@@ -294,20 +294,27 @@ include(SlicerBlockCXXRequiredFlags)
 # Today date
 #-----------------------------------------------------------------------------
 include(SlicerFunctionToday)
-TODAY(Slicer_BUILDDATE)
+today(Slicer_BUILDDATE)
 
 #-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
 set(Slicer_VERSION_MAJOR "4")
 set(Slicer_VERSION_MINOR "0")
+set(Slicer_VERSION_PATCH "1")
+# Releases define a tweak level
+#set(Slicer_VERSION_TWEAK 0)
 
-if(NOT Slicer_VERSION_PATCH)
-  set(Slicer_VERSION_PATCH "1-${Slicer_BUILDDATE}")
+if(NOT DEFINED Slicer_VERSION_TWEAK)
+  # if it's not a release, use the date as a tweak
+  set(Slicer_VERSION_TWEAK "${Slicer_BUILDDATE}")
 endif()
 
 set(Slicer_VERSION      "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_VERSION_FULL "${Slicer_VERSION}.${Slicer_VERSION_PATCH}")
+if (Slicer_VERSION_TWEAK GREATER 0)
+  set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}.${Slicer_VERSION_TWEAK}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
