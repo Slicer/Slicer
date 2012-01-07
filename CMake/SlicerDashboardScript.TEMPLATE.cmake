@@ -38,7 +38,7 @@ set(WITH_PACKAGES FALSE)
 set(WITH_EXTENSIONS FALSE) # Indicates if 'trusted' Slicer extensions should be
                            # built, tested, packaged and uploaded.
 set(CTEST_BUILD_CONFIGURATION "Release")
-set(CTEST_TEST_TIMEOUT 100)
+set(CTEST_TEST_TIMEOUT 500)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
 set(CTEST_PARALLEL_LEVEL 8) # Number of tests running in parallel
 
