@@ -70,7 +70,12 @@ class EditBox(object):
       self.optionsFrame = qt.QFrame(self.parent)
     else:
       self.optionsFrame = optionsFrame
+
+    # state variables for selected effect in the box
+    # - currentOption is an instance of an option GUI
+    # - currentTools is a list of EffectTool instances
     self.currentOption = None
+    self.currentTools = []
 
   #
   # Public lists of the available effects provided by the editor
@@ -333,13 +338,29 @@ itcl::body EditBox::setButtonState {effect state} {
     # if a modal effect was selected, build an options GUI
     # - check to see if it is an extension effect,
     # if not, try to create it, else ignore it
+    # For extensions, look for 'effect'Options and 'effect'Tool
+    # in the editorExtensions map and use those to create the 
+    # effect
     #
     if not self.nonmodal.__contains__(effect):
       if self.currentOption:
         self.currentOption.__del__()
         self.currentOption = None
+        for tool in self.currentTools:
+          tool.cleanup()
+        self.currentTools = []
       if effect in slicer.modules.editorExtensions.keys():
-        self.currentOption = slicer.modules.editorExtensions[effect](self.optionsFrame)
+        extensionEffect = slicer.modules.editorExtensions[effect]()
+        self.currentOption = extensionEffect.options(self.optionsFrame)
+        layoutManager = slicer.app.layoutManager()
+        sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+        for nodeIndex in xrange(sliceNodeCount):
+          # find the widget for each node in scene
+          sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
+          sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
+          if sliceWidget:
+            tool = extensionEffect.tool(sliceWidget)
+            self.currentTools.append(tool)
       else:
         try:
           options = eval("%sOptions" % effect)

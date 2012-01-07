@@ -6,6 +6,9 @@ set(EditorLib_PYTHON_SCRIPTS
   EditOptions
   EditUtil
   HelperBox
+  Effect
+  LabelEffect
+  PaintEffect
   )
 
 set(EditorLib_PYTHON_RESOURCES
