@@ -188,7 +188,7 @@ set(SLICER_ENVVARS_BUILD
 #       CMake refers to the variable as Slicer_HOME, and the tcl variable is SlicerHome.
 
 if(Slicer_USE_PYTHONQT)
-  set(PYTHONPATH "<APPLAUNCHER_DIR>/bin")
+  set(PYTHONPATH "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
 
