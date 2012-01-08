@@ -27,11 +27,11 @@
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModulesCoreExport.h"
 
 class qSlicerCoreModuleFactoryPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCoreModuleFactory :
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModuleFactory :
   public ctkAbstractQObjectFactory<qSlicerAbstractCoreModule>
 {
 public:

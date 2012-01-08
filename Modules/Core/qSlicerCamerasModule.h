@@ -27,12 +27,12 @@
 /// SlicerQt includes
 #include "qSlicerCoreModule.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModulesCoreExport.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerCamerasModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModule :
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerCamerasModule :
   public qSlicerCoreModule
 {
   Q_OBJECT

@@ -18,35 +18,38 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerROIModuleWidget_h
-#define __qSlicerROIModuleWidget_h
+#ifndef __qSlicerCoreModule_h
+#define __qSlicerCoreModule_h
 
 // CTK includes
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerAbstractModule.h"
 
-class qSlicerROIModuleWidgetPrivate;
+#include "qSlicerModulesCoreExport.h"
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModuleWidget :
-  public qSlicerAbstractModuleWidget
+class qSlicerCoreModulePrivate;
+
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerCoreModule : public qSlicerAbstractModule
 {
   Q_OBJECT
+
 public:
-  qSlicerROIModuleWidget(QWidget *parentWidget = 0);
-  virtual ~qSlicerROIModuleWidget();
+
+  typedef qSlicerAbstractModule Superclass;
+  qSlicerCoreModule(QObject *parent=0);
+  virtual ~qSlicerCoreModule();
 
 protected:
   virtual void setup();
 
 protected:
-  QScopedPointer<qSlicerROIModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerCoreModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerROIModuleWidget);
-  Q_DISABLE_COPY(qSlicerROIModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerCoreModule);
+  Q_DISABLE_COPY(qSlicerCoreModule);
 };
 
 #endif

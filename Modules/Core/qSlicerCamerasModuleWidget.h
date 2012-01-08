@@ -27,13 +27,13 @@
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModulesCoreExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLViewNode;
 class qSlicerCamerasModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCamerasModuleWidget :
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerCamerasModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

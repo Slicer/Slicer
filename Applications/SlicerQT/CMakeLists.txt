@@ -32,7 +32,7 @@ set(SlicerQT_UI_SRCS
 set(qt_module_resources
   Resources/SlicerQT.qrc
   ${qSlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
-  ${qSlicerBaseQTCoreModules_SOURCE_DIR}/Resources/qSlicerBaseQTCoreModules.qrc
+  ${qSlicerModulesCore_SOURCE_DIR}/Resources/qSlicerModulesCore.qrc
 )
 #set(SlicerQT_RC_FILE Resources/SlicerQT.rc)
 
@@ -52,6 +52,8 @@ set(include_dirs
   ${MRMLCore_INCLUDE_DIRS}
   ${MRMLLogic_INCLUDE_DIRS}
   ${qMRMLWidgets_INCLUDE_DIRS}
+  ${qSlicerModulesCore_SOURCE_DIR}
+  ${qSlicerModulesCore_BINARY_DIR}
   )
 
 include_directories(${include_dirs})
@@ -71,7 +73,7 @@ add_library(${lib_name}
 set_target_properties(${lib_name} PROPERTIES LABELS SlicerQT)
 
 set(SlicerQT_LIBRARIES
-  qSlicerBaseQTCoreModules
+  qSlicerModulesCore
   )
 
 if(Slicer_BUILD_CLI_SUPPORT)

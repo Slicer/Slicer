@@ -14,7 +14,7 @@
    <string>Data</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+   <iconset resource="../qSlicerDataModule.qrc">
     <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3iew">
@@ -171,7 +171,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -217,7 +217,7 @@ p, li { white-space: pre-wrap; }
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -257,7 +257,7 @@ p, li { white-space: pre-wrap; }
            <item row="4" column="1">
             <widget class="QToolButton" name="AddDataToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -297,7 +297,7 @@ p, li { white-space: pre-wrap; }
            <item row="6" column="1">
             <widget class="QToolButton" name="AddVolumesToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -337,7 +337,7 @@ p, li { white-space: pre-wrap; }
            <item row="8" column="1">
             <widget class="QToolButton" name="AddModelsToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -377,7 +377,7 @@ p, li { white-space: pre-wrap; }
            <item row="10" column="1">
             <widget class="QToolButton" name="AddScalarOverlayToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -417,7 +417,7 @@ p, li { white-space: pre-wrap; }
            <item row="12" column="1">
             <widget class="QToolButton" name="AddTransformationToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -457,7 +457,7 @@ p, li { white-space: pre-wrap; }
            <item row="14" column="1">
             <widget class="QToolButton" name="AddFiducialListToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -497,7 +497,7 @@ p, li { white-space: pre-wrap; }
            <item row="16" column="1">
             <widget class="QToolButton" name="AddColorTableToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -537,7 +537,7 @@ p, li { white-space: pre-wrap; }
            <item row="18" column="1">
             <widget class="QToolButton" name="AddFiberBundleToolButton">
              <property name="icon">
-              <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+              <iconset resource="../qSlicerDataModule.qrc">
                <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
              </property>
             </widget>
@@ -627,7 +627,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../qSlicerDataModule.qrc"/>
  </resources>
  <connections>
   <connection>

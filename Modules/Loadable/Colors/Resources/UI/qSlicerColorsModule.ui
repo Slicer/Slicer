@@ -14,7 +14,7 @@
    <string>Colors</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+   <iconset resource="../qSlicerColorsModule.qrc">
     <normaloff>:/Icons/Colors.png</normaloff>:/Icons/Colors.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -221,7 +221,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../qSlicerColorsModule.qrc"/>
  </resources>
  <connections>
   <connection>

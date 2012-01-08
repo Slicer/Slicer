@@ -83,7 +83,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../qSlicerModulesCore.qrc"/>
  </resources>
  <connections>
   <connection>

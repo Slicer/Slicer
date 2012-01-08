@@ -20,7 +20,7 @@
    <string>Transforms</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+   <iconset resource="../qSlicerTransformsModule.qrc">
     <normaloff>:/Icons/Transforms.png</normaloff>:/Icons/Transforms.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -273,7 +273,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../qSlicerTransformsModule.qrc"/>
  </resources>
  <connections>
   <connection>

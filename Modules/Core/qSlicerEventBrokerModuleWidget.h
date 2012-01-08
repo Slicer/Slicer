@@ -18,38 +18,40 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerCoreModule_h
-#define __qSlicerCoreModule_h
+#ifndef __qSlicerEventBrokerModuleWidget_h
+#define __qSlicerEventBrokerModuleWidget_h
 
 // CTK includes
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerAbstractModule.h"
+#include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModulesCoreExport.h"
 
-class qSlicerCoreModulePrivate;
+class qSlicerEventBrokerModuleWidgetPrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerCoreModule : public qSlicerAbstractModule
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModuleWidget :
+  public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 
 public:
 
-  typedef qSlicerAbstractModule Superclass;
-  qSlicerCoreModule(QObject *parent=0);
-  virtual ~qSlicerCoreModule();
+  typedef qSlicerAbstractModuleWidget Superclass;
+  qSlicerEventBrokerModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerEventBrokerModuleWidget();
+
+protected slots:
+  void onCurrentObjectChanged(vtkObject* );
 
 protected:
+  QScopedPointer<qSlicerEventBrokerModuleWidgetPrivate> d_ptr;
   virtual void setup();
 
-protected:
-  QScopedPointer<qSlicerCoreModulePrivate> d_ptr;
-
 private:
-  Q_DECLARE_PRIVATE(qSlicerCoreModule);
-  Q_DISABLE_COPY(qSlicerCoreModule);
+  Q_DECLARE_PRIVATE(qSlicerEventBrokerModuleWidget);
+  Q_DISABLE_COPY(qSlicerEventBrokerModuleWidget);
 };
 
 #endif

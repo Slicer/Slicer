@@ -18,49 +18,51 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerROIModule_h
-#define __qSlicerROIModule_h
+#ifndef __qSlicerEventBrokerModule_h
+#define __qSlicerEventBrokerModule_h
 
-/// CTK includes
+// CTK includes
 #include <ctkPimpl.h>
 
-/// SlicerQt includes
+// SlicerQt includes
 #include "qSlicerCoreModule.h"
 
-#include "qSlicerBaseQTCoreModulesExport.h"
+#include "qSlicerModulesCoreExport.h"
 
-class qSlicerAbstractModuleWidget;
-class qSlicerROIModulePrivate;
+class qSlicerEventBrokerModulePrivate;
 
-class Q_SLICER_BASE_QTCOREMODULES_EXPORT qSlicerROIModule :
+class Q_SLICER_MODULES_CORE_EXPORT qSlicerEventBrokerModule :
   public qSlicerCoreModule
 {
   Q_OBJECT
 public:
+
   typedef qSlicerCoreModule Superclass;
-  qSlicerROIModule(QObject *parent=0);
-  virtual ~qSlicerROIModule();
+  qSlicerEventBrokerModule(QObject *parent=0);
+  virtual ~qSlicerEventBrokerModule();
+  
+  virtual QString category()const;
 
-  qSlicerGetTitleMacro("ROI");
+  /// Display name for the module
+  qSlicerGetTitleMacro("Event Broker");
 
-  /// Return help/acknowledgement text
+  /// Help text of the module
   virtual QString helpText()const;
+
+  /// Acknowledgement text of the module
   virtual QString acknowledgementText()const;
 
 protected:
-
   /// Create and return the widget representation associated to this module
   virtual qSlicerAbstractModuleRepresentation * createWidgetRepresentation();
 
   /// Create and return the logic associated to this module
   virtual vtkMRMLAbstractLogic* createLogic();
 
-protected:
-  QScopedPointer<qSlicerROIModulePrivate> d_ptr;
-
+  QScopedPointer<qSlicerEventBrokerModulePrivate> d_ptr;
 private:
-  Q_DECLARE_PRIVATE(qSlicerROIModule);
-  Q_DISABLE_COPY(qSlicerROIModule);
+  Q_DECLARE_PRIVATE(qSlicerEventBrokerModule);
+  Q_DISABLE_COPY(qSlicerEventBrokerModule);
 };
 
 #endif

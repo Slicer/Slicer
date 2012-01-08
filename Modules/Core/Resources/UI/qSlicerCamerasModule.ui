@@ -14,7 +14,7 @@
    <string>Cameras</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../qSlicerBaseQTCoreModules.qrc">
+   <iconset resource="../qSlicerModulesCore.qrc">
     <normaloff>:/Icons/Cameras.png</normaloff>:/Icons/Cameras.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -106,7 +106,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../qSlicerBaseQTCoreModules.qrc"/>
+  <include location="../qSlicerModulesCore.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -1,3 +1,4 @@
+add_subdirectory(Core)
 
 if(Slicer_BUILD_QTLOADABLEMODULES)
   add_subdirectory(Loadable)

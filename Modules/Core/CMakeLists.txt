@@ -1,9 +1,9 @@
-project(qSlicerBaseQTCoreModules)
+project(qSlicerModulesCore)
 
 #
 # See CMake/SlicerMacroBuildBaseQtLibrary.cmake for details
 #
-set(KIT_export_directive "Q_SLICER_BASE_QTCOREMODULES_EXPORT")
+set(KIT_export_directive "Q_SLICER_MODULES_CORE_EXPORT")
 
 # Additional directories to include
 set(KIT_include_directories
@@ -70,7 +70,7 @@ set(KIT_target_libraries
 
 # Resources
 set(KIT_resources
-  Resources/qSlicerBaseQTCoreModules.qrc
+  Resources/qSlicerModulesCore.qrc
 )
 
 SlicerMacroBuildBaseQtLibrary(
