@@ -103,7 +103,6 @@ QString qSlicerCamerasModule::contributor()const
 {
   QString contributors = tr(
     "Julien Finet, Kitware Inc., "
-    "Sebastien Barr&eacute;, Kitware Inc., "
-    "Alex Yarmarkovich, Isomics Inc.");
+    "Sebastien Barr&eacute;, Kitware Inc.");
   return contributors;
 }
