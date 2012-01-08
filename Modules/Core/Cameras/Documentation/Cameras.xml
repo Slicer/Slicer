@@ -5,7 +5,7 @@
  <description><![CDATA[
 <p>Bring core support for multiple cameras and 3D views in Slicer.</p>
 <p>The multi views and cameras framework is available from the "Camera" modules. This module displays two pull-down menus. The first one, "View", lists all available views and lets the user create new 3D views. The second one, "Camera", lists all available cameras, and lets the user create new cameras.</p>
-<p>Only one camera is used by a view at a time. When a view is selected from the pull-down, the camera it is currently using is automatically selected in the second pull-down.<p>
+<p>Only one camera is used by a view at a time. When a view is selected from the pull-down, the camera it is currently using is automatically selected in the second pull-down.</p>
 <dl>
 <dt>Create a new camera.</dt>
 <dd>In the "Camera" pull-down menu, select "Create New Camera": a new camera node is created (most likely named "Camera1", as opposed to the default "Camera" node), and automatically assigned to the currently selected view node (named "View" by default). Try interacting with the 3D view.</dd>

@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_EventBroker EventBroker
+\ingroup Slicer_QtModules
+This module is a view of the Event broker for debugging purpose.
+
+*/
