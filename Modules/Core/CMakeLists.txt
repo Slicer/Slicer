@@ -10,6 +10,9 @@ set(KIT_include_directories
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
   ${MRMLLogic_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/Cameras
+  ${CMAKE_CURRENT_SOURCE_DIR}/EventBroker
+  ${CMAKE_CURRENT_SOURCE_DIR}/ROI
   )
 
 # Source files
@@ -20,39 +23,39 @@ set(KIT_SRCS
   qSlicerCoreModuleFactory.cxx
   qSlicerCoreModuleFactory.h
 
-  qSlicerCamerasModule.cxx
-  qSlicerCamerasModule.h
-  qSlicerCamerasModuleWidget.cxx
-  qSlicerCamerasModuleWidget.h
+  Cameras/qSlicerCamerasModule.cxx
+  Cameras/qSlicerCamerasModule.h
+  Cameras/qSlicerCamerasModuleWidget.cxx
+  Cameras/qSlicerCamerasModuleWidget.h
 
-  qSlicerEventBrokerModule.cxx
-  qSlicerEventBrokerModule.h
-  qSlicerEventBrokerModuleWidget.cxx
-  qSlicerEventBrokerModuleWidget.h
+  EventBroker/qSlicerEventBrokerModule.cxx
+  EventBroker/qSlicerEventBrokerModule.h
+  EventBroker/qSlicerEventBrokerModuleWidget.cxx
+  EventBroker/qSlicerEventBrokerModuleWidget.h
 
   qSlicerFiducialsIO.cxx
   qSlicerFiducialsIO.h
 
-  qSlicerROIModule.cxx
-  qSlicerROIModule.h
-  qSlicerROIModuleWidget.cxx
-  qSlicerROIModuleWidget.h
+  ROI/qSlicerROIModule.cxx
+  ROI/qSlicerROIModule.h
+  ROI/qSlicerROIModuleWidget.cxx
+  ROI/qSlicerROIModuleWidget.h
   )
 
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   qSlicerCoreModule.h
 
-  qSlicerCamerasModule.h
-  qSlicerCamerasModuleWidget.h
+  Cameras/qSlicerCamerasModule.h
+  Cameras/qSlicerCamerasModuleWidget.h
 
-  qSlicerEventBrokerModule.h
-  qSlicerEventBrokerModuleWidget.h
+  EventBroker/qSlicerEventBrokerModule.h
+  EventBroker/qSlicerEventBrokerModuleWidget.h
 
   qSlicerFiducialsIO.h
 
-  qSlicerROIModule.h
-  qSlicerROIModuleWidget.h
+  ROI/qSlicerROIModule.h
+  ROI/qSlicerROIModuleWidget.h
 
   )
 
