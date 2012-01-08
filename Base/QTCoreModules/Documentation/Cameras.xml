@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+ <category>Developer Tools</category>
+ <title>Cameras</title>
+ <description>
+This module manages 3D views and cameras.
+ </description>
+ <version>4.0</version>
+ <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Cameras</documentation-url>
+ <license>slicer4</license>
+ <contributor>Julien Finet, Kitware, Sebastien Barre, Kitware Inc., Alex Yarmarkovich, Isomics Inc.</contributor>
+ <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
+ </acknowledgements>
+ <parameters>
+  <label>Cameras</label>
+  <description>List the 3D views and cameras in the scene.</description>
+  <parameter>
+   <label>View</label>
+   <description>Select a 3D view. "View" is the main 3D view, additional 3D views are named "View_1", "View_2" etc. On selection, the view active camera is automatically selected.</description>
+  </parameter>
+  <parameter>
+   <label>Camera</label>
+   <description>Active camera of the view. Selecting a camera changes the view.</description>
+  </parameter>
+ </parameters>
+</executable>

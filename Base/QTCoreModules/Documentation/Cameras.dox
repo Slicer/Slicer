@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Cameras Cameras
+\ingroup Slicer_QtModules
+This module manages 3D views and cameras nodes.
+
+*/

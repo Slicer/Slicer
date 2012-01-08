@@ -67,24 +67,43 @@ vtkMRMLAbstractLogic* qSlicerCamerasModule::createLogic()
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::helpText()const
 {
-  QString help =
-    "Create new views and cameras.<br>"
+  QString help = tr(
+    "Manage 3D views and cameras.<br>"
     "The view pulldown menu below can be used to create new views and select "
     "the active view. Switch the layout to \"Tabbed 3D Layout\" from the "
     "layout icon in the toolbar to access multiple views. The view selected in "
     "\"Tabbed 3D Layout\" becomes the active view and replaces the 3D view in "
     "all other layouts. The camera pulldown menu below can be used to set the "
-    "active camera for the selected view. <br>"
+    "active camera for the selected view.<br>"
     "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
-    "closing the scene are probably broken for new views).";
-  return help;
+    "closing the scene are probably broken for new views).<br>"
+    "<a href=\"%1/Documentation/4.0/Modules/Cameras\">"
+    "%1/Documentation/4.0/Modules/Cameras</a>\n");
+  return help.arg(this->slicerWikiUrl());
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCamerasModule::acknowledgementText()const
 {
-  QString about =
-    "To be updated %1";
+  QString acknowledgement = tr(
+    "<center><table border=\"0\"><tr>"
+    "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
+    "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
+    "</tr><tr>"
+    "<td><img src=\":Logos/BIRN-NoText.png\" alt\"BIRN\"></td>"
+    "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
+    "</tr></table></center>"
+    "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
+    "See <a href=\"http://www.slicer.org\">slicer.org</a> for details.");
+  return acknowledgement;
+}
 
-  return about.arg(this->slicerWikiUrl());
+//-----------------------------------------------------------------------------
+QString qSlicerCamerasModule::contributor()const
+{
+  QString contributors = tr(
+    "Julien Finet, Kitware Inc., "
+    "Sebastien Barr&eacute;, Kitware Inc., "
+    "Alex Yarmarkovich, Isomics Inc.");
+  return contributors;
 }
