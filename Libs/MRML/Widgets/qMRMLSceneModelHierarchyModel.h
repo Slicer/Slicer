@@ -48,8 +48,6 @@ public:
   /// If newParent == 0, set the node into the vtkMRMLScene
  // virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
-  virtual void setMRMLScene(vtkMRMLScene* scene);
-
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneModelHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneModelHierarchyModel);

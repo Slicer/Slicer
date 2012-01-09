@@ -75,13 +75,6 @@ qMRMLSceneModelHierarchyModel::~qMRMLSceneModelHierarchyModel()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModelHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
-{
-  Q_D(qMRMLSceneModelHierarchyModel);
-  this->qMRMLSceneModel::setMRMLScene(scene);
-}
-
-//------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneModelHierarchyModel::parentNode(vtkMRMLNode* node)const
 {
   return vtkMRMLModelHierarchyNode::SafeDownCast(

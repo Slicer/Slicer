@@ -149,9 +149,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loaderV2,
 //-----------------------------------------------------------------------------
 void qSlicerApplicationPrivate::initStyle()
 {
-  Q_Q(qSlicerApplication);
-
-  // Force showing the icons in the menus despite the native OS style
+  // Force showing the icons in the menus even if the native OS style
   // discourages it
   QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus, false);
 }
