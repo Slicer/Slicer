@@ -46,7 +46,7 @@ class WorkflowConfiguration:
     }
 
     dwi_node_name = None
-   
+
     def __init__(self):
         self.slicerVolumesLogic = slicer.vtkSlicerVolumesLogic()
         self.slicerVolumesLogic.SetMRMLScene(slicer.mrmlScene)
@@ -63,21 +63,38 @@ class WorkflowConfiguration:
 
     def validate_dicom2nrrd(self, step_object, data):
         if data[step_object.id()]['DICOMRadioButton']:
+
+            output_volume = data[step_object.id()]['outputVolume']
+            print "\t output volume:", output_volume
+            if not (
+                (
+                    (not os.path.exists(output_volume)) or
+                    os.path.isdir(os.path.basename(output_volume))
+                ) or (
+                    os.path.exists(output_volume) and
+                    os.path.isfile(output_volume)
+                )
+            ):
+                display_error("DICOM to NRRD conversion needs a valid output NRRD file")
+                return False
+
             self.dicomtonrrdconverter_parameter_node = slicer.cli.run(
-                slicer.modules.dicomtonrrdconverter, self.dicomtonrrdconverter_parameter_node, 
-                data[step_object.id()], 
+                slicer.modules.dicomtonrrdconverter, self.dicomtonrrdconverter_parameter_node,
+                data[step_object.id()],
                 wait_for_completion = True)
-           
+
             if self.dicomtonrrdconverter_parameter_node.GetStatusString() == 'Completed':
                 file_path = data[step_object.id()]['outputVolume']
                 result_status, node = slicer.util.loadVolume(
                     file_path,
                     True
                 )
+            else:
+                result_status = False
 
             if result_status:
                 self.dwi_node = node
-                self.dwi_node_name = node.GetID()       
+                self.dwi_node_name = node.GetID()
 
         elif data[step_object.id()]['NRRDDWIRadioButton']:
             result_status, node = slicer.util.loadVolume(
@@ -91,7 +108,7 @@ class WorkflowConfiguration:
 
 
         if not result_status:
-            display_error("Error in DICOM to NRRD conversion")
+            display_error("Error in DICOM to NRRD conversion, please see log")
 
         return result_status
 
@@ -125,8 +142,6 @@ class WorkflowConfiguration:
             display_error("Error in diffusion tensor estimation")
             return False
 
-        
-
         parameters_estimation = {
             'inputVolume': self.dwi_node.GetID(),
             'outputTensor': self.tensor_node.GetID(),
@@ -140,14 +155,13 @@ class WorkflowConfiguration:
         else:
             if 'inputMaskVolume' in parameters_estimation:
                 parameters_estimation['inputMaskVolume'] = ''
-        
 
         self.diffusiontensorestimation_parameter_node = slicer.cli.run(
-            slicer.modules.diffusiontensorestimation, self.diffusiontensorestimation_parameter_node, 
-            parameters_estimation, 
+            slicer.modules.diffusiontensorestimation, self.diffusiontensorestimation_parameter_node,
+            parameters_estimation,
             wait_for_completion=True
         )
-        
+
         result_status = self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completed'
 
         if not result_status:
@@ -171,7 +185,7 @@ class WorkflowConfiguration:
         parameters.update(data[step_object.id()])
 
         self.seeding_parameter_node = slicer.cli.run(
-            slicer.modules.seeding, self.seeding_parameter_node, 
+            slicer.modules.seeding, self.seeding_parameter_node,
             parameters,
             wait_for_completion=True
         )
@@ -318,7 +332,7 @@ class full_tractography_workflow:
 
         for step_widget_file in self.workflow_configuration.step_widget_files:
             path = os.path.join(
-                 os.path.dirname(__file__), 'Resources', 'UI', 
+                 os.path.dirname(__file__), 'Resources', 'UI',
                  step_widget_file + '.ui'
              )
 
@@ -354,7 +368,7 @@ class full_tractography_workflow:
             if name in self.workflow_configuration.step_widget_fields:
                 for field_name, attribute_name in self.workflow_configuration.step_widget_fields[ name ]:
                     data[name][field_name] = getattr(widget_find_field( widget, field_name ), attribute_name)
-                    
+
 
         return data
 
@@ -442,11 +456,11 @@ def create_volume_node(volume_type, attach_display_node = False, dimensions=None
 
 def display_error(message):
     mb = qt.QMessageBox()
-    mb.setText("Error in the Diffusion Tensor Estimation")
-    mb.setStandardButtons( mb.Ok )
+    mb.setText(message)
+    mb.setStandardButtons(mb.Ok)
     mb.setDefaultButton(mb.Ok )
     mb.exec_()
-  
+
 
 import sys
 import re
@@ -457,13 +471,13 @@ for volume_type in __VOLUME_TYPES__:
             re.sub('([A-Z])','_\\1',volume_type).lower() +\
             '_volume_node'
 
-    setattr(this_module, function_name, 
+    setattr(this_module, function_name,
             eval(
                 'lambda attach_display_node=False, dimensions=None:\
                 create_volume_node( "%s", attach_display_node=attach_display_node, dimensions=dimensions)' %\
                 volume_type)
                )
-    
+
 
 if __name__ == "__main__":
   # TODO: need a way to access and parse command line arguments

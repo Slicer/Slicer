@@ -33,10 +33,10 @@ class DICOM2FullBrainTractographyWidget:
     if not parent:
       self.setup()
       self.parent.show()
-    
+
   def setup(self):
     # Instantiate and connect widgets ...
-    
+
     # Collapsible button
     #dummyCollapsibleButton = ctk.ctkCollapsibleButton()
     #dummyCollapsibleButton.text = "A collapsible button"
@@ -51,5 +51,5 @@ class DICOM2FullBrainTractographyWidget:
 
   def exit(self):
       pass
-    
+
 
