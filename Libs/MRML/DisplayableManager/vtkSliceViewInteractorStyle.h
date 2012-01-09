@@ -83,7 +83,8 @@ public:
     None = 0,
     Translate,
     Zoom,
-    Rotate /* Rotate not currently used */
+    Rotate, /* Rotate not currently used */
+    AdjustWindowLevel
     };
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
@@ -99,6 +100,8 @@ public:
   vtkSetVector3Macro(ActionStartFOV, double);
   vtkGetVector2Macro(ActionStartWindow, int);
   vtkSetVector2Macro(ActionStartWindow, int);
+  vtkGetVector2Macro(ActionLastXY, int);
+  vtkSetVector2Macro(ActionLastXY, int);
 
   /// what was the state of the slice node when the action started
   vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
@@ -128,6 +131,7 @@ public:
   /// in more than one place
   void StartTranslate();
   void EndTranslate();
+  void StartAdjustWindowLevel();
 
   /// Get the RAS coordinates of the interactor's EventPosition
   /// with respect to the current poked renderer (taking into
@@ -157,6 +161,7 @@ protected:
   double ActionStartRAS[3];
   double ActionStartFOV[3];
   int ActionStartWindow[2];
+  int ActionLastXY[2];
 
   vtkMatrix4x4 *ActionStartSliceToRAS;
   vtkMatrix4x4 *ActionStartXYToRAS;

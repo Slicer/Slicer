@@ -218,7 +218,7 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     {
     this->StartTranslate();
     }
-  this->Superclass::OnLeftButtonDown();
+  this->StartAdjustWindowLevel();
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeftButtonUp() 
@@ -226,8 +226,9 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
   if (this->ActionState == this->Translate)
     {
     this->EndTranslate();
+    return;
     }
-  this->Superclass::OnLeftButtonUp();
+  this->SetActionState(vtkSliceViewInteractorStyle::None);
 }
 
 //----------------------------------------------------------------------------
@@ -271,6 +272,20 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         double newFOVz = this->GetActionStartFOV()[2];
         sliceNode->SetFieldOfView( newFOVx, newFOVy, newFOVz );
         }
+      }
+      break;
+    case vtkSliceViewInteractorStyle::AdjustWindowLevel:
+      {
+      int lastX = this->GetActionLastXY()[0];
+      int lastY = this->GetActionLastXY()[1];
+      int deltaX = windowX - lastX;
+      int deltaY = windowY - lastY;
+      // Ignore the first point because it is not initialized correctly.
+      if ( (lastX == 0) || (lastY == 0) ) deltaX = deltaY = 0;
+      this->SliceLogic->ChangeBackgroundWindowLevel(deltaX, deltaY);
+      
+      int pos[2] = { windowX, windowY };
+      this->SetActionLastXY(pos);
       }
       break;
     default:
@@ -364,6 +379,13 @@ void vtkSliceViewInteractorStyle::MoveSlice(double delta)
   this->SliceLogic->EndSliceNodeInteraction();
 }
 
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::StartAdjustWindowLevel()
+{
+  int pos[2] = { this->GetActionStartWindow()[0], this->GetActionStartWindow()[1] };
+  this->SetActionLastXY(pos);
+  this->SetActionState(vtkSliceViewInteractorStyle::AdjustWindowLevel);
+}
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::StartTranslate()
 {

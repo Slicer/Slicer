@@ -111,6 +111,10 @@ public:
   void SetLabelOpacity(double LabelOpacity);
 
   /// 
+  /// Helper to adjust the background layer Window setting
+  void ChangeBackgroundWindowLevel(signed int dwindow, signed int dlevel);
+
+  /// 
   /// Model slice plane 
   vtkGetObjectMacro(SliceModelNode, vtkMRMLModelNode);
 

@@ -24,6 +24,7 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
@@ -718,6 +719,39 @@ void vtkMRMLSliceLogic::SetLabelOpacity(double labelOpacity)
     this->Modified();
     }
 }
+
+void vtkMRMLSliceLogic
+::ChangeBackgroundWindowLevel(signed int dwindow, signed int dlevel)
+{
+  vtkMRMLScalarVolumeNode* volumeNode = 
+    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) ); 
+    // 0 is background layer, definied in this::GetLayerVolumeNode
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
+  if (volumeNode)
+    {
+     volumeDisplayNode = 
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
+    }
+  vtkImageData* imageData;
+  if (volumeDisplayNode && (imageData = volumeDisplayNode->GetImageData()) )
+    {
+    double s_window = volumeDisplayNode->GetWindow();
+    double s_level = volumeDisplayNode->GetLevel();
+    double* scalarRange = imageData->GetScalarRange();
+    
+    double gain = 1 + (scalarRange[1] - scalarRange[0]) * 7.0;
+    double window = s_window + (gain * dwindow);
+    double level = s_level + (gain * dlevel);
+    if (window < 0) window = 0;
+  
+    int disabledModify = volumeDisplayNode->StartModify();
+    volumeDisplayNode->SetAutoWindowLevel(0);
+    volumeDisplayNode->SetWindowLevel(window, level);
+    volumeDisplayNode->EndModify(disabledModify);
+    this->Modified();
+    }
+}
+
 
 //----------------------------------------------------------------------------
 vtkImageData * vtkMRMLSliceLogic::GetImageData()
