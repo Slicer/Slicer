@@ -20,10 +20,10 @@
 
 // Qt includes
 #include <QHeaderView>
+#include <QInputDialog>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QScrollBar>
-#include <QInputDialog>
 
 // qMRML includes
 #include "qMRMLItemDelegate.h"
@@ -620,6 +620,19 @@ void qMRMLTreeView::deleteCurrentNode()
       }
     }
   this->mrmlScene()->RemoveNode(this->currentNode());
+}
+
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::showEvent(QShowEvent* event)
+{
+  Q_D(qMRMLTreeView);
+  this->Superclass::showEvent(event);
+  if (d->FitSizeToVisibleIndexes &&
+      !d->TreeViewSizeHint.isValid())
+    {
+    this->updateGeometry();
+    }
 }
 
 //------------------------------------------------------------------------------

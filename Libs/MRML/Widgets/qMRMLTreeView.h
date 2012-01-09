@@ -24,6 +24,7 @@
 // Qt includes
 #include <QTreeView>
 #include <QStyledItemDelegate>
+class QShowEvent;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -50,6 +51,8 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
 
 public:
+  typedef QTreeView Superclass;
+
   qMRMLTreeView(QWidget *parent=0);
   virtual ~qMRMLTreeView();
 
@@ -107,6 +110,7 @@ public:
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
 
+  virtual void showEvent(QShowEvent* show);
   virtual bool eventFilter(QObject* object, QEvent* e);
 
 public slots:
