@@ -30,16 +30,17 @@
     <image type ="label">
       <name>InputROI</name>
       <label>Input Label Map</label>
-      <channel>input</channel>
-      <index>1</index>
+      <flag>-a</flag>
+      <longflag>--inputroi</longflag>
       <description>Label map with seeding ROIs</description>
+      <channel>input</channel>
     </image> 
 
     <geometry type = "fiberbundle">
       <name>OutputFibers</name>
       <label>Output Fiber bundle</label>
       <channel>output</channel>
-      <index>2</index>
+      <index>1</index>
       <description>Tractography result</description>
     </geometry>
 

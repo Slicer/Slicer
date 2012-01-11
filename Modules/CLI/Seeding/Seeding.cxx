@@ -4,6 +4,9 @@
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkMath.h"
 #include "vtkImageCast.h"
+#include "vtkImageData.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkImageThreshold.h"
 
 #include "SeedingCLP.h"
 
@@ -23,23 +26,79 @@ int main( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
 
+
+    vtkImageData* ROI;
     vtkNRRDReader *reader2 = vtkNRRDReader::New();
-    reader2->SetFileName(InputROI.c_str() );
-    reader2->Update();
+    vtkImageCast *imageCast = vtkImageCast::New();
+    vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
+    vtkImageThreshold *th = vtkImageThreshold::New();
+    vtkMatrix4x4 *ROIRASToIJK = vtkMatrix4x4::New();
 
-    /*
-    vtkNRRDWriter *iwriter = vtkNRRDWriter::New();
-    iwriter->SetInput(reader->GetOutput());
-    iwriter->SetFileName("C:/Temp/helix.nhdr");
-    iwriter->Write();
-    iwriter->Delete();
-    **/
+    if (InputROI.length() > 0)
+    {
+      reader2->SetFileName(InputROI.c_str() );
+      reader2->Update();
 
-    if( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
-      {
-      std::cerr << argv[0] << ": No roi data" << std::endl;
-      return EXIT_FAILURE;
-      }
+      if( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
+        {
+        std::cerr << argv[0] << ": No roi data" << std::endl;
+        return EXIT_FAILURE;
+        }
+
+      // cast roi to short data type
+      imageCast->SetOutputScalarTypeToShort();
+      imageCast->SetInput(reader2->GetOutput() );
+      imageCast->Update();
+
+      ROI = imageCast->GetOutput();
+
+      // Set up the matrix that will take points in ROI
+      // to RAS space.  Code assumes this is world space
+      // since  we have no access to external transforms.
+      // This will only work if no transform is applied to
+      // ROI and tensor volumes.
+      //
+      ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
+    } else {
+      math->SetInput(0, reader->GetOutput());
+
+      if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
+        {
+        math->SetOperationToLinearMeasure();
+        }
+      else if( StoppingMode == std::string("PlanarMeasurement") || StoppingMode == std::string("PlanarMeasure") )
+        {
+        math->SetOperationToPlanarMeasure();
+        }
+      else if( StoppingMode == std::string("FractionalAnisotropy") )
+        {
+        math->SetOperationToFractionalAnisotropy();
+        }
+      else
+        {
+        std::cerr << "Mode " << StoppingMode << " is not supported" << endl;
+        return EXIT_FAILURE;
+        }
+      math->Update();
+
+      th->SetInput(math->GetOutput());
+      th->ThresholdBetween(ClTh,1);
+      th->SetInValue(ROIlabel);
+      th->SetOutValue(0);
+      th->ReplaceInOn();
+      th->ReplaceOutOn();
+      th->SetOutputScalarTypeToShort();
+      th->Update();
+      ROI = th->GetOutput();
+
+      // Set up the matrix that will take points in ROI
+      // to RAS space.  Code assumes this is world space
+      // since  we have no access to external transforms.
+      // This will only work if no transform is applied to
+      // ROI and tensor volumes.
+      ROIRASToIJK->DeepCopy(reader->GetRasToIjkMatrix() );
+    }
+
 
     vtkSeedTracts *seed = vtkSeedTracts::New();
 
@@ -104,11 +163,6 @@ int main( int argc, char * argv[] )
 
     // 3. Set up ROI (not based on Cl mask), from input now
 
-    // cast roi to short data type
-    vtkImageCast *imageCast = vtkImageCast::New();
-    imageCast->SetOutputScalarTypeToShort();
-    imageCast->SetInput(reader2->GetOutput() );
-    imageCast->Update();
 
     // Create Cl mask
     /**
@@ -144,29 +198,25 @@ int main( int argc, char * argv[] )
     iwriter->SetFileName("C:/Temp/th.nhdr");
     iwriter->Write();
     **/
-
-    // PENDING: Do merging with input ROI
-
-    seed->SetInputROI(imageCast->GetOutput() );
-    seed->SetInputROIValue(ROIlabel);
-    seed->UseStartingThresholdOn();
-    seed->SetStartingThreshold(ClTh);
-
-    // Set up the matrix that will take points in ROI
-    // to RAS space.  Code assumes this is world space
-    // since  we have no access to external transforms.
-    // This will only work if no transform is applied to
-    // ROI and tensor volumes.
-    vtkMatrix4x4 *ROIRASToIJK = vtkMatrix4x4::New();
-    ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
+   
     vtkTransform *trans2 = vtkTransform::New();
     trans2->Identity();
     trans2->PreMultiply();
+
     // no longer assume this ROI is in tensor space
     // trans2->SetMatrix(TensorRASToIJK);
     trans2->SetMatrix(ROIRASToIJK);
     trans2->Inverse();
     seed->SetROIToWorld(trans2);
+
+
+    // PENDING: Do merging with input ROI
+
+    seed->SetInputROI(ROI);
+    seed->SetInputROIValue(ROIlabel);
+    seed->UseStartingThresholdOn();
+    seed->SetStartingThreshold(ClTh);
+
 
     // 4. Set Tractography specific parameters
 
@@ -243,8 +293,8 @@ int main( int argc, char * argv[] )
     TensorRASToIJK->Delete();
     ROIRASToIJK->Delete();
     TensorRASToIJKRotation->Delete();
-    // math->Delete();
-    // th->Delete();
+    math->Delete();
+    th->Delete();
     trans2->Delete();
     trans->Delete();
     streamer->Delete();
