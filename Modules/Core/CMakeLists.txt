@@ -33,9 +33,6 @@ set(KIT_SRCS
   EventBroker/qSlicerEventBrokerModuleWidget.cxx
   EventBroker/qSlicerEventBrokerModuleWidget.h
 
-  qSlicerFiducialsIO.cxx
-  qSlicerFiducialsIO.h
-
   ROI/qSlicerROIModule.cxx
   ROI/qSlicerROIModule.h
   ROI/qSlicerROIModuleWidget.cxx
@@ -51,8 +48,6 @@ set(KIT_MOC_SRCS
 
   EventBroker/qSlicerEventBrokerModule.h
   EventBroker/qSlicerEventBrokerModuleWidget.h
-
-  qSlicerFiducialsIO.h
 
   ROI/qSlicerROIModule.h
   ROI/qSlicerROIModuleWidget.h

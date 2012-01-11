@@ -22,7 +22,6 @@
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerCamerasModule.h"
 #include "qSlicerEventBrokerModule.h"
-#include "qSlicerFiducialsIO.h"
 //#include "qSlicerROIModule.h"
 // FIXME:Move the following to the Models module (when it will be ready in Qt.)
 #include "qSlicerCoreApplication.h"
@@ -94,16 +93,6 @@ void qSlicerCoreModuleFactory::registerItems()
   // vtkMRMLROINode are obsolete, one should use the Annotations module to
   // interact with nodes.
   //d->registerCoreModule<qSlicerROIModule>();
-
-  Q_ASSERT(qSlicerCoreApplication::application());
-  if(!qSlicerCoreApplication::application())
-    {
-    return;
-    }
-  qSlicerCoreIOManager * ioManager =
-      qSlicerCoreApplication::application()->coreIOManager();
-
-  ioManager->registerIO(new qSlicerFiducialsIO());
 }
 
 //-----------------------------------------------------------------------------
