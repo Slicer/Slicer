@@ -21,11 +21,18 @@
 // Qt includes
 #include <QSettings>
 
+// For:
+//  - Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h"
+
 // SlicerQt includes
 #include "qSlicerScriptedLoadableModuleFactory.h"
 #include "qSlicerCoreApplication.h"
 #include "qSlicerScriptedLoadableModule.h"
 #include "qSlicerUtils.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerCorePythonManager.h"
+#endif
 
 // For:
 //  - Slicer_QTSCRIPTEDMODULES_LIB_DIR
@@ -61,6 +68,24 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   module->setInstalled(qSlicerUtils::isPluginInstalled(this->path(), app->slicerHome()));
 
+#ifdef Slicer_USE_PYTHONQT
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
+    {
+    // By convention, if the module is an extension, "<MODULEPATH>" will be appended to PYTHONPATH
+    if (qSlicerCoreApplication::application()->isExtension(module->path()))
+      {
+      QDir modulePath = QFileInfo(module->path()).dir();
+      QString intDir = qSlicerCoreApplication::application()->intDir();
+      if (intDir ==  modulePath.dirName())
+        {
+        modulePath.cdUp();
+        }
+      qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
+      pythonManager->appendPythonPaths(QStringList() << modulePath.absolutePath());
+      }
+    }
+#endif
+
   return module.take();
 }
 
@@ -86,7 +111,7 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
 
   // slicerHome shouldn't be empty
   Q_ASSERT(!app->slicerHome().isEmpty());
-  
+
   QStringList defaultQTModulePaths;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
@@ -112,8 +137,8 @@ QStringList qSlicerScriptedLoadableModuleFactoryPrivate::modulePaths() const
   QStringList qtModulePaths = additionalModulePaths + defaultQTModulePaths;
 
 //  qDebug() << "scriptedModulePaths:" << qtModulePaths;
-  
-  return qtModulePaths; 
+
+  return qtModulePaths;
 }
 
 //-----------------------------------------------------------------------------
