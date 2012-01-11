@@ -180,6 +180,10 @@ class WorkflowConfiguration:
             'InputVolume':self.tensor_node.GetID(),
             'InputROI':self.mask_node.GetID(),
             'OutputFibers':self.tractography_node.GetID(),
+            'SeedSpacing':data[step_object.id()]['seedSpacing'],
+            'StoppingValue':data[step_object.id()]['stoppingFAValue'],
+            'StoppingCurvature':data[step_object.id()]['stoppingTrackCurvature'],
+            'ClTh':data[step_object.id()]['minimumFAValueSeed'],
         }
 
         parameters.update(data[step_object.id()])
