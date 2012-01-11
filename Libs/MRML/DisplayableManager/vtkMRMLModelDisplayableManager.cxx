@@ -1636,7 +1636,9 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
     }
   else
     {
-    return 0;
+    // there may not have been an actor at the picked point, but the Pick should be translated to a valid position
+    // TBD: warn the user that they're picking in empty space?
+    this->Internal->CellPicker->GetPickPosition(pickPoint);
     }
   /**
   if (this->PropPicker->PickProp(x, y, ren))
