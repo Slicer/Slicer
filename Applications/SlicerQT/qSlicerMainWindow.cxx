@@ -30,7 +30,6 @@
 // CTK includes
 #include <ctkMessageBox.h>
 #include <ctkSettingsDialog.h>
-#include <ctkVTKMagnifyView.h>
 #include <ctkVTKSliceView.h>
 
 // SlicerQt includes
