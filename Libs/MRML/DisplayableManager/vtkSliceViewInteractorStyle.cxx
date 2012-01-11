@@ -218,7 +218,10 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     {
     this->StartTranslate();
     }
-  this->StartAdjustWindowLevel();
+  else
+    {
+    this->StartAdjustWindowLevel();
+    }
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnLeftButtonUp() 
