@@ -110,6 +110,8 @@ set(qt_module_SRCS
   qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.cxx
   qSlicerAnnotationsModule.h
+  qSlicerFiducialsIO.cxx
+  qSlicerFiducialsIO.h
   )
 
 # Headers that should run through moc
@@ -117,6 +119,7 @@ set(qt_module_MOC_SRCS
   qSlicerAnnotationsIO.h
   qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.h
+  qSlicerFiducialsIO.h
   GUI/qMRMLSceneAnnotationModel.h
   GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.h

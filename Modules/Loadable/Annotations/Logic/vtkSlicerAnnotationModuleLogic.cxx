@@ -22,10 +22,14 @@
 #include "qSlicerCoreApplication.h"
 
 // MRML includes
+#include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
+
+// Logic includes
+#include <vtkSlicerFiducialsLogic.h>
 
 // VTK includes
 #include <vtkImageData.h>
@@ -111,19 +115,105 @@ void vtkSlicerAnnotationModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //-----------------------------------------------------------------------------
+// Load a fiducial list from file and make it into a set of fiducial annotations
+//-----------------------------------------------------------------------------
+char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
+{
+  char *nodeID = NULL;
+  std::string idList;
+  if (!filename)
+    {
+    vtkErrorMacro("LoadFiducialList: null file name, cannot load");
+    return nodeID;
+    }
+
+  // turn on batch processing
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+
+  // first off, load it as a fiducial list
+  vtkSlicerFiducialsLogic* fiducialsLogic = vtkSlicerFiducialsLogic::New();
+  fiducialsLogic->SetMRMLScene(this->GetMRMLScene());
+  vtkMRMLFiducialListNode* node = fiducialsLogic->LoadFiducialList(filename);
+  if (!node)
+    {
+    vtkErrorMacro("Unable to load fiducial list from : " << filename);
+    return nodeID;
+    }
+  // now iterate through the list and make fiducials
+  int numFids = node->GetNumberOfFiducials();
+  double *color = node->GetColor();
+  double *selColor = node->GetSelectedColor();
+  double symbolScale = node->GetSymbolScale();
+  double textScale = node->GetTextScale();
+  int locked = node->GetLocked();
+  int glyphType = node->GetGlyphType();
+  for (int n = 0; n < numFids; n++)
+    {
+    float *xyz = node->GetNthFiducialXYZ(n);
+    int sel = node->GetNthFiducialSelected(n);
+    int vis = node->GetNthFiducialVisibility(n);
+    const char *labelText = node->GetNthFiducialLabelText(n);
+
+    // now make an annotation
+    vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
+    fnode->SetName(labelText);
+    double coord[3] = {(double)xyz[0], (double)xyz[1], (double)xyz[2]};
+    fnode->AddControlPoint(coord, sel, vis);
+    fnode->SetSelected(sel);
+    fnode->SetVisible(vis);
+    fnode->SetLocked(locked);
+
+    this->GetMRMLScene()->AddNode(fnode);
+    if (n != 0)
+      {
+      idList += std::string(",");
+      }
+    idList += std::string(fnode->GetID());
+    fnode->CreateAnnotationTextDisplayNode();
+    fnode->CreateAnnotationPointDisplayNode();
+    fnode->SetTextScale(textScale);
+    fnode->GetAnnotationPointDisplayNode()->SetGlyphScale(symbolScale);
+    fnode->GetAnnotationPointDisplayNode()->SetGlyphType(glyphType);
+    fnode->GetAnnotationPointDisplayNode()->SetColor(color);
+    fnode->GetAnnotationPointDisplayNode()->SetSelectedColor(selColor);
+    fnode->GetAnnotationTextDisplayNode()->SetColor(color);
+    fnode->GetAnnotationTextDisplayNode()->SetSelectedColor(selColor);
+    
+    fnode->Delete();
+    }
+  // now remove the legacy node (?)
+  this->GetMRMLScene()->RemoveNode(node->GetStorageNode());
+  this->GetMRMLScene()->RemoveNode(node);
+
+  // turn off batch processing
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+    
+  if (idList.length())
+    {
+    nodeID = (char *)malloc(sizeof(char) * (idList.length() + 1));
+    strcpy(nodeID, idList.c_str());
+    }
+  return nodeID;
+}
+
+//-----------------------------------------------------------------------------
 // Load an annotation from file
 //-----------------------------------------------------------------------------
 char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const char *name, int fileType)
 {
+  char *nodeID = NULL;
   if (!filename)
     {
     vtkErrorMacro("LoadAnnotation: null filename, cannot load");
-    return NULL;
+    return nodeID;
     }
   vtkDebugMacro("LoadAnnotation: filename = " << filename << ", fileType = " << fileType);
 //  std::cout << "LoadAnnotation: filename = " << filename << ", fileType = " << fileType << std::endl;
 
   const itksys_stl::string fname(filename);
+
+  // turn on batch processing
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
   if (fileType == this->Fiducial)
     {
@@ -144,8 +234,9 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     if (fStorageNode->ReadData(fnode))
       {
       vtkDebugMacro("LoadAnnotation: fiducial storage node read " << filename);
-      return fnode->GetID();
+      nodeID =  fnode->GetID();
       }
+    fnode->Delete();
     }
   else if (fileType == this->Ruler)
     {
@@ -158,7 +249,7 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     if (rStorageNode->ReadData(rNode))
       {
       vtkDebugMacro("LoadAnnotation: ruler storage node read " << filename);
-      return rNode->GetID();
+      nodeID = rNode->GetID();
       }
     }
   else if (fileType == this->ROI)
@@ -169,7 +260,10 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     {
     vtkErrorMacro("LoadAnnotation: unknown file type " << fileType << ", cannot read " << filename);
     }
-  return NULL;
+  // turn off batch processing
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+    
+  return nodeID;
 }
 
 //-----------------------------------------------------------------------------
@@ -259,7 +353,7 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkErrorMacro("OnMRMLSceneNodeAddedEvent: No hierarchyNode added.")
     return;
     }
-
+  
   // we pass the hierarchy node along - it includes the pointer to the actual annotationNode
   this->AddNodeCompleted(annotationNode);
 }
@@ -2801,7 +2895,13 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
         vtkErrorMacro("AddHierarchyNodeForAnnotation: annotation node has no scene or id, not checking for existing hierarchy node");
         }
       }
-
+  // is there an associated node?
+/*  if (annotationNode->GetAttribute("AssociatedNode"))
+    {
+    // add a hierarchy for that node
+    // add/get another displayable hierarchy that encapsulates both the associated node and the new fid node
+    }
+*/
     if (!this->GetActiveHierarchyNodeID())
       {
       // no active hierarchy node, this means we create the new node directly under the top-level hierarchy node
