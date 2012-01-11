@@ -17,6 +17,9 @@
 
 // Qt includes
 #include <QtPlugin>
+#include <QFileInfo>
+#include <QtPlugin>
+#include <QScopedPointer>
 
 // ExtensionTemplate Logic includes
 #include <vtkSlicerVectorImageExplorerLogic.h>
@@ -24,6 +27,12 @@
 // ExtensionTemplate includes
 #include "qSlicerVectorImageExplorerModule.h"
 #include "qSlicerVectorImageExplorerModuleWidget.h"
+
+// SlicerQT includes
+#include <qSlicerUtils.h>
+#include <qSlicerModuleManager.h>
+#include <qSlicerScriptedLoadableModuleWidget.h>
+#include <vtkSlicerConfigure.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVectorImageExplorerModule, qSlicerVectorImageExplorerModule);
@@ -86,8 +95,19 @@ void qSlicerVectorImageExplorerModule::setup()
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerVectorImageExplorerModule::createWidgetRepresentation()
-{
-  return new qSlicerVectorImageExplorerModuleWidget;
+{  
+  QString pythonPath = qSlicerUtils::pathWithoutIntDir(
+              QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
+
+  QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
+  QString classNameToLoad = "qSlicerVectorImageExplorerModuleWidget";
+  bool ret = widget->setPythonSource(
+        pythonPath + "/Python/" + classNameToLoad + ".py", classNameToLoad);
+  if (!ret)
+    {
+    return 0;
+    }
+  return widget.take();
 }
 
 //-----------------------------------------------------------------------------

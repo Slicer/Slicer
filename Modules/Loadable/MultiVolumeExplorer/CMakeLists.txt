@@ -45,6 +45,7 @@ endif()
 # Add subdirectories
 add_subdirectory(Logic)
 add_subdirectory(MRML)
+add_subdirectory(Py)
 
 #-----------------------------------------------------------------------------
 # Sources
