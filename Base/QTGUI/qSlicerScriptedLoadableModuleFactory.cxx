@@ -74,14 +74,14 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
     // By convention, if the module is an extension, "<MODULEPATH>" will be appended to PYTHONPATH
     if (qSlicerCoreApplication::application()->isExtension(module->path()))
       {
-      QDir modulePath = QFileInfo(module->path()).dir();
+      QDir modulePathWithoutIntDir = QFileInfo(module->path()).dir();
       QString intDir = qSlicerCoreApplication::application()->intDir();
-      if (intDir ==  modulePath.dirName())
+      if (intDir ==  modulePathWithoutIntDir.dirName())
         {
-        modulePath.cdUp();
+        modulePathWithoutIntDir.cdUp();
         }
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
-      pythonManager->appendPythonPaths(QStringList() << modulePath.absolutePath());
+      pythonManager->appendPythonPaths(QStringList() << modulePathWithoutIntDir.absolutePath());
       }
     }
 #endif
