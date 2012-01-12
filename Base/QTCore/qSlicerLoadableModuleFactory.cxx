@@ -60,18 +60,18 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
     if (qSlicerCoreApplication::application()->isExtension(module->path()))
       {
-      QDir modulePath = QFileInfo(module->path()).dir();
+      QDir modulePathWithoutIntDir = QFileInfo(module->path()).dir();
       QString intDir = qSlicerCoreApplication::application()->intDir();
-      if (intDir ==  modulePath.dirName())
+      if (intDir ==  modulePathWithoutIntDir.dirName())
         {
-        modulePath.cdUp();
+        modulePathWithoutIntDir.cdUp();
         }
-      QString pythonPath = modulePath.filePath("Python");
-      QStringList paths; paths << modulePath.absolutePath() << pythonPath;
+      QString pythonPath = modulePathWithoutIntDir.filePath("Python");
+      QStringList paths; paths << QFileInfo(module->path()).dir().absolutePath() << pythonPath;
       qSlicerCorePythonManager * pythonManager = qSlicerCoreApplication::application()->corePythonManager();
       pythonManager->appendPythonPaths(paths);
       // Update current application directory, so that *PythonD modules can be loaded
-      ctkScopedCurrentDir scopedCurrentDir(modulePath.absolutePath());
+      ctkScopedCurrentDir scopedCurrentDir(modulePathWithoutIntDir.absolutePath());
       pythonManager->executeString(QString(
             "from slicer.util import importVTKClassesFromDirectory;"
             "importVTKClassesFromDirectory('%1', 'slicer.modulelogic', filematch='vtkSlicer*ModuleLogic.py');"
@@ -80,7 +80,7 @@ qSlicerAbstractCoreModule* qSlicerLoadableModuleFactoryItem::instanciator()
       pythonManager->executeString(QString(
             "from slicer.util import importQtClassesFromDirectory;"
             "importQtClassesFromDirectory('%1', 'slicer.modulewidget', filematch='qSlicer*PythonQt.*');"
-            ).arg(modulePath.absolutePath()));
+            ).arg(modulePathWithoutIntDir.absolutePath()));
       }
     }
 #endif
