@@ -206,6 +206,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 }
 
 //-----------------------------------------------------------------------------
@@ -218,6 +219,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 }
 
 //-----------------------------------------------------------------------------
@@ -230,4 +232,5 @@ void qSlicerScriptedLoadableModuleWidget::exit()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 }

@@ -137,6 +137,7 @@ void vtkMRMLScriptedDisplayableManager::Create()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 }
 
 //---------------------------------------------------------------------------
@@ -151,6 +152,7 @@ void vtkMRMLScriptedDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newSc
     {
     sceneEventsAsPointer = vtkIntArray::SafeDownCast(
         vtkPythonUtil::GetPointerFromObject(PyObject_CallObject(method, 0), "vtkIntArray"));
+    PyErr_Print();
     }
   vtkSmartPointer<vtkIntArray> sceneEvents;
   sceneEvents.TakeReference(sceneEventsAsPointer);
@@ -180,6 +182,7 @@ void vtkMRMLScriptedDisplayableManager
                    vtkPythonUtil::GetObjectFromPointer(reinterpret_cast<vtkMRMLNode*>(callData)));
 
   PyObject_CallObject(method, arguments);
+  PyErr_Print();
 
   Py_DECREF(arguments);
 }
@@ -201,6 +204,7 @@ void vtkMRMLScriptedDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller
   PyTuple_SET_ITEM(arguments, 2, vtkPythonUtil::GetObjectFromPointer(0));
 
   PyObject_CallObject(method, arguments);
+  PyErr_Print();
 
   Py_DECREF(arguments);
 }
@@ -214,6 +218,7 @@ void vtkMRMLScriptedDisplayableManager::RemoveMRMLObservers()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 
   this->Superclass::RemoveMRMLObservers();
 }
@@ -227,6 +232,7 @@ void vtkMRMLScriptedDisplayableManager::UpdateFromMRML()
     return;
     }
   PyObject_CallObject(method, 0);
+  PyErr_Print();
 }
 
 //---------------------------------------------------------------------------
@@ -242,6 +248,7 @@ void vtkMRMLScriptedDisplayableManager::OnInteractorStyleEvent(int eventid)
   PyTuple_SET_ITEM(arguments, 0, PyInt_FromLong(eventid));
 
   PyObject_CallObject(method, arguments);
+  PyErr_Print();
 
   Py_DECREF(arguments);
 }
@@ -260,6 +267,7 @@ void vtkMRMLScriptedDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkOb
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(caller));
 
   PyObject_CallObject(method, arguments);
+  PyErr_Print();
 
   Py_DECREF(arguments);
 }
