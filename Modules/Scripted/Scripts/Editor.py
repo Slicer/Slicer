@@ -88,7 +88,6 @@ class EditorWidget:
       sliceLogic = sliceLogics.GetItemAsObject(i)
       if sliceLogic:
         sliceNode = sliceLogic.GetSliceNode()
-        print("checking %s", sliceNode.GetName())
         if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
           if not warned:
             qt.QMessageBox.warning(slicer.util.mainWindow(), 'Editor', 'The Editor Module is not compatible with slice viewers in light box mode.\nViews are being reset.')
