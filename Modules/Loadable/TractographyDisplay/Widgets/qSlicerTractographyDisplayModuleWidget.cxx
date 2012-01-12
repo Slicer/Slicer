@@ -99,6 +99,11 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
   if (vtkMRMLFiberBundleNode::SafeDownCast(FiberBundleNode))
     {
     d->fiberBundleNode = FiberBundleNode;
+
+    d->LineDisplayWidget->setFiberBundleNode(FiberBundleNode);
+    d->TubeDisplayWidget->setFiberBundleNode(FiberBundleNode);
+    d->GlyphDisplayWidget->setFiberBundleNode(FiberBundleNode);
+
     d->LineDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetLineDisplayNode());
     d->TubeDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetTubeDisplayNode());
     d->GlyphDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());

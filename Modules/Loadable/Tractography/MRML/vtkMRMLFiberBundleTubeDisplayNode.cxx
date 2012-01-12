@@ -15,6 +15,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkCellData.h"
+#include "vtkPointData.h"
 
 #include "vtkPolyDataTensorToColor.h"
 #include "vtkTubeFilter.h"
@@ -187,6 +188,12 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
 
         IntermediatePolyData = this->TubeFilter->GetOutput();
       }
+      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
+      {
+        vtkDebugMacro("coloring with Scalar Data==============================");
+        IntermediatePolyData = this->TubeFilter->GetOutput();
+        IntermediatePolyData->GetPointData()->SetActiveScalars(this->GetActiveScalarName());
+      }
       else  
       {
         if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
@@ -281,7 +288,10 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
 
     if (this->GetAutoScalarRange() && this->GetScalarVisibility() && this->TensorToColor->GetInput() != NULL )
       {
-        if (this->GetColorMode ( ) != vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
+        if (
+            (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar) ||
+            (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeFunctionOfScalar)
+           )
         {
           int ScalarInvariant = 0;
           if (DiffusionTensorDisplayPropertiesNode)
@@ -297,7 +307,13 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
           }
           this->ScalarRange[0] = range[0];
           this->ScalarRange[1] = range[1];
-      }}
+        }
+        else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
+        {
+          IntermediatePolyData->GetScalarRange(this->ScalarRange);
+        }
+      }
+
     }
 }
 

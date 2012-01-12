@@ -5,6 +5,10 @@
 #include "ui_qSlicerTractographyDisplayWidget.h"
 
 // MRML includes
+#include <vtkDataSet.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleDisplayNode.h>
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
@@ -24,6 +28,7 @@ public:
   void init();
   bool centeredOrigin(double* origin)const;
 
+  vtkMRMLFiberBundleNode* FiberBundleNode;
   vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode;
 };
@@ -53,16 +58,33 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
 
   QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
-  QObject::connect( this->ColorByCellScalarsCheckBox, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
-  QObject::connect( this->ColorBySolidCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
+  QObject::connect( this->ColorByCellScalarsRadioButton, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(disabled()), this->GroupBox_ColorByScalars, SLOT(enabled())); 
+/*
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarInvariantRadioButton, SLOT(disabled()));
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarRadioButton, SLOT(disabled()));
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByCellScalarsRadioButton, SLOT(disabled()));
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarInvariantComboBox, SLOT(disabled()));
+  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarComboBox, SLOT(disabled()));
+*/
+
+
   QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );
   QObject::connect( this->ColorByScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, 
                     SLOT(setColorByCellScalarsColorTable(vtkMRMLNode*)) );
-  QObject::connect( this->ColorByScalarInvariantCheckBox, SIGNAL(clicked()), q, SLOT(setColorByScalarInvariant()) );
+
+  QObject::connect( this->ColorByScalarInvariantRadioButton, SIGNAL(clicked()), q, SLOT(setColorByScalarInvariant()) );
   QObject::connect( this->ColorByScalarInvariantComboBox, SIGNAL(currentIndexChanged(int)), q,
                     SLOT(onColorByScalarInvariantChanged(int)) );  
   QObject::connect( this->ColorByScalarInvariantDisplayRange, SIGNAL(rangeChanged(double,double)), q,
                     SLOT(setColorByScalarInvariantDisplayRange(double,double)) );
+
+  QObject::connect( this->ColorByScalarRadioButton, SIGNAL(clicked()), q, SLOT(setColorByScalar()) );
+  QObject::connect( this->ColorByScalarComboBox, SIGNAL(currentIndexChanged(int)), q,
+                    SLOT(onColorByScalarChanged(int)) );  
+
+
   QObject::connect( this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double)) );
 }
 
@@ -84,6 +106,12 @@ qSlicerTractographyDisplayWidget::~qSlicerTractographyDisplayWidget()
 {
 }
 
+//------------------------------------------------------------------------------
+vtkMRMLFiberBundleNode* qSlicerTractographyDisplayWidget::FiberBundleNode()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->FiberBundleNode;
+}
 
 //------------------------------------------------------------------------------
 vtkMRMLFiberBundleDisplayNode* qSlicerTractographyDisplayWidget::FiberBundleDisplayNode()const
@@ -100,6 +128,25 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode* qSlicerTractographyDisplayWidget::D
     d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode() : 0;
 }
 
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLNode* node)
+{
+  this->setFiberBundleNode(vtkMRMLFiberBundleNode::SafeDownCast(node));
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* FiberBundleNode)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  vtkMRMLFiberBundleNode *oldNode = 
+    this->FiberBundleNode();
+  
+  d->FiberBundleNode = FiberBundleNode;
+  
+  qvtkReconnect( oldNode, this->FiberBundleNode(),
+                vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
+  this->updateWidgetFromMRML();
+}
 
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLNode* node)
@@ -138,7 +185,7 @@ void qSlicerTractographyDisplayWidget::setVisibility(bool state)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setColorBySolid()
+void qSlicerTractographyDisplayWidget::clickColorBySolid(bool checked)
 {
   Q_D(qSlicerTractographyDisplayWidget);
   
@@ -146,8 +193,31 @@ void qSlicerTractographyDisplayWidget::setColorBySolid()
     {
     return;
     }
-  d->FiberBundleDisplayNode->SetColorModeToSolid();
-  d->FiberBundleDisplayNode->SetScalarVisibility(0);
+
+  if (checked)
+  {
+    d->FiberBundleDisplayNode->SetColorModeToSolid();
+    d->FiberBundleDisplayNode->SetScalarVisibility(0);
+  } else {
+    if (d->ColorByScalarInvariantRadioButton->isChecked())
+    {
+      d->FiberBundleDisplayNode->SetColorModeToScalar();
+    }
+    else if (d->ColorByScalarRadioButton->isChecked())
+    {
+      d->FiberBundleDisplayNode->SetColorModeToScalarData();
+    }
+    else if (d->ColorByCellScalarsRadioButton->isChecked()) 
+    {
+      d->FiberBundleDisplayNode->SetColorModeToUseCellScalars();
+    }
+    else if (d->FiberBundleNode->GetPolyData()->GetPointData()->GetTensors()) 
+    {
+      d->FiberBundleDisplayNode->SetColorModeToScalar();
+    } else {
+      d->FiberBundleDisplayNode->SetColorModeToScalarData();
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -160,6 +230,30 @@ void qSlicerTractographyDisplayWidget::onColorBySolidChanged(const QColor &color
     return;
     }
   d->FiberBundleDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+}
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setColorByScalar()
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetColorModeToScalarData();
+  d->FiberBundleDisplayNode->SetScalarVisibility(1);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarInvariantIndex)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+
+  d->FiberBundleDisplayNode->SetActiveScalarName(d->ColorByScalarComboBox->itemText(scalarInvariantIndex).toStdString().c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -246,7 +340,7 @@ void qSlicerTractographyDisplayWidget::setOpacity(double opacity)
 void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  if ( !d->FiberBundleDisplayNode || this->m_updating )
+  if ( !d->FiberBundleNode || !d->FiberBundleDisplayNode || this->m_updating )
     {
     return;
     }
@@ -256,20 +350,52 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
   
   d->ColorByScalarsColorTableComboBox->setCurrentNode
     (d->FiberBundleDisplayNode->GetColorNodeID());
+  d->ColorByScalarComboBox->setDataSet(vtkDataSet::SafeDownCast(d->FiberBundleNode->GetPolyData()));
+
+  const bool hasTensors = d->FiberBundleNode->GetPolyData()->GetPointData()->GetTensors();
+  const bool colorSolid = d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeSolid;
+
+  d->ColorByScalarInvariantRadioButton->setEnabled(hasTensors);// && !colorSolid);
+  d->ColorByScalarInvariantComboBox->setEnabled(hasTensors);// && !colorSolid);
+//  d->ColorByScalarRadioButton->setEnabled(!colorSolid);
+//  d->ColorByScalarComboBox->setEnabled(!colorSolid);
+//  d->ColorByCellScalarsRadioButton->setEnabled(!colorSolid);
+
+  if (!hasTensors)
+  {
+    d->FiberBundleDisplayNode->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeSolid);
+  }
+
   switch ( d->FiberBundleDisplayNode->GetColorMode() )
     {
       case vtkMRMLFiberBundleDisplayNode::colorModeScalar:
         {
         vtkMRMLDiffusionTensorDisplayPropertiesNode *dpNode = 
           d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
+
         d->ColorByScalarInvariantComboBox->setCurrentIndex( 
           d->ColorByScalarInvariantComboBox->findData( dpNode->GetColorGlyphBy() ));
-        d->ColorByScalarInvariantCheckBox->setChecked(1);
+
+        d->ColorByScalarInvariantRadioButton->setChecked(1);
         }
         break;
       case vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars:
         {
-        d->ColorByCellScalarsCheckBox->setChecked(1);
+        d->ColorByCellScalarsRadioButton->setChecked(1);
+        }
+        break;
+      case vtkMRMLFiberBundleDisplayNode::colorModeScalarData:
+        {
+
+        if (d->ColorByScalarComboBox->currentText() != d->FiberBundleDisplayNode->GetActiveScalarName())
+        {
+          d->ColorByScalarComboBox->setCurrentIndex( 
+            d->ColorByScalarComboBox->findData( d->FiberBundleDisplayNode->GetActiveScalarName() )
+          );
+        }
+
+        d->ColorByScalarRadioButton->setChecked(1);
+
         }
         break;
       case vtkMRMLFiberBundleDisplayNode::colorModeSolid:
@@ -277,7 +403,7 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         double color[3];
         d->FiberBundleDisplayNode->GetColor(color);
         d->ColorBySolidColorPicker->setColor(QColor::fromRgbF(color[0],color[1],color[2]) );
-        d->ColorBySolidCheckBox->setChecked(1);
+        d->ColorBySolidColorCheckBox->setChecked(1);
         }
         break;
    }

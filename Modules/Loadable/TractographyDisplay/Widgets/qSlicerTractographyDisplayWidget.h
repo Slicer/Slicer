@@ -15,6 +15,7 @@
 
 class qSlicerTractographyDisplayWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLFiberBundleNode;
 class vtkMRMLFiberBundleDisplayNode;
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
@@ -28,10 +29,14 @@ public:
   qSlicerTractographyDisplayWidget(QWidget *parent=0);
   virtual ~qSlicerTractographyDisplayWidget();
 
+  vtkMRMLFiberBundleNode* FiberBundleNode()const;
   vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode()const;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode()const;
 
 public slots:
+  void setFiberBundleNode(vtkMRMLNode *node);
+  void setFiberBundleNode(vtkMRMLFiberBundleNode *node);
+
   void setFiberBundleDisplayNode(vtkMRMLNode *node);
   void setFiberBundleDisplayNode(vtkMRMLFiberBundleDisplayNode *node);
 
@@ -39,8 +44,10 @@ public slots:
   void setColorByScalarInvariant();
   void onColorByScalarInvariantChanged(int);
   void setColorByScalarInvariantDisplayRange(double, double);
+  void setColorByScalar();
+  void onColorByScalarChanged(int);
   void setColorByCellScalars();
-  void setColorBySolid();
+  void clickColorBySolid(bool);
   void onColorBySolidChanged(const QColor&);
   void setColorByCellScalarsColorTable(vtkMRMLNode*);
   void setOpacity(double); 

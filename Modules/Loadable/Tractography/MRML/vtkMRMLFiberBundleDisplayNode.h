@@ -92,7 +92,8 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
     colorModeSolid = 0,
     colorModeScalar = 1,
     colorModeFunctionOfScalar = 2,
-    colorModeUseCellScalars = 3
+    colorModeUseCellScalars = 3,
+    colorModeScalarData = 4
   };
 
   //--------------------------------------------------------------------------
@@ -134,7 +135,12 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
     this->SetColorMode ( this->colorModeUseCellScalars );
   };
 
-
+  /// 
+  /// Color according to the tensors using scalars (not calculated from tensors)
+  /// from the original fiber bundle node.
+  void SetColorModeToScalarData ( ) {
+    this->SetColorMode ( this->colorModeScalarData );
+  };
 
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
