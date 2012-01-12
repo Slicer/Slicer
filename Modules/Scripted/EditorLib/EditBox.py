@@ -205,6 +205,12 @@ class EditBox(object):
 
         self.effectModes[effect] = iconMode
 
+    if effect in slicer.modules.editorExtensions.keys():
+      extensionEffect = slicer.modules.editorExtensions[effect]()
+      module = eval('slicer.modules.%s' % effect.lower())
+      iconPath = os.path.join( os.path.dirname(module.path),"%s.png" % effect)
+      self.effectIconFiles[effect,""] = iconPath
+      self.effectModes[effect] = ""
 
   #
   # create a row of the edit box given a list of 
