@@ -25,12 +25,19 @@ set(proj python)
 set(python_base ${CMAKE_CURRENT_BINARY_DIR}/${proj})
 set(python_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
 #
-# WARNING - If you consider updating the Python version, make sure the patch 
+# WARNING - If you consider updating the Python version, make sure the patch
 #           step associated with both window and unix are still valid !
 #
 set(PYVER_SHORT 26)
 set(python_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Python-2.6.6.tgz)
 set(python_MD5 b2f209df270a33315e62c1ffac1937f0)
+# Since the solution file provided within "Python-2.6.6.tgz" is specific to VS2008, let's use
+#  "Python-2.6.6-vc2010" where the solution file is converted for VS2010.
+# This is required because there is command-line tool to convert the solution automatically.
+if(CMAKE_GENERATOR MATCHES "Visual*"  AND "${MSVC_VERSION}" VERSION_GREATER "1599")
+  set(python_URL file://C:/dev/Slicer4/SuperBuild/Python-2.6.6-vc2010.tgz)
+  set(python_MD5 120b65e3ab568d8861803be811707c79)
+endif()
 
 get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 
@@ -44,7 +51,12 @@ else()
   set(External_python_unix_PROJECT_INCLUDED 0)
 endif()
 
+#message(STATUS "MSVC_VERSION:${MSVC_VERSION}")
+#message(STATUS "python_URL:${python_URL}")
+#message(STATUS "CMAKE_GENERATOR:${CMAKE_GENERATOR}")
+
 #message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")
 #message(STATUS "slicer_PYTHON_LIBRARY:${slicer_PYTHON_LIBRARY}")
 #message(STATUS "slicer_PYTHON_EXECUTABLE:${slicer_PYTHON_EXECUTABLE}")
+
 
