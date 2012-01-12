@@ -35,7 +35,7 @@ set(python_MD5 b2f209df270a33315e62c1ffac1937f0)
 #  "Python-2.6.6-vc2010" where the solution file is converted for VS2010.
 # This is required because there is command-line tool to convert the solution automatically.
 if(CMAKE_GENERATOR MATCHES "Visual*"  AND "${MSVC_VERSION}" VERSION_GREATER "1599")
-  set(python_URL file://C:/dev/Slicer4/SuperBuild/Python-2.6.6-vc2010.tgz)
+  set(python_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/Python-2.6.6-vc2010.tgz)
   set(python_MD5 120b65e3ab568d8861803be811707c79)
 endif()
 
