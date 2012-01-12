@@ -66,13 +66,11 @@ macro(SlicerMacroBuildModuleWidgets)
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleWidgets_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  if(Slicer_SOURCE_DIR)
-    set(Slicer_ModuleWidgets_INCLUDE_DIRS
-      ${Slicer_ModuleWidgets_INCLUDE_DIRS}
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_CURRENT_BINARY_DIR}
-      CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
-  endif()
+  set(Slicer_ModuleWidgets_INCLUDE_DIRS
+    ${Slicer_ModuleWidgets_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
 
 endmacro()
 

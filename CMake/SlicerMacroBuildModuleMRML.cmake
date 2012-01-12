@@ -51,13 +51,11 @@ macro(SlicerMacroBuildModuleMRML)
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleMRML_INCLUDE_DIRS
   #-----------------------------------------------------------------------------
-  if(Slicer_SOURCE_DIR)
-    set(Slicer_ModuleMRML_INCLUDE_DIRS
-      ${Slicer_ModuleMRML_INCLUDE_DIRS}
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_CURRENT_BINARY_DIR}
-      CACHE INTERNAL "Slicer Module MRML includes" FORCE)
-  endif()
+  set(Slicer_ModuleMRML_INCLUDE_DIRS
+    ${Slicer_ModuleMRML_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    CACHE INTERNAL "Slicer Module MRML includes" FORCE)
 
   # --------------------------------------------------------------------------
   # Python wrapping
