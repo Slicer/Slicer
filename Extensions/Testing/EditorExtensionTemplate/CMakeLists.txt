@@ -49,6 +49,7 @@ set(KIT_PYTHON_SCRIPTS
   )
   
 set(KIT_PYTHON_RESOURCES
+  EditorExtensionTemplate.png
   )
 
 #-----------------------------------------------------------------------------
