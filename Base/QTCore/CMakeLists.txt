@@ -83,7 +83,6 @@ set(KIT_target_libraries
   SlicerBaseLogic
   MRMLDisplayableManager
   CTKCore
-  CTKDICOMCore
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore
   )
