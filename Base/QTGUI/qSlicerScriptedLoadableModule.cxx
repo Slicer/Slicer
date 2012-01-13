@@ -41,16 +41,17 @@ class qSlicerScriptedLoadableModulePrivate
 public:
   qSlicerScriptedLoadableModulePrivate();
   virtual ~qSlicerScriptedLoadableModulePrivate();
-  
+
   QString Title;
   QString Category;
   QString Contributor;
+  QStringList Dependencies;
   QString HelpText;
   QString AcknowledgementText;
   QIcon   Icon;
   bool   Hidden;
   QVariantMap   Extensions;
-  
+
   PyObject * PythonSelf;
   QString    PythonSource;
 };
@@ -205,7 +206,7 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
 vtkMRMLAbstractLogic* qSlicerScriptedLoadableModule::createLogic()
 {
 //  Q_D(qSlicerScriptedLoadableModule);
-  
+
   vtkSlicerScriptedLoadableModuleLogic* logic = vtkSlicerScriptedLoadableModuleLogic::New();
 
 //  bool ret = logic->SetPythonSource(d->PythonSource.toStdString());
@@ -249,3 +250,7 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, QIcon, icon, Icon)
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, bool, setHidden, Hidden)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, bool, isHidden, Hidden)
+
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setDependencies, Dependencies)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, dependencies, Dependencies)

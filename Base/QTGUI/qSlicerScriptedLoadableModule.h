@@ -42,37 +42,41 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
   Q_PROPERTY(QVariantMap extensions READ extensions WRITE setExtensions)
   Q_PROPERTY(QIcon icon READ icon WRITE setIcon)
   Q_PROPERTY(bool hidden READ isHidden WRITE setHidden)
+  Q_PROPERTY(QStringList dependencies READ dependencies WRITE setDependencies)
 public:
 
   typedef qSlicerLoadableModule Superclass;
   qSlicerScriptedLoadableModule(QObject *parent=0);
   virtual ~qSlicerScriptedLoadableModule();
-  
+
   bool setPythonSource(const QString& newPythonSource);
 
   /// Convenient method allowing to retrieve the associated scripted instance
   /// Q_INVOKABLE PyObject* pythonInstance() const;
-  
+
   virtual QString title()const ;
   void setTitle(const QString& newTitle);
-  
+
   virtual QString category()const;
   void setCategory(const QString& newCategory);
-  
+
   virtual QString contributor()const;
   void setContributor(const QString& newContributor);
-  
+
   virtual QString helpText()const;
   void setHelpText(const QString& newHelpText);
-  
+
   virtual QString acknowledgementText()const;
   void setAcknowledgementText(const QString& newAcknowledgementText);
 
   virtual QVariantMap extensions()const;
   void setExtensions(const QVariantMap& extensions);
-  
+
   virtual QIcon icon()const;
   void setIcon(const QIcon& newIcon);
+
+  virtual QStringList dependencies() const;
+  void setDependencies(const QStringList& dependencies);
 
   /// Enable/Disable hide state of the module
   /// Needs to be hidden before the module menu is created.
