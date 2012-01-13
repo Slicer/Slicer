@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
+#include <vtkDoubleArray.h>
 
 // MRML includes
 #include "vtkMRMLVolumeNode.h"
@@ -30,51 +31,22 @@ vtkMRMLNodeNewMacro(vtkMRMLVectorImageContainerNode);
 //----------------------------------------------------------------------------
 vtkMRMLVectorImageContainerNode::vtkMRMLVectorImageContainerNode()
 {
-  /*
-  this->HideFromEditors = 1;
-
-  this->InputVolumeNodeID = NULL;
-  this->InputVolumeNode = NULL;
-
-  this->OutputVolumeNodeID = NULL;
-  this->OutputVolumeNode = NULL;
-
-  this->ROINodeID = NULL;
-  this->ROINode = NULL;
-
-  this->ROIVisibility = false;
-  this->InterpolationMode = 2;
-
-  this->SpacingScalingConst = 1.;
-  */
+  // TODO: use this->, use 0 instead of NULL
+  DWVNode = NULL;
+  VectorLabelArray = NULL;
+  VectorLabelName = NULL;
+  this->HideFromEditors = 0;
+  std::cout << "Vector image container constructor called" << std::endl;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorImageContainerNode::~vtkMRMLVectorImageContainerNode()
 {
-  /*
-  if (this->InputVolumeNodeID)
-    {
-    this->SetAndObserveInputVolumeNodeID(NULL);
-    }
-
-  if (this->OutputVolumeNodeID)
-    {
-    this->SetAndObserveOutputVolumeNodeID(NULL);
-    }
-
-  if (this->ROINodeID)
-    {
-    this->SetAndObserveROINodeID(NULL);
-    }
-    */
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLVectorImageContainerNode::ReadXMLAttributes(const char** atts)
 {
-
-  std::cerr << "Reading CropVolume param node!" << std::endl;
   Superclass::ReadXMLAttributes(atts);
   
   /*
@@ -133,49 +105,6 @@ void vtkMRMLVectorImageContainerNode::WriteXML(ostream& of, int nIndent)
   of << indent << " interpolationMode=\"" << this->InterpolationMode << "\"";
   */
 }
-
-#if 0
-//----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  /*
-  if (this->InputVolumeNodeID && !strcmp(oldID, this->InputVolumeNodeID))
-    {
-    this->SetAndObserveInputVolumeNodeID(newID);
-    }
-  if (this->OutputVolumeNodeID && !strcmp(oldID, this->OutputVolumeNodeID))
-    {
-    this->SetAndObserveOutputVolumeNodeID(newID);
-    }
-  if (this->ROINodeID && !strcmp(oldID, this->ROINodeID))
-    {
-    this->SetAndObserveROINodeID(newID);
-    }
-    */
-}
-
-//-----------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::UpdateReferences()
-{
-   Superclass::UpdateReferences();
-
-   /*
-  if (this->InputVolumeNodeID != NULL && this->Scene->GetNodeByID(this->InputVolumeNodeID) == NULL)
-    {
-    this->SetAndObserveInputVolumeNodeID(NULL);
-    }
-  if (this->OutputVolumeNodeID != NULL && this->Scene->GetNodeByID(this->OutputVolumeNodeID) == NULL)
-    {
-    this->SetAndObserveOutputVolumeNodeID(NULL);
-    }
-  if (this->ROINodeID != NULL && this->Scene->GetNodeByID(this->ROINodeID) == NULL)
-    {
-    this->SetAndObserveROINodeID(NULL);
-    }
-    */
-}
-
-#endif // 0
 
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.

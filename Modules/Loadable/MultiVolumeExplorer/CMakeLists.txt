@@ -43,8 +43,8 @@ endif()
 
 
 # Add subdirectories
-add_subdirectory(Logic)
 add_subdirectory(MRML)
+add_subdirectory(Logic)
 add_subdirectory(Py)
 
 #-----------------------------------------------------------------------------
@@ -81,8 +81,8 @@ set(qt_module_UI_SRCS
 
 # Additional Target libraries
 set(qt_module_target_libraries
-  vtkSlicerVectorImageExplorerModuleLogic
   vtkSlicerVectorImageExplorerModuleMRML
+  vtkSlicerVectorImageExplorerModuleLogic
   )
 
 # Resources
