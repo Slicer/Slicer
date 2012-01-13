@@ -17,7 +17,7 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LineThickness = 1.0;
   this->LabelPosition = 0.2;
   this->LabelVisibility = 1;
-  this->TickSpacing = 5.0;
+  this->TickSpacing = 10.0;
   this->MaxTicks = 99;
 }
 
