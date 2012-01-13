@@ -60,7 +60,7 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
   QObject::connect( this->ColorByCellScalarsRadioButton, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
   QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(disabled()), this->GroupBox_ColorByScalars, SLOT(enabled())); 
+//  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(disabled()), this->GroupBox_ColorByScalars, SLOT(enabled())); 
 /*
   QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarInvariantRadioButton, SLOT(disabled()));
   QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarRadioButton, SLOT(disabled()));
@@ -245,15 +245,27 @@ void qSlicerTractographyDisplayWidget::setColorByScalar()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarInvariantIndex)
+void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarIndex)
 {
   Q_D(qSlicerTractographyDisplayWidget);
-  if (!d->FiberBundleDisplayNode)
+  if (
+      !d->FiberBundleDisplayNode || !d->FiberBundleNode ||
+      !d->FiberBundleNode->GetPolyData() || !d->FiberBundleNode->GetPolyData()->GetPointData()
+      )
     {
     return;
     }
 
-  d->FiberBundleDisplayNode->SetActiveScalarName(d->ColorByScalarComboBox->itemText(scalarInvariantIndex).toStdString().c_str());
+  const char* ActiveScalarName = d->ColorByScalarComboBox->itemText(scalarIndex).toStdString().c_str();
+  vtkPointData* PointData = d->FiberBundleNode->GetPolyData()->GetPointData();
+
+  if (
+      PointData->GetArray(ActiveScalarName) != PointData->GetTensors() &&
+      PointData->GetArray(ActiveScalarName) != PointData->GetVectors()
+      )
+  {
+    d->FiberBundleDisplayNode->SetActiveScalarName(ActiveScalarName);
+  }
 }
 
 //------------------------------------------------------------------------------
