@@ -11,6 +11,8 @@ set(module_logic_export_directive "VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_LOGIC_E
 
 # Additional directories to include
 set(module_logic_include_directories
+  ${CMAKE_CURRENT_SOURCE_DIR}/../MRML
+  ${CMAKE_CURRENT_BINARY_DIR}/../MRML
   )
 
 # Source files
@@ -21,7 +23,8 @@ set(module_logic_SRCS
 
 # Additional Target libraries
 set(module_logic_target_libraries
-  ${ITK_LIBRARIES}
+  # ${ITK_LIBRARIES}
+  vtkSlicerVectorImageExplorerModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(

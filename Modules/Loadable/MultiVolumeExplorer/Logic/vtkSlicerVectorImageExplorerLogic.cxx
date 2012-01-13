@@ -19,9 +19,11 @@
 #include "vtkSlicerVectorImageExplorerLogic.h"
 
 // MRML includes
+#include "vtkMRMLVectorImageContainerNode.h"
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkDoubleArray.h>
 
 // STD includes
 #include <cassert>
@@ -55,12 +57,6 @@ void vtkSlicerVectorImageExplorerLogic::InitializeEventListeners()
   this->SetAndObserveMRMLSceneEventsInternal(this->GetMRMLScene(), events.GetPointer());
 }
 
-//-----------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic::RegisterNodes()
-{
-  assert(this->GetMRMLScene() != 0);
-}
-
 //---------------------------------------------------------------------------
 void vtkSlicerVectorImageExplorerLogic::UpdateFromMRMLScene()
 {
@@ -79,3 +75,20 @@ void vtkSlicerVectorImageExplorerLogic
 {
 }
 
+// Register the module-specific MRML node
+void vtkSlicerVectorImageExplorerLogic
+::RegisterNodes()
+{
+  if(!this->GetMRMLScene())
+    return;
+  vtkMRMLVectorImageContainerNode *pNode = vtkMRMLVectorImageContainerNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(pNode);
+  pNode->Delete();
+}
+
+// Initialize the encapsulated DWI volume node
+//void vtkSlicerVectorImageExplorerLogic
+//::SetDWVNode(vtkMRMLDiffusionWeightedVolumeNode *dwv)
+//{
+//  DWVNode = dwv;
+//}

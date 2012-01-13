@@ -20,13 +20,17 @@
 #ifndef __vtkMRMLVectorImageContainerNode_h
 #define __vtkMRMLVectorImageContainerNode_h
 
+// TODO: sort the header elements, separate MRML and VTK
+// MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
 #include "vtkSlicerVectorImageExplorerModuleMRMLExport.h"
+#include "vtkDoubleArray.h"
 
 class vtkMRMLAnnotationROINode;
 class vtkMRMLVolumeNode;
+class vtkMRMLDiffusionWeightedVolumeNode;
 
 /*
   This class is a wrapper around a full-fledged, but too specialized, vector volume represented by DWI node. 
@@ -34,7 +38,7 @@ class vtkMRMLVolumeNode;
   extra metadata and provide an extra interface for exploring this data.
 */
 
-/// \ingroup Slicer_QtModules_CropVolume
+/// \ingroup Slicer_QtModules_VectorImageContainerNode
 class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContainerNode : public vtkMRMLNode
 {
   public:   
@@ -45,29 +49,23 @@ class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContai
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  // Description:
-  // Set node attributes
+  /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "MRMLVectorImageContainer";};
 
-  // Description:
-  // Update the stored reference to another node in the scene
+  /// Update the stored reference to another node in the scene
   //virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
+  /// Updates this node if it depends on other nodes
+  /// when the node is deleted in the scene
   //virtual void UpdateReferences();
 
   // Description:
@@ -75,12 +73,27 @@ class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContai
 
   //virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
+  // TODO: no macros, put function body in .cxx even if it is one line
+  vtkGetObjectMacro(DWVNode, vtkMRMLDiffusionWeightedVolumeNode);
+
+  void SetDWVNode(vtkMRMLDiffusionWeightedVolumeNode* dwv){ DWVNode = dwv;}
+
+  vtkGetObjectMacro(VectorLabelArray, vtkDoubleArray);
+  vtkSetObjectMacro(VectorLabelArray, vtkDoubleArray);
+
+  const char* GetVectorLabelName(){ return VectorLabelName;}
+  void SetVectorLabelName(char* n){ VectorLabelName = n;}
+
 protected:
   vtkMRMLVectorImageContainerNode();
   ~vtkMRMLVectorImageContainerNode();
   vtkMRMLVectorImageContainerNode(const vtkMRMLVectorImageContainerNode&);
   void operator=(const vtkMRMLVectorImageContainerNode&);
 
+
+  vtkMRMLDiffusionWeightedVolumeNode *DWVNode;
+  vtkDoubleArray *VectorLabelArray;
+  char * VectorLabelName;
 };
 
 #endif

@@ -34,6 +34,7 @@
 
 #include "vtkSlicerVectorImageExplorerModuleLogicExport.h"
 
+class vtkDoubleArray;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerVectorImageExplorerLogic :
@@ -57,10 +58,12 @@ protected:
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
+
 private:
 
   vtkSlicerVectorImageExplorerLogic(const vtkSlicerVectorImageExplorerLogic&); // Not implemented
   void operator=(const vtkSlicerVectorImageExplorerLogic&);               // Not implemented
+
 };
 
 #endif
