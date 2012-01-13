@@ -59,7 +59,8 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(ITKv4_REPOSITORY git://itk.org/ITK.git)
-  set(ITKv4_GIT_TAG v4.0.0)
+  #set(ITKv4_GIT_TAG v4.0.0)
+  set(ITKv4_GIT_TAG 0f012d23b5ddad8da3d5fcd4bd37a68cf25b26da)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
