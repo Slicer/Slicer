@@ -77,8 +77,20 @@ class qSlicerVectorImageExplorerModuleWidget:
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
+    label = qt.QLabel('Label for the element shown:')
     self.__mdValue = qt.QLabel()
-    self.layout.addRow(self.__mdValue)
+    self.layout.addRow(label, self.__mdValue)
+
+    label = qt.QLabel('Vector content:')
+    self.__vcValue = qt.QLabel()
+    self.layout.addRow(label, self.__vcValue)
+
+    # initialize slice observers (from DataProbe.py)
+    # keep list of pairs: [observee,tag] so they can be removed easily
+    self.styleObserverTags = []
+    # keep a map of interactor styles to sliceWidgets so we can easily get sliceLogic
+    self.sliceWidgetsPerStyle = {}
+    self.refreshObservers()
 
   def onSliderChanged(self, newValue):
     value = self.__mdSlider.value
@@ -107,3 +119,80 @@ class qSlicerVectorImageExplorerModuleWidget:
       self.__logic.InitializeEventListeners()
     self.__logic.GetMRMLManager().SetMRMLScene(mrmlScene)
     '''
+    
+  def removeObservers(self):
+    # remove observers and reset
+    for observee,tag in self.styleObserverTags:
+      observee.RemoveObserver(tag)
+    self.styleObserverTags = []
+    self.sliceWidgetsPerStyle = {}
+
+
+  def refreshObservers(self):
+    """ When the layout changes, drop the observers from
+    all the old widgets and create new observers for the
+    newly created widgets"""
+    self.removeObservers()
+    # get new slice nodes
+    layoutManager = slicer.app.layoutManager()
+    sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+    for nodeIndex in xrange(sliceNodeCount):
+      # find the widget for each node in scene
+      sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
+      sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
+      if sliceWidget:
+        # add obserservers and keep track of tags
+        style = sliceWidget.sliceView().interactorStyle()
+        self.sliceWidgetsPerStyle[style] = sliceWidget
+        events = ("MouseMoveEvent", "EnterEvent", "LeaveEvent")
+        for event in events:
+          tag = style.AddObserver(event, self.processEvent)
+          self.styleObserverTags.append([style,tag])
+ 
+  def processEvent(self,observee,event):
+    # TODO: use a timer to delay calculation and compress events
+    if event == 'LeaveEvent':
+      # reset all the readouts
+      # TODO: reset the label text
+      return
+    if self.sliceWidgetsPerStyle.has_key(observee):
+      sliceWidget = self.sliceWidgetsPerStyle[observee]
+      sliceLogic = sliceWidget.sliceLogic()
+      sliceNode = sliceWidget.mrmlSliceNode()
+      interactor = observee.GetInteractor()
+      xy = interactor.GetEventPosition()
+      xyz = sliceWidget.convertDeviceToXYZ(xy);
+
+      # TODO: get z value from lightbox
+      ras = sliceWidget.convertXYZToRAS(xyz)
+      '''
+      layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
+                         ('F', sliceLogic.GetForegroundLayer),
+                         ('B', sliceLogic.GetBackgroundLayer))
+      '''
+      layerLogicCalls = [sliceLogic.GetBackgroundLayer]
+      for logicCall in layerLogicCalls:
+        layerLogic = logicCall()
+        volumeNode = layerLogic.GetVolumeNode()
+        nameLabel = "None"
+        ijkLabel = ""
+        valueLabel = ""
+        if volumeNode:
+          nameLabel = volumeNode.GetName()
+          xyToIJK = layerLogic.GetXYToIJKTransform().GetMatrix()
+          ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+          ijk = []
+          for element in ijkFloat:
+            try:
+              index = int(round(element))
+            except ValueError:
+              index = 0
+            ijk.append(index)
+          if self.__dwvNode != None:
+            # get the vector of values at IJK
+            dwvImage = self.__dwvNode.GetImageData()
+            nComponents = self.__dwvNode.GetNumberOfGradients()
+            values = ''
+            for c in range(nComponents):
+              values = values + str(dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c))+' '
+            self.__vcValue.setText(values)
