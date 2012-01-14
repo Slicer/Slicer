@@ -21,7 +21,8 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__updating = 1
 
     # Reference to the logic
-    self.__logic = None
+    self.__logic = slicer.modulelogic.vtkSlicerVectorImageExplorerLogic()
+    print 'Logic is ',self.__logic
 
     if not parent:
       self.__logic = slicer.modulelogic.vtkVectorImageExplorerLogic()
@@ -33,6 +34,7 @@ class qSlicerVectorImageExplorerModuleWidget:
       self.parent.show()
 
     self.__dwvNode = None
+    self.__vcNode = None
 
   def setup( self ):
     '''
@@ -48,7 +50,8 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
 
     w = qt.QWidget()
-    layout = qt.QFormLayout()
+    layout = qt.QGridLayout()
+    # layout = qt.QFormLayout()
     w.setLayout(layout)
     self.layout.addWidget(w)
     w.show()
@@ -63,7 +66,9 @@ class qSlicerVectorImageExplorerModuleWidget:
 
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
 
-    self.layout.addRow(label, self.__vcSelector)
+    ## self.layout.addRow(label, self.__vcSelector)
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.__vcSelector)
 
 
     # TODO: initialize the slider based on the contents of the labels array
@@ -73,17 +78,23 @@ class qSlicerVectorImageExplorerModuleWidget:
     #self.__mdSlider.setValue(5)
 
     label = qt.QLabel('Vector scroller:')
-    self.layout.addRow(label, self.__mdSlider)
+    ## self.layout.addRow(label, self.__mdSlider)
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.__mdSlider)
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
     label = qt.QLabel('Label for the element shown:')
     self.__mdValue = qt.QLabel()
-    self.layout.addRow(label, self.__mdValue)
+    ## self.layout.addRow(label, self.__mdValue)
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.__mdValue)
 
     label = qt.QLabel('Vector content:')
     self.__vcValue = qt.QLabel()
-    self.layout.addRow(label, self.__vcValue)
+    ## self.layout.addRow(label, self.__vcValue)
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.__vcValue)
 
     # initialize slice observers (from DataProbe.py)
     # keep list of pairs: [observee,tag] so they can be removed easily
@@ -92,6 +103,28 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.sliceWidgetsPerStyle = {}
     self.refreshObservers()
 
+    # add chart container widget
+    ##chartWidget = qt.QWidget()
+    ##chartWidgetLayout = qt.QGridLayout()
+    ##chartWidget.setLayout(chartWidgetLayout)
+    ##self.__chartView = ctk.ctkVTKChartView(chartWidget)
+    self.__chartView = ctk.ctkVTKChartView(w)
+    ##self.layout.addRow(self.__chartView)
+    self.layout.addWidget(self.__chartView)
+    ##chartWidgetLayout.addWidget(self.__chartView)
+    ##self.layout.addRow(chartWidget)
+    ##chartWidget.show()
+
+    self.__chart = self.__chartView.chart()
+    self.__chartTable = vtk.vtkTable()
+    self.__xArray = vtk.vtkFloatArray()
+    self.__yArray = vtk.vtkFloatArray()
+    # will crash if there is no name
+    self.__xArray.SetName('X')
+    self.__yArray.SetName('Y')
+    self.__chartTable.AddColumn(self.__xArray)
+    self.__chartTable.AddColumn(self.__yArray)
+     
   def onSliderChanged(self, newValue):
     value = self.__mdSlider.value
     self.__mdValue.setText(str(newValue))
@@ -101,13 +134,14 @@ class qSlicerVectorImageExplorerModuleWidget:
       dwvDisplayNode.SetDiffusionComponent(newValue)
 
   def onInputChanged(self):
-    vcNode = self.__vcSelector.currentNode()
-    if vcNode != None:
-       self.__dwvNode = vcNode.GetDWVNode()
+    self.__vcNode = self.__vcSelector.currentNode()
+    if self.__vcNode != None:
+       self.__dwvNode = self.__vcNode.GetDWVNode()
        print 'Active DWV node: ', self.__dwvNode
        if self.__dwvNode != None:
          self.__mdSlider.minimum = 0
          self.__mdSlider.maximum = self.__dwvNode.GetNumberOfGradients()-1
+         self.__chartTable.SetNumberOfRows(self.__dwvNode.GetNumberOfGradients())
     
   def onMRMLSceneChanged(self, mrmlScene):
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
@@ -193,6 +227,22 @@ class qSlicerVectorImageExplorerModuleWidget:
             dwvImage = self.__dwvNode.GetImageData()
             nComponents = self.__dwvNode.GetNumberOfGradients()
             values = ''
+            extent = dwvImage.GetExtent()
             for c in range(nComponents):
-              values = values + str(dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c))+' '
-            self.__vcValue.setText(values)
+              if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
+                val = dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+                values = values + str(val)+' '
+                self.__chartTable.SetValue(c, 0, c)
+                self.__chartTable.SetValue(c, 1, val)
+              else:
+                break
+            
+            if values != '':
+              #self.__vcValue.setText(values)
+              self.__chart.RemovePlot(0)
+              self.__chart.RemovePlot(0)
+              # self.__chart.GetAxis(0).SetTitle(self.__vcNode.GetLabel ???)
+              plot = self.__chart.AddPlot(0)
+              plot.SetInput(self.__chartTable, 0, 1)
+              # seems to update only after another plot?..
+              self.__chart.AddPlot(0)
