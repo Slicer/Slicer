@@ -26,6 +26,7 @@
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLChartViewNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
@@ -47,7 +48,7 @@ const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
   "  <view class=\"vtkMRMLViewNode\">"
-  "   <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
   " <item>"
@@ -385,6 +386,87 @@ const char* fourOverFourView =
   "     <property name=\"orientation\" action=\"default\">Coronal</property>"
   "     <property name=\"viewlabel\" action=\"default\">6</property>"
   "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "    </view>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* conventionalQuantitativeView =
+  "<layout type=\"vertical\" split=\"true\" >"
+  " <item>"
+  "   <layout type=\"horizontal\">"
+  "     <item>"
+  "      <view class=\"vtkMRMLViewNode\">"
+  "       <property name=\"viewlabel\" action=\"default\">1</property>"
+  "      </view>"
+  "     </item>"
+  "     <item>"
+  "      <view class=\"vtkMRMLChartViewNode\">"
+  //"       <property name=\"viewlabel\" action=\"default\">1</property>"
+  "      </view>"
+  "     </item>"
+  "   </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+  "     <property name=\"orientation\" action=\"default\">Axial</property>"
+  "     <property name=\"viewlabel\" action=\"default\">R</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+  "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
+  "     <property name=\"viewlabel\" action=\"default\">Y</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
+  "     <property name=\"orientation\" action=\"default\">Coronal</property>"
+  "     <property name=\"viewlabel\" action=\"default\">G</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
+  "    </view>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+const char* fourUpQuantitativeView =
+  "<layout type=\"vertical\">"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+  "     <property name=\"orientation\" action=\"default\">Axial</property>"
+  "     <property name=\"viewlabel\" action=\"default\">R</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLChartViewNode\">"
+  // "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    </view>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+  "     <property name=\"orientation\" action=\"default\">Sagittal</property>"
+  "     <property name=\"viewlabel\" action=\"default\">Y</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">"
+  "     <property name=\"orientation\" action=\"default\">Coronal</property>"
+  "     <property name=\"viewlabel\" action=\"default\">G</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#6EB04B</property>"
   "    </view>"
   "   </item>"
   "  </layout>"
@@ -792,6 +874,10 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          conventionalWidescreenView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTriple3DEndoscopyView,
                                          triple3DEndoscopyView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalQuantitativeView,
+                                         conventionalQuantitativeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView,
+                                         fourUpQuantitativeView);
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
 }
@@ -823,6 +909,11 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
   if (className == "vtkMRMLViewNode")
     {
     node->SetName(this->GetMRMLScene()->GetUniqueNameByString("View"));
+    }
+  else if (className == "vtkMRMLChartViewNode")
+    {
+    //std::cout<<"node->SetName(this->GetMRMLScene()->GetUniqueNameByString(\"ChartView\"))\n";
+    node->SetName(this->GetMRMLScene()->GetUniqueNameByString("ChartView"));
     }
   else if (className == "vtkMRMLSliceNode")
     {
@@ -896,7 +987,8 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
     {
     vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
     vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(view);
-    if (!sliceNode && !viewNode)
+    vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(view);
+    if (!sliceNode && !viewNode && !chartViewNode)
       {
       vtkWarningMacro("Invalid view label property.");
       return;
@@ -908,6 +1000,10 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
     if (viewNode)
       {
       viewNode->SetViewLabel(value.c_str());
+      }
+    if (chartViewNode)
+      {
+      chartViewNode->SetViewLabel(value.c_str());
       }
     }
   // ViewColor
@@ -1031,10 +1127,15 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
         {
         continue;
         }
+      if (className == "vtkMRMLChartViewNode")
+        {
+        continue;
+        }
       for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
         {
         std::string viewType =
           node->GetAttribute("ViewType") ? node->GetAttribute("ViewType") : "";
+
         if (attributeValue != viewType &&
             // if there is no viewType, it's a main view.
             !(attributeValue == "main" && viewType != std::string()))

@@ -42,12 +42,15 @@ class QLayout;
 class QGridLayout;
 class QButtonGroup;
 class qMRMLSliceWidget;
+class qMRMLChartView;
+class qMRMLChartWidget;
 class qMRMLThreeDView;
 class qMRMLThreeDWidget;
 class vtkCollection;
 class vtkObject;
 class vtkMRMLLayoutLogic;
 class vtkMRMLLayoutNode;
+class vtkMRMLChartViewNode;
 class vtkMRMLViewNode;
 class vtkMRMLSliceNode;
 class vtkXMLDataElement;
@@ -70,6 +73,7 @@ public:
 
   void setMRMLLayoutNode(vtkMRMLLayoutNode* node);
   void setActiveMRMLThreeDViewNode(vtkMRMLViewNode * node);
+  void setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node);
 
   /// Instantiate a slice viewer corresponding to \a sliceViewName
   virtual QWidget* createSliceWidget(vtkMRMLSliceNode* sliceNode);
@@ -79,9 +83,11 @@ public:
 
   /// Instantiate a 3D Viewer corresponding to \a viewNode
   virtual qMRMLThreeDWidget* createThreeDWidget(vtkMRMLViewNode* viewNode);
+  virtual qMRMLChartWidget* createChartWidget(vtkMRMLChartViewNode* viewNode);
 
   /// Delete 3D Viewer associated with \a viewNode
   void removeThreeDWidget(vtkMRMLViewNode* viewNode);
+  void removeChartWidget(vtkMRMLChartViewNode* viewNode);
 
   /// Enable/disable paint event associated with the TargetWidget
   //bool startUpdateLayout();
@@ -102,6 +108,8 @@ public:
   /// identified by \a renderViewName.
   qMRMLThreeDWidget* threeDWidget(vtkMRMLViewNode* node)const;
   qMRMLThreeDWidget* threeDWidget(int id)const;
+  qMRMLChartWidget* chartWidget(vtkMRMLChartViewNode* node)const;
+  qMRMLChartWidget* chartWidget(int id)const;
 
   /// Convenient function allowing to get a reference to the sliceView widget
   /// identified by \a sliceViewName
@@ -125,17 +133,19 @@ public slots:
   void updateLayoutFromMRMLScene();
 
 public:
-  vtkMRMLScene*      MRMLScene;
-  vtkMRMLLayoutNode* MRMLLayoutNode;
-  vtkMRMLLayoutLogic*MRMLLayoutLogic;
-  vtkMRMLViewNode*   ActiveMRMLThreeDViewNode;
-  int                SavedCurrentViewArrangement;
-  QGridLayout*       GridLayout;
-  QWidget*           TargetWidget;
-  QButtonGroup*      SliceControllerButtonGroup;
-  vtkCollection*     MRMLSliceLogics;
+  vtkMRMLScene*           MRMLScene;
+  vtkMRMLLayoutNode*      MRMLLayoutNode;
+  vtkMRMLLayoutLogic*     MRMLLayoutLogic;
+  vtkMRMLViewNode*        ActiveMRMLThreeDViewNode;
+  vtkMRMLChartViewNode*   ActiveMRMLChartViewNode;
+  int                     SavedCurrentViewArrangement;
+  QGridLayout*            GridLayout;
+  QWidget*                TargetWidget;
+  QButtonGroup*           SliceControllerButtonGroup;
+  vtkCollection*          MRMLSliceLogics;
 
   QList<qMRMLThreeDWidget*>         ThreeDWidgetList;
+  QList<qMRMLChartWidget*>          ChartWidgetList;
   QList<qMRMLSliceWidget*>          SliceWidgetList;
 protected:
   void showWidget(QWidget* widget);

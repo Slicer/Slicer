@@ -26,6 +26,8 @@
 #include "qMRMLLayoutManager_p.h"
 #include <qMRMLSliceWidget.h>
 #include <qMRMLSliceControllerWidget.h>
+#include <qMRMLChartView.h>
+#include <qMRMLChartWidget.h>
 #include <qMRMLThreeDView.h>
 #include <qMRMLThreeDWidget.h>
 
@@ -35,6 +37,7 @@
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLChartViewNode.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
@@ -51,6 +54,7 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
   this->MRMLLayoutNode = 0;
   this->MRMLLayoutLogic = vtkMRMLLayoutLogic::New();
   this->ActiveMRMLThreeDViewNode = 0;
+  this->ActiveMRMLChartViewNode = 0;
   this->MRMLSliceLogics = vtkCollection::New();
   this->SliceControllerButtonGroup = 0;
   //this->SavedCurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
@@ -89,6 +93,17 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(int id)const
 }
 
 //------------------------------------------------------------------------------
+qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(int id)const
+{
+  Q_ASSERT(id >= 0);
+  if (id >= this->ChartWidgetList.size())
+    {
+    return 0;
+    }
+  return this->ChartWidgetList.at(id);
+}
+
+//------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node)const
 {
   if (!node)
@@ -98,6 +113,23 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::threeDWidget(vtkMRMLViewNode* node
   foreach(qMRMLThreeDWidget* view, this->ThreeDWidgetList)
     {
     if (view->mrmlViewNode() == node)
+      {
+      return view;
+      }
+    }
+  return 0;
+}
+
+//------------------------------------------------------------------------------
+qMRMLChartWidget* qMRMLLayoutManagerPrivate::chartWidget(vtkMRMLChartViewNode* node)const
+{
+  if (!node)
+    {
+    return 0;
+    }
+  foreach(qMRMLChartWidget* view, this->ChartWidgetList)
+    {
+    if (view->mrmlChartViewNode() == node)
       {
       return view;
       }
@@ -142,6 +174,10 @@ vtkMRMLNode* qMRMLLayoutManagerPrivate::viewNode(QWidget* widget)const
     {
     return qobject_cast<qMRMLThreeDWidget*>(widget)->mrmlViewNode();
     }
+  if (qobject_cast<qMRMLChartWidget*>(widget))
+    {
+    return qobject_cast<qMRMLChartWidget*>(widget)->mrmlChartViewNode();
+    }
   return 0;
 }
 
@@ -155,6 +191,10 @@ QWidget* qMRMLLayoutManagerPrivate::viewWidget(vtkMRMLNode* viewNode)const
   if (vtkMRMLViewNode::SafeDownCast(viewNode))
     {
     return this->threeDWidget(vtkMRMLViewNode::SafeDownCast(viewNode));
+    }
+  if (vtkMRMLChartViewNode::SafeDownCast(viewNode))
+    {
+    return this->chartWidget(vtkMRMLChartViewNode::SafeDownCast(viewNode));
     }
   return 0;
 }
@@ -181,6 +221,21 @@ void qMRMLLayoutManagerPrivate::setActiveMRMLThreeDViewNode(vtkMRMLViewNode * no
 
   emit q->activeThreeDRendererChanged(q->activeThreeDRenderer());
   emit q->activeMRMLThreeDViewNodeChanged(this->ActiveMRMLThreeDViewNode);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::setActiveMRMLChartViewNode(vtkMRMLChartViewNode * node)
+{
+  Q_Q(qMRMLLayoutManager);
+  if (this->ActiveMRMLChartViewNode == node)
+    {
+    return;
+    }
+
+  this->ActiveMRMLChartViewNode = node;
+
+  emit q->activeChartRendererChanged(q->activeChartRenderer());
+  emit q->activeMRMLChartViewNodeChanged(this->ActiveMRMLChartViewNode);
 }
 
 // --------------------------------------------------------------------------
@@ -244,6 +299,33 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode
 }
 
 // --------------------------------------------------------------------------
+qMRMLChartWidget* qMRMLLayoutManagerPrivate::createChartWidget(vtkMRMLChartViewNode* viewNode)
+{
+  Q_Q(qMRMLLayoutManager);
+  if (!q->viewport() || !this->MRMLScene || !viewNode)
+    {
+    Q_ASSERT(this->MRMLScene);
+    Q_ASSERT(viewNode);
+    return 0;
+    }
+
+  // There must be a unique ChartWidget per node
+  Q_ASSERT(!this->chartWidget(viewNode));
+
+  qMRMLChartWidget* chartWidget = 0;
+
+  //logger.trace("createChartWidget - instantiated new qMRMLChartWidget");
+  chartWidget = new qMRMLChartWidget(q->viewport());
+  chartWidget->setViewLabel(viewNode->GetViewLabel());
+  chartWidget->setMRMLScene(this->MRMLScene);
+  chartWidget->setMRMLChartViewNode(viewNode);
+
+  this->ChartWidgetList.push_back(chartWidget);
+
+  return chartWidget;
+}
+
+// --------------------------------------------------------------------------
 void qMRMLLayoutManagerPrivate::removeSliceView(vtkMRMLSliceNode* sliceNode)
 {
   Q_ASSERT(sliceNode);
@@ -267,6 +349,20 @@ void qMRMLLayoutManagerPrivate::removeThreeDWidget(vtkMRMLViewNode* viewNode)
     {
     this->ThreeDWidgetList.removeAll(threeDWidgetToDelete);
     delete threeDWidgetToDelete;
+    }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLLayoutManagerPrivate::removeChartWidget(vtkMRMLChartViewNode* viewNode)
+{
+  Q_ASSERT(viewNode);
+  qMRMLChartWidget * chartWidgetToDelete = this->chartWidget(viewNode);
+
+  // Remove threeDView
+  if (chartWidgetToDelete)
+    {
+    this->ChartWidgetList.removeAll(chartWidgetToDelete);
+    delete chartWidgetToDelete;
     }
 }
 
@@ -303,6 +399,17 @@ void qMRMLLayoutManagerPrivate::onNodeAddedEvent(vtkObject* scene, vtkObject* no
     if (!this->threeDWidget(viewNode))
       {
       this->createThreeDWidget(viewNode);
+      }
+    }
+
+  // Chart-View node
+  vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(node);
+  if (chartViewNode)
+    {
+    //logger.trace(QString("onChartViewNodeAddedEvent - id: %1").arg(chartViewNode->GetID()));
+    if (!this->chartWidget(chartViewNode))
+      {
+      this->createChartWidget(chartViewNode);
       }
     }
 
@@ -343,6 +450,17 @@ void qMRMLLayoutManagerPrivate::onNodeRemovedEvent(vtkObject* scene, vtkObject* 
       this->setActiveMRMLThreeDViewNode(0);
       }
     this->removeThreeDWidget(viewNode);
+    }
+
+  // View node
+  vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(node);
+  if (chartViewNode)
+    {
+    if (chartViewNode == this->ActiveMRMLChartViewNode)
+      {
+      this->setActiveMRMLChartViewNode(0);
+      }
+    this->removeChartWidget(chartViewNode);
     }
 
   // Slice node
@@ -425,6 +543,23 @@ void qMRMLLayoutManagerPrivate::updateWidgetsFromViewNodes()
     if (i == 0)
       {
       this->setActiveMRMLThreeDViewNode(viewNode);
+      }
+    }
+
+  // Maybe the chart-nodes have been created a while ago, we need to associate a chart-view to each of them
+  std::vector<vtkMRMLNode*> chartViewNodes;
+  this->MRMLScene->GetNodesByClass("vtkMRMLChartViewNode", chartViewNodes);
+  for (unsigned int i = 0; i < chartViewNodes.size(); ++i)
+    {
+    vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(chartViewNodes[i]);
+    if (!this->chartWidget(chartViewNode))
+      {
+      this->createChartWidget(chartViewNode);
+      }
+    // For now, the active view is the first one
+    if (i == 0)
+      {
+      this->setActiveMRMLChartViewNode(chartViewNode);
       }
     }
 
@@ -631,6 +766,13 @@ int qMRMLLayoutManager::threeDViewCount()const
 }
 
 //------------------------------------------------------------------------------
+int qMRMLLayoutManager::chartViewCount()const
+{
+  Q_D(const qMRMLLayoutManager);
+  return d->ChartWidgetList.size();
+}
+
+//------------------------------------------------------------------------------
 qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
 {
   Q_D(const qMRMLLayoutManager);
@@ -639,6 +781,17 @@ qMRMLThreeDWidget* qMRMLLayoutManager::threeDWidget(int id)const
     return 0;
     }
   return d->threeDWidget(id);
+}
+
+//------------------------------------------------------------------------------
+qMRMLChartWidget* qMRMLLayoutManager::chartWidget(int id)const
+{
+  Q_D(const qMRMLLayoutManager);
+  if(id < 0 || id >= d->ChartWidgetList.size())
+    {
+    return 0;
+    }
+  return d->chartWidget(id);
 }
 
 //------------------------------------------------------------------------------
@@ -703,6 +856,10 @@ void qMRMLLayoutManager::setMRMLScene(vtkMRMLScene* scene)
     {
     threeDWidget->setMRMLScene(d->MRMLScene);
     }
+  foreach (qMRMLChartWidget* chartWidget, d->ChartWidgetList )
+    {
+    chartWidget->setMRMLScene(d->MRMLScene);
+    }
 
   d->updateWidgetsFromViewNodes();
   d->updateLayoutFromMRMLScene();
@@ -720,11 +877,24 @@ CTK_GET_CPP(qMRMLLayoutManager, vtkMRMLViewNode*,
             activeMRMLThreeDViewNode, ActiveMRMLThreeDViewNode)
 
 //------------------------------------------------------------------------------
+CTK_GET_CPP(qMRMLLayoutManager, vtkMRMLChartViewNode*,
+            activeMRMLChartViewNode, ActiveMRMLChartViewNode)
+
+//------------------------------------------------------------------------------
 vtkRenderer* qMRMLLayoutManager::activeThreeDRenderer()const
 {
   Q_D(const qMRMLLayoutManager);
   qMRMLThreeDWidget* activeThreeDWidget = d->threeDWidget(d->ActiveMRMLThreeDViewNode);
   return activeThreeDWidget ? activeThreeDWidget->threeDView()->renderer() : 0;
+}
+
+//------------------------------------------------------------------------------
+vtkRenderer* qMRMLLayoutManager::activeChartRenderer()const
+{
+  return 0;
+  // Q_D(const qMRMLLayoutManager);
+  // qMRMLChartWidget* activeChartWidget = d->chartWidget(d->ActiveMRMLChartViewNode);
+  // return activeChartWidget ? activeChartWidget->chartView()->renderer() : 0;
 }
 
 //------------------------------------------------------------------------------

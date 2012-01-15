@@ -76,6 +76,8 @@ set(MRMLCore_SRCS
   vtkDataFileFormatHelper.cxx
   vtkMRMLLogic.cxx
   vtkMRMLCameraNode.cxx
+  vtkMRMLChartNode.cxx
+  vtkMRMLChartViewNode.cxx
   vtkMRMLClipModelsNode.cxx
   vtkMRMLColorNode.cxx
   vtkMRMLColors.cxx

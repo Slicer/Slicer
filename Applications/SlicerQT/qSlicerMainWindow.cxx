@@ -534,7 +534,9 @@ void qSlicerMainWindow::setupMenuActions()
 
   d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   d->actionViewLayoutConventionalWidescreen->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView);
+  d->actionViewLayoutConventionalQuantitative->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalQuantitativeView);
   d->actionViewLayoutFourUp->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpView);
+  d->actionViewLayoutFourUpQuantitative->setData(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView);
   d->actionViewLayoutDual3D->setData(vtkMRMLLayoutNode::SlicerLayoutDual3DView);
   d->actionViewLayoutTriple3D->setData(vtkMRMLLayoutNode::SlicerLayoutTriple3DEndoscopyView);
   d->actionViewLayoutOneUp3D->setData(vtkMRMLLayoutNode::SlicerLayoutOneUp3DView);

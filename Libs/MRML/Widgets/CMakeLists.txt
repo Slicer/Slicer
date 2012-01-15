@@ -26,6 +26,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${MRMLWidgets_SOURCE_DIR}/CMake")
 set(MRMLWidgets_SRCS
   qMRMLCaptureToolBar.cxx
   qMRMLCaptureToolBar.h
+  qMRMLChartView.cxx
+  qMRMLChartView.h
+  qMRMLChartView_p.h
+  qMRMLChartViewControllerWidget.cxx
+  qMRMLChartViewControllerWidget.h
+  qMRMLChartViewControllerWidget_p.h
+  qMRMLChartWidget.cxx
+  qMRMLChartWidget.h
   qMRMLCheckableNodeComboBox.cxx
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.cxx
@@ -153,6 +161,10 @@ set(MRMLWidgets_SRCS
 # Headers that should run through moc
 set(MRMLWidgets_MOC_SRCS
   qMRMLCaptureToolBar.h
+  qMRMLChartView.h
+  qMRMLChartView_p.h
+  qMRMLChartViewControllerWidget.h
+  qMRMLChartWidget.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h
   qMRMLCollapsibleButton.h
@@ -218,7 +230,8 @@ set(MRMLWidgets_MOC_SRCS
 
 # UI files
 set(MRMLWidgets_UI_SRCS
-  Resources/UI/qMRMLClipNodeWidget.ui
+ Resources/UI/qMRMLChartViewControllerWidget.ui
+ Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
@@ -236,16 +249,18 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLWindowLevelWidget.ui
   )
 
+configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc) 
 set(MRMLWidgets_QRC_SRCS
-  Resources/qMRMLWidgets.qrc
-  )
+ Resources/qMRMLWidgets.qrc
+ ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
+)
 
 QT4_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
 
 source_group("Resources" FILES
-  ${MRMLWidgets_UI_SRCS}
+ ${MRMLWidgets_UI_SRCS}
   ${MRMLWidgets_QRC_SRCS}
   )
 

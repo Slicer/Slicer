@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK)
+set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
@@ -321,6 +321,8 @@ ExternalProject_Add(${proj}
     -DQT_QMAKE_EXECUTABLE:PATH=${QT_QMAKE_EXECUTABLE}
     # CTK
     -DCTK_DIR:PATH=${CTK_DIR}
+    # jqPlot
+    -DjqPlot_DIR:PATH=${jqPlot_DIR}
   INSTALL_COMMAND ""
   )
 

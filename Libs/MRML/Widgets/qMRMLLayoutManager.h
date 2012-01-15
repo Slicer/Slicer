@@ -27,13 +27,16 @@
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
+class qMRMLChartWidget;
 class qMRMLThreeDWidget;
 class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
 class vtkCollection;
 class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
+class vtkMRMLChartNode;
 class vtkMRMLNode;
+class vtkMRMLChartViewNode;
 class vtkMRMLViewNode;
 class vtkRenderer;
 
@@ -43,6 +46,7 @@ class QMRML_WIDGETS_EXPORT qMRMLLayoutManager : public ctkLayoutManager
   // The following properties are exposed so that they are available within python
   Q_PROPERTY(int layout READ layout WRITE setLayout NOTIFY layoutChanged DESIGNABLE false)
   Q_PROPERTY(int threeDViewCount READ threeDViewCount DESIGNABLE false)
+  Q_PROPERTY(int chartViewCount READ chartViewCount DESIGNABLE false)
 public:
   /// Superclass typedef
   typedef ctkLayoutManager Superclass;
@@ -65,12 +69,14 @@ public:
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
+  int chartViewCount()const;
 
   /// Get ThreeDWidget identified by \a id
   /// where \a id is an integer ranging from 0 to N-1 with N being the number
   /// of instantiated qMRMLThreeDView (that should also be equal to the number
   /// of vtkMRMLViewNode)
   Q_INVOKABLE qMRMLThreeDWidget* threeDWidget(int id)const;
+  Q_INVOKABLE qMRMLChartWidget* chartWidget(int id)const;
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
@@ -82,6 +88,8 @@ public:
 
   vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
   vtkRenderer* activeThreeDRenderer()const;
+  vtkMRMLChartViewNode* activeMRMLChartViewNode()const;
+  vtkRenderer* activeChartRenderer()const;
 
   Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
 public slots:
@@ -100,7 +108,9 @@ public slots:
 
 signals:
   void activeMRMLThreeDViewNodeChanged(vtkMRMLViewNode * newActiveMRMLThreeDViewNode);
+  void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
+  void activeChartRendererChanged(vtkRenderer* newRenderer);
   void layoutChanged(int);
 
 protected:

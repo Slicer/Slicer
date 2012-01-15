@@ -70,7 +70,9 @@
      </property>
      <addaction name="actionViewLayoutConventional"/>
      <addaction name="actionViewLayoutConventionalWidescreen"/>
+     <addaction name="actionViewLayoutConventionalQuantitative"/>
      <addaction name="actionViewLayoutFourUp"/>
+     <addaction name="actionViewLayoutFourUpQuantitative"/>
      <addaction name="actionViewLayoutDual3D"/>
      <addaction name="actionViewLayoutTriple3D"/>
      <addaction name="actionViewLayoutOneUp3D"/>
@@ -246,7 +248,9 @@
    </attribute>
    <addaction name="actionViewLayoutConventional"/>
    <addaction name="actionViewLayoutConventionalWidescreen"/>
+   <addaction name="actionViewLayoutConventionalQuantitative"/>
    <addaction name="actionViewLayoutFourUp"/>
+   <addaction name="actionViewLayoutFourUpQuantitative"/>
    <addaction name="actionViewLayoutDual3D"/>
    <addaction name="actionViewLayoutTriple3D"/>
    <addaction name="actionViewLayoutOneUp3D"/>
@@ -758,6 +762,18 @@
     <bool>true</bool>
    </property>
   </action>
+  <action name="actionViewLayoutConventionalQuantitative">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Conventional Quantitative</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
   <action name="actionViewLayoutFourUp">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
@@ -765,6 +781,18 @@
    </property>
    <property name="text">
     <string>Four-Up</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionViewLayoutFourUpQuantitative">
+   <property name="icon">
+    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four-Up Quantitative</string>
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>

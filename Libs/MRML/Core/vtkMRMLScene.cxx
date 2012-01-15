@@ -22,6 +22,8 @@ Version:   $Revision: 1.18 $
 
 #include "vtkMRMLBSplineTransformNode.h"
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLChartNode.h"
+#include "vtkMRMLChartViewNode.h"
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLColorTableStorageNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
@@ -361,6 +363,15 @@ vtkMRMLScene::vtkMRMLScene()
   vtkMRMLInteractionNode *intn = vtkMRMLInteractionNode::New();
   this->RegisterNodeClass(intn);
   intn->Delete();
+
+  vtkMRMLChartNode *chartnode = vtkMRMLChartNode::New(); 
+  this->RegisterNodeClass( chartnode );
+  chartnode->Delete();
+
+  vtkMRMLChartViewNode *chartviewnode = vtkMRMLChartViewNode::New(); 
+  this->RegisterNodeClass( chartviewnode );
+  std::cout<<"RegisterNodeClass( chartviewnode )\n"; 
+  chartviewnode->Delete();
 
 }
 

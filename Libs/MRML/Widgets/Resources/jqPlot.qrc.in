@@ -1,0 +1,12 @@
+<RCC version="1.0">
+ <qresource prefix="jqPlot">
+    <file alias="jquery.jqplot.min.css">@jqPlot_DIR@/jquery.jqplot.min.css</file>
+    <file alias="jquery.min.js">@jqPlot_DIR@/jquery.min.js</file>
+    <file alias="jquery.jqplot.min.js">@jqPlot_DIR@/jquery.jqplot.min.js</file>
+    <file alias="plugins/jqplot.canvasTextRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasTextRenderer.min.js</file>
+    <file alias="plugins/jqplot.canvasAxisLabelRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasAxisLabelRenderer.min.js</file>
+    <file alias="plugins/jqplot.highlighter.min.js">@jqPlot_DIR@/plugins/jqplot.highlighter.min.js</file>
+    <file alias="plugins/jqplot.cursor.min.js">@jqPlot_DIR@/plugins/jqplot.cursor.min.js</file>
+    <file alias="plugins/jqplot.dateAxisRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.dateAxisRenderer.min.js</file>
+ </qresource>
+</RCC>

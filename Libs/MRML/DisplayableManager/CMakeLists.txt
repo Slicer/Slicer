@@ -68,6 +68,9 @@ set(DisplayableManager_SRCS
   vtkMRMLCrosshairDisplayableManager.cxx
   vtkMRMLModelSliceDisplayableManager.cxx
   vtkMRMLVolumeGlyphSliceDisplayableManager.cxx
+
+  # DisplayableManager associated with ChartView
+  vtkMRMLChartViewDisplayableManager.cxx
  )
 
 set(KIT_SRCS
@@ -75,15 +78,20 @@ set(KIT_SRCS
   vtkMRMLAbstractDisplayableManager.cxx
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
-
+  
   # ThreeDView factory and DisplayableManager
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
+  
+  # ChartView DisplayableManager
+  vtkMRMLChartViewDisplayableManager.cxx
+  vtkMRMLChartViewDisplayableManagerFactory.cxx
 
   # SliceView factory and DisplayableManager
   vtkMRMLAbstractSliceViewDisplayableManager.cxx
   vtkMRMLSliceViewDisplayableManagerFactory.cxx
 
+  vtkChartViewInteractorStyle.cxx
   vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
 
@@ -91,10 +99,11 @@ set(KIT_SRCS
   vtkMRMLLightBoxRendererManagerProxy.cxx
 )
 set_source_files_properties(
+  vtkMRMLChartViewDisplayableManagerFactory.cxx
   vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
-  vtkMRMLSliceViewDisplayableManagerFactory.cxx
+ vtkMRMLSliceViewDisplayableManagerFactory.cxx
   WRAP_EXCLUDE
 )
 
