@@ -237,21 +237,15 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     return;
     }
 
-  // Build the plot
-  //
-  //
-  QStringList plot;
   vtkStringArray *arrayIDs = cn->GetArrays();
   vtkStringArray *arrayNames = cn->GetArrayNames();
 
-  plot << plotPreamble;
+  // data to plot - represented in javascript
+  //
+  //
+  QStringList plotData;
+  plotData << "var data = [";
 
-  plot << 
-    "<div id=\"chart\"></div>"
-    "<script class=\"code\" type=\"text/javascript\">"
-    "$(document).ready(function(){"
-    "var plot1 = $.jqplot ('chart', [";
-  
   // for each curve
   for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
     {
@@ -261,100 +255,125 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       {
       double x, y;
 
-      plot << "[";
+      plotData << "[";
       
       // for each value
       for (unsigned int j = 0; j < dn->GetSize(); ++j)
         {
         dn->GetXYValue(j, &x, &y);
-        plot << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
+        plotData << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
         if (j < dn->GetSize()-1)
           {
-          plot << ",";
+          plotData << ",";
           }
         }
 
-      plot<< "]";
+      plotData<< "]";
 
       if (idx < arrayIDs->GetNumberOfValues()-1)
         {
-        plot << ",";
+        plotData << ",";
         }
       }
     }
 
-  plot << "],";
+  plotData << "];";
+  
 
-  // properties
+  // properties for the plot - represented in javascript
   //
   //
+  QStringList plotOptions;
+  plotOptions << "var options = {";
 
   // plot level properties: title, axis labels, grid, ...
-  plot << 
-    "{"
+  plotOptions << 
     "highlighter: {show: true}, cursor: {show: false}, legend: {show: true}";
   
   // if (cn->GetTitle() && cn->ShowTitle())
   //   {
-  //   plot << ", title: " << cn->GetTitle();
+  //   plotOptions << ", title: " << cn->GetTitle();
   //   }
 
   // series level properties
-  plot << ", series: [";
+  plotOptions << ", series: [";
   for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
     {
     // for each series
-    plot << "{";
+    plotOptions << "{";
     // legend
-    plot << "label: '" << arrayNames->GetValue(idx).c_str() << "'";
+    plotOptions << "label: '" << arrayNames->GetValue(idx).c_str() << "'";
 
     // markers
-    plot << ", showMarker: false";
+    plotOptions << ", showMarker: false";
 
     // lines
 
     // end of a series
-    plot << "}";
+    plotOptions << "}";
     if (idx < arrayNames->GetNumberOfValues()-1)
       {
-      plot << ",";
+      plotOptions << ",";
       }
     }
   // end of series properties
-  plot << "]";
-
-  // end of properties, end of call to jqplot
-  plot <<       
-    "}"
-    ");";
+  plotOptions << "]";
+  // end of properties
+  plotOptions << "};";
 
 
-  // define a function for resizing
+  // resize slot - represented in javascript
   // pass in resetAxes: true option to get rid of old ticks and axis properties
-  plot << 
+  QStringList plotResizeSlot;
+  plotResizeSlot << 
     "var resizeSlot = function() {"
     "$('#chart').css('width', 0.95*$(window).width());"
     "$('#chart').css('height', 0.95*$(window).height());"
     "plot1.replot( {resetAxes: true} );"
     "};";
 
-  // adjust the size of the initial chart
-  plot << 
+  // an initial call to the resize slot - represented in javascript
+  QStringList plotInitialResize;
+  plotInitialResize <<
     "resizeSlot();";
 
-  // put in the hooks for resizing.
+  // resize hook - represented in javascript
   // resize function should be bound to the #chart not to the window
-  plot <<
+  QStringList plotResizeHook;
+  plotResizeHook <<
     "$(window).resize( resizeSlot );";
 
-  // end of function and end of call to ready()
+
+  // Assemble the plot
+  //
+  // 1. HTML page preamble
+  // 2. Div container for the chart
+  // 3. Script container
+  // 4. Definition of the "ready" function inside the script container
+  // 5. HTML page poscript
+  //
+  QStringList plot;
+  plot << plotPreamble;       // 1. page header, css, javascript
+
   plot << 
-    "});"
-    "</script>";
+    "<div id=\"chart\"></div>"                       // 2. container for the chart
+    "<script class=\"code\" type=\"text/javascript\">"    // 3. container for js
+    "$(document).ready(function(){";                 // 4. ready function     
+  plot << plotData;     // insert data
+  plot << plotOptions;  // insert options
+  plot << 
+    "var plot1 = $.jqplot ('chart', data, options);";  // call the plot
+  plot << plotResizeSlot;        // insert definition of the resizeSlot
+  plot << plotInitialResize;     // insert an initial call to resizeSlot 
+  plot << plotResizeHook;        // insert hook to call resizeSlot on page resize
+
+  plot << 
+    "});"                   // end of function and end of call to ready()
+    "</script>";            // end of the javascript
       
-  plot << plotPostscript;
+  plot << plotPostscript;   // 5. page postscript, additional javascript
   
-  //qDebug() << plot.join("");
+  // qDebug() << plot.join("");
 
   // show the plot
   q->setHtml(plot.join("")); 
