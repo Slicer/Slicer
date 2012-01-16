@@ -63,18 +63,21 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     <boolean>
       <name>writeProtocolGradientsFile</name>
       <longflag>--writeProtocolGradientsFile</longflag>
+      <label>Write Protocol Gradients File</label>
       <description> Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary. </description>
       <default>false</default>
     </boolean>
     <boolean>
       <name>useIdentityMeaseurementFrame</name>
       <longflag>--useIdentityMeaseurementFrame</longflag>
+      <label>Use Identity Measurement Frame</label>
       <description>Adjust all the gradients so that the measurement frame is an identity matrix.</description>
       <default>false</default>
     </boolean>
     <boolean>
        <name>useBMatrixGradientDirections</name>
        <longflag>--useBMatrixGradientDirections</longflag>
+       <label>Use BMatrix Gradient Directions</label>
        <description>Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.</description>
        <default>false</default> <!-- This does nothing as the default for booleans is always false -->
     </boolean>
