@@ -41,6 +41,7 @@ class PerformanceTestsWidget:
         ( 'Get Sample Data', self.downloadMRHead ),
         ( 'Reslicing', self.reslicing ),
         ( 'Chart Test', self.chartTest ),
+        ( 'Web View Test', self.webViewTest ),
         # ( 'timeProbe', self.timeProbe ),
         # ( 'sizeProbe', self.sizeProbe),
         # ( 'fakewin', self.fakewin ),
@@ -204,7 +205,26 @@ class PerformanceTestsWidget:
 
     cvn.SetChartNodeID(cn.GetID())
 
+  def webViewCallback(self,qurl):
+    url = qurl.toString()
+    print(url)
+    if url == 'reslicing':
+      self.reslicing()
+    if url == 'chart':
+      self.chartTest()
+    pass
 
+  def webViewTest(self):
+    self.webView = qt.QWebView()
+    html = """
+    <a href="reslicing">Run reslicing test</a>
+    <p>
+    <a href="chart">Run chart test</a>
+    """
+    self.webView.setHtml(html)
+    self.webView.page().setLinkDelegationPolicy(qt.QWebPage.DelegateAllLinks)
+    self.webView.connect('linkClicked(QUrl)', self.webViewCallback)
+    self.webView.show()
 
 class sliceLogicTest:
   def __init__(self):
