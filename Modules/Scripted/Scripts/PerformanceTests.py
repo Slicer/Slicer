@@ -18,6 +18,7 @@ and others.  This work was partially funded by NIH grant 3P41RR013218-12S1.
     """
     self.parent = parent
 
+
 #
 # qPerformanceTestsWidget
 #
@@ -39,6 +40,7 @@ class PerformanceTestsWidget:
     tests = (
         ( 'Get Sample Data', self.downloadMRHead ),
         ( 'Reslicing', self.reslicing ),
+        ( 'Chart Test', self.chartTest ),
         # ( 'timeProbe', self.timeProbe ),
         # ( 'sizeProbe', self.sizeProbe),
         # ( 'fakewin', self.fakewin ),
@@ -117,7 +119,7 @@ class PerformanceTestsWidget:
     """ go into a loop that stresses the reslice performance
     """
     import time
-    sliceNode = slicer.util.getNode('vtkMRMLSliceNode1')
+    sliceNode = slicer.util.getNode('vtkMRMLSliceNodeRed')
     dims = sliceNode.GetDimensions()
     elapsedTime = 0
     for i in xrange(iters):
@@ -162,6 +164,48 @@ class PerformanceTestsWidget:
     self.imageViewer2.Render()
 
 
+  def chartTest(self):
+    import math,random
+    lns = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
+    lns.InitTraversal()
+    ln = lns.GetNextItemAsObject()
+    ln.SetViewArrangement(24)
+
+    cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    cvns.InitTraversal()
+    cvn = cvns.GetNextItemAsObject()
+
+    dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+    dn = slicer.mrmlScene.AddNode(dn)
+    a = dn.GetArray()
+    a.SetNumberOfTuples(600)
+    x = range(0, 600)
+    phase = random.random()
+    for i in range(len(x)):
+        a.SetComponent(i, 0, x[i]/50.0)
+        a.SetComponent(i, 1, math.sin(phase+x[i]/50.0))
+        a.SetComponent(i, 2, 0)
+
+    dn2 = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+    dn2 = slicer.mrmlScene.AddNode(dn2)
+    a = dn2.GetArray()
+    a.SetNumberOfTuples(600)
+    x = range(0, 600)
+    for i in range(len(x)):
+        a.SetComponent(i, 0, x[i]/50.0)
+        a.SetComponent(i, 1, math.cos(phase+x[i]/50.0))
+        a.SetComponent(i, 2, 0)
+
+
+    cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+    cn = slicer.mrmlScene.AddNode(cn)
+    cn.AddArray('A double array', dn.GetID())
+    cn.AddArray('Another double array', dn2.GetID())
+
+    cvn.SetChartNodeID(cn.GetID())
+
+
+
 class sliceLogicTest:
   def __init__(self):
     self.step = 0
@@ -178,3 +222,4 @@ class sliceLogicTest:
 
   def testSliceLogic(self, iters):
     timeSteps(iters, self.stepSliceLogic)
+
