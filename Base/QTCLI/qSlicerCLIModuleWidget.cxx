@@ -252,19 +252,12 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
     noneEnabled = 1;
     }
 
+  QLabel* widgetLabel = new QLabel(_label);
+  widgetLabel->setToolTip(description);
+
   QWidget * widget = this->CLIModuleUIHelper->createTagWidget(moduleParameter);
 
-  if (widget)
-    {
-    widget->setToolTip(description);
-    _layout->addRow(new QLabel(_label), widget);
-    }
-  else
-    {
-    QLabel * labelWidget = new QLabel(_label);
-    labelWidget->setToolTip(description);
-    _layout->addWidget(labelWidget);
-    }
+  _layout->addRow(widgetLabel, widget);
 }
 
 //-----------------------------------------------------------------------------
