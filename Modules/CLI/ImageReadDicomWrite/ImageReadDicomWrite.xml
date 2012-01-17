@@ -132,7 +132,7 @@
        <name>rescaleIntercept</name>
        <longflag>--rescaleIntercept</longflag>
        <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
-       <default>0.0</default>
+       <default>0.0000</default>
     </double>
 
     <double>
@@ -140,7 +140,7 @@
        <name>rescaleSlope</name>
        <longflag>--rescaleSlope</longflag>
        <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
-       <default>1.0</default>
+       <default>1.0000</default>
     </double>
  </parameters>
 
