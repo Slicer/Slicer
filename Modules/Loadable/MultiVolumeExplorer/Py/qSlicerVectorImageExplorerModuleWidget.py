@@ -13,8 +13,6 @@ class qSlicerVectorImageExplorerModuleWidget:
       self.parent = parent
       print 'Layout is ', self.parent.layout()
 
-    # parent.dependencies = []
-
     self.layout = self.parent.layout()
 
     # this flag is 1 if there is an update in progress
@@ -62,9 +60,8 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__vcSelector.nodeTypes = ['vtkMRMLVectorImageContainerNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
-    self.__vcSelector.addEnabled = 1
-
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
+    self.__vcSelector.addEnabled = 1
 
     ## self.layout.addRow(label, self.__vcSelector)
     self.layout.addWidget(label)
@@ -133,19 +130,10 @@ class qSlicerVectorImageExplorerModuleWidget:
       dwvDisplayNode = self.__dwvNode.GetDisplayNode()
       dwvDisplayNode.SetDiffusionComponent(newValue)
 
-  def onInputChanged(self):
-    self.__vcNode = self.__vcSelector.currentNode()
-    if self.__vcNode != None:
-       self.__dwvNode = self.__vcNode.GetDWVNode()
-       print 'Active DWV node: ', self.__dwvNode
-       if self.__dwvNode != None:
-         self.__mdSlider.minimum = 0
-         self.__mdSlider.maximum = self.__dwvNode.GetNumberOfGradients()-1
-         self.__chartTable.SetNumberOfRows(self.__dwvNode.GetNumberOfGradients())
-    
   def onMRMLSceneChanged(self, mrmlScene):
+    print 'onMRMLSceneChanged called'
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
-    return
+    self.onInputChanged()
     '''
     if mrmlScene != self.__logic.GetMRMLScene():
       self.__logic.SetMRMLScene(mrmlScene)
@@ -154,6 +142,17 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__logic.GetMRMLManager().SetMRMLScene(mrmlScene)
     '''
     
+  def onInputChanged(self):
+    print 'onInputChanged() called'
+    self.__vcNode = self.__vcSelector.currentNode()
+    if self.__vcNode != None:
+       self.__dwvNode = self.__vcNode.GetDWVNode()
+       print 'Active DWV node: ', self.__dwvNode
+       if self.__dwvNode != None:
+         self.__mdSlider.minimum = 0
+         self.__mdSlider.maximum = self.__dwvNode.GetNumberOfGradients()-1
+         self.__chartTable.SetNumberOfRows(self.__dwvNode.GetNumberOfGradients())
+   
   def removeObservers(self):
     # remove observers and reset
     for observee,tag in self.styleObserverTags:
