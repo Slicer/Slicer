@@ -88,6 +88,19 @@ QIcon qSlicerVectorImageExplorerModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerVectorImageExplorerModule::category() const 
+{ 
+  return QString("Vector Image Tools"); 
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerVectorImageExplorerModule::dependencies() const
+{
+  return QStringList();
+}
+
+
+//-----------------------------------------------------------------------------
 void qSlicerVectorImageExplorerModule::setup()
 {
   this->Superclass::setup();
