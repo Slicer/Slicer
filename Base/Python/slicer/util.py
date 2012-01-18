@@ -114,7 +114,7 @@ def findChildren(widget=None,name="",text="",title="",className=""):
         p.text
         if fnmatch.fnmatch(p.text, text):
           children.append(p)
-      except AttributeError:
+      except (AttributeError, TypeError):
         pass
     elif title:
       try:
