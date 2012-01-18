@@ -7,14 +7,15 @@ from __main__ import vtk, qt, ctk, slicer
 class VectorImageImporter:
   def __init__(self, parent):
     parent.title = "VectorImageImporter"
-    parent.category = "VectorImageSupport"
+    parent.category = "Vector Image Tools"
     parent.contributor = ""
     parent.helpText = """
-    Example of scripted loadable extension.
+    Support of VectorImageContainer initialization
     """
+    # VectorImageExplorer registers the MRML node type this module is using
+    parent.dependencies = ['VectorImageExplorer']
     parent.acknowledgementText = """
-    This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
-and was partially funded by NIH grant 3P41RR013218-12S1.
+    This file was originally developed by Andrey Fedorov, SPL
     """
     self.parent = parent
 
