@@ -34,6 +34,11 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__dwvNode = None
     self.__vcNode = None
 
+    # image play setup
+    self.timer = qt.QTimer()
+    self.timer.setInterval(50)
+    self.timer.connect('timeout()', self.goToNext)
+
   def setup( self ):
     '''
     Create and start the EMSegment workflow.
@@ -100,6 +105,12 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.sliceWidgetsPerStyle = {}
     self.refreshObservers()
 
+    self.playButton = qt.QPushButton('Play')
+    self.playButton.toolTip = 'Iterate over vector image components'
+    self.playButton.checkable = True
+    self.layout.addWidget(self.playButton)
+    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+
     # add chart container widget
     ##chartWidget = qt.QWidget()
     ##chartWidgetLayout = qt.QGridLayout()
@@ -152,7 +163,24 @@ class qSlicerVectorImageExplorerModuleWidget:
          self.__mdSlider.minimum = 0
          self.__mdSlider.maximum = self.__dwvNode.GetNumberOfGradients()-1
          self.__chartTable.SetNumberOfRows(self.__dwvNode.GetNumberOfGradients())
-   
+  
+  def onPlayButtonToggled(self,checked):
+    if self.__vcNode == None:
+      return
+    if checked:
+      self.timer.start()
+      self.playButton.text = 'Stop'
+    else:
+      self.timer.stop()
+      self.playButton.text = 'Play'
+
+  def goToNext(self):
+    currentElement = self.__mdSlider.value
+    currentElement = currentElement+1
+    if currentElement > self.__mdSlider.maximum:
+      currentElement = 0
+    self.__mdSlider.value = currentElement
+
   def removeObservers(self):
     # remove observers and reset
     for observee,tag in self.styleObserverTags:
