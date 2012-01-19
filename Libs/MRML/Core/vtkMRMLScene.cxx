@@ -370,7 +370,6 @@ vtkMRMLScene::vtkMRMLScene()
 
   vtkMRMLChartViewNode *chartviewnode = vtkMRMLChartViewNode::New(); 
   this->RegisterNodeClass( chartviewnode );
-  std::cout<<"RegisterNodeClass( chartviewnode )\n"; 
   chartviewnode->Delete();
 
 }

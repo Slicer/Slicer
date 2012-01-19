@@ -20,6 +20,8 @@ vtkMRMLNodeNewMacro(vtkMRMLChartNode);
 //----------------------------------------------------------------------------
 vtkMRMLChartNode::vtkMRMLChartNode()
 {
+  this->HideFromEditors = 0;
+
   this->DoubleArrayIDs = new DoubleArrayIDMap;
   this->ArrayNames = vtkStringArray::New();
   this->Arrays = vtkStringArray::New();
