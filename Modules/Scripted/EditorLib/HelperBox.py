@@ -62,11 +62,6 @@ class HelperBox(object):
       self.parent = parent
       self.create()
 
-  def create(self):
-    self.label = qt.QLabel(self.parent)
-    self.label.setText("TODO: controls for multi-structure label map editing (like in slicer3) will be added here eventually")
-    self.parent.layout().addWidget(self.label)
-
   def cleanup(self):
     for tagpair in self.observerTags:
       tagpair[0].RemoveObserver(tagpair[1])
@@ -135,9 +130,6 @@ class HelperBox(object):
     pNode = slicer.mrmlScene.GetNodeByID(nodeID)
     if pNode:
       pNode.Modified()
-
-
-
 
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into 
@@ -587,11 +579,6 @@ class HelperBox(object):
     self.structures.setHeaderData(4,1,"Order")
     self.structuresView.setModel(self.structures)
     
-    # show the tools if a structure has been selected
-    #TODO: 
-    # EditorShowHideTools "show"
-
-
   #
   # callback helpers (slots)
   #
