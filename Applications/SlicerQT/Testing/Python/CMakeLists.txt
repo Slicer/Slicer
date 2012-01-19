@@ -60,6 +60,11 @@ slicer_add_python_unittest(
   SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_)
 
+slicer_add_python_unittest(
+  SCRIPT SlicerSceneObserverTest.py
+  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
+  TESTNAME_PREFIX nomainwindow_)
+
 #
 # No warnings for simple test
 #
