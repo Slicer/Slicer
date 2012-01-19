@@ -23,7 +23,9 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
     self.parent = parent
 
     if slicer.mrmlScene.GetTagByClassName( "vtkMRMLScriptedModuleNode" ) != 'ScriptedModule':
-      slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
+      node = vtkMRMLScriptedModuleNode()
+      slicer.mrmlScene.RegisterNodeClass(node)
+      node.Delete()
 
     if tcl('info exists ::Editor(singleton)') != '':
       # TODO: cannot call dialog.exec from pythonqt... This is just a warning anyway
@@ -48,6 +50,7 @@ class EditorWidget:
   
   def __init__(self, parent=None, embedded=False, suppliedEffects=[], showVolumesFrame=True):
     self.observerTags = []
+    self.toolsBox = None
 
     # set attributes from ctor parameters
     self.embedded = embedded
@@ -122,10 +125,12 @@ class EditorWidget:
     # TODO: not fully implemented
     #self.activateEffect()
 
+    self.helper.onEnter()
     
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
     self.pauseEffect()
+    self.helper.onExit()
 
   def updateGUIFromMRML(self, caller, event):
     if self.toolsBox:
@@ -167,18 +172,17 @@ class EditorWidget:
     # Editor Volumes
     #
     # only if showing volumes
-    if (self.showVolumesFrame == True):
+    if self.showVolumesFrame:
       self.volumes = ctk.ctkCollapsibleButton(self.parent)
       self.volumes.setLayout(qt.QVBoxLayout())
       self.volumes.setText("Create and Select Label Maps")
       self.layout.addWidget(self.volumes)
-    #->> otherwise self.volumes = None (needed below as parent for self.helper)
     else:
       self.volumes = None
     
     # create the helper box - note this isn't a Qt widget
     #  but a helper class that creates Qt widgets in the given parent
-    if (self.showVolumesFrame == True):
+    if self.showVolumesFrame:
       self.helper = EditorLib.HelperBox(self.volumes)
     else:
       self.helper = None
@@ -192,7 +196,7 @@ class EditorWidget:
 
     # if creating a standard editor widget (i.e. not an embedded widget), create
     # collapsible button for entire "edit label maps" section
-    if (self.embedded == False):
+    if not self.embedded:
       # create collapsible button for entire "edit label maps" section
       self.editLabelMapsFrame = ctk.ctkCollapsibleButton(self.parent)
       self.editLabelMapsFrame.setLayout(qt.QVBoxLayout())
@@ -210,7 +214,7 @@ class EditorWidget:
 
     # if creating a standard editor widget, create frame holding both the effect
     # options and edit box:
-    if (self.embedded == False):
+    if not self.embedded:
       self.effectsToolsFrame = qt.QFrame(self.editLabelMapsFrame)
       self.effectsToolsFrame.setLayout(qt.QHBoxLayout())
       self.editLabelMapsFrame.layout().addStretch(1)
@@ -237,7 +241,7 @@ class EditorWidget:
   # creates the frame for the effect options
   # assumes self.effectsToolsFrame and its layout has already been created
   def createEffectOptionsFrame(self):
-    if (not self.effectsToolsFrame):
+    if not self.effectsToolsFrame:
       return
     self.effectOptionsFrame = qt.QFrame(self.editLabelMapsFrame)
     self.effectOptionsFrame.setLayout(qt.QVBoxLayout())

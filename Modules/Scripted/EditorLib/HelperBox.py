@@ -62,9 +62,18 @@ class HelperBox(object):
       self.parent = parent
       self.create()
 
-  def cleanup(self):
+  def onEnter(self):
+    # new scene, node added or removed events
+    # TODO: allow observers on speific events: 66000, 66001, 66002
+    tag = slicer.mrmlScene.AddObserver("ModifiedEvent", self.updateStructures)
+    self.observerTags.append( (slicer.mrmlScene, tag) )
+
+  def onExit(self):
     for tagpair in self.observerTags:
       tagpair[0].RemoveObserver(tagpair[1])
+
+  def cleanup(self):
+    self.onExit()
     if self.colorBox:
       self.colorBox.cleanup()
 
@@ -742,11 +751,6 @@ class HelperBox(object):
     self.mergeButton.connect("clicked()", self.mergeStructures)
     self.mergeAndBuildButton.connect("clicked()", self.onMergeAndBuild)
     self.setMergeButton.connect("clicked()", self.labelSelectDialog)
-
-    # new scene, node added or removed events
-    # TODO: allow observers on speific events: 66000, 66001, 66002
-    tag = slicer.mrmlScene.AddObserver("ModifiedEvent", self.updateStructures)
-    self.observerTags.append( (slicer.mrmlScene, tag) )
 
     # so buttons will initially be disabled
     self.master = None

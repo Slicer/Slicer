@@ -51,7 +51,8 @@ class EditUtil(object):
     compNode = self.getCompositeNode()
     if compNode:
       backgroundID = compNode.GetBackgroundVolumeID()
-      return slicer.mrmlScene.GetNodeByID(backgroundID)
+      if backgroundID:
+        return slicer.mrmlScene.GetNodeByID(backgroundID)
   
   def getBackgroundID(self,):
     compNode = self.getCompositeNode()

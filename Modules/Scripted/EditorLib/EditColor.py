@@ -107,15 +107,17 @@ class EditColor(object):
       # parameter does not exist - probably intializing
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
-    if self.colorSpin.destroyed():
+    try:
+      self.colorSpin.destroyed()
+      self.colorSpin.setValue(label)
+    except ValueError:
       # TODO: why does the python class still exist if the widget is destroyed?
       # - this only happens when reloading the module.  The owner of the 
       # instance is gone and the widgets are gone, but this instance still
       # has observer on the parameter node - this indicates memory leaks
       # that need to be fixed
       self.cleanup()
-    else:
-      self.colorSpin.setValue(label)
+      return
 
     colorNode = self.editUtil.getColorNode()
     if colorNode:
