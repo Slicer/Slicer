@@ -82,7 +82,6 @@ const char *plotPostscript =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
-  "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.dateAxisRenderer.min.js\"></script>"
   "</body>"
   "</html>";
 
@@ -288,7 +287,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   // plot level properties: title, axis labels, grid, ...
   plotOptions << 
-    "highlighter: {show: true}, cursor: {show: false}, legend: {show: true}";
+    "highlighter: {show: true}, cursor: {show: false, zoom: true}, legend: {show: true}";
   
   // if (cn->GetTitle() && cn->ShowTitle())
   //   {
