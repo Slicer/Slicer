@@ -62,7 +62,6 @@ const char *examplePlot =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
-  "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.dateAxisRenderer.min.js\"></script>"
   "</body>"
   "</html>";
 

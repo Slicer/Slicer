@@ -7,6 +7,5 @@
     <file alias="plugins/jqplot.canvasAxisLabelRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasAxisLabelRenderer.min.js</file>
     <file alias="plugins/jqplot.highlighter.min.js">@jqPlot_DIR@/plugins/jqplot.highlighter.min.js</file>
     <file alias="plugins/jqplot.cursor.min.js">@jqPlot_DIR@/plugins/jqplot.cursor.min.js</file>
-    <file alias="plugins/jqplot.dateAxisRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.dateAxisRenderer.min.js</file>
  </qresource>
 </RCC>

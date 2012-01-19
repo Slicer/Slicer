@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qMRMLChartViewControllerWidget</class>
- <widget class="QWidget" name="qMRMLChartViewControllerWidget">
+ <widget class="ctkPopupWidget" name="qMRMLChartViewControllerWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,12 +9,6 @@
     <width>94</width>
     <height>40</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Chart View Controller</string>
@@ -71,5 +65,22 @@
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>ChartComboBox</sender>
+   <signal>currentNodeChanged(bool)</signal>
+   <receiver>ChartOptionButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

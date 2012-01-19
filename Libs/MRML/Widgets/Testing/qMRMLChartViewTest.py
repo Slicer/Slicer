@@ -43,3 +43,12 @@ cn.AddArray('Another double array', dn2.GetID())
 
 cvn.SetChartNodeID(cn.GetID())
 
+cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+cn = slicer.mrmlScene.AddNode(cn)
+print cn.GetID()
+cn.AddArray('Just one array', dn.GetID())
+
+cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+cn = slicer.mrmlScene.AddNode(cn)
+print cn.GetID()
+cn.AddArray('The other array', dn2.GetID())

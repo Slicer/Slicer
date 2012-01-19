@@ -1,3 +1,19 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
 
 // Qt includes
 #include <QActionGroup>
@@ -8,10 +24,8 @@
 #include <QHBoxLayout>
 
 // CTK includes
-#include <ctkButtonGroup.h>
 #include <ctkLogger.h>
 #include <ctkPopupWidget.h>
-#include <ctkSignalMapper.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
@@ -39,7 +53,6 @@ qMRMLChartViewControllerWidgetPrivate::qMRMLChartViewControllerWidgetPrivate(
 {
   this->ChartViewNode = 0;
   this->ChartView = 0;
-  this->MRMLChartNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -56,9 +69,11 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
   this->PopupWidget->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
   this->Ui_qMRMLChartViewControllerWidget::setupUi(this->PopupWidget);
 
+  this->ChartComboBox->addAttribute("vtkMRMLChartNode", "Chart", "1");
+
   // Connect Chart selector
-  // this->connect(this->ChartComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-  //               SLOT(onChartNodeSelected(vtkMRMLNode*)));
+  this->connect(this->ChartComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                SLOT(onChartNodeSelected(vtkMRMLNode*)));
 
   // when the user select an entry already selected, we want to
   // synchronize with the linked slice logics as they mighy not have
@@ -139,21 +154,55 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLChartViewControllerWidget);
 
-  if (!d->ChartViewNode)
+  if (!d->ChartViewNode || !this->mrmlScene())
     {
     return;
     }
+
+  d->ChartComboBox->setCurrentNode(this->mrmlScene()->GetNodeByID(d->ChartViewNode->GetChartNodeID()));
+
 }
 
 // --------------------------------------------------------------------------
 void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * node)
 {
-  Q_Q(qMRMLChartViewControllerWidget);
+  // Q_Q(qMRMLChartViewControllerWidget);
 
-  if (!this->MRMLChartNode)
+  if (!this->ChartViewNode)
     {
     return;
     }
 
   this->ChartViewNode->SetChartNodeID(node ? node->GetID() : 0);
 }
+
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
+{
+  Q_D(qMRMLChartViewControllerWidget);
+  
+  qDebug() << "Inside setMRMLScene()";
+
+  if (this->mrmlScene() == newScene)
+    {
+    return;
+    }
+
+  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
+                   this, SLOT(updateWidgetFromMRML()));
+
+  // Disable the node selectors as they would fire the signal currentIndexChanged(0)
+  // meaning that there is no current node anymore. It's not true, it just means that
+  // that the current node was not in the combo box list menu before
+  bool chartBlockSignals = d->ChartComboBox->blockSignals(true);
+
+  this->Superclass::setMRMLScene(newScene);
+
+  d->ChartComboBox->blockSignals(chartBlockSignals);
+
+  if (this->mrmlScene())
+    {
+    this->updateWidgetFromMRML();
+    }
+}
+  

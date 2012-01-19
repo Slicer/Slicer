@@ -164,6 +164,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLChartView.h
   qMRMLChartView_p.h
   qMRMLChartViewControllerWidget.h
+  qMRMLChartViewControllerWidget_p.h
   qMRMLChartWidget.h
   qMRMLCheckableNodeComboBox.h
   qMRMLClipNodeWidget.h

@@ -1,10 +1,24 @@
+/*==============================================================================
 
+  Program: 3D Slicer
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
 
 #ifndef __qMRMLChartViewControllerWidget_h
 #define __qMRMLChartViewControllerWidget_h
 
 // CTK includes
-#include <ctkAxesWidget.h>
 #include <ctkVTKObject.h>
 
 // qMRMLWidget includes
@@ -20,6 +34,7 @@ class QMRML_WIDGETS_EXPORT qMRMLChartViewControllerWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+
 public:
   /// Superclass typedef
   typedef qMRMLViewControllerBar Superclass;
@@ -28,7 +43,7 @@ public:
   explicit qMRMLChartViewControllerWidget(QWidget* parent = 0);
   virtual ~qMRMLChartViewControllerWidget();
 
-  /// Set the label for the 3D view (abbreviation for the view
+  /// Set the label for the chart view (abbreviation for the view
   /// name)
   void setViewLabel(const QString& newViewLabel);
 
@@ -36,6 +51,7 @@ public:
   QString viewLabel()const;
 
 public slots:
+  virtual void setMRMLScene(vtkMRMLScene* newScene);
   void setChartView(qMRMLChartView* ChartView);
   void setMRMLChartViewNode(vtkMRMLChartViewNode* chartViewNode);
 
