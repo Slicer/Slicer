@@ -19,12 +19,12 @@ def newPlane():
   modelDisplayNode = Slicer.slicer.vtkMRMLModelDisplayNode()
   modelDisplayNode.SetBackfaceCulling(0)
   modelDisplayNode.SetAndObserveTextureImageData(imageSource.GetOutput())
-  Slicer.slicer.MRMLScene.AddNodeNoNotify(modelDisplayNode)
+  Slicer.slicer.MRMLScene.AddNode(modelDisplayNode)
 
   # transform node
   transformNode = Slicer.slicer.vtkMRMLLinearTransformNode()
   transformNode.SetName('PlaneToWorld')
-  Slicer.slicer.MRMLScene.AddNodeNoNotify(transformNode)
+  Slicer.slicer.MRMLScene.AddNode(transformNode)
 
   # set up model node
   modelNode = Slicer.slicer.vtkMRMLModelNode()

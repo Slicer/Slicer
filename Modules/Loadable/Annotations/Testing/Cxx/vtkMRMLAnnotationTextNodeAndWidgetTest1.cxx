@@ -227,7 +227,7 @@ int vtkMRMLAnnotationTextNodeAndWidgetTest1(int argc, char* argv[])
   textNode->GetTextLabel();
   textNode->SetTextLabel("New text");
 
-  scene->AddNodeNoNotify(textNode);
+  scene->AddNode(textNode);
 
   textNode->CreateAnnotationTextDisplayNode();
   textNode->CreateAnnotationPointDisplayNode();

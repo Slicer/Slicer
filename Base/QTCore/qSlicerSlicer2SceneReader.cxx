@@ -1039,7 +1039,7 @@ void qSlicerSlicer2SceneReaderPrivate::importModelGroupNode(NodeType& node)
         }
       }
     }
-  //set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+  //set dnode [$::slicer3::MRMLScene AddNode $dnode]
   //set hnode [$::slicer3::MRMLScene AddNode $hnode]
   dnode = vtkMRMLModelDisplayNode::SafeDownCast(
     q->mrmlScene()->AddNode(dnode));

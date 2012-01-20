@@ -42,7 +42,7 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLo
   // Description:
   // Create new mrml fiber bundle node and read its polydata from a specified file.
   // Also create the logic object for its display.
-  vtkMRMLFiberBundleNode* AddFiberBundle (const char* filename, int notifyScene);
+  vtkMRMLFiberBundleNode* AddFiberBundle (const char* filename);
 
   // Description:
   // Create fiber bundle nodes and read their polydata from a specified directory.

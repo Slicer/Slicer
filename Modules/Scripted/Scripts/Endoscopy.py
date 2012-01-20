@@ -427,7 +427,7 @@ class EndoscopyPathModel:
     modelDisplay = slicer.vtkMRMLModelDisplayNode()
     modelDisplay.SetColor(1,1,0) # yellow
     modelDisplay.SetScene(scene)
-    scene.AddNodeNoNotify(modelDisplay)
+    scene.AddNode(modelDisplay)
     model.SetAndObserveDisplayNodeID(modelDisplay.GetID())
 
     # Add to scene
@@ -448,7 +448,7 @@ class EndoscopyPathModel:
     cursorModelDisplay = slicer.vtkMRMLModelDisplayNode()
     cursorModelDisplay.SetColor(1,0,0) # red
     cursorModelDisplay.SetScene(scene)
-    scene.AddNodeNoNotify(cursorModelDisplay)
+    scene.AddNode(cursorModelDisplay)
     cursor.SetAndObserveDisplayNodeID(cursorModelDisplay.GetID())
 
     # Add to scene

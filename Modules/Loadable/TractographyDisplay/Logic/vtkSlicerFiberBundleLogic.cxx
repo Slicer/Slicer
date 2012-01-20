@@ -60,7 +60,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, const char*
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddFiberBundle(fullPath.c_str(), i==nfiles-1 ? 1:0) == NULL) 
+        if (this->AddFiberBundle(fullPath.c_str()) == NULL)
           {
           res = 0;
           }
@@ -90,7 +90,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector
           {
           std::string fullPath = std::string(dir.GetPath())
               + "/" + filename;
-          if (this->AddFiberBundle(fullPath.c_str(), i==nfiles-1 ? 1:0) == NULL) 
+          if (this->AddFiberBundle(fullPath.c_str()) == NULL)
             {
             res = 0;
             }
@@ -102,7 +102,7 @@ int vtkSlicerFiberBundleLogic::AddFiberBundles (const char* dirname, std::vector
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* filename, int notifyScene)
+vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* filename)
 {
   vtkDebugMacro("Adding fiber bundle from filename " << filename);
 
@@ -145,37 +145,20 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     displayLineNode->SetVisibility(1);
     displayTubeNode->SetVisibility(0);
     displayGlyphNode->SetVisibility(0);
-    if (notifyScene)
-      {
-      this->GetMRMLScene()->SaveStateForUndo();
-      this->GetMRMLScene()->AddNode(lineDTDPN);
-      this->GetMRMLScene()->AddNode(tubeDTDPN);
-      this->GetMRMLScene()->AddNode(glyphDTDPN);
-      }
-    else
-      {
-      this->GetMRMLScene()->AddNodeNoNotify(lineDTDPN);
-      this->GetMRMLScene()->AddNodeNoNotify(tubeDTDPN);
-      this->GetMRMLScene()->AddNodeNoNotify(glyphDTDPN);
-      }
+
+    this->GetMRMLScene()->SaveStateForUndo();
+    this->GetMRMLScene()->AddNode(lineDTDPN);
+    this->GetMRMLScene()->AddNode(tubeDTDPN);
+    this->GetMRMLScene()->AddNode(glyphDTDPN);
+
     displayLineNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(lineDTDPN->GetID());
     displayTubeNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(tubeDTDPN->GetID());
     displayGlyphNode->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(glyphDTDPN->GetID());
  
-   if (notifyScene)
-      {
-      this->GetMRMLScene()->AddNode(storageNode);  
-      this->GetMRMLScene()->AddNode(displayLineNode);
-      this->GetMRMLScene()->AddNode(displayTubeNode);
-      this->GetMRMLScene()->AddNode(displayGlyphNode);
-     }
-   else
-     {
-      this->GetMRMLScene()->AddNodeNoNotify(storageNode);  
-      this->GetMRMLScene()->AddNodeNoNotify(displayLineNode);
-      this->GetMRMLScene()->AddNodeNoNotify(displayTubeNode);
-      this->GetMRMLScene()->AddNodeNoNotify(displayGlyphNode);
-     }
+    this->GetMRMLScene()->AddNode(storageNode);
+    this->GetMRMLScene()->AddNode(displayLineNode);
+    this->GetMRMLScene()->AddNode(displayTubeNode);
+    this->GetMRMLScene()->AddNode(displayGlyphNode);
 
     fiberBundleNode->SetAndObserveStorageNodeID(storageNode->GetID());
     displayLineNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeRainbow");
@@ -189,15 +172,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     displayTubeNode->SetPolyData(fiberBundleNode->GetFilteredPolyData());
     displayGlyphNode->SetPolyData(fiberBundleNode->GetFilteredPolyData());
 
-   if (notifyScene)
-     {
-     this->GetMRMLScene()->AddNode(fiberBundleNode);  
-     }
-   else
-     {
-     this->GetMRMLScene()->AddNodeNoNotify(fiberBundleNode);  
-     }
-
+    this->GetMRMLScene()->AddNode(fiberBundleNode);
 
     // Set up display logic and any other logic classes in future
     //this->InitializeLogicForFiberBundleNode(fiberBundleNode);

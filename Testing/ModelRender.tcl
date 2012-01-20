@@ -9,7 +9,7 @@ proc newSphere { {name ""} } {
   [$sphere GetOutput] Update
   set modelDisplayNode [vtkMRMLModelDisplayNode New]
   $modelDisplayNode SetColor [expr rand()] [expr rand()] [expr rand()] 
-  $::slicer3::MRMLScene AddNodeNoNotify $modelDisplayNode 
+  $::slicer3::MRMLScene AddNode $modelDisplayNode
   set modelNode [vtkMRMLModelNode New]
   $modelNode SetAndObservePolyData [$sphere GetOutput]
   $modelNode SetAndObserveDisplayNodeID [$modelDisplayNode GetID]

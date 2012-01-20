@@ -127,7 +127,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     {
     node->HideFromEditorsOff();
     }
-  // ID will be set by AddNodeNoNotify
+  // ID will be set by AddNode
   /*
   if (node->GetID() == NULL) 
     {
@@ -153,7 +153,7 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     }
   else
     {
-    this->MRMLScene->AddNodeNoNotify(node);
+    this->MRMLScene->AddNode(node);
     }
   node->Delete();
 }

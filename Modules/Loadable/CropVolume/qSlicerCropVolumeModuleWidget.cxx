@@ -140,7 +140,7 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
     {
     qDebug() << "No CropVolume parameter nodes found!";
     this->parametersNode = vtkMRMLCropVolumeParametersNode::New();
-    scene->AddNodeNoNotify(this->parametersNode);
+    scene->AddNode(this->parametersNode);
     this->parametersNode->Delete();
     }
 

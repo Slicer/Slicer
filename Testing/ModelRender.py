@@ -13,7 +13,7 @@ def newSphere(name=''):
   sphere.GetOutput().Update()
   modelDisplayNode = Slicer.slicer.vtkMRMLModelDisplayNode()
   modelDisplayNode.SetColor(random.random(), random.random(), random.random())
-  Slicer.slicer.MRMLScene.AddNodeNoNotify(modelDisplayNode)
+  Slicer.slicer.MRMLScene.AddNode(modelDisplayNode)
   modelNode = Slicer.slicer.vtkMRMLModelNode()
   modelNode.SetAndObservePolyData( sphere.GetOutput() )
   modelNode.SetAndObserveDisplayNodeID( modelDisplayNode.GetID() )

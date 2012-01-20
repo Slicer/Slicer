@@ -445,7 +445,7 @@ proc ImportNodeModelGroup {node} {
           }
       } 
   }
-  set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+  set dnode [$::slicer3::MRMLScene AddNode $dnode]
   set hnode [$::slicer3::MRMLScene AddNode $hnode]
 
   if {$::S2_HParent_ID != ""} {
@@ -470,7 +470,7 @@ proc ImportNodeModelRef {node} {
   $hnode SetName [[$::slicer3::MRMLScene GetNodeByID $id3] GetName]
 
   #set dnode [vtkMRMLModelDisplayNode New]
-  #set dnode [$::slicer3::MRMLScene AddNodeNoNotify $dnode]
+  #set dnode [$::slicer3::MRMLScene AddNode $dnode]
 
   set hnode [$::slicer3::MRMLScene AddNode $hnode]
 

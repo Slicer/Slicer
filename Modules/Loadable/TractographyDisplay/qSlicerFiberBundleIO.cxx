@@ -117,7 +117,7 @@ bool qSlicerFiberBundleIO::load(const IOProperties& properties)
   QStringList nodes;
   foreach(QString file, fileNames)
     {
-    vtkMRMLFiberBundleNode* node = d->FiberBundleLogic->AddFiberBundle(file.toLatin1(), 1);
+    vtkMRMLFiberBundleNode* node = d->FiberBundleLogic->AddFiberBundle(file.toLatin1());
     if (node)
       {
       if (properties.contains("name"))

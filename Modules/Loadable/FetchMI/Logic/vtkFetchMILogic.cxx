@@ -3452,10 +3452,10 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     this->GetMRMLScene()->SaveStateForUndo();
 
     // add storage nodes to the scene so can observe them
-    this->GetMRMLScene()->AddNodeNoNotify(storageNode);
-    this->GetMRMLScene()->AddNodeNoNotify(scalarNode);
+    this->GetMRMLScene()->AddNode(storageNode);
+    this->GetMRMLScene()->AddNode(scalarNode);
     scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    this->GetMRMLScene()->AddNodeNoNotify(sdisplayNode);
+    this->GetMRMLScene()->AddNode(sdisplayNode);
     scalarNode->SetAndObserveDisplayNodeID(sdisplayNode->GetID());
 
     //--- download to cache and load.
@@ -3507,8 +3507,8 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     mStorageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNodeNoNotify(mStorageNode);
-    this->GetMRMLScene()->AddNodeNoNotify(displayNode);
+    this->GetMRMLScene()->AddNode(mStorageNode);
+    this->GetMRMLScene()->AddNode(displayNode);
     modelNode->SetAndObserveStorageNodeID(mStorageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     displayNode->SetPolyData(modelNode->GetPolyData());
@@ -3551,8 +3551,8 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     fsmStorageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNodeNoNotify(fsmStorageNode);
-    this->GetMRMLScene()->AddNodeNoNotify(displayNode);
+    this->GetMRMLScene()->AddNode(fsmStorageNode);
+    this->GetMRMLScene()->AddNode(displayNode);
     modelNode->SetAndObserveStorageNodeID(fsmStorageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     displayNode->SetPolyData(modelNode->GetPolyData());

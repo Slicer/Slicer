@@ -132,9 +132,6 @@ public:
   /// Add a copy of a node to the scene.
   vtkMRMLNode* CopyNode(vtkMRMLNode *n);
 
-  /// Add a node to the scene without invoking a NodeAdded Event
-  vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
-
   /// Invoke a NodeAddedEvent (used, for instnace, after adding a bunch of nodes with AddNodeNoNotify
   void NodeAdded(vtkMRMLNode *n);
   void NodeAdded() {this->NodeAdded(NULL);};
@@ -517,6 +514,10 @@ protected:
 
   void CopyNodeInUndoStack(vtkMRMLNode *node);
   void CopyNodeInRedoStack(vtkMRMLNode *node);
+
+  /// Add a node to the scene without invoking a NodeAddedEvent event
+  /// Use with extreme caution as it might unsynchronize observer.
+  vtkMRMLNode* AddNodeNoNotify(vtkMRMLNode *n);
 
   void AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes);
 

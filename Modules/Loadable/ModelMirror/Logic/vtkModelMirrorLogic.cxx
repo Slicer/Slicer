@@ -221,8 +221,8 @@ void vtkModelMirrorLogic::CreateMirrorModel ( )
     mirrorModelNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayNode->SetScene(this->GetMRMLScene()); 
-    this->GetMRMLScene()->AddNodeNoNotify(storageNode);  
-    this->GetMRMLScene()->AddNodeNoNotify(displayNode);
+    this->GetMRMLScene()->AddNode(storageNode);
+    this->GetMRMLScene()->AddNode(displayNode);
     mirrorModelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     mirrorModelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
     this->GetMRMLScene()->AddNode(mirrorModelNode);
@@ -382,7 +382,7 @@ void vtkModelMirrorLogic::CreateMirrorTransform ( )
   //--- Configure the node and storage node.
   //---
   mirrorTransformNode->SetName ( "mirror");
-  this->GetMRMLScene()->AddNodeNoNotify ( storageNode );
+  this->GetMRMLScene()->AddNode ( storageNode );
   this->GetMRMLScene()->AddNode(mirrorTransformNode );
   this->SetMirrorTransformNode ( mirrorTransformNode );
   mirrorTransformNode->SetAndObserveStorageNodeID ( storageNode->GetID() );
