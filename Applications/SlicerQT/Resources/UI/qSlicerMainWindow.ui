@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -693,7 +693,7 @@
   </action>
   <action name="actionHelpAboutSlicerQT">
    <property name="text">
-    <string>About SlicerQT</string>
+    <string>About 3D Slicer</string>
    </property>
    <property name="toolTip">
     <string>Provides a description of the Slicer effort and its support.</string>
@@ -764,7 +764,7 @@
   </action>
   <action name="actionViewLayoutConventionalQuantitative">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutConventionalView.png</normaloff>:/Icons/LayoutConventionalView.png</iconset>
    </property>
    <property name="text">
@@ -788,7 +788,7 @@
   </action>
   <action name="actionViewLayoutFourUpQuantitative">
    <property name="icon">
-    <iconset resource="../../../../Libs/qMRMLWidgets/Resources/qMRMLWidgets.qrc">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
      <normaloff>:/Icons/LayoutFourUpView.png</normaloff>:/Icons/LayoutFourUpView.png</iconset>
    </property>
    <property name="text">
@@ -1204,6 +1204,7 @@
   <include location="../SlicerQT.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
  <connections>
