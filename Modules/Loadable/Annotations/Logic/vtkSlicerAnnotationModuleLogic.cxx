@@ -2896,7 +2896,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
         }
       }
   // is there an associated node?
-/*  if (annotationNode->GetAttribute("AssociatedNode"))
+/*  if (annotationNode->GetAttribute("AssociatedNodeID"))
     {
     // add a hierarchy for that node
     // add/get another displayable hierarchy that encapsulates both the associated node and the new fid node
