@@ -214,12 +214,44 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
     {
     return;
     }
-  //qDebug() << "qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode:"
-  //         << selectionNode->GetID();
-
+  
   // make sure that all the elements in the selection node have actions in the
   // create and place menu
   int numIDs = selectionNode->GetNumberOfAnnotationIDsInList();
+
+  // if some were removed, clear out those actions first
+  QList<QAction*> actionList = this->CreateAndPlaceMenu->actions();
+  int numActions = actionList.size();
+  if (numIDs < numActions)
+    {
+    // iterate over the action list and remove ones that aren't in the
+    // selection node
+    for (int i = 0; i < actionList.size(); ++i)
+      {
+      QAction *action = actionList.at(i);
+      QString actionText = action->text();
+      actionText = actionText.prepend(QString("vtkMRMLAnnotation"));
+      actionText = actionText.append(QString("Node"));
+      const char *thisAnnotID = actionText.toAscii().data();
+      if (selectionNode->AnnotationIDInList(thisAnnotID) == -1)
+        {
+        this->ActionGroup->removeAction(action);
+        this->CreateAndPlaceMenu->removeAction(action);
+        }
+      }
+    // update the tool button from the updated action list
+    actionList = this->CreateAndPlaceMenu->actions();
+    if (actionList.size())
+      {
+      this->CreateAndPlaceToolButton->setDefaultAction(actionList.at(0));
+      }
+    else
+      {
+      this->CreateAndPlaceToolButton->setDefaultAction(0);
+      this->CreateAndPlaceToolButton->setIcon(QIcon());
+      this->CreateAndPlaceToolButton->setText(QString());
+      }
+    }
 //  qDebug() << "\tnumIDs = " << numIDs;
   for (int i = 0; i < numIDs; i++)
     {
@@ -253,8 +285,9 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
               q, SLOT(switchPlaceMode()));
       this->CreateAndPlaceToolButton->menu()->addAction(newAction);
       this->ActionGroup->addAction(newAction);
-      // is it a fiducial? make it the default action
-      if (annotationID == QString("vtkMRMLAnnotationFiducialNode"))
+      // is it a fiducial? or the only one? make it the default action
+      if (annotationID == QString("vtkMRMLAnnotationFiducialNode") ||
+          this->CreateAndPlaceMenu->actions().size() == 1)
         {
         this->CreateAndPlaceToolButton->setDefaultAction(newAction);
         }

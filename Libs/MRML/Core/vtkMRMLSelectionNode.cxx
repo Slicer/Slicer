@@ -347,6 +347,36 @@ void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const cha
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::RemoveAnnotationIDFromList(const char *id)
+{
+  if (id == NULL)
+    {
+    return;
+    }
+  vtkDebugMacro("RemoveAnnotationIDFromList: id = " << id);
+
+  std::string idString = std::string(id);
+
+  int index = this->AnnotationIDInList(idString);
+  if (index == -1)
+    {
+    return;
+    }
+  vtkDebugMacro("Removing annotation id " << id << ", found at index " << index);
+  // erase the id and resource
+  this->AnnotationIDList.erase(this->AnnotationIDList.begin()+index);
+  this->AnnotationResourceList.erase(this->AnnotationResourceList.begin()+index);
+
+  // was it the active one?
+  if (this->GetActiveAnnotationID() &&
+      idString.compare(this->GetActiveAnnotationID()) == 0)
+    {
+    // make it inactive
+    this->SetActiveAnnotationID(NULL);
+    }
+  this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);
+}    
+//----------------------------------------------------------------------------
 std::string vtkMRMLSelectionNode::GetAnnotationIDByIndex(int n)
 {
   std::string id;
