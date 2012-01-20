@@ -44,11 +44,39 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
 {
   Q_OBJECT
   QVTK_OBJECT
+
+  /// This property controls which node is visible. The node class name must
+  /// be provided.
+  /// An empty list means all the nodes are visible (default).
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+
+  /// This property controls whether the nodes with the HideFromEditor flag
+  /// on are filtered by the proxy model or not.
+  /// False by default.
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
+
+  /// This property overrides the behavior of \a showHidden for specific types.
+  /// Empty by default.
   Q_PROPERTY(QStringList showHiddenForTypes READ showHiddenForTypes WRITE setShowHiddenForTypes)
+
+  /// This property controls whether \a nodeType subclasses are visible
+  /// If \a showChildNodeTypes is false and \a nodeTypes is vtkMRMLVolumeNode
+  /// then vtkMRMLDScalarVolumeNode are not visible.
+  /// True by default.
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
+
+  /// This property controls the nodes to hide by node type
+  /// Any node of type \a nodeType are visible except the ones
+  /// also of type \a hideChildNodeTypes.
+  /// e.g.: nodeTypes = vtkMRMLVolumeNode, showChildNodeTypes = true,
+  /// hideChildNodeTypes = vtkMRMLDiffusionWeightedVolumeNode
+  /// -> all the nodes of type vtkMRMLScalarVolumeNode, vtkMRMLTensorVolumeNode,
+  /// vtkMRMLDiffusionImageVolumeNode... (but not vtkMRMLDiffusionWeightedVolumeNode)
+  /// will be visible.
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
+
+  /// This property controls the nodes to hide by node IDs.
+  Q_PROPERTY(QStringList hiddenNodeIDs READ hiddenNodeIDs WRITE setHiddenNodeIDs)
 public:
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=0);
@@ -101,6 +129,10 @@ public:
   /// mother class of ExcludedChildNodeType)
   void setHideChildNodeTypes(const QStringList& nodeTypes);
   QStringList hideChildNodeTypes()const;
+
+  void setHiddenNodeIDs(const QStringList& nodeIDsToHide);
+  QStringList hiddenNodeIDs()const;
+
 public slots:
    void setShowHidden(bool);
 
