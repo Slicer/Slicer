@@ -79,7 +79,9 @@ void qMRMLSceneModelPrivate::init()
 
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
+
   q->setNameColumn(0);
+  q->setListenNodeModifiedEvent(true);
 }
 
 //------------------------------------------------------------------------------

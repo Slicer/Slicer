@@ -69,7 +69,6 @@ void qMRMLAnnotationTreeViewPrivate::init()
   //this->SceneModel = new qMRMLSceneAnnotationModel(q);
   //this->SceneModel->setColumnCount(6);
 
-  //this->SceneModel->setListenNodeModifiedEvent(true);
   this->SceneModel = new qMRMLSceneAnnotationModel(q);
   q->setSceneModel(this->SceneModel, "Annotation");
   //this->SortFilterModel = new qMRMLSortFilterProxyModel(q);

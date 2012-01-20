@@ -41,7 +41,6 @@ int qMRMLSceneDisplayableModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneDisplayableModel model;
-  model.setListenNodeModifiedEvent(true);
   qMRMLSceneFactoryWidget sceneFactory(0);
 
   try

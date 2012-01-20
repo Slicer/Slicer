@@ -54,7 +54,6 @@ int qMRMLSceneModelHierarchyModelTest2(int argc, char * argv [])
   scene->Connect();
 
   qMRMLSceneModelHierarchyModel model;
-  model.setListenNodeModifiedEvent(true);
   model.setMRMLScene(scene.GetPointer());
 
   QTreeView view;
@@ -64,7 +63,6 @@ int qMRMLSceneModelHierarchyModelTest2(int argc, char * argv [])
   view.show();
 
   qMRMLTreeView mrmlView;
-  mrmlView.setListenNodeModifiedEvent(true);
   mrmlView.setWindowTitle("qMRMLTreeView");
   mrmlView.setDragDropMode(QAbstractItemView::InternalMove);
   mrmlView.setSceneModelType("ModelHierarchy");
@@ -75,7 +73,6 @@ int qMRMLSceneModelHierarchyModelTest2(int argc, char * argv [])
   mrmlView.show();
 
   qMRMLTreeView mrmlView2;
-  mrmlView2.setListenNodeModifiedEvent(true);
   mrmlView2.setWindowTitle("qMRMLTreeView2");
   mrmlView2.setDragDropMode(QAbstractItemView::InternalMove);
   mrmlView2.setSceneModelType("ModelHierarchy");

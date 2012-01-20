@@ -43,7 +43,6 @@ int qMRMLSceneColorTableModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneColorTableModel model;
-  model.setListenNodeModifiedEvent(true);
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   qMRMLNodeFactory nodeFactory(0);

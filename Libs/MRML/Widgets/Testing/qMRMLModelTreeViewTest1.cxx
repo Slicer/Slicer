@@ -48,7 +48,6 @@ int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 
   qMRMLTreeView modelView;
   modelView.setSceneModelType("ModelHierarchy");
-  modelView.setListenNodeModifiedEvent(true);
   modelView.setMRMLScene(scene);
 
   modelView.show();

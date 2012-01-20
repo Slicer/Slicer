@@ -38,7 +38,6 @@ int qMRMLSceneModelHierarchyModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneModelHierarchyModel model;
-  model.setListenNodeModifiedEvent(true);
   qMRMLSceneFactoryWidget sceneFactory(0);
 
   try

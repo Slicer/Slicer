@@ -38,7 +38,6 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneTransformModel model;
-  model.setListenNodeModifiedEvent(true);
   qMRMLSceneFactoryWidget sceneFactory(0);
 
   try
@@ -135,7 +134,6 @@ int qMRMLSceneTransformModelTest1(int argc, char * argv [])
   treeWidget.setWindowTitle("qMRMLTreeView");
   treeWidget.setMRMLScene(sceneFactory.mrmlScene());
   treeWidget.setDragDropMode(QAbstractItemView::InternalMove);
-  treeWidget.setListenNodeModifiedEvent(true);
   treeWidget.show();
 
   qMRMLSortFilterProxyModel sortModel;

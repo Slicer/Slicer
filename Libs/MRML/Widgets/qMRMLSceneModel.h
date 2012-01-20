@@ -43,9 +43,11 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
 
-  /// Observe (or not) the modified event of the node and update the node item
-  /// data accordingly. It can be useful when the modified property is displayed
+  /// This property controls whether to observe or not the modified event of
+  /// the node and update the node item data accordingly.
+  /// It can be useful when the modified property is displayed
   /// (name, id, visibility...)
+  /// True by default
   Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 
   /// Control wether the model actively listens to the scene.
@@ -100,7 +102,6 @@ public:
   /// Option that activates the expensive listening of the vtkMRMLNode Modified
   /// events. When listening, the signal itemDataChanged() is fired when a
   /// vtkMRMLNode is modified.
-  /// False by default.
   void setListenNodeModifiedEvent(bool listen);
   bool listenNodeModifiedEvent()const;
 

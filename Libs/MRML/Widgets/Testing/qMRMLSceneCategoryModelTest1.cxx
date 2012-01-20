@@ -42,7 +42,6 @@ int qMRMLSceneCategoryModelTest1(int argc, char * argv [])
   QApplication app(argc, argv);
 
   qMRMLSceneCategoryModel model;
-  model.setListenNodeModifiedEvent(true);
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   qMRMLNodeFactory nodeFactory(0);
