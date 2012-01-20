@@ -140,7 +140,7 @@ protected:
   // Get the coordinates of a click in the RenderWindow
   void OnClickInRenderWindowGetCoordinates();
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y);
+  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID = NULL);
   /// Counter for clicks in Render Window
   vtkMRMLAnnotationClickCounter* m_ClickCounter;
 

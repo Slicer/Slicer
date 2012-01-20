@@ -582,7 +582,7 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
   if (!this->IsCorrectDisplayableManager())
     {
@@ -626,6 +626,12 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
   // save for undo and add the node to the scene after any reset of the
   // interaction node so that don't end up back in place mode
   this->GetMRMLScene()->SaveStateForUndo();
+  
+  // is there a node associated with this?
+  if (associatedNodeID)
+    {
+    fiducialNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+    }
 
   fiducialNode->Initialize(this->GetMRMLScene());
 

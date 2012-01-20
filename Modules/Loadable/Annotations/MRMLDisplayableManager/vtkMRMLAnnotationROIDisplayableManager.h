@@ -45,7 +45,7 @@ protected:
   virtual ~vtkMRMLAnnotationROIDisplayableManager();
 
   /// Callback for click in RenderWindow
-  virtual void OnClickInRenderWindow(double x, double y);
+  virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID);
   /// Create a widget.
   virtual vtkAbstractWidget * CreateWidget(vtkMRMLAnnotationNode* node);
 

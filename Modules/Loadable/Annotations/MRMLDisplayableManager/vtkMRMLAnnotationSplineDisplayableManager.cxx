@@ -316,7 +316,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -363,7 +363,13 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
       }
     
     this->GetMRMLScene()->SaveStateForUno();
-    
+
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      splineNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
+  
     splineNode->Initialize(this->GetMRMLScene());
 
     splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("S"));

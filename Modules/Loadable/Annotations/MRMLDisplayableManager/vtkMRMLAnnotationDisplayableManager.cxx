@@ -16,6 +16,7 @@
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
@@ -1138,7 +1139,121 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
 
   if (x < windowWidth && y < windowHeight)
     {
-    this->OnClickInRenderWindow(x, y);
+    const char *associatedNodeID = NULL;
+    // is this a 2d manager that has a volume in the background?
+    if (this->Is2DDisplayableManager())
+      {
+      if (this->GetSliceNode())
+        {
+        // find the slice composite node in the scene with the matching layout name
+        vtkMRMLNode *node;
+        vtkCollectionSimpleIterator it;
+        vtkSmartPointer<vtkCollection> scene;
+        scene = this->GetMRMLScene()->GetNodes();
+        for (scene->InitTraversal(it);
+             (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
+          {
+          vtkMRMLSliceCompositeNode* sliceCompositeNode =
+            vtkMRMLSliceCompositeNode::SafeDownCast(node);
+          if (sliceCompositeNode && sliceCompositeNode->GetLayoutName() &&
+              !strcmp(sliceCompositeNode->GetLayoutName(),
+                      this->GetSliceNode()->GetLayoutName()))
+            {
+            if (sliceCompositeNode->GetBackgroundVolumeID())
+              {
+              associatedNodeID = sliceCompositeNode->GetBackgroundVolumeID();
+              }
+            else if (sliceCompositeNode->GetForegroundVolumeID())
+              {
+              associatedNodeID = sliceCompositeNode->GetForegroundVolumeID();
+              }
+            else if (sliceCompositeNode->GetLabelVolumeID())
+              {
+              associatedNodeID = sliceCompositeNode->GetLabelVolumeID();
+              }
+            }
+          }
+        }
+      }
+    else
+      {
+      // it's a 3D displayable manager and the click could have been on a node
+      vtkMRMLModelDisplayableManager * modelDisplayableManager =
+        vtkMRMLModelDisplayableManager::SafeDownCast(
+          this->GetMRMLDisplayableManagerGroup()->GetDisplayableManagerByClassName(
+            "vtkMRMLModelDisplayableManager"));
+      double yNew = windowHeight - y - 1;
+      if (modelDisplayableManager &&
+          modelDisplayableManager->Pick(x,yNew) &&
+          strcmp(modelDisplayableManager->GetPickedNodeName(),"") != 0)
+        {
+        // find the node id, the picked node name is probably the display node
+        const char *pickedNodeID = modelDisplayableManager->GetPickedNodeName();
+        vtkDebugMacro("Click was on model " << pickedNodeID);
+        vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(pickedNodeID);
+        vtkMRMLDisplayNode *displayNode = NULL;
+        if (mrmlNode)
+          {
+          vtkDebugMacro("Got a mrml node by name, id = " << mrmlNode->GetID());
+          displayNode = vtkMRMLDisplayNode::SafeDownCast(mrmlNode);
+          }
+        else
+          {
+          vtkDebugMacro("couldn't find a mrml node with ID " << pickedNodeID);
+          }
+        if (displayNode)
+          {
+          vtkDebugMacro("Got display node for picked node name " << displayNode->GetID());
+          vtkMRMLDisplayableNode *displayableNode = displayNode->GetDisplayableNode();
+          if (displayableNode)
+            {
+            // start with the assumption that it's a generic displayable node,
+            // then look for it to be a slice node that has the string
+            // CompositeID in it's Description with a valid mrml node id after it
+            associatedNodeID = displayableNode->GetID();
+            // it might be a slice node, check the Description field for the string CompositeID
+            if (displayableNode->GetDescription())
+              {
+              std::string desc = displayableNode->GetDescription();
+              size_t ptr = desc.find("CompositeID");
+              // does it have the string CompoisteID in the description with
+              // something after it?
+              vtkDebugMacro("Desc len = " << desc.length() << ", ptr = " << ptr); 
+              if (ptr != std::string::npos &&
+                  (desc.length() > (ptr + 12)))
+                {
+                std::string compID = desc.substr(ptr + 12);
+                vtkDebugMacro("Found composite node id = " << compID.c_str());
+                vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(compID.c_str());
+                // was this a valid composite node id?
+                if (mrmlNode)
+                  {
+                  vtkMRMLSliceCompositeNode* sliceCompositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(mrmlNode);
+                  if (sliceCompositeNode)
+                    {
+                    if (sliceCompositeNode->GetBackgroundVolumeID())
+                      {
+                      associatedNodeID = sliceCompositeNode->GetBackgroundVolumeID();
+                      }
+                    else if (sliceCompositeNode->GetForegroundVolumeID())
+                      {
+                      associatedNodeID = sliceCompositeNode->GetForegroundVolumeID();
+                      }
+                    else if (sliceCompositeNode->GetLabelVolumeID())
+                      {
+                      associatedNodeID = sliceCompositeNode->GetLabelVolumeID();
+                      }
+                    vtkDebugMacro("Annotation was placed on a 3d slice model, found the volume id " << associatedNodeID);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    vtkDebugMacro("associatedNodeID set to " << (associatedNodeID ? associatedNodeID : "NULL"));
+    this->OnClickInRenderWindow(x, y, associatedNodeID);
     //this->Helper->UpdateLockedAllWidgetsFromNodes();
     }
 }
@@ -1465,7 +1580,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsCorrectDisplayableManager()
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double vtkNotUsed(x), double vtkNotUsed(y))
+void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindow(double vtkNotUsed(x), double vtkNotUsed(y), const char * vtkNotUsed(associatedNodeID))
 {
 
   // The user clicked in the renderWindow

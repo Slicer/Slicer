@@ -659,7 +659,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateWidgetToMRML(vtk
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -832,6 +832,12 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
       }
     
     this->GetMRMLScene()->SaveStateForUndo();
+
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      bidimensionalNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
     
     bidimensionalNode->Initialize(this->GetMRMLScene());
 

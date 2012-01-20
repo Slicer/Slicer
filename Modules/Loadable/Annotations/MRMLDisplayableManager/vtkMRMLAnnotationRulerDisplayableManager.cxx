@@ -754,7 +754,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -813,6 +813,11 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
 
     this->GetMRMLScene()->SaveStateForUndo();
 
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      rulerNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
     rulerNode->Initialize(this->GetMRMLScene());
 
     rulerNode->Delete();

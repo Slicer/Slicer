@@ -386,7 +386,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
 //---------------------------------------------------------------------------
 /// Handle clicks in 3D Render Window
-void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -418,6 +418,12 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
       }
 
     this->GetMRMLScene()->SaveStateForUno();
+
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      angleNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
     
     angleNode->Initialize(this->GetMRMLScene());
 

@@ -633,7 +633,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateWidgetToMRML(vtkAbstractWi
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -705,6 +705,12 @@ void vtkMRMLAnnotationROIDisplayableManager::OnClickInRenderWindow(double x, dou
       }
 
     this->GetMRMLScene()->SaveStateForUndo();
+
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      roiNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
 
     roiNode->Initialize(this->GetMRMLScene());
 

@@ -320,7 +320,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateWidgetToMRML(vtkAbstrac
 
 //---------------------------------------------------------------------------
 /// Create a annotationMRMLnode
-void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, double y)
+void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, double y, const char *associatedNodeID)
 {
 
   if (!this->IsCorrectDisplayableManager())
@@ -351,6 +351,12 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
       }
     
     this->GetMRMLScene()->SaveStateForUno();
+
+    // is there a node associated with this?
+    if (associatedNodeID)
+      {
+      stickyNode->SetAttribute("AssociatedNodeID", associatedNodeID);
+      }
     
     stickyNode->Initialize(this->GetMRMLScene());
 
