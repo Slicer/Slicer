@@ -42,6 +42,9 @@ public:
   qSlicerTransformsModuleWidget(QWidget *parent=0);
   virtual ~qSlicerTransformsModuleWidget();
 
+  /// Reimplemented for internal reasons
+  void setMRMLScene(vtkMRMLScene* scene);
+
 public slots:
   void loadTransform();
 
@@ -55,6 +58,8 @@ protected slots:
   void onNodeSelected(vtkMRMLNode* node);
   void onTranslationRangeChanged(double newMin, double newMax);
 
+  void transformSelectedNodes();
+  void untransformSelectedNodes();
   /// 
   /// Triggered upon MRML transform node updates
   void onMRMLTransformNodeModified(vtkObject* caller);

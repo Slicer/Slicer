@@ -125,9 +125,24 @@ void qSlicerTransformsModuleWidget::setup()
   this->onTranslationRangeChanged(d->TranslationSliders->minimum(),
                                   d->TranslationSliders->maximum());
 
+  // Transform nodes connection
+  this->connect(d->TransformToolButton, SIGNAL(clicked()),
+                SLOT(transformSelectedNodes()));
+  this->connect(d->UntransformToolButton, SIGNAL(clicked()),
+                SLOT(untransformSelectedNodes()));
+
+  // Icons
   QIcon openIcon =
     QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
   d->LoadTransformPushButton->setIcon(openIcon);
+
+  QIcon rightIcon =
+    QApplication::style()->standardIcon(QStyle::SP_ArrowRight);
+  d->TransformToolButton->setIcon(rightIcon);
+
+  QIcon leftIcon =
+    QApplication::style()->standardIcon(QStyle::SP_ArrowLeft);
+  d->UntransformToolButton->setIcon(leftIcon);
 }
 
 //-----------------------------------------------------------------------------
@@ -160,6 +175,26 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
     vtkMRMLTransformableNode::TransformModifiedEvent,
     this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
+  QStringList nodeTypes;
+  // If no transform node, it would show the entire scene, lets shown none
+  // instead.
+  if (transformNode == 0)
+    {
+    nodeTypes << QString("test");
+    }
+  d->TransformedTreeView->setNodeTypes(nodeTypes);
+
+  // Filter the current node in the transformed tree view
+  d->TransformedTreeView->setRootNode(transformNode);
+
+  // Hide the current node in the transformable tree view
+  QStringList hiddenNodeIDs;
+  if (transformNode)
+    {
+    hiddenNodeIDs << QString(transformNode->GetID());
+    }
+  d->TransformableTreeView->sortFilterProxyModel()
+    ->setHiddenNodeIDs(hiddenNodeIDs);
   d->MRMLTransformNode = transformNode;
 }
 
@@ -255,5 +290,46 @@ void qSlicerTransformsModuleWidget::loadTransform()
   if (!fileName.isEmpty())
     {
     d->logic()->AddTransform(fileName.toLatin1(), this->mrmlScene());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  this->Superclass::setMRMLScene(scene);
+  d->TransformableTreeView->setRootIndex(
+    d->TransformableTreeView->sortFilterProxyModel()->mrmlSceneIndex());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::transformSelectedNodes()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  QModelIndexList selectedIndexes =
+    d->TransformableTreeView->selectionModel()->selectedRows();
+  selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
+  foreach(QModelIndex selectedIndex, selectedIndexes)
+    {
+    vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
+    d->TransformableTreeView->sortFilterProxyModel()->
+      mrmlNodeFromIndex( selectedIndex ));
+    node->SetAndObserveTransformNodeID(d->MRMLTransformNode->GetID());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::untransformSelectedNodes()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  QModelIndexList selectedIndexes =
+    d->TransformedTreeView->selectionModel()->selectedRows();
+  selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
+  foreach(QModelIndex selectedIndex, selectedIndexes)
+    {
+    vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
+    d->TransformedTreeView->sortFilterProxyModel()->
+      mrmlNodeFromIndex( selectedIndex ));
+    node->SetAndObserveTransformNodeID(0);
     }
 }
