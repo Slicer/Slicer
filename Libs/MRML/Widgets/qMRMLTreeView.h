@@ -43,7 +43,12 @@ class vtkMRMLModelHierarchyLogic;
 class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 {
   Q_OBJECT
+  QVTK_OBJECT
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
+  /// This property controls whether to actively listen to the nodes
+  /// to synchronize their representation. As it can be time consuming, you
+  /// can disable it if you want a lazy update.
+  /// True by default.
   Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
@@ -95,7 +100,13 @@ public:
   /// bypass the property and show the node anyway.
   inline void setShowHidden(bool);
   inline bool showHidden()const;
-  
+
+  /// Similar to setRootIndex(QModelIndex) but observe the ModifiedEvent of
+  /// the node to stay in sync.
+  /// A null node (default) means QModelIndex() is the root index.
+  void setRootNode(vtkMRMLNode* root);
+  vtkMRMLNode* rootNode()const;
+
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// The returned value can't be null.
@@ -106,6 +117,17 @@ public:
   /// it's sizeHint is right for the visible indexes
   bool fitSizeToVisibleIndexes()const;
   void setFitSizeToVisibleIndexes(bool);
+
+  /// Return true if \a potentialAncestor is an ancestor
+  /// of index
+  static bool isAncestor(const QModelIndex& index, const QModelIndex& potentialAncestor);
+
+  /// Return an ancestor in the list of potential ancestors if any, otherwise
+  /// return an invalid QModelIndex
+  static QModelIndex findAncestor(const QModelIndex& index, const QModelIndexList& potentialAncestors);
+
+  /// Remove indexes that have at least one ancestor in the list
+  static QModelIndexList removeChildren(const QModelIndexList& indexes);
 
   virtual QSize minimumSizeHint()const;
   virtual QSize sizeHint()const;
@@ -131,6 +153,7 @@ protected slots:
   void editCurrentNode();
   void renameCurrentNode();
 
+  void updateRootNode(vtkObject* modifiedRootNode);
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
 

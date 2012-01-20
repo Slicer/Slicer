@@ -413,7 +413,28 @@ void qMRMLTreeView::editCurrentNode()
     }
   emit editNodeRequested(this->currentNode());
 }
-  
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
+{
+  qvtkReconnect(this->rootNode(), rootNode, vtkCommand::ModifiedEvent,
+                this, SLOT(updateRootNode(vtkObject*)));
+  this->setRootIndex(this->sortFilterProxyModel()->indexFromMRMLNode(rootNode));
+}
+
+//--------------------------------------------------------------------------
+vtkMRMLNode* qMRMLTreeView::rootNode()const
+{
+  return this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::updateRootNode(vtkObject* node)
+{
+  // Maybe the node has changed of QModelIndex, need to resync
+  this->setRootNode(vtkMRMLNode::SafeDownCast(node));
+}
+
 //--------------------------------------------------------------------------
 qMRMLSortFilterProxyModel* qMRMLTreeView::sortFilterProxyModel()const
 {
@@ -622,6 +643,47 @@ void qMRMLTreeView::deleteCurrentNode()
   this->mrmlScene()->RemoveNode(this->currentNode());
 }
 
+//------------------------------------------------------------------------------
+bool qMRMLTreeView::isAncestor(const QModelIndex& index, const QModelIndex& potentialAncestor)
+{
+  QModelIndex ancestor = index.parent();
+  while(ancestor.isValid())
+    {
+    if (ancestor == potentialAncestor)
+      {
+      return true;
+      }
+    ancestor = ancestor.parent();
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+QModelIndex qMRMLTreeView::findAncestor(const QModelIndex& index, const QModelIndexList& potentialAncestors)
+{
+  foreach(const QModelIndex& potentialAncestor, potentialAncestors)
+    {
+    if (qMRMLTreeView::isAncestor(index, potentialAncestor))
+      {
+      return potentialAncestor;
+      }
+    }
+  return QModelIndex();
+}
+
+//------------------------------------------------------------------------------
+QModelIndexList qMRMLTreeView::removeChildren(const QModelIndexList& indexes)
+{
+  QModelIndexList noAncestorIndexList;
+  foreach(QModelIndex index, indexes)
+    {
+    if (!qMRMLTreeView::findAncestor(index, indexes).isValid())
+      {
+      noAncestorIndexList << index;
+      }
+    }
+  return noAncestorIndexList;
+}
 
 //------------------------------------------------------------------------------
 void qMRMLTreeView::showEvent(QShowEvent* event)
