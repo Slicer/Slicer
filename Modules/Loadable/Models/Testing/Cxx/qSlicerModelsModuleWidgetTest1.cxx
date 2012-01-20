@@ -32,6 +32,7 @@
 
 // MRML includes
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelNode.h>
 
 // VTK includes
 #include <vtkNew.h>

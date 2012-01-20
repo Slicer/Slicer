@@ -4,11 +4,14 @@ set(qt_module_name "Models")
 set(qt_module_export_directive "Q_SLICER_QTMODULES_MODELS_EXPORT")
 
 # Build module sub libraries
+add_subdirectory(Logic)
 add_subdirectory(Widgets)
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 # Is used by the Plugins and Testing directories
 set(qt_module_include_directories
+  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
+  ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
@@ -45,6 +48,7 @@ set(qt_module_UI_SRCS
 # Additional Target libraries
 set(qt_module_target_libraries
   qSlicerModelsModuleWidgets
+  vtkSlicerModelsModuleLogic
   )
 
 # Resources

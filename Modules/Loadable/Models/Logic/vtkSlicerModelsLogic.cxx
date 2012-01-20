@@ -14,10 +14,10 @@
 /// MRML includes
 #include <vtkCacheManager.h>
 #include <vtkMRMLClipModelsNode.h>
-#include <vtkMRMLColorNode.h>
 #include <vtkMRMLFreeSurferModelOverlayStorageNode.h>
 #include <vtkMRMLFreeSurferModelStorageNode.h>
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLTransformNode.h>
 
 /// VTK includes
@@ -47,8 +47,8 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
 {
   if (this->ActiveModelNode != NULL)
     {
-        this->ActiveModelNode->Delete();
-        this->ActiveModelNode = NULL;
+    this->ActiveModelNode->Delete();
+    this->ActiveModelNode = NULL;
     }
 }
 
@@ -86,7 +86,6 @@ void vtkSlicerModelsLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     {
     this->GetMRMLScene()->RemoveNode(storageNodes[i]);
     }
-
 }
 
 //----------------------------------------------------------------------------
@@ -102,7 +101,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
   std::string ssuf = suffix;
   itksys::Directory dir;
   dir.Load(dirname);
- 
+
   int nfiles = dir.GetNumberOfFiles();
   int res = 1;
   for (int i=0; i<nfiles; i++) {
@@ -114,7 +113,7 @@ int vtkSlicerModelsLogic::AddModels (const char* dirname, const char* suffix )
         {
         std::string fullPath = std::string(dir.GetPath())
             + "/" + filename;
-        if (this->AddModel(fullPath.c_str()) == NULL) 
+        if (this->AddModel(fullPath.c_str()) == NULL)
           {
           res = 0;
           }
@@ -194,17 +193,17 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
     modelNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
-    displayNode->SetScene(this->GetMRMLScene()); 
+    displayNode->SetScene(this->GetMRMLScene());
 
-    this->GetMRMLScene()->AddNode(storageNode);  
+    this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayNode);
     modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());  
+    modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
     displayNode->SetPolyData(modelNode->GetPolyData());
-    
-    this->GetMRMLScene()->AddNode(modelNode);  
 
-    //this->Modified();  
+    this->GetMRMLScene()->AddNode(modelNode);
+
+    //this->Modified();
 
     // the scene points to it still
     modelNode->Delete();
@@ -228,8 +227,9 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
     modelNode = NULL;
     }
 
-  return modelNode;  
+  return modelNode;
 }
+
 //----------------------------------------------------------------------------
 int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *modelNode)
 {
@@ -241,7 +241,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
                   (modelNode == NULL ? "null" : modelNode->GetID()));
     return 0;
     }
-  
+
   vtkMRMLModelStorageNode *storageNode = NULL;
   vtkMRMLStorageNode *snode = modelNode->GetStorageNode();
   if (snode != NULL)
@@ -252,7 +252,7 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     {
     storageNode = vtkMRMLModelStorageNode::New();
     storageNode->SetScene(this->GetMRMLScene());
-    this->GetMRMLScene()->AddNode(storageNode);  
+    this->GetMRMLScene()->AddNode(storageNode);
     modelNode->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     }
@@ -267,12 +267,10 @@ int vtkSlicerModelsLogic::SaveModel (const char* filename, vtkMRMLModelNode *mod
     {
     storageNode->SetFileName(filename);
     }
-  
+
   int res = storageNode->WriteData(modelNode);
 
-  
   return res;
-
 }
 
 
@@ -295,11 +293,11 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
     {
     vtkErrorMacro("Model node or file name are null.");
     return 0;
-    }  
+    }
 
   vtkMRMLFreeSurferModelOverlayStorageNode *fsmoStorageNode = vtkMRMLFreeSurferModelOverlayStorageNode::New();
   vtkMRMLStorageNode *storageNode = NULL;
-  
+
   // check for local or remote files
   int useURI = 0; //false ;
   if (this->GetMRMLScene() &&
@@ -337,7 +335,7 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
     }
   else
     {
-    vtkMRMLColorNode *colorNode = vtkMRMLColorNode::SafeDownCast(displayNode->GetColorNode());
+    vtkMRMLColorNode *colorNode = displayNode->GetColorNode();
     if (colorNode == NULL)
       {
       vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
@@ -353,7 +351,7 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
     this->GetMRMLScene()->AddNode(storageNode);
     // now add this as another storage node on the model
     modelNode->AddAndObserveStorageNodeID(storageNode->GetID());
-    
+
     // now read, since all the id's are set up
     vtkDebugMacro("AddScalar: calling read data now.");
     if (this->GetDebug()) { storageNode->DebugOn(); }
@@ -388,12 +386,12 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
 
     }
   fsmoStorageNode->Delete();
-  
+
   return storageNode;
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode, 
+void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
                                           vtkMRMLModelNode *modelNode,
                                           int transformNormals,
                                           vtkMRMLModelNode *modelOut)
@@ -445,4 +443,3 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 
   return;
 }
-

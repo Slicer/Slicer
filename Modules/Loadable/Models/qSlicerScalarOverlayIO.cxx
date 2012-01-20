@@ -29,6 +29,7 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
 
 // VTK includes

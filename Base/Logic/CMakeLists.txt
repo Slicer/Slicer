@@ -79,8 +79,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerApplicationLogic.cxx
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
-  vtkSlicerModelsLogic.cxx
-  vtkSlicerModelHierarchyLogic.cxx
   vtkSlicerFiducialsLogic.cxx
   vtkSlicerColorLogic.cxx
   vtkDataIOManagerLogic.cxx
