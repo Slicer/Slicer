@@ -367,7 +367,7 @@ void vtkMRMLChartViewDisplayableManager::vtkInternal::UpdateBackgroundColor()
   bool gradient = backgroundColor[0] != backgroundColor2[0] ||
                   backgroundColor[1] != backgroundColor2[1] ||
                   backgroundColor[2] != backgroundColor2[2];
-  this->External->GetRenderer()->SetGradientBackground(true);
+  this->External->GetRenderer()->SetGradientBackground(gradient);
 
   // If new background color is White, switch axis color label to black
   if (backgroundColor[0] == 1.0 && backgroundColor[1] == 1.0 && backgroundColor[2] == 1.0)

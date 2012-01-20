@@ -107,7 +107,9 @@ void vtkMRMLChartNode::ClearArrays()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLChartNode::SetProperty(const char *name, const char *property, const char *value)
+void vtkMRMLChartNode::SetProperty(const char *vtkNotUsed(name),
+                                   const char *vtkNotUsed(property),
+                                   const char *vtkNotUsed(value))
 {
 
 }

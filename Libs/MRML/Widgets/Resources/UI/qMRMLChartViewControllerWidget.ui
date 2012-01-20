@@ -61,6 +61,12 @@
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
+  <customwidget>
+   <class>ctkPopupWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkPopupWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
