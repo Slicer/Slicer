@@ -47,9 +47,6 @@ class Q_SLICER_QTMODULES_SCENEVIEWS_EXPORT qMRMLSceneViewsTreeView
   : public qMRMLTreeView
 {
   Q_OBJECT
-  Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
-  Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
-  Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
 
 public:
   typedef qMRMLTreeView Superclass;
