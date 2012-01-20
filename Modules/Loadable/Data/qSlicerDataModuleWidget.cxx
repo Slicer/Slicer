@@ -196,7 +196,6 @@ void qSlicerDataModuleWidget::insertTransformNode()
   if (parent)
     {
     linearTransform->SetAndObserveTransformNodeID( parent->GetID() );
-    linearTransform->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     }
 
   this->mrmlScene()->AddNode(linearTransform);

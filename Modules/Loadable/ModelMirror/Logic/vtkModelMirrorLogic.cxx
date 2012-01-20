@@ -478,7 +478,6 @@ int vtkModelMirrorLogic::HardenTransform()
     }
 
   tbnode->SetAndObserveTransformNodeID(NULL);
-  tbnode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
 
   return ( 1 );
 }

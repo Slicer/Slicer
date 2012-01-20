@@ -100,11 +100,6 @@ vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 {
-  if (this->MRMLLogicCallbackCommand)
-    {
-    this->MRMLLogicCallbackCommand->Delete();
-    this->MRMLLogicCallbackCommand = 0;
-    }
   this->SetName(0);
   this->SetSliceNode(0);
 
@@ -143,6 +138,11 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
 
   this->DeleteSliceModel();
 
+  if (this->MRMLLogicCallbackCommand)
+    {
+    this->MRMLLogicCallbackCommand->Delete();
+    this->MRMLLogicCallbackCommand = 0;
+    }
 }
 
 //----------------------------------------------------------------------------

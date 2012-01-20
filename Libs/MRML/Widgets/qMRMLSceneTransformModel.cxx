@@ -100,7 +100,6 @@ bool qMRMLSceneTransformModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
   if (transformableNode)
     {
     transformableNode->SetAndObserveTransformNodeID( newParent ? newParent->GetID() : 0 );
-    transformableNode->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
     return true;
     }
   return false;
