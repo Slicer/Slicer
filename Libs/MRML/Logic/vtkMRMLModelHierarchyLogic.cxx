@@ -21,6 +21,7 @@
 #include "vtkMRMLDisplayNode.h"
 
 // VTK includes
+#include <vtkNew.h>
 
 vtkCxxRevisionMacro(vtkMRMLModelHierarchyLogic, "$Revision: 12142 $");
 vtkStandardNewMacro(vtkMRMLModelHierarchyLogic);
@@ -35,6 +36,31 @@ vtkMRMLModelHierarchyLogic::vtkMRMLModelHierarchyLogic()
 //----------------------------------------------------------------------------
 vtkMRMLModelHierarchyLogic::~vtkMRMLModelHierarchyLogic()
 {
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelHierarchyLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  vtkNew<vtkIntArray> sceneEvents;
+  sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLModelHierarchyLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
+{
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
+  if (!modelNode || this->GetMRMLScene()->IsBatchProcessing())
+    {
+    return;
+    }
+  // A model hierarchy node is useless without a model node. Delete it.
+  vtkMRMLModelHierarchyNode* modelHierarchyNode =
+    this->GetModelHierarchyNode(modelNode->GetID());
+  if (modelHierarchyNode)
+    {
+    this->GetMRMLScene()->RemoveNode(modelHierarchyNode);
+    }
 }
 
 //----------------------------------------------------------------------------

@@ -38,11 +38,9 @@
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLModelNode.h>
-#include <vtkMRMLModelHierarchyNode.h>
-
-#include <vtkMRMLScene.h>
-
 #include <vtkMRMLModelHierarchyLogic.h>
+#include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLScene.h>
 
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
@@ -55,7 +53,6 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->NodeMenu = 0;
   this->EditAction = 0;
   this->SceneMenu = 0;
-  this->ModelHierarchyLogic = 0;
 }
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::~qMRMLTreeViewPrivate()
@@ -310,14 +307,6 @@ vtkMRMLNode* qMRMLTreeView::currentNode()const
   Q_D(const qMRMLTreeView);
   return d->SortFilterModel->mrmlNodeFromIndex(this->selectionModel()->currentIndex());
 }
-
-void qMRMLTreeView::setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic* logic)
-{
-  Q_D(qMRMLTreeView);
-
-  d->ModelHierarchyLogic = logic;
-}
-
 
 //------------------------------------------------------------------------------
 void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
@@ -629,16 +618,6 @@ void qMRMLTreeView::deleteCurrentNode()
     {
     Q_ASSERT(this->currentNode());
     return;
-    }
-  // remove model hierarchy node if exists
-  vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(this->currentNode());
-  if (mnode)
-    {
-    vtkMRMLModelHierarchyNode* mhnode = d->ModelHierarchyLogic->GetModelHierarchyNode(mnode->GetID());
-    if (mhnode)
-      {
-      this->mrmlScene()->RemoveNode(mhnode);
-      }
     }
   this->mrmlScene()->RemoveNode(this->currentNode());
 }

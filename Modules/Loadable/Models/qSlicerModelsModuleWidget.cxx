@@ -41,7 +41,6 @@ class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModule
 public:
   qSlicerModelsModuleWidgetPrivate();
   QAction *InsertHierarchyAction;
-  vtkMRMLModelHierarchyLogic *MRMLModelHierarchyLogic;
 };
 
 //-----------------------------------------------------------------------------
@@ -51,7 +50,6 @@ public:
 qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
 {
   this->InsertHierarchyAction = 0;
-  this->MRMLModelHierarchyLogic = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -70,22 +68,12 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic *logic)
-{
-  Q_D(qSlicerModelsModuleWidget);
-  
-  d->MRMLModelHierarchyLogic = logic;
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerModelsModuleWidget::setup()
 {
   Q_D(qSlicerModelsModuleWidget);
   
   d->setupUi(this);
   d->ClipModelsNodeComboBox->setVisible(false);
-
-  d->ModelHierarchyTreeView->setMRMLModelHierarchyLogic(d->MRMLModelHierarchyLogic);
 
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
     d->ModelHierarchyTreeView->sceneModel())->setIDColumn(-1);

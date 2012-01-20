@@ -35,7 +35,6 @@
 // Slicer logic includes
 #include <vtkSlicerApplicationLogic.h>
 #include <vtkSlicerModelsLogic.h>
-#include <vtkMRMLModelHierarchyLogic.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerModelsModule, qSlicerModelsModule);
@@ -122,10 +121,6 @@ void qSlicerModelsModule::setup()
 qSlicerAbstractModuleRepresentation * qSlicerModelsModule::createWidgetRepresentation()
 {
   qSlicerModelsModuleWidget* widget = new qSlicerModelsModuleWidget;
-  if (this->appLogic())
-    {
-    widget->setMRMLModelHierarchyLogic(this->appLogic()->GetModelHierarchyLogic());
-    }
   return widget;
 }
 

@@ -41,7 +41,6 @@ class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModule
 public:
   qSlicerDataModuleWidgetPrivate();
   vtkMRMLNode*                MRMLNode;
-  vtkMRMLModelHierarchyLogic* MRMLModelHierarchyLogic;
   QAction*                    HardenTransformAction;
 };
 
@@ -50,7 +49,6 @@ qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate()
 {
   this->MRMLNode = 0;
   this->HardenTransformAction = 0;
-  this->MRMLModelHierarchyLogic = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -71,8 +69,6 @@ void qSlicerDataModuleWidget::setup()
   Q_D(qSlicerDataModuleWidget);
 
   d->setupUi(this);
-
-  d->MRMLTreeView->setMRMLModelHierarchyLogic(d->MRMLModelHierarchyLogic);
 
   // Edit properties...
   connect(d->MRMLTreeView, SIGNAL(editNodeRequested(vtkMRMLNode*)),
@@ -154,15 +150,6 @@ void qSlicerDataModuleWidget::setup()
     help->setChecked(false);
     }
 }
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic *logic)
-{
-  Q_D(qSlicerDataModuleWidget);
-  
-  d->MRMLModelHierarchyLogic = logic;
-}
-
 
 //-----------------------------------------------------------------------------
 void qSlicerDataModuleWidget::setMRMLIDsVisible(bool visible)

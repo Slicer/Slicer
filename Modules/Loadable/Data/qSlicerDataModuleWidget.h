@@ -26,7 +26,6 @@
 #include "qSlicerDataModuleExport.h"
 
 class vtkMRMLNode;
-class vtkMRMLModelHierarchyLogic;
 class qSlicerDataModuleWidgetPrivate;
 
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
@@ -48,8 +47,6 @@ public slots:
   void addFiducialList();
   void addColorTable();
   void addFiberBundle();
-
-  void setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic *logic);
 
   void setMRMLIDsVisible(bool visible);
 

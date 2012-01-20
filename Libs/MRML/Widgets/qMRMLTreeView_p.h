@@ -22,16 +22,13 @@
 #define __qMRMLTreeView_p_h
 
 // Qt includes
-#include <QStyledItemDelegate>
 class QAction;
 class QMenu;
 
 // MRMLWidgets includes
 #include "qMRMLTreeView.h"
-#include "qMRMLWidgetsExport.h"
 class qMRMLSceneModel;
 class qMRMLSortFilterProxyModel;
-class vtkMRMLModelHierarchyLogic;
 
 //------------------------------------------------------------------------------
 class qMRMLTreeViewPrivate
@@ -57,7 +54,6 @@ public:
   QMenu*                     NodeMenu;
   QAction*                   EditAction;
   QMenu*                     SceneMenu;
-  vtkMRMLModelHierarchyLogic* ModelHierarchyLogic;
 
 };
 

@@ -28,7 +28,6 @@
 
 class qSlicerModelsModuleWidgetPrivate;
 class vtkMRMLNode;
-class vtkMRMLModelHierarchyLogic;
 class QModelIndex;
 
 /// \ingroup Slicer_QtModules_Models
@@ -48,7 +47,6 @@ public slots:
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void onExpanded(const QModelIndex &index);
   void onCollapsed(const QModelIndex &index);
-  void setMRMLModelHierarchyLogic(vtkMRMLModelHierarchyLogic *logic);
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
