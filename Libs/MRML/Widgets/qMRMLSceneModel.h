@@ -58,7 +58,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// A value of -1 hides it. First column (0) by default.
   Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
   /// Control in which column vtkMRMLNode IDs are displayed (Qt::DisplayRole).
-  /// A value of -1 hides it. Second column (1) by default.
+  /// A value of -1 hides it. Hidden by default (value of -1)
   Q_PROPERTY (int idColumn READ idColumn WRITE setIDColumn)
   /// Control in which column vtkMRMLNode::Selected are displayed (Qt::CheckStateRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
@@ -80,12 +80,6 @@ public:
     PointerRole,
     ExtraItemsRole
     };
-
-  enum ModelColumn
-  {
-    NameColumn = 0,
-    IDColumn
-  };
 
   virtual void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
@@ -178,6 +172,8 @@ protected slots:
   void onItemChanged(QStandardItem * item);
   void delayedItemChanged();
 
+  void updateColumnCount();
+
 protected:
 
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);
@@ -189,11 +185,16 @@ protected:
 
   virtual bool isANode(const QStandardItem* item)const;
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+
+  /// You shouldn't need to call this function.
+  void updateNodeItems();
+
   /// Generic function that updates the item data and flags from the node.
   /// You probably want to reimplement updateItemDataFromNode() instead.
   /// \sa updateNodeFromItemData, updateNodeFromItem, updateItemDataFromNode,
   /// nodeFlags
   virtual void updateItemFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+
   /// To reimplement if you want custom display of the QStandardItem from
   /// the MRML node.
   /// Example:
@@ -237,6 +238,7 @@ protected:
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);
+  virtual int maxColumnId()const;
 protected:
   QScopedPointer<qMRMLSceneModelPrivate> d_ptr;
 
@@ -244,6 +246,7 @@ private:
   Q_DECLARE_PRIVATE(qMRMLSceneModel);
   Q_DISABLE_COPY(qMRMLSceneModel);
 };
+
 void printStandardItem(QStandardItem* item, const QString& offset);
 
 // -----------------------------------------------------------------------------

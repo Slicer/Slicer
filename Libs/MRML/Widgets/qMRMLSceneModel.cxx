@@ -77,13 +77,9 @@ void qMRMLSceneModelPrivate::init()
   this->CallBack->SetClientData(q);
   this->CallBack->SetCallback(qMRMLSceneModel::onMRMLSceneEvent);
 
-  this->NameColumn = qMRMLSceneModel::NameColumn;
-  this->IDColumn = qMRMLSceneModel::IDColumn;
-
-  q->setColumnCount(2);
-  q->setHorizontalHeaderLabels(QStringList() << "Nodes" << "Ids");
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)),
                    q, SLOT(onItemChanged(QStandardItem*)));
+  q->setNameColumn(0);
 }
 
 //------------------------------------------------------------------------------
@@ -1207,6 +1203,24 @@ void printStandardItem(QStandardItem* item, const QString& offset)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModel::updateNodeItems()
+{
+  if (this->mrmlScene() == 0)
+    {
+    return;
+    }
+  this->mrmlSceneItem()->setColumnCount(this->columnCount());
+  vtkCollection* nodes = this->mrmlScene()->GetNodes();
+  vtkMRMLNode* node = 0;
+  vtkCollectionSimpleIterator it;
+  for (nodes->InitTraversal(it);
+       (node = (vtkMRMLNode*)nodes->GetNextItemAsObject(it)) ;)
+    {
+    this->updateNodeItems(node, QString(node->GetID()));
+    }
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLNodeModified(vtkObject* node)
 {
   vtkMRMLNode* modifiedNode = vtkMRMLNode::SafeDownCast(node);
@@ -1221,21 +1235,21 @@ void qMRMLSceneModel::onMRMLNodeIDChanged(vtkObject* node, void* callData)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* modifiedNode, const QString& uid)
+void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 {
   Q_D(qMRMLSceneModel);
-  Q_ASSERT(modifiedNode && modifiedNode->GetScene());
-  //Q_ASSERT(modifiedNode->GetScene()->IsNodePresent(modifiedNode));
-  QModelIndexList nodeIndexes = d->indexes(uid);
+  Q_ASSERT(node && node->GetScene());
+  //Q_ASSERT(node->GetScene()->IsNodePresent(node));
+  QModelIndexList nodeIndexes = d->indexes(nodeUID);
   Q_ASSERT(nodeIndexes.count());
-  //qDebug() << "onMRMLNodeModified" << modifiedNode->GetID() << nodeIndexes;
+  //qDebug() << "onMRMLNodeModified" << node->GetID() << nodeIndexes;
   for (int i = 0; i < nodeIndexes.size(); ++i)
     {
     QModelIndex index = nodeIndexes[i];
     // The node has been modified because it's part of a drag&drop action
     // (reparenting). so it means QStandardItemModel has already reparented
     // the row, no need to update the items again.
-    //if (d->DraggedNodes.contains(modifiedNode))
+    //if (d->DraggedNodes.contains(node))
     //  {
     //  continue;
     //  }
@@ -1243,13 +1257,13 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* modifiedNode, const QString& 
     int oldRow = item->row();
     QStandardItem* oldParent = item->parent();
 
-    this->updateItemFromNode(item, modifiedNode, item->column());
+    this->updateItemFromNode(item, node, item->column());
     // maybe the item has been reparented, then we need to rescan the
     // indexes again as may are wrong.
     if (item->row() != oldRow || item->parent() != oldParent)
       {
       int oldSize = nodeIndexes.size();
-      nodeIndexes = this->indexes(modifiedNode);
+      nodeIndexes = this->indexes(node);
       int newSize = nodeIndexes.size();
       //the number of columns shouldn't change
       Q_ASSERT(oldSize == newSize);
@@ -1372,7 +1386,7 @@ void qMRMLSceneModel::setNameColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->NameColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
 //------------------------------------------------------------------------------
@@ -1387,7 +1401,7 @@ void qMRMLSceneModel::setIDColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->IDColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
 //------------------------------------------------------------------------------
@@ -1402,7 +1416,7 @@ void qMRMLSceneModel::setCheckableColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->CheckableColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
 //------------------------------------------------------------------------------
@@ -1417,7 +1431,7 @@ void qMRMLSceneModel::setVisibilityColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->VisibilityColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
 //------------------------------------------------------------------------------
@@ -1432,5 +1446,27 @@ void qMRMLSceneModel::setToolTipNameColumn(int column)
 {
   Q_D(qMRMLSceneModel);
   d->ToolTipNameColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::updateColumnCount()
+{
+  Q_D(qMRMLSceneModel);
+  int max = this->maxColumnId();
+  this->setColumnCount(max + 1);
+  this->updateNodeItems();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneModel::maxColumnId()const
+{
+  Q_D(const qMRMLSceneModel);
+  int maxId = -1;
+  maxId = qMax(maxId, d->NameColumn);
+  maxId = qMax(maxId, d->IDColumn);
+  maxId = qMax(maxId, d->CheckableColumn);
+  maxId = qMax(maxId, d->VisibilityColumn);
+  maxId = qMax(maxId, d->ToolTipNameColumn);
+  return maxId;
 }

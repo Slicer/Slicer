@@ -30,6 +30,7 @@
 #include <vtkSlicerTransformLogic.h>
 
 // MRMLWidgets includes
+#include <qMRMLSceneModel.h>
 
 // MRML includes
 #include <vtkMRMLLinearTransformNode.h>
@@ -90,13 +91,13 @@ void qSlicerDataModuleWidget::setup()
   connect( d->HardenTransformAction, SIGNAL(triggered()),
            this, SLOT(hardenTransformOnCurrentNode()) );
 
+  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
+          this, SLOT(onSceneModelChanged(QString)));
+
   // Connection with TreeView is done in UI file
   d->MRMLSceneModelComboBox->addItem(QString("Transform"));
   d->MRMLSceneModelComboBox->addItem(QString("Displayable"));
   d->MRMLSceneModelComboBox->addItem(QString("ModelHierarchy"));
-
-  connect(d->MRMLSceneModelComboBox, SIGNAL(currentIndexChanged(QString)),
-          this, SLOT(onSceneModelChanged(QString)));
 
   connect(d->DisplayMRMLIDsCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(setMRMLIDsVisible(bool)));
@@ -107,6 +108,7 @@ void qSlicerDataModuleWidget::setup()
   d->MRMLTreeView->sortFilterProxyModel()->setFilterKeyColumn(-1);
   connect(d->FilterLineEdit, SIGNAL(textChanged(QString)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(QString)));
+
   // hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
 
@@ -227,6 +229,10 @@ void qSlicerDataModuleWidget::onSceneModelChanged(const QString& modelType)
   Q_D(qSlicerDataModuleWidget);
   d->MRMLTreeView->setSceneModelType( modelType );
 
+  d->MRMLTreeView->sceneModel()->setIDColumn(1);
+  d->MRMLTreeView->sceneModel()->setHorizontalHeaderLabels(
+    QStringList() << "Nodes" << "IDs");
+
   d->MRMLTreeView->header()->setStretchLastSection(false);
   d->MRMLTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
   d->MRMLTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
@@ -235,6 +241,8 @@ void qSlicerDataModuleWidget::onSceneModelChanged(const QString& modelType)
 
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
+
+  d->MRMLTreeView->sortFilterProxyModel()->invalidate();
 }
 
 //-----------------------------------------------------------------------------

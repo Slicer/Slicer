@@ -47,7 +47,6 @@ qMRMLSceneViewsModel::qMRMLSceneViewsModel(QObject *vparent)
   : Superclass(vparent)
 {
   this->setListenNodeModifiedEvent(true);
-  this->setIDColumn(-1);
   this->setNameColumn(2);
   this->setColumnCount(4);
   this->setHorizontalHeaderLabels(

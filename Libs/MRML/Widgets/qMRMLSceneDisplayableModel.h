@@ -25,6 +25,7 @@
 #include "qMRMLSceneHierarchyModel.h"
 class qMRMLSceneDisplayableModelPrivate;
 
+/// The Visibility icon is in the same column than the name by default.
 class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarchyModel
 {
   Q_OBJECT
@@ -33,8 +34,11 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModel : public qMRMLSceneHierarc
   /// proper, the color of its display node is used. If the model node has
   /// more than one display node and their colors are different, it uses
   /// an invalid color.
-  /// A value of -1 hides it. Hidden by default (value of -1).
+  /// A value of -1 (default) hides the column
   Q_PROPERTY (int colorColumn READ colorColumn WRITE setColorColumn)
+
+  /// This property holds the column ID where the node opacity is shown.
+  /// A value of -1 (default) hides the column.
   Q_PROPERTY (int opacityColumn READ opacityColumn WRITE setOpacityColumn)
 
 public:
@@ -48,15 +52,15 @@ public:
   int opacityColumn()const;
   void setOpacityColumn(int column);
 
-  /// 
+  ///
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
   //virtual int          nodeIndex(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a child.
   virtual bool         canBeAChild(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a parent.
   virtual bool         canBeAParent(vtkMRMLNode* node)const;
-  
-  /// 
+
+  ///
   /// As we reimplement insertNode, we need don't want to hide the other functions.
   using qMRMLSceneModel::insertNode;
   /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
@@ -71,6 +75,7 @@ protected:
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
+  virtual int maxColumnId()const;
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneDisplayableModel);
   Q_DISABLE_COPY(qMRMLSceneDisplayableModel);

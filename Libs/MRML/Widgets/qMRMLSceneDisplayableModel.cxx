@@ -32,13 +32,15 @@ qMRMLSceneDisplayableModelPrivate
 ::qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object)
   : qMRMLSceneHierarchyModelPrivate(object)
 {
+  this->OpacityColumn = -1;
+  this->ColorColumn = -1;
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneDisplayableModelPrivate::init()
 {
   Q_Q(qMRMLSceneDisplayableModel);
-  q->setVisibilityColumn(qMRMLSceneModel::NameColumn);
+  q->setVisibilityColumn(q->nameColumn());
 }
 
 //------------------------------------------------------------------------------
@@ -265,7 +267,7 @@ void qMRMLSceneDisplayableModel::setColorColumn(int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
   d->ColorColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
 //------------------------------------------------------------------------------
@@ -280,6 +282,15 @@ void qMRMLSceneDisplayableModel::setOpacityColumn(int column)
 {
   Q_D(qMRMLSceneDisplayableModel);
   d->OpacityColumn = column;
-  /// TODO: refresh the items
+  this->updateColumnCount();
 }
 
+//------------------------------------------------------------------------------
+int qMRMLSceneDisplayableModel::maxColumnId()const
+{
+  Q_D(const qMRMLSceneDisplayableModel);
+  int maxId = this->Superclass::maxColumnId();
+  maxId = qMax(maxId, d->ColorColumn);
+  maxId = qMax(maxId, d->OpacityColumn);
+  return maxId;
+}
