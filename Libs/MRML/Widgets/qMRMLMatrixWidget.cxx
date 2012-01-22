@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 
 // qMRML includes
 #include "qMRMLUtils.h"
@@ -38,8 +39,9 @@ class qMRMLMatrixWidgetPrivate
 public:
   qMRMLMatrixWidgetPrivate()
     {
-    this->CoordinateReference = qMRMLMatrixWidget::GLOBAL; 
-    this->MRMLTransformNode = 0; 
+    this->CoordinateReference = qMRMLMatrixWidget::GLOBAL;
+    this->MRMLTransformNode = 0;
+    this->UserUpdates = true;
     }
   
   qMRMLMatrixWidget::CoordinateReferenceType   CoordinateReference;
@@ -47,6 +49,8 @@ public:
   // Warning, this is not the real "transform, the real can be retrieved
   // by qVTKAbstractMatrixWidget->transform();
   vtkSmartPointer<vtkTransform>                Transform;
+  // Indicates whether the changes come from the user or are programatic
+  bool                                         UserUpdates;
 };
 
 // --------------------------------------------------------------------------
@@ -54,6 +58,8 @@ qMRMLMatrixWidget::qMRMLMatrixWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qMRMLMatrixWidgetPrivate)
 {
+  connect(this, SIGNAL(matrixChanged()),
+          this, SLOT(updateTransformNode()));
 }
 
 // --------------------------------------------------------------------------
@@ -131,9 +137,25 @@ void qMRMLMatrixWidget::updateMatrix()
     d->MRMLTransformNode,
     d->CoordinateReference == qMRMLMatrixWidget::GLOBAL, 
     transform);
+  int oldUserUpdates = d->UserUpdates;
+  d->UserUpdates = false;
   // update the matrix with the new values.
-  this->setMatrixInternal(transform->GetMatrix());
+  this->setMatrixInternal( transform->GetMatrix() );
+  d->UserUpdates = oldUserUpdates;
   // keep a ref on the transform otherwise, the matrix will be reset when transform
-  // goes out of scope (because qVTKAbstractMatrixWidget has a weak ref on the matrix).
-  d->Transform = transform;  
+  // goes out of scope (because ctkVTKAbstractMatrixWidget has a weak ref on the matrix).
+  d->Transform = transform;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLMatrixWidget::updateTransformNode()
+{
+  Q_D(qMRMLMatrixWidget);
+  if (d->MRMLTransformNode == 0 ||
+      !d->UserUpdates)
+    {
+    return;
+    }
+  vtkMatrix4x4* matrix = this->matrix();
+  d->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(matrix);
 }

@@ -55,6 +55,7 @@ public:
   CoordinateReferenceType coordinateReference() const;
 
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+
 public slots:
   /// 
   /// Set the MRML node of interest
@@ -65,6 +66,11 @@ protected slots:
   /// 
   /// Triggered upon MRML transform node updates
   void updateMatrix();
+
+  ///
+  /// Triggered when the user modifies the cells of the matrix.
+  /// Synchronize with the node.
+  void updateTransformNode();
 
 protected:
   QScopedPointer<qMRMLMatrixWidgetPrivate> d_ptr;
