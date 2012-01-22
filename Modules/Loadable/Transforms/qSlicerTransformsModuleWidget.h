@@ -45,9 +45,6 @@ public:
   /// Reimplemented for internal reasons
   void setMRMLScene(vtkMRMLScene* scene);
 
-public slots:
-  void loadTransform();
-
 protected:
   virtual void setup();
 

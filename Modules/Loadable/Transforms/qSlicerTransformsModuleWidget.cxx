@@ -113,9 +113,6 @@ void qSlicerTransformsModuleWidget::setup()
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onNodeSelected(vtkMRMLNode*)));
 
-  this->connect(d->LoadTransformPushButton, SIGNAL(clicked()),
-                SLOT(loadTransform()));
-
   // Connect minimum and maximum from the translation sliders to the matrix
   this->connect(d->TranslationSliders,
                SIGNAL(rangeChanged(double,double)),
@@ -132,10 +129,6 @@ void qSlicerTransformsModuleWidget::setup()
                 SLOT(untransformSelectedNodes()));
 
   // Icons
-  QIcon openIcon =
-    QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon);
-  d->LoadTransformPushButton->setIcon(openIcon);
-
   QIcon rightIcon =
     QApplication::style()->standardIcon(QStyle::SP_ArrowRight);
   d->TransformToolButton->setIcon(rightIcon);
@@ -143,6 +136,8 @@ void qSlicerTransformsModuleWidget::setup()
   QIcon leftIcon =
     QApplication::style()->standardIcon(QStyle::SP_ArrowLeft);
   d->UntransformToolButton->setIcon(leftIcon);
+
+  this->onNodeSelected(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -180,7 +175,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   // instead.
   if (transformNode == 0)
     {
-    nodeTypes << QString("test");
+    nodeTypes << QString("vtkMRMLNotANode");
     }
   d->TransformedTreeView->setNodeTypes(nodeTypes);
 
@@ -279,18 +274,6 @@ int qSlicerTransformsModuleWidget::coordinateReference()const
 {
   Q_D(const qSlicerTransformsModuleWidget);
   return d->CoordinateReferenceButtonGroup->checkedId();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::loadTransform()
-{
-  Q_D(qSlicerTransformsModuleWidget);
-  Q_ASSERT(this->mrmlScene());
-  QString fileName = QFileDialog::getOpenFileName(this);
-  if (!fileName.isEmpty())
-    {
-    d->logic()->AddTransform(fileName.toLatin1(), this->mrmlScene());
-    }
 }
 
 //-----------------------------------------------------------------------------

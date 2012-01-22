@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
-    <height>832</height>
+    <width>581</width>
+    <height>961</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,40 +28,11 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="ctkCollapsibleButton" name="LoadCollapsibleWidget">
-     <property name="text">
-      <string>Load</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QPushButton" name="LoadTransformPushButton">
-        <property name="text">
-         <string>Load Transform</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>213</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLabel" name="TransformNodeSelectorLabel">
        <property name="text">
-        <string>Transform Node:</string>
+        <string>Active Transform:</string>
        </property>
       </widget>
      </item>
@@ -72,8 +43,8 @@
          <string>vtkMRMLLinearTransformNode</string>
         </stringlist>
        </property>
-       <property name="editEnabled">
-        <bool>false</bool>
+       <property name="renameEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -214,7 +185,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="CollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="TransformedCollapsibleButton">
      <property name="text">
       <string>Transformed nodes</string>
      </property>
@@ -245,6 +216,9 @@
       </item>
       <item row="1" column="1">
        <widget class="QToolButton" name="TransformToolButton">
+        <property name="toolTip">
+         <string>Apply the active transform to the selected transformable nodes</string>
+        </property>
         <property name="text">
          <string>&gt;</string>
         </property>
@@ -271,6 +245,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QToolButton" name="UntransformToolButton">
+        <property name="toolTip">
+         <string>Remove the active transform from the selected transformed nodes</string>
+        </property>
         <property name="text">
          <string>&lt;</string>
         </property>
