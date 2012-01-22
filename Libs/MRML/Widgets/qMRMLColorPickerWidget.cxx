@@ -48,12 +48,16 @@ protected:
 public:
   qMRMLColorPickerWidgetPrivate(qMRMLColorPickerWidget& object);
   void init();
+
+  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 };
 
 //------------------------------------------------------------------------------
 qMRMLColorPickerWidgetPrivate::qMRMLColorPickerWidgetPrivate(qMRMLColorPickerWidget& object)
   : q_ptr(&object)
 {
+  // Create a default color logic
+  this->ColorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -93,6 +97,20 @@ qMRMLColorPickerWidget::~qMRMLColorPickerWidget()
 }
 
 //------------------------------------------------------------------------------
+void qMRMLColorPickerWidget::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  Q_D(qMRMLColorPickerWidget);
+  d->ColorLogic = colorLogic;
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorLogic* qMRMLColorPickerWidget::mrmlColorLogic()const
+{
+  Q_D(const qMRMLColorPickerWidget);
+  return d->ColorLogic.GetPointer();
+}
+
+//------------------------------------------------------------------------------
 vtkMRMLColorNode* qMRMLColorPickerWidget::currentColorNode()const
 {
   Q_D(const qMRMLColorPickerWidget);
@@ -111,15 +129,15 @@ void qMRMLColorPickerWidget::setCurrentColorNode(vtkMRMLNode* node)
 //------------------------------------------------------------------------------
 void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
 {
+  Q_D(qMRMLColorPickerWidget);
   if (!this->mrmlScene())
     {
     return;
     }
-  // TODO: Retrieve a unique instance of color logic from the MRML Application logic
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
-    vtkSmartPointer<vtkMRMLColorLogic>::New();
   vtkMRMLNode* defaultColorNode =
-    this->mrmlScene()->GetNodeByID(colorLogic->GetDefaultEditorColorNodeID());
+    this->mrmlScene()->GetNodeByID( d->ColorLogic.GetPointer() != 0 ?
+                                    d->ColorLogic->GetDefaultEditorColorNodeID() :
+                                    0);
   if (defaultColorNode)
     {
     this->setCurrentColorNode(defaultColorNode);
@@ -129,13 +147,11 @@ void qMRMLColorPickerWidget::setCurrentColorNodeToDefault()
 //------------------------------------------------------------------------------
 void qMRMLColorPickerWidget::onNodeAdded(vtkObject* scene, vtkObject* nodeObject)
 {
+  Q_D(qMRMLColorPickerWidget);
   Q_UNUSED(scene);
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(nodeObject);
-  // TODO: Retrieve a unique instance of color logic from the MRML Application logic
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
-    vtkSmartPointer<vtkMRMLColorLogic>::New();
-  if (node &&
-      QString(node->GetID()) == colorLogic->GetDefaultEditorColorNodeID())
+  if (node != 0 && d->ColorLogic.GetPointer() != 0 &&
+      QString(node->GetID()) == d->ColorLogic->GetDefaultEditorColorNodeID())
     {
     this->setCurrentColorNode(node);
     }

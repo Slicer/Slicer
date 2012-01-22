@@ -50,9 +50,13 @@
 
 // Logic includes
 #include <vtkSlicerApplicationLogic.h>
+#include <vtkSlicerColorLogic.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
+
+// VTK includes
+#include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerApplicationPrivate : public qSlicerCoreApplicationPrivate
@@ -108,6 +112,8 @@ void qSlicerApplicationPrivate::init()
 
   this->ColorDialogPickerWidget =
     QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
+  vtkNew<vtkSlicerColorLogic> colorLogic;
+  this->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic.GetPointer());
   ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
                                 "Labels", SIGNAL(colorSelected(QColor)));
   ctkColorDialog::setDefaultTab(1);

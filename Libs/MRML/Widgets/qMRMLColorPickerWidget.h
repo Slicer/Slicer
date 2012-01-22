@@ -34,6 +34,7 @@
 class qMRMLColorPickerWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLColorNode;
+class vtkMRMLColorLogic;
 
 /// Given a mrml scene, qMRMLColorPickerWidget allows the selection of
 /// a color/label from all the vtkMRMLColorNode in the scene.
@@ -44,8 +45,14 @@ class QMRML_WIDGETS_EXPORT qMRMLColorPickerWidget : public qMRMLWidget
 public:
   qMRMLColorPickerWidget(QWidget *parent=0);
   virtual ~qMRMLColorPickerWidget();
-  
+
+  /// A color logic is needed to select the color default nodes.
+  /// A default color logic is created.
+  void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
+  vtkMRMLColorLogic* mrmlColorLogic()const;
+
   vtkMRMLColorNode* currentColorNode()const;
+
   virtual void setMRMLScene(vtkMRMLScene* scene);
   virtual bool eventFilter(QObject* target, QEvent* event);
 
