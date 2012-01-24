@@ -56,6 +56,24 @@ class DICOMLoader(object):
     else:
       raise RuntimeError("Unknown dicom load method '%s'" % self.method)
 
+    #
+    # add list of DICOM instance UIDs to the volume node
+    # corresponding to the loaded files
+    #
+    instanceUIDs = ""
+    instanceUIDTag = "0008,0018"
+    for file in self.files:
+      slicer.dicomDatabase.loadFileHeader(file)
+      d = slicer.dicomDatabase.headerValue(instanceUIDTag)
+      print('header for %s is %s' % (instanceUIDTag, d))
+      try:
+        uid = d[d.index('[')+1:d.index(']')]
+      except ValueError:
+        uid = "Unknown"
+      instanceUIDs += uid + " "
+    instanceUIDs = instanceUIDs[:-1]  # strip last space
+    self.volumeNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
+
     # automatically select the volume to display
     appLogic = slicer.app.applicationLogic()
     selNode = appLogic.GetSelectionNode()
