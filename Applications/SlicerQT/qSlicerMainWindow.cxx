@@ -194,6 +194,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Color of the spacing between views:
   QFrame* layoutFrame = new QFrame(this->CentralWidget);
+  layoutFrame->setObjectName("CentralWidgetLayoutFrame");
   QHBoxLayout* centralLayout = new QHBoxLayout(this->CentralWidget);
   centralLayout->setContentsMargins(0, 0, 0, 0);
   centralLayout->addWidget(layoutFrame);
