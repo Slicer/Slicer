@@ -209,7 +209,9 @@ class DICOMSender(DICOMProcess):
   def start(self,file):
     self.storeSCUExecutable = self.exeDir+'/storescu'+self.exeExtension
     # run the process!
-    args = [str(self.address), str(self.port), file]
+    ### TODO: maybe use dcmsend (is smarter about the compress/decompress)
+    ### TODO: add option in dialog to set AETitle
+    args = [str(self.address), str(self.port), "-aec", "CTK", file]
     super(DICOMSender,self).start(self.storeSCUExecutable, args)
     self.process.waitForFinished()
     if self.process.ExitStatus() == qt.QProcess.CrashExit or self.process.exitCode() != 0:

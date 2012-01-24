@@ -21,9 +21,7 @@ class DICOM:
     parent.category = "" # top level module
     parent.contributor = "Steve Pieper"
     parent.helpText = """
-The DICOM module is a place to experiment a bit with dicom classes from CTK (based on DCMTK).  It is a 'tent' because it is meant to be suitable for explorers, but may not be robust enough for civilized people.
-
-Warning: all data directories are temporary and data may be gone next time you look!
+The DICOM module integrates DICOM classes from CTK (based on DCMTK).
     """
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.  Based on work from CommonTK (http://www.commontk.org).
@@ -36,21 +34,24 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     # initialize the dicom infrastructure
     settings = qt.QSettings()
     # the dicom database is a global object for slicer
-    databaseDirectory = settings.value('DatabaseDirectory')
-    if databaseDirectory: 
-      slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-      slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-      # the dicom listener is also global, but only started on app start if 
-      # the user so chooses
-      if settings.contains('DICOM/RunListenerAtStart'):
-        if bool(settings.value('DICOM/RunListenerAtStart')):
-          if not hasattr(slicer, 'dicomListener'):
-            try:
-              slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-            except UserWarning as message:
-              # TODO: how to put this into the error log?
-              print ('Problem trying to start DICOMListener:\n %s' % message)
-            slicer.dicomListener.start()
+    if settings.contains('DatabaseDirectory'):
+      databaseDirectory = settings.value('DatabaseDirectory')
+      if databaseDirectory: 
+        slicer.dicomDatabase = ctk.ctkDICOMDatabase()
+        slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+        # the dicom listener is also global, but only started on app start if 
+        # the user so chooses
+        if settings.contains('DICOM/RunListenerAtStart'):
+          if bool(settings.value('DICOM/RunListenerAtStart')):
+            if not hasattr(slicer, 'dicomListener'):
+              try:
+                slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+              except UserWarning as message:
+                # TODO: how to put this into the error log?
+                print ('Problem trying to start DICOMListener:\n %s' % message)
+              slicer.dicomListener.start()
+    else:
+      slicer.dicomDatabase = None
             
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
@@ -69,11 +70,15 @@ class DICOMWidget:
 
   def __init__(self, parent=None):
     self.testingServer = None
+    
+    # let the popup window manage data loading
+    self.useDetailsPopup = True
 
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
     self.dicomModelTypeRole = self.dicomModelUIDRole + 1
     self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
+
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -141,26 +146,53 @@ class DICOMWidget:
       self.runListenerAtStart.checked = bool(settings.value('DICOM/RunListenerAtStart'))
     self.runListenerAtStart.connect('clicked()', self.onRunListenerAtStart)
 
-
     # the Database frame (home of the ctkDICOM widget)
     self.dicomFrame = ctk.ctkCollapsibleButton(self.parent)
     self.dicomFrame.setLayout(qt.QVBoxLayout())
     self.dicomFrame.setText("DICOM Database and Networking")
     self.layout.addWidget(self.dicomFrame)
 
+    #
+    # create and configure the app widget - this involves
+    # reaching inside and manipulating the widget hierarchy
+    # - TODO: this configurability should be exposed more natively
+    #   in the CTK code to avoid the findChildren calls
+    #
     self.dicomApp = ctk.ctkDICOMAppWidget()
     self.dicomFrame.layout().addWidget(self.dicomApp)
     # hide the search options - doesn't work yet and doesn't fit 
     # well into the frame
-    self.findChildren(self.dicomApp, 'SearchOption')[0].hide()
-    # make the tree a little smaller to fit in slicer
-    self.tree = self.findChildren(self.dicomApp, 'TreeView')[0]
-    g = self.tree.geometry
-    g.setHeight(150)
-    if self.dicomApp.databaseDirectory:
-      self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
+    slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
+
+    if self.useDetailsPopup:
+      self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp)
+      # TODO: move all functions to popup
+      # for now, create dummy buttons just so callbacks work
+      self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
+      self.loadButton = qt.QPushButton('Load to Slicer')
+      self.previewLabel = qt.QLabel()
     else:
+      userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
+      userFrame.setLayout(qt.QVBoxLayout())
+      self.previewLabel = qt.QLabel(userFrame)
+      userFrame.layout().addWidget(self.previewLabel)
+      self.loadButton = qt.QPushButton('Load to Slicer')
+      self.loadButton.enabled = False 
+      userFrame.layout().addWidget(self.loadButton)
+      self.loadButton.connect('clicked()', self.onLoadButton)
+      self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
+      self.exportButton.enabled = False 
+      userFrame.layout().addWidget(self.exportButton)
+      self.exportButton.connect('clicked()', self.onExportClicked)
+
+    # make the tree view a bit bigger
+    self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
+    self.tree.setMinimumHeight(500)
+
+    if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
+    else:
+      self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
@@ -170,22 +202,13 @@ class DICOMWidget:
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
 
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
-    self.tree.connect('clicked(const QModelIndex&)', self.onTreeClicked)
+    selectionModel = self.tree.selectionModel()
+    # TODO: can't use this because QList<QModelIndex> is not visible in PythonQt
+    #selectionModel.connect('selectionChanged(QItemSelection, QItemSelection)', self.onTreeSelectionChanged)
+    self.tree.connect('clicked(QModelIndex)', self.onTreeClicked)
     self.tree.setContextMenuPolicy(3)
     self.tree.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
 
-    userFrame = self.findChildren(self.dicomApp, 'UserFrame')[0]
-    userFrame.setLayout(qt.QVBoxLayout())
-    self.treeLabel = qt.QLabel('Selection: None')
-    userFrame.layout().addWidget(self.treeLabel)
-    self.loadButton = qt.QPushButton('Load to Slicer')
-    self.loadButton.enabled = False 
-    userFrame.layout().addWidget(self.loadButton)
-    self.loadButton.connect('clicked()', self.onLoadButton)
-    self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
-    self.exportButton.enabled = False 
-    userFrame.layout().addWidget(self.exportButton)
-    self.exportButton.connect('clicked()', self.onExportClicked)
 
     # enable to the Send button of the app widget and take it over
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
@@ -197,7 +220,7 @@ class DICOMWidget:
     self.layout.addStretch(1)
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
-    if not hasattr(slicer, 'dicomDatabase'):
+    if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
       slicer.dicomDatabase = ctk.ctkDICOMDatabase()
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
@@ -206,23 +229,24 @@ class DICOMWidget:
     slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
     if not slicer.dicomDatabase.isOpen:
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+    if self.dicomApp.databaseDirectory != databaseDirectory:
+      self.dicomApp.databaseDirectory = databaseDirectory
 
   def promptForDatabaseDirectory(self):
-    fileDialog = qt.QFileDialog(slicer.util.mainWindow())
+    fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())
     fileDialog.setWindowModality(1)
     fileDialog.setWindowTitle("Select DICOM Database Directory")
     fileDialog.setFileMode(2) # prompt for directory
     fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
-    label = qt.QLabel("<p>The Slicer DICOM module stores a local database with an index to all datasets that are pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.")
-    layout = fileDialog.layout()
-    layout.addWidget(label, layout.rowCount(), 1, -1, -1)
+    label = qt.QLabel("<p><p>The Slicer DICOM module stores a local database with an index to all datasets that are <br>pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.<p>Be sure you have write access to the selected directory.", fileDialog)
+    fileDialog.setBottomWidget(label)
     fileDialog.open()
 
   def onTreeClicked(self,index):
     self.model = index.model()
+    self.tree.setExpanded(index, not self.tree.expanded(index))
     self.selection = index.sibling(index.row(), 0)
     typeRole = self.selection.data(self.dicomModelTypeRole)
-    self.treeLabel.text = 'Selection: %s' % self.dicomModelTypes[typeRole]
     if typeRole > 0:
       self.loadButton.text = 'Load Selected %s to Slicer' % self.dicomModelTypes[typeRole]
       self.loadButton.enabled = True
@@ -231,7 +255,15 @@ class DICOMWidget:
       self.loadButton.text = 'Load to Slicer'
       self.loadButton.enabled = False 
       self.sendButton.enabled = False
-    self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
+    if typeRole:
+      self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
+    else:
+      self.exportButton.enabled = False
+    self.previewLabel.text = "Selection: " + self.dicomModelTypes[typeRole]
+    self.detailsPopup.open()
+    uid = self.selection.data(self.dicomModelUIDRole)
+    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
+    self.detailsPopup.offerVolumes(uid, role)
 
   def onTreeContextMenuRequested(self,pos):
     index = self.tree.indexAt(pos)
@@ -274,7 +306,7 @@ class DICOMWidget:
   def onExportClicked(self):
     """Associate a slicer volume as a series in the selected dicom study"""
     uid = self.selection.data(self.dicomModelUIDRole)
-    exportDialog = DICOMExportDialog(uid,onExportFinished=self.onExportFinished)
+    exportDialog = DICOMLib.DICOMExportDialog(uid,onExportFinished=self.onExportFinished)
     self.dicomApp.suspendModel()
     exportDialog.open()
 
@@ -302,9 +334,8 @@ class DICOMWidget:
     files = []
     for serie in series:
       files += slicer.dicomDatabase.filesForSeries(serie)
-    sendDialog = DICOMSendDialog(files)
+    sendDialog = DICOMLib.DICOMSendDialog(files)
     sendDialog.open()
-
 
   def loadPatient(self,patientUID):
     studies = slicer.dicomDatabase.studiesForPatient(patientUID)
@@ -453,191 +484,6 @@ class DICOMWidget:
 
   def okayCancel(self,text,title='DICOM'):
     return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
-
-  def findChildren(self,widget,name):
-    """ return a list of child widgets that match the passed name """
-    # TODO: figure out why the native QWidget.findChildren method
-    # does not seem to work from PythonQt
-    children = []
-    parents = [widget]
-    while parents != []:
-      p = parents.pop()
-      parents += p.children()
-      if name == "" or p.name == name:
-        children.append(p)
-    return children
-
-class DICOMExportDialog(object):
-  """Implement the Qt dialog for selecting slicer data to be exported
-  to be part of a DICOM study (e.g. a slicer volume as a new dicom series).
-  """
-
-  def __init__(self,studyUID,onExportFinished=None):
-    self.studyUID = studyUID
-    self.onExportFinished = onExportFinished
-
-  def open(self):
-
-    # main dialog
-    self.dialog = qt.QDialog(slicer.util.mainWindow())
-    self.dialog.setWindowTitle('Export to DICOM Study')
-    self.dialog.setWindowModality(1)
-    layout = qt.QVBoxLayout()
-    self.dialog.setLayout(layout)
-
-    self.studyLabel = qt.QLabel('Attach Data to Study: %s' % self.studyUID)
-    layout.addWidget(self.studyLabel)
-
-    # scene or volume option
-    self.selectFrame = qt.QFrame(self.dialog)
-    layout.addWidget(self.selectFrame)
-    self.selectLayout = qt.QGridLayout()
-    self.selectFrame.setLayout(self.selectLayout)
-    self.exportScene = qt.QRadioButton("Export Entire Scene", self.selectFrame)
-    self.exportScene.setToolTip( "Create a Slicer Data Bundle in a DICOM Private Creator\n(Only compatible with Slicer)" )
-    self.exportVolume = qt.QRadioButton("Export Selected Volume", self.selectFrame)
-    self.exportVolume.setToolTip( "Create a compatible DICOM series of slice images" )
-    self.exportVolume.checked = True
-    self.selectLayout.addWidget(self.exportScene, 0, 0)
-    self.selectLayout.addWidget(self.exportVolume, 1, 0)
-    self.exportScene.connect('toggled(bool)', self.onExportRadio)
-    self.exportVolume.connect('toggled(bool)', self.onExportRadio)
-
-    # select volume
-    self.volumeSelector = slicer.qMRMLNodeComboBox(self.dialog)
-    self.volumeSelector.nodeTypes = ( "vtkMRMLScalarVolumeNode", "" )
-    self.volumeSelector.selectNodeUponCreation = False
-    self.volumeSelector.addEnabled = False
-    self.volumeSelector.noneEnabled = False
-    self.volumeSelector.removeEnabled = False
-    self.volumeSelector.showHidden = False
-    self.volumeSelector.showChildNodeTypes = False
-    self.volumeSelector.setMRMLScene( slicer.mrmlScene )
-    self.volumeSelector.setToolTip( "Pick the label map to edit" )
-    self.selectLayout.addWidget( self.volumeSelector, 1, 1 )
-
-    # DICOM Parameters
-    self.dicomFrame = qt.QFrame(self.dialog)
-    self.dicomFormLayout = qt.QFormLayout()
-    self.dicomFrame.setLayout(self.dicomFormLayout)
-    self.dicomEntries = {}
-    exporter = DICOMLib.DICOMExporter(self.studyUID)
-    self.dicomParameters = exporter.parametersFromStudy()
-    self.dicomParameters['Series Description'] = '3D Slicer Export'
-    for label in self.dicomParameters.keys():
-      self.dicomEntries[label] = qt.QLineEdit()
-      self.dicomEntries[label].text = self.dicomParameters[label]
-      self.dicomFormLayout.addRow(label+": ", self.dicomEntries[label])
-    layout.addWidget(self.dicomFrame)
-
-    # button box
-    bbox = qt.QDialogButtonBox(self.dialog)
-    bbox.addButton(bbox.Ok)
-    bbox.addButton(bbox.Cancel)
-    bbox.connect('accepted()', self.onOk)
-    bbox.connect('rejected()', self.onCancel)
-    layout.addWidget(bbox)
-
-    self.dialog.open()
-
-  def onExportRadio(self,toggled):
-    self.volumeSelector.enabled = self.exportVolume.checked
-
-  def onOk(self):
-    """Run the export process for either the scene or the selected volume"""
-    if self.exportScene.checked:
-      volumeNode = None
-    else:
-      volumeNode = self.volumeSelector.currentNode()
-    if volumeNode or self.exportScene.checked:
-      parameters = {}
-      for label in self.dicomParameters.keys():
-        parameters[label] = self.dicomEntries[label].text
-      try:
-        exporter = DICOMLib.DICOMExporter(self.studyUID,volumeNode,parameters)
-        exporter.export()
-      except Exception as result:
-        import traceback
-        qt.QMessageBox.warning(self.dialog, 'DICOM Export', 'Could not export data: %s\n\n%s' % (result, traceback.format_exception(*sys.exc_info())))
-    if self.onExportFinished:
-      self.onExportFinished()
-    self.dialog.close()
-
-  def onCancel(self):
-    self.dialog.close()
-
-class DICOMSendDialog(object):
-  """Implement the Qt dialog for doing a DICOM Send (storage SCU)
-  """
-
-  def __init__(self,files):
-    self.files = files
-    settings = qt.QSettings()
-    self.sendAddress = settings.value('DICOM.sendAddress')
-    self.sendPort = settings.value('DICOM.sendPort')
-    self.open
-
-  def open(self):
-    # main dialog
-    self.dialog = qt.QDialog(slicer.util.mainWindow())
-    self.dialog.setWindowTitle('Send DICOM Study')
-    self.dialog.setWindowModality(1)
-    layout = qt.QVBoxLayout()
-    self.dialog.setLayout(layout)
-
-    self.studyLabel = qt.QLabel('Send %d items to destination' % len(self.files))
-    layout.addWidget(self.studyLabel)
-
-    # Send Parameters
-    self.dicomFrame = qt.QFrame(self.dialog)
-    self.dicomFormLayout = qt.QFormLayout()
-    self.dicomFrame.setLayout(self.dicomFormLayout)
-    self.dicomEntries = {}
-    self.dicomParameters = { 
-      "Destination Address": self.sendAddress,
-      "Destination Port": self.sendPort
-    }
-    for label in self.dicomParameters.keys():
-      self.dicomEntries[label] = qt.QLineEdit()
-      self.dicomEntries[label].text = self.dicomParameters[label]
-      self.dicomFormLayout.addRow(label+": ", self.dicomEntries[label])
-    layout.addWidget(self.dicomFrame)
-
-    # button box
-    bbox = qt.QDialogButtonBox(self.dialog)
-    bbox.addButton(bbox.Ok)
-    bbox.addButton(bbox.Cancel)
-    bbox.connect('accepted()', self.onOk)
-    bbox.connect('rejected()', self.onCancel)
-    layout.addWidget(bbox)
-
-    self.dialog.open()
-
-  def onOk(self):
-    address = self.dicomEntries['Destination Address'].text
-    port = self.dicomEntries['Destination Port'].text
-    settings = qt.QSettings()
-    settings.setValue('DICOM.sendAddress', address)
-    settings.setValue('DICOM.sendPort', port)
-    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
-    self.progress.minimumDuration = 0
-    self.progress.setMaximum(len(self.files))
-    self.progressValue = 0
-    try:
-      DICOMLib.DICOMSender(self.files, address, port, progressCallback = self.onProgress)
-    except Exception as result:
-      qt.QMessageBox.warning(self.dialog, 'DICOM Send', 'Could not send data: %s' % result)
-    self.progress.close()
-    self.dialog.close()
-
-  def onProgress(self,message):
-    self.progress.show()
-    self.progressValue += 1
-    self.progress.setValue(self.progressValue)
-    self.progress.setLabelText(message)
-
-  def onCancel(self):
-    self.dialog.close()
 
 def DICOMTest():
   w = slicer.modules.dicom.widgetRepresentation()

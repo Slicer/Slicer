@@ -2,6 +2,7 @@ set(EditorLib_PYTHON_SCRIPTS
   __init__
   DICOMProcesses
   DICOMDataExchange
+  DICOMWidgets
   )
 
 set(EditorLib_PYTHON_RESOURCES
