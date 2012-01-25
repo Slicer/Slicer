@@ -56,9 +56,9 @@ qSlicerColorsModule::~qSlicerColorsModule()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsModule::category()const
+QStringList qSlicerColorsModule::categories()const
 {
-  return "Informatics";
+  return QStringList() << "Informatics";
 }
 
 //-----------------------------------------------------------------------------

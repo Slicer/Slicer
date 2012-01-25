@@ -96,6 +96,12 @@ QIcon qSlicerVolumeRenderingModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerVolumeRenderingModule::categories() const
+{
+  return QStringList() << "";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingModule::setup()
 {
   this->Superclass::setup();

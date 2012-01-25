@@ -383,8 +383,11 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   QObject::connect(moduleAction, SIGNAL(triggered(bool)),
                    this, SLOT(onActionTriggered()));
 
-  QMenu* menu = d->menu(this, module->category().split('.'));
-  d->addModuleAction(menu, moduleAction);
+  foreach(const QString& category, module->categories())
+    {
+    QMenu* menu = d->menu(this, category.split('.'));
+    d->addModuleAction(menu, moduleAction);
+    }
   // Add in "All Modules" as well
   d->addModuleAction(d->AllModulesMenu, moduleAction, false);
 

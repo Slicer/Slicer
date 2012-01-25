@@ -53,9 +53,9 @@ vtkMRMLAbstractLogic* qSlicerEventBrokerModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerEventBrokerModule::category()const
+QStringList qSlicerEventBrokerModule::categories()const
 {
-  return "Developer Tools";
+  return QStringList() << "Developer Tools";
 }
 
 //-----------------------------------------------------------------------------

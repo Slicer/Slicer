@@ -126,6 +126,12 @@ QIcon qSlicerAnnotationsModule::icon() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerAnnotationsModule::categories() const
+{
+  return QStringList() << "" << "Informatics";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerAnnotationsModule::showScreenshotDialog()
 {
   Q_ASSERT(this->widgetRepresentation());

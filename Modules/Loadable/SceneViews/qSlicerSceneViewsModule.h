@@ -30,6 +30,7 @@ public:
 
   /// Return the icon of the SceneViews module.
   virtual QIcon icon()const;
+  virtual QStringList categories()const;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 

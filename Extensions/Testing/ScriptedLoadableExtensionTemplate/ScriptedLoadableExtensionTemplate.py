@@ -7,7 +7,7 @@ from __main__ import vtk, qt, ctk, slicer
 class ScriptedLoadableExtensionTemplate:
   def __init__(self, parent):
     parent.title = "Scripted Loadable Extension Template"
-    parent.category = "Examples"
+    parent.categories = ["Examples"]
     parent.contributor = ""
     parent.helpText = """
     Example of scripted loadable extension.

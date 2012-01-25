@@ -46,6 +46,8 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
+  virtual QStringList categories()const;
+
   /// Help to use the module
   virtual QString helpText()const;
 

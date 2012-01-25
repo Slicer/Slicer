@@ -8,7 +8,7 @@ import qt, vtk
 class DataProbe:
   def __init__(self, parent):
     parent.title = "DataProbe"
-    parent.category = "Quantification"
+    parent.categories = ["Quantification"]
     parent.contributor = "Steve Pieper"
     parent.helpText = """
 The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.

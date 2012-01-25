@@ -35,7 +35,8 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
 {
   Q_OBJECT
   Q_PROPERTY(QString title READ title WRITE setTitle)
-  Q_PROPERTY(QString category READ category WRITE setCategory)
+  /// Reimplemented to expose the setter setCategories
+  Q_PROPERTY(QStringList categories READ categories WRITE setCategories)
   Q_PROPERTY(QString contributor READ contributor WRITE setContributor)
   Q_PROPERTY(QString helpText READ helpText WRITE setHelpText)
   Q_PROPERTY(QString acknowledgementText READ acknowledgementText WRITE setAcknowledgementText)
@@ -57,8 +58,8 @@ public:
   virtual QString title()const ;
   void setTitle(const QString& newTitle);
 
-  virtual QString category()const;
-  void setCategory(const QString& newCategory);
+  virtual QStringList categories()const;
+  void setCategories(const QStringList& newCategories);
 
   virtual QString contributor()const;
   void setContributor(const QString& newContributor);

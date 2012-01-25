@@ -43,7 +43,7 @@ public:
   virtual ~qSlicerScriptedLoadableModulePrivate();
 
   QString Title;
-  QString Category;
+  QStringList Categories;
   QString Contributor;
   QStringList Dependencies;
   QString HelpText;
@@ -224,8 +224,8 @@ CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setTitle, Title)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, title, Title)
 
 //-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setCategory, Category)
-CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, category, Category)
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setCategories, Categories)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, categories, Categories)
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setContributor, Contributor)

@@ -41,7 +41,7 @@ public:
   qSlicerCamerasModule(QObject *parent=0);
   virtual ~qSlicerCamerasModule();
 
-  virtual QString category()const;
+  virtual QStringList categories()const;
   virtual QIcon icon()const;
   qSlicerGetTitleMacro("Cameras");
 

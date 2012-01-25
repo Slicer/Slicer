@@ -45,6 +45,8 @@ public:
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
 
+  virtual QStringList categories()const;
+
 protected:
   /// Initialize the module. Register the volumes reader/writer
   virtual void setup();

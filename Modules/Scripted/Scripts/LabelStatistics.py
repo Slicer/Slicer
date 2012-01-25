@@ -7,7 +7,7 @@ from __main__ import vtk, qt, ctk, slicer
 class LabelStatistics:
   def __init__(self, parent):
     parent.title = "Label Statistics"
-    parent.category = "Quantification"
+    parent.categories = ["Quantification"]
     parent.contributor = "Steve Pieper"
     parent.helpText = """
 Use this module to calculate counts and volumes for different labels of a label map plus statistics on the grayscale background volume.  Note: volumes must have same dimensions.

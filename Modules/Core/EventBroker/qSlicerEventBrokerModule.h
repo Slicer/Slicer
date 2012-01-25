@@ -41,7 +41,7 @@ public:
   qSlicerEventBrokerModule(QObject *parent=0);
   virtual ~qSlicerEventBrokerModule();
   
-  virtual QString category()const;
+  virtual QStringList categories()const;
 
   /// Display name for the module
   qSlicerGetTitleMacro("Event Broker");

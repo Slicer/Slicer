@@ -69,6 +69,12 @@ QIcon qSlicerDataModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerDataModule::categories() const
+{
+  return QStringList() << "" << "Informatics";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerDataModule::setup()
 {
   this->Superclass::setup();

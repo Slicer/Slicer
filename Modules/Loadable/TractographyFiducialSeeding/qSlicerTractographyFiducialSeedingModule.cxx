@@ -30,6 +30,12 @@ vtkMRMLAbstractLogic* qSlicerTractographyFiducialSeedingModule::createLogic()
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerTractographyFiducialSeedingModule::categories()const
+{
+  return QStringList() << "Diffusion.Tractography";
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerTractographyFiducialSeedingModule::helpText()const
 {
   QString help =

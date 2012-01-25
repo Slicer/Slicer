@@ -59,6 +59,13 @@ QIcon qSlicerTransformsModule::icon()const
   return QIcon(":/Icons/Transforms.png");
 }
 
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerTransformsModule::categories() const
+{
+  return QStringList() << "" << "Registration";
+}
+
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTransformsModule::createWidgetRepresentation()
 {

@@ -37,7 +37,7 @@ class qSlicerAbstractCoreModule;
 /// qSlicerModuleSelectorToolBar is a toolbar that can be added in your
 /// application and will fired events when the QAction of modules are triggered
 /// qSlicerModuleSelectorToolBar supports a tree hierarchy of modules (based on
-/// module->category() ), previous/next buttons to browse the history of
+/// module->categories() ), previous/next buttons to browse the history of
 /// selected modules. (and a plain history button)
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleSelectorToolBar: public QToolBar
 {

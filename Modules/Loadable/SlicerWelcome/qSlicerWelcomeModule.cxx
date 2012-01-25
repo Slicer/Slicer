@@ -48,6 +48,12 @@ qSlicerWelcomeModule::~qSlicerWelcomeModule()
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerWelcomeModule::categories()const
+{
+  return QStringList() << "";
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerWelcomeModule::helpText()const
 {
   return QString();

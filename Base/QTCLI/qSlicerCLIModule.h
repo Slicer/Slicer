@@ -76,7 +76,7 @@ public:
   Q_INVOKABLE vtkSlicerCLIModuleLogic* cliModuleLogic();
 
   virtual QString title() const;
-  virtual QString category() const;
+  virtual QStringList categories() const;
   virtual QString contributor() const;
 
   virtual QImage logo() const;

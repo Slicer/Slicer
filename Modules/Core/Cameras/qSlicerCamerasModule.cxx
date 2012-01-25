@@ -41,9 +41,9 @@ qSlicerCamerasModule::~qSlicerCamerasModule()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCamerasModule::category()const
+QStringList qSlicerCamerasModule::categories()const
 {
-  return "Developer Tools";
+  return QStringList() << "Developer Tools";
 }
 
 //-----------------------------------------------------------------------------

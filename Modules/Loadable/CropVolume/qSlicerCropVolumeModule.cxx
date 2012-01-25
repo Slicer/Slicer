@@ -72,6 +72,12 @@ QIcon qSlicerCropVolumeModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerCropVolumeModule::categories()const
+{
+  return QStringList() << "Converters";
+}
+
+//-----------------------------------------------------------------------------
 QStringList qSlicerCropVolumeModule::dependencies()const
 {
   return QStringList() << "Volumes" << "ResampleVolume2";

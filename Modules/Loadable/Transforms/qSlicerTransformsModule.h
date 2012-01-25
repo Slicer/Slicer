@@ -45,6 +45,8 @@ public:
   /// Icon of the transform module
   virtual QIcon icon()const;
 
+  virtual QStringList categories()const;
+
   /// Display name for the module
   qSlicerGetTitleMacro("Transforms");
 

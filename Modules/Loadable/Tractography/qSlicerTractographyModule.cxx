@@ -55,9 +55,9 @@ qSlicerTractographyModule::qSlicerTractographyModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTractographyModule::category()const
+QStringList qSlicerTractographyModule::categories()const
 {
-  return "Developer Tools";
+  return QStringList() << "Developer Tools";
 }
 
 //-----------------------------------------------------------------------------

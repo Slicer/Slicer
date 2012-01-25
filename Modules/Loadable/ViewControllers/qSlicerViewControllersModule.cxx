@@ -57,6 +57,12 @@ QString qSlicerViewControllersModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerViewControllersModule::categories() const
+{
+  return QStringList() << "";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerViewControllersModule::setup()
 {
   this->Superclass::setup();

@@ -7,7 +7,7 @@ from __main__ import vtk, qt, ctk, slicer
 class PerformanceTests:
   def __init__(self, parent):
     parent.title = "Performance Tests"
-    parent.category = "Developer Tools"
+    parent.categories = ["Developer Tools"]
     parent.contributor = "Steve Pieper"
     parent.helpText = """
     Module to run interactive performance tests on the core of slicer.

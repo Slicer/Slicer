@@ -6,7 +6,7 @@ from __main__ import vtk, qt, ctk, slicer
 class Endoscopy:
   def __init__(self, parent):
     parent.title = "Endoscopy"
-    parent.category = "Endoscopy"
+    parent.categories = ["Endoscopy"]
     parent.contributor = ""
     parent.helpText = """
     Create a path model as a spline interpolation of a set of fiducial points. See <a>http://www.slicer.org/slicerWiki/index.php/Modules:Endoscopy-Documentation-3.6</a> for more information.\n\nPick the Camera to be modified by the path and the Fiducial List defining the control points.  Clicking Apply will bring up the flythrough panel.\n\nYou can manually scroll though the path with the Frame slider.\n\nThe Play/Pause button toggles animated flythrough.\n\nThe Frame Skip slider speeds up the animation by skipping points on the path.\n\nThe Frame Delay slider slows down the animation by adding more time between frames.\n\nThe View Angle provides is used to approximate the optics of an endoscopy system.\n\nThe Close button dismisses the flyrhough panel and stops the animation.

@@ -20,7 +20,7 @@ public:
   qSlicerTractographyFiducialSeedingModule(QObject *_parent = 0);
 
   /// Category of the module
-  virtual QString category() const {return "Diffusion.Tractography";}
+  virtual QStringList categories() const;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 

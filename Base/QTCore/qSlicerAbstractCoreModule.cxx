@@ -110,9 +110,9 @@ void qSlicerAbstractCoreModule::setName(const QString& _name)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::category()const
+QStringList qSlicerAbstractCoreModule::categories()const
 {
-  return QString();
+  return QStringList();
 }
 
 //-----------------------------------------------------------------------------

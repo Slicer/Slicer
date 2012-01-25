@@ -43,6 +43,7 @@ public:
   virtual void setup();
 
   virtual QIcon icon()const;
+  virtual QStringList categories()const;
   qSlicerGetTitleMacro("Data");
 
   /// Return help/acknowledgement text

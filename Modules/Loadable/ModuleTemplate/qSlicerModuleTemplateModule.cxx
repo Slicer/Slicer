@@ -55,9 +55,9 @@ qSlicerModuleTemplateModule::qSlicerModuleTemplateModule(QObject* _parent)
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleTemplateModule::category()const
+QStringList qSlicerModuleTemplateModule::categories()const
 {
-  return "Developer Tools";
+  return QStringList() << "Developer Tools";
 }
 
 //-----------------------------------------------------------------------------

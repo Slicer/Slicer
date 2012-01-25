@@ -106,6 +106,12 @@ QIcon qSlicerModelsModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerModelsModule::categories() const
+{
+  return QStringList() << "";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();

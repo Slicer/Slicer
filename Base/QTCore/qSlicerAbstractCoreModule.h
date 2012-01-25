@@ -79,13 +79,16 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// \a title() must be overwritten for each module.
   Q_PROPERTY(QString title READ title)
 
-  /// This property holds the category a module belongs to.
+  /// This property holds the categories a module belongs to.
   /// It is used to organize modules in the modules menu.
   /// Sub-categories are supported by using '.' as a a separator to specify a
   /// subcategory (no depth limit), e.g.: "Filtering.Arithmetic".
   /// A category doesn't have to exist, it will be created if needed.
-  /// The method \a category() must be reimplemented for each module.
-  Q_PROPERTY(QString category READ category)
+  /// The method \a categories() must be reimplemented for each module.
+  /// An empty category means the module shows up at the top level. It is
+  /// possible to define more than 1 category, the module will then be visible
+  /// in all the listed categories
+  Q_PROPERTY(QStringList categories READ categories)
 
   /// This property controls the index used to sort modules in the module
   ///  selector's menu in the module's category.
@@ -117,7 +120,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
   /// This property holds the authors of the module
   /// It is shown in the Acknowledgement page.
-  /// \a category() must be reimplemented for each module.
+  /// \a contributor() must be reimplemented for each module.
   /// \sa helpText, acknowledgementText
   Q_PROPERTY(QString contributor READ contributor)
 
@@ -179,12 +182,12 @@ public:
   /// \a title() must be reimplemented in derived classes.
   virtual QString title()const = 0;
 
-  /// Category the module belongs to. Categories support subcategories. Use the
+  /// Categories the module belongs to. Categories support subcategories. Use the
   /// '.' separator to specify a subcategory (no depth limit), e.g.:
   /// "Filtering.Arithmetic".
   /// The function must be reimplemented in derived classes.
   /// Note: If a category doesn't exist, it will be created.
-  virtual QString category()const;
+  virtual QStringList categories()const;
 
   /// Return the index of the module.
   virtual int index()const;

@@ -42,8 +42,8 @@ public:
 
   qSlicerTractographyDisplayModule(QObject *_parent = 0);
 
-  /// Category of the module
-  virtual QString category() const;
+  /// Categories of the module
+  virtual QStringList categories() const;
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 

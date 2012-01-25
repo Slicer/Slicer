@@ -25,7 +25,7 @@ public:
 
   /// Return a custom icon for the module
   virtual QIcon icon()const;
-  virtual QString category() const { return QString("Converters"); };
+  virtual QStringList categories() const;
 
   /// Help to use the module
   virtual QString helpText()const;

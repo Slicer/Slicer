@@ -31,6 +31,8 @@ public:
   /// Return the icon of the Annotation module.
   virtual QIcon icon()const;
 
+  virtual QStringList categories()const;
+
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:

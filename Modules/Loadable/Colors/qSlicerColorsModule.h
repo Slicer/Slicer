@@ -41,7 +41,7 @@ public:
   qSlicerColorsModule(QObject *parent=0);
   virtual ~qSlicerColorsModule();
 
-  virtual QString category()const;
+  virtual QStringList categories()const;
   virtual QIcon icon()const;
   virtual QString title()const;
 

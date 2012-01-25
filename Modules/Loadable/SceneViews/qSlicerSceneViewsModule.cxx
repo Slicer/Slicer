@@ -70,6 +70,12 @@ QIcon qSlicerSceneViewsModule::icon() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerSceneViewsModule::categories() const
+{
+  return QStringList() << "";
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerSceneViewsModule::showSceneViewDialog()
 {
   Q_ASSERT(this->widgetRepresentation());

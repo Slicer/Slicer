@@ -48,7 +48,7 @@ public:
   QString           Title;
   QString           Acknowledgement;
   QString           Help;
-  QString           Category;
+  QStringList       Categories;
   QString           Contributor;
   QImage            Logo;
   int               Index;
@@ -115,7 +115,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCLIModule, QString, title, Title);
-CTK_GET_CPP(qSlicerCLIModule, QString, category, Category);
+CTK_GET_CPP(qSlicerCLIModule, QStringList, categories, Categories);
 CTK_GET_CPP(qSlicerCLIModule, QString, contributor, Contributor);
 CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
 CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
@@ -156,7 +156,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
     {
     d->Index = -1;
     }
-  d->Category = QString::fromStdString(desc.GetCategory());
+  d->Categories = QStringList() << QString::fromStdString(desc.GetCategory());
 
   d->ProcessInformation = desc.GetProcessInformation();
 

@@ -59,7 +59,7 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
     return 0;
     }
 
-  //qDebug() << "module->category()" << module->category();
+  //qDebug() << "module->categories()" << module->categories();
   //qDebug() << "module->contributor()" << module->contributor();
   //qDebug() << "module->helpText()" << module->helpText();
   //qDebug() << "module->acknowledgementText()" << module->acknowledgementText();
