@@ -115,6 +115,9 @@ QCheckBox::indicator:unchecked {
              <property name="autoExclusive">
               <bool>true</bool>
              </property>
+             <attribute name="buttonGroup">
+              <string>buttonGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -177,6 +180,9 @@ QCheckBox::indicator:unchecked {
              <property name="text">
               <string>Of Scalar Value</string>
              </property>
+             <attribute name="buttonGroup">
+              <string>buttonGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -199,6 +205,9 @@ QCheckBox::indicator:unchecked {
            <property name="autoExclusive">
             <bool>true</bool>
            </property>
+           <attribute name="buttonGroup">
+            <string>buttonGroup</string>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -214,6 +223,9 @@ QCheckBox::indicator:unchecked {
           <property name="autoExclusive">
            <bool>true</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string>buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -325,6 +337,6 @@ QCheckBox::indicator:unchecked {
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="ButtonGroup_ColorBySelectors"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>
