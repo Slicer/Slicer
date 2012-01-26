@@ -259,6 +259,10 @@ namespace {
         {
         const int itemLength = *(infoAsCharPtr+offset+4);
         const int strideSize = static_cast<int> (ceil(static_cast<double>(itemLength)/4) * 4);
+        if ( infoAsString.length() < offset + 16 + itemLength )
+          { // data not available or incomplete
+          return 0;
+          }
         const std::string valueString = infoAsString.substr( offset+16, itemLength );
         valueArray.push_back( atof(valueString.c_str()) );
         offset += 16+strideSize;
