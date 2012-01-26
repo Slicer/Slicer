@@ -1216,7 +1216,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
               {
               std::string desc = displayableNode->GetDescription();
               size_t ptr = desc.find("CompositeID");
-              // does it have the string CompoisteID in the description with
+              // does it have the string CompositeID in the description with
               // something after it?
               vtkDebugMacro("Desc len = " << desc.length() << ", ptr = " << ptr); 
               if (ptr != std::string::npos &&
