@@ -311,24 +311,21 @@ void vtkEventBroker::RemoveObservations (std::vector< vtkObservation *>observati
     this->SubjectMap[subjectKey] = newObservations;
     }
 
-  for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)  
+  for(inObsIter=observations.begin(); inObsIter != observations.end(); inObsIter++)
     {
     vtkObservation *inObs = (*inObsIter);
     newObservations.clear();
-    if (inObs->GetObserver())  // Observer may be NULL for scripts
+    KeyType observerKey = reinterpret_cast<KeyType>(inObs->GetObserver());
+    ObservationVector *observerObservations = &(this->ObserverMap[observerKey]);
+    for(obsIter=(*observerObservations).begin(); obsIter != (*observerObservations).end(); obsIter++)
       {
-      KeyType observerKey = reinterpret_cast<KeyType>(inObs->GetObserver());
-      ObservationVector *observerObservations = &(this->ObserverMap[observerKey]);
-      for(obsIter=(*observerObservations).begin(); obsIter != (*observerObservations).end(); obsIter++)  
+      vtkObservation *obs = (*obsIter);
+      if (obs != inObs)
         {
-        vtkObservation *obs = (*obsIter);
-        if (obs != inObs)
-          {
-          newObservations.push_back(obs);
-          }
+        newObservations.push_back(obs);
         }
-      this->ObserverMap[observerKey] = newObservations;
       }
+    this->ObserverMap[observerKey] = newObservations;
     }
 
   // remove from event queue
