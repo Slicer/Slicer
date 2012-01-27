@@ -46,10 +46,10 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
             if not hasattr(slicer, 'dicomListener'):
               try:
                 slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-              except UserWarning as message:
+                slicer.dicomListener.start()
+              except (UserWarning,OSError) as message:
                 # TODO: how to put this into the error log?
                 print ('Problem trying to start DICOMListener:\n %s' % message)
-              slicer.dicomListener.start()
     else:
       slicer.dicomDatabase = None
             
