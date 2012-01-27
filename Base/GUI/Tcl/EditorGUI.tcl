@@ -611,8 +611,14 @@ proc EditorStoreCheckPointVolume {nodeID listID} {
   # trim oldest previousCheckPoint image if needed
   if { [llength $::Editor($listID)] >= $::Editor(numberOfCheckPoints) } {
     array set disposeCheckPoint [lindex $::Editor($listID) 0]
-    $disposeCheckPoint(imageData) Delete
-    $disposeCheckPoint(stash) Delete
+    if [catch "$disposeCheckPoint(imageData) Delete" res] {
+      puts "Warning: couldn't delete check point $disposeCheckPoint(imageData)"
+      puts "         message was: $res"
+    }
+    if [catch "$disposeCheckPoint(stash) Delete" res] {
+      puts "Warning: couldn't delete stash object $disposeCheckPoint(imageData)"
+      puts "         message was: $res"
+    }
     set ::Editor($listID) [lrange $::Editor($listID) 1 end]
   }
 
