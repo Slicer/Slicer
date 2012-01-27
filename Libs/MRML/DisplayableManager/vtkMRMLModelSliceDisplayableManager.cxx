@@ -82,6 +82,7 @@ public:
   bool IsVisible(vtkMRMLDisplayNode* displayNode);
   bool IsDisplayable(vtkMRMLDisplayNode* displayNode);
   vtkPolyData* GetDisplayNodePolyData(vtkMRMLDisplayNode* displayNode);
+  void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode, vtkMRMLDisplayNode* displayNode);
 
   // Displayable Node caching (for transform events)
   void AddUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode);
@@ -127,8 +128,7 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
        pipelinesIt != this->DisplayPipelines.end();
        pipelinesIt = this->DisplayPipelines.begin())
     {
-    pipelinesIt->first->RemoveObserver(this->External->GetMRMLNodesCallbackCommand());
-    this->RemoveDisplayNodePipeline(pipelinesIt->first);
+    this->External->RemoveDisplayNode(pipelinesIt->first);
     }
   assert(this->DisplayPipelines.size() == 0);
 }
@@ -146,6 +146,16 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 {
   // TBD: hide when !visible or !scalarsvisible?
   return (displayNode->GetSliceIntersectionVisibility() != 0);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode,
+                     vtkMRMLDisplayNode* displayNode)
+{
+  displayableNode->AddObserver(vtkMRMLDisplayableNode::TransformModifiedEvent,
+                               this->External->GetMRMLNodesCallbackCommand() );
+  this->DisplayableNodes[displayableNode] = displayNode;
 }
 
 //---------------------------------------------------------------------------
@@ -185,12 +195,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
        it != DisplayNodesToUpdateDisplayable.end(); it++)
     {
     vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(*it);
-    vtkMRMLDisplayableNode* node = displayNode->GetDisplayableNode();
-    if (node)
+    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+    if (displayableNode)
       {
-      node->AddObserver(vtkMRMLDisplayableNode::TransformModifiedEvent, 
-                        this->External->GetMRMLNodesCallbackCommand() );
-      this->DisplayableNodes[node] = displayNode;
+      this->AddDisplayableNode(displayableNode, displayNode);
       }
     }
   // This is safer cross-platform than erasing in the loop
@@ -304,6 +312,14 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode)
 {
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  if (displayableNode)
+    {
+    displayableNode->RemoveObservers(
+      vtkMRMLDisplayableNode::TransformModifiedEvent,
+      this->External->GetMRMLNodesCallbackCommand());
+    this->DisplayableNodes.erase(displayableNode);
+    }
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
   if(actorsIt == this->DisplayPipelines.end())
     {
@@ -451,13 +467,13 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayNode(
   displayNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand() );
   
   // Observe the displayable node for TransformModified events
-  vtkMRMLDisplayableNode* modelNode = displayNode->GetDisplayableNode();
-  if (modelNode)
+  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
+  if (displayableNode)
     {
-    modelNode->AddObserver( vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand() );
+    this->Internal->AddDisplayableNode(displayableNode, displayNode);
     }
   else
-    {  
+    {
     this->Internal->AddUpdateDisplayableNodeRef(displayNode);
     }
 }
