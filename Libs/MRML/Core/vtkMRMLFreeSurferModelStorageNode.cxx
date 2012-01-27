@@ -284,78 +284,6 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
   return result;
 }
 
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelStorageNode::WriteData(vtkMRMLNode *refNode)
-{
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: Reference node is null!");
-    return 0;
-    }
-  // test whether refNode is a valid node to hold a model
-  if (!refNode->IsA("vtkMRMLModelNode") ) 
-    {
-    vtkErrorMacro("WriteData: Reference node is not a vtkMRMLModelNode");
-    return 0;
-    }
-  
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
-  
-  std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
-    {
-    vtkErrorMacro("WriteData: File name not specified");
-    return 0;
-    }
-
-  std::string extension = itksys::SystemTools::GetFilenameLastExtension(fullName);
-
-  int result = 1;
-  if (extension == std::string(".vtk"))
-    {
-    vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
-    writer->SetFileName(fullName.c_str());
-    writer->SetInput( modelNode->GetPolyData() );
-    try
-      {
-      writer->Write();
-      }
-    catch (...)
-      {
-      result = 0;
-      }
-    writer->Delete();    
-    }
-  else if (extension == std::string(".vtp"))
-    {
-    vtkXMLPolyDataWriter *writer = vtkXMLPolyDataWriter::New();
-    writer->SetFileName(fullName.c_str());
-    writer->SetInput( modelNode->GetPolyData() );
-    try
-      {
-      writer->Write();
-      }
-    catch (...)
-      {
-      result = 0;
-      }
-    writer->Delete();    
-    }
-  else
-    {
-    result = 0;
-    vtkErrorMacro("WriteData: No Writer for file extension: '" << extension.c_str() << "', use VTK model extensions .vtk or .vtp" );
-    }
-  
-  if (result != 0)
-    {
-    this->StageWriteData(refNode);
-    }
-  
-  return result;
-}
-
 //----------------------------------------------------------------------------
 int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
                                                 const char *newFileName)
@@ -405,9 +333,6 @@ int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
   return 1;
 
 }
-
-
-
 
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelStorageNode::AddFileExtension(std::string ext)
@@ -473,14 +398,4 @@ int vtkMRMLFreeSurferModelStorageNode::SupportedFileType(const char *fileName)
     return 0;
     }
 }
-
-//----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelStorageNode::InitializeSupportedWriteFileTypes()
-{
-  // Look at WriteData()
-  // support saving in vtk format
-  this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
-  this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");  
-}
-
 

@@ -14,6 +14,8 @@
 ///  vtkMRMLFreeSurferModelStorageNode - MRML node for model storage on disk
 /// 
 /// Storage nodes has methods to read/write vtkPolyData to/from disk
+/// It uses the superclass vtkMRMLModelStorageNode for writting
+/// (same file format supported).
 
 #ifndef __vtkMRMLFreeSurferModelStorageNode_h
 #define __vtkMRMLFreeSurferModelStorageNode_h
@@ -42,11 +44,6 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   /// Read data and set it in the referenced node
   /// NOTE: Subclasses should implement this method
   virtual int ReadData(vtkMRMLNode *refNode);
-  
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
 
   /// 
   /// Copy data from a  referenced node's filename to new location.
@@ -79,10 +76,6 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   bool IsKnownFileExtension(std::string ext);
   virtual int SupportedFileType(const char *fileName);
 
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
-  
 protected:
   vtkMRMLFreeSurferModelStorageNode();
   ~vtkMRMLFreeSurferModelStorageNode();
