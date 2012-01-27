@@ -22,7 +22,6 @@
 #include <QMainWindow>
 #include <QStatusBar>
 
-#include "vtkObserverManager.h"
 #include "vtkCollection.h"
 #include "vtkSmartPointer.h"
 

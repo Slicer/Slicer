@@ -163,7 +163,6 @@ vtkMRMLAbstractDisplayableManager::vtkInternal::~vtkInternal()
   this->SetAndObserveInteractorStyle(0);
   this->SetAndObserveMRMLInteractionNode(0);
 
-  this->WidgetsObserverManager->AssignOwner(0);
   this->WidgetsObserverManager->Delete();
 }
 

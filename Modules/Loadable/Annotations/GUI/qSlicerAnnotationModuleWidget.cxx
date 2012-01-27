@@ -34,7 +34,6 @@
 #include <vtkCommand.h>
 #include <vtkCollection.h>
 #include <vtkNew.h>
-#include <vtkObserverManager.h>
 #include <vtkSmartPointer.h>
 
 // MRML includes

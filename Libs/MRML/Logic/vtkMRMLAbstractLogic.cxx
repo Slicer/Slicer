@@ -75,10 +75,7 @@ vtkMRMLAbstractLogic::vtkInternal::vtkInternal()
 //----------------------------------------------------------------------------
 vtkMRMLAbstractLogic::vtkInternal::~vtkInternal()
 {
-  this->MRMLSceneObserverManager->AssignOwner(0);
   this->MRMLSceneObserverManager->Delete();
-
-  this->MRMLNodesObserverManager->AssignOwner(0);
   this->MRMLNodesObserverManager->Delete();
 }
 
@@ -181,7 +178,6 @@ void vtkMRMLAbstractLogic::MRMLNodesCallback(vtkObject* caller, unsigned long ei
 #endif
     return;
     }
-
   vtkDebugWithObjectMacro(self, "In vtkMRMLAbstractLogic MRMLNodesCallback");
 
   self->SetInMRMLNodesCallbackFlag(self->GetInMRMLNodesCallbackFlag() + 1);

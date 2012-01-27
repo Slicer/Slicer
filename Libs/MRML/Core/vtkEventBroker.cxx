@@ -105,6 +105,7 @@ vtkEventBroker::vtkEventBroker()
 //----------------------------------------------------------------------------
 vtkEventBroker::~vtkEventBroker()
 {
+  /// fast and dangerous but ok because we are in the destructor.
   this->DetachObservations();
   
   // close the event log if needed
@@ -134,6 +135,9 @@ void vtkEventBroker::DetachObservations()
     for(oiter=(mapiter->second).begin(); oiter != (mapiter->second).end(); oiter++)
       {
       this->DetachObservation (*oiter);
+      // Ideally the observation should be removed from SubjectMap and
+      // ObserverMap. This is what RemoveObservations() does, but it takes
+      // time.
       (*oiter)->Delete();
       }
     }
@@ -361,7 +365,6 @@ void vtkEventBroker::RemoveObservations (std::vector< vtkObservation *>observati
     }
 }
 
-
 //----------------------------------------------------------------------------
 void vtkEventBroker::RemoveObservations (vtkObject *observer)
 {
@@ -483,6 +486,25 @@ vtkCollection *vtkEventBroker::GetObservationsForObserver ( vtkObject *observer 
     if ( (*iter)->GetObserver() == observer )
       {
       collection->AddItem( *iter );
+      }
+    }
+  return collection;
+}
+
+//----------------------------------------------------------------------------
+vtkCollection *vtkEventBroker::GetObservationsForCallback ( vtkCallbackCommand *callback )
+{
+  vtkCollection *collection = vtkCollection::New();
+  ObjectToObservationVectorMap::iterator it;
+  for (it = this->ObserverMap.begin(); it != this->ObserverMap.end(); ++it)
+    {
+    std::vector< vtkObservation *>::iterator iter;
+    for(iter=it->second.begin(); iter != it->second.end(); iter++)
+      {
+      if ( *iter && (*iter)->GetCallbackCommand() == callback )
+        {
+        collection->AddItem( *iter );
+        }
       }
     }
   return collection;

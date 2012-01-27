@@ -83,14 +83,6 @@ public:
   /// Scripted version of observation
   /// - creates an observation that will be invoked using the ScriptHandler method
   vtkObservation *AddObservation (vtkObject *subject, const char *event, const char *script);
-
-  /// 
-  /// Attach adds the observers to the object.
-  /// Detach removes the observers
-  /// These routines manage the internal datastructres and should
-  /// be the only methods used to modified the internal Observations member
-  void AttachObservation (vtkObservation *observation);
-  void DetachObservation (vtkObservation *observation);
  
   /// 
   /// Remove observation from the broker and event queue
@@ -123,6 +115,7 @@ public:
   /// and must be freed by the caller
   vtkCollection *GetObservationsForSubject (vtkObject *subject);
   vtkCollection *GetObservationsForObserver (vtkObject *observer);
+  vtkCollection *GetObservationsForCallback (vtkCallbackCommand* callback);
 
   /// 
   /// Accessors for Observations
@@ -247,6 +240,15 @@ protected:
   /// Singleton management functions.
   static void classInitialize();
   static void classFinalize();
+
+  ///
+  /// Attach adds the observers to the object.
+  /// Detach removes the observers
+  /// These routines manage the internal datastructres and should
+  /// be the only methods used to modified the internal Observations member
+  /// Please note that they don't update the SubjectMap nor the ObserverMap.
+  void AttachObservation (vtkObservation *observation);
+  void DetachObservation (vtkObservation *observation);
   
   friend class vtkEventBrokerInitialize;
   typedef vtkEventBroker Self;
@@ -260,7 +262,6 @@ protected:
   /// maps to manage quick lookup by object
   ObjectToObservationVectorMap SubjectMap;
   ObjectToObservationVectorMap ObserverMap;
-
 
   /// The event queue of triggered but not-yet-invoked observations
   std::deque< vtkObservation * > EventQueue;
@@ -278,7 +279,10 @@ protected:
 
   std::ofstream LogFile;
 private:
-  void DetachObservations(); 
+  /// DetachObservations is a fast (but dangerous) method to delete all the
+  /// observations. It leaves the event broker in an inconsistent state:
+  ///  - SubjectMap and ObserverMap are not being updated.
+  void DetachObservations();
   /// vtkObservation can call these methods
   friend class vtkObservation; 
 };

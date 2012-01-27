@@ -16,11 +16,11 @@
 #include <vtkCallbackCommand.h>
 #include <vtkIntArray.h>
 #include <vtkObjectFactory.h>
-#include <vtkObservation.h>
 #include <vtkUnsignedLongArray.h>
 
 // MRML includes
 #include "vtkEventBroker.h"
+#include "vtkObservation.h"
 #include "vtkObserverManager.h"
 
 vtkCxxRevisionMacro(vtkObserverManager, "$Revision: 1.9.12.1 $");
@@ -36,18 +36,26 @@ vtkObserverManager::vtkObserverManager()
 //----------------------------------------------------------------------------
 vtkObserverManager::~vtkObserverManager()
 {
-   
-  if (this->CallbackCommand)
-    {
-    this->CallbackCommand->Delete();
-    }
-
+  // Remove all the observations associated to the callback
   std::map< vtkObject*, vtkUnsignedLongArray*>::iterator iter; 
   for(iter=this->ObserverTags.begin(); iter != this->ObserverTags.end(); iter++)  
     { 
     this->RemoveObjectEvents(iter->first); 
     vtkUnsignedLongArray *objTags = iter->second; 
     objTags->Delete(); 
+    }
+
+  if (this->CallbackCommand)
+    {
+    if (this->Owner &&
+        this->CallbackCommand->GetReferenceCount() > 1)
+      {
+      // It is possible to externally use the callback command, it is not
+      // recommended though.
+      vtkWarningMacro( << "The callback is not deleted because there are still some observation. "
+                       << "They seem to not have been registered into the event broker.");
+      }
+    this->CallbackCommand->Delete();
     }
 }
 

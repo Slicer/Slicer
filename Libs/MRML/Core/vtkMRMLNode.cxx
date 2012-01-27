@@ -96,7 +96,6 @@ vtkMRMLNode::~vtkMRMLNode()
     }
   if (this->MRMLObserverManager)
     {
-    this->MRMLObserverManager->AssignOwner( NULL );
     this->MRMLObserverManager->Delete();
     }
 
