@@ -134,7 +134,6 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
       qCritical() << "FATAL ERROR: Cannot instantiate CropVolumeParameterNode";
       Q_ASSERT(this->parametersNode);
       }
-    //InitializeEventListeners(this->parametersNode);
     }
   else
     {
@@ -296,11 +295,3 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
 
   d->SpacingScalingSpinBox->setValue(parameterNode->GetSpacingScalingConst());
 }
-
-//-----------------------------------------------------------------------------
-//void qSlicerCropVolumeModuleWidget::InitializeEventListeners(vtkMRMLCropVolumeParametersNode *n)
-//{
-//  //vtkIntArray *events = vtkIntArray::New();
-//  //events->InsertNextValue(vtkCommand::ModifiedEvent);
-//  //
-//}

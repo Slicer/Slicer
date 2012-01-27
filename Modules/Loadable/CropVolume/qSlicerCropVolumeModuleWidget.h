@@ -46,8 +46,6 @@ private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
   Q_DISABLE_COPY(qSlicerCropVolumeModuleWidget);
 
-  //void InitializeEventListeners(vtkMRMLCropVolumeParametersNode*);
-
   vtkMRMLCropVolumeParametersNode *parametersNode;
 };
 

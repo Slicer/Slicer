@@ -472,7 +472,7 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (selectionNode)
     {
-    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::InitializeEventListeners(): adding new annotation ids to selection node list");
+    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::ObserveMRMLScene(): adding new annotation ids to selection node list");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png");
 //    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationTextWithArrow.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png");
@@ -525,8 +525,6 @@ void vtkSlicerAnnotationModuleLogic::StartPlaceMode(bool persistent)
     vtkErrorMacro ( "StartPlaceMode: No interaction node in the scene." );
     return;
     }
-
-  //  this->InitializeEventListeners();
 
   interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
 

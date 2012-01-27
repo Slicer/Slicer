@@ -44,9 +44,6 @@ public:
   static vtkSlicerTractographyLogic *New();
   vtkTypeMacro(vtkSlicerTractographyLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  /// Initialize listening to MRML events
-  //void InitializeEventListeners();
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();

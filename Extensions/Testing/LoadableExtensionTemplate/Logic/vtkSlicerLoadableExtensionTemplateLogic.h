@@ -45,13 +45,11 @@ public:
   vtkTypeMacro(vtkSlicerLoadableExtensionTemplateLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Initialize listening to MRML events
-  void InitializeEventListeners();
-
 protected:
   vtkSlicerLoadableExtensionTemplateLogic();
   virtual ~vtkSlicerLoadableExtensionTemplateLogic();
 
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
   virtual void UpdateFromMRMLScene();
