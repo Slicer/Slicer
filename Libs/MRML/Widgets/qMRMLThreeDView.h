@@ -54,7 +54,7 @@ public:
   void addDisplayableManager(const QString& displayableManager);
 
   /// Get the 3D View node observed by view.
-  vtkMRMLViewNode* mrmlViewNode()const;
+  Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
 
   /// Returns the interactor style of the view
   //vtkInteractorObserver* interactorStyle()const;
