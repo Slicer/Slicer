@@ -22,8 +22,8 @@
 #include "vtkMRMLVectorImageContainerNode.h"
 
 // VTK includes
-#include <vtkNew.h>
 #include <vtkDoubleArray.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cassert>
