@@ -34,6 +34,19 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__dwvNode = None
     self.__vcNode = None
 
+    # chart view node
+    cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    cvns.InitTraversal()
+    self.__cvn = cvns.GetNextItemAsObject()
+
+    # data node
+    self.__dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+    self.__dn = slicer.mrmlScene.AddNode(self.__dn)
+
+    # chart node
+    self.__cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+    cn = slicer.mrmlScene.AddNode(self.__cn)
+
     # image play setup
     self.timer = qt.QTimer()
     self.timer.setInterval(50)
@@ -160,9 +173,22 @@ class qSlicerVectorImageExplorerModuleWidget:
        self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
        print 'Active DWV node: ', self.__dwvNode
        if self.__dwvNode != None:
+         nGradients = self.__dwvNode.GetNumberOfGradients()
          self.__mdSlider.minimum = 0
-         self.__mdSlider.maximum = self.__dwvNode.GetNumberOfGradients()-1
-         self.__chartTable.SetNumberOfRows(self.__dwvNode.GetNumberOfGradients())
+         self.__mdSlider.maximum = nGradients-1
+         self.__chartTable.SetNumberOfRows(nGradients)
+         a = self.__dn.GetArray()
+         a.SetNumberOfTuples(nGradients)
+
+         # populate array with something and initialize
+         for c in range(nGradients):
+           a.SetComponent(c, 0, c)
+           a.SetComponent(c, 1, c*c)
+           a.SetComponent(c, 2, 0)
+         
+         self.__cn.AddArray('data array', self.__dn.GetID())
+         self.__cvn.SetChartNodeID(self.__cn.GetID())
+
   
   def onPlayButtonToggled(self,checked):
     if self.__vcNode == None:
@@ -255,12 +281,21 @@ class qSlicerVectorImageExplorerModuleWidget:
             nComponents = self.__dwvNode.GetNumberOfGradients()
             values = ''
             extent = dwvImage.GetExtent()
+            a = self.__dn.GetArray()
             for c in range(nComponents):
               if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
                 val = dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
                 values = values + str(val)+' '
                 self.__chartTable.SetValue(c, 0, c)
                 self.__chartTable.SetValue(c, 1, val)
+
+                # populate alternative charting data too
+                a.SetComponent(c, 0, c)
+                a.SetComponent(c, 0, val)
+                a.SetComponent(c, 2, 0)
+                self.__dn.Modified()
+                self.__cvn.Modified()
+
               else:
                 break
             
