@@ -61,6 +61,19 @@ class VectorImageImporterWidget:
     self.__fDialog.caption = 'Input DICOM directory'
     dummyFormLayout.addRow(label, self.__fDialog)
 
+    # label name and values
+    label = qt.QLabel('Units of vector elements:')
+    self.__veLabel = qt.QLineEdit()
+    dummyFormLayout.addRow(label, self.__veLabel)
+    label = qt.QLabel('Initial value:')
+    self.__veInitial = qt.QDoubleSpinBox()
+    self.__veInitial.value = 0
+    dummyFormLayout.addRow(label, self.__veInitial)
+    label = qt.QLabel('Step:')
+    self.__veStep = qt.QDoubleSpinBox()
+    self.__veStep.value = 1
+    dummyFormLayout.addRow(label, self.__veStep)
+
     # HelloWorld button
     importButton = qt.QPushButton("Import")
     importButton.toolTip = "Import the contents of the DICOM directory as a VectorImageContainer"
@@ -109,9 +122,19 @@ class VectorImageImporterWidget:
       self.__status.text = 'Status: Error importing volume'
       return
     
-    vcNode.SetDWVNode(vol)
+    vcNode.SetDWVNodeID(vol.GetID())
+    vcNode.SetVectorLabelName(self.__veLabel.text)
+    labels = vtk.vtkDoubleArray()
+    nElements = vol.GetNumberOfGradients()
+    labels.SetNumberOfTuples(nElements)
+    labels.SetNumberOfComponents(1)
+    val = self.__veInitial.value
+    step = self.__veStep.value
+    for c in range(nElements):
+      labels.SetComponent(c, 0, val)
+      val = val+step
+
+    vcNode.SetVectorLabelArray(labels)
 
     # initialize the vector values and name
     # make DWI node hidden from the user
-    print "Hello World !"
-
