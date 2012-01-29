@@ -73,16 +73,19 @@ class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContai
 
   //virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
 
-  // TODO: no macros, put function body in .cxx even if it is one line
-  vtkGetObjectMacro(DWVNode, vtkMRMLDiffusionWeightedVolumeNode);
+  /*
+  vtkMRMLDiffusionWeightedVolumeNode* GetDWVNode();
+  void SetDWVNode(vtkMRMLDiffusionWeightedVolumeNode* dwv);
+  */
 
-  void SetDWVNode(vtkMRMLDiffusionWeightedVolumeNode* dwv){ DWVNode = dwv;}
+  const std::string GetDWVNodeID();
+  void SetDWVNodeID(std::string);
 
-  vtkGetObjectMacro(VectorLabelArray, vtkDoubleArray);
-  vtkSetObjectMacro(VectorLabelArray, vtkDoubleArray);
+  void SetVectorLabelArray(vtkDoubleArray*);
+  const vtkDoubleArray* GetVectorLabelArray();
 
-  const char* GetVectorLabelName(){ return VectorLabelName;}
-  void SetVectorLabelName(char* n){ VectorLabelName = n;}
+  const std::string GetVectorLabelName(){ return VectorLabelName;}
+  void SetVectorLabelName(std::string n){ VectorLabelName = n;}
 
 protected:
   vtkMRMLVectorImageContainerNode();
@@ -91,9 +94,9 @@ protected:
   void operator=(const vtkMRMLVectorImageContainerNode&);
 
 
-  vtkMRMLDiffusionWeightedVolumeNode *DWVNode;
   vtkDoubleArray *VectorLabelArray;
-  char * VectorLabelName;
+  std::string VectorLabelName;
+  std::string DWVNodeID;
 };
 
 #endif

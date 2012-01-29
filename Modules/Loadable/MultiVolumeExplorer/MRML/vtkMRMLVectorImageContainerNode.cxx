@@ -12,12 +12,21 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
+// C++ includes
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <string>
+#include <vector>
+
 // VTK includes
 #include <vtkCommand.h>
-#include <vtkObjectFactory.h>
 #include <vtkDoubleArray.h>
+#include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 // MRML includes
+#include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLVolumeNode.h"
 
 // CropModuleMRML includes
@@ -32,16 +41,52 @@ vtkMRMLNodeNewMacro(vtkMRMLVectorImageContainerNode);
 vtkMRMLVectorImageContainerNode::vtkMRMLVectorImageContainerNode()
 {
   // TODO: use this->, use 0 instead of NULL
-  DWVNode = NULL;
-  VectorLabelArray = NULL;
-  VectorLabelName = NULL;
+  this->VectorLabelArray = NULL;
+  this->VectorLabelName = "";
   this->HideFromEditors = 0;
+  this->DWVNodeID = "";
   std::cout << "Vector image container constructor called" << std::endl;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLVectorImageContainerNode::~vtkMRMLVectorImageContainerNode()
 {
+  if(this->VectorLabelArray)
+    {
+    this->VectorLabelArray->Delete();
+    this->VectorLabelArray = NULL;
+    }
+}
+
+//----------------------------------------------------------------------------
+const std::string vtkMRMLVectorImageContainerNode::GetDWVNodeID()
+{
+  return this->DWVNodeID;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVectorImageContainerNode::SetDWVNodeID(std::string id)
+{
+  this->DWVNodeID = id;
+}
+
+//----------------------------------------------------------------------------
+const vtkDoubleArray* vtkMRMLVectorImageContainerNode::GetVectorLabelArray()
+{
+  return this->VectorLabelArray;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVectorImageContainerNode::SetVectorLabelArray(vtkDoubleArray* arr)
+{
+  if(!this->VectorLabelArray)
+    {
+    this->VectorLabelArray = vtkDoubleArray::New();
+    this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfComponents());
+    this->VectorLabelArray->SetNumberOfComponents(1);
+    }
+  for(int i=0;i<arr->GetNumberOfTuples();i++)
+    this->VectorLabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
 }
 
 //----------------------------------------------------------------------------
@@ -49,44 +94,51 @@ void vtkMRMLVectorImageContainerNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
   
-  /*
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
   {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "inputVolumeNodeID"))
+    if (!strcmp(attName, "DWVNodeID"))
     {
-      this->SetInputVolumeNodeID(attValue);
+      std::cout << "DWVNodeID is " << attValue << std::endl;
+      this->DWVNodeID = attValue;
       continue;
     }
-    if (!strcmp(attName, "outputVolumeNodeID"))
+    if (!strcmp(attName, "VectorLabelArray"))
     {
-      this->SetOutputVolumeNodeID(attValue);
+      std::vector<double> labels;
+      char* str = (char*)attValue;
+      char* pch = strtok(str, " ");
+      while(pch)
+        {
+        labels.push_back(atof(pch));
+        pch = strtok(NULL," ");
+        }
+      /*
+      copy(std::istream_iterator<std::string>(iss),
+        std::istream_iterator<std::string>(),
+        std::back_inserter<std::vector<double> >(labels));
+      */
+      std::cout << "Number of elements found: " << labels.size() << std::endl;
+      if(!this->VectorLabelArray)
+        this->VectorLabelArray = vtkDoubleArray::New();
+      this->VectorLabelArray->SetNumberOfTuples(labels.size());
+      this->VectorLabelArray->SetNumberOfComponents(1);
+      for(unsigned int i=0;i<labels.size();i++)
+        {
+        std::cout << "Setting " << i << " to " << labels[i] << std::endl;
+        this->VectorLabelArray->SetComponent(i, 0, labels[i]);
+        }
       continue;
     }
-    if (!strcmp(attName, "ROINodeID"))
+    if (!strcmp(attName, "VectorLabelName"))
     {
-      this->SetROINodeID(attValue);
-      continue;
-    }
-    if (!strcmp(attName,"ROIVisibility"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->ROIVisibility;
-      continue;
-    }
-    if (!strcmp(attName,"interpolationMode"))
-    {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->InterpolationMode;
+      this->VectorLabelName = attValue;
       continue;
     }
   }
-  */
   this->WriteXML(std::cout,1);
 }
 
@@ -95,15 +147,19 @@ void vtkMRMLVectorImageContainerNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  /*
   vtkIndent indent(nIndent);
-
-  of << indent << " inputVolumeNodeID=\"" << (this->InputVolumeNodeID ? this->InputVolumeNodeID : "NULL") << "\"";
-  of << indent << " outputVolumeNodeID=\"" << (this->OutputVolumeNodeID ? this->OutputVolumeNodeID : "NULL") << "\"";
-  of << indent << " ROIVisibility=\""<< this->ROIVisibility << "\"";
-  of << indent << " ROINodeID=\"" << (this->ROINodeID ? this->ROINodeID : "NULL") << "\"";
-  of << indent << " interpolationMode=\"" << this->InterpolationMode << "\"";
-  */
+  of << indent << " DWVNodeID=\"" << this->DWVNodeID << "\"";
+  if(this->VectorLabelArray)
+    {
+    int nItems = this->VectorLabelArray->GetNumberOfTuples();
+    of << indent << " VectorLabelArray=\"";
+    for(int i=0;i<nItems;i++)
+      {
+      of << indent << this->VectorLabelArray->GetComponent(i, 0) << indent;
+      }
+    of << indent << "\"";
+    }
+  of << indent << " VectorLabelName=\"" << this->VectorLabelName << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -111,113 +167,30 @@ void vtkMRMLVectorImageContainerNode::WriteXML(ostream& of, int nIndent)
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLVectorImageContainerNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(anode);
-  /*
-  vtkMRMLVectorImageContainerNode *node = vtkMRMLVectorImageContainerNode::SafeDownCast(anode);
-  this->DisableModifiedEventOn();
+  vtkMRMLVectorImageContainerNode *n = vtkMRMLVectorImageContainerNode::SafeDownCast(anode);
+  if(!n)
+    return;
 
-  this->SetInputVolumeNodeID(node->GetInputVolumeNodeID());
-  this->SetOutputVolumeNodeID(node->GetOutputVolumeNodeID());
-  this->SetROINodeID(node->GetROINodeID());
-  this->SetInterpolationMode(node->GetInterpolationMode());
-  this->SetROIVisibility(node->GetROIVisibility());
-  
-  this->DisableModifiedEventOff();
-  this->InvokePendingModifiedEvent();
-  */
+  Superclass::Copy(anode);
+
+  this->DWVNodeID = n->DWVNodeID;
+  if(n->VectorLabelArray)
+    {
+    vtkDoubleArray *arr = n->VectorLabelArray;
+    if(arr)
+      {
+      if(!this->VectorLabelArray)
+        this->VectorLabelArray = vtkDoubleArray::New();
+      this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
+      this->VectorLabelArray->SetNumberOfComponents(1);
+      for(int i=0;i<arr->GetNumberOfTuples();i++)
+        this->VectorLabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
+      }
+    }
+  this->VectorLabelName = n->VectorLabelName;
 }
 
 #if 0
-//----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::SetAndObserveInputVolumeNodeID(const char *volumeNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetInputVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetInputVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::SetAndObserveOutputVolumeNodeID(const char *volumeNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetOutputVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetOutputVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::SetAndObserveROINodeID(const char *ROINodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
-
-  if (ROINodeID != NULL)
-  {
-    this->SetROINodeID(ROINodeID);
-    vtkMRMLAnnotationROINode *node = this->GetROINode();
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLVectorImageContainerNode::GetInputVolumeNode()
-{
-  if (this->InputVolumeNodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->InputVolumeNode != NULL && strcmp(this->InputVolumeNode->GetID(), this->InputVolumeNodeID)) ||
-            (this->InputVolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->InputVolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
-    }
-  return this->InputVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLVectorImageContainerNode::GetOutputVolumeNode()
-{
-  if (this->OutputVolumeNodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->OutputVolumeNode != NULL && strcmp(this->OutputVolumeNode->GetID(), this->OutputVolumeNodeID)) ||
-            (this->OutputVolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->OutputVolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
-    }
-  return this->OutputVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLAnnotationROINode* vtkMRMLVectorImageContainerNode::GetROINode()
-{
-  if (this->ROINodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->ROINode != NULL && strcmp(this->ROINode->GetID(), this->ROINodeID)) ||
-            (this->ROINode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ROINodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLAnnotationROINode::SafeDownCast(snode));
-    }
-  return this->ROINode;
-}
-
 //-----------------------------------------------------------
 void vtkMRMLVectorImageContainerNode::UpdateScene(vtkMRMLScene *scene)
 {
@@ -244,14 +217,15 @@ void vtkMRMLVectorImageContainerNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
-  /*
-  os << "InputVolumeNodeID: " << ( (this->InputVolumeNodeID) ? this->InputVolumeNodeID : "None" ) << "\n";
-  os << "OutputVolumeNodeID: " << ( (this->OutputVolumeNodeID) ? this->OutputVolumeNodeID : "None" ) << "\n";
-  os << "ROINodeID: " << ( (this->ROINodeID) ? this->ROINodeID : "None" ) << "\n";
-  os << "ROIVisibility: " << this->ROIVisibility << "\n";
-  os << "InterpolationMode: " << this->InterpolationMode << "\n";
-  os << "IsotropicResampling: " << this->IsotropicResampling << "\n";
-  */
+  os << "DWVNodeID: " << this->DWVNodeID << "\n";
+  if(this->VectorLabelArray)
+    {
+    os << "VectorLabelArray: ";
+    for(int i=0;i<this->VectorLabelArray->GetNumberOfTuples();i++)
+      os << this->VectorLabelArray->GetComponent(i, 0) << " ";
+    os << std::endl;
+    }
+  os << "VectorLabelName: " << this->VectorLabelName << std::endl;
 }
 
 // End
