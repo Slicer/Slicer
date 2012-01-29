@@ -157,7 +157,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     print 'onInputChanged() called'
     self.__vcNode = self.__vcSelector.currentNode()
     if self.__vcNode != None:
-       self.__dwvNode = self.__vcNode.GetDWVNode()
+       self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
        print 'Active DWV node: ', self.__dwvNode
        if self.__dwvNode != None:
          self.__mdSlider.minimum = 0
