@@ -40,8 +40,8 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__cvn = cvns.GetNextItemAsObject()
 
     # data node
-    self.__dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-    self.__dn = slicer.mrmlScene.AddNode(self.__dn)
+    #self.__dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+    #self.__dn = slicer.mrmlScene.AddNode(self.__dn)
 
     # chart node
     self.__cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
@@ -63,7 +63,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     #if not self.__logic:
     #  self.__logic = self.parent.module().logic()
 
-    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
+    self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
 
     w = qt.QWidget()
     layout = qt.QGridLayout()
@@ -77,7 +77,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__vcSelector = slicer.qMRMLNodeComboBox()
     self.__vcSelector.nodeTypes = ['vtkMRMLVectorImageContainerNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
-    self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
+    self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
     self.__vcSelector.addEnabled = 1
 
@@ -99,6 +99,7 @@ class qSlicerVectorImageExplorerModuleWidget:
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
+    '''
     label = qt.QLabel('Label for the element shown:')
     self.__mdValue = qt.QLabel()
     ## self.layout.addRow(label, self.__mdValue)
@@ -110,6 +111,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     ## self.layout.addRow(label, self.__vcValue)
     self.layout.addWidget(label)
     self.layout.addWidget(self.__vcValue)
+    '''
 
     # initialize slice observers (from DataProbe.py)
     # keep list of pairs: [observee,tag] so they can be removed easily
@@ -118,6 +120,20 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.sliceWidgetsPerStyle = {}
     self.refreshObservers()
 
+    # label map for probing
+    label = qt.QLabel('Probed label volume:')
+    self.__fSelector = slicer.qMRMLNodeComboBox()
+    self.__fSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.__fSelector.addAttribute('vtkMRMLScalarVolumeNode','LabelMap','1')
+    self.__fSelector.toolTip = 'Label map to be probed'
+    self.__fSelector.setMRMLScene(slicer.mrmlScene)
+    self.__fSelector.addEnabled = 0
+    self.__fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelVolumeChanged)
+    self.__fSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onLVMRMLSceneChanged)
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.__fSelector)
+
+    # "play" control
     self.playButton = qt.QPushButton('Play')
     self.playButton.toolTip = 'Iterate over vector image components'
     self.playButton.checkable = True
@@ -146,26 +162,67 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__chartTable.AddColumn(self.__xArray)
     self.__chartTable.AddColumn(self.__yArray)
      
+  def onLabelVolumeChanged(self):
+    # iterate over the label image and collect the IJK for each label element
+    labelNode = self.__fSelector.currentNode()
+    if labelNode != None:
+      labelID = labelNode.GetID()
+      img = labelNode.GetImageData()
+      extent = img.GetWholeExtent()
+      labeledVoxels = {}
+      for i in range(extent[1]):
+        for j in range(extent[3]):
+          for k in range(extent[5]):
+            labelValue = img.GetScalarComponentAsFloat(i,j,k,0)
+            if labelValue:
+              if labelValue in labeledVoxels.keys():
+                labeledVoxels[labelValue].append([i,j,k])
+              else:
+                labeledVoxels[labelValue] = []
+                labeledVoxels[labelValue].append([i,j,k])
+
+      # go over all elements, calculate the mean in each frame for each label
+      # and add to the chart array
+      nComponents = self.__dwvNode.GetNumberOfGradients()
+      dataNodes = {}
+      for k in labeledVoxels.keys():
+        dataNodes[k] = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+        dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
+        slicer.mrmlScene.AddNode(dataNodes[k])
+      dwvImage = self.__dwvNode.GetImageData()
+      for c in range(nComponents):
+        for k in labeledVoxels.keys():
+          arr = dataNodes[k].GetArray()
+          mean = 0.
+          cnt = 0.
+          for v in labeledVoxels[k]:
+            mean = mean+dwvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
+            cnt = cnt+1
+          arr.SetComponent(c, 0, c)
+          arr.SetComponent(c, 1, mean/cnt)
+          arr.SetComponent(c, 2, 0)
+
+      # add initialized data nodes to the chart
+      for k in labeledVoxels.keys():
+        self.__cn.AddArray('Label '+str(k), dataNodes[k].GetID())
+        self.__cvn.Modified()
+
   def onSliderChanged(self, newValue):
     value = self.__mdSlider.value
-    self.__mdValue.setText(str(newValue))
+    # self.__mdValue.setText(str(newValue))
 
     if self.__dwvNode != None:
       dwvDisplayNode = self.__dwvNode.GetDisplayNode()
       dwvDisplayNode.SetDiffusionComponent(newValue)
 
-  def onMRMLSceneChanged(self, mrmlScene):
+  def onVCMRMLSceneChanged(self, mrmlScene):
     print 'onMRMLSceneChanged called'
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.onInputChanged()
-    '''
-    if mrmlScene != self.__logic.GetMRMLScene():
-      self.__logic.SetMRMLScene(mrmlScene)
-      self.__logic.RegisterNodes()
-      self.__logic.InitializeEventListeners()
-    self.__logic.GetMRMLManager().SetMRMLScene(mrmlScene)
-    '''
-    
+  
+  def onLVMRMLSceneChanged(self, mrmlScene):
+    self.__fSelector.setMRMLScene(slicer.mrmlScene)
+   
   def onInputChanged(self):
     print 'onInputChanged() called'
     self.__vcNode = self.__vcSelector.currentNode()
@@ -177,18 +234,18 @@ class qSlicerVectorImageExplorerModuleWidget:
          self.__mdSlider.minimum = 0
          self.__mdSlider.maximum = nGradients-1
          self.__chartTable.SetNumberOfRows(nGradients)
-         a = self.__dn.GetArray()
+         #a = self.__dn.GetArray()
          # it is implicit that the array has 3 components, no need to
          # initialize that
-         a.SetNumberOfTuples(nGradients)
+         #a.SetNumberOfTuples(nGradients)
 
          # populate array with something and initialize
-         for c in range(nGradients):
-           a.SetComponent(c, 0, c)
-           a.SetComponent(c, 1, c*c)
-           a.SetComponent(c, 2, 0)
+         #for c in range(nGradients):
+         #  a.SetComponent(c, 0, c)
+         #  a.SetComponent(c, 1, c*c)
+         #  a.SetComponent(c, 2, 0)
          
-         self.__cn.AddArray('Intensity at cursor location', self.__dn.GetID())
+         #self.__cn.AddArray('Intensity at cursor location', self.__dn.GetID())
          self.__cvn.SetChartNodeID(self.__cn.GetID())
 
   
@@ -239,6 +296,7 @@ class qSlicerVectorImageExplorerModuleWidget:
           self.styleObserverTags.append([style,tag])
  
   def processEvent(self,observee,event):
+    return
     # TODO: use a timer to delay calculation and compress events
     if event == 'LeaveEvent':
       # reset all the readouts
@@ -283,7 +341,7 @@ class qSlicerVectorImageExplorerModuleWidget:
             nComponents = self.__dwvNode.GetNumberOfGradients()
             values = ''
             extent = dwvImage.GetExtent()
-            a = self.__dn.GetArray()
+            # a = self.__dn.GetArray()
             for c in range(nComponents):
               if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
                 val = dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
@@ -292,11 +350,12 @@ class qSlicerVectorImageExplorerModuleWidget:
                 self.__chartTable.SetValue(c, 1, val)
 
                 # populate alternative charting data too
-                a.SetComponent(c, 0, c)
-                a.SetComponent(c, 1, val)
-                a.SetComponent(c, 2, 0)
-                self.__dn.Modified()
-                self.__cvn.Modified()
+                # -- doing this interactively is slow, use label map
+                # a.SetComponent(c, 0, c)
+                # a.SetComponent(c, 1, val)
+                # a.SetComponent(c, 2, 0)
+                # self.__dn.Modified()
+                # self.__cvn.Modified()
 
               else:
                 break
