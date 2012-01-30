@@ -24,6 +24,7 @@
 class vtkDataObject;
 class vtkStringArray;
 class DoubleArrayIDMap;
+class ChartPropertyMap;
 
 #include <string>
 
@@ -85,12 +86,6 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///
   /// Remove all the arrays
   void ClearArrays();
-  
-  ///
-  /// Set a property for a specific array to control how it will
-  /// appear in the chart. Properties can control lines, points,
-  /// colors, etc.
-  void SetProperty(const char *name, const char *property, const char *value);
 
   ///
   /// Get the array id referenced by a particular name
@@ -104,10 +99,52 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// Get the list of array ids
   vtkStringArray* GetArrays();
 
+  ///
+  /// Set/Get a property for a specific array to control how it will
+  /// appear in the chart. If the array name is "default", then the property
+  /// is either a property of the entire chart or a default property
+  /// for the arrays (which can be overridden by properties assigned
+  /// to specific arrays).  Available properties are:
+  /// 
+  /// Chart level properties
+  ///
+  ///   "title" - title displayed on the chart
+  ///   "showTitle" - show title "on" or "off"
+  ///   "xAxisLabel" - label displayed on the x-axis
+  ///   "showXAxisLabel" - show x-axis label "on" or "off"
+  ///   "yAxisLabel" - label displayed on the y-axis
+  ///   "showYAxisLabel" - show y-axis label "on" or "off"
+  ///   "showGrid" - show grid "on" or "off"
+  ///   "showLegend" - show legend "on" or "off"
+  ///
+  /// Array level properties (can be assigned to "default" to apply to
+  ///   entire chart)
+  ///
+  ///   "showLines" - show lines "on" or "off"
+  ///   "showMarkers" - show markers "on" or "off"
+  ///   "color" - color to use for the array lines and points (#RRGGBB)
+  ///   "bins" - number of bins to use when building histograms
+  /// 
+  void SetProperty(const char *arrname, const char *property, const char *value);
+  const char* GetProperty(const char *arrname, const char *property);
+
+  ///
+  /// Remove a property for an array
+  void ClearProperty(const char *arrname, const char *property);
+
+  ///
+  /// Remove all the properties for an array
+  void ClearProperties(const char *arrname);
+
+  ///
+  /// Remove all the properties for all the arrays
+  void ClearProperties();
+
+
+ protected:
   //----------------------------------------------------------------
   /// Constructor and destroctor
   //----------------------------------------------------------------
- protected:
   vtkMRMLChartNode();
   ~vtkMRMLChartNode();
   vtkMRMLChartNode(const vtkMRMLChartNode&);
@@ -121,6 +158,7 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   DoubleArrayIDMap *DoubleArrayIDs;
   vtkStringArray *Arrays;        // only valid when GetArrays() is called
   vtkStringArray *ArrayNames;    // only valid when GetArrayNames() is called
+  ChartPropertyMap *Properties;
 };
 
 

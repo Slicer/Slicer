@@ -96,6 +96,7 @@ qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
   this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
   this->MRMLChartViewNode = 0;
+  this->MRMLChartNode = 0;
   this->PinButton = 0;
   this->PopupWidget = 0;
 }
@@ -207,8 +208,29 @@ vtkMRMLScene* qMRMLChartViewPrivate::mrmlScene()
 }
 
 // --------------------------------------------------------------------------
+void qMRMLChartViewPrivate::onChartNodeChanged()
+{
+  //qDebug() << "onChartNodeChanged()";
+
+  vtkMRMLChartNode *newChartNode=0;
+
+  if (this->MRMLChartViewNode && this->MRMLChartViewNode->GetChartNodeID())
+    {
+    newChartNode = vtkMRMLChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(this->MRMLChartViewNode->GetChartNodeID()));
+    }
+
+  this->qvtkReconnect(
+    this->MRMLChartNode, newChartNode,
+    vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
+
+  this->MRMLChartNode = newChartNode;
+}
+
+// --------------------------------------------------------------------------
 void qMRMLChartViewPrivate::updateWidgetFromMRML()
 {
+  //qDebug() << "qMRMLChartViewPrivate::updateWidgetFromMRML()";
+
   Q_Q(qMRMLChartView);
   if (!this->MRMLScene || !this->MRMLChartViewNode)
     {
@@ -281,31 +303,160 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // properties for the plot - represented in javascript
   //
   //
+  
   QStringList plotOptions;
   plotOptions << "var options = {";
 
   // plot level properties: title, axis labels, grid, ...
   plotOptions << 
-    "highlighter: {show: true}, cursor: {show: false, zoom: true}, legend: {show: true}";
+    "highlighter: {show: true}, cursor: {show: false, zoom: true}";
+
+  // title
+  const char *showTitle = cn->GetProperty("default", "showTitle");
+  const char *title = cn->GetProperty("default", "title");
+
+  if (showTitle && !strcmp(showTitle, "on") && title)
+    {
+    plotOptions << ", title: '" << title << "'";
+    }
   
-  // if (cn->GetTitle() && cn->ShowTitle())
-  //   {
-  //   plotOptions << ", title: " << cn->GetTitle();
-  //   }
+  // axes labels
+  const char *showXAxisLabel = cn->GetProperty("default", "showXAxisLabel");
+  const char *xAxisLabel = cn->GetProperty("default", "xAxisLabel");
+  const char *showYAxisLabel = cn->GetProperty("default", "showYAxisLabel");
+  const char *yAxisLabel = cn->GetProperty("default", "yAxisLabel");
+  
+  bool showx = false, showy = false;
+  if (showXAxisLabel && !strcmp(showXAxisLabel, "on") && xAxisLabel)
+    {
+    showx = true;
+    }
+  if (showYAxisLabel && !strcmp(showYAxisLabel, "on") && yAxisLabel)
+    {
+    showy = true;
+    }
+  if (showx || showy)
+    {
+    plotOptions << ", axes: {";
+    if (showx)
+      {
+      plotOptions << "xaxis: {label: '" << xAxisLabel << "', ";
+      plotOptions << "labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
+      if (showy)
+        {
+        plotOptions << ", ";
+        }
+      }
+    if (showy)
+      {
+      plotOptions << "yaxis: {label: '" << yAxisLabel << "', ";
+      plotOptions << "labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
+      }
+    plotOptions << "}";
+    }
+    
+  
+  // grid
+  const char *grid = cn->GetProperty("default", "showGrid");
+
+  if (grid && !strcmp(grid, "on"))
+    {
+    plotOptions << ", grid: {drawGridlines: true}";
+    }
+  else
+    {
+    plotOptions << ", grid: {drawGridlines: false}";
+    }
+
+  // legend
+  const char *legend = cn->GetProperty("default", "showLegend");
+
+  if (legend && !strcmp(legend, "on"))
+    {
+    plotOptions << ", legend: {show: true}";
+    }
+  else
+    {
+    plotOptions << ", legend: {show: false}";
+    }
+
+  // default properties for a series
+  //
+  //
+  plotOptions << ", seriesDefaults: {show: true";
+  
+  // markers
+  const char *markers = cn->GetProperty("default", "showMarkers");
+    
+  if (markers && !strcmp(markers, "on"))
+    {
+    plotOptions << ", showMarker: true";
+    }
+  else if (markers && !strcmp(markers, "off"))
+    {
+    plotOptions << ", showMarker: false";
+    }
+  
+  // lines
+  const char *lines = cn->GetProperty("default", "showLines");
+  
+  if (lines && !strcmp(lines, "on"))
+    {
+    plotOptions << ", showLine: true";
+    }
+  else if (lines && !strcmp(lines, "off"))
+    {
+    plotOptions << ", showLine: false";
+    }
+
+  // end of seriesDefaults properties
+  plotOptions << "}";
+  
 
   // series level properties
+  //
+  //
   plotOptions << ", series: [";
   for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
     {
+    std::string arrayName = arrayNames->GetValue(idx);
+
     // for each series
     plotOptions << "{";
     // legend
-    plotOptions << "label: '" << arrayNames->GetValue(idx).c_str() << "'";
+    plotOptions << "label: '" << arrayName.c_str() << "'";
 
     // markers
-    plotOptions << ", showMarker: false";
+    const char *markers = cn->GetProperty(arrayName.c_str(), "showMarkers");
+    
+    if (markers && !strcmp(markers, "on"))
+      {
+      plotOptions << ", showMarker: true";
+      }
+    else if (markers && !strcmp(markers, "off"))
+      {
+      plotOptions << ", showMarker: false";
+      }
 
     // lines
+    const char *lines = cn->GetProperty(arrayName.c_str(), "showLines");
+
+    if (lines && !strcmp(lines, "on"))
+      {
+      plotOptions << ", showLine: true";
+      }
+    else if (lines && !strcmp(lines, "off"))
+      {
+      plotOptions << ", showLine: false";
+      }
+
+    // color
+    const char *color = cn->GetProperty(arrayName.c_str(), "color");
+    
+    if (color)
+      {
+      plotOptions << ", color: '" << color << "'";
+      }
 
     // end of a series
     plotOptions << "}";
@@ -434,13 +585,27 @@ void qMRMLChartView::setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode
     return;
     }
 
+  // connect modified event on ChartViewNode to updating the widget
   d->qvtkReconnect(
     d->MRMLChartViewNode, newChartViewNode,
     vtkCommand::ModifiedEvent, d, SLOT(updateWidgetFromMRML()));
 
+  // connect on ChartNodeChangedEvent (e.g. ChartView is looking at a
+  // different ChartNode
+  d->qvtkReconnect(
+    d->MRMLChartViewNode, newChartViewNode, 
+    vtkMRMLChartViewNode::ChartNodeChangedEvent, d, SLOT(onChartNodeChanged()));
+
+  // cache the ChartViewNode
   d->MRMLChartViewNode = newChartViewNode;
+
+  // ... and connect modified event on the ChartViewNode's ChartNode
+  // to update the widget
+  d->onChartNodeChanged();
+  
   // d->DisplayableManagerGroup->SetMRMLDisplayableNode(newChartViewNode);
 
+  // make sure the gui is up to date
   d->updateWidgetFromMRML();
 }
 

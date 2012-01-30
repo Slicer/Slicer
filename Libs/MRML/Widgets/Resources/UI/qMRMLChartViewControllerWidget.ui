@@ -6,56 +6,290 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>94</width>
-    <height>40</height>
+    <width>462</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Chart View Controller</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item>
-    <widget class="qMRMLNodeComboBox" name="ChartComboBox" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>1</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>65</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Select the chart</string>
-     </property>
-     <property name="nodeTypes" stdset="0">
-      <stringlist>
-       <string>vtkMRMLChartNode</string>
-      </stringlist>
-     </property>
-     <property name="noneEnabled" stdset="0">
-      <bool>true</bool>
-     </property>
-     <property name="addEnabled" stdset="0">
-      <bool>true</bool>
-     </property>
-     <property name="removeEnabled" stdset="0">
-      <bool>false</bool>
-     </property>
-     <property name="renameEnabled" stdset="0">
-      <bool>true</bool>
-     </property>
-    </widget>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="contentLayout">
+     <item row="1" column="0">
+      <widget class="qMRMLNodeComboBox" name="chartComboBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>1</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>65</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Select the chart</string>
+       </property>
+       <property name="nodeTypes">
+        <stringlist>
+         <string>vtkMRMLChartNode</string>
+        </stringlist>
+       </property>
+       <property name="noneEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="addEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="removeEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="renameEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="chartTypeComboBox">
+       <property name="toolTip">
+        <string>Select a chart type (line, scatter, bar, histogram, pie)</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Line</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Scatter</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Bar</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Histogram</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Pie</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="qMRMLCheckableNodeComboBox" name="arrayComboBox">
+       <property name="toolTip">
+        <string>Add/Remove arrays from the chart</string>
+       </property>
+       <property name="nodeTypes">
+        <stringlist>
+         <string>qMRMLDoubleArrayNode</string>
+        </stringlist>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
+      <widget class="QToolButton" name="showLegendToolButton">
+       <property name="toolTip">
+        <string>Show legend</string>
+       </property>
+       <property name="text">
+        <string>Legend</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QToolButton" name="showGridToolButton">
+       <property name="toolTip">
+        <string>Show grid</string>
+       </property>
+       <property name="text">
+        <string>Grid</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QToolButton" name="showMarkersToolButton">
+       <property name="toolTip">
+        <string>Show markers</string>
+       </property>
+       <property name="text">
+        <string>Markers</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QToolButton" name="showLinesToolButton">
+       <property name="toolTip">
+        <string>Show lines</string>
+       </property>
+       <property name="text">
+        <string>Lines</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout"/>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <layout class="QGridLayout" name="labelsLayout">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="showTitleCheckBox">
+       <property name="toolTip">
+        <string>Show chart title</string>
+       </property>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="showXAxisLabelCheckBox">
+       <property name="toolTip">
+        <string>Show the X-axis label</string>
+       </property>
+       <property name="text">
+        <string>X-axis label</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="showYAxisLabelCheckBox">
+       <property name="toolTip">
+        <string>Show the Y-axis label</string>
+       </property>
+       <property name="text">
+        <string>Y-axis label</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="titleLineEdit">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="toolTip">
+        <string>Enter a title for the chart.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="dragEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="xAxisLabelLineEdit">
+       <property name="toolTip">
+        <string>Enter a label for the X-axis.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="yAxisLabelLineEdit">
+       <property name="toolTip">
+        <string>Enter a label for the Y-axis.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
+  <action name="actionShow_Lines">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lines</string>
+   </property>
+   <property name="toolTip">
+    <string>Show lines</string>
+   </property>
+  </action>
+  <action name="actionShow_Markers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Markers</string>
+   </property>
+   <property name="toolTip">
+    <string>Show markers</string>
+   </property>
+  </action>
+  <action name="actionShow_Grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Grid</string>
+   </property>
+   <property name="toolTip">
+    <string>Show grid</string>
+   </property>
+  </action>
+  <action name="actionShow_Legend">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Legend</string>
+   </property>
+   <property name="toolTip">
+    <string>Show legend</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
+  </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
@@ -71,22 +305,5 @@
  <resources>
   <include location="../qMRMLWidgets.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>ChartComboBox</sender>
-   <signal>currentNodeChanged(bool)</signal>
-   <receiver>ChartOptionButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>268</x>
-     <y>46</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>22</x>
-     <y>45</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

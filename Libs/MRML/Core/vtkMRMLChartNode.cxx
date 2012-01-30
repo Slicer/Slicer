@@ -11,6 +11,8 @@
 #include "vtkMRMLChartNode.h"
 
 class DoubleArrayIDMap : public std::map<std::string, std::string> {} ;
+class ArrayPropertyMap : public std::map<std::string, std::string> {} ;
+class ChartPropertyMap : public std::map<std::string, ArrayPropertyMap> {} ;
 
 
 
@@ -25,6 +27,17 @@ vtkMRMLChartNode::vtkMRMLChartNode()
   this->DoubleArrayIDs = new DoubleArrayIDMap;
   this->ArrayNames = vtkStringArray::New();
   this->Arrays = vtkStringArray::New();
+  this->Properties = new ChartPropertyMap;
+  
+  // default properties
+  this->SetProperty("default", "showLines", "on");
+  this->SetProperty("default", "showMarkers", "off");
+  this->SetProperty("default", "showGrid", "on");
+  this->SetProperty("default", "showLegend", "on");
+
+  this->SetProperty("default", "showTitle", "on");
+  this->SetProperty("default", "showXAxisLabel", "on");
+  this->SetProperty("default", "showYAxisLabel", "on");
 }
 
 
@@ -32,7 +45,8 @@ vtkMRMLChartNode::vtkMRMLChartNode()
 vtkMRMLChartNode::~vtkMRMLChartNode()
 {
   delete this->DoubleArrayIDs;
-  
+  delete this->Properties;
+
   this->ArrayNames->Delete();
   this->Arrays->Delete();
 }
@@ -69,6 +83,7 @@ void vtkMRMLChartNode::Copy(vtkMRMLNode *anode)
   if (achartnode)
     {
     *(this->DoubleArrayIDs) = *(achartnode->DoubleArrayIDs);
+    *(this->Properties) = *(achartnode->Properties);
     }
 }
 
@@ -91,32 +106,57 @@ void vtkMRMLChartNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::AddArray(const char *name, const char *id)
 {
+  if (!name || !id)
+    {
+    return;
+    }
+
+  DoubleArrayIDMap::iterator it = (*this->DoubleArrayIDs).find(name);
+  if (it != (*this->DoubleArrayIDs).end())
+    {
+    if ((*it).second == id)
+      {
+      return;
+      }
+    }
   (*this->DoubleArrayIDs)[name] = id;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::RemoveArray(const char *name)
 {
+  if (!name)
+    {
+    return;
+    }
+
+  DoubleArrayIDMap::iterator it = (*this->DoubleArrayIDs).find(name);
+  if (it == (*this->DoubleArrayIDs).end())
+    {
+    return;
+    }
+
   this->DoubleArrayIDs->erase(name);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::ClearArrays()
 {
   this->DoubleArrayIDs->clear();
+  this->Modified();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLChartNode::SetProperty(const char *vtkNotUsed(name),
-                                   const char *vtkNotUsed(property),
-                                   const char *vtkNotUsed(value))
-{
-
-}
 
 //----------------------------------------------------------------------------
 const char* vtkMRMLChartNode::GetArray(const char *name)
 {
+  if (!name)
+    {
+    return 0;
+    }
+
   DoubleArrayIDMap::iterator it = (*this->DoubleArrayIDs).find(name);
   
   if (it == this->DoubleArrayIDs->end())
@@ -158,3 +198,108 @@ vtkStringArray* vtkMRMLChartNode::GetArrays()
 }
 
 
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::SetProperty(const char *name,
+                                   const char *property,
+                                   const char *value)
+{
+  bool found = true;
+  ChartPropertyMap::iterator it;
+  ArrayPropertyMap::iterator ait;
+
+  //std::cout << "Setting property " << property << " on " << name << " to " << value << std::endl;
+
+  // check whether this name and property exist
+  it = this->Properties->find(name);
+  if (it == this->Properties->end())
+    {
+    found = false;
+    }
+  else
+    {
+    ait = (*it).second.find(property);
+    if (ait == (*it).second.end())
+      {
+      found = false;
+      }
+    }
+
+  // if the name and property exist, check whether we are changing the value
+  if (found)
+    {
+    if ((*ait).second == value)
+      {
+      return;
+      }
+    }
+  
+  // new name, property or value. set it and mark modified
+  //std::cout << "Set the property" << std::endl;
+  (*this->Properties)[name][property] = value;
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+const char *vtkMRMLChartNode::GetProperty(const char *name,
+                                          const char *property)
+{
+  ChartPropertyMap::iterator it = this->Properties->find(name);
+  if (it == this->Properties->end())
+    {
+    return 0;
+    }
+
+  ArrayPropertyMap::iterator ait = (*it).second.find(property);
+  if (ait == (*it).second.end())
+    {
+    return 0;
+    }
+
+  return (*ait).second.c_str();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::ClearProperty(const char *name,
+                                     const char *property)
+{
+  ChartPropertyMap::iterator it = this->Properties->find(name);
+  if (it == this->Properties->end())
+    {
+    return;
+    }
+
+  ArrayPropertyMap::iterator ait = (*it).second.find(property);
+  if (ait == (*it).second.end())
+    {
+    return;
+    }
+
+  // erase the property from that array
+  (*it).second.erase(ait);
+
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::ClearProperties(const char *name)
+{
+  ChartPropertyMap::iterator it = this->Properties->find(name);
+  if (it == this->Properties->end())
+    {
+    return;
+    }
+
+  // clear the whole property map for this array
+  (*it).second.clear();
+
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::ClearProperties()
+{
+  this->Properties->clear();
+
+  this->Modified();
+}

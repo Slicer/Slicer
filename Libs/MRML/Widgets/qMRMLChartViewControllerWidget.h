@@ -54,6 +54,16 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* newScene);
   void setChartView(qMRMLChartView* ChartView);
   void setMRMLChartViewNode(vtkMRMLChartViewNode* chartViewNode);
+  void showLines(bool show);
+  void showMarkers(bool show);
+  void showGrid(bool show);
+  void showLegend(bool show);
+  void showTitle(bool show);
+  void showXAxisLabel(bool show);
+  void showYAxisLabel(bool show);
+  void setTitle(const QString&);
+  void setXAxisLabel(const QString&);
+  void setYAxisLabel(const QString&);
 
 protected slots:
   void updateWidgetFromMRML();

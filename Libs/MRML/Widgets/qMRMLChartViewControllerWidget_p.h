@@ -53,6 +53,8 @@ public:
 
   QString                          ChartViewLabel;
 
+  vtkMRMLChartNode* chartNode();
+  
 public slots:
   /// Called after a chart node is selected
   /// using the associated qMRMLNodeComboBox

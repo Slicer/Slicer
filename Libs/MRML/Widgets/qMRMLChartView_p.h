@@ -16,7 +16,7 @@ class ctkPopupWidget;
 
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLChartViewNode;
-class vtkMRMLCameraNode;
+class vtkMRMLChartNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
@@ -43,12 +43,16 @@ public slots:
 
   void updateWidgetFromMRML();
 
+  /// slot when the view is configured to look at a different chart node
+  void onChartNodeChanged(); 
+
 protected:
   void initDisplayableManagers();
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLChartViewNode*              MRMLChartViewNode;
+  vtkMRMLChartNode*                  MRMLChartNode;
   
   QToolButton*                       PinButton;
   ctkPopupWidget*                    PopupWidget;

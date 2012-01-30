@@ -58,6 +58,13 @@ public:
   /// Get the Chart node id displayed in this Chart View
   vtkGetStringMacro(ChartNodeID);
 
+  ///
+  /// Events
+  enum
+  {
+    ChartNodeChangedEvent = 16000
+  };
+  
 protected:
   vtkMRMLChartViewNode();
   ~vtkMRMLChartViewNode();

@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLChartViewNode);
 
-vtkCxxSetReferenceStringMacro(vtkMRMLChartViewNode, ChartNodeID);
+//vtkCxxSetReferenceStringMacro(vtkMRMLChartViewNode, ChartNodeID);
 
 //----------------------------------------------------------------------------
 vtkMRMLChartViewNode::vtkMRMLChartViewNode() : vtkMRMLViewNode()
@@ -59,4 +59,12 @@ void vtkMRMLChartViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartViewNode::SetChartNodeID(const char* _arg)
+{
+  vtkSetReferenceStringBodyMacro(ChartNodeID);
+
+  this->InvokeEvent(vtkMRMLChartViewNode::ChartNodeChangedEvent);
 }
