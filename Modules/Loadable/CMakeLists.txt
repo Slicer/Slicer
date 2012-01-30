@@ -17,6 +17,7 @@ set(qtmodules
   SlicerWelcome
   Tractography
   TractographyDisplay
+  Reformat
   ViewControllers
   Volumes
   TractographyFiducialSeeding # tractography depends of Volumes

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/Reformat.png</file>
+    </qresource>
+</RCC>

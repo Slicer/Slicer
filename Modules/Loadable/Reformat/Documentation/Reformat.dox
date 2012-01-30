@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Reformat Reformat
+\ingroup Slicer_QtModules
+This module allows adjust and display parameters of a slice
+
+*/
