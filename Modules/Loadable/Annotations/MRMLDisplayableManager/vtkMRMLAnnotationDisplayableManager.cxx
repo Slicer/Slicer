@@ -13,10 +13,12 @@
 #include <vtkMRMLDisplayableManagerGroup.h>
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLViewNode.h>
@@ -1145,32 +1147,32 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
       {
       if (this->GetSliceNode())
         {
-        // find the slice composite node in the scene with the matching layout name
-        vtkMRMLNode *node;
-        vtkCollectionSimpleIterator it;
-        vtkSmartPointer<vtkCollection> scene;
-        scene = this->GetMRMLScene()->GetNodes();
-        for (scene->InitTraversal(it);
-             (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
+        // find the slice composite node in the scene with the matching layout
+        // name
+        vtkMRMLSliceLogic *sliceLogic = NULL;
+        vtkMRMLSliceCompositeNode* sliceCompositeNode = NULL;
+        vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
+        if (mrmlAppLogic)
           {
-          vtkMRMLSliceCompositeNode* sliceCompositeNode =
-            vtkMRMLSliceCompositeNode::SafeDownCast(node);
-          if (sliceCompositeNode && sliceCompositeNode->GetLayoutName() &&
-              !strcmp(sliceCompositeNode->GetLayoutName(),
-                      this->GetSliceNode()->GetLayoutName()))
+          sliceLogic = mrmlAppLogic->GetSliceLogic(this->GetSliceNode());
+          }
+        if (sliceLogic)
+          {
+          sliceCompositeNode = sliceLogic->GetSliceCompositeNode(this->GetSliceNode());
+          }
+        if (sliceCompositeNode)
+          {
+          if (sliceCompositeNode->GetBackgroundVolumeID())
             {
-            if (sliceCompositeNode->GetBackgroundVolumeID())
-              {
-              associatedNodeID = sliceCompositeNode->GetBackgroundVolumeID();
-              }
-            else if (sliceCompositeNode->GetForegroundVolumeID())
-              {
-              associatedNodeID = sliceCompositeNode->GetForegroundVolumeID();
-              }
-            else if (sliceCompositeNode->GetLabelVolumeID())
-              {
-              associatedNodeID = sliceCompositeNode->GetLabelVolumeID();
-              }
+            associatedNodeID = sliceCompositeNode->GetBackgroundVolumeID();
+            }
+          else if (sliceCompositeNode->GetForegroundVolumeID())
+            {
+            associatedNodeID = sliceCompositeNode->GetForegroundVolumeID();
+            }
+          else if (sliceCompositeNode->GetLabelVolumeID())
+            {
+            associatedNodeID = sliceCompositeNode->GetLabelVolumeID();
             }
           }
         }
