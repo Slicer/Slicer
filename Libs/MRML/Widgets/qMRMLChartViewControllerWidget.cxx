@@ -83,6 +83,9 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
   // configure the Array selector
   this->arrayComboBox->addAttribute("vtkMRMLDoubleArrayNode", "Array", "1");
 
+  // Connect the Chart Type selector
+  this->connect(this->chartTypeComboBox, SIGNAL(activated(const QString&)), SLOT(onChartTypeSelected(const QString&)));
+
   // Connect the actions
   QObject::connect(this->actionShow_Lines, SIGNAL(toggled(bool)),
                    q, SLOT(showLines(bool)));
@@ -176,7 +179,23 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
     }
 }
 
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidgetPrivate::onChartTypeSelected(const QString& type)
+{
+  //Q_Q(qMRMLChartViewControllerWidget);
 
+  if (!this->ChartViewNode)
+    {
+    return;
+    }
+
+  if (!this->chartNode())
+    {
+    return;
+    }
+  
+  this->chartNode()->SetProperty("default", "type", type.toStdString().c_str());
+}
 
 // --------------------------------------------------------------------------
 // qMRMLChartViewControllerWidget methods
@@ -251,7 +270,21 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 
   // ChartNode selector
   d->chartComboBox->setCurrentNode(chartNode->GetID());
-  
+
+  // ChartType selector (should we default to "Line" if we don't
+  // recognize the type?)
+  const char *type;
+  type = chartNode->GetProperty("default", "type");
+  if (type)
+    {
+    QString qtype(type);
+    int tindex = d->chartTypeComboBox->findText(qtype);
+    if (tindex != -1)
+      {
+      d->chartTypeComboBox->setCurrentIndex(tindex);
+      }
+    }
+
   // Buttons
   const char *propertyValue;
   propertyValue = chartNode->GetProperty("default", "showLines");
@@ -265,6 +298,29 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 
   propertyValue = chartNode->GetProperty("default", "showLegend");
   d->actionShow_Legend->setChecked(propertyValue && !strcmp("on", propertyValue));
+
+  // Based on ChartType, override button checked and enable/disable some controls
+  d->showLinesToolButton->setEnabled(true);
+  d->showMarkersToolButton->setEnabled(true);
+  if (type && !strcmp(type, "Line"))
+    {
+    d->actionShow_Lines->setChecked(true);
+    d->showLinesToolButton->setEnabled(false);
+    }
+  if (type && !strcmp(type, "Scatter"))
+    {
+    d->actionShow_Markers->setChecked(true);
+    d->showMarkersToolButton->setEnabled(false);
+    d->showLinesToolButton->setEnabled(false);
+    }
+  if (type && !strcmp(type, "Bar"))
+    {
+    d->actionShow_Lines->setChecked(true);
+    d->actionShow_Markers->setChecked(false);
+    d->showMarkersToolButton->setEnabled(false);
+    d->showLinesToolButton->setEnabled(false);
+    }
+
 
   // Titles, axis labels (checkboxes AND text widgets)
   propertyValue = chartNode->GetProperty("default", "showTitle");

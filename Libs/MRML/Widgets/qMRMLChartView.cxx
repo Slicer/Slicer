@@ -1,4 +1,19 @@
+/*==============================================================================
 
+  Program: 3D Slicer
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
 
 // Qt includes
 #include <QDebug>
@@ -78,6 +93,7 @@ const char *plotPreamble =
 const char *plotPostscript =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/jquery.jqplot.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasTextRenderer.min.js\"></script>"
+  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.barRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
@@ -385,10 +401,29 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   //
   plotOptions << ", seriesDefaults: {show: true";
   
+  // chart type
+  const char *type = cn->GetProperty("default", "type");
+  int defaultMarkers = 0; // 0 = not set, 1 = on, -1 = off
+  int defaultLines = 0;   // 0 = not set, 1 = on, -1 = off
+  if (type && !strcmp(type, "Line"))
+    {
+    defaultLines = 1; // lines on, markers don't care
+    }
+  if (type && !strcmp(type, "Scatter"))
+    {
+    defaultMarkers = 1; // markers on
+    defaultLines = -1;  // lines off
+    }
+  if (type && !strcmp(type, "Bar"))
+    {
+    plotOptions << ", renderer: $.jqplot.BarRenderer";
+    plotOptions << ", rendererOptions: {barWidth: null}";
+    }
+
   // markers
   const char *markers = cn->GetProperty("default", "showMarkers");
     
-  if (markers && !strcmp(markers, "on"))
+  if ((markers && !strcmp(markers, "on")) || defaultMarkers == 1)
     {
     plotOptions << ", showMarker: true";
     }
@@ -400,11 +435,11 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // lines
   const char *lines = cn->GetProperty("default", "showLines");
   
-  if (lines && !strcmp(lines, "on"))
+  if ((lines && !strcmp(lines, "on") && defaultLines != -1) || defaultLines == 1)
     {
     plotOptions << ", showLine: true";
     }
-  else if (lines && !strcmp(lines, "off"))
+  else if ((lines && !strcmp(lines, "off")) || defaultLines == -1)
     {
     plotOptions << ", showLine: false";
     }

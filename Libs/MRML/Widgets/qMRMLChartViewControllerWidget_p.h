@@ -60,6 +60,8 @@ public slots:
   /// using the associated qMRMLNodeComboBox
   void onChartNodeSelected(vtkMRMLNode* node);
   
+  /// Called after a chart type is selected using the qComboBox
+  void onChartTypeSelected(const QString&);
 
 protected:
   virtual void setupPopupUi();

@@ -66,3 +66,23 @@ cn.SetProperty('The other array', 'showLines', 'on')
 cn.SetProperty('The other array', 'showMarkers', 'off')
 cn.SetProperty('The other array', 'color', '#FF0000')
 
+
+dn3 = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+dn3 = slicer.mrmlScene.AddNode(dn3)
+print dn3.GetID()
+a = dn3.GetArray()
+a.SetNumberOfTuples(12)
+x = range(0, 12)
+for i in range(len(x)):
+    a.SetComponent(i, 0, x[i]/4.0)
+    a.SetComponent(i, 1, math.sin(x[i]/4.0))
+    a.SetComponent(i, 2, 0)
+
+cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+cn = slicer.mrmlScene.AddNode(cn)
+print cn.GetID()
+cn.AddArray('Periodic', dn3.GetID())
+cn.SetProperty('default', 'title', 'A bar chart')
+cn.SetProperty('default', 'xAxisLabel', 'time')
+cn.SetProperty('default', 'yAxisLabel', 'velocity')
+cn.SetProperty('default', 'type', 'Bar');
