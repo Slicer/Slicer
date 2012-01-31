@@ -100,7 +100,7 @@ public:
   vtkSmartPointer<vtkPointPicker>      PointPicker;
 
   /// Information about a pick event
-  std::string  PickedNodeName;
+  std::string  PickedNodeID;
   double       PickedRAS[3];
   vtkIdType    PickedCellID;
   vtkIdType    PickedPointID;
@@ -157,7 +157,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::CreateClipSlices()
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
 {
-  this->PickedNodeName.clear();
+  this->PickedNodeID.clear();
   for (int i=0; i < 3; i++)
     {
     this->PickedRAS[i] = 0.0;
@@ -206,7 +206,7 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
 
   os << indent << "ModelHierarchiesPresent = " << this->Internal->ModelHierarchiesPresent << "\n";
 
-  os << indent << "PickedNodeName = " << this->Internal->PickedNodeName.c_str() << "\n";
+  os << indent << "PickedNodeID = " << this->Internal->PickedNodeID.c_str() << "\n";
   os << indent << "PickedRAS = (" << this->Internal->PickedRAS[0] << ", "
       << this->Internal->PickedRAS[1] << ", "<< this->Internal->PickedRAS[2] << ")\n";
   os << indent << "PickedCellID = " << this->Internal->PickedCellID << "\n";
@@ -1598,7 +1598,7 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
           if (modelIter->second->GetPolyData() == polyData)
             {
             vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
-            this->Internal->PickedNodeName = modelIter->first;
+            this->Internal->PickedNodeID = modelIter->first;
 
             // figure out the closest vertex in the picked cell to the picked RAS
             // point. Only doing this on model nodes for now.
@@ -1670,12 +1670,12 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLModelDisplayableManager::GetPickedNodeName()
+const char * vtkMRMLModelDisplayableManager::GetPickedNodeID()
 {
-  vtkDebugMacro(<< "returning this->Internal->PickedNodeName of "
-                << (this->Internal->PickedNodeName.empty()?
-                    "(empty)":this->Internal->PickedNodeName));
-  return this->Internal->PickedNodeName.c_str();
+  vtkDebugMacro(<< "returning this->Internal->PickedNodeID of "
+                << (this->Internal->PickedNodeID.empty()?
+                    "(empty)":this->Internal->PickedNodeID));
+  return this->Internal->PickedNodeID.c_str();
 }
 
 //---------------------------------------------------------------------------

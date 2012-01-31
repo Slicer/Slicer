@@ -104,8 +104,8 @@ public:
   int Pick(int x, int y);
 
   /// 
-  /// Get the name of the picked node, returns empty string if no pick
-  const char *GetPickedNodeName();
+  /// Get the MRML ID of the picked node, returns empty string if no pick
+  const char *GetPickedNodeID();
   
   /// 
   /// Get/Set the picked RAS point, returns 0,0,0 if no pick

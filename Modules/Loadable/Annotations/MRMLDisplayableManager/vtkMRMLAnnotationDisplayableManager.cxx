@@ -1187,10 +1187,10 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
       double yNew = windowHeight - y - 1;
       if (modelDisplayableManager &&
           modelDisplayableManager->Pick(x,yNew) &&
-          strcmp(modelDisplayableManager->GetPickedNodeName(),"") != 0)
+          strcmp(modelDisplayableManager->GetPickedNodeID(),"") != 0)
         {
         // find the node id, the picked node name is probably the display node
-        const char *pickedNodeID = modelDisplayableManager->GetPickedNodeName();
+        const char *pickedNodeID = modelDisplayableManager->GetPickedNodeID();
         vtkDebugMacro("Click was on model " << pickedNodeID);
         vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(pickedNodeID);
         vtkMRMLDisplayNode *displayNode = NULL;
