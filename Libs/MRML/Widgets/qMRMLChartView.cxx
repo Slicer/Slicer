@@ -276,6 +276,11 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   vtkStringArray *arrayIDs = cn->GetArrays();
   vtkStringArray *arrayNames = cn->GetArrayNames();
 
+  // What type of chart?
+  //
+  //
+  const char *type = cn->GetProperty("default", "type");
+
   // data to plot - represented in javascript
   //
   //
@@ -297,7 +302,15 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       for (unsigned int j = 0; j < dn->GetSize(); ++j)
         {
         dn->GetXYValue(j, &x, &y);
-        plotData << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
+        if (false && type && !strcmp(type, "Bar"))
+          {
+          // DISABLED. For bar plots, only take the y coordinate.
+          plotData << QString("%1").arg(y);
+          }
+        else
+          {
+          plotData << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
+          }
         if (j < dn->GetSize()-1)
           {
           plotData << ",";
@@ -335,6 +348,17 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     {
     plotOptions << ", title: '" << title << "'";
     }
+
+  // jqplot bar charts (BarRenderer) was designed for categorical
+  // data.  For numeric x-axis data, the bar widths are calculated
+  // incorrectly. But if the bar charts are set to be "stacked", then
+  // bar widths are calculated properly. Defaulting to stacked bar
+  // charts for now.  May write our own renderer for the types of bar
+  // charts we want.
+  if (type && !strcmp(type, "Bar"))
+    {
+    plotOptions << ", stackSeries: true";
+    }
   
   // axes labels
   const char *showXAxisLabel = cn->GetProperty("default", "showXAxisLabel");
@@ -356,8 +380,13 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     plotOptions << ", axes: {";
     if (showx)
       {
-      plotOptions << "xaxis: {label: '" << xAxisLabel << "', ";
-      plotOptions << "labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
+      plotOptions << "xaxis: {label: '" << xAxisLabel << "'";
+      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      // if (type && !strcmp(type, "Bar"))
+      //   {
+      //   plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
+      //   }
+      plotOptions << "}";
       if (showy)
         {
         plotOptions << ", ";
@@ -365,8 +394,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       }
     if (showy)
       {
-      plotOptions << "yaxis: {label: '" << yAxisLabel << "', ";
-      plotOptions << "labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
+      plotOptions << "yaxis: {label: '" << yAxisLabel << "'";
+      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
       }
     plotOptions << "}";
     }
@@ -402,7 +431,6 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plotOptions << ", seriesDefaults: {show: true";
   
   // chart type
-  const char *type = cn->GetProperty("default", "type");
   int defaultMarkers = 0; // 0 = not set, 1 = on, -1 = off
   int defaultLines = 0;   // 0 = not set, 1 = on, -1 = off
   if (type && !strcmp(type, "Line"))
@@ -417,7 +445,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   if (type && !strcmp(type, "Bar"))
     {
     plotOptions << ", renderer: $.jqplot.BarRenderer";
-    plotOptions << ", rendererOptions: {barWidth: null}";
+    plotOptions << ", rendererOptions: {barWidth: null, fillToZero: true}";
     }
 
   // markers
