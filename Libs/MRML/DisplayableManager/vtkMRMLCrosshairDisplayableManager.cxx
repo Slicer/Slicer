@@ -22,12 +22,14 @@
 #include "vtkMRMLCrosshairDisplayableManager.h"
 
 // MRML includes
+#include <vtkMRMLApplicationLogic.h>
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLightBoxRendererManagerProxy.h>
 #include <vtkMRMLSliceCompositeNode.h>
+#include <vtkMRMLSliceLogic.h>
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
@@ -247,32 +249,23 @@ void vtkMRMLCrosshairDisplayableManager::vtkInternal::UpdateSliceNode()
 vtkMRMLSliceCompositeNode* vtkMRMLCrosshairDisplayableManager::vtkInternal
 ::FindSliceCompositeNode()
 {
-  if (this->External->GetMRMLScene() == 0 ||
-      this->GetSliceNode() == 0)
+  if (this->GetSliceNode() == 0 ||
+      this->External->GetMRMLApplicationLogic() == 0)
     {
     return 0;
     }
 
-  vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
-  vtkSmartPointer<vtkCollection> scene;
-  //scene.TakeReference(this->External->GetMRMLScene()->GetNodes());
-  //scene =  vtkSmartPointer<vtkCollection>::Take(this->External->GetMRMLScene()->GetNodes());
-  scene = this->External->GetMRMLScene()->GetNodes();
-  for (scene->InitTraversal(it);
-       (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
+  vtkMRMLSliceLogic *sliceLogic = NULL;
+  vtkMRMLApplicationLogic *mrmlAppLogic = this->External->GetMRMLApplicationLogic();
+  if (mrmlAppLogic)
     {
-    vtkMRMLSliceCompositeNode* sliceCompositeNode =
-      vtkMRMLSliceCompositeNode::SafeDownCast(node);
-    if (sliceCompositeNode && sliceCompositeNode->GetLayoutName() &&
-        !strcmp(sliceCompositeNode->GetLayoutName(),
-                this->GetSliceNode()->GetLayoutName()) )
-      {
-      return sliceCompositeNode;
-      }
+    sliceLogic = mrmlAppLogic->GetSliceLogic(this->GetSliceNode());
+    }
+  if (sliceLogic)
+    {
+    return sliceLogic->GetSliceCompositeNode(this->GetSliceNode());
     }
   // no matching slice composite node is found
-  assert(0);
   return 0;
 }
 
