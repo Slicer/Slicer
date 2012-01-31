@@ -22,7 +22,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string/>
+        <string>Slice:</string>
        </property>
        <property name="tristate">
         <bool>false</bool>
@@ -37,25 +37,6 @@
          <width>21</width>
          <height>21</height>
         </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ctkCheckBox" name="ReformatWidgetVisibilityCheckBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="indicatorIcon" stdset="0">
-        <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-         <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
-         <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Slice:</string>
        </property>
       </widget>
      </item>
@@ -83,6 +64,18 @@
        </property>
        <property name="renameEnabled" stdset="0">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkCheckBox" name="ReformatWidgetVisibilityCheckBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="indicatorIcon" stdset="0">
+        <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+         <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
+         <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
        </property>
       </widget>
      </item>

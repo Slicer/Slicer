@@ -53,7 +53,7 @@ public:
   virtual QIcon icon()const;
 
   /// Return the category for the module
-  virtual QString category()const;
+  virtual QStringList categories()const;
 
 protected:
 

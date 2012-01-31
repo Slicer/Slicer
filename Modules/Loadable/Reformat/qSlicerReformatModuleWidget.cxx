@@ -197,10 +197,20 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
   this->OnPlaneYdoubleSpinBox->setMaximum(sliceBounds[3]);*/
 
   // Update volumes origin coordinates
+  double normal[3];
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
-  this->InVolumeXdoubleSpinBox->setValue(sliceToRAS->GetElement(0,3));
-  this->InVolumeYdoubleSpinBox->setValue(sliceToRAS->GetElement(1,3));
-  this->InVolumeZdoubleSpinBox->setValue(sliceToRAS->GetElement(2,3));
+
+  normal[0] = sliceToRAS->GetElement(0,3);
+  normal[1] = sliceToRAS->GetElement(1,3);
+  normal[2] = sliceToRAS->GetElement(2,3);
+
+  normal[0] = (normal[0] > 1) ? 1  : ((normal[0] < -1) ? -1 : normal[0]);
+  normal[1] = (normal[1] > 1) ? 1  : ((normal[1] < -1) ? -1 : normal[1]);
+  normal[2] = (normal[2] > 1) ? 1  : ((normal[2] < -1) ? -1 : normal[2]);
+
+  this->InVolumeXdoubleSpinBox->setValue(normal[0]);
+  this->InVolumeYdoubleSpinBox->setValue(normal[1]);
+  this->InVolumeZdoubleSpinBox->setValue(normal[2]);
 
   // TODO : Update plane origin coordinates
 
@@ -233,6 +243,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   bool wasNormalZBlocking = this->NormalZdoubleSpinBox->blockSignals(true);
 
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
+
   this->NormalXdoubleSpinBox->setValue(sliceToRAS->GetElement(0,2));
   this->NormalYdoubleSpinBox->setValue(sliceToRAS->GetElement(1,2));
   this->NormalZdoubleSpinBox->setValue(sliceToRAS->GetElement(2,2));

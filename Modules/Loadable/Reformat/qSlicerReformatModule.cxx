@@ -96,9 +96,9 @@ QIcon qSlicerReformatModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerReformatModule::category()const
+QStringList qSlicerReformatModule::categories()const
 {
-  return "Registration.Specialized";
+  return QStringList() << "Registration.Specialized";
 }
 
 //------------------------------------------------------------------------------
