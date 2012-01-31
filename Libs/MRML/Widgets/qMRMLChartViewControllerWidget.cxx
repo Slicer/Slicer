@@ -271,10 +271,15 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
   // ChartNode selector
   d->chartComboBox->setCurrentNode(chartNode->GetID());
 
-  // ChartType selector (should we default to "Line" if we don't
-  // recognize the type?)
+  // ChartType selector 
   const char *type;
+  std::string stype("Line");
   type = chartNode->GetProperty("default", "type");
+  if (!type)
+    {
+    // no type specified, default to "Line"
+    type = stype.c_str();
+    }
   if (type)
     {
     QString qtype(type);
