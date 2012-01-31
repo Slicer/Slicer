@@ -100,7 +100,7 @@ public:
   /// Similar to setRootIndex(QModelIndex) but observe the ModifiedEvent of
   /// the node to stay in sync.
   /// A null node (default) means QModelIndex() is the root index.
-  void setRootNode(vtkMRMLNode* root);
+  Q_INVOKABLE void setRootNode(vtkMRMLNode* root);
   vtkMRMLNode* rootNode()const;
 
   /// Retrieve the sortFilterProxyModel used to filter/sort

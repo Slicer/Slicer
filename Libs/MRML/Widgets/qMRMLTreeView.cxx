@@ -612,7 +612,7 @@ void qMRMLTreeView::renameCurrentNode()
 //------------------------------------------------------------------------------
 void qMRMLTreeView::deleteCurrentNode()
 {
-  Q_D(qMRMLTreeView);
+//  Q_D(qMRMLTreeView);
 
   if (!this->currentNode())
     {
