@@ -87,9 +87,9 @@ qSlicerReformatModuleWidgetPrivate(
   this->OriginCoordinateReferenceButtonGroup = 0;
   this->MRMLSliceNode = 0;
   this->MRMLSliceLogic = 0;
-  this->LastRotationValues[qSlicerReformatModuleWidget::axeX] = 0;
-  this->LastRotationValues[qSlicerReformatModuleWidget::axeY] = 0;
-  this->LastRotationValues[qSlicerReformatModuleWidget::axeZ] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -263,15 +263,15 @@ resetSlider(qMRMLLinearTransformSlider* slider)
 
   if (slider == this->LRSlider)
     {
-    this->LastRotationValues[qSlicerReformatModuleWidget::axeX] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = slider->value();
     }
   else if (slider == this->PASlider)
     {
-    this->LastRotationValues[qSlicerReformatModuleWidget::axeY] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = slider->value();
     }
   else if (slider == this->ISSlider)
     {
-    this->LastRotationValues[qSlicerReformatModuleWidget::axeZ] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = slider->value();
     }
 
   slider->blockSignals(wasSliderBlocking);
@@ -360,11 +360,11 @@ void qSlicerReformatModuleWidget::setup()
 
   // Connect slice normal pushButtons
   this->connect(d->NormalXPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxeX()));
+                this, SLOT(setNormalToAxisX()));
   this->connect(d->NormalYPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxeY()));
+                this, SLOT(setNormalToAxisY()));
   this->connect(d->NormalZPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToAxeZ()));
+                this, SLOT(setNormalToAxisZ()));
 
   this->connect(d->NormalToCameraPushButton, SIGNAL(pressed()),
                 this, SLOT(setNormalToCamera()));
@@ -573,31 +573,31 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxeX()
+void qSlicerReformatModuleWidget::setNormalToAxisX()
 {
-  this->onSliceNormalToAxisChanged(axeX);
+  this->onSliceNormalToAxisChanged(axisX);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxeY()
+void qSlicerReformatModuleWidget::setNormalToAxisY()
 {
-  this->onSliceNormalToAxisChanged(axeY);
+  this->onSliceNormalToAxisChanged(axisY);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setNormalToAxeZ()
+void qSlicerReformatModuleWidget::setNormalToAxisZ()
 {
-  this->onSliceNormalToAxisChanged(axeZ);
+  this->onSliceNormalToAxisChanged(axisZ);
 }
 
 //------------------------------------------------------------------------------
 void qSlicerReformatModuleWidget::onSliceNormalToAxisChanged(AxesReferenceType
-                                                             axe)
+                                                             axis)
 {
   double sliceNormal[3];
-  sliceNormal[0] = (axe == axeX) ? 1 : 0;
-  sliceNormal[1] = (axe == axeY) ? 1 : 0;
-  sliceNormal[2] = (axe == axeZ) ? 1 : 0;
+  sliceNormal[0] = (axis == axisX) ? 1 : 0;
+  sliceNormal[1] = (axis == axisY) ? 1 : 0;
+  sliceNormal[2] = (axis == axisZ) ? 1 : 0;
 
   // Insert the widget rotation
   this->setSliceNormal(sliceNormal);
@@ -660,10 +660,10 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->ISSlider);
 
     // Rotate on LR given the angle with the last value reccorded
-    transform->RotateX(rotation-d->LastRotationValues[axeX]);
+    transform->RotateX(rotation-d->LastRotationValues[axisX]);
 
     // Update last value and apply the transform
-    d->LastRotationValues[axeX] = rotation;
+    d->LastRotationValues[axisX] = rotation;
     }
   else if (this->sender() == d->PASlider)
     {
@@ -672,10 +672,10 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->ISSlider);
 
     // Rotate on PA given the angle with the last value reccorded
-    transform->RotateY(rotation-d->LastRotationValues[axeY]);
+    transform->RotateY(rotation-d->LastRotationValues[axisY]);
 
     // Update last value and apply the transform
-    d->LastRotationValues[axeY] = rotation;
+    d->LastRotationValues[axisY] = rotation;
     }
   else if (this->sender() == d->ISSlider)
     {
@@ -684,10 +684,10 @@ onSliderRotationChanged(double rotation)
       d->resetSlider(d->PASlider);
 
       // Rotate on PA given the angle with the last value reccorded
-      transform->RotateZ(rotation-d->LastRotationValues[axeZ]);
+      transform->RotateZ(rotation-d->LastRotationValues[axisZ]);
 
       // Update last value and apply the transform
-      d->LastRotationValues[axeZ] = rotation;
+      d->LastRotationValues[axisZ] = rotation;
     }
 
   // Apply the transform

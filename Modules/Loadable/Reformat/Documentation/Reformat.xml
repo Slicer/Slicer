@@ -41,15 +41,15 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   </parameter>
   <parameter>
    <label>Normal X</label>
-   <description>Set the normal to a x axe.</description>
+   <description>Set the normal to a x axis.</description>
   </parameter>
   <parameter>
    <label>Normal Y</label>
-   <description>Set the normal to a y axe.</description>
+   <description>Set the normal to a y axis.</description>
   </parameter>
   <parameter>
    <label>Normal Z</label>
-   <description>Set the normal to a z axe.</description>
+   <description>Set the normal to a z axis.</description>
   </parameter>
   <parameter>
    <label>Normal to camera</label>
