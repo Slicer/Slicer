@@ -342,7 +342,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   // plot level properties: title, axis labels, grid, ...
   plotOptions << 
-    "highlighter: {show: true, useAxesFormatters: false, formatString: '%.3g, %.3g'}, cursor: {show: false, zoom: true}";
+    "highlighter: {show: true, useAxesFormatters: false, formatString: '%.3g, %.3g'}, cursor: {show: true, zoom: true}";
 
   // title
   const char *showTitle = cn->GetProperty("default", "showTitle");
