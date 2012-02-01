@@ -21,7 +21,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <description>Information about the selected slice. Fields can be edited to precisely set values to the slice.</description>
   <parameter>
    <label>Offset</label>
-   <description>See & Set the current distance from the origin to the slice plane</description>
+   <description>See and Set the current distance from the origin to the slice plane</description>
   </parameter>
   <parameter>
    <label>Origin</label>
