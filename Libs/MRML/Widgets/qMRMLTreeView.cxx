@@ -329,7 +329,7 @@ void qMRMLTreeView::setListenNodeModifiedEvent(bool listen)
 bool qMRMLTreeView::listenNodeModifiedEvent()const
 {
   Q_D(const qMRMLTreeView);
-  return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : false;
+  return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : true;
 }
 
 // --------------------------------------------------------------------------
