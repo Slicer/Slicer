@@ -46,6 +46,9 @@ public:
   // /// Returns the interactor style of the view
   // vtkInteractorObserver* interactorStyle()const;
 
+  // Redefine the sizeHint so layouts work properly.
+  virtual QSize sizeHint() const;
+
 public slots:
 
   /// Set the MRML \a scene that should be listened for events

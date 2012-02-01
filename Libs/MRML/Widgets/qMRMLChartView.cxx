@@ -130,6 +130,10 @@ qMRMLChartViewPrivate::~qMRMLChartViewPrivate()
 void qMRMLChartViewPrivate::init()
 {
   Q_Q(qMRMLChartView);
+  
+  // Let the QWebView expand in both directions
+  q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);  
+
 //  q->setRenderEnabled(this->MRMLScene != 0);
   q->setEnabled(this->MRMLScene != 0);
 
@@ -684,6 +688,14 @@ vtkMRMLScene* qMRMLChartView::mrmlScene()const
 {
   Q_D(const qMRMLChartView);
   return d->MRMLScene;
+}
+
+
+//---------------------------------------------------------------------------
+QSize qMRMLChartView::sizeHint()const
+{
+  // return a default size hint (invalid size)
+  return QSize();
 }
 
 
