@@ -17,7 +17,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <description>Select the slice to operate on -- the module's Display interface will change to show slice parameters.</description>
  </parameters>
  <parameters>
-  <label>Display & Edit</label>
+  <label>Display - Edit</label>
   <description>Information about the selected slice. Fields can be edited to precisely set values to the slice.</description>
   <parameter>
    <label>Offset</label>
@@ -38,6 +38,22 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
   <parameter>
    <label>Reset</label>
    <description>Reset the slice to transformation to the coresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".</description>
+  </parameter>
+  <parameter>
+   <label>Normal X</label>
+   <description>Set the normal to a x axe.</description>
+  </parameter>
+  <parameter>
+   <label>Normal Y</label>
+   <description>Set the normal to a y axe.</description>
+  </parameter>
+  <parameter>
+   <label>Normal Z</label>
+   <description>Set the normal to a z axe.</description>
+  </parameter>
+  <parameter>
+   <label>Normal to camera</label>
+   <description>Set slice normal to the camera.</description>
   </parameter>
   <parameter>
    <label>LR</label>

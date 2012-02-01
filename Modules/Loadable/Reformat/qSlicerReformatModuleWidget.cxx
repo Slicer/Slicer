@@ -28,12 +28,14 @@
 
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
+#include "vtkMRMLCameraNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLVolumeNode.h"
 
 // VTK includes
+#include <vtkCamera.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
@@ -85,9 +87,9 @@ qSlicerReformatModuleWidgetPrivate(
   this->OriginCoordinateReferenceButtonGroup = 0;
   this->MRMLSliceNode = 0;
   this->MRMLSliceLogic = 0;
-  this->LastRotationValues[0] = 0;
-  this->LastRotationValues[1] = 0;
-  this->LastRotationValues[2] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axeX] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axeY] = 0;
+  this->LastRotationValues[qSlicerReformatModuleWidget::axeZ] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -197,20 +199,10 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
   this->OnPlaneYdoubleSpinBox->setMaximum(sliceBounds[3]);*/
 
   // Update volumes origin coordinates
-  double normal[3];
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
-
-  normal[0] = sliceToRAS->GetElement(0,3);
-  normal[1] = sliceToRAS->GetElement(1,3);
-  normal[2] = sliceToRAS->GetElement(2,3);
-
-  normal[0] = (normal[0] > 1) ? 1  : ((normal[0] < -1) ? -1 : normal[0]);
-  normal[1] = (normal[1] > 1) ? 1  : ((normal[1] < -1) ? -1 : normal[1]);
-  normal[2] = (normal[2] > 1) ? 1  : ((normal[2] < -1) ? -1 : normal[2]);
-
-  this->InVolumeXdoubleSpinBox->setValue(normal[0]);
-  this->InVolumeYdoubleSpinBox->setValue(normal[1]);
-  this->InVolumeZdoubleSpinBox->setValue(normal[2]);
+  this->InVolumeXdoubleSpinBox->setValue(sliceToRAS->GetElement(0,3));
+  this->InVolumeYdoubleSpinBox->setValue(sliceToRAS->GetElement(1,3));
+  this->InVolumeZdoubleSpinBox->setValue(sliceToRAS->GetElement(2,3));
 
   // TODO : Update plane origin coordinates
 
@@ -242,11 +234,20 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   bool wasNormalYBlocking = this->NormalYdoubleSpinBox->blockSignals(true);
   bool wasNormalZBlocking = this->NormalZdoubleSpinBox->blockSignals(true);
 
+  double normal[3];
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
 
-  this->NormalXdoubleSpinBox->setValue(sliceToRAS->GetElement(0,2));
-  this->NormalYdoubleSpinBox->setValue(sliceToRAS->GetElement(1,2));
-  this->NormalZdoubleSpinBox->setValue(sliceToRAS->GetElement(2,2));
+  normal[0] = sliceToRAS->GetElement(0,2);
+  normal[1] = sliceToRAS->GetElement(1,2);
+  normal[2] = sliceToRAS->GetElement(2,2);
+
+  normal[0] = (normal[0] > 1) ? 1 : ((normal[0] < -1) ? -1 : normal[0]);
+  normal[1] = (normal[1] > 1) ? 1 : ((normal[1] < -1) ? -1 : normal[1]);
+  normal[2] = (normal[2] > 1) ? 1 : ((normal[2] < -1) ? -1 : normal[2]);
+
+  this->NormalXdoubleSpinBox->setValue(normal[0]);
+  this->NormalYdoubleSpinBox->setValue(normal[1]);
+  this->NormalZdoubleSpinBox->setValue(normal[2]);
 
   this->NormalXdoubleSpinBox->blockSignals(wasNormalXBlocking);
   this->NormalYdoubleSpinBox->blockSignals(wasNormalYBlocking);
@@ -262,15 +263,15 @@ resetSlider(qMRMLLinearTransformSlider* slider)
 
   if (slider == this->LRSlider)
     {
-    this->LastRotationValues[0] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axeX] = slider->value();
     }
   else if (slider == this->PASlider)
     {
-    this->LastRotationValues[1] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axeY] = slider->value();
     }
   else if (slider == this->ISSlider)
     {
-    this->LastRotationValues[2] = slider->value();
+    this->LastRotationValues[qSlicerReformatModuleWidget::axeZ] = slider->value();
     }
 
   slider->blockSignals(wasSliderBlocking);
@@ -356,6 +357,17 @@ void qSlicerReformatModuleWidget::setup()
                 this, SLOT(onSliceNormalChanged()));
   this->connect(d->NormalZdoubleSpinBox, SIGNAL(valueChanged(double)),
                 this, SLOT(onSliceNormalChanged()));
+
+  // Connect slice normal pushButtons
+  this->connect(d->NormalXPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxeX()));
+  this->connect(d->NormalYPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxeY()));
+  this->connect(d->NormalZPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToAxeZ()));
+
+  this->connect(d->NormalToCameraPushButton, SIGNAL(pressed()),
+                this, SLOT(setNormalToCamera()));
 
   // Connect Slice rotation sliders
   this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
@@ -501,7 +513,7 @@ void qSlicerReformatModuleWidget::onWorldPositionChanged()
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::onSliceNormalChanged()
+void qSlicerReformatModuleWidget::setSliceNormal(double x, double y, double z)
 {
   Q_D(qSlicerReformatModuleWidget);
 
@@ -513,13 +525,96 @@ void qSlicerReformatModuleWidget::onSliceNormalChanged()
     return;
     }
 
+  // Reset rotation sliders
+  d->resetSlider(d->LRSlider);
+  d->resetSlider(d->PASlider);
+  d->resetSlider(d->ISSlider);
+
+  double sliceNormal[3] = {x,y,z};
+
+  // Insert the widget rotation
+  transformLogic->SetSliceNormal(d->MRMLSliceNode, sliceNormal);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::setSliceNormal(double normal[3])
+{
+  double x = normal[0];
+  double y = normal[1];
+  double z = normal[2];
+
+  this->setSliceNormal(x, y, z);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::setNormalToCamera()
+{
+  vtkSlicerReformatLogic* transformLogic =
+    vtkSlicerReformatLogic::SafeDownCast(this->logic());
+
+  if (!transformLogic)
+    {
+    return;
+    }
+
+  // NOTE: We use the first Camera because there is no notion of active scene
+  // Code to be changed when methods avaible.
+  vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
+    transformLogic->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+
+  if (!cameraNode)
+    {
+    return;
+    }
+
+  double camNormal[3];
+  cameraNode->GetCamera()->GetViewPlaneNormal(camNormal);
+  this->setSliceNormal(camNormal);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::setNormalToAxeX()
+{
+  this->onSliceNormalToAxisChanged(axeX);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::setNormalToAxeY()
+{
+  this->onSliceNormalToAxisChanged(axeY);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::setNormalToAxeZ()
+{
+  this->onSliceNormalToAxisChanged(axeZ);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::onSliceNormalToAxisChanged(AxesReferenceType
+                                                             axe)
+{
+  double sliceNormal[3];
+  sliceNormal[0] = (axe == axeX) ? 1 : 0;
+  sliceNormal[1] = (axe == axeY) ? 1 : 0;
+  sliceNormal[2] = (axe == axeZ) ? 1 : 0;
+
+  // Insert the widget rotation
+  this->setSliceNormal(sliceNormal);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::onSliceNormalChanged()
+{
+  Q_D(qSlicerReformatModuleWidget);
+
   double sliceNormal[3];
   sliceNormal[0] = d->NormalXdoubleSpinBox->value();
   sliceNormal[1] = d->NormalYdoubleSpinBox->value();
   sliceNormal[2] = d->NormalZdoubleSpinBox->value();
 
-  // Insert the widget translation
-  transformLogic->SetSliceNormal(d->MRMLSliceNode, sliceNormal);
+  // Insert the widget rotation
+  this->setSliceNormal(sliceNormal);
 }
 
 //------------------------------------------------------------------------------
@@ -565,10 +660,10 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->ISSlider);
 
     // Rotate on LR given the angle with the last value reccorded
-    transform->RotateX(rotation-d->LastRotationValues[0]);
+    transform->RotateX(rotation-d->LastRotationValues[axeX]);
 
     // Update last value and apply the transform
-    d->LastRotationValues[0] = rotation;
+    d->LastRotationValues[axeX] = rotation;
     }
   else if (this->sender() == d->PASlider)
     {
@@ -577,10 +672,10 @@ onSliderRotationChanged(double rotation)
     d->resetSlider(d->ISSlider);
 
     // Rotate on PA given the angle with the last value reccorded
-    transform->RotateY(rotation-d->LastRotationValues[1]);
+    transform->RotateY(rotation-d->LastRotationValues[axeY]);
 
     // Update last value and apply the transform
-    d->LastRotationValues[1] = rotation;
+    d->LastRotationValues[axeY] = rotation;
     }
   else if (this->sender() == d->ISSlider)
     {
@@ -589,10 +684,10 @@ onSliderRotationChanged(double rotation)
       d->resetSlider(d->PASlider);
 
       // Rotate on PA given the angle with the last value reccorded
-      transform->RotateZ(rotation-d->LastRotationValues[2]);
+      transform->RotateZ(rotation-d->LastRotationValues[axeZ]);
 
       // Update last value and apply the transform
-      d->LastRotationValues[2] = rotation;
+      d->LastRotationValues[axeZ] = rotation;
     }
 
   // Apply the transform

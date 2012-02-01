@@ -41,9 +41,13 @@ public:
   virtual ~qSlicerReformatModuleWidget();
 
   enum OriginReferenceType {ONPLANE, INVOLUME};
+  enum AxesReferenceType {axeX=0, axeY, axeZ};
+
+  void setSliceNormal(double x, double y, double z);
+  void setSliceNormal(double normal[3]);
 
 protected:
-    virtual void setup();
+  virtual void setup();
 
 public slots:
   /// Set slice \a offset. Used to set a single value.
@@ -51,6 +55,18 @@ public slots:
 
   /// Recenter the active node given its coordinates reference.
   void centerSliceNode();
+
+  /// Set slice normal to the camera.
+  void setNormalToCamera();
+
+  /// Set the normal to a x axe
+  void setNormalToAxeX();
+
+  /// Set the normal to a y axe
+  void setNormalToAxeY();
+
+  /// Set the normal to a z axe
+  void setNormalToAxeZ();
 
 protected slots:
   /// Triggered upon MRML transform node updates
@@ -67,6 +83,7 @@ protected slots:
   void onWorldPositionChanged();
 
   void onSliceNormalChanged();
+  void onSliceNormalToAxisChanged(AxesReferenceType axe);
   void onSliceOrientationChanged(const QString& orientation);
   void onSliderRotationChanged(double rotationX);
 
