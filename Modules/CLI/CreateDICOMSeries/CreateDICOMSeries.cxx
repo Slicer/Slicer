@@ -16,7 +16,7 @@ command line processing and additional features have been added.
 #include "itkGDCMImageIO.h"
 #include "itkMetaDataObject.h"
 
-#include "ImageReadDicomWriteCLP.h"
+#include "CreateDICOMSeriesCLP.h"
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every

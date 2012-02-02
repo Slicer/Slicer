@@ -9,6 +9,7 @@ set(cli_modules
   CastScalarVolume
   CheckerBoardFilter
   ConfidenceConnected
+  CreateDICOMSeries
   CurvatureAnisotropicDiffusion
   DiffusionApplications
   DiffusionTensorEstimation
@@ -24,7 +25,6 @@ set(cli_modules
   GrayscaleModelMaker
   HistogramMatching
   ImageLabelCombine
-  ImageReadDicomWrite
   Java
   LabelMapSmoothing
   Mask
