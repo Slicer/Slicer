@@ -8,7 +8,6 @@ set(cli_modules
   AddScalarVolumes
   CastScalarVolume
   CheckerBoardFilter
-  ConfidenceConnected
   CreateDICOMSeries
   CurvatureAnisotropicDiffusion
   DiffusionApplications
@@ -41,6 +40,7 @@ set(cli_modules
   ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
   RobustStatisticsSegmenter
   Seeding
+  SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
   ThresholdScalarVolume
   VotingBinaryHoleFillingImageFilter
