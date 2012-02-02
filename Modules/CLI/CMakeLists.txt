@@ -4,6 +4,7 @@
 # WARNING: CLI modules should be topologically ordered.
 #-----------------------------------------------------------------------------
 set(cli_modules
+  ACPCTransform
   Add
   Cast
   CheckerBoard
@@ -36,7 +37,6 @@ set(cli_modules
   OrientImage
   PolyDataToLabelmap
   ProbeVolumeWithModel
-  Realign
   ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
   RobustStatisticsSegmenter
   Seeding

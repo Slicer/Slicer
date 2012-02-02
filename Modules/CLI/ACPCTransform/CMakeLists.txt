@@ -1,4 +1,4 @@
-project( Realign )
+project( ACPCTransform )
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})

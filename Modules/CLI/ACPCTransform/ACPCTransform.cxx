@@ -11,18 +11,19 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include "RealignCLP.h"
-#include "vtkTransform.h"
-#include "vtkPolyData.h"
-#include "vtkMath.h"
-
+#include "ACPCTransformCLP.h"
 #include "vtkPluginFilterWatcher.h"
-
 #include "vtkPrincipalAxesAlign.h"
 
-#include "vtkMRMLScene.h"
-#include "vtkSmartPointer.h"
-#include "vtkMRMLLinearTransformNode.h"
+// MRML includes
+#include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkMath.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every
@@ -34,6 +35,7 @@ namespace
 
 } // end of anonymous namespace
 
+//-----------------------------------------------------------------------------
 int main(int argc, char * argv[])
 {
   PARSE_ARGS;

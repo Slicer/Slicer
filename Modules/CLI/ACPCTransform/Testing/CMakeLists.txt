@@ -2,10 +2,10 @@
 #-----------------------------------------------------------------------------
 # ACPC Realign test
 #-----------------------------------------------------------------------------
-set(CLP ACPC)
+set(CLP ${PROJECT_NAME})
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
-target_link_libraries(${CLP}Test  RealignLib)
+target_link_libraries(${CLP}Test  ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 # configure the input mrml file to copy it to the binary TEMP dir so
