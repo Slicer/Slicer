@@ -2,15 +2,12 @@
 <executable>
   <category>Quantification</category>
   <title>PET Standard Uptake Value Computation</title>
-  <description>
-Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.</description>
+  <description>Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.</description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ComputeSUVBodyWeight</documentation-url>
   <license></license>
   <contributor>Wendy Plesniak, BWH (Nicole Aucoin, BWH, Ron Kikinis, BWH)</contributor>
-<acknowledgements>
-This work is funded by the Harvard Catalyst, and the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
+  <acknowledgements>This work is funded by the Harvard Catalyst, and the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
 
   <parameters>
     <label>Image and Information </label>

@@ -7,9 +7,7 @@
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesMultiRes-Documentation-3.6</documentation-url>
   <license></license>
   <contributor>Casey B Goodlett</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>Required</label>
     <description>Input and output parameters</description>

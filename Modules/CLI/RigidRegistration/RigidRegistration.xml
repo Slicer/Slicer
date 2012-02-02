@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Legacy.Registration</category>
-  <title>Fast Rigid registration</title>
+  <title>Rigid Registration</title>
   <index>2</index>
   <description>Registers two images together using a rigid transform and mutual information.\n\nThis module was originally distributed as "Linear registration" but has been renamed to eliminate confusion with the "Affine registration" module.\n\nThis module is often used to align images of different subjects or images of the same subject from different modalities.\n\nThis module can smooth images prior to registration to mitigate noise and improve convergence. Many of the registration parameters require a working knowledge of the algorithm although the default parameters are sufficient for many registration tasks.\n\n</description>
   <version>0.1.0.$Revision$(alpha)</version>
@@ -99,7 +99,7 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <label>Learning Rates</label>
       <default>0.01,0.005,0.0005,0.0002</default>
     </double-vector>
-    
+
     <double>
       <name>TranslationScale</name>
       <longflag>translationscale</longflag>
@@ -153,7 +153,7 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <channel>output</channel>
       <description>Resampled moving image to the fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
-    
+
   </parameters>
 
 </executable>

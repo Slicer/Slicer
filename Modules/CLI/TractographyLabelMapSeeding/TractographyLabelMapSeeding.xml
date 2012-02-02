@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Diffusion.Tractography
-  </category>
-  <title>
-  Tractography Labelmap Seeding
-  </title>
-  <description>
-  Seed tracts on a Diffusion Tensor Image (DT) from a label map
-  </description>
+  <category>Diffusion.Tractography</category>
+  <title>Tractography Label Map Seeding</title>
+  <description>Seed tracts on a Diffusion Tensor Image (DT) from a label map</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Seeding</documentation-url>
   <license>slicer3</license>
@@ -26,7 +20,7 @@
       <index>0</index>
       <description>Input DTI volume</description>
     </image>
-    
+
     <image type ="label">
       <name>InputROI</name>
       <label>Input Label Map</label>
@@ -34,7 +28,7 @@
       <longflag>--inputroi</longflag>
       <description>Label map with seeding ROIs</description>
       <channel>input</channel>
-    </image> 
+    </image>
 
     <geometry type = "fiberbundle">
       <name>OutputFibers</name>
@@ -58,7 +52,7 @@
       <channel>output</channel>
       <longflag>--outputdirectory</longflag>
       <description>Directory in which to save fiber(s)</description>
-    </directory>  
+    </directory>
 
    <string>
      <name>FilePrefix</name>
@@ -80,9 +74,9 @@
       <flag>-x</flag>
       <longflag>--useindexspace</longflag>
       <description>Seed at IJK voxel grid</description>
-      <default>false</default>  	
+      <default>false</default>
     </boolean>
-      
+
     <double>
       <name>SeedSpacing</name>
       <label>Seed Spacing</label>
@@ -91,21 +85,21 @@
       <description>Spacing (in mm) between seed points, only matters if use Use Index Space is off</description>
       <default>2</default>
       <constraints>
-      	<minimum>0.1</minimum>
-	<maximum>10</maximum>
-	<step>0.1</step>
+        <minimum>0.1</minimum>
+  <maximum>10</maximum>
+  <step>0.1</step>
       </constraints>
-    </double>    
-    
+    </double>
+
     <boolean>
       <name>RandomGrid</name>
       <label>Random Grid</label>
       <flag>-r</flag>
       <longflag>--randomgrid</longflag>
       <description>Enable random placing of seeds</description>
-      <default>false</default>  	
+      <default>false</default>
     </boolean>
-      
+
     <double>
       <name>ClTh</name>
       <label>Linear Measure Start Threshold</label>
@@ -115,16 +109,16 @@
       <default>0.3</default>
       <constraints>
         <minimum>0</minimum>
-	<maximum>1</maximum>
-	<step>0.1</step>
+  <maximum>1</maximum>
+  <step>0.1</step>
       </constraints>
     </double>
   </parameters>
-      
+
   <parameters>
     <label> Tractography Seeding Parameters</label>
     <description>Parameters for the tractography method</description>
-    
+
     <double>
       <name>MinimumLength</name>
       <label>Minimum Length</label>
@@ -134,11 +128,11 @@
       <default>10</default>
       <constraints>
         <minimum>0</minimum>
-	<maximum>200</maximum>
-	<step>1</step>
+  <maximum>200</maximum>
+  <step>1</step>
       </constraints>
     </double>
-    
+
     <double>
       <name>MaximumLength</name>
       <label>Maximum Length</label>
@@ -148,22 +142,22 @@
       <default>800</default>
       <constraints>
         <minimum>0</minimum>
-	<maximum>2000</maximum>
-	<step>1</step>
+  <maximum>2000</maximum>
+  <step>1</step>
       </constraints>
     </double>
-    
+
     <string-enumeration>
       <name>StoppingMode</name>
       <label>Stopping Mode</label>
       <description>Tensor measurement used to stop the tractography</description>
       <flag>-f</flag>
-      <longflag>--stoppingmode</longflag>      	
+      <longflag>--stoppingmode</longflag>
       <default>LinearMeasure</default>
       <element>LinearMeasure</element>
       <element>FractionalAnisotropy</element>
     </string-enumeration>
-    
+
     <double>
       <name>StoppingValue</name>
       <label>Stopping Value</label>
@@ -173,10 +167,10 @@
       <default>0.15</default>
       <constraints>
         <minimum>0</minimum>
-	<maximum>1</maximum>
-	<step>0.01</step>
+  <maximum>1</maximum>
+  <step>0.01</step>
       </constraints>
-    </double>  	
+    </double>
 
     <double>
       <name>StoppingCurvature</name>
@@ -187,11 +181,11 @@
       <default>0.8</default>
       <constraints>
         <minimum>0</minimum>
-	<maximum>10</maximum>
-	<step>0.1</step>
+  <maximum>10</maximum>
+  <step>0.1</step>
       </constraints>
-    </double> 
- 	
+    </double>
+
     <double>
       <name>IntegrationStepLength</name>
       <label>Integration Step Length(mm)</label>
@@ -201,17 +195,17 @@
       <default>0.5</default>
       <constraints>
         <minimum>0.0</minimum>
-	<maximum>10</maximum>
-	<step>0.1</step>
+  <maximum>10</maximum>
+  <step>0.1</step>
       </constraints>
-    </double>  	
-      
+    </double>
+
   </parameters>
-  
+
   <parameters>
     <label>Label definition</label>
     <description>Selection of label(labels) for ROI definition</description>
-    
+
     <integer>
       <name>ROIlabel</name>
       <label>Seeding label</label>
@@ -220,5 +214,5 @@
       <description>Label value that defines seeding region.</description>
       <default>1</default>
     </integer>
-  </parameters>  
+  </parameters>
 </executable>

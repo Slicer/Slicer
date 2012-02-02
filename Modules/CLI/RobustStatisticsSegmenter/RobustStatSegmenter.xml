@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-     Segmentation.Specialized
-  </category>
-  <title>
-    Robust Statistics Segmentation
-  </title>
-  <description>
-    Active contour segmentation using robust statistic.
-  </description>
+  <category>Segmentation.Specialized</category>
+  <title>Robust Statistics Segmenter</title>
+  <description>Active contour segmentation using robust statistic.</description>
   <version>1.0</version>
-  <documentation-url>
-http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RobustStatisticsSegmenter
-  </documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RobustStatisticsSegmenter</documentation-url>
   <license></license>
-  <contributor>
-    Yi Gao, Allen Tannenbaum, Ron Kikinis
-  </contributor>
-  <acknowledgements>
-    This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health
-  </acknowledgements>
+  <contributor>Yi Gao, Allen Tannenbaum, Ron Kikinis</contributor>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health</acknowledgements>
 
   <parameters>
     <label>Segmentation Parameters</label>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Arithmetic</category>
-  <title>Add Images</title>
+  <title>Add Scalar Volumes</title>
   <description>
 Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.
 </description>

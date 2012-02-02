@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Filtering
-  </category>
-  <title>
-  Voting Binary Hole Filling
-  </title>
-  <description>
-Applies a voting operation in order to fill-in cavities. This can be used for smoothing contours and for filling holes in binary images. This technique is used frequently when segmenting complete organs that may have ducts or vasculature that may not have been included in the initial segmentation, e.g. lungs, kidneys, liver.
-  </description>
+  <category>Filtering</category>
+  <title>Voting Binary Hole Filling Image Filter</title>
+  <description>Applies a voting operation in order to fill-in cavities. This can be used for smoothing contours and for filling holes in binary images. This technique is used frequently when segmenting complete organs that may have ducts or vasculature that may not have been included in the initial segmentation, e.g. lungs, kidneys, liver.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/VotingBinaryHoleFillingImageFilter</documentation-url>
   <license></license>

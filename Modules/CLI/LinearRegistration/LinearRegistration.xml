@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Legacy.Registration</category>
-  <title>Linear registration</title>
+  <title>Linear Registration</title>
   <index>8</index>
   <description>Registers two images together using a rigid transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LinearRegistration</documentation-url>
   <license></license>
   <contributor>Daniel Blezek</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
 
  <parameters advanced="true">
     <label>Preprocessing</label>
@@ -91,7 +89,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Learning Rates</label>
       <default>0.01,0.005,0.0005,0.0002</default>
     </double-vector>
-    
+
     <double>
       <name>TranslationScale</name>
       <longflag>translationscale</longflag>

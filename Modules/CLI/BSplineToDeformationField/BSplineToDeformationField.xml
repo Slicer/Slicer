@@ -7,14 +7,12 @@
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BSplineToDeformationField</documentation-url>
   <license></license>
   <contributor>Andrey Fedorov, BWH</contributor>
-<acknowledgements>
-This work is funded by NIH grants R01 CA111288 and U01 CA151261.
-</acknowledgements>
+  <acknowledgements>This work is funded by NIH grants R01 CA111288 and U01 CA151261.</acknowledgements>
 
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-   
+
     <transform>
       <name>inputTransformName</name>
       <label>BSpline transform that includes bulk affine transform</label>

@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Surface Models</category>
-  <title>
-  Probe Volume With Model (Paint)
-  </title>
-  <description>
-  Paint a model by a volume (using vtkProbeFilter).
-  </description>
+  <title>Probe Volume With Model</title>
+  <description>Paint a model by a volume (using vtkProbeFilter).</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ProbeVolumeWithModel</documentation-url>
   <license></license>
@@ -38,5 +34,5 @@
       <description>Output "painted" model</description>
     </geometry>
   </parameters>
-  
+
 </executable>

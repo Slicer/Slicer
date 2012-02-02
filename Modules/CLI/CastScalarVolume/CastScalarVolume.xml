@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering.Arithmetic</category>
-  <title>Cast Image</title>
-  <description>
-Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.</description>
+  <title>Cast Scalar Volume</title>
+  <description>Cast a volume to a given data type.\nUse at your own risk when casting an input volume into a lower precision type!\nAllows casting to the same type as the input volume.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Cast</documentation-url>
   <license></license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
 
   <parameters>
     <label>IO</label>
@@ -31,7 +28,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
     </image>
   </parameters>
   <parameters>
-    <label>Filter Settings</label>    
+    <label>Filter Settings</label>
     <string-enumeration>
       <name>Type</name>
       <label>Output Type:</label>
@@ -47,6 +44,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>UnsignedInt</element>
       <element>Float</element>
       <element>Double</element>
-    </string-enumeration>  
+    </string-enumeration>
   </parameters>
 </executable>
