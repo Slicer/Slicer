@@ -13,7 +13,7 @@ set(cli_modules
   DiffusionApplications
   DiffusionTensorEstimation
   DiffusionTensorScalarMeasurements
-  DiffusionWeightedMasking
+  DiffusionWeightedVolumeMasking
   ExecutionModelTour
   ExtractSkeleton
   FreesurferSurfaceSectionExtraction

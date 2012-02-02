@@ -13,7 +13,7 @@
 #include "itkFloatingPointExceptions.h"
 #endif
 
-#include "DiffusionWeightedMaskingCLP.h"
+#include "DiffusionWeightedVolumeMaskingCLP.h"
 
 #define GRAD_0_TOL 1e-6
 

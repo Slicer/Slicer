@@ -1,8 +1,6 @@
 
-#-----------------------------------------------------------------------------
-# DiffusionWeightedMasking tests
-#-----------------------------------------------------------------------------
-set(CLP DiffusionWeightedMasking)
+set(CLP DiffusionWeightedVolumeMasking)
+
 include_directories(
   ${vtkITK_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
@@ -14,12 +12,11 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  DiffusionWeightedMaskingTest
+  ${testname}
     --otsuomegathreshold 0.5
     --removeislands
     ${MRML_TEST_DATA}/helix-DWI.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
-    ${TEMP}/DiffusionWeightedMaskingTest_output.nhdr
+    ${TEMP}/${CLP}_estimatedBaseline.nhdr
+    ${TEMP}/${CLP}_output.nhdr
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
-
