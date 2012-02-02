@@ -1,6 +1,3 @@
-project( DiffusionFiltering )
-
-include_directories(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon)
 
 set(filters
   DWIJointRicianLMMSEFilter

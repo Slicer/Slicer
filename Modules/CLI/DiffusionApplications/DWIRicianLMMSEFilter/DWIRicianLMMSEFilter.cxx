@@ -11,18 +11,19 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include <itkMetaDataObject.h>
 
-#include "localPluginUtilities.h"
-
+// DWIRicianLMMSEFilter includes
+#include "DWIRicianLMMSEFilterCLP.h"
 #include "itkLMMSEVectorImageFilter.h"
 
+// CLI includes
+#include <itkPluginUtilities.h>
+
+// ITK includes
+#include <itkCastImageFilter.h>
 #include <itkImageFileWriter.h>
+#include <itkMetaDataObject.h>
 #include <itkNrrdImageIO.h>
-
-#include "itkCastImageFilter.h"
-
-#include "DWIRicianLMMSEFilterCLP.h"
 
 #define DIMENSION 3
 

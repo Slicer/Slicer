@@ -11,27 +11,27 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include <itkMetaDataObject.h>
 
 #ifdef _WIN32
 // to pick up M_SQRT2 and other nice things...
 #define _USE_MATH_DEFINES
 #endif
 
-#include "localPluginUtilities.h"
-
-#include "itkUNLMFilter.h"
-
-#include <itkImageFileWriter.h>
-#include <itkNrrdImageIO.h>
-
-#include "itkCastImageFilter.h"
-
+// DWIUnbiasedNonLocalMeansFilter includes
+#include "DWIUnbiasedNonLocalMeansFilterCLP.h"
+#include "itkComputeRestrictedHistogram.h"
 #include "itkOtsuStatistics.h"
 #include "itkOtsuThreshold.h"
-#include "itkComputeRestrictedHistogram.h"
+#include "itkUNLMFilter.h"
 
-#include "DWIUnbiasedNonLocalMeansFilterCLP.h"
+// CLI includes
+#include <itkPluginUtilities.h>
+
+// ITK includes
+#include <itkMetaDataObject.h>
+#include <itkImageFileWriter.h>
+#include <itkNrrdImageIO.h>
+#include <itkCastImageFilter.h>
 
 #define DIMENSION 3
 #define dwiPI 3.141592653589793

@@ -18,20 +18,20 @@
 #define _USE_MATH_DEFINES
 #endif
 
-#include "localPluginUtilities.h"
-
+// DWIJointRicianLMMSEFilter includes
+#include "DWIJointRicianLMMSEFilterCLP.h"
+#include "itkComputeRestrictedHistogram.h"
 #include "itkLMMSEVectorImageFilter.h"
-
-#include <itkImageFileWriter.h>
-#include <itkNrrdImageIO.h>
-
-#include "itkCastImageFilter.h"
-
 #include "itkOtsuStatistics.h"
 #include "itkOtsuThreshold.h"
-#include "itkComputeRestrictedHistogram.h"
 
-#include "DWIJointRicianLMMSEFilterCLP.h"
+// CLI includes
+#include "itkPluginUtilities.h"
+
+// ITK includes
+#include <itkImageFileWriter.h>
+#include <itkNrrdImageIO.h>
+#include <itkCastImageFilter.h>
 
 #define DIMENSION 3
 #define dwiPI 3.141592653589793
