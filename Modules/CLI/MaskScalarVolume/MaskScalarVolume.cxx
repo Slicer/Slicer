@@ -23,7 +23,7 @@
 #include "itkResampleImageFilter.h"
 
 #include "itkPluginUtilities.h"
-#include "MaskCLP.h"
+#include "MaskScalarVolumeCLP.h"
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every

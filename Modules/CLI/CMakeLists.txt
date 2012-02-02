@@ -27,7 +27,7 @@ set(cli_modules
   ImageLabelCombine
   Java
   LabelMapSmoothing
-  Mask
+  MaskScalarVolume
   MedianImageFilter
   MergeModels
   ModelMaker
