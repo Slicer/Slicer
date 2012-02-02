@@ -1,11 +1,9 @@
-project( SparseFieldLevelSetContour )
 
 slicerMacroBuildCLI(
-  NAME ${PROJECT_NAME}
+  NAME MeshContourSegmentation
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES vtkTeem MRMLCore SlicerBaseCLI
   ADDITIONAL_SRCS
-    SparseFieldLevelSetContour.cxx
     Utils.cxx
     MeshOps.cxx
     LSops.cxx
@@ -36,4 +34,3 @@ slicerMacroBuildCLI(
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-

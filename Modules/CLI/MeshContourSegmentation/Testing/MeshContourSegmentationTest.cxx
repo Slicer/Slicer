@@ -9,10 +9,10 @@
 
 void RegisterTests()
 {
-  REGISTER_TEST(SparseFieldLevelSetContourTest);
+  REGISTER_TEST(MeshContourSegmentationTest);
 }
 
 #undef main
-#define main SparseFieldLevelSetContourTest
+#define main MeshContourSegmentationTest
 
-#include "../SparseFieldLevelSetContour.cxx"
+#include "../MeshContourSegmentation.cxx"

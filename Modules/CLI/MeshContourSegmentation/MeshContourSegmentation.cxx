@@ -11,7 +11,7 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-#include "SparseFieldLevelSetContourCLP.h"
+#include "MeshContourSegmentationCLP.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkPluginFilterWatcher.h"

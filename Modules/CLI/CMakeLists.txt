@@ -30,6 +30,7 @@ set(cli_modules
   MaskScalarVolume
   MedianImageFilter
   MergeModels
+  MeshContourSegmentation
   ModelMaker
   MultipleModelsExample
   Multiply
@@ -40,7 +41,6 @@ set(cli_modules
   ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
   RobustStatisticsSegmenter
   Seeding
-  SparseFieldLevelSetContour
   Subtract
   Threshold
   VotingBinaryHoleFillingImageFilter
