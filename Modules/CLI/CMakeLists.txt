@@ -7,7 +7,7 @@ set(cli_modules
   ACPCTransform
   AddScalarVolumes
   CastScalarVolume
-  CheckerBoard
+  CheckerBoardFilter
   ConfidenceConnected
   CurvatureAnisotropicDiffusion
   DiffusionApplications
