@@ -42,7 +42,7 @@ set(cli_modules
   RobustStatisticsSegmenter
   Seeding
   Subtract
-  Threshold
+  ThresholdScalarVolume
   VotingBinaryHoleFillingImageFilter
   ZeroCrossingBasedEdgeDetectionImageFilter
   )
