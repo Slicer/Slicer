@@ -5,7 +5,7 @@ include_directories(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon
 
 set(filters
   jointLMMSE
-  dwiNoiseFilter
+  DWIRicianLMMSEFilter
   DWIUnbiasedNonLocalMeansFilter
   ResampleDTI
   )

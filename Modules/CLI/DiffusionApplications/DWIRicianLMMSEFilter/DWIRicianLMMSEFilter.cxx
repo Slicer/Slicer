@@ -22,7 +22,7 @@
 
 #include "itkCastImageFilter.h"
 
-#include "dwiNoiseFilterCLP.h"
+#include "DWIRicianLMMSEFilterCLP.h"
 
 #define DIMENSION 3
 

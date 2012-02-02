@@ -1,10 +1,6 @@
-project(dwiNoiseFilter)
-
-find_package(ITK REQUIRED)
-include(${ITK_USE_FILE})
 
 slicerMacroBuildCLI(
-  NAME ${PROJECT_NAME}
+  NAME DWIRicianLMMSEFilter
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES} ModuleDescriptionParser
   LINK_DIRECTORIES ${ModuleDescriptionParser_BINARY_DIR}
@@ -12,3 +8,6 @@ slicerMacroBuildCLI(
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )
 
+if(BUILD_TESTING)
+  add_subdirectory(Testing)
+endif()
