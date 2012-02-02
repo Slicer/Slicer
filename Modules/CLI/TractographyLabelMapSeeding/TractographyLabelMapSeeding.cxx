@@ -8,7 +8,7 @@
 #include "vtkDiffusionTensorMathematics.h"
 #include "vtkImageThreshold.h"
 
-#include "SeedingCLP.h"
+#include "TractographyLabelMapSeedingCLP.h"
 
 int main( int argc, char * argv[] )
 {
@@ -198,7 +198,7 @@ int main( int argc, char * argv[] )
     iwriter->SetFileName("C:/Temp/th.nhdr");
     iwriter->Write();
     **/
-   
+
     vtkTransform *trans2 = vtkTransform::New();
     trans2->Identity();
     trans2->PreMultiply();

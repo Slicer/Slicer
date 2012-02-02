@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME Seeding
+  NAME TractographyLabelMapSeeding
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES vtkTeem SlicerBaseLogic
   LINK_DIRECTORIES
