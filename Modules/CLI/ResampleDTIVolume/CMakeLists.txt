@@ -1,6 +1,8 @@
 
+project(ResampleDTIVolume)
+
 slicerMacroBuildCLI(
-  NAME ResampleDTIVolume
+  NAME ${PROJECT_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS
     dtiprocessFiles/deformationfieldio.h
@@ -16,3 +18,4 @@ slicerMacroBuildCLI(
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
+

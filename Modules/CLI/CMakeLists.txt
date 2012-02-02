@@ -10,10 +10,12 @@ set(cli_modules
   CheckerBoardFilter
   CreateDICOMSeries
   CurvatureAnisotropicDiffusion
-  DiffusionApplications
   DiffusionTensorEstimation
   DiffusionTensorScalarMeasurements
   DiffusionWeightedVolumeMasking
+  DWIJointRicianLMMSEFilter
+  DWIRicianLMMSEFilter
+  DWIUnbiasedNonLocalMeansFilter
   ExecutionModelTour
   ExtractSkeleton
   FreesurferSurfaceSectionExtraction
@@ -37,6 +39,7 @@ set(cli_modules
   N4ITKBiasFieldCorrection
   OrientScalarVolume
   ProbeVolumeWithModel
+  ResampleDTIVolume
   ResampleScalarVectorDWIVolume # Depends on DiffusionApplications
   RobustStatisticsSegmenter
   SimpleRegionGrowingSegmentation

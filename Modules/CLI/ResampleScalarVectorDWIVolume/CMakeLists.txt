@@ -4,17 +4,17 @@ slicerMacroBuildCLI(
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   INCLUDE_DIRECTORIES
-    ${DiffusionFiltering_SOURCE_DIR}
+    ${ResampleDTIVolume_SOURCE_DIR}
   ADDITIONAL_SRCS
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkWarpTransform3D.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkWarpTransform3D.txx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkTransformDeformationFieldFilter.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkTransformDeformationFieldFilter.txx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/deformationfieldio.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/deformationfieldio.cxx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/dtitypes.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/itkWarpTransform3D.h
+    ${ResampleDTIVolume_SOURCE_DIR}/itkWarpTransform3D.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/itkTransformDeformationFieldFilter.h
+    ${ResampleDTIVolume_SOURCE_DIR}/itkTransformDeformationFieldFilter.txx
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/deformationfieldio.h
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/deformationfieldio.cxx
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/dtitypes.h
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
+    ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
   )
 
 if(BUILD_TESTING)
