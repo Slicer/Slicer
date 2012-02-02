@@ -37,7 +37,6 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} ${CMAKE_COMMAND}
   -Dmodel2=${MRML_TEST_DATA}/cube.vtp
   -Doutput_model=${TEMP}/sphereCube.vtp
   -Doutput_baseline=${BASELINE}/sphereCube.vtp
-  -Doutput_test=${TEMP}/sphereCube.vtp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/run_MergeModelsTest.cmake
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
