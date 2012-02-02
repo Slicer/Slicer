@@ -34,7 +34,6 @@ set(cli_modules
   MeshContourSegmentation
   ModelMaker
   ModelToLabelMap
-  MultipleModelsExample
   MultiplyScalarVolumes
   N4ITKBiasFieldCorrection
   OrientScalarVolume
