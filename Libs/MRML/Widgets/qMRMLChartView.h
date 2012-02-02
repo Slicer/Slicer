@@ -58,6 +58,11 @@ public slots:
   void setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode);
 
 signals:
+
+  /// Signal emitted when a data point has been clicked. Returns the
+  /// id of the MRMLDoubleArrayNode, the index of the point, and the values
+  void dataPointClicked(const char *mrmlArrayID, int pointidx, double x, double y);
+
   /// When designing custom qMRMLWidget in the designer, you can connect the
   /// mrmlSceneChanged signal directly to the aggregated MRML widgets that
   /// have a setMRMLScene slot.

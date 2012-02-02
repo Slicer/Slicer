@@ -21,6 +21,7 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QWebFrame>
 
 // CTK includes
 #include <ctkAxesWidget.h>
@@ -133,6 +134,9 @@ void qMRMLChartViewPrivate::init()
   
   // Let the QWebView expand in both directions
   q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);  
+
+  // Expose the ChartView class to Javascript
+  q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
 
 //  q->setRenderEnabled(this->MRMLScene != 0);
   q->setEnabled(this->MRMLScene != 0);
@@ -559,6 +563,17 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plotResizeHook <<
     "$(window).resize( resizeSlot );";
 
+  // data point click slot - represented in javascript
+  QStringList plotDataPointClickedSlot;
+  plotDataPointClickedSlot <<
+    "var dataPointClickedSlot = function(ev, seriesIndex, pointIndex, data) {"
+    "qtobject.onDataPointClicked(seriesIndex, pointIndex, data[0], data[1]);"
+    "};";
+
+  // bind a data point clicked to the slot
+  QStringList plotDataPointClickedHook;
+  plotDataPointClickedHook <<
+    "$('#chart').bind('jqplotDataClick', dataPointClickedSlot);";
 
   // Assemble the plot
   //
@@ -582,6 +597,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plot << plotResizeSlot;        // insert definition of the resizeSlot
   plot << plotInitialResize;     // insert an initial call to resizeSlot 
   plot << plotResizeHook;        // insert hook to call resizeSlot on page resize
+  plot << plotDataPointClickedSlot; // insert definition of the data clicked slot
+  plot << plotDataPointClickedHook; // insert the binding to the slot
 
   plot << 
     "});"                   // end of function and end of call to ready()
@@ -595,7 +612,55 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   q->setHtml(plot.join("")); 
   q->show();
 
+  // expose this object to the Javascript code
+  q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
+
 }
+
+//---------------------------------------------------------------------------
+void qMRMLChartViewPrivate::onDataPointClicked(int series, int pointidx, double x, double y)
+{
+  Q_Q(qMRMLChartView);
+
+  //qDebug() << "Series: " << series << ", Pointid: " << pointidx << ": " << x << ", " << y;
+  
+  // map from series to MRML ID
+  if (!this->MRMLScene || !this->MRMLChartViewNode)
+    {
+    return;
+    }
+
+  if (!q->isEnabled())
+    {
+    return;
+    }
+
+  // Get the ChartNode
+  char *chartnodeid = this->MRMLChartViewNode->GetChartNodeID();
+
+  if (!chartnodeid)
+    {
+    return;
+    }
+
+  vtkMRMLChartNode* cn = vtkMRMLChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(chartnodeid));
+
+  if (!cn)
+    {
+    return;
+    }
+
+  // Get the array ids
+  vtkStringArray *arrayIDs = cn->GetArrays();
+
+  // emit the real signal
+  if (series >= 0 && series < arrayIDs->GetNumberOfValues())
+    {
+    //qDebug() << "Array: " << arrayIDs->GetValue(series) << ", Pointidx: " << pointidx << ": " << x << ", " << y;
+    emit q->dataPointClicked(arrayIDs->GetValue(series), pointidx, x, y);
+    }
+}
+
 
 // --------------------------------------------------------------------------
 // qMRMLChartView methods
@@ -697,5 +762,6 @@ QSize qMRMLChartView::sizeHint()const
   // return a default size hint (invalid size)
   return QSize();
 }
+
 
 

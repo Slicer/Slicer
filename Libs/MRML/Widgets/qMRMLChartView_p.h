@@ -35,7 +35,7 @@ public:
 
   void setMRMLScene(vtkMRMLScene* scene);                                        
   vtkMRMLScene *mrmlScene();
-                                       
+
 public slots:
   /// Handle MRML scene event
   void startProcessing();
@@ -45,6 +45,9 @@ public slots:
 
   /// slot when the view is configured to look at a different chart node
   void onChartNodeChanged(); 
+
+  // slot when a data point is clicked
+  void onDataPointClicked(int series, int pointidx, double x, double y);
 
 protected:
   void initDisplayableManagers();
