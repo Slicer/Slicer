@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 set(cli_modules
   ACPCTransform
-  Add
+  AddScalarVolumes
   Cast
   CheckerBoard
   ConfidenceConnected
