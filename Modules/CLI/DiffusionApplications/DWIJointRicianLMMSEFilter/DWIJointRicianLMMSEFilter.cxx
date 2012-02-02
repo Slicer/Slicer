@@ -31,7 +31,7 @@
 #include "itkOtsuThreshold.h"
 #include "itkComputeRestrictedHistogram.h"
 
-#include "jointLMMSECLP.h"
+#include "DWIJointRicianLMMSEFilterCLP.h"
 
 #define DIMENSION 3
 #define dwiPI 3.141592653589793
