@@ -53,7 +53,6 @@ if(Slicer_BUILD_LEGACY_CLI)
     BSplineDeformableRegistration
     BSplineToDeformationField
     DiffusionTensorTest
-    DiffusionWeightedTest
     ExpertAutomatedRegistration
     FiducialRegistration
     LinearRegistration
