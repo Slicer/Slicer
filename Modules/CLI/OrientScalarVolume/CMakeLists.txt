@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME OrientImage
+  NAME OrientScalarVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   )

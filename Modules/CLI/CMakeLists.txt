@@ -35,7 +35,7 @@ set(cli_modules
   MultipleModelsExample
   MultiplyScalarVolumes
   N4ITKBiasFieldCorrection
-  OrientImage
+  OrientScalarVolume
   ProbeVolumeWithModel
   ResampleScalarVectorDWIVolume # Depends on DiffusionApplications
   RobustStatisticsSegmenter
