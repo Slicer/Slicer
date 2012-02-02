@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME ComputeSUVBodyWeight
+  NAME PETStandardUptakeValueComputation
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   # LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/CTSCLogo.h
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRMLCore SlicerBaseLogic SlicerBaseCLI ITKIO

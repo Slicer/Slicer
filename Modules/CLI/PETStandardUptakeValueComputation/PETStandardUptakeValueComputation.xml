@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Quantification</category>
-  <title>SUVComputation</title>
+  <title>PET Standard Uptake Value Computation</title>
   <description>
 Computes the standardized uptake value based on body weight. Takes an input PET image in DICOM and NRRD format (DICOM header must contain Radiopharmaceutical parameters). Produces a CSV file that contains patientID, studyDate, dose, labelID, suvmin, suvmax, suvmean, labelName for each volume of interest. It also displays some of the information as output strings in the GUI, the CSV file is optional in that case. The CSV file is appended to on each execution of the CLI.</description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
@@ -47,7 +47,7 @@ This work is funded by the Harvard Catalyst, and the National Alliance for Medic
       <channel>input</channel>
       <longflag>--color</longflag>
       <description>Color table to to map labels to colors and names</description>
-    </table>   
+    </table>
 
   </parameters>
  <parameters>

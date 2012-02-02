@@ -73,8 +73,8 @@ endif()
 endif()
 
 if("${ITK_VERSION_MAJOR}" LESS 4)
-  list(APPEND cli_modules ComputeSUVBodyWeight)
   list(APPEND cli_modules DicomToNrrdConverter)
+  list(APPEND cli_modules PETStandardUptakeValueComputation)
 endif()
 
 if(Slicer_USE_MIDAS)

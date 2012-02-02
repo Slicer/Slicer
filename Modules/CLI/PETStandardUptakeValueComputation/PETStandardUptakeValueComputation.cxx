@@ -1,34 +1,40 @@
 
-#include "itkImageSeriesReader.h"
-#include "itkOrientedImage.h"
-#include "itkMetaDataDictionary.h"
-#include "itkGDCMImageIO.h"
-#include "itkGDCMSeriesFileNames.h"
-#include "itkNumericSeriesFileNames.h"
-#include "itkImageSeriesReader.h"
-#include "vtkGlobFileNames.h"
+#include "PETStandardUptakeValueComputationCLP.h"
 
-#include "gdcmFile.h"
-#include "gdcmGlobal.h"
-#include "gdcmUtil.h"
-#include "gdcmValEntry.h"
-#include "gdcmBinEntry.h"
-#include "gdcmSeqEntry.h"
-#include "gdcmSQItem.h"
+// MRML includes
+#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLColorTableStorageNode.h>
 
-#include "itkImageFileWriter.h"
+// vtkITK includes
+#include <vtkITKArchetypeImageSeriesScalarReader.h>
 
-#include "ComputeSUVBodyWeightCLP.h"
+// VTK includes
+#include <vtkGlobFileNames.h>
+#include <vtkImageAccumulate.h>
+#include <vtkImageData.h>
+#include <vtkImageThreshold.h>
+#include <vtkImageToImageStencil.h>
+#include <vtkSmartPointer.h>
 
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
-#include "vtkImageData.h"
-#include "vtkImageAccumulate.h"
-#include "vtkImageThreshold.h"
-#include "vtkImageToImageStencil.h"
-#include "vtkSmartPointer.h"
+// ITK includes
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
+#include <itkImageFileWriter.h>
+#include <itkImageSeriesReader.h>
+#include <itkImageSeriesReader.h>
+#include <itkMetaDataDictionary.h>
+#include <itkNumericSeriesFileNames.h>
+#include <itkOrientedImage.h>
 
-#include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLColorTableStorageNode.h"
+// GDCM includes
+#include <gdcmBinEntry.h>
+#include <gdcmFile.h>
+#include <gdcmGlobal.h>
+#include <gdcmSeqEntry.h>
+#include <gdcmSQItem.h>
+#include <gdcmUtil.h>
+#include <gdcmValEntry.h>
+
 // ...
 // ...............................................................................................
 // ...
@@ -110,7 +116,7 @@ struct parameters
     std::string radionuclideHalfLife;
     std::string frameReferenceTime;
 };
-  
+
 // ...
 // ...............................................................................................
 // ...
@@ -736,7 +742,7 @@ double DecayCorrection(parameters & list, double inVal )
 const char * MapLabelIDtoColorName( int id, std::string colorFile )
 {
   // use the colour table that was passed in with the VOI volume
-  
+
   const char *colorName = "";
 
   vtkSmartPointer<vtkMRMLColorTableNode>        colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
@@ -806,7 +812,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   fclose(voifile);
 
   // Read the PET file
-  
+
   reader1 = vtkITKArchetypeImageSeriesScalarReader::New();
 //    vtkPluginFilterWatcher watchReader1 ( reader1, "Reading PET Volume", CLPProcessInformation );
   reader1->SetArchetype(list.PETVolumeName.c_str() );
@@ -815,7 +821,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   reader1->SetUseNativeOriginOn();
   reader1->Update();
   std::cout << "Done reading the file " << list.PETVolumeName.c_str() << endl;
-  
+
 
   // Read the VOI file
   reader2 = vtkITKArchetypeImageSeriesScalarReader::New();
@@ -835,7 +841,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   voiVolume = reader2->GetOutput();
   voiVolume->Update();
 
-  
+
   //
   // COMPUTE SUV ///////////////////////////////////////////////////////////////////////////////RSNA CHANGE//////////////////////////
   //
@@ -863,13 +869,13 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   typedef itk::GDCMImageIO ImageIOType;
   typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
   typedef itk::VectorImage< PixelValueType, 3 > NRRDImageType;
-    
+
   if ( !list.PETDICOMPath.compare(""))
     {
     std::cerr << "GetParametersFromDicomHeader:Got empty list.PETDICOMPath." << std::endl;
     return EXIT_FAILURE;
     }
- 
+
 
   //--- catch non-dicom data
   vtkGlobFileNames* gfn = vtkGlobFileNames::New();
@@ -895,14 +901,14 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     return EXIT_FAILURE;
     }
 
-  
+
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetUseSeriesDetails(true);
   inputNames->SetDirectory(list.PETDICOMPath);
   itk::SerieUIDContainer seriesUIDs = inputNames->GetSeriesUIDs();
 
   const VolumeReaderType::FileNamesContainer & filenames = inputNames->GetFileNames(seriesUIDs[0]);
-      
+
   std::string tag;
   std::string yearstr;
   std::string monthstr;
@@ -911,7 +917,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::string minutestr;
   std::string secondstr;
   int len;
-    
+
 // Nuclear Medicine DICOM info:
 /*
     0054,0016  Radiopharmaceutical Information Sequence:
@@ -952,11 +958,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           //---as long as every component to the right of an unspecified
           //---component is also unspecified. If frac is unspecified the preceding "."
           //---may not be included. Frac shall be held to six decimal places or
-          //---less to ensure its format conforms to the ANSI 
+          //---less to ensure its format conforms to the ANSI
           //---Examples -
           //---1. "070907.0705" represents a time of 7 hours, 9 minutes and 7.0705 seconds.
           //---2. "1010" represents a time of 10 hours, and 10 minutes.
-          //---3. "021" is an invalid value. 
+          //---3. "021" is an invalid value.
           if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
             {
             list.injectionTime  = "MODULE_INIT_NO_VALUE" ;
@@ -1001,7 +1007,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
             }
 
           //---
-          //--- Radionuclide Total Dose 
+          //--- Radionuclide Total Dose
           tag.clear();
           tag = sqItem->GetEntryValue(0x0018,0x1074);
           if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
@@ -1026,7 +1032,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           //--- the decimal point. A floating point number shall be conveyed
           //--- as defined in ANSI X3.9, with an "E" or "e" to indicate the start
           //--- of the exponent. Decimal Strings may be padded with leading
-          //--- or trailing spaces. Embedded spaces are not allowed. 
+          //--- or trailing spaces. Embedded spaces are not allowed.
           if ( tag.c_str() == NULL || *(tag.c_str()) == '\0' )
             {
             list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE" ;
@@ -1050,7 +1056,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         //--- CNTS, NONE, CM2, PCNT, CPS, BQML,
         //--- MGMINML, UMOLMINML, MLMING, MLG,
         //--- 1CM, UMOLML, PROPCNTS, PROPCPS,
-        //--- MLMINML, MLML, GML, STDDEV      
+        //--- MLMINML, MLML, GML, STDDEV
         //---
         tag.clear();
         tag = f->GetEntryValue (0x0054,0x1001);
@@ -1061,7 +1067,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           if ( ( units.find ("BQML") != std::string::npos) ||
                ( units.find ("BQML") != std::string::npos) )
             {
-            list.radioactivityUnits= "Bq";        
+            list.radioactivityUnits= "Bq";
             list.tissueRadioactivityUnits = "Bq";
             }
           else if ( ( units.find ("MBq") != std::string::npos) ||
@@ -1103,25 +1109,25 @@ int LoadImagesAndComputeSUV( parameters & list, T )
             }
           else if ( (units.find ("kCi") != std::string::npos) ||
                     (units.find ("kCI") != std::string::npos)  ||
-                    (units.find ("KCI") != std::string::npos) )                
+                    (units.find ("KCI") != std::string::npos) )
             {
             list.radioactivityUnits = "kCi";
             list.tissueRadioactivityUnits = "kCi";
             }
           else if ( (units.find ("mCi") != std::string::npos) ||
-                    (units.find ("mCI") != std::string::npos) )                
+                    (units.find ("mCI") != std::string::npos) )
             {
             list.radioactivityUnits = "mCi";
             list.tissueRadioactivityUnits = "mCi";
             }
           else if ( (units.find ("uCi") != std::string::npos) ||
-                    (units.find ("uCI") != std::string::npos) )                
+                    (units.find ("uCI") != std::string::npos) )
             {
             list.radioactivityUnits = "uCi";
             list.tissueRadioactivityUnits = "uCi";
             }
           else if ( (units.find ("Ci") != std::string::npos) ||
-                    (units.find ("CI") != std::string::npos) )                
+                    (units.find ("CI") != std::string::npos) )
             {
             list.radioactivityUnits = "Ci";
             list.tissueRadioactivityUnits = "Ci";
@@ -1133,27 +1139,27 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           //--- default values.
           list.radioactivityUnits = "MBq";
           list.tissueRadioactivityUnits = "MBq";
-          list.volumeUnits = "ml";   
+          list.volumeUnits = "ml";
           }
 
-    
+
         //---
         //--- DecayCorrection
         //--- Possible values are:
         //--- NONE = no decay correction
         //--- START= acquisition start time
         //--- ADMIN = radiopharmaceutical administration time
-        //--- Frame Reference Time  is the time that the pixel values in the Image occurred. 
+        //--- Frame Reference Time  is the time that the pixel values in the Image occurred.
         //--- It's defined as the time offset, in msec, from the Series Reference Time.
         //--- Series Reference Time is defined by the combination of:
         //--- Series Date (0008,0021) and
-        //--- Series Time (0008,0031).      
+        //--- Series Time (0008,0031).
         //--- We don't pull these out now, but can if we have to.
         tag.clear();
         tag = f->GetEntryValue (0x0054,0x1102);
         if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
           {
-          //---A string of characters with leading or trailing spaces (20H) being non-significant. 
+          //---A string of characters with leading or trailing spaces (20H) being non-significant.
           list.decayCorrection = tag.c_str();
           }
         else
@@ -1250,7 +1256,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           list.decayFactor =  "MODULE_INIT_NO_VALUE" ;
           }
 
-    
+
         //---
         //--- FrameReferenceTime
         tag.clear();
@@ -1268,7 +1274,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
           }
 
-  
+
         //---
         //--- SeriesTime
         tag.clear();
@@ -1331,7 +1337,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
           {
           list.patientWeight = 0.0;
           list.weightUnits = "";
-          
+
           }
 
 
@@ -1341,7 +1347,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         tag = f->GetEntryValue (0x7053,0x1009);
         if ( tag.c_str() != NULL && strcmp(tag.c_str(), "" ) )
           {
-          //--- converts counts to Bq/cc. If Units = BQML then CalibrationFactor =1 
+          //--- converts counts to Bq/cc. If Units = BQML then CalibrationFactor =1
           //--- I think we expect the same format as RadiopharmaceuticalStartTime
           list.calibrationFactor =  atof(tag.c_str());
           }
@@ -1371,7 +1377,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       }
 
 
-    
+
 
   // convert from input units.
   if( list.radioactivityUnits.c_str() == NULL )
@@ -1393,7 +1399,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
   std::string outputSUVMaxString = "SUVMax = ";
   std::string outputSUVMeanString = "SUVMean = ";
   std::string outputSUVMinString = "SUVMin = ";
-  
+
   // --- find the max and min label in mask
   vtkImageAccumulate *stataccum = vtkImageAccumulate::New();
   stataccum->SetInput( voiVolume );
@@ -1528,9 +1534,9 @@ int LoadImagesAndComputeSUV( parameters & list, T )
       outputStringStream.str("");
       outputStringStream << suvmin << postfixStr;
       outputSUVMinString += outputStringStream.str();
-      
+
       // --- write output CSV file
-      
+
       // open file containing suvs and append to it.
       ofile.open( outputFile.c_str(), ios::out | ios::app );
       if( !ofile.is_open() )
@@ -1552,7 +1558,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
         std::cout << "Wrote output for label " << labelName.c_str() << " to " << outputFile.c_str() << std::endl;
         }
       }
-  
+
 
     thresholder->Delete();
     labelstat->Delete();
@@ -1578,7 +1584,7 @@ int LoadImagesAndComputeSUV( parameters & list, T )
 
   reader1->Delete();
   reader2->Delete();
-  
+
   return EXIT_SUCCESS;
 
 }
@@ -1624,13 +1630,13 @@ int main( int argc, char * argv[] )
   list.radionuclideHalfLife = "MODULE_INIT_NO_VALUE";
   list.frameReferenceTime = "MODULE_INIT_NO_VALUE";
   list.weightUnits = "kg";
-  
+
   try
     {
     // pass the input parameters to the helper method
     list.PETDICOMPath = PETDICOMPath;
     // keep the PET volume as the node selector PET volume
-    list.PETVolumeName = PETVolume; 
+    list.PETVolumeName = PETVolume;
     list.VOIVolumeName = VOIVolume;
     list.VOIVolumeColorTableFile = ColorTable;
     list.SUVOutputTable = OutputCSV;
