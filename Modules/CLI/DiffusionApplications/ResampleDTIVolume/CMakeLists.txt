@@ -1,10 +1,6 @@
-project(ResampleDTI)
-
-find_package(ITK REQUIRED)
-include(${ITK_USE_FILE})
 
 slicerMacroBuildCLI(
-  NAME ${PROJECT_NAME}
+  NAME ResampleDTIVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS
     dtiprocessFiles/deformationfieldio.h

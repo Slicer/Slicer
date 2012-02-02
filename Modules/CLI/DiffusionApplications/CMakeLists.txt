@@ -7,7 +7,7 @@ set(filters
   jointLMMSE
   DWIRicianLMMSEFilter
   DWIUnbiasedNonLocalMeansFilter
-  ResampleDTI
+  ResampleDTIVolume
   )
 foreach(filter ${filters})
   add_subdirectory(${filter})

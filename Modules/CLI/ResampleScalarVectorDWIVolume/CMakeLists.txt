@@ -6,15 +6,15 @@ slicerMacroBuildCLI(
   INCLUDE_DIRECTORIES
     ${DiffusionFiltering_SOURCE_DIR}
   ADDITIONAL_SRCS
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/itkWarpTransform3D.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/itkWarpTransform3D.txx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/itkTransformDeformationFieldFilter.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/itkTransformDeformationFieldFilter.txx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/dtiprocessFiles/deformationfieldio.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/dtiprocessFiles/deformationfieldio.cxx
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/dtiprocessFiles/dtitypes.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
-    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTI/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkWarpTransform3D.h
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkWarpTransform3D.txx
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkTransformDeformationFieldFilter.h
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/itkTransformDeformationFieldFilter.txx
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/deformationfieldio.h
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/deformationfieldio.cxx
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/dtitypes.h
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
+    ${DiffusionFiltering_SOURCE_DIR}/ResampleDTIVolume/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
   )
 
 if(BUILD_TESTING)

@@ -20,7 +20,7 @@
 #include "itkDiffusionTensor3DWindowedSincInterpolateImageFunction.h"
 #include "itkDiffusionTensor3DBSplineInterpolateImageFunction.h"
 #include <itkTransformFileReader.h>
-#include "ResampleDTICLP.h"
+#include "ResampleDTIVolumeCLP.h"
 #include "itkDiffusionTensor3DZeroCorrection.h"
 #include "itkDiffusionTensor3DAbsCorrection.h"
 #include "itkDiffusionTensor3DNearestCorrection.h"

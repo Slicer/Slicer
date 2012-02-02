@@ -28,10 +28,10 @@
 // ResampleScalarVectorDWIVolume includes
 #include "ResampleScalarVectorDWIVolumeCLP.h"
 
-// ResampleDTI includes
-#include "ResampleDTI/dtiprocessFiles/deformationfieldio.h"
-#include "ResampleDTI/itkTransformDeformationFieldFilter.h"
-#include "ResampleDTI/itkWarpTransform3D.h"
+// ResampleDTIVolume includes
+#include "ResampleDTIVolume/dtiprocessFiles/deformationfieldio.h"
+#include "ResampleDTIVolume/itkTransformDeformationFieldFilter.h"
+#include "ResampleDTIVolume/itkWarpTransform3D.h"
 
 // STD includes
 
