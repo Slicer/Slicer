@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME Cast
+  NAME CastScalarVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
