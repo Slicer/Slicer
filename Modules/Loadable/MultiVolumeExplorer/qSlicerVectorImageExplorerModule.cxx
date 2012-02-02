@@ -88,9 +88,9 @@ QIcon qSlicerVectorImageExplorerModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVectorImageExplorerModule::category() const 
+QStringList qSlicerVectorImageExplorerModule::categories() const 
 { 
-  return QString("Vector Image Tools"); 
+  return QStringList() << "Vector Image Tools"; 
 }
 
 //-----------------------------------------------------------------------------
