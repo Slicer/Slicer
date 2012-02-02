@@ -25,8 +25,8 @@
 #include <itkVectorResampleImageFilter.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
 
-// ResampleVolume2 includes
-#include "ResampleVolume2CLP.h"
+// ResampleScalarVectorDWIVolume includes
+#include "ResampleScalarVectorDWIVolumeCLP.h"
 
 // ResampleDTI includes
 #include "ResampleDTI/dtiprocessFiles/deformationfieldio.h"

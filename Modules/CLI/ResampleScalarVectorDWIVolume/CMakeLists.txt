@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME ResampleVolume2
+  NAME ResampleScalarVectorDWIVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   INCLUDE_DIRECTORIES

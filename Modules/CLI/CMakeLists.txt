@@ -37,7 +37,7 @@ set(cli_modules
   N4ITKBiasFieldCorrection
   OrientImage
   ProbeVolumeWithModel
-  ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
+  ResampleScalarVectorDWIVolume # Depends on DiffusionApplications
   RobustStatisticsSegmenter
   SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
