@@ -1,8 +1,5 @@
 
-#-----------------------------------------------------------------------------
-# DiffusionTensorEstimation tests
-#-----------------------------------------------------------------------------
-set(CLP DiffusionTensorEstimation)
+set(CLP DWIToDTIEstimation)
 include_directories(
   ${vtkITK_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}
@@ -15,11 +12,11 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  DiffusionTensorEstimationTest
+  ${testname}
     -m ${MRML_TEST_DATA}/helix-DWI-otsu-no_islands-05.nrrd
     ${MRML_TEST_DATA}/helix-DWI.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_dti.nhdr
-    ${TEMP}/DiffusionTensorEstimationTest_baseline.nhdr
-      )
+    ${TEMP}/${testname}_dti.nhdr
+    ${TEMP}/${testname}_baseline.nhdr
+    )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 

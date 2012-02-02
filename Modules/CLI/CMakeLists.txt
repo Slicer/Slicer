@@ -10,11 +10,11 @@ set(cli_modules
   CheckerBoardFilter
   CreateDICOMSeries
   CurvatureAnisotropicDiffusion
-  DiffusionTensorEstimation
   DiffusionTensorScalarMeasurements
   DiffusionWeightedVolumeMasking
   DWIJointRicianLMMSEFilter
   DWIRicianLMMSEFilter
+  DWIToDTIEstimation
   DWIUnbiasedNonLocalMeansFilter
   ExecutionModelTour
   ExtractSkeleton

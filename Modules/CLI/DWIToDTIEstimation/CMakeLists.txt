@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME DiffusionTensorEstimation
+  NAME DWIToDTIEstimation
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRMLCore vtkTeem SlicerBaseLogic
   LINK_DIRECTORIES

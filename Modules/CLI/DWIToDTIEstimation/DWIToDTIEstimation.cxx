@@ -1,18 +1,27 @@
-#include "vtkSmartPointer.h"
-#include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
-#include "vtkMRMLNRRDStorageNode.h"
-#include "vtkMath.h"
-#include "vtkTensorMask.h"
-#include "vtkTeemEstimateDiffusionTensor.h"
 
-#include "vtkITKNewOtsuThresholdImageFilter.h"
+// DWIToDTIEstimation includes
+#include "DWIToDTIEstimationCLP.h"
 
+// MRML includes
+#include <vtkMRMLNRRDStorageNode.h>
+
+// vtkITK includes
+#include <vtkITKNewOtsuThresholdImageFilter.h>
+
+// vtkTeem includes
+#include <vtkNRRDReader.h>
+#include <vtkNRRDWriter.h>
+#include <vtkTeemEstimateDiffusionTensor.h>
+#include <vtkTensorMask.h>
+
+// VTK includes
+#include <vtkMath.h>
+#include <vtkSmartPointer.h>
+
+// ITK includes
 #if ITK_VERSION_MAJOR >= 4
-#include "itkFloatingPointExceptions.h"
+#include <itkFloatingPointExceptions.h>
 #endif
-
-#include "DiffusionTensorEstimationCLP.h"
 
 #define MAT_TOL 1e-6
 bool transformsNotEqual(const vtkMatrix4x4* mat1, const vtkMatrix4x4* mat2);
