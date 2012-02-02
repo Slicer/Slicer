@@ -18,9 +18,6 @@
 #include "itkDiffusionTensor3D.h"
 #include <itkImage.h>
 #include <itkPoint.h>
-// #include <itkSemaphore.h>
-// #include <itkNumericTraits.h>
-// #include "define.h"
 #include <itkImageFunction.h>
 
 namespace itk

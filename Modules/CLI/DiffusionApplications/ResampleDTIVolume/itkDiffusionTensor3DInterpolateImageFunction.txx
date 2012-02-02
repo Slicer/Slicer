@@ -25,7 +25,7 @@ DiffusionTensor3DInterpolateImageFunction<TData, TCoordRep>
 {
 //  m_InputImage = 0 ;
   latestTime = 0;
-//  SetDefaultPixelValue( ZERO ) ;
+//  SetDefaultPixelValue( ITK_DIFFUSION_TENSOR_3D_ZERO ) ;
 }
 
 /*

@@ -23,7 +23,8 @@
 #include <itkCastImageFilter.h>
 #include <itkImageRegionIterator.h>
 #include <itkPoint.h>
-#include "define.h"
+
+#include "itkDiffusionTensor3DConstants.h"
 
 namespace itk
 {

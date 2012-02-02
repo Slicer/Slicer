@@ -28,7 +28,7 @@ DiffusionTensor3DResample<TInput, TOutput>
   m_OutputOrigin.Fill( 0.0 );
   m_OutputDirection.SetIdentity();
   m_OutputSize.Fill( 0 );
-  m_DefaultPixelValue = static_cast<OutputDataType>( ZERO );
+  m_DefaultPixelValue = static_cast<OutputDataType>( ITK_DIFFUSION_TENSOR_3D_ZERO );
 }
 
 template <class TInput, class TOutput>

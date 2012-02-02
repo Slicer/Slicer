@@ -18,7 +18,7 @@
 #include "vnl/vnl_math.h"
 #include <itkMatrix.h>
 #include "itkDiffusionTensor3DExtended.h"
-#include "define.h"
+#include "itkDiffusionTensor3DConstants.h"
 
 namespace itk
 {
@@ -77,7 +77,7 @@ public:
     tensorDouble.ComputeEigenAnalysis( eigenValues, eigenVectors );
     for( int i = 0; i < 3; i++ )
       {
-      mat[i][i] = ( eigenValues[i] <= 0 ? ZERO : eigenValues[i] );
+      mat[i][i] = ( eigenValues[i] <= 0 ? ITK_DIFFUSION_TENSOR_3D_ZERO : eigenValues[i] );
       }
     eigenVectors = eigenVectors.GetTranspose();
     matcorrect = eigenVectors * mat * eigenVectors.GetInverse();

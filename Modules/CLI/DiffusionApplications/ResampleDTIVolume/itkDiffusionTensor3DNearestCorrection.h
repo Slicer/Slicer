@@ -94,7 +94,7 @@ public:
     mat.Fill(0);
     for( int i = 0; i < 3; i++ )
       {
-      mat[i][i] = ( eigenValues[i] <= 0 ? ZERO : eigenValues[i] );
+      mat[i][i] = ( eigenValues[i] <= 0 ? ITK_DIFFUSION_TENSOR_3D_ZERO : eigenValues[i] );
       }
     eigenVectors = eigenVectors.GetTranspose();
     tensorDouble.SetTensorFromMatrix<double>( eigenVectors * mat * eigenVectors.GetInverse() );
