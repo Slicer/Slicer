@@ -13,7 +13,7 @@ set(cli_modules
   CurvatureAnisotropicDiffusion
   DiffusionApplications
   DiffusionTensorEstimation
-  DiffusionTensorMathematics
+  DiffusionTensorScalarMeasurements
   DiffusionWeightedMasking
   ExecutionModelTour
   ExtractSkeleton

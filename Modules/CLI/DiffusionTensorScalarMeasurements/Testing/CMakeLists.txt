@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # DiffusionTensorMathematics tests
 #-----------------------------------------------------------------------------
-set(CLP DiffusionTensorMathematics)
+set(CLP DiffusionTensorScalarMeasurements)
 
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
@@ -11,10 +11,10 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  DiffusionTensorMathematicsTest
+  ${CLP}Test
     --enumeration FractionalAnisotropy
     ${MRML_TEST_DATA}/helix-DTI.nhdr
-    ${TEMP}/DiffusionTensorMathematicsTest.nhdr
+    ${TEMP}/${CLP}Test.nhdr
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 

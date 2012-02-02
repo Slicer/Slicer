@@ -7,7 +7,7 @@
 #if ITK_VERSION_MAJOR >= 4
 #endif
 
-#include "DiffusionTensorMathematicsCLP.h"
+#include "DiffusionTensorScalarMeasurementsCLP.h"
 
 int main( int argc, char * argv[] )
 {

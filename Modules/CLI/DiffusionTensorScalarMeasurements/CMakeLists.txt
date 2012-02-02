@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME DiffusionTensorMathematics
+  NAME DiffusionTensorScalarMeasurements
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRMLCore vtkTeem
   INCLUDE_DIRECTORIES
