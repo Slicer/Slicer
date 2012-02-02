@@ -7,7 +7,7 @@ from __main__ import vtk, qt, ctk, slicer
 class VectorImageImporter:
   def __init__(self, parent):
     parent.title = "VectorImageImporter"
-    parent.category = "Vector Image Tools"
+    parent.categories = ["Vector Image Tools"]
     parent.contributor = ""
     parent.helpText = """
     Support of VectorImageContainer initialization
