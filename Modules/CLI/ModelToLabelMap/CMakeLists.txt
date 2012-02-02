@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME PolyDataToLabelmap
+  NAME ModelToLabelMap
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES} vtkIO vtkGraphics ${ITK_LIBRARIES}
   )

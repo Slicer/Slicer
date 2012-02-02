@@ -31,11 +31,11 @@ set(cli_modules
   MergeModels
   MeshContourSegmentation
   ModelMaker
+  ModelToLabelMap
   MultipleModelsExample
   MultiplyScalarVolumes
   N4ITKBiasFieldCorrection
   OrientImage
-  PolyDataToLabelmap
   ProbeVolumeWithModel
   ResampleVolume2 #ResampleVolume2 depends on DiffusionApplications
   RobustStatisticsSegmenter

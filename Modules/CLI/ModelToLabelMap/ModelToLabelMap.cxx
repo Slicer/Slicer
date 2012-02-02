@@ -29,7 +29,7 @@
 #include "vtkDebugLeaks.h"
 
 #include "itkPluginUtilities.h"
-#include "PolyDataToLabelmapCLP.h"
+#include "ModelToLabelMapCLP.h"
 
 #ifdef ITKV3_COMPATIBILITY
 #include "itkAnalyzeImageIOFactory.h"
