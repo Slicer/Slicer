@@ -49,8 +49,8 @@ public:
   /// Return a custom icon for the module
   virtual QIcon icon()const;
 
-  /// Return the category
-  virtual QString category() const;
+  /// Return the categories
+  virtual QStringList categories() const;
 
   /// Return the dependencies
   virtual QStringList dependencies() const;
