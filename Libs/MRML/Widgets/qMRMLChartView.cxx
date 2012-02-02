@@ -567,7 +567,9 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   QStringList plotDataPointClickedSlot;
   plotDataPointClickedSlot <<
     "var dataPointClickedSlot = function(ev, seriesIndex, pointIndex, data) {"
+    "try {"
     "qtobject.onDataPointClicked(seriesIndex, pointIndex, data[0], data[1]);"
+    "} catch(error) {}"
     "};";
 
   // bind a data point clicked to the slot
@@ -612,7 +614,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   q->setHtml(plot.join("")); 
   q->show();
 
-  // expose this object to the Javascript code
+  // expose this object to the Javascript code so Javascript can call
+  // slots in this Qt object, e.g. onDataPointClicked()
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
 
 }
