@@ -1,13 +1,14 @@
 
-#include "TransformFromFiducialsCLP.h"
+#include "FiducialRegistrationCLP.h"
 
-#include "itkLandmarkBasedTransformInitializer.h"
-#include "itkSimilarity3DTransform.h"
-
-#include <itkTransformFileWriter.h>
-#include <itkImage.h>
+// ITK includes
 #include <itkAffineTransform.h>
+#include <itkImage.h>
+#include <itkLandmarkBasedTransformInitializer.h>
+#include <itkSimilarity3DTransform.h>
+#include <itkTransformFileWriter.h>
 
+// STD includes
 #include <numeric>
 
 namespace

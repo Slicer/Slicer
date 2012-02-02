@@ -14,11 +14,12 @@
 =========================================================================*/
 
 #include "itkInitialImageToImageRegistrationMethod.h"
-#include "itkAffineImageToImageRegistrationMethod.h"
-#include "itkImage.h"
+#include "itkRigidImageToImageRegistrationMethod.h"
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 
-#include "metaCommand.h"
+// ITK includes
+#include <itkImage.h>
+#include <metaCommand.h>
 
 // Description:
 // Get the PixelType and ComponentType from fileName
@@ -49,7 +50,7 @@ int DoIt( MetaCommand & command )
   typedef itk::InitialImageToImageRegistrationMethod<ImageType>
   InitializationMethodType;
 
-  typedef itk::AffineImageToImageRegistrationMethod<ImageType>
+  typedef itk::RigidImageToImageRegistrationMethod<ImageType>
   RegistrationMethodType;
 
   typedef itk::ImageToImageRegistrationMethodTestingHelper<InitializationMethodType>
@@ -109,48 +110,33 @@ int DoIt( MetaCommand & command )
 
   typename RegistrationMethodType::Pointer  registrationMethod = helper.GetRegistrationMethod();
 
-  // Scales
   typedef typename RegistrationMethodType::TransformParametersScalesType
   TransformParametersScalesType;
 
   TransformParametersScalesType optimizerScales( registrationMethod->GetTypedTransform()->GetNumberOfParameters() );
   const double                  offsetScale = 1.0 / command.GetValueAsFloat("ExpectedOffset");
   const double                  rotationScale = 1.0 / command.GetValueAsFloat("ExpectedRotation");
-  const double                  scaleScale = 1.0 / command.GetValueAsFloat("ExpectedScale");
-  const double                  skewScale = 1.0 / command.GetValueAsFloat("ExpectedSkew");
 
   if( DimensionsT == 2 )
     {
-    optimizerScales[0] = rotationScale + scaleScale;
-    optimizerScales[1] = rotationScale + skewScale;
+    optimizerScales[0] = rotationScale;
 
-    optimizerScales[2] = rotationScale + skewScale;
-    optimizerScales[3] = rotationScale + scaleScale;
-
-    optimizerScales[4] = offsetScale;
-    optimizerScales[5] = offsetScale;
+    optimizerScales[1] = offsetScale;
+    optimizerScales[2] = offsetScale;
     }
   else
     {
-    optimizerScales[0] = rotationScale + scaleScale;
-    optimizerScales[1] = rotationScale + skewScale;
-    optimizerScales[2] = rotationScale + skewScale;
+    optimizerScales[0] = rotationScale;
+    optimizerScales[1] = rotationScale;
+    optimizerScales[2] = rotationScale;
 
-    optimizerScales[3] = rotationScale + skewScale;
-    optimizerScales[4] = rotationScale + scaleScale;
-    optimizerScales[5] = rotationScale + skewScale;
-
-    optimizerScales[6] = rotationScale + skewScale;
-    optimizerScales[7] = rotationScale + skewScale;
-    optimizerScales[8] = rotationScale + scaleScale;
-
-    optimizerScales[9] = offsetScale;
-    optimizerScales[10] = offsetScale;
-    optimizerScales[11] = offsetScale;
+    optimizerScales[3] = offsetScale;
+    optimizerScales[4] = offsetScale;
+    optimizerScales[5] = offsetScale;
     }
   registrationMethod->SetTransformParametersScales( optimizerScales );
 
-  // Affine method parameters
+  // Rigid method parameters
 
   // General optimizer parameters
   registrationMethod->SetNumberOfSamples( command.GetValueAsInt("NumberOfSamples") );
@@ -161,10 +147,12 @@ int DoIt( MetaCommand & command )
 
   if( command.GetOptionWasSet("MeanSquares") )
     {
+    std::cout << "Setting Mean Squares Error metric " << std::endl;
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::MEAN_SQUARED_ERROR_METRIC );
     }
   if( command.GetOptionWasSet("NormalizedCorrelation") )
     {
+    std::cout << "Setting Normalized Correlation metric " << std::endl;
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::NORMALIZED_CORRELATION_METRIC );
     }
 
@@ -225,8 +213,7 @@ int main(int argc, char *argv[])
 
   command.SetOption("Mode", "M", false,
                     "Registration mode: DRAFT, NORMAL, PRECISE");
-  command.SetOptionLongTag("Mode",
-                           "Mode");
+  command.SetOptionLongTag("Mode", "Mode");
   command.AddOptionField("Mode", "Mode", MetaCommand::STRING, true);
 
   // Scales
@@ -242,30 +229,18 @@ int main(int argc, char *argv[])
   command.AddOptionField("ExpectedRotation", "ExpectedRotation",
                          MetaCommand::FLOAT, true, "0.1");
 
-  command.SetOption("ExpectedScale", "s", false,
-                    "Expected scale needed to align moving with fixed");
-  command.SetOptionLongTag("ExpectedScale", "ExpectedScale");
-  command.AddOptionField("ExpectedScale", "ExpectedScale",
-                         MetaCommand::FLOAT, true, "0.05");
-
-  command.SetOption("ExpectedSkew", "k", false,
-                    "Expected skew needed to align moving with fixed");
-  command.SetOptionLongTag("ExpectedSkew", "ExpectedSkew");
-  command.AddOptionField("ExpectedSkew", "ExpectedSkew",
-                         MetaCommand::FLOAT, true, "0.02");
-
   // General Optimizer Params
   command.SetOption("NumberOfSamples", "s", false,
                     "Number of samples from the fixed images for computing the metric");
   command.SetOptionLongTag("NumberOfSamples", "NumberOfSamples");
   command.AddOptionField("NumberOfSamples", "NumberOfSamples",
-                         MetaCommand::INT, true, "150000");
+                         MetaCommand::INT, true, "100000");
 
   command.SetOption("MaxIterations", "s", false,
                     "Maximum number of optimizer iterations");
   command.SetOptionLongTag("MaxIterations", "MaxIterations");
   command.AddOptionField("MaxIterations", "MaxIterations",
-                         MetaCommand::INT, true, "150");
+                         MetaCommand::INT, true, "100");
 
   command.SetOption("RandomNumberSeed", "u", false,
                     "Seed used to generate random numbers (0 = random seed)");
@@ -273,7 +248,7 @@ int main(int argc, char *argv[])
   command.AddOptionField("RandomNumberSeed", "RandomNumberSeed",
                          MetaCommand::INT, true, "0");
 
-  // Affine optimizer params
+  // BSpline optimizer params
   command.SetOption("InitCenterOfMass", "m", false,
                     "Use center of mass to initialize the registrations");
   command.SetOptionLongTag("InitCenterOfMass", "InitCenterOfMass");
@@ -307,7 +282,7 @@ int main(int argc, char *argv[])
                          MetaCommand::STRING, true);
 
   command.SetOption("DifferenceImage", "D", false,
-                    "Save the difference between resampled moving and baseline");
+                    "Save the difference between resample moving and baseline");
   command.SetOptionLongTag("DifferenceImage",
                            "DifferenceImage");
   command.AddOptionField("DifferenceImage", "DifferenceImage",
@@ -375,6 +350,8 @@ int main(int argc, char *argv[])
   else
     {
     std::cerr << "ERROR: Only 2 and 3 dimensional images supported."
+              << std::endl;
+    std::cerr << "Fixed image = " << command.GetValueAsString("FixedImage")
               << std::endl;
     std::cerr << "Fixed image dimensions = " << dimensions << std::endl;
 

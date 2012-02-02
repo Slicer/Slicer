@@ -54,10 +54,12 @@ if(Slicer_BUILD_LEGACY_CLI)
     BSplineToDeformationField
     DiffusionTensorTest
     DiffusionWeightedTest
+    ExpertAutomatedRegistration
+    FiducialRegistration
     LinearRegistration
+    MultiResolutionAffineRegistration
     OtsuThresholdImageFilter
     OtsuThresholdSegmentation
-    RegisterImagesModule
     ResampleVolume
     RigidRegistration
     TestGridTransformRegistration

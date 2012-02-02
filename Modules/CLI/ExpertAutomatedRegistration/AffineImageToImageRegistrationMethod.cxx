@@ -13,11 +13,15 @@
 
 =========================================================================*/
 
-#include "itkBSplineImageToImageRegistrationMethod.h"
-#include "itkImage.h"
+#include "itkInitialImageToImageRegistrationMethod.h"
+#include "itkAffineImageToImageRegistrationMethod.h"
+
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 
-#include "metaCommand.h"
+// ITK includes
+#include <itkImage.h>
+#include <metaCommand.h>
+
 
 // Description:
 // Get the PixelType and ComponentType from fileName
@@ -45,11 +49,48 @@ int DoIt( MetaCommand & command )
   typedef itk::Image<PixelType, DimensionsT>
   ImageType;
 
-  typedef itk::BSplineImageToImageRegistrationMethod<ImageType>
+  typedef itk::InitialImageToImageRegistrationMethod<ImageType>
+  InitializationMethodType;
+
+  typedef itk::AffineImageToImageRegistrationMethod<ImageType>
   RegistrationMethodType;
+
+  typedef itk::ImageToImageRegistrationMethodTestingHelper<InitializationMethodType>
+  InitializationHelperType;
 
   typedef itk::ImageToImageRegistrationMethodTestingHelper<RegistrationMethodType>
   TestingHelperType;
+
+  // Use this to set center of rotation to image centers
+  InitializationHelperType initializer;
+
+  initializer.SetFixedImageFileName( command.GetValueAsString("FixedImage").c_str() );
+  initializer.SetMovingImageFileName( command.GetValueAsString("MovingImage").c_str() );
+
+  typename InitializationMethodType::Pointer  initializationMethod = initializer.GetRegistrationMethod();
+  if( command.GetOptionWasSet("InitCenterOfImages") )
+    {
+    initializationMethod->SetNumberOfMoments( 0 );
+    }
+  else if( command.GetOptionWasSet("InitCenterOfMass") )
+    {
+    initializationMethod->SetNumberOfMoments( 1 );
+    }
+  else
+    {
+    initializationMethod->SetComputeCenterOfRotationOnly( true );
+    }
+
+  initializer.PrepareRegistration();
+  try
+    {
+    initializer.RunRegistration();
+    }
+  catch( ... )
+    {
+    std::cerr << "Intialization failed" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //  Setup the registration
   TestingHelperType helper;
@@ -71,15 +112,48 @@ int DoIt( MetaCommand & command )
 
   typename RegistrationMethodType::Pointer  registrationMethod = helper.GetRegistrationMethod();
 
-  // BSpline specific parameters
-  registrationMethod->SetExpectedDeformationMagnitude( command.GetValueAsFloat("ExpectedOffset") );
-  if( command.GetOptionWasSet("MinimizeMemory") )
-    {
-    registrationMethod->SetMinimizeMemory( true );
-    }
-  registrationMethod->SetNumberOfControlPoints( command.GetValueAsInt("NumberOfControlPoints") );
+  // Scales
+  typedef typename RegistrationMethodType::TransformParametersScalesType
+  TransformParametersScalesType;
 
-  registrationMethod->SetNumberOfLevels( command.GetValueAsInt("NumberOfLevels") );
+  TransformParametersScalesType optimizerScales( registrationMethod->GetTypedTransform()->GetNumberOfParameters() );
+  const double                  offsetScale = 1.0 / command.GetValueAsFloat("ExpectedOffset");
+  const double                  rotationScale = 1.0 / command.GetValueAsFloat("ExpectedRotation");
+  const double                  scaleScale = 1.0 / command.GetValueAsFloat("ExpectedScale");
+  const double                  skewScale = 1.0 / command.GetValueAsFloat("ExpectedSkew");
+
+  if( DimensionsT == 2 )
+    {
+    optimizerScales[0] = rotationScale + scaleScale;
+    optimizerScales[1] = rotationScale + skewScale;
+
+    optimizerScales[2] = rotationScale + skewScale;
+    optimizerScales[3] = rotationScale + scaleScale;
+
+    optimizerScales[4] = offsetScale;
+    optimizerScales[5] = offsetScale;
+    }
+  else
+    {
+    optimizerScales[0] = rotationScale + scaleScale;
+    optimizerScales[1] = rotationScale + skewScale;
+    optimizerScales[2] = rotationScale + skewScale;
+
+    optimizerScales[3] = rotationScale + skewScale;
+    optimizerScales[4] = rotationScale + scaleScale;
+    optimizerScales[5] = rotationScale + skewScale;
+
+    optimizerScales[6] = rotationScale + skewScale;
+    optimizerScales[7] = rotationScale + skewScale;
+    optimizerScales[8] = rotationScale + scaleScale;
+
+    optimizerScales[9] = offsetScale;
+    optimizerScales[10] = offsetScale;
+    optimizerScales[11] = offsetScale;
+    }
+  registrationMethod->SetTransformParametersScales( optimizerScales );
+
+  // Affine method parameters
 
   // General optimizer parameters
   registrationMethod->SetNumberOfSamples( command.GetValueAsInt("NumberOfSamples") );
@@ -97,12 +171,11 @@ int DoIt( MetaCommand & command )
     registrationMethod->SetMetricMethodEnum( RegistrationMethodType::NORMALIZED_CORRELATION_METRIC );
     }
 
+  // General parameters
   if( command.GetOptionWasSet("Mode") )
     {
     if( command.GetValueAsString("Mode") == "DRAFT" )
       {
-      // registrationMethod->SetNumberOfControlPoints( 0.5 * registrationMethod->GetNumberOfControlPoints() );
-      registrationMethod->SetNumberOfLevels( 2 );
       registrationMethod->SetMaxIterations( (unsigned int)(0.5 * registrationMethod->GetMaxIterations() ) );
       registrationMethod->SetNumberOfSamples( (unsigned int)(0.5 * registrationMethod->GetNumberOfSamples() ) );
       }
@@ -113,7 +186,6 @@ int DoIt( MetaCommand & command )
       }
     else if( command.GetValueAsString("Mode") == "PRECISE" )
       {
-      // registrationMethod->SetNumberOfControlPoints( 2 * registrationMethod->GetNumberOfControlPoints() );
       registrationMethod->SetMaxIterations( (unsigned int)(1.25 * registrationMethod->GetMaxIterations() ) );
       registrationMethod->SetNumberOfSamples( (unsigned int)(1.25 * registrationMethod->GetNumberOfSamples() ) );
       }
@@ -124,16 +196,28 @@ int DoIt( MetaCommand & command )
       }
     }
 
+  // Set the center of rotation from the initializer
+  registrationMethod->SetInitialTransformParametersFromAffineTransform(
+    initializer.GetRegistrationMethod()->GetTypedTransform() );
+
   // Run
-  helper.PrepareRegistration();
-  helper.SetNumberOfFailedPixelsTolerance( command.GetValueAsInt("FailurePixelTolerance") );
-  helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
-  helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
-  helper.RunRegistration();
-  // helper.PrintTest();
-  // helper.ReportResults();
-  helper.ResampleOutputImage();
-  helper.PerformRegressionTest();
+  try
+    {
+    helper.PrepareRegistration();
+    helper.SetNumberOfFailedPixelsTolerance( command.GetValueAsInt("FailurePixelTolerance") );
+    helper.SetIntensityTolerance( command.GetValueAsFloat("FailureIntensityTolerance") );
+    helper.SetRadiusTolerance( command.GetValueAsInt("FailureOffsetTolerance") );
+    helper.RunRegistration();
+    // helper.PrintTest();
+    // helper.ReportResults();
+    helper.ResampleOutputImage();
+    helper.PerformRegressionTest();
+    }
+  catch( ... )
+    {
+    std::cerr << "Registration class threw an exception" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return helper.GetTestResult();
 }
@@ -155,18 +239,36 @@ int main(int argc, char *argv[])
   command.AddOptionField("ExpectedOffset", "ExpectedOffset",
                          MetaCommand::FLOAT, true, "10");
 
+  command.SetOption("ExpectedRotation", "r", false,
+                    "Expected rotation needed to align moving with fixed");
+  command.SetOptionLongTag("ExpectedRotation", "ExpectedRotation");
+  command.AddOptionField("ExpectedRotation", "ExpectedRotation",
+                         MetaCommand::FLOAT, true, "0.1");
+
+  command.SetOption("ExpectedScale", "s", false,
+                    "Expected scale needed to align moving with fixed");
+  command.SetOptionLongTag("ExpectedScale", "ExpectedScale");
+  command.AddOptionField("ExpectedScale", "ExpectedScale",
+                         MetaCommand::FLOAT, true, "0.05");
+
+  command.SetOption("ExpectedSkew", "k", false,
+                    "Expected skew needed to align moving with fixed");
+  command.SetOptionLongTag("ExpectedSkew", "ExpectedSkew");
+  command.AddOptionField("ExpectedSkew", "ExpectedSkew",
+                         MetaCommand::FLOAT, true, "0.02");
+
   // General Optimizer Params
   command.SetOption("NumberOfSamples", "s", false,
                     "Number of samples from the fixed images for computing the metric");
   command.SetOptionLongTag("NumberOfSamples", "NumberOfSamples");
   command.AddOptionField("NumberOfSamples", "NumberOfSamples",
-                         MetaCommand::INT, true, "400000");
+                         MetaCommand::INT, true, "150000");
 
   command.SetOption("MaxIterations", "s", false,
                     "Maximum number of optimizer iterations");
   command.SetOptionLongTag("MaxIterations", "MaxIterations");
   command.AddOptionField("MaxIterations", "MaxIterations",
-                         MetaCommand::INT, true, "20");
+                         MetaCommand::INT, true, "150");
 
   command.SetOption("RandomNumberSeed", "u", false,
                     "Seed used to generate random numbers (0 = random seed)");
@@ -174,22 +276,14 @@ int main(int argc, char *argv[])
   command.AddOptionField("RandomNumberSeed", "RandomNumberSeed",
                          MetaCommand::INT, true, "0");
 
-  // BSpline Specific Params
-  command.SetOption("MinimizeMemory", "M", false,
-                    "Reduce the amount of memory required");
-  command.SetOptionLongTag("MinimizeMemory", "MinimizeMemory");
+  // Affine optimizer params
+  command.SetOption("InitCenterOfMass", "m", false,
+                    "Use center of mass to initialize the registrations");
+  command.SetOptionLongTag("InitCenterOfMass", "InitCenterOfMass");
 
-  command.SetOption("NumberOfControlPoints", "c", false,
-                    "Number of control points to align moving with fixed");
-  command.SetOptionLongTag("NumberOfControlPoints", "NumberOfControlPoints");
-  command.AddOptionField("NumberOfControlPoints", "NumberOfControlPoints",
-                         MetaCommand::INT, true, "5");
-
-  command.SetOption("NumberOfLevels", "l", false,
-                    "Number of multi-resolution levels to use during optimization");
-  command.SetOptionLongTag("NumberOfLevels", "NumberOfLevels");
-  command.AddOptionField("NumberOfLevels", "NumberOfLevels",
-                         MetaCommand::INT, true, "4");
+  command.SetOption("InitCenterOfImages", "i", false,
+                    "Use center of images to initialize the registrations");
+  command.SetOptionLongTag("InitCenterOfImages", "InitCenterOfImages");
 
   // Metric
   command.SetOption("MeanSquares", "q", false,
@@ -216,7 +310,7 @@ int main(int argc, char *argv[])
                          MetaCommand::STRING, true);
 
   command.SetOption("DifferenceImage", "D", false,
-                    "Save the difference between the resampled image and baseline");
+                    "Save the difference between resampled moving and baseline");
   command.SetOptionLongTag("DifferenceImage",
                            "DifferenceImage");
   command.AddOptionField("DifferenceImage", "DifferenceImage",

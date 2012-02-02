@@ -1,35 +1,33 @@
 
-#include "RegisterImagesMultiResCLP.h"
+#include "MultiResolutionAffineRegistrationCLP.h"
 
-#include "itkImageFileReader.h"
-
-#include "itkFRPROptimizer.h"
-#include "itkCenteredTransformInitializer.h"
-#include "itkRecursiveMultiResolutionPyramidImageFilter.h"
-#include "itkImageMaskSpatialObject.h"
-
-// From Review
-#include "itkTransformFileWriter.h"
-#include "itkImageRegistrationMethod.h"
-#include "itkVectorResampleImageFilter.h"
-#include "itkRegionalMinimaImageFilter.h"
-#include "itkMattesMutualInformationImageToImageMetric.h"
-
-// My headers
-#include "itkFixedRotationSimilarity3DTransform.h"
-#include "itkEulerSimilarity3DTransform.h"
-#include "itkDecomposedAffine3DTransform.h"
-
-#include "RegistrationMonitor.h"
-#include "ImageWriters.h"
-#include "DownsampleHeuristics.h"
-#include "ScalingHeuristics.h"
+// MultiResolutionAffineRegistration includes
 #include "ConvertSlicerROIToRegion.h"
+#include "DownsampleHeuristics.h"
+#include "ImageWriters.h"
+#include "itkDecomposedAffine3DTransform.h"
+#include "itkEulerSimilarity3DTransform.h"
+#include "itkFixedRotationSimilarity3DTransform.h"
+#include "RegistrationMonitor.h"
+#include "ScalingHeuristics.h"
 
+// ITK includes
+#include <itkCenteredTransformInitializer.h>
+#include <itkFRPROptimizer.h>
+#include <itkImageFileReader.h>
+#include <itkImageMaskSpatialObject.h>
+#include <itkImageRegistrationMethod.h> // From Review
+#include <itkMattesMutualInformationImageToImageMetric.h> // From Review
+#include <itkRecursiveMultiResolutionPyramidImageFilter.h>
+#include <itkRegionalMinimaImageFilter.h> // From Review
+#include <itkTransformFileWriter.h> // From Review
+#include <itkVectorResampleImageFilter.h> // From Review
+
+// STD includes
 #include <queue>
 
 #ifndef M_PI
-#define M_PI  3.1415926
+# define M_PI  3.1415926
 #endif
 
 using namespace itk;

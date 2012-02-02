@@ -1,11 +1,14 @@
-#include <itkImage.h>
+
+// ITK includes
+#include <itkBSplineDeformableTransform.h>
+#include <itkEuler3DTransform.h>
 #include <itkImageFileWriter.h>
+#include <itkImage.h>
 #include <itkResampleImageFilter.h>
 #include <itkTransformFactory.h>
 #include <itkTransformFileReader.h>
-#include <itkBSplineDeformableTransform.h>
-#include <itkEuler3DTransform.h>
 
+// STD includes
 #include <list>
 
 #ifndef M_PI

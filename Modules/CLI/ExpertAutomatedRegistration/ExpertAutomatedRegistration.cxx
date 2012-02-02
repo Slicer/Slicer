@@ -1,5 +1,5 @@
 
-#include "RegisterImagesSlicerCLP.h"
+#include "ExpertAutomatedRegistrationCLP.h"
 #include "itkImageToImageRegistrationHelper.h"
 
 // Use an anonymous namespace to keep class types and function names

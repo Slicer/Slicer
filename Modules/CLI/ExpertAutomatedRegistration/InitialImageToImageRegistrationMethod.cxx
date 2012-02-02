@@ -14,11 +14,13 @@
 =========================================================================*/
 
 #include "itkInitialImageToImageRegistrationMethod.h"
-#include "itkImage.h"
+
 #include "itkImageToImageRegistrationMethodTestingHelper.h"
 
-#include "metaUtils.h"
-#include "metaCommand.h"
+// ITK includes
+#include <itkImage.h>
+#include <metaCommand.h>
+#include <metaUtils.h>
 
 // Description:
 // Get the PixelType and ComponentType from fileName
