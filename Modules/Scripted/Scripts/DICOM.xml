@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- This XML is used to define the documentation for the corresponding fields of the python script of the same name -->
 <executable>
-  <category></category>
+  <category>Informatics</category>
   <title>DICOM</title>
   <description>Provides DICOM local database and networking support.</description>
   <documentation-url></documentation-url>
