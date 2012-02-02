@@ -6,8 +6,7 @@ include_directories(${DiffusionFiltering_SOURCE_DIR}/DiffusionApplicationsCommon
 set(filters
   jointLMMSE
   dwiNoiseFilter
-  dwiUNLM
-  #StochasticTractographyFilter
+  DWIUnbiasedNonLocalMeansFilter
   ResampleDTI
   )
 foreach(filter ${filters})
