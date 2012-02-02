@@ -60,7 +60,7 @@ if(Slicer_BUILD_LEGACY_CLI)
     MultiResolutionAffineRegistration
     OtsuThresholdImageFilter
     OtsuThresholdSegmentation
-    ResampleVolume
+    ResampleScalarVolume
     RigidRegistration
     TestGridTransformRegistration
     )

@@ -19,18 +19,18 @@
 #endif
 
 // Resample a series
-//   Usage: ResampleVolume --spacing xSpacing,ySpacing,zSpacing
-//                         InputDirectory OutputDirectory
+//   Usage: ResampleScalarVolume --spacing xSpacing,ySpacing,zSpacing
+//                               InputDirectory OutputDirectory
 //
 //
-//   Example: ResampleVolume --spacing 0,0,1.5 CT.mhd CTResample.mhd
+//   Example: ResampleScalarVolume --spacing 0,0,1.5 CT.mhd CTResample.mhd
 //            will read a volume CT.mhd and create a
 //            new volume called CTResample.mhd directory. The new series
 //            will have the same x,y spacing as the input series, but
 //            will have a z-spacing of 1.5.
 //
 // Description:
-// ResampleVolume resamples a volume with user-specified
+// ResampleScalarVolume resamples a volume with user-specified
 // spacing. The number of slices in
 // the output series may be larger or smaller due to changes in the
 // z-spacing. To retain the spacing for a given dimension, specify 0.
@@ -52,7 +52,7 @@
 #include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkWindowedSincInterpolateImageFunction.h"
 
-#include "ResampleVolumeCLP.h"
+#include "ResampleScalarVolumeCLP.h"
 
 // Use an anonymous namespace to keep class types and function names
 // from colliding when module is used as shared object module.  Every

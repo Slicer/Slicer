@@ -1,6 +1,6 @@
 
 slicerMacroBuildCLI(
-  NAME ResampleVolume
+  NAME ResampleScalarVolume
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   )
