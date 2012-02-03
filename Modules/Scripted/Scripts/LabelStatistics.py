@@ -102,6 +102,12 @@ class LabelStatisticsWidget:
     self.view.sortingEnabled = True
     self.parent.layout().addWidget(self.view)
 
+    # Chart button
+    self.chartButton = qt.QPushButton("Chart")
+    self.chartButton.toolTip = "Make a chart from the current statistics."
+    self.chartButton.enabled = False
+    self.parent.layout().addWidget(self.chartButton)
+
     # Save button
     self.saveButton = qt.QPushButton("Save")
     self.saveButton.toolTip = "Calculate Statistics."
@@ -113,6 +119,7 @@ class LabelStatisticsWidget:
 
     # connections
     self.applyButton.connect('clicked()', self.onApply)
+    self.chartButton.connect('clicked()', self.onChart)
     self.saveButton.connect('clicked()', self.onSave)
     self.grayscaleSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onGrayscaleSelect)
     self.labelSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelSelect)
@@ -129,15 +136,22 @@ class LabelStatisticsWidget:
     """Calculate the label statistics
     """
     self.applyButton.text = "Working..."
-    # TODO: why doesn't processEvents make the label text change?
+    # TODO: why doesn't processEvents alone make the label text change?
+    self.applyButton.repaint()
     slicer.app.processEvents()
     self.logic = LabelStatisticsLogic(self.grayscaleNode, self.labelNode)
     self.populateStats()
+    self.chartButton.enabled = True
     self.saveButton.enabled = True
     self.applyButton.text = "Apply"
 
+  def onChart(self):
+    """chart the label statistics
+    """
+    self.logic.createStatsChart()
+
   def onSave(self):
-    """Calculate the label statistics
+    """save the label statistics
     """
     if not self.fileDialog:
       self.fileDialog = qt.QFileDialog(self.parent)
@@ -248,6 +262,41 @@ class LabelStatisticsLogic:
         # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"1")
 
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
+
+  def createStatsChart(self):
+    """Make a MRML chart of the current stats
+    """
+    layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
+    layoutNodes.InitTraversal()
+    layoutNode = layoutNodes.GetNextItemAsObject()
+    layoutNode.SetViewArrangement(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalQuantitativeView)
+
+    chartViewNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    chartViewNodes.InitTraversal()
+    chartViewNode = chartViewNodes.GetNextItemAsObject()
+
+    arrayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+    arrayNode = slicer.mrmlScene.AddNode(arrayNode)
+    array = arrayNode.GetArray()
+    samples = len(self.labelStats["Labels"])
+    array.SetNumberOfTuples(samples)
+    for i in xrange(samples):
+        array.SetComponent(i, 0, i)
+        array.SetComponent(i, 1, self.labelStats[i,"Mean"])
+        array.SetComponent(i, 2, 0)
+
+    chartNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
+    chartNode = slicer.mrmlScene.AddNode(chartNode)
+    chartNode.AddArray('Mean Intensity', arrayNode.GetID())
+
+    chartViewNode.SetChartNodeID(chartNode.GetID())
+
+    chartNode.SetProperty('default', 'title', 'Label Statistics')
+    chartNode.SetProperty('default', 'xAxisLabel', 'Label Index')
+    chartNode.SetProperty('default', 'yAxisLabel', 'Signal Intensity')
+    chartNode.SetProperty('default', 'type', 'Bar');
+
+    chartViewNode.SetChartNodeID(chartNode.GetID())
 
   def statsAsCSV(self):
     """
