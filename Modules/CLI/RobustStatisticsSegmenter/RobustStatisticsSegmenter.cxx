@@ -1,4 +1,4 @@
-#include "RobustStatSegmenterCLP.h"
+#include "RobustStatisticsSegmenterCLP.h"
 
 #include <iostream>
 
