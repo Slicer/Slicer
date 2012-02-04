@@ -282,7 +282,8 @@ class LabelStatisticsLogic:
     array.SetNumberOfTuples(samples)
     for i in xrange(samples):
         array.SetComponent(i, 0, i)
-        array.SetComponent(i, 1, self.labelStats[i,"Mean"])
+        index = self.labelStats["Labels"][i]
+        array.SetComponent(i, 1, self.labelStats[index,"Mean"])
         array.SetComponent(i, 2, 0)
 
     chartNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
