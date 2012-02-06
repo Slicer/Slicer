@@ -101,6 +101,12 @@ QStringList qSlicerReformatModule::categories()const
   return QStringList() << "Registration.Specialized";
 }
 
+//-----------------------------------------------------------------------------
+QString qSlicerReformatModule::contributor()const
+{
+  return QString("Michael Jeulin-Lagarrigue, Kitware Inc.");
+}
+
 //------------------------------------------------------------------------------
 void qSlicerReformatModule::setup()
 {

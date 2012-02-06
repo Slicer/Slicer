@@ -42,10 +42,9 @@ public:
 
   qSlicerGetTitleMacro("View Controllers");
 
-  /// Return acknowledgements
   virtual QString acknowledgementText()const;
-
   virtual QStringList categories()const;
+  virtual QString contributor()const;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

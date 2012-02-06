@@ -45,13 +45,11 @@ public:
   virtual ~qSlicerModelsModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
-  /// Help to use the module
-  virtual QString helpText()const;
 
-  /// Return acknowledgements
+  virtual QString helpText()const;
   virtual QString acknowledgementText()const;
-  
+  virtual QString contributor()const;
+
   /// Return a custom icon for the module
   virtual QIcon icon()const;
 

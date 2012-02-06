@@ -84,6 +84,14 @@ QString qSlicerTractographyModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerTractographyModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Julien Finet, Kitware Inc.");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerTractographyModule::icon()const
 {
   return QIcon(":/Icons/Tractography.png");

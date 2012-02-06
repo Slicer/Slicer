@@ -50,9 +50,9 @@ public:
 
   /// Help to use the module
   virtual QString helpText()const;
-
-  /// Return acknowledgements
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
+
 protected:
 
   /// Create and return the widget representation associated to this module

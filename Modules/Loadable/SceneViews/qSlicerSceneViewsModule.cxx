@@ -64,6 +64,15 @@ QString qSlicerSceneViewsModule::acknowledgementText() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSceneViewsModule::contributor() const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Daniel Haehn and Kilian Pohl, UPenn");
+  moduleContributors << QString("Nicole Aucoin, SPL");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerSceneViewsModule::icon() const
 {
   return QIcon(":/Icons/SelectCameras.png");

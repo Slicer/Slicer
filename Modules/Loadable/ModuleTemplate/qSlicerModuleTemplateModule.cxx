@@ -84,6 +84,16 @@ QString qSlicerModuleTemplateModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerModuleTemplateModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("John Doe, Organization Inc.");
+  // moduleContributors << QString("Richard Roe, Other organization Inc.");
+  // ...
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerModuleTemplateModule::icon()const
 {
   return QIcon(":/Icons/ModuleTemplate.png");

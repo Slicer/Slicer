@@ -80,3 +80,19 @@ QString qSlicerROIModule::acknowledgementText()const
     "Inc. with help from others at SPL, BWH (Ron Kikinis)";
   return about;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerROIModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Alex Yarmarkovich, Isomics");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerROIModule::categories()const
+{
+  QStringList moduleCategories;
+  moduleCategories << QString();
+  return moduleCategories;
+}

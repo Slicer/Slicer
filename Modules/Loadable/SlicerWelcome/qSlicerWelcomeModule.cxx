@@ -70,6 +70,15 @@ QString qSlicerWelcomeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerWelcomeModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Wendy Plesniak, SPL");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin, Kitware Inc.");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerWelcomeModule::createWidgetRepresentation()
 {
   return new qSlicerWelcomeModuleWidget;

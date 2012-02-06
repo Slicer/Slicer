@@ -79,3 +79,12 @@ vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 {
   return 0;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerViewControllersModule::contributor()const
+{
+  QStringList contributors;
+  contributors << QString("Jean-Christophe Fillion-Robin, Kitware Inc.");
+  contributors << QString("Jim Miller, GE");
+  return contributors.join(";");
+}

@@ -54,3 +54,11 @@ QString qSlicerTractographyFiducialSeedingModule::acknowledgementText()const
     "help from others at SPL, BWH (Ron Kikinis)";
   return acknowledgement;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerTractographyFiducialSeedingModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Alex Yarmakovich, Isomics Inc.");
+  return moduleContributors.join(";");
+}

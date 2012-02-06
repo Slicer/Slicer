@@ -120,6 +120,18 @@ QString qSlicerAnnotationsModule::acknowledgementText() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerAnnotationsModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Daniel Haehn, UPenn");
+  moduleContributors << QString("Nicole Aucoin, SPL");
+  moduleContributors << QString("Kilian Pohl, UPenn");
+  moduleContributors << QString("Yong Zhang");
+  moduleContributors << QString("Wendy Plesniak, SPL");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerAnnotationsModule::icon() const
 {
   return QIcon(":/Icons/Annotation.png");

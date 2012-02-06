@@ -24,12 +24,9 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  /// Help text of the module
   virtual QString helpText()const;
-
-  /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
-
+  virtual QString contributor()const;
 
 protected:
   /// Create and return a widget representation of the object

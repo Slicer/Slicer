@@ -142,3 +142,12 @@ QString qSlicerColorsModule::acknowledgementText()const
     "This Color module was developed by Nicole Aucoin, SPL, BWH (Ron Kikinis).";
   return about;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerColorsModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Nicole Aucoint, SPL");
+  moduleContributors << QString("Julien Finet, Kitware Inc.");
+  return moduleContributors.join(";");
+}

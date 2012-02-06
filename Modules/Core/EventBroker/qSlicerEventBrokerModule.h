@@ -40,17 +40,15 @@ public:
   typedef qSlicerCoreModule Superclass;
   qSlicerEventBrokerModule(QObject *parent=0);
   virtual ~qSlicerEventBrokerModule();
-  
+
   virtual QStringList categories()const;
 
   /// Display name for the module
   qSlicerGetTitleMacro("Event Broker");
 
-  /// Help text of the module
   virtual QString helpText()const;
-
-  /// Acknowledgement text of the module
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
 
 protected:
   /// Create and return the widget representation associated to this module

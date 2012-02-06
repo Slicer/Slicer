@@ -56,6 +56,9 @@ public:
   /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
 
+  /// Contributors of the module
+  virtual QString contributor()const;
+
 protected:
   /// Reimplemented to initialize the transforms IO
   virtual void setup();

@@ -25,8 +25,9 @@ public:
   virtual ~qSlicerAnnotationsModule();
 
   /// Return the help and acknowledgement text for the Annotation module.
-  virtual QString helpText()const ;
+  virtual QString helpText()const;
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
 
   /// Return the icon of the Annotation module.
   virtual QIcon icon()const;

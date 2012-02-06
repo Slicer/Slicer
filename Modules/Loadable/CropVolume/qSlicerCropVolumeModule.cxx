@@ -66,6 +66,14 @@ QString qSlicerCropVolumeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCropVolumeModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Andrey Fedorov");
+  return moduleContributors.join(";");
+}
+
+//-----------------------------------------------------------------------------
 QIcon qSlicerCropVolumeModule::icon()const
 {
   return QIcon(":/Icons/CropVolume.png");

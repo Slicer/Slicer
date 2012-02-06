@@ -27,11 +27,9 @@ public:
   virtual QIcon icon()const;
   virtual QStringList categories() const;
 
-  /// Help to use the module
   virtual QString helpText()const;
-
-  /// Return acknowledgements
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
 
   virtual QStringList dependencies()const;
 

@@ -73,3 +73,10 @@ QString qSlicerEventBrokerModule::acknowledgementText()const
       "NA-MIC, NAC and Slicer community.";
   return acknowledgement;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerEventBrokerModule::contributor()const
+{
+  QString contributors = "Julien Finet, Kitware Inc.";
+  return contributors;
+}

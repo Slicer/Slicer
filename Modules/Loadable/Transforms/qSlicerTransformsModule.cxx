@@ -96,8 +96,17 @@ QString qSlicerTransformsModule::acknowledgementText()const
     "Community.<br>"
     "See <a href=\"http://www.slicer.org\">www.slicer.org</a> for details.<br>"
     "The Transforms module was contributed by Alex Yarmarkovich, Isomics Inc. "
-      "with help from others at SPL, BWH (Ron Kikinis)<br>";
+    "with help from others at SPL, BWH (Ron Kikinis)<br>";
   return acknowledgement;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerTransformsModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Jean-Christophe Fillion-Robin, Kitware Inc.");
+  moduleContributors << QString("Alex Yarmarkovich, Isomics Inc.");
+  return moduleContributors.join(";");
 }
 
 //-----------------------------------------------------------------------------

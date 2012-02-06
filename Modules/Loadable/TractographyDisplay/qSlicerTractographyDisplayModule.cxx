@@ -90,3 +90,11 @@ QString qSlicerTractographyDisplayModule::acknowledgementText()const
     "See <a href=\"http://www.slicer.org\">http://www.slicer.org</a> for details.\n";
   return acknowledgement;
 }
+
+//-----------------------------------------------------------------------------
+QString qSlicerTractographyDisplayModule::contributor()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Julien Finet, Kitware Inc.");
+  return moduleContributors.join(";");
+}

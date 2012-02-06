@@ -47,11 +47,9 @@ public:
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
-  /// Help text of the module
   virtual QString helpText()const;
-
-  /// Acknowledgement of the module
   virtual QString acknowledgementText()const;
+  virtual QString contributor()const;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer
