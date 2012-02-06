@@ -82,7 +82,7 @@ configure_file(
 # -------------------------------------------------------------------------
 # Simulate generation of package named: ${CPACK_PACKAGE_FILE_NAME}.s4ext
 # -------------------------------------------------------------------------
-install(CODE "message(\"CPack: - package: ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext generated.\")")
+#install(CODE "message(\"CPack: - package: ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext generated.\")")
 
 # -------------------------------------------------------------------------
 # Disable source generator enabled by default

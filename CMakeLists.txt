@@ -167,11 +167,6 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_CLI" OFF
   )
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
-option(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
-CMAKE_DEPENDENT_OPTION(
-  Slicer_UPLOAD_EXTENSIONS "Build, test, package and upload extensions" OFF
-  "Slicer_BUILD_EXTENSIONS" OFF
-  )
 
 #-----------------------------------------------------------------------------
 # External projects related options

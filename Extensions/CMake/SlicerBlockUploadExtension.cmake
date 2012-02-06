@@ -45,6 +45,9 @@ set(script_arg_list
   Slicer_CMAKE_DIR=${Slicer_CMAKE_DIR}
   Slicer_DIR=${Slicer_DIR}
   Slicer_WC_REVISION=${Slicer_WC_REVISION}
+  MIDAS_PACKAGE_URL=${MIDAS_PACKAGE_URL}
+  MIDAS_PACKAGE_EMAIL=${MIDAS_PACKAGE_EMAIL}
+  MIDAS_PACKAGE_API_KEY=${MIDAS_PACKAGE_API_KEY}
   )
 if(NOT "${CMAKE_CFG_INTDIR}" STREQUAL "")
   list(APPEND script_arg_list CMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR})
@@ -74,7 +77,12 @@ set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V
 #-----------------------------------------------------------------------------
 # Set EXTENSION_UPLOAD_COMMAND
 set(script_arg_list_for_upload ${script_arg_list})
-list(APPEND script_arg_list_for_upload RUN_CTEST_UPLOAD=TRUE)
+list(APPEND script_arg_list_for_upload
+  RUN_CTEST_UPLOAD=TRUE
+  EXTENSION_ARCHITECTURE=${EXTENSION_ARCHITECTURE}
+  EXTENSION_BITNESS=${EXTENSION_BITNESS}
+  EXTENSION_OPERATING_SYSTEM=${EXTENSION_OPERATING_SYSTEM}
+  )
 set(script_args "")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_upload}" script_args)
 set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})

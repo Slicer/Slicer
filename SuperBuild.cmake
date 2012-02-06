@@ -339,11 +339,4 @@ ExternalProject_Add_Step(${proj} forcebuild
 #-----------------------------------------------------------------------------
 # Slicer extensions
 #-----------------------------------------------------------------------------
-if(Slicer_BUILD_EXTENSIONS)
-  set(Slicer_EXTENSION_DESCRIPTION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Extensions)
-  set(Slicer_LOCAL_EXTENSIONS_DIR ${Slicer_EXTENSION_DESCRIPTION_DIR})
-  set(Slicer_DIR ${CMAKE_CURRENT_BINARY_DIR}/Slicer-build)
-  include(SlicerMacroExtractRepositoryInfo)
-  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
-  include(SlicerBlockBuildPackageAndUploadExtensions)
-endif()
+add_subdirectory(Extensions/CMake)

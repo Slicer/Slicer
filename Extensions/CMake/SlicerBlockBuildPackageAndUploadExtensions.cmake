@@ -1,9 +1,23 @@
 
 # Sanity checks
-set(expected_defined_vars Slicer_DIR Slicer_EXTENSION_DESCRIPTION_DIR Slicer_LOCAL_EXTENSIONS_DIR Slicer_CMAKE_DIR Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR CMAKE_GENERATOR)
+set(expected_defined_vars Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR CMAKE_GENERATOR)
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
+  endif()
+endforeach()
+
+set(expected_existing_vars Slicer_DIR Slicer_EXTENSION_DESCRIPTION_DIR Slicer_CMAKE_DIR Slicer_LOCAL_EXTENSIONS_DIR)
+foreach(var ${expected_existing_vars})
+  if(NOT EXISTS "${${var}}")
+    message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
+  endif()
+endforeach()
+
+# Convert to absolute path
+foreach(varname Slicer_DIR Slicer_EXTENSION_DESCRIPTION_DIR Slicer_CMAKE_DIR Slicer_LOCAL_EXTENSIONS_DIR)
+  if(NOT IS_ABSOLUTE ${${varname}})
+    set(${varname} "${CMAKE_CURRENT_BINARY_DIR}/${${varname}}")
   endif()
 endforeach()
 
@@ -21,6 +35,7 @@ file(GLOB_RECURSE s4extfiles "${Slicer_EXTENSION_DESCRIPTION_DIR}/*.s4ext")
 # Get the dependency information of each extension
 set(EXTENSION_LIST)
 foreach(file ${s4extfiles})
+  message(STATUS "Extension:${file}")
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
   #message(DEPENDS:${EXTENSION_SEXT_DEPENDS})
