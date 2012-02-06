@@ -94,7 +94,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
   endif()
 endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES LibArchive qCDashAPI)
+  list(APPEND Slicer_DEPENDENCIES LibArchive qMidasAPI)
 endif()
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
@@ -265,7 +265,7 @@ endif()
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND ep_superbuild_extra_args
     -DLibArchive_DIR:PATH=${LibArchive_DIR}
-    -DqCDashAPI_DIR:PATH=${qCDashAPI_DIR}
+    -DqMidasAPI_DIR:PATH=${qMidasAPI_DIR}
     )
 endif()
 

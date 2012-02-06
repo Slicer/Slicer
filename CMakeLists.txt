@@ -517,11 +517,11 @@ find_package(CTK REQUIRED)
 include(${CTK_USE_FILE})
 
 #-----------------------------------------------------------------------------
-# qCDashAPI
+# qMidasAPI
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  find_package(qCDashAPI REQUIRED)
-  include(${qCDashAPI_USE_FILE})
+  find_package(qMidasAPI REQUIRED)
+  include(${qMidasAPI_USE_FILE})
 endif()
 
 #-----------------------------------------------------------------------------

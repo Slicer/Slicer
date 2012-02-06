@@ -26,6 +26,9 @@
 #include <QProgressBar>
 #include <QProgressDialog>
 
+// CTK includes
+#include <ctkScopedCurrentDir.h>
+
 // QtGUI includes
 #include "qSlicerApplication.h"
 #include "qSlicerExtensionsWizardOverviewPage.h"
@@ -97,6 +100,7 @@ bool cpDir(const QString &srcPath, const QString &dstPath)
   QDir parentDstDir(QFileInfo(dstPath).path());
   if (!parentDstDir.mkdir(QFileInfo(dstPath).fileName()))
     {
+    qDebug() << "Failed to create directory" << QFileInfo(dstPath).fileName();
     return false;
     }
 
@@ -109,6 +113,7 @@ bool cpDir(const QString &srcPath, const QString &dstPath)
       {
       if (!cpDir(srcItemPath, dstItemPath))
         {
+        qDebug() << "Failed to copy from " << srcItemPath << " into " << dstItemPath;
         return false;
         }
       }
@@ -129,62 +134,34 @@ bool cpDir(const QString &srcPath, const QString &dstPath)
 
 //-----------------------------------------------------------------------------
 QList<ManifestEntry*> UpdateModulesFromRepository(const QString& extensionServerURL,
-                                                 const QList<QVariantMap>& retrievedListOfS4extFiles,
-                                                 const QList<QVariantMap>& retrievedListOfPackageFiles,
+                                                 const QList<QVariantMap>& retrievedListOfExtensionInfos,
                                                  vtkSlicerExtensionsLogic * extensionLogic)
 {
   Q_ASSERT(extensionLogic);
 
-  // Generate map of s4ext filename to the corresponding URL
-  QHash<QString, QVariantMap> s4extFileNameToMap;
-  foreach(const QVariantMap& file, retrievedListOfS4extFiles)
-    {
-    s4extFileNameToMap.insert(file.value("filename").toString(), file);
-    }
-
-  // The following regex has been developed with the help of http://rexv.org/
-  // Matching group 1: Slicer revision - Could be 'svn revision' or 'git sha1'
-  // Matching group 2: <platform>-<arch>
-  // Matching group 3: Extension name
-  // Matching group 4: (git|svn|local)
-  // Matching group 5: (sha1|revision|"")
-  QRegExp regex("^((?:[a-f0-9]{5,40})|(?:\\d+))\\-((?:linux|macosx|win|na)-(?:i386|amd64|na))\\-([a-zA-Z0-9_]+)\\-(svn|git|local)((?:[a-f0-9]{5,40})|(?:\\d*))\\-\\d{4}\\-\\d{2}\\-\\d{2}\\.tar.gz$");
+  QString url = extensionServerURL + "/download/?items=%1";
 
   std::vector<ManifestEntry*> updatedManifestEntries;
-  QStringList processedS4extFileNames;
-  foreach(const QVariantMap& packageFile, retrievedListOfPackageFiles)
+  foreach(const QVariantMap& extensionInfo, retrievedListOfExtensionInfos)
     {
-    // file attributes: id, filename, filesize, sha1sum, url
-    QString packageFileName = packageFile.value("filename").toString();
-    if (!regex.exactMatch(packageFileName))
-      {
-      qWarning() << "The file name is not formatted properly:" << packageFileName;
-      continue;
-      }
-    // Skip filename if it has already been processed
-    if (processedS4extFileNames.contains(packageFileName))
-      {
-      continue;
-      }
-    processedS4extFileNames << packageFileName;
-
-    QStringList capturedTexts = regex.capturedTexts();
-    Q_ASSERT(capturedTexts.count() == 6);
-
     ManifestEntry * entry = new ManifestEntry;
-    QString url = packageFile.value("url").toString();
-    entry->URL = (extensionServerURL + "/" + url).toStdString();
-    entry->Name = capturedTexts.at(3).toStdString();
-    entry->Revision = capturedTexts.at(5).toStdString();
+    QString item_id = extensionInfo.value("item_id").toString();
+    entry->URL = url.arg(item_id).toStdString();
+    entry->Name = extensionInfo.value("productname").toString().toStdString();
+    entry->Revision = extensionInfo.value("revision").toString().toStdString();
+    //entry->Homepage =
+    //entry->Category =
+    //entry->ExtensionStatus =
+    //entry->Description =
 
     // Lookup url of the associated s4ext files
-    QString s4extFileName = QString(packageFileName).replace(QFileInfo(packageFileName).completeSuffix(), "s4ext");
-    QHash<QString, QVariantMap>::const_iterator i =s4extFileNameToMap.find(s4extFileName);
-    if (i != s4extFileNameToMap.end())
-      {
-      QString s4extURL = extensionServerURL + "/" + i.value().value("url").toString();
-      extensionLogic->DownloadAndParseS4ext(s4extURL.toStdString(), entry);
-      }
+//    QString s4extFileName = QString(packageFileName).replace(QFileInfo(packageFileName).completeSuffix(), "s4ext");
+//    QHash<QString, QVariantMap>::const_iterator i =s4extFileNameToMap.find(s4extFileName);
+//    if (i != s4extFileNameToMap.end())
+//      {
+//      QString s4extURL = extensionServerURL + "/" + i.value().value("url").toString();
+//      extensionLogic->DownloadAndParseS4ext(s4extURL.toStdString(), entry);
+//      }
     extensionLogic->AddEntry(updatedManifestEntries, entry);
     }
   return QVector<ManifestEntry*>::fromStdVector(updatedManifestEntries).toList();
@@ -208,7 +185,7 @@ public:
   void init();
 
   QStringList scanExistingExtensions()const;
-  
+
   void addExtension(ManifestEntry* extension);
   QTreeWidgetItem* categoryItem(const QString& category)const;
   QIcon iconFromStatus(int status)const;
@@ -236,9 +213,9 @@ void qSlicerExtensionsWizardOverviewPagePrivate::init()
 {
   Q_Q(qSlicerExtensionsWizardOverviewPage);
   this->setupUi(q);
-  
+
   //ctkCheckableHeaderView* headerView =
-  //  new ctkCheckableHeaderView(Qt::Horizontal, this->ExtensionsTreeWidget);  
+  //  new ctkCheckableHeaderView(Qt::Horizontal, this->ExtensionsTreeWidget);
   //headerView->setPropagateToItems(true);
 
   //this->ExtensionsTreeWidget->setHeader(headerView);
@@ -247,7 +224,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate::init()
   this->ExtensionsTreeWidget->setColumnHidden(DescriptionColumn, true);
   this->ExtensionsTreeWidget->header()->setResizeMode(ExtensionColumn, QHeaderView::ResizeToContents);
   this->ExtensionsTreeWidget->header()->setResizeMode(StatusColumn, QHeaderView::ResizeToContents);
-  
+
   QObject::connect( this->ExtensionsTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)),
                     q, SLOT(onItemClicked(QTreeWidgetItem*,int)));
   QObject::connect( this->InstallPushButton, SIGNAL(clicked()),
@@ -268,21 +245,21 @@ QStringList qSlicerExtensionsWizardOverviewPagePrivate::scanExistingExtensions()
   QFileInfoList entries = this->ExtensionsDir.entryInfoList(QDir::Dirs|QDir::NoDotAndDotDot|QDir::Executable);
   foreach(const QFileInfo& entry, entries)
     {
-    if (QFile::exists(entry.absoluteFilePath() + "/qt-loadable-modules"))
+    if (QFile::exists(entry.absoluteFilePath() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR))
       {
-      extensions << entry.absoluteFilePath() + "/qt-loadable-modules";
+      extensions << entry.absoluteFilePath() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR;
       }
-    if (QFile::exists(entry.absoluteFilePath() + "/qt-scripted-modules"))
+    if (QFile::exists(entry.absoluteFilePath() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR))
       {
-      extensions << entry.absoluteFilePath() + "/qt-scripted-modules";
+      extensions << entry.absoluteFilePath() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR;
       }
-    if(QFile::exists(entry.absoluteFilePath() + "/plugins"))
+    if(QFile::exists(entry.absoluteFilePath() + "/" Slicer_CLIMODULES_LIB_DIR))
       {
-      extensions << entry.absoluteFilePath() + "/plugins";
+      extensions << entry.absoluteFilePath() + "/" Slicer_CLIMODULES_LIB_DIR;
       }
-    if (!QFile::exists(entry.absoluteFilePath() + "/qt-loadable-modules") &&
-        !QFile::exists(entry.absoluteFilePath() + "/qt-scripted-modules") &&
-        !QFile::exists(entry.absoluteFilePath() + "/plugins"))
+    if (!QFile::exists(entry.absoluteFilePath() + "/" Slicer_QTLOADABLEMODULES_LIB_DIR) &&
+        !QFile::exists(entry.absoluteFilePath() + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR) &&
+        !QFile::exists(entry.absoluteFilePath() + "/" Slicer_CLIMODULES_LIB_DIR))
       {
       extensions << entry.absoluteFilePath();
       }
@@ -396,8 +373,7 @@ QIcon qSlicerExtensionsWizardOverviewPagePrivate::iconFromStatus(int status)cons
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsWizardOverviewPagePrivate
-::downloadExtension(QTreeWidgetItem* extensionItem)
+void qSlicerExtensionsWizardOverviewPagePrivate::downloadExtension(QTreeWidgetItem* extensionItem)
 {
   Q_Q(qSlicerExtensionsWizardOverviewPage);
   Q_ASSERT(extensionItem);
@@ -442,22 +418,41 @@ void qSlicerExtensionsWizardOverviewPagePrivate
   extensionsDir.mkdir(extensionName);
   extensionsDir.cd(extensionName);
 
-  // Save current directory
-  QString currentPath = QDir::currentPath();
+  QString archiveBaseName;
+  {
+    // Set extension directory as current directory
+    ctkScopedCurrentDir scopedCurrentDir(extensionsDir.absolutePath());
 
-  // Set extension directory as current directory
-  QDir::setCurrent(extensionsDir.absolutePath());
+    // Extract into <extensionsPath>/<extensionName>/<topLevelArchiveDir>/
+    std::vector<std::string> extracted_files;
+    bool success = extract_tar(archive.toLatin1(), /* verbose */ true, /* extract */ true, &extracted_files);
+    if(!success)
+      {
+      qCritical() << "Failed to extract" << archive << "into" << extensionsDir.absolutePath();
+      return;
+      }
+    if(extracted_files.size() == 0)
+      {
+      qWarning() << "Archive" << archive << "doesn't contain any files !";
+      return;
+      }
 
-  // Extract into <extensionsPath>/<extensionName>/<archiveBaseName>/
-  extract_tar(archive.toLatin1(), true, true);
+    // Compute <topLevelArchiveDir>. We assume all files are extracted in top-level folder.
+    QDir extractDirOfFirstFile = QFileInfo(extensionsDir, QString::fromStdString(extracted_files.at(0))).dir();
+    QDir topLevelArchiveDir;
+    while(extractDirOfFirstFile != extensionsDir)
+      {
+      topLevelArchiveDir = extractDirOfFirstFile;
+      extractDirOfFirstFile.cdUp();
+      }
+
+    archiveBaseName = topLevelArchiveDir.dirName();
+  }
 
   extensionsDir.cdUp();
 
-  // Restore current directory
-  QDir::setCurrent(currentPath);
-
   // Name of the sub-folder <archiveBaseName>
-  QString archiveBaseName = QFileInfo(archive).baseName();
+  //QString archiveBaseName = QFileInfo(archive).baseName();
 
   // Rename <extensionName>/<archiveBaseName> into <extensionName>
   // => Such operation can't be done directly, we need intermediate steps ...
@@ -536,8 +531,7 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
 
   QString extensionsServerURL = this->field("extensionsServerURL").toString();
 
-  QList<QVariantMap> retrievedListOfS4extFiles = this->field("retrievedListOfS4extFiles").value< QList<QVariantMap> >();
-  QList<QVariantMap> retrievedListOfPackageFiles = this->field("retrievedListOfPackageFiles").value< QList<QVariantMap> >();
+  QList<QVariantMap> retrievedListOfExtensionInfos = this->field("retrievedListOfExtensionInfos").value< QList<QVariantMap> >();
 
   bool install = this->field("installEnabled").toBool();
   bool uninstall = this->field("uninstallEnabled").toBool();
@@ -561,7 +555,7 @@ void qSlicerExtensionsWizardOverviewPage::initializePage()
   QList<ManifestEntry*> modules;
   if (install)
     {
-    modules = UpdateModulesFromRepository(extensionsServerURL, retrievedListOfS4extFiles, retrievedListOfPackageFiles, d->Logic);
+    modules = UpdateModulesFromRepository(extensionsServerURL, retrievedListOfExtensionInfos, d->Logic);
     d->InstallPushButton->setEnabled(modules.count() > 0);
     }
   else
@@ -654,6 +648,8 @@ void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
   Q_D(qSlicerExtensionsWizardOverviewPage);
 
   QUrl extensionUrl = reply->url();
+  Q_ASSERT(extensionUrl.hasQueryItem("items"));
+
   QTreeWidgetItem* item = d->item(extensionUrl);
   Q_ASSERT(item);
   if (!item || reply->error())
@@ -664,13 +660,15 @@ void qSlicerExtensionsWizardOverviewPage::downloadFinished(QNetworkReply* reply)
     return;
     }
 
-  QFileInfo urlFileInfo(extensionUrl.path());
+  //QFileInfo urlFileInfo(extensionUrl.path());
+  //QFileInfo fileInfo(qSlicerCoreApplication::application()->temporaryPath(),
+  //  urlFileInfo.fileName());
   QFileInfo fileInfo(qSlicerCoreApplication::application()->temporaryPath(),
-    urlFileInfo.fileName());
+                     "extension-" + extensionUrl.queryItemValue("items") + ".tar.gz");
   QFile file(fileInfo.absoluteFilePath());
   if (!file.open(QIODevice::WriteOnly))
     {
-    qWarning() << "Could not open " << fileInfo.absoluteFilePath() << " for writing: %s" << file.errorString();
+    qWarning() << "Could not open " << fileInfo.absoluteFilePath() << " for writing: " << file.errorString();
     // remove progress bar
     d->ExtensionsTreeWidget->setItemWidget(item, ExtensionColumn, 0);
     item->setIcon(ExtensionColumn, d->iconFromStatus(StatusError));

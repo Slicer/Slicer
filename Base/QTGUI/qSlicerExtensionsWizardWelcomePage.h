@@ -22,6 +22,7 @@
 #define __qSlicerExtensionsWizardWelcomePage_h
 
 // Qt includes
+#include <QUuid>
 #include <QWizardPage>
 
 // QtGUI includes
@@ -43,7 +44,7 @@ public:
 
   /// Destructor
   virtual ~qSlicerExtensionsWizardWelcomePage();
-  
+
   virtual void initializePage();
   virtual bool isComplete()const;
   virtual bool validatePage();
@@ -52,7 +53,7 @@ public slots:
   void deleteTemporaryArchiveFiles();
 
 protected slots:
-  void onProjectFilesReceived(const QString& queryUuid, const QList<QVariantMap>& files);
+  void onExtensionInfosReceived(const QUuid& queryUuid, const QList<QVariantMap>& extensionInfos);
 
 protected:
   QScopedPointer<qSlicerExtensionsWizardWelcomePagePrivate> d_ptr;

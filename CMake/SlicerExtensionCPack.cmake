@@ -73,11 +73,11 @@ set(CPACK_NSIS_MODIFY_PATH OFF)
 # -------------------------------------------------------------------------
 # Prepare s4ext file
 # -------------------------------------------------------------------------
-configure_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}.s4ext
-  ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext
-  COPYONLY
-  )
+#configure_file(
+#  ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}.s4ext
+#  ${CMAKE_CURRENT_BINARY_DIR}/${CPACK_PACKAGE_FILE_NAME}.s4ext
+#  COPYONLY
+#  )
 
 # -------------------------------------------------------------------------
 # Simulate generation of package named: ${CPACK_PACKAGE_FILE_NAME}.s4ext

@@ -22,8 +22,8 @@
 #include <QProgressDialog>
 #include <QUrl>
 
-// qCDashAPI includes
-#include <qCDashAPI.h>
+// qMidasAPI includes
+#include <qMidasAPI.h>
 
 // QtGUI includes
 #include "qSlicerCoreApplication.h"
@@ -45,9 +45,9 @@ public:
   qSlicerExtensionsWizardWelcomePagePrivate(qSlicerExtensionsWizardWelcomePage& object);
   void init();
 
-  qCDashAPI             CDashAPI;
+  qMidasAPI             MidasAPI;
   QString               RetrieveS4extQueryUuid;
-  QString               RetrievePackageQueryUuid;
+  QString               RetrieveExtensionInfosQueryUuid;
   QProgressDialog*      ProgressDialog;
 };
 
@@ -74,11 +74,8 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
   q->registerField("installPath", this->InstallPathDirectoryButton, "directory", SIGNAL(directoryChanged(QString)));
   q->registerField("extensionsServerURL", this->ExtensionServerURL, "text", SIGNAL(textChanged(QString)));
 
-  q->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(QList<QVariantMap>()));
-  q->registerField("retrievedListOfS4extFiles", q, "retrievedListOfS4extFiles");
-
-  q->setProperty("retrievedListOfPackageFiles", QVariant::fromValue(QList<QVariantMap>()));
-  q->registerField("retrievedListOfPackageFiles", q, "retrievedListOfPackageFiles");
+  q->setProperty("retrievedListOfExtensionInfos", QVariant::fromValue(QList<QVariantMap>()));
+  q->registerField("retrievedListOfExtensionInfos", q, "retrievedListOfExtensionInfos");
 
   QObject::connect(this->InstallExtensionsCheckBox, SIGNAL(toggled(bool)),
                    q, SIGNAL(completeChanged()));
@@ -88,10 +85,10 @@ void qSlicerExtensionsWizardWelcomePagePrivate::init()
                    q, SIGNAL(completeChanged()));
   QObject::connect(this->DeleteTempPushButton, SIGNAL(clicked()),
                    q, SLOT(deleteTemporaryArchiveFiles()));
-  
+
   qRegisterMetaType<QList<QVariantMap> >("QList<QVariantMap>");
-  QObject::connect(&this->CDashAPI, SIGNAL(projectFilesReceived(QString,QList<QVariantMap>)),
-                   q, SLOT(onProjectFilesReceived(QString,QList<QVariantMap>)));
+  QObject::connect(&this->MidasAPI, SIGNAL(resultReceived(QUuid,QList<QVariantMap>)),
+                   q, SLOT(onExtensionInfosReceived(QUuid,QList<QVariantMap>)));
 }
 
 // --------------------------------------------------------------------------
@@ -120,7 +117,7 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
 
   d->InstallPathDirectoryButton->setDirectory(app->extensionsPath());
 
-  QString url("http://www.cdash.org/slicer4");
+  QString url("http://localhost/midas");
   d->ExtensionServerURL->setText(url);
   d->PlatformArchitectureValueLabel->setText(app->platform());
   d->SlicerRevisionLineEdit->setText(app->repositoryRevision());
@@ -136,24 +133,18 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
   QDir::root().mkpath(extensionsPath);
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  d->CDashAPI.setUrl(d->ExtensionServerURL->text());
+  d->MidasAPI.setMidasUrl(d->ExtensionServerURL->text());
 
   QString revision = d->SlicerRevisionLineEdit->text();
 
-  // Prepare matching pattern arguments
-  QString retrieveS4extPattern("%1-%2-.*.s4ext");
-  retrieveS4extPattern = retrieveS4extPattern.arg(revision).arg(app->platform());
-
-  QString retrievePackagePattern("%1-%2-.*.tar.gz");
-  retrievePackagePattern = retrievePackagePattern.arg(revision).arg(app->platform());
-
   // Query CDash server
-  d->CDashAPI.setLogLevel(qCDashAPI::SILENT);
-  d->RetrieveS4extQueryUuid = d->CDashAPI.queryProjectFiles("Slicer4", retrieveS4extPattern);
+  qMidasAPI::ParametersType parameters;
+  parameters["slicer_revision"] = revision;
+  parameters["os"] = app->platform().split("-").at(0);
+  parameters["arch"] = app->platform().split("-").at(1);
 
-  d->CDashAPI.setLogLevel(qCDashAPI::SILENT);
-  d->RetrievePackageQueryUuid = d->CDashAPI.queryProjectFiles("Slicer4", retrievePackagePattern);
-
+  d->RetrieveExtensionInfosQueryUuid =
+      d->MidasAPI.query("midas.slicerpackages.get.extensions", parameters);
 
   if (d->ProgressDialog->exec() == QDialog::Rejected)
     {
@@ -167,13 +158,13 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
 bool qSlicerExtensionsWizardWelcomePage::isComplete()const
 {
   Q_D(const qSlicerExtensionsWizardWelcomePage);
-  
+
   if (!d->InstallExtensionsCheckBox->isChecked() &&
       !d->UninstallExtensionsCheckBox->isChecked())
     {
     return false;
     }
-  
+
   QUrl searchURL(d->ExtensionServerURL->text());
   if (d->InstallExtensionsCheckBox->isChecked() && !searchURL.isValid())
     {
@@ -196,23 +187,19 @@ void qSlicerExtensionsWizardWelcomePage::deleteTemporaryArchiveFiles()
     }
 }
 
+#include <QDebug>
+
 // --------------------------------------------------------------------------
-void qSlicerExtensionsWizardWelcomePage::onProjectFilesReceived(const QString& queryUuid,
-                                                                const QList<QVariantMap>& files)
+void qSlicerExtensionsWizardWelcomePage::onExtensionInfosReceived(const QUuid& queryUuid,
+                                                                  const QList<QVariantMap>& extensionInfos)
 {
   Q_D(qSlicerExtensionsWizardWelcomePage);
-  // Set manifestFile as a dynamic property
-  if (queryUuid == d->RetrieveS4extQueryUuid)
+  if (queryUuid == d->RetrieveExtensionInfosQueryUuid)
     {
-    this->setProperty("retrievedListOfS4extFiles", QVariant::fromValue(files));
-    d->RetrieveS4extQueryUuid.clear();
+    this->setProperty("retrievedListOfExtensionInfos", QVariant::fromValue(extensionInfos));
+    d->RetrieveExtensionInfosQueryUuid.clear();
     }
-  else if (queryUuid == d->RetrievePackageQueryUuid)
-    {
-    this->setProperty("retrievedListOfPackageFiles", QVariant::fromValue(files));
-    d->RetrievePackageQueryUuid.clear();
-    }
-  if (d->RetrieveS4extQueryUuid.isEmpty() && d->RetrievePackageQueryUuid.isEmpty())
+  if (d->RetrieveExtensionInfosQueryUuid.isEmpty())
     {
     d->ProgressDialog->accept();
     }
