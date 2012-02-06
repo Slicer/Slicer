@@ -110,16 +110,19 @@ void qMRMLSliceInformationWidgetPrivate::updateWidgetFromMRMLSliceNode()
   // Update dimension
   int dimensions[3] = {0, 0, 0};
   this->MRMLSliceNode->GetDimensions(dimensions);
-  this->DimensionXEdit->setText(QString::number(dimensions[0]));
-  this->DimensionYEdit->setText(QString::number(dimensions[1]));
-  this->DimensionZEdit->setText(QString::number(dimensions[2]));
+  double coordinatesInDouble[3];
+  coordinatesInDouble[0] = dimensions[0];
+  coordinatesInDouble[1] = dimensions[1];
+  coordinatesInDouble[2] = dimensions[2];
+  this->DimensionWidget->setCoordinates(coordinatesInDouble);
 
   // Update field of view
   double fieldOfView[3] = {0.0, 0.0, 0.0};
   this->MRMLSliceNode->GetFieldOfView(fieldOfView);
-  this->FieldOfViewXEdit->setText(QString::number(fieldOfView[0]));
-  this->FieldOfViewYEdit->setText(QString::number(fieldOfView[1]));
-  this->FieldOfViewZEdit->setText(QString::number(fieldOfView[2]));
+  coordinatesInDouble[0] = fieldOfView[0];
+  coordinatesInDouble[1] = fieldOfView[1];
+  coordinatesInDouble[2] = fieldOfView[2];
+  this->FieldOfViewWidget->setCoordinates(coordinatesInDouble);
 
   // Update lightbox rows/columns entries
   this->LightboxLayoutRowsSpinBox->setValue(this->MRMLSliceNode->GetLayoutGridRows());

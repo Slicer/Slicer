@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>661</width>
-    <height>302</height>
+    <width>471</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <property name="margin">
     <number>0</number>
    </property>
@@ -42,35 +45,31 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <widget class="QComboBox" name="SliceOrientationSelector">
+     <property name="toolTip">
+      <string>Slice orientation (Axial, Sagittal, Coronal, Reformat)</string>
+     </property>
      <item>
-      <widget class="QComboBox" name="SliceOrientationSelector">
-       <property name="toolTip">
-        <string>Slice orientation (Axial, Sagittal, Coronal, Reformat)</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>Axial</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Sagittal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Coronal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Reformat</string>
-        </property>
-       </item>
-      </widget>
+      <property name="text">
+       <string>Axial</string>
+      </property>
      </item>
-    </layout>
+     <item>
+      <property name="text">
+       <string>Sagittal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coronal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Reformat</string>
+      </property>
+     </item>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_4">
@@ -151,90 +150,22 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
+    <widget class="ctkCoordinatesWidget" name="DimensionWidget">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="decimals">
       <number>0</number>
      </property>
-     <item>
-      <widget class="QLineEdit" name="DimensionXEdit">
-       <property name="toolTip">
-        <string>Slice dimension in X</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="DimensionYEdit">
-       <property name="toolTip">
-        <string>Slice dimension in Y</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="DimensionZEdit">
-       <property name="toolTip">
-        <string>Slice dimension in Z</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="toolTip">
-      <string>Field of view of the slice.</string>
+     <property name="minimum">
+      <double>0.000000000000000</double>
      </property>
-     <property name="text">
-      <string>Field of view:</string>
+     <property name="maximum">
+      <double>1000000.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLineEdit" name="FieldOfViewXEdit">
-       <property name="toolTip">
-        <string>Field of view in X (mm)</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="FieldOfViewYEdit">
-       <property name="toolTip">
-        <string>Field of view in Y (mm)</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="FieldOfViewZEdit">
-       <property name="toolTip">
-        <string>Field of view in Z (mm)</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="label_8">
      <property name="toolTip">
       <string>Layout of the lightbox (rows, columns)</string>
@@ -244,11 +175,8 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <widget class="QSpinBox" name="LightboxLayoutRowsSpinBox">
        <property name="toolTip">
@@ -277,7 +205,7 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="label_9">
      <property name="toolTip">
       <string>Slice spacing can be prescribed by the user or context or set automatically</string>
@@ -287,7 +215,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <property name="spacing">
       <number>0</number>
@@ -311,14 +239,14 @@
      </item>
     </layout>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="label_10">
      <property name="text">
       <string>Prescribed spacing:</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <widget class="QDoubleSpinBox" name="PrescribedSpacingSpinBox">
      <property name="enabled">
       <bool>false</bool>
@@ -334,6 +262,26 @@
      </property>
     </widget>
    </item>
+   <item row="5" column="1">
+    <widget class="ctkCoordinatesWidget" name="FieldOfViewWidget">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="toolTip">
+      <string>Field of view of the slice.</string>
+     </property>
+     <property name="text">
+      <string>Field of view:</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -342,6 +290,11 @@
    <extends>QWidget</extends>
    <header>qMRMLWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCoordinatesWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkCoordinatesWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
