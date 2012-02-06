@@ -108,6 +108,7 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// 
   /// Chart level properties
   ///
+  ///   "type" - Line, Bar, Scatter, Histogram, Pie
   ///   "title" - title displayed on the chart
   ///   "showTitle" - show title "on" or "off"
   ///   "xAxisLabel" - label displayed on the x-axis
