@@ -263,7 +263,7 @@ class DICOMWidget:
     self.detailsPopup.open()
     uid = self.selection.data(self.dicomModelUIDRole)
     role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
-    self.detailsPopup.offerVolumes(uid, role)
+    self.detailsPopup.offerLoadables(uid, role)
 
   def onTreeContextMenuRequested(self,pos):
     index = self.tree.indexAt(pos)
@@ -275,11 +275,16 @@ class DICOMWidget:
       typeRole = self.selection.data(self.dicomModelTypeRole)
       role = self.dicomModelTypes[typeRole]
       uid = self.selection.data(self.dicomModelUIDRole)
-      if self.okayCancel('Delete to %s: "%s"?' % (role, uid)):
-        deleteFiles = False
-        if self.question('Delete files in addition to database entries?'):
-          # TODO: add delete option to ctkDICOMDatabase
-          self.messageBox("Delete not yet implemented")
+      if self.okayCancel('This will remove the files themselves and references to them in the database\n\nDelete %s?' % role):
+        # TODO: add delete option to ctkDICOMDatabase
+        if role == "Patient":
+          removeWorked = slicer.dicomDatabase.removePatient(uid)
+        elif role == "Study":
+          removeWorked = slicer.dicomDatabase.removeStudy(uid)
+        elif role == "Series":
+          removeWorked = slicer.dicomDatabase.removeSeries(uid)
+        if not removeWorked:
+          self.messageBox(self,"Could not remove %s" % role,title='DICOM')
 
   def onLoadButton(self):
     self.progress = qt.QProgressDialog(slicer.util.mainWindow())

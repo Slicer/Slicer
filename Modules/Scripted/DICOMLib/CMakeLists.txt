@@ -1,5 +1,6 @@
 set(EditorLib_PYTHON_SCRIPTS
   __init__
+  DICOMPlugin
   DICOMProcesses
   DICOMDataExchange
   DICOMWidgets

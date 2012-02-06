@@ -76,10 +76,10 @@ class DICOMDetailsPopup(object):
     self.loadButton = qt.QPushButton('Load Selection to Slicer')
     self.loadButton.enabled = False 
     self.actionLayout.addWidget(self.loadButton)
-    self.loadButton.connect('clicked()', self.loadCheckedVolumes)
+    self.loadButton.connect('clicked()', self.loadCheckedLoadables)
 
-    self.volumeTable = DICOMVolumeTable(self.userFrame)
-    self.actionLayout.addWidget(self.volumeTable.widget)
+    self.loadableTable = DICOMLoadableTable(self.userFrame)
+    self.actionLayout.addWidget(self.loadableTable.widget)
 
     self.actionLayout.addStretch(1)
 
@@ -95,11 +95,10 @@ class DICOMDetailsPopup(object):
   def open(self):
     self.window.show()
 
-  def offerVolumes(self,uid,role):
-    """Get all the volume options at the currently selected level
-    and present them in the volume table"""
+  def offerLoadables(self,uid,role):
+    """Get all the loadable options at the currently selected level
+    and present them in the loadable table"""
     fileLists = []
-    volumes = []
     if role == "Series":
       fileLists.append(slicer.dicomDatabase.filesForSeries(uid))
     if role == "Study":
@@ -113,45 +112,46 @@ class DICOMDetailsPopup(object):
         for serie in series:
           fileLists.append(slicer.dicomDatabase.filesForSeries(serie))
 
-    for files in fileLists:
-      volumeFiles = DICOMLib.DICOMVolumeOrganizer().organizeFiles(files)
-      if volumeFiles:
-        for volume in volumeFiles:
-          volumes.append(volume)
+    loadEnabled = False
+    self.loadablesByPlugin = {}
+    for pluginClass in slicer.modules.dicomPlugins:
+      plugin = slicer.modules.dicomPlugins[pluginClass]()
+      self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
+      loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
+    self.loadButton.enabled = loadEnabled
+    self.loadableTable.setLoadables(self.loadablesByPlugin)
 
-    volumes = sorted(volumes, key=lambda x: not x.selected)
-    self.volumeTable.setVolumes(volumes)
-    self.loadButton.enabled = volumes != []
-
-    # TODO: update based on selection
-    self.header.setHeader(volumes[0].files[0])
-
-  def loadCheckedVolumes(self):
-    volumes = self.volumeTable.checkedVolumes()
-
+  def loadCheckedLoadables(self):
+    """Invoke the load method on each plugin for the DICOMLoadable
+    instances that are selected"""
+    self.loadableTable.updateCheckstate()
+    loadableCount = 0
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        loadableCount += 1
     self.progress = qt.QProgressDialog(slicer.util.mainWindow())
     self.progress.minimumDuration = 0
     self.progress.show()
     self.progress.setValue(0)
-    self.progress.setMaximum(len(volumes))
+    self.progress.setMaximum(loadableCount)
     step = 0
-    for volume in volumes:
-      self.progress.labelText = '\nLoading %s' % volume.name
-      self.progress.setValue(step)
-      slicer.app.processEvents()
-      loader = DICOMLib.DICOMLoader(volume.files,volume.name)
-      if not loader.volumeNode:
-        qt.QMessageBox.warning(slicer.util.mainWindow(), 'Load', 'Could not load volume for: %s' % name)
-        print('Tried to load volume as %s using: ' % name, files)
-      step += 1
-      self.progress.setValue(step)
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        self.progress.labelText = '\nLoading %s' % loadable.name
+        self.progress.setValue(step)
+        slicer.app.processEvents()
+        if loadable.selected:
+          if not plugin.load(loadable):
+            qt.QMessageBox.warning(slicer.util.mainWindow(), 
+                'Load', 'Could not load: %s as a %s' % (loadable.name,plugin.loadType))
+        step += 1
+        self.progress.setValue(step)
     self.progress.close()
     self.progress = None
 
-
-class DICOMVolumeTable(object):
+class DICOMLoadableTable(object):
   """Implement the Qt code for a table of
-  selectable slicer volumes to be made from 
+  selectable slicer data to be made from 
   the given dicom files
   """
 
@@ -163,49 +163,54 @@ class DICOMVolumeTable(object):
     self.widget.setMinimumHeight(500)
     self.widget.setMinimumWidth(350)
     self.items = []
-    self.setVolumes([])
+    self.loadables = {}
+    self.setLoadables([])
 
-  def setVolumes(self,volumes):
+  def setLoadables(self,loadablesByPlugin):
     """Load the table widget with a list
     of volume options (of class DICOMVolume)
     """
+    loadableCount = 0
+    for plugin in loadablesByPlugin:
+      for loadable in loadablesByPlugin[plugin]:
+        loadableCount += 1
     self.widget.clearContents()
     self.widget.setColumnCount(2)
-    self.widget.setHorizontalHeaderLabels(['Volumes to Load','Warnings'])
+    self.widget.setHorizontalHeaderLabels(['DICOM Data','Warnings'])
     self.widget.setColumnWidth(0,150)
     self.widget.setColumnWidth(1,200)
-    self.widget.setRowCount(len(volumes))
+    self.widget.setRowCount(loadableCount)
     row = 0
-    for volume in volumes:
-      # name and check state
-      item = qt.QTableWidgetItem(volume.name)
-      item.setCheckState(volume.selected * 2)
-      self.items.append(item)
-      self.widget.setItem(row,0,item)
-      item.setToolTip(volume.name)
-      # warning
-      if volume.warning:
-        warnItem = qt.QTableWidgetItem(volume.warning)
-        self.items.append(warnItem)
-        self.widget.setItem(row,1,warnItem)
-        item.setToolTip(item.toolTip() + "\n" + volume.warning)
-        warnItem.setToolTip(item.toolTip())
-      row += 1
+    for plugin in loadablesByPlugin:
+      for loadable in loadablesByPlugin[plugin]:
+        # name and check state
+        self.loadables[row] = loadable
+        item = qt.QTableWidgetItem(loadable.name)
+        item.setCheckState(loadable.selected * 2)
+        self.items.append(item)
+        self.widget.setItem(row,0,item)
+        item.setToolTip(loadable.tooltip)
+        # warning
+        if loadable.warning:
+          warnItem = qt.QTableWidgetItem(loadable.warning)
+          self.items.append(warnItem)
+          self.widget.setItem(row,1,warnItem)
+          item.setToolTip(item.toolTip() + "\n" + loadable.warning)
+          warnItem.setToolTip(item.toolTip())
+        row += 1
     self.widget.setVerticalHeaderLabels(row * [""])
-    self.volumes = volumes
 
-  def checkedVolumes(self):
-    returnVolumes = []
+  def updateCheckstate(self):
     for row in xrange(self.widget.rowCount):
       item = self.widget.item(row,0)
-      if item.checkState():
-        returnVolumes.append(self.volumes[row])
-    return(returnVolumes)
+      self.loadables[row].selected = item.checkState()
 
 class DICOMHeaderWidget(object):
   """Implement the Qt code for a table of
   DICOM header values
   """
+  # TODO: move this to ctk and use data dictionary for 
+  # tag names
 
   def __init__(self,parent):
     self.widget = qt.QTableWidget(parent)
