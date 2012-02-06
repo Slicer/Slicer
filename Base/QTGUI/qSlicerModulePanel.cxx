@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QScrollBar>
 
 // CTK includes
 #include <ctkWidgetsUtils.h>
@@ -154,13 +155,14 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
     qWarning() << moduleWidget->moduleName() << "widget doesn't have a top-level layout.";
     }
 
+  QWidget* scrollAreaContents = d->ScrollArea->widget();
   // Insert module in the panel
   QBoxLayout* scrollAreaLayout =
-    qobject_cast<QBoxLayout*>(d->ScrollArea->widget()->layout());
+    qobject_cast<QBoxLayout*>(scrollAreaContents->layout());
   Q_ASSERT(scrollAreaLayout);
   scrollAreaLayout->insertWidget(1, moduleWidget,1);
 
-  moduleWidget->setSizePolicy(QSizePolicy::Ignored, moduleWidget->sizePolicy().verticalPolicy());
+  moduleWidget->setSizePolicy(QSizePolicy::Minimum, moduleWidget->sizePolicy().verticalPolicy());
   moduleWidget->setVisible(true);
 
   QString help = module->helpText();
@@ -183,6 +185,9 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
     QString contributors = QString("<br><u>Contributors:</u> <i>") + module->contributor() + "</i>";
     d->AcknowledgementLabel->append(contributors);
     }
+
+  moduleWidget->installEventFilter(this);
+  this->updateGeometry();
 
   moduleWidget->enter();
 
@@ -210,6 +215,7 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
     }
 
   moduleWidget->exit();
+  moduleWidget->removeEventFilter(this);
 
   //emit moduleAboutToBeRemoved(moduleWidget->module());
 
@@ -234,6 +240,31 @@ void qSlicerModulePanel::removeModule(qSlicerAbstractCoreModule* module)
 void qSlicerModulePanel::removeAllModules()
 {
   this->setModule("");
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModulePanel::eventFilter(QObject* watchedModule, QEvent* event)
+{
+  if (event->type() == QEvent::Resize)
+    {
+    // The module has a new size, that means the module panel should probably
+    // be resized as well.
+    this->updateGeometry();
+    }
+  return false;
+}
+
+//---------------------------------------------------------------------------
+QSize qSlicerModulePanel::minimumSizeHint()const
+{
+  Q_D(const qSlicerModulePanel);
+  // QScrollArea::minumumSizeHint is wrong. QScrollArea are not meant to
+  // be resized. The minimumSizeHint is actually the width of the module
+  // representation.
+  QSize size = QSize(d->ScrollArea->widget()->minimumSizeHint().width() +
+                  d->ScrollArea->horizontalScrollBar()->sizeHint().width(),
+                  this->Superclass::minimumSizeHint().height());
+  return size;
 }
 
 //---------------------------------------------------------------------------

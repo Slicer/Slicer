@@ -36,12 +36,16 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModulePanel
 {
   Q_OBJECT
 public:
+  typedef qSlicerAbstractModulePanel Superclass;
   qSlicerModulePanel(QWidget* parent = 0, Qt::WindowFlags f = 0);
   virtual ~qSlicerModulePanel();
 
   virtual void removeAllModules();
   qSlicerAbstractCoreModule* currentModule()const;
   QString currentModuleName()const;
+
+  virtual bool eventFilter(QObject* watchedModule, QEvent* event);
+  virtual QSize minimumSizeHint()const;
 
 public slots:
   void setModule(const QString& moduleName);

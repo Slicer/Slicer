@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -143,6 +143,12 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>2</number>
@@ -160,12 +166,12 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string/>
-       </property>
+      <widget class="QLabel" name="logoLabel">
        <property name="pixmap">
         <pixmap resource="../../../../Resources/qSlicerLogos.qrc">:/Logos/Slicer3.png</pixmap>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -1176,7 +1182,6 @@
    <class>qSlicerModulePanel</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerModulePanel.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerMouseModeToolBar</class>
@@ -1206,6 +1211,7 @@
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
+  <include location="../../../../../../../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
  <connections>
   <connection>
