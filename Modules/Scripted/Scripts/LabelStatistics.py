@@ -281,7 +281,7 @@ class LabelStatisticsLogic:
     samples = len(self.labelStats["Labels"])
     array.SetNumberOfTuples(samples)
     for i in xrange(samples):
-        array.SetComponent(i, 0, i)
+        array.SetComponent(i, 0, i+1)
         index = self.labelStats["Labels"][i]
         array.SetComponent(i, 1, self.labelStats[index,"Mean"])
         array.SetComponent(i, 2, 0)
@@ -293,7 +293,7 @@ class LabelStatisticsLogic:
     chartViewNode.SetChartNodeID(chartNode.GetID())
 
     chartNode.SetProperty('default', 'title', 'Label Statistics')
-    chartNode.SetProperty('default', 'xAxisLabel', 'Label Index')
+    chartNode.SetProperty('default', 'xAxisLabel', 'Row Number')
     chartNode.SetProperty('default', 'yAxisLabel', 'Signal Intensity')
     chartNode.SetProperty('default', 'type', 'Bar');
 
