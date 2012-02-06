@@ -135,7 +135,7 @@
       <bool>false</bool>
      </property>
      <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QFormLayout" name="formLayout_11">
       <property name="fieldGrowthPolicy">
@@ -297,7 +297,7 @@
       <bool>true</bool>
      </property>
      <property name="contentsFrameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -738,7 +738,6 @@
    <class>qSlicerPresetComboBox</class>
    <extends>qMRMLNodeComboBox</extends>
    <header>qSlicerPresetComboBox.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkCheckablePushButton</class>

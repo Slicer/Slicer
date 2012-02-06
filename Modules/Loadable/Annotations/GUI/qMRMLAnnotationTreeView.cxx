@@ -536,13 +536,17 @@ void qMRMLAnnotationTreeView::hideScene()
 
 
   // set the column widths
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::CheckedColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::VisibilityColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::LockColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::EditColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
-  this->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
-
+  // If the model hasn't been populated yet, the columns don't exist and
+  // QHeaderView::setResizeMode asserts.
+  if ( this->header()->visualIndex(qMRMLSceneAnnotationModel::LockColumn) != -1)
+    {
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::CheckedColumn, (QHeaderView::ResizeToContents));
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::VisibilityColumn, (QHeaderView::ResizeToContents));
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::LockColumn, (QHeaderView::ResizeToContents));
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::EditColumn, (QHeaderView::ResizeToContents));
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::ValueColumn, (QHeaderView::ResizeToContents));
+    this->header()->setResizeMode(qMRMLSceneAnnotationModel::TextColumn, (QHeaderView::ResizeToContents));
+    }
 }
 
 //------------------------------------------------------------------------------

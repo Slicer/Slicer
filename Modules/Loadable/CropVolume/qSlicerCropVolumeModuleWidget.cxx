@@ -1,6 +1,9 @@
 // Qt includes
 #include <QDebug>
 
+// CTK includes
+#include <ctkFlowLayout.h>
+
 // SlicerQt includes
 #include <qSlicerAbstractCoreModule.h>
 
@@ -81,7 +84,11 @@ qSlicerCropVolumeModuleWidget::~qSlicerCropVolumeModuleWidget()
 void qSlicerCropVolumeModuleWidget::setup()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
+
   d->setupUi(this);
+  ctkFlowLayout* flowLayout = ctkFlowLayout::replaceLayout(d->InterpolatorWidget);
+  flowLayout->setPreferredExpandingDirections(Qt::Vertical);
+
   this->Superclass::setup();
 
   connect(d->InputROIComboBox->nodeFactory(), SIGNAL(nodeInitialized(vtkMRMLNode*)),
