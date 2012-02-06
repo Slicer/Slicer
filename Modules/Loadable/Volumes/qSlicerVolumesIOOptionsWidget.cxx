@@ -46,6 +46,8 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   Q_D(qSlicerVolumesIOOptionsWidget);
   d->setupUi(this);
 
+  ctkFlowLayout::replaceLayout(this);
+  /*
   // Replace the horizontal layout with a flow layout
   ctkFlowLayout* flowLayout = new ctkFlowLayout;
   flowLayout->setPreferredExpandingDirections(Qt::Horizontal);
@@ -65,6 +67,7 @@ qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidg
   delete oldLayout;
   flowLayout->setContentsMargins(0,0,0,0);
   this->setLayout(flowLayout);
+  */
 
   connect(d->NameLineEdit, SIGNAL(textChanged(QString)),
           this, SLOT(updateProperties()));
