@@ -43,8 +43,8 @@ public:
   void SetVolumesLogic(vtkSlicerVolumesLogic* logic);
   vtkSlicerVolumesLogic* GetVolumesLogic();
 
-  void SetResampleVolume2Logic(vtkSlicerCLIModuleLogic* logic);
-  vtkSlicerCLIModuleLogic* GetResampleVolume2Logic();
+  void SetResampleLogic(vtkSlicerCLIModuleLogic* logic);
+  vtkSlicerCLIModuleLogic* GetResampleLogic();
 
   int Apply(vtkMRMLCropVolumeParametersNode*);
 

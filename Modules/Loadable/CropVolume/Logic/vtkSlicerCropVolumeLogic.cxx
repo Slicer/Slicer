@@ -44,14 +44,14 @@ public:
   vtkInternal();
 
   vtkSlicerVolumesLogic* VolumesLogic;
-  vtkSlicerCLIModuleLogic* ResampleVolume2Logic;
+  vtkSlicerCLIModuleLogic* ResampleLogic;
 };
 
 //----------------------------------------------------------------------------
 vtkSlicerCropVolumeLogic::vtkInternal::vtkInternal()
 {
   this->VolumesLogic = 0;
-  this->ResampleVolume2Logic = 0;
+  this->ResampleLogic = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -83,15 +83,15 @@ vtkSlicerVolumesLogic* vtkSlicerCropVolumeLogic::GetVolumesLogic()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerCropVolumeLogic::SetResampleVolume2Logic(vtkSlicerCLIModuleLogic* logic)
+void vtkSlicerCropVolumeLogic::SetResampleLogic(vtkSlicerCLIModuleLogic* logic)
 {
-  this->Internal->ResampleVolume2Logic = logic;
+  this->Internal->ResampleLogic = logic;
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerCLIModuleLogic* vtkSlicerCropVolumeLogic::GetResampleVolume2Logic()
+vtkSlicerCLIModuleLogic* vtkSlicerCropVolumeLogic::GetResampleLogic()
 {
-  return this->Internal->ResampleVolume2Logic;
+  return this->Internal->ResampleLogic;
 }
 
 //----------------------------------------------------------------------------
@@ -232,14 +232,14 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   outputRASToIJK->Delete();
   outputIJKToRAS->Delete();
 
-  if(this->Internal->ResampleVolume2Logic == 0)
+  if(this->Internal->ResampleLogic == 0)
     {
-    std::cerr << "CropVolume: ERROR: resamplevolume2 logic is not set!";
+    std::cerr << "CropVolume: ERROR: resample logic is not set!";
     return -3;
     }
 
   vtkSmartPointer<vtkMRMLCommandLineModuleNode> cmdNode =
-    this->Internal->ResampleVolume2Logic->CreateNodeInScene();
+    this->Internal->ResampleLogic->CreateNodeInScene();
   assert(cmdNode.GetPointer() != 0);
 
   cmdNode->SetParameterAsString("inputVolume", inputVolume->GetID());
@@ -260,7 +260,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   }
 
   cmdNode->SetParameterAsString("interpolationType", interp.c_str());
-  this->Internal->ResampleVolume2Logic->ApplyAndWait(cmdNode);
+  this->Internal->ResampleLogic->ApplyAndWait(cmdNode);
 
   this->GetMRMLScene()->RemoveNode(refVolume);
   this->GetMRMLScene()->RemoveNode(cmdNode);
