@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>792</height>
+    <width>519</width>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,35 +15,62 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <widget class="ctkCollapsibleButton" name="SliceControllersCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="SliceControllersCollapsibleButton">
+     <property name="text">
       <string>Slice Controllers</string>
      </property>
      <layout class="QVBoxLayout" name="SliceControllersLayout"/>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="ThreeDViewControllersCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="ThreeDViewControllersCollapsibleButton">
+     <property name="text">
       <string>3D View Controllers</string>
      </property>
      <layout class="QVBoxLayout" name="ThreeDViewControllersLayout"/>
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="SliceInformationCollapsibleButton" native="true">
+    <widget class="ctkCollapsibleButton" name="SliceInformationCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Slice Information</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>false</bool>
      </property>
      <layout class="QVBoxLayout" name="SliceInformationLayout">
       <item>
        <layout class="QFormLayout" name="formLayout_2">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="0" column="1">
+         <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Select a slice from the current scene</string>
+          </property>
+          <property name="nodeTypes">
+           <stringlist>
+            <string>vtkMRMLSliceNode</string>
+           </stringlist>
+          </property>
+          <property name="showHidden">
+           <bool>true</bool>
+          </property>
+          <property name="addEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="removeEnabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
@@ -51,34 +78,10 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="qMRMLNodeComboBox" name="MRMLSliceNodeComboBox" native="true">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="toolTip">
-           <string>Select a slice from the current scene</string>
-          </property>
-          <property name="nodeTypes" stdset="0">
-           <stringlist>
-            <string>vtkMRMLSliceNode</string>
-           </stringlist>
-          </property>
-          <property name="showHidden" stdset="0">
-           <bool>true</bool>
-          </property>
-          <property name="addEnabled" stdset="0">
-           <bool>false</bool>
-          </property>
-          <property name="removeEnabled" stdset="0">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
-       <widget class="qMRMLSliceInformationWidget" name="MRMLSliceInformationWidget" native="true"/>
+       <widget class="qMRMLSliceInformationWidget" name="MRMLSliceInformationWidget"/>
       </item>
      </layout>
     </widget>
@@ -100,15 +103,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliceInformationWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLSliceInformationWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qMRMLWidget</class>
@@ -123,9 +126,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLSliceInformationWidget</class>
-   <extends>qMRMLWidget</extends>
-   <header>qMRMLSliceInformationWidget.h</header>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
