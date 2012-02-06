@@ -13,94 +13,187 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-#  This file was originally developed by Zach Mullen, Kitware Inc.
+#  This file was originally developed by Zach Mullen and Jean-Christophe Fillion-Robin, Kitware Inc.
 #  and was partially funded by NIH grant 3P41RR013218-12S1
 #
 ################################################################################
 
 # Uploads a package to the MIDAS server.
-# The following variables should be set in your dashboard script before calling this:
-#   MIDAS_PACKAGE_URL The url of the MIDAS server
-#   MIDAS_PACKAGE_EMAIL The email to use to authenticate to the server
-#   MIDAS_PACKAGE_API_KEY The default api key to use to authenticate to the server
-#   SCRIPT_MODE The dashboard mode: experimental | nightly | continuous
+#   SERVER_URL The url of the MIDAS server
+#   SERVER_TOKEN Token obtained using SlicerFunctionMIDASLogin()
+#   SUBMISSION_TYPE The dashboard mode: experimental | nightly | continuous
 #
-# Will set the value of the variable in resultvar to either "ok" or "fail".
-# Will output warning messages in the fail condition
-function(SlicerFunctionMIDASUploadPackage package packagetype resultvar)
-  include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroExtractRepositoryInfo.cmake")
-  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR "${CTEST_SOURCE_DIRECTORY}")
+# Will both output warning messages and return an empty token it login failed.
+function(SlicerFunctionMIDASUploadPackage)
+  include(CMakeParseArguments)
+  set(options)
+  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
+  set(multiValueArgs)
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-  if(NOT DEFINED MIDAS_PACKAGE_EMAIL)
-    message(WARNING "Skipped uploading package to MIDAS: MIDAS_PACKAGE_EMAIL is not set")
-    set(${resultvar} "fail" PARENT_SCOPE)
-    return()
-  endif()
-  if(NOT DEFINED MIDAS_PACKAGE_API_KEY)
-    message(WARNING "Skipped uploading package to MIDAS: MIDAS_PACKAGE_API_KEY is not set")
-    set(${resultvar} "fail" PARENT_SCOPE)
-    return()
-  endif()
-
-  _SlicerEscapeForUrl(email ${MIDAS_PACKAGE_EMAIL})
-  _SlicerEscapeForUrl(apikey ${MIDAS_PACKAGE_API_KEY})
-
-  file(DOWNLOAD "${MIDAS_PACKAGE_URL}/api/json?method=midas.login&appname=Default&email=${email}&apikey=${apikey}"
-       "${CTEST_BINARY_DIRECTORY}/MIDAStoken.txt"
-       INACTIVITY_TIMEOUT 120)
-  file(READ "${CTEST_BINARY_DIRECTORY}/MIDAStoken.txt" resp)
-  file(REMOVE "${CTEST_BINARY_DIRECTORY}/MIDAStoken.txt")
-  string(REGEX REPLACE ".*token\":\"(.*)\".*" "\\1" token ${resp})
-  string(LENGTH ${token} tokenlength)
-
-  if(NOT tokenlength EQUAL 40)
-    message(WARNING "Skipped uploading package to MIDAS: login failed: ${resp}")
-    set(${resultvar} "fail" PARENT_SCOPE)
-    return()
-  endif()
-
-  if(DEFINED MY_BITNESS)
-    if(MY_BITNESS EQUAL 32)
-      set(arch "i386")
-    else()
-      set(arch "amd64")
+  # Sanity check
+  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  foreach(var ${expected_nonempty_vars})
+    if("${MY_${var}}" STREQUAL "")
+      message(FATAL_ERROR "error: ${var} CMake variable is empty !")
     endif()
-  else()
-    set(arch "unknown")
-  endif()
+  endforeach()
 
-  if(WIN32)
-    set(os "win")
-  elseif(APPLE)
-    set(os "macosx")
-  elseif(UNIX)
-    set(os "linux")
-  endif()
+  set(expected_existing_vars TMP_DIR PACKAGE_FILEPATH)
+  foreach(var ${expected_existing_vars})
+    if(NOT EXISTS "${MY_${var}}")
+      message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
+    endif()
+  endforeach()
 
-  get_filename_component(basename "${package}" NAME)
+  if(NOT COMMAND SlicerFunctionMIDASLogin)
+    include(SlicerFunctionMIDASLogin)
+  endif()
+  SlicerFunctionMIDASLogin(
+    SERVER_URL ${MY_SERVER_URL}
+    SERVER_EMAIL ${MY_SERVER_EMAIL}
+    SERVER_APIKEY ${MY_SERVER_APIKEY}
+    TMP_DIR "${MY_TMP_DIR}"
+    RESULT_VARNAME server_token
+    )
+
+  get_filename_component(basename "${MY_PACKAGE_FILEPATH}" NAME)
   _SlicerEscapeForUrl(basename "${basename}")
-  _SlicerEscapeForUrl(rev "${Slicer_WC_REVISION}")
-  _SlicerEscapeForUrl(checkoutdate "${Slicer_WC_LAST_CHANGED_DATE}")
-  _SlicerEscapeForUrl(os "${os}")
-  _SlicerEscapeForUrl(arch "${arch}")
-  _SlicerEscapeForUrl(packagetype "${packagetype}")
-  _SlicerEscapeForUrl(package "${package}")
-  _SlicerEscapeForUrl(dashboardmode "${SCRIPT_MODE}")
+  _SlicerEscapeForUrl(revision "${MY_SOURCE_REVISION}")
+  _SlicerEscapeForUrl(checkoutdate "${MY_SOURCE_CHECKOUTDATE}")
+  _SlicerEscapeForUrl(os "${MY_OPERATING_SYSTEM}")
+  _SlicerEscapeForUrl(arch "${MY_ARCHITECTURE}")
+  _SlicerEscapeForUrl(packagetype "${MY_PACKAGE_TYPE}")
+  _SlicerEscapeForUrl(package "${MY_PACKAGE_FILEPATH}")
+  string(TOLOWER ${MY_SUBMISSION_TYPE} MY_SUBMISSION_TYPE)
+  _SlicerEscapeForUrl(submissiontype "${MY_SUBMISSION_TYPE}")
+  _SlicerEscapeForUrl(release "${MY_RELEASE}")
 
-  set(params "&revision=${rev}&os=${os}&arch=${arch}&submissiontype=${dashboardmode}&packagetype=${packagetype}&name=${basename}&token=${token}&checkoutdate=${checkoutdate}&productname=Slicer&codebase=Slicer4")
-  set(url "${MIDAS_PACKAGE_URL}/api/json?method=midas.slicerpackages.uploadpackage${params}")
-  file(UPLOAD ${package} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
+  set(api_method "midas.slicerpackages.upload.package")
+  set(params "&token=${server_token}")
+  set(params "${params}&revision=${revision}")
+  set(params "${params}&os=${os}")
+  set(params "${params}&arch=${arch}")
+  set(params "${params}&submissiontype=${submissiontype}")
+  set(params "${params}&packagetype=${packagetype}")
+  set(params "${params}&name=${basename}")
+  set(params "${params}&checkoutdate=${checkoutdate}")
+  set(params "${params}&productname=Slicer")
+  set(params "${params}&codebase=Slicer4")
+  set(params "${params}&release=${release}")
+  set(url "${MY_SERVER_URL}/api/json?method=${api_method}${params}")
+
+  file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
   if(status STREQUAL "ok")
-    set(${resultvar} "ok" PARENT_SCOPE)
+    set(${MY_RESULT_VARNAME} "ok" PARENT_SCOPE)
   else()
     message(WARNING "Upload of package to MIDAS failed: ${log}")
-    set(${resultvar} "fail" PARENT_SCOPE)
+    set(${MY_RESULT_VARNAME} "fail" PARENT_SCOPE)
   endif()
 endfunction()
 
-macro(_SlicerEscapeForUrl var str)
-  # Escape spaces in the url
-  string(REPLACE " " "%20" ${var} "${str}")
-endmacro()
+#
+# Testing
+#
+
+#
+# cmake -DTMP_DIR:PATH=/tmp -DTEST_SlicerFunctionMIDASUploadPackageTest:BOOL=ON -P SlicerFunctionMIDASUploadPackage.cmake
+#
+if(TEST_SlicerFunctionMIDASUploadPackageTest)
+
+  function(SlicerFunctionMIDASUploadPackageTest)
+    include(${CMAKE_CURRENT_LIST_DIR}/SlicerFunctionMIDASLogin.cmake)
+
+    include(${CMAKE_CURRENT_LIST_DIR}/SlicerFunctionToday.cmake)
+    TODAY(Test_TESTDATE)
+
+    # Sanity check
+    set(expected_nonempty_vars Test_TESTDATE)
+    foreach(var ${expected_nonempty_vars})
+      if("${var}" STREQUAL "")
+        message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+                            "Variable ${var} is an empty string !")
+      endif()
+    endforeach()
+
+    set(expected_existing_vars TMP_DIR)
+    foreach(var ${expected_existing_vars})
+      if(NOT EXISTS "${${var}}")
+        message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
+      endif()
+    endforeach()
+
+    if(NOT DEFINED SERVER_URL)
+      set(SERVER_URL "karakoram/midas")
+    endif()
+    if(NOT DEFINED SERVER_EMAIL)
+      set(SERVER_EMAIL "jchris.fillionr@kitware.com")
+    endif()
+    if(NOT DEFINED SERVER_APIKEY)
+      set(SERVER_APIKEY "a4d947d1772e227adf75639b449974d3")
+    endif()
+
+    set(source_checkoutdate "2011-12-26 12:21:42 -0500 (Mon, 26 Dec 2011)")
+    set(package_type "installer")
+
+    set(source_revisions "100" "101" "102" "103" "104" "105" "106")
+    set(source_revision_101_nightly_release "4.0.0")
+    set(source_revision_104_experimental_release "4.0.1")
+    set(source_revision_106_nightly_release "4.2")
+
+    foreach(submission_type "experimental" "nightly")
+      foreach(operating_system "linux" "macosx" "win")
+        foreach(architecture "i386" "amd64")
+          foreach(source_revision ${source_revisions})
+
+            set(release "${source_revision_${source_revision}_${submission_type}_release}")
+
+            set(package_filepath ${TMP_DIR}/Test-${Test_TESTDATE}-${submission_type}-${operating_system}-${architecture}-${source_revision}.txt)
+            file(WRITE ${package_filepath} "
+              Test_TESTDATE: ${Test_TESTDATE}
+              source_checkoutdate: ${source_checkoutdate}
+              submission_type: ${submission_type}
+              operating_system: ${operating_system}
+              architecture: ${architecture}
+              source_revision: ${source_revision}
+              release: ${release}")
+
+            if(NOT EXISTS ${package_filepath})
+              message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+                                  "Failed to create [${package_filepath}]")
+            endif()
+
+            SlicerFunctionMIDASUploadPackage(
+              SERVER_URL ${SERVER_URL}
+              SERVER_EMAIL ${SERVER_EMAIL}
+              SERVER_APIKEY ${SERVER_APIKEY}
+              TMP_DIR ${TMP_DIR}
+              SUBMISSION_TYPE ${submission_type}
+              SOURCE_REVISION ${source_revision}
+              SOURCE_CHECKOUTDATE ${source_checkoutdate}
+              OPERATING_SYSTEM ${operating_system}
+              ARCHITECTURE ${architecture}
+              PACKAGE_FILEPATH ${package_filepath}
+              PACKAGE_TYPE ${package_type}
+              RELEASE ${release}
+              RESULT_VARNAME output
+              )
+            set(expected_output "ok")
+            if(NOT "${output}" STREQUAL "${expected_output}")
+              message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+                                  "output:${output}\n"
+                                  "expected_output:${expected_output}")
+            endif()
+            file(REMOVE ${package_filepath})
+
+          endforeach()
+        endforeach()
+      endforeach()
+    endforeach()
+
+    message("SUCCESS")
+  endfunction()
+  SlicerFunctionMIDASUploadPackageTest()
+endif()

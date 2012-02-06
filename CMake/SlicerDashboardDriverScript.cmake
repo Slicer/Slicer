@@ -124,13 +124,30 @@ set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 # run_ctest macro
 #
 macro(run_ctest)
+  #-----------------------------------------------------------------------------
+  # The following variable can be used while testing the driver scripts
+  #-----------------------------------------------------------------------------
+  set(run_ctest_submit TRUE)
+  set(run_ctest_with_update TRUE)
+  set(run_ctest_with_configure TRUE)
+  set(run_ctest_with_build TRUE)
+  set(run_ctest_with_test TRUE)
+  set(run_ctest_with_coverage TRUE)
+  set(run_ctest_with_memcheck TRUE)
+  set(run_ctest_with_packages TRUE)
+  set(run_ctest_with_upload TRUE)
+  set(run_ctest_with_notes TRUE)
+
   ctest_start(${model} TRACK ${track})
-  ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
+
+  if(run_ctest_with_update)
+    ctest_update(SOURCE "${CTEST_SOURCE_DIRECTORY}" RETURN_VALUE FILES_UPDATED)
+  endif()
 
   # force a build if this is the first run and the build dir is empty
   if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
     message("First time build - Initialize CMakeCache.txt")
-    set(force_build 1)
+    set(force_build TRUE)
 
     if(WITH_EXTENSIONS)
       set(ADDITIONAL_CMAKECACHE_OPTION
@@ -156,20 +173,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 
   if(FILES_UPDATED GREATER 0 OR force_build)
 
-    set(force_build 0)
-
-    #-----------------------------------------------------------------------------
-    # The following variable can be used while testing the driver scripts
-    #-----------------------------------------------------------------------------
-    set(run_ctest_submit TRUE)
-    set(run_ctest_with_update TRUE)
-    set(run_ctest_with_configure TRUE)
-    set(run_ctest_with_build TRUE)
-    set(run_ctest_with_test TRUE)
-    set(run_ctest_with_coverage TRUE)
-    set(run_ctest_with_memcheck TRUE)
-    set(run_ctest_with_packages TRUE)
-    set(run_ctest_with_notes TRUE)
+    set(force_build FALSE)
 
     #-----------------------------------------------------------------------------
     # Update
@@ -260,37 +264,83 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
     #-----------------------------------------------------------------------------
     # Create packages / installers ...
     #-----------------------------------------------------------------------------
-    if(WITH_PACKAGES AND run_ctest_with_packages)
-      message("----------- [ WITH_PACKAGES ] -----------")
+    if(WITH_PACKAGES AND (run_ctest_with_packages OR run_ctest_with_upload))
+      message("----------- [ WITH_PACKAGES and UPLOAD ] -----------")
 
       if(build_errors GREATER "0")
         message("Build Errors Detected: ${build_errors}. Aborting package generation")
       else()
+
+        if(MY_BITNESS EQUAL 32)
+          set(dashboard_Architecture "i386")
+        else()
+          set(dashboard_Architecture "amd64")
+        endif()
+
+        if(WIN32)
+          set(dashboard_OperatingSystem "win")
+        elseif(APPLE)
+          set(dashboard_OperatingSystem "macosx")
+        elseif(UNIX)
+          set(dashboard_OperatingSystem "linux")
+        endif()
+
         #-----------------------------------------------------------------------------
         # Build and upload Slicer packages
         #-----------------------------------------------------------------------------
         include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
         include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASUploadPackage.cmake")
-        include(CMakeParseArguments)
+        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroExtractRepositoryInfo.cmake")
+
+        # Update CMake module path so that our custom FindGit.cmake module is used.
+        set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
+
+        SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
+
         set(packages)
-        message("Packaging ...")
-        SlicerFunctionCTestPackage(
-          BINARY_DIR ${slicer_build_dir}
-          CONFIG ${CTEST_BUILD_CONFIGURATION}
-          RETURN_VAR packages)
-        message("Uploading ...")
-        foreach(p ${packages})
-          SlicerFunctionMIDASUploadPackage(${p} "installer" slicer_midas_upload_status)
-          if(NOT slicer_midas_upload_status STREQUAL "ok")
-            ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
-          else()
-            include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASCTestUploadURL.cmake")
-            SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
-          endif()
-          if(run_ctest_submit)
-            ctest_submit(PARTS Upload)
-          endif()
-        endforeach()
+        if(run_ctest_with_packages)
+          message("Packaging ...")
+          SlicerFunctionCTestPackage(
+            BINARY_DIR ${slicer_build_dir}
+            CONFIG ${CTEST_BUILD_CONFIGURATION}
+            RETURN_VAR packages)
+        else()
+          set(packages ${CMAKE_CURRENT_LIST_FILE})
+        endif()
+        if(run_ctest_with_upload)
+          message("Uploading ...")
+          foreach(p ${packages})
+            set(slicer_midas_upload_status "fail")
+            if(DEFINED MIDAS_PACKAGE_URL
+               AND DEFINED MIDAS_PACKAGE_EMAIL
+               AND DEFINED MIDAS_PACKAGE_API_KEY)
+              SlicerFunctionMIDASUploadPackage(
+                SERVER_URL ${MIDAS_PACKAGE_URL}
+                SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
+                SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
+                TMP_DIR ${slicer_build_dir}
+                SUBMISSION_TYPE ${SCRIPT_MODE}
+                SOURCE_REVISION ${Slicer_WC_REVISION}
+                SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
+                OPERATING_SYSTEM ${dashboard_OperatingSystem}
+                ARCHITECTURE ${dashboard_Architecture}
+                PACKAGE_FILEPATH ${p}
+                PACKAGE_TYPE "installer"
+                RESULT_VARNAME slicer_midas_upload_status
+                )
+            endif()
+            if(slicer_midas_upload_status STREQUAL "ok")
+              include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASCTestUploadURL.cmake")
+              SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
+            endif()
+            if(NOT slicer_midas_upload_status STREQUAL "ok")
+              ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
+            endif()
+            if(run_ctest_submit)
+              ctest_submit(PARTS Upload)
+            endif()
+          endforeach()
+        endif()
       endif()
     endif()
 
