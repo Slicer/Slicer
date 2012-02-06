@@ -25,6 +25,7 @@
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerApplication.h>
+#include <vtkSlicerModuleLogic.h>
 
 // @MODULENAME@ includes
 #include "qSlicer@MODULENAME@Module.h"
@@ -36,7 +37,7 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-int qSlicer@MODULENAME@ModuleTest1( int argc, char * argv[] )
+int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
@@ -57,12 +58,33 @@ int qSlicer@MODULENAME@ModuleTest1( int argc, char * argv[] )
   app.parseArguments(exitWhenDone);
   if (exitWhenDone == true)
     {
-    std::cerr << "Line " << __LINE__ 
+    std::cerr << "Line " << __LINE__
               << " - Problem with the application::parseArguments function" << std::endl;
     return EXIT_FAILURE;
     }
 
   qSlicer@MODULENAME@Module * module = new qSlicer@MODULENAME@Module;
+
+  if (module->title().isEmpty())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::title() is empty." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (module->categories().isEmpty())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::categories() is empty." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (module->index() < -1 || module->index() > 1000)
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::index() seems invalid." << std::endl;
+    return EXIT_FAILURE;
+    }
 
   //if (module->helpText().isEmpty())
   //  {
@@ -73,38 +95,83 @@ int qSlicer@MODULENAME@ModuleTest1( int argc, char * argv[] )
 
   if (module->acknowledgementText().isEmpty())
     {
-    std::cerr << "Line " << __LINE__ 
+    std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::acknowledgementText() is empty." << std::endl;
     return EXIT_FAILURE;
     }
 
+  if (module->contributor().isEmpty())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::contributor() is empty." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Initialize with no application logic. Shouldn't crash
   module->initialize(0);
+
   if (module->appLogic() != 0)
     {
-    std::cerr << "Line " << __LINE__ 
+    std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::initialize() failed." << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (module->logic() != module->logic())
+  // Instantiate the logic if any
+  vtkMRMLAbstractLogic* logic = module->logic();
+
+  if (logic != module->logic())
     {
     std::cerr << "Line " << __LINE__ << " - The logic must remain the same." << std::endl;
     return EXIT_FAILURE;
     }
 
+  // Instantiate the representation if any
+  qSlicerAbstractModuleRepresentation* moduleRepresentation =
+    module->widgetRepresentation();
+
+  if (moduleRepresentation != module->widgetRepresentation())
+    {
+    std::cerr << "Line " << __LINE__ << " - The widget must remain the same." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (!moduleRepresentation && !module->isHidden())
+    {
+    // A module with no widget should be hidden
+    std::cerr << "Line " << __LINE__
+              << " qSlicer@MODULENAME@Module has no widget representation."
+              << " however it is not hidden. " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  // Set a scene to the module,
   vtkNew<vtkMRMLScene> scene;
   module->setMRMLScene(scene.GetPointer());
   if (module->mrmlScene() != scene.GetPointer())
     {
-    std::cerr << "Line " << __LINE__ 
+    std::cerr << "Line " << __LINE__
               << " - qSlicer@MODULENAME@Module::setMRMLScene() failed." << std::endl;
     return EXIT_FAILURE;
     }
 
-  // Instantiate the logic if any
-  module->logic();
+  if (logic && logic->GetMRMLScene() != scene.GetPointer())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::setMRMLScene() failed to pass"
+              << "the mrml scene to the logic" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (moduleRepresentation && moduleRepresentation->mrmlScene() != scene.GetPointer())
+    {
+    std::cerr << "Line " << __LINE__
+              << " - qSlicer@MODULENAME@Module::setMRMLScene() failed to pass"
+              << "the mrml scene to the widget" << std::endl;
+    return EXIT_FAILURE;
+    }
 
   delete module;
-  
+
   return EXIT_SUCCESS;
 }

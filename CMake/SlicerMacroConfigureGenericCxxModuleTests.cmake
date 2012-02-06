@@ -13,7 +13,7 @@ macro(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR
   endforeach()
 
   foreach(MODULENAME ${MODULENAMES})
-    set(MODULETESTS ModuleTest1 ModuleTest2)
+    set(MODULETESTS ModuleGenericTest ModuleWidgetGenericTest)
     foreach(MODULETEST ${MODULETESTS})
       # Note: the variable MODULENAME is used to configure the different tests.
       set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}${MODULETEST}.cxx)

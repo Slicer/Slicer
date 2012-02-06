@@ -30,6 +30,6 @@ endmacro()
 
 set(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
-SIMPLE_TEST( qSlicerVolumesIOOptionsWidgetTest1 )
-SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE} )
-SIMPLE_TEST( vtkSlicerVolumesLogicTest1 ${VOLUME_FILE} )
+foreach(testname ${KIT_TEST_NAMES})
+  SIMPLE_TEST( ${testname} ${VOLUME_FILE})
+endforeach()

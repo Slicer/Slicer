@@ -34,14 +34,14 @@ macro(SIMPLE_TEST  TESTNAME)
 endmacro()
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  SIMPLE_TEST( ${testname} ${VOLUME_FILE})
 endforeach()
-SIMPLE_TEST( qMRMLVolumePropertyNodeWidgetTest1 )
-SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest1 )
-SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest2 ${VOLUME_FILE} )
-SIMPLE_TEST( vtkMRMLVolumePropertyNodeTest1 )
-SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLVolumeRenderingDisplayableManagerTest1 )
+#SIMPLE_TEST( qMRMLVolumePropertyNodeWidgetTest1 )
+#SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest1 )
+#SIMPLE_TEST( qSlicerVolumeRenderingModuleWidgetTest2  )
+#SIMPLE_TEST( vtkMRMLVolumePropertyNodeTest1 )
+#SIMPLE_TEST( vtkMRMLVolumePropertyStorageNodeTest1 )
+#SIMPLE_TEST( vtkMRMLVolumeRenderingDisplayableManagerTest1 )
 
 # Install the testing data
 

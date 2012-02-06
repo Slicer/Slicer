@@ -24,6 +24,7 @@
 
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
+#include <qSlicerAbstractModuleWidget.h>
 #include <qSlicerApplication.h>
 
 // @MODULENAME@ includes
@@ -35,46 +36,41 @@
 // VTK includes
 #include <vtkNew.h>
 
+const int minimumWidth = 500;
+
 //-----------------------------------------------------------------------------
-int qSlicer@MODULENAME@ModuleTest2( int argc, char * argv[] )
+int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
   bool exitWhenDone = false;
   app.parseArguments(exitWhenDone);
 
-  if (exitWhenDone == true)
-    {
-    std::cerr << "Line " << __LINE__ 
-              << " - Problem with the application::parseArguments function" << std::endl;
-    return EXIT_FAILURE;
-    }
-
   qSlicer@MODULENAME@Module module(0);
 
   module.initialize(0);
 
-  if (module.widgetRepresentation() != module.widgetRepresentation())
-    {
-    std::cerr << "Line " << __LINE__ << " - The widgetRepresentation must remain the same." << std::endl;
-    return EXIT_FAILURE;
-    }
-
   vtkNew<vtkMRMLScene> scene;
   module.setMRMLScene(scene.GetPointer());
-  if (module.mrmlScene() != scene.GetPointer())
+
+  // Instantiate the widget if any
+  qSlicerAbstractModuleWidget* widget =
+    dynamic_cast<qSlicerAbstractModuleWidget*>(module.widgetRepresentation());
+  if (!widget)
     {
-    std::cerr << "Line " << __LINE__ 
-              << " - qSlicer@MODULENAME@Module::setMRMLScene() failed." << std::endl;
+    return EXIT_SUCCESS;
+    }
+
+  if (widget->minimumSizeHint().width() > minimumWidth)
+    {
+    std::cerr << "Line " << __LINE__
+              << " qSlicer@MODULENAME@Module widget has a minimum size hint width"
+              << " of " << widget->minimumSizeHint().width() << "px. It is wider"
+              << " than the max width of " << minimumWidth << "px." << std::endl;
     return EXIT_FAILURE;
     }
 
-  // Instantiate the widget if any
-  QWidget* widget = dynamic_cast<QWidget*>(module.widgetRepresentation());
-  if (widget)
-    {
-    widget->show();
-    }
+  widget->show();
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

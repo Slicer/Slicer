@@ -27,4 +27,6 @@ macro(SIMPLE_TEST TESTNAME)
   add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
 endmacro()
 
-SIMPLE_TEST( qSlicerTransformsModuleWidgetTest1 )
+foreach(testname ${KIT_TEST_NAMES})
+  SIMPLE_TEST( ${testname} )
+endforeach()

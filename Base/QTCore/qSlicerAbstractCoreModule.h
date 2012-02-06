@@ -120,6 +120,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
 
   /// This property holds the authors of the module
   /// It is shown in the Acknowledgement page.
+  /// If there are multiple contributors, they must be listed in the order
+  /// of amount of contribution and separated by a ';' punctuation sign.
   /// \a contributor() must be reimplemented for each module.
   /// \sa helpText, acknowledgementText
   Q_PROPERTY(QString contributor READ contributor)
@@ -217,9 +219,10 @@ public:
   void setAppLogic(vtkSlicerApplicationLogic* appLogic);
   vtkSlicerApplicationLogic* appLogic() const;
 
-  /// This method allows to get a pointer to the ModuleLogic.
+  /// This method allows to get a pointer to the module logic.
   /// If no moduleLogic already exists, one will be created calling
-  /// 'createLogic' method.
+  /// the 'createLogic' method.
+  /// A module logic is typically a vtkSlicerModuleLogic but not necessarily.
   Q_INVOKABLE vtkMRMLAbstractLogic* logic();
 
   /// Return a pointer on the MRML scene
