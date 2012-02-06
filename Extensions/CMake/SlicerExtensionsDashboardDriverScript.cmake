@@ -115,18 +115,19 @@ set(CTEST_UPDATE_COMMAND "${CTEST_SVN_COMMAND}")
 
 set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 
+#-----------------------------------------------------------------------------
+# The following variable can be used while testing the driver scripts
+#-----------------------------------------------------------------------------
+setIfNotDefined(run_ctest_submit TRUE)
+setIfNotDefined(run_ctest_with_update TRUE)
+setIfNotDefined(run_ctest_with_configure TRUE)
+setIfNotDefined(run_ctest_with_build TRUE)
+setIfNotDefined(run_ctest_with_notes TRUE)
+
 #
 # run_ctest macro
 #
 macro(run_ctest)
-  #-----------------------------------------------------------------------------
-  # The following variable can be used while testing the driver scripts
-  #-----------------------------------------------------------------------------
-  set(run_ctest_submit TRUE)
-  set(run_ctest_with_update TRUE)
-  set(run_ctest_with_configure TRUE)
-  set(run_ctest_with_build TRUE)
-  set(run_ctest_with_notes TRUE)
 
   ctest_start(${model} TRACK ${track})
 
@@ -221,3 +222,11 @@ if(SCRIPT_MODE STREQUAL "continuous")
 else()
   run_ctest()
 endif()
+
+#-----------------------------------------------------------------------------
+# Macro allowing to set a variable to its default value only if not already defined
+macro(setIfNotDefined var defaultvalue)
+  if(NOT DEFINED ${var})
+    set(${var} "${defaultvalue}")
+  endif()
+endmacro()
