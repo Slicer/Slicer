@@ -1,0 +1,214 @@
+################################################################################
+#
+#  Program: 3D Slicer
+#
+#  Copyright (c) Kitware Inc.
+#
+#  See COPYRIGHT.txt
+#  or http://www.slicer.org/copyright/copyright.txt for details.
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+#  This file was originally developed by Jean-Christophe Fillion-Robin and Zach Mullen, Kitware Inc.
+#  and was partially funded by NIH grant 3P41RR013218-12S1
+#
+################################################################################
+
+# Uploads an extension to the MIDAS server.
+# The following variables should be set in your dashboard script before calling this:
+#   MIDAS_PACKAGE_URL The url of the MIDAS server
+#   MIDAS_PACKAGE_EMAIL The email to use to authenticate to the server
+#   MIDAS_PACKAGE_API_KEY The default api key to use to authenticate to the server
+#   SCRIPT_MODE The dashboard mode: experimental | nightly | continuous
+#
+# Will set the value of the variable in resultvar to either "ok" or "fail".
+# Will output warning messages in the fail condition
+function(SlicerFunctionMIDASUploadExtension)
+  include(CMakeParseArguments)
+  set(options)
+  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
+  set(multiValueArgs)
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  # Sanity check
+  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  foreach(var ${expected_nonempty_vars})
+    if("${MY_${var}}" STREQUAL "")
+      message(FATAL_ERROR "error: ${var} CMake variable is empty !")
+    endif()
+  endforeach()
+
+  set(expected_existing_vars TMP_DIR PACKAGE_FILEPATH)
+  foreach(var ${expected_existing_vars})
+    if(NOT EXISTS "${MY_${var}}")
+      message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
+    endif()
+  endforeach()
+
+  include(SlicerFunctionMIDASLogin)
+  SlicerFunctionMIDASLogin(
+    SERVER_URL ${MY_SERVER_URL}
+    SERVER_EMAIL ${MY_SERVER_EMAIL}
+    SERVER_APIKEY ${MY_SERVER_APIKEY}
+    TMP_DIR "${MY_TMP_DIR}"
+    RESULT_VARNAME server_token
+    )
+
+  get_filename_component(basename "${MY_PACKAGE_FILEPATH}" NAME)
+  _SlicerEscapeForUrl(basename "${basename}")
+  _SlicerEscapeForUrl(productname "${MY_EXTENSION_NAME}")
+  _SlicerEscapeForUrl(slicer_revision "${MY_SLICER_REVISION}")
+  _SlicerEscapeForUrl(revision "${MY_EXTENSION_SOURCE_REVISION}")
+  _SlicerEscapeForUrl(repository_url "${MY_EXTENSION_REPOSITORY_URL}")
+  _SlicerEscapeForUrl(os "${MY_OPERATING_SYSTEM}")
+  _SlicerEscapeForUrl(arch "${MY_ARCHITECTURE}")
+  _SlicerEscapeForUrl(packagetype "${MY_PACKAGE_TYPE}")
+  _SlicerEscapeForUrl(package "${MY_PACKAGE_FILEPATH}")
+  string(TOLOWER ${MY_SUBMISSION_TYPE} MY_SUBMISSION_TYPE)
+  _SlicerEscapeForUrl(submissiontype "${MY_SUBMISSION_TYPE}")
+
+  set(api_method "midas.slicerpackages.upload.extension")
+  set(params "&token=${server_token}")
+  set(params "${params}&repository_url=${repository_url}")
+  set(params "${params}&slicer_revision=${slicer_revision}")
+  set(params "${params}&revision=${revision}")
+  set(params "${params}&os=${os}")
+  set(params "${params}&arch=${arch}")
+  set(params "${params}&submissiontype=${submissiontype}")
+  set(params "${params}&packagetype=${packagetype}")
+  set(params "${params}&name=${basename}")
+  set(params "${params}&productname=${productname}")
+  set(params "${params}&codebase=Slicer4")
+  set(params "${params}&release=${release}")
+  set(url "${MY_SERVER_URL}/api/json?method=${api_method}${params}")
+
+  file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
+  string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
+
+  if(status STREQUAL "ok")
+    set(${MY_RESULT_VARNAME} "ok" PARENT_SCOPE)
+  else()
+    message(WARNING "Upload of extension to MIDAS failed: ${log}")
+    set(${MY_RESULT_VARNAME} "fail" PARENT_SCOPE)
+  endif()
+
+endfunction()
+
+
+#
+# Testing - cmake -D<TESTNAME>:BOOL=ON -P SlicerFunctionMIDASUploadExtensionTest.cmake
+#
+if(TEST_SlicerFunctionMIDASUploadExtensionTest)
+
+  function(SlicerFunctionMIDASUploadExtensionTest)
+
+    set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../CMake ${CMAKE_MODULE_PATH})
+
+    include(SlicerFunctionToday)
+    TODAY(Test_TESTDATE)
+
+    # Sanity check
+    set(expected_nonempty_vars Test_TESTDATE)
+    foreach(var ${expected_nonempty_vars})
+      if("${var}" STREQUAL "")
+        message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
+                            "Variable ${var} is an empty string !")
+      endif()
+    endforeach()
+
+    set(expected_existing_vars TMP_DIR)
+    foreach(var ${expected_existing_vars})
+      if(NOT EXISTS "${${var}}")
+        message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
+      endif()
+    endforeach()
+
+    set(server_url "karakoram/midas")
+    set(server_email "jchris.fillionr@kitware.com")
+    set(server_apikey "a4d947d1772e227adf75639b449974d3")
+
+    set(source_checkoutdate "2011-12-26 12:21:42 -0500 (Mon, 26 Dec 2011)")
+    set(package_type "installer")
+
+    #set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
+    set(slicer_revisions "105" "106")
+    #set(slicer_revision_101_nightly_release "4.0.0")
+    #set(slicer_revision_104_experimental_release "4.0.1")
+    #set(slicer_revision_106_nightly_release "4.2")
+
+    set(extension_infos
+      "ExtensionA^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5"
+      "ExtensionB^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4")
+
+    #set(slicer_revision_101_nightly_release "4.0.0")
+    #set(slicer_revision_104_experimental_release "4.0.1")
+    #set(slicer_revision_106_nightly_release "4.2")
+
+    foreach(submission_type "experimental" "nightly")
+      foreach(operating_system "linux" "macosx" "win")
+        foreach(architecture "i386" "amd64")
+          foreach(slicer_revision ${slicer_revisions})
+            foreach(extension_info ${extension_infos})
+              string(REPLACE "^^" ";" extension_info_list ${extension_info})
+              list(GET extension_info_list 0 extension_name)
+              list(GET extension_info_list 1 extension_repository_url)
+              list(GET extension_info_list 2 extension_source_revision)
+
+              #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
+
+              set(package_filepath ${TMP_DIR}/${slicer_revision}-${operating_system}-${architecture}-${extension_name}-${extension_source_revision}-${Test_TESTDATE}-${submission_type}.txt)
+              file(WRITE ${package_filepath} "
+                extension_name: ${extension_name}
+                extension_repository_url: ${extension_repository_url}
+                extension_source_revision: ${extension_source_revision}
+                Test_TESTDATE: ${Test_TESTDATE}
+                submission_type: ${submission_type}
+                operating_system: ${operating_system}
+                architecture: ${architecture}
+                slicer_revision: ${slicer_revision}
+                release: ${release}")
+
+              if(NOT EXISTS ${package_filepath})
+                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+                                    "Failed to create [${package_filepath}]")
+              endif()
+
+              SlicerFunctionMIDASUploadExtension(
+                SERVER_URL ${server_url}
+                SERVER_EMAIL ${server_email}
+                SERVER_APIKEY ${server_apikey}
+                TMP_DIR ${TMP_DIR}
+                SUBMISSION_TYPE ${submission_type}
+                SLICER_REVISION ${slicer_revision}
+                EXTENSION_NAME ${extension_name}
+                EXTENSION_REPOSITORY_URL ${extension_repository_url}
+                EXTENSION_SOURCE_REVISION ${extension_source_revision}
+                OPERATING_SYSTEM ${operating_system}
+                ARCHITECTURE ${architecture}
+                PACKAGE_FILEPATH ${package_filepath}
+                PACKAGE_TYPE ${package_type}
+                RELEASE ${release}
+                RESULT_VARNAME output
+                )
+              set(expected_output "ok")
+              if(NOT "${output}" STREQUAL "${expected_output}")
+                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
+                                    "output:${output}\n"
+                                    "expected_output:${expected_output}")
+              endif()
+              file(REMOVE ${package_filepath})
+
+            endforeach()
+          endforeach()
+        endforeach()
+      endforeach()
+    endforeach()
+
+    message("SUCCESS")
+  endfunction()
+  SlicerFunctionMIDASUploadExtensionTest()
+endif()
