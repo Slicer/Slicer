@@ -17,5 +17,6 @@ ctkMacroCompilePythonScript(
   )
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
-  add_subdirectory(Testing)
+  # TODO: add testing
+  # add_subdirectory(Testing)
 endif()

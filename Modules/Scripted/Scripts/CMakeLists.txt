@@ -30,6 +30,10 @@ add_subdirectory(
   DICOM2FullBrainTractography
   )
 
+add_subdirectory(
+  DICOMPlugins
+  )
+
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
   add_subdirectory(Testing)
 endif()

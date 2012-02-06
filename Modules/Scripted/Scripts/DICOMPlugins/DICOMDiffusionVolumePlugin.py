@@ -70,7 +70,6 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     """
 
     # get the series description to use as base for volume name
-    print('looking at file %s' % files[0])
     slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
     d = slicer.dicomDatabase.headerValue(seriesDescription)
@@ -82,14 +81,11 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     validDWI = False
     vendorName = ""
     for vendor in self.diffusionTags:
-      print('checking for %s' % vendor)
       matchesVendor = False
       for tag in self.diffusionTags[vendor]:
         value = slicer.dicomDatabase.headerValue(tag)
-        print('value of %s is %s' % (tag,value))
         matchesVendor |= value != ""
       if matchesVendor:
-        print('matches!')
         validDWI = True
         vendorName = vendor
 
