@@ -50,6 +50,7 @@
 #
 
 macro(SlicerMacroExtractRepositoryInfo)
+  include(CMakeParseArguments)
   set(options)
   set(oneValueArgs VAR_PREFIX SOURCE_DIR)
   set(multiValueArgs)
@@ -62,7 +63,7 @@ macro(SlicerMacroExtractRepositoryInfo)
 
   set(wc_info_prefix ${MY_VAR_PREFIX})
 
-  if ("${MY_SOURCE_DIR}" STREQUAL "")
+  if(NOT EXISTS "${MY_SOURCE_DIR}")
     set(MY_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 
@@ -92,7 +93,7 @@ macro(SlicerMacroExtractRepositoryInfo)
   if(${GIT_result} EQUAL 0)
 
     set(${wc_info_prefix}_WC_TYPE git)
-    GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} ${wc_info_prefix})
+    GIT_WC_INFO(${MY_SOURCE_DIR} ${wc_info_prefix})
     if(${wc_info_prefix}_WC_GITSVN)
       set(${wc_info_prefix}_WC_TYPE svn)
     endif()
