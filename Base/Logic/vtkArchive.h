@@ -13,6 +13,9 @@
 #ifndef __vtkArchive_h
 #define __vtkArchive_h
 
+#include <string>
+#include <vector>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,7 +24,8 @@ extern "C" {
 
 // Warning, it extracts the archive into the current directory
 // With Qt, you can change the current directory using QDir::setCurrent()
-VTK_SLICER_BASE_LOGIC_EXPORT bool extract_tar(const char* outFileName, bool verbose, bool extract);
+VTK_SLICER_BASE_LOGIC_EXPORT bool extract_tar(const char* outFileName, bool verbose, bool extract,
+                                              std::vector<std::string> * extracted_files = 0);
 
 #ifdef __cplusplus
 }

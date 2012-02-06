@@ -32,7 +32,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   static time_t          now;
   size_t u_width = 6;
   size_t gs_width = 13;
-  
+
   /*
    * We avoid collecting the entire list in memory at once by
    * listing things as we see them.  However, that also means we can't
@@ -47,7 +47,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
   fprintf(out, "%s %d ",
           archive_entry_strmode(entry),
           archive_entry_nlink(entry));
-  
+
   /* Use uname if it's present, else uid. */
   p = archive_entry_uname(entry);
   if ((p == NULL) || (*p == '\0'))
@@ -68,7 +68,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
     {
     fprintf(out, "%s", p);
     w = strlen(p);
-    } 
+    }
   else
     {
     sprintf(tmp, "%lu",
@@ -76,20 +76,20 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
     w = strlen(tmp);
     fprintf(out, "%s", tmp);
     }
-  
+
   /*
    * Print device number or file size, right-aligned so as to make
    * total width of group and devnum/filesize fields be gs_width.
    * If gs_width is too small, grow it.
    */
   if (archive_entry_filetype(entry) == AE_IFCHR
-      || archive_entry_filetype(entry) == AE_IFBLK) 
+      || archive_entry_filetype(entry) == AE_IFBLK)
     {
     sprintf(tmp, "%lu,%lu",
             (unsigned long)archive_entry_rdevmajor(entry),
             (unsigned long)archive_entry_rdevminor(entry));
     }
-  else 
+  else
     {
     /*
      * Note the use of platform-dependent macros to format
@@ -110,7 +110,7 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 #define HALF_YEAR (time_t)365 * 86400 / 2
 #if defined(_WIN32) && !defined(__CYGWIN__)
   /* Windows' strftime function does not support %e format. */
-#define DAY_FMT  "%d"  
+#define DAY_FMT  "%d"
 #else
 #define DAY_FMT  "%e"  /* Day number without leading zeros */
 #endif
@@ -140,15 +140,15 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 #ifdef __BORLANDC__
 # pragma warn -8066 /* unreachable code */
 #endif
-  
+
 long copy_data(struct archive *ar, struct archive *aw)
 {
   long r;
   const void *buff;
   size_t size;
   off_t offset;
-  
-  for (;;) 
+
+  for (;;)
     {
     r = archive_read_data_block(ar, &buff, &size, &offset);
     if (r == ARCHIVE_EOF)
@@ -160,7 +160,7 @@ long copy_data(struct archive *ar, struct archive *aw)
       return (r);
       }
     r = archive_write_data_block(aw, buff, size, offset);
-    if (r != ARCHIVE_OK) 
+    if (r != ARCHIVE_OK)
       {
       printf("Problem with archive_write_data_block(): %s", archive_error_string(aw));
       return (r);
@@ -171,7 +171,7 @@ long copy_data(struct archive *ar, struct archive *aw)
 
 
 //-----------------------------------------------------------------------------
-bool extract_tar(const char* outFileName, bool verbose, bool extract)
+bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files)
 {
   struct archive* a = archive_read_new();
   struct archive *ext = archive_write_disk_new();
@@ -180,12 +180,12 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract)
   struct archive_entry *entry;
   int r = archive_read_open_file(a, outFileName, 10240);
   if(r)
-    { 
+    {
     printf("Problem with archive_read_open_file(): %s",
            archive_error_string(a));
     return false;
     }
-  for (;;) 
+  for (;;)
     {
     r = archive_read_next_header(a, &entry);
     if (r == ARCHIVE_EOF)
@@ -196,6 +196,10 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract)
       {
       printf("Problem with archive_read_next_header(): %s",
              archive_error_string(a));
+      }
+    if ( extract && extracted_files)
+      {
+      extracted_files->push_back(archive_entry_pathname(entry));
       }
     if (verbose && extract)
       {
@@ -226,7 +230,7 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract)
         printf( "Current file: %s",
                 archive_entry_pathname(entry) );
         }
-      else 
+      else
         {
         copy_data(a, ext);
         r = archive_write_finish_entry(ext);
@@ -244,6 +248,6 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract)
     }
   archive_read_close(a);
   archive_read_finish(a);
-  
+
   return true;
 }
