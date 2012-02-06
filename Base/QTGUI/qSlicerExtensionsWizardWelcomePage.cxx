@@ -144,7 +144,7 @@ bool qSlicerExtensionsWizardWelcomePage::validatePage()
   parameters["arch"] = app->platform().split("-").at(1);
 
   d->RetrieveExtensionInfosQueryUuid =
-      d->MidasAPI.query("midas.slicerpackages.get.extensions", parameters);
+      d->MidasAPI.query("midas.slicerpackages.extension.list", parameters);
 
   if (d->ProgressDialog->exec() == QDialog::Rejected)
     {

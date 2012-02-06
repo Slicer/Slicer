@@ -71,7 +71,7 @@ function(SlicerFunctionMIDASUploadExtension)
   string(TOLOWER ${MY_SUBMISSION_TYPE} MY_SUBMISSION_TYPE)
   _SlicerEscapeForUrl(submissiontype "${MY_SUBMISSION_TYPE}")
 
-  set(api_method "midas.slicerpackages.upload.extension")
+  set(api_method "midas.slicerpackages.extension.upload")
   set(params "&token=${server_token}")
   set(params "${params}&repository_url=${repository_url}")
   set(params "${params}&slicer_revision=${slicer_revision}")
