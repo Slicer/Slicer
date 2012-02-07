@@ -37,6 +37,7 @@ if(NOT DEFINED qMidasAPI_DIR)
     UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      ${ep_common_compiler_args}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
