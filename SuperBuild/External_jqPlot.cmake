@@ -13,21 +13,29 @@ set(jqPlot_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(jqPlot)
 set(proj jqPlot)
 
-#message(STATUS "${__indent}Adding project ${proj}")
+if(NOT DEFINED jqPlot_DIR)
+  #message(STATUS "${__indent}Adding project ${proj}")
 
-set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/jqPlot.git")
-set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "1.0.0b2_r1012")
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Slicer/jqPlot.git")
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "1.0.0b2_r1012")
 
-ExternalProject_Add(${proj}
-  URL http://cloud.github.com/downloads/Slicer/jqPlot/jquery.jqplot.1.0.0b2_r1012.tar.gz
-  URL_MD5 2afa87db609446d568b79a9ae5c07523
-  SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot
-  BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot-build
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
-  DEPENDS
-    ${jqPlot_DEPENDENCIES}
-  )
+  ExternalProject_Add(${proj}
+    URL http://cloud.github.com/downloads/Slicer/jqPlot/jquery.jqplot.1.0.0b2_r1012.tar.gz
+    URL_MD5 2afa87db609446d568b79a9ae5c07523
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot
+    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot-build
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
+    DEPENDS
+      ${jqPlot_DEPENDENCIES}
+    )
+  set(jqPlot_DIR ${CMAKE_BINARY_DIR}/${proj})
+
+else()
+  # The project is provided using jqPlot_DIR, nevertheless since other project may depend on CTK,
+  # let's add an 'empty' one
+  SlicerMacroEmptyExternalProject(${proj} "${jqPlot_DEPENDENCIES}")
+endif()
 
