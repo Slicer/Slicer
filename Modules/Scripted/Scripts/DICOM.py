@@ -19,7 +19,7 @@ class DICOM:
   def __init__(self, parent):
     parent.title = "DICOM"
     parent.categories = ["", "Informatics"] # top level module
-    parent.contributor = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
 The DICOM module integrates DICOM classes from CTK (based on DCMTK).
     """
