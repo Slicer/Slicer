@@ -115,7 +115,10 @@ endif()
 #-----------------------------------------------------------------------------
 # Qt - Slicer_REQUIRED_QT_VERSION
 #-----------------------------------------------------------------------------
-set(Slicer_REQUIRED_QT_VERSION "4.6.2")
+set(Slicer_REQUIRED_QT_VERSION "4.6.3")
+if(APPLE)
+  set(Slicer_REQUIRED_QT_VERSION "4.7.0")
+endif()
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
