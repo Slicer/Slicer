@@ -8,15 +8,15 @@ class ScriptedLoadableExtensionTemplate:
   def __init__(self, parent):
     parent.title = "Scripted Loadable Extension Template"
     parent.categories = ["Examples"]
-    parent.contributor = ""
+    parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware Inc.)"] # replace with your name and organization
     parent.helpText = """
     Example of scripted loadable extension.
     """
     parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
 and was partially funded by NIH grant 3P41RR013218-12S1.
-    """
-    self.parent = parent
+""" # replace with organization, grant and thanks.
+     self.parent = parent
 
 #
 # qScriptedLoadableExtensionTemplateWidget

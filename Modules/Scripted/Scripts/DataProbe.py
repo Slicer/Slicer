@@ -9,7 +9,7 @@ class DataProbe:
   def __init__(self, parent):
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
-    parent.contributor = "Steve Pieper"
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
 The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.
     """

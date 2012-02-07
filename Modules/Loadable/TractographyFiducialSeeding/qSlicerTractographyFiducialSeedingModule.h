@@ -26,7 +26,7 @@ public:
 
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
 protected:
   /// Create and return a widget representation of the object

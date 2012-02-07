@@ -18,10 +18,16 @@ class qSlicer@MODULENAME@ModuleTest1(unittest.TestCase):
     import slicer
     import ctk
     self.assertTrue(isinstance(slicer.app.settings(), ctk.ctkSettings))
-    
+
+  def test_categories(self):
+    self.assertNotEqual(self.module.categories, "")
+
   def test_acknowledgementText(self):
     self.assertNotEqual(self.module.acknowledgementText, "")
-    
+
+  def test_contributors(self):
+    self.assertNotEqual(self.module.contributors, "")
+
   def test_logic(self):
     self.assertEqual(self.module.logic(), self.module.logic())
 

@@ -84,13 +84,13 @@ QString qSlicerModuleTemplateModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModuleTemplateModule::contributor()const
+QStringList qSlicerModuleTemplateModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe, Organization Inc.");
-  // moduleContributors << QString("Richard Roe, Other organization Inc.");
+  moduleContributors << QString("John Doe (Organization Inc.)");
+  // moduleContributors << QString("Richard Roe (Other organization Inc.)");
   // ...
-  return moduleContributors.join(";");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

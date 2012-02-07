@@ -70,12 +70,12 @@ QString qSlicerWelcomeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerWelcomeModule::contributor()const
+QStringList qSlicerWelcomeModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Wendy Plesniak, SPL");
-  moduleContributors << QString("Jean-Christophe Fillion-Robin, Kitware Inc.");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Wendy Plesniak (SPL)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

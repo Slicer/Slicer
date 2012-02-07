@@ -136,11 +136,11 @@ QString qSlicerDataModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerDataModule::contributor()const
+QStringList qSlicerDataModule::contributors()const
 {
-  QString contributors =
-    "Julien Finet, Kitware Inc., "
-    "Alex Yarmarkovich, Isomics Inc., SPL, "
-    "Nicole Aucoin, BWH";
-  return contributors;
+  QStringList moduleContributors;
+  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  moduleContributors << QString("Nicole Aucoin (BWH)");
+  return moduleContributors;
 }

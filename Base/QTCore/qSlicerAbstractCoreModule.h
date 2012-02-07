@@ -108,23 +108,26 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// This property holds the help of the module.
   /// The help is displayed inside the module as a tab.
   /// \a helpText must be reimplemented for each module.
-  /// \sa acknowledgement, contributor
+  /// \sa acknowledgement, contributors
   Q_PROPERTY(QString helpText READ helpText)
 
   /// This property holds the acknowledgments for the module
   /// Credits (organization, grants, thanks...) can be given and are displayed
-  /// in the acknowledgment tab in the module panel.
+  /// in the acknowledgment tab in the module panel. The contributors of the module
+  /// will automatically be appended when needed, don't duplicate the
+  /// information in the acknowledgements.
   /// \a acknowledgementText() must be reimplemented for each module.
-  /// \sa helpText, contributor
+  /// \sa helpText, contributors
   Q_PROPERTY(QString acknowledgementText READ acknowledgementText)
 
   /// This property holds the authors of the module
   /// It is shown in the Acknowledgement page.
   /// If there are multiple contributors, they must be listed in the order
-  /// of amount of contribution and separated by a ';' punctuation sign.
-  /// \a contributor() must be reimplemented for each module.
+  /// of contribution. For each contributor, the name of the institution
+  /// can succede the author: e.g. John Doe, CompanyName Inc.
+  /// \a contributors() must be reimplemented for each module.
   /// \sa helpText, acknowledgementText
-  Q_PROPERTY(QString contributor READ contributor)
+  Q_PROPERTY(QStringList contributors READ contributors)
 
   /// This property holds the URL of the module for the Slicer wiki.
   /// It can be used in the help/ackknowledgement.
@@ -199,7 +202,7 @@ public:
   virtual bool isHidden()const;
 
   /// Return the contributors of the module
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
   /// Return help text of the module
   /// Must be reimplemented in the derived classes

@@ -179,7 +179,7 @@ class EditorExtensionTemplate:
   def __init__(self, parent):
     parent.title = "Editor EditorExtensionTemplate Effect"
     parent.categoryies = ["Developer Tools.Editor Extensions"]
-    parent.contributor = "Steve Pieper"
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"] # insert your name in the list
     parent.helpText = """
     Example of an editor extension.  No module interface here, only in the Editor module
     """

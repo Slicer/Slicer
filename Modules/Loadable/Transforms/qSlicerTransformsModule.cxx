@@ -101,12 +101,12 @@ QString qSlicerTransformsModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerTransformsModule::contributor()const
+QStringList qSlicerTransformsModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin, Kitware Inc.");
-  moduleContributors << QString("Alex Yarmarkovich, Isomics Inc.");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

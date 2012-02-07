@@ -27,7 +27,7 @@ public:
   /// Return the help and acknowledgement text for the SceneViews module.
   virtual QString helpText()const ;
   virtual QString acknowledgementText()const;
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
   /// Return the icon of the SceneViews module.
   virtual QIcon icon()const;

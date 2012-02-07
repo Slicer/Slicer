@@ -56,7 +56,7 @@ public:
   virtual QStringList categories()const;
 
   /// Return the contributor for the module
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 protected:
 
   /// Initialize the module. Register the volumes reader/writer

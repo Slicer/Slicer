@@ -75,8 +75,9 @@ QString qSlicerEventBrokerModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerEventBrokerModule::contributor()const
+QStringList qSlicerEventBrokerModule::contributors()const
 {
-  QString contributors = "Julien Finet, Kitware Inc.";
+  QStringList contributors;
+  contributors << QString("Julien Finet (Kitware Inc.)");
   return contributors;
 }

@@ -100,10 +100,10 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  if (module->contributor().isEmpty())
+  if (module->contributors().isEmpty())
     {
     std::cerr << "Line " << __LINE__
-              << " - qSlicer@MODULENAME@Module::contributor() is empty." << std::endl;
+              << " - qSlicer@MODULENAME@Module::contributors() is empty." << std::endl;
     return EXIT_FAILURE;
     }
 

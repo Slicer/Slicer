@@ -131,7 +131,7 @@ class DICOMDiffusionVolumePlugin:
   def __init__(self, parent):
     parent.title = "DICOM Diffusion Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
-    parent.contributor = "Steve Pieper"
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
     Plugin to the DICOM Module to parse and load diffusion volumes
     from DICOM files.

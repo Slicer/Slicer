@@ -82,11 +82,11 @@ QString qSlicerROIModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerROIModule::contributor()const
+QStringList qSlicerROIModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Alex Yarmarkovich, Isomics");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

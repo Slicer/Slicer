@@ -44,7 +44,7 @@ public:
 
   virtual QString acknowledgementText()const;
   virtual QStringList categories()const;
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

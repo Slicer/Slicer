@@ -286,7 +286,7 @@ class DICOMScalarVolumePlugin:
   def __init__(self, parent):
     parent.title = "DICOM Scalar Volume Plugin"
     parent.categories = ["Developer Tools.DICOM Plugins"]
-    parent.contributor = "Steve Pieper"
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
     Plugin to the DICOM Module to parse and load scalar volumes
     from DICOM files.

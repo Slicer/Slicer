@@ -66,11 +66,11 @@ QString qSlicerCropVolumeModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerCropVolumeModule::contributor()const
+QStringList qSlicerCropVolumeModule::contributors()const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andrey Fedorov");
-  return moduleContributors.join(";");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

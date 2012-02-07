@@ -47,7 +47,7 @@ public:
   virtual QString acknowledgementText()const;
 
   /// Return acknowledgements
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
   /// Return a custom icon for the module
   virtual QIcon icon()const;

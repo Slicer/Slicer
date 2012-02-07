@@ -31,7 +31,7 @@ public:
   /// Acknowledgement for the module
   virtual QString acknowledgementText()const;
   /// Contributors of the module.
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
 
   /// Return a custom icon for the module
   virtual QIcon icon()const;

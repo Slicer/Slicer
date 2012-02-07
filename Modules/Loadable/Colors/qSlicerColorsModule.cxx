@@ -144,10 +144,10 @@ QString qSlicerColorsModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsModule::contributor()const
+QStringList qSlicerColorsModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Nicole Aucoint, SPL");
-  moduleContributors << QString("Julien Finet, Kitware Inc.");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Nicole Aucoin (SPL)");
+  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  return moduleContributors;
 }

@@ -10,7 +10,7 @@ class SampleData:
   def __init__(self, parent):
     parent.title = "Sample Data"
     parent.categories = ["Informatics"]
-    parent.contributor = "Steve Pieper"
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
 The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
     """

@@ -180,10 +180,12 @@ void qSlicerModulePanel::addModule(qSlicerAbstractCoreModule* module)
     }
   QString acknowledgement = module->acknowledgementText();
   d->AcknowledgementLabel->insertHtml(acknowledgement);
-  if (!module->contributor().isEmpty())
+  if (!module->contributors().isEmpty())
     {
-    QString contributors = QString("<br><u>Contributors:</u> <i>") + module->contributor() + "</i>";
-    d->AcknowledgementLabel->append(contributors);
+    QString contributors = module->contributors().join(", ");
+    contributors.replace(contributors.lastIndexOf(","), 1, " and");
+    QString contributorsText = QString("<br/><u>Contributors:</u> <i>") + contributors + "</i><br/>";
+    d->AcknowledgementLabel->append(contributorsText);
     }
 
   moduleWidget->installEventFilter(this);
@@ -245,6 +247,7 @@ void qSlicerModulePanel::removeAllModules()
 //---------------------------------------------------------------------------
 bool qSlicerModulePanel::eventFilter(QObject* watchedModule, QEvent* event)
 {
+  Q_UNUSED(watchedModule);
   if (event->type() == QEvent::Resize)
     {
     // The module has a new size, that means the module panel should probably

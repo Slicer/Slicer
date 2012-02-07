@@ -46,7 +46,7 @@ public:
   /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
-  virtual QString contributor()const;
+  virtual QStringList contributors()const;
   virtual QStringList categories()const;
 protected:
 

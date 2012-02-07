@@ -64,12 +64,14 @@ QString qSlicerSceneViewsModule::acknowledgementText() const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSceneViewsModule::contributor() const
+QStringList qSlicerSceneViewsModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Daniel Haehn and Kilian Pohl, UPenn");
-  moduleContributors << QString("Nicole Aucoin, SPL");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Nicole Aucoin (SPL)");
+  moduleContributors << QString("Wendy Plesniak (SPL)");
+  moduleContributors << QString("Daniel Haehn (UPenn)");
+  moduleContributors << QString("Kilian Pohl (UPenn)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

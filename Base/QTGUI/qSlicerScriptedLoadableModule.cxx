@@ -44,7 +44,7 @@ public:
 
   QString Title;
   QStringList Categories;
-  QString Contributor;
+  QStringList Contributors;
   QStringList Dependencies;
   QString HelpText;
   QString AcknowledgementText;
@@ -228,8 +228,8 @@ CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setCategories, Ca
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, categories, Categories)
 
 //-----------------------------------------------------------------------------
-CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setContributor, Contributor)
-CTK_GET_CPP(qSlicerScriptedLoadableModule, QString, contributor, Contributor)
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setContributors, Contributors)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, contributors, Contributors)
 
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QString&, setHelpText, HelpText)

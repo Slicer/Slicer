@@ -116,9 +116,9 @@ QStringList qSlicerAbstractCoreModule::categories()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerAbstractCoreModule::contributor()const
+QStringList qSlicerAbstractCoreModule::contributors()const
 {
-  return QString();
+  return QStringList();
 }
 
 //-----------------------------------------------------------------------------

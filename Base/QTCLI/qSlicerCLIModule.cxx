@@ -49,7 +49,7 @@ public:
   QString           Acknowledgement;
   QString           Help;
   QStringList       Categories;
-  QString           Contributor;
+  QStringList       Contributors;
   QImage            Logo;
   int               Index;
 
@@ -116,7 +116,7 @@ vtkMRMLAbstractLogic* qSlicerCLIModule::createLogic()
 //-----------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerCLIModule, QString, title, Title);
 CTK_GET_CPP(qSlicerCLIModule, QStringList, categories, Categories);
-CTK_GET_CPP(qSlicerCLIModule, QString, contributor, Contributor);
+CTK_GET_CPP(qSlicerCLIModule, QStringList, contributors, Contributors);
 CTK_GET_CPP(qSlicerCLIModule, int, index, Index);
 CTK_GET_CPP(qSlicerCLIModule, QString, acknowledgementText, Acknowledgement);
 CTK_GET_CPP(qSlicerCLIModule, QImage, logo, Logo);
@@ -148,7 +148,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   // Set properties
   d->Title = QString::fromStdString(desc.GetTitle());
   d->Acknowledgement = QString::fromStdString(desc.GetAcknowledgements());
-  d->Contributor = QString::fromStdString(desc.GetContributor());
+  d->Contributors = QStringList() << QString::fromStdString(desc.GetContributor());
   d->Logo = this->moduleLogoToImage(desc.GetLogo());
   bool ok = false;
   d->Index = QString::fromStdString(desc.GetIndex()).toInt(&ok);

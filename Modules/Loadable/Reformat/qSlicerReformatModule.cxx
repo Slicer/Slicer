@@ -102,9 +102,11 @@ QStringList qSlicerReformatModule::categories()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerReformatModule::contributor()const
+QStringList qSlicerReformatModule::contributors()const
 {
-  return QString("Michael Jeulin-Lagarrigue, Kitware Inc.");
+  QStringList moduleContributors;
+  moduleContributors << QString("Michael Jeulin-Lagarrigue (Kitware Inc.)");
+  return moduleContributors;
 }
 
 //------------------------------------------------------------------------------

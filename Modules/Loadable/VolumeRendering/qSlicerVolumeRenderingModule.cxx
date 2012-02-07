@@ -66,7 +66,7 @@ QString qSlicerVolumeRenderingModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerVolumeRenderingModule::acknowledgementText()const
 {
-  QString acknowledgement = 
+  QString acknowledgement =
     "<center><table border=\"0\"><tr>"
     "<td><img src=\":Logos/NAMIC.png\" alt\"NA-MIC\"></td>"
     "<td><img src=\":Logos/NAC.png\" alt\"NAC\"></td>"
@@ -75,18 +75,22 @@ QString qSlicerVolumeRenderingModule::acknowledgementText()const
     "<td><img src=\":Logos/NCIGT.png\" alt\"NCIGT\"></td>"
     "</tr></table></center>"
     "This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. "
-    "See <a href=\"http://www.slicer.org\">slicer.org</a> for details. ";
+    "See <a href=\"http://www.slicer.org\">slicer.org</a> for details.<br/>"
+    "Some of the transfer functions were contributed by Kitware Inc. (VolView)"
+    ;
   return acknowledgement;
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVolumeRenderingModule::contributor()const
+QStringList qSlicerVolumeRenderingModule::contributors()const
 {
-  return "Julien Finet, Kitware Inc., "
-         "Alex Yarmarkovich, Isomics Inc. (Steve Pieper), "
-         "Yanling Liu, NCI-Frederick/SAIC-Frederick, "
-         "Andreas Freudling, Student Intern at SPL, BWH (Ron Kikinis)."
-         "Some of the transfer functions were contributed by Kitware Inc. (VolView)";
+  QStringList moduleContributors;
+  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  moduleContributors << QString("Yanling Liu (NCI-Frederick/SAIC-Frederick)");
+  moduleContributors << QString("Andreas Freudling (Student Intern at SPL)");
+  moduleContributors << QString("Ron Kikinis (BWH)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------

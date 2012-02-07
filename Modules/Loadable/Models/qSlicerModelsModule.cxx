@@ -100,15 +100,13 @@ QString qSlicerModelsModule::acknowledgementText()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerModelsModule::contributor()const
+QStringList qSlicerModelsModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Daniel Haehn, UPenn");
-  moduleContributors << QString("Nicole Aucoin, SPL");
-  moduleContributors << QString("Kilian Pohl, UPenn");
-  moduleContributors << QString("Yong Zhang");
-  moduleContributors << QString("Wendy Plesniak, SPL");
-  return moduleContributors.join(";");
+  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  moduleContributors << QString("Alex Yarmakovich (Isomics Inc.)");
+  moduleContributors << QString("Nicole Aucoin (SPL)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
