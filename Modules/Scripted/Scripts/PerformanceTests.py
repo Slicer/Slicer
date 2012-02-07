@@ -244,7 +244,7 @@ with point index of {pointIndex}
     cn.SetProperty('default', 'yAxisLabel', 'velocity')
     cn.SetProperty('The other array', 'showLines', 'on')
     cn.SetProperty('The other array', 'showMarkers', 'off')
-    cn.SetProperty('The other array', 'color', '#FF0000')
+    cn.SetProperty('The other array', 'color', '#fe7d20')
 
 
     dn3 = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')

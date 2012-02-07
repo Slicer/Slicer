@@ -113,10 +113,13 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///   "showTitle" - show title "on" or "off"
   ///   "xAxisLabel" - label displayed on the x-axis
   ///   "showXAxisLabel" - show x-axis label "on" or "off"
+  ///   "xAxisType" - type of data on x-axis, "quantitative", "categorical", "date"
   ///   "yAxisLabel" - label displayed on the y-axis
   ///   "showYAxisLabel" - show y-axis label "on" or "off"
+  ///   "yAxisType" - type of data on y-axis, "quantitative", "categorical", "date"
   ///   "showGrid" - show grid "on" or "off"
   ///   "showLegend" - show legend "on" or "off"
+  ///   "lookupTable" - MRMLID of a ColorNode to use to color series
   ///
   /// Array level properties (can be assigned to "default" to apply to
   ///   entire chart)
@@ -125,6 +128,8 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///   "showMarkers" - show markers "on" or "off"
   ///   "color" - color to use for the array lines and points (#RRGGBB)
   ///   "bins" - number of bins to use when building histograms
+  ///   "lookupTable" - MRMLID of a ColorNode to use to color individual 
+  ///         bars in bar chart (useful with categorical data)
   /// 
   void SetProperty(const char *arrname, const char *property, const char *value);
   const char* GetProperty(const char *arrname, const char *property);

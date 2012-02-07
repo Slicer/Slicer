@@ -148,7 +148,7 @@ class LabelStatisticsWidget:
   def onChart(self):
     """chart the label statistics
     """
-    self.logic.createStatsChart()
+    self.logic.createStatsChart(self.labelNode)
 
   def onSave(self):
     """save the label statistics
@@ -263,7 +263,7 @@ class LabelStatisticsLogic:
 
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
 
-  def createStatsChart(self):
+  def createStatsChart(self, labelNode):
     """Make a MRML chart of the current stats
     """
     layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
@@ -281,8 +281,9 @@ class LabelStatisticsLogic:
     samples = len(self.labelStats["Labels"])
     array.SetNumberOfTuples(samples)
     for i in xrange(samples):
-        array.SetComponent(i, 0, i+1)
         index = self.labelStats["Labels"][i]
+        #array.SetComponent(i, 0, i+1)
+        array.SetComponent(i, 0, index)
         array.SetComponent(i, 1, self.labelStats[index,"Mean"])
         array.SetComponent(i, 2, 0)
 
@@ -293,11 +294,15 @@ class LabelStatisticsLogic:
     chartViewNode.SetChartNodeID(chartNode.GetID())
 
     chartNode.SetProperty('default', 'title', 'Label Statistics')
-    chartNode.SetProperty('default', 'xAxisLabel', 'Row Number')
+    chartNode.SetProperty('default', 'xAxisLabel', 'Label')
     chartNode.SetProperty('default', 'yAxisLabel', 'Signal Intensity')
     chartNode.SetProperty('default', 'type', 'Bar');
+    chartNode.SetProperty('default', 'xAxisType', 'categorical')
 
-    chartViewNode.SetChartNodeID(chartNode.GetID())
+    # series level properties
+    if labelNode.GetDisplayNode() != None and labelNode.GetDisplayNode().GetColorNode() != None:
+      chartNode.SetProperty('Mean Intensity', 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
+
 
   def statsAsCSV(self):
     """

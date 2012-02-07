@@ -42,6 +42,7 @@
 #include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLChartNode.h>
 #include <vtkMRMLChartViewNode.h>
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -96,6 +97,7 @@ const char *plotPostscript =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasTextRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.barRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
+  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.categoryAxisRenderer.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
   "</body>"
@@ -284,10 +286,13 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   vtkStringArray *arrayIDs = cn->GetArrays();
   vtkStringArray *arrayNames = cn->GetArrayNames();
 
-  // What type of chart?
+  // What type of chart? What type of axes?
   //
   //
   const char *type = cn->GetProperty("default", "type");
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+  const char *yAxisType = cn->GetProperty("default", "yAxisType");
+
 
   // data to plot - represented in javascript
   //
@@ -302,30 +307,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
     if (dn)
       {
-      double x, y;
-
-      plotData << "[";
-      
-      // for each value
-      for (unsigned int j = 0; j < dn->GetSize(); ++j)
-        {
-        dn->GetXYValue(j, &x, &y);
-        if (false && type && !strcmp(type, "Bar"))
-          {
-          // DISABLED. For bar plots, only take the y coordinate.
-          plotData << QString("%1").arg(y);
-          }
-        else
-          {
-          plotData << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
-          }
-        if (j < dn->GetSize()-1)
-          {
-          plotData << ",";
-          }
-        }
-
-      plotData<< "]";
+      // convert the data array into a string
+      plotData << this->seriesDataString(dn);
 
       if (idx < arrayIDs->GetNumberOfValues()-1)
         {
@@ -336,7 +319,6 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   plotData << "];";
   
-
   // properties for the plot - represented in javascript
   //
   //
@@ -357,14 +339,21 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     plotOptions << ", title: '" << title << "'";
     }
 
-  // jqplot bar charts (BarRenderer) was designed for categorical
+  // jqplot bar charts (BarRenderer) were designed for categorical
   // data.  For numeric x-axis data, the bar widths are calculated
   // incorrectly. But if the bar charts are set to be "stacked", then
   // bar widths are calculated properly. Defaulting to stacked bar
   // charts for now.  May write our own renderer for the types of bar
   // charts we want.
-  if (type && !strcmp(type, "Bar"))
+  //
+  // Note that this also affects how varyBarColors
+  // works. varyBarColors is disabled for stacked bar charts. So you
+  // can only assign a color node to noncategorical data.
+  if (type && !strcmp(type, "Bar") 
+      && (!xAxisType || (xAxisType && strcmp(xAxisType, "categorical"))))
     {
+    // use stacking for "quantitative" and "date", note only testing
+    // against not "categorical"
     plotOptions << ", stackSeries: true";
     }
   
@@ -390,10 +379,10 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       {
       plotOptions << "xaxis: {label: '" << xAxisLabel << "'";
       plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
-      // if (type && !strcmp(type, "Bar"))
-      //   {
-      //   plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
-      //   }
+      if (xAxisType && !strcmp(xAxisType, "categorical"))
+        {
+        plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
+        }
       plotOptions << "}";
       if (showy)
         {
@@ -403,7 +392,12 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     if (showy)
       {
       plotOptions << "yaxis: {label: '" << yAxisLabel << "'";
-      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer}";
+      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      if (yAxisType && !strcmp(yAxisType, "categorical"))
+        {
+        plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
+        }
+      plotOptions << "}";
       }
     plotOptions << "}";
     }
@@ -433,6 +427,25 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     plotOptions << ", legend: {show: false}";
     }
 
+  // Use a default set of colors defined by Slicer or specified by the
+  // chart node. Later, when defining each series and if we are
+  // displaying a bar chart, we will look for a lookup table assigned
+  // to the array and use that with "varyBarColor". We define the
+  // seriesColors here for line charts to work. If seriesColors is
+  // defined in seriesDefaults, then only bar charts observe it.
+  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID("vtkMRMLColorTableNodeFileGenericChartColors.txt"));
+  vtkMRMLColorNode *colorNode = defaultColorNode;
+  const char *lookupTable = cn->GetProperty("default", "lookupTable");
+  if (lookupTable)
+    {
+    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
+    }
+  
+  if (colorNode)
+    {
+    plotOptions << ", seriesColors: " << this->seriesColorsString(colorNode);
+    }
+                                                                
   // default properties for a series
   //
   //
@@ -453,7 +466,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   if (type && !strcmp(type, "Bar"))
     {
     plotOptions << ", renderer: $.jqplot.BarRenderer";
-    plotOptions << ", rendererOptions: {barWidth: null, fillToZero: true}";
+    plotOptions << ", rendererOptions: {barWidth: null, fillToZero: true, varyBarColor: true, useNegativeColors: false}";
     }
 
   // markers
@@ -480,10 +493,9 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     plotOptions << ", showLine: false";
     }
 
-  // end of seriesDefaults properties
-  plotOptions << "}";
+   // end of seriesDefaults properties
+   plotOptions << "}";
   
-
   // series level properties
   //
   //
@@ -527,6 +539,22 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     if (color)
       {
       plotOptions << ", color: '" << color << "'";
+      }
+
+    // seriesColors, only use for bar (and pie?)
+    if (type && !strcmp(type, "Bar"))
+      {
+      const char *seriesLookupTable = cn->GetProperty(arrayName.c_str(), "lookupTable");
+      if (seriesLookupTable)
+        {
+        vtkMRMLColorNode *seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
+        vtkMRMLDoubleArrayNode *arrayNode = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID(arrayIDs->GetValue(idx).c_str()));
+        if (seriesColorNode)
+          {
+          plotOptions << ", seriesColors: "
+                      << this->seriesColorsString(seriesColorNode, arrayNode);
+          }
+        }
       }
 
     // end of a series
@@ -618,6 +646,97 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // slots in this Qt object, e.g. onDataPointClicked()
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
 
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesColorsString(vtkMRMLColorNode *colorNode)
+{
+  QStringList seriesColors;
+
+  seriesColors << "[";
+
+  if (colorNode)
+    {
+    double c[4];
+    QColor qc;
+    QString sc;
+    
+    for (int i=0; i < colorNode->GetNumberOfColors(); ++i)
+      {
+      colorNode->GetColor(i, c);
+      qc.setRgbF(c[0], c[1], c[2]);
+      seriesColors << "'" << qc.name() << "'";
+      if (i < colorNode->GetNumberOfColors()-1)
+        {
+        seriesColors << ", ";
+        }
+      }
+    }
+  
+  seriesColors << "]";
+
+  return seriesColors.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesColorsString(vtkMRMLColorNode *colorNode, vtkMRMLDoubleArrayNode *arrayNode)
+{
+  QStringList seriesColors;
+
+  seriesColors << "[";
+
+  if (colorNode)
+    {
+    double c[4], x, y;
+    QColor qc;
+    QString sc;
+    
+    // Loop over the values in the array and lookup their color from
+    // the colortable
+    for (unsigned int i=0; i < arrayNode->GetSize(); ++i)
+      {
+      arrayNode->GetXYValue(i, &x, &y);
+      colorNode->GetColor(x, c);
+      qc.setRgbF(c[0], c[1], c[2]);
+      seriesColors << "'" << qc.name() << "'";
+      if (i < arrayNode->GetSize()-1)
+        {
+        seriesColors << ", ";
+        }
+      }
+    }
+  
+  seriesColors << "]";
+
+  return seriesColors.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      data << "[" << QString("%1").arg(x) << ", " << QString("%1").arg(y) << "]";
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
 }
 
 //---------------------------------------------------------------------------

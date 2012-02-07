@@ -17,6 +17,8 @@ class ctkPopupWidget;
 class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLChartViewNode;
 class vtkMRMLChartNode;
+class vtkMRMLColorNode;
+class vtkMRMLDoubleArrayNode;
 class vtkObject;
 
 //-----------------------------------------------------------------------------
@@ -51,6 +53,24 @@ public slots:
 
 protected:
   void initDisplayableManagers();
+
+  // Convert the colors in a color node to a string that can be used
+  // as the "seriesColors" field for the chart. This is used to assign
+  // colors to multiple series.
+  QString seriesColorsString(vtkMRMLColorNode *);
+
+  // Convert the colors in ta color node to a string that can be used
+  // as the "seriesColors" field for a specific series.  This requires
+  // evaluating the lookup table for the values (X component) actually
+  // used in the order they are used. This method is only used with
+  // bar (and pie?)  charts to color each bar of series a different
+  // color.
+  QString seriesColorsString(vtkMRMLColorNode*, vtkMRMLDoubleArrayNode*);
+
+  // Convert a data array into a string that can be passed as the data
+  // for a series.
+  QString seriesDataString(vtkMRMLDoubleArrayNode*);
+  
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
