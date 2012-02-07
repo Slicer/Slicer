@@ -1,6 +1,6 @@
 import unittest
 
-class qSlicer@MODULENAME@ModuleTest1(unittest.TestCase):
+class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
   
   def setUp(self):
     import slicer

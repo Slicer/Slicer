@@ -17,9 +17,9 @@ macro(SlicerMacroConfigureGenericPythonModuleTests MODULENAMES TEST_SCRIPTS_OUTP
     # Note: The variables MODULENAME and MODULENAME_LC are used to
     #       configure the different test scripts.
     string(TOLOWER ${MODULENAME} MODULENAME_LC)
-    set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}ModuleTest1.py)
+    set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}ModuleGenericTest.py)
     configure_file(
-      ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR}/qSlicerModuleTest1.py.in
+      ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR}/qSlicerModuleGenericTest.py.in
       ${configured_test_src}
       @ONLY
       )
