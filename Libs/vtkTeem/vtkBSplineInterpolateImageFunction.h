@@ -25,7 +25,8 @@
 #include "vtkImplicitFunction.h"
 #include "vtkTeemConfigure.h"
 
-#include <vtkstd/vector>  /// for the buffer
+// STD includes
+#include <vector>  /// for the buffer
 
 #define VTK_INTEGRATE_MAJOR_EIGENVECTOR  0
 #define VTK_INTEGRATE_MEDIUM_EIGENVECTOR 1

@@ -45,8 +45,9 @@
 #include "vtkKWTkUtilities.h"
 #include "vtkKWInternationalization.h"
 
-#include <vtksys/stl/string>
-#include <vtksys/ios/sstream> 
+// STD includes
+#include <sstream> 
+#include <string>
 
 #define VTK_KW_VPW_INTERPOLATION_LINEAR     "Linear"
 #define VTK_KW_VPW_INTERPOLATION_NEAREST    "Nearest"
@@ -270,7 +271,7 @@ void vtkSlicerVolumePropertyWidget::CreateWidget()
 
   this->Superclass::CreateWidget();
 
-  vtksys_ios::ostringstream tk_cmd;
+  std::ostringstream tk_cmd;
   int label_width = 12;
   int menu_width = 6;
   char command[256];
@@ -644,7 +645,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
     }
 
 
-  vtksys_ios::ostringstream tk_cmd;
+  std::ostringstream tk_cmd;
 
   // Pack the frame
 
@@ -667,7 +668,7 @@ void vtkSlicerVolumePropertyWidget::Pack()
   const char *pad = " -padx 2 -pady 2";
   const char *pad_ed = " -padx 2 -pady 3";
   
-  vtksys_stl::string in_frame(" -in ");
+  std::string in_frame(" -in ");
   in_frame += frame->GetWidgetName();
 
   /*
@@ -865,7 +866,7 @@ void vtkSlicerVolumePropertyWidget::Update()
 
   char hist_name[1024];
       
-  vtksys_ios::ostringstream tk_cmd;
+  std::ostringstream tk_cmd;
 
   // In the dependent case, everything is in the component 0
 

@@ -447,9 +447,9 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
     dir.Load(moveFromDir.c_str());
     vtkDebugMacro("WriteData: tempdir " << moveFromDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
     size_t fileNum;
-    vtksys_stl::vector<vtksys_stl::string> targetPathComponents;
+    std::vector<std::string> targetPathComponents;
     vtksys::SystemTools::SplitPath(targetDir.c_str(), targetPathComponents);
-    vtksys_stl::vector<vtksys_stl::string> sourcePathComponents;
+    std::vector<std::string> sourcePathComponents;
     vtksys::SystemTools::SplitPath(moveFromDir.c_str(), sourcePathComponents);
     for (fileNum = 0; fileNum <  dir.GetNumberOfFiles(); ++fileNum)
       {
@@ -616,7 +616,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   this->ResetFileNameList();
   
   // make a new dir to write temporary stuff out to
-//  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+//  std::vector<std::string> pathComponents;
   // get the base dir of the destination
   /*
   // get the cache dir and make a subdir in it.
@@ -632,8 +632,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
   */
   // get the original directory
-  vtksys_stl::string originalDir = vtksys::SystemTools::GetParentDirectory(oldName.c_str());
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::string originalDir = vtksys::SystemTools::GetParentDirectory(oldName.c_str());
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
   // add a temp dir to it
   pathComponents.push_back(std::string("TempWrite"));
@@ -688,8 +688,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   // take the archetype and temp dir off of the path
   pathComponents.pop_back();
   pathComponents.pop_back();
-  vtksys_stl::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
-  vtksys_stl::string relativePath;
+  std::string localDirectory = vtksys::SystemTools::JoinPath(pathComponents);
+  std::string relativePath;
   
   if (this->IsFilePathRelative(localDirectory.c_str()))
     {
@@ -704,7 +704,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
       // use the scene's root dir, all the files in the list will be
       // relative to it (the relative path is how you go from the root dir to
       // the dir in which the volume is saved)
-      vtksys_stl::string rootDir = volNode->GetScene()->GetRootDirectory();
+      std::string rootDir = volNode->GetScene()->GetRootDirectory();
       if (rootDir.length() != 0 &&
           rootDir.find_last_of("/") == rootDir.length() - 1)
         {
@@ -752,15 +752,15 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     }
   vtkDebugMacro("UpdateFileList: using prefix of relative path '" << relativePath.c_str() << "'");
   // now get ready to join the relative path to thisFile
-  vtksys_stl::vector<vtksys_stl::string> relativePathComponents;
+  std::vector<std::string> relativePathComponents;
   vtksys::SystemTools::SplitPath(relativePath.c_str(), relativePathComponents);
 
   // make sure that the archetype is added first! AddFile when it gets to it
   // in the dir will not add a duplicate
-  vtksys_stl::string newArchetype = vtksys::SystemTools::GetFilenameName(tempName.c_str());
+  std::string newArchetype = vtksys::SystemTools::GetFilenameName(tempName.c_str());
   vtkDebugMacro("Stripped archetype = " << newArchetype.c_str());
   relativePathComponents.push_back(newArchetype);
-  vtksys_stl::string relativeArchetypeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+  std::string relativeArchetypeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
   vtkDebugMacro("Relative archetype = " << relativeArchetypeFile.c_str());
   relativePathComponents.pop_back();
   this->AddFileName(relativeArchetypeFile.c_str());
@@ -783,7 +783,7 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
       // at this point, the file name is bare of a directory, turn it into a
       // relative path from the original archetype
       relativePathComponents.push_back(thisFile);
-      vtksys_stl::string relativeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
+      std::string relativeFile =  vtksys::SystemTools::JoinPath(relativePathComponents);
       relativePathComponents.pop_back();
       vtkDebugMacro("UpdateFileList: " << fileNum << ", using relative file name " << relativeFile.c_str());
       this->AddFileName(relativeFile.c_str());

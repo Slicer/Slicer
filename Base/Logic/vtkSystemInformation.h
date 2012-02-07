@@ -7,8 +7,11 @@
 // VTK includes
 #include <vtkObject.h>
 
+// VTKSYS includes
 #include <vtksys/SystemInformation.hxx>
-#include <vtksys/stl/string>
+
+// STD includes
+#include <string>
 
 class VTK_SLICER_BASE_LOGIC_EXPORT vtkSystemInformation : public vtkObject
 {
@@ -56,7 +59,7 @@ public:
   void RunOSCheck();
   void RunMemoryCheck();
 
-  protected:
+protected:
 
   vtkSystemInformation();
   virtual ~vtkSystemInformation();
@@ -66,7 +69,7 @@ public:
   //private:
 
   vtksys::SystemInformation SystemInformation;
-  vtksys_stl::string StringHolder;
+  std::string StringHolder;
 
 };
 #endif

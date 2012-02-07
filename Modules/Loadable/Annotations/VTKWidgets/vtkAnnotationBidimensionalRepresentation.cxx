@@ -2,9 +2,6 @@
 // AnnotationModule/VTKWidgets includes
 #include "VTKWidgets/vtkAnnotationBidimensionalRepresentation.h"
 
-// VTKSYS includes
-#include <vtksys/ios/sstream>
-
 // VTK includes
 #include <vtkAxisActor2D.h>
 #include <vtkCellArray.h>
@@ -15,6 +12,9 @@
 #include <vtkRenderer.h>
 #include <vtkTextMapper.h>
 #include <vtkWindow.h>
+
+// STD includes
+#include <sstream>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkAnnotationBidimensionalRepresentation);
@@ -120,7 +120,7 @@ void vtkAnnotationBidimensionalRepresentation::BuildRepresentation()
         }
 
       }
-    vtksys_ios::ostringstream label;
+    std::ostringstream label;
     if (this->IDInitialized)
       {
       label << this->ID << ": ";

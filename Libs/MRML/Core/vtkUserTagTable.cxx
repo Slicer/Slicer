@@ -88,7 +88,7 @@ int vtkUserTagTable::AddKeywordValuePair ( const char *keyword, void *value)
 
   if ( this->TagTable && keyword != NULL )
     {
-      vtksys_stl::stringstream ss;
+      std::stringstream ss;
     if ( value != NULL )
       {
       ss << value;
@@ -162,7 +162,7 @@ int vtkUserTagTable::GetKeywordColumn ( const char* keyword )
   char * returnString = NULL;
   const char *val;
   vtkVariant d;
-  vtksys_stl::string s;
+  std::string s;
 
   if ( this->TagTable )
     {
@@ -189,7 +189,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
   char * returnString = NULL;
   const char *val;
   vtkVariant d;
-  vtksys_stl::string ss;
+  std::string ss;
 
   if ( this->TagTable )
     {
@@ -222,7 +222,7 @@ const char * vtkUserTagTable::GetUserTagValue ( const char* keyword)
 {
   if ( this->TagTable )
     {
-    vtksys_stl::stringstream ss;
+    std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
       {
@@ -278,7 +278,7 @@ int vtkUserTagTable::DeleteKeywordValuePair ( const char *keyword  )
 {
   if ( this->TagTable )
     {
-    vtksys_stl::stringstream ss;
+    std::stringstream ss;
     int numcols = this->TagTable->GetNumberOfColumns();
     for ( int i=0; i < numcols; i++ )
       {

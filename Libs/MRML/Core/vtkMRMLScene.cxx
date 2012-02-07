@@ -980,11 +980,11 @@ int vtkMRMLScene::LoadIntoScene(vtkCollection* nodeCollection)
 
   if ( this->RootDirectory[0] != '\0' )
     {
-    this->RootDirectory = this->RootDirectory + vtksys_stl::string("/");
+    this->RootDirectory = this->RootDirectory + std::string("/");
     }
   else
     {
-    this->RootDirectory = vtksys_stl::string("./");
+    this->RootDirectory = std::string("./");
     }
   vtkMRMLParser* parser = vtkMRMLParser::New();
   parser->SetMRMLScene(this);
@@ -2775,7 +2775,7 @@ int vtkMRMLScene::IsFilePathRelative(const char * filepath)
       }
     }
 
-  vtksys_stl::vector<vtksys_stl::string> components;
+  std::vector<std::string> components;
   vtksys::SystemTools::SplitPath((const char*)filepath, components);
   if (components[0] == "")
     {

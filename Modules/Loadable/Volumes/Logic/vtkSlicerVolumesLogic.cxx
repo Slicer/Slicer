@@ -159,8 +159,8 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddHeaderVolume (const char* filename,
     {
     if (volname == NULL)
       {
-      const vtksys_stl::string fname(filename);
-      vtksys_stl::string baseName = vtksys::SystemTools::GetFilenameName(fname);
+      const std::string fname(filename);
+      std::string baseName = vtksys::SystemTools::GetFilenameName(fname);
       std::string uname = this->GetMRMLScene()->GetUniqueNameByString(baseName.c_str());
       volumeNode->SetName(uname.c_str());
       }
@@ -313,8 +313,8 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
 
   if (volname == NULL)
     {
-    const vtksys_stl::string fname(filename);
-    vtksys_stl::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+    const std::string fname(filename);
+    std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
     std::string uname = this->GetMRMLScene()->GetUniqueNameByString(basename.c_str());
     scalarNode->SetName(uname.c_str());
     }
@@ -466,7 +466,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     }
   else
     {
-    const vtksys_stl::string fname(filename);
+    const std::string fname(filename);
     volumeName = vtksys::SystemTools::GetFilenameName(fname);
     }
   // now set all the volume names, before add the volumes to the scene

@@ -300,7 +300,7 @@ std::vector< std::string > vtkCacheManager::GetAllCachedFiles ( )
 int vtkCacheManager::GetCachedFileList ( const char *dirname )
 {
 
-//  vtksys_stl::string convdir = vtksys::SystemTools::ConvertToOutputPath ( dirname );
+//  std::string convdir = vtksys::SystemTools::ConvertToOutputPath ( dirname );
   if ( vtksys::SystemTools::FileIsDirectory ( dirname ) )
     {
     vtksys::Directory dir;
@@ -314,7 +314,7 @@ int vtkCacheManager::GetCachedFileList ( const char *dirname )
         if (strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".") &&
             strcmp(dir.GetFile(static_cast<unsigned long>(fileNum)),".."))
           {
-          vtksys_stl::string fullName = dirname;
+          std::string fullName = dirname;
           //--- add backslash to end if not present.
           if ( ( fullName.rfind ( "/", 0 )) != (fullName.size()-1) )
             {
@@ -358,7 +358,7 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
     {
     return "(null)";
     }
-  vtksys_stl::string kwInString = vtksys_stl::string(uri);
+  std::string kwInString = std::string(uri);
   // encode %
   vtksys::SystemTools::ReplaceString(kwInString,
                                      "%", "%25");
@@ -393,10 +393,10 @@ const char* vtkCacheManager::EncodeURI ( const char *uri )
 //----------------------------------------------------------------------------
 const char* vtkCacheManager::AddCachePathToFilename ( const char *filename )
 {
-  vtksys_stl::string cachedir ( this->GetRemoteCacheDirectory() );
+  std::string cachedir ( this->GetRemoteCacheDirectory() );
   if ( cachedir.c_str() != NULL )
     {
-    vtksys_stl::string ret = cachedir;
+    std::string ret = cachedir;
     ret += "/";
     ret += filename;
 
@@ -437,9 +437,9 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
     return (mapcheck);
     }
 
-  vtksys_stl::string kwInString = vtksys_stl::string(uri);
+  std::string kwInString = std::string(uri);
 
-  vtksys_stl::string::size_type loc = kwInString.find ( "?" );
+  std::string::size_type loc = kwInString.find ( "?" );
   if ( loc != kwInString.npos  )
     {
     kwInString = kwInString.substr (0, loc );
@@ -467,18 +467,18 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
 
   //--- Now strip off all the uri prefix (does this work?)
 
-  vtksys_stl::string newFileName;
-  vtksys_stl::string fileName;
-  vtksys_stl::string baseName;
-  vtksys_stl::string extensionName;
-  vtksys_stl::string tmpName = vtksys::SystemTools::GetFilenameName ( kwInString );
-  vtksys_stl::string versionExtension;
+  std::string newFileName;
+  std::string fileName;
+  std::string baseName;
+  std::string extensionName;
+  std::string tmpName = vtksys::SystemTools::GetFilenameName ( kwInString );
+  std::string versionExtension;
 
   vtkDebugMacro("GetFilenameFromURI: got fileName name " << tmpName.c_str());
 
   //--- Now check for trailing version numbers.
-//  vtksys_stl::string::size_type found = tmpName.find_first_of ( ".");
-  vtksys_stl::string::size_type found = tmpName.find_last_of ( ".");
+//  std::string::size_type found = tmpName.find_first_of ( ".");
+  std::string::size_type found = tmpName.find_last_of ( ".");
   if ( found != tmpName.npos )
     {
     //--- save the extension_version and baseName.
@@ -511,7 +511,7 @@ const char* vtkCacheManager::GetFilenameFromURI ( const char *uri )
     {
     vtkErrorMacro("GetFilenameFromURI: remote cache dir is not set! The file will appear in the current working dir.");
     }
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath( this->GetRemoteCacheDirectory(), pathComponents);
   pathComponents.push_back ( newFileName );
   fileName = vtksys::SystemTools::JoinPath ( pathComponents );
@@ -635,7 +635,7 @@ int vtkCacheManager::ClearCacheCheck()
   // check to see how many files are in it.
   // if more than... 0? invoke CacheDirtyEvent.
   //
-  vtksys_stl::string cachedir = this->GetRemoteCacheDirectory();
+  std::string cachedir = this->GetRemoteCacheDirectory();
   if ( cachedir.c_str() != NULL )
     {
     unsigned long numFiles = vtksys::Directory::GetNumberOfFilesInDirectory( cachedir.c_str() );
@@ -963,7 +963,7 @@ const char* vtkCacheManager::FindCachedFile ( const char * target, const char *d
           }
         //--- does the file or directory match the target with full path?
         //--- add backslash if missing
-        vtksys_stl::string fullName = dirname;
+        std::string fullName = dirname;
         if ( ( fullName.rfind ( "/", 0 )) != (fullName.size()-1) )
           {
           fullName += "/";

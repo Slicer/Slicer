@@ -335,12 +335,12 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
 
   vtkDebugMacro("Zip: zipFileName = " << zipFileName << ", temp dir = " << tempDir);
 
-  vtksys_stl::string archiveFileName;
-  vtksys_stl::string newName;
+  std::string archiveFileName;
+  std::string newName;
   if (!zipFileName)
     {
     // use the current URL as a base
-    vtksys_stl::string url = this->GetMRMLScene()->GetURL();
+    std::string url = this->GetMRMLScene()->GetURL();
     if (url != "")
       {
       // use the url without the file path or extension
@@ -354,7 +354,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     }
   else
     {
-    newName = vtksys_stl::string(zipFileName);
+    newName = std::string(zipFileName);
     }
 
   // does the name have a .zip extension?
@@ -362,7 +362,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   if (pos == std::string::npos)
     {
     // append .zip to the end of the name
-    newName += vtksys_stl::string(".zip");
+    newName += std::string(".zip");
     vtkWarningMacro("Zip: Adding missing .zip to end of input file name, new name = " << newName.c_str());
     }
   // check the LibArchive version since .zip is only supported after 2.8.4,
@@ -387,7 +387,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     }
   else
     {
-    vtksys_stl::vector<vtksys_stl::string> archivePathComponents;
+    std::vector<std::string> archivePathComponents;
     vtksys::SystemTools::SplitPath(tempDir, archivePathComponents);
     archivePathComponents.push_back(newName);
     archiveFileName = vtksys::SystemTools::JoinPath(archivePathComponents);
@@ -408,8 +408,8 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
     }
 
   // zip things up in a folder with the name of the archive file
-  vtksys_stl::string rootDir = vtksys::SystemTools::GetParentDirectory(archiveFileName.c_str());
-  vtksys_stl::vector<vtksys_stl::string> rootPathComponents;
+  std::string rootDir = vtksys::SystemTools::GetParentDirectory(archiveFileName.c_str());
+  std::vector<std::string> rootPathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), rootPathComponents);
   // GetFilenameWithoutExtension just returns the file name without path, add
   // it to the end of the parent dir
@@ -443,7 +443,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   zipScene->SetRootDirectory(rootDir.c_str());
 
   // put the mrml scene file in the new directory
-  vtksys_stl::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(newName) + vtksys_stl::string(".mrml");
+  std::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(newName) + std::string(".mrml");
   rootPathComponents.push_back(urlStr);
   urlStr =  vtksys::SystemTools::JoinPath(rootPathComponents);
   zipScene->SetURL(urlStr.c_str());
@@ -451,10 +451,10 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   vtkDebugMacro("Zip: set new scene url to " << zipScene->GetURL());
 
   // create a data directory
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
   pathComponents.push_back("Data");
-  vtksys_stl::string dataDir =  vtksys::SystemTools::JoinPath(pathComponents);
+  std::string dataDir =  vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("Zip: using data dir of " << dataDir);
 
   // create the data dir
@@ -520,10 +520,10 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
             if (vtksys::SystemTools::FileExists(snode->GetFileName(), true))
               {
               vtkWarningMacro("Zip: file " << snode->GetFileName() << " already exists, renaming!");
-              vtksys_stl::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(snode->GetFileName());
-              vtksys_stl::string ext = vtksys::SystemTools::GetFilenameExtension(snode->GetFileName());
+              std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(snode->GetFileName());
+              std::string ext = vtksys::SystemTools::GetFilenameExtension(snode->GetFileName());
               bool uniqueName = false;
-              vtksys_stl::string uniqueFileName;
+              std::string uniqueFileName;
               int v = 1;
               while (!uniqueName)
                 {
@@ -670,7 +670,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   dirEntry = archive_entry_new();
   archive_entry_set_mtime(dirEntry, 11, 110);
   // want just the subdir and Data for the relative dir name in the archive
-  vtksys_stl::string relativeDataDir = vtksys::SystemTools::RelativePath(rootDir.c_str(), dataDir.c_str());
+  std::string relativeDataDir = vtksys::SystemTools::RelativePath(rootDir.c_str(), dataDir.c_str());
   vtkDebugMacro("Zip: Adding data dir to .zip file: " << relativeDataDir);
   archive_entry_copy_pathname(dirEntry, relativeDataDir.c_str());
   archive_entry_set_mode(dirEntry, S_IFDIR | 0755);
@@ -763,10 +763,10 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
     vtkErrorMacro("SaveSceneToSlicerDataBundleDirectory: given directory name is not actually a directory, try again!" << sdbDir);
     return NULL;
     }
-  vtksys_stl::string rootDir = vtksys_stl::string(sdbDir);
+  std::string rootDir = std::string(sdbDir);
   vtkDebugMacro("SaveSceneToSlicerDataBundleDirectory: Using root dir of " << rootDir);
   // need the components to build file names
-  vtksys_stl::vector<vtksys_stl::string> rootPathComponents;
+  std::vector<std::string> rootPathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), rootPathComponents);
 
   // remove the directory if it does exist
@@ -795,7 +795,7 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
   sdbScene->SetRootDirectory(rootDir.c_str());
 
   // put the mrml scene file in the new directory
-  vtksys_stl::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(rootDir.c_str()) + vtksys_stl::string(".mrml");
+  std::string urlStr = vtksys::SystemTools::GetFilenameWithoutExtension(rootDir.c_str()) + std::string(".mrml");
   rootPathComponents.push_back(urlStr);
   urlStr =  vtksys::SystemTools::JoinPath(rootPathComponents);
   sdbScene->SetURL(urlStr.c_str());
@@ -803,10 +803,10 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
   vtkDebugMacro("SaveSceneToSlicerDataBundleDirectory: set new scene url to " << sdbScene->GetURL());
 
   // create a data directory
-  vtksys_stl::vector<vtksys_stl::string> pathComponents;
+  std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(rootDir.c_str(), pathComponents);
   pathComponents.push_back("Data");
-  vtksys_stl::string dataDir =  vtksys::SystemTools::JoinPath(pathComponents);
+  std::string dataDir =  vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("SaveSceneToSlicerDataBundleDirectory: using data dir of " << dataDir);
 
   // create the data dir
@@ -872,10 +872,10 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
             if (vtksys::SystemTools::FileExists(snode->GetFileName(), true))
               {
               vtkWarningMacro("SaveSceneToSlicerDataBundleDirectory: file " << snode->GetFileName() << " already exists, renaming!");
-              vtksys_stl::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(snode->GetFileName());
-              vtksys_stl::string ext = vtksys::SystemTools::GetFilenameExtension(snode->GetFileName());
+              std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(snode->GetFileName());
+              std::string ext = vtksys::SystemTools::GetFilenameExtension(snode->GetFileName());
               bool uniqueName = false;
-              vtksys_stl::string uniqueFileName;
+              std::string uniqueFileName;
               int v = 1;
               while (!uniqueName)
                 {
@@ -944,8 +944,8 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
 {
 
   // build up the vector
-  vtksys_stl::vector<vtksys_stl::string> filesVector;
-  vtksys_stl::vector<vtksys_stl::string> filesToLoad;
+  std::vector<std::string> filesVector;
+  std::vector<std::string> filesToLoad;
   //filesVector.push_back(""); // for relative path
 
 // Didn't port this next block of code yet.  Would need to add a
@@ -975,12 +975,12 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
   // Get the list of parameter sets in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
     {
-    vtksys_stl::string dirString = directories[d];
+    std::string dirString = directories[d];
     //vtkDebugMacro("\nLoadDefaultParameterSets: checking for parameter sets in dir " << d << " = " << dirString.c_str());
 
     filesVector.clear();
     filesVector.push_back(dirString);
-    filesVector.push_back(vtksys_stl::string("/"));
+    filesVector.push_back(std::string("/"));
 
 #ifdef WIN32
     WIN32_FIND_DATA findData;
@@ -997,7 +997,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
         {
         // add this file to the vector holding the base dir name so check the
         // file type using the full path
-        filesVector.push_back(vtksys_stl::string(findData.cFileName));
+        filesVector.push_back(std::string(findData.cFileName));
 #else
     DIR *dp;
     struct dirent *dirp;
@@ -1010,10 +1010,10 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
       while ((dirp = readdir(dp)) != NULL)
         {
         // add this file to the vector holding the base dir name
-        filesVector.push_back(vtksys_stl::string(dirp->d_name));
+        filesVector.push_back(std::string(dirp->d_name));
 #endif
 
-        vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
+        std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
         int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
         if (fileType == vtksys::SystemTools::FileTypeText)
           {
@@ -1046,7 +1046,7 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
   std::string rootdir = scene->GetRootDirectory();
 
   // Finally, load each of the parameter sets
-  vtksys_stl::vector<vtksys_stl::string>::iterator fit;
+  std::vector<std::string>::iterator fit;
   for (fit = filesToLoad.begin(); fit != filesToLoad.end(); ++fit)
     {
     scene->SetURL( (*fit).c_str() );

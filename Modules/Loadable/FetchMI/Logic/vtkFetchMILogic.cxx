@@ -704,7 +704,7 @@ int vtkFetchMILogic::RequestStorableNodesUpload ( )
       //--- invoke event that user sees if something goes wrong.
       //---
       const char *snodeFileName = storageNode->GetFileName();
-      vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName ( snodeFileName );
+      std::string vtkFileName = vtksys::SystemTools::GetFilenameName ( snodeFileName );
       const char *strippedFileName = vtkFileName.c_str();
       retval = this->WriteMetadataForUpload(nodeID.c_str());
       if ( retval == 0 )
@@ -915,7 +915,7 @@ int vtkFetchMILogic::RequestSceneUpload ( )
     //--- write header and metadata
     //---
     const char *sceneFileName =this->GetMRMLScene()->GetURL();
-    vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (  sceneFileName );
+    std::string vtkFileName = vtksys::SystemTools::GetFilenameName (  sceneFileName );
     const char *strippedFileName = vtkFileName.c_str();
     int retval = this->WriteMetadataForUpload("MRMLScene");
     if (retval == 0 )
@@ -4417,10 +4417,10 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
   if ( this->SceneSelected )
     {
     //--- save in case we need to restore.
-    vtksys_stl::string sceneFileName = this->GetMRMLScene()->GetURL();
+    std::string sceneFileName = this->GetMRMLScene()->GetURL();
 
 
-    vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (sceneFileName );
+    std::string vtkFileName = vtksys::SystemTools::GetFilenameName (sceneFileName );
     const char *mrmlFileName = vtkFileName.c_str();
     if ( mrmlFileName== NULL || (!strcmp(mrmlFileName, "" )) )
       {
@@ -4431,7 +4431,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
     // addthe mrml file
     pathComponents.push_back(mrmlFileName);
     // set the new url
-    vtksys_stl::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
+    std::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
     mrmlFileName = tmp.c_str();
     vtkDebugMacro("vtkFetchMILogic::SetCacheFileNamesOnSelectedResources setting scene url to " << mrmlFileName);
     this->GetMRMLScene()->SetURL(mrmlFileName);
@@ -4486,9 +4486,9 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
           // {
           //--- Set Filename to be cachedir/filename
           // get out the file name and save in case we need to restore.
-          vtksys_stl::string nodeFileName = storageNode->GetFileName();
+          std::string nodeFileName = storageNode->GetFileName();
 
-          vtksys_stl::string vtkFileName = vtksys::SystemTools::GetFilenameName (nodeFileName );
+          std::string vtkFileName = vtksys::SystemTools::GetFilenameName (nodeFileName );
           const char *filename = vtkFileName.c_str();
 
           // add the file name to the cache dir
@@ -4496,7 +4496,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
           pathComponents.push_back(filename);
           // set it
           vtkDebugMacro("SetCacheFileNamesOnSelectedResources setting file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to storage node " << storageNode->GetID());
-          vtksys_stl::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
+          std::string tmp = vtksys::SystemTools::JoinPath(pathComponents);
           storageNode->SetFileName( tmp.c_str() );
 
           //--- add both old and new filenames as a pair, in case we need to restore.
@@ -4512,7 +4512,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
           orig.clear();
           for (int filenum = 0; filenum < storageNode->GetNumberOfFileNames(); filenum++)
             {
-            vtksys_stl::string nthFilename = storageNode->GetNthFileName(filenum);
+            std::string nthFilename = storageNode->GetNthFileName(filenum);
             vtkFileName = vtksys::SystemTools::GetFilenameName(nthFilename);
             //--- save in case we need to restore.
             //--- add with path.
@@ -4522,7 +4522,7 @@ void vtkFetchMILogic::SetCacheFileNamesOnSelectedResources ( )
             pathComponents.pop_back();
             pathComponents.push_back(nthFilename);
             vtkDebugMacro("SetCacheFileNamesOnSelectedResources adding file name " << vtksys::SystemTools::JoinPath(pathComponents).c_str() << " to list of new file names");
-            vtksys_stl::string ttmp = vtksys::SystemTools::JoinPath(pathComponents);
+            std::string ttmp = vtksys::SystemTools::JoinPath(pathComponents);
             CacheFileNameList.push_back(ttmp.c_str());
             }
           // reset the file list
@@ -4710,10 +4710,10 @@ int  vtkFetchMILogic::PostStorableNodes()
 
   //--- get the cache directory.
   // get the cache dir
-  vtksys_stl::string dummy = "dummy.txt";
-  vtksys_stl::vector<std::string> pathComponents;
-  vtksys_stl::string nodeFileName;
-  vtksys_stl::string vtkFileName;
+  std::string dummy = "dummy.txt";
+  std::vector<std::string> pathComponents;
+  std::string nodeFileName;
+  std::string vtkFileName;
 
   vtksys::SystemTools::SplitPath( this->GetMRMLScene()->GetCacheManager()->GetRemoteCacheDirectory(), pathComponents);
   pathComponents.push_back(dummy.c_str());
@@ -4750,7 +4750,7 @@ int  vtkFetchMILogic::PostStorableNodes()
 
           vtkFileName = vtksys::SystemTools::GetFilenameName (storageNode->GetFileName() );
           pathComponents.push_back(vtkFileName.c_str() );
-          vtksys_stl::string cacheName = vtksys::SystemTools::JoinPath(pathComponents);
+          std::string cacheName = vtksys::SystemTools::JoinPath(pathComponents);
 
           if ( !(fsmo_snode->CopyData ( storableNode, cacheName.c_str() )) )
             {
@@ -4766,7 +4766,7 @@ int  vtkFetchMILogic::PostStorableNodes()
 
           vtkFileName = vtksys::SystemTools::GetFilenameName (storageNode->GetFileName() );
           pathComponents.push_back(vtkFileName.c_str() );
-          vtksys_stl::string cacheName = vtksys::SystemTools::JoinPath(pathComponents);
+          std::string cacheName = vtksys::SystemTools::JoinPath(pathComponents);
 
           if ( !(fsm_snode->CopyData ( storableNode, cacheName.c_str() )) )
             {

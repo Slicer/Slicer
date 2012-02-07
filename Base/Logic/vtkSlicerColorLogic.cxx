@@ -58,28 +58,28 @@ const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
 {
   // get the slicer home dir
-  vtksys_stl::string slicerHome;
+  std::string slicerHome;
   if (vtksys::SystemTools::GetEnv("SLICER_HOME") == NULL)
     {
     if (vtksys::SystemTools::GetEnv("PWD") != NULL)
       {
-      slicerHome =  vtksys_stl::string(vtksys::SystemTools::GetEnv("PWD"));
+      slicerHome =  std::string(vtksys::SystemTools::GetEnv("PWD"));
       }
     else
       {
-      slicerHome =  vtksys_stl::string("");
+      slicerHome =  std::string("");
       }
     }
   else
     {
-    slicerHome = vtksys_stl::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
+    slicerHome = std::string(vtksys::SystemTools::GetEnv("SLICER_HOME"));
     }
   // build up the vector
-  vtksys_stl::vector<vtksys_stl::string> filesVector;
+  std::vector<std::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(vtksys_stl::string(Slicer_SHARE_DIR) + "/ColorFiles");
-  vtksys_stl::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
+  filesVector.push_back(std::string(Slicer_SHARE_DIR) + "/ColorFiles");
+  std::string resourcesDirString = vtksys::SystemTools::JoinPath(filesVector);
 
   // now make up a vector to iterate through of dirs to look in
   std::vector<std::string> DirectoriesToCheck;
@@ -124,12 +124,12 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
   // get the list of colour files in these dir
   for (unsigned int d = 0; d < directories.size(); d++)
     {
-    vtksys_stl::string dirString = directories[d];
+    std::string dirString = directories[d];
     vtkDebugMacro("FindColorFiles: checking for colour files in dir " << d << " = " << dirString.c_str());
 
-    vtksys_stl::vector<vtksys_stl::string> filesVector;
+    std::vector<std::string> filesVector;
     filesVector.push_back(dirString);
-    filesVector.push_back(vtksys_stl::string("/"));
+    filesVector.push_back(std::string("/"));
 
 #ifdef WIN32
     WIN32_FIND_DATA findData;
@@ -146,7 +146,7 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
         {
         // add this file to the vector holding the base dir name so check the
         // file type using the full path
-        filesVector.push_back(vtksys_stl::string(findData.cFileName));
+        filesVector.push_back(std::string(findData.cFileName));
 #else
     DIR *dp;
     struct dirent *dirp;
@@ -159,10 +159,10 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
       while ((dirp = readdir(dp)) != NULL)
         {
         // add this file to the vector holding the base dir name
-        filesVector.push_back(vtksys_stl::string(dirp->d_name));
+        filesVector.push_back(std::string(dirp->d_name));
 #endif
 
-        vtksys_stl::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
+        std::string fileToCheck = vtksys::SystemTools::JoinPath(filesVector);
         int fileType = vtksys::SystemTools::DetectFileType(fileToCheck.c_str());
         if (fileType == vtksys::SystemTools::FileTypeText)
           {
