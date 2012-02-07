@@ -17,6 +17,7 @@ cmake_minimum_required(VERSION 2.8.7)
 #
 set(MY_OPERATING_SYSTEM   "Linux") # Windows, Linux, Darwin...
 set(MY_COMPILER           "g++4.4.3")
+set(MY_QT_VERSION         "4.7")
 set(Slicer_DIR            "$ENV{HOME}/Projects/Slicer4-Superbuild-Debug/Slicer-build")
 set(CTEST_SITE            "karakoram.kitware") # for example: mymachine.kitware, mymachine.bwh.harvard.edu, ...
 set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
@@ -73,7 +74,7 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
 
 # Update the following variable to match the chosen build options. This variable is used to
 # generate both the build directory and the build name.
-set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits")
+set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}")
 
 #
 # Project specific properties
