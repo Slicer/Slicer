@@ -2,19 +2,15 @@
 <executable>
   <category>Diffusion.Utilities</category>
   <title>Resample DTI Volume</title>
-  <description>
-Resampling an image is a very important task in image analysis. It is especially important in the frame of image registration. This module implements DT image resampling through the use of itk Transforms. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions.
-</description>
+  <description>Resampling an image is a very important task in image analysis. It is especially important in the frame of image registration. This module implements DT image resampling through the use of itk Transforms. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions.</description>
   <version>0.1</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ResampleDTI</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Francois Budin</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on the National Centers for Biomedical Computing can be obtained from http://nihroadmap.nih.gov/bioinformatics
-</acknowledgements>
-<parameters>
-  <label>Input/Ouput</label>
-  <description>Input/output parameters</description>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on the National Centers for Biomedical Computing can be obtained from http://nihroadmap.nih.gov/bioinformatics</acknowledgements>
+  <parameters>
+    <label>Input/Ouput</label>
+    <description>Input/output parameters</description>
     <image type="tensor">
       <name>inputVolume</name>
       <label>Input Volume</label>
@@ -36,29 +32,29 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <flag>-R</flag>
       <longflag>--Reference</longflag>
       <description>Reference Volume (spacing,size,orientation,origin)</description>
-      <default></default>
+      <default/>
     </image>
-</parameters>
-<parameters>
-  <label>Transform Parameters</label>
-  <description>Parameters used to transform the input image into the output image</description>
+  </parameters>
+  <parameters>
+    <label>Transform Parameters</label>
+    <description>Parameters used to transform the input image into the output image</description>
     <transform fileExtensions=".mat">
       <name>transformationFile</name>
       <label>Transform Node</label>
       <flag>-f</flag>
       <longflag>--transformationFile</longflag>
-      <default></default>
+      <default/>
       <channel>input</channel>
     </transform>
-     <image type="vector">
-        <name>deffield</name>
-        <label>Deformation Field Volume</label>
-        <channel>input</channel>
-        <flag>-H</flag>
-        <longflag>--defField</longflag>
-        <description>File containing the deformation field (3D vector image containing vectors with 3 components)</description>
-        <default></default>
-     </image>
+    <image type="vector">
+      <name>deffield</name>
+      <label>Deformation Field Volume</label>
+      <channel>input</channel>
+      <flag>-H</flag>
+      <longflag>--defField</longflag>
+      <description>File containing the deformation field (3D vector image containing vectors with 3 components)</description>
+      <default/>
+    </image>
     <string-enumeration>
       <name>typeOfField</name>
       <longflag>--hfieldtype</longflag>
@@ -68,10 +64,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>h-Field</element>
       <default>h-Field</default>
     </string-enumeration>
-</parameters>
-<parameters>
-  <label>Processing Options</label>
-  <string-enumeration>
+  </parameters>
+  <parameters>
+    <label>Processing Options</label>
+    <string-enumeration>
       <name>interpolationType</name>
       <flag>-i</flag>
       <longflag>--interpolation</longflag>
@@ -82,8 +78,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>ws</element>
       <element>bs</element>
       <default>linear</default>
-  </string-enumeration>
-  <string-enumeration>
+    </string-enumeration>
+    <string-enumeration>
       <name>correction</name>
       <longflag>--correction</longflag>
       <description>Correct the tensors if computed tensor is not semi-definite positive</description>
@@ -94,9 +90,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>nearest</element>
       <default>zero</default>
     </string-enumeration>
-</parameters>
-<parameters advanced="true">
-  <label>Tensor Transform Type</label>
+  </parameters>
+  <parameters advanced="true">
+    <label>Tensor Transform Type</label>
     <string-enumeration>
       <name>ppd</name>
       <longflag>--transform_tensor_method</longflag>
@@ -107,8 +103,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>FS</element>
       <default>PPD</default>
     </string-enumeration>
-</parameters>
-<parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Advanced Transform Parameters</label>
     <description>Those parameters should normally not be modified</description>
     <string-enumeration>
@@ -134,8 +130,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Space Orientation inconsistency (between transform and image)</label>
       <default>false</default>
     </boolean>
-</parameters>
-<parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Advanced Rigid/Affine Parameters</label>
     <point multiple="false" coordinateSystem="lps">
       <name>rotationPoint</name>
@@ -161,7 +157,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>input</element>
       <element>output</element>
       <default>input</default>
-     </string-enumeration>
+    </string-enumeration>
     <boolean>
       <name>inverseITKTransformation</name>
       <flag>-b</flag>
@@ -170,12 +166,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Inverse Transformation</label>
       <default>false</default>
     </boolean>
-</parameters>
-
-
-<parameters advanced="true">
-  <label>Manual Output Parameters</label>
-  <description>Parameters of the output image</description>
+  </parameters>
+  <parameters advanced="true">
+    <label>Manual Output Parameters</label>
+    <description>Parameters of the output image</description>
     <double-vector>
       <name>outputImageSpacing</name>
       <flag>-s</flag>
@@ -198,7 +192,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>--origin</longflag>
       <description>Origin of the output Image</description>
       <label>Origin</label>
-      <default></default>
+      <default/>
     </point>
     <double-vector>
       <name>directionMatrix</name>
@@ -208,8 +202,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Direction Matrix</label>
       <default>0,0,0,0,0,0,0,0,0</default>
     </double-vector>
-</parameters>
-<parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Advanced Resampling Parameters</label>
     <description>Parameters used for resampling</description>
     <integer>
@@ -228,10 +222,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Default Pixel Value</label>
       <default>1e-10</default>
     </double>
-</parameters>
-
-
-<parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Windowed Sinc Interpolate Function Parameters</label>
     <description>Parameters used for the Windowed Sinc interpolation</description>
     <string-enumeration>
@@ -246,10 +238,9 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>l</element>
       <element>b</element>
       <default>c</default>
-     </string-enumeration>
-</parameters>
-
-<parameters advanced="true">
+    </string-enumeration>
+  </parameters>
+  <parameters advanced="true">
     <label>BSpline Interpolate Function Parameters</label>
     <description>Parameters used for the BSpline interpolation</description>
     <integer>
@@ -260,9 +251,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Spline Order</label>
       <default>3</default>
     </integer>
-</parameters>
-
-<parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Manual Transform (Used only if no transform node set)</label>
     <double-vector>
       <name>transformMatrix</name>
@@ -282,7 +272,5 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <element>a</element>
       <default>a</default>
     </string-enumeration>
-</parameters>
-
-
+  </parameters>
 </executable>

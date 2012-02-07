@@ -5,14 +5,10 @@
   <description>Merge the polydata from two input models and output a new model with the added polydata. Uses the vtkAppendPolyData filter. Works on .vtp and .vtk surface files.</description>
   <version>$Revision$</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MergeModels</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Nicole Aucoin BWH (Ron Kikinis, BWH), Daniel Haehn</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. 
-</acknowledgements>
-
-
-<parameters>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <parameters>
     <label>IO</label>
     <description>Input/output</description>
     <geometry type="model">
@@ -29,13 +25,12 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>2</index>
       <description>Model</description>
     </geometry>
- <geometry type="model">
+    <geometry type="model">
       <name>ModelOutput</name>
-      <label>Output Model </label>
+      <label>Output Model</label>
       <channel>output</channel>
       <index>3</index>
       <description>Model</description>
     </geometry>
- </parameters>
-
+  </parameters>
 </executable>

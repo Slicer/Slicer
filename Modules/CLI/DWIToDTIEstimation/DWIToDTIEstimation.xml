@@ -7,8 +7,7 @@
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionTensorEstimation</documentation-url>
   <license>slicer3</license>
   <contributor>Raul San Jose</contributor>
-  <acknowledgements>This command module is based on the estimation functionality provided by the Teem library. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
-
+  <acknowledgements>This command module is based on the estimation functionality provided by the Teem library. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -19,7 +18,7 @@
       <index>0</index>
       <description>Input DWI volume</description>
     </image>
-    <image type ="label">
+    <image type="label">
       <name>inputMaskVolume</name>
       <flag>m</flag>
       <longflag>mask</longflag>
@@ -34,7 +33,7 @@
       <index>1</index>
       <description>Estimated DTI volume</description>
     </image>
-    <image type ="scalar">
+    <image type="scalar">
       <name>outputBaseline</name>
       <label>Output Baseline Volume</label>
       <channel>output</channel>
@@ -44,7 +43,7 @@
   </parameters>
   <parameters>
     <label>Estimation Parameters</label>
-    <description> Parameters for the estimation algorithm</description>
+    <description>Parameters for the estimation algorithm</description>
     <string-enumeration>
       <name>estimationMethod</name>
       <flag>e</flag>

@@ -6,10 +6,9 @@
   <description>Registers two images together using BSpline transform and mutual information.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BSplineDeformableRegistration</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
-
   <parameters>
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
@@ -21,7 +20,6 @@
       <label>Iterations</label>
       <default>20</default>
     </integer>
-
     <integer>
       <name>gridSize</name>
       <flag>g</flag>
@@ -48,7 +46,6 @@
         <step>5</step>
       </constraints>
     </integer>
-
     <integer>
       <name>SpatialSamples</name>
       <flag>s</flag>
@@ -62,7 +59,6 @@
         <step>1000</step>
       </constraints>
     </integer>
-
     <boolean>
       <name>ConstrainDeformation</name>
       <longflag>constrain</longflag>
@@ -70,7 +66,6 @@
       <label>Constrain Deformation</label>
       <default>false</default>
     </boolean>
-
     <float>
       <name>MaximumDeformation</name>
       <flag>m</flag>
@@ -79,7 +74,6 @@
       <label>Maximum Deformation</label>
       <default>1</default>
     </float>
-
     <integer>
       <name>DefaultPixelValue</name>
       <flag>d</flag>
@@ -88,9 +82,7 @@
       <label>Default Pixel Value</label>
       <default>0</default>
     </integer>
-
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -137,5 +129,4 @@
       <description>Resampled moving image to fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
   </parameters>
-
 </executable>

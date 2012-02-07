@@ -1,91 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
- <category>Core</category>
- <title>Data</title>
- <description>
-This module lists the objects of the current scene and permits general operations (such as search, rename, delete, move) on the MRML tree.
- </description>
- <version>4.0</version>
- <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Data</documentation-url>
- <license>slicer4</license>
- <contributor>Julien Finet, Kitware, Alex Yarmarkovich, Isomics, SPL, Nicole Aucoin, BWH</contributor>
- <acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
- </acknowledgements>
- <parameters>
-  <label>Display &amp; Modify scene</label>
-  <description>Display all the nodes of the scene. By default, only the main nodes are shown. Node type independant operations can be done on the nodes in the tree view. Advanced controls are available to customize the content of the listing</description>
-  <parameter>
-   <label>Nodes</label>
-   <description>The view lists all the nodes of the scene as a hierarchical tree that describes the relationships between nodes. Nodes are graphical objects such as volumes or models that control the displays in the different views (2D, 3D).
-***To rename an item, double click with the left button on any item (but the scene) in the list. 
-***A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&amp;drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.
-***Tooltips show the type of the moused over node (e.g. "View", "Camera", "Volume". "Model"...)
-   </description>
-  </parameter>
-  <parameter>
-   <label>Scene Model</label>
-   <description>The model controls the meaning of the hiearchy in the tree view.
-***"Transforms" (by default) shows the transform/transformed relationship between nodes. The parent being the transform , the children being the nodes for which the transform is applied. A transform can have another transform as a child.
-***"Displayable" shows the displayable/display relationship between nodes. A displayable node (parent) contains non-view-specific information (data), while a display node (child) contains graphical properties such as color or opacity used to render the displayable node in views.
-***"ModelHierarchy" shows the group hierarchy between nodes. Models (child) can be grouped within a hierarchy node (parent), the later controls the display properties of multiple children at once (see Models module).
-   </description>
-  </parameter>
-  <parameter>
-   <label>Display MRML ID's </label>
-   <description>Show/Hide in the tree view  a second column containing the node ID of the nodes. Hidden by default</description>
-  </parameter>
-  <parameter>
-   <label>Show hidden nodes</label>
-   <description>Show/Hide all the nodes. By default, only the main nodes are shown</description>
-  </parameter>
-  <parameter>
-   <label>Filter</label>
-   <description>Hide all the nodes not matching the typed string. This can be useful to quickly search for a specific node. Please note that the search is case sensitive</description>
-  </parameter>
- </parameters>
- <parameters>
-  <label>Load &amp; Add Scenes Or Individual datasets</label>
-  <description>Shortcuts to load data into the scene.</description>
-  <parameter>
-   <label>Load new scene (close current)</label>
-   <description>Close the existing scene and load a new MRML scene from a Slicer.x file with extension ".mrml", or a Slicer2.x file with extension ".xml". Data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar") may also be loaded.</description>
-  </parameter>
-  <parameter>
-   <label>Add a scene (to current)</label>
-   <description>Add a new scene to the existing scene. Supported file formats include Slicer.x MRML files (".mrml"), Slicer2.x MRML files (.xml"), data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar").</description>
-  </parameter>
-  <parameter>
-   <label>Add data or data directory</label>
-   <description>Add all files in a selected directory to the existing scene, or an individual data set of any supported type.</description>
-  </parameter>
-  <parameter>
-    <label>Add scalar and tensor volumes</label>
-   <description>add volume image data in a variety of formats to the existing scene.</description>
-  </parameter>
-  <parameter>
-    <label>Add 3D model or a model directory</label>
-   <description>Raise a dialog with options to add models to the current scene.</description>
-  </parameter>
-  <parameter>
-    <label>Add scalar overlay</label>
-    <description>Add a (FreeSurfer) scalar overlay to an existing model in the scene.</description>
-  </parameter>
-  <parameter>
-    <label>Add transformation matrix</label>
-    <description>Add a new transform initialized with an Identity matrix to the current scene. Then, use the MRML tree widget in the panel above to position the transform in the data hierarchy.</description>
-  </parameter>
-  <parameter>
-    <label>Add fiducial list</label>
-    <description>Add a fiducial list from a file with extension (".fcsv") to the current scene.</description>
-  </parameter>
-  <parameter>
-    <label>Add color table</label>
-    <description>Add new Color lookup-up tables to the scene (files with extension ".txt"). Click the Add color table button, and select a color LUT file (with extension .txt) from the File Browser.</description>
-  </parameter>
-  <parameter>
-    <label>Add fiber bundle</label>
-    <description>Add new Tractography Fiber Bundles to the scene. Click the Add fiber bundle button, and select a fiber bundle file from the File Browser.</description>
-  </parameter>
- </parameters>
+  <category>Core</category>
+  <title>Data</title>
+  <description>This module lists the objects of the current scene and permits general operations (such as search, rename, delete, move) on the MRML tree.</description>
+  <version>4.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Data</documentation-url>
+  <license>slicer4</license>
+  <contributor>Julien Finet, Kitware, Alex Yarmarkovich, Isomics, SPL, Nicole Aucoin, BWH</contributor>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <parameters>
+    <label>Display&amp;Modify scene</label>
+    <description>Display all the nodes of the scene. By default, only the main nodes are shown. Node type independant operations can be done on the nodes in the tree view. Advanced controls are available to customize the content of the listing</description>
+    <parameter>
+      <label>Nodes</label>
+      <description>The view lists all the nodes of the scene as a hierarchical tree that describes the relationships between nodes. Nodes are graphical objects such as volumes or models that control the displays in the different views (2D, 3D).***To rename an item, double click with the left button on any item (but the scene) in the list.***A right click pops up a menu containing different actions: "Insert Transform" creates an identity linear transform node and applies it on the selected node. "Edit properties" opens the module of the node (e.g. "Volumes" for volume nodes, "Models" for model nodes...). "Rename" opens a dialog to rename the node. "Delete" removes the node from the scene. Internal drag&amp;drops are supported in the view, while moving a node position within the same parent has no effect, changing the parent of a node has a different meaning depending on the current scene model.***Tooltips show the type of the moused over node (e.g. "View", "Camera", "Volume". "Model"...)</description>
+    </parameter>
+    <parameter>
+      <label>Scene Model</label>
+      <description>The model controls the meaning of the hiearchy in the tree view.***"Transforms" (by default) shows the transform/transformed relationship between nodes. The parent being the transform , the children being the nodes for which the transform is applied. A transform can have another transform as a child.***"Displayable" shows the displayable/display relationship between nodes. A displayable node (parent) contains non-view-specific information (data), while a display node (child) contains graphical properties such as color or opacity used to render the displayable node in views.***"ModelHierarchy" shows the group hierarchy between nodes. Models (child) can be grouped within a hierarchy node (parent), the later controls the display properties of multiple children at once (see Models module).</description>
+    </parameter>
+    <parameter>
+      <label>Display MRML ID's</label>
+      <description>Show/Hide in the tree view  a second column containing the node ID of the nodes. Hidden by default</description>
+    </parameter>
+    <parameter>
+      <label>Show hidden nodes</label>
+      <description>Show/Hide all the nodes. By default, only the main nodes are shown</description>
+    </parameter>
+    <parameter>
+      <label>Filter</label>
+      <description>Hide all the nodes not matching the typed string. This can be useful to quickly search for a specific node. Please note that the search is case sensitive</description>
+    </parameter>
+  </parameters>
+  <parameters>
+    <label>Load&amp;Add Scenes Or Individual datasets</label>
+    <description>Shortcuts to load data into the scene.</description>
+    <parameter>
+      <label>Load new scene (close current)</label>
+      <description>Close the existing scene and load a new MRML scene from a Slicer.x file with extension ".mrml", or a Slicer2.x file with extension ".xml". Data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar") may also be loaded.</description>
+    </parameter>
+    <parameter>
+      <label>Add a scene (to current)</label>
+      <description>Add a new scene to the existing scene. Supported file formats include Slicer.x MRML files (".mrml"), Slicer2.x MRML files (.xml"), data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar").</description>
+    </parameter>
+    <parameter>
+      <label>Add data or data directory</label>
+      <description>Add all files in a selected directory to the existing scene, or an individual data set of any supported type.</description>
+    </parameter>
+    <parameter>
+      <label>Add scalar and tensor volumes</label>
+      <description>add volume image data in a variety of formats to the existing scene.</description>
+    </parameter>
+    <parameter>
+      <label>Add 3D model or a model directory</label>
+      <description>Raise a dialog with options to add models to the current scene.</description>
+    </parameter>
+    <parameter>
+      <label>Add scalar overlay</label>
+      <description>Add a (FreeSurfer) scalar overlay to an existing model in the scene.</description>
+    </parameter>
+    <parameter>
+      <label>Add transformation matrix</label>
+      <description>Add a new transform initialized with an Identity matrix to the current scene. Then, use the MRML tree widget in the panel above to position the transform in the data hierarchy.</description>
+    </parameter>
+    <parameter>
+      <label>Add fiducial list</label>
+      <description>Add a fiducial list from a file with extension (".fcsv") to the current scene.</description>
+    </parameter>
+    <parameter>
+      <label>Add color table</label>
+      <description>Add new Color lookup-up tables to the scene (files with extension ".txt"). Click the Add color table button, and select a color LUT file (with extension .txt) from the File Browser.</description>
+    </parameter>
+    <parameter>
+      <label>Add fiber bundle</label>
+      <description>Add new Tractography Fiber Bundles to the scene. Click the Add fiber bundle button, and select a fiber bundle file from the File Browser.</description>
+    </parameter>
+  </parameters>
 </executable>

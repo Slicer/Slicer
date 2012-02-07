@@ -5,10 +5,10 @@
   <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesBatch-Documentation-3.6</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Stephen R Aylward and Julien Finet at Kitware Inc.</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org</acknowledgements>
- <parameters advanced="true">
+  <parameters advanced="true">
     <label>BatchMake</label>
     <description>BatchMake specific parameters</description>
     <string-enumeration>
@@ -24,28 +24,28 @@
       <name>InputDirectory_Grid</name>
       <label>Grid input directory</label>
       <longflag>inputDirectory_Grid</longflag>
-      <default></default>
+      <default/>
       <description>Directory where the input data are. Necessary if dealing with relative input paths.</description>
     </directory>
     <directory>
       <name>OutputDirectory_Grid</name>
       <label>Grid output directory</label>
       <longflag>outputDirectory_Grid</longflag>
-      <default></default>
+      <default/>
       <description>Directory where the output data are. Necessary if dealing with relative output paths.</description>
     </directory>
     <directory>
       <name>ExecutableDirectory_Grid</name>
       <label>Grid executable directory</label>
       <longflag>executableDirectory_Grid</longflag>
-      <default></default>
+      <default/>
       <description>Directory where the executables are.</description>
     </directory>
     <directory>
       <name>WorkingDirectory_Grid</name>
       <label>Grid working directory</label>
       <longflag>workingDirectory_Grid</longflag>
-      <default></default>
+      <default/>
       <description>Directory where the condor scripts are written.</description>
     </directory>
     <string-enumeration>
@@ -90,7 +90,7 @@
       <channel>output</channel>
       <longflag>resampledImage_Directory</longflag>
       <description>Registration results</description>
-      <default></default>
+      <default/>
     </directory>
     <string>
       <name>resampledImage_Mask</name>
@@ -110,7 +110,7 @@
       <description>Load a transform that is immediately applied to the moving image</description>
       <longflag>loadTransform</longflag>
       <channel>input</channel>
-      <default></default>
+      <default/>
     </file>
     <file>
       <name>saveTransform</name>
@@ -118,24 +118,8 @@
       <description>Save the transform that results from registration</description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
-      <default></default>
+      <default/>
     </file>
-    <!--
-    <file>
-      <name>loadParameters</name>
-      <label>Load parameters</label>
-      <description>File containing detailed parameters for registration</description>
-      <longflag>loadParameters</longflag>
-      <default></default>
-    </file>
-    <file>
-      <name>saveParameters</name>
-      <label>Save parameters</label>
-      <description>Writed the parameters used for registration</description>
-      <longflag>saveParameters</longflag>
-      <default></default>
-    </file>
-    -->
     <string-enumeration>
       <name>initialization</name>
       <description>Method to prime the registration process</description>
@@ -257,7 +241,7 @@
       <longflag>baselineImage</longflag>
       <channel>input</channel>
       <description>Image against which the resampled moving image will be compared</description>
-      <default></default>
+      <default/>
     </file>
     <integer>
       <name>baselineNumberOfFailedPixelsTolerance</name>
@@ -286,7 +270,7 @@
       <longflag>baselineDifferenceImage</longflag>
       <channel>output</channel>
       <description>Result from subtracting the registered moving image from the baseline image</description>
-      <default></default>
+      <default/>
     </file>
     <file>
       <name>baselineResampledMovingImage</name>
@@ -294,7 +278,7 @@
       <longflag>baselineResampledMovingImage</longflag>
       <channel>output</channel>
       <description>Result resampling the moving image to the space of the baseline image</description>
-      <default></default>
+      <default/>
     </file>
   </parameters>
   <parameters advanced="true">
@@ -305,14 +289,14 @@
       <description>Ordered list of landmarks in the fixed image</description>
       <label>Fixed landmarks</label>
       <longflag>fixedLandmarks</longflag>
-      <default></default>
+      <default/>
     </float-vector>
     <float-vector>
       <name>movingLandmarks</name>
       <description>Ordered list of landmarks in the moving image</description>
       <label>Moving landmarks</label>
       <longflag>movingLandmarks</longflag>
-      <default></default>
+      <default/>
     </float-vector>
   </parameters>
   <parameters advanced="true">
@@ -395,7 +379,7 @@
       <label>BSpline Max Iterations(max)</label>
       <longflag>bsplineMaxIterations_Max</longflag>
       <default>20</default>
-    </integer>    
+    </integer>
     <integer>
       <name>bsplineMaxIterations_Step</name>
       <description>Maximum number of bspline optimization iterations</description>

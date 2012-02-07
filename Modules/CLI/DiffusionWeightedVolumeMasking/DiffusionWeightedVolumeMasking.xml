@@ -2,13 +2,12 @@
 <executable>
   <category>Diffusion.Utilities</category>
   <title>Diffusion Weighted Volume Masking</title>
-  <description><![CDATA[<p>Performs a mask calculation from a diffusion weighted (DW) image.</p><p>Starting from a dw image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the otsu segmentation algorithm in order to produce a mask. this mask can then be used when estimating the diffusion tensor (dt) image, not to estimate tensors all over the volume.</p>]]></description>
+  <description>&lt;p&gt;Performs a mask calculation from a diffusion weighted (DW) image.&lt;/p&gt;&lt;p&gt;Starting from a dw image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the otsu segmentation algorithm in order to produce a mask. this mask can then be used when estimating the diffusion tensor (dt) image, not to estimate tensors all over the volume.&lt;/p&gt;</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionWeightedMasking</documentation-url>
   <license>slicer3</license>
   <contributor>Demian Wassermann</contributor>
-  <acknowledgements></acknowledgements>
-
+  <acknowledgements/>
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -19,14 +18,14 @@
       <index>0</index>
       <description>Input DWI volume</description>
     </image>
-    <image type ="scalar">
+    <image type="scalar">
       <name>outputBaseline</name>
       <label>Output Baseline Volume</label>
       <channel>output</channel>
       <index>2</index>
       <description>Estimated baseline volume</description>
     </image>
-    <image type ="label">
+    <image type="label">
       <name>thresholdMask</name>
       <label>Otsu Threshold Mask</label>
       <channel>output</channel>
@@ -35,7 +34,7 @@
     </image>
   </parameters>
   <parameters>
-     <double>
+    <double>
       <name>otsuOmegaThreshold</name>
       <label>Otsu Omega Threshold Parameter</label>
       <flag>o</flag>
@@ -44,16 +43,16 @@
       <default>0.5</default>
       <constraints>
         <minimum>0.0</minimum>
-  <maximum>1.0</maximum>
-  <step>0.1</step>
+        <maximum>1.0</maximum>
+        <step>0.1</step>
       </constraints>
     </double>
     <boolean>
-     <name>removeIslands</name>
-     <label>Remove Islands in Threshold Mask</label>
-     <longflag>--removeislands</longflag>
-     <description>Remove Islands in Threshold Mask?</description>
-     <default>true</default>
+      <name>removeIslands</name>
+      <label>Remove Islands in Threshold Mask</label>
+      <longflag>--removeislands</longflag>
+      <description>Remove Islands in Threshold Mask?</description>
+      <default>true</default>
     </boolean>
   </parameters>
 </executable>

@@ -2,16 +2,14 @@
 <executable>
   <category>Diffusion.Denoising</category>
   <title>DWI Joint Rician LMMSE Filter</title>
-  <description>This module reduces Rician noise (or unwanted detail) on a set of diffusion weighted images. For this, it filters the image in the mean squared error sense using a Rician noise model. The N closest gradient directions to the direction being processed are filtered together to improve the results: the noise-free signal is seen as an n-diemensional vector which has to be estimated with the LMMSE method from a set of corrupted measurements. To that end, the covariance matrix of the noise-free vector and the cross covariance between this signal and the noise have to be estimated, which is done taking into account the image formation process.\nThe noise parameter is automatically estimated from a rough segmentation of the background of the image. In this area the signal is simply 0, so that Rician statistics reduce to Rayleigh and the noise power can be easily estimated from the mode of the histogram.\nA complete description of the algorithm may be found in:\nAntonio Tristan-Vega and Santiago Aja-Fernandez, DWI filtering using joint information for DTI and HARDI, Medical Image Analysis, Volume 14, Issue 2, Pages 205-218. 2010. </description>
+  <description>This module reduces Rician noise (or unwanted detail) on a set of diffusion weighted images. For this, it filters the image in the mean squared error sense using a Rician noise model. The N closest gradient directions to the direction being processed are filtered together to improve the results: the noise-free signal is seen as an n-diemensional vector which has to be estimated with the LMMSE method from a set of corrupted measurements. To that end, the covariance matrix of the noise-free vector and the cross covariance between this signal and the noise have to be estimated, which is done taking into account the image formation process.\nThe noise parameter is automatically estimated from a rough segmentation of the background of the image. In this area the signal is simply 0, so that Rician statistics reduce to Rayleigh and the noise power can be easily estimated from the mode of the histogram.\nA complete description of the algorithm may be found in:\nAntonio Tristan-Vega and Santiago Aja-Fernandez, DWI filtering using joint information for DTI and HARDI, Medical Image Analysis, Volume 14, Issue 2, Pages 205-218. 2010.</description>
   <version>0.1.1.$Revision: 1 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/JointRicianLMMSEImageFilter</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Antonio Tristan Vega, Santiago Aja Fernandez. University of Valladolid (SPAIN). Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).</contributor>
-
   <parameters>
     <label>DWI Noise Removal Parameters</label>
     <description>Parameters for Joint Rician LMMSE image filter</description>
-
     <integer-vector>
       <name>iRadiusEstimation</name>
       <label>Estimation Radius</label>
@@ -19,7 +17,6 @@
       <description>Estimation radius.</description>
       <default>2,2,1</default>
     </integer-vector>
-
     <integer-vector>
       <name>iRadiusFiltering</name>
       <label>Filtering Radius</label>
@@ -27,7 +24,6 @@
       <description>Filtering radius.</description>
       <default>2,2,1</default>
     </integer-vector>
-
     <integer>
       <name>iNumNeighbors</name>
       <label>Number of neighboring gradients</label>
@@ -35,13 +31,10 @@
       <description>The number of the closest gradients that are used to jointly filter a given gradient direction (0 to use all).</description>
       <default>0</default>
     </integer>
-
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-
     <image type="diffusion-weighted">
       <name>inputVolume</name>
       <label>Input Volume</label>
@@ -49,7 +42,6 @@
       <index>0</index>
       <description>Input DWI volume.</description>
     </image>
-
     <image type="diffusion-weighted">
       <name>outputVolume</name>
       <label>Output Volume</label>
@@ -57,7 +49,5 @@
       <index>1</index>
       <description>Output DWI volume.</description>
     </image>
-
   </parameters>
-
 </executable>

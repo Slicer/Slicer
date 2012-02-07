@@ -5,10 +5,9 @@
   <description>Paint a model by a volume (using vtkProbeFilter).</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ProbeVolumeWithModel</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Lauren O'Donnell</contributor>
   <acknowledgements>BWH, NCIGT/LMI</acknowledgements>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -34,5 +33,4 @@
       <description>Output "painted" model</description>
     </geometry>
   </parameters>
-
 </executable>

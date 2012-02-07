@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This XML is used to define the documentation for the corresponding fields of the python script of the same name -->
 <executable>
   <category>Endoscopy.Endoscopy</category>
   <title>Endoscopy</title>
   <index>8</index>
   <description>Provides interactive animation of flythrough paths.</description>
-  <documentation-url></documentation-url>
-  <license></license>
+  <documentation-url/>
+  <license/>
   <contributor>Steve Pieper</contributor>
   <contributor>Jean-Christophe Fillion-Robin</contributor>
-  <acknowledgements>This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper. 
-  </acknowledgements>
-
- <parameters>
+  <acknowledgements>This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.</acknowledgements>
+  <parameters>
     <label>Path</label>
     <description>Inputs related to defining the path.</description>
-
     <integer>
       <name>Camera</name>
       <description>The input camera that will be controlled by the path.</description>
       <label>Camera</label>
     </integer>
-
     <integer>
       <name>Input Fiducials</name>
       <description>The list of control points defining the path.</description>
@@ -33,7 +28,6 @@
       <label>Create Path</label>
     </integer>
   </parameters>
-
   <parameters>
     <label>Flythrough</label>
     <description>Controls for animating along the path.</description>

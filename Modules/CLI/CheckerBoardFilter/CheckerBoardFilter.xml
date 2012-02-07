@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Filtering
-  </category>
-  <title>
-  CheckerBoard Filter
-  </title>
-  <description>
-Create a checkerboard volume of two volumes. The output volume will show the two inputs alternating according to the user supplied checkerPattern. This filter is often used to compare the results of image registration. Note that the second input is resampled to the same origin, spacing and direction before it is composed with the first input. The scalar type of the output volume will be the same as the input image scalar type.
-  </description>
+  <category>Filtering</category>
+  <title>CheckerBoard Filter</title>
+  <description>Create a checkerboard volume of two volumes. The output volume will show the two inputs alternating according to the user supplied checkerPattern. This filter is often used to compare the results of image registration. Note that the second input is resampled to the same origin, spacing and direction before it is composed with the first input. The scalar type of the output volume will be the same as the input image scalar type.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/CheckerBoard</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Bill Lorensen</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>CheckerBoard Parameters</label>
     <description>Parameters for the checkerboard</description>
-
     <integer-vector>
       <name>checkerPattern</name>
       <longflag>--checkerPattern</longflag>
@@ -27,9 +18,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Checker Pattern</label>
       <default>2,2,2</default>
     </integer-vector>
-
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -55,5 +44,4 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Output filtered</description>
     </image>
   </parameters>
-
 </executable>

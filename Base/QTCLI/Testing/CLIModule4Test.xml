@@ -2,16 +2,12 @@
 <executable>
   <category>Testing</category>
   <title>Command Line Module Test</title>
-  <description>
-    Command line module used to test the automatic UI generator.\n
-  </description>
+  <description>Command line module used to test the automatic UI generator.\n</description>
   <version>0.0.1</version>
-  <documentation-url></documentation-url>
-  <license></license>
+  <documentation-url/>
+  <license/>
   <contributor>Jean-Christophe Fillion-Robin</contributor>
-  <acknowledgements>
-  </acknowledgements>
-  
+  <acknowledgements/>
   <parameters>
     <label>Test Settings</label>
     <integer>

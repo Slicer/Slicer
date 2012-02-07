@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This XML is used to define the documentation for the corresponding fields of the python script of the same name -->
 <executable>
   <category>Informatics</category>
   <title>DICOM</title>
   <description>Provides DICOM local database and networking support.</description>
-  <documentation-url></documentation-url>
-  <license></license>
+  <documentation-url/>
+  <license/>
   <contributor>Steve Pieper</contributor>
-  <acknowledgements>This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper. 
-  </acknowledgements>
-
- <parameters>
+  <acknowledgements>This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.</acknowledgements>
+  <parameters>
     <label>Servers</label>
     <description>Controls the DICOM Listener</description>
-
     <integer>
       <name>Start/Stop Listener</name>
       <description>Control external process that listens for network connections to populate the local database.  The listener port is controlled by the setting in the Query dialog.</description>
       <label>Start/Stop Listener</label>
     </integer>
-
     <integer>
       <name>Start Listener when Slicer Starts</name>
       <description>When checked, a DICOM listener will be launched automatically when slicer is running.</description>
       <label>Start Listener when Slicer Starts</label>
     </integer>
-
   </parameters>
-
   <parameters>
     <label>DICOM Database and Networking</label>
     <description>Options for interacting with remote DICOM nodes and interacting between Slicer and the DICOM database.</description>
@@ -62,33 +55,28 @@
       <label>Database TreeLocalDatabase</label>
     </integer>
   </parameters>
- <parameters>
+  <parameters>
     <label>Slicer Interface</label>
     <description>Move data to/from Slicer and the DICOM database</description>
-
     <integer>
       <name>Selection</name>
       <description>Indicates type of selection level.</description>
       <label>Selection</label>
     </integer>
-
     <integer>
       <name>Load to Slicer</name>
       <description>Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a slicer volume.  A study will load mulitple volumes and patient may have multiple studies.</description>
       <label>Load to Slicer</label>
     </integer>
-
     <integer>
       <name>Export Slicer Data to Study...</name>
       <description>Is enabled when a study is selected.  This will export a slicer volume as a series of DICOM slice files that are then loaded into the DICOM database.  Optionally the entire scene will be embeded in a DICOM compatible manner (not yet implemented).</description>
       <label>Export Slicer Data to Study...</label>
     </integer>
-
     <integer>
       <name>Image Preview</name>
       <description>Shows the currently selected images from the DICOM database.</description>
       <label>Image Preview</label>
     </integer>
-
   </parameters>
 </executable>

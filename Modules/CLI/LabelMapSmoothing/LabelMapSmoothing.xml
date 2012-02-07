@@ -1,26 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Surface Models
-  </category>
-  <title>
-  Label Map Smoothing
-  </title>
-  <description>
-This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.  
-  </description>
+  <category>Surface Models</category>
+  <title>Label Map Smoothing</title>
+  <description>This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.</description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelMapSmoothing</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Dirk Padfield, Josh Cates, Ross Whitaker</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.
-</acknowledgements>
-
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.</acknowledgements>
   <parameters advanced="true">
     <label>Label Selection Parameters</label>
     <description>Parameters for selecting the label to smooth</description>
-
     <integer>
       <name>labelToSmooth</name>
       <longflag>--labelToSmooth</longflag>
@@ -28,14 +18,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Label to smooth</label>
       <default>-1</default>
     </integer>
-
   </parameters>
-
-
   <parameters advanced="true">
     <label>AntiAliasing Parameters</label>
     <description>Parameters for the AntiAliasing algorithm</description>
-
     <integer>
       <name>numberOfIterations</name>
       <longflag>--numberOfIterations</longflag>
@@ -43,7 +29,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Number of Iterations</label>
       <default>50</default>
     </integer>
-
     <float>
       <name>maxRMSError</name>
       <longflag>--maxRMSError</longflag>
@@ -51,14 +36,10 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Maximum RMS Error</label>
       <default>0.01</default>
     </float>
-
   </parameters>
-
-
   <parameters advanced="true">
     <label>Gaussian Smoothing Parameters</label>
     <description>Parameters for Gaussian Smoothing</description>
-
     <float>
       <name>gaussianSigma</name>
       <longflag>--gaussianSigma</longflag>
@@ -66,9 +47,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Sigma</label>
       <default>0.2</default>
     </float>
-
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -79,7 +58,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <index>0</index>
       <description>Input label map to smooth</description>
     </image>
-
     <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
@@ -88,5 +66,4 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Smoothed label map</description>
     </image>
   </parameters>
-
 </executable>

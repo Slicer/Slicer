@@ -5,10 +5,9 @@
   <description>Intersects an input model with an reference volume and produces an output label map.</description>
   <version>0.1.0.$Revision: 8643 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/PolyDataToLabelMap</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Nicole Aucoin BWH, Xiaodong Tao, GE</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
-
   <parameters>
     <label>Settings</label>
     <description>Parameter setting</description>
@@ -20,7 +19,6 @@
       <default>1</default>
     </float>
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output</description>
@@ -46,5 +44,4 @@
       <description>The label volume</description>
     </image>
   </parameters>
-
 </executable>

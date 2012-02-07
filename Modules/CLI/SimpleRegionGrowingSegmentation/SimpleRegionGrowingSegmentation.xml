@@ -5,38 +5,35 @@
   <description>A simple region growing segmentation algorithm based on intensity statistics. To create a list of fiducials (Seeds) for this algorithm, click on the tool bar icon of an arrow pointing to a starburst fiducial to enter the 'place a new object mode' and then use the fiducials module. This module uses the Slicer Command Line Interface (CLI) and the ITK filters CurvatureFlowImageFilter and ConfidenceConnectedImageFilter.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:Simple_Region_Growing-Documentation-3.6</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Jim Miller</contributor>
   <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
   <parameters advanced="true">
     <label>Smoothing Parameters</label>
     <description>Parameters to denoise the image prior to segmenting</description>
     <integer>
-       <name>smoothingIterations</name>
-       <label>Smoothing iterations</label>
-       <longflag>--smoothingIterations</longflag>
-       <description>Number of smoothing iterations</description>
-       <default>5</default>
+      <name>smoothingIterations</name>
+      <label>Smoothing iterations</label>
+      <longflag>--smoothingIterations</longflag>
+      <description>Number of smoothing iterations</description>
+      <default>5</default>
     </integer>
-
     <double>
-        <name>timestep</name>
-        <label>Timestep</label>
-        <longflag>--timestep</longflag>
-        <description>Timestep for curvature flow</description>
-        <default>0.0625</default>
-        <constraints>
-           <minimum>0.001</minimum>
-           <maximum>1</maximum>
-           <step>0.0001</step>
-        </constraints>
+      <name>timestep</name>
+      <label>Timestep</label>
+      <longflag>--timestep</longflag>
+      <description>Timestep for curvature flow</description>
+      <default>0.0625</default>
+      <constraints>
+        <minimum>0.001</minimum>
+        <maximum>1</maximum>
+        <step>0.0001</step>
+      </constraints>
     </double>
   </parameters>
-
   <parameters>
     <label>Segmentation Parameters</label>
     <description>Parameters to prescribe the region growing</description>
-
     <integer>
       <name>iterations</name>
       <longflag>--iterations</longflag>
@@ -48,7 +45,6 @@
         <maximum>100</maximum>
       </constraints>
     </integer>
-
     <double>
       <name>multiplier</name>
       <longflag>--multiplier</longflag>
@@ -60,7 +56,6 @@
         <maximum>10</maximum>
       </constraints>
     </double>
-
     <integer>
       <name>neighborhood</name>
       <longflag>--neighborhood</longflag>
@@ -68,7 +63,6 @@
       <label>Neighborhood Radius</label>
       <default>1</default>
     </integer>
-
     <integer>
       <name>labelvalue</name>
       <longflag>--labelvalue</longflag>
@@ -80,17 +74,14 @@
         <maximum>255</maximum>
       </constraints>
     </integer>
-
-    <point coordinateSystem="ras" multiple="true">
+    <point multiple="true" coordinateSystem="ras">
       <name>seed</name>
       <label>Seeds</label>
       <longflag>--seed</longflag>
       <description>Seed point(s) for region growing</description>
       <default>0,0,0</default>
     </point>
-
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -109,5 +100,4 @@
       <description>Output filtered</description>
     </image>
   </parameters>
-
 </executable>

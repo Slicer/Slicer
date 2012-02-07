@@ -5,14 +5,12 @@
   <description>Active contour segmentation using robust statistic.</description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RobustStatisticsSegmenter</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Yi Gao, Allen Tannenbaum, Ron Kikinis</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health</acknowledgements>
-
   <parameters>
     <label>Segmentation Parameters</label>
     <description>Parameters for robust statistics segmentation</description>
-
     <double>
       <name>expectedVolume</name>
       <longflag>expectedVolume</longflag>
@@ -27,11 +25,9 @@
       </constraints>
     </double>
   </parameters>
-
   <parameters>
     <label>Auxiliary Parameters</label>
     <description>Some auxillary parameters to control the stop criteria.</description>
-
     <double>
       <name>intensityHomogeneity</name>
       <longflag>intensityHomogeneity</longflag>
@@ -44,7 +40,6 @@
         <step>0.1</step>
       </constraints>
     </double>
-
     <double>
       <name>curvatureWeight</name>
       <longflag>curvatureWeight</longflag>
@@ -58,7 +53,6 @@
         <step>0.1</step>
       </constraints>
     </double>
-
     <integer>
       <name>labelValue</name>
       <longflag>labelValue</longflag>
@@ -71,8 +65,6 @@
         <step>1</step>
       </constraints>
     </integer>
-
-
     <double>
       <name>maxRunningTime</name>
       <longflag>maxRunningTime</longflag>
@@ -85,24 +77,7 @@
         <step>1</step>
       </constraints>
     </double>
-
-<!--     <integer> -->
-<!--       <name>numOfIteration</name> -->
-<!--       <longflag>numOfIteration</longflag> -->
-<!--       <flag>n</flag> -->
-<!--       <description>Max number of iteration</description> -->
-<!--       <label>Number of iteration</label> -->
-<!--       <default>1000000</default> -->
-<!--       <constraints> -->
-<!--         <minimum>1</minimum> -->
-<!--         <maximum>1000000</maximum> -->
-<!--         <step>100</step> -->
-<!--       </constraints> -->
-<!--     </integer> -->
-
   </parameters>
-
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -128,5 +103,4 @@
       <description>Segmented image</description>
     </image>
   </parameters>
-
 </executable>

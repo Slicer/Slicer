@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Diffusion.Utilities
-  </category>
-  <title>
-  Diffusion Tensor Scalar Measurements
-  </title>
-  <description>
-  Compute a set of different scalar measurements from a tensor field, specially oriented for Diffusion Tensors where some rotationally invariant measurements, like Fractional Anisotropy, are highly used to describe the anistropic behaviour of the tensor.
-  </description>
+  <category>Diffusion.Utilities</category>
+  <title>Diffusion Tensor Scalar Measurements</title>
+  <description>Compute a set of different scalar measurements from a tensor field, specially oriented for Diffusion Tensors where some rotationally invariant measurements, like Fractional Anisotropy, are highly used to describe the anistropic behaviour of the tensor.</description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionTensorMathematics</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Raul San Jose</contributor>
   <acknowledgements>LMI</acknowledgements>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-    <image type ="tensor">
+    <image type="tensor">
       <name>inputVolume</name>
       <label>Input DTI Volume</label>
       <channel>input</channel>
       <index>0</index>
       <description>Input DTI volume</description>
     </image>
-    <image type ="scalar">
+    <image type="scalar">
       <name>outputScalar</name>
       <label>Output Scalar Volume</label>
       <channel>output</channel>
@@ -35,7 +28,7 @@
   </parameters>
   <parameters>
     <label>Operation</label>
-    <description> Parameters for the estimation algorithm</description>
+    <description>Parameters for the estimation algorithm</description>
     <string-enumeration>
       <name>operation</name>
       <flag>e</flag>

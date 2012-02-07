@@ -2,18 +2,12 @@
 <executable>
   <category>Filtering</category>
   <title>Extract Skeleton</title>
-  <description>
-Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.
-    </description>
+  <description>Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExtractSkeleton</documentation-url>
-  <license></license>
-  <contributor>Pierre Seroul, Martin Styner, Guido Gerig, and Stephen Aylward 
-    </contributor>
-  <acknowledgements>
-The original implementation of this method was provided by ETH Zurich, Image Analysis Laboratory of Profs Olaf Kuebler, Gabor Szekely and Guido Gerig.  Martin Styner at UNC, Chapel Hill made enhancements.  Wrapping for Slicer was provided by Pierre Seroul and Stephen Aylward at Kitware, Inc.
-    </acknowledgements>
-
+  <license/>
+  <contributor>Pierre Seroul, Martin Styner, Guido Gerig, and Stephen Aylward</contributor>
+  <acknowledgements>The original implementation of this method was provided by ETH Zurich, Image Analysis Laboratory of Profs Olaf Kuebler, Gabor Szekely and Guido Gerig.  Martin Styner at UNC, Chapel Hill made enhancements.  Wrapping for Slicer was provided by Pierre Seroul and Stephen Aylward at Kitware, Inc.</acknowledgements>
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -30,9 +24,8 @@ The original implementation of this method was provided by ETH Zurich, Image Ana
       <channel>output</channel>
       <index>2</index>
       <description>Skeleton of the input image</description>
-    </image> 
+    </image>
   </parameters>
-
   <parameters>
     <label>Skeleton</label>
     <description>Skeleton parameters</description>
@@ -63,8 +56,7 @@ The original implementation of this method was provided by ETH Zurich, Image Ana
       <name>OutputPointsFileName</name>
       <longflag>pointsFile</longflag>
       <label>Output points file (.txt)</label>
-      <description>Name of the file to store the coordinates of the central (1D) skeleton points
-        </description>
+      <description>Name of the file to store the coordinates of the central (1D) skeleton points</description>
       <default>skeleton.txt</default>
     </string>
   </parameters>

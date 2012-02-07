@@ -6,16 +6,12 @@
   <description>Registers two images together using a rigid transform and mutual information.\n\nThis module was originally distributed as "Linear registration" but has been renamed to eliminate confusion with the "Affine registration" module.\n\nThis module is often used to align images of different subjects or images of the same subject from different modalities.\n\nThis module can smooth images prior to registration to mitigate noise and improve convergence. Many of the registration parameters require a working knowledge of the algorithm although the default parameters are sufficient for many registration tasks.\n\n</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RigidRegistration</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Daniel Blezek</contributor>
-<acknowledgements>
-This module was developed by Daniel Blezek while at GE Research with contributions from Jim Miller.\n\nThis work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
-
- <parameters advanced="true">
+  <acknowledgements>This module was developed by Daniel Blezek while at GE Research with contributions from Jim Miller.\n\nThis work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <parameters advanced="true">
     <label>Preprocessing</label>
     <description>Preprocessing of images (smoothing) before registration.</description>
-
     <integer>
       <name>FixedImageSmoothingFactor</name>
       <longflag>fixedsmoothingfactor</longflag>
@@ -28,7 +24,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
         <step>1</step>
       </constraints>
     </integer>
-
     <integer>
       <name>MovingImageSmoothingFactor</name>
       <longflag>movingsmoothingfactor</longflag>
@@ -42,11 +37,9 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       </constraints>
     </integer>
   </parameters>
-
   <parameters>
     <label>Registration Parameters</label>
     <description>Parameters used for registration</description>
-
     <boolean hidden="true">
       <name>TestingMode</name>
       <longflag>testingmode</longflag>
@@ -54,7 +47,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <label>Testing mode</label>
       <default>false</default>
     </boolean>
-
     <integer>
       <name>HistogramBins</name>
       <flag>b</flag>
@@ -68,7 +60,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
         <step>5</step>
       </constraints>
     </integer>
-
     <integer>
       <name>SpatialSamples</name>
       <flag>s</flag>
@@ -81,7 +72,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
         <step>1000</step>
       </constraints>
     </integer>
-
     <integer-vector>
       <name>Iterations</name>
       <flag>i</flag>
@@ -90,7 +80,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <label>Iterations</label>
       <default>1000,1000,500,200</default>
     </integer-vector>
-
     <double-vector>
       <name>LearningRate</name>
       <flag>l</flag>
@@ -99,7 +88,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <label>Learning Rates</label>
       <default>0.01,0.005,0.0005,0.0002</default>
     </double-vector>
-
     <double>
       <name>TranslationScale</name>
       <longflag>translationscale</longflag>
@@ -114,7 +102,6 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       </constraints>
     </double>
   </parameters>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -153,7 +140,5 @@ This module was developed by Daniel Blezek while at GE Research with contributio
       <channel>output</channel>
       <description>Resampled moving image to the fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
     </image>
-
   </parameters>
-
 </executable>

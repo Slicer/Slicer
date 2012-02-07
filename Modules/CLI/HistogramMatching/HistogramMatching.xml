@@ -1,26 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Filtering
-  </category>
-  <title>
-  Histogram Matching
-  </title>
-  <description>
-Normalizes the grayscale values of a source image based on the grayscale values of a reference image.  This filter uses a histogram matching technique where the histograms of the two images are matched only at a specified number of quantile values.\n\nThe filter was orginally designed to normalize MR images of the sameMR protocol and same body part. The algorithm works best if background pixels are excluded from both the source and reference histograms.  A simple background exclusion method is to exclude all pixels whose grayscale values are smaller than the mean grayscale value. ThresholdAtMeanIntensity switches on this simple background exclusion method.\n\nNumber of match points governs the number of quantile values to be matched.\n\nThe filter assumes that both the source and reference are of the same type and that the input and output image type have the same number of dimension and have scalar pixel types.
-  </description>
+  <category>Filtering</category>
+  <title>Histogram Matching</title>
+  <description>Normalizes the grayscale values of a source image based on the grayscale values of a reference image.  This filter uses a histogram matching technique where the histograms of the two images are matched only at a specified number of quantile values.\n\nThe filter was orginally designed to normalize MR images of the sameMR protocol and same body part. The algorithm works best if background pixels are excluded from both the source and reference histograms.  A simple background exclusion method is to exclude all pixels whose grayscale values are smaller than the mean grayscale value. ThresholdAtMeanIntensity switches on this simple background exclusion method.\n\nNumber of match points governs the number of quantile values to be matched.\n\nThe filter assumes that both the source and reference are of the same type and that the input and output image type have the same number of dimension and have scalar pixel types.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/HistogramMatching</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Bill Lorensen</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
-
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>Histogram Matching Parameters</label>
     <description>Parameters for Histogram Matching</description>
-
     <integer>
       <name>numberOfHistogramLevels</name>
       <longflag>--numberOfHistogramLevels</longflag>
@@ -28,7 +18,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Number of Histogram Levels</label>
       <default>128</default>
     </integer>
-
     <integer>
       <name>numberOfMatchPoints</name>
       <longflag>--numberOfMatchPoints</longflag>
@@ -36,7 +25,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Number of Match Points</label>
       <default>10</default>
     </integer>
-
     <boolean>
       <name>thresholdAtMeanIntensity</name>
       <longflag>--threshold</longflag>
@@ -44,7 +32,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <label>Threshold at mean</label>
       <default>false</default>
     </boolean>
-
   </parameters>
   <parameters>
     <label>IO</label>
@@ -71,5 +58,4 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Output volume. This is the input volume with intensities matched to the reference volume.</description>
     </image>
   </parameters>
-
 </executable>

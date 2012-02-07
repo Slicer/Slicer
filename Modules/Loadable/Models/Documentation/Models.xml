@@ -10,10 +10,10 @@
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>Scene</label>
-     <parameter>
+    <parameter>
       <label>Scene tree view</label>
       <description>The tree view of all models and model hierarchies in the current MRML scene. You can right click on the Scene element to add hierarchies and drag and drop models into them. Control the Visible property of the model via the eye icon (open/close to show/hide the models). The model color and opacity are also displayed on the same line as the model name. Model hierarchies allow you to group together models. When using the ModelMaker module, multiple models created from one label map are grouped under a model hierarchy node.</description>
-     </parameter>
+    </parameter>
   </parameters>
   <parameters>
     <label>Information Panel</label>
@@ -72,7 +72,7 @@
     <parameter>
       <label>Material Properties</label>
       <description>Material properties of the currently selected model</description>
-    </parameter>  
+    </parameter>
     <parameter>
       <label>Scalars</label>
       <description>Scalar overlay properties</description>
@@ -81,7 +81,6 @@
       <label>Clipping</label>
       <description>Control the clipping properties for this surface model</description>
     </parameter>
-    
   </parameters>
   <parameters>
     <label>Material Properties Panel</label>
@@ -157,7 +156,7 @@
     </parameter>
     <string-enumeration>
       <label>Clipping Type</label>
-      <description>When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. </description>
+      <description>When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model.</description>
       <element>Union</element>
       <element>Intersection</element>
     </string-enumeration>

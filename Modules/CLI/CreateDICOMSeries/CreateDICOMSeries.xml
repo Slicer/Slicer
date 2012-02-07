@@ -5,14 +5,12 @@
   <description>Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ImageReadDicomWrite</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Bill Lorensen</contributor>
   <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
-
   <parameters advanced="true">
     <label>Patient Parameters</label>
     <description>Parameters that apply to a patient</description>
-
     <string>
       <name>patientName</name>
       <longflag>--patientName</longflag>
@@ -20,7 +18,6 @@
       <label>Patient Name</label>
       <default>Anonymous</default>
     </string>
-
     <string>
       <name>patientID</name>
       <longflag>--patientID</longflag>
@@ -28,7 +25,6 @@
       <label>Patient ID</label>
       <default>123456</default>
     </string>
-
     <string>
       <name>patientComments</name>
       <longflag>--patientComments</longflag>
@@ -36,13 +32,10 @@
       <label>Patient Comments</label>
       <default>None</default>
     </string>
-
- </parameters>
-
+  </parameters>
   <parameters advanced="true">
     <label>Study Parameters</label>
     <description>Parameters that apply to a study</description>
-
     <string>
       <name>studyID</name>
       <longflag>--studyID</longflag>
@@ -50,7 +43,6 @@
       <label>Study ID</label>
       <default>123456</default>
     </string>
-
     <string>
       <name>studyDate</name>
       <longflag>--studyDate</longflag>
@@ -58,7 +50,6 @@
       <label>Study Date</label>
       <default>20060101</default>
     </string>
-
     <string>
       <name>studyComments</name>
       <longflag>--studyComments</longflag>
@@ -66,7 +57,6 @@
       <label>Study Comments</label>
       <default>None</default>
     </string>
-
     <string>
       <name>studyDescription</name>
       <longflag>--studyDescription</longflag>
@@ -74,7 +64,6 @@
       <label>Study Descriptions</label>
       <default>None</default>
     </string>
-
     <string>
       <name>modality</name>
       <longflag>--modality</longflag>
@@ -82,7 +71,6 @@
       <label>Modality</label>
       <default>CT</default>
     </string>
-
     <string>
       <name>manufacturer</name>
       <longflag>--manufacturer</longflag>
@@ -90,7 +78,6 @@
       <label>Manufacturer</label>
       <default>GE Medical Systems</default>
     </string>
-
     <string>
       <name>model</name>
       <longflag>--model</longflag>
@@ -98,13 +85,10 @@
       <label>Model</label>
       <default>None</default>
     </string>
-
- </parameters>
-
+  </parameters>
   <parameters advanced="true">
     <label>Series Parameters</label>
     <description>Parameters that apply to a series</description>
-
     <string>
       <name>seriesNumber</name>
       <longflag>--seriesNumber</longflag>
@@ -112,7 +96,6 @@
       <label>Series Number</label>
       <default>123456</default>
     </string>
-
     <string>
       <name>seriesDescription</name>
       <longflag>--seriesDescription</longflag>
@@ -120,31 +103,25 @@
       <label>Series Description</label>
       <default>None</default>
     </string>
-
- </parameters>
-
- <parameters advanced="true">
+  </parameters>
+  <parameters advanced="true">
     <label>Image Parameters</label>
     <description>Parameters that apply to the images and data in each image</description>
-
     <double>
-       <label>Rescale intercept</label>
-       <name>rescaleIntercept</name>
-       <longflag>--rescaleIntercept</longflag>
-       <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
-       <default>0.0000</default>
+      <label>Rescale intercept</label>
+      <name>rescaleIntercept</name>
+      <longflag>--rescaleIntercept</longflag>
+      <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
+      <default>0.0000</default>
     </double>
-
     <double>
-       <label>Rescale slope</label>
-       <name>rescaleSlope</name>
-       <longflag>--rescaleSlope</longflag>
-       <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
-       <default>1.0000</default>
+      <label>Rescale slope</label>
+      <name>rescaleSlope</name>
+      <longflag>--rescaleSlope</longflag>
+      <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
+      <default>1.0000</default>
     </double>
- </parameters>
-
-
+  </parameters>
   <parameters>
     <label>Input</label>
     <description>Input parameters</description>
@@ -156,7 +133,6 @@
       <description>Input volume to be resampled</description>
     </image>
   </parameters>
-
   <parameters>
     <label>Output</label>
     <description>Output parameters</description>
@@ -196,5 +172,4 @@
       <default>false</default>
     </boolean>
   </parameters>
-
 </executable>

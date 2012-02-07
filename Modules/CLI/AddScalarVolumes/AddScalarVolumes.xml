@@ -2,17 +2,12 @@
 <executable>
   <category>Filtering.Arithmetic</category>
   <title>Add Scalar Volumes</title>
-  <description>
-Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.
-</description>
+  <description>Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Add</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Bill Lorensen</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
-
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
@@ -53,5 +48,4 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Interpolation order if two images are in different coordinate frames or have different sampling.</description>
     </integer-enumeration>
   </parameters>
-
 </executable>

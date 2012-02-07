@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-  Legacy.Work in Progress.Diffusion Tensor.Test
-  </category>
-  <title>
-  Simple IO Test
-  </title>
-  <description>
-  Simple test of tensor IO
-  </description>
+  <category>Legacy.Work in Progress.Diffusion Tensor.Test</category>
+  <title>Simple IO Test</title>
+  <description>Simple test of tensor IO</description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url></documentation-url>
-  <license></license>
+  <documentation-url/>
+  <license/>
   <contributor>Bill Lorensen</contributor>
   <parameters>
     <label>IO</label>
@@ -31,5 +25,4 @@
       <description>Filtered tensor volume</description>
     </image>
   </parameters>
-
 </executable>

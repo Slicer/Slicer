@@ -5,10 +5,9 @@
   <description>Shows one of each type of parameter.</description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExecutionModelTour</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Daniel Blezek, Bill Lorensen</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
-
   <parameters>
     <label>Scalar Parameters</label>
     <description>Variations on scalar parameters</description>
@@ -34,7 +33,6 @@
       </constraints>
     </double>
   </parameters>
-
   <parameters>
     <label>Vector Parameters</label>
     <description>Variations on vector parameters</description>
@@ -53,7 +51,6 @@
       <default>foo,bar,foobar</default>
     </string-vector>
   </parameters>
-
   <parameters>
     <label>Enumeration Parameters</label>
     <description>Variations on enumeration parameters</description>
@@ -72,7 +69,6 @@
       <element>Will</element>
     </string-enumeration>
   </parameters>
-
   <parameters>
     <label>Boolean Parameters</label>
     <description>Variations on boolean parameters</description>
@@ -97,7 +93,6 @@
       <label>Boolean No Default</label>
     </boolean>
   </parameters>
-
   <parameters>
     <label>File, Directory and Image Parameters</label>
     <description>Parameters that describe files and direcories.</description>
@@ -107,7 +102,7 @@
       <label>Input file</label>
       <channel>input</channel>
     </file>
-    <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html"  multiple="true">
+    <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html" multiple="true">
       <longflag>files</longflag>
       <description>Multiple input files</description>
       <label>Input Files</label>
@@ -143,7 +138,7 @@
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
-    <point coordinateSystem="ras" multiple="true">
+    <point multiple="true" coordinateSystem="ras">
       <name>seed</name>
       <label>Seeds</label>
       <longflag>--seed</longflag>
@@ -151,7 +146,6 @@
       <default>0,0,0</default>
     </point>
   </parameters>
-
   <parameters>
     <label>Index Parameters</label>
     <description>Variations on parameters that use index rather than flags.</description>
@@ -171,30 +165,30 @@
     </image>
   </parameters>
   <parameters>
-        <label>Regions of interest</label>
-        <region multiple="true">
-           <name>regions</name>
-           <label>Region list</label>
-           <longflag>region</longflag>
-           <description>List of regions to process</description>
-        </region>
+    <label>Regions of interest</label>
+    <region multiple="true">
+      <name>regions</name>
+      <label>Region list</label>
+      <longflag>region</longflag>
+      <description>List of regions to process</description>
+    </region>
   </parameters>
   <parameters>
-        <label>Measurements</label>
-        <measurement>
-           <name>inputFA</name>
-           <channel>input</channel>
-           <label>Input FA measurements</label>
-           <longflag>inputFA</longflag>
-           <description>Array of FA values to process</description>
-        </measurement>
-        <measurement>
-           <name>outputFA</name>
-           <channel>output</channel>
-           <label>Output FA measurements</label>
-           <longflag>outputFA</longflag>
-           <description>Array of processed (output) FA values</description>
-        </measurement>
+    <label>Measurements</label>
+    <measurement>
+      <name>inputFA</name>
+      <channel>input</channel>
+      <label>Input FA measurements</label>
+      <longflag>inputFA</longflag>
+      <description>Array of FA values to process</description>
+    </measurement>
+    <measurement>
+      <name>outputFA</name>
+      <channel>output</channel>
+      <label>Output FA measurements</label>
+      <longflag>outputFA</longflag>
+      <description>Array of processed (output) FA values</description>
+    </measurement>
   </parameters>
   <parameters>
     <label>Simple return types</label>

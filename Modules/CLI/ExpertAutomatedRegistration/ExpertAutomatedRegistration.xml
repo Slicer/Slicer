@@ -6,12 +6,9 @@
   <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImages-Documentation-3.6</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Stephen R Aylward, Casey B Goodlett</contributor>
-<acknowledgements>
-This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.
-</acknowledgements>
-
+  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>IO</label>
     <description>Input and output parameters</description>
@@ -35,7 +32,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <channel>output</channel>
       <longflag>resampledImage</longflag>
       <description>Registration results</description>
-      <default></default>
+      <default/>
     </image>
   </parameters>
   <parameters>
@@ -47,7 +44,7 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Load a transform that is immediately applied to the moving image</description>
       <longflag>loadTransform</longflag>
       <channel>input</channel>
-      <default></default>
+      <default/>
     </transform>
     <transform fileExtensions=".txt">
       <name>saveTransform</name>
@@ -55,24 +52,8 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Save the transform that results from registration</description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
-      <default></default>
+      <default/>
     </transform>
-    <!--
-    <file>
-      <name>loadParameters</name>
-      <label>Load parameters</label>
-      <description>File containing detailed parameters for registration</description>
-      <longflag>loadParameters</longflag>
-      <default></default>
-    </file>
-    <file>
-      <name>saveParameters</name>
-      <label>Save parameters</label>
-      <description>Writed the parameters used for registration</description>
-      <longflag>saveParameters</longflag>
-      <default></default>
-    </file>
-    -->
     <string-enumeration>
       <name>initialization</name>
       <description>Method to prime the registration process</description>
@@ -166,27 +147,6 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <longflag>fixedImageMask</longflag>
       <description>Image which defines a mask for the fixed image</description>
     </image>
-    <!-- Removed because this can be handled by a user specified mask -->
-    <!--
-    <float>
-      <name>sampleIntensityPortion</name>
-      <description>Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)</description>
-      <label>Fixed image intensity percentage threshold</label>
-      <longflag>sampleIntensityPortion</longflag>
-      <default>0.0</default>
-    </float>
-    -->
-    <!-- Removed because this can be handled by a mask.  If we could
-    get a MRML ROI object this may become useful again. -->
-    <!--
-    <float-vector>
-      <name>regionOfInterest</name>
-      <description>Limit metric evaluation to the physical ROI (x1,y1,z1,x2,y2,z2)</description>
-      <label>Limit analysis to physical ROI bounded two points</label>
-      <longflag>regionOfInterest</longflag>
-      <default></default>
-    </float-vector>
-    -->
     <integer>
       <name>randomNumberSeed</name>
       <description>Seed to generate a consistent random number sequence</description>
@@ -227,14 +187,14 @@ This work is part of the National Alliance for Medical Image Computing (NAMIC), 
       <description>Ordered list of landmarks in the fixed image</description>
       <label>Fixed landmarks</label>
       <longflag>fixedLandmarks</longflag>
-      <default></default>
+      <default/>
     </point>
     <point multiple="true">
       <name>movingLandmarks</name>
       <description>Ordered list of landmarks in the moving image</description>
       <label>Moving landmarks</label>
       <longflag>movingLandmarks</longflag>
-      <default></default>
+      <default/>
     </point>
   </parameters>
   <parameters advanced="true">

@@ -2,12 +2,12 @@
 <executable>
   <category>Data Access</category>
   <title>MIDAS Data and Slicer Tutorials</title>
-  <description> Allows the user to browse data and download Slicer tutorials to their computer from MIDAS (http://www.insight-journal.org/midas).  Tutorials typically consist of .zip files that contain the tutorials at PowerPoint presentations as well as demonstration data. </description>
+  <description>Allows the user to browse data and download Slicer tutorials to their computer from MIDAS (http://www.insight-journal.org/midas).  Tutorials typically consist of .zip files that contain the tutorials at PowerPoint presentations as well as demonstration data.</description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
-  <documentation-url></documentation-url>
-  <license></license>
+  <documentation-url/>
+  <license/>
   <contributor>Patrick Reynolds and Stephen Aylward</contributor>
-  <acknowledgements> This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
+  <acknowledgements>This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
     <label>Browse Data</label>
     <description>Select the data to browse using your Web browser</description>

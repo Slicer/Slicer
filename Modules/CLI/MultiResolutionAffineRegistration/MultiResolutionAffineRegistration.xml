@@ -5,7 +5,7 @@
   <description>Provides affine registration using multiple resolution levels and decomposed affine transforms.</description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesMultiRes-Documentation-3.6</documentation-url>
-  <license></license>
+  <license/>
   <contributor>Casey B Goodlett</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
   <parameters>
@@ -31,7 +31,7 @@
       <channel>output</channel>
       <longflag>resampledImage</longflag>
       <description>Registration results</description>
-      <default></default>
+      <default/>
     </image>
     <transform fileExtensions=".txt">
       <name>outputTransform</name>
@@ -39,7 +39,7 @@
       <description>Save the output transform from the registration</description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
-      <default></default>
+      <default/>
     </transform>
   </parameters>
   <parameters>
@@ -51,7 +51,7 @@
       <channel>input</channel>
       <longflag>fixedImageMask</longflag>
       <description>Label image which defines a mask of interest for the fixed image</description>
-      <default></default>
+      <default/>
     </image>
     <region>
       <name>fixedImageROI</name>
@@ -59,7 +59,7 @@
       <channel>input</channel>
       <longflag>fixedImageROI</longflag>
       <description>Label image which defines a ROI of interest for the fixed image</description>
-      <default></default>
+      <default/>
     </region>
   </parameters>
   <parameters>
@@ -101,7 +101,7 @@
       <label>Metric Tolerance</label>
       <channel>input</channel>
       <longflag>metricTolerance</longflag>
-      <description></description>
+      <description/>
       <default>.00001</default>
     </float>
   </parameters>

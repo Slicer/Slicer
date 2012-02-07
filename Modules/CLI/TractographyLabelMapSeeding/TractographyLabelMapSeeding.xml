@@ -9,19 +9,17 @@
   <contributor>Raul San Jose</contributor>
   <contributor>Demian Wassermann</contributor>
   <acknowledgements>Laboratory of Mathematics in Imaging. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
-
   <parameters>
     <label>IO</label>
     <description>Input/output parameters</description>
-    <image type ="tensor">
+    <image type="tensor">
       <name>InputVolume</name>
       <label>Input DTI Volume</label>
       <channel>input</channel>
       <index>0</index>
       <description>Input DTI volume</description>
     </image>
-
-    <image type ="label">
+    <image type="label">
       <name>InputROI</name>
       <label>Input Label Map</label>
       <flag>-a</flag>
@@ -29,23 +27,20 @@
       <description>Label map with seeding ROIs</description>
       <channel>input</channel>
     </image>
-
-    <geometry type = "fiberbundle">
+    <geometry type="fiberbundle">
       <name>OutputFibers</name>
       <label>Output Fiber bundle</label>
       <channel>output</channel>
       <index>1</index>
       <description>Tractography result</description>
     </geometry>
-
-   <boolean>
-     <name>WriteToFile</name>
-     <label>Write Fibers To Disk</label>
-     <longflag>--writetofile</longflag>
-     <description>Write fibers to disk or create in the scene?</description>
-     <default>false</default>
-   </boolean>
-
+    <boolean>
+      <name>WriteToFile</name>
+      <label>Write Fibers To Disk</label>
+      <longflag>--writetofile</longflag>
+      <description>Write fibers to disk or create in the scene?</description>
+      <default>false</default>
+    </boolean>
     <directory>
       <name>OutputDirectory</name>
       <label>Output Directory</label>
@@ -53,21 +48,18 @@
       <longflag>--outputdirectory</longflag>
       <description>Directory in which to save fiber(s)</description>
     </directory>
-
-   <string>
-     <name>FilePrefix</name>
-     <label>File Prefix Name</label>
-     <flag>-n</flag>
-     <longflag>--name</longflag>
-     <description>Name to use for fiber files</description>
-     <default>line</default>
-   </string>
-
+    <string>
+      <name>FilePrefix</name>
+      <label>File Prefix Name</label>
+      <flag>-n</flag>
+      <longflag>--name</longflag>
+      <description>Name to use for fiber files</description>
+      <default>line</default>
+    </string>
   </parameters>
   <parameters>
     <label>Seed Placement Options</label>
     <description>Options for seed placement</description>
-
     <boolean>
       <name>UseIndexSpace</name>
       <label>Use Index Space</label>
@@ -76,7 +68,6 @@
       <description>Seed at IJK voxel grid</description>
       <default>false</default>
     </boolean>
-
     <double>
       <name>SeedSpacing</name>
       <label>Seed Spacing</label>
@@ -86,11 +77,10 @@
       <default>2</default>
       <constraints>
         <minimum>0.1</minimum>
-  <maximum>10</maximum>
-  <step>0.1</step>
+        <maximum>10</maximum>
+        <step>0.1</step>
       </constraints>
     </double>
-
     <boolean>
       <name>RandomGrid</name>
       <label>Random Grid</label>
@@ -99,7 +89,6 @@
       <description>Enable random placing of seeds</description>
       <default>false</default>
     </boolean>
-
     <double>
       <name>ClTh</name>
       <label>Linear Measure Start Threshold</label>
@@ -109,16 +98,14 @@
       <default>0.3</default>
       <constraints>
         <minimum>0</minimum>
-  <maximum>1</maximum>
-  <step>0.1</step>
+        <maximum>1</maximum>
+        <step>0.1</step>
       </constraints>
     </double>
   </parameters>
-
   <parameters>
-    <label> Tractography Seeding Parameters</label>
+    <label>Tractography Seeding Parameters</label>
     <description>Parameters for the tractography method</description>
-
     <double>
       <name>MinimumLength</name>
       <label>Minimum Length</label>
@@ -128,11 +115,10 @@
       <default>10</default>
       <constraints>
         <minimum>0</minimum>
-  <maximum>200</maximum>
-  <step>1</step>
+        <maximum>200</maximum>
+        <step>1</step>
       </constraints>
     </double>
-
     <double>
       <name>MaximumLength</name>
       <label>Maximum Length</label>
@@ -142,11 +128,10 @@
       <default>800</default>
       <constraints>
         <minimum>0</minimum>
-  <maximum>2000</maximum>
-  <step>1</step>
+        <maximum>2000</maximum>
+        <step>1</step>
       </constraints>
     </double>
-
     <string-enumeration>
       <name>StoppingMode</name>
       <label>Stopping Mode</label>
@@ -157,7 +142,6 @@
       <element>LinearMeasure</element>
       <element>FractionalAnisotropy</element>
     </string-enumeration>
-
     <double>
       <name>StoppingValue</name>
       <label>Stopping Value</label>
@@ -167,11 +151,10 @@
       <default>0.15</default>
       <constraints>
         <minimum>0</minimum>
-  <maximum>1</maximum>
-  <step>0.01</step>
+        <maximum>1</maximum>
+        <step>0.01</step>
       </constraints>
     </double>
-
     <double>
       <name>StoppingCurvature</name>
       <label>Stopping Track Curvature</label>
@@ -181,11 +164,10 @@
       <default>0.8</default>
       <constraints>
         <minimum>0</minimum>
-  <maximum>10</maximum>
-  <step>0.1</step>
+        <maximum>10</maximum>
+        <step>0.1</step>
       </constraints>
     </double>
-
     <double>
       <name>IntegrationStepLength</name>
       <label>Integration Step Length(mm)</label>
@@ -195,17 +177,14 @@
       <default>0.5</default>
       <constraints>
         <minimum>0.0</minimum>
-  <maximum>10</maximum>
-  <step>0.1</step>
+        <maximum>10</maximum>
+        <step>0.1</step>
       </constraints>
     </double>
-
   </parameters>
-
   <parameters>
     <label>Label definition</label>
     <description>Selection of label(labels) for ROI definition</description>
-
     <integer>
       <name>ROIlabel</name>
       <label>Seeding label</label>
