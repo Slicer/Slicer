@@ -121,6 +121,14 @@ set(CTEST_UPDATE_COMMAND "${CTEST_SVN_COMMAND}")
 set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 
 #-----------------------------------------------------------------------------
+# Macro allowing to set a variable to its default value only if not already defined
+macro(setIfNotDefined var defaultvalue)
+  if(NOT DEFINED ${var})
+    set(${var} "${defaultvalue}")
+  endif()
+endmacro()
+
+#-----------------------------------------------------------------------------
 # The following variable can be used while testing the driver scripts
 #-----------------------------------------------------------------------------
 setIfNotDefined(run_ctest_submit TRUE)
@@ -366,11 +374,3 @@ else()
   run_ctest()
 endif()
 
-
-#-----------------------------------------------------------------------------
-# Macro allowing to set a variable to its default value only if not already defined
-macro(setIfNotDefined var defaultvalue)
-  if(NOT DEFINED ${var})
-    set(${var} "${defaultvalue}")
-  endif()
-endmacro()
