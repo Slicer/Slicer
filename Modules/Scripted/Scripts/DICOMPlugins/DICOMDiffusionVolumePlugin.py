@@ -13,7 +13,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
   """ DiffusionVolume specific interpretation code
   """
 
-  def __init__(self,epsilon=0.01):
+  def __init__(self):
     super(DICOMPlugin,self).__init__()
     self.loadType = "Diffusion Volume"
     # these are the required tags for each vendor
@@ -21,27 +21,27 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     # standard DICOM Diffusion, but when it does we should
     # add a set of required tags based on supplement 49
     self.diffusionTags = {
-        "GE" : [
+        'GE' : [
             '0043,1039', # B Value of diffusion weighting
             '0019,10bb', # X component of gradient direction
             '0019,10bc', # Y component of gradient direction
-            '0019,10bd'  # Z component of gradient direction
+            '0019,10bd', # Z component of gradient direction
           ],
-        "Siemens" : [
+        'Siemens' : [
             '0051,100b', # "Mosiac Matrix Size"
             '0019,100a', # "Number of Images In Mosaic"
             '0019,100c', # "B Value of diffusion weighting"
             '0019,100e', # "Diffusion Gradient Direction"
             '0019,1027', # "Diffusion Matrix"
-            '0029,1010'  # "Siemens DWI Info"
+            '0029,1010', # "Siemens DWI Info"
           ],
-        "Philips" : [
+        'Philips' : [
             '2001,1003', # "B Value of diffusion weighting"
             '2001,1004', # "Diffusion Gradient Direction"
             '2005,10b0', # "Diffusion Direction R/L"
             '2005,10b1', # "Diffusion Direction A/P"
-            '2005,10b2'  # "Diffusion Direction F/H"
-          ]
+            '2005,10b2', # "Diffusion Direction F/H"
+          ],
         }
 
   def examine(self,fileLists):
