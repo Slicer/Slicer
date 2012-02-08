@@ -99,15 +99,15 @@ vtkMRMLSliceLayerLogic::vtkMRMLSliceLayerLogic()
   this->DWIExtractComponent = vtkImageExtractComponents::New();
 
   // Create the components for the DTI layer pipeline
-  this->DTIReslice = vtkImageReslice::New();
+  //this->DTIReslice = vtkImageReslice::New();
   this->DTIMathematics = vtkDiffusionTensorMathematics::New();
   // Set parameters that won't change based on input
-  this->DTIReslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
-  this->DTIReslice->AutoCropOutputOff();
-  this->DTIReslice->SetOptimization(1);
-  this->DTIReslice->SetOutputOrigin( 0, 0, 0 );
-  this->DTIReslice->SetOutputSpacing( 1, 1, 1 );
-  this->DTIReslice->SetOutputDimensionality( 2 );
+  //this->DTIReslice->SetBackgroundColor(128, 0, 0, 0); // only first two are used
+  //this->DTIReslice->AutoCropOutputOff();
+  //this->DTIReslice->SetOptimization(1);
+  //this->DTIReslice->SetOutputOrigin( 0, 0, 0 );
+  //this->DTIReslice->SetOutputSpacing( 1, 1, 1 );
+  //this->DTIReslice->SetOutputDimensionality( 2 );
 
 
   //
@@ -168,7 +168,7 @@ vtkMRMLSliceLayerLogic::~vtkMRMLSliceLayerLogic()
 
   this->Slice->Delete();
   this->Reslice->Delete();
-  this->DTIReslice->Delete();
+  //this->DTIReslice->Delete();
   this->DWIExtractComponent->Delete();
   this->DTIMathematics->Delete();
   this->Threshold->Delete();
@@ -502,9 +502,9 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   this->Reslice->SetOutputExtent( 0, dimensions[0]-1,
                                   0, dimensions[1]-1,
                                   0, dimensions[2]-1);
-  this->DTIReslice->SetOutputExtent( 0, dimensions[0]-1,
-                                  0, dimensions[1]-1,
-                                  0, dimensions[2]-1);
+  //this->DTIReslice->SetOutputExtent( 0, dimensions[0]-1,
+  //                                0, dimensions[1]-1,
+  //                                0, dimensions[2]-1);
 
   this->UpdatingTransforms = 0; 
 
