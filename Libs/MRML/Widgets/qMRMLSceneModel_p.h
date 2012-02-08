@@ -69,6 +69,7 @@ public:
   int CheckableColumn;
   int VisibilityColumn;
   int ToolTipNameColumn;
+  int ExtraItemColumn;
   
   QIcon VisibleIcon;
   QIcon HiddenIcon;

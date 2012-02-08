@@ -50,6 +50,7 @@ qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   this->CheckableColumn = -1;
   this->VisibilityColumn = -1;
   this->ToolTipNameColumn = -1;
+  this->ExtraItemColumn = 0;
 
   this->HiddenIcon = QIcon(":Icons/VisibleOff.png");
   this->VisibleIcon = QIcon(":Icons/VisibleOn.png");
@@ -146,21 +147,30 @@ void qMRMLSceneModelPrivate::insertExtraItem(int row, QStandardItem* parent,
 {
   Q_ASSERT(parent);
 
-  QStandardItem* item = new QStandardItem;
-  item->setData(extraType, qMRMLSceneModel::UIDRole);
-  if (text == "separator")
-    {
-    item->setData("separator", Qt::AccessibleDescriptionRole);
-    }
-  else
-    {
-    item->setText(text);
-    }
-  item->setFlags(flags);
   QList<QStandardItem*> items;
-  items << item;
-  items << new QStandardItem;
-  items[1]->setFlags(0);
+  // fill with empty column items
+  for (int column = 0; column < parent->columnCount(); ++column)
+    {
+    QStandardItem* extraItem = new QStandardItem;
+    if (column == this->ExtraItemColumn)
+      {
+      extraItem->setData(extraType, qMRMLSceneModel::UIDRole);
+      if (text == "separator")
+        {
+        extraItem->setData("separator", Qt::AccessibleDescriptionRole);
+        }
+      else
+        {
+        extraItem->setText(text);
+        }
+      extraItem->setFlags(flags);
+      }
+    else
+      {
+      extraItem->setFlags(0);
+      }
+    items << extraItem;
+    }
   parent->insertRow(row, items);
 
   // update extra item cache info (for faster retrieval)
@@ -365,7 +375,7 @@ vtkMRMLScene* qMRMLSceneModel::mrmlScene()const
 QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
 {
   Q_D(const qMRMLSceneModel);
-  if (d->MRMLScene == 0)
+  if (d->MRMLScene == 0 || this->maxColumnId() == -1)
     {
     return 0;
     }
@@ -373,6 +383,10 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem()const
   for (int i = 0; i < count; ++i)
     {
     QStandardItem* child = this->invisibleRootItem()->child(i);
+    if (!child)
+      {
+      continue;
+      }
     QVariant uid = child->data(qMRMLSceneModel::UIDRole);
     if (uid.type() == QVariant::String &&
         uid.toString() == "scene")
@@ -654,6 +668,12 @@ void qMRMLSceneModel::updateScene()
       preSceneItemCount,
       this->rowCount() - preSceneItemCount - postSceneItemCount);
     this->setColumnCount(oldColumnCount);
+    return;
+    }
+
+  // if there is no column, there is no scene item.
+  if (!this->mrmlSceneItem())
+    {
     return;
     }
 
@@ -1207,11 +1227,12 @@ void printStandardItem(QStandardItem* item, const QString& offset)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeItems()
 {
-  if (this->mrmlScene() == 0)
+  QStandardItem* sceneItem = this->mrmlSceneItem();
+  if (sceneItem == 0)
     {
     return;
     }
-  this->mrmlSceneItem()->setColumnCount(this->columnCount());
+  sceneItem->setColumnCount(this->columnCount());
   vtkCollection* nodes = this->mrmlScene()->GetNodes();
   vtkMRMLNode* node = 0;
   vtkCollectionSimpleIterator it;
@@ -1452,23 +1473,46 @@ void qMRMLSceneModel::setToolTipNameColumn(int column)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::updateColumnCount()
+int qMRMLSceneModel::extraItemColumn()const
+{
+  Q_D(const qMRMLSceneModel);
+  return d->ExtraItemColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::setExtraItemColumn(int column)
 {
   Q_D(qMRMLSceneModel);
+  d->ExtraItemColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::updateColumnCount()
+{
   int max = this->maxColumnId();
+  int oldColumnCount = this->columnCount();
   this->setColumnCount(max + 1);
-  this->updateNodeItems();
+  if (oldColumnCount == 0)
+    {
+    this->updateScene();
+    }
+  else
+    {
+    this->updateNodeItems();
+    }
 }
 
 //------------------------------------------------------------------------------
 int qMRMLSceneModel::maxColumnId()const
 {
   Q_D(const qMRMLSceneModel);
-  int maxId = -1;
+  int maxId = 0; // informations (scene, node uid... ) are stored in the 1st column
   maxId = qMax(maxId, d->NameColumn);
   maxId = qMax(maxId, d->IDColumn);
   maxId = qMax(maxId, d->CheckableColumn);
   maxId = qMax(maxId, d->VisibilityColumn);
   maxId = qMax(maxId, d->ToolTipNameColumn);
+  maxId = qMax(maxId, d->ExtraItemColumn);
   return maxId;
 }

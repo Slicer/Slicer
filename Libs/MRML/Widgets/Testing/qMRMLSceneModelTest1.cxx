@@ -116,8 +116,8 @@ int qMRMLSceneModelTest1( int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (sceneModel.columnCount() != 2 ||
-      sceneModel.columnCount(sceneModel.mrmlSceneIndex()) != 2)
+  if (sceneModel.columnCount() != 1 ||
+      sceneModel.columnCount(sceneModel.mrmlSceneIndex()) != 1)
     {
     std::cerr << "Wrong number of columns" << sceneModel.columnCount()
               << " " << sceneModel.columnCount(sceneModel.mrmlSceneIndex()) << std::endl;

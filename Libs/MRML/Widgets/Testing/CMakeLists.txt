@@ -38,6 +38,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLSceneColorTableModelTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneHierarchyModelTest1.cxx
+  qMRMLSceneModelTest.cxx
   qMRMLSceneModelTest1.cxx
   qMRMLSceneModelHierarchyModelTest1.cxx
   qMRMLSceneModelHierarchyModelTest2.cxx
@@ -69,11 +70,16 @@ set(Tests_UtilityFiles
     )
 
 QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
+QT4_GENERATE_MOCS(
+  qMRMLSceneModelTest.cxx
+  )
 
 set(TestsToRun ${Tests})
 list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 set(LIBRARY_NAME ${PROJECT_NAME})
+
+include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
@@ -124,6 +130,7 @@ SIMPLE_TEST( qMRMLScalarInvariantComboBoxTest1 )
 SIMPLE_TEST( qMRMLSceneCategoryModelTest1 )
 SIMPLE_TEST( qMRMLSceneColorTableModelTest1 )
 SIMPLE_TEST( qMRMLSceneFactoryWidgetTest1 )
+SIMPLE_TEST( qMRMLSceneModelTest )
 SIMPLE_TEST( qMRMLSceneModelTest1 )
 SIMPLE_TEST( qMRMLSceneModelHierarchyModelTest1 )
 SIMPLE_TEST( qMRMLSceneModelHierarchyModelTest2 vol_and_cube.mrml)

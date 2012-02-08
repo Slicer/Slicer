@@ -38,6 +38,20 @@ class QAction;
 class qMRMLSceneModelPrivate;
 
 //------------------------------------------------------------------------------
+///
+/// qMRMLSceneModel has at least 1 column with the scene as a top level item.
+/// See below an example of model when nameColumn = 0 (default) and idColumn = 1
+/// with 1 postItem ("Add new node"):
+///
+///    Column 0           Column 1
+///
+///  - Scene
+///    |- ViewNode        vtkMRMLViewNode1
+///    |- CameraNode      vtkMRMLCameraNode1
+///    ...
+///    |- my_volume.nrrd  vtkMRMLScalarVolumeNode1
+///    |- Add new node
+///
 class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
 {
   Q_OBJECT
@@ -58,6 +72,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
 
   /// Control in which column vtkMRMLNode names are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. First column (0) by default.
+  /// If no property is set in a column, nothing is displayed.
   Q_PROPERTY (int nameColumn READ nameColumn WRITE setNameColumn)
   /// Control in which column vtkMRMLNode IDs are displayed (Qt::DisplayRole).
   /// A value of -1 hides it. Hidden by default (value of -1)
@@ -71,22 +86,28 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   /// Control in which column tooltips are displayed (Qt::ToolTipRole).
   /// A value of -1 hides it. Hidden by default (value of -1).
   Q_PROPERTY (int toolTipNameColumn READ toolTipNameColumn WRITE setToolTipNameColumn)
-
+  /// Control in which column the extra items are displayed
+  /// A value of -1 hides it (not tested). 0 by default
+  Q_PROPERTY( int extraItemColumn READ extraItemColumn WRITE setExtraItemColumn)
 public:
   typedef QStandardItemModel Superclass;
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
-  
+
   enum ItemDataRole{
     UIDRole = Qt::UserRole + 1,
     PointerRole,
     ExtraItemsRole
     };
 
+  /// 0 by default
   virtual void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene* mrmlScene()const;
 
+  /// 0 until a valid scene is set
   QStandardItem* mrmlSceneItem()const;
+
+  /// invalid until a valid scene is set
   QModelIndex mrmlSceneIndex()const;
 
   /// Return the vtkMRMLNode associated to the node index.
@@ -113,7 +134,7 @@ public:
 
   int idColumn()const;
   void setIDColumn(int column);
-  
+
   int checkableColumn()const;
   void setCheckableColumn(int column);
 
@@ -122,6 +143,9 @@ public:
 
   int toolTipNameColumn()const;
   void setToolTipNameColumn(int column);
+
+  int extraItemColumn()const;
+  void setExtraItemColumn(int column);
 
   /// Extra items that are prepended to the node list
   /// Warning, setPreItems() resets the model, the currently selected item is lost
@@ -133,6 +157,8 @@ public:
   void setPostItems(const QStringList& extraItems, QStandardItem* parent);
   QStringList postItems(QStandardItem* parent)const;
 
+  /// Doesn't support drop actions, scene model subclasses can support drop
+  /// actions though.
   virtual Qt::DropActions supportedDropActions()const;
   virtual QMimeData* mimeData(const QModelIndexList& indexes)const;
   virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
