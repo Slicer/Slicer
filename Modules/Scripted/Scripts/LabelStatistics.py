@@ -23,6 +23,7 @@ Use this module to calculate counts and volumes for different labels of a label 
 
 class LabelStatisticsWidget:
   def __init__(self, parent=None):
+    self.chartOptions = ("Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout(qt.QVBoxLayout())
@@ -103,10 +104,22 @@ class LabelStatisticsWidget:
     self.parent.layout().addWidget(self.view)
 
     # Chart button
+    self.chartFrame = qt.QFrame()
+    self.chartFrame.setLayout(qt.QHBoxLayout())
+    self.parent.layout().addWidget(self.chartFrame)
     self.chartButton = qt.QPushButton("Chart")
     self.chartButton.toolTip = "Make a chart from the current statistics."
-    self.chartButton.enabled = False
-    self.parent.layout().addWidget(self.chartButton)
+    self.chartFrame.layout().addWidget(self.chartButton)
+    self.chartOption = qt.QComboBox()
+    self.chartOption.addItems(self.chartOptions)
+    self.chartFrame.layout().addWidget(self.chartOption)
+    self.chartIgnoreZero = qt.QCheckBox()
+    self.chartIgnoreZero.setText('Ignore Zero')
+    self.chartIgnoreZero.checked = False
+    self.chartIgnoreZero.setToolTip('Do not include the zero index in the chart to avoid dwarfing other bars')
+    self.chartFrame.layout().addWidget(self.chartIgnoreZero)
+    self.chartFrame.enabled = False
+
 
     # Save button
     self.saveButton = qt.QPushButton("Save")
@@ -141,14 +154,16 @@ class LabelStatisticsWidget:
     slicer.app.processEvents()
     self.logic = LabelStatisticsLogic(self.grayscaleNode, self.labelNode)
     self.populateStats()
-    self.chartButton.enabled = True
+    self.chartFrame.enabled = True
     self.saveButton.enabled = True
     self.applyButton.text = "Apply"
 
   def onChart(self):
     """chart the label statistics
     """
-    self.logic.createStatsChart(self.labelNode)
+    valueToPlot = self.chartOptions[self.chartOption.currentIndex]
+    ignoreZero = self.chartIgnoreZero.checked
+    self.logic.createStatsChart(self.labelNode,valueToPlot,ignoreZero)
 
   def onSave(self):
     """save the label statistics
@@ -167,21 +182,36 @@ class LabelStatisticsWidget:
   def populateStats(self):
     if not self.logic:
       return
+    displayNode = self.labelNode.GetDisplayNode()
+    colorNode = displayNode.GetColorNode()
+    lut = colorNode.GetLookupTable()
     self.items = []
     self.model = qt.QStandardItemModel()
     self.view.setModel(self.model)
+    self.view.verticalHeader().visible = False
     row = 0
     for i in self.logic.labelStats["Labels"]:
-      col = 0
+      color = qt.QColor()
+      rgb = lut.GetTableValue(i)
+      color.setRgb(rgb[0]*255,rgb[1]*255,rgb[2]*255)
+      item = qt.QStandardItem()
+      item.setData(color,1)
+      item.setToolTip(colorNode.GetColorName(i))
+      self.model.setItem(row,0,item)
+      self.items.append(item)
+      col = 1
       for k in self.logic.keys:
         item = qt.QStandardItem()
         item.setText(str(self.logic.labelStats[i,k]))
+        item.setToolTip(colorNode.GetColorName(i))
         self.model.setItem(row,col,item)
         self.items.append(item)
         col += 1
       row += 1
 
-    col = 0
+    self.view.setColumnWidth(0,30)
+    self.model.setHeaderData(0,1," ")
+    col = 1
     for k in self.logic.keys:
       self.view.setColumnWidth(col,15*len(k))
       self.model.setHeaderData(col,1,k)
@@ -263,7 +293,7 @@ class LabelStatisticsLogic:
 
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
 
-  def createStatsChart(self, labelNode):
+  def createStatsChart(self, labelNode, valueToPlot, ignoreZero=False):
     """Make a MRML chart of the current stats
     """
     layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
@@ -279,29 +309,34 @@ class LabelStatisticsLogic:
     arrayNode = slicer.mrmlScene.AddNode(arrayNode)
     array = arrayNode.GetArray()
     samples = len(self.labelStats["Labels"])
-    array.SetNumberOfTuples(samples)
+    tuples = samples
+    if ignoreZero and self.labelStats["Labels"].__contains__(0):
+      tuples -= 1
+    array.SetNumberOfTuples(tuples)
+    tuple = 0
     for i in xrange(samples):
         index = self.labelStats["Labels"][i]
-        #array.SetComponent(i, 0, i+1)
-        array.SetComponent(i, 0, index)
-        array.SetComponent(i, 1, self.labelStats[index,"Mean"])
-        array.SetComponent(i, 2, 0)
+        if not (ignoreZero and index == 0):
+          array.SetComponent(tuple, 0, index)
+          array.SetComponent(tuple, 1, self.labelStats[index,valueToPlot])
+          array.SetComponent(tuple, 2, 0)
+          tuple += 1
 
     chartNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
     chartNode = slicer.mrmlScene.AddNode(chartNode)
-    chartNode.AddArray('Mean Intensity', arrayNode.GetID())
+    chartNode.AddArray(valueToPlot, arrayNode.GetID())
 
     chartViewNode.SetChartNodeID(chartNode.GetID())
 
     chartNode.SetProperty('default', 'title', 'Label Statistics')
     chartNode.SetProperty('default', 'xAxisLabel', 'Label')
-    chartNode.SetProperty('default', 'yAxisLabel', 'Signal Intensity')
+    chartNode.SetProperty('default', 'yAxisLabel', valueToPlot)
     chartNode.SetProperty('default', 'type', 'Bar');
     chartNode.SetProperty('default', 'xAxisType', 'categorical')
 
     # series level properties
     if labelNode.GetDisplayNode() != None and labelNode.GetDisplayNode().GetColorNode() != None:
-      chartNode.SetProperty('Mean Intensity', 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
+      chartNode.SetProperty(valueToPlot, 'lookupTable', labelNode.GetDisplayNode().GetColorNodeID());
 
 
   def statsAsCSV(self):
