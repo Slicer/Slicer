@@ -97,6 +97,7 @@ const char *plotPostscript =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasTextRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.barRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
+  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.categoryAxisRenderer.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
   "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
@@ -293,6 +294,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   const char *xAxisType = cn->GetProperty("default", "xAxisType");
   const char *yAxisType = cn->GetProperty("default", "yAxisType");
 
+  bool rotateXTickLabels = false;
 
   // data to plot - represented in javascript
   //
@@ -307,8 +309,32 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
     if (dn)
       {
-      // convert the data array into a string
-      plotData << this->seriesDataString(dn);
+      vtkMRMLColorNode *seriesColorNode = 0;
+      const char *seriesLookupTable 
+        = cn->GetProperty(arrayNames->GetValue(idx).c_str(), "lookupTable");
+      if (seriesLookupTable)
+        {
+        seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
+        }
+
+      // if doing a Bar chart with categorical data and a lookup
+      // table, then use the color names (tissue names) instead of the
+      // label value
+      if (type && !strcmp(type, "Bar") 
+          && xAxisType && !strcmp(xAxisType, "categorical")
+          && seriesColorNode) 
+        {
+        plotData << this->seriesDataString(dn, seriesColorNode);
+        if (dn->GetSize() > 6)
+          {
+          rotateXTickLabels = true;
+          }
+        }
+      else
+        {
+        // convert the data array into a string of quantitative values
+        plotData << this->seriesDataString(dn);
+        }
 
       if (idx < arrayIDs->GetNumberOfValues()-1)
         {
@@ -382,6 +408,11 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       if (xAxisType && !strcmp(xAxisType, "categorical"))
         {
         plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
+        if (rotateXTickLabels)
+          {
+          plotOptions << ", tickRenderer: $.jqplot.CanvasAxisTickRenderer"
+                      << ", tickOptions: { angle: -30 }";
+          }
         }
       plotOptions << "}";
       if (showy)
@@ -738,6 +769,35 @@ QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn)
 
   return data.join("");
 }
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn, vtkMRMLColorNode *cn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      data << "['" << cn->GetColorName((int)x) << "', " << QString("%1").arg(y) << "]";
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
 
 //---------------------------------------------------------------------------
 void qMRMLChartViewPrivate::onDataPointClicked(int series, int pointidx, double x, double y)

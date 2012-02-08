@@ -5,6 +5,7 @@
     <file alias="jquery.jqplot.min.js">@jqPlot_DIR@/jquery.jqplot.min.js</file>
     <file alias="plugins/jqplot.canvasTextRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasTextRenderer.min.js</file>
     <file alias="plugins/jqplot.canvasAxisLabelRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasAxisLabelRenderer.min.js</file>
+    <file alias="plugins/jqplot.canvasAxisTickRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.canvasAxisTickRenderer.min.js</file>
     <file alias="plugins/jqplot.categoryAxisRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.categoryAxisRenderer.min.js</file>
     <file alias="plugins/jqplot.barRenderer.min.js">@jqPlot_DIR@/plugins/jqplot.barRenderer.min.js</file>
     <file alias="plugins/jqplot.highlighter.min.js">@jqPlot_DIR@/plugins/jqplot.highlighter.min.js</file>

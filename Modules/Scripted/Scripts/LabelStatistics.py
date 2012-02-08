@@ -333,6 +333,7 @@ class LabelStatisticsLogic:
     chartNode.SetProperty('default', 'yAxisLabel', valueToPlot)
     chartNode.SetProperty('default', 'type', 'Bar');
     chartNode.SetProperty('default', 'xAxisType', 'categorical')
+    chartNode.SetProperty('default', 'showLegend', 'off')
 
     # series level properties
     if labelNode.GetDisplayNode() != None and labelNode.GetDisplayNode().GetColorNode() != None:

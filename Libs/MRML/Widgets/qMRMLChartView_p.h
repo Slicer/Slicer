@@ -70,6 +70,11 @@ protected:
   // Convert a data array into a string that can be passed as the data
   // for a series.
   QString seriesDataString(vtkMRMLDoubleArrayNode*);
+
+  // Convert a data array into a string that can be passed as the data
+  // for a series. This version will use values in the ArrayNode to
+  // lookup names in a ColorNode.
+  QString seriesDataString(vtkMRMLDoubleArrayNode*, vtkMRMLColorNode*);
   
 
   vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
