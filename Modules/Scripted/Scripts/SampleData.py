@@ -129,7 +129,6 @@ class SampleDataWidget:
     if volumeNode:
       storageNode = volumeNode.GetStorageNode()
       if storageNode:
-        storageNode.AddObserver('ModifiedEvent', self.processStorageEvents)
         # Automatically select the volume to display
         self.logMessage('<i>Displaying...</i>')
         appLogic = slicer.app.applicationLogic()
@@ -137,16 +136,7 @@ class SampleDataWidget:
         selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
         appLogic.PropagateVolumeSelection(1)
         self.logMessage('<i>finished.</i>\n')
-        self.processStorageEvents(storageNode, 'ModifiedEvent')
       else:
         self.logMessage('<b>Download failed!</b>\n')
     else:
       self.logMessage('<b>Download failed!</b>\n')
-
-  def processStorageEvents(self, node, event):
-    state = node.GetReadStateAsString()
-    if state == 'TransferDone':
-      self.logMessage('<i>Transfer Done</i>\n')
-      node.RemoveObserver('ModifiedEvent', self.processStorageEvents)
-    else:
-      self.logMessage('Status: <i>%s</i>\n' % state)
