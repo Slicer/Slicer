@@ -27,12 +27,12 @@
        <property name="tristate">
         <bool>false</bool>
        </property>
-       <property name="indicatorIcon" stdset="0">
+       <property name="indicatorIcon">
         <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
          <normaloff>:/Icons/VisibleOn.png</normaloff>
          <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
        </property>
-       <property name="indicatorIconSize" stdset="0">
+       <property name="indicatorIconSize">
         <size>
          <width>21</width>
          <height>21</height>
@@ -41,48 +41,60 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector" native="true">
+      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
-       <property name="nodeTypes" stdset="0">
+       <property name="nodeTypes">
         <stringlist>
          <string>vtkMRMLSliceNode</string>
         </stringlist>
        </property>
-       <property name="showHidden" stdset="0">
+       <property name="showHidden">
         <bool>true</bool>
        </property>
-       <property name="noneEnabled" stdset="0">
+       <property name="noneEnabled">
         <bool>true</bool>
        </property>
-       <property name="addEnabled" stdset="0">
+       <property name="addEnabled">
         <bool>false</bool>
        </property>
-       <property name="removeEnabled" stdset="0">
+       <property name="removeEnabled">
         <bool>false</bool>
        </property>
-       <property name="renameEnabled" stdset="0">
+       <property name="renameEnabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="ctkCheckBox" name="ReformatWidgetVisibilityCheckBox">
+      <widget class="QToolButton" name="ShowReformatWidgetToolButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="indicatorIcon" stdset="0">
+       <property name="toolTip">
+        <string>Show reformat widget in 3D view</string>
+       </property>
+       <property name="icon">
         <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-         <normaloff>:/Icons/SliceWidgetOn.png</normaloff>
-         <normalon>:/Icons/SliceWidgetOff.png</normalon>:/Icons/SliceWidgetOn.png</iconset>
+         <normaloff>:/Icons/SliceWidgetOff.png</normaloff>
+         <normalon>:/Icons/SliceWidgetOn.png</normalon>:/Icons/SliceWidgetOff.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget" native="true">
+    <widget class="ctkCollapsibleButton" name="DisplayEditCollapsibleWidget">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -92,10 +104,10 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Display &amp;&amp; Edit</string>
      </property>
-     <property name="contentsLineWidth" stdset="0">
+     <property name="contentsLineWidth">
       <number>0</number>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -109,17 +121,17 @@
           <number>0</number>
          </property>
          <item row="0" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="OffsetSlider" native="true">
+          <widget class="qMRMLLinearTransformSlider" name="OffsetSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" stdset="0">
+           <property name="minimum">
             <double>-200.000000000000000</double>
            </property>
-           <property name="maximum" stdset="0">
+           <property name="maximum">
             <double>200.000000000000000</double>
            </property>
           </widget>
@@ -196,13 +208,6 @@
            </layout>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="CenterPushButton">
-           <property name="text">
-            <string>Center</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QGroupBox" name="OnPlaneGroupBox">
            <layout class="QHBoxLayout" name="OnPlaneLayout">
@@ -236,6 +241,13 @@
            </layout>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="CenterPushButton">
+           <property name="text">
+            <string>Center</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -256,20 +268,20 @@
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="LRSlider" native="true">
+          <widget class="qMRMLLinearTransformSlider" name="LRSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="decimals" stdset="0">
+           <property name="decimals">
             <number>2</number>
            </property>
-           <property name="minimum" stdset="0">
+           <property name="minimum">
             <double>-200.000000000000000</double>
            </property>
-           <property name="maximum" stdset="0">
+           <property name="maximum">
             <double>200.000000000000000</double>
            </property>
           </widget>
@@ -282,20 +294,20 @@
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="PASlider" native="true">
+          <widget class="qMRMLLinearTransformSlider" name="PASlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="decimals" stdset="0">
+           <property name="decimals">
             <number>2</number>
            </property>
-           <property name="minimum" stdset="0">
+           <property name="minimum">
             <double>-200.000000000000000</double>
            </property>
-           <property name="maximum" stdset="0">
+           <property name="maximum">
             <double>200.000000000000000</double>
            </property>
           </widget>
@@ -308,17 +320,17 @@
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="qMRMLLinearTransformSlider" name="ISSlider" native="true">
+          <widget class="qMRMLLinearTransformSlider" name="ISSlider">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimum" stdset="0">
+           <property name="minimum">
             <double>-200.000000000000000</double>
            </property>
-           <property name="maximum" stdset="0">
+           <property name="maximum">
             <double>200.000000000000000</double>
            </property>
           </widget>
@@ -487,15 +499,27 @@
           </layout>
          </item>
          <item row="3" column="1">
-          <widget class="QPushButton" name="NormalToCameraPushButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="ctkCheckablePushButton" name="NormalToCameraCheckablePushButton">
            <property name="text">
             <string>Normal To Camera</string>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="flat">
+            <bool>false</bool>
+           </property>
+           <property name="buttonTextAlignment">
+            <set>Qt::AlignCenter|Qt::AlignHCenter|Qt::AlignJustify|Qt::AlignVCenter</set>
+           </property>
+           <property name="indicatorAlignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+           <property name="checkState">
+            <enum>Qt::Unchecked</enum>
            </property>
           </widget>
          </item>
@@ -519,8 +543,25 @@
     </spacer>
    </item>
   </layout>
+  <action name="actionLockNormalToCamera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lock Normal To Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Lock reformat widget's normal to the camera one. </string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qMRMLLinearTransformSlider</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLLinearTransformSlider.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
@@ -531,6 +572,11 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckBox</class>
@@ -558,12 +604,6 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLLinearTransformSlider</class>
-   <extends>ctkSliderWidget</extends>
-   <header>qMRMLLinearTransformSlider.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

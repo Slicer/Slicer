@@ -592,6 +592,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   // Update slice visibility toggle
   this->actionShow_in_3D->setChecked(this->MRMLSliceNode->GetSliceVisible());
+  this->actionLockNormalToCamera->setChecked(
+    this->MRMLSliceNode->GetWidgetNormalLockedToCamera());
 
   // Label Outline
   bool showOutline = this->MRMLSliceNode->GetUseLabelOutline();

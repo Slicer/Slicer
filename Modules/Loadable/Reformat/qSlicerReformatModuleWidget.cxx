@@ -18,6 +18,10 @@
 
 ==============================================================================*/
 
+// QT includes
+#include <QMenu>
+#include <QString>
+
 // SlicerQt includes
 #include "vtkMRMLSliceNode.h"
 #include "vtkSlicerTransformLogic.h"
@@ -36,6 +40,7 @@
 
 // VTK includes
 #include <vtkCamera.h>
+#include <vtkMath.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
@@ -69,6 +74,9 @@ public:
   /// Reset the slider
   void resetSlider(qMRMLLinearTransformSlider*);
 
+  /// Setup the reformate option menu associated to the button
+  void setupReformatOptionsMenu();
+
   QButtonGroup* OriginCoordinateReferenceButtonGroup;
   vtkMRMLSliceNode* MRMLSliceNode;
   vtkMRMLSliceLogic* MRMLSliceLogic;
@@ -90,6 +98,22 @@ qSlicerReformatModuleWidgetPrivate(
   this->LastRotationValues[qSlicerReformatModuleWidget::axisX] = 0;
   this->LastRotationValues[qSlicerReformatModuleWidget::axisY] = 0;
   this->LastRotationValues[qSlicerReformatModuleWidget::axisZ] = 0;
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidgetPrivate::setupReformatOptionsMenu()
+{
+  Q_Q(qSlicerReformatModuleWidget);
+
+  QMenu* reformatMenu =
+    new QMenu(q->tr("Reformat"),this->ShowReformatWidgetToolButton);
+
+  reformatMenu->addAction(this->actionLockNormalToCamera);
+
+  QObject::connect(this->actionLockNormalToCamera, SIGNAL(triggered(bool)),
+                   q, SLOT(onLockReformatWidgetToCamera(bool)));
+
+  this->ShowReformatWidgetToolButton->setMenu(reformatMenu);
 }
 
 //------------------------------------------------------------------------------
@@ -118,15 +142,31 @@ void qSlicerReformatModuleWidgetPrivate::updateVisibilityControllers()
 
   // Check reformat widget visibility
   bool wasVisibilityReformatWidgetCheckBoxBlocking =
-    this->ReformatWidgetVisibilityCheckBox->blockSignals(true);
+    this->ShowReformatWidgetToolButton->blockSignals(true);
+  bool wasLockReformatWidgetCheckBoxBlocking =
+    this->actionLockNormalToCamera->blockSignals(true);
+  bool wasLockReformatWidgetCheckBoxButtonBlocking =
+    this->NormalToCameraCheckablePushButton->blockSignals(true);
 
-  this->ReformatWidgetVisibilityCheckBox->setEnabled(this->MRMLSliceNode != 0);
+  this->ShowReformatWidgetToolButton->setEnabled(this->MRMLSliceNode != 0);
+
   int widgetVisibility =
     (this->MRMLSliceNode) ? this->MRMLSliceNode->GetWidgetVisible() : 0;
-  this->ReformatWidgetVisibilityCheckBox->setChecked(widgetVisibility);
+  int lockWidgetNormal = (this->MRMLSliceNode) ?
+    this->MRMLSliceNode->GetWidgetNormalLockedToCamera() : 0;
 
-  this->ReformatWidgetVisibilityCheckBox->blockSignals(
+  this->ShowReformatWidgetToolButton->setChecked(widgetVisibility);
+  this->actionLockNormalToCamera->setChecked(lockWidgetNormal);
+  this->NormalToCameraCheckablePushButton->setChecked(lockWidgetNormal);
+  this->NormalToCameraCheckablePushButton->setCheckState(
+    (lockWidgetNormal) ? Qt::Checked : Qt::Unchecked);
+
+  this->ShowReformatWidgetToolButton->blockSignals(
     wasVisibilityReformatWidgetCheckBoxBlocking);
+  this->actionLockNormalToCamera->blockSignals(
+    wasLockReformatWidgetCheckBoxBlocking);
+  this->NormalToCameraCheckablePushButton->blockSignals(
+    wasLockReformatWidgetCheckBoxButtonBlocking);
 }
 
 //------------------------------------------------------------------------------
@@ -241,9 +281,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   normal[1] = sliceToRAS->GetElement(1,2);
   normal[2] = sliceToRAS->GetElement(2,2);
 
-  normal[0] = (normal[0] > 1) ? 1 : ((normal[0] < -1) ? -1 : normal[0]);
-  normal[1] = (normal[1] > 1) ? 1 : ((normal[1] < -1) ? -1 : normal[1]);
-  normal[2] = (normal[2] > 1) ? 1 : ((normal[2] < -1) ? -1 : normal[2]);
+  vtkMath::Normalize(normal);
 
   this->NormalXdoubleSpinBox->setValue(normal[0]);
   this->NormalYdoubleSpinBox->setValue(normal[1]);
@@ -298,13 +336,17 @@ void qSlicerReformatModuleWidget::setup()
   Q_D(qSlicerReformatModuleWidget);
   d->setupUi(this);
 
+  // Populate the Linked menu
+  d->setupReformatOptionsMenu();
+
   // Connect node selector with module itself
   this->connect(d->VisibilityCheckBox,
                    SIGNAL(toggled(bool)),
                    this, SLOT(onSliceVisibilityChanged(bool)));
-  this->connect(d->ReformatWidgetVisibilityCheckBox,
+  this->connect(d->ShowReformatWidgetToolButton,
                    SIGNAL(toggled(bool)),
                    this, SLOT(onReformatWidgetVisibilityChanged(bool)));
+
   this->connect(d->SliceNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onNodeSelected(vtkMRMLNode*)));
@@ -366,8 +408,11 @@ void qSlicerReformatModuleWidget::setup()
   this->connect(d->NormalZPushButton, SIGNAL(pressed()),
                 this, SLOT(setNormalToAxisZ()));
 
-  this->connect(d->NormalToCameraPushButton, SIGNAL(pressed()),
-                this, SLOT(setNormalToCamera()));
+  QObject::connect(d->NormalToCameraCheckablePushButton, SIGNAL(clicked()),
+                   this, SLOT(setNormalToCamera()));
+  QObject::connect(d->NormalToCameraCheckablePushButton,
+                   SIGNAL(checkBoxToggled(bool)),
+                   this, SLOT(onLockReformatWidgetToCamera(bool)));
 
   // Connect Slice rotation sliders
   this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
@@ -441,6 +486,18 @@ onReformatWidgetVisibilityChanged(bool visible)
     }
 
   d->MRMLSliceNode->SetWidgetVisible(visible);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerReformatModuleWidget::onLockReformatWidgetToCamera(bool lock)
+{
+  Q_D(qSlicerReformatModuleWidget);
+  if (!d->MRMLSliceNode)
+    {
+    return;
+    }
+
+  d->MRMLSliceNode->SetWidgetNormalLockedToCamera(lock);
 }
 
 //------------------------------------------------------------------------------

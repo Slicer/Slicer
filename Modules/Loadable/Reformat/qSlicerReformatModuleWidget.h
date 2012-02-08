@@ -78,6 +78,7 @@ protected slots:
   void onNodeSelected(vtkMRMLNode* node);
   void onSliceVisibilityChanged(bool visible);
   void onReformatWidgetVisibilityChanged(bool visible);
+  void onLockReformatWidgetToCamera(bool lock);
 
   void onOriginCoordinateReferenceButtonPressed(int reference);
   void onWorldPositionChanged();
