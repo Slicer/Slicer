@@ -98,7 +98,6 @@ class HelperBox(object):
 
     if not merge:
       merge = self.volumesLogic.CreateLabelVolume( slicer.mrmlScene, self.master, mergeName )
-      merge.SetName( mergeName )
       merge.GetDisplayNode().SetAndObserveColorNodeID( self.colorSelector.currentNodeId )
       self.setMergeVolume( merge )
     self.select()
