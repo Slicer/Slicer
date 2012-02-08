@@ -145,6 +145,7 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDispl
   /// 
   /// Sets ImageData for background mask 
   virtual void SetBackgroundImageData(vtkImageData *imageData);
+  virtual vtkImageData* GetBackgroundImageData();
 
   /// 
   /// Parse a string with window and level as double|double, and add a preset 

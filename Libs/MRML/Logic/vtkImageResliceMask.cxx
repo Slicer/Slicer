@@ -3389,6 +3389,15 @@ void vtkImageResliceMask::ThreadedRequestData(
   vtkImageData* backgroundMask = outData[1];
   // Get the output pointer
   void *outPtr = outData[0]->GetScalarPointerForExtent(outExt);
+  // The update extent of the background mask should be the same than the image.
+  // Typically the background mask is connected to a pipeline that eventually
+  // merges with the output image pipeline, so they share the same extent.
+  // Sometimes the background mask is disconnected from the the pipeline
+  // and its update extent gets out-of-date.
+  // This would make the following function call output an error and return 0,
+  // which would lead to crash later in the code.
+  // \todo: ThreadedRequestData shall not crash if backgroundMaskPtr is 0 as
+  // it means that the backgroundmask is not pipeline connected.
   void *backgroundMaskPtr = outData[1]->GetScalarPointerForExtent(outExt);
 
   int wholeExtent0[6];

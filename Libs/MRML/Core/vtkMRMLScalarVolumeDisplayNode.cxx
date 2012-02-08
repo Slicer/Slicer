@@ -155,6 +155,12 @@ void vtkMRMLScalarVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 }
 
 //----------------------------------------------------------------------------
+vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetBackgroundImageData()
+{
+  return vtkImageData::SafeDownCast(this->ResliceAlphaCast->GetInput());
+}
+
+//----------------------------------------------------------------------------
 vtkImageData* vtkMRMLScalarVolumeDisplayNode::GetInputImageData()
 {
   return vtkImageData::SafeDownCast(this->MapToWindowLevelColors->GetInput());
