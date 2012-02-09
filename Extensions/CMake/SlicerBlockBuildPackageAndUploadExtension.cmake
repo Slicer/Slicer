@@ -20,6 +20,7 @@ if(NOT CTEST_SCRIPT_ARG STREQUAL "")
     list(GET argn_argv_list 0 argn)
     if(argn_argv_list_length EQUAL 2)
       list(GET argn_argv_list 1 argv)
+      string(REPLACE "/-/" "//" argv ${argv}) # See http://www.cmake.org/Bug/view.php?id=12953
       set(${argn} ${argv})
     endif()
   endforeach()
