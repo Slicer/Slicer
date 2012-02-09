@@ -57,30 +57,6 @@
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLChartView");
 //--------------------------------------------------------------------------
 
-const char *examplePlot = 
-  "<!DOCTYPE html>"
-  "<html>"
-  "<head>"
-  "<title>Line Charts and Options</title>"
-  "<link class=\"include\" rel=\"stylesheet\" type=\"text/css\" href=\"qrc:/jqPlot/jquery.jqplot.min.css\" />"
-  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/jquery.min.js\"></script>"
-  "</head>"
-  "<body>"
-  "<div id=\"chart1\"></div>"
-  "<script class=\"code\" type=\"text/javascript\">"
-  "$(document).ready(function(){"
-  "var plot1 = $.jqplot ('chart1', [[3,7,9,1,5,3,8,2,5]],"
-  "{title: 'An example plot', highlighter: {show: true}, cursor: {show: false}}"
-  ");"
-  "});"
-  "</script>"
-  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/jquery.jqplot.min.js\"></script>"
-  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasTextRenderer.min.js\"></script>"
-  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
-  "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.highlighter.min.js\"></script>"
-  "<script type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.cursor.min.js\"></script>"
-  "</body>"
-  "</html>";
 
 const char *plotPreamble = 
   "<!DOCTYPE html>"
@@ -142,7 +118,7 @@ void qMRMLChartViewPrivate::init()
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
 
 //  q->setRenderEnabled(this->MRMLScene != 0);
-  q->setEnabled(this->MRMLScene != 0);
+////  q->setEnabled(this->MRMLScene != 0);
 
   this->PopupWidget = new ctkPopupWidget;
   QHBoxLayout* popupLayout = new QHBoxLayout;
@@ -154,7 +130,6 @@ void qMRMLChartViewPrivate::init()
 
 //  this->initDisplayableManagers();
 
-//  q->setHtml(examplePlot); 
   q->setHtml("");
   q->show();
 }
@@ -189,7 +164,7 @@ void qMRMLChartViewPrivate::initDisplayableManagers()
 //---------------------------------------------------------------------------
 void qMRMLChartViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 {
-  Q_Q(qMRMLChartView);
+  //Q_Q(qMRMLChartView);
   if (newScene == this->MRMLScene)
     {
     return;
@@ -205,27 +180,27 @@ void qMRMLChartViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
 
   this->MRMLScene = newScene;
 //  q->setRenderEnabled(this->MRMLScene != 0);
-  q->setEnabled(this->MRMLScene != 0);
+////  q->setEnabled(this->MRMLScene != 0);
 }
 
 
 // --------------------------------------------------------------------------
 void qMRMLChartViewPrivate::startProcessing()
 {
-  logger.trace("startProcessing");
-  Q_Q(qMRMLChartView);
+//  logger.trace("startProcessing");
+//  Q_Q(qMRMLChartView);
 //  q->setRenderEnabled(false);
-  q->setEnabled(false);
+////  q->setEnabled(false);
 }
 
 //
 // --------------------------------------------------------------------------
 void qMRMLChartViewPrivate::endProcessing()
 {
-  logger.trace("endProcessing");
-  Q_Q(qMRMLChartView);
+//  logger.trace("endProcessing");
+//  Q_Q(qMRMLChartView);
 //  q->setRenderEnabled(true);
-  q->setEnabled(true);
+////  q->setEnabled(true);
 }
 
 // --------------------------------------------------------------------------

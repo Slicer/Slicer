@@ -1,3 +1,16 @@
+/*=auto=========================================================================
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLChartNode.cxx,v $
+  Date:      $Date: 2006/03/19 17:12:29 $
+  Version:   $Revision: 1.18 $
+
+=========================================================================auto=*/
 
 
 #include "vtkObjectFactory.h"
@@ -9,6 +22,7 @@
 #include <vtkStringArray.h>
 
 #include "vtkMRMLChartNode.h"
+#include "vtkMRMLScene.h"
 
 class DoubleArrayIDMap : public std::map<std::string, std::string> {} ;
 class ArrayPropertyMap : public std::map<std::string, std::string> {} ;
@@ -44,6 +58,9 @@ vtkMRMLChartNode::vtkMRMLChartNode()
 //----------------------------------------------------------------------------
 vtkMRMLChartNode::~vtkMRMLChartNode()
 {
+  this->ClearArrays();
+  this->ClearProperties();
+
   delete this->DoubleArrayIDs;
   delete this->Properties;
 
@@ -121,6 +138,10 @@ void vtkMRMLChartNode::AddArray(const char *name, const char *id)
     }
   (*this->DoubleArrayIDs)[name] = id;
   this->Modified();
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(id, this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -139,11 +160,23 @@ void vtkMRMLChartNode::RemoveArray(const char *name)
 
   this->DoubleArrayIDs->erase(name);
   this->Modified();
+  if (this->Scene)
+    {
+    this->Scene->RemoveReferencedNodeID(name, this);
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::ClearArrays()
 {
+  DoubleArrayIDMap::iterator it;
+  for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end(); ++it)
+    {
+    if (this->Scene)
+      {
+      this->Scene->RemoveReferencedNodeID((*it).second.c_str(), this);
+      }
+    }
   this->DoubleArrayIDs->clear();
   this->Modified();
 }
@@ -226,18 +259,32 @@ void vtkMRMLChartNode::SetProperty(const char *name,
     }
 
   // if the name and property exist, check whether we are changing the value
+  std::string oldValue;
   if (found)
     {
     if ((*ait).second == value)
       {
       return;
       }
+    oldValue = (*ait).second;
     }
   
   // new name, property or value. set it and mark modified
   //std::cout << "Set the property" << std::endl;
   (*this->Properties)[name][property] = value;
   this->Modified();
+  
+  // A ColorNode id can be store as property of the chart or an
+  // array. Need to manage the references.
+  if (this->Scene && !strcmp(name, "lookupTable"))
+    {
+    if (found)
+      {
+      // overwritting the ColorNode ID at this level
+      this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this);
+      }
+    this->Scene->AddReferencedNodeID(value, this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -276,9 +323,17 @@ void vtkMRMLChartNode::ClearProperty(const char *name,
     }
 
   // erase the property from that array
+  std::string oldValue = (*ait).second;
   (*it).second.erase(ait);
 
   this->Modified();
+
+  // A ColorNode id can be store as property of the chart or an
+  // array. Need to manage the references.
+  if (this->Scene && !strcmp(name, "lookupTable"))
+    {
+    this->Scene->RemoveReferencedNodeID(oldValue.c_str(), this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -290,6 +345,16 @@ void vtkMRMLChartNode::ClearProperties(const char *name)
     return;
     }
 
+  // manage any references
+  ArrayPropertyMap::iterator ait = (*it).second.find("lookupTable");
+  if (ait != (*it).second.end())
+    {
+    if (this->Scene)
+      {
+      this->Scene->RemoveReferencedNodeID((*ait).second.c_str(), this);
+      }
+    }
+
   // clear the whole property map for this array
   (*it).second.clear();
 
@@ -299,6 +364,21 @@ void vtkMRMLChartNode::ClearProperties(const char *name)
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::ClearProperties()
 {
+  // manage any references
+  ChartPropertyMap::iterator it;
+  for (it = this->Properties->begin(); it != this->Properties->end(); ++it)
+    {
+    ArrayPropertyMap::iterator ait = (*it).second.find("lookupTable");
+    if (ait != (*it).second.end())
+      {
+      if (this->Scene)
+        {
+        this->Scene->RemoveReferencedNodeID((*ait).second.c_str(), this);
+        }
+      }
+    }
+
+  // clear the entire property map
   this->Properties->clear();
 
   this->Modified();

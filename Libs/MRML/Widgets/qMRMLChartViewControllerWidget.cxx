@@ -371,15 +371,15 @@ void qMRMLChartViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLChartViewControllerWidget);
   
-  qDebug() << "Inside setMRMLScene()";
+  //qDebug() << "Inside setMRMLScene()";
 
   if (this->mrmlScene() == newScene)
     {
     return;
     }
 
-  d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
-                   this, SLOT(updateWidgetFromMRML()));
+   d->qvtkReconnect(this->mrmlScene(), newScene, vtkMRMLScene::EndBatchProcessEvent,
+                    this, SLOT(updateWidgetFromMRML()));
 
   // Disable the node selectors as they would fire signal currentIndexChanged(0)
   // meaning that there is no current node anymore. It's not true, it just means 
@@ -396,6 +396,8 @@ void qMRMLChartViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     this->updateWidgetFromMRML();
     }
+
+  //qDebug() << "Leaving setMRMLScene()";
 }
   
 // --------------------------------------------------------------------------
