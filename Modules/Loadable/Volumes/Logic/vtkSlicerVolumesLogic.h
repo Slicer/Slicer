@@ -48,6 +48,9 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   vtkTypeRevisionMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
+  vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
+
   // Description:
   // The currently active mrml volume node 
   vtkGetObjectMacro (ActiveVolumeNode, vtkMRMLVolumeNode);
@@ -157,6 +160,8 @@ protected:
   // Description:
   //
   vtkMRMLVolumeNode *ActiveVolumeNode;
+
+  vtkMRMLColorLogic* ColorLogic;
 };
 
 #endif

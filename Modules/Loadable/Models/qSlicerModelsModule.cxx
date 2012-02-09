@@ -31,10 +31,14 @@
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerModelsDialog.h"
+#include "qSlicerModuleManager.h"
 
 // Slicer logic includes
 #include <vtkSlicerApplicationLogic.h>
 #include <vtkSlicerModelsLogic.h>
+
+// MRML includes
+#include "vtkMRMLColorLogic.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerModelsModule, qSlicerModelsModule);
@@ -122,12 +126,30 @@ QStringList qSlicerModelsModule::categories() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerModelsModule::dependencies() const
+{
+  QStringList moduleDependencies;
+  moduleDependencies << "Colors";
+  return moduleDependencies;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerModelsModule::setup()
 {
   this->Superclass::setup();
-  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  // Configure models logic
   vtkSlicerModelsLogic* modelsLogic =
     vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  qSlicerAbstractCoreModule* colorsModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Colors");
+  if (colorsModule)
+    {
+    vtkMRMLColorLogic* colorLogic =
+      vtkMRMLColorLogic::SafeDownCast(colorsModule->logic());
+    modelsLogic->SetColorLogic(colorLogic);
+    }
+  // Register IOs
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ioManager->registerIO(new qSlicerModelsIO(modelsLogic, this));
   ioManager->registerIO(new qSlicerScalarOverlayIO(modelsLogic, this));
   ioManager->registerDialog(new qSlicerModelsDialog(this));

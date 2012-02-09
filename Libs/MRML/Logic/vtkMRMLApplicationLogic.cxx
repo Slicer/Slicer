@@ -20,6 +20,7 @@
 
 // MRMLLogic includes
 #include "vtkMRMLApplicationLogic.h"
+#include "vtkMRMLColorLogic.h"
 #include "vtkMRMLSliceLogic.h"
 #include <vtkMRMLSliceLinkLogic.h>
 #include <vtkMRMLModelHierarchyLogic.h>
@@ -76,6 +77,7 @@ public:
   vtkSmartPointer<vtkCollection> SliceLogics;
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
   vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
+  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 };
 
 //----------------------------------------------------------------------------
@@ -86,6 +88,7 @@ vtkMRMLApplicationLogic::vtkInternal::vtkInternal()
 {
   this->SliceLinkLogic = vtkSmartPointer<vtkMRMLSliceLinkLogic>::New();
   this->ModelHierarchyLogic = vtkSmartPointer<vtkMRMLModelHierarchyLogic>::New();
+  this->ColorLogic = vtkSmartPointer<vtkMRMLColorLogic>::New();
 }
 
 //----------------------------------------------------------------------------
@@ -102,6 +105,7 @@ vtkMRMLApplicationLogic::vtkMRMLApplicationLogic()
   this->Internal = new vtkInternal;
   this->Internal->SliceLinkLogic->SetMRMLApplicationLogic(this);
   this->Internal->ModelHierarchyLogic->SetMRMLApplicationLogic(this);
+  this->Internal->ColorLogic->SetMRMLApplicationLogic(this);
 }
 
 //----------------------------------------------------------------------------
@@ -132,6 +136,18 @@ vtkMRMLInteractionNode * vtkMRMLApplicationLogic::GetInteractionNode()const
 vtkMRMLModelHierarchyLogic* vtkMRMLApplicationLogic::GetModelHierarchyLogic()const
 {
   return this->Internal->ModelHierarchyLogic;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  this->Internal->ColorLogic = colorLogic;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLColorLogic* vtkMRMLApplicationLogic::GetColorLogic()const
+{
+  return this->Internal->ColorLogic;
 }
 
 //----------------------------------------------------------------------------

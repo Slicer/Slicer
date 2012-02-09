@@ -54,6 +54,7 @@ public:
   virtual QIcon icon()const;
 
   virtual QStringList categories()const;
+  QStringList dependencies() const;
 
 protected:
   /// Initialize the module. Register the volumes reader/writer

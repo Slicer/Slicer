@@ -8,7 +8,7 @@
 
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerColorLogic.h"
+#include "vtkMRMLColorLogic.h"
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_CLI_SUPPORT
 #include "vtkSlicerTask.h"
 
@@ -1202,9 +1202,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
   if (disp)
     {
     vtkMRMLNode *dnode = this->GetMRMLScene()->AddNode( disp );
-    vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-    disp->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
-    colorLogic->Delete();
+    disp->SetAndObserveColorNodeID(this->GetColorLogic()->GetDefaultVolumeColorNodeID());
     disp = vtkMRMLDisplayNode::SafeDownCast(dnode);
     int isLabelMap = 0;
     vtkMRMLVolumeDisplayNode *displayNode = NULL;

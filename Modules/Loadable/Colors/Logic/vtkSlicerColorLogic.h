@@ -8,21 +8,18 @@
 =========================================================================auto=*/
 
 ///  vtkSlicerColorLogic - slicer logic class for color manipulation
-/// 
+///
 /// This class manages the logic associated with reading, saving,
 /// and changing propertied of the colors
-
 
 #ifndef __vtkSlicerColorLogic_h
 #define __vtkSlicerColorLogic_h
 
-// SlicerLogic includes
-#include "vtkSlicerBaseLogic.h"
-
 // MRMLLogic includes
 #include <vtkMRMLColorLogic.h>
+#include "vtkSlicerColorsModuleLogicExport.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerColorLogic
+class VTK_SLICER_COLORS_MODULE_LOGIC_EXPORT vtkSlicerColorLogic
   : public vtkMRMLColorLogic
 {
   public:

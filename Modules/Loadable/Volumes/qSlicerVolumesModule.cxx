@@ -23,7 +23,8 @@
 
 // SlicerQt includes
 #include <qSlicerCoreApplication.h>
-#include <qSlicerCoreIOManager.h>
+#include <qSlicerIOManager.h>
+#include <qSlicerModuleManager.h>
 
 // Volumes Logic includes
 #include <vtkSlicerVolumesLogic.h>
@@ -32,6 +33,9 @@
 #include "qSlicerVolumesIO.h"
 #include "qSlicerVolumesModule.h"
 #include "qSlicerVolumesModuleWidget.h"
+
+// MRML Logic includes
+#include <vtkMRMLColorLogic.h>
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumesModule, qSlicerVolumesModule);
@@ -117,12 +121,33 @@ QStringList qSlicerVolumesModule::categories() const
   return QStringList() << "";
 }
 
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerVolumesModule::dependencies() const
+{
+  QStringList moduleDependencies;
+  moduleDependencies << "Colors";
+  return moduleDependencies;
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerVolumesModule::setup()
 {
   this->Superclass::setup();
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
-    new qSlicerVolumesIO(vtkSlicerVolumesLogic::SafeDownCast(this->logic()), this));
+  vtkSlicerVolumesLogic* volumesLogic =
+    vtkSlicerVolumesLogic::SafeDownCast(this->logic());
+  qSlicerAbstractCoreModule* colorsModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Colors");
+  if (colorsModule)
+    {
+    vtkMRMLColorLogic* colorLogic =
+      vtkMRMLColorLogic::SafeDownCast(colorsModule->logic());
+    volumesLogic->SetColorLogic(colorLogic);
+    }
+
+  qSlicerCoreIOManager* ioManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  ioManager->registerIO(new qSlicerVolumesIO(volumesLogic,this));
 }
 
 //-----------------------------------------------------------------------------

@@ -4,7 +4,6 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   vtkDataIOManagerLogicTest1.cxx
   vtkSlicerApplicationLogicTest1.cxx
-  vtkSlicerColorLogicTest1.cxx
   vtkSlicerTransformLogicTest1.cxx
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -35,5 +34,4 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
 endif()
 SIMPLE_TEST( vtkDataIOManagerLogicTest1 )
 SIMPLE_TEST( vtkSlicerApplicationLogicTest1 )
-SIMPLE_TEST( vtkSlicerColorLogicTest1 )
 SIMPLE_TEST( vtkSlicerTransformLogicTest1 ${CMAKE_CURRENT_SOURCE_DIR}/affineTransform.txt)

@@ -2,7 +2,7 @@
 # Install support files
 # --------------------------------------------------------------------------
 
-# Should this location change, update Base/Logic/vtkSlicerColorLogic.cxx
+# Should this location change, update Modules/Loadable/Colors/Logic/vtkSlicerColorLogic.cxx
 
 file(GLOB COLORFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "ColorFiles/*.txt")
 

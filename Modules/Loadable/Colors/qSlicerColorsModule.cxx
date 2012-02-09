@@ -22,6 +22,9 @@
 #include <QtPlugin>
 #include <QSettings>
 
+// CTK includes
+#include <ctkColorDialog.h>
+
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
@@ -30,6 +33,9 @@
 #include "qSlicerColorsIO.h"
 #include "qSlicerColorsModule.h"
 #include "qSlicerColorsModuleWidget.h"
+
+// qMRML includes
+#include <qMRMLColorPickerWidget.h>
 
 // Slicer Logic includes
 #include "vtkSlicerColorLogic.h"
@@ -41,7 +47,16 @@ Q_EXPORT_PLUGIN2(qSlicerColorsModule, qSlicerColorsModule);
 class qSlicerColorsModulePrivate
 {
 public:
+  qSlicerColorsModulePrivate();
+  QSharedPointer<qMRMLColorPickerWidget> ColorDialogPickerWidget;
 };
+
+//-----------------------------------------------------------------------------
+qSlicerColorsModulePrivate::qSlicerColorsModulePrivate()
+{
+  this->ColorDialogPickerWidget =
+    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
+}
 
 //-----------------------------------------------------------------------------
 qSlicerColorsModule::qSlicerColorsModule(QObject* _parent)
@@ -76,6 +91,7 @@ QString qSlicerColorsModule::title()const
 //-----------------------------------------------------------------------------
 void qSlicerColorsModule::setup()
 {
+  Q_D(qSlicerColorsModule);
   qSlicerApplication * app = qSlicerApplication::application();
   if (!app)
     {
@@ -95,6 +111,21 @@ void qSlicerColorsModule::setup()
   // setting the user color file paths doesn't trigger any action to add new nodes.
   // It's something that must be fixed into the logic, not here
   colorLogic->SetUserColorFilePaths(joinedPaths.toLatin1());
+
+  // Color picker
+  d->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic);
+  ctkColorDialog::addDefaultTab(d->ColorDialogPickerWidget.data(),
+                                "Labels", SIGNAL(colorSelected(QColor)));
+  ctkColorDialog::setDefaultTab(1);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerColorsModule::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerColorsModule);
+  /// tbd: might be set too late ?
+  d->ColorDialogPickerWidget->setMRMLScene(scene);
+  this->Superclass::setMRMLScene(scene);
 }
 
 //-----------------------------------------------------------------------------

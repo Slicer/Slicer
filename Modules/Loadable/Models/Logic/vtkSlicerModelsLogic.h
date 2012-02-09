@@ -33,6 +33,12 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   vtkTypeRevisionMacro(vtkSlicerModelsLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  ///
+  /// The color logic is used to retrieve the default color node ID for
+  /// model nodes.
+  virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
+  vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
+
   /// 
   /// The currently active mrml volume node 
   vtkGetObjectMacro (ActiveModelNode, vtkMRMLModelNode);
@@ -80,6 +86,9 @@ protected:
   /// 
   //
   vtkMRMLModelNode *ActiveModelNode;
+
+  /// Color logic
+  vtkMRMLColorLogic* ColorLogic;
 };
 
 #endif

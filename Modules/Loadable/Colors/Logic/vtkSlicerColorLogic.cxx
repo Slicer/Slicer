@@ -7,14 +7,18 @@
 
 =========================================================================auto=*/
 
-#include <vtkSmartPointer.h>
-#include <vtksys/SystemTools.hxx>
-
+// Colors
 #include "vtkSlicerColorLogic.h"
 
+// Slicer
+#include "vtkSlicerConfigure.h" // for Slicer_SHARE_DIR
+
+// MRML
 #include "vtkMRMLColorTableStorageNode.h"
 
-#include "vtkSlicerConfigure.h" // for Slicer_SHARE_DIR
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtksys/SystemTools.hxx>
 
 #ifdef WIN32
 #include <windows.h>

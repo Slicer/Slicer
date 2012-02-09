@@ -45,12 +45,10 @@
 #include "qSlicerSettingsModulesPanel.h"
 
 // qMRMLWidget includes
-#include "qMRMLColorPickerWidget.h"
 #include "qMRMLEventBrokerConnection.h"
 
 // Logic includes
 #include <vtkSlicerApplicationLogic.h>
-#include <vtkSlicerColorLogic.h>
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -78,7 +76,6 @@ public:
 
   qSlicerLayoutManager*   LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
-  QSharedPointer<qMRMLColorPickerWidget> ColorDialogPickerWidget;
   ctkSettingsDialog*      SettingsDialog;
 };
 
@@ -109,14 +106,6 @@ void qSlicerApplicationPrivate::init()
   Q_Q(qSlicerApplication);
 
   ctkVTKConnectionFactory::setInstance(new qMRMLConnectionFactory);
-
-  this->ColorDialogPickerWidget =
-    QSharedPointer<qMRMLColorPickerWidget>(new qMRMLColorPickerWidget(0));
-  vtkNew<vtkSlicerColorLogic> colorLogic;
-  this->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic.GetPointer());
-  ctkColorDialog::addDefaultTab(this->ColorDialogPickerWidget.data(),
-                                "Labels", SIGNAL(colorSelected(QColor)));
-  ctkColorDialog::setDefaultTab(1);
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
@@ -307,17 +296,6 @@ void qSlicerApplication::confirmRestart(QString reason)
     {
     this->restart();
     }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerApplication::setMRMLScene(vtkMRMLScene* newMRMLScene)
-{
-  Q_D(qSlicerApplication);
-  // we do it now because Superclass::setMRMLScene() emits the signal
-  // mrmlSceneChanged and we don't want the set the scene after the signal
-  // is sent.
-  d->ColorDialogPickerWidget->setMRMLScene(newMRMLScene);
-  this->Superclass::setMRMLScene(newMRMLScene);
 }
 
 //-----------------------------------------------------------------------------

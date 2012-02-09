@@ -27,7 +27,7 @@
 class qSlicerXcedeCatalogIOPrivate;
 
 // Slicer Logic
-class vtkSlicerColorLogic;
+class vtkMRMLColorLogic;
 
 //-----------------------------------------------------------------------------
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
@@ -35,11 +35,11 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
   Q_OBJECT
 public: 
   qSlicerXcedeCatalogIO(QObject* parent = 0);
-  qSlicerXcedeCatalogIO(vtkSlicerColorLogic* logic, QObject* parent = 0);
+  qSlicerXcedeCatalogIO(vtkMRMLColorLogic* logic, QObject* parent = 0);
   virtual ~qSlicerXcedeCatalogIO();
 
-  vtkSlicerColorLogic* colorLogic()const;
-  void setColorLogic(vtkSlicerColorLogic* logic);
+  vtkMRMLColorLogic* colorLogic()const;
+  void setColorLogic(vtkMRMLColorLogic* logic);
 
   virtual QString description()const;
   virtual IOFileType fileType()const;

@@ -50,6 +50,8 @@ public:
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 
+  virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);
+
 protected:
   /// Reimplemented to initialize the color logic
   virtual void setup();

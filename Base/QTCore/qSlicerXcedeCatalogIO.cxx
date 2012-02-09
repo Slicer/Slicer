@@ -28,7 +28,7 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "vtkSlicerApplicationLogic.h"
-#include "vtkSlicerColorLogic.h"
+#include "vtkMRMLColorLogic.h"
 
 /// MRML includes
 #include <vtkCacheManager.h>
@@ -70,7 +70,7 @@ public:
   bool    computeFIPS2SlicerTransformCorrection();
   void    applyFIPS2SlicerTransformCorrection();
 
-  vtkSmartPointer<vtkSlicerColorLogic> ColorLogic;
+  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   QStringList TransformIDStack; 
   QString     Directory;
   //QString     ParentId;
@@ -1256,7 +1256,7 @@ qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(QObject* _parent)
 }
 
 //------------------------------------------------------------------------------
-qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(vtkSlicerColorLogic* logic, QObject* _parent)
+qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(vtkMRMLColorLogic* logic, QObject* _parent)
   :qSlicerIO(_parent)
   , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
 {
@@ -1269,14 +1269,14 @@ qSlicerXcedeCatalogIO::~qSlicerXcedeCatalogIO()
 }
 
 //------------------------------------------------------------------------------
-vtkSlicerColorLogic* qSlicerXcedeCatalogIO::colorLogic()const
+vtkMRMLColorLogic* qSlicerXcedeCatalogIO::colorLogic()const
 {
   Q_D(const qSlicerXcedeCatalogIO);
   return d->ColorLogic.GetPointer();
 }
 
 //------------------------------------------------------------------------------
-void qSlicerXcedeCatalogIO::setColorLogic(vtkSlicerColorLogic* logic)
+void qSlicerXcedeCatalogIO::setColorLogic(vtkMRMLColorLogic* logic)
 {
   Q_D(qSlicerXcedeCatalogIO);
   d->ColorLogic = logic;

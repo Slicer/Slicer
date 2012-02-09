@@ -26,6 +26,7 @@
 
 #include "vtkMRMLLogicWin32Header.h"
 
+class vtkMRMLColorLogic;
 class vtkMRMLSliceNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLModelHierarchyLogic;
@@ -56,6 +57,13 @@ public:
 
   /// Get ModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;
+
+  /// Set/Get color logic.
+  /// The application typically sets a custom color logic (i.e.
+  /// vtkSlicerColorLogic) that contains default color nodes.
+  /// By default, a vtkMRMLColorLogic is instantiated.
+  void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
+  vtkMRMLColorLogic* GetColorLogic()const;
 
   /// 
   /// Apply the active volumes in the SelectionNode to the slice composite nodes

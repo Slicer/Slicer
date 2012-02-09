@@ -47,6 +47,7 @@ public:
   virtual QStringList contributors()const;
   virtual QIcon icon()const;
   virtual QStringList categories()const;
+  virtual QStringList dependencies()const;
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
 protected:

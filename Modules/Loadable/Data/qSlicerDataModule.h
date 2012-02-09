@@ -44,6 +44,7 @@ public:
 
   virtual QIcon icon()const;
   virtual QStringList categories()const;
+  virtual QStringList dependencies()const;
   qSlicerGetTitleMacro("Data");
 
   /// Return help/acknowledgement text

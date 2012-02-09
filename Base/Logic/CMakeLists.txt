@@ -80,7 +80,6 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerModuleLogic.cxx
   vtkSlicerTask.cxx
   vtkSlicerFiducialsLogic.cxx
-  vtkSlicerColorLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
   vtkImageSlicePaint.cxx

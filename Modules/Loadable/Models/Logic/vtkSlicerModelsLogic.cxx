@@ -35,11 +35,13 @@
 
 vtkCxxRevisionMacro(vtkSlicerModelsLogic, "$Revision$");
 vtkStandardNewMacro(vtkSlicerModelsLogic);
+vtkCxxSetObjectMacro(vtkSlicerModelsLogic, ColorLogic, vtkMRMLColorLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::vtkSlicerModelsLogic()
 {
   this->ActiveModelNode = NULL;
+  this->ColorLogic = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -49,6 +51,11 @@ vtkSlicerModelsLogic::~vtkSlicerModelsLogic()
     {
     this->ActiveModelNode->Delete();
     this->ActiveModelNode = NULL;
+    }
+  if (this->ColorLogic != NULL)
+    {
+    this->ColorLogic->Delete();
+    this->ColorLogic = NULL;
     }
 }
 
@@ -336,11 +343,10 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
   else
     {
     vtkMRMLColorNode *colorNode = displayNode->GetColorNode();
-    if (colorNode == NULL)
+    if (colorNode == NULL && this->ColorLogic != NULL)
       {
-      vtkSlicerColorLogic *colorLogic = vtkSlicerColorLogic::New();
-      displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultModelColorNodeID());
-      colorLogic->Delete();
+      displayNode->SetAndObserveColorNodeID(
+        this->ColorLogic->GetDefaultModelColorNodeID());
       }
     }
 
