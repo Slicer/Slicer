@@ -74,7 +74,8 @@ def lookupTopLevelWidget(objectName, verbose = True):
   return the one matching 'objectName'"""
   from slicer import app
   for w in app.topLevelWidgets():
-    if w.objectName == objectName: return w
+    if hasattr(w,'objectName'):
+      if w.objectName == objectName: return w
   if verbose:
     print "Failed to obtain reference to '%s'" % objectName
   return None
