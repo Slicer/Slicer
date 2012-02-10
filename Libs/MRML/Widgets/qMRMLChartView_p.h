@@ -14,7 +14,6 @@ class ctkPopupWidget;
 // qMRML includes
 #include "qMRMLChartView.h"
 
-class vtkMRMLDisplayableManagerGroup;
 class vtkMRMLChartViewNode;
 class vtkMRMLChartNode;
 class vtkMRMLColorNode;
@@ -52,7 +51,6 @@ public slots:
   void onDataPointClicked(int series, int pointidx, double x, double y);
 
 protected:
-  void initDisplayableManagers();
 
   // Convert the colors in a color node to a string that can be used
   // as the "seriesColors" field for the chart. This is used to assign
@@ -77,7 +75,6 @@ protected:
   QString seriesDataString(vtkMRMLDoubleArrayNode*, vtkMRMLColorNode*);
   
 
-  vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLChartViewNode*              MRMLChartViewNode;
   vtkMRMLChartNode*                  MRMLChartNode;

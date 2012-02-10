@@ -94,10 +94,12 @@ qMRMLChartWidget::~qMRMLChartWidget()
 }
 
 // --------------------------------------------------------------------------
-void qMRMLChartWidget::addDisplayableManager(const QString& dManager)
+void qMRMLChartWidget::addDisplayableManager(const QString& vtkNotUsed(dManager))
 {
-  Q_D(qMRMLChartWidget);
-  d->ChartView->addDisplayableManager(dManager);
+  //Q_D(qMRMLChartWidget);
+
+  // Charts do not use DisplayableManager (yet)
+  //d->ChartView->addDisplayableManager(dManager);
 }
 
 // --------------------------------------------------------------------------

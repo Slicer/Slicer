@@ -32,12 +32,6 @@
 #include "qMRMLColors.h"
 #include "qMRMLChartView_p.h"
 
-// MRMLDisplayableManager includes
-#include <vtkMRMLAbstractDisplayableManager.h>
-#include <vtkMRMLDisplayableManagerGroup.h>
-#include <vtkMRMLChartViewDisplayableManagerFactory.h>
-#include <vtkChartViewInteractorStyle.h>
-
 // MRML includes
 #include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLChartNode.h>
@@ -89,7 +83,6 @@ const char *plotPostscript =
 qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
   : q_ptr(&object)
 {
-  this->DisplayableManagerGroup = 0;
   this->MRMLScene = 0;
   this->MRMLChartViewNode = 0;
   this->MRMLChartNode = 0;
@@ -100,10 +93,6 @@ qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
 //---------------------------------------------------------------------------
 qMRMLChartViewPrivate::~qMRMLChartViewPrivate()
 {
-  if (this->DisplayableManagerGroup)
-    {
-    this->DisplayableManagerGroup->Delete();
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -125,40 +114,8 @@ void qMRMLChartViewPrivate::init()
   popupLayout->addWidget(new QToolButton);
   this->PopupWidget->setLayout(popupLayout);
 
-  // VTK_CREATE(vtkChartViewInteractorStyle, interactorStyle);
-  // q->interactor()->SetInteractorStyle(interactorStyle);
-
-//  this->initDisplayableManagers();
-
   q->setHtml("");
   q->show();
-}
-
-//---------------------------------------------------------------------------
-void qMRMLChartViewPrivate::initDisplayableManagers()
-{
-  // Q_Q(qMRMLChartView);
-  // vtkMRMLChartViewDisplayableManagerFactory* factory
-  //   = vtkMRMLChartViewDisplayableManagerFactory::GetInstance();
-
-  // QStringList displayableManagers;
-  // displayableManagers << "vtkMRMLChartViewDisplayableManager";
-  //                     //<< "vtkMRMLCameraDisplayableManager"
-  //                     //<< "vtkMRMLViewDisplayableManager"
-  //                     //<< "vtkMRMLModelDisplayableManager";
-  // foreach(const QString& displayableManager, displayableManagers)
-  //   {
-  //   if(!factory->IsDisplayableManagerRegistered(displayableManager.toLatin1()))
-  //     {
-  //     factory->RegisterDisplayableManager(displayableManager.toLatin1());
-  //     }
-  //   }
-
-  // this->DisplayableManagerGroup
-  //   = factory->InstantiateDisplayableManagers(q->renderer());
-  // // Observe displayable manager group to catch RequestRender events
-  // this->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
-  //                   q, SLOT(scheduleRender()));
 }
 
 //---------------------------------------------------------------------------
@@ -835,16 +792,6 @@ qMRMLChartView::~qMRMLChartView()
 {
 }
 
-//------------------------------------------------------------------------------
-void qMRMLChartView::addDisplayableManager(const QString&) //displayableManagerName)
-{
-  // Q_D(qMRMLChartView);
-  // vtkSmartPointer<vtkMRMLAbstractDisplayableManager> displayableManager;
-  // displayableManager.TakeReference(
-  //   vtkMRMLDisplayableManagerGroup::InstantiateDisplayableManager(
-  //     displayableManagerName.toLatin1()));
-  // d->DisplayableManagerGroup->AddDisplayableManager(displayableManager);
-}
 
 //------------------------------------------------------------------------------
 void qMRMLChartView::setMRMLScene(vtkMRMLScene* newScene)
@@ -892,8 +839,6 @@ void qMRMLChartView::setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode
   // to update the widget
   d->onChartNodeChanged();
   
-  // d->DisplayableManagerGroup->SetMRMLDisplayableNode(newChartViewNode);
-
   // make sure the gui is up to date
   d->updateWidgetFromMRML();
 }

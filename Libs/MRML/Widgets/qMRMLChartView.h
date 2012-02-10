@@ -1,7 +1,16 @@
+/*=auto=========================================================================
 
+Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
+See COPYRIGHT.txt
+or http://www.slicer.org/copyright/copyright.txt for details.
 
+Program:   3D Slicer
+Module:    $RCSfile: qMRMLChartView.h,v $
+Date:      $Date: 2006/03/17 15:10:09 $
+Version:   $Revision: 1.18 $
 
+=========================================================================auto=*/
 #ifndef __qMRMLChartView_h
 #define __qMRMLChartView_h
 
@@ -25,26 +34,11 @@ public:
   explicit qMRMLChartView(QWidget* parent = 0);
   virtual ~qMRMLChartView();
 
-  /// Add a displayable manager to the view,
-  /// the displayable manager is proper to the 3D view and is not shared
-  /// with other views.
-  /// If you want to register a displayable manager with all the 3D
-  /// views (existing or future), you need to do it via
-  /// vtkMRMLChartViewDisplayableManagerFactory::RegisterDisplayableManager()
-  /// By default: vtkMRMLCameraDisplayableManager,
-  /// vtkMRMLViewDisplayableManager and vtkMRMLModelDisplayableManager are
-  /// already registered.
-  void addDisplayableManager(const QString& displayableManager);
-
   /// Return a pointer on the current MRML scene
   vtkMRMLScene* mrmlScene() const;
 
-  /// Get the 3D View node observed by view.
-  //vtkMRMLViewNode* mrmlViewNode()const;
+  /// Get the ChartView node observed by view.
   vtkMRMLChartViewNode* mrmlChartViewNode()const;
-
-  // /// Returns the interactor style of the view
-  // vtkInteractorObserver* interactorStyle()const;
 
   // Redefine the sizeHint so layouts work properly.
   virtual QSize sizeHint() const;
