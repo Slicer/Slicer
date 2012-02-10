@@ -54,15 +54,8 @@ class qSlicerVectorImageExplorerModuleWidget:
 
   def setup( self ):
     '''
-    Create and start the EMSegment workflow.
     '''
     
-    print 'My module Setup called'
-    
-    # Use the logic associated with the module
-    #if not self.__logic:
-    #  self.__logic = self.parent.module().logic()
-
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
 
     w = qt.QWidget()
@@ -99,19 +92,20 @@ class qSlicerVectorImageExplorerModuleWidget:
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
-    '''
-    label = qt.QLabel('Label for the element shown:')
-    self.__mdValue = qt.QLabel()
-    ## self.layout.addRow(label, self.__mdValue)
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.__mdValue)
+    label = qt.QLabel('Extract current frame:')
+    
+    self.__vfSelector = slicer.qMRMLNodeComboBox()
+    self.__vfSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
+    self.__vfSelector.setMRMLScene(slicer.mrmlScene)
+    self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
+    self.__vfSelector.addEnabled = 1
 
-    label = qt.QLabel('Vector content:')
-    self.__vcValue = qt.QLabel()
-    ## self.layout.addRow(label, self.__vcValue)
+    self.extractButton = qt.QPushButton('Extract')
+    self.extractButton.connect('pressed()', self.onExtractFrame)
+
     self.layout.addWidget(label)
-    self.layout.addWidget(self.__vcValue)
-    '''
+    self.layout.addWidget(self.__vfSelector)
+    self.layout.addWidget(self.extractButton)
 
     # initialize slice observers (from DataProbe.py)
     # keep list of pairs: [observee,tag] so they can be removed easily
@@ -141,16 +135,8 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
 
     # add chart container widget
-    ##chartWidget = qt.QWidget()
-    ##chartWidgetLayout = qt.QGridLayout()
-    ##chartWidget.setLayout(chartWidgetLayout)
-    ##self.__chartView = ctk.ctkVTKChartView(chartWidget)
     self.__chartView = ctk.ctkVTKChartView(w)
-    ##self.layout.addRow(self.__chartView)
     self.layout.addWidget(self.__chartView)
-    ##chartWidgetLayout.addWidget(self.__chartView)
-    ##self.layout.addRow(chartWidget)
-    ##chartWidget.show()
 
     self.__chart = self.__chartView.chart()
     self.__chartTable = vtk.vtkTable()
@@ -202,14 +188,27 @@ class qSlicerVectorImageExplorerModuleWidget:
           arr.SetComponent(c, 1, mean/cnt)
           arr.SetComponent(c, 2, 0)
 
+      # setup color node
+      colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
+      lut = labelNode.GetDisplayNode().GetColorNode().GetLookupTable()
+      
       # add initialized data nodes to the chart
+      self.__cn.ClearArrays()
       for k in labeledVoxels.keys():
-        self.__cn.AddArray('Label '+str(k), dataNodes[k].GetID())
+        name = 'Label '+str(k)
+        self.__cn.AddArray(name, dataNodes[k].GetID())
+        #self.__cn.SetProperty(name, "lookupTable", colorNodeID)
+        rgb = lut.GetTableValue(int(k))
+        
+        colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
+        self.__cn.SetProperty(name, "color", colorStr)
         self.__cvn.Modified()
+
+  def RGBtoHex(self,r,g,b):
+    return '#%02X%02X%02X' % (r,g,b)
 
   def onSliderChanged(self, newValue):
     value = self.__mdSlider.value
-    # self.__mdValue.setText(str(newValue))
 
     if self.__dwvNode != None:
       dwvDisplayNode = self.__dwvNode.GetDisplayNode()
@@ -222,6 +221,9 @@ class qSlicerVectorImageExplorerModuleWidget:
   
   def onLVMRMLSceneChanged(self, mrmlScene):
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
+  
+  def onVFMRMLSceneChanged(self, mrmlScene):
+    self.__vfSelector.setMRMLScene(slicer.mrmlScene)
    
   def onInputChanged(self):
     print 'onInputChanged() called'
@@ -258,6 +260,35 @@ class qSlicerVectorImageExplorerModuleWidget:
     else:
       self.timer.stop()
       self.playButton.text = 'Play'
+
+  def onExtractFrame(self):
+    frameVolume = self.__vfSelector.currentNode()
+    print 'Entering Extract frame'
+    if frameVolume == 'None' or self.__dwvNode == 'None':
+      return
+    dwvImage = self.__dwvNode.GetImageData()
+    frameId = self.__mdSlider.value
+    
+    extract = vtk.vtkImageExtractComponents()
+    extract.SetInput(dwvImage)
+    extract.SetComponents(frameId)
+    extract.Update()
+
+    frame = extract.GetOutput()
+    ras2ijk = vtk.vtkMatrix4x4()
+    ijk2ras = vtk.vtkMatrix4x4()
+    self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
+    self.__dwvNode.GetIJKToRASMatrix(ijk2ras)
+    frameVolume.SetAndObserveImageData(frame)
+    frameVolume.SetRASToIJKMatrix(ras2ijk)
+    frameVolume.SetIJKToRASMatrix(ijk2ras)
+    ras2ijk.SetReferenceCount(1)
+    ijk2ras.SetReferenceCount(1)
+    #ras2ijk.Delete()
+    #ijk2ras.Delete()
+
+    print 'Extract frame completed!'
+
 
   def goToNext(self):
     currentElement = self.__mdSlider.value
@@ -296,7 +327,6 @@ class qSlicerVectorImageExplorerModuleWidget:
           self.styleObserverTags.append([style,tag])
  
   def processEvent(self,observee,event):
-    return
     # TODO: use a timer to delay calculation and compress events
     if event == 'LeaveEvent':
       # reset all the readouts
