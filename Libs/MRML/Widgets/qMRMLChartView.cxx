@@ -790,6 +790,7 @@ qMRMLChartView::qMRMLChartView(QWidget* _parent) : Superclass(_parent)
 // --------------------------------------------------------------------------
 qMRMLChartView::~qMRMLChartView()
 {
+  this->setMRMLScene(0);
 }
 
 

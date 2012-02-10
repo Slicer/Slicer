@@ -211,6 +211,7 @@ qMRMLChartViewControllerWidget::qMRMLChartViewControllerWidget(QWidget* parentWi
 // --------------------------------------------------------------------------
 qMRMLChartViewControllerWidget::~qMRMLChartViewControllerWidget()
 {
+  this->setMRMLScene(0);
 }
 
 // --------------------------------------------------------------------------
@@ -371,8 +372,6 @@ void qMRMLChartViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
 {
   Q_D(qMRMLChartViewControllerWidget);
   
-  //qDebug() << "Inside setMRMLScene()";
-
   if (this->mrmlScene() == newScene)
     {
     return;
@@ -396,8 +395,6 @@ void qMRMLChartViewControllerWidget::setMRMLScene(vtkMRMLScene* newScene)
     {
     this->updateWidgetFromMRML();
     }
-
-  //qDebug() << "Leaving setMRMLScene()";
 }
   
 // --------------------------------------------------------------------------

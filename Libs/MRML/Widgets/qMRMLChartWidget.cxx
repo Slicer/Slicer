@@ -91,6 +91,9 @@ qMRMLChartWidget::qMRMLChartWidget(QWidget* parentWidget)
 // --------------------------------------------------------------------------
 qMRMLChartWidget::~qMRMLChartWidget()
 {
+  Q_D(qMRMLChartWidget);
+  d->ChartView->setMRMLScene(0);
+  d->ChartController->setMRMLScene(0);
 }
 
 // --------------------------------------------------------------------------
