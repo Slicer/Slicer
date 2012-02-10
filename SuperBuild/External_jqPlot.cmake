@@ -29,6 +29,7 @@ if(NOT DEFINED jqPlot_DIR)
       ${jqPlot_DEPENDENCIES}
     )
   set(jqPlot_DIR ${CMAKE_BINARY_DIR}/${proj})
+  mark_as_advanced(jqPlot_DIR)
 
 else()
   # The project is provided using jqPlot_DIR, nevertheless since other project may depend on jqPlot,
