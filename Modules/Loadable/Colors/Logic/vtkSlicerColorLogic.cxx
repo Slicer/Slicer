@@ -49,13 +49,13 @@ void vtkSlicerColorLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  return vtkSlicerColorLogic::GetFileColorNodeID("GenericColors.txt");
+  return vtkMRMLColorLogic::GetFileColorNodeID("GenericColors.txt");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 {
-  return vtkSlicerColorLogic::GetFileColorNodeID("GenericAnatomyColors.txt");
+  return vtkMRMLColorLogic::GetFileColorNodeID("GenericAnatomyColors.txt");
 }
 
 //----------------------------------------------------------------------------

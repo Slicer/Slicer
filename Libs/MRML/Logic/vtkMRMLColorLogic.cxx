@@ -358,13 +358,13 @@ const char *vtkMRMLColorLogic::GetDefaultVolumeColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetDefaultLabelMapColorNodeID()
 {
-  return vtkMRMLColorLogic::GetFileColorNodeID("GenericColors.txt");
+  return vtkMRMLColorLogic::GetProceduralColorNodeID("RandomIntegers");
 }
 
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetDefaultEditorColorNodeID()
 {
-  return vtkMRMLColorLogic::GetFileColorNodeID("GenericAnatomyColors.txt");
+  return vtkMRMLColorLogic::GetProceduralColorNodeID("RandomIntegers");
 }
 
 //----------------------------------------------------------------------------
