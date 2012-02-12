@@ -29,9 +29,6 @@ public:
   explicit qMRMLChartWidget(QWidget* parent = 0);
   virtual ~qMRMLChartWidget();
 
-  /// Get chart controller
-  qMRMLChartViewControllerWidget* ChartController()const;
-
   /// Get the chart node observed by view.
   vtkMRMLChartViewNode* mrmlChartViewNode()const;
 
