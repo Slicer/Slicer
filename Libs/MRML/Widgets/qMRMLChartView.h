@@ -20,8 +20,11 @@ Version:   $Revision: 1.18 $
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLChartViewPrivate;
-class vtkMRMLScene;
+
+// MRML includes
 class vtkMRMLChartViewNode;
+class vtkMRMLColorLogic;
+class vtkMRMLScene;
 
 class QMRML_WIDGETS_EXPORT qMRMLChartView : public QWebView
 {
@@ -39,6 +42,13 @@ public:
 
   /// Get the ChartView node observed by view.
   vtkMRMLChartViewNode* mrmlChartViewNode()const;
+
+  /// Set the application color logic for default node
+  /// color.
+  void setColorLogic(vtkMRMLColorLogic* colorLogic);
+
+  /// Get the application color logic. 0 by default.
+  vtkMRMLColorLogic* colorLogic()const;
 
   // Redefine the sizeHint so layouts work properly.
   virtual QSize sizeHint() const;

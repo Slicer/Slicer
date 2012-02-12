@@ -56,6 +56,7 @@ qMRMLLayoutManagerPrivate::qMRMLLayoutManagerPrivate(qMRMLLayoutManager& object)
   this->ActiveMRMLThreeDViewNode = 0;
   this->ActiveMRMLChartViewNode = 0;
   this->MRMLSliceLogics = vtkCollection::New();
+  this->MRMLColorLogic = 0;
   this->SliceControllerButtonGroup = 0;
   //this->SavedCurrentViewArrangement = vtkMRMLLayoutNode::SlicerLayoutNone;
 }
@@ -317,6 +318,7 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::createChartWidget(vtkMRMLChartViewN
   //logger.trace("createChartWidget - instantiated new qMRMLChartWidget");
   chartWidget = new qMRMLChartWidget(q->viewport());
   chartWidget->setViewLabel(viewNode->GetViewLabel());
+  chartWidget->setColorLogic(this->MRMLColorLogic);
   chartWidget->setMRMLScene(this->MRMLScene);
   chartWidget->setMRMLChartViewNode(viewNode);
 
@@ -799,6 +801,21 @@ vtkCollection* qMRMLLayoutManager::mrmlSliceLogics()const
 {
   Q_D(const qMRMLLayoutManager);
   return d->MRMLSliceLogics;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  Q_D(qMRMLLayoutManager);
+  d->MRMLColorLogic = colorLogic;
+  /// TODO: apply color logic to existing chart views
+}
+
+//------------------------------------------------------------------------------
+vtkMRMLColorLogic* qMRMLLayoutManager::mrmlColorLogic()const
+{
+  Q_D(const qMRMLLayoutManager);
+  return d->MRMLColorLogic;
 }
 
 //------------------------------------------------------------------------------

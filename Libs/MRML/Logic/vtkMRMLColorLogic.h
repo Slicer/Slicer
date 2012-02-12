@@ -46,6 +46,9 @@ public:
 
   /// Add a series of color nodes, setting the types to the defaults, so that
   /// they're accessible to the rest of Slicer
+  /// Each node is a singleton and is not included in a saved scene. The color
+  /// node singleton tags are the same as the node IDs:
+  /// vtkMRMLColorTableNodeGrey, vtkMRMLPETProceduralColorNodeHeat, etc.
   virtual void AddDefaultColorNodes();
 
   /// Remove the colour nodes that were added
@@ -86,6 +89,9 @@ public:
 
   /// Return a default color node id for a model
   virtual const char * GetDefaultModelColorNodeID();
+
+  /// Return a default color node id for a chart
+  virtual const char * GetDefaultChartColorNodeID();
 
   /// Add a file to the input list list, checking first for null, duplicates
   void AddColorFile(const char *fileName, std::vector<std::string> *Files);

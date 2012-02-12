@@ -33,10 +33,11 @@
 #include "qMRMLChartView_p.h"
 
 // MRML includes
-#include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLChartNode.h>
 #include <vtkMRMLChartViewNode.h>
+#include <vtkMRMLColorLogic.h>
 #include <vtkMRMLColorNode.h>
+#include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -86,6 +87,7 @@ qMRMLChartViewPrivate::qMRMLChartViewPrivate(qMRMLChartView& object)
   this->MRMLScene = 0;
   this->MRMLChartViewNode = 0;
   this->MRMLChartNode = 0;
+  this->ColorLogic = 0;
   this->PinButton = 0;
   this->PopupWidget = 0;
 }
@@ -396,24 +398,27 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // to the array and use that with "varyBarColor". We define the
   // seriesColors here for line charts to work. If seriesColors is
   // defined in seriesDefaults, then only bar charts observe it.
-  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID("vtkMRMLColorTableNodeFileGenericChartColors.txt"));
+  const char* defaultChartColorNodeID =
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
+    this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
   vtkMRMLColorNode *colorNode = defaultColorNode;
   const char *lookupTable = cn->GetProperty("default", "lookupTable");
   if (lookupTable)
     {
     colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
     }
-  
+
   if (colorNode)
     {
     plotOptions << ", seriesColors: " << this->seriesColorsString(colorNode);
     }
-                                                                
+
   // default properties for a series
   //
   //
   plotOptions << ", seriesDefaults: {show: true";
-  
+
   // chart type
   int defaultMarkers = 0; // 0 = not set, 1 = on, -1 = off
   int defaultLines = 0;   // 0 = not set, 1 = on, -1 = off
@@ -858,6 +863,19 @@ vtkMRMLScene* qMRMLChartView::mrmlScene()const
   return d->MRMLScene;
 }
 
+//---------------------------------------------------------------------------
+void qMRMLChartView::setColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  Q_D(qMRMLChartView);
+  d->ColorLogic = colorLogic;
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLColorLogic* qMRMLChartView::colorLogic()const
+{
+  Q_D(const qMRMLChartView);
+  return d->ColorLogic;
+}
 
 //---------------------------------------------------------------------------
 QSize qMRMLChartView::sizeHint()const

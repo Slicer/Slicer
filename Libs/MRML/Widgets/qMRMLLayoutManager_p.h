@@ -143,6 +143,7 @@ public:
   QWidget*                TargetWidget;
   QButtonGroup*           SliceControllerButtonGroup;
   vtkCollection*          MRMLSliceLogics;
+  vtkMRMLColorLogic*      MRMLColorLogic;
 
   QList<qMRMLThreeDWidget*>         ThreeDWidgetList;
   QList<qMRMLChartWidget*>          ChartWidgetList;

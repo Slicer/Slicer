@@ -140,3 +140,17 @@ QString qMRMLChartWidget::viewLabel()const
   Q_D(const qMRMLChartWidget);
   return d->ChartController->viewLabel();
 }
+
+//---------------------------------------------------------------------------
+void qMRMLChartWidget::setColorLogic(vtkMRMLColorLogic* colorLogic)
+{
+  Q_D(const qMRMLChartWidget);
+  return d->ChartView->setColorLogic(colorLogic);
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLColorLogic* qMRMLChartWidget::colorLogic()const
+{
+  Q_D(const qMRMLChartWidget);
+  return d->ChartView->colorLogic();
+}

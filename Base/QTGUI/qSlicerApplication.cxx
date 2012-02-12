@@ -216,7 +216,11 @@ void qSlicerApplication::setLayoutManager(qSlicerLayoutManager* layoutManager)
   if (this->applicationLogic())
     {
     this->applicationLogic()->SetSliceLogics(
-      layoutManager? layoutManager->mrmlSliceLogics() : 0);
+      d->LayoutManager? d->LayoutManager->mrmlSliceLogics() : 0);
+    if (d->LayoutManager)
+      {
+      d->LayoutManager->setMRMLColorLogic(this->applicationLogic()->GetColorLogic());
+      }
     }
 }
 
@@ -257,6 +261,16 @@ void qSlicerApplication::handleCommandLineArguments()
   this->Superclass::handleCommandLineArguments();
 
   this->setToolTipsEnabled(!options->disableToolTips());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerApplication::onSlicerApplicationLogicModified()
+{
+  if (this->layoutManager())
+    {
+    this->layoutManager()->setMRMLColorLogic(
+      this->applicationLogic()->GetColorLogic());
+    }
 }
 
 //-----------------------------------------------------------------------------

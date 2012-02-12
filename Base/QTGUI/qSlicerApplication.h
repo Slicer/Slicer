@@ -113,6 +113,7 @@ protected:
   /// Reimplemented from qSlicerCoreApplication
   virtual QSettings* newSettings(const QString& fileName = QString());
   virtual void handleCommandLineArguments();
+  virtual void onSlicerApplicationLogicModified();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerApplication);

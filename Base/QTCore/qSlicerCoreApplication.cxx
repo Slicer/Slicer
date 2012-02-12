@@ -166,6 +166,8 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
+              q, SLOT(onSlicerApplicationLogicModified()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
@@ -1064,6 +1066,11 @@ void qSlicerCoreApplication::restart()
   QStringList args = qSlicerCoreApplication::instance()->arguments();
   QProcess::startDetached(qSlicerCoreApplication::instance()->applicationFilePath(), args);
   QCoreApplication::quit();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::onSlicerApplicationLogicModified()
+{
 }
 
 //-----------------------------------------------------------------------------

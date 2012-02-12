@@ -374,6 +374,12 @@ const char *vtkMRMLColorLogic::GetDefaultModelColorNodeID()
 }
 
 //----------------------------------------------------------------------------
+const char *vtkMRMLColorLogic::GetDefaultChartColorNodeID()
+{
+  return vtkMRMLColorLogic::GetProceduralColorNodeID("RandomIntegers");
+}
+
+//----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::GetDefaultFreeSurferLabelMapColorNodeID()
 {
   return vtkMRMLColorLogic::GetFreeSurferColorNodeID(vtkMRMLFreeSurferProceduralColorNode::Labels);

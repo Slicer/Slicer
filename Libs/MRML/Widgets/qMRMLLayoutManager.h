@@ -32,6 +32,7 @@ class qMRMLThreeDWidget;
 class qMRMLSliceWidget;
 class qMRMLLayoutManagerPrivate;
 class vtkCollection;
+class vtkMRMLColorLogic;
 class vtkMRMLLayoutLogic;
 class vtkMRMLScene;
 class vtkMRMLChartNode;
@@ -80,6 +81,9 @@ public:
 
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
+
+  void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
+  vtkMRMLColorLogic* mrmlColorLogic()const;
 
   /// Returns the current layout. it's the same value than
   /// vtkMRMLLayoutNode::ViewArrangement

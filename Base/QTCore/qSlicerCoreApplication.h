@@ -224,6 +224,7 @@ protected slots:
 
   ///
   virtual void handleCommandLineArguments();
+  virtual void onSlicerApplicationLogicModified();
   void onSlicerApplicationLogicRequest(vtkObject*, void* , unsigned long);
   void processAppLogicModified();
   void processAppLogicReadData();

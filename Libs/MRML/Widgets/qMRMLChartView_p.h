@@ -16,6 +16,7 @@ class ctkPopupWidget;
 
 class vtkMRMLChartViewNode;
 class vtkMRMLChartNode;
+class vtkMRMLColorLogic;
 class vtkMRMLColorNode;
 class vtkMRMLDoubleArrayNode;
 class vtkObject;
@@ -34,7 +35,7 @@ public:
 
   virtual void init();
 
-  void setMRMLScene(vtkMRMLScene* scene);                                        
+  void setMRMLScene(vtkMRMLScene* scene);
   vtkMRMLScene *mrmlScene();
 
 public slots:
@@ -78,6 +79,8 @@ protected:
   vtkMRMLScene*                      MRMLScene;
   vtkMRMLChartViewNode*              MRMLChartViewNode;
   vtkMRMLChartNode*                  MRMLChartNode;
+
+  vtkMRMLColorLogic*                 ColorLogic;
   
   QToolButton*                       PinButton;
   ctkPopupWidget*                    PopupWidget;

@@ -59,6 +59,12 @@ const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 }
 
 //----------------------------------------------------------------------------
+const char *vtkSlicerColorLogic::GetDefaultChartColorNodeID()
+{
+  return vtkMRMLColorLogic::GetFileColorNodeID("GenericChartColors.txt");
+}
+
+//----------------------------------------------------------------------------
 std::vector<std::string> vtkSlicerColorLogic::FindDefaultColorFiles()
 {
   // get the slicer home dir
