@@ -29,7 +29,6 @@ class ArrayPropertyMap : public std::map<std::string, std::string> {} ;
 class ChartPropertyMap : public std::map<std::string, ArrayPropertyMap> {} ;
 
 
-
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLChartNode);
 
@@ -58,8 +57,13 @@ vtkMRMLChartNode::vtkMRMLChartNode()
 //----------------------------------------------------------------------------
 vtkMRMLChartNode::~vtkMRMLChartNode()
 {
-  this->ClearArrays();
-  this->ClearProperties();
+  // No need to call ClearArrays() and ClearProperties(). These
+  // containers will be cleared up automatically.  We apparently do
+  // not need to worry about cleaning up the Scene's ReferencedNodeIDs
+  // at this time. If you follow the logic in the destructor to
+  // MRMLSliceCompositeNode down to the
+  // vtkSetReferencedStringBodyMacro, the reference link for the old
+  // id is only updated if we are setting a valid new id.
 
   delete this->DoubleArrayIDs;
   delete this->Properties;
@@ -76,32 +80,160 @@ void vtkMRMLChartNode::WriteXML(ostream& of, int nIndent)
   // Start by having the superclass write its information
   Superclass::WriteXML(of, nIndent);
 
+  vtkIndent indent(nIndent);
+
   // Write all the IDs
+  of << " arrays=\"";
+  DoubleArrayIDMap::iterator it;
+  for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end(); ++it)
+    {
+    if (it != this->DoubleArrayIDs->begin())
+      {
+      of << " ";
+      }
+    of << "'" << (*it).first << "':'" << (*it).second << "'";
+    }
+  of << "\"";
+
+  // Write out the properties
+  of << " properties=\"";
+  ChartPropertyMap::iterator pit;
+  bool first = true;
+  for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
+    {
+    for (ArrayPropertyMap::iterator ait = (*pit).second.begin();
+         ait != (*pit).second.end(); ++ait)
+      {
+      if (!first)
+        {
+        of << ",";
+        }
+      first = false;
+      of << "'" << (*pit).first << "','" << (*ait).first << "','" << (*ait).second
+         << "'";
+      }
+    }
+  of << "\"";
+  
 }
 
 
 //----------------------------------------------------------------------------
 void vtkMRMLChartNode::ReadXMLAttributes(const char** atts)
 {
+  int disabledModify = this->StartModify();
+
   vtkMRMLNode::ReadXMLAttributes(atts);
 
-  // Read in the IDs
+  const char* attName;
+  const char* attValue;
+  while (*atts != NULL) 
+    {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "arrays")) 
+      {
+      // format is 'name':'id'
+      // Search for 4 single quotes and pull out the pieces.
+      std::string text(attValue);
+      const std::string::size_type n = text.length();
+      std::string::size_type first=0, second, third, fourth;
+      first = text.find_first_of("'");
+      while (first < n)
+       {
+        second = text.find_first_of("'", first+1);
+        third = text.find_first_of("'", second+1);
+        fourth = text.find_first_of("'", third+1);
+        
+        this->AddArray(text.substr(first+1, second-first-1).c_str(),
+                       text.substr(third+1, fourth-third-1).c_str());
+
+        first = text.find_first_of("'",fourth+1);
+        }
+      }
+    else if (!strcmp(attName, "properties"))
+      {
+      // format is 'arrayname','propertyname','value'
+      // Search for 6 single quotes and pull out the pieces
+      std::string text(attValue);
+      const std::string::size_type n = text.length();
+      std::string::size_type first=0, second, third, fourth, fifth, sixth;
+      first = text.find_first_of("'");
+      while (first < n)
+        {
+        second = text.find_first_of("'", first+1);
+        third = text.find_first_of("'", second+1);
+        fourth = text.find_first_of("'", third+1);
+        fifth = text.find_first_of("'", fourth+1);
+        sixth = text.find_first_of("'", fifth+1);
+        
+        this->SetProperty(text.substr(first+1, second-first-1).c_str(),
+                          text.substr(third+1, fourth-third-1).c_str(),
+                          text.substr(fifth+1, sixth-fifth-1).c_str());
+
+        first = text.find_first_of("'",sixth+1);
+        }
+      
+      }
+    }
+
+  this->EndModify(disabledModify);
 }
 
 
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
 void vtkMRMLChartNode::Copy(vtkMRMLNode *anode)
 {
+  vtkMRMLChartNode *achartnode = vtkMRMLChartNode::SafeDownCast(anode);
+
+  int disabledModify = this->StartModify();
+
   Superclass::Copy(anode);
 
-  vtkMRMLChartNode *achartnode = vtkMRMLChartNode::SafeDownCast(anode);
+  // Need to manage references to other nodes.  Unregister this node's
+  // currrent references (done implictly when clearing the arrays and properties).
+  this->ClearArrays();
+  this->ClearProperties();
+
+  // copy the array list and properties from the other node. Don't
+  // bother copying the ivars ArrayNames and Arrays as they are
+  // constructed upon request
   if (achartnode)
     {
     *(this->DoubleArrayIDs) = *(achartnode->DoubleArrayIDs);
     *(this->Properties) = *(achartnode->Properties);
+
+    // add the new references
+    //
+    //
+
+    // references in the array list 
+    DoubleArrayIDMap::iterator it;
+    for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end(); ++it)
+      {
+      if (this->Scene)
+        {
+        this->Scene->AddReferencedNodeID((*it).second.c_str(), this);
+        }
+      }
+
+    // references in the properties
+    ChartPropertyMap::iterator pit;
+    for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
+      {
+      ArrayPropertyMap::iterator ait = (*pit).second.find("lookupTable");
+      if (ait != (*pit).second.end())
+        {
+        if (this->Scene)
+          {
+          this->Scene->AddReferencedNodeID((*ait).second.c_str(), this);
+          }
+        }
+      }
     }
+
+  this->EndModify(disabledModify);
 }
 
 
@@ -276,7 +408,7 @@ void vtkMRMLChartNode::SetProperty(const char *name,
   
   // A ColorNode id can be store as property of the chart or an
   // array. Need to manage the references.
-  if (this->Scene && !strcmp(name, "lookupTable"))
+  if (this->Scene && !strcmp(property, "lookupTable"))
     {
     if (found)
       {
@@ -382,4 +514,90 @@ void vtkMRMLChartNode::ClearProperties()
   this->Properties->clear();
 
   this->Modified();
+}
+
+void vtkMRMLChartNode::UpdateReferences()
+{
+   Superclass::UpdateReferences();
+
+   // Check to see if the referenced nodes are still in the scene
+   //
+   //
+
+   // arrays
+   DoubleArrayIDMap::iterator it;
+   for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end();++it)
+     {
+     if (this->Scene && !this->Scene->GetNodeByID((*it).second.c_str()))
+       {
+       this->RemoveArray((*it).first.c_str());
+       }
+     }
+   
+   // properties
+   ChartPropertyMap::iterator pit;
+   for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
+     {
+     ArrayPropertyMap::iterator ait = (*pit).second.find("lookupTable");
+     if (ait != (*pit).second.end())
+       {
+       if (this->Scene && !this->Scene->GetNodeByID((*ait).second.c_str()))
+         {
+         this->ClearProperty((*pit).first.c_str(), "lookupTable");
+         }
+       }
+     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::UpdateReferenceID(const char *oldID, const char *newID)
+{
+  Superclass::UpdateReferenceID(oldID, newID);
+
+  // Check to see if the old id is an array
+   DoubleArrayIDMap::iterator it;
+   for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end();++it)
+     {
+     if (!strcmp((*it).second.c_str(), oldID))
+       {
+       if (newID)
+         {
+         //std::cerr << "UpdateReferenceID " << oldID <<" -> "<< newID <<std::endl;
+         (*it).second = std::string(newID);
+         this->Scene->RemoveReferencedNodeID(oldID, this);
+         this->Scene->AddReferencedNodeID(newID, this);
+         }
+       else
+         {
+         //std::cerr << "UpdateReferenceID (RemoveArray) " << oldID << " -> " << newID << std::endl;
+
+         this->RemoveArray((*it).first.c_str());
+         }
+       }
+     }
+
+   // Check to see if the old id is a lookupTable
+   ChartPropertyMap::iterator pit;
+   for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
+     {
+     ArrayPropertyMap::iterator ait = (*pit).second.find("lookupTable");
+     if (ait != (*pit).second.end())
+       {
+       if (!strcmp((*ait).second.c_str(), oldID))
+         {
+         if (newID)
+           {
+           //std::cerr << "UpdateReferenceID "<< oldID <<" -> "<< newID<<std::endl;
+           (*ait).second = std::string(newID);
+           this->Scene->RemoveReferencedNodeID(oldID, this);
+           this->Scene->AddReferencedNodeID(newID, this);
+           }
+         else
+           {
+           //std::cerr << "UpdateReferenceID (ClearProperty)" << oldID << " -> " << newID << std::endl;
+           this->ClearProperty((*pit).first.c_str(), "lookupTable");
+           }
+         }
+       }
+     }
 }

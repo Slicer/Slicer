@@ -146,6 +146,14 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// Remove all the properties for all the arrays
   void ClearProperties();
 
+  /// 
+  /// Updates this node if it depends on other nodes 
+  /// when the node is deleted in the scene
+  virtual void UpdateReferences();
+
+  /// 
+  /// Update the stored reference to another node in the scene
+  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
  protected:
   //----------------------------------------------------------------
