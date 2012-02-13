@@ -376,7 +376,7 @@ const char *vtkMRMLColorLogic::GetDefaultModelColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetDefaultChartColorNodeID()
 {
-  return vtkMRMLColorLogic::GetProceduralColorNodeID("RandomIntegers");
+  return vtkMRMLColorLogic::GetFileColorNodeID("GenericChartColors.txt");
 }
 
 //----------------------------------------------------------------------------
