@@ -2,23 +2,23 @@
 <executable>
   <category>Registration.Specialized</category>
   <title>Fiducial Registration</title>
-  <description>Computes a rigid, similarity or affine transform from a matched list of fiducials</description>
+  <description><![CDATA[Computes a rigid, similarity or affine transform from a matched list of fiducials]]></description>
   <version>0.1.0.$Revision$</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/TransformFromFiducials</documentation-url>
   <license/>
   <contributor>Casey B Goodlett</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <point multiple="true">
       <name>fixedLandmarks</name>
-      <description>Ordered list of landmarks in the fixed image</description>
+      <description><![CDATA[Ordered list of landmarks in the fixed image]]></description>
       <label>Fixed landmarks</label>
       <longflag>fixedLandmarks</longflag>
       <channel>input</channel>
     </point>
     <point multiple="true">
       <name>movingLandmarks</name>
-      <description>Ordered list of landmarks in the moving image</description>
+      <description><![CDATA[Ordered list of landmarks in the moving image]]></description>
       <label>Moving landmarks</label>
       <longflag>movingLandmarks</longflag>
       <channel>input</channel>
@@ -26,13 +26,13 @@
     <transform fileExtensions=".txt">
       <name>saveTransform</name>
       <label>Save transform</label>
-      <description>Save the transform that results from registration</description>
+      <description><![CDATA[Save the transform that results from registration]]></description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
     </transform>
     <string-enumeration>
       <name>transformType</name>
-      <description>Type of transform to produce</description>
+      <description><![CDATA[Type of transform to produce]]></description>
       <label>Transform Type</label>
       <longflag>transformType</longflag>
       <element>Translation</element>

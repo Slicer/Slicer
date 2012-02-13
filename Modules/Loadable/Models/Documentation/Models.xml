@@ -2,127 +2,127 @@
 <executable>
   <category>Core</category>
   <title>Models</title>
-  <description>This module is used for changing the appearance of and organizing 3d surface models.</description>
+  <description><![CDATA[This module is used for changing the appearance of and organizing 3d surface models.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Models</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware Inc.), Alex Yarmarkovich (Isomics Inc.), Nicole Aucoin (SPL)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Scene</label>
     <parameter>
       <label>Scene tree view</label>
-      <description>The tree view of all models and model hierarchies in the current MRML scene. You can right click on the Scene element to add hierarchies and drag and drop models into them. Control the Visible property of the model via the eye icon (open/close to show/hide the models). The model color and opacity are also displayed on the same line as the model name. Model hierarchies allow you to group together models. When using the ModelMaker module, multiple models created from one label map are grouped under a model hierarchy node.</description>
+      <description><![CDATA[The tree view of all models and model hierarchies in the current MRML scene. You can right click on the Scene element to add hierarchies and drag and drop models into them. Control the Visible property of the model via the eye icon (open/close to show/hide the models). The model color and opacity are also displayed on the same line as the model name. Model hierarchies allow you to group together models. When using the ModelMaker module, multiple models created from one label map are grouped under a model hierarchy node.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Information Panel</label>
     <parameter>
       <label>Information</label>
-      <description>Information about this surface model</description>
+      <description><![CDATA[Information about this surface model]]></description>
     </parameter>
     <parameter>
       <label>Surface Area</label>
-      <description>The calculated surface area of the model, in square millimetres</description>
+      <description><![CDATA[The calculated surface area of the model, in square millimetres]]></description>
     </parameter>
     <parameter>
       <label>Volume</label>
-      <description>The volume inside the surface model, in cubed millimetres</description>
+      <description><![CDATA[The volume inside the surface model, in cubed millimetres]]></description>
     </parameter>
     <parameter>
       <label>Number of Points</label>
-      <description>Number of vertices in the surface model</description>
+      <description><![CDATA[Number of vertices in the surface model]]></description>
     </parameter>
     <parameter>
       <label>Number of Cells</label>
-      <description>Number of cells in the surface model</description>
+      <description><![CDATA[Number of cells in the surface model]]></description>
     </parameter>
     <parameter>
       <label>Number of Point Scalars</label>
-      <description>Shows how many arrays of scalars are associated with the points of the surface model.</description>
+      <description><![CDATA[Shows how many arrays of scalars are associated with the points of the surface model.]]></description>
     </parameter>
     <parameter>
       <label>Number of Cell Scalars</label>
-      <description>Shows how many arrays of scalars are associated with the cells of the surface model.</description>
+      <description><![CDATA[Shows how many arrays of scalars are associated with the cells of the surface model.]]></description>
     </parameter>
     <parameter>
       <label>Filename</label>
-      <description>Path to the file which this surface model was loaded from/saved to</description>
+      <description><![CDATA[Path to the file which this surface model was loaded from/saved to]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Display</label>
-    <description>Control the display properties of the currently selected model in the Scene</description>
+    <description><![CDATA[Control the display properties of the currently selected model in the Scene]]></description>
     <parameter>
       <label>Visible</label>
-      <description>Is this surface model visible in the 3D view?</description>
+      <description><![CDATA[Is this surface model visible in the 3D view?]]></description>
     </parameter>
     <parameter>
       <label>Selected</label>
-      <description>If this model is selected, it's visual appearance will change.</description>
+      <description><![CDATA[If this model is selected, it's visual appearance will change.]]></description>
     </parameter>
     <parameter>
       <label>Clip</label>
-      <description>Is clipping (using the slice planes) enabled for this model? Once it is on, go to the Clipping pane to set the options.</description>
+      <description><![CDATA[Is clipping (using the slice planes) enabled for this model? Once it is on, go to the Clipping pane to set the options.]]></description>
     </parameter>
     <parameter>
       <label>Slice Intersections Visible</label>
-      <description>If this flag is set, the intersections of the model with the slices will be computed and shown as an outline on the slice planes.</description>
+      <description><![CDATA[If this flag is set, the intersections of the model with the slices will be computed and shown as an outline on the slice planes.]]></description>
     </parameter>
     <parameter>
       <label>Material Properties</label>
-      <description>Material properties of the currently selected model</description>
+      <description><![CDATA[Material properties of the currently selected model]]></description>
     </parameter>
     <parameter>
       <label>Scalars</label>
-      <description>Scalar overlay properties</description>
+      <description><![CDATA[Scalar overlay properties]]></description>
     </parameter>
     <parameter>
       <label>Clipping</label>
-      <description>Control the clipping properties for this surface model</description>
+      <description><![CDATA[Control the clipping properties for this surface model]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Material Properties Panel</label>
     <parameter>
       <label>Material Properties</label>
-      <description>Material properties of the currently selected model</description>
+      <description><![CDATA[Material properties of the currently selected model]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
-      <description>The RGBA color of this model</description>
+      <description><![CDATA[The RGBA color of this model]]></description>
     </parameter>
     <parameter>
       <label>Opacity</label>
-      <description>The object's opacity. 1.0 is totally opaque and 0.0 is completely transparent. Note: only one model at a time can be correctly rendered with less than 100% opacity. This is a not a Slicer limitation, it's a property hardware accelerated 3D graphics.</description>
+      <description><![CDATA[The object's opacity. 1.0 is totally opaque and 0.0 is completely transparent. Note: only one model at a time can be correctly rendered with less than 100% opacity. This is a not a Slicer limitation, it's a property hardware accelerated 3D graphics.]]></description>
     </parameter>
     <parameter>
       <label>Ambient</label>
-      <description>Controls the base lighting for the model.</description>
+      <description><![CDATA[Controls the base lighting for the model.]]></description>
     </parameter>
     <parameter>
       <label>Diffuse</label>
-      <description>Controls the amount of light scattered from the model.</description>
+      <description><![CDATA[Controls the amount of light scattered from the model.]]></description>
     </parameter>
     <parameter>
       <label>Specular</label>
-      <description>Controls the highlights on the model.</description>
+      <description><![CDATA[Controls the highlights on the model.]]></description>
     </parameter>
     <parameter>
       <label>Power</label>
-      <description>The specular power.</description>
+      <description><![CDATA[The specular power.]]></description>
     </parameter>
     <parameter>
       <label>Backface Culling</label>
-      <description>Backface culling is turned on by default. This means that all the faces pointing away from the view point of the camera, are not rendered. This feature needs to be turned off if the inside of a model is viewed, either when clipping or when moving the camera inside an object.</description>
+      <description><![CDATA[Backface culling is turned on by default. This means that all the faces pointing away from the view point of the camera, are not rendered. This feature needs to be turned off if the inside of a model is viewed, either when clipping or when moving the camera inside an object.]]></description>
     </parameter>
     <parameter>
       <label>Preview</label>
-      <description>A rendering of a sphere using the current material properties, useful if the surface model isn't regular.</description>
+      <description><![CDATA[A rendering of a sphere using the current material properties, useful if the surface model isn't regular.]]></description>
     </parameter>
     <string-enumeration>
       <label>Presets</label>
-      <description>A set of buttons allowing the user to select a new material properties from a set of defaults.</description>
+      <description><![CDATA[A set of buttons allowing the user to select a new material properties from a set of defaults.]]></description>
       <element>Full ambient eliminating all directional shading</element>
       <element>Dull material properties (no specular lighting)</element>
       <element>Smooth material properties (moderate specular lighting)</element>
@@ -133,48 +133,48 @@
     <label>Scalars</label>
     <parameter>
       <label>Scalars panel</label>
-      <description>Scalar overlay properties</description>
+      <description><![CDATA[Scalar overlay properties]]></description>
     </parameter>
     <parameter>
       <label>Visible</label>
-      <description>Are the scalars visible on the surface model?</description>
+      <description><![CDATA[Are the scalars visible on the surface model?]]></description>
     </parameter>
     <parameter>
       <label>Active Scalar</label>
-      <description>A drop down menu listing the current scalar overlays associated with this model and shows which one is currently active. Most models will have normals, Freesurfer surface models can have multiple scalar overlay files associated with them (e.g. lh.sulc, lh.curv).</description>
+      <description><![CDATA[A drop down menu listing the current scalar overlays associated with this model and shows which one is currently active. Most models will have normals, Freesurfer surface models can have multiple scalar overlay files associated with them (e.g. lh.sulc, lh.curv).]]></description>
     </parameter>
     <parameter>
       <label>Color Table</label>
-      <description>Select a color look up table used to map the scalar overlay's values  (usually in the range of 0.0 to 1.0) to colors. There are built in color maps that can be browsed in the Colors module. The most commonly used color map for FreeSurfer scalar overlays is the GreenRed one. Legacy color maps from Slicer2 include Grey, Iron, Rainbow, etc. Those color maps with "labels" in their names are usually discrete and don't work well for the continuous scalar overlay ranges.</description>
+      <description><![CDATA[Select a color look up table used to map the scalar overlay's values  (usually in the range of 0.0 to 1.0) to colors. There are built in color maps that can be browsed in the Colors module. The most commonly used color map for FreeSurfer scalar overlays is the GreenRed one. Legacy color maps from Slicer2 include Grey, Iron, Rainbow, etc. Those color maps with "labels" in their names are usually discrete and don't work well for the continuous scalar overlay ranges.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Clipping Panel</label>
     <parameter>
       <label>Clipping</label>
-      <description>Control the clipping properties for this surface model</description>
+      <description><![CDATA[Control the clipping properties for this surface model]]></description>
     </parameter>
     <string-enumeration>
       <label>Clipping Type</label>
-      <description>When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model.</description>
+      <description><![CDATA[When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model.]]></description>
       <element>Union</element>
       <element>Intersection</element>
     </string-enumeration>
     <string-enumeration>
       <label>Red Slice Clipping</label>
-      <description>Control on which side of the red slice plane is clipped on the model</description>
+      <description><![CDATA[Control on which side of the red slice plane is clipped on the model]]></description>
       <element>Positive</element>
       <element>Negative</element>
     </string-enumeration>
     <string-enumeration>
       <label>Yellow Slice Clipping</label>
-      <description>Control on which side of the yellow slice plane is clipped on the model</description>
+      <description><![CDATA[Control on which side of the yellow slice plane is clipped on the model]]></description>
       <element>Positive</element>
       <element>Negative</element>
     </string-enumeration>
     <string-enumeration>
       <label>Green Slice Clipping</label>
-      <description>Control on which side of the green slice plane is clipped on the model</description>
+      <description><![CDATA[Control on which side of the green slice plane is clipped on the model]]></description>
       <element>Positive</element>
       <element>Negative</element>
     </string-enumeration>

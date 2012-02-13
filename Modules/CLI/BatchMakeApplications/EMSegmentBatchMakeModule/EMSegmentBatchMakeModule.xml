@@ -2,43 +2,43 @@
 <executable>
   <category>Batch Processing</category>
   <title>EMSegment BatchMake</title>
-  <description>Run EMSegment Module as a batch process.</description>
+  <description><![CDATA[Run EMSegment Module as a batch process.]]></description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:EMSegmentBatch-Documentation-3.6</documentation-url>
   <license/>
   <contributor>Julien Jomier, Stephen Aylward, and Brad Davis at Kitware Inc.</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org]]></acknowledgements>
   <parameters advanced="true">
     <label>Parameters</label>
-    <description>Algorithm Parameters</description>
+    <description><![CDATA[Algorithm Parameters]]></description>
     <string>
       <name>parametersMRMLNodeName</name>
       <longflag>parametersMRMLNodeName</longflag>
-      <description>The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default.</description>
+      <description><![CDATA[The name of the EMSegment parameters node within the active MRML scene.  Leave blank for default.]]></description>
       <label>EMSegment Parameters Node Name</label>
     </string>
     <boolean>
       <name>disableMultithreading</name>
       <longflag>disableMultithreading</longflag>
-      <description>Disable multithreading.</description>
+      <description><![CDATA[Disable multithreading.]]></description>
       <label>Disable Multithreading</label>
       <default>false</default>
     </boolean>
     <boolean>
       <name>verbose</name>
       <longflag>verbose</longflag>
-      <description>Enable verbose output.</description>
+      <description><![CDATA[Enable verbose output.]]></description>
       <label>Verbose Output</label>
       <default>false</default>
     </boolean>
   </parameters>
   <parameters>
     <label>Input Datasets</label>
-    <description>Input Datasets</description>
+    <description><![CDATA[Input Datasets]]></description>
     <file fileExtensions=".mrml">
       <name>mrmlSceneFileName</name>
       <longflag>mrmlSceneFileName</longflag>
-      <description>Active MRML scene that contains EMSegment algorithm parameters.</description>
+      <description><![CDATA[Active MRML scene that contains EMSegment algorithm parameters.]]></description>
       <label>MRML Scene</label>
     </file>
     <directory>
@@ -46,7 +46,7 @@
       <label>Data directory</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Directory where to find input images</description>
+      <description><![CDATA[Directory where to find input images]]></description>
     </directory>
     <string>
       <name>DataMask</name>
@@ -69,21 +69,21 @@
   </parameters>
   <parameters>
     <label>Output Directory</label>
-    <description>Output Directory</description>
+    <description><![CDATA[Output Directory]]></description>
     <directory>
       <name>outputDir</name>
       <label>Output directory</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Directory where to put the processed images</description>
+      <description><![CDATA[Directory where to put the processed images]]></description>
     </directory>
   </parameters>
   <parameters advanced="true">
     <label>BatchMake</label>
-    <description>BatchMake specific parameters</description>
+    <description><![CDATA[BatchMake specific parameters]]></description>
     <boolean>
       <name>runUsingCondor</name>
-      <description>Select to run on local grid using Condor (BatchMake must have been compiled using Condor)</description>
+      <description><![CDATA[Select to run on local grid using Condor (BatchMake must have been compiled using Condor)]]></description>
       <label>Run using Grid/Condor</label>
       <longflag>condor</longflag>
       <default>false</default>

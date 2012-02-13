@@ -3,33 +3,33 @@
   <category>Registration.Specialized</category>
   <title>ACPC Transform</title>
   <index>1</index>
-  <description>&lt;p&gt;Calculate a transformation from two lists of fiducial points.&lt;/p&gt;&lt;p&gt;ACPC line is two fiducial points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting them to horizontal to the AP axis.&lt;/p&gt;&lt;p&gt;The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will put the output volume with the mid sagittal plane lined up with the AS plane.&lt;/p&gt;&lt;p&gt;Use the Filtering module&lt;b&gt;Resample Scalar/Vector/DWI Volume&lt;/b&gt;to apply the transformation to a volume.&lt;/p&gt;</description>
+  <description><![CDATA[<p>Calculate a transformation from two lists of fiducial points.</p><p>ACPC line is two fiducial points, one at the anterior commissure and one at the posterior commissure. The resulting transform will bring the line connecting them to horizontal to the AP axis.</p><p>The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane). The resulting transform will put the output volume with the mid sagittal plane lined up with the AS plane.</p><p>Use the Filtering module<b>Resample Scalar/Vector/DWI Volume</b>to apply the transformation to a volume.</p>]]></description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ACPCTransform</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin (BWH), Ron Kikinis (BWH)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Transform</label>
-    <description>Calculate a transform from midline and ACPC fiducial lists.</description>
+    <description><![CDATA[Calculate a transform from midline and ACPC fiducial lists.]]></description>
     <point multiple="true" coordinateSystem="ras">
       <name>ACPC</name>
       <label>ACPC Line</label>
       <longflag>--acpc</longflag>
-      <description>ACPC line, two fiducial points, one at the anterior commissure and one at the posterior commissure.</description>
+      <description><![CDATA[ACPC line, two fiducial points, one at the anterior commissure and one at the posterior commissure.]]></description>
       <default>0,0,0</default>
     </point>
     <point multiple="true" coordinateSystem="ras">
       <name>Midline</name>
       <label>Midline</label>
       <longflag>--midline</longflag>
-      <description>The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane).</description>
+      <description><![CDATA[The midline is a series of points defining the division between the hemispheres of the brain (the mid sagittal plane).]]></description>
       <default>0,0,0</default>
     </point>
     <transform type="linear">
       <name>OutputTransform</name>
       <longflag>--outputTransform</longflag>
-      <description>A transform filled in from the ACPC and Midline registration calculation</description>
+      <description><![CDATA[A transform filled in from the ACPC and Midline registration calculation]]></description>
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
@@ -39,7 +39,7 @@
     <boolean>
       <name>debugSwitch</name>
       <label>Debug</label>
-      <description>Click if wish to see debugging output</description>
+      <description><![CDATA[Click if wish to see debugging output]]></description>
       <flag>d</flag>
       <default>false</default>
     </boolean>

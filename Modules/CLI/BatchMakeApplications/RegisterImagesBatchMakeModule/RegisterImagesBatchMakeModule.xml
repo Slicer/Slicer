@@ -2,19 +2,19 @@
 <executable>
   <category>Batch Processing</category>
   <title>Register Images BatchMake</title>
-  <description>Provides rigid, affine, and BSpline registration methods via a simple GUI</description>
+  <description><![CDATA[Provides rigid, affine, and BSpline registration methods via a simple GUI]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesBatch-Documentation-3.6</documentation-url>
   <license/>
   <contributor>Stephen R Aylward and Julien Finet at Kitware Inc.</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org]]></acknowledgements>
   <parameters advanced="true">
     <label>BatchMake</label>
-    <description>BatchMake specific parameters</description>
+    <description><![CDATA[BatchMake specific parameters]]></description>
     <string-enumeration>
       <name>RunningMode_Grid</name>
       <longflag>runningMode_Grid</longflag>
-      <description>Running Mode: Where the module shall be executed? On your local machine or on a grid?</description>
+      <description><![CDATA[Running Mode: Where the module shall be executed? On your local machine or on a grid?]]></description>
       <label>Running Mode</label>
       <default>local</default>
       <element>local</element>
@@ -25,33 +25,33 @@
       <label>Grid input directory</label>
       <longflag>inputDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the input data are. Necessary if dealing with relative input paths.</description>
+      <description><![CDATA[Directory where the input data are. Necessary if dealing with relative input paths.]]></description>
     </directory>
     <directory>
       <name>OutputDirectory_Grid</name>
       <label>Grid output directory</label>
       <longflag>outputDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the output data are. Necessary if dealing with relative output paths.</description>
+      <description><![CDATA[Directory where the output data are. Necessary if dealing with relative output paths.]]></description>
     </directory>
     <directory>
       <name>ExecutableDirectory_Grid</name>
       <label>Grid executable directory</label>
       <longflag>executableDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the executables are.</description>
+      <description><![CDATA[Directory where the executables are.]]></description>
     </directory>
     <directory>
       <name>WorkingDirectory_Grid</name>
       <label>Grid working directory</label>
       <longflag>workingDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the condor scripts are written.</description>
+      <description><![CDATA[Directory where the condor scripts are written.]]></description>
     </directory>
     <string-enumeration>
       <name>TransferFile_Grid</name>
       <longflag>transferFile_Grid</longflag>
-      <description>Type of files that shall be transfered by the grid</description>
+      <description><![CDATA[Type of files that shall be transfered by the grid]]></description>
       <label>Transfer File</label>
       <default>NONE</default>
       <element>NONE</element>
@@ -63,33 +63,33 @@
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input and output parameters</description>
+    <description><![CDATA[Input and output parameters]]></description>
     <file>
       <name>fixedImage</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Image which defines the space into which the moving image is registered</description>
+      <description><![CDATA[Image which defines the space into which the moving image is registered]]></description>
     </file>
     <directory>
       <name>movingImage_Directory</name>
       <label>Moving Image Directory</label>
       <channel>input</channel>
       <index>1</index>
-      <description>The transform goes from the fixed image's space into the moving image's space</description>
+      <description><![CDATA[The transform goes from the fixed image's space into the moving image's space]]></description>
     </directory>
     <string>
       <name>movingImage_Mask</name>
       <label>Moving Image Mask</label>
       <longflag>movingImage_Mask</longflag>
-      <description>The transform goes from the fixed image's space into the moving image's space</description>
+      <description><![CDATA[The transform goes from the fixed image's space into the moving image's space]]></description>
     </string>
     <directory>
       <name>resampledImage_Directory</name>
       <label>Resample Images Directory</label>
       <channel>output</channel>
       <longflag>resampledImage_Directory</longflag>
-      <description>Registration results</description>
+      <description><![CDATA[Registration results]]></description>
       <default/>
     </directory>
     <string>
@@ -97,17 +97,17 @@
       <label>Resample Images mask</label>
       <channel>output</channel>
       <longflag>resampledImage_Mask</longflag>
-      <description>Registration results</description>
+      <description><![CDATA[Registration results]]></description>
       <default>Registered-${movingImage}</default>
     </string>
   </parameters>
   <parameters>
     <label>Registration Parameters</label>
-    <description>Common parameters</description>
+    <description><![CDATA[Common parameters]]></description>
     <file>
       <name>loadTransform</name>
       <label>Load transform</label>
-      <description>Load a transform that is immediately applied to the moving image</description>
+      <description><![CDATA[Load a transform that is immediately applied to the moving image]]></description>
       <longflag>loadTransform</longflag>
       <channel>input</channel>
       <default/>
@@ -115,14 +115,14 @@
     <file>
       <name>saveTransform</name>
       <label>Save transform</label>
-      <description>Save the transform that results from registration</description>
+      <description><![CDATA[Save the transform that results from registration]]></description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
       <default/>
     </file>
     <string-enumeration>
       <name>initialization</name>
-      <description>Method to prime the registration process</description>
+      <description><![CDATA[Method to prime the registration process]]></description>
       <label>Initialization</label>
       <longflag>initialization</longflag>
       <element>None</element>
@@ -134,7 +134,7 @@
     </string-enumeration>
     <string-enumeration>
       <name>registration</name>
-      <description>Method for the registration process</description>
+      <description><![CDATA[Method for the registration process]]></description>
       <label>Registration</label>
       <longflag>registration</longflag>
       <element>None</element>
@@ -149,28 +149,28 @@
     </string-enumeration>
     <float>
       <name>expectedOffset</name>
-      <description>Expected misalignment after initialization</description>
+      <description><![CDATA[Expected misalignment after initialization]]></description>
       <label>Expected offset magnitude</label>
       <longflag>expectedOffset</longflag>
       <default>10</default>
     </float>
     <float>
       <name>expectedRotation</name>
-      <description>Expected misalignment after initialization</description>
+      <description><![CDATA[Expected misalignment after initialization]]></description>
       <label>Expected rotation magnitude</label>
       <longflag>expectedRotation</longflag>
       <default>0.1</default>
     </float>
     <float>
       <name>expectedScale</name>
-      <description>Expected misalignment after initialization</description>
+      <description><![CDATA[Expected misalignment after initialization]]></description>
       <label>Expected scale magnitude</label>
       <longflag>expectedScale</longflag>
       <default>0.05</default>
     </float>
     <float>
       <name>expectedSkew</name>
-      <description>Expected misalignment after initialization</description>
+      <description><![CDATA[Expected misalignment after initialization]]></description>
       <label>Expected skew magnitude</label>
       <longflag>expectedSkew</longflag>
       <default>0.01</default>
@@ -178,10 +178,10 @@
   </parameters>
   <parameters advanced="true">
     <label>Advanced Registration Parameters</label>
-    <description>Parameters that determine how registration is performed</description>
+    <description><![CDATA[Parameters that determine how registration is performed]]></description>
     <string-enumeration>
       <name>verbosityLevel</name>
-      <description>Level of detail of reporting progress</description>
+      <description><![CDATA[Level of detail of reporting progress]]></description>
       <label>Verbosity level</label>
       <longflag>verbosityLevel</longflag>
       <element>Silent</element>
@@ -191,42 +191,42 @@
     </string-enumeration>
     <boolean>
       <name>sampleFromOverlap</name>
-      <description>Limit metric evaluation to the fixed image region overlapped by the moving image</description>
+      <description><![CDATA[Limit metric evaluation to the fixed image region overlapped by the moving image]]></description>
       <label>Sample from fixed/moving overlap</label>
       <longflag>sampleFromOverlap</longflag>
       <default>false</default>
     </boolean>
     <float>
       <name>sampleIntensityPortion</name>
-      <description>Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)</description>
+      <description><![CDATA[Limit metric evaluation to the fixed image points at or above the threshold (as a percent of intensity range of the image)]]></description>
       <label>Fixed image intensity percentage threshold</label>
       <longflag>sampleIntensityPortion</longflag>
       <default>0.0</default>
     </float>
     <integer>
       <name>randomNumberSeed</name>
-      <description>Seed to generate a consistent random number sequence</description>
+      <description><![CDATA[Seed to generate a consistent random number sequence]]></description>
       <label>Random number seed (0=none)</label>
       <longflag>randomNumberSeed</longflag>
       <default>0</default>
     </integer>
     <integer>
       <name>numberOfThreads</name>
-      <description>Number of CPU threads to use</description>
+      <description><![CDATA[Number of CPU threads to use]]></description>
       <label>Number of threads (0=max)</label>
       <longflag>numberOfThreads</longflag>
       <default>0</default>
     </integer>
     <boolean>
       <name>minimizeMemory</name>
-      <description>Reduce the amount of memory required at the cost of increased computation time</description>
+      <description><![CDATA[Reduce the amount of memory required at the cost of increased computation time]]></description>
       <label>Minimize memory</label>
       <longflag>minimizeMemory</longflag>
       <default>false</default>
     </boolean>
     <boolean>
       <name>useWindowedSinc</name>
-      <description>Use Windowed Sinc interpolation when generating the final resampled moving image</description>
+      <description><![CDATA[Use Windowed Sinc interpolation when generating the final resampled moving image]]></description>
       <label>Use windowed sinc for final interpolation</label>
       <longflag>useWindowedSinc</longflag>
       <default>false</default>
@@ -234,34 +234,34 @@
   </parameters>
   <parameters advanced="true">
     <label>Registration Testing Parameters</label>
-    <description>Functions for comparing registration results with a baseline image</description>
+    <description><![CDATA[Functions for comparing registration results with a baseline image]]></description>
     <file>
       <name>baselineImage</name>
       <label>Baseline Image</label>
       <longflag>baselineImage</longflag>
       <channel>input</channel>
-      <description>Image against which the resampled moving image will be compared</description>
+      <description><![CDATA[Image against which the resampled moving image will be compared]]></description>
       <default/>
     </file>
     <integer>
       <name>baselineNumberOfFailedPixelsTolerance</name>
       <label>Number of Failed Pixels Tolerance</label>
       <longflag>baselineNumberOfFailedPixelsTolerance</longflag>
-      <description>Maximum number of pixels that can differ and the test pass</description>
+      <description><![CDATA[Maximum number of pixels that can differ and the test pass]]></description>
       <default>1000</default>
     </integer>
     <double>
       <name>baselineIntensityTolerance</name>
       <label>Intensity Tolerance</label>
       <longflag>baselineIntensityTolerance</longflag>
-      <description>Maximum intensity difference for pixels to be considered matching</description>
+      <description><![CDATA[Maximum intensity difference for pixels to be considered matching]]></description>
       <default>10</default>
     </double>
     <integer>
       <name>baselineRadiusTolerance</name>
       <label>Radius Tolerance</label>
       <longflag>baselineRadiusTolerance</longflag>
-      <description>Maximum neighborhood that will be searched to find a matching pixel</description>
+      <description><![CDATA[Maximum neighborhood that will be searched to find a matching pixel]]></description>
       <default>0</default>
     </integer>
     <file>
@@ -269,7 +269,7 @@
       <label>Baseline Difference Image</label>
       <longflag>baselineDifferenceImage</longflag>
       <channel>output</channel>
-      <description>Result from subtracting the registered moving image from the baseline image</description>
+      <description><![CDATA[Result from subtracting the registered moving image from the baseline image]]></description>
       <default/>
     </file>
     <file>
@@ -277,23 +277,23 @@
       <label>Baseline Resampled Moving Image</label>
       <longflag>baselineResampledMovingImage</longflag>
       <channel>output</channel>
-      <description>Result resampling the moving image to the space of the baseline image</description>
+      <description><![CDATA[Result resampling the moving image to the space of the baseline image]]></description>
       <default/>
     </file>
   </parameters>
   <parameters advanced="true">
     <label>Advanced Initial Registration Parameters</label>
-    <description>Parameters that determine how initial registration is performed</description>
+    <description><![CDATA[Parameters that determine how initial registration is performed]]></description>
     <float-vector>
       <name>fixedLandmarks</name>
-      <description>Ordered list of landmarks in the fixed image</description>
+      <description><![CDATA[Ordered list of landmarks in the fixed image]]></description>
       <label>Fixed landmarks</label>
       <longflag>fixedLandmarks</longflag>
       <default/>
     </float-vector>
     <float-vector>
       <name>movingLandmarks</name>
-      <description>Ordered list of landmarks in the moving image</description>
+      <description><![CDATA[Ordered list of landmarks in the moving image]]></description>
       <label>Moving landmarks</label>
       <longflag>movingLandmarks</longflag>
       <default/>
@@ -301,31 +301,31 @@
   </parameters>
   <parameters advanced="true">
     <label>Advanced Rigid Registration Parameters</label>
-    <description>Parameters that determine how registration is performed</description>
+    <description><![CDATA[Parameters that determine how registration is performed]]></description>
     <integer>
       <name>rigidMaxIterations_Min</name>
-      <description>Maximum number of rigid optimization iterations</description>
+      <description><![CDATA[Maximum number of rigid optimization iterations]]></description>
       <label>Rigid Max Iterations (min)</label>
       <longflag>rigidMaxIterations_Min</longflag>
       <default>100</default>
     </integer>
     <integer>
       <name>rigidMaxIterations_Max</name>
-      <description>Maximum number of rigid optimization iterations</description>
+      <description><![CDATA[Maximum number of rigid optimization iterations]]></description>
       <label>Rigid Max Iterations (max)</label>
       <longflag>rigidMaxIterations_Max</longflag>
       <default>100</default>
     </integer>
     <integer>
       <name>rigidMaxIterations_Step</name>
-      <description>Maximum number of rigid optimization iterations</description>
+      <description><![CDATA[Maximum number of rigid optimization iterations]]></description>
       <label>Rigid Max Iterations (step)</label>
       <longflag>rigidMaxIterations_Step</longflag>
       <default>50</default>
     </integer>
     <float>
       <name>rigidSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during rigid registration</description>
+      <description><![CDATA[Portion of the image to use in computing the metric during rigid registration]]></description>
       <label>Rigid sampling ratio</label>
       <longflag>rigidSamplingRatio</longflag>
       <default>0.01</default>
@@ -333,31 +333,31 @@
   </parameters>
   <parameters advanced="true">
     <label>Advanced Affine Registration Parameters</label>
-    <description>Parameters that determine how registration is performed</description>
+    <description><![CDATA[Parameters that determine how registration is performed]]></description>
     <integer>
       <name>affineMaxIterations_Min</name>
-      <description>Maximum number of affine optimization iterations</description>
+      <description><![CDATA[Maximum number of affine optimization iterations]]></description>
       <label>Affine Max Iterations(min)</label>
       <longflag>affineMaxIterations_Min</longflag>
       <default>50</default>
     </integer>
     <integer>
       <name>affineMaxIterations_Max</name>
-      <description>Maximum number of affine optimization iterations</description>
+      <description><![CDATA[Maximum number of affine optimization iterations]]></description>
       <label>Affine Max Iterations(max)</label>
       <longflag>affineMaxIterations_Max</longflag>
       <default>50</default>
     </integer>
     <integer>
       <name>affineMaxIterations_Step</name>
-      <description>Maximum number of affine optimization iterations</description>
+      <description><![CDATA[Maximum number of affine optimization iterations]]></description>
       <label>Affine Max Iterations(step)</label>
       <longflag>affineMaxIterations_Step</longflag>
       <default>50</default>
     </integer>
     <float>
       <name>affineSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during affine registration</description>
+      <description><![CDATA[Portion of the image to use in computing the metric during affine registration]]></description>
       <label>Affine sampling ratio</label>
       <longflag>affineSamplingRatio</longflag>
       <default>0.02</default>
@@ -365,38 +365,38 @@
   </parameters>
   <parameters advanced="true">
     <label>Advanced BSpline Registration Parameters</label>
-    <description>Parameters that determine how registration is performed</description>
+    <description><![CDATA[Parameters that determine how registration is performed]]></description>
     <integer>
       <name>bsplineMaxIterations_Min</name>
-      <description>Maximum number of bspline optimization iterations</description>
+      <description><![CDATA[Maximum number of bspline optimization iterations]]></description>
       <label>BSpline Max Iterations(min)</label>
       <longflag>bsplineMaxIterations_Min</longflag>
       <default>20</default>
     </integer>
     <integer>
       <name>bsplineMaxIterations_Max</name>
-      <description>Maximum number of bspline optimization iterations</description>
+      <description><![CDATA[Maximum number of bspline optimization iterations]]></description>
       <label>BSpline Max Iterations(max)</label>
       <longflag>bsplineMaxIterations_Max</longflag>
       <default>20</default>
     </integer>
     <integer>
       <name>bsplineMaxIterations_Step</name>
-      <description>Maximum number of bspline optimization iterations</description>
+      <description><![CDATA[Maximum number of bspline optimization iterations]]></description>
       <label>BSpline Max Iterations(step)</label>
       <longflag>bsplineMaxIterations_Step</longflag>
       <default>20</default>
     </integer>
     <float>
       <name>bsplineSamplingRatio</name>
-      <description>Portion of the image to use in computing the metric during BSpline registration</description>
+      <description><![CDATA[Portion of the image to use in computing the metric during BSpline registration]]></description>
       <label>BSpline sampling ratio</label>
       <longflag>bsplineSamplingRatio</longflag>
       <default>0.10</default>
     </float>
     <integer>
       <name>controlPointSpacing</name>
-      <description>Number of pixels between control points</description>
+      <description><![CDATA[Number of pixels between control points]]></description>
       <label>Control point spacing (pixels)</label>
       <longflag>controlPointSpacing</longflag>
       <default>40</default>

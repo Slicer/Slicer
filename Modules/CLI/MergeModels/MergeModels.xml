@@ -2,35 +2,35 @@
 <executable>
   <category>Surface Models</category>
   <title>Merge Models</title>
-  <description>Merge the polydata from two input models and output a new model with the added polydata. Uses the vtkAppendPolyData filter. Works on .vtp and .vtk surface files.</description>
+  <description><![CDATA[Merge the polydata from two input models and output a new model with the added polydata. Uses the vtkAppendPolyData filter. Works on .vtp and .vtk surface files.]]></description>
   <version>$Revision$</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MergeModels</documentation-url>
   <license/>
   <contributor>Nicole Aucoin BWH (Ron Kikinis, BWH), Daniel Haehn</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output</description>
+    <description><![CDATA[Input/output]]></description>
     <geometry type="model">
       <name>Model1</name>
       <label>Model 1</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Model</description>
+      <description><![CDATA[Model]]></description>
     </geometry>
     <geometry type="model">
       <name>Model2</name>
       <label>Model 2</label>
       <channel>input</channel>
       <index>2</index>
-      <description>Model</description>
+      <description><![CDATA[Model]]></description>
     </geometry>
     <geometry type="model">
       <name>ModelOutput</name>
       <label>Output Model</label>
       <channel>output</channel>
       <index>3</index>
-      <description>Model</description>
+      <description><![CDATA[Model]]></description>
     </geometry>
   </parameters>
 </executable>

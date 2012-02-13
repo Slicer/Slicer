@@ -2,192 +2,192 @@
 <executable>
   <category>Base</category>
   <title>Annotations</title>
-  <description>Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).</description>
+  <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Annotations</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (BWH), Daniel Haehn, Kilian Pohl and Yong Zhang (UPenn)</contributor>
-  <acknowledgements>The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Annotations</label>
     <parameter>
       <label>Edit</label>
-      <description>Edit the properties of all the annotations in the scene</description>
+      <description><![CDATA[Edit the properties of all the annotations in the scene]]></description>
     </parameter>
     <parameter>
       <label>Select All Button</label>
-      <description>Select all annotations and hierarchies</description>
+      <description><![CDATA[Select all annotations and hierarchies]]></description>
     </parameter>
     <parameter>
       <label>Unselect All Button</label>
-      <description>Unselect all annotations and hierarchies</description>
+      <description><![CDATA[Unselect all annotations and hierarchies]]></description>
     </parameter>
     <parameter>
       <label>Visible Selected Button</label>
-      <description>Toggle the visibility of highlighted Annotations. Hierarchies are ignored.</description>
+      <description><![CDATA[Toggle the visibility of highlighted Annotations. Hierarchies are ignored.]]></description>
     </parameter>
     <parameter>
       <label>Lock Selected Button</label>
-      <description>Lock or unlock highlighted annotations. Hierarchies are ignored.</description>
+      <description><![CDATA[Lock or unlock highlighted annotations. Hierarchies are ignored.]]></description>
     </parameter>
     <parameter>
       <label>Jump Slices Button</label>
-      <description>Reset slice views to the first coordinate of the highlighted annotation.</description>
+      <description><![CDATA[Reset slice views to the first coordinate of the highlighted annotation.]]></description>
     </parameter>
     <parameter>
       <label>Add HierarchyButton</label>
-      <description>Create a new hierarchy. If a hierarchy is currently highlighted, the new one will be a sub-hierarchy</description>
+      <description><![CDATA[Create a new hierarchy. If a hierarchy is currently highlighted, the new one will be a sub-hierarchy]]></description>
     </parameter>
     <parameter>
       <label>Generate Report</label>
-      <description>Display a report of highlighted annotations</description>
+      <description><![CDATA[Display a report of highlighted annotations]]></description>
     </parameter>
     <parameter>
       <label>Delete Selected Button</label>
-      <description>Delete highlighted annotations. Hierarchies have to single selected to get deleted.</description>
+      <description><![CDATA[Delete highlighted annotations. Hierarchies have to single selected to get deleted.]]></description>
     </parameter>
     <parameter>
       <label>Active list</label>
-      <description>The name of the currently active list, which controls which list new annotations will be added to. If the top level All Annotations list is active, the module will automatically create separate lists for each type of annotation. Click on a hierarchy in the tree view to make it active and to add new annotations to it.</description>
+      <description><![CDATA[The name of the currently active list, which controls which list new annotations will be added to. If the top level All Annotations list is active, the module will automatically create separate lists for each type of annotation. Click on a hierarchy in the tree view to make it active and to add new annotations to it.]]></description>
     </parameter>
     <parameter>
       <label>Visible Hierarchy Button</label>
-      <description>Set all annotations in active list visible</description>
+      <description><![CDATA[Set all annotations in active list visible]]></description>
     </parameter>
     <parameter>
       <label>Invisible Hierarchy Button</label>
-      <description>Set all annotations in active list invisible</description>
+      <description><![CDATA[Set all annotations in active list invisible]]></description>
     </parameter>
     <parameter>
       <label>Lock Hierarchy Button</label>
-      <description>Set all annotations in active list locked</description>
+      <description><![CDATA[Set all annotations in active list locked]]></description>
     </parameter>
     <parameter>
       <label>Unlock Hierarchy Button</label>
-      <description>Set all annotations in active list to be unlocked</description>
+      <description><![CDATA[Set all annotations in active list to be unlocked]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Annotation Hierarchy tree view</label>
     <parameter>
       <label>Selected</label>
-      <description>Selected annotations can be passed to command line modules.</description>
+      <description><![CDATA[Selected annotations can be passed to command line modules.]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
-      <description>Shows the color for the annotation, open the properties panel to pick a new one</description>
+      <description><![CDATA[Shows the color for the annotation, open the properties panel to pick a new one]]></description>
     </parameter>
     <parameter>
       <label>Vis</label>
-      <description>Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views</description>
+      <description><![CDATA[Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views]]></description>
     </parameter>
     <parameter>
       <label>Lock</label>
-      <description>Click on this button to make the annotation be locked into place, not responding to mouse events. This is useful if you need to manipulate other things in the scene.</description>
+      <description><![CDATA[Click on this button to make the annotation be locked into place, not responding to mouse events. This is useful if you need to manipulate other things in the scene.]]></description>
     </parameter>
     <parameter>
       <label>Edit</label>
-      <description>Click on the icon in the Edit column to bring up the Modify Annotation Properties dialog box</description>
+      <description><![CDATA[Click on the icon in the Edit column to bring up the Modify Annotation Properties dialog box]]></description>
     </parameter>
     <parameter>
       <label>Value</label>
-      <description>A useful value associated with the annotation (location for fiducials, length for rulers)</description>
+      <description><![CDATA[A useful value associated with the annotation (location for fiducials, length for rulers)]]></description>
     </parameter>
     <parameter>
       <label>Name</label>
-      <description>The name of the annotation, usually kept short, one letter and a number, as it's displayed in the 3D and 2D windows.</description>
+      <description><![CDATA[The name of the annotation, usually kept short, one letter and a number, as it's displayed in the 3D and 2D windows.]]></description>
     </parameter>
     <parameter>
       <label>Description</label>
-      <description>A longer text describing this annotation</description>
+      <description><![CDATA[A longer text describing this annotation]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Modify Annotation Hierarchy Properties</label>
     <parameter>
       <label>Type</label>
-      <description>The class type for this annotation hierarchy</description>
+      <description><![CDATA[The class type for this annotation hierarchy]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
-      <description>Click on this button to bring up a color picker widget to set the color used for all annotations in this hierarchy when the hierarchy is collapsed (not implemented yet)</description>
+      <description><![CDATA[Click on this button to bring up a color picker widget to set the color used for all annotations in this hierarchy when the hierarchy is collapsed (not implemented yet)]]></description>
     </parameter>
     <parameter>
       <label>Apply to List</label>
-      <description>If this checkbox is ticked, change the color on all the annotations in this hierarchy. Default true.</description>
+      <description><![CDATA[If this checkbox is ticked, change the color on all the annotations in this hierarchy. Default true.]]></description>
     </parameter>
     <parameter>
       <label>Visibility</label>
-      <description>Click on this button (eye open or closed) to toggle the visibility of the annotations in this hierarchy in the 2D and 3D views.</description>
+      <description><![CDATA[Click on this button (eye open or closed) to toggle the visibility of the annotations in this hierarchy in the 2D and 3D views.]]></description>
     </parameter>
     <parameter>
       <label>Name</label>
-      <description>The name of the annotation hierarchy, describing the annotations below it.</description>
+      <description><![CDATA[The name of the annotation hierarchy, describing the annotations below it.]]></description>
     </parameter>
     <parameter>
       <label>Description</label>
-      <description>A longer text describing this annotation hierarchy</description>
+      <description><![CDATA[A longer text describing this annotation hierarchy]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Modify Annotation Properties</label>
     <parameter>
       <label>Type</label>
-      <description>The class type for this annotation, is it a fiducial, ruler, region of interest?</description>
+      <description><![CDATA[The class type for this annotation, is it a fiducial, ruler, region of interest?]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
-      <description>Click on this button to bring up a color picker widget to set the color for all parts of the annotation (text, glyphs, lines)</description>
+      <description><![CDATA[Click on this button to bring up a color picker widget to set the color for all parts of the annotation (text, glyphs, lines)]]></description>
     </parameter>
     <parameter>
       <label>Visibility</label>
-      <description>Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views.</description>
+      <description><![CDATA[Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views.]]></description>
     </parameter>
     <parameter>
       <label>Lock</label>
-      <description>Click on this button to make the annotation be locked into place, not responding to mouse events. This is useful if you need to manipulate other things in the scene.</description>
+      <description><![CDATA[Click on this button to make the annotation be locked into place, not responding to mouse events. This is useful if you need to manipulate other things in the scene.]]></description>
     </parameter>
     <parameter>
       <label>Name</label>
-      <description>The name of the annotation, usually kept short, one letter and a number, as it's displayed in the 3D and 2D windows.</description>
+      <description><![CDATA[The name of the annotation, usually kept short, one letter and a number, as it's displayed in the 3D and 2D windows.]]></description>
     </parameter>
     <parameter>
       <label>Size</label>
-      <description>Click on the small, Medium, Large buttons to change the scaling of the annotation</description>
+      <description><![CDATA[Click on the small, Medium, Large buttons to change the scaling of the annotation]]></description>
     </parameter>
     <parameter>
       <label>RAS</label>
-      <description>The world coordinates of this annotation in the default Slicer Right-Anterior-Superior coordinate system. Double click to edit the values</description>
+      <description><![CDATA[The world coordinates of this annotation in the default Slicer Right-Anterior-Superior coordinate system. Double click to edit the values]]></description>
     </parameter>
     <parameter>
       <label>Description</label>
-      <description>A longer text describing this annotation</description>
+      <description><![CDATA[A longer text describing this annotation]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Modify Annotation Properties: Advanced</label>
     <parameter>
       <label>Text</label>
-      <description>Set the descriptive text, text color, scale, opacity on this panel</description>
+      <description><![CDATA[Set the descriptive text, text color, scale, opacity on this panel]]></description>
     </parameter>
     <parameter>
       <label>Points</label>
-      <description>Set the coordinate location of the point(s), glyph color, scale, glyph type, opacity, ambient, diffuse, specular material properites on this panel</description>
+      <description><![CDATA[Set the coordinate location of the point(s), glyph color, scale, glyph type, opacity, ambient, diffuse, specular material properites on this panel]]></description>
     </parameter>
     <parameter>
       <label>Lines</label>
-      <description>This panel is only enabled for rulers. Set the line color, label visibility, label position along the line (from 0-1), tick spacing, maximum number of ticks, opacity, ambient, diffuse, specular material properites on this panel</description>
+      <description><![CDATA[This panel is only enabled for rulers. Set the line color, label visibility, label position along the line (from 0-1), tick spacing, maximum number of ticks, opacity, ambient, diffuse, specular material properites on this panel]]></description>
     </parameter>
     <parameter>
       <label>ROI</label>
-      <description>This panel is only enabled for regions of interest. Set the ranges for the ROI along it's axes, LR, PA, IS. Toggle the ROI visibility and if it's updated interactively on this panel</description>
+      <description><![CDATA[This panel is only enabled for regions of interest. Set the ranges for the ROI along it's axes, LR, PA, IS. Toggle the ROI visibility and if it's updated interactively on this panel]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Toolbar</label>
     <parameter>
       <label>Annotations toolbar</label>
-      <description>Create new annotations by selecting them from the drop down menu. Return to rotate mouse mode by clicking on the rotate idcon. Toggle persistent placement of annotations by checking and unchecking the Persistent checkbox</description>
+      <description><![CDATA[Create new annotations by selecting them from the drop down menu. Return to rotate mouse mode by clicking on the rotate idcon. Toggle persistent placement of annotations by checking and unchecking the Persistent checkbox]]></description>
     </parameter>
   </parameters>
 </executable>

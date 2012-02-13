@@ -2,52 +2,52 @@
 <executable>
   <category>Core</category>
   <title>Scene Views</title>
-  <description>Scene views are a convenience tool for organizing multiple 'live views' of the data in your scene.\n\nYou can create any number of views and control parameters such as the 3D view, model visibility, window layout, and other parameters.\n\nThis can be used to set up a series of predefined starting points for looking at portions of your data in detail.\n\nFor example, you may have one overview scene which shows an external view of the body along with interior views with the skin surface turned off and slice planes visible to highlight a tumor location.</description>
+  <description><![CDATA[Scene views are a convenience tool for organizing multiple 'live views' of the data in your scene.\n\nYou can create any number of views and control parameters such as the 3D view, model visibility, window layout, and other parameters.\n\nThis can be used to set up a series of predefined starting points for looking at portions of your data in detail.\n\nFor example, you may have one overview scene which shows an external view of the body along with interior views with the skin surface turned off and slice planes visible to highlight a tumor location.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SceneViews</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (BWH), Wendy Plesniak (BWH), Daniel Haehn (UPenn)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Scene Views</label>
-    <description>Create, edit, restore scene views</description>
+    <description><![CDATA[Create, edit, restore scene views]]></description>
     <parameters>
       <label>Create and Edit</label>
-      <description>Create and delete scene views, move them up and down</description>
+      <description><![CDATA[Create and delete scene views, move them up and down]]></description>
       <parameter>
         <label>Create a 3D Slicer Scene View</label>
-        <description>Click on the camera button to create a new scene view</description>
+        <description><![CDATA[Click on the camera button to create a new scene view]]></description>
       </parameter>
       <parameter>
         <label>Move selected view up</label>
-        <description>Move the highlighted scene view in the table up one row</description>
+        <description><![CDATA[Move the highlighted scene view in the table up one row]]></description>
       </parameter>
       <parameter>
         <label>Move selected view down</label>
-        <description>Move the highlighted scene view in the table down one row</description>
+        <description><![CDATA[Move the highlighted scene view in the table down one row]]></description>
       </parameter>
       <parameter>
         <label>Delete selected view</label>
-        <description>Click on the garbage can button to delete the highlighted scene view</description>
+        <description><![CDATA[Click on the garbage can button to delete the highlighted scene view]]></description>
       </parameter>
       <parameters>
         <label>Table of Scene Views</label>
-        <description>A table showing the scene views, one per line</description>
+        <description><![CDATA[A table showing the scene views, one per line]]></description>
         <parameter>
           <label>Preview/Edit</label>
-          <description>Click on the thumbnail of the scene view to edit it.</description>
+          <description><![CDATA[Click on the thumbnail of the scene view to edit it.]]></description>
         </parameter>
         <parameter>
           <label>Restore</label>
-          <description>Click on this button to restore this scene view, making it the currently active scene.</description>
+          <description><![CDATA[Click on this button to restore this scene view, making it the currently active scene.]]></description>
         </parameter>
         <parameter>
           <label>Name</label>
-          <description>The short name given to this scene view. Double click to edit it.</description>
+          <description><![CDATA[The short name given to this scene view. Double click to edit it.]]></description>
         </parameter>
         <parameter>
           <label>Description</label>
-          <description>Some descriptive text about this scene view. Double click to edit it.</description>
+          <description><![CDATA[Some descriptive text about this scene view. Double click to edit it.]]></description>
         </parameter>
       </parameters>
     </parameters>

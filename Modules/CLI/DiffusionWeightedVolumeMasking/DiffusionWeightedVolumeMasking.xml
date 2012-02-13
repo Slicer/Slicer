@@ -2,7 +2,7 @@
 <executable>
   <category>Diffusion.Utilities</category>
   <title>Diffusion Weighted Volume Masking</title>
-  <description>&lt;p&gt;Performs a mask calculation from a diffusion weighted (DW) image.&lt;/p&gt;&lt;p&gt;Starting from a dw image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the otsu segmentation algorithm in order to produce a mask. this mask can then be used when estimating the diffusion tensor (dt) image, not to estimate tensors all over the volume.&lt;/p&gt;</description>
+  <description><![CDATA[<p>Performs a mask calculation from a diffusion weighted (DW) image.</p><p>Starting from a dw image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the otsu segmentation algorithm in order to produce a mask. this mask can then be used when estimating the diffusion tensor (dt) image, not to estimate tensors all over the volume.</p>]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionWeightedMasking</documentation-url>
   <license>slicer3</license>
@@ -10,27 +10,27 @@
   <acknowledgements/>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="diffusion-weighted">
       <name>inputVolume</name>
       <label>Input DWI Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input DWI volume</description>
+      <description><![CDATA[Input DWI volume]]></description>
     </image>
     <image type="scalar">
       <name>outputBaseline</name>
       <label>Output Baseline Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Estimated baseline volume</description>
+      <description><![CDATA[Estimated baseline volume]]></description>
     </image>
     <image type="label">
       <name>thresholdMask</name>
       <label>Otsu Threshold Mask</label>
       <channel>output</channel>
       <index>3</index>
-      <description>Otsu Threshold Mask</description>
+      <description><![CDATA[Otsu Threshold Mask]]></description>
     </image>
   </parameters>
   <parameters>
@@ -39,7 +39,7 @@
       <label>Otsu Omega Threshold Parameter</label>
       <flag>o</flag>
       <longflag>otsuomegathreshold</longflag>
-      <description>Control the sharpness of the threshold in the Otsu computation. 0: lower threshold, 1: higher threhold</description>
+      <description><![CDATA[Control the sharpness of the threshold in the Otsu computation. 0: lower threshold, 1: higher threhold]]></description>
       <default>0.5</default>
       <constraints>
         <minimum>0.0</minimum>
@@ -51,7 +51,7 @@
       <name>removeIslands</name>
       <label>Remove Islands in Threshold Mask</label>
       <longflag>--removeislands</longflag>
-      <description>Remove Islands in Threshold Mask?</description>
+      <description><![CDATA[Remove Islands in Threshold Mask?]]></description>
       <default>true</default>
     </boolean>
   </parameters>

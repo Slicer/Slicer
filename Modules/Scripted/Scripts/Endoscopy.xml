@@ -3,57 +3,57 @@
   <category>Endoscopy.Endoscopy</category>
   <title>Endoscopy</title>
   <index>8</index>
-  <description>Provides interactive animation of flythrough paths.</description>
+  <description><![CDATA[Provides interactive animation of flythrough paths.]]></description>
   <documentation-url/>
   <license/>
   <contributor>Steve Pieper (Isomics Inc.)</contributor>
   <contributor>Jean-Christophe Fillion-Robin (Kitware Inc.)</contributor>
-  <acknowledgements>This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.</acknowledgements>
+  <acknowledgements><![CDATA[This work is supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colonoscopy (See http://www.na-mic.org/Wiki/index.php/NA-MIC_NCBC_Collaboration:NA-MIC_virtual_colonoscopy) NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.]]></acknowledgements>
   <parameters>
     <label>Path</label>
-    <description>Inputs related to defining the path.</description>
+    <description><![CDATA[Inputs related to defining the path.]]></description>
     <integer>
       <name>Camera</name>
-      <description>The input camera that will be controlled by the path.</description>
+      <description><![CDATA[The input camera that will be controlled by the path.]]></description>
       <label>Camera</label>
     </integer>
     <integer>
       <name>Input Fiducials</name>
-      <description>The list of control points defining the path.</description>
+      <description><![CDATA[The list of control points defining the path.]]></description>
       <label>Input Fiducials</label>
     </integer>
     <integer>
       <name>Create Path</name>
-      <description>Create a path model as an interpolation of the currently selected points.  Will enable the Flythrough panel.</description>
+      <description><![CDATA[Create a path model as an interpolation of the currently selected points.  Will enable the Flythrough panel.]]></description>
       <label>Create Path</label>
     </integer>
   </parameters>
   <parameters>
     <label>Flythrough</label>
-    <description>Controls for animating along the path.</description>
+    <description><![CDATA[Controls for animating along the path.]]></description>
     <integer>
       <name>Frame</name>
-      <description>The current frame (step along the path).</description>
+      <description><![CDATA[The current frame (step along the path).]]></description>
       <label>Frame</label>
     </integer>
     <integer>
       <name>Frame Skip</name>
-      <description>Number of frames to skip (larger numbers make the animation go faster).</description>
+      <description><![CDATA[Number of frames to skip (larger numbers make the animation go faster).]]></description>
       <label>Frame Skip</label>
     </integer>
     <integer>
       <name>Frame Delay</name>
-      <description>Time delay between animation frames (larger numbers make the animation go slower)</description>
+      <description><![CDATA[Time delay between animation frames (larger numbers make the animation go slower)]]></description>
       <label>Frame Delay</label>
     </integer>
     <integer>
       <name>View Angle</name>
-      <description>Field of view of the camera.  The default value of 30 approximates normal camera lenses.  Larger numbers, such as 110 or 120 approximate the wide angle lenses often used in endoscopy viewing systems.</description>
+      <description><![CDATA[Field of view of the camera.  The default value of 30 approximates normal camera lenses.  Larger numbers, such as 110 or 120 approximate the wide angle lenses often used in endoscopy viewing systems.]]></description>
       <label>View Angle</label>
     </integer>
     <integer>
       <name>Play/Stop</name>
-      <description>Field of view of the camera.  The default value of 30 approximates normal camera lenses.  Larger numbers, such as 110 or 120 approximate the wide angle lenses often used in endoscopy viewing systems.</description>
+      <description><![CDATA[Field of view of the camera.  The default value of 30 approximates normal camera lenses.  Larger numbers, such as 110 or 120 approximate the wide angle lenses often used in endoscopy viewing systems.]]></description>
       <label>Play/Stop</label>
     </integer>
   </parameters>

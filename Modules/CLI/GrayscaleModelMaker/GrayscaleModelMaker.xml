@@ -2,38 +2,38 @@
 <executable>
   <category>Surface Models</category>
   <title>Grayscale Model Maker</title>
-  <description>Create 3D surface models from grayscale data. This module uses Marching Cubes to create an isosurface at a given threshold. The resulting surface consists of triangles that separate a volume into regions below and above the threshold. The resulting surface can be smoothed and decimated. This model works on continuous data while the module Model Maker works on labeled (or discrete) data.</description>
+  <description><![CDATA[Create 3D surface models from grayscale data. This module uses Marching Cubes to create an isosurface at a given threshold. The resulting surface consists of triangles that separate a volume into regions below and above the threshold. The resulting surface can be smoothed and decimated. This model works on continuous data while the module Model Maker works on labeled (or discrete) data.]]></description>
   <version>3.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GrayscaleModelMaker</documentation-url>
   <license>slicer3</license>
   <contributor>Nicole Aucoin, Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Volume containing the input grayscale data.</description>
+      <description><![CDATA[Volume containing the input grayscale data.]]></description>
     </image>
     <geometry>
       <name>OutputGeometry</name>
       <label>Output Geometry</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output that contains geometry model.</description>
+      <description><![CDATA[Output that contains geometry model.]]></description>
     </geometry>
   </parameters>
   <parameters>
     <label>Grayscale Model Maker Parameters</label>
-    <description>Parameters used for making models.</description>
+    <description><![CDATA[Parameters used for making models.]]></description>
     <float>
       <name>Threshold</name>
       <flag>-t</flag>
       <longflag>--threshold</longflag>
-      <description>Grayscale threshold of isosurface. The resulting surface of triangles separates the volume into voxels that lie above (inside) and below (outside) the threshold.</description>
+      <description><![CDATA[Grayscale threshold of isosurface. The resulting surface of triangles separates the volume into voxels that lie above (inside) and below (outside) the threshold.]]></description>
       <label>Threshold</label>
       <default>100.0</default>
     </float>
@@ -42,14 +42,14 @@
       <label>Model Name</label>
       <flag>-n</flag>
       <longflag>--name</longflag>
-      <description>Name to use for this model.</description>
+      <description><![CDATA[Name to use for this model.]]></description>
       <default>Model</default>
     </string>
     <integer>
       <name>Smooth</name>
       <label>Smooth</label>
       <longflag>--smooth</longflag>
-      <description>Number of smoothing iterations. If 0, no smoothing will be done.</description>
+      <description><![CDATA[Number of smoothing iterations. If 0, no smoothing will be done.]]></description>
       <default>15</default>
       <constraints>
         <minimum>0</minimum>
@@ -61,7 +61,7 @@
       <name>Decimate</name>
       <label>Decimate</label>
       <longflag>--decimate</longflag>
-      <description>Target reduction during decimation, as a decimal percentage reduction in the number of polygons. If 0, no decimation will be done.</description>
+      <description><![CDATA[Target reduction during decimation, as a decimal percentage reduction in the number of polygons. If 0, no decimation will be done.]]></description>
       <default>0.25</default>
       <constraints>
         <minimum>0.0</minimum>
@@ -72,14 +72,14 @@
       <name>SplitNormals</name>
       <label>Split Normals?</label>
       <longflag>--splitnormals</longflag>
-      <description>Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affect measurements</description>
+      <description><![CDATA[Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affect measurements]]></description>
       <default>true</default>
     </boolean>
     <boolean>
       <name>PointNormals</name>
       <label>Compute Point Normals?</label>
       <longflag>--pointnormals</longflag>
-      <description>Calculate the point normals? Calculated point normals make the surface appear smooth. Without point normals, the surface will appear faceted.</description>
+      <description><![CDATA[Calculate the point normals? Calculated point normals make the surface appear smooth. Without point normals, the surface will appear faceted.]]></description>
       <default>true</default>
     </boolean>
   </parameters>

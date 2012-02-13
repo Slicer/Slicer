@@ -2,28 +2,28 @@
 <executable>
   <category>Converters</category>
   <title>Dicom to Nrrd Converter</title>
-  <description>Converts diffusion weighted MR images in dicom series into Nrrd format for analysis in Slicer. This program has been tested on only a limited subset of DTI dicom formats available from Siemens, GE, and Phillips scanners. Work in progress to support dicom multi-frame data. The program parses dicom header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a nrrd image. For non-diffusion weighted dicom images, it loads in an entire dicom series and writes out a single dicom volume in a .nhdr/.raw pair.</description>
+  <description><![CDATA[Converts diffusion weighted MR images in dicom series into Nrrd format for analysis in Slicer. This program has been tested on only a limited subset of DTI dicom formats available from Siemens, GE, and Phillips scanners. Work in progress to support dicom multi-frame data. The program parses dicom header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a nrrd image. For non-diffusion weighted dicom images, it loads in an entire dicom series and writes out a single dicom volume in a .nhdr/.raw pair.]]></description>
   <version>0.2.0.$Revision: 916 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DicomToNrrdConverter</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Xiaodong Tao</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <directory>
       <name>inputDicomDirectory</name>
       <longflag>--inputDicomDirectory</longflag>
       <label>Input Dicom Data</label>
       <channel>input</channel>
-      <description>Directory holding Dicom series</description>
+      <description><![CDATA[Directory holding Dicom series]]></description>
     </directory>
     <directory>
       <name>outputDirectory</name>
       <longflag>--outputDirectory</longflag>
       <label>Output Directtory</label>
       <channel>output</channel>
-      <description>Directory holding the output NRRD format</description>
+      <description><![CDATA[Directory holding the output NRRD format]]></description>
       <default>.</default>
     </directory>
     <string>
@@ -31,38 +31,38 @@
       <longflag>--outputVolume</longflag>
       <label>Output Filename</label>
       <channel>output</channel>
-      <description>Output filename (.nhdr or .nrrd)</description>
+      <description><![CDATA[Output filename (.nhdr or .nrrd)]]></description>
     </string>
     <double>
       <name>smallGradientThreshold</name>
       <longflag>--smallGradientThreshold</longflag>
       <label>Small Gradient Threshold</label>
-      <description>If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DicomToNrrdConverter will display an error message and quit, unless the useBMatrixGradientDirections option is set.</description>
+      <description><![CDATA[If a gradient magnitude is greater than 0 and less than smallGradientThreshold, then DicomToNrrdConverter will display an error message and quit, unless the useBMatrixGradientDirections option is set.]]></description>
       <default>0.2</default>
     </double>
   </parameters>
   <parameters advanced="true">
     <label>Output Options</label>
-    <description>Options to control the output.</description>
+    <description><![CDATA[Options to control the output.]]></description>
     <boolean>
       <name>writeProtocolGradientsFile</name>
       <longflag>--writeProtocolGradientsFile</longflag>
       <label>Write Protocol Gradients File</label>
-      <description>Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.</description>
+      <description><![CDATA[Write the protocol gradients to a file suffixed by ".txt" as they were specified in the procol by multiplying each diffusion gradient direction by the measurement frame.  This file is for debugging purposes only, the format is not fixed, and will likely change as debugging of new dicom formats is necessary.]]></description>
       <default>false</default>
     </boolean>
     <boolean>
       <name>useIdentityMeaseurementFrame</name>
       <longflag>--useIdentityMeaseurementFrame</longflag>
       <label>Use Identity Measurement Frame</label>
-      <description>Adjust all the gradients so that the measurement frame is an identity matrix.</description>
+      <description><![CDATA[Adjust all the gradients so that the measurement frame is an identity matrix.]]></description>
       <default>false</default>
     </boolean>
     <boolean>
       <name>useBMatrixGradientDirections</name>
       <longflag>--useBMatrixGradientDirections</longflag>
       <label>Use BMatrix Gradient Directions</label>
-      <description>Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.</description>
+      <description><![CDATA[Fill the nhdr header with the gradient directions and bvalues computed out of the BMatrix. Only changes behavior for Siemens data.]]></description>
       <default>false</default>
     </boolean>
   </parameters>

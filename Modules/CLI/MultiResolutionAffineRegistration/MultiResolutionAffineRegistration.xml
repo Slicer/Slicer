@@ -2,41 +2,41 @@
 <executable>
   <category>Legacy.Registration</category>
   <title>Robust Multiresolution Affine Registration</title>
-  <description>Provides affine registration using multiple resolution levels and decomposed affine transforms.</description>
+  <description><![CDATA[Provides affine registration using multiple resolution levels and decomposed affine transforms.]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:RegisterImagesMultiRes-Documentation-3.6</documentation-url>
   <license/>
   <contributor>Casey B Goodlett</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Required</label>
-    <description>Input and output parameters</description>
+    <description><![CDATA[Input and output parameters]]></description>
     <image>
       <name>fixedImage</name>
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Image which defines the space into which the moving image is registered</description>
+      <description><![CDATA[Image which defines the space into which the moving image is registered]]></description>
     </image>
     <image>
       <name>movingImage</name>
       <label>Moving Image</label>
       <channel>input</channel>
       <index>1</index>
-      <description>The transform goes from the fixed image's space into the moving image's space</description>
+      <description><![CDATA[The transform goes from the fixed image's space into the moving image's space]]></description>
     </image>
     <image>
       <name>resampledImage</name>
       <label>Resample image</label>
       <channel>output</channel>
       <longflag>resampledImage</longflag>
-      <description>Registration results</description>
+      <description><![CDATA[Registration results]]></description>
       <default/>
     </image>
     <transform fileExtensions=".txt">
       <name>outputTransform</name>
       <label>Output transform</label>
-      <description>Save the output transform from the registration</description>
+      <description><![CDATA[Save the output transform from the registration]]></description>
       <longflag>saveTransform</longflag>
       <channel>output</channel>
       <default/>
@@ -44,13 +44,13 @@
   </parameters>
   <parameters>
     <label>Optional</label>
-    <description>Registration algorithm</description>
+    <description><![CDATA[Registration algorithm]]></description>
     <image type="label">
       <name>fixedImageMask</name>
       <label>Fixed Image Mask image</label>
       <channel>input</channel>
       <longflag>fixedImageMask</longflag>
-      <description>Label image which defines a mask of interest for the fixed image</description>
+      <description><![CDATA[Label image which defines a mask of interest for the fixed image]]></description>
       <default/>
     </image>
     <region>
@@ -58,7 +58,7 @@
       <label>Fixed Image ROI</label>
       <channel>input</channel>
       <longflag>fixedImageROI</longflag>
-      <description>Label image which defines a ROI of interest for the fixed image</description>
+      <description><![CDATA[Label image which defines a ROI of interest for the fixed image]]></description>
       <default/>
     </region>
   </parameters>
@@ -69,7 +69,7 @@
       <label>Number of Iterations</label>
       <channel>input</channel>
       <longflag>numIterations</longflag>
-      <description>Number of iterations to run at each resolution level.</description>
+      <description><![CDATA[Number of iterations to run at each resolution level.]]></description>
       <default>10</default>
     </integer>
     <integer>
@@ -77,7 +77,7 @@
       <label>Number of Line Iterations</label>
       <channel>input</channel>
       <longflag>numLineIterations</longflag>
-      <description>Number of iterations to run at each resolution level.</description>
+      <description><![CDATA[Number of iterations to run at each resolution level.]]></description>
       <default>30</default>
     </integer>
     <float>
@@ -85,7 +85,7 @@
       <label>Step Size (voxels)</label>
       <channel>input</channel>
       <longflag>stepSize</longflag>
-      <description>The maximum step size of the optimizer in voxels</description>
+      <description><![CDATA[The maximum step size of the optimizer in voxels]]></description>
       <default>5.0</default>
     </float>
     <float>
@@ -93,7 +93,7 @@
       <label>Step Tolerance (voxels)</label>
       <channel>input</channel>
       <longflag>stepTolerance</longflag>
-      <description>The maximum step size of the optimizer in voxels</description>
+      <description><![CDATA[The maximum step size of the optimizer in voxels]]></description>
       <default>.25</default>
     </float>
     <float>

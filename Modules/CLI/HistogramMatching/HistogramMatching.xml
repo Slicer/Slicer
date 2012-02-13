@@ -2,60 +2,60 @@
 <executable>
   <category>Filtering</category>
   <title>Histogram Matching</title>
-  <description>Normalizes the grayscale values of a source image based on the grayscale values of a reference image.  This filter uses a histogram matching technique where the histograms of the two images are matched only at a specified number of quantile values.\n\nThe filter was orginally designed to normalize MR images of the sameMR protocol and same body part. The algorithm works best if background pixels are excluded from both the source and reference histograms.  A simple background exclusion method is to exclude all pixels whose grayscale values are smaller than the mean grayscale value. ThresholdAtMeanIntensity switches on this simple background exclusion method.\n\nNumber of match points governs the number of quantile values to be matched.\n\nThe filter assumes that both the source and reference are of the same type and that the input and output image type have the same number of dimension and have scalar pixel types.</description>
+  <description><![CDATA[Normalizes the grayscale values of a source image based on the grayscale values of a reference image.  This filter uses a histogram matching technique where the histograms of the two images are matched only at a specified number of quantile values.\n\nThe filter was orginally designed to normalize MR images of the sameMR protocol and same body part. The algorithm works best if background pixels are excluded from both the source and reference histograms.  A simple background exclusion method is to exclude all pixels whose grayscale values are smaller than the mean grayscale value. ThresholdAtMeanIntensity switches on this simple background exclusion method.\n\nNumber of match points governs the number of quantile values to be matched.\n\nThe filter assumes that both the source and reference are of the same type and that the input and output image type have the same number of dimension and have scalar pixel types.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/HistogramMatching</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Histogram Matching Parameters</label>
-    <description>Parameters for Histogram Matching</description>
+    <description><![CDATA[Parameters for Histogram Matching]]></description>
     <integer>
       <name>numberOfHistogramLevels</name>
       <longflag>--numberOfHistogramLevels</longflag>
-      <description>The number of hisogram levels to use</description>
+      <description><![CDATA[The number of hisogram levels to use]]></description>
       <label>Number of Histogram Levels</label>
       <default>128</default>
     </integer>
     <integer>
       <name>numberOfMatchPoints</name>
       <longflag>--numberOfMatchPoints</longflag>
-      <description>The number of match points to use</description>
+      <description><![CDATA[The number of match points to use]]></description>
       <label>Number of Match Points</label>
       <default>10</default>
     </integer>
     <boolean>
       <name>thresholdAtMeanIntensity</name>
       <longflag>--threshold</longflag>
-      <description>If on, only pixels above the mean in each volume are thresholded.</description>
+      <description><![CDATA[If on, only pixels above the mean in each volume are thresholded.]]></description>
       <label>Threshold at mean</label>
       <default>false</default>
     </boolean>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image>
       <name>referenceVolume</name>
       <label>Reference Volume</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Input volume whose histogram will be matched</description>
+      <description><![CDATA[Input volume whose histogram will be matched]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Output volume. This is the input volume with intensities matched to the reference volume.</description>
+      <description><![CDATA[Output volume. This is the input volume with intensities matched to the reference volume.]]></description>
     </image>
   </parameters>
 </executable>

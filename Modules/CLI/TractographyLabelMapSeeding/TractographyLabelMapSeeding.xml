@@ -2,29 +2,29 @@
 <executable>
   <category>Diffusion.Tractography</category>
   <title>Tractography Label Map Seeding</title>
-  <description>Seed tracts on a Diffusion Tensor Image (DT) from a label map</description>
+  <description><![CDATA[Seed tracts on a Diffusion Tensor Image (DT) from a label map]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Seeding</documentation-url>
   <license>slicer3</license>
   <contributor>Raul San Jose</contributor>
   <contributor>Demian Wassermann</contributor>
-  <acknowledgements>Laboratory of Mathematics in Imaging. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[Laboratory of Mathematics in Imaging. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="tensor">
       <name>InputVolume</name>
       <label>Input DTI Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input DTI volume</description>
+      <description><![CDATA[Input DTI volume]]></description>
     </image>
     <image type="label">
       <name>InputROI</name>
       <label>Input Label Map</label>
       <flag>-a</flag>
       <longflag>--inputroi</longflag>
-      <description>Label map with seeding ROIs</description>
+      <description><![CDATA[Label map with seeding ROIs]]></description>
       <channel>input</channel>
     </image>
     <geometry type="fiberbundle">
@@ -32,13 +32,13 @@
       <label>Output Fiber bundle</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Tractography result</description>
+      <description><![CDATA[Tractography result]]></description>
     </geometry>
     <boolean>
       <name>WriteToFile</name>
       <label>Write Fibers To Disk</label>
       <longflag>--writetofile</longflag>
-      <description>Write fibers to disk or create in the scene?</description>
+      <description><![CDATA[Write fibers to disk or create in the scene?]]></description>
       <default>false</default>
     </boolean>
     <directory>
@@ -46,26 +46,26 @@
       <label>Output Directory</label>
       <channel>output</channel>
       <longflag>--outputdirectory</longflag>
-      <description>Directory in which to save fiber(s)</description>
+      <description><![CDATA[Directory in which to save fiber(s)]]></description>
     </directory>
     <string>
       <name>FilePrefix</name>
       <label>File Prefix Name</label>
       <flag>-n</flag>
       <longflag>--name</longflag>
-      <description>Name to use for fiber files</description>
+      <description><![CDATA[Name to use for fiber files]]></description>
       <default>line</default>
     </string>
   </parameters>
   <parameters>
     <label>Seed Placement Options</label>
-    <description>Options for seed placement</description>
+    <description><![CDATA[Options for seed placement]]></description>
     <boolean>
       <name>UseIndexSpace</name>
       <label>Use Index Space</label>
       <flag>-x</flag>
       <longflag>--useindexspace</longflag>
-      <description>Seed at IJK voxel grid</description>
+      <description><![CDATA[Seed at IJK voxel grid]]></description>
       <default>false</default>
     </boolean>
     <double>
@@ -73,7 +73,7 @@
       <label>Seed Spacing</label>
       <flag>-s</flag>
       <longflag>--seedspacing</longflag>
-      <description>Spacing (in mm) between seed points, only matters if use Use Index Space is off</description>
+      <description><![CDATA[Spacing (in mm) between seed points, only matters if use Use Index Space is off]]></description>
       <default>2</default>
       <constraints>
         <minimum>0.1</minimum>
@@ -86,7 +86,7 @@
       <label>Random Grid</label>
       <flag>-r</flag>
       <longflag>--randomgrid</longflag>
-      <description>Enable random placing of seeds</description>
+      <description><![CDATA[Enable random placing of seeds]]></description>
       <default>false</default>
     </boolean>
     <double>
@@ -94,7 +94,7 @@
       <label>Linear Measure Start Threshold</label>
       <flag>-c</flag>
       <longflag>--clthreshold</longflag>
-      <description>Minimum Linear Measure for the seeding to start.</description>
+      <description><![CDATA[Minimum Linear Measure for the seeding to start.]]></description>
       <default>0.3</default>
       <constraints>
         <minimum>0</minimum>
@@ -105,13 +105,13 @@
   </parameters>
   <parameters>
     <label>Tractography Seeding Parameters</label>
-    <description>Parameters for the tractography method</description>
+    <description><![CDATA[Parameters for the tractography method]]></description>
     <double>
       <name>MinimumLength</name>
       <label>Minimum Length</label>
       <flag>-l</flag>
       <longflag>--minimumlength</longflag>
-      <description>Minimum length of the fibers (in mm)</description>
+      <description><![CDATA[Minimum length of the fibers (in mm)]]></description>
       <default>10</default>
       <constraints>
         <minimum>0</minimum>
@@ -124,7 +124,7 @@
       <label>Maximum Length</label>
       <flag>-m</flag>
       <longflag>--maximumlength</longflag>
-      <description>Maximum length of fibers (in mm)</description>
+      <description><![CDATA[Maximum length of fibers (in mm)]]></description>
       <default>800</default>
       <constraints>
         <minimum>0</minimum>
@@ -135,7 +135,7 @@
     <string-enumeration>
       <name>StoppingMode</name>
       <label>Stopping Mode</label>
-      <description>Tensor measurement used to stop the tractography</description>
+      <description><![CDATA[Tensor measurement used to stop the tractography]]></description>
       <flag>-f</flag>
       <longflag>--stoppingmode</longflag>
       <default>LinearMeasure</default>
@@ -145,7 +145,7 @@
     <double>
       <name>StoppingValue</name>
       <label>Stopping Value</label>
-      <description>Tractography will stop when the stopping measurement drops below this value</description>
+      <description><![CDATA[Tractography will stop when the stopping measurement drops below this value]]></description>
       <flag>-v</flag>
       <longflag>--stoppingvalue</longflag>
       <default>0.15</default>
@@ -158,7 +158,7 @@
     <double>
       <name>StoppingCurvature</name>
       <label>Stopping Track Curvature</label>
-      <description>Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm</description>
+      <description><![CDATA[Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm]]></description>
       <flag>-t</flag>
       <longflag>--stoppingcurvature</longflag>
       <default>0.8</default>
@@ -171,7 +171,7 @@
     <double>
       <name>IntegrationStepLength</name>
       <label>Integration Step Length(mm)</label>
-      <description>Distance between points on the same fiber in mm</description>
+      <description><![CDATA[Distance between points on the same fiber in mm]]></description>
       <flag>-i</flag>
       <longflag>--integrationsteplength</longflag>
       <default>0.5</default>
@@ -184,13 +184,13 @@
   </parameters>
   <parameters>
     <label>Label definition</label>
-    <description>Selection of label(labels) for ROI definition</description>
+    <description><![CDATA[Selection of label(labels) for ROI definition]]></description>
     <integer>
       <name>ROIlabel</name>
       <label>Seeding label</label>
       <flag>-o</flag>
       <longflag>--label</longflag>
-      <description>Label value that defines seeding region.</description>
+      <description><![CDATA[Label value that defines seeding region.]]></description>
       <default>1</default>
     </integer>
   </parameters>

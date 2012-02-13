@@ -2,19 +2,19 @@
 <executable>
   <category>Batch Processing</category>
   <title>Gaussian Blur BatchMake</title>
-  <description>Run Gaussian Blur module as a batch process.  Iterating for a range of sigma values and for a number of files.</description>
+  <description><![CDATA[Run Gaussian Blur module as a batch process.  Iterating for a range of sigma values and for a number of files.]]></description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GaussianBlurBatch-Documentation-3.6</documentation-url>
   <license/>
   <contributor>Julien Jomier, Stephen Aylward and Julien Finet at Kitware Inc.</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org]]></acknowledgements>
   <parameters>
     <label>Sigma Range</label>
-    <description>The range of sigma values to be processed.</description>
+    <description><![CDATA[The range of sigma values to be processed.]]></description>
     <double>
       <name>sigmaMin</name>
       <longflag>sigmaMin</longflag>
-      <description>Sigma minimum value for range to be processed</description>
+      <description><![CDATA[Sigma minimum value for range to be processed]]></description>
       <label>Sigma minimum</label>
       <default>1</default>
       <constraints>
@@ -26,7 +26,7 @@
     <double>
       <name>sigmaMax</name>
       <longflag>sigmaMax</longflag>
-      <description>Sigma maximum value for range to be processed</description>
+      <description><![CDATA[Sigma maximum value for range to be processed]]></description>
       <label>Sigma maximum</label>
       <default>10</default>
       <constraints>
@@ -38,7 +38,7 @@
     <double>
       <name>sigmaStep</name>
       <longflag>sigmaStep</longflag>
-      <description>Change in sigma value per iteration from min to max</description>
+      <description><![CDATA[Change in sigma value per iteration from min to max]]></description>
       <label>Sigma step</label>
       <default>1.0</default>
       <constraints>
@@ -50,25 +50,25 @@
   </parameters>
   <parameters>
     <label>Input Datasets</label>
-    <description>Input Datasets</description>
+    <description><![CDATA[Input Datasets]]></description>
     <directory>
       <name>dataDir</name>
-      <description>Diretory containing the datafiles to be processed</description>
+      <description><![CDATA[Diretory containing the datafiles to be processed]]></description>
       <label>Data directory</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Directory where to find input images</description>
+      <description><![CDATA[Directory where to find input images]]></description>
     </directory>
     <string>
       <name>dataMask</name>
-      <description>Wildcard/mask to apply to the directory listing to select only the images to be processed</description>
+      <description><![CDATA[Wildcard/mask to apply to the directory listing to select only the images to be processed]]></description>
       <label>Data file mask</label>
       <default>*.mha</default>
       <flag>m</flag>
     </string>
     <boolean>
       <name>dataMaskRecursive</name>
-      <description>Automatically descend into subdirs to find input files</description>
+      <description><![CDATA[Automatically descend into subdirs to find input files]]></description>
       <label>Recursive</label>
       <longflag>dataMaskRecursive</longflag>
       <default>true</default>
@@ -76,21 +76,21 @@
   </parameters>
   <parameters>
     <label>Output Directory</label>
-    <description>Output Directory</description>
+    <description><![CDATA[Output Directory]]></description>
     <directory>
       <name>outputDir</name>
       <label>Output directory</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Directory where to put the processed images</description>
+      <description><![CDATA[Directory where to put the processed images]]></description>
     </directory>
   </parameters>
   <parameters advanced="true">
     <label>BatchMake</label>
-    <description>BatchMake specific parameters</description>
+    <description><![CDATA[BatchMake specific parameters]]></description>
     <boolean>
       <name>runUsingCondor</name>
-      <description>Select to run on local grid using Condor (BatchMake must have been compiled using Condor)</description>
+      <description><![CDATA[Select to run on local grid using Condor (BatchMake must have been compiled using Condor)]]></description>
       <label>Run using Grid/Condor</label>
       <longflag>condor</longflag>
       <default>false</default>

@@ -2,38 +2,38 @@
 <executable>
   <category>Filtering</category>
   <title>Extract Skeleton</title>
-  <description>Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.</description>
+  <description><![CDATA[Extract the skeleton of a binary object.  The skeleton can be limited to being a 1D curve or allowed to be a full 2D manifold.  The branches of the skeleton can be pruned so that only the maximal center skeleton is returned.]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExtractSkeleton</documentation-url>
   <license/>
   <contributor>Pierre Seroul, Martin Styner, Guido Gerig, and Stephen Aylward</contributor>
-  <acknowledgements>The original implementation of this method was provided by ETH Zurich, Image Analysis Laboratory of Profs Olaf Kuebler, Gabor Szekely and Guido Gerig.  Martin Styner at UNC, Chapel Hill made enhancements.  Wrapping for Slicer was provided by Pierre Seroul and Stephen Aylward at Kitware, Inc.</acknowledgements>
+  <acknowledgements><![CDATA[The original implementation of this method was provided by ETH Zurich, Image Analysis Laboratory of Profs Olaf Kuebler, Gabor Szekely and Guido Gerig.  Martin Styner at UNC, Chapel Hill made enhancements.  Wrapping for Slicer was provided by Pierre Seroul and Stephen Aylward at Kitware, Inc.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputImageFileName</name>
       <label>Input Image</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Input image</description>
+      <description><![CDATA[Input image]]></description>
     </image>
     <image type="label">
       <name>OutputImageFileName</name>
       <label>Output Image</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Skeleton of the input image</description>
+      <description><![CDATA[Skeleton of the input image]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Skeleton</label>
-    <description>Skeleton parameters</description>
+    <description><![CDATA[Skeleton parameters]]></description>
     <string-enumeration>
       <name>SkeletonType</name>
       <longflag>type</longflag>
       <label>Skeleton type</label>
-      <description>Type of skeleton to create</description>
+      <description><![CDATA[Type of skeleton to create]]></description>
       <default>1D</default>
       <element>1D</element>
       <element>2D</element>
@@ -42,21 +42,21 @@
       <name>DontPruneBranches</name>
       <longflag>dontPrune</longflag>
       <label>Do not prune branches</label>
-      <description>Return the full skeleton, not just the maximal skeleton</description>
+      <description><![CDATA[Return the full skeleton, not just the maximal skeleton]]></description>
       <default>false</default>
     </boolean>
     <integer>
       <name>NumberOfPoints</name>
       <longflag>numPoints</longflag>
       <label>Number Of Points</label>
-      <description>Number of points used to represent the skeleton</description>
+      <description><![CDATA[Number of points used to represent the skeleton]]></description>
       <default>100</default>
     </integer>
     <string>
       <name>OutputPointsFileName</name>
       <longflag>pointsFile</longflag>
       <label>Output points file (.txt)</label>
-      <description>Name of the file to store the coordinates of the central (1D) skeleton points</description>
+      <description><![CDATA[Name of the file to store the coordinates of the central (1D) skeleton points]]></description>
       <default>skeleton.txt</default>
     </string>
   </parameters>

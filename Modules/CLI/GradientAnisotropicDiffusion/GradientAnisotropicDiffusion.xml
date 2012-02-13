@@ -3,19 +3,19 @@
   <category>Filtering.Denoising</category>
   <index>1</index>
   <title>Gradient Anisotropic Diffusion</title>
-  <description>Runs gradient anisotropic diffusion on a volume.\n\nAnisotropic diffusion methods reduce noise (or unwanted detail) in images while preserving specific image features, like edges.  For many applications, there is an assumption that light-dark transitions (edges) are interesting.  Standard isotropic diffusion methods move and blur light-dark boundaries.  Anisotropic diffusion methods are formulated to specifically preserve edges. The conductance term for this implementation is a function of the gradient magnitude of the image at each point, reducing the strength of diffusion at edges. The numerical implementation of this equation is similar to that described in the Perona-Malik paper, but uses a more robust technique for gradient magnitude estimation and has been generalized to N-dimensions.</description>
+  <description><![CDATA[Runs gradient anisotropic diffusion on a volume.\n\nAnisotropic diffusion methods reduce noise (or unwanted detail) in images while preserving specific image features, like edges.  For many applications, there is an assumption that light-dark transitions (edges) are interesting.  Standard isotropic diffusion methods move and blur light-dark boundaries.  Anisotropic diffusion methods are formulated to specifically preserve edges. The conductance term for this implementation is a function of the gradient magnitude of the image at each point, reducing the strength of diffusion at edges. The numerical implementation of this equation is similar to that described in the Perona-Malik paper, but uses a more robust technique for gradient magnitude estimation and has been generalized to N-dimensions.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GradientAnisotropicDiffusion</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters>
     <label>Anisotropic Diffusion Parameters</label>
-    <description>Parameters for the anisotropic diffusion algorithm</description>
+    <description><![CDATA[Parameters for the anisotropic diffusion algorithm]]></description>
     <double>
       <name>conductance</name>
       <longflag>--conductance</longflag>
-      <description>Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges.</description>
+      <description><![CDATA[Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges.]]></description>
       <label>Conductance</label>
       <default>1</default>
       <constraints>
@@ -27,7 +27,7 @@
     <integer>
       <name>numberOfIterations</name>
       <longflag>--iterations</longflag>
-      <description>The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges.</description>
+      <description><![CDATA[The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges.]]></description>
       <label>Iterations</label>
       <default>5</default>
       <constraints>
@@ -39,7 +39,7 @@
     <double>
       <name>timeStep</name>
       <longflag>--timeStep</longflag>
-      <description>The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution.</description>
+      <description><![CDATA[The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution.]]></description>
       <label>Time Step</label>
       <default>0.0625</default>
       <constraints>
@@ -51,20 +51,20 @@
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

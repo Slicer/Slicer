@@ -2,19 +2,19 @@
 <executable>
   <category>Diffusion.Denoising</category>
   <title>DWI Rician LMMSE Filter</title>
-  <description>This module reduces noise (or unwanted detail) on a set of diffusion weighted images. For this, it filters the image in the mean squared error sense using a Rician noise model. Images corresponding to each gradient direction, including baseline, are processed individually. The noise parameter is automatically estimated (noise estimation improved but slower).\nNote that this is a general purpose filter for MRi images. The module jointLMMSE has been specifically designed for DWI volumes and shows a better performance, so its use is recommended instead.\nA complete description of the algorithm in this module can be found in:\nS. Aja-Fernandez, M. Niethammer, M. Kubicki, M. Shenton, and C.-F. Westin. Restoration of DWI data using a Rician LMMSE estimator. IEEE Transactions on Medical Imaging, 27(10): pp. 1389-1403, Oct. 2008.</description>
+  <description><![CDATA[This module reduces noise (or unwanted detail) on a set of diffusion weighted images. For this, it filters the image in the mean squared error sense using a Rician noise model. Images corresponding to each gradient direction, including baseline, are processed individually. The noise parameter is automatically estimated (noise estimation improved but slower).\nNote that this is a general purpose filter for MRi images. The module jointLMMSE has been specifically designed for DWI volumes and shows a better performance, so its use is recommended instead.\nA complete description of the algorithm in this module can be found in:\nS. Aja-Fernandez, M. Niethammer, M. Kubicki, M. Shenton, and C.-F. Westin. Restoration of DWI data using a Rician LMMSE estimator. IEEE Transactions on Medical Imaging, 27(10): pp. 1389-1403, Oct. 2008.]]></description>
   <version>0.1.1.$Revision: 1 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RicianLMMSEImageFilter</documentation-url>
   <license/>
   <contributor>Antonio Tristan Vega, Santiago Aja Fernandez and Marc Niethammer. Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).</contributor>
   <parameters>
     <label>DWI Noise Removal Parameters</label>
-    <description>Parameters for Rician LMMSE image filter</description>
+    <description><![CDATA[Parameters for Rician LMMSE image filter]]></description>
     <integer>
       <name>iIterations</name>
       <label>Number of iterations</label>
       <longflag>--iter</longflag>
-      <description>Number of iterations for the noise removal filter.</description>
+      <description><![CDATA[Number of iterations for the noise removal filter.]]></description>
       <default>1</default>
       <constraints>
         <minimum>0</minimum>
@@ -26,75 +26,75 @@
       <name>iRadiusEstimation</name>
       <label>Estimation Radius</label>
       <longflag>--re</longflag>
-      <description>Estimation radius.</description>
+      <description><![CDATA[Estimation radius.]]></description>
       <default>3,3,0</default>
     </integer-vector>
     <integer-vector>
       <name>iRadiusFiltering</name>
       <label>Filtering Radius</label>
       <longflag>--rf</longflag>
-      <description>Filtering radius.</description>
+      <description><![CDATA[Filtering radius.]]></description>
       <default>3,3,0</default>
     </integer-vector>
     <integer>
       <name>iMinimumNumberOfUsedVoxelsF</name>
       <label>Minimum voxels # for filtering.</label>
       <longflag>--mnvf</longflag>
-      <description>Minimum number of voxels in kernel used for filtering.</description>
+      <description><![CDATA[Minimum number of voxels in kernel used for filtering.]]></description>
       <default>1</default>
     </integer>
     <integer>
       <name>iMinimumNumberOfUsedVoxelsE</name>
       <label>Minimum voxels # for estimation.</label>
       <longflag>--mnve</longflag>
-      <description>Minimum number of voxels in kernel used for estimation.</description>
+      <description><![CDATA[Minimum number of voxels in kernel used for estimation.]]></description>
       <default>1</default>
     </integer>
     <integer>
       <name>dMinSTD</name>
       <label>Minimum noise STD.</label>
       <longflag>--minnstd</longflag>
-      <description>Minimum allowed noise standard deviation.</description>
+      <description><![CDATA[Minimum allowed noise standard deviation.]]></description>
       <default>0</default>
     </integer>
     <integer>
       <name>dMaxSTD</name>
       <label>Maximum noise STD.</label>
       <longflag>--maxnstd</longflag>
-      <description>Maximum allowed noise standard deviation.</description>
+      <description><![CDATA[Maximum allowed noise standard deviation.]]></description>
       <default>10000</default>
     </integer>
     <double>
       <name>dResFact</name>
       <label>Histogram resolution factor.</label>
       <longflag>--hrf</longflag>
-      <description>How many histogram bins per unit interval.</description>
+      <description><![CDATA[How many histogram bins per unit interval.]]></description>
       <default>2.0</default>
     </double>
     <boolean>
       <name>bUseAbsoluteValue</name>
       <label>Use absolute value.</label>
       <longflag>--uav</longflag>
-      <description>Use absolute value in case of negative square.</description>
+      <description><![CDATA[Use absolute value in case of negative square.]]></description>
       <default>true</default>
     </boolean>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="diffusion-weighted">
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input DWI volume.</description>
+      <description><![CDATA[Input DWI volume.]]></description>
     </image>
     <image type="diffusion-weighted">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output DWI volume.</description>
+      <description><![CDATA[Output DWI volume.]]></description>
     </image>
   </parameters>
 </executable>

@@ -2,66 +2,66 @@
 <executable>
   <category>Registration.Specialized</category>
   <title>Reformat</title>
-  <description>This module is used for changing the slice properties.</description>
+  <description><![CDATA[This module is used for changing the slice properties.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/</documentation-url>
   <license>slicer4</license>
   <contributor>Michael Jeulin-Lagarrigue (Kitware Inc.)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Slice</label>
-    <description>Select the slice to operate on -- the module's Display interface will change to show slice parameters.</description>
+    <description><![CDATA[Select the slice to operate on -- the module's Display interface will change to show slice parameters.]]></description>
   </parameters>
   <parameters>
     <label>Display - Edit</label>
-    <description>Information about the selected slice. Fields can be edited to precisely set values to the slice.</description>
+    <description><![CDATA[Information about the selected slice. Fields can be edited to precisely set values to the slice.]]></description>
     <parameter>
       <label>Offset</label>
-      <description>See and Set the current distance from the origin to the slice plane</description>
+      <description><![CDATA[See and Set the current distance from the origin to the slice plane]]></description>
     </parameter>
     <parameter>
       <label>Origin</label>
-      <description>The location of the center of the slice. It is also related to the reformat widget origin associated to the selected slice.</description>
+      <description><![CDATA[The location of the center of the slice. It is also related to the reformat widget origin associated to the selected slice.]]></description>
     </parameter>
     <parameter>
       <label>Center</label>
-      <description>This button will adjust the slice Origin so that the entire slice is centered around 0,0,0 in the volume space.</description>
+      <description><![CDATA[This button will adjust the slice Origin so that the entire slice is centered around 0,0,0 in the volume space.]]></description>
     </parameter>
     <parameter>
       <label>Normal</label>
-      <description>Allow to set accurately the normal of the active slice.</description>
+      <description><![CDATA[Allow to set accurately the normal of the active slice.]]></description>
     </parameter>
     <parameter>
       <label>Reset</label>
-      <description>Reset the slice to transformation to the coresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".</description>
+      <description><![CDATA[Reset the slice to transformation to the coresponding orientation -- The orientation could be either "Axial, "Sagittal", "Coronal" or "Reformat".]]></description>
     </parameter>
     <parameter>
       <label>Normal X</label>
-      <description>Set the normal to a x axis.</description>
+      <description><![CDATA[Set the normal to a x axis.]]></description>
     </parameter>
     <parameter>
       <label>Normal Y</label>
-      <description>Set the normal to a y axis.</description>
+      <description><![CDATA[Set the normal to a y axis.]]></description>
     </parameter>
     <parameter>
       <label>Normal Z</label>
-      <description>Set the normal to a z axis.</description>
+      <description><![CDATA[Set the normal to a z axis.]]></description>
     </parameter>
     <parameter>
       <label>Normal to camera</label>
-      <description>Set slice normal to the camera.</description>
+      <description><![CDATA[Set slice normal to the camera.]]></description>
     </parameter>
     <parameter>
       <label>LR</label>
-      <description>Rotate the slice on the X axis</description>
+      <description><![CDATA[Rotate the slice on the X axis]]></description>
     </parameter>
     <parameter>
       <label>PA</label>
-      <description>Rotate the slice on the Y axis</description>
+      <description><![CDATA[Rotate the slice on the Y axis]]></description>
     </parameter>
     <parameter>
       <label>IS</label>
-      <description>Rotate the slice on the Z axis</description>
+      <description><![CDATA[Rotate the slice on the Z axis]]></description>
     </parameter>
   </parameters>
 </executable>

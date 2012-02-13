@@ -2,28 +2,28 @@
 <executable>
   <category>Converters</category>
   <title>Nrrd DWI comparison</title>
-  <description>Compares two nrrd format DWI images and verifies that gradient magnitudes, gradient directions, measurement frame, and max B0 value are identicle.  Used for testing DicomToNrrdConverter.</description>
+  <description><![CDATA[Compares two nrrd format DWI images and verifies that gradient magnitudes, gradient directions, measurement frame, and max B0 value are identicle.  Used for testing DicomToNrrdConverter.]]></description>
   <version>0.1.0.$Revision: 916 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:DicomToNRRD-3.6</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Mark Scully</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  Additional support for DTI data produced on Philips scanners was contributed by Vincent Magnotta and Hans Johnson at the University of Iowa.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume1</name>
       <longflag>--inputVolume1</longflag>
       <label>First input volume</label>
       <channel>input</channel>
-      <description>First input volume (.nhdr or .nrrd)</description>
+      <description><![CDATA[First input volume (.nhdr or .nrrd)]]></description>
     </image>
     <image>
       <name>inputVolume2</name>
       <longflag>--inputVolume2</longflag>
       <label>Second input volume</label>
       <channel>input</channel>
-      <description>Second input volume (.nhdr or .nrrd)</description>
+      <description><![CDATA[Second input volume (.nhdr or .nrrd)]]></description>
     </image>
   </parameters>
 </executable>

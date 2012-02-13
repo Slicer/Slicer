@@ -2,172 +2,172 @@
 <executable>
   <category>Converters</category>
   <title>Create a DICOM Series</title>
-  <description>Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.</description>
+  <description><![CDATA[Create a DICOM Series from a Slicer volume. User can specify values for selected DICOM tags in the UI. Given the number of tags DICOM series have, it is impossible to expose all tags in UI. So only important tags can be set by the user.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ImageReadDicomWrite</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters advanced="true">
     <label>Patient Parameters</label>
-    <description>Parameters that apply to a patient</description>
+    <description><![CDATA[Parameters that apply to a patient]]></description>
     <string>
       <name>patientName</name>
       <longflag>--patientName</longflag>
-      <description>The name of the patient [0010-0010]</description>
+      <description><![CDATA[The name of the patient [0010-0010]]]></description>
       <label>Patient Name</label>
       <default>Anonymous</default>
     </string>
     <string>
       <name>patientID</name>
       <longflag>--patientID</longflag>
-      <description>The patient ID [0010-0020]</description>
+      <description><![CDATA[The patient ID [0010-0020]]]></description>
       <label>Patient ID</label>
       <default>123456</default>
     </string>
     <string>
       <name>patientComments</name>
       <longflag>--patientComments</longflag>
-      <description>Patient comments [0010-4000]</description>
+      <description><![CDATA[Patient comments [0010-4000]]]></description>
       <label>Patient Comments</label>
       <default>None</default>
     </string>
   </parameters>
   <parameters advanced="true">
     <label>Study Parameters</label>
-    <description>Parameters that apply to a study</description>
+    <description><![CDATA[Parameters that apply to a study]]></description>
     <string>
       <name>studyID</name>
       <longflag>--studyID</longflag>
-      <description>The study ID [0020-0010]</description>
+      <description><![CDATA[The study ID [0020-0010]]]></description>
       <label>Study ID</label>
       <default>123456</default>
     </string>
     <string>
       <name>studyDate</name>
       <longflag>--studyDate</longflag>
-      <description>The date of the study [0008-0020]</description>
+      <description><![CDATA[The date of the study [0008-0020]]]></description>
       <label>Study Date</label>
       <default>20060101</default>
     </string>
     <string>
       <name>studyComments</name>
       <longflag>--studyComments</longflag>
-      <description>Study comments[0032-4000]</description>
+      <description><![CDATA[Study comments[0032-4000]]]></description>
       <label>Study Comments</label>
       <default>None</default>
     </string>
     <string>
       <name>studyDescription</name>
       <longflag>--studyDescription</longflag>
-      <description>Study description[0008-1030]</description>
+      <description><![CDATA[Study description[0008-1030]]]></description>
       <label>Study Descriptions</label>
       <default>None</default>
     </string>
     <string>
       <name>modality</name>
       <longflag>--modality</longflag>
-      <description>Modality [0008-0060]</description>
+      <description><![CDATA[Modality [0008-0060]]]></description>
       <label>Modality</label>
       <default>CT</default>
     </string>
     <string>
       <name>manufacturer</name>
       <longflag>--manufacturer</longflag>
-      <description>Manufacturer [0008-0070]</description>
+      <description><![CDATA[Manufacturer [0008-0070]]]></description>
       <label>Manufacturer</label>
       <default>GE Medical Systems</default>
     </string>
     <string>
       <name>model</name>
       <longflag>--model</longflag>
-      <description>model [0008-1090]</description>
+      <description><![CDATA[model [0008-1090]]]></description>
       <label>Model</label>
       <default>None</default>
     </string>
   </parameters>
   <parameters advanced="true">
     <label>Series Parameters</label>
-    <description>Parameters that apply to a series</description>
+    <description><![CDATA[Parameters that apply to a series]]></description>
     <string>
       <name>seriesNumber</name>
       <longflag>--seriesNumber</longflag>
-      <description>The series number [0020-0011]</description>
+      <description><![CDATA[The series number [0020-0011]]]></description>
       <label>Series Number</label>
       <default>123456</default>
     </string>
     <string>
       <name>seriesDescription</name>
       <longflag>--seriesDescription</longflag>
-      <description>Series description [0008-103E]</description>
+      <description><![CDATA[Series description [0008-103E]]]></description>
       <label>Series Description</label>
       <default>None</default>
     </string>
   </parameters>
   <parameters advanced="true">
     <label>Image Parameters</label>
-    <description>Parameters that apply to the images and data in each image</description>
+    <description><![CDATA[Parameters that apply to the images and data in each image]]></description>
     <double>
       <label>Rescale intercept</label>
       <name>rescaleIntercept</name>
       <longflag>--rescaleIntercept</longflag>
-      <description>Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
+      <description><![CDATA[Rescale interscept [0028-1052]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleIntercept.  Default is 0.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
       <default>0.0000</default>
     </double>
     <double>
       <label>Rescale slope</label>
       <name>rescaleSlope</name>
       <longflag>--rescaleSlope</longflag>
-      <description>Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).</description>
+      <description><![CDATA[Rescale slope [0028-1053]. Converts pixel values on disk to pixel values in memory. (Pixel value in memory) = (Pixel value on disk) * rescaleSlope + rescaleInterscept.  Default is 1.0. Data values are converted on write (the data is scaled and shifted so that the slope and interscept will bring it back to the current intensity range).]]></description>
       <default>1.0000</default>
     </double>
   </parameters>
   <parameters>
     <label>Input</label>
-    <description>Input parameters</description>
+    <description><![CDATA[Input parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be resampled</description>
+      <description><![CDATA[Input volume to be resampled]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Output</label>
-    <description>Output parameters</description>
+    <description><![CDATA[Output parameters]]></description>
     <directory>
       <name>dicomDirectory</name>
       <longflag>--dicomDirectory</longflag>
-      <description>The directory to contain the DICOM series.</description>
+      <description><![CDATA[The directory to contain the DICOM series.]]></description>
       <label>DICOM Directory</label>
       <default>./</default>
     </directory>
     <string>
       <name>dicomPrefix</name>
       <longflag>--dicomPrefix</longflag>
-      <description>The prefix of the DICOM filename.</description>
+      <description><![CDATA[The prefix of the DICOM filename.]]></description>
       <label>DICOM filename prefix</label>
       <default>IMG</default>
     </string>
     <string>
       <name>dicomNumberFormat</name>
       <longflag>--dicomNumberFormat</longflag>
-      <description>The printf-style format to be used when creating the per-slice DICOM filename.</description>
+      <description><![CDATA[The printf-style format to be used when creating the per-slice DICOM filename.]]></description>
       <label>DICOM file number format</label>
       <default>%04d</default>
     </string>
     <boolean>
       <name>reverseImages</name>
       <longflag>--reverseImages</longflag>
-      <description>Reverse the slices.</description>
+      <description><![CDATA[Reverse the slices.]]></description>
       <label>Reverse Slices</label>
       <default>false</default>
     </boolean>
     <boolean>
       <name>useCompression</name>
       <longflag>--useCompression</longflag>
-      <description>Compress the output pixel data.</description>
+      <description><![CDATA[Compress the output pixel data.]]></description>
       <label>Use Compression</label>
       <default>false</default>
     </boolean>

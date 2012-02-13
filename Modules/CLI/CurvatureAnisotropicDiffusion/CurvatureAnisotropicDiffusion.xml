@@ -3,20 +3,20 @@
   <category>Filtering.Denoising</category>
   <index>2</index>
   <title>Curvature Anisotropic Diffusion</title>
-  <description>Performs anisotropic diffusion on an image using a modified curvature diffusion equation (MCDE).\n\nMCDE does not exhibit the edge enhancing properties of classic anisotropic diffusion, which can under certain conditions undergo a 'negative' diffusion, which enhances the contrast of edges.  Equations of the form of MCDE always undergo positive diffusion, with the conductance term only varying the strength of that diffusion. \n\n Qualitatively, MCDE compares well with other non-linear diffusion techniques.  It is less sensitive to contrast than classic Perona-Malik style diffusion, and preserves finer detailed structures in images.  There is a potential speed trade-off for using this function in place of Gradient Anisotropic Diffusion.  Each iteration of the solution takes roughly twice as long.  Fewer iterations, however, may be required to reach an acceptable solution.</description>
+  <description><![CDATA[Performs anisotropic diffusion on an image using a modified curvature diffusion equation (MCDE).\n\nMCDE does not exhibit the edge enhancing properties of classic anisotropic diffusion, which can under certain conditions undergo a 'negative' diffusion, which enhances the contrast of edges.  Equations of the form of MCDE always undergo positive diffusion, with the conductance term only varying the strength of that diffusion. \n\n Qualitatively, MCDE compares well with other non-linear diffusion techniques.  It is less sensitive to contrast than classic Perona-Malik style diffusion, and preserves finer detailed structures in images.  There is a potential speed trade-off for using this function in place of Gradient Anisotropic Diffusion.  Each iteration of the solution takes roughly twice as long.  Fewer iterations, however, may be required to reach an acceptable solution.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/CurvatureAnisotropicDiffusion</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters>
     <label>Anisotropic Diffusion Parameters</label>
-    <description>Parameters for the anisotropic diffusion algorithm</description>
+    <description><![CDATA[Parameters for the anisotropic diffusion algorithm]]></description>
     <double>
       <name>conductance</name>
       <longflag>--conductance</longflag>
-      <description>Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges.</description>
-      <description>Conductance</description>
+      <description><![CDATA[Conductance controls the sensitivity of the conductance term. As a general rule, the lower the value, the more strongly the filter preserves edges. A high value will cause diffusion (smoothing) across edges. Note that the number of iterations controls how much smoothing is done within regions bounded by edges.]]></description>
+      <description><![CDATA[Conductance]]></description>
       <label>Conductance</label>
       <default>1</default>
       <constraints>
@@ -28,7 +28,7 @@
     <integer>
       <name>numberOfIterations</name>
       <longflag>--iterations</longflag>
-      <description>The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges.</description>
+      <description><![CDATA[The more iterations, the more smoothing. Each iteration takes the same amount of time. If it takes 10 seconds for one iteration, then it will take 100 seconds for 10 iterations. Note that the conductance controls how much each iteration smooths across edges.]]></description>
       <label>Iterations</label>
       <default>1</default>
       <constraints>
@@ -40,8 +40,8 @@
     <double>
       <name>timeStep</name>
       <longflag>--timeStep</longflag>
-      <description>The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution.</description>
-      <description>Time Step</description>
+      <description><![CDATA[The time step depends on the dimensionality of the image. In Slicer the images are 3D and the default (.0625) time step will provide a stable solution.]]></description>
+      <description><![CDATA[Time Step]]></description>
       <label>Time Step</label>
       <default>0.0625</default>
       <constraints>
@@ -53,20 +53,20 @@
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

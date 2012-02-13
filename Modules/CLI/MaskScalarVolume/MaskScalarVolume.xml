@@ -2,47 +2,47 @@
 <executable>
   <category>Filtering.Arithmetic</category>
   <title>Mask Scalar Volume</title>
-  <description>Masks two images. The output image is set to 0 everywhere except where the chosen label from the mask volume is present, at which point it will retain it's original values. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.</description>
+  <description><![CDATA[Masks two images. The output image is set to 0 everywhere except where the chosen label from the mask volume is present, at which point it will retain it's original values. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.]]></description>
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Mask</documentation-url>
   <license/>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Input and Output</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be masked</description>
+      <description><![CDATA[Input volume to be masked]]></description>
     </image>
     <image type="label">
       <name>MaskVolume</name>
       <label>Mask Volume</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Label volume containing the mask</description>
+      <description><![CDATA[Label volume containing the mask]]></description>
     </image>
     <image>
       <name>OutputVolume</name>
       <label>Masked Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Output volume: Input Volume masked by label value from Mask Volume</description>
+      <description><![CDATA[Output volume: Input Volume masked by label value from Mask Volume]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Settings</label>
-    <description>Filter settings</description>
+    <description><![CDATA[Filter settings]]></description>
     <integer>
       <name>Label</name>
       <label>Label value</label>
       <flag>-l</flag>
       <longflag>--label</longflag>
       <default>1</default>
-      <description>Label value in the Mask Volume to use as the mask</description>
+      <description><![CDATA[Label value in the Mask Volume to use as the mask]]></description>
     </integer>
     <integer>
       <name>Replace</name>
@@ -50,7 +50,7 @@
       <flag>-r</flag>
       <longflag>--replace</longflag>
       <default>0</default>
-      <description>Value to use for the output volume outside of the mask</description>
+      <description><![CDATA[Value to use for the output volume outside of the mask]]></description>
     </integer>
   </parameters>
 </executable>

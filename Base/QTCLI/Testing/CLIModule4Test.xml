@@ -2,7 +2,7 @@
 <executable>
   <category>Testing</category>
   <title>Command Line Module Test</title>
-  <description>Command line module used to test the automatic UI generator.\n</description>
+  <description><![CDATA[Command line module used to test the automatic UI generator.\n]]></description>
   <version>0.0.1</version>
   <documentation-url/>
   <license/>
@@ -14,20 +14,20 @@
       <name>InputValue1</name>
       <label>Input Value 1</label>
       <longflag>--inputvalue1</longflag>
-      <description>Input value 1</description>
+      <description><![CDATA[Input value 1]]></description>
       <default>1</default>
     </integer>
     <integer>
       <name>InputValue2</name>
       <label>Input Value 2</label>
       <longflag>--inputvalue2</longflag>
-      <description>Input value 2</description>
+      <description><![CDATA[Input value 2]]></description>
       <default>1</default>
     </integer>
     <string-enumeration>
       <name>OperationType</name>
       <label>Operation Type</label>
-      <description>What kind of operation to perform: Addition or multiplication</description>
+      <description><![CDATA[What kind of operation to perform: Addition or multiplication]]></description>
       <longflag>--operationtype</longflag>
       <default>Addition</default>
       <element>Addition</element>
@@ -38,7 +38,7 @@
       <label>Output File</label>
       <channel>output</channel>
       <index>0</index>
-      <description>Output file</description>
+      <description><![CDATA[Output file]]></description>
     </file>
   </parameters>
 </executable>

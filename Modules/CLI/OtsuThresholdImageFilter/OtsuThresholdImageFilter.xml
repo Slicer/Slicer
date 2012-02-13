@@ -2,53 +2,53 @@
 <executable xmlns="http://slicer.org/module-description/1.0#" version="1.0">
   <category>Legacy.Filtering</category>
   <title>Otsu Threshold Image Filter</title>
-  <description>This filter creates a binary thresholded image that separates an image into foreground and background components. The filter calculates the optimum threshold separating those two classes so that their combined spread (intra-class variance) is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method).  Then the filter applies that threshold to the input image using the itkBinaryThresholdImageFilter. The numberOfHistogram bins can be set for the Otsu Calculator. The insideValue and outsideValue can be set for the BinaryThresholdImageFilter.  The filter produces a labeled volume.\n\nThe original reference is: \n\nN.Otsu, ‘‘A threshold selection method from gray level histograms,’’ IEEE Trans.Syst.ManCybern.SMC-9,62–66 1979.</description>
+  <description><![CDATA[This filter creates a binary thresholded image that separates an image into foreground and background components. The filter calculates the optimum threshold separating those two classes so that their combined spread (intra-class variance) is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method).  Then the filter applies that threshold to the input image using the itkBinaryThresholdImageFilter. The numberOfHistogram bins can be set for the Otsu Calculator. The insideValue and outsideValue can be set for the BinaryThresholdImageFilter.  The filter produces a labeled volume.\n\nThe original reference is: \n\nN.Otsu, ‘‘A threshold selection method from gray level histograms,’’ IEEE Trans.Syst.ManCybern.SMC-9,62–66 1979.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/OtsuThresholdImageFilter</documentation-url>
-  <acknowledgements>This command module was derived from Insight/Examples (copyright) Insight Software Consortium</acknowledgements>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <license/>
   <contributor>Bill Lorensen</contributor>
   <parameters>
     <label>Otsu Threshold Parameters</label>
-    <description>Parameters for Otsu Thresholding</description>
+    <description><![CDATA[Parameters for Otsu Thresholding]]></description>
     <integer>
       <name>insideValue</name>
       <longflag>--insideValue</longflag>
-      <description>The value assigned to pixels that are inside the computed threshold</description>
+      <description><![CDATA[The value assigned to pixels that are inside the computed threshold]]></description>
       <label>Inside Value</label>
       <default>0</default>
     </integer>
     <integer>
       <name>outsideValue</name>
       <longflag>--outsideValue</longflag>
-      <description>The value assigned to pixels that are outside the computed threshold</description>
+      <description><![CDATA[The value assigned to pixels that are outside the computed threshold]]></description>
       <label>Outside Value</label>
       <default>255</default>
     </integer>
     <integer>
       <name>numberOfBins</name>
       <longflag>--numberOfBins</longflag>
-      <description>This is an advanced parameter. The number of bins in the histogram used to model the probability mass function of the two intensity distributions. Small numbers of bins may result in a more conservative threshold. The default should suffice for most applications. Experimentation is the only way to see the effect of varying this parameter.</description>
+      <description><![CDATA[This is an advanced parameter. The number of bins in the histogram used to model the probability mass function of the two intensity distributions. Small numbers of bins may result in a more conservative threshold. The default should suffice for most applications. Experimentation is the only way to see the effect of varying this parameter.]]></description>
       <label>Number of Histogram Bins</label>
       <default>128</default>
     </integer>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

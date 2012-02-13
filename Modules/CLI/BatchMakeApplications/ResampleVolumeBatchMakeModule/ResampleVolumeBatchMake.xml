@@ -2,34 +2,34 @@
 <executable>
   <category>Batch Processing</category>
   <title>Resample Scalar Volume BatchMake</title>
-  <description>Resampling an image is an important task in image analysis. It is especially important in the frame of image registration. This module implements image resampling through the use of itk Transforms. This module uses an Identity Transform. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. Several interpolators are available: linear, nearest neighbor, bspline and five flavors of sinc. The sinc interpolators, although more precise, are much slower than the linear and nearest neighbor interpolator. To resample label volumnes, nearest neighbor interpolation should be used exclusively.</description>
+  <description><![CDATA[Resampling an image is an important task in image analysis. It is especially important in the frame of image registration. This module implements image resampling through the use of itk Transforms. This module uses an Identity Transform. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. Several interpolators are available: linear, nearest neighbor, bspline and five flavors of sinc. The sinc interpolators, although more precise, are much slower than the linear and nearest neighbor interpolator. To resample label volumnes, nearest neighbor interpolation should be used exclusively.]]></description>
   <version>0.1.0.$Revision: 8757 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:ResampleVolume-Documentation-3.6</documentation-url>
   <license/>
   <contributor>Julien Finet at Kitware Inc.</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org]]></acknowledgements>
   <parameters>
     <label>Resampling Parameters</label>
-    <description>Parameters used for resampling</description>
+    <description><![CDATA[Parameters used for resampling]]></description>
     <float-vector>
       <name>outputPixelSpacing</name>
       <flag>-s</flag>
       <longflag>--spacing</longflag>
-      <description>Spacing along each dimension (0 means use input spacing)</description>
+      <description><![CDATA[Spacing along each dimension (0 means use input spacing)]]></description>
       <label>Spacing</label>
       <default>0,0,0</default>
     </float-vector>
-    <string-enumeration><name>interpolationType</name><flag>-i</flag><longflag>--interpolation</longflag><description>Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;</description><label>Interpolation</label><element>linear</element><element>nearestNeighbor</element><element>bspline</element><element>hamming</element><element>cosine</element>'<element>welch</element><element>lanczos</element>'<element>blackman</element><default>linear</default></string-enumeration>
+    <string-enumeration><name>interpolationType</name><flag>-i</flag><longflag>--interpolation</longflag><description><![CDATA[Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;]]></description><label>Interpolation</label><element>linear</element><element>nearestNeighbor</element><element>bspline</element><element>hamming</element><element>cosine</element>'<element>welch</element><element>lanczos</element>'<element>blackman</element><default>linear</default></string-enumeration>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <directory>
       <name>InputVolume_Directory</name>
       <label>Input volume directory</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Directory where to find input volumes</description>
+      <description><![CDATA[Directory where to find input volumes]]></description>
     </directory>
     <string>
       <name>InputVolume_Mask</name>
@@ -42,23 +42,23 @@
       <label>Output volume directory</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Directory where to save the output volumes</description>
+      <description><![CDATA[Directory where to save the output volumes]]></description>
     </directory>
     <string>
       <name>OutputVolume_Mask</name>
       <label>Output Volume Suffix</label>
       <default>${InputVolume}-Resampled.mha</default>
       <longflag>outputVolume_Mask</longflag>
-      <description>Suffix for output volumes file name</description>
+      <description><![CDATA[Suffix for output volumes file name]]></description>
     </string>
   </parameters>
   <parameters advanced="true">
     <label>BatchMake</label>
-    <description>BatchMake specific parameters</description>
+    <description><![CDATA[BatchMake specific parameters]]></description>
     <string-enumeration>
       <name>RunningMode_Grid</name>
       <longflag>runningMode_Grid</longflag>
-      <description>Running Mode: Where the module shall be executed? On your local machine or on a grid?</description>
+      <description><![CDATA[Running Mode: Where the module shall be executed? On your local machine or on a grid?]]></description>
       <label>Running Mode</label>
       <default>local</default>
       <element>local</element>
@@ -69,33 +69,33 @@
       <label>Grid input directory</label>
       <longflag>inputDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the input data are. Necessary if dealing with relative input paths.</description>
+      <description><![CDATA[Directory where the input data are. Necessary if dealing with relative input paths.]]></description>
     </directory>
     <directory>
       <name>OutputDirectory_Grid</name>
       <label>Grid output directory</label>
       <longflag>outputDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the output data are. Necessary if dealing with relative output paths.</description>
+      <description><![CDATA[Directory where the output data are. Necessary if dealing with relative output paths.]]></description>
     </directory>
     <directory>
       <name>ExecutableDirectory_Grid</name>
       <label>Grid executable directory</label>
       <longflag>executableDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the executables are.</description>
+      <description><![CDATA[Directory where the executables are.]]></description>
     </directory>
     <directory>
       <name>WorkingDirectory_Grid</name>
       <label>Grid working directory</label>
       <longflag>workingDirectory_Grid</longflag>
       <default/>
-      <description>Directory where the condor scripts are written.</description>
+      <description><![CDATA[Directory where the condor scripts are written.]]></description>
     </directory>
     <string-enumeration>
       <name>TransferFile_Grid</name>
       <longflag>transferFile_Grid</longflag>
-      <description>Type of files that shall be transfered by the grid</description>
+      <description><![CDATA[Type of files that shall be transfered by the grid]]></description>
       <label>Transfer File</label>
       <default>NONE</default>
       <element>NONE</element>

@@ -2,40 +2,40 @@
 <executable>
   <category>Filtering.Arithmetic</category>
   <title>Add Scalar Volumes</title>
-  <description>Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.</description>
+  <description><![CDATA[Adds two images. Although all image types are supported on input, only signed types are produced. The two images do not have to have the same dimensions.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Add</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume1</name>
       <label>Input Volume 1</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume 1</description>
+      <description><![CDATA[Input volume 1]]></description>
     </image>
     <image>
       <name>inputVolume2</name>
       <label>Input Volume 2</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Input volume 2</description>
+      <description><![CDATA[Input volume 2]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Volume1 + Volume2</description>
+      <description><![CDATA[Volume1 + Volume2]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Controls</label>
-    <description>Control how the module operates</description>
+    <description><![CDATA[Control how the module operates]]></description>
     <integer-enumeration>
       <name>order</name>
       <label>Interpolation order</label>
@@ -45,7 +45,7 @@
       <element>2</element>
       <element>3</element>
       <longflag>order</longflag>
-      <description>Interpolation order if two images are in different coordinate frames or have different sampling.</description>
+      <description><![CDATA[Interpolation order if two images are in different coordinate frames or have different sampling.]]></description>
     </integer-enumeration>
   </parameters>
 </executable>

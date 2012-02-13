@@ -2,27 +2,27 @@
 <executable>
   <category>Legacy.Work in Progress.Diffusion Tensor.Test</category>
   <title>Simple IO Test</title>
-  <description>Simple test of tensor IO</description>
+  <description><![CDATA[Simple test of tensor IO]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url/>
   <license/>
   <contributor>Bill Lorensen</contributor>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="tensor">
       <name>inputVolume</name>
       <label>Input Tensor Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input tensor volume to be filtered</description>
+      <description><![CDATA[Input tensor volume to be filtered]]></description>
     </image>
     <image type="tensor">
       <name>outputVolume</name>
       <label>Output Tensor Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Filtered tensor volume</description>
+      <description><![CDATA[Filtered tensor volume]]></description>
     </image>
   </parameters>
 </executable>

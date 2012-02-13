@@ -2,20 +2,20 @@
 <executable>
   <category>Developer Tools</category>
   <title>Execution Model Tour</title>
-  <description>Shows one of each type of parameter.</description>
+  <description><![CDATA[Shows one of each type of parameter.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExecutionModelTour</documentation-url>
   <license/>
   <contributor>Daniel Blezek, Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Scalar Parameters</label>
-    <description>Variations on scalar parameters</description>
+    <description><![CDATA[Variations on scalar parameters]]></description>
     <integer>
       <name>integerVariable</name>
       <flag>-i</flag>
       <longflag>--integer</longflag>
-      <description>An integer without constraints</description>
+      <description><![CDATA[An integer without constraints]]></description>
       <label>Integer Parameter</label>
       <default>30</default>
     </integer>
@@ -23,7 +23,7 @@
       <name>doubleVariable</name>
       <flag>-d</flag>
       <longflag>--double</longflag>
-      <description>A double with constraints</description>
+      <description><![CDATA[A double with constraints]]></description>
       <label>Double Parameter</label>
       <default>30</default>
       <constraints>
@@ -35,30 +35,30 @@
   </parameters>
   <parameters>
     <label>Vector Parameters</label>
-    <description>Variations on vector parameters</description>
+    <description><![CDATA[Variations on vector parameters]]></description>
     <float-vector>
       <name>floatVector</name>
       <flag>f</flag>
-      <description>A vector of floats</description>
+      <description><![CDATA[A vector of floats]]></description>
       <label>Float Vector Parameter</label>
       <default>1.3,2,-14</default>
     </float-vector>
     <string-vector>
       <name>stringVector</name>
       <longflag>string_vector</longflag>
-      <description>A vector of strings</description>
+      <description><![CDATA[A vector of strings]]></description>
       <label>String Vector Parameter</label>
       <default>foo,bar,foobar</default>
     </string-vector>
   </parameters>
   <parameters>
     <label>Enumeration Parameters</label>
-    <description>Variations on enumeration parameters</description>
+    <description><![CDATA[Variations on enumeration parameters]]></description>
     <string-enumeration>
       <name>stringChoice</name>
       <flag>e</flag>
       <longflag>enumeration</longflag>
-      <description>An enumeration of strings</description>
+      <description><![CDATA[An enumeration of strings]]></description>
       <label>String Enumeration Parameter</label>
       <default>Bill</default>
       <element>Ron</element>
@@ -71,70 +71,70 @@
   </parameters>
   <parameters>
     <label>Boolean Parameters</label>
-    <description>Variations on boolean parameters</description>
+    <description><![CDATA[Variations on boolean parameters]]></description>
     <boolean>
       <name>boolean1</name>
       <longflag>boolean1</longflag>
-      <description>A boolean default true</description>
+      <description><![CDATA[A boolean default true]]></description>
       <label>Boolean Default true</label>
       <default>true</default>
     </boolean>
     <boolean>
       <name>boolean2</name>
       <longflag>boolean2</longflag>
-      <description>A boolean default false</description>
+      <description><![CDATA[A boolean default false]]></description>
       <label>Boolean Default false</label>
       <default>false</default>
     </boolean>
     <boolean>
       <name>boolean3</name>
       <longflag>boolean3</longflag>
-      <description>A boolean with no default, should be defaulting to false</description>
+      <description><![CDATA[A boolean with no default, should be defaulting to false]]></description>
       <label>Boolean No Default</label>
     </boolean>
   </parameters>
   <parameters>
     <label>File, Directory and Image Parameters</label>
-    <description>Parameters that describe files and direcories.</description>
+    <description><![CDATA[Parameters that describe files and direcories.]]></description>
     <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html">
       <longflag>file1</longflag>
-      <description>An input file</description>
+      <description><![CDATA[An input file]]></description>
       <label>Input file</label>
       <channel>input</channel>
     </file>
     <file fileExtensions=".png,.jpg,.jpeg,.bmp,.tif,.tiff,.gipl,.dcm,.dicom,.nhdr,.nrrd,.mhd,.mha,.mask,.hdr,.nii,.nii.gz,.hdr.gz,.pic,.lsm,.spr,.vtk,.vtkp,.vtki,.stl,.csv,.txt,.xml,.html" multiple="true">
       <longflag>files</longflag>
-      <description>Multiple input files</description>
+      <description><![CDATA[Multiple input files]]></description>
       <label>Input Files</label>
       <channel>input</channel>
     </file>
     <directory>
       <longflag>directory1</longflag>
-      <description>An input directory. If no default is specified, the current directory is used,</description>
+      <description><![CDATA[An input directory. If no default is specified, the current directory is used,]]></description>
       <label>Input directory</label>
       <channel>input</channel>
     </directory>
     <image>
       <longflag>image1</longflag>
-      <description>An input image</description>
+      <description><![CDATA[An input image]]></description>
       <label>Input image</label>
       <channel>input</channel>
     </image>
     <image>
       <longflag>image2</longflag>
-      <description>An output image</description>
+      <description><![CDATA[An output image]]></description>
       <label>Output image</label>
       <channel>output</channel>
     </image>
     <transform type="linear">
       <longflag>transform1</longflag>
-      <description>An input transform</description>
+      <description><![CDATA[An input transform]]></description>
       <label>Input transform</label>
       <channel>input</channel>
     </transform>
     <transform type="linear">
       <longflag>transform2</longflag>
-      <description>An output transform</description>
+      <description><![CDATA[An output transform]]></description>
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
@@ -142,25 +142,25 @@
       <name>seed</name>
       <label>Seeds</label>
       <longflag>--seed</longflag>
-      <description>Lists of points in the CLI correspond to slicer fiducial lists</description>
+      <description><![CDATA[Lists of points in the CLI correspond to slicer fiducial lists]]></description>
       <default>0,0,0</default>
     </point>
   </parameters>
   <parameters>
     <label>Index Parameters</label>
-    <description>Variations on parameters that use index rather than flags.</description>
+    <description><![CDATA[Variations on parameters that use index rather than flags.]]></description>
     <image>
       <name>arg0</name>
       <channel>input</channel>
       <index>0</index>
-      <description>First index argument is an image</description>
+      <description><![CDATA[First index argument is an image]]></description>
       <label>First index argument</label>
     </image>
     <image>
       <name>arg1</name>
       <channel>output</channel>
       <index>1</index>
-      <description>Second index argument is an image</description>
+      <description><![CDATA[Second index argument is an image]]></description>
       <label>Second index argument</label>
     </image>
   </parameters>
@@ -170,7 +170,7 @@
       <name>regions</name>
       <label>Region list</label>
       <longflag>region</longflag>
-      <description>List of regions to process</description>
+      <description><![CDATA[List of regions to process]]></description>
     </region>
   </parameters>
   <parameters>
@@ -180,14 +180,14 @@
       <channel>input</channel>
       <label>Input FA measurements</label>
       <longflag>inputFA</longflag>
-      <description>Array of FA values to process</description>
+      <description><![CDATA[Array of FA values to process]]></description>
     </measurement>
     <measurement>
       <name>outputFA</name>
       <channel>output</channel>
       <label>Output FA measurements</label>
       <longflag>outputFA</longflag>
-      <description>Array of processed (output) FA values</description>
+      <description><![CDATA[Array of processed (output) FA values]]></description>
     </measurement>
   </parameters>
   <parameters>
@@ -197,47 +197,47 @@
       <label>An integer return value</label>
       <channel>output</channel>
       <default>5</default>
-      <description>An example of an integer return type</description>
+      <description><![CDATA[An example of an integer return type]]></description>
     </integer>
     <boolean>
       <name>abooleanreturn</name>
       <label>A boolean return value</label>
       <channel>output</channel>
       <default>false</default>
-      <description>An example of a boolean return type</description>
+      <description><![CDATA[An example of a boolean return type]]></description>
     </boolean>
     <float>
       <name>afloatreturn</name>
       <label>A floating point return value</label>
       <channel>output</channel>
       <default>7.0</default>
-      <description>An example of a float return type</description>
+      <description><![CDATA[An example of a float return type]]></description>
     </float>
     <double>
       <name>adoublereturn</name>
       <label>A double point return value</label>
       <channel>output</channel>
       <default>14.0</default>
-      <description>An example of a double return type</description>
+      <description><![CDATA[An example of a double return type]]></description>
     </double>
     <string>
       <name>astringreturn</name>
       <label>A string point return value</label>
       <channel>output</channel>
       <default>Hello</default>
-      <description>An example of a string return type</description>
+      <description><![CDATA[An example of a string return type]]></description>
     </string>
     <integer-vector>
       <name>anintegervectorreturn</name>
       <label>An integer vector return value</label>
       <channel>output</channel>
       <default>1,2,3</default>
-      <description>An example of an integer vector return type</description>
+      <description><![CDATA[An example of an integer vector return type]]></description>
     </integer-vector>
     <string-enumeration>
       <name>astringchoicereturn</name>
       <channel>output</channel>
-      <description>An enumeration of strings as a return type</description>
+      <description><![CDATA[An enumeration of strings as a return type]]></description>
       <label>A string enumeration return value</label>
       <default>Bill</default>
       <element>Ron</element>

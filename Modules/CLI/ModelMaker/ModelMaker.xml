@@ -2,64 +2,64 @@
 <executable>
   <category>Surface Models</category>
   <title>Model Maker</title>
-  <description>Create 3D surface models from segmented data.&lt;p&gt;Models are imported into Slicer under a model hierarchy node in a MRML scene. The model colors are set by the color table associated with the input volume (these colours will only be visible if you load the model scene file).&lt;/p&gt;&lt;p&gt;&lt;b&gt;Create Multiple:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;If you specify a list of Labels, it will over ride any start/end label settings.&lt;/p&gt;&lt;p&gt;If you click&lt;i&gt;Generate All&lt;/i&gt;it will over ride the list of lables and any start/end label settings.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Model Maker Settings:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;You can set the number of smoothing iterations, target reduction in number of polygons (decimal percentage). Use 0 and 1 if you wish no smoothing nor decimation.&lt;br&gt;You can set the flags to split normals or generate point normals in this pane as well.&lt;br&gt;You can save a copy of the models after intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation); these models are not saved in the mrml file, turn off deleting temporary files first in the python window:&lt;br&gt;&lt;i&gt;slicer.modules.modelmaker.cliModuleLogic().DeleteTemporaryFilesOff()&lt;/i&gt;&lt;/p&gt;</description>
+  <description><![CDATA[Create 3D surface models from segmented data.<p>Models are imported into Slicer under a model hierarchy node in a MRML scene. The model colors are set by the color table associated with the input volume (these colours will only be visible if you load the model scene file).</p><p><b>Create Multiple:</b></p><p>If you specify a list of Labels, it will over ride any start/end label settings.</p><p>If you click<i>Generate All</i>it will over ride the list of lables and any start/end label settings.</p><p><b>Model Maker Settings:</b></p><p>You can set the number of smoothing iterations, target reduction in number of polygons (decimal percentage). Use 0 and 1 if you wish no smoothing nor decimation.<br>You can set the flags to split normals or generate point normals in this pane as well.<br>You can save a copy of the models after intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation); these models are not saved in the mrml file, turn off deleting temporary files first in the python window:<br><i>slicer.modules.modelmaker.cliModuleLogic().DeleteTemporaryFilesOff()</i></p>]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ModelMaker</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH), Bill Lorensen (GE)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="label">
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input label map. The Input Volume drop down menu is populated with the label map volumes that are present in the scene, select one from which to generate models.</description>
+      <description><![CDATA[Input label map. The Input Volume drop down menu is populated with the label map volumes that are present in the scene, select one from which to generate models.]]></description>
     </image>
     <table hidden="true" type="color" reference="InputVolume">
       <name>ColorTable</name>
       <channel>input</channel>
       <longflag>color</longflag>
-      <description>Color table to make labels to colors and objects</description>
+      <description><![CDATA[Color table to make labels to colors and objects]]></description>
     </table>
     <geometry aggregate="true" fileExtensions=".mrml" multiple="true">
       <name>ModelSceneFile</name>
       <channel>output</channel>
       <label>Models</label>
       <longflag>--modelSceneFile</longflag>
-      <description>Generated models, under a model hierarchy node. Models are imported into Slicer under a model hierarchy node, and their colors are set by the color table associated with the input label map volume. The model hierarchy node must be created before running the model maker, by selecting Create New ModelHierarchy from the Models drop down menu. If you're running from the command line, a model hierarchy node in a new mrml scene will be created for you.</description>
+      <description><![CDATA[Generated models, under a model hierarchy node. Models are imported into Slicer under a model hierarchy node, and their colors are set by the color table associated with the input label map volume. The model hierarchy node must be created before running the model maker, by selecting Create New ModelHierarchy from the Models drop down menu. If you're running from the command line, a model hierarchy node in a new mrml scene will be created for you.]]></description>
       <default>models.mrml</default>
     </geometry>
   </parameters>
   <parameters>
     <label>Create Multiple</label>
-    <description>Create more than one model at the same time, used for continuous ranges of labels.</description>
+    <description><![CDATA[Create more than one model at the same time, used for continuous ranges of labels.]]></description>
     <string>
       <name>Name</name>
       <label>Model Name</label>
       <flag>-n</flag>
       <longflag>--name</longflag>
-      <description>Name to use for this model. Any text entered in the entry box will be the starting string for the created model file names. The label number and the color name will also be part of the file name. If making multiple models, use this as a prefix to the label and color name.</description>
+      <description><![CDATA[Name to use for this model. Any text entered in the entry box will be the starting string for the created model file names. The label number and the color name will also be part of the file name. If making multiple models, use this as a prefix to the label and color name.]]></description>
       <default>Model</default>
     </string>
     <boolean>
       <name>GenerateAll</name>
       <label>Generate All Models</label>
       <longflag>--generateAll</longflag>
-      <description>Generate models for all labels in the input volume. select this option if you want to create all models that correspond to all values in a labelmap volume (using the Joint Smoothing option below is useful with this option). Ignores Labels, Start Label, End Label settings. Skips label 0.</description>
+      <description><![CDATA[Generate models for all labels in the input volume. select this option if you want to create all models that correspond to all values in a labelmap volume (using the Joint Smoothing option below is useful with this option). Ignores Labels, Start Label, End Label settings. Skips label 0.]]></description>
       <default>true</default>
     </boolean>
   </parameters>
   <parameters advanced="true">
     <label>Model Maker Parameters</label>
-    <description>Parameters used for making models.</description>
+    <description><![CDATA[Parameters used for making models.]]></description>
     <integer-vector>
       <name>Labels</name>
       <flag>-l</flag>
       <longflag>-labels</longflag>
-      <description>A comma separated list of label values from which to make models. f you specify a list of Labels, it will override any start/end label settings. If you click Generate All Models it will override the list of labels and any start/end label settings.</description>
+      <description><![CDATA[A comma separated list of label values from which to make models. f you specify a list of Labels, it will override any start/end label settings. If you click Generate All Models it will override the list of labels and any start/end label settings.]]></description>
       <label>Labels</label>
     </integer-vector>
     <integer>
@@ -67,7 +67,7 @@
       <label>Start Label</label>
       <flag>-s</flag>
       <longflag>--start</longflag>
-      <description>If you want to specify a continuous range of labels from which to generate models, enter the lower label here. Voxel value from which to start making models. Used instead of the label list to specify a range (make sure the label list is empty or it will over ride this).</description>
+      <description><![CDATA[If you want to specify a continuous range of labels from which to generate models, enter the lower label here. Voxel value from which to start making models. Used instead of the label list to specify a range (make sure the label list is empty or it will over ride this).]]></description>
       <default>-1</default>
     </integer>
     <integer>
@@ -75,20 +75,20 @@
       <label>End Label</label>
       <flag>-e</flag>
       <longflag>--end</longflag>
-      <description>If you want to specify a continuous range of labels from which to generate models, enter the higher label here. Voxel value up to which to continue making models. Skip any values with zero voxels.</description>
+      <description><![CDATA[If you want to specify a continuous range of labels from which to generate models, enter the higher label here. Voxel value up to which to continue making models. Skip any values with zero voxels.]]></description>
       <default>-1</default>
     </integer>
     <boolean>
       <name>SkipUnNamed</name>
       <label>Skip Un-Named Labels</label>
       <longflag>--skipUnNamed</longflag>
-      <description>Select this to not generate models from labels that do not have names defined in the color look up table associated with the input label map. If true, only models which have an entry in the color table will be generated.  If false, generate all models that exist within the label range.</description>
+      <description><![CDATA[Select this to not generate models from labels that do not have names defined in the color look up table associated with the input label map. If true, only models which have an entry in the color table will be generated.  If false, generate all models that exist within the label range.]]></description>
       <default>true</default>
     </boolean>
     <boolean>
       <name>JointSmoothing</name>
       <label>Joint Smoothing</label>
-      <description>This will ensure that all resulting models fit together smoothly, like jigsaw puzzle pieces. Otherwise the models will be smoothed independently and may overlap.</description>
+      <description><![CDATA[This will ensure that all resulting models fit together smoothly, like jigsaw puzzle pieces. Otherwise the models will be smoothed independently and may overlap.]]></description>
       <flag>-j</flag>
       <longflag>--jointsmooth</longflag>
       <default>false</default>
@@ -97,7 +97,7 @@
       <name>Smooth</name>
       <label>Smooth</label>
       <longflag>--smooth</longflag>
-      <description>Here you can set the number of smoothing iterations. Use 0 if you wish no smoothing.</description>
+      <description><![CDATA[Here you can set the number of smoothing iterations. Use 0 if you wish no smoothing.]]></description>
       <default>10</default>
       <constraints>
         <minimum>0</minimum>
@@ -106,7 +106,7 @@
     <string-enumeration>
       <name>FilterType</name>
       <label>Filter Type</label>
-      <description>You can control the type of smoothing done on the models by selecting a filter type of either Sinc or Laplacian.</description>
+      <description><![CDATA[You can control the type of smoothing done on the models by selecting a filter type of either Sinc or Laplacian.]]></description>
       <longflag>--filtertype</longflag>
       <default>Sinc</default>
       <element>Sinc</element>
@@ -116,7 +116,7 @@
       <name>Decimate</name>
       <label>Decimate</label>
       <longflag>--decimate</longflag>
-      <description>Chose the target reduction in number of polygons as a decimal percentage (between 0 and 1) of the number of polygons. Use 1 if you wish no decimation.</description>
+      <description><![CDATA[Chose the target reduction in number of polygons as a decimal percentage (between 0 and 1) of the number of polygons. Use 1 if you wish no decimation.]]></description>
       <default>0.25</default>
       <constraints>
         <minimum>0.0</minimum>
@@ -127,28 +127,28 @@
       <name>SplitNormals</name>
       <label>Split Normals</label>
       <longflag>--splitnormals</longflag>
-      <description>Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affects measurements.</description>
+      <description><![CDATA[Splitting normals is useful for visualizing sharp features. However it creates holes in surfaces which affects measurements.]]></description>
       <default>true</default>
     </boolean>
     <boolean>
       <name>PointNormals</name>
       <label>Point Normals</label>
       <longflag>--pointnormals</longflag>
-      <description>Turn this flag on if you wish to calculate the normal vectors for the points.</description>
+      <description><![CDATA[Turn this flag on if you wish to calculate the normal vectors for the points.]]></description>
       <default>true</default>
     </boolean>
     <boolean>
       <name>Pad</name>
       <label>Pad</label>
       <longflag>--pad</longflag>
-      <description>Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces. Sets the origin translation and extent translation so that the models still line up with the unpadded input volume.</description>
+      <description><![CDATA[Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces. Sets the origin translation and extent translation so that the models still line up with the unpadded input volume.]]></description>
       <default>true</default>
     </boolean>
     <boolean>
       <name>SaveIntermediateModels</name>
       <label>Save Intermediate Models</label>
       <longflag>saveIntermediateModels</longflag>
-      <description>You can save a copy of the models after each of the intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation). These intermediate models are not saved in the mrml file, you have to load them manually after turning off deleting temporary files in they python console (View -&gt;Python Interactor) using the following command slicer.modules.modelmaker.cliModuleLogic().DeleteTemporaryFilesOff().</description>
+      <description><![CDATA[You can save a copy of the models after each of the intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation). These intermediate models are not saved in the mrml file, you have to load them manually after turning off deleting temporary files in they python console (View ->Python Interactor) using the following command slicer.modules.modelmaker.cliModuleLogic().DeleteTemporaryFilesOff().]]></description>
       <default>false</default>
     </boolean>
   </parameters>
@@ -157,7 +157,7 @@
     <boolean>
       <name>debug</name>
       <label>Debug</label>
-      <description>turn this flag on in order to see debugging output (look in the Error Log window that is accessed via the View menu)</description>
+      <description><![CDATA[turn this flag on in order to see debugging output (look in the Error Log window that is accessed via the View menu)]]></description>
       <flag>-d</flag>
       <longflag>--debug</longflag>
       <default>false</default>

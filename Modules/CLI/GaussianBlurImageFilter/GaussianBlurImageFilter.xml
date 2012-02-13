@@ -3,36 +3,36 @@
   <category>Filtering.Denoising</category>
   <index>3</index>
   <title>Gaussian Blur Image Filter</title>
-  <description>Apply a gaussian blurr to an image</description>
+  <description><![CDATA[Apply a gaussian blurr to an image]]></description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GaussianBlurImageFilter</documentation-url>
   <license/>
   <contributor>Julien Jomier and Stephen Aylward</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <double>
       <name>sigma</name>
       <longflag>sigma</longflag>
       <flag>s</flag>
       <label>Sigma</label>
-      <description>Sigma value in physical units (e.g., mm) of the Gaussian kernel</description>
+      <description><![CDATA[Sigma value in physical units (e.g., mm) of the Gaussian kernel]]></description>
       <default>1.0</default>
     </double>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume</description>
+      <description><![CDATA[Input volume]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Blurred Volume</description>
+      <description><![CDATA[Blurred Volume]]></description>
     </image>
   </parameters>
 </executable>

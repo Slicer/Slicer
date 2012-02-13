@@ -2,118 +2,118 @@
 <executable>
   <category>Core</category>
   <title>Volume Rendering</title>
-  <description>This module provides interactive visualization of 3D image data.</description>
+  <description><![CDATA[This module provides interactive visualization of 3D image data.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/VolumeRendering</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware Inc.), Alex Yarmarkovich (Isomics Inc.), Yanling Liu (NCI-Frederick/SAIC-Frederick), Andreas Freudling (Student Intern at SPL), Ron Kikinis(BWH)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Some of the transfer functions were contributed by Kitware Inc. (VolView)</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Some of the transfer functions were contributed by Kitware Inc. (VolView)]]></acknowledgements>
   <parameters>
     <label>Inputs</label>
-    <description>Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.</description>
+    <description><![CDATA[Contains the list of nodes required for VolumeRendering. It is unlikely that you need to interact with controllers.]]></description>
     <parameter>
       <label>Volume</label>
-      <description>Select the current volume to render. Note that only 1 volume can be rendered at a time.</description>
+      <description><![CDATA[Select the current volume to render. Note that only 1 volume can be rendered at a time.]]></description>
     </parameter>
     <parameter>
       <label>Display</label>
-      <description>Select the current volume rendering display properties. Volume rendering display nodes contains all the informations relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.</description>
+      <description><![CDATA[Select the current volume rendering display properties. Volume rendering display nodes contains all the informations relative to volume rendering. They contain pointers to the ROI, volume property and view nodes. A new display node is automatically created if none exist for the current volume.]]></description>
     </parameter>
     <parameter>
       <label>ROI</label>
-      <description>Select the current ROI to optionally crop with 6 planes the volume rendering.</description>
+      <description><![CDATA[Select the current ROI to optionally crop with 6 planes the volume rendering.]]></description>
     </parameter>
     <parameter>
       <label>Property</label>
-      <description>Select the current Volume Property. Volume properties contain the opacity, color and gradient transfer functions for each component.</description>
+      <description><![CDATA[Select the current Volume Property. Volume properties contain the opacity, color and gradient transfer functions for each component.]]></description>
     </parameter>
     <parameter>
       <label>View</label>
-      <description>Select the 3D views where the volume rendering must be displayed into. If no view is selected, the volume rendering is visible in all views</description>
+      <description><![CDATA[Select the 3D views where the volume rendering must be displayed into. If no view is selected, the volume rendering is visible in all views]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Display</label>
-    <description>Main properties for the volume rendering.</description>
+    <description><![CDATA[Main properties for the volume rendering.]]></description>
     <parameter>
       <label>Preset</label>
-      <description>Apply a pre-defined set of functions for the opacity, color and gradient transfer functions. The generic presets have been tuned for a combination of modalities and organs. They may need some manual tuning to fit your data.</description>
+      <description><![CDATA[Apply a pre-defined set of functions for the opacity, color and gradient transfer functions. The generic presets have been tuned for a combination of modalities and organs. They may need some manual tuning to fit your data.]]></description>
     </parameter>
     <parameter>
       <label>Shift</label>
-      <description>Move all the inner points (first and last excluded) of the current transfer functions to the right/left (lower/higher). It can be useful when a preset defines a ramp from 0 to 200 but your data requires a ramp from 1000 to 1200.</description>
+      <description><![CDATA[Move all the inner points (first and last excluded) of the current transfer functions to the right/left (lower/higher). It can be useful when a preset defines a ramp from 0 to 200 but your data requires a ramp from 1000 to 1200.]]></description>
     </parameter>
     <parameter>
       <label>Crop</label>
-      <description>Simple controls for the cropping box (aka ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.</description>
+      <description><![CDATA[Simple controls for the cropping box (aka ROI). More controls are available in the "Advanced..." section. Enable/Disable cropping of the volume. Show/Hide the cropping box. Reset the box ROI to the volume's bounds.]]></description>
     </parameter>
     <parameter>
       <label>Rendering</label>
-      <description>Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.***"VTK CPU Ray Casting": Available on all platforms, the volume rendering is enterily realized on the CPU (default)***"VTK GPU Ray Casting": Available on all platforms except on Mac with an NVidia graphic card, fastest method to volume render***"VTK OpenGL 3D Texture Mapping": Available on all platforms, use the GPU but it is not ray casting***"NCI GPU Ray Casting": Available on all platforms, ray caster on the GPU, doesn't support compositing.</description>
+      <description><![CDATA[Select a volume rendering method. A default method can be set in the application settings Volume Rendering panel.***"VTK CPU Ray Casting": Available on all platforms, the volume rendering is enterily realized on the CPU (default)***"VTK GPU Ray Casting": Available on all platforms except on Mac with an NVidia graphic card, fastest method to volume render***"VTK OpenGL 3D Texture Mapping": Available on all platforms, use the GPU but it is not ray casting***"NCI GPU Ray Casting": Available on all platforms, ray caster on the GPU, doesn't support compositing.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Advanced</label>
-    <description>More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"</description>
+    <description><![CDATA[More controls to control the volume rendering. Contains 3 tabs: "Techniques", "Volume Properties" and "ROI"]]></description>
     <parameter>
       <label>Technique</label>
-      <description>Advanced properties of the current volume rendering method.</description>
+      <description><![CDATA[Advanced properties of the current volume rendering method.]]></description>
     </parameter>
     <parameter>
       <label>GPU Memory Size</label>
-      <description>Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the application settings Volume Rendering panel.</description>
+      <description><![CDATA[Amount of memory to allocate on the GPU for volume rendering. By default, all the memory of the GPU is allocated. You can change the default behavior in the application settings Volume Rendering panel.]]></description>
     </parameter>
     <parameter>
       <label>Quality Control</label>
-      <description>Not supported yet.</description>
+      <description><![CDATA[Not supported yet.]]></description>
     </parameter>
     <parameter>
       <label>Interactive speed</label>
-      <description>Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering</description>
+      <description><![CDATA[Ensure the given frame per second (FPS) is enforced in the views during interaction. The higher the FPS, the lower the resolution of the volume rendering]]></description>
     </parameter>
     <parameter>
       <label>Volume Properties</label>
-      <description>Advanced views of the transfer functions.***Left button click: set current point or create a new point if no point is under the mouse.***Left button move: move the current or selected points if any.***Right button click: select/unselect point. Selected points can be moved at once***Right button move: define an area to select points***Middle button click: delete point under the mouse cursor.***Right/Left arrow keys: change of current point***Delete key: delete the current point and set the next point as current***Backspace key: delete the current point and set the previous point as current***ESC key: unselect all points.***Unsupported: "ALT to move selected points", "CTRL-A to select all points"</description>
+      <description><![CDATA[Advanced views of the transfer functions.***Left button click: set current point or create a new point if no point is under the mouse.***Left button move: move the current or selected points if any.***Right button click: select/unselect point. Selected points can be moved at once***Right button move: define an area to select points***Middle button click: delete point under the mouse cursor.***Right/Left arrow keys: change of current point***Delete key: delete the current point and set the next point as current***Backspace key: delete the current point and set the previous point as current***ESC key: unselect all points.***Unsupported: "ALT to move selected points", "CTRL-A to select all points"]]></description>
     </parameter>
     <parameter>
       <label>Synchronize with Volumes module</label>
-      <description>***Click: Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.***Toggled: by clicking on the checkbox, you can toggle the button. When toggled, any modification occuring in the Volumes module is instantaneously applied to the volume rendering</description>
+      <description><![CDATA[***Click: Apply once the properties (window/level, threshold, lut) of the Volumes module to the Volume Rendering module.***Toggled: by clicking on the checkbox, you can toggle the button. When toggled, any modification occuring in the Volumes module is instantaneously applied to the volume rendering]]></description>
     </parameter>
     <parameter>
       <label>Scalar Opacity Mapping</label>
-      <description>Opacity transfer function. Threshold mode: enabling threshold controls the transfer function using range sliders in addition to control points.</description>
+      <description><![CDATA[Opacity transfer function. Threshold mode: enabling threshold controls the transfer function using range sliders in addition to control points.]]></description>
     </parameter>
     <parameter>
       <label>Scalar Color Mapping</label>
-      <description>Color transfer function.</description>
+      <description><![CDATA[Color transfer function.]]></description>
     </parameter>
     <parameter>
       <label>Gradient Opacity</label>
-      <description>Gradient opacity transfer function.</description>
+      <description><![CDATA[Gradient opacity transfer function.]]></description>
     </parameter>
     <parameter>
       <label>Interpolation</label>
-      <description>Linear (default for scalar volumes) or nearest neighboor (default for labelmaps) interpolation.</description>
+      <description><![CDATA[Linear (default for scalar volumes) or nearest neighboor (default for labelmaps) interpolation.]]></description>
     </parameter>
     <parameter>
       <label>Shade</label>
-      <description>Enable/Disable shading. Shading uses light and material properties.</description>
+      <description><![CDATA[Enable/Disable shading. Shading uses light and material properties.]]></description>
     </parameter>
     <parameter>
       <label>Material</label>
-      <description>Material properties of the volume to compute shading effect.</description>
+      <description><![CDATA[Material properties of the volume to compute shading effect.]]></description>
     </parameter>
     <parameter>
       <label>ROI</label>
-      <description>More controls for the cropping box.</description>
+      <description><![CDATA[More controls for the cropping box.]]></description>
     </parameter>
     <parameter>
       <label>Display Clipping box</label>
-      <description>Show hide the bounds of the ROI box.</description>
+      <description><![CDATA[Show hide the bounds of the ROI box.]]></description>
     </parameter>
     <parameter>
       <label>Interactive mode</label>
-      <description>Control wether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.</description>
+      <description><![CDATA[Control wether the cropping box is instantaneously updated when dragging the sliders or only when the mouse button is released.]]></description>
     </parameter>
   </parameters>
 </executable>

@@ -2,68 +2,68 @@
 <executable>
   <category>Surface Models</category>
   <title>Label Map Smoothing</title>
-  <description>This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.</description>
+  <description><![CDATA[This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.]]></description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelMapSmoothing</documentation-url>
   <license/>
   <contributor>Dirk Padfield, Josh Cates, Ross Whitaker</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.]]></acknowledgements>
   <parameters advanced="true">
     <label>Label Selection Parameters</label>
-    <description>Parameters for selecting the label to smooth</description>
+    <description><![CDATA[Parameters for selecting the label to smooth]]></description>
     <integer>
       <name>labelToSmooth</name>
       <longflag>--labelToSmooth</longflag>
-      <description>The label to smooth.  All others will be ignored.  If no label is selected by the user, the maximum label in the image is chosen by default.</description>
+      <description><![CDATA[The label to smooth.  All others will be ignored.  If no label is selected by the user, the maximum label in the image is chosen by default.]]></description>
       <label>Label to smooth</label>
       <default>-1</default>
     </integer>
   </parameters>
   <parameters advanced="true">
     <label>AntiAliasing Parameters</label>
-    <description>Parameters for the AntiAliasing algorithm</description>
+    <description><![CDATA[Parameters for the AntiAliasing algorithm]]></description>
     <integer>
       <name>numberOfIterations</name>
       <longflag>--numberOfIterations</longflag>
-      <description>The number of iterations of the level set AntiAliasing algorithm</description>
+      <description><![CDATA[The number of iterations of the level set AntiAliasing algorithm]]></description>
       <label>Number of Iterations</label>
       <default>50</default>
     </integer>
     <float>
       <name>maxRMSError</name>
       <longflag>--maxRMSError</longflag>
-      <description>The maximum RMS error.</description>
+      <description><![CDATA[The maximum RMS error.]]></description>
       <label>Maximum RMS Error</label>
       <default>0.01</default>
     </float>
   </parameters>
   <parameters advanced="true">
     <label>Gaussian Smoothing Parameters</label>
-    <description>Parameters for Gaussian Smoothing</description>
+    <description><![CDATA[Parameters for Gaussian Smoothing]]></description>
     <float>
       <name>gaussianSigma</name>
       <longflag>--gaussianSigma</longflag>
-      <description>The standard deviation of the Gaussian kernel</description>
+      <description><![CDATA[The standard deviation of the Gaussian kernel]]></description>
       <label>Sigma</label>
       <default>0.2</default>
     </float>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input label map to smooth</description>
+      <description><![CDATA[Input label map to smooth]]></description>
     </image>
     <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Smoothed label map</description>
+      <description><![CDATA[Smoothed label map]]></description>
     </image>
   </parameters>
 </executable>

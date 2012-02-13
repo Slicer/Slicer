@@ -5,13 +5,13 @@
   <version>0.2 (alpha)</version>
   <contributor>Peter Karasev, pkarasev@gatech.edu, Allen Tannenbaum, tannenba@ece.gatech.edu</contributor>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MeshContourSegmentation</documentation-url>
-  <description>Sparse-Field Levelset Mesh Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.\n\nOnce the output surface has been loaded into Slicer, go to the Models module, Model Display pane, and set the Scalar Visibility Flag, select the LevelSetValue as the active scalar array, and pick the FreeSurfer RedGreen Scalar Color Map. The InitialCurvature and SmoothedCurvature may appear if the path finding failed. \n An example calling convention from the commandline for this module:\n\n--inputScene C:/.../bin/Release/LSVTKOut1.vtk" -c "1.5,1.5,0" -c "-1.5,1.5,0" -c "-1.5,-1.5,0" -c "1.5,-1.5,0" --outputFilename "tempOut.vtk"\n\nThis gives it an initial geometry in the vtk file, four seed points in (x,y,z) coordinates, and where to write the output.\n\nThe resulting output contains a colormap that defines interior/exterior of the surface as determined by evolving the curve into high mean curvature areas.</description>
+  <description><![CDATA[Sparse-Field Levelset Mesh Segmentation. Given some initial points in polydata will construct a contour and evolve it to high mean-curvature areas, returning the interior region indices.\n\nOnce the output surface has been loaded into Slicer, go to the Models module, Model Display pane, and set the Scalar Visibility Flag, select the LevelSetValue as the active scalar array, and pick the FreeSurfer RedGreen Scalar Color Map. The InitialCurvature and SmoothedCurvature may appear if the path finding failed. \n An example calling convention from the commandline for this module:\n\n--inputScene C:/.../bin/Release/LSVTKOut1.vtk" -c "1.5,1.5,0" -c "-1.5,1.5,0" -c "-1.5,-1.5,0" -c "1.5,-1.5,0" --outputFilename "tempOut.vtk"\n\nThis gives it an initial geometry in the vtk file, four seed points in (x,y,z) coordinates, and where to write the output.\n\nThe resulting output contains a colormap that defines interior/exterior of the surface as determined by evolving the curve into high mean curvature areas.]]></description>
   <parameters>
     <label>Input Parameters</label>
-    <description>The inputs for the contour initialization and poly data</description>
+    <description><![CDATA[The inputs for the contour initialization and poly data]]></description>
     <geometry>
       <name>InputSurface</name>
-      <description>The filename of the input vtk XML polydata file for the surface.</description>
+      <description><![CDATA[The filename of the input vtk XML polydata file for the surface.]]></description>
       <label>Input Model</label>
       <longflag>inputScene</longflag>
       <channel>input</channel>
@@ -21,15 +21,15 @@
       <label>Contour Points</label>
       <flag>c</flag>
       <longflag>contourpoints</longflag>
-      <description>The initialization points in x,y,z coords where the contour is seeded initially.</description>
+      <description><![CDATA[The initialization points in x,y,z coords where the contour is seeded initially.]]></description>
     </point>
   </parameters>
   <parameters>
     <label>Output Parameters</label>
-    <description>Output params.</description>
+    <description><![CDATA[Output params.]]></description>
     <geometry>
       <name>OutputModel</name>
-      <description>Output model, in vtk xml poly data format.</description>
+      <description><![CDATA[Output model, in vtk xml poly data format.]]></description>
       <label>Output Model</label>
       <channel>output</channel>
       <longflag>outputModel</longflag>
@@ -37,53 +37,53 @@
   </parameters>
   <parameters advanced="true">
     <label>Filter Parameters</label>
-    <description>Set the number of iterations here</description>
+    <description><![CDATA[Set the number of iterations here]]></description>
     <integer>
       <name>evolve_its</name>
       <longflag>--evolve_its</longflag>
-      <description>How many evolution iterations to take, moving the curve along the curvature gradient. Use 0 to use the intial input points connected by a curve.</description>
+      <description><![CDATA[How many evolution iterations to take, moving the curve along the curvature gradient. Use 0 to use the intial input points connected by a curve.]]></description>
       <label>Evolution Iterations</label>
       <default>10</default>
     </integer>
     <integer>
       <name>mesh_smooth_its</name>
       <longflag>--mesh_smooth_its</longflag>
-      <description>How many times to smooth the input surface.</description>
+      <description><![CDATA[How many times to smooth the input surface.]]></description>
       <label>Mesh Smoothing Iterations</label>
       <default>50</default>
     </integer>
     <integer>
       <name>H_smooth_its</name>
       <longflag>--H_smooth_its</longflag>
-      <description>How many times to average the curvature</description>
+      <description><![CDATA[How many times to average the curvature]]></description>
       <label>Curvature Averaging Iterations</label>
       <default>100</default>
     </integer>
     <integer>
       <name>adj_levels</name>
       <longflag>--adj_levels</longflag>
-      <description>Number of levels into the adjacency tree to look. Use a larger number if the mesh is very fine.</description>
+      <description><![CDATA[Number of levels into the adjacency tree to look. Use a larger number if the mesh is very fine.]]></description>
       <label>Adjacency Tree Levels</label>
       <default>1</default>
     </integer>
     <boolean>
       <name>showLS</name>
       <longflag>--showLS</longflag>
-      <description>Show value of the Level Set at all vertices as opposed to only showing the inside/outside segmentation</description>
+      <description><![CDATA[Show value of the Level Set at all vertices as opposed to only showing the inside/outside segmentation]]></description>
       <label>Show Level Set</label>
       <default>0</default>
     </boolean>
     <boolean>
       <name>rightHandMesh</name>
       <longflag>--rightHandMesh</longflag>
-      <description>If set assumes a right handed mesh, normals pointing out</description>
+      <description><![CDATA[If set assumes a right handed mesh, normals pointing out]]></description>
       <default>true</default>
       <label>Right Handed mesh</label>
     </boolean>
     <integer>
       <name>is_test</name>
       <longflag>--is_test</longflag>
-      <description>Confirms whether module is being run as a test to confirm it's working properly</description>
+      <description><![CDATA[Confirms whether module is being run as a test to confirm it's working properly]]></description>
       <default>0</default>
     </integer>
   </parameters>

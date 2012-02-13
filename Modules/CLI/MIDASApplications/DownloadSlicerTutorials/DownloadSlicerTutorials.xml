@@ -2,15 +2,15 @@
 <executable>
   <category>Data Access</category>
   <title>MIDAS Data and Slicer Tutorials</title>
-  <description>Allows the user to browse data and download Slicer tutorials to their computer from MIDAS (http://www.insight-journal.org/midas).  Tutorials typically consist of .zip files that contain the tutorials at PowerPoint presentations as well as demonstration data.</description>
+  <description><![CDATA[Allows the user to browse data and download Slicer tutorials to their computer from MIDAS (http://www.insight-journal.org/midas).  Tutorials typically consist of .zip files that contain the tutorials at PowerPoint presentations as well as demonstration data.]]></description>
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url/>
   <license/>
   <contributor>Patrick Reynolds and Stephen Aylward</contributor>
-  <acknowledgements>This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Browse Data</label>
-    <description>Select the data to browse using your Web browser</description>
+    <description><![CDATA[Select the data to browse using your Web browser]]></description>
     <boolean>
       <name>namic</name>
       <label>Browse NAMIC data over the Web</label>
@@ -26,7 +26,7 @@
   </parameters>
   <parameters>
     <label>Download Tutorials</label>
-    <description>Place a check next to the tutorials you would like to download</description>
+    <description><![CDATA[Place a check next to the tutorials you would like to download]]></description>
     <boolean>
       <name>dl01</name>
       <label>EM Segment Tutorial Data</label>
@@ -102,7 +102,7 @@
   </parameters>
   <parameters>
     <label>Download Directory</label>
-    <description>Enter the directory where you'd like the checked tutorials to be downloaded</description>
+    <description><![CDATA[Enter the directory where you'd like the checked tutorials to be downloaded]]></description>
     <directory>
       <name>dir</name>
       <longflag>dir</longflag>

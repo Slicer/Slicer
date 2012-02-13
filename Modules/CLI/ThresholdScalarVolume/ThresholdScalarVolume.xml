@@ -2,28 +2,28 @@
 <executable>
   <category>Filtering</category>
   <title>Threshold Scalar Volume</title>
-  <description>&lt;p&gt;Threshold an image.&lt;/p&gt;&lt;p&gt;Set image values to a user-specified outside value if they are below, above, or between simple threshold values.&lt;/p&gt;&lt;p&gt;ThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.&lt;/p&gt;&lt;p&gt;ThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.&lt;/p&gt;&lt;p&gt;ThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.&lt;/p&gt;&lt;p&gt;Although all image types are supported on input, only signed types are produced.&lt;/p&gt;&lt;p&gt;</description>
+  <description><![CDATA[<p>Threshold an image.</p><p>Set image values to a user-specified outside value if they are below, above, or between simple threshold values.</p><p>ThresholdAbove: The values greater than or equal to the threshold value are set to OutsideValue.</p><p>ThresholdBelow: The values less than or equal to the threshold value are set to OutsideValue.</p><p>ThresholdOutside: The values outside the range Lower-Upper are set to OutsideValue.</p><p>Although all image types are supported on input, only signed types are produced.</p><p>]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Threshold</documentation-url>
   <license/>
   <contributor>Nicole Aucoin, BWH (Ron Kikinis, BWH)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume</description>
+      <description><![CDATA[Input volume]]></description>
     </image>
     <image>
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Thresholded input volume</description>
+      <description><![CDATA[Thresholded input volume]]></description>
     </image>
   </parameters>
   <parameters>
@@ -33,7 +33,7 @@
       <label>Threshold Value</label>
       <flag>-t</flag>
       <longflag>--threshold</longflag>
-      <description>Threshold value</description>
+      <description><![CDATA[Threshold value]]></description>
       <default>128</default>
     </integer>
     <integer>
@@ -41,7 +41,7 @@
       <label>Lower</label>
       <flag>-l</flag>
       <longflag>--lower</longflag>
-      <description>Lower threshold value</description>
+      <description><![CDATA[Lower threshold value]]></description>
       <default>1</default>
     </integer>
     <integer>
@@ -49,7 +49,7 @@
       <label>Upper</label>
       <flag>-u</flag>
       <longflag>--upper</longflag>
-      <description>Upper threshold value</description>
+      <description><![CDATA[Upper threshold value]]></description>
       <default>200</default>
     </integer>
     <integer>
@@ -57,13 +57,13 @@
       <label>Outside Value</label>
       <flag>-v</flag>
       <longflag>--outsidevalue</longflag>
-      <description>Set the voxels to this value if they fall outside the threshold range</description>
+      <description><![CDATA[Set the voxels to this value if they fall outside the threshold range]]></description>
       <default>0</default>
     </integer>
     <string-enumeration>
       <name>ThresholdType</name>
       <label>Threshold Type</label>
-      <description>What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the ThresholdValue.</description>
+      <description><![CDATA[What kind of threshold to perform. If Outside is selected, uses Upper and Lower values. If Below is selected, uses the ThresholdValue, if Above is selected, uses the ThresholdValue.]]></description>
       <longflag>--thresholdtype</longflag>
       <default>Outside</default>
       <element>Below</element>

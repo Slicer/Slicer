@@ -2,80 +2,80 @@
 <executable>
   <category>Informatics</category>
   <title>DICOM</title>
-  <description>Provides DICOM local database and networking support.</description>
+  <description><![CDATA[Provides DICOM local database and networking support.]]></description>
   <documentation-url/>
   <license/>
   <contributor>Steve Pieper (Isomics Inc.)</contributor>
-  <acknowledgements>This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.</acknowledgements>
+  <acknowledgements><![CDATA[This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.]]></acknowledgements>
   <parameters>
     <label>Servers</label>
-    <description>Controls the DICOM Listener</description>
+    <description><![CDATA[Controls the DICOM Listener]]></description>
     <integer>
       <name>Start/Stop Listener</name>
-      <description>Control external process that listens for network connections to populate the local database.  The listener port is controlled by the setting in the Query dialog.</description>
+      <description><![CDATA[Control external process that listens for network connections to populate the local database.  The listener port is controlled by the setting in the Query dialog.]]></description>
       <label>Start/Stop Listener</label>
     </integer>
     <integer>
       <name>Start Listener when Slicer Starts</name>
-      <description>When checked, a DICOM listener will be launched automatically when slicer is running.</description>
+      <description><![CDATA[When checked, a DICOM listener will be launched automatically when slicer is running.]]></description>
       <label>Start Listener when Slicer Starts</label>
     </integer>
   </parameters>
   <parameters>
     <label>DICOM Database and Networking</label>
-    <description>Options for interacting with remote DICOM nodes and interacting between Slicer and the DICOM database.</description>
+    <description><![CDATA[Options for interacting with remote DICOM nodes and interacting between Slicer and the DICOM database.]]></description>
     <integer>
       <name>Import</name>
-      <description>Use this to add DICOM files from your local file system into the DICOM Database.  Selected directories will be searched hierarchically for DICOM files.  A checkbox in the dialog controls whether a copy of these files should be added to the LocalDatabase direcory or if they should be pointed to where they exist.</description>
+      <description><![CDATA[Use this to add DICOM files from your local file system into the DICOM Database.  Selected directories will be searched hierarchically for DICOM files.  A checkbox in the dialog controls whether a copy of these files should be added to the LocalDatabase direcory or if they should be pointed to where they exist.]]></description>
       <label>Import</label>
     </integer>
     <integer>
       <name>Export</name>
-      <description>(not currently available)</description>
+      <description><![CDATA[(not currently available)]]></description>
       <label>Export</label>
     </integer>
     <integer>
       <name>Query</name>
-      <description>Bring up the Query dialog.  Add and select servers to query.  Use the search options to identify subjects of interest for retrieval.  Note that servers typically need to be specially configured to allow clients to query/retrieve.  Also note that firewalls may disrupt access and that ports below 1024 require administrator permissions.</description>
+      <description><![CDATA[Bring up the Query dialog.  Add and select servers to query.  Use the search options to identify subjects of interest for retrieval.  Note that servers typically need to be specially configured to allow clients to query/retrieve.  Also note that firewalls may disrupt access and that ports below 1024 require administrator permissions.]]></description>
       <label>Query</label>
     </integer>
     <integer>
       <name>Send</name>
-      <description>Send the selected Patient/Study/Series to a remote DICOM node.  A dialog will prompt for the destination address and port.</description>
+      <description><![CDATA[Send the selected Patient/Study/Series to a remote DICOM node.  A dialog will prompt for the destination address and port.]]></description>
       <label>Send</label>
     </integer>
     <integer>
       <name>LocalDatabase</name>
-      <description>Directory where image files, thumbnail images, and relational database will be stored.  Pick a directory where you will have adequate disk space for the amount of DICOM data you intend to process.</description>
+      <description><![CDATA[Directory where image files, thumbnail images, and relational database will be stored.  Pick a directory where you will have adequate disk space for the amount of DICOM data you intend to process.]]></description>
       <label>LocalDatabase</label>
     </integer>
     <integer>
       <name>Database Tree</name>
-      <description>Browse local database by Patient/Study/Series.  Selection will display image previews and will enable options such as Send or Load to Slicer.  Right clicking on this tree invokes a popup context menu (not yet implemented).</description>
+      <description><![CDATA[Browse local database by Patient/Study/Series.  Selection will display image previews and will enable options such as Send or Load to Slicer.  Right clicking on this tree invokes a popup context menu (not yet implemented).]]></description>
       <label>Database TreeLocalDatabase</label>
     </integer>
   </parameters>
   <parameters>
     <label>Slicer Interface</label>
-    <description>Move data to/from Slicer and the DICOM database</description>
+    <description><![CDATA[Move data to/from Slicer and the DICOM database]]></description>
     <integer>
       <name>Selection</name>
-      <description>Indicates type of selection level.</description>
+      <description><![CDATA[Indicates type of selection level.]]></description>
       <label>Selection</label>
     </integer>
     <integer>
       <name>Load to Slicer</name>
-      <description>Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a slicer volume.  A study will load mulitple volumes and patient may have multiple studies.</description>
+      <description><![CDATA[Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a slicer volume.  A study will load mulitple volumes and patient may have multiple studies.]]></description>
       <label>Load to Slicer</label>
     </integer>
     <integer>
       <name>Export Slicer Data to Study...</name>
-      <description>Is enabled when a study is selected.  This will export a slicer volume as a series of DICOM slice files that are then loaded into the DICOM database.  Optionally the entire scene will be embeded in a DICOM compatible manner (not yet implemented).</description>
+      <description><![CDATA[Is enabled when a study is selected.  This will export a slicer volume as a series of DICOM slice files that are then loaded into the DICOM database.  Optionally the entire scene will be embeded in a DICOM compatible manner (not yet implemented).]]></description>
       <label>Export Slicer Data to Study...</label>
     </integer>
     <integer>
       <name>Image Preview</name>
-      <description>Shows the currently selected images from the DICOM database.</description>
+      <description><![CDATA[Shows the currently selected images from the DICOM database.]]></description>
       <label>Image Preview</label>
     </integer>
   </parameters>

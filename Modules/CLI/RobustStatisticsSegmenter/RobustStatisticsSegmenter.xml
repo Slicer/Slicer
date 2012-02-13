@@ -2,20 +2,20 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>Robust Statistics Segmenter</title>
-  <description>Active contour segmentation using robust statistic.</description>
+  <description><![CDATA[Active contour segmentation using robust statistic.]]></description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RobustStatisticsSegmenter</documentation-url>
   <license/>
   <contributor>Yi Gao, Allen Tannenbaum, Ron Kikinis</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health]]></acknowledgements>
   <parameters>
     <label>Segmentation Parameters</label>
-    <description>Parameters for robust statistics segmentation</description>
+    <description><![CDATA[Parameters for robust statistics segmentation]]></description>
     <double>
       <name>expectedVolume</name>
       <longflag>expectedVolume</longflag>
       <flag>v</flag>
-      <description>The approximate volume of the object, in mL.</description>
+      <description><![CDATA[The approximate volume of the object, in mL.]]></description>
       <label>Approximate volume(mL)</label>
       <default>1</default>
       <constraints>
@@ -27,11 +27,11 @@
   </parameters>
   <parameters>
     <label>Auxiliary Parameters</label>
-    <description>Some auxillary parameters to control the stop criteria.</description>
+    <description><![CDATA[Some auxillary parameters to control the stop criteria.]]></description>
     <double>
       <name>intensityHomogeneity</name>
       <longflag>intensityHomogeneity</longflag>
-      <description>What is the homogeneity of intensity within the object? Given constant intensity at 1.0 score and extreme fluctuating intensity at 0.</description>
+      <description><![CDATA[What is the homogeneity of intensity within the object? Given constant intensity at 1.0 score and extreme fluctuating intensity at 0.]]></description>
       <label>Intensity Homogeneity[0-1.0]</label>
       <default>0.0</default>
       <constraints>
@@ -44,7 +44,7 @@
       <name>curvatureWeight</name>
       <longflag>curvatureWeight</longflag>
       <flag>c</flag>
-      <description>Given sphere 1.0 score and extreme rough bounday/surface 0 score, what is the expected smoothness of the object?</description>
+      <description><![CDATA[Given sphere 1.0 score and extreme rough bounday/surface 0 score, what is the expected smoothness of the object?]]></description>
       <label>Boundary Smoothness[0-1.0]</label>
       <default>0</default>
       <constraints>
@@ -56,7 +56,7 @@
     <integer>
       <name>labelValue</name>
       <longflag>labelValue</longflag>
-      <description>Label value of the output image</description>
+      <description><![CDATA[Label value of the output image]]></description>
       <label>Output Label Value</label>
       <default>1</default>
       <constraints>
@@ -68,7 +68,7 @@
     <double>
       <name>maxRunningTime</name>
       <longflag>maxRunningTime</longflag>
-      <description>The program will stop if this time is reached.</description>
+      <description><![CDATA[The program will stop if this time is reached.]]></description>
       <label>Max running time(min)</label>
       <default>10</default>
       <constraints>
@@ -80,27 +80,27 @@
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>originalImageFileName</name>
       <label>Original Image</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Original image to be segmented</description>
+      <description><![CDATA[Original image to be segmented]]></description>
     </image>
     <image>
       <name>labelImageFileName</name>
       <label>Label Image</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Label image for initialization</description>
+      <description><![CDATA[Label image for initialization]]></description>
     </image>
     <image type="label">
       <name>segmentedImageFileName</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Segmented image</description>
+      <description><![CDATA[Segmented image]]></description>
     </image>
   </parameters>
 </executable>

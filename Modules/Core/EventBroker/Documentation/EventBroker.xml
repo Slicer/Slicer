@@ -2,26 +2,26 @@
 <executable>
   <category>Developer Tools</category>
   <title>Event Broker</title>
-  <description>Profiling tool for the developers. The event broker manages observations between VTK objects in Slicer. Observed objects are populated in the tree view, their observers are listed under each observed object events. Selecting a VTK object in the list, dumps (PrintSelf()) all its information.</description>
+  <description><![CDATA[Profiling tool for the developers. The event broker manages observations between VTK objects in Slicer. Observed objects are populated in the tree view, their observers are listed under each observed object events. Selecting a VTK object in the list, dumps (PrintSelf()) all its information.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Cameras</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware Inc.)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Actions</label>
-    <description>Actions in the view.</description>
+    <description><![CDATA[Actions in the view.]]></description>
     <parameter>
       <label>Refresh</label>
-      <description>Rescan the event broker and populate the tree view with the observers of the MRML scene, nodes, logics.</description>
+      <description><![CDATA[Rescan the event broker and populate the tree view with the observers of the MRML scene, nodes, logics.]]></description>
     </parameter>
     <parameter>
       <label>Reset Times</label>
-      <description>Reset the time spent in all callbacks to 0 second. To be used with "Show observations with Elapsed Times</description>
+      <description><![CDATA[Reset the time spent in all callbacks to 0 second. To be used with "Show observations with Elapsed Times]]></description>
     </parameter>
     <parameter>
       <label>Show observations with Elapsed Times &gt;0</label>
-      <description>Filter the tree view to show only objects for which time has been spent in at least one of its callback.</description>
+      <description><![CDATA[Filter the tree view to show only objects for which time has been spent in at least one of its callback.]]></description>
     </parameter>
   </parameters>
 </executable>

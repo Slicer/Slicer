@@ -2,35 +2,35 @@
 <executable>
   <category>Surface Models</category>
   <title>Probe Volume With Model</title>
-  <description>Paint a model by a volume (using vtkProbeFilter).</description>
+  <description><![CDATA[Paint a model by a volume (using vtkProbeFilter).]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ProbeVolumeWithModel</documentation-url>
   <license/>
   <contributor>Lauren O'Donnell</contributor>
-  <acknowledgements>BWH, NCIGT/LMI</acknowledgements>
+  <acknowledgements><![CDATA[BWH, NCIGT/LMI]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Volume to use to "paint" the model</description>
+      <description><![CDATA[Volume to use to "paint" the model]]></description>
     </image>
     <geometry>
       <name>InputModel</name>
       <label>Input Model</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Input model</description>
+      <description><![CDATA[Input model]]></description>
     </geometry>
     <geometry>
       <name>OutputModel</name>
       <label>Output Model</label>
       <channel>output</channel>
       <index>2</index>
-      <description>Output "painted" model</description>
+      <description><![CDATA[Output "painted" model]]></description>
     </geometry>
   </parameters>
 </executable>

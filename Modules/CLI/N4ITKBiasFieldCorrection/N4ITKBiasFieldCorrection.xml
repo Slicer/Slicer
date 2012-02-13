@@ -3,42 +3,42 @@
   <category>Filtering</category>
   <title>N4ITK MRI Bias correction</title>
   <index>3</index>
-  <description>Performs MRI bias correction using N4 algorithm. This module is based on the ITK filters contributed in the following publication:  Tustison N, Gee J "N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction", The Insight Journal 2009 January-June, http://hdl.handle.net/10380/3053</description>
+  <description><![CDATA[Performs MRI bias correction using N4 algorithm. This module is based on the ITK filters contributed in the following publication:  Tustison N, Gee J "N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction", The Insight Journal 2009 January-June, http://hdl.handle.net/10380/3053]]></description>
   <version>9</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/N4ITKBiasFieldCorrection</documentation-url>
   <license/>
   <contributor>Nick Tustison (algorithm and ITK implementation), Andrey Fedorov (Slicer wrapping), Ron Kikinis (PI)</contributor>
-  <acknowledgements>The development of this module was partially supported by NIH grants R01 AA016748-01, R01 CA111288 and U01 CA151261 as well as by NA-MIC, NAC, NCIGT and the Slicer community.</acknowledgements>
+  <acknowledgements><![CDATA[The development of this module was partially supported by NIH grants R01 AA016748-01, R01 CA111288 and U01 CA151261 as well as by NA-MIC, NAC, NCIGT and the Slicer community.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <longflag>inputimage</longflag>
       <name>inputImageName</name>
       <label>Input Image</label>
       <channel>input</channel>
-      <description>Input image where you observe signal inhomegeneity</description>
+      <description><![CDATA[Input image where you observe signal inhomegeneity]]></description>
     </image>
     <image>
       <longflag>maskimage</longflag>
       <name>maskImageName</name>
       <label>Mask Image</label>
       <channel>input</channel>
-      <description>Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined.</description>
+      <description><![CDATA[Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined.]]></description>
     </image>
     <image>
       <longflag>outputimage</longflag>
       <name>outputImageName</name>
       <label>Output Volume</label>
       <channel>output</channel>
-      <description>Result of processing</description>
+      <description><![CDATA[Result of processing]]></description>
     </image>
     <image>
       <longflag>outputbiasfield</longflag>
       <name>outputBiasFieldName</name>
       <label>Output bias field image</label>
       <channel>output</channel>
-      <description>Recovered bias field (OPTIONAL)</description>
+      <description><![CDATA[Recovered bias field (OPTIONAL)]]></description>
     </image>
   </parameters>
   <parameters>
@@ -47,46 +47,46 @@
       <name>numberOfIterations</name>
       <longflag>iterations</longflag>
       <label>Number of iterations</label>
-      <description>Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.</description>
+      <description><![CDATA[Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.]]></description>
       <default>50,40,30</default>
     </integer-vector>
     <float>
       <name>convergenceThreshold</name>
       <longflag>convergencethreshold</longflag>
       <label>Convergence threshold</label>
-      <description>Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.</description>
+      <description><![CDATA[Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.]]></description>
       <default>0.0001</default>
     </float>
     <float-vector>
       <name>initialMeshResolution</name>
       <longflag>meshresolution</longflag>
       <label>BSpline grid resolution</label>
-      <description>Resolution of the initial bspline grid defined as a sequence of three numbers. The actual resolution will be defined by adding the bspline order (default is 3) to the resolution in each dimension specified here. For example, 1,1,1 will result in a 4x4x4 grid of control points. This parameter may need to be adjusted based on your input image. In the multi-resolution N4 framework, the resolution of the bspline grid at subsequent iterations will be doubled. The number of resolutions is implicitly defined by Number of iterations parameter (the size of this list is the number of resolutions)</description>
+      <description><![CDATA[Resolution of the initial bspline grid defined as a sequence of three numbers. The actual resolution will be defined by adding the bspline order (default is 3) to the resolution in each dimension specified here. For example, 1,1,1 will result in a 4x4x4 grid of control points. This parameter may need to be adjusted based on your input image. In the multi-resolution N4 framework, the resolution of the bspline grid at subsequent iterations will be doubled. The number of resolutions is implicitly defined by Number of iterations parameter (the size of this list is the number of resolutions)]]></description>
       <default>1,1,1</default>
     </float-vector>
     <float>
       <name>splineDistance</name>
       <longflag>splinedistance</longflag>
       <label>Spline distance</label>
-      <description>An alternative means to define the spline grid, by setting the distance between the control points. This parameter is used only if the grid resolution is not specified.</description>
+      <description><![CDATA[An alternative means to define the spline grid, by setting the distance between the control points. This parameter is used only if the grid resolution is not specified.]]></description>
       <default>0</default>
     </float>
     <integer>
       <name>shrinkFactor</name>
       <longflag>shrinkfactor</longflag>
       <label>Shrink factor</label>
-      <description>Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time.</description>
+      <description><![CDATA[Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time.]]></description>
       <default>4</default>
     </integer>
   </parameters>
   <parameters advanced="true">
     <label>Advanced N4 Parameters</label>
-    <description>Advanced parameters of the algorithm</description>
+    <description><![CDATA[Advanced parameters of the algorithm]]></description>
     <integer>
       <name>bsplineOrder</name>
       <longflag>bsplineorder</longflag>
       <label>BSpline order</label>
-      <description>Order of B-spline used in the approximation. Larger values will lead to longer execution times, may result in overfitting and poor result.</description>
+      <description><![CDATA[Order of B-spline used in the approximation. Larger values will lead to longer execution times, may result in overfitting and poor result.]]></description>
       <default>3</default>
     </integer>
     <image>
@@ -94,13 +94,13 @@
       <name>weightImageName</name>
       <label>Weight Image</label>
       <channel>input</channel>
-      <description>Weight Image</description>
+      <description><![CDATA[Weight Image]]></description>
     </image>
     <float-vector>
       <name>histogramSharpening</name>
       <longflag>histogramsharpening</longflag>
       <label>Histogram sharpening parameters</label>
-      <description>A vector of up to three values. Non-zero values correspond to Bias Field Full Width at Half Maximum, Wiener filter noise, and Number of histogram bins.</description>
+      <description><![CDATA[A vector of up to three values. Non-zero values correspond to Bias Field Full Width at Half Maximum, Wiener filter noise, and Number of histogram bins.]]></description>
       <default>0,0,0</default>
     </float-vector>
   </parameters>

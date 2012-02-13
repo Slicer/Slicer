@@ -3,20 +3,20 @@
   <category>Legacy.Registration</category>
   <title>BSpline Deformable Registration</title>
   <index>4</index>
-  <description>Registers two images together using BSpline transform and mutual information.</description>
+  <description><![CDATA[Registers two images together using BSpline transform and mutual information.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BSplineDeformableRegistration</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Registration Parameters</label>
-    <description>Parameters used for registration</description>
+    <description><![CDATA[Parameters used for registration]]></description>
     <integer>
       <name>Iterations</name>
       <flag>i</flag>
       <longflag>iterations</longflag>
-      <description>Number of iterations</description>
+      <description><![CDATA[Number of iterations]]></description>
       <label>Iterations</label>
       <default>20</default>
     </integer>
@@ -24,7 +24,7 @@
       <name>gridSize</name>
       <flag>g</flag>
       <longflag>gridSize</longflag>
-      <description>Number of grid points on interior of the fixed image. Larger grid sizes allow for finer registrations.</description>
+      <description><![CDATA[Number of grid points on interior of the fixed image. Larger grid sizes allow for finer registrations.]]></description>
       <label>Grid Size</label>
       <default>5</default>
       <constraints>
@@ -37,7 +37,7 @@
       <name>HistogramBins</name>
       <flag>b</flag>
       <longflag>histogrambins</longflag>
-      <description>Number of histogram bins to use for Mattes Mutual Information. Reduce the number of bins if a deformable registration fails. If the number of bins is too large, the estimated PDFs will be a field of impulses and will inhibit reliable registration estimation.</description>
+      <description><![CDATA[Number of histogram bins to use for Mattes Mutual Information. Reduce the number of bins if a deformable registration fails. If the number of bins is too large, the estimated PDFs will be a field of impulses and will inhibit reliable registration estimation.]]></description>
       <label>Histogram Bins</label>
       <default>100</default>
       <constraints>
@@ -50,7 +50,7 @@
       <name>SpatialSamples</name>
       <flag>s</flag>
       <longflag>spatialsamples</longflag>
-      <description>Number of spatial samples to use in estimating Mattes Mutual Information. Larger values yield more accurate PDFs and improved registration quality.</description>
+      <description><![CDATA[Number of spatial samples to use in estimating Mattes Mutual Information. Larger values yield more accurate PDFs and improved registration quality.]]></description>
       <label>Spatial Samples</label>
       <default>50000</default>
       <constraints>
@@ -62,7 +62,7 @@
     <boolean>
       <name>ConstrainDeformation</name>
       <longflag>constrain</longflag>
-      <description>Constrain the deformation to the amount specified in Maximum Deformation</description>
+      <description><![CDATA[Constrain the deformation to the amount specified in Maximum Deformation]]></description>
       <label>Constrain Deformation</label>
       <default>false</default>
     </boolean>
@@ -70,7 +70,7 @@
       <name>MaximumDeformation</name>
       <flag>m</flag>
       <longflag>maximumDeformation</longflag>
-      <description>If Constrain Deformation is checked, limit the deformation to this amount.</description>
+      <description><![CDATA[If Constrain Deformation is checked, limit the deformation to this amount.]]></description>
       <label>Maximum Deformation</label>
       <default>1</default>
     </float>
@@ -78,18 +78,18 @@
       <name>DefaultPixelValue</name>
       <flag>d</flag>
       <longflag>default</longflag>
-      <description>Default pixel value used if resampling a pixel outside of the volume.</description>
+      <description><![CDATA[Default pixel value used if resampling a pixel outside of the volume.]]></description>
       <label>Default Pixel Value</label>
       <default>0</default>
     </integer>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <transform fileExtensions=".txt" type="linear">
       <name>InitialTransform</name>
       <longflag>initialtransform</longflag>
-      <description>Initial transform for aligning the fixed and moving image. Maps positions in the fixed coordinate frame to positions in the moving coordinate frame. This transform should be an affine or rigid transform.  It is used an a bulk transform for the BSpline. Optional.</description>
+      <description><![CDATA[Initial transform for aligning the fixed and moving image. Maps positions in the fixed coordinate frame to positions in the moving coordinate frame. This transform should be an affine or rigid transform.  It is used an a bulk transform for the BSpline. Optional.]]></description>
       <label>Initial transform</label>
       <channel>input</channel>
     </transform>
@@ -98,26 +98,26 @@
       <label>Fixed Image</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Fixed image to which to register</description>
+      <description><![CDATA[Fixed image to which to register]]></description>
     </image>
     <image>
       <name>MovingImageFileName</name>
       <label>Moving Image</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Moving image</description>
+      <description><![CDATA[Moving image]]></description>
     </image>
     <transform fileExtensions=".txt" type="bspline" reference="MovingImageFileName">
       <name>OutputTransform</name>
       <longflag>outputtransform</longflag>
-      <description>Transform calculated that aligns the fixed and moving image. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional (specify an output transform or an output volume or both).</description>
+      <description><![CDATA[Transform calculated that aligns the fixed and moving image. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional (specify an output transform or an output volume or both).]]></description>
       <label>Output transform</label>
       <channel>output</channel>
     </transform>
     <transform fileExtensions=".nrrd" type="nonlinear" reference="MovingImageFileName">
       <name>OutputWarp</name>
       <longflag>outputwarp</longflag>
-      <description>Vector field that applies an equivalent warp as the BSpline. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional.</description>
+      <description><![CDATA[Vector field that applies an equivalent warp as the BSpline. Maps positions from the fixed coordinate frame to the moving coordinate frame. Optional.]]></description>
       <label>Output warp</label>
       <channel>output</channel>
     </transform>
@@ -126,7 +126,7 @@
       <longflag>resampledmovingfilename</longflag>
       <label>Output Volume</label>
       <channel>output</channel>
-      <description>Resampled moving image to fixed image coordinate frame. Optional (specify an output transform or an output volume or both).</description>
+      <description><![CDATA[Resampled moving image to fixed image coordinate frame. Optional (specify an output transform or an output volume or both).]]></description>
     </image>
   </parameters>
 </executable>

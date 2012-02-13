@@ -2,68 +2,68 @@
 <executable>
   <category>Legacy.Segmentation</category>
   <title>Otsu Threshold Segmentation</title>
-  <description>This filter creates a labeled image from a grayscale image. First, it calculates an optimal threshold that separates the image into foreground and background. This threshold separates those two classes so that their intra-class variance is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a connected component algorithm to generate unique labels for each connected region of the foreground. Finally, the resulting image is relabeled to provide consecutive numbering.</description>
+  <description><![CDATA[This filter creates a labeled image from a grayscale image. First, it calculates an optimal threshold that separates the image into foreground and background. This threshold separates those two classes so that their intra-class variance is minimal (see http://en.wikipedia.org/wiki/Otsu%27s_method). Then the filter runs a connected component algorithm to generate unique labels for each connected region of the foreground. Finally, the resulting image is relabeled to provide consecutive numbering.]]></description>
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/OtsuThresholdSegmentation</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters advanced="true">
     <label>Otsu Parameters</label>
-    <description>Parameters for Otsu Thresholding</description>
+    <description><![CDATA[Parameters for Otsu Thresholding]]></description>
     <boolean>
       <name>brightObjects</name>
       <longflag>brightObjects</longflag>
-      <description>Segmenting bright objects on a dark background or dark objects on a bright background.</description>
+      <description><![CDATA[Segmenting bright objects on a dark background or dark objects on a bright background.]]></description>
       <label>Bright objects</label>
       <default>true</default>
     </boolean>
     <integer>
       <name>numberOfBins</name>
       <longflag>--numberOfBins</longflag>
-      <description>This is an advanced parameter. The number of bins in the histogram used to model the probability mass function of the two intensity distributions. Small numbers of bins may result in a more conservative threshold. The default should suffice for most applications. Experimentation is the only way to see the effect of varying this parameter.</description>
+      <description><![CDATA[This is an advanced parameter. The number of bins in the histogram used to model the probability mass function of the two intensity distributions. Small numbers of bins may result in a more conservative threshold. The default should suffice for most applications. Experimentation is the only way to see the effect of varying this parameter.]]></description>
       <label>Number of Histogram Bins</label>
       <default>128</default>
     </integer>
   </parameters>
   <parameters advanced="true">
     <label>ConnectedComponent Parameters</label>
-    <description>Parameters for Connected Components</description>
+    <description><![CDATA[Parameters for Connected Components]]></description>
     <boolean>
       <name>faceConnected</name>
       <longflag>--faceConnected</longflag>
-      <description>This is an advanced parameter. Adjacent voxels are face connected. This affects the connected component algorithm. If this parameter is false, more regions are likely to be identified.</description>
+      <description><![CDATA[This is an advanced parameter. Adjacent voxels are face connected. This affects the connected component algorithm. If this parameter is false, more regions are likely to be identified.]]></description>
       <label>Face Connected</label>
       <default>true</default>
     </boolean>
   </parameters>
   <parameters advanced="true">
     <label>Relabel Component Parameters</label>
-    <description>Parameters for Relabel Components</description>
+    <description><![CDATA[Parameters for Relabel Components]]></description>
     <integer>
       <name>minimumObjectSize</name>
       <longflag>--minimumObjectSize</longflag>
-      <description>Minimum size of object to retain. This parameter can be used to get rid of small regions in noisy images.</description>
+      <description><![CDATA[Minimum size of object to retain. This parameter can be used to get rid of small regions in noisy images.]]></description>
       <label>Minimum Object Size</label>
       <default>0</default>
     </integer>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be segmented</description>
+      <description><![CDATA[Input volume to be segmented]]></description>
     </image>
     <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

@@ -2,28 +2,28 @@
 <executable>
   <category>Legacy.Filtering</category>
   <title>MRI Bias Field Correction</title>
-  <description>Corrects 3D MRI images corrupted by MRI gain field effect.  This module removes the slow-varying intensity variation from a 3D image.  The output image has a higher contrast locally and the visualization and reading of the image are improved.  This is an important pre-processinbg step for image operations requiring intensity perfect images, such as the Expectation Maximization segmentation (see EMSegment module). The N3 and N4 methods are described in N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction, Tustison N., Gee J., Insight Journal, 2009. http://hdl.handle.net/10380/3053 The Slicer code was contributed by Sylvain Jaume (MIT) for NA-MIC (http://na-mic.org).</description>
+  <description><![CDATA[Corrects 3D MRI images corrupted by MRI gain field effect.  This module removes the slow-varying intensity variation from a 3D image.  The output image has a higher contrast locally and the visualization and reading of the image are improved.  This is an important pre-processinbg step for image operations requiring intensity perfect images, such as the Expectation Maximization segmentation (see EMSegment module). The N3 and N4 methods are described in N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction, Tustison N., Gee J., Insight Journal, 2009. http://hdl.handle.net/10380/3053 The Slicer code was contributed by Sylvain Jaume (MIT) for NA-MIC (http://na-mic.org).]]></description>
   <version>0.1.0.$Revision: 0 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MRIBiasFieldCorrection</documentation-url>
   <license>3D Slicer license</license>
   <contributor>Sylvain Jaume (MIT)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149 (PI: Ron Kikinis).</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149 (PI: Ron Kikinis).]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputImage</name>
       <label>Input Image</label>
       <longflag>inputImage</longflag>
       <channel>input</channel>
-      <description>Input image</description>
+      <description><![CDATA[Input image]]></description>
     </image>
     <image type="label">
       <name>InputMask</name>
       <label>Input Mask</label>
       <longflag>inputMask</longflag>
       <channel>input</channel>
-      <description>Input mask</description>
+      <description><![CDATA[Input mask]]></description>
     </image>
     <image>
       <name>OutputImage</name>
@@ -31,17 +31,17 @@
       <longflag>outputImage</longflag>
       <default>MRIBiasFieldCorrection_OutputImage</default>
       <channel>output</channel>
-      <description>Corrected image</description>
+      <description><![CDATA[Corrected image]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Parameters for the algorithm</label>
-    <description>Parameters for MRI bias field correction</description>
+    <description><![CDATA[Parameters for MRI bias field correction]]></description>
     <string-enumeration>
       <name>AlgorithmType</name>
       <label>Algorithm type</label>
       <longflag>algorithmType</longflag>
-      <description>Select your algorithm</description>
+      <description><![CDATA[Select your algorithm]]></description>
       <element>N3</element>
       <element>N4</element>
       <default>N3</default>
@@ -50,42 +50,42 @@
       <name>ShrinkFactor</name>
       <longflag>shrinkFactor</longflag>
       <label>Shrink factor</label>
-      <description>Shrink the image by this factor</description>
+      <description><![CDATA[Shrink the image by this factor]]></description>
       <default>3</default>
     </integer>
     <integer>
       <name>MaximumNumberOfIterations</name>
       <longflag>maximumNumberOfIterations</longflag>
       <label>Maximum number of iterations</label>
-      <description>Number of iterations</description>
+      <description><![CDATA[Number of iterations]]></description>
       <default>50</default>
     </integer>
     <integer>
       <name>NumberOfFittingLevels</name>
       <longflag>numberOfFittingLevels</longflag>
       <label>Number of fitting levels</label>
-      <description>Set the number of fitting levels</description>
+      <description><![CDATA[Set the number of fitting levels]]></description>
       <default>4</default>
     </integer>
     <double>
       <name>WienerFilterNoise</name>
       <longflag>wienerFilterNoise</longflag>
       <label>Wiener filter noise</label>
-      <description>Set the Wiener filter noise</description>
+      <description><![CDATA[Set the Wiener filter noise]]></description>
       <default>0.1</default>
     </double>
     <double>
       <name>FullWidthAtHalfMaximum</name>
       <longflag>fullWidthAtHalfMaximum</longflag>
       <label>Bias full width at half maximum</label>
-      <description>Set the bias field full width at half maximum</description>
+      <description><![CDATA[Set the bias field full width at half maximum]]></description>
       <default>0.70</default>
     </double>
     <double>
       <name>ConvergenceThreshold</name>
       <longflag>convergenceThreshold</longflag>
       <label>Convergence threshold</label>
-      <description>Set the convergence threshold</description>
+      <description><![CDATA[Set the convergence threshold]]></description>
       <default>0.001</default>
     </double>
   </parameters>

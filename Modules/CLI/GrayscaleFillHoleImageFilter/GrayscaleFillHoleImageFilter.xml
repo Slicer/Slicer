@@ -2,28 +2,28 @@
 <executable>
   <category>Filtering.Morphology</category>
   <title>Grayscale Fill Hole Image Filter</title>
-  <description>GrayscaleFillholeImageFilter fills holes in a grayscale image.  Holes are local minima in the grayscale topography that are not connected to boundaries of the image. Gray level values adjacent to a hole are extrapolated across the hole.\n\nThis filter is used to smooth over local minima without affecting the values of local maxima.  If you take the difference between the output of this filter and the original image (and perhaps threshold the difference above a small value), you'll obtain a map of the local minima.\n\nThis filter uses the itkGrayscaleGeodesicErodeImageFilter.  It provides its own input as the "mask" input to the geodesic erosion.  The "marker" image for the geodesic erosion is constructed such that boundary pixels match the boundary pixels of the input image and the interior pixels are set to the maximum pixel value in the input image.\n\n Geodesic morphology and the Fillhole algorithm is described in Chapter 6 of Pierre Soille's book "Morphological Image Analysis: Principles and Applications", Second Edition, Springer, 2003. \n\n A companion filter, Grayscale Grind Peak, removes peaks in grayscale images.</description>
+  <description><![CDATA[GrayscaleFillholeImageFilter fills holes in a grayscale image.  Holes are local minima in the grayscale topography that are not connected to boundaries of the image. Gray level values adjacent to a hole are extrapolated across the hole.\n\nThis filter is used to smooth over local minima without affecting the values of local maxima.  If you take the difference between the output of this filter and the original image (and perhaps threshold the difference above a small value), you'll obtain a map of the local minima.\n\nThis filter uses the itkGrayscaleGeodesicErodeImageFilter.  It provides its own input as the "mask" input to the geodesic erosion.  The "marker" image for the geodesic erosion is constructed such that boundary pixels match the boundary pixels of the input image and the interior pixels are set to the maximum pixel value in the input image.\n\n Geodesic morphology and the Fillhole algorithm is described in Chapter 6 of Pierre Soille's book "Morphological Image Analysis: Principles and Applications", Second Edition, Springer, 2003. \n\n A companion filter, Grayscale Grind Peak, removes peaks in grayscale images.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GrayscaleFillHoleImageFilter</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

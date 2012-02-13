@@ -2,46 +2,46 @@
 <executable>
   <category>Surface Models</category>
   <title>Model To Label Map</title>
-  <description>Intersects an input model with an reference volume and produces an output label map.</description>
+  <description><![CDATA[Intersects an input model with an reference volume and produces an output label map.]]></description>
   <version>0.1.0.$Revision: 8643 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/PolyDataToLabelMap</documentation-url>
   <license/>
   <contributor>Nicole Aucoin BWH, Xiaodong Tao, GE</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Settings</label>
-    <description>Parameter setting</description>
+    <description><![CDATA[Parameter setting]]></description>
     <float>
       <name>sampleDistance</name>
       <longflag>distance</longflag>
-      <description>Sample distance</description>
+      <description><![CDATA[Sample distance]]></description>
       <label>Sample distance</label>
       <default>1</default>
     </float>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output</description>
+    <description><![CDATA[Input/output]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume</description>
+      <description><![CDATA[Input volume]]></description>
     </image>
     <geometry type="model">
       <name>surface</name>
       <label>Model</label>
       <channel>input</channel>
       <index>1</index>
-      <description>Model</description>
+      <description><![CDATA[Model]]></description>
     </geometry>
     <image type="label">
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description>The label volume</description>
+      <description><![CDATA[The label volume]]></description>
     </image>
   </parameters>
 </executable>

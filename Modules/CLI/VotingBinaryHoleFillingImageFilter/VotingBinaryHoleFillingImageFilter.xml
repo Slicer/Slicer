@@ -2,60 +2,60 @@
 <executable>
   <category>Filtering</category>
   <title>Voting Binary Hole Filling Image Filter</title>
-  <description>Applies a voting operation in order to fill-in cavities. This can be used for smoothing contours and for filling holes in binary images. This technique is used frequently when segmenting complete organs that may have ducts or vasculature that may not have been included in the initial segmentation, e.g. lungs, kidneys, liver.</description>
+  <description><![CDATA[Applies a voting operation in order to fill-in cavities. This can be used for smoothing contours and for filling holes in binary images. This technique is used frequently when segmenting complete organs that may have ducts or vasculature that may not have been included in the initial segmentation, e.g. lungs, kidneys, liver.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/VotingBinaryHoleFillingImageFilter</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This command module was derived from Insight/Examples/Filtering/VotingBinaryHoleFillingImageFilter (copyright) Insight Software Consortium</acknowledgements>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples/Filtering/VotingBinaryHoleFillingImageFilter (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters>
     <label>Binary Hole Filling Parameters</label>
-    <description>Parameters for Hole Filling</description>
+    <description><![CDATA[Parameters for Hole Filling]]></description>
     <integer-vector>
       <name>radius</name>
       <longflag>--radius</longflag>
-      <description>The radius of a hole to be filled</description>
+      <description><![CDATA[The radius of a hole to be filled]]></description>
       <label>Maximum Radius</label>
       <default>1,1,1</default>
     </integer-vector>
     <integer>
       <name>majorityThreshold</name>
       <longflag>--majorityThreshold</longflag>
-      <description>The number of pixels over 50% that will decide whether an OFF pixel will become ON or not. For example, if the neighborhood of a pixel has 124 pixels (excluding itself), the 50% will be 62, and if you set a Majority threshold of 5, that means that the filter will require 67 or more neighbor pixels to be ON in order to switch the current OFF pixel to ON.</description>
+      <description><![CDATA[The number of pixels over 50% that will decide whether an OFF pixel will become ON or not. For example, if the neighborhood of a pixel has 124 pixels (excluding itself), the 50% will be 62, and if you set a Majority threshold of 5, that means that the filter will require 67 or more neighbor pixels to be ON in order to switch the current OFF pixel to ON.]]></description>
       <label>Majority Threshold</label>
       <default>1</default>
     </integer>
     <integer>
       <name>background</name>
       <longflag>--background</longflag>
-      <description>The value associated with the background (not object)</description>
+      <description><![CDATA[The value associated with the background (not object)]]></description>
       <label>Background</label>
       <default>0</default>
     </integer>
     <integer>
       <name>foreground</name>
       <longflag>--foreground</longflag>
-      <description>The value associated with the foreground (object)</description>
+      <description><![CDATA[The value associated with the foreground (object)]]></description>
       <label>Foreground</label>
       <default>255</default>
     </integer>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image type="label">
       <name>inputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be filtered</description>
+      <description><![CDATA[Input volume to be filtered]]></description>
     </image>
     <image type="label">
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Output filtered</description>
+      <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
 </executable>

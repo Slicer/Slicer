@@ -2,41 +2,41 @@
 <executable>
   <category>Legacy.Filtering</category>
   <title>Resample Scalar Volume</title>
-  <description>Resampling an image is an important task in image analysis. It is especially important in the frame of image registration. This module implements image resampling through the use of itk Transforms. This module uses an Identity Transform. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. Several interpolators are available: linear, nearest neighbor, bspline and five flavors of sinc. The sinc interpolators, although more precise, are much slower than the linear and nearest neighbor interpolator. To resample label volumnes, nearest neighbor interpolation should be used exclusively.</description>
+  <description><![CDATA[Resampling an image is an important task in image analysis. It is especially important in the frame of image registration. This module implements image resampling through the use of itk Transforms. This module uses an Identity Transform. The resampling is controlled by the Output Spacing. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. Several interpolators are available: linear, nearest neighbor, bspline and five flavors of sinc. The sinc interpolators, although more precise, are much slower than the linear and nearest neighbor interpolator. To resample label volumnes, nearest neighbor interpolation should be used exclusively.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ResampleVolume</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Resampling Parameters</label>
-    <description>Parameters used for resampling</description>
+    <description><![CDATA[Parameters used for resampling]]></description>
     <float-vector>
       <name>outputPixelSpacing</name>
       <flag>-s</flag>
       <longflag>--spacing</longflag>
-      <description>Spacing along each dimension (0 means use input spacing)</description>
+      <description><![CDATA[Spacing along each dimension (0 means use input spacing)]]></description>
       <label>Spacing</label>
       <default>0,0,0</default>
     </float-vector>
-    <string-enumeration><name>interpolationType</name><flag>-i</flag><longflag>--interpolation</longflag><description>Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;</description><label>Interpolation</label><element>linear</element><element>nearestNeighbor</element><element>bspline</element><element>hamming</element><element>cosine</element>'<element>welch</element><element>lanczos</element>'<element>blackman</element><default>linear</default></string-enumeration>
+    <string-enumeration><name>interpolationType</name><flag>-i</flag><longflag>--interpolation</longflag><description><![CDATA[Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;]]></description><label>Interpolation</label><element>linear</element><element>nearestNeighbor</element><element>bspline</element><element>hamming</element><element>cosine</element>'<element>welch</element><element>lanczos</element>'<element>blackman</element><default>linear</default></string-enumeration>
   </parameters>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
       <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume to be resampled</description>
+      <description><![CDATA[Input volume to be resampled]]></description>
     </image>
     <image>
       <name>OutputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>Resampled Volume</description>
+      <description><![CDATA[Resampled Volume]]></description>
     </image>
   </parameters>
 </executable>

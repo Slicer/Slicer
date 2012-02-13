@@ -2,138 +2,138 @@
 <executable>
   <category>Core</category>
   <title>Volumes</title>
-  <description>This module is used for changing the appearance of various volume types.</description>
+  <description><![CDATA[This module is used for changing the appearance of various volume types.]]></description>
   <version>4.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Volumes</documentation-url>
   <license>slicer4</license>
   <contributor>Steve Pieper (Isomics Inc.), Julien Finet (Kitware Inc.), Alex Yarmarkovich (Isomics Inc.), Nicole Aucoin (BWH)</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Active Volume</label>
-    <description>Select the volume to display and operate on -- the module's Display interface will change to show controls appropriate for the volume type.</description>
+    <description><![CDATA[Select the volume to display and operate on -- the module's Display interface will change to show controls appropriate for the volume type.]]></description>
   </parameters>
   <parameters>
     <label>Volume Information</label>
-    <description>Information about the selected volume.  Some fields can be edited to correctly describe, for example, when loading incompletely specified image data such as a sequence of jpeg files.  Use caution however, since changing properties such as Image Spacing will impact the physical accuracy of some calculations such as Label Statistics.</description>
+    <description><![CDATA[Information about the selected volume.  Some fields can be edited to correctly describe, for example, when loading incompletely specified image data such as a sequence of jpeg files.  Use caution however, since changing properties such as Image Spacing will impact the physical accuracy of some calculations such as Label Statistics.]]></description>
     <parameter>
       <label>Image Dimensions</label>
-      <description>The number of pixels in "IJK" space - this is the way the data is arranged in memory.  The IJK indices (displayed in the DataProbe) go from 0 to dimension-1 in each direction.</description>
+      <description><![CDATA[The number of pixels in "IJK" space - this is the way the data is arranged in memory.  The IJK indices (displayed in the DataProbe) go from 0 to dimension-1 in each direction.]]></description>
     </parameter>
     <parameter>
       <label>Image Spacing</label>
-      <description>The physical distance between pixel centers when mapped to patient space expressed in millimeters.</description>
+      <description><![CDATA[The physical distance between pixel centers when mapped to patient space expressed in millimeters.]]></description>
     </parameter>
     <parameter>
       <label>Image Origin</label>
-      <description>The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space.  Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions.  See http://www.slicer.org/slicerWiki/index.php/Coordinate_systems for more information.</description>
+      <description><![CDATA[The location of the center of the 0,0,0 (IJK) pixel expressed with respect to patient space.  Patient space is organized with respect to the subject's Right, Anterior, and Superior anatomical directions.  See http://www.slicer.org/slicerWiki/index.php/Coordinate_systems for more information.]]></description>
     </parameter>
     <parameter>
       <label>Center Volume</label>
-      <description>This button will adjust the Image Origin so that the entire volume is centered around 0,0,0 in patient space.</description>
+      <description><![CDATA[This button will adjust the Image Origin so that the entire volume is centered around 0,0,0 in patient space.]]></description>
     </parameter>
     <parameter>
       <label>Scan Order</label>
-      <description>Describes the image orientation (how the IJK space is oriented with respect to patient RAS.</description>
+      <description><![CDATA[Describes the image orientation (how the IJK space is oriented with respect to patient RAS.]]></description>
     </parameter>
     <parameter>
       <label>Number of Scalars</label>
-      <description>Most CT or MR scans have one scalar component (grayscale).  Color images have three components (red, green, blue).  Tensor images have 9 components.  For diffusion weighted volumes this indicates the number of baseline and gradient volumes.</description>
+      <description><![CDATA[Most CT or MR scans have one scalar component (grayscale).  Color images have three components (red, green, blue).  Tensor images have 9 components.  For diffusion weighted volumes this indicates the number of baseline and gradient volumes.]]></description>
     </parameter>
     <parameter>
       <label>Scalars Type</label>
-      <description>Tells the computer representation of each pixel.  Most operations work independent of scalar type.  Label map volumes must be of type Short for use with the Editor module.</description>
+      <description><![CDATA[Tells the computer representation of each pixel.  Most operations work independent of scalar type.  Label map volumes must be of type Short for use with the Editor module.]]></description>
     </parameter>
     <parameter>
       <label>Filename</label>
-      <description>Path to the file which this volume was loaded from/saved to</description>
+      <description><![CDATA[Path to the file which this volume was loaded from/saved to]]></description>
     </parameter>
     <parameter>
       <label>LabelMap</label>
-      <description>Indicates and controls if the Volume is a label map</description>
+      <description><![CDATA[Indicates and controls if the Volume is a label map]]></description>
     </parameter>
     <parameter>
       <label>Window/Level Presets</label>
-      <description>Loaded from DICOM headers defined by scanner or by technician.</description>
+      <description><![CDATA[Loaded from DICOM headers defined by scanner or by technician.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Display</label>
-    <description>Set of visualization controls appropriate for the currently selected volume.  Not all controls are available for all volume types.</description>
+    <description><![CDATA[Set of visualization controls appropriate for the currently selected volume.  Not all controls are available for all volume types.]]></description>
     <parameter>
       <label>Lookup Table</label>
-      <description>Select the color mapping for scalar volumes to colors.</description>
+      <description><![CDATA[Select the color mapping for scalar volumes to colors.]]></description>
     </parameter>
     <parameter>
       <label>Interpolate</label>
-      <description>When checked, slice views will display linearly interpolated slices through input volumes.  Unchecked indicates nearest neighbor resampling</description>
+      <description><![CDATA[When checked, slice views will display linearly interpolated slices through input volumes.  Unchecked indicates nearest neighbor resampling]]></description>
     </parameter>
     <parameter>
       <label>Window Level Presets</label>
-      <description>Predefinied shortcuts to window/level and color table combinations for common visualization requirements.</description>
+      <description><![CDATA[Predefinied shortcuts to window/level and color table combinations for common visualization requirements.]]></description>
     </parameter>
     <parameter>
       <label>Window/Level Controls</label>
-      <description>Double slider with text input to define the range of input volume data that should be mapped to the display grayscale.  Auto window level tries to estimate the intensity range of the foreground image data.</description>
+      <description><![CDATA[Double slider with text input to define the range of input volume data that should be mapped to the display grayscale.  Auto window level tries to estimate the intensity range of the foreground image data.]]></description>
     </parameter>
     <parameter>
       <label>Threshold</label>
-      <description>Controls the range of the image that should be considered transparent when used in the foreground layer of the slice display.  Same parameters also control transparency of slice models displayed in the 3D viewers.</description>
+      <description><![CDATA[Controls the range of the image that should be considered transparent when used in the foreground layer of the slice display.  Same parameters also control transparency of slice models displayed in the 3D viewers.]]></description>
     </parameter>
     <parameter>
       <label>Histogram</label>
-      <description>Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.</description>
+      <description><![CDATA[Shows the number of pixels (y axis) vs the image intensity (x axis) over a background of the current window/level and threshold mapping.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Diffusion Weighted Volumes</label>
-    <description>The following controls show up when a DWI volume is selected</description>
+    <description><![CDATA[The following controls show up when a DWI volume is selected]]></description>
     <parameter>
       <label>DWI Component</label>
-      <description>Selects the baseline or diffusion gradient direction volume to display.</description>
+      <description><![CDATA[Selects the baseline or diffusion gradient direction volume to display.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Diffusion Tensor Volumes</label>
-    <description>The following controls show up when a DTI volume is selected</description>
+    <description><![CDATA[The following controls show up when a DTI volume is selected]]></description>
     <parameter>
       <label>Scalar Mode</label>
-      <description>Mapping from tensor to scalar.</description>
+      <description><![CDATA[Mapping from tensor to scalar.]]></description>
     </parameter>
     <parameter>
       <label>Glyphs on Slices Display</label>
-      <description>Allows display of graphics visualizations of tensors on one or more of the standard Red, Green, or Yellow slice views.</description>
+      <description><![CDATA[Allows display of graphics visualizations of tensors on one or more of the standard Red, Green, or Yellow slice views.]]></description>
     </parameter>
     <parameter>
       <label>Opacity</label>
-      <description>How much of the underlying image shows through the glyphs.</description>
+      <description><![CDATA[How much of the underlying image shows through the glyphs.]]></description>
     </parameter>
     <parameter>
       <label>Scalar Color Map</label>
-      <description>How scalar measures of tensor are mapped to color.</description>
+      <description><![CDATA[How scalar measures of tensor are mapped to color.]]></description>
     </parameter>
     <parameter>
       <label>Color by Scalar</label>
-      <description>Which scalar metric is used to determine the color of the glyphs.</description>
+      <description><![CDATA[Which scalar metric is used to determine the color of the glyphs.]]></description>
     </parameter>
     <parameter>
       <label>Scalar Range</label>
-      <description>Defines the min-max range of the scalar mapping to color.  When enabled, allows a consistent color mapping independent of the full range of the currently displayed item (if not selected color range will cover min-max of the currently displayed data).</description>
+      <description><![CDATA[Defines the min-max range of the scalar mapping to color.  When enabled, allows a consistent color mapping independent of the full range of the currently displayed item (if not selected color range will cover min-max of the currently displayed data).]]></description>
     </parameter>
     <parameter>
       <label>Glyph Type</label>
-      <description>Tubes and line show direction of eigen vector of tensor (major, middle, or minimum as selected by the Glyph Eigenvector parameter).  Ellipsoid shows direction and relative scale of all three eigenvectors.</description>
+      <description><![CDATA[Tubes and line show direction of eigen vector of tensor (major, middle, or minimum as selected by the Glyph Eigenvector parameter).  Ellipsoid shows direction and relative scale of all three eigenvectors.]]></description>
     </parameter>
     <parameter>
       <label>Scale Factor</label>
-      <description>Controls size of glyphs.  There are no physical units for this parameter.</description>
+      <description><![CDATA[Controls size of glyphs.  There are no physical units for this parameter.]]></description>
     </parameter>
     <parameter>
       <label>Spacing</label>
-      <description>Controls the number of glyphs on the slice view.</description>
+      <description><![CDATA[Controls the number of glyphs on the slice view.]]></description>
     </parameter>
     <parameter>
       <label>Glyph Eigenvector</label>
-      <description>Selects which aspect of tensor controls orientation of glyphs.</description>
+      <description><![CDATA[Selects which aspect of tensor controls orientation of glyphs.]]></description>
     </parameter>
   </parameters>
 </executable>

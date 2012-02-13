@@ -2,38 +2,38 @@
 <executable>
   <category>Converters</category>
   <title>Orient Scalar Volume</title>
-  <description>Orients an output volume. Rearranges the slices in a volume according to the selected orientation. The slices are not interpolated. They are just reordered and/or permuted. The resulting volume will cover the original volume. NOTE: since Slicer takes into account the orientation of a volume, the re-oriented volume will not show any difference from the original volume, To see the difference, save the volume and display it with a system that either ignores the orientation of the image (e.g. Paraview) or displays individual images.</description>
+  <description><![CDATA[Orients an output volume. Rearranges the slices in a volume according to the selected orientation. The slices are not interpolated. They are just reordered and/or permuted. The resulting volume will cover the original volume. NOTE: since Slicer takes into account the orientation of a volume, the re-oriented volume will not show any difference from the original volume, To see the difference, save the volume and display it with a system that either ignores the orientation of the image (e.g. Paraview) or displays individual images.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/OrientImage</documentation-url>
   <license/>
   <contributor>Bill Lorensen</contributor>
-  <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume1</name>
       <label>Input Volume 1</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume 1</description>
+      <description><![CDATA[Input volume 1]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
       <index>1</index>
-      <description>The oriented volume</description>
+      <description><![CDATA[The oriented volume]]></description>
     </image>
   </parameters>
   <parameters>
     <label>Orientation Parameters</label>
-    <description>Orientation of output</description>
+    <description><![CDATA[Orientation of output]]></description>
     <string-enumeration>
       <name>orientation</name>
       <flag>o</flag>
       <longflag>orientation</longflag>
-      <description>Orientation choices</description>
+      <description><![CDATA[Orientation choices]]></description>
       <default>LPS</default>
       <label>Orientation</label>
       <element>Axial</element>
