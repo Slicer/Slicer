@@ -145,7 +145,7 @@ QString qMRMLChartWidget::viewLabel()const
 void qMRMLChartWidget::setColorLogic(vtkMRMLColorLogic* colorLogic)
 {
   Q_D(const qMRMLChartWidget);
-  return d->ChartView->setColorLogic(colorLogic);
+  d->ChartView->setColorLogic(colorLogic);
 }
 
 //---------------------------------------------------------------------------

@@ -38,6 +38,7 @@
 #include <qMRMLColorPickerWidget.h>
 
 // Slicer Logic includes
+#include <vtkSlicerApplicationLogic.h>
 #include "vtkSlicerColorLogic.h"
 
 //-----------------------------------------------------------------------------
@@ -98,6 +99,9 @@ void qSlicerColorsModule::setup()
     return;
     }
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
+
+  this->appLogic()->SetColorLogic(colorLogic);
+
   app->coreIOManager()->registerIO(
     new qSlicerColorsIO(colorLogic, this));
 

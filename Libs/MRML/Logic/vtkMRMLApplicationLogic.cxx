@@ -142,6 +142,7 @@ vtkMRMLModelHierarchyLogic* vtkMRMLApplicationLogic::GetModelHierarchyLogic()con
 void vtkMRMLApplicationLogic::SetColorLogic(vtkMRMLColorLogic* colorLogic)
 {
   this->Internal->ColorLogic = colorLogic;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
