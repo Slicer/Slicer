@@ -215,6 +215,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   if (!cn)
     {
+    q->setHtml("");
+    q->show();
     return;
     }
 
