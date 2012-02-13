@@ -35,6 +35,9 @@
 #include "vtkSlicerVectorImageExplorerModuleLogicExport.h"
 
 class vtkDoubleArray;
+class vtkMRMLScalarVolumeNode;
+class vtkMRMLVolumeArchetypeStorageNode;
+class vtkMRMLScalarVolumeDisplayNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerVectorImageExplorerLogic :
@@ -48,7 +51,10 @@ public:
 
   /// Initialize listening to MRML events
   void InitializeEventListeners();
+  const int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
+                               std::string dcmTag, vtkDoubleArray*);
 
+  int getNum(int i){return 1;}
 protected:
   vtkSlicerVectorImageExplorerLogic();
   virtual ~vtkSlicerVectorImageExplorerLogic();
@@ -58,7 +64,8 @@ protected:
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-
+  const void StoreVolumeNode(const std::vector<std::string>& filenames,
+                             const std::string& seriesFileName);
 private:
 
   vtkSlicerVectorImageExplorerLogic(const vtkSlicerVectorImageExplorerLogic&); // Not implemented
