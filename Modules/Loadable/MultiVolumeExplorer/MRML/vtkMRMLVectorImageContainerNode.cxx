@@ -227,5 +227,4 @@ void vtkMRMLVectorImageContainerNode::PrintSelf(ostream& os, vtkIndent indent)
     }
   os << "VectorLabelName: " << this->VectorLabelName << std::endl;
 }
-
 // End
