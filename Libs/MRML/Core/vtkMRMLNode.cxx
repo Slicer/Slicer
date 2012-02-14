@@ -204,6 +204,17 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "Selectable: " << this->Selectable << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
+  if (this->Attributes.size())
+    {
+    os << indent << "Attributes:\n";
+    AttributesType::const_iterator it;
+    AttributesType::const_iterator begin = this->Attributes.begin();
+    AttributesType::const_iterator end = this->Attributes.end();
+    for (it = begin; it != end; ++it)
+      {
+      os << indent.GetNextIndent() << it->first << ':' << it->second << "\n";
+      }
+    }
 }
 
 //----------------------------------------------------------------------------

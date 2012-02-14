@@ -837,7 +837,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   // create a display node
   vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
 
-   scene->AddNode(labelDisplayNode);
+  scene->AddNode(labelDisplayNode);
 
   // create a volume node as copy of source volume
   vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
@@ -848,6 +848,12 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   labelNode->SetAndObserveStorageNodeID(NULL);
   labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
+
+  // associate it with the source volume
+  if (volumeNode->GetID())
+    {
+    labelNode->SetAttribute("AssociatedNodeID", volumeNode->GetID());
+    }
 
   // restore modifiedSinceRead value since copy cause Modify on image data.
   volumeNode->SetModifiedSinceRead(modifiedSinceRead);
