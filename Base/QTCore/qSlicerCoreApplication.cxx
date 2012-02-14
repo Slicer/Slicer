@@ -1000,16 +1000,38 @@ ctkErrorLogModel* qSlicerCoreApplication::errorLogModel()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::libraries()const
+{
+  QString librariesText(
+    "Built on top of:"
+    "<a href=\"http://www.vtk.org/\"> VTK </a>, "
+    "<a href=\"http://www.itk.org/\"> ITK</a>,"
+    "<a href=\"http://www.commontk.org/index.php/Main_Page\"> CTK</a>,"
+    "<a href=\"http://qt.nokia.com/products/\"> Qt</a>,"
+    "<a href=\"http://www.tcl.tk\"> Tcl/Tk</a>,"
+    "<a href=\"http://teem.sf.net\"> Teem</a>,"
+    "<a href=\"http://www.python.org/\"> Python</a>,"
+    "<a href=\"http://dicom.offis.de/dcmtk\"> DCMTK</a>,"
+    "<a href=\"http://www.jqplot.com/\"> JQPlot</a><br />");
+  return librariesText;
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::copyrights()const
 {
   QString copyrightsText(
+    "<pre>                    "
+    "<a href=\"http://slicer.org/pages/License\">Licensing Information</a>                    "
+    "<a href=\"http://slicer.org/\">Website</a>                   "
+    "<a href=\"http://slicer.org/pages/Acknowledgments\">Acknowledgments</a>"
+    "</pre>");
+  return copyrightsText;
+}
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::acknowledgment()const
+{
+  QString acknowledgmentText(
     "Slicer is NOT an FDA approved medical device.\n\n"
-    "See www.slicer.org for license details.\n\n"
-    "See http://slicer.org/pages/Acknowledgments\n\n"
-    "VTK http://www.vtk.org/copyright.php\n\n"
-    "ITK http://www.itk.org/HTML/Copyright.htm\n\n"
-    "Tcl/Tk http://www.tcl.tk\n\n"
-    "Teem:  http://teem.sf.ne\n\nt"
     "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.\n\n"
     "Special thanks to the NIH and our other supporters.\n\n"
     "This work is part of the National Alliance for Medical Image Computing "
@@ -1017,7 +1039,7 @@ QString qSlicerCoreApplication::copyrights()const
     "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
     "National Centers for Biomedical Computing can be obtained from "
     "http://nihroadmap.nih.gov/bioinformatics.\n\n");
-  return copyrightsText;
+  return acknowledgmentText;
 }
 
 //-----------------------------------------------------------------------------

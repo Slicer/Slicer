@@ -6,49 +6,58 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>518</height>
+    <width>853</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>About 3D Slicer</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
     <number>0</number>
    </property>
-   <item>
+   <item row="0" column="0">
     <widget class="QLabel" name="SlicerLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="pixmap">
-      <pixmap resource="../SlicerQT.qrc">:/Images/SlicerSplashScreen.png</pixmap>
+      <pixmap resource="../SlicerQT.qrc">:/Images/SlicerLogo.png</pixmap>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
      </property>
      <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <set>Qt::AlignLeading</set>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QTextEdit" name="CreditsTextEdit">
+   <item row="0" column="2">
+    <widget class="QTextBrowser" name="CreditsTextBrowser">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
      <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="0" colspan="3">
+    <widget class="QTextBrowser" name="SlicerCreditTextBrowser">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Ok</set>
-     </property>
-     <property name="centerButtons">
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
@@ -58,38 +67,5 @@
  <resources>
   <include location="../SlicerQT.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>qSlicerAboutDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>qSlicerAboutDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

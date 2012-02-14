@@ -45,13 +45,22 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->setupUi(this);
 
   qSlicerApplication* slicer = qSlicerApplication::application();
-  d->CreditsTextEdit->append(
-    slicer->applicationName() + " "
-    + slicer->applicationVersion()+ " "
+  d->CreditsTextBrowser->setFontPointSize(25);
+  d->CreditsTextBrowser->append(slicer->applicationName());
+  d->CreditsTextBrowser->setFontPointSize(11);
+  d->CreditsTextBrowser->append("");
+  d->CreditsTextBrowser->append(
+    slicer->applicationVersion()+ " "
     + "r" + slicer->repositoryRevision());
-  d->CreditsTextEdit->append("");
-  d->CreditsTextEdit->append(slicer->copyrights());
-  d->CreditsTextEdit->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+  d->CreditsTextBrowser->setFontPointSize(6);
+  d->CreditsTextBrowser->append("");
+  d->CreditsTextBrowser->append("");
+  d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
+  d->CreditsTextBrowser->append("");
+  d->CreditsTextBrowser->append(slicer->acknowledgment());
+  d->CreditsTextBrowser->insertHtml(slicer->libraries());
+  d->SlicerCreditTextBrowser->insertHtml(slicer->copyrights());
+  d->CreditsTextBrowser->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
 }
 
 //-----------------------------------------------------------------------------
