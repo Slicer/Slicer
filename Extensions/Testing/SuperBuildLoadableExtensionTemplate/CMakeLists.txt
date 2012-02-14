@@ -15,6 +15,7 @@ endif()
 #   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
 #-----------------------------------------------------------------------------
 set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate)
+set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
 
 #-----------------------------------------------------------------------------
@@ -53,7 +54,6 @@ add_subdirectory(Logic)
 # Extension description
 #-----------------------------------------------------------------------------
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_STATUS "Beta")
 set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any

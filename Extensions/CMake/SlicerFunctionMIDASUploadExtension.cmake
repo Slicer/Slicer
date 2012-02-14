@@ -30,12 +30,12 @@
 function(SlicerFunctionMIDASUploadExtension)
   include(CMakeParseArguments)
   set(options)
-  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
+  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity check
-  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
@@ -61,6 +61,7 @@ function(SlicerFunctionMIDASUploadExtension)
   get_filename_component(basename "${MY_PACKAGE_FILEPATH}" NAME)
   _SlicerEscapeForUrl(basename "${basename}")
   _SlicerEscapeForUrl(productname "${MY_EXTENSION_NAME}")
+  _SlicerEscapeForUrl(category "${MY_EXTENSION_CATEGORY}")
   _SlicerEscapeForUrl(slicer_revision "${MY_SLICER_REVISION}")
   _SlicerEscapeForUrl(revision "${MY_EXTENSION_SOURCE_REVISION}")
   _SlicerEscapeForUrl(repository_url "${MY_EXTENSION_REPOSITORY_URL}")
@@ -80,6 +81,7 @@ function(SlicerFunctionMIDASUploadExtension)
   set(params "${params}&arch=${arch}")
   set(params "${params}&submissiontype=${submissiontype}")
   set(params "${params}&packagetype=${packagetype}")
+  set(params "${params}&category=${category}")
   set(params "${params}&name=${basename}")
   set(params "${params}&productname=${productname}")
   set(params "${params}&codebase=Slicer4")
@@ -145,8 +147,8 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
     set(slicer_revision_105_nightly_release "4.2")
 
     set(extension_infos
-      "ExtensionA^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5"
-      "ExtensionB^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4")
+      "ExtensionA^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5^^Foo"
+      "ExtensionB^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar")
 
     foreach(submission_type "experimental" "nightly")
       foreach(operating_system "linux" "macosx" "win")
@@ -157,12 +159,14 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
               list(GET extension_info_list 0 extension_name)
               list(GET extension_info_list 1 extension_repository_url)
               list(GET extension_info_list 2 extension_source_revision)
+              list(GET extension_info_list 3 extension_category)
 
               #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
 
               set(package_filepath ${TMP_DIR}/${slicer_revision}-${operating_system}-${architecture}-${extension_name}-${extension_source_revision}-${Test_TESTDATE}-${submission_type}.txt)
               file(WRITE ${package_filepath} "
                 extension_name: ${extension_name}
+                extension_category: ${extension_category}
                 extension_repository_url: ${extension_repository_url}
                 extension_source_revision: ${extension_source_revision}
                 Test_TESTDATE: ${Test_TESTDATE}
@@ -185,6 +189,7 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 SUBMISSION_TYPE ${submission_type}
                 SLICER_REVISION ${slicer_revision}
                 EXTENSION_NAME ${extension_name}
+                EXTENSION_CATEGORY ${extension_category}
                 EXTENSION_REPOSITORY_URL ${extension_repository_url}
                 EXTENSION_SOURCE_REVISION ${extension_source_revision}
                 OPERATING_SYSTEM ${operating_system}

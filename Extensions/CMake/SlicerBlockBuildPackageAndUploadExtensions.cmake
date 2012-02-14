@@ -61,6 +61,7 @@ foreach(extension_name ${EXTENSION_LIST})
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
   string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS "${EXTENSION_SEXT_DEPENDS}")
+  set(EXTENSION_CATEGORY ${EXTENSION_SEXT_CATEGORY})
 
   #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY STATUS DESCRIPTION)
   #  message(${v}:${EXTENSION_SEXT_${v}})

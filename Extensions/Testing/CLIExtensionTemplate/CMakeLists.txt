@@ -17,6 +17,20 @@ endif()
 set(EXTENSION_NAME CLIExtensionTemplate)
 
 #-----------------------------------------------------------------------------
+# Extension meta information
+#-----------------------------------------------------------------------------
+set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+set(EXTENSION_CATEGORY "Examples")
+set(EXTENSION_CONTRIBUTOR "Bill Lorensen &amp; Jean-Christophe Fillion-Robin")
+set(EXTENSION_MAJOR_VERSION 0)
+set(EXTENSION_MINOR_VERSION 1)
+set(EXTENSION_PATCH_VERSION 0)
+set(EXTENSION_STATUS "Beta")
+set(EXTENSION_DESCRIPTION "This is an example of CLI module built as an extension")
+set(EXTENSION_ACKNOWLEDGEMENTS "This work was supported by ...")
+set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
+
+#-----------------------------------------------------------------------------
 # Prerequisites
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
@@ -34,18 +48,6 @@ if(NOT Slicer_SOURCE_DIR)
 
   include(SlicerEnableExtensionTesting)
 endif()
-
-# Extension meta information
-set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-set(EXTENSION_CATEGORY "Examples")
-set(EXTENSION_CONTRIBUTOR "Bill Lorensen &amp; Jean-Christophe Fillion-Robin")
-set(EXTENSION_MAJOR_VERSION 0)
-set(EXTENSION_MINOR_VERSION 1)
-set(EXTENSION_PATCH_VERSION 0)
-set(EXTENSION_STATUS "Beta")
-set(EXTENSION_DESCRIPTION "This is an example of CLI module built as an extension")
-set(EXTENSION_ACKNOWLEDGEMENTS "This work was supported by ...")
-set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION}) 
 
 # Configure XML description
 configure_file(
@@ -66,7 +68,7 @@ set(cli_module_include_directories
 # Additional source files
 set(cli_module_SRCS
   )
-  
+
 # Additional Target libraries
 set(cli_module_target_libraries
   ${ITK_LIBRARIES}
