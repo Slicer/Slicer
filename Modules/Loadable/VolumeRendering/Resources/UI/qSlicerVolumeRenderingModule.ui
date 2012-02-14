@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>580</height>
+    <width>344</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,17 +21,17 @@
     <number>0</number>
    </property>
    <item row="2" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton" native="true">
+    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Inputs</string>
      </property>
-     <property name="checked" stdset="0">
+     <property name="checked">
       <bool>false</bool>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -46,16 +46,16 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="DisplayNodeComboBox" native="true">
+       <widget class="qMRMLNodeComboBox" name="DisplayNodeComboBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="nodeTypes" stdset="0">
+        <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLVolumeRenderingDisplayNode</string>
          </stringlist>
         </property>
-        <property name="renameEnabled" stdset="0">
+        <property name="renameEnabled">
          <bool>true</bool>
         </property>
        </widget>
@@ -68,16 +68,16 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="ROINodeComboBox" native="true">
-        <property name="nodeTypes" stdset="0">
+       <widget class="qMRMLNodeComboBox" name="ROINodeComboBox">
+        <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled" stdset="0">
+        <property name="noneEnabled">
          <bool>true</bool>
         </property>
-        <property name="renameEnabled" stdset="0">
+        <property name="renameEnabled">
          <bool>true</bool>
         </property>
        </widget>
@@ -90,16 +90,16 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="VolumePropertyNodeComboBox" native="true">
-        <property name="nodeTypes" stdset="0">
+       <widget class="qMRMLNodeComboBox" name="VolumePropertyNodeComboBox">
+        <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLVolumePropertyNode</string>
          </stringlist>
         </property>
-        <property name="noneEnabled" stdset="0">
+        <property name="noneEnabled">
          <bool>true</bool>
         </property>
-        <property name="renameEnabled" stdset="0">
+        <property name="renameEnabled">
          <bool>true</bool>
         </property>
        </widget>
@@ -112,13 +112,13 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="qMRMLCheckableNodeComboBox" name="ViewCheckableNodeComboBox" native="true">
-        <property name="nodeTypes" stdset="0">
+       <widget class="qMRMLCheckableNodeComboBox" name="ViewCheckableNodeComboBox">
+        <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLViewNode</string>
          </stringlist>
         </property>
-        <property name="baseName" stdset="0">
+        <property name="baseName">
          <string>View</string>
         </property>
        </widget>
@@ -127,12 +127,15 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+     <property name="text">
       <string>Display</string>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>false</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QFormLayout" name="formLayout_11">
       <property name="fieldGrowthPolicy">
@@ -146,7 +149,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox" native="true"/>
+       <widget class="qSlicerPresetComboBox" name="PresetsNodeComboBox"/>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="CropLabel">
@@ -175,12 +178,12 @@
           <property name="text">
            <string>Display ROI</string>
           </property>
-          <property name="indicatorIcon" stdset="0">
-           <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+          <property name="indicatorIcon">
+           <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/VisibleOn.png</normaloff>
             <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
           </property>
-          <property name="indicatorIconSize" stdset="0">
+          <property name="indicatorIconSize">
            <size>
             <width>21</width>
             <height>21</height>
@@ -197,7 +200,7 @@
            <string>Fit to Volume</string>
           </property>
           <property name="icon">
-           <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+           <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
             <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
           </property>
          </widget>
@@ -239,26 +242,29 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="ctkDoubleSlider" name="PresetOffsetSlider" native="true">
+       <widget class="ctkDoubleSlider" name="PresetOffsetSlider">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="toolTip">
          <string>Shift transfer functions</string>
         </property>
-        <property name="value" stdset="0">
+        <property name="value">
          <double>0.500000000000000</double>
         </property>
-        <property name="singleStep" stdset="0">
+        <property name="singleStep">
          <double>0.100000000000000</double>
         </property>
-        <property name="pageStep" stdset="0">
+        <property name="pageStep">
          <double>0.100000000000000</double>
         </property>
-        <property name="maximum" stdset="0">
+        <property name="maximum">
          <double>1.000000000000000</double>
         </property>
-        <property name="handleToolTip" stdset="0">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="handleToolTip">
          <string>%1</string>
         </property>
        </widget>
@@ -277,24 +283,27 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="ctkCollapsibleButton" name="AdvancedCollapsibleButton" native="true">
+    <widget class="ctkCollapsibleButton" name="AdvancedCollapsibleButton">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text" stdset="0">
+     <property name="text">
       <string>Advanced...</string>
      </property>
-     <property name="checked" stdset="0">
+     <property name="checked">
       <bool>false</bool>
      </property>
-     <property name="collapsed" stdset="0">
+     <property name="collapsed">
       <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QTabWidget" name="AdvancedTabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="TechniquesTab">
          <attribute name="title">
@@ -355,20 +364,20 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="ctkSliderWidget" name="FramerateSliderWidget" native="true">
-            <property name="decimals" stdset="0">
+           <widget class="ctkSliderWidget" name="FramerateSliderWidget">
+            <property name="decimals">
              <number>0</number>
             </property>
-            <property name="minimum" stdset="0">
+            <property name="minimum">
              <double>1.000000000000000</double>
             </property>
-            <property name="maximum" stdset="0">
+            <property name="maximum">
              <double>20.000000000000000</double>
             </property>
-            <property name="value" stdset="0">
+            <property name="value">
              <double>8.000000000000000</double>
             </property>
-            <property name="suffix" stdset="0">
+            <property name="suffix">
              <string> fps</string>
             </property>
            </widget>
@@ -431,58 +440,58 @@
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="ctkSliderWidget" name="DistColorBlendingSliderWidget" native="true">
+                  <widget class="ctkSliderWidget" name="DistColorBlendingSliderWidget">
                    <property name="toolTip">
                     <string>Distance Color Blending: Voxels with longer distance to eye/camera would be more darker to reveal depth information in volume. Higher value indicates stronger darking effect. Setting the value to 0 will turn off the effect.</string>
                    </property>
-                   <property name="singleStep" stdset="0">
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
-                   <property name="pageStep" stdset="0">
+                   <property name="pageStep">
                     <double>0.200000000000000</double>
                    </property>
-                   <property name="maximum" stdset="0">
+                   <property name="maximum">
                     <double>1.000000000000000</double>
                    </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="ctkSliderWidget" name="ICPEScaleSliderWidget" native="true">
+                  <widget class="ctkSliderWidget" name="ICPEScaleSliderWidget">
                    <property name="toolTip">
                     <string>Parameter scale (kt) for Illustrative Context Preserving Exploration, which simulates depth penetrating into volume.</string>
                    </property>
-                   <property name="singleStep" stdset="0">
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
-                   <property name="pageStep" stdset="0">
+                   <property name="pageStep">
                     <double>4.000000000000000</double>
                    </property>
-                   <property name="maximum" stdset="0">
+                   <property name="maximum">
                     <double>20.000000000000000</double>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="ctkSliderWidget" name="ICPESmoothnessSliderWidget" native="true">
+                  <widget class="ctkSliderWidget" name="ICPESmoothnessSliderWidget">
                    <property name="toolTip">
                     <string>Parameter smoothness (ks) for Illustrative Context Preserving Exploration.</string>
                    </property>
-                   <property name="singleStep" stdset="0">
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
-                   <property name="pageStep" stdset="0">
+                   <property name="pageStep">
                     <double>0.200000000000000</double>
                    </property>
-                   <property name="maximum" stdset="0">
+                   <property name="maximum">
                     <double>1.000000000000000</double>
                    </property>
-                   <property name="value" stdset="0">
+                   <property name="value">
                     <double>0.500000000000000</double>
                    </property>
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="ctkSliderWidget" name="DepthPeelingSliderWidget" native="true">
+                  <widget class="ctkSliderWidget" name="DepthPeelingSliderWidget">
                    <property name="toolTip">
                     <string>Set threshold for Volumetric Depth Peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.</string>
                    </property>
@@ -567,17 +576,17 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="ctkSliderWidget" name="BgFgRatioSliderWidget" native="true">
-                   <property name="singleStep" stdset="0">
+                  <widget class="ctkSliderWidget" name="BgFgRatioSliderWidget">
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
-                   <property name="pageStep" stdset="0">
+                   <property name="pageStep">
                     <double>0.200000000000000</double>
                    </property>
-                   <property name="maximum" stdset="0">
+                   <property name="maximum">
                     <double>1.000000000000000</double>
                    </property>
-                   <property name="value" stdset="0">
+                   <property name="value">
                     <double>0.500000000000000</double>
                    </property>
                   </widget>
@@ -603,7 +612,7 @@
            <number>0</number>
           </property>
           <item row="1" column="0" colspan="2">
-           <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget" native="true">
+           <widget class="qMRMLVolumePropertyNodeWidget" name="VolumePropertyNodeWidget">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -633,7 +642,7 @@
            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
           </property>
           <item row="0" column="0" colspan="2">
-           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget" native="true"/>
+           <widget class="qMRMLAnnotationROIWidget" name="ROIWidget"/>
           </item>
          </layout>
         </widget>
@@ -660,12 +669,12 @@
        <property name="text">
         <string>Volume:</string>
        </property>
-       <property name="indicatorIcon" stdset="0">
-        <iconset resource="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+       <property name="indicatorIcon">
+        <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
          <normaloff>:/Icons/VisibleOn.png</normaloff>
          <normalon>:/Icons/VisibleOff.png</normalon>:/Icons/VisibleOn.png</iconset>
        </property>
-       <property name="indicatorIconSize" stdset="0">
+       <property name="indicatorIconSize">
         <size>
          <width>21</width>
          <height>21</height>
@@ -676,22 +685,22 @@
     </layout>
    </item>
    <item row="1" column="1">
-    <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox" native="true">
-     <property name="nodeTypes" stdset="0">
+    <widget class="qMRMLNodeComboBox" name="VolumeNodeComboBox">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLScalarVolumeNode</string>
       </stringlist>
      </property>
-     <property name="hideChildNodeTypes" stdset="0">
+     <property name="hideChildNodeTypes">
       <stringlist>
        <string>vtkMRMLDiffusionWeightedVolumeNode</string>
        <string>vtkMRMLDiffusionTensorVolumeNode</string>
       </stringlist>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled" stdset="0">
+     <property name="renameEnabled">
       <bool>true</bool>
      </property>
     </widget>
@@ -700,9 +709,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLCheckableNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
@@ -710,10 +719,30 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerPresetComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qSlicerPresetComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCheckBox</class>
@@ -733,38 +762,19 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qMRMLCheckableNodeComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLCheckableNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLVolumePropertyNodeWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLVolumePropertyNodeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLAnnotationROIWidget</class>
-   <extends>QWidget</extends>
-   <header>qMRMLAnnotationROIWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerPresetComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qSlicerPresetComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ctkCheckablePushButton</class>
-   <extends>QPushButton</extends>
-   <header>ctkCheckablePushButton.h</header>
-  </customwidget>
-  <customwidget>
    <class>ctkDoubleSlider</class>
    <extends>QWidget</extends>
    <header>ctkDoubleSlider.h</header>
   </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
+  <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
  </resources>
  <connections>
   <connection>
