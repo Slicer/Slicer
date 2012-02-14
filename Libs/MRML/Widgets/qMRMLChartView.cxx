@@ -208,6 +208,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
 
   if (!chartnodeid)
     {
+    q->setHtml("");
+    q->show();
     return;
     }
 

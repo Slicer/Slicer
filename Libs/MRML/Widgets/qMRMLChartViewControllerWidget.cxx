@@ -173,10 +173,7 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
   
   this->ChartViewNode->SetChartNodeID(node ? node->GetID() : 0);
 
-  if (node)
-    {
-    q->updateWidgetFromMRML();
-    }
+  q->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
@@ -266,6 +263,19 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
   vtkMRMLChartNode *chartNode = d->chartNode();
   if (!chartNode)
     {
+    // Set the widgets to default states
+    int tindex = d->chartTypeComboBox->findText(QString("Line"));
+    d->chartTypeComboBox->setCurrentIndex(tindex);
+    d->actionShow_Lines->setChecked(true);
+    d->actionShow_Markers->setChecked(false);
+    d->actionShow_Grid->setChecked(true);
+    d->actionShow_Legend->setChecked(true);
+    d->showTitleCheckBox->setChecked(true);
+    d->showXAxisLabelCheckBox->setChecked(true);
+    d->showYAxisLabelCheckBox->setChecked(true);
+    d->titleLineEdit->setText("");
+    d->xAxisLabelLineEdit->setText("");
+    d->yAxisLabelLineEdit->setText("");
     return;
     }
 
@@ -347,7 +357,7 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
   if (propertyValue)
     {
     d->xAxisLabelLineEdit->setText(propertyValue);
-      }
+    }
   else
     {
     d->xAxisLabelLineEdit->clear();
