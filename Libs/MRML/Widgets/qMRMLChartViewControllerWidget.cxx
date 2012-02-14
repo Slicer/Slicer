@@ -23,6 +23,9 @@
 #include <QMenu>
 #include <QHBoxLayout>
 
+// VTK includes
+#include <vtkStringArray.h>
+
 // CTK includes
 #include <ctkLogger.h>
 #include <ctkPopupWidget.h>
@@ -36,6 +39,7 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLDoubleArrayNode.h>
 #include <vtkMRMLChartViewNode.h>
 #include <vtkMRMLChartNode.h>
 #include <vtkMRMLSceneViewNode.h>
@@ -82,6 +86,10 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
 
   // configure the Array selector
   this->arrayComboBox->addAttribute("vtkMRMLDoubleArrayNode", "Array", "1");
+  
+  // Connect Array selector
+  this->connect(this->arrayComboBox, SIGNAL(checkedNodesChanged()),
+                SLOT(onArrayNodesSelected()));
 
   // Connect the Chart Type selector
   this->connect(this->chartTypeComboBox, SIGNAL(activated(const QString&)), SLOT(onChartTypeSelected(const QString&)));
@@ -122,6 +130,8 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->chartComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
   
+  QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   this->arrayComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
 }
 
 //---------------------------------------------------------------------------
@@ -174,6 +184,59 @@ void qMRMLChartViewControllerWidgetPrivate::onChartNodeSelected(vtkMRMLNode * no
   this->ChartViewNode->SetChartNodeID(node ? node->GetID() : 0);
 
   q->updateWidgetFromMRML();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidgetPrivate::onArrayNodesSelected()
+{
+  //Q_Q(qMRMLChartViewControllerWidget);
+
+  if (!this->ChartViewNode)
+    {
+    return;
+    }
+
+  if (!this->chartNode())
+    {
+    return;
+    }
+
+  vtkStringArray *arrayIDs = this->chartNode()->GetArrays();
+  vtkStringArray *arrayNames = this->chartNode()->GetArrayNames();
+
+  // loop over arrays in the widget
+  for (int idx = 0; idx < this->arrayComboBox->nodeCount(); ++idx)
+    {
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->arrayComboBox->nodeFromIndex(idx));
+
+    bool checked = (this->arrayComboBox->checkState(dn) == Qt::Checked);
+
+    // is the node in the chart?
+    bool found = false;
+    for (int j = 0; j < arrayIDs->GetSize(); ++j)
+      {
+      if (!strcmp(dn->GetID(), arrayIDs->GetValue(j).c_str()))
+        {
+        if (!checked)
+          {
+          // array is not checked but currently in the chart, remove it
+          // (might want to cache the old name in case user adds it back)
+          this->chartNode()->RemoveArray(arrayNames->GetValue(j).c_str());
+          }
+        found = true;
+        break;
+        }
+      }
+    if (!found)
+      {
+      if (checked)
+        {
+        // array is checked but not currently in the chart, add it
+        // (need a string for the name, use the GetName() for now).
+        this->chartNode()->AddArray(dn->GetName(), dn->GetID());
+        }
+      }
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -281,6 +344,24 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
 
   // ChartNode selector
   d->chartComboBox->setCurrentNode(chartNode->GetID());
+
+  // Array selector
+  vtkStringArray *arrayIDs = chartNode->GetArrays();
+  bool arrayBlockSignals = d->arrayComboBox->blockSignals(true);
+  for (int idx = 0; idx < d->arrayComboBox->nodeCount(); ++idx)
+    {
+    d->arrayComboBox->setCheckState(d->arrayComboBox->nodeFromIndex(idx), 
+                                    Qt::Unchecked);
+    }
+  for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
+    {
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->mrmlScene()->GetNodeByID( arrayIDs->GetValue(idx).c_str() ));
+    if (dn)
+      {
+      d->arrayComboBox->setCheckState(dn, Qt::Checked);
+      }
+    }
+  d->arrayComboBox->blockSignals(arrayBlockSignals);
 
   // ChartType selector 
   const char *type;

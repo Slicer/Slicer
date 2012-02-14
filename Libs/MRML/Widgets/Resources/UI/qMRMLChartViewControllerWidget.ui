@@ -81,8 +81,21 @@
        </property>
        <property name="nodeTypes">
         <stringlist>
-         <string>qMRMLDoubleArrayNode</string>
+         <string>vtkMRMLDoubleArrayNode</string>
+         <string></string>
         </stringlist>
+       </property>
+       <property name="addEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="removeEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="editEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="renameEnabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

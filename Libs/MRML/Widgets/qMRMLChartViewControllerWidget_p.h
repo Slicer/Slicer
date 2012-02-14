@@ -59,6 +59,9 @@ public slots:
   /// Called after a chart node is selected
   /// using the associated qMRMLNodeComboBox
   void onChartNodeSelected(vtkMRMLNode* node);
+
+  /// Called after an array node is selected using the qMRMLCheckableNodeComboBox
+  void onArrayNodesSelected();
   
   /// Called after a chart type is selected using the qComboBox
   void onChartTypeSelected(const QString&);
