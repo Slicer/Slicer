@@ -100,7 +100,11 @@ endfunction()
 
 
 #
-# Testing - cmake -D<TESTNAME>:BOOL=ON -P SlicerFunctionMIDASUploadExtensionTest.cmake
+# Testing - cmake -DTEST_<TESTNAME>:BOOL=ON -P SlicerFunctionMIDASUploadExtensionTest.cmake
+#
+
+#
+# TESTNAME: SlicerFunctionMIDASUploadExtensionTest
 #
 if(TEST_SlicerFunctionMIDASUploadExtensionTest)
 
@@ -134,19 +138,15 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
     set(source_checkoutdate "2011-12-26 12:21:42 -0500 (Mon, 26 Dec 2011)")
     set(package_type "installer")
 
-    #set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
-    set(slicer_revisions "105" "106")
-    #set(slicer_revision_101_nightly_release "4.0.0")
-    #set(slicer_revision_104_experimental_release "4.0.1")
-    #set(slicer_revision_106_nightly_release "4.2")
+    set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
+    #set(slicer_revisions "105" "106")
+    set(slicer_revision_101_nightly_release "4.0.0")
+    set(slicer_revision_104_experimental_release "4.0.1")
+    set(slicer_revision_105_nightly_release "4.2")
 
     set(extension_infos
       "ExtensionA^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5"
       "ExtensionB^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4")
-
-    #set(slicer_revision_101_nightly_release "4.0.0")
-    #set(slicer_revision_104_experimental_release "4.0.1")
-    #set(slicer_revision_106_nightly_release "4.2")
 
     foreach(submission_type "experimental" "nightly")
       foreach(operating_system "linux" "macosx" "win")
