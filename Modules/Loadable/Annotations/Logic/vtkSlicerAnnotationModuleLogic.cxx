@@ -139,6 +139,22 @@ char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
     vtkErrorMacro("Unable to load fiducial list from : " << filename);
     return nodeID;
     }
+  // get the list name and make a hierarchy node with that name to add the
+  // fids to
+  char *fidListName = node->GetName();
+  vtkMRMLAnnotationHierarchyNode* fidListHierarchyNode =
+      vtkMRMLAnnotationHierarchyNode::New();
+  fidListHierarchyNode->HideFromEditorsOff();
+  if (fidListName)
+    {
+    fidListHierarchyNode->SetName(fidListName);
+    }
+  this->GetMRMLScene()->AddNode(fidListHierarchyNode);
+  // make it a child of the top level node
+  fidListHierarchyNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
+  // and make it active so that the fids will be added to it
+  this->SetActiveHierarchyNodeID(fidListHierarchyNode->GetID());
+  
   // now iterate through the list and make fiducials
   int numFids = node->GetNumberOfFiducials();
   double *color = node->GetColor();
@@ -181,7 +197,9 @@ char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
     
     fnode->Delete();
     }
-  // now remove the legacy node (?)
+  // clean up
+  fidListHierarchyNode->Delete();
+  // remove the legacy node
   this->GetMRMLScene()->RemoveNode(node->GetStorageNode());
   this->GetMRMLScene()->RemoveNode(node);
 
