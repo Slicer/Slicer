@@ -97,7 +97,9 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // logic - make sure the logic knows about this widget
   this->logic()->SetAndObserveWidget(q);
   this->hierarchyTreeView->hideScene();
-
+  // enable scrolling when drag past end of window
+  this->hierarchyTreeView->setFitSizeToVisibleIndexes(false);
+  
   // connect the tree's edit property button to the widget's slot
   QObject::connect(this->hierarchyTreeView, SIGNAL(onPropertyEditButtonClicked(QString)),
                    q, SLOT(propertyEditButtonClicked(QString)));
