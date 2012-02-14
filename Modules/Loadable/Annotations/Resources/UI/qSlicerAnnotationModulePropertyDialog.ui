@@ -761,7 +761,7 @@
                <string>Distance in mm between major ticks</string>
               </property>
               <property name="text">
-               <string>Tick Spacing:</string>
+               <string>Tick Spacing (mm):</string>
               </property>
              </widget>
             </item>
