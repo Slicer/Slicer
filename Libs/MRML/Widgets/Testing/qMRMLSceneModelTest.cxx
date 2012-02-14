@@ -85,7 +85,7 @@ void qMRMLSceneModelTester::testSetScene()
   QCOMPARE(sceneModel.mrmlSceneIndex().column(), 0);
   QVERIFY(!sceneModel.mrmlSceneIndex().parent().isValid());
   QCOMPARE(sceneModel.columnCount(), 1);
-  QCOMPARE(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 0);
+  QCOMPARE(sceneModel.columnCount(sceneModel.mrmlSceneIndex()), 1);
   vtkNew<vtkMRMLViewNode> node;
   scene->AddNode(node.GetPointer());
   QCOMPARE(sceneModel.columnCount(), 1);

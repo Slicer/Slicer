@@ -657,6 +657,9 @@ void qMRMLSceneModel::updateScene()
       sceneOtherColumn->setFlags(0);
       sceneItems << sceneOtherColumn;
       }
+    // We need to set the colum count in case there extra items,
+    // they need to know how many columns the scene item has.
+    sceneItem->setColumnCount(this->columnCount());
     this->insertRow(preSceneItemCount, sceneItems);
     }
   else if (!d->MRMLScene)
