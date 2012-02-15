@@ -99,9 +99,10 @@ void qSlicerColorsModule::setup()
     return;
     }
   vtkSlicerColorLogic* colorLogic = vtkSlicerColorLogic::SafeDownCast(this->logic());
-
-  this->appLogic()->SetColorLogic(colorLogic);
-
+  if (this->appLogic() != 0)
+    {
+    this->appLogic()->SetColorLogic(colorLogic);
+    }
   app->coreIOManager()->registerIO(
     new qSlicerColorsIO(colorLogic, this));
 
