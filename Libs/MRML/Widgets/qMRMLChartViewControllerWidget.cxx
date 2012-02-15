@@ -118,14 +118,23 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->showYAxisLabelCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(showYAxisLabel(bool)));
 
-  // Connect the text boxes
+  // Connect the line edit boxes
   QObject::connect(this->titleLineEdit, SIGNAL(textEdited(const QString&)),
                    q, SLOT(setTitle(const QString&)));
   QObject::connect(this->xAxisLabelLineEdit, SIGNAL(textEdited(const QString&)),
                    q, SLOT(setXAxisLabel(const QString&)));
   QObject::connect(this->yAxisLabelLineEdit, SIGNAL(textEdited(const QString&)),
                    q, SLOT(setYAxisLabel(const QString&)));
-  
+
+  // Connect the edit buttons to work around the issues of the
+  // LineEdits not capturing the mouse focus when in ControllerWidget
+  QObject::connect(this->editTitleButton, SIGNAL(clicked()),
+                   q, SLOT(editTitle()));
+  QObject::connect(this->editXAxisLabelButton, SIGNAL(clicked()),
+                   q, SLOT(editXAxisLabel()));
+  QObject::connect(this->editYAxisLabelButton, SIGNAL(clicked()),
+                   q, SLOT(editYAxisLabel()));
+
   // Connect the scene
   QObject::connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                    this->chartComboBox, SLOT(setMRMLScene(vtkMRMLScene*)));
@@ -667,5 +676,84 @@ void qMRMLChartViewControllerWidget::setYAxisLabel(const QString &str)
   chartNode->SetProperty("default", "yAxisLabel", str.toStdString().c_str());
 
   //qDebug() << "Regetting property: " << chartNode->GetProperty("default", "yAxisLabel");
+}
+
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidget::editTitle()
+{
+  Q_D(qMRMLChartViewControllerWidget);
+
+  vtkMRMLChartNode *chartNode = d->chartNode();
+
+  if (!chartNode)
+    {
+    return;
+    }
+
+  // Bring up a dialog to request a title
+  bool ok = false;
+  QString newTitle = QInputDialog::getText(
+    this, "Edit Title", "Title",
+    QLineEdit::Normal, chartNode->GetProperty("default", "title"), &ok);
+  if (!ok)
+    {
+    return;
+    }
+
+  // Set the parameter
+  this->setTitle(newTitle);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidget::editXAxisLabel()
+{
+  Q_D(qMRMLChartViewControllerWidget);
+
+  vtkMRMLChartNode *chartNode = d->chartNode();
+
+  if (!chartNode)
+    {
+    return;
+    }
+
+  // Bring up a dialog to request a title
+  bool ok = false;
+  QString newXAxisLabel = QInputDialog::getText(
+    this, "Edit X-axis label", "X-axis label",
+    QLineEdit::Normal, chartNode->GetProperty("default", "xAxisLabel"), &ok);
+  if (!ok)
+    {
+    return;
+    }
+
+  // Set the parameter
+  this->setXAxisLabel(newXAxisLabel);
+}
+
+
+// --------------------------------------------------------------------------
+void qMRMLChartViewControllerWidget::editYAxisLabel()
+{
+  Q_D(qMRMLChartViewControllerWidget);
+
+  vtkMRMLChartNode *chartNode = d->chartNode();
+
+  if (!chartNode)
+    {
+    return;
+    }
+
+  // Bring up a dialog to request a title
+  bool ok = false;
+  QString newYAxisLabel = QInputDialog::getText(
+    this, "Edit Y-axis label", "Y-axis label",
+    QLineEdit::Normal, chartNode->GetProperty("default", "yAxisLabel"), &ok);
+  if (!ok)
+    {
+    return;
+    }
+
+  // Set the parameter
+  this->setYAxisLabel(newYAxisLabel);
 }
 

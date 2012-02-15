@@ -64,6 +64,9 @@ public slots:
   void setTitle(const QString&);
   void setXAxisLabel(const QString&);
   void setYAxisLabel(const QString&);
+  void editTitle();
+  void editXAxisLabel();
+  void editYAxisLabel();
 
 protected slots:
   void updateWidgetFromMRML();
