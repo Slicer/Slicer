@@ -612,16 +612,41 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 //---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* node)const
 {
-  // Not very robust, we could have displayable node having no polydata but
-  // displayed as polydata.
-  return node ? node->GetPolyData() != 0: false;
+  if (!node)
+    {
+    return false;
+    }
+  else if (node->GetPolyData())
+    {
+    return true;
+    }
+  else
+    {
+    int ndnodes = node->GetNumberOfDisplayNodes();
+    for (int i=0; i<ndnodes; i++)
+      {
+      vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);
+      if (dnode && dnode->GetPolyData())
+        {
+        return true;
+        }
+      }
+    }
+  return false;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node)const
 {
   // TODO: should probably check the type of the display node instead
-  return this->IsModelDisplayable(node ? node->GetDisplayableNode() : 0);
+  if (node->GetPolyData())
+    {
+    return true;
+    }
+  else
+    {
+    return this->IsModelDisplayable(node ? node->GetDisplayableNode() : 0);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -1339,7 +1364,13 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             {
             if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
-              actor->GetMapper()->SetLookupTable(modelDisplayNode->GetColorNode()->GetLookupTable());
+              // copy lut so that they are not shared between the mappers
+              // vtk sets scalar range on lut while rendering
+              // that may cause performance problem if lut's are shared
+              vtkLookupTable *lut = vtkLookupTable::New();
+              lut->DeepCopy( modelDisplayNode->GetColorNode()->GetLookupTable());
+              actor->GetMapper()->SetLookupTable(lut);
+              lut->Delete();
               }
             else if (modelDisplayNode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
                      vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode())->GetColorTransferFunction() != 0)
