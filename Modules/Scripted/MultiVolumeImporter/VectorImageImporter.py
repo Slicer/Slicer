@@ -1,4 +1,5 @@
 from __main__ import vtk, qt, ctk, slicer
+import vtk.util.numpy_support
 
 #
 # VectorImageImporter
@@ -166,101 +167,78 @@ class VectorImageImporterWidget:
 
     self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
 
+    print 'Location of files:',tmpDir
+
     frameList = []
     volumesLogic = slicer.modules.volumes.logic()
     fileNames = os.listdir(tmpDir)
     fileNames.sort()
-    bValues = vtk.vtkDoubleArray()
-    bValues.SetNumberOfTuples(nFrames)
-    bValues.SetNumberOfComponents(1)
-    gradients = vtk.vtkDoubleArray()
-    gradients.SetNumberOfTuples(nFrames)
-    gradients.SetNumberOfComponents(3)
-    print 'Sorted list of file names: ',fileNames
-    for frameId in range(nFrames):
-      fullName = tmpDir+'/'+fileNames[frameId]
-      print 'Processing frame ',frameId,': ',fullName
-      frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
-      print 'Read OK'
-      # remove once read
-      os.unlink(fullName)
-      frameList.append(frame)
-      bValues.SetComponent(frameId, 0, 0)
-      gradients.SetComponent(frameId, 0, 1)
-      gradients.SetComponent(frameId, 1, 1)
-      gradients.SetComponent(frameId, 2, 1)
-      print 'Done'
-
-    print 'All series have been read!'
-
-    # create and initialize a blank DWI node
-    frameNode = frameList[0]
+    
+    # read the first frame to get the extent for DWI node
+    fullName = tmpDir+'/'+fileNames[0]
+    frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame 0', 0)
+    #os.unlink(fullName)
     frameImage = frame.GetImageData()
     frameExtent = frameImage.GetExtent()
+    frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
 
+    nFrames = len(fileNames)
     dwiImage = vtk.vtkImageData()
     dwiImage.SetExtent(frameExtent)
     dwiImage.SetNumberOfScalarComponents(nFrames)
 
-    print 'DWI node initializd'
+    dwiImage.AllocateScalars()
+    dwiImageArray = vtk.util.numpy_support.vtk_to_numpy(dwiImage.GetPointData().GetScalars())
 
-    # copy each frame into the DWI node (TODO: there should be a better way to
-    # do this!)
-    for f in range(nFrames):
-      for i in range(frameExtent[1]):
-        for j in range(frameExtent[3]):
-          for k in range(frameExtent[5]):
-            frameValue = frameImage.GetScalarComponentAsDouble(i,j,k,0)
-            dwiImage.SetScalarComponentFromDouble(i,j,k,f,frameValue)
-      print 'Frame '+str(f)+' has been copied'
+    # create and initialize a blank DWI node
+    bValues = vtk.vtkDoubleArray()
+    bValues.Allocate(nFrames)
+    bValues.SetNumberOfComponents(1)
+    bValues.SetNumberOfTuples(nFrames)
+    gradients = vtk.vtkDoubleArray()
+    gradients.Allocate(nFrames*3)
+    gradients.SetNumberOfComponents(3)
+    gradients.SetNumberOfTuples(nFrames)
+    print 'Sorted list of file names: ',fileNames
 
+    bValuesArray = vtk.util.numpy_support.vtk_to_numpy(bValues)
+    gradientsArray = vtk.util.numpy_support.vtk_to_numpy(gradients)
+    bValuesArray[:] = 0
+    gradientsArray[:] = 1
+    
     dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
-    dwiNode.SetAndObserveImageData(dwiImage)
     dwiNode.SetBValues(bValues)
     dwiNode.SetDiffusionGradients(gradients)
+    
+    mat = vtk.vtkMatrix4x4()
+    frame.GetRASToIJKMatrix(mat)
+    dwiNode.SetRASToIJKMatrix(mat)
+    frame.GetIJKToRASMatrix(mat)
+    dwiNode.SetIJKToRASMatrix(mat)
+
+    self.annihilateScalarNode(frame)
+
+    for frameId in range(0,nFrames):
+      fullName = tmpDir+'/'+fileNames[frameId]
+      print 'Processing frame ',frameId,': ',fullName
+      frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
+      frameImage = frame.GetImageData()
+      frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
+      dwiImageArray.T[frameId] = frameImageArray
+      self.annihilateScalarNode(frame)
+      os.unlink(fullName)
+
+    dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
     print 'DWI node added to the scene'
 
-    return
-  
-    # run DicomToNrrdConverter
-    parameters = {}
-    parameters['inputDicomDirectory'] = self.__fDialog.directory
-    parameters['outputDirectory'] = slicer.app.temporaryPath
-    parameters['outputVolume'] = 'vic_dwi_volume.nrrd'
-    
-    cliNode = None
-    self.__status.text = 'Status: Running'
-    cliNode = slicer.cli.run(slicer.modules.dicomtonrrdconverter, cliNode, parameters, 1)
+  # leave no trace of the temporary nodes
+  def annihilateScalarNode(self, node):
+    dn = node.GetDisplayNode()
+    sn = node.GetStorageNode()
+    node.SetAndObserveDisplayNodeID(None)
+    node.SetAndObserveStorageNodeID(None)
+    slicer.mrmlScene.RemoveNode(dn)
+    slicer.mrmlScene.RemoveNode(sn)
+    slicer.mrmlScene.RemoveNode(node)
 
-    status = cliNode.GetStatusString()
-    if status == 'Completed':
-      self.__status.text = 'Status: Completed'
-    else:
-      self.__status.text = 'Status: Error'
-      return
-
-    # read in the DWI node
-    vl = slicer.modules.volumes.logic()
-    fName = parameters['outputDirectory']+os.sep+parameters['outputVolume']
-    vol = vl.AddArchetypeVolume(fName, 'VectorImageContainer', 0)
-    if vol == None:
-      self.__status.text = 'Status: Error importing volume'
-      return
-    
-    vcNode.SetDWVNodeID(vol.GetID())
-    vcNode.SetVectorLabelName(self.__veLabel.text)
-    labels = vtk.vtkDoubleArray()
-    nElements = vol.GetNumberOfGradients()
-    labels.SetNumberOfTuples(nElements)
-    labels.SetNumberOfComponents(1)
-    val = self.__veInitial.value
-    step = self.__veStep.value
-    for c in range(nElements):
-      labels.SetComponent(c, 0, val)
-      val = val+step
-
-    vcNode.SetVectorLabelArray(labels)
-
-    # initialize the vector values and name
-    # make DWI node hidden from the user
