@@ -315,8 +315,14 @@ void qMRMLAnnotationTreeView::deleteSelected()
 
   // case: delete a hierarchy only, if it is the only selection
   // warning: all directly under this hierarchy laying annotation nodes will be lost
-  // if there are other hierarchies underneath the one which gets deleted, they will get reparented
-  if (selected.count()==6)
+  // if there are other hierarchies underneath the one which gets deleted,
+  // they will get reparented
+
+  // the selected count will be number of rows that are highlighted * number
+  // of columns (each item in a row is selected when the row is highlighted),
+  // so to check for one row being selected, the count has to be 1 * the
+  // columnCount 
+  if (selected.count() == d->SceneModel->columnCount())
     {
     // only one item was selected, is this a hierarchy?
     vtkMRMLAnnotationHierarchyNode* hierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(d->SortFilterModel->mrmlNodeFromIndex(selected.first()));
