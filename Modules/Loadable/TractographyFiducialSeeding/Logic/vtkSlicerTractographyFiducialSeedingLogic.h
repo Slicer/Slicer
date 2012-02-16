@@ -45,6 +45,10 @@ public:
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  virtual void ProcessMRMLNodesEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void * callData);
+
   // Get parameters node
   vtkGetObjectMacro (TractographyFiducialSeedingNode, vtkMRMLTractographyFiducialSeedingNode);
 

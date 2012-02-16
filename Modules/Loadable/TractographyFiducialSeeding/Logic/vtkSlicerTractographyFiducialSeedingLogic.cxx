@@ -83,7 +83,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
 
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
 
-  if (node && node == oldNode)
+  if (node && node != oldNode)
     {
     this->RemoveMRMLNodesObservers();
 
@@ -527,6 +527,39 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   ici->Delete();
   seed->Delete();
   return 1;
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+                                                                      unsigned long event,
+                                                                      void *callData) 
+{
+
+  vtkMRMLScene* scene = this->GetMRMLScene(); 
+  if (!scene)
+    {
+    return;
+    }
+
+  vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;
+
+  if (snode == NULL || snode->GetEnableSeeding() == 0)
+    {
+    return;
+    }
+
+  if (event == vtkMRMLHierarchyNode::ChildNodeAddedEvent ||
+      event == vtkMRMLHierarchyNode::ChildNodeRemovedEvent ||
+      event == vtkMRMLNode::HierarchyModifiedEvent || 
+      event == vtkMRMLTransformableNode::TransformModifiedEvent ||
+      event == vtkMRMLModelNode::PolyDataModifiedEvent)
+    {
+    this->OnMRMLNodeModified(NULL);
+    }    
+  else
+    {
+    Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+    }
 }
 
 //---------------------------------------------------------------------------
