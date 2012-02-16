@@ -138,7 +138,7 @@
       <description><![CDATA[Tensor measurement used to stop the tractography]]></description>
       <flag>-f</flag>
       <longflag>--stoppingmode</longflag>
-      <default>LinearMeasure</default>
+      <default>FractionalAnisotropy</default>
       <element>LinearMeasure</element>
       <element>FractionalAnisotropy</element>
     </string-enumeration>
@@ -148,7 +148,7 @@
       <description><![CDATA[Tractography will stop when the stopping measurement drops below this value]]></description>
       <flag>-v</flag>
       <longflag>--stoppingvalue</longflag>
-      <default>0.15</default>
+      <default>0.25</default>
       <constraints>
         <minimum>0</minimum>
         <maximum>1</maximum>
@@ -161,7 +161,7 @@
       <description><![CDATA[Tractography will stop if radius of curvature becomes smaller than this number units are degrees per mm]]></description>
       <flag>-t</flag>
       <longflag>--stoppingcurvature</longflag>
-      <default>0.8</default>
+      <default>0.7</default>
       <constraints>
         <minimum>0</minimum>
         <maximum>10</maximum>
