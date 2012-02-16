@@ -33,6 +33,7 @@
 
 // MRMLLogic includes
 #include <vtkMRMLSliceLogic.h>
+#include <vtkMRMLColorLogic.h>
 
 // MRML includes
 #include <vtkMRMLLayoutNode.h>
@@ -808,7 +809,12 @@ void qMRMLLayoutManager::setMRMLColorLogic(vtkMRMLColorLogic* colorLogic)
 {
   Q_D(qMRMLLayoutManager);
   d->MRMLColorLogic = colorLogic;
-  /// TODO: apply color logic to existing chart views
+
+  /// apply color logic to existing chart views
+  foreach(qMRMLChartWidget* view, d->ChartWidgetList)
+    {
+    view->setColorLogic(colorLogic);
+    }
 }
 
 //------------------------------------------------------------------------------

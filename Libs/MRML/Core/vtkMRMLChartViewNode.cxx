@@ -12,9 +12,11 @@ vtkMRMLNodeNewMacro(vtkMRMLChartViewNode);
 //vtkCxxSetReferenceStringMacro(vtkMRMLChartViewNode, ChartNodeID);
 
 //----------------------------------------------------------------------------
-vtkMRMLChartViewNode::vtkMRMLChartViewNode() : vtkMRMLViewNode()
+vtkMRMLChartViewNode::vtkMRMLChartViewNode() : vtkMRMLNode()
 {
   this->ChartNodeID = 0;
+  this->ViewLabel = new char[2];
+  strcpy(this->ViewLabel, "1");
 }
 
 //----------------------------------------------------------------------------
@@ -23,6 +25,10 @@ vtkMRMLChartViewNode::~vtkMRMLChartViewNode()
   if (this->ChartNodeID)
     {
     this->SetChartNodeID(0);
+    }
+  if ( this->ViewLabel )
+    {
+    delete [] this->ViewLabel;
     }
 }
 
@@ -43,6 +49,10 @@ void vtkMRMLChartViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << " chart=\"" << this->ChartNodeID << "\"";
     }
+  if (this->GetViewLabel())
+    {
+    of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -58,7 +68,11 @@ void vtkMRMLChartViewNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "chart")) 
+    if (!strcmp(attName, "layoutLabel")) 
+      {
+      this->SetViewLabel( attValue );
+      }
+    else if (!strcmp(attName, "chart")) 
       {
       this->SetChartNodeID(attValue);
       }
@@ -78,6 +92,7 @@ void vtkMRMLChartViewNode::Copy(vtkMRMLNode *anode)
 
   Superclass::Copy(anode);
 
+  this->SetViewLabel(achartviewnode->GetViewLabel());
   this->SetChartNodeID(achartviewnode->GetChartNodeID());
 
   this->EndModify(disabledModify);
@@ -88,6 +103,10 @@ void vtkMRMLChartViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   Superclass::PrintSelf(os,indent);
+
+  os << indent << "ViewLabel: " << (this->ViewLabel ? this->ViewLabel : "(null)") << std::endl;
+  os << indent << "ChartNodeID: " << 
+   (this->ChartNodeID ? this->ChartNodeID : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------

@@ -18,9 +18,9 @@
 #ifndef __vtkMRMLChartViewNode_h
 #define __vtkMRMLChartViewNode_h
 
-#include "vtkMRMLViewNode.h"
+#include "vtkMRMLNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLChartViewNode : public vtkMRMLViewNode
+class VTK_MRML_EXPORT vtkMRMLChartViewNode : public vtkMRMLNode
 {
 public:
   static vtkMRMLChartViewNode *New();
@@ -58,6 +58,10 @@ public:
   /// Get the Chart node id displayed in this Chart View
   vtkGetStringMacro(ChartNodeID);
 
+  /// Label for the view. Usually a 1 character label, e.g. 1, 2, etc.
+  vtkSetStringMacro(ViewLabel);
+  vtkGetStringMacro(ViewLabel);
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
@@ -81,6 +85,7 @@ protected:
   void operator=(const vtkMRMLChartViewNode&);
 
   char* ChartNodeID;
+  char* ViewLabel;
 };
 
 #endif

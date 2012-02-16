@@ -6,6 +6,9 @@
 // Qt includes
 class QToolButton;
 
+// VTK includes
+#include <vtkWeakPointer.h>
+
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
@@ -80,7 +83,7 @@ protected:
   vtkMRMLChartViewNode*              MRMLChartViewNode;
   vtkMRMLChartNode*                  MRMLChartNode;
 
-  vtkMRMLColorLogic*                 ColorLogic;
+  vtkWeakPointer<vtkMRMLColorLogic>  ColorLogic;
   
   QToolButton*                       PinButton;
   ctkPopupWidget*                    PopupWidget;
