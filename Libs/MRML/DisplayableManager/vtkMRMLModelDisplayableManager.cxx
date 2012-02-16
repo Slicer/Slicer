@@ -639,7 +639,7 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* 
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node)const
 {
   // TODO: should probably check the type of the display node instead
-  if (node->GetPolyData())
+  if (node && node->GetPolyData())
     {
     return true;
     }
