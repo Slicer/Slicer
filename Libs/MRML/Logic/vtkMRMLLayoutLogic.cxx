@@ -402,7 +402,7 @@ const char* conventionalQuantitativeView =
   "      </view>"
   "     </item>"
   "     <item>"
-  "      <view class=\"vtkMRMLChartViewNode\">"
+  "      <view class=\"vtkMRMLChartViewNode\" singletontag=\"ChartView1\">"
   "       <property name=\"viewlabel\" action=\"default\">1</property>"
   "      </view>"
   "     </item>"
@@ -447,7 +447,7 @@ const char* fourUpQuantitativeView =
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLChartViewNode\">"
+  "    <view class=\"vtkMRMLChartViewNode\" singletontag=\"ChartView1\">"
   "     <property name=\"viewlabel\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
@@ -912,8 +912,15 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
     }
   else if (className == "vtkMRMLChartViewNode")
     {
-    //std::cout<<"node->SetName(this->GetMRMLScene()->GetUniqueNameByString(\"ChartView\"))\n";
-    node->SetName(this->GetMRMLScene()->GetUniqueNameByString("ChartView"));
+    vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(node);
+    it = attributes.find(std::string("singletontag"));
+    if (it != end)
+      {
+      const std::string& singletonTag = it->second;
+      chartViewNode->SetLayoutName(singletonTag.c_str());
+      }
+    std::string name = std::string(chartViewNode->GetLayoutName());
+    node->SetName(name.c_str());
     }
   else if (className == "vtkMRMLSliceNode")
     {

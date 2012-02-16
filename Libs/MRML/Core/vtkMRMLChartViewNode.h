@@ -50,6 +50,15 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
+  /// 
+  /// Name of the layout
+  void SetLayoutName(const char *layoutName) {
+    this->SetSingletonTag(layoutName);
+  }
+  char *GetLayoutName() {
+    return this->GetSingletonTag();
+  }
+
   ///
   /// Set the Chart node id displayed in this Chart View
   void SetChartNodeID(const char *);

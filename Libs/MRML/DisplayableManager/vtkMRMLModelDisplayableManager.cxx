@@ -436,11 +436,11 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
       vtkMRMLDisplayableNode::SafeDownCast(caller);
     switch (event)
       {
-      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
-        // don't go any further if the modified display node is not a model
-        if (!this->IsModelDisplayable(displayableNode) &&
-            !this->IsModelDisplayable(
-              reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
+       case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+         // don't go any further if the modified display node is not a model
+         if (!this->IsModelDisplayable(displayableNode) &&
+             !this->IsModelDisplayable(
+               reinterpret_cast<vtkMRMLDisplayNode*>(callData)))
           {
           requestRender = false;
           break;

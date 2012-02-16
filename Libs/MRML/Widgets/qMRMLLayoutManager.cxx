@@ -318,6 +318,8 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::createChartWidget(vtkMRMLChartViewN
 
   //logger.trace("createChartWidget - instantiated new qMRMLChartWidget");
   chartWidget = new qMRMLChartWidget(q->viewport());
+  QString layoutName(viewNode->GetLayoutName());
+  chartWidget->setObjectName(QString("qMRMLChartWidget" + layoutName));
   chartWidget->setViewLabel(viewNode->GetViewLabel());
   chartWidget->setColorLogic(this->MRMLColorLogic);
   chartWidget->setMRMLScene(this->MRMLScene);

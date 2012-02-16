@@ -53,6 +53,10 @@ void vtkMRMLChartViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
     }
+  if (this->GetLayoutName() != NULL)
+    {
+    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -71,6 +75,10 @@ void vtkMRMLChartViewNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "layoutLabel")) 
       {
       this->SetViewLabel( attValue );
+      }
+    else if (!strcmp(attName, "layoutName")) 
+      {
+      this->SetLayoutName( attValue );
       }
     else if (!strcmp(attName, "chart")) 
       {

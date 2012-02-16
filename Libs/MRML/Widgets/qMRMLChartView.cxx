@@ -108,9 +108,6 @@ void qMRMLChartViewPrivate::init()
   // Expose the ChartView class to Javascript
   q->page()->mainFrame()->addToJavaScriptWindowObject(QString("qtobject"), this);
 
-//  q->setRenderEnabled(this->MRMLScene != 0);
-////  q->setEnabled(this->MRMLScene != 0);
-
   this->PopupWidget = new ctkPopupWidget;
   QHBoxLayout* popupLayout = new QHBoxLayout;
   popupLayout->addWidget(new QToolButton);
@@ -138,8 +135,6 @@ void qMRMLChartViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
     vtkMRMLScene::EndBatchProcessEvent, this, SLOT(endProcessing()));
 
   this->MRMLScene = newScene;
-//  q->setRenderEnabled(this->MRMLScene != 0);
-////  q->setEnabled(this->MRMLScene != 0);
 }
 
 
@@ -148,8 +143,6 @@ void qMRMLChartViewPrivate::startProcessing()
 {
 //  logger.trace("startProcessing");
 //  Q_Q(qMRMLChartView);
-//  q->setRenderEnabled(false);
-////  q->setEnabled(false);
 }
 
 //
@@ -158,8 +151,7 @@ void qMRMLChartViewPrivate::endProcessing()
 {
 //  logger.trace("endProcessing");
 //  Q_Q(qMRMLChartView);
-//  q->setRenderEnabled(true);
-////  q->setEnabled(true);
+  this->updateWidgetFromMRML();
 }
 
 // --------------------------------------------------------------------------
