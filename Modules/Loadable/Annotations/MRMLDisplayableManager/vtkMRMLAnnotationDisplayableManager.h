@@ -93,6 +93,9 @@ protected:
 
   virtual void Create();
 
+  /// wrap the superclass render request in a check for batch processing
+  virtual void RequestRender();
+  
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();
 

@@ -208,6 +208,19 @@ void vtkMRMLAnnotationDisplayableManager::Create()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::RequestRender()
+{
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+  if (!this->GetMRMLScene()->IsBatchProcessing())
+    {
+    this->Superclass::RequestRender();
+    }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::RemoveMRMLObservers()
 {
   // run through all associated nodes
@@ -488,7 +501,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* no
 
   // and render again after seeds were removed
   this->RequestRender();
-
 }
 
 //---------------------------------------------------------------------------

@@ -455,7 +455,7 @@ void vtkSlicerAnnotationModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScen
   // a good time to add the observed events!
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkCommand::ModifiedEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);

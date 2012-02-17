@@ -341,9 +341,10 @@ void qMRMLAnnotationTreeView::deleteSelected()
 
       if (ret == QMessageBox::Yes)
         {
-
+        this->mrmlScene()->StartState(vtkMRMLScene::BatchProcessState);
         hierarchyNode->DeleteDirectChildren();
-
+        this->mrmlScene()->EndState(vtkMRMLScene::BatchProcessState);
+        
         this->mrmlScene()->RemoveNode(hierarchyNode);
 
         }
@@ -394,6 +395,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
 
   // we parsed the complete selection and saved all mrmlIds to delete
   // now, it is safe to delete
+  this->mrmlScene()->StartState(vtkMRMLScene::BatchProcessState);
   for (int j=0; j < markedForDeletion.size(); ++j)
     {
 
@@ -401,6 +403,7 @@ void qMRMLAnnotationTreeView::deleteSelected()
     this->m_Logic->RemoveAnnotationNode(annotationNodeToDelete);
 
     }
+  this->mrmlScene()->EndState(vtkMRMLScene::BatchProcessState);
 
   this->m_Logic->SetActiveHierarchyNodeID(NULL);
 
