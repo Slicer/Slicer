@@ -112,13 +112,13 @@ class VectorImageImporterWidget:
     self.layout.addStretch(1)
     
   def populateProcessingModes(self):
-    self.__modeSelector.addItem('4D DCE MRI (GE)')
-    self.__modeSelector.addItem('Manual')
+    self.__modeSelector.addItem('DICOM 4D DCE MRI (GE)')
+    self.__modeSelector.addItem('List of 3D frames')
     self.__modeSelector.currentIndex = 0
     '''
-    self.__modeSelector.addItem('Separate by echo time (GE)')
-    self.__modeSelector.addItem('Separate by flip angle (GE)')
-    self.__modeSelector.addItem('Separate by repetition time (GE)')
+    self.__modeSelector.addItem('DICOM Multi-TE MRI (GE)')
+    self.__modeSelector.addItem('DICOM Multi-FA MRI (GE)')
+    self.__modeSelector.addItem('DICOM Multi-TR MRI (GE)')
     '''
 
   def onProcessingModeChanged(self, idx):
@@ -207,6 +207,7 @@ class VectorImageImporterWidget:
     gradientsArray[:] = 1
     
     dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
+    dwiNode.SetScene(slicer.mrmlScene)
     dwiNode.SetBValues(bValues)
     dwiNode.SetDiffusionGradients(gradients)
     
@@ -228,9 +229,22 @@ class VectorImageImporterWidget:
       self.annihilateScalarNode(frame)
       os.unlink(fullName)
 
+    dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
+    dwiDisplayNode.SetScene(slicer.mrmlScene)
+    slicer.mrmlScene.AddNode(dwiDisplayNode)
+    dwiDisplayNode.SetDefaultColorMap()
+
+    dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
     dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
     print 'DWI node added to the scene'
+
+
+    vcNode.SetDWVNodeID(dwiNode.GetID())
+    vcNode.SetVectorLabelArray(volumeLabels)
+    vcNode.SetVectorLabelName(self.__veLabel.text)
+    print 'VC node setup!'
+
 
   # leave no trace of the temporary nodes
   def annihilateScalarNode(self, node):
