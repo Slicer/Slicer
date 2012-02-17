@@ -15,14 +15,14 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerVectorImageExplorerLogic - slicer logic class for volumes manipulation
+// .NAME vtkSlicerMultiVolumeExplorerLogic - slicer logic class for volumes manipulation
 // .SECTION Description
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
 
-#ifndef __vtkSlicerVectorImageExplorerLogic_h
-#define __vtkSlicerVectorImageExplorerLogic_h
+#ifndef __vtkSlicerMultiVolumeExplorerLogic_h
+#define __vtkSlicerMultiVolumeExplorerLogic_h
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
@@ -32,7 +32,7 @@
 // STD includes
 #include <cstdlib>
 
-#include "vtkSlicerVectorImageExplorerModuleLogicExport.h"
+#include "vtkSlicerMultiVolumeExplorerModuleLogicExport.h"
 
 class vtkDoubleArray;
 class vtkMRMLScalarVolumeNode;
@@ -40,13 +40,13 @@ class vtkMRMLVolumeArchetypeStorageNode;
 class vtkMRMLScalarVolumeDisplayNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerVectorImageExplorerLogic :
+class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeExplorerLogic :
   public vtkSlicerModuleLogic
 {
 public:
 
-  static vtkSlicerVectorImageExplorerLogic *New();
-  vtkTypeMacro(vtkSlicerVectorImageExplorerLogic, vtkSlicerModuleLogic);
+  static vtkSlicerMultiVolumeExplorerLogic *New();
+  vtkTypeMacro(vtkSlicerMultiVolumeExplorerLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /// Initialize listening to MRML events
@@ -54,10 +54,9 @@ public:
   const int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
                                std::string dcmTag, vtkDoubleArray*);
 
-  int getNum(int i){return 1;}
 protected:
-  vtkSlicerVectorImageExplorerLogic();
-  virtual ~vtkSlicerVectorImageExplorerLogic();
+  vtkSlicerMultiVolumeExplorerLogic();
+  virtual ~vtkSlicerMultiVolumeExplorerLogic();
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
@@ -68,8 +67,8 @@ protected:
                              const std::string& seriesFileName);
 private:
 
-  vtkSlicerVectorImageExplorerLogic(const vtkSlicerVectorImageExplorerLogic&); // Not implemented
-  void operator=(const vtkSlicerVectorImageExplorerLogic&);               // Not implemented
+  vtkSlicerMultiVolumeExplorerLogic(const vtkSlicerMultiVolumeExplorerLogic&); // Not implemented
+  void operator=(const vtkSlicerMultiVolumeExplorerLogic&);               // Not implemented
 
 };
 

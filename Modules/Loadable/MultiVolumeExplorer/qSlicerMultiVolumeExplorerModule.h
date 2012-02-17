@@ -15,18 +15,18 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerVectorImageExplorerModule_h
-#define __qSlicerVectorImageExplorerModule_h
+#ifndef __qSlicerMultiVolumeExplorerModule_h
+#define __qSlicerMultiVolumeExplorerModule_h
 
 // SlicerQt includes
 #include "qSlicerLoadableModule.h"
 
-#include "qSlicerVectorImageExplorerModuleExport.h"
+#include "qSlicerMultiVolumeExplorerModuleExport.h"
 
-class qSlicerVectorImageExplorerModulePrivate;
+class qSlicerMultiVolumeExplorerModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_VECTORIMAGEEXPLORER_EXPORT qSlicerVectorImageExplorerModule :
+class Q_SLICER_QTMODULES_MULTIVOLUMEEXPLORER_EXPORT qSlicerMultiVolumeExplorerModule :
   public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -35,8 +35,8 @@ class Q_SLICER_QTMODULES_VECTORIMAGEEXPLORER_EXPORT qSlicerVectorImageExplorerMo
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerVectorImageExplorerModule(QObject *parent=0);
-  virtual ~qSlicerVectorImageExplorerModule();
+  explicit qSlicerMultiVolumeExplorerModule(QObject *parent=0);
+  virtual ~qSlicerMultiVolumeExplorerModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
   
@@ -67,11 +67,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerVectorImageExplorerModulePrivate> d_ptr;
+  QScopedPointer<qSlicerMultiVolumeExplorerModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerVectorImageExplorerModule);
-  Q_DISABLE_COPY(qSlicerVectorImageExplorerModule);
+  Q_DECLARE_PRIVATE(qSlicerMultiVolumeExplorerModule);
+  Q_DISABLE_COPY(qSlicerMultiVolumeExplorerModule);
 
 };
 

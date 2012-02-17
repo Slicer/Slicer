@@ -19,44 +19,44 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerVectorImageExplorerModuleWidget.h"
-#include "ui_qSlicerVectorImageExplorerModule.h"
+#include "qSlicerMultiVolumeExplorerModuleWidget.h"
+#include "ui_qSlicerMultiVolumeExplorerModule.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerVectorImageExplorerModuleWidgetPrivate: public Ui_qSlicerVectorImageExplorerModule
+class qSlicerMultiVolumeExplorerModuleWidgetPrivate: public Ui_qSlicerMultiVolumeExplorerModule
 {
 public:
-  qSlicerVectorImageExplorerModuleWidgetPrivate();
+  qSlicerMultiVolumeExplorerModuleWidgetPrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerVectorImageExplorerModuleWidgetPrivate methods
+// qSlicerMultiVolumeExplorerModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModuleWidgetPrivate::qSlicerVectorImageExplorerModuleWidgetPrivate()
+qSlicerMultiVolumeExplorerModuleWidgetPrivate::qSlicerMultiVolumeExplorerModuleWidgetPrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerVectorImageExplorerModuleWidget methods
+// qSlicerMultiVolumeExplorerModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModuleWidget::qSlicerVectorImageExplorerModuleWidget(QWidget* _parent)
+qSlicerMultiVolumeExplorerModuleWidget::qSlicerMultiVolumeExplorerModuleWidget(QWidget* _parent)
   : Superclass( _parent )
-  , d_ptr( new qSlicerVectorImageExplorerModuleWidgetPrivate )
+  , d_ptr( new qSlicerMultiVolumeExplorerModuleWidgetPrivate )
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModuleWidget::~qSlicerVectorImageExplorerModuleWidget()
+qSlicerMultiVolumeExplorerModuleWidget::~qSlicerMultiVolumeExplorerModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerVectorImageExplorerModuleWidget::setup()
+void qSlicerMultiVolumeExplorerModuleWidget::setup()
 {
-  Q_D(qSlicerVectorImageExplorerModuleWidget);
+  Q_D(qSlicerMultiVolumeExplorerModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
 }

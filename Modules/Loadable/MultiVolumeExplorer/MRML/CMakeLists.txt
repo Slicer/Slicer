@@ -6,8 +6,8 @@ set(module_mrml_include_directory
   )
 
 set(module_mrml_SRCS
-  vtkMRMLVectorImageContainerNode.cxx
-  vtkMRMLVectorImageContainerNode.h
+  vtkMRMLMultiVolumeNode.cxx
+  vtkMRMLMultiVolumeNode.h
   )
 
 # Additional Target libraries
@@ -16,7 +16,7 @@ set(module_logic_target_libraries
   )
 
 # The header '${module_mrml_name}Export.h' will be automatically configured.
-set(module_mrml_export_directive "VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT")
+set(module_mrml_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT")
 
 set(module_mrml_target_libraries
   ${MRML_LIBRARIES}

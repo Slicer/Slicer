@@ -14,7 +14,7 @@ endif()
 #   - Usually identique to the directory name)
 #   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
 #-----------------------------------------------------------------------------
-set(EXTENSION_NAME VectorImageExplorer)
+set(EXTENSION_NAME MultiVolumeExplorer)
 
 #-----------------------------------------------------------------------------
 # Prerequisites
@@ -50,7 +50,7 @@ add_subdirectory(Py)
 #-----------------------------------------------------------------------------
 # Sources
 #-----------------------------------------------------------------------------
-set(qt_module_export_directive "Q_SLICER_QTMODULES_VECTORIMAGEEXPLORER_EXPORT")
+set(qt_module_export_directive "Q_SLICER_QTMODULES_MULTIVOLUMEEXPLORER_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 set(qt_module_include_directories
@@ -62,32 +62,32 @@ set(qt_module_include_directories
 
 # Source files
 set(qt_module_SRCS
-  qSlicerVectorImageExplorerModule.cxx
-  qSlicerVectorImageExplorerModule.h
-  qSlicerVectorImageExplorerModuleWidget.cxx
-  qSlicerVectorImageExplorerModuleWidget.h
+  qSlicerMultiVolumeExplorerModule.cxx
+  qSlicerMultiVolumeExplorerModule.h
+  qSlicerMultiVolumeExplorerModuleWidget.cxx
+  qSlicerMultiVolumeExplorerModuleWidget.h
   )
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
-  qSlicerVectorImageExplorerModule.h
-  qSlicerVectorImageExplorerModuleWidget.h
+  qSlicerMultiVolumeExplorerModule.h
+  qSlicerMultiVolumeExplorerModuleWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
-  Resources/UI/qSlicerVectorImageExplorerModule.ui
+  Resources/UI/qSlicerMultiVolumeExplorerModule.ui
 )
 
 # Additional Target libraries
 set(qt_module_target_libraries
-  vtkSlicerVectorImageExplorerModuleMRML
-  vtkSlicerVectorImageExplorerModuleLogic
+  vtkSlicerMultiVolumeExplorerModuleMRML
+  vtkSlicerMultiVolumeExplorerModuleLogic
   )
 
 # Resources
 set(qt_module_resources
-  Resources/qSlicerVectorImageExplorerModule.qrc
+  Resources/qSlicerMultiVolumeExplorerModule.qrc
 )
 
 #-----------------------------------------------------------------------------

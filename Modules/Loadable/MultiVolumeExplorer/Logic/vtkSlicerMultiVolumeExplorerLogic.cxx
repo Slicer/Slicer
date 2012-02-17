@@ -16,12 +16,12 @@
 ==============================================================================*/
 
 // ModuleTemplate includes
-#include "vtkSlicerVectorImageExplorerLogic.h"
+#include "vtkSlicerMultiVolumeExplorerLogic.h"
 
 // MRML includes
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
-#include "vtkMRMLVectorImageContainerNode.h"
+#include "vtkMRMLMultiVolumeNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 // VTK includes
@@ -41,26 +41,26 @@
 #include "vtkSlicerColorLogic.h"
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerVectorImageExplorerLogic);
+vtkStandardNewMacro(vtkSlicerMultiVolumeExplorerLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerVectorImageExplorerLogic::vtkSlicerVectorImageExplorerLogic()
+vtkSlicerMultiVolumeExplorerLogic::vtkSlicerMultiVolumeExplorerLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerVectorImageExplorerLogic::~vtkSlicerVectorImageExplorerLogic()
+vtkSlicerMultiVolumeExplorerLogic::~vtkSlicerMultiVolumeExplorerLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerMultiVolumeExplorerLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic::InitializeEventListeners()
+void vtkSlicerMultiVolumeExplorerLogic::InitializeEventListeners()
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -70,36 +70,36 @@ void vtkSlicerVectorImageExplorerLogic::InitializeEventListeners()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic::UpdateFromMRMLScene()
+void vtkSlicerMultiVolumeExplorerLogic::UpdateFromMRMLScene()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic
+void vtkSlicerMultiVolumeExplorerLogic
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerVectorImageExplorerLogic
+void vtkSlicerMultiVolumeExplorerLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 // Register the module-specific MRML node
-void vtkSlicerVectorImageExplorerLogic
+void vtkSlicerMultiVolumeExplorerLogic
 ::RegisterNodes()
 {
   if(!this->GetMRMLScene())
     return;
-  vtkMRMLVectorImageContainerNode *pNode = vtkMRMLVectorImageContainerNode::New();
+  vtkMRMLMultiVolumeNode *pNode = vtkMRMLMultiVolumeNode::New();
   this->GetMRMLScene()->RegisterNodeClass(pNode);
   pNode->Delete();
 }
 
 //----------------------------------------------------------------------------
-const int vtkSlicerVectorImageExplorerLogic
+const int vtkSlicerMultiVolumeExplorerLogic
 ::ProcessDICOMSeries(std::string dir, std::string outputDir,
                      std::string dcmTag, vtkDoubleArray* tagValues)
 {
@@ -155,7 +155,8 @@ const int vtkSlicerVectorImageExplorerLogic
     int nSlices = inputDict->size();
 
     nSlices = filenames.size();
-    std::string sortTag = "0018|1060"; // DCE GE: trigger time
+    //std::string sortTag = "0018|1060"; // DCE GE: trigger time
+    std::string sortTag = dcmTag;
     std::string tagVal;
     std::map<int,ReaderType::FileNamesContainer> tagVal2fileList;
 
@@ -168,7 +169,6 @@ const int vtkSlicerVectorImageExplorerLogic
     }
 
     // map items should be sorted by key
-    unsigned timeStamp = 0;
     tagValues->SetNumberOfComponents(1);
     tagValues->SetNumberOfTuples(tagVal2fileList.size());
 
@@ -193,7 +193,7 @@ const int vtkSlicerVectorImageExplorerLogic
   return tagVal2fileList.size();
 }
 
-const void vtkSlicerVectorImageExplorerLogic
+const void vtkSlicerMultiVolumeExplorerLogic
 ::StoreVolumeNode(const std::vector<std::string>& filenames,
                   const std::string& seriesFileName)
 {

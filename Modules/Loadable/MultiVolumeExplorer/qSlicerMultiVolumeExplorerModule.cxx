@@ -22,11 +22,11 @@
 #include <QScopedPointer>
 
 // ExtensionTemplate Logic includes
-#include <vtkSlicerVectorImageExplorerLogic.h>
+#include <vtkSlicerMultiVolumeExplorerLogic.h>
 
 // ExtensionTemplate includes
-#include "qSlicerVectorImageExplorerModule.h"
-#include "qSlicerVectorImageExplorerModuleWidget.h"
+#include "qSlicerMultiVolumeExplorerModule.h"
+#include "qSlicerMultiVolumeExplorerModuleWidget.h"
 
 // SlicerQT includes
 #include <qSlicerUtils.h>
@@ -35,85 +35,85 @@
 #include <vtkSlicerConfigure.h>
 
 //-----------------------------------------------------------------------------
-Q_EXPORT_PLUGIN2(qSlicerVectorImageExplorerModule, qSlicerVectorImageExplorerModule);
+Q_EXPORT_PLUGIN2(qSlicerMultiVolumeExplorerModule, qSlicerMultiVolumeExplorerModule);
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerVectorImageExplorerModulePrivate
+class qSlicerMultiVolumeExplorerModulePrivate
 {
 public:
-  qSlicerVectorImageExplorerModulePrivate();
+  qSlicerMultiVolumeExplorerModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerVectorImageExplorerModulePrivate methods
+// qSlicerMultiVolumeExplorerModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModulePrivate::qSlicerVectorImageExplorerModulePrivate()
+qSlicerMultiVolumeExplorerModulePrivate::qSlicerMultiVolumeExplorerModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerVectorImageExplorerModule methods
+// qSlicerMultiVolumeExplorerModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModule::qSlicerVectorImageExplorerModule(QObject* _parent)
+qSlicerMultiVolumeExplorerModule::qSlicerMultiVolumeExplorerModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerVectorImageExplorerModulePrivate)
+  , d_ptr(new qSlicerMultiVolumeExplorerModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerVectorImageExplorerModule::~qSlicerVectorImageExplorerModule()
+qSlicerMultiVolumeExplorerModule::~qSlicerMultiVolumeExplorerModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVectorImageExplorerModule::helpText()const
+QString qSlicerMultiVolumeExplorerModule::helpText()const
 {
-  return "This VectorImageExplorer module illustrates how a loadable module should "
+  return "This MultiVolumeExplorer module illustrates how a loadable module should "
       "be implemented.";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerVectorImageExplorerModule::acknowledgementText()const
+QString qSlicerMultiVolumeExplorerModule::acknowledgementText()const
 {
   return "This work was supported by ...";
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerVectorImageExplorerModule::icon()const
+QIcon qSlicerMultiVolumeExplorerModule::icon()const
 {
-  return QIcon(":/Icons/VectorImageExplorer.png");
+  return QIcon(":/Icons/MultiVolumeExplorer.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVectorImageExplorerModule::categories() const 
+QStringList qSlicerMultiVolumeExplorerModule::categories() const 
 { 
   return QStringList() << "Vector Image Tools"; 
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerVectorImageExplorerModule::dependencies() const
+QStringList qSlicerMultiVolumeExplorerModule::dependencies() const
 {
   return QStringList();
 }
 
 
 //-----------------------------------------------------------------------------
-void qSlicerVectorImageExplorerModule::setup()
+void qSlicerMultiVolumeExplorerModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerVectorImageExplorerModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerMultiVolumeExplorerModule::createWidgetRepresentation()
 {  
   QString pythonPath = qSlicerUtils::pathWithoutIntDir(
               QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
 
   QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
-  QString classNameToLoad = "qSlicerVectorImageExplorerModuleWidget";
+  QString classNameToLoad = "qSlicerMultiVolumeExplorerModuleWidget";
   bool ret = widget->setPythonSource(
         pythonPath + "/Python/" + classNameToLoad + ".py", classNameToLoad);
   if (!ret)
@@ -124,7 +124,7 @@ qSlicerAbstractModuleRepresentation * qSlicerVectorImageExplorerModule::createWi
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerVectorImageExplorerModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerMultiVolumeExplorerModule::createLogic()
 {
-  return vtkSlicerVectorImageExplorerLogic::New();
+  return vtkSlicerMultiVolumeExplorerLogic::New();
 }

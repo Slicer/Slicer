@@ -6,7 +6,7 @@ See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLVectorImageContainerNode.cxx,v $
+Module:    $RCSfile: vtkMRMLMultiVolumeNode.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
@@ -30,15 +30,15 @@ Version:   $Revision: 1.2 $
 #include "vtkMRMLVolumeNode.h"
 
 // CropModuleMRML includes
-#include "vtkMRMLVectorImageContainerNode.h"
+#include "vtkMRMLMultiVolumeNode.h"
 
 // STD includes
 
 //----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLVectorImageContainerNode);
+vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLVectorImageContainerNode::vtkMRMLVectorImageContainerNode()
+vtkMRMLMultiVolumeNode::vtkMRMLMultiVolumeNode()
 {
   // TODO: use this->, use 0 instead of NULL
   this->VectorLabelArray = NULL;
@@ -49,7 +49,7 @@ vtkMRMLVectorImageContainerNode::vtkMRMLVectorImageContainerNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVectorImageContainerNode::~vtkMRMLVectorImageContainerNode()
+vtkMRMLMultiVolumeNode::~vtkMRMLMultiVolumeNode()
 {
   if(this->VectorLabelArray)
     {
@@ -59,25 +59,25 @@ vtkMRMLVectorImageContainerNode::~vtkMRMLVectorImageContainerNode()
 }
 
 //----------------------------------------------------------------------------
-const std::string vtkMRMLVectorImageContainerNode::GetDWVNodeID()
+const std::string vtkMRMLMultiVolumeNode::GetDWVNodeID()
 {
   return this->DWVNodeID;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::SetDWVNodeID(std::string id)
+void vtkMRMLMultiVolumeNode::SetDWVNodeID(std::string id)
 {
   this->DWVNodeID = id;
 }
 
 //----------------------------------------------------------------------------
-const vtkDoubleArray* vtkMRMLVectorImageContainerNode::GetVectorLabelArray()
+const vtkDoubleArray* vtkMRMLMultiVolumeNode::GetVectorLabelArray()
 {
   return this->VectorLabelArray;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::SetVectorLabelArray(vtkDoubleArray* arr)
+void vtkMRMLMultiVolumeNode::SetVectorLabelArray(vtkDoubleArray* arr)
 {
   if(!this->VectorLabelArray)
     {
@@ -91,7 +91,7 @@ void vtkMRMLVectorImageContainerNode::SetVectorLabelArray(vtkDoubleArray* arr)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLMultiVolumeNode::ReadXMLAttributes(const char** atts)
 {
   Superclass::ReadXMLAttributes(atts);
   
@@ -144,7 +144,7 @@ void vtkMRMLVectorImageContainerNode::ReadXMLAttributes(const char** atts)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLMultiVolumeNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
@@ -166,9 +166,9 @@ void vtkMRMLVectorImageContainerNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
-void vtkMRMLVectorImageContainerNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode *anode)
 {
-  vtkMRMLVectorImageContainerNode *n = vtkMRMLVectorImageContainerNode::SafeDownCast(anode);
+  vtkMRMLMultiVolumeNode *n = vtkMRMLMultiVolumeNode::SafeDownCast(anode);
   if(!n)
     return;
 
@@ -193,7 +193,7 @@ void vtkMRMLVectorImageContainerNode::Copy(vtkMRMLNode *anode)
 
 #if 0
 //-----------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::UpdateScene(vtkMRMLScene *scene)
+void vtkMRMLMultiVolumeNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
   this->SetAndObserveInputVolumeNodeID(this->InputVolumeNodeID);
@@ -202,7 +202,7 @@ void vtkMRMLVectorImageContainerNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::ProcessMRMLEvents ( vtkObject *caller,
+void vtkMRMLMultiVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
                                                     unsigned long event,
                                                     void *callData )
 {
@@ -214,7 +214,7 @@ void vtkMRMLVectorImageContainerNode::ProcessMRMLEvents ( vtkObject *caller,
 #endif // 0
 
 //----------------------------------------------------------------------------
-void vtkMRMLVectorImageContainerNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLMultiVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 
