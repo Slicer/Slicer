@@ -82,7 +82,8 @@ void vtkMRMLVectorImageContainerNode::SetVectorLabelArray(vtkDoubleArray* arr)
   if(!this->VectorLabelArray)
     {
     this->VectorLabelArray = vtkDoubleArray::New();
-    this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfComponents());
+    this->VectorLabelArray->Allocate(arr->GetNumberOfTuples());
+    this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
     this->VectorLabelArray->SetNumberOfComponents(1);
     }
   for(int i=0;i<arr->GetNumberOfTuples();i++)
