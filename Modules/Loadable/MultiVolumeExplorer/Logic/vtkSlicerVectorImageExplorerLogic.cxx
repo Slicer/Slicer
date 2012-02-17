@@ -182,7 +182,7 @@ const int vtkSlicerVectorImageExplorerLogic
       tagValStr  << tagVal;
 
       char fname[255];
-      sprintf(fname, "%s/%08X.nrrd", outputDir.c_str(), (*it).first);
+      sprintf(fname, "%s/%08i.nrrd", outputDir.c_str(), i);
       std::string seriesFileName(fname);
 
       StoreVolumeNode((*it).second, seriesFileName);
