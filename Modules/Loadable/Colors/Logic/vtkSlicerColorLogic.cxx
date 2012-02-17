@@ -61,7 +61,7 @@ const char *vtkSlicerColorLogic::GetDefaultEditorColorNodeID()
 //----------------------------------------------------------------------------
 const char *vtkSlicerColorLogic::GetDefaultChartColorNodeID()
 {
-  return vtkMRMLColorLogic::GetFileColorNodeID("GenericChartColors.txt");
+  return vtkMRMLColorLogic::GetFileColorNodeID("DarkBrightChartColors.txt");
 }
 
 //----------------------------------------------------------------------------
