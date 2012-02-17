@@ -170,7 +170,8 @@ class LabelStatisticsWidget:
     """
     if not self.fileDialog:
       self.fileDialog = qt.QFileDialog(self.parent)
-      self.fileDialog.acceptMode = 1 # save dialog
+      self.fileDialog.options = self.fileDialog.DontUseNativeDialog
+      self.fileDialog.acceptMode = self.fileDialog.AcceptSave
       self.fileDialog.defaultSuffix = "csv"
       self.fileDialog.setNameFilter("Comma Separated Values (*.csv)")
       self.fileDialog.connect("fileSelected(QString)", self.onFileSelected)
