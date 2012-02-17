@@ -2,29 +2,29 @@ from __main__ import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
 
 #
-# MultivolumeImporter
+# MultiVolumeImporter
 #
 
-class MultivolumeImporter:
+class MultiVolumeImporter:
   def __init__(self, parent):
-    parent.title = "MultivolumeImporter"
-    parent.categories = ["Multivolume support", "Work in progress"]
+    parent.title = "MultiVolumeImporter"
+    parent.categories = ["MultiVolume support", "Work in progress"]
     parent.contributors = ["Andrey Fedorov", "Steve Pieper", "Ron Kikinis"]
     parent.helpText = """
-    Support of Multivolume initialization
+    Support of MultiVolume initialization
     """
-    # MultivolumeExplorer registers the MRML node type this module is using
-    parent.dependencies = ['MultivolumeExplorer']
+    # MultiVolumeExplorer registers the MRML node type this module is using
+    parent.dependencies = ['MultiVolumeExplorer']
     parent.acknowledgementText = """
     This file was originally developed by Andrey Fedorov, SPL
     """
     self.parent = parent
 
 #
-# qMultivolumeImporterWidget
+# qMultiVolumeImporterWidget
 #
 
-class MultivolumeImporterWidget:
+class MultiVolumeImporterWidget:
   def __init__(self, parent = None):
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -54,7 +54,7 @@ class MultivolumeImporterWidget:
 
     label = qt.QLabel('Output node:')
     self.__vcSelector = slicer.qMRMLNodeComboBox()
-    self.__vcSelector.nodeTypes = ['vtkMRMLMultivolumeContainerNode']
+    self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
     self.__vcSelector.addEnabled = 1
@@ -99,7 +99,7 @@ class MultivolumeImporterWidget:
     dummyFormLayout.addRow(label, self.__veStep)
 
     importButton = qt.QPushButton("Import")
-    importButton.toolTip = "Import the contents of the DICOM directory as a MultivolumeContainer"
+    importButton.toolTip = "Import the contents of the DICOM directory as a MultiVolume"
     self.layout.addWidget(importButton)
     self.populateProcessingModes()
     importButton.connect('clicked(bool)', self.onImportButtonClicked)
