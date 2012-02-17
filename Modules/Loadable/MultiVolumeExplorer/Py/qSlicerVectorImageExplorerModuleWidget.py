@@ -85,7 +85,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     #self.__mdSlider.setRange(0,10)
     #self.__mdSlider.setValue(5)
 
-    label = qt.QLabel('Vector scroller:')
+    label = qt.QLabel('Frame scroller:')
     ## self.layout.addRow(label, self.__mdSlider)
     self.layout.addWidget(label)
     self.layout.addWidget(self.__mdSlider)
@@ -133,6 +133,12 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.playButton.checkable = True
     self.layout.addWidget(self.playButton)
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+
+    label = qt.QLabel('Enable interactive charting')
+    self.iCharting = qt.QCheckBox()
+    self.layout.addWidget(label)
+    self.layout.addWidget(self.iCharting)
+    self.iCharting.setChecked(True)
 
     # add chart container widget
     self.__chartView = ctk.ctkVTKChartView(w)
@@ -327,6 +333,9 @@ class qSlicerVectorImageExplorerModuleWidget:
           self.styleObserverTags.append([style,tag])
  
   def processEvent(self,observee,event):
+    if not self.iCharting.checked:
+      return
+
     # TODO: use a timer to delay calculation and compress events
     if event == 'LeaveEvent':
       # reset all the readouts
@@ -399,3 +408,8 @@ class qSlicerVectorImageExplorerModuleWidget:
               plot.SetInput(self.__chartTable, 0, 1)
               # seems to update only after another plot?..
               self.__chart.AddPlot(0)
+
+
+  def enter(self):
+    self.onInputChanged()
+    self.onLabelVolumeChanged()
