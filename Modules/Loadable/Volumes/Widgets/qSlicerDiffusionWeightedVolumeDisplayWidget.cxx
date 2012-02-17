@@ -152,14 +152,14 @@ void qSlicerDiffusionWeightedVolumeDisplayWidget::updateWidgetFromVolumeNode()
   // can change the component value. We want to set it back.
   vtkMRMLDiffusionWeightedVolumeDisplayNode* displayNode =
     this->volumeDisplayNode();
-  int component = displayNode ? displayNode->GetDiffusionComponent() :
-    d->DWIComponentSlider->value();
+
+  int component = displayNode ? displayNode->GetDiffusionComponent() : d->DWIComponentSlider->value(); 
+  bool sliderWasBlocking = d->DWIComponentSlider->blockSignals(true);
+  bool spinBoxWasBlocking = d->DWIComponentSpinBox->blockSignals(true);
   d->DWIComponentSlider->setRange(0, maxRange);
   d->DWIComponentSpinBox->setRange(0, maxRange);
-  // it is not really an assert we want here, just want to raise the performance
-  // issue here that changing the range has modified the value and we need to
-  // set it back which can be a bit expensive...
-  Q_ASSERT(d->DWIComponentSlider->value() == component);
+  d->DWIComponentSlider->blockSignals(sliderWasBlocking);
+  d->DWIComponentSpinBox->blockSignals(spinBoxWasBlocking);
   d->DWIComponentSlider->setValue(component);
 }
 
