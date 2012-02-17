@@ -2,7 +2,7 @@ from __main__ import vtk, qt, ctk, slicer
 
 from EMSegmentWizard import Helper
 
-class qSlicerVectorImageExplorerModuleWidget:
+class qSlicerMultiVolumeExplorerModuleWidget:
   def __init__( self, parent=None ):
 
     print 'My module init called, parent = ', parent
@@ -19,11 +19,11 @@ class qSlicerVectorImageExplorerModuleWidget:
     self.__updating = 1
 
     # Reference to the logic
-    self.__logic = slicer.modulelogic.vtkSlicerVectorImageExplorerLogic()
+    self.__logic = slicer.modulelogic.vtkSlicerMultiVolumeExplorerLogic()
     print 'Logic is ',self.__logic
 
     if not parent:
-      self.__logic = slicer.modulelogic.vtkVectorImageExplorerLogic()
+      self.__logic = slicer.modulelogic.vtkMultiVolumeExplorerLogic()
       self.setup()
       self.parent.setMRMLScene( slicer.mrmlScene )
       # after setup, be ready for events
@@ -68,7 +68,7 @@ class qSlicerVectorImageExplorerModuleWidget:
     
     label = qt.QLabel('Input container:')
     self.__vcSelector = slicer.qMRMLNodeComboBox()
-    self.__vcSelector.nodeTypes = ['vtkMRMLVectorImageContainerNode']
+    self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)

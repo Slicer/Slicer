@@ -17,15 +17,15 @@
 //
 //
 
-#ifndef __vtkMRMLVectorImageContainerNode_h
-#define __vtkMRMLVectorImageContainerNode_h
+#ifndef __vtkMRMLMultiVolumeNode_h
+#define __vtkMRMLMultiVolumeNode_h
 
 // TODO: sort the header elements, separate MRML and VTK
 // MRML includes
 #include "vtkMRML.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
-#include "vtkSlicerVectorImageExplorerModuleMRMLExport.h"
+#include "vtkSlicerMultiVolumeExplorerModuleMRMLExport.h"
 #include "vtkDoubleArray.h"
 
 class vtkMRMLAnnotationROINode;
@@ -38,13 +38,13 @@ class vtkMRMLDiffusionWeightedVolumeNode;
   extra metadata and provide an extra interface for exploring this data.
 */
 
-/// \ingroup Slicer_QtModules_VectorImageContainerNode
-class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContainerNode : public vtkMRMLNode
+/// \ingroup Slicer_QtModules_MultiVolumeNode
+class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode : public vtkMRMLNode
 {
   public:   
 
-  static vtkMRMLVectorImageContainerNode *New();
-  vtkTypeMacro(vtkMRMLVectorImageContainerNode,vtkMRMLNode);
+  static vtkMRMLMultiVolumeNode *New();
+  vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -59,7 +59,7 @@ class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContai
   virtual void Copy(vtkMRMLNode *node);
 
   /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "MRMLVectorImageContainer";};
+  virtual const char* GetNodeTagName() {return "MRMLMultiVolume";};
 
   /// Update the stored reference to another node in the scene
   //virtual void UpdateReferenceID(const char *oldID, const char *newID);
@@ -88,10 +88,10 @@ class VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_MRML_EXPORT vtkMRMLVectorImageContai
   void SetVectorLabelName(std::string n){ VectorLabelName = n;}
 
 protected:
-  vtkMRMLVectorImageContainerNode();
-  ~vtkMRMLVectorImageContainerNode();
-  vtkMRMLVectorImageContainerNode(const vtkMRMLVectorImageContainerNode&);
-  void operator=(const vtkMRMLVectorImageContainerNode&);
+  vtkMRMLMultiVolumeNode();
+  ~vtkMRMLMultiVolumeNode();
+  vtkMRMLMultiVolumeNode(const vtkMRMLMultiVolumeNode&);
+  void operator=(const vtkMRMLMultiVolumeNode&);
 
 
   vtkDoubleArray *VectorLabelArray;

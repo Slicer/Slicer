@@ -7,7 +7,7 @@ project(vtkSlicer${EXTENSION_NAME}ModuleLogic)
 set(module_logic_name "${PROJECT_NAME}")
 
 # The header '${module_logic_name}Export.h' will be automatically configured.
-set(module_logic_export_directive "VTK_SLICER_VECTORIMAGEEXPLORER_MODULE_LOGIC_EXPORT")
+set(module_logic_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT")
 
 # Additional directories to include
 set(module_logic_include_directories
@@ -17,14 +17,14 @@ set(module_logic_include_directories
 
 # Source files
 set(module_logic_SRCS
-  vtkSlicerVectorImageExplorerLogic.cxx
-  vtkSlicerVectorImageExplorerLogic.h
+  vtkSlicerMultiVolumeExplorerLogic.cxx
+  vtkSlicerMultiVolumeExplorerLogic.h
   )
 
 # Additional Target libraries
 set(module_logic_target_libraries
   # ${ITK_LIBRARIES}
-  vtkSlicerVectorImageExplorerModuleMRML
+  vtkSlicerMultiVolumeExplorerModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(
