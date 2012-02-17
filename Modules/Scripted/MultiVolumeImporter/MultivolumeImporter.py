@@ -2,29 +2,29 @@ from __main__ import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
 
 #
-# VectorImageImporter
+# MultivolumeImporter
 #
 
-class VectorImageImporter:
+class MultivolumeImporter:
   def __init__(self, parent):
-    parent.title = "VectorImageImporter"
-    parent.categories = ["Vector Image Tools"]
-    parent.contributors = ["Andrey Fedorov"]
+    parent.title = "MultivolumeImporter"
+    parent.categories = ["Multivolume support", "Work in progress"]
+    parent.contributors = ["Andrey Fedorov", "Steve Pieper", "Ron Kikinis"]
     parent.helpText = """
-    Support of VectorImageContainer initialization
+    Support of Multivolume initialization
     """
-    # VectorImageExplorer registers the MRML node type this module is using
-    parent.dependencies = ['VectorImageExplorer']
+    # MultivolumeExplorer registers the MRML node type this module is using
+    parent.dependencies = ['MultivolumeExplorer']
     parent.acknowledgementText = """
     This file was originally developed by Andrey Fedorov, SPL
     """
     self.parent = parent
 
 #
-# qVectorImageImporterWidget
+# qMultivolumeImporterWidget
 #
 
-class VectorImageImporterWidget:
+class MultivolumeImporterWidget:
   def __init__(self, parent = None):
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -54,7 +54,7 @@ class VectorImageImporterWidget:
 
     label = qt.QLabel('Output node:')
     self.__vcSelector = slicer.qMRMLNodeComboBox()
-    self.__vcSelector.nodeTypes = ['vtkMRMLVectorImageContainerNode']
+    self.__vcSelector.nodeTypes = ['vtkMRMLMultivolumeContainerNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
     self.__vcSelector.addEnabled = 1
@@ -99,7 +99,7 @@ class VectorImageImporterWidget:
     dummyFormLayout.addRow(label, self.__veStep)
 
     importButton = qt.QPushButton("Import")
-    importButton.toolTip = "Import the contents of the DICOM directory as a VectorImageContainer"
+    importButton.toolTip = "Import the contents of the DICOM directory as a MultivolumeContainer"
     self.layout.addWidget(importButton)
     self.populateProcessingModes()
     importButton.connect('clicked(bool)', self.onImportButtonClicked)
@@ -241,8 +241,8 @@ class VectorImageImporterWidget:
 
 
     vcNode.SetDWVNodeID(dwiNode.GetID())
-    vcNode.SetVectorLabelArray(volumeLabels)
-    vcNode.SetVectorLabelName(self.__veLabel.text)
+    vcNode.SetLabelArray(volumeLabels)
+    vcNode.SetLabelName(self.__veLabel.text)
     print 'VC node setup!'
 
 

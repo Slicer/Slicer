@@ -14,7 +14,7 @@ endif()
 #   - Usually identique to the directory name)
 #   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
 #-----------------------------------------------------------------------------
-set(EXTENSION_NAME VectorImageImporter)
+set(EXTENSION_NAME MultivolumeImporter)
 
 #-----------------------------------------------------------------------------
 # Prerequisites
@@ -44,7 +44,7 @@ endif()
 # Sources
 #-----------------------------------------------------------------------------
 set(KIT_PYTHON_SCRIPTS
-  VectorImageImporter.py
+  MultivolumeImporter.py
   )
 
 set(KIT_PYTHON_RESOURCES
@@ -54,7 +54,7 @@ set(KIT_PYTHON_RESOURCES
 # Build
 #-----------------------------------------------------------------------------
 ctkMacroCompilePythonScript(
-  TARGET_NAME VectorImageImporter
+  TARGET_NAME MultivolumeImporter
   SCRIPTS "${KIT_PYTHON_SCRIPTS}"
   RESOURCES "${KIT_PYTHON_RESOURCES}"
   DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
