@@ -81,11 +81,11 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
   const std::string GetDWVNodeID();
   void SetDWVNodeID(std::string);
 
-  void SetVectorLabelArray(vtkDoubleArray*);
-  const vtkDoubleArray* GetVectorLabelArray();
+  void SetLabelArray(vtkDoubleArray*);
+  const vtkDoubleArray* GetLabelArray();
 
-  const std::string GetVectorLabelName(){ return VectorLabelName;}
-  void SetVectorLabelName(std::string n){ VectorLabelName = n;}
+  const std::string GetLabelName(){ return LabelName;}
+  void SetLabelName(std::string n){ LabelName = n;}
 
 protected:
   vtkMRMLMultiVolumeNode();
@@ -94,8 +94,8 @@ protected:
   void operator=(const vtkMRMLMultiVolumeNode&);
 
 
-  vtkDoubleArray *VectorLabelArray;
-  std::string VectorLabelName;
+  vtkDoubleArray *LabelArray;
+  std::string LabelName;
   std::string DWVNodeID;
 };
 

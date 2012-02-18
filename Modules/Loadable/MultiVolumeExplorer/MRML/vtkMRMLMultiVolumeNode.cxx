@@ -41,20 +41,20 @@ vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeNode);
 vtkMRMLMultiVolumeNode::vtkMRMLMultiVolumeNode()
 {
   // TODO: use this->, use 0 instead of NULL
-  this->VectorLabelArray = NULL;
-  this->VectorLabelName = "";
+  this->LabelArray = NULL;
+  this->LabelName = "";
   this->HideFromEditors = 0;
   this->DWVNodeID = "";
-  std::cout << "Vector image container constructor called" << std::endl;
+  std::cout << " image container constructor called" << std::endl;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeNode::~vtkMRMLMultiVolumeNode()
 {
-  if(this->VectorLabelArray)
+  if(this->LabelArray)
     {
-    this->VectorLabelArray->Delete();
-    this->VectorLabelArray = NULL;
+    this->LabelArray->Delete();
+    this->LabelArray = NULL;
     }
 }
 
@@ -71,23 +71,23 @@ void vtkMRMLMultiVolumeNode::SetDWVNodeID(std::string id)
 }
 
 //----------------------------------------------------------------------------
-const vtkDoubleArray* vtkMRMLMultiVolumeNode::GetVectorLabelArray()
+const vtkDoubleArray* vtkMRMLMultiVolumeNode::GetLabelArray()
 {
-  return this->VectorLabelArray;
+  return this->LabelArray;
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLMultiVolumeNode::SetVectorLabelArray(vtkDoubleArray* arr)
+void vtkMRMLMultiVolumeNode::SetLabelArray(vtkDoubleArray* arr)
 {
-  if(!this->VectorLabelArray)
+  if(!this->LabelArray)
     {
-    this->VectorLabelArray = vtkDoubleArray::New();
-    this->VectorLabelArray->Allocate(arr->GetNumberOfTuples());
-    this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
-    this->VectorLabelArray->SetNumberOfComponents(1);
+    this->LabelArray = vtkDoubleArray::New();
+    this->LabelArray->Allocate(arr->GetNumberOfTuples());
+    this->LabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
+    this->LabelArray->SetNumberOfComponents(1);
     }
   for(int i=0;i<arr->GetNumberOfTuples();i++)
-    this->VectorLabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
+    this->LabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
 }
 
 //----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void vtkMRMLMultiVolumeNode::ReadXMLAttributes(const char** atts)
       this->DWVNodeID = attValue;
       continue;
     }
-    if (!strcmp(attName, "VectorLabelArray"))
+    if (!strcmp(attName, "LabelArray"))
     {
       std::vector<double> labels;
       char* str = (char*)attValue;
@@ -123,20 +123,20 @@ void vtkMRMLMultiVolumeNode::ReadXMLAttributes(const char** atts)
         std::back_inserter<std::vector<double> >(labels));
       */
       std::cout << "Number of elements found: " << labels.size() << std::endl;
-      if(!this->VectorLabelArray)
-        this->VectorLabelArray = vtkDoubleArray::New();
-      this->VectorLabelArray->SetNumberOfTuples(labels.size());
-      this->VectorLabelArray->SetNumberOfComponents(1);
+      if(!this->LabelArray)
+        this->LabelArray = vtkDoubleArray::New();
+      this->LabelArray->SetNumberOfTuples(labels.size());
+      this->LabelArray->SetNumberOfComponents(1);
       for(unsigned int i=0;i<labels.size();i++)
         {
         std::cout << "Setting " << i << " to " << labels[i] << std::endl;
-        this->VectorLabelArray->SetComponent(i, 0, labels[i]);
+        this->LabelArray->SetComponent(i, 0, labels[i]);
         }
       continue;
     }
-    if (!strcmp(attName, "VectorLabelName"))
+    if (!strcmp(attName, "LabelName"))
     {
-      this->VectorLabelName = attValue;
+      this->LabelName = attValue;
       continue;
     }
   }
@@ -150,17 +150,17 @@ void vtkMRMLMultiVolumeNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
   of << indent << " DWVNodeID=\"" << this->DWVNodeID << "\"";
-  if(this->VectorLabelArray)
+  if(this->LabelArray)
     {
-    int nItems = this->VectorLabelArray->GetNumberOfTuples();
-    of << indent << " VectorLabelArray=\"";
+    int nItems = this->LabelArray->GetNumberOfTuples();
+    of << indent << " LabelArray=\"";
     for(int i=0;i<nItems;i++)
       {
-      of << indent << this->VectorLabelArray->GetComponent(i, 0) << indent;
+      of << indent << this->LabelArray->GetComponent(i, 0) << indent;
       }
     of << indent << "\"";
     }
-  of << indent << " VectorLabelName=\"" << this->VectorLabelName << "\"";
+  of << indent << " LabelName=\"" << this->LabelName << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -175,20 +175,20 @@ void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   this->DWVNodeID = n->DWVNodeID;
-  if(n->VectorLabelArray)
+  if(n->LabelArray)
     {
-    vtkDoubleArray *arr = n->VectorLabelArray;
+    vtkDoubleArray *arr = n->LabelArray;
     if(arr)
       {
-      if(!this->VectorLabelArray)
-        this->VectorLabelArray = vtkDoubleArray::New();
-      this->VectorLabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
-      this->VectorLabelArray->SetNumberOfComponents(1);
+      if(!this->LabelArray)
+        this->LabelArray = vtkDoubleArray::New();
+      this->LabelArray->SetNumberOfTuples(arr->GetNumberOfTuples());
+      this->LabelArray->SetNumberOfComponents(1);
       for(int i=0;i<arr->GetNumberOfTuples();i++)
-        this->VectorLabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
+        this->LabelArray->SetComponent(i, 0, arr->GetComponent(i, 0));
       }
     }
-  this->VectorLabelName = n->VectorLabelName;
+  this->LabelName = n->LabelName;
 }
 
 #if 0
@@ -219,13 +219,13 @@ void vtkMRMLMultiVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os,indent);
 
   os << "DWVNodeID: " << this->DWVNodeID << "\n";
-  if(this->VectorLabelArray)
+  if(this->LabelArray)
     {
-    os << "VectorLabelArray: ";
-    for(int i=0;i<this->VectorLabelArray->GetNumberOfTuples();i++)
-      os << this->VectorLabelArray->GetComponent(i, 0) << " ";
+    os << "LabelArray: ";
+    for(int i=0;i<this->LabelArray->GetNumberOfTuples();i++)
+      os << this->LabelArray->GetComponent(i, 0) << " ";
     os << std::endl;
     }
-  os << "VectorLabelName: " << this->VectorLabelName << std::endl;
+  os << "LabelName: " << this->LabelName << std::endl;
 }
 // End

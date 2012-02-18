@@ -55,6 +55,9 @@ public:
   /// Return the dependencies
   virtual QStringList dependencies() const;
 
+  /// Return the contributors
+  virtual QStringList contributors() const;
+
 protected:
 
   /// Initialize the module. Register the volumes reader/writer

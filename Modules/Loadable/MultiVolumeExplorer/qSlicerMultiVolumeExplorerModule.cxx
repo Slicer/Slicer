@@ -71,14 +71,13 @@ qSlicerMultiVolumeExplorerModule::~qSlicerMultiVolumeExplorerModule()
 //-----------------------------------------------------------------------------
 QString qSlicerMultiVolumeExplorerModule::helpText()const
 {
-  return "This MultiVolumeExplorer module illustrates how a loadable module should "
-      "be implemented.";
+  return "MultiVolumeExplorer module supports various operations related to examining multivolume nodes.";
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerMultiVolumeExplorerModule::acknowledgementText()const
 {
-  return "This work was supported by ...";
+  return "This module was originally developed by Andrey Fedorov";
 }
 
 //-----------------------------------------------------------------------------
@@ -90,7 +89,7 @@ QIcon qSlicerMultiVolumeExplorerModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerMultiVolumeExplorerModule::categories() const 
 { 
-  return QStringList() << "Vector Image Tools"; 
+  return QStringList() << "MultiVolume Support" << "Work in progress"; 
 }
 
 //-----------------------------------------------------------------------------
@@ -99,6 +98,13 @@ QStringList qSlicerMultiVolumeExplorerModule::dependencies() const
   return QStringList();
 }
 
+//-----------------------------------------------------------------------------
+QStringList qSlicerMultiVolumeExplorerModule::contributors()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Andrey Fedorov") << QString("Steve Pieper") << QString("Ron Kikinis");
+  return moduleContributors;
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerMultiVolumeExplorerModule::setup()
