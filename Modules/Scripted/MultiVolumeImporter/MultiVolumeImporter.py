@@ -62,6 +62,21 @@ class MultiVolumeImporterWidget:
 
     label = qt.QLabel('Input data type:')
     self.__modeSelector = qt.QComboBox()
+
+    # parameter tuples: long title (for the selector), dicom tag, units, short title
+    self.__processingModes = []
+    self.__processingModes.append(['DICOM 4D DCE MRI (GE)', '0018|1060', 'ms', 'DCE'])
+    self.__processingModes.append(['DICOM variable TE MRI (GE)', '0018|0081', 'ms', 'vTE'])
+    self.__processingModes.append(['DICOM variable FA MRI (GE)', '0018|1314', 'deg', 'vFA'])
+    self.__processingModes.append(['DICOM variable TR MRI (GE)', '0018|0080', 'ms', 'vTR'])
+    self.__processingModes.append(['User-defined DICOM', '??', '??', 'MultiVolumeDICOM'])
+    self.__processingModes.append(['User-defined non-DICOM', 'None', '??', 'MultiVolume'])
+
+    for p in self.__processingModes:
+      print 'Processing mode found: ',p
+      self.__modeSelector.addItem(p[0])
+    self.__modeSelector.currentIndex = 0
+
     self.__modeSelector.connect('currentIndexChanged(int)', self.onProcessingModeChanged)
     dummyFormLayout.addRow(label, self.__modeSelector)
 
@@ -81,7 +96,7 @@ class MultiVolumeImporterWidget:
     self.__dicomTag.enabled = 0
     dummyFormLayout.addRow(label, self.__dicomTag)
 
-    label = qt.QLabel('Units:')
+    label = qt.QLabel('Frame identifying units:')
     self.__veLabel = qt.QLineEdit()
     self.__veLabel.enabled = 0
     dummyFormLayout.addRow(label, self.__veLabel)
@@ -101,45 +116,23 @@ class MultiVolumeImporterWidget:
     importButton = qt.QPushButton("Import")
     importButton.toolTip = "Import the contents of the DICOM directory as a MultiVolume"
     self.layout.addWidget(importButton)
-    self.populateProcessingModes()
     importButton.connect('clicked(bool)', self.onImportButtonClicked)
 
     self.__status = qt.QLabel('Status: Idle')
     self.layout.addWidget(self.__status)
 
-    
     # Add vertical spacer
     self.layout.addStretch(1)
     
-  def populateProcessingModes(self):
-    self.__modeSelector.addItem('DICOM 4D DCE MRI (GE)')
-    self.__modeSelector.addItem('List of 3D frames')
-    self.__modeSelector.currentIndex = 0
-    '''
-    self.__modeSelector.addItem('DICOM Multi-TE MRI (GE)')
-    self.__modeSelector.addItem('DICOM Multi-FA MRI (GE)')
-    self.__modeSelector.addItem('DICOM Multi-TR MRI (GE)')
-    '''
-
   def onProcessingModeChanged(self, idx):
-    if idx == 0:
+    nModes = len(self.__processingModes)
+    mode = self.__processingModes[idx]
+    if idx >= nModes-2:
       self.__advancedFrame.enabled = 0
-      self.__dicomTag.text = "0018|1060"
-      self.__veLabel.text = "ms"
-      self.__veInitial.value = -1
-      self.__veStep.value = -1
-    if idx == 1:
-      self.__advancedFrame.enabled = 1
-
-    '''
-    if idx == 1:
-      return ["0018|0081", "sec"]
-    if idx == 2:
-      return "0018|1314"
-    if idx == 3:
-      return "0018|0080"
-    '''
-    
+    self.__dicomTag.text = mode[1]
+    self.__veLabel.text = mode[2]
+    self.__veInitial.value = 0
+    self.__veStep.value = 1
 
   def onMRMLSceneChanged(self, mrmlScene):
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
@@ -149,8 +142,11 @@ class MultiVolumeImporterWidget:
     # check if the output container exists
     vcNode = self.__vcSelector.currentNode()
     if vcNode == None:
-      self.__status.text = 'Status: Select output container!'
+      self.__status.text = 'Status: Select output node!'
       return
+
+    modeIdx = self.__modeSelector.currentIndex
+    processingMode = self.__processingModes[modeIdx]
 
     # get logic
     logic = slicer.modules.multivolumeexplorer.logic()
@@ -176,7 +172,7 @@ class MultiVolumeImporterWidget:
     
     # read the first frame to get the extent for DWI node
     fullName = tmpDir+'/'+fileNames[0]
-    frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame 0', 0)
+    frame = volumesLogic.AddArchetypeVolume(fullName, processingMode[3]+' Frame 0', 0)
     #os.unlink(fullName)
     frameImage = frame.GetImageData()
     frameExtent = frameImage.GetExtent()
@@ -199,7 +195,6 @@ class MultiVolumeImporterWidget:
     gradients.Allocate(nFrames*3)
     gradients.SetNumberOfComponents(3)
     gradients.SetNumberOfTuples(nFrames)
-    print 'Sorted list of file names: ',fileNames
 
     bValuesArray = vtk.util.numpy_support.vtk_to_numpy(bValues)
     gradientsArray = vtk.util.numpy_support.vtk_to_numpy(gradients)
@@ -207,6 +202,7 @@ class MultiVolumeImporterWidget:
     gradientsArray[:] = 1
     
     dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
+    dwiNode.SetName(processingMode[3]+'DisplayVolume')
     dwiNode.SetScene(slicer.mrmlScene)
     dwiNode.SetBValues(bValues)
     dwiNode.SetDiffusionGradients(gradients)
