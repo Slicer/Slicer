@@ -37,13 +37,13 @@ if(NOT SWIG_DIR)
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
       URL_MD5  4319c503ee3a13d2a53be9d828c3adc0
-      CONFIGURE_COMMAND ../Swig/configure --prefix=${CMAKE_INSTALL_PREFIX}
-      --with-pcre-prefix=${CMAKE_INSTALL_PREFIX}
+      CONFIGURE_COMMAND ../Swig/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}
+      --with-pcre-prefix=${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS PCRE
       )
 
-    set(SWIG_DIR ${CMAKE_INSTALL_PREFIX}/share/swig/${TARGET_SWIG_VERSION})
-    set(SWIG_EXECUTABLE ${CMAKE_INSTALL_PREFIX}/bin/swig)
+    set(SWIG_DIR ${CMAKE_CURRENT_BINARY_DIR}/share/swig/${TARGET_SWIG_VERSION})
+    set(SWIG_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/bin/swig)
     set(Swig_DEPEND Swig)
   endif()
 endif(NOT SWIG_DIR)
