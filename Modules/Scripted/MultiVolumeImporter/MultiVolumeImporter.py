@@ -8,7 +8,7 @@ import vtk.util.numpy_support
 class MultiVolumeImporter:
   def __init__(self, parent):
     parent.title = "MultiVolumeImporter"
-    parent.categories = ["MultiVolume support", "Work in progress"]
+    parent.categories = ["MultiVolume Support", "Work in progress"]
     parent.contributors = ["Andrey Fedorov", "Steve Pieper", "Ron Kikinis"]
     parent.helpText = """
     Support of MultiVolume initialization
@@ -81,7 +81,7 @@ class MultiVolumeImporterWidget:
     self.__dicomTag.enabled = 0
     dummyFormLayout.addRow(label, self.__dicomTag)
 
-    label = qt.QLabel('Units of vector elements:')
+    label = qt.QLabel('Units:')
     self.__veLabel = qt.QLineEdit()
     self.__veLabel.enabled = 0
     dummyFormLayout.addRow(label, self.__veLabel)
@@ -153,7 +153,7 @@ class MultiVolumeImporterWidget:
       return
 
     # get logic
-    logic = slicer.modules.vectorimageexplorer.logic()
+    logic = slicer.modules.multivolumeexplorer.logic()
 
     # create a clean temporary directory
     tmpDir = slicer.app.settings().value('Modules/TemporaryDirectory')
