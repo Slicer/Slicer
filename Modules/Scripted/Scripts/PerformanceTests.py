@@ -42,6 +42,7 @@ class PerformanceTestsWidget:
         ( 'Reslicing', self.reslicing ),
         ( 'Chart Test', self.chartTest ),
         ( 'Web View Test', self.webViewTest ),
+        ( 'Memory Check', self.memoryCheck ),
         # ( 'timeProbe', self.timeProbe ),
         # ( 'sizeProbe', self.sizeProbe),
         # ( 'fakewin', self.fakewin ),
@@ -287,6 +288,33 @@ with point index of {pointIndex}
     self.webView.page().setLinkDelegationPolicy(qt.QWebPage.DelegateAllLinks)
     self.webView.connect('linkClicked(QUrl)', self.webViewCallback)
     self.webView.show()
+
+  def memoryCallback(self):
+    if self.sysInfoWindow.visible:
+      self.sysInfo.RunMemoryCheck()
+      self.sysInfoWindow.append('p: %d of %d,  v: %d of %d' %
+              (self.sysInfo.GetAvailablePhysicalMemory(),
+               self.sysInfo.GetTotalPhysicalMemory(),
+               self.sysInfo.GetAvailableVirtualMemory(),
+               self.sysInfo.GetTotalVirtualMemory(),
+               ))
+      qt.QTimer.singleShot(1000,self.memoryCallback)
+
+  def memoryCheck(self):
+    """Run a periodic memory check in a window"""
+    if not hasattr(self,'sysInfo'):
+      self.sysInfo = slicer.vtkSystemInformation()
+      self.sysInfoWindow = qt.QTextBrowser()
+    if self.sysInfoWindow.visible:
+      return
+    self.sysInfoWindow.show()
+    self.memoryCallback()
+
+
+
+
+
+
 
 class sliceLogicTest:
   def __init__(self):
