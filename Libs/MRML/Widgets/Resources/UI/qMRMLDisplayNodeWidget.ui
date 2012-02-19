@@ -13,7 +13,10 @@
   <property name="windowTitle">
    <string>Display Node</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+  <layout class="QFormLayout" name="formLayout">
+   <property name="labelAlignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
    <property name="margin">
     <number>0</number>
    </property>
