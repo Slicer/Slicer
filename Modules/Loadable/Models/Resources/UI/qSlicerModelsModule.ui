@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>466</width>
-    <height>688</height>
+    <height>664</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,6 +31,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
      <property name="headerHidden">
       <bool>true</bool>
      </property>
@@ -45,9 +48,6 @@
        <string>vtkMRMLModelHierarchyNode</string>
        <string>vtkMRMLModelNode</string>
       </stringlist>
-     </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::InternalMove</enum>
      </property>
     </widget>
    </item>
@@ -76,6 +76,9 @@
      </property>
      <property name="text">
       <string>Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -141,12 +144,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qMRMLClipNodeWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLClipNodeWidget.h</header>
@@ -179,6 +176,12 @@
    <class>qMRMLModelDisplayNodeWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLModelDisplayNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
