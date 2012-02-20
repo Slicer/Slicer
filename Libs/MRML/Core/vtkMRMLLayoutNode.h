@@ -102,6 +102,7 @@ public:
       SlicerLayoutCompareGridView,
       SlicerLayoutConventionalQuantitativeView,
       SlicerLayoutFourUpQuantitativeView,
+      SlicerLayoutTwoOverTwoView,
       SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };

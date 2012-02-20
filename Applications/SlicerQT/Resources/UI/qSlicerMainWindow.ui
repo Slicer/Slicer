@@ -86,6 +86,7 @@
      <addaction name="actionViewLayoutCompareGrid"/>
      <addaction name="actionViewLayoutThreeOverThree"/>
      <addaction name="actionViewLayoutFourOverFour"/>
+     <addaction name="actionViewLayoutTwoOverTwo" />
     </widget>
     <widget class="QMenu" name="menuWindowToolbars">
      <property name="title">
@@ -915,6 +916,23 @@
     <bool>true</bool>
    </property>
   </action>
+
+  <action name="actionViewLayoutTwoOverTwo">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutTwoOverTwoView.png</normaloff>:/Icons/LayoutTwoOverTwoView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Two over Two</string>
+   </property>
+   <property name="toolTip">
+    <string>Two over Two Layout</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+ 
   <action name="actionWindowToolbarsModuleSelector">
    <property name="checkable">
     <bool>true</bool>

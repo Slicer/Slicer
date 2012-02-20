@@ -473,6 +473,47 @@ const char* fourUpQuantitativeView =
   " </item>"
   "</layout>";
 
+const char* twoOverTwoView =
+  "<layout type=\"vertical\">"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice1\">"
+  "     <property name=\"orientation\" action=\"default\">Axial</property>"
+  "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+   "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice2\">"
+  "     <property name=\"orientation\" action=\"default\"></property>"
+  "     <property name=\"viewlabel\" action=\"default\">2</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "    </view>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  " <item>"
+  "  <layout type=\"horizontal\">"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice3\">"
+  "     <property name=\"orientation\" action=\"default\">Axial</property>"
+  "     <property name=\"viewlabel\" action=\"default\">3</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "    </view>"
+  "   </item>"
+  "   <item>"
+  "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Slice4\">"
+  "     <property name=\"orientation\" action=\"default\">Axial</property>"
+  "     <property name=\"viewlabel\" action=\"default\">4</property>"
+  "     <property name=\"viewcolor\" action=\"default\">#8C8C8C</property>"
+  "    </view>"
+  "   </item>"
+  "  </layout>"
+  " </item>"
+  "</layout>";
+
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
@@ -878,6 +919,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          conventionalQuantitativeView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView,
                                          fourUpQuantitativeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTwoOverTwoView,
+                                         twoOverTwoView);
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
 }
