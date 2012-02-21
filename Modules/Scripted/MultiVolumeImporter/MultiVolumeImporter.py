@@ -1,5 +1,6 @@
 from __main__ import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
+from Helper import *
 
 #
 # MultiVolumeImporter
@@ -11,12 +12,12 @@ class MultiVolumeImporter:
     parent.categories = ["MultiVolume Support", "Work in progress"]
     parent.contributors = ["Andrey Fedorov", "Steve Pieper", "Ron Kikinis"]
     parent.helpText = """
-    Support of MultiVolume initialization
+    Support of MultiVolume import in Slicer4
     """
     # MultiVolumeExplorer registers the MRML node type this module is using
     parent.dependencies = ['MultiVolumeExplorer']
     parent.acknowledgementText = """
-    This file was originally developed by Andrey Fedorov, SPL
+    This module was originally developed by Andrey Fedorov, SPL
     """
     self.parent = parent
 
@@ -70,7 +71,7 @@ class MultiVolumeImporterWidget:
     self.__processingModes.append(['DICOM variable FA MRI (GE)', '0018|1314', 'deg', 'vFA'])
     self.__processingModes.append(['DICOM variable TR MRI (GE)', '0018|0080', 'ms', 'vTR'])
     self.__processingModes.append(['User-defined DICOM', '??', '??', 'MultiVolumeDICOM'])
-    self.__processingModes.append(['User-defined non-DICOM', 'None', '??', 'MultiVolume'])
+    self.__processingModes.append(['User-defined non-DICOM', 'N/A', '??', 'MultiVolume'])
 
     for p in self.__processingModes:
       print 'Processing mode found: ',p
@@ -93,24 +94,20 @@ class MultiVolumeImporterWidget:
     label.toolTip = 'DICOM tag used to separate individual volumes in the series'
     self.__dicomTag = qt.QLineEdit()
     self.__dicomTag.text = ""
-    self.__dicomTag.enabled = 0
     dummyFormLayout.addRow(label, self.__dicomTag)
 
     label = qt.QLabel('Frame identifying units:')
     self.__veLabel = qt.QLineEdit()
-    self.__veLabel.enabled = 0
     dummyFormLayout.addRow(label, self.__veLabel)
 
     label = qt.QLabel('Initial value:')
     self.__veInitial = qt.QDoubleSpinBox()
     self.__veInitial.value = 0
-    self.__veInitial.enabled = 0
     dummyFormLayout.addRow(label, self.__veInitial)
 
     label = qt.QLabel('Step:')
     self.__veStep = qt.QDoubleSpinBox()
     self.__veStep.value = 1
-    self.__veStep.enabled = 0
     dummyFormLayout.addRow(label, self.__veStep)
 
     importButton = qt.QPushButton("Import")
@@ -124,11 +121,21 @@ class MultiVolumeImporterWidget:
     # Add vertical spacer
     self.layout.addStretch(1)
     
+  def enter(self):
+    self.onProcessingModeChanged(self.__modeSelector.currentIndex)
+
   def onProcessingModeChanged(self, idx):
     nModes = len(self.__processingModes)
     mode = self.__processingModes[idx]
-    if idx >= nModes-2:
+    self.__advancedFrame.collapsed = 0
+    if idx < nModes-2:
       self.__advancedFrame.enabled = 0
+    else:
+      self.__advancedFrame.enabled = 1
+    if idx == nModes-1:
+      self.__dicomTag.enabled = 0
+    else:
+      self.__dicomTag.enabled = 1
     self.__dicomTag.text = mode[1]
     self.__veLabel.text = mode[2]
     self.__veInitial.value = 0
@@ -148,30 +155,59 @@ class MultiVolumeImporterWidget:
     modeIdx = self.__modeSelector.currentIndex
     processingMode = self.__processingModes[modeIdx]
 
-    # get logic
-    logic = slicer.modules.multivolumeexplorer.logic()
-
-    # create a clean temporary directory
-    tmpDir = slicer.app.settings().value('Modules/TemporaryDirectory')
-    if not os.path.exists(tmpDir):
-      os.mkdir(tmpDir)
-    tmpDir = tmpDir+'/MultiVolumeImporter'
-    if not os.path.exists(tmpDir):
-      os.mkdir(tmpDir)
+    # There are two options:
+    # 1. DICOM series in a directory, with either predefined or custom parse tag
+    # 2. Series of frames alpha-ordered, all in the input directory
+    # Assume here that the last mode in the list is for parsing a list of
+    # non-DICOM frames
+    
+    fileNames = []    # file names on disk
+    frameList = []    # frames as MRMLScalarVolumeNode's
+    frameFolder = ""
     volumeLabels = vtk.vtkDoubleArray()
-    nFrames = logic.ProcessDICOMSeries(self.__fDialog.directory, tmpDir, self.__dicomTag.text, volumeLabels)
 
-    self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
+    if modeIdx < len(self.__processingModes)-1:
+      # DICOM series
 
-    print 'Location of files:',tmpDir
+      # get logic
+      logic = slicer.modules.multivolumeexplorer.logic()
 
-    frameList = []
-    volumesLogic = slicer.modules.volumes.logic()
-    fileNames = os.listdir(tmpDir)
-    fileNames.sort()
+      # create a clean temporary directory
+      tmpDir = slicer.app.settings().value('Modules/TemporaryDirectory')
+      if not os.path.exists(tmpDir):
+        os.mkdir(tmpDir)
+      tmpDir = tmpDir+'/MultiVolumeImporter'
+      if not os.path.exists(tmpDir):
+        os.mkdir(tmpDir)
+        # clean it up
+        fileNames = os.listdir(tmpDir)
+        #for f in fileNames:
+        #  os.unlink(f)
+
+      nFrames = logic.ProcessDICOMSeries(self.__fDialog.directory, tmpDir, self.__dicomTag.text, volumeLabels)
+
+      self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
+
+      print 'Location of files:',tmpDir
+      fileNames = os.listdir(tmpDir)
+
+      frameFolder = tmpDir
+
+    else:
+      # each frame is saved as a separate volume
+      fileNames = os.listdir(self.__fDialog.directory)
+      frameFolder = self.__fDialog.directory
+      nFrames = len(fileNames)
+      volumeLabels.SetNumberOfTuples(nFrames)
+      volumeLabels.SetNumberOfComponents(1)
+      volumeLabels.Allocate(nFrames)
+      for i in range(len(fileNames)):
+        frameId = self.__veInitial.value+self.__veStep.value*i
+        volumeLabels.SetComponent(i, 0, frameId)
     
     # read the first frame to get the extent for DWI node
-    fullName = tmpDir+'/'+fileNames[0]
+    fullName = frameFolder+'/'+fileNames[0]
+    volumesLogic = slicer.modules.volumes.logic()
     frame = volumesLogic.AddArchetypeVolume(fullName, processingMode[3]+' Frame 0', 0)
     #os.unlink(fullName)
     frameImage = frame.GetImageData()
@@ -216,14 +252,13 @@ class MultiVolumeImporterWidget:
     self.annihilateScalarNode(frame)
 
     for frameId in range(0,nFrames):
-      fullName = tmpDir+'/'+fileNames[frameId]
+      fullName = frameFolder+'/'+fileNames[frameId]
       print 'Processing frame ',frameId,': ',fullName
       frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
       dwiImageArray.T[frameId] = frameImageArray
       self.annihilateScalarNode(frame)
-      os.unlink(fullName)
 
     dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
     dwiDisplayNode.SetScene(slicer.mrmlScene)
@@ -241,6 +276,7 @@ class MultiVolumeImporterWidget:
     vcNode.SetLabelName(self.__veLabel.text)
     print 'VC node setup!'
 
+    Helper.SetBgFgVolumes(dwiNode.GetID(),None)
 
   # leave no trace of the temporary nodes
   def annihilateScalarNode(self, node):
