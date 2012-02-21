@@ -277,7 +277,7 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   if (sliceNode)
     {
     QString layoutName = sliceNode->GetLayoutName();
-    qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
+    //qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the slice controller
     d->createController(sliceNode, layoutManager);
@@ -287,7 +287,7 @@ void qSlicerViewControllersModuleWidget::onNodeAddedEvent(vtkObject*, vtkObject*
   if (viewNode)
     {
     QString layoutName = viewNode->GetName();
-    qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
+    //qDebug() << "qSlicerViewControllersModuleWidget::onNodeAddedEvent - layoutName:" << layoutName;
 
     // create the view controller
     d->createController(viewNode, layoutManager);
@@ -335,7 +335,7 @@ void qSlicerViewControllersModuleWidget::onLayoutChanged(int)
     return;
     }
 
-  qDebug() << "qSlicerViewControllersModuleWidget::onLayoutChanged";
+  //qDebug() << "qSlicerViewControllersModuleWidget::onLayoutChanged";
 
   // add the controllers for any newly visible SliceNodes and remove
   // the controllers for any SliceNodes no longer visible
