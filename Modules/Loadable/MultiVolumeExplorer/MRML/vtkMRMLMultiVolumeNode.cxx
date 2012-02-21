@@ -45,7 +45,6 @@ vtkMRMLMultiVolumeNode::vtkMRMLMultiVolumeNode()
   this->LabelName = "";
   this->HideFromEditors = 0;
   this->DWVNodeID = "";
-  std::cout << " image container constructor called" << std::endl;
 }
 
 //----------------------------------------------------------------------------

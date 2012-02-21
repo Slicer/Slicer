@@ -171,6 +171,7 @@ const int vtkSlicerMultiVolumeExplorerLogic
     // map items should be sorted by key
     tagValues->SetNumberOfComponents(1);
     tagValues->SetNumberOfTuples(tagVal2fileList.size());
+    tagValues->Allocate(tagVal2fileList.size());
 
     i = 0;
 
