@@ -2,8 +2,11 @@
   <qresource>
     <file>Icons/SaveScene.png</file>
     <file>Icons/Small/SlicerLoadDICOM.png</file>
+    <file>Icons/Medium/SlicerLoadDICOM.png</file>
     <file>Icons/Small/SlicerLoadData.png</file>    
+    <file>Icons/Medium/SlicerLoadData.png</file>    
     <file>Icons/Small/SlicerSave.png</file>    
+    <file>Icons/Medium/SlicerSave.png</file>    
 
     <file>Icons/Small/SlicerAddColorLUT.png</file>
     <file>Icons/Medium/SlicerAddColorLUT.png</file>
