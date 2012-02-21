@@ -32,8 +32,6 @@ namespace
 /** Main command */
 int main(int argc, char * *argv)
 {
-  std::cout << "Begun." << std::endl;
-
   PARSE_ARGS;
   std::cout << "Processed args." << std::endl;
 

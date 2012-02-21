@@ -21,7 +21,6 @@ using namespace MeshContourEvolver;
 
 int main(int argc, char* argv[] )
 {
-  std::cout << "Starting...\n";
   PARSE_ARGS;
 
   std::cout << "Output model: " << OutputModel.c_str() << "\n";
