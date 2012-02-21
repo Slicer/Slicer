@@ -706,6 +706,8 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"viewcolor\" action=\"default\">#E17012</property>"
       "     <property name=\"lightboxrows\" action=\"default\">1</property>"
       "     <property name=\"lightboxcolumns\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
+      "     <property name=\"lightboxrows\" action=\"relayout\">1</property>"
+      "     <property name=\"lightboxcolumns\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxColumns() << "</property>"
       "    </view>"
       "   </item>";
       }
@@ -758,6 +760,8 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
       "     <property name=\"viewcolor\" action=\"default\">#E17012</property>"
       "     <property name=\"lightboxrows\" action=\"default\">" << this->LayoutNode->GetNumberOfCompareViewLightboxRows() << "</property>"
       "     <property name=\"lightboxcolumns\" action=\"default\">1</property>"
+      "     <property name=\"lightboxrows\" action=\"relayout\">" << this->LayoutNode->GetNumberOfCompareViewLightboxRows() << "</property>"
+      "     <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
       "    </view>"
       "   </item>";
     }
@@ -817,6 +821,8 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
           "       <property name=\"viewcolor\" action=\"default\">#E17012</property>"
           "       <property name=\"lightboxrows\" action=\"default\">1</property>"
           "       <property name=\"lightboxcolumns\" action=\"default\">1</property>"
+          "       <property name=\"lightboxrows\" action=\"relayout\">1</property>"
+          "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
           "      </view>"
           "     </item>";
         }
@@ -1248,10 +1254,10 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
     vtkMRMLNode* viewNode = this->GetViewFromElement(viewElement);
     if (viewNode)
       {
-      // View already exisits, just apply the default properties for
+      // View already exisits, just apply the "relayout" properties for
       // the layout
       ViewProperties properties = this->GetViewElementProperties(viewElement);
-      this->ApplyProperties(properties, viewNode, "default");
+      this->ApplyProperties(properties, viewNode, "relayout");
       continue;
       }
     ViewAttributes attributes = this->GetViewElementAttributes(viewElement);
@@ -1261,6 +1267,7 @@ void vtkMRMLLayoutLogic::CreateMissingViews(vtkXMLDataElement* layoutRootElement
       vtkWarningMacro("Can't find node for element: " << viewElement->GetName());
       viewElement->PrintXML(std::cerr, vtkIndent(0));
       }
+    // New View, apply the "default" properties for the layout.
     ViewProperties properties = this->GetViewElementProperties(viewElement);
     this->ApplyProperties(properties, viewNode, "default");
     this->GetMRMLScene()->AddNode(viewNode);
