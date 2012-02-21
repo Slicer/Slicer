@@ -47,6 +47,8 @@
 #include <vtkMRMLScalarVolumeDisplayNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 
+
+
 //--------------------------------------------------------------------------
 // qMRMLSliceViewPrivate methods
 
@@ -86,6 +88,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->SliceFOVSpinBox = 0;
   this->LightBoxRowsSpinBox = 0;
   this->LightBoxColumnsSpinBox = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -623,6 +626,7 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionLightbox2x2_view->setChecked(rows == 2 && columns == 2);
   this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
   this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
+
 }
 
 // --------------------------------------------------------------------------
@@ -635,8 +639,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     return;
     }
   Q_ASSERT(this->MRMLSliceCompositeNode);
-
-  //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode";
+  
+  bool wasBlocked;
 
   // Update slice link toggle. Must be done first as its state controls
   // different behaviors when properties are set.
@@ -659,26 +663,28 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
     }
 
   // Update "foreground layer" node selector
+  wasBlocked = this->ForegroundComboBox->blockSignals(true);
   this->ForegroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
+  this->ForegroundComboBox->blockSignals(wasBlocked);
 
   // Update "background layer" node selector
+  wasBlocked = this->BackgroundComboBox->blockSignals(true);
   this->BackgroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
+  this->BackgroundComboBox->blockSignals(wasBlocked);
 
   // Update "label map" node selector
+  wasBlocked = this->LabelMapComboBox->blockSignals(true);
   this->LabelMapComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
+  this->LabelMapComboBox->blockSignals(wasBlocked);
 
   // Label opacity
   this->LabelMapOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
 
-  //bool blocking = this->ForegroundOpacitySlider->blockSignals(true);
-  //bool blocking = this->BackgroundOpacitySlider->blockSignals(true);
+  // Foreground opacity
   this->ForegroundOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetForegroundOpacity());
-  //this->ForegroundOpacitySlider->blockSignals(blocking);
-  //this->BackgroundOpacitySlider->setValue(1. - this->MRMLSliceCompositeNode->GetForegroundOpacity());
-  //this->BackgroundOpacitySlider->blockSignals(blocking);
 
   // Compositing
   switch(this->MRMLSliceCompositeNode->GetCompositing())
@@ -696,7 +702,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       this->actionCompositingSubtract->setChecked(true);
       break;
     }
-
 }
 
 

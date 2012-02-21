@@ -442,7 +442,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
         if (sliceCompositeNode->GetInteractionFlags() 
             & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
           {
-          std::cerr << "Broadcasting Foreground Volume " << sliceCompositeNode->GetForegroundVolumeID() << std::endl;
+          //std::cerr << "Broadcasting Foreground Volume " << sliceCompositeNode->GetForegroundVolumeID() << std::endl;
           cNode->SetForegroundVolumeID(sliceCompositeNode->GetForegroundVolumeID());
           }
 
