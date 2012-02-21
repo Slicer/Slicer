@@ -136,6 +136,20 @@ void vtkMRMLSliceCompositeNode::WriteXML(ostream& of, int nIndent)
 }
 
 //-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetInteracting(int interacting)
+{
+  // Don't call Modified()
+  this->Interacting = interacting;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetInteractionFlags(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlags = flags;
+}
+
+//-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferences()
 {
    Superclass::UpdateReferences();

@@ -31,6 +31,7 @@
 
 class vtkCallbackCommand;
 class vtkIntArray;
+class vtkFloatArray;
 class vtkUnsignedLongArray;
 
 #ifndef vtkObjectPointer
@@ -50,19 +51,19 @@ class VTK_MRML_EXPORT vtkObserverManager : public vtkObject
   void SetObject(vtkObject **nodePtr, vtkObject *node);
 
   /// set vtkObject to a specified pointer, remove all observers for all events, add observer for Modify event
-  void SetAndObserveObject(vtkObject **nodePtr, vtkObject *node);
+  void SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority=0.0);
 
   /// set vtkObject to a specified pointer, remove all observers for all events, add observers for specified events
-  void SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events);
+  void SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities=0);
 
   /// remove all observers for all events
   void RemoveObjectEvents(vtkObject *nodePtr);
 
   /// Observe ModifiedEvent on the object
-  void ObserveObject(vtkObject *node);
+  void ObserveObject(vtkObject *node, float priority=0.0);
 
   /// add observers for specified events
-  void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events);
+  void AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities=0);
 
   /// accessors for the owner class
   /// - note we do not hold a registered pointer to the owner

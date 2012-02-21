@@ -115,6 +115,20 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   this->SetLayoutName(NULL);
 }
 
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetInteracting(int interacting)
+{
+  // Don't call Modified()
+  this->Interacting = interacting;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetInteractionFlags(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlags = flags;
+}
+
 //----------------------------------------------------------------------------
 double* vtkMRMLSliceNode::redColor()
 {

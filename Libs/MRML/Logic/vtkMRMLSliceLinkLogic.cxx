@@ -50,14 +50,58 @@ vtkMRMLSliceLinkLogic::~vtkMRMLSliceLinkLogic()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::BroadcastingEventsOn()
+{
+  this->BroadcastingEvents++;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::BroadcastingEventsOff()
+{
+  this->BroadcastingEvents--;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLSliceLinkLogic::GetBroadcastingEvents()
+{
+  return this->BroadcastingEvents;
+}
+
+
+//----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   // List of events the slice logics should listen
   vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  vtkSmartPointer<vtkFloatArray> priorities =vtkSmartPointer<vtkFloatArray>::New();
 
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
+  float normalPriority = 0.0;
+  float lowPriority = -0.5;
+  // float highPriority = 0.5;
+
+  // Events that use the default priority.  Don't care the order they
+  // are triggered
+  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  priorities->InsertNextValue(normalPriority);
+  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  priorities->InsertNextValue(normalPriority);
+  events->InsertNextValue(vtkMRMLScene::StartBatchProcessEvent);
+  priorities->InsertNextValue(normalPriority);
+  events->InsertNextValue(vtkMRMLScene::StartImportEvent);
+  priorities->InsertNextValue(normalPriority);
+  events->InsertNextValue(vtkMRMLScene::StartRestoreEvent);
+  priorities->InsertNextValue(normalPriority);
+
+  // Events that need to a lower priority than normal, in other words,
+  // guaranteed to be be called after other triggers
+  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
+  priorities->InsertNextValue(lowPriority);
+  events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  priorities->InsertNextValue(lowPriority);
+  events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
+  priorities->InsertNextValue(lowPriority);
+
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events, priorities);
 
   this->ProcessMRMLSceneEvents(newScene, vtkCommand::ModifiedEvent, 0);
 }
@@ -189,6 +233,61 @@ void vtkMRMLSliceLinkLogic::OnMRMLNodeModified(vtkMRMLNode* node)
       }
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneStartBatchProcess()
+{
+  // Note the sense. Turning "on" tells the link logic that we are
+  // already broadcasting an event, so don't rebroadcast.
+  //std::cerr << "OnMRMLSceneStartBatchProcess" << std::endl;
+  this->BroadcastingEventsOn();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneEndBatchProcess()
+{
+  // Note the sense. Turning "off" tells the link logic that we are
+  // not already broadcasting an event, so future events can be broadcast
+  //std::cerr << "OnMRMLSceneEndBatchProcess" << std::endl;
+  this->BroadcastingEventsOff();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneStartImport()
+{
+  // Note the sense. Turning "on" tells the link logic that we are
+  // already broadcasting an event, so don't rebroadcast.
+  //std::cerr << "OnMRMLSceneStartImport" << std::endl;
+  this->BroadcastingEventsOn();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneEndImport()
+{
+  // Note the sense. Turning "off" tells the link logic that we are
+  // not already broadcasting an event, so future events can be broadcast
+  //std::cerr << "OnMRMLSceneEndImport" << std::endl;
+  this->BroadcastingEventsOff();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneStartRestore()
+{
+  // Note the sense. Turning "on" tells the link logic that we are
+  // already broadcasting an event, so don't rebroadcast.
+  //std::cerr << "OnMRMLSceneStartRestore" << std::endl;
+  this->BroadcastingEventsOn();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLinkLogic::OnMRMLSceneEndRestore()
+{
+  // Note the sense. Turning "off" tells the link logic that we are
+  // not already broadcasting an event, so future events can be broadcast
+  //std::cerr << "OnMRMLSceneEndRestore" << std::endl;
+  this->BroadcastingEventsOff();
+}
+
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLinkLogic::PrintSelf(ostream& os, vtkIndent indent)
@@ -343,6 +442,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
         if (sliceCompositeNode->GetInteractionFlags() 
             & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
           {
+          std::cerr << "Broadcasting Foreground Volume " << sliceCompositeNode->GetForegroundVolumeID() << std::endl;
           cNode->SetForegroundVolumeID(sliceCompositeNode->GetForegroundVolumeID());
           }
 

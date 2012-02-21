@@ -276,7 +276,7 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, vtkIntArray *events)
+void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, vtkIntArray *events, vtkFloatArray *priorities)
 {
   if (this->Internal->MRMLScene == newScene)
     {
@@ -288,7 +288,7 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
     this->UnobserveMRMLScene();
     }
 
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events, priorities);
 
   if (newScene)
     {
@@ -299,10 +299,12 @@ void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEvents(vtkMRMLScene *newScene, 
 
 //----------------------------------------------------------------------------
 void vtkMRMLAbstractLogic::SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene,
-                                                                vtkIntArray *events)
+                                                                vtkIntArray *events,
+                                                                vtkFloatArray *priorities
+)
 {
   this->GetMRMLSceneObserverManager()->SetAndObserveObjectEvents(
-      vtkObjectPointer(&this->Internal->MRMLScene), newScene, events);
+    vtkObjectPointer(&this->Internal->MRMLScene), newScene, events, priorities);
 }
 
 //----------------------------------------------------------------------------

@@ -192,8 +192,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// Get/Set a flag indicating whether this node is actively being
   /// manipulated (usually) by a user interface. This flag is used by
   /// logic classes to determine whether state changes should be
-  /// propagated to other nodes to implement linked controls.
-  vtkSetMacro(Interacting, int);
+  /// propagated to other nodes to implement linked controls. Does not
+  /// mark the node as Modified.
+  void SetInteracting(int);
   vtkGetMacro(Interacting, int);
   vtkBooleanMacro(Interacting, int);
 
@@ -217,8 +218,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// Get/Set a flag indicating what parameters are being manipulated
   /// within calls to InteractingOn() and InteractingOff(). These
   /// fields are used to propagate linked behaviors. This flag is a
-  /// bitfield, with multiple parameters OR'd to composte the flag.
-  vtkSetMacro(InteractionFlags, unsigned int);
+  /// bitfield, with multiple parameters OR'd to composte the
+  /// flag. Does not mark the node as Modified.
+  void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
 
   

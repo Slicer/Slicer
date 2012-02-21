@@ -56,12 +56,18 @@ protected:
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartBatchProcess();
+  virtual void OnMRMLSceneEndBatchProcess();
+  virtual void OnMRMLSceneStartImport();
+  virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneStartRestore();
+  virtual void OnMRMLSceneEndRestore();
 
   // Used internally to control whether we are in the process of
   // broadcasting events. PIMPL it?
-  vtkSetMacro(BroadcastingEvents, int);
-  vtkGetMacro(BroadcastingEvents, int);
-  vtkBooleanMacro(BroadcastingEvents, int);
+  void BroadcastingEventsOn();
+  void BroadcastingEventsOff();
+  int GetBroadcastingEvents();
  
   /// Broadcast a slice node to other slice nodes. 
   void BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode);
@@ -78,7 +84,12 @@ private:
   void BroadcastLastRotation(vtkMRMLSliceNode*, vtkMRMLSliceNode*);
   void UpdateSliceNodeInteractionStatus(vtkMRMLSliceNode*);
 
+  // Counter on nested requests for Broadcasting events. Counter is
+  // used as scene restores and scene view restores issue several
+  // nested events and we want to block from the first Start to the
+  // last End event (StartBatchProcess, StartImport, StartRestore).
   int BroadcastingEvents;
+
   struct SliceNodeInfos
     {
     SliceNodeInfos(int interacting) : Interacting(interacting) {}

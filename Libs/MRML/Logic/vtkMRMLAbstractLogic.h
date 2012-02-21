@@ -38,6 +38,7 @@ class vtkMRMLApplicationLogic;
 #include <vtkObject.h>
 #include <vtkObjectFactory.h>
 #include <vtkIntArray.h>
+#include <vtkFloatArray.h>
 #include <vtkUnsignedLongArray.h>
 
 #include "vtkMRMLLogicWin32Header.h"
@@ -141,7 +142,7 @@ public:
   /// \sa SetMRMLSceneInternal()
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   void SetAndObserveMRMLScene(vtkMRMLScene * newScene);
-  void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events);
+  void SetAndObserveMRMLSceneEvents(vtkMRMLScene * newScene, vtkIntArray * events, vtkFloatArray* priorities=0);
 
 protected:
 
@@ -291,7 +292,7 @@ protected:
 
   /// Convenient method to set and observe the scene
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
-  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events);
+  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events, vtkFloatArray *priorities=0);
 
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.

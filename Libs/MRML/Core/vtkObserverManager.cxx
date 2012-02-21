@@ -15,6 +15,7 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkIntArray.h>
+#include <vtkFloatArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkUnsignedLongArray.h>
 
@@ -106,7 +107,7 @@ void vtkObserverManager::SetObject(vtkObject **nodePtr, vtkObject *node)
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node)
+void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *node, float priority)
 {
   vtkDebugMacro (<< "SetAndObserveObject of " << node);
   if (*nodePtr == node)
@@ -114,11 +115,12 @@ void vtkObserverManager::SetAndObserveObject(vtkObject **nodePtr, vtkObject *nod
     return;
     }
   this->SetObject(nodePtr, node);
-  this->ObserveObject(node);
+  this->ObserveObject(node, priority);
 }
 
+
 //----------------------------------------------------------------------------
-void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events)
+void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObject *node, vtkIntArray *events, vtkFloatArray *priorities)
 {
   vtkDebugMacro (<< "SetAndObserveObjectEvents of " << node);
   if (*nodePtr == node)
@@ -129,8 +131,8 @@ void vtkObserverManager::SetAndObserveObjectEvents(vtkObject **nodePtr, vtkObjec
       }
     vtkWarningMacro( << "Setting the same object should be a no-op.");
     }
-  this->SetObject(nodePtr, node);
-  this->AddObjectEvents(node, events);
+  this->SetObject(nodePtr, node);  // should we set a priority on the object?
+  this->AddObjectEvents(node, events, priorities);
 }
 
 //----------------------------------------------------------------------------
@@ -152,18 +154,32 @@ void vtkObserverManager::RemoveObjectEvents(vtkObject *nodePtr)
     }
 }
 
+
 //----------------------------------------------------------------------------
-void vtkObserverManager::ObserveObject(vtkObject* node)
+void vtkObserverManager::ObserveObject(vtkObject* node, float priority)
 {
   vtkIntArray *events = vtkIntArray::New();
   events->InsertNextValue(vtkCommand::ModifiedEvent);
-  this->AddObjectEvents(node, events);
+  vtkFloatArray *priorities = vtkFloatArray::New();
+  priorities->InsertNextValue(priority);
+  this->AddObjectEvents(node, events, priorities);
   events->Delete();
+  priorities->Delete();
 }
 
 //----------------------------------------------------------------------------
-void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events) 
+void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events, vtkFloatArray *priorities) 
 {
+  // check whether no priorities are provided or the same number of
+  // events and priorities are provided
+  if ( !((events && priorities && events->GetNumberOfTuples() == priorities->GetNumberOfTuples()) || (events && !priorities)))
+    {
+    vtkWarningMacro(<< "Number of events (" << events->GetNumberOfTuples() 
+                    << ") doesn't match number of priorities ("
+                    << priorities->GetNumberOfTuples());
+    return;
+    }
+
   if (nodePtr)
     {
     vtkUnsignedLongArray* objTags = NULL; 
@@ -195,7 +211,16 @@ void vtkObserverManager::AddObjectEvents(vtkObject *nodePtr, vtkIntArray *events
                           << " already exists.");
           }
 #endif
-        vtkObservation *observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
+        vtkObservation *observation=0;
+        if (!priorities)
+          {
+          observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand );
+          }
+        else
+          {
+          observation = broker->AddObservation (nodePtr, events->GetValue(i), observer, this->CallbackCommand, priorities->GetValue(i) );
+          }
+
         unsigned long tag = observation->GetEventTag();
         
         objTags->InsertNextValue(tag);
