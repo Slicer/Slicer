@@ -206,7 +206,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionFileLoadScene"/>
+   <addaction name="actionFileLoadData"/>
+   <addaction name="actionLoadDICOM"/>
    <addaction name="actionFileSaveScene"/>
   </widget>
   <widget class="QToolBar" name="ModuleToolBar">
@@ -314,7 +315,7 @@
   <action name="actionFileLoadScene">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Medium/SlicerLoadScene.png</normaloff>:/Icons/Medium/SlicerLoadScene.png</iconset>
+     <normaloff>:/Icons/Small/SlicerLoadScene.png</normaloff>:/Icons/Small/SlicerLoadScene.png</iconset>
    </property>
    <property name="text">
     <string>Load Scene</string>
@@ -324,6 +325,33 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionFileLoadData">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise an &quot;Add Data&quot; widget that allows you to select individual datasets to add to the existing scene. This load option is most useful when you want to load many different data types at once (volumes, models, etc.) which may not yet be described by a scene file.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionLoadDICOM">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerLoadDICOM.png</normaloff>:/Icons/Small/SlicerLoadDICOM.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load DICOM</string>
+   </property>
+   <property name="toolTip">
+    <string>Raise the DICOM module for loading DICOM datasets.</string>
    </property>
   </action>
   <action name="actionFileImportScene">
@@ -341,7 +369,7 @@
   <action name="actionFileAddData">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Medium/SlicerAddData.png</normaloff>:/Icons/Medium/SlicerAddData.png</iconset>
+     <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
     <string>Add Data</string>
@@ -380,7 +408,7 @@
   <action name="actionFileSaveScene">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/SmallSlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -395,7 +423,7 @@
   <action name="actionSDBSaveToDirectory">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save Scene To Directory</string>
@@ -410,7 +438,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Zip Directory</string>
@@ -425,7 +453,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>DICOM from Zip</string>

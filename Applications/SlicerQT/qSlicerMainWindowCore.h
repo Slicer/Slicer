@@ -44,7 +44,9 @@ public:
 public slots: 
   /// 
   /// Handle actions - See qSlicerMainWindow::setupMenuActions
+
   void onFileAddDataActionTriggered();
+  void onFileLoadDataActionTriggered();
   void onFileImportSceneActionTriggered();
   void onFileLoadSceneActionTriggered();
   void onFileAddVolumeActionTriggered();

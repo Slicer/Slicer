@@ -98,6 +98,13 @@ void qSlicerMainWindowCore::onFileAddDataActionTriggered()
 }
 
 //---------------------------------------------------------------------------
+void qSlicerMainWindowCore::onFileLoadDataActionTriggered()
+{
+  qSlicerApplication::application()->ioManager()->openAddDataDialog();
+}
+
+
+//---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onFileImportSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddSceneDialog();

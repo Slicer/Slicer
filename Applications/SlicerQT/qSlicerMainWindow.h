@@ -68,6 +68,8 @@ protected slots:
   void onLayoutCompareWidescreenActionTriggered(QAction* action);
   void onLayoutCompareGridActionTriggered(QAction* action);
   void onLayoutChanged(int);
+  void loadDICOMActionTriggered();
+
 protected:
 
   /// Connect MainWindow action with slots defined in MainWindowCore

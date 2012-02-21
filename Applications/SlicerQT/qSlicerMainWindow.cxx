@@ -512,6 +512,7 @@ void qSlicerMainWindow::setupMenuActions()
   Q_D(qSlicerMainWindow);
 
   qSlicerMainWindowCore_connect(FileAddData);
+  qSlicerMainWindowCore_connect(FileLoadData);
   qSlicerMainWindowCore_connect(FileImportScene);
   qSlicerMainWindowCore_connect(FileLoadScene);
   qSlicerMainWindowCore_connect(FileAddVolume);
@@ -530,7 +531,6 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(EditRedo);
 
   qSlicerMainWindow_connect(EditApplicationSettings);
-
   qSlicerMainWindow_connect(ViewExtensionManager);
 
   d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
@@ -592,6 +592,9 @@ void qSlicerMainWindow::setupMenuActions()
   connect(d->actionWindowToolbarsResetToDefault, SIGNAL(triggered()),
           this, SLOT(restoreToolbars()));
 
+  // Main ToolBar actions (where are actions for load data and save?
+  connect(d->actionLoadDICOM, SIGNAL(triggered()),
+          this, SLOT(loadDICOMActionTriggered()));  
   // Module ToolBar actions
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
@@ -606,6 +609,26 @@ void qSlicerMainWindow::setupMenuActions()
 }
 #undef qSlicerMainWindowCore_connect
 
+
+//---------------------------------------------------------------------------
+void qSlicerMainWindow::loadDICOMActionTriggered()
+{
+//  Q_D(qSlicerMainWindow);
+// raise the dicom module....
+//  d->ModuleSelectorToolBar->selectModule("DICOM");
+
+  qSlicerLayoutManager * layoutManager = qSlicerApplication::application()->layoutManager();
+
+  if (!layoutManager)
+    {
+    return;
+    }
+  layoutManager->setCurrentModule("DICOM");
+
+
+}
+
+  
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
 {
