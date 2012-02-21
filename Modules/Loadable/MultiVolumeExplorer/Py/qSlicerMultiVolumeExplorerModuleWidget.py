@@ -1,6 +1,6 @@
 from __main__ import vtk, qt, ctk, slicer
+from Helper import *
 
-from EMSegmentWizard import Helper
 
 class qSlicerMultiVolumeExplorerModuleWidget:
   def __init__( self, parent=None ):
@@ -236,6 +236,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vcNode = self.__vcSelector.currentNode()
     if self.__vcNode != None:
        self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
+
+       Helper.SetBgFgVolumes(self.__dwvNode.GetID(), None)
+
        print 'Active DWV node: ', self.__dwvNode
        if self.__dwvNode != None:
          nGradients = self.__dwvNode.GetNumberOfGradients()
@@ -255,6 +258,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
          
          #self.__cn.AddArray('Intensity at cursor location', self.__dn.GetID())
          self.__cvn.SetChartNodeID(self.__cn.GetID())
+
 
   
   def onPlayButtonToggled(self,checked):
