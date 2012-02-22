@@ -26,6 +26,7 @@
 
 class qMRMLCheckableNodeComboBoxPrivate;
 
+/// Nodes are unchecked by default.
 class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBox
   : public qMRMLNodeComboBox
 {
@@ -39,18 +40,32 @@ public:
   explicit qMRMLCheckableNodeComboBox(QWidget* parent = 0);
   virtual ~qMRMLCheckableNodeComboBox();
 
+  /// Return the list of checked nodes.
   QList<vtkMRMLNode*> checkedNodes()const;
+
+  /// Return true if all the nodes are checked.
+  /// If empty, return true;
   bool allChecked()const;
+
+  /// Return true if all the nodes are unchecked.
+  /// If empty, return true.
   bool noneChecked()const;
 
+  /// Return the checkstate of the node.
+  /// If \a node is invalid (null or not in the scene),
+  /// Qt::Unchecked is returned.
   Qt::CheckState checkState(vtkMRMLNode* node)const;
   void setCheckState(vtkMRMLNode* node, Qt::CheckState check);
 
 public slots:
+  /// Set the check state of the node to Qt::Checked.
   inline void check(vtkMRMLNode* node);
+
+  /// Set the check state of the node to Qt::Unchecked.
   inline void uncheck(vtkMRMLNode* node);
 
 signals:
+  /// Signal fired anytime a node is checked or unchecked.
   void checkedNodesChanged();
 
 private:

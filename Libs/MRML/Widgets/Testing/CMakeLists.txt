@@ -2,6 +2,7 @@
 set(KIT ${PROJECT_NAME})
 set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLCheckableNodeComboBoxTest1.cxx
   qMRMLClipNodeWidgetTest1.cxx
   qMRMLColorListViewTest1.cxx
@@ -71,6 +72,7 @@ set(Tests_UtilityFiles
 
 QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
+  qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLSceneModelTest.cxx
   )
 
@@ -95,6 +97,7 @@ macro(SCENE_TEST TESTNAME SCENEFILENAME)
     )
 endmacro()
 
+SIMPLE_TEST( qMRMLCheckableNodeComboBoxTest )
 SIMPLE_TEST( qMRMLCheckableNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLClipNodeWidgetTest1 )
 SIMPLE_TEST( qMRMLColorListViewTest1 )
