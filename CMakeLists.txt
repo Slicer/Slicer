@@ -239,7 +239,16 @@ else()
   set(Slicer_BUILD_SkullStripper OFF CACHE INTERNAL "SkullStripper disabled with ITKv3" FORCE)
 endif()
 
-option(Slicer_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
+option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
+mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_MultiVolumeImporter "Build MultiVolumeImporter." ON
+  "Slicer_BUILD_QTSCRIPTEDMODULES AND Slicer_BUILD_MULTIVOLUME_SUPPORT" OFF)
+mark_as_advanced(Slicer_BUILD_MultiVolumeImporter)
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_MultiVolumeExplorer "Build MultiVolumeExplorer." ON
+  "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_BUILD_MULTIVOLUME_SUPPORT" OFF)
+mark_as_advanced(Slicer_BUILD_MultiVolumeExplorer)
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get

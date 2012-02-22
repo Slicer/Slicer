@@ -118,7 +118,7 @@ if(Slicer_USE_PYTHONQT)
   endif()
 endif()
 
-if(Slicer_MULTIVOLUME_SUPPORT)
+if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeExplorer)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
@@ -171,7 +171,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     )
 endif()
 
-if(Slicer_MULTIVOLUME_SUPPORT)
+if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
   list(APPEND ep_make_boolean_args
     Slicer_BUILD_MultiVolumeExplorer
     Slicer_BUILD_MultiVolumeImporter

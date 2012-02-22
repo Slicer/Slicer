@@ -16,3 +16,11 @@ if(Slicer_BUILD_CLI_SUPPORT)
   endif()
 endif()
 
+if(Slicer_BUILD_MultiVolumeImporter)
+  # NOTE: MultiVolumeImporter source code is checkout using "External_MultiVolumeImporter.cmake".
+  add_subdirectory(
+    ${MultiVolumeImporter_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/MultiVolumeImporter
+    )
+endif()
+

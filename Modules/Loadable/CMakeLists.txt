@@ -56,3 +56,11 @@ if(Slicer_USE_OpenIGTLink AND Slicer_BUILD_OpenIGTLinkIF)
     ${CMAKE_CURRENT_BINARY_DIR}/OpenIGTLinkIF
     )
 endif()
+
+if(Slicer_BUILD_MultiVolumeExplorer)
+  # NOTE: MultiVolumeExplorer source code is checkout using "External_MultiVolumeExplorer.cmake".
+  add_subdirectory(
+    ${MultiVolumeExplorer_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/MultiVolumeExplorer
+    )
+endif()
