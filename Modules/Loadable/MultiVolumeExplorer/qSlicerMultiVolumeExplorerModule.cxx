@@ -77,7 +77,9 @@ QString qSlicerMultiVolumeExplorerModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerMultiVolumeExplorerModule::acknowledgementText()const
 {
-  return "This module was originally developed by Andrey Fedorov";
+  return "Development of this module was supported in part by \
+    the following grants: P41EB015898, P41RR019703, R01CA111288 \
+    and U01CA151261.";
 }
 
 //-----------------------------------------------------------------------------
@@ -102,7 +104,9 @@ QStringList qSlicerMultiVolumeExplorerModule::dependencies() const
 QStringList qSlicerMultiVolumeExplorerModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Andrey Fedorov") << QString("Steve Pieper") << QString("Ron Kikinis");
+  moduleContributors << QString("Andrey Fedorov (SPL, BWH)");
+  moduleContributors << QString("Steve Pieper (SPL, BWH)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
 }
 
