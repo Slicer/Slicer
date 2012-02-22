@@ -5,7 +5,7 @@ from __main__ import vtk, slicer, tcl
 import sys
 import time
 
-class Helper( object ):
+class qSlicerMultiVolumeExplorerModuleHelper( object ):
   '''
   classdocs
   '''
@@ -13,7 +13,7 @@ class Helper( object ):
   @staticmethod
   def Info( message ):
     '''
-    
+
     '''
 
     print "[MultiVolumeExplorer " + time.strftime( "%m/%d/%Y %H:%M:%S" ) + "]: " + str( message )
@@ -22,7 +22,7 @@ class Helper( object ):
   @staticmethod
   def Warning( message ):
     '''
-    
+
     '''
 
     print "[MultiVolumeExplorer " + time.strftime( "%m/%d/%Y %H:%M:%S" ) + "]: WARNING: " + str( message )
@@ -31,7 +31,7 @@ class Helper( object ):
   @staticmethod
   def Error( message ):
     '''
-    
+
     '''
 
     print "[MultiVolumeExplorer " + time.strftime( "%m/%d/%Y %H:%M:%S" ) + "]: ERROR: " + str( message )
@@ -41,7 +41,7 @@ class Helper( object ):
   @staticmethod
   def Debug( message ):
     '''
-    
+
     '''
 
     showDebugOutput = 0
@@ -94,7 +94,7 @@ class Helper( object ):
       parents += p.children()
       if name and p.name.find(name)>=0:
         children.append(p)
-      elif text: 
+      elif text:
         try:
           p.text
           if p.text.find(text)>=0:

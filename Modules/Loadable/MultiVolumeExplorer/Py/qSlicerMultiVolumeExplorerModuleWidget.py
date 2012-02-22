@@ -1,5 +1,5 @@
 from __main__ import vtk, qt, ctk, slicer
-from Helper import *
+from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
 
 class qSlicerMultiVolumeExplorerModuleWidget:
@@ -52,7 +52,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def setup( self ):
     '''
     '''
-    
+
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
 
     w = qt.QWidget()
@@ -62,7 +62,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.layout.addWidget(w)
     w.show()
     self.layout = layout
-    
+
     label = qt.QLabel('Input container:')
     self.__vcSelector = slicer.qMRMLNodeComboBox()
     self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
@@ -90,7 +90,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
     label = qt.QLabel('Extract current frame:')
-    
+
     self.__vfSelector = slicer.qMRMLNodeComboBox()
     self.__vfSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
@@ -150,7 +150,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__yArray.SetName('Y')
     self.__chartTable.AddColumn(self.__xArray)
     self.__chartTable.AddColumn(self.__yArray)
-     
+
   def onLabelVolumeChanged(self):
     # iterate over the label image and collect the IJK for each label element
     labelNode = self.__fSelector.currentNode()
@@ -194,7 +194,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       # setup color node
       colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
       lut = labelNode.GetDisplayNode().GetColorNode().GetLookupTable()
-      
+
       # add initialized data nodes to the chart
       self.__cn.ClearArrays()
       for k in labeledVoxels.keys():
@@ -202,7 +202,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         self.__cn.AddArray(name, dataNodes[k].GetID())
         #self.__cn.SetProperty(name, "lookupTable", colorNodeID)
         rgb = lut.GetTableValue(int(k))
-        
+
         colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
         self.__cn.SetProperty(name, "color", colorStr)
         self.__cvn.Modified()
@@ -220,13 +220,13 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def onVCMRMLSceneChanged(self, mrmlScene):
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.onInputChanged()
-  
+
   def onLVMRMLSceneChanged(self, mrmlScene):
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
-  
+
   def onVFMRMLSceneChanged(self, mrmlScene):
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
-   
+
   def onInputChanged(self):
     self.__vcNode = self.__vcSelector.currentNode()
     if self.__vcNode != None:
@@ -249,12 +249,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
          #  a.SetComponent(c, 0, c)
          #  a.SetComponent(c, 1, c*c)
          #  a.SetComponent(c, 2, 0)
-         
+
          #self.__cn.AddArray('Intensity at cursor location', self.__dn.GetID())
          self.__cvn.SetChartNodeID(self.__cn.GetID())
 
 
-  
+
   def onPlayButtonToggled(self,checked):
     if self.__vcNode == None:
       return
@@ -271,7 +271,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       return
     dwvImage = self.__dwvNode.GetImageData()
     frameId = self.__mdSlider.value
-    
+
     extract = vtk.vtkImageExtractComponents()
     extract.SetInput(dwvImage)
     extract.SetComponents(frameId)
@@ -327,7 +327,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         for event in events:
           tag = style.AddObserver(event, self.processEvent)
           self.styleObserverTags.append([style,tag])
- 
+
   def processEvent(self,observee,event):
     if not self.iCharting.checked:
       return
@@ -379,7 +379,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
                 self.__chartTable.SetValue(c, 1, val)
               else:
                 break
-            
+
             if values != '':
               #self.__vcValue.setText(values)
               self.__chart.RemovePlot(0)
