@@ -20,28 +20,32 @@
 #ifndef __vtkMRMLMultiVolumeNode_h
 #define __vtkMRMLMultiVolumeNode_h
 
-// TODO: sort the header elements, separate MRML and VTK
+// MultiVolumeExplorer includes
+#include <vtkSlicerMultiVolumeExplorerModuleMRMLExport.h>
+
 // MRML includes
-#include "vtkMRML.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLNode.h"
-#include "vtkSlicerMultiVolumeExplorerModuleMRMLExport.h"
-#include "vtkDoubleArray.h"
+#include <vtkMRML.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLNode.h>
+
+// VTK includes
+#include <vtkDoubleArray.h>
+#include <vtkSmartPointer.h>
 
 class vtkMRMLAnnotationROINode;
 class vtkMRMLVolumeNode;
 class vtkMRMLDiffusionWeightedVolumeNode;
 
 /*
-  This class is a wrapper around a full-fledged, but too specialized, vector volume represented by DWI node. 
-  We will use that node for its display and storage functionality, but will add additional features to store 
+  This class is a wrapper around a full-fledged, but too specialized, vector volume represented by DWI node.
+  We will use that node for its display and storage functionality, but will add additional features to store
   extra metadata and provide an extra interface for exploring this data.
 */
 
 /// \ingroup Slicer_QtModules_MultiVolumeNode
 class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode : public vtkMRMLNode
 {
-  public:   
+  public:
 
   static vtkMRMLMultiVolumeNode *New();
   vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLNode);
@@ -78,23 +82,24 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
   void SetDWVNode(vtkMRMLDiffusionWeightedVolumeNode* dwv);
   */
 
-  const std::string GetDWVNodeID();
-  void SetDWVNodeID(std::string);
+  std::string GetDWVNodeID();
+  void SetDWVNodeID(const std::string& id);
 
   void SetLabelArray(vtkDoubleArray*);
-  const vtkDoubleArray* GetLabelArray();
+  vtkDoubleArray* GetLabelArray();
 
-  const std::string GetLabelName(){ return LabelName;}
-  void SetLabelName(std::string n){ LabelName = n;}
+  std::string GetLabelName();
+  void SetLabelName(const std::string& n);
 
 protected:
   vtkMRMLMultiVolumeNode();
-  ~vtkMRMLMultiVolumeNode();
+  virtual ~vtkMRMLMultiVolumeNode();
+
   vtkMRMLMultiVolumeNode(const vtkMRMLMultiVolumeNode&);
   void operator=(const vtkMRMLMultiVolumeNode&);
 
 
-  vtkDoubleArray *LabelArray;
+  vtkSmartPointer<vtkDoubleArray> LabelArray;
   std::string LabelName;
   std::string DWVNodeID;
 };
