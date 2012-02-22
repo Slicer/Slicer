@@ -5,13 +5,11 @@ from Helper import *
 class qSlicerMultiVolumeExplorerModuleWidget:
   def __init__( self, parent=None ):
 
-    print 'My module init called, parent = ', parent
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout( qt.QVBoxLayout() )
     else:
       self.parent = parent
-      print 'Layout is ', self.parent.layout()
 
     self.layout = self.parent.layout()
 
@@ -20,7 +18,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     # Reference to the logic
     self.__logic = slicer.modulelogic.vtkSlicerMultiVolumeExplorerLogic()
-    print 'Logic is ',self.__logic
 
     if not parent:
       self.__logic = slicer.modulelogic.vtkMultiVolumeExplorerLogic()
@@ -221,7 +218,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       dwvDisplayNode.SetDiffusionComponent(newValue)
 
   def onVCMRMLSceneChanged(self, mrmlScene):
-    print 'onMRMLSceneChanged called'
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.onInputChanged()
   
@@ -232,14 +228,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
    
   def onInputChanged(self):
-    print 'onInputChanged() called'
     self.__vcNode = self.__vcSelector.currentNode()
     if self.__vcNode != None:
        self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
 
        Helper.SetBgFgVolumes(self.__dwvNode.GetID(), None)
 
-       print 'Active DWV node: ', self.__dwvNode
        if self.__dwvNode != None:
          nGradients = self.__dwvNode.GetNumberOfGradients()
          self.__mdSlider.minimum = 0
@@ -273,7 +267,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
   def onExtractFrame(self):
     frameVolume = self.__vfSelector.currentNode()
-    print 'Entering Extract frame'
     if frameVolume == 'None' or self.__dwvNode == 'None':
       return
     dwvImage = self.__dwvNode.GetImageData()
@@ -292,12 +285,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     frameVolume.SetAndObserveImageData(frame)
     frameVolume.SetRASToIJKMatrix(ras2ijk)
     frameVolume.SetIJKToRASMatrix(ijk2ras)
-    ras2ijk.SetReferenceCount(1)
-    ijk2ras.SetReferenceCount(1)
+    # TODO: read again J2's instructions about memory deallocation
+    #ras2ijk.SetReferenceCount(1)
+    #ijk2ras.SetReferenceCount(1)
     #ras2ijk.Delete()
     #ijk2ras.Delete()
-
-    print 'Extract frame completed!'
 
 
   def goToNext(self):
@@ -353,13 +345,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       xy = interactor.GetEventPosition()
       xyz = sliceWidget.convertDeviceToXYZ(xy);
 
-      # TODO: get z value from lightbox
       ras = sliceWidget.convertXYZToRAS(xyz)
-      '''
-      layerLogicCalls = (('L', sliceLogic.GetLabelLayer),
-                         ('F', sliceLogic.GetForegroundLayer),
-                         ('B', sliceLogic.GetBackgroundLayer))
-      '''
       layerLogicCalls = [sliceLogic.GetBackgroundLayer]
       for logicCall in layerLogicCalls:
         layerLogic = logicCall()
@@ -391,15 +377,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
                 values = values + str(val)+' '
                 self.__chartTable.SetValue(c, 0, c)
                 self.__chartTable.SetValue(c, 1, val)
-
-                # populate alternative charting data too
-                # -- doing this interactively is slow, use label map
-                # a.SetComponent(c, 0, c)
-                # a.SetComponent(c, 1, val)
-                # a.SetComponent(c, 2, 0)
-                # self.__dn.Modified()
-                # self.__cvn.Modified()
-
               else:
                 break
             
@@ -412,7 +389,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
               plot.SetInput(self.__chartTable, 0, 1)
               # seems to update only after another plot?..
               self.__chart.AddPlot(0)
-
 
   def enter(self):
     self.onInputChanged()
