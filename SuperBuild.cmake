@@ -119,7 +119,7 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_MULTIVOLUME_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES MultiVolumeEplorer)
+  list(APPEND Slicer_DEPENDENCIES MultiVolumeExplorer)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
 
@@ -265,7 +265,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
   endif()
 
-  if(Slicer_BUILD_MultiVolumeEplorer)
+  if(Slicer_BUILD_MultiVolumeExplorer)
     list(APPEND ep_superbuild_extra_args -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
   endif()
 
