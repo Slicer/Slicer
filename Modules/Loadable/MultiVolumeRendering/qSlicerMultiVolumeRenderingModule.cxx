@@ -93,6 +93,11 @@ QStringList qSlicerMultiVolumeRenderingModule::contributors()const
   return moduleContributors;
 }
 
+QStringList qSlicerMultiVolumeRenderingModule::dependencies()const
+{
+  return QStringList() << "VolumeRendering";
+}
+
 //-----------------------------------------------------------------------------
 QIcon qSlicerMultiVolumeRenderingModule::icon()const
 {
