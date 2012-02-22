@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>877</width>
-    <height>369</height>
+    <width>660</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,28 +20,28 @@
    <item row="0" column="0">
     <widget class="QLabel" name="LoadLoadableModulesLabel">
      <property name="text">
-      <string>Skip loading of &lt;i&gt;qt-loadable-modules&lt;/i&gt;:</string>
+      <string>Skip loading of:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
     <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
      <property name="text">
-      <string/>
+      <string>qt-loadable-modules</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="LoadCommandLineModulesLabel">
      <property name="text">
-      <string>Skip loading of command-line &lt;i&gt;plugins&lt;/i&gt;:</string>
+      <string/>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
      <property name="text">
-      <string/>
+      <string>command-line plugins</string>
      </property>
     </widget>
    </item>
@@ -103,9 +103,6 @@
    <item row="7" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>6</number>
-      </property>
       <property name="margin">
        <number>0</number>
       </property>
@@ -153,30 +150,52 @@
      </layout>
     </widget>
    </item>
-   <item row="8" column="1">
-    <widget class="QLabel" name="RestartRequestedLabel">
-     <property name="text">
-      <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="LoadScriptedLoadableModulesLabel">
      <property name="text">
-      <string>Skip loading of &lt;i&gt;qt-scripted-loadable-modules&lt;/i&gt;:</string>
+      <string/>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
      <property name="text">
-      <string/>
+      <string>qt-scripted-loadable-modules</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLabel" name="RestartRequestedLabel">
+     <property name="text">
+      <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="DisableModulesLabel">
+     <property name="text">
+      <string>Disable modules:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="qSlicerModulesListView" name="DisableModulesListView">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>qSlicerModulesListView</class>
+   <extends>QListView</extends>
+   <header>qSlicerModulesListView.h</header>
+  </customwidget>
   <customwidget>
    <class>ctkDirectoryButton</class>
    <extends>QWidget</extends>

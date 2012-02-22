@@ -122,14 +122,16 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
-                                        new qSlicerCLILoadableModuleFactory);
+  moduleFactoryManager->registerFactory(new qSlicerCLILoadableModuleFactory);
+  QString cliPath = app.slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
+  moduleFactoryManager->addSearchPath(cliPath);
+  moduleFactoryManager->addSearchPath(cliPath + app.intDir());
 
   // Register and instantiate modules
-  moduleFactoryManager->registerAllModules();
-  moduleFactoryManager->instantiateAllModules();
+  moduleFactoryManager->registerModules();
+  moduleFactoryManager->instantiateModules();
 
-  QStringList moduleNames = moduleFactoryManager->moduleNames();
+  QStringList moduleNames = moduleFactoryManager->instantiatedModuleNames();
 #ifdef Slicer_BUILD_CLI
   if (!moduleNames.contains(cliModuleName))
     {
@@ -152,7 +154,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
 
   foreach(const QString& name, moduleNames)
     {
-    moduleManager->loadModule(name);
+    moduleFactoryManager->loadModule(name);
     }
 
   qSlicerAbstractCoreModule * module = moduleManager->module("CLI4Test");

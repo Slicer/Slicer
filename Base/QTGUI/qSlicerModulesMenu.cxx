@@ -308,11 +308,11 @@ void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
   if (d->ModuleManager)
     {
     QObject::disconnect(d->ModuleManager,
-                        SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                        this, SLOT(addModule(qSlicerAbstractCoreModule*)));
+                        SIGNAL(moduleLoaded(QString)),
+                        this, SLOT(addModule(QString)));
     QObject::disconnect(d->ModuleManager,
-                        SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                        this, SLOT(removeModule(qSlicerAbstractCoreModule*)));
+                        SIGNAL(moduleAboutToBeUnloaded(QString)),
+                        this, SLOT(removeModule(QString)));
     }
 
   this->clear();
@@ -326,12 +326,12 @@ void qSlicerModulesMenu::setModuleManager(qSlicerModuleManager* moduleManager)
     }
 
   QObject::connect(d->ModuleManager,
-                   SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                   this, SLOT(addModule(qSlicerAbstractCoreModule*)));
+                   SIGNAL(moduleLoaded(QString)),
+                   this, SLOT(addModule(QString)));
   QObject::connect(d->ModuleManager,
-                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                   this, SLOT(removeModule(qSlicerAbstractCoreModule*)));
-  this->addModules(d->ModuleManager->loadedModules());
+                   SIGNAL(moduleAboutToBeUnloaded(QString)),
+                   this, SLOT(removeModule(QString)));
+  this->addModules(d->ModuleManager->modulesNames());
 }
 
 //---------------------------------------------------------------------------

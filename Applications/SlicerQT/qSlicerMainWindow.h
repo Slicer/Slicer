@@ -57,8 +57,8 @@ public slots:
   void restoreToolbars();
 
 protected slots:
-  void onModuleLoaded(qSlicerAbstractCoreModule* module);
-  void onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
+  void onModuleLoaded(const QString& moduleName);
+  void onModuleAboutToBeUnloaded(const QString& moduleName);
   void onEditApplicationSettingsActionTriggered();
   void onViewExtensionManagerActionTriggered();
 

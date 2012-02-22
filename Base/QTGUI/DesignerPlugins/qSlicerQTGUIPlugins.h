@@ -27,11 +27,13 @@
 // QtGUI includes
 #include "qSlicerWidgetPlugin.h"
 #include "qSlicerModulePanelPlugin.h"
+#include "qSlicerModulesListViewPlugin.h"
 #include "qSlicerMouseModeToolBarPlugin.h"
 
 // \class Group the plugins in one library
-class Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT qSlicerQTGUIPlugins : public QObject,
-                         public QDesignerCustomWidgetCollectionInterface
+class Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT qSlicerQTGUIPlugins
+  : public QObject
+  , public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
   Q_INTERFACES(QDesignerCustomWidgetCollectionInterface);
@@ -42,6 +44,7 @@ public:
     QList<QDesignerCustomWidgetInterface *> plugins;
     plugins << new qSlicerWidgetPlugin;
     plugins << new qSlicerModulePanelPlugin;
+    plugins << new qSlicerModulesListViewPlugin;
     plugins << new qSlicerMouseModeToolBarPlugin;
     return plugins;
     }

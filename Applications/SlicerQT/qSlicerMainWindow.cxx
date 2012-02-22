@@ -121,13 +121,11 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
     qWarning() << "No module manager is created.";
     }
 
-  QObject::connect(moduleManager,
-                   SIGNAL(moduleLoaded(qSlicerAbstractCoreModule*)),
-                   q, SLOT(onModuleLoaded(qSlicerAbstractCoreModule*)));
+  QObject::connect(moduleManager,SIGNAL(moduleLoaded(QString)),
+                   q, SLOT(onModuleLoaded(QString)));
 
-  QObject::connect(moduleManager,
-                   SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                   q, SLOT(onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule*)));
+  QObject::connect(moduleManager, SIGNAL(moduleAboutToBeUnloaded(QString)),
+                   q, SLOT(onModuleAboutToBeUnloaded(QString)));
 
   //----------------------------------------------------------------------------
   // ModuleSelector ToolBar
@@ -645,9 +643,12 @@ void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
+void qSlicerMainWindow::onModuleLoaded(const QString& moduleName)
 {
   Q_D(qSlicerMainWindow);
+
+  qSlicerAbstractCoreModule* coreModule =
+    qSlicerApplication::application()->moduleManager()->module(moduleName);
   qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(coreModule);
   if (!module)
     {
@@ -683,17 +684,13 @@ void qSlicerMainWindow::onModuleLoaded(qSlicerAbstractCoreModule* coreModule)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindow::onModuleAboutToBeUnloaded(qSlicerAbstractCoreModule* module)
+void qSlicerMainWindow::onModuleAboutToBeUnloaded(const QString& moduleName)
 {
   Q_D(qSlicerMainWindow);
-  if (!module)
-    {
-    return;
-    }
 
   foreach(QAction* action, d->ModuleToolBar->actions())
     {
-    if (action->data().toString() == module->name())
+    if (action->data().toString() == moduleName)
       {
       d->ModuleToolBar->removeAction(action);
       return;

@@ -164,6 +164,15 @@ qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
+qSlicerCLILoadableModuleFactory::qSlicerCLILoadableModuleFactory(const QString& tempDir)
+{
+  // Set the list of required symbols for CmdLineLoadableModule,
+  // if one of these symbols can't be resolved, the library won't be registered.
+  this->setSymbols(QStringList() << "XMLModuleDescription" << "ModuleEntryPoint");
+  this->setTempDirectory(tempDir);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCLILoadableModuleFactory::registerItems()
 {
   QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();

@@ -67,20 +67,8 @@ public:
   ///
   QAction* moduleAction(const QString& moduleName)const;
 
-  /// Add a module by name into the menu.
-  /// The category property of the module is used to assign a submenu to the
-  /// module action. If a module is hidden and showHiddenModules is false
-  /// (default), the module is ignored and not added into the list
-  /// \sa qSlicerAbstractCoreModule::category()
-  /// \sa qSlicerAbstractCoreModule::action()
-  /// \sa qSlicerAbstractCoreModule::isHidden()
-  void addModule(const QString& moduleName);
-
   /// Add a list of module available for selection
   inline void addModules(const QStringList& moduleNames);
-
-  /// Remove the module from the list of available module
-  void removeModule(const QString& moduleName);
 
   /// Add a list of module available for selection
   inline void removeModules(const QStringList& moduleNames);
@@ -101,8 +89,17 @@ public:
   bool showHiddenModules()const;
 
 public slots:
-  void addModule(qSlicerAbstractCoreModule*);
-  void removeModule(qSlicerAbstractCoreModule*);
+  /// Add a module by name into the menu.
+  /// The category property of the module is used to assign a submenu to the
+  /// module action. If a module is hidden and showHiddenModules is false
+  /// (default), the module is ignored and not added into the list
+  /// \sa qSlicerAbstractCoreModule::category()
+  /// \sa qSlicerAbstractCoreModule::action()
+  /// \sa qSlicerAbstractCoreModule::isHidden()
+  void addModule(const QString& moduleName);
+
+  /// Remove the module from the list of available module
+  void removeModule(const QString& moduleName);
 
   /// Select a module by title. It looks for the module action and triggers it
   void setCurrentModuleByTitle(const QString& title);
@@ -121,6 +118,9 @@ protected slots:
 
 protected:
   QScopedPointer<qSlicerModulesMenuPrivate> d_ptr;
+
+  void addModule(qSlicerAbstractCoreModule*);
+  void removeModule(qSlicerAbstractCoreModule*);
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModulesMenu);

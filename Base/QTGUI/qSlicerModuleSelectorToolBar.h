@@ -72,7 +72,7 @@ signals:
   void moduleSelected(const QString& name);
 
 protected slots:
-  void moduleRemoved(qSlicerAbstractCoreModule* );
+  void moduleRemoved(const QString& moduleName);
 
   void onModuleSelected(const QString& name);
   void actionSelected(QAction* action);

@@ -50,6 +50,8 @@
 #include "qSlicerCoreApplication_p.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerCoreIOManager.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
@@ -201,6 +203,10 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Instantiate moduleManager
   this->ModuleManager = QSharedPointer<qSlicerModuleManager>(new qSlicerModuleManager);
+  this->ModuleManager->factoryManager()->setAppLogic(this->AppLogic.GetPointer());
+  this->ModuleManager->factoryManager()->setMRMLScene(scene.GetPointer());
+  q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                 this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))

@@ -40,10 +40,10 @@ int qSlicerModulePanelTest2(int argc, char * argv[] )
 
   // Register core module factories for testing purpose
   qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();
-  app.moduleManager()->factoryManager()->registerFactory("qSlicerCoreModuleFactory", coreModuleFactory);
-  app.moduleManager()->factoryManager()->registerAllModules();
-  app.moduleManager()->factoryManager()->instantiateAllModules();
-  app.moduleManager()->loadAllModules();
+  app.moduleManager()->factoryManager()->registerFactory(coreModuleFactory);
+  app.moduleManager()->factoryManager()->registerModules();
+  app.moduleManager()->factoryManager()->instantiateModules();
+  app.moduleManager()->factoryManager()->loadModules();
 
   QDockWidget dockWidget;
   qSlicerModulePanel* modulePanel = new qSlicerModulePanel(&dockWidget);

@@ -18,8 +18,6 @@
 
 ==============================================================================*/
 
-// Qt includes
-
 // SlicerQt includes
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
@@ -32,120 +30,18 @@ protected:
   qSlicerModuleFactoryManager* const q_ptr;
 public:
   qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object);
-  // Convenient typedefs
-  typedef qSlicerModuleFactoryManagerPrivate Self; 
-  typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerAbstractCoreModuleFactory;
 
-  // Instantiate a module
-  qSlicerAbstractCoreModule* instantiateModule(qSlicerAbstractCoreModuleFactory* factory,
-                                           const QString& name);
-
-  void printAdditionalInfo();
-
-  // Uninstantiate module
-  void uninstantiateModule(const QString& name); 
-
-  // Convenient typdefs
-  typedef QHash<QString, QString>::const_iterator MapConstIterator;
-  typedef QHash<QString, QString>::iterator       MapIterator;
-  // Maps
-  QHash<QString, QString> MapTitleToName;
-  QHash<QString, QString> MapNameToTitle;
-
-  // Convenient typdefs
-  typedef QHash<QString, qSlicerAbstractCoreModuleFactory*>::const_iterator Map2ConstIterator;
-  typedef QHash<QString, qSlicerAbstractCoreModuleFactory*>::iterator       Map2Iterator;
-  // Maps
-  QHash<QString, qSlicerModuleFactoryManager::qSlicerAbstractModuleFactory*> RegisteredFactories;
-  QHash<QString, qSlicerModuleFactoryManager::qSlicerAbstractModuleFactory*> ModuleNameToFactoryCache;
+  QStringList LoadedModules;
+  vtkSlicerApplicationLogic* AppLogic;
+  vtkMRMLScene* MRMLScene;
 };
 
 //-----------------------------------------------------------------------------
 // qSlicerModuleFactoryManagerPrivate methods
-qSlicerModuleFactoryManagerPrivate::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
+qSlicerModuleFactoryManagerPrivate
+::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
   : q_ptr(&object)
 {
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManagerPrivate::printAdditionalInfo()
-{
-  qDebug() << "RegisteredFactories:" << this->RegisteredFactories.keys();
-  qDebug() << "ModuleNameToFactoryCache:" << this->ModuleNameToFactoryCache.keys();
-  qDebug() << "[MapTitleToName]";
-  Self::MapConstIterator iter = this->MapTitleToName.constBegin();
-  while(iter != this->MapTitleToName.constEnd())
-    {
-    qDebug() << "\tTitle:" << iter.key() << "-> Name:" << iter.value();
-    ++iter;
-    }
-  qDebug() << "[MapNameToTitle]";
-  iter = this->MapNameToTitle.constBegin();
-  while(iter != this->MapNameToTitle.constEnd())
-    {
-    qDebug() << "\tName:" << iter.key() << "-> Title:" << iter.value();
-    ++iter;
-    }
-  qDebug() << "[RegisteredFactories]";
-  Self::Map2ConstIterator iter2 = this->RegisteredFactories.constBegin();
-  while(iter2 != this->RegisteredFactories.constEnd())
-    {
-    iter2.value()->printAdditionalInfo();
-    ++iter2;
-    }
-  qDebug() << "[ModuleNameToFactoryCache]";
-  iter2 = this->ModuleNameToFactoryCache.constBegin();
-  while(iter2 != this->ModuleNameToFactoryCache.constEnd())
-    {
-    qDebug() << "ModuleName:" << iter2.key() << "-> Factory:" << iter2.value();
-    ++iter2;
-    }
-}
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModuleFactoryManagerPrivate::instantiateModule(
-  qSlicerAbstractCoreModuleFactory* factory, const QString& name)
-{
-  qSlicerAbstractCoreModule* module = 0;
-  // Try to instantiate a module
-  module = factory->instantiate(name);
-  if ( !module )
-    {
-    return 0;
-    }
-  Q_ASSERT(module);
-  module->setName(name);
-  
-  QString title = module->title();
-  // Keep track of the relation Title -> name
-  this->MapTitleToName[title] = name;
-
-  // Keep track of the relation name -> Title
-  this->MapNameToTitle[name] = title;
-  
-  return module;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManagerPrivate::uninstantiateModule(const QString& name)
-{
-  Q_Q(qSlicerModuleFactoryManager);
-  
-  // Retrieve the factoryType associated with the module
-  Self::Map2ConstIterator iter = this->ModuleNameToFactoryCache.constFind(name);
-
-  Q_ASSERT(iter != this->ModuleNameToFactoryCache.constEnd());
-  if (iter == this->ModuleNameToFactoryCache.constEnd())
-    {
-    qWarning() << "Failed to retrieve factory name for module:" << name;
-    return;
-    }
-  QString title = q->moduleTitle(name);
-  
-  iter.value()->uninstantiate(name);
-  
-  this->MapTitleToName.remove(title);
-  this->MapNameToTitle.remove(name);
 }
 
 //-----------------------------------------------------------------------------
@@ -160,194 +56,193 @@ qSlicerModuleFactoryManager::qSlicerModuleFactoryManager(QObject * newParent)
 //-----------------------------------------------------------------------------
 qSlicerModuleFactoryManager::~qSlicerModuleFactoryManager()
 {
-  this->uninstantiateAll();
+  this->unloadModules();
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::printAdditionalInfo()
 {
   Q_D(qSlicerModuleFactoryManager);
-  
-  qDebug() << "qSlicerModuleFactoryManager (" << this << ")";
-  d->printAdditionalInfo();
+  this->Superclass::printAdditionalInfo();
+  qDebug() << "LoadedModules: " << d->LoadedModules;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::registerFactory(const QString& factoryName,
-                                                  qSlicerAbstractModuleFactory* factory)
+int qSlicerModuleFactoryManager::loadModules()
 {
-  Q_D(qSlicerModuleFactoryManager);
-  Q_ASSERT(!d->RegisteredFactories.contains(factoryName));
-  d->RegisteredFactories[factoryName] = factory;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::registerAllModules()
-{
-  Q_D(qSlicerModuleFactoryManager);
-  foreach (const QString& factoryName, d->RegisteredFactories.keys())
+  foreach(const QString& name, this->instantiatedModuleNames())
     {
-    this->registerModules(factoryName);
+    this->loadModule(name);
     }
-  emit this->allModulesRegistered();
+  emit this->modulesLoaded(this->loadedModuleNames());
+  return this->loadedModuleNames().count();
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::registerModules(const QString& factoryName)
-{
-  Q_D(qSlicerModuleFactoryManager);
-  Q_ASSERT(d->RegisteredFactories.contains(factoryName));
-  qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
-
-  factory->registerItems();
-  
-  // Keep track of the registered modules and their associated factory
-  foreach(const QString& key, factory->itemKeys())
-    {
-    d->ModuleNameToFactoryCache[key] = factory;
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::instantiateAllModules()
-{
-  Q_D(qSlicerModuleFactoryManager);
-  foreach (const QString& factoryName, d->RegisteredFactories.keys())
-    {
-    this->instantiateModules(factoryName);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::instantiateModules(const QString& factoryName)
-{
-  Q_D(qSlicerModuleFactoryManager);
-  Q_ASSERT(d->RegisteredFactories.contains(factoryName));
-  qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
-
-  foreach(const QString& key, factory->itemKeys())
-    {
-    d->instantiateModule(factory, key);
-    }
-}
-  
-//-----------------------------------------------------------------------------
-QString qSlicerModuleFactoryManager::moduleName(const QString & title) const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  // Lookup module name
-  qSlicerModuleFactoryManagerPrivate::MapConstIterator iter = d->MapTitleToName.constFind(title);
-
-  if (iter == d->MapTitleToName.constEnd())
-    {
-    //qCritical() << "Failed to retrieve module name given its title:" << title;
-    return QString();
-    }
-  return iter.value();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerModuleFactoryManager::moduleTitle(const QString & name) const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  // Lookup module name
-  qSlicerModuleFactoryManagerPrivate::MapConstIterator iter = d->MapNameToTitle.constFind(name);
-
-  if (iter == d->MapNameToTitle.constEnd())
-    {
-    //qCritical() << "Failed to retrieve module title given its name:" << name;
-    return QString();
-    }
-  return iter.value();
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryManager::moduleNames() const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  QStringList names;
-  foreach (const QString& factoryName, d->RegisteredFactories.keys())
-    {
-    names << d->RegisteredFactories[factoryName]->itemKeys();
-    }
-  return names;
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryManager::moduleNames(const QString& factoryName) const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  Q_ASSERT(d->RegisteredFactories.contains(factoryName));
-  qSlicerAbstractModuleFactory * factory = d->RegisteredFactories[factoryName];
-  return factory->itemKeys();
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerModuleFactoryManager::instantiatedModuleNames() const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  return d->MapNameToTitle.keys();
-}
-
-//-----------------------------------------------------------------------------
-qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::instantiateModule(const QString& name)
+//---------------------------------------------------------------------------
+bool qSlicerModuleFactoryManager::loadModule(const QString& name)
 {
   Q_D(qSlicerModuleFactoryManager);
 
-  // Retrieve the factory name associated with the module
-  qSlicerModuleFactoryManagerPrivate::Map2ConstIterator iter =
-    d->ModuleNameToFactoryCache.constFind(name);
-
-  Q_ASSERT(iter != d->ModuleNameToFactoryCache.constEnd());
-  if (iter == d->ModuleNameToFactoryCache.constEnd())
+  // A module should be registered when attempting to load it
+  if (!this->isRegistered(name) ||
+      !this->isInstantiated(name))
     {
-    QString description = QString("Attempt to instantiate \"%1\" ").arg(name);
-    QString msg = QString("%1 [Failed to retrieve factory name]").arg(description, -70, QChar('.'));
-    qCritical().nospace() << qPrintable(msg);
+    //Q_ASSERT(d->ModuleFactoryManager.isRegistered(name));
+    return false;
+    }
+
+  // Check if module has been loaded already
+  if (this->isLoaded(name))
+    {
+    return true;
+    }
+
+  // Instantiate the module if needed
+  qSlicerAbstractCoreModule* instance = this->moduleInstance(name);
+  if (!instance)
+    {
+    return false;
+    }
+
+  // Load the modules the module depends on.
+  // There is no cycle check, so be careful
+  foreach(const QString& dependency, instance->dependencies())
+    {
+    // no-op if the module is already loaded
+    bool dependencyLoaded = this->loadModule(dependency);
+    if (!dependencyLoaded)
+      {
+      qWarning() << "When loading module " << name << ", the dependency"
+                 << dependency << "failed to be loaded.";
+      return false;
+      }
+    }
+
+  // Update internal Map
+  d->LoadedModules << name;
+
+  // Initialize module
+  instance->initialize(d->AppLogic);
+
+  // Check the module has a title (required)
+  if (instance->title().isEmpty())
+    {
+    qWarning() << "Failed to retrieve module title corresponding to module name: " << name;
+    Q_ASSERT(!instance->title().isEmpty());
     return 0;
     }
 
-  return d->instantiateModule(*iter, name);
+  // Set the MRML scene
+  instance->setMRMLScene(d->MRMLScene);
+
+  // Module should also be aware if current MRML scene has changed
+  this->connect(this,SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                instance, SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  // Handle post-load initialization
+  emit this->moduleLoaded(name);
+
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModuleFactoryManager::isLoaded(const QString& name)const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->LoadedModules.contains(name);
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerModuleFactoryManager::loadedModuleNames()const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->LoadedModules;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactoryManager::unloadModules()
+{
+  QStringList modulesToUnload = this->loadedModuleNames();
+  emit this->modulesAboutToBeUnloaded(modulesToUnload);
+  foreach(const QString& name, modulesToUnload)
+    {
+    this->unloadModule(name);
+    }
+  emit this->modulesUnloaded(modulesToUnload);
+}
+
+//---------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::uninstantiateModule(const QString& name)
 {
   Q_D(qSlicerModuleFactoryManager);
-  qDebug() << "Uninstantiating:" << name;
-  d->uninstantiateModule(name);
-}
 
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::uninstantiateAll()
-{
-  foreach(const QString& name, this->moduleNames())
+  if (this->isLoaded(name))
     {
-    this->uninstantiateModule(name);
+    emit this->moduleAboutToBeUnloaded(name);
+    }
+
+  this->Superclass::uninstantiateModule(name);
+
+  if (this->isLoaded(name))
+    {
+    d->LoadedModules.removeOne(name);
+    emit this->moduleUnloaded(name);
     }
 }
 
-//-----------------------------------------------------------------------------
-bool qSlicerModuleFactoryManager::isRegistered(const QString& name)const
+//---------------------------------------------------------------------------
+qSlicerAbstractCoreModule* qSlicerModuleFactoryManager::loadedModule(const QString& name)const
 {
-  Q_D(const qSlicerModuleFactoryManager);
-  return d->ModuleNameToFactoryCache.contains(name);
+  if (!this->isRegistered(name))
+    {
+    qDebug() << "The module" << name << "has not been registered.";
+    qDebug() << "The following modules have been registered:"
+             << this->registeredModuleNames();
+    return 0;
+    }
+  if (!this->isInstantiated(name))
+    {
+    qDebug() << "The module" << name << "has been registered but not instantiated.";
+    qDebug() << "The following modules have been instantiated:"
+             << this->instantiatedModuleNames();
+    return 0;
+    }
+
+  if (!this->isLoaded(name))
+    {
+    qDebug()<< "The module" << name << "has not been loaded.";
+    qDebug() << "The following modules have been loaded:"
+             << this->loadedModuleNames();
+    return 0;
+    }
+  return this->moduleInstance(name);
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerModuleFactoryManager::isInstantiated(const QString& name)const
-{
-  Q_D(const qSlicerModuleFactoryManager);
-  return d->MapNameToTitle.contains(name);
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModuleFactoryManager::setVerboseModuleDiscovery(bool value)
+void qSlicerModuleFactoryManager::setAppLogic(vtkSlicerApplicationLogic* logic)
 {
   Q_D(qSlicerModuleFactoryManager);
-  
-  foreach (const QString& factoryName, d->RegisteredFactories.keys())
-    {
-    d->RegisteredFactories[factoryName]->setVerbose(value);
-    }
+  d->AppLogic = logic;
+}
+
+//-----------------------------------------------------------------------------
+vtkSlicerApplicationLogic* qSlicerModuleFactoryManager::appLogic()const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->AppLogic;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactoryManager::setMRMLScene(vtkMRMLScene* scene)
+{
+  Q_D(qSlicerModuleFactoryManager);
+  d->MRMLScene = scene;
+  emit mrmlSceneChanged(d->MRMLScene);
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLScene* qSlicerModuleFactoryManager::mrmlScene()const
+{
+  Q_D(const qSlicerModuleFactoryManager);
+  return d->MRMLScene;
 }

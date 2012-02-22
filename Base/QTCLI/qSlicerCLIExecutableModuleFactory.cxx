@@ -108,6 +108,12 @@ qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory()
 }
 
 //-----------------------------------------------------------------------------
+qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory(const QString& tempDir)
+{
+  this->setTempDirectory(tempDir);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
   QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();

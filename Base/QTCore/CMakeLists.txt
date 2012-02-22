@@ -33,6 +33,8 @@ endif()
 set(KIT_SRCS
   qSlicerAbstractCoreModule.cxx
   qSlicerAbstractCoreModule.h
+  qSlicerAbstractModuleFactoryManager.cxx
+  qSlicerAbstractModuleFactoryManager.h
   qSlicerAbstractModuleRepresentation.cxx
   qSlicerAbstractModuleRepresentation.h
   qSlicerCoreApplication.cxx
@@ -67,6 +69,7 @@ set(KIT_SRCS
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   qSlicerAbstractCoreModule.h
+  qSlicerAbstractModuleFactoryManager.h
   qSlicerCoreCommandOptions.h
   qSlicerCoreApplication.h
   qSlicerCoreIOManager.h

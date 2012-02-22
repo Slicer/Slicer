@@ -49,6 +49,7 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIExecutableModuleFactory :
 public:
   typedef ctkAbstractFileBasedFactory<qSlicerAbstractCoreModule> Superclass;
   qSlicerCLIExecutableModuleFactory();
+  qSlicerCLIExecutableModuleFactory(const QString& tempDir);
 
   virtual void registerItems();
 

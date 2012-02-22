@@ -22,93 +22,90 @@
 #define __qSlicerModuleFactoryManager_h
 
 // Qt includes
-#include <QObject>
-#include <QString>
-
-// CTK includes
-#include <ctkAbstractFactory.h>
-
-#include "qSlicerBaseQTCoreExport.h"
-
-class qSlicerAbstractCoreModule;
-
+#include "qSlicerAbstractModuleFactoryManager.h"
 class qSlicerModuleFactoryManagerPrivate;
 
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager : public QObject
+// Slicer logics includes
+class vtkSlicerApplicationLogic;
+
+// MRML includes
+class vtkMRMLScene;
+
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
+  : public qSlicerAbstractModuleFactoryManager
 {
   Q_OBJECT
 public:
-  typedef ctkAbstractFactory<qSlicerAbstractCoreModule> qSlicerAbstractModuleFactory;
- 
-  typedef QObject Superclass;
-  qSlicerModuleFactoryManager(QObject * newParent = 0);
-
-  /// Destructor, Deallocates resources
+  typedef qSlicerAbstractModuleFactoryManager Superclass;
+  qSlicerModuleFactoryManager(QObject* newParent = 0);
   virtual ~qSlicerModuleFactoryManager();
 
-  /// Print internal state using qDebug()
   virtual void printAdditionalInfo();
 
-  /// \brief Register a \a factory
-  /// \a factoryName will be used to get the reference of the registered factory.
-  void registerFactory(const QString& factoryName, qSlicerAbstractModuleFactory* factory);
+  /// Load all the instantiated modules.
+  /// To register and initialize modules, please use
+  /// qSlicerModuleFactoryManager::registerModules();
+  /// qSlicerModuleFactoryManager::initializeModules();
+  /// Returns the number of loaded modules.
+  /// \sa qSlicerModuleFactoryManager::registerModules()
+  /// \sa qSlicerModuleFactoryManager::instantiateModules()
+  Q_INVOKABLE int loadModules();
 
-  /// Register all modules
-  void registerAllModules();
+  /// Return the list of all the loaded modules
+  QStringList loadedModuleNames()const;
 
-  /// Register modules associated with factory identified by \a factoryName
-  void registerModules(const QString& factoryName);
+  Q_INVOKABLE void unloadModules();
 
-  /// Instanciate all modules
-  void instantiateAllModules();
-  
-  /// Instanciate modules associated with factory identified by \a factoryName
-  void instantiateModules(const QString& factoryName);
+  /// Return true if module \a name has been loaded, false otherwise
+  Q_INVOKABLE bool isLoaded(const QString& name)const;
 
-  /// Get a moduleName given its \a title
-  QString moduleName(const QString & title) const;
+  /// Return the loaded module identified by \a name, 0 if no module
+  /// has been loaded yet, even if the module has been instantiated.
+  Q_INVOKABLE qSlicerAbstractCoreModule* loadedModule(const QString& name)const;
 
-  /// Get a module title given its \a name
-  QString moduleTitle(const QString & name) const;
+  /// Set the application logic to pass to modules at "load" time.
+  void setAppLogic(vtkSlicerApplicationLogic* applicationLogic);
+  vtkSlicerApplicationLogic* appLogic()const;
 
-  /// Convenient method returning the list of all registered module names
-  Q_INVOKABLE QStringList moduleNames() const;
+  /// Return the mrml scene passed to loaded modules
+  vtkMRMLScene* mrmlScene()const;
 
-  /// Convenient method returning the list of module names for the factory identified by \a factoryName
-  Q_INVOKABLE QStringList moduleNames(const QString& factoryName) const;
+  /// Load module identified by \a name
+  /// \todo move it as protected
+  bool loadModule(const QString& name);
 
-  /// List of registered and instantiated modules
-  Q_INVOKABLE QStringList instantiatedModuleNames() const;
-
-  /// Instantiate a module given its \a name
-  qSlicerAbstractCoreModule* instantiateModule(const QString& name);
-
-  /// Uninstantiate a module given its \a name
-  void uninstantiateModule(const QString& name);
-
-  /// Uninstantiate all registered modules
-  void uninstantiateAll();
-
-  /// Indicate if a module has been registered
-  Q_INVOKABLE bool isRegistered(const QString& name)const;
-
-  /// Indicate if a module has been instantiated
-  Q_INVOKABLE bool isInstantiated(const QString& name)const;
-
-  /// Enable/Disable verbose output during module discovery process
-  void setVerboseModuleDiscovery(bool value);
+public slots:
+  /// Set the MRML scene to pass to modules at "load" time.
+  void setMRMLScene(vtkMRMLScene* mrmlScene);
 
 signals:
-  /// \brief This signal is emitted when all the modules associated with the
-  /// registered factories have been loaded
-  void allModulesRegistered();
 
+  void modulesLoaded(const QStringList& modulesNames);
+  void moduleLoaded(const QString& moduleName);
+
+  void modulesAboutToBeUnloaded(const QStringList& modulesNames);
+  void moduleAboutToBeUnloaded(const QString& moduleName);
+
+  void modulesUnloaded(const QStringList& modulesNames);
+  void moduleUnloaded(const QString& moduleName);
+
+  void mrmlSceneChanged(vtkMRMLScene* newScene);
 protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
 
+  /// Unload module identified by \a name
+  inline void unloadModule(const QString& name);
+
+  /// Uninstantiate a module given its \a moduleName
+  virtual void uninstantiateModule(const QString& moduleName);
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
   Q_DISABLE_COPY(qSlicerModuleFactoryManager);
 };
+
+void qSlicerModuleFactoryManager::unloadModule(const QString& name)
+{
+  return this->uninstantiateModule(name);
+}
 
 #endif

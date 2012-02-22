@@ -24,6 +24,8 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerSettingsModulesPanel.h"
@@ -81,6 +83,9 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->ModulesMenu->setCurrentModule("Welcome");
   this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
+  qSlicerAbstractModuleFactoryManager* factoryManager =
+    coreApp->moduleManager()->factoryManager();
+  this->DisableModulesListView->setFactoryManager( factoryManager );
 
   // Register settings
   q->registerProperty("disable-loadable-modules", this->LoadLoadableModulesCheckBox,
@@ -99,6 +104,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
                       "directoryList", SIGNAL(directoryListChanged()));
+  q->registerProperty("Modules/IgnoreModules", factoryManager,
+                      "modulesToIgnore", SIGNAL(modulesToIgnoreChanged(QStringList)));
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(QString)),
@@ -113,6 +120,10 @@ void qSlicerSettingsModulesPanelPrivate::init()
                    q, SLOT(onAddModulesAdditionalPathClicked()));
   QObject::connect(this->RemoveAdditionalModulePathButton, SIGNAL(clicked()),
                    q, SLOT(onRemoveModulesAdditionalPathClicked()));
+
+  // Connect Modules to ignore
+  QObject::connect(factoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
+                   q, SLOT(onModulesToIgnoreChanged()));
 
   // Hide 'Restart requested' label
   q->setRestartRequested(false);
@@ -162,7 +173,9 @@ void qSlicerSettingsModulesPanel::restoreDefaultSettings()
 {
   bool shouldRestart = false;
   if (this->defaultPropertyValue("Modules/AdditionalPaths").toStringList()
-      != this->previousPropertyValue("Modules/AdditionalPaths").toStringList())
+      != this->previousPropertyValue("Modules/AdditionalPaths").toStringList() ||
+      this->defaultPropertyValue("Modules/IgnoreModules").toStringList()
+      != this->previousPropertyValue("Modules/IgnoreModules").toStringList())
     {
     shouldRestart = true;
     }
@@ -212,6 +225,12 @@ void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
   Q_D(qSlicerSettingsModulesPanel);
   d->RemoveAdditionalModulePathButton->setEnabled(
         d->AdditionalModulePathsView->directoryList().count() > 0);
+  this->setRestartRequested(true);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsModulesPanel::onModulesToIgnoreChanged()
+{
   this->setRestartRequested(true);
 }
 

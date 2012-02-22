@@ -266,7 +266,7 @@ void qSlicerMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
   // scan the modules for their actions
   QList<QAction*> moduleActions;
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
-  foreach(const QString& moduleName, moduleManager->moduleList())
+  foreach(const QString& moduleName, moduleManager->modulesNames())
     {
     qSlicerAbstractModule* module =
       qobject_cast<qSlicerAbstractModule*>(moduleManager->module(moduleName));

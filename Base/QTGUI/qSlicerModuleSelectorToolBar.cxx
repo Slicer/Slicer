@@ -205,24 +205,25 @@ void qSlicerModuleSelectorToolBar::setModuleManager(qSlicerModuleManager* module
   if (d->ModulesMenu->moduleManager())
     {
     QObject::disconnect(d->ModulesMenu->moduleManager(),
-                        SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                        this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
+                        SIGNAL(moduleAboutToBeUnloaded(QString)),
+                        this, SLOT(moduleRemoved(QString)));
     }
   d->ModulesMenu->setModuleManager(moduleManager);
 
   if (moduleManager)
     {
     QObject::connect(moduleManager,
-                     SIGNAL(moduleAboutToBeUnloaded(qSlicerAbstractCoreModule*)),
-                     this, SLOT(moduleRemoved(qSlicerAbstractCoreModule*)));
+                     SIGNAL(moduleAboutToBeUnloaded(QString)),
+                     this, SLOT(moduleRemoved(QString)));
     }
 }
 
 //---------------------------------------------------------------------------
-void qSlicerModuleSelectorToolBar::moduleRemoved(qSlicerAbstractCoreModule* moduleRemoved)
+void qSlicerModuleSelectorToolBar::moduleRemoved(const QString& moduleName)
 {
   Q_D(qSlicerModuleSelectorToolBar);
-  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(moduleRemoved);
+  qSlicerAbstractModule* module = qobject_cast<qSlicerAbstractModule*>(
+    d->ModulesMenu->moduleManager()->module(moduleName));
   if (!module)
     {
     return;

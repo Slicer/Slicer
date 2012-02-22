@@ -49,8 +49,8 @@ class _Internal():
     # Note: This is not the default behavior.
     if hasattr( moduleManager, 'factoryManager' ):
       factoryManager = moduleManager.factoryManager()
-      factoryManager.connect( 'allModulesRegistered()', self.setSlicerModuleNames )
-      moduleManager.connect( 'moduleLoaded(qSlicerAbstractCoreModule*)', self.setSlicerModules )
+      factoryManager.connect( 'modulesRegistered(QStringList)', self.setSlicerModuleNames )
+      moduleManager.connect( 'moduleLoaded(QString)', self.setSlicerModules )
 
     # Add module 'slicer.moduleNames'
     _moduleNames = imp.new_module( 'moduleNames' )
@@ -82,14 +82,15 @@ class _Internal():
 
     qt.QTimer.singleShot = staticmethod( _singleShot )
 
-  def setSlicerModuleNames( self ):
+  def setSlicerModuleNames( self, moduleNames):
     """Add module names as attributes of module slicer.moduleNames"""
-    for name in moduleNames():
+    for name in moduleNames:
       setattr( slicer.moduleNames, name, name )
 
-  def setSlicerModules( self, module ):
+  def setSlicerModules( self, moduleName ):
     """Add modules as attributes of module slicer.modules"""
-    setattr( slicer.modules, module.name.lower(), module )
+    moduleManager = slicer.app.moduleManager()
+    setattr( slicer.modules, moduleName.lower(), moduleManager.module(moduleName) )
 
 
 _internalInstance = _Internal()

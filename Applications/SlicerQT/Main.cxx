@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QSettings>
 #include <QSplashScreen>
 #include <QTimer>
 
@@ -134,56 +135,68 @@ void initializePythonConsole(ctkPythonConsole& pythonConsole)
 #endif
 
 //----------------------------------------------------------------------------
-void registerLoadableModuleFactory(
-  qSlicerModuleFactoryManager * moduleFactoryManager,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
+void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager)
 {
-  qSlicerLoadableModuleFactory* loadableModuleFactory = new qSlicerLoadableModuleFactory();
-  loadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
-  moduleFactoryManager->registerFactory("qSlicerLoadableModuleFactory", loadableModuleFactory);
-}
+  qSlicerApplication* app = qSlicerApplication::application();
+  // Register module factories
+  moduleFactoryManager->registerFactory(new qSlicerCoreModuleFactory);
 
-//----------------------------------------------------------------------------
-void registerScriptedLoadableModuleFactory(
-  qSlicerModuleFactoryManager * moduleFactoryManager,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
-{
-#ifdef Slicer_USE_PYTHONQT
-  if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
+// \todo Move the registration somewhere else for reuse.
+  qSlicerCommandOptions* options = qSlicerApplication::application()->commandOptions();
+  if (!options->disableLoadableModules())
     {
-    qSlicerScriptedLoadableModuleFactory* scriptedLoadableModuleFactory =
-      new qSlicerScriptedLoadableModuleFactory();
-    scriptedLoadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
-    moduleFactoryManager->registerFactory("qSlicerScriptedLoadableModuleFactory",
-                                          scriptedLoadableModuleFactory);
+    moduleFactoryManager->registerFactory(new qSlicerLoadableModuleFactory);
+    QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
+    moduleFactoryManager->addSearchPath(loadablePath);
+    // On Win32, *both* paths have to be there, since scripts are installed
+    // in the install location, and exec/libs are *automatically* installed
+    // in intDir.
+    moduleFactoryManager->addSearchPath(loadablePath + app->intDir());
     }
-#else
-  Q_UNUSED(moduleFactoryManager);
-  Q_UNUSED(moduleFactorySharedRegisteredItemKeys);
-#endif
-}
 
-//----------------------------------------------------------------------------
+#ifdef Slicer_USE_PYTHONQT
+  if (!options->disableScriptedLoadableModules() &&
+      !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
+    {
+    moduleFactoryManager->registerFactory(
+      new qSlicerScriptedLoadableModuleFactory);
+    QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
+    moduleFactoryManager->addSearchPath(scriptedPath);
+    // On Win32, *both* paths have to be there, since scripts are installed
+    // in the install location, and exec/libs are *automatically* installed
+    // in intDir.
+    moduleFactoryManager->addSearchPath(scriptedPath + app->intDir());
+    }
+#endif
+
 #ifdef Slicer_BUILD_CLI_SUPPORT
-void registerCLIModuleFactory(
-  qSlicerModuleFactoryManager * moduleFactoryManager, const QString& tempDirectory,
-  const QSharedPointer<ctkAbstractLibraryFactory<qSlicerAbstractCoreModule>::HashType>& moduleFactorySharedRegisteredItemKeys)
-{
-  qSlicerCLILoadableModuleFactory* cliLoadableModuleFactory =
-    new qSlicerCLILoadableModuleFactory();
-  cliLoadableModuleFactory->setTempDirectory(tempDirectory);
-  cliLoadableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
-  moduleFactoryManager->registerFactory("qSlicerCLILoadableModuleFactory",
-                                        cliLoadableModuleFactory);
-
-  qSlicerCLIExecutableModuleFactory* cliExecutableModuleFactory =
-    new qSlicerCLIExecutableModuleFactory();
-  cliExecutableModuleFactory->setTempDirectory(tempDirectory);
-  cliExecutableModuleFactory->setSharedItems(moduleFactorySharedRegisteredItemKeys);
-  moduleFactoryManager->registerFactory("qSlicerCLIExecutableModuleFactory",
-                                        cliExecutableModuleFactory);
-}
+  if (!options->disableCLIModules())
+    {
+    QString tempDirectory =
+      qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory();
+    moduleFactoryManager->registerFactory(
+      new qSlicerCLILoadableModuleFactory(tempDirectory));
+    moduleFactoryManager->registerFactory(
+      new qSlicerCLIExecutableModuleFactory(tempDirectory));
+    QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
+    moduleFactoryManager->addSearchPath(cliPath);
+    // On Win32, *both* paths have to be there, since scripts are installed
+    // in the install location, and exec/libs are *automatically* installed
+    // in intDir.
+    moduleFactoryManager->addSearchPath(cliPath + app->intDir());
+#ifdef Q_OS_MAC
+    moduleFactoryManager->addSearchPath(app->slicerHome() + "/" + Slicer_CLIMODULES_SUBDIR);
 #endif
+    }
+#endif
+  QSettings settings;
+  moduleFactoryManager->addSearchPaths(
+    settings.value("Modules/AdditionalPaths").toStringList());
+  moduleFactoryManager->setModulesToIgnore(
+    settings.value("Modules/IgnoreModules").toStringList());
+
+  moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
+}
 
 //----------------------------------------------------------------------------
 void showMRMLEventLoggerWidget()
@@ -261,38 +274,17 @@ int slicerQtMain(int argc, char* argv[])
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
-
-  // Register module factories
-  qSlicerCoreModuleFactory* coreModuleFactory = new qSlicerCoreModuleFactory();
-  moduleFactoryManager->registerFactory("qSlicerCoreModuleFactory", coreModuleFactory);
-
-  if (!app.commandOptions()->disableLoadableModules())
-    {
-    registerLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->sharedItems());
-    }
-  if (!app.commandOptions()->disableScriptedLoadableModules())
-    {
-    registerScriptedLoadableModuleFactory(moduleFactoryManager, coreModuleFactory->sharedItems());
-    }
-#ifdef Slicer_BUILD_CLI_SUPPORT
-  if (!app.commandOptions()->disableCLIModules())
-    {
-    registerCLIModuleFactory(
-          moduleFactoryManager,
-          qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory(),
-          coreModuleFactory->sharedItems());
-    }
-#endif
-
-  moduleFactoryManager->setVerboseModuleDiscovery(app.commandOptions()->verboseModuleDiscovery());
+  setupModuleFactoryManager(moduleFactoryManager);
 
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");
-  moduleFactoryManager->registerAllModules();
-  qDebug() << "Number of registered modules:" << moduleManager->moduleList().count();
-
+  moduleFactoryManager->registerModules();
+  qDebug() << "Number of registered modules:"
+           << moduleFactoryManager->registeredModuleNames().count();
   splashMessage(splashScreen, "Instantiating modules...");
-  moduleFactoryManager->instantiateAllModules();
+  moduleFactoryManager->instantiateModules();
+  qDebug() << "Number of instantiated modules:"
+           << moduleFactoryManager->instantiatedModuleNames().count();
 
   // Create main window
   splashMessage(splashScreen, "Initializing user interface...");
@@ -304,19 +296,14 @@ int slicerQtMain(int argc, char* argv[])
     }
 
   // Load all available modules
-  QStringList moduleNames = moduleFactoryManager->moduleNames();
-  foreach(const QString& name, moduleNames)
+  foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
     {
-    if (name.isNull())
-      {
-      qWarning() << "Encountered null module name";
-      continue;
-      }
+    Q_ASSERT(!name.isNull());
     qDebug() << "Loading module" << name;
     splashMessage(splashScreen, "Loading module \"" + name + "\"...");
-    moduleManager->loadModule(name);
+    moduleFactoryManager->loadModule(name);
     }
-  qDebug() << "Number of loaded modules:" << moduleManager->loadedModules().count();
+  qDebug() << "Number of loaded modules:" << moduleManager->modulesNames().count();
 
   splashMessage(splashScreen, QString());
 

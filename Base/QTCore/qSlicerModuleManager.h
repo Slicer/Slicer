@@ -48,44 +48,19 @@ public:
   /// Return a pointer to the current module factory manager
   Q_INVOKABLE qSlicerModuleFactoryManager * factoryManager()const;
 
-  /// Load module identified by \a name
-  Q_INVOKABLE bool loadModule(const QString& name);
-
-  /// Unload module identified by \a name
-  Q_INVOKABLE bool unLoadModule(const QString& name);
-
-  /// Return True if module \a name has been loaded
-  Q_INVOKABLE bool isLoaded(const QString& name)const;
-
-  /// Load all the registered modules. Instantiate them if not instantiated
-  /// yet.
-  /// To register modules, please use
-  /// qSlicerModuleFactoryManager::registerAllModules()
-  /// Returns the number of loaded modules.
-  /// \sa qSlicerModuleFactoryManager::registerAllModules()
-  /// \sa qSlicerModuleFactoryManager::instantiateAllModules()
-  Q_INVOKABLE int loadAllModules();
+  /// Return the list of all the loaded modules
+  QStringList modulesNames()const;
 
   /// Return the loaded module identified by \a name
-  Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name);
+  Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name)const;
 
-  /// Convenient method to get module title given its name
-  /// \deprecated
-  QString moduleTitle(const QString& name) const;
-
-  /// Convenient method to get module name given its title
-  /// \deprecated
-  QString moduleName(const QString& title) const;
-
-  /// Return the list of all the registered modules
-  QStringList moduleList()const;
-
-  /// Return the list of all the loaded modules
-  QStringList loadedModules()const;
+  /// Return the list of modules that have \a module as a dependency.
+  /// \sa qSlicerAbstractCoreModule::dependencies()
+  QStringList dependentModules(const QString& module)const;
 
 signals:
-  void moduleLoaded(qSlicerAbstractCoreModule* module);
-  void moduleAboutToBeUnloaded(qSlicerAbstractCoreModule* module);
+  void moduleLoaded(const QString& module);
+  void moduleAboutToBeUnloaded(const QString& module);
 
 protected:
   QScopedPointer<qSlicerModuleManagerPrivate> d_ptr;
