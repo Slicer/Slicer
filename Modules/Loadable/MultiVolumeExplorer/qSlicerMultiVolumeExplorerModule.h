@@ -19,7 +19,7 @@
 #define __qSlicerMultiVolumeExplorerModule_h
 
 // SlicerQt includes
-#include "qSlicerLoadableModule.h"
+#include <qSlicerLoadableModule.h>
 
 #include "qSlicerMultiVolumeExplorerModuleExport.h"
 
@@ -39,13 +39,13 @@ public:
   virtual ~qSlicerMultiVolumeExplorerModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
+
   /// Help to use the module
   virtual QString helpText()const;
 
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
-  
+
   /// Return a custom icon for the module
   virtual QIcon icon()const;
 

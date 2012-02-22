@@ -25,7 +25,7 @@
 #define __vtkSlicerMultiVolumeExplorerLogic_h
 
 // Slicer includes
-#include "vtkSlicerModuleLogic.h"
+#include <vtkSlicerModuleLogic.h>
 
 // MRML includes
 
@@ -51,8 +51,8 @@ public:
 
   /// Initialize listening to MRML events
   void InitializeEventListeners();
-  const int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
-                               std::string dcmTag, vtkDoubleArray*);
+  int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
+                         std::string dcmTag, vtkDoubleArray*);
 
 protected:
   vtkSlicerMultiVolumeExplorerLogic();
@@ -60,11 +60,12 @@ protected:
 
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
+
   virtual void UpdateFromMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
-  const void StoreVolumeNode(const std::vector<std::string>& filenames,
-                             const std::string& seriesFileName);
+  void StoreVolumeNode(const std::vector<std::string>& filenames,
+                       const std::string& seriesFileName);
 private:
 
   vtkSlicerMultiVolumeExplorerLogic(const vtkSlicerMultiVolumeExplorerLogic&); // Not implemented

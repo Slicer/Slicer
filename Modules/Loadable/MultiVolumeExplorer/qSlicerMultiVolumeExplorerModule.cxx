@@ -16,10 +16,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QtPlugin>
 #include <QFileInfo>
-#include <QtPlugin>
 #include <QScopedPointer>
+#include <QtPlugin>
 
 // MultiVolumeExplorer Logic includes
 #include <vtkSlicerMultiVolumeExplorerLogic.h>
@@ -76,9 +75,9 @@ QString qSlicerMultiVolumeExplorerModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerMultiVolumeExplorerModule::acknowledgementText()const
 {
-  return "Development of this module was supported in part by \
-    the following grants: P41EB015898, P41RR019703, R01CA111288 \
-    and U01CA151261.";
+  return "Development of this module was supported in part by "
+      "the following grants: P41EB015898, P41RR019703, R01CA111288 "
+      "and U01CA151261.";
 }
 
 //-----------------------------------------------------------------------------
