@@ -577,6 +577,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
 
   //qDebug() << "qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode";
 
+  bool wasBlocked;
+
   // Update orientation selector state
   int index = this->SliceOrientationSelector->findText(
       QString::fromStdString(this->MRMLSliceNode->GetOrientationString()));
@@ -613,7 +615,9 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
     this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
   double fov[3];
   this->MRMLSliceNode->GetFieldOfView(fov);
+  wasBlocked = this->SliceFOVSpinBox->blockSignals(true);
   this->SliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
+  this->SliceFOVSpinBox->blockSignals(wasBlocked);
   // Lightbox
   int rows = this->MRMLSliceNode->GetLayoutGridRows();
   int columns = this->MRMLSliceNode->GetLayoutGridColumns();
@@ -626,7 +630,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionLightbox2x2_view->setChecked(rows == 2 && columns == 2);
   this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
   this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
-
 }
 
 // --------------------------------------------------------------------------
@@ -702,6 +705,11 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
       this->actionCompositingSubtract->setChecked(true);
       break;
     }
+
+  // Since we blocked the signals when setting the
+  // Foreground/Background/Label volumes, we need to explictly call
+  // the function to enable the buttons
+  this->enableVisibilityButtons();
 }
 
 
