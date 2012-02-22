@@ -10,7 +10,11 @@ class MultiVolumeImporter:
   def __init__(self, parent):
     parent.title = "MultiVolumeImporter"
     parent.categories = ["Work in progress.MultiVolume Support"]
-    parent.contributors = ["Andrey Fedorov (SPL, BWH)","Steve Pieper (SPL, BWH)","Ron Kikinis (SPL, BWH)"]
+    parent.contributors = ["Andrey Fedorov (SPL, BWH)",\
+        "Jean-Christophe Fillion-Robin (Kitware)", \
+        "Julien Finet (Kitware)", \
+        "Steve Pieper (SPL, BWH)",\
+        "Ron Kikinis (SPL, BWH)"]
 
     parent.helpText = """
     Support of MultiVolume import in Slicer4
