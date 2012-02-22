@@ -26,21 +26,22 @@ command line processing and additional features have been added.
 namespace
 {
 
-} // end of anonymous namespace
-
-int main( int argc, char* argv[] )
+template <class Tin>
+int DoIt( int argc, char * argv[], Tin)
 {
   PARSE_ARGS;
 
-  typedef itk::Image<int, 3>                                   Image3DType;//changed from short to int for bright MRI images
-  typedef itk::Image<int, 2>                                   Image2DType;
+  typedef Tin     InputPixelType;
+
+  typedef itk::Image<InputPixelType, 3>                        Image3DType;
+  typedef itk::Image<InputPixelType, 2>                        Image2DType;
   typedef itk::ImageFileReader<Image3DType>                    ReaderType;
   typedef itk::ShiftScaleImageFilter<Image3DType, Image3DType> ShiftScaleType;
   typedef itk::ImageFileWriter<Image2DType>                    WriterType;
   typedef itk::GDCMImageIO                                     ImageIOType;
 
-  Image3DType::Pointer image;
-  ReaderType::Pointer  reader = ReaderType::New();
+  typename Image3DType::Pointer image;
+  typename ReaderType::Pointer  reader = ReaderType::New();
 
   try
     {
@@ -56,8 +57,8 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  Image3DType::SpacingType   spacing = image->GetSpacing();
-  Image3DType::DirectionType oMatrix = image->GetDirection();
+  typename Image3DType::SpacingType   spacing = image->GetSpacing();
+  typename Image3DType::DirectionType oMatrix = image->GetDirection();
 
   // Shift scale the data if necessary based on the rescale slope and
   // rescale interscept prescribed.
@@ -66,7 +67,7 @@ int main( int argc, char* argv[] )
     {
     reader->ReleaseDataFlagOn();
 
-    ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
+    typename ShiftScaleType::Pointer shiftScale = ShiftScaleType::New();
     shiftScale->SetInput( reader->GetOutput() );
     shiftScale->SetShift( -rescaleIntercept );
 
@@ -87,7 +88,7 @@ int main( int argc, char* argv[] )
   typedef itk::MetaDataDictionary DictionaryType;
   unsigned int numberOfSlices = image->GetLargestPossibleRegion().GetSize()[2];
 
-  ImageIOType::Pointer gdcmIO = ImageIOType::New();
+  typename ImageIOType::Pointer gdcmIO = ImageIOType::New();
   DictionaryType       dictionary;
 
   // Progress
@@ -114,8 +115,8 @@ int main( int argc, char* argv[] )
               << std::flush;
 
     itksys_ios::ostringstream value;
-    Image3DType::PointType    origin;
-    Image3DType::IndexType    index;
+    typename Image3DType::PointType    origin;
+    typename Image3DType::IndexType    index;
     index.Fill(0);
     index[2] = i;
     image->TransformIndexToPhysicalPoint(index, origin);
@@ -231,9 +232,9 @@ int main( int argc, char* argv[] )
     // value << rescaleSlope;
     // itk::EncapsulateMetaData<std::string>(dictionary, "0028|1053", value.str());
 
-    Image3DType::RegionType extractRegion;
-    Image3DType::SizeType   extractSize;
-    Image3DType::IndexType  extractIndex;
+    typename Image3DType::RegionType extractRegion;
+    typename Image3DType::SizeType   extractSize;
+    typename Image3DType::IndexType  extractIndex;
     extractSize = image->GetLargestPossibleRegion().GetSize();
     extractIndex.Fill(0);
     if( reverseImages )
@@ -249,7 +250,7 @@ int main( int argc, char* argv[] )
     extractRegion.SetIndex(extractIndex);
 
     typedef itk::ExtractImageFilter<Image3DType, Image2DType> ExtractType;
-    ExtractType::Pointer extract = ExtractType::New();
+    typename ExtractType::Pointer extract = ExtractType::New();
 #if  ITK_VERSION_MAJOR >= 4
     extract->SetDirectionCollapseToGuess();  // ITKv3 compatible, but not recommended
 #endif
@@ -259,11 +260,11 @@ int main( int argc, char* argv[] )
     extract->Update();
 
     itk::ImageRegionIterator<Image2DType> it( extract->GetOutput(), extract->GetOutput()->GetLargestPossibleRegion() );
-    Image2DType::PixelType                minValue = itk::NumericTraits<Image2DType::PixelType>::max();
-    Image2DType::PixelType                maxValue = itk::NumericTraits<Image2DType::PixelType>::min();
+    typename Image2DType::PixelType                minValue = itk::NumericTraits<typename Image2DType::PixelType>::max();
+    typename Image2DType::PixelType                maxValue = itk::NumericTraits<typename Image2DType::PixelType>::min();
     for( it.GoToBegin(); !it.IsAtEnd(); ++it )
       {
-      Image2DType::PixelType p = it.Get();
+      typename Image2DType::PixelType p = it.Get();
       if( p > maxValue )
         {
         maxValue = p;
@@ -273,8 +274,8 @@ int main( int argc, char* argv[] )
         minValue = p;
         }
       }
-    Image2DType::PixelType windowCenter = (minValue + maxValue) / 2;
-    Image2DType::PixelType windowWidth = (maxValue - minValue);
+    typename Image2DType::PixelType windowCenter = (minValue + maxValue) / 2;
+    typename Image2DType::PixelType windowWidth = (maxValue - minValue);
 
     value.str("");
     value << windowCenter;
@@ -283,7 +284,7 @@ int main( int argc, char* argv[] )
     value << windowWidth;
     itk::EncapsulateMetaData<std::string>(dictionary, "0028|1051", value.str() );
 
-    WriterType::Pointer writer = WriterType::New();
+    typename WriterType::Pointer writer = WriterType::New();
     char                imageNumber[BUFSIZ];
 #if WIN32
 #define snprintf sprintf_s
@@ -316,5 +317,53 @@ int main( int argc, char* argv[] )
   std::cout << "</filter-end>";
   std::cout << std::flush;
 
+  return EXIT_SUCCESS;
+}
+
+} // end of anonymous namespace
+
+int main( int argc, char* argv[] )
+{
+  PARSE_ARGS;
+
+  try
+  {
+    if( Type == std::string("Char") )
+      {
+      return DoIt( argc, argv, static_cast<char>(0));
+      }
+    else if( Type == std::string("UnsignedChar") )
+      {
+      return DoIt( argc, argv, static_cast<unsigned char>(0));
+      }
+    else if( Type == std::string("Short") )
+      {
+      return DoIt( argc, argv, static_cast<short>(0));
+      }
+    else if( Type == std::string("UnsignedShort") )
+      {
+      return DoIt( argc, argv, static_cast<unsigned short>(0));
+      }
+    else if( Type == std::string("Int") )
+      {
+      return DoIt( argc, argv, static_cast<int>(0));
+      }
+    else if( Type == std::string("UnsignedInt") )
+      {
+      return DoIt( argc, argv, static_cast<unsigned int>(0));
+      }
+    else
+      {
+      std::cout << "Unknown type to which to cast input volume: " << Type.c_str() << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  catch( itk::ExceptionObject & excep )
+    {
+    std::cerr << argv[0] << ": exception caught !" << std::endl;
+    std::cerr << excep << std::endl;
+    return EXIT_FAILURE;
+    }
+    
   return EXIT_SUCCESS;
 }

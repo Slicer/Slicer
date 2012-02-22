@@ -171,5 +171,21 @@
       <label>Use Compression</label>
       <default>false</default>
     </boolean>
+    <label>Filter Settings</label>
+    <string-enumeration>
+      <name>Type</name>
+      <label>Output Type:</label>
+      <description><![CDATA[Type for the new output volume.]]></description>
+      <longflag>--type</longflag>
+      <flag>--t</flag>
+      <default>Short</default>
+      <element>UnsignedChar</element>
+      <element>Char</element>
+      <element>UnsignedChar</element>
+      <element>Short</element>
+      <element>UnsignedShort</element>
+      <element>Int</element>
+      <element>UnsignedInt</element>
+    </string-enumeration>
   </parameters>
 </executable>
