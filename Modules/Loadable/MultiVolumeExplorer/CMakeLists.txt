@@ -1,3 +1,4 @@
+
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.4)
 #-----------------------------------------------------------------------------
@@ -64,19 +65,15 @@ set(qt_module_include_directories
 set(qt_module_SRCS
   qSlicerMultiVolumeExplorerModule.cxx
   qSlicerMultiVolumeExplorerModule.h
-  qSlicerMultiVolumeExplorerModuleWidget.cxx
-  qSlicerMultiVolumeExplorerModuleWidget.h
   )
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
   qSlicerMultiVolumeExplorerModule.h
-  qSlicerMultiVolumeExplorerModuleWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
-  Resources/UI/qSlicerMultiVolumeExplorerModule.ui
 )
 
 # Additional Target libraries
