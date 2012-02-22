@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerMultiVolumeRenderingModule</class>
+ <widget class="qSlicerWidget" name="qSlicerMultiVolumeRenderingModule">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>423</width>
+    <height>702</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="1" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="CollapsibleButtonRendering">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Rendering</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelRenderingMode">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comboBoxRenderingMode">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Linked Multi-Volume Rendering</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Independent Multi-Volume Rendering</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Background Volume Rendering</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Foreground Volume Rendering</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Labelmap Volume Rendering</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelGPUMemSize">
+        <property name="text">
+         <string>GPU Memory Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBoxGPUMemSize">
+        <item>
+         <property name="text">
+          <string>512 MB (default)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1.0 GB</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1.5 GB</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2.0 GB</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelQualityControl">
+        <property name="text">
+         <string>Quality Control</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBoxQualityControl">
+        <item>
+         <property name="text">
+          <string>Adaptive</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Fixed Framerate</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Maximum Quality</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelFps">
+        <property name="text">
+         <string>Interactive Speed</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkSliderWidget" name="SliderWidgetFps">
+        <property name="decimals">
+         <number>0</number>
+        </property>
+        <property name="minimum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>30.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="suffix">
+         <string> fps</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="CollapsibleButtonVolumes">
+     <property name="text">
+      <string>Volumes</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxLabelmap"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxForeground"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="ctkCheckBox" name="CheckBoxLabelmap">
+        <property name="text">
+         <string>Labelmap</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="ctkCheckBox" name="CheckBoxBgVolume">
+        <property name="text">
+         <string>Background</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxBgVolume"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="ctkCheckBox" name="CheckBoxFgVolume">
+        <property name="text">
+         <string>Foreground</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="CollapsibleButtonBgPara">
+     <property name="text">
+      <string>Parameters (Bg Volume)</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelDisplayNodeBg">
+        <property name="text">
+         <string>Display Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxDisplayNodeBg"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelROINodeBg">
+        <property name="text">
+         <string>ROI Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxROINodeBg"/>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxCropBg">
+          <property name="text">
+           <string>Crop</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelPropertyNodeBg">
+        <property name="text">
+         <string>Property Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxPropertyBg"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelPresetsBg">
+        <property name="text">
+         <string>Preset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qSlicerPresetComboBox" name="PresetComboBoxBg"/>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBoxAdvancedBg">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTabWidget" name="tabWidgetAdvancedBg">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="tabTechniqueBg">
+            <property name="accessibleName">
+             <string/>
+            </property>
+            <attribute name="title">
+             <string>Technique</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelTechniqueBg">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Technique</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="comboBoxTechniqueBg">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Composite</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Maximum Intensity Projection (MIP)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Minimum Intensity Projection (MINIP)</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabVolumePropertyBg">
+            <attribute name="title">
+             <string>Volume Property</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="ctkCheckablePushButton" name="CheckBoxSyncWithVolumesBg">
+               <property name="text">
+                <string>Synchronize with Volumes module</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="qMRMLVolumePropertyNodeWidget" name="MRMLVolumePropertyNodeWidgetBg"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabROIBg">
+            <attribute name="title">
+             <string>ROI</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="qMRMLAnnotationROIWidget" name="MRMLAnnotationROIWidgetBg"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="CollapsibleButtonFgPara">
+     <property name="text">
+      <string>Parameters (Fg Volume)</string>
+     </property>
+     <property name="collapsed">
+      <bool>true</bool>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelDisplayNodeFg">
+        <property name="text">
+         <string>Display Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxDisplayNodeFg"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelROINodeFg">
+        <property name="text">
+         <string>ROI Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelPropertyNodeFg">
+        <property name="text">
+         <string>Property Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxPropertyFg"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelPresetsFg">
+        <property name="text">
+         <string>Preset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="qSlicerPresetComboBox" name="PresetComboBoxFg"/>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxROINodeFg"/>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxCropFg">
+          <property name="text">
+           <string>Crop</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="CollapsibleButtonLabelmapPara">
+     <property name="text">
+      <string>Parameters (Labelmap)</string>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationROIWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLAnnotationROIWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVolumePropertyNodeWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLVolumePropertyNodeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerPresetComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qSlicerPresetComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
