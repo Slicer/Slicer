@@ -32,8 +32,8 @@ int main( int argc, char* argv[] )
 {
   PARSE_ARGS;
 
-  typedef itk::Image<float, 3>                                 Image3DType;//changed from short to float for bright MRI images
-  typedef itk::Image<float, 2>                                 Image2DType;
+  typedef itk::Image<int, 3>                                   Image3DType;//changed from short to int for bright MRI images
+  typedef itk::Image<int, 2>                                   Image2DType;
   typedef itk::ImageFileReader<Image3DType>                    ReaderType;
   typedef itk::ShiftScaleImageFilter<Image3DType, Image3DType> ShiftScaleType;
   typedef itk::ImageFileWriter<Image2DType>                    WriterType;
