@@ -239,6 +239,8 @@ else()
   set(Slicer_BUILD_SkullStripper OFF CACHE INTERNAL "SkullStripper disabled with ITKv3" FORCE)
 endif()
 
+option(Slicer_MULTIVOLUME_SUPPORT "Build MultiVolume support." ON)
+
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.

@@ -118,6 +118,11 @@ if(Slicer_USE_PYTHONQT)
   endif()
 endif()
 
+if(Slicer_MULTIVOLUME_SUPPORT)
+  list(APPEND Slicer_DEPENDENCIES MultiVolumeEplorer)
+  list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
+endif()
+
 SlicerMacroCheckExternalProjectDependency(Slicer)
 
 #-----------------------------------------------------------------------------
@@ -163,6 +168,13 @@ if(Slicer_BUILD_CLI_SUPPORT)
     Slicer_BUILD_ChangeTrackerPy
     Slicer_BUILD_EMSegment
     Slicer_BUILD_SkullStripper
+    )
+endif()
+
+if(Slicer_MULTIVOLUME_SUPPORT)
+  list(APPEND ep_make_boolean_args
+    Slicer_BUILD_MultiVolumeExplorer
+    Slicer_BUILD_MultiVolumeImporter
     )
 endif()
 
@@ -251,6 +263,14 @@ if(Slicer_BUILD_CLI_SUPPORT)
 
   if(Slicer_BUILD_ChangeTrackerPy)
     list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
+  endif()
+
+  if(Slicer_BUILD_MultiVolumeEplorer)
+    list(APPEND ep_superbuild_extra_args -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
+  endif()
+
+  if(Slicer_BUILD_MultiVolumeImporter)
+    list(APPEND ep_superbuild_extra_args -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
   endif()
 
   if(Slicer_BUILD_EMSegment)
