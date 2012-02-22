@@ -52,14 +52,14 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
   d->CreditsTextBrowser->append(
     slicer->applicationVersion()+ " "
     + "r" + slicer->repositoryRevision());
-  d->CreditsTextBrowser->setFontPointSize(6);
   d->CreditsTextBrowser->append("");
   d->CreditsTextBrowser->append("");
   d->CreditsTextBrowser->insertHtml("<a href=\"http://download.slicer.org/\">Download</a> a newer version<br />");
   d->CreditsTextBrowser->append("");
-  d->CreditsTextBrowser->append(slicer->acknowledgment());
+  d->CreditsTextBrowser->insertHtml(slicer->acknowledgment());
   d->CreditsTextBrowser->insertHtml(slicer->libraries());
-  d->SlicerCreditTextBrowser->insertHtml(slicer->copyrights());
+  //d->SlicerLinksTable->setIndexWidget(QModelIndex(), new QTextBrowser);
+  d->SlicerLinksTextBrowser->insertHtml(slicer->copyrights());
   d->CreditsTextBrowser->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
 }
 

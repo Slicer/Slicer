@@ -1003,16 +1003,16 @@ ctkErrorLogModel* qSlicerCoreApplication::errorLogModel()const
 QString qSlicerCoreApplication::libraries()const
 {
   QString librariesText(
-    "Built on top of:"
-    "<a href=\"http://www.vtk.org/\"> VTK </a>, "
-    "<a href=\"http://www.itk.org/\"> ITK</a>,"
-    "<a href=\"http://www.commontk.org/index.php/Main_Page\"> CTK</a>,"
-    "<a href=\"http://qt.nokia.com/products/\"> Qt</a>,"
-    "<a href=\"http://www.tcl.tk\"> Tcl/Tk</a>,"
-    "<a href=\"http://teem.sf.net\"> Teem</a>,"
-    "<a href=\"http://www.python.org/\"> Python</a>,"
-    "<a href=\"http://dicom.offis.de/dcmtk\"> DCMTK</a>,"
-    "<a href=\"http://www.jqplot.com/\"> JQPlot</a><br />");
+    "Built on top of: "
+    "<a href=\"http://www.vtk.org/\">VTK</a>, "
+    "<a href=\"http://www.itk.org/\">ITK</a>, "
+    "<a href=\"http://www.commontk.org/index.php/Main_Page\">CTK</a>, "
+    "<a href=\"http://qt.nokia.com/products/\">Qt</a>, "
+    "<a href=\"http://www.tcl.tk\">Tcl/Tk</a>, "
+    "<a href=\"http://teem.sf.net\">Teem</a>, "
+    "<a href=\"http://www.python.org/\">Python</a>, "
+    "<a href=\"http://dicom.offis.de/dcmtk\">DCMTK</a>, "
+    "<a href=\"http://www.jqplot.com/\">JQPlot</a><br />");
   return librariesText;
 }
 
@@ -1020,25 +1020,25 @@ QString qSlicerCoreApplication::libraries()const
 QString qSlicerCoreApplication::copyrights()const
 {
   QString copyrightsText(
-    "<pre>                    "
-    "<a href=\"http://slicer.org/pages/License\">Licensing Information</a>                    "
-    "<a href=\"http://slicer.org/\">Website</a>                   "
-    "<a href=\"http://slicer.org/pages/Acknowledgments\">Acknowledgments</a>"
-    "</pre>");
+    "<table align=\"center\" border=\"0\" cellspacing=\"30\"> "
+    "<tr><td><a href=\"http://slicer.org/pages/License\">Licensing Information</a></td>"
+    "<td><a href=\"http://slicer.org/\">Website</a></td>"
+    "<td><a href=\"http://slicer.org/pages/Acknowledgments\">Acknowledgments</a></td>"
+    "</tr></table>");
   return copyrightsText;
 }
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::acknowledgment()const
 {
   QString acknowledgmentText(
-    "Slicer is NOT an FDA approved medical device.\n\n"
-    "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.\n\n"
-    "Special thanks to the NIH and our other supporters.\n\n"
+    "Slicer is NOT an FDA approved medical device.<br /><br />"
+    "Supported by: NA-MIC, NAC, BIRN, NCIGT and the Slicer Community.<br /><br />"
+    "Special thanks to the NIH and our other supporters.<br /><br />"
     "This work is part of the National Alliance for Medical Image Computing "
     "(NA-MIC), funded by the National Institutes of Health through the NIH "
     "Roadmap for Medical Research, Grant U54 EB005149. Information on the "
     "National Centers for Biomedical Computing can be obtained from "
-    "http://nihroadmap.nih.gov/bioinformatics.\n\n");
+    "<a href=\"http://nihroadmap.nih.gov/bioinformatics\">http://nihroadmap.nih.gov/bioinformatics</a>.<br /><br />");
   return acknowledgmentText;
 }
 

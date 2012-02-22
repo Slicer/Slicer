@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>853</width>
-    <height>431</height>
+    <width>750</width>
+    <height>500</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>About 3D Slicer</string>
@@ -36,26 +42,38 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QTextBrowser" name="CreditsTextBrowser">
+   <item row="1" column="0" colspan="3">
+    <widget class="QTextBrowser" name="SlicerLinksTextBrowser">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="lineWidth">
-      <number>0</number>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QTextBrowser" name="SlicerCreditTextBrowser">
+   <item row="0" column="1" colspan="2">
+    <widget class="QTextBrowser" name="CreditsTextBrowser">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
      <property name="openExternalLinks">
       <bool>true</bool>
@@ -66,6 +84,7 @@
  </widget>
  <resources>
   <include location="../SlicerQT.qrc"/>
+  <include location="../../../../../../../.designer/SlicerQT.qrc"/>
  </resources>
  <connections/>
 </ui>
