@@ -1026,10 +1026,10 @@ QString qSlicerCoreApplication::libraries()const
 QString qSlicerCoreApplication::copyrights()const
 {
   QString copyrightsText(
-    "<table align=\"center\" border=\"0\" cellspacing=\"30\"> "
-    "<tr><td><a href=\"http://slicer.org/pages/License\">Licensing Information</a></td>"
-    "<td><a href=\"http://slicer.org/\">Website</a></td>"
-    "<td><a href=\"http://slicer.org/pages/Acknowledgments\">Acknowledgments</a></td>"
+    "<table align=\"center\" border=\"0\" width=\"80%\"><tr>"
+    "<td align=\"center\"><a href=\"http://slicer.org/pages/License\">Licensing Information</a></td>"
+    "<td align=\"center\"><a href=\"http://slicer.org/\">Website</a></td>"
+    "<td align=\"center\"><a href=\"http://slicer.org/pages/Acknowledgments\">Acknowledgments</a></td>"
     "</tr></table>");
   return copyrightsText;
 }
