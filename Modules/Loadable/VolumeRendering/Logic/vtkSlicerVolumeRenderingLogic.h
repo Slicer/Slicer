@@ -67,6 +67,12 @@ public:
   vtkSetMacro(DefaultRenderingMethod, int);
   vtkGetMacro(DefaultRenderingMethod, int);
 
+  /// Use a linear ramp (true) or a sharp ramp (false) when copying the volume
+  /// display node threshold values into the volume rendering display node.
+  /// True by default.
+  vtkSetMacro(UseLinearRamp, bool);
+  vtkGetMacro(UseLinearRamp, bool);
+
   /// Create and add into the scene a volume rendering display node.
   /// The new node is initialized with default properties such as
   /// CurrentVolumeMapper.
@@ -97,7 +103,8 @@ public:
     vtkMRMLLabelMapVolumeDisplayNode* labelMapDisplayNode = 0);
 
   void SetThresholdToVolumeProp(
-    double scalarRange[2], double threshold[2], vtkVolumeProperty* node);
+    double scalarRange[2], double threshold[2],
+    vtkVolumeProperty* node, bool linearRamp = false);
 
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
@@ -189,6 +196,7 @@ protected:
   void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
 
   int DefaultRenderingMethod;
+  bool UseLinearRamp;
 
   typedef std::vector<vtkMRMLNode*> DisplayNodesType;
   DisplayNodesType DisplayNodes;

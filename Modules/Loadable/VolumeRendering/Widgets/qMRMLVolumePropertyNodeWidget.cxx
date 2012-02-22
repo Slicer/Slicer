@@ -61,6 +61,8 @@ void qMRMLVolumePropertyNodeWidgetPrivate::setupUi()
   this->Ui_qMRMLVolumePropertyNodeWidget::setupUi(q);
   QObject::connect(this->VolumeProperty, SIGNAL(chartsExtentChanged()),
                    q, SIGNAL(chartsExtentChanged()));
+  QObject::connect(this->VolumeProperty, SIGNAL(thresholdEnabledChanged(bool)),
+                   q, SIGNAL(thresholdChanged(bool)));
 }
 
 // --------------------------------------------------------------------------
@@ -129,6 +131,20 @@ void qMRMLVolumePropertyNodeWidget::chartsExtent(double extent[4])const
 {
   Q_D(const qMRMLVolumePropertyNodeWidget);
   d->VolumeProperty->chartsExtent(extent);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLVolumePropertyNodeWidget::setThreshold(bool enable)
+{
+  Q_D(qMRMLVolumePropertyNodeWidget);
+  d->VolumeProperty->setThresholdEnabled(enable);
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLVolumePropertyNodeWidget::hasThreshold()const
+{
+  Q_D(const qMRMLVolumePropertyNodeWidget);
+  return d->VolumeProperty->isThresholdEnabled();
 }
 
 // --------------------------------------------------------------------------

@@ -32,7 +32,8 @@ class vtkMRMLVolumePropertyNode;
 class vtkIntArray;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode : public vtkMRMLDisplayNode
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDisplayNode
+  : public vtkMRMLDisplayNode
 {
   public:
   static vtkMRMLVolumeRenderingDisplayNode *New();

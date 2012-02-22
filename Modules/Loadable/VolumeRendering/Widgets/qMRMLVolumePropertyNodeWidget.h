@@ -44,6 +44,7 @@ class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qMRMLVolumePropertyNodeWidg
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(bool threshold READ hasThreshold WRITE setThreshold)
 
 public:
   /// Constructors
@@ -61,6 +62,9 @@ public:
   void chartsBounds(double bounds[4])const;
   void chartsExtent(double extent[4])const;
 
+  void setThreshold(bool enable);
+  bool hasThreshold()const;
+
 public slots:
   /// Convenient function to connect with signal/slots
   void setMRMLVolumePropertyNode(vtkMRMLNode* node);
@@ -72,6 +76,7 @@ public slots:
                        bool dontSpreadFirstAndLast = false);
 
 signals:
+  void thresholdChanged(bool enabled);
   void volumePropertyChanged();
   void chartsExtentChanged();
 

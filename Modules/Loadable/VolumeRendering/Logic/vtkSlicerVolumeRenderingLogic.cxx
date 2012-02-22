@@ -82,6 +82,7 @@ vtkStandardNewMacro(vtkSlicerVolumeRenderingLogic);
 vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
 {
   this->DefaultRenderingMethod = vtkMRMLVolumeRenderingDisplayNode::None;
+  this->UseLinearRamp = true;
   this->PresetsScene = 0;
 }
 
@@ -328,7 +329,8 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
 void vtkSlicerVolumeRenderingLogic
 ::SetThresholdToVolumeProp(double scalarRange[2],
                            double threshold[2],
-                           vtkVolumeProperty* volumeProp)
+                           vtkVolumeProperty* volumeProp,
+                           bool linearRamp)
 {
   assert(scalarRange && threshold && volumeProp);
   // Sanity check
@@ -341,11 +343,13 @@ void vtkSlicerVolumeRenderingLogic
   // opacity doesn't support duplicate points
   opacity->AddPoint(higherAndUnique(scalarRange[0], previous), 0.0);
   opacity->AddPoint(higherAndUnique(threshold[0], previous), 0.0);
-  opacity->AddPoint(higherAndUnique(threshold[0], previous), 1.0);
+  if (!linearRamp)
+    {
+    opacity->AddPoint(higherAndUnique(threshold[0], previous), 1.0);
+    }
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 1.0);
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 0.0);
   opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 0.0);
-  assert(opacity->GetSize() == 6);
 
   vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
@@ -537,7 +541,7 @@ void vtkSlicerVolumeRenderingLogic
 
   int disabledModify = vspNode->StartModify();
   this->SetThresholdToVolumeProp(
-    scalarRange, threshold, prop);
+    scalarRange, threshold, prop, this->UseLinearRamp);
   // NCI raycast mapper applies a second threshold in addition to the opacity
   // transfer function
   vspNode->SetDepthPeelingThreshold(scalarRange[0]);

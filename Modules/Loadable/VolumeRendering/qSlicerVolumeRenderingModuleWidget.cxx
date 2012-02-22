@@ -154,8 +154,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->RenderingTechniqueFgComboBox->addItem(
     "Illustrative Context Preserving Exploration",
     vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
-  
-  // Volume Properties 
+
+  // Volume Properties
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
@@ -164,6 +164,10 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->PresetsNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(applyPreset(vtkMRMLNode*)));
 
+  this->VolumePropertyNodeWidget->setThreshold(
+    !volumeRenderingLogic->GetUseLinearRamp());
+  QObject::connect(this->VolumePropertyNodeWidget,  SIGNAL(thresholdChanged(bool)),
+                   q, SLOT(onThresholdChanged(bool)));
   QObject::connect(this->VolumePropertyNodeWidget,  SIGNAL(chartsExtentChanged()),
                    q, SLOT(updatePresetSliderRange()));
 
@@ -931,4 +935,12 @@ void qSlicerVolumeRenderingModuleWidget::setFollowVolumeDisplayNode(bool follow)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   d->DisplayNode->SetFollowVolumeDisplayNode(follow ? 1 : 0);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onThresholdChanged(bool threshold)
+{
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  volumeRenderingLogic->SetUseLinearRamp(!threshold);
 }
