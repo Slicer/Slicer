@@ -7,6 +7,10 @@
     <file>Icons/Medium/SlicerLoadData.png</file>    
     <file>Icons/Small/SlicerSave.png</file>    
     <file>Icons/Medium/SlicerSave.png</file>    
+    <file>Icons/Small/SlicerDataBundle.png</file>    
+    <file>Icons/Medium/SlicerDataBundle.png</file>    
+    <file>Icons/Small/SlicerCloseScene.png</file>    
+    <file>Icons/Medium/SlicerCloseScene.png</file>    
 
     <file>Icons/Small/SlicerAddColorLUT.png</file>
     <file>Icons/Medium/SlicerAddColorLUT.png</file>

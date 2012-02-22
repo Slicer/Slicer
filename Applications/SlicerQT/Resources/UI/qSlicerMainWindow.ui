@@ -32,6 +32,10 @@
      <string>&amp;File</string>
     </property>
     <widget class="QMenu" name="menuSDB">
+     <property name="icon">
+      <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+       <normaloff>:/Icons/Small/SlicerDataBundle.png</normaloff>:/Icons/Small/SlicerDataBundle.png</iconset>
+     </property>
      <property name="title">
       <string>Slicer Data Bundle</string>
      </property>
@@ -463,6 +467,10 @@
    </property>
   </action>
   <action name="actionFileCloseScene">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerCloseScene.png</normaloff>:/Icons/Small/SlicerCloseScene.png</iconset>
+   </property>
    <property name="text">
     <string>Close Scene</string>
    </property>
