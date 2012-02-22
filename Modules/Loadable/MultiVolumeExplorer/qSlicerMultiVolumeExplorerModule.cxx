@@ -103,6 +103,8 @@ QStringList qSlicerMultiVolumeExplorerModule::contributors()const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Andrey Fedorov (SPL, BWH)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
+  moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Steve Pieper (SPL, BWH)");
   moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
