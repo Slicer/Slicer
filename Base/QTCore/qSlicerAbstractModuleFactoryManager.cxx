@@ -25,6 +25,9 @@
 #include "qSlicerAbstractModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
+// STD includes
+#include <typeinfo>
+
 //-----------------------------------------------------------------------------
 class qSlicerAbstractModuleFactoryManagerPrivate
 {
