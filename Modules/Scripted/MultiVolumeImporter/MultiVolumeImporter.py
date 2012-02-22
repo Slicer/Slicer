@@ -9,15 +9,17 @@ from Helper import *
 class MultiVolumeImporter:
   def __init__(self, parent):
     parent.title = "MultiVolumeImporter"
-    parent.categories = ["MultiVolume Support", "Work in progress"]
-    parent.contributors = ["Andrey Fedorov", "Steve Pieper", "Ron Kikinis"]
+    parent.categories = ["MultiVolume Support","Work in progress"]
+    parent.contributors = ["Andrey Fedorov (SPL, BWH)","Steve Pieper (SPL, BWH)","Ron Kikinis (SPL, BWH)"]
+
     parent.helpText = """
     Support of MultiVolume import in Slicer4
     """
     # MultiVolumeExplorer registers the MRML node type this module is using
     parent.dependencies = ['MultiVolumeExplorer']
     parent.acknowledgementText = """
-    This module was originally developed by Andrey Fedorov, SPL
+    Development of this module was supported in part by the following grants: 
+    P41EB015898, P41RR019703, R01CA111288 and U01CA151261.
     """
     self.parent = parent
 
@@ -179,16 +181,19 @@ class MultiVolumeImporterWidget:
       tmpDir = tmpDir+'/MultiVolumeImporter'
       if not os.path.exists(tmpDir):
         os.mkdir(tmpDir)
+      else:
         # clean it up
+        print 'tmpDir = '+tmpDir
         fileNames = os.listdir(tmpDir)
-        #for f in fileNames:
-        #  os.unlink(f)
+        for f in fileNames:
+          print f,' will be unlinked'
+          os.unlink(tmpDir+'/'+f)
 
       nFrames = logic.ProcessDICOMSeries(self.__fDialog.directory, tmpDir, self.__dicomTag.text, volumeLabels)
 
       self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
 
-      print 'Location of files:',tmpDir
+      Helper.Info('Location of files:'+tmpDir)
       fileNames = os.listdir(tmpDir)
 
       frameFolder = tmpDir
@@ -209,7 +214,6 @@ class MultiVolumeImporterWidget:
     fullName = frameFolder+'/'+fileNames[0]
     volumesLogic = slicer.modules.volumes.logic()
     frame = volumesLogic.AddArchetypeVolume(fullName, processingMode[3]+' Frame 0', 0)
-    #os.unlink(fullName)
     frameImage = frame.GetImageData()
     frameExtent = frameImage.GetExtent()
     frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
@@ -253,7 +257,7 @@ class MultiVolumeImporterWidget:
 
     for frameId in range(0,nFrames):
       fullName = frameFolder+'/'+fileNames[frameId]
-      print 'Processing frame ',frameId,': ',fullName
+      Helper.Info('Processing frame '+str(frameId)+': '+fullName)
       frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
@@ -268,13 +272,13 @@ class MultiVolumeImporterWidget:
     dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
     dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
-    print 'DWI node added to the scene'
+    Helper.Info('DWI node added to the scene')
 
 
     vcNode.SetDWVNodeID(dwiNode.GetID())
     vcNode.SetLabelArray(volumeLabels)
     vcNode.SetLabelName(self.__veLabel.text)
-    print 'VC node setup!'
+    Helper.Info('VC node setup complete!')
 
     Helper.SetBgFgVolumes(dwiNode.GetID(),None)
 
