@@ -90,7 +90,7 @@ QIcon qSlicerMultiVolumeExplorerModule::icon()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerMultiVolumeExplorerModule::categories() const
 {
-  return QStringList() << "MultiVolume Support" << "Work in progress";
+  return QStringList() << "Work in progress.MultiVolume Support";
 }
 
 //-----------------------------------------------------------------------------
