@@ -1,6 +1,6 @@
 from __main__ import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
-from Helper import *
+from MultiVolumeImporter.Helper import Helper
 
 #
 # MultiVolumeImporter
@@ -22,7 +22,7 @@ class MultiVolumeImporter:
     # MultiVolumeExplorer registers the MRML node type this module is using
     parent.dependencies = ['MultiVolumeExplorer']
     parent.acknowledgementText = """
-    Development of this module was supported in part by the following grants: 
+    Development of this module was supported in part by the following grants:
     P41EB015898, P41RR019703, R01CA111288 and U01CA151261.
     """
     self.parent = parent
@@ -43,10 +43,10 @@ class MultiVolumeImporterWidget:
     if not parent:
       self.setup()
       self.parent.show()
-    
+
   def setup(self):
     # Instantiate and connect widgets ...
-    
+
     # Collapsible button
     dummyCollapsibleButton = ctk.ctkCollapsibleButton()
     dummyCollapsibleButton.text = "Basic settings"
@@ -94,7 +94,7 @@ class MultiVolumeImporterWidget:
     self.layout.addWidget(dummyCollapsibleButton)
     dummyFormLayout = qt.QFormLayout(dummyCollapsibleButton)
     self.__advancedFrame = dummyCollapsibleButton
- 
+
     # label name and values
     label = qt.QLabel('DICOM tag:')
     label.toolTip = 'DICOM tag used to separate individual volumes in the series'
@@ -126,7 +126,7 @@ class MultiVolumeImporterWidget:
 
     # Add vertical spacer
     self.layout.addStretch(1)
-    
+
   def enter(self):
     self.onProcessingModeChanged(self.__modeSelector.currentIndex)
 
@@ -150,7 +150,7 @@ class MultiVolumeImporterWidget:
   def onMRMLSceneChanged(self, mrmlScene):
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     return
- 
+
   def onImportButtonClicked(self):
     # check if the output container exists
     vcNode = self.__vcSelector.currentNode()
@@ -166,7 +166,7 @@ class MultiVolumeImporterWidget:
     # 2. Series of frames alpha-ordered, all in the input directory
     # Assume here that the last mode in the list is for parsing a list of
     # non-DICOM frames
-    
+
     fileNames = []    # file names on disk
     frameList = []    # frames as MRMLScalarVolumeNode's
     frameFolder = ""
@@ -213,7 +213,7 @@ class MultiVolumeImporterWidget:
       for i in range(len(fileNames)):
         frameId = self.__veInitial.value+self.__veStep.value*i
         volumeLabels.SetComponent(i, 0, frameId)
-    
+
     # read the first frame to get the extent for DWI node
     fullName = frameFolder+'/'+fileNames[0]
     volumesLogic = slicer.modules.volumes.logic()
@@ -244,13 +244,13 @@ class MultiVolumeImporterWidget:
     gradientsArray = vtk.util.numpy_support.vtk_to_numpy(gradients)
     bValuesArray[:] = 0
     gradientsArray[:] = 1
-    
+
     dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
     dwiNode.SetName(processingMode[3]+'DisplayVolume')
     dwiNode.SetScene(slicer.mrmlScene)
     dwiNode.SetBValues(bValues)
     dwiNode.SetDiffusionGradients(gradients)
-    
+
     mat = vtk.vtkMatrix4x4()
     frame.GetRASToIJKMatrix(mat)
     dwiNode.SetRASToIJKMatrix(mat)
