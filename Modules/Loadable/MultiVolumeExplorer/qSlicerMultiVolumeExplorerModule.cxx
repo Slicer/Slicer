@@ -21,12 +21,11 @@
 #include <QtPlugin>
 #include <QScopedPointer>
 
-// ExtensionTemplate Logic includes
+// MultiVolumeExplorer Logic includes
 #include <vtkSlicerMultiVolumeExplorerLogic.h>
 
-// ExtensionTemplate includes
+// MultiVolumeExplorer includes
 #include "qSlicerMultiVolumeExplorerModule.h"
-#include "qSlicerMultiVolumeExplorerModuleWidget.h"
 
 // SlicerQT includes
 #include <qSlicerUtils.h>
@@ -89,9 +88,9 @@ QIcon qSlicerMultiVolumeExplorerModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerMultiVolumeExplorerModule::categories() const 
-{ 
-  return QStringList() << "MultiVolume Support" << "Work in progress"; 
+QStringList qSlicerMultiVolumeExplorerModule::categories() const
+{
+  return QStringList() << "MultiVolume Support" << "Work in progress";
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +117,7 @@ void qSlicerMultiVolumeExplorerModule::setup()
 
 //-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation * qSlicerMultiVolumeExplorerModule::createWidgetRepresentation()
-{  
+{
   QString pythonPath = qSlicerUtils::pathWithoutIntDir(
               QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
 
