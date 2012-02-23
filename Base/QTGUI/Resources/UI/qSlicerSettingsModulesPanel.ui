@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>451</height>
+    <height>461</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
    <item row="0" column="1">
     <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
      <property name="text">
-      <string>qt-loadable-modules</string>
+      <string>loadable modules (--disable-loadable-modules)</string>
      </property>
     </widget>
    </item>
@@ -41,7 +41,7 @@
    <item row="2" column="1">
     <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
      <property name="text">
-      <string>command-line plugins</string>
+      <string>command-line plugins (--disable-cli-modules)</string>
      </property>
     </widget>
    </item>
@@ -160,11 +160,11 @@
    <item row="1" column="1">
     <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
      <property name="text">
-      <string>qt-scripted-loadable-modules</string>
+      <string>scripted loadable modules (--disable-scripted-loadable-modules)</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="10" column="1">
     <widget class="QLabel" name="RestartRequestedLabel">
      <property name="text">
       <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
@@ -172,11 +172,45 @@
     </widget>
    </item>
    <item row="8" column="0">
-    <widget class="QLabel" name="DisableModulesLabel">
-     <property name="text">
-      <string>Disable modules:</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="DisableModulesLabel">
+       <property name="toolTip">
+        <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
+       </property>
+       <property name="text">
+        <string>Modules:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:4px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:small; color:#9f9f9f;&quot;&gt;checked : load at startup&lt;br /&gt;unchecked : ignore at startup&lt;br /&gt;grayed : not loaded&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item row="8" column="1">
     <widget class="qSlicerModulesListView" name="DisableModulesListView">
