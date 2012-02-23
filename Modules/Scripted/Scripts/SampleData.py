@@ -12,7 +12,7 @@ class SampleData:
     parent.categories = ["Informatics"]
     parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
-The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
+The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SampleData\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SampleData</a> for more information.\n\n
     """
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.

@@ -64,8 +64,8 @@ QString qSlicerVolumesModule::helpText()const
 {
   QString help = QString(
     "The Volumes Module loads and adjusts display parameters of volume data.<br>"
-    "<a href=\"%1/Documentation/4.0/Volumes>"
-    "%1/Documentation/4.0/Volumes</a><br>"
+    "<a href=\"%1/Documentation/4.0/Modules/Volumes\">"
+    "%1/Documentation/4.0/Modules/Volumes</a><br>"
     "The Diffusion Editor allows modifying "
     "parameters (gradients, bValues, measurement frame) of DWI data and "
     "provides a quick way to interpret them. "

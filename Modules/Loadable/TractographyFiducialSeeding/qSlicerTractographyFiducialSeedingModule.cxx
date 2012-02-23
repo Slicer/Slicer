@@ -40,7 +40,7 @@ QString qSlicerTractographyFiducialSeedingModule::helpText()const
 {
   QString help =
     "The Tractography Fiducial Seeding Module creates fiber tracts at specified seeding location. \n"
-    "<a href=%1/Modules:FiducialSeeding-Documentation-3.4>%1/Modules:FiducialSeeding-Documentation-3.4</a>";
+    "<a href=%1/Documentation/4.0/Modules/TractographyFiducialSeeding>%1/Documentation/4.0/Modules/TractographyFiducialSeeding</a>";
   return help.arg(this->slicerWikiUrl());
 }
 

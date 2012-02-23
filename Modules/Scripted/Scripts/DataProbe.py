@@ -11,7 +11,7 @@ class DataProbe:
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
-The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.
+The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe</a> for more information.\n\n
     """
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.

@@ -21,7 +21,7 @@ class DICOM:
     parent.categories = ["", "Informatics"] # top level module
     parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
-The DICOM module integrates DICOM classes from CTK (based on DCMTK).
+The DICOM module integrates DICOM classes from CTK (based on DCMTK).  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DICOM\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DICOM</a> for more information.\n\n
     """
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.  Based on work from CommonTK (http://www.commontk.org).

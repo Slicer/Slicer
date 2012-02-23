@@ -58,8 +58,8 @@ QString qSlicerVolumeRenderingModule::helpText()const
     "as 2D surfaces defined in 3D space. \n"
     "<a href=\"%1/Documentation/4.0/Modules/VolumeRendering\">"
     "%1/Documentation/4.0/Modules/VolumeRendering</a>\n"
-    "Tutorials are available at <a href=\"%1/Slicer3:Volume_Rendering_Tutorials\">"
-    "%1/Slicer4:Volume_Rendering_Tutorials</a>";
+    "Tutorials are available at <a href=\"%1/Documentation/4.0/Modules/VolumeRendering\">"
+    "%1/Documentation/4.0/Modules/VolumeRendering</a>";
   return help.arg(this->slicerWikiUrl());
 }
 
