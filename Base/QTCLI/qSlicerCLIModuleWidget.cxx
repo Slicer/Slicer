@@ -131,9 +131,6 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
 
   switch (node->GetStatus())
     {
-    case vtkMRMLCommandLineModuleNode::Cancelled:
-      this->CancelPushButton->setEnabled(false);
-      break;
     case vtkMRMLCommandLineModuleNode::Scheduled:
       this->ApplyPushButton->setEnabled(false);
       this->CancelPushButton->setEnabled(true);
@@ -143,6 +140,7 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
       this->ApplyPushButton->setEnabled(false);
       this->CancelPushButton->setEnabled(true);
       break;
+    case vtkMRMLCommandLineModuleNode::Cancelled:
     case vtkMRMLCommandLineModuleNode::Completed:
     case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
       this->DefaultPushButton->setEnabled(true);
