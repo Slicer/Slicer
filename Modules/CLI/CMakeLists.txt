@@ -46,7 +46,6 @@ set(cli_modules
   ThresholdScalarVolume
   TractographyLabelMapSeeding
   VotingBinaryHoleFillingImageFilter
-  ZeroCrossingBasedEdgeDetectionImageFilter
   )
 
 if(Slicer_BUILD_LEGACY_CLI)
