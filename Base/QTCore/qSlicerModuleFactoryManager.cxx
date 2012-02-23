@@ -22,6 +22,9 @@
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
+// STD includes
+#include <algorithm>
+
 //-----------------------------------------------------------------------------
 class qSlicerModuleFactoryManagerPrivate
 {
