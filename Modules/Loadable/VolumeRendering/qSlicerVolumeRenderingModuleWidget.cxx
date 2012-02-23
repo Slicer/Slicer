@@ -171,6 +171,9 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->VolumePropertyNodeWidget,  SIGNAL(chartsExtentChanged()),
                    q, SLOT(updatePresetSliderRange()));
 
+  QObject::connect(this->ROICropDisplayCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onROICropDisplayCheckBoxToggled(bool)));
+
   QObject::connect(this->PresetOffsetSlider, SIGNAL(valueChanged(double)),
                    q, SLOT(offsetPreset(double)));
   QObject::connect(this->PresetOffsetSlider, SIGNAL(sliderPressed()),
@@ -195,6 +198,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->InputsCollapsibleButton->setEnabled(false);;
   this->AdvancedCollapsibleButton->setCollapsed(true);
   this->AdvancedCollapsibleButton->setEnabled(false);
+
+  this->AdvancedTabWidget->setCurrentWidget(this->VolumePropertyTab);
 }
 
 // --------------------------------------------------------------------------
@@ -943,4 +948,17 @@ void qSlicerVolumeRenderingModuleWidget::onThresholdChanged(bool threshold)
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
   volumeRenderingLogic->SetUseLinearRamp(!threshold);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget
+::onROICropDisplayCheckBoxToggled(bool toggle)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  // When the display box is visible, it should probably activate the
+  // cropping (to follow the "what you see is what you get" pattern).
+  if (toggle)
+    {
+    d->ROICropCheckBox->setChecked(true);
+    }
 }

@@ -87,7 +87,8 @@ protected slots:
   void synchronizeScalarDisplayNode();
   void setFollowVolumeDisplayNode(bool);
 
-  void onThresholdChanged(bool);
+  void onThresholdChanged(bool threshold);
+  void onROICropDisplayCheckBoxToggled(bool toggle);
 
 protected:
   QScopedPointer<qSlicerVolumeRenderingModuleWidgetPrivate> d_ptr;
