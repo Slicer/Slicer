@@ -27,7 +27,7 @@ namespace
 {
 
 template <class Tin>
-int DoIt( int argc, char * argv[], Tin)
+int DoIt( int argc, char * argv[])
 {
   PARSE_ARGS;
 
@@ -330,27 +330,27 @@ int main( int argc, char* argv[] )
   {
     if( Type == std::string("Char") )
       {
-      return DoIt( argc, argv, static_cast<char>(0));
+      return DoIt<char>( argc, argv);
       }
     else if( Type == std::string("UnsignedChar") )
       {
-      return DoIt( argc, argv, static_cast<unsigned char>(0));
+      return DoIt<unsigned char>( argc, argv);
       }
     else if( Type == std::string("Short") )
       {
-      return DoIt( argc, argv, static_cast<short>(0));
+      return DoIt<short>( argc, argv);
       }
     else if( Type == std::string("UnsignedShort") )
       {
-      return DoIt( argc, argv, static_cast<unsigned short>(0));
+      return DoIt<unsigned short>( argc, argv);
       }
     else if( Type == std::string("Int") )
       {
-      return DoIt( argc, argv, static_cast<int>(0));
+      return DoIt<int>( argc, argv);
       }
     else if( Type == std::string("UnsignedInt") )
       {
-      return DoIt( argc, argv, static_cast<unsigned int>(0));
+      return DoIt<unsigned int>( argc, argv);
       }
     else
       {
