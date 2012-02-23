@@ -21,7 +21,6 @@ set(module_mrml_export_directive "VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXP
 set(module_mrml_target_libraries
   ${MRML_LIBRARIES}
   ${VTK_LIBRARIES}
-  z
   )
 
 SlicerMacroBuildModuleMRML(
