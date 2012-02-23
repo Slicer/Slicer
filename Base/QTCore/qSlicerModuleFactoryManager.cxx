@@ -163,31 +163,54 @@ QStringList qSlicerModuleFactoryManager::loadedModuleNames()const
 void qSlicerModuleFactoryManager::unloadModules()
 {
   QStringList modulesToUnload = this->loadedModuleNames();
+  // unload in the reverse the order of load to respect dependencies
+  std::reverse(modulesToUnload.begin(), modulesToUnload.end());
   emit this->modulesAboutToBeUnloaded(modulesToUnload);
+  emit this->modulesAboutToBeUninstantiated(modulesToUnload);
   foreach(const QString& name, modulesToUnload)
     {
     this->unloadModule(name);
     }
+  emit this->modulesUninstantiated(modulesToUnload);
   emit this->modulesUnloaded(modulesToUnload);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModuleFactoryManager::uninstantiateModules()
+{
+  Q_D(qSlicerModuleFactoryManager);
+  if (!d->LoadedModules.isEmpty())
+    {
+    // unload first then uninstantiate the remaining modules
+    this->unloadModules();
+    }
+  this->Superclass::uninstantiateModules();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerModuleFactoryManager::unloadModule(const QString& name)
+{
+  Q_D(qSlicerModuleFactoryManager);
+  if (!this->isLoaded(name))
+    {
+    return;
+    }
+  emit this->moduleAboutToBeUnloaded(name);
+  d->LoadedModules.removeOne(name);
+  this->uninstantiateModule(name);
+  emit this->moduleUnloaded(name);
 }
 
 //---------------------------------------------------------------------------
 void qSlicerModuleFactoryManager::uninstantiateModule(const QString& name)
 {
-  Q_D(qSlicerModuleFactoryManager);
-
   if (this->isLoaded(name))
     {
-    emit this->moduleAboutToBeUnloaded(name);
+    this->unloadModule(name);
+    return;
     }
 
   this->Superclass::uninstantiateModule(name);
-
-  if (this->isLoaded(name))
-    {
-    d->LoadedModules.removeOne(name);
-    emit this->moduleUnloaded(name);
-    }
 }
 
 //---------------------------------------------------------------------------

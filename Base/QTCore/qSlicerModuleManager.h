@@ -54,10 +54,6 @@ public:
   /// Return the loaded module identified by \a name
   Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name)const;
 
-  /// Return the list of modules that have \a module as a dependency.
-  /// \sa qSlicerAbstractCoreModule::dependencies()
-  QStringList dependentModules(const QString& module)const;
-
 signals:
   void moduleLoaded(const QString& module);
   void moduleAboutToBeUnloaded(const QString& module);

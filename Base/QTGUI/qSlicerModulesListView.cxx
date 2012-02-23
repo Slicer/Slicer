@@ -28,8 +28,7 @@
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerAbstractModule.h"
 #include "qSlicerAbstractModuleFactoryManager.h"
-#include "qSlicerCoreApplication.h"
-#include "qSlicerModuleManager.h"
+#include "qSlicerModuleFactoryManager.h"
 
 // QtGUI includes
 #include "qSlicerModulesListView.h"
@@ -89,9 +88,22 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
   Q_Q(qSlicerModulesListView);
   QString moduleName = item->data(Qt::UserRole).toString();
   item->setCheckable(true);
+  // The module is ignored, therefore it hasn't been loaded
   if (this->FactoryManager->ignoredModuleNames().contains(moduleName))
     {
     item->setForeground(q->palette().color(QPalette::Disabled, QPalette::Text));
+    }
+  // The module was registered, not ignored, initialized, but failed to be loaded
+  else if (qobject_cast<qSlicerModuleFactoryManager*>(this->FactoryManager) &&
+           !qobject_cast<qSlicerModuleFactoryManager*>(this->FactoryManager)
+           ->loadedModuleNames().contains(moduleName))
+    {
+    item->setForeground(Qt::red);
+    }
+  // Loaded module
+  else
+    {
+    item->setForeground(QBrush()); // reset color
     }
   if (this->FactoryManager == 0 ||
       this->FactoryManager->modulesToIgnore().contains(moduleName) )
@@ -214,10 +226,12 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
   if (d->FactoryManager != 0)
     {
     disconnect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
-               this, SLOT(addModule(QString)));
+               this, SLOT(updateModule(QString)));
     disconnect(d->FactoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
                this, SLOT(updateModules()));
     disconnect(d->FactoryManager, SIGNAL(moduleIgnored(QString)),
+               this, SLOT(updateModule(QString)));
+    disconnect(d->FactoryManager, SIGNAL(moduleLoaded(QString)),
                this, SLOT(updateModule(QString)));
     disconnect(d->FactoryManager, SIGNAL(modulesInstantiated(QStringList)),
                this, SLOT(sort()));
@@ -227,10 +241,12 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
   if (d->FactoryManager != 0)
     {
     connect(d->FactoryManager, SIGNAL(moduleInstantiated(QString)),
-            this, SLOT(addModule(QString)));
+            this, SLOT(updateModule(QString)));
     connect(d->FactoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
             this, SLOT(updateModules()));
     connect(d->FactoryManager, SIGNAL(moduleIgnored(QString)),
+            this, SLOT(updateModule(QString)));
+    connect(d->FactoryManager, SIGNAL(moduleLoaded(QString)),
             this, SLOT(updateModule(QString)));
     connect(d->FactoryManager, SIGNAL(modulesInstantiated(QStringList)),
             this, SLOT(sort()));
@@ -316,6 +332,7 @@ void qSlicerModulesListView::addModules(const QStringList& moduleNames)
 void qSlicerModulesListView::addModule(const QString& moduleName)
 {
   Q_D(qSlicerModulesListView);
+  Q_ASSERT(d->moduleItem(moduleName) == 0);
   QStandardItem * item = new QStandardItem();
   item->setData(moduleName, Qt::UserRole);
   d->updateItem(item);
@@ -376,9 +393,7 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
     // ensure dependent modules are unchecked
     if (module)
       {
-      qSlicerModuleManager* moduleManager =
-        qSlicerCoreApplication::application()->moduleManager();
-      foreach(const QString& dependentModule, moduleManager->dependentModules(moduleName))
+      foreach(const QString& dependentModule, d->FactoryManager->dependentModules(moduleName))
         {
         d->FactoryManager->addModuleToIgnore(dependentModule);
         }

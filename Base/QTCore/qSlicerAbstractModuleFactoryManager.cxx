@@ -385,3 +385,18 @@ void qSlicerAbstractModuleFactoryManager::setVerboseModuleDiscovery(bool verbose
     factory->setVerbose(verbose);
     }
 }
+
+//---------------------------------------------------------------------------
+QStringList qSlicerAbstractModuleFactoryManager::dependentModules(const QString& dependency)const
+{
+  QStringList dependents;
+  foreach(const QString& moduleName, this->instantiatedModuleNames())
+    {
+    qSlicerAbstractCoreModule* coreModule = this->moduleInstance(moduleName);
+    if (coreModule && coreModule->dependencies().contains(dependency))
+      {
+      dependents << moduleName;
+      }
+    }
+  return dependents;
+}

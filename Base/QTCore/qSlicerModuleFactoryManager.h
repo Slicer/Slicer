@@ -38,6 +38,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerModuleFactoryManager
 public:
   typedef qSlicerAbstractModuleFactoryManager Superclass;
   qSlicerModuleFactoryManager(QObject* newParent = 0);
+
+  /// Unloads all the modules previously loaded.
   virtual ~qSlicerModuleFactoryManager();
 
   virtual void printAdditionalInfo();
@@ -54,6 +56,9 @@ public:
   /// Return the list of all the loaded modules
   QStringList loadedModuleNames()const;
 
+  /// Unload all the loaded modules. Unloading a module simply uninstantiate it.
+  /// To respect dependencies, the order is reverse to the
+  /// order of load.
   Q_INVOKABLE void unloadModules();
 
   /// Return true if module \a name has been loaded, false otherwise
@@ -94,18 +99,16 @@ protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
 
   /// Unload module identified by \a name
-  inline void unloadModule(const QString& name);
+  void unloadModule(const QString& name);
 
   /// Uninstantiate a module given its \a moduleName
   virtual void uninstantiateModule(const QString& moduleName);
+
+  /// Reimplemented to ensure order
+  virtual void uninstantiateModules();
 private:
   Q_DECLARE_PRIVATE(qSlicerModuleFactoryManager);
   Q_DISABLE_COPY(qSlicerModuleFactoryManager);
 };
-
-void qSlicerModuleFactoryManager::unloadModule(const QString& name)
-{
-  return this->uninstantiateModule(name);
-}
 
 #endif

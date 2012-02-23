@@ -144,7 +144,7 @@ public:
   Q_INVOKABLE bool isRegistered(const QString& name)const;
 
   /// Instanciate all previously registered modules.
-  void instantiateModules();
+  virtual void instantiateModules();
 
   /// List of registered and instantiated modules
   Q_INVOKABLE QStringList instantiatedModuleNames() const;
@@ -160,6 +160,11 @@ public:
 
   /// Enable/Disable verbose output during module discovery process
   void setVerboseModuleDiscovery(bool value);
+
+  /// Return the list of modules that have \a module as a dependency.
+  /// Note that the list can contain unloaded modules.
+  /// \sa qSlicerAbstractCoreModule::dependencies()
+  QStringList dependentModules(const QString& module)const;
 
 signals:
   /// \brief This signal is emitted when all the modules associated with the

@@ -81,19 +81,3 @@ QStringList qSlicerModuleManager::modulesNames()const
   Q_D(const qSlicerModuleManager);
   return d->ModuleFactoryManager->loadedModuleNames();
 }
-
-//---------------------------------------------------------------------------
-QStringList qSlicerModuleManager::dependentModules(const QString& dependency)const
-{
-  Q_D(const qSlicerModuleManager);
-  QStringList dependents;
-  foreach(const QString& moduleName, this->modulesNames())
-    {
-    qSlicerAbstractCoreModule* coreModule = this->module(moduleName);
-    if (coreModule && coreModule->dependencies().contains(dependency))
-      {
-      dependents << moduleName;
-      }
-    }
-  return dependents;
-}

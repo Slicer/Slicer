@@ -43,7 +43,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 
   QString moduleName = "Cameras";
 
-  moduleFactoryManager.instantiateModules();
+  moduleFactoryManager.loadModules();
 
   qSlicerAbstractCoreModule * abstractModule =
     moduleFactoryManager.moduleInstance(moduleName);
@@ -63,10 +63,10 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  moduleFactoryManager.uninstantiateModules();
+  moduleFactoryManager.unloadModules();
 
   // Instantiate again
-  moduleFactoryManager.instantiateModules();
+  moduleFactoryManager.loadModules();
   abstractModule = moduleFactoryManager.moduleInstance(moduleName);
 
   if( abstractModule == NULL )
@@ -76,7 +76,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
     return EXIT_FAILURE;
     }
 
-  moduleFactoryManager.uninstantiateModules();
+  moduleFactoryManager.unloadModules();
 
   return EXIT_SUCCESS;
 }
