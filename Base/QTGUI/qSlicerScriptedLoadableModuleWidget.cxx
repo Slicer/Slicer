@@ -112,7 +112,11 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   Q_ASSERT(newPythonSource.endsWith(".py"));
 
   // Open the file
+#ifdef _WIN32
+  FILE* pyfile = PyRun_OpenFile(newPythonSource.toLatin1(), "r");
+#else
   FILE* pyfile = fopen(newPythonSource.toLatin1(), "r");
+#endif
   if (!pyfile)
     {
     PyErr_Print();
@@ -150,6 +154,12 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     PyErr_Print();
     return false;
     }
+
+#ifdef _WIN32
+  PyRun_CloseFile(pyfile);
+#else
+  fclose(pyfile);
+#endif
 
   //qDebug() << "qSlicerScriptedLoadableModuleWidget::setPythonSource - classToInstantiate:" << classToInstantiate;
 
