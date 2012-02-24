@@ -411,6 +411,13 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       # need to take care in case layout order/number is change
       # can we get layout by name?
       lm.setLayout(25) # layouts are defined in Libs/MRML/Core/vtkMRMLLayoutNode.h 
+      # chart view node
+      cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+      cvns.InitTraversal()
+      self.__cvn = cvns.GetNextItemAsObject()
+      if self.__cvn == None:
+        Helper.Error("Failed to locate chart view node!")
+        return
 
     self.onInputChanged()
     self.onLabelVolumeChanged()
