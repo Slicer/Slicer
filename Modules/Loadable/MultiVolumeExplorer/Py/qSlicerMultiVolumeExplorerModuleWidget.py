@@ -104,6 +104,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
     self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
     self.__vfSelector.addEnabled = 1
+    # do not show "children" of vtkMRMLScalarVolumeNode
+    self.__vfSelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode", \
+        "vtkMRMLDiffusionTensorVolumeNode", "vtkMRMLVectorVolumeNode"]
 
     self.extractButton = qt.QPushButton('Extract')
     self.extractButton.connect('pressed()', self.onExtractFrame)
