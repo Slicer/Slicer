@@ -113,7 +113,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
 
   // Open the file
 #ifdef _WIN32
-  FILE* pyfile = PyRun_OpenFile(newPythonSource.toLatin1(), "r");
+  FILE* pyfile = PyRun_OpenFile(newPythonSource.toLatin1());
 #else
   FILE* pyfile = fopen(newPythonSource.toLatin1(), "r");
 #endif
