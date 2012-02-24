@@ -48,6 +48,8 @@ set(KIT_SRCS
   qSlicerModelsDialog.h
   qSlicerModelsDialog_p.h
 
+  qSlicerModuleFactoryFilterModel.cxx
+  qSlicerModuleFactoryFilterModel.h
   qSlicerModulesListView.cxx
   qSlicerModulesListView.h
   qSlicerModulesMenu.cxx
@@ -139,6 +141,7 @@ set(KIT_MOC_SRCS
   qSlicerModelsDialog.h
   qSlicerModelsDialog_p.h
 
+  qSlicerModuleFactoryFilterModel.h
   qSlicerModulesListView.h
   qSlicerModulesMenu.h
   qSlicerModulePanel.h

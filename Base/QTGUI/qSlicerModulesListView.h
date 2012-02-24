@@ -28,6 +28,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerModulesListViewPrivate;
+class qSlicerModuleFactoryFilterModel;
 class qSlicerAbstractModuleFactoryManager;
 class QStandardItem;
 
@@ -54,6 +55,8 @@ public:
   /// and modules to ignore
   void setFactoryManager(qSlicerAbstractModuleFactoryManager* manager);
   qSlicerAbstractModuleFactoryManager* factoryManager()const;
+
+  qSlicerModuleFactoryFilterModel* filterModel()const;
 
   /// Return the list of all loaded, ignored and toIgnore modules.
   QStringList modules()const;

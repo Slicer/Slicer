@@ -24,6 +24,7 @@
 
 // QtGUI includes
 #include "qSlicerApplication.h"
+#include "qSlicerModuleFactoryFilterModel.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
@@ -78,6 +79,22 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowHiddenModulesChanged(bool)));
+
+  qSlicerModuleFactoryFilterModel* filterModel =
+    this->DisableModulesListView->filterModel();
+  QObject::connect(this->FilterToLoadPushButton, SIGNAL(toggled(bool)),
+                   filterModel, SLOT(setFilterToLoad(bool)));
+  QObject::connect(this->FilterToIgnorePushButton, SIGNAL(toggled(bool)),
+                   filterModel, SLOT(setFilterToIgnore(bool)));
+  QObject::connect(this->FilterLoadedPushButton, SIGNAL(toggled(bool)),
+                   filterModel, SLOT(setFilterLoaded(bool)));
+  QObject::connect(this->FilterIgnoredPushButton, SIGNAL(toggled(bool)),
+                   filterModel, SLOT(setFilterIgnored(bool)));
+  QObject::connect(this->FilterFailedPushButton, SIGNAL(toggled(bool)),
+                   filterModel, SLOT(setFilterFailed(bool)));
+  QObject::connect(this->FilterTitleSearchBox, SIGNAL(textChanged(QString)),
+                   filterModel, SLOT(setFilterFixedString(QString)));
+  this->FilterMoreButton->setChecked(false);
 
   // Default values
   this->ModulesMenu->setCurrentModule("Welcome");

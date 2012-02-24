@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
+  This file was originally developed by Julien Finet, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QListView>
+#include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 
 // QtCore includes
@@ -31,7 +32,9 @@
 #include "qSlicerModuleFactoryManager.h"
 
 // QtGUI includes
+#include "qSlicerModuleFactoryFilterModel.h"
 #include "qSlicerModulesListView.h"
+
 
 // --------------------------------------------------------------------------
 // qSlicerModulesListViewPrivate
@@ -56,6 +59,7 @@ public:
   void setModulesCheckState(const QStringList& moduleNames, Qt::CheckState check);
 
   QStandardItemModel* ModulesListModel;
+  qSlicerModuleFactoryFilterModel* FilterModel;
   qSlicerAbstractModuleFactoryManager* FactoryManager;
 };
 
@@ -67,6 +71,7 @@ qSlicerModulesListViewPrivate::qSlicerModulesListViewPrivate(qSlicerModulesListV
   :q_ptr(&object)
 {
   this->ModulesListModel = 0;
+  this->FilterModel = 0;
   this->FactoryManager = 0;
 }
 
@@ -78,8 +83,9 @@ void qSlicerModulesListViewPrivate::init()
   this->ModulesListModel = new QStandardItemModel(q);
   q->connect(this->ModulesListModel, SIGNAL(itemChanged(QStandardItem*)),
              q, SLOT(onItemChanged(QStandardItem*)));
-
-  q->setModel(this->ModulesListModel);
+  this->FilterModel = new qSlicerModuleFactoryFilterModel(q);
+  this->FilterModel->setSourceModel(this->ModulesListModel);
+  q->setModel(this->FilterModel);
 }
 
 // --------------------------------------------------------------------------
@@ -260,6 +266,13 @@ qSlicerAbstractModuleFactoryManager* qSlicerModulesListView::factoryManager()con
 {
   Q_D(const qSlicerModulesListView);
   return d->FactoryManager;
+}
+
+// --------------------------------------------------------------------------
+qSlicerModuleFactoryFilterModel* qSlicerModulesListView::filterModel()const
+{
+  Q_D(const qSlicerModulesListView);
+  return d->FilterModel;
 }
 
 // --------------------------------------------------------------------------

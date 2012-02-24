@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>469</height>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -172,55 +172,233 @@
     </widget>
    </item>
    <item row="8" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QLabel" name="DisableModulesLabel">
-       <property name="toolTip">
-        <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
-       </property>
-       <property name="text">
-        <string>Modules:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:4px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:small; color:#9f9f9f;&quot;&gt;checked : load at startup&lt;br /&gt;unchecked : ignore at startup&lt;br /&gt;gray : not loaded&lt;br/&gt;red: failed to load&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="8" column="1">
-    <widget class="qSlicerModulesListView" name="DisableModulesListView">
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
+    <widget class="QLabel" name="DisableModulesLabel">
+     <property name="toolTip">
+      <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
      </property>
-     <property name="alternatingRowColors">
-      <bool>false</bool>
+     <property name="text">
+       <string>Modules:</string>
      </property>
     </widget>
+   </item>
+   <item row="8" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="qSlicerModulesListView" name="DisableModulesListView">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="FilterGroupBox">
+       <property name="title">
+        <string>Filter</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="ctkCheckablePushButton" name="FilterToLoadPushButton">
+          <property name="toolTip">
+           <string>Hide modules to load at startup</string>
+          </property>
+          <property name="text">
+           <string>To load</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="buttonTextAlignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="indicatorAlignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="checkState">
+           <enum>Qt::Checked</enum>
+          </property>
+          <property name="checkBoxControlsButton">
+           <bool>false</bool>
+          </property>
+          <property name="checkBoxUserCheckable">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkCheckablePushButton" name="FilterToIgnorePushButton">
+          <property name="toolTip">
+           <string>Hide modules to ignore at startup</string>
+          </property>
+          <property name="text">
+           <string>To ignore</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="buttonTextAlignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="indicatorAlignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="checkBoxControlsButton">
+           <bool>false</bool>
+          </property>
+          <property name="checkBoxUserCheckable">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="FilterLoadedPushButton">
+          <property name="toolTip">
+           <string>Hide loaded modules</string>
+          </property>
+          <property name="text">
+           <string>Loaded</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="FilterIgnoredPushButton">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>106</red>
+                <green>104</green>
+                <blue>100</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>106</red>
+                <green>104</green>
+                <blue>100</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="toolTip">
+           <string>Hide ignored modules</string>
+          </property>
+          <property name="text">
+           <string>Ignored</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="FilterFailedPushButton">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>255</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>255</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>106</red>
+                <green>104</green>
+                <blue>100</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="toolTip">
+           <string>Hide Failed to load modules</string>
+          </property>
+          <property name="text">
+           <string>Failed</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ctkSearchBox" name="FilterTitleSearchBox">
+          <property name="showSearchIcon">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkExpandButton" name="FilterMoreButton">
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="mirrorOnExpand">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -231,9 +409,24 @@ p, li { white-space: pre-wrap; }
    <header>qSlicerModulesListView.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkCheckablePushButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkCheckablePushButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkDirectoryButton</class>
    <extends>QWidget</extends>
    <header>ctkDirectoryButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandButton</class>
+   <extends>QToolButton</extends>
+   <header>ctkExpandButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkSettingsPanel</class>
@@ -249,5 +442,22 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>FilterMoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FilterGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>446</x>
+     <y>453</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>467</x>
+     <y>451</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
