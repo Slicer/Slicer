@@ -205,6 +205,7 @@ class MultiVolumeImporterWidget:
     else:
       # each frame is saved as a separate volume
       fileNames = os.listdir(self.__fDialog.directory)
+      fileNames.sort()
       frameFolder = self.__fDialog.directory
       nFrames = len(fileNames)
       volumeLabels.SetNumberOfTuples(nFrames)
