@@ -242,19 +242,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
          self.__mdSlider.minimum = 0
          self.__mdSlider.maximum = nGradients-1
          self.__chartTable.SetNumberOfRows(nGradients)
-         #a = self.__dn.GetArray()
-         # it is implicit that the array has 3 components, no need to
-         # initialize that
-         #a.SetNumberOfTuples(nGradients)
 
-         # populate array with something and initialize
-         #for c in range(nGradients):
-         #  a.SetComponent(c, 0, c)
-         #  a.SetComponent(c, 1, c*c)
-         #  a.SetComponent(c, 2, 0)
-
-         #self.__cn.AddArray('Intensity at cursor location', self.__dn.GetID())
-         self.__cvn.SetChartNodeID(self.__cn.GetID())
+         if self.__cvn != None:
+           self.__cvn.SetChartNodeID(self.__cn.GetID())
 
 
 
