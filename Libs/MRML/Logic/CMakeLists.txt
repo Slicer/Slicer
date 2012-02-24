@@ -57,6 +57,7 @@ set(MRMLLogic_SRCS
   vtkMRMLAbstractLogic.cxx
   vtkMRMLApplicationLogic.cxx
   vtkMRMLColorLogic.cxx
+  vtkMRMLDisplayableHierarchyLogic.cxx
   vtkMRMLRemoteIOLogic.cxx
   vtkMRMLLayoutLogic.cxx
   vtkMRMLModelHierarchyLogic.cxx
