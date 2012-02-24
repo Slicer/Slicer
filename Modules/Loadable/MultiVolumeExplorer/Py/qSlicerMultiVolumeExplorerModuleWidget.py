@@ -35,10 +35,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
     cvns.InitTraversal()
     self.__cvn = cvns.GetNextItemAsObject()
-    if self.__cvn == None:
-      self.__cvn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartViewNode')
-      slicer.mrmlScene.AddNode(self.__cvn)
-      print "Created new chart view node"
 
     # data node
     #self.__dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
@@ -52,6 +48,14 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.timer = qt.QTimer()
     self.timer.setInterval(50)
     self.timer.connect('timeout()', self.goToNext)
+
+  def enter(self):
+    if self.__cvn == None:
+      print "No chart view nodes found, switching to quantiative layout"
+      lm = slicer.app.layoutManager()
+      # need to take care in case layout order/number is change
+      # can we get layout by name?
+      lm.setLayout(25) # layouts are defined in Libs/MRML/Core/vtkMRMLLayoutNode.h 
 
   def setup( self ):
     '''
