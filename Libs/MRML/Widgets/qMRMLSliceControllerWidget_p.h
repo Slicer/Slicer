@@ -135,6 +135,7 @@ public:
   QString                             SliceViewLabel;
   QButtonGroup*                       ControllerButtonGroup;
 
+  QToolButton*                        FitToWindowToolButton;
   ctkSliderWidget*                    SliceOffsetSlider;
   double                              LastLabelMapOpacity;
   double                              LastForegroundOpacity;

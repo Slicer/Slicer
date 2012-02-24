@@ -78,6 +78,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->LastForegroundOpacity = 1.;
   this->LastBackgroundOpacity = 1.;
 
+  this->FitToWindowToolButton = 0;
   this->SliceOffsetSlider = 0;
 
   this->LightboxMenu = 0;
@@ -270,7 +271,6 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   // Connect actions to buttons
   this->SliceVisibilityButton->setDefaultAction(this->actionShow_in_3D);
-  this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
   this->LightBoxToolButton->setMenu(this->LightboxMenu);
   this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
   this->setupMoreOptionsMenu();
@@ -291,6 +291,31 @@ void qMRMLSliceControllerWidgetPrivate::init()
   Q_Q(qMRMLSliceControllerWidget);
 
   this->Superclass::init();
+
+  // Fit to Window icon
+  // Used to be in popup
+  // <item>
+  //  <widget class="QToolButton" name="FitToWindowToolButton">
+  //   <property name="toolTip">
+  //    <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
+  //   </property>
+  //   <property name="icon">
+  //    <iconset resource="../qMRMLWidgets.qrc">
+  //     <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
+  //   </property>
+  //   <property name="autoRaise">
+  //    <bool>true</bool>
+  //   </property>
+  //  </widget>
+  // </item>
+  this->FitToWindowToolButton = new QToolButton(q);
+  this->FitToWindowToolButton->setToolTip(tr("Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label)."));
+  QIcon fitToWindowIcon(":/Icons/SlicesFitToWindow.png");
+  this->FitToWindowToolButton->setIcon(fitToWindowIcon);
+  this->FitToWindowToolButton->setAutoRaise(true);
+  this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
+  this->FitToWindowToolButton->setFixedSize(15, 15);
+  this->BarLayout->insertWidget(2,this->FitToWindowToolButton);
 
   this->SliceOffsetSlider = new ctkSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);

@@ -72,20 +72,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="FitToWindowToolButton">
-          <property name="toolTip">
-           <string>Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label).</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../qMRMLWidgets.qrc">
-            <normaloff>:/Icons/SlicesFitToWindow.png</normaloff>:/Icons/SlicesFitToWindow.png</iconset>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="ctkComboBox" name="SliceOrientationSelector">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Ignored">
