@@ -141,7 +141,7 @@ class DICOMListener(DICOMProcess):
     self.storeSCPExecutable = self.exeDir+'/storescp'+self.exeExtension
     dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
     # start the server!
-    onReceptionCallback = "%s --load-short --print-short --print-filename --search PatientName %s/#f" % (dcmdumpExecutable, self.incomingDir)
+    onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
     args = [str(self.port), 
         '--output-directory' , self.incomingDir,
         '--exec-on-reception', onReceptionCallback]
