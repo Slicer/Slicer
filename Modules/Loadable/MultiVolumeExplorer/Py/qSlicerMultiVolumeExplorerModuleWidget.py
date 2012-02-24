@@ -35,6 +35,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
     cvns.InitTraversal()
     self.__cvn = cvns.GetNextItemAsObject()
+    if self.__cvn == None:
+      self.__cvn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartViewNode')
+      slicer.mrmlScene.AddNode(self.__cvn)
+      print "Created new chart view node"
 
     # data node
     #self.__dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
