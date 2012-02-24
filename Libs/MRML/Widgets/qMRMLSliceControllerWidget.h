@@ -158,6 +158,8 @@ public slots:
 
 
   // Advanced options
+  void moveBackgroundComboBox(bool move);
+
   /// Rotate to volume plane
   void rotateSliceToBackground();
   

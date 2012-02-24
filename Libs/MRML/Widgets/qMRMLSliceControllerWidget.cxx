@@ -154,6 +154,10 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   // Populate the reformat menu
   this->setupReformatOptionsMenu();
 
+  // Connect more button
+  this->connect(this->MoreButton, SIGNAL(toggled(bool)),
+                q, SLOT(moveBackgroundComboBox(bool)));
+
   // Connect link toggle
   this->connect(this->SliceLinkButton, SIGNAL(clicked(bool)),
                 q, SLOT(setSliceLink(bool)));
@@ -353,6 +357,9 @@ void qMRMLSliceControllerWidgetPrivate::init()
   // Move the spinbox in the popup instead of having it in the slider bar
   //dynamic_cast<QGridLayout*>(this->PopupWidget->layout())->addWidget(
   //  this->SliceOffsetSlider->spinBox(), 0, 0, 1, 2);
+
+  // Hide all buttons by default
+  this->MoreButton->setChecked(false);
 
   vtkSmartPointer<vtkMRMLSliceLogic> defaultLogic =
     vtkSmartPointer<vtkMRMLSliceLogic>::New();
@@ -1480,6 +1487,24 @@ void qMRMLSliceControllerWidget::setHotLinked(bool linked)
     sliceCompositeNode->SetHotLinkedControl(linked);
     }
   sliceCompositeNodes->Delete();
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::moveBackgroundComboBox(bool more)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  QLayout* oldParentLayout = d->BackgroundComboBox->parentWidget()->layout();
+  oldParentLayout->takeAt(oldParentLayout->indexOf(d->BackgroundComboBox));
+  if (more)
+    {
+    qobject_cast<QGridLayout*>(d->PopupWidget->layout())->addWidget(d->BackgroundComboBox, 3,4);
+    }
+  else
+    {
+    d->SliceFrame->layout()->addWidget(d->BackgroundComboBox);
+    }
+  d->BackgroundComboBox->setVisible(true);
+  d->PopupWidget->resize(this->width(), d->PopupWidget->sizeHint().height());
 }
 
 //---------------------------------------------------------------------------
