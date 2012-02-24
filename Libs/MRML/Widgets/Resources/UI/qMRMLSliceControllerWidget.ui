@@ -149,6 +149,48 @@
          </widget>
         </item>
         <item>
+         <widget class="QToolButton" name="SliceCompositeButton">
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicesComposite.png</normaloff>:/Icons/SlicesComposite.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="SliceSpacingButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="SliceRotateToVolumePlaneButton">
+          <property name="icon">
+           <iconset resource="../qMRMLWidgets.qrc">
+            <normaloff>:/Icons/SlicerRotateToPixelSpace.png</normaloff>:/Icons/SlicerRotateToPixelSpace.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QToolButton" name="SliceMoreOptionButton">
           <property name="toolTip">
            <string>Advanced options</string>
@@ -214,7 +256,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider" native="true">
+    <widget class="ctkSliderWidget" name="LabelMapOpacitySlider">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -224,16 +266,16 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep" stdset="0">
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep" stdset="0">
+     <property name="pageStep">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider" stdset="0">
+     <property name="popupSlider">
       <bool>true</bool>
      </property>
     </widget>
@@ -249,7 +291,7 @@
     </widget>
    </item>
    <item row="1" column="4">
-    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox" native="true">
+    <widget class="qMRMLNodeComboBox" name="LabelMapComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -265,21 +307,21 @@
      <property name="toolTip">
       <string>Select the label map</string>
      </property>
-     <property name="nodeTypes" stdset="0">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled" stdset="0">
+     <property name="noneEnabled">
       <bool>true</bool>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled" stdset="0">
+     <property name="removeEnabled">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled" stdset="0">
+     <property name="renameEnabled">
       <bool>true</bool>
      </property>
     </widget>
@@ -315,7 +357,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider" native="true">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -325,19 +367,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep" stdset="0">
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep" stdset="0">
+     <property name="pageStep">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>1.000000000000000</double>
      </property>
-     <property name="value" stdset="0">
+     <property name="value">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider" stdset="0">
+     <property name="popupSlider">
       <bool>true</bool>
      </property>
     </widget>
@@ -353,7 +395,7 @@
     </widget>
    </item>
    <item row="2" column="4">
-    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox" native="true">
+    <widget class="qMRMLNodeComboBox" name="ForegroundComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -369,21 +411,21 @@
      <property name="toolTip">
       <string>Select the foreground</string>
      </property>
-     <property name="nodeTypes" stdset="0">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled" stdset="0">
+     <property name="noneEnabled">
       <bool>true</bool>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled" stdset="0">
+     <property name="removeEnabled">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled" stdset="0">
+     <property name="renameEnabled">
       <bool>true</bool>
      </property>
     </widget>
@@ -419,7 +461,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider" native="true">
+    <widget class="ctkSliderWidget" name="BackgroundOpacitySlider">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -429,19 +471,19 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="singleStep" stdset="0">
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="pageStep" stdset="0">
+     <property name="pageStep">
       <double>1.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>1.000000000000000</double>
      </property>
-     <property name="value" stdset="0">
+     <property name="value">
       <double>1.000000000000000</double>
      </property>
-     <property name="popupSlider" stdset="0">
+     <property name="popupSlider">
       <bool>true</bool>
      </property>
     </widget>
@@ -460,7 +502,7 @@
     </widget>
    </item>
    <item row="3" column="4">
-    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox" native="true">
+    <widget class="qMRMLNodeComboBox" name="BackgroundComboBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>1</horstretch>
@@ -476,21 +518,21 @@
      <property name="toolTip">
       <string>Select the background</string>
      </property>
-     <property name="nodeTypes" stdset="0">
+     <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLVolumeNode</string>
       </stringlist>
      </property>
-     <property name="noneEnabled" stdset="0">
+     <property name="noneEnabled">
       <bool>true</bool>
      </property>
-     <property name="addEnabled" stdset="0">
+     <property name="addEnabled">
       <bool>false</bool>
      </property>
-     <property name="removeEnabled" stdset="0">
+     <property name="removeEnabled">
       <bool>false</bool>
      </property>
-     <property name="renameEnabled" stdset="0">
+     <property name="renameEnabled">
       <bool>true</bool>
      </property>
     </widget>
@@ -822,6 +864,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkComboBox</class>
    <extends>QComboBox</extends>
    <header>ctkComboBox.h</header>
@@ -836,11 +883,6 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

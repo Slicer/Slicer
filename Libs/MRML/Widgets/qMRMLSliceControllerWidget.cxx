@@ -273,7 +273,13 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->SliceVisibilityButton->setDefaultAction(this->actionShow_in_3D);
   this->LightBoxToolButton->setMenu(this->LightboxMenu);
   this->ShowReformatWidgetToolButton->setDefaultAction(this->actionShow_reformat_widget);
-  this->setupMoreOptionsMenu();
+
+  this->SliceCompositeButton->setMenu(this->CompositingMenu);
+  this->SliceSpacingButton->setMenu(this->SliceSpacingMenu);
+  this->SliceRotateToVolumePlaneButton->setDefaultAction(
+    this->actionRotate_to_volume_plane);
+  this->SliceMoreOptionButton->setVisible(false);
+  //this->setupMoreOptionsMenu();
 
   this->LabelMapVisibilityButton->setDefaultAction(this->actionLabelMapVisibility);
   this->ForegroundVisibilityButton->setDefaultAction(this->actionForegroundVisibility);
@@ -309,13 +315,13 @@ void qMRMLSliceControllerWidgetPrivate::init()
   //  </widget>
   // </item>
   this->FitToWindowToolButton = new QToolButton(q);
-  this->FitToWindowToolButton->setToolTip(tr("Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label)."));
-  QIcon fitToWindowIcon(":/Icons/SlicesFitToWindow.png");
-  this->FitToWindowToolButton->setIcon(fitToWindowIcon);
+  //this->FitToWindowToolButton->setToolTip(tr("Adjust the Slice Viewer's field of view to match the extent of lowest non-None volume layer (bg, then fg, then label)."));
+  //QIcon fitToWindowIcon(":/Icons/SlicesFitToWindow.png");
+  //this->FitToWindowToolButton->setIcon(fitToWindowIcon);
   this->FitToWindowToolButton->setAutoRaise(true);
   this->FitToWindowToolButton->setDefaultAction(this->actionFit_to_window);
   this->FitToWindowToolButton->setFixedSize(15, 15);
-  this->BarLayout->insertWidget(2,this->FitToWindowToolButton);
+  this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
 
   this->SliceOffsetSlider = new ctkSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);
@@ -359,7 +365,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
 void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  QMenu* linkedMenu = new QMenu(tr("Linked"),this->SliceLinkButton);
+  QMenu* linkedMenu = new QMenu(tr("Linked"), this->SliceLinkButton);
 
   linkedMenu->addAction(this->actionHotLinked);
 
@@ -373,7 +379,7 @@ void qMRMLSliceControllerWidgetPrivate::setupLinkedOptionsMenu()
 void qMRMLSliceControllerWidgetPrivate::setupReformatOptionsMenu()
 {
   Q_Q(qMRMLSliceControllerWidget);
-  QMenu* reformatMenu = new QMenu(tr("Reformat"),this->ShowReformatWidgetToolButton);
+  QMenu* reformatMenu = new QMenu(tr("Reformat"), this->ShowReformatWidgetToolButton);
 
   reformatMenu->addAction(this->actionLockNormalToCamera);
 
@@ -387,7 +393,7 @@ void qMRMLSliceControllerWidgetPrivate::setupReformatOptionsMenu()
 void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
 {
   // Lightbox View
-  this->LightboxMenu = new QMenu(tr("Lightbox view"));
+  this->LightboxMenu = new QMenu(tr("Lightbox view"), this->LightBoxToolButton);
   this->LightboxMenu->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
   this->LightboxMenu->addAction(this->actionLightbox1x1_view);
   this->LightboxMenu->addAction(this->actionLightbox1x2_view);
@@ -434,7 +440,7 @@ void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
 void qMRMLSliceControllerWidgetPrivate::setupCompositingMenu()
 {
   // Compositing
-  this->CompositingMenu = new QMenu(tr("Compositing"));
+  this->CompositingMenu = new QMenu(tr("Compositing"), this->SliceCompositeButton);
   this->CompositingMenu->setIcon(QIcon(":/Icons/SlicesComposite.png"));
   this->CompositingMenu->addAction(this->actionCompositingAlpha_blend);
   this->CompositingMenu->addAction(this->actionCompositingReverse_alpha_blend);
@@ -454,7 +460,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   Q_Q(qMRMLSliceControllerWidget);
 
   // Spacing mode
-  this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"));
+  this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"), this->SliceSpacingButton);
   this->SliceSpacingMenu->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
   this->SliceSpacingMenu->addAction(this->actionSliceSpacingModeAutomatic);
   QMenu* sliceSpacingManualMode = new QMenu(tr("Manual spacing"), this->SliceSpacingMenu);
