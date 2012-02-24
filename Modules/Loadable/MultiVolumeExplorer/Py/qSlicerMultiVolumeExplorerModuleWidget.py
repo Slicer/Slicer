@@ -296,6 +296,17 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     frameVolume.SetAndObserveImageData(frame)
     frameVolume.SetRASToIJKMatrix(ras2ijk)
     frameVolume.SetIJKToRASMatrix(ijk2ras)
+
+    displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
+    displayNode.SetScene(slicer.mrmlScene)
+    slicer.mrmlScene.AddNode(displayNode)
+    displayNode.SetDefaultColorMap()
+
+    frameVolume.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
+    frameVolume.SetName(self.__dwvNode.GetName()+" frame "+str(frameId))
+
+    slicer.mrmlScene.AddNode(frameVolume)
+
     # TODO: read again J2's instructions about memory deallocation
     #ras2ijk.SetReferenceCount(1)
     #ijk2ras.SetReferenceCount(1)
