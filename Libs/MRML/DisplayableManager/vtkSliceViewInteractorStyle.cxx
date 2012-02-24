@@ -45,8 +45,8 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
   this->ActionStartXYToRAS = vtkMatrix4x4::New();
   this->ScratchMatrix = vtkMatrix4x4::New();
 
-  this->LastForegroundOpacity = 0;
-  this->LastLabelOpacity = 0;
+  this->ActionStartForegroundOpacity = 0;
+  this->ActionStartLabelOpacity = 0;
 
   this->SliceLogic = 0;
 }
@@ -137,12 +137,12 @@ void vtkSliceViewInteractorStyle::OnChar()
     double opacity = sliceCompositeNode->GetLabelOpacity();
     if ( opacity != 0.0 )
       {
-      this->SetLastLabelOpacity(opacity);
+      this->SetActionStartLabelOpacity(opacity);
       sliceCompositeNode->SetLabelOpacity(0.0);
       }
     else
       {
-      sliceCompositeNode->SetLabelOpacity(this->GetLastLabelOpacity());
+      sliceCompositeNode->SetLabelOpacity(this->GetActionStartLabelOpacity());
       }
     }
   else if ( !strcmp(key, "t") )
@@ -150,12 +150,12 @@ void vtkSliceViewInteractorStyle::OnChar()
     double opacity = sliceCompositeNode->GetForegroundOpacity();
     if ( opacity != 0.0 )
       {
-      this->SetLastForegroundOpacity(opacity);
+      this->SetActionStartForegroundOpacity(opacity);
       sliceCompositeNode->SetForegroundOpacity(0.0);
       }
     else
       {
-      sliceCompositeNode->SetForegroundOpacity(this->GetLastForegroundOpacity());
+      sliceCompositeNode->SetForegroundOpacity(this->GetActionStartForegroundOpacity());
       }
     }
   else if ( !strcmp(key, "s") )
@@ -218,6 +218,11 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     {
     this->StartTranslate();
     }
+  else if (this->Interactor->GetControlKey())
+    {
+    this->StartBlend();
+    }
+  this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
   this->Superclass::OnLeftButtonDown();
 }
 //----------------------------------------------------------------------------
@@ -227,18 +232,23 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
     {
     this->EndTranslate();
     }
+  else if (this->ActionState == this->Blend)
+    {
+    this->EndBlend();
+    }
   this->Superclass::OnLeftButtonUp();
 }
 
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMouseMove() 
 {
-  int windowX, windowY;
-  int windowH;
-
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  int windowX, windowY;
   this->GetInteractor()->GetEventPosition(windowX, windowY);
-  windowH = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+  int windowW = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+  int windowH = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+  int windowMinSize = std::min(windowW, windowH);
 
   switch (this->GetActionState())
     {
@@ -270,6 +280,27 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         double newFOVy = this->GetActionStartFOV()[1] * percent;
         double newFOVz = this->GetActionStartFOV()[2];
         sliceNode->SetFieldOfView( newFOVx, newFOVy, newFOVz );
+        }
+      }
+      break;
+    case vtkSliceViewInteractorStyle::Blend:
+      {
+      int deltaY = windowY - this->GetActionStartWindow()[1];
+      double offsetY =  (2.0 * deltaY) / windowMinSize;
+      double newForegroundOpacity =
+        this->GetActionStartForegroundOpacity() + offsetY;
+      newForegroundOpacity = std::min(std::max(newForegroundOpacity, 0.), 1.);
+      if (sliceCompositeNode->GetForegroundVolumeID() != 0)
+        {
+        sliceCompositeNode->SetForegroundOpacity(newForegroundOpacity);
+        }
+      int deltaX = windowX - this->GetActionStartWindow()[0];
+      double offsetX =  (2.0 * deltaX) / windowMinSize;
+      double newLabelOpacity = this->GetActionStartLabelOpacity() + offsetX;
+      newLabelOpacity = std::min(std::max(newLabelOpacity, 0.), 1.);
+      if (sliceCompositeNode->GetLabelVolumeID() != 0)
+        {
+        sliceCompositeNode->SetLabelOpacity(newLabelOpacity);
         }
       }
       break;
@@ -383,6 +414,24 @@ void vtkSliceViewInteractorStyle::EndTranslate()
 {
   this->SetActionState(this->None);
   this->SliceLogic->EndSliceNodeInteraction();
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::StartBlend()
+{
+  this->SetActionState(this->Blend);
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  this->SetActionStartForegroundOpacity(sliceCompositeNode->GetForegroundOpacity());
+  this->SetActionStartLabelOpacity(sliceCompositeNode->GetLabelOpacity());
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::EndBlend()
+{
+  this->SetActionState(this->None);
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  this->SetActionStartForegroundOpacity(sliceCompositeNode->GetForegroundOpacity());
+  this->SetActionStartLabelOpacity(sliceCompositeNode->GetLabelOpacity());
 }
 
 //----------------------------------------------------------------------------

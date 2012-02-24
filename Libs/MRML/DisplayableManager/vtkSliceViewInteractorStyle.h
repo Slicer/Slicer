@@ -83,7 +83,8 @@ public:
     None = 0,
     Translate,
     Zoom,
-    Rotate /* Rotate not currently used */
+    Rotate, /* Rotate not currently used */
+    Blend /* fg to bg, labelmap to bg */
     };
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
@@ -93,12 +94,18 @@ public:
   /// - fov is the slice node field of view
   /// - window is mouse pointer with respect to the whole viewer
   /// - xyz is mouse pointer with respect to the light box view (z is which light box viewer)
+  /// - foreground opacity of the slice composite node
+  /// - label opacity of the slice label opacity
   vtkGetVector3Macro(ActionStartRAS, double);
   vtkSetVector3Macro(ActionStartRAS, double);
   vtkGetVector3Macro(ActionStartFOV, double);
   vtkSetVector3Macro(ActionStartFOV, double);
   vtkGetVector2Macro(ActionStartWindow, int);
   vtkSetVector2Macro(ActionStartWindow, int);
+  vtkGetMacro(ActionStartForegroundOpacity, double);
+  vtkSetMacro(ActionStartForegroundOpacity, double);
+  vtkGetMacro(ActionStartLabelOpacity, double);
+  vtkSetMacro(ActionStartLabelOpacity, double);
 
   /// what was the state of the slice node when the action started
   vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
@@ -129,6 +136,11 @@ public:
   void StartTranslate();
   void EndTranslate();
 
+  /// Enter a mode where the mouse moves are used to change the foreground
+  /// or labelmap opacity.
+  void StartBlend();
+  void EndBlend();
+
   /// Get the RAS coordinates of the interactor's EventPosition
   /// with respect to the current poked renderer (taking into
   /// account the lightbox)
@@ -157,6 +169,8 @@ protected:
   double ActionStartRAS[3];
   double ActionStartFOV[3];
   int ActionStartWindow[2];
+  double ActionStartForegroundOpacity;
+  double ActionStartLabelOpacity;
 
   vtkMatrix4x4 *ActionStartSliceToRAS;
   vtkMatrix4x4 *ActionStartXYToRAS;
