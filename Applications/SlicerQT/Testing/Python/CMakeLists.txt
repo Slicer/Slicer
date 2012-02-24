@@ -21,29 +21,29 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest2 PROPERTIES WILL_FAIL 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest3
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
-  --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitSuccess()"
+  --ignore-slicerrc --testing --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "import slicer.testing; slicer.testing.exitSuccess()"
   )
 
 add_test(
   NAME py_nomainwindow_SlicerPythonCodeTest4
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-  --ignore-slicerrc --disable-cli-module --disable-loadable-module --no-main-window
-  --python-code "import slicer.testing; slicer.testing.setEnabled(); slicer.testing.exitFailure('Should fail !')"
+  --ignore-slicerrc --testing --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "import slicer.testing; slicer.testing.exitFailure('Should fail !')"
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
 
 #
-# Check if '--python-scripts' / 'slicer.testing' works as expected
+# Check if '--python-scripts' / 'testing' works as expected
 #
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitSuccessTest.py
-  SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
+  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_)
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitFailureTest.py
-  SLICER_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_)
+  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_)
 set_tests_properties(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 slicer_add_python_test(SCRIPT SlicerTestingExitSuccessTest.py)
@@ -57,12 +57,12 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 slicer_add_python_unittest(
   SCRIPT SlicerUnitTestTest.py
-  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
+  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_)
 
 slicer_add_python_unittest(
   SCRIPT SlicerSceneObserverTest.py
-  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
+  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_)
 
 #
@@ -72,7 +72,7 @@ macro(nowarning_test test_name)
   add_test(
     NAME py_nowarning_${test_name}Test
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-    ${ARGN} --python-code "exit(slicer.util.EXIT_SUCCESS)"
+    ${ARGN} --testing --python-code "exit(slicer.util.EXIT_SUCCESS)"
     )
   set(fail_regexp)
   list(APPEND fail_regexp "Failed to obtain reference to")

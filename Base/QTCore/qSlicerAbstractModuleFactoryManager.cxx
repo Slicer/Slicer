@@ -72,7 +72,9 @@ void qSlicerAbstractModuleFactoryManagerPrivate::printAdditionalInfo()
     qDebug() << "\t" << typeid(factory).name() << ": ";
     factory->printAdditionalInfo();
     }
+  qDebug() << "Modules to ignore:" << q->modulesToIgnore();
   qDebug() << "Registered modules:" << q->registeredModuleNames();
+  qDebug() << "Ignored modules:" << q->ignoredModuleNames();
   qDebug() << "Instantiated modules:" << q->instantiatedModuleNames();
 }
 

@@ -31,5 +31,4 @@ print 'ChangeTrackerTest1 brainsfit parameters: ', parameters
 cliNode = None
 cliNode = slicer.cli.run(slicer.modules.brainsfit, cliNode, parameters, wait_for_completion = True)
 
-slicer.testing.setEnabled()
 slicer.testing.exitSuccess()

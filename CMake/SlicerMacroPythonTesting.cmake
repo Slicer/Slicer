@@ -28,7 +28,10 @@ macro(SLICER_ADD_PYTHON_TEST)
   add_test(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
-    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS} --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
+    --no-splash
+    --testing
+    --ignore-slicerrc ${MY_SLICER_ARGS}
+    --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
 endmacro()
 
@@ -41,7 +44,9 @@ macro(SLICER_ADD_PYTHON_UNITTEST)
   add_test(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
-    --no-splash --ignore-slicerrc ${MY_SLICER_ARGS}
+    --no-splash
+    --testing
+    --ignore-slicerrc ${MY_SLICER_ARGS}
     --python-code "import slicer.testing; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${CMAKE_CURRENT_SOURCE_DIR}'], '${test_name}')"
     )
 endmacro()

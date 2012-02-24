@@ -75,18 +75,6 @@ namespace
 {
 
 #ifdef Slicer_USE_PYTHONQT
-//----------------------------------------------------------------------------
-void setApplicationDisablePythonAttribute(int argc, char* argv[])
-{
-  for (int i = 0; i < argc; ++i)
-    {
-    if (qstrcmp(argv[i], "--disable-python") == 0)
-      {
-      qSlicerCoreApplication::setAttribute(qSlicerCoreApplication::AA_DisablePython);
-      break;
-      }
-    }
-}
 
 //----------------------------------------------------------------------------
 void initializePython()
@@ -194,7 +182,6 @@ void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManage
     settings.value("Modules/AdditionalPaths").toStringList());
   moduleFactoryManager->setModulesToIgnore(
     settings.value("Modules/IgnoreModules").toStringList());
-
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
 }
 
@@ -234,20 +221,10 @@ int slicerQtMain(int argc, char* argv[])
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
 
-#ifdef Slicer_USE_PYTHONQT
-  // Since the attribute AA_DisablePython has to be set before the application
-  // is instantiated, the following function will check if --disable-python argument
-  // has been passed.
-  setApplicationDisablePythonAttribute(argc, argv);
-#endif
-
   qSlicerApplication app(argc, argv);
-
-  bool exitWhenDone = false;
-  app.parseArguments(exitWhenDone);
-  if (exitWhenDone)
+  if (app.returnCode() != -1)
     {
-    return EXIT_SUCCESS;
+    return app.returnCode();
     }
 
 #ifdef Slicer_USE_PYTHONQT

@@ -57,6 +57,5 @@ TestROIAdd()
 testEndTime = time.clock()
 testTime = testEndTime - testStartTime
 print "Test total time = ", testTime
-slicer.testing.setEnabled()
 
 slicer.testing.exitSuccess()

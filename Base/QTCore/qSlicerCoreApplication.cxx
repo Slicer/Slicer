@@ -91,8 +91,9 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreCommandOptions * coreCommandOptions,
   qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
+  qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
   this->Settings = 0;
-  this->ExitWhenDone = false;
+  this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
 }
@@ -208,6 +209,7 @@ void qSlicerCoreApplicationPrivate::init()
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                  this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
+  this->parseArguments();
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
@@ -528,13 +530,13 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     {
     qWarning() << "Failed to parse arguments - "
                   "it seems you forgot to call setCoreCommandOptions()";
-    this->terminate();
+    this->terminate(EXIT_FAILURE);
     return;
     }
   if (!options->parse(q->arguments()))
     {
     qCritical("Problem parsing command line arguments.  Try with --help.");
-    this->terminate();
+    this->terminate(EXIT_FAILURE);
     return;
     }
 
@@ -542,9 +544,12 @@ void qSlicerCoreApplicationPrivate::parseArguments()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::terminate()
+void qSlicerCoreApplicationPrivate::terminate(int returnCode)
 {
-  this->ExitWhenDone = true;
+  Q_Q(qSlicerCoreApplication);
+  this->ReturnCode = returnCode;
+  // Does nothing if the event loop is not running
+  q->exit(returnCode);
 }
 
 //-----------------------------------------------------------------------------
@@ -633,7 +638,14 @@ void qSlicerCoreApplication::parseArguments(bool& exitWhenDone)
 {
   Q_D(qSlicerCoreApplication);
   d->parseArguments();
-  exitWhenDone = d->ExitWhenDone;
+  exitWhenDone = (d->ReturnCode != ExitNotRequested);
+}
+
+//-----------------------------------------------------------------------------
+int qSlicerCoreApplication::returnCode()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ReturnCode;
 }
 
 //-----------------------------------------------------------------------------
@@ -647,7 +659,7 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   if (options->displayHelpAndExit())
     {
     std::cout << qPrintable(options->helpText()) << std::endl;
-    d->terminate();
+    d->terminate(EXIT_SUCCESS);
     return;
     }
 
@@ -655,28 +667,28 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     {
     std::cout << qPrintable(this->applicationName() + " " +
                             this->applicationVersion()) << std::endl;
-    d->terminate();
+    d->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displayProgramPathAndExit())
     {
     std::cout << qPrintable(this->arguments().at(0)) << std::endl;
-    d->terminate();
+    d->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displayHomePathAndExit())
     {
     std::cout << qPrintable(this->slicerHome()) << std::endl;
-    d->terminate();
+    d->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displaySettingsPathAndExit())
     {
     std::cout << qPrintable(this->settings()->fileName()) << std::endl;
-    d->terminate();
+    d->terminate(EXIT_SUCCESS);
     return;
     }
 
@@ -684,6 +696,15 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     {
     qDebug() << "Ignored arguments:" << options->unparsedArguments();
     return;
+    }
+
+  if (options->isTestingEnabled())
+    {
+    this->setAttribute(AA_EnableTesting);
+    // Change the application name to change what settings file to use (to
+    // prevent conflicts with user settings).
+    // \todo improve settings switch mechanism.
+    this->setApplicationName(this->applicationName() + "Testing");
     }
 }
 

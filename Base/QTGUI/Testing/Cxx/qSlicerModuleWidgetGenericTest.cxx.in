@@ -43,9 +43,6 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  bool exitWhenDone = false;
-  app.parseArguments(exitWhenDone);
-
   qSlicer@MODULENAME@Module module(0);
 
   module.initialize(0);

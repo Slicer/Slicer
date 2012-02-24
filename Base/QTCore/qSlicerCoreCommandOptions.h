@@ -46,6 +46,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery)
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers)
   Q_PROPERTY(QString tempDirectory READ tempDirectory)
+  Q_PROPERTY(bool testingEnabled READ isTestingEnabled)
 public:
   typedef ctkCommandLineParser Superclass;
   qSlicerCoreCommandOptions();
@@ -107,6 +108,11 @@ public:
   /// the value returned by QDir::tempPath()
   /// See http://qt.nokia.com/doc/4.6/qdir.html#tempPath
   QString tempDirectory()const;
+
+  // Return True if slicer is in testing mode.
+  // Typically set when running unit tests:
+  // ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
+  bool isTestingEnabled()const;
 
 protected:
   /// Add arguments - Called from parse() method

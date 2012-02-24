@@ -37,6 +37,4 @@ if selectionNode:
     print "Failed to re-add ",annotID,", end index = ", endIndex
     slicer.testing.exitFailure()
 
-slicer.testing.setEnabled()
-
 slicer.testing.exitSuccess()

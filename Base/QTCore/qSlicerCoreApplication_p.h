@@ -106,7 +106,7 @@ public:
   void parseArguments();
 
   /// Set the ExitWhenDone flag to True
-  void terminate();
+  void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
 
 public:
   /// MRMLScene and AppLogic pointers
@@ -148,7 +148,7 @@ public:
   QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
 
   /// ExitWhenDone flag
-  bool                                        ExitWhenDone;
+  int                                         ReturnCode;
 
 #ifdef Slicer_USE_PYTHONQT
   /// CorePythonManager - It should exist only one instance of the CorePythonManager

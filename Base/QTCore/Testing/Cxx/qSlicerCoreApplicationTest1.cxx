@@ -96,11 +96,11 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  bool exitWhenDone = false;
-  app.parseArguments(exitWhenDone);
-  if (exitWhenDone == true)
+  /// Application shouldn't have ask for exit
+  if (app.returnCode() != -1)
     {
-    std::cerr << "Problem with the application::parseArguments function" << std::endl;
+    std::cerr << "Problem with the application::parseArguments function."
+              << "Return code: " << app.returnCode() << std::endl;
     return EXIT_FAILURE;
     }
 

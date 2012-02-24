@@ -198,6 +198,13 @@ QString qSlicerCoreCommandOptions::tempDirectory() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::isTestingEnabled() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("testing").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreCommandOptions::addArguments()
 {
   this->addArgument("ignore-rest", "-", QVariant::Bool,
@@ -206,6 +213,10 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("help", "h", QVariant::Bool,
                     "Display available command line arguments.");
+
+  this->addArgument("testing", "", QVariant::Bool,
+                    "Activate testing mode. Doesn't use user settings in that mode.",
+                    QVariant(false));
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-python", "", QVariant::Bool,

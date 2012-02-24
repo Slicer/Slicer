@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QMetaType>
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -48,6 +49,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_ENUMS(ReturnCode)
+
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
@@ -68,6 +71,8 @@ public:
   /// Return a reference to the application singleton
   static qSlicerCoreApplication* application();
 
+  /// Used in addition to existing QCoreApplication attribute.
+  /// \sa Qt::ApplicationAttribute
   enum ApplicationAttribute
     {
     AA_DisablePython = 1000,
@@ -99,6 +104,18 @@ public:
   /// Parse arguments
   /// \note If exitWhenDone is True, it's your responsability to exit the application
   void parseArguments(bool& exitWhenDone);
+
+  enum ReturnCode{
+    ExitNotRequested = -1,
+    ExitSuccess = EXIT_SUCCESS,
+    ExitFailure = EXIT_FAILURE
+  };
+  /// After parsing arguments and before exec() is called, returnCode contains the
+  /// return code if any (!= -1).
+  /// -1 if the application has not been asked to exit.
+  /// EXIT_SUCCESS (0) if the application must return in success.
+  /// EXIT_FAILURE (1) if the application failed.
+  int returnCode()const;
 
   /// Get MRML Scene
   Q_INVOKABLE vtkMRMLScene* mrmlScene() const;
@@ -247,5 +264,7 @@ private:
   Q_DECLARE_PRIVATE(qSlicerCoreApplication);
   Q_DISABLE_COPY(qSlicerCoreApplication);
 };
+
+Q_DECLARE_METATYPE(qSlicerCoreApplication::ReturnCode)
 
 #endif

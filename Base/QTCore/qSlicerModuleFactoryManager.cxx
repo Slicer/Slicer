@@ -45,6 +45,8 @@ qSlicerModuleFactoryManagerPrivate
 ::qSlicerModuleFactoryManagerPrivate(qSlicerModuleFactoryManager& object)
   : q_ptr(&object)
 {
+  this->AppLogic = 0;
+  this->MRMLScene = 0;
 }
 
 //-----------------------------------------------------------------------------
