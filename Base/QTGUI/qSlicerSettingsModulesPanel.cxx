@@ -248,7 +248,12 @@ void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
 // --------------------------------------------------------------------------
 void qSlicerSettingsModulesPanel::onModulesToIgnoreChanged()
 {
-  this->setRestartRequested(true);
+  Q_D(qSlicerSettingsModulesPanel);
+  QStringList current = d->DisableModulesListView->factoryManager()->modulesToIgnore();
+  QStringList previous = this->previousPropertyValue("Modules/IgnoreModules").toStringList();
+  current.sort();
+  previous.sort();
+  this->setRestartRequested(current != previous);
 }
 
 // --------------------------------------------------------------------------
