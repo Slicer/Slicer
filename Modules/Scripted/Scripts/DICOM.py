@@ -194,6 +194,7 @@ class DICOMWidget:
     else:
       self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
     if hasattr(slicer, 'dicomListener'):
+      slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
     self.contextMenu = qt.QMenu(self.tree)
