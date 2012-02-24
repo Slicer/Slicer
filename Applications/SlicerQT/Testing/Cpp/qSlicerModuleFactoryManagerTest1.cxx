@@ -43,6 +43,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
 
   QString moduleName = "Cameras";
 
+  moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();
 
   qSlicerAbstractCoreModule * abstractModule =
@@ -50,7 +51,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   if( abstractModule == NULL )
     {
     moduleFactoryManager.printAdditionalInfo();
-    std::cerr << __LINE__ << " - Error in instantiateModule()" << std::endl;
+    std::cerr << __LINE__ << " - Error in loadModule()" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -66,6 +67,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   moduleFactoryManager.unloadModules();
 
   // Instantiate again
+  moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();
   abstractModule = moduleFactoryManager.moduleInstance(moduleName);
 
