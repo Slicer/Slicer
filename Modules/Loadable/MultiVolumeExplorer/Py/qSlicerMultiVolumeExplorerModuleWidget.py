@@ -302,7 +302,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     slicer.mrmlScene.AddNode(displayNode)
     displayNode.SetDefaultColorMap()
 
-    frameVolume.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
+    frameVolume.SetAndObserveDisplayNodeID(displayNode.GetID())
     frameVolume.SetName(self.__dwvNode.GetName()+" frame "+str(frameId))
 
     slicer.mrmlScene.AddNode(frameVolume)
