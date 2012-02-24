@@ -9,3 +9,6 @@ slicer_add_python_test(SCRIPT AnnotationsTestingAddManyROIs.py
 
 slicer_add_python_test(SCRIPT RemoveAnnotationsIDFromSelectionNode.py
   SLICER_ARGS --disable-cli-modules)
+
+slicer_add_python_test(SCRIPT LoadAnnotationRulerScene.py
+  SLICER_ARGS --disable-cli-modules)
