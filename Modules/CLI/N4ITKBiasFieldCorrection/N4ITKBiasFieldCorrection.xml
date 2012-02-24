@@ -7,7 +7,7 @@
   <version>9</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/N4ITKBiasFieldCorrection</documentation-url>
   <license/>
-  <contributor>Nick Tustison (algorithm and ITK implementation), Andrey Fedorov (Slicer wrapping), Ron Kikinis (PI)</contributor>
+  <contributor>Nick Tustison (UPenn), Andrey Fedorov (SPL, BWH), Ron Kikinis (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[The development of this module was partially supported by NIH grants R01 AA016748-01, R01 CA111288 and U01 CA151261 as well as by NA-MIC, NAC, NCIGT and the Slicer community.]]></acknowledgements>
   <parameters>
     <label>IO</label>

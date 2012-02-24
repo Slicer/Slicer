@@ -84,10 +84,10 @@ vtkMRMLAbstractLogic* qSlicerViewControllersModule::createLogic()
 QStringList qSlicerViewControllersModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Wendy Plesniak (SPL)");
-  moduleContributors << QString("Jim Miller (GE Research)");
-  moduleContributors << QString("Steve Pieper (Isomics Inc.)");
-  moduleContributors << QString("Ron Kikinis (BWH)");
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  moduleContributors << QString("Wendy Plesniak (SPL, BWH)");
+  moduleContributors << QString("Jim Miller (GE)");
+  moduleContributors << QString("Steve Pieper (Isomics)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
   return moduleContributors;
 }

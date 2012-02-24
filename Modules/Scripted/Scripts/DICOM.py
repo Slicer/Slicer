@@ -19,7 +19,7 @@ class DICOM:
   def __init__(self, parent):
     parent.title = "DICOM"
     parent.categories = ["", "Informatics"] # top level module
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = """
 The DICOM module integrates DICOM classes from CTK (based on DCMTK).  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DICOM\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DICOM</a> for more information.\n\n
     """

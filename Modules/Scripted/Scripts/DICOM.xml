@@ -5,7 +5,7 @@
   <description><![CDATA[Provides DICOM local database and networking support.]]></description>
   <documentation-url/>
   <license/>
-  <contributor>Steve Pieper (Isomics Inc.)</contributor>
+  <contributor>Steve Pieper (Isomics)</contributor>
   <acknowledgements><![CDATA[This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details. Module implemented by Steve Pieper.]]></acknowledgements>
   <parameters>
     <label>Servers</label>

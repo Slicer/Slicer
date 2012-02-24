@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url/>
   <license/>
-  <contributor>Lauren O'Donnell</contributor>
+  <contributor>Lauren O'Donnell (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This command module is based on the estimation capabilities of teem]]></acknowledgements>
   <parameters>
     <label>Input Datasets</label>

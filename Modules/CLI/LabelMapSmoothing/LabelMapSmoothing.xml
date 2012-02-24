@@ -6,7 +6,7 @@
   <version>1.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelMapSmoothing</documentation-url>
   <license/>
-  <contributor>Dirk Padfield, Josh Cates, Ross Whitaker</contributor>
+  <contributor>Dirk Padfield (GE), Josh Cates (Utah), Ross Whitaker (Utah)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.]]></acknowledgements>
   <parameters advanced="true">
     <label>Label Selection Parameters</label>

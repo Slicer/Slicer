@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SimpleRegionGrowingSegmentation</documentation-url>
   <license/>
-  <contributor>Jim Miller</contributor>
+  <contributor>Jim Miller (GE)</contributor>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters advanced="true">
     <label>Smoothing Parameters</label>

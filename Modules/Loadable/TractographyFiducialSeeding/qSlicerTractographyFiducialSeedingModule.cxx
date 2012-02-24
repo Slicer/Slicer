@@ -59,6 +59,6 @@ QString qSlicerTractographyFiducialSeedingModule::acknowledgementText()const
 QStringList qSlicerTractographyFiducialSeedingModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Alex Yarmakovich (Isomics Inc.)");
+  moduleContributors << QString("Alex Yarmakovich (Isomics)");
   return moduleContributors;
 }

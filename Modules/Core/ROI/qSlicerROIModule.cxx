@@ -85,7 +85,7 @@ QString qSlicerROIModule::acknowledgementText()const
 QStringList qSlicerROIModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics)");
   return moduleContributors;
 }
 

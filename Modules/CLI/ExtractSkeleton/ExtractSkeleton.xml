@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExtractSkeleton</documentation-url>
   <license/>
-  <contributor>Pierre Seroul, Martin Styner, Guido Gerig, and Stephen Aylward</contributor>
+  <contributor>Pierre Seroul (UNC), Martin Styner (UNC), Guido Gerig (UNC), Stephen Aylward (Kitware)</contributor>
   <acknowledgements><![CDATA[The original implementation of this method was provided by ETH Zurich, Image Analysis Laboratory of Profs Olaf Kuebler, Gabor Szekely and Guido Gerig.  Martin Styner at UNC, Chapel Hill made enhancements.  Wrapping for Slicer was provided by Pierre Seroul and Stephen Aylward at Kitware, Inc.]]></acknowledgements>
   <parameters>
     <label>IO</label>

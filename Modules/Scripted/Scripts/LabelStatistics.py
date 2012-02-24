@@ -8,7 +8,7 @@ class LabelStatistics:
   def __init__(self, parent):
     parent.title = "Label Statistics"
     parent.categories = ["Quantification"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = """
 Use this module to calculate counts and volumes for different labels of a label map plus statistics on the grayscale background volume.  Note: volumes must have same dimensions.  See <a href=\"hhttp://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelStatistics\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelStatistics</a> for more information.\n\n
     """

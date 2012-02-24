@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url/>
   <license/>
-  <contributor>Patrick Reynolds and Stephen Aylward</contributor>
+  <contributor>Patrick Reynolds (Kitware), Stephen Aylward (Kitware)</contributor>
   <acknowledgements><![CDATA[This work is part of the following projects and grants: (1) National Library of Medicine's Work Assignment 9 for Insight Toolkit Maintenance, MIDAS subproject. (2) BWH Neuroimage Analysis Center (NAC). (3) National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Browse Data</label>

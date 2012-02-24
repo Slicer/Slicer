@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url/>
   <license/>
-  <contributor>Bill Lorensen</contributor>
+  <contributor>Bill Lorensen (GE)</contributor>
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>

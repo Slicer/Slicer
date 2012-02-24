@@ -6,7 +6,7 @@
   <version>0.1</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ResampleScalarVectorDWIVolume</documentation-url>
   <license/>
-  <contributor>Francois Budin</contributor>
+  <contributor>Francois Budin (UNC)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. Information on the National Centers for Biomedical Computing can be obtained from http://nihroadmap.nih.gov/bioinformatics]]></acknowledgements>
   <parameters>
     <label>Input/Output</label>

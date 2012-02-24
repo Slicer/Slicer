@@ -102,7 +102,7 @@ QString qSlicerCamerasModule::acknowledgementText()const
 QStringList qSlicerCamerasModule::contributors()const
 {
   QStringList contributors;
-  contributors << QString("Julien Finet (Kitware Inc.)");
-  contributors << QString("Sebastien Barr&eacute; (Kitware Inc.)");
+  contributors << QString("Julien Finet (Kitware)");
+  contributors << QString("Sebastien Barr&eacute; (Kitware)");
   return contributors;
 }

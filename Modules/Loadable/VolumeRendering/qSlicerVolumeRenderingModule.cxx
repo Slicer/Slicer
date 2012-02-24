@@ -85,11 +85,11 @@ QString qSlicerVolumeRenderingModule::acknowledgementText()const
 QStringList qSlicerVolumeRenderingModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Julien Finet (Kitware Inc.)");
-  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
-  moduleContributors << QString("Yanling Liu (NCI-Frederick/SAIC-Frederick)");
-  moduleContributors << QString("Andreas Freudling (Student Intern at SPL)");
-  moduleContributors << QString("Ron Kikinis (BWH)");
+  moduleContributors << QString("Julien Finet (Kitware)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics)");
+  moduleContributors << QString("Yanling Liu (SAIC-Frederick, NCI-Frederick)");
+  moduleContributors << QString("Andreas Freudling (SPL, BWH)");
+  moduleContributors << QString("Ron Kikinis (SPL, BWH)");
   return moduleContributors;
 }
 

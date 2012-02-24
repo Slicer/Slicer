@@ -7,7 +7,7 @@
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/OtsuThresholdImageFilter</documentation-url>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <license/>
-  <contributor>Bill Lorensen</contributor>
+  <contributor>Bill Lorensen (GE)</contributor>
   <parameters>
     <label>Otsu Threshold Parameters</label>
     <description><![CDATA[Parameters for Otsu Thresholding]]></description>

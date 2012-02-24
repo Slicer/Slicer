@@ -73,8 +73,8 @@ QString qSlicerWelcomeModule::acknowledgementText()const
 QStringList qSlicerWelcomeModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Wendy Plesniak (SPL)");
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  moduleContributors << QString("Wendy Plesniak (SPL, BWH)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
   return moduleContributors;
 }
 

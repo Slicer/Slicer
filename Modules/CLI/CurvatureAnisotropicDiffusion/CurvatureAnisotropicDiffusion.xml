@@ -7,7 +7,7 @@
   <version>0.1.0.$Revision$(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/CurvatureAnisotropicDiffusion</documentation-url>
   <license/>
-  <contributor>Bill Lorensen</contributor>
+  <contributor>Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
   <parameters>
     <label>Anisotropic Diffusion Parameters</label>

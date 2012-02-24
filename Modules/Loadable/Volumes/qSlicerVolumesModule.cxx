@@ -102,10 +102,10 @@ QString qSlicerVolumesModule::acknowledgementText()const
 QStringList qSlicerVolumesModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Steve Pieper (Isomics Inc.)");
-  moduleContributors << QString("Julien Finet (Kitware Inc.)");
-  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
-  moduleContributors << QString("Nicole Aucoin (BWH)");
+  moduleContributors << QString("Steve Pieper (Isomics)");
+  moduleContributors << QString("Julien Finet (Kitware)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics)");
+  moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
   return moduleContributors;
 }
 

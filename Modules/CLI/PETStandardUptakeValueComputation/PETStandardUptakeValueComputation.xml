@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 8595 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ComputeSUVBodyWeight</documentation-url>
   <license/>
-  <contributor>Wendy Plesniak, BWH (Nicole Aucoin, BWH, Ron Kikinis, BWH)</contributor>
+  <contributor>Wendy Plesniak (SPL, BWH), Nicole Aucoin (SPL, BWH), Ron Kikinis (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is funded by the Harvard Catalyst, and the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>Image and Information</label>

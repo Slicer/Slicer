@@ -6,7 +6,8 @@
   <version>0.1.1.$Revision: 1 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RicianLMMSEImageFilter</documentation-url>
   <license/>
-  <contributor>Antonio Tristan Vega, Santiago Aja Fernandez and Marc Niethammer. Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).</contributor>
+  <contributor>Antonio Tristan Vega (UVa), Santiago Aja Fernandez (UVa), Marc Niethammer (UNC)</contributor>
+  <acknowledgements><![CDATA[Partially founded by grant number TEC2007-67073/TCM from the Comision Interministerial de Ciencia y Tecnologia (Spain).]]></acknowledgements>
   <parameters>
     <label>DWI Noise Removal Parameters</label>
     <description><![CDATA[Parameters for Rician LMMSE image filter]]></description>

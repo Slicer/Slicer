@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DiffusionTensorMathematics</documentation-url>
   <license/>
-  <contributor>Raul San Jose</contributor>
+  <contributor>Raul San Jose (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[LMI]]></acknowledgements>
   <parameters>
     <label>IO</label>

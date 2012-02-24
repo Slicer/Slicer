@@ -6,7 +6,7 @@
   <version>3.0</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/GrayscaleModelMaker</documentation-url>
   <license>slicer3</license>
-  <contributor>Nicole Aucoin, Bill Lorensen</contributor>
+  <contributor>Nicole Aucoin (SPL, BWH), Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>

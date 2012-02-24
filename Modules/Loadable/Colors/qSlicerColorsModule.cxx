@@ -183,7 +183,7 @@ QString qSlicerColorsModule::acknowledgementText()const
 QStringList qSlicerColorsModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Nicole Aucoin (SPL)");
-  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
+  moduleContributors << QString("Julien Finet (Kitware)");
   return moduleContributors;
 }

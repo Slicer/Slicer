@@ -67,8 +67,8 @@ QString qSlicerSceneViewsModule::acknowledgementText() const
 QStringList qSlicerSceneViewsModule::contributors() const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Nicole Aucoin (SPL)");
-  moduleContributors << QString("Wendy Plesniak (SPL)");
+  moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
+  moduleContributors << QString("Wendy Plesniak (SPL, BWH)");
   moduleContributors << QString("Daniel Haehn (UPenn)");
   moduleContributors << QString("Kilian Pohl (UPenn)");
   return moduleContributors;

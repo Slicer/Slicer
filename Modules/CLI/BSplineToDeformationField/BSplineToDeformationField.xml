@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BSplineToDeformationField</documentation-url>
   <license/>
-  <contributor>Andrey Fedorov, BWH</contributor>
+  <contributor>Andrey Fedorov (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is funded by NIH grants R01 CA111288 and U01 CA151261.]]></acknowledgements>
   <parameters>
     <label>IO</label>

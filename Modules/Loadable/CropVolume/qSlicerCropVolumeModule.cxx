@@ -69,7 +69,8 @@ QString qSlicerCropVolumeModule::acknowledgementText()const
 QStringList qSlicerCropVolumeModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Andrey Fedorov") << QString("Ron Kikinis");
+  moduleContributors << QString("Andrey Fedorov (BWH, SPL)")
+  moduleContributors << QString("Ron Kikinis (BWH, SPL)");
   return moduleContributors;
 }
 

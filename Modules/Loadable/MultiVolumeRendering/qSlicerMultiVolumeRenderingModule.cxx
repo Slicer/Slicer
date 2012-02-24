@@ -87,8 +87,8 @@ QString qSlicerMultiVolumeRenderingModule::acknowledgementText()const
 QStringList qSlicerMultiVolumeRenderingModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("John Doe (Organization Inc.)");
-  // moduleContributors << QString("Richard Roe (Other organization Inc.)");
+  moduleContributors << QString("John Doe (Organization)");
+  // moduleContributors << QString("Richard Roe (Organization2)");
   // ...
   return moduleContributors;
 }

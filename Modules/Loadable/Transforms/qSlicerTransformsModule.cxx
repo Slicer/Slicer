@@ -103,8 +103,8 @@ QString qSlicerTransformsModule::acknowledgementText()const
 QStringList qSlicerTransformsModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
-  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics)");
   return moduleContributors;
 }
 

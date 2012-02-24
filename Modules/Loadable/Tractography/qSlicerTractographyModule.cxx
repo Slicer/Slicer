@@ -87,7 +87,7 @@ QString qSlicerTractographyModule::acknowledgementText()const
 QStringList qSlicerTractographyModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Julien Finet (Kitware Inc.)");
+  moduleContributors << QString("Julien Finet (Kitware)");
   return moduleContributors;
 }
 

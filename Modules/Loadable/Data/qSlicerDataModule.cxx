@@ -154,8 +154,8 @@ QString qSlicerDataModule::acknowledgementText()const
 QStringList qSlicerDataModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Julien Finet (Kitware Inc.)");
-  moduleContributors << QString("Alex Yarmarkovich (Isomics Inc.)");
-  moduleContributors << QString("Nicole Aucoin (BWH)");
+  moduleContributors << QString("Julien Finet (Kitware)");
+  moduleContributors << QString("Alex Yarmarkovich (Isomics)");
+  moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
   return moduleContributors;
 }

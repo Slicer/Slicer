@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 1.1 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Modules:GaussianBlurBatch-Documentation-3.6</documentation-url>
   <license/>
-  <contributor>Julien Jomier, Stephen Aylward and Julien Finet at Kitware Inc.</contributor>
+  <contributor>Julien Jomier (Kitware), Stephen Aylward (Kitware), Julien Finet (Kitware)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.\nhttp://www.batchmake.org]]></acknowledgements>
   <parameters>
     <label>Sigma Range</label>

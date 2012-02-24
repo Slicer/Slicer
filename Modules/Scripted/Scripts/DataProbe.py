@@ -9,7 +9,7 @@ class DataProbe:
   def __init__(self, parent):
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = """
 The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe</a> for more information.\n\n
     """
