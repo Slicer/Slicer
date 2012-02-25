@@ -16,6 +16,7 @@ class MultiVolumeImporter:
         "Steve Pieper (SPL, BWH)",\
         "Ron Kikinis (SPL, BWH)"]
 
+    parent.index = 0
     parent.helpText = """
     Support of MultiVolume import in Slicer4
     """
