@@ -200,6 +200,7 @@ class MultiVolumeImporterWidget:
 
       Helper.Info('Location of files:'+tmpDir)
       fileNames = os.listdir(tmpDir)
+      fileNames.sort()
 
       frameFolder = tmpDir
 
