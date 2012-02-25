@@ -169,7 +169,7 @@ void vtkMRMLAbstractLogic::MRMLNodesCallback(vtkObject* caller, unsigned long ei
                                              void* clientData, void* callData)
 {
   vtkMRMLAbstractLogic *self = reinterpret_cast<vtkMRMLAbstractLogic *>(clientData);
-  assert(vtkMRMLNode::SafeDownCast(caller));
+  assert("Observed object is not a node" && vtkMRMLNode::SafeDownCast(caller));
 
   if (self && !self->EnterMRMLNodesCallback())
     {

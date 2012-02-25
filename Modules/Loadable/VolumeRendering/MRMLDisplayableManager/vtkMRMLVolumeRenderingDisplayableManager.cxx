@@ -186,13 +186,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGUICallbackCommand(vtkCommand*
 void vtkMRMLVolumeRenderingDisplayableManager::Reset()
 {
   vtkNew<vtkIntArray> mapperEvents;
-  mapperEvents->InsertNextValue(
-    vtkCommand::VolumeMapperComputeGradientsProgressEvent);
+  //mapperEvents->InsertNextValue(
+  //  vtkCommand::VolumeMapperComputeGradientsProgressEvent);
 
   vtkNew<vtkIntArray> mapperEventsWithProgress;
-  mapperEventsWithProgress->InsertNextValue(
-    vtkCommand::VolumeMapperComputeGradientsProgressEvent);
-  mapperEventsWithProgress->InsertNextValue(vtkCommand::ProgressEvent);
+  //mapperEventsWithProgress->InsertNextValue(
+  //  vtkCommand::VolumeMapperComputeGradientsProgressEvent);
+  //mapperEventsWithProgress->InsertNextValue(vtkCommand::ProgressEvent);
 
   // CPU mapper
   vtkNew<vtkFixedPointVolumeRayCastMapper> newMapperRaycast;
