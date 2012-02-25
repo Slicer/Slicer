@@ -51,6 +51,7 @@ public:
   QIcon   Icon;
   bool   Hidden;
   QVariantMap   Extensions;
+  int Index;
 
   PyObject * PythonSelf;
   QString    PythonSource;
@@ -254,3 +255,7 @@ CTK_GET_CPP(qSlicerScriptedLoadableModule, bool, isHidden, Hidden)
 //-----------------------------------------------------------------------------
 CTK_SET_CPP(qSlicerScriptedLoadableModule, const QStringList&, setDependencies, Dependencies)
 CTK_GET_CPP(qSlicerScriptedLoadableModule, QStringList, dependencies, Dependencies)
+
+//-----------------------------------------------------------------------------
+CTK_SET_CPP(qSlicerScriptedLoadableModule, const int, setIndex, Index)
+CTK_GET_CPP(qSlicerScriptedLoadableModule, int, index, Index)
