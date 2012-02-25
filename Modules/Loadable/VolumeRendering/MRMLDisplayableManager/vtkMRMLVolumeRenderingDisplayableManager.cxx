@@ -32,7 +32,7 @@
 #include "vtkInteractorStyle.h"
 #include "vtkLookupTable.h"
 #include "vtkMatrix4x4.h"
-#include "vtkObject.h"
+#include <vtkNew.h>
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
 #include "vtkPlanes.h"
@@ -63,28 +63,21 @@ int vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize = 256;
 //---------------------------------------------------------------------------
 vtkMRMLVolumeRenderingDisplayableManager::vtkMRMLVolumeRenderingDisplayableManager()
 {
-  //create instances of mappers
-  this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
-
-  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
-
-  this->MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
-
-  //this->MapperRaycast = vtkSlicerFixedPointVolumeRayCastMapper::New();
-  this->MapperRaycast = vtkFixedPointVolumeRayCastMapper::New();
-  this->MapperGPURaycast3 = vtkGPUVolumeRayCastMapper::New();
-
-  //create instance of the actor
-  this->Volume = vtkVolume::New();
-
-  this->VolumeRenderingLogic =  vtkSlicerVolumeRenderingLogic::New();;
-
-
+  this->MapperRaycast = NULL;
+  this->MapperTexture = NULL;
+  this->MapperGPURaycast = NULL;
+  this->MapperGPURaycastII = NULL;
+  this->MapperGPURaycast3 = NULL;
+  this->Volume = NULL;
+  this->VolumePropertyGPURaycastII = NULL;
   //this->Histograms = vtkKWHistogramSet::New();
   //this->HistogramsFg = vtkKWHistogramSet::New();
-
-  this->VolumePropertyGPURaycastII = NULL;
   //this->VolumePropertyGPURaycast3 = NULL;
+
+  // Initialize the raycasters in Reset
+  this->Reset();
+
+  this->VolumeRenderingLogic =  vtkSlicerVolumeRenderingLogic::New();;
 
   this->DisplayedNode = NULL;
 
@@ -124,46 +117,19 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
     this->VolumeRenderingLogic->Delete();
     this->VolumeRenderingLogic = NULL;
   }
+  if (this->DisplayObservedEvents)
+    {
+    this->DisplayObservedEvents->Delete();
+    }
 
   //delete instances
-  if (this->MapperTexture)
-  {
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperTexture->Delete();
-    this->MapperTexture = NULL;
-  }
-  if (this->MapperGPURaycast)
-  {
-    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycast->Delete();
-    this->MapperGPURaycast = NULL;
-  }
-  if (this->MapperGPURaycastII)
-  {
-    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycastII->Delete();
-    this->MapperGPURaycastII = NULL;
-  }
-  if (this->MapperRaycast)
-  {
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperRaycast->Delete();
-    this->MapperRaycast = NULL;
-  }
-
-  if (this->MapperGPURaycast3)
-  {
-    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycast3->Delete();
-    this->MapperGPURaycast3 = NULL;
-  }
-
-  if (this->Volume)
-  {
-    this->Volume->Delete();
-    this->Volume = NULL;
-  }
+  vtkSetMRMLNodeMacro(this->MapperRaycast, NULL);
+  vtkSetMRMLNodeMacro(this->MapperTexture, NULL);
+  vtkSetMRMLNodeMacro(this->MapperGPURaycast, NULL);
+  vtkSetMRMLNodeMacro(this->MapperGPURaycastII, NULL);
+  vtkSetMRMLNodeMacro(this->MapperGPURaycast3, NULL);
+  vtkSetMRMLNodeMacro(this->Volume, NULL);
+  vtkSetMRMLNodeMacro(this->VolumePropertyGPURaycastII, NULL);
   /**
   if(this->Histograms != NULL)
   {
@@ -178,21 +144,11 @@ vtkMRMLVolumeRenderingDisplayableManager::~vtkMRMLVolumeRenderingDisplayableMana
     this->HistogramsFg = NULL;
   }
   **/
-  if (this->VolumePropertyGPURaycastII != NULL)
-  {
-    this->VolumePropertyGPURaycastII->Delete();
-    this->VolumePropertyGPURaycastII = NULL;
-  }
   //if (this->VolumePropertyGPURaycast3 != NULL)
   //{
   //  this->VolumePropertyGPURaycast3->Delete();
   //  this->VolumePropertyGPURaycast3 = NULL;
   //}
-  if (this->DisplayObservedEvents)
-    {
-    this->DisplayObservedEvents->Delete();
-    }
-
 }
 
 //---------------------------------------------------------------------------
@@ -229,43 +185,51 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetGUICallbackCommand(vtkCommand*
 //---------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::Reset()
 {
-  //delete instances
-  if (this->MapperTexture)
-  {
-    this->MapperTexture->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperTexture->Delete();
-    this->MapperTexture = NULL;
-  }
-  if (this->MapperGPURaycast)
-  {
-    this->MapperGPURaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycast->Delete();
-    this->MapperGPURaycast = NULL;
-  }
-  if (this->MapperGPURaycastII)
-  {
-    this->MapperGPURaycastII->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycastII->Delete();
-    this->MapperGPURaycastII = NULL;
-  }
-  if (this->MapperRaycast)
-  {
-    this->MapperRaycast->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperRaycast->RemoveObservers(vtkCommand::ProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperRaycast->Delete();
-    this->MapperRaycast = NULL;
-  }
-  if (this->MapperGPURaycast3)
-  {
-    this->MapperGPURaycast3->RemoveObservers(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-    this->MapperGPURaycast3->Delete();
-    this->MapperGPURaycast3 = NULL;
-  }
-  if (this->Volume)
-  {
-    this->Volume->Delete();
-    this->Volume = NULL;
-  }
+  vtkNew<vtkIntArray> mapperEvents;
+  mapperEvents->InsertNextValue(
+    vtkCommand::VolumeMapperComputeGradientsProgressEvent);
+
+  vtkNew<vtkIntArray> mapperEventsWithProgress;
+  mapperEventsWithProgress->InsertNextValue(
+    vtkCommand::VolumeMapperComputeGradientsProgressEvent);
+  mapperEventsWithProgress->InsertNextValue(vtkCommand::ProgressEvent);
+
+  // CPU mapper
+  vtkNew<vtkFixedPointVolumeRayCastMapper> newMapperRaycast;
+  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperRaycast,
+                                      newMapperRaycast.GetPointer(),
+                                      mapperEventsWithProgress.GetPointer());
+  // 3D Texture
+  vtkNew<vtkSlicerVolumeTextureMapper3D> newMapperTexture;
+  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperTexture,
+                                      newMapperTexture.GetPointer(),
+                                      mapperEvents.GetPointer());
+  // GPU raycast
+  vtkNew<vtkSlicerGPURayCastVolumeMapper> newMapperGPURaycast;
+  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperGPURaycast,
+                                      newMapperGPURaycast.GetPointer(),
+                                      mapperEvents.GetPointer());
+  // GPU raycast II
+  vtkNew<vtkSlicerGPURayCastMultiVolumeMapper> newMapperGPURaycastII;
+  vtkNew<vtkIntArray> newMapperGPURaycastIIEvents;
+  newMapperGPURaycastIIEvents->InsertNextValue(
+    vtkCommand::VolumeMapperComputeGradientsProgressEvent);
+  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperGPURaycastII,
+                                      newMapperGPURaycastII.GetPointer(),
+                                      newMapperGPURaycastIIEvents.GetPointer());
+  // GPU raycast 3
+  vtkNew<vtkGPUVolumeRayCastMapper> newMapperGPURaycast3;
+  vtkSetAndObserveMRMLNodeEventsMacro(this->MapperGPURaycast3,
+                                      newMapperGPURaycast3.GetPointer(),
+                                      mapperEvents.GetPointer());
+
+  // Volume
+  vtkNew<vtkVolume> newVolume;
+  vtkSetMRMLNodeMacro(this->Volume, newVolume.GetPointer());
+
+  // Volume Property
+  vtkSetMRMLNodeMacro(this->VolumePropertyGPURaycastII, NULL);
+
   /**
   if(this->Histograms != NULL)
   {
@@ -280,45 +244,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::Reset()
     this->HistogramsFg = NULL;
   }
   ***/
-  if (this->VolumePropertyGPURaycastII != NULL)
-  {
-    this->VolumePropertyGPURaycastII->Delete();
-    this->VolumePropertyGPURaycastII = NULL;
-  }
   //if (this->VolumePropertyGPURaycast3 != NULL)
   //{
   //  this->VolumePropertyGPURaycast3->Delete();
   //  this->VolumePropertyGPURaycast3 = NULL;
   //}
 
-  //create instances of mappers
-  this->MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
-
-  this->MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
-
-  this->MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
-
-  this->MapperRaycast = vtkFixedPointVolumeRayCastMapper::New();
-
-  this->MapperGPURaycast3 = vtkGPUVolumeRayCastMapper::New();
-
-  //create instance of the actor
-  this->Volume = vtkVolume::New();
-
   //this->Histograms = vtkKWHistogramSet::New();
   //this->HistogramsFg = vtkKWHistogramSet::New();
-
-  this->MapperTexture->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-
-  //cpu ray casting
-  this->MapperRaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-  this->MapperRaycast->AddObserver(vtkCommand::ProgressEvent, this->GetMRMLNodesCallbackCommand());
-
-  //hook up the gpu mapper
-  this->MapperGPURaycast->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-
-  this->MapperGPURaycastII->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
-  this->MapperGPURaycast3->AddObserver(vtkCommand::VolumeMapperComputeGradientsProgressEvent, this->GetMRMLNodesCallbackCommand());
 }
 
 //---------------------------------------------------------------------------
@@ -896,10 +829,9 @@ void vtkMRMLVolumeRenderingDisplayableManager::CreateVolumePropertyGPURaycastII(
   if (vspNode->GetCurrentVolumeMapper() != 4)
     return;
 
-  if (this->VolumePropertyGPURaycastII != NULL)
-    this->VolumePropertyGPURaycastII->Delete();
-
-  this->VolumePropertyGPURaycastII = vtkVolumeProperty::New();
+  vtkNew<vtkVolumeProperty> newVolumeProperty;
+  vtkSetMRMLNodeMacro(this->VolumePropertyGPURaycastII,
+                      newVolumeProperty.GetPointer());
 
   //copy bg property into 1st compoent property
   vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
@@ -1093,15 +1025,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::Create()
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayableManager::OnCreate()
 {
-  assert(this->GetMRMLViewNode());
-  if (this->GetMRMLViewNode() &&
-      this->GetMRMLViewNode()->HasObserver(
-        vtkMRMLViewNode::GraphicalResourcesCreatedEvent,
-        (vtkCommand *) this->GetMRMLNodesCallbackCommand()))
+  vtkMRMLViewNode* viewNode = this->GetMRMLViewNode();
+  assert(viewNode);
+  if (viewNode && !vtkIsObservedMRMLNodeEventMacro(
+        viewNode, vtkMRMLViewNode::GraphicalResourcesCreatedEvent))
     {
-    this->GetMRMLViewNode()->AddObserver(
-      vtkMRMLViewNode::GraphicalResourcesCreatedEvent,
-      (vtkCommand *) this->GetMRMLNodesCallbackCommand());
+    vtkNew<vtkIntArray> events;
+    events->InsertNextValue(vtkMRMLViewNode::GraphicalResourcesCreatedEvent);
+    vtkObserveMRMLNodeEventsMacro(viewNode, events.GetPointer());
     }
 
   this->UpdateDisplayNodeList();
@@ -1264,15 +1195,10 @@ void vtkMRMLVolumeRenderingDisplayableManager
   //if (vspNode->GetFgVolumeNode())
   //  this->SetupHistogramsFg(vspNode);
 
-  if (vspNode->GetROINode())
+  vtkMRMLAnnotationROINode* roiNode = vspNode->GetROINode();
+  if (roiNode)
     {
-    vspNode->GetROINode()->InsideOutOn();
-    if (!vspNode->GetROINode()->HasObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand()))
-      {
-      // TODO: this observer is not removed when the displayable manager is deleted
-      // and can cause a crash when swapping scene views
-      //vspNode->GetROINode()->AddObserver(vtkCommand::ModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand());
-      }
+    roiNode->InsideOutOn();
     }
   this->SetROI(vspNode);
 
@@ -1283,30 +1209,24 @@ void vtkMRMLVolumeRenderingDisplayableManager
 
   vtkMRMLVolumeNode *volumeNode = vspNode->GetVolumeNode();
   //Add observer to trigger update of transform
-  if (volumeNode)
+  if (volumeNode && !vtkIsObservedMRMLNodeEventMacro(
+        volumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
     {
-    if (!volumeNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLNodesCallbackCommand()))
-      {
-      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLNodesCallbackCommand());
-      }
-    if (!volumeNode->HasObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand() ))
-      {
-      volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand() );
-      }
+    vtkNew<vtkIntArray> events;
+    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
     }
 
   volumeNode = vspNode->GetFgVolumeNode();
-  if (volumeNode)
+  //Add observer to trigger update of transform
+  if (volumeNode && !vtkIsObservedMRMLNodeEventMacro(
+        volumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
     {
-    //Add observer to trigger update of transform
-    if (!volumeNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLNodesCallbackCommand()))
-      {
-      volumeNode->AddObserver(vtkMRMLTransformableNode::TransformModifiedEvent,(vtkCommand *) this->GetMRMLNodesCallbackCommand());
-      }
-    if(!volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand() ))
-      {
-      volumeNode->AddObserver(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent, (vtkCommand *) this->GetMRMLNodesCallbackCommand() );
-      }
+    vtkNew<vtkIntArray> events;
+    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
     }
 
   this->SetupMapperFromParametersNode(vspNode);
@@ -1575,19 +1495,6 @@ void vtkMRMLVolumeRenderingDisplayableManager
     {
     return;
     }
-  /*
-  vtkEventBroker *broker = vtkEventBroker::GetInstance();
-  ///TODO: have vtkEventBroker::AddObservation to uniquely add an observation
-  std::vector< vtkObservation *> observations =
-    broker->GetObservations(dnode, vtkCommand::ModifiedEvent,
-                            this, this->GetMRMLNodesCallbackCommand());
-  if (observations.size() == 0)
-    {
-    broker->AddObservation(dnode,vtkCommand::ModifiedEvent,
-                           this, this->GetMRMLNodesCallbackCommand());
-    }
-  this->DisplayNodes[dnode->GetID()] = dnode;
-  */
   vtkSetAndObserveMRMLNodeEventsMacro(
     this->DisplayNodes[dnode->GetID()], dnode, this->DisplayObservedEvents);
   this->OnVolumeRenderingDisplayNodeModified(dnode);

@@ -48,6 +48,7 @@ class vtkMRMLApplicationLogic;
 // Convenient macros
 
 //----------------------------------------------------------------------------
+// It removes all the event observations associated with the old value.
 #ifndef vtkSetMRMLNodeMacro
 #define vtkSetMRMLNodeMacro(node,value)  {                                    \
   vtkObject *_oldNode = (node);                                               \
@@ -109,6 +110,13 @@ class vtkMRMLApplicationLogic;
 {                                                                             \
   this->GetMRMLNodesObserverManager()->RemoveObjectEvents ( (node) );         \
 };
+#endif
+
+#ifndef vtkIsObservedMRMLNodeEventMacro
+#define vtkIsObservedMRMLNodeEventMacro(node, event)                          \
+  (                                                                           \
+  this->GetMRMLNodesObserverManager()->GetObservationsCount(node, event) != 0 \
+  )
 #endif
 
 
