@@ -70,16 +70,14 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
 
-  this->ModulesMenu = new qSlicerModulesMenu(q);
-  this->ModulesMenu->setDuplicateActions(true);
-  this->HomeModuleButton->setMenu(this->ModulesMenu);
-  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
-                   q, SLOT(onHomeModuleChanged(QString)));
-  this->ModulesMenu->setModuleManager(coreApp->moduleManager());
-
+  // Show Hidden
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(onShowHiddenModulesChanged(bool)));
 
+  // Additional module paths
+  this->AdditionalModulePathMoreButton->setChecked(false);
+
+  // Modules
   qSlicerModuleFactoryFilterModel* filterModel =
     this->DisableModulesListView->filterModel();
   QObject::connect(this->FilterToLoadPushButton, SIGNAL(toggled(bool)),
@@ -95,16 +93,42 @@ void qSlicerSettingsModulesPanelPrivate::init()
   QObject::connect(this->FilterTitleSearchBox, SIGNAL(textChanged(QString)),
                    filterModel, SLOT(setFilterFixedString(QString)));
 
-  // hide filters by default
-  this->FilterMoreButton->setChecked(false);
+  this->FilterMoreButton->setChecked(false); // hide filters by default
+
+  // Home
+  this->ModulesMenu = new qSlicerModulesMenu(q);
+  this->ModulesMenu->setDuplicateActions(true);
+  this->HomeModuleButton->setMenu(this->ModulesMenu);
+  QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
+                   q, SLOT(onHomeModuleChanged(QString)));
+  this->ModulesMenu->setModuleManager(coreApp->moduleManager());
+
+  // Favorites
+  this->FavoritesModulesListView->filterModel()->setHideAllWhenShowModulesIsEmpty(true);
+  this->FavoritesMoveLeftButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowLeft));
+  this->FavoritesMoveRightButton->setIcon(q->style()->standardIcon(QStyle::SP_ArrowRight));
+  QObject::connect(this->FavoritesRemoveButton, SIGNAL(clicked()),
+                   this->FavoritesModulesListView, SLOT(hideSelectedModules()));
+  QObject::connect(this->FavoritesMoveLeftButton, SIGNAL(clicked()),
+                   this->FavoritesModulesListView, SLOT(moveLeftSelectedModules()));
+  QObject::connect(this->FavoritesMoveRightButton, SIGNAL(clicked()),
+                   this->FavoritesModulesListView, SLOT(moveRightSelectedModules()));
+  QObject::connect(this->FavoritesMoreButton, SIGNAL(toggled(bool)),
+                   this->FavoritesModulesListView, SLOT(scrollToSelectedModules()));
+  this->FavoritesMoreButton->setChecked(false);
+
 
   // Default values
-  this->ModulesMenu->setCurrentModule("Welcome");
   this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
   qSlicerAbstractModuleFactoryManager* factoryManager =
     coreApp->moduleManager()->factoryManager();
+  this->FavoritesModulesListView->setFactoryManager( factoryManager );
   this->DisableModulesListView->setFactoryManager( factoryManager );
+  this->ModulesMenu->setCurrentModule("Welcome");
+  QStringList favorites;
+  favorites  << "Volumes" << "Models" << "Transforms" << "Annotations" << "Editor";
+  this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
 
   // Register settings
   q->registerProperty("disable-loadable-modules", this->LoadLoadableModulesCheckBox,
@@ -115,6 +139,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
                       "currentModule", SIGNAL(currentModuleChanged(QString)));
+  q->registerProperty("Modules/FavoriteModules", this->FavoritesModulesListView->filterModel(),
+                      "showModules", SIGNAL(showModulesChanged(QStringList)));
   q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
                       "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,

@@ -61,6 +61,7 @@ public:
   QStandardItemModel* ModulesListModel;
   qSlicerModuleFactoryFilterModel* FilterModel;
   qSlicerAbstractModuleFactoryManager* FactoryManager;
+  bool CheckBoxVisible;
 };
 
 // --------------------------------------------------------------------------
@@ -73,6 +74,7 @@ qSlicerModulesListViewPrivate::qSlicerModulesListViewPrivate(qSlicerModulesListV
   this->ModulesListModel = 0;
   this->FilterModel = 0;
   this->FactoryManager = 0;
+  this->CheckBoxVisible = false;
 }
 
 // --------------------------------------------------------------------------
@@ -111,14 +113,21 @@ void qSlicerModulesListViewPrivate::updateItem(QStandardItem* item)
     {
     item->setForeground(QBrush()); // reset color
     }
-  if (this->FactoryManager == 0 ||
-      this->FactoryManager->modulesToIgnore().contains(moduleName) )
+  if (this->CheckBoxVisible)
     {
-    item->setCheckState(Qt::Unchecked);
+    if (this->FactoryManager == 0 ||
+        this->FactoryManager->modulesToIgnore().contains(moduleName) )
+      {
+      item->setCheckState(Qt::Unchecked);
+      }
+    else
+      {
+      item->setCheckState(Qt::Checked);
+      }
     }
   else
     {
-    item->setCheckState(Qt::Checked);
+    item->setData(QVariant(), Qt::CheckStateRole);
     }
   QString text = moduleName;
   QString tooltip = moduleName;
@@ -276,6 +285,20 @@ qSlicerModuleFactoryFilterModel* qSlicerModulesListView::filterModel()const
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerModulesListView::isCheckBoxVisible()const
+{
+  Q_D(const qSlicerModulesListView);
+  return d->CheckBoxVisible;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::setCheckBoxVisible(bool show)
+{
+  Q_D(qSlicerModulesListView);
+  d->CheckBoxVisible = show;
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerModulesListView::modules()const
 {
   Q_D(const qSlicerModulesListView);
@@ -323,6 +346,60 @@ void qSlicerModulesListView::setUncheckedModules(const QStringList& moduleNames)
 {
   Q_D(qSlicerModulesListView);
   d->setModulesCheckState(moduleNames, Qt::Unchecked);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::hideSelectedModules()
+{
+  Q_D(qSlicerModulesListView);
+  QStringList newShowModules = d->FilterModel->showModules();
+  QStringList modulesToHide = d->indexListToModules(
+    this->selectionModel()->selectedIndexes());
+  foreach(const QString& moduleToHide, modulesToHide)
+    {
+    newShowModules.removeAll(moduleToHide);
+    }
+  d->FilterModel->setShowModules(newShowModules);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::moveLeftSelectedModules()
+{
+  this->moveSelectedModules(-1);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::moveRightSelectedModules()
+{
+  this->moveSelectedModules(1);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::moveSelectedModules(int offset)
+{
+  Q_D(qSlicerModulesListView);
+  QStringList newShowModules = d->FilterModel->showModules();
+  QStringList modulesToMove = d->indexListToModules(
+    this->selectionModel()->selectedIndexes());
+  foreach(const QString& moduleToMove, modulesToMove)
+    {
+    int moduleIndex = newShowModules.indexOf(moduleToMove);
+    if (moduleIndex != -1)
+      {
+      newShowModules.move(moduleIndex, qBound(0, moduleIndex + offset, newShowModules.count() -1));
+      }
+    }
+  d->FilterModel->setShowModules(newShowModules);
+  d->FilterModel->invalidate();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::scrollToSelectedModules()
+{
+  if (this->selectionModel()->selectedIndexes().count() > 0)
+    {
+    this->scrollTo(this->selectionModel()->selectedIndexes().at(0));
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -386,6 +463,10 @@ void qSlicerModulesListView::updateModule(const QString& moduleName)
 void qSlicerModulesListView::onItemChanged(QStandardItem* item)
 {
   Q_D(qSlicerModulesListView);
+  if (item->data(Qt::CheckStateRole).isNull())
+    {
+    return;
+    }
   QString moduleName = item->data(Qt::UserRole).toString();
   qSlicerAbstractCoreModule* module = d->FactoryManager->moduleInstance(moduleName);
   if (item->checkState() == Qt::Checked)

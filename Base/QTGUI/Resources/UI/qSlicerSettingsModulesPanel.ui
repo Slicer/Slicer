@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>674</height>
+    <height>797</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,76 +31,69 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="LoadCommandLineModulesLabel">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
      <property name="text">
       <string>command-line plugins (--disable-cli-modules)</string>
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
+     <property name="text">
+      <string>scripted loadable modules (--disable-scripted-loadable-modules)</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="HomeModuleLabel">
-     <property name="text">
-      <string>Home module:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QPushButton" name="HomeModuleButton">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
     <widget class="QLabel" name="ShowHiddenModulesLabel">
      <property name="text">
       <string>Show hidden modules:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="3" column="1">
     <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="TemporaryDirectoryLabel">
      <property name="text">
       <string>Temporary directory:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="4" column="1">
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
    </item>
-   <item row="6" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="ExtensionInstallDirectoryLabel">
      <property name="text">
       <string>Extensions install directory:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="5" column="1">
     <widget class="ctkDirectoryButton" name="ExtensionInstallDirectoryButton"/>
    </item>
-   <item row="7" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="AdditionalModulePathsLabel">
      <property name="text">
       <string>Additional module paths:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="6" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="margin">
@@ -117,51 +110,52 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QPushButton" name="AddAdditionalModulePathButton">
-          <property name="text">
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="RemoveAdditionalModulePathButton">
-          <property name="text">
-           <string>Remove</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Paths</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="AddAdditionalModulePathButton">
+           <property name="text">
+            <string>Add</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="RemoveAdditionalModulePathButton">
+           <property name="text">
+            <string>Remove</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="ctkExpandButton" name="AdditionalModulePathMoreButton">
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="mirrorOnExpand">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="LoadScriptedLoadableModulesLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
-     <property name="text">
-      <string>scripted loadable modules (--disable-scripted-loadable-modules)</string>
-     </property>
     </widget>
    </item>
    <item row="10" column="1">
@@ -171,7 +165,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="DisableModulesLabel">
      <property name="toolTip">
       <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
@@ -181,15 +175,21 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="7" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="qSlicerModulesListView" name="DisableModulesListView">
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
        <property name="alternatingRowColors">
         <bool>false</bool>
+       </property>
+       <property name="checkBoxVisible">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -424,6 +424,126 @@
      </item>
     </layout>
    </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="HomeModuleLabel">
+     <property name="text">
+      <string>Home:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QPushButton" name="HomeModuleButton">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="FavoritesModulesLabel">
+     <property name="toolTip">
+      <string>Drag modules into Favorites list</string>
+     </property>
+     <property name="text">
+      <string>Favorites:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="qSlicerModulesListView" name="FavoritesModulesListView">
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::CopyAction</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SingleSelection</enum>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="movement">
+        <enum>QListView::Free</enum>
+       </property>
+       <property name="flow">
+        <enum>QListView::LeftToRight</enum>
+       </property>
+       <property name="isWrapping" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="viewMode">
+        <enum>QListView::IconMode</enum>
+       </property>
+       <property name="uniformItemSizes">
+        <bool>false</bool>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="FavoritesMoreGroupBox">
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0" colspan="2">
+         <widget class="QPushButton" name="FavoritesRemoveButton">
+          <property name="toolTip">
+           <string>Remove from favorites</string>
+          </property>
+          <property name="text">
+           <string>Remove</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QToolButton" name="FavoritesMoveLeftButton">
+          <property name="toolTip">
+           <string>Move to the left</string>
+          </property>
+          <property name="text">
+           <string>Move Left</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QToolButton" name="FavoritesMoveRightButton">
+          <property name="toolTip">
+           <string>Move to the right</string>
+          </property>
+          <property name="text">
+           <string>Move Right</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="ctkExpandButton" name="FavoritesMoreButton">
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="mirrorOnExpand">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -474,12 +594,44 @@
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>453</y>
+     <x>646</x>
+     <y>714</y>
     </hint>
     <hint type="destinationlabel">
-     <x>467</x>
-     <y>451</y>
+     <x>618</x>
+     <y>715</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FavoritesMoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FavoritesMoreGroupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>643</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>613</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AdditionalModulePathMoreButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>640</x>
+     <y>427</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>617</x>
+     <y>471</y>
     </hint>
    </hints>
   </connection>

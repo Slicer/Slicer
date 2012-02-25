@@ -83,7 +83,7 @@ public:
 
   qSlicerMainWindowCore*        Core;
   qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
-  QStringList                   ModuleToolBarList;
+  QStringList                   FavoriteModules;
   qSlicerLayoutManager*         LayoutManager;
 
   QByteArray                    StartupState;
@@ -97,10 +97,6 @@ qSlicerMainWindowPrivate::qSlicerMainWindowPrivate(qSlicerMainWindow& object)
 {
   this->Core = 0;
   this->ModuleSelectorToolBar = 0;
-  // Title of the modules sorted by appearance order
-  this->ModuleToolBarList << "Home" << "Data"  << "Volumes" << "Models" << "Transforms"
-                          << "Annotations" << "Editor" << "Measurements";
-
   this->LayoutManager = 0;
 }
 
@@ -348,6 +344,7 @@ void qSlicerMainWindowPrivate::readSettings()
     this->LayoutManager->setLayout(settings.value("layout").toInt());
     }
   settings.endGroup();
+  this->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
 }
 
 //-----------------------------------------------------------------------------
@@ -666,17 +663,21 @@ void qSlicerMainWindow::onModuleLoaded(const QString& moduleName)
   Q_ASSERT(action->text() == module->title());
 
   // Add action to ToolBar if it's an "allowed" action
-  int index = d->ModuleToolBarList.indexOf(module->title());
-  if (index > 0)
+  int index = d->FavoriteModules.indexOf(module->name());
+  if (index != -1)
     {
-    // find the location of where to add the action. ModelToolBarList is sorted
-    QAction* beforeAction = 0;
+    // find the location of where to add the action.
+    // Note: FavoriteModules is sorted
+    QAction* beforeAction = 0; // 0 means insert at end
     foreach(QAction* toolBarAction, d->ModuleToolBar->actions())
       {
-      Q_ASSERT(d->ModuleToolBarList.contains(toolBarAction->text()));
-      if (d->ModuleToolBarList.indexOf(toolBarAction->text()) > index)
+      bool isActionAFavoriteModule =
+        (d->FavoriteModules.indexOf(toolBarAction->data().toString()) != -1);
+      if ( isActionAFavoriteModule &&
+          d->FavoriteModules.indexOf(toolBarAction->data().toString()) > index)
         {
         beforeAction = toolBarAction;
+        break;
         }
       }
     d->ModuleToolBar->insertAction(beforeAction, action);
