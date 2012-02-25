@@ -264,9 +264,13 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       ijk2ras = vtk.vtkMatrix4x4()
       self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
       self.__dwvNode.GetIJKToRASMatrix(ijk2ras)
-      frameVolume.SetAndObserveImageData(frame)
-      frameVolume.SetRASToIJKMatrix(ras2ijk)
-      frameVolume.SetIJKToRASMatrix(ijk2ras)
+      frameImage = frameVolume.GetImageData()
+      if frameImage == None:
+        frameVolume.SetAndObserveImageData(frame)
+        frameVolume.SetRASToIJKMatrix(ras2ijk)
+        frameVolume.SetIJKToRASMatrix(ijk2ras)
+
+      frameImage.DeepCopy(frame)
 
       displayNode = frameVolume.GetDisplayNode()
       if displayNode == None:
@@ -278,8 +282,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       frameName = '%s frame %d' % (self.__dwvNode.GetName(), frameId)
       frameVolume.SetName(frameName)
-
-      frameVolume.Modified()
 
       # TODO: read again J2's instructions about memory deallocation
       #ras2ijk.SetReferenceCount(1)
