@@ -21,6 +21,7 @@
 // Qt includes
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QListView>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
@@ -186,7 +187,7 @@ QStringList qSlicerModulesListViewPrivate
   QStringList modules;
   foreach(const QModelIndex& index, indexes)
     {
-    modules << index.data(Qt::DisplayRole).toString();
+    modules << index.data(Qt::UserRole).toString();
     }
   return modules;
 }
@@ -493,4 +494,17 @@ void qSlicerModulesListView::onItemChanged(QStandardItem* item)
         }
       }
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModulesListView::keyPressEvent(QKeyEvent * event)
+{
+  if (event->key() == Qt::Key_Delete ||
+      event->key() == Qt::Key_Backspace)
+    {
+    this->hideSelectedModules();
+    event->accept();
+    return;
+    }
+  this->Superclass::keyPressEvent(event);
 }

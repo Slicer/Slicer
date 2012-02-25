@@ -441,7 +441,7 @@
    <item row="9" column="0">
     <widget class="QLabel" name="FavoritesModulesLabel">
      <property name="toolTip">
-      <string>Drag modules into Favorites list</string>
+      <string>Add to the list by dragging modules from the above &quot;Modules&quot; list. Note: modules with no icons will not appear in the toolbar.</string>
      </property>
      <property name="text">
       <string>Favorites:</string>
@@ -495,6 +495,9 @@
      </item>
      <item>
       <widget class="QGroupBox" name="FavoritesMoreGroupBox">
+       <property name="toolTip">
+        <string>Add to the list by dragging modules from the above &quot;Modules&quot; list</string>
+       </property>
        <property name="title">
         <string/>
        </property>
@@ -502,7 +505,7 @@
         <item row="0" column="0" colspan="2">
          <widget class="QPushButton" name="FavoritesRemoveButton">
           <property name="toolTip">
-           <string>Remove from favorites</string>
+           <string>Remove selected module from favorites</string>
           </property>
           <property name="text">
            <string>Remove</string>

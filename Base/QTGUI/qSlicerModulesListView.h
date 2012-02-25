@@ -106,6 +106,8 @@ protected slots:
 protected:
   QScopedPointer<qSlicerModulesListViewPrivate> d_ptr;
 
+  virtual void keyPressEvent(QKeyEvent * event);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerModulesListView);
   Q_DISABLE_COPY(qSlicerModulesListView);

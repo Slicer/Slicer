@@ -117,7 +117,6 @@ void qSlicerSettingsModulesPanelPrivate::init()
                    this->FavoritesModulesListView, SLOT(scrollToSelectedModules()));
   this->FavoritesMoreButton->setChecked(false);
 
-
   // Default values
   this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
