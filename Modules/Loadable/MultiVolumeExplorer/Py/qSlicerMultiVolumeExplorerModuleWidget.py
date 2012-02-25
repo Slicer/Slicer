@@ -89,7 +89,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
     self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
-    self.__vcSelector.addEnabled = 1
+    self.__vcSelector.addEnabled = 0
 
     inputFrameLayout.addRow(label, self.__vcSelector)
     ##self.layout.addWidget(label)
@@ -125,7 +125,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vfSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
     self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
-    self.__vfSelector.addEnabled = 0
+    self.__vfSelector.addEnabled = 1
     # do not show "children" of vtkMRMLScalarVolumeNode
     self.__vfSelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode", \
         "vtkMRMLDiffusionTensorVolumeNode", "vtkMRMLVectorVolumeNode"]
