@@ -30,6 +30,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     self.__dwvNode = None
     self.__vcNode = None
+    self.extractFrame = False
 
     # chart view node
     cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
@@ -57,13 +58,32 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     w = qt.QWidget()
     layout = qt.QGridLayout()
-    # layout = qt.QFormLayout()
     w.setLayout(layout)
     self.layout.addWidget(w)
     w.show()
     self.layout = layout
 
-    label = qt.QLabel('Input container:')
+    # create frames
+    self.inputFrame = ctk.ctkCollapsibleButton()
+    self.inputFrame.text = "Input"
+    self.inputFrame.collapsed = 0
+    inputFrameLayout = qt.QFormLayout(self.inputFrame)
+    self.layout.addWidget(self.inputFrame)
+
+
+    self.ctrlFrame = ctk.ctkCollapsibleButton()
+    self.ctrlFrame.text = "Frame control"
+    self.ctrlFrame.collapsed = 0
+    ctrlFrameLayout = qt.QGridLayout(self.ctrlFrame)
+    self.layout.addWidget(self.ctrlFrame)
+
+    self.plotFrame = ctk.ctkCollapsibleButton()
+    self.plotFrame.text = "Plotting"
+    self.plotFrame.collapsed = 0
+    plotFrameLayout = qt.QGridLayout(self.plotFrame)
+    self.layout.addWidget(self.plotFrame)
+
+    label = qt.QLabel('Input multivolume')
     self.__vcSelector = slicer.qMRMLNodeComboBox()
     self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
@@ -71,9 +91,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
     self.__vcSelector.addEnabled = 1
 
-    ## self.layout.addRow(label, self.__vcSelector)
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.__vcSelector)
+    inputFrameLayout.addRow(label, self.__vcSelector)
+    ##self.layout.addWidget(label)
+    ##self.layout.addWidget(self.__vcSelector)
 
 
     # TODO: initialize the slider based on the contents of the labels array
@@ -82,30 +102,42 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     #self.__mdSlider.setRange(0,10)
     #self.__mdSlider.setValue(5)
 
-    label = qt.QLabel('Frame scroller:')
-    ## self.layout.addRow(label, self.__mdSlider)
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.__mdSlider)
+    label = qt.QLabel('Current frame number')
+    ##self.layout.addWidget(label)
+    ##self.layout.addWidget(self.__mdSlider)
+
+    # "play" control
+    self.playButton = qt.QPushButton('Play')
+    self.playButton.toolTip = 'Iterate over multivolume frames'
+    self.playButton.checkable = True
+    
+    ctrlFrameLayout.addWidget(label, 0, 0)
+    ctrlFrameLayout.addWidget(self.__mdSlider, 0, 1)
+    ctrlFrameLayout.addWidget(self.playButton, 0, 2)
+    
+    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
 
-    label = qt.QLabel('Extract current frame:')
+    label = qt.QLabel('Current frame copy')
 
     self.__vfSelector = slicer.qMRMLNodeComboBox()
     self.__vfSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
     self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
-    self.__vfSelector.addEnabled = 1
+    self.__vfSelector.addEnabled = 0
     # do not show "children" of vtkMRMLScalarVolumeNode
     self.__vfSelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode", \
         "vtkMRMLDiffusionTensorVolumeNode", "vtkMRMLVectorVolumeNode"]
 
-    self.extractButton = qt.QPushButton('Extract')
-    self.extractButton.connect('pressed()', self.onExtractFrame)
+    self.extractFrame = False
+    self.extractButton = qt.QPushButton('Enable current frame copying')
+    self.extractButton.checkable = True
+    self.extractButton.connect('toggled(bool)', self.onExtractFrameToggled)
 
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.__vfSelector)
-    self.layout.addWidget(self.extractButton)
+    ctrlFrameLayout.addWidget(label, 1, 0)
+    ctrlFrameLayout.addWidget(self.__vfSelector,1,1,1,2)
+    ctrlFrameLayout.addWidget(self.extractButton,2,0,1,3)
 
     # initialize slice observers (from DataProbe.py)
     # keep list of pairs: [observee,tag] so they can be removed easily
@@ -115,7 +147,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.refreshObservers()
 
     # label map for probing
-    label = qt.QLabel('Probed label volume:')
+    label = qt.QLabel('Probed label volume')
     self.__fSelector = slicer.qMRMLNodeComboBox()
     self.__fSelector.nodeTypes = ['vtkMRMLScalarVolumeNode']
     self.__fSelector.addAttribute('vtkMRMLScalarVolumeNode','LabelMap','1')
@@ -124,25 +156,20 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__fSelector.addEnabled = 0
     self.__fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelVolumeChanged)
     self.__fSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onLVMRMLSceneChanged)
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.__fSelector)
+    plotFrameLayout.addWidget(label,0,0,1,1)
+    plotFrameLayout.addWidget(self.__fSelector,0,1,1,2)
 
-    # "play" control
-    self.playButton = qt.QPushButton('Play')
-    self.playButton.toolTip = 'Iterate over vector image components'
-    self.playButton.checkable = True
-    self.layout.addWidget(self.playButton)
-    self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
+    self.iCharting = qt.QPushButton()
+    self.iCharting.text = 'Enable interactive charting'
+    self.iCharting.checkable = True
 
-    label = qt.QLabel('Enable interactive charting')
-    self.iCharting = qt.QCheckBox()
-    self.layout.addWidget(label)
-    self.layout.addWidget(self.iCharting)
+    plotFrameLayout.addWidget(self.iCharting,1,0,1,3)
     self.iCharting.setChecked(True)
+    self.iCharting.connect('toggled(bool)', self.onInteractiveChartingChanged)
 
     # add chart container widget
     self.__chartView = ctk.ctkVTKChartView(w)
-    self.layout.addWidget(self.__chartView)
+    plotFrameLayout.addWidget(self.__chartView,2,0,1,3)
 
     self.__chart = self.__chartView.chart()
     self.__chartTable = vtk.vtkTable()
@@ -219,6 +246,46 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     if self.__dwvNode != None:
       dwvDisplayNode = self.__dwvNode.GetDisplayNode()
       dwvDisplayNode.SetDiffusionComponent(newValue)
+      
+    if self.extractFrame == True:
+      frameVolume = self.__vfSelector.currentNode()
+      if frameVolume == None or self.__dwvNode == None:
+        return
+      dwvImage = self.__dwvNode.GetImageData()
+      frameId = newValue
+
+      extract = vtk.vtkImageExtractComponents()
+      extract.SetInput(dwvImage)
+      extract.SetComponents(frameId)
+      extract.Update()
+
+      frame = extract.GetOutput()
+      ras2ijk = vtk.vtkMatrix4x4()
+      ijk2ras = vtk.vtkMatrix4x4()
+      self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
+      self.__dwvNode.GetIJKToRASMatrix(ijk2ras)
+      frameVolume.SetAndObserveImageData(frame)
+      frameVolume.SetRASToIJKMatrix(ras2ijk)
+      frameVolume.SetIJKToRASMatrix(ijk2ras)
+
+      displayNode = frameVolume.GetDisplayNode()
+      if displayNode == None:
+        displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
+        displayNode.SetScene(slicer.mrmlScene)
+        slicer.mrmlScene.AddNode(displayNode)
+        displayNode.SetDefaultColorMap()
+        frameVolume.SetAndObserveDisplayNodeID(displayNode.GetID())
+
+      frameName = '%s frame %d' % (self.__dwvNode.GetName(), frameId)
+      frameVolume.SetName(frameName)
+
+      frameVolume.Modified()
+
+      # TODO: read again J2's instructions about memory deallocation
+      #ras2ijk.SetReferenceCount(1)
+      #ijk2ras.SetReferenceCount(1)
+      #ras2ijk.Delete()
+      #ijk2ras.Delete()
 
   def onVCMRMLSceneChanged(self, mrmlScene):
     self.__vcSelector.setMRMLScene(slicer.mrmlScene)
@@ -230,22 +297,40 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def onVFMRMLSceneChanged(self, mrmlScene):
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
 
+  def onInteractiveChartingChanged(self, checked):
+    if checked:
+      self.iCharting.text = 'Disable interactive charting'
+    else:
+      self.iCharting.text = 'Enable interactive charting'
+
   def onInputChanged(self):
     self.__vcNode = self.__vcSelector.currentNode()
     if self.__vcNode != None:
-       self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
+      self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
 
-       Helper.SetBgFgVolumes(self.__dwvNode.GetID(), None)
+      if self.__dwvNode == None:
+        return
 
-       if self.__dwvNode != None:
-         nGradients = self.__dwvNode.GetNumberOfGradients()
-         self.__mdSlider.minimum = 0
-         self.__mdSlider.maximum = nGradients-1
-         self.__chartTable.SetNumberOfRows(nGradients)
+      Helper.SetBgFgVolumes(self.__dwvNode.GetID(), None)
 
-         if self.__cvn != None:
-           self.__cvn.SetChartNodeID(self.__cn.GetID())
+      if self.__dwvNode != None:
+        nGradients = self.__dwvNode.GetNumberOfGradients()
+        self.__mdSlider.minimum = 0
+        self.__mdSlider.maximum = nGradients-1
+        self.__chartTable.SetNumberOfRows(nGradients)
 
+        if self.__cvn != None:
+          self.__cvn.SetChartNodeID(self.__cn.GetID())
+
+      self.ctrlFrame.enabled = True
+      self.plotFrame.enabled = True
+      self.ctrlFrame.collapsed = 0
+      self.plotFrame.collapsed = 0
+    else:
+      self.ctrlFrame.enabled = False
+      self.plotFrame.enabled = False
+      self.ctrlFrame.collapsed = 1
+      self.plotFrame.collapsed = 1
 
 
   def onPlayButtonToggled(self,checked):
@@ -258,46 +343,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.timer.stop()
       self.playButton.text = 'Play'
 
-  def onExtractFrame(self):
-    frameVolume = self.__vfSelector.currentNode()
-    if frameVolume == 'None' or self.__dwvNode == 'None':
-      return
-    dwvImage = self.__dwvNode.GetImageData()
-    frameId = self.__mdSlider.value
-
-    extract = vtk.vtkImageExtractComponents()
-    extract.SetInput(dwvImage)
-    extract.SetComponents(frameId)
-    extract.Update()
-
-    frame = extract.GetOutput()
-    ras2ijk = vtk.vtkMatrix4x4()
-    ijk2ras = vtk.vtkMatrix4x4()
-    self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
-    self.__dwvNode.GetIJKToRASMatrix(ijk2ras)
-    frameVolume.SetAndObserveImageData(frame)
-    frameVolume.SetRASToIJKMatrix(ras2ijk)
-    frameVolume.SetIJKToRASMatrix(ijk2ras)
-
-    displayNode = frameVolume.GetDisplayNode()
-    if displayNode == None:
-      displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
-      displayNode.SetScene(slicer.mrmlScene)
-      slicer.mrmlScene.AddNode(displayNode)
-      displayNode.SetDefaultColorMap()
-      frameVolume.SetAndObserveDisplayNodeID(displayNode.GetID())
-
-    frameName = '%s frame %d' % (self.__dwvNode.GetName(), frameId)
-    frameVolume.SetName(frameName)
-
-    frameVolume.Modified()
-
-    # TODO: read again J2's instructions about memory deallocation
-    #ras2ijk.SetReferenceCount(1)
-    #ijk2ras.SetReferenceCount(1)
-    #ras2ijk.Delete()
-    #ijk2ras.Delete()
-
+  '''
+  If extract button is checked, will copy the current frame to the
+  selected volume node on each event from frame slider
+  '''
+  def onExtractFrameToggled(self,checked):
+    if checked:
+      self.extractButton.text = 'Disable current frame copying'
+      self.extractFrame = True
+      self.onSliderChanged(self.__mdSlider.value)
+    else:
+      self.extractButton.text = 'Enable current frame copying'
+      self.extractFrame = False
 
   def goToNext(self):
     currentElement = self.__mdSlider.value
