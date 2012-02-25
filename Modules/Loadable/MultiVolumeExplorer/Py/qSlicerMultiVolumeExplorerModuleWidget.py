@@ -269,6 +269,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         frameVolume.SetAndObserveImageData(frame)
         frameVolume.SetRASToIJKMatrix(ras2ijk)
         frameVolume.SetIJKToRASMatrix(ijk2ras)
+        frameImage = frame
 
       frameImage.DeepCopy(frame)
 
