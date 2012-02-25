@@ -38,11 +38,11 @@ protected:
 public:
   qSlicerModuleFactoryFilterModelPrivate(qSlicerModuleFactoryFilterModel& object);
 
-  bool FilterToLoad;
-  bool FilterToIgnore;
-  bool FilterLoaded;
-  bool FilterIgnored;
-  bool FilterFailed;
+  bool ShowToLoad;
+  bool ShowToIgnore;
+  bool ShowLoaded;
+  bool ShowIgnored;
+  bool ShowFailed;
 };
 
 // --------------------------------------------------------------------------
@@ -52,11 +52,11 @@ public:
 qSlicerModuleFactoryFilterModelPrivate::qSlicerModuleFactoryFilterModelPrivate(qSlicerModuleFactoryFilterModel& object)
   :q_ptr(&object)
 {
-  this->FilterToLoad = false;
-  this->FilterLoaded = false;
-  this->FilterToIgnore = false;
-  this->FilterIgnored = false;
-  this->FilterFailed = false;
+  this->ShowToLoad = true;
+  this->ShowLoaded = true;
+  this->ShowToIgnore = true;
+  this->ShowIgnored = true;
+  this->ShowFailed = true;
 }
 
 // --------------------------------------------------------------------------
@@ -73,76 +73,77 @@ qSlicerModuleFactoryFilterModel::~qSlicerModuleFactoryFilterModel()
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterToLoad()const
+bool qSlicerModuleFactoryFilterModel::showToLoad()const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  return d->FilterToLoad;
+  return d->ShowToLoad;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModel::setFilterToLoad(bool filter)
+void qSlicerModuleFactoryFilterModel::setShowToLoad(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
-  d->FilterToLoad = filter;
-  this->invalidate();
-}
-// --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterToIgnore()const
-{
-  Q_D(const qSlicerModuleFactoryFilterModel);
-  return d->FilterToIgnore;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModel::setFilterToIgnore(bool filter)
-{
-  Q_D(qSlicerModuleFactoryFilterModel);
-  d->FilterToIgnore = filter;
+  d->ShowToLoad = show;
   this->invalidate();
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterLoaded()const
+bool qSlicerModuleFactoryFilterModel::showToIgnore()const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  return d->FilterLoaded;
+  return d->ShowToIgnore;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModel::setFilterLoaded(bool filter)
+void qSlicerModuleFactoryFilterModel::setShowToIgnore(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
-  d->FilterLoaded = filter;
+  d->ShowToIgnore = show;
   this->invalidate();
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterIgnored()const
+bool qSlicerModuleFactoryFilterModel::showLoaded()const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  return d->FilterIgnored;
+  return d->ShowLoaded;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModel::setFilterIgnored(bool filter)
+void qSlicerModuleFactoryFilterModel::setShowLoaded(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
-  d->FilterIgnored = filter;
+  d->ShowLoaded = show;
   this->invalidate();
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerModuleFactoryFilterModel::filterFailed()const
+bool qSlicerModuleFactoryFilterModel::showIgnored()const
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
-  return d->FilterFailed;
+  return d->ShowIgnored;
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModuleFactoryFilterModel::setFilterFailed(bool filter)
+void qSlicerModuleFactoryFilterModel::setShowIgnored(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
-  d->FilterFailed = filter;
+  d->ShowIgnored = show;
+  this->invalidate();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerModuleFactoryFilterModel::showFailed()const
+{
+  Q_D(const qSlicerModuleFactoryFilterModel);
+  return d->ShowFailed;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerModuleFactoryFilterModel::setShowFailed(bool show)
+{
+  Q_D(qSlicerModuleFactoryFilterModel);
+  d->ShowFailed = show;
   this->invalidate();
 }
 
@@ -151,28 +152,28 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
 {
   Q_D(const qSlicerModuleFactoryFilterModel);
   QModelIndex sourceIndex = this->sourceModel()->index(sourceRow, 0, sourceParent);
-  if (d->FilterToLoad)
+  if (!d->ShowToLoad)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::CheckStateRole).toUInt() == Qt::Checked)
       {
       return false;
       }
     }
-  if (d->FilterToIgnore)
+  if (!d->ShowToIgnore)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::CheckStateRole).toUInt() == Qt::Unchecked)
       {
       return false;
       }
     }
-  if (d->FilterLoaded)
+  if (!d->ShowLoaded)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() == QBrush())
       {
       return false;
       }
     }
-  if (d->FilterIgnored)
+  if (!d->ShowIgnored)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush() &&
         this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() != QBrush(Qt::red))
@@ -180,7 +181,7 @@ bool qSlicerModuleFactoryFilterModel::filterAcceptsRow(int sourceRow, const QMod
       return false;
       }
     }
-  if (d->FilterFailed)
+  if (!d->ShowFailed)
     {
     if (this->sourceModel()->data(sourceIndex, Qt::ForegroundRole).value<QBrush>() == QBrush(Qt::red))
       {

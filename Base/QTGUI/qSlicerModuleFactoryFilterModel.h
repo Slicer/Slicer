@@ -32,11 +32,16 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerModuleFactoryFilterModel
   : public QSortFilterProxyModel
 {
   Q_OBJECT
-  Q_PROPERTY(bool filterToLoad READ filterToLoad WRITE setFilterToLoad)
-  Q_PROPERTY(bool filterToIgnore READ filterToIgnore WRITE setFilterToIgnore)
-  Q_PROPERTY(bool filterLoaded READ filterLoaded WRITE setFilterLoaded)
-  Q_PROPERTY(bool filterIgnored READ filterIgnored WRITE setFilterIgnored)
-  Q_PROPERTY(bool filterFailed READ filterFailed WRITE setFilterFailed)
+  /// True by default
+  Q_PROPERTY(bool showToLoad READ showToLoad WRITE setShowToLoad)
+  /// True by default
+  Q_PROPERTY(bool showToIgnore READ showToIgnore WRITE setShowToIgnore)
+  /// True by default
+  Q_PROPERTY(bool showLoaded READ showLoaded WRITE setShowLoaded)
+  /// True by default
+  Q_PROPERTY(bool showIgnored READ showIgnored WRITE setShowIgnored)
+  /// True by default
+  Q_PROPERTY(bool showFailed READ showFailed WRITE setShowFailed)
 public:
   /// Superclass typedef
   typedef QSortFilterProxyModel Superclass;
@@ -47,18 +52,18 @@ public:
   /// Destructor
   virtual ~qSlicerModuleFactoryFilterModel();
 
-  bool filterToLoad()const;
-  bool filterToIgnore()const;
-  bool filterLoaded()const;
-  bool filterIgnored()const;
-  bool filterFailed()const;
+  bool showToLoad()const;
+  bool showToIgnore()const;
+  bool showLoaded()const;
+  bool showIgnored()const;
+  bool showFailed()const;
 
 public slots:
-  void setFilterToLoad(bool filter);
-  void setFilterToIgnore(bool filter);
-  void setFilterLoaded(bool filter);
-  void setFilterIgnored(bool filter);
-  void setFilterFailed(bool filter);
+  void setShowToLoad(bool show);
+  void setShowToIgnore(bool show);
+  void setShowLoaded(bool show);
+  void setShowIgnored(bool show);
+  void setShowFailed(bool show);
 
 protected:
   QScopedPointer<qSlicerModuleFactoryFilterModelPrivate> d_ptr;

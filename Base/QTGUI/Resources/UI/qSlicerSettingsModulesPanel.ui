@@ -177,7 +177,7 @@
       <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
      </property>
      <property name="text">
-       <string>Modules:</string>
+      <string>Modules:</string>
      </property>
     </widget>
    </item>
@@ -199,6 +199,9 @@
         <string>Filter</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
+        </property>
         <item>
          <widget class="ctkCheckablePushButton" name="FilterToLoadPushButton">
           <property name="toolTip">
@@ -208,6 +211,9 @@
            <string>To load</string>
           </property>
           <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
            <bool>true</bool>
           </property>
           <property name="buttonTextAlignment">
@@ -238,6 +244,9 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
           <property name="buttonTextAlignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -261,6 +270,9 @@
            <string>Loaded</string>
           </property>
           <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
@@ -313,6 +325,9 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -363,10 +378,19 @@
           <property name="checkable">
            <bool>true</bool>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="ctkSearchBox" name="FilterTitleSearchBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="showSearchIcon">
            <bool>true</bool>
           </property>

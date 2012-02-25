@@ -83,17 +83,19 @@ void qSlicerSettingsModulesPanelPrivate::init()
   qSlicerModuleFactoryFilterModel* filterModel =
     this->DisableModulesListView->filterModel();
   QObject::connect(this->FilterToLoadPushButton, SIGNAL(toggled(bool)),
-                   filterModel, SLOT(setFilterToLoad(bool)));
+                   filterModel, SLOT(setShowToLoad(bool)));
   QObject::connect(this->FilterToIgnorePushButton, SIGNAL(toggled(bool)),
-                   filterModel, SLOT(setFilterToIgnore(bool)));
+                   filterModel, SLOT(setShowToIgnore(bool)));
   QObject::connect(this->FilterLoadedPushButton, SIGNAL(toggled(bool)),
-                   filterModel, SLOT(setFilterLoaded(bool)));
+                   filterModel, SLOT(setShowLoaded(bool)));
   QObject::connect(this->FilterIgnoredPushButton, SIGNAL(toggled(bool)),
-                   filterModel, SLOT(setFilterIgnored(bool)));
+                   filterModel, SLOT(setShowIgnored(bool)));
   QObject::connect(this->FilterFailedPushButton, SIGNAL(toggled(bool)),
-                   filterModel, SLOT(setFilterFailed(bool)));
+                   filterModel, SLOT(setShowFailed(bool)));
   QObject::connect(this->FilterTitleSearchBox, SIGNAL(textChanged(QString)),
                    filterModel, SLOT(setFilterFixedString(QString)));
+
+  // hide filters by default
   this->FilterMoreButton->setChecked(false);
 
   // Default values
