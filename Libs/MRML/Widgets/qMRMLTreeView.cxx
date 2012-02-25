@@ -65,7 +65,7 @@ void qMRMLTreeViewPrivate::init()
   Q_Q(qMRMLTreeView);
 
   q->setItemDelegate(new qMRMLItemDelegate(q));
-
+  q->setAutoScrollMargin(32); // scroll hot area sensitivity
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
   
