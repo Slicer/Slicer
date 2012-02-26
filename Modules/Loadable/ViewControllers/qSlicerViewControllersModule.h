@@ -42,8 +42,10 @@ public:
 
   qSlicerGetTitleMacro("View Controllers");
 
-  virtual QString acknowledgementText()const;
   virtual QStringList categories()const;
+  virtual QIcon icon()const;
+
+  virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 
 protected:

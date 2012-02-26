@@ -63,6 +63,12 @@ QStringList qSlicerViewControllersModule::categories() const
 }
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerViewControllersModule::icon() const
+{
+  return QIcon(":Icons/ViewControllers.png");
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerViewControllersModule::setup()
 {
   this->Superclass::setup();
