@@ -184,7 +184,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def onLabelVolumeChanged(self):
     # iterate over the label image and collect the IJK for each label element
     labelNode = self.__fSelector.currentNode()
-    if labelNode != None:
+    vcNode = self.__vcSelector.currentNode()
+
+    if labelNode != None and vcNode != None:
       labelID = labelNode.GetID()
       img = labelNode.GetImageData()
       extent = img.GetWholeExtent()
@@ -472,5 +474,4 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         Helper.Error("Failed to locate chart view node!")
         return
 
-    self.onInputChanged()
     self.onLabelVolumeChanged()
