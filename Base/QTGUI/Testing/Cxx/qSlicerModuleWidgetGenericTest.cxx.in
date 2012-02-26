@@ -44,6 +44,9 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   qSlicerApplication app(argc, argv);
 
   qSlicer@MODULENAME@Module module(0);
+  // path can be required for modules depending on locale ressources
+  // (typically python script).
+  module.setPath("@MODULEPATH@");
 
   module.initialize(0);
 
