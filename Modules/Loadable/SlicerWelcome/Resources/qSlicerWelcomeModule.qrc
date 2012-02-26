@@ -1,5 +1,8 @@
 <RCC>
   <qresource>
+    <file>Icons/SlicerWelcome.png</file>
+  </qresource>
+  <qresource>
     <file>HTML/stylesheet.css</file>
     <file>HTML/About.html</file>
     <file>Images/WelcomeLogo.png</file>
@@ -49,5 +52,4 @@
     <file>Images/WelcomeFiducialWithArrow-Original.png</file>
     <file>HTML/Acknowledgment.html</file>
   </qresource>
-  <qresource prefix="newPrefix"/>
 </RCC>

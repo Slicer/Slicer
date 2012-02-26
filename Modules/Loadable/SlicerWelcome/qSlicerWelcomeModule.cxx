@@ -54,6 +54,12 @@ QStringList qSlicerWelcomeModule::categories()const
 }
 
 //-----------------------------------------------------------------------------
+QIcon qSlicerWelcomeModule::icon()const
+{
+  return QIcon(":/Icons/SlicerWelcome.png");
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerWelcomeModule::helpText()const
 {
   return QString();
