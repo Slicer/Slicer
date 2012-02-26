@@ -24,3 +24,10 @@ if(Slicer_BUILD_MultiVolumeImporter)
     )
 endif()
 
+if(Slicer_BUILD_SlicerWebGLExport)
+  # NOTE: SlicerWebGLExport source code is checkout using "External_SlicerWebGLExport.cmake".
+  add_subdirectory(
+    ${SlicerWebGLExport_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/SlicerWebGLExport
+    )
+endif()

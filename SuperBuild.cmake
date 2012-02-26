@@ -123,6 +123,10 @@ if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
 
+if(Slicer_BUILD_SlicerWebGLExport)
+  list(APPEND Slicer_DEPENDENCIES SlicerWebGLExport)
+endif()
+
 SlicerMacroCheckExternalProjectDependency(Slicer)
 
 #-----------------------------------------------------------------------------
@@ -176,6 +180,10 @@ if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
     Slicer_BUILD_MultiVolumeExplorer
     Slicer_BUILD_MultiVolumeImporter
     )
+endif()
+
+if(Slicer_BUILD_SlicerWebGLExport)
+  list(APPEND ep_make_boolean_args Slicer_BUILD_SlicerWebGLExport)
 endif()
 
 # Add CTEST_USE_LAUNCHER only if already defined and enabled.
@@ -280,6 +288,10 @@ if(Slicer_BUILD_CLI_SUPPORT)
   if(Slicer_BUILD_SkullStripper)
     list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
   endif()
+endif()
+
+if(Slicer_BUILD_SlicerWebGLExport)
+  list(APPEND ep_superbuild_extra_args -DSlicerWebGLExport_SOURCE_DIR:PATH=${SlicerWebGLExport_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
