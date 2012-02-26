@@ -69,57 +69,65 @@ set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
-  if(Slicer_BUILD_OpenIGTLinkIF)
-    list(APPEND Slicer_DEPENDENCIES OpenIGTLinkIF)
-  endif()
 endif()
-if(ITK_VERSION_MAJOR GREATER 3)
-  if(Slicer_USE_SimpleITK)
-    list(APPEND Slicer_DEPENDENCIES SimpleITK)
-  endif()
+
+if(Slicer_BUILD_OpenIGTLinkIF)
+  list(APPEND Slicer_DEPENDENCIES OpenIGTLinkIF)
 endif()
+
+if(Slicer_USE_SimpleITK)
+  list(APPEND Slicer_DEPENDENCIES SimpleITK)
+endif()
+
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES SlicerExecutionModel)
-  if(Slicer_BUILD_BRAINSTOOLS)
-      list(APPEND Slicer_DEPENDENCIES BRAINSTools)
-  endif()
-  if(Slicer_BUILD_ChangeTrackerPy)
-    list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
-  endif()
-  if(Slicer_BUILD_EMSegment)
-    list(APPEND Slicer_DEPENDENCIES EMSegment)
-  endif()
-  if(Slicer_BUILD_SkullStripper)
-    list(APPEND Slicer_DEPENDENCIES SkullStripper)
-  endif()
 endif()
+
+if(Slicer_BUILD_BRAINSTOOLS)
+    list(APPEND Slicer_DEPENDENCIES BRAINSTools)
+endif()
+
+if(Slicer_BUILD_ChangeTrackerPy)
+  list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
+endif()
+
+if(Slicer_BUILD_EMSegment)
+  list(APPEND Slicer_DEPENDENCIES EMSegment)
+endif()
+
+if(Slicer_BUILD_SkullStripper)
+  list(APPEND Slicer_DEPENDENCIES SkullStripper)
+endif()
+
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES LibArchive qMidasAPI)
 endif()
+
 if(Slicer_USE_BatchMake)
   list(APPEND Slicer_DEPENDENCIES BatchMake)
 endif()
-if (Slicer_USE_CTKAPPLAUNCHER)
+
+if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_DEPENDENCIES CTKAPPLAUNCHER)
 endif()
+
 if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_DEPENDENCIES python)
-  if(Slicer_USE_NUMPY)
-    list(APPEND Slicer_DEPENDENCIES NUMPY)
-    if(Slicer_USE_WEAVE)
-      list(APPEND Slicer_DEPENDENCIES weave)
-    endif()
-    if(Slicer_USE_SCIPY)
-      list(APPEND Slicer_DEPENDENCIES SciPy)
-    endif()
-  endif()
-  if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
-    list(APPEND Slicer_DEPENDENCIES incrTcl)
-  endif()
 endif()
 
-if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
+if(Slicer_USE_NUMPY)
+  list(APPEND Slicer_DEPENDENCIES NUMPY)
+endif()
+
+if(Slicer_USE_PYTHONQT_WITH_TCL AND UNIX)
+  list(APPEND Slicer_DEPENDENCIES incrTcl)
+endif()
+
+if(Slicer_BUILD_MultiVolumeExplorer)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeExplorer)
+endif()
+
+if(Slicer_BUILD_MultiVolumeImporter)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
 
@@ -164,27 +172,14 @@ set(ep_cmake_boolean_args
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
   Slicer_USE_SimpleITK
+  Slicer_BUILD_BRAINSTOOLS
+  Slicer_BUILD_ChangeTrackerPy
+  Slicer_BUILD_EMSegment
+  Slicer_BUILD_SkullStripper
+  Slicer_BUILD_MultiVolumeExplorer
+  Slicer_BUILD_MultiVolumeImporter
+  Slicer_BUILD_SlicerWebGLExport
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND ep_cmake_boolean_args
-    Slicer_BUILD_BRAINSTOOLS
-    Slicer_BUILD_ChangeTrackerPy
-    Slicer_BUILD_EMSegment
-    Slicer_BUILD_SkullStripper
-    )
-endif()
-
-if(Slicer_BUILD_MULTIVOLUME_SUPPORT)
-  list(APPEND ep_make_boolean_args
-    Slicer_BUILD_MultiVolumeExplorer
-    Slicer_BUILD_MultiVolumeImporter
-    )
-endif()
-
-if(Slicer_BUILD_SlicerWebGLExport)
-  list(APPEND ep_make_boolean_args Slicer_BUILD_SlicerWebGLExport)
-endif()
 
 # Add CTEST_USE_LAUNCHER only if already defined and enabled.
 # It avoids extra overhead for manual builds and still allow the option
@@ -253,9 +248,10 @@ endif()
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND ep_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
-  if(Slicer_BUILD_OpenIGTLinkIF)
-    list(APPEND ep_superbuild_extra_args -DOpenIGTLinkIF_SOURCE_DIR:PATH=${OpenIGTLinkIF_SOURCE_DIR})
-  endif()
+endif()
+
+if(Slicer_BUILD_OpenIGTLinkIF)
+  list(APPEND ep_superbuild_extra_args -DOpenIGTLinkIF_SOURCE_DIR:PATH=${OpenIGTLinkIF_SOURCE_DIR})
 endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
@@ -264,30 +260,30 @@ endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND ep_superbuild_extra_args -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR})
+endif()
 
-  if(Slicer_BUILD_BRAINSTOOLS)
-    list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_BRAINSTOOLS)
+  list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
+endif()
 
-  if(Slicer_BUILD_ChangeTrackerPy)
-    list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_ChangeTrackerPy)
+  list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
+endif()
 
-  if(Slicer_BUILD_MultiVolumeExplorer)
-    list(APPEND ep_superbuild_extra_args -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_MultiVolumeExplorer)
+  list(APPEND ep_superbuild_extra_args -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
+endif()
 
-  if(Slicer_BUILD_MultiVolumeImporter)
-    list(APPEND ep_superbuild_extra_args -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_MultiVolumeImporter)
+  list(APPEND ep_superbuild_extra_args -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
+endif()
 
-  if(Slicer_BUILD_EMSegment)
-    list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_EMSegment)
+  list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
+endif()
 
-  if(Slicer_BUILD_SkullStripper)
-    list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
-  endif()
+if(Slicer_BUILD_SkullStripper)
+  list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_SlicerWebGLExport)

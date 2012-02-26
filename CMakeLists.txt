@@ -181,8 +181,6 @@ CMAKE_DEPENDENT_OPTION(
 CMAKE_DEPENDENT_OPTION(
   Slicer_USE_NUMPY "Build Slicer with NumPy" ON
   "Slicer_USE_PYTHONQT" OFF)
-#option(Slicer_USE_WEAVE       "Build Slicer with Weave" OFF)
-#mark_as_advanced(Slicer_USE_WEAVE)
 # option(Slicer_USE_BatchMake   "Build Slicer with BatchMake support." ON)
 set(Slicer_USE_BatchMake OFF CACHE INTERNAL "Build Slicer with BatchMake support." FORCE)
 option(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
