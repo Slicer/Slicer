@@ -59,8 +59,8 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(ITKv4_REPOSITORY git://itk.org/ITK.git)
-  #set(ITKv4_GIT_TAG v4.0.0)
-  set(ITKv4_GIT_TAG 0f012d23b5ddad8da3d5fcd4bd37a68cf25b26da)
+  set(ITKv4_GIT_TAG v4.1rc04)
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
@@ -71,6 +71,8 @@ if(NOT DEFINED ITK_DIR)
     CMAKE_ARGS
       ${ep_common_compiler_args}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
+      -DITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
+      -DITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DITK_LEGACY_REMOVE:BOOL=ON
