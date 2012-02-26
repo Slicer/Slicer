@@ -6,6 +6,7 @@ set(KIT_PYTHON_SCRIPTS
     LabelStatistics.py
     PerformanceTests.py
     SampleData.py
+    WebGLExport.py
   )
 
 if(Slicer_USE_NUMPY)
