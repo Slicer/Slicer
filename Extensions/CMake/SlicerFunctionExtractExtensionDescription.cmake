@@ -30,6 +30,7 @@
 #  <var-prefix>_SEXT_DEPENDS - list of dependencies
 #  <var-prefix>_SEXT_HOMEPAGE - homepage
 #  <var-prefix>_SEXT_CATEGORY - category
+#  <var-prefix>_SEXT_ICONURL - url to icon (png, size 128x128 pixels)
 #  <var-prefix>_SEXT_STATUS - status
 #  <var-prefix>_SEXT_DESCRIPTION - one line description
 #  <var-prefix>_SEXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
@@ -67,6 +68,7 @@ function(slicerFunctionExtractExtensionDescription)
     build_subdirectory:.
     homepage:
     category:
+    iconurl:
     status:
     description:
     enabled:1

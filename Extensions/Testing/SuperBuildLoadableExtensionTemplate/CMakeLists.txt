@@ -20,6 +20,7 @@ set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate)
 # Extension description
 #-----------------------------------------------------------------------------
 set(EXTENSION_CATEGORY "Examples")
+set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/SuperBuildLoadableExtensionTemplate/Resources/Icons/SuperBuildLoadableExtensionTemplate.png?revision=19437&view=co")
 set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_STATUS "Beta")
@@ -130,6 +131,7 @@ slicerFunctionGenerateExtensionDescription(
   EXTENSION_NAME ${EXTENSION_NAME}
   EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_BUILD_SUBDIRECTORY}
   EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
+  EXTENSION_ICONURL ${EXTENSION_ICONURL}
   EXTENSION_STATUS ${EXTENSION_STATUS}
   EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
   EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}

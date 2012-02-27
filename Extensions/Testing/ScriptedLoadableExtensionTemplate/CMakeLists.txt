@@ -22,6 +22,7 @@ set(EXTENSION_NAME ScriptedLoadableExtensionTemplate)
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_STATUS "Beta")
   set(EXTENSION_DESCRIPTION "This is an example of scripted Qt loadable module built as an extension")
   set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
@@ -77,6 +78,7 @@ if(NOT Slicer_SOURCE_DIR)
   slicerFunctionGenerateExtensionDescription(
     EXTENSION_NAME ${EXTENSION_NAME}
     EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
+    EXTENSION_ICONURL ${EXTENSION_ICONURL}
     EXTENSION_STATUS ${EXTENSION_STATUS}
     EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
     EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}

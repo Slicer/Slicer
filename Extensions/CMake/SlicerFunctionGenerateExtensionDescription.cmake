@@ -22,12 +22,12 @@ include(SlicerMacroExtractRepositoryInfo)
 
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
-  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
-  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS SLICER_WC_REVISION SLICER_WC_ROOT)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
@@ -105,6 +105,9 @@ homepage    ${MY_EXTENSION_HOMEPAGE}
 
 # Match category in the xml description of the module (where it shows up in Modules menu)
 category    ${MY_EXTENSION_CATEGORY}
+
+# url to icon (png, size 128x128 pixels)
+iconurl     ${MY_EXTENSION_ICONURL}
 
 # Give people an idea what to expect from this code
 #  - Is it just a test or something you stand beind?

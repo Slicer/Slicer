@@ -22,6 +22,9 @@ homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projec
 # Match category in the xml description of the module (where it shows up in Modules menu)
 category    Examples
 
+# url to icon (png, size 128x128 pixels)
+iconurl     http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/SuperBuildLoadableExtensionTemplate/Resources/Icons/SuperBuildLoadableExtensionTemplate.png?revision=19437&view=co
+
 # Give people an idea what to expect from this code
 #  - Is it just a test or something you stand beind?
 status      Beta
