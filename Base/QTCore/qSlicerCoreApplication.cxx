@@ -37,6 +37,7 @@
 //  - Slicer_SHARE_DIR
 //  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
+//  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUILD_CLI_SUPPORT
 #include "vtkSlicerConfigure.h"
@@ -223,6 +224,12 @@ void qSlicerCoreApplicationPrivate::init()
     this->updatePythonOsEnviron();
 # endif
     }
+#endif
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+
+  this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
+
 #endif
 }
 
@@ -985,18 +992,15 @@ QString qSlicerCoreApplication::defaultExtensionsInstallPath() const
 {
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
-  return QFileInfo(appSettings->fileName()).absolutePath() + "/Extensions";
+  return QFileInfo(appSettings->fileName()).dir().filePath("Extensions");
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::extensionsInstallPath() const
 {
-  Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
-  QString extensionsInstallPath = appSettings->value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString();
-  d->createDirectory(extensionsInstallPath, "extensions"); // Make sure the path exists
-  return extensionsInstallPath;
+  return appSettings->value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString();
 }
 
 //-----------------------------------------------------------------------------
