@@ -41,6 +41,9 @@ class qSlicerModuleManager;
 #ifdef Slicer_USE_PYTHONQT
 class qSlicerCorePythonManager;
 #endif
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+class qSlicerExtensionsManagerModel;
+#endif
 class vtkSlicerApplicationLogic;
 class vtkMRMLApplicationLogic;
 class vtkMRMLScene;
@@ -171,6 +174,15 @@ public:
   /// Set the IO manager
   /// \note qSlicerCoreApplication takes ownership of the object
   void setCorePythonManager(qSlicerCorePythonManager* pythonManager);
+#endif
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  /// Get extension manager model
+  Q_INVOKABLE qSlicerExtensionsManagerModel* extensionManagerModel()const;
+
+  /// Set the extension manager model
+  /// \note qSlicerCoreApplication takes ownership of the object
+  void setExtensionManagerModel(qSlicerExtensionsManagerModel* model);
 #endif
 
   /// Get the module manager

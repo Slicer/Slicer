@@ -155,6 +155,10 @@ public:
   QSharedPointer<qSlicerCorePythonManager>    CorePythonManager;
 #endif
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  QSharedPointer<qSlicerExtensionsManagerModel> ExtensionsManagerModel;
+#endif
+
   QProcessEnvironment                         Environment;
 
 #if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)

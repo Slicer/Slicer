@@ -51,12 +51,15 @@
 #include "qSlicerCoreApplication_p.h"
 #include "qSlicerCoreCommandOptions.h"
 #include "qSlicerCoreIOManager.h"
-#include "qSlicerModuleFactoryManager.h"
-#include "qSlicerLoadableModuleFactory.h"
-#include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerCorePythonManager.h"
 #endif
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+# include "qSlicerExtensionsManagerModel.h"
+#endif
+#include "qSlicerLoadableModuleFactory.h"
+#include "qSlicerModuleFactoryManager.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerUtils.h"
 
 // SlicerLogic includes
@@ -230,6 +233,11 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
+  qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
+  model->setLauncherSettingsFilePath(q->launcherSettingsFilePath());
+  model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
+  q->setExtensionManagerModel(model);
+  model->updateModel();
 #endif
 }
 
@@ -1006,10 +1014,14 @@ QString qSlicerCoreApplication::extensionsInstallPath() const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
 {
+  if (this->extensionsInstallPath() == path)
+    {
+    return;
+    }
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
   appSettings->setValue("Extensions/InstallPath", path);
-  // TODO: rescan for new extensions
+  this->extensionManagerModel()->updateModel();
 }
 
 //-----------------------------------------------------------------------------
@@ -1027,6 +1039,24 @@ qSlicerCorePythonManager* qSlicerCoreApplication::corePythonManager()const
 {
   Q_D(const qSlicerCoreApplication);
   return d->CorePythonManager.data();
+}
+
+#endif
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::setExtensionManagerModel(qSlicerExtensionsManagerModel* model)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ExtensionsManagerModel = QSharedPointer<qSlicerExtensionsManagerModel>(model);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerExtensionsManagerModel* qSlicerCoreApplication::extensionManagerModel()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->ExtensionsManagerModel.data();
 }
 
 #endif
