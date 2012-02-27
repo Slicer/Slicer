@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
+#include <QMessageBox>
 #include <QTimer>
 
 // CTK includes
@@ -122,6 +123,13 @@ qSlicerCoreApplicationPrivate::~qSlicerCoreApplicationPrivate()
 void qSlicerCoreApplicationPrivate::init()
 {
   Q_Q(qSlicerCoreApplication);
+
+  if(qApp->arguments().contains("--attach-process"))
+    {
+    QString msg("This message box is here to give you time to attach "
+                "your debugger to process [PID %1]");
+    QMessageBox::information(0, "Attach process", msg.arg(QCoreApplication::applicationPid()));
+    }
 
   // Minimize the number of call to 'systemEnvironment()' by keeping
   // a reference to 'Environment'. Indeed, re-creating QProcessEnvironment is a non-trivial
