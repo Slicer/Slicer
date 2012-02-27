@@ -62,42 +62,39 @@ foreach(extension_name ${EXTENSION_LIST})
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
   string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS "${EXTENSION_SEXT_DEPENDS}")
   set(EXTENSION_CATEGORY ${EXTENSION_SEXT_CATEGORY})
+  set(EXTENSION_DESCRIPTION ${EXTENSION_SEXT_DESCRIPTION})
+  set(EXTENSION_HOMEPAGE ${EXTENSION_SEXT_HOMEPAGE})
+  set(EXTENSION_ENABLED ${EXTENSION_SEXT_ENABLED})
 
-  #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY STATUS DESCRIPTION)
+  #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY STATUS DESCRIPTION ENABLED)
   #  message(${v}:${EXTENSION_SEXT_${v}})
   #endforeach()
-
-  # Set apporpriate default value for optional property
-  if("${EXTENSION_SEXT_BUILD_SUBDIRECTORY}" STREQUAL "")
-    set(EXTENSION_SEXT_BUILD_SUBDIRECTORY ".")
-  endif()
 
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
   if("${EXTENSION_NAME}" STREQUAL "")
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
-    #message(STATUS "Configuring extension: ${EXTENSION_NAME} (${file})")
     message(STATUS "Configuring extension: ${EXTENSION_NAME}")
     if("${EXTENSION_SEXT_SCM}" STREQUAL "" AND "${EXTENSION_SEXT_SCMURL}" STREQUAL "")
       message(WARNING "Failed to extract extension information associated to file: ${file}")
     else()
       set(sext_add_project True)
       set(sext_ep_options_repository)
-      set(sext_ep_option_scm_executable)
+      set(sext_ep_cmake_args)
       if(${EXTENSION_SEXT_SCM} STREQUAL "git")
         find_package(Git REQUIRED)
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
         set(sext_ep_options_repository
           "GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG \"origin/master\"")
-        set(sext_ep_option_scm_executable
+        list(APPEND sext_ep_cmake_args
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "svn")
         find_package(Subversion REQUIRED)
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
         set(sext_ep_options_repository
           "SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r \"HEAD\"")
-        set(sext_ep_option_scm_executable
+        list(APPEND sext_ep_cmake_args
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "local")
         set(EXTENSION_SOURCE_DIR ${EXTENSION_SEXT_SCMURL})
@@ -174,6 +171,15 @@ foreach(extension_name ${EXTENSION_LIST})
             set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
           endif()
         else()
+
+          list(APPEND sext_ep_cmake_args
+            -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+            -DBUILD_TESTING:BOOL=${BUILD_TESTING}
+            -DSlicer_DIR:PATH=${Slicer_DIR}
+            -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
+            -DEXTENSION_ENABLED:BOOL=${EXTENSION_ENABLED}
+            )
+
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: FALSE
           #-----------------------------------------------------------------------------
@@ -187,11 +193,7 @@ foreach(extension_name ${EXTENSION_LIST})
             BINARY_DIR ${EXTENSION_NAME}-build
             CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
             CMAKE_ARGS
-              -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-              -DBUILD_TESTING:BOOL=OFF
-              -DSlicer_DIR:PATH=${Slicer_DIR}
-              -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
-              ${sext_ep_option_scm_executable}
+              ${sext_ep_cmake_args}
             ${EXTENSION_DEPENDS}
             )
           # This custom external project step forces the build and later
@@ -212,11 +214,7 @@ foreach(extension_name ${EXTENSION_LIST})
               BINARY_DIR ${EXTENSION_NAME}-build
               CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
               CMAKE_ARGS
-                -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-                -DBUILD_TESTING:BOOL=OFF
-                -DSlicer_DIR:PATH=${Slicer_DIR}
-                -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
-                ${sext_ep_option_scm_executable}
+                ${sext_ep_cmake_args}
               ${EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later

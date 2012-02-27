@@ -26,12 +26,13 @@
 # The function defines the following variables in the caller scope:
 #  <var-prefix>_SEXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
 #  <var-prefix>_SEXT_SCMURL - URL of the associated source repository
-#  <var-prefix>_SEXT_BUILD_SUBDIRECTORY - Corresponds to the xxtension inner build directory (default is ".")
+#  <var-prefix>_SEXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
 #  <var-prefix>_SEXT_DEPENDS - list of dependencies
 #  <var-prefix>_SEXT_HOMEPAGE - homepage
 #  <var-prefix>_SEXT_CATEGORY - category
 #  <var-prefix>_SEXT_STATUS - status
 #  <var-prefix>_SEXT_DESCRIPTION - one line description
+#  <var-prefix>_SEXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
 #
 
 function(slicerFunctionExtractExtensionDescription)
@@ -58,19 +59,35 @@ function(slicerFunctionExtractExtensionDescription)
   # Read file
   file(READ ${MY_EXTENSION_FILE} extension_file_content)
 
-  set(extension_description_tokens scm scmurl depends build_subdirectory homepage category status description)
+  # <token_name>:<default_value>
+  set(extension_description_tokens
+    scm:
+    scmurl:
+    depends:
+    build_subdirectory:.
+    homepage:
+    category:
+    status:
+    description:
+    enabled:1
+    )
 
-  foreach(token ${extension_description_tokens})
+  foreach(token_and_default ${extension_description_tokens})
+
+    # Extract token and its associated default value
+    string(REPLACE ":" ";" token_and_default_as_list ${token_and_default})
+    list(GET token_and_default_as_list 0 token)
+    list(GET token_and_default_as_list 1 token_default_value)
 
     string(TOUPPER ${token} upper_case_token)
     string(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
           "\\2" sext_${upper_case_token} "${extension_file_content}")
 
-    # If there was no match, set to an empty string
-    if (sext_${upper_case_token} STREQUAL "${extension_file_content}")
-      set(sext_${upper_case_token} "")
+    # If there was no match, set to the default value specified above or an empty string if any
+    if(sext_${upper_case_token} STREQUAL "${extension_file_content}")
+      set(sext_${upper_case_token} ${token_default_value})
     endif()
-    
+
     # Trim value
     set(str ${sext_${upper_case_token}})
     string(REGEX REPLACE "^[ \t\r\n]+" "" str "${str}")

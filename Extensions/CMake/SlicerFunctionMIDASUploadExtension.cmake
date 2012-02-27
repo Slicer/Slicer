@@ -30,12 +30,12 @@
 function(SlicerFunctionMIDASUploadExtension)
   include(CMakeParseArguments)
   set(options)
-  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
+  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_DESCRIPTION EXTENSION_HOMEPAGE EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity check
-  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  set(expected_nonempty_vars SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_DESCRIPTION EXTENSION_HOMEPAGE EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
@@ -62,9 +62,13 @@ function(SlicerFunctionMIDASUploadExtension)
   _SlicerEscapeForUrl(basename "${basename}")
   _SlicerEscapeForUrl(productname "${MY_EXTENSION_NAME}")
   _SlicerEscapeForUrl(category "${MY_EXTENSION_CATEGORY}")
+  _SlicerEscapeForUrl(description "${MY_EXTENSION_DESCRIPTION}")
+  _SlicerEscapeForUrl(homepage "${MY_EXTENSION_HOMEPAGE}")
   _SlicerEscapeForUrl(slicer_revision "${MY_SLICER_REVISION}")
   _SlicerEscapeForUrl(revision "${MY_EXTENSION_SOURCE_REVISION}")
+  _SlicerEscapeForUrl(repository_type "${MY_EXTENSION_REPOSITORY_TYPE}")
   _SlicerEscapeForUrl(repository_url "${MY_EXTENSION_REPOSITORY_URL}")
+  _SlicerEscapeForUrl(enabled "${MY_EXTENSION_ENABLED}")
   _SlicerEscapeForUrl(os "${MY_OPERATING_SYSTEM}")
   _SlicerEscapeForUrl(arch "${MY_ARCHITECTURE}")
   _SlicerEscapeForUrl(packagetype "${MY_PACKAGE_TYPE}")
@@ -74,6 +78,7 @@ function(SlicerFunctionMIDASUploadExtension)
 
   set(api_method "midas.slicerpackages.extension.upload")
   set(params "&token=${server_token}")
+  set(params "${params}&repository_type=${repository_type}")
   set(params "${params}&repository_url=${repository_url}")
   set(params "${params}&slicer_revision=${slicer_revision}")
   set(params "${params}&revision=${revision}")
@@ -82,6 +87,9 @@ function(SlicerFunctionMIDASUploadExtension)
   set(params "${params}&submissiontype=${submissiontype}")
   set(params "${params}&packagetype=${packagetype}")
   set(params "${params}&category=${category}")
+  set(params "${params}&description=${description}")
+  set(params "${params}&homepage=${homepage}")
+  set(params "${params}&enabled=${enabled}")
   set(params "${params}&name=${basename}")
   set(params "${params}&productname=${productname}")
   set(params "${params}&codebase=Slicer4")
@@ -140,15 +148,15 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
     set(source_checkoutdate "2011-12-26 12:21:42 -0500 (Mon, 26 Dec 2011)")
     set(package_type "installer")
 
-    set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
-    #set(slicer_revisions "105" "106")
+    #set(slicer_revisions "100" "101" "102" "103" "104" "105" "106")
+    set(slicer_revisions "19291")
     set(slicer_revision_101_nightly_release "4.0.0")
     set(slicer_revision_104_experimental_release "4.0.1")
     set(slicer_revision_105_nightly_release "4.2")
 
     set(extension_infos
-      "ExtensionA^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5^^Foo"
-      "ExtensionB^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar")
+      "ExtensionA^^git^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5^^Foo^^0"
+      "ExtensionB^^git^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar^^1")
 
     foreach(submission_type "experimental" "nightly")
       foreach(operating_system "linux" "macosx" "win")
@@ -157,9 +165,14 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
             foreach(extension_info ${extension_infos})
               string(REPLACE "^^" ";" extension_info_list ${extension_info})
               list(GET extension_info_list 0 extension_name)
-              list(GET extension_info_list 1 extension_repository_url)
-              list(GET extension_info_list 2 extension_source_revision)
-              list(GET extension_info_list 3 extension_category)
+              list(GET extension_info_list 1 extension_repository_type)
+              list(GET extension_info_list 2 extension_repository_url)
+              list(GET extension_info_list 3 extension_source_revision)
+              list(GET extension_info_list 4 extension_category)
+              list(GET extension_info_list 5 extension_enabled)
+
+              set(extension_description "This is description of ${extension_name}")
+              set(extension_homepage "http://homepage.${extension_name}.org/foo/bar")
 
               #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
 
@@ -167,8 +180,11 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
               file(WRITE ${package_filepath} "
                 extension_name: ${extension_name}
                 extension_category: ${extension_category}
+                extension_description: ${extension_description}
+                extension_repository_type: ${extension_repository_type}
                 extension_repository_url: ${extension_repository_url}
                 extension_source_revision: ${extension_source_revision}
+                extension_enabled: ${extension_enabled}
                 Test_TESTDATE: ${Test_TESTDATE}
                 submission_type: ${submission_type}
                 operating_system: ${operating_system}
@@ -190,8 +206,12 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 SLICER_REVISION ${slicer_revision}
                 EXTENSION_NAME ${extension_name}
                 EXTENSION_CATEGORY ${extension_category}
+                EXTENSION_DESCRIPTION ${extension_description}
+                EXTENSION_HOMEPAGE ${extension_homepage}
+                EXTENSION_REPOSITORY_TYPE ${extension_repository_type}
                 EXTENSION_REPOSITORY_URL ${extension_repository_url}
                 EXTENSION_SOURCE_REVISION ${extension_source_revision}
+                EXTENSION_ENABLED ${extension_enabled}
                 OPERATING_SYSTEM ${operating_system}
                 ARCHITECTURE ${architecture}
                 PACKAGE_FILEPATH ${package_filepath}

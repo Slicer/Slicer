@@ -22,7 +22,7 @@ include(SlicerMacroExtractRepositoryInfo)
 
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
-  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -38,7 +38,11 @@ function(slicerFunctionGenerateExtensionDescription)
     # A list of extension names without spaces is expected
     #TODO if()
   endif()
-  
+
+  if(NOT DEFINED MY_EXTENSION_ENABLED)
+    set(MY_EXTENSION_ENABLED 1)
+  endif()
+
   # If not specified, EXTENSION_BUILD_SUBDIRECTORY default to "."
   if("${MY_EXTENSION_BUILD_SUBDIRECTORY}" STREQUAL "")
     set(MY_EXTENSION_BUILD_SUBDIRECTORY ".")
@@ -107,7 +111,11 @@ category    ${MY_EXTENSION_CATEGORY}
 status      ${MY_EXTENSION_STATUS}
 
 # One line stating what the module does
-description ${MY_EXTENSION_DESCRIPTION}")
+description ${MY_EXTENSION_DESCRIPTION}
+
+# 0 or 1: Define if the extension should be enabled after its installation.
+enabled ${MY_EXTENSION_ENABLED}
+")
 
 message(STATUS "Extension description has been written to: ${filename}")
 
