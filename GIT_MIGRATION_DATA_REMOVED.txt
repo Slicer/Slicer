@@ -1,5 +1,6 @@
 0135502f44a60824387786978a9e126c2684042c8131f923d11f71c1a89e624c  Base/GUI/Tcl/ImageData/Thumbs.db
 08fd0e76845ea9a1a1c9ab6d7d96daf6dbb2840d5f2649a127a6f279e7c04c0a  Base/Logic/Testing/vol.zip
+55fde0e49303c9e05eb61b29899e22b35232e5becf3f7b23f36d363eb3af321d  Extensions/Testing/CLIExtensionTemplate/Data/Baseline/CLIExtensionTemplateTest.nhdr
 cee4f469402d8814fb313057e609ba495d3027e40afd9e57757ab611b2c5da60  Libs/MRML/Core/Testing/TestData/fixed.nrrd
 9c13a44b18a8277efa44babdea70e308d966bc91ba54ddc412909bfeb8c21980  Libs/MRML/Core/Testing/TestData/helix-DTI.nhdr
 45bd9fbd6a43b83720c9f7960a5b7a960a8b41e7f8bf758f26a6ae59a81d2c43  Libs/MRML/Core/Testing/TestData/helix-DTI.raw.gz

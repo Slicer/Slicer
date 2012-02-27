@@ -21,7 +21,7 @@ set(EXTENSION_NAME CLIExtensionTemplate)
 #-----------------------------------------------------------------------------
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_CATEGORY "Examples")
-set(EXTENSION_CONTRIBUTOR "Bill Lorensen &amp; Jean-Christophe Fillion-Robin")
+set(EXTENSION_CONTRIBUTOR "Julien Jomier (Kitware Inc.), Stephen Aylward (Kitware Inc.), Jean-Christophe Fillion-Robin (Kitware Inc.)")
 set(EXTENSION_MAJOR_VERSION 0)
 set(EXTENSION_MINOR_VERSION 1)
 set(EXTENSION_PATCH_VERSION 0)
@@ -90,7 +90,7 @@ slicerMacroBuildCLI(
 # Testing
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
-#  add_subdirectory(Testing)
+  add_subdirectory(Testing)
 endif()
 
 #-----------------------------------------------------------------------------

@@ -7,46 +7,31 @@
   <documentation-url>@EXTENSION_HOMEPAGE@</documentation-url>
   <license>@EXTENSION_LICENSE_SHORT_DESCRIPTION@</license>
   <contributor>@EXTENSION_CONTRIBUTOR@</contributor>
-<acknowledgements>@EXTENSION_ACKNOWLEDGEMENTS@</acknowledgements>
-
+  <acknowledgements>@EXTENSION_ACKNOWLEDGEMENTS@</acknowledgements>
   <parameters>
+    <double>
+      <name>sigma</name>
+      <longflag>sigma</longflag>
+      <flag>s</flag>
+      <label>Sigma</label>
+      <description><![CDATA[Sigma value in physical units (e.g., mm) of the Gaussian kernel]]></description>
+      <default>1.0</default>
+    </double>
     <label>IO</label>
-    <description>Input/output parameters</description>
+    <description><![CDATA[Input/output parameters]]></description>
     <image>
-      <name>inputVolume1</name>
-      <label>Input Volume 1</label>
+      <name>inputVolume</name>
+      <label>Input Volume</label>
       <channel>input</channel>
       <index>0</index>
-      <description>Input volume 1</description>
-    </image>
-    <image>
-      <name>inputVolume2</name>
-      <label>Input Volume 2</label>
-      <channel>input</channel>
-      <index>1</index>
-      <description>Input volume 2</description>
+      <description><![CDATA[Input volume]]></description>
     </image>
     <image>
       <name>outputVolume</name>
       <label>Output Volume</label>
       <channel>output</channel>
-      <index>2</index>
-      <description>Volume1 + Volume2</description>
+      <index>1</index>
+      <description><![CDATA[Blurred Volume]]></description>
     </image>
-  </parameters>
-  <parameters>
-    <label>Controls</label>
-    <description>Control how the module operates</description>
-    <integer-enumeration>
-      <name>order</name>
-      <label>Interpolation order</label>
-      <default>1</default>
-      <element>0</element>
-      <element>1</element>
-      <element>2</element>
-      <element>3</element>
-      <longflag>order</longflag>
-      <description>Interpolation order if two images are in different coordinate frames or have different sampling.</description>
-    </integer-enumeration>
   </parameters>
 </executable>
