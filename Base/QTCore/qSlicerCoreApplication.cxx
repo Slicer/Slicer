@@ -1173,8 +1173,16 @@ QString qSlicerCoreApplication::os()const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::restart()
 {
-  QStringList args = qSlicerCoreApplication::instance()->arguments();
-  QProcess::startDetached(qSlicerCoreApplication::instance()->applicationFilePath(), args);
+  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  bool launcherAvailable = QFile::exists(coreApp->launcherExecutableFilePath());
+  if (launcherAvailable)
+    {
+    QProcess::startDetached(coreApp->launcherExecutableFilePath(), coreApp->arguments());
+    }
+  else
+    {
+    QProcess::startDetached(coreApp->applicationFilePath(), coreApp->arguments());
+    }
   QCoreApplication::quit();
 }
 
