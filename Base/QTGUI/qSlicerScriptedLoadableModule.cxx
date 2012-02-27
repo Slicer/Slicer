@@ -39,6 +39,7 @@
 class qSlicerScriptedLoadableModulePrivate
 {
 public:
+  typedef qSlicerScriptedLoadableModulePrivate Self;
   qSlicerScriptedLoadableModulePrivate();
   virtual ~qSlicerScriptedLoadableModulePrivate();
 
@@ -53,6 +54,14 @@ public:
   QVariantMap   Extensions;
   int Index;
 
+  enum {
+    SetupMethod = 0
+    };
+
+  static int          APIMethodCount;
+  static const char * APIMethodNames[1];
+
+  PyObject*  PythonAPIMethods[1];
   PyObject * PythonSelf;
   QString    PythonSource;
 };
@@ -60,11 +69,24 @@ public:
 //-----------------------------------------------------------------------------
 // qSlicerScriptedLoadableModulePrivate methods
 
+//---------------------------------------------------------------------------
+int qSlicerScriptedLoadableModulePrivate::APIMethodCount = 1;
+
+//---------------------------------------------------------------------------
+const char* qSlicerScriptedLoadableModulePrivate::APIMethodNames[1] =
+{
+  "setup"
+};
+
 //-----------------------------------------------------------------------------
 qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 {
   this->PythonSelf = 0;
   this->Hidden = false;
+  for (int i = 0; i < Self::APIMethodCount; ++i)
+    {
+    this->PythonAPIMethods[i] = 0;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -72,6 +94,10 @@ qSlicerScriptedLoadableModulePrivate::~qSlicerScriptedLoadableModulePrivate()
 {
   if (this->PythonSelf)
     {
+    for (int i = 0; i < Self::APIMethodCount; ++i)
+      {
+      Py_XDECREF(this->PythonAPIMethods[i]);
+      }
     Py_DECREF(this->PythonSelf);
     }
 }
@@ -166,6 +192,19 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
+  // Retrieve API methods
+  for (int i = 0; i < Pimpl::APIMethodCount; ++i)
+    {
+    Q_ASSERT(Pimpl::APIMethodNames[i]);
+    if (!PyObject_HasAttrString(self, Pimpl::APIMethodNames[i]))
+      {
+      continue;
+      }
+    PyObject * method = PyObject_GetAttrString(self, Pimpl::APIMethodNames[i]);
+    //qDebug() << Pimpl::APIMethodNames[i] << "method:" << method;
+    d->PythonAPIMethods[i] = method;
+    }
+
   d->PythonSource = newPythonSource;
   d->PythonSelf = self;
 
@@ -182,10 +221,14 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 //-----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModule::setup()
 {
-  #ifndef QT_NO_DEBUG
   Q_D(qSlicerScriptedLoadableModule);
-  #endif
-  Q_ASSERT(d != 0);
+  PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
+  if (!method)
+    {
+    return;
+    }
+  PyObject_CallObject(method, 0);
+  PyErr_Print();
 }
 
 //-----------------------------------------------------------------------------

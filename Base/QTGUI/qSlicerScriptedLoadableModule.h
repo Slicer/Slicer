@@ -49,6 +49,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModule : public qSlicerL
 public:
 
   typedef qSlicerLoadableModule Superclass;
+  typedef qSlicerScriptedLoadableModulePrivate Pimpl;
   qSlicerScriptedLoadableModule(QObject *parent=0);
   virtual ~qSlicerScriptedLoadableModule();
 
