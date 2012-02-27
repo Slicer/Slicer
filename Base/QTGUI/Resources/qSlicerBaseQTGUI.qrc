@@ -73,7 +73,11 @@
 
     <file>Icons/CheckModified.png</file>
     <file>Icons/CheckModifiedData.png</file>
-    
+
+    <file>Icons/DownloadExtension.png</file>
+    <file>Icons/Extension.png</file>
+    <file>Icons/ExtensionDefaultIcon.png</file>
+
     <file>Icons/Go.png</file>
 
     <file>Icons/MousePickMode.png</file>
@@ -81,7 +85,7 @@
     <file>Icons/MousePlaceMode.png</file>
     <file>Icons/MouseSinglePlaceMode.png</file>
     <file>Icons/MouseRotateMode.png</file>
-    
+
     <file>Icons/TreeClose.png</file>
     <file>Icons/TreeOpen.png</file>
 
