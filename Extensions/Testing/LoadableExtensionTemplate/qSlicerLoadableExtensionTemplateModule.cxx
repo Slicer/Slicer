@@ -76,7 +76,7 @@ QString qSlicerLoadableExtensionTemplateModule::acknowledgementText()const
 QStringList qSlicerLoadableExtensionTemplateModule::contributors()const
 {
   QStringList moduleContributors;
-  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
   return moduleContributors;
 }
 

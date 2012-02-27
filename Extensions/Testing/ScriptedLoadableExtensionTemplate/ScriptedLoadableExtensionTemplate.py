@@ -9,7 +9,7 @@ class ScriptedLoadableExtensionTemplate:
     parent.title = "Scripted Loadable Extension Template"
     parent.categories = ["Examples"]
     parent.dependencies = []
-    parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware Inc.)"] # replace with your name and organization
+    parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     Example of scripted loadable extension.
     """
