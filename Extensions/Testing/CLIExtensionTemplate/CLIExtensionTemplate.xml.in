@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>@EXTENSION_HOMEPAGE@</category>
+  <category>@EXTENSION_CATEGORY@</category>
   <title>@EXTENSION_NAME@</title>
   <description>@EXTENSION_DESCRIPTION@</description>
   <version>@EXTENSION_MAJOR_VERSION@.@EXTENSION_MINOR_VERSION@.@EXTENSION_PATCH_VERSION@-@EXTENSION_STATUS@</version>
