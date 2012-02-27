@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -32,12 +32,12 @@
      <string>&amp;File</string>
     </property>
     <widget class="QMenu" name="menuSDB">
+     <property name="title">
+      <string>Slicer Data Bundle</string>
+     </property>
      <property name="icon">
       <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
        <normaloff>:/Icons/Small/SlicerDataBundle.png</normaloff>:/Icons/Small/SlicerDataBundle.png</iconset>
-     </property>
-     <property name="title">
-      <string>Slicer Data Bundle</string>
      </property>
      <addaction name="actionSDBSaveToDirectory"/>
      <addaction name="actionSDBZipDirectory"/>
@@ -90,7 +90,7 @@
      <addaction name="actionViewLayoutCompareGrid"/>
      <addaction name="actionViewLayoutThreeOverThree"/>
      <addaction name="actionViewLayoutFourOverFour"/>
-     <addaction name="actionViewLayoutTwoOverTwo" />
+     <addaction name="actionViewLayoutTwoOverTwo"/>
     </widget>
     <widget class="QMenu" name="menuWindowToolbars">
      <property name="title">
@@ -412,7 +412,7 @@
   <action name="actionFileSaveScene">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/SmallSlicerSave.png</iconset>
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -542,6 +542,10 @@
    </property>
   </action>
   <action name="actionViewExtensionManager">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
+   </property>
    <property name="text">
     <string>Extension Manager</string>
    </property>
@@ -952,7 +956,6 @@
     <bool>true</bool>
    </property>
   </action>
-
   <action name="actionViewLayoutTwoOverTwo">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
@@ -968,7 +971,6 @@
     <bool>true</bool>
    </property>
   </action>
- 
   <action name="actionWindowToolbarsModuleSelector">
    <property name="checkable">
     <bool>true</bool>
@@ -1264,8 +1266,6 @@
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
-  <include location="../../../../Resources/qSlicerLogos.qrc"/>
-  <include location="../../../../../../../../../../Resources/qSlicerLogos.qrc"/>
  </resources>
  <connections>
   <connection>

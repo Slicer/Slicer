@@ -39,6 +39,7 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+# include "qSlicerExtensionsManagerDialog.h"
 #endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
@@ -78,6 +79,10 @@ public:
   qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
   QStringList                   FavoriteModules;
   qSlicerLayoutManager*         LayoutManager;
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
+#endif
 
   QByteArray                    StartupState;
 };
@@ -285,7 +290,7 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->ViewToolBar,
                    SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    layoutButton, SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
-  
+
   //----------------------------------------------------------------------------
   // Viewers Toolbar
   //----------------------------------------------------------------------------
@@ -321,6 +326,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionHelpAboutSlicerQT->setIcon(informationIcon);
   this->actionHelpReportBugOrFeatureRequest->setIcon(questionIcon);
   this->actionHelpVisualBlog->setIcon(networkIcon);
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(q);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -582,7 +591,7 @@ void qSlicerMainWindow::setupMenuActions()
 
   // Main ToolBar actions (where are actions for load data and save?
   connect(d->actionLoadDICOM, SIGNAL(triggered()),
-          this, SLOT(loadDICOMActionTriggered()));  
+          this, SLOT(loadDICOMActionTriggered()));
   // Module ToolBar actions
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
@@ -616,7 +625,7 @@ void qSlicerMainWindow::loadDICOMActionTriggered()
 
 }
 
-  
+
 //---------------------------------------------------------------------------
 void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
 {
@@ -627,6 +636,13 @@ void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
 void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  Q_D(qSlicerMainWindow);
+  qSlicerApplication * app = qSlicerApplication::application();
+  d->ExtensionsManagerDialog->setExtensionsManagerModel(app->extensionManagerModel());
+  if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
+    {
+    app->confirmRestart();
+    }
 #endif
 }
 
