@@ -46,12 +46,6 @@
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerIOManager.h"
-#include "qSlicerSettingsModulesPanel.h"
-#include "qSlicerSettingsGeneralPanel.h"
-
-#ifdef Slicer_USE_PYTHONQT
-# include "qSlicerSettingsPythonPanel.h"
-#endif
 
 // qMRML includes
 #include <qMRMLSliceWidget.h>
