@@ -95,7 +95,7 @@ QStringList qSlicerLoadableExtensionTemplateModule::categories() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerLoadableExtensionTemplateModule::dependencies() const
 {
-  return QStringList() << "";
+  return QStringList();
 }
 
 //-----------------------------------------------------------------------------
