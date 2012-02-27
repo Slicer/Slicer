@@ -994,9 +994,9 @@ QString qSlicerCoreApplication::extensionsPath() const
   Q_D(const qSlicerCoreApplication);
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
-  QString extensionsPath = appSettings->value("ExtensionsPath", this->defaultExtensionsPath()).toString();
-  d->createDirectory(extensionsPath, "extensions"); // Make sure the path exists
-  return extensionsPath;
+  QString extensionsInstallPath = appSettings->value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString();
+  d->createDirectory(extensionsInstallPath, "extensions"); // Make sure the path exists
+  return extensionsInstallPath;
 }
 
 //-----------------------------------------------------------------------------
@@ -1004,7 +1004,7 @@ void qSlicerCoreApplication::setExtensionsPath(const QString& path)
 {
   QSettings* appSettings = this->settings();
   Q_ASSERT(appSettings);
-  appSettings->setValue("ExtensionsPath", path);
+  appSettings->setValue("Extensions/InstallPath", path);
   // TODO: rescan for new extensions
 }
 
