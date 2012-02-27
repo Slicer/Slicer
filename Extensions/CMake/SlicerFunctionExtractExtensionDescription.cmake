@@ -33,6 +33,7 @@
 #  <var-prefix>_SEXT_ICONURL - url to icon (png, size 128x128 pixels)
 #  <var-prefix>_SEXT_STATUS - status
 #  <var-prefix>_SEXT_DESCRIPTION - one line description
+#  <var-prefix>_SEXT_SCREENSHOTURLS - space separated list of urls
 #  <var-prefix>_SEXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
 #
 
@@ -70,6 +71,7 @@ function(slicerFunctionExtractExtensionDescription)
     contributors:
     category:
     iconurl:
+    screenshoturls:
     status:
     description:
     enabled:1

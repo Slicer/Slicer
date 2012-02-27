@@ -32,3 +32,6 @@ status      Beta
 
 # One line stating what the module does
 description This is an example of scripted Qt loadable module built as an extension
+
+# Space separated list of urls
+screenshoturls http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png

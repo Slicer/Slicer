@@ -32,3 +32,6 @@ status      Beta
 
 # One line stating what the module does
 description This is an example of CLI module built as an extension
+
+# Space separated list of urls
+screenshoturls http://wiki.slicer.org/slicerWiki/images/a/ab/Slicer-r19441-CLIExtensionTemplate-screenshot.png http://wiki.slicer.org/slicerWiki/images/1/1e/Slicer-r19441-CLIExtensionTemplate-screenshot-2.png

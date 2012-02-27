@@ -26,6 +26,7 @@ set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Devel
 set(EXTENSION_STATUS "Beta")
 set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
+set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/b/b3/Slicer-r19441-SuperBuildLoadableExtensionTemplate-screenshot.png")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 
 #-----------------------------------------------------------------------------
@@ -137,6 +138,7 @@ slicerFunctionGenerateExtensionDescription(
   EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
   EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
   EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
+  EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
   EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
   DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SLICER_WC_REVISION ${Slicer_WC_REVISION}

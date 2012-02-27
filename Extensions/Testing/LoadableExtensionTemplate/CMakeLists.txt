@@ -26,6 +26,7 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_STATUS "Beta")
   set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
+  set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/4/42/Slicer-r19441-LoadableExtensionTemplate-screenshot.png")
   set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 
   find_package(Slicer REQUIRED)
@@ -121,6 +122,7 @@ if(NOT Slicer_SOURCE_DIR)
     EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
     EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
     EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
+    EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
     EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
     DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
