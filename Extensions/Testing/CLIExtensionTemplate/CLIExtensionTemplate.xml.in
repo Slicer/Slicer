@@ -6,7 +6,7 @@
   <version>@EXTENSION_MAJOR_VERSION@.@EXTENSION_MINOR_VERSION@.@EXTENSION_PATCH_VERSION@-@EXTENSION_STATUS@</version>
   <documentation-url>@EXTENSION_HOMEPAGE@</documentation-url>
   <license>@EXTENSION_LICENSE_SHORT_DESCRIPTION@</license>
-  <contributor>@EXTENSION_CONTRIBUTOR@</contributor>
+  <contributor>@EXTENSION_CONTRIBUTORS@</contributor>
   <acknowledgements>@EXTENSION_ACKNOWLEDGEMENTS@</acknowledgements>
   <parameters>
     <double>

@@ -67,6 +67,7 @@ function(slicerFunctionExtractExtensionDescription)
     depends:
     build_subdirectory:.
     homepage:
+    contributors:
     category:
     iconurl:
     status:

@@ -22,7 +22,7 @@ set(EXTENSION_NAME CLIExtensionTemplate)
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/CLIExtensionTemplate/CLIExtensionTemplate.png?revision=19437&view=co")
-set(EXTENSION_CONTRIBUTOR "Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)")
+set(EXTENSION_CONTRIBUTORS "Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_MAJOR_VERSION 0)
 set(EXTENSION_MINOR_VERSION 1)
 set(EXTENSION_PATCH_VERSION 0)
@@ -105,6 +105,7 @@ if(NOT Slicer_SOURCE_DIR)
     EXTENSION_ICONURL ${EXTENSION_ICONURL}
     EXTENSION_STATUS ${EXTENSION_STATUS}
     EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
+    EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
     EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
     EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
     DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}

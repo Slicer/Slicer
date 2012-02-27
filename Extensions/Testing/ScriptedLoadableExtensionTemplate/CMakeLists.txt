@@ -24,6 +24,7 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_STATUS "Beta")
+  set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of scripted Qt loadable module built as an extension")
   set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
 
@@ -81,6 +82,7 @@ if(NOT Slicer_SOURCE_DIR)
     EXTENSION_ICONURL ${EXTENSION_ICONURL}
     EXTENSION_STATUS ${EXTENSION_STATUS}
     EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
+    EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
     EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
     EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
     DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}

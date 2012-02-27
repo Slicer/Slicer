@@ -24,6 +24,7 @@ set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensi
 set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_STATUS "Beta")
+set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 
@@ -134,6 +135,7 @@ slicerFunctionGenerateExtensionDescription(
   EXTENSION_ICONURL ${EXTENSION_ICONURL}
   EXTENSION_STATUS ${EXTENSION_STATUS}
   EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
+  EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
   EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
   EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
   DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
