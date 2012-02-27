@@ -21,6 +21,8 @@ function(SlicerConvertScriptArgListToCTestFormat script_arg_list output_var)
     string(REPLACE "//" "/-/" arg ${arg}) # See http://www.cmake.org/Bug/view.php?id=12953
     string(REPLACE "&" "-AMP-" arg ${arg})
     string(REPLACE "?" "-WHT-" arg ${arg})
+    string(REPLACE "(" "-LPAR-" arg ${arg})
+    string(REPLACE ")" "-RPAR-" arg ${arg})
     string(REPLACE "=" "\#\#" arg ${arg})
     set(script_args "${script_args}^^${arg}")
   endforeach()

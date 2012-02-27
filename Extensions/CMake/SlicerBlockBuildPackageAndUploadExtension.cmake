@@ -28,6 +28,8 @@ if(NOT CTEST_SCRIPT_ARG STREQUAL "")
       string(REPLACE "/-/" "//" argv ${argv}) # See http://www.cmake.org/Bug/view.php?id=12953
       string(REPLACE "-AMP-" "&" argv ${argv})
       string(REPLACE "-WHT-" "?" argv ${argv})
+      string(REPLACE "-LPAR-" "(" argv ${argv})
+      string(REPLACE "-RPAR-" ")" argv ${argv})
       set(${argn} ${argv})
     endif()
   endforeach()
