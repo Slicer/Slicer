@@ -207,15 +207,15 @@ public:
   virtual QString libraries()const;
 
   /// Return the source repository URL associated to this build
-  /// \sa discoverRepository
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryUrl()const;
 
   /// Return the source repository Branch associated to this build
-  /// \sa discoverRepository
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryBranch()const;
 
   /// Return the source repository Revision associated to this build
-  /// \sa discoverRepository
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString repositoryRevision()const;
 
   /// Return the Slicer major version number
@@ -224,8 +224,8 @@ public:
   /// Return the Slicer minor version number
   int minorVersion() const;
 
-  /// Return the source repository Platform associated to this build
-  /// \sa discoverRepository
+  /// Return the \a platform associated to this build
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString platform()const;
 
   /// Return the \a arch associated to this build
