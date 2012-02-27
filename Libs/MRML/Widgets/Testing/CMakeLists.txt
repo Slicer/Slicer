@@ -66,9 +66,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 
 set(Tests_MOC_SRCS qMRMLNodeObject.h)
 set(Tests_UtilityFiles
-    qMRMLNodeObject.cxx
-    qMRMLNodeObject.h
-    )
+  qMRMLNodeObject.cxx
+  qMRMLNodeObject.h
+  )
 
 QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
