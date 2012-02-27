@@ -944,6 +944,35 @@ QString qSlicerCoreApplication::temporaryPath() const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::launcherExecutableFilePath()const
+{
+#ifdef Q_OS_MAC
+  if (this->isInstalled())
+    {
+    return QString();
+    }
+#endif
+  return this->slicerHome() + "/Slicer" + qSlicerUtils::executableExtension();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::launcherSettingsFilePath()const
+{
+  if (this->isInstalled())
+    {
+#ifdef Q_OS_MAC
+    return QString();
+#else
+    return this->slicerHome() + "/" Slicer_BIN_DIR "/SlicerLauncherSettings.ini";
+#endif
+    }
+  else
+    {
+    return this->slicerHome() + "/SlicerLauncherSettings.ini";
+    }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 {
   QSettings* appSettings = this->settings();

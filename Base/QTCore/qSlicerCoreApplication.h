@@ -53,6 +53,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
 
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
+  Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
+  Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
   Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
   Q_PROPERTY(QString intDir READ intDir CONSTANT)
   Q_PROPERTY(bool isInstalled READ isInstalled CONSTANT)
@@ -140,6 +142,11 @@ public:
   /// Set slicer temporary directory
   void setTemporaryPath(const QString& path);
 
+  /// If any, return slicer launcher executable file path.
+  QString launcherExecutableFilePath()const;
+
+  /// If any, return slicer launcher settings file path.
+  QString launcherSettingsFilePath()const;
   /// Get slicer default extensions path
   QString defaultExtensionsPath() const;
 
