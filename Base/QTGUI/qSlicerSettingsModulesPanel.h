@@ -61,7 +61,6 @@ public slots:
 
 protected slots:
   void onHomeModuleChanged(const QString& moduleName);
-  void onExensionsPathChanged(const QString& path);
   void onTemporaryPathChanged(const QString& path);
   void onShowHiddenModulesChanged(bool);
 

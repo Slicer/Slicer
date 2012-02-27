@@ -69,6 +69,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->setupUi(q);
 
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerAbstractModuleFactoryManager* factoryManager = coreApp->moduleManager()->factoryManager();
 
   // Show Hidden
   QObject::connect(this->ShowHiddenModulesCheckBox, SIGNAL(toggled(bool)),
@@ -118,13 +119,10 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesMoreButton->setChecked(false);
 
   // Default values
-  this->ExtensionInstallDirectoryButton->setDirectory(coreApp->defaultExtensionsPath());
-  this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
-  qSlicerAbstractModuleFactoryManager* factoryManager =
-    coreApp->moduleManager()->factoryManager();
-  this->FavoritesModulesListView->setFactoryManager( factoryManager );
-  this->DisableModulesListView->setFactoryManager( factoryManager );
   this->ModulesMenu->setCurrentModule("Welcome");
+  this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
+  this->DisableModulesListView->setFactoryManager(factoryManager);
+  this->FavoritesModulesListView->setFactoryManager(factoryManager);
   QStringList favorites;
   favorites  << "Volumes" << "Models" << "Transforms" << "Annotations" << "Editor";
   this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
@@ -144,16 +142,12 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("Modules/ExtensionsInstallDirectory", this->ExtensionInstallDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(QString)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
                       "directoryList", SIGNAL(directoryListChanged()));
   q->registerProperty("Modules/IgnoreModules", factoryManager,
                       "modulesToIgnore", SIGNAL(modulesToIgnoreChanged(QStringList)));
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->ExtensionInstallDirectoryButton, SIGNAL(directoryChanged(QString)),
-                   q, SLOT(onExensionsPathChanged(QString)));
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(onTemporaryPathChanged(QString)));
   QObject::connect(this->AdditionalModulePathsView, SIGNAL(directoryListChanged()),
@@ -235,12 +229,6 @@ void qSlicerSettingsModulesPanel::onHomeModuleChanged(const QString& moduleName)
   Q_ASSERT(moduleAction);
   d->HomeModuleButton->setText(moduleAction->text());
   d->HomeModuleButton->setIcon(moduleAction->icon());
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsModulesPanel::onExensionsPathChanged(const QString& path)
-{
-  qSlicerCoreApplication::application()->setExtensionsPath(path);
 }
 
 // --------------------------------------------------------------------------
