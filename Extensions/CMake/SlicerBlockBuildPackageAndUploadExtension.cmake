@@ -18,9 +18,16 @@ if(NOT CTEST_SCRIPT_ARG STREQUAL "")
     set(argn_argv_list ${argn_argv_list})
     list(LENGTH argn_argv_list argn_argv_list_length)
     list(GET argn_argv_list 0 argn)
-    if(argn_argv_list_length EQUAL 2)
-      list(GET argn_argv_list 1 argv)
+    if(argn_argv_list_length GREATER 1)
+      list(REMOVE_AT argn_argv_list 0) # Take first item
+      set(argv) # Convert from list to string separated by '='
+      foreach(str_item ${argn_argv_list})
+        set(argv "${argv}=${str_item}")
+      endforeach()
+      string(SUBSTRING ${argv} 1 -1 argv) # Remove first unwanted '='
       string(REPLACE "/-/" "//" argv ${argv}) # See http://www.cmake.org/Bug/view.php?id=12953
+      string(REPLACE "-AMP-" "&" argv ${argv})
+      string(REPLACE "-WHT-" "?" argv ${argv})
       set(${argn} ${argv})
     endif()
   endforeach()
