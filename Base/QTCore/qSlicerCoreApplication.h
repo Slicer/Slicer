@@ -62,6 +62,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(int majorVersion READ majorVersion CONSTANT)
   Q_PROPERTY(int minorVersion READ minorVersion CONSTANT)
   Q_PROPERTY(QString platform READ platform CONSTANT)
+  Q_PROPERTY(QString arch READ arch CONSTANT)
+  Q_PROPERTY(QString os READ os CONSTANT)
 public:
 
   typedef QApplication Superclass;
@@ -225,6 +227,14 @@ public:
   /// Return the source repository Platform associated to this build
   /// \sa discoverRepository
   QString platform()const;
+
+  /// Return the \a arch associated to this build
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
+  QString arch()const;
+
+  /// Return the \a os associated to this build
+  /// \sa qSlicerCoreApplicationPrivate::discoverRepository
+  QString os()const;
 
 public slots:
 

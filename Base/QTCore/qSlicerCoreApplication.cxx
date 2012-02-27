@@ -1124,6 +1124,20 @@ QString qSlicerCoreApplication::platform()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::arch()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->Platform.split("-").at(1);
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::os()const
+{
+  Q_D(const qSlicerCoreApplication);
+  return d->Platform.split("-").at(0);
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::restart()
 {
   QStringList args = qSlicerCoreApplication::instance()->arguments();
