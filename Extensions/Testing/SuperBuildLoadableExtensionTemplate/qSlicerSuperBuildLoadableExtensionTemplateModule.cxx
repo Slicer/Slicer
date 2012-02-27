@@ -69,13 +69,33 @@ QString qSlicerSuperBuildLoadableExtensionTemplateModule::helpText()const
 //-----------------------------------------------------------------------------
 QString qSlicerSuperBuildLoadableExtensionTemplateModule::acknowledgementText()const
 {
-  return "This work was supported by ...";
+  return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::contributors()const
+{
+  QStringList moduleContributors;
+  moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware Inc.)");
+  return moduleContributors;
 }
 
 //-----------------------------------------------------------------------------
 QIcon qSlicerSuperBuildLoadableExtensionTemplateModule::icon()const
 {
   return QIcon(":/Icons/SuperBuildLoadableExtensionTemplate.png");
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::categories() const
+{
+  return QStringList() << "Examples";
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::dependencies() const
+{
+  return QStringList() << "";
 }
 
 //-----------------------------------------------------------------------------

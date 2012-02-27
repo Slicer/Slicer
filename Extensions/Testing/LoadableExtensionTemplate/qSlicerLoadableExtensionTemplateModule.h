@@ -39,15 +39,16 @@ public:
   virtual ~qSlicerLoadableExtensionTemplateModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
-  /// Help to use the module
-  virtual QString helpText()const;
 
-  /// Return acknowledgements
+  virtual QString helpText()const;
   virtual QString acknowledgementText()const;
-  
+  virtual QStringList contributors()const;
+
   /// Return a custom icon for the module
   virtual QIcon icon()const;
+
+  virtual QStringList categories()const;
+  QStringList dependencies() const;
 
 protected:
 
