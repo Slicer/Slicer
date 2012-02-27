@@ -414,7 +414,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
   QString extensionName = extensionItem->text(ExtensionColumn);
 
   // Make extension output directory
-  QDir extensionsDir(qSlicerCoreApplication::application()->extensionsPath());
+  QDir extensionsDir(qSlicerCoreApplication::application()->extensionsInstallPath());
   extensionsDir.mkdir(extensionName);
   extensionsDir.cd(extensionName);
 
@@ -490,7 +490,7 @@ void qSlicerExtensionsWizardOverviewPagePrivate
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(StatusUninstalling));
 
   QString extensionName = extensionItem->text(ExtensionColumn);
-  rmDir(qSlicerCoreApplication::application()->extensionsPath() + "/" + extensionName);
+  rmDir(qSlicerCoreApplication::application()->extensionsInstallPath() + "/" + extensionName);
 
   extensionItem->setIcon(ExtensionColumn, this->iconFromStatus(
     this->isExtensionInstalled(extensionName) ? StatusError: StatusNotFoundOnDisk));

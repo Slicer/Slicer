@@ -55,7 +55,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
-  Q_PROPERTY(QString extensionsPath READ extensionsPath WRITE setExtensionsPath)
+  Q_PROPERTY(QString extensionsInstallPath READ extensionsInstallPath WRITE setExtensionsInstallPath)
   Q_PROPERTY(QString intDir READ intDir CONSTANT)
   Q_PROPERTY(bool isInstalled READ isInstalled CONSTANT)
   Q_PROPERTY(QString repositoryUrl READ repositoryUrl CONSTANT)
@@ -147,14 +147,15 @@ public:
 
   /// If any, return slicer launcher settings file path.
   QString launcherSettingsFilePath()const;
+
   /// Get slicer default extensions path
-  QString defaultExtensionsPath() const;
+  QString defaultExtensionsInstallPath() const;
 
   /// Get slicer extension directory
-  QString extensionsPath() const;
+  QString extensionsInstallPath() const;
 
   /// Set slicer extension directory
-  void setExtensionsPath(const QString& path);
+  void setExtensionsInstallPath(const QString& path);
 
   /// If any, this method return the build intermediate directory
   /// See $(IntDir) on http://msdn.microsoft.com/en-us/library/c02as0cs%28VS.71%29.aspx

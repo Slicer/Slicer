@@ -115,7 +115,7 @@ void qSlicerExtensionsWizardWelcomePage::initializePage()
     return;
     }
 
-  d->InstallPathDirectoryButton->setDirectory(app->extensionsPath());
+  d->InstallPathDirectoryButton->setDirectory(app->extensionsInstallPath());
 
   QString url("http://localhost/midas");
   d->ExtensionServerURL->setText(url);
