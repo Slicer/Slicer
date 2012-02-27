@@ -264,6 +264,8 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
+  Q_Q(qSlicerCoreApplication);
+
   // Since some standalone executable (i.e EMSegmentCommandLine) can create
   // an instance of qSlicer(Core)Application so that the environment and the
   // python manager are properly initialized. This executable will have
@@ -273,6 +275,18 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   QString slicerHome = this->Environment.value("SLICER_HOME");
   if (!slicerHome.isEmpty())
     {
+#ifndef Q_OS_MAC
+    if (QDir(q->applicationDirPath()).dirName() != Slicer_BIN_DIR)
+      {
+      // Additionally, let's note that IntDir value is computed with the help of "pathWithoutIntDir"
+      // within the method "discoverSlicerBinDirectory" before this call
+      // to "discoverSlicerHomeDirectory". When first called, the parameter to "pathWithoutIntDir"
+      // are "applicationDirPath" and "Slicer_BIN_DIR".
+      // Considering the case of command line module, we should use "Slicer_CLIMODULES_BIN_DIR"
+      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_CLIMODULES_BIN_DIR, this->IntDir);
+      }
+#endif
+
     //qDebug() << "qSlicerCoreApplication: SLICER_HOME externally set to" << slicerHome;
     return slicerHome;
     }
