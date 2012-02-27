@@ -1,3 +1,6 @@
+#if ITK_VERSION_MAJOR >= 4
+#include "itkFloatingPointExceptions.h"
+#endif
 
 #include "vtkNRRDReader.h"
 #include "vtkSeedTracts.h"
@@ -12,6 +15,10 @@
 
 int main( int argc, char * argv[] )
 {
+
+#if ITK_VERSION_MAJOR >= 4
+  itk::FloatingPointExceptions::Disable();
+#endif
 
   PARSE_ARGS;
   try
