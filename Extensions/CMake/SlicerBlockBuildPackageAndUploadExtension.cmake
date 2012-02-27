@@ -79,14 +79,6 @@ string(TOLOWER "${CTEST_SITE}" CTEST_SITE)
 # Set build name
 set(CTEST_BUILD_NAME "${Slicer_WC_REVISION}-${EXTENSION_NAME}-${EXTENSION_COMPILER}-${EXTENSION_BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
 
-
-# The following variable can be used while testing the script
-set(run_ctest_with_configure TRUE)
-set(run_ctest_with_build TRUE)
-set(run_ctest_with_test FALSE)
-set(run_ctest_with_packages TRUE)
-# See also RUN_CTEST_SUBMIT in SlicerBlockUploadExtension.cmake
-
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_MODEL "Experimental")
 
@@ -141,7 +133,7 @@ set(CTEST_BINARY_DIRECTORY ${EXTENSION_SUPERBUILD_BINARY_DIR})
 
 #-----------------------------------------------------------------------------
 # Configure extension
-if(run_ctest_with_configure)
+if(RUN_CTEST_CONFIGURE)
   #message("----------- [ Configuring extension ${EXTENSION_NAME} ] -----------")
   ctest_configure(
     BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR}
@@ -155,7 +147,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Build extension
 set(build_errors)
-if(run_ctest_with_build)
+if(RUN_CTEST_BUILD)
   #message("----------- [ Building extension ${EXTENSION_NAME} ] -----------")
   ctest_build(BUILD ${EXTENSION_SUPERBUILD_BINARY_DIR} NUMBER_ERRORS build_errors APPEND)
   if(RUN_CTEST_SUBMIT)
@@ -165,7 +157,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Test extension
-if(run_ctest_with_test)
+if(BUILD_TESTING AND RUN_CTEST_TEST)
   #message("----------- [ Testing extension ${EXTENSION_NAME} ] -----------")
   # Check if there are tests to run
   execute_process(COMMAND ${CMAKE_CTEST_COMMAND} -N
@@ -186,7 +178,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Package extension
-if(run_ctest_with_packages)
+if(RUN_CTEST_PACKAGES)
   if(build_errors GREATER "0")
     message(WARNING "Skip extension packaging: ${build_errors} build error(s) occured !")
   else()

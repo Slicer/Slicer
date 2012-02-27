@@ -28,14 +28,22 @@ endfunction()
 #-----------------------------------------------------------------------------
 # The following variable can be used while testing the script
 #-----------------------------------------------------------------------------
-set(CTEST_EXTRA_VERBOSE FALSE) # Enable/Disable ctest extra verbosity
-set(RUN_CTEST_SUBMIT TRUE) # Enable/Disable dashboard submission
+set(CTEST_EXTRA_VERBOSE FALSE)
+set(RUN_CTEST_CONFIGURE TRUE)
+set(RUN_CTEST_BUILD TRUE)
+set(RUN_CTEST_TEST TRUE)
+set(RUN_CTEST_PACKAGES TRUE)
+set(RUN_CTEST_SUBMIT TRUE)
 
 #-----------------------------------------------------------------------------
 # Prepare external project configuration arguments
 set(script ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUploadExtension.cmake)
 set(script_arg_list
   CTEST_CMAKE_GENERATOR=${Slicer_EXTENSION_CMAKE_GENERATOR}
+  RUN_CTEST_CONFIGURE=${RUN_CTEST_CONFIGURE}
+  RUN_CTEST_BUILD=${RUN_CTEST_BUILD}
+  RUN_CTEST_TEST=${RUN_CTEST_TEST}
+  RUN_CTEST_PACKAGES=${RUN_CTEST_PACKAGES}
   RUN_CTEST_SUBMIT=${RUN_CTEST_SUBMIT}
   EXTENSION_BUILD_OPTIONS_STRING=${EXTENSION_BITNESS}bits-Qt${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}
   EXTENSION_COMPILER=${EXTENSION_COMPILER}
