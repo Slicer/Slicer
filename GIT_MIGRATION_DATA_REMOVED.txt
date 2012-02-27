@@ -1,5 +1,9 @@
 0135502f44a60824387786978a9e126c2684042c8131f923d11f71c1a89e624c  Base/GUI/Tcl/ImageData/Thumbs.db
 08fd0e76845ea9a1a1c9ab6d7d96daf6dbb2840d5f2649a127a6f279e7c04c0a  Base/Logic/Testing/vol.zip
+01fd0b39e96da9e85b841273173001958a5feb219875deee0719a74e36b02652  Base/QTCore/Testing/Data/Input/19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz
+87105840a5b6a5efee1e682df07957d880e23e131791c3b53746e0a4e6c2dfc8  Base/QTCore/Testing/Data/Input/19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
+dd619c9bbd8f058f85c124d775fe5fec1883f05ce4c1025c0f245db1ec088b51  Base/QTCore/Testing/Data/Input/19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
+8e047014e0d5addf1c8c5d92c20069e2c6d5c9893a670c4731b4c4e45cac7b21  Base/QTCore/Testing/Data/Input/19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
 55fde0e49303c9e05eb61b29899e22b35232e5becf3f7b23f36d363eb3af321d  Extensions/Testing/CLIExtensionTemplate/Data/Baseline/CLIExtensionTemplateTest.nhdr
 cee4f469402d8814fb313057e609ba495d3027e40afd9e57757ab611b2c5da60  Libs/MRML/Core/Testing/TestData/fixed.nrrd
 9c13a44b18a8277efa44babdea70e308d966bc91ba54ddc412909bfeb8c21980  Libs/MRML/Core/Testing/TestData/helix-DTI.nhdr

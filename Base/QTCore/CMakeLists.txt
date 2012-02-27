@@ -66,6 +66,13 @@ set(KIT_SRCS
   qSlicerXcedeCatalogIO.h
   )
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_SRCS
+    qSlicerExtensionsManagerModel.cxx
+    qSlicerExtensionsManagerModel.h
+    )
+endif()
+
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   qSlicerAbstractCoreModule.h
@@ -81,6 +88,12 @@ set(KIT_MOC_SRCS
   qSlicerXcedeCatalogIO.h
   )
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerExtensionsManagerModel.h
+    )
+endif()
+
 # Additional Target libraries (QT libs already included)
 set(KIT_target_libraries
   SlicerBaseLogic
@@ -89,6 +102,12 @@ set(KIT_target_libraries
   CTKImageProcessingITKCore
   CTKVisualizationVTKCore
   )
+
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_target_libraries
+    qMidasAPI
+    )
+endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND KIT_target_libraries
@@ -99,7 +118,7 @@ endif()
 # Resources
 set(KIT_resources
   Resources/qSlicerBaseQTCore.qrc
-)
+  )
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)

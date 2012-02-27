@@ -211,12 +211,6 @@ set(KIT_target_libraries
   qMRMLWidgets
   )
 
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND KIT_target_libraries
-    qMidasAPI
-    )
-endif()
-
 # Python wrap
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_target_libraries

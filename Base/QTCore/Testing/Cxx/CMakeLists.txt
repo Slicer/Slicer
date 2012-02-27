@@ -1,12 +1,15 @@
 
 if(BUILD_TESTING)
+
   # Code specfic to Slicer testing is added here.
   set(KIT QTCore)
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
     qSlicerAbstractCoreModuleTest1
     qSlicerCoreApplicationTest1.cxx
     qSlicerCoreIOManagerTest1.cxx
+    qSlicerExtensionsManagerModelTest.cxx
     qSlicerLoadableModuleFactoryTest1.cxx
     qSlicerUtilsTest1.cxx
     EXTRA_INCLUDE TestingMacros.h
@@ -16,6 +19,11 @@ if(BUILD_TESTING)
   list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
   set(LIBRARY_NAME ${PROJECT_NAME})
+
+  QT4_GENERATE_MOCS(
+    qSlicerExtensionsManagerModelTest.cxx
+    )
+  QT4_ADD_RESOURCES(Tests Resources/qSlicerBaseQTCoreTesting.qrc)
 
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
@@ -37,6 +45,7 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerCoreIOManagerTest1 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/name.mrml)
   set_property(TEST qSlicerCoreIOManagerTest1 PROPERTY LABELS ${LIBRARY_NAME})
   SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
+  SIMPLE_TEST( qSlicerExtensionsManagerModelTest )
   SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )
   SIMPLE_TEST( qSlicerUtilsTest1 )
 
