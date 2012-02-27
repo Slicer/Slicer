@@ -596,9 +596,11 @@ void qSlicerMainWindow::setupMenuActions()
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
 
-//#ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  d->actionViewExtensionManager->setVisible(QSettings().value("Extensions/ManagerEnabled").toBool());
+
+#ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   d->actionViewExtensionManager->setVisible(false);
-//#endif
+#endif
 #ifndef Slicer_USE_PYTHONQT
   d->actionWindowPythonInteractor->setVisible(false);
 #endif
