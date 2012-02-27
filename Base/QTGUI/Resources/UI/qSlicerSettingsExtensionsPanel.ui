@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSettingsExtensionsPanel</class>
+ <widget class="ctkSettingsPanel" name="qSlicerSettingsExtensionsPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>751</width>
+    <height>111</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Module Settings</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="ExtensionsServerUrlLabel">
+     <property name="text">
+      <string>Extensions server URL:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="ExtensionsServerUrlLineEdit"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="ExtensionsInstallPathLabel">
+     <property name="text">
+      <string>Extensions installation path:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="RestartRequestedLabel">
+     <property name="text">
+      <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSettingsPanel</class>
+   <extends>QWidget</extends>
+   <header>ctkSettingsPanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

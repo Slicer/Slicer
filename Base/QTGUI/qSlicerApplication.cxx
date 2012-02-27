@@ -41,6 +41,9 @@
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
 #endif
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+# include "qSlicerSettingsExtensionsPanel.h"
+#endif
 #include "qSlicerSettingsGeneralPanel.h"
 #include "qSlicerSettingsModulesPanel.h"
 
@@ -127,11 +130,19 @@ void qSlicerApplicationPrivate::init()
   // Settings Dialog
   //----------------------------------------------------------------------------
   this->SettingsDialog = new ctkSettingsDialog(0);
+
   this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
+
   qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
-
   settingsModulesPanel->setRestartRequested(false);
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
+  this->SettingsDialog->addPanel("Extensions settings", settingsExtensionsPanel);
+  settingsExtensionsPanel->setRestartRequested(false);
+#endif
+
   QObject::connect(this->SettingsDialog, SIGNAL(accepted()),
                    q, SLOT(onSettingDialogAccepted()));
 }

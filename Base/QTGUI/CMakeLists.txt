@@ -89,6 +89,8 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsWizardRestartPage.h
     qSlicerExtensionsWizardWelcomePage.cxx
     qSlicerExtensionsWizardWelcomePage.h
+    qSlicerSettingsExtensionsPanel.cxx
+    qSlicerSettingsExtensionsPanel.h
     )
 endif()
 
@@ -163,6 +165,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsWizardOverviewPage.h
     qSlicerExtensionsWizardRestartPage.h
     qSlicerExtensionsWizardWelcomePage.h
+    qSlicerSettingsExtensionsPanel.h
     )
 endif()
 
@@ -195,6 +198,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
     Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
     Resources/UI/qSlicerExtensionsWizardRestartPage.ui
+    Resources/UI/qSlicerSettingsExtensionsPanel.ui
     )
 endif()
 
