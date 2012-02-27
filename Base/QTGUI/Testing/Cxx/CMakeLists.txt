@@ -16,7 +16,6 @@ if(BUILD_TESTING)
     )
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     list(APPEND KIT_TEST_SRCS
-      qSlicerExtensionsWizardTest1.cxx
       )
   endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -53,7 +52,6 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerWidgetTest1 )
   SIMPLE_TEST( qSlicerWidgetTest2 )
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-    SIMPLE_TEST( qSlicerExtensionsWizardTest1 )
   endif()
 
 endif()

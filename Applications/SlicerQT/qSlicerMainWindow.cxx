@@ -39,7 +39,6 @@
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-# include "qSlicerExtensionsWizard.h"
 #endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
@@ -588,9 +587,9 @@ void qSlicerMainWindow::setupMenuActions()
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
 
-#ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+//#ifndef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   d->actionViewExtensionManager->setVisible(false);
-#endif
+//#endif
 #ifndef Slicer_USE_PYTHONQT
   d->actionWindowPythonInteractor->setVisible(false);
 #endif
@@ -628,8 +627,6 @@ void qSlicerMainWindow::onEditApplicationSettingsActionTriggered()
 void qSlicerMainWindow::onViewExtensionManagerActionTriggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerExtensionsWizard extensionsManager(this);
-  extensionsManager.exec();
 #endif
 }
 

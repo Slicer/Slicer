@@ -89,14 +89,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.cxx
     qSlicerExtensionsManagerWidget.h
-    qSlicerExtensionsWizard.cxx
-    qSlicerExtensionsWizard.h
-    qSlicerExtensionsWizardOverviewPage.cxx
-    qSlicerExtensionsWizardOverviewPage.h
-    qSlicerExtensionsWizardRestartPage.cxx
-    qSlicerExtensionsWizardRestartPage.h
-    qSlicerExtensionsWizardWelcomePage.cxx
-    qSlicerExtensionsWizardWelcomePage.h
     qSlicerSettingsExtensionsPanel.cxx
     qSlicerSettingsExtensionsPanel.h
     )
@@ -173,10 +165,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManageWidget.h
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.h
-    qSlicerExtensionsWizard.h
-    qSlicerExtensionsWizardOverviewPage.h
-    qSlicerExtensionsWizardRestartPage.h
-    qSlicerExtensionsWizardWelcomePage.h
     qSlicerSettingsExtensionsPanel.h
     )
 endif()
@@ -212,9 +200,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     Resources/UI/qSlicerExtensionsManageWidget.ui
     Resources/UI/qSlicerExtensionsManagerDialog.ui
     Resources/UI/qSlicerExtensionsManagerWidget.ui
-    Resources/UI/qSlicerExtensionsWizardWelcomePage.ui
-    Resources/UI/qSlicerExtensionsWizardOverviewPage.ui
-    Resources/UI/qSlicerExtensionsWizardRestartPage.ui
     Resources/UI/qSlicerSettingsExtensionsPanel.ui
     )
 endif()
@@ -223,7 +208,6 @@ endif()
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_UI_SRCS
     Resources/UI/qSlicerSettingsPythonPanel.ui
-  Resources/UI/qSlicerSettingsPythonPanel.ui
   )
 endif()
 
