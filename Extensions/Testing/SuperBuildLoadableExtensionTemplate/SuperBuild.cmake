@@ -48,7 +48,7 @@ ExternalProject_Add(${proj}
     #-DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE}
     # Slicer
     -DSlicer_DIR:PATH=${Slicer_DIR}
-  DEPENDS 
+  DEPENDS
     ${${EXTENSION_NAME}_DEPENDENCIES}
   )
 

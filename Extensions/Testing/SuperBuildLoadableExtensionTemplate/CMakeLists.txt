@@ -15,8 +15,16 @@ endif()
 #   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
 #-----------------------------------------------------------------------------
 set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate)
+
+#-----------------------------------------------------------------------------
+# Extension description
+#-----------------------------------------------------------------------------
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
+set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+set(EXTENSION_STATUS "Beta")
+set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
+set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 
 #-----------------------------------------------------------------------------
 # Prerequisites
@@ -35,6 +43,9 @@ if(NOT Slicer_SOURCE_DIR)
   find_package(Git REQUIRED)
 endif()
 
+set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
+set(EXTENSION_README_FILE ${Slicer_README_FILE})
+
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------
@@ -49,17 +60,6 @@ endif()
 # Add subdirectories
 #-----------------------------------------------------------------------------
 add_subdirectory(Logic)
-
-#-----------------------------------------------------------------------------
-# Extension description
-#-----------------------------------------------------------------------------
-set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
-set(EXTENSION_STATUS "Beta")
-set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
-set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
-
-set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
-set(EXTENSION_README_FILE ${Slicer_README_FILE})
 
 #-----------------------------------------------------------------------------
 # Sources
