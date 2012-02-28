@@ -1,5 +1,6 @@
 // MRML includes
 #include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationHierarchyStorageNode.h"
 #include "vtkMRMLAnnotationNode.h"
 #include "vtkMRMLScene.h"
 
@@ -162,4 +163,22 @@ void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection *children)
       } // check if it is a direct child of this
 
     } // loop through all nodes
+}
+
+//-------------------------------------------------------------------------
+bool vtkMRMLAnnotationHierarchyNode::CanApplyNonLinearTransforms()const
+{
+  return true;
+}
+
+//-------------------------------------------------------------------------
+void vtkMRMLAnnotationHierarchyNode::ApplyTransform(vtkAbstractTransform* transform)
+{
+  // iterate over children?
+}
+
+//-------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLAnnotationHierarchyNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLStorageNode::SafeDownCast(vtkMRMLAnnotationHierarchyStorageNode::New());
 }

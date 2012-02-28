@@ -3,6 +3,7 @@
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
+#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
@@ -464,6 +465,17 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode,  
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  // special case: if this annotation is in a hierarchy, the hierarchy took
+  // care of writing it already
+  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
+  
+  if (hnode &&
+      hnode->GetParentNodeID())
+    {
+    vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
+    return 1;
+    }
+  
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 

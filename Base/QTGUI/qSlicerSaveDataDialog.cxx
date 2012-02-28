@@ -41,6 +41,7 @@
 #include <vtkCacheManager.h>
 #include <vtkCollection.h>
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
+#include <vtkMRMLHierarchyNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSceneViewNode.h>
@@ -224,10 +225,28 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
 {
+  if (!node)
+    {
+    return;
+    }
+
   // Don't show if the node doesn't want to (internal node)
   if (node->GetHideFromEditors())
     {
     return;
+    }
+
+  // if the node is an annotation node and in a hierarchy, the hierarchy will
+  // take care of writing it out
+  if (node->IsA("vtkMRMLAnnotationNode"))
+    {
+    vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(node->GetScene(), node->GetID());
+    if (hnode &&
+        hnode->GetParentNodeID())
+      {
+      // std::cout << "Skipping node in a hierarchy: " << node->GetName() << std::endl;
+      return;
+      }
     }
 
   // get absolute filename

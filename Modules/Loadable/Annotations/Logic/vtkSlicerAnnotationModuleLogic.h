@@ -259,7 +259,8 @@ public:
     None = 0,
     Fiducial,
     Ruler,
-    ROI
+    ROI,
+    List
   };
 
   

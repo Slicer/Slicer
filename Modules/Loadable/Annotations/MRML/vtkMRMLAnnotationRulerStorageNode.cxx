@@ -2,6 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
@@ -219,20 +220,20 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode
 
   if (refNode == NULL)
     {
-      vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
-      return 0;
+    vtkErrorMacro("ReadAnnotation: unable to cast input node " << refNode->GetID() << " to a annotation node");
+    return 0;
     }
 
   if (!Superclass::ReadAnnotation(refNode)) 
     {
-      return 0;
+    return 0;
     }
 
   // open the file for reading input
   fstream fstr;
   if (!this->OpenFileToRead(fstr, refNode))
     {
-      return 0;
+    return 0;
     }
 
   // turn off modified events
@@ -314,6 +315,34 @@ int vtkMRMLAnnotationRulerStorageNode::ReadData(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
+int vtkMRMLAnnotationRulerStorageNode::ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode)
+{
+
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadOneRuler: can't read into a null node");
+    return 0;
+    }
+
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if (!this->GetAddToScene())
+    {
+    return 1;
+    }
+
+  if (!fstr.is_open())
+    {
+    vtkErrorMacro("ReadOneRuler: file isn't open");
+    return 0;
+    }
+
+  
+  vtkErrorMacro("ReadOneRuler: not implemented yet!");
+  return 0;
+}
+                                                    
+
+//----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
 {
    // put down a header
@@ -348,6 +377,17 @@ void vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vt
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+   // special case: if this annotation is in a hierarchy, the hierarchy took
+   // care of writing it already
+   vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
+   
+   if (hnode &&
+       hnode->GetParentNodeID())
+     {
+     vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
+     return 1;
+     }  
+
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 

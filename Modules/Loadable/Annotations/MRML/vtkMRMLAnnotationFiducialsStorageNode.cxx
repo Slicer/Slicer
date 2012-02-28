@@ -1,8 +1,9 @@
 // Annotation includes
+#include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
-#include "vtkMRMLAnnotationFiducialNode.h"
+
 
 // MRML includes
 #include "vtkMRMLScene.h"
@@ -340,6 +341,120 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   fiducialNode->SetModifiedSinceRead(0);
+  
+  return 1;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *refNode)
+{
+  if (refNode == NULL)
+    {
+    vtkErrorMacro("ReadOneFiducial: can't read into a null node");
+    return 0;
+    }
+
+  // do not read if if we are not in the scene (for example inside snapshot)
+  if (!this->GetAddToScene())
+    {
+    return 1;
+    }
+
+  if (!fstr.is_open())
+    {
+    vtkErrorMacro("ReadOneFiducial: file isn't open");
+    return 0;
+    }
+  refNode->CreateAnnotationTextDisplayNode();
+  refNode->CreateAnnotationPointDisplayNode();
+
+  // turn off modified events
+  int modFlag = refNode->GetDisableModifiedEvent();
+  refNode->DisableModifiedEventOn();
+  char line[1024];
+  // default column ordering for text annotation info 
+  int typeColumn = 0;
+  int annotationColumn = 1;
+  int selColumn  = 2;
+  int visColumn  = 3;
+  int numColumns = 4;
+  
+  // default column ordering for point annotation info - this is exactly the same as for fiducial
+  // first pass: line will have label,x,y,z,selected,visible
+  int labelColumn = 0;
+  int xPointColumn = 1;
+  int yPointColumn = 2;
+  int zPointColumn = 3;
+  int selPointColumn  = 4;
+  int visPointColumn  = 5;
+  int numPointColumns = 6;
+
+  // go line by line through the file
+  bool doneOne = false;
+  
+  while (fstr.good() && !doneOne)
+    {
+    fstr.getline(line, 1024);
+    vtkDebugMacro("ReadOneFiducials: working on line: '" << line << "'");
+    if (line[0] == '\0')
+      {
+      // is empty
+      continue;
+      }
+    // does it start with a # ?
+        // Property
+    if (line[0] == '#')
+      {
+      if (line[1] == ' ') 
+        {
+        // it could be defining the text properties
+        int retval =  this->ReadAnnotationTextProperties(refNode, line, typeColumn, annotationColumn, selColumn, visColumn, numColumns);
+        if (retval <= 0)
+          {
+          // it could be defining the fiducial properties
+          if (!this->ReadAnnotationFiducialsProperties(refNode, line, labelColumn, xPointColumn, yPointColumn,  zPointColumn, selPointColumn, visPointColumn, numPointColumns))
+            {
+            // or it could be defining the point display properties
+            if (this->ReadAnnotationPointDisplayProperties(refNode->GetAnnotationPointDisplayNode(), line, "point") < 0 )
+              {
+              vtkWarningMacro("ReadOneFiducial: have a # line that can't parse:\n'" << line << "'");
+              // skip, may be the file name/header line
+              }
+            else { vtkDebugMacro("ReadOneFiducial: read point disp properties: '" << line << "'" ); }
+            }
+           else { vtkDebugMacro("ReadOneFiducial: read fids properties: '" << line << "'" ); }
+          }
+        else { vtkDebugMacro("ReadOneFiducial: read annot text properties returned " << retval << " for line: '" << line << "'" ); }
+        }
+      }
+    else
+      {
+      // could be text data
+      if (!this->ReadAnnotationTextData(refNode, line, typeColumn, annotationColumn,  selColumn,  visColumn, numColumns))
+        {
+        // could be point data
+        if (this->ReadAnnotationFiducialsData(refNode, line, labelColumn, xPointColumn, yPointColumn, zPointColumn, selPointColumn,  
+                                              visPointColumn, numPointColumns) < 0 ) 
+          {
+          vtkDebugMacro("ReadOneFiducial: read annotation text data and fids data both failed on line: '" << line << "'" );
+          }
+        else
+          {
+          vtkDebugMacro("ReadOneFiducial: read annotation fid data succeeded on line: '" << line << "'" );
+          // have read one point, this should be the last thing, so say we're done
+          doneOne = true;
+          }
+        }
+      else
+        {
+        vtkDebugMacro("ReadOneFiducial: read annotation text data succeeded on line: '" << line << "'" );
+        }
+      }
+    }
+  
+  refNode->SetDisableModifiedEvent(modFlag);
+    
+  refNode->SetModifiedSinceRead(0);
   
   return 1;
 }

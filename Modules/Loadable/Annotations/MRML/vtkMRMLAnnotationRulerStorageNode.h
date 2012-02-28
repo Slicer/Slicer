@@ -14,7 +14,11 @@ class vtkMRMLAnnotationRulerNode;
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode : public vtkMRMLAnnotationLinesStorageNode
 {
-  public:
+  /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
+  /// call the protected function WriteData(refNode, of)
+  friend class vtkMRMLAnnotationHierarchyStorageNode;
+
+public:
   static vtkMRMLAnnotationRulerStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationRulerStorageNode,vtkMRMLAnnotationLinesStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -53,6 +57,10 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNo
   // Description:
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "AnnotationRulerStorage";};
+
+  /// Read a single ruler from an open list file, called by the hierarchy
+  /// storage node
+  int ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode);
 
 protected:
 

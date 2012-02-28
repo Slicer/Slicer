@@ -33,6 +33,10 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationFiducialsStora
   // Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
+  /// utility method called by the annotation hierarchy node to let this
+  /// storage node read a single fiducial's data from an already open file
+  int ReadOneFiducial(fstream & fstr, vtkMRMLAnnotationFiducialNode *fiducialNode);
+
 protected:
 
 

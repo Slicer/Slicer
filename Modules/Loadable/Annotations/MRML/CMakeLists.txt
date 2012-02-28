@@ -21,6 +21,8 @@ set(module_mrml_SRCS
   vtkMRMLAnnotationSnapshotStorageNode.h
   vtkMRMLAnnotationHierarchyNode.cxx
   vtkMRMLAnnotationHierarchyNode.h
+  vtkMRMLAnnotationHierarchyStorageNode.cxx
+  vtkMRMLAnnotationHierarchyStorageNode.h
   vtkMRMLAnnotationNode.cxx
   vtkMRMLAnnotationNode.h
   vtkMRMLAnnotationStorageNode.cxx

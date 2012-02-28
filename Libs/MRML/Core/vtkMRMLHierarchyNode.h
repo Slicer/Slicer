@@ -18,6 +18,7 @@
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
 
 // VTK includes
 class vtkCollection;
@@ -25,11 +26,11 @@ class vtkCollection;
 // STD includes
 #include <vector>
 
-class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLStorableNode
 {
 public:
   static vtkMRMLHierarchyNode *New();
-  vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLHierarchyNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -63,6 +64,12 @@ public:
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+//  virtual bool CanApplyNonLinearTransforms()const;
+//  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return NULL; };
+
+  
   /// 
   /// Associated prent MRML node
   vtkMRMLHierarchyNode* GetParentNode();

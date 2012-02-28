@@ -136,6 +136,10 @@ bool qSlicerAnnotationsIO::load(const IOProperties& properties)
     {
     fileType = vtkSlicerAnnotationModuleLogic::ROI;
     }
+  else if (properties.contains("list") && properties["list"].toBool() == true)
+    {
+    fileType = vtkSlicerAnnotationModuleLogic::List;
+    }
 
   char * nodeID = d->AnnotationLogic->LoadAnnotation(
     fileName.toLatin1().data(), name.toLatin1(), fileType);

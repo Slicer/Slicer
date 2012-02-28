@@ -3,6 +3,7 @@
 #include "vtkMRMLAnnotationStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
@@ -645,6 +646,17 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
     {
     vtkWarningMacro("WriteData: reference node is null.");
     return 0;
+    }
+
+  // special case: if this annotation is in a hierarchy, the hierarchy took
+  // care of writing it already
+  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
+  
+  if (hnode &&
+      hnode->GetParentNodeID())
+    {
+    vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
+    return 1;
     }
   // open the file for writing
   fstream of;

@@ -33,7 +33,6 @@ public:
     return "vtkMRMLHierarchyNodeTestHelper1";
     }
 
-  virtual bool CanApplyNonLinearTransforms() { return false; }
 };
 
 int vtkMRMLHierarchyNodeTest1(int , char * [] )

@@ -15,7 +15,11 @@ class vtkMRMLAnnotationControlPointsNode;
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
 {
-  public:
+  /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
+  /// call the protected function WriteData(refNode, of)
+  friend class vtkMRMLAnnotationHierarchyStorageNode;
+
+public:
   static vtkMRMLAnnotationControlPointsStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationControlPointsStorageNode,vtkMRMLAnnotationStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);

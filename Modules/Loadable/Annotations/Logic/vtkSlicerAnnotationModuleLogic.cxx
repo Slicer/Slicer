@@ -10,6 +10,7 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
+#include "vtkMRMLAnnotationHierarchyStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
@@ -273,6 +274,28 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
   else if (fileType == this->ROI)
     {
     vtkErrorMacro("LoadAnnotation: ROI reading not supported yet, cannot read " << filename);
+    }
+  else if (fileType == this->List)
+    {
+    vtkDebugMacro("LoadAnnotation: Loading it as an annotation hierarchy");
+    vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode> hStorageNode = vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode>::New();
+    vtkMRMLAnnotationHierarchyNode *hNode = vtkMRMLAnnotationHierarchyNode::New();
+    hNode->SetName(name);
+    hStorageNode->SetFileName(filename);
+    // add the storage node to the scene
+    this->GetMRMLScene()->AddNode(hStorageNode);
+    hNode->SetScene(this->GetMRMLScene());
+
+    this->GetMRMLScene()->AddNode(hNode);
+    hNode->SetAndObserveStorageNodeID(hStorageNode->GetID());
+
+    if (hStorageNode->ReadData(hNode))
+      {
+      vtkDebugMacro("LoadAnnotation: annotation list storage node read " << filename);
+      nodeID =  hNode->GetID();
+      }
+    hStorageNode->Delete();
+    hNode->Delete();
     }
   else
     {
@@ -832,6 +855,10 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       vtkMRMLAnnotationHierarchyNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
+
+  vtkMRMLAnnotationHierarchyStorageNode* annotationHierarchyStorageNode = vtkMRMLAnnotationHierarchyStorageNode::New();
+  this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyStorageNode);
+  annotationHierarchyStorageNode->Delete();
 }
 
 //---------------------------------------------------------------------------
