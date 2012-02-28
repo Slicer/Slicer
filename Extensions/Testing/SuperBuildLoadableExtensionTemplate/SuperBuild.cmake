@@ -26,7 +26,9 @@ endif()
 # Project dependencies
 #-----------------------------------------------------------------------------
 
-set(${EXTENSION_NAME}_DEPENDENCIES )
+set(${EXTENSION_NAME}_DEPENDENCIES "")
+
+SlicerMacroCheckExternalProjectDependency(${EXTENSION_NAME})
 
 set(proj ${EXTENSION_NAME})
 ExternalProject_Add(${proj}
@@ -45,7 +47,6 @@ ExternalProject_Add(${proj}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     -D${proj}_SUPERBUILD:BOOL=OFF
     -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${proj}_BINARY_DIR}
-    #-DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE}
     # Slicer
     -DSlicer_DIR:PATH=${Slicer_DIR}
   DEPENDS
