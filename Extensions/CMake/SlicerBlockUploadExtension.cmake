@@ -1,4 +1,3 @@
-
 #-----------------------------------------------------------------------------
 # Sanity checks
 set(expected_defined_vars CMAKE_CTEST_COMMAND EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_DESCRIPTION EXTENSION_HOMEPAGE EXTENSION_SOURCE_DIR EXTENSION_SUPERBUILD_BINARY_DIR EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED Slicer_CMAKE_DIR Slicer_EXTENSIONS_CMAKE_DIR Slicer_DIR EXTENSION_COMPILER EXTENSION_BITNESS Slicer_EXTENSION_CMAKE_GENERATOR Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR)
@@ -32,7 +31,7 @@ endfunction()
 #-----------------------------------------------------------------------------
 # The following variable can be used while testing the script
 #-----------------------------------------------------------------------------
-set(CTEST_EXTRA_VERBOSE FALSE)
+set(CTEST_EXTRA_VERBOSE TRUE)
 set(RUN_CTEST_CONFIGURE TRUE)
 set(RUN_CTEST_BUILD TRUE)
 set(RUN_CTEST_TEST TRUE)
@@ -70,12 +69,6 @@ set(script_arg_list
   MIDAS_PACKAGE_EMAIL=${MIDAS_PACKAGE_EMAIL}
   MIDAS_PACKAGE_API_KEY=${MIDAS_PACKAGE_API_KEY}
   )
-if(NOT "${CMAKE_CFG_INTDIR}" STREQUAL "")
-  list(APPEND script_arg_list CMAKE_CFG_INTDIR=${CMAKE_CFG_INTDIR})
-endif()
-if(NOT "${CMAKE_BUILD_TYPE}" STREQUAL "")
-  list(APPEND script_arg_list CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
-endif()
 if(NOT "${CTEST_MODEL}" STREQUAL "")
   list(APPEND script_arg_list CTEST_MODEL=${CTEST_MODEL})
 endif()
@@ -88,10 +81,20 @@ if(CTEST_EXTRA_VERBOSE)
 endif()
 
 #-----------------------------------------------------------------------------
+# Set CTEST_BUILD_CONFIGURATION here - it shouldn't be escaped using 'SlicerConvertScriptArgListToCTestFormat'
+# See http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_CFG_INTDIR
+if(CMAKE_CONFIGURATION_TYPES)
+  set(CTEST_BUILD_CONFIGURATION ${CMAKE_CFG_INTDIR})
+else()
+  set(CTEST_BUILD_CONFIGURATION ${CMAKE_BUILD_TYPE})
+endif()
+set(ctest_build_configuration_arg "CTEST_BUILD_CONFIGURATION\#\#${CTEST_BUILD_CONFIGURATION}")
+
+#-----------------------------------------------------------------------------
 # Set EXTENSION_TEST_COMMAND
 set(script_arg_list_for_test ${script_arg_list})
 list(APPEND script_arg_list_for_test RUN_CTEST_UPLOAD=FALSE)
-set(script_args "")
+set(script_args "${ctest_build_configuration_arg}")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_test}" script_args)
 set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
 
@@ -104,6 +107,6 @@ list(APPEND script_arg_list_for_upload
   EXTENSION_BITNESS=${EXTENSION_BITNESS}
   EXTENSION_OPERATING_SYSTEM=${EXTENSION_OPERATING_SYSTEM}
   )
-set(script_args "")
+set(script_args "${ctest_build_configuration_arg}")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_upload}" script_args)
-set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
+set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
