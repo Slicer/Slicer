@@ -105,6 +105,9 @@ function(SlicerFunctionMIDASUploadExtension)
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
+  set(api_call_log ${MY_TMP_DIR}/SlicerFunctionMIDASUploadExtension-log.txt)
+  file(WRITE ${api_call_log} ${log})
+
   if(status STREQUAL "ok")
     set(${MY_RESULT_VARNAME} "ok" PARENT_SCOPE)
   else()
