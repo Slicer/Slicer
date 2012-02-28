@@ -17,20 +17,19 @@ endif()
 set(EXTENSION_NAME CLIExtensionTemplate)
 
 #-----------------------------------------------------------------------------
-# Extension meta information
+# Extension metadata
 #-----------------------------------------------------------------------------
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/CLIExtensionTemplate/CLIExtensionTemplate.png?revision=19437&view=co")
-set(EXTENSION_CONTRIBUTORS "Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)")
-set(EXTENSION_MAJOR_VERSION 0)
-set(EXTENSION_MINOR_VERSION 1)
-set(EXTENSION_PATCH_VERSION 0)
 set(EXTENSION_STATUS "Beta")
+set(EXTENSION_CONTRIBUTORS "Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of CLI module built as an extension")
 set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/a/ab/Slicer-r19441-CLIExtensionTemplate-screenshot.png http://wiki.slicer.org/slicerWiki/images/1/1e/Slicer-r19441-CLIExtensionTemplate-screenshot-2.png")
 set(EXTENSION_ACKNOWLEDGEMENTS "This work was supported by ...")
-set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
+set(EXTENSION_MAJOR_VERSION 0)
+set(EXTENSION_MINOR_VERSION 1)
+set(EXTENSION_PATCH_VERSION 0)
 
 #-----------------------------------------------------------------------------
 # Prerequisites
@@ -47,6 +46,7 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
   set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
   set(EXTENSION_README_FILE ${Slicer_README_FILE})
+  set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
 
   include(SlicerEnableExtensionTesting)
 endif()

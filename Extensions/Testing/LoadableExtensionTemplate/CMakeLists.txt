@@ -17,7 +17,7 @@ endif()
 set(EXTENSION_NAME LoadableExtensionTemplate)
 
 #-----------------------------------------------------------------------------
-# Prerequisites
+# Extension metadata
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
@@ -28,7 +28,12 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module built as an extension")
   set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/4/42/Slicer-r19441-LoadableExtensionTemplate-screenshot.png")
   set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
+endif()
 
+#-----------------------------------------------------------------------------
+# Prerequisites
+#-----------------------------------------------------------------------------
+if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer REQUIRED)
 
   # Additional C/CXX flags - Should be defined before including Slicer_USE_FILE

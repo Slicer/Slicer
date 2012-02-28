@@ -17,22 +17,23 @@ endif()
 set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate)
 
 #-----------------------------------------------------------------------------
-# Extension description
+# Extension metadata
 #-----------------------------------------------------------------------------
+set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/SuperBuildLoadableExtensionTemplate/Resources/Icons/SuperBuildLoadableExtensionTemplate.png?revision=19437&view=co")
-set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
-set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
 set(EXTENSION_STATUS "Beta")
 set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
 set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/b/b3/Slicer-r19441-SuperBuildLoadableExtensionTemplate-screenshot.png")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
+set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
 
 #-----------------------------------------------------------------------------
 # Prerequisites
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
+
   find_package(Slicer REQUIRED)
 
   # Additional C/CXX flags - Should be defined before including Slicer_USE_FILE
