@@ -107,6 +107,8 @@ def findChildren(widget=None,name="",text="",title="",className=""):
     # sometimes, p is null, f.e. when using --python-script or --python-code
     if not p:
       break
+    if not hasattr(p,'children'):
+      continue
     parents += p.children()
     if name and fnmatch.fnmatch(p.name, name):
       children.append(p)
