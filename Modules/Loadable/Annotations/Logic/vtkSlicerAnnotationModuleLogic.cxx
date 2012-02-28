@@ -281,6 +281,9 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode> hStorageNode = vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode>::New();
     vtkMRMLAnnotationHierarchyNode *hNode = vtkMRMLAnnotationHierarchyNode::New();
     hNode->SetName(name);
+    hNode->HideFromEditorsOff();
+    // make it a child of the top level annotations
+    hNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
     hStorageNode->SetFileName(filename);
     // add the storage node to the scene
     this->GetMRMLScene()->AddNode(hStorageNode);
