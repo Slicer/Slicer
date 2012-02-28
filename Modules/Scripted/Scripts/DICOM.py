@@ -98,7 +98,7 @@ class DICOMWidget:
     pass
 
   def exit(self):
-    pass
+    self.detailsPopup.close()
 
   def updateGUIFromMRML(self, caller, event):
     pass
@@ -199,6 +199,9 @@ class DICOMWidget:
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
 
     self.contextMenu = qt.QMenu(self.tree)
+    self.exportAction = qt.QAction("Export to Study", self.contextMenu)
+    self.contextMenu.addAction(self.exportAction)
+    self.exportAction.enabled = False
     self.deleteAction = qt.QAction("Delete", self.contextMenu)
     self.contextMenu.addAction(self.deleteAction)
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
@@ -258,9 +261,9 @@ class DICOMWidget:
       self.loadButton.enabled = False 
       self.sendButton.enabled = False
     if typeRole:
-      self.exportButton.enabled = self.dicomModelTypes[typeRole] == "Study"
+      self.exportAction.enabled = self.dicomModelTypes[typeRole] == "Study"
     else:
-      self.exportButton.enabled = False
+      self.exportAction.enabled = False
     self.previewLabel.text = "Selection: " + self.dicomModelTypes[typeRole]
     self.detailsPopup.open()
     uid = self.selection.data(self.dicomModelUIDRole)
@@ -277,8 +280,9 @@ class DICOMWidget:
       typeRole = self.selection.data(self.dicomModelTypeRole)
       role = self.dicomModelTypes[typeRole]
       uid = self.selection.data(self.dicomModelUIDRole)
-      if self.okayCancel('This will remove the files themselves and references to them in the database\n\nDelete %s?' % role):
+      if self.okayCancel('This will remove references from the database\n(Files will not be deleted)\n\nDelete %s?' % role):
         # TODO: add delete option to ctkDICOMDatabase
+        self.dicomApp.suspendModel()
         if role == "Patient":
           removeWorked = slicer.dicomDatabase.removePatient(uid)
         elif role == "Study":
@@ -287,6 +291,10 @@ class DICOMWidget:
           removeWorked = slicer.dicomDatabase.removeSeries(uid)
         if not removeWorked:
           self.messageBox(self,"Could not remove %s" % role,title='DICOM')
+        self.dicomApp.resumeModel()
+    elif action == self.exportAction:
+      self.onExportClicked()
+
 
   def onLoadButton(self):
     self.progress = qt.QProgressDialog(slicer.util.mainWindow())

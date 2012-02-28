@@ -395,7 +395,7 @@ class DICOMExporter(object):
   TODO: delete temp directories and files
   """
 
-  def __init__(self,studyUID=None,volumeNode=None,parameters=None):
+  def __init__(self,studyUID,volumeNode=None,parameters=None):
     self.studyUID = studyUID
     self.volumeNode = volumeNode
     self.parameters = parameters
@@ -458,16 +458,22 @@ class DICOMExporter(object):
             p[tags[tag]] = value
     return p
 
+  def progress(self,string):
+    # TODO: make this a callback for a gui progress dialog
+    print(string)
+
   def export(self, parameters=None):
     if not parameters:
       parameters = self.parameters
     if not parameters:
       parameters = self.parametersFromStudy()
     if self.volumeNode:
-      self.createDICOMFilesForVolume(parameters)
+      success = self.createDICOMFilesForVolume(parameters)
     else:
-      self.createDICOMFileForScene(parameters)
-    self.addFilesToDatabase()
+      success = self.createDICOMFileForScene(parameters)
+    if success:
+      self.addFilesToDatabase()
+    return success
 
   def createDICOMFilesForVolume(self, parameters):
     """
@@ -502,8 +508,12 @@ class DICOMExporter(object):
     # - use the GUI to provide progress feedback
     # - use the GUI's Logic to invoke the task
     #
-    dicomWrite = slicer.modules.imagereaddicomwrite
+    if not hasattr(slicer.modules, 'createdicomseries'):
+      return False
+    dicomWrite = slicer.modules.createdicomseries
     cliNode = slicer.cli.run(dicomWrite, None, cliparameters, wait_for_completion=True)
+    return cliNode != None
+
 
   def createDICOMFileForScene(self, parameters):
     """
@@ -528,6 +538,7 @@ class DICOMExporter(object):
     self.sdbFile = os.path.join(self.dicomDirectory, "SlicerDataBundle.dcm")
 
     # get the screen image
+    self.progress('Saving Image...')
     pixmap = qt.QPixmap.grabWidget(slicer.util.mainWindow())
     pixmap.save(self.imageFile)
     imageReader = vtk.vtkJPEGReader()
@@ -535,10 +546,12 @@ class DICOMExporter(object):
     imageReader.Update()
 
     # save the scene to the temp dir
+    self.progress('Saving Scene...')
     appLogic = slicer.app.applicationLogic()
     appLogic.SaveSceneToSlicerDataBundleDirectory(self.sceneDirectory, imageReader.GetOutput())
 
     # make the zip file
+    self.progress('Making zip...')
     zip = zipfile.ZipFile( self.zipFile, "w", zipfile.ZIP_DEFLATED )
     start = len(self.sceneDirectory) + 1
     for root, subdirs, files in os.walk(self.sceneDirectory):
@@ -552,6 +565,7 @@ class DICOMExporter(object):
     # now create the dicom file 
     # - create the dump (capture stdout)
     # cmd = "dcmdump --print-all --write-pixel %s %s" % (self.dicomDirectory, self.referenceFile)
+    self.progress('Making dicom reference file...')
     if not self.referenceFile:
       self.parametersFromStudy()
     args = ['--print-all', '--write-pixel', self.dicomDirectory, self.referenceFile]
@@ -559,9 +573,11 @@ class DICOMExporter(object):
 
     # append this to the dumped output and save the result as self.dicomDirectory/dcm.dump
     #with %s as self.zipFile and %d being its size in bytes
+    zipSizeString = "%d" % zipSize
     candygram = """(cadb,0010) LO [3D Slicer Candygram]                    #  20, 1 PrivateCreator
-(cadb,1008) OB =%s                                      #  %d, 1 Unknown Tag & Data
-""" % (self.zipFile, zipSize)
+(cadb,1008) IS %s                                       #  %d, 1 Unknown Tag & Data
+(cadb,1010) OB =%s                                      #  %d, 1 Unknown Tag & Data
+""" % (zipSizeString, len(zipSizeString), self.zipFile, zipSize)
 
     dump = dump + candygram
 
@@ -570,6 +586,7 @@ class DICOMExporter(object):
     fp.close()
 
     # cmd = "dump2dcm %s/dump.dcm %s/template.dcm" % (self.dicomDirectory, self.dicomDirectory)
+    self.progress('Encapsulating Scene in DICOM Dump...')
     args = ['%s/dump.dcm' % self.dicomDirectory, '%s/template.dcm' % self.dicomDirectory]
     DICOMLib.DICOMCommand('dump2dcm', args).start()
 
@@ -578,7 +595,10 @@ class DICOMExporter(object):
     args = ['-k', 'InstanceNumber=1', '-k', 'SeriesDescription=Slicer Data Bundle',
       '-df', '%s/template.dcm' % self.dicomDirectory,
       self.imageFile, self.sdbFile]
+    self.progress('Creating DICOM Binary File...')
     DICOMLib.DICOMCommand('img2dcm', args).start()
+    self.progress('Done')
+    return True
 
 
   def addFilesToDatabase(self):

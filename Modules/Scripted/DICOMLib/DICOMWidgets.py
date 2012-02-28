@@ -1,5 +1,4 @@
-import os
-import glob
+import os, glob, sys
 from __main__ import qt
 from __main__ import vtk
 from __main__ import ctk
@@ -32,8 +31,9 @@ class DICOMDetailsPopup(object):
   def __init__(self,dicomApp):
     self.dicomApp = dicomApp
     self.create()
+    self.popupPositioned = False
 
-  def create(self):
+  def create(self,widgetType='dialog',showHeader=False):
     """
     main window is a frame with widgets from the app
     widget repacked into it along with slicer-specific 
@@ -47,10 +47,24 @@ class DICOMDetailsPopup(object):
     self.widthSlider = slicer.util.findChildren(self.dicomApp, 'ThumbnailWidthSlider')[0]
     self.preview = slicer.util.findChildren(self.dicomApp, 'PreviewFrame')[0]
 
-    self.window = ctk.ctkPopupWidget(self.dicomApp)
-    self.window.orientation = 1
-    self.window.horizontalDirection = 0
-    self.window.alignment = 0x82
+    if widgetType == 'dialog':
+      self.window = qt.QDialog(self.dicomApp)
+    elif widgetType == 'popup':
+      self.window = ctk.ctkPopupWidget(self.dicomApp)
+      self.window.orientation = 1
+      self.window.horizontalDirection = 0
+      self.window.alignment = 0x82
+    elif widgetType == 'dock':
+      self.dock = qt.QDockWidget(slicer.util.mainWindow())
+      self.dock.setFeatures( qt.QDockWidget.DockWidgetFloatable |
+                                qt.QDockWidget.DockWidgetMovable | 
+                                qt.QDockWidget.DockWidgetClosable )
+      slicer.util.mainWindow().addDockWidget(0x15, self.dock)
+      self.window = qt.QFrame()
+      self.dock.setWidget(self.window)
+    else:
+      raise "Unknown widget type - should be dialog, dock or popup"
+
     self.window.setWindowTitle('DICOM Details')
 
     self.layout = qt.QGridLayout()
@@ -73,27 +87,39 @@ class DICOMDetailsPopup(object):
     self.layout.addLayout(self.actionLayout,0,1)
     self.actionLayout.addWidget(self.userFrame)
     
+    tableWidth = 350 if showHeader else 700
+    self.loadableTable = DICOMLoadableTable(self.userFrame,width=tableWidth)
+    self.actionLayout.addWidget(self.loadableTable.widget)
+
     self.loadButton = qt.QPushButton('Load Selection to Slicer')
     self.loadButton.enabled = False 
     self.actionLayout.addWidget(self.loadButton)
     self.loadButton.connect('clicked()', self.loadCheckedLoadables)
-
-    self.loadableTable = DICOMLoadableTable(self.userFrame)
-    self.actionLayout.addWidget(self.loadableTable.widget)
 
     self.actionLayout.addStretch(1)
 
     #
     # header related column (more details about the selected file)
     #
-    self.headerLayout = qt.QVBoxLayout()
-    self.layout.addLayout(self.headerLayout,0,2)
-    self.header = DICOMHeaderWidget(self.window)
-    self.headerLayout.addWidget(self.header.widget)
-    self.headerLayout.addStretch(1)
+    if showHeader:
+      self.headerLayout = qt.QVBoxLayout()
+      self.layout.addLayout(self.headerLayout,0,2)
+      self.header = DICOMHeaderWidget(self.window)
+      self.headerLayout.addWidget(self.header.widget)
+      self.headerLayout.addStretch(1)
 
   def open(self):
     self.window.show()
+    if not self.popupPositioned:
+      appWidth = self.dicomApp.geometry.width()
+      screenAppPos = self.dicomApp.mapToGlobal(self.dicomApp.pos)
+      x = screenAppPos.x() + appWidth
+      y = screenAppPos.y()
+      self.window.move(qt.QPoint(x,y))
+      self.popupPositioned = True
+
+  def close(self):
+    self.window.hide()
 
   def offerLoadables(self,uid,role):
     """Get all the loadable options at the currently selected level
@@ -112,14 +138,30 @@ class DICOMDetailsPopup(object):
         for serie in series:
           fileLists.append(slicer.dicomDatabase.filesForSeries(serie))
 
+    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
+    self.progress.modal = True
+    self.progress.minimumDuration = 0
+    self.progress.show()
+    self.progress.setValue(0)
+    self.progress.setMaximum(len(slicer.modules.dicomPlugins))
+    step = 0
+
     loadEnabled = False
     self.loadablesByPlugin = {}
     for pluginClass in slicer.modules.dicomPlugins:
       plugin = slicer.modules.dicomPlugins[pluginClass]()
+      if self.progress.wasCanceled:
+        break
+      self.progress.labelText = '\nChecking %s' % pluginClass
+      self.progress.setValue(step)
+      slicer.app.processEvents()
       self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
       loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
+      step +=1
     self.loadButton.enabled = loadEnabled
     self.loadableTable.setLoadables(self.loadablesByPlugin)
+    self.progress.close()
+    self.progress = None
 
   def loadCheckedLoadables(self):
     """Invoke the load method on each plugin for the DICOMLoadable
@@ -137,6 +179,8 @@ class DICOMDetailsPopup(object):
     step = 0
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
+        if self.progress.wasCanceled:
+          break
         self.progress.labelText = '\nLoading %s' % loadable.name
         self.progress.setValue(step)
         slicer.app.processEvents()
@@ -148,6 +192,7 @@ class DICOMDetailsPopup(object):
         self.progress.setValue(step)
     self.progress.close()
     self.progress = None
+    self.close()
 
 class DICOMLoadableTable(object):
   """Implement the Qt code for a table of
@@ -155,13 +200,12 @@ class DICOMLoadableTable(object):
   the given dicom files
   """
 
-  def __init__(self,parent):
+  def __init__(self,parent, width=350,height=500):
     self.widget = qt.QTableWidget(parent)
-    self.sizePolicy = qt.QSizePolicy(qt.QSizePolicy.Ignored,qt.QSizePolicy.Ignored)
-    self.sizePolicy.setVerticalStretch(1)
-    self.widget.setSizePolicy( self.sizePolicy )
-    self.widget.setMinimumHeight(500)
-    self.widget.setMinimumWidth(350)
+    self.widget.setMinimumHeight(height)
+    self.widget.setMinimumWidth(width)
+    self.width = width
+    self.height = height
     self.items = []
     self.loadables = {}
     self.setLoadables([])
@@ -177,27 +221,29 @@ class DICOMLoadableTable(object):
     self.widget.clearContents()
     self.widget.setColumnCount(2)
     self.widget.setHorizontalHeaderLabels(['DICOM Data','Warnings'])
-    self.widget.setColumnWidth(0,150)
-    self.widget.setColumnWidth(1,200)
+    self.widget.setColumnWidth(0,int(self.width * 0.4))
+    self.widget.setColumnWidth(1,int(self.width * 0.6))
     self.widget.setRowCount(loadableCount)
     row = 0
     for plugin in loadablesByPlugin:
-      for loadable in loadablesByPlugin[plugin]:
-        # name and check state
-        self.loadables[row] = loadable
-        item = qt.QTableWidgetItem(loadable.name)
-        item.setCheckState(loadable.selected * 2)
-        self.items.append(item)
-        self.widget.setItem(row,0,item)
-        item.setToolTip(loadable.tooltip)
-        # warning
-        if loadable.warning:
-          warnItem = qt.QTableWidgetItem(loadable.warning)
-          self.items.append(warnItem)
-          self.widget.setItem(row,1,warnItem)
-          item.setToolTip(item.toolTip() + "\n" + loadable.warning)
-          warnItem.setToolTip(item.toolTip())
-        row += 1
+      for selectState in (True,False):
+        for loadable in loadablesByPlugin[plugin]:
+          if loadable.selected == selectState:
+            # name and check state
+            self.loadables[row] = loadable
+            item = qt.QTableWidgetItem(loadable.name)
+            item.setCheckState(loadable.selected * 2)
+            self.items.append(item)
+            self.widget.setItem(row,0,item)
+            item.setToolTip(loadable.tooltip)
+            # warning
+            if loadable.warning:
+              warnItem = qt.QTableWidgetItem(loadable.warning)
+              self.items.append(warnItem)
+              self.widget.setItem(row,1,warnItem)
+              item.setToolTip(item.toolTip() + "\n" + loadable.warning)
+              warnItem.setToolTip(item.toolTip())
+            row += 1
     self.widget.setVerticalHeaderLabels(row * [""])
 
   def updateCheckstate(self):
@@ -214,9 +260,6 @@ class DICOMHeaderWidget(object):
 
   def __init__(self,parent):
     self.widget = qt.QTableWidget(parent)
-    self.sizePolicy = qt.QSizePolicy(7,7)
-    self.sizePolicy.setVerticalStretch(1)
-    self.widget.setSizePolicy( self.sizePolicy )
     self.widget.setMinimumHeight(500)
     self.widget.setMinimumWidth(300)
     self.items = []
@@ -280,8 +323,6 @@ class DICOMExportDialog(object):
     self.selectLayout = qt.QGridLayout()
     self.selectFrame.setLayout(self.selectLayout)
     self.exportScene = qt.QRadioButton("Export Entire Scene", self.selectFrame)
-    #TODO re-enable export scene when slicer data bundle reading works
-    self.exportScene.enabled = False
     self.exportScene.setToolTip( "Create a Slicer Data Bundle in a DICOM Private Creator\n(Only compatible with Slicer)" )
     self.exportVolume = qt.QRadioButton("Export Selected Volume", self.selectFrame)
     self.exportVolume.setToolTip( "Create a compatible DICOM series of slice images" )
@@ -429,3 +470,111 @@ class DICOMSendDialog(object):
   def onCancel(self):
     self.dialog.close()
 
+class DICOMStudyBrowser(object):
+  """Create a dialog for looking at studies and series
+
+    TODO: this is an experiment to implement some of the ideas from:
+     https://www.assembla.com/spaces/sparkit/wiki/20120125_Slicer_DICOM_browser_meeting 
+    Still a work in progress
+ """
+  def __init__(self):
+    settings = qt.QSettings()
+    directory = settings.value('DatabaseDirectory')
+    self.db = qt.QSqlDatabase.addDatabase("QSQLITE")
+    self.db.setDatabaseName('%s/ctkDICOM.sql' % directory)
+    self.db.open()
+
+    self.dialog = qt.QDialog()
+    self.dialog.setWindowTitle('Study Browser')
+    self.dialog.setLayout(qt.QVBoxLayout())
+    self.studyTable = DICOMStudyTable(self.dialog,self.db)
+    self.dialog.layout().addWidget(self.studyTable.view)
+    self.seriesTable = DICOMSeriesTable(self.dialog,self.db)
+    self.dialog.layout().addWidget(self.seriesTable.view)
+
+    self.studyTable.view.connect('clicked(QModelIndex)',self.onStudyClicked)
+
+    self.dialog.show()
+
+  def onStudyClicked(self,index):
+    uid = index.sibling(index.row(),6).data()
+    self.seriesTable.setStudyInstanceUID(uid)
+
+
+class DICOMStudyTable(object):
+  """Implement the Qt table for a list of studies by patient
+  """
+
+  def __init__(self,parent,db):
+    self.view = qt.QTableView(parent)
+    self.model = qt.QSqlQueryModel()
+    self.statement = """ SELECT 
+                            Patients.PatientsName, Patients.PatientID, Patients.PatientsBirthDate,
+                            Studies.StudyDate, Studies.StudyDescription, Studies.ModalitiesInStudy,
+                            Studies.StudyInstanceUID
+                         FROM 
+                            Patients,Studies 
+                          WHERE 
+                            Patients.UID=Studies.PatientsUID
+                         ORDER BY 
+                            Patients.PatientsName
+                         ; """
+    self.query = qt.QSqlQuery(db)
+    self.query.prepare(self.statement)
+    self.query.exec_()
+    self.model.setQuery(self.query)
+
+    self.view.setModel(self.model)
+    self.view.sortingEnabled = False
+    self.view.setSelectionBehavior(self.view.SelectRows)
+    self.view.setSelectionMode(self.view.SingleSelection)
+    self.view.setColumnWidth(0, 250)
+    self.view.setColumnWidth(1, 100)
+    self.view.setColumnWidth(2, 150)
+    self.view.setColumnWidth(3, 100)
+    self.view.setColumnWidth(4, 180)
+    self.view.setColumnWidth(5, 180)
+    self.view.setColumnWidth(6, 180)
+    self.view.verticalHeader().visible = False
+
+
+class DICOMSeriesTable(object):
+  """Implement the Qt table for a list of series for a given study
+  """
+
+  def __init__(self,parent,db):
+    self.view = qt.QTableView(parent)
+    self.model = qt.QSqlQueryModel()
+
+    self.statementFormat = """SELECT
+                            Series.SeriesNumber, Series.SeriesDescription, 
+                            Series.SeriesDate, Series.SeriesTime, Series.SeriesInstanceUID
+                         FROM 
+                            Series
+                          WHERE 
+                            Series.StudyInstanceUID='{StudyInstanceUID}'
+                         ORDER BY 
+                            Series.SeriesNumber
+                         ; """
+    self.query = qt.QSqlQuery(db)
+    self.query.prepare(self.statementFormat.format(StudyInstanceUID='Nothing'))
+    self.query.exec_()
+    self.model.setQuery(self.query)
+
+    self.view.setModel(self.model)
+    self.view.sortingEnabled = False
+    self.view.setSelectionBehavior(self.view.SelectRows)
+    self.view.setSelectionMode(self.view.SingleSelection)
+    self.view.setColumnWidth(0, 250)
+    self.view.setColumnWidth(1, 100)
+    self.view.setColumnWidth(2, 150)
+    self.view.setColumnWidth(3, 100)
+    self.view.setColumnWidth(4, 180)
+    self.view.setColumnWidth(5, 180)
+    self.view.setColumnWidth(6, 180)
+    self.view.verticalHeader().visible = False
+
+  def setStudyInstanceUID(self,uid):
+    statement = self.statementFormat.format(StudyInstanceUID=uid)
+    self.query.prepare(statement)
+    self.query.exec_()

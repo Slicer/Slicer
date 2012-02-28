@@ -2,6 +2,7 @@
 set(KIT_PYTHON_SCRIPTS
   DICOMScalarVolumePlugin.py
   DICOMDiffusionVolumePlugin.py
+  DICOMSlicerDataBundlePlugin.py
   )
 
 set(KIT_PYTHON_RESOURCES

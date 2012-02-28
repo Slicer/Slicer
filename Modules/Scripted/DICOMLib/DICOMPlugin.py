@@ -45,6 +45,34 @@ class DICOMLoadable(object):
     self.selected = False
 
 #
+# DICOMExporter
+#
+
+class DICOMExporterWorkInProgress(object):
+  """Container class for ways of exporting
+  slicer data into DICOM.
+  Each plugin returns a list of instances of this 
+  from its exportOptions method 
+  so the DICOM module can build an appropriate 
+  interface to offer user the options to export
+  and perform the exporting operation.
+  """
+
+  def __init__(self):
+    # callable to be invoked if user selects this exporter
+    self.exportCallback = None
+    # name exposed to the user for the export method
+    self.name = "Untitled Exporter"
+    # extra information the user sees on mouse over the export option
+    self.tooltip = "Creates a DICOM file from the selected data"
+    # if true, only the whole scene is an option for exporting
+    self.exportScene = False
+    # list of node types that can be exported
+    self.nodeTypes = []
+
+
+
+#
 # DICOMPlugin
 #
 
@@ -56,7 +84,20 @@ class DICOMPlugin(object):
     self.loadType = "Generic DICOM"
 
   def examine(self,fileList):
+    """Look at the list of lists of filenames and return
+    a list of DICOMLoadables that are options for loading
+    """
     return []
 
   def load(self,loadable):
+    """Accept a DICOMLoadable and perform the operation to convert
+    the referenced data into MRML nodes
+    """
     return True
+
+  def exportOptions(self):
+    """Return a list of DICOMExporter instances that describe the 
+    available techniques that this plugin offers to convert MRML
+    data into DICOM data
+    """
+    return []

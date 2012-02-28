@@ -81,10 +81,11 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     validDWI = False
     vendorName = ""
     for vendor in self.diffusionTags:
-      matchesVendor = False
+      matchesVendor = True
       for tag in self.diffusionTags[vendor]:
         value = slicer.dicomDatabase.headerValue(tag)
-        matchesVendor |= value != ""
+        hasTag = value != ""
+        matchesVendor &= hasTag
       if matchesVendor:
         validDWI = True
         vendorName = vendor

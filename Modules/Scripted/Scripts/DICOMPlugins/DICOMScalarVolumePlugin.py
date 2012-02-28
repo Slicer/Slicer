@@ -20,13 +20,17 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
 
 
   def examine(self,fileLists):
-    """ Returns a list of DICOMLoadable instances
+    """ Returns a sorted list of DICOMLoadable instances
     corresponding to ways of interpreting the 
     fileLists parameter.
     """
     loadables = []
     for files in fileLists:
       loadables += self.examineFiles(files)
+
+    # sort the loadables by series number if possible
+    loadables.sort(lambda x,y: self.seriesSorter(x,y))
+
     return loadables
 
   def examineFiles(self,files):
@@ -43,6 +47,13 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       name = d[d.index('[')+1:d.index(']')]
     except ValueError:
       name = "Unknown"
+    seriesNumber = "0020,0011"
+    d = slicer.dicomDatabase.headerValue(seriesNumber)
+    try:
+      num = d[d.index('[')+1:d.index(']')]
+      name = num + ": " + name
+    except ValueError:
+      pass
 
     # default loadable includes all files for series
     loadable = DICOMLib.DICOMLoadable()
@@ -215,6 +226,22 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         print("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
 
     return loadables
+
+  def seriesSorter(self,x,y):
+    """ returns -1, 0, 1 for sorting of strings like: "400: series description"
+    Works for DICOMLoadable or other objects with name attribute
+    """
+    if not (hasattr(x,'name') and hasattr(y,'name')):
+        return 0
+    xName = str(x.name)
+    yName = str(y.name)
+    try:
+      xNumber = int(xName[:xName.index(':')])
+      yNumber = int(yName[:yName.index(':')])
+    except ValueError:
+      return 0
+    cmp = xNumber - yNumber
+    return cmp
 
   # 
   # math utilities for processing dicom volumes
