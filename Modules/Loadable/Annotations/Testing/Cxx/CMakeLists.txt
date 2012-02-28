@@ -39,6 +39,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
   #TestAnnAngleWidget3D.cxx
+  vtkMRMLAnnotationHierarchyStorageNodeTest1.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
@@ -89,6 +90,7 @@ target_link_libraries(${KIT}CxxTests ${lib_name}
 # SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data
 
+
 file(GLOB MRMLFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.mrml")
 file(GLOB NHDRFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.nhdr")
 file(GLOB RAWGZFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/*.raw.gz")
@@ -126,6 +128,12 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #   )
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
+MESSAGE(STATUS "TEMP = ${TEMP}, CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
+
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input/Fiducials\ List.acsv
+  ${TEMP}/Fiducials\ List.acsv
+  COPYONLY)
 
 #
 # Add all the tests
