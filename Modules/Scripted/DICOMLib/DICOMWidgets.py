@@ -117,6 +117,7 @@ class DICOMDetailsPopup(object):
       y = screenAppPos.y()
       self.window.move(qt.QPoint(x,y))
       self.popupPositioned = True
+    self.window.raise_()
 
   def close(self):
     self.window.hide()
