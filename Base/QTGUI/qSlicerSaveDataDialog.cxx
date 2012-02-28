@@ -240,12 +240,16 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
   // take care of writing it out
   if (node->IsA("vtkMRMLAnnotationNode"))
     {
-    vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(node->GetScene(), node->GetID());
-    if (hnode &&
-        hnode->GetParentNodeID())
+    // not supporting rulers just yet
+    if (!node->IsA("vtkMRMLAnnotationRulerNode"))
       {
-      // std::cout << "Skipping node in a hierarchy: " << node->GetName() << std::endl;
-      return;
+      vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(node->GetScene(), node->GetID());
+      if (hnode &&
+          hnode->GetParentNodeID())
+        {
+        // std::cout << "Skipping node in a hierarchy: " << node->GetName() << std::endl;
+        return;
+        }
       }
     }
 

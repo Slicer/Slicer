@@ -12,7 +12,11 @@
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLStorageNode.h"
+
+#include <vtkMRMLDisplayableHierarchyLogic.h>
+
 #include "vtkStringArray.h"
+
 
 
 //----------------------------------------------------------------------------
@@ -86,7 +90,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   // clear out the list
-  annotationHierarchyNode->RemoveAllHierarchyChildrenNodes();
+//  annotationHierarchyNode->RemoveAllHierarchyChildrenNodes();
 
   // READ
   
@@ -136,7 +140,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
       {
       std::string linestr = std::string(line);
       std::string className = linestr.substr(18, std::string::npos);
-      std::cout << "Got className = '" << className.c_str() << "'" << std::endl;
+//      std::cout << "Got className = '" << className.c_str() << "'" << std::endl;
       if (className.compare("vtkMRMLAnnotationFiducialNode") == 0)
         {
         vtkDebugMacro("ReadData: have a fiducial node");
@@ -152,6 +156,34 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
         if (fStorageNode->ReadOneFiducial(fstr, fnode))
           {
           vtkDebugMacro("ReadData: read a fiducial from the file " << fullName.c_str());
+          // set the parent to be this hierarchy
+          vtkMRMLHierarchyNode *fidHierarchyNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(fnode->GetScene(), fnode->GetID());
+          if (fidHierarchyNode)
+            {
+//            std::cout << "Found a hierarchy node for new fiducial: " << fidHierarchyNode->GetName() << ", setting it's parent node id to " << refNode->GetID() << std::endl;
+            fidHierarchyNode->SetParentNodeID(refNode->GetID());
+            }
+          else
+            {
+            vtkWarningMacro("ReadData: didn't find a hierarchy node for new fiducial " << fnode->GetName() << ", adding one");
+            // add one
+            vtkMRMLDisplayableHierarchyLogic *displayableHierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
+            char *hid = displayableHierarchyLogic->AddDisplayableHierarchyNodeForNode(fnode);
+            if (hid)
+              {
+              fidHierarchyNode =  vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(fnode->GetScene(), fnode->GetID());
+              if (fidHierarchyNode)
+                {
+                fidHierarchyNode->SetParentNodeID(refNode->GetID());
+                }
+              else
+                {
+                vtkErrorMacro("ReadData: unable to create a hierarchy node for fiducial " << fnode->GetName());
+                }
+              }
+            displayableHierarchyLogic->Delete();
+            }
+          fnode->Delete();
           }
         else
           {
@@ -160,7 +192,8 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       else if (className.compare("vtkMRMLAnnotationRulerNode") == 0)
         {
-        vtkWarningMacro("ReadData: have a ruler node");
+        vtkWarningMacro("ReadData: have a ruler node, saved in a separate file");
+        /*
         vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode> rStorageNode = vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode>::New();
         vtkMRMLAnnotationRulerNode * rnode = vtkMRMLAnnotationRulerNode::New();
         // add the storage node to the scene
@@ -178,6 +211,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
           {
           vtkErrorMacro("ReadData: failed to read a ruler from the file " << fullName.c_str());
           }
+        */
         }
       else
         {
@@ -254,8 +288,8 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
         {
         vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(dnode);
         vtkDebugMacro("WriteData: have an annotation node with name " << annotationNode->GetName());
-        // separate this annotation by a comment line with a number
-        of << "# New Annotation: " << annotationNode->GetClassName() << endl;
+        // separate this annotation by a comment line 
+        //of << "# New Annotation: " << annotationNode->GetClassName() << endl;
         // get it's storage node and use the write to buffer methods
         vtkMRMLStorageNode *storageNode = annotationNode->GetStorageNode();
         if (!storageNode && this->GetScene())
@@ -280,15 +314,20 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
           {
           if (annotationStorageNode->IsA("vtkMRMLAnnotationRulerStorageNode"))
             {
+            /* disable for now, as can't read it yet
+            of << "# New Annotation: " << annotationNode->GetClassName() << endl;
             vtkMRMLAnnotationRulerStorageNode *rulerStorageNode = vtkMRMLAnnotationRulerStorageNode::SafeDownCast(annotationStorageNode);
             int retval = rulerStorageNode->WriteData(annotationNode, of);
             if (!retval)
               {
-              vtkErrorMacro("Error writing data for fiducial annotation " << annotationNode->GetName());
+              vtkErrorMacro("Error writing data for ruler annotation " << annotationNode->GetName());
               }
+            */
             }
           else if (annotationStorageNode->IsA("vtkMRMLAnnotationFiducialsStorageNode"))
             {
+             // separate this annotation by a comment line 
+            of << "# New Annotation: " << annotationNode->GetClassName() << endl;
             vtkMRMLAnnotationFiducialsStorageNode *fidStorageNode = vtkMRMLAnnotationFiducialsStorageNode::SafeDownCast(annotationStorageNode);
             int retval = fidStorageNode->WriteData(annotationNode, of);
             if (!retval)
@@ -298,6 +337,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
             }
           else if (annotationStorageNode->IsA("vtkMRMLAnnotationControlPointsStorageNode"))
             {
+            of << "# New Annotation: " << annotationNode->GetClassName() << endl;
             vtkMRMLAnnotationControlPointsStorageNode *cpStorageNode = vtkMRMLAnnotationControlPointsStorageNode::SafeDownCast(annotationStorageNode);
             int retval = cpStorageNode->WriteData(annotationNode, of);
             if (!retval)

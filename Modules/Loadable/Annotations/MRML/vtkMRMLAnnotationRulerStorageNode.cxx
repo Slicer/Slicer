@@ -377,6 +377,7 @@ void vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vt
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
 {
+  /* For now, disable this as can't read it yet
    // special case: if this annotation is in a hierarchy, the hierarchy took
    // care of writing it already
    vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
@@ -387,7 +388,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
      vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
      return 1;
      }  
-
+  */
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 
