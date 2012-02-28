@@ -172,7 +172,7 @@ bool vtkMRMLAnnotationHierarchyNode::CanApplyNonLinearTransforms()const
 }
 
 //-------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyNode::ApplyTransform(vtkAbstractTransform* transform)
+void vtkMRMLAnnotationHierarchyNode::ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform))
 {
   // iterate over children?
 }
