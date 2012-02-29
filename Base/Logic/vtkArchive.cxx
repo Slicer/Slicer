@@ -16,12 +16,44 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-// Std includes
+// STD includes
 #include <cstring>
+#include <iostream>
 
+namespace
+{
+
+// --------------------------------------------------------------------------
+class cmSystemTools
+{
+public:
+  static void Message(const char* m, const char* /*title*/)
+    {
+    std::cerr << m << std::endl << std::flush;
+    }
+  static void Stdout(const char* s)
+  {
+    std::cout << s;
+    std::cout.flush();
+  }
+  static void Error(const char* m1, const char* m2)
+  {
+    std::string message = "vtkArchive Error: ";
+    if(m1)
+      {
+      message += m1;
+      }
+    if(m2)
+      {
+      message += m2;
+      }
+    cmSystemTools::Message(message.c_str(), "Error");
+  }
+};
+
+// --------------------------------------------------------------------------
 #define BSDTAR_FILESIZE_PRINTF  "%lu"
 #define BSDTAR_FILESIZE_TYPE    unsigned long
-
 void list_item_verbose(FILE *out, struct archive_entry *entry)
 {
   char                   tmp[100];
@@ -141,12 +173,17 @@ void list_item_verbose(FILE *out, struct archive_entry *entry)
 # pragma warn -8066 /* unreachable code */
 #endif
 
+// --------------------------------------------------------------------------
 long copy_data(struct archive *ar, struct archive *aw)
 {
   long r;
   const void *buff;
   size_t size;
+#if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
+  __LA_INT64_T offset;
+#else
   off_t offset;
+#endif
 
   for (;;)
     {
@@ -162,13 +199,15 @@ long copy_data(struct archive *ar, struct archive *aw)
     r = archive_write_data_block(aw, buff, size, offset);
     if (r != ARCHIVE_OK)
       {
-      printf("Problem with archive_write_data_block(): %s", archive_error_string(aw));
+      cmSystemTools::Message("archive_write_data_block()",
+                             archive_error_string(aw));
       return (r);
       }
     }
   return r;
 }
 
+} // end of anonymous namespace
 
 //-----------------------------------------------------------------------------
 bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vector<std::string> * extracted_files)
@@ -181,8 +220,8 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
   int r = archive_read_open_file(a, outFileName, 10240);
   if(r)
     {
-    printf("Problem with archive_read_open_file(): %s",
-           archive_error_string(a));
+    cmSystemTools::Error("Problem with archive_read_open_file(): ",
+                         archive_error_string(a));
     return false;
     }
   for (;;)
@@ -194,8 +233,8 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     if (r != ARCHIVE_OK)
       {
-      printf("Problem with archive_read_next_header(): %s",
-             archive_error_string(a));
+      cmSystemTools::Error("Problem with archive_read_next_header(): ",
+                           archive_error_string(a));
       }
     if ( extract && extracted_files)
       {
@@ -203,7 +242,8 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     if (verbose && extract)
       {
-      printf( "x: %s", archive_entry_pathname(entry) );
+      cmSystemTools::Stdout("x ");
+      cmSystemTools::Stdout(archive_entry_pathname(entry));
       }
     if(verbose && !extract)
       {
@@ -211,24 +251,25 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     else if(!extract)
       {
-      printf("a: %s", archive_entry_pathname(entry));
+      cmSystemTools::Stdout(archive_entry_pathname(entry));
       }
     if(extract)
       {
       r = archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME);
       if (r != ARCHIVE_OK)
         {
-        printf( "Problem with archive_write_disk_set_options(): %s",
-                archive_error_string(a));
+        cmSystemTools::Error(
+          "Problem with archive_write_disk_set_options(): ",
+          archive_error_string(ext));
         }
 
       r = archive_write_header(ext, entry);
       if (r != ARCHIVE_OK)
         {
-        printf( "Problem with archive_write_header(): %s",
-                archive_error_string(a));
-        printf( "Current file: %s",
-                archive_entry_pathname(entry) );
+        cmSystemTools::Error("Problem with archive_write_header(): ",
+                             archive_error_string(ext));
+        cmSystemTools::Error("Current file:",
+                             archive_entry_pathname(entry));
         }
       else
         {
@@ -236,18 +277,17 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
         r = archive_write_finish_entry(ext);
         if (r != ARCHIVE_OK)
           {
-          printf("Problem with archive_write_finish_entry(): %s",
-                 archive_error_string(ext));
+          cmSystemTools::Error("Problem with archive_write_finish_entry(): ",
+                               archive_error_string(ext));
           }
         }
       }
     if (verbose || !extract)
       {
-      printf("\n");
+      cmSystemTools::Stdout("\n");
       }
     }
   archive_read_close(a);
   archive_read_finish(a);
-
   return true;
 }
