@@ -104,9 +104,20 @@ void vtkSlicerCropVolumeLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 {
-  vtkMRMLVolumeNode *inputVolume = pnode->GetInputVolumeNode();
+  vtkMRMLScene *scene = this->GetMRMLScene();
+
+  vtkMRMLVolumeNode *inputVolume = 
+    vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(pnode->GetInputVolumeNodeID()));
+  vtkMRMLAnnotationROINode *inputROI = 
+    vtkMRMLAnnotationROINode::SafeDownCast(scene->GetNodeByID(pnode->GetROINodeID()));
+
+  if(!inputVolume || !inputROI)
+    {
+    std::cerr << "Failed to look up input volume and/or ROI!" << std::endl;
+    return -1;
+    }
+
   vtkMRMLScalarVolumeNode *refVolume;
-  vtkMRMLAnnotationROINode *inputROI = pnode->GetROINode();
   vtkMRMLVolumeNode *outputVolume = NULL;
   vtkMatrix4x4 *inputRASToIJK = vtkMatrix4x4::New();
   vtkMatrix4x4 *inputIJKToRAS = vtkMatrix4x4::New();
@@ -115,10 +126,11 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
   vtkMRMLLinearTransformNode *movingVolumeTransform = NULL, *roiTransform = NULL;
 
   // make sure inputs are initialized
-  if(!inputVolume || !inputROI ){
+  if(!inputVolume || !inputROI )
+    {
     std::cerr << "CropVolume: Inputs are not initialized" << std::endl;
     return -1;
-  }
+    }
 
   // check the output volume type
   vtkMRMLDiffusionTensorVolumeNode *dtvnode= vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(inputVolume);
@@ -267,7 +279,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
 
   outputVolume->SetAndObserveTransformNodeID(NULL);
   outputVolume->ModifiedSinceReadOn();
-  pnode->SetAndObserveOutputVolumeNodeID(outputVolume->GetID());
+  pnode->SetOutputVolumeNodeID(outputVolume->GetID());
 
   return 0;
 }

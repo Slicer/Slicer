@@ -125,12 +125,26 @@ void qSlicerCropVolumeModuleWidget::enter()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
+void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+{
 
   this->Superclass::setMRMLScene(scene);
   if(scene == NULL)
+    {
     return;
+    }
 
+  this->initializeParameterNode(scene);
+
+  this->updateWidget();
+
+  // observe close event
+  qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, 
+    this, SLOT(onEndCloseEvent()));
+}
+
+void qSlicerCropVolumeModuleWidget::initializeParameterNode(vtkMRMLScene* scene)
+{
   vtkCollection* parameterNodes = scene->GetNodesByClass("vtkMRMLCropVolumeParametersNode");
 
   if(parameterNodes->GetNumberOfItems() > 0)
@@ -151,8 +165,6 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene){
     }
 
   parameterNodes->Delete();
-
-  this->updateWidget();
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +200,7 @@ void qSlicerCropVolumeModuleWidget::onInputVolumeChanged()
   vtkMRMLNode* node = d->InputVolumeComboBox->currentNode();
   if(node)
     {
-    this->parametersNode->SetAndObserveInputVolumeNodeID(node->GetID());
+    this->parametersNode->SetInputVolumeNodeID(node->GetID());
     }
 }
 
@@ -200,12 +212,12 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
     {
     return;
     }
-  vtkMRMLNode* node = d->InputROIComboBox->currentNode();
+  vtkMRMLAnnotationROINode* node = 
+    vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
   if(node)
     {
-    this->parametersNode->SetAndObserveROINodeID(node->GetID());
-    this->parametersNode->SetROIVisibility(
-      this->parametersNode->GetROINode()->GetVisibility());
+    this->parametersNode->SetROINodeID(node->GetID());
+    this->parametersNode->SetROIVisibility(node->GetVisibility());
     this->updateWidget();
     }
 }
@@ -219,10 +231,11 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged()
     return;
     }
   this->parametersNode->SetROIVisibility(d->VisibilityButton->isChecked());
-  if (this->parametersNode->GetROINode())
+  vtkMRMLAnnotationROINode* node = 
+    vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
+  if (node)
     {
-    this->parametersNode->GetROINode()->SetVisibility(
-      d->VisibilityButton->isChecked());
+    node->SetVisibility(d->VisibilityButton->isChecked());
     }
 }
 
@@ -277,15 +290,68 @@ void qSlicerCropVolumeModuleWidget::onIsotropicModeChanged()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCropVolumeModuleWidget::updateWidget()
+void qSlicerCropVolumeModuleWidget::onEndCloseEvent()
+{
+  this->initializeParameterNode(this->mrmlScene());
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::updateParameters()
 {
   Q_D(qSlicerCropVolumeModuleWidget);
   if(!this->parametersNode)
+    return;
+  vtkMRMLCropVolumeParametersNode *pNode = this->parametersNode;
+
+  vtkMRMLNode *volumeNode = d->InputVolumeComboBox->currentNode();
+  vtkMRMLNode *roiNode = d->InputROIComboBox->currentNode();
+
+  if(volumeNode)
+    pNode->SetInputVolumeNodeID(volumeNode->GetID());
+  else
+    pNode->SetInputVolumeNodeID(NULL);
+
+
+  if(roiNode)
+    pNode->SetROINodeID(roiNode->GetID());
+  else
+    pNode->SetROINodeID(NULL);
+
+  pNode->SetROIVisibility(d->VisibilityButton->isChecked());
+
+  if(d->NNRadioButton->isChecked())
+    pNode->SetInterpolationMode(1);
+  else if(d->LinearRadioButton->isChecked())
+    pNode->SetInterpolationMode(2);
+  else if(d->WSRadioButton->isChecked())
+    pNode->SetInterpolationMode(3);
+  else if(d->BSRadioButton->isChecked())
+    pNode->SetInterpolationMode(4);
+
+  if(d->IsotropicCheckbox->isChecked())
+    pNode->SetIsotropicResampling(1);
+
+  pNode->SetSpacingScalingConst(d->SpacingScalingSpinBox->value());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCropVolumeModuleWidget::updateWidget()
+{
+  Q_D(qSlicerCropVolumeModuleWidget);
+  if(!this->parametersNode || !this->mrmlScene())
     {
     return;
     }
   vtkMRMLCropVolumeParametersNode *parameterNode = this->parametersNode;
-  d->InputVolumeComboBox->setCurrentNode(parameterNode->GetInputVolumeNode());
+
+  vtkMRMLNode *volumeNode = this->mrmlScene()->GetNodeByID(parameterNode->GetInputVolumeNodeID());
+  vtkMRMLNode *roiNode = this->mrmlScene()->GetNodeByID(parameterNode->GetROINodeID());
+
+  if(volumeNode)
+    d->InputVolumeComboBox->setCurrentNode(volumeNode);
+  if(roiNode)
+    d->InputROIComboBox->setCurrentNode(roiNode);
 
   d->VisibilityButton->setChecked(parameterNode->GetROIVisibility());
   switch(parameterNode->GetInterpolationMode())
@@ -296,9 +362,7 @@ void qSlicerCropVolumeModuleWidget::updateWidget()
     case 4: d->BSRadioButton->setChecked(1); break;
     }
   d->IsotropicCheckbox->setChecked(parameterNode->GetIsotropicResampling());
-  d->VisibilityButton->setChecked(
-    this->parametersNode->GetROINode() &&
-    parameterNode->GetROIVisibility());
+  d->VisibilityButton->setChecked(parameterNode->GetROIVisibility());
 
   d->SpacingScalingSpinBox->setValue(parameterNode->GetSpacingScalingConst());
 }

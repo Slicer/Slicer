@@ -36,13 +36,8 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->HideFromEditors = 1;
 
   this->InputVolumeNodeID = NULL;
-  this->InputVolumeNode = NULL;
-
   this->OutputVolumeNodeID = NULL;
-  this->OutputVolumeNode = NULL;
-
   this->ROINodeID = NULL;
-  this->ROINode = NULL;
 
   this->ROIVisibility = false;
   this->InterpolationMode = 2;
@@ -55,17 +50,17 @@ vtkMRMLCropVolumeParametersNode::~vtkMRMLCropVolumeParametersNode()
 {
   if (this->InputVolumeNodeID)
     {
-    this->SetAndObserveInputVolumeNodeID(NULL);
+    this->SetInputVolumeNodeID(NULL);
     }
 
   if (this->OutputVolumeNodeID)
     {
-    this->SetAndObserveOutputVolumeNodeID(NULL);
+    this->SetOutputVolumeNodeID(NULL);
     }
 
   if (this->ROINodeID)
     {
-    this->SetAndObserveROINodeID(NULL);
+    this->SetROINodeID(NULL);
     }
 }
 
@@ -130,42 +125,6 @@ void vtkMRMLCropVolumeParametersNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  if (this->InputVolumeNodeID && !strcmp(oldID, this->InputVolumeNodeID))
-    {
-    this->SetAndObserveInputVolumeNodeID(newID);
-    }
-  if (this->OutputVolumeNodeID && !strcmp(oldID, this->OutputVolumeNodeID))
-    {
-    this->SetAndObserveOutputVolumeNodeID(newID);
-    }
-  if (this->ROINodeID && !strcmp(oldID, this->ROINodeID))
-    {
-    this->SetAndObserveROINodeID(newID);
-    }
-}
-
-//-----------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::UpdateReferences()
-{
-   Superclass::UpdateReferences();
-
-  if (this->InputVolumeNodeID != NULL && this->Scene->GetNodeByID(this->InputVolumeNodeID) == NULL)
-    {
-    this->SetAndObserveInputVolumeNodeID(NULL);
-    }
-  if (this->OutputVolumeNodeID != NULL && this->Scene->GetNodeByID(this->OutputVolumeNodeID) == NULL)
-    {
-    this->SetAndObserveOutputVolumeNodeID(NULL);
-    }
-  if (this->ROINodeID != NULL && this->Scene->GetNodeByID(this->ROINodeID) == NULL)
-    {
-    this->SetAndObserveROINodeID(NULL);
-    }
-}
-
-//----------------------------------------------------------------------------
 // Copy the node\"s attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, SliceID
 void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
@@ -182,115 +141,6 @@ void vtkMRMLCropVolumeParametersNode::Copy(vtkMRMLNode *anode)
   
   this->DisableModifiedEventOff();
   this->InvokePendingModifiedEvent();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::SetAndObserveInputVolumeNodeID(const char *volumeNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetInputVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetInputVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::SetAndObserveOutputVolumeNodeID(const char *volumeNodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, NULL);
-
-  if (volumeNodeID != NULL)
-  {
-    this->SetOutputVolumeNodeID(volumeNodeID);
-    vtkMRMLVolumeNode *node = this->GetOutputVolumeNode();
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::SetAndObserveROINodeID(const char *ROINodeID)
-{
-  vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
-
-  if (ROINodeID != NULL)
-  {
-    this->SetROINodeID(ROINodeID);
-    vtkMRMLAnnotationROINode *node = this->GetROINode();
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, node);
-  }
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLCropVolumeParametersNode::GetInputVolumeNode()
-{
-  if (this->InputVolumeNodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->InputVolumeNode != NULL && strcmp(this->InputVolumeNode->GetID(), this->InputVolumeNodeID)) ||
-            (this->InputVolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->InputVolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->InputVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
-    }
-  return this->InputVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLVolumeNode* vtkMRMLCropVolumeParametersNode::GetOutputVolumeNode()
-{
-  if (this->OutputVolumeNodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->OutputVolumeNode != NULL && strcmp(this->OutputVolumeNode->GetID(), this->OutputVolumeNodeID)) ||
-            (this->OutputVolumeNode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->OutputVolumeNodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->OutputVolumeNode, vtkMRMLVolumeNode::SafeDownCast(snode));
-    }
-  return this->OutputVolumeNode;
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLAnnotationROINode* vtkMRMLCropVolumeParametersNode::GetROINode()
-{
-  if (this->ROINodeID == NULL)
-    {
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, NULL);
-    }
-  else if (this->GetScene() &&
-           ((this->ROINode != NULL && strcmp(this->ROINode->GetID(), this->ROINodeID)) ||
-            (this->ROINode == NULL)) )
-    {
-    vtkMRMLNode* snode = this->GetScene()->GetNodeByID(this->ROINodeID);
-    vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLAnnotationROINode::SafeDownCast(snode));
-    }
-  return this->ROINode;
-}
-
-//-----------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::UpdateScene(vtkMRMLScene *scene)
-{
-  Superclass::UpdateScene(scene);
-  this->SetAndObserveInputVolumeNodeID(this->InputVolumeNodeID);
-  this->SetAndObserveOutputVolumeNodeID(this->OutputVolumeNodeID);
-  this->SetAndObserveROINodeID(this->ROINodeID);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCropVolumeParametersNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData )
-{
-    Superclass::ProcessMRMLEvents(caller, event, callData);
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-    return;
 }
 
 //----------------------------------------------------------------------------

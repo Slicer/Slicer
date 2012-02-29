@@ -31,6 +31,8 @@ protected:
   virtual void enter();
   virtual void setMRMLScene(vtkMRMLScene*);
 
+  void initializeParameterNode(vtkMRMLScene*);
+
 protected slots:
   void initializeNode(vtkMRMLNode*);
   void onInputVolumeChanged();
@@ -39,8 +41,10 @@ protected slots:
   void onInterpolationModeChanged();
   void onApply();
   void updateWidget();
+  void updateParameters();
   void onSpacingScalingValueChanged(double);
   void onIsotropicModeChanged();
+  void onEndCloseEvent();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);

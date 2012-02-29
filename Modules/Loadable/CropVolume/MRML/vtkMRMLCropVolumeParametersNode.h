@@ -56,31 +56,12 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   virtual const char* GetNodeTagName() {return "CropVolumeParameters";};
 
   // Description:
-  // Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
-  // Description:
-  // Updates this node if it depends on other nodes
-  // when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  // Description:
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
-  virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData);
-
-  // Description:
+  vtkSetReferenceStringMacro(InputVolumeNodeID);
   vtkGetStringMacro (InputVolumeNodeID);
-  void SetAndObserveInputVolumeNodeID(const char *volumeNodeID);
-  vtkMRMLVolumeNode* GetInputVolumeNode();
-  
+  vtkSetReferenceStringMacro(OutputVolumeNodeID);
   vtkGetStringMacro (OutputVolumeNodeID);
-  void SetAndObserveOutputVolumeNodeID(const char *volumeNodeID);
-  vtkMRMLVolumeNode* GetOutputVolumeNode();
-
+  vtkSetReferenceStringMacro(ROINodeID);
   vtkGetStringMacro (ROINodeID);
-  void SetAndObserveROINodeID(const char *ROINodeID);
-  vtkMRMLAnnotationROINode* GetROINode();
 
   vtkSetMacro(IsotropicResampling,bool);
   vtkGetMacro(IsotropicResampling,bool);
@@ -89,9 +70,6 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   vtkSetMacro(ROIVisibility,bool);
   vtkGetMacro(ROIVisibility,bool);
   vtkBooleanMacro(ROIVisibility,bool);
-
-  typedef enum {NearestNeighbor, Linear, Cubic}
-   InterpolationModeType;
 
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);
@@ -102,24 +80,14 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
 protected:
   vtkMRMLCropVolumeParametersNode();
   ~vtkMRMLCropVolumeParametersNode();
+
   vtkMRMLCropVolumeParametersNode(const vtkMRMLCropVolumeParametersNode&);
   void operator=(const vtkMRMLCropVolumeParametersNode&);
 
   char *InputVolumeNodeID;
   char *OutputVolumeNodeID;
-
-  vtkSetReferenceStringMacro(InputVolumeNodeID);
-  vtkSetReferenceStringMacro(OutputVolumeNodeID);
-
-  vtkMRMLVolumeNode* InputVolumeNode;
-  vtkMRMLVolumeNode* OutputVolumeNode;
-
   char *ROINodeID;
   
-  vtkSetReferenceStringMacro(ROINodeID);
-
-  vtkMRMLAnnotationROINode *ROINode;
-
   bool ROIVisibility;
   int InterpolationMode;
   bool IsotropicResampling;
