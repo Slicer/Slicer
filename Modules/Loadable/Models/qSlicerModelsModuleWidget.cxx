@@ -65,6 +65,8 @@ qSlicerModelsModuleWidget::qSlicerModelsModuleWidget(QWidget* _parent)
 //-----------------------------------------------------------------------------
 qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 {
+  // set the mrml scene to null so that stop observing it for events
+  this->setMRMLScene(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -227,14 +229,19 @@ void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
 void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   //Q_D(qSlicerModelsModuleWidget);
+
+  if (scene == this->mrmlScene())
+    {
+    return;
+    }
+
+  // listen for import end events
+  qvtkReconnect(this->mrmlScene(), scene,
+                vtkMRMLScene::EndImportEvent,
+                this, SLOT(onEndImportEvent()));
+
   this->Superclass::setMRMLScene(scene);
 
-  if (scene != NULL)
-    {
-    // listen for import end events
-    qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndImportEvent,
-                  this, SLOT(onEndImportEvent()));
-    }
 }
 
 
