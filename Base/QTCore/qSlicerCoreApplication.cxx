@@ -299,13 +299,14 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   if (!slicerHome.isEmpty())
     {
 #ifndef Q_OS_MAC
-    if (QDir(q->applicationDirPath()).dirName() != Slicer_BIN_DIR)
+    if (this->IntDir.isEmpty())
       {
-      // Additionally, let's note that IntDir value is computed with the help of "pathWithoutIntDir"
-      // within the method "discoverSlicerBinDirectory" before this call
-      // to "discoverSlicerHomeDirectory". When first called, the parameter to "pathWithoutIntDir"
-      // are "applicationDirPath" and "Slicer_BIN_DIR".
-      // Considering the case of command line module, we should use "Slicer_CLIMODULES_BIN_DIR"
+      // Additionally, in an attempt to compute InDir, let's note that its value
+      // is first set with the help of "pathWithoutIntDir" in the method
+      // "discoverSlicerBinDirectory" happening before this call.
+      // When first called, the parameters to "pathWithoutIntDir" are "applicationDirPath" and "Slicer_BIN_DIR".
+      // If set to an empty value, we should then consider the case of command line module,
+      // by trying with "Slicer_CLIMODULES_BIN_DIR".
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_CLIMODULES_BIN_DIR, this->IntDir);
       }
 #endif
