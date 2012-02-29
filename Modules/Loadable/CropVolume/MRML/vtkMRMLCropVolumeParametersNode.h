@@ -56,11 +56,11 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   virtual const char* GetNodeTagName() {return "CropVolumeParameters";};
 
   // Description:
-  vtkSetReferenceStringMacro(InputVolumeNodeID);
+  vtkSetStringMacro(InputVolumeNodeID);
   vtkGetStringMacro (InputVolumeNodeID);
-  vtkSetReferenceStringMacro(OutputVolumeNodeID);
+  vtkSetStringMacro(OutputVolumeNodeID);
   vtkGetStringMacro (OutputVolumeNodeID);
-  vtkSetReferenceStringMacro(ROINodeID);
+  vtkSetStringMacro(ROINodeID);
   vtkGetStringMacro (ROINodeID);
 
   vtkSetMacro(IsotropicResampling,bool);
