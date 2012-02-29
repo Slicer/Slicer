@@ -83,6 +83,7 @@ qSlicerScriptedLoadableModulePrivate::qSlicerScriptedLoadableModulePrivate()
 {
   this->PythonSelf = 0;
   this->Hidden = false;
+  this->Index = -1;
   for (int i = 0; i < Self::APIMethodCount; ++i)
     {
     this->PythonAPIMethods[i] = 0;
