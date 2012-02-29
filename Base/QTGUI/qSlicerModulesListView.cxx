@@ -55,6 +55,7 @@ public:
   void addModules();
   void removeModules();
 
+  int sortedInsertionIndex(const QString& moduleName)const;
   QStandardItem* moduleItem(const QString& moduleName)const;
   QStringList indexListToModules(const QModelIndexList& indexes)const;
   void setModulesCheckState(const QStringList& moduleNames, Qt::CheckState check);
@@ -168,6 +169,23 @@ void qSlicerModulesListViewPrivate::removeModules()
 }
 
 // --------------------------------------------------------------------------
+int qSlicerModulesListViewPrivate
+::sortedInsertionIndex(const QString& moduleName)const
+{
+  int index = 0;
+  for (; index < this->ModulesListModel->rowCount(); ++index)
+    {
+    QStandardItem* item = this->ModulesListModel->item(index);
+    Q_ASSERT(item);
+    if (QString::compare(moduleName, item->text(), Qt::CaseInsensitive) < 0)
+      {
+      break;
+      }
+    }
+  return index;
+}
+
+// --------------------------------------------------------------------------
 QStandardItem* qSlicerModulesListViewPrivate
 ::moduleItem(const QString& moduleName)const
 {
@@ -249,8 +267,6 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
                this, SLOT(updateModule(QString)));
     disconnect(d->FactoryManager, SIGNAL(moduleLoaded(QString)),
                this, SLOT(updateModule(QString)));
-    disconnect(d->FactoryManager, SIGNAL(modulesInstantiated(QStringList)),
-               this, SLOT(sort()));
     d->removeModules();
     }
   d->FactoryManager = factoryManager;
@@ -264,8 +280,6 @@ void qSlicerModulesListView::setFactoryManager(qSlicerAbstractModuleFactoryManag
             this, SLOT(updateModule(QString)));
     connect(d->FactoryManager, SIGNAL(moduleLoaded(QString)),
             this, SLOT(updateModule(QString)));
-    connect(d->FactoryManager, SIGNAL(modulesInstantiated(QStringList)),
-            this, SLOT(sort()));
     }
 
   this->updateModules();
@@ -404,13 +418,6 @@ void qSlicerModulesListView::scrollToSelectedModules()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerModulesListView::sort()
-{
-  Q_D(qSlicerModulesListView);
-  d->ModulesListModel->sort(0);
-}
-
-// --------------------------------------------------------------------------
 void qSlicerModulesListView::addModules(const QStringList& moduleNames)
 {
   foreach(const QString& moduleName, moduleNames)
@@ -427,7 +434,8 @@ void qSlicerModulesListView::addModule(const QString& moduleName)
   QStandardItem * item = new QStandardItem();
   item->setData(moduleName, Qt::UserRole);
   d->updateItem(item);
-  d->ModulesListModel->appendRow(item);
+  int index = d->sortedInsertionIndex(moduleName);
+  d->ModulesListModel->insertRow(index, item);
 }
 
 // --------------------------------------------------------------------------

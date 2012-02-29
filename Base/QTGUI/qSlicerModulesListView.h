@@ -95,7 +95,6 @@ signals:
   void uncheckedModulesChanged(const QStringList&);
 
 protected slots:
-  void sort();
   void addModules(const QStringList& moduleNames);
   void addModule(const QString& moduleName);
   void updateModules();
