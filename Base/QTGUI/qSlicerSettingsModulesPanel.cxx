@@ -119,10 +119,11 @@ void qSlicerSettingsModulesPanelPrivate::init()
   this->FavoritesMoreButton->setChecked(false);
 
   // Default values
-  this->ModulesMenu->setCurrentModule("Welcome");
+  this->PreferExecutableCLICheckBox->setChecked(false);
   this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
-  this->DisableModulesListView->setFactoryManager(factoryManager);
-  this->FavoritesModulesListView->setFactoryManager(factoryManager);
+  this->DisableModulesListView->setFactoryManager( factoryManager );
+  this->FavoritesModulesListView->setFactoryManager( factoryManager );
+  this->ModulesMenu->setCurrentModule("Welcome");
   QStringList favorites;
   favorites  << "Volumes" << "Models" << "Transforms" << "Annotations" << "Editor";
   this->FavoritesModulesListView->filterModel()->setShowModules(favorites);
@@ -133,6 +134,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
   q->registerProperty("disable-scripted-loadable-modules", this->LoadScriptedLoadableModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("disable-cli-modules", this->LoadCommandLineModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("Modules/PreferExecutableCLI", this->PreferExecutableCLICheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,
                       "currentModule", SIGNAL(currentModuleChanged(QString)));

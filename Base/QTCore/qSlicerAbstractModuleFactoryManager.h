@@ -100,7 +100,9 @@ public:
   /// The order in which factories are registered is important. When scanning
   /// directories, registered factories are browse and the first factory that
   /// can read a file is used.
-  void registerFactory(qSlicerModuleFactory* factory);
+  /// Priority is used when multiple factories can register the same module.
+  /// The factory with the higher priority wins.
+  void registerFactory(qSlicerModuleFactory* factory, int priority = 0);
   void unregisterFactory(qSlicerModuleFactory* factory);
   void unregisterFactories();
 
