@@ -6,12 +6,13 @@ from __main__ import vtk, qt, ctk, slicer
 
 class LabelStatistics:
   def __init__(self, parent):
+    import string
     parent.title = "Label Statistics"
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = """
-Use this module to calculate counts and volumes for different labels of a label map plus statistics on the grayscale background volume.  Note: volumes must have same dimensions.  See <a href=\"hhttp://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelStatistics\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelStatistics</a> for more information.\n\n
-    """
+    parent.helpText = string.Template("""
+Use this module to calculate counts and volumes for different labels of a label map plus statistics on the grayscale background volume.  Note: volumes must have same dimensions.  See <a href=\"$a/Documentation/$b.$c/Modules/LabelStatistics\">$a/Documentation/$b.$c/Modules/LabelStatistics</a> for more information.
+    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
     parent.acknowledgementText = """
     Supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See http://www.slicer.org for details.  Module implemented by Steve Pieper.
     """

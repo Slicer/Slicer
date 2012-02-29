@@ -291,7 +291,7 @@ void qSlicerMainWindowCore::onHelpBrowseTutorialsActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
 {
-  QDesktopServices::openUrl(QUrl("http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0"));
+  QDesktopServices::openUrl(QUrl(QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2").arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
 }
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onHelpSlicerPublicationsActionTriggered()

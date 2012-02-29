@@ -8,12 +8,14 @@ import qt, ctk
 
 class SampleData:
   def __init__(self, parent):
+    import string
     parent.title = "Sample Data"
     parent.categories = ["Informatics"]
     parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = """
-The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SampleData\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SampleData</a> for more information.\n\n
-    """
+    parent.helpText = string.Template("""
+The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection. 
+See <a href=\"$a/Documentation/$b.$c/Modules/SampleData\">$a/Documentation/$b.$c/Modules/SampleData</a> for more information.
+    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
     """

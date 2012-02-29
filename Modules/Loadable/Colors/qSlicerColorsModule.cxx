@@ -150,8 +150,8 @@ QString qSlicerColorsModule::helpText()const
 {
   QString help =
     "The <b>Colors Module</b> manages color look up tables.<br>"
-    "For more information see <a href=\"%1/Documentation/4.0/Modules/Colors\">"
-    "%1/Documentation/4.0/Modules/Colors</a><br>"
+    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Colors\">"
+    "%1/Documentation/%2.%3/Modules/Colors</a><br>"
     "Tables are used by mappers to translate between an integer and a colour "
     "value for display of models and volumes.<br>Slicer supports three kinds "
     "of tables:<br>"
@@ -165,7 +165,7 @@ QString qSlicerColorsModule::helpText()const
     "Each line in the file has:<br>"
     "label\tname\tR\tG\tB\tA<br>label is an integer, name a string, and RGBA are "
     "0-255.";
-  return help.arg(this->slicerWikiUrl());
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

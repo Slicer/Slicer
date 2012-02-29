@@ -30,6 +30,7 @@
 // SlicerQt includes
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerBaseQTGUIExport.h"
+#include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_MAJOR, Slicer_VERSION_MINOR
 
 class QAction;
 class qSlicerAbstractModulePrivate;

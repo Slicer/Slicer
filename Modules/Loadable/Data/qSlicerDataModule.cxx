@@ -128,9 +128,9 @@ QString qSlicerDataModule::helpText()const
     "creates and edits transformation hierarchies.<br>"
     "The Load panels exposes options for loading data. Helpful comments can be "
     "opened by clicking on the \"information\" icons in each load panel.<br>"
-    "<a href=\"%1/Documentation/4.0/Modules/Data\">"
-    "%1/Documentation/4.0/Modules/Data</a>";
-  return help.arg(this->slicerWikiUrl());
+    "<a href=\"%1/Documentation/%2.%3/Modules/Data\">"
+    "%1/Documentation/%2.%3/Modules/Data</a>";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

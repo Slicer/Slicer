@@ -79,7 +79,7 @@ QString qSlicerModelsModule::helpText()const
 {
   QString help =
     "The Models Module loads and adjusts display parameters of models.<br>"
-    "For more information see <a href=\"%1/Documentation/4.0/Modules/Models\">%1/Documentation/4.0/Modules/Models</a><br>"
+    "For more information see <a href=\"%1/Documentation/%2.%3/Modules/Models\">%1/Documentation/%2.%3/Modules/Models</a><br>"
     "Save models via the File menu, Save button.<br>"
     "The Add 3D model or a model directory button will allow you to load any "
     "model that Slicer can read, as well as all the VTK models in a directory. "
@@ -94,7 +94,7 @@ QString qSlicerModelsModule::helpText()const
     "planes that will clip the model are selected in the Clipping pane.<br>"
     "The Model Hierarchy pane allows you to group models together and set the "
     "group's properties.";
-  return help.arg(this->slicerWikiUrl());
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

@@ -7,12 +7,13 @@ import qt, vtk
 
 class DataProbe:
   def __init__(self, parent):
+    import string
     parent.title = "DataProbe"
     parent.categories = ["Quantification"]
     parent.contributors = ["Steve Pieper (Isomics)"]
-    parent.helpText = """
-The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.  See <a href=\"http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe\">http://www.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DataProbe</a> for more information.\n\n
-    """
+    parent.helpText = string.Template("""
+The DataProbe module is used to get information about the current RAS position being indicated by the mouse position.  See <a href=\"$a/Documentation/$b.$c/Modules/DataProbe\">$a/Documentation/$b.$c/Modules/DataProbe</a> for more information.
+    """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
     parent.acknowledgementText = """
 This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>http://www.slicer.org</a> for details.  Module implemented by Steve Pieper.
     """

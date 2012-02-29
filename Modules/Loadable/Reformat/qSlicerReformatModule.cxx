@@ -72,9 +72,9 @@ QString qSlicerReformatModule::helpText()const
   QString help = 
       "The Transforms Reformat Widget Module creates "
       "and edits the Slice Node transforms.<br>"
-      "<a href=\"%1/Documentation/4.0/Modules/Reformat\">"
-      "%1/Documentation/4.0/Modules/Reformat</a>\n";
-  return help.arg(this->slicerWikiUrl());
+      "<a href=\"%1/Documentation/%2.%3/Modules/Reformat\">"
+      "%1/Documentation/%2.%3/Modules/Reformat</a>\n";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //------------------------------------------------------------------------------

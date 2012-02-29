@@ -78,8 +78,8 @@ QString qSlicerTractographyDisplayModule::helpText()const
 {
   QString help =
     "Load, save and adjust display parameters of fiber bundles. \n"
-    "<a href= \"%1/Documentation/4.0/Modules/TractographyDisplay\">%1/Documentation/4.0/Modules/TractographyDisplay</a>";
-  return help.arg(this->slicerWikiUrl());
+    "<a href= \"%1/Documentation/%2.%3/Modules/TractographyDisplay\">%1/Documentation/%2.%3/Modules/TractographyDisplay</a>";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

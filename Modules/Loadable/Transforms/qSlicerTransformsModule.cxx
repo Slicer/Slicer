@@ -83,8 +83,8 @@ QString qSlicerTransformsModule::helpText()const
 {
   QString help =
     "The Transforms Module creates and edits transforms.<br>"
-    "<a href=%1/Documentation/4.0/Modules/Transforms>%1/Documentation/4.0/Modules/Transforms</a>";
-  return help.arg(this->slicerWikiUrl());
+    "<a href=%1/Documentation/%2.%3/Modules/Transforms>%1/Documentation/%2.%3/Modules/Transforms</a>";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

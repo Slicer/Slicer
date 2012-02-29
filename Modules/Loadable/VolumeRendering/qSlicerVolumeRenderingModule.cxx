@@ -56,11 +56,11 @@ QString qSlicerVolumeRenderingModule::helpText()const
   QString help =
     "Volume Rendering allows the rendering of volumes in 3D space and not only "
     "as 2D surfaces defined in 3D space. \n"
-    "<a href=\"%1/Documentation/4.0/Modules/VolumeRendering\">"
-    "%1/Documentation/4.0/Modules/VolumeRendering</a>\n"
-    "Tutorials are available at <a href=\"%1/Documentation/4.0/Modules/VolumeRendering\">"
-    "%1/Documentation/4.0/Modules/VolumeRendering</a>";
-  return help.arg(this->slicerWikiUrl());
+    "<a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
+    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>\n"
+    "Tutorials are available at <a href=\"%1/Documentation/%2.%3/Modules/VolumeRendering\">"
+    "%1/Documentation/%2.%3/Modules/VolumeRendering</a>";
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------

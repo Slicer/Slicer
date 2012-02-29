@@ -100,7 +100,7 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
 {
   // The CLI4Test module (CLIModule4Test) has already been built as a normal
   // CLI library. It can be found in
-  // Slicer-build/lib/Slicer4.0/cli-modules[/Debug|Release]
+  // Slicer-build/lib/Slicer-X.Y/cli-modules[/Debug|Release]
   QString cliModuleName("CLI4Test");
 
   qSlicerApplication::setAttribute(qSlicerApplication::AA_DisablePython);

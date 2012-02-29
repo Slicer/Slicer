@@ -77,9 +77,9 @@ QString qSlicerCamerasModule::helpText()const
     "active camera for the selected view.<br>"
     "WARNING: this is rather experimental at the moment (fiducials, IO/data, "
     "closing the scene are probably broken for new views).<br>"
-    "<a href=\"%1/Documentation/4.0/Modules/Cameras\">"
-    "%1/Documentation/4.0/Modules/Cameras</a>\n");
-  return help.arg(this->slicerWikiUrl());
+    "<a href=\"%1/Documentation/%2.%3/Modules/Cameras\">"
+    "%1/Documentation/%2.%3/Modules/Cameras</a>\n");
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------
