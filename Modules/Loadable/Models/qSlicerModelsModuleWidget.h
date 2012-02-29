@@ -43,15 +43,20 @@ public:
   virtual ~qSlicerModelsModuleWidget();
 
 public slots:
+  virtual void setMRMLScene(vtkMRMLScene* scene);
+  
   void insertHierarchyNode();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void onExpanded(const QModelIndex &index);
   void onCollapsed(const QModelIndex &index);
+  void onEndImportEvent();
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
+
+  void updateTreeViewModel();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerModelsModuleWidget);
