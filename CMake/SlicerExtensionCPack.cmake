@@ -94,6 +94,9 @@ set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages")
 # Enable generator
 # -------------------------------------------------------------------------
 set(CPACK_GENERATOR "TGZ")
+if(WIN32)
+  set(CPACK_GENERATOR "ZIP")
+endif()
 
 include(CPack)
 
