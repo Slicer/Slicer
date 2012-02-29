@@ -20,15 +20,18 @@
 
 // Qt includes
 #include <QAction>
+#include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 // CTK includes
+#include <ctkMessageBox.h>
 #ifdef Slicer_USE_PYTHONQT
 #include <ctkPythonConsole.h>
 #endif
+
 
 // SlicerQt includes
 #include "qSlicerAbstractModule.h"
@@ -137,22 +140,46 @@ void qSlicerMainWindowCore::onFileSaveSceneActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 {
+   Q_D(qSlicerMainWindowCore);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QFileDialog pickDirectoryDialog(this->widget());
-  pickDirectoryDialog.setFileMode(QFileDialog::Directory);
-  pickDirectoryDialog.setDirectory(tempDir);
-  QString saveDirName;
-  if (pickDirectoryDialog.exec())
-    {
-    QDir qtDirName = pickDirectoryDialog.directory();
-    saveDirName = qtDirName.absolutePath();
-    }
+  QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (All Existing Files in this Directory Will Be Removed!)"), tempDir, QFileDialog::ShowDirsOnly);
+  //qDebug() << "saveDirName = " << saveDirName.toAscii().data();
   if (saveDirName.isEmpty())
     {
     std::cout << "No directory name chosen!" << std::endl;
     return;
     }
+  // double check that user is sure they want to save to this directory if
+  // there are already files in it
+  QDir testSaveDir = QDir(saveDirName);
+  int numFiles = testSaveDir.count() - 2;
+  if (numFiles > 0)
+    {
+    ctkMessageBox *confirmDeleteMessageBox = new ctkMessageBox(d->ParentWidget);
+    QString plurals = QString("\ncontains ");
+    if (numFiles == 1)
+      {
+      plurals += QString("1 file or directory.\nDo you wish to delete it ");
+      }
+    else
+      {
+      plurals += QString("%1 files or directories.\nDo you wish to delete them ").arg(numFiles);
+      }
+    QString message = QString("Selected directory\n" + saveDirName + plurals +
+                              "and Save the data bundle or Cancel and choose a new directory?");
+    confirmDeleteMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
+    confirmDeleteMessageBox->setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+    confirmDeleteMessageBox->setDefaultButton(QMessageBox::Cancel);
+    confirmDeleteMessageBox->setIcon(QMessageBox::Warning);
+    confirmDeleteMessageBox->setText(message);
+    if (confirmDeleteMessageBox->exec() != QMessageBox::Save)
+      {
+      qDebug() << "Cancelling save to '" + saveDirName + "'";
+      return;
+      }
+    }
+  
   // pass in a screen shot
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
   QPixmap screenShot = QPixmap::grabWidget(widget);
