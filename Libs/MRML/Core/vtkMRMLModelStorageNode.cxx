@@ -22,6 +22,7 @@
 #include "vtkBYUReader.h" 
 #include "vtkPolyDataReader.h"
 #include "vtkXMLPolyDataReader.h"
+#include "vtkUnstructuredGridReader.h"
 #include "vtkSTLReader.h"
 #include "vtkOBJReader.h"
 
@@ -32,6 +33,8 @@
 #include "vtkStringArray.h"
 #include "vtkCellArray.h"
 
+#include "vtkUnstructuredGrid.h"
+#include "vtkDataSetSurfaceFilter.h"
 
 #include "vtkSmartPointer.h"
 
@@ -182,25 +185,42 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     else if (extension == std::string(".vtk"))
       {
+      vtkPolyData* output = 0;
       vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
       reader->SetFileName(fullName.c_str());
-      if (!reader->IsFilePolyData())
+      vtkSmartPointer<vtkUnstructuredGridReader> unstructuredGridReader =
+          vtkSmartPointer<vtkUnstructuredGridReader>::New();
+      vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter =
+        vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+
+      unstructuredGridReader->SetFileName(fullName.c_str());
+      if (reader->IsFilePolyData())
         {
-        vtkErrorMacro("File " << fullName.c_str() << " is not polydata, cannot be read with this reader");
+        reader->Update();
+        output = reader->GetOutput();
+        }
+      else if (unstructuredGridReader->IsFileUnstructuredGrid())
+        {
+        unstructuredGridReader->Update();
+        surfaceFilter->SetInput(unstructuredGridReader->GetOutput());
+        surfaceFilter->Update();
+        output = surfaceFilter->GetOutput();
+        }
+      else
+        {
+        vtkErrorMacro("File " << fullName.c_str()
+                      << "is not polydata nor unstructured grid.");
+        }
+      if (output == 0)
+        {
+        vtkErrorMacro("Unable to read file " << fullName.c_str());
         result = 0;
         }
       else
         {
-        reader->Update();
-        if (reader->GetOutput() == NULL)
-          {
-          vtkErrorMacro("Unable to read file " << fullName.c_str());
-          result = 0;
-          }
-        else
-          {
-          modelNode->SetAndObservePolyData(reader->GetOutput());
-          }
+        std:: cout << output << std::endl;
+        std:: cout << output->GetNumberOfPoints() << std::endl;
+        modelNode->SetAndObservePolyData(output);
         }
       }
     else if (extension == std::string(".vtp")) 
