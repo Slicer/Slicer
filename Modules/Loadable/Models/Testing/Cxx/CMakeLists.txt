@@ -10,6 +10,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qSlicerModelsModuleWidgetTest1
   qSlicerModelsModuleWidgetTestScene
+  vtkSlicerModelsLogicTest
   EXTRA_INCLUDE TestingMacros.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
@@ -36,3 +37,4 @@ set(MODEL_SCENE "${MRMLCore_SOURCE_DIR}/Testing/modelHierarchy.mrml")
 
 SIMPLE_TEST( qSlicerModelsModuleWidgetTest1 ${MODEL_FILE} )
 SIMPLE_TEST( qSlicerModelsModuleWidgetTestScene ${MODEL_SCENE} )
+SIMPLE_TEST(vtkSlicerModelsLogicTest ${MODEL_FILE})
