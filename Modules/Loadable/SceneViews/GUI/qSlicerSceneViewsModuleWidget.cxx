@@ -45,6 +45,8 @@ public:
 
   vtkSlicerSceneViewsModuleLogic* logic() const;
 
+  qSlicerSceneViewsModuleDialog* sceneViewDialog();
+
   QPointer<qSlicerSceneViewsModuleDialog> SceneViewDialog;
 };
 
@@ -57,6 +59,25 @@ qSlicerSceneViewsModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerSceneViewsModuleWidget);
   return vtkSlicerSceneViewsModuleLogic::SafeDownCast(q->logic());
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSceneViewsModuleDialog* qSlicerSceneViewsModuleWidgetPrivate::sceneViewDialog()
+{
+  if (!this->SceneViewDialog)
+    {
+    this->SceneViewDialog = new qSlicerSceneViewsModuleDialog();
+
+    // pass a pointer to the logic class
+    this->SceneViewDialog->setLogic(this->logic());
+
+    // create slots which listen to events fired by the OK and CANCEL button on the dialog
+    //this->connect(this->SceneViewDialog, SIGNAL(rejected()),
+    //              this->SceneViewDialog, SLOT(hide()));
+    //this->connect(this->SceneViewDialog, SIGNAL(accepted()),
+    //              this->SceneViewDialog, SLOT(hide()));
+    }
+  return this->SceneViewDialog;
 }
 
 //-----------------------------------------------------------------------------
@@ -176,13 +197,8 @@ void qSlicerSceneViewsModuleWidget::restoreSceneView(const QString& mrmlId)
 void qSlicerSceneViewsModuleWidget::editSceneView(const QString& mrmlId)
 {
   Q_D(qSlicerSceneViewsModuleWidget);
-
-  this->showSceneViewDialog();
-  if (d->SceneViewDialog)
-    {
-    // now we initialize it with existing values
-    d->SceneViewDialog->loadNode(mrmlId);
-    }
+  d->sceneViewDialog()->loadNode(mrmlId);
+  d->sceneViewDialog()->exec();
 }
 
 //-----------------------------------------------------------------------------
@@ -220,24 +236,8 @@ void qSlicerSceneViewsModuleWidget::refreshTree()
 void qSlicerSceneViewsModuleWidget::showSceneViewDialog()
 {
   Q_D(qSlicerSceneViewsModuleWidget);
-
-  if (!d->SceneViewDialog)
-    {
-
-    d->SceneViewDialog = new qSlicerSceneViewsModuleDialog();
-
-    // pass a pointer to the logic class
-    d->SceneViewDialog->setLogic(d->logic());
-
-    // create slots which listen to events fired by the OK and CANCEL button on the dialog
-    this->connect(d->SceneViewDialog, SIGNAL(rejected()),
-                  d->SceneViewDialog, SLOT(hide()));
-    this->connect(d->SceneViewDialog, SIGNAL(accepted()),
-                  d->SceneViewDialog, SLOT(hide()));
-    }
-
   // show the dialog
-  d->SceneViewDialog->reset();
-  d->SceneViewDialog->open();
+  d->sceneViewDialog()->reset();
+  d->sceneViewDialog()->exec();
 }
 
