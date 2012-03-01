@@ -85,12 +85,13 @@ void qSlicerSceneViewsModuleDialog::reset()
   // dialog causes it to reset and calling GetUniqueNameByString increments
   // the number each time).
   QByteArray nameBytes = name.toLatin1();
-  vtkCollection *col = this->m_Logic->GetMRMLScene()->GetNodesByName(nameBytes.data());
+  vtkCollection* col = this->m_Logic->GetMRMLScene()->GetNodesByName(nameBytes.data());
   if (col->GetNumberOfItems() > 0)
     {
     // get a new unique name
     name = this->m_Logic->GetMRMLScene()->GetUniqueNameByString(name.toLatin1());
     }
+  col->Delete();
   this->resetDialog();
   this->setNameEdit(name);
 }
