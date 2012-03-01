@@ -15,6 +15,7 @@ Version:   $Revision: 1.14 $
 // MRML includes
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLHierarchyStorageNode.h"
 
 // VTK includes
 #include <vtkCollection.h>
@@ -115,6 +116,13 @@ void vtkMRMLHierarchyNode::UpdateReferenceID(const char *oldID, const char *newI
     this->SetAssociatedNodeID(newID);
     }
 }
+
+//----------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLHierarchyNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLHierarchyStorageNode::New();
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
 {

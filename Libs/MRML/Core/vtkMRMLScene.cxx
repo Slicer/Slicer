@@ -33,6 +33,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLFreeSurferModelOverlayStorageNode.h"
 #include "vtkMRMLFreeSurferModelStorageNode.h"
 #include "vtkMRMLGridTransformNode.h"
+#include "vtkMRMLHierarchyStorageNode.h"
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLModelNode.h"
@@ -283,7 +284,14 @@ vtkMRMLScene::vtkMRMLScene()
     this->RegisterNodeClass ( hier );
     hier->Delete();
     }
-
+  
+  vtkMRMLHierarchyStorageNode *hiersn = vtkMRMLHierarchyStorageNode::New();
+  if (hiersn)
+    {
+    this->RegisterNodeClass ( hiersn );
+    hiersn->Delete();
+    }
+  
   vtkMRMLDisplayableHierarchyNode *dhier = vtkMRMLDisplayableHierarchyNode::New();
   this->RegisterNodeClass ( dhier );
   dhier->Delete();

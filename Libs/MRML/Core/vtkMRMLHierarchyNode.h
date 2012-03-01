@@ -67,7 +67,7 @@ public:
 //  virtual bool CanApplyNonLinearTransforms()const;
 //  virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode() { return NULL; };
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   
   /// 

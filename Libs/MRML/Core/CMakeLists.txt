@@ -96,6 +96,7 @@ set(MRMLCore_SRCS
   vtkMRMLFreeSurferModelStorageNode.cxx
   vtkMRMLFreeSurferProceduralColorNode.cxx
   vtkMRMLHierarchyNode.cxx
+  vtkMRMLHierarchyStorageNode.cxx
   vtkMRMLDisplayableHierarchyNode.cxx
   vtkMRMLInteractionNode.cxx
   vtkMRMLLabelMapVolumeDisplayNode.cxx
