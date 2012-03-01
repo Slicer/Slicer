@@ -1791,6 +1791,11 @@ void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
       spacing[1] = current[1];
       spacing[2] = sliceSpacing;
       node->SetPrescribedSliceSpacing(spacing);
+      vtkMRMLSliceLogic* sliceLogic = d->sliceNodeLogic(node);
+      if (sliceLogic)
+        {
+        sliceLogic->ResizeSliceNode(d->ViewSize.width(), d->ViewSize.height());
+        }
       }
     }
 }
