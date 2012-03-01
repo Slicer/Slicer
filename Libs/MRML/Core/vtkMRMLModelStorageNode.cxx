@@ -218,8 +218,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         }
       else
         {
-        std:: cout << output << std::endl;
-        std:: cout << output->GetNumberOfPoints() << std::endl;
         modelNode->SetAndObservePolyData(output);
         }
       }
