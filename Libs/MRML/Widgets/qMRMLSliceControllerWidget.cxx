@@ -474,8 +474,8 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
   this->SliceSpacingSpinBox = new QDoubleSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
-  this->SliceSpacingSpinBox->setRange(0., VTK_LARGE_FLOAT);
-  this->SliceSpacingSpinBox->setSingleStep(0.001);
+  this->SliceSpacingSpinBox->setRange(0.001, VTK_LARGE_FLOAT);
+  this->SliceSpacingSpinBox->setSingleStep(0.1);
   this->SliceSpacingSpinBox->setValue(1.);
   QObject::connect(this->SliceSpacingSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceSpacing(double)));
@@ -490,7 +490,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   QHBoxLayout* sliceFOVLayout = new QHBoxLayout(sliceFOVWidget);
   sliceFOVLayout->setContentsMargins(0,0,0,0);
   this->SliceFOVSpinBox = new QDoubleSpinBox(sliceFOVWidget);
-  this->SliceFOVSpinBox->setRange(0., 10000.);
+  this->SliceFOVSpinBox->setRange(0.01, 10000.);
   this->SliceFOVSpinBox->setValue(250.);
   QObject::connect(this->SliceFOVSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceFOV(double)));
@@ -1310,6 +1310,7 @@ void qMRMLSliceControllerWidget::setSliceOffsetRange(double min, double max)
 void qMRMLSliceControllerWidget::setSliceOffsetResolution(double resolution)
 {
   Q_D(qMRMLSliceControllerWidget);
+  resolution = qMax(resolution, 0.000000000001);
   d->SliceOffsetSlider->setSingleStep(resolution);
   d->SliceOffsetSlider->setPageStep(resolution);
 }
