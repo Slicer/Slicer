@@ -41,6 +41,9 @@ class DICOMDetailsPopup(object):
     """
 
     # find internals of widget for reference and repacking
+    self.toolBar = slicer.util.findChildren(self.dicomApp, 'ToolBar')[0]
+    self.databaseNameLabel = slicer.util.findChildren(self.dicomApp, 'DatabaseNameLabel')[0]
+    self.databaseDirectoryButton = slicer.util.findChildren(self.dicomApp, 'DirectoryButton')[0]
     self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
     self.userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
     self.thumbs = slicer.util.findChildren(self.dicomApp, 'ThumbnailsWidget')[0]
@@ -70,11 +73,26 @@ class DICOMDetailsPopup(object):
     self.layout = qt.QGridLayout()
     self.window.setLayout(self.layout)
 
+    # overall layout - tree on top, preview and selection below
+    toolRow = 0
+    treeRow = 1
+    selectionRow = 2
+
+    # tool row at top, with commands and database
+    self.toolLayout = qt.QHBoxLayout()
+    self.layout.addLayout(self.toolLayout,toolRow,0,1,2)
+    self.toolLayout.addWidget(self.toolBar)
+    self.toolLayout.addWidget(self.databaseNameLabel)
+    self.toolLayout.addWidget(self.databaseDirectoryButton)
+
+    # tree goes next, spread across 1 row, 2 columns
+    self.layout.addWidget(self.tree,treeRow,0,1,2)
+
     #
     # preview related column
     #
     self.previewLayout = qt.QVBoxLayout()
-    self.layout.addLayout(self.previewLayout,0,0)
+    self.layout.addLayout(self.previewLayout,selectionRow,0)
 
     self.previewLayout.addWidget(self.thumbs)
     self.previewLayout.addWidget(self.widthSlider)
@@ -84,17 +102,27 @@ class DICOMDetailsPopup(object):
     # action related column (interacting with slicer)
     #
     self.actionLayout = qt.QVBoxLayout()
-    self.layout.addLayout(self.actionLayout,0,1)
+    self.layout.addLayout(self.actionLayout,selectionRow,1)
     self.actionLayout.addWidget(self.userFrame)
     
     tableWidth = 350 if showHeader else 700
     self.loadableTable = DICOMLoadableTable(self.userFrame,width=tableWidth)
     self.actionLayout.addWidget(self.loadableTable.widget)
 
+    #
+    # button row for action column
+    #
+    self.actionButtonLayout = qt.QHBoxLayout()
+    self.actionLayout.addLayout(self.actionButtonLayout)
+
     self.loadButton = qt.QPushButton('Load Selection to Slicer')
     self.loadButton.enabled = False 
-    self.actionLayout.addWidget(self.loadButton)
+    self.actionButtonLayout.addWidget(self.loadButton)
     self.loadButton.connect('clicked()', self.loadCheckedLoadables)
+
+    self.closeButton = qt.QPushButton('Close')
+    self.actionButtonLayout.addWidget(self.closeButton)
+    self.closeButton.connect('clicked()', self.close)
 
     self.actionLayout.addStretch(1)
 
@@ -103,7 +131,7 @@ class DICOMDetailsPopup(object):
     #
     if showHeader:
       self.headerLayout = qt.QVBoxLayout()
-      self.layout.addLayout(self.headerLayout,0,2)
+      self.layout.addLayout(self.headerLayout,selectionRow,2)
       self.header = DICOMHeaderWidget(self.window)
       self.headerLayout.addWidget(self.header.widget)
       self.headerLayout.addStretch(1)
@@ -111,10 +139,17 @@ class DICOMDetailsPopup(object):
   def open(self):
     self.window.show()
     if not self.popupPositioned:
-      appWidth = self.dicomApp.geometry.width()
-      screenAppPos = self.dicomApp.mapToGlobal(self.dicomApp.pos)
-      x = screenAppPos.x() + appWidth
-      y = screenAppPos.y()
+      if False:
+        appWidth = self.dicomApp.geometry.width()
+        screenAppPos = self.dicomApp.mapToGlobal(self.dicomApp.pos)
+        x = screenAppPos.x() + appWidth
+        y = screenAppPos.y()
+      else:
+        mainWindow = slicer.util.mainWindow()
+        #screenMainPos = mainWindow.mapToGlobal(mainWindow.pos)
+        screenMainPos = mainWindow.pos
+        x = screenMainPos.x() + 100
+        y = screenMainPos.y() + 100
       self.window.move(qt.QPoint(x,y))
       self.popupPositioned = True
     self.window.raise_()

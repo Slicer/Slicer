@@ -75,6 +75,8 @@ class DICOMWidget:
     
     # let the popup window manage data loading
     self.useDetailsPopup = True
+    # hide the search box 
+    self.hideSearch = True
 
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
@@ -96,7 +98,7 @@ class DICOMWidget:
     globals()['d'] = self
 
   def enter(self):
-    pass
+    self.detailsPopup.open()
 
   def exit(self):
     self.detailsPopup.close()
@@ -162,9 +164,10 @@ class DICOMWidget:
     #
     self.dicomApp = ctk.ctkDICOMAppWidget()
     self.dicomFrame.layout().addWidget(self.dicomApp)
-    # hide the search options - doesn't work yet and doesn't fit 
-    # well into the frame
-    slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
+    if self.hideSearch:
+      # hide the search options - doesn't work yet and doesn't fit 
+      # well into the frame
+      slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
 
     if self.useDetailsPopup:
       self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp)
@@ -173,6 +176,10 @@ class DICOMWidget:
       self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
       self.loadButton = qt.QPushButton('Load to Slicer')
       self.previewLabel = qt.QLabel()
+      self.showBrowser = qt.QPushButton('Show DICOM Browser')
+      self.dicomFrame.layout().addWidget(self.showBrowser)
+      self.showBrowser.connect('clicked()', self.detailsPopup.open)
+      self.dicomFrame.layout().addStretch(1)
     else:
       userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
       userFrame.setLayout(qt.QVBoxLayout())
@@ -189,7 +196,7 @@ class DICOMWidget:
 
     # make the tree view a bit bigger
     self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
-    self.tree.setMinimumHeight(500)
+    self.tree.setMinimumHeight(300)
 
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
