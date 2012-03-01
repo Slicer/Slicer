@@ -331,6 +331,7 @@ void qSlicerDataDialogPrivate::setFileOptions(
     delete options;
     }
   this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
+  this->FileWidget->resizeColumnToContents(OptionsColumn);
 }
 /*
 //-----------------------------------------------------------------------------
