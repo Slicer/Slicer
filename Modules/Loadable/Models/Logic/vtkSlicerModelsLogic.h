@@ -45,8 +45,9 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
 
   /// 
-  /// Create new mrml model node and
+  /// Add into the scene a new mrml model node and
   /// read it's polydata from a specified file
+  /// A display node and a storage node are also added into the scene
   vtkMRMLModelNode* AddModel (const char* filename);
 
   /// 
@@ -83,12 +84,15 @@ protected:
   /// node is being removed.
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode);
 
-  /// 
+  ///
+  bool AutoRemoveDisplayAndStorageNodes;
+
   //
   vtkMRMLModelNode *ActiveModelNode;
 
   /// Color logic
   vtkMRMLColorLogic* ColorLogic;
+
 };
 
 #endif
