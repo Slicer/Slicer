@@ -667,16 +667,23 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   archive_write_set_format_pax_restricted(a);
 #else
   // create a zip archive
-  const char *compression_type = "";
+  std::string compression_type;
 #ifdef HAVE_ZLIB_H
-  compression_type = "zip:compression=deflate";
+  compression_type = "deflate";
 #else
-  compression_type = "zip:compression=store";
+  compression_type = "store";
 #endif
   vtkDebugMacro("Zip: compression type = " << compression_type);
 
   archive_write_set_format_zip(a);
-  archive_write_set_format_options(a, compression_type);
+
+#if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
+  archive_write_set_format_option(a, "zip", "compression", compression_type.c_str());
+#else
+  compression_type = "zip:compression=" + compression_type;
+  archive_write_set_format_options(a, compression_type.c_str());
+#endif
+
   // this line was in the example
   //archive_write_set_compression_none(a);
 #endif
