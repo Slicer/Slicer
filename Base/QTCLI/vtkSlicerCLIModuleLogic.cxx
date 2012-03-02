@@ -89,7 +89,6 @@ vtkStandardNewMacro(vtkSlicerCLIModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 {
-  this->CommandLineModuleNode = NULL;
   this->DeleteTemporaryFiles = 1;
   this->RedirectModuleStreams = 1;
 }
@@ -333,12 +332,13 @@ vtkSlicerCLIModuleLogic
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node )
+void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay )
 {
   // Just execute and wait.
   node->Register(this);
+  node->SetAttribute("UpdatDisplay", updateDisplay ? "true" : "false");
   vtkSlicerCLIModuleLogic::ApplyTask ( node );
-  
+
   while (this->GetApplicationLogic()->GetReadDataQueueSize())
     {
     this->GetApplicationLogic()->ProcessReadData();
@@ -346,7 +346,7 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node 
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
+void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay )
 {
   bool ret;
 
@@ -372,7 +372,7 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node )
   // reference count on the node, we'll decrease the reference count
   // once the task actually runs
   node->Register(this);
-  
+  node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
   // Schedule the task
   ret = this->GetApplicationLogic()->ScheduleTask( task );
 
@@ -454,14 +454,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     return;
     }
 
-  vtkMRMLCommandLineModuleNode *node0 = reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata);
+  vtkSmartPointer<vtkMRMLCommandLineModuleNode> node0;
+  // node was registered when the task was scheduled so take reference to
+  // release it when it goes out of scope
+  node0.TakeReference(reinterpret_cast<vtkMRMLCommandLineModuleNode*>(clientdata));
 
   // Check to see if this node/task has been cancelled
   if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Cancelled)
     {
-    // node was registered when the task was scheduled so unregister now
-    node0->UnRegister(this);
-
     return;
     }
 
@@ -1790,9 +1790,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         // reloaded.) We assume that if the user is looking at the node
         // now, he/she will still be looking at the node by the time the
         // data is reloaded by the main thread.
-        bool displayData = false;
+        bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
         bool deleteFile = this->GetDeleteTemporaryFiles();
-        displayData = (node0 == this->CommandLineModuleNode);
         this->GetApplicationLogic()
           ->RequestReadData((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
                             displayData, deleteFile);
@@ -1865,9 +1864,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // if there was a miniscene that needs loading, request it
   if (miniscene->GetNumberOfNodes() > 0)
     {
-    bool displayData = false;
+    bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
     bool deleteFile = this->GetDeleteTemporaryFiles();
-    displayData = (node0 == this->CommandLineModuleNode);
 
     // Convert the index map to two vectors so that we can pass it to
     // a function in a different library (Win32 limitation)
@@ -1920,8 +1918,6 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     }
 
-  // node was registered when the task was scheduled so unregister now
-  node0->UnRegister(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2027,4 +2023,14 @@ vtkSlicerCLIModuleLogic::FindHiddenNodeID(const ModuleDescription& d,
     }
 
   return id;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerCLIModuleLogic
+::IsCommandLineModuleNodeUpdatingDisplay(vtkMRMLCommandLineModuleNode* node)const
+{
+  // Update display except if the node has the updateDisplay attribute set to
+  // "false".
+  const char* updateDisplay = node->GetAttribute("UpdateDisplay");
+  return !updateDisplay || (strcmp(updateDisplay, "false") != 0);
 }

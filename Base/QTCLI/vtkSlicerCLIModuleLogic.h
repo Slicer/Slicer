@@ -65,10 +65,22 @@ public:
   vtkBooleanMacro (RedirectModuleStreams, int);
   vtkSetMacro (RedirectModuleStreams, int);
   vtkGetMacro (RedirectModuleStreams, int);
-  
-  // The method that schedules the command line module to run
-  void Apply( vtkMRMLCommandLineModuleNode* node );
-  void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node );
+
+  // The method that schedules the command line module to run.
+  /// The CLI is scheduled to be run in a separate thread. This methods
+  /// is non blocking and returns immediately.
+  /// If \a updateDisplay is 'true' the selection node will be updated with the
+  /// the created nodes, which would automatically select the created nodes
+  /// in the node selectors.
+  void Apply( vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true );
+
+  /// Don't start the CLI in a separate thread, but run it in the main thread.
+  /// This methods is blocking until the CLI finishes to execute, the UI being
+  /// frozen until that time.
+  /// If \a updateDisplay is 'true' the selection node will be updated with the
+  /// the created nodes, which would automatically select the created nodes
+  /// in the node selectors.
+  void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true);
 
   // Set/Get the directory to use for temporary files
   void SetTemporaryDirectory(const char *tempdir)
@@ -93,7 +105,12 @@ protected:
 
   // Communicate progress back to the node
   static void ProgressCallback(void *);
-  
+
+  /// Return true if the commandlinemodule node can update the
+  /// selection node with the outputs of the CLI
+  bool IsCommandLineModuleNodeUpdatingDisplay(
+    vtkMRMLCommandLineModuleNode* commandLineModuleNode)const;
+
 private:
   vtkSlicerCLIModuleLogic();
   virtual ~vtkSlicerCLIModuleLogic();
@@ -105,7 +122,6 @@ private:
 
   int RedirectModuleStreams;
 
-  vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
   std::string TemporaryDirectory;
 };
 
