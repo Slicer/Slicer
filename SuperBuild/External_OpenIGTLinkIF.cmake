@@ -22,7 +22,7 @@ if(NOT DEFINED OpenIGTLinkIF_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/IGTLoadableModules/QtModules/OpenIGTLinkIF/"
-    SVN_REVISION -r "7901"
+    SVN_REVISION -r "7909"
     #GIT_REPOSITORY "${git_protocol}://github.com/Slicer/OpenIGTLinkIF.git"
     #GIT_TAG "8330b769cc8c607067134296d577b64ae7c92b87"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
