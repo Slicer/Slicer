@@ -33,19 +33,36 @@ if(NOT SWIG_DIR)
 
     # Include dependent projects if any
     SlicerMacroCheckExternalProjectDependency(Swig)
+    #
+    # SWIG
+    #
+
+    # swig uses bison find it by cmake and pass it down
+    find_package ( BISON )
+    set ( BISON_FLAGS "" CACHE STRING "Flags used by bison" )
+    mark_as_advanced ( BISON_FLAGS )
+
+
+    # follow the standard EP_PREFIX locations
+    set ( swig_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig-build )
+    set ( swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig )
+    set ( swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig )
+
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/swig_configure_step.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/swig_configure_step.cmake
+      @ONLY)
+    set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/swig_configure_step.cmake )
 
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
       URL_MD5  4319c503ee3a13d2a53be9d828c3adc0
-      CONFIGURE_COMMAND ../Swig/configure --prefix=${CMAKE_CURRENT_BINARY_DIR}
-      --with-pcre-prefix=${CMAKE_CURRENT_BINARY_DIR}
+      CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE
       )
 
-    set(SWIG_DIR ${CMAKE_CURRENT_BINARY_DIR}/share/swig/${TARGET_SWIG_VERSION})
-    set(SWIG_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/bin/swig)
+    set(SWIG_DIR ${swig_install_dir}/share/swig/${TARGET_SWIG_VERSION})
+    set(SWIG_EXECUTABLE ${swig_install_dir}/bin/swig)
     set(Swig_DEPEND Swig)
   endif()
 endif(NOT SWIG_DIR)
-
-

@@ -60,7 +60,6 @@ if(NOT DEFINED ITK_DIR)
 
   set(ITKv4_REPOSITORY git://itk.org/ITK.git)
   set(ITKv4_GIT_TAG v4.1rc04)
-
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}

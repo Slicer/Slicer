@@ -10,7 +10,7 @@ set(SimpleITK_SITE_PACKAGE_DIR ${PYTHON_SITE_PACKAGES_DIR})
 
 make_directory( ${SimpleITK_SITE_PACKAGE_DIR} )
 
-configure_file(@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/__init__.py  ${SimpleITK_SITE_PACKAGE_DIR}/__init__.py    COPYONLY)
+#configure_file(@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/__init__.py  ${SimpleITK_SITE_PACKAGE_DIR}/__init__.py    COPYONLY)
 configure_file(@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/lib/_SimpleITK.so     ${SimpleITK_SITE_PACKAGE_DIR}/_SimpleITK.so  COPYONLY)
 configure_file(@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/SimpleITK.py ${SimpleITK_SITE_PACKAGE_DIR}/SimpleITK.py   COPYONLY)
 

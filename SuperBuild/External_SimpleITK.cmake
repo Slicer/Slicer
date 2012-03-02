@@ -49,7 +49,7 @@ ExternalProject_add(SimpleITK
   ## Tag of master branch on Dec. 10th 2011
   GIT_REPOSITORY http://itk.org/SimpleITK.git
   # This is the tag for the "master" branch as of December 21, 2011 to address ITKv4.0.0 status
-  GIT_TAG 85b70d15884e1533c576dd2fa94ba814222b8dbe
+  GIT_TAG 61cd8f05575537c9aba5d0d2c93b220065c72a48
   UPDATE_COMMAND ""
   CMAKE_ARGS
     ${ep_common_args}
