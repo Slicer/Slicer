@@ -32,6 +32,7 @@ class DICOMDetailsPopup(object):
     self.dicomApp = dicomApp
     self.create()
     self.popupPositioned = False
+    self.pluginInstances = {}
 
   def create(self,widgetType='dialog',showHeader=False):
     """
@@ -50,6 +51,7 @@ class DICOMDetailsPopup(object):
     self.widthSlider = slicer.util.findChildren(self.dicomApp, 'ThumbnailWidthSlider')[0]
     self.preview = slicer.util.findChildren(self.dicomApp, 'PreviewFrame')[0]
 
+    self.widgetType = widgetType
     if widgetType == 'dialog':
       self.window = qt.QDialog(self.dicomApp)
     elif widgetType == 'popup':
@@ -157,6 +159,10 @@ class DICOMDetailsPopup(object):
   def close(self):
     self.window.hide()
 
+  def setModality(self,modality):
+    if self.widgetType == 'dialog':
+      self.window.setModal(modality)
+
   def offerLoadables(self,uid,role):
     """Get all the loadable options at the currently selected level
     and present them in the loadable table"""
@@ -185,7 +191,9 @@ class DICOMDetailsPopup(object):
     loadEnabled = False
     self.loadablesByPlugin = {}
     for pluginClass in slicer.modules.dicomPlugins:
-      plugin = slicer.modules.dicomPlugins[pluginClass]()
+      if not self.pluginInstances.has_key(pluginClass):
+        self.pluginInstances[pluginClass] = slicer.modules.dicomPlugins[pluginClass]()
+      plugin = self.pluginInstances[pluginClass]
       if self.progress.wasCanceled:
         break
       self.progress.labelText = '\nChecking %s' % pluginClass

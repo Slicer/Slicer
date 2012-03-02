@@ -14,7 +14,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
   """
 
   def __init__(self,epsilon=0.01):
-    super(DICOMPlugin,self).__init__()
+    super(DICOMScalarVolumePluginClass,self).__init__()
     self.loadType = "Scalar Volume"
     self.epsilon = epsilon
 
@@ -22,11 +22,17 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
   def examine(self,fileLists):
     """ Returns a sorted list of DICOMLoadable instances
     corresponding to ways of interpreting the 
-    fileLists parameter.
+    fileLists parameter (list of file lists).
     """
     loadables = []
     for files in fileLists:
-      loadables += self.examineFiles(files)
+      cachedLoadables = self.getCachedLoadables(files)
+      if cachedLoadables:
+        loadables += cachedLoadables
+      else:
+        loadablesForFiles = self.examineFiles(files)
+        loadables += loadablesForFiles
+        self.cacheLoadables(files,loadablesForFiles)
 
     # sort the loadables by series number if possible
     loadables.sort(lambda x,y: self.seriesSorter(x,y))

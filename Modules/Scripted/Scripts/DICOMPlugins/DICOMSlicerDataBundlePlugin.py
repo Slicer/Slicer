@@ -14,7 +14,7 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMPlugin,self).__init__()
+    super(DICOMSlicerDataBundlePluginClass,self).__init__()
     self.loadType = "Slicer Data Bundle"
     self.candygramTag = "cadb,0010"
     self.zipSizeTag = "cadb,1008"
@@ -27,7 +27,13 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     """
     loadables = []
     for files in fileLists:
-      loadables += self.examineFiles(files)
+      cachedLoadables = self.getCachedLoadables(files)
+      if cachedLoadables:
+        loadables += cachedLoadables
+      else:
+        loadablesForFiles = self.examineFiles(files)
+        loadables += loadablesForFiles
+        self.cacheLoadables(files,loadablesForFiles)
     return loadables
 
   def examineFiles(self,files):

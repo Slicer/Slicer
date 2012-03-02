@@ -82,16 +82,44 @@ class DICOMPlugin(object):
 
   def __init__(self):
     self.loadType = "Generic DICOM"
+    self.loadableCache = {}
+
+  def hashFiles(self,files):
+    """Create a hash key for a list of files"""
+    try:
+      import hashlib
+    except:
+      return None
+    m = hashlib.md5()
+    for f in files:
+      m.update(f)
+    return(m.digest())
+
+  def getCachedLoadables(self,files):
+    """ Helper method to access the results of a previous
+    examination of a list of files"""
+    key = self.hashFiles(files)
+    if self.loadableCache.has_key(key):
+      return self.loadableCache[key]
+    return None
+
+  def cacheLoadables(self,files,loadables):
+    """ Helper method to store the results of examining a list
+    of files for later quick access"""
+    key = self.hashFiles(files)
+    self.loadableCache[key] = loadables
 
   def examine(self,fileList):
     """Look at the list of lists of filenames and return
     a list of DICOMLoadables that are options for loading
+    Virtual: should be overridden by the subclass
     """
     return []
 
   def load(self,loadable):
     """Accept a DICOMLoadable and perform the operation to convert
     the referenced data into MRML nodes
+    Virtual: should be overridden by the subclass
     """
     return True
 
@@ -99,5 +127,6 @@ class DICOMPlugin(object):
     """Return a list of DICOMExporter instances that describe the 
     available techniques that this plugin offers to convert MRML
     data into DICOM data
+    Virtual: should be overridden by the subclass
     """
     return []

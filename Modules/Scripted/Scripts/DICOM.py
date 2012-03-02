@@ -78,6 +78,9 @@ class DICOMWidget:
     # hide the search box 
     self.hideSearch = True
 
+    # options for browser
+    self.browserPersistent = False
+
     # TODO: are these wrapped so we can avoid magic numbers?
     self.dicomModelUIDRole = 32
     self.dicomModelTypeRole = self.dicomModelUIDRole + 1
@@ -101,7 +104,8 @@ class DICOMWidget:
     self.detailsPopup.open()
 
   def exit(self):
-    self.detailsPopup.close()
+    if not self.browserPersistent:
+      self.detailsPopup.close()
 
   def updateGUIFromMRML(self, caller, event):
     pass
@@ -176,9 +180,16 @@ class DICOMWidget:
       self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
       self.loadButton = qt.QPushButton('Load to Slicer')
       self.previewLabel = qt.QLabel()
+      
       self.showBrowser = qt.QPushButton('Show DICOM Browser')
       self.dicomFrame.layout().addWidget(self.showBrowser)
       self.showBrowser.connect('clicked()', self.detailsPopup.open)
+
+      self.browserPersistentButton = qt.QCheckBox('Make DICOM Browser Persistent')
+      self.browserPersistentButton.toolTip = 'When enabled, DICOM Broswer remains open and usable after leaving DICOM module'
+      self.dicomFrame.layout().addWidget(self.browserPersistentButton)
+      self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
+
       self.dicomFrame.layout().addStretch(1)
     else:
       userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
@@ -406,6 +417,11 @@ class DICOMWidget:
       qt.QMessageBox.warning(slicer.util.mainWindow(), 'Load', 'Could not load volume for: %s' % name)
       print('Tried to load volume as %s using: ' % name, files)
 
+  def setBrowserPersistence(self,onOff):
+    self.detailsPopup.setModality(not onOff)
+    self.browserPersistent = onOff
+
+
   def onToggleListener(self):
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.stop()
@@ -433,7 +449,6 @@ class DICOMWidget:
       slicer.util.showStatusMessage("DICOM Listener starting")
     if newState == 2:
       slicer.util.showStatusMessage("DICOM Listener running")
-
 
 
   def onListenerToAddFile(self):
