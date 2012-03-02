@@ -156,28 +156,23 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   int numFiles = testSaveDir.count() - 2;
   if (numFiles > 0)
     {
-    ctkMessageBox *confirmDeleteMessageBox = new ctkMessageBox(d->ParentWidget);
+    ctkMessageBox *emptyMessageBox = new ctkMessageBox(d->ParentWidget);
     QString plurals = QString("\ncontains ");
     if (numFiles == 1)
       {
-      plurals += QString("1 file or directory.\nDo you wish to delete it ");
+      plurals += QString("1 file or directory.\n");
       }
     else
       {
-      plurals += QString("%1 files or directories.\nDo you wish to delete them ").arg(numFiles);
+      plurals += QString("%1 files or directories.\n").arg(numFiles);
       }
     QString message = QString("Selected directory\n" + saveDirName + plurals +
-                              "and Save the data bundle or Cancel and choose a new directory?");
-    confirmDeleteMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
-    confirmDeleteMessageBox->setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
-    confirmDeleteMessageBox->setDefaultButton(QMessageBox::Cancel);
-    confirmDeleteMessageBox->setIcon(QMessageBox::Warning);
-    confirmDeleteMessageBox->setText(message);
-    if (confirmDeleteMessageBox->exec() != QMessageBox::Save)
-      {
-      qDebug() << "Cancelling save to '" + saveDirName + "'";
-      return;
-      }
+                              "Please choose an empty directory.");
+    emptyMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
+    emptyMessageBox->setIcon(QMessageBox::Warning);
+    emptyMessageBox->setText(message);
+    emptyMessageBox->exec();
+    return;
     }
   
   // pass in a screen shot
