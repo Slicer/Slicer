@@ -32,6 +32,12 @@
       </property>
       <item row="0" column="0" colspan="2">
        <widget class="qMRMLTreeView" name="MRMLTreeView">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>120</height>
+         </size>
+        </property>
         <property name="dragDropMode">
          <enum>QAbstractItemView::InternalMove</enum>
         </property>
