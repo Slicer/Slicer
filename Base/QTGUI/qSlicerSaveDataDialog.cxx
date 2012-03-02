@@ -23,6 +23,9 @@
 #include <QDebug>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QRegExp>
+#include <QRegExpValidator>
+
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -52,12 +55,67 @@
 #include <vtkImageData.h>
 
 //-----------------------------------------------------------------------------
+qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
+  : Superclass(parent)
+{
+}
+
+//-----------------------------------------------------------------------------
+QWidget* qSlicerFileNameItemDelegate
+::createEditor(QWidget * parent, const QStyleOptionViewItem & option,
+               const QModelIndex & index ) const
+{
+  QWidget* widget =this->Superclass::createEditor(parent, option, index);
+  QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget);
+  if (lineEdit)
+    {
+    QString extension = index.data(Qt::UserRole).toString();
+    lineEdit->setValidator(
+      new QRegExpValidator(qSlicerFileNameItemDelegate::fileNameRegExp(extension), lineEdit));
+    }
+  return widget;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, const QString& extension)
+{
+  QString fixup;
+  QRegExp regExp = qSlicerFileNameItemDelegate::fileNameRegExp();
+  for (int i = 0; i < fileName.size(); ++i)
+    {
+    if (regExp.exactMatch(fileName[i]))
+      {
+      fixup += fileName[i];
+      }
+    }
+  if (!extension.isEmpty() && !fixup.endsWith(extension))
+    {
+    fixup += extension;
+    }
+  return fixup;
+}
+
+//-----------------------------------------------------------------------------
+QRegExp qSlicerFileNameItemDelegate::fileNameRegExp(const QString& extension)
+{
+  QRegExp regExp("[A-Za-z0-9\\ \\-\\_\\.\\(\\)\\$\\!\\~\\#\\'\\%\\^\\{\\}]{1,255}");
+
+  if (!extension.isEmpty())
+    {
+    regExp.setPattern(regExp.pattern() + extension);
+    }
+  return regExp;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget)
   :QDialog(parentWidget)
 {
   this->MRMLScene = 0;
 
   this->setupUi(this);
+  this->FileWidget->setItemDelegateForColumn(
+    FileNameColumn, new qSlicerFileNameItemDelegate(this));
 
   // Checkable headers.
   // We replace the current FileWidget header view with a checkable header view.
@@ -201,22 +259,19 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->setCellWidget(row, FileFormatColumn, sceneComboBoxWidget);
 
   // Scene FileName
+  QFileInfo sceneFileInfo;
   if (this->MRMLScene->GetURL() != 0)
     {
-    QFileInfo sceneFileInfo;
     sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
                                this->MRMLScene->GetURL());
-    this->FileWidget->setItem( row, FileNameColumn,
-                               new QTableWidgetItem(
-                                 sceneFileInfo.completeBaseName()));
     }
   else
     {
-    this->FileWidget->setItem(row, FileNameColumn,
-                              new QTableWidgetItem("SlicerScene1"));
-
+    sceneFileInfo = QFileInfo("SlicerScene1");
     }
-  // Scene Directory
+  QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml");
+  this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
+    // Scene Directory
   ctkDirectoryButton* sceneDirectoryButton =
     new ctkDirectoryButton(this->MRMLScene->GetRootDirectory(), this->FileWidget);
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
@@ -442,9 +497,16 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
 }
 
 //-----------------------------------------------------------------------------
-QTableWidgetItem* qSlicerSaveDataDialogPrivate::createFileNameItem(const QFileInfo& fileInfo)
+QTableWidgetItem* qSlicerSaveDataDialogPrivate
+::createFileNameItem(const QFileInfo& fileInfo, const QString& extension)
 {
-  return new QTableWidgetItem(fileInfo.fileName());
+  QTableWidgetItem* fileNameItem = new QTableWidgetItem(
+    qSlicerFileNameItemDelegate::fixupFileName(fileInfo.fileName(), extension));
+  if (!extension.isEmpty())
+    {
+    fileNameItem->setData(Qt::UserRole, extension);
+    }
+  return fileNameItem;
 }
 
 //-----------------------------------------------------------------------------
@@ -637,13 +699,13 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
 
   QDir directory = fileDirectoryButton->directory();
   QFileInfo file = QFileInfo(directory, fileNameItem->text());
-  if (file.suffix() != "mrml")
-    {
-    file = QFileInfo(directory, fileNameItem->text() + QString(".mrml"));
-    }
   if (file.fileName().isEmpty())
     {
     file = QFileInfo(QString(this->MRMLScene->GetURL()));
+    }
+  if (file.suffix() != "mrml")
+    {
+    file = QFileInfo(directory, fileNameItem->text() + QString(".mrml"));
     }
   return file;
 }
@@ -818,6 +880,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   Q_ASSERT(fileNameItem);
   fileNameItem->setText(QFileInfo(fileNameItem->text()).baseName() + extension);
+  fileNameItem->setData(Qt::UserRole, extension);
 
   // If the user changed the format, that means he wants to save the node
   // Select the row to mark the node to be saved.

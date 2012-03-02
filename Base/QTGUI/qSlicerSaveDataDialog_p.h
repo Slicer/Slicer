@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QDir>
 #include <QFileInfo>
+#include <QStyledItemDelegate>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -64,11 +65,24 @@ protected:
   QTableWidgetItem* createNodeTypeItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
-  QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo);
+  QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
   QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
   bool              mustSceneBeSaved()const;
 
   vtkMRMLScene* MRMLScene;
+};
+
+//-----------------------------------------------------------------------------
+class qSlicerFileNameItemDelegate : public QStyledItemDelegate
+{
+public:
+  typedef QStyledItemDelegate Superclass;
+  qSlicerFileNameItemDelegate( QObject * parent = 0 );
+  virtual QWidget* createEditor( QWidget * parent,
+                                 const QStyleOptionViewItem & option,
+                                 const QModelIndex & index ) const;
+  static QString fixupFileName(const QString& fileName, const QString& extension = QString());
+  static QRegExp fileNameRegExp(const QString& extension = QString());
 };
 
 #endif
