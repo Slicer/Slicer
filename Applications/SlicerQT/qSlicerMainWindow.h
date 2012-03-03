@@ -78,14 +78,15 @@ protected:
   /// Open a popup to warn the user Slicer is not for clinical use.
   void disclaimer();
 
-  // Description:
-  // Forward the dragEnterEvent to the IOManager which will
-  // decide if it could accept a drag/drop or not.
+  /// Forward the dragEnterEvent to the IOManager which will
+  /// decide if it could accept a drag/drop or not.
   void dragEnterEvent(QDragEnterEvent *event);
 
-  // Description:
-  // Forward the dropEvent to the IOManager.
+  /// Forward the dropEvent to the IOManager.
   void dropEvent(QDropEvent *event);
+
+  /// Reimplemented to catch show/hide events
+  bool eventFilter(QObject* object, QEvent* event);
 
   virtual void closeEvent(QCloseEvent *event);
   virtual void showEvent(QShowEvent *event);

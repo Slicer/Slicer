@@ -26,15 +26,14 @@
 #include <QPointer>
 
 // CTK includes
-#include <ctkErrorLogWidget.h>
+class ctkErrorLogWidget;
+class ctkPythonConsole;
 
 // SlicerQt includes
 #include "qSlicerMainWindowCore.h"
 #include "qSlicerMainWindow.h"
 
 class qSlicerAbstractModule;
-class ctkErrorLogWidget;
-class ctkPythonConsole;
 
 //-----------------------------------------------------------------------------
 class qSlicerMainWindowCorePrivate: public QObject
@@ -47,8 +46,10 @@ public:
 
 public:
   QPointer<qSlicerMainWindow> ParentWidget;
+#ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole*           PythonConsole;
-  ctkErrorLogWidget           ErrorLogWidget;
+#endif
+  ctkErrorLogWidget*          ErrorLogWidget;
 };
 
 #endif

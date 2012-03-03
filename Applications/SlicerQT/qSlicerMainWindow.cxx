@@ -27,15 +27,20 @@
 #include <QToolButton>
 #include <QMenu>
 
+#include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
+
 // CTK includes
+#include <ctkErrorLogWidget.h>
 #include <ctkMessageBox.h>
+#ifdef Slicer_USE_PYTHONQT
+# include <ctkPythonConsole.h>
+#endif
 #include <ctkSettingsDialog.h>
 #include <ctkVTKSliceView.h>
 
 // SlicerQt includes
 #include "qSlicerMainWindow.h"
 #include "ui_qSlicerMainWindow.h"
-#include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
 #include "qSlicerAbstractModule.h"
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
@@ -337,6 +342,10 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionHelpReportBugOrFeatureRequest->setIcon(questionIcon);
   this->actionHelpVisualBlog->setIcon(networkIcon);
 
+  //----------------------------------------------------------------------------
+  // Dialogs
+  //----------------------------------------------------------------------------
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(q);
 #endif
@@ -580,9 +589,12 @@ void qSlicerMainWindow::setupMenuActions()
   d->actionViewLayoutCompareGrid_3x3_viewers->setData(3);
   d->actionViewLayoutCompareGrid_4x4_viewers->setData(4);
 
-
-  qSlicerMainWindowCore_connect(WindowErrorLog);
-  qSlicerMainWindowCore_connect(WindowPythonInteractor);
+  connect(d->actionWindowErrorLog, SIGNAL(triggered(bool)),
+          d->Core, SLOT(onWindowErrorLogActionTriggered(bool)));
+  connect(d->actionWindowPythonInteractor, SIGNAL(triggered(bool)),
+          d->Core, SLOT(onWindowPythonInteractorActionTriggered(bool)));
+  d->Core->errorLogWidget()->installEventFilter(this);
+  d->Core->pythonConsole()->installEventFilter(this);
 
   qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);
   qSlicerMainWindowCore_connect(HelpBrowseTutorials);
@@ -835,4 +847,26 @@ void qSlicerMainWindow::restoreToolbars()
 {
   Q_D(qSlicerMainWindow);
   this->restoreState(d->StartupState);
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerMainWindow::eventFilter(QObject* object, QEvent* event)
+{
+  Q_D(qSlicerMainWindow);
+  bool showEvent = (event->type() == QEvent::Show);
+  bool hideEvent = (event->type() == QEvent::Close);
+  if (showEvent || hideEvent)
+    {
+    if (object == d->Core->errorLogWidget())
+      {
+      d->actionWindowErrorLog->setChecked(showEvent);
+      }
+#ifdef Slicer_USE_PYTHONQT
+    else if (object == d->Core->pythonConsole())
+      {
+      d->actionWindowPythonInteractor->setChecked(showEvent);
+      }
+#endif
+    }
+  return this->Superclass::eventFilter(object, event);
 }

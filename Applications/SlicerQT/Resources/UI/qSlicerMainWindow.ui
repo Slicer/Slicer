@@ -613,6 +613,9 @@
    </property>
   </action>
   <action name="actionWindowErrorLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Error Log</string>
    </property>
@@ -624,6 +627,9 @@
    </property>
   </action>
   <action name="actionWindowPythonInteractor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Python Interactor</string>
    </property>

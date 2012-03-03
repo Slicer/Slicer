@@ -26,6 +26,8 @@
 
 // CTK includes
 #include <ctkPimpl.h>
+class ctkPythonConsole;
+class ctkErrorLogWidget;
 
 #include "qSlicerQTExport.h"
 
@@ -40,6 +42,11 @@ public:
   typedef QObject Superclass;
   qSlicerMainWindowCore(qSlicerMainWindow *parent = 0);
   virtual ~qSlicerMainWindowCore();
+
+#ifdef Slicer_USE_PYTHONQT
+  ctkPythonConsole* pythonConsole()const;
+#endif
+  ctkErrorLogWidget* errorLogWidget()const;
 
 public slots: 
   /// 
@@ -61,8 +68,8 @@ public slots:
   void setLayout(int);
   void setLayoutNumberOfCompareViewRows(int);
   void setLayoutNumberOfCompareViewColumns(int);
-  void onWindowErrorLogActionTriggered();
-  void onWindowPythonInteractorActionTriggered();
+  void onWindowErrorLogActionTriggered(bool show);
+  void onWindowPythonInteractorActionTriggered(bool show);
 
   void onHelpKeyboardShortcutsActionTriggered();
   void onHelpBrowseTutorialsActionTriggered();
