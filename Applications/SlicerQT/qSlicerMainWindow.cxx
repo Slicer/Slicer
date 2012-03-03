@@ -125,11 +125,12 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // ModuleSelector ToolBar
   //----------------------------------------------------------------------------
   // Create a Module selector
-  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar("Module Selector",q);
+  this->ModuleSelectorToolBar = new qSlicerModuleSelectorToolBar("Module Selection",q);
   this->ModuleSelectorToolBar->setObjectName(QString::fromUtf8("ModuleSelectorToolBar"));
   this->ModuleSelectorToolBar->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
   this->ModuleSelectorToolBar->setModuleManager(moduleManager);
   q->insertToolBar(this->ModuleToolBar, this->ModuleSelectorToolBar);
+  this->ModuleSelectorToolBar->stackUnder(this->ModuleToolBar);
 
   // Connect the selector with the module panel
   this->ModulePanel->setModuleManager(moduleManager);
@@ -183,6 +184,15 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // loading slicer.
   this->actionWindowToolbarsUndoRedo->trigger();
   this->actionWindowToolbarsLayout->trigger();
+  this->menuWindowToolbars->removeAction(
+    this->actionWindowToolbarsLayout);
+  //q->removeToolBar(this->UndoRedoToolBar);
+  //q->removeToolBar(this->LayoutToolBar);
+  delete this->UndoRedoToolBar;
+  this->UndoRedoToolBar = 0;
+  delete this->LayoutToolBar;
+  this->LayoutToolBar = 0;
+
 
   // Color of the spacing between views:
   QFrame* layoutFrame = new QFrame(this->CentralWidget);
@@ -392,8 +402,8 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   // reading settings might have enable/disable toolbar visibility, need to
   // synchronize with the menu actions
   d->actionWindowToolbarsLoadSave->setChecked(d->MainToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsUndoRedo->setChecked(d->UndoRedoToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsLayout->setChecked(d->LayoutToolBar->isVisibleTo(this));
+  //d->actionWindowToolbarsUndoRedo->setChecked(d->UndoRedoToolBar->isVisibleTo(this));
+  //d->actionWindowToolbarsLayout->setChecked(d->LayoutToolBar->isVisibleTo(this));
   d->actionWindowToolbarsView->setChecked(d->ViewToolBar->isVisibleTo(this));
   d->actionWindowToolbarsModuleSelector->setChecked(d->ModuleSelectorToolBar->isVisibleTo(this));
   d->actionWindowToolbarsModules->setChecked(d->ModuleToolBar->isVisibleTo(this));

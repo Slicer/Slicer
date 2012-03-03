@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -202,7 +202,7 @@
   </widget>
   <widget class="QToolBar" name="MainToolBar">
    <property name="windowTitle">
-    <string>Main ToolBar</string>
+    <string>Load/Save</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -216,7 +216,7 @@
   </widget>
   <widget class="QToolBar" name="ModuleToolBar">
    <property name="windowTitle">
-    <string>Module ToolBar</string>
+    <string>Module Shortcuts</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -239,7 +239,7 @@
   </widget>
   <widget class="QToolBar" name="ViewToolBar">
    <property name="windowTitle">
-    <string>View ToolBar</string>
+    <string>Layout Selection</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -282,7 +282,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>Mouse Mode ToolBar</string>
+    <string>Mouse Interaction</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -296,7 +296,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>Capture ToolBar</string>
+    <string>Capture/Restore</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -307,7 +307,7 @@
   </widget>
   <widget class="qSlicerViewersToolBar" name="ViewersToolBar">
    <property name="windowTitle">
-    <string>Viewers Toolbar</string>
+    <string>Crosshair Selection</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -645,7 +645,7 @@
     <string>Load/Save</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Load/Save&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Load/Save&quot; toolbar</string>
    </property>
   </action>
   <action name="actionWindowToolbarsUndoRedo">
@@ -670,10 +670,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Layout</string>
+    <string>Layout Selection</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Layout&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Layout&quot; toolbar</string>
    </property>
   </action>
   <action name="actionWindowToolbarsMouseMode">
@@ -684,10 +684,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Mouse Mode</string>
+    <string>Mouse Interaction</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Mouse Mode&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Mouse Interaction&quot; toolbar</string>
    </property>
   </action>
   <action name="actionWindowToolbarsCapture">
@@ -698,10 +698,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Capture</string>
+    <string>Capture/Restore</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Capture&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Capture/Restore&quot; toolbar</string>
    </property>
   </action>
   <action name="actionWindowToolbarsResetToDefault">
@@ -794,10 +794,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Modules</string>
+    <string>Module Shortcuts</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Modules&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Modules Shortcuts&quot; toolbar</string>
    </property>
   </action>
   <action name="actionViewLayoutConventional">
@@ -982,10 +982,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Module Selector</string>
+    <string>Module Selection</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;Module Selector&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Module Selection&quot; toolbar</string>
    </property>
   </action>
   <action name="actionWindowToolbarsView">
@@ -996,10 +996,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View</string>
+    <string>Layout Selection</string>
    </property>
    <property name="toolTip">
-    <string>Show or Hide the &quot;View&quot; toolbar</string>
+    <string>Toggle visibility of the &quot;Layout Selection&quot; toolbar</string>
    </property>
   </action>
   <action name="actionModuleHome">
@@ -1226,7 +1226,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Viewers</string>
+    <string>Crosshair Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the &quot;Crosshair Selection&quot; toolbar</string>
    </property>
   </action>
  </widget>
