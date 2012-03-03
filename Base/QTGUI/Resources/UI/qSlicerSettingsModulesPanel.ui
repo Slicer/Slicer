@@ -442,6 +442,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="qSlicerModulesListView" name="FavoritesModulesListView">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>80</height>
+        </size>
+       </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
@@ -486,7 +492,7 @@
         <string>Add to the list by dragging modules from the above &quot;Modules&quot; list</string>
        </property>
        <property name="title">
-        <string/>
+        <string>Favorite</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0" colspan="2">
