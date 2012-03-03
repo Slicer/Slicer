@@ -3,7 +3,7 @@
 #include "vtkMRMLAnnotationStorageNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLHierarchyNode.h"
+//#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 
@@ -476,6 +476,18 @@ int vtkMRMLAnnotationStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 1;
     }
+
+  /*
+  // special case: if this annotation is in a hierarchy, the hierarchy took
+  // care of reading it already
+  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
+  if (hnode &&
+      hnode->GetParentNodeID())
+    {
+    vtkWarningMacro("ReadData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it read it in already");
+    return 1;
+    }
+  */
   // cast the input node
   vtkMRMLAnnotationNode *annotationNode = NULL;
   annotationNode = dynamic_cast <vtkMRMLAnnotationNode *> (refNode);
@@ -648,6 +660,7 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
 
+  /*
   // special case: if this annotation is in a hierarchy, the hierarchy took
   // care of writing it already
   vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
@@ -658,6 +671,8 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
     return 1;
     }
+  */
+
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 

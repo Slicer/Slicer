@@ -10,7 +10,7 @@
 #include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
-#include "vtkMRMLAnnotationHierarchyStorageNode.h"
+//#include "vtkMRMLAnnotationHierarchyStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
@@ -277,6 +277,8 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     }
   else if (fileType == this->List)
     {
+    vtkErrorMacro("Annotation lists disabled, cannot load the hierarhcy");
+    /*
     vtkDebugMacro("LoadAnnotation: Loading it as an annotation hierarchy");
     vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode> hStorageNode = vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode>::New();
     vtkMRMLAnnotationHierarchyNode *hNode = vtkMRMLAnnotationHierarchyNode::New();
@@ -299,6 +301,7 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
       }
     hStorageNode->Delete();
     hNode->Delete();
+    */
     }
   else
     {
@@ -859,9 +862,11 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
 
+  /*
   vtkMRMLAnnotationHierarchyStorageNode* annotationHierarchyStorageNode = vtkMRMLAnnotationHierarchyStorageNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyStorageNode);
   annotationHierarchyStorageNode->Delete();
+  */
 }
 
 //---------------------------------------------------------------------------

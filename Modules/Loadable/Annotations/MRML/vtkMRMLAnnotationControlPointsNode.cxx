@@ -5,6 +5,7 @@
 #include "vtkMRMLAnnotationControlPointsNode.h"
 
 #include <vtkMRMLScene.h>
+//#include <vtkMRMLHierarchyNode.h>
 
 #include "vtkBitArray.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
@@ -29,6 +30,18 @@ vtkMRMLAnnotationControlPointsNode::vtkMRMLAnnotationControlPointsNode()
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
 {
+  /*
+  // special case: if this annotation is in a hierarchy, the hierarchy took
+  // care of writing it already
+  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetScene(), this->GetID());
+  
+  if (hnode &&
+      hnode->GetParentNodeID())
+    {
+    vtkWarningMacro("WriteXML: node " << this->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
+    return;
+    }
+  */
   // cout << "vtkMRMLAnnotationControlPointsNode::WriteXML start" << endl;
   Superclass::WriteXML(of, nIndent);
   

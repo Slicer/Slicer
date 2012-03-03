@@ -2,7 +2,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkMRMLAnnotationRulerStorageNode.h"
 #include "vtkMRMLAnnotationRulerNode.h"
-#include "vtkMRMLHierarchyNode.h"
+//#include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkStringArray.h"
 

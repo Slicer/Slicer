@@ -44,7 +44,7 @@
 #include <vtkCacheManager.h>
 #include <vtkCollection.h>
 #include <vtkDataFileFormatHelper.h> // for GetFileExtensionFromFormatString()
-#include <vtkMRMLHierarchyNode.h>
+//#include <vtkMRMLHierarchyNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLSceneViewNode.h>
@@ -290,7 +290,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
     {
     return;
     }
-
+/*
   // if the node is an annotation node and in a hierarchy, the hierarchy will
   // take care of writing it out
   if (node->IsA("vtkMRMLAnnotationNode"))
@@ -307,7 +307,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
         }
       }
     }
-
+*/
   // get absolute filename
   QFileInfo fileInfo = this->nodeFileInfo(node);
   if (fileInfo == QFileInfo())

@@ -118,12 +118,6 @@ void vtkMRMLHierarchyNode::UpdateReferenceID(const char *oldID, const char *newI
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLStorageNode* vtkMRMLHierarchyNode::CreateDefaultStorageNode()
-{
-  return vtkMRMLHierarchyStorageNode::New();
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLHierarchyNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();

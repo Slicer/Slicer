@@ -228,7 +228,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
   this->SetReadStateIdle();
   
   // make sure that the list node points to this storage node
-  annotationHierarchyNode->SetAndObserveStorageNodeID(this->GetID());
+//  annotationHierarchyNode->SetAndObserveStorageNodeID(this->GetID());
   
   // mark it unmodified since read
   annotationHierarchyNode->ModifiedSinceReadOff();
