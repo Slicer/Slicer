@@ -434,14 +434,14 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode,  
       return 0;
     }
 
-  // test whether refNode is a valid node to hold a volume
+  // test whether refNode is a valid node to hold a control point
   if ( !( refNode->IsA("vtkMRMLAnnotationControlPointsNode") ) )
     {
     vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationControlPointsNode");
     return 0;         
     }
 
-  // cast the input nod
+  // cast the input node
   vtkMRMLAnnotationControlPointsNode *annCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode *> (refNode);
 
   if (annCPNode == NULL)
