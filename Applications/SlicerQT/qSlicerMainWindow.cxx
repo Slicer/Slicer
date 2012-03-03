@@ -178,6 +178,21 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
                    qSlicerApplication::application()->ioManager(),
                    SLOT(openSceneViewsDialog()));
 
+  QList<QAction*> toolBarActions;
+  toolBarActions << this->MainToolBar->toggleViewAction();
+  //toolBarActions << this->UndoRedoToolBar->toggleViewAction();
+  toolBarActions << this->ModuleSelectorToolBar->toggleViewAction();
+  toolBarActions << this->ModuleToolBar->toggleViewAction();
+  toolBarActions << this->ViewToolBar->toggleViewAction();
+  //toolBarActions << this->LayoutToolBar->toggleViewAction();
+  toolBarActions << this->MouseModeToolBar->toggleViewAction();
+  toolBarActions << this->CaptureToolBar->toggleViewAction();
+  toolBarActions << this->ViewersToolBar->toggleViewAction();
+
+  this->menuWindowToolBars->insertActions(
+    this->actionWindowToolbarsResetToDefault, toolBarActions);
+  this->menuWindowToolBars->insertSeparator(
+    this->actionWindowToolbarsResetToDefault);
   //----------------------------------------------------------------------------
   // Hide toolbars by default
   //----------------------------------------------------------------------------
@@ -187,17 +202,14 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // minimizing the application and restore it doesn't hide the module panel. check
   // also the geometry and the state of the menu qactions are correctly restored when
   // loading slicer.
-  this->actionWindowToolbarsUndoRedo->trigger();
-  this->actionWindowToolbarsLayout->trigger();
-  this->menuWindowToolbars->removeAction(
-    this->actionWindowToolbarsLayout);
+  this->UndoRedoToolBar->toggleViewAction()->trigger();
+  this->LayoutToolBar->toggleViewAction()->trigger();
   //q->removeToolBar(this->UndoRedoToolBar);
   //q->removeToolBar(this->LayoutToolBar);
   delete this->UndoRedoToolBar;
   this->UndoRedoToolBar = 0;
   delete this->LayoutToolBar;
   this->LayoutToolBar = 0;
-
 
   // Color of the spacing between views:
   QFrame* layoutFrame = new QFrame(this->CentralWidget);
@@ -407,18 +419,6 @@ qSlicerMainWindow::qSlicerMainWindow(QWidget *_parent):Superclass(_parent)
   this->setupMenuActions();
   d->StartupState = this->saveState();
   d->readSettings();
-
-  // reading settings might have enable/disable toolbar visibility, need to
-  // synchronize with the menu actions
-  d->actionWindowToolbarsLoadSave->setChecked(d->MainToolBar->isVisibleTo(this));
-  //d->actionWindowToolbarsUndoRedo->setChecked(d->UndoRedoToolBar->isVisibleTo(this));
-  //d->actionWindowToolbarsLayout->setChecked(d->LayoutToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsView->setChecked(d->ViewToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsModuleSelector->setChecked(d->ModuleSelectorToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsModules->setChecked(d->ModuleToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsMouseMode->setChecked(d->MouseModeToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsCapture->setChecked(d->CaptureToolBar->isVisibleTo(this));
-  d->actionWindowToolbarsViewers->setChecked(d->ViewersToolBar->isVisibleTo(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -606,8 +606,6 @@ void qSlicerMainWindow::setupMenuActions()
   qSlicerMainWindowCore_connect(HelpVisualBlog);
 
   //connect ToolBars actions
-  connect(d->actionWindowToolbarsModuleSelector, SIGNAL(triggered(bool)),
-          d->ModuleSelectorToolBar, SLOT(setVisible(bool)));
   connect(d->actionWindowToolbarsResetToDefault, SIGNAL(triggered()),
           this, SLOT(restoreToolbars()));
 
