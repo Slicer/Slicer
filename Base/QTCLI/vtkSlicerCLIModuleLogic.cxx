@@ -336,7 +336,7 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
 {
   // Just execute and wait.
   node->Register(this);
-  node->SetAttribute("UpdatDisplay", updateDisplay ? "true" : "false");
+  node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
   vtkSlicerCLIModuleLogic::ApplyTask ( node );
 
   while (this->GetApplicationLogic()->GetReadDataQueueSize())
