@@ -96,7 +96,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = files
       loadable.name = name + ' - as DWI Volume'
-      loadable.selected = True
+      loadable.selected = False
       loadable.tooltip = "Appears to be DWI from vendor %s" % vendorName
       loadables = [loadable]
     return loadables
