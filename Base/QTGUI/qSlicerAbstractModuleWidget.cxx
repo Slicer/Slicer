@@ -24,9 +24,53 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleWidget::qSlicerAbstractModuleWidget(QWidget* parentWidget)
-  :qSlicerWidget(parentWidget)
+class qSlicerAbstractModuleWidgetPrivate
 {
+public:
+  qSlicerAbstractModuleWidgetPrivate();
+  bool IsEntered;
+};
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModuleWidgetPrivate::qSlicerAbstractModuleWidgetPrivate()
+{
+  this->IsEntered = false;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModuleWidget::qSlicerAbstractModuleWidget(QWidget* parentWidget)
+  : qSlicerWidget(parentWidget)
+  , d_ptr(new qSlicerAbstractModuleWidgetPrivate)
+{
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModuleWidget::~qSlicerAbstractModuleWidget()
+{
+  Q_ASSERT(this->isEntered() == false);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModuleWidget::enter()
+{
+  Q_D(qSlicerAbstractModuleWidget);
+  Q_ASSERT(d->IsEntered == false);
+  d->IsEntered = true;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAbstractModuleWidget::exit()
+{
+  Q_D(qSlicerAbstractModuleWidget);
+  Q_ASSERT(d->IsEntered == true);
+  d->IsEntered = false;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerAbstractModuleWidget::isEntered()const
+{
+  Q_D(const qSlicerAbstractModuleWidget);
+  return d->IsEntered;
 }
 
 //-----------------------------------------------------------------------------

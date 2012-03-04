@@ -31,8 +31,7 @@
 // SlicerQt includes
 #include "qSlicerAbstractModuleRepresentation.h"
 #include "qSlicerWidget.h"
-
-#include "qSlicerBaseQTGUIExport.h"
+class qSlicerAbstractModuleWidgetPrivate;
 
 ///
 /// Base class of all the Slicer module widgets. The widget is added in the module panels.
@@ -45,15 +44,26 @@ public:
   /// Constructor
   /// \sa QWidget
   qSlicerAbstractModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerAbstractModuleWidget();
 
   /// The enter and exit methods are called when the module panel changes.
   /// These give the module a chance to do any setup or shutdown operations
   /// as it becomes active and inactive.
-  virtual void enter() {};
-  virtual void exit() {};
+  /// It is the responsibility of the module's manager to call the methods.
+  /// \a enter() and \a exit() must be called when reimplementing these methods
+  /// in order to have \a isEntered() valid.
+  virtual void enter();
+  virtual void exit();
+  bool isEntered()const;
 
 protected:
+  QScopedPointer<qSlicerAbstractModuleWidgetPrivate> d_ptr;
+
   virtual void setup();
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerAbstractModuleWidget);
+  Q_DISABLE_COPY(qSlicerAbstractModuleWidget);
 };
 
 #endif

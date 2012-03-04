@@ -70,7 +70,13 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  widget->enter();
+  widget->exit();
+
   widget->show();
+
+  widget->enter();
+  widget->exit();
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {

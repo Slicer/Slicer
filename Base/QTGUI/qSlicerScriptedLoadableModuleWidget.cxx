@@ -210,6 +210,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
 void qSlicerScriptedLoadableModuleWidget::setup()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
+  this->Superclass::setup();
   PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
   if (!method)
     {
@@ -223,6 +224,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
 void qSlicerScriptedLoadableModuleWidget::enter()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
+  this->Superclass::enter();
   PyObject * method = d->PythonAPIMethods[Pimpl::EnterMethod];
   if (!method)
     {
@@ -236,6 +238,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
 void qSlicerScriptedLoadableModuleWidget::exit()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
+  this->Superclass::exit();
   PyObject * method = d->PythonAPIMethods[Pimpl::ExitMethod];
   if (!method)
     {

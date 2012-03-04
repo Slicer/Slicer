@@ -58,6 +58,7 @@ qSlicerModulePanel::qSlicerModulePanel(QWidget* _parent, Qt::WindowFlags f)
 //---------------------------------------------------------------------------
 qSlicerModulePanel::~qSlicerModulePanel()
 {
+  this->setModule(QString());
 }
 
 //---------------------------------------------------------------------------
