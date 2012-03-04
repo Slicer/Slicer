@@ -28,8 +28,9 @@ class DICOMDetailsPopup(object):
   This is a helper used in the DICOMWidget class.
   """
 
-  def __init__(self,dicomApp):
+  def __init__(self,dicomApp,setBrowserPersistence=None):
     self.dicomApp = dicomApp
+    self.setBrowserPersistence = setBrowserPersistence
     self.create()
     self.popupPositioned = False
     self.pluginInstances = {}
@@ -125,6 +126,12 @@ class DICOMDetailsPopup(object):
     self.closeButton = qt.QPushButton('Close')
     self.actionButtonLayout.addWidget(self.closeButton)
     self.closeButton.connect('clicked()', self.close)
+
+    if self.setBrowserPersistence:
+      self.browserPersistentButton = qt.QCheckBox('Make DICOM Browser Persistent')
+      self.browserPersistentButton.toolTip = 'When enabled, DICOM Broswer remains open and usable after leaving DICOM module'
+      self.actionLayout.addWidget(self.browserPersistentButton)
+      self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
 
     self.actionLayout.addStretch(1)
 

@@ -174,7 +174,7 @@ class DICOMWidget:
       slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
 
     if self.useDetailsPopup:
-      self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp)
+      self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp,setBrowserPersistence=self.setBrowserPersistence)
       # TODO: move all functions to popup
       # for now, create dummy buttons just so callbacks work
       self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
@@ -185,12 +185,8 @@ class DICOMWidget:
       self.dicomFrame.layout().addWidget(self.showBrowser)
       self.showBrowser.connect('clicked()', self.detailsPopup.open)
 
-      self.browserPersistentButton = qt.QCheckBox('Make DICOM Browser Persistent')
-      self.browserPersistentButton.toolTip = 'When enabled, DICOM Broswer remains open and usable after leaving DICOM module'
-      self.dicomFrame.layout().addWidget(self.browserPersistentButton)
-      self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
-
       self.dicomFrame.layout().addStretch(1)
+
     else:
       userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
       userFrame.setLayout(qt.QVBoxLayout())
@@ -207,7 +203,7 @@ class DICOMWidget:
 
     # make the tree view a bit bigger
     self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
-    self.tree.setMinimumHeight(300)
+    self.tree.setMinimumHeight(250)
 
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
