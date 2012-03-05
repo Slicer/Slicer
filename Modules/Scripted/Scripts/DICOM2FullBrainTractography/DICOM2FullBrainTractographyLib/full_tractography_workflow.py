@@ -51,7 +51,7 @@ class WorkflowConfiguration:
         self.slicerVolumesLogic = slicer.vtkSlicerVolumesLogic()
         self.slicerVolumesLogic.SetMRMLScene(slicer.mrmlScene)
         self.dicomtonrrdconverter_parameter_node = None
-        self.diffusionweightedmasking_parameter_node = None
+        self.diffusionweightedvolumemasking_parameter_node = None
         self.diffusiontensorestimation_parameter_node = None
         self.seeding_parameter_node = None
 
@@ -132,13 +132,13 @@ class WorkflowConfiguration:
             'outputBaseline': self.baseline_node.GetID(),
         }
 
-        self.diffusionweightedmasking_parameter_node = slicer.cli.run(
-            slicer.modules.diffusionweightedmasking, self.diffusionweightedmasking_parameter_node,
+        self.diffusionweightedvolumemasking_parameter_node = slicer.cli.run(
+            slicer.modules.diffusionweightedvolumemasking, self.diffusionweightedvolumemasking_parameter_node,
             parameters_mask,
             wait_for_completion=True
         )
 
-        if self.diffusionweightedmasking_parameter_node.GetStatusString() != "Completed":
+        if self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completed":
             display_error("Error in diffusion tensor estimation")
             return False
 
