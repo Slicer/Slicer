@@ -300,8 +300,8 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
   QCOMPARE(comboBox->currentNodeId(), QString(labelmapNode2->GetID()));
 
-  sliceControllerWidget.show();
-  qApp->exec();
+  //sliceControllerWidget.show();
+  //qApp->exec();
 }
 
 // ----------------------------------------------------------------------------
