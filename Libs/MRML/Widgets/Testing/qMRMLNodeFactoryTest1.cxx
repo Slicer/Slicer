@@ -67,7 +67,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
   // Test a simple node
   vtkMRMLNode* createdNode = nodeFactory.createNode("vtkMRMLCameraNode");
   if (createdNode == 0 ||
-      createdNode->IsA("vtkMRMLCameraNode") != true ||
+      createdNode->IsA("vtkMRMLCameraNode") != 1 ||
       createdNode->GetReferenceCount() != 1 ||
       scene->IsNodePresent(createdNode) == 0)
     {
@@ -80,7 +80,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     nodeFactory.createNode("vtkMRMLInteractionNode");
 
   if (createdSingletonNode == 0 ||
-      createdSingletonNode->IsA("vtkMRMLInteractionNode") != true ||
+      createdSingletonNode->IsA("vtkMRMLInteractionNode") != 1 ||
       createdSingletonNode->GetReferenceCount() != 1 ||
       scene->IsNodePresent(createdSingletonNode) == 0)
     {
@@ -101,7 +101,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
   // node to add in the existing node. \sa vtkMRMLScene::AddNode
   if (createdSingletonNode2 == 0 ||
       createdSingletonNode2 != createdSingletonNode || 
-      createdSingletonNode2->IsA("vtkMRMLInteractionNode") != true ||
+      createdSingletonNode2->IsA("vtkMRMLInteractionNode") != 1 ||
       createdSingletonNode2->GetReferenceCount() != 1 ||
       scene->IsNodePresent(createdSingletonNode2) == 0)
     {
@@ -113,7 +113,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
   vtkMRMLNode* createdNodeStatic =
     qMRMLNodeFactory::createNode(scene.GetPointer(), "vtkMRMLCameraNode");
   if (createdNodeStatic == 0 ||
-      createdNodeStatic->IsA("vtkMRMLCameraNode") != true ||
+      createdNodeStatic->IsA("vtkMRMLCameraNode") != 1 ||
       createdNodeStatic->GetReferenceCount() != 1 ||
       scene->IsNodePresent(createdNodeStatic) == 0)
     {

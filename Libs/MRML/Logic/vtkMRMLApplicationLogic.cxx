@@ -651,7 +651,7 @@ const char * vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *t
   struct stat st;
 #endif
   char buff[8192];
-  int len;
+  size_t len;
   // have to read the contents of the files to add them to the archive
   FILE *fd;
 
@@ -1081,5 +1081,5 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
   scene->SetURL(url.c_str());
   scene->SetRootDirectory(rootdir.c_str());
 
-  return filesToLoad.size();
+  return static_cast<int>(filesToLoad.size());
 }
