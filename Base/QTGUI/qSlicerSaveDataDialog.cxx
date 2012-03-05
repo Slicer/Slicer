@@ -20,12 +20,12 @@
 
 /// Qt includes
 #include <QComboBox>
+#include <QDate>
 #include <QDebug>
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QRegExp>
 #include <QRegExpValidator>
-
 
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
@@ -53,6 +53,9 @@
 #include <vtkStringArray.h>
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
+
+// STD includes
+#include <cstring> // for strlen
 
 //-----------------------------------------------------------------------------
 qSlicerFileNameItemDelegate::qSlicerFileNameItemDelegate( QObject * parent )
@@ -260,14 +263,17 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Scene FileName
   QFileInfo sceneFileInfo;
-  if (this->MRMLScene->GetURL() != 0)
+  if (this->MRMLScene->GetURL() != 0 &&
+      strlen(this->MRMLScene->GetURL()) > 0)
     {
     sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
                                this->MRMLScene->GetURL());
     }
   else
     {
-    sceneFileInfo = QFileInfo("SlicerScene1");
+    sceneFileInfo = QFileInfo( QDir(this->MRMLScene->GetRootDirectory()),
+                               QDate::currentDate().toString(
+                                 "yyyy-MM-dd") + "-Scene");
     }
   QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml");
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
