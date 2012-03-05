@@ -37,7 +37,16 @@ class vtkMRMLSliceNode;
 ///
 /// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
-/// be changed. 
+/// can be changed.
+/// To be valid, it needs at least a MRML scene and a MRML slice node:
+/// <code>
+/// qMRMLSliceControllerWidget controllerWidget;
+/// controllerWidget.setSliceViewName("Red");
+/// controllerWidget.setSliceViewLabel("R");
+/// controllerWidget.setSliceViewColor(Qt::red);
+/// controllerWidget.setMRMLScene(scene);
+/// controllerWidget.setMRMLSliceNode(sliceNode);
+/// </code>
 class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
   : public qMRMLViewControllerBar
 {
@@ -61,7 +70,11 @@ public:
   /// \sa setSliceOrientation(QString);
   QString sliceOrientation()const;
 
-  /// Get imageData
+  /// Get imageData from the slice logic.
+  /// Returns 0 if there is no volume assigned to
+  /// Background, Foreground or LabelMap.
+  /// Or if the only volume assigned doesn't have have
+  /// a display node or its display node image data is 0.
   vtkImageData* imageData()const;
 
   /// Get \a sliceNode
@@ -74,6 +87,7 @@ public:
 
   /// Set slice view name
   /// \note SliceViewName should be set before setMRMLSliceNode() is called
+  /// "Red" by default.
   void setSliceViewName(const QString& newSliceViewName);
 
   /// Get slice view name

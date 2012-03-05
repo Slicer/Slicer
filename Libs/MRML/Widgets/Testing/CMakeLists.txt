@@ -48,6 +48,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLSceneTransformModelTest2.cxx
   qMRMLSceneDisplayableModelTest1.cxx
   qMRMLSceneDisplayableModelTest2.cxx
+  qMRMLSliceControllerWidgetTest.cxx
   qMRMLSliceWidgetTest1.cxx
   qMRMLSliceWidgetTest2.cxx
   qMRMLTransformSlidersTest1.cxx
@@ -74,6 +75,7 @@ QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLSceneModelTest.cxx
+  qMRMLSliceControllerWidgetTest.cxx
   )
 
 set(TestsToRun ${Tests})
@@ -141,6 +143,7 @@ SIMPLE_TEST( qMRMLSceneTransformModelTest1 )
 SCENE_TEST(  qMRMLSceneTransformModelTest2 vol_and_cube.mrml )
 SIMPLE_TEST( qMRMLSceneDisplayableModelTest1 )
 SCENE_TEST(  qMRMLSceneDisplayableModelTest2 vol_and_cube.mrml )
+SIMPLE_TEST( qMRMLSliceControllerWidgetTest )
 SCENE_TEST( qMRMLSliceWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLSliceWidgetTest2 fixed.nrrd)
 SIMPLE_TEST( qMRMLTransformSlidersTest1 )

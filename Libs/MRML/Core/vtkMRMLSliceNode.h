@@ -147,7 +147,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void UpdateMatrices();
 
   /// 
-  /// Name of the layout
+  /// Name of the layout. Must be unique between all the slice
+  /// nodes because it is used as a singleton tag.
+  /// Must be the same than the slice composite node.
+  /// No name (i.e. "") by default. Typical names are colors:
+  /// "Red", "Green", "Yellow"... to uniquely define the slice node
+  /// \sa vtkMRMLSliceCompositeNode::SetLayoutName
   void SetLayoutName(const char *layoutName) {
     this->SetSingletonTag(layoutName);
   }
