@@ -34,6 +34,7 @@ class ColorBox(object):
       p = qt.QCursor().pos()
       self.parent.setGeometry(p.x(), p.y(), 300, 700)
       self.parent.show()
+      self.parent.raise_()
     else:
       self.parent = parent
       self.create()
@@ -65,6 +66,7 @@ class ColorBox(object):
     self.parameter = parameter
     self.populateColors()
     self.parent.show()
+    self.parent.raise_()
 
   def addRow(self,c):
     name = self.colorNode.GetColorName(c)

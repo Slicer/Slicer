@@ -212,6 +212,7 @@ class HelperBox(object):
       self.colorBox.colorNode = colorNode
       self.colorBox.parent.populate()
       self.colorBox.parent.show()
+      self.colorBox.parent.raise_()
 
   def addStructure(self,label=None, options=""):
     """create the segmentation helper box"""
