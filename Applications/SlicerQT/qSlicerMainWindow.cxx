@@ -593,8 +593,14 @@ void qSlicerMainWindow::setupMenuActions()
           d->Core, SLOT(onWindowErrorLogActionTriggered(bool)));
   connect(d->actionWindowPythonInteractor, SIGNAL(triggered(bool)),
           d->Core, SLOT(onWindowPythonInteractorActionTriggered(bool)));
-  d->Core->errorLogWidget()->installEventFilter(this);
-  d->Core->pythonConsole()->installEventFilter(this);
+  if (d->Core->errorLogWidget())
+    {
+    d->Core->errorLogWidget()->installEventFilter(this);
+    }
+  if (d->Core->pythonConsole())
+    {
+    d->Core->pythonConsole()->installEventFilter(this);
+    }
 
   qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);
   qSlicerMainWindowCore_connect(HelpBrowseTutorials);
