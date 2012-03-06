@@ -38,6 +38,8 @@ Version:   $Revision: 1.6 $
 #include <vtkStringArray.h>
 #include <vtksys/Directory.hxx>
 
+// STD includes
+#include <algorithm>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
@@ -586,6 +588,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 //----------------------------------------------------------------------------
 std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, int move)
 {
+  bool result = true;
   std::string returnString = "";
   // test whether refNode is a valid node to hold a volume
   if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
@@ -639,9 +642,18 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   pathComponents.push_back(std::string("TempWrite"));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
-  vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
-  vtksys::SystemTools::MakeDirectory(tempDir.c_str());
-  
+  result = vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  if (!result)
+    {
+    vtkErrorMacro("UpdateFileList: Failed to delete directory" << tempDir);
+    return returnString;
+    }
+  result = vtksys::SystemTools::MakeDirectory(tempDir.c_str());
+  if (!result)
+    {
+    vtkErrorMacro("UpdateFileList: Failed to create directory" << tempDir);
+    return returnString;
+    }
   // make a new name,
   pathComponents.push_back(vtksys::SystemTools::GetFilenameName(oldName));
   std::string tempName = vtksys::SystemTools::JoinPath(pathComponents);
@@ -669,21 +681,31 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   volNode->GetRASToIJKMatrix(mat);
   writer->SetRasToIJKMatrix(mat);
 
-  int result = 1;
   try
     {
     writer->Write();
     }
     catch (...)
     {
-    result = 0;
+    result = false;
+    }
+
+  if (!result)
+    {
+    vtkErrorMacro("UpdateFileList: Failed to write '" << tempName.c_str()
+      << "'.");
+    return returnString;
     }
 
   // look through the new dir and populate the file list
   vtksys::Directory dir;
-  dir.Load(tempDir.c_str());
+  result = dir.Load(tempDir.c_str());
   vtkDebugMacro("UpdateFileList: tempdir " << tempDir.c_str() << " has " << dir.GetNumberOfFiles() << " in it");
-  size_t fileNum;
+  if (!result)
+    {
+    vtkErrorMacro("UpdateFileList: Failed to open directory '" << tempDir.c_str() << "'.");
+    return returnString;
+    }
 
   // take the archetype and temp dir off of the path
   pathComponents.pop_back();
@@ -766,9 +788,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   this->AddFileName(relativeArchetypeFile.c_str());
 
   bool addedArchetype = false;
-
   // now iterate through the directory files
-  for (fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
+  for (size_t fileNum = 0; fileNum < dir.GetNumberOfFiles(); ++fileNum)
     {
     // skip the dirs
     const char *thisFile = dir.GetFile(static_cast<unsigned long>(fileNum));
@@ -789,9 +810,19 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
       this->AddFileName(relativeFile.c_str());
       }
     }
-  if (!addedArchetype)
+  result = addedArchetype;
+  if (!result)
     {
-    vtkErrorMacro("UpdateFileList: the archetype file wasn't written out! The updated file list does contain " << newArchetype.c_str() << ", but an error has occurred");
+    std::stringstream addedFiles;
+    std::copy(++this->FileNameList.begin(), this->FileNameList.end(),
+              std::ostream_iterator<std::string>(addedFiles,", "));
+    vtkErrorMacro("UpdateFileList: the archetype file wasn't written out! "
+      << "The updated file list does contain '" << newArchetype.c_str() << ", "
+      << "but it failed to write it in '" << tempDir.c_str() << "'. "
+      << "Only those " << this->FileNameList.size() - 1
+      << " files have been written: " << addedFiles.str().c_str()
+      << "." );
+    return returnString;
     }
   // restore the old file name
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
@@ -801,7 +832,13 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     {
     // clean up temp directory
     vtkDebugMacro("UpdateFileList: removing temp dir " << tempDir);
-    vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    result = vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    if (!result)
+      {
+      vtkErrorMacro("UpdateFileList: failed to remove temp dir '"
+                    << tempDir.c_str() << "'." );
+      return returnString;
+      }
     return std::string("");
     }
   else
