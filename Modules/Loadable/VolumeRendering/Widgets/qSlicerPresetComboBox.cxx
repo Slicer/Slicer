@@ -22,6 +22,10 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QListView>
+#if QT_VERSION < 0x040700
+#  include <private/qtextimagehandler_p.h>
+#include <QPixmapCache>
+#endif
 
 // CTK includes
 #include <ctkVTKScalarsToColorsUtils.h>
@@ -42,6 +46,14 @@
 
 // STD includes
 #include <cassert>
+
+#if QT_VERSION < 0x040700
+static QImage pixmapCacheLoader( const QString& name, const QString &context )
+{
+  QPixmap pix;
+  return QPixmapCache::find( name, pix ) ? pix.toImage() : QImage();
+}
+#endif
 
 //-----------------------------------------------------------------------------
 qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
@@ -206,7 +218,14 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
       volumePropertyNode->GetVolumeProperty() ? volumePropertyNode->GetVolumeProperty()->GetRGBTransferFunction() : 0;
     assert(colors && colors->GetRange()[1] > colors->GetRange()[0]);
     QImage img = ctk::scalarsToColorsImage(colors, QSize(previewSize, previewSize));
-    QString toolTip = QString("<img src=\"%1\"> %2").arg(ctk::base64HTMLImageTagSrc(img)).arg(presetNode->GetName());
+#if QT_VERSION >= 0x040700
+    QString imgSrc = ctk::base64HTMLImageTagSrc(img);
+#else
+    QTextImageHandler::externalLoader = pixmapCacheLoader;
+    QString imgSrc = QString(":%1").arg(presetNode->GetName());
+    QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
+#endif
+    QString toolTip = QString("<img src=\"%1\"> %2").arg(imgSrc).arg(presetNode->GetName());
     sceneModel->setData(sceneModel->indexFromNode(presetNode), toolTip, Qt::ToolTipRole);
     }
 }
