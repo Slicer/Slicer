@@ -46,10 +46,10 @@ set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Si
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
-  ## Tag of master branch on Dec. 10th 2011
   GIT_REPOSITORY http://itk.org/SimpleITK.git
-  # This is the tag for the "master" branch as of December 21, 2011 to address ITKv4.0.0 status
-  GIT_TAG 61cd8f05575537c9aba5d0d2c93b220065c72a48
+  # This is the tag for the "next" branch as of March 6th, 2012 to address ITKv4.1.0
+  ## Tag of next branch on 2012-03-06
+  GIT_TAG 8dbee2630d6d248cc26c7e5245c76e7004a5518d
   UPDATE_COMMAND ""
   CMAKE_ARGS
     ${ep_common_args}

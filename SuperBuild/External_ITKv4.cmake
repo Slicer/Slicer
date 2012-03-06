@@ -59,7 +59,8 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
   set(ITKv4_REPOSITORY git://itk.org/ITK.git)
-  set(ITKv4_GIT_TAG v4.1rc04)
+  #set(ITKv4_GIT_TAG v4.1.0)
+  set(ITKv4_GIT_TAG cc4f86ccb404c2d5e4286b0f7e91ebbb8e3f0e68) ## 2012-03-06 The v4.1.0 branch + ITKv4Registration patch set not needed by Slicer proper, but needed by extensions
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
     GIT_TAG ${ITKv4_GIT_TAG}
