@@ -40,6 +40,7 @@ Version:   $Revision: 1.6 $
 
 // STD includes
 #include <algorithm>
+#include <iterator>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLVolumeArchetypeStorageNode);
