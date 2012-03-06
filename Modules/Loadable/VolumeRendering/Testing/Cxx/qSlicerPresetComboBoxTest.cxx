@@ -28,7 +28,8 @@
 #include <QTextBrowser>
 #include <QTimer>
 #if QT_VERSION < 0x040700
-#  include <private/qtextimagehandler_p.h>
+//#  include <private/qtextimagehandler_p.h>
+#include <QPixmapCache>
 #endif
 
 // CTK includes
@@ -48,11 +49,12 @@
 #include <vtkPiecewiseFunction.h>
 
 #if QT_VERSION < 0x040700
-static QImage pixmapCacheLoader( const QString& name, const QString &context )
-{
-  QPixmap pix;
-  return QPixmapCache::find( name, pix ) ? pix.toImage() : QImage();
-}
+//static QImage pixmapCacheLoader( const QString& name, const QString &context )
+//{
+//  Q_UNUSED(context);
+//  QPixmap pix;
+//  return QPixmapCache::find( name, pix ) ? pix.toImage() : QImage();
+//}
 #endif
 
 // ----------------------------------------------------------------------------
@@ -132,8 +134,8 @@ void qSlicerPresetComboBoxTester::testPreview()
   label.setText(QString("<img src=\"%1\"/>").arg(ctk::base64HTMLImageTagSrc(image)));
 #else
   pixmap = QPixmap::fromImage(image);
-  QTextImageHandler::externalLoader = pixmapCacheLoader;
   QPixmapCache::insert(":cachedImage", pixmap);
+  //QTextImageHandler::externalLoader = pixmapCacheLoader;
   label.setText(QString("<img src=\":cachedImage\"/>"));
 #endif
   //label.setPixmap(pixmap); ok !
