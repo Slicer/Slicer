@@ -32,7 +32,7 @@ if(NOT DEFINED BRAINSTools_SOURCE_DIR)
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
   set(GIT_TAG "75d6840c4d5122cadefa42a3cb2527bec4335eca")
 else()
-  set(GIT_TAG "51a36fa469e8c394616a5b2bf59ca951f2756264")
+  set(GIT_TAG "28cd0f756b60b9988a51d398df39ebedb7bbd78d")
 endif()
 
   ExternalProject_Add(${proj}
