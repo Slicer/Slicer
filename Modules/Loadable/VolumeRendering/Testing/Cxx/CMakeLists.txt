@@ -9,6 +9,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qMRMLVolumePropertyNodeWidgetTest1.cxx
+  qSlicerPresetComboBoxTest.cxx
   qSlicerVolumeRenderingModuleWidgetTest1.cxx
   qSlicerVolumeRenderingModuleWidgetTest2.cxx
   vtkMRMLVolumePropertyNodeTest1.cxx
@@ -18,6 +19,11 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 list(APPEND Tests ${KIT_TEST_SRCS})
+
+QT4_GENERATE_MOCS(
+  qSlicerPresetComboBoxTest.cxx
+  )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
 #set(TestsToRun ${Tests})
 #list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
