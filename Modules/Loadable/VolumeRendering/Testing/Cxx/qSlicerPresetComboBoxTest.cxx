@@ -129,7 +129,7 @@ void qSlicerPresetComboBoxTester::testPreview()
 
 #if QT_VERSION >= 0x040700
   pixmap.convertFromImage(image);
-  label.setText(QString("<img src=\"%1\"/>").arg(ctk::base64HTMLImageTagSrc(image))); not ok
+  label.setText(QString("<img src=\"%1\"/>").arg(ctk::base64HTMLImageTagSrc(image)));
 #else
   pixmap = QPixmap::fromImage(image);
   QTextImageHandler::externalLoader = pixmapCacheLoader;
