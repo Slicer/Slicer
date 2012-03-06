@@ -314,7 +314,7 @@ void qSlicerModuleSelectorToolBar::actionSelected(QAction* action)
     {
     d->insertActionOnTop(action, d->HistoryMenu);
     }
-  emit moduleSelected(action->data().toString());
+  emit moduleSelected(action ? action->data().toString() : QString());
 }
 
 //---------------------------------------------------------------------------

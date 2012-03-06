@@ -47,6 +47,7 @@ public:
 
   qSlicerModuleManager* ModuleManager;
   QMenu*                AllModulesMenu;
+  QAction*              NoModuleAction; //< Can be used to remove the current module
   QString               CurrentModule;
   bool                  DuplicateActions;
   bool                  ShowHiddenModules;
@@ -58,6 +59,7 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
 {
   this->ModuleManager = 0;
   this->AllModulesMenu = 0;
+  this->NoModuleAction = 0;
   this->DuplicateActions = false;
   this->ShowHiddenModules = false;
 }
@@ -65,7 +67,13 @@ qSlicerModulesMenuPrivate::qSlicerModulesMenuPrivate(qSlicerModulesMenu& object)
 //---------------------------------------------------------------------------
 void qSlicerModulesMenuPrivate::init()
 {
+  Q_Q(qSlicerModulesMenu);
   this->addDefaultCategories();
+
+  // Invisible action, don't add it anywhere.
+  this->NoModuleAction = new QAction(q);
+  QObject::connect(this->NoModuleAction, SIGNAL(triggered(bool)),
+                   q, SLOT(onActionTriggered()));
 }
 
 //---------------------------------------------------------------------------
@@ -428,7 +436,9 @@ void qSlicerModulesMenu::setCurrentModule(const QString& moduleName)
   Q_D(qSlicerModulesMenu);
   // It's faster to look for the action in the AllModulesMenu (no need to
   // do a recursive search
-  QAction* moduleAction = d->action(QVariant(moduleName), d->AllModulesMenu);
+  QAction* moduleAction = (!moduleName.isEmpty() ?
+                           d->action(QVariant(moduleName), d->AllModulesMenu) :
+                           d->NoModuleAction );
   if (!moduleAction)
     {
     // maybe the module hasn't been added yet.

@@ -462,6 +462,10 @@ void qSlicerMainWindow::closeEvent(QCloseEvent *event)
   Q_D(qSlicerMainWindow);
   if (d->confirmClose())
     {
+    // Exit current module to leave it a chance to change the UI (e.g. layout)
+    // before writting settings.
+    d->ModuleSelectorToolBar->selectModule("");
+
     d->writeSettings();
     event->accept();
     }
