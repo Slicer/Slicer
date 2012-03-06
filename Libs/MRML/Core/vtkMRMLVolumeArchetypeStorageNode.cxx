@@ -643,10 +643,13 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   pathComponents.push_back(std::string("TempWrite"));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
-  result = vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+  if (vtksys::SystemTools::FileExists(tempDir.c_str()))
+    {
+    result = vtksys::SystemTools::RemoveADirectory(tempDir.c_str());
+    }
   if (!result)
     {
-    vtkErrorMacro("UpdateFileList: Failed to delete directory" << tempDir);
+    vtkErrorMacro("UpdateFileList: Failed to delete directory '" << tempDir << "'.");
     return returnString;
     }
   result = vtksys::SystemTools::MakeDirectory(tempDir.c_str());
