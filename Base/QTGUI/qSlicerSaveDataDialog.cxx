@@ -808,12 +808,16 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
     }
   
   // remove unreferenced nodes
+  // TODO: the MRML Scene should deal with this on Commit or the
+  // modules should respond to NodeRemoved events and keep the scene clean.
+  /*
   vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
   mrmlLogic->SetScene(this->MRMLScene);
   mrmlLogic->RemoveUnreferencedDisplayNodes();
   mrmlLogic->RemoveUnreferencedStorageNodes();
   mrmlLogic->Delete();
-
+  */
+  
   this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1().data());
   // TODO
   this->MRMLScene->SetVersion("Slicer4");
