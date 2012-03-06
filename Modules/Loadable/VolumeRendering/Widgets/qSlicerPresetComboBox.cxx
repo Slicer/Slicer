@@ -23,7 +23,7 @@
 #include <QDesktopWidget>
 #include <QListView>
 #if QT_VERSION < 0x040700
-#  include <private/qtextimagehandler_p.h>
+//#  include <private/qtextimagehandler_p.h>
 #include <QPixmapCache>
 #endif
 
@@ -221,7 +221,7 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 #if QT_VERSION >= 0x040700
     QString imgSrc = ctk::base64HTMLImageTagSrc(img);
 #else
-    QTextImageHandler::externalLoader = pixmapCacheLoader;
+    //QTextImageHandler::externalLoader = pixmapCacheLoader;
     QString imgSrc = QString(":%1").arg(presetNode->GetName());
     QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
 #endif
