@@ -77,8 +77,11 @@ public:
   inline void setShowHidden(bool);
   inline bool showHidden()const;
 
-  /// Display or not the nodes that are excluded by
-  /// the ExcludedChildNodeTypes list.
+  /// This property controls whether subclasses of \a nodeType
+  /// are hidden or not. If false, only the nodes of 'final' type
+  /// is \a nodeType are displayed, if true, all the nodes deriving
+  /// from \a nodeType are visible except for the ones of
+  /// type \a hideChildNodeTypes.
   /// true by default.
   inline void setShowChildNodeTypes(bool show);
   inline bool showChildNodeTypes()const;

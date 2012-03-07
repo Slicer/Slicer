@@ -571,6 +571,14 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
 
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
   widget->setNodeTypes(QStringList(nodeType));
+  // If "type" is specified, only display nodes of type nodeType
+  // (e.g. vtkMRMLScalarVolumeNode), don't display subclasses
+  // (e.g. vtkMRMLDiffusionTensorVolumeNode)
+  if (!type.isEmpty() &&
+      type != "all")
+    {
+    widget->setShowChildNodeTypes(false);
+    }
   // If an index is given, then it means the parameter is required (not optional)
   widget->setNoneEnabled(imageIndex.isEmpty());
   // Being able to create an image for the input is meaningless as the created
