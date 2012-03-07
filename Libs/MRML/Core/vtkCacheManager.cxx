@@ -53,16 +53,6 @@ vtkCacheManager::~vtkCacheManager()
 
 
 //----------------------------------------------------------------------------
-//void vtkCacheManager::SetEnableRemoteCacheOverwriting(int )
-//{
-//  if ( val != this->EnableRemoteCacheOverwriting )
-//   {
-//   this->EnableRemoteCacheOverwriting = val;
-//   this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
-//   }
-//   }
-
-//----------------------------------------------------------------------------
 const char* vtkCacheManager::GetFileFromURIMap (const char *uri )
 {
   std::string uriString (uri);
@@ -108,37 +98,7 @@ void vtkCacheManager::MapFileToURI ( const char *uri, const char *fname )
   if ( !added )
     {
     this->uriMap.insert (std::make_pair (remote, local ));
-    }
-}
-
-
-
-//----------------------------------------------------------------------------
-void vtkCacheManager::SetEnableForceRedownload( int val )
-{
-  if ( val != this->EnableForceRedownload )
-    {
-    this->EnableForceRedownload = val;
-    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkCacheManager::SetRemoteCacheLimit ( int val )
-{
-  if ( val != this->RemoteCacheLimit  )
-    {
-    this->RemoteCacheLimit = val;
-    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
-    }
-}
-//----------------------------------------------------------------------------
-void vtkCacheManager::SetRemoteCacheFreeBufferSize ( int val )
-{
-  if ( val != this->RemoteCacheFreeBufferSize )
-    {
-    this->RemoteCacheFreeBufferSize = val;
-    this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+    this->Modified();
     }
 }
 
@@ -146,32 +106,43 @@ void vtkCacheManager::SetRemoteCacheFreeBufferSize ( int val )
 void vtkCacheManager::SetRemoteCacheDirectory (const char *dir )
 {
   std::string dirstring = dir ;
-  int len = (int)dirstring.size();
+  size_t len = (int)dirstring.size();
 
-  if ( len > 0 )
+  if ( len == 0 )
     {
-    std::string tst = dirstring.substr(len-1);
-    //---
-    //--- make sure to remove backslash on the end of the dirstring.
-    //---
-    if ( tst == "/" )
-      {
-      dirstring = dirstring.substr( 0, len-1 );
-      //dirstring += "/";
-      }
-    this->RemoteCacheDirectory = dirstring;
+    vtkWarningMacro ( "Setting RemoteCacheDirectory to be a null string." );
     }
   else
     {
-    vtkWarningMacro ( "Setting RemoteCacheDirectory to be a null string." );      
-    this->RemoteCacheDirectory = "";
+    //---
+    //--- make sure to remove backslash on the end of the dirstring.
+    //---
+    const char lastChar = dirstring.at(len-1);
+    if ( lastChar == '/' || lastChar == '\\' )
+      {
+      dirstring = dirstring.substr( 0, len-1 );
+      }
     }
-  this->InvokeEvent ( vtkCacheManager::SettingsUpdateEvent );
+
+  if (this->RemoteCacheDirectory == dirstring)
+    {
+    return;
+    }
+
+  this->RemoteCacheDirectory = dirstring;
+  if (!vtksys::SystemTools::FileExists(this->RemoteCacheDirectory.c_str()))
+    {
+    vtksys::SystemTools::MakeDirectory(this->RemoteCacheDirectory.c_str());
+    }
+  // scan files in cache, it calls Modified
+  this->UpdateCacheInformation();
 }
 
-
-
-
+//----------------------------------------------------------------------------
+const char *vtkCacheManager::GetRemoteCacheDirectory ()
+{
+  return ( this->RemoteCacheDirectory.c_str() );
+}
 
 //----------------------------------------------------------------------------
 int vtkCacheManager::IsRemoteReference ( const char *uri )
@@ -295,6 +266,12 @@ std::vector< std::string > vtkCacheManager::GetAllCachedFiles ( )
   return ( this->CachedFileList );
 }
 
+
+//----------------------------------------------------------------------------
+std::vector< std::string > vtkCacheManager::GetCachedFiles ( ) const
+{
+  return this->CachedFileList;
+}
 
 //----------------------------------------------------------------------------
 int vtkCacheManager::GetCachedFileList ( const char *dirname )
@@ -541,6 +518,7 @@ void vtkCacheManager::UpdateCacheInformation ( )
   //--- and refresh list of cached files.
   this->CachedFileList.clear();
   this->GetCachedFileList ( this->GetRemoteCacheDirectory() );
+  this->Modified();
 }
 
 
@@ -673,7 +651,6 @@ int vtkCacheManager::ClearCache()
     }
   this->UpdateCacheInformation();
   this->InvokeEvent ( vtkCacheManager::CacheClearEvent );
-  this->Modified();
   return 1;
 }
 

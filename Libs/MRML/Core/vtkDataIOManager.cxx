@@ -426,6 +426,7 @@ void vtkDataIOManager::QueueRead ( vtkMRMLNode *node )
       //--- and signal this remote read event to Logic and GUI.
       vtkDebugMacro("QueueRead: invoking a remote read event on the data io manager");
       this->InvokeEvent ( vtkDataIOManager::RemoteReadEvent, node);
+      cm->UpdateCacheInformation();
       }
     }
   else

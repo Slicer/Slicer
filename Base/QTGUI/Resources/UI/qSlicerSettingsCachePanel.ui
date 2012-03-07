@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerSettingsCachePanel</class>
+ <widget class="ctkSettingsPanel" name="qSlicerSettingsCachePanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>329</width>
+    <height>267</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Slicer Settings</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="1" column="0">
+    <widget class="QLabel" name="CachePathLabel">
+     <property name="toolTip">
+      <string>Cache directory for downloaded files</string>
+     </property>
+     <property name="text">
+      <string>Cache location:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="UsedCacheSizeLabel">
+       <property name="text">
+        <string>~0MB used</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="FreeCacheSizeLabel">
+       <property name="text">
+        <string>~200MB free</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="UsageLabel">
+     <property name="toolTip">
+      <string>Current usage of the cache</string>
+     </property>
+     <property name="text">
+      <string>Cache usage:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="CacheSizeSpinBox">
+     <property name="suffix">
+      <string>MB</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>200</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="CacheSizeLabel">
+     <property name="toolTip">
+      <string>Upper limit of the dedicated cache for downloaded files</string>
+     </property>
+     <property name="text">
+      <string>Cache size:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QSpinBox" name="CacheFreeBufferSpinBox">
+     <property name="suffix">
+      <string>MB</string>
+     </property>
+     <property name="maximum">
+      <number>999999999</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="CacheFreeBufferLabel">
+     <property name="toolTip">
+      <string>Amount of space that should remain free. It should be the typical size of a file to download.</string>
+     </property>
+     <property name="text">
+      <string>Cache free buffer:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="ForceRedownloadLabel">
+     <property name="toolTip">
+      <string>Control whether a file must be downloaded even if it is already in the cache</string>
+     </property>
+     <property name="text">
+      <string>Force redownload:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QCheckBox" name="ForceRedownloadCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QListWidget" name="FilesListWidget"/>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="FilesListLabel">
+     <property name="text">
+      <string>Files in cache:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QPushButton" name="ClearCachePushButton">
+     <property name="toolTip">
+      <string>Delete all files in cache directory</string>
+     </property>
+     <property name="text">
+      <string>Clear cache</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="ctkDirectoryButton" name="CachePathButton"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSettingsPanel</class>
+   <extends>QWidget</extends>
+   <header>ctkSettingsPanel.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

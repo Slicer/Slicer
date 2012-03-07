@@ -39,9 +39,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
 
   /// 
   /// Returns the name of the directory to use for local file caching
-  const char *GetRemoteCacheDirectory () {
-  return ( this->RemoteCacheDirectory.c_str() );
-  };
+  const char *GetRemoteCacheDirectory ();
 
   /// 
   /// Called when a file is loaded or removed from the cache.
@@ -112,23 +110,22 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
     
   void CacheSizeCheck();
   void FreeCacheBufferCheck();
-  int GetCachedFileList(const char *dirname);
   float ComputeCacheSize( const char *dirname, unsigned long size );
   float GetCurrentCacheSize();
   float GetFreeCacheSpaceRemaining();
-  
-  
+
+  std::vector< std::string > GetCachedFiles()const;
 
   /// 
   vtkGetMacro ( RemoteCacheLimit, int );
-  void SetRemoteCacheLimit ( int );
+  vtkSetMacro ( RemoteCacheLimit, int );
   vtkSetMacro ( CurrentCacheSize, float );
   vtkGetMacro ( RemoteCacheFreeBufferSize, int );
-  void SetRemoteCacheFreeBufferSize ( int );
+  vtkSetMacro ( RemoteCacheFreeBufferSize, int );
   vtkGetMacro ( EnableForceRedownload, int );
-  void SetEnableForceRedownload(int );
+  vtkSetMacro ( EnableForceRedownload, int );
   //vtkGetMacro ( EnableRemoteCacheOverwriting, int );
-  //void SetEnableRemoteCacheOverwriting(int );
+  //vtkSetMacro ( EnableRemoteCacheOverwriting, int );
   void SetMRMLScene ( vtkMRMLScene *scene )
       {
       this->MRMLScene = scene;
@@ -151,8 +148,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
       CacheLimitExceededEvent,
       CacheDeleteEvent,
       CacheDirtyEvent,
-      CacheClearEvent,
-      SettingsUpdateEvent,
+      CacheClearEvent
     };
 
   std::map<std::string, std::string> uriMap;
@@ -168,6 +164,7 @@ class VTK_MRML_EXPORT vtkCacheManager : public vtkObject
   vtkMRMLScene *MRMLScene;
 
   std::string RemoteCacheDirectory;
+  int GetCachedFileList(const char *dirname);
   std::vector< std::string > GetAllCachedFiles();
   /// This array contains a list of cached file names (without paths)
   /// in case it's faster to search thru this list than to
