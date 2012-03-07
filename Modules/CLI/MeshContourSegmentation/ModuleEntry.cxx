@@ -80,7 +80,7 @@ void MeshContourEvolver::entry_main( vtkPolyData* inputMesh,
   double                       thispt[3];
   vtkSmartPointer<vtkIntArray> initialPoints = vtkSmartPointer<vtkIntArray>::New();
   unsigned int                 iNumMeshVerts  = verts->GetNumberOfPoints();
-  unsigned int                 iNumSeedPoints = initPoints3D.size();
+  size_t                       iNumSeedPoints = initPoints3D.size();
   std::cout << "appending " << iNumSeedPoints << " points to list. \n";
 
   if( iNumSeedPoints < 2 )

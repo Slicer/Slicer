@@ -12,6 +12,9 @@
 // and handling the output polyData (either to display or
 // write to file).
 
+#ifndef __module_entry_h
+#define __module_entry_h
+
 #include "vtkComputeLocalGeometry.h"
 #include "vtkInitClosedPath.h"
 #include "vtkLevelSetMeshEvolver.h"
@@ -24,14 +27,14 @@
 
 #include <vector>
 
-#if defined(WIN32) && !defined(SparseFieldLevelSetContourLib_STATIC)
-#if defined(SparseFieldLevelSetContourLib_EXPORTS)
-#define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT __declspec( dllexport )
+#if defined(WIN32) && !defined(MeshContourSegmentationLib_STATIC)
+#if defined(MeshContourSegmentationLib_EXPORTS)
+#define MESHCONTOURSEGMENTATIONLIB_EXPORT __declspec( dllexport )
 #else
-#define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT __declspec( dllimport )
+#define MESHCONTOURSEGMENTATIONLIB_EXPORT __declspec( dllimport )
 #endif
 #else
-#define SPARSEFIELDLEVELSETCONTOURLIB_EXPORT
+#define MESHCONTOURSEGMENTATIONLIB_EXPORT
 #endif
 
 namespace MeshContourEvolver
@@ -48,20 +51,24 @@ struct InitParam
 
 // Input: mesh and indices of vertices for initialization
 // vtkPolyData* entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx, bool bForceRecompute = false);
-void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx,
-                                                      vtkPolyData *outputMesh, InitParam init,
-                                                      bool bForceRecompute = false );
+void MESHCONTOURSEGMENTATIONLIB_EXPORT entry_main( vtkPolyData* inputMesh, vtkIntArray* initVertIdx,
+                                                   vtkPolyData *outputMesh, InitParam init,
+                                                   bool bForceRecompute = false );
 
 // Input: mesh and 3D points for initialization. This is what you get
 // when inputting 'fiducials' in Slicer GUI. The 3D points
 // are not on the mesh, you need to first find closest points on the mesh.
-void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh,
-                                                      std::vector<std::vector<float> >& initPoints3D,
-                                                      vtkPolyData* outputMesh, InitParam init,
-                                                      bool bForceRecompute = false);
+void MESHCONTOURSEGMENTATIONLIB_EXPORT entry_main( vtkPolyData* inputMesh,
+                                                   std::vector<std::vector<float> >& initPoints3D,
+                                                   vtkPolyData* outputMesh, InitParam init,
+                                                   bool bForceRecompute = false);
 
 // Input: mesh only. No initialization of points; either continue
 // evolution of existing curve or only pre-compute geometry!
-void SPARSEFIELDLEVELSETCONTOURLIB_EXPORT entry_main( vtkPolyData* inputMesh, vtkPolyData* outputMesh, InitParam init);
+void MESHCONTOURSEGMENTATIONLIB_EXPORT entry_main( vtkPolyData* inputMesh,
+                                                   vtkPolyData* outputMesh,
+                                                   InitParam init);
 
 }
+
+#endif
