@@ -58,8 +58,8 @@ int UpdateInitLists( const std::vector<std::vector<int> > LstarIJidx,
                      std::vector<std::vector<int> > accessible_init_indices )
 {
   // now append to the initializers...
-  int iIter = 0;
-  int iterMax = LstarIJidx.size() * LstarIJidx.size();
+  size_t iIter = 0;
+  size_t iterMax = LstarIJidx.size() * LstarIJidx.size();
 
   std::vector<std::vector<int> > bShowUpdate = LstarIJidx;
   bool                           bDidUpdate = true;
@@ -102,7 +102,7 @@ int UpdateInitLists( const std::vector<std::vector<int> > LstarIJidx,
     iIter++;
     }
 
-  return iIter;
+  return static_cast<int>(iIter);
 }
 
 // DEBUG_DISPLAY_0:
@@ -141,18 +141,17 @@ void Debug_Display_Path_Vals2( vtkIntArray* activeContourVertIdx,
                                const std::vector<std::vector<int> > & neigh_idx,
                                const std::vector<int> & vtkNotUsed(seedIdx) )
 {
-  int numVerts = neigh_idx.size();
+  size_t numVerts = neigh_idx.size();
 
 //  int numInit  = neigh_idx[0].size();
   for( ::size_t m = 0; m < 1; m++ )
     {
     // int prevIdx = seedIdx[m];
-    int k = 0;
-    while( k < numVerts )
+    
+    for( size_t k = 0; k < numVerts ; ++k )
       {
-
       int idx = neigh_idx[k][m];
-      int val = m;
+      int val = static_cast<int>(m);
       if( idx < 0 )
         {
         val = -2;
@@ -161,7 +160,6 @@ void Debug_Display_Path_Vals2( vtkIntArray* activeContourVertIdx,
         {
         activeContourVertIdx->SetValue( k, val);
         }
-      k++;
       }
     }
 
@@ -442,8 +440,8 @@ BUILD_DISTANCE_TO_INIT:
       (LstarIJidx[i])[i]      = idx;
       LstarIJval[i][i]        = 0.0;
       nextVerts.push_back( idx );
-      firstHitInitIdx[idx] = i;
-      LstarIdx[idx]        = i;
+      firstHitInitIdx[idx] = static_cast<int>(i);
+      LstarIdx[idx]        = static_cast<int>(i);
       Lstar[idx]           = 0; // 0 distance to itself
       }
 
@@ -474,9 +472,9 @@ BUILD_DISTANCE_TO_INIT:
             if( -1 == idxFirstHit ) // have not yet assigned it a first init point
 
               { // hasn't alrdy been added to Next, process it next round!
-              nextVerts.push_back( pt );
+              nextVerts.push_back( static_cast<int>(pt) );
               firstHitInitIdx[pt] = firstHitInitIdx[idx];
-              tmpNextVerts.push_back( pt );
+              tmpNextVerts.push_back( static_cast<int>(pt) );
               LstarIdx[pt] = LstarIdx[idx];
               double x1[3]; double x2[3];
               output->GetPoint( idx, x1 );
@@ -514,7 +512,7 @@ BUILD_DISTANCE_TO_INIT:
                 // re-assign index pt to class at index idx
                 LstarIdx[pt] = LstarIdx[idx];
                 Lstar[pt]    = Lstar_;
-                nextVerts.push_back( pt );
+                nextVerts.push_back( static_cast<int>(pt) );
 
                 }
               else if( Lstar[idx] < 0 || Lstar_rev < Lstar[idx] )
@@ -551,7 +549,7 @@ BUILD_DISTANCE_TO_INIT:
                     // Assign pt's neighbor to be idx (mesh indices)
                     // where idx is a mesh index that is closest to init point ii
                     LstarIJval[jj][ii]        = Lstar_ii_jj_rev;
-                    (LstarIJidx[jj])[ii]      = pt;
+                    (LstarIJidx[jj])[ii]      = static_cast<int>(pt);
                     }
                   // presumably, if we did the above, pt and idx are neighbors...
                   }
@@ -581,7 +579,7 @@ BUILD_DISTANCE_TO_INIT:
                 int mval = accessible_init_indices[pt][m];
                 if( mval > 0 )
                   {
-                  accessible_init_indices[idx][m] = pt;
+                  accessible_init_indices[idx][m] = static_cast<int>(pt);
                   for( ::size_t ck = 0; ck < numInit0; ck++ )
                     {
                     int idxRev = accessible_init_indices[mval][ck];
@@ -659,7 +657,7 @@ BUILD_DISTANCE_TO_INIT:
       ::size_t NUM_KEEP = LstarIJidx.size();
       for( ::size_t k = 0; k < NUM_KEEP; k++ )
         {
-        int    idxAdd = i;
+        int    idxAdd = static_cast<int>(i);
         double Lbest = 1e9;
         int    jBest;
         for( ::size_t j = 0; j < LstarIJidx.size(); j++ )
@@ -670,7 +668,7 @@ BUILD_DISTANCE_TO_INIT:
             {
             idxAdd = idx;
             Lbest  = val; // i's Nearest Neighbor is j!!
-            jBest  = j;
+            jBest  = static_cast<int>(j);
             }
           }
 #define NUM_INIT_RECURSIONS 2

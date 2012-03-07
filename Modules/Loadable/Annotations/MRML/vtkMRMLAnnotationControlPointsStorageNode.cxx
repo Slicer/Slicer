@@ -70,7 +70,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayPropert
       return flag; 
     }
 
-  int pointOffset = preposition.size();
+  size_t pointOffset = preposition.size();
   preposition.insert(0,"# ");
 
   if (lineString.find(preposition + "GlyphScale = ") != std::string::npos)
@@ -121,7 +121,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationControlPointsData(v
 
   vtkDebugMacro("got a line: \n\"" << line << "\""); 
   std::string attValue(line);
-  int size = std::string(this->GetAnnotationStorageType()).size();
+  size_t size = std::string(this->GetAnnotationStorageType()).size();
  
   if (attValue.compare(0,size,this->GetAnnotationStorageType()))
     {

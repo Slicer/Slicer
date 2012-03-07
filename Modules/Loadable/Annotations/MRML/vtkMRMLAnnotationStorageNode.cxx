@@ -66,7 +66,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
     return -1;
     }
 
- int textOffset = preposition.size();
+ size_t textOffset = preposition.size();
  preposition.insert(0,"# ");
 
  if (lineString.find(preposition + "Visibility = ") != std::string::npos)
@@ -193,7 +193,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnn
       return 1;
     }
 
- int textOffset = preposition.size();
+ size_t textOffset = preposition.size();
  preposition.insert(0,"# ");
 
  
@@ -279,7 +279,7 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationTextData(vtkMRMLAnnotationNode *
   vtkDebugMacro("ReadAnnotationTextData: got a line: \n\"" << line << "\"\n\tAnnotation Storage type = " << this->GetAnnotationStorageType());
   
   std::string attValue(line);
-  int size = std::string(this->GetAnnotationStorageType()).size();
+  size_t size = std::string(this->GetAnnotationStorageType()).size();
  
   if (!attValue.compare(0,size,this->GetAnnotationStorageType()))
     {

@@ -83,9 +83,9 @@ void vtkHyperStreamlineTeem::VisualizeFibers( const Nrrd *fibers )
   NumberOfStreamers = 1;
   Streamers[0].Direction = 1;
   
-  const int fibercount = fibers->axis[1].size;
+  const size_t fibercount = fibers->axis[1].size;
   size_t pos[2];
-  for( int fiber = 0; fiber < fibercount; fiber++ )
+  for( size_t fiber = 0; fiber < fibercount; fiber++ )
   {
       pos[1] = fiber;
       vtkFloatingPointType indexPoints[3];

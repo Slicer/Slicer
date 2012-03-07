@@ -37,7 +37,7 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
 
   vtkDebugMacro("got a line: \n\"" << line << "\""); 
   std::string attValue(line);
-  int size = std::string(this->GetAnnotationStorageType()).size();
+  size_t size = std::string(this->GetAnnotationStorageType()).size();
  
   if (attValue.compare(0,size,this->GetAnnotationStorageType()))
     {

@@ -40,7 +40,7 @@ public:
     L_z = C;
     meshdata = data;
     L_z = C; L_n1 = Ln1; L_p1 = Lp1; L_n2 = Ln2; L_p2 = Lp2;
-    int numVerts = map.size();
+    size_t numVerts = map.size();
     point_type = std::vector<int>(numVerts);
     phi        = std::vector<double>(numVerts);
     for( unsigned int i = 0; i < map.size(); i++ )

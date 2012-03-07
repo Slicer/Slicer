@@ -1325,9 +1325,9 @@ void vtkFetchMILogic::DeselectNode( const char *nodeID)
 {
   std::string s;
   std::vector<std::string>tmp;
-  unsigned int n = this->SelectedStorableNodeIDs.size();
+  size_t count = this->SelectedStorableNodeIDs.size();
   // copy all elements but one marked for delete to a temporary vector
-  for ( unsigned int i = 0; i < n; i++ )
+  for ( size_t i = 0; i < count; i++ )
     {
     s = this->SelectedStorableNodeIDs[i];
     if ( (strcmp ( s.c_str(), nodeID )) )
@@ -1337,9 +1337,9 @@ void vtkFetchMILogic::DeselectNode( const char *nodeID)
     }
 
   // clear the vector and copy in new elements
-  n = tmp.size();
+  count = tmp.size();
   this->SelectedStorableNodeIDs.clear();
-  for ( unsigned int i = 0; i < n; i++ )
+  for ( size_t i = 0; i < count; i++ )
     {
     this->SelectedStorableNodeIDs.push_back ( tmp[i] );
     }
@@ -1353,8 +1353,8 @@ void vtkFetchMILogic::SelectNode( const char *nodeID)
   int unique = 1;
   std::string s;
 
-  unsigned int n = this->SelectedStorableNodeIDs.size();
-  for ( unsigned int i = 0; i < n; i++ )
+  size_t count = this->SelectedStorableNodeIDs.size();
+  for ( size_t i = 0; i < count; i++ )
     {
     s = this->SelectedStorableNodeIDs[i];
     if ( !(strcmp ( s.c_str(), nodeID )) )
@@ -1364,10 +1364,10 @@ void vtkFetchMILogic::SelectNode( const char *nodeID)
       }
     }
     //--- add the server name if it's not already here.
-    if ( unique )
-      {
-      this->SelectedStorableNodeIDs.push_back ( std::string ( nodeID ) );
-      }
+  if ( unique )
+    {
+    this->SelectedStorableNodeIDs.push_back ( std::string ( nodeID ) );
+    }
 }
 
 
@@ -2482,7 +2482,7 @@ void vtkFetchMILogic::UpdateMRMLQueryTags()
 //----------------------------------------------------------------------------
 unsigned int vtkFetchMILogic::GetNumberOfURIsDeletedOnServer ( )
 {
-  return ( this->URIsDeletedOnServer.size() );
+  return static_cast<unsigned int>( this->URIsDeletedOnServer.size() );
 }
 
 
@@ -3175,7 +3175,7 @@ void vtkFetchMILogic::AddUniqueValueForTag ( const char *tagname, const char *va
 int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 {
 
-  unsigned int numValues = 0;
+  size_t numValues = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
   for ( iter = this->CurrentWebServiceMetadata.begin();
         iter != this->CurrentWebServiceMetadata.end();
@@ -3187,14 +3187,7 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
       break;
       }
     }
-  if ( numValues <= 0 )
-    {
-    return 0;
-    }
-  else
-    {
-    return ((int) numValues);
-    }
+  return static_cast<int>(numValues);
 }
 
 
@@ -3202,11 +3195,9 @@ int vtkFetchMILogic::GetNumberOfTagValues( const char *tagname)
 int vtkFetchMILogic::GetNumberOfTagsOnServer ( )
 {
 
-  unsigned int numTags = this->CurrentWebServiceMetadata.size();
-  return ( numTags );
-
+  size_t numTags = this->CurrentWebServiceMetadata.size();
+  return static_cast<int>( numTags );
 }
-
 
 
 //----------------------------------------------------------------------------
@@ -3784,14 +3775,15 @@ void vtkFetchMILogic::ClearModifiedNodes()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
 {
-  unsigned int z = this->ModifiedNodes.size();
+  const size_t modifiedNodeCount = this->ModifiedNodes.size();
   int unique = 1;
 
-  for (unsigned int i=0; i < z; i++ )
+  for (size_t i = 0; i < modifiedNodeCount; i++ )
     {
     if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
       {
       unique = 0;
+      break;
       }
     }
 
@@ -3806,8 +3798,8 @@ void vtkFetchMILogic::AddModifiedNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RemoveModifiedNode( const char *nodeID)
 {
-  unsigned int z = this->ModifiedNodes.size();
-  for (unsigned int i=0; i < z; i++ )
+  const size_t modifiedNodeCount = this->ModifiedNodes.size();
+  for (size_t i=0; i < modifiedNodeCount; i++ )
     {
     if ( !(strcmp(this->ModifiedNodes[i].c_str(), nodeID )))
       {
@@ -3830,14 +3822,15 @@ void vtkFetchMILogic::ClearSelectedStorableNodes ()
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
 {
-  unsigned int z = this->SelectedStorableNodeIDs.size();
+  size_t modifiedNodeCount = this->SelectedStorableNodeIDs.size();
   int unique = 1;
 
-  for (unsigned int i=0; i < z; i++ )
+  for (size_t i=0; i < modifiedNodeCount; i++ )
     {
     if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
       {
       unique = 0;
+      break;
       }
     }
 
@@ -3852,8 +3845,8 @@ void vtkFetchMILogic::AddSelectedStorableNode( const char *nodeID)
 //----------------------------------------------------------------------------
 void vtkFetchMILogic::RemoveSelectedStorableNode( const char *nodeID)
 {
-  unsigned int z = this->SelectedStorableNodeIDs.size();
-  for (unsigned int i=0; i < z; i++ )
+  size_t modifiedNodeCount = this->SelectedStorableNodeIDs.size();
+  for (size_t i=0; i < modifiedNodeCount; i++ )
     {
     if ( !(strcmp(this->SelectedStorableNodeIDs[i].c_str(), nodeID )))
       {
@@ -4047,7 +4040,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
     }
 
   //--- how many things to restore?
-  unsigned int numToRestore = this->OldAndNewURIs.size();
+  size_t numToRestore = this->OldAndNewURIs.size();
   if (numToRestore == 0 )
     {
     vtkWarningMacro ( "RestoreURIsOnSelectedResources: found no files to restore.");
@@ -4058,7 +4051,7 @@ int vtkFetchMILogic::RestoreURIsOnSelectedResources ( )
 
   vtkMRMLStorableNode *storableNode;
   vtkMRMLStorageNode *storageNode;
-  unsigned int restoreCount = 0;
+  size_t restoreCount = 0;
   std::string tstURI;
   std::map<std::string, std::string>::iterator iter;
   std::map<std::string, std::string>::iterator iter2;
@@ -4242,7 +4235,7 @@ int vtkFetchMILogic::RestoreFileNamesOnSelectedResources ( )
 
 
   //--- how many things to restore?
-  unsigned int numToRestore = this->OldAndNewFileNames.size();
+  size_t numToRestore = this->OldAndNewFileNames.size();
   if (numToRestore == 0 )
     {
     vtkWarningMacro ( "RestoreFileNamesOnSelectedResources: found no files to restore.");

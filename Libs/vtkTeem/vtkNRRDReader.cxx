@@ -349,7 +349,7 @@ void vtkNRRDReader::ExecuteInformation()
    } else if ( 4 == this->nrrd->dim && 1 == rangeAxisNum) {  
    
       unsigned int kind = nrrd->axis[rangeAxisIdx[0]].kind;
-      unsigned int size = nrrd->axis[rangeAxisIdx[0]].size;
+      int size = static_cast<int>(nrrd->axis[rangeAxisIdx[0]].size);
       // NOTE: it is the NRRD readers responsibility to make sure that
       // the size (# of components) associated with a specific kind is
       // matches the actual size of the axis.
@@ -452,7 +452,7 @@ void vtkNRRDReader::ExecuteInformation()
     {
     unsigned int naxi = domainAxisIdx[axii];
     dataExtent[2*axii] = 0;
-    dataExtent[2*axii+1] = this->nrrd->axis[naxi].size - 1;  
+    dataExtent[2*axii+1] = static_cast<int>(this->nrrd->axis[naxi].size) - 1;
     
     spacingStatus = nrrdSpacingCalculate(this->nrrd, naxi, &spacing, spaceDir);
     

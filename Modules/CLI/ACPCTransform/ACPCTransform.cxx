@@ -124,15 +124,14 @@ int main(int argc, char * argv[])
     vtkSmartPointer<vtkPolyData> output = vtkSmartPointer<vtkPolyData>::New();
     vtkSmartPointer<vtkPoints>   points = vtkSmartPointer<vtkPoints>::New();
     points->SetDataTypeToDouble();
-    int x = Midline.size();
+    size_t x = Midline.size();
     if( debugSwitch )
       {
       std::cout << "Total number of midline points " << x << ", points data type = " << points->GetDataType()
                 << std::endl;
       }
     points->SetNumberOfPoints(x);
-    int i;
-    for( i = 0; i < x; i++ )
+    for( size_t i = 0; i < x; ++i )
       {
       points->SetPoint(i, Midline[i][0], Midline[i][1], Midline[i][2]);
       if( debugSwitch )
@@ -189,12 +188,10 @@ int main(int argc, char * argv[])
     // prepare the rotation matrix
     vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
     mat->Identity();
-    i = 0;
-    for( int p = 0; p < 4; p++ )
+    for( size_t p = 0; p < 4; p++ )
       {
       vtkFloatingPointType point = normal[p];
-      mat->SetElement(i, 0, (sign * point) );
-      i++;
+      mat->SetElement(static_cast<int>(p), 0, (sign * point) );
       }
     vtkFloatingPointType oneAndAlpha = 1.0 + mat->GetElement(0, 0);
     mat->SetElement(0, 1, -1.0 * mat->GetElement(1, 0) );

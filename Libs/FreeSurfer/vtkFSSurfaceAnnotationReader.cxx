@@ -77,7 +77,7 @@ int vtkFSSurfaceAnnotationReader::ReadFSAnnotation()
   int b;
   bool found;
   bool unassignedEntry;
-  int stringLength;
+  size_t stringLength;
 
   int thisStep = 0;
   int totalSteps = 1;
@@ -513,7 +513,7 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
                        << "table name length");
         return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
         }
-      read = fread (tableName, sizeof(char), nameLength, annotFile);
+      read = static_cast<int>(fread (tableName, sizeof(char), nameLength, annotFile));
       if (read != nameLength)
         {
         vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading "
@@ -584,8 +584,8 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
           free (names);
           return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
           }
-        read = fread (names[entryIndex], sizeof(char),
-                      nameLength, annotFile);
+        read = static_cast<int>(fread (names[entryIndex], sizeof(char),
+                                nameLength, annotFile));
         if (read != nameLength)
           {
           vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"
@@ -764,8 +764,8 @@ int vtkFSSurfaceAnnotationReader::ReadEmbeddedColorTable (FILE* annotFile,
             return vtkFSSurfaceAnnotationReader::FS_ERROR_PARSING_COLOR_TABLE;
             }
           names[structure] = (char*) malloc (nameLength+1);
-          read = fread (names[structure], sizeof(char),
-                        nameLength, annotFile);
+          read = static_cast<int>(fread (names[structure], sizeof(char),
+                                  nameLength, annotFile));
           if (read != nameLength)
             {
             vtkErrorMacro (<< "\nReadEmbeddedColorTable: error reading\n"

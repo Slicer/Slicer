@@ -251,7 +251,7 @@ void vtkFetchMIParser::AddUniqueValueForTag ( const char *tagname, const char *v
 int vtkFetchMIParser::GetNumberOfTagValues( const char *tagname)
 {
 
-  unsigned int numValues = 0;
+  size_t numValues = 0;
   std::map<std::string, std::vector<std::string> >::iterator iter;
   for ( iter = this->MetadataInformation.begin();
         iter != this->MetadataInformation.end();
@@ -263,14 +263,7 @@ int vtkFetchMIParser::GetNumberOfTagValues( const char *tagname)
       break;
       }
     }
-  if ( numValues <= 0 )
-    {
-    return 0;
-    }
-  else
-    {
-    return ((int) numValues);
-    }
+  return static_cast<int>(numValues);
 }
 
 
@@ -278,8 +271,8 @@ int vtkFetchMIParser::GetNumberOfTagValues( const char *tagname)
 int vtkFetchMIParser::GetNumberOfTagsOnServer ( )
 {
 
-  unsigned int numTags = this->MetadataInformation.size();
-  return ( numTags );
+  size_t numTags = this->MetadataInformation.size();
+  return static_cast<int>( numTags );
 
 }
 
