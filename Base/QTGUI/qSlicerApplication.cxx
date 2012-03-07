@@ -124,7 +124,8 @@ void qSlicerApplicationPrivate::init()
   this->initStyle();
 
   this->ToolTipTrapper = new ctkToolTipTrapper(q);
-  this->ToolTipTrapper->setEnabled(false);
+  this->ToolTipTrapper->setToolTipsTrapped(false);
+  this->ToolTipTrapper->setToolTipsWordWrapped(true);
 
   //----------------------------------------------------------------------------
   // Settings Dialog
@@ -299,7 +300,7 @@ QSettings* qSlicerApplication::newSettings(const QString& fileName)
 void qSlicerApplication::setToolTipsEnabled(bool enable)
 {
   Q_D(qSlicerApplication);
-  d->ToolTipTrapper->setEnabled(!enable);
+  d->ToolTipTrapper->setToolTipsTrapped(!enable);
 }
 
 //-----------------------------------------------------------------------------
