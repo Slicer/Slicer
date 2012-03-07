@@ -273,7 +273,14 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
         }
       else
         {
-        copy_data(a, ext);
+        r = copy_data(a, ext);
+        if (r != ARCHIVE_OK)
+          {
+          cmSystemTools::Error("Problem with copy_data(): source:",
+                               archive_error_string(a));
+          cmSystemTools::Error("destination: ",
+                               archive_error_string(ext));
+          }
         r = archive_write_finish_entry(ext);
         if (r != ARCHIVE_OK)
           {
