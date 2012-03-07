@@ -102,6 +102,7 @@ public slots:
 protected:
 
   virtual void setup();
+  void onEnter();
 
   vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
 

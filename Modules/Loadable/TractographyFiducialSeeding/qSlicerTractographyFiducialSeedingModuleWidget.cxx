@@ -38,6 +38,13 @@ qSlicerTractographyFiducialSeedingModuleWidget::~qSlicerTractographyFiducialSeed
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::enter()
 {
+  this->onEnter();
+  this->Superclass::enter();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyFiducialSeedingModuleWidget::onEnter()
+{
   if (this->mrmlScene() == 0)
   {
     return;
@@ -159,7 +166,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyFiducialSeedingModuleWidget::onSceneImportedEvent()
 {
-  this->enter();
+  this->onEnter();
 }
 
 //-----------------------------------------------------------------------------
