@@ -137,8 +137,10 @@ public:
 
   QStringList extensionLibraryPaths(const QString& extensionName)const;
   QStringList extensionPaths(const QString& extensionName)const;
-  QStringList extensionPythonPaths(const QString& extensionName)const;
 
+#ifdef Slicer_USE_PYTHONQT
+  QStringList extensionPythonPaths(const QString& extensionName)const;
+#endif
   static bool validateExtensionMetadata(const ExtensionMetadataType &extensionMetadata);
 
   void saveExtensionDescription(const QString& extensionDescriptionFile, const ExtensionMetadataType &allExtensionMetadata);
@@ -380,12 +382,13 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToLauncherSettings(co
   qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
                          appendToPathList(paths, this->extensionPaths(extensionName)),
                          "Paths", "path");
-
+#ifdef Slicer_USE_PYTHONQT
   QString sep("<PATHSEP>");
   QString pythonPath = launcherSettings.value("EnvironmentVariables/PYTHONPATH").toString();
   QStringList pythonPaths = pythonPath.split(sep);
   launcherSettings.setValue("EnvironmentVariables/PYTHONPATH",
                        appendToPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -411,12 +414,13 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
   qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
                          removeFromPathList(paths, this->extensionPaths(extensionName)),
                          "Paths", "path");
-
+#ifdef Slicer_USE_PYTHONQT
   QString sep("<PATHSEP>");
   QString pythonPath = launcherSettings.value("EnvironmentVariables/PYTHONPATH").toString();
   QStringList pythonPaths = pythonPath.split(sep);
   launcherSettings.setValue("EnvironmentVariables/PYTHONPATH",
                        removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -438,6 +442,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& 
                    << path + "/" Slicer_CLIMODULES_BIN_DIR);
 }
 
+#ifdef Slicer_USE_PYTHONQT
 // --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QString& extensionName)const
 {
@@ -447,6 +452,7 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QSt
                           << path + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR
                           << path + "/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR);
 }
+#endif
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(
@@ -553,7 +559,10 @@ QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& e
   return appendToPathList(QStringList(), QStringList()
                    << path + "/" Slicer_CLIMODULES_LIB_DIR
                    << path + "/" Slicer_QTLOADABLEMODULES_LIB_DIR
-                   << path + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR);
+#ifdef Slicer_USE_PYTHONQT
+                   << path + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR
+#endif
+                   );
 }
 
 // --------------------------------------------------------------------------

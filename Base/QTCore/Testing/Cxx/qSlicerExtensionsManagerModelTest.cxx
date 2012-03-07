@@ -1142,12 +1142,12 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
       << 0
       << 1
       << (QStringList() << this->Tmp.filePath("LoadableExtensionTemplate/" Slicer_QTLOADABLEMODULES_LIB_DIR));
-
+#ifdef Slicer_USE_PYTHONQT
   QTest::newRow("2-ScriptedLoadableExtensionTemplate")
       << 1
       << 2
       << (QStringList() << this->Tmp.filePath("ScriptedLoadableExtensionTemplate/" Slicer_QTSCRIPTEDMODULES_LIB_DIR));
-
+#endif
   QTest::newRow("3-SuperBuildLoadableExtensionTemplate")
       << 2
       << 3
@@ -1219,27 +1219,31 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
       << (QStringList() << this->Tmp.filePath("CLIExtensionTemplate/" Slicer_CLIMODULES_LIB_DIR))
       << QString();
 
+#ifdef Slicer_USE_PYTHONQT
   QTest::newRow("1-LoadableExtensionTemplate")
       << 0
       << 1
       << (QStringList() << this->Tmp.filePath("LoadableExtensionTemplate/" Slicer_QTLOADABLEMODULES_LIB_DIR))
       << QStringList()
       << QString("<PATHSEP>" + this->Tmp.filePath("LoadableExtensionTemplate/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR));
+#endif
 
+#ifdef Slicer_USE_PYTHONQT
   QTest::newRow("2-ScriptedLoadableExtensionTemplate")
       << 1
       << 2
       << QStringList()
       << QStringList()
       << QString("<PATHSEP>" + this->Tmp.filePath("ScriptedLoadableExtensionTemplate/" Slicer_QTSCRIPTEDMODULES_LIB_DIR));
-
+#endif
+#ifdef Slicer_USE_PYTHONQT
   QTest::newRow("3-SuperBuildLoadableExtensionTemplate")
       << 2
       << 3
       << (QStringList() << this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" Slicer_QTLOADABLEMODULES_LIB_DIR))
       << QStringList()
       << QString("<PATHSEP>" + this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR));
-
+#endif
   QTest::newRow("Cleanup")
       << 3
       << -1

@@ -5,13 +5,20 @@ if(BUILD_TESTING)
   set(KIT QTCore)
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
   include_directories(${CMAKE_CURRENT_BINARY_DIR})
-  create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+  set(KIT_TEST_SRCS
     qSlicerAbstractCoreModuleTest1
     qSlicerCoreApplicationTest1.cxx
     qSlicerCoreIOManagerTest1.cxx
-    qSlicerExtensionsManagerModelTest.cxx
     qSlicerLoadableModuleFactoryTest1.cxx
     qSlicerUtilsTest1.cxx
+    )
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  list(APPEND KIT_TEST_SRCS
+    qSlicerExtensionsManagerModelTest.cxx
+    )
+endif()
+  create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+    ${KIT_TEST_SRCS}
     EXTRA_INCLUDE TestingMacros.h
     )
 
@@ -20,9 +27,12 @@ if(BUILD_TESTING)
 
   set(LIBRARY_NAME ${PROJECT_NAME})
 
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   QT4_GENERATE_MOCS(
     qSlicerExtensionsManagerModelTest.cxx
     )
+endif()
+
   QT4_ADD_RESOURCES(Tests Resources/qSlicerBaseQTCoreTesting.qrc)
 
   add_executable(${KIT}CxxTests ${Tests})
