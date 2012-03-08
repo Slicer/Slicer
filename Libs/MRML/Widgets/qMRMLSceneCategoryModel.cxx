@@ -189,5 +189,6 @@ void qMRMLSceneCategoryModel::updateNodeFromItem(vtkMRMLNode* node, QStandardIte
     }
   QString category =
     (parentItem != this->mrmlSceneItem()) ? parentItem->text() : QString();
-  node->SetAttribute("Category", category.toLatin1());
+  node->SetAttribute("Category",
+    (category.isEmpty() ? static_cast<const char *>(0) : category.toLatin1()));
 }

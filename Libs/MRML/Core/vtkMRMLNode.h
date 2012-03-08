@@ -218,7 +218,10 @@ public:
   virtual const char* GetNodeTagName() = 0;
 
   /// 
-  /// Set a name value pair attribute
+  /// Set a name value pair attribute. Fires a Modified event.
+  /// Attributes are written in the XML.
+  /// If value is 0, the attribute \a name is removed
+  /// from the pair list.
   void SetAttribute(const char* name, const char* value);
 
   /// 
