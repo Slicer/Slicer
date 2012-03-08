@@ -8,14 +8,15 @@ set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
 set(LibArchive_DEPENDENCIES "")
+if(WIN32)
+  list(APPEND LibArchive_DEPENDENCIES zlib)
+endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(LibArchive)
 set(proj LibArchive)
-
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
-
   #
   # WARNING - Before updating the version of LibArchive, please consider the following:
   #
@@ -70,6 +71,9 @@ if(NOT DEFINED LibArchive_DIR)
     list(APPEND ADDITIONAL_CMAKE_ARGS
       -DBUILD_TESTING:BOOL=OFF
       -DENABLE_OPENSSL:BOOL=OFF
+      -DZLIB_INCLUDE_DIR:PATH=${zlib_DIR}/include
+      -DZLIB_LIBRARY:FILEPATH=${zlib_DIR}/lib/zlib.lib
+      -DZLIB_ROOT:PATH=${zlib_DIR}
       )
   else()
     set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz)
