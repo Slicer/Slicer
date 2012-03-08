@@ -385,10 +385,13 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         vtkMRMLDiffusionTensorDisplayPropertiesNode *dpNode = 
           d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
 
-        d->ColorByScalarInvariantComboBox->setCurrentIndex( 
-          d->ColorByScalarInvariantComboBox->findData( dpNode->GetColorGlyphBy() ));
+        if ( dpNode )
+          {
+          d->ColorByScalarInvariantComboBox->setCurrentIndex( 
+            d->ColorByScalarInvariantComboBox->findData( dpNode->GetColorGlyphBy() ));
 
-        d->ColorByScalarInvariantRadioButton->setChecked(1);
+          d->ColorByScalarInvariantRadioButton->setChecked(1);
+          }
         }
         break;
       case vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars:
