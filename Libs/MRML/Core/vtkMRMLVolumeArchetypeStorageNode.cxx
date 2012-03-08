@@ -589,6 +589,7 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 //----------------------------------------------------------------------------
 std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, int move)
 {
+  this->SetDebug(1);
   bool result = true;
   std::string returnString = "";
   // test whether refNode is a valid node to hold a volume
@@ -640,7 +641,8 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   std::vector<std::string> pathComponents;
   vtksys::SystemTools::SplitPath(originalDir.c_str(), pathComponents);
   // add a temp dir to it
-  pathComponents.push_back(std::string("TempWrite"));
+  pathComponents.push_back(std::string("TempWrite") +
+    vtksys::SystemTools::GetFilenameWithoutExtension(oldName));
   std::string tempDir = vtksys::SystemTools::JoinPath(pathComponents);
   vtkDebugMacro("UpdateFileList: deleting and then re-creating temp dir "<< tempDir.c_str());
   if (vtksys::SystemTools::FileExists(tempDir.c_str()))
@@ -820,18 +822,20 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     std::stringstream addedFiles;
     std::copy(++this->FileNameList.begin(), this->FileNameList.end(),
               std::ostream_iterator<std::string>(addedFiles,", "));
-    vtkErrorMacro("UpdateFileList: the archetype file wasn't written out! "
-      << "The updated file list does contain '" << newArchetype.c_str() << ", "
-      << "but it failed to write it in '" << tempDir.c_str() << "'. "
-      << "Only those " << this->FileNameList.size() - 1
-      << " files have been written: " << addedFiles.str().c_str()
-      << "." );
+    vtkErrorMacro("UpdateFileList: the archetype file '"
+      << newArchetype.c_str() << "' wasn't written out when writting '"
+      << tempName.c_str() << "' in '" << tempDir.c_str() << "'. "
+      << "Only those " << dir.GetNumberOfFiles() - 2
+      << " file(s) have been written: " << addedFiles.str().c_str() <<". "
+      << "Old name is '" << oldName.c_str() << "'."
+      );
     return returnString;
     }
   // restore the old file name
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
   
+  this->SetDebug(0);
   if (move != 1)
     {
     // clean up temp directory
