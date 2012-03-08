@@ -371,6 +371,11 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
       }
     else
       {
+      // Because the displayable manager can only display 1 volume at
+      // a time, here the displayable manager is told that the display node
+      // is the new "current" display node and it should be displayed 
+      // instead of whichever current one.
+      dnode->Modified();
       }
     }
 
