@@ -44,10 +44,6 @@
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 
-// Convenient macro
-#define VTK_CREATE(type, name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
-
 //--------------------------------------------------------------------------
 static ctkLogger logger("org.slicer.libs.qmrmlwidgets.qMRMLChartView");
 //--------------------------------------------------------------------------
