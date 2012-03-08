@@ -122,6 +122,8 @@ void qSlicerCropVolumeModuleWidget::enter()
 {
   this->onInputVolumeChanged();
   this->onInputROIChanged();
+
+  this->Superclass::enter();
 }
 
 //-----------------------------------------------------------------------------
