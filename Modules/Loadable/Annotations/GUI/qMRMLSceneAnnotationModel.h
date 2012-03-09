@@ -24,12 +24,10 @@
 #include "qMRMLSceneDisplayableModel.h"
 
 // Annotation QT includes
-#include "GUI/qSlicerAnnotationModuleWidget.h"
-
 #include "qSlicerAnnotationsModuleExport.h"
 
 // Logic includes
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+class vtkSlicerAnnotationModuleLogic;
 
 class qMRMLSceneAnnotationModelPrivate;
 class vtkMRMLNode;

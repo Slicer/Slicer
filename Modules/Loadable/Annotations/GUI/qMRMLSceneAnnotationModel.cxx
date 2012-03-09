@@ -27,10 +27,11 @@
 #include <QStringList>
 #include <QVector>
 
-// qMRML includes
+// Annotations includes
 #include "qMRMLSceneAnnotationModel.h"
-#include "qMRMLSceneDisplayableModel.h"
-//#include "qMRMLUtils.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationSnapshotNode.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>

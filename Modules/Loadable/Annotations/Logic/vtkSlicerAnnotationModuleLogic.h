@@ -2,26 +2,30 @@
 #define __vtkSlicerAnnotationModuleLogic_h
 
 // Annotation QT includes
-#include "GUI/qSlicerAnnotationModuleWidget.h"
+class qSlicerAnnotationModuleWidget;
 
 // Slicer Logic includes
+#include "vtkSlicerAnnotationsModuleLogicExport.h"
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
-#include "vtkMRMLAnnotationHierarchyNode.h"
-#include "vtkMRMLAnnotationSnapshotNode.h"
-
-#include "qSlicerAnnotationsModuleExport.h"
+class vtkMRMLAnnotationHierarchyNode;
+class vtkMRMLAnnotationLineDisplayNode;
+class vtkMRMLAnnotationNode;
+class vtkMRMLAnnotationPointDisplayNode;
+class vtkMRMLAnnotationTextDisplayNode;
 
 // STD includes
 #include <string>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkSlicerAnnotationModuleLogic :
+class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic :
   public vtkSlicerModuleLogic
 {
 public:
-
+  enum Events{
+    RefreshRequestEvent = vtkCommand::UserEvent
+  };
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
@@ -43,9 +47,6 @@ public:
 
   /// Remove an AnnotationNode and also its 1-1 IS-A hierarchyNode, if found.
   void RemoveAnnotationNode(vtkMRMLAnnotationNode* annotationNode);
-
-  // Register the widget
-  void SetAndObserveWidget(qSlicerAnnotationModuleWidget* widget);
 
   //
   // Annotation Properties (interface to MRML)

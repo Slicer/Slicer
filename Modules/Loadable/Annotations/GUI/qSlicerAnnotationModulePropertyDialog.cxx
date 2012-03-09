@@ -11,18 +11,20 @@
 #include <QTabWidget>
 #include <QTableWidget>
 
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
-#include "vtkMRMLAnnotationTextDisplayNode.h"
+// Annotations includes
+#include "vtkMRMLAnnotationAngleNode.h"
 #include "vtkMRMLAnnotationControlPointsNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
-#include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationLineDisplayNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationROINode.h"
+#include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLFiducialListNode.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 
 // VTK includes
 #include <vtkSmartPointer.h>

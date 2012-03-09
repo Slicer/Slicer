@@ -1,9 +1,10 @@
-#include "vtkSlicerAnnotationModuleLogic.h"
-#include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
+#include "vtkMRMLAnnotationLineDisplayNode.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationTextDisplayNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include "vtkMRMLAnnotationLineDisplayNode.h"
+#include "vtkMRMLAnnotationRulerNode.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 
 #include "TestingMacros.h"
 

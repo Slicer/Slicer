@@ -94,8 +94,7 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // setup the hierarchy treeWidget
   this->hierarchyTreeView->setLogic(this->logic());
   this->hierarchyTreeView->setMRMLScene(this->logic()->GetMRMLScene());
-  // logic - make sure the logic knows about this widget
-  this->logic()->SetAndObserveWidget(q);
+
   this->hierarchyTreeView->hideScene();
   // enable scrolling when drag past end of window
   this->hierarchyTreeView->setFitSizeToVisibleIndexes(false);
@@ -149,6 +148,8 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // listen for updates to the logic to update the active hierarchy label
   q->qvtkConnect(this->logic(), vtkCommand::ModifiedEvent,
                  q, SLOT(updateActiveHierarchyLabel()));
+  q->qvtkConnect(this->logic(), vtkSlicerAnnotationModuleLogic::RefreshRequestEvent,
+                 q, SLOT(refreshTree()));
 
   // update from the mrml scene
   q->refreshTree();

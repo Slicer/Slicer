@@ -1,17 +1,23 @@
-#include "qSlicerAnnotationModuleReportDialog.h"
-
-#include "qSlicerCoreApplication.h"
-
 // QT includes
 #include <QButtonGroup>
-#include <QList>
-#include <QFontMetrics>
 #include <QDebug>
+#include <QFileDialog>
+#include <QFontMetrics>
+#include <QList>
 #include <QMessageBox>
 #include <QPrintDialog>
 #include <QPrinter>
-#include <QFileDialog>
+#include <QPushButton>
 
+// Slicer includes
+#include "qSlicerCoreApplication.h"
+
+// Annotations includes
+#include "qSlicerAnnotationModuleReportDialog.h"
+#include "vtkMRMLAnnotationNode.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+
+// MRML includes
 
 //---------------------------------------------------------------------------
 qSlicerAnnotationModuleReportDialog::qSlicerAnnotationModuleReportDialog()

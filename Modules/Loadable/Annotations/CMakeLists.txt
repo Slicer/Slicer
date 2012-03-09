@@ -5,11 +5,14 @@ set(qt_module_name "Annotations")
 # Build module sub libraries
 add_subdirectory(MRML)
 add_subdirectory(Widgets)
+add_subdirectory(Logic)
 
 set(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 set(qt_module_include_directories
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
@@ -37,11 +40,6 @@ set(DisplayableManager_SRCS
   MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.h
   MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx
 
-  )
-
-set(Logic_SRCS
-  Logic/vtkSlicerAnnotationModuleLogic.cxx
-  Logic/vtkSlicerAnnotationModuleLogic.h
   )
 
 set(VTKWidget_SRCS
@@ -101,7 +99,6 @@ VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_name}ModuleInstantiator"
 set(qt_module_SRCS
   ${DisplayableManager_SRCS}
   ${DisplayableManagerInstantiator_SRCS}
-  ${Logic_SRCS}
   ${VTKWidget_SRCS}
   ${GUI_SRCS}
   qSlicerAnnotationsIO.cxx
@@ -146,6 +143,7 @@ set(qt_module_target_libraries
   qSlicerBaseQTCore
   qMRMLWidgets
   vtkSlicerAnnotationsModuleMRML
+  vtkSlicerAnnotationsModuleLogic
   qSlicerAnnotationsModuleWidgets
   )
 

@@ -1,35 +1,16 @@
 #ifndef __qSlicerAnnotationModuleWidget_h
 #define __qSlicerAnnotationModuleWidget_h
 
-// SlicerQT includes
-#include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerAnnotationsModuleExport.h"
-#include "GUI/qSlicerAnnotationModulePropertyDialog.h"
-
 // CTK includes
-#include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// SlicerQT includes
+#include "qSlicerAbstractModuleWidget.h"
+#include "../qSlicerAnnotationsModuleExport.h"
 
+class qSlicerAnnotationModulePropertyDialog;
 class qSlicerAnnotationModuleReportDialog;
-class qSlicerAnnotationModuleSnapShotDialog;
-class vtkSlicerNodeSelectorWidget;
-class vtkMRMLAnnotationRulerNode;
-class vtkMRMLAnnotationAngleNode;
 class qSlicerAnnotationModuleWidgetPrivate;
-class QTableWidgetItem;
-class QLineEdit;
-class QTextDocument;
-class QGridLayout;
-class vtkMRMLAnnotationLinesNode;
-class vtkMRMLAnnotationControlPointsNode;
-class vtkMRMLAnnotationNode;
-class vtkMRMLAnnotationFiducialNode;
-class vtkMRMLNode;
-class vtkMRMLAnnotationDisplayNode;
-class vtkMRMLAnnotationLineDisplayNode;
-class vtkMRMLAnnotationPointDisplayNode;
-
 class vtkMRMLInteractionNode;
 
 /// \ingroup Slicer_QtModules_Annotation

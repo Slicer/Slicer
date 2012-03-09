@@ -8,8 +8,10 @@
 
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
 #include "vtkMRMLDisplayableHierarchyNode.h"
-#include "vtkMRMLNode.h"
-#include "vtkMRMLStorableNode.h"
+
+class vtkAbstractTransform;
+class vtkMRMLStorableNode;
+class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode

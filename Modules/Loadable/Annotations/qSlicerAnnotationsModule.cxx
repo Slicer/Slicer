@@ -14,7 +14,8 @@
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModule.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+#include "GUI/qSlicerAnnotationModuleWidget.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 #include "qSlicerAnnotationsIO.h"
 #include "qSlicerFiducialsIO.h"
 

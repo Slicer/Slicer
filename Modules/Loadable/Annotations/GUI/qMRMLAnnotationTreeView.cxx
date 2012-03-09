@@ -20,23 +20,25 @@
 
 // Qt includes
 #include <QDebug>
-#include <QMouseEvent>
+#include <QHeaderView>
 #include <QMessageBox>
+#include <QMouseEvent>
 
 // CTK includes
-#include "ctkModelTester.h"
+//#include "ctkModelTester.h"
 
 // qMRML includes
-#include "qMRMLSceneModel.h"
-#include "qMRMLSortFilterProxyModel.h"
-#include "qMRMLSceneTransformModel.h"
-#include "qMRMLSceneAnnotationModel.h"
-#include "qMRMLTreeView.h"
+//#include "qMRMLSortFilterProxyModel.h"
+//#include "qMRMLSceneTransformModel.h"
+//#include "qMRMLTreeView.h"
 
+// Annotations includes
 #include "qMRMLAnnotationTreeView.h"
+#include "qMRMLSceneAnnotationModel.h"
+#include "vtkMRMLAnnotationHierarchyNode.h"
+#include "vtkMRMLAnnotationNode.h"
 
 // MRML includes
-#include "vtkMRMLNode.h"
 
 //------------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
