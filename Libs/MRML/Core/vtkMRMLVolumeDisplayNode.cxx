@@ -106,6 +106,17 @@ vtkImageData* vtkMRMLVolumeDisplayNode::GetInputImageData()
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::SetBackgroundImageData(vtkImageData* vtkNotUsed(imageData))
+{
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVolumeDisplayNode::GetBackgroundImageData()
+{
+  return 0;
+}
+
+//----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVolumeDisplayNode::GetOutputImageData()
 {
   return NULL;

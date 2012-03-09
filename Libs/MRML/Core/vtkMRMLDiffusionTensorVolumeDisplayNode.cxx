@@ -213,17 +213,6 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
         this->AppendComponents->SetInputConnection(0, this->ExtractComponents->GetOutput()->GetProducerPort());
         this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutput()->GetProducerPort() );
         }
-      // The background mask is not used in this scenario. However, the update
-      // extent has the last value when used (in "default:" case,
-      // this->AlphaLogic uses the background mask as input). Having an update
-      // extent for background image data different than the input image data
-      // leads to crashes upstream in the pipeline. Having it to whole extent
-      // fixes the issue in vtkImageResliceMask when it does
-      // outData[1]->GetScalarPointerForExtent(outExt);
-      if (this->GetBackgroundImageData())
-        {
-        this->GetBackgroundImageData()->SetUpdateExtentToWholeExtent();
-        }
       break;
       }
     default:
@@ -329,6 +318,23 @@ vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetInputImageData()
 vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetOutputImageData()
 {
   return this->AppendComponents->GetOutput();
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLDiffusionTensorVolumeDisplayNode::GetBackgroundImageData()
+{
+  switch (this->GetScalarInvariant())
+    {
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorMode:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector:
+    case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector:
+      {
+      return 0;
+      }
+    default:
+      return this->Superclass::GetBackgroundImageData();
+    }
 }
 
 //---------------------------------------------------------------------------

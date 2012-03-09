@@ -149,6 +149,9 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// Get the output of the pipeline
   virtual vtkImageData* GetOutputImageData();
 
+  /// Reimplemented to return 0 when the background mask is not used.
+  virtual vtkImageData* GetBackgroundImageData();
+
   virtual void UpdateImageDataPipeline();
 
   vtkGetObjectMacro(DTIMathematics, vtkDiffusionTensorMathematics);

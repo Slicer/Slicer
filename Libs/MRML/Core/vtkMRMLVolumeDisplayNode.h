@@ -58,8 +58,12 @@ public:
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// 
-  /// Sets ImageData for background mask 
-  virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData)) {};
+  /// Sets ImageData for background mask
+  /// Must be reimplemented in deriving class if they need it.
+  /// GetBackgroundImageData() returns 0 if the background image data
+  /// is not used.
+  virtual void SetBackgroundImageData(vtkImageData * vtkNotUsed(imageData));
+  virtual vtkImageData* GetBackgroundImageData();
 
   /// Returns the output of the pipeline if there is a not a null input.
   virtual vtkImageData* GetImageData();

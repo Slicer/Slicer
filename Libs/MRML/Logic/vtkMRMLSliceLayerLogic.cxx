@@ -679,6 +679,15 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
       //int wasModifying = volumeDisplayNode->StartModify();
       volumeDisplayNode->SetInputImageData(this->GetSliceImageData());
       volumeDisplayNode->SetBackgroundImageData(this->Reslice->GetBackgroundMask());
+      // If the background mask is not used, make sure the update extent of the
+      // background mask is set to the whole extent so the reslice filter can write
+      // into the entire extent instead of trying to access an update extent that won't
+      // be up-to-date because not connected to a pipeline.
+      if (volumeDisplayNode->GetBackgroundImageData() == 0 &&
+          this->Reslice->GetBackgroundMask() != 0)
+        {
+        this->Reslice->GetBackgroundMask()->SetUpdateExtentToWholeExtent();
+        }
       //volumeDisplayNode->EndModify(wasModifying);
       }
     }
