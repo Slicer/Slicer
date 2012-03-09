@@ -48,7 +48,7 @@ public:
   virtual QIcon icon()const;
 
   virtual QStringList categories()const;
-  QStringList dependencies() const;
+  virtual QStringList dependencies() const;
 
 protected:
 

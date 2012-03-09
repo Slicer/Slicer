@@ -55,7 +55,7 @@ public:
   /// Return the categories for the module
   virtual QStringList categories()const;
   
-  QStringList dependencies()const;
+  virtual QStringList dependencies()const;
 
 protected:
 
