@@ -702,6 +702,14 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::UpdateFromMRML()
 {
+  if ( this->GetInteractor() &&
+       this->GetInteractor()->GetRenderWindow() &&
+       this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
+    {
+    vtkDebugMacro("skipping update during render");
+    return;
+    }
+
   this->UpdateClipSlicesFromMRML();
 
   this->RemoveModelProps();
