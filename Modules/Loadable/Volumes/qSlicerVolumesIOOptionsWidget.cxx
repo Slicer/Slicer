@@ -131,11 +131,11 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
     QFileInfo fileInfo(fileName);
     if (fileInfo.isFile())
       {
-      names << fileInfo.baseName();
+      names << fileInfo.completeBaseName();
       // Single file
       // If the name (or the extension) is just a number, then it must be a 2D
       // slice from a 3D volume, so uncheck Single File.
-      fileInfo.baseName().toInt(&onlyNumberInName);
+      onlyNumberInName = QRegExp("[0-9\\.\\-\\_\\@\\(\\)\\~]+").exactMatch(fileInfo.baseName());
       fileInfo.suffix().toInt(&onlyNumberInExtension);
       }
     // Because '_' is considered as a word character (\w), \b
