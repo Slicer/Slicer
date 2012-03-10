@@ -71,7 +71,6 @@ vtkSlicerAnnotationModuleLogic::~vtkSlicerAnnotationModuleLogic()
 
   if (this->m_LastAddedAnnotationNode)
     {
-    this->m_LastAddedAnnotationNode->Delete();
     this->m_LastAddedAnnotationNode = 0;
     }
 
