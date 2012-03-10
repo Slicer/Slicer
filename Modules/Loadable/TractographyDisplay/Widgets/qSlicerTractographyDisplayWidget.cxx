@@ -365,7 +365,7 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
   d->ColorByScalarComboBox->setDataSet(vtkDataSet::SafeDownCast(d->FiberBundleNode->GetPolyData()));
 
   const bool hasTensors = d->FiberBundleNode->GetPolyData()->GetPointData()->GetTensors();
-  const bool colorSolid = d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeSolid;
+//  const bool colorSolid = d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeSolid;
 
   d->ColorByScalarInvariantRadioButton->setEnabled(hasTensors);// && !colorSolid);
   d->ColorByScalarInvariantComboBox->setEnabled(hasTensors);// && !colorSolid);

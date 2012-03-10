@@ -134,12 +134,12 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "[Uu]tilities.gdcm"
   "[Uu]tilities.vxl"
   "[Uu]tilities.itktiff"
-  "[Ii]nsight.[Cc]ode.[Cc]ommon"
-  "[Ii]nsight.[Cc]ode.[Nn]umerics"
-  "[Ii]nsight.[Cc]ode.(IO|io)"
-  "[Ii]nsight.[Cc]ode.[Ss]patial[Oo]bject"
-  "[Ii]nsight.[Uu]tilities.[Nn]rrd(IO|io)"
-  "[Ii]nsight.[Uu]tilities.(openjpeg|nifti)"
+  "([Ii]nsight|ITKv3).[Cc]ode.[Cc]ommon"
+  "([Ii]nsight|ITKv3).[Cc]ode.[Nn]umerics"
+  "([Ii]nsight|ITKv3).[Cc]ode.(IO|io)"
+  "([Ii]nsight|ITKv3).[Cc]ode.[Ss]patial[Oo]bject"
+  "([Ii]nsight|ITKv3).[Uu]tilities.[Nn]rrd(IO|io)"
+  "([Ii]nsight|ITKv3).[Uu]tilities.(openjpeg|nifti)"
 
   # VTK suppressions
   "vtkfreetype"
@@ -187,6 +187,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules.audioop.c.*warning C4018"
   "Modules._multiprocessing.*warning"
+  (Python|Objects|Modules|modules|PC).*conversion from '(Py_uintptr_t|Py_ssize_t|INT_PTR|size_t|__int64)' to '.*', possible loss of data
   # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
@@ -226,6 +227,16 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "curl.mprintf.*warning.*redefined"
   "usr.include.secure._stdio.h.*warning: this is the location of the previous definition"
   "ranlib: file:.*bin.libslicerlibcurl.a.*has no symbols"
+
+  #PythonQt
+  "PythonQt.src.*conversion from 'size_t' to '.*', possible loss of data
+
+  #Libarchive
+  "LibArchive.libArchive.*signed/unsigned mismatch"
+  "LibArchive.libArchive.*conversion from 'size_t' to '.*', possible loss of data"
+
+  #DCMTK
+  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).**conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
   # Visual studio spurious warnings...
   "The following environment variables were not found"

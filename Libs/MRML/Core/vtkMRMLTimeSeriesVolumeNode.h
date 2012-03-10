@@ -64,7 +64,7 @@
 ///   double v = SomeProcessing ( voxelTS );
 ///   volume->SetScalarComponentFromDouble ( x, y, z, 0, v );
 /// }
-//
+/// \endcode
 
 
 #ifndef __vtkMRMLTimeSeriesVolumeNode_h

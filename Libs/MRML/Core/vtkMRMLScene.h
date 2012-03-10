@@ -465,12 +465,13 @@ public:
     ImportProgressFeedbackEvent,
     SaveProgressFeedbackEvent,
 
-    /// \internal not to be used directly
-    StateEvent = 0x2000, // 1024 (decimal)
+    /// \internal
+    /// not to be used directly
+    /// \endinternal
+    StateEvent = 0x2000, ///< 1024 (decimal)
     StartEvent = 0x0100,
     EndEvent = 0x0200,
     ProgressEvent = 0x0400,
-    /// \endinternal
 
     StartBatchProcessEvent = StateEvent | StartEvent | BatchProcessState,
     EndBatchProcessEvent = StateEvent | EndEvent | BatchProcessState,
