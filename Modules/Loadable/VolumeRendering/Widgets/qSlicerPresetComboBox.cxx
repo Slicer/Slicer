@@ -23,7 +23,6 @@
 #include <QDesktopWidget>
 #include <QListView>
 #if QT_VERSION < 0x040700
-//#  include <private/qtextimagehandler_p.h>
 #include <QPixmapCache>
 #endif
 
@@ -46,14 +45,6 @@
 
 // STD includes
 #include <cassert>
-
-#if QT_VERSION < 0x040700
-static QImage pixmapCacheLoader( const QString& name, const QString &context )
-{
-  QPixmap pix;
-  return QPixmapCache::find( name, pix ) ? pix.toImage() : QImage();
-}
-#endif
 
 //-----------------------------------------------------------------------------
 qSlicerIconComboBox::qSlicerIconComboBox(QWidget* parentWidget)
@@ -221,7 +212,6 @@ void qSlicerPresetComboBox::setIconToPreset(vtkMRMLNode* presetNode)
 #if QT_VERSION >= 0x040700
     QString imgSrc = ctk::base64HTMLImageTagSrc(img);
 #else
-    //QTextImageHandler::externalLoader = pixmapCacheLoader;
     QString imgSrc = QString(":%1").arg(presetNode->GetName());
     QPixmapCache::insert(imgSrc, QPixmap::fromImage(img));
 #endif

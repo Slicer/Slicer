@@ -589,7 +589,6 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
 //----------------------------------------------------------------------------
 std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNode, int move)
 {
-  this->SetDebug(1);
   bool result = true;
   std::string returnString = "";
   // test whether refNode is a valid node to hold a volume
@@ -835,7 +834,6 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
   vtkDebugMacro("UpdateFileList: resetting file name to " << oldName.c_str());
   this->SetFileName(oldName.c_str());
   
-  this->SetDebug(0);
   if (move != 1)
     {
     // clean up temp directory
