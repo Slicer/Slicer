@@ -220,7 +220,7 @@ mark_as_advanced(Slicer_BUILD_ChangeTrackerPy)
 
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_EMSegment "Build EMSegment." ON
-  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_QTLOADABLEMODULES" OFF)
+  "Slicer_BUILD_BRAINSTOOLS AND Slicer_BUILD_QTLOADABLEMODULES" OFF)
 mark_as_advanced(Slicer_BUILD_EMSegment)
 
 CMAKE_DEPENDENT_OPTION(
