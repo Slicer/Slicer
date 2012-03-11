@@ -5,6 +5,8 @@ from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerMod
 class qSlicerMultiVolumeExplorerModuleWidget:
   def __init__( self, parent=None ):
 
+    print "MultiVolumeExplorer: __init__()"
+
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -16,24 +18,13 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     # this flag is 1 if there is an update in progress
     self.__updating = 1
 
-    # Reference to the logic
-    self.__logic = slicer.modulelogic.vtkSlicerMultiVolumeExplorerLogic()
-
-    if not parent:
-      self.__logic = slicer.modulelogic.vtkMultiVolumeExplorerLogic()
-      self.setup()
-      self.parent.setMRMLScene( slicer.mrmlScene )
-      # after setup, be ready for events
-      self.__updating = 0
-
-      self.parent.show()
-
     self.__dwvNode = None
     self.__vcNode = None
     self.extractFrame = False
 
     # chart view node
     cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    cvns.SetReferenceCount(1)
     cvns.InitTraversal()
     self.__cvn = cvns.GetNextItemAsObject()
 
@@ -44,6 +35,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     # chart node
     self.__cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
     cn = slicer.mrmlScene.AddNode(self.__cn)
+    self.__cn.SetReferenceCount(1)
 
     # image play setup
     self.timer = qt.QTimer()
@@ -53,6 +45,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def setup( self ):
     '''
     '''
+
+    print "MultiVolumeExplorer: setup()"
 
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
 
@@ -171,6 +165,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__chartView = ctk.ctkVTKChartView(w)
     plotFrameLayout.addWidget(self.__chartView,2,0,1,3)
 
+
     self.__chart = self.__chartView.chart()
     self.__chartTable = vtk.vtkTable()
     self.__xArray = vtk.vtkFloatArray()
@@ -208,6 +203,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       dataNodes = {}
       for k in labeledVoxels.keys():
         dataNodes[k] = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
+        dataNodes[k].SetReferenceCount(1)
         dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
         slicer.mrmlScene.AddNode(dataNodes[k])
       dwvImage = self.__dwvNode.GetImageData()
@@ -278,6 +274,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       displayNode = frameVolume.GetDisplayNode()
       if displayNode == None:
         displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
+        displayNode.SetReferenceCount(1)
         displayNode.SetScene(slicer.mrmlScene)
         slicer.mrmlScene.AddNode(displayNode)
         displayNode.SetDefaultColorMap()
@@ -463,11 +460,14 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     if self.__cvn == None:
       print "No chart view nodes found, switching to quantiative layout"
       lm = slicer.app.layoutManager()
+      if lm == None:
+        return
       # need to take care in case layout order/number is change
       # can we get layout by name?
       lm.setLayout(25) # layouts are defined in Libs/MRML/Core/vtkMRMLLayoutNode.h 
       # chart view node
       cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+      cvns.SetReferenceCount(1)
       cvns.InitTraversal()
       self.__cvn = cvns.GetNextItemAsObject()
       if self.__cvn == None:
