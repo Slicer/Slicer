@@ -168,6 +168,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
   "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
+  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).**conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -229,14 +230,11 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "ranlib: file:.*bin.libslicerlibcurl.a.*has no symbols"
 
   #PythonQt
-  "PythonQt.src.*conversion from 'size_t' to '.*', possible loss of data
+  "PythonQt.src.*conversion from 'size_t' to '.*', possible loss of data"
 
   #Libarchive
   "LibArchive.libArchive.*signed/unsigned mismatch"
   "LibArchive.libArchive.*conversion from 'size_t' to '.*', possible loss of data"
-
-  #DCMTK
-  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).**conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
   # Visual studio spurious warnings...
   "The following environment variables were not found"
