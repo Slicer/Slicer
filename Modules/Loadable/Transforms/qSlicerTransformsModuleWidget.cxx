@@ -297,6 +297,7 @@ void qSlicerTransformsModuleWidget::transformSelectedNodes()
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
     d->TransformableTreeView->sortFilterProxyModel()->
       mrmlNodeFromIndex( selectedIndex ));
+    Q_ASSERT(node);
     node->SetAndObserveTransformNodeID(d->MRMLTransformNode->GetID());
     }
 }
@@ -313,6 +314,7 @@ void qSlicerTransformsModuleWidget::untransformSelectedNodes()
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
     d->TransformedTreeView->sortFilterProxyModel()->
       mrmlNodeFromIndex( selectedIndex ));
+    Q_ASSERT(node);
     node->SetAndObserveTransformNodeID(0);
     }
 }

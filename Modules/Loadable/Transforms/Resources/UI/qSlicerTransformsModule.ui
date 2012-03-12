@@ -393,6 +393,38 @@
   <connection>
    <sender>qSlicerTransformsModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TransformableTreeView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>502</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>816</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>TransformedTreeView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>323</x>
+     <y>501</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>816</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TransformNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
@@ -563,38 +595,6 @@
     <hint type="destinationlabel">
      <x>552</x>
      <y>543</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerTransformsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>TransformableTreeView</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>502</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>816</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerTransformsModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>TransformedTreeView</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>323</x>
-     <y>501</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>553</x>
-     <y>816</y>
     </hint>
    </hints>
   </connection>
