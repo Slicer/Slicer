@@ -59,30 +59,31 @@ class EditOptions(object):
   TODO: no support yet for scope options
   """
 
-  def __init__(self, parent=0):
+  def __init__(self, parent=None):
+    self.parent = parent
     self.updatingGUI = False
     self.observerTags = []
     self.widgets = []
     self.parameterNode = None
     self.parameterNodeTag = None
     self.editUtil = EditUtil.EditUtil()
-    if parent == 0:
-      self.parent = slicer.qMRMLWidget()
-      self.parent.setLayout(qt.QVBoxLayout())
-      self.parent.setMRMLScene(slicer.mrmlScene)
-      self.create()
-      self.parent.show()
-    else:
-      self.parent = parent
-      self.create()
+    self.tools = []
+
+    # connections is a list of widget/signal/slot tripples
+    # for the options gui that can be connected/disconnected
+    # as needed to prevent triggering mrml updates while
+    # updating the state of the gui
+    # - each level of the inheritance tree can add entries
+    #   to this list for use by the connectWidgets
+    #   and disconnectWidgets methods
+    self.connections = []
+    self.connectionsConnected = False
 
     # 1) find the parameter node in the scene and observe it
     # 2) set the defaults (will only set them if they are not
     # already set)
-    # 3) update the GUI to match the defaults
     self.updateParameterNode( self.parameterNode, "ModifiedEvent" )
     self.setMRMLDefaults()
-    self.updateGUIFromMRML( self.parameterNode, "ModifiedEvent" )
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code
@@ -96,7 +97,30 @@ class EditOptions(object):
     for tagpair in self.observerTags:
       tagpair[0].RemoveObserver(tagpair[1])
 
+  def connectWidgets(self):
+    if self.connectionsConnected: return
+    for widget,signal,slot in self.connections:
+      success = widget.connect(signal,slot)
+      if not success:
+        print("Could not connect {signal} to {slot} for {widget}".format(
+          signal = signal, slot = slot, widget = widget))
+    self.connectionsConnected = True
+
+  def disconnectWidgets(self):
+    if not self.connectionsConnected: return
+    for widget,signal,slot in self.connections:
+      success = widget.disconnect(signal,slot)
+      if not success:
+        print("Could not disconnect {signal} to {slot} for {widget}".format(
+          signal = signal, slot = slot, widget = widget))
+    self.connectionsConnected = False
+
   def create(self):
+    if not self.parent:
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
+      self.parent.show()
     self.frame = qt.QFrame(self.parent)
     self.frame.setLayout(qt.QVBoxLayout())
     self.parent.layout().addWidget(self.frame)
@@ -122,6 +146,13 @@ class EditOptions(object):
   #
   def updateGUIFromMRML(self,caller,event):
     pass
+
+  #
+  # update the GUI from MRML
+  # - to be overriden by the subclass
+  #
+  def updateGUI(self):
+    self.updateGUIFromMRML(self.parameterNode,"ModifiedEvent")
 
   #
   # set the default option values
@@ -189,6 +220,15 @@ class EditOptions(object):
 
   def statusText(self,text):
     slicer.util.showStatusMessage(text)
+
+  def debug(self,text):
+    import inspect
+    print('*'*80)
+    print(text)
+    print(self)
+    stack = inspect.stack()
+    for frame in stack:
+      print(frame)
 
 #### Labeler
 class LabelerOptions(EditOptions):
@@ -1674,15 +1714,15 @@ class GrowCutSegmentOptions(EditOptions):
       return
     paintparams = ("radius", "smudge")
     for p in paintparams:
-      if self.parameterNode.GetParameter("Paint,"+p) == '':
+      if self.parameterNode.GetParameter("PaintEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
  
     self.updatingGUI = True
     super(GrowCutSegmentOptions,self).updateGUIFromMRML(caller,event)
-    self.smudge.setChecked( int(self.parameterNode.GetParameter("Paint,smudge")) )
-    self.radius.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
-    self.radiusSpinBox.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
+    self.smudge.setChecked( int(self.parameterNode.GetParameter("PaintEffect,smudge")) )
+    self.radius.setValue( float(self.parameterNode.GetParameter("PaintEffect,radius")) )
+    self.radiusSpinBox.setValue( float(self.parameterNode.GetParameter("PaintEffect,radius")) )
     self.updatingGUI = False
 
   def onRadiusValueChanged(self,value):
@@ -1708,10 +1748,10 @@ class GrowCutSegmentOptions(EditOptions):
     self.parameterNode.SetDisableModifiedEvent(1)
     super(GrowCutSegmentOptions,self).updateMRMLFromGUI()
     if self.smudge.checked:
-      self.parameterNode.SetParameter( "Paint,smudge", "1" )
+      self.parameterNode.SetParameter( "PaintEffect,smudge", "1" )
     else:
-      self.parameterNode.SetParameter( "Paint,smudge", "0" )
-    self.parameterNode.SetParameter( "Paint,radius", str(self.radius.value) )
+      self.parameterNode.SetParameter( "PaintEffect,smudge", "0" )
+    self.parameterNode.SetParameter( "PaintEffect,radius", str(self.radius.value) )
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()

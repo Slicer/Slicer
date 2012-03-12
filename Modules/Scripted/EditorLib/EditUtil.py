@@ -1,3 +1,4 @@
+import vtk
 import slicer
 
 #########################################################
@@ -46,25 +47,47 @@ class EditUtil(object):
       compNode = slicer.mrmlScene.GetNthNodeByClass(n, 'vtkMRMLSliceCompositeNode')
       if compNode.GetLayoutName() == layoutName:
         return compNode
+
+  def getSliceWidget(self,layoutName='Red'):
+    """ use the Red slice widget as the default"""
+    layoutManager = slicer.app.layoutManager()
+    sliceWidget = layoutManager.sliceWidget(layoutName)
+    return sliceWidget
+
+  def getSliceLogic(self,layoutName='Red'):
+    """ use the Red slice logic as the default for operations that are
+    not specific to a slice widget"""
+    sliceWidget = self.getSliceWidget(layoutName)
+    return sliceWidget.sliceLogic()
+
+  def getBackgroundImage(self):
+    backgroundVolume = self.getBackgroundVolume()
+    if backgroundVolume:
+      return backgroundVolume.GetImageData()
     
-  def getBackgroundVolume(self,):
+  def getBackgroundVolume(self):
     compNode = self.getCompositeNode()
     if compNode:
       backgroundID = compNode.GetBackgroundVolumeID()
       if backgroundID:
         return slicer.mrmlScene.GetNodeByID(backgroundID)
   
-  def getBackgroundID(self,):
+  def getBackgroundID(self):
     compNode = self.getCompositeNode()
     if compNode:
       return compNode.GetBackgroundVolumeID()
 
-  def getLabelID(self,):
+  def getLabelImage(self):
+    labelVolume = self.getLabelVolume()
+    if labelVolume:
+      return labelVolume.GetImageData()
+
+  def getLabelID(self):
     compNode = self.getCompositeNode()
     if compNode:
       return compNode.GetLabelVolumeID()
 
-  def getLabelVolume(self,):
+  def getLabelVolume(self):
     compNode = self.getCompositeNode()
     if compNode:
       labelID = compNode.GetLabelVolumeID()
@@ -79,7 +102,18 @@ class EditUtil(object):
         return ( dispNode.GetColorNode() )
 
   def getLabel(self):
-    return self.getParameterNode().GetParameter('label')
+    return int(self.getParameterNode().GetParameter('label'))
+
+  def setLabel(self,label):
+    return self.getParameterNode().SetParameter('label',str(label))
+
+  def toggleLabel(self):
+    storedLabelParam = self.getParameterNode().GetParameter('storedLabel')
+    if storedLabelParam == '':
+      self.getParameterNode().SetParameter('storedLabel','0')
+    storedLabel = int(self.getParameterNode().GetParameter('storedLabel'))
+    self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
+    self.setLabel(storedLabel)
 
 
 class UndoRedo(object):
@@ -97,8 +131,8 @@ class UndoRedo(object):
       self.volumeNode = volumeNode
       self.stashImage = vtk.vtkImageData()
       self.stash = slicer.vtkImageStash()
-      self.stashImage.DeepCopy(volumeNode.GetImageData())
-      self.stash.SetStashImage(self.stashImage)
+      self.stashImage.DeepCopy( volumeNode.GetImageData() )
+      self.stash.SetStashImage( self.stashImage )
       self.stash.ThreadedStash()
 
     def restore(self):
@@ -115,8 +149,8 @@ class UndoRedo(object):
       while self.stash.GetStashing():
         pass
       self.stash.Unstash()
-      self.volumeNode.GetImageData().DeepCopy(self.stashImage)
-      self.volumeNode.SetModifiedSinceRead(1)
+      self.volumeNode.GetImageData().DeepCopy( self.stashImage )
+      self.volumeNode.SetModifiedSinceRead( 1 )
       self.volumeNode.Modified()
 
 
@@ -125,13 +159,21 @@ class UndoRedo(object):
     self.undoSize = undoSize
     self.undoList = []
     self.redoList = []
+    self.editUtil = EditUtil()
+    self.stateChangedCallback = self.defaultStateChangedCallback
+
+  def defaultStateChangedCallback(self):
+    """placeholder so that using class can define a callable
+    for when the state of the stacks changes (e.g. for updating the
+    enable state of menu items or buttons"""
+    pass
 
   def undoEnabled(self):
-    "for managing undo/redo button state"""
+    """for managing undo/redo button state"""
     return self.enabled and self.undoList != []
 
   def redoEnabled(self):
-    "for managing undo/redo button state"""
+    """for managing undo/redo button state"""
     return self.enabled and self.redoList != []
 
   def storeVolume(self,checkPointList,volumeNode):
@@ -141,15 +183,20 @@ class UndoRedo(object):
     """
     if not self.enabled or not volumeNode or not volumeNode.GetImageData():
       return
+    checkPointList.append( self.checkPoint(volumeNode) )
+    self.stateChangedCallback()
     if len(checkPointList) >= self.undoSize: 
-      checkPointList = checkPointList[1:]
-    checkPointList.append(checkPoint(volumeNode))
+      return( checkPointList[1:] )
+    else:
+      return( checkPointList )
 
   def saveState(self):
     """Called by effects as they modify the label volume node
     """
     # store current state onto undoList
-    self.storeVolume(self.undoList,EditUtil.getLabelVolume())
+    self.undoList = self.storeVolume( self.undoList, self.editUtil.getLabelVolume() )
+    self.redoList = []
+    self.stateChangedCallback()
 
   def undo(self):
     """Perform the operation when the user presses 
@@ -160,10 +207,11 @@ class UndoRedo(object):
     if self.undoList == []:
       return
     # store current state onto redoList
-    self.storeVolume(self.redoList,EditUtil.getLabelVolume())
+    self.redoList = self.storeVolume( self.redoList, self.editUtil.getLabelVolume() )
     # get the checkPoint to restore and remove it from the list
     self.undoList[-1].restore()
     self.undoList = self.undoList[:-1]
+    self.stateChangedCallback()
 
   def redo(self):
     """Perform the operation when the user presses 
@@ -174,7 +222,8 @@ class UndoRedo(object):
     if self.redoList == []:
       return
     # store current state onto undoList
-    self.storeVolume(self.undoList,EditUtil.getLabelVolume())
+    self.undoList = self.storeVolume( self.undoList, self.editUtil.getLabelVolume() )
     # get the checkPoint to restore and remove it from the list
     self.redoList[-1].restore()
     self.redoList = self.redoList[:-1]
+    self.stateChangedCallback()

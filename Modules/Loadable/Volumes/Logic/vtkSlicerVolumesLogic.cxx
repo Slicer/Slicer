@@ -879,7 +879,10 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   thresh->SetOutputScalarType (VTK_SHORT);
   thresh->SetInput( volumeNode->GetImageData() );
   thresh->GetOutput()->Update();
-  labelNode->SetAndObserveImageData( thresh->GetOutput() );
+  vtkImageData *imageData = vtkImageData::New();
+  imageData->DeepCopy( thresh->GetOutput() );
+  labelNode->SetAndObserveImageData( imageData );
+  imageData->Delete();
   thresh->Delete();
 
   // add the label volume to the scene

@@ -9,10 +9,25 @@ set(EditorLib_PYTHON_SCRIPTS
   Effect
   LabelEffect
   PaintEffect
-  )
+  DrawEffect
+  ThresholdEffect
+  RectangleEffect
+  LevelTracingEffect
+  MakeModelEffect
+  MorphologyEffect
+  ErodeEffect
+  DilateEffect
+  IslandEffect
+  IdentifyIslandsEffect
+  ChangeIslandEffect
+  RemoveIslandsEffect
+  SaveIslandEffect
+  ChangeLabelEffect
+  GrowCutEffect
+)
 
 set(EditorLib_PYTHON_RESOURCES
-  )
+)
 
 ctkMacroCompilePythonScript(
   TARGET_NAME EditorLib
@@ -20,7 +35,7 @@ ctkMacroCompilePythonScript(
   RESOURCES "${EditorLib_PYTHON_RESOURCES}"
   DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python/EditorLib
   INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}/Python
-  )
+)
 
 #-----------------------------------------------------------------------------
 # Testing

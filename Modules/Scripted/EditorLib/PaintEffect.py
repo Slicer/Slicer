@@ -1,9 +1,10 @@
 import os
 from __main__ import vtk
+from __main__ import ctk
 from __main__ import qt
 from __main__ import slicer
 from EditOptions import EditOptions
-import EditUtil
+from EditorLib import EditorLib
 import LabelEffect
 
 
@@ -67,11 +68,11 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.frame.layout().addWidget(self.smudge)
     self.widgets.append(self.smudge)
 
-    HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
+    EditorLib.HelpButton(self.frame, "Use this tool to paint with a round brush of the selected radius")
 
-    self.smudge.connect('clicked()', self.updateMRMLFromGUI)
-    self.radius.connect('valueChanged(double)', self.onRadiusValueChanged)
-    self.radiusSpinBox.connect('valueChanged(double)', self.onRadiusSpinBoxChanged)
+    self.connections.append( (self.smudge, 'clicked()', self.updateMRMLFromGUI) )
+    self.connections.append( (self.radius, 'valueChanged(double)', self.onRadiusValueChanged) )
+    self.connections.append( (self.radiusSpinBox, 'valueChanged(double)', self.onRadiusSpinBoxChanged) )
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
@@ -83,7 +84,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
   # in each leaf subclass so that "self" in the observer
   # is of the correct type 
   def updateParameterNode(self, caller, event):
-    node = EditUtil.getParameterNode()
+    node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
@@ -91,7 +92,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(PaintOptions,self).setMRMLDefaults()
+    super(PaintEffectOptions,self).setMRMLDefaults()
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
     defaults = (
@@ -99,54 +100,48 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       ("smudge", "0"),
     )
     for d in defaults:
-      param = "Paint,"+d[0]
+      param = "PaintEffect,"+d[0]
       pvalue = self.parameterNode.GetParameter(param)
       if pvalue == '':
         self.parameterNode.SetParameter(param, d[1])
     self.parameterNode.SetDisableModifiedEvent(disableState)
 
   def updateGUIFromMRML(self,caller,event):
-    if self.updatingGUI:
-      return
     params = ("radius", "smudge")
     for p in params:
-      if self.parameterNode.GetParameter("Paint,"+p) == '':
+      if self.parameterNode.GetParameter("PaintEffect,"+p) == '':
         # don't update if the parameter node has not got all values yet
         return
-    self.updatingGUI = True
-    super(PaintOptions,self).updateGUIFromMRML(caller,event)
-    self.smudge.setChecked( int(self.parameterNode.GetParameter("Paint,smudge")) )
-    self.radius.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
-    self.radiusSpinBox.setValue( float(self.parameterNode.GetParameter("Paint,radius")) )
-    self.updatingGUI = False
+    super(PaintEffectOptions,self).updateGUIFromMRML(caller,event)
+    self.disconnectWidgets()
+    smudge = not (0 == int(self.parameterNode.GetParameter("PaintEffect,smudge")))
+    self.smudge.setChecked( smudge )
+    radius = float(self.parameterNode.GetParameter("PaintEffect,radius"))
+    self.radius.setValue( radius )
+    self.radiusSpinBox.setValue( radius )
+    for tool in self.tools:
+      tool.smudge = smudge
+      tool.radius = radius
+      tool.createGlyph(tool.brush)
+    self.connectWidgets()
 
   def onRadiusValueChanged(self,value):
-    if self.updatingGUI:
-      return
-    self.updatingGUI = True
     self.radiusSpinBox.setValue(self.radius.value)
-    self.updatingGUI = False
     self.updateMRMLFromGUI()
 
   def onRadiusSpinBoxChanged(self,value):
-    if self.updatingGUI:
-      return
-    self.updatingGUI = True
     self.radius.setValue(self.radiusSpinBox.value)
-    self.updatingGUI = False
     self.updateMRMLFromGUI()
 
   def updateMRMLFromGUI(self):
-    if self.updatingGUI:
-      return
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(PaintOptions,self).updateMRMLFromGUI()
+    super(PaintEffectOptions,self).updateMRMLFromGUI()
     if self.smudge.checked:
-      self.parameterNode.SetParameter( "Paint,smudge", "1" )
+      self.parameterNode.SetParameter( "PaintEffect,smudge", "1" )
     else:
-      self.parameterNode.SetParameter( "Paint,smudge", "0" )
-    self.parameterNode.SetParameter( "Paint,radius", str(self.radius.value) )
+      self.parameterNode.SetParameter( "PaintEffect,smudge", "0" )
+    self.parameterNode.SetParameter( "PaintEffect,radius", str(self.radius.value) )
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
@@ -170,7 +165,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
     # configuration variables
     self.radius = 5
-    self.smudge = 0
+    self.smudge = False
     self.delayedPaint = 1
 
     # interaction state variables
@@ -205,6 +200,19 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.sliceView.scheduleRender()
     super(PaintEffectTool,self).cleanup()
 
+  def getLabelPixel(self,xy):
+    sliceLogic = self.sliceWidget.sliceLogic()
+    labelLogic = sliceLogic.GetLabelLayer()
+    xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
+    i,j,k,l = xyToIJK.MultiplyPoint( xy + (0, 1) )
+    i = int(round(i))
+    j = int(round(j))
+    k = int(round(k))
+    labelImage = labelLogic.GetVolumeNode().GetImageData()
+    pixel = int(labelImage.GetScalarComponentAsDouble(i,j,k,0))
+    return(pixel)
+    
+
   def processEvent(self, caller=None, event=None):
     """
     handle events from the render window interactor
@@ -212,6 +220,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     if event == "LeftButtonPressEvent":
       self.actionState = "painting"
       xy = self.interactor.GetEventPosition()
+      if self.smudge:
+        self.editUtil.setLabel(self.getLabelPixel(xy))
       self.paintAddPoint(xy[0], xy[1])
       self.abortEvent(event)
     elif event == "LeftButtonReleaseEvent":
@@ -229,10 +239,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       self.actor.VisibilityOff()
     else:
       print(caller,event,self.sliceWidget.sliceLogic().GetSliceNode().GetName())
-
     self.positionActors()
-
-
 
   def positionActors(self):
     """
@@ -327,9 +334,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
   def paintApply(self):
     if self.paintCoordinates != []:
-      # TODO:
-      # EditorStoreCheckPoint $_layers(label,node)
-      pass
+      if self.undoRedo:
+        self.undoRedo.saveState()
     
     for xy in self.paintCoordinates:
       self.paintBrush(xy[0], xy[1])
@@ -344,15 +350,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     labelLogic = sliceLogic.GetLabelLayer()
     labelNode = labelLogic.GetVolumeNode()
     labelNode.SetModifiedSinceRead(1)
-    workaround = 1
-    if workaround:
-      if not hasattr(self,"tempImageData"):
-        self.tempImageData = vtk.vtkImageData()
-      imageData = labelNode.GetImageData()
-      labelNode.SetAndObserveImageData(self.tempImageData)
-      labelNode.SetAndObserveImageData(imageData)
-    else:
-      labelNode.Modified()
+    labelNode.Modified()
 
   def paintBrush(self, x, y):
     """
@@ -434,13 +432,20 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     brushCenter = xyToRAS.MultiplyPoint( (x, y, 0, 1) )[:3]
     brushRadius = self.radius
 
+    parameterNode = self.editUtil.getParameterNode()
+    paintLabel = int(parameterNode.GetParameter("label"))
+    paintOver = int(parameterNode.GetParameter("LabelEffect,paintOver"))
+    paintThreshold = int(parameterNode.GetParameter("LabelEffect,paintThreshold"))
+    paintThresholdMin = float(
+        parameterNode.GetParameter("LabelEffect,paintThresholdMin"))
+    paintThresholdMax = float(
+        parameterNode.GetParameter("LabelEffect,paintThresholdMax"))
+
     #
     # set up the painter class and let 'r rip!
     #
     if not hasattr(self,"painter"):
       self.painter = slicer.vtkImageSlicePaint()
-
-
     self.painter.SetBackgroundImage(backgroundImage)
     self.painter.SetBackgroundIJKToWorld(backgroundIJKToRAS)
     self.painter.SetWorkingImage(labelImage)
@@ -451,16 +456,11 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     self.painter.SetBottomRight( br[0], br[1], br[2] )
     self.painter.SetBrushCenter( brushCenter[0], brushCenter[1], brushCenter[2] )
     self.painter.SetBrushRadius( brushRadius )
-    self.painter.SetPaintLabel(1)
-    self.painter.SetPaintOver(1)
-    self.painter.SetThresholdPaint(0)
+    self.painter.SetPaintLabel(paintLabel)
+    self.painter.SetPaintOver(paintOver)
+    self.painter.SetThresholdPaint(paintThreshold)
+    self.painter.SetThresholdPaintRange(paintThresholdMin, paintThresholdMax)
     self.painter.Paint()
-
-    # TODO
-    #painter.SetPaintLabel( [EditorGetPaintLabel]
-    #$painter SetPaintOver $paintOver
-    #$painter SetThresholdPaint $paintThreshold
-    #$painter SetThresholdPaintRange $paintThresholdMin $paintThresholdMax
 
 
 #
@@ -479,7 +479,8 @@ class PaintEffectLogic(LabelEffect.LabelEffectLogic):
   """
 
   def __init__(self):
-    # TODO: flesh this out
+    # TODO: flesh this out - might want to move all the paint work into here
+    # for easier re-use
     pass
 
 
