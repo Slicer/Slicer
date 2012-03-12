@@ -199,6 +199,8 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode::UpdateImageDataPipeline()
       this->Threshold->SetInput( this->ImageCast->GetOutput());
 
       // window/level
+      this->AutoScalarRange = 1;
+      this->AutoWindowLevel = 1;
       this->ShiftScale->SetInput(this->DTIMathematics->GetOutput());
       double halfWindow = (this->GetWindow() / 2.);
       double min = this->GetLevel() - halfWindow;

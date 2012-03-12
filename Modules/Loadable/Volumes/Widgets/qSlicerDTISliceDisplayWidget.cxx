@@ -251,6 +251,20 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
     }
   this->displayPropertiesNode()->SetColorGlyphBy(scalarInvariant);
 
+  if ( d->DisplayNode && (
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
+    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector 
+    ) )
+  {
+    d->DisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
+    d->GlyphScalarColorTableComboBox->setEnabled(false);
+    d->DisplayNode->AutoScalarRangeOn();
+  } else {
+    d->GlyphScalarColorTableComboBox->setEnabled(true);
+  }
+
+
   if (d->DisplayNode && (d->DisplayNode->GetAutoScalarRange()))
   {
     double scalarRange[2];
@@ -260,17 +274,6 @@ void qSlicerDTISliceDisplayWidget::setColorGlyphBy(int scalarInvariant)
   }
 
 
-  if ( d->DisplayNode && (
-    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation ||
-    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMiddleEigenvector ||
-    this->displayPropertiesNode()->GetScalarInvariant() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientationMinEigenvector 
-    ) )
-  {
-    d->DisplayNode->SetAndObserveColorNodeID("vtkMRMLColorTableNodeFullRainbow");
-    d->GlyphScalarColorTableComboBox->setEnabled(false);
-  } else {
-    d->GlyphScalarColorTableComboBox->setEnabled(true);
-  }
 
 }
 
