@@ -37,7 +37,10 @@ extern "C" {
 
 #include <ctime>
 
-#define VTK_EPS 10e-15
+#define VTK_EPS 1e-16
+#define DOUBLE_NAN (std::numeric_limits<double>::quiet_NaN())
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#define OUT_OF_RANGE_TO_NAN(v, a, b) (( ((a) <= (v)) && ((v) <= (b)))?(v):(DOUBLE_NAN))
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,ScalarMask,vtkImageData);
@@ -984,27 +987,17 @@ double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
 
 double vtkDiffusionTensorMathematics::LinearMeasure(double w[3])
 {
-  if (w[0] < VTK_EPS) 
-     return (w[0] - w[1])/(w[0]+VTK_EPS);
-  else
-     return (w[0] - w[1])/(w[0]);
-
+  return OUT_OF_RANGE_TO_NAN((w[0] - w[1])/MAX(w[0], VTK_EPS), 0, 1);
 }
 
 double vtkDiffusionTensorMathematics::PlanarMeasure(double w[3])
 {
-  if (w[0] < VTK_EPS)
-     return (w[1] - w[2])/(w[0]+VTK_EPS);
-  else
-     return (w[1] - w[2])/(w[0]);
+  return OUT_OF_RANGE_TO_NAN((w[1] - w[2]) / MAX(w[0], VTK_EPS), 0, 1);
 }
 
 double vtkDiffusionTensorMathematics::SphericalMeasure(double w[3])
 {
-  if (w[0] < VTK_EPS)
-     return (w[2])/(w[0]+VTK_EPS);
-  else
-     return  (w[2])/(w[0]);
+  return OUT_OF_RANGE_TO_NAN((w[2]) / MAX(w[0], VTK_EPS), 0, 1);
 }
 
 
