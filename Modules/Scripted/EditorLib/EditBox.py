@@ -40,6 +40,7 @@ class EditBox(object):
     self.effectMapper = qt.QSignalMapper()
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
     self.editUtil = EditUtil.EditUtil()
+    self.undoRedo = EditUtil.UndoRedo()
 
     # check for extensions - if none have been registered, just create the empty dictionary
     try:
@@ -414,9 +415,9 @@ itcl::body EditBox::setButtonState {effect state} {
     elif effect ==  "EraseLabel":
         tcl('EditorToggleErasePaintLabel')
     elif effect ==  "PreviousCheckPoint":
-        tcl('EditorPerformPreviousCheckPoint')
+        self.undoRedo.undo()
     elif effect == "NextCheckPoint":
-        tcl('EditorPerformNextCheckPoint')
+        self.undoRedo.redo()
     else:
         if effect == "GrowCutSegment":
           self.editorGestureCheckPoint()
@@ -448,14 +449,9 @@ itcl::body EditBox::setButtonState {effect state} {
           tcl('EffectSWidget::ConfigureAll %s -exitCommand "EditorSetActiveToolLabel DefaultTool"' % self.effectClasses[effect])
 
   def updateCheckPointButtons(self):
-    previousImagesExist = nextImagesExist = False
-    if bool(int(tcl('info exists ::Editor(previousCheckPointImages)'))):
-      previousImagesExist = bool(int(tcl('llength $::Editor(previousCheckPointImages)')))
-    if bool(int(tcl('info exists ::Editor(nextCheckPointImages)'))):
-      nextImagesExist = bool(int(tcl('llength $::Editor(nextCheckPointImages)')))
     if not self.embedded:
-      self.effectButtons["PreviousCheckPoint"].setDisabled( not previousImagesExist )
-      self.effectButtons["NextCheckPoint"].setDisabled( not nextImagesExist )
+      self.effectButtons["PreviousCheckPoint"].enabled = self.undoRedo.undoEnabled()
+      self.effectButtons["NextCheckPoint"].enabled = self.undoRedo.redoEnabled()
 
   def editorGestureCheckPoint(self):
     labelID = self.editUtil.getLabelID()
