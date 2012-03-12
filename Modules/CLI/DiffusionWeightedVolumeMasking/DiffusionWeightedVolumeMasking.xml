@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Utilities</category>
+  <category>Diffusion.Diffusion Weighted Images</category>
   <title>Diffusion Weighted Volume Masking</title>
   <description><![CDATA[<p>Performs a mask calculation from a diffusion weighted (DW) image.</p><p>Starting from a dw image, this module computes the baseline image averaging all the images without diffusion weighting and then applies the otsu segmentation algorithm in order to produce a mask. this mask can then be used when estimating the diffusion tensor (dt) image, not to estimate tensors all over the volume.</p>]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Filtering</category>
+  <category>Diffusion.Diffusion Weighted Images</category>
   <title>Resample Scalar/Vector/DWI Volume</title>
   <description><![CDATA[This module implements image and vector-image resampling through  the use of itk Transforms.It can also handle diffusion weighted MRI image resampling. "Resampling" is performed in space coordinates, not pixel/grid coordinates. It is quite important to ensure that image spacing is properly set on the images involved. The interpolator is required since the mapping from one space to the other will often require evaluation of the intensity of the image at non-grid positions. \n\nWarning: To resample DWMR Images, use nrrd input and output files. \n\nWarning: Do not use to resample Diffusion Tensor Images, tensors would  not be reoriented]]></description>
   <version>0.1</version>

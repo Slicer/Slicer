@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Converters</category>
-  <title>Dicom to Nrrd Converter</title>
+  <category>Diffusion.Diffusion Data Conversion</category>
+  <title>DICOM to NRRD Converter</title>
   <description><![CDATA[Converts diffusion weighted MR images in dicom series into Nrrd format for analysis in Slicer. This program has been tested on only a limited subset of DTI dicom formats available from Siemens, GE, and Phillips scanners. Work in progress to support dicom multi-frame data. The program parses dicom header to extract necessary information about measurement frame, diffusion weighting directions, b-values, etc, and write out a nrrd image. For non-diffusion weighted dicom images, it loads in an entire dicom series and writes out a single dicom volume in a .nhdr/.raw pair.]]></description>
   <version>0.2.0.$Revision: 916 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/DicomToNrrdConverter</documentation-url>

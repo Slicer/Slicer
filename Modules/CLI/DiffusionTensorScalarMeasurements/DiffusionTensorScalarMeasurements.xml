@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Utilities</category>
+  <category>Diffusion.Diffusion Tensor Images</category>
   <title>Diffusion Tensor Scalar Measurements</title>
   <description><![CDATA[Compute a set of different scalar measurements from a tensor field, specially oriented for Diffusion Tensors where some rotationally invariant measurements, like Fractional Anisotropy, are highly used to describe the anistropic behaviour of the tensor.]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>

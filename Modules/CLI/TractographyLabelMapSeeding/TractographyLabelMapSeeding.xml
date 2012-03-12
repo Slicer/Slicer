@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Tractography</category>
+  <category>Diffusion.Diffusion Tensor Images</category>
   <title>Tractography Label Map Seeding</title>
   <description><![CDATA[Seed tracts on a Diffusion Tensor Image (DT) from a label map]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
