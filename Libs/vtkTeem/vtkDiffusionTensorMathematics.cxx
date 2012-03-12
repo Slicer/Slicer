@@ -36,6 +36,7 @@ extern "C" {
 }
 
 #include <ctime>
+#include <limits>
 
 #define VTK_EPS 1e-16
 #define DOUBLE_NAN (std::numeric_limits<double>::quiet_NaN())
