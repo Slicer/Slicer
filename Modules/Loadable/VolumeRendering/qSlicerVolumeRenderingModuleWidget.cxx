@@ -193,12 +193,16 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(synchronizeScalarDisplayNode()));
   QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(checkBoxToggled(bool)),
                    q, SLOT(setFollowVolumeDisplayNode(bool)));
+  QObject::connect(this->IgnoreVolumesThresholdCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(setIgnoreVolumesThreshold(bool)));
 
   // Default values
   this->InputsCollapsibleButton->setCollapsed(true);
   this->InputsCollapsibleButton->setEnabled(false);;
   this->AdvancedCollapsibleButton->setCollapsed(true);
   this->AdvancedCollapsibleButton->setEnabled(false);
+
+  this->ExpandSynchronizeWithVolumesButton->setChecked(false);
 
   this->AdvancedTabWidget->setCurrentWidget(this->VolumePropertyTab);
 }
@@ -218,8 +222,14 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
   vtkMRMLAnnotationROINode  *roiNode = NULL;
 
   int wasModifying = displayNode->StartModify();
+  // Init the volume rendering without the threshold info
+  // of the Volumes module...
+  displayNode->SetIgnoreVolumeDisplayNodeThreshold(1);
   logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode,
                                          &propNode, &roiNode);
+  // ... but then apply the user settings.
+  displayNode->SetIgnoreVolumeDisplayNodeThreshold(
+    this->IgnoreVolumesThresholdCheckBox->isChecked());
   bool wasLastVolumeVisible = this->VisibilityCheckBox->isChecked();
   displayNode->SetVisibility(wasLastVolumeVisible);
   foreach (vtkMRMLViewNode* viewNode, q->mrmlViewNodes())
@@ -546,6 +556,8 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
   bool follow = d->DisplayNode ? d->DisplayNode->GetFollowVolumeDisplayNode() != 0 : false;
   d->SynchronizeScalarDisplayNodeButton->setCheckState(
     follow ? Qt::Checked : Qt::Unchecked);
+  d->IgnoreVolumesThresholdCheckBox->setChecked( d->DisplayNode ?
+    d->DisplayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
 }
 
 // --------------------------------------------------------------------------
@@ -953,6 +965,13 @@ void qSlicerVolumeRenderingModuleWidget::setFollowVolumeDisplayNode(bool follow)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   d->DisplayNode->SetFollowVolumeDisplayNode(follow ? 1 : 0);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::setIgnoreVolumesThreshold(bool ignore)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  d->DisplayNode->SetIgnoreVolumeDisplayNodeThreshold(ignore ? 1 : 0);
 }
 
 // --------------------------------------------------------------------------

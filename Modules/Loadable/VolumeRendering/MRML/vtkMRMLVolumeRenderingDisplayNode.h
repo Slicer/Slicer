@@ -210,6 +210,9 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   vtkGetMacro(FollowVolumeDisplayNode, int);
   vtkSetMacro(FollowVolumeDisplayNode, int);
 
+  vtkGetMacro(IgnoreVolumeDisplayNodeThreshold, int);
+  vtkSetMacro(IgnoreVolumeDisplayNodeThreshold, int);
+
   vtkGetMacro(UseSingleVolumeProperty, int);
   vtkSetMacro(UseSingleVolumeProperty, int);
   
@@ -350,6 +353,7 @@ protected:
 
   //follow window/level and thresholding setting in volume display node
   int FollowVolumeDisplayNode;
+  int IgnoreVolumeDisplayNodeThreshold;
 
   int UseSingleVolumeProperty;
 

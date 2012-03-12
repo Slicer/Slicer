@@ -86,6 +86,7 @@ protected slots:
 
   void synchronizeScalarDisplayNode();
   void setFollowVolumeDisplayNode(bool);
+  void setIgnoreVolumesThreshold(bool ignore);
 
   void onThresholdChanged(bool threshold);
   void onROICropDisplayCheckBoxToggled(bool toggle);

@@ -330,7 +330,8 @@ void vtkSlicerVolumeRenderingLogic
 ::SetThresholdToVolumeProp(double scalarRange[2],
                            double threshold[2],
                            vtkVolumeProperty* volumeProp,
-                           bool linearRamp)
+                           bool linearRamp,
+                           bool stayUpAtUpperLimit)
 {
   assert(scalarRange && threshold && volumeProp);
   // Sanity check
@@ -348,8 +349,12 @@ void vtkSlicerVolumeRenderingLogic
     opacity->AddPoint(higherAndUnique(threshold[0], previous), 1.0);
     }
   opacity->AddPoint(higherAndUnique(threshold[1], previous), 1.0);
-  opacity->AddPoint(higherAndUnique(threshold[1], previous), 0.0);
-  opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 0.0);
+  double endValue = stayUpAtUpperLimit ? 1.0 : 0.0;
+  if (!stayUpAtUpperLimit)
+    {
+    opacity->AddPoint(higherAndUnique(threshold[1], previous), endValue);
+    }
+  opacity->AddPoint(higherAndUnique(scalarRange[1], previous), endValue);
 
   vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
@@ -523,6 +528,8 @@ void vtkSlicerVolumeRenderingLogic
     }
   assert(vpNode);
 
+  bool ignoreVolumeDisplayNodeThreshold =
+    vspNode->GetIgnoreVolumeDisplayNodeThreshold();
   double scalarRange[2];
   vpNode->GetDisplayScalarRange(scalarRange);
 
@@ -531,8 +538,16 @@ void vtkSlicerVolumeRenderingLogic
   windowLevel[1] = vpNode->GetLevel();
 
   double threshold[2];
-  threshold[0] = vpNode->GetLowerThreshold();
-  threshold[1] = vpNode->GetUpperThreshold();
+  if (!ignoreVolumeDisplayNodeThreshold)
+    {
+    threshold[0] = vpNode->GetLowerThreshold();
+    threshold[1] = vpNode->GetUpperThreshold();
+    }
+  else
+    {
+    threshold[0] = vpNode->GetWindowLevelMin();
+    threshold[1] = vpNode->GetWindowLevelMax();
+    }
 
   vtkLookupTable* lut = vpNode->GetColorNode() ?
     vpNode->GetColorNode()->GetLookupTable() : 0;
@@ -541,7 +556,8 @@ void vtkSlicerVolumeRenderingLogic
 
   int disabledModify = vspNode->StartModify();
   this->SetThresholdToVolumeProp(
-    scalarRange, threshold, prop, this->UseLinearRamp);
+    scalarRange, threshold, prop,
+    this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
   // NCI raycast mapper applies a second threshold in addition to the opacity
   // transfer function
   vspNode->SetDepthPeelingThreshold(scalarRange[0]);

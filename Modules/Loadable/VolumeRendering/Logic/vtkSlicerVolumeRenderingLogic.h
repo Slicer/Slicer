@@ -104,7 +104,8 @@ public:
 
   void SetThresholdToVolumeProp(
     double scalarRange[2], double threshold[2],
-    vtkVolumeProperty* node, bool linearRamp = false);
+    vtkVolumeProperty* node,
+    bool linearRamp = false, bool stayUpAtUpperLimit = false);
 
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],

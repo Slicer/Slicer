@@ -107,6 +107,7 @@ vtkMRMLVolumeRenderingDisplayNode::vtkMRMLVolumeRenderingDisplayNode()
   this->MultiVolumeFusionMethod = vtkMRMLVolumeRenderingDisplayNode::AlphaBlendingOR;
 
   this->FollowVolumeDisplayNode = 0;// by default do not follow volume display node
+  this->IgnoreVolumeDisplayNodeThreshold = 0;
   this->UseSingleVolumeProperty = 0;
   
   this->WindowLevel[0] = 0.0;
@@ -347,6 +348,13 @@ void vtkMRMLVolumeRenderingDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> this->FollowVolumeDisplayNode;
       continue;
     }
+    if (!strcmp(attName,"ignoreVolumeDisplayNodeThreshold"))
+    {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->IgnoreVolumeDisplayNodeThreshold;
+      continue;
+    }
     if (!strcmp(attName, "useSingleVolumeProperty"))
     {
       std::stringstream ss;
@@ -390,6 +398,7 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " useFgThreshold=\"" << this->UseFgThreshold << "\"";
   of << indent << " bgFgRatio=\"" << this->BgFgRatio << "\"";
   of << indent << " followVolumeDisplayNode=\"" << this->FollowVolumeDisplayNode << "\"";
+  of << indent << " ignoreVolumeDisplayNodeThreshold=\"" << this->IgnoreVolumeDisplayNodeThreshold << "\"";
   of << indent << " useSingleVolumeProperty=\"" << this->UseSingleVolumeProperty << "\"";
   of << indent << " windowLevel=\"" << this->WindowLevel[0] << " " << this->WindowLevel[1] << "\"";
   of << indent << " windowLevelFg=\"" << this->WindowLevelFg[0] << " " << this->WindowLevelFg[1] << "\"";
@@ -487,6 +496,7 @@ void vtkMRMLVolumeRenderingDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetWindowLevel(node->GetWindowLevel());
   this->SetWindowLevelFg(node->GetWindowLevelFg());
   this->SetFollowVolumeDisplayNode(node->GetFollowVolumeDisplayNode());
+  this->SetIgnoreVolumeDisplayNodeThreshold(node->GetIgnoreVolumeDisplayNodeThreshold());
   this->SetUseSingleVolumeProperty(node->GetUseSingleVolumeProperty());
   
   this->DisableModifiedEventOff();
