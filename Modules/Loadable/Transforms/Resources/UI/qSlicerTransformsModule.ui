@@ -200,7 +200,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Revert</string>
+           <string>Invert</string>
           </property>
          </widget>
         </item>
