@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>
+            Diffusion.Diffusion Data Conversion
+	</category>
+  <title>
+            DTIexport</title>
+  <description>
+            Export DTI data to various file formats </description>
+  <version>
+            1.0     </version>
+  <documentation-url>
+           http://www.na-mic.org/Wiki/index.php/DTI_Import_Export </documentation-url>
+  <license></license>
+  <contributor>
+            This module was implemented by Sonia Pujol, Ph.D., Surgical Planning Laboratory, Harvard Medical School </contributor>
+  <acknowledgements>
+            This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
+
+<parameters>
+ 
+    <label>Export</label>
+    <description>Export</description>
+    
+     <image type="tensor">
+      <name>inputTensor</name>
+      <label>Input DTI Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description>Input DTI volume</description>
+    </image>
+    
+     <file>
+      <name>outputFile</name>
+      <label>Output file</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description>Output DTI file</description>
+   
+    </file>
+    
+</parameters>
+
+</executable>

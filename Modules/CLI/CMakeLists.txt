@@ -16,6 +16,7 @@ set(cli_modules
   DWIRicianLMMSEFilter
   DWIToDTIEstimation
   DWIUnbiasedNonLocalMeansFilter
+  DTIImportExport
   ExecutionModelTour
   ExtractSkeleton
   FreesurferSurfaceSectionExtraction
