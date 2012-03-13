@@ -7,11 +7,11 @@ set(Slicer_PYTHON_SCRIPTS
   slicer/modulelogic/__init__
   slicer/modulemrml/__init__
   slicer/modulewidget/__init__
+  freesurfer
   mrml
   mrmlLogic
-  teem
-  freesurfer
   remoteio
+  teem
   vtkITK
   )
 
