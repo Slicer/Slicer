@@ -43,6 +43,7 @@ public:
   QHash<QString, QVariant> ParsedArgs;
   QSettings                Settings;
   QString                  ExtraPythonScript;
+  bool                     RunPythonAndExit;
 };
 
 //-----------------------------------------------------------------------------
@@ -58,6 +59,7 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate(qSlicerCoreCo
 void qSlicerCoreCommandOptionsPrivate::init()
 {
   Q_Q(qSlicerCoreCommandOptions);
+  this->RunPythonAndExit = false;
   q->setArgumentPrefix("--", "-"); // Use Unix-style argument names
   q->enableSettings("disable-settings"); // Enable QSettings support
 }
@@ -159,6 +161,10 @@ QString qSlicerCoreCommandOptions::pythonCode() const
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("python-code").toString();
 }
+
+//-----------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerCoreCommandOptions, bool, runPythonAndExit, RunPythonAndExit);
+CTK_SET_CPP(qSlicerCoreCommandOptions, bool, setRunPythonAndExit, RunPythonAndExit);
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::displayVersionAndExit() const

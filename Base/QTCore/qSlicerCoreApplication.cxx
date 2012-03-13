@@ -803,6 +803,11 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       this->corePythonManager()->executeString("loadSlicerRCFile()");
       }
 
+    if (this->testAttribute(AA_EnableTesting))
+      {
+      options->setRunPythonAndExit(true);
+      }
+
     // Execute python script
     if(!pythonScript.isEmpty())
       {
@@ -822,7 +827,7 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       qApp->processEvents();
       this->corePythonManager()->executeString(pythonCode);
       }
-    if (this->testAttribute(AA_EnableTesting))
+    if (options->runPythonAndExit())
       {
       qSlicerCoreApplication::exit(
             this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
