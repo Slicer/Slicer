@@ -191,7 +191,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
 
   QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(clicked()),
                    q, SLOT(synchronizeScalarDisplayNode()));
-  QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(checkBoxToggled(bool)),
+  QObject::connect(this->SynchronizeScalarDisplayNodeButton, SIGNAL(toggled(bool)),
                    q, SLOT(setFollowVolumeDisplayNode(bool)));
   QObject::connect(this->IgnoreVolumesThresholdCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setIgnoreVolumesThreshold(bool)));
@@ -554,8 +554,11 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 
   // Opacity/color
   bool follow = d->DisplayNode ? d->DisplayNode->GetFollowVolumeDisplayNode() != 0 : false;
-  d->SynchronizeScalarDisplayNodeButton->setCheckState(
-    follow ? Qt::Checked : Qt::Unchecked);
+  if (follow)
+    {
+    d->SynchronizeScalarDisplayNodeButton->setCheckState(Qt::Checked);
+    }
+  d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked( d->DisplayNode ?
     d->DisplayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
 }
