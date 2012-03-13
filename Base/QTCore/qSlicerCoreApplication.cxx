@@ -804,14 +804,12 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       }
 
     // Execute python script
-    bool exitStatus = EXIT_FAILURE;
     if(!pythonScript.isEmpty())
       {
       if (QFile::exists(pythonScript))
         {
         qApp->processEvents();
         this->corePythonManager()->executeFile(pythonScript);
-        exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
         }
       else
         {
@@ -823,11 +821,11 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       {
       qApp->processEvents();
       this->corePythonManager()->executeString(pythonCode);
-      exitStatus = this->corePythonManager()->getVariable("slicer.testing._status").toInt();
       }
     if (this->testAttribute(AA_EnableTesting))
       {
-      qSlicerCoreApplication::exit(exitStatus);
+      qSlicerCoreApplication::exit(
+            this->corePythonManager()->pythonErrorOccured() ? EXIT_FAILURE : EXIT_SUCCESS);
       }
     }
 #endif

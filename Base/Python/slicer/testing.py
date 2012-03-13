@@ -8,8 +8,7 @@ from slicer.util import EXIT_FAILURE, EXIT_SUCCESS
 _status = EXIT_FAILURE
 
 def exitSuccess():
-  global _status
-  _status = EXIT_SUCCESS
+  pass
 
 def exitFailure(message = ""):
   global _status
