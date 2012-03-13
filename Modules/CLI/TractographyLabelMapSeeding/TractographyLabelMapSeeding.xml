@@ -28,7 +28,7 @@
     </image>
     <geometry type="fiberbundle">
       <name>OutputFibers</name>
-      <label>Output Fiber bundle</label>
+      <label>Output Fiber Bundle</label>
       <channel>output</channel>
       <index>1</index>
       <description><![CDATA[Tractography result]]></description>
@@ -107,7 +107,7 @@
     <description><![CDATA[Parameters for the tractography method]]></description>
     <double>
       <name>MinimumLength</name>
-      <label>Minimum Length</label>
+      <label>Minimum Path Length</label>
       <flag>-l</flag>
       <longflag>--minimumlength</longflag>
       <description><![CDATA[Minimum length of the fibers (in mm)]]></description>
@@ -133,7 +133,7 @@
     </double>
     <string-enumeration>
       <name>StoppingMode</name>
-      <label>Stopping Mode</label>
+      <label>Stopping Criteria</label>
       <description><![CDATA[Tensor measurement used to stop the tractography]]></description>
       <flag>-f</flag>
       <longflag>--stoppingmode</longflag>

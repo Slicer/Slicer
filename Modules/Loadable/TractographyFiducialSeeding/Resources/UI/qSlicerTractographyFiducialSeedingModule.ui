@@ -26,339 +26,426 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Parameters</string>
+      <string>Parameter set</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="qMRMLNodeComboBox" name="ParameterNodeSelector">
+    <widget class="qMRMLNodeComboBox" name="ParameterNodeSelector" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="nodeTypes">
+     <property name="nodeTypes" stdset="0">
       <stringlist>
        <string>vtkMRMLTractographyFiducialSeedingNode</string>
       </stringlist>
      </property>
-     <property name="showHidden">
+     <property name="showHidden" stdset="0">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>DTI Volume</string>
+   <item row="1" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton" native="true">
+     <property name="enabled">
+      <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="qMRMLNodeComboBox" name="DTINodeSelector">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="text" stdset="0">
+      <string>IO</string>
      </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLDiffusionTensorVolumeNode</string>
-      </stringlist>
-     </property>
-     <property name="addEnabled">
+     <property name="checked" stdset="0">
       <bool>false</bool>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Fiducial List or Model</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLAnnotationHierarchyNode</string>
-       <string>vtkMRMLModelNode</string>
-      </stringlist>
-     </property>
-     <property name="showChildNodeTypes">
+     <property name="collapsed" stdset="0">
       <bool>false</bool>
      </property>
-     <property name="addEnabled">
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Input DTI Volume</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="DTINodeSelector" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="nodeTypes" stdset="0">
+         <stringlist>
+          <string>vtkMRMLDiffusionTensorVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="addEnabled" stdset="0">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Input Fiducial List or Model</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="nodeTypes" stdset="0">
+         <stringlist>
+          <string>vtkMRMLAnnotationHierarchyNode</string>
+          <string>vtkMRMLModelNode</string>
+         </stringlist>
+        </property>
+        <property name="showChildNodeTypes" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="addEnabled" stdset="0">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Output Fiber Bundle</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="qMRMLNodeComboBox" name="FiberNodeSelector" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="nodeTypes" stdset="0">
+         <stringlist>
+          <string>vtkMRMLFiberBundleNode</string>
+         </stringlist>
+        </property>
+        <property name="renameEnabled" stdset="0">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="PlacementOptionCollapsibleButton" native="true">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text" stdset="0">
+      <string>Seed Placement Options</string>
+     </property>
+     <property name="checked" stdset="0">
       <bool>false</bool>
      </property>
+     <property name="collapsed" stdset="0">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Fiducial Region Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkSliderWidget" name="FiducialRegionSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>2.500000000000000</double>
+        </property>
+        <property name="suffix" stdset="0">
+         <string>mm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>Fiducial Seeding Step Size</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="ctkSliderWidget" name="FiducialStepSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="minimum" stdset="0">
+         <double>0.200000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="suffix" stdset="0">
+         <string>mm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="SeedSelectedFiducialsLabel">
+        <property name="text">
+         <string>Seed Selected Fiducials</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="SeedSelectedCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="MaxNumberOfSeedsLabel">
+        <property name="text">
+         <string>Max Number of Seeds</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QSpinBox" name="MaxNumberSeedsNumericInput">
+        <property name="maximum">
+         <number>10000</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>Output Fiber Bundle</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="qMRMLNodeComboBox" name="FiberNodeSelector">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLFiberBundleNode</string>
-      </stringlist>
-     </property>
-     <property name="renameEnabled">
+   <item row="3" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="SeedOptionCollapsibleButton" native="true">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_12">
-     <property name="text">
-      <string>Stopping Criteria</string>
+     <property name="text" stdset="0">
+      <string>Tractography Seeding Parameters</string>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QComboBox" name="StoppingCriteriaComboBox">
-     <item>
-      <property name="text">
-       <string>Fractional Anisotropy</string>
+     <property name="checked" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="collapsed" stdset="0">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Linear Measure</string>
-      </property>
-     </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Minimum Path Length</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="ctkSliderWidget" name="MinimumPathSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>200.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="suffix" stdset="0">
+         <string>mm</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Stopping Criteria</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="StoppingCriteriaComboBox">
+        <item>
+         <property name="text">
+          <string>Fractional Anisotropy</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Linear Measure</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Stopping Value</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="ctkSliderWidget" name="StoppingValueSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="minimum" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>0.250000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Stopping Track Curvature</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="minimum" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>0.700000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Integration Step Length</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="ctkSliderWidget" name="IntegrationStepSpinBoxLabel" native="true">
+        <property name="singleStep" stdset="0">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="minimum" stdset="0">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum" stdset="0">
+         <double>10.000000000000000</double>
+        </property>
+        <property name="value" stdset="0">
+         <double>0.500000000000000</double>
+        </property>
+        <property name="suffix" stdset="0">
+         <string>mm</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Stopping Value</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="ctkSliderWidget" name="StoppingValueSpinBoxLabel">
-     <property name="singleStep">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="minimum">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.250000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Stopping Track Curvature</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBoxLabel">
-     <property name="singleStep">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="minimum">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.700000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>Integration Step Length</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="ctkSliderWidget" name="IntegrationStepSpinBoxLabel">
-     <property name="singleStep">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="minimum">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.500000000000000</double>
-     </property>
-     <property name="suffix">
-      <string>mm</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_9">
-     <property name="text">
-      <string>Minimum Path Length</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="ctkSliderWidget" name="MinimumPathSpinBoxLabel">
-     <property name="singleStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>200.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>20.000000000000000</double>
-     </property>
-     <property name="suffix">
-      <string>mm</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>Fiducial Region Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="1">
-    <widget class="ctkSliderWidget" name="FiducialRegionSpinBoxLabel">
-     <property name="singleStep">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>2.500000000000000</double>
-     </property>
-     <property name="suffix">
-      <string>mm</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="label_11">
-     <property name="text">
-      <string>Fiducial Seeding Step Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="ctkSliderWidget" name="FiducialStepSpinBoxLabel">
-     <property name="singleStep">
-      <double>0.010000000000000</double>
-     </property>
-     <property name="minimum">
-      <double>0.200000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>10.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="QCheckBox" name="SeedSelectedCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
+   <item row="4" column="0" colspan="2">
+    <widget class="ctkCollapsibleButton" name="ControlOptionCollapsibleButton" native="true">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="MaxNumberOfSeedsLabel">
-     <property name="text">
-      <string>Max Number of Seeds</string>
+     <property name="text" stdset="0">
+      <string>Enabling Options</string>
      </property>
-    </widget>
-   </item>
-   <item row="12" column="1">
-    <widget class="QSpinBox" name="MaxNumberSeedsNumericInput">
-     <property name="maximum">
-      <number>10000</number>
+     <property name="checked" stdset="0">
+      <bool>false</bool>
      </property>
-     <property name="value">
-      <number>100</number>
+     <property name="collapsed" stdset="0">
+      <bool>false</bool>
      </property>
-    </widget>
-   </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="CreateTractsInitiallyAsLabel">
-     <property name="text">
-      <string>Create Tracts Initially As</string>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="1">
-    <widget class="QComboBox" name="DisplayTracksComboBox">
-     <item>
-      <property name="text">
-       <string>Lines</string>
+     <layout class="QFormLayout" name="formLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Tubes</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="14" column="1">
-    <widget class="QCheckBox" name="EnableSeedingCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0">
-    <widget class="QLabel" name="SeedSelectedFiducialsLabel">
-     <property name="text">
-      <string>Seed Selected Fiducials</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="0">
-    <widget class="QLabel" name="EnableSeedingTractsLabel">
-     <property name="text">
-      <string>Enable Seeding Tracts</string>
-     </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="CreateTractsInitiallyAsLabel">
+        <property name="text">
+         <string>Create Tracts Initially As</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="DisplayTracksComboBox">
+        <item>
+         <property name="text">
+          <string>Lines</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tubes</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="EnableSeedingCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="EnableSeedingTractsLabel">
+        <property name="text">
+         <string>Enable Seeding Tracts</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -379,6 +466,11 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkcollapsiblebutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
