@@ -184,12 +184,27 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 
   vtkMRMLAnnotationNode *node = (vtkMRMLAnnotationNode *) anode;
-  if (!node) return; 
+  if (!node)
+    {
+    return;
+    }
   
   this->SetReferenceNodeID(node->GetReferenceNodeID());
   this->SetVisible(node->GetVisible());
   this->SetLocked(node->GetLocked());
   this->TextList->DeepCopy(node->TextList);
+
+  if (node->GetPolyData())
+    {
+    // The copy in vtkMRMLDisplayableNode just copies the poly data pointer, so
+    // when an annotation node is in a scene view, it's control
+    // point coordinates are over written by current scene changes
+    vtkPolyData *poly = vtkPolyData::New();
+    poly->DeepCopy(node->GetPolyData());
+    this->SetAndObservePolyData(poly);
+    //poly->ReleaseData();
+    poly->Delete();
+    }
 }
 
 
