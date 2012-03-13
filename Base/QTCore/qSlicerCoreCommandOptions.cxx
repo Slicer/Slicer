@@ -243,8 +243,8 @@ void qSlicerCoreCommandOptions::addArguments()
   this->addArgument("python-script", "", QVariant::String,
                     "Python script to execute after slicer loads.");
 
-  this->addArgument("python-code", "", QVariant::String,
-                    "Python code to execute after slicer loads.");
+  this->addArgument("python-code", "c", QVariant::String,
+                    "Python code to execute after slicer loads. By default, Slicer will then exit.");
 
   this->addArgument("ignore-slicerrc", "", QVariant::Bool,
                     "Do not load the Slicer resource file (~/.slicerrc.py).");

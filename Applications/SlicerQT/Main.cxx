@@ -92,6 +92,10 @@ void initializePython()
     app->commandOptions()->setExtraPythonScript(unparsedArguments.at(0));
     app->commandOptions()->setRunPythonAndExit(true);
     }
+  if (!app->commandOptions()->pythonCode().isEmpty())
+    {
+    app->commandOptions()->setRunPythonAndExit(true);
+    }
 }
 
 //----------------------------------------------------------------------------
