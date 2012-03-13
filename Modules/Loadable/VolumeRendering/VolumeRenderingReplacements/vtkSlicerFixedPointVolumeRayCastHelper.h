@@ -944,12 +944,19 @@
   unsigned int w2X, w2Y, w2Z;                                   \
   unsigned int w1Xw1Y, w2Xw1Y, w1Xw2Y, w2Xw2Y;                  \
                                                                 \
-  unsigned short  val[4];                                       \
-  unsigned int    A[4],B[4],C[4],D[4],E[4],F[4],G[4],H[4];      \
+  unsigned short  val[4]={0,0,0,0};                             \
+  unsigned int A[4]={0,0,0,0};                                  \
+  unsigned int B[4]={0,0,0,0};                                  \
+  unsigned int C[4]={0,0,0,0};                                  \
+  unsigned int D[4]={0,0,0,0};                                  \
+  unsigned int E[4]={0,0,0,0};                                  \
+  unsigned int F[4]={0,0,0,0};                                  \
+  unsigned int G[4]={0,0,0,0};                                  \
+  unsigned int H[4]={0,0,0,0};                                  \
                                                                 \
   unsigned int color[3] = {0,0,0};                              \
   unsigned short remainingOpacity = 0x7fff;                     \
-  unsigned short tmp[4];
+  unsigned short tmp[4] = {0,0,0,0};
 
 
 #define VTKKWRCHelper_InitializeCompositeMultiGOTrilin()                \
