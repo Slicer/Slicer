@@ -73,7 +73,7 @@
     </parameter>
     <parameter>
       <label>Window/Level Controls</label>
-      <description><![CDATA[Double slider with text input to define the range of input volume data that should be mapped to the display grayscale.  Auto window level tries to estimate the intensity range of the foreground image data.]]></description>
+      <description><![CDATA[Double slider with text input to define the range of input volume data that should be mapped to the display grayscale.  Auto window level tries to estimate the intensity range of the foreground image data. On mouse over, a popup slides down to add support for large dynamic range by giving control over the range of the window level double slider.]]></description>
     </parameter>
     <parameter>
       <label>Threshold</label>
