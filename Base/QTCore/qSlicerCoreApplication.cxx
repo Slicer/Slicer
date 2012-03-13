@@ -784,6 +784,10 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     // See http://docs.python.org/c-api/init.html
     PySys_SetArgvEx(pythonArgc, pythonArgv, /*updatepath=*/false);
 
+    // Set 'sys.executable' so that Slicer can be used as a "regular" python interpreter
+    this->corePythonManager()->executeString(
+          QString("import sys; sys.executable = '%1'; del sys").arg(this->applicationFilePath()));
+
     // Clean memory
     for(int i = 0; i < pythonArgc; ++i){ delete[] pythonArgv[i];}
     delete[] pythonArgv;
