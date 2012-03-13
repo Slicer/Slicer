@@ -253,11 +253,15 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
+      cast = vtk.vtkImageCast()
       extract.SetInput(dwvImage)
       extract.SetComponents(frameId)
-      extract.Update()
+      cast.SetInput(extract.GetOutput())
+      cast.SetOutputScalarTypeToShort()
+      cast.Update()
 
-      frame = extract.GetOutput()
+      frame = cast.GetOutput()
+
       ras2ijk = vtk.vtkMatrix4x4()
       ijk2ras = vtk.vtkMatrix4x4()
       self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
@@ -272,6 +276,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       frameImage.DeepCopy(frame)
 
       displayNode = frameVolume.GetDisplayNode()
+
       if displayNode == None:
         displayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLScalarVolumeDisplayNode')
         displayNode.SetReferenceCount(1)
