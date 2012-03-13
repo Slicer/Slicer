@@ -32,8 +32,13 @@
 //-----------------------------------------------------------------------------
 class qSlicerCoreCommandOptionsPrivate
 {
+  Q_DECLARE_PUBLIC(qSlicerCoreCommandOptions);
+protected:
+  qSlicerCoreCommandOptions* q_ptr;
 public:
-  qSlicerCoreCommandOptionsPrivate();
+  qSlicerCoreCommandOptionsPrivate(qSlicerCoreCommandOptions& object);
+
+  void init();
 
   QHash<QString, QVariant> ParsedArgs;
   QSettings                Settings;
@@ -44,8 +49,17 @@ public:
 // qSlicerCoreCommandOptionsPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
+qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate(qSlicerCoreCommandOptions& object)
+  : q_ptr(&object)
 {
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreCommandOptionsPrivate::init()
+{
+  Q_Q(qSlicerCoreCommandOptions);
+  q->setArgumentPrefix("--", "-"); // Use Unix-style argument names
+  q->enableSettings("disable-settings"); // Enable QSettings support
 }
 
 //-----------------------------------------------------------------------------
@@ -53,12 +67,10 @@ qSlicerCoreCommandOptionsPrivate::qSlicerCoreCommandOptionsPrivate()
 
 //-----------------------------------------------------------------------------
 qSlicerCoreCommandOptions::qSlicerCoreCommandOptions():Superclass()
-  , d_ptr(new qSlicerCoreCommandOptionsPrivate)
+, d_ptr(new qSlicerCoreCommandOptionsPrivate(*this))
 {
-  // Use Unix-style argument names
-  this->setArgumentPrefix("--", "-");
-  // Enable QSettings support
-  this->enableSettings("disable-settings");
+  Q_D(qSlicerCoreCommandOptions);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
