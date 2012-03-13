@@ -763,20 +763,22 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     // Note that 'pythonScript' is ignored if 'extraPythonScript' is specified
     QString pythonScript = options->pythonScript();
     QString extraPythonScript = options->extraPythonScript();
+    QStringList scriptArgs = options->unparsedArguments();
     if(!extraPythonScript.isEmpty())
       {
+      scriptArgs.removeFirst();
       pythonScript = extraPythonScript;
       }
 
     // Set 'argv' so that python script can retrieve its associated arguments
-    int pythonArgc = 1 /*scriptname*/ + options->unparsedArguments().count();
+    int pythonArgc = 1 /*scriptname*/ + scriptArgs.count();
     char** pythonArgv = new char*[pythonArgc];
     pythonArgv[0] = new char[pythonScript.size() + 1];
     strcpy(pythonArgv[0], pythonScript.toLatin1());
-    for(int i = 0; i < options->unparsedArguments().count(); ++i)
+    for(int i = 0; i < scriptArgs.count(); ++i)
       {
-      pythonArgv[i + 1] = new char[options->unparsedArguments().at(i).size() + 1];
-      strcpy(pythonArgv[i + 1], options->unparsedArguments().at(i).toLatin1());
+      pythonArgv[i + 1] = new char[scriptArgs.at(i).size() + 1];
+      strcpy(pythonArgv[i + 1], scriptArgs.at(i).toLatin1());
       }
 
     // See http://docs.python.org/c-api/init.html
