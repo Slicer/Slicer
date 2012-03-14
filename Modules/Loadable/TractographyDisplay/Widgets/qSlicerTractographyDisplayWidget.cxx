@@ -59,15 +59,6 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
   QObject::connect( this->ColorByCellScalarsRadioButton, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
   QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
-//  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(disabled()), this->GroupBox_ColorByScalars, SLOT(enabled())); 
-/*
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarInvariantRadioButton, SLOT(disabled()));
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarRadioButton, SLOT(disabled()));
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByCellScalarsRadioButton, SLOT(disabled()));
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarInvariantComboBox, SLOT(disabled()));
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), this->ColorByScalarComboBox, SLOT(disabled()));
-*/
-
 
   QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );
   QObject::connect( this->ColorByScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, 
@@ -270,14 +261,7 @@ void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarIndex)
 
   const char* ActiveScalarName = d->ColorByScalarComboBox->itemText(scalarIndex).toStdString().c_str();
   vtkPointData* PointData = d->FiberBundleNode->GetPolyData()->GetPointData();
-
-  if (
-      PointData->GetArray(ActiveScalarName) != PointData->GetTensors() &&
-      PointData->GetArray(ActiveScalarName) != PointData->GetVectors()
-      )
-  {
-    d->FiberBundleDisplayNode->SetActiveScalarName(ActiveScalarName);
-  }
+  d->FiberBundleDisplayNode->SetActiveScalarName(ActiveScalarName);
 }
 
 //------------------------------------------------------------------------------
