@@ -5,7 +5,7 @@
   <index>3</index>
   <description><![CDATA[Registers two images together using an affine transform and mutual information. This module is often used to align images of different subjects or images of the same subject from different modalities.\n\nThis module can smooth images prior to registration to mitigate noise and improve convergence. Many of the registration parameters require a working knowledge of the algorithm although the default parameters are sufficient for many registration tasks.\n\n]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/AffineRegistration</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/AffineRegistration</documentation-url>
   <license/>
   <contributor>Daniel Blezek (GE)</contributor>
   <acknowledgements><![CDATA[This module was developed by Daniel Blezek while at GE Research with contributions from Jim Miller.\n\nThis work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

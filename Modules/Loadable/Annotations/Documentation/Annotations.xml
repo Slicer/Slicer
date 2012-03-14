@@ -3,8 +3,8 @@
   <category>Base</category>
   <title>Annotations</title>
   <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).]]></description>
-  <version>4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Annotations</documentation-url>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/Annotations</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH), Daniel Haehn (SPL, BWH), Kilian Pohl (UPenn), Yong Zhang (IBM), Wendy Plesniak (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[The research was funded by an ARRA supplement to NIH NCRR (P41 RR13218).This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

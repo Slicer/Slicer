@@ -5,7 +5,7 @@
   <title>Median Image Filter</title>
   <description><![CDATA[The MedianImageFilter is commonly used as a robust approach for noise reduction. This filter is particularly efficient against "salt-and-pepper" noise. In other words, it is robust to the presence of gray-level outliers. MedianImageFilter computes the value of each output pixel as the statistical median of the neighborhood of values around the corresponding input pixel.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MedianImageFilter</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/MedianImageFilter</documentation-url>
   <license/>
   <contributor>Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples/Filtering/MedianImageFilter (copyright) Insight Software Consortium]]></acknowledgements>

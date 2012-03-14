@@ -3,8 +3,8 @@
   <category>Developer Tools</category>
   <title>Event Broker</title>
   <description><![CDATA[Profiling tool for the developers. The event broker manages observations between VTK objects in Slicer. Observed objects are populated in the tree view, their observers are listed under each observed object events. Selecting a VTK object in the list, dumps (PrintSelf()) all its information.]]></description>
-  <version>4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Cameras</documentation-url>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/Cameras</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

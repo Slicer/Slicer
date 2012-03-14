@@ -4,7 +4,7 @@
   <title>Image Label Combine</title>
   <description><![CDATA[Combine two label maps into one]]></description>
   <version>0.1.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ImageLabelCombine</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ImageLabelCombine</documentation-url>
   <license/>
   <contributor>Alex Yarmarkovich (SPL, BWH)</contributor>
   <acknowledgements/>

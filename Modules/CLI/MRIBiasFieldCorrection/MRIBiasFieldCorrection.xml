@@ -4,7 +4,7 @@
   <title>MRI Bias Field Correction</title>
   <description><![CDATA[Corrects 3D MRI images corrupted by MRI gain field effect.  This module removes the slow-varying intensity variation from a 3D image.  The output image has a higher contrast locally and the visualization and reading of the image are improved.  This is an important pre-processinbg step for image operations requiring intensity perfect images, such as the Expectation Maximization segmentation (see EMSegment module). The N3 and N4 methods are described in N4ITK: Nick's N3 ITK Implementation For MRI Bias Field Correction, Tustison N., Gee J., Insight Journal, 2009. http://hdl.handle.net/10380/3053 The Slicer code was contributed by Sylvain Jaume (MIT) for NA-MIC (http://na-mic.org).]]></description>
   <version>0.1.0.$Revision: 0 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/MRIBiasFieldCorrection</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/MRIBiasFieldCorrection</documentation-url>
   <license>3D Slicer license</license>
   <contributor>Sylvain Jaume (MIT)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149 (PI: Ron Kikinis).]]></acknowledgements>

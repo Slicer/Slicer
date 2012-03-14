@@ -4,7 +4,7 @@
   <title>Execution Model Tour</title>
   <description><![CDATA[Shows one of each type of parameter.]]></description>
   <version>0.1.0.$Revision$(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/ExecutionModelTour</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ExecutionModelTour</documentation-url>
   <license/>
   <contributor>Daniel Blezek (GE), Bill Lorensen (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

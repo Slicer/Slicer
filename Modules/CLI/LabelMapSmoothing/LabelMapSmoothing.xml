@@ -4,7 +4,7 @@
   <title>Label Map Smoothing</title>
   <description><![CDATA[This filter smoothes a binary label map.  With a label map as input, this filter runs an anti-alising algorithm followed by a Gaussian smoothing algorithm.  The output is a smoothed label map.]]></description>
   <version>1.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/LabelMapSmoothing</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/LabelMapSmoothing</documentation-url>
   <license/>
   <contributor>Dirk Padfield (GE), Josh Cates (Utah), Ross Whitaker (Utah)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.  This filter is based on work developed at the University of Utah, and implemented at GE Research.]]></acknowledgements>

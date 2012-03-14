@@ -3,8 +3,8 @@
   <category>Core</category>
   <title>Data</title>
   <description>This module lists the objects of the current scene and permits general operations (such as search, rename, delete, move) on the MRML tree.</description>
-  <version>4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/Data</documentation-url>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/Data</documentation-url>
   <license>slicer4</license>
   <contributor>Julien Finet (Kitware), Alex Yarmarkovich (Isomics), Nicole Aucoin (SPL, BWH)</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>

@@ -4,7 +4,7 @@
   <title>Robust Statistics Segmenter</title>
   <description><![CDATA[Active contour segmentation using robust statistic.]]></description>
   <version>1.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/RobustStatisticsSegmenter</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/RobustStatisticsSegmenter</documentation-url>
   <license/>
   <contributor>Yi Gao (gatech), Allen Tannenbaum (gatech), Ron Kikinis (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health]]></acknowledgements>

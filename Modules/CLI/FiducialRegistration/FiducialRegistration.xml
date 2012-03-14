@@ -4,7 +4,7 @@
   <title>Fiducial Registration</title>
   <description><![CDATA[Computes a rigid, similarity or affine transform from a matched list of fiducials]]></description>
   <version>0.1.0.$Revision$</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/TransformFromFiducials</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/TransformFromFiducials</documentation-url>
   <license/>
   <contributor>Casey B Goodlett (Kitware), Dominik Meier (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

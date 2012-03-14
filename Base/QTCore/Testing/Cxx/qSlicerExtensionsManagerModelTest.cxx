@@ -588,8 +588,8 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
 
   QStringList expectedFiles0;
   expectedFiles0 << "CLIExtensionTemplate";
-  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/CLIExtensionTemplate";
-  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/libCLIExtensionTemplateLib.so";
+  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.1/cli-modules/CLIExtensionTemplate";
+  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.1/cli-modules/libCLIExtensionTemplateLib.so";
   QTest::newRow("0") << "CLIExtensionTemplate" << ":/extension-0.tar.gz" << expectedFiles0;
 }
 

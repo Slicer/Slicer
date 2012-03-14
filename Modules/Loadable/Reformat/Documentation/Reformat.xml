@@ -3,8 +3,8 @@
   <category>Registration.Specialized</category>
   <title>Reformat</title>
   <description><![CDATA[This module is used for changing the slice properties.]]></description>
-  <version>4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/</documentation-url>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/</documentation-url>
   <license>slicer4</license>
   <contributor>Michael Jeulin-Lagarrigue (Kitware)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>

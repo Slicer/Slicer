@@ -4,7 +4,7 @@
   <title>BSpline to deformation field</title>
   <description><![CDATA[Create a dense deformation field from a bspline+bulk transform.]]></description>
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/BSplineToDeformationField</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BSplineToDeformationField</documentation-url>
   <license/>
   <contributor>Andrey Fedorov (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is funded by NIH grants R01 CA111288 and U01 CA151261.]]></acknowledgements>

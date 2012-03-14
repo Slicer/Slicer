@@ -3,8 +3,8 @@
   <category>Core</category>
   <title>Scene Views</title>
   <description><![CDATA[Scene views are a convenience tool for organizing multiple 'live views' of the data in your scene.\n\nYou can create any number of views and control parameters such as the 3D view, model visibility, window layout, and other parameters.\n\nThis can be used to set up a series of predefined starting points for looking at portions of your data in detail.\n\nFor example, you may have one overview scene which shows an external view of the body along with interior views with the skin surface turned off and slice planes visible to highlight a tumor location.]]></description>
-  <version>4.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.0/Modules/SceneViews</documentation-url>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/SceneViews</documentation-url>
   <license>slicer4</license>
   <contributor>Nicole Aucoin (SPL, BWH), Wendy Plesniak (SPL, BWH), Daniel Haehn (UPenn), Kilian Pohl (UPenn)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
