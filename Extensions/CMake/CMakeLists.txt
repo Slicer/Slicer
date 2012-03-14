@@ -3,6 +3,14 @@
 cmake_minimum_required(VERSION 2.8.4)
 #-----------------------------------------------------------------------------
 
+if(NOT Slicer_SOURCE_DIR)
+  if(APPLE)
+    # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+    #       we ensure that the bitness will be properly detected.
+    include(${Slicer_CMAKE_DIR}/SlicerBlockSetCMakeOSXVariables.cmake)
+  endif()
+endif()
+
 project(SlicerExtensions)
 
 #-----------------------------------------------------------------------------
