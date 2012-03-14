@@ -219,8 +219,9 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   if(UNIX)
     list(APPEND executables gnome-terminal xterm ddd gdb)
   elseif(WIN32)
-    list(APPEND executables VisualStudio)
+    list(APPEND executables VisualStudio cmd)
     set(VisualStudio_EXECUTABLE ${CMAKE_BUILD_TOOL})
+    set(cmd_ARGUMENTS "/c start cmd")
   endif()
   foreach(executable ${executables})
     find_program(${executable}_EXECUTABLE ${executable})
@@ -230,6 +231,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
         LONG_ARG ${executable}
         HELP "Start ${executable}"
         PATH ${${executable}_EXECUTABLE}
+        ARGUMENTS ${${executable}_ARGUMENTS}
         OUTPUTVAR extraApplicationToLaunchListForBuildTree
         )
     endif()
