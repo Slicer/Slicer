@@ -1,18 +1,21 @@
+// Slicer includes
+#include "TractographyLabelMapSeedingCLP.h"
+#include "vtkDiffusionTensorMathematics.h"
+#include "vtkSeedTracts.h"
+
+// ITK includes
 #if ITK_VERSION_MAJOR >= 4
 #include "itkFloatingPointExceptions.h"
 #endif
 
-#include "vtkSmartPointer.h"
-#include "vtkNRRDReader.h"
-#include "vtkSeedTracts.h"
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkMath.h"
-#include "vtkImageCast.h"
-#include "vtkImageData.h"
-#include "vtkDiffusionTensorMathematics.h"
-#include "vtkImageThreshold.h"
-
-#include "TractographyLabelMapSeedingCLP.h"
+// VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkNRRDReader.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkMath.h>
+#include <vtkImageCast.h>
+#include <vtkImageData.h>
+#include <vtkImageThreshold.h>
 
 int main( int argc, char * argv[] )
 {
