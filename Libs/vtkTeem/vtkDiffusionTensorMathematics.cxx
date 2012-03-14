@@ -60,7 +60,7 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
   this->TensorRotationMatrix = NULL;
   this->ScalarMask = NULL;
   this->MaskWithScalars = 0;
-  this->FixNegativeEigenvalues = 1;
+  this->FixNegativeEigenvalues = 0;
   this->MaskLabelValue = 1;
 }
 
@@ -554,7 +554,16 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
           if (self->GetFixNegativeEigenvalues()==1){
             if (vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w)) {
               vtkGenericWarningMacro( "Warning: Eigenvalues are not properly sorted" );
-            }   
+            }
+            if ((w[0] < 0) || (w[1] < 0) || (w[2] < 0))
+              vtkGenericWarningMacro( "Warning: Negative Eigenvalues after positivity fix" );
+          } else {
+            if (w[0] < 0)
+              w[0] = DOUBLE_NAN;
+            if (w[1] < 0)
+              w[1] = DOUBLE_NAN;
+            if (w[2] < 0)
+              w[2] = DOUBLE_NAN;
           }
 
           // pixel operation
@@ -951,8 +960,12 @@ double vtkDiffusionTensorMathematics::Trace(double D[3][3])
 
 double vtkDiffusionTensorMathematics::Trace(double w[3]) 
 {
+  if ((w[0] <= VTK_EPS) || (w[0] <= VTK_EPS) || (w[2] <= VTK_EPS))
+  {
+    return DOUBLE_NAN;
+  }
+
   return ( w[0] + w[1] + w[2] );
- 
 }
 
 double vtkDiffusionTensorMathematics::Determinant(double D[3][3])
@@ -963,9 +976,7 @@ double vtkDiffusionTensorMathematics::Determinant(double D[3][3])
 double vtkDiffusionTensorMathematics::RelativeAnisotropy(double w[3]) 
 {
   double trace = w[0]+w[1]+w[2];   
-  
-  if (trace < VTK_EPS)
-     trace = trace + VTK_EPS;
+  trace = MAX(trace, VTK_EPS);
   
   return ((0.70710678)*
                 (sqrt((w[0]-w[1])*(w[0]-w[1]) + 
@@ -976,9 +987,7 @@ double vtkDiffusionTensorMathematics::RelativeAnisotropy(double w[3])
 double vtkDiffusionTensorMathematics::FractionalAnisotropy(double w[3])
 {
   double norm = sqrt(w[0]*w[0]+ w[1]*w[1] +  w[2]*w[2]); 
-   
-   if (norm < VTK_EPS)
-      norm = norm + VTK_EPS;
+  norm = MAX(norm, VTK_EPS);
   
   return ((0.70710678)*
                 (sqrt((w[0]-w[1])*(w[0]-w[1]) + 
@@ -1068,8 +1077,8 @@ double vtkDiffusionTensorMathematics::Mode(double w[3])
                   (w[2] - mean)*(w[2] - mean))/3;
   norm = sqrt(norm);
   norm = norm*norm*norm;
-  if (norm < VTK_EPS)
-     norm += VTK_EPS;
+  norm = MAX(norm, VTK_EPS);
+
   // multiply by sqrt 2: range from -1 to 1
   return  (M_SQRT2*((w[0] + w[1] - 2*w[2]) * 
                          (2*w[0] - w[1] - w[2]) * 
@@ -1241,17 +1250,61 @@ int vtkDiffusionTensorMathematics::TeemEigenSolver(double **m, double *w, double
     if (v == NULL)
         res=tenEigensolve_d(eval,NULL,t);
     else
-         res=tenEigensolve_d(eval,evec,t);
+        res=tenEigensolve_d(eval,evec,t);
 
-    //Asigned output eigenvalues
-    if (v != NULL) {
-        v[0][0] = evec[0]; v[1][0] = evec[1]; v[2][0] = evec[2];
-        v[0][1] = evec[3]; v[1][1] = evec[4]; v[2][1] = evec[5];
-        v[0][2] = evec[6]; v[1][2] = evec[7]; v[2][2] = evec[8];
+    unsigned int eval_indices[3];
+
+    if (eval[0] >= eval[1] && eval[0] >= eval[2])
+    {
+      eval_indices[0] = 0;
+      if (eval[1] >= eval[2])
+      {
+        eval_indices[1] = 1;
+        eval_indices[2] = 2;
+      } 
+      else 
+      {
+        eval_indices[1] = 2;
+        eval_indices[2] = 1;
+      }
     }
-    w[0]=eval[0];
-    w[1]=eval[1];
-    w[2]=eval[2];
+    else if (eval[1] >= eval[0] && eval[1] >= eval[2])
+    {
+      eval_indices[1] = 0;
+      if (eval[2] >= eval[0])
+      {
+        eval_indices[0] = 2;
+        eval_indices[2] = 1;
+      } 
+      else 
+      {
+        eval_indices[0] = 1;
+        eval_indices[2] = 2;
+      }
+    }
+    else if (eval[2] >= eval[0] && eval[2] >= eval[1])
+    {
+      eval_indices[2] = 0;
+      if (eval[1] >= eval[0])
+      {
+        eval_indices[0] = 2;
+        eval_indices[1] = 1;
+      } 
+      else 
+      {
+        eval_indices[0] = 1;
+        eval_indices[1] = 2;
+      }
+    }
+    //Assigned output eigenvalues
+    if (v != NULL) {
+        v[eval_indices[0]][0] = evec[0]; v[eval_indices[1]][0] = evec[1]; v[eval_indices[2]][0] = evec[2];
+        v[eval_indices[0]][1] = evec[3]; v[eval_indices[1]][1] = evec[4]; v[eval_indices[2]][1] = evec[5];
+        v[eval_indices[0]][2] = evec[6]; v[eval_indices[1]][2] = evec[7]; v[eval_indices[2]][2] = evec[8];
+    }
+    w[eval_indices[0]]=eval[0];
+    w[eval_indices[1]]=eval[1];
+    w[eval_indices[2]]=eval[2];
     return res;
 
 }

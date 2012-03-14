@@ -355,7 +355,8 @@ void vtkMRMLDiffusionTensorVolumeDisplayNode
   {
     vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, range);
   } else {
-    return this->GetOutputImageData()->GetScalarRange(range);
+    this->DTIMathematics->Update();
+    return this->GetScalarImageData()->GetScalarRange(range);
   }
 
 }
