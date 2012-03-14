@@ -56,6 +56,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLScalarVolumeNodeTest2.cxx
   vtkMRMLSceneAddSingletonTest.cxx
   vtkMRMLSceneBatchProcessTest.cxx
+  vtkMRMLSceneImportTest.cxx
   vtkMRMLSceneImportIDConflictTest.cxx
   vtkMRMLSceneIDTest.cxx
   vtkMRMLSceneSnapshotNodeTest1.cxx
@@ -188,13 +189,14 @@ SIMPLE_TEST( vtkMRMLVolumeNodeTest1 )
 SIMPLE_TEST( vtkMRMLXYPlotManagerNodeTest1 )
 SIMPLE_TEST( vtkObserverManagerTest1 )
 
-macro(TEST_SCENE SCENEFILENAME)
+macro(SIMPLE_TEST_WITH_SCENE TESTNAME SCENEFILENAME)
   add_test(
-    NAME vtkMRMLSceneTest2_${SCENEFILENAME}
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> vtkMRMLSceneTest2
+    NAME ${TESTNAME}_${SCENEFILENAME}
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME}
       ${CMAKE_CURRENT_SOURCE_DIR}/${SCENEFILENAME}
     )
 endmacro()
+
 
 set( ScenesToTest
   clipCube.mrml
@@ -216,6 +218,7 @@ set( ScenesToTest
   )
 
 foreach(SceneToTest ${ScenesToTest})
-  #TEST_SCENE( ${SceneToTest} )
+  #SIMPLE_TEST_WITH_SCENE( vtkMRMLSCeneTest2 ${SceneToTest} )
+  SIMPLE_TEST_WITH_SCENE( vtkMRMLSceneImportTest ${SceneToTest} )
 endforeach()
 

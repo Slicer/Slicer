@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLProceduralColorNode.h"
 #include "vtkMRMLVolumeNode.h"
 
@@ -634,7 +635,12 @@ void vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange(double range[2])
   vtkImageData *imageData = this->GetScalarImageData();
   if (!imageData || !this->GetInputImageData())
     {
-    assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData());
+    // it's a problem if the volume node has an image data but the display node
+    // doesn't. It's ok if the display node is not yet in the scene: being
+    // loaded (vtkMRMLScene::LoadIntoScene)or stored
+    // (vtkMRMLSceneViewNode::StoreScene).
+    assert( !this->GetVolumeNode() || !this->GetVolumeNode()->GetImageData() ||
+            !this->GetScene() || this->GetScene()->GetNodeByID(this->GetID()) != this);
     vtkDebugMacro( << "No valid image data, returning default values [0, 255]");
     return;
     }
