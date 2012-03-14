@@ -7,7 +7,7 @@ if(NOT Slicer_SOURCE_DIR)
   if(APPLE)
     # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
     #       we ensure that the bitness will be properly detected.
-    include(${Slicer_CMAKE_DIR}/SlicerBlockSetCMakeOSXVariables.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/../../CMake/SlicerBlockSetCMakeOSXVariables.cmake)
   endif()
 endif()
 
