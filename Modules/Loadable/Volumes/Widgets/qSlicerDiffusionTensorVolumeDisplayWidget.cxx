@@ -191,6 +191,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::updateWidgetFromMRML()
     d->ScalarVolumeDisplayWidget->setColorTableComboBoxEnabled(false);
     d->ScalarVolumeDisplayWidget->setMRMLWindowLevelWidgetEnabled(false);
     displayNode->AutoScalarRangeOn();
+    displayNode->AutoWindowLevelOn();
   } else {
     d->ScalarVolumeDisplayWidget->setColorTableComboBoxEnabled(true);
     d->ScalarVolumeDisplayWidget->setMRMLWindowLevelWidgetEnabled(true);
