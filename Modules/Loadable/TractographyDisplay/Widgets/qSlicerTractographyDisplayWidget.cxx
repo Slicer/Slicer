@@ -47,12 +47,11 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   Q_Q(qSlicerTractographyDisplayWidget);
   this->setupUi(q);
 
-  std::vector<int> supportedScalarModes;
-  vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(supportedScalarModes);
-  for (std::vector<int>::iterator it = supportedScalarModes.begin(); it!=supportedScalarModes.end(); ++it) 
+  for (int i = 0; i < vtkMRMLFiberBundleDisplayNode::GetNumberOfScalarInvariants(); i++ ) 
     {
+    const int scalarInvariant = vtkMRMLFiberBundleDisplayNode::GetNthScalarInvariant(i);
     this->ColorByScalarInvariantComboBox->addItem(
-        vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(*it), *it);
+        vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(scalarInvariant), scalarInvariant);
     }
 
   this->ColorBySolidColorPicker->setDialogOptions(ctkColorPickerButton::UseCTKColorDialog);
@@ -231,6 +230,19 @@ void qSlicerTractographyDisplayWidget::onColorBySolidChanged(const QColor &color
     }
   d->FiberBundleDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
 }
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setColorBySolid()
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetColorModeToSolid();
+  d->FiberBundleDisplayNode->SetScalarVisibility(0);
+}
+
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayWidget::setColorByScalar()
 {

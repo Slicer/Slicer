@@ -27,6 +27,7 @@
 
 // MRML includes
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
+#include <vtkMRMLDiffusionTensorVolumeDisplayNode.h>
 
 // VTK includes
 
@@ -80,14 +81,16 @@ void qMRMLScalarInvariantComboBoxPrivate::init()
 void qMRMLScalarInvariantComboBoxPrivate::populateComboBox()
 {
   this->ComboBox->clear();
-  for (int i = vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstScalarInvariant();
-       i <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastScalarInvariant();
+  for (int i = 0;
+        i < vtkMRMLDiffusionTensorVolumeDisplayNode::GetNumberOfScalarInvariants();
        ++i)
     {
+    const int scalarInvariant = vtkMRMLDiffusionTensorVolumeDisplayNode::GetNthScalarInvariant(i);
     this->ComboBox->addItem(
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(i),
-      QVariant(i));
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::GetScalarEnumAsString(scalarInvariant),
+      QVariant(scalarInvariant));
     }
+
 }
 
 //------------------------------------------------------------------------------

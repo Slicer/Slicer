@@ -47,6 +47,7 @@ public slots:
   void setColorByScalar();
   void onColorByScalarChanged(int);
   void setColorByCellScalars();
+  void setColorBySolid();
   void clickColorBySolid(bool);
   void onColorBySolidChanged(const QColor&);
   void setColorByCellScalarsColorTable(vtkMRMLNode*);

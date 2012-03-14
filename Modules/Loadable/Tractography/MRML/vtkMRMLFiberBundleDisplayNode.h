@@ -167,8 +167,10 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
 
-  static void GetSupportedColorModes(std::vector<int> &modes);
-//
+  static int GetNumberOfScalarInvariants();
+  static int GetNthScalarInvariant(int i);
+
+
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
   ~vtkMRMLFiberBundleDisplayNode ( );
@@ -182,6 +184,7 @@ class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode :
   virtual void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
   /// ALL MRML nodes
+  static std::vector<int> GetSupportedColorModes();
 
   /// Enumerated
   int ColorMode;

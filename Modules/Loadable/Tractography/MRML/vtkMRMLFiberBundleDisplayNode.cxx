@@ -221,16 +221,38 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes(std::vector<int> &modes)
+std::vector<int> vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes()
 {
+  std::vector<int> modes;
+
   modes.clear();
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
-  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
-  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue);
   modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue);
-  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
+
+  return modes;
 }
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiberBundleDisplayNode::GetNumberOfScalarInvariants()
+{
+  static std::vector<int> modes = vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes();
+  return modes.size();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLFiberBundleDisplayNode::GetNthScalarInvariant(int i)
+{
+  static std::vector<int> modes = vtkMRMLFiberBundleDisplayNode::GetSupportedColorModes();
+  return modes[i];
+}
+

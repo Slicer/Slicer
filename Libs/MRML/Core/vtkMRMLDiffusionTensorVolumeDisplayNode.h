@@ -173,6 +173,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGl
   /// having been mapped through the current display options
   virtual void GetDisplayScalarRange(double range[2]);
 
+  static int GetNumberOfScalarInvariants();
+  static int GetNthScalarInvariant(int i);
 
 protected:
   vtkMRMLDiffusionTensorVolumeDisplayNode();
@@ -184,6 +186,8 @@ protected:
   virtual void SetInputToImageDataPipeline(vtkImageData *imageData);
 
   virtual vtkImageData* GetScalarImageData();
+
+  static std::vector<int> GetSupportedColorModes();
 
   vtkDiffusionTensorGlyph* DiffusionTensorGlyphFilter;
 
@@ -202,6 +206,7 @@ protected:
 
    /// Scalar display parameters
   int ScalarInvariant;
+
 
 };
 
