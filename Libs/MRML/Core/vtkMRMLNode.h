@@ -119,6 +119,8 @@ class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
   /// make the vtkMRMLScene a friend so that AddNodeNoNotify can call
   /// SetID, but that's the only class that is allowed to do so
     friend class vtkMRMLScene;
+    friend class vtkMRMLSceneViewNode;
+
 public:
   vtkTypeMacro(vtkMRMLNode,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);

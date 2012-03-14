@@ -353,15 +353,11 @@ void vtkMRMLSceneViewNode::StoreScene()
     if (node && !node->IsA("vtkMRMLSceneViewNode") && !node->IsA("vtkMRMLSnapshotClipNode")  && node->GetSaveWithScene() )
       {
       vtkMRMLNode *newNode = node->CreateNodeInstance();
-      // \todo: nobody listens to the node, no need to prevent it from firing
-      // events.
-      int wasModifying = newNode->StartModify();
-      newNode->CopyWithScene(node);
-      // CopyWithScene has copied the Scene, reset it to the inner scene
-      // view node scene.
+
       newNode->SetScene(this->Nodes);
-      newNode->SetAddToScene(0);
-      newNode->EndModify(wasModifying);
+      newNode->CopyWithoutModifiedEvent(node);
+      newNode->SetAddToSceneNoModify(0);
+      newNode->SetID(node->GetID());
 
       this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)newNode);
       //--- Try deleting copy after collection has a reference to it,
