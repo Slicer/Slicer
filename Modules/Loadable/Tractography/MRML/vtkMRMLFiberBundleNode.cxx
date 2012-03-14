@@ -39,12 +39,16 @@ Version:   $Revision: 1.3 $
 
 // STD includes
 #include <math.h>
-
+#include <vector>
+#include <algorithm>
 //------------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLFiberBundleNode, AnnotationNodeID);
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleNode);
+
+//------------------------------------------------------------------------------
+vtkIdType vtkMRMLFiberBundleNode::MaxNumberOfFibersToShowByDefault = 10000;
 
 //-----------------------------------------------------------------------------
 vtkMRMLFiberBundleNode::vtkMRMLFiberBundleNode()
@@ -347,6 +351,31 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
 void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
 {
   vtkMRMLModelNode::SetPolyData(polyData);
+  const vtkIdType numberOfFibers = polyData->GetNumberOfLines();
+
+  std::vector<vtkIdType> idVector;
+  for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+    idVector.push_back(i);
+
+  random_shuffle ( idVector.begin(), idVector.end() );
+
+  this->ShuffledIds->Initialize();
+  this->ShuffledIds->SetNumberOfTuples(numberOfFibers);
+  for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+    {
+    this->ShuffledIds->SetValue(i, idVector[i]);
+    }
+  float subsamplingRatio = 1.;
+
+  if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
+    {
+    subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
+    subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
+    }
+
+  this->SetSubsamplingRatio(subsamplingRatio);
+ 
+
   this->UpdateSubsampling();
 }
 
@@ -452,6 +481,8 @@ void vtkMRMLFiberBundleNode::PrepareSubsampling()
 
   this->SubsamplingRatio = 1.;
 
+  this->ShuffledIds = vtkIdTypeArray::New();
+
   this->ExtractSelectedPolyDataIds = vtkExtractSelectedPolyDataIds::New();
 
   sel->AddNode(node);
@@ -493,18 +524,16 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
 
       vtkIdTypeArray* arr = vtkIdTypeArray::SafeDownCast(node->GetSelectionList());
       vtkIdType numberOfCellsToKeep = vtkIdType(floor(this->GetPolyData()->GetNumberOfLines() * this->SubsamplingRatio));
+
+      arr->Initialize();
       arr->SetNumberOfTuples(numberOfCellsToKeep);
-
       if (numberOfCellsToKeep > 0)
-      {
-        float step = this->GetPolyData()->GetNumberOfLines() * 1. / numberOfCellsToKeep;
-
-        vtkIdType i = 0;
-        for (i=0; i<numberOfCellsToKeep; i++)
         {
-          arr->SetValue(i, int(i * step+0.5));
+        for (vtkIdType i=0; i<numberOfCellsToKeep; i++)
+          {
+          arr->SetValue(i, this->ShuffledIds->GetValue(i));
+          }
         }
-      }
 
       arr->Modified();
       node->Modified();
@@ -536,6 +565,7 @@ void vtkMRMLFiberBundleNode::CleanSubsampling()
 {
   this->CleanPolyDataPostSubsampling->Delete();
   this->ExtractSelectedPolyDataIds->Delete();
+  this->ShuffledIds->Delete();
 }
 
 //----------------------------------------------------------------------------

@@ -33,7 +33,6 @@ vtkStandardNewMacro(vtkSlicerFiberBundleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerFiberBundleLogic::vtkSlicerFiberBundleLogic()
 {
-  this->MaxNumberOfFibersToShowByDefault = 10000;
 }
 
 //----------------------------------------------------------------------------
@@ -124,18 +123,7 @@ vtkMRMLFiberBundleNode* vtkSlicerFiberBundleLogic::AddFiberBundle (const char* f
     itksys_stl::string name = itksys::SystemTools::GetFilenameWithoutExtension(fname);
     std::string uname( this->GetMRMLScene()->GetUniqueNameByString(name.c_str()));
     fiberBundleNode->SetName(uname.c_str());
-
-    const vtkIdType numberOfFibers = fiberBundleNode->GetPolyData()->GetNumberOfLines();
-    float subsamplingRatio = 1.;
-
-    if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
-      {
-      subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
-      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
-      }
-
-    fiberBundleNode->SetSubsamplingRatio(subsamplingRatio);
-    
+   
     fiberBundleNode->SetScene(this->GetMRMLScene());
     storageNode->SetScene(this->GetMRMLScene());
     displayLineNode->SetScene(this->GetMRMLScene());

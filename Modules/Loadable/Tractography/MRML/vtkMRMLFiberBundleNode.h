@@ -31,6 +31,7 @@
 class vtkMRMLFiberBundleDisplayNode;
 class vtkExtractSelectedPolyDataIds;
 class vtkMRMLAnnotationNode;
+class vtkIdTypeArray;
 class vtkExtractPolyDataGeometry;
 class vtkPlanes;
 class vtkCleanPolyData;
@@ -176,15 +177,27 @@ public:
   /// Create default display nodes
   virtual void CreateDefaultDisplayNodes();
 
+   // Description:
+  // Get the maximum number of fibers to show by default when a new fiber bundle node is set
+  vtkGetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
 
-  vtkGetObjectMacro(ExtractSelectedPolyDataIds, vtkExtractSelectedPolyDataIds);
-  vtkGetObjectMacro(ExtractPolyDataGeometry, vtkExtractPolyDataGeometry);
-  
+  // Description:
+  // Set the maximum number of fibers to show by default when a new fiber bundle node is set
+  vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
+
+ 
 protected:
   vtkMRMLFiberBundleNode();
   ~vtkMRMLFiberBundleNode();
   vtkMRMLFiberBundleNode(const vtkMRMLFiberBundleNode&);
   void operator=(const vtkMRMLFiberBundleNode&);
+
+
+  // Description:
+  // Maximum number of fibers to show per bundle when it is loaded.
+  static vtkIdType MaxNumberOfFibersToShowByDefault;
+  vtkIdTypeArray* ShuffledIds;
+
 
   virtual void SetPolyData(vtkPolyData* polyData);
 

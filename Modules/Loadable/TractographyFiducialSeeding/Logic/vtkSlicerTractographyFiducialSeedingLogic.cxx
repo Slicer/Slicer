@@ -442,6 +442,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLDiffusionTens
   seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
 
   fiberNode->SetAndObservePolyData(outFibers);
+
+  //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
+  fiberNode->SetSubsamplingRatio(1.);
   
   int newNode = 0;
   vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetTubeDisplayNode();

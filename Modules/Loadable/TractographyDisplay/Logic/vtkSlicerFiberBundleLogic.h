@@ -58,14 +58,6 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLo
   // Write fiber bundle's polydata  to a specified file.
   int SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
 
-  // Description:
-  // Get the maximum number of fibers to show by default when a new fiber bundle node is set
-  vtkGetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
-
-  // Description:
-  // Set the maximum number of fibers to show by default when a new fiber bundle node is set
-  vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
-
 protected:
   vtkSlicerFiberBundleLogic();
   ~vtkSlicerFiberBundleLogic();
@@ -80,10 +72,6 @@ protected:
   // Description:
   // Collection of pointers to display logic objects for fiber bundle nodes in the scene.
   vtkCollection *DisplayLogicCollection;
-
-  // Description:
-  // Maximum number of fibers to show per bundle when it is loaded.
-  vtkIdType MaxNumberOfFibersToShowByDefault;
 };
 
 #endif
