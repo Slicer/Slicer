@@ -63,6 +63,10 @@ public slots:
 
 signals:
 
+  /// Signal emitted when mouse moves over a data point. Returns the
+  /// id of the MRMLDoubleArrayNode, the index of the point, and the values
+  void dataMouseOver(const char *mrmlArrayID, int pointidx, double x, double y);
+
   /// Signal emitted when a data point has been clicked. Returns the
   /// id of the MRMLDoubleArrayNode, the index of the point, and the values
   void dataPointClicked(const char *mrmlArrayID, int pointidx, double x, double y);

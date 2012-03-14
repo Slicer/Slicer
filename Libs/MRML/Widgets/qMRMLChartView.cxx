@@ -551,6 +551,15 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plotResizeHook <<
     "$(window).resize( resizeSlot );";
 
+  // data mouse over slot - represented in javascript
+  QStringList plotDataMouseOverSlot;
+  plotDataMouseOverSlot <<
+    "var dataMouseOverSlot = function(ev, seriesIndex, pointIndex, data) {"
+    "try {"
+    "qtobject.onDataMouseOver(seriesIndex, pointIndex, data[0], data[1]);"
+    "} catch(error) {}"
+    "};";
+
   // data point click slot - represented in javascript
   QStringList plotDataPointClickedSlot;
   plotDataPointClickedSlot <<
@@ -559,6 +568,12 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "qtobject.onDataPointClicked(seriesIndex, pointIndex, data[0], data[1]);"
     "} catch(error) {}"
     "};";
+
+  // bind a data point clicked to the slot
+  QStringList plotDataMouseOverHook;
+  plotDataMouseOverHook <<
+    "$('#chart').bind('jqplotDataMouseOver', dataMouseOverSlot);";
+
 
   // bind a data point clicked to the slot
   QStringList plotDataPointClickedHook;
@@ -587,6 +602,8 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   plot << plotResizeSlot;        // insert definition of the resizeSlot
   plot << plotInitialResize;     // insert an initial call to resizeSlot 
   plot << plotResizeHook;        // insert hook to call resizeSlot on page resize
+  plot << plotDataMouseOverSlot; // insert definition of the data mouse over slot
+  plot << plotDataMouseOverHook; // insert the binding to the slot
   plot << plotDataPointClickedSlot; // insert definition of the data clicked slot
   plot << plotDataPointClickedHook; // insert the binding to the slot
 
@@ -725,6 +742,50 @@ QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn, vtkM
   data << "]";
 
   return data.join("");
+}
+
+//---------------------------------------------------------------------------
+void qMRMLChartViewPrivate::onDataMouseOver(int series, int pointidx, double x, double y)
+{
+  Q_Q(qMRMLChartView);
+
+  //qDebug() << "Series: " << series << ", Pointid: " << pointidx << ": " << x << ", " << y;
+  
+  // map from series to MRML ID
+  if (!this->MRMLScene || !this->MRMLChartViewNode)
+    {
+    return;
+    }
+
+  if (!q->isEnabled())
+    {
+    return;
+    }
+
+  // Get the ChartNode
+  char *chartnodeid = this->MRMLChartViewNode->GetChartNodeID();
+
+  if (!chartnodeid)
+    {
+    return;
+    }
+
+  vtkMRMLChartNode* cn = vtkMRMLChartNode::SafeDownCast(this->MRMLScene->GetNodeByID(chartnodeid));
+
+  if (!cn)
+    {
+    return;
+    }
+
+  // Get the array ids
+  vtkStringArray *arrayIDs = cn->GetArrays();
+
+  // emit the real signal
+  if (series >= 0 && series < arrayIDs->GetNumberOfValues())
+    {
+    //qDebug() << "Array: " << arrayIDs->GetValue(series) << ", Pointidx: " << pointidx << ": " << x << ", " << y;
+    emit q->dataMouseOver(arrayIDs->GetValue(series), pointidx, x, y);
+    }
 }
 
 

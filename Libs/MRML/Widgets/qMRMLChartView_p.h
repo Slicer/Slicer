@@ -51,8 +51,12 @@ public slots:
   /// slot when the view is configured to look at a different chart node
   void onChartNodeChanged(); 
 
+  // slot when mouse is over a point
+  void onDataMouseOver(int series, int pointidx, double x, double y);
+
   // slot when a data point is clicked
   void onDataPointClicked(int series, int pointidx, double x, double y);
+
 
 protected:
 

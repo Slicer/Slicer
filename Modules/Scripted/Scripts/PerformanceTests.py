@@ -166,6 +166,12 @@ class PerformanceTestsWidget:
     self.imageViewer2.Render()
 
 
+  def chartMouseOverCallback(self, mrmlID, pointIndex, x, y):
+    node = slicer.util.getNode(mrmlID)
+    name = node.GetName()
+    print("Clicked at point {x}, {y} on node {name} (id {mrmlID}) with point index of {pointIndex}".format(
+      x=x,y=y,name=name,mrmlID=mrmlID,pointIndex=pointIndex))
+
   def chartCallback(self, mrmlID, pointIndex, x, y):
     node = slicer.util.getNode(mrmlID)
     name = node.GetName()
@@ -186,7 +192,8 @@ with point index of {pointIndex}
     ln.SetViewArrangement(24)
 
     chartView = findChildren(className='qMRMLChartView')[0]
-    chartView.connect("dataPointClicked(const char *,int,double,double)", self.chartCallback)
+    print(chartView.connect("dataMouseOver(const char *,int,double,double)", self.chartMouseOverCallback))
+    print(chartView.connect("dataPointClicked(const char *,int,double,double)", self.chartCallback))
 
     cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
     cvns.InitTraversal()
