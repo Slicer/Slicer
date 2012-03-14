@@ -260,7 +260,6 @@ void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarIndex)
     }
 
   const char* ActiveScalarName = d->ColorByScalarComboBox->itemText(scalarIndex).toStdString().c_str();
-  vtkPointData* PointData = d->FiberBundleNode->GetPolyData()->GetPointData();
   d->FiberBundleDisplayNode->SetActiveScalarName(ActiveScalarName);
 }
 

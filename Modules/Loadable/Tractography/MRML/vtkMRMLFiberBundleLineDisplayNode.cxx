@@ -113,7 +113,7 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayPropertiesNode = this->GetDiffusionTensorDisplayPropertiesNode( );
     
 
-    vtkPolyData *IntermediatePolyData;
+    vtkPolyData *IntermediatePolyData = NULL;
     if (DiffusionTensorDisplayPropertiesNode != NULL) {
       // TO DO: need filter to calculate FA, average FA, etc. as requested
       

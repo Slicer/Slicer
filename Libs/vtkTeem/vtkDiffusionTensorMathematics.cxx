@@ -1252,7 +1252,7 @@ int vtkDiffusionTensorMathematics::TeemEigenSolver(double **m, double *w, double
     else
         res=tenEigensolve_d(eval,evec,t);
 
-    unsigned int eval_indices[3];
+    unsigned int eval_indices[3] = {0, 1, 2};
 
     if (eval[0] >= eval[1] && eval[0] >= eval[2])
     {
