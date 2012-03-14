@@ -24,6 +24,7 @@ class Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT qSlicerScalarVolumeDisplayWidget
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(bool enableColorTableComboBox READ isColorTableComboBoxEnabled WRITE setColorTableComboBoxEnabled )
+  Q_PROPERTY(bool enableMRMLWindowLevelWidget READ isMRMLWindowLevelWidgetEnabled WRITE setMRMLWindowLevelWidgetEnabled )
 public:
   /// Constructors
   typedef qSlicerWidget Superclass;
@@ -35,6 +36,9 @@ public:
 
   bool isColorTableComboBoxEnabled()const;
   void setColorTableComboBoxEnabled(bool);
+
+  bool isMRMLWindowLevelWidgetEnabled()const;
+  void setMRMLWindowLevelWidgetEnabled(bool);
 
 public slots:
 
