@@ -470,7 +470,7 @@
   <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
-   <header>ctkcollapsiblebutton.h</header>
+   <header>ctkCollapsibleButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
