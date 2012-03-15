@@ -619,6 +619,11 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
   if(WIN32)
     set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
+  elseif(APPLE)
+    # HACK Since fixup extension expects the library to contain the full path, let's make sure the non-installed
+    # version of the library is used. Ideally, the project shouldn't be installed and a LibArchiveConfig.cmake
+    # should be created.
+    set(LibArchive_LIBRARY ${LibArchive_DIR}/../LibArchive-build/libarchive/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   else()
     set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   endif()
