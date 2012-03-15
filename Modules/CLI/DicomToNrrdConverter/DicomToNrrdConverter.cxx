@@ -1289,6 +1289,10 @@ int main(int argc, char* argv[])
           valueArray.resize(0);
           ExtractSiemensDiffusionInformation(tag, "B_value", valueArray);
           bValues.push_back( valueArray[0] );
+          vect3d[0] = 0;
+          vect3d[1] = 0;
+          vect3d[2] = 0;
+          DiffusionVectors.push_back(vect3d);
           }
         }
 
