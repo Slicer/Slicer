@@ -881,7 +881,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
     {
     return;
     }
-  if (col == 1)
+  if (col == 0)
     {
     // x
     if (newCoords[0] != newValue)
@@ -889,7 +889,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
       newCoords[0] = newValue;
       }
     }
-  else if (col == 2)
+  else if (col == 1)
     {
     // y
     if (newCoords[1] != newValue)
@@ -897,7 +897,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
       newCoords[1] = newValue;
       }
     }
-  else if (col == 3)
+  else if (col == 2)
     {
     // z
     if (newCoords[2] != newValue)
