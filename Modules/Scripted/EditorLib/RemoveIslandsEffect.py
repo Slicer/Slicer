@@ -144,6 +144,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     preThresh = vtk.vtkImageThreshold()
     preThresh.SetInValue( 0 )
     preThresh.SetOutValue( 1 )
+    preThresh.ReplaceInOn()
     preThresh.ReplaceOutOn()
     preThresh.ThresholdBetween( label,label )
     preThresh.SetInput( self.getScopedLabelInput() )
@@ -157,14 +158,18 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     islandMath.SetMinimumSize( minimumSize )
     # TODO: $this setProgressFilter $islandMath "Calculating Islands..."
     islandMath.Update()
-    bgLabel = self.findNonZeroBorderPixel( islandMath.GetOutput() )
+    islandCount = islandMath.GetNumberOfIslands()
+    islandOrigCount = islandMath.GetOriginalNumberOfIslands()
+    ignoredIslands = islandOrigCount - islandCount
+    print( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
 
     # now rethreshold so that everything which is not background becomes the label
     postThresh = vtk.vtkImageThreshold()
-    postThresh.SetInValue( 0 )
-    postThresh.SetOutValue( label )
+    postThresh.SetInValue( label )
+    postThresh.SetOutValue( 0 )
+    postThresh.ReplaceInOn()
     postThresh.ReplaceOutOn()
-    postThresh.ThresholdBetween( bgLabel,bgLabel )
+    postThresh.ThresholdBetween( 0, 0 )
     postThresh.SetOutputScalarTypeToShort()
     postThresh.SetInput( islandMath.GetOutput() )
     postThresh.SetOutput( self.getScopedLabelOutput() )
@@ -172,23 +177,6 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     postThresh.Update()
 
     self.applyScopedLabel()
-
-  # search the border of the image data looking for the first non-zero
-  # - usually whole border will be nonzero, but in some cases
-  #   it may not be.  So check corners first, and then
-  #   if can't find it, give up and use 1 (to avoid exhaustive search)
-  def findNonZeroBorderPixel(self,imageData):
-
-    dimensions = imageData.GetDimensions()
-    w, h, d = map(lambda e: e-1, dimensions)
-
-    corners = ( (0, 0, 0), (w, 0, 0), (0, h, 0), (w, h, 0),
-                (0, 0, d), (w, 0, d), (0, h, d), (w, h, d) )
-    for i,j,k in corners:
-      p = imageData.GetScalarComponentAsDouble( i, j, k, 0 )
-      if p != 0:
-        return p
-    return 1
 
 #
 # The RemoveIslandsEffect class definition 
