@@ -223,6 +223,11 @@ void qMRMLSliceWidgetPrivate::startProcessing()
 void qMRMLSliceWidgetPrivate::endProcessing()
 {
   this->VTKSliceView->setRenderEnabled(true);
+
+  // When a scene is closed, we need to reconfigure the SliceNode to
+  // the size of the widget.
+  QRect rect = this->VTKSliceView->geometry();
+  this->SliceController->setSliceViewSize(QSize(rect.width(), rect.height()));
 }
 
 // --------------------------------------------------------------------------
