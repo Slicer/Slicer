@@ -174,7 +174,7 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
         self.deleteLastPoint()
         self.abortEvent(event)
     else:
-      print(caller,event,self.sliceWidget.sliceLogic().GetSliceNode().GetName())
+      pass
 
     # events from the slice node
     if caller and caller.IsA('vtkMRMLSliceNode'):

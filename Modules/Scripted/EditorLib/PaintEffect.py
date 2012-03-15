@@ -238,7 +238,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     elif event == "LeaveEvent":
       self.actor.VisibilityOff()
     else:
-      print(caller,event,self.sliceWidget.sliceLogic().GetSliceNode().GetName())
+      pass
     self.positionActors()
 
   def positionActors(self):
