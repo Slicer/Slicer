@@ -318,16 +318,18 @@ namespace eval SWidget set getTensorPixelWarning 0
 
 itcl::body SWidget::getTensorPixel { node i j k } {
 
+  # TODO: in slicer4 this code is not needed
+  return
+
   if { ![info exists o(dtiMath)] } {
-    # TODO: in slicer4 this class is not available - need to figure out why...
-    if { [info command vtkDiffusionTensorMathematicsSimple] == "" } {
+    if { [info command vtkDiffusionTensorMathematics] == "" } {
       if { !$::SWidget::getTensorPixelWarning } {
-        puts "$this: TODO: in slicer4 vtkDiffusionTensorMathematicsSimple class is not available - need to figure out why..."
+        puts "$this: TODO: in slicer4 vtkDiffusionTensorMathematics class is not available - need to figure out why..."
         set ::SWidget::getTensorPixelWarning 1
       }
       return
     }
-    set o(dtiMath) [vtkNew vtkDiffusionTensorMathematicsSimple]
+    set o(dtiMath) [vtkNew vtkDiffusionTensorMathematics]
     set o(dtiPixelImage) [vtkNew vtkImageData]
     set o(dtiPixelTensors) [vtkNew vtkDoubleArray]
     $o(dtiPixelImage) SetDimensions 1 1 1
