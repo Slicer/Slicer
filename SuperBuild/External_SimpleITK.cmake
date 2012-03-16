@@ -43,13 +43,20 @@ configure_file(SuperBuild/SimpleITK_install_step.cmake.in
 
 set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
 
+if ( UNIX AND NOT APPLE )
+  if ( NOT ${CMAKE_CXX_FLAGS} MATCHES "-fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    message ( WARNING "SimpleITK wrapping requires CMAKE_CXX_FLAGS (or equivalent) to include -fPIC and ITK built with this flag" )
+  endif()
+endif()
+
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
   GIT_REPOSITORY http://itk.org/SimpleITK.git
   # This is the tag for the "next" branch as of March 6th, 2012 to address ITKv4.1.0
-  ## Tag of next branch on 2012-03-06
-  GIT_TAG 8dbee2630d6d248cc26c7e5245c76e7004a5518d
+  ## Tag of next branch on 2012-03-15
+  GIT_TAG 4f3e84946cfa3fa36d90b410e3ea09e2aba5107e
   UPDATE_COMMAND ""
   CMAKE_ARGS
     ${ep_common_args}
