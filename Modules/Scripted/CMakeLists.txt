@@ -1,6 +1,8 @@
 add_subdirectory(Scripts)
 add_subdirectory(EditorLib)
 add_subdirectory(DICOMLib)
+add_subdirectory(TractographyToolsLib)
+
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
   add_subdirectory(Testing)

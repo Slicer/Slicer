@@ -159,6 +159,12 @@ void vtkMRMLFiberBundleNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
                                            void *callData )
 {
+  if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
+    event ==  vtkCommand::ModifiedEvent)
+    {
+    this->SetPolyData(this->PolyData);
+    }
+
   if (vtkMRMLAnnotationROINode::SafeDownCast(caller) && (event == vtkCommand::ModifiedEvent))
   {
    vtkDebugMacro("Updating the ROI node");
@@ -351,32 +357,35 @@ vtkMRMLFiberBundleDisplayNode* vtkMRMLFiberBundleNode::AddGlyphDisplayNode()
 void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
 {
   vtkMRMLModelNode::SetPolyData(polyData);
-  const vtkIdType numberOfFibers = polyData->GetNumberOfLines();
-
-  std::vector<vtkIdType> idVector;
-  for(vtkIdType i = 0;  i < numberOfFibers; i++ )
-    idVector.push_back(i);
-
-  random_shuffle ( idVector.begin(), idVector.end() );
-
-  this->ShuffledIds->Initialize();
-  this->ShuffledIds->SetNumberOfTuples(numberOfFibers);
-  for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+  if (polyData)
     {
-    this->ShuffledIds->SetValue(i, idVector[i]);
+    const vtkIdType numberOfFibers = polyData->GetNumberOfLines();
+
+    std::vector<vtkIdType> idVector;
+    for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+      idVector.push_back(i);
+
+    random_shuffle ( idVector.begin(), idVector.end() );
+
+    this->ShuffledIds->Initialize();
+    this->ShuffledIds->SetNumberOfTuples(numberOfFibers);
+    for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+      {
+      this->ShuffledIds->SetValue(i, idVector[i]);
+      }
+    float subsamplingRatio = 1.;
+
+    if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
+      {
+      subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
+      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
+      }
+
+    this->SetSubsamplingRatio(subsamplingRatio);
+   
+
+    this->UpdateSubsampling();
     }
-  float subsamplingRatio = 1.;
-
-  if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
-    {
-    subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
-    subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
-    }
-
-  this->SetSubsamplingRatio(subsamplingRatio);
- 
-
-  this->UpdateSubsampling();
 }
 
 //----------------------------------------------------------------------------
