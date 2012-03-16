@@ -30,6 +30,7 @@
 
 vtkMRMLScene* createScene();
 bool store();
+bool storeAndRestore();
 bool storeAndRemoveVolume();
 bool storeTwice();
 bool storeAndRestoreTwice();
@@ -39,14 +40,38 @@ bool storeTwiceAndRemoveVolume();
 int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc),
                                        char * vtkNotUsed(argv)[] )
 {
-  bool res = true;
-  res = store() && res;
-  res = storeAndRemoveVolume() && res;
-  res = storeTwice() && res;
-  res = storeAndRestoreTwice() && res;
-  res = storeTwiceAndRemoveVolume() && res;
-
-  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+  if (store() != EXIT_SUCCESS)
+    {
+    std::cerr << "store call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (storeAndRestore() != EXIT_SUCCESS)
+    {
+    std::cerr << "storeAndRestore call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (storeAndRemoveVolume() != EXIT_SUCCESS)
+    {
+    std::cerr << "storeAndRemoveVolume call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (storeTwice() != EXIT_SUCCESS)
+    {
+    std::cerr << "storeTwice call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (storeAndRestoreTwice() != EXIT_SUCCESS)
+    {
+    std::cerr << "storeAndRestoreTwice call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (storeTwiceAndRemoveVolume() != EXIT_SUCCESS)
+    {
+    std::cerr << "storeTwiceAndRemoveVolume call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::cout << "Scene View Node Store Scene Test succeeded" << std::endl;
+  return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
@@ -56,7 +81,7 @@ vtkMRMLScene* createScene()
 
   vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
   scene->AddNode(displayNode.GetPointer());
-
+  
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   volumeNode->SetScene(scene);
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
@@ -75,9 +100,22 @@ bool store()
   scene->AddNode(sceneViewNode.GetPointer());
 
   sceneViewNode->StoreScene();
-  sceneViewNode->RestoreScene();
-  sceneViewNode->RestoreScene();
 
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+bool storeAndRestore()
+{
+  vtkSmartPointer<vtkMRMLScene> scene;
+  scene.TakeReference(createScene());
+
+  vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
+  scene->AddNode(sceneViewNode.GetPointer());
+
+  sceneViewNode->StoreScene();
+  sceneViewNode->RestoreScene();
+  
   return EXIT_SUCCESS;
 }
 
