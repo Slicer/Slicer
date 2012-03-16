@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QMap>
+#include <QMetaType>
 #include <QObject>
 #include <QScopedPointer>
 #include <QString>
@@ -62,7 +63,7 @@ public:
     UserFile = 32,
   };
 
-  typedef QMap<QString, QVariant> IOProperties;
+  typedef QVariantMap IOProperties;
 
   /// Unique name of a reader
   virtual QString description()const = 0;

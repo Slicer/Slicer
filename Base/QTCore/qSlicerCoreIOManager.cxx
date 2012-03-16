@@ -203,7 +203,11 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
+#if QT_VERSION < 0x040700
+                                     const QVariantMap& parameters,
+#else
                                      const qSlicerIO::IOProperties& parameters,
+#endif
                                      vtkCollection* loadedNodes)
 {
   Q_D(qSlicerCoreIOManager);

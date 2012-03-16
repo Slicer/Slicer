@@ -66,9 +66,15 @@ public:
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
   /// \note Make also sure the case of parameter name is respected
   /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType
+#if QT_VERSION < 0x040700
+  Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
+                                     const QVariantMap& parameters,
+                                     vtkCollection* loadedNodes = 0);
+#else
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const qSlicerIO::IOProperties& parameters,
                                      vtkCollection* loadedNodes = 0);
+#endif
 
   /// Utility function that loads a bunch of files. The "fileType" attribute should
   /// in the parameter map for each node to load.
