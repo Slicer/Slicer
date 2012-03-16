@@ -158,7 +158,7 @@ class DataProbeInfoWidget(object):
       return "%d components" % numberOfComponents
     for c in xrange(numberOfComponents):
       component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-      if component == int(component):
+      if component.is_integer():
         component = int(component)
       pixel += "%0.4g, " % component
     return pixel[:-2]
