@@ -41,6 +41,9 @@ extern "C" {
 #define VTK_EPS 1e-16
 #define DOUBLE_NAN (std::numeric_limits<double>::quiet_NaN())
 #define MAX(a,b) (((a)>(b))?(a):(b))
+#define MAX3(a,b,c) (MAX(a,MAX(b,c)))
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MIN3(a,b,c) (MIN(a,MIN(b,c)))
 #define OUT_OF_RANGE_TO_NAN(v, a, b) (( ((a) <= (v)) && ((v) <= (b)))?(v):(DOUBLE_NAN))
 
 vtkCxxSetObjectMacro(vtkDiffusionTensorMathematics,TensorRotationMatrix,vtkMatrix4x4);
@@ -60,7 +63,7 @@ vtkDiffusionTensorMathematics::vtkDiffusionTensorMathematics()
   this->TensorRotationMatrix = NULL;
   this->ScalarMask = NULL;
   this->MaskWithScalars = 0;
-  this->FixNegativeEigenvalues = 0;
+  this->FixNegativeEigenvalues = 1;
   this->MaskLabelValue = 1;
 }
 
@@ -552,9 +555,17 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
           //  3. Increase eigenvalues by negative part
           // The two first options have been problematic. Try 3 
           if (self->GetFixNegativeEigenvalues()==1){
-            if (vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w)) {
-              vtkGenericWarningMacro( "Warning: Eigenvalues are not properly sorted" );
-            }
+            const double min_eval = MIN3(w[0], w[1], w[2]);
+            if (min_eval < 0)
+              {
+                const double add_to_eval = -min_eval + VTK_EPS;
+                w[0] += add_to_eval;
+                w[1] += add_to_eval;
+                w[2] += add_to_eval;
+              }
+//            if (vtkDiffusionTensorMathematics::FixNegativeEigenvaluesMethod(w)) {
+//              vtkGenericWarningMacro( "Warning: Eigenvalues are not properly sorted" );
+//            }
             if ((w[0] < 0) || (w[1] < 0) || (w[2] < 0))
               vtkGenericWarningMacro( "Warning: Negative Eigenvalues after positivity fix" );
           } else {
@@ -960,7 +971,7 @@ double vtkDiffusionTensorMathematics::Trace(double D[3][3])
 
 double vtkDiffusionTensorMathematics::Trace(double w[3]) 
 {
-  if ((w[0] <= VTK_EPS) || (w[0] <= VTK_EPS) || (w[2] <= VTK_EPS))
+  if ((w[0] <= VTK_EPS) || (w[1] <= VTK_EPS) || (w[2] <= VTK_EPS))
   {
     return DOUBLE_NAN;
   }
