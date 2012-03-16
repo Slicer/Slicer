@@ -263,7 +263,7 @@ void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
           {
           list<point> * neighbors = new list<point>();
           get_valid_neighbors(act_point, neighbors);
-          int num_nb = neighbors->size();
+          const size_t num_nb = neighbors->size();
           if( num_nb == 0 )
             {
             //    branch ends                        -> stop, next
@@ -314,9 +314,9 @@ void SkelGraph::Extract_skel_graph(unsigned char *orig_image, int orig_dim[3])
               ++act_neighbor; i++;
               }
             // update ends of new branches with each other
-            for( int ii = 0; ii < num_nb; ii++ )
+            for( size_t ii = 0; ii < num_nb; ii++ )
               {
-              for( int jj = 0; jj < num_nb; jj++ )
+              for( size_t jj = 0; jj < num_nb; jj++ )
                 {
                 if( ii != jj )
                   {
@@ -807,7 +807,7 @@ void SkelGraph::Add_new_elem_to_todo(skel_branch * & newElem)
 {
   skel_branch new_elem;
 
-  new_elem.branchID = to_do->size() + graph->size() + 1;
+  new_elem.branchID = static_cast<int>(to_do->size() + graph->size() + 1);
   new_elem.length = 0.0;
   new_elem.end_1_neighbors = NULL;
   new_elem.end_2_neighbors = NULL;
