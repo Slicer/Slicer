@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCloseEvent>
 #include <QDebug>
+#include <QKeySequence>
 #include <QSettings>
 #include <QShowEvent>
 #include <QTimer>
@@ -109,6 +110,14 @@ void qSlicerMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   Q_Q(qSlicerMainWindow);
 
   this->Ui_qSlicerMainWindow::setupUi(mainWindow);
+
+  //----------------------------------------------------------------------------
+  // ModulePanel
+  //----------------------------------------------------------------------------
+  this->PanelDockWidget->toggleViewAction()->setText("&Module Panel");
+  this->PanelDockWidget->toggleViewAction()->setToolTip("Collapse/Expand the GUI panel and allows Slicer's viewers to occupy the entire application window");
+  this->PanelDockWidget->toggleViewAction()->setShortcut(QKeySequence("Ctrl+5"));
+  this->menuView->insertAction(this->menuWindowToolBars->menuAction(), this->PanelDockWidget->toggleViewAction());
 
   //----------------------------------------------------------------------------
   // ModuleManager
