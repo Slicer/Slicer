@@ -35,7 +35,7 @@ class DICOMDetailsPopup(object):
     self.popupPositioned = False
     self.pluginInstances = {}
 
-  def create(self,widgetType='dialog',showHeader=False):
+  def create(self,widgetType='window',showHeader=False,showPreview=True):
     """
     main window is a frame with widgets from the app
     widget repacked into it along with slicer-specific 
@@ -55,6 +55,8 @@ class DICOMDetailsPopup(object):
     self.widgetType = widgetType
     if widgetType == 'dialog':
       self.window = qt.QDialog(self.dicomApp)
+    elif widgetType == 'window':
+      self.window = qt.QWidget()
     elif widgetType == 'popup':
       self.window = ctk.ctkPopupWidget(self.dicomApp)
       self.window.orientation = 1
@@ -69,7 +71,7 @@ class DICOMDetailsPopup(object):
       self.window = qt.QFrame()
       self.dock.setWidget(self.window)
     else:
-      raise "Unknown widget type - should be dialog, dock or popup"
+      raise "Unknown widget type - should be dialog, window, dock or popup"
 
     self.window.setWindowTitle('DICOM Details')
 
@@ -99,7 +101,10 @@ class DICOMDetailsPopup(object):
 
     self.previewLayout.addWidget(self.thumbs)
     self.previewLayout.addWidget(self.widthSlider)
-    self.previewLayout.addWidget(self.preview)
+    if showPreview:
+      self.previewLayout.addWidget(self.preview)
+    else:
+      self.preview.hide()
 
     #
     # action related column (interacting with slicer)
@@ -187,7 +192,7 @@ class DICOMDetailsPopup(object):
         for serie in series:
           fileLists.append(slicer.dicomDatabase.filesForSeries(serie))
 
-    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
+    self.progress = qt.QProgressDialog(self.window)
     self.progress.modal = True
     self.progress.minimumDuration = 0
     self.progress.show()
@@ -222,7 +227,7 @@ class DICOMDetailsPopup(object):
     for plugin in self.loadablesByPlugin:
       for loadable in self.loadablesByPlugin[plugin]:
         loadableCount += 1
-    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
+    self.progress = qt.QProgressDialog(self.window)
     self.progress.minimumDuration = 0
     self.progress.show()
     self.progress.setValue(0)
@@ -310,9 +315,9 @@ class DICOMHeaderWidget(object):
   # tag names
 
   def __init__(self,parent):
-    self.widget = qt.QTableWidget(parent)
-    self.widget.setMinimumHeight(500)
-    self.widget.setMinimumWidth(300)
+    self.widget = qt.QTableWidget(parent,width=350,height=500)
+    self.widget.setMinimumHeight(height)
+    self.widget.setMinimumWidth(width)
     self.items = []
     self.setHeader(None)
 
