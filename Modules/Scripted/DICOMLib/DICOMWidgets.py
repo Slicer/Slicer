@@ -35,7 +35,7 @@ class DICOMDetailsPopup(object):
     self.popupPositioned = False
     self.pluginInstances = {}
 
-  def create(self,widgetType='window',showHeader=False,showPreview=True):
+  def create(self,widgetType='window',showHeader=False,showPreview=False):
     """
     main window is a frame with widgets from the app
     widget repacked into it along with slicer-specific 
@@ -138,7 +138,6 @@ class DICOMDetailsPopup(object):
       self.actionLayout.addWidget(self.browserPersistentButton)
       self.browserPersistentButton.connect('stateChanged(int)', self.setBrowserPersistence)
 
-    self.actionLayout.addStretch(1)
 
     #
     # header related column (more details about the selected file)
@@ -148,7 +147,6 @@ class DICOMDetailsPopup(object):
       self.layout.addLayout(self.headerLayout,selectionRow,2)
       self.header = DICOMHeaderWidget(self.window)
       self.headerLayout.addWidget(self.header.widget)
-      self.headerLayout.addStretch(1)
 
   def open(self):
     self.window.show()
@@ -256,7 +254,7 @@ class DICOMLoadableTable(object):
   the given dicom files
   """
 
-  def __init__(self,parent, width=350,height=500):
+  def __init__(self,parent, width=350,height=300):
     self.widget = qt.QTableWidget(parent)
     self.widget.setMinimumHeight(height)
     self.widget.setMinimumWidth(width)
@@ -315,7 +313,7 @@ class DICOMHeaderWidget(object):
   # tag names
 
   def __init__(self,parent):
-    self.widget = qt.QTableWidget(parent,width=350,height=500)
+    self.widget = qt.QTableWidget(parent,width=350,height=300)
     self.widget.setMinimumHeight(height)
     self.widget.setMinimumWidth(width)
     self.items = []
