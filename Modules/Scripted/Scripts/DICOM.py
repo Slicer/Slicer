@@ -180,6 +180,8 @@ class DICOMWidget:
       self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
       self.loadButton = qt.QPushButton('Load to Slicer')
       self.previewLabel = qt.QLabel()
+
+      self.tree = self.detailsPopup.tree
       
       self.showBrowser = qt.QPushButton('Show DICOM Browser')
       self.dicomFrame.layout().addWidget(self.showBrowser)
@@ -200,9 +202,9 @@ class DICOMWidget:
       self.exportButton.enabled = False 
       userFrame.layout().addWidget(self.exportButton)
       self.exportButton.connect('clicked()', self.onExportClicked)
+      self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
 
     # make the tree view a bit bigger
-    self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
     self.tree.setMinimumHeight(250)
 
     if not slicer.dicomDatabase:
