@@ -45,6 +45,17 @@ set(ep_base        "${CMAKE_BINARY_DIR}")
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
+## On linux SimpleITK requires that ITK be built with -fPIC to allow static libraries to be used.
+if(Slicer_USE_SimpleITK)
+  if ( UNIX AND NOT APPLE )
+    if ( NOT ${ep_common_cxx_flags} MATCHES "-fPIC")
+      set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} -fPIC")
+      message ( WARNING "SimpleITK wrapping requires CMAKE_CXX_FLAGS (or equivalent) to include -fPIC and ITK built with this flag" )
+      message ( WARNING "USING CXX_FLAGS = ${ep_common_cxx_flags}")
+    endif()
+  endif()
+endif()
+
 set(ep_common_compiler_args
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

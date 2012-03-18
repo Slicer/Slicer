@@ -43,12 +43,6 @@ configure_file(SuperBuild/SimpleITK_install_step.cmake.in
 
 set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
 
-if ( UNIX AND NOT APPLE )
-  if ( NOT ${CMAKE_CXX_FLAGS} MATCHES "-fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    message ( WARNING "SimpleITK wrapping requires CMAKE_CXX_FLAGS (or equivalent) to include -fPIC and ITK built with this flag" )
-  endif()
-endif()
 
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
@@ -59,7 +53,7 @@ ExternalProject_add(SimpleITK
   GIT_TAG 4f3e84946cfa3fa36d90b410e3ea09e2aba5107e
   UPDATE_COMMAND ""
   CMAKE_ARGS
-    ${ep_common_args}
+  ${ep_common_compiler_args}
   # SimpleITK does not work with shared libs turned on
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DCMAKE_BUILD_TYPE:STRING=Release
@@ -77,7 +71,6 @@ ExternalProject_add(SimpleITK
   -DWRAP_R:BOOL=OFF
   ${SIMPLEITK_PYTHON_ARGS}
   -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
-  -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
   #
   INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
   #

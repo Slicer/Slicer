@@ -1,11 +1,15 @@
 ## This file performs the necessary steps to install SimpleITK into the python environment of Slicer.
 
-execute_process(
-  COMMAND @slicer_PYTHON_EXECUTABLE@ -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
-  OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_DIR
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+## This is finding the wrong path on linux that has python 2.6 installed
+## execute_process(
+##   COMMAND @slicer_PYTHON_EXECUTABLE@ -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"
+##   OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_DIR
+##   OUTPUT_STRIP_TRAILING_WHITESPACE
+## )
 
+## Hardcode the path
+set ( PYTHON_SITE_PACKAGES_DIR ${CMAKE_CURRENT_BINARY_DIR}/python-build/lib/python2.6/site-packages)
+message(INFO "Installing SimpleITK python package for @slicer_PYTHON_EXECUTABLE@ in ${PYTHON_SITE_PACKAGES_DIR}")
 set(SimpleITK_SITE_PACKAGE_DIR ${PYTHON_SITE_PACKAGES_DIR})
 
 make_directory( ${SimpleITK_SITE_PACKAGE_DIR} )
