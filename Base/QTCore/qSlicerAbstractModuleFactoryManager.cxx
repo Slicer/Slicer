@@ -281,7 +281,13 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     return;
     }
   QString registeredModuleName = moduleFactory->registerFileItem(file);
-  Q_ASSERT(registeredModuleName == moduleName);
+  if (registeredModuleName != moduleName)
+    {
+    //qDebug() << "Ignore module" << moduleName;
+    d->IgnoredModules[moduleName] = file;
+    emit moduleIgnored(moduleName);
+    return;
+    }
   d->RegisteredModules[moduleName] = moduleFactory;
   if (!dontEmitSignal)
     {
