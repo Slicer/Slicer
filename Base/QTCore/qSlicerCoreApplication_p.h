@@ -98,6 +98,10 @@ public:
   /// Set TCL_LIBRARY, TK_LIBRARY and TCLLIBPATH environment variable is not already set.
   void setTclEnvironmentVariables();
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  QString defaultExtensionsInstallPathForMacOSX()const;
+#endif
+
   /// Convenient function used to create a \a path.
   /// If it fails, print an error message using given \a description
   bool createDirectory(const QString& path, const QString& description) const;

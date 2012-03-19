@@ -250,6 +250,12 @@ void qSlicerCoreApplicationPrivate::init()
   model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
   q->setExtensionManagerModel(model);
   model->updateModel();
+
+# ifdef Q_OS_MAC
+  q->addLibraryPath(this->defaultExtensionsInstallPathForMacOSX());
+  q->setExtensionsInstallPath(this->defaultExtensionsInstallPathForMacOSX());
+# endif
+
 #endif
 }
 
@@ -542,6 +548,26 @@ void qSlicerCoreApplicationPrivate::setTclEnvironmentVariables()
     }
 #endif
 }
+
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()const
+{
+  Q_Q(const qSlicerCoreApplication);
+  if (q->isInstalled())
+    {
+    QDir slicerHomeDir(q->slicerHome());
+    slicerHomeDir.cdUp();
+    slicerHomeDir.cd("Contents");
+    slicerHomeDir.cd(Slicer_BUNDLE_EXTENSIONS_DIRNAME);
+    return slicerHomeDir.absolutePath();
+    }
+  else
+    {
+    return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
+    }
+}
+#endif
 
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplicationPrivate::createDirectory(const QString& path, const QString& description) const

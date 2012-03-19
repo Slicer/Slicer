@@ -67,6 +67,9 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   // Default values
   this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
   this->ExtensionsInstallPathButton->setDirectory(coreApp->defaultExtensionsInstallPath());
+#ifdef Q_OS_MAC
+  this->ExtensionsInstallPathButton->setDisabled(true);
+#endif
 
   // Register settings
   q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
