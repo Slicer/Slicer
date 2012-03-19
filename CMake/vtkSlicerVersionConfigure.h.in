@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -18,6 +18,10 @@
 #define Slicer_VERSION_PATCH @Slicer_VERSION_PATCH@
 #define Slicer_VERSION "@Slicer_VERSION@"
 #define Slicer_VERSION_FULL "@Slicer_VERSION_FULL@"
+
+#define Slicer_OS_LINUX_NAME "@Slicer_OS_LINUX_NAME@"
+#define Slicer_OS_MAC_NAME "@Slicer_OS_MAC_NAME@"
+#define Slicer_OS_WIN_NAME "@Slicer_OS_WIN_NAME@"
 
 #define Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@"
 #define Slicer_PLATFORM "@Slicer_PLATFORM@"

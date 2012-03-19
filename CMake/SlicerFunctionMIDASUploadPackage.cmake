@@ -46,9 +46,6 @@ function(SlicerFunctionMIDASUploadPackage)
     endif()
   endforeach()
 
-  if(NOT COMMAND SlicerFunctionMIDASLogin)
-    include(SlicerFunctionMIDASLogin)
-  endif()
   SlicerFunctionMIDASLogin(
     SERVER_URL ${MY_SERVER_URL}
     SERVER_EMAIL ${MY_SERVER_EMAIL}
@@ -107,9 +104,9 @@ endfunction()
 if(TEST_SlicerFunctionMIDASUploadPackageTest)
 
   function(SlicerFunctionMIDASUploadPackageTest)
-    include(${CMAKE_CURRENT_LIST_DIR}/SlicerFunctionMIDASLogin.cmake)
+    set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
-    include(${CMAKE_CURRENT_LIST_DIR}/SlicerFunctionToday.cmake)
+    include(SlicerFunctionToday)
     TODAY(Test_TESTDATE)
 
     # Sanity check
@@ -145,9 +142,11 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
     set(source_revision_101_nightly_release "4.0.0")
     set(source_revision_104_experimental_release "4.0.1")
     set(source_revision_106_nightly_release "4.2")
-
+    
+    include(SlicerBlockOperatingSystemNames)
+    
     foreach(submission_type "experimental" "nightly")
-      foreach(operating_system "linux" "macosx" "win")
+      foreach(operating_system "${Slicer_OS_LINUX_NAME}" "${Slicer_OS_MAC_NAME}" "${Slicer_OS_WIN_NAME}")
         foreach(architecture "i386" "amd64")
           foreach(source_revision ${source_revisions})
 

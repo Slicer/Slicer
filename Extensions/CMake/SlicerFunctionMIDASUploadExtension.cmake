@@ -167,8 +167,10 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
       "ExtensionA^^git^^git://github.com/nowhere/ExtensionA.git^^83352cd1c5^^Foo^^0"
       "ExtensionB^^git^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar^^1")
 
+    include(SlicerBlockOperatingSystemNames)
+    
     foreach(submission_type "experimental" "nightly")
-      foreach(operating_system "linux" "macosx" "win")
+      foreach(operating_system "${Slicer_OS_LINUX_NAME}" "${Slicer_OS_MAC_NAME}" "${Slicer_OS_WIN_NAME}")
         foreach(architecture "i386" "amd64")
           foreach(slicer_revision ${slicer_revisions})
             foreach(extension_info ${extension_infos})

@@ -27,6 +27,8 @@
 #  <var-prefix>_PLATFORM - which is on the this value: linux, macosx, win
 #  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
 
+include(${CMAKE_CURRENT_LIST_DIR}/SlicerBlockOperatingSystemNames.cmake)
+
 macro(SlicerMacroGetPlatformArchitectureBitness)
   set(options)
   set(oneValueArgs VAR_PREFIX)
@@ -48,13 +50,13 @@ macro(SlicerMacroGetPlatformArchitectureBitness)
   endif()
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(${MY_VAR_PREFIX}_PLATFORM "win")
+    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_WIN_NAME}")
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(${MY_VAR_PREFIX}_PLATFORM "linux")
+    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_LINUX_NAME}")
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(${MY_VAR_PREFIX}_PLATFORM "macosx")
+    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_MAC_NAME}")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
       set(${MY_VAR_PREFIX}_ARCHITECTURE "ppc")
     endif()
