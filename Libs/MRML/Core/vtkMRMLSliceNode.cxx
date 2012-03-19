@@ -704,48 +704,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
       }
     else if (!strcmp(attName, "layoutName")) 
       {
-      // At version 18173, we started numbering nodes starting at 1
-      // instead of 0 and started number viewers starting at 1 instead
-      // of 0. Apply this mapping to layouts called Compare#
-      long versionNumber = 0;
-      if (this->GetScene()->GetLastLoadedVersion())
-        {
-        std::string version(this->GetScene()->GetLastLoadedVersion());
-        std::stringstream ss;
-        ss << version;
-        ss >> versionNumber;
-        }
-
-      if (versionNumber >= 18173)
-        {
-        this->SetLayoutName( attValue );
-        }
-      else
-        {
-        if (strncmp(attValue, "Compare", 7) == 0)
-          {
-          // need to remap the layout names AND all references...
-          std::string name(attValue);
-          std::string number(name.substr(7, name.size()-7));
-          std::stringstream ss;
-          ss << number;
-          long value;
-          ss >> value;
-          
-          // add 1.
-          value++;
-          
-          std::stringstream ss2;
-          ss2 << name.substr(0,7) << value;
-
-          this->SetLayoutName( ss2.str().c_str() );
-          }
-        else
-          {
-          // Not a compare view, just set the LayoutName
-          this->SetLayoutName( attValue );
-          }
-        }
+      this->SetLayoutName( attValue );
       }
    else if (!strcmp(attName, "dimensions")) 
       {
