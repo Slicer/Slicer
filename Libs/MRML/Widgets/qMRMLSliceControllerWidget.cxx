@@ -597,6 +597,7 @@ void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
 
   this->actionLabelMapVisibility->setEnabled(enableVisibility && hasLabelMap);
   this->LabelMapOpacitySlider->setEnabled(enableVisibility && hasLabelMap);
+  this->actionLabelMapOutline->setEnabled(enableVisibility && hasLabelMap);
 }
 
 // --------------------------------------------------------------------------
