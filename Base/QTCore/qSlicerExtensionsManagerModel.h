@@ -50,6 +50,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerExtensionsManagerModel : public QObject
   Q_PROPERTY(QString slicerRevision READ slicerRevision WRITE setSlicerRevision)
   Q_PROPERTY(QString slicerOs READ slicerOs WRITE setSlicerOs)
   Q_PROPERTY(QString slicerArch READ slicerArch WRITE setSlicerArch)
+  Q_PROPERTY(QString slicerVersion READ slicerVersion WRITE setSlicerVersion)
 public:
   /// Superclass typedef
   typedef QObject Superclass;
@@ -119,6 +120,9 @@ public:
   void setSlicerArch(const QString& arch);
 
   void setSlicerRequirements(const QString& revision, const QString& os, const QString& arch);
+
+  QString slicerVersion()const;
+  void setSlicerVersion(const QString& version);
 
   Q_INVOKABLE void imcompatibleExtensions() const;
 

@@ -40,6 +40,7 @@
 // QtCore includes
 #include "qSlicerExtensionsManagerModel.h"
 #include "vtkSlicerConfigure.h"
+#include "vtkSlicerVersionConfigure.h"
 
 // Logic includes
 #include "vtkArchive.h"
@@ -161,6 +162,8 @@ public:
   QString SlicerOs;
   QString SlicerArch;
 
+  QString SlicerVersion;
+
   QStandardItemModelWithRole Model;
 };
 
@@ -174,6 +177,8 @@ qSlicerExtensionsManagerModelPrivate::qSlicerExtensionsManagerModelPrivate(qSlic
 void qSlicerExtensionsManagerModelPrivate::init()
 {
   Q_Q(qSlicerExtensionsManagerModel);
+
+  this->SlicerVersion = Slicer_VERSION;
 
   qRegisterMetaType<ExtensionMetadataType>("ExtensionMetadataType");
 
@@ -460,19 +465,29 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
 QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QString& extensionName)const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->SlicerVersion.isEmpty())
+    {
+    return QStringList();
+    }
   QString path = q->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
-                   << path + "/" Slicer_CLIMODULES_LIB_DIR
-                   << path + "/" Slicer_QTLOADABLEMODULES_LIB_DIR);
+                   << path + "/" + QString(Slicer_CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                   << path + "/" + QString(Slicer_QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                   );
 }
 
 // --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& extensionName)const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->SlicerVersion.isEmpty())
+    {
+    return QStringList();
+    }
   QString path = q->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
-                   << path + "/" Slicer_CLIMODULES_BIN_DIR);
+                   << path + "/" + QString(Slicer_CLIMODULES_BIN_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                   );
 }
 
 #ifdef Slicer_USE_PYTHONQT
@@ -480,10 +495,15 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionPaths(const QString& 
 QStringList qSlicerExtensionsManagerModelPrivate::extensionPythonPaths(const QString& extensionName)const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
+  if (this->SlicerVersion.isEmpty())
+    {
+    return QStringList();
+    }
   QString path = q->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
-                          << path + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR
-                          << path + "/" Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR);
+                          << path + "/" + QString(Slicer_QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                          << path + "/" + QString(Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                          );
 }
 #endif
 
@@ -588,13 +608,14 @@ QString qSlicerExtensionsManagerModel::extensionInstallPath(const QString& exten
 // --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& extensionName)const
 {
+  Q_D(const qSlicerExtensionsManagerModel);
   QString path = this->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
                    << path + "/" Slicer_CLIMODULES_SUBDIR // Search for 'Slicer_INSTALL_CLIMODULES_BIN_DIR' in Slicer/CMakeLists.txt
-                   << path + "/" Slicer_CLIMODULES_LIB_DIR
-                   << path + "/" Slicer_QTLOADABLEMODULES_LIB_DIR
+                   << path + "/" + QString(Slicer_CLIMODULES_LIB_DIR).replace(Slicer_VERSION, d->SlicerVersion)
+                   << path + "/" + QString(Slicer_QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, d->SlicerVersion)
 #ifdef Slicer_USE_PYTHONQT
-                   << path + "/" Slicer_QTSCRIPTEDMODULES_LIB_DIR
+                   << path + "/" + QString(Slicer_QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, d->SlicerVersion)
 #endif
                    );
 }
@@ -1000,6 +1021,10 @@ void qSlicerExtensionsManagerModel::imcompatibleExtensions() const
       }
     }
 }
+
+// --------------------------------------------------------------------------
+CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerVersion, SlicerVersion)
+CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString& , setSlicerVersion, SlicerVersion)
 
 // --------------------------------------------------------------------------
 QString qSlicerExtensionsManagerModel::isExtensionCompatible(
