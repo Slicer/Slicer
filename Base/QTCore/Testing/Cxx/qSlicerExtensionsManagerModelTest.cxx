@@ -22,8 +22,6 @@ class qSlicerExtensionsManagerModelTester: public QObject
 
   void dumpExtensionMetatype(const char * varname, const ExtensionMetadataType& extensionMetadata);
 
-  QStringList serverKeysToIgnore()const;
-
   ExtensionMetadataType extensionMetadata(int extensionId, bool filtered = false)const;
   ExtensionMetadataType extensionMetadata0(bool filtered = false)const;
   ExtensionMetadataType extensionMetadata1(bool filtered = false)const;
@@ -58,6 +56,9 @@ private slots:
 
   void testServerUrl();
   void testServerUrl_data();
+
+  void testServerKeysToIgnore();
+  void testServerKeysToIgnore_data();
 
   void testRetrieveExtensionMetadata();
   void testRetrieveExtensionMetadata_data();
@@ -238,14 +239,6 @@ void qSlicerExtensionsManagerModelTester::dumpExtensionMetatype(
 }
 
 // ----------------------------------------------------------------------------
-QStringList qSlicerExtensionsManagerModelTester::serverKeysToIgnore()const
-{
-  return QStringList()
-      << "item_id" << "extension_id" << "bitstream_id"
-      << "submissiontype" << "codebase" << "package"
-      << "size" << "date_creation";
-}
-
 // ----------------------------------------------------------------------------
 qSlicerExtensionsManagerModelTester::ExtensionMetadataType
 qSlicerExtensionsManagerModelTester::extensionMetadata(int extensionId, bool filtered)const
@@ -288,7 +281,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata0(bool filtered)const
   allMetadata.insert("slicer_revision", "19354");
   allMetadata.insert("submissiontype", "experimental");
 
-  QStringList keysToIgnore(this->serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
     {
@@ -333,7 +326,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata1(bool filtered)const
   allMetadata.insert("slicer_revision", "19354");
   allMetadata.insert("submissiontype", "experimental");
 
-  QStringList keysToIgnore(this->serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
     {
@@ -378,7 +371,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata2(bool filtered)const
   allMetadata.insert("slicer_revision", "19354");
   allMetadata.insert("submissiontype", "experimental");
 
-  QStringList keysToIgnore(this->serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
     {
@@ -423,7 +416,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata3(bool filtered)const
   allMetadata.insert("slicer_revision", "19354");
   allMetadata.insert("submissiontype", "experimental");
 
-  QStringList keysToIgnore(this->serverKeysToIgnore());
+  QStringList keysToIgnore(qSlicerExtensionsManagerModel::serverKeysToIgnore());
   QVariantMap metadata;
   foreach(const QString& key, allMetadata.keys())
     {
@@ -440,8 +433,7 @@ qSlicerExtensionsManagerModelTester::extensionMetadata3(bool filtered)const
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::initTestCase()
 {
-   QVERIFY(QDir::temp().exists());
-   QCOMPARE(qSlicerExtensionsManagerModel::serverKeysToIgnore(), this->serverKeysToIgnore());
+  QVERIFY(QDir::temp().exists());
 
   this->TemporaryDirName =
       QString("qSlicerExtensionsManagerModelTester.%1").arg(QTime::currentTime().toString("hhmmsszzz"));
@@ -536,6 +528,24 @@ void qSlicerExtensionsManagerModelTester::testServerUrl_data()
   QTest::newRow("localhost") << "http://localhost/midas"
                              << "http://localhost/midas/slicerpackages"
                              << "http://localhost/midas/slicerappstore";
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore()
+{
+  QFETCH(QStringList, expectedServerKeysToIgnore);
+  QCOMPARE(qSlicerExtensionsManagerModel::serverKeysToIgnore(), expectedServerKeysToIgnore);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
+{
+  QTest::addColumn<QStringList>("expectedServerKeysToIgnore");
+
+  QTest::newRow("0") << (QStringList()
+                         << "item_id" << "extension_id" << "bitstream_id"
+                         << "submissiontype" << "codebase" << "package"
+                         << "size" << "date_creation");
 }
 
 // ----------------------------------------------------------------------------
