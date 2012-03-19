@@ -881,7 +881,7 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
 
   QString extensionDescriptionFile = this->extensionDescriptionFile(extensionName);
 
-  if (!Self::extractExtensionArchive(extensionName, archiveFile, this->extensionsInstallPath()))
+  if (!this->extractExtensionArchive(extensionName, archiveFile, this->extensionsInstallPath()))
     {
     return false;
     }
@@ -1150,22 +1150,15 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   QDir extensionsDir(destinationPath);
 
-  // Make sure extension output directory doesn't exist
   ctk::removeDirRecursively(extensionsDir.filePath(extensionName));
 
   // Make extension output directory
   extensionsDir.mkdir(extensionName);
 
-  // Extract into <extensionsPath>/<extensionName>/<topLevelArchiveDir>/
+  // Extract into <extensionsPath>/<extensionName>/<archiveBaseName>/
   extensionsDir.cd(extensionName);
   QString archiveBaseName = Pimpl::extractArchive(extensionsDir, archiveFile);
   extensionsDir.cdUp();
-
-
-
-
-
-
 
   // Rename <extensionName>/<archiveBaseName> into <extensionName>
   // => Such operation can't be done directly, we need intermediate steps ...
@@ -1174,8 +1167,13 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
   QString srcPath(extensionsDir.absolutePath() + "/" + extensionName + "/" + archiveBaseName);
   QString intermediatePath(extensionsDir.absolutePath() + "/" + extensionName + "-XXXXXX");
 
-  //  Step1: <extensionName>/<archiveBaseName> -> <extensionName>-XXXXXX
-  if (!ctk::copyDirRecursively(srcPath, intermediatePath))
+  //  Step1: <extensionName>/<archiveBaseName>[/<Slicer_BUNDLE_LOCATION>/<Slicer_BUNDLE_EXTENSIONS_DIRNAME>/<extensionName>] -> <extensionName>-XXXXXX
+  QString srcPathToCopy(srcPath);
+  if (this->slicerOs() == Slicer_OS_MAC_NAME)
+    {
+    srcPathToCopy = srcPathToCopy + "/" Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME "/" + extensionName;
+    }
+  if (!ctk::copyDirRecursively(srcPathToCopy, intermediatePath))
     {
     return false;
     }

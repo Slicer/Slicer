@@ -157,7 +157,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QVERIFY(model != 0);
   QVERIFY(extensionId >= 0 && extensionId <= 3);
 
-  QString inputArchiveFile = QString(":/extension-%1.tar.gz").arg(extensionId);
+  QString inputArchiveFile = QString(":/extension-linux-%1.tar.gz").arg(extensionId);
   QString copiedArchiveFile = tmp + "/" + QFileInfo(inputArchiveFile).fileName();
   if (!QFile::exists(copiedArchiveFile))
     {
@@ -165,7 +165,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
              QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toLatin1());
     }
 
-  QVERIFY2(this->prepareJson(QString(":/extension-%1.json").arg(extensionId)),
+  QVERIFY2(this->prepareJson(QString(":/extension-linux-%1.json").arg(extensionId)),
            QString("Failed to prepare json for extensionId: %1").arg(extensionId).toLatin1());
   ExtensionMetadataType metadata = model->retrieveExtensionMetadata(QString("%1").arg(extensionId));
   QVERIFY(metadata.count() > 0);
@@ -477,10 +477,10 @@ void qSlicerExtensionsManagerModelTester::cleanupTestCase()
 {
   if (this->Tmp != QDir::current() && this->Tmp.exists())
     {
-    ctk::removeDirRecursively(this->Tmp.absolutePath());
+    //ctk::removeDirRecursively(this->Tmp.absolutePath());
     this->Tmp = QDir();
     }
-  QVERIFY(QFile::remove(QSettings().fileName()));
+  QFile::remove(QSettings().fileName());
 }
 
 // ----------------------------------------------------------------------------
@@ -565,7 +565,7 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata_data()
   QTest::addColumn<QString>("jsonFile");
   QTest::addColumn<QVariantMap>("expectedResult");
 
-  QTest::newRow("0") << "0" << QString(":/extension-0.json") << this->extensionMetadata0();
+  QTest::newRow("0") << "0" << QString(":/extension-linux-0.json") << this->extensionMetadata0();
 }
 
 // ----------------------------------------------------------------------------
@@ -594,18 +594,27 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
 
   QFETCH(QString, inputExtensionName);
   QFETCH(QString, inputArchiveFile);
+  QFETCH(QStringList, expectedFiles);
+  QFETCH(QString, operatingSystem);
+
+  qSlicerExtensionsManagerModel model;
+  this->initializeModel(&model);
+  model.setSlicerOs(operatingSystem);
 
   QString copiedArchiveFile = this->Tmp.filePath(QFileInfo(inputArchiveFile).fileName());
   QVERIFY(QFile::copy(inputArchiveFile, copiedArchiveFile));
 
-  QVERIFY(qSlicerExtensionsManagerModel::extractExtensionArchive(
+  QVERIFY(model.extractExtensionArchive(
         inputExtensionName, copiedArchiveFile, this->Tmp.absolutePath()));
 
-  QFETCH(QStringList, expectedFiles);
   bool expectedFilesExist = true;
   foreach(const QString& expectedFile, expectedFiles)
     {
     expectedFilesExist = expectedFilesExist && QFile::exists(this->Tmp.filePath(expectedFile));
+    if(!expectedFilesExist)
+      {
+      qCritical() << "Missing file" << expectedFile;
+      }
     }
   QVERIFY(expectedFilesExist);
 }
@@ -616,12 +625,42 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
   QTest::addColumn<QString>("inputExtensionName");
   QTest::addColumn<QString>("inputArchiveFile");
   QTest::addColumn<QStringList>("expectedFiles");
-
-  QStringList expectedFiles0;
-  expectedFiles0 << "CLIExtensionTemplate";
-  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/CLIExtensionTemplate";
-  expectedFiles0 << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/libCLIExtensionTemplateLib.so";
-  QTest::newRow("0") << "CLIExtensionTemplate" << ":/extension-0.tar.gz" << expectedFiles0;
+  QTest::addColumn<QString>("operatingSystem");
+  {
+    QStringList expectedFiles;
+    expectedFiles << "CLIExtensionTemplate";
+    expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/CLIExtensionTemplate";
+    expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/libCLIExtensionTemplateLib.so";
+    QTest::newRow("0") << "CLIExtensionTemplate"
+                       << ":/extension-linux-0.tar.gz"
+                       << expectedFiles
+                       << "linux";
+  }
+  {
+    QStringList expectedFiles;
+    expectedFiles << "CLIExtensionTemplate";
+    expectedFiles << "CLIExtensionTemplate/cli-modules/CLIExtensionTemplate";
+    expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.1/cli-modules/libCLIExtensionTemplateLib.dylib";
+    QTest::newRow("1") << "CLIExtensionTemplate"
+                       << ":/extension-macosx-0.tar.gz"
+                       << expectedFiles
+                       << Slicer_OS_MAC_NAME;
+  }
+  {
+    QStringList expectedFiles;
+    expectedFiles << "LoadableExtensionTemplate";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/libqSlicerLoadableExtensionTemplateModule.dylib";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/libvtkSlicerLoadableExtensionTemplateModuleLogic.dylib";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/libvtkSlicerLoadableExtensionTemplateModuleLogicPythonD.dylib";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerLoadableExtensionTemplateModuleLogic.py";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerLoadableExtensionTemplateModuleLogic.pyc";
+    expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/vtkSlicerLoadableExtensionTemplateModuleLogicPython.so";
+    QTest::newRow("2") << "LoadableExtensionTemplate"
+                       << ":/extension-macosx-1.tar.gz"
+                       << expectedFiles
+                       << Slicer_OS_MAC_NAME;
+  }
+  // TODO Add windows case
 }
 
 // ----------------------------------------------------------------------------

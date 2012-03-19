@@ -142,6 +142,11 @@ public:
                                     const ExtensionMetadataType &extensionMetadata,
                                     const QString &archiveFile);
 
+  /// \brief Extract \a archiveFile into \a destinationPath/extensionName directory
+  Q_INVOKABLE bool extractExtensionArchive(const QString& extensionName,
+                                           const QString& archiveFile,
+                                           const QString &destinationPath);
+
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
@@ -154,10 +159,6 @@ public:
 
   static void writeArrayValues(QSettings& settings, const QStringList& values,
                                const QString& arrayName, const QString fieldName);
-
-  static bool extractExtensionArchive(const QString& extensionName,
-                                      const QString& archiveFile,
-                                      const QString &destinationPath);
 
   static bool writeExtensionDescriptionFile(const QString& file,
                                             const ExtensionMetadataType& metadata);
