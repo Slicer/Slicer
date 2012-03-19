@@ -1,9 +1,9 @@
-set(KIT Annotations)
+set(KIT qSlicer${qt_module_name}Module)
 
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
-SlicerMacroConfigureGenericCxxModuleTests(${KIT} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
+SlicerMacroConfigureGenericCxxModuleTests(${qt_module_name} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -49,21 +49,15 @@ list(APPEND Tests ${KIT_TEST_SRCS})
 set(TestsToRun ${Tests})
 list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
-set(LIBRARY_NAME ${PROJECT_NAME})
-
 add_executable(${KIT}CxxTests ${Tests})
 
 set(target_libraries
   qSlicerAnnotationsModuleWidgets
   )
 
-target_link_libraries(${KIT}CxxTests ${lib_name}
+target_link_libraries(${KIT}CxxTests ${KIT}
   ${target_libraries}
   )
-
-#macro(SIMPLE_TEST  TESTNAME)
-#  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-#endmacro()
 
 #SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
 #SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )

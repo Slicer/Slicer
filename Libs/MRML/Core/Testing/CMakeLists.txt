@@ -92,17 +92,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-set(TestsToRun ${Tests})
-list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
-set(LIBRARY_NAME ${PROJECT_NAME})
-
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
-target_link_libraries(${KIT}CxxTests ${lib_name})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-endmacro()
+target_link_libraries(${KIT}CxxTests ${KIT})
 
 SIMPLE_TEST( vtkMRMLArrayPlotNodeTest1 )
 SIMPLE_TEST( vtkMRMLBSplineTransformNodeTest1 )

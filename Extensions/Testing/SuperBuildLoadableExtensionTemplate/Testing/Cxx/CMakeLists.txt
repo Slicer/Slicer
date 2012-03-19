@@ -1,3 +1,5 @@
+set(KIT qSlicer${EXTENSION_NAME}Module)
+
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
@@ -12,20 +14,11 @@ create_test_sourcelist(Tests ${EXTENSION_NAME}CxxTests.cxx
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 list(APPEND Tests ${KIT_TEST_SRCS})
 
-#set(TestsToRun ${Tests})
-#list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
-set(LIBRARY_NAME qSlicer${EXTENSION_NAME}Module)
-
-add_executable(${EXTENSION_NAME}CxxTests ${Tests})
-target_link_libraries(${EXTENSION_NAME}CxxTests ${lib_name})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${EXTENSION_NAME}CxxTests> ${TESTNAME} ${ARGN})
-endmacro()
+add_executable(${KIT}CxxTests ${Tests})
+target_link_libraries(${KIT}CxxTests ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 
-# Using SIMPLE_TEST(), you coudl add your test after this line.
+# Using SIMPLE_TEST(), you could add your test after this line.

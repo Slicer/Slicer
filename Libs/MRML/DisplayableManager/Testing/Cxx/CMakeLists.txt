@@ -1,4 +1,4 @@
-set(KIT MRMLDisplayableManager)
+set(KIT ${PROJECT_NAME})
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -32,16 +32,11 @@ VTK_MAKE_INSTANTIATOR3("${PROJECT_NAME}TestInstantiator"
   ${PROJECT_BINARY_DIR}
   "")
 
-set(LIBRARY_NAME ${PROJECT_NAME})
 add_executable(${KIT}CxxTests
   ${Tests}
   ${DisplayableManagerTest_SRCS}
   ${DisplayableManagerInstantiatorTest_SRCS})
-target_link_libraries(${KIT}CxxTests ${lib_name})
-
-#macro(SIMPLE_TEST TESTNAME)
-#  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-#endmacro()
+target_link_libraries(${KIT}CxxTests ${KIT})
 
 #
 # Add all the tests

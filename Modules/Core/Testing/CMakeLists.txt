@@ -1,4 +1,4 @@
-set(KIT QTCoreModules)
+set(KIT ${PROJECT_NAME})
 
 set(KIT_TEST_SRCS)
 set(KIT_TEST_NAMES)
@@ -19,20 +19,11 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 list(APPEND Tests ${KIT_TEST_SRCS})
 
-#set(TestsToRun ${Tests})
-#list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${PROJECT_NAME})
-set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${LIBRARY_NAME})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN}
-    )
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${LIBRARY_NAME})
-endmacro()
+target_link_libraries(${KIT}CxxTests ${KIT})
+set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )

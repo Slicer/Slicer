@@ -6,8 +6,7 @@ set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
 set(CLP MultiResolutionAffineRegistration)
 
-create_test_sourcelist(Tests
-  ${CLP}Tests.cxx
+create_test_sourcelist(Tests ${CLP}CxxTests.cxx
   FixedRotationSimilarity3DTransformTest.cxx
   EulerSimilarity3DTransformTest.cxx
   EulerAnisotropicSimilarity3DTransformTest.cxx
@@ -18,14 +17,9 @@ create_test_sourcelist(Tests
   CountSamplesTest.cxx
   )
 
-add_executable(${CLP}Tests ${Tests})
-target_link_libraries(${CLP}Tests ${CLP}Lib)
-set_target_properties(${CLP}Tests PROPERTIES LABELS ${CLP})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Tests> ${TESTNAME} ${ARGN})
-  set_property(TEST ${TESTNAME} PROPERTY LABELS ${CLP})
-endmacro()
+add_executable(${CLP}CxxTests ${Tests})
+target_link_libraries(${CLP}CxxTests ${CLP}Lib)
+set_target_properties(${CLP}CxxTests PROPERTIES LABELS ${CLP})
 
 SIMPLE_TEST( FixedRotationSimilarity3DTransformTest )
 SIMPLE_TEST( EulerSimilarity3DTransformTest )

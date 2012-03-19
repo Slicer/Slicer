@@ -9,9 +9,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-set(TestsToRun ${Tests})
-list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
 set(LIBRARY_NAME ${lib_name})
 
 add_executable(${KIT}CxxTests ${Tests})
@@ -20,10 +17,6 @@ target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
 #
 # Convenient macros
 #
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-endmacro()
 
 set(Models_TESTING_DATA_SOURCE_DIR ${MRMLCore_SOURCE_DIR}/Testing)
 macro(SCENE_TEST TESTNAME SCENEFILENAME)

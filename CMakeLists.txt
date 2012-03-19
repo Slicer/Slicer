@@ -488,6 +488,7 @@ if(BUILD_TESTING)
   set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
   set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
+  include(SlicerMacroSimpleTest)
   include(SlicerMacroPythonTesting)
   include(SlicerMacroConfigureGenericCxxModuleTests)
   include(SlicerMacroConfigureGenericPythonModuleTests)

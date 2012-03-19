@@ -9,9 +9,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 list(APPEND Tests ${KIT_TEST_SRCS})
 
-#set(TestsToRun ${Tests})
-#list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
 # Additional directories to include
 include_directories(
   ${vtkSlicerVolumesModuleLogic_SOURCE_DIR}
@@ -26,10 +23,6 @@ set(test_target_libraries
 
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${test_target_libraries})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-endmacro()
 
 set(DTI_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 

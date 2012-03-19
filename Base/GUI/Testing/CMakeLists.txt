@@ -8,9 +8,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-set(TestsToRun ${Tests})
-list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 # --------------------------------------------------------------------------

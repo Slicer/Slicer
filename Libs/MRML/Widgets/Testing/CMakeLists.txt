@@ -78,19 +78,10 @@ QT4_GENERATE_MOCS(
   qMRMLSliceControllerWidgetTest.cxx
   )
 
-set(TestsToRun ${Tests})
-list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
-
-set(LIBRARY_NAME ${PROJECT_NAME})
-
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
-target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
-
-macro(SIMPLE_TEST TESTNAME)
-  add_test(NAME ${TESTNAME} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${TESTNAME} ${ARGN})
-endmacro()
+target_link_libraries(${KIT}CxxTests ${KIT})
 
 macro(SCENE_TEST TESTNAME SCENEFILENAME)
   add_test(
