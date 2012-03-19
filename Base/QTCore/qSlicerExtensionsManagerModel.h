@@ -150,6 +150,8 @@ public:
   /// Return the item model used internally
   Q_INVOKABLE const QStandardItemModel * model()const;
 
+  static QHash<QString, QString> serverToExtensionDescriptionKey();
+
   static QStringList serverKeysToIgnore();
 
   static ExtensionMetadataType filterExtensionMetadata(const ExtensionMetadataType &extensionMetadata);

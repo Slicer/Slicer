@@ -60,6 +60,9 @@ private slots:
   void testServerKeysToIgnore();
   void testServerKeysToIgnore_data();
 
+  void testServerToExtensionDescriptionKey();
+  void testServerToExtensionDescriptionKey_data();
+
   void testRetrieveExtensionMetadata();
   void testRetrieveExtensionMetadata_data();
 
@@ -116,6 +119,7 @@ private slots:
 };
 
 Q_DECLARE_METATYPE(QList<int>)
+Q_DECLARE_METATYPE(QList<QString>)
 Q_DECLARE_METATYPE(QList<QStringList>)
 
 // ----------------------------------------------------------------------------
@@ -546,6 +550,35 @@ void qSlicerExtensionsManagerModelTester::testServerKeysToIgnore_data()
                          << "item_id" << "extension_id" << "bitstream_id"
                          << "submissiontype" << "codebase" << "package"
                          << "size" << "date_creation");
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey()
+{
+  QHash<QString, QString> serverToExtensionDescriptionKey =
+      qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey();
+
+  QFETCH(QList<QString>, expectedServerKeys);
+  QCOMPARE(serverToExtensionDescriptionKey.keys(), expectedServerKeys);
+
+  QFETCH(QList<QString>, expectedExtensionDescriptionKeys);
+  QCOMPARE(serverToExtensionDescriptionKey.values(), expectedExtensionDescriptionKeys);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testServerToExtensionDescriptionKey_data()
+{
+  QTest::addColumn<QList<QString> >("expectedServerKeys");
+  QTest::addColumn<QList<QString> >("expectedExtensionDescriptionKeys");
+
+  QHash<QString, QString> expected;
+  expected.insert("productname", "extensionname");
+  expected.insert("name", "archivename");
+  expected.insert("repository_type", "scm");
+  expected.insert("repository_url", "scmurl");
+  expected.insert("development_status", "status");
+
+  QTest::newRow("0") << expected.keys() << expected.values();
 }
 
 // ----------------------------------------------------------------------------

@@ -779,17 +779,11 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
     return ExtensionMetadataType();
     }
 
-  QHash<QString, QString> serverToExtensionDescriptionKey;
-  serverToExtensionDescriptionKey.insert("productname", "extensionname");
-  serverToExtensionDescriptionKey.insert("name", "archivename");
-  serverToExtensionDescriptionKey.insert("repository_type", "scm");
-  serverToExtensionDescriptionKey.insert("repository_url", "scmurl");
-  serverToExtensionDescriptionKey.insert("development_status", "status");
-
   ExtensionMetadataType updatedExtensionMetadata;
   foreach(const QString& key, result.keys())
     {
-    updatedExtensionMetadata.insert(serverToExtensionDescriptionKey.value(key, key), result.value(key));
+    updatedExtensionMetadata.insert(
+          this->serverToExtensionDescriptionKey().value(key, key), result.value(key));
     }
 
   return updatedExtensionMetadata;
@@ -1072,6 +1066,18 @@ const QStandardItemModel * qSlicerExtensionsManagerModel::model()const
 {
   Q_D(const qSlicerExtensionsManagerModel);
   return &d->Model;
+}
+
+// --------------------------------------------------------------------------
+QHash<QString, QString> qSlicerExtensionsManagerModel::serverToExtensionDescriptionKey()
+{
+  QHash<QString, QString> serverToExtensionDescriptionKey;
+  serverToExtensionDescriptionKey.insert("productname", "extensionname");
+  serverToExtensionDescriptionKey.insert("name", "archivename");
+  serverToExtensionDescriptionKey.insert("repository_type", "scm");
+  serverToExtensionDescriptionKey.insert("repository_url", "scmurl");
+  serverToExtensionDescriptionKey.insert("development_status", "status");
+  return serverToExtensionDescriptionKey;
 }
 
 // --------------------------------------------------------------------------
