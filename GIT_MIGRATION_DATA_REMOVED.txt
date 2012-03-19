@@ -6,6 +6,8 @@ dd619c9bbd8f058f85c124d775fe5fec1883f05ce4c1025c0f245db1ec088b51  Base/QTCore/Te
 8e047014e0d5addf1c8c5d92c20069e2c6d5c9893a670c4731b4c4e45cac7b21  Base/QTCore/Testing/Data/Input/19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
 720bd3171f920fbbbc42f1dbf63ab0d74ca2fc8afde429375c1b858be80fd7a6  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.tar.gz
 6add3dbcadce70a631bfcde1c0c28316ec21a23ea923561efc97a1c39232ba70  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
+e5d205ff095e02bf1e8c6e837da0fd15c4f32d9b0df07f4a5d897e2612f2d6b0  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
+84fa9d6fc55147cbdb25798c36244ce839be8f41d31fa77416394f7ecb336c81  Base/QTCore/Testing/Data/Input/19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz
 55fde0e49303c9e05eb61b29899e22b35232e5becf3f7b23f36d363eb3af321d  Extensions/Testing/CLIExtensionTemplate/Data/Baseline/CLIExtensionTemplateTest.nhdr
 cee4f469402d8814fb313057e609ba495d3027e40afd9e57757ab611b2c5da60  Libs/MRML/Core/Testing/TestData/fixed.nrrd
 9c13a44b18a8277efa44babdea70e308d966bc91ba54ddc412909bfeb8c21980  Libs/MRML/Core/Testing/TestData/helix-DTI.nhdr

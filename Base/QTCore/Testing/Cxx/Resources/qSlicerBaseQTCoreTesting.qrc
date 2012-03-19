@@ -8,7 +8,14 @@
     <file alias="extension-linux-2.tar.gz">../../Data/Input/19354-linux-amd64-ScriptedLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
     <file alias="extension-linux-3.json">../../Data/Input/19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.json</file>
     <file alias="extension-linux-3.tar.gz">../../Data/Input/19354-linux-amd64-SuperBuildLoadableExtensionTemplate-svn19354-2012-02-23.tar.gz</file>
+
+    <file alias="extension-macosx-0.json">../../Data/Input/19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.json</file>
     <file alias="extension-macosx-0.tar.gz">../../Data/Input/19615-macosx-amd64-CLIExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
+    <file alias="extension-macosx-1.json">../../Data/Input/19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.json</file>
     <file alias="extension-macosx-1.tar.gz">../../Data/Input/19615-macosx-amd64-LoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
+    <file alias="extension-macosx-2.json">../../Data/Input/19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.json</file>
+    <file alias="extension-macosx-2.tar.gz">../../Data/Input/19615-macosx-amd64-ScriptedLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
+    <file alias="extension-macosx-3.json">../../Data/Input/19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.json</file>
+    <file alias="extension-macosx-3.tar.gz">../../Data/Input/19615-macosx-amd64-SuperBuildLoadableExtensionTemplate-svn19615-2012-03-18.tar.gz</file>
   </qresource>
 </RCC>
