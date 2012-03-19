@@ -135,6 +135,8 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
+  static QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
+
   QStringList extensionLibraryPaths(const QString& extensionName)const;
   QStringList extensionPaths(const QString& extensionName)const;
 
@@ -421,6 +423,37 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
   launcherSettings.setValue("EnvironmentVariables/PYTHONPATH",
                        removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
 #endif
+}
+
+// --------------------------------------------------------------------------
+QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensionsDir, const QString& archiveFile)
+{
+  // Set extension directory as current directory
+  ctkScopedCurrentDir scopedCurrentDir(extensionsDir.absolutePath());
+
+  std::vector<std::string> extracted_files;
+  bool success = extract_tar(archiveFile.toLatin1(), /* verbose */ false, /* extract */ true, &extracted_files);
+  if(!success)
+    {
+    qCritical() << "Failed to extract" << archiveFile << "into" << extensionsDir.absolutePath();
+    return false;
+    }
+  if(extracted_files.size() == 0)
+    {
+    qWarning() << "Archive" << archiveFile << "doesn't contain any files !";
+    return false;
+    }
+
+  // Compute <topLevelArchiveDir>. We assume all files are extracted in top-level folder.
+  QDir extractDirOfFirstFile = QFileInfo(extensionsDir, QString::fromStdString(extracted_files.at(0))).dir();
+  QDir topLevelArchiveDir;
+  while(extractDirOfFirstFile != extensionsDir)
+    {
+    topLevelArchiveDir = extractDirOfFirstFile;
+    extractDirOfFirstFile.cdUp();
+    }
+
+  return topLevelArchiveDir.dirName();
 }
 
 // --------------------------------------------------------------------------
@@ -1083,55 +1116,31 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     {
     return false;
     }
+
   if (!QDir(destinationPath).exists())
     {
     qCritical() << "Failed to extract archive" << archiveFile << "into nonexistent directory" << destinationPath;
     return false;
     }
 
+  QDir extensionsDir(destinationPath);
+
   // Make sure extension output directory doesn't exist
-  ctk::removeDirRecursively(destinationPath + "/" + extensionName);
+  ctk::removeDirRecursively(extensionsDir.filePath(extensionName));
 
   // Make extension output directory
-  QDir extensionsDir(destinationPath);
   extensionsDir.mkdir(extensionName);
+
+  // Extract into <extensionsPath>/<extensionName>/<topLevelArchiveDir>/
   extensionsDir.cd(extensionName);
-
-  QString archiveBaseName;
-  {
-    // Set extension directory as current directory
-    ctkScopedCurrentDir scopedCurrentDir(extensionsDir.absolutePath());
-
-    // Extract into <extensionsPath>/<extensionName>/<topLevelArchiveDir>/
-    std::vector<std::string> extracted_files;
-    bool success = extract_tar(archiveFile.toLatin1(), /* verbose */ false, /* extract */ true, &extracted_files);
-    if(!success)
-      {
-      qCritical() << "Failed to extract" << archiveFile << "into" << extensionsDir.absolutePath();
-      return false;
-      }
-    if(extracted_files.size() == 0)
-      {
-      qWarning() << "Archive" << archiveFile << "doesn't contain any files !";
-      return false;
-      }
-
-    // Compute <topLevelArchiveDir>. We assume all files are extracted in top-level folder.
-    QDir extractDirOfFirstFile = QFileInfo(extensionsDir, QString::fromStdString(extracted_files.at(0))).dir();
-    QDir topLevelArchiveDir;
-    while(extractDirOfFirstFile != extensionsDir)
-      {
-      topLevelArchiveDir = extractDirOfFirstFile;
-      extractDirOfFirstFile.cdUp();
-      }
-
-    archiveBaseName = topLevelArchiveDir.dirName();
-  }
-
+  QString archiveBaseName = Pimpl::extractArchive(extensionsDir, archiveFile);
   extensionsDir.cdUp();
 
-  // Name of the sub-folder <archiveBaseName>
-  //QString archiveBaseName = QFileInfo(archiveFile).baseName();
+
+
+
+
+
 
   // Rename <extensionName>/<archiveBaseName> into <extensionName>
   // => Such operation can't be done directly, we need intermediate steps ...

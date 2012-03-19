@@ -54,6 +54,9 @@ public:
   /// Superclass typedef
   typedef QObject Superclass;
 
+  /// Pimpl typedef
+  typedef qSlicerExtensionsManagerModelPrivate Pimpl;
+
   /// Self typedef
   typedef qSlicerExtensionsManagerModel Self;
 
