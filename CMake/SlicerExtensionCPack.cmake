@@ -98,5 +98,24 @@ if(WIN32)
   set(CPACK_GENERATOR "ZIP")
 endif()
 
+if(APPLE)
+  set(executable_path @executable_path)
+  set(slicer_complete_bundle_directory ${CMAKE_BINARY_DIR}/SlicerExtensionBundle)
+  set(EXTENSION_BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
+  set(EXTENSION_SUPERBUILD_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR})
+  get_filename_component(Slicer_SUPERBUILD_DIR ${Slicer_DIR}/.. ABSOLUTE)
+
+  configure_file(
+    ${Slicer_EXTENSION_CPACK_COMPLETE_BUNDLE}
+    "${slicer_complete_bundle_directory}/SlicerExtensionCompleteBundle.cmake"
+    @ONLY)
+  # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
+  #        let's make sure the following install rule is evaluated within its own directory.
+  #        Otherwise, the associated script will be executed before any other relevant install rules.
+  file(WRITE ${slicer_complete_bundle_directory}/CMakeLists.txt
+    "install(SCRIPT \"${slicer_complete_bundle_directory}/SlicerExtensionCompleteBundle.cmake\")")
+  add_subdirectory(${slicer_complete_bundle_directory} ${slicer_complete_bundle_directory}-binary)
+endif()
+
 include(CPack)
 

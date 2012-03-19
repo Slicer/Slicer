@@ -557,6 +557,7 @@ QStringList qSlicerExtensionsManagerModel::extensionModulePaths(const QString& e
 {
   QString path = this->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
+                   << path + "/" Slicer_CLIMODULES_SUBDIR // Search for 'Slicer_INSTALL_CLIMODULES_BIN_DIR' in Slicer/CMakeLists.txt
                    << path + "/" Slicer_CLIMODULES_LIB_DIR
                    << path + "/" Slicer_QTLOADABLEMODULES_LIB_DIR
 #ifdef Slicer_USE_PYTHONQT

@@ -356,10 +356,10 @@ endif()
 # Slicer install directories
 #-----------------------------------------------------------------------------
 set(Slicer_INSTALL_ROOT "./")
+set(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
+set(Slicer_BUNDLE_EXTENSIONS_DIRNAME "Extensions")
 if(APPLE)
-  # Set to create Bundle
-  set(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
-  set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/")
+  set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/") # Set to create Bundle
 endif()
 
 set(Slicer_INSTALL_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BIN_DIR}")

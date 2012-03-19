@@ -1,0 +1,382 @@
+#
+# Make sure this CMake has BundleUtilities.cmake:
+#
+if(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
+  message(FATAL_ERROR "error: BundleUtilities.cmake not found. Use CMake 2.8.3 or later.")
+endif()
+include(BundleUtilities)
+
+#
+# Snanity checks
+#
+if(NOT EXISTS "${CMAKE_INSTALL_PREFIX}")
+  # If you are invoking that script from the command line, make sure to pass -DCMAKE_INSTALL_PREFIX:PATH=/path/to/installed/extension
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is set to a nonexistent directory :(")
+endif()
+
+#
+# Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
+#
+if(COMMAND CMAKE_POLICY)
+  cmake_policy(SET CMP0009 NEW)
+  if(POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# gp_log_message - Convenient function allowing to both display and log a message.
+# Log file: $ENV{DESTDIR}/../complete-bundles-log.txt
+#-----------------------------------------------------------------------------
+function(gp_log_message text)
+  message(${text})
+  file(APPEND "@EXTENSION_BINARY_DIR@/complete-bundles-log.txt" "${text}
+")
+endfunction()
+
+#-----------------------------------------------------------------------------
+# gp_clear_log - Clear the log file
+#-----------------------------------------------------------------------------
+function(gp_clear_log)
+  file(WRITE "@EXTENSION_BINARY_DIR@/complete-bundles-log.txt" "")
+  gp_log_message("Log file: @EXTENSION_BINARY_DIR@/complete-bundles-log.txt")
+endfunction()
+
+#-----------------------------------------------------------------------------
+# gp_resolved_file_type_override resolved_file type_var
+#-----------------------------------------------------------------------------
+function(gp_resolved_file_type_override resolved_file type_var)
+  if(resolved_file MATCHES "^/usr/.*/lib")
+    set(${type_var} system PARENT_SCOPE)
+  endif()
+
+  #gp_log_message("resolving ${file} as ${${type_var}}")
+endfunction()
+
+#-----------------------------------------------------------------------------
+# gp_item_default_embedded_path_override item default_embedded_path_var
+#-----------------------------------------------------------------------------
+# Return the path that others should refer to the item by when the item
+# is embedded inside a bundle.
+#
+# This is a project-specific override of BundleUtilities.cmake's
+# gp_item_default_embedded_path
+#
+function(gp_item_default_embedded_path_override item default_embedded_path_var)
+
+  # By default, embed items as set by gp_item_default_embedded_path:
+  set(path "${${default_embedded_path_var}}")
+
+  if(item MATCHES "\\.dylib$")
+    set(path "@executable_path@/../@Slicer_LIB_DIR@")
+  endif()
+
+  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+  if(Slicer_USE_PYTHONQT)
+
+    if(item MATCHES "libpython[^/]+\\.dylib$")
+      set(path "@executable_path@/../lib/Python/lib")
+    endif()
+
+    if(item MATCHES "@Slicer_LIB_DIR@/[^/]+Python\\.so$")
+      set(path "@executable_path@/../@Slicer_LIB_DIR@")
+    endif()
+
+  endif()
+
+  set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
+    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
+      set(path "@executable_path@/../lib/TclTk")
+    endif()
+  endif()
+
+  if(item MATCHES "@Slicer_LIB_DIR@/[^/]+\\.dylib$")
+    set(path "@executable_path@/../@Slicer_LIB_DIR@")
+  endif()
+
+  #if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
+  #  set(path "@executable_path@/../@Slicer_ITKFACTORIES_DIR@")
+  #endif()
+
+  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
+  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
+  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
+    if(item MATCHES "@Slicer_CLIMODULES_SUBDIR@/@EXTENSION_NAME@$")
+      set(path "@executable_path@/../@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_CLIMODULES_SUBDIR@")
+    endif()
+    if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")
+      set(path "@executable_path@/../@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_CLIMODULES_LIB_DIR@")
+    endif()
+  endif()
+
+  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    if(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
+      set(path "@executable_path@/../@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+    endif()
+  endif()
+
+  math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
+  set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
+  #gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
+
+  set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
+endfunction()
+
+#-----------------------------------------------------------------------------
+# get_extension_keys
+#-----------------------------------------------------------------------------
+function(get_extension_keys ext_dir libs dirs keys_var)
+  set(${keys_var} PARENT_SCOPE)
+
+  #get_bundle_and_executable("${app}" bundle executable valid)
+  #if(valid)
+    # Always use the exepath of the main bundle executable for @executable_path
+    # replacements:
+    #
+    #get_filename_component(exepath "${executable}" PATH)
+    set(exepath "${ext_dir}/Contents/MacOS")
+    set(bundle "${ext_dir}/Contents")
+
+    # But do fixups on all executables in the bundle:
+    #
+    get_bundle_all_executables("${bundle}" exes)
+
+    # For each extra lib, accumulate a key as well and then also accumulate
+    # any of its prerequisites. (Extra libs are typically dynamically loaded
+    # plugins: libraries that are prerequisites for full runtime functionality
+    # but that do not show up in otool -L output...)
+    #
+    foreach(lib ${libs})
+      set_bundle_key_values(${keys_var} "${lib}" "${lib}" "${exepath}" "${dirs}" 0)
+
+      set(prereqs "")
+      get_prerequisites("${lib}" prereqs 1 0 "${exepath}" "${dirs}")
+      foreach(pr ${prereqs})
+        set_bundle_key_values(${keys_var} "${lib}" "${pr}" "${exepath}" "${dirs}" 1)
+      endforeach(pr)
+    endforeach(lib)
+
+    # For each executable found in the bundle, accumulate keys as we go.
+    # The list of keys should be complete when all prerequisites of all
+    # binaries in the bundle have been analyzed.
+    #
+    foreach(exe ${exes})
+      # Add the exe itself to the keys:
+      #
+      set_bundle_key_values(${keys_var} "${exe}" "${exe}" "${exepath}" "${dirs}" 0)
+
+      # Add each prerequisite to the keys:
+      #
+      set(prereqs "")
+      get_prerequisites("${exe}" prereqs 1 0 "${exepath}" "${dirs}")
+      foreach(pr ${prereqs})
+        set_bundle_key_values(${keys_var} "${exe}" "${pr}" "${exepath}" "${dirs}" 1)
+      endforeach(pr)
+    endforeach(exe)
+
+    # Propagate values to caller's scope:
+    #
+    set(${keys_var} ${${keys_var}} PARENT_SCOPE)
+    foreach(key ${${keys_var}})
+      set(${key}_ITEM "${${key}_ITEM}" PARENT_SCOPE)
+      set(${key}_RESOLVED_ITEM "${${key}_RESOLVED_ITEM}" PARENT_SCOPE)
+      set(${key}_DEFAULT_EMBEDDED_PATH "${${key}_DEFAULT_EMBEDDED_PATH}" PARENT_SCOPE)
+      set(${key}_EMBEDDED_ITEM "${${key}_EMBEDDED_ITEM}" PARENT_SCOPE)
+      set(${key}_RESOLVED_EMBEDDED_ITEM "${${key}_RESOLVED_EMBEDDED_ITEM}" PARENT_SCOPE)
+      set(${key}_COPYFLAG "${${key}_COPYFLAG}" PARENT_SCOPE)
+    endforeach(key)
+  #endif(valid)
+endfunction(get_extension_keys)
+
+#-----------------------------------------------------------------------------
+# fixup_extension
+#-----------------------------------------------------------------------------
+function(fixup_extension ext libs dirs)
+  message(STATUS "fixup_extension")
+  message(STATUS "  ext='${ext}'")
+  message(STATUS "  libs='${libs}'")
+  message(STATUS "  dirs='${dirs}'")
+
+  #get_bundle_and_executable("${ext}" bundle executable valid)
+  #if(valid)
+  #  get_filename_component(exepath "${executable}" PATH)
+    set(exepath "${ext}/Contents/MacOS")
+
+    message(STATUS "fixup_extension: preparing...")
+    get_extension_keys("${ext}" "${libs}" "${dirs}" keys)
+
+    message(STATUS "fixup_extension: copying...")
+    list(LENGTH keys n)
+    math(EXPR n ${n}*2)
+
+    set(i 0)
+    foreach(key ${keys})
+      math(EXPR i ${i}+1)
+
+      set(show_status 0)
+      if(show_status)
+        message(STATUS "key='${key}'")
+        message(STATUS "item='${${key}_ITEM}'")
+        message(STATUS "resolved_item='${${key}_RESOLVED_ITEM}'")
+        message(STATUS "default_embedded_path='${${key}_DEFAULT_EMBEDDED_PATH}'")
+        message(STATUS "embedded_item='${${key}_EMBEDDED_ITEM}'")
+        message(STATUS "resolved_embedded_item='${${key}_RESOLVED_EMBEDDED_ITEM}'")
+        message(STATUS "copyflag='${${key}_COPYFLAG}'")
+        message(STATUS "")
+      endif(show_status)
+
+      string(FIND "${${key}_ITEM}" "@Slicer_SUPERBUILD_DIR@" pos)
+      set(key_skip 0)
+      if(${pos} EQUAL 0)
+        message(STATUS "${i}/${n}: skipping '${${key}_ITEM}'")
+        set(key_skip 1)
+      endif()
+      if("${${key}_ITEM}" MATCHES "[^/]+\\.framework/")
+        set(key_skip 1)
+      endif()
+
+      if(NOT ${key_skip})
+        message(STATUS "${i}/${n}: considering '${key}'")
+        if(${${key}_COPYFLAG})
+          message(STATUS "${i}/${n}: copying '${${key}_RESOLVED_ITEM}'")
+        else(${${key}_COPYFLAG})
+          message(STATUS "${i}/${n}: *NOT* copying '${${key}_RESOLVED_ITEM}'")
+        endif(${${key}_COPYFLAG})
+
+        if(${${key}_COPYFLAG})
+          set(item "${${key}_ITEM}")
+          if(item MATCHES "[^/]+\\.framework/")
+            copy_resolved_framework_into_bundle("${${key}_RESOLVED_ITEM}"
+              "${${key}_RESOLVED_EMBEDDED_ITEM}")
+          else()
+            copy_resolved_item_into_bundle("${${key}_RESOLVED_ITEM}"
+              "${${key}_RESOLVED_EMBEDDED_ITEM}")
+          endif()
+        endif(${${key}_COPYFLAG})
+      endif(NOT ${key_skip})
+      set(${key}_SKIP ${key_skip})
+    endforeach(key)
+
+    message(STATUS "fixup_extension: fixing...")
+    foreach(key ${keys})
+      math(EXPR i ${i}+1)
+      if(NOT ${${key}_SKIP})
+        if(APPLE)
+          message(STATUS "${i}/${n}: fixing up '${${key}_RESOLVED_EMBEDDED_ITEM}'")
+          fixup_bundle_item("${${key}_RESOLVED_EMBEDDED_ITEM}" "${exepath}" "${dirs}")
+        else(APPLE)
+          message(STATUS "${i}/${n}: fix-up not required on this platform '${${key}_RESOLVED_EMBEDDED_ITEM}'")
+        endif(APPLE)
+      endif(NOT ${${key}_SKIP})
+    endforeach(key)
+
+    message(STATUS "fixup_extension: cleaning up...")
+    clear_bundle_keys(keys)
+
+    #message(STATUS "fixup_extension: verifying...")
+    #verify_app("${app}")
+  #else(valid)
+  #  message(SEND_ERROR "error: fixup_extension: not a valid bundle")
+  #endif(valid)
+
+  message(STATUS "fixup_extension: done")
+endfunction(fixup_extension)
+
+#-----------------------------------------------------------------------------
+# Fixup the .app bundles in the install tree:
+#-----------------------------------------------------------------------------
+function(fixup_slicer_extension)
+  set(app "Slicer.app")
+  set(ext_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
+  set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
+  set(exepath "${ext_dir}/Contents/MacOS")
+
+  set(candiates_pattern
+    )
+
+  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
+  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
+  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
+    list(APPEND candiates_pattern
+      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_CLIMODULES_LIB_DIR@/*${suffix}"
+      )
+  endif()
+
+  set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
+
+  set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    list(APPEND candiates_pattern
+      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
+      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
+      )
+    if(Slicer_USE_PYTHONQT)
+      list(APPEND candiates_pattern
+        "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/qSlicer*PythonQt.so"
+        )
+    endif()
+  endif()
+
+  set(libs "")
+  file(GLOB_RECURSE candidates ${candiates_pattern})
+  foreach(lib ${candidates})
+    if(NOT lib MATCHES "(_debug|d[0-9])${suffix}$")
+      set(libs ${libs} "${lib}")
+    endif()
+  endforeach()
+
+  list(REMOVE_DUPLICATES libs)
+
+  # Additional libs may be found in:
+  set(libs_path )#"@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
+
+  list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_LIB_DIR@")
+  if(Slicer_BUILD_QTLOADABLEMODULES)
+    list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
+  endif()
+  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
+    list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_CLIMODULES_LIB_DIR@")
+  endif()
+
+  list(REMOVE_DUPLICATES libs_path)
+
+  set(EXTENSION_SUPERBUILD_DIR "@EXTENSION_SUPERBUILD_DIR@")
+
+  gp_clear_log()
+
+  gp_log_message("Calling fixup_extension with")
+  gp_log_message("app=${ext_dir}")
+  gp_log_message("<EXTENSION_SUPERBUILD_DIR>=${EXTENSION_SUPERBUILD_DIR}")
+  gp_log_message("libs=")
+  foreach(lib ${libs})
+    file(RELATIVE_PATH relative_lib ${EXTENSION_SUPERBUILD_DIR} ${lib})
+    if(NOT "${relative_lib}" STREQUAL "${lib}")
+      set(lib "<EXTENSION_SUPERBUILD_DIR>/${relative_lib}")
+    endif()
+    gp_log_message("  ${lib}")
+  endforeach()
+  gp_log_message("libs_path=")
+  foreach(path ${libs_path})
+    file(RELATIVE_PATH relative_path ${EXTENSION_SUPERBUILD_DIR} ${path})
+    if(NOT "${relative_path}" STREQUAL "${path}")
+      set(path "<EXTENSION_SUPERBUILD_DIR>/${relative_path}")
+    endif()
+    gp_log_message("  ${path}")
+  endforeach()
+
+  # Keep track of libs count and current lib being fixed
+  list(LENGTH libs libs_count)
+  set(ENV{FIXUP_LIBS_COUNT} ${libs_count})
+  set(ENV{FIXUP_LIB_CURRENT} 0)
+
+  fixup_extension(
+    "${ext_dir}"
+    "${libs}"
+    "${libs_path}"
+    )
+endfunction()
+
+fixup_slicer_extension()
+

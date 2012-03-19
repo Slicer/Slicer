@@ -42,7 +42,12 @@
 
 #define Slicer_QtPlugins_DIR "@Slicer_QtPlugins_DIR@"
 
+#define Slicer_BUNDLE_LOCATION "@Slicer_BUNDLE_LOCATION@"
+
 #cmakedefine Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+#  define Slicer_BUNDLE_EXTENSIONS_DIRNAME "@Slicer_BUNDLE_EXTENSIONS_DIRNAME@"
+#endif
 
 #cmakedefine Slicer_BUILD_CLI_SUPPORT
 #cmakedefine Slicer_BUILD_CLI

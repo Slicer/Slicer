@@ -35,8 +35,9 @@ set(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_PYTHON_MODULE_TEST_T
 # Path to CommandLineSharedLibraryWrapper
 set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX_CONFIG ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX})
 
-# Path to extension CPack script
+# Path to extension CPack script(s)
 set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake)
+set(Slicer_EXTENSION_CPACK_COMPLETE_BUNDLE_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCompleteBundle.cmake.in)
 
 set(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})
 set(Slicer_CORE_LIBRARY_CONFIG ${Slicer_CORE_LIBRARY})
