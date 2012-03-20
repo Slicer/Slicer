@@ -167,6 +167,7 @@ void qSlicerAbstractModuleFactoryManager::setSearchPaths(const QStringList& path
   Q_D(qSlicerAbstractModuleFactoryManager);
   d->SearchPaths = paths;
   d->SearchPaths.removeDuplicates();
+  d->SearchPaths.removeAll(QString());
 }
 
 //-----------------------------------------------------------------------------
