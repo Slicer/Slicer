@@ -967,6 +967,10 @@ void qSlicerVolumeRenderingModuleWidget::synchronizeScalarDisplayNode()
 void qSlicerVolumeRenderingModuleWidget::setFollowVolumeDisplayNode(bool follow)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
+  if (d->DisplayNode == 0)
+    {
+    return;
+    }
   d->DisplayNode->SetFollowVolumeDisplayNode(follow ? 1 : 0);
 }
 
