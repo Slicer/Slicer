@@ -263,7 +263,7 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     foreach(const QString& node, nodes)
       {
       loadedNodes->AddItem(
-        d->currentScene()->GetNodeByID(node.toLatin1().data()));
+        d->currentScene()->GetNodeByID(node.toLatin1()));
       }
     }
 
@@ -332,7 +332,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
   //foreach(const QString& node, nodes)
   //{
   //loadedNodes->AddItem(
-  //d->currentScene()->GetNodeByID(node.toLatin1().data()));
+  //d->currentScene()->GetNodeByID(node.toLatin1()));
   //}
   //}
   return true;

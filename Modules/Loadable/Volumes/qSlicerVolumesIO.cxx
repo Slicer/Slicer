@@ -146,7 +146,7 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
     fileList = vtkSmartPointer<vtkStringArray>::New();
     foreach(QString file, properties["fileNames"].toStringList())
       {
-      fileList->InsertNextValue(file.toLatin1().data());
+      fileList->InsertNextValue(file.toLatin1());
       }
     }
   Q_ASSERT(d->Logic);

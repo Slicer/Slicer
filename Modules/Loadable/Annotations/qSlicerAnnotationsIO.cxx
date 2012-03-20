@@ -142,7 +142,7 @@ bool qSlicerAnnotationsIO::load(const IOProperties& properties)
 //    }
 
   char * nodeID = d->AnnotationLogic->LoadAnnotation(
-    fileName.toLatin1().data(), name.toLatin1(), fileType);
+    fileName.toLatin1(), name.toLatin1(), fileType);
   if (!nodeID)
     {
     this->setLoadedNodes(QStringList());

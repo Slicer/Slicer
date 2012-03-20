@@ -541,16 +541,14 @@ void qSlicerAnnotationModulePropertyDialog::onCoordinateChanged(QString text)
 void qSlicerAnnotationModulePropertyDialog::onDescriptionTextChanged()
 {
   QString text = ui.DescriptionTextEdit->toPlainText();
-  QByteArray bytes = text.toLatin1();
-  this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toLatin1());
 }
 
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onTextChanged()
 {
   QString text = ui.annotationTextEdit->toPlainText();
-  QByteArray bytes = text.toLatin1();
-  this->m_logic->SetAnnotationText(this->m_id.c_str(), bytes.data());
+  this->m_logic->SetAnnotationText(this->m_id.c_str(), text.toLatin1());
 }
 
 //------------------------------------------------------------------------------
@@ -1028,8 +1026,8 @@ void qSlicerAnnotationModulePropertyDialog::onPointSpecularChanged(double value)
 //------------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onPointGlyphChanged(QString value)
 {
-//  std::cout << "OnPointGlyphChanged: " << value.toAscii().data() << std::endl;
-  this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(),value.toAscii().data());
+//  std::cout << "OnPointGlyphChanged: " << qPrintable(value) << std::endl;
+  this->m_logic->SetAnnotationPointGlyphTypeFromString(this->m_id.c_str(), value.toLatin1());
 }
 
 //------------------------------------------------------------------------------
@@ -1467,9 +1465,8 @@ void qSlicerAnnotationModulePropertyDialog::onNameLineEditChanged()
     return;
     }
   // change the name
-  QString newNameString = ui.nameLineEdit->text();
-  const char *newName = newNameString.toAscii().data();
-  node->SetName(newName);
+  QString name = ui.nameLineEdit->text();
+  node->SetName(name.toLatin1());
 }
 
 //-----------------------------------------------------------------------------

@@ -152,7 +152,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNode(int row)const
     return 0;
     }
   vtkMRMLScene* scene = q->mrmlScene();
-  return scene ? scene->GetNodeByID(nodeId.toLatin1().data()) : 0;
+  return scene ? scene->GetNodeByID(nodeId.toLatin1()) : 0;
   */
   return this->mrmlNodeFromIndex(modelIndex);
 }
@@ -169,7 +169,7 @@ vtkMRMLNode* qMRMLNodeComboBoxPrivate::mrmlNodeFromIndex(const QModelIndex& inde
     return 0;
     }
   vtkMRMLScene* scene = q->mrmlScene();
-  return scene ? scene->GetNodeByID(nodeId.toLatin1().data()) : 0;
+  return scene ? scene->GetNodeByID(nodeId.toLatin1()) : 0;
 }
 
 // --------------------------------------------------------------------------

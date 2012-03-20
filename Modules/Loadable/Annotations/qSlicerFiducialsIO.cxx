@@ -112,7 +112,7 @@ bool qSlicerFiducialsIO::load(const IOProperties& properties)
     return false;
     }
 
-  char * nodeIDs = d->AnnotationLogic->LoadFiducialList(fileName.toLatin1().data());
+  char * nodeIDs = d->AnnotationLogic->LoadFiducialList(fileName.toLatin1());
 
   if (nodeIDs)
     {

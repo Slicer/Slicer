@@ -459,7 +459,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 //      set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
 //      if {$isRemote == 0} {
       isRemote = cacheManager->IsRemoteReference(
-        node[uriAttName].toLatin1().data());
+        node[uriAttName].toLatin1());
       if (isRemote)
         {
         break;
@@ -505,7 +505,7 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 //      set isRemote [$cacheManager IsRemoteReference $node($uriAttName)]
 //      if {$isRemote == 1} {
 //        $::XcedeCatalog_mainWindow SetStatusText "Loading remote $node($uriAttName)..."
-      isRemote = cacheManager->IsRemoteReference(node[uriAttName].toLatin1().data());
+      isRemote = cacheManager->IsRemoteReference(node[uriAttName].toLatin1());
       if (isRemote)
         {
         break;
@@ -522,10 +522,10 @@ void qSlicerXcedeCatalogIOPrivate::importEntry(vtkXMLDataElement* element)
 //      }
 //          }
 //      }
-      uriHandler = q->mrmlScene()->FindURIHandler(node[uriAttName].toLatin1().data());
+      uriHandler = q->mrmlScene()->FindURIHandler(node[uriAttName].toLatin1());
       if (uriHandler)
         {
-        uriHandler->StageFileRead(node[uriAttName].toLatin1().data(), node["localFileName"].toLatin1().data());
+        uriHandler->StageFileRead(node[uriAttName].toLatin1(), node["localFileName"].toLatin1());
         }
       else
         {
@@ -651,7 +651,7 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   //}
   if (node.contains("decription"))
     {
-    volumeNode->SetDescription(node["description"].toLatin1().data());
+    volumeNode->SetDescription(node["description"].toLatin1());
     }
 
   //--- try using xcede differently than the slicer2 xform description
@@ -768,12 +768,12 @@ void qSlicerXcedeCatalogIOPrivate::importVolumeNode(NodeType node)
   if (labelMap)
     {
     this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
-      ->SetReferenceActiveLabelVolumeID(volumeNodeID.toLatin1().data());
+      ->SetReferenceActiveLabelVolumeID(volumeNodeID.toLatin1());
     }
   else
     {
     this->ColorLogic->GetMRMLApplicationLogic()->GetSelectionNode()
-      ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1().data());
+      ->SetReferenceActiveVolumeID(volumeNodeID.toLatin1());
     }
   this->ColorLogic->GetMRMLApplicationLogic()->PropagateVolumeSelection();
 }
@@ -830,7 +830,7 @@ void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
   //}
   if (node.contains("description"))
     {
-    mnode->SetDescription(node["description"].toLatin1().data());
+    mnode->SetDescription(node["description"].toLatin1());
     }
 
   //if { [info exists n(name) ] } {
@@ -838,7 +838,7 @@ void qSlicerXcedeCatalogIOPrivate::importModelNode(NodeType node)
   //}
   if (node.contains("name"))
     {
-    mnode->SetName(node["name"].toLatin1().data());
+    mnode->SetName(node["name"].toLatin1());
     }
 
   // //--- we assume catalogs will contain a single LH model
@@ -934,7 +934,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   // }
   vtkSmartPointer<vtkMRMLLinearTransformNode> tnode = 
     vtkSmartPointer<vtkMRMLLinearTransformNode>::New();
-  tnode->SetName(node["name"].toLatin1().data());
+  tnode->SetName(node["name"].toLatin1());
   q->mrmlScene()->AddNode(tnode);
   QString tid = tnode->GetID();
   if (tid.isNull())
@@ -949,7 +949,7 @@ void qSlicerXcedeCatalogIOPrivate::importTransformNode(NodeType node)
   //}
   if (node.contains("description"))
     {
-    tnode->SetDescription(node["description"].toLatin1().data());
+    tnode->SetDescription(node["description"].toLatin1());
     }
 
   // //--- open register.dat file and read 
@@ -1069,7 +1069,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
       }
     mid = this->MRMLIdLHModel;
     mnode = vtkMRMLModelNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(mid.toLatin1()));
     }
 
   // if { [ string first "rh." $n(uri) ] >= 0 } {
@@ -1089,7 +1089,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
       }
     mid = this->MRMLIdRHModel;
     mnode = vtkMRMLModelNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID(mid.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(mid.toLatin1()));
     }
 
   // if { $mnode == "" } {
@@ -1111,7 +1111,7 @@ void qSlicerXcedeCatalogIOPrivate::importOverlayNode(NodeType node)
   // //--- add the scalar to the node
   // $logic AddScalar $n(uri) $mnode 
   //vtkSlicerModelsLogic* logic = this->modelsLogic();
-  //logic->AddScalar(node["uri"].toLatin1().data(), mnode);
+  //logic->AddScalar(node["uri"].toLatin1(), mnode);
   qSlicerIO::IOProperties properties;
   properties["fileName"] = node["uri"];
   properties["modelNodeId"] = mnode->GetID();
@@ -1156,12 +1156,12 @@ bool qSlicerXcedeCatalogIOPrivate::computeFIPS2SlicerTransformCorrection()
   //set v2 [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(ExampleFunc) ]
   //set anat2exfT [ $::slicer3::MRMLScene GetNodeByID $::XcedeCatalog_MrmlID(anat2exf) ]
   vtkMRMLVolumeNode* v1 = vtkMRMLVolumeNode::SafeDownCast(
-    q->mrmlScene()->GetNodeByID(this->MRMLIdFSBrain.toLatin1().data()));
+    q->mrmlScene()->GetNodeByID(this->MRMLIdFSBrain.toLatin1()));
   vtkMRMLVolumeNode* v2 = vtkMRMLVolumeNode::SafeDownCast(
-    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
+    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1()));
   vtkMRMLLinearTransformNode* anat2exfT = 
     vtkMRMLLinearTransformNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID(this->MRMLIdAnat2Exf.toLatin1().data()));
+      q->mrmlScene()->GetNodeByID(this->MRMLIdAnat2Exf.toLatin1()));
 
   //--- get FSregistration matrix from node
   //set anat2exf [ $anat2exfT GetMatrixTransformToParent ]
@@ -1234,8 +1234,8 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
   foreach(QString id, this->MRMLIdStatFileList)
     {
     vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(
-      q->mrmlScene()->GetNodeByID(id.toLatin1().data()));
-    vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1().data());
+      q->mrmlScene()->GetNodeByID(id.toLatin1()));
+    vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1());
     vnode->Modified();
     }
   //--- move the example func also into the new registration xform
@@ -1243,8 +1243,8 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
   // $vnode SetAndObserveTransformNodeID $::XcedeCatalog_MrmlID(StatisticsToBrainXform) 
   // $vnode Modified
   vtkMRMLVolumeNode* vnode = vtkMRMLVolumeNode::SafeDownCast(
-    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1().data()));
-  vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1().data());
+    q->mrmlScene()->GetNodeByID(this->MRMLIdExampleFunc.toLatin1()));
+  vnode->SetAndObserveTransformNodeID(this->MRMLIdStatisticsToBrainXform.toLatin1());
   vnode->Modified();
 }
 
@@ -1327,7 +1327,7 @@ bool qSlicerXcedeCatalogIO::load(const qSlicerIO::IOProperties& properties)
   //} else {
   vtkSmartPointer<vtkXMLDataParser> parser =
     vtkSmartPointer<vtkXMLDataParser>::New();
-  parser->SetFileName(fileName.toLatin1().data());
+  parser->SetFileName(fileName.toLatin1());
   if (parser->Parse() == 0)
     {
     return false;

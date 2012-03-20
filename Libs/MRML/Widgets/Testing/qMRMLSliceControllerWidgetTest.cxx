@@ -163,7 +163,7 @@ void qMRMLSliceControllerWidgetTester::testSetBackgroundVolume()
   sliceControllerWidget.setMRMLScene(this->MRMLScene);
 
   QFETCH(QString, volumeNodeID);
-  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toStdString().c_str());
+  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
   sliceControllerWidget.mrmlSliceCompositeNode()->SetBackgroundVolumeID(volumeNode ? volumeNode->GetID() : 0);
 
   QFETCH(QString, expectedVolumeNodeID);
@@ -195,7 +195,7 @@ void qMRMLSliceControllerWidgetTester::testSetForegroundVolume()
   sliceControllerWidget.setMRMLScene(this->MRMLScene);
 
   QFETCH(QString, volumeNodeID);
-  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toStdString().c_str());
+  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
   sliceControllerWidget.mrmlSliceCompositeNode()->SetForegroundVolumeID(volumeNode ? volumeNode->GetID() : 0);
 
   QFETCH(QString, expectedVolumeNodeID);
@@ -227,7 +227,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolume()
   sliceControllerWidget.setMRMLScene(this->MRMLScene);
 
   QFETCH(QString, volumeNodeID);
-  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toStdString().c_str());
+  vtkMRMLNode* volumeNode = this->MRMLScene->GetNodeByID(volumeNodeID.toLatin1());
   sliceControllerWidget.mrmlSliceCompositeNode()->SetLabelVolumeID(volumeNode ? volumeNode->GetID() : 0);
 
   QFETCH(QString, expectedVolumeNodeID);

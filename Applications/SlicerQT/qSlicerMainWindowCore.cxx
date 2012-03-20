@@ -180,7 +180,7 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (All Existing Files in this Directory Will Be Removed!)"), tempDir, QFileDialog::ShowDirsOnly);
-  //qDebug() << "saveDirName = " << saveDirName.toAscii().data();
+  //qDebug() << "saveDirName = " << qPrintable(saveDirName);
   if (saveDirName.isEmpty())
     {
     std::cout << "No directory name chosen!" << std::endl;
@@ -218,11 +218,11 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
 
-  const char *retval = qSlicerCoreApplication::application()->applicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toAscii().data(), imageData);
+  const char *retval = qSlicerCoreApplication::application()->applicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toLatin1(), imageData);
   if (retval)
     {
     QString returnFileName = QString(retval);
-    std::cout << "Saved scene to file " << returnFileName.toAscii().data() << std::endl;
+    std::cout << "Saved scene to file " << qPrintable(returnFileName) << std::endl;
     }
   else
     {

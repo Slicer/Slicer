@@ -259,8 +259,8 @@ void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarIndex)
     return;
     }
 
-  const char* ActiveScalarName = d->ColorByScalarComboBox->itemText(scalarIndex).toStdString().c_str();
-  d->FiberBundleDisplayNode->SetActiveScalarName(ActiveScalarName);
+  QString activeScalarName = d->ColorByScalarComboBox->itemText(scalarIndex);
+  d->FiberBundleDisplayNode->SetActiveScalarName(activeScalarName.toLatin1());
 }
 
 //------------------------------------------------------------------------------

@@ -387,7 +387,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
       }
     QFileInfo fileName(QDir(this->DirectoryButton->directory()),
                        QString(node->GetName()) + fileExtension);
-    snode->SetFileName(fileName.absoluteFilePath().toLatin1().data());
+    snode->SetFileName(fileName.absoluteFilePath().toLatin1());
     }
 
   QFileInfo fileInfo;
@@ -604,9 +604,9 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 
     // node
     QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
-    vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1().data());
+    vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1());
     vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(nodeIDs[1].toLatin1().data()));
+      this->MRMLScene->GetNodeByID(nodeIDs[1].toLatin1()));
 
     // check if the file already exists
     if (file.exists())
@@ -640,8 +640,8 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       }
 
     // save the node
-    snode->SetFileName(file.absoluteFilePath().toLatin1().data());
-    snode->SetWriteFileFormat(fileFormatComboBox->currentText().toLatin1().data());
+    snode->SetFileName(file.absoluteFilePath().toLatin1());
+    snode->SetWriteFileFormat(fileFormatComboBox->currentText().toLatin1());
     snode->SetURI(0);
     int res = snode->WriteData(node);
 
@@ -732,7 +732,7 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
       return false;
       }
     }
-  this->MRMLScene->SetRootDirectory(file.absoluteDir().absolutePath().toLatin1().data());
+  this->MRMLScene->SetRootDirectory(file.absoluteDir().absolutePath().toLatin1());
 
   // update the root directory of scene snapshot nodes (not sure why)
   const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
@@ -818,7 +818,7 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   mrmlLogic->Delete();
   */
   
-  this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1().data());
+  this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1());
   // TODO
   this->MRMLScene->SetVersion("Slicer4");
   bool res = this->MRMLScene->Commit();
@@ -886,7 +886,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
 
   // Set the new selected extension to the file name
   QString extension = vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-    formatComboBox->currentText().toStdString().c_str());
+    formatComboBox->currentText().toLatin1());
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   Q_ASSERT(fileNameItem);
   fileNameItem->setText(QFileInfo(fileNameItem->text()).baseName() + extension);

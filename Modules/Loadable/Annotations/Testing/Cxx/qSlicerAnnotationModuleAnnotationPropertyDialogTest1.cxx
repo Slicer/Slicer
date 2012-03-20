@@ -78,7 +78,7 @@ void SaveAnnotationNode(vtkMRMLAnnotationNode* node)
 //-----------------------------------------------------------------------------
 void SaveStateForUndo(vtkMRMLNode* node)
 {
-    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) ) 
+    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) )
     {
         vtkMRMLAnnotationAngleNode* mynode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
         if (!m_angleCopy)
@@ -139,7 +139,7 @@ void UndoAnnotationNode(vtkMRMLAnnotationNode* node)
 //-----------------------------------------------------------------------------
 void Undo(vtkMRMLNode* node)
 {
-    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) ) 
+    if( node->IsA( "vtkMRMLAnnotationAngleNode" ) )
     {
         vtkMRMLAnnotationAngleNode* anode = vtkMRMLAnnotationAngleNode::SafeDownCast(node);
         anode->Copy(m_angleCopy);
@@ -161,7 +161,7 @@ void Undo(vtkMRMLNode* node)
 //-----------------------------------------------------------------------------
 int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
 {
-    // Basic Setup 
+    // Basic Setup
     vtkSmartPointer<vtkSlicerAnnotationModuleLogic > pLogic = vtkSmartPointer< vtkSlicerAnnotationModuleLogic >::New();
     vtkSmartPointer<vtkMRMLScene> pMRMLScene = vtkSmartPointer<vtkMRMLScene>::New();
     vtkSmartPointer<vtkMRMLAnnotationRulerNode> pRulerNode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
@@ -169,16 +169,16 @@ int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
     pMRMLScene->AddNode(pRulerNode);
 
     QString textString = "MyTestString";
-    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString.toLatin1().data());
+    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString.toLatin1());
 
     QString text1 = QString(pLogic->GetAnnotationTextProperty(pRulerNode));
 
     SaveStateForUndo(pRulerNode);
 
     QString textString2 = "AnotherTestString";
-    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString2.toLatin1().data());
+    pLogic->SetAnnotationLinesProperties( (vtkMRMLAnnotationLinesNode*)pRulerNode, vtkSlicerAnnotationModuleLogic::TEXT, textString2.toLatin1());
     QString text22 = QString(pLogic->GetAnnotationTextProperty(pRulerNode));
-    std::cout << text22.toLatin1().data() << std::endl;
+    std::cout << qPrintable(text22) << std::endl;
 
     Undo((vtkMRMLNode*)pRulerNode);
 
@@ -187,12 +187,12 @@ int qSlicerAnnotationModuleAnnotationPropertyDialogTest1( int, char * [] )
     if ( text1 == text2 )
     {
         std::cout << "SaveStateForUndo/Undo okay!" << std::endl;
-        std::cout << text1.toLatin1().data() << std::endl;
+        std::cout << qPrintable(text1) << std::endl;
         return 0;
-    } 
+    }
 
     std::cout << "SaveStateForUndo/Undo Failed!" << std::endl;
-    std::cout << "Text 1:" << text2.toLatin1().data() << " Text 2: " << text2.toLatin1().data() << std::endl;
+    std::cout << "Text 1:" << qPrintable(text2) << " Text 2: " << text2.toLatin1() << std::endl;
     return 1;
 }
 

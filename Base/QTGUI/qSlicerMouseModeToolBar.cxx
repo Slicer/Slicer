@@ -232,7 +232,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
       QString actionText = action->text();
       actionText = actionText.prepend(QString("vtkMRMLAnnotation"));
       actionText = actionText.append(QString("Node"));
-      const char *thisAnnotID = actionText.toAscii().data();
+      const char *thisAnnotID = actionText.toLatin1();
       if (selectionNode->AnnotationIDInList(thisAnnotID) == -1)
         {
         this->ActionGroup->removeAction(action);
@@ -546,8 +546,7 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
     if (thisAction)
       {
       annotationID = thisAction->data().toString();
-      //qDebug() << "qSlicerMouseModeToolBar::switchPlaceMode: got action group checked action text "
-      //         << thisAction->data().toString() << ", id = " << annotationID;
+      //qDebug() << "qSlicerMouseModeToolBar::switchPlaceMode: got action group checked action text id = " << annotationID;
       }
     }
   if (annotationID.isEmpty())
@@ -559,8 +558,8 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
   vtkMRMLSelectionNode *selectionNode = d->MRMLAppLogic->GetSelectionNode();
   if ( selectionNode )
     {
-    selectionNode->SetActiveAnnotationID(annotationID.toAscii().data());
-    std::string resource = selectionNode->GetAnnotationResourceByID(std::string(annotationID.toAscii().data()));
+    selectionNode->SetActiveAnnotationID(annotationID.toLatin1());
+    std::string resource = selectionNode->GetAnnotationResourceByID(std::string(annotationID.toLatin1()));
     //qDebug() << "qSlicerMouseModeToolBar::switchPlaceMode: got resource " << resource.c_str();
     // change the cursor
     this->changeCursorTo(QCursor(QPixmap(resource.c_str()),-1,0));

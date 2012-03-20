@@ -109,7 +109,7 @@ bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
   QString fileName = properties["fileName"].toString();
   QString modelNodeId = properties["modelNodeId"].toString();
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(
-      this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1().data()));
+      this->mrmlScene()->GetNodeByID(modelNodeId.toLatin1()));
   Q_ASSERT(modelNode);
 
   if (d->ModelsLogic == 0)
@@ -118,7 +118,7 @@ bool qSlicerScalarOverlayIO::load(const IOProperties& properties)
     }
 
   vtkMRMLStorageNode* node =
-    d->ModelsLogic->AddScalar(fileName.toLatin1().data(), modelNode);
+    d->ModelsLogic->AddScalar(fileName.toLatin1(), modelNode);
   QStringList loadedNodes;
   if (node)
     {

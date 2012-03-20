@@ -70,7 +70,7 @@ vtkMRMLNode* qMRMLNodeFactory::createNode(const QString& className)
     return 0; 
     }
   vtkSmartPointer<vtkMRMLNode> node; 
-  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1().data() ) );
+  node.TakeReference( d->MRMLScene->CreateNodeByClass( className.toLatin1() ) );
 
   Q_ASSERT_X(node, "createNode",
              QString("Failed to create node of type [%1]").arg(className).toLatin1());

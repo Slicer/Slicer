@@ -101,7 +101,7 @@ bool qSlicerModelsIO::load(const IOProperties& properties)
     return false;
     }
   vtkMRMLModelNode* node = d->ModelsLogic->AddModel(
-    fileName.toLatin1().data());
+    fileName.toLatin1());
   if (!node)
     {
     return false;
