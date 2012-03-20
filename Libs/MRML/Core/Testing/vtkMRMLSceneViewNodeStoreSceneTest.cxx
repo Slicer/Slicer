@@ -28,6 +28,9 @@
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
+namespace
+{
+
 vtkMRMLScene* createScene();
 bool store();
 bool storeAndRestore();
@@ -36,43 +39,47 @@ bool storeTwice();
 bool storeAndRestoreTwice();
 bool storeTwiceAndRemoveVolume();
 
+} // end of anonymous namespace
+
 //---------------------------------------------------------------------------
 int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc),
                                        char * vtkNotUsed(argv)[] )
 {
-  if (store() != EXIT_SUCCESS)
+  if (!store())
     {
     std::cerr << "store call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  if (storeAndRestore() != EXIT_SUCCESS)
+  if (!storeAndRestore())
     {
     std::cerr << "storeAndRestore call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  if (storeAndRemoveVolume() != EXIT_SUCCESS)
+  if (!storeAndRemoveVolume())
     {
     std::cerr << "storeAndRemoveVolume call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  if (storeTwice() != EXIT_SUCCESS)
+  if (!storeTwice())
     {
     std::cerr << "storeTwice call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  if (storeAndRestoreTwice() != EXIT_SUCCESS)
+  if (!storeAndRestoreTwice())
     {
     std::cerr << "storeAndRestoreTwice call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  if (storeTwiceAndRemoveVolume() != EXIT_SUCCESS)
+  if (!storeTwiceAndRemoveVolume())
     {
     std::cerr << "storeTwiceAndRemoveVolume call not successful." << std::endl;
     return EXIT_FAILURE;
     }
-  std::cout << "Scene View Node Store Scene Test succeeded" << std::endl;
   return EXIT_SUCCESS;
 }
+
+namespace
+{
 
 //---------------------------------------------------------------------------
 vtkMRMLScene* createScene()
@@ -81,7 +88,7 @@ vtkMRMLScene* createScene()
 
   vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
   scene->AddNode(displayNode.GetPointer());
-  
+
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   volumeNode->SetScene(scene);
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
@@ -101,7 +108,7 @@ bool store()
 
   sceneViewNode->StoreScene();
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -115,8 +122,8 @@ bool storeAndRestore()
 
   sceneViewNode->StoreScene();
   sceneViewNode->RestoreScene();
-  
-  return EXIT_SUCCESS;
+
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -134,7 +141,7 @@ bool storeAndRemoveVolume()
   sceneViewNode->RestoreScene();
   sceneViewNode->RestoreScene();
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -149,7 +156,7 @@ bool storeTwice()
   sceneViewNode->StoreScene();
   sceneViewNode->StoreScene();
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -167,7 +174,7 @@ bool storeAndRestoreTwice()
   sceneViewNode->RestoreScene();
   sceneViewNode->RestoreScene();
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -186,5 +193,7 @@ bool storeTwiceAndRemoveVolume()
   sceneViewNode->RestoreScene();
   sceneViewNode->RestoreScene();
 
-  return EXIT_SUCCESS;
+  return true;
 }
+
+} // end of anonymous namespace
