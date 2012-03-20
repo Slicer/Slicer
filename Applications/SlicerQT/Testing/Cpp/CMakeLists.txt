@@ -1,3 +1,4 @@
+set(KIT ${KIT_LIBRARY_NAME})
 
 if(Slicer_BUILD_CLI_SUPPORT)
   if(Slicer_BUILD_EMSegment)
@@ -7,7 +8,6 @@ if(Slicer_BUILD_CLI_SUPPORT)
   endif()
 endif()
 
-set(KIT SlicerQT)
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
   qSlicerAboutDialogTest1.cxx
@@ -28,9 +28,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE TestingMacros.h
   )
 
-set(LIBRARY_NAME qSlicerQT)
-
-set(target_libraries ${LIBRARY_NAME})
+set(target_libraries ${KIT})
 if(Slicer_BUILD_CLI_SUPPORT)
   if(Slicer_BUILD_EMSegment)
     list(APPEND target_libraries vtkSlicerEMSegmentModuleLogic)

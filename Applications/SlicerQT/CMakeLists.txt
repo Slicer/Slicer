@@ -63,14 +63,14 @@ include_directories(${include_dirs})
 # Build the library
 # --------------------------------------------------------------------------
 
-set(lib_name "qSlicerQT")
+set(KIT_LIBRARY_NAME "qSlicerQT")
 
-add_library(${lib_name}
+add_library(${KIT_LIBRARY_NAME}
   ${SlicerQT_SRCS}
   ${SlicerQT_UI_CXX}
   ${SlicerQT_QRC_SRCS}
   )
-set_target_properties(${lib_name} PROPERTIES LABELS SlicerQT)
+set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES LABELS ${PROJECT_NAME})
 
 set(SlicerQT_LIBRARIES
   qSlicerModulesCore
@@ -82,7 +82,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     )
 endif()
 
-target_link_libraries(${lib_name}
+target_link_libraries(${KIT_LIBRARY_NAME}
   ${SlicerQT_LIBRARIES}
   )
 
@@ -125,10 +125,10 @@ endif(QT_MAC_USE_COCOA)
 # --------------------------------------------------------------------------
 
 if(Slicer_LIBRARY_PROPERTIES)
-  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
+  set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif(Slicer_LIBRARY_PROPERTIES)
 
-install(TARGETS ${lib_name}
+install(TARGETS ${KIT_LIBRARY_NAME}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
   LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
@@ -160,14 +160,14 @@ add_executable(SlicerQT${SlicerQT_EXE_SUFFIX}
   ${apple_bundle_sources}
   ${qt_menu_nib_sources}
   )
-set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS SlicerQT)
+set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS ${PROJECT_NAME})
 
 if(APPLE)
   set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES OUTPUT_NAME Slicer)
 endif()
 
 target_link_libraries(SlicerQT${SlicerQT_EXE_SUFFIX}
-  ${lib_name}
+  ${KIT_LIBRARY_NAME}
   )
 
 #-----------------------------------------------------------------------------
@@ -175,8 +175,8 @@ target_link_libraries(SlicerQT${SlicerQT_EXE_SUFFIX}
 # --------------------------------------------------------------------------
 
 set(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICERQT_EXPORT")
-set(MY_EXPORT_HEADER_PREFIX ${lib_name})
-set(MY_LIBNAME ${lib_name})
+set(MY_EXPORT_HEADER_PREFIX ${KIT_LIBRARY_NAME})
+set(MY_LIBNAME ${KIT_LIBRARY_NAME})
 
 configure_file(
   ${Slicer_SOURCE_DIR}/CMake/qSlicerExport.h.in
