@@ -122,7 +122,6 @@ file(GLOB TESTFILES "${CMAKE_CURRENT_SOURCE_DIR}/Testing/test*Script")
 #   )
 
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
-MESSAGE(STATUS "TEMP = ${TEMP}, CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input/Fiducials\ List.acsv
