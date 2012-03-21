@@ -35,6 +35,10 @@ else()
   set(GIT_TAG "857d38227c1db72c6d4ba3d9396f4593020c5478")
 endif()
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSStandAlone.git"
     GIT_TAG "${GIT_TAG}"

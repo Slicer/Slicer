@@ -128,6 +128,10 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
 
   mark_as_advanced(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG)
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build

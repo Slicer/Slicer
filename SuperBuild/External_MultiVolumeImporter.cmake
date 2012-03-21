@@ -19,6 +19,11 @@ set(proj MultiVolumeImporter)
 
 if(NOT DEFINED MultiVolumeImporter_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
+
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/MultiVolumeImporter.git"
     GIT_TAG "6e972073bad99cb9e51629ca3d4dbc2c1ce85589"

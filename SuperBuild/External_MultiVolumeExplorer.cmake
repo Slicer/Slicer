@@ -20,6 +20,11 @@ set(proj MultiVolumeExplorer)
 
 if(NOT DEFINED MultiVolumeExplorer_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
+
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/MultiVolumeExplorer.git"
     GIT_TAG "6bb732ada5155d9a6f87e9c346f6a8704e414537"

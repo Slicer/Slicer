@@ -51,6 +51,10 @@ if(NOT DEFINED CTK_DIR)
       )
   endif()
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
     GIT_TAG "edf82958ad3b1aab41be412c2e7cde0055a920df"

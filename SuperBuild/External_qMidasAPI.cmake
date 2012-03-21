@@ -18,17 +18,22 @@ set(qMidasAPI_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(qMidasAPI)
 set(proj qMidasAPI)
 
-# Set CMake OSX variable to pass down the external project
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-endif()
-
 if(NOT DEFINED qMidasAPI_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
+
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
+
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/qMidasAPI.git"
     GIT_TAG "4c7c25d8e0284dea509914fad16e0403ea3e96cb"

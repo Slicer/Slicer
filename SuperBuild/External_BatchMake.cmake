@@ -22,6 +22,10 @@ if(APPLE)
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
+if(NOT DEFINED git_protocol)
+  set(git_protocol "git")
+endif()
+
 #message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"

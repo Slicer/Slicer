@@ -30,6 +30,10 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
     GIT_TAG "9b7cfb5f3e7dc6c7efaa0cfc0a21c2d4dcc834ec"

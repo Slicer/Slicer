@@ -19,6 +19,11 @@ set(proj SlicerWebGLExport)
 
 if(NOT DEFINED SlicerWebGLExport_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
+
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/xtk/SlicerWebGLExport.git"
     GIT_TAG "9e6b567f1ed6c005fb91a815ed00c20d2e13df78"

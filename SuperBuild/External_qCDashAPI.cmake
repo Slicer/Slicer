@@ -18,17 +18,22 @@ set(qCDashAPI_DEPENDENCIES "")
 SlicerMacroCheckExternalProjectDependency(qCDashAPI)
 set(proj qCDashAPI)
 
-# Set CMake OSX variable to pass down the external project
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-endif()
-
 if(NOT DEFINED qCDashAPI_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
+
+  # Set CMake OSX variable to pass down the external project
+  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
+  if(APPLE)
+    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+      -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
+      -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
+
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/jcfr/qCDashAPI.git"
     GIT_TAG "9cd19663c1884b28ba4ad4153b290bf9da5500ab"

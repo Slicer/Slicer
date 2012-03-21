@@ -31,6 +31,10 @@ if(NOT DEFINED zlib_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/zlib.git"
     GIT_TAG "66a753054b356da85e1838a081aa94287226823e"
