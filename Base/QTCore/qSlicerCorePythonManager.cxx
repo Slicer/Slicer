@@ -33,6 +33,7 @@
 //-----------------------------------------------------------------------------
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
 {
+  this->setInitializationFlags(PythonQt::RedirectStdOut);
 }
 
 //-----------------------------------------------------------------------------
