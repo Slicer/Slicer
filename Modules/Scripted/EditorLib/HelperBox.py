@@ -355,7 +355,11 @@ class HelperBox(object):
     lo = int(accum.GetMin()[0])
     hi = int(accum.GetMax()[0])
 
+    # TODO: pending resolution of bug 1822, run the thresholding
+    # in single threaded mode to avoid data corruption observed on mac release
+    # builds
     thresholder = vtk.vtkImageThreshold()
+    thresholder.SetNumberOfThreads(1)
     for i in xrange(lo,hi+1):
       self.statusText( "Splitting label %d..."%i )
       thresholder.SetInput( merge.GetImageData() )
