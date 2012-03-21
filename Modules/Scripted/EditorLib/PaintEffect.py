@@ -164,9 +164,10 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     super(PaintEffectTool,self).__init__(sliceWidget)
 
     # configuration variables
-    self.radius = 5
-    self.smudge = False
-    self.delayedPaint = 1
+    self.delayedPaint = True
+    self.parameterNode = self.editUtil.getParameterNode()
+    self.smudge = not (0 == int(self.parameterNode.GetParameter("PaintEffect,smudge")))
+    self.radius = float(self.parameterNode.GetParameter("PaintEffect,radius"))
 
     # interaction state variables
     self.position = [0, 0, 0]
