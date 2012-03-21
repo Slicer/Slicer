@@ -774,14 +774,6 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     )
 endif()
 
-if(Slicer_BUILD_CLI_SUPPORT)
-  #-----------------------------------------------------------------------------
-  # CLI wrapper
-  #-----------------------------------------------------------------------------
-  set(Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX
-    ${CMAKE_CURRENT_SOURCE_DIR}/Modules/CLI/Templates/CommandLineSharedLibraryWrapper.cxx)
-endif()
-
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------

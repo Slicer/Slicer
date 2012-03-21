@@ -1,7 +1,6 @@
 # SlicerExecutionModel
 find_package(SlicerExecutionModel NO_MODULE REQUIRED GenerateCLP)
 include(${SlicerExecutionModel_USE_FILE})
-include(${SlicerExecutionModel_CMAKE_DIR}/SEMMacroBuildCLI.cmake)
 
 macro(slicerMacroBuildCLI)
   set(options
@@ -43,7 +42,6 @@ macro(slicerMacroBuildCLI)
     INCLUDE_DIRECTORIES             "${MY_SLICER_INCLUDE_DIRECTORIES};${Slicer_BaseCLI_INCLUDE_DIRS}"
     NAME                            ${MY_SLICER_NAME}
     LOGO_HEADER                     ${MY_SLICER_LOGO_HEADER}
-    CLI_SHARED_LIBRARY_WRAPPER_CXX  ${Slicer_CLI_SHARED_LIBRARY_WRAPPER_CXX}
     RUNTIME_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}"
     LIBRARY_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}"
     ARCHIVE_OUTPUT_DIRECTORY        "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}"
