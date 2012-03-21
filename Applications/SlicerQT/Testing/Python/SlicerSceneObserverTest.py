@@ -9,7 +9,7 @@ class testClass():
 
   def setUp(self):
     print("Adding observer to the scene")
-    self.tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.callback)
+    self.tag = slicer.mrmlScene.AddObserver('ModifiedEvent', self.callback)
     print("Modify the scene")
     slicer.mrmlScene.Modified()
 

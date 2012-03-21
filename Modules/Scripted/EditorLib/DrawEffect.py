@@ -67,7 +67,7 @@ class DrawEffectOptions(LabelEffect.LabelEffectOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(DrawEffectOptions,self).setMRMLDefaults()
@@ -182,14 +182,15 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
       # make sure all points are on the current slice plane
       # - if the SliceToRAS has been modified, then we're on a different plane
       #
-      sliceLogic = self.sliceWidget.sliceLogic()
-      lineMode = "solid"
-      currentSlice = sliceLogic.GetSliceOffset()
-      if self.activeSlice:
-        offset = abs(currentSlice - self.activeSlice)
-        if offset > 0.01:
-          lineMode = "dashed"
-      self.setLineMode(lineMode)
+      if hasattr(self,'activeSlice'):
+        sliceLogic = self.sliceWidget.sliceLogic()
+        lineMode = "solid"
+        currentSlice = sliceLogic.GetSliceOffset()
+        if self.activeSlice:
+          offset = abs(currentSlice - self.activeSlice)
+          if offset > 0.01:
+            lineMode = "dashed"
+        self.setLineMode(lineMode)
 
     self.positionActors()
 
@@ -197,15 +198,16 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     """
     update draw feedback to follow slice node
     """
-    sliceLogic = self.sliceWidget.sliceLogic()
-    sliceNode = sliceLogic.GetSliceNode()
-    rasToXY = vtk.vtkTransform()
-    rasToXY.SetMatrix( sliceNode.GetXYToRAS() )
-    rasToXY.Inverse()
-    self.xyPoints.Reset()
-    rasToXY.TransformPoints( self.rasPoints, self.xyPoints )
-    self.polyData.Modified()
-    self.sliceView.scheduleRender()
+    if hasattr(self,'polyData'):
+      sliceLogic = self.sliceWidget.sliceLogic()
+      sliceNode = sliceLogic.GetSliceNode()
+      rasToXY = vtk.vtkTransform()
+      rasToXY.SetMatrix( sliceNode.GetXYToRAS() )
+      rasToXY.Inverse()
+      self.xyPoints.Reset()
+      rasToXY.TransformPoints( self.rasPoints, self.xyPoints )
+      self.polyData.Modified()
+      self.sliceView.scheduleRender()
 
   def apply(self):
 

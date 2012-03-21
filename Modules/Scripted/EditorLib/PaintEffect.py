@@ -54,6 +54,19 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.radiusSpinBox.suffix = "mm"
     self.radiusFrame.layout().addWidget(self.radiusSpinBox)
     self.widgets.append(self.radiusSpinBox)
+    self.radiusUnitsToggle = qt.QPushButton("px:")
+    self.radiusUnitsToggle.setFixedWidth(35)
+    self.radiusFrame.layout().addWidget(self.radiusUnitsToggle)
+    self.radiusUnitsToggle.connect('clicked()',self.onRadiusUnitsToggle)
+    self.radiusQuickies = {}
+    quickies = ( (2, self.onQuickie2Clicked), (3,self.onQuickie3Clicked),
+                 (4, self.onQuickie4Clicked), (5, self.onQuickie5Clicked),
+                 (10, self.onQuickie10Clicked), (20, self.onQuickie20Clicked) )
+    for rad,callback in quickies:
+      self.radiusQuickies[rad] = qt.QPushButton(str(rad))
+      self.radiusFrame.layout().addWidget(self.radiusQuickies[rad])
+      self.radiusQuickies[rad].setFixedWidth(25)
+      self.radiusQuickies[rad].connect('clicked()', callback)
 
     self.radius = ctk.ctkDoubleSlider(self.frame)
     self.radius.minimum = 0.01
@@ -89,7 +102,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(PaintEffectOptions,self).setMRMLDefaults()
@@ -124,6 +137,40 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       tool.radius = radius
       tool.createGlyph(tool.brush)
     self.connectWidgets()
+
+  def onRadiusUnitsToggle(self):
+    if self.radiusUnitsToggle.text == 'mm:':
+      self.radiusUnitsToggle.text = 'px:'
+    else:
+      self.radiusUnitsToggle.text = 'mm:'
+  def onQuickie2Clicked(self):
+    self.setQuickieRadius(2)
+  def onQuickie3Clicked(self):
+    self.setQuickieRadius(3)
+  def onQuickie4Clicked(self):
+    self.setQuickieRadius(4)
+  def onQuickie5Clicked(self):
+    self.setQuickieRadius(5)
+  def onQuickie10Clicked(self):
+    self.setQuickieRadius(10)
+  def onQuickie20Clicked(self):
+    self.setQuickieRadius(20)
+
+  def setQuickieRadius(self,radius):
+    labelVolume = self.editUtil.getLabelVolume()
+    if labelVolume:
+      if self.radiusUnitsToggle.text == 'px:':
+        spacing = labelVolume.GetSpacing()
+        from math import sqrt
+        diag = sqrt(reduce(lambda x,y:x+y, map(lambda x: x**2, spacing)))
+        mmRadius = diag * radius
+      else:
+        mmRadius = radius
+      self.disconnectWidgets()
+      self.radiusSpinBox.setValue(mmRadius)
+      self.radius.setValue(mmRadius)
+      self.connectWidgets()
+      self.updateMRMLFromGUI()
 
   def onRadiusValueChanged(self,value):
     self.radiusSpinBox.setValue(self.radius.value)
@@ -242,12 +289,18 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
       pass
     self.positionActors()
 
+    # events from the slice node
+    if caller and caller.IsA('vtkMRMLSliceNode'):
+      if hasattr(self,'brush'):
+        self.createGlyph(self.brush)
+
   def positionActors(self):
     """
     update paint feedback glyph to follow mouse
     """
-    self.actor.SetPosition( self.interactor.GetEventPosition() )
-    self.sliceView.scheduleRender()
+    if hasattr(self,'actor'):
+      self.actor.SetPosition( self.interactor.GetEventPosition() )
+      self.sliceView.scheduleRender()
     
 
   def createGlyph(self, polyData):

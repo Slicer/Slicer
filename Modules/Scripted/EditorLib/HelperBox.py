@@ -65,7 +65,7 @@ class HelperBox(object):
   def onEnter(self):
     # new scene, node added or removed events
     # TODO: allow observers on speific events: 66000, 66001, 66002
-    tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateStructures)
+    tag = slicer.mrmlScene.AddObserver("ModifiedEvent", self.updateStructures)
     self.observerTags.append( (slicer.mrmlScene, tag) )
 
   def onExit(self):

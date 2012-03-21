@@ -1,7 +1,6 @@
 import slicer
 from __main__ import tcl
 from __main__ import qt
-from __main__ import vtk
 import ColorBox
 import EditUtil
 
@@ -67,8 +66,8 @@ class EditColor(object):
     self.colorPatch = qt.QPushButton(self.frame)
     self.frame.layout().addWidget(self.colorPatch)
 
-    self.updateParameterNode(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent)
-    self.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
+    self.updateParameterNode(slicer.mrmlScene, "ModifiedEvent")
+    self.updateGUIFromMRML(self.parameterNode, "ModifiedEvent")
 
     self.frame.connect( 'destroyed(QObject)', self.cleanup)
     self.colorSpin.connect( 'valueChanged(int)', self.updateMRMLFromGUI)
@@ -76,7 +75,7 @@ class EditColor(object):
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code
-    tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
+    tag = slicer.mrmlScene.AddObserver("ModifiedEvent", self.updateParameterNode)
     self.observerTags.append( (slicer.mrmlScene, tag) )
 
   #
@@ -91,7 +90,7 @@ class EditColor(object):
     if node != self.parameterNode:
       if self.parameterNode:
         self.parameterNode.RemoveObserver(self.parameterNodeTag)
-      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
       self.parameterNode = node
 
   #
