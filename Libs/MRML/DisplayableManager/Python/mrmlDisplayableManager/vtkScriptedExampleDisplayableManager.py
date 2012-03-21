@@ -62,12 +62,8 @@ class vtkScriptedExampleDisplayableManager:
   def GetMRMLSceneEventsToObserve(self):
     print "vtkScriptedExampleDisplayableManager - GetMRMLSceneEventsToObserve"
     sceneEvents = vtkIntArray()
-    sceneEvents.InsertNextValue(66004) #vtkMRMLScene::SceneAboutToBeClosedEvent
-    sceneEvents.InsertNextValue(66003) #vtkMRMLScene::SceneClosedEvent
-    sceneEvents.InsertNextValue(66010) #vtkMRMLScene::SceneAboutToBeImportedEvent
-    sceneEvents.InsertNextValue(66011) #vtkMRMLScene::SceneImportedEvent
-    sceneEvents.InsertNextValue(66000) #vtkMRMLScene::NodeAddedEvent
-    sceneEvents.InsertNextValue(66001) #vtkMRMLScene::NodeRemovedEvent
+    sceneEvents.InsertNextValue(slicer.vtkMRMLScene.NodeAddedEvent)
+    sceneEvents.InsertNextValue(slicer.vtkMRMLScene.NodeRemovedEvent)
     return sceneEvents
   
   def ProcessMRMLSceneEvents(self, scene, eventid, node):
