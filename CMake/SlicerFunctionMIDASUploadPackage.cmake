@@ -46,6 +46,7 @@ function(SlicerFunctionMIDASUploadPackage)
     endif()
   endforeach()
 
+  include(SlicerFunctionMIDASLogin)
   SlicerFunctionMIDASLogin(
     SERVER_URL ${MY_SERVER_URL}
     SERVER_EMAIL ${MY_SERVER_EMAIL}
@@ -142,9 +143,9 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
     set(source_revision_101_nightly_release "4.0.0")
     set(source_revision_104_experimental_release "4.0.1")
     set(source_revision_106_nightly_release "4.2")
-    
+
     include(SlicerBlockOperatingSystemNames)
-    
+
     foreach(submission_type "experimental" "nightly")
       foreach(operating_system "${Slicer_OS_LINUX_NAME}" "${Slicer_OS_MAC_NAME}" "${Slicer_OS_WIN_NAME}")
         foreach(architecture "i386" "amd64")

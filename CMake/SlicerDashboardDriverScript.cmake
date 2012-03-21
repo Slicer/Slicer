@@ -296,12 +296,14 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         #-----------------------------------------------------------------------------
         # Build and upload Slicer packages
         #-----------------------------------------------------------------------------
-        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionCTestPackage.cmake")
-        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASUploadPackage.cmake")
-        include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerMacroExtractRepositoryInfo.cmake")
 
-        # Update CMake module path so that our custom FindGit.cmake module is used.
+        # Update CMake module path so that in addition to our custom 'FindGit' module,
+        # out custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
+
+        include(SlicerFunctionCTestPackage)
+        include(SlicerFunctionMIDASUploadPackage)
+        include(SlicerMacroExtractRepositoryInfo)
 
         SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
 
