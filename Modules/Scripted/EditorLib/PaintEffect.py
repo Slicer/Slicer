@@ -89,7 +89,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(PaintEffectOptions,self).setMRMLDefaults()

@@ -114,7 +114,7 @@ class EditorWidget:
     # button states as needed
     nodeID = tcl('[EditorGetParameterNode] GetID')
     self.parameterNode = slicer.mrmlScene.GetNodeByID(nodeID)
-    self.parameterNodeTag = self.parameterNode.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+    self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
     # resume the current effect, if we left the editor and re-entered or pick default
     # TODO: not fully implemented

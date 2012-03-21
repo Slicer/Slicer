@@ -2,6 +2,7 @@ import slicer
 from __main__ import tcl
 from __main__ import qt
 from __main__ import ctk
+from __main__ import vtk
 from __main__ import getNodes
 import EditUtil
 
@@ -82,12 +83,12 @@ class EditOptions(object):
     # 1) find the parameter node in the scene and observe it
     # 2) set the defaults (will only set them if they are not
     # already set)
-    self.updateParameterNode( self.parameterNode, "ModifiedEvent" )
+    self.updateParameterNode(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
     self.setMRMLDefaults()
 
     # TODO: change this to look for specfic events (added, removed...)
     # but this requires being able to access events by number from wrapped code
-    tag = slicer.mrmlScene.AddObserver("ModifiedEvent", self.updateParameterNode)
+    tag = slicer.mrmlScene.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateParameterNode)
     self.observerTags.append( (slicer.mrmlScene, tag) )
 
   def __del__(self):
@@ -152,7 +153,7 @@ class EditOptions(object):
   # - to be overriden by the subclass
   #
   def updateGUI(self):
-    self.updateGUIFromMRML(self.parameterNode,"ModifiedEvent")
+    self.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
   #
   # set the default option values
@@ -399,7 +400,7 @@ class PaintOptions(LabelerOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(PaintOptions,self).setMRMLDefaults()
@@ -500,7 +501,7 @@ class DrawOptions(LabelerOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(DrawOptions,self).setMRMLDefaults()
@@ -556,7 +557,7 @@ class LevelTracingOptions(LabelerOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(LevelTracingOptions,self).setMRMLDefaults()
@@ -608,7 +609,7 @@ class ImplicitRectangleOptions(LabelerOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(ImplicitRectangleOptions,self).setMRMLDefaults()
@@ -684,7 +685,7 @@ class IdentifyIslandsOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(IdentifyIslandsOptions,self).setMRMLDefaults()
@@ -767,7 +768,7 @@ class ChangeIslandOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(ChangeIslandOptions,self).setMRMLDefaults()
@@ -832,7 +833,7 @@ class RemoveIslandsOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(RemoveIslandsOptions,self).setMRMLDefaults()
@@ -911,7 +912,7 @@ class SaveIslandOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(SaveIslandOptions,self).setMRMLDefaults()
@@ -999,7 +1000,7 @@ class ThresholdOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(ThresholdOptions,self).setMRMLDefaults()
@@ -1194,7 +1195,7 @@ class ErodeLabelOptions(MorphologyOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
 
   def setMRMLDefaults(self):
@@ -1256,7 +1257,7 @@ class DilateLabelOptions(MorphologyOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(DilateLabelOptions,self).setMRMLDefaults()
@@ -1329,7 +1330,7 @@ class ChangeLabelOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(ChangeLabelOptions,self).setMRMLDefaults()
@@ -1530,7 +1531,7 @@ class MakeModelOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(MakeModelOptions,self).setMRMLDefaults()
@@ -1681,7 +1682,7 @@ class GrowCutSegmentOptions(EditOptions):
       if self.parameterNode:
         node.RemoveObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(GrowCutSegmentOptions,self).setMRMLDefaults()
