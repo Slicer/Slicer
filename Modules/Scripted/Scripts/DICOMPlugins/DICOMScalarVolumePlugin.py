@@ -296,6 +296,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         instanceUIDs += uid + " "
       instanceUIDs = instanceUIDs[:-1]  # strip last space
       volumeNode.SetAttribute("DICOM.instanceUIDs", instanceUIDs)
+      # clear the ModifiedSinceRead flag, since changing the attribute
+      # was done as part of the 'read' process
+      volumeNode.SetModifiedSinceRead(0)
 
       #
       # automatically select the volume to display
