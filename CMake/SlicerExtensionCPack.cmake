@@ -21,10 +21,17 @@
 # -------------------------------------------------------------------------
 # Sanity checks
 # -------------------------------------------------------------------------
-set(expected_nonempty_vars EXTENSION_NAME EXTENSION_DESCRIPTION Slicer_WC_REVISION Slicer_PLATFORM Slicer_ARCHITECTURE)
+set(expected_nonempty_vars EXTENSION_NAME Slicer_WC_REVISION Slicer_PLATFORM Slicer_ARCHITECTURE)
 foreach(var ${expected_nonempty_vars})
   if("${${var}}" STREQUAL "")
     message(FATAL_ERROR "error: ${var} is either NOT defined or empty.")
+  endif()
+endforeach()
+
+set(expected_nonempty_vars EXTENSION_DESCRIPTION)
+foreach(var ${expected_nonempty_vars})
+  if("${${var}}" STREQUAL "")
+    message(AUTHOR_WARNING "warning: ${var} is either NOT defined or empty.")
   endif()
 endforeach()
 
