@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -13,14 +13,17 @@
 #ifndef __TestingMacros_h
 #define __TestingMacros_h
 
-#include "vtkDebugLeaks.h"
-#include "vtkSmartPointer.h"
-#include "vtkMath.h"
+// VTK includes
+#include <vtkDebugLeaks.h>
+#include <vtkSmartPointer.h>
+#include <vtkMath.h>
 
+// ----------------------------------------------------------------------------
 /// turns on exiting with an error if there are leaks
 #define DEBUG_LEAKS_ENABLE_EXIT_ERROR() \
   vtkDebugLeaks::SetExitError(true);
 
+// ----------------------------------------------------------------------------
 /// tests basic vtkObject methods
 #define EXERCISE_BASIC_OBJECT_METHODS( object ) \
     { \
@@ -34,6 +37,7 @@
     std::cout << "Name of Superclass = " << object->Superclass::GetClassName() << std::endl; \
     }
 
+// ----------------------------------------------------------------------------
 /// try the itk command passed in, succeeding if catch an exception
 #define TRY_EXPECT_ITK_EXCEPTION( command ) \
   try \
@@ -47,8 +51,9 @@
     {  \
     std::cout << "Caught expected exception" << std::endl;  \
     std::cout << excp << std::endl; \
-    }  
+    }
 
+// ----------------------------------------------------------------------------
 /// try the command passed in, succeeding if no exception
 #define TRY_EXPECT_NO_ITK_EXCEPTION( command ) \
   try \
@@ -60,8 +65,9 @@
     {  \
     std::cerr << excp << std::endl; \
     return EXIT_FAILURE;  \
-    }  
+    }
 
+// ----------------------------------------------------------------------------
 /// test itk set/get
 #define TEST_ITK_SET_GET( variable, command ) \
   if( variable.GetPointer() != command )   \
@@ -72,7 +78,8 @@
     return EXIT_FAILURE; \
     }
 
-/// test itk set/get 
+// ----------------------------------------------------------------------------
+/// test itk set/get
 #define TEST_ITK_SET_GET_VALUE( variable, command ) \
   if( variable != command )   \
     {   \
@@ -82,6 +89,7 @@
     return EXIT_FAILURE; \
     }
 
+// ----------------------------------------------------------------------------
 /// test object by calling Set on the variable with false, true, 0, 1, On, Off
 #define TEST_SET_GET_BOOLEAN( object, variable ) \
   object->Set##variable( false ); \
@@ -110,6 +118,7 @@
     return EXIT_FAILURE; \
     }
 
+// ----------------------------------------------------------------------------
 /// test an integer variable on the object by setting it to input value using Set, and
 /// testing it via the Get
 #define TEST_SET_GET_INT( object, variable, value )        \
@@ -122,6 +131,7 @@
       }                                                                 \
   }
 
+// ----------------------------------------------------------------------------
 /// Test an integer variable on object over the range, calls test set get in
 /// with min - epsilon, min, min + epsilon, (min+max)/2, max - epsilon, max,
 /// max + epsilon, where first and last test should report errors
@@ -145,6 +155,7 @@
     TEST_SET_GET_INT( object, variable, val);               \
   }
 
+// ----------------------------------------------------------------------------
 /// test an integer variable on the object by setting it to a random value up
 /// to max using Set, and  testing it via the Get
 #define TEST_SET_GET_INT_RANDOM( object, variable, max )    \
@@ -158,6 +169,7 @@
       }                                                     \
   }
 
+// ----------------------------------------------------------------------------
 /// Test an unsigned integer variable on object over the range, calls test set get in
 /// with min - epsilon, min, min + epsilon, (min+max)/2, max - epsilon, max,
 /// max + epsilon, where first and last test should report errors
@@ -181,6 +193,7 @@
     TEST_SET_GET_INT( object, variable, val);               \
   }
 
+// ----------------------------------------------------------------------------
 /// test a double variable on the object by setting it to input value using Set, and
 /// testing it via the Get
 #define TEST_SET_GET_DOUBLE( object, variable, value )    \
@@ -193,6 +206,7 @@
       }                                                         \
   }
 
+// ----------------------------------------------------------------------------
 /// Test a double variable on object over the range, calls test set get in
 /// with min - epsilon, min, min + epsilon, (min+max)/2, max - epsilon, max,
 /// max + epsilon, where first and last test should report errors
@@ -216,6 +230,7 @@
     TEST_SET_GET_DOUBLE( object, variable, val);                        \
   }
 
+// ----------------------------------------------------------------------------
 /// test an integer variable on the object by setting it to a random value up
 /// to max using Set, and  testing it via the Get
 #define TEST_SET_GET_DOUBLE_RANDOM( object, variable, max ) \
@@ -229,6 +244,7 @@
       }                                                         \
   }
 
+// ----------------------------------------------------------------------------
 /// test a vector variable on the object by setting it to a the values x, y, z
 /// passed in using Set, and  testing it via the Get
 #define TEST_SET_GET_VECTOR3_DOUBLE( object, variable, x, y, z )    \
@@ -242,6 +258,7 @@
       }                                                             \
   }
 
+// ----------------------------------------------------------------------------
 /// Test a double vector variable on object over the range, calls test set get in
 /// with min - epsilon, min, min + epsilon, (min+max)/2, max - epsilon, max,
 /// max + epsilon, where first and last test should report errors. For now all
@@ -260,6 +277,7 @@
     TEST_SET_GET_VECTOR3_DOUBLE(object, variable, max + epsilon, max + epsilon, max + epsilon); \
   }
 
+// ----------------------------------------------------------------------------
 /// test a vector variable on the object by setting all it's elements to the same random value up
 /// to max using Set, and  testing it via the Get
 #define TEST_SET_GET_VECTOR3_DOUBLE_RANDOM( object, variable, max )  \
@@ -276,6 +294,7 @@
       }                                                             \
   }
 
+// ----------------------------------------------------------------------------
 /// test a string variable on the object by calling Set/Get
 #define TEST_SET_GET_STRING( object, variable ) \
   { \
@@ -314,7 +333,8 @@
     object->Set##variable( NULL ); \
     } \
   }                                                                  \
-  
+
+// ----------------------------------------------------------------------------
 /// Slicer Libs/MRML/vtkMRMLNode exercises
 #define EXERCISE_BASIC_MRML_METHODS( className, node )   \
   {\
@@ -394,6 +414,7 @@
     std::cout << std::endl;                                             \
   }
 
+// ----------------------------------------------------------------------------
 /// For testing nodes in Libs/MRML that are transformable. Calls the basic
 /// mrml methods macro first.
 #define EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS( className, node )    \
@@ -416,6 +437,7 @@
     std::cout << "Node can apply non linear transforms? " << (canApplyNonLinear == true ? "yes" : "no") << std::endl; \
   }
 
+// ----------------------------------------------------------------------------
 /// For testing nodes in Libs/MRML that are storable. Calls the basic
 /// transformable mrml methods macro first.
 #include "vtkMRMLStorageNode.h"
@@ -463,6 +485,7 @@
       }                                                                 \
   }
 
+// ----------------------------------------------------------------------------
 /// For testing nodes in Libs/MRML that are displayable. Calls the basic
 /// transformable mrml methods macro first.
 #define EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS( className, node )      \
@@ -504,6 +527,7 @@
     pdata->Delete();                                                    \
   }
 
+// ----------------------------------------------------------------------------
 /// For testing nodes in Libs/MRML that are subclasses of the display node. Calls the basic
 /// mrml methods macro first.
 #define EXERCISE_BASIC_DISPLAY_MRML_METHODS( className, node )   \
@@ -575,8 +599,8 @@
       }                                                                 \
   }
 
+// ----------------------------------------------------------------------------
 #include <vtkStringArray.h>
-
 /// For testing nodes in Libs/MRML that are subclasses of the storage node. Calls the basic
 /// mrml methods macro first.
 #define EXERCISE_BASIC_STORAGE_MRML_METHODS( className, node )   \
@@ -736,7 +760,8 @@
     std::cout << "Is relative file path relative? " << node->IsFilePathRelative("tmp/file.txt") << std::endl; \
   }
 
-#include "vtkMatrix4x4.h"
+// ----------------------------------------------------------------------------
+#include <vtkMatrix4x4.h>
 /// For testing nodes in Libs/MRML that are transform nodes. Calls the basic
 /// storable mrml methods macro first.
 #define EXERCISE_BASIC_TRANSFORM_MRML_METHODS( className, node )    \
@@ -770,46 +795,3 @@
   }
 
 #endif
-
-// --------------------------------------------------------------------------
-// The ctkFail() macro print the line it's invoking from and an associated message
-//
-#define ctkFail(MSG) \
-  std::cerr << "line " << __LINE__ << " - " << MSG << std::endl;
-  
-// --------------------------------------------------------------------------
-// The ctkVerify2() macro behaves exactly like ctkVerify(), except that it outputs a verbose 
-// message when condition is false.
-//
-#define ctkVerify2(CONDITION, MSG)     \
-  if (!(CONDITION))                    \
-    {                                  \
-    ctkFail("Assert(" << #CONDITION    \
-      << ") " << MSG);                 \
-    return EXIT_FAILURE;               \
-    }
-
-// --------------------------------------------------------------------------
-// The ctkVerify() macro checks whether the condition is true or not. 
-// If it is true, execution continues.
-//
-#define ctkVerify(CONDITION)      \
-  ctkVerify2(CONDITION, "")
-
-// --------------------------------------------------------------------------
-// The ctkCompare macro compares an actual value to an expected value using the equals operator. 
-// If actual and expected are identical, execution continues.
-#define ctkCompare(ACTUAL_VALUE, EXPECTED_VALUE) \
-  if (ACTUAL_VALUE != EXPECTED_VALUE)                     \
-    {                                                     \
-    ctkFail("Compare failed (" << #ACTUAL_VALUE << "!="   \
-        << #EXPECTED_VALUE << ")" << std::endl            \
-        << "  Current:" << ACTUAL_VALUE << std::endl      \
-        << "  Expected:"<< EXPECTED_VALUE);               \
-    return EXIT_FAILURE;                                  \
-    }
-
-// --------------------------------------------------------------------------
-#define ctkExerciseMethod(OBJECT, SETTER, GETTER, VALUE_TO_SET, EXPECTED_VALUE) \
-  (OBJECT)->SETTER(VALUE_TO_SET);                                               \
-  ctkCompare((OBJECT)->GETTER(), EXPECTED_VALUE)

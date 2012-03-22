@@ -6,8 +6,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLCheckableNodeComboBoxTest1.cxx
   qMRMLClipNodeWidgetTest1.cxx
   qMRMLColorListViewTest1.cxx
+  qMRMLColorModelTest.cxx
   qMRMLColorModelTest1.cxx
-  qMRMLColorModelTest2.cxx
   qMRMLColorPickerWidgetTest1.cxx
   qMRMLColorPickerWidgetTest2.cxx
   qMRMLColorPickerWidgetTest3.cxx
@@ -24,7 +24,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLModelInfoWidgetTest1.cxx
   qMRMLModelTest1.cxx
   qMRMLModelTreeViewTest1.cxx
-  qMRMLLabelComboBoxTest1.cxx
+  qMRMLLabelComboBoxTest.cxx
   qMRMLNavigationViewTest1.cxx
   qMRMLNodeComboBoxTest1.cxx
   qMRMLNodeComboBoxTest2.cxx
@@ -74,6 +74,8 @@ set(Tests_UtilityFiles
 QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   qMRMLCheckableNodeComboBoxTest.cxx
+  qMRMLColorModelTest.cxx
+  qMRMLLabelComboBoxTest.cxx
   qMRMLSceneModelTest.cxx
   qMRMLSliceControllerWidgetTest.cxx
   )
@@ -94,8 +96,8 @@ SIMPLE_TEST( qMRMLCheckableNodeComboBoxTest )
 SIMPLE_TEST( qMRMLCheckableNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLClipNodeWidgetTest1 )
 SIMPLE_TEST( qMRMLColorListViewTest1 )
+SIMPLE_TEST( qMRMLColorModelTest )
 SIMPLE_TEST( qMRMLColorModelTest1 )
-SIMPLE_TEST( qMRMLColorModelTest2 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest1 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest2 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest3 )
@@ -112,7 +114,7 @@ SIMPLE_TEST( qMRMLMatrixWidgetTest1 )
 SIMPLE_TEST( qMRMLModelInfoWidgetTest1 )
 SIMPLE_TEST( qMRMLModelTest1 )
 SIMPLE_TEST( qMRMLModelTreeViewTest1 )
-SIMPLE_TEST( qMRMLLabelComboBoxTest1 )
+SIMPLE_TEST( qMRMLLabelComboBoxTest )
 SIMPLE_TEST( qMRMLNavigationViewTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest1 )
 SIMPLE_TEST( qMRMLNodeComboBoxTest2 )
