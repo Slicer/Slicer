@@ -151,13 +151,16 @@ set(Slicer_BaseCLI_INCLUDE_DIRS "@Slicer_BaseCLI_INCLUDE_DIRS@")
 set(Slicer_Base_INCLUDE_DIRS "@Slicer_BINARY_DIR@" "@Slicer_Base_INCLUDE_DIRS_CONFIG@")
 
 # Slicer Module logic include file directories.
-set(Slicer_ModuleLogic_INCLUDE_DIRS "@Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG@")
+set(Slicer_ModuleLogic_INCLUDE_DIRS "@Slicer_ModuleLogic_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Slicer Module logic includes" FORCE)
 
 # Slicer Module MRML include file directories.
-set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@")
+set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Slicer Module MRML includes" FORCE)
 
 # Slicer Module Widgets include file directories.
-set(Slicer_ModuleWidgets_INCLUDE_DIRS "@Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG@")
+set(Slicer_ModuleWidgets_INCLUDE_DIRS "@Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "Slicer Module widgets includes" FORCE)
 
 # The location of the UseSlicer.cmake file.
 set(Slicer_USE_FILE "@Slicer_USE_FILE_CONFIG@")
