@@ -13,7 +13,7 @@
 #include "vtkMRMLCropVolumeParametersNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLCropVolumeParametersNodeTest1(int , char * [] )
 {

@@ -13,7 +13,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLScalarVolumeDisplayNodeTest1(int , char * [] )
 {

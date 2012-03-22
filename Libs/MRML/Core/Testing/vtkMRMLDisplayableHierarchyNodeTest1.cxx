@@ -16,7 +16,7 @@
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // VTK includes
 #include <vtkCollection.h>

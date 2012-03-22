@@ -11,7 +11,7 @@
 =========================================================================auto=*/
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // to make an owner
 #include "vtkMRMLModelNode.h"

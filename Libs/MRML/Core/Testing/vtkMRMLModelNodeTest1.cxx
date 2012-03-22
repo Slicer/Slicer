@@ -16,7 +16,7 @@
 
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 
 int vtkMRMLModelNodeTest1(int , char * [] )

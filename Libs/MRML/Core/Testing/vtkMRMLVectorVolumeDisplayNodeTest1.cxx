@@ -13,7 +13,7 @@
 #include "vtkMRMLVectorVolumeDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLVectorVolumeDisplayNodeTest1(int , char * [] )
 {

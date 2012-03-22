@@ -13,7 +13,7 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 class vtkMRMLFiberBundleDisplayNodeTestHelper1 : public vtkMRMLFiberBundleDisplayNode
 {

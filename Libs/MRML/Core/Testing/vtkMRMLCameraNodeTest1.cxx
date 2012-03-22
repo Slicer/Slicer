@@ -13,7 +13,7 @@
 #include "vtkMRMLCameraNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLCameraNodeTest1(int , char * [] )
 {

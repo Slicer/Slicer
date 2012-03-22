@@ -13,7 +13,7 @@
 #include "vtkMRMLHierarchyNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 
 class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode

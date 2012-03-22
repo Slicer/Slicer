@@ -13,7 +13,7 @@
 #include "vtkMRMLFiberBundleNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLFiberBundleNodeTest1(int , char * [] )
 {

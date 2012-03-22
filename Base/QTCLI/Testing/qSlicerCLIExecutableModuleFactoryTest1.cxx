@@ -25,7 +25,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int qSlicerCLIExecutableModuleFactoryTest1(int, char * [] )
 {

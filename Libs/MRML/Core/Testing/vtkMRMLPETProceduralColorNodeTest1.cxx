@@ -13,7 +13,7 @@
 #include "vtkMRMLPETProceduralColorNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLPETProceduralColorNodeTest1(int , char * [] )
 {

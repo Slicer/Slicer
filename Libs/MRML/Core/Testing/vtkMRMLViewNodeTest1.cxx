@@ -13,7 +13,7 @@
 #include "vtkMRMLViewNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLViewNodeTest1(int , char * [] )
 {

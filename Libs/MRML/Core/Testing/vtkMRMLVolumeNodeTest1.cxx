@@ -17,7 +17,7 @@
 #include <vtkPolyData.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 
 class vtkMRMLVolumeNodeTestHelper1 : public vtkMRMLVolumeNode

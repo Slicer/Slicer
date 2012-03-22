@@ -13,7 +13,7 @@
 #include "vtkMRMLSelectionNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSelectionNodeTest1(int , char * [] )
 {

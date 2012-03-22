@@ -13,7 +13,7 @@
 #include "vtkMRMLPlotNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLPlotNodeTest1(int , char * [] )
 {

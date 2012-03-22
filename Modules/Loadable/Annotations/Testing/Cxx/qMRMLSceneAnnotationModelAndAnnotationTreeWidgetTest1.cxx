@@ -15,7 +15,7 @@
 #include "qMRMLSceneDisplayableModel.h"
 #include "qMRMLUtils.h"
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include <vtkEventBroker.h>
 
 #include "GUI/qMRMLAnnotationTreeView.h"

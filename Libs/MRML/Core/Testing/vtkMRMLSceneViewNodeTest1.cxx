@@ -10,7 +10,7 @@
 
 =========================================================================auto=*/
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLSceneViewNode.h"
 #include "vtkMRMLScene.h"
 

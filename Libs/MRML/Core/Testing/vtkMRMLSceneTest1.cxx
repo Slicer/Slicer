@@ -13,7 +13,7 @@
 #include "vtkMRMLScene.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSceneTest1(int , char * [] )
 {

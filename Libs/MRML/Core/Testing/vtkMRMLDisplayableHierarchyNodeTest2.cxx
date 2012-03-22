@@ -13,7 +13,7 @@
 #include "vtkMRMLDisplayableHierarchyNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"

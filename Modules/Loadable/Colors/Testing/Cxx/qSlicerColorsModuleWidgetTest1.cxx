@@ -33,7 +33,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int qSlicerColorsModuleWidgetTest1(int argc, char * argv [] )
 {

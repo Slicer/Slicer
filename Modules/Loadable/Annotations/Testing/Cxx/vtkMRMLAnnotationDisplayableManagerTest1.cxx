@@ -37,7 +37,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 
 

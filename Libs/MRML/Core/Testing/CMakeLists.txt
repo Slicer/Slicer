@@ -89,7 +89,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeNodeTest1.cxx
   vtkMRMLXYPlotManagerNodeTest1.cxx
   vtkObserverManagerTest1.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)

@@ -13,7 +13,7 @@
 #include "vtkMRMLStorableNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 #include "vtkMRMLModelStorageNode.h"
 

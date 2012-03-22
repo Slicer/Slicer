@@ -11,7 +11,7 @@
 =========================================================================auto=*/
 
 // MRML includes
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLUnstructuredGridNode.h"
 
 // VTK includes

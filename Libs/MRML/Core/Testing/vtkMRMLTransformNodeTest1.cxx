@@ -10,7 +10,7 @@
 
 =========================================================================auto=*/
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLTransformNode.h"
 
 #include <vtkGeneralTransform.h>

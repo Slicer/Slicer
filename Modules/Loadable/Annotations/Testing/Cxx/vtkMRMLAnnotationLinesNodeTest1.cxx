@@ -5,7 +5,7 @@
 
 #include <sstream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 void SetControlPointsAndText(vtkMRMLAnnotationLinesNode* node2)  {
   node2->AddText("TESTING 1",1,1);

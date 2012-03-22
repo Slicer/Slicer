@@ -15,7 +15,7 @@
 #include <vtkAbstractTransform.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
 {

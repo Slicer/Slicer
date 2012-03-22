@@ -1,7 +1,7 @@
 //#include <vtkSlicerConfigure.h>
 #include <vtkSlicerSceneViewsModuleLogic.h>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include <vtkImageData.h>
 #include <vtkMRMLSceneViewNode.h>
 

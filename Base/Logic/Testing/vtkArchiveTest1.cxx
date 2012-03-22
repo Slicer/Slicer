@@ -17,7 +17,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkArchiveTest1(int argc, char * argv[] )
 {

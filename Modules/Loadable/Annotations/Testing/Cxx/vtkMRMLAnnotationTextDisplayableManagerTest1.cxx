@@ -40,7 +40,7 @@
 #include <cstdlib>
 #include <iterator>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand

@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationControlPointsStorageNodeTest1(int , char * [] )
 {

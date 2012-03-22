@@ -13,7 +13,7 @@
 #include "vtkMRMLROINode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLROINodeTest1(int , char * [] )
 {

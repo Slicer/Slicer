@@ -13,7 +13,7 @@
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLDiffusionTensorVolumeDisplayNodeTest1(int , char * [] )
 {

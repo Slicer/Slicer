@@ -3,7 +3,7 @@ set(KIT VolumeRenderingLogic)
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSlicerVolumeRenderingLogicTest.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 add_executable(${KIT}CxxTests ${Tests})

@@ -13,7 +13,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerCoreModuleTest1.cxx
   qSlicerCoreModuleFactoryTest1.cxx
   qSlicerModulePanelTest2.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})

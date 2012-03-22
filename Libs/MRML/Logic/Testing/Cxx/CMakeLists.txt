@@ -12,7 +12,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest2.cxx
   vtkMRMLSliceLogicTest3.cxx
   vtkMRMLSliceLogicTest4.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
 )
 
 add_executable(${KIT}CxxTests ${Tests})

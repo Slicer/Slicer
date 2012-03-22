@@ -13,7 +13,7 @@
 #include "vtkMRMLClipModelsNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLClipModelsNodeTest1(int , char * [] )
 {

@@ -30,7 +30,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLModelHierarchyLogicTest1(int , char * [] )
 {

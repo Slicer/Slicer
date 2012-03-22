@@ -13,7 +13,7 @@
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLGlyphableVolumeSliceDisplayNodeTest1(int , char * [] )
 {

@@ -20,7 +20,7 @@ if(BUILD_TESTING)
   endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
     ${KIT_TEST_SRCS}
-    EXTRA_INCLUDE TestingMacros.h
+    EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
     )
 
   add_executable(${KIT}CxxTests ${Tests})

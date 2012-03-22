@@ -13,7 +13,7 @@
 #include "vtkMRMLModelDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLModelDisplayNodeTest1(int , char * [] )
 {

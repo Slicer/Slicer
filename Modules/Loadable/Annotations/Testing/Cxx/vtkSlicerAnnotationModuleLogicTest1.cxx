@@ -6,7 +6,7 @@
 #include "vtkMRMLAnnotationRulerNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 void CheckTextColor(vtkMRMLAnnotationRulerNode *rnode)
 {

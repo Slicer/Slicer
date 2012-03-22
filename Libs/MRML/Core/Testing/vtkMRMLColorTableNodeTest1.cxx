@@ -13,7 +13,7 @@
 #include "vtkMRMLColorTableNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 class vtkMRMLColorTableNodeTestHelper1 : public vtkMRMLColorTableNode
 {

@@ -10,18 +10,12 @@
 
 =========================================================================auto=*/
 
-#ifndef __TestingMacros_h
-#define __TestingMacros_h
+#ifndef __vtkMRMLCoreTestingMacros_h
+#define __vtkMRMLCoreTestingMacros_h
 
 // VTK includes
-#include <vtkDebugLeaks.h>
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
-
-// ----------------------------------------------------------------------------
-/// turns on exiting with an error if there are leaks
-#define DEBUG_LEAKS_ENABLE_EXIT_ERROR() \
-  vtkDebugLeaks::SetExitError(true);
 
 // ----------------------------------------------------------------------------
 /// tests basic vtkObject methods

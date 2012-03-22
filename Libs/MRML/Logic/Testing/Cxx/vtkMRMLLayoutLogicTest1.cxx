@@ -11,7 +11,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLLayoutLogicTest1(int , char * [] )
 {

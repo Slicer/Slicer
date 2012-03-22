@@ -11,7 +11,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerCLIExecutableModuleFactoryTest1.cxx
   qSlicerCLILoadableModuleFactoryTest1.cxx
   qSlicerCLIModuleTest1.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 add_executable(${KIT}CxxTests ${Tests})

@@ -14,7 +14,7 @@
 
 #include <sstream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelNode.h"

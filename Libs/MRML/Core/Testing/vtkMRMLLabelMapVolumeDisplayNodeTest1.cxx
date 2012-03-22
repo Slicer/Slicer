@@ -13,7 +13,7 @@
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLLabelMapVolumeDisplayNodeTest1(int , char * [] )
 {

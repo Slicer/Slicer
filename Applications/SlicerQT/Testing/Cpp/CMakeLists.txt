@@ -25,7 +25,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
 endif()
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 set(target_libraries ${KIT})

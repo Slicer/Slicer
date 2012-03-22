@@ -13,7 +13,7 @@
 #include "vtkMRMLFiducialListNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLFiducialListNodeTest1(int , char * [] )
 {

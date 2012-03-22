@@ -13,7 +13,7 @@
 #include "vtkMRMLCrosshairNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLCrosshairNodeTest1(int , char * [] )
 {

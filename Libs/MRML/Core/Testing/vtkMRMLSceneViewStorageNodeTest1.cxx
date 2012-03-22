@@ -14,7 +14,7 @@
 #include "vtkURIHandler.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSceneViewStorageNodeTest1(int , char * [] )
 {

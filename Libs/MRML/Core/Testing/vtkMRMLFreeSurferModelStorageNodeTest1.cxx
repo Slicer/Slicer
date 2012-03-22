@@ -14,7 +14,7 @@
 #include "vtkURIHandler.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLFreeSurferModelStorageNodeTest1(int , char * [] )
 {

@@ -13,7 +13,7 @@
 #include "vtkMRMLDoubleArrayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLDoubleArrayNodeTest1(int , char * [] )
 {

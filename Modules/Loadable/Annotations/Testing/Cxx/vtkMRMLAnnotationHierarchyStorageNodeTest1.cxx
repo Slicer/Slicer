@@ -7,7 +7,7 @@
 
 #include <vtksys/SystemTools.hxx>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationHierarchyStorageNodeTest1(int argc, char * argv[] )
 {

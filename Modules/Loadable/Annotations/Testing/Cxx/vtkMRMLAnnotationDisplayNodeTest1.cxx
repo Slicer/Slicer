@@ -1,7 +1,7 @@
 #include "vtkMRMLAnnotationDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationDisplayNodeTest1(int , char * [] )
 {

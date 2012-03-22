@@ -2,7 +2,7 @@
 #include <vtkMRMLScene.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 /* this test has been adopted from vtkMRMLAnnotationAngleTest1 by 
  * Andrey Fedorov to demonstrate some of the problems observed with the ROI

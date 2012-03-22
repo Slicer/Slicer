@@ -5,7 +5,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSlicerModuleGUITest1.cxx
   vtkSlicerComponentGUITest1.cxx
   vtkSlicerViewerTest.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 set(LIBRARY_NAME ${PROJECT_NAME})

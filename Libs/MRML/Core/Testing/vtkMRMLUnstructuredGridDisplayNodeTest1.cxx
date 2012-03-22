@@ -13,7 +13,7 @@
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLUnstructuredGridDisplayNodeTest1(int , char * [] )
 {

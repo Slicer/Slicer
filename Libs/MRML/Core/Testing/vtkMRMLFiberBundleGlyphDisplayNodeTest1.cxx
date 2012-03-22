@@ -13,7 +13,7 @@
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLFiberBundleGlyphDisplayNodeTest1(int , char * [] )
 {

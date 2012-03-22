@@ -6,7 +6,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLModelDisplayNodeWidgetTest1.cxx
   qMRMLModelDisplayNodeWidgetTest2.cxx
 
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 set(LIBRARY_NAME ${lib_name})

@@ -13,7 +13,7 @@
 #include "vtkMRMLSnapshotClipNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSnapshotClipNodeTest1(int , char * [] )
 {

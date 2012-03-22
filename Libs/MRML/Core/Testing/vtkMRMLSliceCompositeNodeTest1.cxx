@@ -13,7 +13,7 @@
 #include "vtkMRMLSliceCompositeNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSliceCompositeNodeTest1(int , char * [] )
 {

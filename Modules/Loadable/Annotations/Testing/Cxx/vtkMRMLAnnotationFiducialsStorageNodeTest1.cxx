@@ -9,7 +9,7 @@
 #include <vtkMRMLScene.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
 {

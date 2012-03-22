@@ -13,7 +13,7 @@
 #include "vtkMRMLTransformableNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 class vtkMRMLTransformableNodeTestHelper1 : public vtkMRMLTransformableNode
 {

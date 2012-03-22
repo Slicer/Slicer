@@ -13,7 +13,7 @@
 #include "vtkMRMLInteractionNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLInteractionNodeTest1(int , char * [] )
 {

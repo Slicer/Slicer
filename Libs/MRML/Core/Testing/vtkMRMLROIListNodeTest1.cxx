@@ -13,7 +13,7 @@
 #include "vtkMRMLROIListNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLROIListNodeTest1(int , char * [] )
 {

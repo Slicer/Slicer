@@ -26,7 +26,7 @@
 // STD includes
 #include <sstream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 //----------------------------------------------------------------------------
 class vtkRenderRequestCallback : public vtkCommand

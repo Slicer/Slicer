@@ -13,7 +13,7 @@
 #include "vtkMRMLOrthogonalLinePlotNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLOrthogonalLinePlotNodeTest1(int , char * [] )
 {

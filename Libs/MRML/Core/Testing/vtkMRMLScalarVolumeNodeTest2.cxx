@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // MRML includes
 #include "vtkMRMLColorTableNode.h"

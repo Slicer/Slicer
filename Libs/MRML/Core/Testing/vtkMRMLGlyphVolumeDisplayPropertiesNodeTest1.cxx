@@ -13,7 +13,7 @@
 #include "vtkMRMLGlyphableVolumeDisplayPropertiesNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1(int , char * [] )
 {

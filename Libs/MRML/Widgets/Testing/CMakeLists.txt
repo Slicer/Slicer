@@ -62,7 +62,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLVolumeThresholdWidgetTest2.cxx
   qMRMLWidgetsExportTest1.cxx
   qMRMLWindowLevelWidgetTest1.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 set(Tests_MOC_SRCS qMRMLNodeObject.h)

@@ -12,7 +12,7 @@
 
 #include "vtkMRMLDisplayNode.h"
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper1 : public vtkMRMLDisplayNode

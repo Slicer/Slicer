@@ -12,7 +12,7 @@
 
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 class vtkMRMLNodeTestHelper1 : public vtkMRMLNode
 {

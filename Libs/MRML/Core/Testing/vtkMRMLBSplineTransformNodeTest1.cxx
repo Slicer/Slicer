@@ -15,7 +15,7 @@
 #include <vtkGeneralTransform.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLBSplineTransformNodeTest1(int , char * [] )
 {

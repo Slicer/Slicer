@@ -22,7 +22,7 @@
 #include "vtkMRMLScene.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int qSlicerCoreIOManagerTest1(int argc, char * argv [])
 {

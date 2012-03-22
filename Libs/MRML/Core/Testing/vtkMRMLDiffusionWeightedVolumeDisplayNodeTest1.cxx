@@ -13,7 +13,7 @@
 #include "vtkMRMLDiffusionWeightedVolumeDisplayNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1(int , char * [] )
 {

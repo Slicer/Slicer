@@ -13,7 +13,7 @@
 // SlicerLogic includes
 #include "vtkDataIOManagerLogic.h"
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // VTK includes
 #include <vtkNew.h>

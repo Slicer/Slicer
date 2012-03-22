@@ -13,7 +13,7 @@
 #include "vtkMRMLdGEMRICProceduralColorNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLdGEMRICProceduralColorNodeTest1(int , char * [] )
 {

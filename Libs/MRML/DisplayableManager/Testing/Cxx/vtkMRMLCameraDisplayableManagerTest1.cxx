@@ -42,7 +42,7 @@
 
 // STD includes
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 char vtkMRMLCameraDisplayableManagerTest1EventLog[] =
 "# StreamVersion 1\n"

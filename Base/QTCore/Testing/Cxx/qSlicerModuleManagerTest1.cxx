@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int qSlicerModuleManagerTest1(int argc, char * argv [] )
 {

@@ -16,7 +16,7 @@
 #include <sstream>
 #include <string>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // The actual test function
 int TestAnnotationWidgetsStandalone( int argc, char *argv[] )

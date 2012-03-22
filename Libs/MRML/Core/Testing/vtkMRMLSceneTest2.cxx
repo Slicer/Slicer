@@ -21,7 +21,7 @@
 #include <set>
 #include <sstream>
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 // Convenient macro
 #define SCENE_CHECK_NUMBER_OF_EVENT(MSG, VARNAME, CURRENTCOUNT, OP, EXPECTEDCOUNT) \

@@ -13,7 +13,7 @@
 #include "vtkMRMLXYPlotManagerNode.h"
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLXYPlotManagerNodeTest1(int , char * [] )
 {

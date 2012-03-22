@@ -7,7 +7,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
   vtkMRMLSliceViewDisplayableManagerFactoryTest.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 set(TestsToRun ${Tests})

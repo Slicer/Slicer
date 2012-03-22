@@ -15,7 +15,7 @@
 #include <vtkPolyData.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLTimeSeriesVolumeNodeTest1(int , char * [] )
 {

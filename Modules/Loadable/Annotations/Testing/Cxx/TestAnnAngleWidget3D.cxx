@@ -36,7 +36,7 @@
 #include "vtkPointHandleRepresentation3D.h"
 #include "vtkAxisActor2D.h"
 #include "vtkProperty2D.h"
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 char TestAngleWidget3DEventLog[] =
 "# StreamVersion 1\n"

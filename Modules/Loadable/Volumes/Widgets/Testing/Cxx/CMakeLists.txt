@@ -5,7 +5,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qSlicerDiffusionTensorVolumeDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest1.cxx
   qSlicerDTISliceDisplayWidgetTest2.cxx
-  EXTRA_INCLUDE TestingMacros.h
+  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 list(APPEND Tests ${KIT_TEST_SRCS})
 

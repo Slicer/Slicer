@@ -14,7 +14,7 @@
 #include <vtkPolyData.h>
 
 
-#include "TestingMacros.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLVectorVolumeNodeTest1(int , char * [] )
 {
