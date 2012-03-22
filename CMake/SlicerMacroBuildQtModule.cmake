@@ -29,7 +29,10 @@ macro(slicerMacroBuildQtModule)
     "NO_INSTALL;NO_TITLE"
     ${ARGN}
     )
-  message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME}")
+
+  set(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
+  message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME} [${MY_EXPORT_HEADER_PREFIX}Export.h]")
+
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
@@ -73,7 +76,6 @@ macro(slicerMacroBuildQtModule)
   # Configure export header
   #-----------------------------------------------------------------------------
   set(MY_LIBRARY_EXPORT_DIRECTIVE ${QTMODULE_EXPORT_DIRECTIVE})
-  set(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
   set(MY_LIBNAME ${lib_name})
 
   # Sanity checks
