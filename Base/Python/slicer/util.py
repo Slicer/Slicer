@@ -22,21 +22,19 @@ def restart():
 #
 
 def importVTKClassesFromDirectory(directory, dest_module_name, filematch = '*'):
-  import glob, os
-  for fname in glob.glob(os.path.join(directory, filematch)):
-    try:
-      vtk_module_name = os.path.splitext(os.path.basename(fname))[0]
-      importModuleObjects(vtk_module_name, dest_module_name, 'vtkclass')
-    except ImportError as detail:
-      # TODO: this message should go in the application error log (how?)
-      print detail
+  importClassesFromDirectory(directory, dest_module_name, 'vtkclass', filematch)
 
 def importQtClassesFromDirectory(directory, dest_module_name, filematch = '*'):
-  import glob, os
+  importClassesFromDirectory(directory, dest_module_name, 'PythonQtClassWrapper', filematch)
+
+def importClassesFromDirectory(directory, dest_module_name, type_name, filematch = '*'):
+  import glob, os, re, fnmatch
   for fname in glob.glob(os.path.join(directory, filematch)):
+    if not re.compile(fnmatch.translate(filematch)).match(os.path.basename(fname)):
+      return
     try:
-      qt_module_name = os.path.splitext(os.path.basename(fname))[0]
-      importModuleObjects(qt_module_name, dest_module_name, 'PythonQtClassWrapper')
+      from_module_name = os.path.splitext(os.path.basename(fname))[0]
+      importModuleObjects(from_module_name, dest_module_name, type_name)
     except ImportError as detail:
       # TODO: this message should go in the application error log (how?)
       print detail
