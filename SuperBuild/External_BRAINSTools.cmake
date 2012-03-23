@@ -32,7 +32,7 @@ if(NOT DEFINED BRAINSTools_SOURCE_DIR)
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
   set(GIT_TAG "75d6840c4d5122cadefa42a3cb2527bec4335eca")
 else()
-  set(GIT_TAG "857d38227c1db72c6d4ba3d9396f4593020c5478")
+  set(GIT_TAG "827494abfbb9741fd2e8a9cfe5d7d064e973f7e8")
 endif()
 
   if(NOT DEFINED git_protocol)
