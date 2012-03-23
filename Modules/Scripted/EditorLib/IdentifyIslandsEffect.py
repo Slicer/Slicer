@@ -72,7 +72,7 @@ class IdentifyIslandsEffectOptions(IslandEffect.IslandEffectOptions):
       if self.parameterNode:
         node.IdentifyObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(IdentifyIslandsEffectOptions,self).setMRMLDefaults()

@@ -75,8 +75,6 @@ class EditorWidget:
       self.parent = parent
       self.layout = parent.layout()
 
-    self.parent.connect('destroyed()', self.exit)
-
   def enter(self):
     """
     When entering the module, check that the lightbox modes are off
@@ -116,7 +114,11 @@ class EditorWidget:
     # button states as needed
     nodeID = tcl('[EditorGetParameterNode] GetID')
     self.parameterNode = slicer.mrmlScene.GetNodeByID(nodeID)
-    self.parameterNodeTag = self.parameterNode.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+    self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
+
+    # resume the current effect, if we left the editor and re-entered or pick default
+    # TODO: not fully implemented
+    #self.activateEffect()
 
     self.helper.onEnter()
     
@@ -188,6 +190,7 @@ class EditorWidget:
     self.editLabelMapsFrame.setText("Edit Selected Label Map")
     self.layout.addWidget(self.editLabelMapsFrame)
     self.editLabelMapsFrame.collapsed = True
+
     # add a callback to collapse/open the frame based on the validity of the label volume
     self.helper.mergeValidCommand = self.updateLabelFrame 
 

@@ -67,7 +67,7 @@ class ChangeIslandEffectOptions(IslandEffect.IslandEffectOptions):
       if self.parameterNode:
         node.ChangeObserver(self.parameterNodeTag)
       self.parameterNode = node
-      self.parameterNodeTag = node.AddObserver("ModifiedEvent", self.updateGUIFromMRML)
+      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
     super(ChangeIslandEffectOptions,self).setMRMLDefaults()
@@ -111,7 +111,7 @@ class ChangeIslandEffectTool(IslandEffect.IslandEffectTool):
     if event == "LeftButtonPressEvent":
       self.logic.undoRedo = self.undoRedo
       xy = self.interactor.GetEventPosition()
-      self.logic.changeIsland(xy)
+      self.logic.saveIsland(xy)
       self.abortEvent(event)
 
 #
@@ -132,7 +132,7 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
   def __init__(self,sliceLogic):
     super(ChangeIslandEffectLogic,self).__init__(sliceLogic)
 
-  def changeIsland(self,xy):
+  def saveIsland(self,xy):
     #
     # change the label values based on the parameter node
     #
