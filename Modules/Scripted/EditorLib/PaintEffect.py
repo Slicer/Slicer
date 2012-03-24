@@ -32,6 +32,10 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 
   def __init__(self, parent=0):
     super(PaintEffectOptions,self).__init__(parent)
+    # option to use 'min' or 'diag'
+    # - min means pixel radius is min spacing
+    # - diag means corner to corner length
+    self.radiusPixelMode = 'min'
 
   def __del__(self):
     super(PaintEffectOptions,self).__del__()
@@ -54,6 +58,21 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.radiusSpinBox.suffix = "mm"
     self.radiusFrame.layout().addWidget(self.radiusSpinBox)
     self.widgets.append(self.radiusSpinBox)
+    self.radiusUnitsToggle = qt.QPushButton("px:")
+    self.radiusUnitsToggle.setToolTip("Toggle radius quick set buttons between mm and label volume pixel size units")
+    self.radiusUnitsToggle.setFixedWidth(35)
+    self.radiusFrame.layout().addWidget(self.radiusUnitsToggle)
+    self.radiusUnitsToggle.connect('clicked()',self.onRadiusUnitsToggle)
+    self.radiusQuickies = {}
+    quickies = ( (2, self.onQuickie2Clicked), (3,self.onQuickie3Clicked),
+                 (4, self.onQuickie4Clicked), (5, self.onQuickie5Clicked),
+                 (10, self.onQuickie10Clicked), (20, self.onQuickie20Clicked) )
+    for rad,callback in quickies:
+      self.radiusQuickies[rad] = qt.QPushButton(str(rad))
+      self.radiusFrame.layout().addWidget(self.radiusQuickies[rad])
+      self.radiusQuickies[rad].setFixedWidth(25)
+      self.radiusQuickies[rad].connect('clicked()', callback)
+      self.radiusQuickies[rad].setToolTip("Set radius based on mm or label voxel size units depending on toggle value")
 
     self.radius = ctk.ctkDoubleSlider(self.frame)
     self.radius.minimum = 0.01
@@ -124,6 +143,46 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       tool.radius = radius
       tool.createGlyph(tool.brush)
     self.connectWidgets()
+
+  def onRadiusUnitsToggle(self):
+    if self.radiusUnitsToggle.text == 'mm:':
+      self.radiusUnitsToggle.text = 'px:'
+    else:
+      self.radiusUnitsToggle.text = 'mm:'
+  def onQuickie2Clicked(self):
+    self.setQuickieRadius(2)
+  def onQuickie3Clicked(self):
+    self.setQuickieRadius(3)
+  def onQuickie4Clicked(self):
+    self.setQuickieRadius(4)
+  def onQuickie5Clicked(self):
+    self.setQuickieRadius(5)
+  def onQuickie10Clicked(self):
+    self.setQuickieRadius(10)
+  def onQuickie20Clicked(self):
+    self.setQuickieRadius(20)
+
+  def setQuickieRadius(self,radius):
+    labelVolume = self.editUtil.getLabelVolume()
+    if labelVolume:
+      if self.radiusUnitsToggle.text == 'px:':
+        spacing = labelVolume.GetSpacing()
+        if self.radiusPixelMode == 'diag':
+          from math import sqrt
+          diag = sqrt(reduce(lambda x,y:x+y, map(lambda x: x**2, spacing)))
+          mmRadius = diag * radius
+        elif self.radiusPixelMode == 'min':
+          mmRadius = min(spacing) * radius
+        else:
+          print (self,"Unknown pixel mode - using 5mm")
+          mmRadius = 5
+      else:
+        mmRadius = radius
+      self.disconnectWidgets()
+      self.radiusSpinBox.setValue(mmRadius)
+      self.radius.setValue(mmRadius)
+      self.connectWidgets()
+      self.updateMRMLFromGUI()
 
   def onRadiusValueChanged(self,value):
     self.radiusSpinBox.setValue(self.radius.value)
