@@ -264,6 +264,10 @@ void vtkMRMLDisplayableNode::SetNthDisplayNodeID(int n, const char *displayNodeI
     {
     this->DisplayNodeIDs[n] = std::string(displayNodeID);
     }
+  else
+    {
+    this->DisplayNodeIDs.erase(this->DisplayNodeIDs.begin()+n);
+    }
   if (displayNodeID)
     {
     this->Scene->AddReferencedNodeID(displayNodeID, this);
@@ -458,3 +462,4 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
       }
     }
 }
+
