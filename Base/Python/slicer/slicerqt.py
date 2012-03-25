@@ -2,6 +2,7 @@ import vtk, qt, ctk
 import slicer
 
 from slicer.util import *
+del print_function
 
 # HACK Ideally constant from vtkSlicerConfigure should be wrapped,
 #      that way the following try/except could be avoided.

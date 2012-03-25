@@ -1,4 +1,6 @@
 
+from __future__ import print_function
+
 #
 # General
 #
@@ -36,8 +38,8 @@ def importClassesFromDirectory(directory, dest_module_name, type_name, filematch
       from_module_name = os.path.splitext(os.path.basename(fname))[0]
       importModuleObjects(from_module_name, dest_module_name, type_name)
     except ImportError as detail:
-      # TODO: this message should go in the application error log (how?)
-      print detail
+      import sys
+      print(detail, file=sys.stderr)
 
 def importModuleObjects(from_module_name, dest_module_name, type_name):
   """Import object of type 'type_name' from module identified
@@ -75,7 +77,8 @@ def lookupTopLevelWidget(objectName, verbose = True):
     if hasattr(w,'objectName'):
       if w.objectName == objectName: return w
   if verbose:
-    print "Failed to obtain reference to '%s'" % objectName
+    import sys
+    print("Failed to obtain reference to '%s'" % objectName, file=sys.stderr)
   return None
 
 def mainWindow(verbose = True):
@@ -248,7 +251,8 @@ def getModule(moduleName):
   from slicer import app
   module = app.moduleManager().module(moduleName);
   if not module:
-    print "Could not find module with name '%s" % moduleName
+    import sys
+    print("Could not find module with name '%s" % moduleName, file=sys.stderr)
     return None
   return module
 
@@ -259,7 +263,8 @@ def getModuleGui(module):
     return None
   widgetRepr = module.widgetRepresentation()
   if not widgetRepr:
-    print "Could not find module widget representation with name '%s" % moduleName
+    import sys
+    print("Could not find module widget representation with name '%s" % moduleName, file=sys.stderr)
     return None
   return widgetRepr
 
