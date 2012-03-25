@@ -39,6 +39,7 @@ public:
   qSlicerScriptedLoadableModuleWidget(QWidget * parentWidget=0);
   virtual ~qSlicerScriptedLoadableModuleWidget();
 
+  QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""));
 
   virtual void enter();

@@ -78,6 +78,9 @@ void qSlicerAbstractModuleWidget::setup()
 {
   const qSlicerAbstractModule* m =
     qobject_cast<const qSlicerAbstractModule*>(this->module());
-  this->setWindowTitle(m->title());
-  this->setWindowIcon(m->icon());
+  if (m)
+    {
+    this->setWindowTitle(m->title());
+    this->setWindowIcon(m->icon());
+    }
 }

@@ -22,6 +22,7 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
       qSlicerPythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
   endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -32,8 +33,12 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     QT4_GENERATE_MOCS(
       qSlicerPythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
   endif()
+
+  QT4_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
+
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
@@ -58,6 +63,7 @@ if(BUILD_TESTING)
 
   if(Slicer_USE_PYTHONQT)
     SIMPLE_TEST( qSlicerPythonManagerWithoutApplicationTest )
+    SIMPLE_TEST( qSlicerScriptedLoadableModuleWidgetTest )
   endif()
 
 endif()
