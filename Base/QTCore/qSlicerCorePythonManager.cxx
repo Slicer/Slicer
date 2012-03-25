@@ -18,6 +18,9 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QBitArray>
+
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -48,6 +51,10 @@ qSlicerCorePythonManager::~qSlicerCorePythonManager()
 QStringList qSlicerCorePythonManager::pythonPaths()
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  if (!app)
+    {
+    return Superclass::pythonPaths();
+    }
 
   QStringList paths;
   paths << Superclass::pythonPaths();
@@ -121,10 +128,11 @@ void qSlicerCorePythonManager::preInitialization()
   Superclass::preInitialization();
 
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
-
-  // Add object to python interpreter context
-  this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
-
+  if (app)
+    {
+    // Add object to python interpreter context
+    this->addObjectToPythonMain("_qSlicerCoreApplicationInstance", app);
+    }
 }
 
 //-----------------------------------------------------------------------------

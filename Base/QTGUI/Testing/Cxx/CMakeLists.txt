@@ -2,6 +2,7 @@ if(BUILD_TESTING)
   # Code specfic to Slicer testing is added here.
   set(KIT ${PROJECT_NAME})
   set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
   set(KIT_TEST_SRCS
     qSlicerAbstractModuleTest1.cxx
     qSlicerAbstractModuleWidgetTest1.cxx
@@ -18,11 +19,21 @@ if(BUILD_TESTING)
     list(APPEND KIT_TEST_SRCS
       )
   endif()
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND KIT_TEST_SRCS
+      qSlicerPythonManagerWithoutApplicationTest.cxx
+      )
+  endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
     ${KIT_TEST_SRCS}
     EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
     )
 
+  if(Slicer_USE_PYTHONQT)
+    QT4_GENERATE_MOCS(
+      qSlicerPythonManagerWithoutApplicationTest.cxx
+      )
+  endif()
   add_executable(${KIT}CxxTests ${Tests})
   target_link_libraries(${KIT}CxxTests ${KIT})
   set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
@@ -41,7 +52,12 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerModulePanelTest1 )
   SIMPLE_TEST( qSlicerWidgetTest1 )
   SIMPLE_TEST( qSlicerWidgetTest2 )
+
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  endif()
+
+  if(Slicer_USE_PYTHONQT)
+    SIMPLE_TEST( qSlicerPythonManagerWithoutApplicationTest )
   endif()
 
 endif()

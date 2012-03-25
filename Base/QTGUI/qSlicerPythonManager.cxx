@@ -55,6 +55,10 @@ void qSlicerPythonManager::preInitialization()
 void qSlicerPythonManager::executeInitializationScripts()
 {
   qSlicerApplication* app = qSlicerApplication::application();
+  if (!app)
+    {
+    return;
+    }
 
   // Evaluate application script
   this->executeFile(app->slicerHome() + "/bin/Python/slicer/slicerqt.py");
