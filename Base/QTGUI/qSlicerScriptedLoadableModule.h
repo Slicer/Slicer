@@ -53,6 +53,7 @@ public:
   qSlicerScriptedLoadableModule(QObject *parent=0);
   virtual ~qSlicerScriptedLoadableModule();
 
+  QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource);
 
   /// Convenient method allowing to retrieve the associated scripted instance

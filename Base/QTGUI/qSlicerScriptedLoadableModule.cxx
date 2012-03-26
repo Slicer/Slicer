@@ -120,9 +120,21 @@ qSlicerScriptedLoadableModule::~qSlicerScriptedLoadableModule()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerScriptedLoadableModule::pythonSource()const
+{
+  Q_D(const qSlicerScriptedLoadableModule);
+  return d->PythonSource;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSource)
 {
   Q_D(qSlicerScriptedLoadableModule);
+
+  if (!Py_IsInitialized())
+    {
+    return false;
+    }
 
   Q_ASSERT(newPythonSource.endsWith(".py"));
 
@@ -134,14 +146,14 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 #endif
   if (!pyfile)
     {
-    qCritical() << "SetPythonSource - File" << newPythonSource << "doesn't exist !";
+    qCritical() << "qSlicerScriptedLoadableModule::setPythonSource - File"
+                << newPythonSource << "doesn't exist !";
     return false;
     }
 
   // Extract moduleName from the provided filename
   QString moduleName = QFileInfo(newPythonSource).baseName();
   QString className = moduleName;
-  //qDebug() << "className" << className;
 
   // Get a reference to the main module and global dictionary
   PyObject * main_module = PyImport_AddModule("__main__");
@@ -170,12 +182,10 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
     return false;
     }
 
-  //qDebug() << "classToInstantiate:" << classToInstantiate;
-
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)
     {
-    qCritical() << "setPythonSource" << newPythonSource
+    qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
         << "- Failed to wrap" << this->metaObject()->className();
     return false;
     }
@@ -188,8 +198,8 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   Py_DECREF(arguments);
   if (!self)
     {
-    qCritical() << "setPythonSource" << newPythonSource
-        << "- Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
+    qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
+                << "-  Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
     return false;
     }
 
@@ -202,7 +212,6 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
       continue;
       }
     PyObject * method = PyObject_GetAttrString(self, Pimpl::APIMethodNames[i]);
-    //qDebug() << Pimpl::APIMethodNames[i] << "method:" << method;
     d->PythonAPIMethods[i] = method;
     }
 

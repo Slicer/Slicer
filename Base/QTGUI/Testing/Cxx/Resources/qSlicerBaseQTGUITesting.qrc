@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
     <file alias="qSlicerScriptedLoadableModuleTestWidget.py">../../Data/Input/qSlicerScriptedLoadableModuleTestWidget.py</file>
-    <file alias="qSlicerScriptedLoadableModuleTest.py">../../Data/Input/qSlicerScriptedLoadableModuleTestWidget.py</file>
+    <file alias="qSlicerScriptedLoadableModuleTest.py">../../Data/Input/qSlicerScriptedLoadableModuleTest.py</file>
   </qresource>
 </RCC>

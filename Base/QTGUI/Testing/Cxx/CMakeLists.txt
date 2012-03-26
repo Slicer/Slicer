@@ -22,6 +22,7 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
       qSlicerPythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedLoadableModuleTest.cxx
       qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
   endif()
@@ -33,6 +34,7 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     QT4_GENERATE_MOCS(
       qSlicerPythonManagerWithoutApplicationTest.cxx
+      qSlicerScriptedLoadableModuleTest.cxx
       qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
   endif()
@@ -63,6 +65,7 @@ if(BUILD_TESTING)
 
   if(Slicer_USE_PYTHONQT)
     SIMPLE_TEST( qSlicerPythonManagerWithoutApplicationTest )
+    SIMPLE_TEST( qSlicerScriptedLoadableModuleTest )
     SIMPLE_TEST( qSlicerScriptedLoadableModuleWidgetTest )
   endif()
 
