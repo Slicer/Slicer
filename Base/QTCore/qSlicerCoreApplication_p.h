@@ -53,13 +53,6 @@ public:
 
   virtual void init();
 
-  /// Generate ':/qt/etc/qt.conf' resource system.
-  /// Since QLibraryInfo will first check if this resource exists, this
-  /// function should be called if the application is installed.
-  /// \see http://doc.qt.nokia.com/latest/qt-conf.html
-  /// \sa QLibraryInfo
-  void setupQtConf();
-
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
 

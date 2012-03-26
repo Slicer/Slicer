@@ -36,7 +36,6 @@
 //  - Slicer_CLIMODULES_BIN_DIR
 //  - Slicer_LIB_DIR
 //  - Slicer_SHARE_DIR
-//  - Slicer_QtPlugins_DIR
 //  - Slicer_USE_PYTHONQT
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
@@ -257,15 +256,6 @@ void qSlicerCoreApplicationPrivate::init()
 # endif
 
 #endif
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::setupQtConf()
-{
-  QSettings qtConfSettings(":/qt/etc/qt.conf", QSettings::IniFormat);
-  qtConfSettings.beginGroup("Paths");
-  qtConfSettings.setValue("Plugins", Slicer_QtPlugins_DIR);
-  qtConfSettings.endGroup();
 }
 
 //-----------------------------------------------------------------------------
