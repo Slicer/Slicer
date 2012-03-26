@@ -33,11 +33,11 @@ private:
   qSlicerCorePythonManager PythonManager;
 
 private slots:
-  void initialize();
+  void testInitialize();
 };
 
 // ----------------------------------------------------------------------------
-void qSlicerCorePythonManagerWithoutApplicationTester::initialize()
+void qSlicerCorePythonManagerWithoutApplicationTester::testInitialize()
 {
   this->PythonManager.initialize();
 }
