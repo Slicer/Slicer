@@ -80,7 +80,7 @@ public:
   /// Return python code snippet to execute after slicer is loaded
   QString pythonCode()const;
 
-  /// Return True if Slicer should be execute python code or script and exit
+  /// Return True if Slicer should execute python code or script and exit
   bool runPythonAndExit()const;
 
   /// \sa runPythonAndExit

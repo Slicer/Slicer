@@ -77,28 +77,6 @@ namespace
 #ifdef Slicer_USE_PYTHONQT
 
 //----------------------------------------------------------------------------
-void initializePython()
-{
-  qSlicerApplication * app = qSlicerApplication::application();
-
-  // If first unparsed argument is python script, enable 'shebang' mode
-  QStringList unparsedArguments = app->commandOptions()->unparsedArguments();
-  if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
-    {
-    if(!app->commandOptions()->pythonScript().isEmpty())
-      {
-      qWarning() << "Ignore script specified using '--python-script'";
-      }
-    app->commandOptions()->setExtraPythonScript(unparsedArguments.at(0));
-    app->commandOptions()->setRunPythonAndExit(true);
-    }
-  if (!app->commandOptions()->pythonCode().isEmpty())
-    {
-    app->commandOptions()->setRunPythonAndExit(true);
-    }
-}
-
-//----------------------------------------------------------------------------
 void initializePythonConsole(ctkPythonConsole& pythonConsole)
 {
   // Create python console
@@ -241,7 +219,6 @@ int slicerQtMain(int argc, char* argv[])
   ctkPythonConsole pythonConsole;
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
-    initializePython();
     initializePythonConsole(pythonConsole);
     }
 #endif

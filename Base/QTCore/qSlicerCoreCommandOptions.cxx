@@ -19,8 +19,9 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QSettings>
+#include <QDebug>
 #include <QDir>
+#include <QSettings>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -99,6 +100,23 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
     qSlicerCoreApplication::application()->disableSettings();
     }
 
+  // If first unparsed argument is python script, enable 'shebang' mode
+  QStringList unparsedArguments = this->unparsedArguments();
+  if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
+    {
+    if(!this->pythonScript().isEmpty())
+      {
+      qWarning() << "Ignore script specified using '--python-script'";
+      }
+    this->setExtraPythonScript(unparsedArguments.at(0));
+    this->setRunPythonAndExit(true);
+    }
+
+  if (!d->ParsedArgs.value("c").toString().isEmpty())
+    {
+    this->setRunPythonAndExit(true);
+    }
+
   return true;
 }
 
@@ -159,7 +177,15 @@ CTK_SET_CPP(qSlicerCoreCommandOptions, const QString&, setExtraPythonScript, Ext
 QString qSlicerCoreCommandOptions::pythonCode() const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("python-code").toString();
+  QString pythonCode = d->ParsedArgs.value("python-code").toString();
+  if(!pythonCode.isEmpty())
+    {
+    return pythonCode;
+    }
+  else
+    {
+    return d->ParsedArgs.value("c").toString();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -243,8 +269,11 @@ void qSlicerCoreCommandOptions::addArguments()
   this->addArgument("python-script", "", QVariant::String,
                     "Python script to execute after slicer loads.");
 
-  this->addArgument("python-code", "c", QVariant::String,
-                    "Python code to execute after slicer loads. By default, Slicer will then exit.");
+  this->addArgument("python-code", "", QVariant::String,
+                    "Python code to execute after slicer loads.");
+
+  this->addArgument("", "c", QVariant::String,
+                    "Python code to execute after slicer loads. By default, no modules are loaded and Slicer exits afterward.");
 
   this->addArgument("ignore-slicerrc", "", QVariant::Bool,
                     "Do not load the Slicer resource file (~/.slicerrc.py).");
