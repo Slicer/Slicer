@@ -113,16 +113,22 @@ void qSlicerScriptedLoadableModuleWidgetTester::testSetPythonSource()
   QVERIFY(w.pythonSource().isEmpty());
 
   w.setPythonSource(scriptPath);
-  QCOMPARE(w.pythonSource(), scriptPath);
+  QFETCH(bool, syntaxErrorExpected);
+  QString expectedScriptPath = syntaxErrorExpected ? QString() : scriptPath;
+  QCOMPARE(w.pythonSource(), expectedScriptPath);
+
+  QVERIFY(!PyErr_Occurred());
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModuleWidgetTester::testSetPythonSource_data()
 {
   QTest::addColumn<QString>("scriptName");
+  QTest::addColumn<bool>("syntaxErrorExpected");
 
-  QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py";
-  QTest::newRow("1") << "qSlicerScriptedLoadableModuleTest.py";
+  QTest::newRow("0") << "qSlicerScriptedLoadableModuleTestWidget.py" << false;
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleTest.py" << false;
+  QTest::newRow("2") << "qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py" << true;
 }
 
 // ----------------------------------------------------------------------------

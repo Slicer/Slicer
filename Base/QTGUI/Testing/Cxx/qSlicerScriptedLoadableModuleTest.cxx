@@ -110,16 +110,21 @@ void qSlicerScriptedLoadableModuleTester::testSetPythonSource()
   QVERIFY(m.pythonSource().isEmpty());
 
   m.setPythonSource(scriptPath);
-  QCOMPARE(m.pythonSource(), scriptPath);
+  QFETCH(bool, syntaxErrorExpected);
+  QString expectedScriptPath = syntaxErrorExpected ? QString() : scriptPath;
+  QCOMPARE(m.pythonSource(), expectedScriptPath);
+
+  QVERIFY(!PyErr_Occurred());
 }
 
 // ----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModuleTester::testSetPythonSource_data()
 {
   QTest::addColumn<QString>("scriptName");
+  QTest::addColumn<bool>("syntaxErrorExpected");
 
-  QTest::newRow("0") << "qSlicerScriptedLoadableModuleTest.py";
-  QTest::newRow("1") << "qSlicerScriptedLoadableModuleSyntaxErrorTest.py";
+  QTest::newRow("0") << "qSlicerScriptedLoadableModuleTest.py" << false;
+  QTest::newRow("1") << "qSlicerScriptedLoadableModuleSyntaxErrorTest.py" << true;
 }
 
 namespace
