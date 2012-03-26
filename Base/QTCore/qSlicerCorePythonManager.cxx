@@ -37,7 +37,6 @@
 qSlicerCorePythonManager::qSlicerCorePythonManager(QObject* _parent) : Superclass(_parent)
 {
   int flags = this->initializationFlags();
-  flags &= ~(PythonQt::RedirectStdOut); // Clear bit
   flags &= ~(PythonQt::IgnoreSiteModule); // Clear bit
   this->setInitializationFlags(flags);
 }
