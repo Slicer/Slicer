@@ -48,10 +48,10 @@ else()
 endif()
 
 set(python_SOURCE_DIR ${python_build})
-configure_file(SuperBuild/python_patch_step_pythonrun.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step_pythonrun.cmake
+configure_file(SuperBuild/python_patch_step_win.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
   @ONLY)
-set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step_pythonrun.cmake)
+set(python_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
 
 
 #-----------------------------------------------------------------------------
