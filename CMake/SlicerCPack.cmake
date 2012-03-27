@@ -48,17 +48,17 @@ Plugins = ${Slicer_QtPlugins_DIR}
           RENAME qt.conf)
 
   set(executable_path @executable_path)
-  set(slicer_complete_bundle_directory ${Slicer_BINARY_DIR}/CMake/SlicerCompleteBundles)
+  set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
-    "${Slicer_SOURCE_DIR}/CMake/SlicerCompleteBundles.cmake.in"
-    "${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake"
+    "${Slicer_SOURCE_DIR}/CMake/SlicerCPackBundleFixup.cmake.in"
+    "${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake"
     @ONLY)
   # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
   #        let's make sure the following install rule is evaluated within its own directory.
   #        Otherwise, the associated script will be executed before any other relevant install rules.
-  file(WRITE ${slicer_complete_bundle_directory}/CMakeLists.txt
-    "install(SCRIPT \"${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake\")")
-  add_subdirectory(${slicer_complete_bundle_directory} ${slicer_complete_bundle_directory}-binary)
+  file(WRITE ${slicer_cpack_bundle_fixup_directory}/CMakeLists.txt
+    "install(SCRIPT \"${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake\")")
+  add_subdirectory(${slicer_cpack_bundle_fixup_directory} ${slicer_cpack_bundle_fixup_directory}-binary)
 endif()
 
 # Install Slicer
