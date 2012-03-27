@@ -6,7 +6,7 @@ endif()
 set(python_SOURCE_DIR python)
 set(python_BUILD_IN_SOURCE 1)
 
-configure_file(SuperBuild/python_patch_step.cmake.in
+configure_file(SuperBuild/python_patch_step_unix.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
   @ONLY)
 
