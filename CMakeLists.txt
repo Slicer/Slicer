@@ -373,7 +373,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     # HACK - On Mac OSX, since all libraries are fixed using the same "install_name" (specifying the
     # location of the dependent libraries relatively to the location of Slicer executable), it
     # is required for CLI executable to be located at same depth as Slicer executable.
-    # See also Slicer/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in
+    # See also Slicer/CMake/SlicerCompleteBundles.cmake.in
     #
     # A more elegant solution would be to create a "Slicer.framework" on which both "Slicer.app"
     # and the plugins/extensions (or loadable bundles) would depend on.

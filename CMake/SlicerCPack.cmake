@@ -37,20 +37,20 @@ else()
   endif()
 
   # Generate qt.conf
-  file(WRITE ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
+  file(WRITE ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
 "[Paths]
 Plugins = ${Slicer_QtPlugins_DIR}
 ")
   # .. and install
-  install(FILES ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/qt.conf-to-install
+  install(FILES ${Slicer_BINARY_DIR}/CMake/qt.conf-to-install
           DESTINATION ${Slicer_INSTALL_ROOT}Resources
           COMPONENT Runtime
           RENAME qt.conf)
 
   set(executable_path @executable_path)
-  set(slicer_complete_bundle_directory ${Slicer_BINARY_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles)
+  set(slicer_complete_bundle_directory ${Slicer_BINARY_DIR}/CMake/SlicerCompleteBundles)
   configure_file(
-    "${Slicer_SOURCE_DIR}/Utilities/LastConfigureStep/SlicerCompleteBundles.cmake.in"
+    "${Slicer_SOURCE_DIR}/CMake/SlicerCompleteBundles.cmake.in"
     "${slicer_complete_bundle_directory}/SlicerCompleteBundles.cmake"
     @ONLY)
   # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
