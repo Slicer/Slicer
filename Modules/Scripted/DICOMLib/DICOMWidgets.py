@@ -188,7 +188,23 @@ class DICOMDetailsPopup(object):
       for study in studies:
         series = slicer.dicomDatabase.seriesForStudy(study)
         for serie in series:
-          fileLists.append(slicer.dicomDatabase.filesForSeries(serie))
+          fileList = slicer.dicomDatabase.filesForSeries(serie)
+          fileLists.append(fileList)
+
+
+    allFileCount = missingFileCount = 0
+    for fileList in fileLists:
+        for filePath in fileList:
+          allFileCount += 1
+          if not os.path.exists(filePath):
+            missingFileCount += 1
+
+    if missingFileCount > 0:
+      qt.QMessageBox.warning(self.window,
+          "DICOM", "Warning: %d of %d files listed in the database for this %s cannot be found on disk." % (missingFileCount, allFileCount, role))
+
+    if missingFileCount == allFileCount:
+      return
 
     self.progress = qt.QProgressDialog(self.window)
     self.progress.modal = True
