@@ -110,6 +110,50 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       }
   }
 
+  //-----------------------------------------------------------------------------
+  // Test IsExtension(const std::string& filePath, const std::string& applicationHomeDir);
+  //-----------------------------------------------------------------------------
+  {
+    // The following vector contains rows where each row has three items:
+    //   - filePath
+    //   - applicationHomeDir
+    //   - isExtensionExpected
+    typedef std::vector<std::string> TestRowType;
+    typedef std::vector< TestRowType > TestDataType;
+    TestDataType data;
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/MRIChangeDetector-build/lib/Slicer-X.Y/qt-scripted-modules/MRIChangeDetector.pyc");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/lib/Slicer-X.Y/qt-scripted-modules/MRIChangeDetector.pyc");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("0");
+      data.push_back(row);
+    }
+    for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
+      {
+      std::string filePath(data.at(rowIdx).at(0));
+      std::string applicationHomeDir(data.at(rowIdx).at(1));
+      std::string isExtensionExpectedAsStr(data.at(rowIdx).at(2));
+      bool isExtensionExpected = (isExtensionExpectedAsStr == "1");
+
+      bool isExtension = vtkSlicerApplicationLogic::IsExtension(filePath, applicationHomeDir);
+      if (isExtensionExpected != isExtension)
+        {
+        std::cerr << "Line " << __LINE__ << " - Problem with IsExtension ! - Row:" << rowIdx << "\n"
+                  << "\tfilePath:" << filePath << ", applicationHomeDir: " << applicationHomeDir << "\n"
+                  << "\texpected:" << isExtensionExpected << "\n"
+                  << "\tcurrent:" << isExtension << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+  }
+
   return EXIT_SUCCESS;
 }
 
