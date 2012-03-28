@@ -97,10 +97,11 @@
       <name>Smooth</name>
       <label>Smooth</label>
       <longflag>--smooth</longflag>
-      <description><![CDATA[Here you can set the number of smoothing iterations. Use 0 if you wish no smoothing.]]></description>
+      <description><![CDATA[Here you can set the number of smoothing iterations for Laplacian smoothing, or the degree of the polynomial approximating the windowed Sinc function. Use 0 if you wish no smoothing. ]]></description>
       <default>10</default>
       <constraints>
         <minimum>0</minimum>
+        <maximum>100</maximum>
       </constraints>
     </integer>
     <string-enumeration>
