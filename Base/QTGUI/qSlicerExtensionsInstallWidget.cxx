@@ -87,7 +87,7 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 {
   QUrl url(this->ExtensionsManagerModel->serverUrlWithExtensionsStorePath());
   url.setQueryItems(QList<QPair<QString, QString> >()
-                    << QPair<QString, QString>("slicerView", "slicerView")
+                    << QPair<QString, QString>("layout", "empty")
                     << QPair<QString, QString>("os", this->SlicerOs)
                     << QPair<QString, QString>("arch", this->SlicerArch)
                     << QPair<QString, QString>("revision", this->SlicerRevision));
