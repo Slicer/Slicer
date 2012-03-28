@@ -59,10 +59,6 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
     return 0;
     }
 
-  //qDebug() << "module->categories()" << module->categories();
-  //qDebug() << "module->contributors()" << module->contributors();
-  //qDebug() << "module->helpText()" << module->helpText();
-  //qDebug() << "module->acknowledgementText()" << module->acknowledgementText();
   module->setPath(this->path());
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
