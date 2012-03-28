@@ -53,12 +53,6 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
   // fails before returning the module. See QScopedPointer::take()
   QScopedPointer<qSlicerScriptedLoadableModule> module(new qSlicerScriptedLoadableModule());
 
-  bool ret = module->setPythonSource(this->path());
-  if (!ret)
-    {
-    return 0;
-    }
-
   module->setPath(this->path());
 
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
@@ -81,6 +75,12 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
       }
     }
 #endif
+
+  bool ret = module->setPythonSource(this->path());
+  if (!ret)
+    {
+    return 0;
+    }
 
   return module.take();
 }
