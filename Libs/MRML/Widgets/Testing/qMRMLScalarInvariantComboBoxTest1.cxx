@@ -44,8 +44,8 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
   scalarComboBox.setDisplayPropertiesNode(displayPropertiesNode);
 
   displayPropertiesNode->SetColorGlyphBy(
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::D22);
-  if (scalarComboBox.scalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::D22)
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);
+  if (scalarComboBox.scalarInvariant() != vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity)
     {
     std::cerr << "qMRMLScalarInvariantComboBox failed: "
               << scalarComboBox.scalarInvariant() << " instead of "
@@ -54,9 +54,9 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
     }
 
   scalarComboBox.setScalarInvariant(
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ);
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
   if (displayPropertiesNode->GetColorGlyphBy() !=
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalueProjZ)
+      vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy)
     {
     std::cerr << "qMRMLScalarInvariantComboBox::setScalarInvariant() failed: "
               << displayPropertiesNode->GetColorGlyphBy() << " instead of "
