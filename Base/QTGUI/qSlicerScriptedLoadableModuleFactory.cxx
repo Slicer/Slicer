@@ -67,8 +67,8 @@ qSlicerAbstractCoreModule* ctkFactoryScriptedItem::instanciator()
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
-    // By convention, if the module is an extension, "<MODULEPATH>" will be appended to PYTHONPATH
-    if (qSlicerCoreApplication::application()->isExtension(module->path()))
+    // By convention, if the module is not embedded, "<MODULEPATH>" will be appended to PYTHONPATH
+    if (!qSlicerCoreApplication::application()->isEmbeddedModule(module->path()))
       {
       QDir modulePathWithoutIntDir = QFileInfo(module->path()).dir();
       QString intDir = qSlicerCoreApplication::application()->intDir();

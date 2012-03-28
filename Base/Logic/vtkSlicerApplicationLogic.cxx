@@ -1557,7 +1557,7 @@ void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerApplicationLogic::IsExtension(const std::string& filePath, const std::string& applicationHomeDir)
+bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir)
 {
   if (filePath.empty())
     {
@@ -1570,7 +1570,7 @@ bool vtkSlicerApplicationLogic::IsExtension(const std::string& filePath, const s
     return false;
     }
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
-  return !itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
+  return itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
 }
 
 //----------------------------------------------------------------------------

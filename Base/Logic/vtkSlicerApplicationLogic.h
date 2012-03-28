@@ -132,8 +132,8 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   void SetTracingOn () { this->Tracing = 1; }
   void SetTracingOff () { this->Tracing = 0; }
 
-  /// Return True if \a filePath isn't contained in \a applicationHomeDir.
-  static bool IsExtension(const std::string& filePath, const std::string& applicationHomeDir);
+  /// Return True if \a filePath is a descendant of \a applicationHomeDir.
+  static bool IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir);
 
   /// Return \a true if the plugin identified with its \a filePath is loaded from an install tree.
   /// \warning Since internally the function looks for the existence of CMakeCache.txt, it will

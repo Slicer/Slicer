@@ -973,10 +973,10 @@ QString qSlicerCoreApplication::slicerHome() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreApplication::isExtension(const QString& moduleFileName)const
+bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)const
 {
-  return vtkSlicerApplicationLogic::IsExtension(moduleFileName.toStdString(),
-                                                this->slicerHome().toStdString());
+  return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(),
+                                                     this->slicerHome().toStdString());
 }
 
 //-----------------------------------------------------------------------------
