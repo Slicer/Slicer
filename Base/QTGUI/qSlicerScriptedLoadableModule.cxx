@@ -228,13 +228,6 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 }
 
 //-----------------------------------------------------------------------------
-//PyObject* qSlicerScriptedLoadableModule::pythonInstance() const
-//{
-//  Q_D(const qSlicerScriptedLoadableModule);
-//  return d->PythonSelf;
-//}
-
-//-----------------------------------------------------------------------------
 void qSlicerScriptedLoadableModule::setup()
 {
   Q_D(qSlicerScriptedLoadableModule);

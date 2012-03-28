@@ -56,9 +56,6 @@ public:
   QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource);
 
-  /// Convenient method allowing to retrieve the associated scripted instance
-  /// Q_INVOKABLE PyObject* pythonInstance() const;
-
   virtual QString title()const ;
   void setTitle(const QString& newTitle);
 

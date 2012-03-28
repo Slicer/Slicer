@@ -26,6 +26,11 @@
 
 #include "qSlicerBaseQTGUIExport.h"
 
+// Forward Declare PyObject*
+#ifndef PyObject_HEAD
+struct _object;
+typedef _object PyObject;
+#endif
 class qSlicerScriptedLoadableModuleWidgetPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerScriptedLoadableModuleWidget
@@ -41,6 +46,9 @@ public:
 
   QString pythonSource()const;
   bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""));
+
+  /// Convenience method allowing to retrieve the associated scripted instance
+  Q_INVOKABLE PyObject* self() const;
 
   virtual void enter();
   virtual void exit();
