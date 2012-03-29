@@ -168,7 +168,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           value = v[v.index('[')+1:v.index(']')]
         except ValueError:
           value = "Unknown"
-        if value == "Unknown":
+        if not value or value == "Unknown":
           loadable.warning = "Reference image in series does not contain geometry information.  Please use caution."
           validGeometry = False
           break
@@ -190,46 +190,52 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # the scan axis, sort files by this
       #
       sortList = []
+      missingGeometry = False
       for file in loadable.files:
+        if not positions[file]:
+          missingGeometry = True
+          break
         position = [float(zz) for zz in positions[file].split('\\')]
         vec = self.difference(position, scanOrigin)
         dist = self.dot(vec, scanAxis)
         sortList.append((file, dist))
 
-      sortedFiles = sorted(sortList, key=lambda x: x[1])
-      distances = {}
-      loadable.files = []
-      for file,dist in sortedFiles:
-        loadable.files.append(file)
-        distances[file] = dist
+      if missingGeometry:
+        loadable.warning = "One or more images is missing geometry information"
+      else:
+        sortedFiles = sorted(sortList, key=lambda x: x[1])
+        distances = {}
+        loadable.files = []
+        for file,dist in sortedFiles:
+          loadable.files.append(file)
+          distances[file] = dist
 
-      #
-      # confirm equal spacing between slices
-      # - use variable 'epsilon' to determine the tolerance
-      #
-      spaceWarnings = 0
-      if len(loadable.files) > 1:
-        file0 = loadable.files[0]
-        file1 = loadable.files[1]
-        dist0 = distances[file0]
-        dist1 = distances[file1]
-        spacing0 = dist1 - dist0
-        n = 1
-        for fileN in loadable.files[1:]:
-          fileNminus1 = loadable.files[n-1]
-          distN = distances[fileN]
-          distNminus1 = distances[fileNminus1]
-          spacingN = distN - distNminus1
-          spaceError = spacingN - spacing0
-          if abs(spaceError) > self.epsilon:
-            spaceWarnings += 1
-            loadable.warning = "Images are not equally spaced (a difference of %g in spacings was detected).  Slicer will load this series as if it had a spacing of %g.  Please use caution." % (spaceError, spacing0)
-            break
-          n += 1
+        #
+        # confirm equal spacing between slices
+        # - use variable 'epsilon' to determine the tolerance
+        #
+        spaceWarnings = 0
+        if len(loadable.files) > 1:
+          file0 = loadable.files[0]
+          file1 = loadable.files[1]
+          dist0 = distances[file0]
+          dist1 = distances[file1]
+          spacing0 = dist1 - dist0
+          n = 1
+          for fileN in loadable.files[1:]:
+            fileNminus1 = loadable.files[n-1]
+            distN = distances[fileN]
+            distNminus1 = distances[fileNminus1]
+            spacingN = distN - distNminus1
+            spaceError = spacingN - spacing0
+            if abs(spaceError) > self.epsilon:
+              spaceWarnings += 1
+              loadable.warning = "Images are not equally spaced (a difference of %g in spacings was detected).  Slicer will load this series as if it had a spacing of %g.  Please use caution." % (spaceError, spacing0)
+              break
+            n += 1
 
-      # TODO: issue space warnings dialog?
-      if spaceWarnings != 0:
-        print("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
+        if spaceWarnings != 0:
+          print("Geometric issues were found with %d of the series.  Please use caution." % spaceWarnings)
 
     return loadables
 
