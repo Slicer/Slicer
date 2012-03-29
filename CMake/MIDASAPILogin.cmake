@@ -44,8 +44,8 @@ function(midas_api_login)
     endif()
   endforeach()
 
-  _SlicerEscapeForUrl(email ${MY_SERVER_EMAIL})
-  _SlicerEscapeForUrl(apikey ${MY_SERVER_APIKEY})
+  midas_api_escape_for_url(email ${MY_SERVER_EMAIL})
+  midas_api_escape_for_url(apikey ${MY_SERVER_APIKEY})
 
   set(api_method "midas.login")
   set(params "&appname=Default")
@@ -71,7 +71,7 @@ function(midas_api_login)
   set(${MY_RESULT_VARNAME} "${token}" PARENT_SCOPE)
 endfunction()
 
-macro(_SlicerEscapeForUrl var str)
+macro(midas_api_escape_for_url var str)
   # Escape spaces in the url
   string(REPLACE " " "%20" ${var} "${str}")
 endmacro()
