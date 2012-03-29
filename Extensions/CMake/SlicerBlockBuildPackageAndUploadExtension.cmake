@@ -66,8 +66,8 @@ set(CMAKE_MODULE_PATH
   )
 
 include(CMakeParseArguments)
+include(CTestPackage)
 include(MIDASCTestUploadURL)
-include(${Slicer_CMAKE_DIR}/SlicerFunctionCTestPackage.cmake)
 include(${Slicer_CMAKE_DIR}/../Extensions/CMake/SlicerFunctionMIDASUploadExtension.cmake)
 
 #-----------------------------------------------------------------------------
@@ -185,7 +185,7 @@ if(RUN_CTEST_PACKAGES)
     #message("----------- [ Packaging extension ${EXTENSION_NAME} ] -----------")
     message("Packaging extension ${EXTENSION_NAME} ...")
     set(extension_packages)
-    SlicerFunctionCTestPackage(
+    ctest_package(
       BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY}
       CONFIG ${CTEST_BUILD_CONFIGURATION}
       RETURN_VAR extension_packages)

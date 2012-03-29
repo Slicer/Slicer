@@ -301,9 +301,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # our custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
+        include(CTestPackage))
         include(MIDASAPIUploadPackage)
         include(MIDASCTestUploadURL)
-        include(SlicerFunctionCTestPackage))
         include(SlicerMacroExtractRepositoryInfo)
 
         SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
@@ -311,7 +311,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         set(packages)
         if(run_ctest_with_packages)
           message("Packaging ...")
-          SlicerFunctionCTestPackage(
+          ctest_package(
             BINARY_DIR ${slicer_build_dir}
             CONFIG ${CTEST_BUILD_CONFIGURATION}
             RETURN_VAR packages)

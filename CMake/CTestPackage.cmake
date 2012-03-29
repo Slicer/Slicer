@@ -20,7 +20,7 @@
 
 include(CMakeParseArguments)
 
-function(SlicerFunctionCTestPackage)
+function(ctest_package)
   set(options)
   set(oneValueArgs BINARY_DIR CONFIG RETURN_VAR)
   set(multiValueArgs)
@@ -36,10 +36,10 @@ function(SlicerFunctionCTestPackage)
   endif()
 
   # The following variable could be used while testing the macro ...
-  set(SlicerFunctionCTestPackage_build_target TRUE)
+  set(_build_target TRUE)
 
-  set(cpack_output_file ${MY_BINARY_DIR}/SlicerFunctionCTestPackage-make-package-output.txt)
-  if (SlicerFunctionCTestPackage_build_target)
+  set(cpack_output_file ${MY_BINARY_DIR}/ctest_package_make_package_output.txt)
+  if(_build_target)
     execute_process(
       COMMAND ${CMAKE_COMMAND} --build ${MY_BINARY_DIR} --target package --config ${MY_CONFIG}
       WORKING_DIRECTORY ${MY_BINARY_DIR}
