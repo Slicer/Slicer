@@ -18,12 +18,16 @@
 #
 ################################################################################
 
+#
 # Uploads a package to the MIDAS server.
+#
 #   SERVER_URL The url of the MIDAS server
-#   SERVER_TOKEN Token obtained using 'midas_api_login' function
+#   SERVER_EMAIL The email to use to authenticate to the server
+#   SERVER_APIKEY The default api key to use to authenticate to the server
 #   SUBMISSION_TYPE The dashboard mode: experimental | nightly | continuous
 #
-# Will both output warning messages and return an empty token it login failed.
+#   RESULT_VARNAME Will set the value of ${RESULT_VARNAME} to either "ok" or "fail".
+
 function(midas_api_upload_package)
   include(CMakeParseArguments)
   set(options)

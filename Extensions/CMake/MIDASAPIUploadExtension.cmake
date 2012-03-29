@@ -18,15 +18,16 @@
 #
 ################################################################################
 
-# Uploads an extension to the MIDAS server.
-# The following variables should be set in your dashboard script before calling this:
-#   MIDAS_PACKAGE_URL The url of the MIDAS server
-#   MIDAS_PACKAGE_EMAIL The email to use to authenticate to the server
-#   MIDAS_PACKAGE_API_KEY The default api key to use to authenticate to the server
-#   SCRIPT_MODE The dashboard mode: experimental | nightly | continuous
 #
-# Will set the value of the variable in resultvar to either "ok" or "fail".
-# Will output warning messages in the fail condition
+# Uploads an extension to the MIDAS server.
+#
+#   SERVER_URL The url of the MIDAS server
+#   SERVER_EMAIL The email to use to authenticate to the server
+#   SERVER_APIKEY The default api key to use to authenticate to the server
+#   SUBMISSION_TYPE The dashboard mode: experimental | nightly | continuous
+#
+#   RESULT_VARNAME Will set the value of ${RESULT_VARNAME} to either "ok" or "fail".
+
 function(midas_api_upload_extension)
   set(expected_nonempty_args SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_DESCRIPTION EXTENSION_CONTRIBUTORS EXTENSION_HOMEPAGE EXTENSION_SCREENSHOTURLS EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
   set(expected_existing_args TMP_DIR PACKAGE_FILEPATH)
