@@ -115,21 +115,21 @@ message("script mode: ${SCRIPT_MODE}")
 message("coverage: ${WITH_COVERAGE}, memcheck: ${WITH_MEMCHECK}")
 
 #
-# Convenient macro allowing to download a file
+# Convenient function allowing to download a file
 #
-macro(downloadFile url dest)
+function(download_file url dest)
   file(DOWNLOAD ${url} ${dest} STATUS status)
   list(GET status 0 error_code)
   list(GET status 1 error_msg)
   if(error_code)
     message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
   endif()
-endmacro()
+endfunction()
 
 #
 # Download and include dashboard driver script
 #
 set(url http://svn.slicer.org/Slicer4/trunk/CMake/SlicerDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
-downloadFile(${url} ${dest})
+download_file(${url} ${dest})
 include(${dest})
