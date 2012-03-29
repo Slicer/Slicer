@@ -169,7 +169,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
   "ld.*has different visibility.*(libdcmdata|libdcmnet|libdcmimgle|liboflog|libofstd).a"
-  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).**conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
+  "DCMTK.(ofstd|dcmdata|dcmjpls|dcmnet|dcmimage|dcmimgle|dcmpstat|dcmqrdb).(lib|include|apps).*conversion from '(size_t|SOCKET)' to '.*', possible loss of data"
 
   # Libs/OpenIGTLink
   "(OpenIGTLink|openigtlink).[Ss]ource.igtl"
@@ -189,7 +189,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules._ctypes.libffi_msvc.ffi.*warning C4018"
   "Modules.audioop.c.*warning C4018"
   "Modules._multiprocessing.*warning"
-  (Python|Objects|Modules|modules|PC).*conversion from '(Py_uintptr_t|Py_ssize_t|INT_PTR|size_t|__int64)' to '.*', possible loss of data
+  "(Python|Objects|Modules|modules|PC).*conversion from '(Py_uintptr_t|Py_ssize_t|INT_PTR|size_t|__int64)' to '.*', possible loss of data"
   # Python - Linux
   "dist.py.*UserWarning.*licence.*distribution option is deprecated"
   "Objects.unicodeobject.c.*warning:.*differ in signedness"
