@@ -321,10 +321,12 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         if(run_ctest_with_upload)
           message("Uploading ...")
           foreach(p ${packages})
+            get_filename_component(package_name "${p}" NAME)
             set(midas_upload_status "fail")
             if(DEFINED MIDAS_PACKAGE_URL
                AND DEFINED MIDAS_PACKAGE_EMAIL
                AND DEFINED MIDAS_PACKAGE_API_KEY)
+              message("Uploading [${package_name}] on [${MIDAS_SERVER_URL}]")
               midas_api_upload_package(
                 SERVER_URL ${MIDAS_PACKAGE_URL}
                 SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
@@ -341,9 +343,11 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
                 )
             endif()
             if(midas_upload_status STREQUAL "ok")
+              message("Uploading URL on CDash")
               midas_ctest_upload_url(${p}) # on success, upload a link to CDash
             endif()
             if(NOT midas_upload_status STREQUAL "ok")
+              message("Uploading [${package_name}] on CDash")
               ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
             endif()
             if(run_ctest_submit)
