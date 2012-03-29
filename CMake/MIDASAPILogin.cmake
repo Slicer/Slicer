@@ -72,6 +72,6 @@ function(midas_api_login)
 endfunction()
 
 macro(midas_api_escape_for_url var str)
-  # Escape spaces in the url
-  string(REPLACE " " "%20" ${var} "${str}")
+  string(REPLACE " " "%20" _tmp "${str}")      # Spaces
+  string(REPLACE "\\/" "%2F" ${var} "${_tmp}") # Slash
 endmacro()
