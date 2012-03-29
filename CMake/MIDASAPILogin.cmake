@@ -71,7 +71,8 @@ function(midas_api_login)
   set(${MY_RESULT_VARNAME} "${token}" PARENT_SCOPE)
 endfunction()
 
-macro(midas_api_escape_for_url var str)
-  string(REPLACE " " "%20" _tmp "${str}")      # Spaces
-  string(REPLACE "\\/" "%2F" ${var} "${_tmp}") # Slash
-endmacro()
+function(midas_api_escape_for_url var str)
+  string(REPLACE "\\/" "%2F" _tmp "${str}") # Slash
+  string(REPLACE " " "%20" _tmp "${_tmp}") # Space
+  set(${var} ${_tmp} PARENT_SCOPE)
+endfunction()
