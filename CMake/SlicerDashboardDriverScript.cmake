@@ -298,7 +298,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         #-----------------------------------------------------------------------------
 
         # Update CMake module path so that in addition to our custom 'FindGit' module,
-        # out custom macros/functions can also be included.
+        # our custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
         include(SlicerFunctionCTestPackage)
@@ -320,7 +320,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         if(run_ctest_with_upload)
           message("Uploading ...")
           foreach(p ${packages})
-            set(slicer_midas_upload_status "fail")
+            set(midas_upload_status "fail")
             if(DEFINED MIDAS_PACKAGE_URL
                AND DEFINED MIDAS_PACKAGE_EMAIL
                AND DEFINED MIDAS_PACKAGE_API_KEY)
@@ -336,14 +336,14 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
                 ARCHITECTURE ${dashboard_Architecture}
                 PACKAGE_FILEPATH ${p}
                 PACKAGE_TYPE "installer"
-                RESULT_VARNAME slicer_midas_upload_status
+                RESULT_VARNAME midas_upload_status
                 )
             endif()
-            if(slicer_midas_upload_status STREQUAL "ok")
+            if(midas_upload_status STREQUAL "ok")
               include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASCTestUploadURL.cmake")
               SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
             endif()
-            if(NOT slicer_midas_upload_status STREQUAL "ok")
+            if(NOT midas_upload_status STREQUAL "ok")
               ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
             endif()
             if(run_ctest_submit)
