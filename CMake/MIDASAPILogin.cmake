@@ -23,7 +23,7 @@ include(CMakeParseArguments)
 #   SERVER_URL The url of the MIDAS server
 #   SERVER_EMAIL The email to use to authenticate to the server
 #   SERVER_APIKEY The default api key to use to authenticate to the server
-function(SlicerFunctionMIDASLogin)
+function(midas_api_login)
   set(options)
   set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR RESULT_VARNAME)
   set(multiValueArgs)

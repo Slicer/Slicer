@@ -49,8 +49,8 @@ function(SlicerFunctionMIDASUploadExtension)
     endif()
   endforeach()
 
-  include(SlicerFunctionMIDASLogin)
-  SlicerFunctionMIDASLogin(
+  include(MIDASAPILogin)
+  midas_api_login(
     SERVER_URL ${MY_SERVER_URL}
     SERVER_EMAIL ${MY_SERVER_EMAIL}
     SERVER_APIKEY ${MY_SERVER_APIKEY}
@@ -168,7 +168,7 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
       "ExtensionB^^git^^git://github.com/nowhere/ExtensionB.git^^45689ae3d4^^Bar^^1")
 
     include(SlicerBlockOperatingSystemNames)
-    
+
     foreach(submission_type "experimental" "nightly")
       foreach(operating_system "${Slicer_OS_LINUX_NAME}" "${Slicer_OS_MAC_NAME}" "${Slicer_OS_WIN_NAME}")
         foreach(architecture "i386" "amd64")

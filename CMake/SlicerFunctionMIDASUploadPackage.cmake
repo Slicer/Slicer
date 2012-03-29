@@ -20,7 +20,7 @@
 
 # Uploads a package to the MIDAS server.
 #   SERVER_URL The url of the MIDAS server
-#   SERVER_TOKEN Token obtained using SlicerFunctionMIDASLogin()
+#   SERVER_TOKEN Token obtained using 'midas_api_login' function
 #   SUBMISSION_TYPE The dashboard mode: experimental | nightly | continuous
 #
 # Will both output warning messages and return an empty token it login failed.
@@ -46,8 +46,8 @@ function(SlicerFunctionMIDASUploadPackage)
     endif()
   endforeach()
 
-  include(SlicerFunctionMIDASLogin)
-  SlicerFunctionMIDASLogin(
+  include(MIDASAPILogin)
+  midas_api_login(
     SERVER_URL ${MY_SERVER_URL}
     SERVER_EMAIL ${MY_SERVER_EMAIL}
     SERVER_APIKEY ${MY_SERVER_APIKEY}
