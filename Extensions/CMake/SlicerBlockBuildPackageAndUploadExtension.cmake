@@ -230,7 +230,11 @@ if(RUN_CTEST_PACKAGES)
           message("Uploading [${package_name}] on CDash") # on failure, upload the package to CDash instead
           ctest_upload(FILES ${p})
         else()
-          midas_ctest_upload_url(${p}) # on success, upload a link to CDash
+          message("Uploading URL on CDash")  # On success, upload a link to CDash
+          midas_ctest_upload_url(
+            API_URL ${MIDAS_PACKAGE_URL}
+            FILEPATH ${p}
+            )
         endif()
         if(RUN_CTEST_SUBMIT)
           ctest_submit(PARTS Upload)

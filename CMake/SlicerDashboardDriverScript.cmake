@@ -341,13 +341,15 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
                 RESULT_VARNAME midas_upload_status
                 )
             endif()
-            if(midas_upload_status STREQUAL "ok")
-              message("Uploading URL on CDash")
-              midas_ctest_upload_url(${p}) # on success, upload a link to CDash
-            endif()
             if(NOT midas_upload_status STREQUAL "ok")
-              message("Uploading [${package_name}] on CDash")
-              ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
+              message("Uploading [${package_name}] on CDash") # On failure, upload the package to CDash instead
+              ctest_upload(FILES ${p})
+            else()
+              message("Uploading URL on CDash")  # On success, upload a link to CDash
+              midas_ctest_upload_url(
+                API_URL ${MIDAS_PACKAGE_URL}
+                FILEPATH ${p}
+                )
             endif()
             if(run_ctest_submit)
               ctest_submit(PARTS Upload)
