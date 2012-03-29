@@ -368,25 +368,34 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 //  d->ColorByScalarComboBox->setEnabled(!colorSolid);
 //  d->ColorByCellScalarsRadioButton->setEnabled(!colorSolid);
 
-  if (!hasTensors)
-  {
-    d->FiberBundleDisplayNode->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeSolid);
-  }
 
   switch ( d->FiberBundleDisplayNode->GetColorMode() )
     {
       case vtkMRMLFiberBundleDisplayNode::colorModeScalar:
-        {
-        vtkMRMLDiffusionTensorDisplayPropertiesNode *dpNode = 
-          d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
-
-        if ( dpNode )
+        if (hasTensors)
           {
-          d->ColorByScalarInvariantComboBox->setCurrentIndex( 
-            d->ColorByScalarInvariantComboBox->findData( dpNode->GetColorGlyphBy() ));
+          vtkMRMLDiffusionTensorDisplayPropertiesNode *dpNode = 
+            d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode();
 
-          d->ColorByScalarInvariantRadioButton->setChecked(1);
+          if ( dpNode )
+            {
+            d->ColorByScalarInvariantComboBox->setCurrentIndex( 
+              d->ColorByScalarInvariantComboBox->findData( dpNode->GetColorGlyphBy() ));
+
+            d->ColorByScalarInvariantRadioButton->setChecked(1);
+            }
+          break;
           }
+        else
+         {
+         d->FiberBundleDisplayNode->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeSolid);
+         }
+      case vtkMRMLFiberBundleDisplayNode::colorModeSolid:
+        {
+        double color[3];
+        d->FiberBundleDisplayNode->GetColor(color);
+        d->ColorBySolidColorPicker->setColor(QColor::fromRgbF(color[0],color[1],color[2]) );
+        d->ColorBySolidColorCheckBox->setChecked(1);
         }
         break;
       case vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars:
@@ -406,14 +415,6 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 
         d->ColorByScalarRadioButton->setChecked(1);
 
-        }
-        break;
-      case vtkMRMLFiberBundleDisplayNode::colorModeSolid:
-        {
-        double color[3];
-        d->FiberBundleDisplayNode->GetColor(color);
-        d->ColorBySolidColorPicker->setColor(QColor::fromRgbF(color[0],color[1],color[2]) );
-        d->ColorBySolidColorCheckBox->setChecked(1);
         }
         break;
    }
