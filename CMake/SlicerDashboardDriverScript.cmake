@@ -301,7 +301,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # our custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
-        include(CTestPackage))
+        include(CTestPackage)
         include(MIDASAPIUploadPackage)
         include(MIDASCTestUploadURL)
         include(SlicerMacroExtractRepositoryInfo)
