@@ -66,8 +66,8 @@ set(CMAKE_MODULE_PATH
   )
 
 include(CMakeParseArguments)
+include(MIDASCTestUploadURL)
 include(${Slicer_CMAKE_DIR}/SlicerFunctionCTestPackage.cmake)
-include(${Slicer_CMAKE_DIR}/SlicerFunctionMIDASCTestUploadURL.cmake)
 include(${Slicer_CMAKE_DIR}/../Extensions/CMake/SlicerFunctionMIDASUploadExtension.cmake)
 
 #-----------------------------------------------------------------------------
@@ -227,7 +227,7 @@ if(RUN_CTEST_PACKAGES)
         if(NOT slicer_midas_upload_status STREQUAL "ok")
           ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
         else()
-          SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
+          midas_ctest_upload_url(${p}) # on success, upload a link to CDash
         endif()
         if(RUN_CTEST_SUBMIT)
           ctest_submit(PARTS Upload)

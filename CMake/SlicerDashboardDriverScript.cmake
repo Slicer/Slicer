@@ -301,6 +301,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # our custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
+        include(MIDASCTestUploadURL)
         include(SlicerFunctionCTestPackage)
         include(SlicerFunctionMIDASUploadPackage)
         include(SlicerMacroExtractRepositoryInfo)
@@ -340,8 +341,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
                 )
             endif()
             if(midas_upload_status STREQUAL "ok")
-              include("${CTEST_SOURCE_DIRECTORY}/CMake/SlicerFunctionMIDASCTestUploadURL.cmake")
-              SlicerFunctionMIDASCTestUploadURL(${p}) # on success, upload a link to CDash
+              midas_ctest_upload_url(${p}) # on success, upload a link to CDash
             endif()
             if(NOT midas_upload_status STREQUAL "ok")
               ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead

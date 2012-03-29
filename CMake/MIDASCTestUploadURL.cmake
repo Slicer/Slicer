@@ -19,30 +19,30 @@
 ################################################################################
 
 #
-# SlicerFunctionMIDASCTestUploadURL
+# MIDASCTestUploadURL
 #
 
 #
-# filepath - Compute and upload to CTest the URL of the 'filepath' that has been previously 
+# filepath - Compute and upload to CTest the URL of the 'filepath' that has been previously
 #            uploaded to MIDAS.
 #
-function(SlicerFunctionMIDASCTestUploadURL filepath)
+function(midas_ctest_upload_url filepath)
 
   if(NOT EXISTS "${filepath}")
     message(FATAL_ERROR "error: filepath doesn't exist ! [${filepath}]")
   endif()
-  
+
   if("${MIDAS_PACKAGE_URL}" STREQUAL "")
     message(FATAL_ERROR "error: MIDAS_PACKAGE_URL is either not defined or set to an empty string !")
   endif()
-  
+
   get_filename_component(filename ${filepath} NAME)
 
   execute_process(COMMAND ${CMAKE_COMMAND} -E md5sum ${filepath} OUTPUT_VARIABLE output)
   string(SUBSTRING "${output}" 0 32 computedChecksum)
-  
+
   set(url ${MIDAS_PACKAGE_URL}/api/rest?method=midas.bitstream.download&name=${filename}&checksum=${computedChecksum})
-  
+
   file(WRITE "${CTEST_BINARY_DIRECTORY}/slicerFunctionCTestUploadURL.url" "${url}")
   ctest_upload(FILES "${CTEST_BINARY_DIRECTORY}/slicerFunctionCTestUploadURL.url")
 endfunction()
