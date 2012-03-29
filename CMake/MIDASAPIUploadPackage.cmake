@@ -31,7 +31,7 @@
 function(midas_api_upload_package)
   include(CMakeParseArguments)
   set(options)
-  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
+  set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -43,7 +43,7 @@ function(midas_api_upload_package)
     endif()
   endforeach()
 
-  set(expected_existing_vars TMP_DIR PACKAGE_FILEPATH)
+  set(expected_existing_vars PACKAGE_FILEPATH)
   foreach(var ${expected_existing_vars})
     if(NOT EXISTS "${MY_${var}}")
       message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
@@ -55,7 +55,6 @@ function(midas_api_upload_package)
     API_URL ${MY_SERVER_URL}
     API_EMAIL ${MY_SERVER_EMAIL}
     API_KEY ${MY_SERVER_APIKEY}
-    TMP_DIR "${MY_TMP_DIR}"
     RESULT_VARNAME midas_api_token
     )
 
@@ -88,7 +87,7 @@ function(midas_api_upload_package)
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
-  set(api_call_log ${MY_TMP_DIR}/midas_api_upload_package_log.txt)
+  set(api_call_log ${CMAKE_CURRENT_BINARY_DIR}/${api_method}_response.txt)
   file(WRITE ${api_call_log} ${log})
 
   if(status STREQUAL "ok")
@@ -104,7 +103,7 @@ endfunction()
 #
 
 #
-# cmake -DTMP_DIR:PATH=/tmp -DTEST_midas_api_upload_package_test:BOOL=ON -P MIDASAPIUploadPackage.cmake
+# cmake -DTEST_midas_api_upload_package_test:BOOL=ON -P MIDASAPIUploadPackage.cmake
 #
 if(TEST_midas_api_upload_package_test)
 
@@ -120,13 +119,6 @@ if(TEST_midas_api_upload_package_test)
       if("${var}" STREQUAL "")
         message(FATAL_ERROR "Problem with midas_api_upload_package_test()\n"
                             "Variable ${var} is an empty string !")
-      endif()
-    endforeach()
-
-    set(expected_existing_vars TMP_DIR)
-    foreach(var ${expected_existing_vars})
-      if(NOT EXISTS "${${var}}")
-        message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
       endif()
     endforeach()
 
@@ -157,7 +149,7 @@ if(TEST_midas_api_upload_package_test)
 
             set(release "${source_revision_${source_revision}_${submission_type}_release}")
 
-            set(package_filepath ${TMP_DIR}/Test-${Test_TESTDATE}-${submission_type}-${operating_system}-${architecture}-${source_revision}.txt)
+            set(package_filepath ${CMAKE_CURRENT_BINARY_DIR}/Test-${Test_TESTDATE}-${submission_type}-${operating_system}-${architecture}-${source_revision}.txt)
             file(WRITE ${package_filepath} "
               Test_TESTDATE: ${Test_TESTDATE}
               source_checkoutdate: ${source_checkoutdate}
@@ -176,7 +168,6 @@ if(TEST_midas_api_upload_package_test)
               SERVER_URL ${SERVER_URL}
               SERVER_EMAIL ${SERVER_EMAIL}
               SERVER_APIKEY ${SERVER_APIKEY}
-              TMP_DIR ${TMP_DIR}
               SUBMISSION_TYPE ${submission_type}
               SOURCE_REVISION ${source_revision}
               SOURCE_CHECKOUTDATE ${source_checkoutdate}

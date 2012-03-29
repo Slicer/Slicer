@@ -30,7 +30,7 @@
 
 function(midas_api_upload_extension)
   set(expected_nonempty_args SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_DESCRIPTION EXTENSION_CONTRIBUTORS EXTENSION_HOMEPAGE EXTENSION_SCREENSHOTURLS EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
-  set(expected_existing_args TMP_DIR PACKAGE_FILEPATH)
+  set(expected_existing_args PACKAGE_FILEPATH)
   include(CMakeParseArguments)
   set(options)
   set(oneValueArgs ${expected_nonempty_args} ${expected_existing_args} RELEASE)
@@ -55,7 +55,6 @@ function(midas_api_upload_extension)
     API_URL ${MY_SERVER_URL}
     API_EMAIL ${MY_SERVER_EMAIL}
     API_KEY ${MY_SERVER_APIKEY}
-    TMP_DIR "${MY_TMP_DIR}"
     RESULT_VARNAME midas_api_token
     )
 
@@ -106,7 +105,7 @@ function(midas_api_upload_extension)
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
-  set(api_call_log ${MY_TMP_DIR}/midas_api_upload_extension_log.txt)
+  set(api_call_log ${CMAKE_CURRENT_BINARY_DIR}/${api_method}_response.txt)
   file(WRITE ${api_call_log} ${log})
 
   if(status STREQUAL "ok")
@@ -141,13 +140,6 @@ if(TEST_midas_api_upload_extension_test)
       if("${var}" STREQUAL "")
         message(FATAL_ERROR "Problem with midas_api_upload_extension_test()\n"
                             "Variable ${var} is an empty string !")
-      endif()
-    endforeach()
-
-    set(expected_existing_vars TMP_DIR)
-    foreach(var ${expected_existing_vars})
-      if(NOT EXISTS "${${var}}")
-        message(FATAL_ERROR "Variable ${var} is set to an inexistent directory or file ! [${${var}}]")
       endif()
     endforeach()
 
@@ -191,7 +183,7 @@ if(TEST_midas_api_upload_extension_test)
 
               #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
 
-              set(package_filepath ${TMP_DIR}/${slicer_revision}-${operating_system}-${architecture}-${extension_name}-${extension_source_revision}-${Test_TESTDATE}-${submission_type}.txt)
+              set(package_filepath ${CMAKE_CURRENT_BINARY_DIR}/${slicer_revision}-${operating_system}-${architecture}-${extension_name}-${extension_source_revision}-${Test_TESTDATE}-${submission_type}.txt)
               file(WRITE ${package_filepath} "
                 extension_name: ${extension_name}
                 extension_category: ${extension_category}
@@ -216,7 +208,6 @@ if(TEST_midas_api_upload_extension_test)
                 SERVER_URL ${server_url}
                 SERVER_EMAIL ${server_email}
                 SERVER_APIKEY ${server_apikey}
-                TMP_DIR ${TMP_DIR}
                 SUBMISSION_TYPE ${submission_type}
                 SLICER_REVISION ${slicer_revision}
                 EXTENSION_NAME ${extension_name}

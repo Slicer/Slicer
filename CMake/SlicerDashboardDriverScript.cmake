@@ -331,7 +331,6 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
                 SERVER_URL ${MIDAS_PACKAGE_URL}
                 SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
                 SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
-                TMP_DIR ${slicer_build_dir}
                 SUBMISSION_TYPE ${SCRIPT_MODE}
                 SOURCE_REVISION ${Slicer_WC_REVISION}
                 SOURCE_CHECKOUTDATE ${Slicer_WC_LAST_CHANGED_DATE}
