@@ -27,7 +27,7 @@
 #
 # Will set the value of the variable in resultvar to either "ok" or "fail".
 # Will output warning messages in the fail condition
-function(SlicerFunctionMIDASUploadExtension)
+function(midas_api_upload_extension)
   set(expected_nonempty_args SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_DESCRIPTION EXTENSION_CONTRIBUTORS EXTENSION_HOMEPAGE EXTENSION_SCREENSHOTURLS EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
   set(expected_existing_args TMP_DIR PACKAGE_FILEPATH)
   include(CMakeParseArguments)
@@ -105,7 +105,7 @@ function(SlicerFunctionMIDASUploadExtension)
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
-  set(api_call_log ${MY_TMP_DIR}/SlicerFunctionMIDASUploadExtension-log.txt)
+  set(api_call_log ${MY_TMP_DIR}/midas_api_upload_extension_log.txt)
   file(WRITE ${api_call_log} ${log})
 
   if(status STREQUAL "ok")
@@ -119,15 +119,15 @@ endfunction()
 
 
 #
-# Testing - cmake -DTEST_<TESTNAME>:BOOL=ON -P SlicerFunctionMIDASUploadExtensionTest.cmake
+# Testing - cmake -DTEST_<TESTNAME>:BOOL=ON -P MIDASAPIUploadExtensionTest.cmake
 #
 
 #
-# TESTNAME: SlicerFunctionMIDASUploadExtensionTest
+# TESTNAME: midas_api_upload_extension_test
 #
-if(TEST_SlicerFunctionMIDASUploadExtensionTest)
+if(TEST_midas_api_upload_extension_test)
 
-  function(SlicerFunctionMIDASUploadExtensionTest)
+  function(midas_api_upload_extension_test)
 
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../CMake ${CMAKE_MODULE_PATH})
 
@@ -138,7 +138,7 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
     set(expected_nonempty_vars Test_TESTDATE)
     foreach(var ${expected_nonempty_vars})
       if("${var}" STREQUAL "")
-        message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
+        message(FATAL_ERROR "Problem with midas_api_upload_extension_test()\n"
                             "Variable ${var} is an empty string !")
       endif()
     endforeach()
@@ -184,6 +184,9 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
 
               set(extension_description "This is description of ${extension_name}")
               set(extension_homepage "http://homepage.${extension_name}.org/foo/bar")
+              set(extension_iconurl "http://homepage.${extension_name}.org/foo/bar.png")
+              set(extension_contributors "Jean-Christophe Fillion-Robin (Kitware)")
+              set(extension_screenshoturls "http://homepage.${extension_name}.org/screenshot1.png http://homepage.${extension_name}.org/screenshot2.png")
 
               #set(release "${slicer_revision_${slicer_revision}_${submission_type}_release}")
 
@@ -204,11 +207,11 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 release: ${release}")
 
               if(NOT EXISTS ${package_filepath})
-                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
+                message(FATAL_ERROR "Problem with midas_api_upload_extension_test()\n"
                                     "Failed to create [${package_filepath}]")
               endif()
 
-              SlicerFunctionMIDASUploadExtension(
+              midas_api_upload_extension(
                 SERVER_URL ${server_url}
                 SERVER_EMAIL ${server_email}
                 SERVER_APIKEY ${server_apikey}
@@ -219,6 +222,9 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 EXTENSION_CATEGORY ${extension_category}
                 EXTENSION_DESCRIPTION ${extension_description}
                 EXTENSION_HOMEPAGE ${extension_homepage}
+                EXTENSION_ICONURL ${extension_iconurl}
+                EXTENSION_CONTRIBUTORS ${extension_contributors}
+                EXTENSION_SCREENSHOTURLS ${extension_screenshoturls}
                 EXTENSION_REPOSITORY_TYPE ${extension_repository_type}
                 EXTENSION_REPOSITORY_URL ${extension_repository_url}
                 EXTENSION_SOURCE_REVISION ${extension_source_revision}
@@ -232,7 +238,7 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 )
               set(expected_output "ok")
               if(NOT "${output}" STREQUAL "${expected_output}")
-                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
+                message(FATAL_ERROR "Problem with midas_api_upload_extension()\n"
                                     "output:${output}\n"
                                     "expected_output:${expected_output}")
               endif()
@@ -246,5 +252,5 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
 
     message("SUCCESS")
   endfunction()
-  SlicerFunctionMIDASUploadExtensionTest()
+  midas_api_upload_extension_test()
 endif()

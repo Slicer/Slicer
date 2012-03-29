@@ -67,8 +67,8 @@ set(CMAKE_MODULE_PATH
 
 include(CMakeParseArguments)
 include(CTestPackage)
+include(MIDASAPIUploadExtension)
 include(MIDASCTestUploadURL)
-include(${Slicer_CMAKE_DIR}/../Extensions/CMake/SlicerFunctionMIDASUploadExtension.cmake)
 
 #-----------------------------------------------------------------------------
 # Set site name
@@ -199,7 +199,7 @@ if(RUN_CTEST_PACKAGES)
       SlicerMacroExtractRepositoryInfo(VAR_PREFIX EXTENSION SOURCE_DIR ${EXTENSION_SOURCE_DIR})
 
       foreach(p ${extension_packages})
-        SlicerFunctionMIDASUploadExtension(
+        midas_api_upload_extension(
           SERVER_URL ${MIDAS_PACKAGE_URL}
           SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
           SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}
