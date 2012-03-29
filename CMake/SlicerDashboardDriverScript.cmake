@@ -301,9 +301,9 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         # our custom macros/functions can also be included.
         set(CMAKE_MODULE_PATH ${CTEST_SOURCE_DIRECTORY}/CMake ${CMAKE_MODULE_PATH})
 
+        include(MIDASAPIUploadPackage)
         include(MIDASCTestUploadURL)
-        include(SlicerFunctionCTestPackage)
-        include(SlicerFunctionMIDASUploadPackage)
+        include(SlicerFunctionCTestPackage))
         include(SlicerMacroExtractRepositoryInfo)
 
         SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
@@ -325,7 +325,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
             if(DEFINED MIDAS_PACKAGE_URL
                AND DEFINED MIDAS_PACKAGE_EMAIL
                AND DEFINED MIDAS_PACKAGE_API_KEY)
-              SlicerFunctionMIDASUploadPackage(
+              midas_api_upload_package(
                 SERVER_URL ${MIDAS_PACKAGE_URL}
                 SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
                 SERVER_APIKEY ${MIDAS_PACKAGE_API_KEY}

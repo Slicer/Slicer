@@ -24,7 +24,7 @@
 #   SUBMISSION_TYPE The dashboard mode: experimental | nightly | continuous
 #
 # Will both output warning messages and return an empty token it login failed.
-function(SlicerFunctionMIDASUploadPackage)
+function(midas_api_upload_package)
   include(CMakeParseArguments)
   set(options)
   set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY TMP_DIR SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
@@ -84,7 +84,7 @@ function(SlicerFunctionMIDASUploadPackage)
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})
 
-  set(api_call_log ${MY_TMP_DIR}/SlicerFunctionMIDASUploadPackage-log.txt)
+  set(api_call_log ${MY_TMP_DIR}/midas_api_upload_package_log.txt)
   file(WRITE ${api_call_log} ${log})
 
   if(status STREQUAL "ok")
@@ -100,11 +100,11 @@ endfunction()
 #
 
 #
-# cmake -DTMP_DIR:PATH=/tmp -DTEST_SlicerFunctionMIDASUploadPackageTest:BOOL=ON -P SlicerFunctionMIDASUploadPackage.cmake
+# cmake -DTMP_DIR:PATH=/tmp -DTEST_midas_api_upload_package_test:BOOL=ON -P MIDASAPIUploadPackage.cmake
 #
-if(TEST_SlicerFunctionMIDASUploadPackageTest)
+if(TEST_midas_api_upload_package_test)
 
-  function(SlicerFunctionMIDASUploadPackageTest)
+  function(midas_api_upload_package_test)
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
     include(SlicerFunctionToday)
@@ -114,7 +114,7 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
     set(expected_nonempty_vars Test_TESTDATE)
     foreach(var ${expected_nonempty_vars})
       if("${var}" STREQUAL "")
-        message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+        message(FATAL_ERROR "Problem with midas_api_upload_package_test()\n"
                             "Variable ${var} is an empty string !")
       endif()
     endforeach()
@@ -164,11 +164,11 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
               release: ${release}")
 
             if(NOT EXISTS ${package_filepath})
-              message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+              message(FATAL_ERROR "Problem with midas_api_upload_package_test()\n"
                                   "Failed to create [${package_filepath}]")
             endif()
 
-            SlicerFunctionMIDASUploadPackage(
+            midas_api_upload_package(
               SERVER_URL ${SERVER_URL}
               SERVER_EMAIL ${SERVER_EMAIL}
               SERVER_APIKEY ${SERVER_APIKEY}
@@ -185,7 +185,7 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
               )
             set(expected_output "ok")
             if(NOT "${output}" STREQUAL "${expected_output}")
-              message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+              message(FATAL_ERROR "Problem with midas_api_upload_package()\n"
                                   "output:${output}\n"
                                   "expected_output:${expected_output}")
             endif()
@@ -198,5 +198,5 @@ if(TEST_SlicerFunctionMIDASUploadPackageTest)
 
     message("SUCCESS")
   endfunction()
-  SlicerFunctionMIDASUploadPackageTest()
+  midas_api_upload_package_test()
 endif()

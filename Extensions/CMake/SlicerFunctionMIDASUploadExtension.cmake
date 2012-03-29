@@ -204,7 +204,7 @@ if(TEST_SlicerFunctionMIDASUploadExtensionTest)
                 release: ${release}")
 
               if(NOT EXISTS ${package_filepath})
-                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadPackageTest()\n"
+                message(FATAL_ERROR "Problem with SlicerFunctionMIDASUploadExtensionTest()\n"
                                     "Failed to create [${package_filepath}]")
               endif()
 
