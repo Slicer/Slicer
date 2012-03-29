@@ -18,16 +18,13 @@
 #
 ################################################################################
 
-if(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
-  get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-endif()
-include("${CMAKE_CURRENT_LIST_DIR}/SlicerMacroParseArguments.cmake")
+include(CMakeParseArguments)
 
 function(SlicerFunctionCTestPackage)
-  SLICER_PARSE_ARGUMENTS(MY
-    "BINARY_DIR;CONFIG;RETURN_VAR"
-    ""
-    ${ARGN})
+  set(options)
+  set(oneValueArgs BINARY_DIR CONFIG RETURN_VAR)
+  set(multiValueArgs)
+  cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
   if(NOT DEFINED MY_BINARY_DIR)
