@@ -18,8 +18,15 @@
 #
 ################################################################################
 
+if(NOT DEFINED MIDAS_API_DISPLAY_URL)
+  set(MIDAS_API_DISPLAY_URL 0)
+endif()
+
 include(CMakeParseArguments)
 
+#
+# midas_api_login
+#
 #   API_URL The url of the MIDAS server
 #   API_EMAIL The email to use to authenticate to the server
 #   API_KEY The default api key to use to authenticate to the server
@@ -45,6 +52,10 @@ function(midas_api_login)
   set(params "${params}&email=${email}")
   set(params "${params}&apikey=${apikey}")
   set(url "${MY_API_URL}/api/json?method=${api_method}${params}")
+
+  if("${MIDAS_API_DISPLAY_URL}")
+    message(STATUS "URL: ${url}")
+  endif()
 
   set(login_token_filepath ${CMAKE_CURRENT_BINARY_DIR}/MIDAStoken.txt)
   file(DOWNLOAD ${url} ${login_token_filepath} INACTIVITY_TIMEOUT 120)

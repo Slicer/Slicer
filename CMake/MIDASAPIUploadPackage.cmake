@@ -18,6 +18,12 @@
 #
 ################################################################################
 
+if(NOT DEFINED MIDAS_API_DISPLAY_URL)
+  set(MIDAS_API_DISPLAY_URL 0)
+endif()
+
+include(CMakeParseArguments)
+
 #
 # Uploads a package to the MIDAS server.
 #
@@ -29,7 +35,6 @@
 #   RESULT_VARNAME Will set the value of ${RESULT_VARNAME} to either "ok" or "fail".
 
 function(midas_api_upload_package)
-  include(CMakeParseArguments)
   set(options)
   set(oneValueArgs SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SOURCE_REVISION SOURCE_CHECKOUTDATE OPERATING_SYSTEM ARCHITECTURE PACKAGE_FILEPATH PACKAGE_TYPE RELEASE RESULT_VARNAME)
   set(multiValueArgs)
@@ -83,6 +88,10 @@ function(midas_api_upload_package)
   set(params "${params}&codebase=Slicer4")
   set(params "${params}&release=${release}")
   set(url "${MY_SERVER_URL}/api/json?method=${api_method}${params}")
+
+  if("${MIDAS_API_DISPLAY_URL}")
+    message(STATUS "URL: ${url}")
+  endif()
 
   file(UPLOAD ${MY_PACKAGE_FILEPATH} ${url} INACTIVITY_TIMEOUT 120 STATUS status LOG log SHOW_PROGRESS)
   string(REGEX REPLACE ".*{\"stat\":\"([^\"]*)\".*" "\\1" status ${log})

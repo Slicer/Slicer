@@ -326,7 +326,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
             if(DEFINED MIDAS_PACKAGE_URL
                AND DEFINED MIDAS_PACKAGE_EMAIL
                AND DEFINED MIDAS_PACKAGE_API_KEY)
-              message("Uploading [${package_name}] on [${MIDAS_SERVER_URL}]")
+              message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
               midas_api_upload_package(
                 SERVER_URL ${MIDAS_PACKAGE_URL}
                 SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}

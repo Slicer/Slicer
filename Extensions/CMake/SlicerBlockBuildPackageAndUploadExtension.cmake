@@ -199,6 +199,8 @@ if(RUN_CTEST_PACKAGES)
       SlicerMacroExtractRepositoryInfo(VAR_PREFIX EXTENSION SOURCE_DIR ${EXTENSION_SOURCE_DIR})
 
       foreach(p ${extension_packages})
+        get_filename_component(package_name "${p}" NAME)
+        message("Uploading [${package_name}] on [${MIDAS_PACKAGE_URL}]")
         midas_api_upload_extension(
           SERVER_URL ${MIDAS_PACKAGE_URL}
           SERVER_EMAIL ${MIDAS_PACKAGE_EMAIL}
@@ -225,7 +227,8 @@ if(RUN_CTEST_PACKAGES)
           RESULT_VARNAME slicer_midas_upload_status
           )
         if(NOT slicer_midas_upload_status STREQUAL "ok")
-          ctest_upload(FILES ${p}) #on failure, upload the package to CDash instead
+          message("Uploading [${package_name}] on CDash") # on failure, upload the package to CDash instead
+          ctest_upload(FILES ${p})
         else()
           midas_ctest_upload_url(${p}) # on success, upload a link to CDash
         endif()
