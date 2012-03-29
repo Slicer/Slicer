@@ -52,9 +52,9 @@ function(midas_api_upload_package)
 
   include(MIDASAPILogin)
   midas_api_login(
-    SERVER_URL ${MY_SERVER_URL}
-    SERVER_EMAIL ${MY_SERVER_EMAIL}
-    SERVER_APIKEY ${MY_SERVER_APIKEY}
+    API_URL ${MY_SERVER_URL}
+    API_EMAIL ${MY_SERVER_EMAIL}
+    API_KEY ${MY_SERVER_APIKEY}
     TMP_DIR "${MY_TMP_DIR}"
     RESULT_VARNAME midas_api_token
     )
