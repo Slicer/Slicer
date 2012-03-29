@@ -56,7 +56,7 @@ function(midas_api_upload_extension)
     SERVER_EMAIL ${MY_SERVER_EMAIL}
     SERVER_APIKEY ${MY_SERVER_APIKEY}
     TMP_DIR "${MY_TMP_DIR}"
-    RESULT_VARNAME server_token
+    RESULT_VARNAME midas_api_token
     )
 
   get_filename_component(basename "${MY_PACKAGE_FILEPATH}" NAME)
@@ -81,7 +81,7 @@ function(midas_api_upload_extension)
   midas_api_escape_for_url(submissiontype "${MY_SUBMISSION_TYPE}")
 
   set(api_method "midas.slicerpackages.extension.upload")
-  set(params "&token=${server_token}")
+  set(params "&token=${midas_api_token}")
   set(params "${params}&repository_type=${repository_type}")
   set(params "${params}&repository_url=${repository_url}")
   set(params "${params}&slicer_revision=${slicer_revision}")
