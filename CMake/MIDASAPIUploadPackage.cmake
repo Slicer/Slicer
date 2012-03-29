@@ -127,7 +127,7 @@ if(TEST_midas_api_upload_package_test)
     endforeach()
 
     if(NOT DEFINED SERVER_URL)
-      set(SERVER_URL "karakoram/midas")
+      set(SERVER_URL "http://karakoram/midas")
     endif()
     if(NOT DEFINED SERVER_EMAIL)
       set(SERVER_EMAIL "jchris.fillionr@kitware.com")

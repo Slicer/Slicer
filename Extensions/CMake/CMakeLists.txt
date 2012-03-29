@@ -23,7 +23,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Common options
 #-----------------------------------------------------------------------------
-set(MIDAS_PACKAGE_URL "karakoram/midas" CACHE STRING "MIDAS URL where the extension should be uploaded.")
+set(MIDAS_PACKAGE_URL "http://karakoram/midas" CACHE STRING "MIDAS URL where the extension should be uploaded.")
 set(MIDAS_PACKAGE_EMAIL "jchris.fillionr@kitware.com" CACHE STRING "Email allowing to authenticate to the MIDAS server.")
 set(MIDAS_PACKAGE_API_KEY "a4d947d1772e227adf75639b449974d3" CACHE STRING "Token allowing to authenticate to the MIDAS server.")
 

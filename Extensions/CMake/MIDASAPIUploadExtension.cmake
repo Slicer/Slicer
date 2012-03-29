@@ -150,7 +150,7 @@ if(TEST_midas_api_upload_extension_test)
       endif()
     endforeach()
 
-    set(server_url "karakoram/midas")
+    set(server_url "http://karakoram/midas")
     set(server_email "jchris.fillionr@kitware.com")
     set(server_apikey "a4d947d1772e227adf75639b449974d3")
 
