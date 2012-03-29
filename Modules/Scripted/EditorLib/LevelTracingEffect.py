@@ -155,18 +155,14 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     ijk = self.logic.backgroundXYToIJK( xy )
     self.tracingFilter.SetSeed( ijk )
 
-    # figure out which plane to use
-    i0,j0,k0 = ijk
-    x,y = xy
-    offset = max(self.sliceWidget.sliceLogic().GetSliceNode().GetDimensions())
-    i1,j1,k1 = self.logic.backgroundXYToIJK( (x+offset,y+offset) )
-    if i0 == i1 and j0 == j1 and k0 == k1:
-      return
-    if i0 == i1:
+    # select the plane corresponding to current slice orientation
+    # for the input volume
+    ijkPlane = self.logic.sliceIJKPlane()
+    if ijkPlane == 'JK':
       self.tracingFilter.SetPlaneToJK()
-    if j0 == j1:
+    if ijkPlane == 'IK':
       self.tracingFilter.SetPlaneToIK()
-    if k0 == k1:
+    if ijkPlane == 'IJ':
       self.tracingFilter.SetPlaneToIJ()
 
     self.tracingFilter.Update()

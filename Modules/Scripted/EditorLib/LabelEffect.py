@@ -423,7 +423,24 @@ class LabelEffectLogic(Effect.EffectLogic):
     labelNode.SetModifiedSinceRead(1)
     labelNode.Modified()
 
-
+  def sliceIJKPlane(self):
+    """ Return a code indicating which plane of IJK
+    space corresponds to the current slice plane orientation.
+    Values are 'IJ', 'IK', 'JK', or None.
+    This is useful for algorithms like LevelTracing that operate
+    in pixel space."""
+    offset = max(self.sliceLogic.GetSliceNode().GetDimensions())
+    i0,j0,k0 = self.backgroundXYToIJK( (0,0) )
+    i1,j1,k1 = self.backgroundXYToIJK( (offset,offset) )
+    if i0 == i1 and j0 == j1 and k0 == k1:
+      return None
+    if i0 == i1:
+      return 'JK'
+    if j0 == j1:
+      return 'IK'
+    if k0 == k1:
+      return 'IJ'
+    return None
 
   def undoLastApply(self):
     #TODO: optimized path for undo/redo - not currently available
