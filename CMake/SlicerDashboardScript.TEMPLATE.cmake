@@ -21,7 +21,6 @@ set(MY_QT_VERSION         "4.7")
 set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/qtsdk-2010.05/qt/bin/qmake")
 set(CTEST_SITE            "karakoram.kitware") # for example: mymachine.kitware, mymachine.bwh.harvard.edu, ...
 set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
-set(CTEST_CMAKE_COMMAND   "$ENV{HOME}/Dashboards/Support/cmake-2.8.3-rc3-Linux-i386/bin/cmake")
 # Open a shell and type in "cmake --help" to obtain the proper spelling of the generator
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(MY_BITNESS            "64")
