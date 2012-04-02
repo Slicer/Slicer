@@ -114,3 +114,30 @@ slicer_add_python_unittest(
   SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
   TESTNAME_PREFIX nomainwindow_
   )
+
+if(Slicer_USE_VTK_DEBUG_LEAKS)
+  set(testname MRMLCreateNodeByClassWithoutSetReferenceCount)
+  slicer_add_python_test(
+    SCRIPT ${testname}.py
+    SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+    TESTNAME_PREFIX nomainwindow_
+    )
+  set_tests_properties(py_nomainwindow_${testname}
+    PROPERTIES PASS_REGULAR_EXPRESSION "vtkDebugLeaks has detected LEAKS!"
+    )
+endif()
+
+set(testname MRMLCreateNodeByClassWithSetReferenceCountMinusOne)
+slicer_add_python_test(
+  SCRIPT ${testname}.py
+  SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
+set(testname MRMLCreateNodeByClassWithSetReferenceCountToOne)
+slicer_add_python_test(
+  SCRIPT ${testname}.py
+  SCRIPT_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+set_tests_properties(py_nomainwindow_${testname} PROPERTIES WILL_FAIL TRUE)
