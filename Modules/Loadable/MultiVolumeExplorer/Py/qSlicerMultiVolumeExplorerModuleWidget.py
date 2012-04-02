@@ -23,16 +23,14 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.extractFrame = False
 
     # chart view node
-    cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
-    cvns.SetReferenceCount(1)
-    cvns.InitTraversal()
-    self.__cvn = cvns.GetNextItemAsObject()
+    self.__cvn = None
 
     # data node
     #slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
 
     # chart node
-    slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
+    self.__cn = slicer.vtkMRMLChartNode()
+    slicer.mrmlScene.AddNode(self.__cn)
 
     # image play setup
     self.timer = qt.QTimer()
