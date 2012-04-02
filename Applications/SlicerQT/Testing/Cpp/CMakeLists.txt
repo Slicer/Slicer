@@ -56,3 +56,17 @@ SIMPLE_TEST( qSlicerMainWindowCoreTest1 )
 SIMPLE_TEST( qSlicerMainWindowTest1 )
 SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 
+#
+# Application tests
+#
+
+add_test(
+  NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  )
+set_tests_properties(
+  slicer_nomainwindow_DisableModulesCommandLineOptionsTest
+  PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 2"
+  )
+
