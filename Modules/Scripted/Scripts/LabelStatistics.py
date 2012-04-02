@@ -307,8 +307,7 @@ class LabelStatisticsLogic:
     chartViewNodes.InitTraversal()
     chartViewNode = chartViewNodes.GetNextItemAsObject()
 
-    arrayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-    arrayNode = slicer.mrmlScene.AddNode(arrayNode)
+    arrayNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     array = arrayNode.GetArray()
     samples = len(self.labelStats["Labels"])
     tuples = samples
@@ -324,8 +323,7 @@ class LabelStatisticsLogic:
           array.SetComponent(tuple, 2, 0)
           tuple += 1
 
-    chartNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
-    chartNode = slicer.mrmlScene.AddNode(chartNode)
+    chartNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
     chartNode.AddArray(valueToPlot, arrayNode.GetID())
 
     chartViewNode.SetChartNodeID(chartNode.GetID())

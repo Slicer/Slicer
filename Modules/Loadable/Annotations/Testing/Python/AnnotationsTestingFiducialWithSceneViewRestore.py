@@ -1,9 +1,7 @@
 
 # Test that setting a fiducial coordinate is consistent across scene view saves and restores
 
-# fid = slicer.mrmlScene.CreateNodeByClass("vtkMRMLAnnotationFiducialNode")
-fid = slicer.modulemrml.vtkMRMLAnnotationFiducialNode()
-
+fid = slicer.vtkMRMLAnnotationFiducialNode()
 fid.SetScene(slicer.mrmlScene)
 fid.CreateAnnotationTextDisplayNode()
 fid.CreateAnnotationPointDisplayNode()
@@ -15,8 +13,7 @@ slicer.mrmlScene.AddNode(fid)
 fid.GetFiducialCoordinates(startCoords)
 print "Starting fiducial coordinates = ",startCoords
 
-sv = slicer.mrmlScene.CreateNodeByClass("vtkMRMLSceneViewNode")
-slicer.mrmlScene.AddNode(sv)
+sv = slicer.mrmlScene.AddNode(slicer.vtkMRMLSceneViewNode())
 
 sv.StoreScene()
 

@@ -35,7 +35,7 @@ class PerformanceTestsWidget:
     if not parent:
       self.setup()
       self.parent.show()
-    
+
   def setup(self):
     tests = (
         ( 'Get Sample Data', self.downloadMRHead ),
@@ -104,7 +104,7 @@ class PerformanceTestsWidget:
     import time
     elapsedTime = 0
     for i in xrange(iters):
-      startTime = time.time() 
+      startTime = time.time()
       f()
       slicer.app.processEvents()
       endTime = time.time()
@@ -125,7 +125,7 @@ class PerformanceTestsWidget:
     dims = sliceNode.GetDimensions()
     elapsedTime = 0
     for i in xrange(iters):
-      startTime = time.time() 
+      startTime = time.time()
       sliceNode.SetSliceOffset(20)
       slicer.app.processEvents()
       endTime1 = time.time()
@@ -146,7 +146,7 @@ class PerformanceTestsWidget:
     for dim in xrange(minSize, maxSize, step):
       mainWindow().size = qt.QSize(dim,dim)
       self.reslicing(iters)
-      
+
   def timeProbe(self, iters=10, steps=30):
     for step in xrange(steps):
       self.reslicing(iters)
@@ -176,7 +176,7 @@ class PerformanceTestsWidget:
     node = slicer.util.getNode(mrmlID)
     name = node.GetName()
     qt.QMessageBox.information(
-        slicer.util.mainWindow(), "Chart Callback", 
+        slicer.util.mainWindow(), "Chart Callback",
         """Clicked at point {x}, {y}
 on node {name} (id {mrmlID})
 with point index of {pointIndex}
@@ -199,8 +199,7 @@ with point index of {pointIndex}
     cvns.InitTraversal()
     cvn = cvns.GetNextItemAsObject()
 
-    dn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-    dn = slicer.mrmlScene.AddNode(dn)
+    dn = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     a = dn.GetArray()
     a.SetNumberOfTuples(600)
     x = range(0, 600)
@@ -210,8 +209,7 @@ with point index of {pointIndex}
         a.SetComponent(i, 1, math.sin(phase+x[i]/50.0))
         a.SetComponent(i, 2, 0)
 
-    dn2 = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-    dn2 = slicer.mrmlScene.AddNode(dn2)
+    dn2 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     a = dn2.GetArray()
     a.SetNumberOfTuples(600)
     x = range(0, 600)
@@ -220,9 +218,7 @@ with point index of {pointIndex}
         a.SetComponent(i, 1, math.cos(phase+x[i]/50.0))
         a.SetComponent(i, 2, 0)
 
-
-    cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
-    cn = slicer.mrmlScene.AddNode(cn)
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
     cn.AddArray('A double array', dn.GetID())
     cn.AddArray('Another double array', dn2.GetID())
 
@@ -234,17 +230,14 @@ with point index of {pointIndex}
 
     cvn.SetChartNodeID(cn.GetID())
 
-    cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
-    cn = slicer.mrmlScene.AddNode(cn)
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
     print cn.GetID()
     cn.AddArray('Just one array', dn.GetID())
     cn.SetProperty('default', 'title', 'A simple chart with 1 curve')
     cn.SetProperty('default', 'xAxisLabel', 'Just x')
     cn.SetProperty('default', 'yAxisLabel', 'Just y')
 
-
-    cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
-    cn = slicer.mrmlScene.AddNode(cn)
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
     print cn.GetID()
     cn.AddArray('The other array', dn2.GetID())
     cn.SetProperty('default', 'title', 'A simple chart with another curve')
@@ -254,9 +247,7 @@ with point index of {pointIndex}
     cn.SetProperty('The other array', 'showMarkers', 'off')
     cn.SetProperty('The other array', 'color', '#fe7d20')
 
-
-    dn3 = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-    dn3 = slicer.mrmlScene.AddNode(dn3)
+    dn3 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
     print dn3.GetID()
     a = dn3.GetArray()
     a.SetNumberOfTuples(12)
@@ -266,8 +257,7 @@ with point index of {pointIndex}
         a.SetComponent(i, 1, math.sin(x[i]/4.0))
         a.SetComponent(i, 2, 0)
 
-    cn = slicer.mrmlScene.CreateNodeByClass('vtkMRMLChartNode')
-    cn = slicer.mrmlScene.AddNode(cn)
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
     print cn.GetID()
     cn.AddArray('Periodic', dn3.GetID())
     cn.SetProperty('default', 'title', 'A bar chart')

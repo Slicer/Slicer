@@ -439,7 +439,7 @@ def create_volume_node(volume_type, attach_display_node = False, dimensions=None
     if volume_type not in __VOLUME_TYPES__:
         raise ValueError('Volume type %s is not valid' % volume_type )
 
-    volume_node = slicer.mrmlScene.CreateNodeByClass('vtkMRML%sVolumeNode' % volume_type)
+    volume_node = eval('slicer.vtkMRML%sVolumeNode()' % volume_type)
     volume_node.SetName(slicer.mrmlScene.GetUniqueNameByString('%s%s' % (WORKFLOW_PREFIX, volume_type)))
 
     if dimensions:
@@ -451,7 +451,7 @@ def create_volume_node(volume_type, attach_display_node = False, dimensions=None
     slicer.mrmlScene.AddNode(volume_node)
 
     if attach_display_node:
-        display_node = slicer.mrmlScene.CreateNodeByClass('vtkMRML%sVolumeDisplayNode' % volume_type)
+        display_node = eval('slicer.vtkMRML%sVolumeDisplayNode()' % volume_type)
         slicer.mrmlScene.AddNode(display_node)
         volume_node.AddAndObserveDisplayNodeID( display_node.GetID() )
 

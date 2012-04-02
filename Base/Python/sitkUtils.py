@@ -36,7 +36,7 @@ def local_create_volume_node(volume_type, nodeName="default"):
     """
     if volume_type not in __sitk__VOLUME_TYPES__:
         raise ValueError('Volume type %s is not valid' % volume_type )
-    volume_node = slicer.mrmlScene.CreateNodeByClass('vtkMRML%sVolumeNode' % volume_type)
+    volume_node = eval('slicer.vtkMRML%sVolumeNode()' % volume_type)
     volume_node.SetName(slicer.mrmlScene.GetUniqueNameByString(nodeName))
     slicer.mrmlScene.AddNode(volume_node)
     return volume_node
@@ -45,10 +45,6 @@ def CreateNewNode( NewNodeNamePrefix , nodeType = 'vtkMRMLScalarVolumeNode'):
   """ Create a new node from scratch
   """
   node = local_create_volume_node('Scalar', NewNodeNamePrefix )
-  #node = slicer.mrmlScene.CreateNodeByClass(nodeType)
-  #node.SetScene(slicer.mrmlScene)
-  #node.SetName(slicer.mrmlScene.GetUniqueNameByString(NewNodeNamePrefix))
-  #slicer.mrmlScene.AddNode(node)
   return node.GetName()
 
 def EnsureRegistration():
