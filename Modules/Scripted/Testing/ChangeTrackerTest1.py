@@ -1,4 +1,3 @@
-import slicer.testing
 import slicer
 
 # test that brainsfit is available and can run
@@ -31,4 +30,3 @@ print 'ChangeTrackerTest1 brainsfit parameters: ', parameters
 cliNode = None
 cliNode = slicer.cli.run(slicer.modules.brainsfit, cliNode, parameters, wait_for_completion = True)
 
-slicer.testing.exitSuccess()

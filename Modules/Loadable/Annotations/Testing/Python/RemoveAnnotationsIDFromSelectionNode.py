@@ -1,4 +1,3 @@
-import slicer.testing
 
 # get the selection node
 selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
@@ -13,8 +12,7 @@ if selectionNode:
   print selectionNode
   print "Start index for ", annotID, " = ", startIndex, ", end index after removing it = ", endIndex
   if endIndex != -1:
-    print "Failed to remove annotation", annotID, "from list, end index = ", endIndex, ", should be -1"
-    slicer.testing.exitFailure()
+    raise Exception("Failed to remove annotation %s from list, end index = %s should be -1" % (annotID, endIndex))
 
   # now make one active and remove it
   annotID = "vtkMRMLAnnotationFiducialNode"
@@ -25,8 +23,7 @@ if selectionNode:
   selectionNode.RemoveAnnotationIDFromList(annotID)
   endIndex = selectionNode.AnnotationIDInList(annotID)
   if endIndex != -1:
-    print "Failed to remove active annotation", annotID, "from list, end index = ", endIndex, ", should be -1"
-    slicer.testing.exitFailure()
+    raise Exception("Failed to remove active annotation %s from list, end index = %s should be -1" % (annotID, endIndex))
 
   # re-add the ruler one
   annotID = "vtkMRMLAnnotationRulerNode"
@@ -34,7 +31,5 @@ if selectionNode:
   selectionNode.AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png")
   endIndex = selectionNode.AnnotationIDInList(annotID)
   if endIndex == -1:
-    print "Failed to re-add ",annotID,", end index = ", endIndex
-    slicer.testing.exitFailure()
+    raise Exception("Failed to re-add %s, end index = %s" % (annotID, endIndex))
 
-slicer.testing.exitSuccess()

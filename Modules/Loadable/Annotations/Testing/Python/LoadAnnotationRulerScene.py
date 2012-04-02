@@ -1,4 +1,3 @@
-import slicer.testing
 import os
 
 # set the url
@@ -11,4 +10,3 @@ slicer.mrmlScene.SetURL(scenePath)
 # and load it
 slicer.mrmlScene.Connect()
 
-slicer.testing.exitSuccess()

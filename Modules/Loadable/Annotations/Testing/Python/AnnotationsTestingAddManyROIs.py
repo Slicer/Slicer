@@ -1,4 +1,3 @@
-import slicer.testing
 import time
 
 def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
@@ -58,4 +57,3 @@ testEndTime = time.clock()
 testTime = testEndTime - testStartTime
 print "Test total time = ", testTime
 
-slicer.testing.exitSuccess()

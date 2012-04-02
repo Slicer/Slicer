@@ -1,4 +1,3 @@
-import slicer.testing
 
 # Test that setting a fiducial coordinate is consistent across scene view saves and restores
 
@@ -43,7 +42,5 @@ print "Difference between coordinates after restored the scene and value from ju
 diffTotal = xdiff + ydiff + zdiff
 
 if diffTotal > 0.1:
-  print "Error! Difference between coordinate values total = ", diffTotal
-  slicer.testing.exitFailure()
+  raise Exception("Difference between coordinate values total = %s" diffTotal)
 
-slicer.testing.exitSuccess()
