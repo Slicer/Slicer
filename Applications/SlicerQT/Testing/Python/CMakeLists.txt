@@ -39,11 +39,13 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitSuccessTest.py
-  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_)
+  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_
+  )
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitFailureTest.py
-  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_)
+  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_
+  )
 set_tests_properties(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 slicer_add_python_test(SCRIPT SlicerTestingExitSuccessTest.py)
@@ -58,15 +60,11 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 slicer_add_python_unittest(
   SCRIPT SlicerUnitTestTest.py
   SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
-  TESTNAME_PREFIX nomainwindow_)
-
-slicer_add_python_unittest(
-  SCRIPT SlicerSceneObserverTest.py
-  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
-  TESTNAME_PREFIX nomainwindow_)
+  TESTNAME_PREFIX nomainwindow_
+  )
 
 #
-# No warnings for simple test
+# Exercise different Slicer command line option and check that no warnings are displated.
 #
 macro(nowarning_test test_name)
   add_test(
@@ -98,3 +96,13 @@ nowarning_test(nomainwindow_nocli_noscripted --no-main-window --disable-cli-modu
 nowarning_test(nomainwindow_noloadable_noscripted --no-main-window --disable-loadable-module --disable-scripted-loadable-modules)
 nowarning_test(nomainwindow_nocli_noloadable_noscripted --no-main-window --disable-cli-module --disable-loadable-module --disable-scripted-loadable-modules)
 nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
+
+
+#
+# Application tests
+#
+slicer_add_python_unittest(
+  SCRIPT SlicerSceneObserverTest.py
+  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
+  TESTNAME_PREFIX nomainwindow_
+  )
