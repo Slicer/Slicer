@@ -15,7 +15,7 @@ macro(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR
   foreach(MODULENAME ${MODULENAMES})
     set(MODULETESTS ModuleGenericTest ModuleWidgetGenericTest)
     # highly depends on SlicerMacroBuildModuleQtLibrary.cmake
-    set(MODULEPATH ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}/qSlicer${MODULENAME}.${CMAKE_SHARED_MODULE_SUFFIX})
+    set(MODULEPATH ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}/${CMAKE_SHARED_MODULE_PREFIX}qSlicer${MODULENAME}Module${CMAKE_SHARED_MODULE_SUFFIX})
     foreach(MODULETEST ${MODULETESTS})
       # Note: the variable MODULENAME is used to configure the different tests.
       set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}${MODULETEST}.cxx)
