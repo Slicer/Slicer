@@ -26,6 +26,10 @@
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerApplication.h>
+#ifdef Slicer_USE_PYTHONQT
+# include <qSlicerLoadableModule.h>
+# include <qSlicerPythonManager.h>
+#endif
 #include <vtkSlicerModuleLogic.h>
 
 // @MODULENAME@ includes
@@ -64,6 +68,19 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
   // Path can be required for modules depending on locale ressources.
   // This usually applies to widget representation implemented in python.
   module->setPath(modulePath);
+
+  {
+    bool current = qSlicerLoadableModule::importModulePythonExtensions(
+          app.pythonManager(), app.intDir(), module->path());
+    bool expected = true;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " Problem with importModulePythonExtensions\n"
+                << "\tcurrent:" << current << "\n"
+                << "\texpected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
 
   if (module->title().isEmpty())
     {
