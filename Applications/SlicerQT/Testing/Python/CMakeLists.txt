@@ -39,12 +39,12 @@ set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL 
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitSuccessTest.py
-  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_
+  SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_
   )
 
 slicer_add_python_test(
   SCRIPT SlicerTestingExitFailureTest.py
-  SLICER_ARGS --testing --no-main-window TESTNAME_PREFIX nomainwindow_
+  SCRIPT_ARGS --no-main-window TESTNAME_PREFIX nomainwindow_
   )
 set_tests_properties(py_nomainwindow_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
@@ -59,7 +59,7 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
 slicer_add_python_unittest(
   SCRIPT SlicerUnitTestTest.py
-  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
+  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_
   )
 
@@ -103,6 +103,6 @@ nowarning_test(nomainwindow_ignoreslicerrc --no-main-window --ignore-slicerrc)
 #
 slicer_add_python_unittest(
   SCRIPT SlicerSceneObserverTest.py
-  SLICER_ARGS --testing --no-main-window --disable-cli-module --disable-loadable-module
+  SLICER_ARGS --no-main-window --disable-cli-module --disable-loadable-module
   TESTNAME_PREFIX nomainwindow_
   )
