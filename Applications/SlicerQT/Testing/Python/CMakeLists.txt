@@ -33,6 +33,14 @@ add_test(
   )
 set_tests_properties(py_nomainwindow_SlicerPythonCodeTest4 PROPERTIES WILL_FAIL TRUE)
 
+add_test(
+  NAME py_nomainwindow_SlicerPythonCodeTest5
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+  --ignore-slicerrc --testing --disable-cli-module --disable-loadable-module --no-main-window
+  --python-code "raise Exception('Should fail !')"
+  )
+set_tests_properties(py_nomainwindow_SlicerPythonCodeTest5 PROPERTIES WILL_FAIL TRUE)
+
 #
 # Check if '--python-scripts' / 'testing' works as expected
 #
