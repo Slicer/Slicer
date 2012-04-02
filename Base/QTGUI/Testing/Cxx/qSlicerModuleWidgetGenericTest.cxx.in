@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDir>
 #include <QTimer>
 #include <QWidget>
 
@@ -44,9 +45,27 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   qSlicerApplication app(argc, argv);
 
   qSlicer@MODULENAME@Module module(0);
-  // path can be required for modules depending on locale ressources
-  // (typically python script).
-  module.setPath("@MODULEPATH@");
+
+  QString modulePathWithoutIntDir = QLatin1String("@MODULEPATH_WITHOUT_INTDIR@");
+  if (!QFile::exists(modulePathWithoutIntDir))
+    {
+    std::cerr << "Line " << __LINE__ << " Problem with @" << "MODULEPATH_WITHOUT_INTDIR@ - "
+              << " File " << qPrintable(modulePathWithoutIntDir) << " doesn't exist " << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  QString moduleFileName = "@CMAKE_SHARED_MODULE_PREFIX@qSlicer@MODULENAME@Module@CMAKE_SHARED_MODULE_SUFFIX@";
+
+  QDir moduleDir(modulePathWithoutIntDir);
+  if (!app.intDir().isEmpty())
+    {
+    moduleDir.cd(app.intDir());
+    }
+  QString modulePath = moduleDir.filePath(moduleFileName);
+
+  // Path can be required for modules depending on locale ressources.
+  // This usually applies to widget representation implemented in python.
+  module.setPath(modulePath);
 
   module.initialize(0);
 
