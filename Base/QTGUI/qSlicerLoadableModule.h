@@ -30,6 +30,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 
 class qSlicerLoadableModulePrivate;
+class qSlicerCorePythonManager;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLoadableModule : public qSlicerAbstractModule
 {
@@ -37,6 +38,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerLoadableModule : public qSlicerAbstractM
 
 public:
 
+  typedef qSlicerLoadableModule Self;
   typedef qSlicerAbstractModule Superclass;
   qSlicerLoadableModule(QObject *parent=0);
   virtual ~qSlicerLoadableModule();
@@ -44,6 +46,20 @@ public:
   /// Return help/acknowledgement text
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
+
+  /// Import python extensions associated with \a modulePath.
+  /// Python extensions corresponds to files matching the following wildcard expression:
+  /// <ul>
+  ///   <li>vtkSlicer*ModuleLogic.py</li>
+  ///   <li>vtkSlicer*ModuleMRML.py</li>
+  ///   <li>qSlicer*PythonQt.* python</li>
+  /// </ul>
+  /// These files are searched within the \a modulePath minus the \a IntDir
+  /// if it applies.
+  /// \sa qSlicerCoreApplication::intDir(), qSlicerCoreApplication::corePythonManager()
+  static bool importModulePythonExtensions(qSlicerCorePythonManager * pythonManager,
+                                           const QString& intDir,
+                                           const QString& modulePath);
 
 protected:
   virtual void setup();
