@@ -132,25 +132,12 @@ int qSlicerCLIModuleTest1(int argc, char * argv[])
   moduleFactoryManager->instantiateModules();
 
   QStringList moduleNames = moduleFactoryManager->instantiatedModuleNames();
-#ifdef Slicer_BUILD_CLI
   if (!moduleNames.contains(cliModuleName))
     {
     std::cerr << "Line " << __LINE__ << " - Problem with qSlicerCLILoadableModuleFactory"
               << " - Failed to register '" << qPrintable(cliModuleName) << "' module" << std::endl;
     return EXIT_FAILURE;
     }
-#else
-  if (moduleNames.contains(cliModuleName))
-    {
-    std::cerr << "Line " << __LINE__
-              << " - Problem with qSlicerCLILoadableModuleFactory"
-              << " - '" << qPrintable(cliModuleName) << "' module shouldn't"
-              << " have been registered; CLI modules are disabled"
-              << std::endl;
-    return EXIT_FAILURE;
-    }
-  return EXIT_SUCCESS;
-#endif
 
   foreach(const QString& name, moduleNames)
     {
