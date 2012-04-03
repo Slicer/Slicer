@@ -115,7 +115,7 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
-if(Slicer_USE_VTK_DEBUG_LEAKS)
+if(VTK_DEBUG_LEAKS)
   set(testname MRMLCreateNodeByClassWithoutSetReferenceCount)
   slicer_add_python_test(
     SCRIPT ${testname}.py
