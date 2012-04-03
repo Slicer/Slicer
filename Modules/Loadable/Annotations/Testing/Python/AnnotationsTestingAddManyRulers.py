@@ -25,7 +25,7 @@ def TestRulerAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   # iterate over the number of rulers to add
   for i in range(numToAdd):
 #    print "i = ", i, "/", numToAdd, ", r = ", r, ", a = ", a, ", s = ", s
-    rulerNode = slicer.modulemrml.vtkMRMLAnnotationRulerNode()
+    rulerNode = slicer.vtkMRMLAnnotationRulerNode()
     rulerNode.SetPosition1(r1, a1, s1)
     rulerNode.SetPosition2(r2, a2, s2)
     t1 = time.clock()

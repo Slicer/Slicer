@@ -25,7 +25,7 @@ def TestROIAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   # iterate over the number of rois to add
   for i in range(numToAdd):
 #    print "i = ", i, "/", numToAdd, ", r = ", r, ", a = ", a, ", s = ", s
-    roiNode = slicer.modulemrml.vtkMRMLAnnotationROINode()
+    roiNode = slicer.vtkMRMLAnnotationROINode()
     roiNode.SetXYZ(cx, cy, cz)
     roiNode.SetRadiusXYZ(rx, ry, rz)
     t1 = time.clock()

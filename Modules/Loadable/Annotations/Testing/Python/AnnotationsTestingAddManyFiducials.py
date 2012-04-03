@@ -22,7 +22,7 @@ def TestFiducialAdd(renameFlag=1, visibilityFlag=1, numToAdd=20):
   # iterate over the number of fiducials to add
   for i in range(numToAdd):
 #    print "i = ", i, "/", numToAdd, ", r = ", r, ", a = ", a, ", s = ", s
-    fidNode = slicer.modulemrml.vtkMRMLAnnotationFiducialNode()
+    fidNode = slicer.vtkMRMLAnnotationFiducialNode()
     fidNode.SetFiducialCoordinates(r, a, s)
     t1 = time.clock()
     fidNode.Initialize(slicer.mrmlScene)
