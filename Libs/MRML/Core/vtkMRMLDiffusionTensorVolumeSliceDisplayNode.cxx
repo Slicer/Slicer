@@ -396,6 +396,38 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdateReferenceID(const char 
     }
 }
 
+//----------------------------------------------------------------------------
+std::vector<int> vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColorModes()
+{
+  std::vector<int> modes;
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::RelativeAnisotropy);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::PerpendicularDiffusivity);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MaxEigenvalue);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MidEigenvalue);
+  modes.push_back(vtkMRMLDiffusionTensorDisplayPropertiesNode::MinEigenvalue);
+  return modes;
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants()
+{
+  static std::vector<int> modes = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColorModes();
+  return modes.size();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNthScalarInvariant(int i)
+{
+  static std::vector<int> modes = vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetSupportedColorModes();
+  return modes[i];
+}
 
 
 

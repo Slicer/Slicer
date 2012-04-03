@@ -51,11 +51,11 @@ int qSlicerDTISliceDisplayWidgetTest1( int argc, char * argv[] )
   widget.setMRMLScene(scene);
   widget.setMRMLDTISliceDisplayNode(displayNode);
 
-  for (int i = vtkMRMLDiffusionTensorDisplayPropertiesNode::GetFirstColorGlyphBy();
-       i <= vtkMRMLDiffusionTensorDisplayPropertiesNode::GetLastColorGlyphBy();
+  for (int i = 0;
+       i < vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNumberOfScalarInvariants();
        ++i)
     {
-    widget.setColorGlyphBy(i);
+    widget.setColorGlyphBy(vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetNthScalarInvariant(i));
     }
 
   widget.show();

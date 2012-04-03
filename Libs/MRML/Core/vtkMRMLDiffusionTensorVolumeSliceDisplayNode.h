@@ -191,6 +191,14 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 
+  /// 
+  /// Get the number of selected scalar invariants to color a Slice
+  static int GetNumberOfScalarInvariants();
+
+  /// 
+  /// Get the nth scalar invariant to color a Slice
+  static int GetNthScalarInvariant(int i);
+
  protected:
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
   ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
@@ -204,6 +212,8 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
     char *DiffusionTensorDisplayPropertiesNodeID;
 
     void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
+
+    static std::vector<int> GetSupportedColorModes();
 
     /// Enumerated
     int ColorMode;
