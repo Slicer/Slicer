@@ -123,7 +123,7 @@ if(VTK_DEBUG_LEAKS)
     TESTNAME_PREFIX nomainwindow_
     )
   set_tests_properties(py_nomainwindow_${testname}
-    PROPERTIES PASS_REGULAR_EXPRESSION "vtkDebugLeaks has detected LEAKS!"
+    PROPERTIES PASS_REGULAR_EXPRESSION "instances? still around"
     )
 endif()
 
