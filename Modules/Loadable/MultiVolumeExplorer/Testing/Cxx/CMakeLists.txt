@@ -19,8 +19,6 @@ set(LIBRARY_NAME qSlicer${KIT}Module)
 
 add_executable(${KIT}CxxTests ${Tests})
 
-MESSAGE("Added executable ${KIT}CxxTests")
-
 target_link_libraries(${KIT}CxxTests ${lib_name})
 
 foreach(testname ${KIT_TEST_NAMES})
