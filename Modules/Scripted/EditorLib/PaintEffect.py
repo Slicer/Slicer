@@ -305,8 +305,9 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     """
     update paint feedback glyph to follow mouse
     """
-    self.actor.SetPosition( self.interactor.GetEventPosition() )
-    self.sliceView.scheduleRender()
+    if hasattr(self,'actor'):
+      self.actor.SetPosition( self.interactor.GetEventPosition() )
+      self.sliceView.scheduleRender()
     
 
   def createGlyph(self, polyData):
