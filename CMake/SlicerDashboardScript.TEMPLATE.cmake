@@ -23,8 +23,8 @@ cmake_minimum_required(VERSION 2.8.4)
 #
 set(MY_OPERATING_SYSTEM   "Linux") # Windows, Linux, Darwin...
 set(MY_COMPILER           "g++4.4.3")
-set(MY_QT_VERSION         "4.7")
-set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/qtsdk-2010.05/qt/bin/qmake")
+set(MY_QT_VERSION         "4.7.4")
+set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/QtSDK-1.2/Desktop/Qt/474/gcc/bin/qmake")
 set(CTEST_SITE            "karakoram.kitware") # for example: mymachine.kitware, mymachine.bwh.harvard.edu, ...
 set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
 # Open a shell and type in "cmake --help" to obtain the proper spelling of the generator
