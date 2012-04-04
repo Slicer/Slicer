@@ -54,13 +54,6 @@ if(NOT DEFINED CTEST_CONFIGURATION_TYPE AND DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_CONFIGURATION_TYPE ${CTEST_BUILD_CONFIGURATION})
 endif()
 
-# Make sure command 'ctest_upload' is available if WITH_PACKAGES is True
-if(WITH_PACKAGES)
-  if(NOT COMMAND ctest_upload)
-    message(FATAL_ERROR "Failed to enable option WITH_PACKAGES ! CMake ${CMAKE_VERSION} doesn't support 'ctest_upload' command.")
-  endif()
-endif()
-
 set(repository http://svn.slicer.org/Slicer4/trunk)
 
 # Should binary directory be cleaned?
@@ -86,10 +79,7 @@ elseif(SCRIPT_MODE STREQUAL "nightly")
 else()
   message(FATAL_ERROR "Unknown script mode: '${SCRIPT_MODE}'. Script mode should be either 'experimental', 'continuous' or 'nightly'")
 endif()
-set(track ${model})
-if(WITH_PACKAGES)
-  set(track "${track}-Packages")
-endif()
+set(track Extensions-${model})
 set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 
 # For more details, see http://www.kitware.com/blog/home/post/11
@@ -97,9 +87,6 @@ set(CTEST_USE_LAUNCHERS 0)
 if(CTEST_CMAKE_GENERATOR MATCHES ".*Makefiles.*")
   set(CTEST_USE_LAUNCHERS 1)
 endif()
-#if(NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
-#  set(CTEST_USE_LAUNCHERS 1)
-#endif()
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
