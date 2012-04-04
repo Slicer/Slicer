@@ -1,10 +1,16 @@
+####################################################################################
+# OS      :
+# Hardware:
+# GPU     :
+####################################################################################
+# WARNING - The specific version and processor type of this machine should be reported
+# in the header above. Indeed, this file will be send to the dashboard as a NOTE file.
 #
-# OS: Ubuntu 9.04  2.6.28-19-generic
-# Hardware: x86_64 GNU/Linux
-# GPU: NA
-
-# Note: The specific version and processor type of this machine should be reported in the
-# header above. Indeed, this file will be send to the dashboard as a NOTE file.
+# On linux, you could run:
+#     'uname -o' and 'cat /etc/*-release' to obtain the OS name.
+#     'uname -mpi' to obtain hardware details.
+#     'glxinfo | grep OpenGL' to obtain GPU details.
+####################################################################################
 
 cmake_minimum_required(VERSION 2.8.4)
 
