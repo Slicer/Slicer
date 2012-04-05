@@ -24,10 +24,12 @@ class WorkflowConfiguration:
         'dicom2nrrd':[
             ('DICOMRadioButton', 'checked'),
             ('NRRDDWIRadioButton', 'checked'),
+            ('MRMLDWIRadioButton', 'checked'),
             ('inputDicomDirectory', 'directory'),
             ('outputVolume', 'currentPath'),
             ('useBMatrixGradientDirections','checked'),
             ('inputNRRDVolume','currentPath'),
+            ('inputNRRDMRMLNode','currentNodeId'),
         ],
         'dwi2dti':[
             ('leastSquaresEstimation', 'checked'),
@@ -54,6 +56,12 @@ class WorkflowConfiguration:
         self.diffusionweightedvolumemasking_parameter_node = None
         self.diffusiontensorestimation_parameter_node = None
         self.seeding_parameter_node = None
+
+    def post_widget_init(self, widget_name, widget):
+        if widget_name == 'dicom2nrrd':
+            for child in widget.findChildren(qt.QWidget, qt.QRegExp('.*FormWidget')):
+                child.setVisible('DICOM' in child.name)
+
 
     def on_entry_dicom2nrrd(self, step_object, coming_from, transition_type, data):
         pass
@@ -106,6 +114,10 @@ class WorkflowConfiguration:
                 self.dwi_node = node
                 self.dwi_node_name = node.GetID()
 
+        elif data[step_object.id()]['MRMLDWIRadioButton']:
+            result_status = True
+            self.dwi_node_name = data[step_object.id()]['inputNRRDMRMLNode']
+            self.dwi_node = slicer.mrmlScene.GetNodeByID(self.dwi_node_name)
 
         if not result_status:
             display_error("Error in DICOM to NRRD conversion, please see log")
@@ -157,7 +169,7 @@ class WorkflowConfiguration:
                 parameters_estimation['inputMaskVolume'] = ''
 
         self.diffusiontensorestimation_parameter_node = slicer.cli.run(
-            slicer.modules.diffusiontensorestimation, self.diffusiontensorestimation_parameter_node,
+            slicer.modules.dwitodtiestimation, self.diffusiontensorestimation_parameter_node,
             parameters_estimation,
             wait_for_completion=True
         )
@@ -178,7 +190,6 @@ class WorkflowConfiguration:
 
         parameters = {
             'InputVolume':self.tensor_node.GetID(),
-            'InputROI':self.mask_node.GetID(),
             'OutputFibers':self.tractography_node.GetID(),
             'SeedSpacing':data[step_object.id()]['seedSpacing'],
             'StoppingValue':data[step_object.id()]['stoppingFAValue'],
@@ -189,7 +200,7 @@ class WorkflowConfiguration:
         parameters.update(data[step_object.id()])
 
         self.seeding_parameter_node = slicer.cli.run(
-            slicer.modules.seeding, self.seeding_parameter_node,
+            slicer.modules.tractographylabelmapseeding, self.seeding_parameter_node,
             parameters,
             wait_for_completion=True
         )
@@ -344,6 +355,11 @@ class full_tractography_workflow:
             qfile.open(qt.QFile.ReadOnly)
             widget = loader.load( qfile )
 
+            if hasattr(widget, 'setMRMLScene'):
+                widget.setMRMLScene(slicer.mrmlScene)
+
+            if hasattr(self.workflow_configuration, 'post_widget_init'):
+                self.workflow_configuration.post_widget_init(step_widget_file, widget)
 
             step = GeneralizedStep(step_widget_file, widget,
                                    onEntryCallback=onEntryCallback,
@@ -351,6 +367,7 @@ class full_tractography_workflow:
                                    validateCallback=validateCallback)
 
             self.steps.append((step_widget_file, step))
+
 
         self.workflow = ctk.ctkWorkflow()
         self.workflowWidget = ctk.ctkWorkflowStackedWidget()
