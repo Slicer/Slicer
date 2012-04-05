@@ -403,7 +403,9 @@ void qSlicerExtensionsManagerModelTester::testServerUrl()
   qSlicerExtensionsManagerModel model;
   model.setSlicerVersion(Slicer_VERSION);
 
-  QCOMPARE(model.serverUrl().toString(), serverUrl);
+  QUrl currentServerUrl = model.serverUrl();
+  QVERIFY(currentServerUrl.isValid());
+  QCOMPARE(currentServerUrl.toString(), serverUrl);
   QCOMPARE(model.serverUrlWithPackagePath().toString(), serverUrlWithPackagePath);
   QCOMPARE(model.serverUrlWithExtensionsStorePath().toString(), serverUrlWithExtensionsStorePath);
 }
@@ -418,6 +420,10 @@ void qSlicerExtensionsManagerModelTester::testServerUrl_data()
   QTest::newRow("localhost") << "http://localhost/midas"
                              << "http://localhost/midas/slicerpackages"
                              << "http://localhost/midas/slicerappstore";
+
+  QTest::newRow("windows-file") << QUrl::fromLocalFile("C:/path/to/foo").toString()
+                                << "file:///C:/path/to/foo/slicerpackages"
+                                << "file:///C:/path/to/foo/slicerappstore";
 }
 
 // ----------------------------------------------------------------------------
@@ -472,7 +478,7 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
 
   QFETCH(QString, extensionId);
   QFETCH(QString, jsonFile);
@@ -647,7 +653,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QString os = Slicer_OS_LINUX_NAME;
@@ -703,7 +709,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QString os = Slicer_OS_LINUX_NAME;
@@ -764,7 +770,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   {
@@ -855,7 +861,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionInstalled()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
 
@@ -911,7 +917,7 @@ void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
 
@@ -953,7 +959,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QFETCH(QString, opertingSystem);
@@ -1008,7 +1014,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
 {
   QVERIFY(this->resetTmp());
 
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QFETCH(QString, opertingSystem);
@@ -1135,7 +1141,7 @@ void qSlicerExtensionsManagerModelTester::testSetLauncherSettingsFilePath_data()
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUpdated()
 {
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QFETCH(ExtensionIdType, extensionIdToUninstall);
@@ -1279,7 +1285,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated()
 {
-  QSettings().setValue("Extensions/ServerUrl", "file://" + this->Tmp.absolutePath());
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
 
   QFETCH(ExtensionIdType, extensionIdToUninstall);
