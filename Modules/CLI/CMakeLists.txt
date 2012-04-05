@@ -32,7 +32,6 @@ set(cli_modules
   MaskScalarVolume
   MedianImageFilter
   MergeModels
-#  MeshContourSegmentation
   ModelMaker
   ModelToLabelMap
   MultiplyScalarVolumes
