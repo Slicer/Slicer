@@ -111,7 +111,7 @@
       <flag>-l</flag>
       <longflag>--minimumlength</longflag>
       <description><![CDATA[Minimum length of the fibers (in mm)]]></description>
-      <default>10</default>
+      <default>20</default>
       <constraints>
         <minimum>0</minimum>
         <maximum>200</maximum>
