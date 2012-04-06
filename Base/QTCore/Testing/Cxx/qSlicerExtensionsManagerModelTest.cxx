@@ -186,7 +186,10 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
 {
   bool success = true;
   QDir tmp = QDir::temp();
-  success = tmp.mkdir(this->TemporaryDirName);
+  if (!QFile::exists(tmp.filePath(this->TemporaryDirName)))
+    {
+    success = tmp.mkdir(this->TemporaryDirName);
+    }
   success = tmp.cd(this->TemporaryDirName);
   if (tmp.exists("api"))
     {
@@ -195,6 +198,7 @@ bool qSlicerExtensionsManagerModelTester::prepareJson(const QString& jsonFile)
   success = success && tmp.mkdir("api");
   success = success && tmp.cd("api");
   success = success && QFile::copy(jsonFile,  tmp.filePath("json"));
+  success = success && QFile::setPermissions(tmp.filePath("json"), QFile::ReadOwner | QFile::WriteOwner);
   return success;
 }
 
@@ -213,6 +217,7 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
     {
     QVERIFY2(QFile::copy(inputArchiveFile, copiedArchiveFile),
              QString("Failed to copy %1 into %2").arg(inputArchiveFile).arg(copiedArchiveFile).toLatin1());
+    QFile::setPermissions(copiedArchiveFile, QFile::ReadOwner | QFile::WriteOwner);
     }
 
   QVERIFY2(this->prepareJson(QString(":/extension-%1-%2.json").arg(os).arg(extensionId)),

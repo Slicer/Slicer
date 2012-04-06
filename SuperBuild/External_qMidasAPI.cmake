@@ -36,7 +36,7 @@ if(NOT DEFINED qMidasAPI_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/qMidasAPI.git"
-    GIT_TAG "4c7c25d8e0284dea509914fad16e0403ea3e96cb"
+    GIT_TAG "3a92ef0edb6a40005169fe3bc6b6f9123f0b03bc"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     UPDATE_COMMAND ""
