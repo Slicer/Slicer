@@ -692,76 +692,118 @@ int qSlicerUtilsTest1(int, char * [] )
         }
       }
 
-     if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner, QFile::ReadOwner))
-       {
-       std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-       return EXIT_FAILURE;
-       }
+    // Make sure directories and files are read-only
+    if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner, QFile::ReadOwner))
+      {
+      std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+#ifndef Q_OS_WIN32
+    // Exe permissions are not supported on windows:
+    //  http://msdn.microsoft.com/en-us/library/1z319a54(v=vs.90).aspx
+    //  https://qt.gitorious.org/qt/qt/blobs/092cd760d5fddf9640a310214fe01929f0fff3a8/src/corelib/io/qfsfileengine_win.cpp#line1781
 
      // Since directory are *NOT* executable, files should *NOT* be readable
-     foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
-       {
-       if (QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner)
-         {
-         std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                   << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                   << " is *NOT* expected to be readable."<< std::endl;
-         return EXIT_FAILURE;
-         }
-       }
-
-     if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner))
-       {
-       std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-       return EXIT_FAILURE;
-       }
-
-     // Since directory are executable, files should be readable
-     foreach(const QString& relativeFilepath, QStringList()
-             << path1 + "/sol.txt"
-             << path1 + "/la.txt"
-             << path2 + "/si.txt"
-             << path2 + "/sol.txt"
-             )
-       {
-       if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner))
-         {
-         std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                   << "File " << qPrintable(tmp.filePath(relativeFilepath))
-                   << " is expected to be readable."<< std::endl;
-         return EXIT_FAILURE;
-         }
-       }
-
-     // Since directories and files are not readable, shouldn't be able to delete
-     if (ctk::removeDirRecursively(tmp.path()))
+    foreach(const QString& relativeFilepath, QStringList()
+           << path1 + "/sol.txt"
+           << path1 + "/la.txt"
+           << path2 + "/si.txt"
+           << path2 + "/sol.txt"
+           )
+     {
+     if (QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner)
        {
        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                 << "Should *NOT* be possible to recursively delete "
-                 << qPrintable(tmp.path()) << std::endl;
+                 << "File " << qPrintable(tmp.filePath(relativeFilepath))
+                 << " is *NOT* expected to be readable."<< std::endl;
        return EXIT_FAILURE;
        }
+     }
 
-     if (!qSlicerUtils::setPermissionsRecursively(tmp.path(),
-                                                  QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner,
-                                                  QFile::ReadOwner | QFile::WriteOwner))
-       {
-       std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
-       return EXIT_FAILURE;
-       }
+    if (!qSlicerUtils::setPermissionsRecursively(tmp.path(), QFile::ReadOwner | QFile::ExeOwner, QFile::ReadOwner))
+     {
+     std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
+     return EXIT_FAILURE;
+     }
 
-     if (!ctk::removeDirRecursively(tmp.path()))
-       {
-       std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
-                 << "Should be possible to recursively delete "
-                 << qPrintable(tmp.path()) << std::endl;
-       return EXIT_FAILURE;
-       }
+    // Since directory are executable, files should be readable
+    foreach(const QString& relativeFilepath, QStringList()
+           << path1 + "/sol.txt"
+           << path1 + "/la.txt"
+           << path2 + "/si.txt"
+           << path2 + "/sol.txt"
+           )
+      {
+      if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::ReadOwner))
+        {
+        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
+                  << "File " << qPrintable(tmp.filePath(relativeFilepath))
+                  << " is expected to be readable."<< std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+
+    // Since directories and files are not writable, shouldn't be able to delete
+    if (ctk::removeDirRecursively(tmp.path()))
+      {
+      std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
+                << "Should *NOT* be possible to recursively delete "
+                << qPrintable(tmp.path()) << std::endl;
+      return EXIT_FAILURE;
+      }
+
+#endif
+
+    // Since files are read-only, they should *NOT* be writable
+    foreach(const QString& relativeFilepath, QStringList()
+           << path1 + "/sol.txt"
+           << path1 + "/la.txt"
+           << path2 + "/si.txt"
+           << path2 + "/sol.txt"
+           )
+      {
+      if (QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner)
+        {
+        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
+                  << "File " << qPrintable(tmp.filePath(relativeFilepath))
+                  << " is expected to be read-only."<< std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+
+    if (!qSlicerUtils::setPermissionsRecursively(tmp.path(),
+                                                 QFile::ReadOwner | QFile::ExeOwner | QFile::WriteOwner,
+                                                 QFile::ReadOwner | QFile::WriteOwner))
+      {
+      std::cerr << __LINE__ << " - Problem with setPermissionsRecursively()" << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    // Make sure files are readable and writable
+    foreach(const QString& relativeFilepath, QStringList()
+           << path1 + "/sol.txt"
+           << path1 + "/la.txt"
+           << path2 + "/si.txt"
+           << path2 + "/sol.txt"
+           )
+      {
+      if (!(QFile::permissions(tmp.filePath(relativeFilepath)) & QFile::WriteOwner))
+        {
+        std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
+                  << "File " << qPrintable(tmp.filePath(relativeFilepath))
+                  << " is expected to have read/write permissions."<< std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+
+    if (!ctk::removeDirRecursively(tmp.path()))
+      {
+      std::cerr << __LINE__ << " - Problem with setPermissionsRecursively() - "
+                << "Should be possible to recursively delete "
+                << qPrintable(tmp.path()) << std::endl;
+      return EXIT_FAILURE;
+      }
   }
 
   return EXIT_SUCCESS;
