@@ -21,6 +21,7 @@
 #ifndef __qSlicerUtils_h
 #define __qSlicerUtils_h
 
+#include <QFile>
 #include <QString>
 
 #include "qSlicerBaseQTCoreExport.h"
@@ -158,6 +159,18 @@ public:
 
   /// Return \a true if the \a inputPath ends with \a path
   static bool pathEndsWith(const QString& inputPath, const QString& path);
+
+
+  /// Set permissions of \a path. If \a path is a directory, permissions will be set to all its descendant.
+  /// While recursively traversing the tree structure, if \a path or one of its descendant
+  /// is a file, \a filePermissions will be set otherwise \a directoryPermissions will be set.
+  /// \note If for some reason, permissions on a file or directory failed to be set, the
+  /// traversing will be aborted and the permission already set won't be reverted.
+  /// \return <code>true</code> on success, <code>false</code> otherwise.
+  /// \sa QFile::setPermissions
+  static bool setPermissionsRecursively(const QString &path,
+                                        QFile::Permissions directoryPermissions,
+                                        QFile::Permissions filePermissions);
 
 private:
   /// Not implemented

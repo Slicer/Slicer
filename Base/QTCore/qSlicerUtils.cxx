@@ -203,3 +203,43 @@ bool qSlicerUtils::pathEndsWith(const QString& inputPath, const QString& path)
   return QDir::cleanPath(QDir::fromNativeSeparators(inputPath)).
       endsWith(QDir::cleanPath(QDir::fromNativeSeparators(path)), sensitivity);
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerUtils::setPermissionsRecursively(const QString &path,
+                                             QFile::Permissions directoryPermissions,
+                                             QFile::Permissions filePermissions)
+{
+  if (!QFile::exists(path))
+    {
+    qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions of nonexistent file" << path;
+    return false;
+    }
+
+  foreach(const QFileInfo &info, QDir(path).entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot))
+    {
+    if (info.isDir())
+      {
+      if (!QFile::setPermissions(info.filePath(), directoryPermissions))
+        {
+        return false;
+        }
+      if (!qSlicerUtils::setPermissionsRecursively(info.filePath(), directoryPermissions, filePermissions))
+        {
+        qCritical() << "qSlicerUtils::setPermissionsRecursively: Failed to set permissions on file" << info.filePath();
+        return false;
+        }
+      }
+    else if (info.isFile())
+      {
+      if (!QFile::setPermissions(info.filePath(), filePermissions))
+        {
+        return false;
+        }
+      }
+    else
+      {
+      qWarning() << "qSlicerUtils::setPermissionsRecursively: Unhandled item" << info.filePath();
+      }
+    }
+  return true;
+}
