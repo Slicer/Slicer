@@ -6,12 +6,30 @@ endif()
 set(python_SOURCE_DIR python)
 set(python_BUILD_IN_SOURCE 1)
 
+
+
+# Set slicer_PYTHON_INCLUDE, slicer_PYTHON_LIBRARY and slicer_PYTHON_EXECUTABLE variables
+set(python_IMPORT_SUFFIX so)
+if(APPLE)
+  set(python_IMPORT_SUFFIX dylib)
+endif()
+set(slicer_PYTHON_INCLUDE ${python_build}/include/python2.6)
+set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_build}/lib)
+set(slicer_PYTHON_LIBRARY ${slicer_PYTHON_SHARED_LIBRARY_DIR}/libpython2.6.${python_IMPORT_SUFFIX})
+set(slicer_PYTHON_EXECUTABLE ${python_build}/bin/customPython)
+set(slicer_PYTHON_REAL_EXECUTABLE ${python_build}/bin/python2.6)
+
 configure_file(SuperBuild/python_patch_step_unix.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
   @ONLY)
 
 configure_file(SuperBuild/python_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_configure_step.cmake
+  @ONLY)
+
+configure_file(
+  SuperBuild/python_customPython_configure.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
   @ONLY)
 
 configure_file(SuperBuild/python_make_step.cmake.in
@@ -41,18 +59,6 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${python_DEPENDENCIES}
   )
-
-#-----------------------------------------------------------------------------
-# Set slicer_PYTHON_INCLUDE and slicer_PYTHON_LIBRARY variables
-#
-set(python_IMPORT_SUFFIX so)
-if(APPLE)
-  set(python_IMPORT_SUFFIX dylib)
-endif()
-
-set(slicer_PYTHON_INCLUDE ${CMAKE_BINARY_DIR}/python-build/include/python2.6)
-set(slicer_PYTHON_LIBRARY ${CMAKE_BINARY_DIR}/python-build/lib/libpython2.6.${python_IMPORT_SUFFIX})
-set(slicer_PYTHON_EXECUTABLE ${CMAKE_BINARY_DIR}/python-build/bin/python2.6)
 
 #-----------------------------------------------------------------------------
 # Since fixup_bundle expects the library to be writable, let's add an extra step

@@ -61,5 +61,6 @@ if(UNIX)
     WORKING_DIRECTORY "@python_base@"
     )
 
-endif()
+  include("@CMAKE_CURRENT_BINARY_DIR@/python_customPython_configure.cmake")
 
+endif()

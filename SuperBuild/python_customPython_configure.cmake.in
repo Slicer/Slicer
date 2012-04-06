@@ -1,0 +1,48 @@
+
+#
+# This script install a launcher named 'customPython' that will invoke
+# the real python executable ensuring that appropriate python shared
+# library will be loaded.
+#
+# When executed, the launcher looks for a file named 'customLauncherSettings.ini',
+# where it read the settings to initialize the environment with.
+#
+
+
+set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
+set(slicer_PYTHON_EXECUTABLE "@slicer_PYTHON_EXECUTABLE@")
+set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
+set(slicer_CUSTOM_PYTHON_SPASH_HACK "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPython_splash.png")
+
+# Sanity checks
+set(expected_existing_vars slicer_CUSTOM_PYTHON_SPASH_HACK)
+foreach(var ${expected_existing_vars})
+  if(NOT EXISTS ${${var}})
+    message(FATAL_ERROR "error: ${var} points to an inexistent file or directory: ${${var}}")
+  endif()
+endforeach()
+
+# Configure customPython launcher settings.
+get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPythonLauncherSettings.ini.in"
+  ${python_bin_dir}/customPythonLauncherSettings.ini
+  @ONLY
+  )
+
+find_program(
+  CTKAPPLAUNCHER_EXECUTABLE CTKAppLauncher
+  PATHS "@CTKAPPLAUNCHER_DIR@/bin" NO_DEFAULT_PATH
+  )
+if(NOT EXISTS ${CTKAPPLAUNCHER_EXECUTABLE})
+  message(FATAL_ERROR "error: CTKAPPLAUNCHER_EXECUTABLE not found: ${CTKAPPLAUNCHER_EXECUTABLE}")
+endif()
+
+configure_file(
+  ${CTKAPPLAUNCHER_EXECUTABLE}
+  ${slicer_PYTHON_EXECUTABLE}
+  COPYONLY
+  )
+if(NOT EXISTS ${slicer_PYTHON_EXECUTABLE})
+  message(FATAL_ERROR "error: slicer_PYTHON_EXECUTABLE points to an inexistent file: ${slicer_PYTHON_EXECUTABLE}")
+endif()

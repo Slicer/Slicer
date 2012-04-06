@@ -7,12 +7,12 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(python_DEPENDENCIES "")
+set(python_DEPENDENCIES CTKAPPLAUNCHER)
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(WIN32)
-    set(python_DEPENDENCIES tcl)
+    list(APPEND python_DEPENDENCIES tcl)
   else()
-    set(python_DEPENDENCIES tcl tk)
+    list(APPEND python_DEPENDENCIES tcl tk)
   endif()
 endif()
 
