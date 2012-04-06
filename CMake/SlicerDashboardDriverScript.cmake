@@ -369,7 +369,7 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 endmacro()
 
 if(SCRIPT_MODE STREQUAL "continuous")
-  while(${CTEST_ELAPSED_TIME} LESS 68400)
+  while(${CTEST_ELAPSED_TIME} LESS 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
     set(START_TIME ${CTEST_ELAPSED_TIME})
     run_ctest()
     # Loop no faster than once every 5 minutes
