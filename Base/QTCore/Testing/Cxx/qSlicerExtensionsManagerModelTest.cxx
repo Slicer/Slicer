@@ -246,20 +246,6 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
   QVERIFY(model->isExtensionEnabled(extensionName));
 }
 
-//// ----------------------------------------------------------------------------
-//QDir qSlicerExtensionsManagerModelTester::tmp()
-//{
-//  QVERIFY(!this->TemporaryDirName.isEmpty());
-//  QDir tmp(QDir::temp());
-//  if (!tmp.exists(this->TemporaryDirName))
-//    {
-//    QVERIFY(tmp.mkdir(this->TemporaryDirName));
-//    }
-//  QVERIFY(tmp.cd(this->TemporaryDirName));
-//  QVERIFY(tmp.exists());
-//  return tmp;
-//}
-
 // ----------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModelTester::resetTmp()
 {
