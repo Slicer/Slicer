@@ -415,14 +415,34 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 void qSlicerApplication::onSettingDialogAccepted()
 {
   Q_D(qSlicerApplication);
+  QStringList reasons;
+
   qSlicerSettingsModulesPanel *settingsModulesPanel =
     qobject_cast<qSlicerSettingsModulesPanel*>(
       d->SettingsDialog->panel("Modules settings"));
   Q_ASSERT(settingsModulesPanel);
   if (settingsModulesPanel->restartRequested())
     {
-    QString reason = tr("Since the module paths have been updated, the application should be restarted.\n\n"
-                        "Do you want to restart now?\n");
-    this->confirmRestart(reason);
+    reasons << "Module paths have been updated.";
+    }
+
+  qSlicerSettingsExtensionsPanel *settingsExtensionsPanel =
+    qobject_cast<qSlicerSettingsExtensionsPanel*>(
+      d->SettingsDialog->panel("Extensions settings"));
+  Q_ASSERT(settingsExtensionsPanel);
+  if (settingsExtensionsPanel->restartRequested())
+    {
+    reasons << "Extension manager visibility has been updated.";
+    }
+
+  if (reasons.count() > 0)
+    {
+    QString formattedReasons;
+    foreach(const QString& reason, reasons)
+      {
+      formattedReasons += QString("<li>%1</li>").arg(reason);
+      }
+    this->confirmRestart(QString("Do you want to restart now?"
+                                 "<ul>%1</ul>").arg(formattedReasons));
     }
 }

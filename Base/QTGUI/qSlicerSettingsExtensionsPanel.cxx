@@ -65,6 +65,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
 
   // Default values
+  this->ExtensionsManagerEnabledCheckBox->setChecked(false);
   this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
   this->ExtensionsInstallPathButton->setDirectory(coreApp->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
@@ -72,12 +73,16 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 #endif
 
   // Register settings
+  q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
                       "text", SIGNAL(textChanged(QString)));
   q->registerProperty("Extensions/InstallPath", this->ExtensionsInstallPathButton,
                       "directory", SIGNAL(directoryChanged(QString)));
 
   // Actions to propagate to the application when settings are changed
+  QObject::connect(this->ExtensionsManagerEnabledCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onExtensionsManagerEnabled(bool)));
   QObject::connect(this->ExtensionsServerUrlLineEdit, SIGNAL(textChanged(QString)),
                    q, SLOT(onExensionsServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
@@ -124,6 +129,13 @@ void qSlicerSettingsExtensionsPanel::resetSettings()
 {
   this->Superclass::resetSettings();
   this->setRestartRequested(false);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsExtensionsPanel::onExtensionsManagerEnabled(bool value)
+{
+  bool previous = this->previousPropertyValue("Extensions/ManagerEnabled").toBool();
+  this->setRestartRequested(value != previous);
 }
 
 // --------------------------------------------------------------------------

@@ -7,37 +7,48 @@
     <x>0</x>
     <y>0</y>
     <width>751</width>
-    <height>111</height>
+    <height>128</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Module Settings</string>
+   <string>Extensions Settings</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
    <item row="0" column="0">
+    <widget class="QLabel" name="ExtensionsManagerEnabledLabel">
+     <property name="text">
+      <string>Enable extension manager:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="ExtensionsManagerEnabledCheckBox">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QLabel" name="ExtensionsServerUrlLabel">
      <property name="text">
       <string>Extensions server URL:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="QLineEdit" name="ExtensionsServerUrlLineEdit"/>
    </item>
-   <item row="1" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="ExtensionsInstallPathLabel">
      <property name="text">
       <string>Extensions installation path:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton"/>
+   <item row="3" column="1">
+    <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton" native="true"/>
    </item>
-   <item row="2" column="1">
+   <item row="5" column="1">
     <widget class="QLabel" name="RestartRequestedLabel">
      <property name="text">
       <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>

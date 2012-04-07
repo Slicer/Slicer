@@ -58,6 +58,7 @@ public slots:
   virtual void resetSettings();
 
 protected slots:
+  void onExtensionsManagerEnabled(bool value);
   /// \todo This slot does nothing.
   void onExensionsServerUrlChanged(const QString& url);
   void onExensionsPathChanged(const QString& path);
