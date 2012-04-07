@@ -63,7 +63,7 @@ if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
        set(tmp_cxx_flags /bigobj)
     endif()
 
-    set(cflags "/Zm1000 /W3")
+    set(cflags "/Zm1000 /W2")
     set(tmp_c_flags "${cflags} ${tmp_c_flags}")
     set(tmp_cxx_flags "${cflags} /EHsc /GR ${tmp_cxx_flags}")
   endif()
