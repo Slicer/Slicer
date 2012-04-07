@@ -264,27 +264,6 @@ class GeneralizedStep(ctk.ctkWorkflowWidgetStep, ) :
         super(GeneralizedStep, self).validate(validationSuceeded, desiredBranchId)
 
 
-
-
-class Slicelet(object):
-    """A slicer modlet is a module widget that comes up in stand alone mode
-    implemented as a python class.
-    This class provides common wrapper functionality used by all slicer modlets.
-    """
-    # TODO: put this in a SliceletLib
-    # TODO: parse command line arge
-
-    def __init__(self, widgetClass=None):
-        self.parent = qt.QFrame()
-        self.parent.setLayout( qt.QVBoxLayout() )
-
-        # TODO: should have way to pop up python interactor
-
-        if widgetClass:
-            self.widget = widgetClass(self.parent)
-            self.widget.setup()
-        self.parent.show()
-
 def widget_find_field(widget, objectName):
     if widget.objectName == objectName:
         return widget
