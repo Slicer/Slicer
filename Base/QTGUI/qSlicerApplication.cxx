@@ -426,6 +426,7 @@ void qSlicerApplication::onSettingDialogAccepted()
     reasons << "Module paths have been updated.";
     }
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel *settingsExtensionsPanel =
     qobject_cast<qSlicerSettingsExtensionsPanel*>(
       d->SettingsDialog->panel("Extensions settings"));
@@ -434,6 +435,7 @@ void qSlicerApplication::onSettingDialogAccepted()
     {
     reasons << "Extension manager visibility has been updated.";
     }
+#endif
 
   if (reasons.count() > 0)
     {
