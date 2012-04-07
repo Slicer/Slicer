@@ -4,6 +4,7 @@ import time
 import ctk
 import qt
 import vtk
+import saferef
 
 import slicer
 
@@ -224,14 +225,13 @@ class GeneralizedStep(ctk.ctkWorkflowWidgetStep, ) :
         self.qt_widget = qt_widget
 
         if onEntryCallback:
-            self.onEntryCallback = onEntryCallback
+            self.weak_onEntryCallback = saferef.safeRef(onEntryCallback)
 
         if validateCallback:
-            self.validateCallback = validateCallback
+            self.weak_validateCallback = saferef.safeRef(validateCallback)
 
         if onExitCallback:
-            self.onExitCallback = onExitCallback
-
+            self.weak_onExitCallback = saferef.safeRef(onExitCallback)
 
     def createUserInterface(self):
         layout = qt.QVBoxLayout(self)
@@ -244,22 +244,25 @@ class GeneralizedStep(ctk.ctkWorkflowWidgetStep, ) :
         if comingFrom: comingFromId = comingFrom.id()
         super(GeneralizedStep, self).onEntry(comingFrom, transitionType)
 
-        if hasattr(self, 'onEntryCallback'):
-            self.onEntryCallback(self, comingFrom, transitionType)
+        if hasattr(self, 'weak_onEntryCallback'):
+            onEntryCallback = self.weak_onEntryCallback()
+            onEntryCallback(self, comingFrom, transitionType)
 
     def onExit(self, goingTo, transitionType):
         goingToId = "None"
         if goingTo: goingToId = goingTo.id()
         super(GeneralizedStep, self).onExit(goingTo, transitionType)
 
-        if hasattr(self, 'onExitCallback'):
-            self.onExitCallback(self, goingTo, transitionType)
+        if hasattr(self, 'weak_onExitCallback'):
+            onExitCallback = self.weak_onExitCallback()
+            onExitCallback(self, goingTo, transitionType)
 
     def validate(self, desiredBranchId):
         validationSuceeded = True
 
-        if hasattr(self, 'validateCallback'):
-            validationSuceeded = self.validateCallback(self, desiredBranchId)
+        if hasattr(self, 'weak_validateCallback'):
+            validateCallback = self.weak_validateCallback()
+            validationSuceeded = validateCallback(self, desiredBranchId)
 
         super(GeneralizedStep, self).validate(validationSuceeded, desiredBranchId)
 
