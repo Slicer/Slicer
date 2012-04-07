@@ -668,6 +668,29 @@ void vtkMRMLScene::CopyRegisteredNodesToScene(vtkMRMLScene *scene)
 }
 
 //------------------------------------------------------------------------------
+void vtkMRMLScene::CopySingletonNodesToScene(vtkMRMLScene *scene)
+{
+  if (!scene)
+    {
+    return;
+    }
+  vtkMRMLNode* node = NULL;
+  int n;
+  for (n=0; n < this->Nodes->GetNumberOfItems(); n++)
+    {
+    node = (vtkMRMLNode*)this->Nodes->GetItemAsObject(n);
+    if (node->GetSingletonTag() != 0)
+      {
+      vtkMRMLNode* newNode = node->CreateNodeInstance();
+      newNode->Copy(node);
+
+      scene->AddNode(newNode);
+      newNode->Delete();
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
 const char* vtkMRMLScene::GetClassNameByTag(const char *tagName)
 {
   if (tagName == NULL)
@@ -3098,6 +3121,10 @@ GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
   newScene->SetRootDirectory(this->GetRootDirectory());
   newScene->SetReadDataOnLoad(0);
 
+  // copy singleton nodes from existing scene
+  this->CopySingletonNodesToScene(newScene);
+
+  // load new scene
   newScene->Connect();
 
   this->SetSaveToXMLString(0);

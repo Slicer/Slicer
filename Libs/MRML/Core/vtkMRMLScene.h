@@ -502,8 +502,11 @@ public:
   vtkGetStringMacro(Version);
   vtkSetStringMacro(Version);
 
-
+  /// Copies all registered nodes into the parameter scene
   void CopyRegisteredNodesToScene(vtkMRMLScene *scene);
+
+  /// Copies all singleton nodes into the parameter scene
+  void CopySingletonNodesToScene(vtkMRMLScene *scene);
 
 protected:
 
