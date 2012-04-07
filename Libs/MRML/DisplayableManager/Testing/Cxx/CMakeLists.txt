@@ -52,3 +52,5 @@ foreach(test ${TestsToRun})
       -V Baseline/${TESTNAME}.png
       )
 endforeach()
+
+set_tests_properties(vtkMRMLCameraDisplayableManagerTest1 PROPERTIES RUN_SERIAL TRUE)
