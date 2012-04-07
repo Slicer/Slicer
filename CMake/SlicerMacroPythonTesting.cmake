@@ -41,12 +41,16 @@ macro(SLICER_ADD_PYTHON_UNITTEST)
   set(multiValueArgs SLICER_ARGS)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   get_filename_component(test_name ${MY_SCRIPT} NAME_WE)
+  get_filename_component(_script_source_dir ${MY_SCRIPT} PATH)
+  if("${_script_source_dir}" STREQUAL "")
+    set(_script_source_dir ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
   add_test(
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
     --ignore-slicerrc ${MY_SLICER_ARGS}
-    --python-code "import slicer.testing; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${CMAKE_CURRENT_SOURCE_DIR}'], '${test_name}')"
+    --python-code "import slicer.testing; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     )
 endmacro()

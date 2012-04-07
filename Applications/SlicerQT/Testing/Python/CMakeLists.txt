@@ -141,3 +141,9 @@ slicer_add_python_test(
   TESTNAME_PREFIX nomainwindow_
   )
 set_tests_properties(py_nomainwindow_${testname} PROPERTIES WILL_FAIL TRUE)
+
+slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/tests/test_saferef.py
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )

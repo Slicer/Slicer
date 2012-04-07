@@ -10,6 +10,7 @@ set(Slicer_PYTHON_SCRIPTS
   freesurfer
   mrml
   mrmlLogic
+  saferef
   remoteio
   teem
   vtkITK
