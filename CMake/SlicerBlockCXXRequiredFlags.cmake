@@ -57,7 +57,15 @@ if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
     set(tmp_c_flags "${cflags} ${tmp_c_flags}")
     set(tmp_cxx_flags "${cflags} -Wno-deprecated -Woverloaded-virtual -Wstrict-null-sentinel ${tmp_cxx_flags}")
   elseif(MSVC)
-     # if 64-bit Windows link with /bigobj
+
+    # Overwrite default warning level
+    string(REPLACE "/W3" "/W2" _cmake_c_flags "${CMAKE_C_FLAGS}")
+    set(CMAKE_C_FLAGS ${_cmake_c_flags} CACHE STRING "CMake C Flags" FORCE)
+
+    string(REPLACE "/W3" "/W2" _cmake_cxx_flags "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS ${_cmake_cxx_flags} CACHE STRING "CMake CXX Flags" FORCE)
+
+    # if 64-bit Windows link with /bigobj
     if(CMAKE_SIZEOF_VOID_P MATCHES 8)
        set(tmp_c_flags /bigobj)
        set(tmp_cxx_flags /bigobj)
