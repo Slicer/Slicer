@@ -95,7 +95,7 @@ endif()
 if(NOT EXISTS ${ctestconfig_dest_dir}/CTestConfig.cmake)
   message(STATUS "CTestConfig.cmake has been written to: ${ctestconfig_dest_dir}")
   file(WRITE ${ctestconfig_dest_dir}/CTestConfig.cmake
-"set(CTEST_PROJECT_NAME \"Slicer\")
+"set(CTEST_PROJECT_NAME \"${EXTENSION_NAME}\")
 set(CTEST_NIGHTLY_START_TIME \"3:00:00 UTC\")
 
 set(CTEST_DROP_METHOD \"http\")
