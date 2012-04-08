@@ -39,18 +39,6 @@ if(NOT DEFINED ITK_DIR)
     set(git_protocol "git")
   endif()
 
-  set(ep_itkv3_compiler_args ${ep_common_compiler_args})
-  if(WIN32)
-    string(REPLACE "/W3" "/W1" ep_itkv3_cxx_flags "${ep_common_cxx_flags}")
-    string(REPLACE "/W3" "/W1" ep_itkv3_c_flags "${ep_common_c_flags}")
-    set(ep_itkv3_compiler_args
-      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_itkv3_cxx_flags}
-      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${ep_itkv3_c_flags}
-      )
-  endif()
-
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
@@ -59,7 +47,7 @@ if(NOT DEFINED ITK_DIR)
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      ${ep_itkv3_compiler_args}
+      ${ep_common_compiler_args}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_EXAMPLES:BOOL=OFF
