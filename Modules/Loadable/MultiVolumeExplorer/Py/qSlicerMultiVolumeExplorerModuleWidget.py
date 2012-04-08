@@ -1,12 +1,11 @@
+from __future__ import print_function
+import sys
 from __main__ import vtk, qt, ctk, slicer
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 
 
 class qSlicerMultiVolumeExplorerModuleWidget:
   def __init__( self, parent=None ):
-
-    print "MultiVolumeExplorer: __init__()"
-
     if not parent:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout( qt.QVBoxLayout() )
@@ -38,10 +37,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.timer.connect('timeout()', self.goToNext)
 
   def setup( self ):
-    '''
-    '''
-
-    print "MultiVolumeExplorer: setup()"
 
     self.parent.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
 
@@ -458,7 +453,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
   def enter(self):
     if self.__cvn == None:
-      print "No chart view nodes found, switching to quantiative layout"
+      print("No chart view nodes found, switching to quantiative layout")
       lm = slicer.app.layoutManager()
       if lm == None:
         return
@@ -471,7 +466,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       cvns.InitTraversal()
       self.__cvn = cvns.GetNextItemAsObject()
       if self.__cvn == None:
-        Helper.Error("Failed to locate chart view node!")
+        print("Failed to locate chart view node!", file=sys.stderr)
         return
 
     self.onLabelVolumeChanged()
