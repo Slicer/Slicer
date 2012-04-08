@@ -58,9 +58,14 @@ configure_file(
   @ONLY
   )
 
-# Add module sub libraries
+#-----------------------------------------------------------------------------
+# Add subdirectories
+#-----------------------------------------------------------------------------
 #add_subdirectory(Logic)
 
+#-----------------------------------------------------------------------------
+# Sources
+#-----------------------------------------------------------------------------
 set(cli_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
 
 # Additional includes
