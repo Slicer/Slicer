@@ -42,11 +42,6 @@ include(SlicerMacroCheckExternalProjectDependency)
 set(ep_base        "${CMAKE_BINARY_DIR}")
 #set(ep_install_dir "${ep_base}/Install")
 
-if(MSVC)
-  string(REPLACE "/W3" "/W2" CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT}")
-  string(REPLACE "/W3" "/W2" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
-endif()
-
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 

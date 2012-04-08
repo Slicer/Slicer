@@ -75,4 +75,10 @@ if(MSVC)
   set(CMAKE_C_FLAGS ${_cmake_c_flags} CACHE STRING "CMake C Flags" FORCE)
   string(REPLACE "/W3" "/W2" _cmake_cxx_flags "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS ${_cmake_cxx_flags} CACHE STRING "CMake CXX Flags" FORCE)
+
+  # Also update CMAKE_{C,CXX}_FLAGS_INIT variables since they can be used to
+  # configure external projects. Note that settings these variables
+  # has no effect on the current project.
+  string(REPLACE "/W3" "/W2" CMAKE_C_FLAGS_INIT "${CMAKE_C_FLAGS_INIT}")
+  string(REPLACE "/W3" "/W2" CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT}")
 endif()
