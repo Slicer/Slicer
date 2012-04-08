@@ -44,8 +44,10 @@ target_link_libraries(${KIT}CxxTests  ${target_libraries})
 
 SIMPLE_TEST( qSlicerAboutDialogTest1 )
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  SIMPLE_TEST( qSlicerApplicationTpyclTest1 )
-  set_tests_properties(qSlicerApplicationTpyclTest1 PROPERTIES PASS_REGULAR_EXPRESSION stringArray)
+  if(Slicer_HAS_CONSOLE_IO_SUPPORT)
+    SIMPLE_TEST( qSlicerApplicationTpyclTest1 )
+    set_tests_properties(qSlicerApplicationTpyclTest1 PROPERTIES PASS_REGULAR_EXPRESSION stringArray)
+  endif()
   if(Slicer_BUILD_CLI_SUPPORT)
     if(Slicer_BUILD_EMSegment)
       SIMPLE_TEST( qSlicerApplicationTpyclEMSegmentIntegrationTest $<TARGET_FILE:EMSegmentCommandLine>)
@@ -60,13 +62,15 @@ SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 # Application tests
 #
 
-add_test(
-  NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
-  ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
-  )
-set_tests_properties(
-  slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-  PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 2"
-  )
+if(Slicer_HAS_CONSOLE_IO_SUPPORT)
+  add_test(
+    NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+    ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+    )
+  set_tests_properties(
+    slicer_nomainwindow_DisableModulesCommandLineOptionsTest
+    PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 2"
+    )
+endif()
 

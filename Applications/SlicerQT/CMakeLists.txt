@@ -3,8 +3,10 @@ project(SlicerQT)
 # --------------------------------------------------------------------------
 # Build option(s)
 # --------------------------------------------------------------------------
+set(Slicer_HAS_CONSOLE_IO_SUPPORT TRUE)
 if(WIN32)
   option(Slicer_BUILD_WIN32_CONSOLE "Build ${PROJECT_NAME} executable as a console app on windows (allows debug output)" ON)
+  set(Slicer_HAS_CONSOLE_IO_SUPPORT ${Slicer_BUILD_WIN32_CONSOLE})
 endif()
 
 # --------------------------------------------------------------------------
