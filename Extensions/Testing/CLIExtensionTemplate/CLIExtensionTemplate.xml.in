@@ -2,12 +2,12 @@
 <executable>
   <category>@EXTENSION_CATEGORY@</category>
   <title>@EXTENSION_NAME@</title>
-  <description>@EXTENSION_DESCRIPTION@</description>
+  <description><![CDATA[@EXTENSION_DESCRIPTION@]]></description>
   <version>@EXTENSION_MAJOR_VERSION@.@EXTENSION_MINOR_VERSION@.@EXTENSION_PATCH_VERSION@-@EXTENSION_STATUS@</version>
   <documentation-url>@EXTENSION_HOMEPAGE@</documentation-url>
   <license>@EXTENSION_LICENSE_SHORT_DESCRIPTION@</license>
   <contributor>@EXTENSION_CONTRIBUTORS@</contributor>
-  <acknowledgements>@EXTENSION_ACKNOWLEDGEMENTS@</acknowledgements>
+  <acknowledgements><![CDATA[@EXTENSION_ACKNOWLEDGEMENTS@]]></acknowledgements>
   <parameters>
     <double>
       <name>sigma</name>
