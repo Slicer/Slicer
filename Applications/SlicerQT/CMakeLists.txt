@@ -1,6 +1,13 @@
 project(SlicerQT)
 
 # --------------------------------------------------------------------------
+# Build option(s)
+# --------------------------------------------------------------------------
+if(WIN32)
+  option(Slicer_BUILD_WIN32_CONSOLE "Build ${PROJECT_NAME} executable as a console app on windows (allows debug output)" ON)
+endif()
+
+# --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
 
@@ -144,7 +151,7 @@ endif()
 
 
 set(SlicerQT_EXE_OPTIONS)
-if (WIN32)
+if(WIN32)
   if(NOT Slicer_BUILD_WIN32_CONSOLE)
     set(SlicerQT_EXE_OPTIONS WIN32)
   endif()
