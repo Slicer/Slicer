@@ -42,6 +42,26 @@ foreach(var ${expected_existing_vars})
   endif()
 endforeach()
 
+if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
+  include(SlicerFunctionGenerateExtensionDescription)
+  slicerFunctionGenerateExtensionDescription(
+    EXTENSION_NAME ${EXTENSION_NAME}
+    EXTENSION_CATEGORY ${EXTENSION_CATEGORY}
+    EXTENSION_ICONURL ${EXTENSION_ICONURL}
+    EXTENSION_STATUS ${EXTENSION_STATUS}
+    EXTENSION_HOMEPAGE ${EXTENSION_HOMEPAGE}
+    EXTENSION_CONTRIBUTORS ${EXTENSION_CONTRIBUTORS}
+    EXTENSION_DESCRIPTION ${EXTENSION_DESCRIPTION}
+    EXTENSION_SCREENSHOTURLS ${EXTENSION_SCREENSHOTURLS}
+    EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
+    EXTENSION_ENABLED ${EXTENSION_ENABLED}
+    EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_BUILD_SUBDIRECTORY}
+    DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    SLICER_WC_REVISION ${Slicer_WC_REVISION}
+    SLICER_WC_ROOT ${Slicer_WC_ROOT}
+    )
+endif()
+
 #-----------------------------------------------------------------------------
 # Get working copy information
 #-----------------------------------------------------------------------------
