@@ -113,7 +113,7 @@ endmacro()
 # The following variable can be used while testing the driver scripts
 #-----------------------------------------------------------------------------
 setIfNotDefined(run_ctest_submit TRUE)
-setIfNotDefined(run_ctest_with_update TRUE)
+setIfNotDefined(run_ctest_with_update FALSE)
 setIfNotDefined(run_ctest_with_configure TRUE)
 setIfNotDefined(run_ctest_with_build TRUE)
 setIfNotDefined(run_ctest_with_notes TRUE)
