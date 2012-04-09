@@ -24,13 +24,7 @@ set(EXTENSION_BUILD_SUBDIRECTORY inner-build)
 # Prerequisites
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
-
   find_package(Slicer REQUIRED)
-
-  # Additional C/CXX flags - Should be defined before including Slicer_USE_FILE
-  set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} C Flags")
-  set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional ${EXTENSION_NAME} CXX Flags")
-
   include(${Slicer_USE_FILE})
 
   include(SlicerEnableExtensionTesting)
