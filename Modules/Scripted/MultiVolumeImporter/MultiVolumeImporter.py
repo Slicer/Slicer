@@ -1,3 +1,6 @@
+from __future__ import print_function
+import sys
+
 from __main__ import vtk, qt, ctk, slicer
 import vtk.util.numpy_support
 from MultiVolumeImporter.Helper import Helper
@@ -81,7 +84,7 @@ class MultiVolumeImporterWidget:
     self.__processingModes.append(['User-defined non-DICOM', 'N/A', '??', 'MultiVolume'])
 
     for p in self.__processingModes:
-      print 'Processing mode found: ',p
+      print("Processing mode found: %s" % p)
       self.__modeSelector.addItem(p[0])
     self.__modeSelector.currentIndex = 0
 
@@ -188,31 +191,26 @@ class MultiVolumeImporterWidget:
         os.mkdir(tmpDir)
       else:
         # clean it up
-        print 'tmpDir = '+tmpDir
+        print("tmpDir: %s" % tmpDir)
         fileNames = os.listdir(tmpDir)
         for f in fileNames:
-          print f,' will be unlinked'
+          print("%s will be unlinked" % f)
           os.unlink(tmpDir+'/'+f)
 
       nFrames = logic.ProcessDICOMSeries(self.__fDialog.directory, tmpDir, self.__dicomTag.text, volumeLabels)
 
       self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
 
-      Helper.Info('Location of files:'+tmpDir)
-      for f in os.listdir(tmpDir):
-        if not f.startswith('.'):
-          fileNames.append(f)
+      print("Location of files: %s" % tmpDir)
+      fileNames = os.listdir(tmpDir)
       fileNames.sort()
 
       frameFolder = tmpDir
 
     else:
       # each frame is saved as a separate volume
-      for f in os.listdir(self.__fDialog.directory):
-        if not f.startswith('.'):
-          fileNames.append(f)
+      fileNames = os.listdir(self.__fDialog.directory)
       fileNames.sort()
-
       frameFolder = self.__fDialog.directory
       nFrames = len(fileNames)
       volumeLabels.SetNumberOfTuples(nFrames)
@@ -269,7 +267,7 @@ class MultiVolumeImporterWidget:
 
     for frameId in range(0,nFrames):
       fullName = frameFolder+'/'+fileNames[frameId]
-      Helper.Info('Processing frame '+str(frameId)+': '+fullName)
+      print("Processing frame %d: %s" % (frameId, fullName))
       frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
@@ -284,13 +282,13 @@ class MultiVolumeImporterWidget:
     dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
     dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
-    Helper.Info('DWI node added to the scene')
+    print("DWI node added to the scene")
 
 
     vcNode.SetDWVNodeID(dwiNode.GetID())
     vcNode.SetLabelArray(volumeLabels)
     vcNode.SetLabelName(self.__veLabel.text)
-    Helper.Info('VC node setup complete!')
+    print("VC node setup complete !")
 
     Helper.SetBgFgVolumes(dwiNode.GetID(),None)
 
