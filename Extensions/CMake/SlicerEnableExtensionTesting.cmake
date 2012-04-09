@@ -64,12 +64,12 @@ file(WRITE ${_additonal_settings_configure_script}
 "
 file(WRITE ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
 \"[LibraryPaths]
-1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/${CMAKE_CFG_INTDIR}
-2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/${CMAKE_CFG_INTDIR}
+1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
+2\\\\path=${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_LIB_DIR}/\${CMAKE_CFG_INTDIR}
 size=2
 
 [Paths]
-1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/${CMAKE_CFG_INTDIR}
+1\\\\path=${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}/\${CMAKE_CFG_INTDIR}
 size=1
 
 [EnvironmentVariables]
