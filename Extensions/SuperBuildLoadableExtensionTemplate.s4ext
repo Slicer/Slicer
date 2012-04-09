@@ -14,7 +14,7 @@ scmurl Testing/SuperBuildLoadableExtensionTemplate
 depends     NA
 
 # Inner build directory (default is .)
-build_subdirectory SuperBuildLoadableExtensionTemplate-build
+build_subdirectory inner-build
 
 # homepage
 homepage    http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting

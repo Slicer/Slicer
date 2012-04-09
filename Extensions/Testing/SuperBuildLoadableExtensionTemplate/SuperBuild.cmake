@@ -26,16 +26,16 @@ endif()
 # Project dependencies
 #-----------------------------------------------------------------------------
 
-set(${EXTENSION_NAME}_DEPENDENCIES "")
+set(inner_DEPENDENCIES "")
 
-SlicerMacroCheckExternalProjectDependency(${EXTENSION_NAME})
+SlicerMacroCheckExternalProjectDependency(inner)
 
-set(proj ${EXTENSION_NAME})
+set(proj inner)
 ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   INSTALL_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BINARY_DIR ${proj}-build
+  BINARY_DIR ${EXTENSION_BUILD_SUBDIRECTORY}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -45,11 +45,11 @@ ExternalProject_Add(${proj}
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
-    -D${proj}_SUPERBUILD:BOOL=OFF
-    -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${proj}_BINARY_DIR}
+    -D${EXTENSION_NAME}_SUPERBUILD:BOOL=OFF
+    -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${EXTENSION_NAME}_BINARY_DIR}
     # Slicer
     -DSlicer_DIR:PATH=${Slicer_DIR}
   DEPENDS
-    ${${EXTENSION_NAME}_DEPENDENCIES}
+    ${${proj}_DEPENDENCIES}
   )
 

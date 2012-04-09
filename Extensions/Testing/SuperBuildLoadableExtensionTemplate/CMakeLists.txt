@@ -27,7 +27,7 @@ set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
 set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
 set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/b/b3/Slicer-r19441-SuperBuildLoadableExtensionTemplate-screenshot.png")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
-set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_NAME}-build)
+set(EXTENSION_BUILD_SUBDIRECTORY inner-build)
 
 #-----------------------------------------------------------------------------
 # Prerequisites
