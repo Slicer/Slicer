@@ -30,9 +30,6 @@ if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_USE_FILE})
 
   set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
-  set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
-  set(EXTENSION_README_FILE ${Slicer_README_FILE})
-  set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
 
   include(SlicerEnableExtensionTesting)
 endif()

@@ -32,9 +32,6 @@ if(NOT Slicer_SOURCE_DIR)
   find_package(Git REQUIRED)
 endif()
 
-set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
-set(EXTENSION_README_FILE ${Slicer_README_FILE})
-
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------

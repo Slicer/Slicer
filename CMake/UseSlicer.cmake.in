@@ -101,3 +101,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+
+#-----------------------------------------------------------------------------
+# Set a default license and readme if not already specified
+#-----------------------------------------------------------------------------
+if(NOT DEFINED EXTENSION_LICENSE_FILE)
+  set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
+endif()
+if(NOT DEFINED EXTENSION_LICENSE_SHORT_DESCRIPTION)
+  set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
+endif()
+if(NOT DEFINED EXTENSION_README_FILE)
+  set(EXTENSION_README_FILE ${Slicer_README_FILE})
+endif()
