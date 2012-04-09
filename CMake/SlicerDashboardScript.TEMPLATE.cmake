@@ -68,8 +68,6 @@ set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 
 #
 # Additional CMakeCache options
-# For example:
-#   ADDITIONAL_{C/CXX}_FLAGS: /MP -> Multi process build with MSVC
 #
 set(ADDITIONAL_CMAKECACHE_OPTION "
   ADDITIONAL_C_FLAGS:STRING=
