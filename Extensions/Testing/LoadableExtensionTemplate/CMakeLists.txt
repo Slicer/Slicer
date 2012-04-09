@@ -1,17 +1,11 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-# Module name
-#   - Usually identique to the directory name)
-#   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
-#-----------------------------------------------------------------------------
-set(EXTENSION_NAME LoadableExtensionTemplate)
+set(EXTENSION_NAME LoadableExtensionTemplate) # Do not use 'project()' - See SlicerConfig.cmake
 
 #-----------------------------------------------------------------------------
-# Extension metadata
-#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/LoadableExtensionTemplate/Resources/Icons/LoadableExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_STATUS "Beta")
@@ -22,8 +16,6 @@ if(NOT Slicer_SOURCE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
-# Prerequisites
-#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
@@ -31,24 +23,18 @@ if(NOT Slicer_SOURCE_DIR)
   include(SlicerEnableExtensionTesting)
 endif()
 
-
-#-----------------------------------------------------------------------------
-# Add subdirectories
 #-----------------------------------------------------------------------------
 add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
-# Sources
-#-----------------------------------------------------------------------------
 set(qt_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
 
-# Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
+# Current_{source,binary} and Slicer_{Libs,Base} already included
 set(qt_module_include_directories
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   )
 
-# Source files
 set(qt_module_SRCS
   qSlicerLoadableExtensionTemplateModule.cxx
   qSlicerLoadableExtensionTemplateModule.h
@@ -56,29 +42,23 @@ set(qt_module_SRCS
   qSlicerLoadableExtensionTemplateModuleWidget.h
   )
 
-# Headers that should run through moc
 set(qt_module_MOC_SRCS
   qSlicerLoadableExtensionTemplateModule.h
   qSlicerLoadableExtensionTemplateModuleWidget.h
   )
 
-# UI files
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerLoadableExtensionTemplateModule.ui
-)
+  )
 
-# Additional Target libraries
 set(qt_module_target_libraries
   vtkSlicerLoadableExtensionTemplateModuleLogic
   )
 
-# Resources
 set(qt_module_resources
   Resources/qSlicerLoadableExtensionTemplateModule.qrc
-)
+  )
 
-#-----------------------------------------------------------------------------
-# Build
 #-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
   NAME ${EXTENSION_NAME}
@@ -92,14 +72,10 @@ slicerMacroBuildQtModule(
   )
 
 #-----------------------------------------------------------------------------
-# Testing
-#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
-#-----------------------------------------------------------------------------
-# Package and generate extension description file '<EXTENSION_NAME>.s4ext'
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_EXTENSION_CPACK})

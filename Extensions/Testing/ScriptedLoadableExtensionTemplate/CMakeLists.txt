@@ -1,17 +1,11 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-# Module name
-#   - Usually identique to the directory name)
-#   - You shouldn't call 'project(...)'. See SlicerConfig.cmake for more details.
-#-----------------------------------------------------------------------------
-set(EXTENSION_NAME ScriptedLoadableExtensionTemplate)
+set(EXTENSION_NAME ScriptedLoadableExtensionTemplate) # Do not use 'project()' - See SlicerConfig.cmake
 
 #-----------------------------------------------------------------------------
-# Extension metadata
-#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Slicer4:Developers:Projects:QtSlicer/Tutorials/ExtensionWriting")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_STATUS "Beta")
@@ -22,8 +16,6 @@ if(NOT Slicer_SOURCE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
-# Prerequisites
-#-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
@@ -32,8 +24,6 @@ if(NOT Slicer_SOURCE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
-# Sources
-#-----------------------------------------------------------------------------
 set(KIT_PYTHON_SCRIPTS
   ScriptedLoadableExtensionTemplate.py
   )
@@ -41,8 +31,6 @@ set(KIT_PYTHON_SCRIPTS
 set(KIT_PYTHON_RESOURCES
   )
 
-#-----------------------------------------------------------------------------
-# Build
 #-----------------------------------------------------------------------------
 ctkMacroCompilePythonScript(
   TARGET_NAME ScriptedLoadableExtensionTemplate
@@ -54,14 +42,10 @@ ctkMacroCompilePythonScript(
   )
 
 #-----------------------------------------------------------------------------
-# Testing
-#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
 
-#-----------------------------------------------------------------------------
-# Package and generate extension description file '<EXTENSION_NAME>.s4ext'
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   include(${Slicer_EXTENSION_CPACK})
