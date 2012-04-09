@@ -279,7 +279,15 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   add_dependencies(SlicerConfigureLauncher SlicerRemoveLauncherSettings)
 
   if(NOT APPLE)
-    install(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+    if(Slicer_HAS_CONSOLE_IO_SUPPORT)
+      install(PROGRAMS "${Slicer_BINARY_DIR}/Slicer${CMAKE_EXECUTABLE_SUFFIX}" DESTINATION ".")
+    else()
+      install(
+        PROGRAMS "${CTKAPPLAUNCHER_EXECUTABLE}/bin/CTKAppLauncherW${CMAKE_EXECUTABLE_SUFFIX}"
+        DESTINATION "."
+        RENAME "Slicer${CMAKE_EXECUTABLE_SUFFIX}"
+        )
+    endif()
 
     install(
       FILES ${splash_image_path}

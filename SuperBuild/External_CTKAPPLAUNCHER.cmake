@@ -21,13 +21,10 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   if(NOT DEFINED CTKAPPLAUNCHER_DIR)
     SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.4")
+    set(launcher_version "0.1.5-rc1")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_PLATFORM}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
-      if(NOT "${Slicer_BUILD_WIN32_CONSOLE}")
-        set(launcher_version "${launcher_version}-gaaae") # Version with "no-win32-console" support
-      endif()
     endif()
     #message(STATUS "${__indent}Adding project ${proj}")
     ExternalProject_Add(${proj}
