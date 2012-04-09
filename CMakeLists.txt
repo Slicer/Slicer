@@ -697,16 +697,15 @@ endif()
 include(SlicerBlockCXXCoverageFlags)
 
 #-----------------------------------------------------------------------------
-# Set {ITK,VTK}_REQUIRED_{C,CXX}_FLAGS variables
+# Set ITK_REQUIRED_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
-include(vtkDetermineCompilerFlags)
 include(ITKPlatformSpecificChecks)
 
 #-----------------------------------------------------------------------------
 # Set CMAKE_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${VTK_REQUIRED_C_FLAGS} ${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${VTK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${COVERAGE_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${COVERAGE_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set the header template which defines custom export/import macros
