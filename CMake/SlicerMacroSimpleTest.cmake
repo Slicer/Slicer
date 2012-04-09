@@ -34,11 +34,11 @@ macro(SIMPLE_TEST testname)
   endif()
 
   if("${Slicer_LAUNCH_COMMAND}" STREQUAL "")
-    message(FATAL_ERROR "error: KIT or CLP or EXTENSION_NAME variable is not set !")
+    message(FATAL_ERROR "error: Slicer_LAUNCH_COMMAND variable is not set !")
   endif()
 
   if(NOT TARGET ${KIT}CxxTests)
-    message(FATAL_ERROR "error: Slicer_LAUNCH_COMMAND variable is not set !")
+    message(FATAL_ERROR "error: Target '${KIT}CxxTests' is not defined !")
   endif()
 
   add_test(NAME ${testname}
