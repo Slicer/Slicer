@@ -8,7 +8,7 @@ from EditorLib import LabelEffect
 
 #
 # The Editor Extension itself.
-# 
+#
 # This needs to define the hooks to be come an editor effect.
 #
 
@@ -52,7 +52,7 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = EditUtil.EditUtil().getParameterNode()
     if node != self.parameterNode:
@@ -86,7 +86,7 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
 #
 # EditorExtensionTemplateTool
 #
- 
+
 class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -121,13 +121,13 @@ class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
 #
 # EditorExtensionTemplateLogic
 #
- 
+
 class EditorExtensionTemplateLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an EditorExtensionTemplateTool
   or EditorExtensionTemplateOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the EditorExtensionTemplateTool so that the operations can be used
   by other code without the need for a view context.
@@ -141,7 +141,7 @@ class EditorExtensionTemplateLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The EditorExtensionTemplateExtension class definition 
+# The EditorExtensionTemplateExtension class definition
 #
 
 class EditorExtensionTemplateExtension(LabelEffect.LabelEffect):
@@ -179,12 +179,12 @@ class EditorExtensionTemplate:
   def __init__(self, parent):
     parent.title = "Editor EditorExtensionTemplate Effect"
     parent.categoryies = ["Developer Tools.Editor Extensions"]
-    parent.contributors = ["Steve Pieper (Isomics Inc.)"] # insert your name in the list
+    parent.contributors = ["Steve Pieper (Isomics)"] # insert your name in the list
     parent.helpText = """
     Example of an editor extension.  No module interface here, only in the Editor module
     """
     parent.acknowledgementText = """
-    This editor extension was developed by 
+    This editor extension was developed by
     <Author>, <Institution>
     based on work by:
     Steve Pieper, Isomics, Inc.
@@ -213,14 +213,14 @@ class EditorExtensionTemplate:
 class EditorExtensionTemplateWidget:
   def __init__(self, parent = None):
     self.parent = parent
-    
+
   def setup(self):
     # don't display anything for this widget - it will be hidden anyway
     pass
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 
