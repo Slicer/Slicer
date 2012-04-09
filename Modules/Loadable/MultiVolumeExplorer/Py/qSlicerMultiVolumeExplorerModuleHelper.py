@@ -1,10 +1,7 @@
-# slicer imports
-from __main__ import vtk, slicer, tcl
+
+from __main__ import vtk, slicer
 
 class qSlicerMultiVolumeExplorerModuleHelper( object ):
-  '''
-  classdocs
-  '''
 
   @staticmethod
   def SetBgFgVolumes(bg, fg):
@@ -13,9 +10,4 @@ class qSlicerMultiVolumeExplorerModuleHelper( object ):
     selectionNode.SetReferenceActiveVolumeID(bg)
     selectionNode.SetReferenceSecondaryVolumeID(fg)
     appLogic.PropagateVolumeSelection()
-
-  @staticmethod
-  def RotateToVolumePlanes():
-    # AF TODO: check with Steve if this has any undesired consequences
-    tcl('EffectSWidget::RotateToVolumePlanes')
 
