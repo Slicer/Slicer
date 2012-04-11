@@ -1,13 +1,11 @@
 
-set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
-include(CTest)
-include(SlicerBlockUploadExtensionPrerequisites)
-
 slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
 slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
 slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
-
 include(SlicerBlockModuleToExtensionMetadata)
+
+set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
+include(CTest)
 
 set(CTEST_MODEL "Experimental")
 include(SlicerBlockUploadExtension)

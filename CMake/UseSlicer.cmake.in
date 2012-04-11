@@ -331,6 +331,11 @@ if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
 endif()
 
 #-----------------------------------------------------------------------------
+# Set Slicer_EXTENSION_CMAKE_GENERATOR and EXTENSION_{COMPILER, ARCHITECTURE, BITNESS, OPERATING_SYSTEM}
+#-----------------------------------------------------------------------------
+include(SlicerBlockUploadExtensionPrerequisites)
+
+#-----------------------------------------------------------------------------
 # Set Slicer_BUNDLE_EXTENSIONS_LOCATION variable
 #-----------------------------------------------------------------------------
 set(Slicer_BUNDLE_EXTENSIONS_LOCATION "")
