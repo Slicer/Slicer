@@ -9,7 +9,6 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_STATUS "Beta")
   set(EXTENSION_DESCRIPTION "This is an example of scripted loadable editor effect built as an extension")
-  set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
 
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})

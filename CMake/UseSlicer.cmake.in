@@ -103,8 +103,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 #-----------------------------------------------------------------------------
-# Set a default license and readme if not already specified
+# Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
+if(NOT DEFINED EXTENSION_DEPENDS)
+  set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
+endif()
 if(NOT DEFINED EXTENSION_LICENSE_FILE)
   set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
 endif()

@@ -12,7 +12,6 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of scripted Qt loadable module built as an extension")
   set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png")
-  set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
 endif()
 
 #-----------------------------------------------------------------------------
