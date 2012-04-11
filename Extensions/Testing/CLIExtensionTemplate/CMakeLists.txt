@@ -21,8 +21,6 @@ if(NOT Slicer_SOURCE_DIR)
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
 
-  set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
-
   include(SlicerEnableExtensionTesting)
 endif()
 
@@ -37,8 +35,6 @@ configure_file(
 #add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
-set(cli_module_export_directive "Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT")
-
 set(cli_module_include_directories
   )
 
