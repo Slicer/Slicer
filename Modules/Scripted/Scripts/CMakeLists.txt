@@ -8,6 +8,12 @@ set(KIT_PYTHON_SCRIPTS
     SampleData.py
   )
 
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND KIT_PYTHON_SCRIPTS
+    Editor.py
+    )
+endif()
+
 if(Slicer_USE_NUMPY)
   list(APPEND KIT_PYTHON_SCRIPTS
     Endoscopy.py

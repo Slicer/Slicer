@@ -1,6 +1,8 @@
-add_subdirectory(Scripts)
-add_subdirectory(EditorLib)
 add_subdirectory(DICOMLib)
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  add_subdirectory(EditorLib)
+endif()
+add_subdirectory(Scripts)
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
   add_subdirectory(Testing)
