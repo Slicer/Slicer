@@ -36,8 +36,9 @@ function(slicerFunctionGenerateExtensionDescription)
 
   set(expected_defined_vars EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_DESCRIPTION EXTENSION_SCREENSHOTURLS)
   foreach(var ${expected_defined_vars})
-    if("${MY_${var}}" STREQUAL "")
+    if("${MY_${var}}" STREQUAL "" AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
       message(AUTHOR_WARNING "CMake variable ${var} is empty !")
+      set(${var}_AUTHOR_WARN "DONE")
     endif()
   endforeach()
 

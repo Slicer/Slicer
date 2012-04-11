@@ -33,8 +33,9 @@ endforeach()
 
 set(expected_nonempty_vars EXTENSION_DESCRIPTION)
 foreach(var ${expected_nonempty_vars})
-  if("${${var}}" STREQUAL "")
+  if("${${var}}" STREQUAL "" AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
     message(AUTHOR_WARNING "warning: ${var} is either NOT defined or empty.")
+    set(${var}_AUTHOR_WARN "DONE")
   endif()
 endforeach()
 
