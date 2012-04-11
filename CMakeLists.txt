@@ -480,10 +480,10 @@ message(STATUS "Configuring Slicer for ${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
-  set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
+set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
+set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
+if(BUILD_TESTING)
   include(SlicerMacroSimpleTest)
   include(SlicerMacroPythonTesting)
   include(SlicerMacroConfigureGenericCxxModuleTests)
@@ -500,7 +500,6 @@ if(BUILD_TESTING)
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
     ${Slicer_BINARY_DIR}/${Slicer_BIN_DIR}/CTestConfig.cmake
     COPYONLY)
-
 endif()
 
 #-----------------------------------------------------------------------------
