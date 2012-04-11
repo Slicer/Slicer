@@ -1,38 +1,205 @@
 #
-# This file sets up the include directories, link directories and compiler
-# settings for a project to use Slicer.  Such projects could provide new
-# Slicer modules built against a Slicer build tree or a Slicer installation.
+# This file has been primarly designed for the purpose of Slicer extension development.
+#
+# It includes the required Slicer macros/functions and sets up compiler
+# settings for a project to use Slicer.
+#
+# Note that the behavior of this file can customized up to some extent by
+# defining variables like:
+#
+#   set(Slicer_SKIP_<DoSomething> TRUE)
+#
+# Such variable has to be set before:
+#
+#   include(${Slicer_USE_FILE})
+#
+# The variable allowing to customize the behavior are:
+#
+#  Slicer_SKIP_SlicerBlockSetCMakeOSXVariables
+#  Slicer_SKIP_USE_FILE_INCLUDE_CHECK
+#  Slicer_SKIP_PROJECT_COMMAND
+#  Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE
+#  Slicer_SKIP_SlicerBlockPlatformCheck
+#  Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS
+#  Slicer_SKIP_ITKPlatformSpecificChecks
+#  Slicer_SKIP_SlicerBlockCXXRequiredFlags
+#
+# By default, if any 'Slicer_SKIP_<DoSomething>' variable is set to TRUE,
+# a message will be displayed.
+#
+# For example:
+#  set(Slicer_SKIP_SlicerBlockPlatformCheck TRUE)
+#  include(${Slicer_USE_FILE})
+#
+# will output:
+#  -- Skipping SlicerBlockPlatformCheck
+#
+# This is can avoided by setting the variable Slicer_VERBOSE_SKIP to TRUE
 #
 
-if(APPLE)
+# --------------------------------------------------------------------------
+# Helper function(s) and macro(s)
+# --------------------------------------------------------------------------
+
+# If the variable Slicer_VERBOSE_SKIP is FALSE, this function will
+# display the provided text prepended with "Skipping ".
+function(_slicer_skip_message text)
+  if(NOT Slicer_VERBOSE_SKIP)
+    message(STATUS "Skipping ${text}")
+  endif()
+endfunction()
+
+# Given a variable name, this function will display messages indicating what the current
+# value of the variable.
+# For example:
+#
+#   slicer_check_variable(bar bar_set)
+#   message("bar_set: ${bar_set}")
+#
+#   set(bar "")
+#   slicer_check_variable(bar bar_set)
+#   message("bar_set: ${bar_set}")
+#
+#   set(bar "This is bar")
+#   slicer_check_variable(bar bar_set)
+#   message("bar_set: ${bar_set}")
+#
+# will output:
+#  -- Checking bar variable
+#  -- Checking bar variable - NOTDEFINED
+#  bar_set: FALSE
+#  -- Checking bar variable
+#  -- Checking bar variable - EMPTY
+#  bar_set: FALSE
+#  -- Checking bar variable
+#  -- Checking bar variable - This is bar
+#  bar_set: TRUE
+#
+function(slicer_check_variable name resultvar)
+  message(STATUS "Checking ${name} variable")
+  set(result FALSE)
+  if(NOT DEFINED ${name})
+    message(STATUS "Checking ${name} variable - NOTDEFINED")
+  elseif("${${name}}" STREQUAL "")
+    message(STATUS "Checking ${name} variable - EMPTY")
+  else()
+    message(STATUS "Checking ${name} variable - ${${name}}")
+    set(result TRUE)
+  endif()
+  set(${resultvar} ${result} PARENT_SCOPE)
+endfunction()
+
+# Given a variable name, this function will display the text
+#   "-- Setting <varname> ........: ${<varname>}"
+# and will ensure that the message is consistenly padded.
+#
+# If the optional argument 'SKIP_TRUNCATE' is provided, the
+# text will NOT be truncated it too long.
+#
+# In the current implementation, the padding is hardcoded to a length of 40
+# and the total text will be truncated if longer than 120 characters.
+#
+# For example:
+#   set(SHORTNAME "This is short variable name")
+#   slicer_setting_variable_message("SHORTNAME")
+#   set(LONGLONGNAME "This is a longer variable name")
+#   slicer_setting_variable_message("LONGLONGNAME")
+#
+# will output:
+#   -- Setting SHORTNAME ........: This is short variable name
+#   -- Setting LONGLONGNAME .....: This is a longer variable name
+#
+function(slicer_setting_variable_message varname)
+  set(truncate TRUE)
+  if("${ARGV1}" STREQUAL "SKIP_TRUNCATE")
+    set(truncate FALSE)
+  endif()
+  set(pretext_right_jusitfy_length 40)
+  set(fill_char ".")
+  set(truncated_text_length 120)
+
+  set(pretext "Setting ${varname}")
+  string(LENGTH ${pretext} pretext_length)
+  math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length}")
+  string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
+  set(text "${pretext} ${pretext_dots}: ${${varname}}")
+  string(LENGTH ${text} text_length)
+  if(${truncate} AND ${text_length} GREATER ${truncated_text_length})
+    string(SUBSTRING ${text} 0 ${truncated_text_length} text)
+    set(text "${text} [...]")
+  endif()
+  message(STATUS ${text})
+endfunction()
+
+
+
+# --------------------------------------------------------------------------
+if(NOT DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
+  set(Slicer_SKIP_SlicerBlockSetCMakeOSXVariables FALSE)
+endif()
+if(NOT Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness will be properly detected.
-  include(${Slicer_CMAKE_DIR}/SlicerBlockSetCMakeOSXVariables.cmake)
+  include(SlicerBlockSetCMakeOSXVariables)
+else()
+  _slicer_skip_message("SlicerBlockSetCMakeOSXVariables")
 endif()
 
-# Make sure EXTENSION_NAME is defined
-if(NOT DEFINED EXTENSION_NAME OR "${EXTENSION_NAME}" STREQUAL "")
-  message(FATAL_ERROR "error: Make sure to define EXTENSION_NAME prior to call find_package(Slicer) !")
+# --------------------------------------------------------------------------
+# Checking EXTENSION_NAME
+# --------------------------------------------------------------------------
+if("${EXTENSION_NAME}" STREQUAL "")
+  message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
 endif()
-if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT SlicerConfig_INCLUDED_ONCE)
-  message(FATAL_ERROR "Since calling find_package(Slicer) automatically calls project(${EXTENSION_NAME}). Make sure to remove any call to project(${EXTENSION_NAME}).
-Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}")
+
+# --------------------------------------------------------------------------
+# Setup project
+# --------------------------------------------------------------------------
+
+if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
+  set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK FALSE)
 endif()
-project(${EXTENSION_NAME})
+if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
+  if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT SlicerConfig_INCLUDED_ONCE)
+    message(FATAL_ERROR "Since calling 'include(\${Slicer_USE_FILE})' automatically calls 'project(${EXTENSION_NAME})'. "
+                        "Make sure to remove any call to project(${EXTENSION_NAME})."
+                        "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
+                        )
+  endif()
+else()
+  _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
+endif()
+
+if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
+  set(Slicer_SKIP_PROJECT_COMMAND FALSE)
+endif()
+if(NOT Slicer_SKIP_PROJECT_COMMAND)
+  project(${EXTENSION_NAME})
+else()
+  _slicer_skip_message("'project(${EXTENSION_NAME})'")
+endif()
 
 # --------------------------------------------------------------------------
 # Prerequisites
 # --------------------------------------------------------------------------
 
-# Include projects
-foreach(proj ${Slicer_EXTERNAL_PROJECTS})
-  set(proj_has_no_usefile -1)
-  list(FIND Slicer_EXTERNAL_PROJECTS_NO_USEFILE ${proj} proj_has_no_usefile)
-  #message("${proj} has_no_usefile: ${proj_has_no_usefile}")
-  if(proj_has_no_usefile EQUAL -1)
-    include(${${proj}_USE_FILE})
-  endif()
-endforeach()
+# By default, the "<PROJECT>_USE_FILE" of each slicer external project will be included.
+# This can be changed by setting the variable Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE to TRUE
+if(NOT DEFINED Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE)
+  set(Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE FALSE)
+endif()
+if(NOT ${Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE})
+  foreach(proj ${Slicer_EXTERNAL_PROJECTS})
+    set(proj_has_no_usefile -1)
+    list(FIND Slicer_EXTERNAL_PROJECTS_NO_USEFILE ${proj} proj_has_no_usefile)
+    #message("${proj} has_no_usefile: ${proj_has_no_usefile}")
+    if(proj_has_no_usefile EQUAL -1)
+      include(${${proj}_USE_FILE})
+    endif()
+  endforeach()
+else()
+  _slicer_skip_message("Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE")
+endif()
 
 # Set PythonQt 'DIR' variable so that find_package(PythonQt) works as expected.
 set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
@@ -40,23 +207,54 @@ set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
 # --------------------------------------------------------------------------
 # Platform check
 # --------------------------------------------------------------------------
-include(SlicerBlockPlatformCheck)
-
-#-----------------------------------------------------------------------------
-# Set ITK_REQUIRED_{C,CXX}_FLAGS variables
-#-----------------------------------------------------------------------------
-include(ITKPlatformSpecificChecks)
-
-#-----------------------------------------------------------------------------
-# Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
-#-----------------------------------------------------------------------------
-include(SlicerBlockCXXRequiredFlags)
+if(NOT DEFINED Slicer_SKIP_SlicerBlockPlatformCheck)
+  set(Slicer_SKIP_SlicerBlockPlatformCheck FALSE)
+endif()
+if(NOT ${Slicer_SKIP_SlicerBlockPlatformCheck})
+  include(SlicerBlockPlatformCheck)
+else()
+  _slicer_skip_message("SlicerBlockPlatformCheck")
+endif()
 
 #-----------------------------------------------------------------------------
 # Set CMAKE_{C,CXX}_FLAGS variables
 #-----------------------------------------------------------------------------
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
+if(NOT DEFINED Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS)
+  set(Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS FALSE)
+endif()
+if(NOT ${Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS})
+  #-----------------------------------------------------------------------------
+  # Set ITK_REQUIRED_{C,CXX}_FLAGS variables
+  #-----------------------------------------------------------------------------
+  if(NOT DEFINED Slicer_SKIP_ITKPlatformSpecificChecks)
+    set(Slicer_SKIP_ITKPlatformSpecificChecks FALSE)
+  endif()
+  if(NOT ${Slicer_SKIP_ITKPlatformSpecificChecks})
+    include(ITKPlatformSpecificChecks)
+  else()
+    _slicer_skip_message("ITKPlatformSpecificChecks")
+  endif()
+
+  #-----------------------------------------------------------------------------
+  # Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
+  #-----------------------------------------------------------------------------
+  if(NOT DEFINED Slicer_SKIP_SlicerBlockCXXRequiredFlags)
+    set(Slicer_SKIP_SlicerBlockCXXRequiredFlags FALSE)
+  endif()
+  if(NOT ${Slicer_SKIP_SlicerBlockCXXRequiredFlags})
+    include(SlicerBlockCXXRequiredFlags)
+  else()
+    _slicer_skip_message("SlicerBlockCXXRequiredFlags")
+  endif()
+
+  #-----------------------------------------------------------------------------
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS_INIT} ${Slicer_REQUIRED_C_FLAGS} ${ITK_REQUIRED_C_FLAGS} ${ADDITIONAL_C_FLAGS}" CACHE STRING "CMake C Flags" FORCE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS} ${ADDITIONAL_CXX_FLAGS}" CACHE STRING "CMake CXX Flags" FORCE)
+else()
+  _slicer_skip_message("ITKPlatformSpecificChecks")
+  _slicer_skip_message("SlicerBlockCXXRequiredFlags")
+  _slicer_skip_message("SET_CMAKE_C_CXX_FLAGS")
+endif()
 
 #-----------------------------------------------------------------------------
 # Static or Shared library
@@ -101,6 +299,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+
 
 #-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
