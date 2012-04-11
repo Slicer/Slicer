@@ -60,7 +60,7 @@ macro(SlicerMacroBuildModuleMRML)
   # --------------------------------------------------------------------------
   # Python wrapping
   # --------------------------------------------------------------------------
-  if(NOT ${MODULEMRML_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON)
+  if(NOT ${MODULEMRML_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
     set(Slicer_Wrapped_LIBRARIES
       )

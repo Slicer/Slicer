@@ -84,7 +84,7 @@ macro(SlicerMacroBuildModuleLogic)
   # --------------------------------------------------------------------------
   # Python wrapping
   # --------------------------------------------------------------------------
-  if(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON)
+  if(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
 
     set(Slicer_Wrapped_LIBRARIES
       SlicerBaseLogicPythonD
