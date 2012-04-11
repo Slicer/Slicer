@@ -23,6 +23,7 @@
 #  Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS
 #  Slicer_SKIP_ITKPlatformSpecificChecks
 #  Slicer_SKIP_SlicerBlockCXXRequiredFlags
+#  Slicer_SKIP_SlicerBlockAdditionalLauncherSettings
 #
 # By default, if any 'Slicer_SKIP_<DoSomething>' variable is set to TRUE,
 # a message will be displayed.
@@ -319,6 +320,15 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "MinSizeRel" "RelWithDebInfo")
 endif()
 
+#-----------------------------------------------------------------------------
+# Configure additional launcher settings
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_SKIP_SlicerBlockAdditionalLauncherSettings)
+  set(Slicer_SKIP_SlicerBlockAdditionalLauncherSettings FALSE)
+endif()
+if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
+  include(SlicerBlockAdditionalLauncherSettings)
+endif()
 
 #-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
