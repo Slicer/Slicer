@@ -15,14 +15,12 @@ set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated lis
 set(EXTENSION_BUILD_SUBDIRECTORY inner-build)
 
 #-----------------------------------------------------------------------------
-if(NOT Slicer_SOURCE_DIR)
-  find_package(Slicer REQUIRED)
-  include(${Slicer_USE_FILE})
+find_package(Slicer REQUIRED)
+include(${Slicer_USE_FILE})
 
-  find_package(Git REQUIRED)
+find_package(Git REQUIRED)
 
-  include(SlicerEnableExtensionTesting)
-endif()
+include(SlicerEnableExtensionTesting)
 
 #-----------------------------------------------------------------------------
 option(${EXTENSION_NAME}_SUPERBUILD "Build ${EXTENSION_NAME} and the projects it depends on via SuperBuild.cmake." ON)
