@@ -238,6 +238,7 @@ int slicerQtMain(int argc, char* argv[])
 
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
+  moduleFactoryManager->addSearchPaths(app.commandOptions()->additonalModulePaths());
   setupModuleFactoryManager(moduleFactoryManager);
 
   // Register and instantiate modules

@@ -48,6 +48,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers)
   Q_PROPERTY(QString tempDirectory READ tempDirectory)
   Q_PROPERTY(bool testingEnabled READ isTestingEnabled)
+  Q_PROPERTY(QStringList additonalModulePaths READ additonalModulePaths)
 public:
   typedef ctkCommandLineParser Superclass;
   qSlicerCoreCommandOptions();
@@ -86,6 +87,9 @@ public:
   /// \sa runPythonAndExit
   void setRunPythonAndExit(bool value);
 
+  /// Return list of additional module path that should be considered when searching for modules to load.
+  QStringList additonalModulePaths()const;
+
   /// Return True if the loading of Loadable Modules should be disabled
   bool disableLoadableModules()const;
 
@@ -120,6 +124,7 @@ public:
   /// Typically set when running unit tests:
   ///  ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
   bool isTestingEnabled()const;
+
 
 protected:
   /// Add arguments - Called from parse() method

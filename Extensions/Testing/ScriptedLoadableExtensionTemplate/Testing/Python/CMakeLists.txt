@@ -7,6 +7,9 @@ SlicerMacroConfigureGenericPythonModuleTests("${EXTENSION_NAME}" KIT_UNITTEST_SC
 foreach(script_name ${KIT_UNITTEST_SCRIPTS})
   slicer_add_python_unittest(
     SCRIPT ${script_name}
-    SLICER_ARGS --no-main-window --disable-cli-module TESTNAME_PREFIX nomainwindow_)
+    SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules
+                --additional-module-paths ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    TESTNAME_PREFIX nomainwindow_
+    )
 endforeach()
 

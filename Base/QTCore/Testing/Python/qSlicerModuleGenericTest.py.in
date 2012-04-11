@@ -1,11 +1,13 @@
 import unittest
 
 class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
-  
+
   def setUp(self):
     import slicer
+    self.assertTrue(hasattr(slicer, 'modules'))
+    self.assertTrue(hasattr(slicer.modules, '@MODULENAME_LC@'))
     self.module = slicer.modules.@MODULENAME_LC@
-  
+
   def test_module_valid(self):
     self.assertNotEqual(self.module, None)
     self.assertEqual(self.module.name, '@MODULENAME@')
@@ -13,7 +15,7 @@ class qSlicer@MODULENAME@ModuleGenericTest(unittest.TestCase):
   def test_application(self):
     import slicer
     self.assertEqual(slicer.app.__class__.__name__, 'qSlicerApplication')
-    
+
   def test_settings(self):
     import slicer
     import ctk
