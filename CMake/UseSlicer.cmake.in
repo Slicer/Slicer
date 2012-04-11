@@ -303,6 +303,10 @@ include(SlicerMacroBuildModuleWidgets)
 include(SlicerMacroBuildQtModule)
 include(vtkMacroKitPythonWrap)
 
+include(SlicerMacroSimpleTest)
+include(SlicerMacroPythonTesting)
+include(SlicerMacroConfigureGenericCxxModuleTests)
+include(SlicerMacroConfigureGenericPythonModuleTests)
 
 #-----------------------------------------------------------------------------
 # Set a default build type if none was specified

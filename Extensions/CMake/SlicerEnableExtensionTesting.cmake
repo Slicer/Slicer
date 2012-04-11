@@ -1,11 +1,6 @@
 
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Do not add CTest default targets
 include(CTest)
-include(SlicerMacroSimpleTest)
-include(SlicerMacroPythonTesting)
-include(SlicerMacroConfigureGenericCxxModuleTests)
-include(SlicerMacroConfigureGenericPythonModuleTests)
-
 include(SlicerBlockUploadExtensionPrerequisites)
 
 slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
