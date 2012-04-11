@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate) # Do not use 'project()' - See SlicerConfig.cmake
+set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
 set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")

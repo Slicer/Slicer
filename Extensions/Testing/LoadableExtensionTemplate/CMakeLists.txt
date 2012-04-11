@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME LoadableExtensionTemplate) # Do not use 'project()' - See SlicerConfig.cmake
+set(MODULE_NAME LoadableExtensionTemplate) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
