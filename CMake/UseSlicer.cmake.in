@@ -417,3 +417,12 @@ if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata})
   slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
   include(SlicerBlockModuleToExtensionMetadata)
 endif()
+
+#-----------------------------------------------------------------------------
+set(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3" CACHE STRING "MIDAS URL where the extension should be uploaded.")
+set(MIDAS_PACKAGE_EMAIL "YOUR-MIDAS-LOGIN-NOTFOUND" CACHE STRING "Email allowing to authenticate to the MIDAS server.")
+set(MIDAS_PACKAGE_API_KEY "YOUR-MIDAS-APIKEY-NOTFOUND" CACHE STRING "Token allowing to authenticate to the MIDAS server.")
+
+slicer_setting_variable_message("MIDAS_PACKAGE_URL")
+slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
+slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
