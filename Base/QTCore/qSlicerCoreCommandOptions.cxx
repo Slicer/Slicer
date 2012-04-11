@@ -279,14 +279,18 @@ void qSlicerCoreCommandOptions::addArguments()
                     "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
 
+#ifdef Slicer_BUILD_CLI_SUPPORT
   this->addArgument("disable-cli-modules", "", QVariant::Bool,
                     "Disables the loading of Command Line Modules.");
+#endif
 
   this->addArgument("disable-loadable-modules", "", QVariant::Bool,
                     "Disables the loading of Loadable Modules.");
 
+#ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-scripted-loadable-modules", "", QVariant::Bool,
                     "Disables the loading of Scripted Loadable Modules.");
+#endif
 
   this->addArgument("version", "", QVariant::Bool,
                     "Displays version information and exits.");
