@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME CLIExtensionTemplate) # Do not use 'project()' - See SlicerConfig.cmake
+set(MODULE_NAME CLIExtensionTemplate) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
 set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
