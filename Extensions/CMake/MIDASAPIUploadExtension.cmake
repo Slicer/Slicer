@@ -29,11 +29,12 @@
 #   RESULT_VARNAME Will set the value of ${RESULT_VARNAME} to either "ok" or "fail".
 
 function(midas_api_upload_extension)
-  set(expected_nonempty_args SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_DESCRIPTION EXTENSION_CONTRIBUTORS EXTENSION_HOMEPAGE EXTENSION_SCREENSHOTURLS EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  set(expected_nonempty_args SERVER_URL SERVER_EMAIL SERVER_APIKEY SUBMISSION_TYPE SLICER_REVISION EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_HOMEPAGE EXTENSION_REPOSITORY_TYPE EXTENSION_REPOSITORY_URL EXTENSION_SOURCE_REVISION EXTENSION_ENABLED OPERATING_SYSTEM ARCHITECTURE PACKAGE_TYPE RESULT_VARNAME)
+  set(optional_args EXTENSION_ICONURL EXTENSION_DESCRIPTION EXTENSION_CONTRIBUTORS EXTENSION_SCREENSHOTURLS)
   set(expected_existing_args PACKAGE_FILEPATH)
   include(CMakeParseArguments)
   set(options)
-  set(oneValueArgs ${expected_nonempty_args} ${expected_existing_args} RELEASE)
+  set(oneValueArgs ${expected_nonempty_args} ${optional_args} ${expected_existing_args} RELEASE)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -41,6 +42,13 @@ function(midas_api_upload_extension)
   foreach(var ${expected_nonempty_args})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
+    endif()
+  endforeach()
+
+  foreach(var ${optional_args})
+    if(NOT DEFINED ${var} AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
+      message(AUTHOR_WARNING "warning: ${var} CMake variable ${var} is empty !")
+      set(${var}_AUTHOR_WARN "DONE")
     endif()
   endforeach()
 
