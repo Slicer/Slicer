@@ -7,10 +7,10 @@ set(MODULE_NAME LoadableExtensionTemplate) # Do not use 'project()'
 if(NOT Slicer_SOURCE_DIR)
   set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
   set(MODULE_CATEGORY "Examples")
-  set(MODULE_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/LoadableExtensionTemplate/Resources/Icons/LoadableExtensionTemplate.png?revision=19437&view=co")
   set(MODULE_STATUS "Beta")
   set(MODULE_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(MODULE_DESCRIPTION "This is an example of Qt loadable module built as an extension")
+  set(MODULE_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/LoadableExtensionTemplate/Resources/Icons/LoadableExtensionTemplate.png?revision=19437&view=co")
   set(MODULE_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/4/42/Slicer-r19441-LoadableExtensionTemplate-screenshot.png")
   set(MODULE_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
 endif()
