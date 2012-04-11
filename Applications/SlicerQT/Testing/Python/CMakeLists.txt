@@ -71,6 +71,13 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+slicer_add_python_unittest(
+  SCRIPT SlicerUnitTestWithErrorsTest.py
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+set_tests_properties(py_nomainwindow_SlicerUnitTestWithErrorsTest PROPERTIES WILL_FAIL TRUE)
+
 #
 # Exercise different Slicer command line option and check that no warnings are displated.
 #
