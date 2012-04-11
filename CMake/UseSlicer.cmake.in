@@ -24,6 +24,7 @@
 #  Slicer_SKIP_ITKPlatformSpecificChecks
 #  Slicer_SKIP_SlicerBlockCXXRequiredFlags
 #  Slicer_SKIP_SlicerBlockAdditionalLauncherSettings
+#  Slicer_SKIP_SlicerBlockModuleToExtensionMetadata
 #
 # By default, if any 'Slicer_SKIP_<DoSomething>' variable is set to TRUE,
 # a message will be displayed.
@@ -403,3 +404,16 @@ if(NOT DEFINED EXTENSION_ENABLED)
   set(EXTENSION_ENABLED 1)
 endif()
 
+#-----------------------------------------------------------------------------
+# Convert MODULE_* variables into EXTENSION_* variables if it applies
+#-----------------------------------------------------------------------------
+
+if(NOT DEFINED Slicer_SKIP_SlicerBlockModuleToExtensionMetadata)
+  set(Slicer_SKIP_SlicerBlockModuleToExtensionMetadata FALSE)
+endif()
+if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata})
+  slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
+  slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
+  slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
+  include(SlicerBlockModuleToExtensionMetadata)
+endif()
