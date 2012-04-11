@@ -116,9 +116,9 @@ public:
   /// See http://qt.nokia.com/doc/4.6/qdir.html#tempPath
   QString tempDirectory()const;
 
-  // Return True if slicer is in testing mode.
-  // Typically set when running unit tests:
-  // ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
+  /// Return True if slicer is in testing mode.
+  /// Typically set when running unit tests:
+  ///  ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
   bool isTestingEnabled()const;
 
 protected:
