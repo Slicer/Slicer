@@ -331,6 +331,41 @@ if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
 endif()
 
 #-----------------------------------------------------------------------------
+# Set Slicer_BUNDLE_EXTENSIONS_LOCATION variable
+#-----------------------------------------------------------------------------
+set(Slicer_BUNDLE_EXTENSIONS_LOCATION "")
+if(APPLE)
+  set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_BUNDLE_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
+  set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
+endif()
+
+#-----------------------------------------------------------------------------
+# Set Slicer_INSTALL_*MODULE_*_DIR variables
+#-----------------------------------------------------------------------------
+if(Slicer_BUILD_CLI_SUPPORT)
+  set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_BIN_DIR}")
+  if(APPLE)
+    # For more detail, see 'Slicer/CMakeLists.txt' and search for 'Slicer_INSTALL_CLIMODULES_BIN_DIR'
+    set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}/${Slicer_CLIMODULES_SUBDIR}")
+  endif()
+  set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_SHARE_DIR}")
+endif()
+
+set(Slicer_INSTALL_QTLOADABLEMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_BIN_DIR}")
+set(Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_LIB_DIR}")
+set(Slicer_INSTALL_QTLOADABLEMODULES_PYTHON_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
+set(Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_INCLUDE_DIR}")
+set(Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTLOADABLEMODULES_SHARE_DIR}")
+
+if(Slicer_USE_PYTHONQT)
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_BIN_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_LIB_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_INCLUDE_DIR}")
+  set(Slicer_INSTALL_QTSCRIPTEDMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_QTSCRIPTEDMODULES_SHARE_DIR}")
+endif()
+
+#-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
 if(NOT DEFINED MODULE_DEPENDS)
