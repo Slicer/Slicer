@@ -22,6 +22,8 @@ slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
 slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
 slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
 
+include(SlicerBlockModuleToExtensionMetadata)
+
 set(CTEST_MODEL "Experimental")
 include(SlicerBlockUploadExtension)
 add_custom_target(Experimental

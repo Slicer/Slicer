@@ -146,10 +146,25 @@ else()
 endif()
 
 # --------------------------------------------------------------------------
-# Checking EXTENSION_NAME
+# Setting EXTENSION_HAS_ONLY_ONE_MODULE
 # --------------------------------------------------------------------------
+slicer_check_variable(EXTENSION_NAME _EXTENSION_NAME_SET)
+slicer_check_variable(MODULE_NAME _MODULE_NAME_SET)
+
+set(EXTENSION_HAS_ONLY_ONE_MODULE FALSE)
+if(NOT ${_EXTENSION_NAME_SET} AND ${_MODULE_NAME_SET})
+  set(EXTENSION_HAS_ONLY_ONE_MODULE TRUE)
+endif()
+slicer_setting_variable_message("EXTENSION_HAS_ONLY_ONE_MODULE")
+
+# --------------------------------------------------------------------------
+# Seting and checking EXTENSION_NAME
+# --------------------------------------------------------------------------
+if(EXTENSION_HAS_ONLY_ONE_MODULE)
+  set(EXTENSION_NAME ${MODULE_NAME})
+endif()
 if("${EXTENSION_NAME}" STREQUAL "")
-  message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
+  message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME or MODULE_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
 endif()
 
 # --------------------------------------------------------------------------
@@ -304,15 +319,21 @@ endif()
 #-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
-if(NOT DEFINED EXTENSION_DEPENDS)
-  set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
+if(NOT DEFINED MODULE_DEPENDS)
+  set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
 endif()
-if(NOT DEFINED EXTENSION_LICENSE_FILE)
-  set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
+if(NOT DEFINED MODULE_LICENSE_FILE)
+  set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
 endif()
-if(NOT DEFINED EXTENSION_LICENSE_SHORT_DESCRIPTION)
-  set(EXTENSION_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
+if(NOT DEFINED MODULE_LICENSE_SHORT_DESCRIPTION)
+  set(MODULE_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
 endif()
-if(NOT DEFINED EXTENSION_README_FILE)
-  set(EXTENSION_README_FILE ${Slicer_README_FILE})
+if(NOT DEFINED MODULE_README_FILE)
+  set(MODULE_README_FILE ${Slicer_README_FILE})
+endif()
+
+if(NOT ${EXTENSION_HAS_ONLY_ONE_MODULE})
+  foreach(var DEPENDS LICENSE_FILE LICENSE_SHORT_DESCRIPTION README_FILE)
+    set(EXTENSION_${var} ${MODULE_${var}})
+  endforeach()
 endif()
