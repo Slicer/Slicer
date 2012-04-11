@@ -70,7 +70,8 @@ foreach(extension_name ${EXTENSION_LIST})
   set(EXTENSION_SCREENSHOTURLS ${EXTENSION_SEXT_SCREENSHOTURLS})
   set(EXTENSION_ENABLED ${EXTENSION_SEXT_ENABLED})
 
-  #foreach(v SCM SCMURL DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY CONTRIBUTORS ICONURL STATUS DESCRIPTION SCREENSHOTURLS ENABLED)
+  #foreach(v SCM SCMURL SCMREVISION DEPENDS BUILD_SUBDIRECTORY HOMEPAGE CATEGORY CONTRIBUTORS ICONURL
+  #          STATUS DESCRIPTION SCREENSHOTURLS ENABLED)
   #  message(${v}:${EXTENSION_SEXT_${v}})
   #endforeach()
 
@@ -86,18 +87,25 @@ foreach(extension_name ${EXTENSION_LIST})
       set(sext_add_project True)
       set(sext_ep_options_repository)
       set(sext_ep_cmake_args)
+      set(sext_revision ${EXTENSION_SEXT_SCMREVISION})
       if(${EXTENSION_SEXT_SCM} STREQUAL "git")
         find_package(Git REQUIRED)
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
+        if("${sext_revision}" STREQUAL "")
+          set(sext_revision "origin/master")
+        endif()
         set(sext_ep_options_repository
-          "GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG \"origin/master\"")
+          "GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG \"${sext_revision}\"")
         list(APPEND sext_ep_cmake_args
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "svn")
         find_package(Subversion REQUIRED)
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
+        if("${sext_revision}" STREQUAL "")
+          set(sext_revision "HEAD")
+        endif()
         set(sext_ep_options_repository
-          "SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r \"HEAD\"")
+          "SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r \"${sext_revision}\"")
         list(APPEND sext_ep_cmake_args
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "local")

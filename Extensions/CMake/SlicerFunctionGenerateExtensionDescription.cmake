@@ -99,6 +99,7 @@ function(slicerFunctionGenerateExtensionDescription)
 # This is source code manager (i.e. svn)
 scm ${scm_type}
 ${scm_path_token} ${scm_url}
+scmrevision ${Extension_WC_REVISION}
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files
