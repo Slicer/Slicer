@@ -74,10 +74,6 @@
       <description><![CDATA[Selected annotations can be passed to command line modules.]]></description>
     </parameter>
     <parameter>
-      <label>Color</label>
-      <description><![CDATA[Shows the color for the annotation, open the properties panel to pick a new one]]></description>
-    </parameter>
-    <parameter>
       <label>Vis</label>
       <description><![CDATA[Click on this button (eye open or closed) to toggle the visibility of the annotation in the 2D and 3D views]]></description>
     </parameter>
