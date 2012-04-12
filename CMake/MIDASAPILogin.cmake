@@ -61,9 +61,9 @@ function(midas_api_login)
   file(DOWNLOAD ${url} ${login_token_filepath} INACTIVITY_TIMEOUT 120)
   file(READ ${login_token_filepath} resp)
   file(REMOVE ${login_token_filepath})
-  string(REGEX REPLACE ".*token\":\"(.*)\".*" "\\1" token ${resp})
+  string(REGEX REPLACE ".*token\":\"(.*)\".*" "\\1" token "${resp}")
 
-  string(LENGTH ${token} tokenlength)
+  string(LENGTH "${token}" tokenlength)
   if(NOT tokenlength EQUAL 40)
     set(token "")
     message(WARNING "Failed to login to MIDAS server\n"
