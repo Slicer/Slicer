@@ -112,8 +112,7 @@ QString qSlicerAnnotationsModule::helpText() const
                          "<a href=\"%1/Documentation/%2.%3/Modules/Annotations\">"
                          "%1/Documentation/%2.%3/Modules/Annotations</a><br>");
 
-//  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
-  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(0);
+  return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }
 
 //-----------------------------------------------------------------------------
