@@ -44,7 +44,7 @@ add_custom_command(
   COMMENT "Configuring: AdditionalLauncherSettings.ini"
   )
 
-add_custom_target(ConfigureAdditonalLauncherSettings ALL
+add_custom_target(ConfigureAdditionalLauncherSettings ALL
   DEPENDS
     ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS_FILE}
   )
