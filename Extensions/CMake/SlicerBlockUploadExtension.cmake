@@ -39,7 +39,9 @@ endfunction()
 # The following variable can be used while testing the script
 #-----------------------------------------------------------------------------
 set(CTEST_EXTRA_VERBOSE TRUE)
-set(RUN_CTEST_CONFIGURE TRUE)
+if(NOT DEFINED RUN_CTEST_CONFIGURE)
+  set(RUN_CTEST_CONFIGURE TRUE)
+endif()
 set(RUN_CTEST_BUILD TRUE)
 set(RUN_CTEST_TEST TRUE)
 set(RUN_CTEST_PACKAGES TRUE)

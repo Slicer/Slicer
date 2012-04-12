@@ -7,6 +7,10 @@ if(TARGET Experimental OR TARGET Nightly)
   set(target_qualifier "Extension")
 endif()
 
+if(WIN32)
+  set(RUN_CTEST_CONFIGURE FALSE)
+endif()
+
 set(CTEST_MODEL "Experimental")
 include(SlicerBlockUploadExtension)
 add_custom_target(Experimental${target_qualifier}
