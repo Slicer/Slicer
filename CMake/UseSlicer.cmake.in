@@ -429,3 +429,12 @@ set(MIDAS_PACKAGE_API_KEY "YOUR-MIDAS-APIKEY-NOTFOUND" CACHE STRING "Token allow
 slicer_setting_variable_message("MIDAS_PACKAGE_URL")
 slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
 slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
+
+
+#-----------------------------------------------------------------------------
+if(NOT DEFINED Slicer_SKIP_SlicerEnableExtensionTesting)
+  set(Slicer_SKIP_SlicerEnableExtensionTesting FALSE)
+endif()
+if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting})
+  include(SlicerEnableExtensionTesting)
+endif()

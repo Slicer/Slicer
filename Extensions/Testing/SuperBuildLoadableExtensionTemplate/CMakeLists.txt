@@ -20,8 +20,6 @@ include(${Slicer_USE_FILE})
 
 find_package(Git REQUIRED)
 
-include(SlicerEnableExtensionTesting)
-
 #-----------------------------------------------------------------------------
 option(${EXTENSION_NAME}_SUPERBUILD "Build ${EXTENSION_NAME} and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(${EXTENSION_NAME}_SUPERBUILD)
