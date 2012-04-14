@@ -43,6 +43,8 @@
 # Helper function(s) and macro(s)
 # --------------------------------------------------------------------------
 
+include(UseSlicerMacros)
+
 # If the variable Slicer_VERBOSE_SKIP is FALSE, this function will
 # display the provided text prepended with "Skipping ".
 function(_slicer_skip_message text)
@@ -50,89 +52,6 @@ function(_slicer_skip_message text)
     message(STATUS "Skipping ${text}")
   endif()
 endfunction()
-
-# Given a variable name, this function will display messages indicating what the current
-# value of the variable.
-# For example:
-#
-#   slicer_check_variable(bar bar_set)
-#   message("bar_set: ${bar_set}")
-#
-#   set(bar "")
-#   slicer_check_variable(bar bar_set)
-#   message("bar_set: ${bar_set}")
-#
-#   set(bar "This is bar")
-#   slicer_check_variable(bar bar_set)
-#   message("bar_set: ${bar_set}")
-#
-# will output:
-#  -- Checking bar variable
-#  -- Checking bar variable - NOTDEFINED
-#  bar_set: FALSE
-#  -- Checking bar variable
-#  -- Checking bar variable - EMPTY
-#  bar_set: FALSE
-#  -- Checking bar variable
-#  -- Checking bar variable - This is bar
-#  bar_set: TRUE
-#
-function(slicer_check_variable name resultvar)
-  message(STATUS "Checking ${name} variable")
-  set(result FALSE)
-  if(NOT DEFINED ${name})
-    message(STATUS "Checking ${name} variable - NOTDEFINED")
-  elseif("${${name}}" STREQUAL "")
-    message(STATUS "Checking ${name} variable - EMPTY")
-  else()
-    message(STATUS "Checking ${name} variable - ${${name}}")
-    set(result TRUE)
-  endif()
-  set(${resultvar} ${result} PARENT_SCOPE)
-endfunction()
-
-# Given a variable name, this function will display the text
-#   "-- Setting <varname> ........: ${<varname>}"
-# and will ensure that the message is consistenly padded.
-#
-# If the optional argument 'SKIP_TRUNCATE' is provided, the
-# text will NOT be truncated it too long.
-#
-# In the current implementation, the padding is hardcoded to a length of 40
-# and the total text will be truncated if longer than 120 characters.
-#
-# For example:
-#   set(SHORTNAME "This is short variable name")
-#   slicer_setting_variable_message("SHORTNAME")
-#   set(LONGLONGNAME "This is a longer variable name")
-#   slicer_setting_variable_message("LONGLONGNAME")
-#
-# will output:
-#   -- Setting SHORTNAME ........: This is short variable name
-#   -- Setting LONGLONGNAME .....: This is a longer variable name
-#
-function(slicer_setting_variable_message varname)
-  set(truncate TRUE)
-  if("${ARGV1}" STREQUAL "SKIP_TRUNCATE")
-    set(truncate FALSE)
-  endif()
-  set(pretext_right_jusitfy_length 40)
-  set(fill_char ".")
-  set(truncated_text_length 120)
-
-  set(pretext "Setting ${varname}")
-  string(LENGTH ${pretext} pretext_length)
-  math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length}")
-  string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
-  set(text "${pretext} ${pretext_dots}: ${${varname}}")
-  string(LENGTH ${text} text_length)
-  if(${truncate} AND ${text_length} GREATER ${truncated_text_length})
-    string(SUBSTRING ${text} 0 ${truncated_text_length} text)
-    set(text "${text} [...]")
-  endif()
-  message(STATUS ${text})
-endfunction()
-
 
 
 # --------------------------------------------------------------------------
