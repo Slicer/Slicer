@@ -96,12 +96,13 @@ if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
   set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK FALSE)
 endif()
 if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-  if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT SlicerConfig_INCLUDED_ONCE)
+  if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT UseSlicer_INCLUDED_ONCE)
     message(FATAL_ERROR "Since calling 'include(\${Slicer_USE_FILE})' automatically calls 'project(${EXTENSION_NAME})'. "
-                        "Make sure to remove any call to project(${EXTENSION_NAME})."
+                        "Make sure to remove any call to project(${EXTENSION_NAME}). "
                         "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
                         )
   endif()
+  set(UseSlicer_INCLUDED_ONCE 1 CACHE INTERNAL "True if UseSlicer has already been included")
 else()
   _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
 endif()

@@ -1,21 +1,15 @@
 #
-# SlicerConfig.cmake - Slicer CMake configuration file for external projects
+# This file has been primarly designed for the purpose of Slicer extension development.
 #
 # This file is configured by Slicer and used by UseSlicer.cmake module
 # to load Slicer's settings for an external project. External projects
-# can use these setting to build new modules against a Slicer build tree
-# or a Slicer installation.
+# can use these setting to build new modules against a Slicer build tree.
+#
 #
 
-# Macro allowing to set a variable or complain if already defined
-macro(_slicer_set_or_complain_if_defined var value)
-  if(DEFINED ${var} AND NOT SlicerConfig_INCLUDED_ONCE)
-    message(FATAL_ERROR "Variable ${var} has been defined prior calling find_package(Slicer) !")
-  endif()
-  set(${var} "${value}" ${ARGN})
-endmacro()
-
+# --------------------------------------------------------------------------
 # Slicer options
+# --------------------------------------------------------------------------
 set(Slicer_USE_BatchMake "@Slicer_USE_BatchMake@")
 set(Slicer_USE_MIDAS "@Slicer_USE_MIDAS@")
 set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
@@ -26,65 +20,11 @@ set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
 set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
 set(Slicer_BUILD_TESTING "@BUILD_TESTING@")
 
-# Qt
-_slicer_set_or_complain_if_defined(QT_QMAKE_EXECUTABLE "@QT_QMAKE_EXECUTABLE_CONFIG@")
 set(Slicer_REQUIRED_QT_VERSION "@Slicer_REQUIRED_QT_VERSION@")
 set(Slicer_REQUIRED_QT_MODULES "@Slicer_REQUIRED_QT_MODULES@")
 
-# External projects
-if(Slicer_USE_BatchMake)
-  _slicer_set_or_complain_if_defined(BatchMake_DIR "@BatchMake_DIR_CONFIG@" CACHE PATH "Path to BatchMake build or install directory" FORCE)
-endif()
-_slicer_set_or_complain_if_defined(CTK_DIR "@CTK_DIR_CONFIG@" CACHE PATH "Path to CTK build or install directory" FORCE)
-_slicer_set_or_complain_if_defined(ITK_DIR "@ITK_DIR_CONFIG@" CACHE PATH "Path to ITK build or install directory" FORCE)
-if(Slicer_USE_OpenIGTLink)
-  _slicer_set_or_complain_if_defined(OpenIGTLink_DIR "@OpenIGTLink_DIR_CONFIG@" CACHE PATH "Path to OpenIGTLink build or install directory" FORCE)
-endif()
-if(Slicer_USE_PYTHONQT)
-  _slicer_set_or_complain_if_defined(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE_CONFIG@" CACHE PATH "Path to Python executable" FORCE)
-  _slicer_set_or_complain_if_defined(PYTHON_INCLUDE_DIR "@PYTHON_INCLUDE_DIR_CONFIG@" CACHE PATH "Path to Python include directory" FORCE)
-  _slicer_set_or_complain_if_defined(PYTHON_LIBRARY "@PYTHON_LIBRARY_CONFIG@" CACHE FILEPATH "Path to Python library" FORCE)
-  if(WIN32)
-    _slicer_set_or_complain_if_defined(PYTHON_DEBUG_LIBRARY "@PYTHON_DEBUG_LIBRARY_CONFIG@" CACHE FILEPATH "Path to Python debug library" FORCE)
-  endif()
-endif()
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  _slicer_set_or_complain_if_defined(qMidasAPI_DIR "@qMidasAPI_DIR_CONFIG@" CACHE PATH "Path to qMidasAPI build or install directory" FORCE)
-endif()
-_slicer_set_or_complain_if_defined(SLICERLIBCURL_DIR "@SLICERLIBCURL_DIR_CONFIG@" CACHE PATH "Path to Curl build or install directory" FORCE)
-if(Slicer_BUILD_CLI_SUPPORT)
-  _slicer_set_or_complain_if_defined(SlicerExecutionModel_DIR "@SlicerExecutionModel_DIR_CONFIG@" CACHE PATH "Path to SlicerExecutionModel build or install directory" FORCE)
-endif()
-_slicer_set_or_complain_if_defined(Teem_DIR "@Teem_DIR_CONFIG@" CACHE PATH "Path to Teem build or install directory")
-_slicer_set_or_complain_if_defined(VTK_DIR "@VTK_DIR_CONFIG@" CACHE PATH "Path to VTK build or install directory")
-
-# List all required external project
-set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
-set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
-
-# Include external projects
-foreach(proj ${Slicer_EXTERNAL_PROJECTS})
-  find_package(${proj} REQUIRED)
-endforeach()
-
-# Slicer CMake macros and functions directory
 set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
 set(Slicer_EXTENSIONS_CMAKE_DIR "@Slicer_EXTENSIONS_CMAKE_DIR@")
-
-# Update CMake module path
-set(CMAKE_MODULE_PATH
-  ${Slicer_CMAKE_DIR}
-  ${Slicer_EXTENSIONS_CMAKE_DIR}
-  ${VTK_CMAKE_DIR}
-  ${CTK_CMAKE_DIR}
-  ${CTK_CMAKE_UTILITIES_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
-
-# Note: This block should be added after VTK and CTK are found.
-#       Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE
-#       are valid.
-include(SlicerBlockFindQtAndCheckVersion)
 
 # Launcher command
 set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
@@ -222,10 +162,144 @@ endif()
 # The Slicer install prefix (*not* defined in the install tree)
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
-# The Slicer targets file.
+# --------------------------------------------------------------------------
+# External projects
+# --------------------------------------------------------------------------
+
+# With the help of SuperBuild, Slicer has been configured and built against a collection
+# of external projects.
+#
+# Considering that, by default, Slicer and most of its dependent external projects are
+# built as shared library, it's important to make sure that the project including
+# SlicerConfig.cmake (this file) is built against the same set of external projects if it applies.
+#
+# Let's consider the example of a project dependending on both VTK and Slicer. With the help of
+# the macro 'slicer_config_set_ep', the build system will check that the path of the already
+# defined VTK_DIR matches the VTK_DIR used to build Slicer.
+#
+# A typical use of this macro is illustrated below:
+#
+#    slicer_config_set_ep("VTK_DIR", "@VTK_DIR_CONFIG@")
+#
+#
+macro(slicer_config_set_ep var value)
+  if(NOT "${value}" STREQUAL "")
+    if(DEFINED ${var})
+      get_filename_component(var_realpath "${${var}}" REALPATH)
+      get_filename_component(value_realpath ${value} REALPATH)
+      if(NOT ${var_realpath} STREQUAL ${value_realpath})
+        message(FATAL_ERROR "Variable ${var} defined prior calling 'find_package(Slicer)' does NOT "
+                            "match value used to configure Slicer. It probably means that a different "
+                            "${var} has been used to configure this project and Slicer.\n"
+                            "${var}=${${var}}\n"
+                            "Slicer_${var}=${value}")
+      endif()
+    endif()
+    set(${var} "${value}" ${ARGN})
+  endif()
+endmacro()
+
+# For sake of simplification, the macro 'slicer_config_set_ep' is not invoked confitionally, if
+# the configured 'value' parameter is an empty string, the macro 'slicer_config_set_ep' is a no-op.
+
+slicer_config_set_ep(
+  QT_QMAKE_EXECUTABLE
+  "@QT_QMAKE_EXECUTABLE_CONFIG@"
+  )
+
+slicer_config_set_ep(
+  BatchMake_DIR
+  "@BatchMake_DIR_CONFIG@"
+  CACHE PATH "Path to BatchMake build or install directory" FORCE)
+
+slicer_config_set_ep(
+  CTK_DIR
+  "@CTK_DIR_CONFIG@"
+  CACHE PATH "Path to CTK build or install directory" FORCE)
+
+slicer_config_set_ep(
+  ITK_DIR
+  "@ITK_DIR_CONFIG@"
+  CACHE PATH "Path to ITK build or install directory" FORCE)
+
+slicer_config_set_ep(
+  OpenIGTLink_DIR
+  "@OpenIGTLink_DIR_CONFIG@"
+  CACHE PATH "Path to OpenIGTLink build or install directory" FORCE)
+
+slicer_config_set_ep(
+  PYTHON_EXECUTABLE
+  "@PYTHON_EXECUTABLE_CONFIG@"
+  CACHE PATH "Path to Python executable" FORCE)
+
+slicer_config_set_ep(
+  PYTHON_INCLUDE_DIR
+  "@PYTHON_INCLUDE_DIR_CONFIG@"
+  CACHE PATH "Path to Python include directory" FORCE)
+
+slicer_config_set_ep(
+  PYTHON_LIBRARY
+  "@PYTHON_LIBRARY_CONFIG@"
+  CACHE FILEPATH "Path to Python library" FORCE)
+
+slicer_config_set_ep(
+  PYTHON_DEBUG_LIBRARY
+  "@PYTHON_DEBUG_LIBRARY_CONFIG@"
+  CACHE FILEPATH "Path to Python debug library" FORCE)
+
+slicer_config_set_ep(
+  qMidasAPI_DIR
+  "@qMidasAPI_DIR_CONFIG@"
+  CACHE PATH "Path to qMidasAPI build or install directory" FORCE)
+
+slicer_config_set_ep(
+  SLICERLIBCURL_DIR
+  "@SLICERLIBCURL_DIR_CONFIG@"
+  CACHE PATH "Path to Curl build or install directory" FORCE)
+
+slicer_config_set_ep(
+  SlicerExecutionModel_DIR
+  "@SlicerExecutionModel_DIR_CONFIG@"
+  CACHE PATH "Path to SlicerExecutionModel build or install directory" FORCE)
+
+slicer_config_set_ep(
+  Teem_DIR
+  "@Teem_DIR_CONFIG@"
+  CACHE PATH "Path to Teem build or install directory")
+
+slicer_config_set_ep(
+  VTK_DIR
+  "@VTK_DIR_CONFIG@"
+  CACHE PATH "Path to VTK build or install directory")
+
+# List all required external project
+set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
+set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
+
+# Include external projects
+foreach(proj ${Slicer_EXTERNAL_PROJECTS})
+  find_package(${proj} REQUIRED)
+endforeach()
+
+# This block should be added after VTK and CTK are found.
+# Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE are valid.
+include(${Slicer_CMAKE_DIR}/SlicerBlockFindQtAndCheckVersion.cmake)
+
+# --------------------------------------------------------------------------
+# CMake module path
+# --------------------------------------------------------------------------
+
+# Update CMake module path
+set(CMAKE_MODULE_PATH
+  ${Slicer_CMAKE_DIR}
+  ${Slicer_EXTENSIONS_CMAKE_DIR}
+  ${VTK_CMAKE_DIR}
+  ${CTK_CMAKE_DIR}
+  ${CTK_CMAKE_UTILITIES_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
+# --------------------------------------------------------------------------
 if(EXISTS "@Slicer_TARGETS_FILE@" AND NOT TARGET SlicerBaseLogic)
   include("@Slicer_TARGETS_FILE@")
 endif()
-
-set(SlicerConfig_INCLUDED_ONCE 1 CACHE INTERNAL "True if SlicerConfig has already been included")
-
