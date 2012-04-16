@@ -12,11 +12,11 @@
     <label>Transforms</label>
     <parameter>
       <label>Active Transform</label>
-      <description>Select the transform node to display, control and edit</description>
+      <description>Select the transform node to display, control and edit.</description>
     </parameter>
   </parameters>
   <parameters>
-    <label><![CDATA[Display &amp; Edit]]></label>
+    <label>Display - Edit></label>
     <parameter>
       <label>Transform Matrix</label>
       <description><![CDATA[4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.]]></description>
