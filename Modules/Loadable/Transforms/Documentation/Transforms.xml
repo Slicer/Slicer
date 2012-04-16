@@ -19,47 +19,47 @@
     <label><![CDATA[Display &amp; Edit]]></label>
     <parameter>
       <label>Transform Matrix</label>
-      <description>4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.</description>
+      <description><![CDATA[4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.]]></description>
     </parameter>
     <parameter>
       <label>Translation</label>
-      <description>Apply LR, PA, and IS translational components of the transformation matrix in the RAS space (in mm). Min and Max control the lower and upper bounds of the sliders.</description>
+      <description><![CDATA[Apply LR, PA, and IS translational components of the transformation matrix in the RAS space (in mm). Min and Max control the lower and upper bounds of the sliders.]]></description>
     </parameter>
     <parameter>
       <label>Rotation</label>
-      <description>Apply LR, PA, and IS rotation angles (degrees) in the RAS space. Rotations are concatenated.</description>
+      <description><![CDATA[Apply LR, PA, and IS rotation angles (degrees) in the RAS space. Rotations are concatenated.]]></description>
     </parameter>
     <parameter>
       <label>Coordinate Reference</label>
-      <description>Switches between global RAS space transformation and a local one, relative to the current position and orientation</description>
+      <description><![CDATA[Switches between global RAS space transformation and a local one, relative to the current position and orientation.]]></description>
     </parameter>
     <parameter>
       <label>Identity</label>
-      <description>Resets transformation matrix to identity matrix</description>
+      <description><![CDATA[Resets transformation matrix to identity matrix.]]></description>
     </parameter>
     <parameter>
       <label>Invert</label>
-      <description>Inverts the transformation matrix</description>
+      <description><![CDATA[Inverts the transformation matrix.]]></description>
     </parameter>
   </parameters>
   <parameters>
     <label>Transformed nodes</label>
-    <description>Control what nodes uses the current transformation</description>
+    <description><![CDATA[Control what nodes uses the current transformation.]]></description>
     <parameter>
       <label>Transformable</label>
-      <description>List the nodes in the scene that DON'T use the transform node.</description>
+      <description><![CDATA[List the nodes in the scene that DON'T use the transform node.]]></description>
     </parameter>
     <parameter>
       <label>Transformed</label>
-      <description>List the nodes in the scene that use the transform node.</description>
+      <description><![CDATA[List the nodes in the scene that use the transform node.]]></description>
     </parameter>
     <parameter>
       <label>Right arrow</label>
-      <description>Apply the current transform node to the selected nodes in Transformable list.</description>
+      <description><![CDATA[Apply the current transform node to the selected nodes in Transformable list.]]></description>
     </parameter>
     <parameter>
       <label>Left arrow</label>
-      <description>Remove the current transform node from the selected nodes in the Transformed list.</description>
+      <description><![CDATA[Remove the current transform node from the selected nodes in the Transformed list.]]></description>
     </parameter>
   </parameters>
 </executable>
