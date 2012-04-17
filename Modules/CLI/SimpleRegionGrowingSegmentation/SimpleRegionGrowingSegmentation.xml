@@ -54,6 +54,7 @@
       <constraints>
         <minimum>0</minimum>
         <maximum>10</maximum>
+        <step>0.01</step>
       </constraints>
     </double>
     <integer>
