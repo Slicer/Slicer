@@ -27,7 +27,7 @@
     <integer>
       <name>Show DICOM Browser</name>
       <description><![CDATA[ The DICOM Browser window will be shown by default when entering the module.  Use this button to re-open the browser if it is closed or if it is hidden by other windows.]]></description>
-      <label>Import</label>
+      <label>Show DICOM Browser</label>
     </integer>
     <integer>
       <name>Import</name>
