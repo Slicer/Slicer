@@ -41,7 +41,7 @@ class DICOM2FullBrainTractographyWidget:
     #dummyCollapsibleButton = ctk.ctkCollapsibleButton()
     #dummyCollapsibleButton.text = "A collapsible button"
 
-    full_tractography_workflow = DICOM2FullBrainTractographyLib.full_tractography_workflow(
+    self.full_tractography_workflow = DICOM2FullBrainTractographyLib.full_tractography_workflow(
         DICOM2FullBrainTractographyLib.WorkflowConfiguration(),
         self.layout
     )
