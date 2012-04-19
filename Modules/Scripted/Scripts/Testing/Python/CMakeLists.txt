@@ -1,9 +1,15 @@
 set(extensions DataProbe
     DICOM
-    Editor
     LabelStatistics
     PerformanceTests
     SampleData)
+
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  list(APPEND extensions
+    Editor
+    )
+endif()
+
 set(KIT_UNITTEST_SCRIPTS)
 foreach(extension ${extensions})
   SlicerMacroConfigureGenericPythonModuleTests("${extension}" KIT_UNITTEST_SCRIPTS)
