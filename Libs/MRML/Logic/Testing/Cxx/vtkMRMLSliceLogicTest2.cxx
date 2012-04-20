@@ -28,11 +28,18 @@
 #include <vtkMRMLSliceCompositeNode.h>
 
 // VTK includes
+#include <vtkImageAppendComponents.h>
 #include <vtkImageData.h>
+#include <vtkImageCast.h>
+#include <vtkImageMapToColors.h>
+#include <vtkImageMapToWindowLevelColors.h>
 #include <vtkImageResliceMask.h>
+#include <vtkImageThreshold.h>
 #include <vtkImageViewer2.h>
+#include <vtkLookupTable.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkScalarsToColors.h>
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
