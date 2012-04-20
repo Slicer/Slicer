@@ -43,6 +43,17 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
   def create(self):
     super(PaintEffectOptions,self).create()
 
+    labelVolume = self.editUtil.getLabelVolume()
+    if labelVolume and labelVolume.GetImageData():
+      spacing = labelVolume.GetSpacing()
+      dimensions = labelVolume.GetImageData().GetDimensions()
+      self.minimumRadius = 2*min(spacing)
+      bounds = [a*b for a,b in zip(spacing,dimensions)]
+      self.maximumRadius = 0.5 * min(bounds)
+    else:
+      self.minimumRadius = 0.01
+      self.maximumRadius = 100
+
     self.radiusFrame = qt.QFrame(self.frame)
     self.radiusFrame.setLayout(qt.QHBoxLayout())
     self.frame.layout().addWidget(self.radiusFrame)
@@ -53,9 +64,13 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.widgets.append(self.radiusLabel)
     self.radiusSpinBox = qt.QDoubleSpinBox(self.radiusFrame)
     self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
-    self.radiusSpinBox.minimum = 0.01
-    self.radiusSpinBox.maximum = 100
+    self.radiusSpinBox.minimum = self.minimumRadius
+    self.radiusSpinBox.maximum = self.maximumRadius
     self.radiusSpinBox.suffix = "mm"
+    from math import log,floor
+    decimals = floor(log(self.minimumRadius,10))
+    if decimals < 0:
+      self.radiusSpinBox.decimals = -decimals + 2
     self.radiusFrame.layout().addWidget(self.radiusSpinBox)
     self.widgets.append(self.radiusSpinBox)
     self.radiusUnitsToggle = qt.QPushButton("px:")
@@ -75,10 +90,10 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
       self.radiusQuickies[rad].setToolTip("Set radius based on mm or label voxel size units depending on toggle value")
 
     self.radius = ctk.ctkDoubleSlider(self.frame)
-    self.radius.minimum = 0.01
-    self.radius.maximum = 100
+    self.radius.minimum = self.minimumRadius
+    self.radius.maximum = self.maximumRadius
     self.radius.orientation = 1
-    self.radius.singleStep = 0.01
+    self.radius.singleStep = self.minimumRadius
     self.frame.layout().addWidget(self.radius)
     self.widgets.append(self.radius)
 
@@ -95,6 +110,9 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
+
+    # set the node parameters that are dependent on the input data
+    self.parameterNode.SetParameter( "PaintEffect,radius", str(self.minimumRadius * 10) )
 
   def destroy(self):
     super(PaintEffectOptions,self).destroy()
