@@ -432,7 +432,7 @@ void vtkMRMLSliceLayerLogic::UpdateVolumeDisplayNode()
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNodeUVW)->SetAutoWindowLevel(0);
     vtkMRMLScalarVolumeDisplayNode::SafeDownCast(this->VolumeDisplayNodeUVW)->SetAutoThreshold(0);
     }
-  this->VolumeDisplayNodeUVW->SetDisableModifiedEvent(wasDisabling);
+  this->VolumeDisplayNodeUVW->SetDisableModifiedEvent(wasDisablingUVW);
 
 }
 
@@ -462,7 +462,6 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   dimensionsUVW[1] = 100;
   dimensionsUVW[2] = 100;
 
-  int i=0;
   vtkSmartPointer<vtkMatrix4x4> xyToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
   xyToIJK->Identity();
 
