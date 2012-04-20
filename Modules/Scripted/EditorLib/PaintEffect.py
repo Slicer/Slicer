@@ -47,7 +47,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     if labelVolume and labelVolume.GetImageData():
       spacing = labelVolume.GetSpacing()
       dimensions = labelVolume.GetImageData().GetDimensions()
-      self.minimumRadius = 2*min(spacing)
+      self.minimumRadius = 0.5 * min(spacing)
       bounds = [a*b for a,b in zip(spacing,dimensions)]
       self.maximumRadius = 0.5 * min(bounds)
     else:
