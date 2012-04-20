@@ -121,10 +121,55 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetFieldOfView (double x, double y, double z);
 
   /// 
+  /// Origin of XYZ window
+  vtkGetVector3Macro (XYZOrigin, double);
+  void SetXYZOrigin (double x, double y, double z);
+
+  /// 
   /// Number of samples in each direction
   /// -- note that the spacing is implicitly FieldOfView / Dimensions
   vtkGetVectorMacro(Dimensions,int,3)
   void SetDimensions (int x, int y, int z);
+
+  /// 
+  /// Number of samples in each direction for the reslice operation
+  /// -- this is the resolution that each slice layer is resliced into
+  /// -- the outputs of the slice layers are then composited and upsampled 
+  ///    to the full Dimensions
+  /// -- note that z, the number of slices, should be the same for both 
+  ///    Dimensions and UVWDimensions
+  vtkGetVectorMacro(UVWDimensions,int,3)
+  void SetUVWDimensions (int x, int y, int z);
+  void SetUVWDimensions (int xyz[3]);
+
+  ///  
+  ///    maximum limit for  UVWDimensions
+  vtkGetVectorMacro(UVWMaximumDimensions,int,3)
+  void SetUVWMaximumDimensions (int x, int y, int z);
+  void SetUVWMaximumDimensions (int xyz[3]);
+
+  ///
+  /// Get/Set maximum extent in any direction occupied by slice
+  vtkGetVector3Macro (UVWExtents, double);
+  void SetUVWExtents (double x, double y, double z);
+  void SetUVWExtents (double xyz[3]);
+
+  /// 
+  /// Origin of UVW window
+  vtkGetVector3Macro (UVWOrigin, double);
+  void SetUVWOrigin (double x, double y, double z);
+  void SetUVWOrigin (double xyz[3]);
+
+  /// 
+  /// Origin of slice in XYZ or UVW space depending on SliceResolutionMode
+  void SetSliceOrigin (double xyz[3]);
+  void SetSliceOrigin (double x, double y, double z);
+
+  ///
+  /// Set UVW extents and dimensions, 
+  /// produces less upadtes then calling both separately
+  void SetUVWExtentsAndDimensions (double extents[3], int dimensions[3]);
+
 
   /// 
   /// Matrix mapping from XY pixel coordinates on an image window 
@@ -135,6 +180,16 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// Matrix mapping from XY pixel coordinates on an image window 
   /// into RAS world coordinates
   vtkGetObjectMacro (XYToRAS, vtkMatrix4x4);
+
+  /// 
+  /// Matrix mapping from UVW texture coordinates 
+  /// into slice coordinates in mm
+  vtkGetObjectMacro (UVWToSlice, vtkMatrix4x4);
+
+  /// 
+  /// Matrix mapping from UVW texture coordinates
+  /// into RAS world coordinates
+  vtkGetObjectMacro (UVWToRAS, vtkMatrix4x4);
 
   /// 
   /// helper for comparing to matrices
@@ -153,10 +208,12 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// No name (i.e. "") by default. Typical names are colors:
   /// "Red", "Green", "Yellow"... to uniquely define the slice node
   /// \sa vtkMRMLSliceCompositeNode::SetLayoutName
-  void SetLayoutName(const char *layoutName) {
+  void SetLayoutName(const char *layoutName) 
+  {
     this->SetSingletonTag(layoutName);
   }
-  char *GetLayoutName() {
+  char *GetLayoutName() 
+  {
     return this->GetSingletonTag();
   }
 
@@ -294,6 +351,21 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   vtkGetMacro(InteractionFlags, unsigned int);
 
   
+  /// Enum to specify the method for setting UVW extents
+
+  enum SliceResolutionModeType
+  {
+    SliceResolutionMatchVolumes=0, 
+    SliceResolutionMatch2DView,
+    SliceFOVMatch2DViewSpacingMatchVolumes,
+    SliceResolutionCustom
+  };
+
+  /// 
+  /// method for setting UVW space (extents, dimensions and spacing) 
+  virtual void SetSliceResolutionMode(int mode);
+  vtkGetMacro(SliceResolutionMode, int);
+
 protected:
 
 
@@ -303,8 +375,13 @@ protected:
   void operator=(const vtkMRMLSliceNode&);
 
   vtkMatrix4x4 *SliceToRAS;
+
   vtkMatrix4x4 *XYToSlice;
   vtkMatrix4x4 *XYToRAS;
+
+  vtkMatrix4x4 *UVWToSlice;
+  vtkMatrix4x4 *UVWToRAS;
+
 
   int JumpMode;
   
@@ -312,8 +389,17 @@ protected:
   int WidgetVisible;
   int WidgetNormalLockedToCamera;
   int UseLabelOutline;
+
   double FieldOfView[3];
+  double XYZOrigin[3];
+  double UVWOrigin[3];
   int Dimensions[3];
+
+  int SliceResolutionMode;
+  double UVWExtents[3];
+  int UVWDimensions[3];
+  int UVWMaximumDimensions[3];
+
   char *OrientationString;
   char *OrientationReference;
 
@@ -330,6 +416,8 @@ protected:
 
   int Interacting;
   unsigned int InteractionFlags;
+
+  int IsUpdatingMatrices;
 };
 
 #endif

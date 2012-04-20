@@ -201,6 +201,26 @@ public slots:
   void setSliceSpacingMode(bool automatic);
   void setSliceSpacing(double spacing);
   void setSliceFOV(double fov);
+
+  /// Slice Model
+  void setSliceModelMode(int mode);
+  void setSliceModelModeVolumes();
+  void setSliceModelMode2D();
+  void setSliceModelMode2D_Volumes();
+  void setSliceModelModeCustom();
+
+  void setSliceModelFOV(int index, double fov);
+  void setSliceModelFOVX(double fov);
+  void setSliceModelFOVY(double fov);
+
+  void setSliceModelOrigin(int index, double fov);
+  void setSliceModelOriginX(double fov);
+  void setSliceModelOriginY(double fov);
+
+  void setSliceModelDimension(int index, int dim);
+  void setSliceModelDimensionX(int dim);
+  void setSliceModelDimensionY(int dim);
+
   // Lightbox
   void setLightbox(int rows, int columns);
   void setLightboxTo1x1();

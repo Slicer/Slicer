@@ -150,6 +150,9 @@ public:
   virtual int GetDisplayVisibility();
   virtual void SetDisplayVisibility(int visible);
 
+  /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  virtual void GetRASBounds(double bounds[6]);
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();

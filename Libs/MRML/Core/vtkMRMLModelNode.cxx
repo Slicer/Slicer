@@ -15,10 +15,12 @@ Version:   $Revision: 1.3 $
 
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
+#include "vtkMatrix4x4.h"
 
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelStorageNode.h"
+#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
 #include "vtkPointData.h"
@@ -688,6 +690,74 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   this->GetPolyData()->DeepCopy(transformFilter->GetOutput());
 
   transformFilter->Delete();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::GetRASBounds(double bounds[6])
+{
+  Superclass::GetRASBounds( bounds);
+
+  if (this->PolyData == NULL)
+  {
+    return;
+  }
+
+  this->PolyData->ComputeBounds();
+
+  double boundsLocal[6];
+  this->PolyData->GetBounds(boundsLocal);
+
+  vtkMatrix4x4 *localToRas = vtkMatrix4x4::New();
+  localToRas->Identity();
+  vtkMRMLTransformNode *transformNode = this->GetParentTransformNode();
+  if ( transformNode )
+    {
+    vtkMatrix4x4 *rasToRAS = vtkMatrix4x4::New();;
+    transformNode->GetMatrixTransformToWorld(rasToRAS);
+    vtkMatrix4x4::Multiply4x4(rasToRAS, localToRas, localToRas);
+    rasToRAS->Delete();
+    }
+
+  double minBounds[3], maxBounds[3];
+  int i;
+  for ( i=0; i<3; i++)
+    {
+    minBounds[i] = 1.0e10;
+    maxBounds[i] = -1.0e10;
+    }
+
+  double ras[4];
+  double pnts[8][4] = {
+    {boundsLocal[0], boundsLocal[2], boundsLocal[4], 1},
+    {boundsLocal[0], boundsLocal[3], boundsLocal[4], 1},
+    {boundsLocal[0], boundsLocal[2], boundsLocal[5], 1},
+    {boundsLocal[0], boundsLocal[3], boundsLocal[5], 1},
+    {boundsLocal[1], boundsLocal[2], boundsLocal[4], 1},
+    {boundsLocal[1], boundsLocal[3], boundsLocal[4], 1},
+    {boundsLocal[1], boundsLocal[2], boundsLocal[5], 1},
+    {boundsLocal[1], boundsLocal[3], boundsLocal[5], 1}
+  };
+
+  for ( i=0; i<8; i++)
+    {
+    localToRas->MultiplyPoint( pnts[i], ras );
+    for (int n=0; n<3; n++) {
+      if (ras[n] < minBounds[n])
+        {
+        minBounds[n] = ras[n];
+        }
+      if (ras[n] > maxBounds[n])
+        {
+        maxBounds[n] = ras[n];
+        }
+      }
+     }
+   localToRas->Delete();
+   for ( i=0; i<3; i++)
+    {
+    bounds[2*i]   = minBounds[i];
+    bounds[2*i+1] = maxBounds[i];
+    }
 }
 
 //---------------------------------------------------------------------------

@@ -43,23 +43,15 @@
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 
 // VTK includes
-#include "vtkImageMapToWindowLevelColors.h"
-#include "vtkImageThreshold.h"
-#include "vtkImageAppendComponents.h"
 #include "vtkImageLogic.h"
 #include "vtkImageExtractComponents.h"
-#include "vtkImageCast.h"
-#include "vtkLookupTable.h"
 
 class vtkAssignAttribute;
 class vtkImageResliceMask;
-class vtkImageReslice;
-class vtkImageLinearReslice;
 
 // STL includes
 //#include <cstdlib>
 
-class vtkDiffusionTensorMathematics;
 class vtkImageLabelOutline;
 class vtkTransform;
 
@@ -83,6 +75,7 @@ public:
   /// - this node is set implicitly when the volume is set
   ///   and it is observed by this logic
   vtkGetObjectMacro (VolumeDisplayNode, vtkMRMLVolumeDisplayNode);
+  vtkGetObjectMacro (VolumeDisplayNodeUVW, vtkMRMLVolumeDisplayNode);
 
   /// 
   /// The slice node that defines the view 
@@ -91,7 +84,6 @@ public:
 
   /// 
   /// The image reslice or slice being used
-  vtkGetObjectMacro (Slice, vtkImageLinearReslice);
   vtkGetObjectMacro (Reslice, vtkImageResliceMask);
 
   /// 
@@ -102,44 +94,16 @@ public:
   vtkBooleanMacro (IsLabelLayer, int);
 
   /// 
-  /// The filter that applies the threshold
-  vtkGetObjectMacro (Threshold, vtkImageThreshold);
-
-  /// 
   /// The filter that turns the label map into an outline
   vtkGetObjectMacro (LabelOutline, vtkImageLabelOutline);
   
   /// 
-  /// The filter that applies the threshold to the input of the Reslice
-  /// so there's a fully opaque alpha channel within the image
-  /// but fully transparent outside of the image
-  vtkGetObjectMacro (ResliceThreshold, vtkImageThreshold);
-
-  /// 
-  /// The add the alpha channel onto the image
-  vtkGetObjectMacro (AppendComponents, vtkImageAppendComponents);
-
-  /// 
-  /// The add the alpha channel onto the image before the reslice
-  vtkGetObjectMacro (ResliceAppendComponents, vtkImageAppendComponents);
-
-  /// 
-  /// Extract the two channels after reslice for separate processing
-  vtkGetObjectMacro (ResliceExtractLuminance, vtkImageExtractComponents);
-  vtkGetObjectMacro (ResliceExtractAlpha, vtkImageExtractComponents);
-
-  /// 
-  /// Used to convert the alpha channel of the reslice output to be unsigned char
-  /// so it can be blended with the image based threshold
-  vtkGetObjectMacro (ResliceAlphaCast, vtkImageCast);
-
-  /// 
-  /// combine the reslice with the threshold 
-  vtkGetObjectMacro (AlphaLogic, vtkImageLogic);
-
-  /// 
   /// Get the output of the pipeline for this layer
   vtkImageData *GetImageData ();
+
+  /// 
+  /// Get the output of the texture UVW pipeline for this layer
+  vtkImageData *GetImageDataUVW ();
 
   void UpdateImageDisplay();
 
@@ -159,7 +123,8 @@ public:
   /// 
   /// The current reslice transform XYToIJK
   vtkGetObjectMacro (XYToIJKTransform, vtkTransform);
-    
+
+
 protected:
   vtkMRMLSliceLayerLogic();
   virtual ~vtkMRMLSliceLayerLogic();
@@ -183,6 +148,8 @@ protected:
 
   vtkImageData* GetSliceImageData();
 
+  vtkImageData* GetSliceImageDataUVW();
+
   // Copy VolumeDisplayNodeObserved into VolumeDisplayNode
   void UpdateVolumeDisplayNode();
 
@@ -190,35 +157,24 @@ protected:
   /// the MRML Nodes that define this Logic's parameters
   vtkMRMLVolumeNode *VolumeNode;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNode;
+  vtkMRMLVolumeDisplayNode *VolumeDisplayNodeUVW;
   vtkMRMLVolumeDisplayNode *VolumeDisplayNodeObserved;
   vtkMRMLSliceNode *SliceNode;
 
   /// 
   /// the VTK class instances that implement this Logic's operations
-  vtkImageThreshold *ResliceThreshold;
-  vtkImageAppendComponents *ResliceAppendComponents;
-  vtkImageExtractComponents *ResliceExtractLuminance;
-  vtkImageExtractComponents *ResliceExtractAlpha;
-  vtkImageCast *ResliceAlphaCast;
-  vtkImageLogic *AlphaLogic;
   vtkImageResliceMask *Reslice;
-  vtkImageLinearReslice *Slice;
-  vtkImageThreshold *Threshold;
+  vtkImageResliceMask *ResliceUVW;
   vtkImageLabelOutline *LabelOutline;
-  vtkImageAppendComponents *AppendComponents;
-
-  /// 
-  /// VTK class instances that implement the DWI logic operations
-  vtkImageExtractComponents *DWIExtractComponent;
-
-  vtkImageReslice *DTIReslice;
-  vtkDiffusionTensorMathematics *DTIMathematics;
+  vtkImageLabelOutline *LabelOutlineUVW;
 
   vtkAssignAttribute* AssignAttributeTensorsToScalars;
   vtkAssignAttribute* AssignAttributeScalarsToTensors;
+  vtkAssignAttribute* AssignAttributeScalarsToTensorsUVW;
 
   /// TODO: make this a vtkAbstractTransform for non-linear
   vtkTransform *XYToIJKTransform;
+  vtkTransform *UVWToIJKTransform;
 
   int IsLabelLayer;
 

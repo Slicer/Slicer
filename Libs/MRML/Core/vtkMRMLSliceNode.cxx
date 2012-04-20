@@ -49,6 +49,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   // calculated by UpdateMatrices()
   this->XYToSlice = vtkMatrix4x4::New();
   this->XYToRAS = vtkMatrix4x4::New();
+  this->UVWToSlice = vtkMatrix4x4::New();
+  this->UVWToRAS = vtkMatrix4x4::New();
 
   // set the default field of view to a convenient size for looking 
   // at slices through human heads (a 1 pixel thick slab 25x25 cm)
@@ -60,6 +62,29 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->Dimensions[0] = 256;
   this->Dimensions[1] = 256;
   this->Dimensions[2] = 1;
+
+  this->UVWDimensions[0] = 256;
+  this->UVWDimensions[1] = 256;
+  this->UVWDimensions[2] = 1;
+
+  this->UVWMaximumDimensions[0] = 1024;
+  this->UVWMaximumDimensions[1] = 1024;
+  this->UVWMaximumDimensions[2] = 1024;
+
+  this->UVWExtents[0] = 0;
+  this->UVWExtents[1] = 0;
+  this->UVWExtents[2] = 0;
+
+  this->SliceResolutionMode = vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes;
+
+  this->XYZOrigin[0] = 0;
+  this->XYZOrigin[1] = 0;
+  this->XYZOrigin[2] = 0;
+
+  this->UVWOrigin[0] = 0;
+  this->UVWOrigin[1] = 0;
+  this->UVWOrigin[2] = 0;
+
   this->SliceVisible = 0;
   this->WidgetVisible = 0;
   this->WidgetNormalLockedToCamera = 0;
@@ -77,6 +102,8 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->Interacting = 0;
   this->InteractionFlags = 0;
+
+  this->IsUpdatingMatrices = 0;
 
   this->LayoutLabel = new char[1];
   strcpy(this->LayoutLabel, "");
@@ -99,6 +126,14 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
   if ( this->XYToRAS != NULL) 
     {
     this->XYToRAS->Delete();
+    }
+  if ( this->UVWToSlice != NULL) 
+    {
+    this->UVWToSlice->Delete();
+    }
+  if ( this->UVWToRAS != NULL) 
+    {
+    this->UVWToRAS->Delete();
     }
   if ( this->OrientationString )
     {
@@ -403,30 +438,38 @@ void vtkMRMLSliceNode::SetSliceToRASByNTP (double Nx, double Ny, double Nz,
 //
 void vtkMRMLSliceNode::UpdateMatrices()
 {
-    double spacing[3];
-    unsigned int i;
-    vtkSmartPointer<vtkMatrix4x4> xyToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
-    vtkSmartPointer<vtkMatrix4x4> xyToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  if (this->IsUpdatingMatrices)
+    {
+    return;
+    }
+  else
+    {
+    this->IsUpdatingMatrices = 1;
+    }
+  double spacing[3];
+  unsigned int i;
+  vtkSmartPointer<vtkMatrix4x4> xyToSlice = vtkSmartPointer<vtkMatrix4x4>::New();
+  vtkSmartPointer<vtkMatrix4x4> xyToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
 
-    int disabledModify = this->StartModify();
+  int disabledModify = this->StartModify();
 
-    // the mapping from XY output slice pixels to Slice Plane coordinate
-    xyToSlice->Identity();
-    if (this->Dimensions[0] > 0 &&
-        this->Dimensions[1] > 0 &&
-        this->Dimensions[2] > 0)
+  // the mapping from XY output slice pixels to Slice Plane coordinate
+  xyToSlice->Identity();
+  if (this->Dimensions[0] > 0 &&
+      this->Dimensions[1] > 0 &&
+      this->Dimensions[2] > 0)
+    {
+    for (i = 0; i < 3; i++)
       {
-      for (i = 0; i < 3; i++)
-        {
-        spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
-        xyToSlice->SetElement(i, i, spacing[i]);
-        xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2.);
-        }
-      //vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
-      //xyToSlice->SetElement(2, 2, 1.);
-
-      xyToSlice->SetElement(2, 3, 0.);
+      spacing[i] = this->FieldOfView[i] / this->Dimensions[i];
+      xyToSlice->SetElement(i, i, spacing[i]);
+      xyToSlice->SetElement(i, 3, -this->FieldOfView[i] / 2. + this->XYZOrigin[i]);
       }
+    //vtkWarningMacro( << "FieldOfView[2] = " << this->FieldOfView[2] << ", Dimensions[2] = " << this->Dimensions[2] );
+    //xyToSlice->SetElement(2, 2, 1.);
+
+    xyToSlice->SetElement(2, 3, 0.);
+    }
 
     // the mapping from slice plane coordinates to RAS 
     // (the Orienation as in Axial, Sagittal, Coronal)
@@ -444,17 +487,45 @@ void vtkMRMLSliceNode::UpdateMatrices()
     //
     vtkMatrix4x4::Multiply4x4(this->SliceToRAS, xyToSlice, xyToRAS);
 
+    bool modified = false;
+
     // check to see if the matrix actually changed
     if ( !Matrix4x4AreEqual (xyToRAS, this->XYToRAS) )
       {
       this->XYToSlice->DeepCopy( xyToSlice );
       this->XYToRAS->DeepCopy( xyToRAS );
-      this->Modified();  // RSierra 3/9/07 This triggesr the update on
-                         // the windows. In the IGT module when the
-                         // slices are updated by the tracker it might
-                         // be better to trigger the update AFTER all
-                         // positions are modified to synchoronously
-                         // update what the user sees ...
+      modified = true;
+      }
+
+
+    // the mapping from XY output slice pixels to Slice Plane coordinate
+    this->UVWToSlice->Identity();
+    if (this->UVWDimensions[0] > 0 &&
+        this->UVWDimensions[1] > 0 &&
+        this->UVWDimensions[2] > 0)
+      {
+      for (i = 0; i < 3; i++)
+        {
+        spacing[i] = this->UVWExtents[i] / this->UVWDimensions[i];
+        this->UVWToSlice->SetElement(i, i, spacing[i]);
+        this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
+        }
+      this->UVWToSlice->SetElement(2, 3, 0.);
+      }
+
+    vtkSmartPointer<vtkMatrix4x4> uvwToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+
+    vtkMatrix4x4::Multiply4x4(this->SliceToRAS, this->UVWToSlice, uvwToRAS);
+
+    if ( !Matrix4x4AreEqual (uvwToRAS, this->UVWToRAS) )
+      {
+      this->UVWToRAS->DeepCopy( uvwToRAS );
+      modified = true;
+      }
+
+    if (modified)
+      {
+      this->Modified(); 
       }
 
     const char *orientationString = "Reformat";
@@ -503,8 +574,10 @@ void vtkMRMLSliceNode::UpdateMatrices()
     // (typically when the scene is closed, slice nodes are reset but shouldn't
     // fire events. We should respect the modifiedWasDisabled flag.
     this->EndModify(disabledModify);
-}
 
+    this->IsUpdatingMatrices = 0;
+
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
@@ -524,6 +597,29 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
         this->Dimensions[0] << " " <<
         this->Dimensions[1] << " " <<
         this->Dimensions[2] << "\"";
+
+  of << indent << " xyzOrigin=\"" << 
+        this->XYZOrigin[0] << " " <<
+        this->XYZOrigin[1] << " " <<
+        this->XYZOrigin[2] << "\"";
+
+  of << indent << " sliceResolutionMode=\"" << this->SliceResolutionMode << "\"";
+
+  of << indent << " uvwExtents=\"" << 
+        this->UVWExtents[0] << " " <<
+        this->UVWExtents[1] << " " <<
+        this->UVWExtents[2] << "\"";
+
+  of << indent << " uvwDimensions=\"" << 
+        this->UVWDimensions[0] << " " <<
+        this->UVWDimensions[1] << " " <<
+        this->UVWDimensions[2] << "\"";
+
+  of << indent << " uvwOrigin=\"" << 
+        this->UVWOrigin[0] << " " <<
+        this->UVWOrigin[1] << " " <<
+        this->UVWOrigin[2] << "\"";
+
 
   of << indent << " activeSlice=\"" << this->ActiveSlice << "\"";
   
@@ -625,6 +721,74 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         this->FieldOfView[i] = val;
         }
       }
+    else if (!strcmp(attName, "xyzOrigin")) 
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->XYZOrigin[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "uvwOrigin")) 
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->UVWOrigin[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "uvwExtents")) 
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->UVWExtents[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "uvwDimensions")) 
+      {
+      std::stringstream ss;
+      double val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->UVWDimensions[i] = val;
+        }
+      }
+    else if (!strcmp(attName, "sliceResolutionMode")) 
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+      
+      this->SliceResolutionMode = val;
+      }
+
+    else if (!strcmp(attName, "sliceResolutionMode")) 
+      {
+      std::stringstream ss;
+      int val;
+      ss << attValue;
+      ss >> val;
+      
+      this->SliceResolutionMode = val;
+      }
+
     else if (!strcmp(attName, "activeSlice")) 
       {
       std::stringstream ss;
@@ -716,6 +880,18 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
         {
         ss >> val;
         this->Dimensions[i] = val;
+        }
+      }
+   else if (!strcmp(attName, "resliceDimensions")) 
+      {
+      std::stringstream ss;
+      unsigned int val;
+      ss << attValue;
+      int i;
+      for (i=0; i<3; i++) 
+        {
+        ss >> val;
+        this->UVWDimensions[i] = val;
         }
       }
     else if (!strcmp(attName, "sliceToRAS")) 
@@ -845,11 +1021,18 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   this->WidgetVisible = node->WidgetVisible;
   this->UseLabelOutline = node->UseLabelOutline;
 
+  this->SliceResolutionMode = node->SliceResolutionMode;
+
   int i;
   for(i=0; i<3; i++) 
     {
     this->FieldOfView[i] = node->FieldOfView[i];
     this->Dimensions[i] = node->Dimensions[i];
+    this->XYZOrigin[i] = node->XYZOrigin[i];
+    this->UVWDimensions[i] = node->UVWDimensions[i];
+    this->UVWExtents[i] = node->UVWExtents[i];
+    this->UVWOrigin[i] = node->UVWOrigin[i];
+    this->UVWMaximumDimensions[i] = node->UVWMaximumDimensions[i];
     this->PrescribedSliceSpacing[i] = node->PrescribedSliceSpacing[i];
     }
   this->UpdateMatrices();
@@ -893,6 +1076,32 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << indent << " " << this->Dimensions[idx];
   }
   os << "\n";
+
+  os << indent << "XYZOrigin:\n ";
+  for (idx = 0; idx < 3; ++idx) {
+    os << indent << indent << " " << this->XYZOrigin[idx];
+  }
+  os << "\n";
+
+  os << indent << "UVWDimensions:\n ";
+  for (idx = 0; idx < 3; ++idx) {
+    os << indent << indent << " " << this->UVWDimensions[idx];
+  }
+  os << "\n";
+
+  os << indent << "UVWExtents:\n ";
+  for (idx = 0; idx < 3; ++idx) {
+    os << indent << indent << " " << this->UVWExtents[idx];
+  }
+  os << "\n";
+
+  os << indent << "UVWOrigin:\n ";
+  for (idx = 0; idx < 3; ++idx) {
+    os << indent << indent << " " << this->UVWOrigin[idx];
+  }
+  os << "\n";
+
+  os << indent << "SliceResolutionMode: " << this->SliceResolutionMode << "\n";
 
   os << indent << "Layout grid: " << this->LayoutGridRows << "x" << this->LayoutGridColumns << "\n";
   os << indent << "Active slice: " << this->ActiveSlice << "\n";
@@ -1039,8 +1248,9 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
 
 void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 {
-  if ( x != this->FieldOfView[0] || y != this->FieldOfView[1]
-       || z != this->FieldOfView[2] )
+  if ( x != this->FieldOfView[0] || 
+       y != this->FieldOfView[1] ||
+       z != this->FieldOfView[2] )
     {
     this->FieldOfView[0] = x;
     this->FieldOfView[1] = y;
@@ -1049,15 +1259,225 @@ void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
     }
 }
 
+void vtkMRMLSliceNode::SetXYZOrigin(double x, double y, double z)
+{
+  if ( x != this->XYZOrigin[0] || 
+       y != this->XYZOrigin[1] ||
+       z != this->XYZOrigin[2] )
+    {
+    this->XYZOrigin[0] = x;
+    this->XYZOrigin[1] = y;
+    this->XYZOrigin[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetUVWOrigin(double x, double y, double z)
+{
+  if ( x != this->UVWOrigin[0] || 
+       y != this->UVWOrigin[1] ||
+       z != this->UVWOrigin[2] )
+    {
+    this->UVWOrigin[0] = x;
+    this->UVWOrigin[1] = y;
+    this->UVWOrigin[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
 void vtkMRMLSliceNode::SetDimensions(int x, int y,
                                      int z)
 {
-  if ( x != this->Dimensions[0] || y != this->Dimensions[1]
-       || z != this->Dimensions[2] )
+  if ( x != this->Dimensions[0] || 
+       y != this->Dimensions[1] ||
+       z != this->Dimensions[2] )
     {
     this->Dimensions[0] = x;
     this->Dimensions[1] = y;
     this->Dimensions[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetUVWExtents (double x, double y, double z)
+{
+  if ( x != this->UVWExtents[0] || 
+       y != this->UVWExtents[1] || 
+       z != this->UVWExtents[2] )
+    {
+    this->UVWExtents[0] = x;
+    this->UVWExtents[1] = y;
+    this->UVWExtents[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetUVWExtents (double xyz[3])
+{
+  this->SetUVWExtents(xyz[0], xyz[1], xyz[2]);
+}
+
+void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
+{
+  if (this->SliceResolutionMode != mode)
+  {
+    this->SliceResolutionMode = mode;
+    if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes ||
+        this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||
+        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
+    {
+      this->SetUVWOrigin(0,0,0);
+    }
+    this->Modified();
+    this->UpdateMatrices();
+  }
+}
+
+
+void vtkMRMLSliceNode::SetUVWDimensions (int xyz[3])
+{
+  this->SetUVWDimensions(xyz[0], xyz[1], xyz[2]);
+}
+
+void vtkMRMLSliceNode::SetUVWMaximumDimensions (int xyz[3])
+{
+  this->SetUVWMaximumDimensions(xyz[0], xyz[1], xyz[2]);
+}
+
+void vtkMRMLSliceNode::SetUVWOrigin (double xyz[3])
+{
+  this->SetUVWOrigin(xyz[0], xyz[1], xyz[2]);
+}
+
+
+
+void vtkMRMLSliceNode::SetUVWMaximumDimensions(int x, int y,
+                                               int z)
+{
+  if ( x != this->UVWMaximumDimensions[0] || y != this->UVWMaximumDimensions[1]
+       || z != this->UVWMaximumDimensions[2] )
+    {
+    this->UVWMaximumDimensions[0] = x;
+    this->UVWMaximumDimensions[1] = y;
+    this->UVWMaximumDimensions[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetUVWDimensions(int x, int y,
+                                            int z)
+{
+  if ( x != this->UVWDimensions[0] || 
+       y != this->UVWDimensions[1] ||
+       z != this->UVWDimensions[2] )
+    {
+    if (x > this->UVWMaximumDimensions[0])
+      {
+      x = this->UVWMaximumDimensions[0];
+      }
+    if (y > this->UVWMaximumDimensions[1])
+      {
+      y = this->UVWMaximumDimensions[1];
+      }
+    if (z > this->UVWMaximumDimensions[2])
+      {
+      z = this->UVWMaximumDimensions[2];
+      }
+    this->UVWDimensions[0] = x;
+    this->UVWDimensions[1] = y;
+    this->UVWDimensions[2] = z;
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetSliceOrigin(double x, double y, double z)
+{
+  bool modified = false;
+  double u=x;
+  double v=y;
+  double w=z;
+
+  if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
+    {
+    u=0;
+    v=0;
+    w=0;
+    }
+  if (this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionMatch2DView &&
+      this->SliceResolutionMode != vtkMRMLSliceNode::SliceResolutionCustom)
+    {
+    if ( u != this->UVWOrigin[0] || 
+         v != this->UVWOrigin[1] ||
+         w != this->UVWOrigin[2] )
+      {
+      this->UVWOrigin[0] = u;
+      this->UVWOrigin[1] = v;
+      this->UVWOrigin[2] = w;
+      modified = true;
+      }
+    }
+  if ( x != this->XYZOrigin[0] || 
+       y != this->XYZOrigin[1] ||
+       z != this->XYZOrigin[2] )
+    {
+    this->XYZOrigin[0] = x;
+    this->XYZOrigin[1] = y;
+    this->XYZOrigin[2] = z;
+    modified = true;
+    }
+
+  if (modified)
+    {
+    this->UpdateMatrices();
+    }
+}
+
+void vtkMRMLSliceNode::SetSliceOrigin(double xyz[3])
+{
+  this->SetSliceOrigin(xyz[0],xyz[1],xyz[2]);
+}
+
+void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimensions[3])
+{
+  bool modified = false;
+
+  if ( extents[0] != this->UVWExtents[0] || 
+       extents[1] != this->UVWExtents[1] || 
+       extents[2] != this->UVWExtents[2] )
+    {
+    modified = true;
+    this->UVWExtents[0] = extents[0];
+    this->UVWExtents[1] = extents[1];
+    this->UVWExtents[2] = extents[2];
+    }
+
+  if ( dimensions[0] != this->UVWDimensions[0] || 
+       dimensions[1] != this->UVWDimensions[1] ||
+       dimensions[2] != this->UVWDimensions[2] )
+    {
+    if (dimensions[0] > this->UVWMaximumDimensions[0])
+      {
+      dimensions[0] = this->UVWMaximumDimensions[0];
+      modified = true;
+      }
+    if (dimensions[1] > this->UVWMaximumDimensions[1])
+      {
+      dimensions[1] = this->UVWMaximumDimensions[1];
+      modified = true;
+      }
+    if (dimensions[2] > this->UVWMaximumDimensions[2])
+      {
+      dimensions[2] = this->UVWMaximumDimensions[2];
+      modified = true;
+      }
+    this->UVWDimensions[0] = dimensions[0];
+    this->UVWDimensions[1] = dimensions[1];
+    this->UVWDimensions[2] = dimensions[2];
+
+    }
+
+  if (modified)
+    {
     this->UpdateMatrices();
     }
 }

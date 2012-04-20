@@ -131,6 +131,9 @@ public:
   void SetIJKToRASMatrix(vtkMatrix4x4* mat);
   void SetRASToIJKMatrix(vtkMatrix4x4* mat);
 
+  /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  virtual void GetRASBounds(double bounds[6]);
+
   /// 
   /// Associated display MRML node
   virtual vtkMRMLVolumeDisplayNode* GetVolumeDisplayNode();

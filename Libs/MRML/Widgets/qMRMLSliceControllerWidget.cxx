@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDoubleSpinBox>
+#include <QSpinBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -84,11 +85,21 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->LightboxMenu = 0;
   this->CompositingMenu = 0;
   this->SliceSpacingMenu = 0;
+  this->SliceModelMenu = 0;
 
   this->SliceSpacingSpinBox = 0;
   this->SliceFOVSpinBox = 0;
   this->LightBoxRowsSpinBox = 0;
   this->LightBoxColumnsSpinBox = 0;
+
+  this->SliceModelFOVXSpinBox = 0;
+  this->SliceModelFOVYSpinBox = 0;
+
+  this->SliceModelOriginXSpinBox = 0;
+  this->SliceModelOriginYSpinBox = 0;
+
+  this->SliceModelDimensionXSpinBox = 0;
+  this->SliceModelDimensionYSpinBox = 0;
 
 }
 
@@ -184,6 +195,16 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setCompositingToSubtract()));
   QObject::connect(this->actionSliceSpacingModeAutomatic, SIGNAL(toggled(bool)),
                    q, SLOT(setSliceSpacingMode(bool)));
+
+  QObject::connect(this->actionSliceModelModeVolumes, SIGNAL(triggered()),
+                   q, SLOT(setSliceModelModeVolumes()));
+  QObject::connect(this->actionSliceModelMode2D, SIGNAL(triggered()),
+                   q, SLOT(setSliceModelMode2D()));
+  QObject::connect(this->actionSliceModelMode2D_Volumes, SIGNAL(triggered()),
+                   q, SLOT(setSliceModelMode2D_Volumes()));
+  //QObject::connect(this->actionSliceModelModeCustom, SIGNAL(triggered()),
+  //                 q, SLOT(setSliceModelModeCustom()));
+
   QObject::connect(this->actionLightbox1x1_view, SIGNAL(triggered()),
                    q, SLOT(setLightboxTo1x1()));
   QObject::connect(this->actionLightbox1x2_view, SIGNAL(triggered()),
@@ -205,6 +226,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->setupLightboxMenu();
   this->setupCompositingMenu();
   this->setupSliceSpacingMenu();
+  this->setupSliceModelMenu();
 
   // Visibility column
   this->connect(this->actionLabelMapVisibility, SIGNAL(triggered(bool)),
@@ -280,6 +302,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
 
   this->SliceCompositeButton->setMenu(this->CompositingMenu);
   this->SliceSpacingButton->setMenu(this->SliceSpacingMenu);
+  this->SliceVisibilityButton->setMenu(this->SliceModelMenu);
   this->SliceRotateToVolumePlaneButton->setDefaultAction(
     this->actionRotate_to_volume_plane);
   this->SliceMoreOptionButton->setVisible(false);
@@ -501,6 +524,110 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   sliceFOVMenu->addAction(sliceFOVAction);
   this->SliceSpacingMenu->addMenu(sliceFOVMenu);
 }
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
+{
+  Q_Q(qMRMLSliceControllerWidget);
+
+  // Slice model mode
+  this->SliceModelMenu = new QMenu(tr("Slice model mode"), this->SliceVisibilityButton);
+  this->SliceModelMenu->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
+  this->SliceModelMenu->addAction(this->actionSliceModelModeVolumes);
+  this->SliceModelMenu->addAction(this->actionSliceModelMode2D);
+  this->SliceModelMenu->addAction(this->actionSliceModelMode2D_Volumes);
+  //this->SliceModelMenu->addAction(this->actionSliceModelModeCustom);
+
+  this->SliceVisibilityButton->setCheckable(true);
+  this->SliceVisibilityButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  this->SliceVisibilityButton->setPopupMode(QToolButton::MenuButtonPopup);
+
+  // TODO add custom sliders
+  double UVWExtents[] = {256,256,256};
+  double UVWOrigin[] = {0,0,0};
+  int UVWDimensions[] = {256,256,256};
+  if (this->MRMLSliceNode)
+  {
+    this->MRMLSliceNode->GetUVWExtents(UVWExtents);
+    this->MRMLSliceNode->GetUVWOrigin(UVWOrigin);
+    this->MRMLSliceNode->GetUVWDimensions(UVWDimensions);
+  }
+
+  QMenu* fovSliceModelMenu = new QMenu(tr("Manual FOV"), this->SliceModelMenu);
+  QWidget* fovSliceModel = new QWidget(this->SliceModelMenu);
+  QHBoxLayout* fovSliceModelLayout = new QHBoxLayout(fovSliceModel);
+
+  this->SliceModelFOVXSpinBox = new QDoubleSpinBox(fovSliceModel);
+  this->SliceModelFOVXSpinBox->setRange(0.01, 10000.);
+  this->SliceModelFOVXSpinBox->setValue(UVWExtents[0]);
+  QObject::connect(this->SliceModelFOVXSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceModelFOVX(double)));
+
+  this->SliceModelFOVYSpinBox = new QDoubleSpinBox(fovSliceModel);
+  this->SliceModelFOVYSpinBox->setRange(0.01, 10000.);
+  this->SliceModelFOVYSpinBox->setValue(UVWExtents[1]);
+  QObject::connect(this->SliceModelFOVYSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceModelFOVY(double)));
+
+  fovSliceModelLayout->addWidget(this->SliceModelFOVXSpinBox);
+  fovSliceModelLayout->addWidget(this->SliceModelFOVYSpinBox);
+  fovSliceModel->setLayout(fovSliceModelLayout);
+
+  QWidgetAction* fovSliceModelAction = new QWidgetAction(fovSliceModel);
+  fovSliceModelAction->setDefaultWidget(fovSliceModel);
+  fovSliceModelMenu->addAction(fovSliceModelAction);
+  this->SliceModelMenu->addMenu(fovSliceModelMenu);
+  
+  QMenu* dimesnionsSliceModelMenu = new QMenu(tr("Manual Dimensions"), this->SliceModelMenu);
+  QWidget* dimesnionsSliceModel = new QWidget(this->SliceModelMenu);
+  QHBoxLayout* dimesnionsSliceModelLayout = new QHBoxLayout(dimesnionsSliceModel);
+
+  this->SliceModelDimensionXSpinBox = new QSpinBox(dimesnionsSliceModel);
+  this->SliceModelDimensionXSpinBox->setRange(1, 2000);
+  this->SliceModelDimensionXSpinBox->setValue(UVWDimensions[0]);
+  QObject::connect(this->SliceModelDimensionXSpinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(setSliceModelDimensionX(int)));
+
+  this->SliceModelDimensionYSpinBox = new QSpinBox(dimesnionsSliceModel);
+  this->SliceModelDimensionYSpinBox->setRange(1, 2000);
+  this->SliceModelDimensionYSpinBox->setValue(UVWDimensions[1]);
+  QObject::connect(this->SliceModelDimensionYSpinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(setSliceModelDimensionY(int)));
+
+  dimesnionsSliceModelLayout->addWidget(this->SliceModelDimensionXSpinBox);
+  dimesnionsSliceModelLayout->addWidget(this->SliceModelDimensionYSpinBox);
+  dimesnionsSliceModel->setLayout(dimesnionsSliceModelLayout);
+
+  QWidgetAction* dimesnionsSliceModelAction = new QWidgetAction(dimesnionsSliceModel);
+  dimesnionsSliceModelAction->setDefaultWidget(dimesnionsSliceModel);
+  dimesnionsSliceModelMenu->addAction(dimesnionsSliceModelAction);
+  this->SliceModelMenu->addMenu(dimesnionsSliceModelMenu);
+  
+  QMenu* originSliceModelMenu = new QMenu(tr("Manual Origin"), this->SliceModelMenu);
+  QWidget* originSliceModel = new QWidget(this->SliceModelMenu);
+  QHBoxLayout* originSliceModelLayout = new QHBoxLayout(originSliceModel);
+
+  this->SliceModelOriginXSpinBox = new QDoubleSpinBox(originSliceModel);
+  this->SliceModelOriginXSpinBox->setRange(-1000., 1000.);
+  this->SliceModelOriginXSpinBox->setValue(UVWOrigin[0]);
+  QObject::connect(this->SliceModelOriginXSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceModelOriginX(double)));
+
+  this->SliceModelOriginYSpinBox = new QDoubleSpinBox(originSliceModel);
+  this->SliceModelOriginYSpinBox->setRange(-1000, 1000.);
+  this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
+  QObject::connect(this->SliceModelOriginYSpinBox, SIGNAL(valueChanged(double)),
+                   q, SLOT(setSliceModelOriginY(double)));
+
+  originSliceModelLayout->addWidget(this->SliceModelOriginXSpinBox);
+  originSliceModelLayout->addWidget(this->SliceModelOriginYSpinBox);
+  originSliceModel->setLayout(originSliceModelLayout);
+
+  QWidgetAction* originSliceModelAction = new QWidgetAction(originSliceModel);
+  originSliceModelAction->setDefaultWidget(originSliceModel);
+  originSliceModelMenu->addAction(originSliceModelAction);
+  this->SliceModelMenu->addMenu(originSliceModelMenu);
+  
+}
 
 // --------------------------------------------------------------------------
 void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
@@ -510,6 +637,7 @@ void qMRMLSliceControllerWidgetPrivate::setupMoreOptionsMenu()
   advancedMenu->addMenu(this->CompositingMenu);
   advancedMenu->addAction(this->actionRotate_to_volume_plane);
   advancedMenu->addMenu(this->SliceSpacingMenu);
+  advancedMenu->addMenu(this->SliceModelMenu);
 
   this->SliceMoreOptionButton->setMenu(advancedMenu);
 }
@@ -669,6 +797,48 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionLightbox2x2_view->setChecked(rows == 2 && columns == 2);
   this->actionLightbox3x3_view->setChecked(rows == 3 && columns == 3);
   this->actionLightbox6x6_view->setChecked(rows == 6 && columns == 6);
+
+  this->actionSliceModelModeVolumes->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+                                                vtkMRMLSliceNode::SliceResolutionMatchVolumes);
+  this->actionSliceModelMode2D->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+                                                vtkMRMLSliceNode::SliceResolutionMatch2DView);
+  this->actionSliceModelMode2D_Volumes->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+                                                vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes);
+  //this->actionSliceModelModeCustom->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
+  //                                              vtkMRMLSliceNode::SliceResolutionCustom);
+
+  double UVWExtents[] = {256,256,256};
+  double UVWOrigin[] = {0,0,0};
+  int UVWDimensions[] = {256,256,256};
+
+  this->MRMLSliceNode->GetUVWExtents(UVWExtents);
+  this->MRMLSliceNode->GetUVWOrigin(UVWOrigin);
+  this->MRMLSliceNode->GetUVWDimensions(UVWDimensions);
+
+  wasBlocked = this->SliceModelFOVXSpinBox->blockSignals(true);
+  this->SliceModelFOVXSpinBox->setValue(UVWExtents[0]);
+  this->SliceModelFOVXSpinBox->blockSignals(wasBlocked);
+
+  wasBlocked = this->SliceModelFOVYSpinBox->blockSignals(true);
+  this->SliceModelFOVYSpinBox->setValue(UVWExtents[1]);
+  this->SliceModelFOVYSpinBox->blockSignals(wasBlocked);
+
+  wasBlocked = this->SliceModelDimensionXSpinBox->blockSignals(true);
+  this->SliceModelDimensionXSpinBox->setValue(UVWDimensions[0]);
+  this->SliceModelDimensionXSpinBox->blockSignals(wasBlocked);
+
+  wasBlocked = this->SliceModelDimensionYSpinBox->blockSignals(true);
+  this->SliceModelDimensionYSpinBox->setValue(UVWDimensions[1]);
+  this->SliceModelDimensionYSpinBox->blockSignals(wasBlocked);
+
+  wasBlocked = this->SliceModelOriginXSpinBox->blockSignals(true);
+  this->SliceModelOriginXSpinBox->setValue(UVWOrigin[0]);
+  this->SliceModelOriginXSpinBox->blockSignals(wasBlocked);
+
+  wasBlocked = this->SliceModelOriginYSpinBox->blockSignals(true);
+  this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
+  this->SliceModelOriginYSpinBox->blockSignals(wasBlocked);
+  
 }
 
 // --------------------------------------------------------------------------
@@ -1828,6 +1998,116 @@ void qMRMLSliceControllerWidget::setSliceFOV(double fov)
       sliceLogic->FitFOVToBackground(fov);
       }
     }
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelFOV(int index, double fov)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  double oldFov[3];
+  d->MRMLSliceNode->GetUVWExtents(oldFov);
+  if (qAbs(oldFov[index] - fov) < 0.01)
+    {
+    return;
+    }
+  oldFov[index] = fov;
+  this->mrmlSliceNode()->SetSliceResolutionMode(vtkMRMLSliceNode::SliceResolutionCustom);
+  this->mrmlSliceNode()->SetUVWExtents(oldFov);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelFOVX(double fov)
+{
+  this->setSliceModelFOV(0,fov);
+}
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelFOVY(double fov)
+{
+  this->setSliceModelFOV(1,fov);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelDimension(int index, int dimension)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  int oldDimension[3];
+  d->MRMLSliceNode->GetUVWDimensions(oldDimension);
+  if (qAbs(oldDimension[index] - dimension) < 0.01)
+    {
+    return;
+    }
+  oldDimension[index] = dimension;
+  this->mrmlSliceNode()->SetSliceResolutionMode(vtkMRMLSliceNode::SliceResolutionCustom);
+  this->mrmlSliceNode()->SetUVWDimensions(oldDimension);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelDimensionX(int dimension)
+{
+  this->setSliceModelDimension(0,dimension);
+}
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelDimensionY(int dimension)
+{
+  this->setSliceModelDimension(1,dimension);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelOrigin(int index, double origin)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  double oldOrigin[3];
+  d->MRMLSliceNode->GetUVWOrigin(oldOrigin);
+  if (qAbs(oldOrigin[index] - origin) < 0.01)
+    {
+    return;
+    }
+  oldOrigin[index] = origin;
+  this->mrmlSliceNode()->SetSliceResolutionMode(vtkMRMLSliceNode::SliceResolutionCustom);
+  this->mrmlSliceNode()->SetUVWOrigin(oldOrigin);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelOriginX(double origin)
+{
+  this->setSliceModelOrigin(0,origin);
+}
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelOriginY(double origin)
+{
+  this->setSliceModelOrigin(1,origin);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelModeVolumes()
+{
+  this->setSliceModelMode(vtkMRMLSliceNode::SliceResolutionMatchVolumes);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelMode2D()
+{
+  this->setSliceModelMode(vtkMRMLSliceNode::SliceResolutionMatch2DView);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelMode2D_Volumes()
+{
+  this->setSliceModelMode(vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes);
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelModeCustom()
+{
+  this->setSliceModelMode(vtkMRMLSliceNode::SliceResolutionCustom);
+  // TODO show sliders
+}
+
+//---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setSliceModelMode(int mode)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  d->MRMLSliceNode->SetSliceResolutionMode(mode);
 }
 
 //---------------------------------------------------------------------------

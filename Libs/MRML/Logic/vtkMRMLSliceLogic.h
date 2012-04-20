@@ -49,6 +49,7 @@ class vtkTransform;
 class vtkImageData;
 class vtkImageReslice;
 class vtkPolyDataCollection;
+class vtkTransform;
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic 
 {
@@ -130,6 +131,7 @@ public:
   /// The compositing filter
   /// TODO: this will eventually be generalized to a per-layer compositing function
   vtkGetObjectMacro(Blend, vtkImageBlend);
+  vtkGetObjectMacro(BlendUVW, vtkImageBlend);
 
   /// 
   /// The offset to the correct slice for lightbox mode
@@ -264,6 +266,14 @@ public:
   double GetSliceOffset();
   void SetSliceOffset(double offset);
 
+  ///
+  /// Get the largest slice bounding box for all volumes in layers
+  void GetSliceBounds(double sliceBounds[6]);
+
+  ///
+  /// Set slice extents to all layers
+  void SetSliceExtentsToSliceNode();
+
   /// Indicate an interaction with the slice node is beginning. The
   /// parameters of the slice node being manipulated are passed as a
   /// bitmask. See vtkMRMLSliceNode::InteractionFlagType.
@@ -318,10 +328,6 @@ public:
   void DeleteSliceModel();
   
   /// 
-  /// Get PolyData models like glyphs etc.
-  void GetPolyDataAndLookUpTableCollections(vtkPolyDataCollection *PolyDataCollection,
-                                            vtkCollection *LookupTableCollection);
-  /// 
   /// Get  all slice displaynodes creating PolyData models like glyphs etc.
   std::vector< vtkMRMLDisplayNode*> GetPolyDataDisplayNodes();
   /// Return the associated slicerlayer nodes
@@ -374,9 +380,10 @@ protected:
   double LabelOpacity;
 
   vtkImageBlend *   Blend;
+  vtkImageBlend *   BlendUVW;
+  vtkImageReslice * ExtractModelTexture;
   vtkImageData *    ImageData;
   vtkTransform *    ActiveSliceTransform;
-  vtkImageReslice * ExtractModelTexture;
 
   vtkPolyDataCollection * PolyDataCollection;
   vtkCollection *         LookupTableCollection;
@@ -386,8 +393,6 @@ protected:
   vtkMRMLLinearTransformNode *  SliceModelTransformNode;
   double                        SliceSpacing[3];
   
-  void AddSliceGlyphs(vtkMRMLSliceLayerLogic *layerLogic);
-
 private:
 
   vtkMRMLSliceLogic(const vtkMRMLSliceLogic&);

@@ -105,6 +105,9 @@ public:
   
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
 
+  /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
+  virtual void GetRASBounds(double bounds[6]);
+
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 

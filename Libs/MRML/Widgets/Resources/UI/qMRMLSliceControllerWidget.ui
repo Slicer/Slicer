@@ -4,10 +4,10 @@
  <widget class="ctkPopupWidget" name="qMRMLSliceControllerWidget">
   <property name="geometry">
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>285</width>
-    <height>112</height>
+    <x>3031</x>
+    <y>737</y>
+    <width>321</width>
+    <height>130</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -668,7 +668,31 @@
     <string>Automatic</string>
    </property>
   </action>
-  <action name="actionLightbox1x1_view">
+   <action name="actionSliceModelModeVolumes">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>FOV, Spacing match Volumes</string>
+     </property>
+   </action>
+   <action name="actionSliceModelMode2D">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>FOV, Spacing match 2D</string>
+     </property>
+   </action>
+   <action name="actionSliceModelMode2D_Volumes">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>FOV match Volumes, Spacing match 2D</string>
+     </property>
+   </action>
+   <action name="actionLightbox1x1_view">
    <property name="checkable">
     <bool>true</bool>
    </property>

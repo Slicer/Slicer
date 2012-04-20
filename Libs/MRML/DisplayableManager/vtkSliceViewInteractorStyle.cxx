@@ -204,6 +204,7 @@ void vtkSliceViewInteractorStyle::OnRightButtonUp()
 void vtkSliceViewInteractorStyle::OnMiddleButtonDown() 
 {
   this->StartTranslate();
+  this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMiddleButtonUp() 
@@ -254,17 +255,8 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
     {
     case vtkSliceViewInteractorStyle::Translate:
       {
-      double eventRAS[4];
-      this->GetEventRASWithRespectToEventStart(eventRAS);
-      this->ScratchMatrix->DeepCopy(this->ActionStartSliceToRAS);
-      for (int i = 0; i < 3; i++)
-        {
-        double delta = eventRAS[i] - this->ActionStartRAS[i];
-        double ele = this->ScratchMatrix->GetElement(i, 3);
-        this->ScratchMatrix->SetElement(i, 3, ele - delta);
-        }
-      sliceNode->GetSliceToRAS()->DeepCopy(this->ScratchMatrix);
-      sliceNode->UpdateMatrices();
+      sliceNode->SetSliceOrigin(this->ActionStartWindow[0] - windowX,
+                                this->ActionStartWindow[1] - windowY, 0);
       }
       break;
     case vtkSliceViewInteractorStyle::Zoom:

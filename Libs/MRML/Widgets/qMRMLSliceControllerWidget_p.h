@@ -41,6 +41,7 @@
 
 class QSpinBox;
 class QDoubleSpinBox;
+class QSpinBox;
 class ctkSignalMapper;
 class ctkSliderWidget;
 class ctkVTKSliceView;
@@ -76,6 +77,7 @@ public:
   void setupLightboxMenu();
   void setupCompositingMenu();
   void setupSliceSpacingMenu();
+  void setupSliceModelMenu();
   void setupMoreOptionsMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
@@ -144,11 +146,21 @@ public:
   QMenu*                              LightboxMenu;
   QMenu*                              CompositingMenu;
   QMenu*                              SliceSpacingMenu;
+  QMenu*                              SliceModelMenu;
 
   QDoubleSpinBox*                     SliceSpacingSpinBox;
   QDoubleSpinBox*                     SliceFOVSpinBox;
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
+
+  QDoubleSpinBox*                     SliceModelFOVXSpinBox;
+  QDoubleSpinBox*                     SliceModelFOVYSpinBox;
+
+  QDoubleSpinBox*                     SliceModelOriginXSpinBox;
+  QDoubleSpinBox*                     SliceModelOriginYSpinBox;
+
+  QSpinBox*                    SliceModelDimensionXSpinBox;
+  QSpinBox*                    SliceModelDimensionYSpinBox;
 
   QSize                               ViewSize;
 };
