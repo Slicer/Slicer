@@ -49,6 +49,7 @@ class HelperBox(object):
     # pseudo signals 
     # - python callable that gets True or False
     self.mergeValidCommand = None
+    self.selectCommand = None
     # mrml node for invoking command line modules
     self.CLINode = None
 
@@ -138,6 +139,9 @@ class HelperBox(object):
     pNode = slicer.mrmlScene.GetNodeByID(nodeID)
     if pNode:
       pNode.Modified()
+
+    if self.selectCommand:
+      self.selectCommand()
 
   def setVolumes(self,masterVolume,mergeVolume):
     """set both volumes at the same time - trick the callback into 
