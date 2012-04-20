@@ -158,6 +158,11 @@ class EditorWidget:
 
   # sets up the widget
   def setup(self):
+
+    if slicer.app.commandOptions().noMainWindow:
+      # don't build the widget if there's no place to put it
+      return
+    
     #
     # Editor Volumes
     #
