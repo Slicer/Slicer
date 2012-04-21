@@ -54,6 +54,7 @@ ExternalProject_Add(${proj}
   URL_MD5 ${CLAPACK_MD5}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
+    ${ep_common_compiler_args}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DBUILD_TESTING:BOOL=OFF
