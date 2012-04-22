@@ -689,7 +689,7 @@
        <bool>true</bool>
      </property>
      <property name="text">
-       <string>FOV match Volumes, Spacing match 2D</string>
+       <string>FOV matches 2D, Spacing matches Volumes</string>
      </property>
    </action>
    <action name="actionLightbox1x1_view">
