@@ -795,7 +795,7 @@ vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageData()
 vtkImageData* vtkMRMLSliceLayerLogic::GetSliceImageDataUVW()
 {
   // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
-  if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
+  if (this->SliceNode == NULL || this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
     return NULL;
     }
