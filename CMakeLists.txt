@@ -388,7 +388,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Module name should be specified as they appear in FindQt4.cmake
 # For example, the module name associated with the variable QT_USE_QTXML is XML.
-set(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK UITOOLS XML WEBKIT SVG)
+set(Slicer_REQUIRED_QT_MODULES CORE GUI NETWORK UITOOLS XML WEBKIT SVG SQL)
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_REQUIRED_QT_MODULES SCRIPT)
 endif()
