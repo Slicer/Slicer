@@ -83,6 +83,7 @@ set(MRMLCore_SRCS
   vtkMRMLColors.cxx
   vtkMRMLColorTableNode.cxx
   vtkMRMLColorTableStorageNode.cxx
+  vtkMRMLCoreTestingMacros.cxx
   vtkMRMLCrosshairNode.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx

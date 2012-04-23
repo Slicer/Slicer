@@ -10,13 +10,14 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLLinearTransformNode.h"
 
+// VTK includes
 #include <vtkGeneralTransform.h>
 
-
-#include "vtkMRMLCoreTestingMacros.h"
-
+//---------------------------------------------------------------------------
 int vtkMRMLLinearTransformNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLLinearTransformNode > node1 = vtkSmartPointer< vtkMRMLLinearTransformNode >::New();

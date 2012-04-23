@@ -21,8 +21,6 @@ Version:   $Revision: 1.14 $
 #include "vtkEventBroker.h"
 #include "vtkMRMLLinearTransformNode.h"
 
-vtkCxxSetObjectMacro(vtkMRMLLinearTransformNode, MatrixTransformToParent, vtkMatrix4x4);
-
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
 
@@ -282,20 +280,14 @@ int  vtkMRMLLinearTransformNode::GetMatrixTransformToNode(vtkMRMLTransformNode* 
 //----------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix)
 {
-  if (this->MatrixTransformToParent != NULL)
+  if (this->MatrixTransformToParent == matrix)
     {
-    vtkEventBroker::GetInstance()->RemoveObservations( 
-      this->MatrixTransformToParent, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    this->SetMatrixTransformToParent(NULL);
+    return;
     }
-  this->SetMatrixTransformToParent(matrix);
-  if ( this->MatrixTransformToParent )
-    {
-    vtkEventBroker::GetInstance()->AddObservation( 
-      this->MatrixTransformToParent, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
+  vtkSetAndObserveMRMLObjectMacro(this->MatrixTransformToParent, matrix);
+  this->Modified();
+  this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
 }
-
 
 //---------------------------------------------------------------------------
 void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,

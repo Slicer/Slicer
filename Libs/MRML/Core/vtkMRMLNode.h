@@ -38,6 +38,7 @@ class vtkCallbackCommand;
 #define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
 #endif
 
+/// Can be used to set any vtkObject, not only vtkMRMLNodes.
 #ifndef vtkSetAndObserveMRMLObjectMacro
 #define vtkSetAndObserveMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetAndObserveObject ( vtkObjectPointer( &(node)), (value) );};
 #endif

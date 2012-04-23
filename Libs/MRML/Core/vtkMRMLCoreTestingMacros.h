@@ -13,7 +13,11 @@
 #ifndef __vtkMRMLCoreTestingMacros_h
 #define __vtkMRMLCoreTestingMacros_h
 
+// MRML includes
+#include "vtkMRML.h"
+
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
 #include <vtkMath.h>
 
@@ -787,5 +791,29 @@
     std::cout << "IsTransformNodeMyParent = " << node->IsTransformNodeMyParent(t) << std::endl; \
     std::cout << "IsTransformNodeMyChild = " << node->IsTransformNodeMyChild(t) << std::endl; \
   }
+
+//---------------------------------------------------------------------------
+class VTK_MRML_EXPORT vtkMRMLNodeCallback : public vtkCallbackCommand
+{
+public:
+  vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;};
+
+  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData);
+  virtual void ResetNumberOfEventsVariables();
+
+  void SetMRMLNode(vtkMRMLNode*);
+  std::string GetErrorString();
+  int GetNumberOfModified();
+
+protected:
+  vtkMRMLNodeCallback();
+  ~vtkMRMLNodeCallback();
+
+  void SetErrorString(const char* error);
+
+  vtkMRMLNode* Node;
+  std::string ErrorString;
+  int NumberOfModified;
+};
 
 #endif
