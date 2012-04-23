@@ -56,6 +56,8 @@ set(KIT_SRCS
   qSlicerModuleManager.h
   qSlicerObject.cxx
   qSlicerObject.h
+  qSlicerFileWriter.cxx
+  qSlicerFileWriter.h
   qSlicerSceneIO.cxx
   qSlicerSceneIO.h
   qSlicerSlicer2SceneReader.cxx
@@ -73,6 +75,13 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
 endif()
 
+# Since the wrapper doesn't consider hierarchy of classes, let's exclude
+# classes deriving from pure abstract class and remaining abstract pure
+set_source_files_properties(
+  qSlicerFileWriter.h
+  WRAP_EXCLUDE
+  )
+
 # Headers that should run through moc
 set(KIT_MOC_SRCS
   qSlicerAbstractCoreModule.h
@@ -83,6 +92,7 @@ set(KIT_MOC_SRCS
   qSlicerIO.h
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.h
+  qSlicerFileWriter.h
   qSlicerSceneIO.h
   qSlicerSlicer2SceneReader.h
   qSlicerXcedeCatalogIO.h

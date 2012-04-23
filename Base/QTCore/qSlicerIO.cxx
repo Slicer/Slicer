@@ -143,13 +143,6 @@ bool qSlicerIO::load(const IOProperties& properties)
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerIO::save(const IOProperties& properties)
-{
-  Q_UNUSED(properties);
-  return false;
-}
-
-//----------------------------------------------------------------------------
 void qSlicerIO::setLoadedNodes(const QStringList& nodes)
 {
   Q_D(qSlicerIO);
@@ -161,18 +154,4 @@ QStringList qSlicerIO::loadedNodes()const
 {
   Q_D(const qSlicerIO);
   return d->LoadedNodes;
-}
-
-//----------------------------------------------------------------------------
-void qSlicerIO::setSavedNodes(const QStringList& nodes)
-{
-  Q_D(qSlicerIO);
-  d->SavedNodes = nodes;
-}
-
-//----------------------------------------------------------------------------
-QStringList qSlicerIO::savedNodes()const
-{
-  Q_D(const qSlicerIO);
-  return d->SavedNodes;
 }

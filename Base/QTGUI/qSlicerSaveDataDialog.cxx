@@ -33,6 +33,7 @@
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerCoreIOManager.h"
 #include "qSlicerSaveDataDialog_p.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLUtils.h"
@@ -485,6 +486,19 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
       currentFormat = formatIt;
       }
     }
+  // Add custom qSlicerSaveFile
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  qSlicerIO::IOFileType fileType =
+    coreIOManager ? coreIOManager->fileType(node) : qSlicerIO::NoFile;
+  qDebug() << fileType << QString(node->GetNodeTagName());
+  if (fileType != qSlicerIO::NoFile)
+    {
+    foreach(QString extensions, coreIOManager->fileWriterExtensions(fileType))
+      {
+      fileFormats->addItem(extensions);
+      }
+    }
   fileFormats->setCurrentIndex(currentFormat);
   if (currentFormat == -1)
     {
@@ -641,9 +655,26 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 
     // save the node
     snode->SetFileName(file.absoluteFilePath().toLatin1());
-    snode->SetWriteFileFormat(fileFormatComboBox->currentText().toLatin1());
+    snode->SetWriteFileFormat(format.toLatin1());
     snode->SetURI(0);
-    int res = snode->WriteData(node);
+    bool res = false;
+    if (fileFormatComboBox->currentIndex() >=
+        snode->GetSupportedWriteFileTypes()->GetNumberOfValues())
+      {
+      qSlicerCoreIOManager* coreIOManager =
+        qSlicerCoreApplication::application()->coreIOManager();
+      Q_ASSERT(coreIOManager);
+      qSlicerIO::IOFileType fileType = coreIOManager->fileType(
+        vtkMRMLStorableNode::SafeDownCast(node));
+      qSlicerIO::IOProperties savingParameters;
+      savingParameters["fileName"] = file.absoluteFilePath();
+      savingParameters["nodeID"] = QString(node->GetID());
+      res = coreIOManager->saveNodes(fileType, savingParameters);
+      }
+    else
+      {
+      res = (snode->WriteData(node) != 0);
+      }
 
     // node has failed to be written
     if (!res)

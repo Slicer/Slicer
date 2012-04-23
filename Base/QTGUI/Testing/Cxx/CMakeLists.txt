@@ -12,6 +12,7 @@ if(BUILD_TESTING)
     qSlicerLayoutManagerTest1.cxx
     qSlicerLoadableModuleTest1.cxx
     qSlicerModulePanelTest1.cxx
+    qSlicerSaveDataDialogCustomFileWriterTest.cxx
     qSlicerWidgetTest1.cxx
     qSlicerWidgetTest2.cxx
     )
@@ -57,6 +58,7 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerLayoutManagerTest1 )
   SIMPLE_TEST( qSlicerLoadableModuleTest1 )
   SIMPLE_TEST( qSlicerModulePanelTest1 )
+  SIMPLE_TEST( qSlicerSaveDataDialogCustomFileWriterTest )
   SIMPLE_TEST( qSlicerWidgetTest1 )
   SIMPLE_TEST( qSlicerWidgetTest2 )
 

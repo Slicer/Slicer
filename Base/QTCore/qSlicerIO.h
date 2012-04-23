@@ -37,6 +37,7 @@ class vtkMRMLScene;
 class qSlicerIOOptions;
 class qSlicerIOPrivate;
 
+// TODO: split in 2 classes: to load and to save.
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO : public QObject
 {
   Q_OBJECT
@@ -60,6 +61,8 @@ public:
     FiberBundleFile = 9,
     TransferFunctionFile = 10,
     AnnotationFile = 11,
+    DoubleArrayFile = 12,
+    SceneViewFile = 13,
     UserFile = 32,
   };
 
@@ -96,15 +99,12 @@ public:
   
   /// Properties availables : fileMode, multipleFiles, fileType.
   virtual bool load(const IOProperties& properties);
-  virtual bool save(const IOProperties& properties);
 
   QStringList loadedNodes()const;
-  QStringList savedNodes()const;
   
 protected:
   void setLoadedNodes(const QStringList& nodes);
-  void setSavedNodes(const QStringList& nodes);
-  
+
 protected:
   QScopedPointer<qSlicerIOPrivate> d_ptr;
 
