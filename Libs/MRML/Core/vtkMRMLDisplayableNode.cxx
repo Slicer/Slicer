@@ -467,7 +467,7 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
 void vtkMRMLDisplayableNode::GetRASBounds(double bounds[6])
 
 {
-  bounds[0] = bounds[0] = 0.0;
-  bounds[1] = bounds[1] = 0.0;
-  bounds[2] = bounds[2] = 0.0;
+  bounds[0] = bounds[3] = 0.0;
+  bounds[1] = bounds[4] = 0.0;
+  bounds[2] = bounds[5] = 0.0;
 }
