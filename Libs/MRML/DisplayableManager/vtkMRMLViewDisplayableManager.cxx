@@ -25,6 +25,7 @@
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
+#include <vtkMRMLCameraNode.h>
 
 // VTK includes
 #include <vtkBoundingBox.h>
@@ -53,6 +54,8 @@ class vtkMRMLViewDisplayableManager::vtkInternal
 public:
   vtkInternal(vtkMRMLViewDisplayableManager * external);
   ~vtkInternal();
+
+  vtkMRMLCameraNode* CameraNode;
 
   void CreateAxis();
   void AddAxis(vtkRenderer * renderer);
@@ -83,6 +86,7 @@ vtkMRMLViewDisplayableManager::vtkInternal::vtkInternal(vtkMRMLViewDisplayableMa
   this->External = external;
   this->BoxAxisBoundingBox = new vtkBoundingBox();
   this->CreateAxis();
+  this->CameraNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -295,12 +299,40 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
+  double orient[] = {-1,1};
+  double dir[4];
+  vtkCamera *camera = this->External->GetRenderer()->GetActiveCamera();
+  camera->GetDirectionOfProjection(dir);
+  vtkMath::Normalize(dir);
+
   int visible = this->External->GetMRMLViewNode()->GetAxisLabelsVisible();
-  vtkDebugWithObjectMacro(this->External, << "UpdateAxisLabelVisibility:" << visible);
-  for(std::size_t i = 0; i < this->AxisLabelActors.size(); ++i)
+  int cameraBasedVilibility = this->External->GetMRMLViewNode()->GetAxisLabelsCameraDependent();
+
+  double s2 = 0.5*sqrt(2.0);
+  for  (int j=0; j<2; j++)
     {
-    vtkFollower* actor = this->AxisLabelActors[i];
-    actor->SetVisibility(visible);
+    for  (int i=0; i<3; i++)
+      {
+      vtkFollower* actor = this->AxisLabelActors[i+3*j];
+      if (cameraBasedVilibility)
+        {
+        double axis[] = {0,0,0};
+        axis[i] = orient[j];
+        double dot = vtkMath::Dot(axis, dir);
+        if (dot > s2)
+          {
+          actor->SetVisibility(false);
+          }
+        else
+          {
+          actor->SetVisibility(visible);
+          }
+        }
+      else
+        {
+        actor->SetVisibility(visible);
+        }
+      }
     }
   this->External->RequestRender();
 }
@@ -411,6 +443,7 @@ vtkMRMLViewDisplayableManager::vtkMRMLViewDisplayableManager()
 //---------------------------------------------------------------------------
 vtkMRMLViewDisplayableManager::~vtkMRMLViewDisplayableManager()
 {
+  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, NULL);
   delete this->Internal;
 }
 
@@ -446,9 +479,14 @@ void vtkMRMLViewDisplayableManager::Create()
   cameraDisplayableManager->AddObserver(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
                                         this->GetWidgetsCallbackCommand());
 
+  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, 
+                                cameraDisplayableManager->GetCameraNode());
+
+
   // If there is a active camera available, it means the vtkMRMLCameraDisplayableManager
   // has already been created and ActiveCameraChangedEvent already invoked.
   this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+  this->Internal->UpdateAxisLabelVisibility();
   this->Superclass::Create();
 }
 
@@ -472,6 +510,13 @@ void vtkMRMLViewDisplayableManager
       {
       vtkDebugMacro(<< "ProcessMRMLNodesEvents - ResetFocalPointEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+      }
+    }
+  else if(vtkMRMLCameraNode::SafeDownCast(caller))
+    {
+    if (event == vtkCommand::ModifiedEvent)
+      {
+      this->Internal->UpdateAxisLabelVisibility();
       }
     }
   // Default MRML Event handler is NOT needed

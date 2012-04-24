@@ -32,6 +32,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->Visibility = 1;
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
+  this->AxisLabelsCameraDependent = 1;
   this->FiducialsVisible = 1;
   this->FiducialLabelsVisible = 1;
   this->FieldOfView = 200;
@@ -93,6 +94,7 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   of << indent << " fiducialsVisible=\"" << (this->FiducialsVisible ? "true" : "false") << "\"";
   of << indent << " fiducialLabelsVisible=\"" << (this->FiducialLabelsVisible ? "true" : "false") << "\"";
   of << indent << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
+  of << indent << " axisLabelsCameraDependent=\"" << (this->AxisLabelsCameraDependent ? "true" : "false") << "\"";
 
   // background color
   of << indent << " backgroundColor=\"" << this->BackgroundColor[0] << " "
@@ -306,6 +308,18 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         }
       }
 
+    else if (!strcmp(attName, "axisLabelsCameraDependent")) 
+      {
+      if (!strcmp(attValue,"true")) 
+        {
+        this->AxisLabelsCameraDependent = 1;
+        }
+      else
+        {
+        this->AxisLabelsCameraDependent = 0;
+        }
+      }
+
     else if (!strcmp(attName, "stereoType")) 
       {
       if (!strcmp(attValue,"NoStereo")) 
@@ -490,6 +504,7 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetFiducialsVisible(node->GetFiducialsVisible());
   this->SetFiducialLabelsVisible(node->GetFiducialLabelsVisible());
   this->SetAxisLabelsVisible(node->GetAxisLabelsVisible());
+  this->SetAxisLabelsCameraDependent(node->GetAxisLabelsCameraDependent());
   this->SetFieldOfView(node->GetFieldOfView());
   this->SetLetterSize(node->GetLetterSize());
   this->SetAnimationMode ( node->GetAnimationMode ( ) );
@@ -524,6 +539,7 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
   os << indent << "FiducialLabelsVisible:        " << this->FiducialLabelsVisible << "\n";
   os << indent << "AxisLabelsVisible: " << this->AxisLabelsVisible << "\n";
+  os << indent << "AxisLabelsCameraDependent: " << this->AxisLabelsCameraDependent << "\n";
   os << indent << "FieldOfView:       " << this->FieldOfView << "\n";
   os << indent << "LetterSize:       " << this->LetterSize << "\n";
   os << indent << "SpinDirection:       " << this->SpinDirection << "\n";

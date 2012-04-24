@@ -77,6 +77,11 @@ public:
   vtkSetMacro(AxisLabelsVisible, int);
 
   /// 
+  /// Indicates if the axis labels visibility contolled by camera orientation
+  vtkGetMacro(AxisLabelsCameraDependent, int);
+  vtkSetMacro(AxisLabelsCameraDependent, int);
+
+  /// 
   /// Toggles visibility of fiducial points in 3D viewer
   vtkGetMacro (FiducialsVisible, int );
   vtkSetMacro (FiducialsVisible, int );
@@ -215,6 +220,7 @@ protected:
   int FiducialLabelsVisible;
   int BoxVisible;
   int AxisLabelsVisible;
+  int AxisLabelsCameraDependent;
   double FieldOfView;
   double LetterSize;
   double BackgroundColor[3];

@@ -42,6 +42,8 @@ public:
 
   void UpdateCameraNode();
 
+  vtkMRMLCameraNode* GetCameraNode();
+
 //  void AddCameraObservers();
 //  void RemoveCameraObservers();
 

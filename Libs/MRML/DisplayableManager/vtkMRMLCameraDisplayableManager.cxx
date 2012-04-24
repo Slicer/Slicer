@@ -212,6 +212,12 @@ void vtkMRMLCameraDisplayableManager::OnMRMLNodeModified(
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLCameraNode* vtkMRMLCameraDisplayableManager::GetCameraNode()
+{
+  return this->Internal->CameraNode;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode * newCameraNode)
 {
   // If a camera node already points to me. Do I already have it?
