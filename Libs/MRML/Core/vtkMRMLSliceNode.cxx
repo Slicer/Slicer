@@ -1322,11 +1322,14 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
   if (this->SliceResolutionMode != mode)
   {
     this->SliceResolutionMode = mode;
-    if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes ||
-        this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||
-        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
+    if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
     {
       this->SetUVWOrigin(0,0,0);
+    }
+    else if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||
+        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
+    {
+      this->SetUVWOrigin(this->GetXYZOrigin());
     }
     this->Modified();
     this->UpdateMatrices();
