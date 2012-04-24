@@ -134,6 +134,10 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(USE_BRAINSROIAuto                   ON CACHE BOOL "Build BRAINSROIAuto"   )
   set(USE_BRAINSResample                  ON CACHE BOOL "Build BRAINSResample"  )
   set(USE_BRAINSDemonWarp                 ON CACHE BOOL "Build BRAINSDemonWarp ")
+  if("${ITK_VERSION_MAJOR}" GREATER 3)
+    set(USE_BRAINSTransformConvert          ON CACHE BOOL "Build BRAINSTransformConvert ")
+  endif("${ITK_VERSION_MAJOR}" GREATER 3)
+
   ## BRAINSTools comes with some extra tool
   ## options that should not be compiled by default.
   set(USE_GTRACT                         OFF CACHE BOOL "" FORCE)
