@@ -64,8 +64,10 @@ private:
 
   static const QString CLIMODULES_LIB_DIR;
   static const QString QTLOADABLEMODULES_LIB_DIR;
+#ifdef Slicer_USE_PYTHONQT
   static const QString QTLOADABLEMODULES_PYTHON_LIB_DIR;
   static const QString QTSCRIPTEDMODULES_LIB_DIR;
+#endif
 
 private slots:
   void initTestCase();
@@ -146,8 +148,10 @@ Q_DECLARE_METATYPE(QList<QStringList>)
 
 const QString qSlicerExtensionsManagerModelTester::CLIMODULES_LIB_DIR = Slicer_CLIMODULES_LIB_DIR;
 const QString qSlicerExtensionsManagerModelTester::QTLOADABLEMODULES_LIB_DIR = Slicer_QTLOADABLEMODULES_LIB_DIR;
+#ifdef Slicer_USE_PYTHONQT
 const QString qSlicerExtensionsManagerModelTester::QTLOADABLEMODULES_PYTHON_LIB_DIR = Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR;
 const QString qSlicerExtensionsManagerModelTester::QTSCRIPTEDMODULES_LIB_DIR = Slicer_QTSCRIPTEDMODULES_LIB_DIR;
+#endif
 
 // ----------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModelTester::expectedExtensionNames()const
@@ -1341,6 +1345,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
         << QString();
   }
 
+#ifdef Slicer_USE_PYTHONQT
   {
     int extensionId = 1;
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(os, extensionId));
@@ -1352,6 +1357,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("LoadableExtensionTemplate/" + qtloadablemodules_python_lib_dir));
   }
+#endif
 
   int extensionIdOffset = 1;
 #ifdef Slicer_USE_PYTHONQT
@@ -1366,7 +1372,6 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("ScriptedLoadableExtensionTemplate/" + qtscriptedmodules_lib_dir));
   }
-#endif
 
   {
     int extensionId = 3;
@@ -1381,6 +1386,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" + qtloadablemodules_python_lib_dir));
   }
+#endif
 
   {
     QTest::newRow("linux-Cleanup")
