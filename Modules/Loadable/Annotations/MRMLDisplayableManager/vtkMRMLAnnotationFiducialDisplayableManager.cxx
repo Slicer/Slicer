@@ -468,6 +468,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   // update lock status
   this->Helper->UpdateLocked(node);
+
+  // update visibility status
+  this->Helper->UpdateVisible(node);
   
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
