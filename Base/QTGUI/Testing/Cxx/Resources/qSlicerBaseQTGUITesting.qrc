@@ -4,5 +4,7 @@
     <file alias="qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py">../../Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTestWidget.py</file>
     <file alias="qSlicerScriptedLoadableModuleTest.py">../../Data/Input/qSlicerScriptedLoadableModuleTest.py</file>
     <file alias="qSlicerScriptedLoadableModuleSyntaxErrorTest.py">../../Data/Input/qSlicerScriptedLoadableModuleSyntaxErrorTest.py</file>
+    <file>Icons/AnnotationPointWithArrow.png</file>
+    <file>Icons/AnnotationDistanceWithArrow.png</file>
   </qresource>
 </RCC>

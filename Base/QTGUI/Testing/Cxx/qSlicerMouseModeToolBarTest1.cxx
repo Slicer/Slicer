@@ -1,7 +1,8 @@
 // Qt includes
-#include <QApplication>
+//#include <QApplication>
 
 // SlicerQt includes
+#include "qSlicerApplication.h"
 #include "qSlicerMouseModeToolBar.h"
 
 // MRML includes
@@ -16,7 +17,8 @@
 
 int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
 {
-  QApplication app(argc, argv);
+  //QApplication app(argc, argv);
+  qSlicerApplication app(argc, argv);
   qSlicerMouseModeToolBar mouseToolBar;
   
   // set the scene without the app logic
@@ -43,7 +45,6 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   activeActionText = mouseToolBar.activeActionText();
   std::cout << "Active action text = " << qPrintable(activeActionText) << std::endl;
 
-  /*
   // get the selection and interaction nodes that the mouse mode tool bar
   // listens to
   vtkMRMLNode *mrmlNode;
@@ -60,12 +61,24 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     // add the new annotation types to it
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png");
     selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png");
+    
     selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
     activeActionText = mouseToolBar.activeActionText();
     std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+    if (activeActionText.compare(QString("Fiducial")) != 0)
+      {
+      std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
+      return EXIT_FAILURE;
+      }
+      
     selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationRulerNode");
     activeActionText = mouseToolBar.activeActionText();
     std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+    if (activeActionText.compare(QString("Ruler")) != 0)
+        {
+        std::cerr << "Error! Expected active action text of 'Ruler', got '" << qPrintable(activeActionText) << "'" << std::endl;
+        return EXIT_FAILURE;
+        }
     }
   
   vtkMRMLInteractionNode *interactionNode = NULL;
@@ -85,12 +98,22 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
       selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
       activeActionText = mouseToolBar.activeActionText();
       std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+      if (activeActionText.compare(QString("Fiducial")) != 0)
+        {
+        std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
+        return EXIT_FAILURE;
+        }
       }
     interactionNode->SwitchToViewTransformMode();
     activeActionText = mouseToolBar.activeActionText();
     std::cout << "After switching interaction node to view transform, active action text = " << qPrintable(activeActionText) << std::endl;
+    if (activeActionText.compare(QString("&Rotate")) != 0)
+      {
+      std::cerr << "Error! Expected active action text of '&Rotate', got '" << qPrintable(activeActionText) << "'" << std::endl;
+      return EXIT_FAILURE;
+      }
     }
-  */
+
 
   // clean up
   appLogic->Delete();
