@@ -1,12 +1,10 @@
 import os
-import time
-
-import ctk
 import qt
-import vtk
-import saferef
+
 
 import slicer
+
+from .workflow_support import *
 
 if not '__file__' in locals():
     __file__ = os.path.join(os.getcwd(), 'full_tractography_workflow.py')
@@ -74,7 +72,6 @@ class WorkflowConfiguration:
         if data[step_object.id()]['DICOMRadioButton']:
 
             output_volume = data[step_object.id()]['outputVolume']
-            print "\t output volume:", output_volume
             if not (
                 (
                     (not os.path.exists(output_volume)) or
@@ -128,11 +125,11 @@ class WorkflowConfiguration:
     def validate_dwi2dti(self, step_object, data):
         dimensions = self.dwi_node.GetImageData().GetDimensions()
         if not hasattr(self, 'tensor_node'):
-            self.tensor_node = create_diffusion_tensor_volume_node()
+            self.tensor_node = create_diffusion_tensor_volume_node(prefix=WORKFLOW_PREFIX)
         if not hasattr(self, 'baseline_node'):
-            self.baseline_node = create_scalar_volume_node(dimensions=dimensions)
+            self.baseline_node = create_scalar_volume_node(dimensions=dimensions, prefix=WORKFLOW_PREFIX)
         if not hasattr(self, 'mask_node'):
-            self.mask_node = create_scalar_volume_node(dimensions=dimensions)
+            self.mask_node = create_scalar_volume_node(dimensions=dimensions, prefix=WORKFLOW_PREFIX)
             self.mask_node.LabelMapOn()
 
         step_parameters = data[step_object.id()]
@@ -215,179 +212,6 @@ class WorkflowConfiguration:
 
 
 
-
-
-class GeneralizedStep(ctk.ctkWorkflowWidgetStep, ) :
-    """Step implemented using the derivation approach"""
-
-    def __init__(self, stepid, qt_widget, onEntryCallback=None, validateCallback=None, onExitCallback=None):
-        self.initialize(stepid)
-        self.qt_widget = qt_widget
-
-        if onEntryCallback:
-            self.weak_onEntryCallback = saferef.safeRef(onEntryCallback)
-
-        if validateCallback:
-            self.weak_validateCallback = saferef.safeRef(validateCallback)
-
-        if onExitCallback:
-            self.weak_onExitCallback = saferef.safeRef(onExitCallback)
-
-    def createUserInterface(self):
-        layout = qt.QVBoxLayout(self)
-        scrollArea = qt.QScrollArea()
-        scrollArea.setWidget(self.qt_widget)
-        layout.addWidget(scrollArea)
-
-    def onEntry(self, comingFrom, transitionType):
-        comingFromId = "None"
-        if comingFrom: comingFromId = comingFrom.id()
-        super(GeneralizedStep, self).onEntry(comingFrom, transitionType)
-
-        if hasattr(self, 'weak_onEntryCallback'):
-            onEntryCallback = self.weak_onEntryCallback()
-            onEntryCallback(self, comingFrom, transitionType)
-
-    def onExit(self, goingTo, transitionType):
-        goingToId = "None"
-        if goingTo: goingToId = goingTo.id()
-        super(GeneralizedStep, self).onExit(goingTo, transitionType)
-
-        if hasattr(self, 'weak_onExitCallback'):
-            onExitCallback = self.weak_onExitCallback()
-            onExitCallback(self, goingTo, transitionType)
-
-    def validate(self, desiredBranchId):
-        validationSuceeded = True
-
-        if hasattr(self, 'weak_validateCallback'):
-            validateCallback = self.weak_validateCallback()
-            validationSuceeded = validateCallback(self, desiredBranchId)
-
-        super(GeneralizedStep, self).validate(validationSuceeded, desiredBranchId)
-
-
-def widget_find_field(widget, objectName):
-    if widget.objectName == objectName:
-        return widget
-    else:
-        children = []
-        for w in widget.children():
-            resulting_widget = widget_find_field(w, objectName)
-            if resulting_widget:
-                children.append(resulting_widget)
-
-        if len( children ) == 0:
-            return None
-        else:
-            if len(children) > 1:
-                raise ValueError("More than one widget with the specified object name: " + objectName)
-            return children[0]
-
-class full_tractography_workflow:
-
-    def __init__(self, workflow_configuration, parent=None):
-        if not parent:
-            self.parent = qt.QWidget()
-            self.parent.setLayout(qt.QVBoxLayout())
-        else:
-            self.parent = parent
-
-        self.workflow_configuration = workflow_configuration
-
-        loader = qt.QUiLoader()
-
-        self.steps = []
-
-        def onEntryCallback(actual_step, comingFrom, transitionType):
-            data = self.extract_data()
-
-            method_name = 'on_entry_'+actual_step.id()
-            if hasattr(self.workflow_configuration, method_name):
-                on_entry = getattr(self.workflow_configuration, method_name)
-                on_entry(actual_step, comingFrom, transitionType, data)
-                self.update_data(data)
-
-        def onExitCallback(actual_step, comingFrom, transitionType):
-            data = self.extract_data()
-
-            method_name = 'on_exit_'+actual_step.id()
-            if hasattr(self.workflow_configuration, method_name):
-                on_exit = getattr(self.workflow_configuration, method_name)
-                on_exit(actual_step, comingFrom, transitionType, data)
-                self.update_data(data)
-
-        def validateCallback(actual_step, desiredBranchId):
-            data = self.extract_data()
-
-            method_name = 'validate_'+actual_step.id()
-            if hasattr(self.workflow_configuration, method_name):
-                validate = getattr(self.workflow_configuration, method_name)
-                return validate(actual_step, data)
-            else:
-                return True
-
-        for step_widget_file in self.workflow_configuration.step_widget_files:
-            path = os.path.join(
-                 os.path.dirname(__file__), 'Resources', 'UI',
-                 step_widget_file + '.ui'
-             )
-
-            qfile = qt.QFile(path)
-            qfile.open(qt.QFile.ReadOnly)
-            widget = loader.load( qfile )
-
-            if hasattr(widget, 'setMRMLScene'):
-                widget.setMRMLScene(slicer.mrmlScene)
-
-            if hasattr(self.workflow_configuration, 'post_widget_init'):
-                self.workflow_configuration.post_widget_init(step_widget_file, widget)
-
-            step = GeneralizedStep(step_widget_file, widget,
-                                   onEntryCallback=onEntryCallback,
-                                   onExitCallback=onExitCallback,
-                                   validateCallback=validateCallback)
-
-            self.steps.append((step_widget_file, step))
-
-
-        self.workflow = ctk.ctkWorkflow()
-        self.workflowWidget = ctk.ctkWorkflowStackedWidget()
-
-        self.workflowWidget.setWorkflow(self.workflow)
-        self.parent.layout().addWidget(self.workflowWidget)
-
-        for i in xrange(len(self.steps) - 1):
-            self.workflow.addTransition(self.steps[i][1], self.steps[i + 1][1])
-
-        self.workflow.start()
-
-    def extract_data(self):
-
-        data = {}
-        for name, step in self.steps:
-            widget = step.qt_widget
-            data[ name ] = {}
-            if name in self.workflow_configuration.step_widget_fields:
-                for field_name, attribute_name in self.workflow_configuration.step_widget_fields[ name ]:
-                    data[name][field_name] = getattr(widget_find_field( widget, field_name ), attribute_name)
-
-
-        return data
-
-    def update_data(self, data):
-
-        data = {}
-        for name, step in self.steps:
-            if name not in data:
-                continue
-
-            widget = step.qt_widget
-            if name in self.workflow_configuration.step_widget_fields:
-                for field_name, attribute_name in self.workflow_configuration.step_widget_fields[ name ]:
-                    if field_name in data[name]:
-                        setattr( widget_find_field( widget, field_name ), attribute_name )
-
 class Slicelet(object):
     """A Slicelet is a module widget that comes up in stand alone mode
     implemented as a python class.
@@ -412,79 +236,12 @@ class full_tractography_workflow_slicelet(Slicelet):
     """
 
     def __init__(self):
-        super(full_tractography_workflow_slicelet, self).__init__(full_tractography_workflow, WorkflowConfiguration())
+        super(full_tractography_workflow_slicelet, self).__init__(Workflow, WorkflowConfiguration())
 
-def wait_for_module(module, time_pause=5):
-    while module.GetStatusString() not in ('Completed','CompletedWithErrors','Cancelled'):
-        time.sleep(time_pause)
-
-
-__VOLUME_TYPES__ =(
-    'Scalar',
-    'DiffusionWeighted',
-    'DiffusionTensor'
-)
-
-#def create_scalar_volume_node(attach_display_node=False, dimensions=None):
-#    return create_volume_node('Scalar', attach_display_node, dimensions=dimensions)
-#
-#def create_diffusion_tensor_volume_node(attach_display_node=False, dimensions=None):
-#   return create_volume_node('DiffusionTensor', attach_display_node, dimensions=dimensions)
-
-def create_volume_node(volume_type, attach_display_node = False, dimensions=None):
-    """
-    Creates a volume node and inserts it into the MRML tree
-    """
-    if volume_type not in __VOLUME_TYPES__:
-        raise ValueError('Volume type %s is not valid' % volume_type )
-
-    volume_node = eval('slicer.vtkMRML%sVolumeNode()' % volume_type)
-    volume_node.SetName(slicer.mrmlScene.GetUniqueNameByString('%s%s' % (WORKFLOW_PREFIX, volume_type)))
-
-    if dimensions:
-        image_data = vtk.vtkImageData()
-        image_data.SetDimensions(dimensions)
-        image_data.AllocateScalars()
-        volume_node.SetAndObserveImageData(image_data)
-
-    slicer.mrmlScene.AddNode(volume_node)
-
-    if attach_display_node:
-        display_node = eval('slicer.vtkMRML%sVolumeDisplayNode()' % volume_type)
-        slicer.mrmlScene.AddNode(display_node)
-        volume_node.AddAndObserveDisplayNodeID( display_node.GetID() )
-
-    return volume_node
-
-
-def display_error(message):
-    mb = qt.QMessageBox()
-    mb.setText(message)
-    mb.setStandardButtons(mb.Ok)
-    mb.setDefaultButton(mb.Ok )
-    mb.exec_()
-
-
-import sys
-import re
-this_module = sys.modules[__name__]
-for volume_type in __VOLUME_TYPES__:
-    function_name =\
-            'create' +\
-            re.sub('([A-Z])','_\\1',volume_type).lower() +\
-            '_volume_node'
-
-    setattr(this_module, function_name,
-            eval(
-                'lambda attach_display_node=False, dimensions=None:\
-                create_volume_node( "%s", attach_display_node=attach_display_node, dimensions=dimensions)' %\
-                volume_type)
-               )
 
 
 if __name__ == "__main__":
   # TODO: need a way to access and parse command line arguments
   # TODO: ideally command line args should handle --xml
 
-  import sys
   slicelet = full_tractography_workflow_slicelet()

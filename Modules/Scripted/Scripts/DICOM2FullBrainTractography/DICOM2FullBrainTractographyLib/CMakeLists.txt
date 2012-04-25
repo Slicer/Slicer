@@ -1,6 +1,7 @@
 set(DICOM2FullBrainTractographyLib_PYTHON_SCRIPTS
   __init__
   full_tractography_workflow
+  workflow_support
   )
 
 set(DICOM2FullBrainTractographyLib_PYTHON_RESOURCES

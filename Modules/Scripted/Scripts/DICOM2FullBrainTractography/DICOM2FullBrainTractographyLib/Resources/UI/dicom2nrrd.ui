@@ -249,6 +249,9 @@ Gradient Directions</string>
            <string>vtkMRMLDiffusionWeightedVolumeNode</string>
           </stringlist>
          </property>
+         <property name="addEnabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="0" column="0">
@@ -329,9 +332,6 @@ Gradient Directions</string>
               <string>*.nhdr</string>
               <string>*.nrrd</string>
              </stringlist>
-            </property>
-            <property name="filters">
-             <set>ctkPathLineEdit::Files|ctkPathLineEdit::NoDot|ctkPathLineEdit::NoDotAndDotDot|ctkPathLineEdit::NoDotDot|ctkPathLineEdit::Readable</set>
             </property>
            </widget>
           </item>
