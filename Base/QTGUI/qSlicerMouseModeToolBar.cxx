@@ -70,7 +70,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->ViewTransformModeAction = new QAction(q);
   this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
   this->ViewTransformModeAction->setText("&Rotate");
-  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view");
+  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view (use drop down menu to place Annotations)");
   this->ViewTransformModeAction->setCheckable(true);
   connect(this->ViewTransformModeAction, SIGNAL(triggered()),
           q, SLOT(switchToViewTransformMode()));
