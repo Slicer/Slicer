@@ -92,7 +92,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// the ID of a MRMLAnnotationNode
   vtkGetStringMacro (ActiveAnnotationID);
   void SetActiveAnnotationID(const char* id);
-  void SetReferenceActiveAnnotationID (const char *id) { this->SetActiveAnnotationID(id); };
+  void SetReferenceActiveAnnotationID (const char *id) { this->SetActiveAnnotationID(id); this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent); };
 
   /// the ID of a MRMLROIList
   vtkGetStringMacro (ActiveROIListID);
@@ -115,7 +115,7 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// the ID of a MRMLLayoutNode
   vtkGetStringMacro (ActiveLayoutID );
   void SetActiveLayoutID(const char* id);
-  void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent); };
+  void SetReferenceActiveLayoutID (const char *id) { this->SetActiveLayoutID(id); };
 
   /// Description
   /// a list of events that this node can throw

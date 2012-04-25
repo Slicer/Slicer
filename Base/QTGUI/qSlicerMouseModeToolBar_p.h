@@ -89,7 +89,7 @@ public:
   QMenu*        CreateAndPlaceMenu;
 
   // Place Persistence
-  QCheckBox* PersistenceCheckBox;
+  QAction *PersistenceAction;
   
   /// RotateMode
   QAction*      ViewTransformModeAction;

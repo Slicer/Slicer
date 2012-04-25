@@ -61,8 +61,12 @@ public slots:
   /// Switch to placing items of annotationID type
   void switchPlaceMode();
 
-  /// Update the interaction node's persistent place mode from the checkbox
-  void onPersistenceCheckBoxStateChanged(int state);
+  /// Update the interaction node's persistent place mode from the UI
+  void onPersistenceToggled();
+
+  /// For testing, return the active action text
+  QString activeActionText();
+  
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
