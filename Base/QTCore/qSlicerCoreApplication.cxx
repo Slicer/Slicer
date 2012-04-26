@@ -158,8 +158,6 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->ITKFactoriesDir = this->discoverITKFactoriesDirectory();
   this->setEnvironmentVariable("ITK_AUTOLOAD_PATH", this->ITKFactoriesDir);
-
-  this->discoverRepository();
   this->setPythonEnvironmentVariables();
   this->setTclEnvironmentVariables();
 
@@ -427,30 +425,6 @@ QString qSlicerCoreApplicationPrivate::discoverITKFactoriesDirectory()
     qWarning() << "ITK_AUTOLOAD_PATH doesn't exists:"<< this->ITKFactoriesDir;
     }
   return itkFactoriesDir.absolutePath();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverRepository()
-{
-  QDir slicerShareDir(this->SlicerHome);
-  slicerShareDir.cd(Slicer_SHARE_DIR);
-  QFileInfo slicerVersion(slicerShareDir, "SlicerVersion.txt");
-  QFile slicerVersionFile(slicerVersion.absoluteFilePath());
-  if (!slicerVersionFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-    qWarning() << "Can't find SlicerVersion.txt at address:"
-               << slicerVersionFile.fileName();
-    return;
-    }
-
-  QTextStream slicerVersionStream(&slicerVersionFile);
-  QString build, buildDate, repositoryUrl, repositoryRevision;
-  slicerVersionStream >> build >> this->Platform;
-  slicerVersionStream >> buildDate >> buildDate;
-  slicerVersionStream >> repositoryUrl >> this->RepositoryUrl;
-  slicerVersionStream >> repositoryRevision >> this->RepositoryRevision;
-
-  this->RepositoryBranch = QFileInfo(this->RepositoryUrl).fileName();
 }
 
 //-----------------------------------------------------------------------------
@@ -1189,22 +1163,19 @@ QString qSlicerCoreApplication::acknowledgment()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::repositoryUrl()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->RepositoryUrl;
+  return Slicer_WC_URL;
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::repositoryBranch()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->RepositoryBranch;
+  return QFileInfo(this->repositoryUrl()).fileName();
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::repositoryRevision()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->RepositoryRevision;
+  return Slicer_WC_REVISION;
 }
 
 //-----------------------------------------------------------------------------
@@ -1222,22 +1193,19 @@ int qSlicerCoreApplication::minorVersion() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::platform()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->Platform;
+  return QString("%1-%2").arg(Slicer_PLATFORM).arg(Slicer_ARCHITECTURE);
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::arch()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->Platform.split("-").at(1);
+  return Slicer_ARCHITECTURE;
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::os()const
 {
-  Q_D(const qSlicerCoreApplication);
-  return d->Platform.split("-").at(0);
+  return Slicer_PLATFORM;
 }
 
 //-----------------------------------------------------------------------------

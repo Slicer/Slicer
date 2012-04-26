@@ -714,29 +714,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_
 #-----------------------------------------------------------------------------
 set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/MRML/Widgets/CMake/qMRMLExport.h.in")
 
-#-----------------------------------------------------------------------------
-# Generate SlicerVersion.txt
-#-----------------------------------------------------------------------------
-
-SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer)
-
-set(slicer_version_file ${Slicer_HOME}/${Slicer_SHARE_DIR}/SlicerVersion.txt)
-
-# Note that Slicer_BUILD is set above
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerVersion.txt.in
-  ${slicer_version_file}
-  )
-
-install(FILES
-  ${slicer_version_file}
-  DESTINATION ${Slicer_INSTALL_SHARE_DIR}
-  COMPONENT Development
-  )
-
 # --------------------------------------------------------------------------
 # Configure and install headers
 # --------------------------------------------------------------------------
+
+SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
+
 set(files
   vtkSlicerConfigure.h
   vtkSlicerVersionConfigure.h
@@ -747,6 +730,17 @@ foreach(f ${files})
     ${CMAKE_CURRENT_BINARY_DIR}/${f}
     )
 endforeach()
+if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
+    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
+    )
+endif()
+
+#-----------------------------------------------------------------------------
+# Configure testing scripts
+#-----------------------------------------------------------------------------
 set(files
   Utilities/Scripts/runValgrind.sh
   Utilities/Scripts/runValgrindForOneModule.sh
@@ -761,14 +755,6 @@ foreach(f ${files})
     ${CMAKE_CURRENT_BINARY_DIR}/${f}
     )
 endforeach()
-
-if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
-  install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
-    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
-endif()
 
 #-----------------------------------------------------------------------------
 # Includes
