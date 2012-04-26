@@ -172,7 +172,16 @@ add_executable(SlicerQT${SlicerQT_EXE_SUFFIX}
 set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS ${PROJECT_NAME})
 
 if(APPLE)
-  set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES OUTPUT_NAME Slicer)
+  set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX}
+    PROPERTIES
+      OUTPUT_NAME Slicer
+      MACOSX_BUNDLE_BUNDLE_VERSION "${Slicer_VERSION_FULL}"
+    )
+  if(DEFINED Slicer_VERSION_TWEAK)
+    set_target_properties(SlicerQT${SlicerQT_EXE_SUFFIX} PROPERTIES
+      MACOSX_BUNDLE_SHORT_VERSION_STRING "${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}.${Slicer_VERSION_PATCH}"
+      )
+  endif()
 endif()
 
 target_link_libraries(SlicerQT${SlicerQT_EXE_SUFFIX}
