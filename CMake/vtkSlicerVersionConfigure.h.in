@@ -24,7 +24,7 @@
 #define Slicer_OS_WIN_NAME "@Slicer_OS_WIN_NAME@"
 
 #define Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@"
-#define Slicer_PLATFORM "@Slicer_PLATFORM@"
+#define Slicer_OS "@Slicer_OS@"
 #define Slicer_BUILDDATE "@Slicer_BUILDDATE@"
 #define Slicer_WC_URL "@Slicer_WC_URL@"
 #define Slicer_WC_REVISION "@Slicer_WC_REVISION@"

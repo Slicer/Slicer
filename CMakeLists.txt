@@ -83,7 +83,7 @@ include(CMakeDependentOption)
 include(CMakeParseArguments)
 include(Slicer3PluginsMacros)
 include(SlicerMacroExtractRepositoryInfo)
-include(SlicerMacroGetPlatformArchitectureBitness)
+include(SlicerMacroGetOperatingSystemArchitectureBitness)
 include(SlicerMacroParseArguments)
 include(SlicerMacroEmptyExternalProject)
 include(SlicerFunctionInstallLibrary)
@@ -472,10 +472,10 @@ set(Slicer_ModuleMRML_INCLUDE_DIRS CACHE INTERNAL "Slicer Module MRML includes" 
 set(Slicer_ModuleWidgets_INCLUDE_DIRS CACHE INTERNAL "Slicer Module Widgets includes" FORCE)
 
 #-----------------------------------------------------------------------------
-# Get platform, architecture and bitness
+# Get operating system, architecture and bitness
 #-----------------------------------------------------------------------------
-SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX Slicer)
-message(STATUS "Configuring Slicer for ${Slicer_PLATFORM}-${Slicer_ARCHITECTURE}")
+SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX Slicer)
+message(STATUS "Configuring Slicer for ${Slicer_OS}-${Slicer_ARCHITECTURE}")
 
 #-----------------------------------------------------------------------------
 # Testing

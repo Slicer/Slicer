@@ -1193,7 +1193,7 @@ int qSlicerCoreApplication::minorVersion() const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::platform()const
 {
-  return QString("%1-%2").arg(Slicer_PLATFORM).arg(Slicer_ARCHITECTURE);
+  return QString("%1-%2").arg(Slicer_OS).arg(Slicer_ARCHITECTURE);
 }
 
 //-----------------------------------------------------------------------------
@@ -1205,7 +1205,7 @@ QString qSlicerCoreApplication::arch()const
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::os()const
 {
-  return Slicer_PLATFORM;
+  return Slicer_OS;
 }
 
 //-----------------------------------------------------------------------------
