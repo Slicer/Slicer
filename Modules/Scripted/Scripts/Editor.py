@@ -97,7 +97,12 @@ class EditorWidget:
     if self.showVolumesFrame:
       # get the slice composite node for the Red slice view (we'll assume it exists 
       # since we are in the editor) to get the current background and label
+      # - set the foreground layer as the active ID 
+      # in the selection node for later calls to PropagateVolumeSelection
       compositeNode = self.editUtil.getCompositeNode()
+      selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+      selectionNode.SetReferenceSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
+      print( 'setting selection node to ', compositeNode.GetForegroundVolumeID() )
       bgID = lbID = ""
       if compositeNode.GetBackgroundVolumeID():
         bgID = compositeNode.GetBackgroundVolumeID()
