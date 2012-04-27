@@ -23,7 +23,6 @@ class ColorBox(object):
     self.parameterNode = parameterNode
     self.parameter = parameter
     self.selectCommand = selectCommand
-    self.showRecents = False # TODO: make a group for recents for visual feedback (otherwise confusing)
     self.recents = []
     self.label = None
     if not parent:
@@ -102,17 +101,16 @@ class ColorBox(object):
     self.view.setModel(self.model)
     pattern = self.search.text
     self.row = 0
-    if self.showRecents and pattern == "":
-      for c in self.recents:
-        self.addRow(c)
-      if self.recents:
-        item = qt.QStandardItem()
-        item.setText("--")
-        self.model.setItem(self.row,0,item)
-        self.model.setItem(self.row,1,item)
-        self.model.setItem(self.row,2,item)
-        self.items.append(item)
-        self.row+=1
+    for c in self.recents:
+      self.addRow(c)
+    if self.recents:
+      item = qt.QStandardItem()
+      item.setText("--")
+      self.model.setItem(self.row,0,item)
+      self.model.setItem(self.row,1,item)
+      self.model.setItem(self.row,2,item)
+      self.items.append(item)
+      self.row+=1
     for c in xrange(self.colorNode.GetNumberOfColors()):
       name = self.colorNode.GetColorName(c)
       if name != "(none)" and name.find(pattern) >= 0:
@@ -126,7 +124,9 @@ class ColorBox(object):
 
   def selected(self, modelIndex):
     self.label = self.model.item(modelIndex.row(),0).text()
-    self.recents.append(int(self.label))
+    labelNumber = int(self.label)
+    if not labelNumber in self.recents:
+      self.recents.append(labelNumber)
     if self.parameter:
       self.parameterNode.SetParameter(self.parameter,self.label)
     if self.selectCommand:
