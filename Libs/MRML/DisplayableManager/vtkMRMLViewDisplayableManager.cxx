@@ -24,8 +24,10 @@
 #include "vtkMRMLDisplayableManagerGroup.h"
 
 // MRML includes
+#include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLCameraNode.h>
+#include <vtkMRMLDisplayableNode.h>
 
 // VTK includes
 #include <vtkBoundingBox.h>
@@ -60,6 +62,7 @@ public:
   void CreateAxis();
   void AddAxis(vtkRenderer * renderer);
   void UpdateAxis(vtkRenderer * renderer, vtkMRMLViewNode * viewNode);
+  void UpdateRASBounds(double bounds[6]);
 
   void UpdateAxisVisibility();
   void UpdateAxisLabelVisibility();
@@ -148,6 +151,58 @@ void vtkMRMLViewDisplayableManager::vtkInternal::AddAxis(vtkRenderer * renderer)
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6])
+{
+  //Bounds is x-min, x-max, y-min, y-max, z-min, z-max 
+  vtkMath::UninitializeBounds(bounds);
+
+  if (this->External->GetMRMLViewNode() == 0)
+    {
+    return;
+    }
+  vtkMRMLScene *scene = this->External->GetMRMLViewNode()->GetScene();
+
+  std::vector<vtkMRMLNode *> nodes;
+  int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
+  double nodeBounds[6];
+  for (int n=0; n<nnodes; n++)
+    {
+    vtkMRMLDisplayableNode *node =  vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
+    if (node && !(!strcmp(node->GetName(), "Red Volume Slice") ||
+                  !strcmp(node->GetName(), "Green Volume Slice") ||
+                  !strcmp(node->GetName(), "Yellow Volume Slice")) )
+      {
+      node->GetRASBounds(nodeBounds);
+      if (vtkMath::AreBoundsInitialized(nodeBounds))
+        {
+        if (!vtkMath::AreBoundsInitialized(bounds))
+          {
+          for (int i=0; i<6; i++)
+            {
+            bounds[i] = nodeBounds[i];
+            }
+          }
+        else
+          {
+          for (int i=0; i<3; i++)
+            {
+            if (bounds[2*i] > nodeBounds[2*i])
+              {
+              bounds[2*i] = nodeBounds[2*i];
+              }
+            if (bounds[2*i+1] < nodeBounds[2*i+1])
+              {
+              bounds[2*i+1] = nodeBounds[2*i+1];
+              }
+            }
+          }
+        }
+      }
+    }
+
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * renderer,
                                                             vtkMRMLViewNode * viewNode)
 {
@@ -171,7 +226,9 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 
   // Compute bounds
   double bounds[6];
-  renderer->ComputeVisiblePropBounds(bounds);
+  this->UpdateRASBounds(bounds);
+
+  //renderer->ComputeVisiblePropBounds(bounds);
 
   // If there are no visible props, create a default set of bounds
   vtkBoundingBox newBBox;
@@ -510,6 +567,7 @@ void vtkMRMLViewDisplayableManager
       {
       vtkDebugMacro(<< "ProcessMRMLNodesEvents - ResetFocalPointEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+      this->Internal->UpdateAxisLabelVisibility();
       }
     }
   else if(vtkMRMLCameraNode::SafeDownCast(caller))

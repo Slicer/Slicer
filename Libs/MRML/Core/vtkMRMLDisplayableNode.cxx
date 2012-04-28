@@ -23,6 +23,7 @@ Version:   $Revision: 1.3 $
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkPolyData.h>
+#include <vtkMath.h>
 
 // STD includes
 #include <cassert>
@@ -467,7 +468,5 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
 void vtkMRMLDisplayableNode::GetRASBounds(double bounds[6])
 
 {
-  bounds[0] = bounds[3] = 0.0;
-  bounds[1] = bounds[4] = 0.0;
-  bounds[2] = bounds[5] = 0.0;
+  vtkMath::UninitializeBounds(bounds);
 }
