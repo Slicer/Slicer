@@ -1458,20 +1458,18 @@ void vtkMRMLSliceNode::SetUVWExtentsAndDimensions (double extents[3], int dimens
        dimensions[1] != this->UVWDimensions[1] ||
        dimensions[2] != this->UVWDimensions[2] )
     {
+    modified = true;
     if (dimensions[0] > this->UVWMaximumDimensions[0])
       {
       dimensions[0] = this->UVWMaximumDimensions[0];
-      modified = true;
       }
     if (dimensions[1] > this->UVWMaximumDimensions[1])
       {
       dimensions[1] = this->UVWMaximumDimensions[1];
-      modified = true;
       }
     if (dimensions[2] > this->UVWMaximumDimensions[2])
       {
       dimensions[2] = this->UVWMaximumDimensions[2];
-      modified = true;
       }
     this->UVWDimensions[0] = dimensions[0];
     this->UVWDimensions[1] = dimensions[1];
