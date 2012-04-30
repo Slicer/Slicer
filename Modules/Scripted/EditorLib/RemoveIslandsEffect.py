@@ -127,6 +127,24 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
   def __init__(self,sliceLogic):
     super(RemoveIslandsEffectLogic,self).__init__(sliceLogic)
 
+
+  def findNonZeroBorderPixel(self, imageData):
+    """ search the border of the image data looking for the first 
+    - usually whole border will be nonzero, but in some cases
+      it may not be.  So check corners first, and then
+      if can't find it, give up and use 1 (to avoid exhaustive search)
+    """
+    w,h,d = map(lambda x: x-1, imageData.GetDimensions())
+
+    corners = [ [0, 0, 0], [w, 0, 0], [0, h, 0], [w, h, 0],
+                  [0, 0, d], [w, 0, d], [0, h, d], [w, h, d] ]
+
+    for corner in corners:
+        p = imageData.GetScalarComponentAsDouble(*(corner+[0,]))
+        if p != 0:
+          return p
+    return 1
+
   def removeIslands(self):
     #
     # change the label values based on the parameter node
@@ -163,13 +181,15 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     ignoredIslands = islandOrigCount - islandCount
     print( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
 
+    bgPixel = self.findNonZeroBorderPixel(islandMath.GetOutput())
+
     # now rethreshold so that everything which is not background becomes the label
     postThresh = vtk.vtkImageThreshold()
-    postThresh.SetInValue( label )
-    postThresh.SetOutValue( 0 )
+    postThresh.SetInValue( 0 )
+    postThresh.SetOutValue( label )
     postThresh.ReplaceInOn()
     postThresh.ReplaceOutOn()
-    postThresh.ThresholdBetween( 0, 0 )
+    postThresh.ThresholdBetween( bgPixel, bgPixel )
     postThresh.SetOutputScalarTypeToShort()
     postThresh.SetInput( islandMath.GetOutput() )
     postThresh.SetOutput( self.getScopedLabelOutput() )
@@ -177,6 +197,27 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     postThresh.Update()
 
     self.applyScopedLabel()
+
+
+    if False:
+      layerLogic = self.sliceLogic.GetLabelLayer()
+      labelNode = layerLogic.GetVolumeNode()
+      volumesLogic = slicer.modules.volumes.logic()
+      thresh1 = volumesLogic.CloneVolume(slicer.mrmlScene, labelNode, 'thres1')
+      islands = volumesLogic.CloneVolume(slicer.mrmlScene, labelNode, 'islands')
+      thresh2 = volumesLogic.CloneVolume(slicer.mrmlScene, labelNode, 'thres2')
+      cast = vtk.vtkImageCast()
+      cast.SetOutputScalarTypeToShort()
+      cast.SetInput(preThresh.GetOutput())
+      cast.Update()
+      thresh1.SetAndObserveImageData(cast.GetOutput())
+      cast2 = vtk.vtkImageCast()
+      cast2.SetOutputScalarTypeToShort()
+      cast2.SetInput(islandMath.GetOutput())
+      cast2.Update()
+      islands.SetAndObserveImageData(cast2.GetOutput())
+      thresh2.SetAndObserveImageData(postThresh.GetOutput())
+
 
 #
 # The RemoveIslandsEffect class definition 
