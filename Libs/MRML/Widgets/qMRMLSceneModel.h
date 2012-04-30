@@ -201,6 +201,15 @@ protected slots:
 
   void updateColumnCount();
 
+signals :
+  /// This signal is sent when a user is about to reparent a Node by
+  /// a drag and drop
+  void aboutToReparentByDragAndDrop(vtkMRMLNode* node, vtkMRMLNode* newParent);
+
+  ///  This signal is sent after a user draged and droped a Node in the
+  /// qMRMLTreeView
+  void reparentedByDragAndDrop(vtkMRMLNode* node, vtkMRMLNode* newParent);
+
 protected:
 
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);

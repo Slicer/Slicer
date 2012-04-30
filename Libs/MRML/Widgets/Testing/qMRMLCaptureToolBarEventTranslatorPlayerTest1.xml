@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCaptureToolBar0/QAction2" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCaptureToolBar0/QAction1" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCaptureToolBar0/QAction2" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCaptureToolBar0/1QToolButton2/1qMRMLSceneViewMenu0" command="activate" arguments="No scene views"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCaptureToolBar0/1QToolButton2/1qMRMLSceneViewMenu0" command="activate" arguments="No scene views"/>
+    </events>
+</xml>

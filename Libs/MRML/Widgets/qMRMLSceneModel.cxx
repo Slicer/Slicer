@@ -963,7 +963,9 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
   int desiredNodeIndex = -1;
   if (this->parentNode(node) != parent)
     {
+    emit aboutToReparentByDragAndDrop(node, parent);
     this->reparent(node, parent);
+    emit reparentedByDragAndDrop(node, parent);
     }
   else if ((desiredNodeIndex = this->nodeIndex(node)) != item->row())
     {

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0" command="mousePress" arguments="1,1,0,46,11,/8:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0" command="mouseRelease" arguments="1,0,0,46,11,/8:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,212,8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,212,98"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-240,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-240,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,186,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,186,121"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0" command="mousePress" arguments="1,1,0,36,8,/49:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLColorListView0" command="mouseRelease" arguments="1,0,0,36,8,/49:0"/>
+    </events>
+</xml>

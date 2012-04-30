@@ -238,6 +238,10 @@ signals:
 
   /// TBD:
   /// void nodeRemoved(vtkMRMLNode*);
+
+  /// Signal emitted when the current node is renamed
+  void currentNodeRenamed(const QString& newName);
+
 protected:
   /// qMRMLNodeComboBox will not take ownership on the model.
   qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="10"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="12"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="13"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="14"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="15"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="16"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="17"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="18"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="19"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="20"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="21"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="22"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="23"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="24"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="26"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="27"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="28"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="30"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="32"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="33"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="34"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="35"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="36"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="37"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="38"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="39"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="40"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="41"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="42"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="43"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="44"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="45"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="46"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="47"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="48"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="49"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="50"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="51"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="52"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="spin" arguments="up"/>
+    </events>
+</xml>

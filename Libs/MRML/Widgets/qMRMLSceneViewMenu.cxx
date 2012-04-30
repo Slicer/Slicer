@@ -94,6 +94,7 @@ void qMRMLSceneViewMenuPrivate::addMenuItem(vtkMRMLNode * sceneViewNode)
     }
 
   QMenu* sceneViewMenu = q->addMenu(QLatin1String(node->GetName()));
+  sceneViewMenu->setObjectName("sceneViewMenu");
 
   QAction* restoreAction = sceneViewMenu->addAction(QIcon(":/Icons/SnapshotRestore.png"), "Restore",
                                                    &this->RestoreActionMapper, SLOT(map()));

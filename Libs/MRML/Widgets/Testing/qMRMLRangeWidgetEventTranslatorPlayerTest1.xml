@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb00010000000000000000003100000270000001a2000000060000004a0000026a0000019c000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000002650000013f00000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="spin" arguments="down"/>
+    </events>
+</xml>

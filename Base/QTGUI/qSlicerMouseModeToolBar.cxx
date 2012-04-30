@@ -30,8 +30,6 @@
 #include "qMRMLSliceWidget.h"
 #include "qSlicerMouseModeToolBar_p.h"
 
-// CTK includes
-
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
 
@@ -68,6 +66,7 @@ void qSlicerMouseModeToolBarPrivate::init()
 
   // RotateMode action
   this->ViewTransformModeAction = new QAction(q);
+  this->ViewTransformModeAction->setObjectName("MouseRotateMode");
   this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
   this->ViewTransformModeAction->setText("&Rotate");
   this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view (use drop down menu to place Annotations)");
@@ -103,6 +102,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   
   // popuplate the create and place menu, with persistence first
   this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
+  this->CreateAndPlaceMenu->setObjectName("CreateAndPlaceMenu");
   this->CreateAndPlaceMenu->addAction(this->PersistenceAction);
   this->CreateAndPlaceMenu->addSeparator();
   this->CreateAndPlaceMenu->addActions(this->ActionGroup->actions());
@@ -110,6 +110,7 @@ void qSlicerMouseModeToolBarPrivate::init()
   
 
   this->CreateAndPlaceToolButton = new QToolButton();
+  this->CreateAndPlaceToolButton->setObjectName("CreateAndPlaceToolButton");
   this->CreateAndPlaceToolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
   this->CreateAndPlaceToolButton->setToolTip(QObject::tr("Create and Place"));
   this->CreateAndPlaceToolButton->setText(QObject::tr("Place"));
@@ -278,6 +279,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
       {
       // add it
       QAction * newAction = new QAction(this->CreateAndPlaceMenu);
+      newAction->setObjectName(annotationID);
       newAction->setIcon(QIcon(annotationResource));
       if (newAction->icon().isNull())
         {

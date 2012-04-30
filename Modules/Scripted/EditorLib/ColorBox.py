@@ -27,6 +27,7 @@ class ColorBox(object):
     self.label = None
     if not parent:
       self.parent = slicer.qMRMLWidget()
+      self.parent.setObjectName('EditMRMLWidget')
       self.parent.setLayout(qt.QVBoxLayout())
       self.parent.setMRMLScene(slicer.mrmlScene)
       self.create()
@@ -51,10 +52,12 @@ class ColorBox(object):
 
     # model and view for color table
     self.view = qt.QTreeView()
+    self.view.setObjectName('EditColorTreeView')
+    self.view.setEditTriggers(qt.QAbstractItemView().NoEditTriggers)
     self.parent.layout().addWidget(self.view)
     self.populateColors()
     self.search.connect('textChanged(QString)', self.populateColors)
-    self.view.connect('clicked(QModelIndex)', self.selected)
+    self.view.connect('activated(QModelIndex)', self.selected)
 
   def cleanup(self):
     pass

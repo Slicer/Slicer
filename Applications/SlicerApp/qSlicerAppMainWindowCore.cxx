@@ -30,7 +30,10 @@
 #include <ctkErrorLogWidget.h>
 #include <ctkMessageBox.h>
 #ifdef Slicer_USE_PYTHONQT
-#include <ctkPythonConsole.h>
+# include <ctkPythonConsole.h>
+#endif
+#ifdef Slicer_USE_QtTesting
+# include <ctkQtTestingUtility.h>
 #endif
 
 
@@ -246,6 +249,33 @@ void qSlicerAppMainWindowCore::onSDBZipToDCMActionTriggered()
 void qSlicerAppMainWindowCore::onFileCloseSceneActionTriggered()
 {
   qSlicerCoreApplication::application()->mrmlScene()->Clear(false);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindowCore::onEditRecordMacroActionTriggered()
+{
+#ifdef Slicer_USE_QtTesting
+  QString filename = QFileDialog::getSaveFileName(this->widget(), "Macro File Name",
+    QString(), "XML Files (*.xml)");
+  if (!filename.isEmpty())
+    {
+    qSlicerApplication::application()->testingUtility()->recordTests(filename);
+    }
+#endif
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindowCore::onEditPlayMacroActionTriggered()
+{
+#ifdef Slicer_USE_QtTesting
+  qSlicerApplication::application()->testingUtility()->openPlayerDialog();
+//  QString filename = QFileDialog::getOpenFileName(this->widget(), "Test File Name",
+//    QString(), "XML Files (*.xml)");
+//  if (!filename.isEmpty())
+//    {
+//    d->TestUtility.playTests(filename);
+//    }
+#endif
 }
 
 //---------------------------------------------------------------------------

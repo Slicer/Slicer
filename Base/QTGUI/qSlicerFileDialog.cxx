@@ -242,6 +242,7 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
     delete options;
     options = 0;
     }
+  delete fileDialog;
   return res;
 }
 

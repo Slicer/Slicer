@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb0001000000000000000000310000038a0000019a000000060000004a0000038400000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd000000000000037f0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/ColorTableComboBox/1ctkTreeComboBox0" command="indexChanged" arguments="WarmTint2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/ColorTableComboBox/1ctkTreeComboBox0" command="indexChanged" arguments="WarmShade3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/SearchBox" command="set_string" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/SearchBox" command="key" arguments="46"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/SearchBox" command="set_string" arguments="0.2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/SearchBox" command="set_string" arguments="0.20"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/SearchBox" command="set_string" arguments="0.200"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="6,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="6,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="6,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="keyEvent" arguments="7,16777237,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="mousePress" arguments="1,1,0,69,9,/4:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="mouseMove" arguments="1,0,0,70,9,/4:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="mouseRelease" arguments="1,0,0,70,9,/4:0"/>
+    </events>
+</xml>

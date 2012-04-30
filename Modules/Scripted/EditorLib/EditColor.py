@@ -65,6 +65,7 @@ class EditColor(object):
     self.frame.layout().addWidget(self.colorSpin)
 
     self.colorPatch = qt.QPushButton(self.frame)
+    self.colorPatch.setObjectName('colorPatch')
     self.frame.layout().addWidget(self.colorPatch)
 
     self.updateParameterNode(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent)
@@ -109,7 +110,6 @@ class EditColor(object):
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
     try:
-      self.colorSpin.destroyed()
       self.colorSpin.setValue(label)
     except ValueError:
       # TODO: why does the python class still exist if the widget is destroyed?
@@ -134,8 +134,7 @@ class EditColor(object):
 
 
   def showColorBox(self):
-    if self.colorBox:
-      self.colorBox.show(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())
-    else:
+    if not self.colorBox:
       self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())
 
+    self.colorBox.show(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())

@@ -29,12 +29,16 @@
 #include <QMenu>
 
 #include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT and Slicer_USE_QtTesting
 
 // CTK includes
 #include <ctkErrorLogWidget.h>
 #include <ctkMessageBox.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
+#endif
+#ifdef Slicer_USE_QtTesting
+#include <ctkQtTestingUtility.h>
 #endif
 #include <ctkSettingsDialog.h>
 #include <ctkVTKSliceView.h>
@@ -43,6 +47,10 @@
 #include "qSlicerAppMainWindow.h"
 #include "ui_qSlicerAppMainWindow.h"
 #include "qSlicerAbstractModule.h"
+#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
+#include "qSlicerCLIModuleWidgetEventPlayer.h"
+#endif
+#include "qSlicerCommandOptions.h"
 #include "qSlicerCoreCommandOptions.h"
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 # include "qSlicerExtensionsManagerDialog.h"
@@ -247,6 +255,11 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->LayoutManager->setScriptedDisplayableManagerDirectory(
       qSlicerApplication::application()->slicerHome() + "/bin/Python/mrmlDisplayableManager");
   qSlicerApplication::application()->setLayoutManager(this->LayoutManager);
+#ifdef Slicer_USE_QtTesting
+  // we store this layout manager to the Object state property for QtTesting
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
+      qSlicerApplication::application()->layoutManager(), QString("layout"));
+#endif
   // Layout manager should also listen the MRML scene
   this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
   QObject::connect(qSlicerApplication::application(),
@@ -263,6 +276,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // Add menus for configuring compare view
   QMenu *compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->setObjectName("CompareMenuView");
   compareMenu->addAction(this->actionViewLayoutCompare_2_viewers);
   compareMenu->addAction(this->actionViewLayoutCompare_3_viewers);
   compareMenu->addAction(this->actionViewLayoutCompare_4_viewers);
@@ -276,6 +290,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // ... and for widescreen version of compare view as well
   compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->setObjectName("CompareMenuWideScreen");
   compareMenu->addAction(this->actionViewLayoutCompareWidescreen_2_viewers);
   compareMenu->addAction(this->actionViewLayoutCompareWidescreen_3_viewers);
   compareMenu->addAction(this->actionViewLayoutCompareWidescreen_4_viewers);
@@ -289,6 +304,7 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 
   // ... and for the grid version of the compare views
   compareMenu = new QMenu(q->tr("Select number of viewers..."));
+  compareMenu->setObjectName("CompareMenuGrid");
   compareMenu->addAction(this->actionViewLayoutCompareGrid_2x2_viewers);
   compareMenu->addAction(this->actionViewLayoutCompareGrid_3x3_viewers);
   compareMenu->addAction(this->actionViewLayoutCompareGrid_4x4_viewers);
@@ -370,6 +386,21 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(q);
 #endif
+
+  //----------------------------------------------------------------------------
+  // Update UI considering build options
+  //----------------------------------------------------------------------------
+
+#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
+  if (qSlicerApplication::application()->commandOptions()->enableQtTesting())
+    {
+    this->actionEditPlayMacro->setVisible(true);
+    this->actionEditRecordMacro->setVisible(true);
+    qSlicerApplication::application()->testingUtility()->addPlayer(
+          new qSlicerCLIModuleWidgetEventPlayer());
+    }
+#endif
+
 }
 
 //-----------------------------------------------------------------------------
@@ -556,6 +587,8 @@ void qSlicerAppMainWindow::setupMenuActions()
   this->connect(d->actionFileExit, SIGNAL(triggered()),
                 this, SLOT(close()));
 
+  qSlicerAppMainWindowCore_connect(EditRecordMacro);
+  qSlicerAppMainWindowCore_connect(EditPlayMacro);
   qSlicerAppMainWindowCore_connect(EditUndo);
   qSlicerAppMainWindowCore_connect(EditRedo);
 
@@ -731,6 +764,7 @@ void qSlicerAppMainWindow::onModuleLoaded(const QString& moduleName)
         }
       }
     d->ModuleToolBar->insertAction(beforeAction, action);
+    action->setParent(d->ModuleToolBar);
     }
 }
 

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="uncheck_indexes" arguments="0 2 3 4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="1 2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="1 2 3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="uncheck_indexes" arguments="0 2 4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="1 3 4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="0 1 3 4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="uncheck_indexes" arguments="1 2"/>
+    </events>
+</xml>

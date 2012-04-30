@@ -183,6 +183,8 @@ option(Slicer_USE_MIDAS       "Build Slicer with MIDAS support." OFF)
 option(Slicer_USE_OpenIGTLink "Build Slicer with OpenIGTLink support." ON)
 option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
+option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
+mark_as_advanced(Slicer_USE_QtTesting)
 
 set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
@@ -537,6 +539,14 @@ include(${VTK_USE_FILE})
 #-----------------------------------------------------------------------------
 find_package(CTK REQUIRED)
 include(${CTK_USE_FILE})
+
+#-----------------------------------------------------------------------------
+# QtTesting
+#-----------------------------------------------------------------------------
+if(Slicer_USE_QtTesting)
+  set(QtTesting_DIR ${CTK_QtTesting_DIR})
+  find_package(QtTesting REQUIRED)
+endif()
 
 #-----------------------------------------------------------------------------
 # qMidasAPI

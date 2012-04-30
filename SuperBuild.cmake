@@ -171,6 +171,7 @@ set(ep_cmake_boolean_args
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
   #Slicer_USE_WEAVE
+  Slicer_USE_QtTesting
   Slicer_USE_SimpleITK
   Slicer_BUILD_BRAINSTOOLS
   Slicer_BUILD_ChangeTrackerPy

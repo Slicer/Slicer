@@ -16,6 +16,9 @@
 // PythonQt includes
 #include <PythonQt.h>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
 #include "qSlicerAbstractCoreModule.h"
@@ -38,6 +41,7 @@ public:
     {
     PythonQt::self()->registerClass(&qSlicerCoreApplication::staticMetaObject);
     PythonQt::self()->registerClass(&qSlicerAbstractCoreModule::staticMetaObject);
+    PythonQt::self()->registerClass(&ctkErrorLogModel::staticMetaObject);
     // Note: Use registerCPPClassForPythonQt to register pure Cpp classes
     }
 

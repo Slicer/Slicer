@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Sans,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000003d000000450000022c000001ca0000003e000000600000022b000001c5000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000015000000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/qMRMLSliceControllerWidget" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="-6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/1QWidget0/1QToolButton0" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/qMRMLSliceControllerWidget/SliceFrame/SliceMoreOptionButton" command="activate" arguments=""/>
+        <event widget="CompositingMenu" command="activate" arguments="actionCompositingReverse_alpha_blend"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/qMRMLSliceControllerWidget/SliceFrame/SliceMoreOptionButton" command="activate" arguments=""/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="down"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerSpacingManualMode/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="SlicerSpacingMenu/slicerFOVMenu/1QWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
+        <event widget="SlicerSpacingMenu/slicerFOVMenu/1QWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
+        <event widget="SlicerSpacingMenu/slicerFOVMenu/1QWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
+        <event widget="SlicerSpacingMenu/slicerFOVMenu/1QWidget0/1QDoubleSpinBox0" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLSliceWidget/SliceController/qMRMLSliceControllerWidget/SliceFrame/LightBoxToolButton" command="activate" arguments=""/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox0" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox0" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox1" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox1" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox1" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox1" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QSpinBox1" command="spin" arguments="up"/>
+        <event widget="LightboxMenu/customLightboxMenu/1QWidget0/1QPushButton0" command="activate" arguments=""/>
+    </events>
+</xml>

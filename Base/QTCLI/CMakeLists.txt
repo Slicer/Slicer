@@ -76,6 +76,16 @@ set(KIT_target_libraries
   MRMLCLI
   )
 
+if(Slicer_USE_QtTesting)
+  list(APPEND KIT_SRCS
+    qSlicerCLIModuleWidgetEventPlayer.cxx
+    qSlicerCLIModuleWidgetEventPlayer.h
+    )
+  list(APPEND KIT_MOC_SRCS
+    qSlicerCLIModuleWidgetEventPlayer.h
+    )
+endif()
+
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}
   EXPORT_DIRECTIVE ${KIT_export_directive}

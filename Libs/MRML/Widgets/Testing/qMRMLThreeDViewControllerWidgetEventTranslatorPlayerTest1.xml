@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000001f90000019a000000060000004a000001f300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000001ee0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/1QWidget0/1QToolButton0" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/1QWidget0/1QToolButton0" command="set_boolean" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.5,0.333333,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.5,0.333333,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.45,0.424242,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.45,0.424242,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.41,0.560606,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.41,0.560606,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.4,0.530303,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.4,0.530303,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.59,0.530303,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.59,0.515152,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.58,0.651515,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.58,0.651515,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mousePress" arguments="(0.51,0.69697,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/AxesWidget" command="mouseRelease" arguments="(0.51,0.69697,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/OrthoButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="false"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDViewControllerWidget0/1QWidget0/1QToolButton0" command="set_boolean" arguments="true"/>
+    </events>
+</xml>

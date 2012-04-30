@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000003d70000019a000000060000004a000003d100000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000003cc0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,0,0,0,2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0" command="keyEvent" arguments="6,16777249,67108864,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0" command="keyEvent" arguments="7,16777249,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,11,25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,11,25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_viewport" command="mouseWheel" arguments="-120,0,0,11,25"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="-120,0,0,30,205"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0" command="keyEvent" arguments="6,16777249,67108864,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,15"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,15"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mousePress" arguments="1,1,67108864,0,0,11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0/1QHeaderView0" command="mouseRelease" arguments="1,0,67108864,0,0,11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView0" command="keyEvent" arguments="7,16777249,0,,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView1/1QHeaderView0" command="mousePress" arguments="1,1,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView1/1QHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView2/1QHeaderView0" command="mousePress" arguments="1,1,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView2/1QHeaderView0" command="mouseRelease" arguments="1,0,0,0,0,0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView2" command="mousePress" arguments="1,1,0,18,11,/0:0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLColorTableView2" command="mouseRelease" arguments="1,0,0,18,11,/0:0"/>
+    </events>
+</xml>

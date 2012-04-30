@@ -291,6 +291,7 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode
   Q_ASSERT(!this->threeDWidget(viewNode));
 
   qMRMLThreeDWidget* threeDWidget = new qMRMLThreeDWidget(q->viewport());
+  threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetViewLabel()));
   threeDWidget->setViewLabel(viewNode->GetViewLabel());
   threeDWidget->setMRMLScene(this->MRMLScene);
   threeDWidget->setMRMLViewNode(viewNode);

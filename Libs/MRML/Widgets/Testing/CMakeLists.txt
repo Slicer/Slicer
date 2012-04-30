@@ -1,7 +1,7 @@
 
 set(KIT ${PROJECT_NAME})
 set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
-create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+set(TEST_SOURCES
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLCheckableNodeComboBoxTest1.cxx
   qMRMLClipNodeWidgetTest1.cxx
@@ -63,6 +63,43 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   qMRMLWidgetsExportTest1.cxx
   qMRMLWindowLevelWidgetTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+  )
+
+if(Slicer_USE_QtTesting)
+  list(APPEND TEST_SOURCES
+    qMRMLCaptureToolBarEventTranslatorPlayerTest1.cxx
+    qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1.cxx
+    qMRMLClipNodeWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLCollapsibleButtonEventTranslatorPlayerTest1.cxx
+    qMRMLColorListViewEventTranslatorPlayerTest1.cxx
+    qMRMLColorPickerWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLColorTableComboBoxEventTranslatorPlayerTest1.cxx
+    qMRMLColorTableViewEventTranslatorPlayerTest1.cxx
+    qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLLabelComboBoxEventTranslatorPlayerTest1.cxx
+    qMRMLLayoutWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLLinearTransformSliderEventTranslatorPlayerTest1.cxx
+    qMRMLListWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLMatrixWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLNavigationViewEventTranslatorPlayerTest1.cxx
+    qMRMLNodeComboBoxEventTranslatorPlayerTest1.cxx
+    qMRMLRangeWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLROIWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1.cxx
+    qMRMLSliceControllerWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLSliceWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLThreeDViewControllerWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLThreeDWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLTransformSlidersEventTranslatorPlayerTest1.cxx
+    qMRMLTreeViewEventTranslatorPlayerTest1.cxx
+    qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1.cxx
+    qMRMLWindowLevelWidgetEventTranslatorPlayerTest1.cxx
+    )
+endif()
+
+create_test_sourcelist(Tests ${KIT}CppTests.cxx
+  ${TEST_SOURCES}
   )
 
 set(Tests_MOC_SRCS qMRMLNodeObject.h)
@@ -150,3 +187,34 @@ SCENE_TEST( qMRMLVolumeThresholdWidgetTest1 vol_and_cube.mrml)
 SCENE_TEST( qMRMLVolumeThresholdWidgetTest2 vol_and_cube.mrml)
 SIMPLE_TEST( qMRMLWidgetsExportTest1 )
 SCENE_TEST( qMRMLWindowLevelWidgetTest1 vol_and_cube.mrml)
+
+if(Slicer_USE_QtTesting)
+  SIMPLE_TEST(qMRMLCaptureToolBarEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLClipNodeWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLCollapsibleButtonEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLColorListViewEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLColorPickerWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLColorTableComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLColorTableViewEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLLabelComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLLayoutWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLLinearTransformSliderEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLListWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLMatrixWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLNavigationViewEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLNodeComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLRangeWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLROIWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLScalarInvariantComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLSliceControllerWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLSliceWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR} "${MRMLCore_SOURCE_DIR}/Testing/vol_and_cube.mrml")
+  SIMPLE_TEST(qMRMLThreeDViewControllerWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLThreeDWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLTransformSlidersEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLTreeViewEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR} "${MRMLCore_SOURCE_DIR}/Testing/vol_and_cube.mrml")
+  SIMPLE_TEST(qMRMLVolumeInfoWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
+  SIMPLE_TEST(qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR} "${MRMLCore_SOURCE_DIR}/Testing/vol_and_cube.mrml")
+  SIMPLE_TEST(qMRMLWindowLevelWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR} "${MRMLCore_SOURCE_DIR}/Testing/vol_and_cube.mrml")
+endif()

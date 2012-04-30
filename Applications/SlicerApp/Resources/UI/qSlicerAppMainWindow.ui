@@ -59,6 +59,9 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionEditApplicationSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionEditRecordMacro"/>
+    <addaction name="actionEditPlayMacro"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -1083,6 +1086,22 @@
    </property>
    <property name="text">
     <string>4x4 viewers</string>
+   </property>
+  </action>
+  <action name="actionEditRecordMacro">
+   <property name="text">
+    <string>Record Macro</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionEditPlayMacro">
+   <property name="text">
+    <string>Play Macro</string>
+   </property>
+   <property name="visible">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

@@ -44,6 +44,10 @@ class qSlicerPythonManager;
 class qSlicerLayoutManager;
 class qSlicerWidget;
 
+#ifdef Slicer_USE_QtTesting
+class ctkQtTestingUtility;
+#endif
+
 // MRML includes
 class vtkMRMLNode;
 
@@ -68,6 +72,11 @@ public:
   #ifdef Slicer_USE_PYTHONQT
   /// Get Python Manager
   Q_INVOKABLE qSlicerPythonManager * pythonManager();
+  #endif
+
+  #ifdef Slicer_USE_QtTesting
+  /// Get test utility
+  Q_INVOKABLE ctkQtTestingUtility* testingUtility();
   #endif
 
   /// Set/Get layout manager

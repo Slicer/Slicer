@@ -256,6 +256,29 @@ set(MRMLWidgets_QRC_SRCS
  ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
 )
 
+if(Slicer_USE_QtTesting)
+  list(APPEND MRMLWidgets_SRCS
+    qMRMLCheckableNodeComboBoxEventPlayer.cpp
+    qMRMLCheckableNodeComboBoxEventPlayer.h
+    qMRMLNodeComboBoxEventPlayer.cpp
+    qMRMLNodeComboBoxEventPlayer.h
+    qMRMLNodeComboBoxEventTranslator.cpp
+    qMRMLNodeComboBoxEventTranslator.h
+    qMRMLTreeViewEventPlayer.cpp
+    qMRMLTreeViewEventPlayer.h
+    qMRMLTreeViewEventTranslator.cpp
+    qMRMLTreeViewEventTranslator.h
+    )
+
+  list(APPEND MRMLWidgets_MOC_SRCS
+    qMRMLCheckableNodeComboBoxEventPlayer.h
+    qMRMLNodeComboBoxEventPlayer.h
+    qMRMLNodeComboBoxEventTranslator.h
+    qMRMLTreeViewEventPlayer.h
+    qMRMLTreeViewEventTranslator.h
+    )
+endif()
+
 QT4_WRAP_CPP(MRMLWidgets_MOC_CXX ${MRMLWidgets_MOC_SRCS})
 QT4_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})

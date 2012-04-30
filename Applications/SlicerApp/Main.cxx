@@ -74,6 +74,21 @@
 namespace
 {
 
+#ifdef Slicer_USE_QtTesting
+//-----------------------------------------------------------------------------
+void setEnableQtTesting(int argc, char* argv[])
+{
+  for (int i = 0; i < argc; ++i)
+    {
+    if (qstrcmp(argv[i], "--qt-testing") == 0)
+      {
+      QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
+      break;
+      }
+    }
+}
+#endif
+
 #ifdef Slicer_USE_PYTHONQT
 
 //----------------------------------------------------------------------------
@@ -208,6 +223,10 @@ int SlicerAppMain(int argc, char* argv[])
   //vtkObject::SetGlobalWarningDisplay(false);
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
+
+#ifdef Slicer_USE_QtTesting
+  setEnableQtTesting(argc, argv);
+#endif
 
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)

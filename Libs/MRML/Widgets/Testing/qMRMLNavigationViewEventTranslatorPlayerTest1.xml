@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb00010000000000000000003100000329000001b3000000060000004a00000323000001ad000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd000000000000031e0000015000000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseWheel" arguments="(1.17333,1.35333,0,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseWheel" arguments="(1.17333,1.35333,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseWheel" arguments="(1.17333,1.35333,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseWheel" arguments="(1.17333,1.35333,1,0,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mousePress" arguments="(-0.373333,-0.426667,1,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.373333,-0.433333,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.366667,-0.433333,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.366667,-0.44,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.36,-0.446667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.306667,-0.48,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.226667,-0.52,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.18,-0.54,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(-0.08,-0.553333,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.0266667,-0.586667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.0733333,-0.593333,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.126667,-0.6,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.133333,-0.6,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.14,-0.6,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.146667,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.153333,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.16,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.166667,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.173333,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.18,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.186667,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.193333,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.2,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseMove" arguments="(0.2,-0.606667,0,1,0)"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1QWidget0/1qMRMLThreeDView0/1QVTKWidget0" command="mouseRelease" arguments="(0.2,-0.606667,1,0,0)"/>
+    </events>
+</xml>

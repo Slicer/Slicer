@@ -63,6 +63,8 @@ public slots:
   void onSDBZipDirectoryActionTriggered();
   void onSDBZipToDCMActionTriggered();
   void onFileCloseSceneActionTriggered();
+  void onEditRecordMacroActionTriggered();
+  void onEditPlayMacroActionTriggered();
   void onEditUndoActionTriggered();
   void onEditRedoActionTriggered();
   void setLayout(int);

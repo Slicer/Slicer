@@ -131,6 +131,8 @@ public:
   virtual void showEvent(QShowEvent* show);
   virtual bool eventFilter(QObject* object, QEvent* e);
 
+  bool clickDecoration(const QModelIndex& index);
+
 public slots:
   void setMRMLScene(vtkMRMLScene* scene);
 
@@ -138,16 +140,20 @@ public slots:
   /// will happen
   void setSceneModelType(const QString& modelType);
 
+  void deleteCurrentNode();
+  void editCurrentNode();
+  void renameCurrentNode();
+
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
+  void currentNodeDeleted(const QModelIndex& index);
+  void currentNodeRenamed(const QString& newName);
   void editNodeRequested(vtkMRMLNode* node);
+  void decorationClicked(const QModelIndex&);
 
 protected slots:
   virtual void onCurrentRowChanged(const QModelIndex& index);
   void onNumberOfVisibleIndexChanged();
-  void deleteCurrentNode();
-  void editCurrentNode();
-  void renameCurrentNode();
 
   void updateRootNode(vtkObject* modifiedRootNode);
 protected:
@@ -158,7 +164,6 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseReleaseEvent(QMouseEvent* event);
 
-  bool onDecorationClicked(const QModelIndex& index);
   void toggleVisibility(const QModelIndex& index);
 
 private:

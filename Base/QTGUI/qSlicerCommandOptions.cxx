@@ -56,6 +56,12 @@ bool qSlicerCommandOptions::showPythonInteractor() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCommandOptions::enableQtTesting()const
+{
+  return this->parsedArgs().value("qt-testing").toBool();
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCommandOptions::addArguments()
 {
   this->Superclass::addArguments();
@@ -75,5 +81,10 @@ void qSlicerCommandOptions::addArguments()
     this->addArgument("show-python-interactor", "", QVariant::Bool,
                       "Show Python interactor at startup.");
     }
+#endif
+
+#ifdef Slicer_USE_QtTesting
+  this->addArgument("qt-testing", "", QVariant::Bool,
+                    "Enable QtTesting in the user interface and disable the native Menu bar");
 #endif
 }

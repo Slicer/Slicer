@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QHeaderView>
 #include <QInputDialog>
 #include <QMenu>
@@ -87,6 +88,7 @@ void qMRMLTreeViewPrivate::init()
   q->horizontalScrollBar()->installEventFilter(q);
   
   this->NodeMenu = new QMenu(q);
+  this->NodeMenu->setObjectName("nodeMenuTreeView");
 
   // rename node
   QAction* renameAction =
@@ -107,6 +109,7 @@ void qMRMLTreeViewPrivate::init()
   QObject::connect(this->EditAction, SIGNAL(triggered()),
                    q, SLOT(editCurrentNode()));
   this->SceneMenu = new QMenu(q);
+  this->SceneMenu->setObjectName("sceneMenuTreeView");
 }
 
 //------------------------------------------------------------------------------
@@ -528,7 +531,7 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
     //decorationElement.translate(this->visualRect(index).topLeft());
     if (decorationElement.contains(e->pos()))  
       {
-      if (this->onDecorationClicked(index))
+      if (this->clickDecoration(index))
         {
         return;
         }
@@ -539,19 +542,25 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTreeView::onDecorationClicked(const QModelIndex& index)
+bool qMRMLTreeView::clickDecoration(const QModelIndex& index)
 {
+  bool res = false;
   QModelIndex sourceIndex = this->sortFilterProxyModel()->mapToSource(index);
   if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
     {
-    return false;
+    res = false;
     }
-  if (sourceIndex.column() == this->sceneModel()->visibilityColumn())
+  else if (sourceIndex.column() == this->sceneModel()->visibilityColumn())
     {
     this->toggleVisibility(index);
-    return true;
+    res = true;
     }
-  return false;
+
+  if (res)
+    {
+    emit decorationClicked(index);
+    }
+  return res;
 }
 
 //------------------------------------------------------------------------------
@@ -606,7 +615,7 @@ void qMRMLTreeView::renameCurrentNode()
     return;
     }
   this->currentNode()->SetName(newName.toLatin1());
-
+  emit currentNodeRenamed(newName);
 }
 
 //------------------------------------------------------------------------------
@@ -620,6 +629,7 @@ void qMRMLTreeView::deleteCurrentNode()
     return;
     }
   this->mrmlScene()->RemoveNode(this->currentNode());
+  emit currentNodeDeleted(this->currentIndex());
 }
 
 //------------------------------------------------------------------------------

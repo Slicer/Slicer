@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000003ef000001e9000000060000004a000003e9000001e3000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000003e40000018600000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="20"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="up"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/CenterVolumePushButton" command="activate" arguments=""/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="spin" arguments="down"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/LabelMapCheckBox" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mousePress" arguments="1,1,0,31,15,"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mouseRelease" arguments="1,0,0,31,15,"/>
+    </events>
+</xml>

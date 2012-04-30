@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<xml>
+    <settings>
+        <name widget="qApp" command="applicationName" arguments=""/>
+        <version widget="qApp" command="applicationVersion" arguments=""/>
+        <font widget="MainWindow" command="font" arguments="Loma,10,-1,5,50,0,0,0,0,0"/>
+        <geometry widget="MainWindow" command="mainWindowGeometry" arguments="01d9d0cb000100000000000000000031000003a90000019a000000060000004a000003a300000194000000000000"/>
+        <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd000000000000039e0000013700000004000000040000000800000008fc00000000"/>
+    </settings>
+    <events>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/RedSliceClippingCheckBox" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/RedPositiveRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/GreenSliceClippingCheckBox" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/GreenPositiveRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/GreenNegativeRadioButton" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/UnionRadioButton" command="set_boolean" arguments="true"/>
+    </events>
+</xml>

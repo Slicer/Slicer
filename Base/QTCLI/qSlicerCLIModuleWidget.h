@@ -55,7 +55,7 @@ public slots:
   /// Set the current \a commandLineModuleNode
   void setCurrentCommandLineModuleNode(vtkMRMLNode* commandLineModuleNode);
 
-  void apply();
+  void apply(bool wait = false);
   void cancel();
   void reset();
 
