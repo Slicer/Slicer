@@ -180,6 +180,8 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     islandOrigCount = islandMath.GetOriginalNumberOfIslands()
     ignoredIslands = islandOrigCount - islandCount
     print( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
+    if islandCount == 0:
+      return
 
     bgPixel = self.findNonZeroBorderPixel(islandMath.GetOutput())
 
@@ -200,6 +202,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
 
 
     if False:
+      # some code for debugging - leave it in 
       layerLogic = self.sliceLogic.GetLabelLayer()
       labelNode = layerLogic.GetVolumeNode()
       volumesLogic = slicer.modules.volumes.logic()
