@@ -144,6 +144,12 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
+if(Slicer_USE_QtTesting)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${CTK_DIR}/QtTesting-build/<CMAKE_CFG_INTDIR>
+    )
+endif()
+
 if(Slicer_USE_NUMPY)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages/numpy/core
