@@ -582,8 +582,8 @@ void qSlicerMouseModeToolBar::switchPlaceMode()
   QAction *thisAction = d->CreateAndPlaceToolButton->menu()->activeAction();
   if (thisAction)
     {
-    annotationID = thisAction->text();
-    //qDebug() << "qSlicerMouseModeToolBar::switchPlaceMode: got active action text " << annotationID;
+    annotationID = thisAction->data().toString();
+//    qDebug() << "qSlicerMouseModeToolBar::switchPlaceMode: got active action data " << annotationID;
     }
   else
     {
