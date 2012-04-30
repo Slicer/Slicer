@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Slicer Extensions Manager</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="../../../../Applications/SlicerQT/Resources/SlicerQT.qrc">
-    <normaloff>:/Icons/Small/3DSlicer-DesktopIcon.png</normaloff>:/Icons/Small/3DSlicer-DesktopIcon.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="margin">
     <number>0</number>
@@ -86,7 +82,6 @@
  </customwidgets>
  <resources>
   <include location="../qSlicerBaseQTGUI.qrc"/>
-  <include location="../../../../Applications/SlicerQT/Resources/SlicerQT.qrc"/>
  </resources>
  <connections/>
 </ui>

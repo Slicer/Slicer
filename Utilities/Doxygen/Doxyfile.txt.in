@@ -42,7 +42,7 @@ PROJECT_BRIEF          = "<a href=\"http://www.slicer.org/\">Slicer</a> is a mul
 # exceed 55 pixels and the maximum width should not exceed 200 pixels.
 # Doxygen will copy the logo to the output directory.
 
-PROJECT_LOGO           = "@Slicer_SOURCE_DIR@/Applications/SlicerQT/Resources/Icons/XLarge/3DSlicer-DesktopIcon.png"
+PROJECT_LOGO           = "@Slicer_SOURCE_DIR@/Resources/3DSlicer-DesktopIcon.png"
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.

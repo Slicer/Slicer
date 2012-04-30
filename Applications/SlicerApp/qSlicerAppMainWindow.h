@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMainWindow_h
-#define __qSlicerMainWindow_h
+#ifndef __qSlicerAppMainWindow_h
+#define __qSlicerAppMainWindow_h
 
 // Qt includes
 #include <QMainWindow>
@@ -33,21 +33,21 @@
 class qSlicerAbstractCoreModule;
 class qSlicerModulePanel;
 class qSlicerModuleSelectorToolBar;
-class qSlicerMainWindowCore;
-class qSlicerMainWindowPrivate;
+class qSlicerAppMainWindowCore;
+class qSlicerAppMainWindowPrivate;
 
-class Q_SLICER_APP_EXPORT qSlicerMainWindow : public QMainWindow
+class Q_SLICER_APP_EXPORT qSlicerAppMainWindow : public QMainWindow
 {
   Q_OBJECT
   QVTK_OBJECT
 public:
 
   typedef QMainWindow Superclass;
-  qSlicerMainWindow(QWidget *parent=0);
-  virtual ~qSlicerMainWindow();
+  qSlicerAppMainWindow(QWidget *parent=0);
+  virtual ~qSlicerAppMainWindow();
 
   /// Return the main window core.
-  qSlicerMainWindowCore* core()const;
+  qSlicerAppMainWindowCore* core()const;
 
   /// Return the module selector
   Q_INVOKABLE qSlicerModuleSelectorToolBar* moduleSelector()const;
@@ -92,11 +92,11 @@ protected:
   virtual void showEvent(QShowEvent *event);
 
 protected:
-  QScopedPointer<qSlicerMainWindowPrivate> d_ptr;
+  QScopedPointer<qSlicerAppMainWindowPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerMainWindow);
-  Q_DISABLE_COPY(qSlicerMainWindow);
+  Q_DECLARE_PRIVATE(qSlicerAppMainWindow);
+  Q_DISABLE_COPY(qSlicerAppMainWindow);
 };
 
 #endif

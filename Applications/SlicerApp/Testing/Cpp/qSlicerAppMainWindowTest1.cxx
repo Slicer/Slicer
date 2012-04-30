@@ -21,23 +21,43 @@
 // Qt includes
 #include <QTimer>
 
-// SlicerQt includes
-#include "qSlicerAboutDialog.h"
+// Slicer includes
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
+// CTK includes
+#ifdef Slicer_USE_PYTHONQT
+# include <ctkPythonConsole.h>
+#endif
+
+// SlicerApp includes
 #include "qSlicerApplication.h"
+#include "qSlicerAppMainWindow.h"
+#ifdef Slicer_USE_PYTHONQT
+# include "qSlicerPythonManager.h"
+#endif
 
 // STD includes
 
-int qSlicerAboutDialogTest1(int argc, char * argv[] )
+int qSlicerAppMainWindowTest1(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  qSlicerAboutDialog about;
+  qSlicerAppMainWindow mainWindow;
+  mainWindow.show();
+
+#ifdef Slicer_USE_PYTHONQT
+  // Create python console
+  Q_ASSERT(qSlicerApplication::application()->pythonManager());
+  ctkPythonConsole pythonConsole;
+  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
+  pythonConsole.resize(600, 280);
+#endif
 
   if (argc < 2 || QString(argv[1]) != "-I")
     {
     QTimer::singleShot(100, qApp, SLOT(quit()));
     }
 
-  return about.exec();
+  return app.exec();
 }
 

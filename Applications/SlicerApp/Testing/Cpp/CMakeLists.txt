@@ -10,9 +10,9 @@ endif()
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
-  qSlicerAboutDialogTest1.cxx
-  qSlicerMainWindowCoreTest1.cxx
-  qSlicerMainWindowTest1.cxx
+  qSlicerAppAboutDialogTest1.cxx
+  qSlicerAppMainWindowCoreTest1.cxx
+  qSlicerAppMainWindowTest1.cxx
   qSlicerModuleFactoryManagerTest1.cxx
   )
 if(Slicer_USE_PYTHONQT_WITH_TCL)
@@ -42,7 +42,7 @@ target_link_libraries(${KIT}CxxTests  ${target_libraries})
 # Add Tests
 #
 
-SIMPLE_TEST( qSlicerAboutDialogTest1 )
+SIMPLE_TEST( qSlicerAppAboutDialogTest1 )
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_HAS_CONSOLE_IO_SUPPORT)
     SIMPLE_TEST( qSlicerApplicationTpyclTest1 )
@@ -54,8 +54,8 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     endif()
   endif()
 endif()
-SIMPLE_TEST( qSlicerMainWindowCoreTest1 )
-SIMPLE_TEST( qSlicerMainWindowTest1 )
+SIMPLE_TEST( qSlicerAppMainWindowCoreTest1 )
+SIMPLE_TEST( qSlicerAppMainWindowTest1 )
 SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 
 #
@@ -65,7 +65,7 @@ SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}>
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}>
     ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
     )
   set_tests_properties(

@@ -25,7 +25,7 @@
 // PythonQT includes
 #include <PythonQt.h>
 
-// SlicerQt includes
+// SlicerApp includes
 #include "qSlicerApplication.h"
 #include "qSlicerPythonManager.h"
 

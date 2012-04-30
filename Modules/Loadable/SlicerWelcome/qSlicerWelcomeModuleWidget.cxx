@@ -38,7 +38,7 @@
 // CTK includes
 #include "ctkButtonGroup.h"
 
-class qSlicerMainWindow;
+class qSlicerAppMainWindow;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SlicerWelcome

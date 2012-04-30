@@ -1,2 +1,2 @@
 
-add_subdirectory(SlicerQT)
+add_subdirectory(SlicerApp)
