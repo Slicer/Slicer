@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QTimer>
+#include <QNetworkProxyFactory>
 
 // CTK includes
 #include <ctkErrorLogFDMessageHandler.h>
@@ -198,6 +199,9 @@ void qSlicerCoreApplicationPrivate::init()
   //this->AppLogic->ProcessMRMLEvents(scene, vtkCommand::ModifiedEvent, NULL);
   //this->AppLogic->SetAndObserveMRMLScene(scene);
   this->AppLogic->CreateProcessingThread();
+
+  // Set up Slicer to use the system proxy
+  QNetworkProxyFactory::setUseSystemConfiguration(true);
 
   // Create MRMLRemoteIOLogic
   this->MRMLRemoteIOLogic = vtkSmartPointer<vtkMRMLRemoteIOLogic>::New();
