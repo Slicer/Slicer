@@ -544,6 +544,7 @@ include(${CTK_USE_FILE})
 # QtTesting
 #-----------------------------------------------------------------------------
 if(Slicer_USE_QtTesting)
+  set(QtTesting_INSTALL_DIR ${CTK_QtTesting_INSTALL_DIR})
   set(QtTesting_DIR ${CTK_QtTesting_DIR})
   find_package(QtTesting REQUIRED)
 endif()
