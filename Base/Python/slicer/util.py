@@ -33,7 +33,7 @@ def importClassesFromDirectory(directory, dest_module_name, type_name, filematch
   import glob, os, re, fnmatch
   for fname in glob.glob(os.path.join(directory, filematch)):
     if not re.compile(fnmatch.translate(filematch)).match(os.path.basename(fname)):
-      return
+      continue
     try:
       from_module_name = os.path.splitext(os.path.basename(fname))[0]
       importModuleObjects(from_module_name, dest_module_name, type_name)
