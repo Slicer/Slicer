@@ -15,12 +15,12 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 #
-# For additional information, see http://www.slicer.org/slicerWiki/index.php/Slicer4:_Dashboard_Setup
+# For additional information, see http://http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/DashboardSetup
 #
 
-#
+#-----------------------------------------------------------------------------
 # Dashboard properties
-#
+#-----------------------------------------------------------------------------
 set(MY_OPERATING_SYSTEM   "Linux") # Windows, Linux, Darwin...
 set(MY_COMPILER           "g++4.4.3")
 set(MY_QT_VERSION         "4.7.4")
@@ -31,9 +31,9 @@ set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(MY_BITNESS            "64")
 
-#
+#-----------------------------------------------------------------------------
 # Dashboard options
-#
+#-----------------------------------------------------------------------------
 set(WITH_KWSTYLE FALSE)
 set(WITH_MEMCHECK FALSE)
 set(WITH_COVERAGE FALSE)
@@ -47,10 +47,6 @@ set(CTEST_TEST_TIMEOUT 500)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
 set(CTEST_PARALLEL_LEVEL 8) # Number of tests running in parallel
 
-find_program(CTEST_SVN_COMMAND NAMES svn)
-find_program(CTEST_GIT_COMMAND NAMES git)
-find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
-find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
 # experimental:
 #     - run_ctest() macro will be called *ONE* time
 #     - binary directory will *NOT* be cleaned
@@ -64,11 +60,13 @@ find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
 set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
 
 # You could invoke the script with the following syntax:
-#  ctest -S karakoram_Slicer4_nightly.cmake -V
+#  ctest -S karakoram_Slicer4_nightly.cmake -C <CTEST_BUILD_CONFIGURATION> -V
+#
+# Note that '-C <CTEST_BUILD_CONFIGURATION>' is mandatory on windows
 
-#
+#-----------------------------------------------------------------------------
 # Additional CMakeCache options
-#
+#-----------------------------------------------------------------------------
 set(ADDITIONAL_CMAKECACHE_OPTION "
   ADDITIONAL_C_FLAGS:STRING=
   ADDITIONAL_CXX_FLAGS:STRING=
@@ -77,24 +75,43 @@ set(ADDITIONAL_CMAKECACHE_OPTION "
   Slicer_BUILD_CLI:BOOL=OFF
 ")
 
+#-----------------------------------------------------------------------------
+# List of test that should be explicitly disabled on this machine
+#-----------------------------------------------------------------------------
+set(TEST_TO_EXCLUDE_REGEX "")
+
+#-----------------------------------------------------------------------------
+# Set any extra environment variables here
+#-----------------------------------------------------------------------------
+if(UNIX)
+  set(ENV{DISPLAY} ":0")
+endif()
+
+#-----------------------------------------------------------------------------
+# Required executables
+#-----------------------------------------------------------------------------
+find_program(CTEST_SVN_COMMAND NAMES svn)
+find_program(CTEST_GIT_COMMAND NAMES git)
+find_program(CTEST_COVERAGE_COMMAND NAMES gcov)
+find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
+
+#-----------------------------------------------------------------------------
+# Build Name
+#-----------------------------------------------------------------------------
 # Update the following variable to match the chosen build options. This variable is used to
 # generate both the build directory and the build name.
 # See http://www.cdash.org/CDash/index.php?project=Slicer4 for examples
 set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}-PythonQt-With-Tcl-NoCLI")
 
-#
-# Project specific properties
-#
-set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/Slicer4")
+#-----------------------------------------------------------------------------
+# Build directory
+#-----------------------------------------------------------------------------
 set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/Slicer-build-${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}-${SCRIPT_MODE}")
 
-# List of test that should be explicitly disabled on this machine
-set(TEST_TO_EXCLUDE_REGEX "")
-
-# set any extra environment variables here
-if(UNIX)
-  set(ENV{DISPLAY} ":0")
-endif()
+#-----------------------------------------------------------------------------
+# Source directory
+#-----------------------------------------------------------------------------
+set(CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/Slicer4")
 
 
 ##########################################
@@ -112,10 +129,16 @@ set(CTEST_BUILD_NAME "${MY_OPERATING_SYSTEM}-${MY_COMPILER}-${BUILD_OPTIONS_STRI
 #
 # Display build info
 #
-message("site name: ${CTEST_SITE}")
-message("build name: ${CTEST_BUILD_NAME}")
-message("script mode: ${SCRIPT_MODE}")
-message("coverage: ${WITH_COVERAGE}, memcheck: ${WITH_MEMCHECK}")
+message("CTEST_SITE ................: ${CTEST_SITE}")
+message("CTEST_BUILD_NAME ..........: ${CTEST_BUILD_NAME}")
+message("SCRIPT_MODE ...............: ${SCRIPT_MODE}")
+message("CTEST_BUILD_CONFIGURATION .: ${CTEST_BUILD_CONFIGURATION}")
+message("WITH_KWSTYLE ..............: ${WITH_KWSTYLE}")
+message("WITH_COVERAGE: ............: ${WITH_COVERAGE}")
+message("WITH_MEMCHECK .............: ${WITH_MEMCHECK}")
+message("WITH_PACKAGES .............: ${WITH_PACKAGES}")
+message("WITH_DOCUMENTATION ........: ${WITH_DOCUMENTATION}")
+message("DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY: ${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}")
 
 #
 # Convenient function allowing to download a file
