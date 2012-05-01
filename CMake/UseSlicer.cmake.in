@@ -141,7 +141,6 @@ endif()
 # Set '<PROJECTNAME>_DIR' variable(s) so that find_package(<PROJECTNAME>) works as expected.
 set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
 set(DCMTK_DIR ${CTK_DCMTK_DIR})
-set(QtTesting_INSTALL_DIR ${CTK_QtTesting_INSTALL_DIR})
 
 # --------------------------------------------------------------------------
 # Platform check

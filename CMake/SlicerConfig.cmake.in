@@ -16,6 +16,7 @@ set(Slicer_USE_NUMPY "@Slicer_USE_NUMPY@")
 set(Slicer_USE_OpenIGTLink "@Slicer_USE_OpenIGTLink@")
 set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
+set(Slicer_USE_QtTesting "@Slicer_USE_QtTesting@")
 set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
 set(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "@Slicer_BUILD_EXTENSIONMANAGER_SUPPORT@")
 set(Slicer_BUILD_TESTING "@BUILD_TESTING@")
@@ -216,6 +217,11 @@ slicer_config_set_ep(
   CTK_DIR
   "@CTK_DIR_CONFIG@"
   CACHE PATH "Path to CTK build or install directory" FORCE)
+
+slicer_config_set_ep(
+  QtTesting_DIR
+  "@QtTesting_DIR_CONFIG@"
+  CACHE PATH "Path to QtTesting build or install directory" FORCE)
 
 slicer_config_set_ep(
   ITK_DIR
