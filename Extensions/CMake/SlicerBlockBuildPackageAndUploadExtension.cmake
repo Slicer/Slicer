@@ -78,10 +78,10 @@ include(MIDASAPIUploadExtension)
 include(MIDASCTestUploadURL)
 
 #-----------------------------------------------------------------------------
-# Set site name
+# Set site name and force to lower case
 site_name(CTEST_SITE)
-# Force to lower case
-string(TOLOWER "${CTEST_SITE}" CTEST_SITE)
+string(TOLOWER "${CTEST_SITE}" ctest_site_lowercase)
+set(CTEST_SITE ${ctest_site_lowercase} CACHE STRING "Name of the computer/site where compile is being run" FORCE)
 
 # Set build name
 set(CTEST_BUILD_NAME "${Slicer_WC_REVISION}-${EXTENSION_NAME}-${EXTENSION_COMPILER}-${EXTENSION_BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
