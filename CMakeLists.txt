@@ -167,6 +167,9 @@ CMAKE_DEPENDENT_OPTION(
   )
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
 
+set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
+mark_as_advanced(Slicer_FORCED_WC_REVISION)
+
 #-----------------------------------------------------------------------------
 # External projects related options
 #-----------------------------------------------------------------------------
@@ -730,6 +733,10 @@ set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/MRML/Widgets/
 # --------------------------------------------------------------------------
 
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
+
+if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
+  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+endif()
 
 set(files
   vtkSlicerConfigure.h
