@@ -58,6 +58,7 @@ void checkFinalWidgetState(void* data)
   {
   qMRMLTreeView* widget = reinterpret_cast<qMRMLTreeView*>(data);
 
+  CTKCOMPARE(widget->currentIndex().row(), 1);
   Q_UNUSED(widget);
   }
 //-----------------------------------------------------------------------------
@@ -67,8 +68,7 @@ void checkFinalWidgetState2(void* data)
 
   Q_UNUSED(widget);
 
-  qDebug() << "SpyAction count : " << SpyAction->count();
-  CTKCOMPARE(SpyAction->count(), 2);
+  CTKCOMPARE(widget->currentIndex().row(), 1);
   }
 }
 

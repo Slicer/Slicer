@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -15,4 +15,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/GreenNegativeRadioButton" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLClipNodeWidget/UnionRadioButton" command="set_boolean" arguments="true"/>
     </events>
-</xml>
+</QtTesting>

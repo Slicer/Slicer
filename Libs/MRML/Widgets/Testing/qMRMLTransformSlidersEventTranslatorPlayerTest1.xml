@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -8,4 +8,4 @@
         <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000003940000013700000004000000040000000800000008fc00000000"/>
     </settings>
     <events/>
-</xml>
+</QtTesting>

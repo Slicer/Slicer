@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -123,4 +123,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/ISRangeWidget/1qMRMLDoubleRangeSlider0" command="set_min_double" arguments="-33"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/ISRangeWidget/1qMRMLDoubleRangeSlider0" command="set_max_double" arguments="33"/>
     </events>
-</xml>
+</QtTesting>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -15,4 +15,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLNodeComboBox0" command="nodeAddedByUser" arguments=""/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLNodeComboBox0" command="nodeAboutToBeRemoved" arguments="View_3"/>
     </events>
-</xml>
+</QtTesting>

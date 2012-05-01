@@ -51,7 +51,7 @@ void checkFinalWidgetState(void* data)
   {
   qMRMLScalarInvariantComboBox* widget = reinterpret_cast<qMRMLScalarInvariantComboBox*>(data);
 
-  CTKCOMPARE(widget->scalarInvariant(), vtkMRMLDiffusionTensorDisplayPropertiesNode::D22);
+  CTKCOMPARE(widget->scalarInvariant(), vtkMRMLDiffusionTensorDisplayPropertiesNode::SphericalMeasure);
   }
 }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -85,4 +85,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDWidget0/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget/ZoomOutButton" command="activate" arguments=""/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLThreeDWidget0/1qMRMLThreeDViewControllerWidget0/qMRMLThreeDViewControllerWidget" command="popupOpen" arguments="false"/>
     </events>
-</xml>
+</QtTesting>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -77,4 +77,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/VolumeThresholdRangeWidget/1qMRMLDoubleRangeSlider0" command="set_max_double" arguments="125"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeThresholdWidget/AutoManualComboBox" command="set_string" arguments="Auto"/>
     </events>
-</xml>
+</QtTesting>

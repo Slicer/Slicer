@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -17,4 +17,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="check_indexes" arguments="0 1 3 4"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLCheckableNodeComboBox0/1ctkCheckableComboBox0" command="uncheck_indexes" arguments="1 2"/>
     </events>
-</xml>
+</QtTesting>

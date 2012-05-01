@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -26,4 +26,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="mouseMove" arguments="1,0,0,70,9,/4:0"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ColorPickerWidget1/MRMLColorListView" command="mouseRelease" arguments="1,0,0,70,9,/4:0"/>
     </events>
-</xml>
+</QtTesting>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<xml>
+<QtTesting>
     <settings>
         <name widget="qApp" command="applicationName" arguments=""/>
         <version widget="qApp" command="applicationVersion" arguments=""/>
@@ -12,4 +12,4 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLLabelComboBox0/1ctkComboBox0" command="set_string" arguments="dylan"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/1qMRMLLabelComboBox0/1ctkComboBox0" command="set_string" arguments="gato"/>
     </events>
-</xml>
+</QtTesting>
