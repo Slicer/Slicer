@@ -83,14 +83,14 @@ mark_as_advanced(GIT_EXECUTABLE)
 
 if(GIT_EXECUTABLE)
   macro(GIT_WC_INFO dir prefix)
-    execute_process(COMMAND ${GIT_EXECUTABLE} rev-list -n 1 HEAD
+    execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --verify -q --short=7 HEAD
        WORKING_DIRECTORY ${dir}
        ERROR_VARIABLE GIT_error
        OUTPUT_VARIABLE ${prefix}_WC_REVISION_HASH
        OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(${prefix}_WC_REVISION ${${prefix}_WC_REVISION_HASH})
     if(NOT ${GIT_error} EQUAL 0)
-      message(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-list -n 1 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
+      message(SEND_ERROR "Command \"${GIT_EXECUTBALE} rev-parse --verify -q --short=7 HEAD\" in directory ${dir} failed with output:\n${GIT_error}")
     else(NOT ${GIT_error} EQUAL 0)
       execute_process(COMMAND ${GIT_EXECUTABLE} name-rev ${${prefix}_WC_REVISION_HASH}
          WORKING_DIRECTORY ${dir}
