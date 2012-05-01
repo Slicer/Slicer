@@ -18,16 +18,14 @@
 #
 ################################################################################
 
-include(SlicerMacroExtractRepositoryInfo)
-
 function(slicerFunctionGenerateExtensionDescription)
   set(options)
-  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_SCREENSHOTURLS EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(oneValueArgs EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DESCRIPTION EXTENSION_SCREENSHOTURLS EXTENSION_DEPENDS EXTENSION_BUILD_SUBDIRECTORY EXTENSION_ENABLED EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL DESTINATION_DIR SLICER_WC_REVISION SLICER_WC_ROOT)
   set(multiValueArgs)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
-  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DEPENDS SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_STATUS EXTENSION_HOMEPAGE EXTENSION_DEPENDS EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL SLICER_WC_REVISION SLICER_WC_ROOT)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "CMake variable ${var} is empty !")
@@ -65,24 +63,22 @@ function(slicerFunctionGenerateExtensionDescription)
 
   set(filename ${MY_DESTINATION_DIR}/${MY_EXTENSION_NAME}.s4ext)
 
-  SlicerMacroExtractRepositoryInfo(VAR_PREFIX Extension)
-
-  set(scm_type ${Extension_WC_TYPE})
-  #set(scm_path_token ${Extension_WC_TYPE}path)
+  set(scm_type ${MY_EXTENSION_WC_TYPE})
+  #set(scm_path_token ${MY_EXTENSION_WC_TYPE}path)
   set(scm_path_token scmurl)
-  set(scm_url ${Extension_WC_URL})
+  set(scm_url ${MY_EXTENSION_WC_URL})
 
   #message(MY_SLICER_WC_ROOT:${MY_SLICER_WC_ROOT})
   #message(MY_SLICER_WC_REVISION:${MY_SLICER_WC_REVISION})
-  #message(Extension_WC_TYPE:${Extension_WC_TYPE})
-  #message(Extension_WC_ROOT:${Extension_WC_ROOT})
-  #message(Extension_WC_REVISION:${Extension_WC_REVISION})
+  #message(MY_EXTENSION_WC_TYPE:${MY_EXTENSION_WC_TYPE})
+  #message(MY_EXTENSION_WC_ROOT:${MY_EXTENSION_WC_ROOT})
+  #message(MY_EXTENSION_WC_REVISION:${MY_EXTENSION_WC_REVISION})
 
   # If both Root and Revision matches, let's assume both Slicer source and Extension source
   # are checkout on the same filesystem.
   # This is useful for testing purposes
-  if(${Extension_WC_TYPE} STREQUAL "local" OR ("${Extension_WC_ROOT}" STREQUAL ${MY_SLICER_WC_ROOT}
-     AND "${Extension_WC_REVISION}" STREQUAL ${MY_SLICER_WC_REVISION}))
+  if(${MY_EXTENSION_WC_TYPE} STREQUAL "local" OR (${MY_EXTENSION_WC_ROOT} STREQUAL ${MY_SLICER_WC_ROOT}
+     AND ${MY_EXTENSION_WC_REVISION} STREQUAL ${MY_SLICER_WC_REVISION}))
     set(scm_type local)
     #set(scm_path_token localpath)
     set(scm_url ${CMAKE_CURRENT_SOURCE_DIR})
@@ -99,7 +95,7 @@ function(slicerFunctionGenerateExtensionDescription)
 # This is source code manager (i.e. svn)
 scm ${scm_type}
 ${scm_path_token} ${scm_url}
-scmrevision ${Extension_WC_REVISION}
+scmrevision ${MY_EXTENSION_WC_REVISION}
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files

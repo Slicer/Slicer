@@ -46,6 +46,15 @@ foreach(var ${expected_existing_vars})
   endif()
 endforeach()
 
+#-----------------------------------------------------------------------------
+# Get working copy information
+#-----------------------------------------------------------------------------
+include(SlicerMacroExtractRepositoryInfo)
+SlicerMacroExtractRepositoryInfo(VAR_PREFIX ${EXTENSION_NAME})
+
+#-----------------------------------------------------------------------------
+# Generate extension description
+#-----------------------------------------------------------------------------
 if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
   include(SlicerFunctionGenerateExtensionDescription)
   slicerFunctionGenerateExtensionDescription(
@@ -60,16 +69,15 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
     EXTENSION_DEPENDS ${EXTENSION_DEPENDS}
     EXTENSION_ENABLED ${EXTENSION_ENABLED}
     EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_BUILD_SUBDIRECTORY}
+    EXTENSION_WC_TYPE ${${EXTENSION_NAME}_WC_TYPE}
+    EXTENSION_WC_REVISION ${${EXTENSION_NAME}_WC_REVISION}
+    EXTENSION_WC_ROOT ${${EXTENSION_NAME}_WC_ROOT}
+    EXTENSION_WC_URL ${${EXTENSION_NAME}_WC_URL}
     DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
 endif()
-
-#-----------------------------------------------------------------------------
-# Get working copy information
-#-----------------------------------------------------------------------------
-SlicerMacroExtractRepositoryInfo(VAR_PREFIX ${EXTENSION_NAME})
 
 #-----------------------------------------------------------------------------
 # Get today's date
