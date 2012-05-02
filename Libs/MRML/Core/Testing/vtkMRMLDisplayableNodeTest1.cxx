@@ -20,6 +20,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 
+//----------------------------------------------------------------------------
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
 {
 public:
@@ -28,6 +29,12 @@ public:
 
   vtkTypeMacro( vtkMRMLDisplayableNodeTestHelper1, vtkMRMLDisplayableNode);
 
+  // Return the raw list of display nodes. Elements can be 0 even if the node
+  // associated to the node ID exists in the scene.
+  const std::vector<vtkMRMLDisplayNode*>& GetInternalDisplayNodes()
+    {
+    return this->DisplayNodes;
+    }
   virtual vtkMRMLNode* CreateNodeInstance()
     {
     return new vtkMRMLDisplayableNodeTestHelper1;
@@ -38,6 +45,7 @@ public:
     }
 };
 
+//----------------------------------------------------------------------------
 class vtkMRMLDisplayNodeTestHelper : public vtkMRMLDisplayNode
 {
 public:
@@ -224,9 +232,9 @@ bool TestAddDisplayNodeIDWithNoScene()
   // in the scene.
   scene->AddNode(displayableNode.GetPointer());
 
-  if (displayableNode->GetDisplayNodes().size() != 2 ||
-      displayableNode->GetDisplayNodes()[0] != 0 ||
-      displayableNode->GetDisplayNodes()[1] != 0)
+  if (displayableNode->GetInternalDisplayNodes().size() != 2 ||
+      displayableNode->GetInternalDisplayNodes()[0] != 0 ||
+      displayableNode->GetInternalDisplayNodes()[1] != 0)
     {
     std::cout << __LINE__ << ": AddNode failed" << std::endl;
     return false;
@@ -235,10 +243,10 @@ bool TestAddDisplayNodeIDWithNoScene()
   // Test the scanning of GetDisplayNode
   vtkMRMLDisplayNode* nthDisplayNode = displayableNode->GetNthDisplayNode(1);
 
-  if (displayableNode->GetDisplayNodes().size() != 2 ||
+  if (displayableNode->GetInternalDisplayNodes().size() != 2 ||
       nthDisplayNode != displayNode3.GetPointer() ||
-      displayableNode->GetDisplayNodes()[1] != displayNode3.GetPointer() ||
-      displayableNode->GetDisplayNodes()[0] != 0)
+      displayableNode->GetInternalDisplayNodes()[1] != displayNode3.GetPointer() ||
+      displayableNode->GetInternalDisplayNodes()[0] != 0)
     {
     std::cout << __LINE__ << ": GetNthDisplayNode failed" << std::endl;
     return false;
@@ -247,7 +255,10 @@ bool TestAddDisplayNodeIDWithNoScene()
   // Typically called by vtkMRMLScene::Import
   displayableNode->UpdateScene(scene.GetPointer());
 
-  if (displayableNode->GetNthDisplayNodeID(1) == 0 ||
+  if (displayableNode->GetInternalDisplayNodes().size() != 2 ||
+      displayableNode->GetInternalDisplayNodes()[0] != displayNode2.GetPointer() ||
+      displayableNode->GetInternalDisplayNodes()[1] != displayNode3.GetPointer() ||
+      displayableNode->GetNthDisplayNodeID(1) == 0 ||
       strcmp(displayableNode->GetNthDisplayNodeID(1), displayNode3->GetID()) ||
       displayableNode->GetNthDisplayNode(1) != displayNode3.GetPointer() ||
       // make sure it didn't change the first display node ID
@@ -286,7 +297,7 @@ bool TestAddDelayedDisplayNode()
 
   if (displayableNode->GetNthDisplayNodeID(0) == 0 ||
       strcmp(displayableNode->GetNthDisplayNodeID(0), "vtkMRMLDisplayNodeTestHelper1") ||
-      displayableNode->GetDisplayNodes()[0] != 0)
+      displayableNode->GetInternalDisplayNodes()[0] != 0)
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed" << std::endl;
     return false;

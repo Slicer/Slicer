@@ -661,7 +661,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     }
   // If the node is already cached with an actor process only this one
   // If it was not visible and is still not visible do nothing
-  std::vector< vtkMRMLDisplayNode *> dnodes = modelNode->GetDisplayNodes();
+  const std::vector< vtkMRMLDisplayNode *>& dnodes = modelNode->GetDisplayNodes();
   bool updateModel = false;
   bool updateMRML = false;
   for (unsigned int i=0; i<dnodes.size(); i++)

@@ -153,9 +153,9 @@ public:
   ///
   /// Return a copy of the list of the display nodes. Some nodes can be 0
   /// when the scene is in a temporary state.
-  /// TBD: Warning the display node list may not be up to date.
-  ///      Call UpdateReferences() to make sure the nodes are cached
-  std::vector<vtkMRMLDisplayNode*> GetDisplayNodes();
+  /// The list of nodes is browsed (slow) to make sure the pointers are
+  /// up-to-date.
+  const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
 
   /// 
   /// Set and observe poly data for this model
@@ -214,9 +214,14 @@ public:
   void operator=(const vtkMRMLDisplayableNode&);
 
   ///
+  /// Call UpdateNthDisplayNode(i) on all nodes.
+  void UpdateDisplayNodes();
+
+  ///
   /// Search the display node in the scene that match the associated node ID.
   /// Prerequisites: scene is valid, n >= 0 and n < display node IDs list size
   void UpdateNthDisplayNode(int n);
+
   void SetAndObserveNthDisplayNode(int n, vtkMRMLDisplayNode *dnode);
 
   ///
@@ -228,7 +233,7 @@ public:
 
   /// Data
   vtkPolyData *PolyData;
-private:
+
   ///
   /// List of display node IDs.
   std::vector<std::string> DisplayNodeIDs;

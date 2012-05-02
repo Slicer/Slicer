@@ -161,11 +161,10 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
 {
   this->Superclass::UpdateScene(scene);
 
-  int wasModifying = this->StartModify();
+  this->UpdateDisplayNodes();
 
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); ++i)
     {
-    this->UpdateNthDisplayNode(i);
     // When calling UpdateScene, the scene is up-to-date (it is done to be
     // imported/restored). All the nodes are in it.
     // Therefor, there is no reason why there wouldn't be a node
@@ -174,8 +173,6 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
     // DisplayNodeIDs[i] really exists.
     assert(this->DisplayNodes[i]);
     }
-
-  this->EndModify(wasModifying);
 }
 
 //-----------------------------------------------------------
@@ -207,8 +204,9 @@ void vtkMRMLDisplayableNode::RemoveAllDisplayNodeIDs()
 }
 
 //----------------------------------------------------------------------------
-std::vector<vtkMRMLDisplayNode*> vtkMRMLDisplayableNode::GetDisplayNodes()
+const std::vector<vtkMRMLDisplayNode*>& vtkMRMLDisplayableNode::GetDisplayNodes()
 {
+  this->UpdateDisplayNodes();
   return this->DisplayNodes;
 }
 
@@ -240,6 +238,20 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
     node = this->DisplayNodes[n];
     }
   return node;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLDisplayableNode::UpdateDisplayNodes()
+{
+  assert(this->DisplayNodeIDs.size() == this->DisplayNodes.size());
+  int wasModifying = this->StartModify();
+
+  for (unsigned int i=0; i<this->DisplayNodeIDs.size(); ++i)
+    {
+    this->UpdateNthDisplayNode(i);
+    }
+
+  this->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------
@@ -277,6 +289,7 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
       {
       this->UpdateNthDisplayNode(n);
       }
+    assert(this->DisplayNodeIDs.size() == this->DisplayNodes.size());
     return;
     }
   // Delete the display node ID if the new value is 0.
@@ -288,9 +301,14 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
         displayNodeIDIt->c_str(), this);
       }
     this->DisplayNodeIDs.erase(displayNodeIDIt);
-    /// First need to unobserve
+    vtkMRMLDisplayNode* oldDisplayNode = this->DisplayNodes[n];
+    /// Need to unobserve
     this->SetAndObserveNthDisplayNode(n, 0);
     this->DisplayNodes.erase(this->DisplayNodes.begin() + n);
+    if (oldDisplayNode != 0)
+      {
+      this->OnDisplayNodeAdded(oldDisplayNode);
+      }
     }
   else
     {
@@ -301,13 +319,16 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
       }
     this->UpdateNthDisplayNode(n);
     }
+  assert(this->DisplayNodeIDs.size() == this->DisplayNodes.size());
   this->Modified();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNode(int n, vtkMRMLDisplayNode *dnode)
 {
-  bool newNode = (this->DisplayNodes[n] != dnode);
+  bool newNode = (this->DisplayNodes[n] != dnode &&
+    // Don't call OnDisplayNodeAdded if deleting the entry
+    this->DisplayNodes.size() == this->DisplayNodeIDs.size());
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNodes[n], dnode);
   if (newNode)
     {
