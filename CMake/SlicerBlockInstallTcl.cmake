@@ -21,11 +21,12 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
       USE_SOURCE_PERMISSIONS
       REGEX "man/" EXCLUDE
       REGEX "include/" EXCLUDE
-      REGEX "demos/" EXCLUDE
+      REGEX "demos/" EXCLUDE      
       PATTERN "*.sh" EXCLUDE
       PATTERN "*.c" EXCLUDE
       PATTERN "tclsh${TCL_TK_VERSION_DOT}" EXCLUDE
       PATTERN "wish${TCL_TK_VERSION_DOT}" EXCLUDE
+      PATTERN ".svn" EXCLUDE
       )
   endif()
 endif()
