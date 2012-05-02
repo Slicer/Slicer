@@ -58,7 +58,11 @@ bool qSlicerCommandOptions::showPythonInteractor() const
 //-----------------------------------------------------------------------------
 bool qSlicerCommandOptions::enableQtTesting()const
 {
+#ifdef Slicer_USE_QtTesting
   return this->parsedArgs().value("qt-testing").toBool();
+#else
+  return false;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -85,6 +89,6 @@ void qSlicerCommandOptions::addArguments()
 
 #ifdef Slicer_USE_QtTesting
   this->addArgument("qt-testing", "", QVariant::Bool,
-                    "Enable QtTesting in the user interface and disable the native Menu bar");
+                    "Enable QtTesting in the user interface");
 #endif
 }

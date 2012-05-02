@@ -53,6 +53,9 @@
 #endif
 #include "qSlicerSettingsCachePanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
+#ifdef Slicer_USE_QtTesting
+# include "qSlicerSettingsQtTestingPanel.h"
+#endif
 #include "qSlicerSettingsModulesPanel.h"
 
 // qMRMLWidget includes
@@ -173,6 +176,11 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
   this->SettingsDialog->addPanel("Cache settings", cachePanel);
+
+#ifdef Slicer_USE_QtTesting
+  qSlicerSettingsQtTestingPanel* qtTestingPanel = new qSlicerSettingsQtTestingPanel;
+  this->SettingsDialog->addPanel("QtTesting settings", qtTestingPanel);
+#endif
 
   QObject::connect(this->SettingsDialog, SIGNAL(accepted()),
                    q, SLOT(onSettingDialogAccepted()));

@@ -114,6 +114,13 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
+if(Slicer_USE_QtTesting)
+  list(APPEND KIT_SRCS
+    qSlicerSettingsQtTestingPanel.cxx
+    qSlicerSettingsQtTestingPanel.h
+    )
+endif()
+
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
 set_source_files_properties(
@@ -186,6 +193,12 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
+if(Slicer_USE_QtTesting)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerSettingsQtTestingPanel.h
+    )
+endif()
+
 # UI files
 set(KIT_UI_SRCS
   Resources/UI/qSlicerActionsDialog.ui
@@ -212,6 +225,12 @@ endif()
 if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_UI_SRCS
     Resources/UI/qSlicerSettingsPythonPanel.ui
+  )
+endif()
+
+if(Slicer_USE_QtTesting)
+  list(APPEND KIT_UI_SRCS
+    Resources/UI/qSlicerSettingsQtTestingPanel.ui
   )
 endif()
 

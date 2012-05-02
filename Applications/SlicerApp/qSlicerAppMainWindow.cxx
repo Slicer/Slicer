@@ -386,21 +386,6 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(q);
 #endif
-
-  //----------------------------------------------------------------------------
-  // Update UI considering build options
-  //----------------------------------------------------------------------------
-
-#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
-  if (qSlicerApplication::application()->commandOptions()->enableQtTesting())
-    {
-    this->actionEditPlayMacro->setVisible(true);
-    this->actionEditRecordMacro->setVisible(true);
-    qSlicerApplication::application()->testingUtility()->addPlayer(
-          new qSlicerCLIModuleWidgetEventPlayer());
-    }
-#endif
-
 }
 
 //-----------------------------------------------------------------------------
@@ -670,13 +655,25 @@ void qSlicerAppMainWindow::setupMenuActions()
   connect(d->actionModuleHome, SIGNAL(triggered()),
           this, SLOT(setHomeModuleCurrent()));
 
+  QSettings settings;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  d->actionViewExtensionManager->setVisible(QSettings().value("Extensions/ManagerEnabled").toBool());
+  d->actionViewExtensionManager->setVisible(settings.value("Extensions/ManagerEnabled").toBool());
 #else
   d->actionViewExtensionManager->setVisible(false);
 #endif
 #ifndef Slicer_USE_PYTHONQT
   d->actionWindowPythonInteractor->setVisible(false);
+#endif
+
+#if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
+  if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
+      settings.value("QtTesting/Enabled").toBool())
+    {
+    d->actionEditPlayMacro->setVisible(true);
+    d->actionEditRecordMacro->setVisible(true);
+    qSlicerApplication::application()->testingUtility()->addPlayer(
+          new qSlicerCLIModuleWidgetEventPlayer());
+    }
 #endif
 
 }
