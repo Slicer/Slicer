@@ -796,14 +796,17 @@
 class VTK_MRML_EXPORT vtkMRMLNodeCallback : public vtkCallbackCommand
 {
 public:
-  vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;};
+  static vtkMRMLNodeCallback *New() {return new vtkMRMLNodeCallback;};
 
   virtual void Execute(vtkObject* caller, unsigned long eid, void *callData);
-  virtual void ResetNumberOfEventsVariables();
+  virtual void ResetNumberOfEvents();
 
   void SetMRMLNode(vtkMRMLNode*);
   std::string GetErrorString();
+
   int GetNumberOfModified();
+  int GetNumberOfEvents(unsigned long event);
+  int GetTotalNumberOfEvents();
 
 protected:
   vtkMRMLNodeCallback();
@@ -813,7 +816,7 @@ protected:
 
   vtkMRMLNode* Node;
   std::string ErrorString;
-  int NumberOfModified;
+  std::map<unsigned long, unsigned int> ReceivedEvents;
 };
 
 #endif

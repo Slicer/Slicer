@@ -81,7 +81,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
   if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
-    for (unsigned int i=0; i<this->DisplayNodes.size(); i++)
+    for (unsigned int i=0; i<this->GetNumberOfDisplayNodes(); i++)
       {
       vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(i));
       if (dnode != NULL)

@@ -17,7 +17,7 @@
 vtkMRMLNodeCallback::vtkMRMLNodeCallback()
   : Node(0)
 {
-  this->ResetNumberOfEventsVariables();
+  this->ResetNumberOfEvents();
 }
 
 //---------------------------------------------------------------------------
@@ -26,9 +26,9 @@ vtkMRMLNodeCallback::~vtkMRMLNodeCallback()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLNodeCallback::ResetNumberOfEventsVariables()
+void vtkMRMLNodeCallback::ResetNumberOfEvents()
 {
-  this->NumberOfModified = 0;
+  this->ReceivedEvents.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -52,7 +52,25 @@ void vtkMRMLNodeCallback::SetErrorString(const char* error)
 //---------------------------------------------------------------------------
 int vtkMRMLNodeCallback::GetNumberOfModified()
 {
-  return this->NumberOfModified;
+  return this->GetNumberOfEvents(vtkCommand::ModifiedEvent);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLNodeCallback::GetNumberOfEvents(unsigned long event)
+{
+  return this->ReceivedEvents[event];
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLNodeCallback::GetTotalNumberOfEvents()
+{
+  int eventsCount = 0;
+  for (std::map<unsigned long, unsigned int>::const_iterator it = this->ReceivedEvents.begin(),
+       end = this->ReceivedEvents.end(); it != end; ++it)
+    {
+    eventsCount += it->second;
+    }
+  return eventsCount;
 }
 
 //---------------------------------------------------------------------------
@@ -70,9 +88,6 @@ void vtkMRMLNodeCallback::Execute(vtkObject *vtkcaller,
     this->SetErrorString("vtkMRMLNodeCallback::Execute - node != vtkcaller");
     return;
     }
-    
-  if (eid == vtkCommand::ModifiedEvent)
-    {
-    ++this->NumberOfModified;
-    }
+
+  ++this->ReceivedEvents[eid];
 }
