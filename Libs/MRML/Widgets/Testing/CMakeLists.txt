@@ -67,7 +67,6 @@ set(TEST_SOURCES
 
 if(Slicer_USE_QtTesting)
   list(APPEND TEST_SOURCES
-    qMRMLCaptureToolBarEventTranslatorPlayerTest1.cxx
     qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1.cxx
     qMRMLClipNodeWidgetEventTranslatorPlayerTest1.cxx
     qMRMLCollapsibleButtonEventTranslatorPlayerTest1.cxx
@@ -77,7 +76,6 @@ if(Slicer_USE_QtTesting)
     qMRMLColorTableViewEventTranslatorPlayerTest1.cxx
     qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1.cxx
     qMRMLLabelComboBoxEventTranslatorPlayerTest1.cxx
-    qMRMLLayoutWidgetEventTranslatorPlayerTest1.cxx
     qMRMLLinearTransformSliderEventTranslatorPlayerTest1.cxx
     qMRMLListWidgetEventTranslatorPlayerTest1.cxx
     qMRMLMatrixWidgetEventTranslatorPlayerTest1.cxx
@@ -189,7 +187,6 @@ SIMPLE_TEST( qMRMLWidgetsExportTest1 )
 SCENE_TEST( qMRMLWindowLevelWidgetTest1 vol_and_cube.mrml)
 
 if(Slicer_USE_QtTesting)
-  SIMPLE_TEST(qMRMLCaptureToolBarEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLCheckableNodeComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLClipNodeWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLCollapsibleButtonEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
@@ -199,7 +196,6 @@ if(Slicer_USE_QtTesting)
   SIMPLE_TEST(qMRMLColorTableViewEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLDisplayNodeWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLLabelComboBoxEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
-  SIMPLE_TEST(qMRMLLayoutWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLLinearTransformSliderEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLListWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
   SIMPLE_TEST(qMRMLMatrixWidgetEventTranslatorPlayerTest1 ${Slicer_SOURCE_DIR})
