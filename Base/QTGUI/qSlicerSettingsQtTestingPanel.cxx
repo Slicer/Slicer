@@ -61,8 +61,6 @@ void qSlicerSettingsQtTestingPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
-
   // Default values
   this->QtTestingEnabledCheckBox->setChecked(false);
 
