@@ -88,12 +88,12 @@ void vtkSlicerModelsLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
     {
     /// we can't get the display node directly as it might be 0 because the
     /// model node has no longer access to the scene
-    for (unsigned int i = 0; i < modelNode->GetNumberOfDisplayNodes(); ++i)
+    for (int i = 0; i < modelNode->GetNumberOfDisplayNodes(); ++i)
       {
       this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(
         modelNode->GetNthDisplayNodeID(i)));
       }
-    for (unsigned int i = 0; i < modelNode->GetNumberOfStorageNodes(); ++i)
+    for (int i = 0; i < modelNode->GetNumberOfStorageNodes(); ++i)
       {
       this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(
         modelNode->GetNthStorageNodeID(i)));
