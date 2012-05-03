@@ -129,7 +129,8 @@ public:
   ///
   /// Return the string of the Nth display node ID. Or 0 if no such
   /// node exist.
-  /// Warning, a temporary char is returned.
+  /// Warning, a temporary char generated from a std::string::c_str()
+  /// is returned.
   const char *GetNthDisplayNodeID(int n);
 
   ///
@@ -143,6 +144,9 @@ public:
   /// yet into the scene.
   /// If not cached, it tnternally scans (slow) the scene to search for the
   /// associated display node ID.
+  /// If the displayable node is no longer in the scene (GetScene() == 0), it
+  /// happens after the node is removed from hte scene (scene->RemoveNode(dn),
+  /// the returned display node is 0.
   vtkMRMLDisplayNode* GetNthDisplayNode(int n);
 
   ///
@@ -155,6 +159,7 @@ public:
   /// when the scene is in a temporary state.
   /// The list of nodes is browsed (slow) to make sure the pointers are
   /// up-to-date.
+  /// \sa GetNthDisplayNode
   const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
 
   /// 

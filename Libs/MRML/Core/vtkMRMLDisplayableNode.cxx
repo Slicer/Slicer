@@ -230,9 +230,10 @@ vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
     }
   vtkMRMLDisplayNode* node = this->DisplayNodes[n];
   // Maybe the node was not yet in the scene when the node ID was set.
-  // Check now to see if it's now there.
-  if ((!node || node->GetScene() != this->GetScene()) &&
-      this->GetScene() != 0)
+  // Check to see if it's now there.
+  // Similarly, if the scene is 0, clear the display node if not already null.
+  if ((!node || node->GetScene() != this->GetScene()) ||
+      (node && this->GetScene() == 0))
     {
     this->UpdateNthDisplayNode(n);
     node = this->DisplayNodes[n];

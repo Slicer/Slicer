@@ -69,6 +69,7 @@ bool TestAddDisplayNodeIDWithNoScene();
 bool TestAddDelayedDisplayNode();
 bool TestRemoveDisplayNodeID();
 bool TestRemoveDisplayNode();
+bool TestRemoveDisplayableNode();
 bool TestDisplayModifiedEvent();
 
 //----------------------------------------------------------------------------
@@ -86,6 +87,7 @@ int vtkMRMLDisplayableNodeTest1(int , char * [] )
   res = TestAddDelayedDisplayNode() && res;
   res = TestRemoveDisplayNodeID() && res;
   res = TestRemoveDisplayNode() && res;
+  res = TestRemoveDisplayableNode() && res;
   res = TestDisplayModifiedEvent() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -410,6 +412,55 @@ bool TestRemoveDisplayNode()
   return true;
 }
 
+//----------------------------------------------------------------------------
+bool TestRemoveDisplayableNode()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkNew<vtkMRMLDisplayableNodeTestHelper1> displayableNode;
+  scene->AddNode(displayableNode.GetPointer());
+
+  vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode1;
+  scene->AddNode(displayNode1.GetPointer());
+  vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode2;
+  scene->AddNode(displayNode2.GetPointer());
+  vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode3;
+  scene->AddNode(displayNode3.GetPointer());
+
+  displayableNode->AddAndObserveDisplayNodeID(displayNode1->GetID());
+  displayableNode->AddAndObserveDisplayNodeID(displayNode2->GetID());
+  displayableNode->AddAndObserveDisplayNodeID(displayNode3->GetID());
+
+  scene->RemoveNode(displayableNode.GetPointer());
+  // Removing the scene from the displayable node clear the cached display
+  // nodes.
+  vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(0);
+  std::vector<vtkMRMLDisplayNode*> displayNodes =
+    displayableNode->GetDisplayNodes();
+
+  if (displayableNode->GetNumberOfDisplayNodes() != 3 ||
+      displayNode != 0 ||
+      displayNodes.size() != 3 ||
+      displayNodes[0] != 0 ||
+      displayNodes[1] != 0 ||
+      displayNodes[2] != 0 ||
+      displayableNode->GetNthDisplayNodeID(0) == 0 ||
+      strcmp(displayableNode->GetNthDisplayNodeID(0), displayNode1->GetID()) ||
+      displayableNode->GetNthDisplayNode(0) != 0 ||
+      displayableNode->GetNthDisplayNodeID(1) == 0 ||
+      strcmp(displayableNode->GetNthDisplayNodeID(1), displayNode2->GetID()) ||
+      displayableNode->GetNthDisplayNode(1) != 0 ||
+      displayableNode->GetNthDisplayNodeID(2) == 0 ||
+      strcmp(displayableNode->GetNthDisplayNodeID(2), displayNode3->GetID()) ||
+      displayableNode->GetNthDisplayNode(2) != 0
+      )
+    {
+    std::cout << __LINE__ << ": RemoveNode failed" << std::endl;
+    return false;
+    }
+
+  return true;
+}
 //----------------------------------------------------------------------------
 bool TestDisplayModifiedEvent()
 {
