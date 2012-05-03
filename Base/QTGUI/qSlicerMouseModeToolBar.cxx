@@ -284,6 +284,12 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
               q, SLOT(switchPlaceMode()));
       this->CreateAndPlaceToolButton->menu()->addAction(newAction);
       this->ActionGroup->addAction(newAction);
+      // if this new one is the fiducial
+      if (annotationName.compare("Fiducial") == 0)
+        {
+        // make it the default
+        this->CreateAndPlaceToolButton->setDefaultAction(newAction);
+        }
       }
     }
   // select the active one
