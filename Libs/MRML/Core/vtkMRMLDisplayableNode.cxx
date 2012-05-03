@@ -307,7 +307,7 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     this->DisplayNodes.erase(this->DisplayNodes.begin() + n);
     if (oldDisplayNode != 0)
       {
-      this->OnDisplayNodeAdded(oldDisplayNode);
+      this->OnDisplayNodeAdded(0);
       }
     }
   else
