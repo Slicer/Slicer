@@ -84,16 +84,14 @@ public:
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
   vtkSmartPointer<vtkMRMLApplicationLogic> MRMLAppLogic;
 
-  /// PlaceMode
+  /// PlaceMode button and menu
   QToolButton *CreateAndPlaceToolButton;
   QMenu*        CreateAndPlaceMenu;
 
-  // Place Persistence
+  /// Place Persistence
   QAction *PersistenceAction;
-  
-  /// RotateMode
-  QAction*      ViewTransformModeAction;
 
+  /// Group the place actions together so that they're exclusive
   QActionGroup* ActionGroup;
 
 };

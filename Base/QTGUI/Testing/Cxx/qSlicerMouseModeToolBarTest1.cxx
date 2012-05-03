@@ -107,9 +107,11 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     interactionNode->SwitchToViewTransformMode();
     activeActionText = mouseToolBar.activeActionText();
     std::cout << "After switching interaction node to view transform, active action text = " << qPrintable(activeActionText) << std::endl;
-    if (activeActionText.compare(QString("&Rotate")) != 0)
+    // after a change in the tool bar (removed the Rotate action), this should still
+    // be fiducial.
+    if (activeActionText.compare(QString("Fiducial")) != 0)
       {
-      std::cerr << "Error! Expected active action text of '&Rotate', got '" << qPrintable(activeActionText) << "'" << std::endl;
+      std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
       return EXIT_FAILURE;
       }
     }

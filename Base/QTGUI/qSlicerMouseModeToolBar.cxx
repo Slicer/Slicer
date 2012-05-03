@@ -49,8 +49,6 @@ qSlicerMouseModeToolBarPrivate::qSlicerMouseModeToolBarPrivate(qSlicerMouseModeT
   this->CreateAndPlaceToolButton = 0;
   this->CreateAndPlaceMenu = 0;
 
-  this->ViewTransformModeAction = 0;
-  
   this->PersistenceAction = 0;
 
   this->ActionGroup = 0;
@@ -64,18 +62,6 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->ActionGroup = new QActionGroup(q);
   this->ActionGroup->setExclusive(true);
 
-  // RotateMode action
-  this->ViewTransformModeAction = new QAction(q);
-  this->ViewTransformModeAction->setObjectName("MouseRotateMode");
-  this->ViewTransformModeAction->setIcon(QIcon(":/Icons/MouseRotateMode.png"));
-  this->ViewTransformModeAction->setText("&Rotate");
-  this->ViewTransformModeAction->setToolTip("Set the 3DViewer mouse mode to transform view (use drop down menu to place Annotations)");
-  this->ViewTransformModeAction->setCheckable(true);
-  connect(this->ViewTransformModeAction, SIGNAL(triggered()),
-          q, SLOT(switchToViewTransformMode()));
-
-  this->ActionGroup->addAction(this->ViewTransformModeAction);
-  
   // new actions will be added when interaction modes are registered with the
   // scene
 
@@ -117,8 +103,8 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->CreateAndPlaceToolButton->setMenu(this->CreateAndPlaceMenu);
   this->CreateAndPlaceToolButton->setPopupMode(QToolButton::MenuButtonPopup);
   
-  // set default action
-  this->CreateAndPlaceToolButton->setDefaultAction( this->ViewTransformModeAction);
+  // set default action?
+
 
   q->addWidget(this->CreateAndPlaceToolButton);  
   
@@ -321,9 +307,8 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annota
     {
     //qDebug() << "qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation: "
     //            "null active annotation id, resetting to view transform";
-    this->ViewTransformModeAction->setChecked(true);
     q->changeCursorTo(QCursor());
-    checkedAction = this->ViewTransformModeAction;
+    q->switchToViewTransformMode();
     }
   else
     {
@@ -370,6 +355,11 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation(const char *annota
     //  make the checked one the default action
     //qDebug() << "qSlicerMouseModeToolBarPrivate::updateWidgetToAnnotation - setting default action to " << qPrintable(checkedAction->text());
     this->CreateAndPlaceToolButton->setDefaultAction(checkedAction);
+    }
+  else
+    {
+    // switching to view transform mode, actions are unchecked by the time we
+    // get here
     }
 }
 
@@ -512,8 +502,20 @@ void qSlicerMouseModeToolBar::switchToViewTransformMode()
     // update the interaction node, should trigger a cursor update
     interactionNode->SwitchToViewTransformMode();
 
-    d->ViewTransformModeAction->setChecked(true);
-
+    // uncheck all 
+    d->CreateAndPlaceToolButton->setChecked(false);
+    QList<QAction*> actionList =  d->CreateAndPlaceMenu->actions();
+    int numActions = actionList.size();
+    for (int i = 0; i < numActions; i++)
+      {
+      QAction *action = actionList.at(i);
+      QString actionText = action->text();
+      if ( actionText.compare(QObject::tr("Persistent")) != 0  &&
+          !actionText.isEmpty())
+        {
+        action->setChecked(false);
+        }
+      }
     // cancel all Annotation placements
     interactionNode->InvokeEvent(vtkMRMLInteractionNode::EndPlacementEvent);
     }
@@ -687,7 +689,10 @@ QString qSlicerMouseModeToolBar::activeActionText()
   QString activeActionText;
 
   QAction *defaultAction = d->CreateAndPlaceToolButton->defaultAction();
-  activeActionText = defaultAction->text();
-  
+  if (defaultAction)
+    {
+    activeActionText = defaultAction->text();
+    }
+
   return activeActionText;
 }
