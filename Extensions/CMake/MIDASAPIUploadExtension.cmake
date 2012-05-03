@@ -139,8 +139,7 @@ if(TEST_midas_api_upload_extension_test)
 
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../../CMake ${CMAKE_MODULE_PATH})
 
-    include(SlicerFunctionToday)
-    TODAY(Test_TESTDATE)
+    set(Test_TESTDATE "2011-12-26")
 
     # Sanity check
     set(expected_nonempty_vars Test_TESTDATE)
