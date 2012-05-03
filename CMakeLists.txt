@@ -332,6 +332,7 @@ endif()
 if(Slicer_VERSION_TWEAK GREATER 0)
   set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_VERSION_TWEAK}")
 endif()
+message(STATUS "Building Slicer version [${Slicer_VERSION_FULL}]")
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
