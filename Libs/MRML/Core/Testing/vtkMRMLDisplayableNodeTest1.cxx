@@ -499,7 +499,8 @@ bool TestDisplayModifiedEvent()
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
 
   if (spy->GetTotalNumberOfEvents() != 1 ||
-      spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
+      spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1 ||
+      displayNode != displayNode3.GetPointer())
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "

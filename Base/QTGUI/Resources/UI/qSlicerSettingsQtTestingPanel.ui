@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="QtTestingEnabledLabel">
      <property name="text">
-      <string>Enable extension manager:</string>
+      <string>Enable QtTesting:</string>
      </property>
     </widget>
    </item>

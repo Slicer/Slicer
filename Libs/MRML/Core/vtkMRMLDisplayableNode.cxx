@@ -257,7 +257,7 @@ void vtkMRMLDisplayableNode::UpdateDisplayNodes()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateNthDisplayNode(int n)
 {
-  assert(n >= 0 && n < this->DisplayNodeIDs.size());
+  assert(n >= 0 && n < static_cast<int>(this->DisplayNodeIDs.size()));
   vtkMRMLNode* node = this->GetScene() ?
     this->GetScene()->GetNodeByID(this->DisplayNodeIDs[n]) : 0;
   this->SetAndObserveNthDisplayNode(n, vtkMRMLDisplayNode::SafeDownCast(node));
