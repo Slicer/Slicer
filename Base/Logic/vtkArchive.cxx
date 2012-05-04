@@ -24,7 +24,7 @@ namespace
 {
 
 // --------------------------------------------------------------------------
-class cmSystemTools
+class vtkArchiveTools
 {
 public:
   static void Message(const char* m, const char* /*title*/)
@@ -47,7 +47,7 @@ public:
       {
       message += m2;
       }
-    cmSystemTools::Message(message.c_str(), "Error");
+    vtkArchiveTools::Message(message.c_str(), "Error");
   }
 };
 
@@ -199,7 +199,7 @@ long copy_data(struct archive *ar, struct archive *aw)
     r = archive_write_data_block(aw, buff, size, offset);
     if (r != ARCHIVE_OK)
       {
-      cmSystemTools::Message("archive_write_data_block()",
+      vtkArchiveTools::Message("archive_write_data_block()",
                              archive_error_string(aw));
       return (r);
       }
@@ -220,7 +220,7 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
   int r = archive_read_open_file(a, outFileName, 10240);
   if(r)
     {
-    cmSystemTools::Error("Problem with archive_read_open_file(): ",
+    vtkArchiveTools::Error("Problem with archive_read_open_file(): ",
                          archive_error_string(a));
     return false;
     }
@@ -233,7 +233,7 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     if (r != ARCHIVE_OK)
       {
-      cmSystemTools::Error("Problem with archive_read_next_header(): ",
+      vtkArchiveTools::Error("Problem with archive_read_next_header(): ",
                            archive_error_string(a));
       }
     if ( extract && extracted_files)
@@ -242,8 +242,8 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     if (verbose && extract)
       {
-      cmSystemTools::Stdout("x ");
-      cmSystemTools::Stdout(archive_entry_pathname(entry));
+      vtkArchiveTools::Stdout("x ");
+      vtkArchiveTools::Stdout(archive_entry_pathname(entry));
       }
     if(verbose && !extract)
       {
@@ -251,14 +251,14 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       }
     else if(!extract)
       {
-      cmSystemTools::Stdout(archive_entry_pathname(entry));
+      vtkArchiveTools::Stdout(archive_entry_pathname(entry));
       }
     if(extract)
       {
       r = archive_write_disk_set_options(ext, ARCHIVE_EXTRACT_TIME);
       if (r != ARCHIVE_OK)
         {
-        cmSystemTools::Error(
+        vtkArchiveTools::Error(
           "Problem with archive_write_disk_set_options(): ",
           archive_error_string(ext));
         }
@@ -266,9 +266,9 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
       r = archive_write_header(ext, entry);
       if (r != ARCHIVE_OK)
         {
-        cmSystemTools::Error("Problem with archive_write_header(): ",
+        vtkArchiveTools::Error("Problem with archive_write_header(): ",
                              archive_error_string(ext));
-        cmSystemTools::Error("Current file:",
+        vtkArchiveTools::Error("Current file:",
                              archive_entry_pathname(entry));
         }
       else
@@ -276,22 +276,22 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
         r = copy_data(a, ext);
         if (r != ARCHIVE_OK)
           {
-          cmSystemTools::Error("Problem with copy_data(): source:",
+          vtkArchiveTools::Error("Problem with copy_data(): source:",
                                archive_error_string(a));
-          cmSystemTools::Error("destination: ",
+          vtkArchiveTools::Error("destination: ",
                                archive_error_string(ext));
           }
         r = archive_write_finish_entry(ext);
         if (r != ARCHIVE_OK)
           {
-          cmSystemTools::Error("Problem with archive_write_finish_entry(): ",
+          vtkArchiveTools::Error("Problem with archive_write_finish_entry(): ",
                                archive_error_string(ext));
           }
         }
       }
     if (verbose || !extract)
       {
-      cmSystemTools::Stdout("\n");
+      vtkArchiveTools::Stdout("\n");
       }
     }
   archive_read_close(a);
