@@ -33,13 +33,12 @@
     </property>
     <widget class="QMenu" name="menuSDB">
      <property name="title">
-      <string>Slicer Data Bundle</string>
+      <string>Save Data Bundle</string>
      </property>
      <property name="icon">
       <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
        <normaloff>:/Icons/Small/SlicerDataBundle.png</normaloff>:/Icons/Small/SlicerDataBundle.png</iconset>
      </property>
-     <addaction name="actionSDBOpenMRB"/>
      <addaction name="actionSDBSaveToDirectory"/>
      <addaction name="actionSDBSaveToMRB"/>
      <addaction name="actionSDBSaveToDCM"/>
@@ -416,18 +415,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="actionSDBOpenMRB">
-   <property name="icon">
-    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
-     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerLoad.png</iconset>
-   </property>
-   <property name="text">
-    <string>Open MRB File</string>
-   </property>
-   <property name="toolTip">
-    <string>UNDER CONSTRUCTION: Open a Medical Reality Bundle.</string>
    </property>
   </action>
   <action name="actionSDBSaveToDirectory">
