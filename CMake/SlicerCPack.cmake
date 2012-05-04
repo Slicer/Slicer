@@ -97,7 +97,7 @@ set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
 # -------------------------------------------------------------------------
 # File extensions
 # -------------------------------------------------------------------------
-set(FILE_EXTENSIONS .mrml .xcat)
+set(FILE_EXTENSIONS .mrml .xcat .mrb)
 
 if(FILE_EXTENSIONS)
 
