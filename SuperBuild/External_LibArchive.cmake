@@ -18,55 +18,12 @@ set(proj LibArchive)
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   #
-  # WARNING - Before updating the version of LibArchive, please consider the following:
-  #
-  #   * LibArchive 2.7.1:
-  #         - Patched version where '-Werror' is commented out - Available here [1]
-  #         - Compiles on: All unix-like platform + windows 32bits
-  #         - Doesn't compile on windows 64bits
-  #
-  #   * LibArchive 2.8.4
-  #         - Patched version where '-Werror' is commented out - Available here [2]
-  #         - Doesn't compile on all unix-like platform (See errors listed below)
-  #         - Compiles compile on windows 64bits
-  #
-  #   * LibArchive trunk (r3461)
-  #         - Compiles properly on all unix-like platform
-  #         - Doesn't compile on windows 64bits
-  #
-  #   * LibArchive 3.0.3
-  #         - No particular issues
-  #         - Tested shared library build on MacOSX, Ubuntu 10.04, Windows7 32/64bit
-  #
-  # [1] http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz
-  # [2] http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.8.4-patched.tar.gz
-  #
-  #
-  # Listed below the errors occurring when compiling LibArchive2.8.4-patched.tar.gz
-  #
-  #   MacOSX:
-  #    ../LibArchive/libarchive/archive_entry_copy_stat.c: \
-  #    In function ‘archive_entry_copy_stat’:
-  #    ../LibArchive/libarchive/archive_entry_copy_stat.c:67: \
-  #    error: ‘const struct stat’ has no member named ‘st_birthtimespec’
-  #    ../LibArchive/libarchive/archive_entry_copy_stat.c:67: \
-  #    error: ‘const struct stat’ has no member named ‘st_birthtimespec’
-  #
-  #   Ubuntu 9.04 - gcc 4.3.3 :
-  #    ../LibArchive/libarchive/archive_write_disk.c: In function ‘set_time’:
-  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
-  #     error: ‘AT_FDCWD’ undeclared (first use in this function)
-  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
-  #    error: (Each undeclared identifier is reported only once
-  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
-  #    error: for each function it appears in.)
-  #    ../LibArchive/libarchive/archive_write_disk.c:1859: \
-  #    error: ‘AT_SYMLINK_NOFOLLOW’ undeclared (first use in this function)
+  # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git 
+  #         for all platforms.  For notes on cross-platform issues with earlier versions 
+  #         of LibArchive, see the repository for earlier revisions of this file.
   #
   set(ADDITIONAL_CMAKE_ARGS)
   if(WIN32)
-    set(LibArchive_URL http://cloud.github.com/downloads/libarchive/libarchive/libarchive-3.0.3.tar.gz)
-    set(LibArchive_MD5 ca4090f0099432a9ac5a8b6618dc3892)
     # CMake arguments specific to LibArchive >= 2.8.4
     list(APPEND ADDITIONAL_CMAKE_ARGS
       -DBUILD_TESTING:BOOL=OFF
@@ -76,8 +33,6 @@ if(NOT DEFINED LibArchive_DIR)
       -DZLIB_ROOT:PATH=${zlib_DIR}
       )
   else()
-    set(LibArchive_URL http://svn.slicer.org/Slicer3-lib-mirrors/trunk/libarchive-2.7.1-patched.tar.gz)
-    set(LibArchive_MD5 fce7fc069ff7f7ecb2eaccac6bab3d7e)
     if(${CMAKE_VERSION} VERSION_GREATER "2.8.5")
       # Note that CMAKE_DISABLE_FIND_PACKAGE_* is only supported in CMake >= 2.8.6
       list(APPEND ADDITIONAL_CMAKE_ARGS
@@ -102,8 +57,8 @@ if(NOT DEFINED LibArchive_DIR)
   endif()
 
   ExternalProject_Add(${proj}
-    URL ${LibArchive_URL}
-    URL_MD5 ${LibArchive_MD5}
+    GIT_REPOSITORY "${git_protocol}://github.com/libarchive/libarchive.git"
+    GIT_TAG "v3.0.4"
     SOURCE_DIR LibArchive
     BINARY_DIR LibArchive-build
     INSTALL_DIR LibArchive-install
