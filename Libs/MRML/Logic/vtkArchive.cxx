@@ -51,6 +51,7 @@ public:
       }
     if(m2)
       {
+      message += " ";
       message += m2;
       }
     vtkArchiveTools::Message(message.c_str(), "Error");
@@ -451,14 +452,157 @@ bool zip(const char* zipFileName, const char* directoryToZip)
 }
 
 //-----------------------------------------------------------------------------
-// unzips zip file into current directory
-// Warning, it extracts the archive into the current directory
-// With Qt, you can change the current directory using QDir::setCurrent()
-bool unzip(const char* zipFileName)
+// unzips zip file into destinationDirectory
+bool unzip(const char* zipFileName, const char* destinationDirectory)
 {
 #ifndef MRML_USE_LibArchive
   return false;
 #else
-  return false;
+
+  //
+  // Unziping the archive
+  // - check that files and directories exist
+  // - cd to destination
+  // - create an extracter from the file
+  // - create a writer to disk
+  // - read all headers and data into disk
+  // - close up the archives
+  // - cd back to original directory
+  //
+
+  if ( !zipFileName || !destinationDirectory )
+    {
+    vtkArchiveTools::Error("Unzip:", "Invalid zipfile or directory");
+    return false;
+    }
+
+  if ( !vtksys::SystemTools::FileExists(zipFileName) )
+    {
+    vtkArchiveTools::Error("Unzip:", "Zip file does not exist");
+    return false;
+    }
+
+  if ( !vtksys::SystemTools::FileIsDirectory(destinationDirectory) )
+    {
+    vtkArchiveTools::Error("Unzip:", "Destination is not a directory");
+    return false;
+    }
+
+  std::string cwd = vtksys::SystemTools::GetCurrentWorkingDirectory(true);
+
+  if ( vtksys::SystemTools::ChangeDirectory(destinationDirectory) )
+    {
+    vtkArchiveTools::Error("Unzip:", "could not change to destination directory");
+    return false;
+    }
+
+  struct archive *zipArchive;
+  struct archive *diskDestination;
+  struct archive_entry *entry;
+  int result;
+
+  zipArchive = archive_read_new();
+  // we will typically have zip files, but support all archive types (why not?)
+  archive_read_support_filter_all(zipArchive);
+  archive_read_support_format_all(zipArchive);
+  // Note: the 10240 is just a suggested block size
+  result = archive_read_open_filename(zipArchive, zipFileName, 10240);
+  if (result != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Unzip:", "Cannot open archive file");
+    return false;
+    }
+
+  diskDestination = archive_write_disk_new();
+  archive_write_disk_set_standard_lookup(diskDestination);
+
+  for (;;)
+    {
+    // for each file entry
+    result = archive_read_next_header(zipArchive, &entry);
+    if (result == ARCHIVE_EOF)
+      {
+      break;
+      }
+    if (result != ARCHIVE_OK)
+      {
+      vtkArchiveTools::Error("Unzip error:", archive_error_string(zipArchive));
+      if (result < ARCHIVE_WARN)
+        {
+        break;
+        }
+      }
+    result = archive_write_header(diskDestination, entry);
+    if (result != ARCHIVE_OK)
+      {
+      vtkArchiveTools::Error("Unzip error:", archive_error_string(diskDestination));
+      if (result < ARCHIVE_WARN)
+        {
+        break;
+        }
+      } 
+    else 
+      {
+      // copy data
+      const void *buff;
+      size_t size;
+      off_t offset;
+
+      for (;;) 
+        {
+        result = archive_read_data_block(zipArchive, &buff, &size, &offset);
+        if (result == ARCHIVE_EOF)
+          {
+          break;
+          }
+        if (result != ARCHIVE_OK)
+          {
+          vtkArchiveTools::Error("Unzip error:", archive_error_string(zipArchive));
+          break;
+          }
+        result = archive_write_data_block(diskDestination, buff, size, offset);
+        if (result != ARCHIVE_OK) 
+          {
+          vtkArchiveTools::Error("Unzip error:", archive_error_string(diskDestination));
+          break;
+          }
+        }
+      }
+    }
+
+  result = archive_read_close(zipArchive);
+  if (result != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Unzip closing zipfile:", archive_error_string(zipArchive));
+    return false;
+    }
+  result = archive_read_free(zipArchive);
+  if (result != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Unzip freeing zipfile:", archive_error_string(zipArchive));
+    return false;
+    }
+  result = archive_write_close(diskDestination);
+  if (result != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Unzip closing disk:", archive_error_string(diskDestination));
+    return false;
+    }
+  result = archive_write_free(diskDestination);
+  if (result != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Unzip freeing disk:", archive_error_string(diskDestination));
+    return false;
+    }
+
+
+  if ( vtksys::SystemTools::ChangeDirectory(cwd.c_str()) )
+    {
+    vtkArchiveTools::Error("Unzip:", "could not change back to working directory");
+    return false;
+    }
+
+  return (result == ARCHIVE_OK);
+
 #endif
 }

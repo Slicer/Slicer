@@ -35,10 +35,9 @@ VTK_MRML_LOGIC_EXPORT bool extract_tar(const char* outFileName, bool verbose, bo
 // zip entries will include relative path of including tail of directoryToZip
 VTK_MRML_LOGIC_EXPORT bool zip(const char* zipFileName, const char* directoryToZip);
 
-// unzips zip file into current directory
-// Warning, it extracts the archive into the current directory
-// With Qt, you can change the current directory using QDir::setCurrent()
-VTK_MRML_LOGIC_EXPORT bool unzip(const char* zipFileName);
+// unzips zip file into specified directory
+// (internally this supports many formats of archive, not just zip)
+VTK_MRML_LOGIC_EXPORT bool unzip(const char* zipFileName, const char *destinationDirectory);
 #ifdef __cplusplus
 }
 #endif
