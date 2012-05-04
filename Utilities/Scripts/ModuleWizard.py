@@ -48,10 +48,12 @@ def usage():
   print "  --template default ./Modules/Loadable/ModuleTemplate"
   print "  --templateKey default is dirname of template"
   print "  --target default ./Modules/Loadable/<moduleName>"
-  print "Examples (from Slicer4 source directory):"
+  print "Examples (from Slicer source directory):"
   print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
   print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
   print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect"
+  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI"
+  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildLoadableExtensionTemplate --target ../MySuperBuild MySuperBuild"
   print ""
 
 def main(argv):
