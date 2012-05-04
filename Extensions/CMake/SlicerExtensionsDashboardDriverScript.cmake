@@ -261,7 +261,8 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
       ${work_dir} # work_dir
     )
     # Note: The following command should be specified as a string.
-    set(CTEST_CHECKOUT_COMMAND "${CMAKE_COMMAND} -P ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}-${git_tag_cleaned}-${SCRIPT_MODE}-gitclone.cmake")
+    string(REPLACE " " "\\ " CMAKE_COMMAND_ESCAPED ${CMAKE_COMMAND})
+    set(CTEST_CHECKOUT_COMMAND "${CMAKE_COMMAND_ESCAPED} -P ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}-${git_tag_cleaned}-${SCRIPT_MODE}-gitclone.cmake")
   endif()
 
   _update_gitclone_script(
