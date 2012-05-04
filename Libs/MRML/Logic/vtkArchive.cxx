@@ -341,13 +341,6 @@ bool zip(const char* zipFileName, const char* directoryToZip)
   directoryParts = vtksys::SystemTools::SplitString(directoryToZip, '/', true);
   std::string directoryName = directoryParts.back();
 
-  vtkArchiveTools::Error("Zip:", "zipfile:");
-  vtkArchiveTools::Error("Zip:", zipFileName); 
-  vtkArchiveTools::Error("Zip:", "dir:");
-  vtkArchiveTools::Error("Zip:", directoryToZip); 
-  vtkArchiveTools::Error("Zip:", "dirName:");
-  vtkArchiveTools::Error("Zip:", directoryName.c_str()); 
-
   vtksys::Glob glob;
   glob.RecurseOn();
   glob.RecurseThroughSymlinksOff();
