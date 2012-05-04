@@ -28,6 +28,7 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerSceneIO.h"
+#include "qSlicerSceneBundleIO.h"
 #include "qSlicerSlicer2SceneReader.h"
 #include "qSlicerXcedeCatalogIO.h"
 
@@ -99,6 +100,7 @@ void qSlicerDataModule::setup()
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   ioManager->registerIO(new qSlicerSceneIO(this));
+  ioManager->registerIO(new qSlicerSceneBundleIO(this));
   ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
   ioManager->registerIO(new qSlicerXcedeCatalogIO(colorLogic, this));
 
