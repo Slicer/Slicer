@@ -82,19 +82,18 @@ public:
 
   /// unzip the zip file to the current working directory
   /// Returns success or failure.
-  bool Unzip(const char *zipFileName);
+  bool Unzip(const char *zipFileName, const char *destinationDirectory);
   
   /// Save the scene into a self contained directory, sdbDir
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns the path to the self contained directory, null on failure
   const char *SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
-  
-  /// Save directory into a zip file. If sdbDir does not exist, pass that to
-  /// SaveSceneToSlicerDataBundleDirectory along with the screenShot.
-  /// If zipFileName is null, use the base of the mrml scene's URL
-  /// Returns the final zip file name on success, null on failure.
-  //const char * ZipSlicerDataBundleDirectory(const char *zipFileName, const char *sdbDir, vtkImageData *screenShot = NULL);
 
+  /// Open the file into a temp directory and load the scene file 
+  /// inside.  Note that the first mrml file found in the extracted 
+  /// directory will be used.
+  bool OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory);
+  
   /// Load any default parameter sets into the specified scene
   /// Returns the total number of loaded parameter sets
   static int LoadDefaultParameterSets(vtkMRMLScene * scene,

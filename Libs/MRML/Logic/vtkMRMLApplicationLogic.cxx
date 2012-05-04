@@ -45,6 +45,7 @@
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
+#include <vtksys/Glob.hxx>
 
 // STD includes
 #include <cassert>
@@ -341,15 +342,57 @@ bool vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *directory
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::Unzip(const char *zipFileName)
+bool vtkMRMLApplicationLogic::Unzip(const char *zipFileName, const char *destinationDirectory)
 {
 #ifndef MRML_USE_LibArchive
   (void)(zipFileName);
+  (void)(destinationDirectory);
   return 0;
 #else
   // call function in vtkArchive
-  return unzip(zipFileName);
+  return unzip(zipFileName, destinationDirectory);
 #endif
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("no scene");
+    return NULL;
+    }
+
+  if ( !this->Unzip(sdbFilePath, temporaryDirectory) )
+    {
+    vtkErrorMacro("could not open bundle file");
+    return false;
+    }
+
+  vtksys::Glob glob;
+  glob.RecurseOn();
+  glob.RecurseThroughSymlinksOff();
+  std::string globPattern(temporaryDirectory);
+  if ( !glob.FindFiles( globPattern + "/*.mrml" ) )
+    {
+    vtkErrorMacro("could not search archive");
+    return false;
+    }
+  std::vector<std::string> files = glob.GetFiles();
+  if ( files.size() <= 0 )
+    {
+    vtkErrorMacro("could not find mrml file in archive");
+    return false;
+    }
+
+  this->GetMRMLScene()->SetURL( files[0].c_str() );
+  int result = this->GetMRMLScene()->Connect();
+  if ( result )
+    {
+    vtkErrorMacro("Could not connect to scene");
+    return false;
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------
