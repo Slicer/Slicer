@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
@@ -60,6 +61,11 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
+#include <vtkNew.h>
+
+// vtksys includes
+#include <vtksys/SystemTools.hxx>
+
 
 //---------------------------------------------------------------------------
 // qSlicerAppMainWindowCorePrivate methods
@@ -182,7 +188,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
    Q_D(qSlicerAppMainWindowCore);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
-  QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (All Existing Files in this Directory Will Be Removed!)"), tempDir, QFileDialog::ShowDirsOnly);
+  QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
   //qDebug() << "saveDirName = " << qPrintable(saveDirName);
   if (saveDirName.isEmpty())
     {
@@ -234,13 +240,95 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindowCore::onSDBZipDirectoryActionTriggered()
+void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
 {
-  // NOT IMPLEMENTED YET
+  //
+  // open a file dialog to let the user choose where to save
+  // make sure it was selected and add a .mrb to it if needed
+  //
+  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
+  QString fileName = QFileDialog::getSaveFileName(this->widget(), tr("Save Data Bundle File"),
+                                                    "", tr("Medical Reality Bundle (*.mrb)"));
+
+  if (fileName.isEmpty())
+    {
+    std::cout << "No directory name chosen!" << std::endl;
+    return;
+    }
+
+  QFileInfo fileInfo(fileName);
+  if ( fileInfo.suffix() != QString(".mrb") )
+    {
+    fileName += QString(".mrb");
+    }
+
+  //
+  // make a temp directory to save the scene into - this will
+  // be a uniquely named directory that contains a directory
+  // named based on the user's selection.
+  //
+ 
+  // TODO: switch to QTemporaryDir in Qt5.
+  // For now, create a named directory and use
+  // kwsys calls to remove it
+  QString packPath( QDir::tempPath() + 
+                        QString("/__BundleSaveTemp") + 
+                          QDateTime::currentDateTime().toString(Qt::ISODate) );
+
+  std::cerr << "packing to " << packPath.toStdString() << "\n";
+
+  if (vtksys::SystemTools::FileIsDirectory(packPath.toLatin1()))
+    {
+    if ( !vtksys::SystemTools::RemoveADirectory(packPath.toLatin1()) )
+      {
+      QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not remove temp directory"));
+      return;
+      }
+    }
+
+  if ( !vtksys::SystemTools::MakeDirectory(packPath.toLatin1()) )
+    {
+    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not make temp directory"));
+    return;
+    }
+
+  // make a subdirectory with the name the user has chosen
+  QString bundlePath = packPath + QString("/") + fileInfo.baseName();
+
+  if ( !vtksys::SystemTools::MakeDirectory(bundlePath.toLatin1()) )
+    {
+    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not make temp directory"));
+    return;
+    }
+
+  //
+  // Now save the scene into the bundle directory and then make a zip (mrb) file
+  // in the user's selected file location
+  //
+  vtkNew<vtkMRMLApplicationLogic> appLogic;
+  appLogic->SetMRMLScene( qSlicerCoreApplication::application()->mrmlScene() );
+  appLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toLatin1(), NULL);
+  std::cerr << "zipping to " << fileName.toStdString() << "\n";
+  if ( !appLogic->Zip(fileName.toLatin1(), bundlePath.toLatin1()) )
+    {
+    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not compress bundle"));
+    return;
+    }
+
+  //
+  // Now clean up the temp directory
+  //
+  if ( !vtksys::SystemTools::RemoveADirectory(packPath.toLatin1()) )
+    {
+    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not remove temp directory"));
+    return;
+    }
+
+  std::cerr << "saved " << packPath.toStdString() << "\n";
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindowCore::onSDBZipToDCMActionTriggered()
+void qSlicerAppMainWindowCore::onSDBSaveToDCMActionTriggered()
 {
   // NOT IMPLEMENTED YET
 }

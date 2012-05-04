@@ -60,8 +60,8 @@ public slots:
   void onFileAddTransformActionTriggered();
   void onFileSaveSceneActionTriggered();
   void onSDBSaveToDirectoryActionTriggered();
-  void onSDBZipDirectoryActionTriggered();
-  void onSDBZipToDCMActionTriggered();
+  void onSDBSaveToMRBActionTriggered();
+  void onSDBSaveToDCMActionTriggered();
   void onFileCloseSceneActionTriggered();
   void onEditRecordMacroActionTriggered();
   void onEditPlayMacroActionTriggered();
