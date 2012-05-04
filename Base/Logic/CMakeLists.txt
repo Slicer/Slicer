@@ -149,11 +149,10 @@ set(libs
   ${VTK_LIBRARIES}
   )
 
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND libs
-    ${LibArchive_LIBRARY}
-    )
-endif()
+# Archive support used by extensions and by slicer data bundle
+list(APPEND libs
+  ${LibArchive_LIBRARY}
+  )
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND libs
