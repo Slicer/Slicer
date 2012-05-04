@@ -539,7 +539,11 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
       // copy data
       const void *buff;
       size_t size;
+#if defined(ARCHIVE_VERSION_NUMBER) && ARCHIVE_VERSION_NUMBER >= 3000000
+      __LA_INT64_T offset;
+#else
       off_t offset;
+#endif
 
       for (;;) 
         {
