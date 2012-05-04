@@ -256,8 +256,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
     return;
     }
 
-  QFileInfo fileInfo(fileName);
-  if ( fileInfo.suffix() != QString(".mrb") )
+  if ( ! fileName.endsWith(".mrb") )
     {
     fileName += QString(".mrb");
     }
@@ -293,6 +292,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
     }
 
   // make a subdirectory with the name the user has chosen
+  QFileInfo fileInfo(fileName);
   QString bundlePath = packPath + QString("/") + fileInfo.baseName();
 
   if ( !vtksys::SystemTools::MakeDirectory(bundlePath.toLatin1()) )
