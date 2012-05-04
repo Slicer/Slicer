@@ -72,7 +72,7 @@ bool qSlicerSceneBundleIO::load(const qSlicerIO::IOProperties& properties)
   // kwsys calls to remove it
   QString unpackPath( QDir::tempPath() + 
                         QString("/__BundleLoadTemp") + 
-                          QDateTime::currentDateTime().toString(Qt::ISODate) );
+                          QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
   std::cerr << "unpacking to " << unpackPath.toStdString() << "\n";
 

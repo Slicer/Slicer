@@ -272,7 +272,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
   // kwsys calls to remove it
   QString packPath( QDir::tempPath() + 
                         QString("/__BundleSaveTemp") + 
-                          QDateTime::currentDateTime().toString(Qt::ISODate) );
+                          QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
 
   std::cerr << "packing to " << packPath.toStdString() << "\n";
 
