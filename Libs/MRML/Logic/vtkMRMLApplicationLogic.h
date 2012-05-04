@@ -93,6 +93,11 @@ public:
   /// inside.  Note that the first mrml file found in the extracted 
   /// directory will be used.
   bool OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory);
+
+  /// Unpack the file into a temp directory and return the scene file 
+  /// inside.  Note that the first mrml file found in the extracted 
+  /// directory will be used.
+  std::string UnpackSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory);
   
   /// Load any default parameter sets into the specified scene
   /// Returns the total number of loaded parameter sets

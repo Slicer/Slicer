@@ -355,18 +355,12 @@ bool vtkMRMLApplicationLogic::Unzip(const char *zipFileName, const char *destina
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory)
+std::string vtkMRMLApplicationLogic::UnpackSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory)
 {
-  if (!this->GetMRMLScene())
-    {
-    vtkErrorMacro("no scene");
-    return NULL;
-    }
-
   if ( !this->Unzip(sdbFilePath, temporaryDirectory) )
     {
     vtkErrorMacro("could not open bundle file");
-    return false;
+    return "";
     }
 
   vtksys::Glob glob;
@@ -376,16 +370,36 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, cons
   if ( !glob.FindFiles( globPattern + "/*.mrml" ) )
     {
     vtkErrorMacro("could not search archive");
-    return false;
+    return "";
     }
   std::vector<std::string> files = glob.GetFiles();
   if ( files.size() <= 0 )
     {
     vtkErrorMacro("could not find mrml file in archive");
+    return "";
+    }
+
+  return( files[0] );
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("no scene");
+    return NULL;
+    }
+
+  std::string mrmlFile = this->UnpackSlicerDataBundle(sdbFilePath, temporaryDirectory);
+
+  if ( mrmlFile.empty() )
+    {
+    vtkErrorMacro("Could not unpack mrml scene");
     return false;
     }
 
-  this->GetMRMLScene()->SetURL( files[0].c_str() );
+  this->GetMRMLScene()->SetURL( mrmlFile.c_str() );
   int result = this->GetMRMLScene()->Connect();
   if ( result )
     {
