@@ -11,6 +11,8 @@
 ============================================================================*/
 
 #include "vtkArchive.h"
+#include "vtksys/Glob.hxx"
+#include "vtksys/SystemTools.hxx"
 
 // LibArchive includes
 #include <archive.h>
@@ -27,7 +29,11 @@ namespace
 class vtkArchiveTools
 {
 public:
-  static void Message(const char* m, const char* /*title*/)
+  static void Message(const char* title, const char* message)
+    {
+    std::cerr << title << " " << message << std::endl << std::flush;
+    }
+  static void Message(const char* m)
     {
     std::cerr << m << std::endl << std::flush;
     }
@@ -297,4 +303,162 @@ bool extract_tar(const char* outFileName, bool verbose, bool extract, std::vecto
   archive_read_close(a);
   archive_read_finish(a);
   return true;
+}
+
+//-----------------------------------------------------------------------------
+// creates a zip file with the full contents of the directory (recurses)
+// zip entries will include relative path of including tail of directoryToZip
+bool zip(const char* zipFileName, const char* directoryToZip)
+{
+
+  //
+  // to make a zip file:
+  // - check that libarchive supports zip writing
+  // - check arguments
+  // - get a list of files using vtksys Glob
+  // - create the archive
+  // -- go file-by-file and add chunks of data to the archive
+  // - close up and return success
+  //
+
+#ifndef MRML_USE_LibArchive
+  return false;
+#else
+
+// only support the libarchive version 3.0 +
+#if !defined(ARCHIVE_VERSION_NUMBER) || ARCHIVE_VERSION_NUMBER < 3000000
+  return false;
+#endif
+
+  if ( !zipFileName || !directoryToZip )
+    {
+    vtkArchiveTools::Error("Zip:", "Invalid zipfile or directory");
+    return false;
+    }
+
+  std::vector<vtksys::String> directoryParts;
+  directoryParts = vtksys::SystemTools::SplitString(directoryToZip, '/', true);
+  std::string directoryName = directoryParts.back();
+
+  vtkArchiveTools::Error("Zip:", "zipfile:");
+  vtkArchiveTools::Error("Zip:", zipFileName); 
+  vtkArchiveTools::Error("Zip:", "dir:");
+  vtkArchiveTools::Error("Zip:", directoryToZip); 
+  vtkArchiveTools::Error("Zip:", "dirName:");
+  vtkArchiveTools::Error("Zip:", directoryName.c_str()); 
+
+  vtksys::Glob glob;
+  glob.RecurseOn();
+  glob.RecurseThroughSymlinksOff();
+  std::string globPattern(directoryToZip);
+  if ( !glob.FindFiles( globPattern + "/*" ) )
+    {
+    vtkArchiveTools::Error("Zip:", "Could not find files in directory");
+    return false;
+    }
+  std::vector<std::string> files = glob.GetFiles();
+
+  // now zip it up using LibArchive
+  struct archive *zipArchive;
+  struct archive_entry *entry, *dirEntry;
+  char buff[BUFSIZ];
+  size_t len;
+  // have to read the contents of the files to add them to the archive
+  FILE *fd;
+
+  zipArchive = archive_write_new();
+
+  // create a zip archive
+#ifdef HAVE_ZLIB_H
+  std::string compression_type = "deflate";
+#else
+  std::string compression_type = "store";
+#endif
+
+  archive_write_set_format_zip(zipArchive);
+
+  archive_write_set_format_option(zipArchive, "zip", "compression", compression_type.c_str());
+
+  archive_write_open_filename(zipArchive, zipFileName);
+
+  // add the data directory
+  dirEntry = archive_entry_new();
+  archive_entry_set_mtime(dirEntry, 11, 110);
+  archive_entry_copy_pathname(dirEntry, directoryName.c_str());
+  archive_entry_set_mode(dirEntry, S_IFDIR | 0755);
+  archive_entry_set_size(dirEntry, 512);
+  archive_write_header(zipArchive, dirEntry);
+  archive_entry_free(dirEntry);
+
+  // add the files
+  std::vector<std::string>::const_iterator sit;
+  sit = files.begin();
+  while (sit != files.end())
+    {
+    vtkArchiveTools::Message("Zip: adding:", (*sit).c_str());
+    const char *fileName = (*sit).c_str();
+    ++sit;
+
+    //
+    // add an entry for this file
+    //
+    entry = archive_entry_new();
+    // use a relative path for the entry file name, including the top
+    // directory so it unzips into a directory of it's own
+    std::string relFileName = vtksys::SystemTools::RelativePath(
+              vtksys::SystemTools::GetParentDirectory(directoryToZip).c_str(), 
+              fileName);
+    vtkArchiveTools::Message("Zip: adding rel:", relFileName.c_str());
+    archive_entry_set_pathname(entry, relFileName.c_str());
+    // size is required, for now use the vtksys call though it uses struct stat 
+    // and may not be portable
+    unsigned long fileLength = vtksys::SystemTools::FileLength(fileName);
+    archive_entry_set_size(entry, fileLength);
+    archive_entry_set_filetype(entry, AE_IFREG);
+    archive_entry_set_perm(entry, 0644);
+    archive_write_header(zipArchive, entry);
+
+    //
+    // add the data for this entry
+    //
+    fd = fopen(fileName, "r");
+    if (!fd)
+      {
+      vtkArchiveTools::Error("Zip: cannot open:", (*sit).c_str());
+      }
+    else
+      {
+      len = fread(buff, sizeof(char), sizeof(buff), fd);
+      while ( len > 0 )
+        {
+        archive_write_data(zipArchive, buff, len);
+        len = fread(buff, sizeof(char), sizeof(buff), fd);
+        }
+      fclose(fd);
+      }
+    archive_entry_free(entry);
+    }
+
+  archive_write_close(zipArchive);
+  int retval = archive_write_free(zipArchive);
+  if (retval != ARCHIVE_OK)
+    {
+    vtkArchiveTools::Error("Zip:", "error on close!");
+    return false;
+    }
+  return true;
+#endif
+}
+
+//-----------------------------------------------------------------------------
+// unzips zip file into current directory
+// Warning, it extracts the archive into the current directory
+// With Qt, you can change the current directory using QDir::setCurrent()
+bool unzip(const char* zipFileName)
+{
+#ifndef MRML_USE_LibArchive
+  return false;
+#else
+  return false;
+#endif
 }

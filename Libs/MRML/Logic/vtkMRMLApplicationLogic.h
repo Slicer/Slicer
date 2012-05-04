@@ -76,11 +76,13 @@ public:
   /// Fit all the volumes into their views
   void FitSliceToAll();
 
-  /// Save the scene into a self contained directory and zip it up. Use the
-  /// tempDir to stage the scene. If screenShot is not null, use it as the
-  /// screen shot for a scene view
-  /// Returns the final zip file name on success, null on failure.
-  const char * Zip(const char *zipFileName, const char *tempDir, vtkImageData *screenShot = NULL);
+  /// zip the directory into a zip file
+  /// Returns success or failure.
+  bool Zip(const char *zipFileName, const char *directoryToZip);
+
+  /// unzip the zip file to the current working directory
+  /// Returns success or failure.
+  bool Unzip(const char *zipFileName);
   
   /// Save the scene into a self contained directory, sdbDir
   /// If screenShot is not null, use it as the screen shot for a scene view
