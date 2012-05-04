@@ -6,6 +6,7 @@ set(KIT_PYTHON_SCRIPTS
     LabelStatistics.py
     PerformanceTests.py
     SampleData.py
+    VectorToScalarVolume.py
   )
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
