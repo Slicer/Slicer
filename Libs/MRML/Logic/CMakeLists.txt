@@ -70,10 +70,19 @@ set(MRMLLogic_SRCS
   vtkImageNeighborhoodFilter.cxx
   vtkImageLinearReslice.cxx
   vtkImageResliceMask.cxx
+
+  # utility 
+  vtkArchive.cxx
   )
 
 # set hints for tcl and python
 set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
+
+# vtkArchive is not really a vtk class
+set_source_files_properties(
+  vtkArchive.cxx
+  WRAP_EXCLUDE
+)
 
 # --------------------------------------------------------------------------
 # Build library

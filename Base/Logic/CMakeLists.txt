@@ -100,12 +100,7 @@ set(SlicerBaseLogic_SRCS
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND SlicerBaseLogic_SRCS
     vtkSlicerExtensionsLogic.cxx
-    vtkArchive.cxx
     )
-  set_source_files_properties(
-    vtkArchive.cxx
-    WRAP_EXCLUDE
-  )
 endif()
 
 if(Slicer_USE_PYTHONQT)
