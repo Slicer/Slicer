@@ -39,9 +39,10 @@
       <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
        <normaloff>:/Icons/Small/SlicerDataBundle.png</normaloff>:/Icons/Small/SlicerDataBundle.png</iconset>
      </property>
+     <addaction name="actionSDBOpenMRB"/>
      <addaction name="actionSDBSaveToDirectory"/>
-     <addaction name="actionSDBZipDirectory"/>
-     <addaction name="actionSDBZipToDCM"/>
+     <addaction name="actionSDBSaveToMRB"/>
+     <addaction name="actionSDBSaveToDCM"/>
     </widget>
     <addaction name="actionFileLoadScene"/>
     <addaction name="actionFileImportScene"/>
@@ -417,10 +418,19 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionSDBSaveToDirectory">
-   <property name="enabled">
-    <bool>false</bool>
+  <action name="actionSDBOpenMRB">
+   <property name="icon">
+    <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+     <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerLoad.png</iconset>
    </property>
+   <property name="text">
+    <string>Open MRB File</string>
+   </property>
+   <property name="toolTip">
+    <string>UNDER CONSTRUCTION: Open a Medical Reality Bundle.</string>
+   </property>
+  </action>
+  <action name="actionSDBSaveToDirectory">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
@@ -432,22 +442,19 @@
     <string>UNDER CONSTRUCTION: Save the current scene to a stand alone directory.</string>
    </property>
   </action>
-  <action name="actionSDBZipDirectory">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
+  <action name="actionSDBSaveToMRB">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
-    <string>Zip Directory</string>
+    <string>Save Scene to MRB File</string>
    </property>
    <property name="toolTip">
-    <string>Zip a stand alone directory containing a scene.</string>
+    <string>Create a Medical Reality Bundle containing the scene.</string>
    </property>
   </action>
-  <action name="actionSDBZipToDCM">
+  <action name="actionSDBSaveToDCM">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -456,10 +463,10 @@
      <normaloff>:/Icons/Small/SlicerSave.png</normaloff>:/Icons/Small/SlicerSave.png</iconset>
    </property>
    <property name="text">
-    <string>DICOM from Zip</string>
+    <string>Save Scene to DICOM MRB</string>
    </property>
    <property name="toolTip">
-    <string>Encapsulate Zip file as a DICOM secondary capture</string>
+    <string>Encapsulate MRB file as a DICOM secondary capture</string>
    </property>
   </action>
   <action name="actionFileCloseScene">

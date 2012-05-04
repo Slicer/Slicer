@@ -565,8 +565,8 @@ void qSlicerAppMainWindow::setupMenuActions()
   qSlicerAppMainWindowCore_connect(FileSaveScene);
 
   qSlicerAppMainWindowCore_connect(SDBSaveToDirectory);
-  qSlicerAppMainWindowCore_connect(SDBZipDirectory);
-  qSlicerAppMainWindowCore_connect(SDBZipToDCM);
+  qSlicerAppMainWindowCore_connect(SDBSaveToMRB);
+  qSlicerAppMainWindowCore_connect(SDBSaveToDCM);
 
   qSlicerAppMainWindowCore_connect(FileCloseScene);
   this->connect(d->actionFileExit, SIGNAL(triggered()),
