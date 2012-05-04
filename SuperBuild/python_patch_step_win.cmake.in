@@ -12,3 +12,12 @@ configure_file(
   "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/pythonrun.h.in"
   "@python_SOURCE_DIR@/Include/pythonrun.h"
   COPY)
+
+# Allow pyd files to be build with embedded manifests that point to msvc runtime dll
+# This allows a debug build of slicer to import numpy.pyd that is built in release mode.
+# Based on viewvc.slicer.org/viewvc.cgi/Slicer3-lib-mirrors/trunk/Python-2.6.6/Lib/distutils/msvc9compiler.py?view=co&pathrev=163
+# See python bug http://bugs.python.org/issue7833 and discussion for more details
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_distutils_msvc9compiler.py.in"
+  "@python_SOURCE_DIR@/Lib/distutils/msvc9compiler.py"
+  COPY)
