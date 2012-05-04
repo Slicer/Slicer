@@ -14,12 +14,17 @@
 ///  vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
 /// 
 /// Volume nodes describe data sets that can be thought of as stacks of 2D 
-/// images that form a 3D volume.  Volume nodes describe where the images 
-/// are stored on disk, how to render the data (window and level), and how 
-/// to read the files.  This information is extracted from the image 
-/// headers (if they exist) at the time the MRML file is generated.  
+/// images that form a 3D volume. Volume nodes contain only the image data,
+/// where it is store on disk and how to read the files is controlled by
+/// the volume storage node, how to render the data (window and level) is
+/// controlled by the volume display nodes. Image information is extracted 
+/// from the image headers (if they exist) at the time the MRML file is
+/// generated.
 /// Consequently, MRML files isolate MRML browsers from understanding how 
 /// to read the myriad of file formats for medical data. 
+/// A scalar volume node can be a labelmap, which is typically the output of
+/// a segmentation that labels each voxel according to its tissue type.
+/// The alternative is a gray-level or color image
 
 #ifndef __vtkMRMLScalarVolumeNode_h
 #define __vtkMRMLScalarVolumeNode_h
@@ -59,13 +64,26 @@ class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Volume";};
 
-  /// 
-  /// Indicates if this volume is a label map, which is the output of 
-  /// segmentation that labels each voxel according to its tissue type.  
-  /// The alternative is a gray-level or color image.
+  ///
+  /// Returns true (1) if the volume is a labelmap (1 label value per voxel
+  /// to indicates the tissue type.
+  /// \sa SetLabelMap
   int GetLabelMap();
+
+  ///
+  /// Set the volume as a labelmap. 
+  /// If true (1), it sets the volume as a labelmap.
+  /// \sa GetLabelMap(), LabelMapOn(), LabelMapOff()
   void SetLabelMap(int);
+
+  ///
+  /// Convenient method that sets the volume as labelmap
+  /// \sa SetLabelMap, LabelMapOff()
   void LabelMapOn();
+
+  ///
+  /// Convenient method that unsets the volume a labelmap
+  /// \sa SetLabelMap, LabelMapOff()
   void LabelMapOff();
 
   /// 
