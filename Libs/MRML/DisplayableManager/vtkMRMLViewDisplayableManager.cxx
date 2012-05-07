@@ -161,6 +161,10 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
     return;
     }
   vtkMRMLScene *scene = this->External->GetMRMLViewNode()->GetScene();
+  if (scene == NULL)
+    {
+    return;
+    }
 
   std::vector<vtkMRMLNode *> nodes;
   int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
