@@ -298,27 +298,38 @@ setIfNotDefined(run_ctest_with_notes TRUE)
 # run_ctest macro
 #
 macro(run_ctest)
-  ctest_start(${model} TRACK ${track})
 
-  if(NOT EXTENSIONS_BUILDSYSTEM_TESTING AND run_ctest_with_update)
-    ctest_update(SOURCE "${Slicer_EXTENSION_DESCRIPTION_DIR}" RETURN_VALUE FILES_UPDATED)
+  set(slicer_build_in_progress FALSE)
+  set(build_in_progress_file ${Slicer_DIR}/BUILD_IN_PROGRESS)
+  if(EXISTS ${build_in_progress_file})
+    set(slicer_build_in_progress TRUE)
   endif()
-  set(CTEST_CHECKOUT_COMMAND) # checkout on first iteration only
 
-  # force a build if this is the first run and the build dir is empty
-  if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
-    message("First time build - Initialize CMakeCache.txt")
-    set(force_build TRUE)
+  if(slicer_build_in_progress)
+    message("Skipping run_ctest() - Slicer build in PROGRESS")
+  else()
 
-    set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE)
-    if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
-      set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE "Slicer_EXTENSION_DESCRIPTION_DIR:PATH=${Slicer_EXTENSION_DESCRIPTION_DIR}")
+    ctest_start(${model} TRACK ${track})
+
+    if(NOT EXTENSIONS_BUILDSYSTEM_TESTING AND run_ctest_with_update)
+      ctest_update(SOURCE "${Slicer_EXTENSION_DESCRIPTION_DIR}" RETURN_VALUE FILES_UPDATED)
     endif()
+    set(CTEST_CHECKOUT_COMMAND) # checkout on first iteration only
 
-    #-----------------------------------------------------------------------------
-    # Write initial cache.
-    #-----------------------------------------------------------------------------
-    file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
+    # force a build if this is the first run and the build dir is empty
+    if(NOT EXISTS "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
+      message("First time build - Initialize CMakeCache.txt")
+      set(force_build TRUE)
+
+      set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE)
+      if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
+        set(Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE "Slicer_EXTENSION_DESCRIPTION_DIR:PATH=${Slicer_EXTENSION_DESCRIPTION_DIR}")
+      endif()
+
+      #-----------------------------------------------------------------------------
+      # Write initial cache.
+      #-----------------------------------------------------------------------------
+      file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 CTEST_MODEL:STRING=${model}
 CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${EXTENSIONS_TRACK_QUALIFIER}
@@ -335,68 +346,69 @@ Slicer_UPLOAD_EXTENSIONS:BOOL=TRUE
 ${Slicer_EXTENSION_DESCRIPTION_DIR_CMAKECACHE}
 ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
-  endif()
-
-  _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
-  set(slicer_source_updated FALSE)
-  if(NOT "${Slicer_PREVIOUS_WC_REVISION}" STREQUAL "${Slicer_WC_REVISION}")
-    set(slicer_source_updated TRUE)
-  endif()
-
-  message("FILES_UPDATED ................: ${FILES_UPDATED}")
-  message("force_build ..................: ${force_build}")
-  message("Slicer_PREVIOUS_WC_REVISION ..: ${Slicer_PREVIOUS_WC_REVISION}")
-  message("Slicer_WC_REVISION ...........: ${Slicer_WC_REVISION}")
-
-  if(FILES_UPDATED GREATER 0 OR force_build OR slicer_source_updated)
-
-    set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
-    set(force_build FALSE)
-
-    #-----------------------------------------------------------------------------
-    # Update
-    #-----------------------------------------------------------------------------
-    if(run_ctest_with_update AND run_ctest_submit)
-      ctest_submit(PARTS Update)
     endif()
 
-    #-----------------------------------------------------------------------------
-    # Configure
-    #-----------------------------------------------------------------------------
-    if(run_ctest_with_configure)
-      message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
+    _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
+    set(slicer_source_updated FALSE)
+    if(NOT "${Slicer_PREVIOUS_WC_REVISION}" STREQUAL "${Slicer_WC_REVISION}")
+      set(slicer_source_updated TRUE)
+    endif()
 
-      #set(label Slicer)
+    message("FILES_UPDATED ................: ${FILES_UPDATED}")
+    message("force_build ..................: ${force_build}")
+    message("Slicer_PREVIOUS_WC_REVISION ..: ${Slicer_PREVIOUS_WC_REVISION}")
+    message("Slicer_WC_REVISION ...........: ${Slicer_WC_REVISION}")
 
-      set_property(GLOBAL PROPERTY SubProject ${label})
-      set_property(GLOBAL PROPERTY Label ${label})
+    if(FILES_UPDATED GREATER 0 OR force_build OR slicer_source_updated)
 
-      ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}" SOURCE "${EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY}")
-      ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
-      if(run_ctest_submit)
-        ctest_submit(PARTS Configure)
+      set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
+      set(force_build FALSE)
+
+      #-----------------------------------------------------------------------------
+      # Update
+      #-----------------------------------------------------------------------------
+      if(run_ctest_with_update AND run_ctest_submit)
+        ctest_submit(PARTS Update)
       endif()
-    endif()
 
-    #-----------------------------------------------------------------------------
-    # Build
-    #-----------------------------------------------------------------------------
-    set(build_errors)
-    if(run_ctest_with_build)
-      message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
-      ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
-      if(run_ctest_submit)
-        ctest_submit(PARTS Build)
+      #-----------------------------------------------------------------------------
+      # Configure
+      #-----------------------------------------------------------------------------
+      if(run_ctest_with_configure)
+        message("----------- [ Configure ${CTEST_PROJECT_NAME} ] -----------")
+
+        #set(label Slicer)
+
+        set_property(GLOBAL PROPERTY SubProject ${label})
+        set_property(GLOBAL PROPERTY Label ${label})
+
+        ctest_configure(BUILD "${CTEST_BINARY_DIRECTORY}" SOURCE "${EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY}")
+        ctest_read_custom_files("${CTEST_BINARY_DIRECTORY}")
+        if(run_ctest_submit)
+          ctest_submit(PARTS Configure)
+        endif()
       endif()
-    endif()
 
-    #-----------------------------------------------------------------------------
-    # Note should be at the end
-    #-----------------------------------------------------------------------------
-    if(run_ctest_with_notes AND run_ctest_submit)
-      ctest_submit(PARTS Notes)
-    endif()
+      #-----------------------------------------------------------------------------
+      # Build
+      #-----------------------------------------------------------------------------
+      set(build_errors)
+      if(run_ctest_with_build)
+        message("----------- [ Build ${CTEST_PROJECT_NAME} ] -----------")
+        ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" NUMBER_ERRORS build_errors APPEND)
+        if(run_ctest_submit)
+          ctest_submit(PARTS Build)
+        endif()
+      endif()
 
+      #-----------------------------------------------------------------------------
+      # Note should be at the end
+      #-----------------------------------------------------------------------------
+      if(run_ctest_with_notes AND run_ctest_submit)
+        ctest_submit(PARTS Notes)
+      endif()
+
+    endif()
   endif()
 endmacro()
 
