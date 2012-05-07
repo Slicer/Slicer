@@ -108,6 +108,12 @@ bool store()
 
   sceneViewNode->StoreScene();
 
+  if (sceneViewNode->GetNodes()->GetNodeByID("vtkMRMLScalarVolumeNode1") == 0)
+    {
+    std::cout << "vtkMRMLSceneViewNode::StoreScene() failed" << std::endl;
+    return false;
+    }
+
   return true;
 }
 
@@ -120,8 +126,19 @@ bool storeAndRestore()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
+  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+
   sceneViewNode->StoreScene();
   sceneViewNode->RestoreScene();
+
+  vtkMRMLNode* restoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  // Restoring the volume should re-use the same node.
+  if (restoredVolumeNode != volumeNode)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::RestoreScene() failed"
+              << std::endl;
+    return false;
+    }
 
   return true;
 }
@@ -136,10 +153,33 @@ bool storeAndRemoveVolume()
   scene->AddNode(sceneViewNode.GetPointer());
 
   sceneViewNode->StoreScene();
-  vtkMRMLNode* node = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
-  scene->RemoveNode(node);
+
+  // Remove node from the scene to see if it gets restored.
+  vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  scene->RemoveNode(volumeNode);
   sceneViewNode->RestoreScene();
+
+  // Make sure the node has been restored.
+  vtkMRMLNode* restoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  if (restoredVolumeNode == 0 ||
+      restoredVolumeNode == volumeNode)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::RestoreScene() failed"
+              << std::endl;
+    return false;
+    }
+
   sceneViewNode->RestoreScene();
+
+  // Make sure the node has been restored.
+  vtkMRMLNode* rerestoredVolumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  if (rerestoredVolumeNode == 0 ||
+      rerestoredVolumeNode != restoredVolumeNode)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::RestoreScene() failed"
+              << std::endl;
+    return false;
+    }
 
   return true;
 }
@@ -153,8 +193,33 @@ bool storeTwice()
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
 
+  // Empty scene view nodes until "stored"
+  int defaultNodes = sceneViewNode->GetNodes() ?
+    sceneViewNode->GetNodes()->GetNumberOfNodes() : 0;
+  if (defaultNodes != 0)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()"
+              << " failed" << std::endl;
+    return false;
+    }
   sceneViewNode->StoreScene();
+
+  int nodeCount = sceneViewNode->GetNodes()->GetNumberOfNodes();
+  if (nodeCount != 2)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed"
+              << std::endl;
+    return false;
+    }
   sceneViewNode->StoreScene();
+
+  int newNodeCount = sceneViewNode->GetNodes()->GetNumberOfNodes();
+  if (newNodeCount != nodeCount)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed"
+              << std::endl;
+    return false;
+    }
 
   return true;
 }

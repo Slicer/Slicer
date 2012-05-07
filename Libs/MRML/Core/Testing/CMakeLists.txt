@@ -65,6 +65,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   #vtkMRMLSceneTest2.cxx
   vtkMRMLSceneViewStorageNodeTest1.cxx
   vtkMRMLSceneViewNodeEventsTest.cxx
+  vtkMRMLSceneViewNodeRestoreSceneTest.cxx
   vtkMRMLSceneViewNodeStoreSceneTest.cxx
   vtkMRMLSceneViewNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
@@ -157,6 +158,7 @@ SIMPLE_TEST( vtkMRMLSceneIDTest )
 SIMPLE_TEST( vtkMRMLSceneSnapshotNodeTest1 )
 SIMPLE_TEST( vtkMRMLSceneTest1 )
 SIMPLE_TEST( vtkMRMLSceneViewNodeEventsTest )
+SIMPLE_TEST( vtkMRMLSceneViewNodeRestoreSceneTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeStoreSceneTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeTest1 )
 SIMPLE_TEST( vtkMRMLSceneViewStorageNodeTest1 )
