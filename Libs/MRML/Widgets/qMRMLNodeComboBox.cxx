@@ -249,6 +249,10 @@ void qMRMLNodeComboBoxPrivate::updateActionItems(bool resetRootIndex)
       {
       extraItems.append(QObject::tr("Create new ") + this->nodeTypeLabel());
       }
+    if (this->RenameEnabled && this->AddEnabled)
+      {
+      extraItems.append(QObject::tr("Create and rename new ") + this->nodeTypeLabel());
+      }
     if (this->RemoveEnabled)
       {
       extraItems.append(QObject::tr("Delete current ")  + this->nodeTypeLabel());
@@ -379,6 +383,13 @@ void qMRMLNodeComboBox::activateExtraItem(const QModelIndex& index)
     d->ComboBox->hidePopup();
     this->renameCurrentNode();
     }
+  else if (data.startsWith(QObject::tr("Create and rename")))
+    {
+    d->ComboBox->hidePopup();
+    this->addNode();
+    this->renameCurrentNode();
+    }
+
 }
 
 //-----------------------------------------------------------------------------
