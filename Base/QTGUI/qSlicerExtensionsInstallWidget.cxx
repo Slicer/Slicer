@@ -19,11 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QNetworkCookieJar>
 #include <QSettings>
 #include <QWebFrame>
 
 // CTK includes
 #include <ctkPimpl.h>
+
+// QtCore includes
+#include <qSlicerPersistentCookieJar.h>
 
 // QtGUI includes
 #include "qSlicerExtensionsInstallWidget.h"
@@ -74,6 +78,10 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
   Q_Q(qSlicerExtensionsInstallWidget);
 
   this->setupUi(q);
+
+  QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();;
+  Q_ASSERT(networkAccessManager);
+  networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
 
   QObject::connect(this->WebView, SIGNAL(loadFinished(bool)),
                    q, SLOT(onLoadFinished(bool)));

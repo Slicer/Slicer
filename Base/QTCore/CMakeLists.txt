@@ -74,6 +74,8 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerExtensionsManagerModel.cxx
     qSlicerExtensionsManagerModel.h
+    qSlicerPersistentCookieJar.cxx
+    qSlicerPersistentCookieJar.h
     )
 endif()
 
