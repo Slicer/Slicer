@@ -24,8 +24,10 @@ set(include_dirs
   ${MRMLCore_INCLUDE_DIRS}
   ${vtkTeem_INCLUDE_DIRS}
   ${RemoteIO_INCLUDE_DIRS}
-  ${LibArchive_INCLUDE_DIR}
   )
+if(MRML_USE_LibArchive)
+  list(APPEND include_dirs ${LibArchive_INCLUDE_DIR})
+endif()
 include_directories(${include_dirs})
 
 # --------------------------------------------------------------------------
@@ -70,19 +72,22 @@ set(MRMLLogic_SRCS
   vtkImageNeighborhoodFilter.cxx
   vtkImageLinearReslice.cxx
   vtkImageResliceMask.cxx
-
-  # utility 
-  vtkArchive.cxx
   )
+
+if(MRML_USE_LibArchive)
+  set(MRMLLogic_SRCS
+    ${MRMLLogic_SRCS}
+    vtkArchive.cxx
+    )
+
+  # vtkArchive is not really a vtk class
+  set_source_files_properties(vtkArchive.cxx
+    WRAP_EXCLUDE
+    )
+endif()
 
 # set hints for tcl and python
 set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-
-# vtkArchive is not really a vtk class
-set_source_files_properties(
-  vtkArchive.cxx
-  WRAP_EXCLUDE
-)
 
 # --------------------------------------------------------------------------
 # Build library
@@ -106,8 +111,10 @@ set(libs
   vtkTeem
   RemoteIO
   ${VTK_LIBRARIES}
-  ${LibArchive_LIBRARY}
   )
+if(MRML_USE_LibArchive)
+  list(APPEND libs ${LibArchive_LIBRARY})
+endif()
 target_link_libraries(${lib_name} ${libs})
 
 # Apply user-defined properties to the library target.

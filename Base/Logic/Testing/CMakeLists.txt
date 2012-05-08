@@ -5,8 +5,10 @@ set(KIT_TEST_SRCS
   vtkDataIOManagerLogicTest1.cxx
   vtkSlicerApplicationLogicTest1.cxx
   vtkSlicerTransformLogicTest1.cxx
-  vtkArchiveTest1.cxx
   )
+if(MRML_USE_LibArchive)
+  list(APPEND KIT_TEST_SRCS vtkArchiveTest1.cxx)
+endif()
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
