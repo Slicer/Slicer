@@ -293,14 +293,16 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     assert(this->DisplayNodeIDs.size() == this->DisplayNodes.size());
     return;
     }
+
+  if (!displayNodeIDIt->empty() && this->Scene)
+    {
+    this->Scene->RemoveReferencedNodeID(
+      displayNodeIDIt->c_str(), this);
+    }
+
   // Delete the display node ID if the new value is 0.
   if (newDisplayNodeID.empty())
     {
-    if (!displayNodeIDIt->empty() && this->Scene)
-      {
-      this->Scene->RemoveReferencedNodeID(
-        displayNodeIDIt->c_str(), this);
-      }
     this->DisplayNodeIDs.erase(displayNodeIDIt);
     vtkMRMLDisplayNode* oldDisplayNode = this->DisplayNodes[n];
     /// Need to unobserve

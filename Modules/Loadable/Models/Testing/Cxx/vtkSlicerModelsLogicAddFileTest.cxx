@@ -31,7 +31,7 @@ bool testAddEmptyFile(const char* filePath);
 bool testAddFile(const char* filePath);
 
 //-----------------------------------------------------------------------------
-int vtkSlicerModelsLogicTest( int argc, char * argv[] )
+int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
 {
   bool res = true;
   std::cout << ">>>>>>>>>>>>>>>>>> "

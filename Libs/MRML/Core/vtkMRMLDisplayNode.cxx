@@ -21,6 +21,7 @@ Version:   $Revision: 1.3 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkCollection.h>
 #include <vtkImageData.h>
 
 // STD includes
@@ -481,18 +482,17 @@ vtkMRMLDisplayableNode* vtkMRMLDisplayNode::GetDisplayableNode()
     {
     return NULL;
     }
-  int numNodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLDisplayableNode");
-  for (int i=0; i<numNodes; i++)
+  vtkMRMLNode* node = NULL;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* sceneNodes = this->Scene->GetNodes();
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    vtkMRMLDisplayableNode *model = vtkMRMLDisplayableNode::SafeDownCast(this->Scene->GetNthNodeByClass(i, "vtkMRMLDisplayableNode"));
-    int ndnodes = model->GetNumberOfDisplayNodes();
-    for (int k=0; k<ndnodes; k++)
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(node);
+    if (displayableNode && displayableNode->HasDisplayNodeID(this->GetID()))
       {
-      const char *id = model->GetNthDisplayNodeID(k);
-      if (id && !strcmp(id, this->GetID()))
-        {
-        return model;
-        }
+      return displayableNode;
       }
     }
   return NULL;

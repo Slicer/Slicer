@@ -56,8 +56,10 @@ public:
   /// the pipeline and the dimension of the input data.
   vtkImageData* GetUpToDateImageData();
 
-  /// 
-  /// Gets associated dispayable node 
+  ///
+  /// Returns the first displayable node that is associated to this display node
+  /// Warning: This function is slow as it browses the entire scene to find the
+  /// displayable node.
   virtual vtkMRMLDisplayableNode* GetDisplayableNode();
 
   /// 

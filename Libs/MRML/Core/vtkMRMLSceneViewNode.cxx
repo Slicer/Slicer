@@ -30,6 +30,7 @@ Version:   $Revision: 1.14 $
 // STD includes
 #include <cassert>
 #include <sstream>
+#include <stack>
 
 vtkCxxSetObjectMacro(vtkMRMLSceneViewNode, ScreenShot, vtkImageData);
 
@@ -375,11 +376,13 @@ void vtkMRMLSceneViewNode::RestoreScene()
 {
   if (this->Scene == NULL)
     {
+    vtkWarningMacro("No scene to restore onto");
     return;
     }
 
   if (this->Nodes == NULL)
     {
+    vtkWarningMacro("No nodes to restore");
     return;
     }
 
@@ -413,37 +416,48 @@ void vtkMRMLSceneViewNode::RestoreScene()
         }
       }
     }
-  std::vector<vtkMRMLNode*> removedNodes;
-  unsigned int nnodesScene = this->Scene->GetNumberOfNodes();
-  for (n=0; n<nnodesScene; n++)
+  // Identify which nodes must be removed from the scene.
+  vtkCollectionSimpleIterator it;
+  vtkCollection* sceneNodes = this->Scene->GetNodes();
+  // Use smart pointer to ensure the nodes still exist when being removed.
+  // Indeed, removing a node can have the side effect of removing other nodes.
+  std::stack<vtkSmartPointer<vtkMRMLNode> > removedNodes;
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    node = this->Scene->GetNthNode(n);
-    if (node)
+    std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
+    vtkSmartPointer<vtkMRMLHierarchyNode> hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
+    // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
+    // sceneview nodes nor top level scene view hierarchy nodes
+    if (iter == snapshotMap.end() &&
+        !node->IsA("vtkMRMLSceneViewNode") &&
+        !(hnode && hnode->GetAssociatedNode() && hnode->GetAssociatedNode()->IsA("vtkMRMLSceneViewNode")) &&
+        !(hnode && hnode->GetName() && !strncmp(hnode->GetName(), "SceneViewToplevel", 17)) &&
+        !node->IsA("vtkMRMLSnapshotClipNode") &&
+        node->GetSaveWithScene())
       {
-      std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
-      vtkSmartPointer<vtkMRMLHierarchyNode> hnode = vtkMRMLHierarchyNode::SafeDownCast(node);
-      // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
-      // sceneview nodes nor top level scene view hierarchy nodes
-      if (iter == snapshotMap.end() &&
-          !node->IsA("vtkMRMLSceneViewNode") &&
-          !(hnode && hnode->GetAssociatedNode() && hnode->GetAssociatedNode()->IsA("vtkMRMLSceneViewNode")) &&
-          !(hnode && hnode->GetName() && !strncmp(hnode->GetName(), "SceneViewToplevel", 17)) &&
-          !node->IsA("vtkMRMLSnapshotClipNode") &&
-          node->GetSaveWithScene())
-        {
-        removedNodes.push_back(node);
-        }
+      removedNodes.push(vtkSmartPointer<vtkMRMLNode>(node));
       }
     }
-  for(n=0; n<removedNodes.size(); n++)
+  while(!removedNodes.empty())
     {
-    this->Scene->RemoveNode(removedNodes[n]);
+    vtkMRMLNode* nodeToRemove = removedNodes.top().GetPointer();
+    // Remove the node only if it's not part of the scene.
+    bool isNodeInScene = (nodeToRemove->GetScene() == this->Scene);
+    // Decrease reference count before removing it from the scene
+    // to give the opportunity of the node to be deleted in RemoveNode
+    // (standard behavior).
+    removedNodes.pop();
+    if (isNodeInScene)
+      {
+      this->Scene->RemoveNode(nodeToRemove);
+      }
     }
 
   std::vector<vtkMRMLNode *> addedNodes;
   for (n=0; n < nnodesSanpshot; n++) 
     {
-    node = (vtkMRMLNode*)this->Nodes->GetNodes()->GetItemAsObject(n);
+    node = vtkMRMLNode::SafeDownCast(this->Nodes->GetNodes()->GetItemAsObject(n));
     if (node)
       {
       /***
@@ -481,10 +495,9 @@ void vtkMRMLSceneViewNode::RestoreScene()
 
   //this->Scene->UpdateNodeReferences(this->Nodes);
 
-  nnodesScene = this->Scene->GetNumberOfNodes();
-  for (n=0; n<nnodesScene; n++) 
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    node = this->Scene->GetNthNode(n);
     if(!node->IsA("vtkMRMLSceneViewNode") && !node->IsA("vtkMRMLSnapshotClipNode") && node->GetSaveWithScene())
       {
       node->UpdateScene(this->Scene);
@@ -512,10 +525,9 @@ void vtkMRMLSceneViewNode::RestoreScene()
 
 #ifndef NDEBUG
   // sanity checks
-  nnodesScene = this->Scene->GetNumberOfNodes();
-  for (n=0; n<nnodesScene; n++)
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    node = this->Scene->GetNthNode(n);
     assert(node->GetScene() == this->Scene);
     }
 #endif
