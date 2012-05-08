@@ -29,6 +29,7 @@
 
 // CTK includes
 #include <ctkErrorLogWidget.h>
+#include <ctkFileDialog.h>
 #include <ctkMessageBox.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
@@ -343,11 +344,16 @@ void qSlicerAppMainWindowCore::onFileCloseSceneActionTriggered()
 void qSlicerAppMainWindowCore::onEditRecordMacroActionTriggered()
 {
 #ifdef Slicer_USE_QtTesting
-  QString filename = QFileDialog::getSaveFileName(this->widget(), "Macro File Name",
-    QString(), "XML Files (*.xml)");
-  if (!filename.isEmpty())
+  QFileDialog fileDialog(this->widget(), tr("Macro File Name"),
+                         QString("macro"), tr("XML Files (*.xml)"));
+  fileDialog.setDefaultSuffix(QString("xml"));
+  if(fileDialog.exec() == QDialog::Accepted)
     {
-    qSlicerApplication::application()->testingUtility()->recordTests(filename);
+    QString filename = fileDialog.selectedFiles()[0];
+    if (!filename.isEmpty())
+      {
+      qSlicerApplication::application()->testingUtility()->recordTests(filename);
+      }
     }
 #endif
 }
