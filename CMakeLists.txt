@@ -197,6 +197,11 @@ if(NOT "${ITK_VERSION_MAJOR}" STREQUAL "3" AND NOT "${ITK_VERSION_MAJOR}" STREQU
   message(WARNING "Setting ITK_VERSION_MAJOR to '3' as an valid value was specified.")
 endif()
 
+set(_overwrite_options_file ${Slicer_CMAKE_DIR}/SlicerOverwriteDefaultOptions.cmake)
+if(EXISTS ${_overwrite_options_file})
+  include(${_overwrite_options_file})
+endif()
+
 set(USE_ITKv3 OFF)
 set(USE_ITKv4 ON)
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
