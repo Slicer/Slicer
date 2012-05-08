@@ -121,7 +121,7 @@ bool removeRestoreEditAndRestore()
   if (restoredVolumeNode->GetDisplayNodeID() == 0 ||
       strcmp(restoredVolumeNode->GetDisplayNodeID(), "vtkMRMLScalarVolumeDisplayNode1") != 0)
     {
-    std::cout << __LINE__ << "vtkMRMLSceneViewNode::RestoreScene failed"
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::RestoreScene failed"
               << std::endl;
     return false;
     }

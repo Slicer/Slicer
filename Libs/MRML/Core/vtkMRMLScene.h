@@ -280,12 +280,20 @@ public:
   /// or NULL if id has not changed
   const char* GetChangedID(const char* id);
 
-  /// Return collection of all nodes referenced directly or indirectly by a node.
+  /// Return collection of all nodes referenced directly or indirectly by
+  /// \a node.
+  /// The node itself is in first place in the collection. No doublon in the
+  /// list.
+  /// Note that you are responsible for deleting the returned collection.
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
   /// Get a sub-scene containing all nodes directly or indirectly reference by
   /// the input node
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
+
+  /// Return the list of referencing nodes.
+  /// Only used for debugging
+  const std::vector< vtkMRMLNode* >& GetReferencingNodes();
 
   int IsFilePathRelative(const char * filepath);
 

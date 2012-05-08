@@ -25,19 +25,21 @@
 #include "vtkMRMLSceneViewNode.h"
 
 // VTK includes
+#include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 namespace
 {
 
-vtkMRMLScene* createScene();
+void populateScene(vtkMRMLScene* scene);
 bool store();
 bool storeAndRestore();
 bool storeAndRemoveVolume();
 bool storeTwice();
 bool storeAndRestoreTwice();
 bool storeTwiceAndRemoveVolume();
+bool references();
 
 } // end of anonymous namespace
 
@@ -75,6 +77,12 @@ int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc),
     std::cerr << "storeTwiceAndRemoveVolume call not successful." << std::endl;
     return EXIT_FAILURE;
     }
+  if (!references())
+    {
+    std::cerr << "references call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }
 
@@ -82,26 +90,22 @@ namespace
 {
 
 //---------------------------------------------------------------------------
-vtkMRMLScene* createScene()
+void populateScene(vtkMRMLScene* scene)
 {
-  vtkMRMLScene* scene = vtkMRMLScene::New();
-
   vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
   scene->AddNode(displayNode.GetPointer());
 
   vtkNew<vtkMRMLScalarVolumeNode> volumeNode;
   volumeNode->SetScene(scene);
-  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
   scene->AddNode(volumeNode.GetPointer());
-
-  return scene;
+  volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 }
 
 //---------------------------------------------------------------------------
 bool store()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -120,8 +124,8 @@ bool store()
 //---------------------------------------------------------------------------
 bool storeAndRestore()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -146,8 +150,8 @@ bool storeAndRestore()
 //---------------------------------------------------------------------------
 bool storeAndRemoveVolume()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -187,8 +191,8 @@ bool storeAndRemoveVolume()
 //---------------------------------------------------------------------------
 bool storeTwice()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -227,8 +231,8 @@ bool storeTwice()
 //---------------------------------------------------------------------------
 bool storeAndRestoreTwice()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -245,8 +249,8 @@ bool storeAndRestoreTwice()
 //---------------------------------------------------------------------------
 bool storeTwiceAndRemoveVolume()
 {
-  vtkSmartPointer<vtkMRMLScene> scene;
-  scene.TakeReference(createScene());
+  vtkNew<vtkMRMLScene> scene;
+  populateScene(scene.GetPointer());
 
   vtkNew<vtkMRMLSceneViewNode> sceneViewNode;
   scene->AddNode(sceneViewNode.GetPointer());
@@ -258,6 +262,67 @@ bool storeTwiceAndRemoveVolume()
   sceneViewNode->RestoreScene();
   sceneViewNode->RestoreScene();
 
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool references()
+{
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  populateScene(scene.GetPointer());
+
+  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode =
+    vtkSmartPointer<vtkMRMLSceneViewNode>::New();
+  scene->AddNode(sceneViewNode.GetPointer());
+
+  vtkMRMLNode* volumeNode =
+    scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+
+  sceneViewNode->StoreScene();
+  vtkMRMLNode* sceneViewVolumeNode =
+    sceneViewNode->GetNodes()->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkMRMLNode* sceneViewVolumeDisplayNode =
+    sceneViewNode->GetNodes()->GetNodeByID("vtkMRMLScalarVolumeDisplayNode1");
+
+  vtkSmartPointer<vtkCollection> referencedNodes;
+  referencedNodes.TakeReference(scene->GetReferencedNodes(volumeNode));
+  vtkSmartPointer<vtkCollection> sceneViewReferencedNodes;
+  sceneViewReferencedNodes.TakeReference(
+    sceneViewNode->GetNodes()->GetReferencedNodes(sceneViewVolumeNode));
+
+  if (sceneViewReferencedNodes->GetNumberOfItems() != 2)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed." << std::endl
+              << sceneViewReferencedNodes->GetNumberOfItems() << " items"
+              << std::endl;
+    return false;
+    }
+
+  // if the previous check passes, then UpdateScene is not necessary
+  sceneViewNode->UpdateScene(scene.GetPointer());
+
+  sceneViewReferencedNodes.TakeReference(
+    sceneViewNode->GetNodes()->GetReferencedNodes(sceneViewVolumeNode));
+  if (sceneViewReferencedNodes->GetNumberOfItems() != 2 ||
+      sceneViewReferencedNodes->GetItemAsObject(0) != sceneViewVolumeNode ||
+      sceneViewReferencedNodes->GetItemAsObject(1) != sceneViewVolumeDisplayNode ||
+      sceneViewNode->GetNodes()->GetReferencingNodes().size() != 1 ||
+      sceneViewNode->GetNodes()->GetReferencingNodes()[0] != sceneViewVolumeNode)
+    {
+    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed." << std::endl
+              << sceneViewReferencedNodes->GetNumberOfItems() << " items for "
+              << sceneViewVolumeNode << ": "
+              << sceneViewReferencedNodes->GetItemAsObject(0) << ", "
+              << sceneViewReferencedNodes->GetItemAsObject(1) << std::endl;
+    std::cout << "Referencing nodes: "
+              << sceneViewNode->GetNodes()->GetReferencingNodes().size() << " "
+              << sceneViewNode->GetNodes()->GetReferencingNodes()[0] << std::endl;
+    std::cout << referencedNodes->GetNumberOfItems() << " items in scene for "
+              << volumeNode << ": "
+              << referencedNodes->GetItemAsObject(0) << ", "
+              << referencedNodes->GetItemAsObject(1) << std::endl;
+    return false;
+    }
   return true;
 }
 

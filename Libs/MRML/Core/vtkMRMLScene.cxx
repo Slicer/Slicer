@@ -3175,6 +3175,14 @@ GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
   // clean up
   nodes->Delete();
 }
+
+//-----------------------------------------------------------------------------
+const std::vector< vtkMRMLNode* >& vtkMRMLScene::GetReferencingNodes()
+{
+  return this->ReferencingNodes;
+}
+
+
 //-----------------------------------------------------------------------------
 unsigned long vtkMRMLScene::GetSceneModifiedTime()
 {

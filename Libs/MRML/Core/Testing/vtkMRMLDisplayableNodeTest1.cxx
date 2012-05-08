@@ -71,6 +71,7 @@ bool TestRemoveDisplayNodeID();
 bool TestRemoveDisplayNode();
 bool TestRemoveDisplayableNode();
 bool TestDisplayModifiedEvent();
+bool TestReferences();
 
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableNodeTest1(int , char * [] )
@@ -89,6 +90,7 @@ int vtkMRMLDisplayableNodeTest1(int , char * [] )
   res = TestRemoveDisplayNode() && res;
   res = TestRemoveDisplayableNode() && res;
   res = TestDisplayModifiedEvent() && res;
+  res = TestReferences() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -461,6 +463,7 @@ bool TestRemoveDisplayableNode()
 
   return true;
 }
+
 //----------------------------------------------------------------------------
 bool TestDisplayModifiedEvent()
 {
@@ -560,5 +563,97 @@ bool TestDisplayModifiedEvent()
     return false;
     }
   spy->ResetNumberOfEvents();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestReferences()
+{
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+
+  vtkSmartPointer<vtkMRMLDisplayNodeTestHelper> displayNode1 =
+    vtkSmartPointer<vtkMRMLDisplayNodeTestHelper>::New();
+  scene->AddNode(displayNode1);
+
+  vtkSmartPointer<vtkMRMLDisplayableNodeTestHelper1> displayableNode =
+    vtkSmartPointer<vtkMRMLDisplayableNodeTestHelper1>::New();
+  scene->AddNode(displayableNode);
+
+  displayableNode->AddAndObserveDisplayNodeID(displayNode1->GetID());
+
+  vtkSmartPointer<vtkCollection> referencedNodes;
+  referencedNodes.TakeReference(
+    scene->GetReferencedNodes(displayableNode.GetPointer()));
+
+  if (referencedNodes->GetNumberOfItems() != 2 ||
+      referencedNodes->GetItemAsObject(0) != displayableNode.GetPointer() ||
+      referencedNodes->GetItemAsObject(1) != displayNode1.GetPointer())
+    {
+    std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
+              << referencedNodes->GetNumberOfItems() << std::endl;
+    return false;
+    }
+
+  // Observing a display node not yet in the scene should add the reference in
+  // the mrml scene, however GetReferencedNodes can't return the node because
+  // it is not yet in the scene.
+  vtkSmartPointer<vtkMRMLDisplayNodeTestHelper> displayNode2 =
+    vtkSmartPointer<vtkMRMLDisplayNodeTestHelper>::New();
+  displayableNode->AddAndObserveDisplayNodeID("vtkMRMLDisplayNodeTestHelper2");
+
+  referencedNodes.TakeReference(
+    scene->GetReferencedNodes(displayableNode.GetPointer()));
+  if (referencedNodes->GetNumberOfItems() != 2 ||
+      referencedNodes->GetItemAsObject(0) != displayableNode.GetPointer() ||
+      referencedNodes->GetItemAsObject(1) != displayNode1.GetPointer())
+    {
+    std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
+              << referencedNodes->GetNumberOfItems() << std::endl;
+    return false;
+    }
+
+  scene->AddNode(displayNode2);
+  displayableNode->GetNthDisplayNode(1);
+
+  referencedNodes.TakeReference(
+    scene->GetReferencedNodes(displayableNode));
+  if (referencedNodes->GetNumberOfItems() != 3 ||
+      referencedNodes->GetItemAsObject(0) != displayableNode.GetPointer() ||
+      referencedNodes->GetItemAsObject(1) != displayNode1.GetPointer() ||
+      referencedNodes->GetItemAsObject(2) != displayNode2.GetPointer())
+    {
+    std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
+              << referencedNodes->GetNumberOfItems() << std::endl;
+    return false;
+    }
+
+  // Test if the reference removal works
+  vtkSmartPointer<vtkMRMLDisplayNodeTestHelper> displayNode3 =
+    vtkSmartPointer<vtkMRMLDisplayNodeTestHelper>::New();
+  scene->AddNode(displayNode3);
+  displayableNode->AddAndObserveDisplayNodeID(displayNode3->GetID());
+  displayableNode->RemoveNthDisplayNodeID(2);
+
+  referencedNodes.TakeReference(
+    scene->GetReferencedNodes(displayableNode));
+  if (referencedNodes->GetNumberOfItems() != 3 ||
+      referencedNodes->GetItemAsObject(0) != displayableNode.GetPointer() ||
+      referencedNodes->GetItemAsObject(1) != displayNode1.GetPointer() ||
+      referencedNodes->GetItemAsObject(2) != displayNode2.GetPointer())
+    {
+    std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
+              << referencedNodes->GetNumberOfItems() << std::endl;
+    return false;
+    }
+
+  // Simulate scene deletion to see if it crashes or not.
+  // When the displayable node is destroyed, it unreferences nodes. Make sure
+  // it is ok for nodes already removed/deleted like displayNode1.
+  displayNode1 = 0;
+  displayableNode = 0;
+  displayNode2 = 0;
+  displayNode3 = 0;
+  scene = 0;
+
   return true;
 }
