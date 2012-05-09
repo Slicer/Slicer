@@ -37,6 +37,7 @@ class EditUtil(object):
     """
     node = slicer.vtkMRMLScriptedModuleNode()
     node.SetModuleName( "Editor" )
+    node.SetParameter( "label", "1" )
     slicer.mrmlScene.AddNode(node)
     return node
 
