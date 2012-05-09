@@ -190,7 +190,8 @@ QStandardItem* qSlicerModulesListViewPrivate
 ::moduleItem(const QString& moduleName)const
 {
   QModelIndex start = this->ModulesListModel->index(0, 0);
-  QModelIndexList moduleIndexes = this->ModulesListModel->match(start, Qt::UserRole, moduleName);
+  QModelIndexList moduleIndexes = this->ModulesListModel->match(start, Qt::UserRole, moduleName,
+                                                                /* hits= */ 1, Qt::MatchExactly);
   if (moduleIndexes.count() == 0)
     {
     return 0;
