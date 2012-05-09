@@ -56,6 +56,7 @@ class SampleDataWidget:
 
   def __init__(self, parent=None):
     self.observerTags = []
+    self.logic = SampleDataLogic(self.logMessage)
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -79,12 +80,12 @@ class SampleDataWidget:
 
   def setup(self):
     samples = (
-        ( 'MRHead', self.downloadMRHead ),
-        ( 'CTChest', self.downloadCTChest ),
-        ( 'CTACardio', self.downloadCTACardio ),
-        ( 'DTIBrain', self.downloadDTIBrain ),
-        ( 'MRBrainTumor Time Point 1', self.downloadMRBrainTumor1 ),
-        ( 'MRBrainTumor Time Point 2', self.downloadMRBrainTumor2 ),
+        ( 'MRHead', self.logic.downloadMRHead ),
+        ( 'CTChest', self.logic.downloadCTChest ),
+        ( 'CTACardio', self.logic.downloadCTACardio ),
+        ( 'DTIBrain', self.logic.downloadDTIBrain ),
+        ( 'MRBrainTumor Time Point 1', self.logic.downloadMRBrainTumor1 ),
+        ( 'MRBrainTumor Time Point 2', self.logic.downloadMRBrainTumor2 ),
       )
     for sample in samples:
       b = qt.QPushButton('Download %s' % sample[0] )
@@ -106,23 +107,35 @@ class SampleDataWidget:
     self.log.repaint()
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
 
+#
+# SampleData logic
+#
+
+class SampleDataLogic:
+  def __init__(self, logMessage=None):
+    if logMessage:
+      self.logMessage = logMessage
+
+  def logMessage(self,message):
+    print(message)
+
   def downloadMRHead(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
 
   def downloadCTChest(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CTChest')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CTChest')
 
   def downloadCTACardio(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
 
   def downloadDTIBrain(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
 
   def downloadMRBrainTumor1(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
+    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
 
   def downloadVolume(self, uri, name):
     self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
@@ -142,3 +155,4 @@ class SampleDataWidget:
         self.logMessage('<b>Download failed!</b>\n')
     else:
       self.logMessage('<b>Download failed!</b>\n')
+    return volumeNode
