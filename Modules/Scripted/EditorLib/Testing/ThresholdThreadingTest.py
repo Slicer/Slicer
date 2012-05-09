@@ -1,12 +1,13 @@
 
 import unittest
 import slicer
+import EditorLib
 
 class EditorLibTesting(unittest.TestCase):
   def setUp(self):
     pass
 
-  def test_ThresholdThreading():
+  def test_ThresholdThreading(self):
     """
     Replicate the issue reported in bug 1822 where spliting
     a grow-cut produced volume causes a multi-threading related
