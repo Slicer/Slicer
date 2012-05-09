@@ -21,6 +21,9 @@
 #ifndef __qMRMLLayoutManager_h
 #define __qMRMLLayoutManager_h
 
+// Qt includes
+#include <QStringList>
+
 // CTK includes
 #include <ctkLayoutManager.h>
 
@@ -68,8 +71,10 @@ public:
   /// Get SliceViewWidget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
-  /// Get the list of SliceViewWidget
-  Q_INVOKABLE QList<qMRMLSliceWidget*> sliceWidgetList() const;
+  /// Get the list of SliceWidgetNames
+  /// All slice widget names are returned,
+  /// even those from hidden and not currently used widgets.
+  Q_INVOKABLE QStringList sliceViewNames() const;
 
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
