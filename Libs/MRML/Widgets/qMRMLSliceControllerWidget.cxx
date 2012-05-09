@@ -1683,10 +1683,13 @@ void qMRMLSliceControllerWidget::setMoreButtonVisible(bool visible)
 {
   Q_D(qMRMLSliceControllerWidget);
   d->MoreButton->setVisible(visible);
-  if (!visible)
-    {
-    this->moveBackgroundComboBox(false);
-    }
+}
+
+//---------------------------------------------------------------------------
+bool qMRMLSliceControllerWidget::isMoreButtonVisible() const
+{
+  Q_D(const qMRMLSliceControllerWidget);
+  return d->MoreButton->isVisibleTo(const_cast<qMRMLSliceControllerWidget*>(this));
 }
 
 //---------------------------------------------------------------------------
