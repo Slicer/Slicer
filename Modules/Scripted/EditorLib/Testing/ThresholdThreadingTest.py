@@ -64,6 +64,7 @@ def thresholdThreadingTest():
   editUtil.setLabel(2)
   paintTool.paintAddPoint(200,200)
   paintTool.paintApply()
+  paintTool.cleanup()
   paintTool = None
 
   #
@@ -75,9 +76,16 @@ def thresholdThreadingTest():
   #
   # now split the volume, merge it back, and see if it looks right
   #
+  preArray = slicer.util.array(croppedHeadLabel.GetName())
   slicer.util.selectModule('Editor')
   slicer.util.findChildren(text='Split Merge Volume')[0].clicked()
   slicer.util.findChildren(text='Merge All')[0].clicked()
+  postArray = slicer.util.array(croppedHeadLabel.GetName())
+
+  if (postArray - preArray).max() != 0:
+    print("!$!$!#!@#!@!@$%! Test Failed!!")
+  else:
+    print("Ahh... test passed.")
 
 
 
