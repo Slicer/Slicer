@@ -344,17 +344,7 @@ void qSlicerAppMainWindowCore::onFileCloseSceneActionTriggered()
 void qSlicerAppMainWindowCore::onEditRecordMacroActionTriggered()
 {
 #ifdef Slicer_USE_QtTesting
-  QFileDialog fileDialog(this->widget(), tr("Macro File Name"),
-                         QString("macro"), tr("XML Files (*.xml)"));
-  fileDialog.setDefaultSuffix(QString("xml"));
-  if(fileDialog.exec() == QDialog::Accepted)
-    {
-    QString filename = fileDialog.selectedFiles()[0];
-    if (!filename.isEmpty())
-      {
-      qSlicerApplication::application()->testingUtility()->recordTests(filename);
-      }
-    }
+  qSlicerApplication::application()->testingUtility()->recordTestsBySuffix(QString("xml"));
 #endif
 }
 
@@ -363,12 +353,6 @@ void qSlicerAppMainWindowCore::onEditPlayMacroActionTriggered()
 {
 #ifdef Slicer_USE_QtTesting
   qSlicerApplication::application()->testingUtility()->openPlayerDialog();
-//  QString filename = QFileDialog::getOpenFileName(this->widget(), "Test File Name",
-//    QString(), "XML Files (*.xml)");
-//  if (!filename.isEmpty())
-//    {
-//    d->TestUtility.playTests(filename);
-//    }
 #endif
 }
 
