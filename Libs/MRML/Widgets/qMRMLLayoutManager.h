@@ -68,6 +68,9 @@ public:
   /// Get SliceViewWidget identified by \a name
   Q_INVOKABLE qMRMLSliceWidget* sliceWidget(const QString& name)const;
 
+  /// Get the list of SliceViewWidget
+  Q_INVOKABLE QList<qMRMLSliceWidget*> sliceWidgetList() const;
+
   /// Return the number of instantiated ThreeDRenderView
   int threeDViewCount()const;
   int chartViewCount()const;
@@ -115,6 +118,7 @@ signals:
   void activeMRMLChartViewNodeChanged(vtkMRMLChartViewNode * newActiveMRMLChartViewNode);
   void activeThreeDRendererChanged(vtkRenderer* newRenderer);
   void activeChartRendererChanged(vtkRenderer* newRenderer);
+  void sliceWidgetCreated(qMRMLSliceWidget* sliceWidget);
   void layoutChanged(int);
 
 protected:
