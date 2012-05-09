@@ -41,37 +41,6 @@ class GrowCutEffectOptions(Effect.EffectOptions):
   def create(self):
     super(GrowCutEffectOptions,self).create()
 
-    if False:
-      self.radiusButtonsFrame = qt.QFrame(self.frame)
-      self.radiusButtonsFrame.setLayout(qt.QHBoxLayout())
-      self.frame.layout().addWidget(self.radiusButtonsFrame)
-      self.widgets.append(self.radiusButtonsFrame)
-
-      self.radius1 = qt.QPushButton("1", self.radiusButtonsFrame)
-      self.radius1.setToolTip("Set radius to 1")
-      self.radiusButtonsFrame.layout().addWidget(self.radius1)
-      self.widgets.append(self.radius1)
-
-      self.radius2 = qt.QPushButton("2", self.radiusButtonsFrame)
-      self.radius2.setToolTip("Set radius to 2")
-      self.radiusButtonsFrame.layout().addWidget(self.radius2)
-      self.widgets.append(self.radius2)
-
-      self.radius3 = qt.QPushButton("3", self.radiusButtonsFrame)
-      self.radius3.setToolTip("Set radius to 3")
-      self.radiusButtonsFrame.layout().addWidget(self.radius3)
-      self.widgets.append(self.radius3)
-
-      self.radius4 = qt.QPushButton("4", self.radiusButtonsFrame)
-      self.radius4.setToolTip("Set radius to 4")
-      self.radiusButtonsFrame.layout().addWidget(self.radius4)
-      self.widgets.append(self.radius4)
-
-      self.radius5 = qt.QPushButton("5", self.radiusButtonsFrame)
-      self.radius5.setToolTip("Set radius to 5")
-      self.radiusButtonsFrame.layout().addWidget(self.radius5)
-      self.widgets.append(self.radius5)
-
     self.helpLabel = qt.QLabel("Run the GrowCut segmentation on the current label map.\nThis will use your current segmentation as an example\nto fill in the rest of the volume.", self.frame)
     self.frame.layout().addWidget(self.helpLabel)
 
@@ -82,12 +51,6 @@ class GrowCutEffectOptions(Effect.EffectOptions):
 
     EditorLib.HelpButton(self.frame, "Use this tool to apply grow cut segmentation.\n\n Select different label colors and paint on foreground and background or as many different classes as you want using the standard drawing tools.\nTo run segmentation correctly, you need to supply a minimum or two class labels.")
 
-    if False:
-      self.connections.append( (self.radius1, 'clicked()', self.onRadius1) )
-      self.connections.append( (self.radius2, 'clicked()', self.onRadius2) )
-      self.connections.append( (self.radius3, 'clicked()', self.onRadius3) )
-      self.connections.append( (self.radius4, 'clicked()', self.onRadius4) )
-      self.connections.append( (self.radius5, 'clicked()', self.onRadius5) )
     self.connections.append( (self.apply, 'clicked()', self.onApply) )
 
     # Add vertical spacer
@@ -112,21 +75,6 @@ class GrowCutEffectOptions(Effect.EffectOptions):
 
   def updateGUIFromMRML(self,caller,event):
     super(GrowCutEffectOptions,self).updateGUIFromMRML(caller,event)
-
-  def onRadius1(self):
-    self.parameterNode.SetParameter( "Effect,radius", "1" )
-
-  def onRadius2(self):
-    self.parameterNode.SetParameter( "Effect,radius", "2" )
-
-  def onRadius3(self):
-    self.parameterNode.SetParameter( "Effect,radius", "3" )
-
-  def onRadius4(self):
-    self.parameterNode.SetParameter( "Effect,radius", "4" )
-
-  def onRadius5(self):
-      self.parameterNode.SetParameter( "Effect,radius", "5" )
 
   def onApply(self):
     slicer.util.showStatusMessage("Running GrowCut...", 2000)
