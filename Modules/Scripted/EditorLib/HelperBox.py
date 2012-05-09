@@ -326,7 +326,7 @@ class HelperBox(object):
 
       combiner.SetInput1( merge.GetImageData() )
       combiner.SetInput2( structureVolume.GetImageData() )
-      self.statusText( "Merging $structureName..." )
+      self.statusText( "Merging %s" % structureName )
       combiner.Update()
       merge.GetImageData().DeepCopy( combiner.GetOutput() )
 
