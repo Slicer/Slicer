@@ -50,6 +50,7 @@ vtkMRMLSceneViewNode::vtkMRMLSceneViewNode()
 //----------------------------------------------------------------------------
 vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
 {
+  if (this->Nodes)
     {
     //this->Nodes->GetNodes()->RemoveAllItems();
     //this->Nodes->Clear(1);
