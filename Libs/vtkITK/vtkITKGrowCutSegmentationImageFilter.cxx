@@ -428,197 +428,195 @@ void ExecuteGrowCut( vtkITKGrowCutSegmentationImageFilter *self,
 
   if(input2->GetScalarType() != input3->GetScalarType() ) 
     {
-        
+
     bool select2 = true;
 
-    if( select2) {
+    if( select2) 
+      {
 
       vtkImageCast *imageCaster = vtkImageCast::New();
       imageCaster->SetInput( input3 );
-      
+
       if((input2->GetScalarType() != VTK_UNSIGNED_SHORT) || 
-   (input2->GetScalarType() != VTK_UNSIGNED_CHAR) || 
-   (input2->GetScalarType() != VTK_UNSIGNED_LONG) || 
-   (input2->GetScalarType() != VTK_SHORT) || 
-   (input2->GetScalarType() != VTK_CHAR) || 
-   (input2->GetScalarType() != VTK_LONG) )
-  {
+      (input2->GetScalarType() != VTK_UNSIGNED_CHAR) || 
+      (input2->GetScalarType() != VTK_UNSIGNED_LONG) || 
+      (input2->GetScalarType() != VTK_SHORT) || 
+      (input2->GetScalarType() != VTK_CHAR) || 
+      (input2->GetScalarType() != VTK_LONG) )
+        {
 
-    std::cout<<" Setting to type "<<VTK_SHORT<<std::endl;
+        std::cout<<" Setting to type "<<VTK_SHORT<<std::endl;
 
-    outData->SetScalarType(VTK_SHORT );
+        outData->SetScalarType(VTK_SHORT);
 
-    imageCaster->SetOutputScalarTypeToShort();
-    
-    vtkImageCast *imageCaster1 = vtkImageCast::New();
-    imageCaster1->SetInput(input2);
-    imageCaster1->SetOutputScalarTypeToShort();
-  
-    vtkITKImageGrowCutExecute3D(input1, 
-              (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
-              (short*)(outPtr), 
-              self->ObjectSize, self->ContrastNoiseRatio, 
-              self->PriorSegmentConfidence, 
-              progressCommand);     
-    }
-      else 
-  {
-    std::cout<<" setting to type "<<input2->GetScalarType()<<std::endl;
-    outData->SetScalarType(input2->GetScalarType());
-    imageCaster->SetOutputScalarType(input2->GetScalarType() );
+        imageCaster->SetOutputScalarTypeToShort();
 
-    if(input2->GetScalarType() == VTK_UNSIGNED_SHORT) {
-      
-    vtkITKImageGrowCutExecute3D(input1, 
-              (IT1*)(inPtr1), (unsigned short*)(inPtr2), (unsigned short*) (inPtr3),
-              (unsigned short*)(outPtr), 
-              self->ObjectSize, self->ContrastNoiseRatio, 
-              self->PriorSegmentConfidence, 
-              progressCommand);     
-    
-    }
-    else if (input2->GetScalarType() == VTK_SHORT) {
+        vtkImageCast *imageCaster1 = vtkImageCast::New();
+        imageCaster1->SetInput(input2);
+        imageCaster1->SetOutputScalarTypeToShort();
 
-      vtkITKImageGrowCutExecute3D(input1, 
+        vtkITKImageGrowCutExecute3D(input1, 
           (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
           (short*)(outPtr), 
           self->ObjectSize, self->ContrastNoiseRatio, 
           self->PriorSegmentConfidence, 
           progressCommand);     
+        imageCaster1->Delete();
+        }
+      else 
+        {
+        std::cout<<" setting to type "<<input2->GetScalarType()<<std::endl;
+        outData->SetScalarType(input2->GetScalarType());
+        imageCaster->SetOutputScalarType(input2->GetScalarType() );
 
-    }
-    else if(input2->GetScalarType() == VTK_UNSIGNED_CHAR) {
-
-
-      vtkITKImageGrowCutExecute3D(input1, 
-          (IT1*)(inPtr1), (unsigned char*)(inPtr2), (unsigned char*) (inPtr3),
-          (unsigned char*)(outPtr), 
-          self->ObjectSize, self->ContrastNoiseRatio, 
-          self->PriorSegmentConfidence, 
-          progressCommand);     
-    }
-    else if(input2->GetScalarType() == VTK_CHAR) {
-     
-       vtkITKImageGrowCutExecute3D(input1, 
-          (IT1*)(inPtr1), (char*)(inPtr2), (char*) (inPtr3),
-          (char*)(outPtr), 
-          self->ObjectSize, self->ContrastNoiseRatio, 
-          self->PriorSegmentConfidence, 
-          progressCommand);     
-
-    }
-    else if(input2->GetScalarType() == VTK_UNSIGNED_LONG) {
-
-      vtkITKImageGrowCutExecute3D(input1, 
-          (IT1*)(inPtr1), (unsigned long*)(inPtr2), (unsigned long*) (inPtr3),
-          (unsigned long*)(outPtr), 
-          self->ObjectSize, self->ContrastNoiseRatio, 
-          self->PriorSegmentConfidence, 
-          progressCommand);     
-
-    }
-    else if(input2->GetScalarType() == VTK_LONG) {
-      
-      vtkITKImageGrowCutExecute3D(input1, 
-          (IT1*)(inPtr1), (long*)(inPtr2), (long*) (inPtr3),
-          (long*)(outPtr), 
-          self->ObjectSize, self->ContrastNoiseRatio, 
-          self->PriorSegmentConfidence, 
-          progressCommand);     
-    }
-  }
-    }
-  }
-  else {
-      if((input2->GetScalarType() != VTK_UNSIGNED_SHORT) || 
-   (input2->GetScalarType() != VTK_UNSIGNED_CHAR) || 
-   (input2->GetScalarType() != VTK_UNSIGNED_LONG) || 
-   (input2->GetScalarType() != VTK_SHORT) || 
-   (input2->GetScalarType() != VTK_CHAR) || 
-   (input2->GetScalarType() != VTK_LONG) ) {
-
-  outData->SetScalarType(VTK_SHORT); 
-
-  vtkImageCast *imageCaster = vtkImageCast::New();
-  imageCaster->SetInput( input2 );
-  imageCaster->SetOutputScalarTypeToShort();
-  
-  vtkImageCast *imageCaster1 = vtkImageCast::New();
-  imageCaster1->SetInput(input3);
-  imageCaster1->SetOutputScalarTypeToShort();
-
-  vtkITKImageGrowCutExecute3D(input1, 
-            (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
-            (short*)(outPtr), 
-            self->ObjectSize, self->ContrastNoiseRatio, 
-            self->PriorSegmentConfidence, 
-            progressCommand);     
-  
-      }
-      else {
-
-  outData->SetScalarType(input2->GetScalarType());
-  if(input2->GetScalarType() == VTK_UNSIGNED_SHORT) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+        if(input2->GetScalarType() == VTK_UNSIGNED_SHORT) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (unsigned short*)(inPtr2), (unsigned short*) (inPtr3),
             (unsigned short*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-
-  }
-  else if (input2->GetScalarType() == VTK_SHORT) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+          }
+        else if (input2->GetScalarType() == VTK_SHORT) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
             (short*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-
-  }
-  else if(input2->GetScalarType() == VTK_UNSIGNED_CHAR) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+          }
+        else if(input2->GetScalarType() == VTK_UNSIGNED_CHAR) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (unsigned char*)(inPtr2), (unsigned char*) (inPtr3),
             (unsigned char*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-
-  }
-  else if(input2->GetScalarType() == VTK_CHAR) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+          }
+        else if(input2->GetScalarType() == VTK_CHAR) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (char*)(inPtr2), (char*) (inPtr3),
             (char*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-  }
-  else if(input2->GetScalarType() == VTK_UNSIGNED_LONG) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+          }
+        else if(input2->GetScalarType() == VTK_UNSIGNED_LONG) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (unsigned long*)(inPtr2), (unsigned long*) (inPtr3),
             (unsigned long*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-
-  }
-  else if(input2->GetScalarType() == VTK_LONG) {
-    
-  vtkITKImageGrowCutExecute3D(input1, 
+          }
+        else if(input2->GetScalarType() == VTK_LONG) 
+          {
+          vtkITKImageGrowCutExecute3D(input1, 
             (IT1*)(inPtr1), (long*)(inPtr2), (long*) (inPtr3),
             (long*)(outPtr), 
             self->ObjectSize, self->ContrastNoiseRatio, 
             self->PriorSegmentConfidence, 
             progressCommand);     
-  }
-
+          }
+        }
+      imageCaster->Delete();
       }
-  }
+    }
+  else 
+    {
+    if((input2->GetScalarType() != VTK_UNSIGNED_SHORT) || 
+        (input2->GetScalarType() != VTK_UNSIGNED_CHAR) || 
+        (input2->GetScalarType() != VTK_UNSIGNED_LONG) || 
+        (input2->GetScalarType() != VTK_SHORT) || 
+        (input2->GetScalarType() != VTK_CHAR) || 
+        (input2->GetScalarType() != VTK_LONG) ) 
+      {
+
+      outData->SetScalarType(VTK_SHORT); 
+
+      vtkImageCast *imageCaster = vtkImageCast::New();
+      imageCaster->SetInput( input2 );
+      imageCaster->SetOutputScalarTypeToShort();
+
+      vtkImageCast *imageCaster1 = vtkImageCast::New();
+      imageCaster1->SetInput(input3);
+      imageCaster1->SetOutputScalarTypeToShort();
+
+      vtkITKImageGrowCutExecute3D(input1, 
+        (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
+        (short*)(outPtr), 
+        self->ObjectSize, self->ContrastNoiseRatio, 
+        self->PriorSegmentConfidence, 
+        progressCommand);     
+
+      imageCaster1->Delete();
+      imageCaster->Delete();
+      }
+    else
+      {
+      outData->SetScalarType(input2->GetScalarType());
+
+      if(input2->GetScalarType() == VTK_UNSIGNED_SHORT) 
+        {
+        vtkITKImageGrowCutExecute3D(input1, 
+          (IT1*)(inPtr1), (unsigned short*)(inPtr2), (unsigned short*) (inPtr3),
+          (unsigned short*)(outPtr), 
+          self->ObjectSize, self->ContrastNoiseRatio, 
+          self->PriorSegmentConfidence, 
+          progressCommand);     
+        }
+      else if (input2->GetScalarType() == VTK_SHORT) 
+        {
+        vtkITKImageGrowCutExecute3D(input1, 
+          (IT1*)(inPtr1), (short*)(inPtr2), (short*) (inPtr3),
+          (short*)(outPtr), 
+          self->ObjectSize, self->ContrastNoiseRatio, 
+          self->PriorSegmentConfidence, 
+          progressCommand);     
+        }
+      else if(input2->GetScalarType() == VTK_UNSIGNED_CHAR)
+        {
+        vtkITKImageGrowCutExecute3D(input1, 
+          (IT1*)(inPtr1), (unsigned char*)(inPtr2), (unsigned char*) (inPtr3),
+          (unsigned char*)(outPtr), 
+          self->ObjectSize, self->ContrastNoiseRatio, 
+          self->PriorSegmentConfidence, 
+          progressCommand);     
+        }
+      else if(input2->GetScalarType() == VTK_CHAR) 
+        {
+        vtkITKImageGrowCutExecute3D(input1, 
+          (IT1*)(inPtr1), (char*)(inPtr2), (char*) (inPtr3),
+          (char*)(outPtr), 
+          self->ObjectSize, self->ContrastNoiseRatio, 
+          self->PriorSegmentConfidence, 
+          progressCommand);     
+        }
+      else if(input2->GetScalarType() == VTK_UNSIGNED_LONG) 
+      {
+      vtkITKImageGrowCutExecute3D(input1, 
+        (IT1*)(inPtr1), (unsigned long*)(inPtr2), (unsigned long*) (inPtr3),
+        (unsigned long*)(outPtr), 
+        self->ObjectSize, self->ContrastNoiseRatio, 
+        self->PriorSegmentConfidence, 
+        progressCommand);     
+      }
+      else if(input2->GetScalarType() == VTK_LONG) 
+        {
+        vtkITKImageGrowCutExecute3D(input1, 
+          (IT1*)(inPtr1), (long*)(inPtr2), (long*) (inPtr3),
+          (long*)(outPtr), 
+          self->ObjectSize, self->ContrastNoiseRatio, 
+          self->PriorSegmentConfidence, 
+          progressCommand);     
+        }
+      }
+    }
 
   return;
 
