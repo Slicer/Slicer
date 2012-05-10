@@ -65,7 +65,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot)
+set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
@@ -100,7 +100,7 @@ if(Slicer_BUILD_SkullStripper)
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES LibArchive qMidasAPI)
+  list(APPEND Slicer_DEPENDENCIES qMidasAPI)
 endif()
 
 if(Slicer_USE_BatchMake)
