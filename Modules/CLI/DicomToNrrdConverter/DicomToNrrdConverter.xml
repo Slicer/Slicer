@@ -22,7 +22,7 @@
     <directory>
       <name>outputDirectory</name>
       <longflag>--outputDirectory</longflag>
-      <label>Output Directtory</label>
+      <label>Output Directory</label>
       <channel>output</channel>
       <description><![CDATA[Directory holding the output NRRD format]]></description>
       <default>.</default>
