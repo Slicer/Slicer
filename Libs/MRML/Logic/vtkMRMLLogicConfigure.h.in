@@ -11,6 +11,3 @@
 #ifndef BUILD_SHARED_LIBS
 #define VTKMRMLLogic_STATIC
 #endif
-
-#cmakedefine MRML_USE_LibArchive
-

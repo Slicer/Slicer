@@ -331,27 +331,15 @@ void vtkMRMLApplicationLogic::FitSliceToAll()
 //----------------------------------------------------------------------------
 bool vtkMRMLApplicationLogic::Zip(const char *zipFileName, const char *directoryToZip)
 {
-#ifndef MRML_USE_LibArchive
-  (void)(zipFileName);
-  (void)(directoryToZip);
-  return false;
-#else
   // call function in vtkArchive
   return zip(zipFileName, directoryToZip);
-#endif
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLApplicationLogic::Unzip(const char *zipFileName, const char *destinationDirectory)
 {
-#ifndef MRML_USE_LibArchive
-  (void)(zipFileName);
-  (void)(destinationDirectory);
-  return 0;
-#else
   // call function in vtkArchive
   return unzip(zipFileName, destinationDirectory);
-#endif
 }
 
 //----------------------------------------------------------------------------

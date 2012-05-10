@@ -3,8 +3,6 @@ project(SlicerLibs)
 # Enable this option to avoid unnecessary re-compilation associated with command line module
 set(GENERATECLP_USE_MD5 ON)
 
-set(MRML_USE_LibArchive ${Slicer_BUILD_EXTENSIONMANAGER_SUPPORT})
-
 #set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
 #set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
 

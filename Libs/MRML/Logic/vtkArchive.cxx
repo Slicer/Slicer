@@ -322,10 +322,6 @@ bool zip(const char* zipFileName, const char* directoryToZip)
   // - close up and return success
   //
 
-#ifndef MRML_USE_LibArchive
-  return false;
-#else
-
 // only support the libarchive version 3.0 +
 #if !defined(ARCHIVE_VERSION_NUMBER) || ARCHIVE_VERSION_NUMBER < 3000000
   return false;
@@ -441,17 +437,12 @@ bool zip(const char* zipFileName, const char* directoryToZip)
     return false;
     }
   return true;
-#endif
 }
 
 //-----------------------------------------------------------------------------
 // unzips zip file into destinationDirectory
 bool unzip(const char* zipFileName, const char* destinationDirectory)
 {
-#ifndef MRML_USE_LibArchive
-  return false;
-#else
-
   //
   // Unziping the archive
   // - check that files and directories exist
@@ -600,6 +591,4 @@ bool unzip(const char* zipFileName, const char* destinationDirectory)
     }
 
   return (result == ARCHIVE_OK);
-
-#endif
 }
