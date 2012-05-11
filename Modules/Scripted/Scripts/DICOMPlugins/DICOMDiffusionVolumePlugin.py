@@ -107,6 +107,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     """
     parameters = {}
     parameters['inputDicomDirectory'] = os.path.dirname(loadable.files[0])
+    parameters['outputDirectory'] = slicer.app.temporaryPath
     parameters['outputVolume'] = os.path.join(slicer.app.temporaryPath,'dwiImport.nhdr')
     dicomToNRRD = slicer.modules.dicomtonrrdconverter
     cliNode = slicer.cli.run(dicomToNRRD, None, parameters, wait_for_completion = True)
