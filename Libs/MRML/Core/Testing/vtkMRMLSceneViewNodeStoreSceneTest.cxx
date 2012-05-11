@@ -299,7 +299,7 @@ bool references()
     }
 
   // if the previous check passes, then UpdateScene is not necessary
-  sceneViewNode->UpdateScene(scene.GetPointer());
+  //sceneViewNode->UpdateScene(scene.GetPointer());
 
   sceneViewReferencedNodes.TakeReference(
     sceneViewNode->GetNodes()->GetReferencedNodes(sceneViewVolumeNode));

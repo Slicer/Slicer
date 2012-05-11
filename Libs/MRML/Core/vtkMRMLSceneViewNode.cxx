@@ -339,7 +339,7 @@ void vtkMRMLSceneViewNode::StoreScene()
     }
   else
     {
-    this->Nodes->GetNodes()->RemoveAllItems();
+    this->Nodes->Clear(1);
     }
 
   if (this->GetScene())
@@ -370,6 +370,7 @@ void vtkMRMLSceneViewNode::StoreScene()
       assert(newNode->GetScene() == this->Nodes);
       }
     }
+  this->Nodes->CopyNodeReferences(this->GetScene());
 }
 
 //----------------------------------------------------------------------------
@@ -380,7 +381,6 @@ void vtkMRMLSceneViewNode::RestoreScene()
     vtkWarningMacro("No scene to restore onto");
     return;
     }
-
   if (this->Nodes == NULL)
     {
     vtkWarningMacro("No nodes to restore");

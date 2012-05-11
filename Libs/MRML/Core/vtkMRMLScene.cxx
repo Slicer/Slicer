@@ -2948,9 +2948,18 @@ void vtkMRMLScene::CopyNodeReferences(vtkMRMLScene *scene)
     {
     return;
     }
+
   this->ReferencedIDChanges = scene->ReferencedIDChanges;
-  this->ReferencedIDs = scene->ReferencedIDs;
-  this->ReferencingNodes = scene->ReferencingNodes;
+
+  //assuming the nodes exist in this scene
+  for (unsigned int i=0; i < scene->ReferencedIDs.size(); i++)
+    {
+    vtkMRMLNode *node = this->GetNodeByID(scene->ReferencingNodes[i]->GetID());
+    if (node)
+      {
+      this->AddReferencedNodeID(scene->ReferencedIDs[i].c_str(), node);
+      }
+    }
 }
 
 //------------------------------------------------------------------------------
