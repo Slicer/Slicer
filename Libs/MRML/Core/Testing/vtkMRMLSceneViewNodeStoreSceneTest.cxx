@@ -359,7 +359,7 @@ bool storePerformance()
   sceneViewNode->StoreScene();
   timer->StopTimer();
 
-  std::cout<< "DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"
+  std::cout<< "<DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"
            << displayNodePairCount <<"\" type=\"numeric/double\">"
            << timer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
   return true;
