@@ -3001,8 +3001,8 @@ void vtkMRMLScene::UpdateNodeIDs()
                       " without having the map in sync.");
       }
     this->NodeIDs.clear();
-#ifndef MRMLSCENE_VERBOSE
-    std::cout << "Recompute node id cache..." << std::endl;
+#ifdef MRMLSCENE_VERBOSE
+    std::cerr << "Recompute node id cache..." << std::endl;
 #endif
     vtkMRMLNode *node;
     vtkCollectionSimpleIterator it;
