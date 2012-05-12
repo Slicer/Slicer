@@ -1139,6 +1139,10 @@ void qSlicerExtensionsManagerModel::writeArrayValues(QSettings& settings, const 
   settings.endArray();
 }
 
+#ifdef Q_OS_WIN
+extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
+#endif
+
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     const QString& extensionName, const QString& archiveFile, const QString& destinationPath)
@@ -1154,14 +1158,21 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     return false;
     }
 
-  if (!(QFile(destinationPath).permissions() & QFile::ReadUser)
-      || !(QFile(destinationPath).permissions() & QFile::WriteUser)
-      || !(QFile(destinationPath).permissions() & QFile::ExeUser))
+  QFileInfo destinationPathInfo(destinationPath);
+#ifdef Q_OS_WIN
+  ++qt_ntfs_permission_lookup;
+#endif
+  if (!destinationPathInfo.isReadable()
+      || !destinationPathInfo.isWritable()
+      || !destinationPathInfo.isExecutable())
     {
     qCritical() << "Failed to extract archive" << archiveFile << "into directory" << destinationPath
                 << "either NON readable, writable or executable";
     return false;
     }
+#ifdef Q_OS_WIN
+  --qt_ntfs_permission_lookup;
+#endif
 
   QDir extensionsDir(destinationPath);
 
