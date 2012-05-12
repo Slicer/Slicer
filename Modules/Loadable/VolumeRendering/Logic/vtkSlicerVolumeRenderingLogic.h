@@ -43,6 +43,7 @@ class vtkMRMLVolumePropertyNode;
 // VTK includes
 class vtkColorTransferFunction;
 class vtkPiecewiseFunction;
+class vtkScalarsToColors;
 class vtkVolumeProperty;
 
 // STD includes
@@ -110,7 +111,7 @@ public:
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
-  void SetLabelMapToVolumeProp(vtkLookupTable* lut, vtkVolumeProperty* node);
+  void SetLabelMapToVolumeProp(vtkScalarsToColors* colors, vtkVolumeProperty* node);
 
   // Description:
   // Update DisplayNode from VolumeNode,

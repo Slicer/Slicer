@@ -449,21 +449,30 @@ void vtkSlicerVolumeRenderingLogic
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
-::SetLabelMapToVolumeProp(vtkLookupTable* lut,
+::SetLabelMapToVolumeProp(vtkScalarsToColors* colors,
                           vtkVolumeProperty* volumeProp)
 {
-  assert(lut && volumeProp);
+  assert(colors && volumeProp);
 
   vtkNew<vtkPiecewiseFunction> opacity;
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
-  double value = lut->GetTableRange()[0];
-  double step = (lut->GetTableRange()[1] - lut->GetTableRange()[0]) /
-                lut->GetNumberOfTableValues();
-  for (int i = 0; i < lut->GetNumberOfTableValues(); ++i, value += step)
+  vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
+  int colorCount = std::min(colors->GetNumberOfAvailableColors(), vtkIdType(1024));
+  double value = colors->GetRange()[0];
+  double step = (colors->GetRange()[1] - colors->GetRange()[0]) / colorCount;
+  double color[4] = {0., 0., 0., 1.};
+  for (int i = 0; i < colorCount; ++i, value += step)
     {
-    double color[4];
-    lut->GetTableValue(i, color);
+    // Short circuit for luts as it is faster
+    if (lut)
+      {
+      lut->GetTableValue(i, color);
+      }
+    else
+      {
+      colors->GetColor(value, color);
+      }
     opacity->AddPoint(value, color[3]);
     colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
     }
@@ -582,14 +591,14 @@ void vtkSlicerVolumeRenderingLogic
     }
   assert(vpNode);
 
-  vtkLookupTable* lut = vpNode->GetColorNode() ?
-    vpNode->GetColorNode()->GetLookupTable() : 0;
+  vtkScalarsToColors* colors = vpNode->GetColorNode() ?
+    vpNode->GetColorNode()->GetScalarsToColors() : 0;
 
   vtkVolumeProperty *prop =
     vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
   int disabledModify = vspNode->StartModify();
-  this->SetLabelMapToVolumeProp(lut, prop);
+  this->SetLabelMapToVolumeProp(colors, prop);
   vspNode->EndModify(disabledModify);
 }
 

@@ -958,7 +958,7 @@ void qSlicerVolumeRenderingModuleWidget::synchronizeScalarDisplayNode()
   Q_D(qSlicerVolumeRenderingModuleWidget);
   vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
-  volumeRenderingLogic->CopyScalarDisplayToVolumeRenderingDisplayNode(
+  volumeRenderingLogic->CopyDisplayToVolumeRenderingDisplayNode(
     d->DisplayNode);
 }
 
