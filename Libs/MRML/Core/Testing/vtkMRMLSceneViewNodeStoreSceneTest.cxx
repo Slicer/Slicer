@@ -168,6 +168,12 @@ bool storeAndRemoveVolume()
   // Remove node from the scene to see if it gets restored.
   vtkMRMLNode* volumeNode = scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
   scene->RemoveNode(volumeNode);
+
+  // The following instantiate a new scalar volume node which may use the
+  // same pointer than the removed/deleted node.
+  vtkNew<vtkMRMLScalarVolumeNode> uselessVolumeNode;
+  uselessVolumeNode;
+
   sceneViewNode->RestoreScene();
 
   // Make sure the node has been restored.
