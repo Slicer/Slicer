@@ -28,6 +28,7 @@
 #include <vtkCollection.h>
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkTimerLog.h>
 
 namespace
 {
@@ -40,6 +41,7 @@ bool storeTwice();
 bool storeAndRestoreTwice();
 bool storeTwiceAndRemoveVolume();
 bool references();
+bool storePerformance();
 
 } // end of anonymous namespace
 
@@ -80,6 +82,11 @@ int vtkMRMLSceneViewNodeStoreSceneTest(int vtkNotUsed(argc),
   if (!references())
     {
     std::cerr << "references call not successful." << std::endl;
+    return EXIT_FAILURE;
+    }
+  if (!storePerformance())
+    {
+    std::cerr << "updateNodeIDs call not successful." << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -277,6 +284,16 @@ bool references()
 
   vtkMRMLNode* volumeNode =
     scene->GetNodeByID("vtkMRMLScalarVolumeNode1");
+  vtkSmartPointer<vtkCollection> sceneReferencedNodes;
+  sceneReferencedNodes.TakeReference(
+    scene->GetReferencedNodes(volumeNode));
+  if (sceneReferencedNodes->GetNumberOfItems() != 2)
+    {
+    std::cout << __LINE__ << ": vtkMRMLScene::GetReferencedNodes() failed. \n"
+              << sceneReferencedNodes->GetNumberOfItems() << " items"
+              << std::endl;
+    return false;
+    }
 
   sceneViewNode->StoreScene();
   vtkMRMLNode* sceneViewVolumeNode =
@@ -290,19 +307,8 @@ bool references()
   sceneViewReferencedNodes.TakeReference(
     sceneViewNode->GetNodes()->GetReferencedNodes(sceneViewVolumeNode));
 
-  if (sceneViewReferencedNodes->GetNumberOfItems() != 2)
-    {
-    std::cout << __LINE__ << ": vtkMRMLSceneViewNode::StoreScene() failed." << std::endl
-              << sceneViewReferencedNodes->GetNumberOfItems() << " items"
-              << std::endl;
-    return false;
-    }
-
-  // if the previous check passes, then UpdateScene is not necessary
-  //sceneViewNode->UpdateScene(scene.GetPointer());
-
-  sceneViewReferencedNodes.TakeReference(
-    sceneViewNode->GetNodes()->GetReferencedNodes(sceneViewVolumeNode));
+  // Number of references in scene view node scene should be the same as the
+  // main scene reference count.
   if (sceneViewReferencedNodes->GetNumberOfItems() != 2 ||
       sceneViewReferencedNodes->GetItemAsObject(0) != sceneViewVolumeNode ||
       sceneViewReferencedNodes->GetItemAsObject(1) != sceneViewVolumeDisplayNode ||
@@ -323,6 +329,33 @@ bool references()
               << referencedNodes->GetItemAsObject(1) << std::endl;
     return false;
     }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool storePerformance()
+{
+  // This test is for perfor
+  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  const int displayNodePairCount = 100;
+
+  for (int i = 0; i < displayNodePairCount; ++i)
+    {
+    populateScene(scene.GetPointer());
+    }
+
+  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode =
+    vtkSmartPointer<vtkMRMLSceneViewNode>::New();
+  scene->AddNode(sceneViewNode.GetPointer());
+
+  vtkNew<vtkTimerLog> timer;
+  timer->StartTimer();
+  sceneViewNode->StoreScene();
+  timer->StopTimer();
+
+  std::cout<< "DartMeasurement name=\"vtkMRMLSceneViewNode-StorePerformance-"
+           << displayNodePairCount <<"\" type=\"numeric/double\">"
+           << timer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
   return true;
 }
 

@@ -52,8 +52,6 @@ vtkMRMLSceneViewNode::~vtkMRMLSceneViewNode()
 {
   if (this->Nodes)
     {
-    //this->Nodes->GetNodes()->RemoveAllItems();
-    //this->Nodes->Clear(1);
     this->Nodes->Delete();
     this->Nodes = 0;
     }
@@ -358,12 +356,13 @@ void vtkMRMLSceneViewNode::StoreScene()
 
       newNode->SetScene(this->Nodes);
       newNode->CopyWithoutModifiedEvent(node);
-      newNode->SetAddToSceneNoModify(0);
       newNode->SetID(node->GetID());
 
-      this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)newNode);
-      //--- Try deleting copy after collection has a reference to it,
-      //--- in order to eliminate debug leaks..
+      newNode->SetAddToSceneNoModify(1);
+      this->Nodes->AddNode(newNode);
+      newNode->SetAddToSceneNoModify(0);
+
+      // Node has been added into the scene, decrease reference count to 1.
       newNode->Delete();
 
       // sanity check
