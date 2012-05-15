@@ -175,6 +175,7 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
   disconnect(this, SLOT(onExtensionInstalled(QString)));
   disconnect(this, SLOT(onExtensionUninstalled(QString)));
   disconnect(this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
+  disconnect(this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
 
   d->ExtensionsManagerModel = model;
 
@@ -191,6 +192,9 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
 
     QObject::connect(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                      this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
+
+    QObject::connect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
+                     this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
     }
 }
 
@@ -234,6 +238,27 @@ void qSlicerExtensionsInstallWidget::onSlicerRequirementsChanged(const QString& 
   this->setSlicerOs(os);
   this->setSlicerArch(arch);
   this->refresh();
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+
+  QString delay = "2500";
+  QString state;
+  if (level == ctkErrorLogLevel::Warning)
+    {
+    delay = "10000";
+    state = "warning";
+    }
+  else if(level == ctkErrorLogLevel::Critical || level == ctkErrorLogLevel::Fatal)
+    {
+    delay = "10000";
+    state = "error";
+    }
+
+  d->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
 }
 
 // --------------------------------------------------------------------------
