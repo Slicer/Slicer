@@ -878,9 +878,15 @@ void vtkMRMLLayoutLogic::SetLayoutNode(vtkMRMLLayoutNode* layoutNode)
     this->LayoutNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand(), 10.);
     }
 
-  // To do only once (when the layout node is set)
+  // Add default layouts only the first time (when the layout node is set)
   this->AddDefaultLayouts();
-
+  if (this->LayoutNode)
+    {
+    // Maybe the vtkMRMLLayoutNode::ViewArrangement was set before the
+    // layout descriptions were added into the node.
+    // UpdateCurrentLayoutDescription needs to be called.
+    this->LayoutNode->SetViewArrangement(this->LayoutNode->GetViewArrangement());
+    }
   this->OnMRMLNodeModified(this->LayoutNode); //this->UpdateFromLayoutNode();
 }
 
@@ -891,6 +897,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
     {
     return;
     }
+  int wasModifying = this->LayoutNode->StartModify();
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutInitialView,
                                          conventionalView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDefaultView,
@@ -929,6 +936,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          twoOverTwoView);
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
+  this->LayoutNode->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------

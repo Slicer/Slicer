@@ -199,8 +199,10 @@ void vtkMRMLLayoutNode::SetViewArrangement ( int arrNew )
                     << "AddLayoutDescription()");
     }
 #endif
+  int wasModifying = this->StartModify();
   this->UpdateCurrentLayoutDescription();
   this->Modified();
+  this->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------

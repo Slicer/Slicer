@@ -45,6 +45,9 @@ int qMRMLLayoutManagerTest3(int argc, char * argv[] )
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
   vtkMRMLLayoutNode* layoutNode = vtkMRMLLayoutNode::New();
+  // The view arrangement is set before the view descriptions are registered
+  // into the layout node. Setting the scene to the layout manager will set the
+  // the scene to the layout logic which will register the layout descriptions.
   layoutNode->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutOneUpRedSliceView);
   scene->AddNode(layoutNode);
   layoutNode->Delete();
