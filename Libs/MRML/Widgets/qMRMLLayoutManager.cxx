@@ -526,9 +526,7 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
     {
     return;
     }
-  vtkMRMLLayoutNode * mrmlLayoutNode = vtkMRMLLayoutNode::SafeDownCast(layoutNode);
-  Q_ASSERT(mrmlLayoutNode);
-  this->setLayoutInternal(mrmlLayoutNode->GetViewArrangement());
+  this->updateLayoutInternal();
 }
 
 //------------------------------------------------------------------------------
@@ -618,14 +616,13 @@ void qMRMLLayoutManagerPrivate::endUpdateLayout(bool updatesEnabled)
 */
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::setLayoutInternal(int layout)
+void qMRMLLayoutManagerPrivate::updateLayoutInternal()
 {
   Q_Q(qMRMLLayoutManager);
-  // Update LayoutNode
-  if (this->MRMLLayoutNode)
-    {
-    this->MRMLLayoutNode->SetViewArrangement(layout);
-    }
+  int layout = this->MRMLLayoutNode ?
+    this->MRMLLayoutNode->GetViewArrangement() :
+    vtkMRMLLayoutNode::SlicerLayoutNone;
+
   if (layout == vtkMRMLLayoutNode::SlicerLayoutCustomView)
     {
     return;
@@ -956,7 +953,11 @@ void qMRMLLayoutManager::setLayout(int layout)
     {
     return;
     }
-  d->setLayoutInternal(layout);
+  // Update LayoutNode
+  if (d->MRMLLayoutNode)
+    {
+    d->MRMLLayoutNode->SetViewArrangement(layout);
+    }
 }
 
 //------------------------------------------------------------------------------

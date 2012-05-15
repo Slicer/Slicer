@@ -93,10 +93,10 @@ public:
   //bool startUpdateLayout();
   //void endUpdateLayout(bool updateEnabled);
 
-  /// Actually set the layout type to the node
-  void updateLayoutNode(int layout);
+  // Refresh the viewport with the current layout from the layout
+  // layout node. Empty the view if there is no layout node.
+  void updateLayoutInternal();
 
-  void setLayoutInternal(int layout);
   void setLayoutNumberOfCompareViewRowsInternal(int num);
   void setLayoutNumberOfCompareViewColumnsInternal(int num);
 
