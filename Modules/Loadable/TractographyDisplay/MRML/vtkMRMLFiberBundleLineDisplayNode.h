@@ -27,7 +27,7 @@
 class vtkPolyData;
 class vtkPolyDataTensorToColor;
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
  public:
   static vtkMRMLFiberBundleLineDisplayNode *New (  );

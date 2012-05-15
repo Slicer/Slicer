@@ -25,7 +25,7 @@ set(module_logic_SRCS
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   vtkSlicerAnnotationsModuleMRML
-  vtkSlicerTractographyModuleMRML
+  vtkSlicerTractographyDisplayModuleMRML
   )
 
 SlicerMacroBuildModuleLogic(

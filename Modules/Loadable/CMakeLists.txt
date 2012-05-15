@@ -15,7 +15,6 @@ set(qtmodules
   #FiberBundles
   SceneViews
   SlicerWelcome
-  Tractography
   TractographyDisplay
   Reformat
   ViewControllers

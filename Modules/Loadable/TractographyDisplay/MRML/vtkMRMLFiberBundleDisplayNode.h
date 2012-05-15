@@ -26,11 +26,11 @@
 #include <vtkMRMLModelDisplayNode.h>
 
 // Tractography includes
-#include "vtkSlicerTractographyModuleMRMLExport.h"
+#include "vtkSlicerTractographyDisplayModuleMRMLExport.h"
 
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
   vtkTypeMacro(vtkMRMLFiberBundleDisplayNode, vtkMRMLModelDisplayNode);

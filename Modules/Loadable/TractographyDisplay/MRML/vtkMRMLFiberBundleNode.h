@@ -26,7 +26,7 @@
 
 
 // Tractography includes
-#include "vtkSlicerTractographyModuleMRMLExport.h"
+#include "vtkSlicerTractographyDisplayModuleMRMLExport.h"
 
 class vtkMRMLFiberBundleDisplayNode;
 class vtkExtractSelectedPolyDataIds;
@@ -36,7 +36,7 @@ class vtkExtractPolyDataGeometry;
 class vtkPlanes;
 class vtkCleanPolyData;
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLFiberBundleNode *New();
