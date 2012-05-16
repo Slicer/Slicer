@@ -27,6 +27,7 @@
 
 class vtkMRMLNode;
 class qSlicerDataModuleWidgetPrivate;
+class QTableWidgetItem;
 
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerDataModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -52,26 +53,20 @@ public slots:
 
   /// Reimplemented for internal reasons
   virtual void setMRMLScene(vtkMRMLScene* scene);
-/* HIDDEN to the UI
-  void setCurrentNodeName(const QString& name);
-
-protected slots:
-  void onMRMLNodeChanged(vtkMRMLNode* node);
-  void onMRMLNodeModified();
-  void validateNodeName();
-*/
-public slots:
-  void insertTransformNode();
-  void hardenTransformOnCurrentNode();
 
 protected slots:
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void onSceneModelChanged(const QString& modelType);
+
+public slots:
+  void insertTransformNode();
+  void hardenTransformOnCurrentNode();
+
+protected:
+  virtual void setup();
   
 protected:
   QScopedPointer<qSlicerDataModuleWidgetPrivate> d_ptr;
-
-  virtual void setup();
 
 private:
   Q_DECLARE_PRIVATE(qSlicerDataModuleWidget);

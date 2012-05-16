@@ -26,7 +26,6 @@ Version:   $Revision: 1.11 $
 #include <cassert>
 #include <iostream>
 #include <sstream>
-#include <string>
 
 //------------------------------------------------------------------------------
 vtkMRMLNode::vtkMRMLNode()
@@ -369,6 +368,13 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNode::RemoveAttribute(const char* name)
+{
+  assert(name != 0);
+  this->SetAttribute(name, 0);
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLNode::GetAttribute(const char* name)
 {
   if ( name == NULL )
@@ -385,6 +391,17 @@ const char* vtkMRMLNode::GetAttribute(const char* name)
     {
     return iter->second.c_str();
     }
+}
+
+//----------------------------------------------------------------------------
+std::vector< std::string > vtkMRMLNode::GetAttributeNames()
+{
+  std::vector< std::string > attributeNamesVector;
+  for ( AttributesType::iterator iter = this->Attributes.begin(); iter != this->Attributes.end(); ++iter )
+    {
+    attributeNamesVector.push_back(iter->first);
+    }
+  return attributeNamesVector;
 }
 
 //----------------------------------------------------------------------------

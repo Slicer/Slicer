@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>333</width>
-    <height>334</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,20 +17,17 @@
    <iconset resource="../qSlicerDataModule.qrc">
     <normaloff>:/Icons/Data.png</normaloff>:/Icons/Data.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3iew">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
     <widget class="ctkCollapsibleButton" name="DisplayModifiyButton">
      <property name="text">
       <string>Display &amp;&amp; Modify Scene</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
+     <layout class="QGridLayout" name="gridLayout_3">
       <property name="margin">
        <number>0</number>
       </property>
-      <item row="0" column="0" colspan="2">
+      <item row="0" column="0">
        <widget class="qMRMLTreeView" name="MRMLTreeView">
         <property name="minimumSize">
          <size>
@@ -53,92 +50,81 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="MRMLSceneModelLabel">
-        <property name="text">
-         <string>Scene Model:</string>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>2</number>
         </property>
-        <property name="buddy">
-         <cstring>MRMLSceneModelComboBox</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="MRMLSceneModelComboBox">
-        <property name="toolTip">
-         <string extracomment="Pick a model to determine how the scene is organised in the tree"/>
-        </property>
-        <property name="editable">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
-        <property name="text">
-         <string>Display MRML ID's</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="ShowHiddenCheckBox">
-        <property name="text">
-         <string>Show Hidden nodes</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="ctkCollapsibleGroupBox" name="MRMLNodeInspectorGroupBox">
-        <property name="title">
-         <string>MRML Node Inspector</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="NodeIDLabel">
-           <property name="text">
-            <string>ID:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="NodeIDLineEdit">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="NodeNameLabel">
-           <property name="text">
-            <string>Name:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="NodeNameLineEdit"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="FilterLabel">
-        <property name="text">
-         <string>Filter:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="FilterLineEdit"/>
+        <item row="0" column="0">
+         <widget class="QLabel" name="MRMLSceneModelLabel">
+          <property name="text">
+           <string>Scene Model:</string>
+          </property>
+          <property name="buddy">
+           <cstring>MRMLSceneModelComboBox</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="MRMLSceneModelComboBox">
+          <property name="toolTip">
+           <string extracomment="Pick a model to determine how the scene is organised in the tree"/>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="DisplayMRMLIDsCheckBox">
+          <property name="text">
+           <string>Display MRML ID's</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="ShowHiddenCheckBox">
+          <property name="text">
+           <string>Show Hidden nodes</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="FilterLabel">
+          <property name="text">
+           <string>Filter:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="2">
+         <widget class="ctkCollapsibleGroupBox" name="MRMLNodeInspectorGroupBox">
+          <property name="title">
+           <string>MRML Node Inspector</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="collapsed">
+           <bool>true</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="qMRMLNodeAttributeTableWidget" name="MRMLNodeAttributeTableWidget"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="FilterLineEdit"/>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="ctkCollapsibleButton" name="LoadAddSceneButton">
      <property name="text">
       <string>Load &amp;&amp; Add Scenes Or Individual Datasets</string>
@@ -149,8 +135,8 @@
      <property name="collapsed">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
        <widget class="QWidget" name="LoadAddSceneViewport" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <property name="margin">
@@ -578,7 +564,7 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="ctkDynamicSpacer" name="DynamicSpacer">
      <property name="activeSizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Ignored">
@@ -613,6 +599,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeAttributeTableWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeAttributeTableWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkCollapsibleButton</class>

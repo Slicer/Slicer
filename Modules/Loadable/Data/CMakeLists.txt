@@ -3,18 +3,18 @@ set(qt_module_name "Data")
 
 # Build module sub libraries
 #add_subdirectory(MRML)
-#add_subdirectory(Logic)
-#add_subdirectory(Widgets)
+add_subdirectory(Logic)
+add_subdirectory(Widgets)
 
 string(TOUPPER ${qt_module_name} qt_module_name_upper)
 set(qt_module_export_directive "Q_SLICER_QTMODULES_${qt_module_name_upper}_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 set(qt_module_include_directories
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-#  ${CMAKE_CURRENT_BINARY_DIR}/Logic
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
-#  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
+  ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
+  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
 # Source files
@@ -38,8 +38,8 @@ set(qt_module_UI_SRCS
 
 # Additional Target libraries
 set(qt_module_target_libraries
-#  qSlicerDataModuleWidgets
-#  vtkSlicerDataModuleLogic
+  qSlicerDataModuleWidgets
+  vtkSlicerDataModuleLogic
   )
 
 # Resources

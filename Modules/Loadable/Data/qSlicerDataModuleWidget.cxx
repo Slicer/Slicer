@@ -26,6 +26,9 @@
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 
+// ModuleTemplate includes
+#include "vtkSlicerDataModuleLogic.h"
+
 // SlicerLibs includes
 #include <vtkSlicerTransformLogic.h>
 
@@ -35,26 +38,41 @@
 // MRML includes
 #include <vtkMRMLLinearTransformNode.h>
 
+// STL includes
+#include <set>
+
 //-----------------------------------------------------------------------------
 class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModule
 {
+  Q_DECLARE_PUBLIC(qSlicerDataModuleWidget);
+protected:
+  qSlicerDataModuleWidget* const q_ptr;
 public:
-  qSlicerDataModuleWidgetPrivate();
-  vtkMRMLNode*                MRMLNode;
+  qSlicerDataModuleWidgetPrivate(qSlicerDataModuleWidget& object);
+  vtkSlicerDataModuleLogic* logic() const;
+
   QAction*                    HardenTransformAction;
 };
 
 //-----------------------------------------------------------------------------
-qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate()
+qSlicerDataModuleWidgetPrivate::qSlicerDataModuleWidgetPrivate(qSlicerDataModuleWidget& object)
+ : q_ptr(&object)
 {
-  this->MRMLNode = 0;
   this->HardenTransformAction = 0;
 }
 
 //-----------------------------------------------------------------------------
+vtkSlicerDataModuleLogic*
+qSlicerDataModuleWidgetPrivate::logic() const
+{
+  Q_Q(const qSlicerDataModuleWidget);
+  return vtkSlicerDataModuleLogic::SafeDownCast(q->logic());
+} 
+
+//-----------------------------------------------------------------------------
 qSlicerDataModuleWidget::qSlicerDataModuleWidget(QWidget* parentWidget)
   :qSlicerAbstractModuleWidget(parentWidget)
-  , d_ptr(new qSlicerDataModuleWidgetPrivate)
+  , d_ptr( new qSlicerDataModuleWidgetPrivate(*this) )
 {
 }
 
@@ -105,17 +123,12 @@ void qSlicerDataModuleWidget::setup()
   connect(d->FilterLineEdit, SIGNAL(textChanged(QString)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setFilterFixedString(QString)));
 
-  // hide the IDs by default
+  // Hide the IDs by default
   d->DisplayMRMLIDsCheckBox->setChecked(false);
 
-  // Hide the node inspector as it is possible to edit nodes via the tree
-  d->MRMLNodeInspectorGroupBox->setVisible(false);
-  //   connect(d->MRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
-  //           this, SLOT(onMRMLNodeChanged(vtkMRMLNode*)));
-  // Change the node name only when the Enter key is pressed or the line edit
-  // looses the focus
-  //connect(d->NodeNameLineEdit, SIGNAL(editingFinished()),
-  //        this, SLOT(validateNodeName()));
+  // Make connections for the attribute table widget
+  connect(d->MRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+          d->MRMLNodeAttributeTableWidget, SLOT(setMRMLNode(vtkMRMLNode*)));
 
   // Connect the buttons to the associated slots
   connect(d->LoadSceneToolButton, SIGNAL(clicked()),
@@ -179,7 +192,8 @@ void qSlicerDataModuleWidget::insertTransformNode()
   Q_D(qSlicerDataModuleWidget);
   vtkMRMLTransformNode* linearTransform = vtkMRMLLinearTransformNode::New();
 
-  vtkMRMLNode* parent = vtkMRMLTransformNode::SafeDownCast(d->MRMLTreeView->currentNode());
+  vtkMRMLNode* parent = vtkMRMLTransformNode::SafeDownCast(
+    d->MRMLTreeView->currentNode());
   if (parent)
     {
     linearTransform->SetAndObserveTransformNodeID( parent->GetID() );

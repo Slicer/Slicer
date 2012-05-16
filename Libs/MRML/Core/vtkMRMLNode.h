@@ -33,6 +33,7 @@ class vtkCallbackCommand;
 // STD includes
 #include <string>
 #include <map>
+#include <vector>
 
 #ifndef vtkSetMRMLObjectMacro
 #define vtkSetMRMLObjectMacro(node,value)  {this->MRMLObserverManager->SetObject ( vtkObjectPointer( &(node)), (value) );};
@@ -228,9 +229,17 @@ public:
   void SetAttribute(const char* name, const char* value);
 
   /// 
+  /// Remove attribute with the specified name
+  void RemoveAttribute(const char* name);
+
+  /// 
   /// Get value of a name value pair attribute
   /// or NULL if the name does not exists
   const char* GetAttribute(const char* name);
+
+  /// 
+  /// Get all attribute names
+  std::vector< std::string > GetAttributeNames();
 
   /// 
   /// Describes if the node is hidden

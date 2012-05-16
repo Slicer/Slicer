@@ -39,6 +39,9 @@
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
 
+// ModuleTemplate includes
+#include "vtkSlicerDataModuleLogic.h"
+
 // MRML Logic includes
 #include <vtkMRMLColorLogic.h>
 
@@ -119,7 +122,7 @@ qSlicerAbstractModuleRepresentation * qSlicerDataModule::createWidgetRepresentat
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerDataModule::createLogic()
 {
-  return 0;
+  return vtkSlicerDataModuleLogic::New();
 }
 
 //-----------------------------------------------------------------------------
@@ -159,5 +162,6 @@ QStringList qSlicerDataModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   moduleContributors << QString("Alex Yarmarkovich (Isomics)");
   moduleContributors << QString("Nicole Aucoin (SPL, BWH)");
+  moduleContributors << QString("Csaba Pinter (Queen's)");
   return moduleContributors;
 }
