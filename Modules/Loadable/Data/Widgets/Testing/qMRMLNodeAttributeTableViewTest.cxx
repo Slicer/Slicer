@@ -31,6 +31,7 @@
 #include <vtkMRMLModelNode.h>
 
 // VTK includes
+#include <vtkNew.h>
 #include <vtkSmartPointer.h>
 
 // ----------------------------------------------------------------------------
@@ -60,12 +61,10 @@ void qMRMLNodeAttributeTableViewTester::init()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::cleanup()
 {
-  if (this->NodeAttributeTableView != NULL)
-    {
-    this->NodeAttributeTableView->setInspectedNode(NULL);
-    delete this->NodeAttributeTableView;
-    this->NodeAttributeTableView = NULL;
-    }
+  QVERIFY(this->NodeAttributeTableView != NULL);
+  this->NodeAttributeTableView->setInspectedNode(NULL);
+  delete this->NodeAttributeTableView;
+  this->NodeAttributeTableView = NULL;
 }
 
 // ----------------------------------------------------------------------------
@@ -81,10 +80,10 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   this->NodeAttributeTableView->setInspectedNode(NULL);
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 0);
 
-  vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
   node->SetAttribute("Attribute2", "Value2");
-  this->NodeAttributeTableView->setInspectedNode(node);
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
 
   node->SetAttribute("Attribute3", "Value3");
@@ -97,10 +96,10 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSelect()
 {
-  vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
   node->SetAttribute("Attribute2", "Value2");
-  this->NodeAttributeTableView->setInspectedNode(node);
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
   this->NodeAttributeTableView->selectItemRange(1,0,1,0);
   QCOMPARE(this->NodeAttributeTableView->selectionModel()->selectedIndexes().count(), 1);
   QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).top(), 1);
@@ -115,26 +114,24 @@ void qMRMLNodeAttributeTableViewTester::testSelect()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd()
 {
-  vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
-  this->NodeAttributeTableView->setInspectedNode(node);
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
   this->NodeAttributeTableView->addAttribute();
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
 
   this->NodeAttributeTableView->renameAttribute(QString(""), QString("Attribute2"));
   QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttributeNames().size(), 2);
-
-  this->NodeAttributeTableView->setInspectedNode(NULL);
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testRemove()
 {
-  vtkSmartPointer<vtkMRMLModelNode> node = vtkSmartPointer<vtkMRMLModelNode>::New();
+  vtkNew<vtkMRMLModelNode> node;
   node->SetAttribute("Attribute1", "Value1");
   node->SetAttribute("Attribute2", "Value2");
   node->SetAttribute("Attribute3", "Value3");
-  this->NodeAttributeTableView->setInspectedNode(node);
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
   this->NodeAttributeTableView->selectItemRange(1,0,1,1);
   this->NodeAttributeTableView->removeSelectedAttributes();
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
@@ -143,7 +140,6 @@ void qMRMLNodeAttributeTableViewTester::testRemove()
   QCOMPARE(this->NodeAttributeTableView->attributeValue(QString("Attribute3")).isEmpty(), false);
   QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttribute("Attribute2"), NULL);
 
-  this->NodeAttributeTableView->setInspectedNode(NULL);
 }
 
 // ----------------------------------------------------------------------------
