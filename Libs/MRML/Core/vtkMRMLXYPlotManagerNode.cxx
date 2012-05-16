@@ -221,7 +221,7 @@ void vtkMRMLXYPlotManagerNode::ProcessMRMLEvents( vtkObject *caller, unsigned lo
   //if (this->TargetPlanList && this->TargetPlanList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
   //  event ==  vtkCommand::ModifiedEvent)
   //  {
-  //  //this->ModifiedSinceReadOn();
+  //  //this->ModifiedSinceRead = true;
   //  //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
   //  //this->UpdateFromMRML();
   //  return;
@@ -230,7 +230,7 @@ void vtkMRMLXYPlotManagerNode::ProcessMRMLEvents( vtkObject *caller, unsigned lo
   //if (this->TargetCompletedList && this->TargetCompletedList == vtkMRMLFiducialListNode::SafeDownCast(caller) &&
   //  event ==  vtkCommand::ModifiedEvent)
   //  {
-  //  //this->ModifiedSinceReadOn();
+  //  //this->ModifiedSinceRead = true;
   //  //this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
   //  //this->UpdateFromMRML();
   //  return;

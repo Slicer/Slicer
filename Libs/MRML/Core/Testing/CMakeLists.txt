@@ -89,6 +89,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeDisplayNodeTest1.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
   vtkMRMLVolumeNodeTest1.cxx
+  vtkMRMLVolumeNodeEventsTest.cxx
   vtkMRMLXYPlotManagerNodeTest1.cxx
   vtkObserverManagerTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h

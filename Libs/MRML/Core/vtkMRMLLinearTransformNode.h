@@ -59,8 +59,15 @@ class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
   virtual vtkGeneralTransform* GetTransformToParent();
 
   /// 
-  /// vtkMatrix4x4 transform of this node to paren node
-  vtkGetObjectMacro(MatrixTransformToParent, vtkMatrix4x4); 
+  /// Return the vtkMatrix4x4 transform of this node to parent node
+  vtkGetObjectMacro(MatrixTransformToParent, vtkMatrix4x4);
+
+  ///
+  /// Set and observe a new matrix transform of this node to parent node.
+  /// Each time the matrix is modified,
+  /// vtkMRMLTransformableNode::TransformModifiedEvent is fired.
+  /// ModifiedEvent() and TransformModifiedEvent() are fired after the matrix
+  /// is set.
   void SetAndObserveMatrixTransformToParent(vtkMatrix4x4 *matrix);
 
   /// 
