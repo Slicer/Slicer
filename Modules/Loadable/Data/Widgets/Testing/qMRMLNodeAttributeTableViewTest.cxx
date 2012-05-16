@@ -32,7 +32,6 @@
 
 // VTK includes
 #include <vtkNew.h>
-#include <vtkSmartPointer.h>
 
 // ----------------------------------------------------------------------------
 class qMRMLNodeAttributeTableViewTester: public QObject
@@ -40,18 +39,34 @@ class qMRMLNodeAttributeTableViewTester: public QObject
   Q_OBJECT
   qMRMLNodeAttributeTableView* NodeAttributeTableView;
 
+public:
+  typedef QPair<QString, QString> AttributeType;
+  typedef QPair<QString, bool> AttributeEmptyType;
+
 private slots:
   void init();
   void cleanup();
 
   void testDefaults();
+
   void testPopulate();
+
   void testSelect();
+
   void testSetAttribute();
   void testSetAttribute_data();
+
   void testAdd();
+
   void testRemove();
+  void testRemove_data();
 };
+
+Q_DECLARE_METATYPE(QList<int>)
+Q_DECLARE_METATYPE(qMRMLNodeAttributeTableViewTester::AttributeType)
+Q_DECLARE_METATYPE(QList<qMRMLNodeAttributeTableViewTester::AttributeType>)
+Q_DECLARE_METATYPE(qMRMLNodeAttributeTableViewTester::AttributeEmptyType)
+Q_DECLARE_METATYPE(QList<qMRMLNodeAttributeTableViewTester::AttributeEmptyType>)
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::init()
@@ -194,19 +209,66 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testRemove()
 {
-  vtkNew<vtkMRMLModelNode> node;
-  node->SetAttribute("Attribute1", "Value1");
-  node->SetAttribute("Attribute2", "Value2");
-  node->SetAttribute("Attribute3", "Value3");
-  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
-  this->NodeAttributeTableView->selectItemRange(1,0,1,1);
-  this->NodeAttributeTableView->removeSelectedAttributes();
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
-  QCOMPARE(this->NodeAttributeTableView->attributeValue(QString("Attribute1")).isEmpty(), false);
-  QCOMPARE(this->NodeAttributeTableView->attributeValue(QString("Attribute2")).isEmpty(), true);
-  QCOMPARE(this->NodeAttributeTableView->attributeValue(QString("Attribute3")).isEmpty(), false);
-  QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttribute("Attribute2"), NULL);
+  QFETCH(QList<AttributeType>, attributesToAdd);
+  QFETCH(QList<int>, rangeToSelect);
+  QFETCH(int, expectedAttributeCountAfterRemove);
+  QFETCH(QList<AttributeEmptyType>, expectedExistingAttributesAfterRemove);
 
+  vtkNew<vtkMRMLModelNode> node;
+
+  foreach(const AttributeType& attribute, attributesToAdd)
+    {
+    node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
+    }
+
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
+
+  this->NodeAttributeTableView->selectItemRange(rangeToSelect.at(0),
+                                                rangeToSelect.at(1),
+                                                rangeToSelect.at(2),
+                                                rangeToSelect.at(3));
+
+  this->NodeAttributeTableView->removeSelectedAttributes();
+  QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterRemove);
+
+  foreach(const AttributeEmptyType& attributeExist, expectedExistingAttributesAfterRemove)
+    {
+    bool isEmpty = attributeExist.second;
+    QCOMPARE(this->NodeAttributeTableView->attributeValue(attributeExist.first).isEmpty(), isEmpty);
+
+    const char * inspectedNodeAttributeValue
+        = this->NodeAttributeTableView->inspectedNode()->GetAttribute(attributeExist.first.toLatin1());
+    if (isEmpty)
+      {
+      QVERIFY(inspectedNodeAttributeValue == NULL);
+      }
+    else
+      {
+      QVERIFY(inspectedNodeAttributeValue != NULL);
+      }
+    }
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testRemove_data()
+{
+  QTest::addColumn<QList<AttributeType> >("attributesToAdd");
+  QTest::addColumn<QList<int> >("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<int>("expectedAttributeCountAfterRemove");
+  QTest::addColumn<QList<AttributeEmptyType> >("expectedExistingAttributesAfterRemove");
+
+  {
+  QTest::newRow("0") << ( QList<AttributeType>()
+                          << AttributeType("Attribute1", "Value1")
+                          << AttributeType("Attribute2", "Value2")
+                          << AttributeType("Attribute3", "Value3"))
+                     << ( QList<int>() << 1 << 0 << 1 << 1)
+                     << 2
+                     << (QList<AttributeEmptyType>()
+                         << AttributeEmptyType("Attribute1", false)
+                         << AttributeEmptyType("Attribute2", true)
+                         << AttributeEmptyType("Attribute3", false));
+  }
 }
 
 // ----------------------------------------------------------------------------
