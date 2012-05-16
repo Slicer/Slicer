@@ -95,10 +95,6 @@ if(Slicer_BUILD_EMSegment)
   list(APPEND Slicer_DEPENDENCIES EMSegment)
 endif()
 
-if(Slicer_BUILD_SkullStripper)
-  list(APPEND Slicer_DEPENDENCIES SkullStripper)
-endif()
-
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND Slicer_DEPENDENCIES qMidasAPI)
 endif()
@@ -176,7 +172,6 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_BRAINSTOOLS
   Slicer_BUILD_ChangeTrackerPy
   Slicer_BUILD_EMSegment
-  Slicer_BUILD_SkullStripper
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
   Slicer_BUILD_SlicerWebGLExport
@@ -281,10 +276,6 @@ endif()
 
 if(Slicer_BUILD_EMSegment)
   list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
-endif()
-
-if(Slicer_BUILD_SkullStripper)
-  list(APPEND ep_superbuild_extra_args -DSkullStripper_SOURCE_DIR:PATH=${SkullStripper_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_SlicerWebGLExport)
