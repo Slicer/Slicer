@@ -115,6 +115,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
   //stereoTypesActions->addAction(this->actionSwitchToCrystalEyesStereo);
   QMenu* stereoTypesMenu = new QMenu("Stereo Modes", this->PopupWidget);
+  stereoTypesMenu->setObjectName("stereoTypesMenu");
   stereoTypesMenu->addActions(stereoTypesActions->actions());
   this->StereoButton->setMenu(stereoTypesMenu);
   QObject::connect(this->StereoTypesMapper, SIGNAL(mapped(int)),
@@ -123,6 +124,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    this->StereoTypesMapper, SLOT(map(QAction*)));
 
   QMenu* visibilityMenu = new QMenu("Visibility", this->PopupWidget);
+  visibilityMenu->setObjectName("visibilityMenu");
   this->VisibilityButton->setMenu(visibilityMenu);
 
   // Show 3D Axis, 3D Axis label
