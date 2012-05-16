@@ -106,8 +106,8 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute()
   QFETCH(QString, value);
   if (setOnNode)
     {
-    node->SetAttribute(attribute.isNull() ? 0 : attribute.toLatin1(),
-                       value.isNull() ? 0 : value.toLatin1());
+    node->SetAttribute(attribute.isNull() ? QByteArray(0) : attribute.toLatin1(),
+                       value.isNull() ? QByteArray(0) : value.toLatin1());
     }
   else
     {
