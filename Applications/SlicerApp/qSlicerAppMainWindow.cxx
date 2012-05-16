@@ -57,6 +57,7 @@
 #endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerModulesMenu.h"
 #include "qSlicerAppMainWindowCore.h"
 #include "qSlicerModuleSelectorToolBar.h"
 #include "qSlicerIOManager.h"
@@ -259,6 +260,8 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   // we store this layout manager to the Object state property for QtTesting
   qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
       qSlicerApplication::application()->layoutManager(), QString("layout"));
+  qSlicerApplication::application()->testingUtility()->addObjectStateProperty(
+      this->ModuleSelectorToolBar->modulesMenu(), QString("currentModule"));
 #endif
   // Layout manager should also listen the MRML scene
   this->LayoutManager->setMRMLScene(qSlicerApplication::application()->mrmlScene());
