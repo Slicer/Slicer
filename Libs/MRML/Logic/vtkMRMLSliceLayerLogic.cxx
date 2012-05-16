@@ -670,7 +670,7 @@ void vtkMRMLSliceLayerLogic::UpdateImageDisplay()
     this->AssignAttributeScalarsToTensors->SetInput(this->Reslice->GetOutput() );
 
     // don't activate 3D UVW reslice pipeline if we use single 2D reslice pipeline
-    if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
+    if (this->SliceNode && this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
       this->AssignAttributeScalarsToTensorsUVW->SetInput(this->ResliceUVW->GetOutput() );
       }
