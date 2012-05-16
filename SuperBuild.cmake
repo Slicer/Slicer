@@ -293,7 +293,6 @@ endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND ep_superbuild_extra_args
-    -DLibArchive_DIR:PATH=${LibArchive_DIR}
     -DqMidasAPI_DIR:PATH=${qMidasAPI_DIR}
     )
 endif()
@@ -354,6 +353,8 @@ ExternalProject_Add(${proj}
     -DCTK_DIR:PATH=${CTK_DIR}
     # jqPlot
     -DjqPlot_DIR:PATH=${jqPlot_DIR}
+    # LibArchive
+    -DLibArchive_DIR:PATH=${LibArchive_DIR}
   INSTALL_COMMAND ""
   )
 
