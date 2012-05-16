@@ -127,15 +127,6 @@ void SetupVolumeNode(vtkMRMLScene* scene, vtkMRMLScalarVolumeNode* volumeNode)
     //vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping);
     //vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast);
   scene->AddNode(vrDisplayNode.GetPointer());
-
-  vtkNew<vtkMRMLScalarVolumeDisplayNode> volumeDisplayNode;
-  volumeDisplayNode->SetScalarRange(0, 255);
-  scene->AddNode(volumeDisplayNode.GetPointer());
-
-  volumeNode->AddAndObserveDisplayNodeID(volumeDisplayNode->GetID());
-
-  vtkNew<vtkSlicerVolumeRenderingLogic> vrLogic;
-  vrLogic->SetMRMLScene(scene);
 }
 
 char TestCopyImageDataEventLog[] =
