@@ -22,7 +22,9 @@
 /// 
 /// It also provides method allowing to either call RenderRequest
 /// or SetAndObserveMRMLDisplayableNode on all member of the group.
-/// 
+/// When the displayable managers in the group request the view to be
+/// refreshed, the group fires a vtkCommand::UpdateEvent event.
+/// This event can be observed and trigger a Render on the render window.
 
 #ifndef __vtkMRMLDisplayableManagerGroup_h
 #define __vtkMRMLDisplayableManagerGroup_h

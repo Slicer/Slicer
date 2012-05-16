@@ -46,6 +46,19 @@ public:
   //vtkGetObjectMacro (DisplayNode, vtkMRMLVolumeRenderingDisplayNode);
   //void SetAndObserveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
+  ///
+  /// Return the volume mapper of the volume rendering display node
+  vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  ///
+  /// Configure mapper with volume nodes
+  void SetupMapperFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  ///
+  /// Configure mapper with volume node
+  void SetupMapperFromVolumeNode(vtkMRMLVolumeNode* volumeNode,
+                                 vtkVolumeMapper* volumeMapper,
+                                 int inputIndex = 0);
 
   // Description:
   // setup mapper based on current parameters node

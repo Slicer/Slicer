@@ -15,6 +15,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumePropertyNodeTest1.cxx
   vtkMRMLVolumePropertyStorageNodeTest1.cxx
   vtkMRMLVolumeRenderingDisplayableManagerTest1.cxx
+  vtkMRMLVolumeRenderingMultiVolumeTest.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})

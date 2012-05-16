@@ -498,9 +498,9 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
 
   switch(vspNode->GetCurrentVolumeMapper())//mapper specific initialization
   {
-  case 0:
+  case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
     return 1;
-  case 3:
+  case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
     {
       vtkSlicerGPURayCastVolumeMapper* MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
 
@@ -517,7 +517,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
         return 0;
       }
     }
-  case 4:
+  case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
     {
       vtkSlicerGPURayCastMultiVolumeMapper* MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
 
@@ -536,7 +536,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
         return 0;
       }
     }
-  case 2:
+  case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
     {
       vtkSlicerVolumeTextureMapper3D* MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
 
@@ -553,7 +553,7 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
         return 0;
       }
     }
-  case 1:
+  case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
     {
     vtkGPUVolumeRayCastMapper* VTKGPURaycast = vtkGPUVolumeRayCastMapper::New();
     VTKGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
@@ -571,6 +571,72 @@ int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVo
   default:
     return 0;
   }
+}
+
+//---------------------------------------------------------------------------
+vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager
+::GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  switch(vspNode ? vspNode->GetCurrentVolumeMapper()
+          : vtkMRMLVolumeRenderingDisplayNode::None)
+    {
+    case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
+      return this->MapperRaycast;
+    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
+      return this->MapperGPURaycast;
+    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
+      return this->MapperGPURaycastII;
+    case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
+      return this->MapperTexture;
+    case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
+      return this->MapperGPURaycast3;
+    case vtkMRMLVolumeRenderingDisplayNode::None:
+    default:
+      return 0;
+    }
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::SetupMapperFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  vtkMRMLVolumeNode* volumeNode = vspNode ? vspNode->GetVolumeNode() : 0;
+  //Add observer to trigger update of transform
+  if (volumeNode && !vtkIsObservedMRMLNodeEventMacro(
+        volumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
+    {
+    vtkNew<vtkIntArray> events;
+    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
+    }
+  this->SetupMapperFromVolumeNode(volumeNode, this->GetVolumeMapper(vspNode), 0);
+
+  vtkMRMLVolumeNode* fgVolumeNode = vspNode ? vspNode->GetFgVolumeNode() : 0;
+  //Add observer to trigger update of transform
+  if (fgVolumeNode && !vtkIsObservedMRMLNodeEventMacro(
+        fgVolumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
+    {
+    vtkNew<vtkIntArray> events;
+    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+    vtkObserveMRMLNodeEventsMacro(fgVolumeNode, events.GetPointer());
+    }
+  this->SetupMapperFromVolumeNode(fgVolumeNode, this->GetVolumeMapper(vspNode), 1);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::SetupMapperFromVolumeNode(vtkMRMLVolumeNode* volumeNode,
+                            vtkVolumeMapper* volumeMapper,
+                            int index)
+{
+  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
+  if (volumeMapper->GetNumberOfInputPorts() > index)
+    {
+    volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
+    }
 }
 
 /*
@@ -598,7 +664,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
   switch(vspNode->GetCurrentVolumeMapper())//mapper specific initialization
     {
     case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
-      this->MapperRaycast->SetInput(volumeNode->GetImageData() );
       this->MapperRaycast->SetSampleDistance(sampleDistance);
       this->SetCPURaycastParameters(vspNode);
       this->Volume->SetMapper(this->MapperRaycast);
@@ -608,7 +673,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
-      this->MapperGPURaycast->SetInput( volumeNode->GetImageData() );
       this->SetGPURaycastParameters(vspNode);
       if ( vspNode->GetVolumePropertyNode() && vspNode->GetVolumePropertyNode()->GetVolumeProperty() )
         {
@@ -632,11 +696,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
-      this->MapperGPURaycastII->SetNthInput(0, volumeNode->GetImageData());
-      if (vspNode->GetFgVolumeNode())
-        {
-        this->MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
-        }
       this->SetGPURaycastIIParameters(vspNode);
       if (this->MapperGPURaycastII->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
         {
@@ -651,7 +710,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
-      this->MapperTexture->SetInput( volumeNode->GetImageData() );
       this->MapperTexture->SetSampleDistance(sampleDistance);
       if (this->MapperTexture->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
         {
@@ -668,7 +726,6 @@ int vtkMRMLVolumeRenderingDisplayableManager
         }
       break;
     case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
-      this->MapperGPURaycast3->SetInput(volumeNode->GetImageData());
       this->MapperGPURaycast3->SetSampleDistance(sampleDistance);
       this->SetGPURaycast3Parameters(vspNode);
        if (this->MapperGPURaycast3->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
@@ -1145,6 +1202,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
     }
   else if (event == vtkMRMLScalarVolumeNode::ImageDataModifiedEvent)
     {
+    this->SetupMapperFromVolumeNode(this->DisplayedNode);
     this->RequestRender();
     }
   else if (event == vtkMRMLTransformableNode::TransformModifiedEvent)
@@ -1206,29 +1264,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
   //this->DeleteRenderingFrame();
   //this->CreateRenderingFrame();
 
-
-  vtkMRMLVolumeNode *volumeNode = vspNode->GetVolumeNode();
-  //Add observer to trigger update of transform
-  if (volumeNode && !vtkIsObservedMRMLNodeEventMacro(
-        volumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
-    {
-    vtkNew<vtkIntArray> events;
-    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
-    vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
-    }
-
-  volumeNode = vspNode->GetFgVolumeNode();
-  //Add observer to trigger update of transform
-  if (volumeNode && !vtkIsObservedMRMLNodeEventMacro(
-        volumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
-    {
-    vtkNew<vtkIntArray> events;
-    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
-    vtkObserveMRMLNodeEventsMacro(volumeNode, events.GetPointer());
-    }
-
+  this->SetupMapperFromVolumeNode(vspNode);
   this->SetupMapperFromParametersNode(vspNode);
 
   this->DisplayedNode = vspNode;
