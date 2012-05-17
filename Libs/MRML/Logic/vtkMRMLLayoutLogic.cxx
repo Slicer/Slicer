@@ -676,6 +676,8 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     return;
     }
 
+  int wasModifying = this->LayoutNode->StartModify();
+
   // Horizonal compare viewers
   std::stringstream compareView;
   compareView << "<layout type=\"vertical\" split=\"true\" >"
@@ -716,18 +718,15 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     "</layout>";
 
-  if (this->LayoutNode)
+  if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView))
     {
-    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView))
-      {
-      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
-                                             compareView.str().c_str());
-      }
-    else
-      {
-      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
-                                             compareView.str().c_str());
-      }
+    this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
+                                           compareView.str().c_str());
+    }
+  else
+    {
+    this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareView,
+                                           compareView.str().c_str());
     }
 
   // Vertical compare viewers
@@ -770,20 +769,16 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " </item>"
     "</layout>";
 
-  if (this->LayoutNode)
+  if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView))
     {
-    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView))
-      {
-      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
-                                          compareWidescreenView.str().c_str());
-      }
-    else
-      {
-      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
-                                          compareWidescreenView.str().c_str());
-      }
+    this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
+                                        compareWidescreenView.str().c_str());
     }
-
+  else
+    {
+    this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareWidescreenView,
+                                        compareWidescreenView.str().c_str());
+    }
 
   // Grid compare viewers
   std::stringstream compareViewGrid;
@@ -805,50 +800,47 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " <item>"
     "  <layout type=\"vertical\">";
 
-    for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+  for (int i=1, k=1; i<=this->LayoutNode->GetNumberOfCompareViewRows(); ++i)
+    {
+    compareViewGrid <<
+      "   <item>"
+      "    <layout type=\"horizontal\">";
+    for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
+         ++j,++k)
       {
       compareViewGrid <<
-        "   <item>"
-        "    <layout type=\"horizontal\">";
-      for (int j=1; j <= this->LayoutNode->GetNumberOfCompareViewColumns();
-           ++j,++k)
-        {
-        compareViewGrid <<
-          "     <item>"
-          "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
-          "       <property name=\"orientation\" action=\"default\">Axial</property>"
-          "       <property name=\"viewlabel\" action=\"default\">" << k << "</property>"
-          "       <property name=\"viewcolor\" action=\"default\">#E17012</property>"
-          "       <property name=\"lightboxrows\" action=\"default\">1</property>"
-          "       <property name=\"lightboxcolumns\" action=\"default\">1</property>"
-          "       <property name=\"lightboxrows\" action=\"relayout\">1</property>"
-          "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
-          "      </view>"
-          "     </item>";
-        }
-      compareViewGrid <<
-        "     </layout>"
-        "    </item>";
+        "     <item>"
+        "      <view class=\"vtkMRMLSliceNode\" singletontag=\"Compare"<< k << "\">"
+        "       <property name=\"orientation\" action=\"default\">Axial</property>"
+        "       <property name=\"viewlabel\" action=\"default\">" << k << "</property>"
+        "       <property name=\"viewcolor\" action=\"default\">#E17012</property>"
+        "       <property name=\"lightboxrows\" action=\"default\">1</property>"
+        "       <property name=\"lightboxcolumns\" action=\"default\">1</property>"
+        "       <property name=\"lightboxrows\" action=\"relayout\">1</property>"
+        "       <property name=\"lightboxcolumns\" action=\"relayout\">1</property>"
+        "      </view>"
+        "     </item>";
       }
     compareViewGrid <<
-      "  </layout>"
-      " </item>"
-      "</layout>";
-
-
-  if (this->LayoutNode)
-    {
-    if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView))
-      {
-      this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
-                                             compareViewGrid.str().c_str());
-      }
-    else
-      {
-      this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
-                                             compareViewGrid.str().c_str());
-      }
+      "     </layout>"
+      "    </item>";
     }
+  compareViewGrid <<
+    "  </layout>"
+    " </item>"
+    "</layout>";
+
+  if (this->LayoutNode->IsLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView))
+    {
+    this->LayoutNode->SetLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
+                                           compareViewGrid.str().c_str());
+    }
+  else
+    {
+    this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutCompareGridView,
+                                           compareViewGrid.str().c_str());
+    }
+  this->LayoutNode->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------
