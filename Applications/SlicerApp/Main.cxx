@@ -249,7 +249,7 @@ int SlicerAppMain(int argc, char* argv[])
   QScopedPointer<QSplashScreen> splashScreen;
   if (showSplashScreen)
     {
-    QPixmap pixmap(":Images/SlicerSplashScreen.png");
+    QPixmap pixmap(":/3DSlicerSplashScreen.png");
     splashScreen.reset(new QSplashScreen(pixmap));
     splashMessage(splashScreen, "Initializing...");
     splashScreen->show();
