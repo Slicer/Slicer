@@ -188,14 +188,14 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
   else if (changedItem->column() == 0)
     {
     QTableWidgetItem* valueItem = d->NodeAttributesTable->item( changedItem->row(), 1 );
-    std::string valueText("");
+    std::string valueText;
     if (valueItem)
       {
-      valueText = valueItem->text().toLatin1();
+      valueText = valueItem->text().toStdString();
       }
 
     // Don't set if there is another attribute with the same name (would overwrite it)
-    if ( d->InspectedNode->GetAttribute(changedItem->text().toLatin1()) )
+    if ( d->InspectedNode->GetAttribute(changedItem->text().toLatin1()))
       {
       d->setMessage(tr("There is already an attribute with the same name"));
       d->NodeAttributesTable->blockSignals(true);
@@ -209,7 +209,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       d->InspectedNode->SetAttribute(
         d->SelectedAttributeTableItemText.toLatin1(), 0 );
       d->InspectedNode->SetAttribute(
-        changedItem->text().toLatin1(), valueText.c_str() );
+        changedItem->text().toLatin1(), valueText.c_str());
 
       d->InspectedNode->EndModify(wasModifying);
       }
@@ -221,11 +221,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
     std::string nameText;
     if (nameItem)
       {
-      nameText = nameItem->text().toLatin1();
-      }
-    else
-      {
-      nameText = "";
+      nameText = nameItem->text().toStdString();
       }
     d->InspectedNode->SetAttribute( nameText.c_str(), changedItem->text().toLatin1() );
     }
