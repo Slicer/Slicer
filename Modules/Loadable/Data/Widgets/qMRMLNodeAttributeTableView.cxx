@@ -188,10 +188,10 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
   else if (changedItem->column() == 0)
     {
     QTableWidgetItem* valueItem = d->NodeAttributesTable->item( changedItem->row(), 1 );
-    std::string valueText;
+    std::string valueText("");
     if (valueItem)
       {
-      valueText = valueItem->text().toStdString();
+      valueText = valueItem->text().toLatin1();
       }
 
     // Don't set if there is another attribute with the same name (would overwrite it)
@@ -209,7 +209,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       d->InspectedNode->SetAttribute(
         d->SelectedAttributeTableItemText.toLatin1(), 0 );
       d->InspectedNode->SetAttribute(
-        changedItem->text().toLatin1(), valueText.c_str());
+        changedItem->text().toLatin1(), valueText.c_str() );
 
       d->InspectedNode->EndModify(wasModifying);
       }
@@ -221,7 +221,11 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
     std::string nameText;
     if (nameItem)
       {
-      nameText = nameItem->text().toStdString();
+      nameText = nameItem->text().toLatin1();
+      }
+    else
+      {
+      nameText = "";
       }
     d->InspectedNode->SetAttribute( nameText.c_str(), changedItem->text().toLatin1() );
     }
@@ -255,6 +259,12 @@ void qMRMLNodeAttributeTableView::addAttribute()
 {
   Q_D(qMRMLNodeAttributeTableView);
 
+  if (!d->InspectedNode)
+    {
+    d->setMessage(tr("No node is selected"));
+    return;
+    }
+
   d->setMessage(QString());
 
   int rowCountBefore = d->NodeAttributesTable->rowCount();
@@ -269,12 +279,13 @@ void qMRMLNodeAttributeTableView::removeSelectedAttributes()
 {
   Q_D(qMRMLNodeAttributeTableView);
 
-  d->setMessage(QString());
-
   if (!d->InspectedNode)
     {
+    d->setMessage(tr("No node is selected"));
     return;
     }
+
+  d->setMessage(QString());
 
   // Extract selected row indices out of the selected table widget items list
   // (there may be more items selected in a row)
