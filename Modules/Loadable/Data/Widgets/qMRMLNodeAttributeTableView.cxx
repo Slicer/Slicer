@@ -195,7 +195,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       }
 
     // Don't set if there is another attribute with the same name (would overwrite it)
-    if ( d->InspectedNode->GetAttribute(changedItem->text().toLatin1()))
+    if (d->InspectedNode->GetAttribute(changedItem->text().toLatin1()))
       {
       d->setMessage(tr("There is already an attribute with the same name"));
       d->NodeAttributesTable->blockSignals(true);
@@ -207,7 +207,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       int wasModifying = d->InspectedNode->StartModify();
 
       d->InspectedNode->SetAttribute(
-        d->SelectedAttributeTableItemText.toLatin1(), 0 );
+        d->SelectedAttributeTableItemText.toLatin1(), 0);
       d->InspectedNode->SetAttribute(
         changedItem->text().toLatin1(), valueText.c_str());
 
@@ -345,25 +345,44 @@ QTableWidgetItem* qMRMLNodeAttributeTableView::findAttributeNameItem(const QStri
       }
     }
 
-  Q_ASSERT(numberOfAttributesFound == 1);
-  return item;
+  return (numberOfAttributesFound == 1) ? item : NULL;
 }
 
 //-----------------------------------------------------------------------------
 QString qMRMLNodeAttributeTableView::attributeValue(const QString& attributeName) const
 {
+  Q_D(const qMRMLNodeAttributeTableView);
+
   QTableWidgetItem* item = findAttributeNameItem(attributeName);
-  return item ? item->text() : QString();
+  return item ? d->NodeAttributesTable->item(item->row(), item->column()+1)->text() : QString();
 }
 
 //-----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableView::setAttribute(const QString& attributeName, const QString& attributeValue)
 {
+  if (attributeName.isNull())
+    {
+    return;
+    }
+
   Q_D(qMRMLNodeAttributeTableView);
 
   QTableWidgetItem* nameItem = findAttributeNameItem(attributeName);
   if (!nameItem)
     {
+    if (attributeName.isEmpty() || attributeValue.isNull())
+      {
+      return;
+      }
+    int rowCountBefore = d->NodeAttributesTable->rowCount();
+    d->NodeAttributesTable->insertRow( rowCountBefore );
+    d->NodeAttributesTable->setItem( rowCountBefore, 0, new QTableWidgetItem(attributeName) );
+    d->NodeAttributesTable->setItem( rowCountBefore, 1, new QTableWidgetItem(attributeValue) );
+    return;
+    }
+  else if (attributeValue.isNull())
+    {
+    d->InspectedNode->RemoveAttribute(attributeName.toLatin1());
     return;
     }
 

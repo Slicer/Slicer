@@ -353,7 +353,7 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
     {
     return;
     }
-  if (value != 0)
+  if (value != 0 && strlen(name) > 0)
     {
     this->Attributes[std::string(name)] = std::string(value);
     }

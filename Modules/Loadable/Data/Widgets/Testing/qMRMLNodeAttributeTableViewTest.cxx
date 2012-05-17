@@ -121,7 +121,11 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute()
   QFETCH(QString, value);
   if (setOnNode)
     {
-    node->SetAttribute(attribute.isNull() ? static_cast<const char*>(0) : attribute.toLatin1().constData(),
+    if (attribute.isNull())
+    {
+      return;
+    }
+    node->SetAttribute(attribute.toLatin1().constData(),
                        value.isNull() ? static_cast<const char*>(0) : value.toLatin1().constData());
     }
   else
@@ -202,7 +206,10 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
   this->NodeAttributeTableView->addAttribute();
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
 
-  this->NodeAttributeTableView->renameAttribute(QString(""), QString("Attribute2"));
+  this->NodeAttributeTableView->selectItemRange(1,0,1,0);
+  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
+  this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+  this->NodeAttributeTableView->renameAttribute(QString("NewAttributeName"), QString("Attribute2"));
   QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttributeNames().size(), 2);
 }
 
