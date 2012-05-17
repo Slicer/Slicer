@@ -234,6 +234,7 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
 //-----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableView::storeSelectedAttributeTableItem(QTableWidgetItem* selectedItem, QTableWidgetItem* previousItem)
 {
+  Q_UNUSED(previousItem);
   Q_D(qMRMLNodeAttributeTableView);
 
   d->SelectedAttributeTableItemText = selectedItem ? selectedItem->text() : QString();
