@@ -188,18 +188,18 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
   else if (changedItem->column() == 0)
     {
     QTableWidgetItem* valueItem = d->NodeAttributesTable->item( changedItem->row(), 1 );
-    std::string valueText;
+    QString valueText;
     if (valueItem)
       {
-      valueText = valueItem->text().toStdString();
+      valueText = valueItem->text();
       }
 
     // Don't set if there is another attribute with the same name (would overwrite it)
-    if (d->InspectedNode->GetAttribute(changedItem->text().toLatin1()))
+    if (d->InspectedNode->GetAttribute(changedItem->text().toLatin1().constData()))
       {
       d->setMessage(tr("There is already an attribute with the same name"));
       d->NodeAttributesTable->blockSignals(true);
-      changedItem->setText( d->SelectedAttributeTableItemText.toLatin1() );
+      changedItem->setText( d->SelectedAttributeTableItemText );
       d->NodeAttributesTable->blockSignals(false);
       }
     else
@@ -207,9 +207,9 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
       int wasModifying = d->InspectedNode->StartModify();
 
       d->InspectedNode->SetAttribute(
-        d->SelectedAttributeTableItemText.toLatin1(), 0);
+        d->SelectedAttributeTableItemText.toLatin1().constData(), 0);
       d->InspectedNode->SetAttribute(
-        changedItem->text().toLatin1(), valueText.c_str());
+        changedItem->text().toLatin1().constData(), valueText.toLatin1().constData());
 
       d->InspectedNode->EndModify(wasModifying);
       }
@@ -218,12 +218,12 @@ void qMRMLNodeAttributeTableView::onAttributeChanged(QTableWidgetItem* changedIt
   else if (changedItem->column() == 1)
     {
     QTableWidgetItem* nameItem = d->NodeAttributesTable->item( changedItem->row(), 0 );
-    std::string nameText;
+    QString nameText;
     if (nameItem)
       {
-      nameText = nameItem->text().toStdString();
+      nameText = nameItem->text();
       }
-    d->InspectedNode->SetAttribute( nameText.c_str(), changedItem->text().toLatin1() );
+    d->InspectedNode->SetAttribute( nameText.toLatin1().constData(), changedItem->text().toLatin1().constData() );
     }
 }
 
@@ -244,7 +244,7 @@ QString qMRMLNodeAttributeTableView::generateNewAttributeName() const
   QString newAttributeNameBase("NewAttributeName");
   QString newAttributeName(newAttributeNameBase);
   int i=0;
-  while (d->InspectedNode->GetAttribute(newAttributeName.toLatin1()))
+  while (d->InspectedNode->GetAttribute(newAttributeName.toLatin1().constData()))
     {
     newAttributeName = QString("%1%2").arg(newAttributeNameBase).arg(++i);
     }
@@ -298,7 +298,7 @@ void qMRMLNodeAttributeTableView::removeSelectedAttributes()
   for (QSet<int>::iterator it = affectedRowNumbers.begin(); it != affectedRowNumbers.end(); ++it)
     {
     QString attributeNameToDelete( d->NodeAttributesTable->item((*it), 0)->text() );
-    d->InspectedNode->RemoveAttribute( attributeNameToDelete.toLatin1() );
+    d->InspectedNode->RemoveAttribute( attributeNameToDelete.toLatin1().constData() );
     }
 
   d->InspectedNode->Modified();
@@ -382,7 +382,7 @@ void qMRMLNodeAttributeTableView::setAttribute(const QString& attributeName, con
     }
   else if (attributeValue.isNull())
     {
-    d->InspectedNode->RemoveAttribute(attributeName.toLatin1());
+    d->InspectedNode->RemoveAttribute(attributeName.toLatin1().constData());
     return;
     }
 
