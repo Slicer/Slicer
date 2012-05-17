@@ -5,6 +5,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLAbstractLogicSceneEventsTest.cxx
   vtkMRMLColorLogicTest1.cxx
   vtkMRMLDisplayableHierarchyLogicTest1.cxx
+  vtkMRMLLayoutLogicCompareTest.cxx
   vtkMRMLLayoutLogicTest1.cxx
   vtkMRMLLayoutLogicTest2.cxx
   vtkMRMLModelHierarchyLogicTest1.cxx
@@ -30,6 +31,7 @@ SIMPLE_TEST( vtkMRMLAbstractLogicSceneEventsTest )
 SIMPLE_TEST( vtkMRMLColorLogicTest1 )
 SIMPLE_TEST( vtkMRMLDisplayableHierarchyLogicTest1 )
 SIMPLE_TEST( vtkMRMLModelHierarchyLogicTest1 )
+SIMPLE_TEST( vtkMRMLLayoutLogicCompareTest )
 SIMPLE_TEST( vtkMRMLLayoutLogicTest1 )
 SIMPLE_TEST( vtkMRMLLayoutLogicTest2 )
 SIMPLE_TEST( vtkMRMLSliceLogicTest1 )

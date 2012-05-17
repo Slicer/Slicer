@@ -231,7 +231,10 @@ bool vtkMRMLLayoutNode::SetLayoutDescription(int layout, const char* layoutDescr
     return true;
     }
   this->Layouts[layout] = std::string(layoutDescription);
+  int wasModifying = this->StartModify();
+  this->UpdateCurrentLayoutDescription();
   this->Modified();
+  this->EndModify(wasModifying);
   return true;
 }
 
