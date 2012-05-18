@@ -47,6 +47,7 @@
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <cassert>
 
 //----------------------------------------------------------------------------
 void SetupRenderer(vtkRenderWindow* renderWindow, vtkRenderer* renderer)
