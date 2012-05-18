@@ -132,13 +132,13 @@ bool qSlicerVolumesIO::load(const IOProperties& properties)
     {
     options |= properties["singleFile"].toBool() ? 0x4 : 0x0;
     }
-  if (properties.contains("autowindowlevel"))
+  if (properties.contains("autoWindowLevel"))
     {
-    options |= properties["autowindowlevel"].toBool() ? 0x8 : 0x0;
+    options |= properties["autoWindowLevel"].toBool() ? 0x8: 0x0;
     }
-  if (properties.contains("discardorientation"))
+  if (properties.contains("discardOrientation"))
     {
-    options |= properties["discardorientation"].toBool() ? 0x10 : 0x0;
+    options |= properties["discardOrientation"].toBool() ? 0x10 : 0x0;
     }
   vtkSmartPointer<vtkStringArray> fileList;
   if (properties.contains("fileNames"))
