@@ -20,7 +20,9 @@
 
 // Qt includes
 #include <QNetworkCookieJar>
+#include <QNetworkReply>
 #include <QSettings>
+#include <QTime>
 #include <QWebFrame>
 
 // CTK includes
@@ -60,6 +62,8 @@ public:
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 
+  QTime DownloadTime;
+
   QString SlicerRevision;
   QString SlicerOs;
   QString SlicerArch;
@@ -88,6 +92,8 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
 
   QObject::connect(this->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
                    q, SLOT(initJavascript()));
+
+  this->ProgressBar->setVisible(false);
 }
 
 // --------------------------------------------------------------------------
@@ -176,6 +182,8 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
   disconnect(this, SLOT(onExtensionUninstalled(QString)));
   disconnect(this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
   disconnect(this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
+  disconnect(this, SLOT(onDownloadStarted(QNetworkReply*)));
+  disconnect(this, SLOT(onDownloadFinished(QNetworkReply*)));
 
   d->ExtensionsManagerModel = model;
 
@@ -195,6 +203,12 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
 
     QObject::connect(model, SIGNAL(messageLogged(QString,ctkErrorLogLevel::LogLevels)),
                      this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
+
+    QObject::connect(model, SIGNAL(downloadStarted(QNetworkReply*)),
+                     this, SLOT(onDownloadStarted(QNetworkReply*)));
+
+    QObject::connect(model, SIGNAL(downloadFinished(QNetworkReply*)),
+                     this, SLOT(onDownloadFinished(QNetworkReply*)));
     }
 }
 
@@ -259,6 +273,52 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
     }
 
   d->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onDownloadStarted(QNetworkReply* reply)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
+          SLOT(onDownloadProgress(qint64,qint64)));
+  d->DownloadTime.start();
+  d->ProgressBar->setVisible(true);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+
+  // Calculate the download speed
+  double speed = bytesReceived * 1000.0 / d->DownloadTime.elapsed();
+  QString unit;
+  if (speed < 1024)
+    {
+    unit = "bytes/sec";
+    }
+  else if (speed < 1024*1024) {
+    speed /= 1024;
+    unit = "kB/s";
+    }
+  else
+    {
+    speed /= 1024*1024;
+    unit = "MB/s";
+    }
+
+  d->ProgressBar->setFormat(QString("%p% (%1 %2)").arg(speed, 3, 'f', 1).arg(unit));
+  d->ProgressBar->setMaximum(bytesTotal);
+  d->ProgressBar->setValue(bytesReceived);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onDownloadFinished(QNetworkReply* reply)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  Q_UNUSED(reply);
+  d->ProgressBar->reset();
+  d->ProgressBar->setVisible(false);
 }
 
 // --------------------------------------------------------------------------

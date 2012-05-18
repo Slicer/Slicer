@@ -23,6 +23,13 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QProgressBar" name="ProgressBar">
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -32,5 +39,6 @@
    <header>QtWebKit/QWebView</header>
   </customwidget>
  </customwidgets>
+ <resources/>
  <connections/>
 </ui>

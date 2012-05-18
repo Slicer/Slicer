@@ -855,6 +855,7 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 
   QNetworkReply * reply = d->NetworkManager.get(QNetworkRequest(downloadUrl));
   reply->setProperty("extension_metadata", extensionMetadata);
+  emit this->downloadStarted(reply);
 }
 
 // --------------------------------------------------------------------------
@@ -864,6 +865,8 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
 
   QUrl downloadUrl = reply->url();
   Q_ASSERT(downloadUrl.hasQueryItem("items"));
+
+  emit this->downloadFinished(reply);
 
   if (reply->error())
     {

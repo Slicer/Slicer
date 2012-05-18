@@ -190,6 +190,10 @@ public slots:
 
 signals:
 
+  void downloadStarted(QNetworkReply * reply);
+
+  void downloadFinished(QNetworkReply * reply);
+
   void modelUpdated();
 
   void extensionInstalled(const QString& extensionName);
