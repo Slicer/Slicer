@@ -187,8 +187,7 @@ void vtkChangeImageCallback::Execute(vtkObject* caller, unsigned long , void* )
       }
     return;
     }
-  vtkRenderWindowInteractor *iren =
-    vtkRenderWindowInteractor::SafeDownCast(caller);
+  assert(vtkRenderWindowInteractor::SafeDownCast(caller));
   this->CurrentImageData = (this->CurrentImageData + 1)
     % this->ImageDataCollection->GetNumberOfItems();
   vtkImageData* newImageData = vtkImageData::SafeDownCast(
@@ -254,7 +253,8 @@ bool TestChangeImageData(int copyBehavior, vtkImageData* screenShot)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingMultiVolumeTest(int argc, char* argv[])
+int vtkMRMLVolumeRenderingMultiVolumeTest(int vtkNotUsed(argc),
+                                          char* vtkNotUsed(argv)[])
 {
   bool res = true;
   // Save the output image of the Test and compare each output to make sure
