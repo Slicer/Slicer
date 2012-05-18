@@ -346,14 +346,15 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLNode::SetAttribute(const char* name, const char* value)
 {
-  assert(name != 0);
   const char* oldValue = this->GetAttribute(name);
-  if ((!oldValue && !value) ||
+  if (name == 0 ||
+      strlen(name) == 0 ||
+      (!oldValue && !value) ||
       (oldValue && value && !strcmp(oldValue, value)))
     {
     return;
     }
-  if (value != 0 && strlen(name) > 0)
+  if (value != 0)
     {
     this->Attributes[std::string(name)] = std::string(value);
     }

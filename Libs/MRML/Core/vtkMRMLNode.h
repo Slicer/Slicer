@@ -226,6 +226,7 @@ public:
   /// Attributes are written in the XML.
   /// If value is 0, the attribute \a name is removed
   /// from the pair list.
+  /// no-op if \a name is null or empty
   void SetAttribute(const char* name, const char* value);
 
   /// 
