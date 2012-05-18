@@ -563,9 +563,17 @@ bool qSlicerSaveDataDialogPrivate::save()
     {
     return false;
     }
-  if (this->mustSceneBeSaved() && !this->saveScene())
+  if (this->mustSceneBeSaved())
     {
-    return false;
+    if (!this->saveScene())
+      {
+      return false;
+      }
+    }
+  else
+    {
+    // restore the root directory only if the scene is not saved
+    this->restoreAfterSaving();
     }
   return true;
 }
@@ -714,6 +722,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
     }
   QTableWidgetItem* nodeNameItem = 
     this->FileWidget->item(found[0].row(), NodeNameColumn);
+  std::cout << "MUST SCENE BE SAVED: " << nodeNameItem->checkState();
   return nodeNameItem->checkState() == Qt::Checked;
 }
 
@@ -751,7 +760,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
 bool qSlicerSaveDataDialogPrivate::prepareForSaving()
 {
   QFileInfo file = this->sceneFile();
-  if (file.exists())
+  if (file.exists() && this->mustSceneBeSaved())
     {
     QMessageBox::StandardButton answer = 
       QMessageBox::question(this, "Saving scene", "Scene file \""
@@ -763,17 +772,31 @@ bool qSlicerSaveDataDialogPrivate::prepareForSaving()
       return false;
       }
     }
-  this->MRMLScene->SetRootDirectory(file.absoluteDir().absolutePath().toLatin1());
+  this->MRMLSceneRootDirectoryBeforeSaving = this->MRMLScene->GetRootDirectory();
+  this->setSceneRootDirectory(file.absoluteDir().absolutePath().toLatin1());
+  return true;
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::restoreAfterSaving()
+{
+  this->setSceneRootDirectory(this->MRMLSceneRootDirectoryBeforeSaving);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::setSceneRootDirectory(const QString& dir)
+{
+  this->MRMLScene->SetRootDirectory(dir.toLatin1());
 
   // update the root directory of scene snapshot nodes (not sure why)
-  const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneSnapshotNode");
+  const int nnodes = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
   for (int n=0; n<nnodes; n++)
     {
-    vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneSnapshotNode");
+    vtkMRMLNode* node = this->MRMLScene->GetNthNodeByClass(n, "vtkMRMLSceneViewNode");
     vtkMRMLSceneViewNode *snode = vtkMRMLSceneViewNode::SafeDownCast(node);
     snode->GetNodes()->SetRootDirectory(this->MRMLScene->GetRootDirectory());
     }
-  return true;
 }
 
 //-----------------------------------------------------------------------------

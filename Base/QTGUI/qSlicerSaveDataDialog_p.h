@@ -57,9 +57,14 @@ protected:
     FileDirectoryColumn = 5
   };
 
+  bool              mustSceneBeSaved()const;
   bool              prepareForSaving();
+  void              restoreAfterSaving();
+  void              setSceneRootDirectory(const QString& rootDirectory);
+
   void              populateScene();
   void              populateNode(vtkMRMLStorableNode* node);
+
   QFileInfo         nodeFileInfo(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeNameItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeTypeItem(vtkMRMLStorableNode* node);
@@ -67,9 +72,9 @@ protected:
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
   QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
-  bool              mustSceneBeSaved()const;
 
   vtkMRMLScene* MRMLScene;
+  QString MRMLSceneRootDirectoryBeforeSaving;
 };
 
 //-----------------------------------------------------------------------------
