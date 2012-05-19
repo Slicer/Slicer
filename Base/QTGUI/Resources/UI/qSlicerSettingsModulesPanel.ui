@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Module Settings</string>
+   <string>Module</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="fieldGrowthPolicy">
@@ -423,11 +423,20 @@
    </item>
    <item row="10" column="0">
     <widget class="QLabel" name="FavoritesModulesLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="toolTip">
       <string>Add to the list by dragging modules from the above &quot;Modules&quot; list. Note: modules with no icons will not appear in the toolbar.</string>
      </property>
      <property name="text">
-      <string>Favorites:</string>
+      <string>Favorite Modules:&lt;br&gt;&lt;small&gt;&lt;i&gt;Drag &amp;amp; drop from &lt;/i&gt;Modules&lt;i&gt; list&lt;/i&gt;&lt;/small&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -448,7 +457,7 @@
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
        <property name="dragDropMode">
-        <enum>QAbstractItemView::DropOnly</enum>
+        <enum>QAbstractItemView::DragDrop</enum>
        </property>
        <property name="defaultDropAction">
         <enum>Qt::CopyAction</enum>

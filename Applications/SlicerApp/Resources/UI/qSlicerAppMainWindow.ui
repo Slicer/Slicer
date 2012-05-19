@@ -209,7 +209,7 @@
   </widget>
   <widget class="QToolBar" name="ModuleToolBar">
    <property name="windowTitle">
-    <string>Module Shortcuts</string>
+    <string>Favorite Modules</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -1137,6 +1137,7 @@
   <include location="../SlicerApp.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
+  <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>
  </resources>

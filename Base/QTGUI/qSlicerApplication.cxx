@@ -163,22 +163,22 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog = new ctkSettingsDialog(0);
   this->SettingsDialog->setResetButton(true);
 
-  this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
+  this->SettingsDialog->addPanel("General", new qSlicerSettingsGeneralPanel);
 
   qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
-  this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
+  this->SettingsDialog->addPanel("Modules", settingsModulesPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
-  this->SettingsDialog->addPanel("Extensions settings", settingsExtensionsPanel);
+  this->SettingsDialog->addPanel("Extensions", settingsExtensionsPanel);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
-  this->SettingsDialog->addPanel("Cache settings", cachePanel);
+  this->SettingsDialog->addPanel("Cache", cachePanel);
 
 #ifdef Slicer_USE_QtTesting
   qSlicerSettingsQtTestingPanel* qtTestingPanel = new qSlicerSettingsQtTestingPanel;
-  this->SettingsDialog->addPanel("QtTesting settings", qtTestingPanel);
+  this->SettingsDialog->addPanel("QtTesting", qtTestingPanel);
 #endif
 
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),

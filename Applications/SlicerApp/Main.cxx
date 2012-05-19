@@ -108,7 +108,7 @@ void initializePythonConsole(ctkPythonConsole& pythonConsole)
   pythonConsole.resize(600, 280);
 
   qSlicerApplication::application()->settingsDialog()->addPanel(
-    "Python settings", new qSlicerSettingsPythonPanel);
+    "Python", new qSlicerSettingsPythonPanel);
 
   // Show pythonConsole if required
   qSlicerCommandOptions * options = qSlicerApplication::application()->commandOptions();
