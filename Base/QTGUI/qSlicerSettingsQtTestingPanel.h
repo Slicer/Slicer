@@ -37,7 +37,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsQtTestingPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
-  Q_PROPERTY(bool restartRequested READ restartRequested WRITE setRestartRequested)
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -48,17 +47,10 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsQtTestingPanel();
 
-  /// Return True if the application is expected to be restarted.
-  bool restartRequested()const;
-
-  /// \sa restartRequested()
-  void setRestartRequested(bool value);
-
 public slots:
-  virtual void resetSettings();
-  void enableQtTesting(bool value);
 
 protected slots:
+  void enableQtTesting(bool value);
 
 protected:
   QScopedPointer<qSlicerSettingsQtTestingPanelPrivate> d_ptr;

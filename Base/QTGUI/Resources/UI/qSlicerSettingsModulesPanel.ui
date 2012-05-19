@@ -148,13 +148,6 @@
      </layout>
     </widget>
    </item>
-   <item row="11" column="1">
-    <widget class="QLabel" name="RestartRequestedLabel">
-     <property name="text">
-      <string>&lt;font color=&quot;red&quot;&gt;* Restart requested&lt;/font&gt;</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0">
     <widget class="QLabel" name="DisableModulesLabel">
      <property name="toolTip">

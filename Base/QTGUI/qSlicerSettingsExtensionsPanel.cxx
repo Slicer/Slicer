@@ -41,8 +41,6 @@ protected:
 public:
   qSlicerSettingsExtensionsPanelPrivate(qSlicerSettingsExtensionsPanel& object);
   void init();
-
-  bool RestartRequested;
 };
 
 // --------------------------------------------------------------------------
@@ -52,7 +50,6 @@ public:
 qSlicerSettingsExtensionsPanelPrivate::qSlicerSettingsExtensionsPanelPrivate(qSlicerSettingsExtensionsPanel& object)
   :q_ptr(&object)
 {
-  this->RestartRequested = false;
 }
 
 // --------------------------------------------------------------------------
@@ -74,7 +71,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   // Register settings
   q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)));
+                      "checked", SIGNAL(toggled(bool)),
+                      "Enable/Disable extension manager", ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
                       "text", SIGNAL(textChanged(QString)));
   q->registerProperty("Extensions/InstallPath", this->ExtensionsInstallPathButton,
@@ -87,9 +85,6 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                    q, SLOT(onExensionsServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(onExensionsPathChanged(QString)));
-
-  // Hide 'Restart requested' label
-  q->setRestartRequested(false);
 }
 
 // --------------------------------------------------------------------------
@@ -110,32 +105,9 @@ qSlicerSettingsExtensionsPanel::~qSlicerSettingsExtensionsPanel()
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerSettingsExtensionsPanel::restartRequested()const
-{
-  Q_D(const qSlicerSettingsExtensionsPanel);
-  return d->RestartRequested;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsExtensionsPanel::setRestartRequested(bool value)
-{
-  Q_D(qSlicerSettingsExtensionsPanel);
-  d->RestartRequested = value;
-  d->RestartRequestedLabel->setVisible(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsExtensionsPanel::resetSettings()
-{
-  this->Superclass::resetSettings();
-  this->setRestartRequested(false);
-}
-
-// --------------------------------------------------------------------------
 void qSlicerSettingsExtensionsPanel::onExtensionsManagerEnabled(bool value)
 {
-  bool previous = this->previousPropertyValue("Extensions/ManagerEnabled").toBool();
-  this->setRestartRequested(value != previous);
+  Q_UNUSED(value);
 }
 
 // --------------------------------------------------------------------------

@@ -37,7 +37,6 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerSettingsExtensionsPanel
   : public ctkSettingsPanel
 {
   Q_OBJECT
-  Q_PROPERTY(bool restartRequested READ restartRequested WRITE setRestartRequested)
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -47,15 +46,6 @@ public:
 
   /// Destructor
   virtual ~qSlicerSettingsExtensionsPanel();
-
-  /// Return True if the application is expected to be restarted.
-  bool restartRequested()const;
-
-  /// \sa restartRequested()
-  void setRestartRequested(bool value);
-
-public slots:
-  virtual void resetSettings();
 
 protected slots:
   void onExtensionsManagerEnabled(bool value);

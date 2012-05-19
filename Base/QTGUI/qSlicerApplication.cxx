@@ -161,17 +161,16 @@ void qSlicerApplicationPrivate::init()
   // Settings Dialog
   //----------------------------------------------------------------------------
   this->SettingsDialog = new ctkSettingsDialog(0);
+  this->SettingsDialog->setResetButton(true);
 
   this->SettingsDialog->addPanel("General settings", new qSlicerSettingsGeneralPanel);
 
   qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog->addPanel("Modules settings", settingsModulesPanel);
-  settingsModulesPanel->setRestartRequested(false);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;
   this->SettingsDialog->addPanel("Extensions settings", settingsExtensionsPanel);
-  settingsExtensionsPanel->setRestartRequested(false);
 #endif
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
@@ -182,8 +181,8 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel("QtTesting settings", qtTestingPanel);
 #endif
 
-  QObject::connect(this->SettingsDialog, SIGNAL(accepted()),
-                   q, SLOT(onSettingDialogAccepted()));
+  QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
+                   q, SLOT(restart()));
 
   //----------------------------------------------------------------------------
   // Test Utility
@@ -479,42 +478,4 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 {
   Q_D(const qSlicerApplication);
   return d->SettingsDialog;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerApplication::onSettingDialogAccepted()
-{
-  Q_D(qSlicerApplication);
-  QStringList reasons;
-
-  qSlicerSettingsModulesPanel *settingsModulesPanel =
-    qobject_cast<qSlicerSettingsModulesPanel*>(
-      d->SettingsDialog->panel("Modules settings"));
-  Q_ASSERT(settingsModulesPanel);
-  if (settingsModulesPanel->restartRequested())
-    {
-    reasons << "Module paths have been updated.";
-    }
-
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerSettingsExtensionsPanel *settingsExtensionsPanel =
-    qobject_cast<qSlicerSettingsExtensionsPanel*>(
-      d->SettingsDialog->panel("Extensions settings"));
-  Q_ASSERT(settingsExtensionsPanel);
-  if (settingsExtensionsPanel->restartRequested())
-    {
-    reasons << "Extension manager visibility has been updated.";
-    }
-#endif
-
-  if (reasons.count() > 0)
-    {
-    QString formattedReasons;
-    foreach(const QString& reason, reasons)
-      {
-      formattedReasons += QString("<li>%1</li>").arg(reason);
-      }
-    this->confirmRestart(QString("Do you want to restart now?"
-                                 "<ul>%1</ul>").arg(formattedReasons));
-    }
 }

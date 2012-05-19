@@ -39,8 +39,6 @@ protected:
 public:
   qSlicerSettingsQtTestingPanelPrivate(qSlicerSettingsQtTestingPanel& object);
   void init();
-
-  bool RestartRequested;
 };
 
 // --------------------------------------------------------------------------
@@ -51,7 +49,6 @@ qSlicerSettingsQtTestingPanelPrivate
 ::qSlicerSettingsQtTestingPanelPrivate(qSlicerSettingsQtTestingPanel& object)
   :q_ptr(&object)
 {
-  this->RestartRequested = false;
 }
 
 // --------------------------------------------------------------------------
@@ -66,14 +63,12 @@ void qSlicerSettingsQtTestingPanelPrivate::init()
 
   // Register settings
   q->registerProperty("QtTesting/Enabled", this->QtTestingEnabledCheckBox,
-                      "checked", SIGNAL(toggled(bool)));
+                      "checked", SIGNAL(toggled(bool)),
+                      "Enable/Disable QtTesting", ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->QtTestingEnabledCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(enableQtTesting(bool)));
-
-  // Hide 'Restart requested' label
-  q->setRestartRequested(false);
 }
 
 // --------------------------------------------------------------------------
@@ -94,30 +89,7 @@ qSlicerSettingsQtTestingPanel::~qSlicerSettingsQtTestingPanel()
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerSettingsQtTestingPanel::restartRequested()const
-{
-  Q_D(const qSlicerSettingsQtTestingPanel);
-  return d->RestartRequested;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsQtTestingPanel::setRestartRequested(bool value)
-{
-  Q_D(qSlicerSettingsQtTestingPanel);
-  d->RestartRequested = value;
-  d->RestartRequestedLabel->setVisible(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsQtTestingPanel::resetSettings()
-{
-  this->Superclass::resetSettings();
-  this->setRestartRequested(false);
-}
-
-// --------------------------------------------------------------------------
 void qSlicerSettingsQtTestingPanel::enableQtTesting(bool value)
 {
-  bool previous = this->previousPropertyValue("QtTesting/Enabled").toBool();
-  this->setRestartRequested(value != previous);
+  Q_UNUSED(value);
 }

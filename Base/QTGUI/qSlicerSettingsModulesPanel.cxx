@@ -47,7 +47,6 @@ public:
   void init();
 
   qSlicerModulesMenu* ModulesMenu;
-  bool RestartRequested;
 };
 
 // --------------------------------------------------------------------------
@@ -58,7 +57,6 @@ qSlicerSettingsModulesPanelPrivate::qSlicerSettingsModulesPanelPrivate(qSlicerSe
   :q_ptr(&object)
 {
   this->ModulesMenu = 0;
-  this->RestartRequested = false;
 }
 
 // --------------------------------------------------------------------------
@@ -146,9 +144,11 @@ void qSlicerSettingsModulesPanelPrivate::init()
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
-                      "directoryList", SIGNAL(directoryListChanged()));
+                      "directoryList", SIGNAL(directoryListChanged()),
+                      "Additional module paths", ctkSettingsPanel::OptionRequireRestart);
   q->registerProperty("Modules/IgnoreModules", factoryManager,
-                      "modulesToIgnore", SIGNAL(modulesToIgnoreChanged(QStringList)));
+                      "modulesToIgnore", SIGNAL(modulesToIgnoreChanged(QStringList)),
+                      "Modules to ignore", ctkSettingsPanel::OptionRequireRestart);
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(QString)),
@@ -165,9 +165,6 @@ void qSlicerSettingsModulesPanelPrivate::init()
   // Connect Modules to ignore
   QObject::connect(factoryManager, SIGNAL(modulesToIgnoreChanged(QStringList)),
                    q, SLOT(onModulesToIgnoreChanged()));
-
-  // Hide 'Restart requested' label
-  q->setRestartRequested(false);
 }
 
 // --------------------------------------------------------------------------
@@ -185,43 +182,6 @@ qSlicerSettingsModulesPanel::qSlicerSettingsModulesPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerSettingsModulesPanel::~qSlicerSettingsModulesPanel()
 {
-}
-
-// --------------------------------------------------------------------------
-bool qSlicerSettingsModulesPanel::restartRequested()const
-{
-  Q_D(const qSlicerSettingsModulesPanel);
-  return d->RestartRequested;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsModulesPanel::setRestartRequested(bool value)
-{
-  Q_D(qSlicerSettingsModulesPanel);
-  d->RestartRequested = value;
-  d->RestartRequestedLabel->setVisible(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsModulesPanel::resetSettings()
-{
-  this->Superclass::resetSettings();
-  this->setRestartRequested(false);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsModulesPanel::restoreDefaultSettings()
-{
-  bool shouldRestart = false;
-  if (this->defaultPropertyValue("Modules/AdditionalPaths").toStringList()
-      != this->previousPropertyValue("Modules/AdditionalPaths").toStringList() ||
-      this->defaultPropertyValue("Modules/IgnoreModules").toStringList()
-      != this->previousPropertyValue("Modules/IgnoreModules").toStringList())
-    {
-    shouldRestart = true;
-    }
-  this->Superclass::restoreDefaultSettings();
-  this->setRestartRequested(shouldRestart);
 }
 
 // --------------------------------------------------------------------------
@@ -260,18 +220,11 @@ void qSlicerSettingsModulesPanel::onAdditionalModulePathsChanged()
   Q_D(qSlicerSettingsModulesPanel);
   d->RemoveAdditionalModulePathButton->setEnabled(
         d->AdditionalModulePathsView->directoryList().count() > 0);
-  this->setRestartRequested(true);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerSettingsModulesPanel::onModulesToIgnoreChanged()
 {
-  Q_D(qSlicerSettingsModulesPanel);
-  QStringList current = d->DisableModulesListView->factoryManager()->modulesToIgnore();
-  QStringList previous = this->previousPropertyValue("Modules/IgnoreModules").toStringList();
-  current.sort();
-  previous.sort();
-  this->setRestartRequested(current != previous);
 }
 
 // --------------------------------------------------------------------------
