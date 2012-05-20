@@ -131,17 +131,18 @@ public slots:
   void setMRMLTransformNode(vtkMRMLNode* node);
 
   /// 
-  /// Reset all sliders to their 0 position and value
+  /// Reset all sliders to their 0 position and value.
+  /// Note that it can change the transform node values.
   void reset();
 
-  /// Reset all sliders but the one that are currently active (i.e. the user
-  /// is changing its value.
+  ///
+  /// Reset all sliders but the one that is currently active (i.e. the user
+  /// is changing its value. The reset doesn't fire any event and the node
+  /// is not modified. If no slider is active, then all sliders are reset.
   void resetUnactiveSliders();
 
 protected slots:
-  void onLRSliderPositionChanged(double position);
-  void onPASliderPositionChanged(double position);
-  void onISSliderPositionChanged(double position);
+  void onSliderPositionChanged(double position);
 
   void onMinimumChanged(double min);
   void onMaximumChanged(double max);

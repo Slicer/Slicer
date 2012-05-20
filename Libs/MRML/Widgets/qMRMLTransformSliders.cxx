@@ -59,11 +59,11 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
 
   
   this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
-                SLOT(onLRSliderPositionChanged(double)));
+                SLOT(onSliderPositionChanged(double)));
   this->connect(d->PASlider, SIGNAL(valueChanged(double)),
-                SLOT(onPASliderPositionChanged(double)));
+                SLOT(onSliderPositionChanged(double)));
   this->connect(d->ISSlider, SIGNAL(valueChanged(double)),
-                SLOT(onISSliderPositionChanged(double)));
+                SLOT(onSliderPositionChanged(double)));
   
   this->connect(d->MinValueSpinBox, SIGNAL(valueChanged(double)),
                 SLOT(onMinimumChanged(double)));
@@ -326,87 +326,42 @@ void qMRMLTransformSliders::resetUnactiveSliders()
   
   if (!d->ActiveSliders.contains(d->LRSlider))
     {
-    d->LRSlider->blockSignals(true);
+    bool blocked = d->LRSlider->blockSignals(true);
     d->LRSlider->reset();
-    d->LRSlider->blockSignals(false);
+    d->LRSlider->blockSignals(blocked);
     }
   if (!d->ActiveSliders.contains(d->PASlider))
     {
-    d->PASlider->blockSignals(true);
+    bool blocked = d->PASlider->blockSignals(true);
     d->PASlider->reset();
-    d->PASlider->blockSignals(false);
+    d->PASlider->blockSignals(blocked);
     }
   if (!d->ActiveSliders.contains(d->ISSlider))
     {
-    d->ISSlider->blockSignals(true);
+    bool blocked = d->ISSlider->blockSignals(true);
     d->ISSlider->reset();
-    d->ISSlider->blockSignals(false);
+    d->ISSlider->blockSignals(blocked);
     }
 }
 
 // --------------------------------------------------------------------------
-void qMRMLTransformSliders::onLRSliderPositionChanged(double position)
+void qMRMLTransformSliders::onSliderPositionChanged(double position)
 {
   Q_D(qMRMLTransformSliders);
-  d->ActiveSliders.push(d->LRSlider);
+  qMRMLLinearTransformSlider* slider =
+    qobject_cast<qMRMLLinearTransformSlider*>(this->sender());
+  Q_ASSERT(slider);
+  d->ActiveSliders.push(slider);
 
   if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
     {
-    // Reset other sliders
-    d->PASlider->blockSignals(true);
-    d->PASlider->reset();
-    d->PASlider->blockSignals(false);
-    d->ISSlider->blockSignals(true);
-    d->ISSlider->reset();
-    d->ISSlider->blockSignals(false);
+    // When a rotation slider is manipulated, the other rotation sliders are
+    // reset to 0. Resetting the other sliders should no fire any event.
+    this->resetUnactiveSliders();
     }
-  // Update LR slider
-  d->LRSlider->applyTransformation(position);
+  slider->applyTransformation(position);
   emit this->valuesChanged();
 
   d->ActiveSliders.pop();
 }
 
-// --------------------------------------------------------------------------
-void qMRMLTransformSliders::onPASliderPositionChanged(double position)
-{
-  Q_D(qMRMLTransformSliders);
-  d->ActiveSliders.push(d->PASlider);
-
-  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
-    {
-    // Reset other sliders
-    d->LRSlider->blockSignals(true);
-    d->LRSlider->reset();
-    d->LRSlider->blockSignals(false);
-    d->ISSlider->blockSignals(true);
-    d->ISSlider->reset();
-    d->ISSlider->blockSignals(false);
-    }
-  // Update PA slider
-  d->PASlider->applyTransformation(position);
-  emit this->valuesChanged();
-  d->ActiveSliders.pop();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLTransformSliders::onISSliderPositionChanged(double position)
-{
-  Q_D(qMRMLTransformSliders);
-   d->ActiveSliders.push(d->ISSlider);
-  if (this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
-    {
-    // Reset other sliders
-    d->LRSlider->blockSignals(true);
-    d->LRSlider->reset();
-    d->LRSlider->blockSignals(false);
-    d->PASlider->blockSignals(true);
-    d->PASlider->reset();
-    d->PASlider->blockSignals(false);
-    }
-  
-  // Update IS slider
-  d->ISSlider->applyTransformation(position);
-  emit this->valuesChanged();
-  d->ActiveSliders.pop();
-}
