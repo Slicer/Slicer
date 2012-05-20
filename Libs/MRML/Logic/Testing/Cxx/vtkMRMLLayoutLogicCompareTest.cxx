@@ -46,7 +46,7 @@ bool TestSetSlicerLayoutCompareGridView()
     std::cout << __LINE__ << ": SetViewArrangement(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   layoutNode->SetNumberOfCompareViewRows(2);
@@ -55,7 +55,7 @@ bool TestSetSlicerLayoutCompareGridView()
     std::cout << __LINE__ << ": SetNumberOfCompareViewRows(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   layoutNode->SetNumberOfCompareViewColumns(2);
@@ -64,8 +64,9 @@ bool TestSetSlicerLayoutCompareGridView()
     std::cout << __LINE__ << ": SetNumberOfCompareViewRows(Grid) failed. "
               << layoutLogic->GetViewNodes()->GetNumberOfItems() << " views."
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -152,4 +153,5 @@ bool TestSetSlicerLayoutCompareGridViewEvents()
     return false;
     }
   spy->ResetNumberOfEvents();
+  return true;
 }
