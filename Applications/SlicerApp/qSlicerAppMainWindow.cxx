@@ -52,9 +52,6 @@
 #endif
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreCommandOptions.h"
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-# include "qSlicerExtensionsManagerDialog.h"
-#endif
 #include "qSlicerLayoutManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerModulesMenu.h"
@@ -94,10 +91,6 @@ public:
   qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
   QStringList                   FavoriteModules;
   qSlicerLayoutManager*         LayoutManager;
-
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
-#endif
 
   QByteArray                    StartupState;
 };
@@ -381,14 +374,6 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   this->actionHelpAboutSlicerApp->setIcon(informationIcon);
   this->actionHelpReportBugOrFeatureRequest->setIcon(questionIcon);
   this->actionHelpVisualBlog->setIcon(networkIcon);
-
-  //----------------------------------------------------------------------------
-  // Dialogs
-  //----------------------------------------------------------------------------
-
-#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(q);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -714,11 +699,7 @@ void qSlicerAppMainWindow::onViewExtensionManagerActionTriggered()
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Q_D(qSlicerAppMainWindow);
   qSlicerApplication * app = qSlicerApplication::application();
-  d->ExtensionsManagerDialog->setExtensionsManagerModel(app->extensionManagerModel());
-  if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
-    {
-    app->confirmRestart();
-    }
+  app->openExtensionManagerDialog();
 #endif
 }
 

@@ -59,12 +59,12 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 
   this->setupUi(q);
 
-  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
+  qSlicerApplication * app = qSlicerApplication::application();
 
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
   this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
-  this->ExtensionsInstallPathButton->setDirectory(coreApp->defaultExtensionsInstallPath());
+  this->ExtensionsInstallPathButton->setDirectory(app->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
   this->ExtensionsInstallPathButton->setDisabled(true);
 #endif
@@ -85,6 +85,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                    q, SLOT(onExensionsServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(onExensionsPathChanged(QString)));
+  QObject::connect(this->OpenExtensionManagerPushButton, SIGNAL(clicked()),
+                   app, SLOT(openExtensionManagerDialog()));
 }
 
 // --------------------------------------------------------------------------

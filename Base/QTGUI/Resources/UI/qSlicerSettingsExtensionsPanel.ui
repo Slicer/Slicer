@@ -6,47 +6,87 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>128</height>
+    <width>378</width>
+    <height>164</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Extensions</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="ExtensionsManagerEnabledLabel">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="ExtensionsManagerEnabledLabel">
+       <property name="text">
+        <string>Enable extension manager:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="ExtensionsManagerEnabledCheckBox">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="ExtensionsServerUrlLabel">
+       <property name="text">
+        <string>Extensions server URL:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="ExtensionsServerUrlLineEdit"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="ExtensionsInstallPathLabel">
+       <property name="text">
+        <string>Extensions installation path:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QPushButton" name="OpenExtensionManagerPushButton">
      <property name="text">
-      <string>Enable extension manager:</string>
+      <string>Open Extension Manager...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../qSlicerBaseQTGUI.qrc">
+       <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
      </property>
     </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="ExtensionsManagerEnabledCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="ExtensionsServerUrlLabel">
-     <property name="text">
-      <string>Extensions server URL:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="ExtensionsServerUrlLineEdit"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="ExtensionsInstallPathLabel">
-     <property name="text">
-      <string>Extensions installation path:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton" native="true"/>
    </item>
   </layout>
  </widget>
@@ -63,6 +103,25 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../qSlicerBaseQTGUI.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>ExtensionsManagerEnabledCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>OpenExtensionManagerPushButton</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>4</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>228</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

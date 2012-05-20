@@ -49,6 +49,7 @@
 # include "qSlicerPythonManager.h"
 #endif
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+# include "qSlicerExtensionsManagerDialog.h"
 # include "qSlicerSettingsExtensionsPanel.h"
 #endif
 #include "qSlicerSettingsCachePanel.h"
@@ -100,6 +101,9 @@ public:
   qSlicerLayoutManager*   LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  qSlicerExtensionsManagerDialog* ExtensionsManagerDialog;
+#endif
 #ifdef Slicer_USE_QtTesting
   ctkQtTestingUtility*    TestingUtility;
 #endif
@@ -127,6 +131,10 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
 {
   delete this->SettingsDialog;
   this->SettingsDialog = 0;
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  delete this->ExtensionsManagerDialog;
+  this->ExtensionsManagerDialog =0;
+#endif
 #ifdef Slicer_USE_QtTesing
   delete this->TestingUtility;
   this->TestingUtility = 0;
@@ -183,6 +191,15 @@ void qSlicerApplicationPrivate::init()
 
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
                    q, SLOT(restart()));
+
+  //----------------------------------------------------------------------------
+  // Dialogs
+  //----------------------------------------------------------------------------
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
+  this->ExtensionsManagerDialog->setExtensionsManagerModel(
+    q->extensionManagerModel());
+#endif
 
   //----------------------------------------------------------------------------
   // Test Utility
@@ -479,3 +496,15 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
   Q_D(const qSlicerApplication);
   return d->SettingsDialog;
 }
+
+// --------------------------------------------------------------------------
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+void qSlicerApplication::openExtensionManagerDialog()
+{
+  Q_D(qSlicerApplication);
+  if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
+    {
+    this->confirmRestart();
+    }
+}
+#endif

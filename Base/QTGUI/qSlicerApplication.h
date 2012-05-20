@@ -115,6 +115,10 @@ public slots:
   /// If no \a reason is given, the text will default to ""Are you sure you want to restart?"
   void confirmRestart(QString reason = QString());
 
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  void openExtensionManagerDialog();
+#endif
+
 protected:
   /// Reimplemented from qSlicerCoreApplication
   virtual QSettings* newSettings(const QString& fileName = QString());
