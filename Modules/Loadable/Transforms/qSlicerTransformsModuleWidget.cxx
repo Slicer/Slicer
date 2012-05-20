@@ -100,13 +100,13 @@ void qSlicerTransformsModuleWidget::setup()
 
   // Connect identity button
   this->connect(d->IdentityPushButton,
-                SIGNAL(pressed()),
-                SLOT(onIdentityButtonPressed()));
+                SIGNAL(clicked()),
+                SLOT(identity()));
 
   // Connect revert button
   this->connect(d->InvertPushButton,
-                SIGNAL(pressed()),
-                SLOT(onInvertButtonPressed()));
+                SIGNAL(clicked()),
+                SLOT(invert()));
 
   // Connect node selector with module itself
   this->connect(d->TransformNodeSelector,
@@ -194,25 +194,28 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onIdentityButtonPressed()
+void qSlicerTransformsModuleWidget::identity()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  
-  if (!d->MRMLTransformNode) { return; }
 
+  if (!d->MRMLTransformNode)
+    {
+    return;
+    }
+
+  d->RotationSliders->resetUnactiveSliders();
   d->MRMLTransformNode->GetMatrixTransformToParent()->Identity();
-  d->RotationSliders->reset();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onInvertButtonPressed()
+void qSlicerTransformsModuleWidget::invert()
 {
   Q_D(qSlicerTransformsModuleWidget);
   
   if (!d->MRMLTransformNode) { return; }
 
+  d->RotationSliders->resetUnactiveSliders();
   d->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
-  d->RotationSliders->reset();
 }
 
 //-----------------------------------------------------------------------------
@@ -281,6 +284,9 @@ void qSlicerTransformsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qSlicerTransformsModuleWidget);
   this->Superclass::setMRMLScene(scene);
+  // If the root index is set before the scene, it will show the scene as
+  // top-level item. Setting the root index to be the scene makes the nodes
+  // top-level, and this can only be done once the scene is set.
   d->TransformableTreeView->setRootIndex(
     d->TransformableTreeView->sortFilterProxyModel()->mrmlSceneIndex());
 }

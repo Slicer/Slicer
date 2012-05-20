@@ -45,13 +45,18 @@ public:
   /// Reimplemented for internal reasons
   void setMRMLScene(vtkMRMLScene* scene);
 
+public slots:
+  /// Set the matrix to identity, the sliders are reset to the position 0
+  void identity();
+
+  /// Invert the matrix. The sliders are reset to the position 0.
+  void invert();
+
 protected:
   virtual void setup();
 
 protected slots:
   void onCoordinateReferenceButtonPressed(int id);
-  void onIdentityButtonPressed();
-  void onInvertButtonPressed();
   void onNodeSelected(vtkMRMLNode* node);
   void onTranslationRangeChanged(double newMin, double newMax);
 

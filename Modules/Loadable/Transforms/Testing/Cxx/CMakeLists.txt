@@ -8,11 +8,17 @@ SlicerMacroConfigureGenericCxxModuleTests(${qt_module_name} KIT_TEST_SRCS KIT_TE
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
+  qSlicerTransformsModuleWidgetTest.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 list(APPEND Tests ${KIT_TEST_SRCS})
+
+QT4_GENERATE_MOCS(
+  qSlicerTransformsModuleWidgetTest.cxx
+  )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT})
@@ -20,3 +26,5 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
+
+SIMPLE_TEST(qSlicerTransformsModuleWidgetTest)
