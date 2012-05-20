@@ -37,10 +37,20 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
    this->SeedingRegionSize = 2.5;
    this->SeedingRegionStep = 1.0;
    this->MinimumPathLength = 20.0;
+   this->MaximumPathLength = 800.0;
    this->MaxNumberOfSeeds = 100;
    this->SeedSelectedFiducials = 0;
+   this->ROILabel = 1;
+   this->RandomGrid = 0;
+   this->UseIndexSpace = 0;
+   this->LinearMeasureStart = 0.3;
+   this->SeedSpacing = 2.0;
    this->DisplayMode = 1;
    this->EnableSeeding = 1;
+  
+   this->FilePrefix = NULL;
+   this->FileDirectoryName = NULL;
+   this->WriteToFile = 0;
 
    this->InputVolumeRef = NULL;
    this->InputFiducialRef = NULL;
@@ -85,7 +95,12 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->IntegrationStep;
     of << indent << " IntegrationStep=\"" << ss.str() << "\"";
   }
- {
+  { 
+    std::stringstream ss;
+    ss << this->MaximumPathLength;
+    of << indent << " MaximumPathLength=\"" << ss.str() << "\"";
+  }
+  {
     std::stringstream ss;
     ss << this->MinimumPathLength;
     of << indent << " MinimumPathLength=\"" << ss.str() << "\"";
@@ -100,7 +115,7 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     ss << this->SeedingRegionStep;
     of << indent << " SeedingRegionStep=\"" << ss.str() << "\"";
   }  
-   {
+  {
     std::stringstream ss;
     ss << this->MaxNumberOfSeeds;
     of << indent << " MaxNumberOfSeeds=\"" << ss.str() << "\"";
@@ -114,7 +129,31 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
     of << indent << " displayMode=\"" << ss.str() << "\"";
   }
 
+  {
+    std::stringstream ss;
+    ss << this->ROILabel;
+    of << indent << " ROILabel=\"" << ss.str() << "\"";
+  }
+    
+  of << indent << " randomGrid=\"" << (this->RandomGrid ? "true" : "false") << "\"";
+
+  of << indent << " useIndexSpace=\"" << (this->UseIndexSpace ? "true" : "false") << "\"";
+
+  {
+    std::stringstream ss;
+    ss << this->LinearMeasureStart;
+    of << indent << " linearMeasureStart=\"" << ss.str() << "\"";
+  }
+
+  {
+    std::stringstream ss;
+    ss << this->SeedSpacing;
+    of << indent << " seedSpacing=\"" << ss.str() << "\"";
+  }
+
   of << indent << " enableSeeding=\"" << (this->EnableSeeding ? "true" : "false") << "\"";
+
+  of << indent << " writeToFile=\"" << (this->WriteToFile ? "true" : "false") << "\"";
 
   {
     std::stringstream ss;
@@ -122,6 +161,22 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
       {
       ss << this->InputVolumeRef;
       of << indent << " InputVolumeRef=\"" << ss.str() << "\"";
+     }
+  }
+  {
+    std::stringstream ss;
+    if ( this->FileDirectoryName )
+      {
+      ss << this->FileDirectoryName;
+      of << indent << " fileDirectoryName=\"" << ss.str() << "\"";
+     }
+  }
+  {
+    std::stringstream ss;
+    if ( this->FilePrefix )
+      {
+      ss << this->FilePrefix;
+      of << indent << " filePrefix=\"" << ss.str() << "\"";
      }
   }
   {
@@ -184,6 +239,12 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
       ss << attValue;
       ss >> this->MinimumPathLength;
       }
+    else if (!strcmp(attName, "MaximumPathLength")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->MaximumPathLength;
+      }
     else if (!strcmp(attName, "SeedingRegionSize")) 
       {
       std::stringstream ss;
@@ -213,6 +274,46 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
         this->SeedSelectedFiducials = 0;
         }
       }
+    else if (!strcmp(attName, "ROILabel")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->ROILabel;
+      }
+    else if (!strcmp(attName, "randomGrid")) 
+      {
+     if (!strcmp(attValue,"true")) 
+        {
+        this->RandomGrid = 1;
+        }
+      else
+        {
+        this->RandomGrid = 0;
+        }
+      }
+    else if (!strcmp(attName, "useIndexSpace")) 
+      {
+     if (!strcmp(attValue,"true")) 
+        {
+        this->UseIndexSpace = 1;
+        }
+      else
+        {
+        this->UseIndexSpace = 0;
+        }
+      }
+    else if (!strcmp(attName, "linearMeasureStart")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LinearMeasureStart;
+      }
+    else if (!strcmp(attName, "seedSpacing")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SeedSpacing;
+      }
     else if (!strcmp(attName, "enableSeeding")) 
       {
      if (!strcmp(attValue,"true")) 
@@ -224,6 +325,17 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
         this->EnableSeeding = 0;
         }
       }
+    else if (!strcmp(attName, "writeToFile")) 
+      {
+     if (!strcmp(attValue,"true")) 
+        {
+        this->WriteToFile = 1;
+        }
+      else
+        {
+        this->WriteToFile = 0;
+        }
+      }
     else if (!strcmp(attName, "DisplayMode")) 
       {
       std::stringstream ss;
@@ -231,6 +343,14 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
       ss >> this->DisplayMode;
       }
 
+    else if (!strcmp(attName, "fileDirectoryName"))
+      {
+      this->SetFileDirectoryName(attValue);
+      }
+    else if (!strcmp(attName, "filePrefix"))
+      {
+      this->SetFilePrefix(attValue);
+      }
     else if (!strcmp(attName, "InputVolumeRef"))
       {
       this->SetInputVolumeRef(attValue);
@@ -264,12 +384,21 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetStoppingCurvature(node->StoppingCurvature);
   this->SetIntegrationStep(node->IntegrationStep);
   this->SetMinimumPathLength(node->MinimumPathLength);
+  this->SetMaximumPathLength(node->MaximumPathLength);
   this->SetSeedingRegionSize(node->SeedingRegionSize);
   this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
   this->SetSeedSelectedFiducials(node->SeedSelectedFiducials);
+  this->SetROILabel(node->ROILabel);
+  this->SetRandomGrid(node->RandomGrid);
+  this->SetUseIndexSpace(node->UseIndexSpace);
+  this->SetLinearMeasureStart(node->LinearMeasureStart);
+  this->SetSeedSpacing(node->SeedSpacing);
   this->SetDisplayMode(node->DisplayMode);
   this->SetEnableSeeding(node->EnableSeeding);
+  this->SetWriteToFile(node->WriteToFile);
+  this->SetFileDirectoryName(node->FileDirectoryName);
+  this->SetFilePrefix(node->FilePrefix);
   this->SetInputVolumeRef(node->InputVolumeRef);
   this->SetInputFiducialRef(node->InputFiducialRef);
   this->SetOutputFiberRef(node->OutputFiberRef);
@@ -290,12 +419,25 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
   os << indent << "StoppingCurvature:   " << this->StoppingCurvature << "\n";
   os << indent << "IntegrationStep:   " << this->IntegrationStep << "\n";
   os << indent << "MinimumPathLength:   " << this->MinimumPathLength << "\n";
+  os << indent << "MaximumPathLength:   " << this->MaximumPathLength << "\n";
   os << indent << "SeedingRegionSize:   " << this->SeedingRegionSize << "\n";
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
   os << indent << "SeedSelectedFiducials:   " << this->SeedSelectedFiducials << "\n";
+  os << indent << "ROILabel:   " << this->ROILabel << "\n";
+  os << indent << "RandomGrid:   " << this->RandomGrid << "\n";
+  os << indent << "UseIndexSpace:   " << this->UseIndexSpace << "\n";
+  os << indent << "LinearMeasureStart:   " << this->LinearMeasureStart << "\n";
+  os << indent << "SeedSpacing:   " << this->SeedSpacing << "\n";
   os << indent << "DisplayMode:   " << this->DisplayMode << "\n";
   os << indent << "EnableSeeding:   " << this->EnableSeeding << "\n";
+  os << indent << "WriteToFile:   " << this->WriteToFile << "\n";
+
+  os << indent << "FileDirectoryName:   " << 
+   (this->FileDirectoryName ? this->FileDirectoryName : "(none)") << "\n";
+  os << indent << "FilePrefix:   " << 
+   (this->FilePrefix ? this->FilePrefix : "(none)") << "\n";
+
   os << indent << "InputVolumeRef:   " << 
    (this->InputVolumeRef ? this->InputVolumeRef : "(none)") << "\n";
   os << indent << "InputFiducialRef:   " << 

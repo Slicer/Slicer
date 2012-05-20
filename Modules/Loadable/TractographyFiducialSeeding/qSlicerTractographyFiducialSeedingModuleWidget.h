@@ -81,6 +81,9 @@ public slots:
   /// Set minimum path length, mm
   void setMinimumPath(double value);
 
+  /// Set maximum path length, mm
+  void setMaximumPath(double value);
+
   /// Set the size of fiducial region, mm
   void setFiducialRegion(double value);
 
@@ -95,6 +98,30 @@ public slots:
 
   /// Set max number of seeds
   void setMaxNumberSeeds(int value);
+
+  /// Set linear measure start threshold
+  void setLinearMeasureStart(double value);
+
+  /// Set RPO label
+  void setROILabel(int value);
+
+  /// Set random grid
+  void setRandomGrid(int value);
+
+  /// Set seed spacing
+  void setSeedSpacing(double value);
+
+  /// Set use index space
+  void setUseIndexSpace(int value);
+
+  /// Set use index space
+  void setWriteFibers(int value);
+
+  /// Set otput file directory
+  void setDirectory(const QString &value);
+
+  /// Set otput file prefix
+  void setFilePrefix(const QString &value);
 
   /// Update widget GUI from parameter node
   void updateWidgetFromMRML();

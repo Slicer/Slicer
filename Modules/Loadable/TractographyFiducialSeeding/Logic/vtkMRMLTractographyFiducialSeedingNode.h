@@ -98,7 +98,13 @@ public:
   // Currently only used in SeedAndSaveStreamlinesInROI.
   vtkGetMacro(MinimumPathLength,double);
   vtkSetMacro(MinimumPathLength,double);
- 
+
+  // Description
+  // Maximum length in mm for a path (otherwise the path will be deleted).
+  // Currently only used in SeedAndSaveStreamlinesInROI.
+  vtkGetMacro(MaximumPathLength,double);
+  vtkSetMacro(MaximumPathLength,double);
+
   // Description:
   // Specifies whether seed only from selected fiducials
   vtkBooleanMacro(SeedSelectedFiducials, int);
@@ -119,6 +125,49 @@ public:
   vtkGetMacro(EnableSeeding, int);
   vtkSetMacro(EnableSeeding, int);
 
+  // Description:
+  // Enable/Disable Lable Map seeding random grid
+  vtkBooleanMacro(RandomGrid, int);
+  vtkGetMacro(RandomGrid, int);
+  vtkSetMacro(RandomGrid, int);
+
+  // Description:
+  // Enable/Disable Lable Map seeding random grid
+  vtkBooleanMacro(ROILabel, int);
+  vtkGetMacro(ROILabel, int);
+  vtkSetMacro(ROILabel, int);
+
+  // Description:
+  // Enable/Disable Lable Map seeding use index space
+  vtkBooleanMacro(UseIndexSpace, int);
+  vtkGetMacro(UseIndexSpace, int);
+  vtkSetMacro(UseIndexSpace, int);
+
+  // Description
+  // Lable Map seeding Linear Measure start threshold.
+  vtkGetMacro(LinearMeasureStart,double);
+  vtkSetMacro(LinearMeasureStart,double);
+
+  // Description
+  // Lable Map seeding seed spacing.
+  vtkGetMacro(SeedSpacing,double);
+  vtkSetMacro(SeedSpacing,double);
+
+  // Description:
+  // Enable/Disable WriteToFile
+  vtkBooleanMacro(WriteToFile, int);
+  vtkGetMacro(WriteToFile, int);
+  vtkSetMacro(WriteToFile, int);
+
+  // Description
+  // file directory.
+  vtkGetStringMacro(FileDirectoryName);
+  vtkSetStringMacro(FileDirectoryName);
+
+  // Description
+  // file prefix.
+  vtkGetStringMacro(FilePrefix);
+  vtkSetStringMacro(FilePrefix);
 
   // Description:
   // Get/Set input volume MRML Id
@@ -155,9 +204,20 @@ protected:
   double SeedingRegionSize;
   double SeedingRegionStep;
   double MinimumPathLength;
+  double MaximumPathLength;
   int MaxNumberOfSeeds;
   int SeedSelectedFiducials;
   int EnableSeeding;
+
+  int ROILabel;
+  int RandomGrid;
+  int UseIndexSpace;
+  double LinearMeasureStart;
+  double SeedSpacing;
+
+  int WriteToFile;
+  char* FileDirectoryName;
+  char* FilePrefix;
 
   char* InputVolumeRef;
   char* InputFiducialRef;

@@ -29,6 +29,7 @@
 
 class vtkMRMLTractographyFiducialSeedingNode;
 class vtkMRMLDiffusionTensorVolumeNode;
+class vtkMRMLScalarVolumeNode;
 class vtkMRMLAnnotationHierarchyNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLTransformableNode;
@@ -64,7 +65,8 @@ public:
                               int maxNumberOfSeeds,
                               int seedSelectedFiducials);
 
-  int CreateTracts( vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+  int CreateTracts( vtkMRMLTractographyFiducialSeedingNode *parametersNode,
+                    vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                     vtkMRMLNode *seedingNode,
                     vtkMRMLFiberBundleNode *fiberNode,
                     int stoppinMode,
@@ -74,6 +76,22 @@ public:
                     int maxNumberOfSeeds,
                     int seedSelectedFiducials,
                     int displayMode);
+
+  int CreateTractsForLabelMap(
+                              vtkSeedTracts *seed,
+                              vtkMRMLDiffusionTensorVolumeNode *volumeNode,
+                              vtkMRMLScalarVolumeNode *seedingNode,
+                              int ROIlabel,
+                              int useIndexSpace,
+                              double seedSpacing,
+                              int randomGrid,
+                              double linearMeasureStart,
+                              int stoppingMode, 
+                              double stoppingValue, 
+                              double stoppingCurvature, 
+                              double integrationStepLength,
+                              double minPathLength,
+                              double maxPathLength);
 
   void SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node);
 
