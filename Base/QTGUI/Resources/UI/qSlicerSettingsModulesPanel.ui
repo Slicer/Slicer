@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>660</width>
-    <height>797</height>
+    <width>531</width>
+    <height>538</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,66 +24,38 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
-     <property name="text">
-      <string>loadable modules (--disable-loadable-modules)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="LoadCommandLineModulesLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
-     <property name="text">
-      <string>command-line plugins (--disable-cli-modules)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
-     <property name="text">
-      <string>scripted loadable modules (--disable-scripted-loadable-modules)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="ShowHiddenModulesLabel">
      <property name="text">
       <string>Show hidden modules:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="2" column="1">
     <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="TemporaryDirectoryLabel">
      <property name="text">
       <string>Temporary directory:</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="3" column="1">
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
    </item>
-   <item row="6" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="AdditionalModulePathsLabel">
      <property name="text">
       <string>Additional module paths:</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="4" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="margin">
@@ -148,7 +120,7 @@
      </layout>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="DisableModulesLabel">
      <property name="toolTip">
       <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
@@ -158,10 +130,19 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="6" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="qSlicerModulesListView" name="DisableModulesListView">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>140</height>
+        </size>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
@@ -407,21 +388,21 @@
      </item>
     </layout>
    </item>
-   <item row="9" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="HomeModuleLabel">
      <property name="text">
       <string>Home:</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
+   <item row="7" column="1">
     <widget class="QPushButton" name="HomeModuleButton">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="FavoritesModulesLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -440,7 +421,7 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="1">
+   <item row="8" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="qSlicerModulesListView" name="FavoritesModulesListView">
@@ -542,7 +523,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="PreferExecutableCLILabel">
      <property name="toolTip">
       <string>To limit memory consumption, loading executable CLIs is prefered as they don't load in Slicer's memory</string>
@@ -552,12 +533,46 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="1" column="1">
     <widget class="QCheckBox" name="PreferExecutableCLICheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QCheckBox" name="LoadLoadableModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarilly disable, pass --disable-loadable-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>loadable modules</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="LoadCommandLineModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarily disable, pass --disable-cli-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>command-line plugins</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarily disable, pass  --disable-scripted-loadable-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>scripted loadable modules</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
