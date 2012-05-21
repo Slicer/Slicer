@@ -9,6 +9,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
   qSlicerCamerasModuleWidgetTest1.cxx
+  vtkSlicerCamerasModuleLogicCopyImportedCamerasTest.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
@@ -22,3 +23,4 @@ foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 SIMPLE_TEST(qSlicerCamerasModuleWidgetTest1)
+SIMPLE_TEST(vtkSlicerCamerasModuleLogicCopyImportedCamerasTest)

@@ -42,8 +42,9 @@
 // ModuleTemplate includes
 #include "vtkSlicerDataModuleLogic.h"
 
-// MRML Logic includes
+// Logic includes
 #include <vtkMRMLColorLogic.h>
+#include <vtkSlicerCamerasModuleLogic.h>
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -85,8 +86,9 @@ QStringList qSlicerDataModule::categories() const
 QStringList qSlicerDataModule::dependencies() const
 {
   QStringList moduleDependencies;
-  // Required to have a valid color logic for XcedeCatalogUI.
-  moduleDependencies << "Colors";
+  // Colors: Required to have a valid color logic for XcedeCatalogUI.
+  // Cameras: Required in qSlicerSceneIO
+  moduleDependencies << "Colors" << "Cameras";
   return moduleDependencies;
 }
 
@@ -100,9 +102,14 @@ void qSlicerDataModule::setup()
   vtkMRMLColorLogic* colorLogic =
     vtkMRMLColorLogic::SafeDownCast(colorsModule ? colorsModule->logic() : 0);
 
+  qSlicerAbstractCoreModule* camerasModule =
+    qSlicerCoreApplication::application()->moduleManager()->module("Cameras");
+  vtkSlicerCamerasModuleLogic* camerasLogic =
+    vtkSlicerCamerasModuleLogic::SafeDownCast(camerasModule ? camerasModule->logic() : 0);
+
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
-  ioManager->registerIO(new qSlicerSceneIO(this));
+  ioManager->registerIO(new qSlicerSceneIO(camerasLogic, this));
   ioManager->registerIO(new qSlicerSceneBundleIO(this));
   ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
   ioManager->registerIO(new qSlicerXcedeCatalogIO(colorLogic, this));

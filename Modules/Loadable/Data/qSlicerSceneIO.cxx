@@ -20,13 +20,32 @@
 
 // QtCore includes
 #include "qSlicerSceneIO.h"
+#include "qSlicerSceneIOOptionsWidget.h"
+
+// Logic includes
+#include <vtkSlicerCamerasModuleLogic.h>
 
 // MRML includes
 #include <vtkMRMLScene.h>
 
+class qSlicerSceneIOPrivate
+{
+public:
+  vtkSmartPointer<vtkSlicerCamerasModuleLogic> CamerasLogic;
+};
+
 //-----------------------------------------------------------------------------
-qSlicerSceneIO::qSlicerSceneIO(QObject* _parent)
-  :qSlicerIO(_parent)
+qSlicerSceneIO::qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic,
+                               QObject* _parent)
+  : qSlicerIO(_parent)
+  , d_ptr(new qSlicerSceneIOPrivate)
+{
+  Q_D(qSlicerSceneIO);
+  d->CamerasLogic = camerasLogic;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerSceneIO::~qSlicerSceneIO()
 {
 }
 
@@ -49,16 +68,19 @@ QStringList qSlicerSceneIO::extensions()const
 }
 
 //-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerSceneIO::options()const
+{
+  return new qSlicerSceneIOOptionsWidget;
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerSceneIO::load(const qSlicerIO::IOProperties& properties)
 {
+  Q_D(qSlicerSceneIO);
   Q_ASSERT(properties.contains("fileName"));
   QString file = properties["fileName"].toString();
   this->mrmlScene()->SetURL(file.toLatin1());
-  bool clear = false;
-  if (properties.contains("clear"))
-    {
-    clear = properties["clear"].toBool();
-    }
+  bool clear = properties.value("clear", false).toBool();
   int res = 0;
   if (clear)
     {
@@ -66,7 +88,11 @@ bool qSlicerSceneIO::load(const qSlicerIO::IOProperties& properties)
     }
   else
     {
+    bool wasCopying = d->CamerasLogic->GetCopyImportedCameras();
+    bool copyCameras = properties.value("copyCameras", wasCopying).toBool();
+    d->CamerasLogic->SetCopyImportedCameras(copyCameras);
     res = this->mrmlScene()->Import();
+    d->CamerasLogic->SetCopyImportedCameras(wasCopying);
     }
   return res;
 }

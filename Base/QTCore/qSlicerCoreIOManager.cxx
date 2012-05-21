@@ -25,9 +25,6 @@
 #include "qSlicerCoreApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerFileWriter.h"
-#include "qSlicerSceneIO.h"
-#include "qSlicerSlicer2SceneReader.h"
-#include "qSlicerXcedeCatalogIO.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>

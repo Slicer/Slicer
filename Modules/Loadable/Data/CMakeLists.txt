@@ -15,6 +15,8 @@ set(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+  ${vtkSlicerCamerasModuleLogic_SOURCE_DIR}
+  ${vtkSlicerCamerasModuleLogic_BINARY_DIR}
   )
 
 # Source files
@@ -23,23 +25,31 @@ set(qt_module_SRCS
   qSlicerDataModule.h
   qSlicerDataModuleWidget.cxx
   qSlicerDataModuleWidget.h
+  qSlicerSceneIO.cxx
+  qSlicerSceneIO.h
+  qSlicerSceneIOOptionsWidget.cxx
+  qSlicerSceneIOOptionsWidget.h
   )
 
 # Headers that should run through moc
 set(qt_module_MOC_SRCS
   qSlicerDataModule.h
   qSlicerDataModuleWidget.h
+  qSlicerSceneIO.h
+  qSlicerSceneIOOptionsWidget.h
   )
 
 # UI files
 set(qt_module_UI_SRCS
   Resources/UI/qSlicerDataModule.ui
+  Resources/UI/qSlicerSceneIOOptionsWidget.ui
   )
 
 # Additional Target libraries
 set(qt_module_target_libraries
   qSlicerDataModuleWidgets
   vtkSlicerDataModuleLogic
+  vtkSlicerCamerasModuleLogic
   )
 
 # Resources

@@ -40,24 +40,31 @@ public:
   vtkTypeMacro(vtkSlicerCamerasModuleLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-public:
   /// Scan the scene and search for the active camera that is used
   /// in the view.
   vtkMRMLCameraNode* GetViewActiveCameraNode(vtkMRMLViewNode* view);
+
+  /// CopyImportedCameras controls whether the logic copies the properties of
+  /// the scene-to-import camera nodes into the existing nodes having the same
+  /// name. If true, this is done when a camera node is about to be added to
+  /// the scene.
+  /// True by default.
+  /// \sa vtkMRMLScene::Import, vtkMRMLScene::Connect
+  vtkSetMacro(CopyImportedCameras, bool);
+  vtkGetMacro(CopyImportedCameras, bool);
 
 protected:
   vtkSlicerCamerasModuleLogic();
   virtual ~vtkSlicerCamerasModuleLogic();
 
-  //virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
-  //virtual void UpdateFromMRMLScene();
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void ProcessMRMLSceneEvents(vtkObject *, unsigned long, void *);
+
+  bool CopyImportedCameras;
 
 private:
   vtkSlicerCamerasModuleLogic(const vtkSlicerCamerasModuleLogic&); // Not implemented
   void operator=(const vtkSlicerCamerasModuleLogic&);              // Not implemented
-
-protected:
-
 };
 
 #endif

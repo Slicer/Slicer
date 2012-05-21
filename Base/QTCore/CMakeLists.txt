@@ -58,8 +58,6 @@ set(KIT_SRCS
   qSlicerObject.h
   qSlicerFileWriter.cxx
   qSlicerFileWriter.h
-  qSlicerSceneIO.cxx
-  qSlicerSceneIO.h
   qSlicerSceneBundleIO.cxx
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.cxx
@@ -97,7 +95,6 @@ set(KIT_MOC_SRCS
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.h
   qSlicerFileWriter.h
-  qSlicerSceneIO.h
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.h
   qSlicerXcedeCatalogIO.h

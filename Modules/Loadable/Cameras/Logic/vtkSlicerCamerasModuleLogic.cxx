@@ -39,6 +39,7 @@ vtkStandardNewMacro(vtkSlicerCamerasModuleLogic);
 //----------------------------------------------------------------------------
 vtkSlicerCamerasModuleLogic::vtkSlicerCamerasModuleLogic()
 {
+  this->CopyImportedCameras = true;
 }
 
 //----------------------------------------------------------------------------
@@ -78,17 +79,49 @@ vtkMRMLCameraNode* vtkSlicerCamerasModuleLogic
 }
 
 //---------------------------------------------------------------------------
-//void vtkSlicerCamerasModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
-//{
-//  vtkNew<vtkIntArray> events;
-//  events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
-//  events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
-//  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
-//  events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
-//  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
-//}
-//
-////---------------------------------------------------------------------------
-//void vtkSlicerCamerasModuleLogic::UpdateFromMRMLScene()
-//{
-//}
+void vtkSlicerCamerasModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+{
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(vtkMRMLScene::NodeAboutToBeAddedEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerCamerasModuleLogic
+::ProcessMRMLSceneEvents(vtkObject *caller, unsigned long event, void *callData)
+{
+  this->Superclass::ProcessMRMLSceneEvents(caller, event, callData);
+  if (event == vtkMRMLScene::NodeAboutToBeAddedEvent &&
+      this->GetMRMLScene()->IsImporting() &&
+      this->CopyImportedCameras)
+    {
+    vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
+      reinterpret_cast<vtkObject*>(callData));
+    if (cameraNode)
+      {
+      vtkSmartPointer<vtkCollection> existingCamerasWithSameName;
+      existingCamerasWithSameName.TakeReference(
+        this->GetMRMLScene()->GetNodesByClassByName(cameraNode->GetClassName(),
+                                                    cameraNode->GetName()));
+      vtkMRMLCameraNode* existingCameraWithSameName =
+        vtkMRMLCameraNode::SafeDownCast(
+          existingCamerasWithSameName->GetItemAsObject(0));
+      if (existingCameraWithSameName)
+        {
+        int wasModifying = existingCameraWithSameName->StartModify();
+        existingCameraWithSameName->SetParallelProjection(
+          cameraNode->GetParallelProjection());
+        existingCameraWithSameName->SetParallelScale(
+          cameraNode->GetParallelScale());
+        existingCameraWithSameName->SetPosition(
+          cameraNode->GetPosition());
+        existingCameraWithSameName->SetFocalPoint(
+          cameraNode->GetFocalPoint());
+        existingCameraWithSameName->SetViewUp(
+          cameraNode->GetViewUp());
+        // \tbd: Copy AppliedTransform ?
+        existingCameraWithSameName->EndModify(wasModifying);
+        }
+      }
+    }
+}

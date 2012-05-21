@@ -22,17 +22,24 @@
 #define __qSlicerSceneIO_h
 
 // QtCore includes
+#include "qSlicerDataModuleExport.h"
 #include "qSlicerIO.h"
+
+// Logic includes
+class vtkSlicerCamerasModuleLogic;
+class qSlicerSceneIOPrivate;
 
 ///
 /// qSlicerSceneIO is the IO class that handle MRML scene
 /// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
 /// depending on the clear flag.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneIO: public qSlicerIO
+class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIO
+  : public qSlicerIO
 {
   Q_OBJECT
 public: 
-  qSlicerSceneIO(QObject* _parent = 0);
+  qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = 0);
+  virtual ~qSlicerSceneIO();
   
   virtual QString description()const;
   /// Support qSlicerIO::SceneFile
@@ -41,10 +48,19 @@ public:
   /// Support only .mrml files
   virtual QStringList extensions()const;
 
+  /// Options to control scene loading
+  virtual qSlicerIOOptions* options()const;
+
   /// the supported properties are:
   /// QString fileName: the path of the mrml scene to load
   /// bool clear: wether the current should be cleared or not
   virtual bool load(const qSlicerIO::IOProperties& properties);
+protected:
+  QScopedPointer<qSlicerSceneIOPrivate> d_ptr;
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerSceneIO);
+  Q_DISABLE_COPY(qSlicerSceneIO);
 };
 
 
