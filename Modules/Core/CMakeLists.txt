@@ -10,7 +10,6 @@ set(KIT_include_directories
   ${qSlicerBaseQTGUI_SOURCE_DIR}
   ${qSlicerBaseQTGUI_BINARY_DIR}
   ${MRMLLogic_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/Cameras
   ${CMAKE_CURRENT_SOURCE_DIR}/EventBroker
   ${CMAKE_CURRENT_SOURCE_DIR}/ROI
   )
@@ -22,11 +21,6 @@ set(KIT_SRCS
 
   qSlicerCoreModuleFactory.cxx
   qSlicerCoreModuleFactory.h
-
-  Cameras/qSlicerCamerasModule.cxx
-  Cameras/qSlicerCamerasModule.h
-  Cameras/qSlicerCamerasModuleWidget.cxx
-  Cameras/qSlicerCamerasModuleWidget.h
 
   EventBroker/qSlicerEventBrokerModule.cxx
   EventBroker/qSlicerEventBrokerModule.h
@@ -43,9 +37,6 @@ set(KIT_SRCS
 set(KIT_MOC_SRCS
   qSlicerCoreModule.h
 
-  Cameras/qSlicerCamerasModule.h
-  Cameras/qSlicerCamerasModuleWidget.h
-
   EventBroker/qSlicerEventBrokerModule.h
   EventBroker/qSlicerEventBrokerModuleWidget.h
 
@@ -56,7 +47,6 @@ set(KIT_MOC_SRCS
 
 # UI files
 set(KIT_UI_SRCS
-  Resources/UI/qSlicerCamerasModule.ui
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
 )

@@ -25,19 +25,19 @@
 #include <ctkPimpl.h>
 
 /// SlicerQt includes
-#include "qSlicerCoreModule.h"
-
-#include "qSlicerModulesCoreExport.h"
+#include "qSlicerCamerasModuleExport.h"
+#include "qSlicerLoadableModule.h"
 
 class qSlicerAbstractModuleWidget;
 class qSlicerCamerasModulePrivate;
 
-class Q_SLICER_MODULES_CORE_EXPORT qSlicerCamerasModule :
-  public qSlicerCoreModule
+class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
+  Q_INTERFACES(qSlicerLoadableModule);
 public:
-  typedef qSlicerCoreModule Superclass;
+  typedef qSlicerLoadableModule Superclass;
   qSlicerCamerasModule(QObject *parent=0);
   virtual ~qSlicerCamerasModule();
 

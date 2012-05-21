@@ -21,20 +21,16 @@
 #ifndef __qSlicerCamerasModuleWidget_h
 #define __qSlicerCamerasModuleWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-
-#include "qSlicerModulesCoreExport.h"
+#include "qSlicerCamerasModuleExport.h"
 
 class vtkMRMLNode;
 class vtkMRMLViewNode;
 class qSlicerCamerasModuleWidgetPrivate;
 
-class Q_SLICER_MODULES_CORE_EXPORT qSlicerCamerasModuleWidget :
-  public qSlicerAbstractModuleWidget
+class Q_SLICER_QTMODULES_CAMERAS_EXPORT qSlicerCamerasModuleWidget
+  : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
 public:
