@@ -60,6 +60,7 @@ protected slots:
 
   void onScrollBarPolicyChanged(int index);
 
+  void onFontChanged(const QFont& font);
 //  void onFontChanged(const QFont& font);
 //  void onShowToolTipsToggled(bool);
 //  void onShowToolButtonTextToggled(bool enable);
