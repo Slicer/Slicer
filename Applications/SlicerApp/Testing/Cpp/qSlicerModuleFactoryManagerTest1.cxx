@@ -41,7 +41,7 @@ int qSlicerModuleFactoryManagerTest1(int argc, char * argv[])
   // Register core modules
   moduleFactoryManager.registerModules();
 
-  QString moduleName = "Cameras";
+  QString moduleName = "EventBroker";
 
   moduleFactoryManager.instantiateModules();
   moduleFactoryManager.loadModules();
