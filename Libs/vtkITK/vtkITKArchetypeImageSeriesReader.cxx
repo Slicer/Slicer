@@ -1203,11 +1203,17 @@ int vtkITKArchetypeImageSeriesReader::AssembleVolumeContainingArchetype( )
       {
       // find the position and orientation corresponding to this
       // file - it could be that all files in the set have the same index
-      // (1) or that there is no position information
+      // (1) or that there is no position information, in which case the 
+      // position index will be -1
+      int kth_orientation = -1;
+      int kth_position = -1;
       if ( ImagePositionPatient.size() != 0 )
         {
-        unsigned int kth_orientation = this->IndexImageOrientationPatient[k];
-        unsigned int kth_position = this->IndexImagePositionPatient[k];
+        kth_orientation = this->IndexImageOrientationPatient[k];
+        kth_position = this->IndexImagePositionPatient[k];
+        }
+      if (kth_orientation > 0 && kth_position > 0)
+        {
         if (!originSet)
           {
           std::vector<float> iopv = this->ImageOrientationPatient[kth_orientation];
