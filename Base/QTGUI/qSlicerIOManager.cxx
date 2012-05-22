@@ -38,9 +38,9 @@ public:
   void stopProgressDialog();
   void readSettings();
   void writeSettings();
-  QString getUniqueDialogName(qSlicerIO::IOFileType,
-                              qSlicerFileDialog::IOAction,
-                              const qSlicerIO::IOProperties&);
+  QString createUniqueDialogName(qSlicerIO::IOFileType,
+                                 qSlicerFileDialog::IOAction,
+                                 const qSlicerIO::IOProperties&);
 
   QStringList                   History;
   QList<QUrl>                   Favorites;
@@ -143,9 +143,9 @@ void qSlicerIOManagerPrivate::writeSettings()
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerIOManagerPrivate::getUniqueDialogName(qSlicerIO::IOFileType fileType,
-                                                     qSlicerFileDialog::IOAction action,
-                                                     const qSlicerIO::IOProperties& ioProperties)
+QString qSlicerIOManagerPrivate::createUniqueDialogName(qSlicerIO::IOFileType fileType,
+                                                        qSlicerFileDialog::IOAction action,
+                                                        const qSlicerIO::IOProperties& ioProperties)
 {
   QString objectName;
 
@@ -196,13 +196,13 @@ bool qSlicerIOManager::openAddSceneDialog()
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, 
                                   qSlicerFileDialog::IOAction action,
-                                  qSlicerIO::IOProperties& properties)
+                                  qSlicerIO::IOProperties properties)
 {
   Q_D(qSlicerIOManager);
   bool deleteDialog = false;
   if (properties["objectName"].toString().isEmpty())
     {
-    QString name = d->getUniqueDialogName(fileType, action, properties);
+    QString name = d->createUniqueDialogName(fileType, action, properties);
     properties["objectName"] = name;
     }
   qSlicerFileDialog* dialog = action == qSlicerFileDialog::Read ? 
