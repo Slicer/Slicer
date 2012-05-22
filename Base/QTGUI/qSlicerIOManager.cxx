@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QFileDialog>
+#include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
 
@@ -37,6 +38,9 @@ public:
   void stopProgressDialog();
   void readSettings();
   void writeSettings();
+  QString getUniqueDialogName(qSlicerIO::IOFileType,
+                              qSlicerFileDialog::IOAction,
+                              const qSlicerIO::IOProperties&);
 
   QStringList                   History;
   QList<QUrl>                   Favorites;
@@ -139,6 +143,23 @@ void qSlicerIOManagerPrivate::writeSettings()
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerIOManagerPrivate::getUniqueDialogName(qSlicerIO::IOFileType fileType,
+                                                     qSlicerFileDialog::IOAction action,
+                                                     const qSlicerIO::IOProperties& ioProperties)
+{
+  QString objectName;
+
+  objectName += action == qSlicerFileDialog::Read ? "Add" : "Save";
+  int propIndex = qSlicerIO::staticMetaObject.indexOfEnumerator("IOFileType");
+  QMetaEnum widgetTypeEnum = qSlicerIO::staticMetaObject.enumerator(propIndex);
+  objectName += widgetTypeEnum.valueToKey(fileType);
+  objectName += ioProperties["multipleFiles"].toBool() ? "s" : "";
+  objectName += "Dialog";
+
+  return objectName;
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerIOManager methods
 
 //-----------------------------------------------------------------------------
@@ -161,7 +182,6 @@ bool qSlicerIOManager::openLoadSceneDialog()
 {
   qSlicerIO::IOProperties properties;
   properties["clear"] = true;
-  properties["objectName"] = "LoadSceneDialog";
   return this->openDialog(qSlicerIO::SceneFile, qSlicerFileDialog::Read, properties);
 }
 
@@ -170,17 +190,21 @@ bool qSlicerIOManager::openAddSceneDialog()
 {
   qSlicerIO::IOProperties properties;
   properties["clear"] = false;
-  properties["objectName"] = "AddSceneDialog";
   return this->openDialog(qSlicerIO::SceneFile, qSlicerFileDialog::Read, properties);
 }
 
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, 
                                   qSlicerFileDialog::IOAction action,
-                                  const qSlicerIO::IOProperties& properties)
+                                  qSlicerIO::IOProperties& properties)
 {
   Q_D(qSlicerIOManager);
   bool deleteDialog = false;
+  if (properties["objectName"].toString().isEmpty())
+    {
+    QString name = d->getUniqueDialogName(fileType, action, properties);
+    properties["objectName"] = name;
+    }
   qSlicerFileDialog* dialog = action == qSlicerFileDialog::Read ? 
     d->ReadDialogs[fileType] : d->WriteDialogs[fileType];
   if (dialog == 0)

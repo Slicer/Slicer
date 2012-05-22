@@ -38,7 +38,7 @@ public:
   /// used.
   bool openDialog(qSlicerIO::IOFileType fileType,
                   qSlicerFileDialog::IOAction action,
-                  const qSlicerIO::IOProperties& ioProperties);
+                  qSlicerIO::IOProperties& ioProperties);
 
   void addHistory(const QString& path);
   const QStringList& history()const;
@@ -104,7 +104,6 @@ private:
 bool qSlicerIOManager::openAddDataDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddDataDialog";
   return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -112,7 +111,6 @@ bool qSlicerIOManager::openAddDataDialog()
 bool qSlicerIOManager::openAddVolumeDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddVolumeDialog";
   return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -121,7 +119,6 @@ bool qSlicerIOManager::openAddVolumesDialog()
 {
   qSlicerIO::IOProperties ioProperties;
   ioProperties["multipleFiles"] = true;
-  ioProperties["objectName"] = "AddVolumesDialog";
   return this->openDialog(qSlicerIO::VolumeFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -129,7 +126,6 @@ bool qSlicerIOManager::openAddVolumesDialog()
 bool qSlicerIOManager::openAddModelDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddModelDialog";
   return this->openDialog(qSlicerIO::ModelFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -137,7 +133,6 @@ bool qSlicerIOManager::openAddModelDialog()
 bool qSlicerIOManager::openAddScalarOverlayDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddScalarOverlayDialog";
   return this->openDialog(qSlicerIO::ScalarOverlayFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -145,7 +140,6 @@ bool qSlicerIOManager::openAddScalarOverlayDialog()
 bool qSlicerIOManager::openAddTransformDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddTransformDialog";
   return this->openDialog(qSlicerIO::TransformFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -153,7 +147,6 @@ bool qSlicerIOManager::openAddTransformDialog()
 bool qSlicerIOManager::openAddColorTableDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddColorTableDialog";
   return this->openDialog(qSlicerIO::ColorTableFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -161,7 +154,6 @@ bool qSlicerIOManager::openAddColorTableDialog()
 bool qSlicerIOManager::openAddFiducialDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddFiducialDialog";
   return this->openDialog(qSlicerIO::FiducialListFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -169,7 +161,6 @@ bool qSlicerIOManager::openAddFiducialDialog()
 bool qSlicerIOManager::openAddFiberBundleDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "AddFiberBundleDialog";
   return this->openDialog(qSlicerIO::FiberBundleFile, qSlicerFileDialog::Read, ioProperties);
 }
 
@@ -177,7 +168,6 @@ bool qSlicerIOManager::openAddFiberBundleDialog()
 bool qSlicerIOManager::openSaveDataDialog()
 {
   qSlicerIO::IOProperties ioProperties;
-  ioProperties["objectName"] = "SaveDataDialog";
   return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Write, ioProperties);
 }
 
