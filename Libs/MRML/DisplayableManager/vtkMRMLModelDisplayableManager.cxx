@@ -1191,20 +1191,17 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayable(vtkMRMLDisplayableNode* m
     {
     return;
     }
-  int ndnodes = model->GetNumberOfDisplayNodes();
-  std::map<std::string, vtkProp3D *>::iterator iter;
+  const int ndnodes = model->GetNumberOfDisplayNodes();
   std::vector<std::string> removedIDs;
   for (int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *displayNode = model->GetNthDisplayNode(i);
-    if (displayNode)
+    const char* displayNodeIDToRemove = model->GetNthDisplayNodeID(i);
+    std::map<std::string, vtkProp3D *>::iterator iter =
+      this->Internal->DisplayedActors.find(displayNodeIDToRemove);
+    if (iter != this->Internal->DisplayedActors.end())
       {
-      iter = this->Internal->DisplayedActors.find(displayNode->GetID());
-      if (iter != this->Internal->DisplayedActors.end())
-        {
-        this->GetRenderer()->RemoveViewProp(iter->second);
-        removedIDs.push_back(iter->first);
-        }
+      this->GetRenderer()->RemoveViewProp(iter->second);
+      removedIDs.push_back(iter->first);
       }
     }
 
