@@ -50,13 +50,16 @@ private slots:
   void testDefaults();
 
   void testPopulate();
+  void testPopulate_data();
 
   void testSelect();
+  void testSelect_data();
 
   void testSetAttribute();
   void testSetAttribute_data();
 
   void testAdd();
+  void testAdd_data();
 
   void testRemove();
   void testRemove_data();
@@ -93,20 +96,66 @@ void qMRMLNodeAttributeTableViewTester::testDefaults()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testPopulate()
 {
-  this->NodeAttributeTableView->setInspectedNode(NULL);
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 0);
+  QFETCH(bool, null);
+  QFETCH(int, expectedAttributeCount);
+
+  if (null)
+    {
+    this->NodeAttributeTableView->setInspectedNode(NULL);
+    QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCount);
+    QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCount);
+    return;
+    }
+
+  QFETCH(QList<AttributeType>, attributes);
 
   vtkNew<vtkMRMLModelNode> node;
-  node->SetAttribute("Attribute1", "Value1");
-  node->SetAttribute("Attribute2", "Value2");
+
+  foreach(const AttributeType& attribute, attributes)
+    {
+    node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
+    }
+
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
 
-  node->SetAttribute("Attribute3", "Value3");
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 3);
+  QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCount);
 
-  this->NodeAttributeTableView->setInspectedNode(NULL);
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 0);
+  QStringList attributeList = this->NodeAttributeTableView->attributes();
+  QCOMPARE(attributeList.count(), expectedAttributeCount);
+
+  for (int i=0; i<expectedAttributeCount; ++i)
+    {
+    QCOMPARE(attributeList[i], attributes[i].first);
+    QCOMPARE(this->NodeAttributeTableView->attributeValue(attributes[i].first), attributes[i].second);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testPopulate_data()
+{
+  QTest::addColumn<bool>("null");
+  QTest::addColumn<int>("expectedAttributeCount");
+  QTest::addColumn<QList<AttributeType>>("attributes");
+
+  {
+  QTest::newRow("empty") << true
+                     << 0
+                     << QList<AttributeType>();
+  }
+
+  {
+  QTest::newRow("empty") << false
+                     << 0
+                     << QList<AttributeType>();
+  }
+
+  {
+  QTest::newRow("valid with 2 attributes") << false
+                     << 2
+                     << ( QList<AttributeType>()
+                          << AttributeType("Attribute1", "Value1")
+                          << AttributeType("Attribute2", "Value2") );
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -178,35 +227,121 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testSelect()
 {
-  vtkNew<vtkMRMLModelNode> node;
-  node->SetAttribute("Attribute1", "Value1");
-  node->SetAttribute("Attribute2", "Value2");
-  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
-  this->NodeAttributeTableView->selectItemRange(1,0,1,0);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selectedIndexes().count(), 1);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).top(), 1);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).left(), 0);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).bottom(), 1);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).right(), 0);
+  QFETCH(bool, null);
+  QFETCH(QList<int>, rangeToSelect);
+  QFETCH(int, expectedSelectedCellCount);
 
-  this->NodeAttributeTableView->setInspectedNode(NULL);
-  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selectedIndexes().count(), 0);
+  vtkMRMLModelNode* nodePtr = NULL;
+  if (!null)
+    {
+    QFETCH(QList<AttributeType>, attributes);
+    vtkNew<vtkMRMLModelNode> node;
+
+    foreach(const AttributeType& attribute, attributes)
+      {
+      node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
+      }
+
+    this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
+    }
+  else
+    {
+    this->NodeAttributeTableView->setInspectedNode(NULL);
+    }
+
+  this->NodeAttributeTableView->selectItemRange( rangeToSelect[0]
+                                                ,rangeToSelect[1]
+                                                ,rangeToSelect[2]
+                                                ,rangeToSelect[3] );
+
+  QCOMPARE(this->NodeAttributeTableView->selectionModel()->selectedIndexes().count(), expectedSelectedCellCount);
+
+  if (expectedSelectedCellCount > 0)
+    {
+    QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).top(), rangeToSelect[0]);
+    QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).left(), rangeToSelect[1]);
+    QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).bottom(), rangeToSelect[2]);
+    QCOMPARE(this->NodeAttributeTableView->selectionModel()->selection().at(0).right(), rangeToSelect[3]);
+    }
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testSelect_data()
+{
+  QTest::addColumn<bool>("null");
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<QList<int>>("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<int>("expectedSelectedCellCount");
+
+  {
+  QTest::newRow("null") << true
+                     << QList<AttributeType>()
+                     << ( QList<int>() << 1 << 0 << 1 << 0 )
+                     << 0;
+  }
+
+  {
+  QTest::newRow("valid with 1 cell selected") << false
+                     << ( QList<AttributeType>()
+                          << AttributeType("Attribute1", "Value1")
+                          << AttributeType("Attribute2", "Value2") )
+                     << ( QList<int>() << 1 << 0 << 1 << 0 )
+                     << 1;
+  }
+
+  {
+  QTest::newRow("valid with 2 cells selected") << false
+                     << ( QList<AttributeType>()
+                          << AttributeType("Attribute1", "Value1")
+                          << AttributeType("Attribute2", "Value2") )
+                     << ( QList<int>() << 1 << 0 << 1 << 1 )
+                     << 2;
+  }
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd()
 {
-  vtkNew<vtkMRMLModelNode> node;
-  node->SetAttribute("Attribute1", "Value1");
-  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
-  this->NodeAttributeTableView->addAttribute();
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), 2);
+  QFETCH(QList<AttributeType>, attributes);
+  QFETCH(int, expectedAttributeCountAfterAdd);
+  QFETCH(QString, newAttributeName);
 
-  this->NodeAttributeTableView->selectItemRange(1,0,1,0);
+  vtkNew<vtkMRMLModelNode> node;
+
+  foreach(const AttributeType& attribute, attributes)
+    {
+    node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
+    }
+
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
+
+  this->NodeAttributeTableView->addAttribute();
+
+  QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterAdd);
+
+  // Make the new attribute name the current so that the view can store its name
+  this->NodeAttributeTableView->selectItemRange(
+    expectedAttributeCountAfterAdd-1,0,expectedAttributeCountAfterAdd-1,0);
   QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
   this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-  this->NodeAttributeTableView->renameAttribute(QString("NewAttributeName"), QString("Attribute2"));
-  QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttributeNames().size(), 2);
+
+  this->NodeAttributeTableView->renameAttribute(QString("NewAttributeName"), newAttributeName);
+  QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttributeNames().size(), expectedAttributeCountAfterAdd);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testAdd_data()
+{
+  QTest::addColumn<QList<AttributeType>>("attributes");
+  QTest::addColumn<int>("expectedAttributeCountAfterAdd");
+  QTest::addColumn<QString>("newAttributeName");
+
+  {
+  QTest::newRow("0") << ( QList<AttributeType>()
+                          << AttributeType("Attribute1", "Value1") )
+                     << 2
+                     << "Attribute2";
+  }
 }
 
 // ----------------------------------------------------------------------------
