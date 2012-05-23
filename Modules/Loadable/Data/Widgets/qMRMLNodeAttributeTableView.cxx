@@ -353,7 +353,7 @@ QString qMRMLNodeAttributeTableView::attributeValue(const QString& attributeName
 {
   Q_D(const qMRMLNodeAttributeTableView);
 
-  QTableWidgetItem* item = findAttributeNameItem(attributeName);
+  QTableWidgetItem* item = this->findAttributeNameItem(attributeName);
   return item ? d->NodeAttributesTable->item(item->row(), item->column()+1)->text() : QString();
 }
 
@@ -367,7 +367,7 @@ void qMRMLNodeAttributeTableView::setAttribute(const QString& attributeName, con
 
   Q_D(qMRMLNodeAttributeTableView);
 
-  QTableWidgetItem* nameItem = findAttributeNameItem(attributeName);
+  QTableWidgetItem* nameItem = this->findAttributeNameItem(attributeName);
   if (!nameItem)
     {
     if (attributeName.isEmpty() || attributeValue.isNull())
@@ -397,7 +397,7 @@ void qMRMLNodeAttributeTableView::setAttribute(const QString& attributeName, con
 //-----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableView::renameAttribute(const QString& oldName, const QString& newName)
 {
-  QTableWidgetItem* nameItem = findAttributeNameItem(oldName);
+  QTableWidgetItem* nameItem = this->findAttributeNameItem(oldName);
   if (nameItem)
     {
     nameItem->setText(newName);

@@ -69,7 +69,10 @@ public:
   QItemSelectionModel* selectionModel();
 
 public slots:
-  /// Add empty attribute row
+  /// Add empty attribute row. The name of the added attribute is unique,
+  /// NewAttributeName for the first added name, NewAttributeName1 if
+  /// attribute NewAttributeName already exists, NewAttributeName2 if attrbiute
+  /// NewAttributeNam1 already exists, etc.
   void addAttribute();
 
   /// Remove selected attributes

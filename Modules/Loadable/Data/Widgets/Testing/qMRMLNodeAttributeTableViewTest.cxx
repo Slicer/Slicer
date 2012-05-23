@@ -61,6 +61,9 @@ private slots:
   void testAdd();
   void testAdd_data();
 
+  void testRename();
+  void testRename_data();
+
   void testRemove();
   void testRemove_data();
 };
@@ -107,6 +110,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
   this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
 
   QFETCH(QList<AttributeType>, expectedAttributes);
+  QCOMPARE(static_cast<int>(node->GetAttributeNames().size()), expectedAttributes.count());
   QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributes.count());
 
   QStringList resultAttributes = this->NodeAttributeTableView->attributes();
@@ -116,6 +120,7 @@ void qMRMLNodeAttributeTableViewTester::testPopulate()
     QCOMPARE(attribute, expectedAttributes[i].first);
     QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
              expectedAttributes[i].second);
+    ++i;
     }
 }
 
@@ -158,17 +163,17 @@ void qMRMLNodeAttributeTableViewTester::testPopulate_data()
     << ( QList<AttributeType>()
          << AttributeType("", "")
          << AttributeType("", "") )
-    << ( QList<AttributeType>() << AttributeType("", "") );
+    << ( QList<AttributeType>() );
   QTest::newRow("2 empty attributes")
     << ( QList<AttributeType>()
          << AttributeType("", "Value1")
          << AttributeType("", "Value2") )
-    << ( QList<AttributeType>() << AttributeType("", "Value2") );
+    << ( QList<AttributeType>() ) ;
   QTest::newRow("2 empty attributes")
     << ( QList<AttributeType>()
          << AttributeType("", "Value1")
          << AttributeType("", "Value1") )
-    << ( QList<AttributeType>() << AttributeType("", "Value1") );
+    << ( QList<AttributeType>() );
 }
 
 // ----------------------------------------------------------------------------
@@ -221,19 +226,30 @@ void qMRMLNodeAttributeTableViewTester::testSetAttribute_data()
     // null vs empty:
     //   QString makes a difference between a QString() and QString("")
     //   vtkMRMLNode::SetAttribute() makes a difference between 0 and ""
-    QTest::newRow("null null") << (setOnNode != 0) << QString() << QString() << 1 << "Value1";
-    QTest::newRow("null empty") << (setOnNode != 0) << QString() << QString("") << 1 << "Value1";
-    QTest::newRow("null valid") << (setOnNode != 0) << QString() << QString("Value2") << 1 << "Value1";
-    QTest::newRow("empty null") << (setOnNode != 0) << QString("") << QString() << 1 << "Value1";
-    QTest::newRow("empty empty") << (setOnNode != 0) << QString("") << QString("") << 1 << "Value1";
-    QTest::newRow("empty valid") << (setOnNode != 0) << QString("") << QString("Value2") << 1 << "Value1";
-    QTest::newRow("valid null") << (setOnNode != 0) << QString("Attribute2") << QString() << 1 << "Value1";
-    QTest::newRow("valid empty") << (setOnNode != 0) << QString("Attribute2") << QString("") << 2 << "Value1";
-    QTest::newRow("valid valid") << (setOnNode != 0) << QString("Attribute2") << QString("Value2") << 2 << "Value1";
-
-    QTest::newRow("replace null") << (setOnNode != 0) << QString("Attribute1") << QString() << 0 << QString();
-    QTest::newRow("replace empty") << (setOnNode != 0) << QString("Attribute1") << QString("") << 1 << QString("");
-    QTest::newRow("replace valid") << (setOnNode != 0) << QString("Attribute1") << QString("Value2") << 1 << QString("Value2");
+    QTest::newRow("null null") << (setOnNode != 0)
+      << QString() << QString() << 1 << "Value1";
+    QTest::newRow("null empty") << (setOnNode != 0)
+      << QString() << QString("") << 1 << "Value1";
+    QTest::newRow("null valid") << (setOnNode != 0)
+      << QString() << QString("Value2") << 1 << "Value1";
+    QTest::newRow("empty null") << (setOnNode != 0)
+      << QString("") << QString() << 1 << "Value1";
+    QTest::newRow("empty empty") << (setOnNode != 0)
+      << QString("") << QString("") << 1 << "Value1";
+    QTest::newRow("empty valid") << (setOnNode != 0)
+      << QString("") << QString("Value2") << 1 << "Value1";
+    QTest::newRow("valid null") << (setOnNode != 0)
+      << QString("Attribute2") << QString() << 1 << "Value1";
+    QTest::newRow("valid empty") << (setOnNode != 0)
+      << QString("Attribute2") << QString("") << 2 << "Value1";
+    QTest::newRow("valid valid") << (setOnNode != 0)
+      << QString("Attribute2") << QString("Value2") << 2 << "Value1";
+    QTest::newRow("replace null") << (setOnNode != 0)
+      << QString("Attribute1") << QString() << 0 << QString();
+    QTest::newRow("replace empty") << (setOnNode != 0)
+      << QString("Attribute1") << QString("") << 1 << QString("");
+    QTest::newRow("replace valid") << (setOnNode != 0)
+      << QString("Attribute1") << QString("Value2") << 1 << QString("Value2");
   }
 }
 
@@ -306,12 +322,9 @@ void qMRMLNodeAttributeTableViewTester::testSelect_data()
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd()
 {
-  QFETCH(QList<AttributeType>, attributes);
-  QFETCH(int, expectedAttributeCountAfterAdd);
-  QFETCH(QString, newAttributeName);
-
   vtkNew<vtkMRMLModelNode> node;
 
+  QFETCH(QList<AttributeType>, attributes);
   foreach(const AttributeType& attribute, attributes)
     {
     node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
@@ -321,33 +334,76 @@ void qMRMLNodeAttributeTableViewTester::testAdd()
 
   this->NodeAttributeTableView->addAttribute();
 
-  QCOMPARE(this->NodeAttributeTableView->attributeCount(), expectedAttributeCountAfterAdd);
+  QFETCH(QList<AttributeType>, expectedAttributes);
 
-  // Make the new attribute name the current so that the view can store its name
-  this->NodeAttributeTableView->selectItemRange(
-    expectedAttributeCountAfterAdd-1,0,expectedAttributeCountAfterAdd-1,0);
-  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
-  this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-
-  this->NodeAttributeTableView->renameAttribute(QString("NewAttributeName"), newAttributeName);
-  QCOMPARE((int)this->NodeAttributeTableView->inspectedNode()->GetAttributeNames().size(), expectedAttributeCountAfterAdd);
+  QStringList resultAttributes = this->NodeAttributeTableView->attributes();
+  int i = 0;
+  foreach (QString attribute, resultAttributes)
+    {
+    QCOMPARE(attribute, expectedAttributes[i].first);
+    QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
+             expectedAttributes[i].second);
+    ++i;
+    }
 }
 
 // ----------------------------------------------------------------------------
 void qMRMLNodeAttributeTableViewTester::testAdd_data()
 {
   QTest::addColumn<QList<AttributeType> >("attributes");
-  QTest::addColumn<int>("expectedAttributeCountAfterAdd");
-  QTest::addColumn<QString>("newAttributeName");
+  QTest::addColumn<QList<AttributeType> >("expectedAttributes");
 
-  QTest::newRow("attribute") << ( QList<AttributeType>()
-                                  << AttributeType("Attribute1", "Value1") )
-                             << 2
-                             << "Attribute2";
-  QTest::newRow("empty attribute") << ( QList<AttributeType>()
-                                        << AttributeType("", "") )
-                                   << 2
-                                   << "Attribute2";
+  QTest::newRow("empty attribute")
+    << ( QList<AttributeType>() << AttributeType("", "") )
+    << ( QList<AttributeType>() << AttributeType("NewAttributeName", "") );
+  QTest::newRow("attribute")
+    << ( QList<AttributeType>() << AttributeType("Attribute1", "Value1") )
+    << ( QList<AttributeType>() << AttributeType("Attribute1", "Value1")
+         << AttributeType("NewAttributeName", "") );
+  QTest::newRow("NewAttributeName attribute")
+    << ( QList<AttributeType>() << AttributeType("NewAttributeName", "Value1") )
+    << ( QList<AttributeType>() << AttributeType("NewAttributeName", "Value1")
+         << AttributeType("NewAttributeName1", ""));
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testRename()
+{
+  vtkNew<vtkMRMLModelNode> node;
+  node->SetAttribute("Attribute1", "Value1");
+  node->SetAttribute("Attribute2", "Value2");
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
+
+  QFETCH(QString, attributeToRename);
+  QFETCH(QString, newAttributeName);
+  this->NodeAttributeTableView->renameAttribute(attributeToRename, newAttributeName);
+  QFETCH(QStringList, expectedAttributes);
+  QCOMPARE(this->NodeAttributeTableView->attributes(),
+           expectedAttributes);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testRename_data()
+{
+  QTest::addColumn<QString>("attributeToRename");
+  QTest::addColumn<QString>("newAttributeName");
+  QTest::addColumn<QStringList>("expectedAttributes");
+
+  QTest::newRow("Attribute1 -> Attribute3")
+    << "Attribute1" << "Attribute3"
+    << (QStringList() << "Attribute3" << "Attribute2");
+  QTest::newRow("Attribute1 -> Attribute2")
+    << "Attribute1" << "Attribute2"
+    << (QStringList() << "Attribute2");
+  QTest::newRow("Attribute2 -> Attribute3")
+    << "Attribute2" << "Attribute3"
+    << (QStringList() << "Attribute1" << "Attribute3");
+  QTest::newRow("Attribute1 -> \"\"")
+    << "Attribute1" << ""
+    << (QStringList() << "Attribute2");
+  QTest::newRow("\"\" -> Attribute1")
+    << "" << "Attribute1"
+    << (QStringList() << "Attribute1" << "Attribute2");
 }
 
 // ----------------------------------------------------------------------------
