@@ -17,7 +17,7 @@
    <iconset resource="../qSlicerBaseQTGUI.qrc">
     <normaloff>:/Icons/SaveScene.png</normaloff>:/Icons/SaveScene.png</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0,0">
    <item row="0" column="0">
     <widget class="QToolButton" name="SelectSceneDataButton">
      <property name="toolTip">
@@ -38,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="6">
+   <item row="1" column="0" colspan="4">
     <widget class="QTableWidget" name="FileWidget">
      <property name="selectionMode">
       <enum>QAbstractItemView::NoSelection</enum>
@@ -78,38 +78,25 @@
      </column>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QLabel" name="DirectoryLabel">
-     <property name="text">
-      <string>Destination for all selected:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="6">
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <item row="2" column="3">
+    <widget class="QDialogButtonBox" name="ButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
-   <item row="2" column="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="2" column="0" colspan="3">
+    <widget class="ctkDirectoryButton" name="DirectoryButton">
+     <property name="text">
+      <string>Change directory for selected files</string>
      </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::MinimumExpanding</enum>
+     <property name="options">
+      <set>ctkDirectoryButton::DontUseNativeDialog</set>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
    <item row="0" column="1">
     <widget class="QToolButton" name="SelectDataButton">
@@ -131,9 +118,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="3">
-    <widget class="ctkDirectoryButton" name="DirectoryButton"/>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -148,7 +132,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>ButtonBox</sender>
    <signal>accepted()</signal>
    <receiver>qSlicerSaveDataDialog</receiver>
    <slot>accept()</slot>
@@ -164,7 +148,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>ButtonBox</sender>
    <signal>rejected()</signal>
    <receiver>qSlicerSaveDataDialog</receiver>
    <slot>reject()</slot>
