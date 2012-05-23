@@ -376,7 +376,17 @@ void qMRMLNodeAttributeTableViewTester::testRename()
 
   QFETCH(QString, attributeToRename);
   QFETCH(QString, newAttributeName);
+  QFETCH(int, renamedAttributeRowIndex);
+
+  // Make the new attribute name the current so that the view can store its name
+  //   This way in case of duplicated names, the original name is restored (default behavior)
+  this->NodeAttributeTableView->selectItemRange(
+    renamedAttributeRowIndex,0,renamedAttributeRowIndex,0);
+  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
+  this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+
   this->NodeAttributeTableView->renameAttribute(attributeToRename, newAttributeName);
+
   QFETCH(QStringList, expectedAttributes);
   QCOMPARE(this->NodeAttributeTableView->attributes(),
            expectedAttributes);
@@ -387,22 +397,23 @@ void qMRMLNodeAttributeTableViewTester::testRename_data()
 {
   QTest::addColumn<QString>("attributeToRename");
   QTest::addColumn<QString>("newAttributeName");
+  QTest::addColumn<int>("renamedAttributeRowIndex");
   QTest::addColumn<QStringList>("expectedAttributes");
 
   QTest::newRow("Attribute1 -> Attribute3")
-    << "Attribute1" << "Attribute3"
-    << (QStringList() << "Attribute3" << "Attribute2");
+    << "Attribute1" << "Attribute3" << 0
+    << (QStringList() << "Attribute2" << "Attribute3");
   QTest::newRow("Attribute1 -> Attribute2")
-    << "Attribute1" << "Attribute2"
-    << (QStringList() << "Attribute2");
+    << "Attribute1" << "Attribute2" << 0
+    << (QStringList() << "Attribute1" << "Attribute2");
   QTest::newRow("Attribute2 -> Attribute3")
-    << "Attribute2" << "Attribute3"
+    << "Attribute2" << "Attribute3" << 1
     << (QStringList() << "Attribute1" << "Attribute3");
   QTest::newRow("Attribute1 -> \"\"")
-    << "Attribute1" << ""
+    << "Attribute1" << "" << 0
     << (QStringList() << "Attribute2");
   QTest::newRow("\"\" -> Attribute1")
-    << "" << "Attribute1"
+    << "" << "Attribute1" << 0
     << (QStringList() << "Attribute1" << "Attribute2");
 }
 
