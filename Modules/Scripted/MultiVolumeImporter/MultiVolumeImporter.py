@@ -199,15 +199,20 @@ class MultiVolumeImporterWidget:
       self.__status.text = 'Series processed OK, '+str(nFrames)+' volumes identified'
 
       Helper.Info('Location of files:'+tmpDir)
-      fileNames = os.listdir(tmpDir)
+      for f in os.listdir(tmpDir):
+        if not f.startswith('.'):
+          fileNames.append(f)
       fileNames.sort()
 
       frameFolder = tmpDir
 
     else:
       # each frame is saved as a separate volume
-      fileNames = os.listdir(self.__fDialog.directory)
+      for f in os.listdir(self.__fDialog.directory):
+        if not f.startswith('.'):
+          fileNames.append(f)
       fileNames.sort()
+
       frameFolder = self.__fDialog.directory
       nFrames = len(fileNames)
       volumeLabels.SetNumberOfTuples(nFrames)
