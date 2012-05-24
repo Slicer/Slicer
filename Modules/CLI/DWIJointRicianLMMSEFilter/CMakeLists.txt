@@ -6,6 +6,7 @@ slicerMacroBuildCLI(
   LINK_DIRECTORIES ${ModuleDescriptionParser_BINARY_DIR}
   INCLUDE_DIRECTORIES
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
+  EXECUTABLE_ONLY
   )
 
 if(BUILD_TESTING)
