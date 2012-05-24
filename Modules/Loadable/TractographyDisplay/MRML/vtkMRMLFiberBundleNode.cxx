@@ -217,12 +217,6 @@ void vtkMRMLFiberBundleNode::UpdateReferenceID(const char *oldID, const char *ne
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleNode::GetFilteredPolyData() 
   {
-//    if (this->SubsamplingRatio < 1.)
-//    {
-//      return this->CleanPolyData->GetOutput();
-//    } else {
-//      return this->GetPolyData();
-//    }
     if (this->SelectWithAnnotationNode)
       return this->CleanPolyDataPostROISelection->GetOutput();
     else
@@ -378,7 +372,9 @@ void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
     if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
       {
       subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
-      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2; //Rounding to 2 decimals
+      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2, 1;
+      if (subsamplingRatio < 0.01)
+        subsamplingRatio = 0.01;
       }
 
     this->SetSubsamplingRatio(subsamplingRatio);
