@@ -53,6 +53,9 @@
       <element>RAIMaxEigenvecX</element>
       <element>RAIMaxEigenvecY</element>
       <element>RAIMaxEigenvecZ</element>
+      <element>MaxEigenvecX</element>
+      <element>MaxEigenvecY</element>
+      <element>MaxEigenvecZ</element>
       <element>D11</element>
       <element>D22</element>
       <element>D33</element>

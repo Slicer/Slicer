@@ -636,12 +636,25 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
         break;
 
       case vtkDiffusionTensorMathematics::VTK_TENS_RAI_MAX_EIGENVEC_PROJY:
-            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecY(v,w));
-            break;
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecY(v,w));
+        break;
 
       case vtkDiffusionTensorMathematics::VTK_TENS_RAI_MAX_EIGENVEC_PROJZ:
-            *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(v,w));
-            break;
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(v,w));
+        break;
+
+      case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVEC_PROJX:
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvecX(v,w));
+        break;
+
+      case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVEC_PROJY:
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvecY(v,w));
+        break;
+
+      case vtkDiffusionTensorMathematics::VTK_TENS_MAX_EIGENVEC_PROJZ:
+        *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::MaxEigenvecZ(v,w));
+        break;
+
 
       case vtkDiffusionTensorMathematics::VTK_TENS_MODE:
             *outPtr = static_cast<T> (vtkDiffusionTensorMathematics::Mode(w));
@@ -1061,6 +1074,21 @@ double vtkDiffusionTensorMathematics::RAIMaxEigenvecY(double **v, double w[3])
 double vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(double **v, double w[3])
 {
   return (fabs(v[2][0])*vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
+}
+
+double vtkDiffusionTensorMathematics::MaxEigenvecX(double **v, double w[3]) 
+{
+  return (fabs(v[0][0]));
+}
+
+double vtkDiffusionTensorMathematics::MaxEigenvecY(double **v, double w[3])
+{
+  return (fabs(v[1][0]));
+}
+
+double vtkDiffusionTensorMathematics::MaxEigenvecZ(double **v, double w[3])
+{
+  return (fabs(v[2][0]));
 }
 
 double vtkDiffusionTensorMathematics::MaxEigenvalueProjectionX(double **v, double w[3]) 

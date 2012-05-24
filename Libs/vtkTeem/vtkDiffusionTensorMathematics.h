@@ -69,10 +69,13 @@ public:
     VTK_TENS_RAI_MAX_EIGENVEC_PROJX = 19,
     VTK_TENS_RAI_MAX_EIGENVEC_PROJY = 20,
     VTK_TENS_RAI_MAX_EIGENVEC_PROJZ = 21,
-    VTK_TENS_PARALLEL_DIFFUSIVITY = 22,
-    VTK_TENS_PERPENDICULAR_DIFFUSIVITY = 23,
-    VTK_TENS_COLOR_ORIENTATION_MIDDLE_EIGENVECTOR = 24,
-    VTK_TENS_COLOR_ORIENTATION_MIN_EIGENVECTOR = 25
+    VTK_TENS_MAX_EIGENVEC_PROJX = 22,
+    VTK_TENS_MAX_EIGENVEC_PROJY = 23,
+    VTK_TENS_MAX_EIGENVEC_PROJZ = 24,
+    VTK_TENS_PARALLEL_DIFFUSIVITY = 25,
+    VTK_TENS_PERPENDICULAR_DIFFUSIVITY = 26,
+    VTK_TENS_COLOR_ORIENTATION_MIDDLE_EIGENVECTOR = 27,
+    VTK_TENS_COLOR_ORIENTATION_MIN_EIGENVECTOR = 28
   };
 
 
@@ -133,6 +136,16 @@ public:
   {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJY);}
   void SetOperationToRAIMaxEigenvecZ()
   {this->SetOperation(VTK_TENS_RAI_MAX_EIGENVEC_PROJZ);}
+
+  /// 
+  /// Output Relative_anisotropy*Maxeigenvec_projection also known as L1z
+  void SetOperationToMaxEigenvecX()
+  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJX);}
+  void SetOperationToMaxEigenvecY()
+  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJY);}
+  void SetOperationToMaxEigenvecZ()
+  {this->SetOperation(VTK_TENS_MAX_EIGENVEC_PROJZ);}
+
   
   ///  
   /// Output a matrix (tensor) component
@@ -239,6 +252,9 @@ public:
   static double RAIMaxEigenvecX(double **v, double w[3]);
   static double RAIMaxEigenvecY(double **v, double w[3]);
   static double RAIMaxEigenvecZ(double **v, double w[3]);
+  static double MaxEigenvecX(double **v, double w[3]);
+  static double MaxEigenvecY(double **v, double w[3]);
+  static double MaxEigenvecZ(double **v, double w[3]);
   static double MaxEigenvalueProjectionX(double **v, double w[3]);
   static double MaxEigenvalueProjectionY(double **v, double w[3]);
   static double MaxEigenvalueProjectionZ(double **v, double w[3]);

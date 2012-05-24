@@ -107,6 +107,19 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToRAIMaxEigenvecZ();
     }
+  else if( operation == std::string("MaxEigenvecX") )
+    {
+    math->SetOperationToMaxEigenvecX();
+    }
+  else if( operation == std::string("MaxEigenvecY") )
+    {
+    math->SetOperationToMaxEigenvecY();
+    }
+  else if( operation == std::string("MaxEigenvecZ") )
+    {
+    math->SetOperationToMaxEigenvecZ();
+    }
+
   else if( operation == std::string("D11") )
     {
     math->SetOperationToD11();
