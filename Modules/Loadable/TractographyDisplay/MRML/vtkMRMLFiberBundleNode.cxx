@@ -372,7 +372,7 @@ void vtkMRMLFiberBundleNode::SetPolyData(vtkPolyData* polyData)
     if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
       {
       subsamplingRatio = this->GetMaxNumberOfFibersToShowByDefault() * 1. / numberOfFibers;
-      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2, 1;
+      subsamplingRatio = floor(subsamplingRatio * 1e2) / 1e2;
       if (subsamplingRatio < 0.01)
         subsamplingRatio = 0.01;
       }
