@@ -275,7 +275,14 @@ int DoIt( int argc, char * argv[], PixelType )
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput( castImageFilter->GetOutput() );
   nrrdWriter->SetFileName( outputVolume.c_str() );
-  nrrdWriter->UseCompressionOn();
+  if (compressOutput)
+    {
+    nrrdWriter->UseCompressionOn();
+    }
+  else
+    {
+    nrrdWriter->UseCompressionOff();
+    }
   try
     {
     nrrdWriter->Update();

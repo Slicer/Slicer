@@ -98,4 +98,15 @@
       <description><![CDATA[Output DWI volume.]]></description>
     </image>
   </parameters>
+  <parameters>
+    <label>Input/Output Parameters</label>
+    <description><![CDATA[Parameters for the input/output of DWI files]]></description>
+    <boolean>
+      <name>compressOutput</name>
+      <longflag>compressOutput</longflag>
+      <description><![CDATA[Compress the data of the compressed file using gzip]]></description>
+      <label>Compress output data</label>
+      <default>false</default>
+    </boolean>
+  </parameters>
 </executable>
