@@ -265,5 +265,5 @@ function(fixup_bundle_with_plugins app)
     )
 endfunction()
 
-fixup_bundle_with_plugins("Slicer.app")
-#verify_app("/Users/partyd/Kitware/Slicer4-trunk/build/Slicer-build/_CPack_Packages/Darwin/DragNDrop/Slicer-4.0.gamma-2011-05-10-Darwin/Slicer.app")
+fixup_bundle_with_plugins("@Slicer_APPLICATION_NAME@.app")
+#verify_app("/Users/partyd/Kitware/Slicer4-trunk/build/Slicer-build/_CPack_Packages/Darwin/DragNDrop/Slicer-4.0.gamma-2011-05-10-Darwin/${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app")

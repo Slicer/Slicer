@@ -50,7 +50,7 @@
 # At build time, <CMAKE_CFG_INTDIR> will be replaced by the active configuration name.
 # This happens within the script "ctkAppLauncher-configure.cmake".
 
-# Note also that script is executed each time the target 'SlicerConfigureLauncher' is built.
+# Note also that script is executed each time the target '{Application_Name}ConfigureLauncher' is built.
 #
 # It means you could manually trigger the reconfiguration of the launcher settings file
 # by building that target.

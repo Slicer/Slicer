@@ -994,12 +994,12 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 #ifdef Q_OS_MAC
     return QString();
 #else
-    return this->slicerHome() + "/" Slicer_BIN_DIR "/SlicerLauncherSettings.ini";
+    return this->slicerHome() + "/" Slicer_BIN_DIR "/" Slicer_APPLICATION_NAME "LauncherSettings.ini";
 #endif
     }
   else
     {
-    return this->slicerHome() + "/SlicerLauncherSettings.ini";
+    return this->slicerHome() + "/" Slicer_APPLICATION_NAME "LauncherSettings.ini";
     }
 }
 
