@@ -230,6 +230,12 @@ void qSlicerExtensionsManagerModelPrivate::init()
 
   QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
                    q, SLOT(onDownloadFinished(QNetworkReply*)));
+
+  QObject::connect(q, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
+                   q, SLOT(identifyIncompatibleExtensions()));
+
+  QObject::connect(q, SIGNAL(modelUpdated()),
+                   q, SLOT(identifyIncompatibleExtensions()));
 }
 
 // --------------------------------------------------------------------------
@@ -779,6 +785,11 @@ void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extension
 {
   Q_D(qSlicerExtensionsManagerModel);
 
+  if(value && !this->isExtensionCompatible(extensionName).isEmpty())
+    {
+    return;
+    }
+
   if (value)
     {
     d->addExtensionSettings(extensionName);
@@ -1072,6 +1083,13 @@ bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& ext
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions()
 {
+  QStringList uninstalledExtensions;
+  return this->uninstallScheduledExtensions(uninstalledExtensions);
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions(QStringList& uninstalledExtensions)
+{
   Q_D(qSlicerExtensionsManagerModel);
   bool success = true;
   foreach(const QString& extensionName, this->scheduledForUninstallExtensions())
@@ -1079,7 +1097,7 @@ bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions()
     success = success && d->uninstallExtension(extensionName);
     if(success)
       {
-      qDebug() << "Successfully uninstalled extension" << extensionName;
+      uninstalledExtensions << extensionName;
       }
     }
   return success;
@@ -1171,15 +1189,18 @@ void qSlicerExtensionsManagerModel::setSlicerRequirements(const QString& revisio
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManagerModel::imcompatibleExtensions() const
+void qSlicerExtensionsManagerModel::identifyIncompatibleExtensions()
 {
   Q_D(const qSlicerExtensionsManagerModel);
   foreach(const QString& extensionName, this->installedExtensions())
     {
-    QString reasons = this->isExtensionCompatible(extensionName, d->SlicerRevision, d->SlicerOs, d->SlicerArch);
+    QStringList reasons = this->isExtensionCompatible(extensionName, d->SlicerRevision, d->SlicerOs, d->SlicerArch);
     if (!reasons.isEmpty())
       {
-      qCritical() << "Extension" << extensionName << "is not compatibile." << reasons;
+      reasons.prepend(QString("Extension %1 is incompatible").arg(extensionName));
+      qCritical() << reasons.join("\n  ");
+      this->setExtensionEnabled(extensionName, false);
+      emit this->extensionIdentifedAsIncompatible(extensionName);
       }
     }
 }
@@ -1189,32 +1210,32 @@ CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerVersion, SlicerVersion
 CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString& , setSlicerVersion, SlicerVersion)
 
 // --------------------------------------------------------------------------
-QString qSlicerExtensionsManagerModel::isExtensionCompatible(
+QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(
     const QString& extensionName, const QString& slicerRevision,
     const QString& slicerOs, const QString& slicerArch) const
 {
   if (extensionName.isEmpty())
     {
-    return tr("extensionName is not specified");
+    return QStringList() << tr("extensionName is not specified");
     }
   if (slicerRevision.isEmpty())
     {
-    return tr("slicerRevision is not specified");
+    return QStringList() << tr("slicerRevision is not specified");
     }
   if (slicerOs.isEmpty())
     {
-    return tr("slicerOs is not specified");
+    return QStringList() << tr("slicerOs is not specified");
     }
   if (slicerArch.isEmpty())
     {
-    return tr("slicerArch is not specified");
+    return QStringList() << tr("slicerArch is not specified");
     }
   QStringList reasons;
   ExtensionMetadataType metadata = this->extensionMetadata(extensionName);
-  QString extensionRevision = metadata.value("revision").toString();
-  if (slicerRevision != extensionRevision)
+  QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
+  if (slicerRevision != extensionSlicerRevision)
     {
-    reasons << tr("extensionRevision [%1] is different from slicerRevision [%2]").arg(extensionRevision).arg(slicerRevision);
+    reasons << tr("extensionSlicerRevision [%1] is different from slicerRevision [%2]").arg(extensionSlicerRevision).arg(slicerRevision);
     }
   QString extensionArch = metadata.value("arch").toString();
   if (slicerArch != extensionArch)
@@ -1226,7 +1247,14 @@ QString qSlicerExtensionsManagerModel::isExtensionCompatible(
     {
     reasons << tr("extensionOs [%1] is different from slicerOs [%2]").arg(extensionOs).arg(slicerOs);
     }
-  return reasons.join(", ");
+  return reasons;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::isExtensionCompatible(const QString& extensionName) const
+{
+  return this->isExtensionCompatible(
+        extensionName, this->slicerRevision(), this->slicerOs(), this->slicerArch());
 }
 
 // --------------------------------------------------------------------------

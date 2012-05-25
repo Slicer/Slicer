@@ -252,7 +252,12 @@ void qSlicerCoreApplicationPrivate::init()
   q->setExtensionManagerModel(model);
   model->updateModel();
 
-  model->uninstallScheduledExtensions();
+  QStringList uninstalledExtensions;
+  model->uninstallScheduledExtensions(uninstalledExtensions);
+  foreach(const QString& extensionName, uninstalledExtensions)
+    {
+    qDebug() << "Successfully uninstalled extension" << extensionName;
+    }
 
 # ifdef Q_OS_MAC
   q->addLibraryPath(this->defaultExtensionsInstallPathForMacOSX());
