@@ -668,11 +668,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       {
       // only write out scalar & vector image nodes if running an executable
       out = vtkMRMLVolumeArchetypeStorageNode::New();
+      out->UseCompressionOff();
       }
     else if ((commandType == CommandLineModule) && (dtvnd || dwvnd))
       {
       // only write out diffusion image & tensor nodes if running an executable
       out = vtkMRMLNRRDStorageNode::New();
+      out->UseCompressionOff();
       }
     else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode"))
       {
