@@ -53,10 +53,12 @@ public slots:
 protected slots:
   void setExtensionEnabled(const QString& extensionName);
   void setExtensionDisabled(const QString& extensionName);
-  void uninstallExtension(const QString& extensionName);
+  void scheduleExtensionForUninstall(const QString& extensionName);
+  void cancelExtensionScheduledForUninstall(const QString& extensionName);
   void onModelUpdated();
   void onExtensionInstalled(const QString& extensionName);
-  void onExtensionUninstalled(const QString& extensionName);
+  void onExtensionScheduledForUninstall(const QString& extensionName);
+  void onExtensionCancelledScheduleForUninstall(const QString& extensionName);
   void onModelExtensionEnabledChanged(const QString& extensionName, bool enabled);
 
 protected:

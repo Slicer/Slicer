@@ -179,7 +179,8 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
     }
 
   disconnect(this, SLOT(onExtensionInstalled(QString)));
-  disconnect(this, SLOT(onExtensionUninstalled(QString)));
+  //disconnect(this, SLOT(onExtensionUninstalled(QString)));
+  disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
   disconnect(this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
   disconnect(this, SLOT(onMessageLogged(QString,ctkErrorLogLevel::LogLevels)));
   disconnect(this, SLOT(onDownloadStarted(QNetworkReply*)));
@@ -195,8 +196,11 @@ void qSlicerExtensionsInstallWidget::setExtensionsManagerModel(qSlicerExtensions
     QObject::connect(model, SIGNAL(extensionInstalled(QString)),
                      this, SLOT(onExtensionInstalled(QString)));
 
-    QObject::connect(model, SIGNAL(extensionUninstalled(QString)),
-                     this, SLOT(onExtensionUninstalled(QString)));
+    QObject::connect(model, SIGNAL(extensionScheduledForUninstall(QString)),
+                     this, SLOT(onExtensionScheduledForUninstall(QString)));
+
+    QObject::connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
+                     this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
 
     QObject::connect(model, SIGNAL(slicerRequirementsChanged(QString,QString,QString)),
                      this, SLOT(onSlicerRequirementsChanged(QString,QString,QString)));
@@ -235,14 +239,20 @@ void qSlicerExtensionsInstallWidget::refresh()
 void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'uninstall')").arg(extensionName));
+  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'ScheduleUninstall')").arg(extensionName));
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onExtensionUninstalled(const QString& extensionName)
+void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'install')").arg(extensionName));
+  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'CancelScheduledForUninstall')").arg(extensionName));
+}
+
+// -------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
+{
+  this->onExtensionInstalled(extensionName);
 }
 
 // --------------------------------------------------------------------------

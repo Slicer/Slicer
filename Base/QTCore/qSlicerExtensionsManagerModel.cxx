@@ -141,7 +141,17 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
+  void addExtensionSettings(const QString& extensionName);
+  void removeExtensionSettings(const QString& extensionName);
+
+  void removeExtensionFromScheduledForUninstallList(const QString& extensionName);
+
   QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
+
+  /// \brief Uninstall \a extensionName
+  /// \note The directory containing the extension will be deleted.
+  /// \sa downloadExtension, installExtension
+  bool uninstallExtension(const QString& extensionName);
 
   QStringList extensionLibraryPaths(const QString& extensionName)const;
   QStringList extensionPaths(const QString& extensionName)const;
@@ -473,6 +483,28 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::addExtensionSettings(const QString& extensionName)
+{
+  this->addExtensionPathToApplicationSettings(extensionName);
+  this->addExtensionPathToLauncherSettings(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::removeExtensionSettings(const QString& extensionName)
+{
+  this->removeExtensionPathFromApplicationSettings(extensionName);
+  this->removeExtensionPathFromLauncherSettings(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::removeExtensionFromScheduledForUninstallList(const QString& extensionName)
+{
+  QStringList extensionsScheduledForUninstall = QSettings().value("Extensions/ScheduledForUninstall").toStringList();
+  extensionsScheduledForUninstall.removeAll(extensionName);
+  QSettings().setValue("Extensions/ScheduledForUninstall", extensionsScheduledForUninstall);
+}
+
+// --------------------------------------------------------------------------
 QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensionsDir, const QString& archiveFile)
 {
   // Set extension directory as current directory
@@ -778,6 +810,18 @@ bool qSlicerExtensionsManagerModel::isExtensionEnabled(const QString& extensionN
 }
 
 // --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::scheduledForUninstallExtensions() const
+{
+  return QSettings().value("Extensions/ScheduledForUninstall").toStringList();
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(const QString& extensionName)const
+{
+  return QSettings().value("Extensions/ScheduledForUninstall").toStringList().contains(extensionName);
+}
+
+// --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
 {
   Q_D(const qSlicerExtensionsManagerModel);
@@ -930,10 +974,7 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     }
 
   d->saveExtensionDescription(extensionDescriptionFile, extensionMetadata);
-
-  d->addExtensionPathToApplicationSettings(extensionName);
-  d->addExtensionPathToLauncherSettings(extensionName);
-
+  d->addExtensionSettings(extensionName);
   d->addExtensionModelRow(Self::parseExtensionDescriptionFile(extensionDescriptionFile));
 
   emit this->extensionInstalled(extensionName);
@@ -942,27 +983,95 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
 }
 
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModel::uninstallExtension(const QString& extensionName)
+bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  QStandardItem * item = d->extensionItem(extensionName);
+  if (!this->isExtensionInstalled(extensionName))
+    {
+    return false;
+    }
+
+  if (this->isExtensionScheduledForUninstall(extensionName))
+    {
+    return true;
+    }
+  QSettings().setValue(
+        "Extensions/ScheduledForUninstall",
+        QSettings().value("Extensions/ScheduledForUninstall").toStringList() << extensionName);
+
+  d->removeExtensionSettings(extensionName);
+
+  emit this->extensionScheduledForUninstall(extensionName);
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManagerModel);
+
+  if (!this->isExtensionScheduledForUninstall(extensionName))
+    {
+    return false;
+    }
+  d->removeExtensionFromScheduledForUninstallList(extensionName);
+  d->addExtensionSettings(extensionName);
+
+  emit this->extensionCancelledScheduleForUninstall(extensionName);
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& extensionName)
+{
+  Q_Q(qSlicerExtensionsManagerModel);
+
+  QStandardItem * item = this->extensionItem(extensionName);
   if (!item)
     {
     qCritical() << "Failed to uninstall extension" << extensionName;
     return false;
     }
 
-  d->removeExtensionPathFromApplicationSettings(extensionName);
-  d->removeExtensionPathFromLauncherSettings(extensionName);
+  if (!q->isExtensionScheduledForUninstall(extensionName))
+    {
+    qCritical() << "Failed to uninstall extension" << extensionName
+                << " - Extension is NOT 'scheduled for uninstall'";
+    return false;
+    }
 
   bool success = true;
-  success = success && ctk::removeDirRecursively(this->extensionInstallPath(extensionName));
-  success = success && QFile::remove(this->extensionDescriptionFile(extensionName));
-  success = success && d->Model.removeRow(item->row());
+  success = success && ctk::removeDirRecursively(q->extensionInstallPath(extensionName));
+  success = success && QFile::remove(q->extensionDescriptionFile(extensionName));
+  success = success && this->Model.removeRow(item->row());
 
-  emit this->extensionUninstalled(extensionName);
+  if (success)
+    {
+    this->removeExtensionSettings(extensionName);
+    this->removeExtensionFromScheduledForUninstallList(extensionName);
+    }
 
+  emit q->extensionUninstalled(extensionName);
+
+  return success;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModel::uninstallScheduledExtensions()
+{
+  Q_D(qSlicerExtensionsManagerModel);
+  bool success = true;
+  foreach(const QString& extensionName, this->scheduledForUninstallExtensions())
+    {
+    success = success && d->uninstallExtension(extensionName);
+    if(success)
+      {
+      qDebug() << "Successfully uninstalled extension" << extensionName;
+      }
+    }
   return success;
 }
 

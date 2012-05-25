@@ -30,7 +30,7 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="2">
-      <widget class="QPushButton" name="UninstallButton">
+      <widget class="QPushButton" name="ScheduleForUninstallButton">
        <property name="text">
         <string>Uninstall</string>
        </property>
@@ -50,12 +50,17 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="CancelScheduledForUninstallButton">
+       <property name="text">
+        <string>Cancel Uninstall</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../qSlicerBaseQTGUI.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

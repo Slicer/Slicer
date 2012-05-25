@@ -58,6 +58,8 @@ private:
 
   void installHelper(qSlicerExtensionsManagerModel *model, const QString &os, int extensionId, const QString &tmp);
 
+  bool uninstallHelper(qSlicerExtensionsManagerModel *model, const QString& extensionName);
+
   bool resetTmp();
   QDir Tmp;
   QString TemporaryDirName;
@@ -101,6 +103,12 @@ private slots:
   void testInstallExtension();
 
   void testUninstallExtension();
+
+  void testScheduleExtensionForUninstall();
+  void testScheduleExtensionForUninstall_data();
+
+  void testCancelExtensionScheduledForUninstall();
+  void testCancelExtensionScheduledForUninstall_data();
 
   void testUpdateModel();
 
@@ -253,6 +261,14 @@ void qSlicerExtensionsManagerModelTester::installHelper(qSlicerExtensionsManager
 
   QVERIFY(model->isExtensionInstalled(extensionName));
   QVERIFY(model->isExtensionEnabled(extensionName));
+}
+
+// ----------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelTester::uninstallHelper(qSlicerExtensionsManagerModel *model, const QString& extensionName)
+{
+  bool success = model->scheduleExtensionForUninstall(extensionName);
+  success = success && model->uninstallScheduledExtensions();
+  return success;
 }
 
 // ----------------------------------------------------------------------------
@@ -783,7 +799,6 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
   {
     qSlicerExtensionsManagerModel model;
     model.setSlicerVersion(slicerVersion);
-    QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
 
     for (int extensionId = 0; extensionId < 4; ++extensionId)
       {
@@ -794,7 +809,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
             << "LoadableExtensionTemplate"
             << "SuperBuildLoadableExtensionTemplate")
       {
-      QVERIFY(model.uninstallExtension(extensionName));
+      QVERIFY(this->uninstallHelper(&model, extensionName));
       QVERIFY(!model.isExtensionInstalled(extensionName));
       }
   }
@@ -828,6 +843,168 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
       QVERIFY(model.isExtensionInstalled(extensionName));
       }
   }
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
+{
+  QVERIFY(this->resetTmp());
+
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
+  QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
+
+  QString slicerVersion = "4.0";
+
+  {
+    QFETCH(QString, operatingSystem);
+    QFETCH(QList<int>, extensionIdsToInstall);
+    qSlicerExtensionsManagerModel model;
+    model.setSlicerVersion(slicerVersion);
+    foreach(int extensionIdToInstall, extensionIdsToInstall)
+      {
+      this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
+      }
+  }
+
+  QFETCH(QStringList, extensionNamesToScheduleForUninstall);
+  QFETCH(QStringList, expectedExtensionNamesScheduledForUninstall);
+
+  {
+    qSlicerExtensionsManagerModel model;
+    QSignalSpy spyExtensionScheduledForUninstall(&model, SIGNAL(extensionScheduledForUninstall(QString)));
+    model.setSlicerVersion(slicerVersion);
+    model.updateModel();
+    foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
+      {
+      model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
+      }
+    QCOMPARE(spyExtensionScheduledForUninstall.count(), expectedExtensionNamesScheduledForUninstall.count());
+  }
+
+  {
+    qSlicerExtensionsManagerModel model;
+    model.setSlicerVersion(slicerVersion);
+    model.updateModel();
+    QCOMPARE(model.scheduledForUninstallExtensions(), expectedExtensionNamesScheduledForUninstall);
+  }
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall_data()
+{
+  QTest::addColumn<QString>("operatingSystem");
+  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QStringList>("extensionNamesToScheduleForUninstall");
+  QTest::addColumn<QStringList>("expectedExtensionNamesScheduledForUninstall");
+
+  QTest::newRow("1")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList())
+      << (QStringList());
+
+  QTest::newRow("2")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
+
+  QTest::newRow("3")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList() << this->expectedExtensionNames().at(0) << "Invalid" << this->expectedExtensionNames().at(2))
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninstall()
+{
+  QVERIFY(this->resetTmp());
+
+  QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
+  QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
+
+  QString slicerVersion = "4.0";
+
+  {
+    QFETCH(QString, operatingSystem);
+    QFETCH(QList<int>, extensionIdsToInstall);
+    qSlicerExtensionsManagerModel model;
+    model.setSlicerVersion(slicerVersion);
+    foreach(int extensionIdToInstall, extensionIdsToInstall)
+      {
+      this->installHelper(&model, operatingSystem, extensionIdToInstall, this->Tmp.absolutePath());
+      }
+  }
+
+  {
+    QFETCH(QStringList, extensionNamesToScheduleForUninstall);
+    qSlicerExtensionsManagerModel model;
+    model.setSlicerVersion(slicerVersion);
+    model.updateModel();
+    foreach(const QString& extensionNameToScheduleForUninstall, extensionNamesToScheduleForUninstall)
+      {
+      model.scheduleExtensionForUninstall(extensionNameToScheduleForUninstall);
+      }
+  }
+
+  {
+    QFETCH(QStringList, extensionNamesToCancelScheduledForUninstall);
+    QFETCH(int, expectedSpyExtensionCancelledScheduleForUninstallCount);
+    qSlicerExtensionsManagerModel model;
+    QSignalSpy spyExtensionCancelledScheduleForUninstall(&model, SIGNAL(extensionCancelledScheduleForUninstall(QString)));
+    model.setSlicerVersion(slicerVersion);
+    model.updateModel();
+    foreach(const QString& extensionNameToCancelScheduledForUninstall, extensionNamesToCancelScheduledForUninstall)
+      {
+      model.cancelExtensionScheduledForUninstall(extensionNameToCancelScheduledForUninstall);
+      }
+    QCOMPARE(spyExtensionCancelledScheduleForUninstall.count(), expectedSpyExtensionCancelledScheduleForUninstallCount);
+  }
+
+  {
+    QFETCH(QStringList, expectedExtensionNamesScheduledForUninstall);
+    qSlicerExtensionsManagerModel model;
+    model.setSlicerVersion(slicerVersion);
+    model.updateModel();
+    QCOMPARE(model.scheduledForUninstallExtensions(), expectedExtensionNamesScheduledForUninstall);
+  }
+
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninstall_data()
+{
+  QTest::addColumn<QString>("operatingSystem");
+  QTest::addColumn<QList<int> >("extensionIdsToInstall");
+  QTest::addColumn<QStringList>("extensionNamesToScheduleForUninstall");
+  QTest::addColumn<QStringList>("extensionNamesToCancelScheduledForUninstall");
+  QTest::addColumn<int>("expectedSpyExtensionCancelledScheduleForUninstallCount");
+  QTest::addColumn<QStringList>("expectedExtensionNamesScheduledForUninstall");
+
+  QTest::newRow("1")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
+      << (QStringList())
+      << 0
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2));
+
+  QTest::newRow("2")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
+      << (QStringList() << this->expectedExtensionNames().at(2) << "Invalid")
+      << 1
+      << (QStringList() << this->expectedExtensionNames().at(0));
+
+  QTest::newRow("3")
+      << Slicer_OS_LINUX_NAME
+      << (QList<int>() << 0 << 1 << 2 << 3)
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
+      << (QStringList() << this->expectedExtensionNames().at(0) << this->expectedExtensionNames().at(2))
+      << 2
+      << (QStringList());
 }
 
 // ----------------------------------------------------------------------------
@@ -1221,7 +1398,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
     {
     model.setSlicerOs(extensionIdToUninstall.first);
     model.setSlicerVersion(this->slicerVersion(extensionIdToUninstall.first, extensionIdToUninstall.second));
-    model.uninstallExtension(this->expectedExtensionNames().at(extensionIdToUninstall.second));
+    this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall.second));
     }
   QCOMPARE(model.numberOfInstalledExtensions(), 0);
 
@@ -1367,7 +1544,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated()
   if (extensionIdToUninstall.second >= 0)
     {
     model.setSlicerVersion(this->slicerVersion(extensionIdToUninstall.first, extensionIdToUninstall.second));
-    model.uninstallExtension(this->expectedExtensionNames().at(extensionIdToUninstall.second));
+    this->uninstallHelper(&model, this->expectedExtensionNames().at(extensionIdToUninstall.second));
     }
   QCOMPARE(model.numberOfInstalledExtensions(), 0);
 
