@@ -93,23 +93,23 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLNode* inp
   this->setFiberBundleNode(vtkMRMLFiberBundleNode::SafeDownCast(inputNode));
 }
 
-void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* FiberBundleNode)
+void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* fiberBundleNode)
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
-  if (vtkMRMLFiberBundleNode::SafeDownCast(FiberBundleNode))
+  if (vtkMRMLFiberBundleNode::SafeDownCast(fiberBundleNode))
     {
-    d->fiberBundleNode = FiberBundleNode;
+    d->fiberBundleNode = fiberBundleNode;
 
-    d->LineDisplayWidget->setFiberBundleNode(FiberBundleNode);
-    d->TubeDisplayWidget->setFiberBundleNode(FiberBundleNode);
-    d->GlyphDisplayWidget->setFiberBundleNode(FiberBundleNode);
+    d->LineDisplayWidget->setFiberBundleNode(fiberBundleNode);
+    d->TubeDisplayWidget->setFiberBundleNode(fiberBundleNode);
+    d->GlyphDisplayWidget->setFiberBundleNode(fiberBundleNode);
 
-    d->LineDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetLineDisplayNode());
-    d->TubeDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetTubeDisplayNode());
-    d->GlyphDisplayWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());
-    d->GlyphPropertiesWidget->setFiberBundleDisplayNode(FiberBundleNode->GetGlyphDisplayNode());
+    d->LineDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
+    d->TubeDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
+    d->GlyphDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+    d->GlyphPropertiesWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
     
-    d->PercentageOfFibersShown = FiberBundleNode->GetSubsamplingRatio() * 100.;
+    d->PercentageOfFibersShown = fiberBundleNode->GetSubsamplingRatio() * 100.;
     emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
     }
 }

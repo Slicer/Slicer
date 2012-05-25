@@ -125,13 +125,13 @@ void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLNode* node)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* FiberBundleNode)
+void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* fiberBundleNode)
 {
   Q_D(qSlicerTractographyDisplayWidget);
   vtkMRMLFiberBundleNode *oldNode = 
     this->FiberBundleNode();
   
-  d->FiberBundleNode = FiberBundleNode;
+  d->FiberBundleNode = fiberBundleNode;
   
   qvtkReconnect( oldNode, this->FiberBundleNode(),
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
@@ -359,7 +359,13 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
     (d->FiberBundleDisplayNode->GetColorNodeID());
   d->ColorByScalarComboBox->setDataSet(vtkDataSet::SafeDownCast(d->FiberBundleNode->GetPolyData()));
 
-  const bool hasTensors = d->FiberBundleNode->GetPolyData()->GetPointData()->GetTensors();
+  bool hasTensors = false;
+  if (d->FiberBundleNode && d->FiberBundleNode->GetPolyData() && 
+      d->FiberBundleNode->GetPolyData()->GetPointData() &&
+      d->FiberBundleNode->GetPolyData()->GetPointData()->GetTensors() )
+    {
+    hasTensors = true;
+    }
 //  const bool colorSolid = d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeSolid;
 
   d->ColorByScalarInvariantRadioButton->setEnabled(hasTensors);// && !colorSolid);
