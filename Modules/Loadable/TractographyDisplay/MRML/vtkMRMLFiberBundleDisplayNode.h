@@ -93,7 +93,9 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
     colorModeScalar = 1,
     colorModeFunctionOfScalar = 2,
     colorModeUseCellScalars = 3,
-    colorModeScalarData = 4
+    colorModeScalarData = 4,
+    colorModePointFiberOrientation = 5,
+    colorModeMeanFiberOrientation = 6,
   };
 
   //--------------------------------------------------------------------------
@@ -140,6 +142,20 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
   /// from the original fiber bundle node.
   void SetColorModeToScalarData ( ) {
     this->SetColorMode ( this->colorModeScalarData );
+  };
+
+  /// 
+  /// Color according to the mean orientation of the fiber
+  /// calculated from the orientation of the segment original fiber bundle node.
+  void SetColorModeToMeanFiberOrientation ( ) {
+    this->SetColorMode ( this->colorModeMeanFiberOrientation );
+  };
+
+  /// 
+  /// Color according to the segment orientation of the fiber
+  /// calculated from the orientation of the segment original fiber bundle node.
+  void SetColorModeToPointFiberOrientation ( ) {
+    this->SetColorMode ( this->colorModePointFiberOrientation );
   };
 
   //--------------------------------------------------------------------------

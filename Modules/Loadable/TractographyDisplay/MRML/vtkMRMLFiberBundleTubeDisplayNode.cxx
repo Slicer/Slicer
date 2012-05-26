@@ -24,6 +24,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLNode.h"
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkPolyDataColorLinesByOrientation.h"
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLFiberBundleTubeDisplayNode);
@@ -34,7 +35,7 @@ vtkMRMLFiberBundleTubeDisplayNode::vtkMRMLFiberBundleTubeDisplayNode()
 {
   this->TensorToColor = vtkPolyDataTensorToColor::New();
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
-
+  this->ColorLinesByOrientation = vtkPolyDataColorLinesByOrientation::New();
   this->TubeFilter = vtkTubeFilter::New();
   this->TubeNumberOfSides = 6;
   this->TubeRadius = 0.5;
@@ -50,6 +51,7 @@ vtkMRMLFiberBundleTubeDisplayNode::~vtkMRMLFiberBundleTubeDisplayNode()
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->TubeFilter->Delete();
   this->TensorToColor->Delete();
+  this->ColorLinesByOrientation->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -134,6 +136,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
   if ((this->PolyData != glyphPolyData) && (this->TubeFilter))
     {
     Superclass::SetPolyData(glyphPolyData);
+    this->ColorLinesByOrientation->SetInput(glyphPolyData);
     this->TubeFilter->SetInput(glyphPolyData);
     }
 }
@@ -182,6 +185,33 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
         this->PolyData->GetCellData()->GetArray("ClusterId")->GetRange(this->ScalarRange);
       }
     }
+    else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation)
+    {
+        vtkDebugMacro("Color by mean fiber orientation");
+        this->ScalarVisibilityOn( );
+        this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModeMeanFiberOrientation);
+        this->TubeFilter->SetInput(this->ColorLinesByOrientation->GetOutput());
+        vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+        vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (ColorNode)
+        {
+          this->SetAndObserveColorNodeID(ColorNode->GetID());
+        }
+
+    }
+    else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
+    {
+        vtkDebugMacro("Color by segment orientation");
+        this->ScalarVisibilityOn( );
+        this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModePointFiberOrientation);
+        this->TubeFilter->SetInput(this->ColorLinesByOrientation->GetOutput());
+        vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+        vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (ColorNode)
+        {
+          this->SetAndObserveColorNodeID(ColorNode->GetID());
+        }
+    }
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
     {
       vtkDebugMacro("coloring with Scalar Data==============================");
@@ -193,6 +223,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     else if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar) && (DiffusionTensorDisplayPropertiesNode != NULL))
     {
         this->ScalarVisibilityOn( );
+        this->AutoScalarRangeOn( );
         this->TensorToColor->SetExtractScalar(1);
 
         switch ( DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( ))

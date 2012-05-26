@@ -46,6 +46,8 @@ public slots:
   void setColorByScalarInvariantDisplayRange(double, double);
   void setColorByScalar();
   void onColorByScalarChanged(int);
+  void setColorByMeanFiberOrientation();
+  void setColorByPointFiberOrientation();
   void setColorByCellScalars();
   void setColorBySolid();
   void clickColorBySolid(bool);

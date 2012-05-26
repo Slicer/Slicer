@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>432</width>
-    <height>346</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -132,7 +132,7 @@ QCheckBox::indicator:unchecked {
            </item>
           </layout>
          </item>
-         <item row="3" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="ScalarRangeLabel">
            <property name="enabled">
             <bool>false</bool>
@@ -148,7 +148,7 @@ QCheckBox::indicator:unchecked {
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="7" column="1">
           <widget class="qMRMLRangeWidget" name="ColorByScalarInvariantDisplayRange">
            <property name="enabled">
             <bool>false</bool>
@@ -200,7 +200,27 @@ QCheckBox::indicator:unchecked {
            </item>
           </layout>
          </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QRadioButton" name="ColorByMeanFiberOrientationRadioButton">
+           <property name="text">
+            <string>Color Fibers By Mean Orientation</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string>buttonGroup</string>
+           </attribute>
+          </widget>
+         </item>
          <item row="5" column="0" colspan="2">
+          <widget class="QRadioButton" name="ColorByPointFiberOrientationRadioButton">
+           <property name="text">
+            <string>Color Fibers By Segment Orientation</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string>buttonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
           <widget class="QRadioButton" name="ColorByCellScalarsRadioButton">
            <property name="text">
             <string>Of Fiber Cluster Group ID</string>
@@ -304,6 +324,18 @@ QCheckBox::indicator:unchecked {
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>VisibilityCheckBox</tabstop>
+  <tabstop>ColorByScalarInvariantRadioButton</tabstop>
+  <tabstop>ColorByScalarInvariantComboBox</tabstop>
+  <tabstop>ColorByScalarRadioButton</tabstop>
+  <tabstop>ColorByScalarComboBox</tabstop>
+  <tabstop>ColorByMeanFiberOrientationRadioButton</tabstop>
+  <tabstop>ColorByPointFiberOrientationRadioButton</tabstop>
+  <tabstop>ColorByCellScalarsRadioButton</tabstop>
+  <tabstop>ColorBySolidColorCheckBox</tabstop>
+  <tabstop>ColorBySolidColorPicker</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -317,8 +349,8 @@ QCheckBox::indicator:unchecked {
      <y>121</y>
     </hint>
     <hint type="destinationlabel">
-     <x>254</x>
-     <y>113</y>
+     <x>296</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
@@ -329,12 +361,12 @@ QCheckBox::indicator:unchecked {
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>28</y>
+     <x>61</x>
+     <y>75</y>
     </hint>
     <hint type="destinationlabel">
-     <x>273</x>
-     <y>29</y>
+     <x>419</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>

@@ -18,6 +18,7 @@ Version:   $Revision: 1.3 $
 #include "vtkPointData.h"
 
 #include "vtkPolyDataTensorToColor.h"
+#include "vtkPolyDataColorLinesByOrientation.h"
 
 #include "vtkMRMLScene.h"
 #include "vtkMRMLNode.h"
@@ -32,6 +33,7 @@ vtkMRMLNodeNewMacro(vtkMRMLFiberBundleLineDisplayNode);
 vtkMRMLFiberBundleLineDisplayNode::vtkMRMLFiberBundleLineDisplayNode()
 {
   this->TensorToColor = vtkPolyDataTensorToColor::New();
+  this->ColorLinesByOrientation = vtkPolyDataColorLinesByOrientation::New();
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
 }
 
@@ -41,6 +43,7 @@ vtkMRMLFiberBundleLineDisplayNode::~vtkMRMLFiberBundleLineDisplayNode()
 {
   this->RemoveObservers ( vtkCommand::ModifiedEvent, this->MRMLCallbackCommand );
   this->TensorToColor->Delete();
+  this->ColorLinesByOrientation->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -87,13 +90,14 @@ void vtkMRMLFiberBundleLineDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
     {
     Superclass::SetPolyData(glyphPolyData);
     this->TensorToColor->SetInput(glyphPolyData);
+    this->ColorLinesByOrientation->SetInput(this->TensorToColor->GetOutput());
     }
 }
 
 //----------------------------------------------------------------------------
 vtkPolyData* vtkMRMLFiberBundleLineDisplayNode::GetPolyData()
 {
-  if (this->TensorToColor)
+  if (this->ColorLinesByOrientation)
     {
     return this->OutputPolyData;
     }
@@ -123,22 +127,63 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
         this->ScalarVisibilityOff( );
         this->TensorToColor->SetExtractScalar(0);
         IntermediatePolyData = this->TensorToColor->GetOutput();
+
+        vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (ColorNode)
+          {
+            this->SetAndObserveColorNodeID(ColorNode->GetID());
+          }
+
+        this->AutoScalarRangeOff();
+        this->SetScalarRange(0, 255);
         }
       else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
       {
         this->ScalarVisibilityOn( );
-        this->TensorToColor->SetExtractScalar(0); // force a copy of the data
-        this->SetActiveScalarName("ClusterId");
-        if (this->PolyData->GetCellData()->HasArray("ClusterId"))
+        this->TensorToColor->SetExtractScalar(0);
+        if (!this->PolyData->GetCellData()->HasArray(this->GetActiveScalarName()) || this->GetActiveScalarName() == this->ColorLinesByOrientation->GetScalarArrayName())
         {
-          this->PolyData->GetCellData()->GetArray("ClusterId")->GetRange(this->ScalarRange);
+          IntermediatePolyData = this->ColorLinesByOrientation->GetOutput();
+          this->SetActiveScalarName(this->ColorLinesByOrientation->GetScalarArrayName());
+          vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+          if (ColorNode)
+          {
+            this->SetAndObserveColorNodeID(ColorNode->GetID());
+          }
+        } else {
+          IntermediatePolyData = this->PolyData;
+        }
+      }
+      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation)
+      {
+        vtkDebugMacro("Color by mean fiber orientation");
+        this->ScalarVisibilityOn( );
+        IntermediatePolyData = this->ColorLinesByOrientation->GetOutput();
+        this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModeMeanFiberOrientation);
+        vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+        vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (ColorNode)
+        {
+          this->SetAndObserveColorNodeID(ColorNode->GetID());
         }
 
-        IntermediatePolyData = this->PolyData;
+      }
+      else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
+      {
+        vtkDebugMacro("Color by mean fiber orientation");
+        this->ScalarVisibilityOn( );
+        IntermediatePolyData = this->ColorLinesByOrientation->GetOutput();
+        this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModePointFiberOrientation);
+        vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+        vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (ColorNode)
+        {
+          this->SetAndObserveColorNodeID(ColorNode->GetID());
+        }
       }
       else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData)
       {
-        vtkDebugMacro("coloring with Scalar Data==============================");
+        vtkDebugMacro("coloring with Scalar Data");
         IntermediatePolyData = this->PolyData;
         IntermediatePolyData->GetPointData()->SetActiveScalars(this->GetActiveScalarName());
       }
@@ -151,25 +196,25 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           {
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::FractionalAnisotropy:
             {
-              vtkDebugMacro("coloring with FA==============================");
+              vtkDebugMacro("coloring with FA");
               this->TensorToColor->ColorGlyphsByFractionalAnisotropy( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::LinearMeasure:
             {
-              vtkDebugMacro("coloring with Cl=============================");
+              vtkDebugMacro("coloring with Cl");
               this->TensorToColor->ColorGlyphsByLinearMeasure( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::Trace:
             {
-              vtkDebugMacro("coloring with trace =================");
+              vtkDebugMacro("coloring with trace ");
               this->TensorToColor->ColorGlyphsByTrace( );
             }
             break;
           case vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation:
             {
-              vtkDebugMacro("coloring with orientation =================");
+              vtkDebugMacro("coloring with orientation ");
               this->TensorToColor->ColorGlyphsByOrientation( );
                 vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
                 if (ColorNode)

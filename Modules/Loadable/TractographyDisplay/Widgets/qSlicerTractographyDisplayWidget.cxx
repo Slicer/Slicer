@@ -74,6 +74,8 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   QObject::connect( this->ColorByScalarComboBox, SIGNAL(currentIndexChanged(int)), q,
                     SLOT(onColorByScalarChanged(int)) );  
 
+  QObject::connect( this->ColorByMeanFiberOrientationRadioButton, SIGNAL(clicked()), q, SLOT(setColorByMeanFiberOrientation()) );
+  QObject::connect( this->ColorByPointFiberOrientationRadioButton, SIGNAL(clicked()), q, SLOT(setColorByPointFiberOrientation()) );
 
   QObject::connect( this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double)) );
 }
@@ -261,6 +263,30 @@ void qSlicerTractographyDisplayWidget::onColorByScalarChanged(int scalarIndex)
 
   QString activeScalarName = d->ColorByScalarComboBox->itemText(scalarIndex);
   d->FiberBundleDisplayNode->SetActiveScalarName(activeScalarName.toLatin1());
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setColorByMeanFiberOrientation()
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetColorModeToMeanFiberOrientation(); 
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setColorByPointFiberOrientation()
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetColorModeToPointFiberOrientation();
 }
 
 //------------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 class vtkPolyData;
 class vtkPolyDataTensorToColor;
 class vtkTubeFilter;
+class vtkPolyDataColorLinesByOrientation;
 
 class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleTubeDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -101,6 +102,7 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleTubeD
   /// dispaly pipeline
   vtkTubeFilter *TubeFilter;
   vtkPolyDataTensorToColor *TensorToColor;
+  vtkPolyDataColorLinesByOrientation *ColorLinesByOrientation;
 
 };
 

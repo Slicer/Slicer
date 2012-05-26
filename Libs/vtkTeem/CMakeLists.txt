@@ -62,6 +62,7 @@ set(vtkTeem_SRCS
   vtkTeemEstimateDiffusionTensor.cxx
   vtkDiffusionTensorGlyph.cxx
   vtkPolyDataTensorToColor.cxx
+  vtkPolyDataColorLinesByOrientation.cxx
   vtkBSplineInterpolateImageFunction.cxx
   vtkHyperPointandArray.cxx
   vtkHyperStreamlineDTMRI.cxx

@@ -26,6 +26,8 @@
 
 class vtkPolyData;
 class vtkPolyDataTensorToColor;
+class vtkPolyDataColorLinesByOrientation;
+
 
 class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
@@ -77,6 +79,8 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineD
   void operator= ( const vtkMRMLFiberBundleLineDisplayNode& );
 
   vtkPolyDataTensorToColor *TensorToColor;
+  vtkPolyDataColorLinesByOrientation *ColorLinesByOrientation;
+
   /// dispaly pipeline
 };
 
