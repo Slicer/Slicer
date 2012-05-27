@@ -114,6 +114,7 @@ if(BUILD_TESTING)
 endif()
 
 foreach(cli_module ${cli_modules})
+  set(${cli_module}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${cli_module})
   add_subdirectory(${cli_module})
 endforeach()
 
