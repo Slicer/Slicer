@@ -697,7 +697,6 @@ void qSlicerAppMainWindow::onEditApplicationSettingsActionTriggered()
 void qSlicerAppMainWindow::onViewExtensionManagerActionTriggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  Q_D(qSlicerAppMainWindow);
   qSlicerApplication * app = qSlicerApplication::application();
   app->openExtensionManagerDialog();
 #endif
