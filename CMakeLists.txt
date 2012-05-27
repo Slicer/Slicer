@@ -480,6 +480,15 @@ SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX Slicer)
 message(STATUS "Configuring Slicer for ${Slicer_OS}-${Slicer_ARCHITECTURE}")
 
 #-----------------------------------------------------------------------------
+# ExternalData configuration for test data
+#-----------------------------------------------------------------------------
+list(APPEND ExternalData_URL_TEMPLATES "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)")
+set(ExternalData_OBJECT_STORES ${Slicer_BINARY_DIR}/ExternalData/Objects)
+include(ExternalData)
+set(Slicer_ExternalData_OBJECT_STORES ${ExternalData_OBJECT_STORES})
+set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})
+
+#-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
 set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})

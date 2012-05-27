@@ -164,6 +164,12 @@ endif()
 set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 
 # --------------------------------------------------------------------------
+# External data
+# --------------------------------------------------------------------------
+set(Slicer_ExternalData_OBJECT_STORES "@Slicer_ExternalData_OBJECT_STORES@")
+set(Slicer_ExternalData_URL_TEMPLATES "@Slicer_ExternalData_URL_TEMPLATES@")
+
+# --------------------------------------------------------------------------
 # External projects
 # --------------------------------------------------------------------------
 
