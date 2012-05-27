@@ -29,11 +29,11 @@
 
 class vtkMRMLFiberBundleNode;
 
-class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLogic
-  : public vtkSlicerModuleLogic 
+class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLogic
+  : public vtkSlicerModuleLogic
 {
   public:
-  
+
   // The Usual vtk class functions
   static vtkSlicerFiberBundleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerFiberBundleLogic,vtkSlicerModuleLogic);

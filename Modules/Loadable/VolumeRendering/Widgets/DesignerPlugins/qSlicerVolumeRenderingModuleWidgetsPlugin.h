@@ -29,7 +29,7 @@
 #include "qSlicerPresetComboBoxPlugin.h"
 
 // \class Group the plugins in one library
-class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsPlugin
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsPlugin
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

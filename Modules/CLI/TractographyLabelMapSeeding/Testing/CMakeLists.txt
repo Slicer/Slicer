@@ -1,8 +1,11 @@
-set(module_name TractographyLabelMapSeeding)
 
-add_executable(${module_name}Test ${module_name}Test.cxx)
-add_dependencies(${module_name}Test ${module_name})
-target_link_libraries(${module_name}Test
+#-----------------------------------------------------------------------------
+set(CLP ${MODULE_NAME})
+
+#-----------------------------------------------------------------------------
+add_executable(${CLP}Test ${CLP}Test.cxx)
+add_dependencies(${CLP}Test ${CLP})
+target_link_libraries(${CLP}Test
   vtkITK
   ${ITK_LIBRARIES}
   vtkTeem
@@ -10,13 +13,13 @@ target_link_libraries(${module_name}Test
   SlicerBaseCLI
 )
 
-set_target_properties(${module_name}Test PROPERTIES LABELS ${module_name})
+set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
-set(testname ${module_name}Test)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${module_name}Test>
-  ${module_name}Test
+set(testname ${CLP}Test)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  ${CLP}Test
   --outputdirectory ${TEMP}
-  --name ${module_name}Test_line
+  --name ${CLP}Test_line
   --seedspacing 4
   --clthreshold 0.3
   --minimumlength 10
@@ -27,7 +30,6 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${module_nam
   --integrationsteplength 0.5
   --label 1
   ${MRML_TEST_DATA}/helix-DTI.nhdr
-  ${TEMP}/${module_name}Test_helixTracts.vtp
+  ${TEMP}/${CLP}Test_helixTracts.vtp
   )
-set_property(TEST ${testname} PROPERTY LABELS ${module_name})
-
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})

@@ -12,10 +12,10 @@
 
   =========================================================================auto=*/
 ///  vtkMRMLFiberBundleDisplayNode - MRML node to represent display properties for tractography.
-/// 
-/// vtkMRMLFiberBundleDisplayNode nodes store display properties of trajectories 
-/// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-/// or by scalar invariants), display on/off for tensor glyphs and display of 
+///
+/// vtkMRMLFiberBundleDisplayNode nodes store display properties of trajectories
+/// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
+/// or by scalar invariants), display on/off for tensor glyphs and display of
 /// trajectory as a line or tube.
 //
 
@@ -30,50 +30,50 @@
 
 class vtkMRMLDiffusionTensorDisplayPropertiesNode;
 
-class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
+class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDisplayNode : public vtkMRMLModelDisplayNode
 {
  public:
   vtkTypeMacro(vtkMRMLFiberBundleDisplayNode, vtkMRMLModelDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
-  /// 
+  ///
   /// Read node attributes from XML (MRML) file
   virtual void ReadXMLAttributes ( const char** atts );
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML ( ostream& of, int indent );
 
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
-  
-  /// 
+
+  ///
   /// Get node XML tag name (like Volume, FiberBundle)
   virtual const char* GetNodeTagName() = 0;
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
   //--------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
 
   //--------------------------------------------------------------------------
   /// Display Information: Color Mode
-  /// 0) solid color by group 1) color by scalar invariant 
+  /// 0) solid color by group 1) color by scalar invariant
   /// 2) color by avg scalar invariant 3) color by other
   //--------------------------------------------------------------------------
 
@@ -106,27 +106,27 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
   /// Color mode for glyphs. The color modes are mutually exclusive.
   vtkGetMacro ( ColorMode, int );
   vtkSetMacro ( ColorMode, int );
- 
-  /// 
+
+  ///
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)
   void SetColorModeToSolid ( ) {
     this->SetColorMode ( this->colorModeSolid );
   };
 
-  /// 
+  ///
   /// Color according to the tensors using various scalar invariants.
   void SetColorModeToScalar ( ) {
     this->SetColorMode ( this->colorModeScalar );
   };
 
-  /// 
+  ///
   /// Color according to the tensors using a function of scalar invariants along the tract.
   /// This enables coloring by average FA, for example.
   void SetColorModeToFunctionOfScalar ( ) {
     this->SetColorMode ( this->colorModeFunctionOfScalar );
   };
 
-  /// 
+  ///
   /// Use to color by the active cell scalars.  This is intended to support
   /// external processing of fibers, for example to label each with the distance
   /// of that fiber from an fMRI activation.  Then by making that information
@@ -137,7 +137,7 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
     this->SetColorMode ( this->colorModeUseCellScalars );
   };
 
-  /// 
+  ///
   /// Color according to the tensors using scalars (not calculated from tensors)
   /// from the original fiber bundle node.
   void SetColorModeToScalarData ( ) {
@@ -161,24 +161,24 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispl
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for glyphs
   //--------------------------------------------------------------------------
-  
+
 
   //--------------------------------------------------------------------------
   /// MRML nodes that are observed
   //--------------------------------------------------------------------------
-  
- 
+
+
   /// Node reference to ALL DT nodes
 
-  /// 
+  ///
   /// Get diffusion tensor display MRML object for fiber glyph.
   vtkMRMLDiffusionTensorDisplayPropertiesNode* GetDiffusionTensorDisplayPropertiesNode ( );
 
-  /// 
+  ///
   /// Set diffusion tensor display MRML object for fiber glyph.
   void SetAndObserveDiffusionTensorDisplayPropertiesNodeID ( const char *ID );
 
-  /// 
+  ///
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(DiffusionTensorDisplayPropertiesNodeID);
 

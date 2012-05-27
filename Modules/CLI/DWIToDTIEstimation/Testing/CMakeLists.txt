@@ -1,5 +1,8 @@
 
-set(CLP DWIToDTIEstimation)
+#-----------------------------------------------------------------------------
+set(CLP ${MODULE_NAME})
+
+#-----------------------------------------------------------------------------
 include_directories(
   ${vtkITK_INCLUDE_DIRS}
   ${MRMLCore_INCLUDE_DIRS}

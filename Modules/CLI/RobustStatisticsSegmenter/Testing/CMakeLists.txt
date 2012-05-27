@@ -1,6 +1,9 @@
 
+#-----------------------------------------------------------------------------
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
+set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
 target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})

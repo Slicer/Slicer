@@ -1,8 +1,8 @@
 
-# Module name (usually identique to the directory name)
-set(qt_module_name "ModelTransform")
-set(qt_module_title "ModelTransform")
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "ModelTransform") # Do not use 'project()'
 
-# Build module sub libraries
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(Logic)
-

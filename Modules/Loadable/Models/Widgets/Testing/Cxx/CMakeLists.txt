@@ -1,5 +1,5 @@
 
-set(KIT qSlicerModelsWidgets)
+set(KIT qSlicer${MODULE_NAME}ModuleWidgets)
 
 set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -9,10 +9,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
-set(LIBRARY_NAME ${lib_name})
-
 add_executable(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${LIBRARY_NAME})
+target_link_libraries(${KIT}CxxTests ${KIT})
 
 #
 # Convenient macros

@@ -1,24 +1,18 @@
-# Module name (usually identique to the directory name)
-set(qt_module_name "Transforms")
 
-# Build module sub libraries
-#add_subdirectory(MRML)
-#add_subdirectory(Logic)
-#add_subdirectory(Widgets)
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "Transforms") # Do not use 'project()'
+set(MODULE_TITLE "${MODULE_NAME}")
 
-string(TOUPPER ${qt_module_name} qt_module_name_upper)
-set(qt_module_export_directive "Q_SLICER_QTMODULES_${qt_module_name_upper}_EXPORT")
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
+set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-set(qt_module_include_directories
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-#  ${CMAKE_CURRENT_BINARY_DIR}/Logic
-#  ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
-#  ${CMAKE_CURRENT_BINARY_DIR}/Widgets
+set(MODULE_INCLUDE_DIRECTORIES
   )
 
-# Source files
-set(qt_module_SRCS
+set(MODULE_SRCS
   qSlicerTransformsIO.cxx
   qSlicerTransformsIO.h
   qSlicerTransformsModule.cxx
@@ -27,40 +21,37 @@ set(qt_module_SRCS
   qSlicerTransformsModuleWidget.h
   )
 
-# Headers that should run through moc
-set(qt_module_MOC_SRCS
+set(MODULE_MOC_SRCS
   qSlicerTransformsIO.h
   qSlicerTransformsModule.h
   qSlicerTransformsModuleWidget.h
   )
 
-# UI files
-set(qt_module_UI_SRCS
+set(MODULE_UI_SRCS
   Resources/UI/qSlicerTransformsModule.ui
   )
 
-# Additional Target libraries
-set(qt_module_target_libraries
-#  qSlicerTransformsModuleWidgets
-#  vtkSlicerTransformsModuleLogic
+set(MODULE_TARGET_LIBRARIES
   )
 
-# Resources
-set(qt_module_resources
+set(MODULE_RESOURCES
   Resources/qSlicerTransformsModule.qrc
   )
 
+#-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
-  NAME ${qt_module_name}
-  EXPORT_DIRECTIVE ${qt_module_export_directive}
-  INCLUDE_DIRECTORIES ${qt_module_include_directories}
-  SRCS ${qt_module_SRCS}
-  MOC_SRCS ${qt_module_MOC_SRCS}
-  UI_SRCS ${qt_module_UI_SRCS}
-  TARGET_LIBRARIES ${qt_module_target_libraries}
-  RESOURCES ${qt_module_resources}
+  NAME ${MODULE_NAME}
+  TITLE ${MODULE_TITLE}
+  EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
+  SRCS ${MODULE_SRCS}
+  MOC_SRCS ${MODULE_MOC_SRCS}
+  UI_SRCS ${MODULE_UI_SRCS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  RESOURCES ${MODULE_RESOURCES}
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

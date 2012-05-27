@@ -30,7 +30,7 @@ class qSlicerReformatModuleWidgetPrivate;
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_Reformat
-class Q_SLICER_QTMODULES_Reformat_EXPORT
+class Q_SLICER_QTMODULES_REFORMAT_EXPORT
 qSlicerReformatModuleWidget : public qSlicerAbstractModuleWidget
 {
   Q_OBJECT

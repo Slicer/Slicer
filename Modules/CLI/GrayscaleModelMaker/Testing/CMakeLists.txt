@@ -1,9 +1,8 @@
 
 #-----------------------------------------------------------------------------
-# GrayscaleModelMaker tests
-#-----------------------------------------------------------------------------
-set (CLP GrayscaleModelMaker)
+set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test
@@ -28,4 +27,3 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${TEMP}GrayscaleModelMakerTest.vtp
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
-

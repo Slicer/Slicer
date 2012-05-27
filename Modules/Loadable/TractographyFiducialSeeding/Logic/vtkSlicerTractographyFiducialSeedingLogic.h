@@ -36,11 +36,11 @@ class vtkMRMLTransformableNode;
 class vtkMaskPoints;
 class vtkSeedTracts;
 
-class VTK_SLICER_TRACTOGRAPHY_FIDUCIAL_SEEDING_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
+class VTK_SLICER_TRACTOGRAPHYFIDUCIALSEEDING_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
   public vtkSlicerModuleLogic
 {
 public:
-  
+
   // The Usual vtk class functions
   static vtkSlicerTractographyFiducialSeedingLogic *New();
   vtkTypeRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic,vtkSlicerModuleLogic);
@@ -56,9 +56,9 @@ public:
   void CreateTractsForOneSeed(vtkSeedTracts *seed,
                               vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                               vtkMRMLTransformableNode *transformableNode,
-                              int stoppingMode, 
-                              double stoppingValue, 
-                              double stoppingCurvature, 
+                              int stoppingMode,
+                              double stoppingValue,
+                              double stoppingCurvature,
                               double integrationStepLength,
                               double mnimumPathLength,
                               double regionSize, double sampleStep,
@@ -70,7 +70,7 @@ public:
                     vtkMRMLNode *seedingNode,
                     vtkMRMLFiberBundleNode *fiberNode,
                     int stoppinMode,
-                    double stoppingValue, double stoppingCurvature, 
+                    double stoppingValue, double stoppingCurvature,
                     double integrationStepLength, double mnimumPathLength,
                     double resgionSize, double samplingStep,
                     int maxNumberOfSeeds,
@@ -86,9 +86,9 @@ public:
                               double seedSpacing,
                               int randomGrid,
                               double linearMeasureStart,
-                              int stoppingMode, 
-                              double stoppingValue, 
-                              double stoppingCurvature, 
+                              int stoppingMode,
+                              double stoppingValue,
+                              double stoppingCurvature,
                               double integrationStepLength,
                               double minPathLength,
                               double maxPathLength);
@@ -118,7 +118,7 @@ protected:
   void AddMRMLNodesObservers();
 
   void RemoveMRMLNodesObservers();
-  
+
   vtkMaskPoints *MaskPoints;
 
   vtkMRMLTractographyFiducialSeedingNode *TractographyFiducialSeedingNode;

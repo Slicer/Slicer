@@ -45,7 +45,8 @@ public:
   virtual QIcon icon()const;
   virtual QStringList categories()const;
   virtual QStringList dependencies()const;
-  qSlicerGetTitleMacro("Data");
+
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Return help/acknowledgement text
   virtual QString helpText()const;

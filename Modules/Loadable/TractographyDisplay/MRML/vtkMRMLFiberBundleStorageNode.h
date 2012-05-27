@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLFiberBundleStorageNode - MRML node for fiberBundle storage on disk.
-/// 
+///
 /// The storage node has methods to read/write vtkPolyData to/from disk.
 
 #ifndef __vtkMRMLFiberBundleStorageNode_h
@@ -24,7 +24,7 @@
 // Tractography includes
 #include "vtkSlicerTractographyDisplayModuleMRMLExport.h"
 
-class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
+class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
 {
   public:
   static vtkMRMLFiberBundleStorageNode *New();
@@ -33,21 +33,21 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleStora
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FiberBundleStorage";};
 
-  /// 
+  ///
   /// Check to see if this storage node can handle the file type in the input
-  /// string. If input string is null, check URI, then check FileName. 
+  /// string. If input string is null, check URI, then check FileName.
   /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
 
-  /// 
+  ///
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
 
-  /// 
+  ///
   /// Return a default file extension for writting
   virtual const char* GetDefaultWriteFileExtension()
     {

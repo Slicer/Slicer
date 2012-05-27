@@ -39,11 +39,11 @@
 
 
 /// \ingroup Slicer_QtModules_TransformsReformatWidget
-class VTK_SLICER_Reformat_MODULE_LOGIC_EXPORT
+class VTK_SLICER_REFORMAT_MODULE_LOGIC_EXPORT
 vtkSlicerReformatLogic : public vtkSlicerModuleLogic
 {
 public:
-  
+
   static vtkSlicerReformatLogic *New();
   vtkTypeMacro(vtkSlicerReformatLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);

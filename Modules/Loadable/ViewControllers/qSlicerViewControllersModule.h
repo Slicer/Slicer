@@ -40,7 +40,7 @@ public:
   qSlicerViewControllersModule(QObject *parent=0);
   virtual ~qSlicerViewControllersModule();
 
-  qSlicerGetTitleMacro("View Controllers");
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   virtual QStringList categories()const;
   virtual QIcon icon()const;

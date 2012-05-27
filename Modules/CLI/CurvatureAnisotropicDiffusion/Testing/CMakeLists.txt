@@ -1,10 +1,9 @@
 
 #-----------------------------------------------------------------------------
-# CurvatureAnisotropicDiffusion tests
-#-----------------------------------------------------------------------------
 #set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
-#set (CLP CurvatureAnisotropicDiffusion)
+#set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 #add_executable(${CLP}Test ${CLP}Test.cxx)
 #target_link_libraries(${CLP}Test ${CLP}Lib)
 
@@ -20,4 +19,3 @@
 #    ${TEMP}/${CLP}Test.nhdr
 #  )
 #set_property(TEST ${testname} PROPERTY LABELS ${CLP})
-

@@ -43,7 +43,8 @@ public:
 
   virtual QStringList categories()const;
   virtual QIcon icon()const;
-  qSlicerGetTitleMacro("Cameras");
+
+  qSlicerGetTitleMacro(QTMODULE_TITLE);
 
   /// Return help/acknowledgement text
   virtual QString helpText()const;

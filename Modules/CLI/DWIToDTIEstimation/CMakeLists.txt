@@ -1,6 +1,10 @@
 
+#-----------------------------------------------------------------------------
+set(MODULE_NAME DWIToDTIEstimation) # Do not use 'project()'
+
+#-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
-  NAME DWIToDTIEstimation
+  NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRMLCore vtkTeem SlicerBaseLogic
   LINK_DIRECTORIES
@@ -14,7 +18,7 @@ slicerMacroBuildCLI(
   EXECUTABLE_ONLY
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-

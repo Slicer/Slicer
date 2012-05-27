@@ -1,16 +1,20 @@
-# Module name (usually identique to the directory name)
-set(qt_module_name "TractographyDisplay")
-set(qt_module_title "Tractography Display")
 
-# Build module sub libraries
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "TractographyDisplay") # Do not use 'project()'
+set(MODULE_TITLE "Tractography Display")
+
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(MRML)
 add_subdirectory(Logic)
 add_subdirectory(Widgets)
 
-set(qt_module_export_directive "Q_SLICER_QTMODULES_TRACTOGRAPHYDISPLAY_EXPORT")
+#-----------------------------------------------------------------------------
+set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-set(qt_module_include_directories
+set(MODULE_INCLUDE_DIRECTORIES
   ${vtkSlicerTractographyDisplayModuleLogic_SOURCE_DIR}
   ${vtkSlicerTractographyDisplayModuleLogic_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
@@ -19,48 +23,45 @@ set(qt_module_include_directories
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
   )
 
-# Source files
-set(qt_module_SRCS
+set(MODULE_SRCS
   qSlicerFiberBundleIO.cxx
   qSlicerFiberBundleIO.h
   qSlicerTractographyDisplayModule.cxx
   qSlicerTractographyDisplayModule.h
   )
 
-# Headers that should run through moc
-set(qt_module_MOC_SRCS
+set(MODULE_MOC_SRCS
   qSlicerFiberBundleIO.h
   qSlicerTractographyDisplayModule.h
   )
 
-# UI files
-set(qt_module_UI_SRCS
-)
+set(MODULE_UI_SRCS
+  )
 
-# Additional Target libraries
-set(qt_module_target_libraries
+set(MODULE_TARGET_LIBRARIES
   vtkSlicerTractographyDisplayModuleLogic
   vtkSlicerTractographyDisplayModuleMRML
   qSlicerTractographyDisplayModuleWidgets
   ${MRML_LIBRARIES}
   )
 
-# Resources
-set(qt_module_resources
-)
-
-slicerMacroBuildQtModule(
-  NAME ${qt_module_name}
-  TITLE ${qt_module_title}
-  EXPORT_DIRECTIVE ${qt_module_export_directive}
-  INCLUDE_DIRECTORIES ${qt_module_include_directories}
-  SRCS ${qt_module_SRCS}
-  MOC_SRCS ${qt_module_MOC_SRCS}
-  UI_SRCS ${qt_module_UI_SRCS}
-  TARGET_LIBRARIES ${qt_module_target_libraries}
-  RESOURCES ${qt_module_resources}
+set(MODULE_RESOURCES
   )
 
+#-----------------------------------------------------------------------------
+slicerMacroBuildQtModule(
+  NAME ${MODULE_NAME}
+  TITLE ${MODULE_TITLE}
+  EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
+  SRCS ${MODULE_SRCS}
+  MOC_SRCS ${MODULE_MOC_SRCS}
+  UI_SRCS ${MODULE_UI_SRCS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  RESOURCES ${MODULE_RESOURCES}
+  )
+
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

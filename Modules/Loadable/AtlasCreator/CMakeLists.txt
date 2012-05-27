@@ -1,8 +1,9 @@
 
-# Module name (usually identique to the directory name)
-set(qt_module_name "AtlasCreator")
-set(qt_module_title "AtlasCreator")
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "AtlasCreator")  # Do not use 'project()'
 
-# Build module sub libraries
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(Logic)
 

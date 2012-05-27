@@ -23,7 +23,7 @@
 
 #include "qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h"
 
-class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qSlicerPresetComboBoxPlugin
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerPresetComboBoxPlugin
   : public QObject
   , public qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
 {
@@ -31,13 +31,13 @@ class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qSlicerPresetComboBoxPlugi
 
 public:
   qSlicerPresetComboBoxPlugin(QObject *_parent = 0);
-  
+
   QWidget *createWidget(QWidget *_parent);
   QString  domXml() const;
   QString  includeFile() const;
   bool     isContainer() const;
   QString  name() const;
-  
+
 };
 
 #endif

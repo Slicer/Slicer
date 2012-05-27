@@ -1,10 +1,10 @@
-project( ACPCTransform )
 
-find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
+#-----------------------------------------------------------------------------
+set(MODULE_NAME ACPCTransform) # Do not use 'project()'
 
+#-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
-  NAME ${PROJECT_NAME}
+  NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS
     vtkPrincipalAxesAlign.cxx
@@ -19,7 +19,7 @@ slicerMacroBuildCLI(
     ${vtkTeem_LIB_DIR}
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-
