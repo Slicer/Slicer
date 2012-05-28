@@ -65,7 +65,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
 
   // Default values
-  this->ExtensionsManagerEnabledCheckBox->setChecked(false);
+  this->ExtensionsManagerEnabledCheckBox->setChecked(true);
   this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
   this->ExtensionsInstallPathButton->setDirectory(coreApp->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
