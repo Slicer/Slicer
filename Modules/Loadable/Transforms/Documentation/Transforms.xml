@@ -16,7 +16,7 @@
     </parameter>
   </parameters>
   <parameters>
-    <label>Display & Edit</label>
+    <label><![CDATA[Display &amp; Edit]]></label>
     <parameter>
       <label>Transform Matrix</label>
       <description>4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.</description>
