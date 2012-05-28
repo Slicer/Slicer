@@ -95,7 +95,7 @@ foreach(extension_name ${EXTENSION_LIST})
           set(sext_revision "origin/master")
         endif()
         set(sext_ep_options_repository
-          "GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG \"${sext_revision}\"")
+          GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG ${sext_revision})
         list(APPEND sext_ep_cmake_args
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "svn")
@@ -105,10 +105,11 @@ foreach(extension_name ${EXTENSION_LIST})
           set(sext_revision "HEAD")
         endif()
         set(sext_ep_options_repository
-          "SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r \"${sext_revision}\"")
+          SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r ${sext_revision})
         list(APPEND sext_ep_cmake_args
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
       elseif(${EXTENSION_SEXT_SCM} STREQUAL "local")
+        set(sext_ep_options_repository DOWNLOAD_COMMAND "")
         set(EXTENSION_SOURCE_DIR ${EXTENSION_SEXT_SCMURL})
         if(NOT EXISTS ${EXTENSION_SOURCE_DIR})
           set(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
@@ -144,7 +145,6 @@ foreach(extension_name ${EXTENSION_LIST})
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
-            DOWNLOAD_COMMAND ""
             ${sext_ep_options_repository}
             SOURCE_DIR ${EXTENSION_SOURCE_DIR}
             BINARY_DIR ${EXTENSION_NAME}-build
@@ -164,7 +164,6 @@ foreach(extension_name ${EXTENSION_LIST})
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
-              DOWNLOAD_COMMAND ""
               ${sext_ep_options_repository}
               SOURCE_DIR ${EXTENSION_SOURCE_DIR}
               BINARY_DIR ${EXTENSION_NAME}-build
@@ -198,7 +197,6 @@ foreach(extension_name ${EXTENSION_LIST})
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
-            DOWNLOAD_COMMAND ""
             ${sext_ep_options_repository}
             INSTALL_COMMAND ""
             SOURCE_DIR ${EXTENSION_SOURCE_DIR}
@@ -219,7 +217,6 @@ foreach(extension_name ${EXTENSION_LIST})
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
-              DOWNLOAD_COMMAND ""
               ${sext_ep_options_repository}
               INSTALL_COMMAND ""
               SOURCE_DIR ${EXTENSION_SOURCE_DIR}
