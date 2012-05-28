@@ -26,12 +26,12 @@
 macro(__SlicerBlockFindQtAndCheckVersion_find_qt)
   find_package(Qt4)
   if(NOT QT4_FOUND)
-    message(FATAL_ERROR "error: Qt >= ${Slicer_REQUIRED_QT_VERSION} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable.")
+    message(FATAL_ERROR "error: Qt ${Slicer_REQUIRED_QT_VERSION} was not found on your system. You probably need to set the QT_QMAKE_EXECUTABLE variable.")
   endif()
 
   # Check version
-  if("${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_LESS "${Slicer_REQUIRED_QT_VERSION}")
-    message(FATAL_ERROR "error: Slicer requires Qt >= ${Slicer_REQUIRED_QT_VERSION} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}. ${extra_error_message}")
+  if(NOT "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}" VERSION_EQUAL "${Slicer_REQUIRED_QT_VERSION}")
+    message(FATAL_ERROR "error: Slicer requires Qt ${Slicer_REQUIRED_QT_VERSION} -- you cannot use Qt ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}. ${extra_error_message}")
   endif()
 
   set(command_separated_module_list)
