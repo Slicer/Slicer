@@ -65,7 +65,7 @@ SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
 if(Slicer_HAS_CONSOLE_IO_SUPPORT)
   add_test(
     NAME slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerQT${SlicerQT_EXE_SUFFIX}>
+    COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}>
     ${ARGN} --testing --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
     )
   set_tests_properties(

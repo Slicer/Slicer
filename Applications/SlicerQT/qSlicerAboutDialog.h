@@ -28,12 +28,12 @@
 #include <ctkPimpl.h>
 
 // SlicerQt includes
-#include "qSlicerQTExport.h"
+#include "qSlicerAppExport.h"
 
 class qSlicerAboutDialogPrivate;
 
 /// Pre-request that a qSlicerApplication has been instanced
-class Q_SLICERQT_EXPORT qSlicerAboutDialog :
+class Q_SLICER_APP_EXPORT qSlicerAboutDialog :
   public QDialog
 {
   Q_OBJECT

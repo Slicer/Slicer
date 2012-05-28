@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 #ifndef __qSlicerMainWindowCore_h
-#define __qSlicerMainWindowCore_h 
+#define __qSlicerMainWindowCore_h
 
 // Qt includes
 #include <QObject>
@@ -29,15 +29,15 @@
 class ctkPythonConsole;
 class ctkErrorLogWidget;
 
-#include "qSlicerQTExport.h"
+#include "qSlicerAppExport.h"
 
-class qSlicerMainWindow; 
+class qSlicerMainWindow;
 class qSlicerMainWindowCorePrivate;
 
-class Q_SLICERQT_EXPORT qSlicerMainWindowCore : public QObject
+class Q_SLICER_APP_EXPORT qSlicerMainWindowCore : public QObject
 {
   Q_OBJECT
-  
+
 public:
   typedef QObject Superclass;
   qSlicerMainWindowCore(qSlicerMainWindow *parent = 0);
@@ -48,8 +48,8 @@ public:
 #endif
   ctkErrorLogWidget* errorLogWidget()const;
 
-public slots: 
-  /// 
+public slots:
+  ///
   /// Handle actions - See qSlicerMainWindow::setupMenuActions
 
   void onFileAddDataActionTriggered();

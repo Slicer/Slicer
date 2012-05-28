@@ -28,7 +28,7 @@
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
-#include "qSlicerQTExport.h"
+#include "qSlicerAppExport.h"
 
 class qSlicerAbstractCoreModule;
 class qSlicerModulePanel;
@@ -36,7 +36,7 @@ class qSlicerModuleSelectorToolBar;
 class qSlicerMainWindowCore;
 class qSlicerMainWindowPrivate;
 
-class Q_SLICERQT_EXPORT qSlicerMainWindow : public QMainWindow
+class Q_SLICER_APP_EXPORT qSlicerMainWindow : public QMainWindow
 {
   Q_OBJECT
   QVTK_OBJECT
