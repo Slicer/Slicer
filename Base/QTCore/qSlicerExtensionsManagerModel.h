@@ -106,6 +106,14 @@ public:
   /// \sa setExtensionEnabled, extensionEnabledChanged, enabledExtensions
   Q_INVOKABLE bool isExtensionEnabled(const QString& extensionName)const;
 
+  /// \brief Return names of all extensions scheduled for uninstall
+  /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall, extensionScheduledForUninstall
+  QStringList scheduledForUninstallExtensions() const;
+
+  /// \brief Return True if the \a extensionName is scheduled to be uninstalled
+  /// \sa uninstallScheduledExtensions();
+  Q_INVOKABLE bool isExtensionScheduledForUninstall(const QString& extensionName)const;
+
   /// \brief Return names of all enabled extensions
   /// \sa setExtensionEnabled, extensionEnabledChanged, isExtensionEnabled
   QStringList enabledExtensions()const;
@@ -140,7 +148,7 @@ public:
   /// \sa setServerUrl
   Q_INVOKABLE ExtensionMetadataType retrieveExtensionMetadata(const QString& extensionId);
 
-  /// \sa downloadExtension, uninstallExtension
+  /// \sa downloadExtension, isExtensionScheduledForUninstall, extensionScheduledForUninstall
   Q_INVOKABLE bool installExtension(const QString& extensionName,
                                     const ExtensionMetadataType &extensionMetadata,
                                     const QString &archiveFile);
@@ -176,13 +184,21 @@ public slots:
 
   /// \brief Download and install \a extensionId
   /// The \a extensionId correponds to the identifier used on the extension server itself.
-  /// \sa installExtension, uninstallExtension
+  /// \sa installExtension, scheduleExtensionForUninstall, uninstallScheduledExtensions
   void downloadAndInstallExtension(const QString& extensionId);
 
-  /// \brief Uninstall \a extensionName
-  /// \note The directory containing the extension will be deleted.
-  /// \sa downloadExtension, installExtension
-  bool uninstallExtension(const QString& extensionName);
+  /// \brief Schedule \a extensionName of uninstall
+  /// An extension scheduled for uninstall can be effectively uninstalled by calling
+  /// uninstallScheduledExtensions()
+  /// \sa isExtensionScheduledForUninstall, uninstallScheduledExtensions
+  bool scheduleExtensionForUninstall(const QString& extensionName);
+
+  /// \brief Cancel the uninstallation of \a extensionName
+  /// \sa scheduleExtensionForUninstall
+  bool cancelExtensionScheduledForUninstall(const QString& extensionName);
+
+  /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall
+  bool uninstallScheduledExtensions();
 
   bool exportExtensionList(QString& exportFilePath);
 
@@ -197,6 +213,10 @@ signals:
   void modelUpdated();
 
   void extensionInstalled(const QString& extensionName);
+
+  void extensionScheduledForUninstall(const QString& extensionName);
+
+  void extensionCancelledScheduleForUninstall(const QString& extensionName);
 
   void extensionUninstalled(const QString& extensionName);
 

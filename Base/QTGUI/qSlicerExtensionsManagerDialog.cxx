@@ -41,6 +41,7 @@ public:
   bool RestartRequested;
 
   QStringList PreviousModulesAdditionalPaths;
+  QStringList PreviousExtensionsScheduledForUninstall;
 };
 
 // --------------------------------------------------------------------------
@@ -66,6 +67,7 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
   this->PreviousModulesAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
+  this->PreviousExtensionsScheduledForUninstall = QSettings().value("Extensions/ScheduledForUninstall").toStringList();
 }
 
 // --------------------------------------------------------------------------
@@ -113,7 +115,9 @@ void qSlicerExtensionsManagerDialog::setExtensionsManagerModel(qSlicerExtensions
             this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionInstalled(QString)),
             this, SLOT(onModelUpdated()));
-    connect(model, SIGNAL(extensionUninstalled(QString)),
+    connect(model, SIGNAL(extensionScheduledForUninstall(QString)),
+            this, SLOT(onModelUpdated()));
+    connect(model, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
             this, SLOT(onModelUpdated()));
     connect(model, SIGNAL(extensionEnabledChanged(QString,bool)),
             this, SLOT(onModelUpdated()));
@@ -143,7 +147,9 @@ void qSlicerExtensionsManagerDialog::onModelUpdated()
   Q_ASSERT(this->extensionsManagerModel());
   bool shouldRestart = false;
   if (d->PreviousModulesAdditionalPaths
-      != QSettings().value("Modules/AdditionalPaths").toStringList())
+      != QSettings().value("Modules/AdditionalPaths").toStringList() ||
+      d->PreviousExtensionsScheduledForUninstall
+      != QSettings().value("Extensions/ScheduledForUninstall").toStringList())
     {
     shouldRestart = true;
     }

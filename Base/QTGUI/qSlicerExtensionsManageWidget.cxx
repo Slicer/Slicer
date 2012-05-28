@@ -59,7 +59,8 @@ public:
   QSignalMapper LabelLinkMapper;
   QSignalMapper EnableButtonMapper;
   QSignalMapper DisableButtonMapper;
-  QSignalMapper UninstallButtonMapper;
+  QSignalMapper ScheduleUninstallButtonMapper;
+  QSignalMapper CancelScheduledUninstallButtonMapper;
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 };
@@ -116,8 +117,11 @@ void qSlicerExtensionsManageWidgetPrivate::init()
   QObject::connect(&this->DisableButtonMapper, SIGNAL(mapped(QString)),
                    q, SLOT(setExtensionDisabled(QString)));
 
-  QObject::connect(&this->UninstallButtonMapper, SIGNAL(mapped(QString)),
-                   q, SLOT(uninstallExtension(QString)));
+  QObject::connect(&this->ScheduleUninstallButtonMapper, SIGNAL(mapped(QString)),
+                   q, SLOT(scheduleExtensionForUninstall(QString)));
+
+  QObject::connect(&this->CancelScheduledUninstallButtonMapper, SIGNAL(mapped(QString)),
+                   q, SLOT(cancelExtensionScheduledForUninstall(QString)));
 }
 
 // --------------------------------------------------------------------------
@@ -177,8 +181,15 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   QObject::connect(buttonBox->DisableButton, SIGNAL(clicked()), &this->DisableButtonMapper, SLOT(map()));
   buttonBox->DisableButton->setVisible(enabled);
 
-  this->UninstallButtonMapper.setMapping(buttonBox->UninstallButton, extensionName);
-  QObject::connect(buttonBox->UninstallButton, SIGNAL(clicked()), &this->UninstallButtonMapper, SLOT(map()));
+  bool scheduledForUninstall = this->ExtensionsManagerModel->isExtensionScheduledForUninstall(extensionName);
+
+  this->ScheduleUninstallButtonMapper.setMapping(buttonBox->ScheduleForUninstallButton, extensionName);
+  QObject::connect(buttonBox->ScheduleForUninstallButton, SIGNAL(clicked()), &this->ScheduleUninstallButtonMapper, SLOT(map()));
+  buttonBox->ScheduleForUninstallButton->setVisible(!scheduledForUninstall);
+
+  this->CancelScheduledUninstallButtonMapper.setMapping(buttonBox->CancelScheduledForUninstallButton, extensionName);
+  QObject::connect(buttonBox->CancelScheduledForUninstallButton, SIGNAL(clicked()), &this->CancelScheduledUninstallButtonMapper, SLOT(map()));
+  buttonBox->CancelScheduledForUninstallButton->setVisible(scheduledForUninstall);
 }
 
 // --------------------------------------------------------------------------
@@ -214,7 +225,8 @@ void qSlicerExtensionsManageWidget::setExtensionsManagerModel(qSlicerExtensionsM
 
   disconnect(this, SLOT(onModelUpdated()));
   disconnect(this, SLOT(onExtensionInstalled(QString)));
-  disconnect(this, SLOT(onExtensionUninstalled(QString)));
+  disconnect(this, SLOT(onExtensionScheduledForUninstall(QString)));
+  disconnect(this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
   disconnect(this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
 
   d->ExtensionsManagerModel = model;
@@ -226,8 +238,10 @@ void qSlicerExtensionsManageWidget::setExtensionsManagerModel(qSlicerExtensionsM
             this, SLOT(onModelUpdated()));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionInstalled(QString)),
             this, SLOT(onExtensionInstalled(QString)));
-    connect(d->ExtensionsManagerModel, SIGNAL(extensionUninstalled(QString)),
-            this, SLOT(onExtensionUninstalled(QString)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionScheduledForUninstall(QString)),
+            this, SLOT(onExtensionScheduledForUninstall(QString)));
+    connect(d->ExtensionsManagerModel, SIGNAL(extensionCancelledScheduleForUninstall(QString)),
+            this, SLOT(onExtensionCancelledScheduleForUninstall(QString)));
     connect(d->ExtensionsManagerModel, SIGNAL(extensionEnabledChanged(QString,bool)),
             this, SLOT(onModelExtensionEnabledChanged(QString,bool)));
     }
@@ -260,13 +274,23 @@ void qSlicerExtensionsManageWidget::setExtensionDisabled(const QString& extensio
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManageWidget::uninstallExtension(const QString& extensionName)
+void qSlicerExtensionsManageWidget::scheduleExtensionForUninstall(const QString& extensionName)
 {
   if (!this->extensionsManagerModel())
     {
     return;
     }
-  this->extensionsManagerModel()->uninstallExtension(extensionName);
+  this->extensionsManagerModel()->scheduleExtensionForUninstall(extensionName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::cancelExtensionScheduledForUninstall(const QString& extensionName)
+{
+  if (!this->extensionsManagerModel())
+    {
+    return;
+    }
+  this->extensionsManagerModel()->cancelExtensionScheduledForUninstall(extensionName);
 }
 
 // --------------------------------------------------------------------------
@@ -277,12 +301,29 @@ void qSlicerExtensionsManageWidget::onExtensionInstalled(const QString& extensio
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsManageWidget::onExtensionUninstalled(const QString& extensionName)
+void qSlicerExtensionsManageWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManageWidget);
   QTreeWidgetItem * item = d->extensionItem(extensionName);
   Q_ASSERT(item);
-  delete d->ExtensionList->takeTopLevelItem(d->ExtensionList->indexOfTopLevelItem(item));
+  qSlicerExtensionsButtonBox * buttonBox =
+      dynamic_cast<qSlicerExtensionsButtonBox*>(d->ExtensionList->itemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn));
+  Q_ASSERT(buttonBox);
+  buttonBox->CancelScheduledForUninstallButton->setVisible(true);
+  buttonBox->ScheduleForUninstallButton->setVisible(false);
+}
+
+// -------------------------------------------------------------------------
+void qSlicerExtensionsManageWidget::onExtensionCancelledScheduleForUninstall(const QString& extensionName)
+{
+  Q_D(qSlicerExtensionsManageWidget);
+  QTreeWidgetItem * item = d->extensionItem(extensionName);
+  Q_ASSERT(item);
+  qSlicerExtensionsButtonBox * buttonBox =
+      dynamic_cast<qSlicerExtensionsButtonBox*>(d->ExtensionList->itemWidget(item, qSlicerExtensionsManageWidgetPrivate::ButtonsColumn));
+  Q_ASSERT(buttonBox);
+  buttonBox->CancelScheduledForUninstallButton->setVisible(false);
+  buttonBox->ScheduleForUninstallButton->setVisible(true);
 }
 
 // --------------------------------------------------------------------------
