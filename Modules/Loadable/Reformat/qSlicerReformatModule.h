@@ -29,7 +29,7 @@
 class qSlicerReformatModulePrivate;
 
 /// \ingroup Slicer_QtModules_Reformat
-class Q_SLICER_QTMODULES_Reformat_EXPORT
+class Q_SLICER_QTMODULES_REFORMAT_EXPORT
 qSlicerReformatModule : public qSlicerLoadableModule
 {
   Q_OBJECT
@@ -42,13 +42,13 @@ public:
   virtual ~qSlicerReformatModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
-  
+
   /// Help to use the module
   virtual QString helpText()const;
 
   /// Return acknowledgements
   virtual QString acknowledgementText()const;
-  
+
   /// Return a custom icon for the module
   virtual QIcon icon()const;
 

@@ -28,7 +28,7 @@
 
 class vtkImageData;
 
-class VTK_SLICER_TRACTOGRAPHY_FIDUCIAL_SEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
+class VTK_SLICER_TRACTOGRAPHYFIDUCIALSEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
   public vtkMRMLNode
 {
 public:
@@ -72,7 +72,7 @@ public:
   // Get/Set Stopping Curvature (module parameter)
   vtkGetMacro(StoppingCurvature, double);
   vtkSetMacro(StoppingCurvature, double);
-  
+
   // Description:
   // Get/Set Integration Step (module parameter)
   vtkGetMacro(IntegrationStep, double);
@@ -112,7 +112,7 @@ public:
   vtkGetMacro(DisplayMode, int);
   vtkSetMacro(DisplayMode, int);
 
-  
+
   // Description:
   // Enable/Disable fiducial seeding
   vtkBooleanMacro(EnableSeeding, int);
@@ -129,7 +129,7 @@ public:
   // Get/Set input fiducial MRML Id
   vtkGetStringMacro(InputFiducialRef);
   vtkSetStringMacro(InputFiducialRef);
-  
+
   // Description:
   // Get/Set output volume MRML Id
   vtkGetStringMacro(OutputFiberRef);
@@ -139,7 +139,7 @@ public:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
- 
+
 protected:
   vtkMRMLTractographyFiducialSeedingNode();
   ~vtkMRMLTractographyFiducialSeedingNode();

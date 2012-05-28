@@ -1,6 +1,10 @@
 
+#-----------------------------------------------------------------------------
+set(MODULE_NAME DiffusionTensorScalarMeasurements) # Do not use 'project()'
+
+#-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
-  NAME DiffusionTensorScalarMeasurements
+  NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRMLCore vtkTeem
   INCLUDE_DIRECTORIES
@@ -9,7 +13,7 @@ slicerMacroBuildCLI(
   EXECUTABLE_ONLY
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-

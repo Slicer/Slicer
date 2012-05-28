@@ -29,50 +29,57 @@ if(${EXTENSION_NAME}_SUPERBUILD)
 endif()
 
 #-----------------------------------------------------------------------------
+set(MODULE_NAME ${EXTENSION_NAME}) # Do not use 'project()'
+set(MODULE_TITLE ${MODULE_NAME})
+
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
-set(qt_module_export_directive "Q_SLICER_QTMODULES_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_EXPORT")
+set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
-set(qt_module_include_directories
+set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   )
 
-set(qt_module_SRCS
+set(MODULE_SRCS
   qSlicerSuperBuildLoadableExtensionTemplateModule.cxx
   qSlicerSuperBuildLoadableExtensionTemplateModule.h
   qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.cxx
   qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h
   )
 
-set(qt_module_MOC_SRCS
+set(MODULE_MOC_SRCS
   qSlicerSuperBuildLoadableExtensionTemplateModule.h
   qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h
   )
 
-set(qt_module_UI_SRCS
+set(MODULE_UI_SRCS
   Resources/UI/qSlicerSuperBuildLoadableExtensionTemplateModule.ui
   )
 
-set(qt_module_target_libraries
+set(MODULE_TARGET_LIBRARIES
   vtkSlicerSuperBuildLoadableExtensionTemplateModuleLogic
   )
 
-set(qt_module_resources
+set(MODULE_RESOURCES
   Resources/qSlicerSuperBuildLoadableExtensionTemplateModule.qrc
   )
 
 #-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
-  NAME ${EXTENSION_NAME}
-  EXPORT_DIRECTIVE ${qt_module_export_directive}
-  INCLUDE_DIRECTORIES ${qt_module_include_directories}
-  SRCS ${qt_module_SRCS}
-  MOC_SRCS ${qt_module_MOC_SRCS}
-  UI_SRCS ${qt_module_UI_SRCS}
-  TARGET_LIBRARIES ${qt_module_target_libraries}
-  RESOURCES ${qt_module_resources}
+  NAME ${MODULE_NAME}
+  TITLE ${MODULE_TITLE}
+  EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
+  SRCS ${MODULE_SRCS}
+  MOC_SRCS ${MODULE_MOC_SRCS}
+  UI_SRCS ${MODULE_UI_SRCS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  RESOURCES ${MODULE_RESOURCES}
   )
 
 #-----------------------------------------------------------------------------

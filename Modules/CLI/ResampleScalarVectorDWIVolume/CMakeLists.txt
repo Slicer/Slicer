@@ -1,6 +1,10 @@
 
+#-----------------------------------------------------------------------------
+set(MODULE_NAME ResampleScalarVectorDWIVolume) # Do not use 'project()'
+
+#-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
-  NAME ResampleScalarVectorDWIVolume
+  NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   INCLUDE_DIRECTORIES
@@ -17,6 +21,7 @@ slicerMacroBuildCLI(
     ${ResampleDTIVolume_SOURCE_DIR}/dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

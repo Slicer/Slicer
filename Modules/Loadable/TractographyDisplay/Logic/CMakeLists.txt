@@ -1,40 +1,31 @@
-project(vtkSlicer${qt_module_name}ModuleLogic)
+project(vtkSlicer${MODULE_NAME}ModuleLogic)
 
-#
-# See CMake/SlicerMacroBuildModuleLogic.cmake for details
-#
+set(KIT ${PROJECT_NAME})
 
-set(module_logic_name "${PROJECT_NAME}")
+set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
 
-# The header '${PROJECT_NAME}Export.h' will be automatically configured.
-set(module_logic_export_directive "VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT")
-
-# Additional directories to include
-set(module_logic_include_directories
+set(${KIT}_INCLUDE_DIRECTORIES
   ${MRML_LIBRARIES}
   ${vtkSlicerTractographyDisplayModuleMRML_SOURCE_DIR}
   ${vtkSlicerTractographyDisplayModuleMRML_BINARY_DIR}
   )
 
-# Source files
-set(module_logic_SRCS
+set(${KIT}_SRCS
   vtkSlicerFiberBundleLogic.cxx
   vtkSlicerFiberBundleLogic.h
   )
 
-
-# Additional Target libraries
-set(module_logic_target_libraries
+set(${KIT}_TARGET_LIBRARIES
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
   vtkSlicerTractographyDisplayModuleMRML
   )
 
-
+#-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
-  NAME ${module_logic_name}
-  EXPORT_DIRECTIVE ${module_logic_export_directive}
-  INCLUDE_DIRECTORIES ${module_logic_include_directories}
-  SRCS ${module_logic_SRCS}
-  TARGET_LIBRARIES ${module_logic_target_libraries}
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
+  SRCS ${${KIT}_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   )

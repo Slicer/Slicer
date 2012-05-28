@@ -1,9 +1,8 @@
 
 #-----------------------------------------------------------------------------
-# DiffusionTensorMathematics tests
-#-----------------------------------------------------------------------------
-set(CLP DiffusionTensorScalarMeasurements)
+set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test MRMLCore vtkTeem SlicerBaseLogic)

@@ -1,20 +1,13 @@
-project(qSlicer${qt_module_name}ModuleWidgets)
+project(qSlicer${MODULE_NAME}ModuleWidgets)
 
-#
-# See CMake/SlicerMacroBuildModuleWidgets.cmake for details
-#
+set(KIT ${PROJECT_NAME})
 
-set(module_widgets_name "${PROJECT_NAME}")
+set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
-# The header '${module_widgets_name}Export.h' will be automatically configured.
-set(module_widgets_export_directive "Q_SLICER_QTMODULES_VOLUMES_WIDGETS_EXPORT")
-
-# Additional directories to include
-set(module_widgets_include_directories
+set(${KIT}_INCLUDE_DIRECTORIES
   )
 
-# Source files
-set(module_widgets_SRCS
+set(${KIT}_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.cxx
   qSlicerDiffusionTensorVolumeDisplayWidget.h
   qSlicerDiffusionWeightedVolumeDisplayWidget.cxx
@@ -29,8 +22,7 @@ set(module_widgets_SRCS
   qSlicerDTISliceDisplayWidget.h
   )
 
-# Headers that should run through moc
-set(module_widgets_MOC_SRCS
+set(${KIT}_MOC_SRCS
   qSlicerDiffusionTensorVolumeDisplayWidget.h
   qSlicerDiffusionWeightedVolumeDisplayWidget.h
   qSlicerLabelMapVolumeDisplayWidget.h
@@ -39,8 +31,7 @@ set(module_widgets_MOC_SRCS
   qSlicerDTISliceDisplayWidget.h
   )
 
-# UI files
-set(module_widgets_UI_SRCS
+set(${KIT}_UI_SRCS
   Resources/UI/qSlicerDiffusionTensorVolumeDisplayWidget.ui
   Resources/UI/qSlicerDiffusionWeightedVolumeDisplayWidget.ui
   Resources/UI/qSlicerDTISliceDisplayWidget.ui
@@ -48,27 +39,26 @@ set(module_widgets_UI_SRCS
   Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
   )
 
-# Resources
-set(module_widgets_resources
-  Resources/qSlicer${qt_module_name}WidgetsModule.qrc
+set(${KIT}_RESOURCES
+  Resources/qSlicer${MODULE_NAME}WidgetsModule.qrc
   )
 
-# Additional Target libraries
-set(module_widgets_target_libraries
+set(${KIT}_TARGET_LIBRARIES
   )
 
+#-----------------------------------------------------------------------------
 SlicerMacroBuildModuleWidgets(
-  NAME ${module_widgets_name}
-  EXPORT_DIRECTIVE ${module_widgets_export_directive}
-  INCLUDE_DIRECTORIES ${module_widgets_include_directories}
-  SRCS ${module_widgets_SRCS}
-  MOC_SRCS ${module_widgets_MOC_SRCS}
-  UI_SRCS ${module_widgets_UI_SRCS}
-  TARGET_LIBRARIES ${module_widgets_target_libraries}
-  RESOURCES ${module_widgets_resources}
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
+  SRCS ${${KIT}_SRCS}
+  MOC_SRCS ${${KIT}_MOC_SRCS}
+  UI_SRCS ${${KIT}_UI_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
+  RESOURCES ${${KIT}_RESOURCES}
   )
 
-# Qt Designer Plugins
+#-----------------------------------------------------------------------------
 #add_subdirectory(Plugins)
 
 # Testing

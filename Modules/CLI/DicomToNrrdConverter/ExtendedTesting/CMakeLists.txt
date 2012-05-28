@@ -1,6 +1,4 @@
-#
-# Test CLI executables
-#
+
 include_regular_expression("^.*$")
 
 enable_testing()

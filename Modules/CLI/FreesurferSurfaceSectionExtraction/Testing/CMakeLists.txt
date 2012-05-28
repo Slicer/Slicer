@@ -1,8 +1,6 @@
 
 #-----------------------------------------------------------------------------
-# FreesurferSurfaceSectionExtraction tests
-#-----------------------------------------------------------------------------
-#set (CLP FreesurferSurfaceSectionExtraction)
+#set(CLP ${MODULE_NAME})
 
 #add_executable(${CLP}Test ${CLP}Test.cxx)
 #add_dependencies(${CLP}Test ${CLP})
@@ -14,4 +12,3 @@
 #  FreesurferSurfaceSectionExtractionTest --help
 #  )
 #set_property(TEST ${testname} PROPERTY LABELS ${CLP})
-

@@ -1,22 +1,15 @@
-project(qSlicer${qt_module_name}ModuleWidgets)
+project(qSlicer${MODULE_NAME}ModuleWidgets)
 
-#
-# See CMake/SlicerMacroBuildModuleWidgets.cmake for details
-#
+set(KIT ${PROJECT_NAME})
 
-set(module_widgets_name "${PROJECT_NAME}")
+set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
-# The header '${module_widgets_name}Export.h' will be automatically configured.
-set(module_widgets_export_directive "Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT")
-
-# Additional directories to include
-set(module_widgets_include_directories
+set(${KIT}_INCLUDE_DIRECTORIES
   ${vtkSlicerVolumeRenderingModuleMRML_SOURCE_DIR}
   ${vtkSlicerVolumeRenderingModuleMRML_BINARY_DIR}
   )
 
-# Source files
-set(module_widgets_SRCS
+set(${KIT}_SRCS
   qSlicerPresetComboBox.cxx
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
@@ -24,37 +17,34 @@ set(module_widgets_SRCS
   qMRMLVolumePropertyNodeWidget.h
   )
 
-# Headers that should run through moc
-set(module_widgets_MOC_SRCS
+set(${KIT}_MOC_SRCS
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
   qMRMLVolumePropertyNodeWidget.h
   )
 
-# UI files
-set(module_widgets_UI_SRCS
+set(${KIT}_UI_SRCS
   ../Resources/UI/qMRMLVolumePropertyNodeWidget.ui
   )
 
-# Resources
-set(module_widgets_resources
+set(${KIT}_RESOURCES
   )
 
-# Additional Target libraries
-set(module_widgets_target_libraries
+set(${KIT}_TARGET_LIBRARIES
   vtkSlicerVolumeRenderingModuleMRML
   )
 
+#-----------------------------------------------------------------------------
 SlicerMacroBuildModuleWidgets(
-  NAME ${module_widgets_name}
-  EXPORT_DIRECTIVE ${module_widgets_export_directive}
-  INCLUDE_DIRECTORIES ${module_widgets_include_directories}
-  SRCS ${module_widgets_SRCS}
-  MOC_SRCS ${module_widgets_MOC_SRCS}
-  UI_SRCS ${module_widgets_UI_SRCS}
-  TARGET_LIBRARIES ${module_widgets_target_libraries}
-  RESOURCES ${module_widgets_resources}
+  NAME ${KIT}
+  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
+  SRCS ${${KIT}_SRCS}
+  MOC_SRCS ${${KIT}_MOC_SRCS}
+  UI_SRCS ${${KIT}_UI_SRCS}
+  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
+  RESOURCES ${${KIT}_RESOURCES}
   )
 
-# Qt Designer Plugins
+#-----------------------------------------------------------------------------
 add_subdirectory(DesignerPlugins)

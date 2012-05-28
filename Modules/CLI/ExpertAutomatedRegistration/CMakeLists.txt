@@ -1,7 +1,10 @@
 
-set(CLP ExpertAutomatedRegistration)
+#-----------------------------------------------------------------------------
+set(MODULE_NAME ExpertAutomatedRegistration) # Do not use 'project()'
+
+#-----------------------------------------------------------------------------
 slicerMacroBuildCLI(
-  NAME ${CLP}
+  NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}
   INCLUDE_DIRECTORIES
@@ -13,6 +16,7 @@ if(SUPPORT_2D_IMAGES)
     PROPERTIES COMPILE_FLAGS "-Dmain=ModuleEntryPoint -DSUPPORT_2D_IMAGES" )
 endif()
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

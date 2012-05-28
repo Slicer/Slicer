@@ -1,7 +1,9 @@
 
+#-----------------------------------------------------------------------------
 set(ResampleDTIVolume_INPUT ${ResampleDTIVolume_SOURCE_DIR}/Data/Input)
-set(CLP ResampleScalarVectorDWIVolume)
+set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})

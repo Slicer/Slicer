@@ -1,4 +1,4 @@
-set(KIT VolumesWidgets)
+set(KIT qSlicer${MODULE_NAME}ModuleWidgets)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -15,9 +15,8 @@ include_directories(
   ${vtkSlicerVolumesModuleLogic_BINARY_DIR}
   )
 
-# Additional Target libraries
 set(test_target_libraries
-  ${PROJECT_NAME}
+  ${KIT}
   vtkSlicerVolumesModuleLogic
   )
 

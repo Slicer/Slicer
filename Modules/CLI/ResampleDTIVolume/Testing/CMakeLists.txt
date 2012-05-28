@@ -1,21 +1,17 @@
 
-set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
-if(USE_VALGRIND)
-  set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
-endif()
-
+#-----------------------------------------------------------------------------
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Baseline)
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
-set(CLP ResampleDTIVolume)
-
 set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
-set(TransformedImage ${TEMP}/dt-helix-transformed.nrrd )
+set(CLP ${MODULE_NAME})
 
-set(OriginalImage ${INPUT}/dt-helix.nrrd)
-
+#-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
+
+#-----------------------------------------------------------------------------
+set(OriginalImage ${INPUT}/dt-helix.nrrd)
 
 #-----------------------------------------------------------------------------
 set(TransformFile ${INPUT}/rotation.tfm )
@@ -116,14 +112,14 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 #-----------------------------------------------------------------------------
 message(WARNING "warning: Test named 'itkTestMainExtendedScalarTest' associated with ResampleDTI should be reviewed !")
 # TODO The baseline associated with each command line module has been moved within
-#      the Data/Baseline subdirectory of each module. For that reason, ResampleDTI shouldn;t
+#      the Data/Baseline subdirectory of each module. For that reason, ResampleDTI shouldn't
 #      reference the baseline 'AddTest_DOUBLE.mha' as input data.
 #Test itkTestMainExtended.h
 #copy scalar file to binary directory so that if an error occurs the output files will be created in the binary directory
 #set(SourceScalarFile ${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI/AddTest_DOUBLE.mha )
 #file( COPY ${SourceScalarFile} DESTINATION ${TEMP})
 #set( BinaryScalarFile ${TEMP}/AddTest_DOUBLE.mha)
-
+#set(TransformedImage ${TEMP}/dt-helix-transformed.nrrd)
 #set(testname itkTestMainExtendedScalarTest)
 #add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 # --compare

@@ -12,10 +12,10 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLFiberBundleNode - MRML node to represent a fiber bundle from tractography in DTI data.
-/// 
+///
 /// FiberBundle nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
-/// A FiberBundle node contains many fibers and forms the smallest logical unit of tractography 
-/// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
+/// A FiberBundle node contains many fibers and forms the smallest logical unit of tractography
+/// that MRML will manage/read/write. Each fiber has accompanying tensor data.
 /// Visualization parameters for these nodes are controlled by the vtkMRMLFiberBundleDisplayNode class.
 //
 
@@ -36,7 +36,7 @@ class vtkExtractPolyDataGeometry;
 class vtkPlanes;
 class vtkCleanPolyData;
 
-class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
+class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleNode : public vtkMRMLModelNode
 {
 public:
   static vtkMRMLFiberBundleNode *New();
@@ -44,46 +44,46 @@ public:
   //vtkTypeMacro(vtkMRMLFiberBundleNode,vtkMRMLTransformableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
+  ///
   /// Read node attributes from XML (MRML) file
   virtual void ReadXMLAttributes ( const char** atts );
 
-  /// 
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML ( ostream& of, int indent );
 
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy ( vtkMRMLNode *node );
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
-  /// 
-  /// Updates this node if it depends on other nodes 
+  ///
+  /// Updates this node if it depends on other nodes
   /// when the node is deleted in the scene
   virtual void UpdateReferences();
 
-  /// 
+  ///
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
 
-  /// 
+  ///
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
+  ///
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "FiberBundle";};
 
@@ -104,16 +104,16 @@ public:
 
   //vtkSetClampMacro(SubsamplingRatio, float, 0, 1);
 
-  /// 
+  ///
   /// Get annotation MRML object.
   vtkMRMLAnnotationNode* GetAnnotationNode ( );
 
 
-  /// 
+  ///
   /// Set the ID annotation node for interactive selection.
   void SetAndObserveAnnotationNodeID ( const char *ID );
 
-  /// 
+  ///
   /// Get ID of diffusion tensor display MRML object for fiber glyph.
   vtkGetStringMacro(AnnotationNodeID);
 
@@ -141,36 +141,36 @@ public:
     this->SetSelectionWithAnnotationNodeMode(NegativeAnnotationNodeSelection);
   }
 
-  /// 
+  ///
   /// Gets the subsampled PolyData converted from the real data in the node
   virtual vtkPolyData* GetFilteredPolyData();
 
 
-  /// 
+  ///
   /// get associated line display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetLineDisplayNode();
 
-  /// 
+  ///
   /// get associated tube display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetTubeDisplayNode();
 
-  /// 
+  ///
   /// get associated glyph display node or NULL if not set
   vtkMRMLFiberBundleDisplayNode* GetGlyphDisplayNode();
 
-  /// 
+  ///
   /// add line display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddLineDisplayNode();
 
-  /// 
+  ///
   /// add tube display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddTubeDisplayNode();
 
-  /// 
+  ///
   /// add glyph display node if not already present and return it
   vtkMRMLFiberBundleDisplayNode* AddGlyphDisplayNode();
 
-  /// 
+  ///
   /// Create and return default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
@@ -185,7 +185,7 @@ public:
   // Set the maximum number of fibers to show by default when a new fiber bundle node is set
   vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
 
- 
+
 protected:
   vtkMRMLFiberBundleNode();
   ~vtkMRMLFiberBundleNode();

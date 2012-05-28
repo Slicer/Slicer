@@ -84,12 +84,6 @@ QIcon qSlicerColorsModule::icon()const
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerColorsModule::title()const
-{
-  return "Colors";
-}
-
-//-----------------------------------------------------------------------------
 void qSlicerColorsModule::setup()
 {
   Q_D(qSlicerColorsModule);

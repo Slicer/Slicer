@@ -24,7 +24,7 @@
 #include <QDesignerCustomWidgetInterface>
 #include "qSlicerVolumeRenderingModuleWidgetsPluginsExport.h"
 
-class Q_VOLUMERENDERING_MODULE_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_PLUGINS_EXPORT qSlicerVolumeRenderingModuleWidgetsAbstractPlugin
   : public QDesignerCustomWidgetInterface
 {
   Q_INTERFACES(QDesignerCustomWidgetInterface);

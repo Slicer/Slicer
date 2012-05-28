@@ -1,9 +1,5 @@
 project(VolumeRenderingReplacements)
-
-#
-# See CMake/SlicerMacroBuildModuleLogic.cmake for details
-#
-
+#-----------------------------------------------------------------------------
 #
 # Third-Party
 #
@@ -12,14 +8,12 @@ find_package(OpenGL REQUIRED)
 set(module_replacements_name "${PROJECT_NAME}")
 
 # The header '${module_replacements_name}Export.h' will be automatically configured.
-set(module_replacements_export_directive "Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT")
+set(module_replacements_export_directive "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_REPLACEMENTS_EXPORT")
 
-# Additional directories to include
 set(module_replacements_include_directories
   ${qt_module_include_directories}
   )
 
-# Source files
 set(module_replacements_SRCS
   vtkSlicerVolumeTextureMapper3D.cxx
   vtkSlicerOpenGLVolumeTextureMapper3D.cxx
@@ -69,12 +63,12 @@ set(module_replacements_SRCS
 
   )
 
-# Additional Target libraries
 set(module_replacements_target_libraries
   ${VTK_LIBRARIES}
   ${OPENGL_gl_LIBRARY}
   )
 
+#-----------------------------------------------------------------------------
 SlicerMacroBuildModuleLogic(
   NAME ${module_replacements_name}
   EXPORT_DIRECTIVE ${module_replacements_export_directive}

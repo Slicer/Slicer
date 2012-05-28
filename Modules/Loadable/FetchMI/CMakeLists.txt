@@ -1,8 +1,8 @@
 
-# Module name (usually identique to the directory name)
-set(qt_module_name "FetchMI")
-set(qt_module_title "FetchMI")
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "FetchMI") # Do not use 'project()'
 
-# Build module sub libraries
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(Logic)
-

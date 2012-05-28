@@ -1,9 +1,8 @@
 
 #-----------------------------------------------------------------------------
-# ExecutionModelTour tests
-#-----------------------------------------------------------------------------
-set (CLP ExecutionModelTour)
+set(CLP ${MODULE_NAME})
 
+#-----------------------------------------------------------------------------
 add_executable(${CLP}Test ${CLP}Test.cxx)
 add_dependencies(${CLP}Test ${CLP})
 target_link_libraries(${CLP}Test ${CLP}Lib)
@@ -24,4 +23,3 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
     ${TEST_DATA}/CTHeadAxial.nhdr
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
-

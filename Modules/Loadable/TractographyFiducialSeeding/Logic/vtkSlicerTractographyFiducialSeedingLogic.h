@@ -35,7 +35,7 @@ class vtkMRMLTransformableNode;
 class vtkMaskPoints;
 class vtkSeedTracts;
 
-class VTK_SLICER_TRACTOGRAPHY_FIDUCIAL_SEEDING_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
+class VTK_SLICER_TRACTOGRAPHYFIDUCIALSEEDING_MODULE_LOGIC_EXPORT vtkSlicerTractographyFiducialSeedingLogic :
   public vtkSlicerModuleLogic
 {
 public:

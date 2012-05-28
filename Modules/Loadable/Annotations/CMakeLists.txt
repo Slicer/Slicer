@@ -1,16 +1,20 @@
 
-# Module name (usually identical to the directory name)
-set(qt_module_name "Annotations")
+#-----------------------------------------------------------------------------
+set(MODULE_NAME "Annotations")  # Do not use 'project()'
+set(MODULE_TITLE "${MODULE_NAME}")
 
-# Build module sub libraries
+string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
+
+#-----------------------------------------------------------------------------
 add_subdirectory(MRML)
 add_subdirectory(Widgets)
 add_subdirectory(Logic)
 
-set(qt_module_export_directive "Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT")
+#-----------------------------------------------------------------------------
+set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
-set(qt_module_include_directories
+set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
@@ -85,18 +89,16 @@ set(GUI_SRCS
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
-# Create the instantiator for DisplayableManager classes.
 set(VTK_USE_INSTANTIATOR_NEW 1)
-VTK_MAKE_INSTANTIATOR3("qSlicer${qt_module_name}ModuleInstantiator"
+VTK_MAKE_INSTANTIATOR3("qSlicer${MODULE_NAME}ModuleInstantiator"
   DisplayableManagerInstantiator_SRCS
   "${DisplayableManager_SRCS}"
-  "${qt_module_export_directive}"
+  "${MODULE_EXPORT_DIRECTIVE}"
   ${CMAKE_CURRENT_BINARY_DIR}
-  "qSlicer${qt_module_name}ModuleExport.h"
+  "qSlicer${MODULE_NAME}ModuleExport.h"
   )
 
-# Source files
-set(qt_module_SRCS
+set(MODULE_SRCS
   ${DisplayableManager_SRCS}
   ${DisplayableManagerInstantiator_SRCS}
   ${VTKWidget_SRCS}
@@ -111,8 +113,7 @@ set(qt_module_SRCS
   qSlicerFiducialsIO.h
   )
 
-# Headers that should run through moc
-set(qt_module_MOC_SRCS
+set(MODULE_MOC_SRCS
   qSlicerAnnotationsIO.h
   qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.h
@@ -125,21 +126,18 @@ set(qt_module_MOC_SRCS
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
-# UI files
-set(qt_module_UI_SRCS
+set(MODULE_UI_SRCS
   Resources/UI/qSlicerAnnotationModule.ui
   Resources/UI/qSlicerAnnotationModuleIOOptionsWidget.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui
   )
 
-# Resources
-set(qt_module_resources
+set(MODULE_RESOURCES
   Resources/qSlicerAnnotationModule.qrc
   )
 
-# Additional Target libraries
-set(qt_module_target_libraries
+set(MODULE_TARGET_LIBRARIES
   qSlicerBaseQTCore
   qMRMLWidgets
   vtkSlicerAnnotationsModuleMRML
@@ -147,17 +145,20 @@ set(qt_module_target_libraries
   qSlicerAnnotationsModuleWidgets
   )
 
+#-----------------------------------------------------------------------------
 slicerMacroBuildQtModule(
-  NAME ${qt_module_name}
-  EXPORT_DIRECTIVE ${qt_module_export_directive}
-  INCLUDE_DIRECTORIES ${qt_module_include_directories}
-  SRCS ${qt_module_SRCS}
-  MOC_SRCS ${qt_module_MOC_SRCS}
-  UI_SRCS ${qt_module_UI_SRCS}
-  TARGET_LIBRARIES ${qt_module_target_libraries}
-  RESOURCES ${qt_module_resources}
+  NAME ${MODULE_NAME}
+  TITLE ${MODULE_TITLE}
+  EXPORT_DIRECTIVE ${MODULE_EXPORT_DIRECTIVE}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
+  SRCS ${MODULE_SRCS}
+  MOC_SRCS ${MODULE_MOC_SRCS}
+  UI_SRCS ${MODULE_UI_SRCS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  RESOURCES ${MODULE_RESOURCES}
   )
 
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing/Cxx)
   if(Slicer_USE_PYTHONQT)

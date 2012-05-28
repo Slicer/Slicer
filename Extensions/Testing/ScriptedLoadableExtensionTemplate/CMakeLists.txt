@@ -21,18 +21,18 @@ if(NOT Slicer_SOURCE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
-set(KIT_PYTHON_SCRIPTS
+set(MODULE_PYTHON_SCRIPTS
   ScriptedLoadableExtensionTemplate.py
   )
 
-set(KIT_PYTHON_RESOURCES
+set(MODULE_PYTHON_RESOURCES
   )
 
 #-----------------------------------------------------------------------------
 ctkMacroCompilePythonScript(
   TARGET_NAME ScriptedLoadableExtensionTemplate
-  SCRIPTS "${KIT_PYTHON_SCRIPTS}"
-  RESOURCES "${KIT_PYTHON_RESOURCES}"
+  SCRIPTS "${MODULE_PYTHON_SCRIPTS}"
+  RESOURCES "${MODULE_PYTHON_RESOURCES}"
   DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
   INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
   NO_INSTALL_SUBDIR
