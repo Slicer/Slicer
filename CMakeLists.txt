@@ -1,7 +1,6 @@
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8.4)
 #-----------------------------------------------------------------------------
-
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness will be properly detected.
@@ -349,8 +348,11 @@ endif()
 #-----------------------------------------------------------------------------
 # Slicer install directories
 #-----------------------------------------------------------------------------
+set(Slicer_MAIN_PROJECT SlicerApp)
+set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer)
+
 set(Slicer_INSTALL_ROOT "./")
-set(Slicer_BUNDLE_LOCATION "Slicer.app/Contents")
+set(Slicer_BUNDLE_LOCATION "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app/Contents")
 set(Slicer_BUNDLE_EXTENSIONS_DIRNAME "Extensions")
 if(APPLE)
   set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/") # Set to create Bundle
@@ -370,7 +372,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     # is required for CLI executable to be located at same depth as Slicer executable.
     # See also Slicer/CMake/SlicerCPackBundleFixup.cmake.in
     #
-    # A more elegant solution would be to create a "Slicer.framework" on which both "Slicer.app"
+    # A more elegant solution would be to create a "Slicer.framework" on which both "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app"
     # and the plugins/extensions (or loadable bundles) would depend on.
     #
     # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
@@ -478,7 +480,7 @@ message(STATUS "Configuring Slicer for ${Slicer_OS}-${Slicer_ARCHITECTURE}")
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/Slicer)
+set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
 if(BUILD_TESTING)

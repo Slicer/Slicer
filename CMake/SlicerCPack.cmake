@@ -48,6 +48,7 @@ Plugins = ${Slicer_QtPlugins_DIR}
           RENAME qt.conf)
 
   set(executable_path @executable_path)
+  set(Slicer_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
     "${Slicer_SOURCE_DIR}/CMake/SlicerCPackBundleFixup.cmake.in"
@@ -87,8 +88,8 @@ endif()
 # Slicer does *NOT* require setting the windows path
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
-set(APPLICATION_NAME "Slicer")
-set(EXECUTABLE_NAME "Slicer")
+set(APPLICATION_NAME "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}")
+set(EXECUTABLE_NAME "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}")
 set(CPACK_PACKAGE_EXECUTABLES "..\\\\${EXECUTABLE_NAME}" "${APPLICATION_NAME}")
 
 # -------------------------------------------------------------------------

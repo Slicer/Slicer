@@ -26,4 +26,4 @@ foreach(var ${expected_existing_vars})
   endif()
 endforeach()
 
-verify_app("${Slicer_INSTALL_DIR}/Slicer.app")
+verify_app("${Slicer_INSTALL_DIR}/${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app")
