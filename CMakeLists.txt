@@ -297,6 +297,14 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
+# Main application
+#-----------------------------------------------------------------------------
+set(Slicer_MAIN_PROJECT SlicerApp)
+set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer)
+
+set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
+
+#-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
 set(Slicer_VERSION_MAJOR "4")
@@ -348,11 +356,8 @@ endif()
 #-----------------------------------------------------------------------------
 # Slicer install directories
 #-----------------------------------------------------------------------------
-set(Slicer_MAIN_PROJECT SlicerApp)
-set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer)
-
 set(Slicer_INSTALL_ROOT "./")
-set(Slicer_BUNDLE_LOCATION "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app/Contents")
+set(Slicer_BUNDLE_LOCATION "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app/Contents")
 set(Slicer_BUNDLE_EXTENSIONS_DIRNAME "Extensions")
 if(APPLE)
   set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/") # Set to create Bundle
@@ -372,7 +377,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
     # is required for CLI executable to be located at same depth as Slicer executable.
     # See also Slicer/CMake/SlicerCPackBundleFixup.cmake.in
     #
-    # A more elegant solution would be to create a "Slicer.framework" on which both "${${Slicer_MAIN_PROJECT}_APPLICATION_NAME}.app"
+    # A more elegant solution would be to create a "Slicer.framework" on which both "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app"
     # and the plugins/extensions (or loadable bundles) would depend on.
     #
     # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
@@ -489,7 +494,7 @@ set(Slicer_ExternalData_URL_TEMPLATES ${ExternalData_URL_TEMPLATES})
 #-----------------------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------------------
-set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
+set(Slicer_LAUNCHER_EXECUTABLE ${Slicer_BINARY_DIR}/${Slicer_MAIN_PROJECT_APPLICATION_NAME})
 set(Slicer_LAUNCH_COMMAND ${Slicer_LAUNCHER_EXECUTABLE} --launcher-no-splash --launch)
 
 if(BUILD_TESTING)

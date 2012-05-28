@@ -39,6 +39,10 @@ set(Slicer_WC_ROOT "@Slicer_WC_ROOT@")
 set(Slicer_OS "@Slicer_OS@")
 set(Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@")
 
+# Slicer main application
+set(Slicer_MAIN_PROJECT "@Slicer_MAIN_PROJECT@")
+set(Slicer_MAIN_PROJECT_APPLICATION_NAME "@Slicer_MAIN_PROJECT_APPLICATION_NAME@")
+
 # License and Readme file
 set(Slicer_LICENSE_FILE "@Slicer_LICENSE_FILE_CONFIG@")
 set(Slicer_README_FILE "@Slicer_README_FILE_CONFIG@")

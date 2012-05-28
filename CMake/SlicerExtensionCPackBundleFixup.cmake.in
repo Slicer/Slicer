@@ -288,7 +288,7 @@ endfunction(fixup_extension)
 # Fixup the .app bundles in the install tree:
 #-----------------------------------------------------------------------------
 function(fixup_slicer_extension)
-  set(app "@Slicer_APPLICATION_NAME@.app")
+  set(app "@Slicer_MAIN_PROJECT_APPLICATION_NAME@.app")
   set(ext_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
   set(exepath "${ext_dir}/Contents/MacOS")
