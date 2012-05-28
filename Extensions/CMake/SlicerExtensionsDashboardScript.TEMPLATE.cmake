@@ -110,9 +110,14 @@ set(BUILD_OPTIONS_STRING "${MY_BITNESS}bits-QT${MY_QT_VERSION}-PythonQt-With-Tcl
 #-----------------------------------------------------------------------------
 set(dir_suffix ${BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}-${SCRIPT_MODE})
 
-set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/SlicerExtensions-build-${dir_suffix}-${EXTENSIONS_TRACK_QUALIFIER}")
-
 set(Slicer_DIR "${CTEST_DASHBOARD_ROOT}/Slicer-build-${dir_suffix}/Slicer-build")
+
+set(testing_suffix "")
+if(EXTENSIONS_BUILDSYSTEM_TESTING)
+  set(testing_suffix "-Testing")
+endif()
+
+set(CTEST_BINARY_DIRECTORY "${CTEST_DASHBOARD_ROOT}/SlicerExtensions-build-${dir_suffix}${testing_suffix}-${EXTENSIONS_TRACK_QUALIFIER}")
 
 #-----------------------------------------------------------------------------
 # Source directories
