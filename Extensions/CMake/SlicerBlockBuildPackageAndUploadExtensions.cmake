@@ -1,6 +1,6 @@
 
 # Sanity checks
-set(expected_defined_vars Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR CMAKE_GENERATOR)
+set(expected_defined_vars Slicer_WC_REVISION QT_VERSION_MAJOR QT_VERSION_MINOR CMAKE_GENERATOR Slicer_EXTENSIONS_TRACK_QUALIFIER)
 foreach(var ${expected_defined_vars})
   if(NOT DEFINED ${var})
     message(FATAL_ERROR "Variable ${var} is not defined !")
@@ -187,6 +187,7 @@ foreach(extension_name ${EXTENSION_LIST})
             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
             -DBUILD_TESTING:BOOL=${BUILD_TESTING}
             -DSlicer_DIR:PATH=${Slicer_DIR}
+            -DSlicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
             -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
             -DEXTENSION_ENABLED:BOOL=${EXTENSION_ENABLED}
             )

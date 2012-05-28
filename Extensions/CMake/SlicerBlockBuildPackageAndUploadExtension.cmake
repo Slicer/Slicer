@@ -115,7 +115,12 @@ set(CTEST_DROP_LOCATION \"/submit.php?project=Slicer4\")
 set(CTEST_DROP_SITE_CDASH TRUE)")
 endif()
 
-set(track "Extensions-${CTEST_MODEL}")
+set(track_qualifier_cleaned "${Slicer_EXTENSIONS_TRACK_QUALIFIER}-")
+# Track associated with 'master' should default to either 'Continuous', 'Nightly' or 'Experimental'
+if(track_qualifier_cleaned STREQUAL "master-")
+  set(track_qualifier_cleaned "")
+endif()
+set(track "Extensions-${track_qualifier_cleaned}${CTEST_MODEL}")
 ctest_start(${CTEST_MODEL} TRACK ${track} ${EXTENSION_SOURCE_DIR} ${EXTENSION_SUPERBUILD_BINARY_DIR})
 ctest_read_custom_files(${EXTENSION_SUPERBUILD_BINARY_DIR} ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
 
