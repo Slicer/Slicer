@@ -66,7 +66,7 @@ if(WITH_PACKAGES)
   endif()
 endif()
 
-set(repository http://svn.slicer.org/Slicer4/trunk)
+set(repository http://svn.slicer.org/Slicer4/branches/Slicer-4-1-1)
 
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
