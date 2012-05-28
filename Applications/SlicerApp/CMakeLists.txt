@@ -23,11 +23,9 @@ endif()
 # --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
-
 set(SlicerApp_SRCS
   qSlicerAppAboutDialog.cxx
   qSlicerAppAboutDialog.h
-
   qSlicerAppMainWindow.cxx
   qSlicerAppMainWindow.h
   qSlicerAppMainWindowCore.cxx
@@ -37,7 +35,6 @@ set(SlicerApp_SRCS
 
 set(SlicerApp_MOC_SRCS
   qSlicerAppAboutDialog.h
-
   qSlicerAppMainWindow.h
   qSlicerAppMainWindowCore.h
   qSlicerAppMainWindowCore_p.h
@@ -48,8 +45,7 @@ set(SlicerApp_UI_SRCS
   Resources/UI/qSlicerAppMainWindow.ui
   )
 
-# Resources
-set(qt_module_resources
+set(SlicerApp_RESOURCES
   Resources/SlicerApp.qrc
   ${qSlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
   ${qSlicerModulesCore_SOURCE_DIR}/Resources/qSlicerModulesCore.qrc
@@ -57,13 +53,9 @@ set(qt_module_resources
 
 QT4_WRAP_CPP(SlicerApp_SRCS ${SlicerApp_MOC_SRCS})
 QT4_WRAP_UI(SlicerApp_UI_CXX ${SlicerApp_UI_SRCS})
-QT4_ADD_RESOURCES(SlicerApp_QRC_SRCS ${qt_module_resources})
+QT4_ADD_RESOURCES(SlicerApp_QRC_SRCS ${SlicerApp_RESOURCES})
 
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-
-set(include_dirs
+set(SlicerApp_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${Slicer_Base_INCLUDE_DIRS}
@@ -73,14 +65,11 @@ set(include_dirs
   ${qSlicerModulesCore_SOURCE_DIR}
   ${qSlicerModulesCore_BINARY_DIR}
   )
-
-include_directories(${include_dirs})
-
+include_directories(${SlicerApp_INCLUDE_DIRECTORIES})
 
 # --------------------------------------------------------------------------
 # Build the library
 # --------------------------------------------------------------------------
-
 set(KIT_LIBRARY_NAME "q${PROJECT_NAME}")
 
 add_library(${KIT_LIBRARY_NAME}
@@ -107,7 +96,6 @@ target_link_libraries(${KIT_LIBRARY_NAME}
 # --------------------------------------------------------------------------
 # Configure Application Bundle Resources (Mac Only)
 # --------------------------------------------------------------------------
-
 if(Q_WS_MAC)
   set(apple_icon_file ${Slicer_APPLICATION_NAME}.icns)
   set(apple_bundle_sources "${CMAKE_CURRENT_SOURCE_DIR}/Resources/${apple_icon_file}")
@@ -141,7 +129,6 @@ endif(QT_MAC_USE_COCOA)
 # --------------------------------------------------------------------------
 # Apply user-defined properties to the library target.
 # --------------------------------------------------------------------------
-
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif(Slicer_LIBRARY_PROPERTIES)
@@ -155,11 +142,9 @@ install(TARGETS ${KIT_LIBRARY_NAME}
 # --------------------------------------------------------------------------
 # Build the executable
 # --------------------------------------------------------------------------
-
 if(NOT APPLE)
   set(SlicerApp_EXE_SUFFIX -real)
 endif()
-
 
 set(SlicerApp_EXE_OPTIONS)
 if(WIN32)
@@ -191,7 +176,6 @@ target_link_libraries(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
 #-----------------------------------------------------------------------------
 # Configure
 # --------------------------------------------------------------------------
-
 set(MY_LIBRARY_EXPORT_DIRECTIVE "Q_SLICER_APP_EXPORT")
 set(MY_EXPORT_HEADER_PREFIX "qSlicerApp")
 set(MY_LIBNAME ${KIT_LIBRARY_NAME})
@@ -206,7 +190,6 @@ set(dynamicHeaders
 # --------------------------------------------------------------------------
 # Install
 # --------------------------------------------------------------------------
-
 if(NOT APPLE)
   set(SlicerApp_INSTALL_DESTINATION_ARGS RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR})
 else()
@@ -315,8 +298,6 @@ if(DEFINED ${PROJECT_NAME}_APPLICATION_NAME)
 endif()
 
 # --------------------------------------------------------------------------
-# Testing
-#
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
