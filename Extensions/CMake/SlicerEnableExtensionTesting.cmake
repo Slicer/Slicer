@@ -11,6 +11,9 @@ if(WIN32)
   set(RUN_CTEST_CONFIGURE FALSE)
 endif()
 
+find_package(Git)
+find_package(Subversion)
+
 set(CTEST_MODEL "Experimental")
 include(SlicerBlockUploadExtension)
 add_custom_target(Experimental${target_qualifier}
