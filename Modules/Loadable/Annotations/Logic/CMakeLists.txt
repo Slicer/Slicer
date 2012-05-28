@@ -24,6 +24,9 @@ set(module_logic_SRCS
 # Additional Target libraries
 set(module_logic_target_libraries
   vtkSlicerAnnotationsModuleMRML
+  ${QT_LIBRARIES}
+  qSlicerBaseQTCore
+  ${CTK_LIBRARIES}
   )
 
 SlicerMacroBuildModuleLogic(
