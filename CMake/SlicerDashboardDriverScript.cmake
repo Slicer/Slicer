@@ -372,9 +372,10 @@ if(SCRIPT_MODE STREQUAL "continuous")
   while(${CTEST_ELAPSED_TIME} LESS 46800) # Lasts 13 hours (Assuming it starts at 9am, it will end around 10pm)
     set(START_TIME ${CTEST_ELAPSED_TIME})
     run_ctest()
-    # Loop no faster than once every 5 minutes
-    message("Wait for 5 minutes ...")
-    ctest_sleep(${START_TIME} 300 ${CTEST_ELAPSED_TIME})
+    set(interval 300)
+    # Loop no faster than once every <interval> seconds
+    message("Wait for ${interval} seconds ...")
+    ctest_sleep(${START_TIME} ${interval} ${CTEST_ELAPSED_TIME})
   endwhile()
 else()
   run_ctest()
