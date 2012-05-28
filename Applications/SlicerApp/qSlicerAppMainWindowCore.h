@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMainWindowCore_h
-#define __qSlicerMainWindowCore_h
+#ifndef __qSlicerAppMainWindowCore_h
+#define __qSlicerAppMainWindowCore_h
 
 // Qt includes
 #include <QObject>
@@ -31,17 +31,17 @@ class ctkErrorLogWidget;
 
 #include "qSlicerAppExport.h"
 
-class qSlicerMainWindow;
-class qSlicerMainWindowCorePrivate;
+class qSlicerAppMainWindow;
+class qSlicerAppMainWindowCorePrivate;
 
-class Q_SLICER_APP_EXPORT qSlicerMainWindowCore : public QObject
+class Q_SLICER_APP_EXPORT qSlicerAppMainWindowCore : public QObject
 {
   Q_OBJECT
 
 public:
   typedef QObject Superclass;
-  qSlicerMainWindowCore(qSlicerMainWindow *parent = 0);
-  virtual ~qSlicerMainWindowCore();
+  qSlicerAppMainWindowCore(qSlicerAppMainWindow *parent = 0);
+  virtual ~qSlicerAppMainWindowCore();
 
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole* pythonConsole()const;
@@ -50,7 +50,7 @@ public:
 
 public slots:
   ///
-  /// Handle actions - See qSlicerMainWindow::setupMenuActions
+  /// Handle actions - See qSlicerAppMainWindow::setupMenuActions
 
   void onFileAddDataActionTriggered();
   void onFileLoadDataActionTriggered();
@@ -78,17 +78,17 @@ public slots:
   void onHelpVisualBlogActionTriggered();
 
   void onHelpReportBugOrFeatureRequestActionTriggered();
-  void onHelpAboutSlicerQTActionTriggered();
+  void onHelpAboutSlicerAppActionTriggered();
 
 protected:
-  qSlicerMainWindow* widget() const;
+  qSlicerAppMainWindow* widget() const;
 
 protected:
-  QScopedPointer<qSlicerMainWindowCorePrivate> d_ptr;
+  QScopedPointer<qSlicerAppMainWindowCorePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerMainWindowCore);
-  Q_DISABLE_COPY(qSlicerMainWindowCore);
+  Q_DECLARE_PRIVATE(qSlicerAppMainWindowCore);
+  Q_DISABLE_COPY(qSlicerAppMainWindowCore);
 };
 
 #endif

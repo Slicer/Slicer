@@ -34,14 +34,14 @@
 #endif
 
 
-// SlicerQt includes
+// SlicerApp includes
 #include "qSlicerAbstractModule.h"
-#include "qSlicerAboutDialog.h"
+#include "qSlicerAppAboutDialog.h"
 #include "qSlicerActionsDialog.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerLayoutManager.h"
-#include "qSlicerMainWindowCore_p.h"
+#include "qSlicerAppMainWindowCore_p.h"
 #include "qSlicerModuleManager.h"
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerPythonManager.h"
@@ -59,10 +59,10 @@
 #include <vtkImageData.h>
 
 //---------------------------------------------------------------------------
-// qSlicerMainWindowCorePrivate methods
+// qSlicerAppMainWindowCorePrivate methods
 
 //---------------------------------------------------------------------------
-qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
+qSlicerAppMainWindowCorePrivate::qSlicerAppMainWindowCorePrivate()
   {
 #ifdef Slicer_USE_PYTHONQT
   this->PythonConsole = 0;
@@ -71,20 +71,20 @@ qSlicerMainWindowCorePrivate::qSlicerMainWindowCorePrivate()
   }
 
 //---------------------------------------------------------------------------
-qSlicerMainWindowCorePrivate::~qSlicerMainWindowCorePrivate()
+qSlicerAppMainWindowCorePrivate::~qSlicerAppMainWindowCorePrivate()
 {
   delete this->ErrorLogWidget;
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerMainWindowCore methods
+// qSlicerAppMainWindowCore methods
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent)
+qSlicerAppMainWindowCore::qSlicerAppMainWindowCore(qSlicerAppMainWindow* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerMainWindowCorePrivate)
+  , d_ptr(new qSlicerAppMainWindowCorePrivate)
 {
-  Q_D(qSlicerMainWindowCore);
+  Q_D(qSlicerAppMainWindowCore);
   
   d->ParentWidget = _parent;
   d->ErrorLogWidget = new ctkErrorLogWidget;
@@ -93,18 +93,18 @@ qSlicerMainWindowCore::qSlicerMainWindowCore(qSlicerMainWindow* _parent)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerMainWindowCore::~qSlicerMainWindowCore()
+qSlicerAppMainWindowCore::~qSlicerAppMainWindowCore()
 {
 }
 
 //-----------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerMainWindowCore, qSlicerMainWindow*, widget, ParentWidget);
+CTK_GET_CPP(qSlicerAppMainWindowCore, qSlicerAppMainWindow*, widget, ParentWidget);
 
 #ifdef Slicer_USE_PYTHONQT
 //---------------------------------------------------------------------------
-ctkPythonConsole* qSlicerMainWindowCore::pythonConsole()const
+ctkPythonConsole* qSlicerAppMainWindowCore::pythonConsole()const
 {
-  Q_D(const qSlicerMainWindowCore);
+  Q_D(const qSlicerAppMainWindowCore);
   if (!d->PythonConsole)
     {
     // Lookup reference of 'PythonConsole' widget
@@ -113,7 +113,7 @@ ctkPythonConsole* qSlicerMainWindowCore::pythonConsole()const
       {
       if(widget->objectName().compare(QLatin1String("pythonConsole")) == 0)
         {
-        const_cast<qSlicerMainWindowCorePrivate*>(d)
+        const_cast<qSlicerAppMainWindowCorePrivate*>(d)
           ->PythonConsole = qobject_cast<ctkPythonConsole*>(widget);
         break;
         }
@@ -124,59 +124,59 @@ ctkPythonConsole* qSlicerMainWindowCore::pythonConsole()const
 #endif
 
 //---------------------------------------------------------------------------
-ctkErrorLogWidget* qSlicerMainWindowCore::errorLogWidget()const
+ctkErrorLogWidget* qSlicerAppMainWindowCore::errorLogWidget()const
 {
-  Q_D(const qSlicerMainWindowCore);
+  Q_D(const qSlicerAppMainWindowCore);
   return d->ErrorLogWidget;
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileAddDataActionTriggered()
+void qSlicerAppMainWindowCore::onFileAddDataActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddDataDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileLoadDataActionTriggered()
+void qSlicerAppMainWindowCore::onFileLoadDataActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddDataDialog();
 }
 
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileImportSceneActionTriggered()
+void qSlicerAppMainWindowCore::onFileImportSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddSceneDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileLoadSceneActionTriggered()
+void qSlicerAppMainWindowCore::onFileLoadSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileAddVolumeActionTriggered()
+void qSlicerAppMainWindowCore::onFileAddVolumeActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddVolumesDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileAddTransformActionTriggered()
+void qSlicerAppMainWindowCore::onFileAddTransformActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openAddTransformDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileSaveSceneActionTriggered()
+void qSlicerAppMainWindowCore::onFileSaveSceneActionTriggered()
 {
   qSlicerApplication::application()->ioManager()->openSaveDataDialog();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
+void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 {
-   Q_D(qSlicerMainWindowCore);
+   Q_D(qSlicerAppMainWindowCore);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (All Existing Files in this Directory Will Be Removed!)"), tempDir, QFileDialog::ShowDirsOnly);
@@ -231,57 +231,57 @@ void qSlicerMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onSDBZipDirectoryActionTriggered()
+void qSlicerAppMainWindowCore::onSDBZipDirectoryActionTriggered()
 {
   // NOT IMPLEMENTED YET
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onSDBZipToDCMActionTriggered()
+void qSlicerAppMainWindowCore::onSDBZipToDCMActionTriggered()
 {
   // NOT IMPLEMENTED YET
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onFileCloseSceneActionTriggered()
+void qSlicerAppMainWindowCore::onFileCloseSceneActionTriggered()
 {
   qSlicerCoreApplication::application()->mrmlScene()->Clear(false);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onEditUndoActionTriggered()
+void qSlicerAppMainWindowCore::onEditUndoActionTriggered()
 {
   qSlicerApplication::application()->mrmlScene()->Undo();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onEditRedoActionTriggered()
+void qSlicerAppMainWindowCore::onEditRedoActionTriggered()
 {
   qSlicerApplication::application()->mrmlScene()->Redo();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::setLayout(int layout)
+void qSlicerAppMainWindowCore::setLayout(int layout)
 {
   qSlicerApplication::application()->layoutManager()->setLayout(layout);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::setLayoutNumberOfCompareViewRows(int num)
+void qSlicerAppMainWindowCore::setLayoutNumberOfCompareViewRows(int num)
 {
   qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewRows(num);
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::setLayoutNumberOfCompareViewColumns(int num)
+void qSlicerAppMainWindowCore::setLayoutNumberOfCompareViewColumns(int num)
 {
   qSlicerApplication::application()->layoutManager()->setLayoutNumberOfCompareViewColumns(num);
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindowCore::onWindowErrorLogActionTriggered(bool show)
+void qSlicerAppMainWindowCore::onWindowErrorLogActionTriggered(bool show)
 {
-  Q_D(qSlicerMainWindowCore);
+  Q_D(qSlicerAppMainWindowCore);
   if (show)
     {
     d->ErrorLogWidget->show();
@@ -295,7 +295,7 @@ void qSlicerMainWindowCore::onWindowErrorLogActionTriggered(bool show)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered(bool show)
+void qSlicerAppMainWindowCore::onWindowPythonInteractorActionTriggered(bool show)
 {
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole* console = this->pythonConsole();
@@ -314,7 +314,7 @@ void qSlicerMainWindowCore::onWindowPythonInteractorActionTriggered(bool show)
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
+void qSlicerAppMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
 {
   qSlicerActionsDialog actionsDialog(this->widget());
   actionsDialog.setActionsWithNoShortcutVisible(false);
@@ -342,35 +342,35 @@ void qSlicerMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpBrowseTutorialsActionTriggered()
+void qSlicerAppMainWindowCore::onHelpBrowseTutorialsActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
 }
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
+void qSlicerAppMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
 {
   QDesktopServices::openUrl(QUrl(QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2").arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
 }
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpSlicerPublicationsActionTriggered()
+void qSlicerAppMainWindowCore::onHelpSlicerPublicationsActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/publications"));
 }
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpAboutSlicerQTActionTriggered()
+void qSlicerAppMainWindowCore::onHelpAboutSlicerAppActionTriggered()
 {
-  qSlicerAboutDialog about(this->widget());
+  qSlicerAppAboutDialog about(this->widget());
   about.exec();
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpReportBugOrFeatureRequestActionTriggered()
+void qSlicerAppMainWindowCore::onHelpReportBugOrFeatureRequestActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.na-mic.org/Bug/index.php"));
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMainWindowCore::onHelpVisualBlogActionTriggered()
+void qSlicerAppMainWindowCore::onHelpVisualBlogActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer4:VisualBlog"));
 }

@@ -32,9 +32,5 @@
    <header>QtWebKit/QWebView</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../qSlicerBaseQTGUI.qrc"/>
-  <include location="../../../../Applications/SlicerQT/Resources/SlicerQT.qrc"/>
- </resources>
  <connections/>
 </ui>

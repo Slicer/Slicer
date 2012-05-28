@@ -38,7 +38,7 @@
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL, Slicer_BUILD_CLI_SUPPORT
 
-// SlicerQt includes
+// SlicerApp includes
 #include "qSlicerApplication.h"
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include "qSlicerCLIExecutableModuleFactory.h"
@@ -47,7 +47,7 @@
 #include "qSlicerCommandOptions.h"
 #include "qSlicerCoreModuleFactory.h"
 #include "qSlicerLoadableModuleFactory.h"
-#include "qSlicerMainWindow.h"
+#include "qSlicerAppMainWindow.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerStyle.h"
@@ -201,7 +201,7 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 }
 
 //----------------------------------------------------------------------------
-int slicerQtMain(int argc, char* argv[])
+int SlicerAppMain(int argc, char* argv[])
 {
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
@@ -252,10 +252,10 @@ int slicerQtMain(int argc, char* argv[])
            << moduleFactoryManager->instantiatedModuleNames().count();
   // Create main window
   splashMessage(splashScreen, "Initializing user interface...");
-  QScopedPointer<qSlicerMainWindow> window;
+  QScopedPointer<qSlicerAppMainWindow> window;
   if (enableMainWindow)
     {
-    window.reset(new qSlicerMainWindow);
+    window.reset(new qSlicerAppMainWindow);
     window->setWindowTitle(window->windowTitle()+ " " + Slicer_VERSION_FULL);
     }
 
@@ -308,7 +308,7 @@ int __stdcall WinMain(HINSTANCE hInstance,
   vtksys::SystemTools::ConvertWindowsCommandLineToUnixArguments(
     lpCmdLine, &argc, &argv);
 
-  int ret = slicerQtMain(argc, argv);
+  int ret = SlicerAppMain(argc, argv);
 
   for (int i = 0; i < argc; i++)
     {
@@ -321,6 +321,6 @@ int __stdcall WinMain(HINSTANCE hInstance,
 #else
 int main(int argc, char *argv[])
 {
-  return slicerQtMain(argc, argv);
+  return SlicerAppMain(argc, argv);
 }
 #endif

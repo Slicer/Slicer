@@ -81,7 +81,7 @@ SET(CPACK_PACKAGE_VERSION "${Slicer_VERSION_FULL}")
 set(CPACK_SYSTEM_NAME "${Slicer_OS}-${Slicer_ARCHITECTURE}")
 
 if(APPLE)
-  set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Applications/SlicerQT/Resources/Slicer.icns")
+  set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Resources/Slicer.icns")
 endif()
 
 # Slicer does *NOT* require setting the windows path

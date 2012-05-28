@@ -18,35 +18,26 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerAboutDialog_h
-#define __qSlicerAboutDialog_h
-
 // Qt includes
-#include <QDialog>
+#include <QTimer>
 
-// CTK includes
-#include <ctkPimpl.h>
+// SlicerApp includes
+#include "qSlicerCoreApplication.h"
+#include "qSlicerAppMainWindowCore.h"
 
-// SlicerQt includes
-#include "qSlicerAppExport.h"
+// STD includes
 
-class qSlicerAboutDialogPrivate;
-
-/// Pre-request that a qSlicerApplication has been instanced
-class Q_SLICER_APP_EXPORT qSlicerAboutDialog :
-  public QDialog
+int qSlicerAppMainWindowCoreTest1(int argc, char * argv[] )
 {
-  Q_OBJECT
-public:
-  qSlicerAboutDialog(QWidget *parentWidget = 0);
-  virtual ~qSlicerAboutDialog();
+  qSlicerCoreApplication app(argc, argv);
 
-protected:
-  QScopedPointer<qSlicerAboutDialogPrivate> d_ptr;
+  qSlicerAppMainWindowCore mainWindow;
 
-private:
-  Q_DECLARE_PRIVATE(qSlicerAboutDialog);
-  Q_DISABLE_COPY(qSlicerAboutDialog);
-};
+  if (argc < 2 || QString(argv[1]) != "-I")
+    {
+    QTimer::singleShot(100, qApp, SLOT(quit()));
+    }
 
-#endif
+  return app.exec();
+}
+

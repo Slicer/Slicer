@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerMainWindow</class>
- <widget class="QMainWindow" name="qSlicerMainWindow">
+ <class>qSlicerAppMainWindow</class>
+ <widget class="QMainWindow" name="qSlicerAppMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +14,7 @@
    <string>3D Slicer</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../SlicerQT.qrc">
+   <iconset resource="../SlicerApp.qrc">
     <normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.png</normaloff>:/Icons/Medium/3DSlicer-DesktopIcon.png</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget"/>
@@ -119,7 +119,7 @@
     <addaction name="actionHelpVisualBlog"/>
     <addaction name="separator"/>
     <addaction name="actionHelpReportBugOrFeatureRequest"/>
-    <addaction name="actionHelpAboutSlicerQT"/>
+    <addaction name="actionHelpAboutSlicerApp"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -650,7 +650,7 @@
     <string>Slicer Publications</string>
    </property>
   </action>
-  <action name="actionHelpAboutSlicerQT">
+  <action name="actionHelpAboutSlicerApp">
    <property name="text">
     <string>About 3D Slicer</string>
    </property>
@@ -1121,7 +1121,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../SlicerQT.qrc"/>
+  <include location="../SlicerApp.qrc"/>
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicerLogos.qrc"/>

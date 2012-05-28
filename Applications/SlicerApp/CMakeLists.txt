@@ -1,4 +1,4 @@
-project(SlicerQT)
+project(SlicerApp)
 
 # --------------------------------------------------------------------------
 # Build option(s)
@@ -13,42 +13,40 @@ endif()
 # Sources
 # --------------------------------------------------------------------------
 
-set(SlicerQT_SRCS
-  qSlicerAboutDialog.cxx
-  qSlicerAboutDialog.h
+set(SlicerApp_SRCS
+  qSlicerAppAboutDialog.cxx
+  qSlicerAppAboutDialog.h
 
-  qSlicerMainWindow.cxx
-  qSlicerMainWindow.h
-  qSlicerMainWindowCore.cxx
-  qSlicerMainWindowCore.h
-  qSlicerMainWindowCore_p.h
+  qSlicerAppMainWindow.cxx
+  qSlicerAppMainWindow.h
+  qSlicerAppMainWindowCore.cxx
+  qSlicerAppMainWindowCore.h
+  qSlicerAppMainWindowCore_p.h
   )
 
-set(SlicerQT_MOC_SRCS
-  qSlicerAboutDialog.h
+set(SlicerApp_MOC_SRCS
+  qSlicerAppAboutDialog.h
 
-  qSlicerMainWindow.h
-  qSlicerMainWindowCore.h
-  qSlicerMainWindowCore_p.h
+  qSlicerAppMainWindow.h
+  qSlicerAppMainWindowCore.h
+  qSlicerAppMainWindowCore_p.h
   )
 
-set(SlicerQT_UI_SRCS
-  Resources/UI/qSlicerAboutDialog.ui
-  Resources/UI/qSlicerMainWindow.ui
+set(SlicerApp_UI_SRCS
+  Resources/UI/qSlicerAppAboutDialog.ui
+  Resources/UI/qSlicerAppMainWindow.ui
   )
 
 # Resources
 set(qt_module_resources
-  Resources/SlicerQT.qrc
+  Resources/SlicerApp.qrc
   ${qSlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
   ${qSlicerModulesCore_SOURCE_DIR}/Resources/qSlicerModulesCore.qrc
 )
-#set(SlicerQT_RC_FILE Resources/SlicerQT.rc)
 
-
-QT4_WRAP_CPP(SlicerQT_SRCS ${SlicerQT_MOC_SRCS})
-QT4_WRAP_UI(SlicerQT_UI_CXX ${SlicerQT_UI_SRCS})
-QT4_ADD_RESOURCES(SlicerQT_QRC_SRCS ${qt_module_resources})
+QT4_WRAP_CPP(SlicerApp_SRCS ${SlicerApp_MOC_SRCS})
+QT4_WRAP_UI(SlicerApp_UI_CXX ${SlicerApp_UI_SRCS})
+QT4_ADD_RESOURCES(SlicerApp_QRC_SRCS ${qt_module_resources})
 
 # --------------------------------------------------------------------------
 # Include dirs
@@ -75,24 +73,24 @@ include_directories(${include_dirs})
 set(KIT_LIBRARY_NAME "q${PROJECT_NAME}")
 
 add_library(${KIT_LIBRARY_NAME}
-  ${SlicerQT_SRCS}
-  ${SlicerQT_UI_CXX}
-  ${SlicerQT_QRC_SRCS}
+  ${SlicerApp_SRCS}
+  ${SlicerApp_UI_CXX}
+  ${SlicerApp_QRC_SRCS}
   )
 set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES LABELS ${PROJECT_NAME})
 
-set(SlicerQT_LIBRARIES
+set(SlicerApp_LIBRARIES
   qSlicerModulesCore
   )
 
 if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND SlicerQT_LIBRARIES
+  list(APPEND SlicerApp_LIBRARIES
     qSlicerBaseQTCLI
     )
 endif()
 
 target_link_libraries(${KIT_LIBRARY_NAME}
-  ${SlicerQT_LIBRARIES}
+  ${SlicerApp_LIBRARIES}
   )
 
 # --------------------------------------------------------------------------
@@ -148,34 +146,34 @@ install(TARGETS ${KIT_LIBRARY_NAME}
 # --------------------------------------------------------------------------
 
 if(NOT APPLE)
-  set(SlicerQT_EXE_SUFFIX -real)
+  set(SlicerApp_EXE_SUFFIX -real)
 endif()
 
 
-set(SlicerQT_EXE_OPTIONS)
+set(SlicerApp_EXE_OPTIONS)
 if(WIN32)
   if(NOT Slicer_BUILD_WIN32_CONSOLE)
-    set(SlicerQT_EXE_OPTIONS WIN32)
+    set(SlicerApp_EXE_OPTIONS WIN32)
   endif()
 endif()
 
 if(APPLE)
-  set(SlicerQT_EXE_OPTIONS MACOSX_BUNDLE)
+  set(SlicerApp_EXE_OPTIONS MACOSX_BUNDLE)
 endif()
 
-add_executable(${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}
-  ${SlicerQT_EXE_OPTIONS}
+add_executable(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
+  ${SlicerApp_EXE_OPTIONS}
   Main.cxx
   ${apple_bundle_sources}
   ${qt_menu_nib_sources}
   )
-set_target_properties(${PROJECT_NAME}${SlicerQT_EXE_SUFFIX} PROPERTIES LABELS ${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} PROPERTIES LABELS ${PROJECT_NAME})
 
 if(APPLE)
-  set_target_properties(${PROJECT_NAME}${SlicerQT_EXE_SUFFIX} PROPERTIES OUTPUT_NAME Slicer)
+  set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} PROPERTIES OUTPUT_NAME Slicer)
 endif()
 
-target_link_libraries(${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}
+target_link_libraries(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
   ${KIT_LIBRARY_NAME}
   )
 
@@ -199,13 +197,13 @@ set(dynamicHeaders
 # --------------------------------------------------------------------------
 
 if(NOT APPLE)
-  set(SlicerQT_INSTALL_DESTINATION_ARGS RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR})
+  set(SlicerApp_INSTALL_DESTINATION_ARGS RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR})
 else()
-  set(SlicerQT_INSTALL_DESTINATION_ARGS BUNDLE DESTINATION ".")
+  set(SlicerApp_INSTALL_DESTINATION_ARGS BUNDLE DESTINATION ".")
 endif()
 
-install(TARGETS ${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}
-  ${SlicerQT_INSTALL_DESTINATION_ARGS}
+install(TARGETS ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
+  ${SlicerApp_INSTALL_DESTINATION_ARGS}
   COMPONENT Runtime)
 
 # --------------------------------------------------------------------------
@@ -249,7 +247,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   include(SlicerBlockCTKAppLauncherSettings)
   set(splash_image_path ${Slicer_SOURCE_DIR}/Applications/${PROJECT_NAME}/Resources/Images/SlicerSplashScreen.png)
   ctkAppLauncherConfigure(
-    TARGET ${PROJECT_NAME}${SlicerQT_EXE_SUFFIX}
+    TARGET ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
     APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}
     APPLICATION_NAME Slicer
     SPLASH_IMAGE_PATH ${splash_image_path}
@@ -275,7 +273,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       ${Slicer_BINARY_DIR}/SlicerLauncherSettings.ini
       ${Slicer_BINARY_DIR}/SlicerLauncherSettingsToInstall.ini
     )
-  add_dependencies(SlicerRemoveLauncherSettings ${PROJECT_NAME}${SlicerQT_EXE_SUFFIX})
+  add_dependencies(SlicerRemoveLauncherSettings ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX})
   add_dependencies(SlicerConfigureLauncher SlicerRemoveLauncherSettings)
 
   if(NOT APPLE)

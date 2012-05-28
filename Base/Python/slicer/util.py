@@ -82,7 +82,7 @@ def lookupTopLevelWidget(objectName, verbose = True):
   return None
 
 def mainWindow(verbose = True):
-  return lookupTopLevelWidget('qSlicerMainWindow', verbose)
+  return lookupTopLevelWidget('qSlicerAppMainWindow', verbose)
 
 def pythonShell(verbose = True):
   return lookupTopLevelWidget('pythonConsole', verbose)

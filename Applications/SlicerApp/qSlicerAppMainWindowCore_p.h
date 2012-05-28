@@ -18,8 +18,8 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerMainWindowCorePrivate_p_h
-#define __qSlicerMainWindowCorePrivate_p_h
+#ifndef __qSlicerAppMainWindowCorePrivate_p_h
+#define __qSlicerAppMainWindowCorePrivate_p_h
 
 // Qt includes
 #include <QObject>
@@ -29,23 +29,23 @@
 class ctkErrorLogWidget;
 class ctkPythonConsole;
 
-// SlicerQt includes
-#include "qSlicerMainWindowCore.h"
-#include "qSlicerMainWindow.h"
+// SlicerApp includes
+#include "qSlicerAppMainWindowCore.h"
+#include "qSlicerAppMainWindow.h"
 
 class qSlicerAbstractModule;
 
 //-----------------------------------------------------------------------------
-class qSlicerMainWindowCorePrivate: public QObject
+class qSlicerAppMainWindowCorePrivate: public QObject
 {
   Q_OBJECT
 
 public:
-  explicit qSlicerMainWindowCorePrivate();
-  virtual ~qSlicerMainWindowCorePrivate();
+  explicit qSlicerAppMainWindowCorePrivate();
+  virtual ~qSlicerAppMainWindowCorePrivate();
 
 public:
-  QPointer<qSlicerMainWindow> ParentWidget;
+  QPointer<qSlicerAppMainWindow> ParentWidget;
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole*           PythonConsole;
 #endif

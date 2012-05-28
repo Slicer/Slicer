@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerAboutDialog</class>
- <widget class="QDialog" name="qSlicerAboutDialog">
+ <class>qSlicerAppAboutDialog</class>
+ <widget class="QDialog" name="qSlicerAppAboutDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -509,7 +509,7 @@
       <set>Qt::AlignCenter</set>
      </property>
      <property name="pixmap">
-      <pixmap resource="../SlicerQT.qrc">:/Images/SlicerLogo.png</pixmap>
+      <pixmap resource="../SlicerApp.qrc">:/Images/SlicerLogo.png</pixmap>
      </property>
      <property name="transformationMode">
       <enum>Qt::SmoothTransformation</enum>
@@ -533,8 +533,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../SlicerQT.qrc"/>
-  <include location="../../../../../../../.designer/SlicerQT.qrc"/>
+  <include location="../SlicerApp.qrc"/>
+  <include location="../../../../../../../.designer/SlicerApp.qrc"/>
  </resources>
  <connections/>
 </ui>

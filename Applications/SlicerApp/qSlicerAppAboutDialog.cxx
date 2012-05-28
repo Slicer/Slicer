@@ -20,28 +20,28 @@
 
 // Qt includes
 
-// SlicerQt includes
-#include "qSlicerAboutDialog.h"
+// SlicerApp includes
+#include "qSlicerAppAboutDialog.h"
 #include "qSlicerApplication.h"
-#include "ui_qSlicerAboutDialog.h"
+#include "ui_qSlicerAppAboutDialog.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerAboutDialogPrivate: public Ui_qSlicerAboutDialog
+class qSlicerAppAboutDialogPrivate: public Ui_qSlicerAppAboutDialog
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerAboutDialogPrivate methods
+// qSlicerAppAboutDialogPrivate methods
 
 
 //-----------------------------------------------------------------------------
-// qSlicerAboutDialog methods
-qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
+// qSlicerAppAboutDialog methods
+qSlicerAppAboutDialog::qSlicerAppAboutDialog(QWidget* parentWidget)
  :QDialog(parentWidget)
-  , d_ptr(new qSlicerAboutDialogPrivate)
+  , d_ptr(new qSlicerAppAboutDialogPrivate)
 {
-  Q_D(qSlicerAboutDialog);
+  Q_D(qSlicerAppAboutDialog);
   d->setupUi(this);
 
   qSlicerApplication* slicer = qSlicerApplication::application();
@@ -64,6 +64,6 @@ qSlicerAboutDialog::qSlicerAboutDialog(QWidget* parentWidget)
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAboutDialog::~qSlicerAboutDialog()
+qSlicerAppAboutDialog::~qSlicerAppAboutDialog()
 {
 }
