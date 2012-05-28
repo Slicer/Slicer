@@ -59,7 +59,7 @@ endif()
 
 "
 )
-endfunction(_write_gitclone_script)
+endfunction()
 
 # Helper function used to generate the CMake script that will update a git clone given a tag.
 # (Inspired from ExternalProject CMake module)
@@ -98,7 +98,21 @@ endif()
 
 "
 )
-endfunction(_update_gitclone_script)
+endfunction()
+
+# Helper function used to extract slicer revision within a header file. The revision is
+# expected to be defined using the format '#define Slicer_WC_REVISION "abcd123456"'
+function(_get_slicer_revision headerfile varname)
+  set(_macroname Slicer_WC_REVISION)
+  set(_revision_regex "^#define[ \t]+${_macroname}[ \t]+[\"]*([0-9A-Za-z\\.]+)[\"][ \t]*$")
+  file(STRINGS "${headerfile}" _revision_string
+       LIMIT_COUNT 1 REGEX ${_revision_regex})
+  set(dollar "$")
+  string(REGEX REPLACE ${_revision_regex} "\\1" _revision "${_revision_string}")
+
+  set(${varname} ${_revision} PARENT_SCOPE)
+endfunction()
+
 
 # Macro allowing to set a variable to its default value only if not already defined
 macro(setIfNotDefined var defaultvalue)
@@ -263,6 +277,11 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   # Note: The following command should be specified as a list.
   set(CTEST_GIT_UPDATE_CUSTOM ${CMAKE_COMMAND} -P ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}-${git_tag_cleaned}-${SCRIPT_MODE}-gitupdate.cmake)
 
+  # Retrieve revision associated with Slicer source tree
+  _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
+  message("Slicer_WC_REVISION:${Slicer_WC_REVISION}")
+  set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
+
 endif()
 
 #-----------------------------------------------------------------------------
@@ -317,8 +336,20 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
 ")
   endif()
 
-  if(FILES_UPDATED GREATER 0 OR force_build)
+  _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
+  set(slicer_source_updated FALSE)
+  if(NOT "${Slicer_PREVIOUS_WC_REVISION}" STREQUAL "${Slicer_WC_REVISION}")
+    set(slicer_source_updated TRUE)
+  endif()
 
+  message("FILES_UPDATED ................: ${FILES_UPDATED}")
+  message("force_build ..................: ${force_build}")
+  message("Slicer_PREVIOUS_WC_REVISION ..: ${Slicer_PREVIOUS_WC_REVISION}")
+  message("Slicer_WC_REVISION ...........: ${Slicer_WC_REVISION}")
+
+  if(FILES_UPDATED GREATER 0 OR force_build OR slicer_source_updated)
+
+    set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
     set(force_build FALSE)
 
     #-----------------------------------------------------------------------------
