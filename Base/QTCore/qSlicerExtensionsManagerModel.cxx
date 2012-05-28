@@ -121,6 +121,11 @@ public:
   qSlicerExtensionsManagerModelPrivate(qSlicerExtensionsManagerModel& object);
   void init();
 
+  void debug(const QString& text) const;
+  void warning(const QString& text) const;
+  void critical(const QString& text) const;
+  void log(const QString& text, ctkErrorLogLevel::LogLevels level) const;
+
   int role(const QByteArray& roleName);
 
   QFileInfoList extensionDescriptionFileInfos(const QString& extensionDescriptionPath)const;
@@ -136,7 +141,7 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
-  static QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
+  QString extractArchive(const QDir& extensionsDir, const QString &archiveFile);
 
   QStringList extensionLibraryPaths(const QString& extensionName)const;
   QStringList extensionPaths(const QString& extensionName)const;
@@ -215,6 +220,43 @@ void qSlicerExtensionsManagerModelPrivate::init()
 
   QObject::connect(&this->NetworkManager, SIGNAL(finished(QNetworkReply*)),
                    q, SLOT(onDownloadFinished(QNetworkReply*)));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::debug(const QString& text) const
+{
+  this->log(text, ctkErrorLogLevel::Debug);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::warning(const QString& text) const
+{
+  this->log(text, ctkErrorLogLevel::Warning);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::critical(const QString& text) const
+{
+  this->log(text, ctkErrorLogLevel::Critical);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerModelPrivate::log(const QString& text, ctkErrorLogLevel::LogLevels level) const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+  if(level == ctkErrorLogLevel::Debug)
+    {
+    qDebug() << text;
+    }
+  else if (level == ctkErrorLogLevel::Warning)
+    {
+    qWarning() << text;
+    }
+  else if (level == ctkErrorLogLevel::Critical)
+    {
+    qCritical() << text;
+    }
+  emit q->messageLogged(text, level);
 }
 
 // --------------------------------------------------------------------------
@@ -376,7 +418,7 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToLauncherSettings(co
   QSettings launcherSettings(this->LauncherSettingsFilePath, QSettings::IniFormat);
   if (launcherSettings.status() != QSettings::NoError)
     {
-    qWarning() << "Failed to open launcher settings file" << this->LauncherSettingsFilePath;
+    this->warning(QString("Failed to open launcher settings file %1").arg(this->LauncherSettingsFilePath));
     return;
     }
 
@@ -408,7 +450,7 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
   QSettings launcherSettings(this->LauncherSettingsFilePath, QSettings::IniFormat);
   if (launcherSettings.status() != QSettings::NoError)
     {
-    qWarning() << "Failed to open launcher settings file" << this->LauncherSettingsFilePath;
+    this->warning(QString("Failed to open launcher settings file: %1").arg(this->LauncherSettingsFilePath));
     return;
     }
 
@@ -440,12 +482,12 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   bool success = extract_tar(archiveFile.toLatin1(), /* verbose */ false, /* extract */ true, &extracted_files);
   if(!success)
     {
-    qCritical() << "Failed to extract" << archiveFile << "into" << extensionsDir.absolutePath();
+    this->critical(QString("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
     return false;
     }
   if(extracted_files.size() == 0)
     {
-    qWarning() << "Archive" << archiveFile << "doesn't contain any files !";
+    this->warning(QString("Archive %1 doesn't contain any files !").arg(archiveFile));
     return false;
     }
 
@@ -754,6 +796,8 @@ QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
 // --------------------------------------------------------------------------
 qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::retrieveExtensionMetadata(const QString& extensionId)
 {
+  Q_D(qSlicerExtensionsManagerModel);
+
   if (extensionId.isEmpty())
     {
     return ExtensionMetadataType();
@@ -768,7 +812,7 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
         "midas.slicerpackages.extension.list", parameters);
   if (!ok)
     {
-    qCritical() << results[0]["queryError"];
+    d->critical(results[0]["queryError"].toString());
     return ExtensionMetadataType();
     }
   Q_ASSERT(results.count() == 1);
@@ -794,7 +838,7 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  qDebug() << "Retrieving extension metadata [ extensionId:" << extensionId << "]";
+  d->debug(QString("Retrieving extension metadata [ extensionId: %1]").arg(extensionId));
   ExtensionMetadataType extensionMetadata = this->retrieveExtensionMetadata(extensionId);
   if (extensionMetadata.count() == 0)
     {
@@ -803,7 +847,7 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 
   QString itemId = extensionMetadata["item_id"].toString();
 
-  qDebug() << "Downloading extension [ itemId:" << itemId << "]";
+  d->debug(QString("Downloading extension [ itemId: %1]").arg(itemId));
   QUrl downloadUrl(this->serverUrl());
   downloadUrl.setPath(downloadUrl.path() + "/download");
   downloadUrl.setQueryItems(
@@ -816,12 +860,14 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
 {
+  Q_D(qSlicerExtensionsManagerModel);
+
   QUrl downloadUrl = reply->url();
   Q_ASSERT(downloadUrl.hasQueryItem("items"));
 
   if (reply->error())
     {
-    qCritical() << "Failed downloading: " << downloadUrl.toString();
+    d->critical(QString("Failed downloading: %1").arg(downloadUrl.toString()));
     return;
     }
 
@@ -835,7 +881,7 @@ void qSlicerExtensionsManagerModel::onDownloadFinished(QNetworkReply* reply)
   QFile file(fileInfo.absoluteFilePath());
   if (!file.open(QIODevice::WriteOnly))
     {
-    qCritical() << "Could not open " << fileInfo.absoluteFilePath() << " for writing: " << file.errorString();
+    d->critical(QString("Could not open %1 for writing: %2").arg(fileInfo.absoluteFilePath()).arg(file.errorString()));
     return;
     }
   file.write(reply->readAll());
@@ -863,13 +909,13 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
 
   if (this->extensionsInstallPath().isEmpty())
     {
-    qCritical() << "Extensions/InstallPath setting is not set !";
+    d->critical("Extensions/InstallPath setting is not set !");
     return false;
     }
 
   if (!QDir().mkpath(this->extensionsInstallPath()))
     {
-    qCritical() << "Failed to create extension installation directory" << this->extensionsInstallPath();
+    d->critical(QString("Failed to create extension installation directory %1").arg(this->extensionsInstallPath()));
     return false;
     }
 
@@ -1147,6 +1193,8 @@ extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
 bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     const QString& extensionName, const QString& archiveFile, const QString& destinationPath)
 {
+  Q_D(qSlicerExtensionsManagerModel);
+
   if (extensionName.isEmpty())
     {
     return false;
@@ -1154,7 +1202,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   if (!QDir(destinationPath).exists())
     {
-    qCritical() << "Failed to extract archive" << archiveFile << "into nonexistent directory" << destinationPath;
+    d->critical(QString("Failed to extract archive %1 into nonexistent directory %2").arg(archiveFile).arg(destinationPath));
     return false;
     }
 
@@ -1166,8 +1214,8 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
       || !destinationPathInfo.isWritable()
       || !destinationPathInfo.isExecutable())
     {
-    qCritical() << "Failed to extract archive" << archiveFile << "into directory" << destinationPath
-                << "either NON readable, writable or executable";
+    d->critical(QString("Failed to extract archive %1 into directory %2 "
+                        "either NON readable, writable or executable").arg(archiveFile).arg(destinationPath));
     return false;
     }
 #ifdef Q_OS_WIN
@@ -1183,7 +1231,7 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
 
   // Extract into <extensionsPath>/<extensionName>/<archiveBaseName>/
   extensionsDir.cd(extensionName);
-  QString archiveBaseName = Pimpl::extractArchive(extensionsDir, archiveFile);
+  QString archiveBaseName = d->extractArchive(extensionsDir, archiveFile);
   extensionsDir.cdUp();
 
   // Rename <extensionName>/<archiveBaseName> into <extensionName>

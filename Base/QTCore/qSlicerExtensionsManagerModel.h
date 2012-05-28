@@ -28,6 +28,9 @@
 #include <QSettings>
 #include <QVariantMap>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 // QtGUI includes
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -196,6 +199,8 @@ signals:
   void extensionEnabledChanged(const QString& extensionName, bool value);
 
   void slicerRequirementsChanged(const QString& revision, const QString& os, const QString& arch);
+
+  void messageLogged(const QString& text, ctkErrorLogLevel::LogLevels level) const;
 
 protected slots:
 

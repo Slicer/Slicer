@@ -24,6 +24,9 @@
 // Qt includes
 #include <QWidget>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
@@ -68,6 +71,8 @@ public slots:
   void onExtensionUninstalled(const QString& extensionName);
 
   void onSlicerRequirementsChanged(const QString& revision,const QString& os,const QString& arch);
+
+  void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
 
 protected slots:
   void initJavascript();
