@@ -15,6 +15,7 @@ if(BUILD_TESTING)
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     list(APPEND KIT_TEST_SRCS
       qSlicerExtensionsManagerModelTest.cxx
+      qSlicerPersistentCookieJarTest.cxx
       )
   endif()
   if(Slicer_USE_PYTHONQT)
@@ -30,6 +31,7 @@ if(BUILD_TESTING)
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     QT4_GENERATE_MOCS(
       qSlicerExtensionsManagerModelTest.cxx
+      qSlicerPersistentCookieJarTest.cxx
       )
   endif()
 
@@ -61,6 +63,7 @@ if(BUILD_TESTING)
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     SIMPLE_TEST( qSlicerExtensionsManagerModelTest )
+    SIMPLE_TEST( qSlicerPersistentCookieJarTest )
   endif()
 
   if(Slicer_USE_PYTHONQT)
