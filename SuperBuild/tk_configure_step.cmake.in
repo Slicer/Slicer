@@ -13,6 +13,9 @@ endif()
 # and not from the parent directory relatively i.e. sh /unix/configure
 # use this step so we can set the WORKING_DIRECTORY appropriately
 
+set(ENV{CC} @CMAKE_C_COMPILER@)
+set(ENV{CXX} @CMAKE_CXX_COMPILER@)
+
 if(APPLE)
   set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
   set(osx_arch_flags)
