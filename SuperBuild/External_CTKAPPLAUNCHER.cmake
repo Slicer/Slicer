@@ -20,15 +20,15 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   set(proj CTKAPPLAUNCHER)
 
   if(NOT DEFINED CTKAPPLAUNCHER_DIR)
-    SlicerMacroGetPlatformArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
+    SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
     set(launcher_version "0.1.5")
     # On windows, use i386 launcher unconditionally
-    if("${CTKAPPLAUNCHER_PLATFORM}" STREQUAL "win")
+    if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
     endif()
     #message(STATUS "${__indent}Adding project ${proj}")
     ExternalProject_Add(${proj}
-      URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_PLATFORM}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
+      URL http://cloud.github.com/downloads/commontk/AppLauncher/CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""

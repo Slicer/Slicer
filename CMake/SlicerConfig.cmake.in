@@ -35,8 +35,8 @@ set(Slicer_WC_REVISION "@Slicer_WC_REVISION@")
 set(Slicer_WC_URL "@Slicer_WC_URL@")
 set(Slicer_WC_ROOT "@Slicer_WC_ROOT@")
 
-# Slicer platform and architecture
-set(Slicer_PLATFORM "@Slicer_PLATFORM@")
+# Slicer os and architecture
+set(Slicer_OS "@Slicer_OS@")
 set(Slicer_ARCHITECTURE "@Slicer_ARCHITECTURE@")
 
 # License and Readme file

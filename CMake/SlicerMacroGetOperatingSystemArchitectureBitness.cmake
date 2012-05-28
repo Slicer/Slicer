@@ -19,17 +19,17 @@
 ################################################################################
 
 #
-# SlicerMacroGetPlatformArchitectureBitness(<var-prefix>)
+# SlicerMacroGetOperatingSystemArchitectureBitness(<var-prefix>)
 # is used to extract information associated with the current platform.
 #
 # The macro defines the following variables:
 #  <var-prefix>_BITNESS - bitness of the platform: 32 or 64
-#  <var-prefix>_PLATFORM - which is on the this value: linux, macosx, win
+#  <var-prefix>_OS - which is on the this value: linux, macosx, win
 #  <var-prefix>_ARCHITECTURE - which is on the this value: i386, amd64, ppc
 
 include(${CMAKE_CURRENT_LIST_DIR}/SlicerBlockOperatingSystemNames.cmake)
 
-macro(SlicerMacroGetPlatformArchitectureBitness)
+macro(SlicerMacroGetOperatingSystemArchitectureBitness)
   set(options)
   set(oneValueArgs VAR_PREFIX)
   set(multiValueArgs)
@@ -50,13 +50,13 @@ macro(SlicerMacroGetPlatformArchitectureBitness)
   endif()
 
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_WIN_NAME}")
+    set(${MY_VAR_PREFIX}_OS "${Slicer_OS_WIN_NAME}")
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_LINUX_NAME}")
+    set(${MY_VAR_PREFIX}_OS "${Slicer_OS_LINUX_NAME}")
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(${MY_VAR_PREFIX}_PLATFORM "${Slicer_OS_MAC_NAME}")
+    set(${MY_VAR_PREFIX}_OS "${Slicer_OS_MAC_NAME}")
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "powerpc")
       set(${MY_VAR_PREFIX}_ARCHITECTURE "ppc")
     endif()
