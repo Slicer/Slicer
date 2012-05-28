@@ -15,6 +15,7 @@
 #include "vtkITKIslandMath.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkDataArray.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
 #include "vtkProcessObject.h"

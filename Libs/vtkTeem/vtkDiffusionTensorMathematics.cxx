@@ -18,6 +18,7 @@
 #endif
 
 // But, if you are on VS6.0 you don't get the define...
+#include "vtkDataArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkImageData.h"

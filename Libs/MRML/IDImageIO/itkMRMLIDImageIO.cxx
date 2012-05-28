@@ -20,6 +20,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
 #include "vtkMRMLScene.h"
 
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPointData.h>

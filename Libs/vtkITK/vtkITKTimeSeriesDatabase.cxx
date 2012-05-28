@@ -13,7 +13,7 @@
 ==========================================================================*/
 #include "vtkITKTimeSeriesDatabase.h"
 
-
+#include <vtkDataArray.h>
 
 vtkCxxRevisionMacro(vtkITKTimeSeriesDatabase, "$Revision: 6383 $");
 vtkStandardNewMacro(vtkITKTimeSeriesDatabase);
