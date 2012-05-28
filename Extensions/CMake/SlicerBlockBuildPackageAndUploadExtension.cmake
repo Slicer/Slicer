@@ -83,8 +83,12 @@ site_name(CTEST_SITE)
 string(TOLOWER "${CTEST_SITE}" ctest_site_lowercase)
 set(CTEST_SITE ${ctest_site_lowercase} CACHE STRING "Name of the computer/site where compile is being run" FORCE)
 
+# Get working copy information
+include(SlicerMacroExtractRepositoryInfo)
+SlicerMacroExtractRepositoryInfo(VAR_PREFIX EXTENSION SOURCE_DIR ${EXTENSION_SOURCE_DIR})
+
 # Set build name
-set(CTEST_BUILD_NAME "${Slicer_WC_REVISION}-${EXTENSION_NAME}-${EXTENSION_COMPILER}-${EXTENSION_BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
+set(CTEST_BUILD_NAME "${Slicer_WC_REVISION}-${EXTENSION_NAME}-${EXTENSION_WC_TYPE}${EXTENSION_WC_REVISION}-${EXTENSION_COMPILER}-${EXTENSION_BUILD_OPTIONS_STRING}-${CTEST_BUILD_CONFIGURATION}")
 
 setIfNotDefined(CTEST_PARALLEL_LEVEL 8)
 setIfNotDefined(CTEST_MODEL "Experimental")
@@ -202,11 +206,6 @@ if(RUN_CTEST_PACKAGES)
 
     if(RUN_CTEST_UPLOAD AND COMMAND ctest_upload)
       message("Uploading extension ${EXTENSION_NAME} ...")
-
-      # Update CMake module path so that our custom FindGit.cmake module is used.
-      set(CMAKE_MODULE_PATH ${Slicer_CMAKE_DIR} ${CMAKE_MODULE_PATH})
-      include(SlicerMacroExtractRepositoryInfo)
-      SlicerMacroExtractRepositoryInfo(VAR_PREFIX EXTENSION SOURCE_DIR ${EXTENSION_SOURCE_DIR})
 
       foreach(p ${extension_packages})
         get_filename_component(package_name "${p}" NAME)
