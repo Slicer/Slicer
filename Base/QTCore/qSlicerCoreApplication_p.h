@@ -81,10 +81,6 @@ public:
   /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
   QString discoverITKFactoriesDirectory();
 
-  /// Set variable 'Repository{Url, Revision, Url}' and Platform extracting information
-  /// from SlicerVersion.txt
-  void discoverRepository();
-
   /// Set PYTHONHOME and PYTHONPATH environment variables is not already set.
   void setPythonEnvironmentVariables();
 
@@ -122,13 +118,6 @@ public:
   /// IntDir should be set to either Debug,
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                     IntDir;
-
-  /// Variable set extracting information from SlicerVersion.txt
-  /// \sa discoverRepository
-  QString                                     RepositoryUrl;
-  QString                                     RepositoryBranch;
-  QString                                     RepositoryRevision;
-  QString                                     Platform;
 
   QSettings*                                  Settings;
 
