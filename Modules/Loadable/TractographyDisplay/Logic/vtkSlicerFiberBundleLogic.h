@@ -59,14 +59,6 @@ class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_EXPORT vtkSlicerFiberBundleLo
   int SaveFiberBundle (const char* filename, vtkMRMLFiberBundleNode *fiberBundleNode);
 
   // Description:
-  // Get the maximum number of fibers to show by default when a new fiber bundle node is set
-  vtkGetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
-
-  // Description:
-  // Set the maximum number of fibers to show by default when a new fiber bundle node is set
-  vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
-
-  // Description:
   // Register MRML Node classes to Scene.
   // Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
