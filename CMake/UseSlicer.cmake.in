@@ -92,8 +92,11 @@ endif()
 # Setup project
 # --------------------------------------------------------------------------
 
+if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
+  set(Slicer_SKIP_PROJECT_COMMAND FALSE)
+endif()
 if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-  set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK FALSE)
+  set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK ${Slicer_SKIP_PROJECT_COMMAND})
 endif()
 if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
   if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT UseSlicer_INCLUDED_ONCE)
@@ -107,9 +110,6 @@ else()
   _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
 endif()
 
-if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
-  set(Slicer_SKIP_PROJECT_COMMAND FALSE)
-endif()
 if(NOT Slicer_SKIP_PROJECT_COMMAND)
   project(${EXTENSION_NAME})
 else()
