@@ -1,49 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>
-            Diffusion.Diffusion Data Conversion
-  </category>
-  <title>
-            DTIimport</title>
-  <description>
-            Import DTI data in various file formats </description>
-  <version>
-            1.0     </version>
-  <documentation-url>
-            http://www.na-mic.org/Wiki/index.php/DTI_Import_Export </documentation-url>
+  <category>Diffusion.Diffusion Data Conversion</category>
+  <title>DTIimport</title>
+  <description>Import tensor datasets from various formats, including the NifTi file format</description>
+  <version>1.0</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/DTIImport</documentation-url>
   <license></license>
-  <contributor>
-           This module was implemented by Sonia Pujol, Ph.D., Surgical Planning Laboratory, Harvard Medical School. </contributor>
-  <acknowledgements>
-            This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149. </acknowledgements>
-
+  <contributor>Sonia Pujol (SPL, BWH)</contributor>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
 <parameters>
-    
-   <file>
-      <name>inputFile</name>
-      <label>Input DTI file</label>
-      <channel>input</channel>
-      <index>0</index>
-      <description>Input DTI file</description>
-    </file>
-    
-     <image type="tensor">
-      <name>outputTensor</name>
-      <label>Output DTI Volume</label>
-      <channel>output</channel>
-      <index>1</index>
-      <description>Output DTI volume</description>
-    </image>    
-    
-     <boolean hidden="true">
-      <name>TestingMode</name>
-      <longflag>testingmode</longflag>
-      <description>Enable testing mode. Sample helix file (helix-DTI.nhdr) will be loaded into Slicer and converted in Nifti.</description>
-      <label>Testing mode</label>
-      <default>false</default>
-    </boolean>
-    
-
+  <file>
+    <name>inputFile</name>
+    <label>Input DTI file</label>
+    <channel>input</channel>
+    <index>0</index>
+    <description>Input DTI file</description>
+  </file>
+  <image type="tensor">
+    <name>outputTensor</name>
+    <label>Output DTI Volume</label>
+    <channel>output</channel>
+    <index>1</index>
+    <description>Output DTI volume</description>
+  </image>    
+  <boolean hidden="true">
+    <name>TestingMode</name>
+    <longflag>testingmode</longflag>
+    <description>Enable testing mode. Sample helix file (helix-DTI.nhdr) will be loaded into Slicer and converted in Nifti.</description>
+    <label>Testing mode</label>
+    <default>false</default>
+  </boolean>
 </parameters>
-
 </executable>
