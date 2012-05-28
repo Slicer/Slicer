@@ -35,6 +35,7 @@
 # If a GIT repository is associated with SOURCE_DIR, the macro
 # will define the following variables:
 #  <var-prefix>_WC_URL - url of the repository (at SOURCE_DIR)
+#  <var-prefix>_WC_ROOT - Same value as working copy URL
 #  <var-prefix>_WC_REVISION_NAME - url of the repository (at SOURCE_DIR)
 #  <var-prefix>_WC_REVISION_HASH - current revision
 #  <var-prefix>_WC_REVISION - Equal to <var-prefix>_WC_REVISION_HASH if not a git-svn repository
@@ -42,6 +43,7 @@
 # If a SVN or GIT-SVN repository is associated with SOURCE_DIR, the macro
 # will define the following variables:
 #  <var-prefix>_WC_URL - url of the repository (at SOURCE_DIR)
+#  <var-prefix>_WC_ROOT - root url of the associated SVN repository
 #  <var-prefix>_WC_REVISION - current revision
 #  <var-prefix>_WC_LAST_CHANGED_AUTHOR - author of last commit
 #  <var-prefix>_WC_LAST_CHANGED_DATE - date of last commit
@@ -73,6 +75,7 @@ macro(SlicerMacroExtractRepositoryInfo)
 
   # Clear SVN, GIT_SVN specific variables
   set(${wc_info_prefix}_WC_URL "NA")
+  set(${wc_info_prefix}_WC_ROOT "NA")
   set(${wc_info_prefix}_WC_REVISION 0)
   set(${wc_info_prefix}_WC_LAST_CHANGED_AUTHOR)
   set(${wc_info_prefix}_WC_LAST_CHANGED_DATE)
