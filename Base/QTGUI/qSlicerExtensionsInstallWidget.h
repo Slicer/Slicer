@@ -30,6 +30,7 @@
 // QtGUI includes
 #include "qSlicerBaseQTGUIExport.h"
 
+class QNetworkReply;
 class qSlicerExtensionsInstallWidgetPrivate;
 class qSlicerExtensionsManagerModel;
 
@@ -73,6 +74,12 @@ public slots:
   void onSlicerRequirementsChanged(const QString& revision,const QString& os,const QString& arch);
 
   void onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level);
+
+  void onDownloadStarted(QNetworkReply* reply);
+
+  void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+
+  void onDownloadFinished(QNetworkReply* reply);
 
 protected slots:
   void initJavascript();
