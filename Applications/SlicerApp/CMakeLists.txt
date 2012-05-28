@@ -245,7 +245,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   endforeach()
 
   include(SlicerBlockCTKAppLauncherSettings)
-  set(splash_image_path ${Slicer_SOURCE_DIR}/Applications/${PROJECT_NAME}/Resources/Images/SlicerSplashScreen.png)
+  set(splash_image_path ${Slicer_SOURCE_DIR}/Applications/${PROJECT_NAME}/Resources/Images/3DSlicerSplashScreen.png)
   ctkAppLauncherConfigure(
     TARGET ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
     APPLICATION_INSTALL_SUBDIR ${Slicer_INSTALL_BIN_DIR}

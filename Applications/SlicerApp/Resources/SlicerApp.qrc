@@ -1,10 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/Small/3DSlicer-DesktopIcon.png</file>
-    <file>Icons/Medium/3DSlicer-DesktopIcon.png</file>
-    <file>Icons/Large/3DSlicer-DesktopIcon.png</file>
-    <file>Icons/XLarge/3DSlicer-DesktopIcon.png</file>
-    <file>Images/SlicerSplashScreen.png</file>
-    <file>Images/SlicerLogo.png</file>
+    <file alias="3DSlicer-DesktopIcon-Small.png">Icons/Small/3DSlicer-DesktopIcon.png</file>
+    <file alias="3DSlicer-DesktopIcon-Medium.png">Icons/Medium/3DSlicer-DesktopIcon.png</file>
+    <file alias="3DSlicer-DesktopIcon-Large.png">Icons/Large/3DSlicer-DesktopIcon.png</file>
+    <file alias="3DSlicer-DesktopIcon-XLarge.png">Icons/XLarge/3DSlicer-DesktopIcon.png</file>
+    <file alias="3DSlicerSplashScreen.png">Images/3DSlicerSplashScreen.png</file>
+    <file alias="3DSlicerLogo.png">Images/3DSlicerLogo.png</file>
   </qresource>
 </RCC>
