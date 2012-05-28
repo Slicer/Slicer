@@ -25,6 +25,11 @@
     <label>DICOM Database and Networking</label>
     <description><![CDATA[Options for interacting with remote DICOM nodes and interacting between Slicer and the DICOM database.]]></description>
     <integer>
+      <name>Show DICOM Browser</name>
+      <description><![CDATA[ The DICOM Browser window will be shown by default when entering the module.  Use this button to re-open the browser if it is closed or if it is hidden by other windows.]]></description>
+      <label>Import</label>
+    </integer>
+    <integer>
       <name>Import</name>
       <description><![CDATA[Use this to add DICOM files from your local file system into the DICOM Database.  Selected directories will be searched hierarchically for DICOM files.  A checkbox in the dialog controls whether a copy of these files should be added to the LocalDatabase direcory or if they should be pointed to where they exist.]]></description>
       <label>Import</label>
@@ -36,7 +41,7 @@
     </integer>
     <integer>
       <name>Query</name>
-      <description><![CDATA[Bring up the Query dialog.  Add and select servers to query.  Use the search options to identify subjects of interest for retrieval.  Note that servers typically need to be specially configured to allow clients to query/retrieve.  Also note that firewalls may disrupt access and that ports below 1024 require administrator permissions.]]></description>
+      <description><![CDATA[Bring up the Query dialog.  Add and select servers to query.  Use the search options to identify subjects of interest for retrieval.  Note that servers typically need to be specially configured to allow clients to query/retrieve.  Also note that firewalls may disrupt access and that ports below 1024 require administrator permissions.  The CGET option allows retrieval of DICOM data without running a local listener.  Not all DICOM storage providers support CGET - contact your DICOM network administrator and/or refer to the documentation and DICOM compliance statements of the software you wish to access.]]></description>
       <label>Query</label>
     </integer>
     <integer>
@@ -51,32 +56,27 @@
     </integer>
     <integer>
       <name>Database Tree</name>
-      <description><![CDATA[Browse local database by Patient/Study/Series.  Selection will display image previews and will enable options such as Send or Load to Slicer.  Right clicking on this tree invokes a popup context menu (not yet implemented).]]></description>
-      <label>Database TreeLocalDatabase</label>
+      <description><![CDATA[Browse local database by Patient/Study/Series.  Selection will display image previews and will enable options such as Send or Load to Slicer.  See the Slicer Interface section below for a description of the load options.  Right clicking on this tree invokes a popup context menu: (1) all levels of the tree provide the option to delete the selection and all children (2) selection at the Study level will provide the option of exporting slicer data to the study.  Note that exporting slicer data to the study is still an experimental feature.  Exporting slicer data to a study results in the creation of a new series in the study that contains either (1) a slicer volume exported using the Create a DICOM Series module or (2) a Slicer Data Bundle that includes the entire slicer scene as a zip file encapsulated in a DICOM format.]]></description>
+      <label>Database Tree</label>
     </integer>
   </parameters>
   <parameters>
     <label>Slicer Interface</label>
     <description><![CDATA[Move data to/from Slicer and the DICOM database]]></description>
     <integer>
-      <name>Selection</name>
-      <description><![CDATA[Indicates type of selection level.]]></description>
-      <label>Selection</label>
-    </integer>
-    <integer>
       <name>Load to Slicer</name>
-      <description><![CDATA[Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a slicer volume.  A study will load mulitple volumes and patient may have multiple studies.]]></description>
+      <description><![CDATA[Is enabled depending on selected data.  This button will bulk load data to slicer.  Typically each series corresponds to a Slicer volume, however Slicer performs some heuristics to provide options for different loading strategies that might better match the acquisition to the requirements of a Slicer volume (for example, some acquisitions may have multiple time points per-slice within a series, while a Slicer volume requires unique data values at each location).  A study will load mulitple volumes and patient may have multiple studies.]]></description>
       <label>Load to Slicer</label>
-    </integer>
-    <integer>
-      <name>Export Slicer Data to Study...</name>
-      <description><![CDATA[Is enabled when a study is selected.  This will export a slicer volume as a series of DICOM slice files that are then loaded into the DICOM database.  Optionally the entire scene will be embeded in a DICOM compatible manner (not yet implemented).]]></description>
-      <label>Export Slicer Data to Study...</label>
     </integer>
     <integer>
       <name>Image Preview</name>
       <description><![CDATA[Shows the currently selected images from the DICOM database.]]></description>
       <label>Image Preview</label>
+    </integer>
+    <integer>
+      <name>Make DICOM Browser Persistent</name>
+      <description><![CDATA[By default the DICOM Browser is only visible when the DICOM Module is selected.  By selecting this option, the browser window stays up as you navigate among modules.]]></description>
+      <label>Make DICOM Browser Persistent</label>
     </integer>
   </parameters>
 </executable>
