@@ -500,6 +500,8 @@ if(BUILD_TESTING)
     ${Slicer_SOURCE_DIR}/CTestConfig.cmake
     ${Slicer_BINARY_DIR}/${Slicer_BIN_DIR}/CTestConfig.cmake
     COPYONLY)
+
+  add_subdirectory(CMake/Testing)
 endif()
 
 #-----------------------------------------------------------------------------
