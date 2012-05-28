@@ -263,6 +263,7 @@ bool qSlicerExtensionsManagerModelTester::resetTmp()
     return false;
     }
   QDir tmp = QDir::temp();
+  QFile(tmp.filePath(this->TemporaryDirName)).setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser);
   ctk::removeDirRecursively(tmp.filePath(this->TemporaryDirName));
   tmp.mkdir(this->TemporaryDirName);
   tmp.cd(this->TemporaryDirName);
@@ -532,6 +533,12 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QFETCH(QString, slicerVersion);
   QFETCH(QStringList, expectedFiles);
   QFETCH(QString, operatingSystem);
+  QFETCH(bool, expectedExtractSuccess);
+  QFETCH(bool, nonExistentDestinationPath);
+  QFETCH(bool, readOnlyDestinationPath);
+
+  QFile destinationPath(this->Tmp.absolutePath());
+  QCOMPARE(static_cast<bool>(destinationPath.permissions() & QFile::WriteUser), true);
 
   qSlicerExtensionsManagerModel model;
   model.setSlicerVersion(slicerVersion);
@@ -540,8 +547,25 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QString copiedArchiveFile = this->Tmp.filePath(QFileInfo(inputArchiveFile).fileName());
   QVERIFY(QFile::copy(inputArchiveFile, copiedArchiveFile));
 
-  QVERIFY(model.extractExtensionArchive(
-        inputExtensionName, copiedArchiveFile, this->Tmp.absolutePath()));
+  if (nonExistentDestinationPath)
+    {
+    QVERIFY(ctk::removeDirRecursively(this->Tmp.absolutePath()));
+    QVERIFY(!QFile::exists(this->Tmp.absolutePath()));
+    }
+
+  if (readOnlyDestinationPath)
+    {
+    QVERIFY(destinationPath.setPermissions(QFile::ReadUser));
+    QCOMPARE(static_cast<bool>(destinationPath.permissions() & QFile::WriteUser), false);
+    }
+
+  bool extractSuccess =
+      model.extractExtensionArchive(inputExtensionName, copiedArchiveFile, this->Tmp.absolutePath());
+  QCOMPARE(extractSuccess, expectedExtractSuccess);
+  if (!expectedExtractSuccess)
+    {
+    return;
+    }
 
   bool expectedFilesExist = true;
   foreach(const QString& expectedFile, expectedFiles)
@@ -563,27 +587,64 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
   QTest::addColumn<QString>("slicerVersion");
   QTest::addColumn<QStringList>("expectedFiles");
   QTest::addColumn<QString>("operatingSystem");
+  QTest::addColumn<bool>("expectedExtractSuccess");
+  QTest::addColumn<bool>("nonExistentDestinationPath");
+  QTest::addColumn<bool>("readOnlyDestinationPath");
   {
     QStringList expectedFiles;
     expectedFiles << "CLIExtensionTemplate";
     expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/CLIExtensionTemplate";
     expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.0/cli-modules/libCLIExtensionTemplateLib.so";
-    QTest::newRow("linux-0") << "CLIExtensionTemplate"
-                             << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
-                             << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
-                             << expectedFiles
-                             << Slicer_OS_LINUX_NAME;
+    {
+      QTest::newRow("linux-0-success")
+                               << "CLIExtensionTemplate"
+                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
+                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << expectedFiles
+                               << Slicer_OS_LINUX_NAME
+                               << true /* expectedExtractSuccess */
+                               << false /* nonExistentDestinationPath */
+                               << false /* readOnlyDestinationPath */;
+    }
+    {
+      QTest::newRow("linux-0-nonexistent-destinationPath")
+                               << "CLIExtensionTemplate"
+                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
+                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << expectedFiles
+                               << Slicer_OS_LINUX_NAME
+                               << false /* expectedExtractSuccess */
+                               << true /* nonExistentDestinationPath */
+                               << false /* readOnlyDestinationPath */;
+    }
+    {
+      QTest::newRow("linux-0-readonly-destinationPath")
+                               << "CLIExtensionTemplate"
+                               << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
+                               << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << expectedFiles
+                               << Slicer_OS_LINUX_NAME
+                               << false /* expectedExtractSuccess */
+                               << false /* nonExistentDestinationPath */
+                               << true /* readOnlyDestinationPath */;
+    }
   }
   {
     QStringList expectedFiles;
     expectedFiles << "CLIExtensionTemplate";
     expectedFiles << "CLIExtensionTemplate/cli-modules/CLIExtensionTemplate";
     expectedFiles << "CLIExtensionTemplate/lib/Slicer-4.1/cli-modules/libCLIExtensionTemplateLib.dylib";
-    QTest::newRow("macosx-0") << "CLIExtensionTemplate"
-                              << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_MAC_NAME)
-                              << this->slicerVersion(Slicer_OS_MAC_NAME, 0)
-                              << expectedFiles
-                              << Slicer_OS_MAC_NAME;
+    {
+      QTest::newRow("macosx-0-success")
+                                << "CLIExtensionTemplate"
+                                << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_MAC_NAME)
+                                << this->slicerVersion(Slicer_OS_MAC_NAME, 0)
+                                << expectedFiles
+                                << Slicer_OS_MAC_NAME
+                                << true /* expectedExtractSuccess */
+                                << false /* nonExistentDestinationPath */
+                                << false /* readOnlyDestinationPath */;
+    }
   }
   {
     QStringList expectedFiles;
@@ -594,11 +655,17 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
     expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerLoadableExtensionTemplateModuleLogic.py";
     expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerLoadableExtensionTemplateModuleLogic.pyc";
     expectedFiles << "LoadableExtensionTemplate/lib/Slicer-4.1/qt-loadable-modules/vtkSlicerLoadableExtensionTemplateModuleLogicPython.so";
-    QTest::newRow("macosx-1") << "LoadableExtensionTemplate"
-                              << QString(":/extension-%1-1.tar.gz").arg(Slicer_OS_MAC_NAME)
-                              << this->slicerVersion(Slicer_OS_MAC_NAME, 1)
-                              << expectedFiles
-                              << Slicer_OS_MAC_NAME;
+    {
+      QTest::newRow("macosx-1-success")
+                                << "LoadableExtensionTemplate"
+                                << QString(":/extension-%1-1.tar.gz").arg(Slicer_OS_MAC_NAME)
+                                << this->slicerVersion(Slicer_OS_MAC_NAME, 1)
+                                << expectedFiles
+                                << Slicer_OS_MAC_NAME
+                                << true /* expectedExtractSuccess */
+                                << false /* nonExistentDestinationPath */
+                                << false /* readOnlyDestinationPath */;
+    }
   }
 }
 

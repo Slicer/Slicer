@@ -1154,6 +1154,15 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     return false;
     }
 
+  if (!(QFile(destinationPath).permissions() & QFile::ReadUser)
+      || !(QFile(destinationPath).permissions() & QFile::WriteUser)
+      || !(QFile(destinationPath).permissions() & QFile::ExeUser))
+    {
+    qCritical() << "Failed to extract archive" << archiveFile << "into directory" << destinationPath
+                << "either NON readable, writable or executable";
+    return false;
+    }
+
   QDir extensionsDir(destinationPath);
 
   ctk::removeDirRecursively(extensionsDir.filePath(extensionName));
