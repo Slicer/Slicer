@@ -19,6 +19,7 @@
 #  Slicer_SKIP_USE_FILE_INCLUDE_CHECK
 #  Slicer_SKIP_PROJECT_COMMAND
 #  Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE
+#  Slicer_SKIP_EXTERNAL_DATA
 #  Slicer_SKIP_SlicerBlockPlatformCheck
 #  Slicer_SKIP_SET_CMAKE_C_CXX_FLAGS
 #  Slicer_SKIP_ITKPlatformSpecificChecks
@@ -141,6 +142,19 @@ endif()
 # Set '<PROJECTNAME>_DIR' variable(s) so that find_package(<PROJECTNAME>) works as expected.
 set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
 set(DCMTK_DIR ${CTK_DCMTK_DIR})
+
+# --------------------------------------------------------------------------
+# ExternalData
+# --------------------------------------------------------------------------
+if(NOT DEFINED Slicer_SKIP_EXTERNAL_DATA)
+  set(Slicer_SKIP_EXTERNAL_DATA FALSE)
+endif()
+if(NOT ${Slicer_SKIP_EXTERNAL_DATA})
+  set(ExternalData_OBJECT_STORES ${Slicer_ExternalData_OBJECT_STORES})
+  set(ExternalData_URL_TEMPLATES ${Slicer_ExternalData_URL_TEMPLATES})
+else()
+  _slicer_skip_message("Slicer_ExternalData")
+endif()
 
 # --------------------------------------------------------------------------
 # Platform check

@@ -14,10 +14,13 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
-  --compare ${BASELINE}/${CLP}Test.nhdr
+ExternalData_add_test(${CLP}Data NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  --compare DATA{${BASELINE}/${CLP}Test.nhdr}
   ${TEMP}/${CLP}Test.nhdr
   ModuleEntryPoint
-  --sigma 2.5 ${INPUT}/CTHeadAxial.nhdr ${TEMP}/${CLP}Test.nhdr
+  --sigma 2.5 DATA{${INPUT}/CTHeadAxial.nhdr} ${TEMP}/${CLP}Test.nhdr
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+#-----------------------------------------------------------------------------
+ExternalData_add_target(${CLP}Data)
