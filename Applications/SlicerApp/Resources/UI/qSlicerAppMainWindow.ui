@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../SlicerApp.qrc">
-    <normaloff>:/3DSlicer-DesktopIcon-Medium.png</normaloff>:/3DSlicer-DesktopIcon-Medium.png</iconset>
+    <normaloff>:/Icons/Medium/DesktopIcon.png</normaloff>:/Icons/Medium/DesktopIcon.png</iconset>
   </property>
   <widget class="QWidget" name="CentralWidget"/>
   <widget class="QMenuBar" name="menubar">
