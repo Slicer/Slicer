@@ -302,12 +302,6 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
-# Today date
-#-----------------------------------------------------------------------------
-include(SlicerFunctionToday)
-today(Slicer_BUILDDATE)
-
-#-----------------------------------------------------------------------------
 # Slicer version number.
 #-----------------------------------------------------------------------------
 set(Slicer_VERSION_MAJOR "4")
@@ -316,6 +310,10 @@ set(Slicer_VERSION_PATCH "0")
 # Releases define a tweak level
 #set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 1)
+
+SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
+string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
+  Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
 
 if(NOT DEFINED Slicer_VERSION_TWEAK)
   # if it's not a release, use the date as a tweak
@@ -721,8 +719,6 @@ set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/MRML/Widgets/
 # --------------------------------------------------------------------------
 # Configure and install headers
 # --------------------------------------------------------------------------
-
-SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
 
 if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
   set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
