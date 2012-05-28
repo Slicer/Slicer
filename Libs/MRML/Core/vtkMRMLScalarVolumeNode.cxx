@@ -18,6 +18,7 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 // VTK includes
+#include <vtkDataArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>

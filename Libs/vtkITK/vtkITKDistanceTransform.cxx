@@ -15,6 +15,7 @@
 #include "vtkITKDistanceTransform.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkDataArray.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"
 

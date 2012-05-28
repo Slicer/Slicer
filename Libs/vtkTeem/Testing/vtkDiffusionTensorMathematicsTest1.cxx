@@ -22,6 +22,7 @@
 #include <vtkDiffusionTensorMathematics.h>
 
 // VTK includes
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkMultiThreader.h>
 #include <vtkPointData.h>

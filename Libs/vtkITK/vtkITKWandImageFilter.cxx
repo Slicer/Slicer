@@ -15,6 +15,7 @@ PURPOSE.  See the above copyright notice for more information.
 =========================================================================*/
 #include "vtkITKWandImageFilter.h"
 
+#include "vtkDataArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"

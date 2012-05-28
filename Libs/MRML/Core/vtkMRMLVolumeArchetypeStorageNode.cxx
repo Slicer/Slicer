@@ -32,6 +32,7 @@ Version:   $Revision: 1.6 $
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+#include <vtkDataArray.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
