@@ -149,6 +149,6 @@ endfunction()
 #
 set(url http://svn.slicer.org/Slicer4/trunk/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
-#download_file(${url} ${dest})
+download_file(${url} ${dest})
 include(${dest})
 
