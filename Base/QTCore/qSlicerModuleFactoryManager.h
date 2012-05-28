@@ -22,6 +22,9 @@
 #define __qSlicerModuleFactoryManager_h
 
 // Qt includes
+#include <QStringList>
+
+// Slicer includes
 #include "qSlicerAbstractModuleFactoryManager.h"
 class qSlicerModuleFactoryManagerPrivate;
 
@@ -54,7 +57,7 @@ public:
   Q_INVOKABLE int loadModules();
 
   /// Return the list of all the loaded modules
-  QStringList loadedModuleNames()const;
+  Q_INVOKABLE QStringList loadedModuleNames()const;
 
   /// Unload all the loaded modules. Unloading a module simply uninstantiate it.
   /// To respect dependencies, the order is reverse to the

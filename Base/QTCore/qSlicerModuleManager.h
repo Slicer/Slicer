@@ -21,11 +21,12 @@
 #ifndef __qSlicerModuleManager_h
 #define __qSlicerModuleManager_h
 
+// Qt includes
+#include <QStringList>
+#include <QObject>
+
 // CTK includes
 #include <ctkPimpl.h>
-
-// Qt includes
-#include <QObject>
 
 #include "qSlicerBaseQTCoreExport.h"
 
@@ -49,7 +50,7 @@ public:
   Q_INVOKABLE qSlicerModuleFactoryManager * factoryManager()const;
 
   /// Return the list of all the loaded modules
-  QStringList modulesNames()const;
+  Q_INVOKABLE QStringList modulesNames()const;
 
   /// Return the loaded module identified by \a name
   Q_INVOKABLE qSlicerAbstractCoreModule* module(const QString& name)const;
