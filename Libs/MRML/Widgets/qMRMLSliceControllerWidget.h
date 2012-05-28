@@ -52,6 +52,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString sliceViewName READ sliceViewName WRITE setSliceViewName)
+  Q_PROPERTY(bool moreButtonVisibility READ isMoreButtonVisible WRITE setMoreButtonVisible)
 public:
   /// Superclass typedef
   typedef qMRMLViewControllerBar Superclass;
@@ -175,6 +176,10 @@ public slots:
   /// Set the visibility of the MoreButton which allows to show the advanced
   /// controls.
   void setMoreButtonVisible(bool visible);
+  /// Get the visibility of the MoreButton which allows to show the advanced
+  /// controls.
+  bool isMoreButtonVisible() const;
+
   void moveBackgroundComboBox(bool move);
 
   /// Rotate to volume plane
