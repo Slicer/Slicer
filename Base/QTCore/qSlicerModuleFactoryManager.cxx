@@ -134,7 +134,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name)
     {
     qWarning() << "Failed to retrieve module title corresponding to module name: " << name;
     Q_ASSERT(!instance->title().isEmpty());
-    return 0;
+    return false;
     }
 
   // Set the MRML scene
