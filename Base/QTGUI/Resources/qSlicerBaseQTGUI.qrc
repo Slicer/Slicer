@@ -3,14 +3,14 @@
     <file>Icons/SaveScene.png</file>
     <file>Icons/Small/SlicerLoadDICOM.png</file>
     <file>Icons/Medium/SlicerLoadDICOM.png</file>
-    <file>Icons/Small/SlicerLoadData.png</file>    
-    <file>Icons/Medium/SlicerLoadData.png</file>    
-    <file>Icons/Small/SlicerSave.png</file>    
-    <file>Icons/Medium/SlicerSave.png</file>    
-    <file>Icons/Small/SlicerDataBundle.png</file>    
-    <file>Icons/Medium/SlicerDataBundle.png</file>    
-    <file>Icons/Small/SlicerCloseScene.png</file>    
-    <file>Icons/Medium/SlicerCloseScene.png</file>    
+    <file>Icons/Small/SlicerLoadData.png</file>
+    <file>Icons/Medium/SlicerLoadData.png</file>
+    <file>Icons/Small/SlicerSave.png</file>
+    <file>Icons/Medium/SlicerSave.png</file>
+    <file>Icons/Small/SlicerDataBundle.png</file>
+    <file>Icons/Medium/SlicerDataBundle.png</file>
+    <file>Icons/Small/SlicerCloseScene.png</file>
+    <file>Icons/Medium/SlicerCloseScene.png</file>
 
     <file>Icons/Small/SlicerAddColorLUT.png</file>
     <file>Icons/Medium/SlicerAddColorLUT.png</file>
@@ -77,6 +77,8 @@
     <file>Icons/DownloadExtension.png</file>
     <file>Icons/Extension.png</file>
     <file>Icons/ExtensionDefaultIcon.png</file>
+    <!-- Source: http://openclipart.org/detail/14428/signs-hazard-warning-by-h0us3s-14428 -->
+    <file alias="Icons/ExtensionIncompatible.png">Icons/warning-17.png</file>
 
     <file>Icons/Go.png</file>
 

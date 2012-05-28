@@ -135,14 +135,20 @@ public:
   QString slicerVersion()const;
   void setSlicerVersion(const QString& version);
 
-  Q_INVOKABLE void imcompatibleExtensions() const;
-
-  /// \brief Check if \a extensionName is compatibile with the system identified
+  /// \brief Check if \a extensionName is compatible with the system identified
   /// by \a slicerRevision, \a slicerOs and \a slicerArch.
-  /// @return Return the reason justifying the incompatibility or an empty string if the extension
+  /// @return Return the reasons justifying the incompatibility or an empty list if the extension
   /// is compatibile.
-  Q_INVOKABLE QString isExtensionCompatible(const QString& extensionName, const QString& slicerRevision,
-                                            const QString& slicerOs, const QString& slicerArch) const;
+  Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName, const QString& slicerRevision,
+                                                const QString& slicerOs, const QString& slicerArch) const;
+
+  /// \brief Check if \a extensionName is compatible.
+  /// An extension is considered incompatible when the version of Slicer used
+  /// to build the extension is different from the version of Slicer attempting
+  /// to load the extension.
+  /// \sa isExtensionCompatible(const QString&, const QString&, const QString&)
+  /// \sa setSlicerRevision, setSlicerOs, setSlicerArch, setSlicerRequirements
+  Q_INVOKABLE QStringList isExtensionCompatible(const QString& extensionName) const;
 
   /// \brief Query the extension server and retrieve the metadata associated with \a extensionId
   /// \sa setServerUrl
@@ -199,6 +205,9 @@ public slots:
 
   /// \sa scheduleExtensionForUninstall, isExtensionScheduledForUninstall
   bool uninstallScheduledExtensions();
+  bool uninstallScheduledExtensions(QStringList &uninstalledExtensions);
+
+  void identifyIncompatibleExtensions();
 
   bool exportExtensionList(QString& exportFilePath);
 
@@ -221,6 +230,8 @@ signals:
   void extensionUninstalled(const QString& extensionName);
 
   void extensionEnabledChanged(const QString& extensionName, bool value);
+
+  void extensionIdentifedAsIncompatible(const QString& extensionName);
 
   void slicerRequirementsChanged(const QString& revision, const QString& os, const QString& arch);
 

@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QLabel>
+#include <QPaintEvent>
 #include <QPushButton>
 #include <QSignalMapper>
 
@@ -137,9 +138,99 @@ QTreeWidgetItem * qSlicerExtensionsManageWidgetPrivate::extensionItem(const QStr
   return 0;
 }
 
+namespace
+{
+
+// --------------------------------------------------------------------------
+class qSlicerExtensionsDescriptionLabel : public QLabel
+{
+public:
+  typedef QLabel Superclass;
+
+  enum
+  {
+    NOWARNING = 0,
+    INCOMPATIBLE
+  };
+
+  // --------------------------------------------------------------------------
+  qSlicerExtensionsDescriptionLabel(const QString& extensionSlicerVersion, const QString& slicerRevision,
+                                    const QString& extensionName, const QString& extensionDescription,
+                                    int warningType = NOWARNING)
+    : QLabel(), ExtensionSlicerVersion(extensionSlicerVersion), SlicerRevision(slicerRevision),
+      PreviousWidth(0), ExtensionName(extensionName), ExtensionDescription(extensionDescription),
+      WarningColor("#bd8530"), WarningType(warningType)
+  {
+    this->setToolTip(extensionDescription);
+  }
+
+  // --------------------------------------------------------------------------
+  QString incompatibleExtensionText()
+  {
+    int imgHeight = this->fontMetrics().size(Qt::TextSingleLine, "XXXX").height();
+    return QString("<small><img height=\"%1\" src=\":/Icons/ExtensionIncompatible.png\"/>"
+                   " <font color=\"%2\">Incompatible with Slicer r%3 [built for r%4]</font></small><br>").
+        arg(imgHeight).arg(this->WarningColor).
+        arg(this->SlicerRevision).arg(this->ExtensionSlicerVersion);
+  }
+
+  // --------------------------------------------------------------------------
+  QString descriptionAsRichText(const QString& extensionDescription)
+  {
+    //
+    QString warningMessage;
+    if (this->WarningType == INCOMPATIBLE)
+      {
+      warningMessage = this->incompatibleExtensionText();
+      }
+    //  <a href=\"slicer:%1\">More</a>
+    return warningMessage + QString("<b>%1</b><br><br>%2").arg(this->ExtensionName).arg(extensionDescription);
+  }
+
+  // --------------------------------------------------------------------------
+  virtual QSize sizeHint() const
+  {
+    int lineCount = 3; // Corresponds to the number of line within the default description text
+    if (this->WarningType != NOWARNING)
+      {
+      lineCount++;
+      }
+    QSize hint = this->Superclass::sizeHint();
+    hint.setHeight(this->fontMetrics().size(Qt::TextSingleLine, "XXXX").height() * lineCount + this->margin() * 2 + 2);
+    return hint;
+  }
+
+  // --------------------------------------------------------------------------
+  virtual void paintEvent(QPaintEvent * event)
+  {
+    this->Superclass::paintEvent(event);
+    if (this->rect().width() != this->PreviousWidth)
+      {
+      this->PreviousWidth = this->rect().width();
+      this->setText(this->descriptionAsRichText(
+                      this->fontMetrics().elidedText(this->ExtensionDescription, Qt::ElideRight,
+                                                     this->rect().width()
+                                                     - this->margin() * 2
+                                                     /* - this->fontMetrics().size(Qt::TextSingleLine, " More").width()*/)));
+      }
+  }
+  QString ExtensionSlicerVersion;
+  QString SlicerRevision;
+  int PreviousWidth;
+  bool ExtensionIncompatible;
+  QString ExtensionName;
+  QString ExtensionDescription;
+  QString WarningColor;
+  int WarningType;
+};
+
+} // end of anonymous namespace
+
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetadataType& metadata)
 {
+  Q_Q(qSlicerExtensionsManageWidget);
+
   QString extensionName = metadata.value("extensionname").toString();
   if (extensionName.isEmpty())
     {
@@ -148,6 +239,7 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
     }
   Q_ASSERT(this->extensionItem(extensionName) == 0);
   QString description = metadata.value("description").toString();
+  QString extensionSlicerRevision = metadata.value("slicer_revision").toString();
   bool enabled = QVariant::fromValue(metadata.value("enabled")).toBool();
 
   QTreeWidgetItem * item = new QTreeWidgetItem();
@@ -160,10 +252,19 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
 
   this->ExtensionList->addTopLevelItem(item);
 
-  QString extensionNameAndDescription =
-      QString("<b>%1</b><br><br>%2<br>").arg(extensionName).arg(description);
-//  QString extensionMoreLink = QString("<a href=\"slicer:%3\">More</a>").arg(extensionName);
-  QLabel * label = new QLabel(extensionNameAndDescription);
+  bool isExtensionCompatible =
+      q->extensionsManagerModel()->isExtensionCompatible(extensionName).isEmpty();
+
+  int warningType = qSlicerExtensionsDescriptionLabel::NOWARNING;
+  if (!isExtensionCompatible)
+    {
+    warningType = qSlicerExtensionsDescriptionLabel::INCOMPATIBLE;
+    }
+
+  qSlicerExtensionsDescriptionLabel * label = new qSlicerExtensionsDescriptionLabel(
+        extensionSlicerRevision,
+        q->extensionsManagerModel()->slicerRevision(),
+        extensionName, description, warningType);
   label->setOpenExternalLinks(true);
   label->setMargin(9);
   this->ExtensionList->setItemWidget(item, qSlicerExtensionsManageWidgetPrivate::TextColumn, label);
@@ -176,6 +277,7 @@ void qSlicerExtensionsManageWidgetPrivate::addExtensionItem(const ExtensionMetad
   this->EnableButtonMapper.setMapping(buttonBox->EnableButton, extensionName);
   QObject::connect(buttonBox->EnableButton, SIGNAL(clicked()), &this->EnableButtonMapper, SLOT(map()));
   buttonBox->EnableButton->setVisible(!enabled);
+  buttonBox->EnableButton->setEnabled(isExtensionCompatible);
 
   this->DisableButtonMapper.setMapping(buttonBox->DisableButton, extensionName);
   QObject::connect(buttonBox->DisableButton, SIGNAL(clicked()), &this->DisableButtonMapper, SLOT(map()));
