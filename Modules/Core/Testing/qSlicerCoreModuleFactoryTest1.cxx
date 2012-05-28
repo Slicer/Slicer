@@ -29,7 +29,7 @@
 
 int qSlicerCoreModuleFactoryTest1(int, char * [] )
 {
-  QString className = "qSlicerEvenBrokerModule";
+  QString className = "qSlicerEventBrokerModule";
   QString expectedModuleName = "EventBroker";
 
   QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);

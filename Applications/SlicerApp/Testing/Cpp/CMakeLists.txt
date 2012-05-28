@@ -70,7 +70,7 @@ if(Slicer_HAS_CONSOLE_IO_SUPPORT)
     )
   set_tests_properties(
     slicer_nomainwindow_DisableModulesCommandLineOptionsTest
-    PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 2"
+    PROPERTIES PASS_REGULAR_EXPRESSION "Number of loaded modules: 1"
     )
 endif()
 
