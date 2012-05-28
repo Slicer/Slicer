@@ -1492,6 +1492,17 @@ void qMRMLSliceControllerWidget::setHotLinked(bool linked)
 }
 
 //---------------------------------------------------------------------------
+void qMRMLSliceControllerWidget::setMoreButtonVisible(bool visible)
+{
+  Q_D(qMRMLSliceControllerWidget);
+  d->MoreButton->setVisible(visible);
+  if (!visible)
+    {
+    this->moveBackgroundComboBox(false);
+    }
+}
+
+//---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::moveBackgroundComboBox(bool more)
 {
   Q_D(qMRMLSliceControllerWidget);

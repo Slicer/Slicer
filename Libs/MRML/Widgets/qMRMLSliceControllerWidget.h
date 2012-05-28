@@ -172,6 +172,9 @@ public slots:
 
 
   // Advanced options
+  /// Set the visibility of the MoreButton which allows to show the advanced
+  /// controls.
+  void setMoreButtonVisible(bool visible);
   void moveBackgroundComboBox(bool move);
 
   /// Rotate to volume plane
