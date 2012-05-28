@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Core</category>
+  <title>Transforms</title>
+  <description><![CDATA[This module is used for creating and editing transformation matrices.<br>Transformation nodes are used in Slicer to define spacial relationships between different nodes (such as volumes, models, fiducials, ROI's, or other Transform nodes) or between the nodes and the global RAS space. <br>You can establish these relations by moving nodes from the Transformable list to the Transformed list or by dragging the nodes under the Transformation nodes in the Data module.]]></description>
+  <version>4.1</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/Transforms</documentation-url>
+  <license>slicer4</license>
+  <contributor>Alex Yarmarkovich (Isomics), Jean-Christophe Fillion-Robin (Kitware), Julien Finet (Kitware)</contributor>
+  <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
+  <parameters>
+    <label>Transforms</label>
+    <parameter>
+      <label>Active Transform</label>
+      <description>Select the transform node to display, control and edit</description>
+    </parameter>
+  </parameters>
+  <parameters>
+    <label>Display & Edit</label>
+    <parameter>
+      <label>Transform Matrix</label>
+      <description>4x4 matrix. Each element is editable on double click. Type Enter to validate change, Escape to cancel or Tab to edit the next element.</description>
+    </parameter>
+    <parameter>
+      <label>Translation</label>
+      <description>Apply LR, PA, and IS translational components of the transformation matrix in the RAS space (in mm). Min and Max control the lower and upper bounds of the sliders.</description>
+    </parameter>
+    <parameter>
+      <label>Rotation</label>
+      <description>Apply LR, PA, and IS rotation angles (degrees) in the RAS space. Rotations are concatenated.</description>
+    </parameter>
+    <parameter>
+      <label>Coordinate Reference</label>
+      <description>Switches between global RAS space transformation and a local one, relative to the current position and orientation</description>
+    </parameter>
+    <parameter>
+      <label>Identity</label>
+      <description>Resets transformation matrix to identity matrix</description>
+    </parameter>
+    <parameter>
+      <label>Invert</label>
+      <description>Inverts the transformation matrix</description>
+    </parameter>
+  </parameters>
+  <parameters>
+    <label>Transformed nodes</label>
+    <description>Control what nodes uses the current transformation</description>
+    <parameter>
+      <label>Transformable</label>
+      <description>List the nodes in the scene that DON'T use the transform node.</description>
+    </parameter>
+    <parameter>
+      <label>Transformed</label>
+      <description>List the nodes in the scene that use the transform node.</description>
+    </parameter>
+    <parameter>
+      <label>Right arrow</label>
+      <description>Apply the current transform node to the selected nodes in Transformable list.</description>
+    </parameter>
+    <parameter>
+      <label>Left arrow</label>
+      <description>Remove the current transform node from the selected nodes in the Transformed list.</description>
+    </parameter>
+  </parameters>
+</executable>
