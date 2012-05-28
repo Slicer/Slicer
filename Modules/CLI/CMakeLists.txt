@@ -152,11 +152,3 @@ if(Slicer_BUILD_BRAINSTOOLS)
     )
 endif()
 
-if(Slicer_BUILD_SkullStripper)
-  # NOTE: SkullStripper source code is checkout using "External_SkullStripper.cmake".
-  add_subdirectory(
-    ${SkullStripper_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/SkullStripper
-    )
-endif()
-
