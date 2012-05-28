@@ -8,6 +8,7 @@ set(cli_modules
   AddScalarVolumes
   CastScalarVolume
   CheckerBoardFilter
+  ConnectedComponent
   CreateDICOMSeries
   CurvatureAnisotropicDiffusion
   DiffusionTensorScalarMeasurements

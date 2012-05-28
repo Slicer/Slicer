@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <title>Connected Component Filter</title>
+  <description><![CDATA[ConnectedComponentImageFilter labels the objects in a binary image. Each distinct object is assigned a unique label.]]></description>
+  <version>0.1.0.$Revision: 19363 $(alpha)</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/ConnectedComponent</documentation-url>
+  <license/>
+  <contributor>Yanling Liu (SAIC-Frederick)</contributor>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description><![CDATA[Input/output parameters]]></description>
+    <image type="label">
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description><![CDATA[Input volume]]></description>
+    </image>
+    <image type="label">
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description><![CDATA[Thresholded input volume]]></description>
+    </image>
+  </parameters>
+</executable>
