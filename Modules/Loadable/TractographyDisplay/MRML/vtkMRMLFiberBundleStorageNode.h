@@ -22,9 +22,9 @@
 #include "vtkMRMLModelStorageNode.h"
 
 // Tractography includes
-#include "vtkSlicerTractographyModuleMRMLExport.h"
+#include "vtkSlicerTractographyDisplayModuleMRMLExport.h"
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleStorageNode : public vtkMRMLModelStorageNode
 {
   public:
   static vtkMRMLFiberBundleStorageNode *New();

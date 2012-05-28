@@ -28,7 +28,7 @@ class vtkDiffusionTensorGlyph;
 class vtkCleanPolyData;
 class vtkPolyData;
 
-class VTK_SLICER_TRACTOGRAPHY_MODULE_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayNode : public vtkMRMLFiberBundleDisplayNode
+class VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleGlyphDisplayNode : public vtkMRMLFiberBundleDisplayNode
 {
  public:
   static vtkMRMLFiberBundleGlyphDisplayNode *New (  );

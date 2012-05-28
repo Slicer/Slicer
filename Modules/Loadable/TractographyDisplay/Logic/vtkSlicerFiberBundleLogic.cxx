@@ -15,13 +15,17 @@
 
 #include "vtkSlicerFiberBundleLogic.h"
 
+#include <vtkMRMLConfigure.h>
+#ifdef MRML_USE_vtkTeem
 #include "vtkMRMLDiffusionTensorDisplayPropertiesNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLFiberBundleGlyphDisplayNode.h"
+#endif
 
+#include <vtkNew.h>
 #include "vtkPolyData.h"
 
 #include <itksys/SystemTools.hxx> 
@@ -231,4 +235,20 @@ void vtkSlicerFiberBundleLogic::PrintSelf(ostream& os, vtkIndent indent)
 
 }
 
+
+//-----------------------------------------------------------------------------
+void vtkSlicerFiberBundleLogic::RegisterNodes()
+{
+  if(!this->GetMRMLScene())
+    {
+    return;
+    }
+#ifdef MRML_USE_vtkTeem
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleLineDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleTubeDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleGlyphDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLFiberBundleStorageNode>().GetPointer());
+#endif
+}
 

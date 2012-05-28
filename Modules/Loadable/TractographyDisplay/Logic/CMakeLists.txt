@@ -1,4 +1,4 @@
-project(vtkSlicerTractographyDisplayModuleLogic)
+project(vtkSlicer${qt_module_name}ModuleLogic)
 
 #
 # See CMake/SlicerMacroBuildModuleLogic.cmake for details
@@ -11,7 +11,9 @@ set(module_logic_export_directive "VTK_SLICER_TRACTOGRAPHY_DISPLAY_MODULE_LOGIC_
 
 # Additional directories to include
 set(module_logic_include_directories
-
+  ${MRML_LIBRARIES}
+  ${vtkSlicerTractographyDisplayModuleMRML_SOURCE_DIR}
+  ${vtkSlicerTractographyDisplayModuleMRML_BINARY_DIR}
   )
 
 # Source files
@@ -25,7 +27,7 @@ set(module_logic_SRCS
 set(module_logic_target_libraries
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
-  vtkSlicerTractographyModuleMRML
+  vtkSlicerTractographyDisplayModuleMRML
   )
 
 

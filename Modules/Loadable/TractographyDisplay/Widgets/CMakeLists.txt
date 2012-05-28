@@ -12,6 +12,8 @@ set(module_widgets_export_directive "Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS
 # Additional directories to include
 set(module_widgets_include_directories
   ${CMAKE_BUILD_DIR}
+  ${vtkSlicerTractographyDisplayModuleMRML_SOURCE_DIR}
+  ${vtkSlicerTractographyDisplayModuleMRML_BINARY_DIR}
   )
 
 # Source files
