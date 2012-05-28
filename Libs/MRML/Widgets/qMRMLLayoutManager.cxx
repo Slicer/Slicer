@@ -271,8 +271,11 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
 
   this->SliceWidgetList.push_back(sliceWidget);
   this->MRMLSliceLogics->AddItem(sliceWidget->sliceLogic());
+
   //qDebug() << "qMRMLLayoutManagerPrivate::createSliceWidget - Instantiated qMRMLSliceWidget"
   //         << sliceLayoutName;
+
+  emit q->sliceWidgetCreated(sliceWidget);
   return sliceWidget;
 }
 
@@ -761,6 +764,13 @@ qMRMLSliceWidget* qMRMLLayoutManager::sliceWidget(const QString& name)const
 {
   Q_D(const qMRMLLayoutManager);
   return d->sliceWidget(name);
+}
+
+//------------------------------------------------------------------------------
+QList<qMRMLSliceWidget*> qMRMLLayoutManager::sliceWidgetList() const
+{
+  Q_D(const qMRMLLayoutManager);
+  return d->SliceWidgetList;
 }
 
 //------------------------------------------------------------------------------
