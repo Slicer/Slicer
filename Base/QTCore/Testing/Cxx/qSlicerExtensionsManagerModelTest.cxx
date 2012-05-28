@@ -546,6 +546,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
 
   QString copiedArchiveFile = this->Tmp.filePath(QFileInfo(inputArchiveFile).fileName());
   QVERIFY(QFile::copy(inputArchiveFile, copiedArchiveFile));
+  QVERIFY(QFile(copiedArchiveFile).setPermissions(QFile::ReadUser | QFile::WriteUser));
 
   if (nonExistentDestinationPath)
     {
@@ -617,6 +618,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << true /* nonExistentDestinationPath */
                                << false /* readOnlyDestinationPath */;
     }
+#ifndef Q_OS_WIN
     {
       QTest::newRow("linux-0-readonly-destinationPath")
                                << "CLIExtensionTemplate"
@@ -628,6 +630,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << false /* nonExistentDestinationPath */
                                << true /* readOnlyDestinationPath */;
     }
+#endif
   }
   {
     QStringList expectedFiles;
