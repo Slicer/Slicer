@@ -778,6 +778,16 @@ QStringList qSlicerExtensionsManagerModel::installedExtensions()const
 void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extensionName, bool value)
 {
   Q_D(qSlicerExtensionsManagerModel);
+
+  if (value)
+    {
+    d->addExtensionSettings(extensionName);
+    }
+  else
+    {
+    d->removeExtensionSettings(extensionName);
+    }
+
   if (value == this->isExtensionEnabled(extensionName))
     {
     return;
