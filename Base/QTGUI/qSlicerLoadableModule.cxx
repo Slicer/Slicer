@@ -88,7 +88,7 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
   return !pythonManager->pythonErrorOccured();
 #else
   Q_UNUSED(pythonManager);
-  Q_UNUSED(indDir);
+  Q_UNUSED(intDir);
   Q_UNUSED(modulePath);
   return false;
 #endif

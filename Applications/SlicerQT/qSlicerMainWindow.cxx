@@ -610,10 +610,12 @@ void qSlicerMainWindow::setupMenuActions()
     {
     d->Core->errorLogWidget()->installEventFilter(this);
     }
+#ifdef Slicer_USE_PYTHONQT
   if (d->Core->pythonConsole())
     {
     d->Core->pythonConsole()->installEventFilter(this);
     }
+#endif
 
   qSlicerMainWindowCore_connect(HelpKeyboardShortcuts);
   qSlicerMainWindowCore_connect(HelpBrowseTutorials);

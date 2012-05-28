@@ -71,6 +71,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   // This usually applies to widget representation implemented in python.
   module.setPath(modulePath);
 
+#ifdef Slicer_USE_PYTHONQT
   {
     bool current = qSlicerLoadableModule::importModulePythonExtensions(
           app.pythonManager(), app.intDir(), module.path());
@@ -83,6 +84,7 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
       return EXIT_FAILURE;
       }
   }
+#endif
 
   module.initialize(0);
 
