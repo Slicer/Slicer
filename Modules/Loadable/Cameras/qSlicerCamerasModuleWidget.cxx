@@ -21,6 +21,7 @@
 // SlicerQt includes
 #include "qSlicerCamerasModuleWidget.h"
 #include "ui_qSlicerCamerasModule.h"
+#include "vtkSlicerCamerasModuleLogic.h"
 
 // MRML includes
 #include "vtkMRMLViewNode.h"
@@ -87,20 +88,10 @@ void qSlicerCamerasModuleWidget::synchronizeCameraWithView(vtkMRMLViewNode* curr
     {
     return;
     }
-  vtkMRMLCameraNode *found_camera_node = NULL;
-  std::vector<vtkMRMLNode*> cameraNodes;
-  int nnodes = this->mrmlScene()->GetNodesByClass("vtkMRMLCameraNode", cameraNodes);
-  for (int n = 0; n < nnodes; n++)
-    {
-    vtkMRMLCameraNode *cameraNode = vtkMRMLCameraNode::SafeDownCast(cameraNodes[n]);
-    if (cameraNode &&
-        cameraNode->GetActiveTag() &&
-        !strcmp(cameraNode->GetActiveTag(), currentViewNode->GetID()))
-      {
-      found_camera_node = cameraNode;
-      break;
-      }
-    }
+  vtkSlicerCamerasModuleLogic* camerasLogic =
+    vtkSlicerCamerasModuleLogic::SafeDownCast(this->logic());
+  vtkMRMLCameraNode *found_camera_node =
+    camerasLogic->GetViewActiveCameraNode(currentViewNode);
   d->CameraNodeSelector->setCurrentNode(found_camera_node);
 }
 

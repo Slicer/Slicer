@@ -29,8 +29,8 @@
 
 int qSlicerCoreModuleFactoryTest1(int, char * [] )
 {
-  QString className = "qSlicerCamerasModule";
-  QString expectedModuleName = "Cameras";
+  QString className = "qSlicerEvenBrokerModule";
+  QString expectedModuleName = "EventBroker";
 
   QString moduleName = qSlicerCoreModuleFactory::extractModuleName(className);
   if (moduleName != expectedModuleName)

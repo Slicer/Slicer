@@ -18,9 +18,16 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QtPlugin>
+
 // SlicerQt includes
 #include "qSlicerCamerasModule.h"
 #include "qSlicerCamerasModuleWidget.h"
+#include "vtkSlicerCamerasModuleLogic.h"
+
+//-----------------------------------------------------------------------------
+Q_EXPORT_PLUGIN2(qSlicerCamerasModule, qSlicerCamerasModule);
 
 //-----------------------------------------------------------------------------
 class qSlicerCamerasModulePrivate
@@ -61,7 +68,7 @@ qSlicerAbstractModuleRepresentation * qSlicerCamerasModule::createWidgetRepresen
 //-----------------------------------------------------------------------------
 vtkMRMLAbstractLogic* qSlicerCamerasModule::createLogic()
 {
-  return 0;
+  return vtkSlicerCamerasModuleLogic::New();
 }
 
 //-----------------------------------------------------------------------------
