@@ -252,9 +252,9 @@ public:
   static double RAIMaxEigenvecX(double **v, double w[3]);
   static double RAIMaxEigenvecY(double **v, double w[3]);
   static double RAIMaxEigenvecZ(double **v, double w[3]);
-  static double MaxEigenvecX(double **v, double w[3]);
-  static double MaxEigenvecY(double **v, double w[3]);
-  static double MaxEigenvecZ(double **v, double w[3]);
+  static double MaxEigenvecX(double **v, double vtkNotUsed(w)[3]);
+  static double MaxEigenvecY(double **v, double vtkNotUsed(w)[3]);
+  static double MaxEigenvecZ(double **v, double vtkNotUsed(w)[3]);
   static double MaxEigenvalueProjectionX(double **v, double w[3]);
   static double MaxEigenvalueProjectionY(double **v, double w[3]);
   static double MaxEigenvalueProjectionZ(double **v, double w[3]);

@@ -1077,17 +1077,17 @@ double vtkDiffusionTensorMathematics::RAIMaxEigenvecZ(double **v, double w[3])
   return (fabs(v[2][0])*vtkDiffusionTensorMathematics::RelativeAnisotropy(w));
 }
 
-double vtkDiffusionTensorMathematics::MaxEigenvecX(double **v, double[3]) 
+double vtkDiffusionTensorMathematics::MaxEigenvecX(double **v, double vtkNotUsed(w)[3]) 
 {
   return (fabs(v[0][0]));
 }
 
-double vtkDiffusionTensorMathematics::MaxEigenvecY(double **v, double[3])
+double vtkDiffusionTensorMathematics::MaxEigenvecY(double **v, double vtkNotUsed(w)[3])
 {
   return (fabs(v[1][0]));
 }
 
-double vtkDiffusionTensorMathematics::MaxEigenvecZ(double **v, double[3])
+double vtkDiffusionTensorMathematics::MaxEigenvecZ(double **v, double vtkNotUsed(w)[3])
 {
   return (fabs(v[2][0]));
 }
