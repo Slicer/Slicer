@@ -190,6 +190,9 @@ foreach(extension_name ${EXTENSION_LIST})
             -DSlicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
             -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
             -DEXTENSION_ENABLED:BOOL=${EXTENSION_ENABLED}
+            -DMIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
+            -DMIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
+            -DMIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
             )
 
           #-----------------------------------------------------------------------------
