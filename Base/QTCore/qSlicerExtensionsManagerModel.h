@@ -186,6 +186,9 @@ public:
 
 public slots:
 
+  /// \brief Enable or disable an extension.
+  /// Tell the application to load (or skip the loading) of \a extensionName
+  /// by adding (or removing) all associated module paths to the application settings.
   void setExtensionEnabled(const QString& extensionName, bool value);
 
   /// \brief Download and install \a extensionId
@@ -194,12 +197,14 @@ public slots:
   void downloadAndInstallExtension(const QString& extensionId);
 
   /// \brief Schedule \a extensionName of uninstall
+  /// Tell the application to uninstall \a extensionName when it will restart
   /// An extension scheduled for uninstall can be effectively uninstalled by calling
   /// uninstallScheduledExtensions()
   /// \sa isExtensionScheduledForUninstall, uninstallScheduledExtensions
   bool scheduleExtensionForUninstall(const QString& extensionName);
 
   /// \brief Cancel the uninstallation of \a extensionName
+  /// Tell the application to keep \a extensionName installed
   /// \sa scheduleExtensionForUninstall
   bool cancelExtensionScheduledForUninstall(const QString& extensionName);
 
