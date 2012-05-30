@@ -86,9 +86,13 @@ class SampleDataWidget:
         ( 'DTIBrain', self.logic.downloadDTIBrain ),
         ( 'MRBrainTumor Time Point 1', self.logic.downloadMRBrainTumor1 ),
         ( 'MRBrainTumor Time Point 2', self.logic.downloadMRBrainTumor2 ),
+        ( 'Baseline Volume', self.logic.downloadWhiteMatterExplorationBaselineVolume),
+        ( 'DTI Volume', self.logic.downloadWhiteMatterExplorationDTIVolume),
+        ( 'DWI Volume', self.logic.downloadDiffusionMRIDWIVolume)
       )
     for sample in samples:
       b = qt.QPushButton('Download %s' % sample[0] )
+      b.setObjectName('%sPushButton' % sample[0].replace(' ',''))
       self.layout.addWidget(b)
       b.connect('clicked()', sample[1])
 
@@ -120,25 +124,52 @@ class SampleDataLogic:
     print(message)
 
   def downloadMRHead(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
 
   def downloadCTChest(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CTChest')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CTChest')
 
   def downloadCTACardio(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
 
   def downloadDTIBrain(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
 
   def downloadMRBrainTumor1(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    return self.downloadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
+    return self.loadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
 
-  def downloadVolume(self, uri, name):
-    self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name,uri))
+  def downloadWhiteMatterExplorationBaselineVolume(self):
+    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2009,1', destFolderPath, 'BaselineVolume.nrrd')
+    return self.loadVolume(filePath, 'BaselineVolume')
+
+  def downloadWhiteMatterExplorationDTIVolume(self):
+    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    filepath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2011,1', destFolderPath, 'DTIVolume.raw.gz')
+    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2010,1', destFolderPath, 'DTIVolume.nhdr')
+    return self.loadVolume(filePath, 'DTIVolume');
+
+  def downloadDiffusionMRIDWIVolume(self):
+    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2142,1', destFolderPath, 'dwi.raw.gz')
+    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2141,1', destFolderPath, 'dwi.nhdr')
+    return self.loadVolume(filePath, 'dwi');
+
+
+  def downloadFile(self, uri, destFolderPath, name):
+    import urllib
+    self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
+    # add a progress bar
+    filePath = destFolderPath + '/' + name
+    urllib.urlretrieve(uri, filePath)
+    self.logMessage('<b>Download finished</b>')
+    return filePath
+
+  def loadVolume(self, uri, name):
+    self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
     vl = slicer.modules.volumes.logic()
     volumeNode = vl.AddArchetypeVolume(uri, name, 0)
     if volumeNode:
@@ -152,7 +183,7 @@ class SampleDataLogic:
         appLogic.PropagateVolumeSelection(1)
         self.logMessage('<i>finished.</i>\n')
       else:
-        self.logMessage('<b>Download failed!</b>\n')
+        self.logMessage('<b>Load failed!</b>\n')
     else:
-      self.logMessage('<b>Download failed!</b>\n')
+      self.logMessage('<b>Load failed!</b>\n')
     return volumeNode

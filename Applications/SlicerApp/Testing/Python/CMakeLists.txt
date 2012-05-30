@@ -65,11 +65,23 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 # Check if Tutorial work as expected
 #
 
-#if(Slicer_USE_QtTesting)
-#  slicer_add_python_test(
-#    SCRIPT SlicerQtTestingDTITutorial.py
-#    SLICER_ARGS --launcher-no-splash --qt-testing)
-#endif()
+if(Slicer_USE_QtTesting)
+  slicer_add_python_test(
+    SCRIPT Slicer_NeurosurgicalPlanning-Tutorial.py
+    SLICER_ARGS --launcher-no-splash --qt-testing)
+  slicer_add_python_test(
+    SCRIPT Slicer_DiffusionTensorImaging-Tutorial.py
+    SLICER_ARGS --launcher-no-splash --qt-testing)
+  set_tests_properties(
+  py_Slicer_NeurosurgicalPlanning-Tutorial
+  py_Slicer_DiffusionTensorImaging-Tutorial
+  PROPERTIES RUN_SERIAL ON
+  )
+  configure_file(
+    ApplicationsSlicerAppData.py.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationsSlicerAppData.py
+  )
+endif()
 
 
 #
