@@ -99,6 +99,15 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
     return EXIT_SUCCESS;
     }
 
+  // If the test fails here, there might be in the panel a GUI element (e.g. a
+  // combobox, a push button...) with a too large minimum size hint.
+  // Ideally this minimum size hint should be fixed, it is unlikely that such
+  // large size hint is "ideal". Alternatively, you might want to investigate
+  // the following:
+  // Consider setting the horizontal size policy of such element to "Ignored"
+  // If the element is in a form layout, QFormLayout::layoutFieldGrowthPolicy
+  // might need to be set to AllNonFixedFieldsGrow.
+  // All those changes can be set from Qt Designer.
   if (widget->minimumSizeHint().width() > minimumWidth)
     {
     std::cerr << "Line " << __LINE__
