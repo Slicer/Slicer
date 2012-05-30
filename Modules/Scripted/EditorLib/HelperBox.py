@@ -753,7 +753,7 @@ class HelperBox(object):
     self.addStructureButton.connect("clicked()", self.addStructure)
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
     # selection changed event
-    self.structuresView.connect("clicked(QModelIndex)", self.onStructuresClicked)
+    self.structuresView.connect("activated(QModelIndex)", self.onStructuresClicked)
     # invoked event
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.mergeStructures)
