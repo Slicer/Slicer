@@ -141,6 +141,7 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
+  bool checkExtensionSettingsPermissions()const;
   void addExtensionSettings(const QString& extensionName);
   void removeExtensionSettings(const QString& extensionName);
 
@@ -489,6 +490,36 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
 }
 
 // --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions()const
+{
+  Q_Q(const qSlicerExtensionsManagerModel);
+
+  QString settingsFileName = QSettings().fileName();
+  QFileInfo settingsFileInfo = QFileInfo(settingsFileName);
+  if (settingsFileInfo.exists())
+    {
+    if (!settingsFileInfo.isReadable() || !settingsFileInfo.isWritable())
+      {
+      this->warning(QString("Settings file %1 is expected to be both readable and writable").
+                     arg(settingsFileName));
+      return false;
+      }
+    }
+
+  QFileInfo launcherSettingsFileInfo = QFileInfo(q->launcherSettingsFilePath());
+  if(launcherSettingsFileInfo.exists())
+    {
+    if (!launcherSettingsFileInfo.isReadable() || !launcherSettingsFileInfo.isWritable())
+      {
+      this->warning(QString("Launcher settings file %1 is expected to be both readable and writable").
+                     arg(q->launcherSettingsFilePath()));
+      return false;
+      }
+    }
+  return true;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::addExtensionSettings(const QString& extensionName)
 {
   this->addExtensionPathToApplicationSettings(extensionName);
@@ -785,6 +816,11 @@ void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extension
 {
   Q_D(qSlicerExtensionsManagerModel);
 
+  if (!d->checkExtensionSettingsPermissions())
+    {
+    return;
+    }
+
   if(value && !this->isExtensionCompatible(extensionName).isEmpty())
     {
     return;
@@ -903,6 +939,11 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 {
   Q_D(qSlicerExtensionsManagerModel);
 
+  if (!d->checkExtensionSettingsPermissions())
+    {
+    return;
+    }
+
   d->debug(QString("Retrieving extension metadata [ extensionId: %1]").arg(extensionId));
   ExtensionMetadataType extensionMetadata = this->retrieveExtensionMetadata(extensionId);
   if (extensionMetadata.count() == 0)
@@ -987,6 +1028,11 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     return false;
     }
 
+  if (!d->checkExtensionSettingsPermissions())
+    {
+    return false;
+    }
+
   QString extensionDescriptionFile = this->extensionDescriptionFile(extensionName);
 
   if (!this->extractExtensionArchive(extensionName, archiveFile, this->extensionsInstallPath()))
@@ -1007,6 +1053,11 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
 bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString& extensionName)
 {
   Q_D(qSlicerExtensionsManagerModel);
+
+  if (!d->checkExtensionSettingsPermissions())
+    {
+    return false;
+    }
 
   if (!this->isExtensionInstalled(extensionName))
     {
@@ -1033,6 +1084,10 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const Q
 {
   Q_D(qSlicerExtensionsManagerModel);
 
+  if (!d->checkExtensionSettingsPermissions())
+    {
+    return false;
+    }
   if (!this->isExtensionScheduledForUninstall(extensionName))
     {
     return false;
@@ -1049,6 +1104,11 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const Q
 bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
+
+  if (!this->checkExtensionSettingsPermissions())
+    {
+    return false;
+    }
 
   QStandardItem * item = this->extensionItem(extensionName);
   if (!item)
