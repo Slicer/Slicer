@@ -26,6 +26,7 @@
 #  Slicer_SKIP_SlicerBlockCXXRequiredFlags
 #  Slicer_SKIP_SlicerBlockAdditionalLauncherSettings
 #  Slicer_SKIP_SlicerBlockModuleToExtensionMetadata
+#  Slicer_SKIP_SlicerEnableExtensionTesting
 #
 # By default, if any 'Slicer_SKIP_<DoSomething>' variable is set to TRUE,
 # a message will be displayed.
