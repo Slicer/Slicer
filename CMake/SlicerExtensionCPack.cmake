@@ -77,6 +77,11 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
+  set(description_file "${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}.s4ext")
+  if(NOT EXISTS "${description_file}")
+    message(FATAL_ERROR "error: Failed to generate extension description file: ${description_file}")
+  endif()
+  install(FILES ${description_file} DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT RuntimeLibraries)
 endif()
 
 #-----------------------------------------------------------------------------
