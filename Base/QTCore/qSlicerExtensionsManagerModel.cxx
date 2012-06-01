@@ -582,6 +582,8 @@ QStringList qSlicerExtensionsManagerModelPrivate::extensionLibraryPaths(const QS
     }
   QString path = q->extensionInstallPath(extensionName);
   return appendToPathList(QStringList(), QStringList()
+                   << path + "/" + QString(Slicer_BIN_DIR).replace(Slicer_VERSION, this->SlicerVersion)
+                   << path + "/" + QString(Slicer_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                    << path + "/" + QString(Slicer_CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                    << path + "/" + QString(Slicer_QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->SlicerVersion)
                    );
