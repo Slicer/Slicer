@@ -68,10 +68,10 @@ set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 if(Slicer_USE_QtTesting)
   slicer_add_python_test(
     SCRIPT Slicer_NeurosurgicalPlanning-Tutorial.py
-    SLICER_ARGS --launcher-no-splash --qt-testing)
+    SLICER_ARGS "--launcher-no-splash --qt-testing")
   slicer_add_python_test(
     SCRIPT Slicer_DiffusionTensorImaging-Tutorial.py
-    SLICER_ARGS --launcher-no-splash --qt-testing)
+    SLICER_ARGS "--launcher-no-splash --qt-testing")
   set_tests_properties(
   py_Slicer_NeurosurgicalPlanning-Tutorial
   py_Slicer_DiffusionTensorImaging-Tutorial
