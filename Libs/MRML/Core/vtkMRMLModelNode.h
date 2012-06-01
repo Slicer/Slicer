@@ -50,8 +50,6 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  void UpdateScene(vtkMRMLScene *scene);
-
   /// 
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
@@ -126,6 +124,9 @@ protected:
   vtkMRMLModelNode(const vtkMRMLModelNode&);
   void operator=(const vtkMRMLModelNode&);
 
+  /// Called when a display node is added. Propagate the polydata
+  /// to the new display node.
+  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
 
   /// Data
   

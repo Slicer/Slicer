@@ -51,27 +51,6 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 }
 
-//-----------------------------------------------------------
-void vtkMRMLModelNode::UpdateScene(vtkMRMLScene *scene)
-{
-  Superclass::UpdateScene(scene);
-  int nnodes = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<nnodes; n++)
-    {
-    vtkMRMLNode *mnode = scene->GetNodeByID(this->GetNthDisplayNodeID(n));
-    if (mnode) 
-      {
-      vtkMRMLModelDisplayNode *node  = dynamic_cast < vtkMRMLModelDisplayNode *>(mnode);
-      if (node)
-        {
-        // set input/output to/from display pipeline
-        node->SetPolyData(this->GetPolyData());
-        //this->SetAndObservePolyData(node->GetPolyData());
-        }
-      }
-    }
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
@@ -79,7 +58,8 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
 {
 
   if (this->PolyData == vtkPolyData::SafeDownCast(caller) &&
-    event ==  vtkCommand::ModifiedEvent)
+      this->PolyData != 0 &&
+      event ==  vtkCommand::ModifiedEvent)
     {
     for (int i=0; i<this->GetNumberOfDisplayNodes(); ++i)
       {
@@ -766,3 +746,14 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode)
+{
+  vtkMRMLModelDisplayNode* modelDisplayNode =
+    vtkMRMLModelDisplayNode::SafeDownCast(dnode);
+  if (modelDisplayNode)
+    {
+    modelDisplayNode->SetPolyData(this->GetPolyData());
+    }
+  this->Superclass::OnDisplayNodeAdded(dnode);
+}

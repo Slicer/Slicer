@@ -22,6 +22,7 @@
 class vtkMRMLModelNode;
 class vtkMRMLStorageNode;
 class vtkMRMLTransformNode;
+class vtkPolyData;
 
 class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   : public vtkSlicerModuleLogic
@@ -43,6 +44,12 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
   /// The currently active mrml volume node 
   vtkGetObjectMacro (ActiveModelNode, vtkMRMLModelNode);
   void SetActiveModelNode (vtkMRMLModelNode *ActiveModelNode);
+
+  ///
+  /// Add into the scene a new mrml model node with an existing polydata
+  /// A display node is also added into the scene.
+  /// \tbd Add a storage node ?
+  vtkMRMLModelNode* AddModel(vtkPolyData* polyData = 0);
 
   /// 
   /// Add into the scene a new mrml model node and

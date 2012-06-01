@@ -22,13 +22,17 @@
 #include "vtkSlicerModelsLogic.h"
 
 // MRML includes
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkNew.h>
+#include <vtkPolyData.h>
 
+//-----------------------------------------------------------------------------
 bool testAddEmptyFile(const char* filePath);
 bool testAddFile(const char* filePath);
+bool testAddModelWithPolyData(bool withPolyData);
 
 //-----------------------------------------------------------------------------
 int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
@@ -48,6 +52,8 @@ int vtkSlicerModelsLogicAddFileTest( int argc, char * argv[] )
     {
     res = testAddFile(argv[1]) && res;
     }
+  res = testAddModelWithPolyData(false) && res;
+  res = testAddModelWithPolyData(true) && res;
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -110,3 +116,31 @@ bool testAddFile(const char * filePath)
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+bool testAddModelWithPolyData(bool withPolyData)
+{
+  vtkNew<vtkPolyData> polyData;
+  vtkPolyData* poly = (withPolyData ? polyData.GetPointer() : 0);
+  vtkNew<vtkSlicerModelsLogic> modelsLogic;
+  if (modelsLogic->AddModel(poly) != 0)
+    {
+    std::cout << __LINE__
+      <<"vtkSlicerModelsLogic::AddModel(vtkPolyData*) failed."
+      << std::endl;
+    return false;
+    }
+  vtkNew<vtkMRMLScene> scene;
+  modelsLogic->SetMRMLScene(scene.GetPointer());
+  vtkMRMLModelNode* model = modelsLogic->AddModel(poly);
+  if (model->GetPolyData() != poly ||
+      model->GetModelDisplayNode() == 0)
+    {
+    std::cout << __LINE__
+      <<"vtkSlicerModelsLogic::AddModel(vtkPolyData*) failed."
+      << std::endl;
+    return false;
+    }
+  return true;
+}
+

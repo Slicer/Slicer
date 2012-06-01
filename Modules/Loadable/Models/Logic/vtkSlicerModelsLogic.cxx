@@ -22,6 +22,7 @@
 
 /// VTK includes
 #include <vtkGeneralTransform.h>
+#include <vtkNew.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkSmartPointer.h>
 #include <vtkTagTable.h>
@@ -106,6 +107,25 @@ void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
 {
   vtkSetMRMLNodeMacro(this->ActiveModelNode, activeNode );
   this->Modified();
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel(vtkPolyData* polyData)
+{
+  if (this->GetMRMLScene() == 0)
+    {
+    return 0;
+    }
+
+  vtkNew<vtkMRMLModelDisplayNode> display;
+  this->GetMRMLScene()->AddNode(display.GetPointer());
+
+  vtkNew<vtkMRMLModelNode> model;
+  model->SetAndObservePolyData(polyData);
+  model->SetAndObserveDisplayNodeID(display->GetID());
+  this->GetMRMLScene()->AddNode(model.GetPointer());
+
+  return model.GetPointer();
 }
 
 //----------------------------------------------------------------------------
