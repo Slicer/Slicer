@@ -85,6 +85,7 @@ public slots:
 
 protected slots:
   void initJavascript();
+  void onLoadStarted();
   void onLoadFinished(bool ok);
 
 protected:

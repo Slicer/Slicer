@@ -87,8 +87,14 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
   Q_ASSERT(networkAccessManager);
   networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
 
+  QObject::connect(this->WebView, SIGNAL(loadStarted()),
+                   q, SLOT(onLoadStarted()));
+
   QObject::connect(this->WebView, SIGNAL(loadFinished(bool)),
                    q, SLOT(onLoadFinished(bool)));
+
+  QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
+                   this->ProgressBar, SLOT(setValue(int)));
 
   QObject::connect(this->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
                    q, SLOT(initJavascript()));
@@ -339,9 +345,19 @@ void qSlicerExtensionsInstallWidget::initJavascript()
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onLoadStarted()
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  d->ProgressBar->setFormat("%p%");
+  d->ProgressBar->setVisible(true);
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 {
   Q_D(qSlicerExtensionsInstallWidget);
+  d->ProgressBar->reset();
+  d->ProgressBar->setVisible(false);
   if(!ok)
     {
     d->setFailurePage(d->extensionsListUrl().toString());
