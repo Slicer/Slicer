@@ -45,6 +45,9 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
   this->ActionStartXYToRAS = vtkMatrix4x4::New();
   this->ScratchMatrix = vtkMatrix4x4::New();
 
+  LastActionWindow[0] = 0;
+  LastActionWindow[1] = 0;
+
   this->ActionStartForegroundOpacity = 0;
   this->ActionStartLabelOpacity = 0;
 
@@ -192,6 +195,7 @@ void vtkSliceViewInteractorStyle::OnRightButtonDown()
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   this->SetActionStartFOV(sliceNode->GetFieldOfView());
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
+  this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnRightButtonUp() 
@@ -205,6 +209,7 @@ void vtkSliceViewInteractorStyle::OnMiddleButtonDown()
 {
   this->StartTranslate();
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
+  this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
 }
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::OnMiddleButtonUp() 
@@ -224,6 +229,7 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     this->StartBlend();
     }
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
+  this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
   this->Superclass::OnLeftButtonDown();
 }
 //----------------------------------------------------------------------------
@@ -255,8 +261,10 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
     {
     case vtkSliceViewInteractorStyle::Translate:
       {
-      sliceNode->SetSliceOrigin(this->ActionStartWindow[0] - windowX,
-                                this->ActionStartWindow[1] - windowY, 0);
+      double xyz[3];
+      sliceNode->GetXYZOrigin(xyz);
+      sliceNode->SetSliceOrigin(xyz[0] + this->LastActionWindow[0] - windowX,
+                                xyz[1] + this->LastActionWindow[1] - windowY, 0);
       }
       break;
     case vtkSliceViewInteractorStyle::Zoom:
@@ -310,6 +318,8 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         }
       }
     }
+  LastActionWindow[0] = windowX;
+  LastActionWindow[1] = windowY;
 }
 
 //----------------------------------------------------------------------------

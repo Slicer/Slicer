@@ -102,6 +102,9 @@ public:
   vtkSetVector3Macro(ActionStartFOV, double);
   vtkGetVector2Macro(ActionStartWindow, int);
   vtkSetVector2Macro(ActionStartWindow, int);
+  vtkGetVector2Macro(LastActionWindow, int);
+  vtkSetVector2Macro(LastActionWindow, int);
+  
   vtkGetMacro(ActionStartForegroundOpacity, double);
   vtkSetMacro(ActionStartForegroundOpacity, double);
   vtkGetMacro(ActionStartLabelOpacity, double);
@@ -169,6 +172,8 @@ protected:
   double ActionStartRAS[3];
   double ActionStartFOV[3];
   int ActionStartWindow[2];
+  int LastActionWindow[2];
+
   double ActionStartForegroundOpacity;
   double ActionStartLabelOpacity;
 
