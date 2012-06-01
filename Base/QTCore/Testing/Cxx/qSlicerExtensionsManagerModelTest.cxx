@@ -64,6 +64,8 @@ private:
   QDir Tmp;
   QString TemporaryDirName;
 
+  static const QString LIB_DIR;
+
   static const QString CLIMODULES_LIB_DIR;
   static const QString QTLOADABLEMODULES_LIB_DIR;
 #ifdef Slicer_USE_PYTHONQT
@@ -153,6 +155,8 @@ Q_DECLARE_METATYPE(qSlicerExtensionsManagerModelTester::ExtensionIdType)
 Q_DECLARE_METATYPE(QList<int>)
 Q_DECLARE_METATYPE(QList<QString>)
 Q_DECLARE_METATYPE(QList<QStringList>)
+
+const QString qSlicerExtensionsManagerModelTester::LIB_DIR = Slicer_LIB_DIR;
 
 const QString qSlicerExtensionsManagerModelTester::CLIMODULES_LIB_DIR = Slicer_CLIMODULES_LIB_DIR;
 const QString qSlicerExtensionsManagerModelTester::QTLOADABLEMODULES_LIB_DIR = Slicer_QTLOADABLEMODULES_LIB_DIR;
@@ -1742,12 +1746,15 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
 
   {
     int extensionId = 0;
+    QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString climodules_lib_dir = QString(Self::CLIMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QTest::newRow("linux-0-CLIExtensionTemplate")
         << operatingSystem << architecture << slicerRevision
         << ExtensionIdType(operatingSystem, -1)
         << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList() << this->Tmp.filePath("CLIExtensionTemplate/" + climodules_lib_dir))
+        << (QStringList()
+            << this->Tmp.filePath("CLIExtensionTemplate/" + lib_dir)
+            << this->Tmp.filePath("CLIExtensionTemplate/" + climodules_lib_dir))
         << (QStringList() << this->Tmp.filePath("CLIExtensionTemplate/" + climodules_lib_dir))
         << QString();
   }
@@ -1755,13 +1762,16 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
 #ifdef Slicer_USE_PYTHONQT
   {
     int extensionId = 1;
+    QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtloadablemodules_python_lib_dir = QString(Self::QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QTest::newRow("linux-1-LoadableExtensionTemplate")
         << operatingSystem << architecture << slicerRevision
         << ExtensionIdType(operatingSystem, 0)
         << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList() << this->Tmp.filePath("LoadableExtensionTemplate/" + qtloadablemodules_lib_dir))
+        << (QStringList()
+            << this->Tmp.filePath("LoadableExtensionTemplate/" + lib_dir)
+            << this->Tmp.filePath("LoadableExtensionTemplate/" + qtloadablemodules_lib_dir))
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("LoadableExtensionTemplate/" + qtloadablemodules_python_lib_dir));
   }
@@ -1772,18 +1782,20 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
   {
     extensionIdOffset = 0;
     int extensionId = 2;
+    QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtscriptedmodules_lib_dir = QString(Self::QTSCRIPTEDMODULES_LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QTest::newRow("linux-2-ScriptedLoadableExtensionTemplate")
         << operatingSystem << architecture << slicerRevision
         << ExtensionIdType(operatingSystem, 1)
         << ExtensionIdType(operatingSystem, extensionId)
-        << QStringList()
+        << (QStringList() << this->Tmp.filePath("ScriptedLoadableExtensionTemplate/" + lib_dir))
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("ScriptedLoadableExtensionTemplate/" + qtscriptedmodules_lib_dir));
   }
 
   {
     int extensionId = 3;
+    QString lib_dir = QString(Self::LIB_DIR).replace(Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtloadablemodules_lib_dir = QString(Self::QTLOADABLEMODULES_LIB_DIR).replace(
           Slicer_VERSION, this->slicerVersion(operatingSystem, extensionId));
     QString qtloadablemodules_python_lib_dir = QString(Self::QTLOADABLEMODULES_PYTHON_LIB_DIR).replace(
@@ -1792,7 +1804,9 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
         << operatingSystem << architecture << slicerRevision
         << ExtensionIdType(operatingSystem, 2 - extensionIdOffset)
         << ExtensionIdType(operatingSystem, extensionId)
-        << (QStringList() << this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" + qtloadablemodules_lib_dir))
+        << (QStringList()
+            << this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" + lib_dir)
+            << this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" + qtloadablemodules_lib_dir))
         << QStringList()
         << QString("<PATHSEP>" + this->Tmp.filePath("SuperBuildLoadableExtensionTemplate/" + qtloadablemodules_python_lib_dir));
   }
