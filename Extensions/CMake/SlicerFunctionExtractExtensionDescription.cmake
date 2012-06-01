@@ -26,6 +26,8 @@
 # The function defines the following variables in the caller scope:
 #  <var-prefix>_SEXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
 #  <var-prefix>_SEXT_SCMURL - URL of the associated source repository
+#  <var-prefix>_SEXT_SVNUSERNAME - Username for Subversion checkout and update
+#  <var-prefix>_SEXT_SVNPASSWORD - Password for Subversion checkout and update
 #  <var-prefix>_SEXT_SCMREVISION - REVISION associated with the source repository
 #  <var-prefix>_SEXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
 #  <var-prefix>_SEXT_DEPENDS - list of dependencies
@@ -66,6 +68,8 @@ function(slicerFunctionExtractExtensionDescription)
   set(extension_description_tokens
     scm:
     scmurl:
+    svnusername:
+    svnpassword:""
     scmrevision:
     depends:
     build_subdirectory:.
