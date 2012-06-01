@@ -61,28 +61,6 @@ slicer_add_python_test(SCRIPT SlicerTestingExitSuccessTest.py)
 slicer_add_python_test(SCRIPT SlicerTestingExitFailureTest.py)
 set_tests_properties(py_SlicerTestingExitFailureTest PROPERTIES WILL_FAIL TRUE)
 
-#
-# Check if Tutorial work as expected
-#
-
-if(Slicer_USE_QtTesting)
-  slicer_add_python_test(
-    SCRIPT Slicer_NeurosurgicalPlanning-Tutorial.py
-    SLICER_ARGS "--launcher-no-splash --qt-testing")
-  slicer_add_python_test(
-    SCRIPT Slicer_DiffusionTensorImaging-Tutorial.py
-    SLICER_ARGS "--launcher-no-splash --qt-testing")
-  set_tests_properties(
-  py_Slicer_NeurosurgicalPlanning-Tutorial
-  py_Slicer_DiffusionTensorImaging-Tutorial
-  PROPERTIES RUN_SERIAL ON
-  )
-  configure_file(
-    ApplicationsSlicerAppData.py.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationsSlicerAppData.py
-  )
-endif()
-
 
 #
 # Check if 'slicer.testing.runUnitTest()' works as expected
@@ -177,3 +155,32 @@ slicer_add_python_unittest(
   SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules --disable-scripted-loadable-modules
   TESTNAME_PREFIX nomainwindow_
   )
+
+
+
+#
+# Tutorial tests
+#
+
+if(Slicer_USE_QtTesting)
+  configure_file(
+    ApplicationsSlicerAppData.py.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationsSlicerAppData.py
+    )
+
+  slicer_add_python_test(
+    SCRIPT Slicer_NeurosurgicalPlanning-Tutorial.py
+    SLICER_ARGS "--launcher-no-splash --qt-testing"
+    )
+
+  slicer_add_python_test(
+    SCRIPT Slicer_DiffusionTensorImaging-Tutorial.py
+    SLICER_ARGS "--launcher-no-splash --qt-testing"
+    )
+
+  set_tests_properties(
+    py_Slicer_NeurosurgicalPlanning-Tutorial
+    py_Slicer_DiffusionTensorImaging-Tutorial
+    PROPERTIES RUN_SERIAL ON
+    )
+endif()
