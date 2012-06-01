@@ -53,6 +53,8 @@ if(NOT Slicer_SOURCE_DIR)
   #-----------------------------------------------------------------------------
   include(ExternalProject)
   find_package(Slicer REQUIRED)
+  find_package(Git REQUIRED)
+  find_package(Subversion REQUIRED)
 
   #-----------------------------------------------------------------------------
   # Options
