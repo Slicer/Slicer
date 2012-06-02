@@ -84,14 +84,28 @@ public:
     {
       TransformModifiedEvent = 15000
     };
- 
+
+  /// Returns true if the transformable node can apply non linear transforms
+  /// \sa ApplyTransformMatrix, ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const;
-  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix); 
-  virtual void ApplyTransform(vtkAbstractTransform* transform); 
 
-  virtual void TransformPointToWorld(double *in, double *out);
-  virtual void TransformPointFromWorld(double *in, double *out);
+  /// Concatenate a matrix to the current transform matrix.
+  /// \sa SetAndObserveTransformNodeID, ApplyTransform,
+  /// CanApplyNonLinearTransforms
+  virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
+  /// Concatenate a transform to the current transform matrix.
+  /// \sa SetAndObserveTransformNodeID, ApplyMatrix,
+  /// CanApplyNonLinearTransforms
+  virtual void ApplyTransform(vtkAbstractTransform* transform);
+
+  /// Apply the observed transform to the input point.
+  /// \sa TransformPointFromWorld, SetAndObserveTransformNodeID
+  virtual void TransformPointToWorld(const double in[4], double out[4]);
+
+  /// Apply the invert of the observed transform to the input point.
+  /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
+  virtual void TransformPointFromWorld(const double in[4], double out[4]);
 
 protected:
   vtkMRMLTransformableNode();

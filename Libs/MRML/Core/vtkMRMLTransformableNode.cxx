@@ -221,7 +221,7 @@ void vtkMRMLTransformableNode::ApplyTransform(vtkAbstractTransform* transform)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLTransformableNode::TransformPointToWorld(double *in, double *out)
+void vtkMRMLTransformableNode::TransformPointToWorld(const double in[4], double out[4])
 {
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
@@ -248,7 +248,7 @@ void vtkMRMLTransformableNode::TransformPointToWorld(double *in, double *out)
 }
 
 //-----------------------------------------------------------
-void vtkMRMLTransformableNode::TransformPointFromWorld(double *in, double *out)
+void vtkMRMLTransformableNode::TransformPointFromWorld(const double in[4], double out[4])
 {
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = this->GetParentTransformNode();
