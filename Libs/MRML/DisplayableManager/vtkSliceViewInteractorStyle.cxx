@@ -45,8 +45,8 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
   this->ActionStartXYToRAS = vtkMatrix4x4::New();
   this->ScratchMatrix = vtkMatrix4x4::New();
 
-  LastActionWindow[0] = 0;
-  LastActionWindow[1] = 0;
+  this->LastActionWindow[0] = 0;
+  this->LastActionWindow[1] = 0;
 
   this->ActionStartForegroundOpacity = 0;
   this->ActionStartLabelOpacity = 0;
@@ -318,8 +318,8 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         }
       }
     }
-  LastActionWindow[0] = windowX;
-  LastActionWindow[1] = windowY;
+  this->LastActionWindow[0] = windowX;
+  this->LastActionWindow[1] = windowY;
 }
 
 //----------------------------------------------------------------------------
