@@ -109,6 +109,12 @@ target_link_libraries(${KIT_LIBRARY_NAME}
 if(Q_WS_MAC)
   set(apple_icon_file ${SlicerApp_APPLICATION_NAME}.icns)
   set(apple_bundle_sources "${CMAKE_CURRENT_SOURCE_DIR}/Resources/${apple_icon_file}")
+
+  if(NOT EXISTS "${apple_bundle_sources}")
+    message(FATAL_ERROR "error: ${apple_bundle_sources} corresponds to an nonexistent file. "
+                        "In case the main application name as been updated, make sure the associated icns icon exists.")
+  endif()
+
   set_source_files_properties(
     "${apple_bundle_sources}"
     PROPERTIES
