@@ -103,6 +103,7 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerAbstractCoreModule : public QObject
   /// If the module is hidden, it doesn't appear in the list of modules menu.
   /// However, the module is programatically accessible.
   /// By default, modules are visible (hidden == false).
+  /// \sa isHidden
   Q_PROPERTY(bool hidden READ isHidden)
 
   /// This property holds the help of the module.
@@ -194,11 +195,12 @@ public:
   /// Note: If a category doesn't exist, it will be created.
   virtual QStringList categories()const;
 
-  /// Return the index of the module.
+  /// Return the category index of the module.
   virtual int index()const;
 
   /// Returns true if the module should be hidden to the user.
   /// By default, modules are not hidden.
+  /// \sa hidden
   virtual bool isHidden()const;
 
   /// Return the contributors of the module

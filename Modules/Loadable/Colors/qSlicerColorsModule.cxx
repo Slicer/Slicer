@@ -181,3 +181,9 @@ QStringList qSlicerColorsModule::contributors()const
   moduleContributors << QString("Julien Finet (Kitware)");
   return moduleContributors;
 }
+
+//-----------------------------------------------------------------------------
+bool qSlicerColorsModule::isHidden()const
+{
+  return true;
+}

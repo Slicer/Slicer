@@ -50,6 +50,7 @@ public:
   virtual QString helpText()const;
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
+  virtual bool isHidden()const;
 
   virtual void setMRMLScene(vtkMRMLScene* newMRMLScene);
 
