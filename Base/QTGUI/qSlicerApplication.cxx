@@ -135,7 +135,7 @@ qSlicerApplicationPrivate::~qSlicerApplicationPrivate()
   delete this->ExtensionsManagerDialog;
   this->ExtensionsManagerDialog =0;
 #endif
-#ifdef Slicer_USE_QtTesing
+#ifdef Slicer_USE_QtTesting
   delete this->TestingUtility;
   this->TestingUtility = 0;
 #endif
