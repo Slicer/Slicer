@@ -3,7 +3,7 @@ import slicer
 import ApplicationsSlicerAppData as data
 
 
-filepath = data.input + '/DiffusionTensorImaging_tutorial.xml'
+filepath = data.input + '/DiffusionTensorImagingTutorial.xml'
 testUtility = slicer.app.testingUtility()
 success = testUtility.playTests(filepath)
 if not success :

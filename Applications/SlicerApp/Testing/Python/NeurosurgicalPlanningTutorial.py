@@ -3,7 +3,7 @@ import slicer
 import ApplicationsSlicerAppData as data
 
 
-filepath = data.input + '/NeurosurgicalPlanning_tutorial.xml'
+filepath = data.input + '/NeurosurgicalPlanningTutorial.xml'
 testUtility = slicer.app.testingUtility()
 success = testUtility.playTests(filepath)
 if not success :

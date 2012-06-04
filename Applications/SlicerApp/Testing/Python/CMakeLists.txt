@@ -169,18 +169,18 @@ if(Slicer_USE_QtTesting)
     )
 
   slicer_add_python_test(
-    SCRIPT Slicer_NeurosurgicalPlanning-Tutorial.py
+    SCRIPT NeurosurgicalPlanningTutorial.py
     SLICER_ARGS "--launcher-no-splash --qt-testing"
     )
 
   slicer_add_python_test(
-    SCRIPT Slicer_DiffusionTensorImaging-Tutorial.py
+    SCRIPT DiffusionTensorImagingTutorial.py
     SLICER_ARGS "--launcher-no-splash --qt-testing"
     )
 
   set_tests_properties(
-    py_Slicer_NeurosurgicalPlanning-Tutorial
-    py_Slicer_DiffusionTensorImaging-Tutorial
+    py_NeurosurgicalPlanningTutorial
+    py_DiffusionTensorImagingTutorial
     PROPERTIES RUN_SERIAL ON
     )
 endif()
