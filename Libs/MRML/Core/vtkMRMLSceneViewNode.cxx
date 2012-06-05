@@ -509,16 +509,6 @@ void vtkMRMLSceneViewNode::RestoreScene()
       }
     }
 
-  // reset AddToScene
-  for (n=0; n < nnodesSanpshot; n++) 
-    {
-    node = (vtkMRMLNode*)this->Nodes->GetNodes()->GetItemAsObject(n);
-    if (node)
-      {
-      node->SetAddToSceneNoModify(1);
-      }
-    }
-
   //this->Scene->SetIsClosing(0);
   for(n=0; n<addedNodes.size(); n++)
     {
