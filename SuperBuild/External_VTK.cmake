@@ -102,7 +102,10 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
   set(CUSTOM_BUILD_COMMAND)
   if(CMAKE_GENERATOR MATCHES ".*Makefiles.*")
     # Use ${MAKE} as build command to propagate parallel make option
-    SET(CUSTOM_BUILD_COMMAND BUILD_COMMAND "$(MAKE)")
+    set(CUSTOM_BUILD_COMMAND BUILD_COMMAND "$(MAKE)")
+    set(make_command_definition -DMAKE_COMMAND=$(MAKE) )
+  else()
+    set(make_command_definition -DMAKE_COMMAND=${MAKECOMMAND})
   endif()
 
   if(UNIX)
@@ -110,7 +113,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
       ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake
       @ONLY)
     set(CUSTOM_BUILD_COMMAND BUILD_COMMAND ${CMAKE_COMMAND}
-      -DMAKE_COMMAND=$(MAKE)
+      ${make_command_definition}
       -P ${CMAKE_CURRENT_BINARY_DIR}/VTK_build_step.cmake)
   endif()
 
