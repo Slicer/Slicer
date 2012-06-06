@@ -301,9 +301,8 @@ include(SlicerBlockCXXRequiredFlags)
 #-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
-set(Slicer_MAIN_PROJECT SlicerApp)
-set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE STRING "Main application name")
-mark_as_advanced(${Slicer_MAIN_PROJECT}_APPLICATION_NAME)
+set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
+set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE INTERNAL "Main application name")
 
 set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
