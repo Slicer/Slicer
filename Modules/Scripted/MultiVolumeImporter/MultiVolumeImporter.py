@@ -192,8 +192,8 @@ class MultiVolumeImporterWidget:
       else:
         # clean it up
         print("tmpDir: %s" % tmpDir)
-        fileNames = os.listdir(tmpDir)
-        for f in fileNames:
+        oldFileNames = os.listdir(tmpDir)
+        for f in oldFileNames:
           print("%s will be unlinked" % f)
           os.unlink(tmpDir+'/'+f)
 
