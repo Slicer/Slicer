@@ -24,6 +24,7 @@
 // SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
+#include "qSlicerNodeWriter.h"
 #include "vtkSlicerTransformLogic.h"
 
 // Transforms includes
@@ -119,5 +120,9 @@ void qSlicerTransformsModule::setup()
     }
   vtkSlicerTransformLogic* transformLogic =
     vtkSlicerTransformLogic::SafeDownCast(this->logic());
-  app->coreIOManager()->registerIO(new qSlicerTransformsIO(transformLogic, this));
+  app->coreIOManager()->registerIO(
+    new qSlicerTransformsIO(transformLogic, this));
+  app->coreIOManager()->registerIO(new qSlicerNodeWriter(
+    "Transforms", qSlicerIO::TransformFile,
+    QStringList() << "vtkMRMLTransformNode", this));
 }

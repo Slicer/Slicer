@@ -283,9 +283,9 @@ int vtkMRMLVolumePropertyStorageNode::WriteData(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumePropertyStorageNode::InitializeSupportedWriteFileTypes()
 {
-  this->SupportedWriteFileTypes->InsertNextValue("VolumePropperty (.vp)");
+  this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.vp)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-  this->SupportedWriteFileTypes->InsertNextValue("VolumePropperty (.*)");
+  this->SupportedWriteFileTypes->InsertNextValue("VolumeProperty (.*)");
 }
 
 //----------------------------------------------------------------------------

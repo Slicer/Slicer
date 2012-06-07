@@ -24,7 +24,7 @@
 // SlicerQt includes
 #include <qSlicerCoreApplication.h>
 #include <qSlicerCoreIOManager.h>
-
+#include <qSlicerNodeWriter.h>
 
 // Tractography QTModule includes
 #include "qSlicerTractographyDisplayModule.h"
@@ -40,7 +40,8 @@ Q_EXPORT_PLUGIN2(qSlicerTractographyDisplayModule, qSlicerTractographyDisplayMod
 
 //-----------------------------------------------------------------------------
 qSlicerTractographyDisplayModule::
-qSlicerTractographyDisplayModule(QObject* _parent):Superclass(_parent)
+qSlicerTractographyDisplayModule(QObject* _parent)
+  : Superclass(_parent)
 {
 }
 
@@ -50,8 +51,13 @@ void qSlicerTractographyDisplayModule::setup()
   this->Superclass::setup();
   vtkSlicerFiberBundleLogic* fiberBundleLogic =
     vtkSlicerFiberBundleLogic::SafeDownCast(this->logic());
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  coreIOManager->registerIO(
     new qSlicerFiberBundleIO(fiberBundleLogic, this));
+  coreIOManager->registerIO(new qSlicerNodeWriter(
+    "FiberBundles", qSlicerIO::FiberBundleFile,
+    QStringList() << "vtkMRMLFiberBundleNode", this));
 }
 
 //-----------------------------------------------------------------------------

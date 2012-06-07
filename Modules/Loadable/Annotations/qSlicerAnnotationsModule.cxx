@@ -9,8 +9,8 @@
 // QTGUI includes
 #include <qSlicerApplication.h>
 #include <qSlicerCoreApplication.h>
-#include <qSlicerCoreIOManager.h>
-
+#include <qSlicerIOManager.h>
+#include <qSlicerNodeWriter.h>
 
 // AnnotationModule includes
 #include "qSlicerAnnotationsModule.h"
@@ -84,12 +84,16 @@ void qSlicerAnnotationsModule::setup()
     }
 
   /// Register IO
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+  qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
+  ioManager->registerIO(
     new qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
 
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+  ioManager->registerIO(
     new qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
 
+  ioManager->registerIO(new qSlicerNodeWriter(
+    "Annotations", qSlicerIO::AnnotationFile,
+    QStringList() << "vtkMRMLAnnotationNode", this));
 }
 
 //-----------------------------------------------------------------------------

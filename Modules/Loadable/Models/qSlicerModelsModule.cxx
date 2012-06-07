@@ -32,6 +32,7 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerModelsDialog.h"
 #include "qSlicerModuleManager.h"
+#include "qSlicerNodeWriter.h"
 
 // Slicer logic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -153,6 +154,9 @@ void qSlicerModelsModule::setup()
   ioManager->registerIO(new qSlicerModelsIO(modelsLogic, this));
   ioManager->registerIO(new qSlicerScalarOverlayIO(modelsLogic, this));
   ioManager->registerDialog(new qSlicerModelsDialog(this));
+  ioManager->registerIO(new qSlicerNodeWriter(
+    "Models", qSlicerIO::ModelFile,
+    QStringList() << "vtkMRMLModelNode", this));
 }
 
 //-----------------------------------------------------------------------------

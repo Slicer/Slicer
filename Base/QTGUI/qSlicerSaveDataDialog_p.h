@@ -14,6 +14,7 @@
 #include "qSlicerSaveDataDialog.h"
 #include "ui_qSlicerSaveDataDialog.h"
 
+class vtkMRMLNode;
 class vtkMRMLStorableNode;
 
 //-----------------------------------------------------------------------------
@@ -63,7 +64,7 @@ protected:
   void              setSceneRootDirectory(const QString& rootDirectory);
 
   void              populateScene();
-  void              populateNode(vtkMRMLStorableNode* node);
+  void              populateNode(vtkMRMLNode* node);
 
   QFileInfo         nodeFileInfo(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeNameItem(vtkMRMLStorableNode* node);

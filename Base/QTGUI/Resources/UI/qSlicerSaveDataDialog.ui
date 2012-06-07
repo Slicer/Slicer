@@ -40,6 +40,9 @@
    </item>
    <item row="1" column="0" colspan="4">
     <widget class="QTableWidget" name="FileWidget">
+     <property name="editTriggers">
+      <set>QAbstractItemView::AllEditTriggers</set>
+     </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::NoSelection</enum>
      </property>

@@ -208,12 +208,12 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 
   this->populateScene();
 
-  const int nodeCount = this->MRMLScene->GetNumberOfNodesByClass("vtkMRMLStorableNode");
-  for (int i = 0 ; i < nodeCount; ++i)
+  vtkMRMLNode* node = NULL;
+  vtkCollectionSimpleIterator it;
+  vtkCollection* sceneNodes = this->MRMLScene->GetNodes();
+  for (sceneNodes->InitTraversal(it);
+       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-      this->MRMLScene->GetNthNodeByClass(i, "vtkMRMLStorableNode"));
-    Q_ASSERT(node);
     this->populateNode(node);
     }
 
@@ -256,10 +256,16 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   sceneModifiedItem->setFlags(sceneModifiedItem->flags() & ~Qt::ItemIsEditable);
   this->FileWidget->setItem(row, NodeStatusColumn, sceneModifiedItem);
 
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  
   // Scene Format
   QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
-  sceneComboBoxWidget->addItem("MRML (.mrml)");
-  sceneComboBoxWidget->setEnabled(false);
+  foreach(const QString& extension,
+          coreIOManager->fileWriterExtensions(this->MRMLScene))
+    {
+    sceneComboBoxWidget->addItem(extension);
+    }
   this->FileWidget->setCellWidget(row, FileFormatColumn, sceneComboBoxWidget);
 
   // Scene FileName
@@ -285,15 +291,20 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
+void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
 {
-  if (!node)
+  vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(node);
+  // Don't show if the node doesn't want to (internal node)
+  if (!storableNode ||
+      storableNode->GetHideFromEditors())
     {
     return;
     }
 
-  // Don't show if the node doesn't want to (internal node)
-  if (node->GetHideFromEditors())
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  Q_ASSERT(coreIOManager);
+  if (coreIOManager->fileWriterFileType(node) == qSlicerIO::NoFile)
     {
     return;
     }
@@ -316,7 +327,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
     }
 */
   // get absolute filename
-  QFileInfo fileInfo = this->nodeFileInfo(node);
+  QFileInfo fileInfo = this->nodeFileInfo(storableNode);
   if (fileInfo == QFileInfo())
     {
     return;
@@ -327,23 +338,23 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLStorableNode* node)
   this->FileWidget->insertRow(row);
 
   // Node name
-  QTableWidgetItem *nodeNameItem = this->createNodeNameItem(node);
+  QTableWidgetItem *nodeNameItem = this->createNodeNameItem(storableNode);
   this->FileWidget->setItem(row, NodeNameColumn, nodeNameItem);
 
   // Node type
-  QTableWidgetItem *nodeTypeItem = this->createNodeTypeItem(node);
+  QTableWidgetItem *nodeTypeItem = this->createNodeTypeItem(storableNode);
   this->FileWidget->setItem(row, NodeTypeColumn, nodeTypeItem);
 
   // Node status
-  QTableWidgetItem *nodeModifiedItem = this->createNodeStatusItem(node, fileInfo);
+  QTableWidgetItem *nodeModifiedItem = this->createNodeStatusItem(storableNode, fileInfo);
   this->FileWidget->setItem(row, NodeStatusColumn, nodeModifiedItem);
 
   // Select modified nodes by default
   nodeNameItem->setCheckState(
-    node->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
+    storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
 
   // File format
-  QWidget* fileFormatsWidget = this->createFileFormatsWidget(node, fileInfo);
+  QWidget* fileFormatsWidget = this->createFileFormatsWidget(storableNode, fileInfo);
   this->FileWidget->setCellWidget(row, FileFormatColumn, fileFormatsWidget);
 
   // File name
@@ -473,30 +484,17 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   Q_ASSERT(snode);
   QComboBox* fileFormats = new QComboBox(this->FileWidget);
-  const int formatCount = snode->GetSupportedWriteFileTypes()->GetNumberOfValues();
-  int currentFormat = -1;
-  for (int formatIt = 0; formatIt < formatCount; ++formatIt)
-    {
-    vtkStdString format =
-      snode->GetSupportedWriteFileTypes()->GetValue(formatIt);
-    fileFormats->addItem(format.c_str());
-    if (QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-                  format.c_str())) == (QString(".") + fileInfo.suffix()))
-      {
-      currentFormat = formatIt;
-      }
-    }
   // Add custom qSlicerSaveFile
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
-  qSlicerIO::IOFileType fileType =
-    coreIOManager ? coreIOManager->fileType(node) : qSlicerIO::NoFile;
-  qDebug() << fileType << QString(node->GetNodeTagName());
-  if (fileType != qSlicerIO::NoFile)
+  int currentFormat = -1;
+  foreach(QString extension, coreIOManager->fileWriterExtensions(node))
     {
-    foreach(QString extensions, coreIOManager->fileWriterExtensions(fileType))
+    fileFormats->addItem(extension);
+    if (QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+                extension.toLatin1())) == (QString(".") + fileInfo.suffix()))
       {
-      fileFormats->addItem(extensions);
+      currentFormat = fileFormats->count() -1;
       }
     }
   fileFormats->setCurrentIndex(currentFormat);
@@ -662,27 +660,15 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       }
 
     // save the node
-    snode->SetFileName(file.absoluteFilePath().toLatin1());
-    snode->SetWriteFileFormat(format.toLatin1());
-    snode->SetURI(0);
-    bool res = false;
-    if (fileFormatComboBox->currentIndex() >=
-        snode->GetSupportedWriteFileTypes()->GetNumberOfValues())
-      {
-      qSlicerCoreIOManager* coreIOManager =
-        qSlicerCoreApplication::application()->coreIOManager();
-      Q_ASSERT(coreIOManager);
-      qSlicerIO::IOFileType fileType = coreIOManager->fileType(
-        vtkMRMLStorableNode::SafeDownCast(node));
-      qSlicerIO::IOProperties savingParameters;
-      savingParameters["fileName"] = file.absoluteFilePath();
-      savingParameters["nodeID"] = QString(node->GetID());
-      res = coreIOManager->saveNodes(fileType, savingParameters);
-      }
-    else
-      {
-      res = (snode->WriteData(node) != 0);
-      }
+    qSlicerCoreIOManager* coreIOManager =
+      qSlicerCoreApplication::application()->coreIOManager();
+    Q_ASSERT(coreIOManager);
+    qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(node);
+    qSlicerIO::IOProperties savingParameters;
+    savingParameters["nodeID"] = QString(node->GetID());
+    savingParameters["fileName"] = file.absoluteFilePath();
+    savingParameters["fileFormat"] = format;
+    bool res = coreIOManager->saveNodes(fileType, savingParameters);
 
     // node has failed to be written
     if (!res)
@@ -699,10 +685,6 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       }
 
     // clean up node after saving
-    int disableModify = node->GetDisableModifiedEvent();
-    node->SetDisableModifiedEvent(1);
-    node->SetModifiedSinceRead(0);
-    node->SetDisableModifiedEvent(disableModify);
     nodeNameItem->setCheckState(Qt::Unchecked);
     nodeStatusItem->setText("Not Modified");
     }
@@ -722,7 +704,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
     }
   QTableWidgetItem* nodeNameItem = 
     this->FileWidget->item(found[0].row(), NodeNameColumn);
-  std::cout << "MUST SCENE BE SAVED: " << nodeNameItem->checkState();
+
   return nodeNameItem->checkState() == Qt::Checked;
 }
 
@@ -802,80 +784,19 @@ void qSlicerSaveDataDialogPrivate::setSceneRootDirectory(const QString& dir)
 //-----------------------------------------------------------------------------
 bool qSlicerSaveDataDialogPrivate::saveScene()
 {
+  qSlicerIO::IOProperties properties;
   QFileInfo file = this->sceneFile();
+  properties["fileName"] = file.absoluteFilePath();
 
-  // save an explicit default scene view recording the state of the scene when
-  // saved to file
-  const char *defaultSceneName = "Master Scene View";
-  vtkMRMLSceneViewNode * newSceneViewNode = NULL;
-  vtkMRMLSceneViewNode *sceneViewNode = NULL;
-  vtkSmartPointer<vtkCollection> oldSceneViewNodes;
-  oldSceneViewNodes.TakeReference(this->MRMLScene->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));
-  if (oldSceneViewNodes->GetNumberOfItems() == 0)
-    {
-    // make a new one
-    newSceneViewNode = vtkMRMLSceneViewNode::New();
-    newSceneViewNode->SetScene(this->MRMLScene);
-    newSceneViewNode->SetName(defaultSceneName);
-    newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
-    this->MRMLScene->AddNode(newSceneViewNode);
-
-    // create a storage node
-    vtkMRMLStorageNode *storageNode = newSceneViewNode->CreateDefaultStorageNode();
-    // set the file name from the node name
-    std::string fname = std::string(newSceneViewNode->GetName()) + std::string(".png");
-    storageNode->SetFileName(fname.c_str());
-    this->MRMLScene->AddNode(storageNode);
-    newSceneViewNode->SetAndObserveStorageNodeID(storageNode->GetID());
-    storageNode->Delete();
-
-    // use the new one
-    sceneViewNode = newSceneViewNode;
-    }
-  else
-    {
-    // take the first one and over write it
-    sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(oldSceneViewNodes->GetItemAsObject(0));
-    }
-  // take a screen shot of the full layout
-  sceneViewNode->SetScreenShotType(4);
   // create a screenShot of the full layout
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
-  // don't block the screenshot
-  this->hide();
+  this->hide();  // don't block the screenshot
   QPixmap screenShot = QPixmap::grabWidget(widget);
   this->show();
-  // convert to vtkImageData
-  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
-  sceneViewNode->SetScreenShot(imageData);
-  // mark it modified since read so that the screen shot will get saved to disk
-  sceneViewNode->ModifiedSinceReadOn();
-  sceneViewNode->StoreScene();
-  
-  // force a write
-  sceneViewNode->GetStorageNode()->WriteData(sceneViewNode);
-  // clean up
-  if (newSceneViewNode)
-    {
-    newSceneViewNode->Delete();
-    }
-  
-  // remove unreferenced nodes
-  // TODO: the MRML Scene should deal with this on Commit or the
-  // modules should respond to NodeRemoved events and keep the scene clean.
-  /*
-  vtkMRMLLogic *mrmlLogic = vtkMRMLLogic::New();
-  mrmlLogic->SetScene(this->MRMLScene);
-  mrmlLogic->RemoveUnreferencedDisplayNodes();
-  mrmlLogic->RemoveUnreferencedStorageNodes();
-  mrmlLogic->Delete();
-  */
-  
-  this->MRMLScene->SetURL(file.absoluteFilePath().toLatin1());
-  // TODO
-  this->MRMLScene->SetVersion("Slicer4");
-  bool res = this->MRMLScene->Commit();
+  properties["screenShot"] = screenShot;
+
+  bool res = qSlicerApplication::application()->coreIOManager()->saveNodes(
+    qSlicerIO::SceneFile, properties);
   return res;
 }
 

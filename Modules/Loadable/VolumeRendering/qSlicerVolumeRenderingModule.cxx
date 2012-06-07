@@ -5,6 +5,7 @@
 // QtGUI includes
 #include <qSlicerApplication.h>
 #include <qSlicerCoreIOManager.h>
+#include <qSlicerNodeWriter.h>
 
 // VolumeRendering Logic includes
 #include <vtkSlicerVolumeRenderingLogic.h>
@@ -122,8 +123,13 @@ void qSlicerVolumeRenderingModule::setup()
     qSlicerApplication::application()->settingsDialog()->addPanel(
       "Volume rendering", panel);
     }
-  qSlicerCoreApplication::application()->coreIOManager()->registerIO(
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  coreIOManager->registerIO(
     new qSlicerVolumeRenderingIO(volumeRenderingLogic, this));
+  coreIOManager->registerIO(new qSlicerNodeWriter(
+    "Transfer Function", qSlicerIO::TransferFunctionFile,
+    QStringList() << "vtkMRMLVolumePropertyNode", this));
 }
 
 //-----------------------------------------------------------------------------

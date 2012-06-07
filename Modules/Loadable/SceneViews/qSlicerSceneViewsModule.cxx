@@ -3,6 +3,9 @@
 #include <QtPlugin>
 
 // QTGUI includes
+#include "qSlicerApplication.h"
+#include "qSlicerCoreIOManager.h"
+#include <qSlicerNodeWriter.h>
 
 // SceneViewsModule includes
 #include "qSlicerSceneViewsModule.h"
@@ -35,7 +38,11 @@ qSlicerSceneViewsModule::~qSlicerSceneViewsModule()
 //-----------------------------------------------------------------------------
 void qSlicerSceneViewsModule::setup()
 {
-
+  qSlicerCoreIOManager* ioManager =
+    qSlicerApplication::application()->coreIOManager();
+  ioManager->registerIO(new qSlicerNodeWriter(
+    "SceneViews", qSlicerIO::SceneViewFile,
+    QStringList() << "vtkMRMLSceneViewNode", this));
 }
 
 //-----------------------------------------------------------------------------
