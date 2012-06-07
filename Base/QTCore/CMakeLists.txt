@@ -44,6 +44,10 @@ set(KIT_SRCS
   qSlicerCoreCommandOptions.h
   qSlicerCoreIOManager.cxx
   qSlicerCoreIOManager.h
+  qSlicerFileReader.cxx
+  qSlicerFileReader.h
+  qSlicerFileWriter.cxx
+  qSlicerFileWriter.h
   qSlicerIO.cxx
   qSlicerIO.h
   qSlicerIOOptions.cxx
@@ -54,10 +58,10 @@ set(KIT_SRCS
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.cxx
   qSlicerModuleManager.h
+  qSlicerNodeWriter.cxx
+  qSlicerNodeWriter.cxx
   qSlicerObject.cxx
   qSlicerObject.h
-  qSlicerFileWriter.cxx
-  qSlicerFileWriter.h
   qSlicerSceneBundleIO.cxx
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.cxx
@@ -80,6 +84,7 @@ endif()
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
 set_source_files_properties(
+  qSlicerFileReader.h
   qSlicerFileWriter.h
   WRAP_EXCLUDE
   )
@@ -91,10 +96,12 @@ set(KIT_MOC_SRCS
   qSlicerCoreCommandOptions.h
   qSlicerCoreApplication.h
   qSlicerCoreIOManager.h
+  qSlicerFileReader.h
+  qSlicerFileWriter.h
   qSlicerIO.h
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.h
-  qSlicerFileWriter.h
+  qSlicerNodeWriter.h
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.h
   qSlicerXcedeCatalogIO.h

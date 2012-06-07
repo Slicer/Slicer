@@ -1250,14 +1250,14 @@ void qSlicerXcedeCatalogIOPrivate::applyFIPS2SlicerTransformCorrection()
 
 //------------------------------------------------------------------------------
 qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
 {
 }
 
 //------------------------------------------------------------------------------
 qSlicerXcedeCatalogIO::qSlicerXcedeCatalogIO(vtkMRMLColorLogic* logic, QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerXcedeCatalogIOPrivate(*this))
 {
   this->setColorLogic(logic);

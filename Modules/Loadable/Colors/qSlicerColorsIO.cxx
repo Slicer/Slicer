@@ -42,7 +42,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerColorsIO::qSlicerColorsIO(
   vtkSlicerColorLogic* _colorLogic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerColorsIOPrivate)
 {
   this->setColorLogic(_colorLogic);

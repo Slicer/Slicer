@@ -47,22 +47,22 @@ class qSlicerVolumeRenderingIOPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerVolumeRenderingIOPrivate)
-{
-}
-
-//-----------------------------------------------------------------------------
-qSlicerVolumeRenderingIO::~qSlicerVolumeRenderingIO()
 {
 }
 
 //-----------------------------------------------------------------------------
 qSlicerVolumeRenderingIO::qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerVolumeRenderingIOPrivate)
 {
   this->setVolumeRenderingLogic(logic);
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumeRenderingIO::~qSlicerVolumeRenderingIO()
+{
 }
 
 //-----------------------------------------------------------------------------

@@ -22,17 +22,19 @@
 #define __qSlicerTransformsIO_h
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerTransformsIOPrivate;
 
 // Slicer includes
 class vtkSlicerTransformLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsIO: public qSlicerIO
+class qSlicerTransformsIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
 public:
+  typedef qSlicerFileReader Superclass;
   qSlicerTransformsIO(vtkSlicerTransformLogic* transformLogic, QObject* parent = 0);
   virtual ~qSlicerTransformsIO();
 

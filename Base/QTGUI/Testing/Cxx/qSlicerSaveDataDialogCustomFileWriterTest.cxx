@@ -49,7 +49,7 @@ public:
   virtual QStringList nodeTags()const {return QStringList() << "LinearTransform";}
   virtual QString description()const{return "Dummy";}
   virtual qSlicerIO::IOFileType fileType()const{return this->FileType;}
-  virtual QStringList extensions()const{return QStringList(QString("MyType(*.mhd *.vtk)"));}
+  virtual QStringList extensions(vtkObject*)const{return QStringList(QString("MyType(*.mhd *.vtk)"));}
 
   virtual bool write(const IOProperties& properties);
 

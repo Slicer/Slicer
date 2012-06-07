@@ -22,7 +22,7 @@
 #define __qSlicerModelsIO_h
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerModelsIOPrivate;
 
 // Slicer includes
@@ -30,10 +30,12 @@ class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
-class qSlicerModelsIO: public qSlicerIO
+class qSlicerModelsIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerModelsIO(vtkSlicerModelsLogic* modelsLogic = 0, QObject* parent = 0);
   virtual ~qSlicerModelsIO();
 

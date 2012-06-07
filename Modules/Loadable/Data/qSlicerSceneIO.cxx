@@ -37,7 +37,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerSceneIO::qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic,
                                QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerSceneIOPrivate)
 {
   Q_D(qSlicerSceneIO);

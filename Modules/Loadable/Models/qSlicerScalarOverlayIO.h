@@ -22,17 +22,19 @@
 #define __qSlicerScalarOverlayIO_h
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerScalarOverlayIOPrivate;
 
 // Slicer includes
 class vtkSlicerModelsLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerScalarOverlayIO: public qSlicerIO
+class qSlicerScalarOverlayIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
 public:
+  typedef qSlicerFileReader Superclass;
   qSlicerScalarOverlayIO(vtkSlicerModelsLogic* modelsLogic, QObject* parent = 0);
   virtual ~qSlicerScalarOverlayIO();
 

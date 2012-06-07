@@ -91,7 +91,7 @@ protected slots:
 
 protected:
   friend class qSlicerFileDialog;
-  using qSlicerCoreIOManager::ios;
+  using qSlicerCoreIOManager::readers;
 protected:
   QScopedPointer<qSlicerIOManagerPrivate> d_ptr;
 

@@ -22,7 +22,7 @@
 #define __qSlicerVolumeRenderingIO_h
 
 // SlicerQT includes
-#include <qSlicerIO.h>
+#include <qSlicerFileReader.h>
 
 // Volume Rendering includes
 class qSlicerVolumeRenderingIOPrivate;
@@ -30,10 +30,12 @@ class vtkSlicerVolumeRenderingLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
-class qSlicerVolumeRenderingIO: public qSlicerIO
+class qSlicerVolumeRenderingIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerVolumeRenderingIO(QObject* parent = 0);
   qSlicerVolumeRenderingIO(vtkSlicerVolumeRenderingLogic* logic, QObject* parent = 0);
   virtual ~qSlicerVolumeRenderingIO();

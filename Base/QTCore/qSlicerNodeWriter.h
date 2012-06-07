@@ -18,22 +18,29 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerFileWriter_h
-#define __qSlicerFileWriter_h
+#ifndef __qSlicerNodeWriter_h
+#define __qSlicerNodeWriter_h
 
 // QtCore includes
-#include "qSlicerIO.h"
-class qSlicerFileWriterPrivate;
+#include "qSlicerFileWriter.h"
+class qSlicerNodeWriterPrivate;
 
-class vtkObject;
-
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerFileWriter
-  : public qSlicerIO
+/// Utility class that is ready to use for most of the nodes.
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerNodeWriter
+  : public qSlicerFileWriter
 {
   Q_OBJECT
 public:
-  qSlicerFileWriter(QObject* parent = 0);
-  virtual ~qSlicerFileWriter();
+  typedef qSlicerFileWriter Superclass;
+  qSlicerNodeWriter(const QString& description,
+                    const qSlicerIO::IOFileType& fileType,
+                    const QStringList& nodeTags,
+                    QObject* parent = 0);
+
+  virtual ~qSlicerNodeWriter();
+
+  virtual QString description()const;
+  virtual IOFileType fileType()const;
 
   /// Return true if the object is handled by the writer.
   virtual bool canWriteObject(vtkObject* object)const;
@@ -41,29 +48,20 @@ public:
   /// Return  a list of the supported extensions for a particuliar object.
   /// Please read QFileDialog::nameFilters for the allowed formats
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
-  virtual QStringList extensions(vtkObject* object)const = 0;
+  virtual QStringList extensions(vtkObject* object)const;
 
-  /// Write the node identified by nodeID into the fileName file.
-  /// Returns true on success
-  /// Properties availables:
-  /// * QString nodeID
-  /// * QString fileName
-  /// * QString fileFormat
-  /// * bool compressed
-  /// ...
   virtual bool write(const qSlicerIO::IOProperties& properties);
 
-  QStringList writtenNodes()const;
+protected:
+  void setNodeClassNames(const QStringList& nodeClassNames);
+  QStringList nodeClassNames()const;
 
 protected:
-  void setWrittenNodes(const QStringList& nodes);
-
-protected:
-  QScopedPointer<qSlicerFileWriterPrivate> d_ptr;
+  QScopedPointer<qSlicerNodeWriterPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerFileWriter);
-  Q_DISABLE_COPY(qSlicerFileWriter);
+  Q_DECLARE_PRIVATE(qSlicerNodeWriter);
+  Q_DISABLE_COPY(qSlicerNodeWriter);
 };
 
 #endif

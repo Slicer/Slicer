@@ -22,7 +22,7 @@
 #define __qSlicerXcedeCatalogIO
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 
 class qSlicerXcedeCatalogIOPrivate;
 
@@ -30,10 +30,12 @@ class qSlicerXcedeCatalogIOPrivate;
 class vtkMRMLColorLogic;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerXcedeCatalogIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerXcedeCatalogIO(QObject* parent = 0);
   qSlicerXcedeCatalogIO(vtkMRMLColorLogic* logic, QObject* parent = 0);
   virtual ~qSlicerXcedeCatalogIO();

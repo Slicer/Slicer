@@ -41,10 +41,9 @@ qSlicerFileWriter::~qSlicerFileWriter()
 }
 
 //----------------------------------------------------------------------------
-bool qSlicerFileWriter::canWriteFile(const QString& fileName)const
+bool qSlicerFileWriter::canWriteObject(vtkObject* object)const
 {
-  QStringList res = this->supportedNameFilters(fileName);
-  return res.count() > 0;
+  return false;
 }
 
 //----------------------------------------------------------------------------

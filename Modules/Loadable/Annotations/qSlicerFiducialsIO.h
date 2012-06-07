@@ -22,17 +22,19 @@
 #define __qSlicerFiducialsIO
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 
 class qSlicerFiducialsIOPrivate;
 class vtkSlicerAnnotationModuleLogic;
 
 //----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotations
-class qSlicerFiducialsIO: public qSlicerIO
+class qSlicerFiducialsIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
 public:
+  typedef qSlicerFileReader Superclass;
   qSlicerFiducialsIO(QObject* parent = 0);
   qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* parent = 0);
   virtual ~qSlicerFiducialsIO();

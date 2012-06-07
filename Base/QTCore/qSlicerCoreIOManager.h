@@ -35,7 +35,9 @@
 class vtkMRMLNode;
 class vtkMRMLStorableNode;
 class vtkCollection;
+class vtkObject;
 class qSlicerCoreIOManagerPrivate;
+class qSlicerFileReader;
 class qSlicerFileWriter;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreIOManager:public QObject
@@ -49,7 +51,6 @@ public:
   Q_INVOKABLE qSlicerIO::IOFileType fileType(const QString& file)const;
   Q_INVOKABLE QList<qSlicerIO::IOFileType> fileTypes(const QString& file)const;
   Q_INVOKABLE qSlicerIO::IOFileType fileTypeFromDescription(const QString& fileDescription)const;
-  Q_INVOKABLE qSlicerIO::IOFileType fileType(vtkMRMLStorableNode* storableNode)const;
 
   /// Return the file description associated with a \a file
   /// Usually the description is a short text of one or two words
@@ -57,8 +58,9 @@ public:
   QStringList fileDescriptions(const QString& file)const;
   QStringList fileDescriptions(const qSlicerIO::IOFileType fileType)const;
 
+  Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object)const;
   QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
-  QStringList fileWriterExtensions(const qSlicerIO::IOFileType& fileType)const;
+  QStringList fileWriterExtensions(vtkObject* object)const;
 
   /// Return the file option associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
@@ -113,17 +115,16 @@ public:
 protected:
 
   /// Returns the list of registered readers
-  const QList<qSlicerIO*>& ios()const;
+  const QList<qSlicerFileReader*>& readers()const;
 
   /// Returns the list of registered writers
   const QList<qSlicerFileWriter*>& writers()const;
   /// Returns the list of registered writers for a given fileType
   QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType& fileType)const;
 
-
   /// Returns the list of registered readers or writers associated with \a fileType
-  QList<qSlicerIO*> ios(const qSlicerIO::IOFileType& fileType)const;
-  qSlicerIO* io(const QString& ioDescription)const;
+  QList<qSlicerFileReader*> readers(const qSlicerIO::IOFileType& fileType)const;
+  qSlicerFileReader* reader(const QString& ioDescription)const;
 
 protected:
   QScopedPointer<qSlicerCoreIOManagerPrivate> d_ptr;

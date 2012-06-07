@@ -23,7 +23,7 @@
 
 // QtCore includes
 #include "qSlicerDataModuleExport.h"
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 
 // Logic includes
 class vtkSlicerCamerasModuleLogic;
@@ -34,10 +34,11 @@ class qSlicerSceneIOPrivate;
 /// It internally call vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
 /// depending on the clear flag.
 class Q_SLICER_QTMODULES_DATA_EXPORT qSlicerSceneIO
-  : public qSlicerIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerSceneIO(vtkSlicerCamerasModuleLogic* camerasLogic, QObject* _parent = 0);
   virtual ~qSlicerSceneIO();
   

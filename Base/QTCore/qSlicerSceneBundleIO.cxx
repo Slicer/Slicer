@@ -39,7 +39,7 @@
 
 //-----------------------------------------------------------------------------
 qSlicerSceneBundleIO::qSlicerSceneBundleIO(QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
 {
 }
 

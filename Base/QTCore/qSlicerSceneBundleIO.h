@@ -22,7 +22,7 @@
 #define __qSlicerSceneBundleIO_h
 
 // QtCore includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 
 ///
 /// qSlicerSceneBundleIO is the IO class that handle MRML scene
@@ -30,12 +30,14 @@
 /// is mrb (for Medical Reality Bundle)
 /// It internally calls vtkMRMLScene::Connect() or vtkMRMLScene::Import() 
 /// depending on the clear flag.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleIO: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSceneBundleIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerSceneBundleIO(QObject* _parent = 0);
-  
+
   virtual QString description()const;
   /// Support qSlicerIO::SceneFile
   virtual qSlicerIO::IOFileType fileType()const;

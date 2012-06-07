@@ -22,7 +22,7 @@
 #define __qSlicerFiberBundleIO_h
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerFiberBundleIOPrivate;
 
 // Slicer includes
@@ -30,10 +30,12 @@ class vtkSlicerFiberBundleLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_TractographyDisplay
-class qSlicerFiberBundleIO: public qSlicerIO
+class qSlicerFiberBundleIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
 public:
+  typedef qSlicerFileReader Superclass;
   qSlicerFiberBundleIO(vtkSlicerFiberBundleLogic* fiberBundleLogic, QObject* parent = 0);
   virtual ~qSlicerFiberBundleIO();
 

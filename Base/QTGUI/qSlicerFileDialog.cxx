@@ -27,6 +27,7 @@
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
+#include "qSlicerFileReader.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerIOOptionsWidget.h"
 
@@ -54,9 +55,9 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 {
   QStringList filters;
   QStringList extensions;
-  QList<qSlicerIO*> readers = 
-    qSlicerApplication::application()->ioManager()->ios(fileType);
-  foreach(const qSlicerIO* reader, readers)
+  QList<qSlicerFileReader*> readers = 
+    qSlicerApplication::application()->ioManager()->readers(fileType);
+  foreach(const qSlicerFileReader* reader, readers)
     {
     foreach(const QString& filter, reader->extensions())
       {

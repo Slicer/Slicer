@@ -43,7 +43,7 @@ public:
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
 qSlicerModelsIO::qSlicerModelsIO(vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerModelsIOPrivate)
 {
   this->setModelsLogic(_modelsLogic);

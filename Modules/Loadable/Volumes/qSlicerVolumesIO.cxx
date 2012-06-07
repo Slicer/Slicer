@@ -46,14 +46,14 @@ class qSlicerVolumesIOPrivate
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesIO::qSlicerVolumesIO(QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerVolumesIOPrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesIO::qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerVolumesIOPrivate)
 {
   this->setLogic(logic);

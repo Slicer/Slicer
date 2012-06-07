@@ -1272,14 +1272,14 @@ void qSlicerSlicer2SceneReaderPrivate::importOptionsNode(NodeType& node)
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerSlicer2SceneReaderPrivate(*this))
 {
 }
 
 //-----------------------------------------------------------------------------
 qSlicerSlicer2SceneReader::qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerSlicer2SceneReaderPrivate(*this))
 {
   this->setApplicationLogic(logic);

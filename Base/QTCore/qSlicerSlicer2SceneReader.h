@@ -22,17 +22,19 @@
 #define __qSlicerSlicer2SceneReader
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerSlicer2SceneReaderPrivate;
 
 // SlicerLogic includes
 class vtkSlicerApplicationLogic;
 
 //-----------------------------------------------------------------------------
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader: public qSlicerIO
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerSlicer2SceneReader
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerSlicer2SceneReader(QObject* parent = 0);
   qSlicerSlicer2SceneReader(vtkSlicerApplicationLogic* logic, QObject* parent = 0);
   virtual ~qSlicerSlicer2SceneReader();

@@ -22,12 +22,9 @@
 #define __qSlicerObject_h
 
 // Qt includes
-#include <QObject>
+#include <QScopedPointer>
 
 // CTK includes
-#include <ctkPimpl.h>
-#include <ctkVTKObject.h>
-
 #include "qSlicerBaseQTCoreExport.h"
 
 class vtkMRMLScene;

@@ -22,16 +22,18 @@
 #define __qSlicerVolumesIO
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerVolumesIOPrivate;
 class vtkSlicerVolumesLogic;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
-class qSlicerVolumesIO: public qSlicerIO
+class qSlicerVolumesIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
-public: 
+public:
+  typedef qSlicerFileReader Superclass;
   qSlicerVolumesIO(QObject* parent = 0);
   qSlicerVolumesIO(vtkSlicerVolumesLogic* logic, QObject* parent = 0);
   virtual ~qSlicerVolumesIO();

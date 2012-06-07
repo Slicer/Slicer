@@ -45,7 +45,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayIO::qSlicerScalarOverlayIO(
   vtkSlicerModelsLogic* _modelsLogic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerScalarOverlayIOPrivate)
 {
   this->setModelsLogic(_modelsLogic);

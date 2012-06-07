@@ -22,17 +22,19 @@
 #define __qSlicerColorsIO_h
 
 // SlicerQt includes
-#include "qSlicerIO.h"
+#include "qSlicerFileReader.h"
 class qSlicerColorsIOPrivate;
 
 // Slicer includes
 class vtkSlicerColorLogic;
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsIO: public qSlicerIO
+class qSlicerColorsIO
+  : public qSlicerFileReader
 {
   Q_OBJECT
 public:
+  typedef qSlicerFileReader Superclass;
   qSlicerColorsIO(vtkSlicerColorLogic* colorLogic = 0, QObject* parent = 0);
   virtual ~qSlicerColorsIO();
 

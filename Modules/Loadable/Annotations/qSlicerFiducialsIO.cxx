@@ -51,13 +51,13 @@ class qSlicerFiducialsIOPrivate
 /// \ingroup Slicer_QtModules_Annotations
 //-----------------------------------------------------------------------------
 qSlicerFiducialsIO::qSlicerFiducialsIO(QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerFiducialsIOPrivate)
 {
 }
 
 qSlicerFiducialsIO::qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerFiducialsIOPrivate)
 {
   this->setAnnotationLogic(logic);

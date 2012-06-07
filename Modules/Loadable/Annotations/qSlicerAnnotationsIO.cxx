@@ -48,13 +48,13 @@ class qSlicerAnnotationsIOPrivate
 /// \ingroup Slicer_QtModules_Annotations
 //-----------------------------------------------------------------------------
 qSlicerAnnotationsIO::qSlicerAnnotationsIO(QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerAnnotationsIOPrivate)
 {
 }
 
 qSlicerAnnotationsIO::qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic* logic, QObject* _parent)
-  :qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerAnnotationsIOPrivate)
 {
   this->setAnnotationLogic(logic);

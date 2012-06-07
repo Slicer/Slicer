@@ -23,18 +23,19 @@
 
 // SlicerQt includes
 #include "qSlicerApplication.h"
-#include "qSlicerDataDialog.h"
 #include "qSlicerIOManager.h"
 #include "qSlicerModuleManager.h"
+
+// Data includes
+#include "qSlicerDataDialog.h"
+#include "qSlicerDataModule.h"
+#include "qSlicerDataModuleWidget.h"
 #include "qSlicerSaveDataDialog.h"
 #include "qSlicerSceneIO.h"
 #include "qSlicerSceneBundleIO.h"
+#include "qSlicerSceneWriter.h"
 #include "qSlicerSlicer2SceneReader.h"
 #include "qSlicerXcedeCatalogIO.h"
-
-// CoreModule includes
-#include "qSlicerDataModule.h"
-#include "qSlicerDataModuleWidget.h"
 
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
@@ -109,12 +110,16 @@ void qSlicerDataModule::setup()
 
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
+  // Readers
   ioManager->registerIO(new qSlicerSceneIO(camerasLogic, this));
   ioManager->registerIO(new qSlicerSceneBundleIO(this));
   ioManager->registerIO(new qSlicerSlicer2SceneReader(this->appLogic(), this));
   ioManager->registerIO(new qSlicerXcedeCatalogIO(colorLogic, this));
 
-  //p->registerDialog(new qSlicerStandardFileDialog(p));
+  // Writers
+  ioManager->registerIO(new qSlicerSceneWriter(this));
+
+  // Dialogs
   ioManager->registerDialog(new qSlicerDataDialog(this));
   ioManager->registerDialog(new qSlicerSaveDataDialog(this));
 }

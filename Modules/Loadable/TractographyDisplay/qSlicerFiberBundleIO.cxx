@@ -43,7 +43,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerFiberBundleIO::qSlicerFiberBundleIO(
   vtkSlicerFiberBundleLogic* _fiberBundleLogic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerFiberBundleIOPrivate)
 {
   this->setFiberBundleLogic(_fiberBundleLogic);

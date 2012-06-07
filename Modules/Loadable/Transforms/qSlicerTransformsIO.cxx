@@ -42,7 +42,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerTransformsIO::qSlicerTransformsIO(
   vtkSlicerTransformLogic* _transformLogic, QObject* _parent)
-  : qSlicerIO(_parent)
+  : Superclass(_parent)
   , d_ptr(new qSlicerTransformsIOPrivate)
 {
   this->setTransformLogic(_transformLogic);
