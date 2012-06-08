@@ -15,6 +15,8 @@
 #define __itkDiffusionTensor3DWrite_txx
 
 #include "itkDiffusionTensor3DWrite.h"
+#include <teem/nrrdEnums.h>
+#include <teem/ten.h>
 
 namespace itk
 {
