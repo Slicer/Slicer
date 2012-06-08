@@ -19,12 +19,21 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDateTime>
+#include <QDebug>
+#include <QDir>
 #include <QFileInfo>
 #include <QPixmap>
 
+// CTK includes
+#include <ctkMessageBox.h>
+#include <ctkUtils.h>
+
 // QtCore includes
 #include "qMRMLUtils.h"
+#include "qSlicerCoreApplication.h"
 #include "qSlicerSceneWriter.h"
+#include "vtkSlicerApplicationLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -70,7 +79,10 @@ bool qSlicerSceneWriter::canWriteObject(vtkObject* object)const
 QStringList qSlicerSceneWriter::extensions(vtkObject* object)const
 {
   Q_UNUSED(object);
-  return QStringList("MRML Scene(.mrml)");
+  return QStringList()
+    << tr("MRML Scene (.mrml)")
+    << tr("Medical Reality Bundle (.mrb)")
+    << tr("Slicer Data Bundle (*)");
 }
 
 //----------------------------------------------------------------------------
@@ -78,6 +90,28 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
 {
   this->setWrittenNodes(QStringList());
 
+  Q_ASSERT(!properties["fileName"].toString().isEmpty());
+  QFileInfo fileInfo(properties["fileName"].toString());
+  bool res = false;
+  if (fileInfo.suffix() == "mrml")
+    {
+    res = this->writeToMRML(properties);
+    }
+  else if (fileInfo.suffix() == "mrb")
+    {
+    res = this->writeToMRB(properties);
+    }
+  else
+    {
+    res = this->writeToDirectory(properties);
+    }
+  return res;
+}
+
+
+//----------------------------------------------------------------------------
+bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
+{
   // save an explicit default scene view recording the state of the scene when
   // saved to file
   const char *defaultSceneName = "Master Scene View";
@@ -137,4 +171,151 @@ bool qSlicerSceneWriter::write(const qSlicerIO::IOProperties& properties)
   this->mrmlScene()->SetVersion("Slicer4");
   bool res = this->mrmlScene()->Commit();
   return res;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
+{
+  //
+  // make a temp directory to save the scene into - this will
+  // be a uniquely named directory that contains a directory
+  // named based on the user's selection.
+  //
+
+  // TODO: switch to QTemporaryDir in Qt5.
+  // For now, create a named directory and use Qt calls to remove it
+  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
+  QFileInfo pack(QDir(tempDir), //QDir::tempPath(),
+                 QString("__BundleSaveTemp-") + 
+                  QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz"));
+  qDebug() << "packing to " << pack.absoluteFilePath();
+
+  // make a subdirectory with the name the user has chosen
+  QFileInfo fileInfo(properties["fileName"].toString());
+  QFileInfo bundle = QFileInfo(QDir(pack.absoluteFilePath()),
+                               fileInfo.baseName());
+  QString bundlePath = bundle.absoluteFilePath();
+  if ( bundle.exists() )
+    {
+    if ( !ctk::removeDirRecursively(bundlePath) )
+      {
+      QMessageBox::critical(0, tr("Save Scene as MRB"), tr("Could not remove temp directory"));
+      return false;
+      }
+    }
+
+  if ( !QDir().mkpath(bundlePath) )
+    {
+    QMessageBox::critical(0, tr("Save scene as MRB"), tr("Could not make temp directory"));
+    return false;
+    }
+
+  vtkSmartPointer<vtkImageData> imageData;
+  if (properties.contains("screenShot"))
+    {
+    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    // convert to vtkImageData
+    imageData = vtkSmartPointer<vtkImageData>::New();
+    qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
+    }
+
+  //
+  // Now save the scene into the bundle directory and then make a zip (mrb) file
+  // in the user's selected file location
+  //
+  vtkSlicerApplicationLogic* applicationLogic =
+    qSlicerCoreApplication::application()->applicationLogic();
+  Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
+  const char *retval =
+    applicationLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toLatin1(),
+                                                           imageData);
+  if (retval == 0)
+    {
+    QMessageBox::critical(0, tr("Save scene as MRB"), tr("Failed to create bundle"));
+    return false;
+    }
+
+  qDebug() << "zipping to " << fileInfo.absoluteFilePath();
+  if ( !applicationLogic->Zip(fileInfo.absoluteFilePath().toLatin1(),
+                              bundlePath.toLatin1()) )
+    {
+    QMessageBox::critical(0, tr("Save scene as MRB"), tr("Could not compress bundle"));
+    return false;
+    }
+
+  //
+  // Now clean up the temp directory
+  //
+  if ( !ctk::removeDirRecursively(bundlePath) )
+    {
+    QMessageBox::critical(0, tr("Save scene as MRB"), tr("Could not remove temp directory"));
+    return false;
+    }
+
+  qDebug() << "saved " << fileInfo.absoluteFilePath();
+  return true;
+}
+
+
+//---------------------------------------------------------------------------
+bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& properties)
+{
+  // open a file dialog to let the user choose where to save
+  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
+  QString saveDirName = properties["fileName"].toString();
+
+  QDir saveDir(saveDirName);
+  if (!saveDir.exists())
+    {
+    QDir().mkpath(saveDir.absolutePath());
+    }
+  int numFiles = saveDir.count() - 2;
+  if (numFiles != 0)
+    {
+    ctkMessageBox *emptyMessageBox = new ctkMessageBox(0);
+    QString error;
+    switch(numFiles)
+      {
+      case -2:
+      case -1:
+        error = tr("fails to be created");
+      case 1:
+        error = tr("contains 1 file or directory");
+      default:
+        error = tr("contains %1 files or directories").arg(numFiles);
+      }
+    QString message = tr("Selected directory\n\"%1\"\n%2.\n"
+                         "Please choose an empty directory.")
+                         .arg(saveDirName)
+                         .arg(error);
+    emptyMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
+    emptyMessageBox->setIcon(QMessageBox::Warning);
+    emptyMessageBox->setText(message);
+    emptyMessageBox->exec();
+    return false;
+    }
+
+  vtkSmartPointer<vtkImageData> imageData;
+  if (properties.contains("screenShot"))
+    {
+    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    // convert to vtkImageData
+    imageData = vtkSmartPointer<vtkImageData>::New();
+    qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
+    }
+
+  vtkSlicerApplicationLogic* applicationLogic =
+    qSlicerCoreApplication::application()->applicationLogic();
+  Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
+  const char *retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(
+    saveDirName.toLatin1(), imageData);
+  if (retval)
+    {
+    qDebug() << "Saved scene to file " << QString(retval);
+    }
+  else
+    {
+    qDebug() << "Error saving scene to file!";
+    }
+  return retval ? true : false;
 }

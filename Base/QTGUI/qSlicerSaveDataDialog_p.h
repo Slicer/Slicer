@@ -48,6 +48,8 @@ protected slots:
   QFileInfo sceneFile()const;
   void showMoreColumns(bool);
   void updateSize();
+  void onSceneFormatChanged();
+  void enableNodes(bool);
 
 protected:
   enum ColumnType
@@ -61,6 +63,7 @@ protected:
     NodeStatusColumn = 5
   };
 
+  int               findSceneRow()const;
   bool              mustSceneBeSaved()const;
   bool              prepareForSaving();
   void              restoreAfterSaving();

@@ -186,7 +186,7 @@ void qSlicerAppMainWindowCore::onFileSaveSceneActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 {
-   Q_D(qSlicerAppMainWindowCore);
+  Q_D(qSlicerAppMainWindowCore);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
@@ -196,31 +196,6 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
     std::cout << "No directory name chosen!" << std::endl;
     return;
     }
-  // double check that user is sure they want to save to this directory if
-  // there are already files in it
-  QDir testSaveDir = QDir(saveDirName);
-  int numFiles = testSaveDir.count() - 2;
-  if (numFiles > 0)
-    {
-    ctkMessageBox *emptyMessageBox = new ctkMessageBox(d->ParentWidget);
-    QString plurals = QString("\ncontains ");
-    if (numFiles == 1)
-      {
-      plurals += QString("1 file or directory.\n");
-      }
-    else
-      {
-      plurals += QString("%1 files or directories.\n").arg(numFiles);
-      }
-    QString message = QString("Selected directory\n" + saveDirName + plurals +
-                              "Please choose an empty directory.");
-    emptyMessageBox->setAttribute( Qt::WA_DeleteOnClose, true );
-    emptyMessageBox->setIcon(QMessageBox::Warning);
-    emptyMessageBox->setText(message);
-    emptyMessageBox->exec();
-    return;
-    }
-  
   // pass in a screen shot
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
   QPixmap screenShot = QPixmap::grabWidget(widget);
@@ -228,16 +203,11 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
   qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
 
-  const char *retval = qSlicerCoreApplication::application()->applicationLogic()->SaveSceneToSlicerDataBundleDirectory(saveDirName.toLatin1(), imageData);
-  if (retval)
-    {
-    QString returnFileName = QString(retval);
-    std::cout << "Saved scene to file " << qPrintable(returnFileName) << std::endl;
-    }
-  else
-    {
-    std::cerr << "Error saving scene to file!" << std::endl;
-    }
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = saveDirName;
+  properties["screenShot"] = screenShot;
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->saveNodes(qSlicerIO::SceneFile, properties);
 }
 
 //---------------------------------------------------------------------------
@@ -257,75 +227,14 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
     return;
     }
 
-  if ( ! fileName.endsWith(".mrb") )
+  if ( !fileName.endsWith(".mrb") )
     {
     fileName += QString(".mrb");
     }
-
-  //
-  // make a temp directory to save the scene into - this will
-  // be a uniquely named directory that contains a directory
-  // named based on the user's selection.
-  //
- 
-  // TODO: switch to QTemporaryDir in Qt5.
-  // For now, create a named directory and use
-  // kwsys calls to remove it
-  QString packPath( QDir::tempPath() + 
-                        QString("/__BundleSaveTemp") + 
-                          QDateTime::currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz") );
-
-  std::cerr << "packing to " << packPath.toStdString() << "\n";
-
-  if (vtksys::SystemTools::FileIsDirectory(packPath.toLatin1()))
-    {
-    if ( !vtksys::SystemTools::RemoveADirectory(packPath.toLatin1()) )
-      {
-      QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not remove temp directory"));
-      return;
-      }
-    }
-
-  if ( !vtksys::SystemTools::MakeDirectory(packPath.toLatin1()) )
-    {
-    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not make temp directory"));
-    return;
-    }
-
-  // make a subdirectory with the name the user has chosen
-  QFileInfo fileInfo(fileName);
-  QString bundlePath = packPath + QString("/") + fileInfo.baseName();
-
-  if ( !vtksys::SystemTools::MakeDirectory(bundlePath.toLatin1()) )
-    {
-    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not make temp directory"));
-    return;
-    }
-
-  //
-  // Now save the scene into the bundle directory and then make a zip (mrb) file
-  // in the user's selected file location
-  //
-  vtkNew<vtkMRMLApplicationLogic> appLogic;
-  appLogic->SetMRMLScene( qSlicerCoreApplication::application()->mrmlScene() );
-  appLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toLatin1(), NULL);
-  std::cerr << "zipping to " << fileName.toStdString() << "\n";
-  if ( !appLogic->Zip(fileName.toLatin1(), bundlePath.toLatin1()) )
-    {
-    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not compress bundle"));
-    return;
-    }
-
-  //
-  // Now clean up the temp directory
-  //
-  if ( !vtksys::SystemTools::RemoveADirectory(packPath.toLatin1()) )
-    {
-    QMessageBox::critical(this->widget(), tr("Save MRB"), tr("Could not remove temp directory"));
-    return;
-    }
-
-  std::cerr << "saved " << packPath.toStdString() << "\n";
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = fileName;
+  qSlicerCoreApplication::application()->coreIOManager()
+    ->saveNodes(qSlicerIO::SceneFile, properties);
 }
 
 //---------------------------------------------------------------------------

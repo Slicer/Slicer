@@ -38,7 +38,7 @@ public:
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
-  
+
   /// Return true if the object is handled by the writer.
   virtual bool canWriteObject(vtkObject* object)const;
 
@@ -50,6 +50,11 @@ public:
   /// Write the node identified by nodeID into the fileName file.
   /// Returns true on success.
   virtual bool write(const qSlicerIO::IOProperties& properties);
+
+protected:
+  bool writeToMRML(const qSlicerIO::IOProperties& properties);
+  bool writeToMRB(const qSlicerIO::IOProperties& properties);
+  bool writeToDirectory(const qSlicerIO::IOProperties& properties);
 
 private:
   Q_DISABLE_COPY(qSlicerSceneWriter);
