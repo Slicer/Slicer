@@ -60,7 +60,7 @@ if(NOT DEFINED ITK_DIR)
 
   set(ITKv4_REPOSITORY git://itk.org/ITK.git)
   #set(ITKv4_GIT_TAG v4.1.0)
-  set(ITKv4_GIT_TAG ae54e7089a7b12e51586519735c1d6f0af05021a) ## 2012-03-17 The v4.1.0 branch + ITKv4Registration patch set not needed by Slicer proper, but needed by extensions
+  set(ITKv4_GIT_TAG 6ab33bd3ff830d9277b09a3b31aa6303414e78a4) ## 2012-06-08 The feature freeze version that will become v4.2.0rc2
 
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
