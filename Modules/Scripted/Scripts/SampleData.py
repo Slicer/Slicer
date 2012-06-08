@@ -39,7 +39,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     menuFile = slicer.util.lookupTopLevelWidget('menuFile')
     if menuFile:
       for action in menuFile.actions():
-        if action.text == 'Add Data':
+        if action.text == 'Save':
           menuFile.insertAction(action,a)
 
 

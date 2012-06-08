@@ -54,7 +54,27 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
                 print ('Problem trying to start DICOMListener:\n %s' % message)
     else:
       slicer.dicomDatabase = None
-            
+
+    # Trigger the menu to be added when application has started up
+    if not slicer.app.commandOptions().noMainWindow :
+      qt.QTimer.singleShot(0, self.addMenu);
+
+  def addMenu(self):
+    actionIcon = self.parent.icon
+    a = qt.QAction(actionIcon, 'Add DICOM', slicer.util.mainWindow())
+    a.setToolTip('Raise the DICOM module for loading DICOM dataset')
+    a.connect('triggered()', self.select)
+
+    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
+    if menuFile:
+      for action in menuFile.actions():
+        if action.text == 'Save':
+          menuFile.insertAction(action,a)
+
+  def select(self):
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModule('DICOM')
+
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
       print('trying to stop listener')
