@@ -120,13 +120,14 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
   this->setupUi(this);
   this->FileWidget->setItemDelegateForColumn(
     FileNameColumn, new qSlicerFileNameItemDelegate(this));
+  this->FileWidget->verticalHeader()->setVisible(false);
 
   // Checkable headers.
   // We replace the current FileWidget header view with a checkable header view.
   // Checked files (rows) will be saved, unchecked files will be discarded.
   // In order to have a column checkable, we need to manually set a checkstate
   // to a column. No checkstate (null QVariant) means uncheckable.
-  this->FileWidget->model()->setHeaderData(NodeNameColumn, Qt::Horizontal,
+  this->FileWidget->model()->setHeaderData(SelectColumn, Qt::Horizontal,
                                            Qt::Unchecked, Qt::CheckStateRole);
   QHeaderView* previousHeaderView = this->FileWidget->horizontalHeader();
   ctkCheckableHeaderView* headerView = new ctkCheckableHeaderView(Qt::Horizontal, this->FileWidget);
@@ -148,6 +149,9 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
           this, SLOT(selectModifiedSceneData()));
   connect(this->SelectDataButton, SIGNAL(clicked()),
           this, SLOT(selectModifiedData()));
+  connect(this->ShowMoreCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(showMoreColumns(bool)));
+  this->showMoreColumns(this->ShowMoreCheckBox->isChecked());
 }
 
 //-----------------------------------------------------------------------------
@@ -221,17 +225,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   // MRML scene the first item of the list so we don't do restore the sorting.
   // this->FileWidget->setSortingEnabled(oldSortingEnabled);
 
-  // let's try to resize the columns according to their new contents
-  this->FileWidget->resizeColumnsToContents();
-  // let's try to show the whole table on screen
-  // TODO: find a function in Qt that does it automatically.
-  this->resize(this->layout()->contentsMargins().left()
-               + this->FileWidget->frameWidth()
-               + this->FileWidget->verticalHeader()->sizeHint().width()
-               + this->FileWidget->horizontalHeader()->length()
-               + this->FileWidget->frameWidth()
-               + this->layout()->contentsMargins().right(),
-               this->sizeHint().height());
+  this->updateSize();
 }
 
 //-----------------------------------------------------------------------------
@@ -241,13 +235,13 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->insertRow(row);
 
   // Scene Name
-  QTableWidgetItem* sceneNameItem = new QTableWidgetItem("(Scene Description)");
-  sceneNameItem->setFlags((sceneNameItem->flags() | Qt::ItemIsUserCheckable) & ~Qt::ItemIsEditable);
-  sceneNameItem->setCheckState(Qt::Checked);
+  QTableWidgetItem* sceneNameItem = new QTableWidgetItem("");
+  sceneNameItem->setFlags(sceneNameItem->flags() & ~Qt::ItemIsEditable);
   this->FileWidget->setItem(row, NodeNameColumn, sceneNameItem);
 
   // Scene Type
-  QTableWidgetItem* sceneTypeItem = new QTableWidgetItem("(SCENE)");
+  QTableWidgetItem* sceneTypeItem = new QTableWidgetItem("");
+  sceneTypeItem->setData(Qt::UserRole, QString("Scene"));
   sceneTypeItem->setFlags(sceneTypeItem->flags() & ~Qt::ItemIsEditable);
   this->FileWidget->setItem(row, NodeTypeColumn, sceneTypeItem);
 
@@ -284,10 +278,16 @@ void qSlicerSaveDataDialogPrivate::populateScene()
     }
   QTableWidgetItem* fileNameItem = this->createFileNameItem(sceneFileInfo, ".mrml");
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
-    // Scene Directory
+
+  // Scene Directory
   ctkDirectoryButton* sceneDirectoryButton =
     new ctkDirectoryButton(this->MRMLScene->GetRootDirectory(), this->FileWidget);
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
+
+  // Scene Selected
+  QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
+  selectItem->setFlags(selectItem->flags() | Qt::ItemIsUserCheckable);
+  selectItem->setCheckState(Qt::Checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -349,10 +349,6 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   QTableWidgetItem *nodeModifiedItem = this->createNodeStatusItem(storableNode, fileInfo);
   this->FileWidget->setItem(row, NodeStatusColumn, nodeModifiedItem);
 
-  // Select modified nodes by default
-  nodeNameItem->setCheckState(
-    storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
-
   // File format
   QWidget* fileFormatsWidget = this->createFileFormatsWidget(storableNode, fileInfo);
   this->FileWidget->setCellWidget(row, FileFormatColumn, fileFormatsWidget);
@@ -364,6 +360,11 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   // File Directory
   QWidget* directoryWidget = this->createFileDirectoryWidget(fileInfo);
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, directoryWidget);
+
+  // Select modified nodes by default
+  QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
+  selectItem->setCheckState(
+    storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -583,6 +584,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
+    QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     QTableWidgetItem* nodeNameItem = this->FileWidget->item(row, NodeNameColumn);
     QTableWidgetItem* nodeTypeItem = this->FileWidget->item(row, NodeTypeColumn);
     QTableWidgetItem* nodeStatusItem = this->FileWidget->item(row, NodeStatusColumn);
@@ -592,6 +594,7 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
       this->FileWidget->cellWidget(row, FileDirectoryColumn));
 
+    Q_ASSERT(selectItem);
     Q_ASSERT(nodeNameItem);
     Q_ASSERT(nodeTypeItem);
     Q_ASSERT(fileFormatComboBox);
@@ -599,13 +602,13 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     Q_ASSERT(fileDirectoryButton);
 
     // don't save unchecked nodes
-    if (nodeNameItem->checkState() != Qt::Checked)
+    if (selectItem->checkState() != Qt::Checked)
       {
       continue;
       }
 
     // only save nodes here
-    if (nodeTypeItem->text() == "(SCENE)")
+    if (nodeTypeItem->data(Qt::UserRole).toString() == "Scene")
       {
       continue;
       }
@@ -697,7 +700,7 @@ bool qSlicerSaveDataDialogPrivate::mustSceneBeSaved()const
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
     model->index(0, NodeTypeColumn),
-    Qt::DisplayRole, QString("(SCENE)"), 1, Qt::MatchExactly);
+    Qt::UserRole, QString("Scene"), 1, Qt::MatchExactly);
   if (found.count() == 0 || !found[0].isValid())
     {
     return false;
@@ -715,7 +718,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
   QAbstractItemModel* model = this->FileWidget->model();
   QModelIndexList found = model->match(
     model->index(0, NodeTypeColumn),
-    Qt::DisplayRole, QString("(SCENE)"), 1, Qt::MatchExactly);
+    Qt::UserRole, QString("Scene"), 1, Qt::MatchExactly);
   if (!found[0].isValid())
     {
     return QFileInfo(QString(this->MRMLScene->GetURL()));
@@ -814,7 +817,7 @@ void qSlicerSaveDataDialogPrivate::selectModifiedData()
     Q_ASSERT(nodeNameItem);
     nodeNameItem->setCheckState(
       statusItem->text() == tr("Modified") &&
-      typeItem->text() != tr("(SCENE)") ? Qt::Checked : Qt::Unchecked);
+      typeItem->data(Qt::UserRole).toString() != tr("Scene") ? Qt::Checked : Qt::Unchecked);
     }
 }
 
@@ -872,6 +875,31 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   QTableWidgetItem* nodeNameItem = this->FileWidget->item(row, NodeNameColumn);
   Q_ASSERT(nodeNameItem);
   nodeNameItem->setCheckState(Qt::Checked);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::showMoreColumns(bool show)
+{
+  this->FileWidget->setColumnHidden(NodeNameColumn, !show);
+  this->FileWidget->setColumnHidden(NodeTypeColumn, !show);
+  this->FileWidget->setColumnHidden(NodeStatusColumn, !show);
+  this->updateSize();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::updateSize()
+{
+  // let's try to resize the columns according to their new contents
+  this->FileWidget->resizeColumnsToContents();
+  // let's try to show the whole table on screen
+  // TODO: find a function in Qt that does it automatically.
+  this->resize(this->layout()->contentsMargins().left()
+               + this->FileWidget->frameWidth()
+//               + this->FileWidget->verticalHeader()->sizeHint().width()
+               + this->FileWidget->horizontalHeader()->length()
+               + this->FileWidget->frameWidth()
+               + this->layout()->contentsMargins().right(),
+               this->sizeHint().height());
 }
 
 //-----------------------------------------------------------------------------

@@ -46,16 +46,19 @@ protected slots:
   bool saveScene();
   bool saveNodes();
   QFileInfo sceneFile()const;
+  void showMoreColumns(bool);
+  void updateSize();
 
 protected:
   enum ColumnType
   {
-    NodeNameColumn = 0,
-    NodeTypeColumn = 1,
-    NodeStatusColumn = 2,
-    FileFormatColumn = 3,
-    FileNameColumn = 4,
-    FileDirectoryColumn = 5
+    SelectColumn = 0,
+    FileNameColumn = 0,
+    FileFormatColumn = 1,
+    FileDirectoryColumn = 2,
+    NodeNameColumn = 3,
+    NodeTypeColumn = 4,
+    NodeStatusColumn = 5
   };
 
   bool              mustSceneBeSaved()const;
