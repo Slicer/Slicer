@@ -305,13 +305,6 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
     return;
     }
 
-  qSlicerCoreIOManager* coreIOManager =
-    qSlicerCoreApplication::application()->coreIOManager();
-  Q_ASSERT(coreIOManager);
-  if (coreIOManager->fileWriterFileType(node) == qSlicerIO::NoFile)
-    {
-    return;
-    }
 /*
   // if the node is an annotation node and in a hierarchy, the hierarchy will
   // take care of writing it out
@@ -330,9 +323,19 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
       }
     }
 */
-  // get absolute filename
+  // Get absolute filename and create storage node if needed
   QFileInfo fileInfo = this->nodeFileInfo(storableNode);
   if (fileInfo == QFileInfo())
+    {
+    return;
+    }
+
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  Q_ASSERT(coreIOManager);
+  // Must be called after nodeFileInfo() as it creates a storage node
+  // that is mandatory for fileWriterFileType()
+  if (coreIOManager->fileWriterFileType(node) == qSlicerIO::NoFile)
     {
     return;
     }
@@ -354,11 +357,14 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   this->FileWidget->setItem(row, NodeStatusColumn, nodeModifiedItem);
 
   // File format
-  QWidget* fileFormatsWidget = this->createFileFormatsWidget(storableNode, fileInfo);
+  QComboBox* fileFormatsWidget = qobject_cast<QComboBox*>(
+    this->createFileFormatsWidget(storableNode, fileInfo));
   this->FileWidget->setCellWidget(row, FileFormatColumn, fileFormatsWidget);
+  QString extension = fileFormatsWidget->itemData(
+    fileFormatsWidget->currentIndex()).toString();
 
   // File name
-  QTableWidgetItem *fileNameItem = this->createFileNameItem(fileInfo);
+  QTableWidgetItem *fileNameItem = this->createFileNameItem(fileInfo, extension);
   this->FileWidget->setItem(row, FileNameColumn, fileNameItem);
 
   // File Directory
@@ -368,32 +374,27 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   // Select modified nodes by default
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
   selectItem->setCheckState(
-    storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
+    storableNode->GetModifiedSinceRead() ||
+    this->nodeFileInfo(storableNode) != fileInfo? Qt::Checked : Qt::Unchecked);
 }
 
 //-----------------------------------------------------------------------------
 QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
 {
-  vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
-  if (storageNode == 0)
-    {
-    qDebug() << "nodeFileInfo: unable to create a new default storage node for node " << node->GetID();
-    return QFileInfo();
-    }
-  
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   if (snode == 0)
     {
-    storageNode->SetScene(this->MRMLScene);
+    vtkMRMLStorageNode* storageNode = node->CreateDefaultStorageNode();
+    if (storageNode == 0)
+      {
+      qDebug() << "nodeFileInfo: unable to create a new default storage node for node " << node->GetID();
+      return QFileInfo();
+      }
+
     this->MRMLScene->AddNode(storageNode);
     node->SetAndObserveStorageNodeID(storageNode->GetID());
     storageNode->Delete();
     snode = storageNode;
-    }
-  else
-    {
-    // there already is a storage node, don't need this new one
-    storageNode->Delete();
     }
   if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
     {
@@ -484,7 +485,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStor
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNode* node, const QFileInfo& fileInfo)
+QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo)
 {
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   Q_ASSERT(snode);
@@ -493,15 +494,36 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
   int currentFormat = -1;
-  foreach(QString extension, coreIOManager->fileWriterExtensions(node))
+  QString currentExtension = QString(".") + fileInfo.suffix();
+  foreach(QString nameFilter, coreIOManager->fileWriterExtensions(node))
     {
-    fileFormats->addItem(extension);
-    if (QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
-                extension.toLatin1())) == (QString(".") + fileInfo.suffix()))
+    QString extension = QString(vtkDataFileFormatHelper::GetFileExtensionFromFormatString(
+      nameFilter.toLatin1()));
+    fileFormats->addItem(nameFilter, extension);
+    if (extension == currentExtension)
       {
-      currentFormat = fileFormats->count() -1;
+      currentFormat = fileFormats->count() - 1;
       }
     }
+  // The existing file name doesn't contain an existing extension, pick the
+  // default extension if any
+  if (currentFormat == -1 &&
+      snode->GetDefaultWriteFileExtension() != 0)
+    {
+    for (int i = 0; i < fileFormats->count(); ++i)
+      {
+      if (fileFormats->itemData(i).toString() ==
+          QString('.') + QString(snode->GetDefaultWriteFileExtension()))
+        {
+        currentFormat = i;
+        fileInfo = QFileInfo(fileInfo.dir(),
+                             fileInfo.completeBaseName() +
+                               fileFormats->itemData(i).toString());
+        break;
+        }
+      }
+    }
+
   fileFormats->setCurrentIndex(currentFormat);
   if (currentFormat == -1)
     {

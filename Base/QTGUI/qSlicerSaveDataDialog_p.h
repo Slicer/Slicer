@@ -76,7 +76,7 @@ protected:
   QTableWidgetItem* createNodeNameItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeTypeItem(vtkMRMLStorableNode* node);
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
-  QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
+  QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
   QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
 
