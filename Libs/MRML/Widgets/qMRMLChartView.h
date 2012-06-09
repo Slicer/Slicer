@@ -1,16 +1,20 @@
-/*=auto=========================================================================
+/*==============================================================================
 
-Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+  Program: 3D Slicer
 
-See COPYRIGHT.txt
-or http://www.slicer.org/copyright/copyright.txt for details.
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-Program:   3D Slicer
-Module:    $RCSfile: qMRMLChartView.h,v $
-Date:      $Date: 2006/03/17 15:10:09 $
-Version:   $Revision: 1.18 $
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-=========================================================================auto=*/
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
+
 #ifndef __qMRMLChartView_h
 #define __qMRMLChartView_h
 
@@ -26,6 +30,14 @@ class vtkMRMLChartViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
+///
+/// qMRMLChartView is the display canvas for a Chart.  
+///
+/// qMRMLChartView is currently implemented as a subclass of QWebView and charting
+/// is implemented using a jQuery library called jqPlot. This is
+/// subject to being made opaque, so that qMRMLChartView is merely a
+/// subclass of QWidget and internally a variety of implementations
+/// for charting may be provided.
 class QMRML_WIDGETS_EXPORT qMRMLChartView : public QWebView
 {
   Q_OBJECT
