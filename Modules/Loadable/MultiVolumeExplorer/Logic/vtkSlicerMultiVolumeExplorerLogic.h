@@ -35,9 +35,11 @@
 #include "vtkSlicerMultiVolumeExplorerModuleLogicExport.h"
 
 class vtkDoubleArray;
+class vtkStringArray;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLVolumeArchetypeStorageNode;
 class vtkMRMLScalarVolumeDisplayNode;
+class vtkMRMLMultiVolumeNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeExplorerLogic :
@@ -53,6 +55,10 @@ public:
   void InitializeEventListeners();
   int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
                          std::string dcmTag, vtkDoubleArray*);
+
+  std::string CheckIfMultivolume(std::string);
+  int SplitMultivolume(std::string, std::string, vtkStringArray*);
+  int InitializeMultivolumeNode(std::string dir, vtkMRMLMultiVolumeNode*);
 
 protected:
   vtkSlicerMultiVolumeExplorerLogic();
