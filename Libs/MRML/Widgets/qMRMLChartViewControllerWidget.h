@@ -29,6 +29,11 @@ class qMRMLChartView;
 // MRML includes
 class vtkMRMLChartViewNode;
 
+///
+/// qMRMLChartViewControllerWidget offers controls to a chart view
+/// (vtkMRMLChartViewNode and vtkMRMLChartNode). This controller
+/// allows for the content (data) and style (properties) of a chart to
+/// be defined.
 class QMRML_WIDGETS_EXPORT qMRMLChartViewControllerWidget
   : public qMRMLViewControllerBar
 {
@@ -51,21 +56,59 @@ public:
   QString viewLabel()const;
 
 public slots:
+  /// Set the scene
   virtual void setMRMLScene(vtkMRMLScene* newScene);
+
+  /// Set the ChartView with which this controller interacts
   void setChartView(qMRMLChartView* ChartView);
+
+  /// Set the ChartViewNode associated with this ChartViewController.
+  /// ChartViewNodes are 1-to-1 with ChartViews
   void setMRMLChartViewNode(vtkMRMLChartViewNode* chartViewNode);
+
+  /// Control whether lines are displayed
   void showLines(bool show);
+
+  /// Control whether point markers are displayed
   void showMarkers(bool show);
+
+  /// Control the display of a grid in the chart
   void showGrid(bool show);
+
+  /// Control the display of the legend in the chart
   void showLegend(bool show);
+
+  /// Control the display of the title for the chart
+  /// \sa setTitle
   void showTitle(bool show);
+
+  /// Conrtol the diplay of a label along the X-Axis
+  /// \sa setXAxisLabel
   void showXAxisLabel(bool show);
+
+  /// Control the display of a label along the Y-AXis
+  /// \sa setYAxisLabel
   void showYAxisLabel(bool show);
+
+  /// Set the title. 
+  /// \sa showTitle
   void setTitle(const QString&);
+
+  /// Set the label along the X-Axis.
+  /// \sa showXAxisLabel
   void setXAxisLabel(const QString&);
+
+  /// Set the label along the Y-Axis.
+  /// \sa showYAxisLabel
   void setYAxisLabel(const QString&);
+
+  /// Show a popup to edit the title
   void editTitle();
+
+  /// Show a popup to edit the label along the X-Axis
   void editXAxisLabel();
+
+  /// Show a popup to edit the label along the Y-Axis
   void editYAxisLabel();
 
 protected slots:

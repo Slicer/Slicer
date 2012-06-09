@@ -32,6 +32,13 @@ class vtkMRMLChartViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
+/// qMRMLChartWidget is the toplevel charting widget that can be
+/// packed in a layout.
+///
+/// qMRMLChartWidget provides charting capabilities with a display
+/// canvas for the chart and a controller widget to control the
+/// content and properties of the chart.
+/// 
 class QMRML_WIDGETS_EXPORT qMRMLChartWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -51,10 +58,12 @@ public:
   /// unsynchronize the view from the nodes/logics.
   Q_INVOKABLE qMRMLChartView* chartView()const;
 
+  /// Get the view label for the chart.
   /// \sa qMRMLChartControllerWidget::chartViewLabel()
   /// \sa setChartViewLabel()
   QString viewLabel()const;
 
+  /// Set the view label for the chart.
   /// \sa qMRMLChartControllerWidget::chartViewLabel()
   /// \sa chartViewLabel()
   void setViewLabel(const QString& newChartViewLabel);
@@ -62,7 +71,6 @@ public:
   /// Set the color logic that is used by the view.
   void setColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkMRMLColorLogic* colorLogic()const;
-
 
 
 public slots:
