@@ -111,14 +111,6 @@ qMRMLChartWidget::~qMRMLChartWidget()
   d->ChartController->setMRMLScene(0);
 }
 
-// --------------------------------------------------------------------------
-void qMRMLChartWidget::addDisplayableManager(const QString& vtkNotUsed(dManager))
-{
-  //Q_D(qMRMLChartWidget);
-
-  // Charts do not use DisplayableManager (yet)
-  //d->ChartView->addDisplayableManager(dManager);
-}
 
 // --------------------------------------------------------------------------
 void qMRMLChartWidget::setMRMLChartViewNode(vtkMRMLChartViewNode* newChartViewNode)
