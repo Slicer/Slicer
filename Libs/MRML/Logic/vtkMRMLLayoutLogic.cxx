@@ -891,7 +891,7 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
     }
   int wasModifying = this->LayoutNode->StartModify();
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutInitialView,
-                                         conventionalView);
+                                         fourUpView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutDefaultView,
                                          conventionalView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutConventionalView,
