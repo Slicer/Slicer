@@ -157,7 +157,6 @@ slicer_add_python_unittest(
   )
 
 
-
 #
 # Tutorial tests
 #
@@ -168,19 +167,28 @@ if(Slicer_USE_QtTesting)
     ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationsSlicerAppData.py
     )
 
-  slicer_add_python_test(
-    SCRIPT NeurosurgicalPlanningTutorial.py
-    SLICER_ARGS --launcher-no-splash --qt-testing
-    )
+  set(tests_using_qttesting)
 
-  slicer_add_python_test(
-    SCRIPT DiffusionTensorImagingTutorial.py
-    SLICER_ARGS --launcher-no-splash --qt-testing
-    )
+  if(Slicer_BUILD_CLI AND Slicer_USE_PYTHONQT)
+    slicer_add_python_test(
+      SCRIPT NeurosurgicalPlanningTutorial.py
+      SLICER_ARGS --launcher-no-splash --qt-testing
+      )
+
+    slicer_add_python_test(
+      SCRIPT DiffusionTensorImagingTutorial.py
+      SLICER_ARGS --launcher-no-splash --qt-testing
+      )
+
+    list(APPEND tests_using_qttesting
+      py_DiffusionTensorImagingTutorial
+      py_NeurosurgicalPlanningTutorial
+      )
+  endif()
+
 
   set_tests_properties(
-    py_NeurosurgicalPlanningTutorial
-    py_DiffusionTensorImagingTutorial
+    ${tests_using_qttesting}
     PROPERTIES RUN_SERIAL ON
     )
 endif()
