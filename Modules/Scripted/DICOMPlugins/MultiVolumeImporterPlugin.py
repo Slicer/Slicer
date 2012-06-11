@@ -261,10 +261,9 @@ class MultiVolumeImporterPlugin:
     slicer.modules.dicomPlugins['MultiVolumeImporterPlugin'] = MultiVolumeImporterPluginClass
 
 #
-# DicomRtImportWidget
 #
 
-class MultiVolumeImporterWidget:
+class MultiVolumeImporterPluginWidget:
   def __init__(self, parent = None):
     self.parent = parent
     
