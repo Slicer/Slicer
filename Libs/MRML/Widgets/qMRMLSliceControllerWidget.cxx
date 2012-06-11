@@ -425,10 +425,7 @@ void qMRMLSliceControllerWidgetPrivate::setupReformatOptionsMenu()
 void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
 {
   // Lightbox View
-  // Removed the parent menu to this submenu, to help QtTesting to play back
-  // actions. This should be investigate, to find a better way to record,
-  // play back action on submenu.
-  this->LightboxMenu = new QMenu(tr("Lightbox view"));
+  this->LightboxMenu = new QMenu(tr("Lightbox view"), this->LightBoxToolButton);
   this->LightboxMenu->setObjectName("LightboxMenu");
   this->LightboxMenu->setIcon(QIcon(":/Icons/LayoutLightboxView.png"));
   this->LightboxMenu->addAction(this->actionLightbox1x1_view);
@@ -477,10 +474,7 @@ void qMRMLSliceControllerWidgetPrivate::setupLightboxMenu()
 void qMRMLSliceControllerWidgetPrivate::setupCompositingMenu()
 {
   // Compositing
-  // Removed the parent menu to this submenu, to help QtTesting to play back
-  // actions. This should be investigate, to find a better way to record,
-  // play back action on submenu.
-  this->CompositingMenu = new QMenu(tr("Compositing"));
+  this->CompositingMenu = new QMenu(tr("Compositing"), this->SliceCompositeButton);
   this->CompositingMenu->setObjectName("CompositingMenu");
   this->CompositingMenu->setIcon(QIcon(":/Icons/SlicesComposite.png"));
   this->CompositingMenu->addAction(this->actionCompositingAlpha_blend);
@@ -501,10 +495,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   Q_Q(qMRMLSliceControllerWidget);
 
   // Spacing mode
-  // Removed the parent menu to this submenu, to help QtTesting to play back
-  // actions. This should be investigate, to find a better way to record,
-  // play back action on submenu.
-  this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"));
+  this->SliceSpacingMenu = new QMenu(tr("Slice spacing mode"), this->SliceSpacingButton);
   this->SliceSpacingMenu->setObjectName("SlicerSpacingMenu");
   this->SliceSpacingMenu->setIcon(QIcon(":/Icons/SlicerAutomaticSliceSpacing.png"));
   this->SliceSpacingMenu->addAction(this->actionSliceSpacingModeAutomatic);
