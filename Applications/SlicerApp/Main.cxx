@@ -76,15 +76,12 @@ namespace
 
 #ifdef Slicer_USE_QtTesting
 //-----------------------------------------------------------------------------
-void setEnableQtTesting(int argc, char* argv[])
+void setEnableQtTesting()
 {
-  for (int i = 0; i < argc; ++i)
+  if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
+      qSlicerApplication::application()->settings()->value("QtTesting/Enabled").toBool())
     {
-    if (qstrcmp(argv[i], "--qt-testing") == 0)
-      {
-      QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
-      break;
-      }
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
     }
 }
 #endif
@@ -224,15 +221,15 @@ int SlicerAppMain(int argc, char* argv[])
   QApplication::setDesktopSettingsAware(false);
   QApplication::setStyle(new qSlicerStyle);
 
-#ifdef Slicer_USE_QtTesting
-  setEnableQtTesting(argc, argv);
-#endif
-
   qSlicerApplication app(argc, argv);
   if (app.returnCode() != -1)
     {
     return app.returnCode();
     }
+
+#ifdef Slicer_USE_QtTesting
+  setEnableQtTesting(); // disabled the native menu bar.
+#endif
 
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole pythonConsole;
