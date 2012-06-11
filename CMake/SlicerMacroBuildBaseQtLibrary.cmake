@@ -123,7 +123,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
     QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${SLICERQTBASELIB_RESOURCES})
   endif(DEFINED SLICERQTBASELIB_RESOURCES)
 
-  QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc)
+  QT4_ADD_RESOURCES(SLICERQTBASELIB_QRC_SRCS ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc)
 
   set_source_files_properties(
     ${SLICERQTBASELIB_UI_CXX}
@@ -137,7 +137,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # --------------------------------------------------------------------------
   source_group("Resources" FILES
     ${SLICERQTBASELIB_UI_SRCS}
-    ${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc
+    ${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc
     ${SLICERQTBASELIB_RESOURCES}
   )
 

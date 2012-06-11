@@ -472,7 +472,7 @@
   <resources>
     <include location="../qSlicerWelcomeModule.qrc"/>
     <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
-    <include location="../../../../Resources/qSlicerLogos.qrc"/>
+    <include location="../../../../Resources/qSlicer.qrc"/>
   </resources>
   <connections>
     <connection>

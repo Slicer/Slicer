@@ -29,5 +29,9 @@
     <file>Logos/Slicer3.png</file>
     <file>Logos/SPL.png</file>
     <file>Logos/TATRC.png</file>
+    <file>Icons/Small/3DSlicerIcon.png</file>
+    <file alias="3DSlicerIcon">Icons/Medium/3DSlicerIcon.png</file>
+    <file>Icons/XLarge/3DSlicerIcon.png</file>
+    <file>Icons/XXLarge/3DSlicerIcon.png</file>
   </qresource>
 </RCC>

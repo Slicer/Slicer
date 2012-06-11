@@ -73,7 +73,7 @@ endif()
 # for shared libraries
 #-----------------------------------------------------------------------------
 set(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/CMake/qSlicerExport.h.in")
-set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicerLogos.qrc")
+set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc")
 
 #-----------------------------------------------------------------------------
 # CMake Function(s) and Macro(s)
