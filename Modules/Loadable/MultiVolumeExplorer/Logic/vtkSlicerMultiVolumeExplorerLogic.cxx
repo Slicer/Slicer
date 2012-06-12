@@ -213,7 +213,6 @@ int vtkSlicerMultiVolumeExplorerLogic
       if(status.bad())
         return 0;
       el->getString(str);
-      std::cout << str << " ";
       tagVal2FileList[atoi(str)].push_back(filenames[j]);
       }
     std::cout << std::endl << "Distinct values of tags found: ";
@@ -229,7 +228,6 @@ int vtkSlicerMultiVolumeExplorerLogic
     for(std::map<int,std::vector<std::string> >::const_iterator it=tagVal2FileList.begin();
       it!=tagVal2FileList.end();++it)
       {
-      std::cout << it->first << " ";
       char str[255];
       sprintf(str, "%i", it->first);
 
@@ -331,10 +329,10 @@ int vtkSlicerMultiVolumeExplorerLogic
 
   for(j = 0; j < nSlices; ++j)
     {
-    std::cout << "\n\n\n\n\n Processing slice " << j << std::endl;
+    //std::cout << "\n\n\n\n\n Processing slice " << j << std::endl;
 
     itk::ExposeMetaData<std::string>(*(*inputDict)[j], sortTag, tagVal);
-    std::cout << "Tag value found: " << tagVal << "(" << tagVal2fileList.size() << ")" << " ";
+    //std::cout << "Tag value found: " << tagVal << "(" << tagVal2fileList.size() << ")" << " ";
     tagVal2fileList[atoi(tagVal.c_str())].push_back(filenames[j]);
     }
 
@@ -362,8 +360,6 @@ int vtkSlicerMultiVolumeExplorerLogic
     tagValues->SetComponent(i, 0, tagVal);
     }
 
-  std::cout << "Will return " << tagVal2fileList.size() << " from ProcessDICOM" << std::endl;
-
   return tagVal2fileList.size();
 }
 
@@ -376,13 +372,10 @@ void vtkSlicerMultiVolumeExplorerLogic
   vtkStringArray *fileNames = vtkStringArray::New();
   vtkMRMLVolumeArchetypeStorageNode *sNode = vtkMRMLVolumeArchetypeStorageNode::New();
 
-  std::cout << "Store volume node called " << std::endl;
   for(std::vector<std::string>::const_iterator
       it=filenames.begin();it!=filenames.end();++it)
     {
     fileNames->InsertNextValue(it->c_str());
-    std::cout << it->c_str() << " ";
-    }
   std::cout << std::endl;
 
   qSlicerAbstractCoreModule* volumesModule =
