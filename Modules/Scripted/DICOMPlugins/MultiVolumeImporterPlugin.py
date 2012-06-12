@@ -50,12 +50,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(os.path.dirname(files[0]), mvNode)
 
     if nFrames > 1:
-      print 'Multivolume node found: '
-      print mvNode
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = files
-      loadable.name = 'MultiVolume'
-      loadable.tooltip = 'MultiVolume'
+      loadable.name = str(nFrames) + ' frames Multi Volume'
+      loadable.tooltip = str(nFrames) + ' frames Multi Volume'
       loadable.selected = True
       loadable.multivolume = mvNode
       loadables.append(loadable)
@@ -110,26 +108,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       sNode.SetFileName(files[0])
       sNode.ResetFileNameList();
 
-      for fileNumber in range(frameNumber*filesPerFrame,(frameNumber+1)*filesPerFrame):
-        frameFileList.InsertNextValue(files[fileNumber])
-        sNode.AddFileName(files[fileNumber])
-
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
+      # sv plugin will sort the filenames by geometric order
       svLoadables = scalarVolumePlugin.examine([frameFileList])
-      sNode.ResetFileNameList()
 
       if len(svLoadables) == 0:
         return
-
       for f in svLoadables[0].files:
         sNode.AddFileName(f)
       
       sNode.SetSingleFile(0)
       frame = slicer.vtkMRMLScalarVolumeNode()
       sNode.ReadData(frame)
-
-      ## This is EXTREMELY slow
-      ## frame = volumesLogic.AddArchetypeVolume(frameFileList.GetValue(0), 'MultiVolume_frame'+str(frameNumber), 0, frameFileList)
 
       if frame == None:
         print('Failed to read a multivolume frame!')
@@ -184,11 +174,13 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
     dwiDisplayNode.SetScene(slicer.mrmlScene)
     slicer.mrmlScene.AddNode(dwiDisplayNode)
+    dwiDisplayNode.SetReferenceCount(dwiDisplayNode.GetReferenceCount()-1)
     dwiDisplayNode.SetDefaultColorMap()
 
     dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
     dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
+    dwiNode.SetReferenceCount(dwiNode.GetReferenceCount()-1)
     print("Number of frames :"+str(nFrames))
 
     frameLabelsArray = vtk.vtkDoubleArray()
@@ -204,11 +196,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     '''
     mvNode.SetLabelArray(frameLabelsArray)
     mvNode.SetDWVNodeID(dwiNode.GetID())
-    print('Label array set')
     mvNode.SetLabelName('Label name')
 
     slicer.mrmlScene.AddNode(mvNode)
     print('MV node added to the scene')
+
+    mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
     return True
 
