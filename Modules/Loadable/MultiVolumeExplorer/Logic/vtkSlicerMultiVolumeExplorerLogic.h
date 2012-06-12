@@ -56,8 +56,6 @@ public:
   int ProcessDICOMSeries(std::string inputDir, std::string outputDir,
                          std::string dcmTag, vtkDoubleArray*);
 
-  std::string CheckIfMultivolume(std::string);
-  int SplitMultivolume(std::string, std::string, vtkStringArray*);
   int InitializeMultivolumeNode(std::string dir, vtkMRMLMultiVolumeNode*);
 
 protected:
