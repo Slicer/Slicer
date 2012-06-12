@@ -376,7 +376,7 @@ void vtkSlicerMultiVolumeExplorerLogic
       it=filenames.begin();it!=filenames.end();++it)
     {
     fileNames->InsertNextValue(it->c_str());
-  std::cout << std::endl;
+    }
 
   qSlicerAbstractCoreModule* volumesModule =
     qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
