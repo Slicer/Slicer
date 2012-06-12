@@ -9,6 +9,8 @@
   <contributor>Casey B Goodlett (Kitware), Dominik Meier (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
+    <label>IO</label>
+    <description><![CDATA[Input/output parameters]]></description>
     <point multiple="true">
       <name>fixedLandmarks</name>
       <description><![CDATA[Ordered list of landmarks in the fixed image]]></description>
@@ -40,5 +42,18 @@
       <element>Similarity</element>
       <default>Rigid</default>
     </string-enumeration>
+	  <double>
+      <name>rms</name>
+      <description><![CDATA[Display RMS Error.]]></description>
+      <label>RMS Error</label>
+	    <channel>output</channel>
+      <default>0</default>
+    </double>
+    <string>
+      <name>outputMessage</name>
+      <label>Output Message</label>
+      <channel>output</channel>
+      <description><![CDATA[Provides more information on the output]]></description>
+    </string>
   </parameters>
 </executable>
