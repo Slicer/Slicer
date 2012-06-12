@@ -182,7 +182,7 @@ int vtkSlicerMultiVolumeExplorerLogic
   closedir(dp);
 
   std::cout << "Processing directory " << dir << std::endl;
-  for(int i=0;i<filenames.size();i++)
+  for(unsigned i=0;i<filenames.size();i++)
     {
     DcmFileFormat ff;
     OFCondition fs = ff.loadFile(filenames[i].c_str());
@@ -200,12 +200,12 @@ int vtkSlicerMultiVolumeExplorerLogic
   std::cout << dcmDatasetVector.size() << " files loaded OK" << std::endl;
   std::map<int,std::vector<std::string> > tagVal2FileList;
 
-  int numberOfFrames = 0;
-  for(int i=0;i<VolumeIdentifyingTags.size();i++)
+  unsigned numberOfFrames = 0;
+  for(unsigned i=0;i<VolumeIdentifyingTags.size();i++)
     {
     DcmTagKey tag = VolumeIdentifyingTags[i];
     std::cout << "Splitting by " << tag << std::endl;
-    for(int j = 0; j < filenames.size(); ++j)
+    for(unsigned j = 0; j < filenames.size(); ++j)
       {
       DcmElement *el;
       char* str;
