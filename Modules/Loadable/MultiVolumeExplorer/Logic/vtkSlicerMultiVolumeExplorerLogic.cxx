@@ -368,36 +368,22 @@ void vtkSlicerMultiVolumeExplorerLogic
 ::StoreVolumeNode(const std::vector<std::string>& filenames,
                   const std::string& seriesFileName)
 {
-  vtkMRMLVolumeNode *vNode;
-  vtkStringArray *fileNames = vtkStringArray::New();
-  vtkMRMLVolumeArchetypeStorageNode *sNode = vtkMRMLVolumeArchetypeStorageNode::New();
-
+  vtkMRMLVolumeArchetypeStorageNode* sNode =
+    vtkMRMLVolumeArchetypeStorageNode::New();
+  vtkMRMLScalarVolumeNode *vNode =
+    vtkMRMLScalarVolumeNode::New();
+  sNode->SetFileName(filenames[0].c_str());
+  sNode->ResetFileNameList();
   for(std::vector<std::string>::const_iterator
-      it=filenames.begin();it!=filenames.end();++it)
-    {
-    fileNames->InsertNextValue(it->c_str());
-    }
+    it=filenames.begin();it!=filenames.end();++it)
+    sNode->AddFileName(it->c_str());
+  sNode->SetSingleFile(0);
+  sNode->ReadData(vNode);
 
-  qSlicerAbstractCoreModule* volumesModule =
-    qSlicerCoreApplication::application()->moduleManager()->module("Volumes");
-  vtkSlicerVolumesLogic* volumesLogic;
-  if (volumesModule)
-    {
-    volumesLogic = 
-      vtkSlicerVolumesLogic::SafeDownCast(volumesModule->logic());
-    }
-  else
-    {
-    return;
-    }
- 
-  vNode = volumesLogic->AddArchetypeVolume(filenames[0].c_str(), "test", 0, fileNames);
   sNode->SetFileName(seriesFileName.c_str());
   sNode->SetWriteFileFormat("nrrd");
   sNode->SetURI(NULL);
   sNode->WriteData(vNode);
-  /*
   sNode->Delete();
   vNode->Delete();
-  */
 }
