@@ -99,6 +99,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     dwiImage = vtk.vtkImageData()
     dwiImageArray = None
 
+    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+
     # read each frame into scalar volume
     volumesLogic = slicer.modules.volumes.logic()
     for frameNumber in range(nFrames):
@@ -108,18 +110,23 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       sNode.SetFileName(files[0])
       sNode.ResetFileNameList();
 
-      print 'Reading frame ',frameNumber,', file list: ',
       for fileNumber in range(frameNumber*filesPerFrame,(frameNumber+1)*filesPerFrame):
         frameFileList.InsertNextValue(files[fileNumber])
         sNode.AddFileName(files[fileNumber])
-        print files[fileNumber],', ',
-      print
+
+      frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
+      svLoadables = scalarVolumePlugin.examine([frameFileList])
+      sNode.ResetFileNameList()
+
+      if len(svLoadables) == 0:
+        return
+
+      for f in svLoadables[0].files:
+        sNode.AddFileName(f)
       
       sNode.SetSingleFile(0)
       frame = slicer.vtkMRMLScalarVolumeNode()
       sNode.ReadData(frame)
-
-      print('MV load: loading frame ',frameNumber)
 
       ## This is EXTREMELY slow
       ## frame = volumesLogic.AddArchetypeVolume(frameFileList.GetValue(0), 'MultiVolume_frame'+str(frameNumber), 0, frameFileList)
