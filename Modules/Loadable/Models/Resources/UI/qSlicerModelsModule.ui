@@ -34,6 +34,9 @@
      <property name="dragDropMode">
       <enum>QAbstractItemView::InternalMove</enum>
      </property>
+     <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
      <property name="headerHidden">
       <bool>true</bool>
      </property>

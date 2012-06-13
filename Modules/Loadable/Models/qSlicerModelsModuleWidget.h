@@ -46,6 +46,8 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
   
   void insertHierarchyNode();
+  void deleteMultipleModels();
+  void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
   void onExpanded(const QModelIndex &index);
   void onCollapsed(const QModelIndex &index);

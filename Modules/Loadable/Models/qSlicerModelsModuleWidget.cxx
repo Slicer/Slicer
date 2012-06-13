@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QInputDialog>
 #include <QModelIndex>
 
 // qMRMLWidgets
@@ -41,6 +42,8 @@ class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModule
 public:
   qSlicerModelsModuleWidgetPrivate();
   QAction *InsertHierarchyAction;
+  QAction *DeleteMultipleNodesAction;
+  QAction *RenameMultipleNodesAction;
 };
 
 //-----------------------------------------------------------------------------
@@ -50,6 +53,8 @@ public:
 qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
 {
   this->InsertHierarchyAction = 0;
+  this->DeleteMultipleNodesAction = 0;
+  this->RenameMultipleNodesAction = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -79,6 +84,9 @@ void qSlicerModelsModuleWidget::setup()
 
   this->updateTreeViewModel();
 
+  // turn of setting of size to visible indexes to allow drag scrolling
+  d->ModelHierarchyTreeView->setFitSizeToVisibleIndexes(false);
+  
   // add an add hierarchy right click action on the scene and hierarchy nodes
   connect(d->ModelHierarchyTreeView,  SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
@@ -99,6 +107,20 @@ void qSlicerModelsModuleWidget::setup()
   d->ModelHierarchyTreeView->prependSceneMenuAction(d->InsertHierarchyAction);
   connect(d->InsertHierarchyAction, SIGNAL(triggered()),
           this, SLOT(insertHierarchyNode()));
+
+  // customize the right click menu to offer a delete multiple nodes option,
+  // and deal with the hierarchies associated with model nodes
+  d->DeleteMultipleNodesAction = new QAction(tr("Delete Model(s)"), this);
+  d->DeleteMultipleNodesAction->setToolTip(tr("Delete one or more models, along with the 1:1 hierarchy nodes that may be associated with them"));
+  d->ModelHierarchyTreeView->appendNodeMenuAction(d->DeleteMultipleNodesAction);
+  connect(d->DeleteMultipleNodesAction, SIGNAL(triggered()),
+          this, SLOT(deleteMultipleModels()));
+
+  // customise the right click menu to offer a rename multiple nodes option
+  d->RenameMultipleNodesAction = new QAction(tr("Rename Multiple Models"), this);
+  d->ModelHierarchyTreeView->appendNodeMenuAction(d->RenameMultipleNodesAction);
+  connect(d->RenameMultipleNodesAction, SIGNAL(triggered()),
+          this, SLOT(renameMultipleModels()));
   
   this->Superclass::setup();
 }
@@ -157,6 +179,94 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
     modelDisplayNode->Delete();
     }
   modelHierarchyNode->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::deleteMultipleModels()
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  if (!this->mrmlScene())
+    {
+    qWarning("No mrml scene set, cannot delete models");
+    return;
+    }
+  
+  // get all rows where column 2, the model name, is selected
+  int nameColumn = d->ModelHierarchyTreeView->sceneModel()->nameColumn();
+  QModelIndexList indexList = d->ModelHierarchyTreeView->selectionModel()->selectedRows(nameColumn);
+  // have to build up a list of nodes to delete, as the node from index call will
+  // fail as the tree is updated while the nodes are being deleted.
+  QStringList modelIDsToDelete;
+  for (int i = 0; i < indexList.size(); ++i)
+    {
+    QModelIndex index = indexList.at(i);
+    vtkMRMLNode *nodeToDelete =  d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+    if (nodeToDelete && nodeToDelete->GetID())
+      {
+      modelIDsToDelete << nodeToDelete->GetID();
+      }
+    else
+      {
+      qWarning() << "selection index " << i << " has no model";
+      }
+    }
+  for (int i = 0; i < modelIDsToDelete.size(); i++)
+    {
+    QString modelID = modelIDsToDelete.at(i);
+    vtkMRMLNode *mrmlNode = this->mrmlScene()->GetNodeByID(modelID.toLatin1());
+    if (mrmlNode && mrmlNode->IsA("vtkMRMLModelNode"))
+      {
+      // get the model hierarchy node and delete it
+      vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(mrmlNode->GetScene(), mrmlNode->GetID());
+      if (hnode)
+        {
+        //qDebug() << i << ": removing hierarchy " << (hnode ? hnode->GetID() : "null");
+        this->mrmlScene()->RemoveNode(hnode);
+        }
+      // remove the model node
+      //qDebug() << i << ": removing model node " << mrmlNode->GetName() << ", id = " << mrmlNode->GetID();
+      this->mrmlScene()->RemoveNode(mrmlNode);
+      }
+    else
+      {
+      qWarning() << "Unable to delete model using node id" << qPrintable(modelID);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::renameMultipleModels()
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  if (!this->mrmlScene())
+    {
+    qWarning("No mrml scene set, cannot rename models");
+    return;
+    }
+  
+  // get all rows where column 2, the model name, is selected
+  int nameColumn = d->ModelHierarchyTreeView->sceneModel()->nameColumn();
+  QModelIndexList indexList = d->ModelHierarchyTreeView->selectionModel()->selectedRows(nameColumn);
+  for (int i = 0; i < indexList.size(); ++i)
+    {
+    QModelIndex index = indexList.at(i);
+    vtkMRMLNode *mrmlNode =  d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
+    if (mrmlNode && mrmlNode->IsA("vtkMRMLModelNode"))
+      {
+      // pop up an entry box for the new name, with the old name as default
+      QString oldName = mrmlNode->GetName();
+      bool ok = false;
+      QString newName = QInputDialog::getText(
+                        this, "Rename " + oldName, "Old name: " + oldName + "\nNew name:",
+                        QLineEdit::Normal, oldName, &ok);
+      if (ok)
+        {
+        mrmlNode->SetName(newName.toLatin1());
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
