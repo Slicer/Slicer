@@ -208,7 +208,7 @@ int vtkSlicerMultiVolumeExplorerLogic
     {
     OFCondition status;
     DcmTagKey tag = VolumeIdentifyingTags[i];
-    std::cout << "Splitting by " << tag << std::endl;
+    std::cerr << "Splitting by " << tag << std::endl;
     for(unsigned j = 0; j < filenames->GetNumberOfValues(); ++j)
       {
       DcmElement *el;
@@ -222,16 +222,17 @@ int vtkSlicerMultiVolumeExplorerLogic
       status = el->getString(str);
       if(status.bad() || !str)
         {
-        std::cout << "Failed to process element for " << str << std::endl;
+        std::cerr << "Failed to process element for " << str << std::endl;
         break;
         }
       tagVal2FileList[atoi(str)].push_back(filenames->GetValue(j));
       }
-    std::cerr << std::endl << "Distinct values of tags found: ";
 
     if(tagVal2FileList.size()<=1)
       // not a multivolume
       continue;
+
+    std::cerr << std::endl << "Distinct values of tags found: ";
 
     std::ostringstream frameFileListStream;
     std::ostringstream frameLabelsStream;
@@ -242,7 +243,7 @@ int vtkSlicerMultiVolumeExplorerLogic
       {
       char str[255];
       sprintf(str, "%i", it->first);
-      std::cout << it->first << " ";
+      std::cerr << it->first << " ";
 
       for(std::vector<std::string>::const_iterator fIt=(*it).second.begin();
         fIt!=(*it).second.end();++fIt)
