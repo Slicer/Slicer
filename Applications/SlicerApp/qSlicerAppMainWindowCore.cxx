@@ -186,7 +186,7 @@ void qSlicerAppMainWindowCore::onFileSaveSceneActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
 {
-  Q_D(qSlicerAppMainWindowCore);
+  // Q_D(qSlicerAppMainWindowCore);
   // open a file dialog to let the user choose where to save
   QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString saveDirName = QFileDialog::getExistingDirectory(this->widget(), tr("Slicer Data Bundle Directory (Select Empty Directory)"), tempDir, QFileDialog::ShowDirsOnly);
