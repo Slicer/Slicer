@@ -1,9 +1,8 @@
 import os
 import slicer
-import ApplicationsSlicerAppData as data
+from slicer import slicerappdatapaths
 
-
-filepath = data.input + '/NeurosurgicalPlanningTutorial.xml'
+filepath = slicerappdatapaths.input + '/NeurosurgicalPlanningTutorial.xml'
 testUtility = slicer.app.testingUtility()
 success = testUtility.playTests(filepath)
 if not success :

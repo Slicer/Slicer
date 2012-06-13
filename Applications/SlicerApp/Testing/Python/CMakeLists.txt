@@ -162,10 +162,6 @@ slicer_add_python_unittest(
 #
 
 if(Slicer_USE_QtTesting)
-  configure_file(
-    ApplicationsSlicerAppData.py.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationsSlicerAppData.py
-    )
 
   set(tests_using_qttesting)
 

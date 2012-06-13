@@ -1,6 +1,7 @@
 
 set(Slicer_PYTHON_SCRIPTS
   slicer/logic
+  slicer/slicerappdatapaths
   slicer/slicerqt
   slicer/testing
   slicer/util
