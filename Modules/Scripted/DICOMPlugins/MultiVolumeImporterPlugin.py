@@ -41,24 +41,65 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     # Look for series with several values in either of the volume-identifying
     #  tags in files
-    # AF TODO: run ProcessDICOMSeries with each of these tags?
-    # AF TODO: need to re-read the header
 
-    mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
-    mvNode.SetName('MultiVolume node')
-    mvNode.SetScene(slicer.mrmlScene)
-    nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(os.path.dirname(files[0]), mvNode)
+    # first separate individual series, then try to find multivolume in each
+    # of the series (code from DICOMScalarVolumePlugin)
+    subseriesLists = {}
+    subseriesDescriptions = {}
 
-    if nFrames > 1:
-      loadable = DICOMLib.DICOMLoadable()
-      loadable.files = files
-      loadable.name = str(nFrames) + ' frames Multi Volume'
-      loadable.tooltip = str(nFrames) + ' frames Multi Volume'
-      loadable.selected = True
-      loadable.multivolume = mvNode
-      loadables.append(loadable)
-    else:
-      print('No multivolumes found!')
+    for file in files:
+
+      slicer.dicomDatabase.loadFileHeader(file)
+      v = slicer.dicomDatabase.headerValue("0020,000E") # SeriesInstanceUID
+      d = slicer.dicomDatabase.headerValue("0008,103e") # SeriesDescription
+
+      try:
+        value = v[v.index('[')+1:v.index(']')]
+      except ValueError:
+        value = "Unknown"
+
+      try:
+        desc = d[d.index('[')+1:d.index(']')]
+      except ValueError:
+        desc = "Unknown"
+ 
+      if not subseriesLists.has_key(value):
+        subseriesLists[value] = []
+      subseriesLists[value].append(file)
+      subseriesDescriptions[value] = desc
+
+    # now iterate over all subseries file lists and try to parse the
+    # multivolumes
+
+    mvNode = None
+    for key in subseriesLists.keys():
+      if mvNode == None:
+        mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+        mvNode.SetName('MultiVolume node')
+        mvNode.SetScene(slicer.mrmlScene)
+      
+      filevtkStringArray = vtk.vtkStringArray()
+      for item in subseriesLists[key]:
+        filevtkStringArray.InsertNextValue(item)
+
+      nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(filevtkStringArray, mvNode)
+
+      if nFrames > 1:
+        tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
+        loadable = DICOMLib.DICOMLoadable()
+        loadable.files = files
+        loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
+        loadable.tooltip = loadable.name
+        loadable.selected = True
+        loadable.multivolume = mvNode
+        loadables.append(loadable)
+
+        mvNode = None
+      else:
+        print('No multivolumes found!')
+
+    if mvNode != None:
+      mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
     return loadables
 
@@ -102,7 +143,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # read each frame into scalar volume
     volumesLogic = slicer.modules.volumes.logic()
     for frameNumber in range(nFrames):
-      frameFileList = vtk.vtkStringArray()
       
       sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
       sNode.SetFileName(files[0])
