@@ -169,14 +169,7 @@ void vtkMRMLColorTableNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
   Superclass::PrintSelf(os,indent);
-
-  os << indent << "Name: " <<
-      (this->Name ? this->Name : "(none)") << "\n";
-  
-
-  os << indent << "Type: (" << this->GetTypeAsString() << ")\n";
 
   if (this->LookupTable != NULL)
     {
@@ -189,19 +182,6 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
     this->FSLookupTable->PrintSelf(os, indent.GetNextIndent());
     }
 */
-  if (this->Names.size() > 0)
-    {
-    os << indent << "Color Names:\n";
-    for (unsigned int i = 0; i < this->Names.size(); i++)
-      {
-      os << indent << indent << i << " " << this->GetColorName(i) << endl;
-      if ( i > 10 )
-        {
-        os << indent << indent << "..." << endl;
-        break;
-        }
-      }
-    }
 }
 
 //-----------------------------------------------------------

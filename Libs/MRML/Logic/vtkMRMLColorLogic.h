@@ -95,8 +95,11 @@ public:
 
   /// Add a file to the input list list, checking first for null, duplicates
   void AddColorFile(const char *fileName, std::vector<std::string> *Files);
-  /// load in a color file, creating a storage node. Returns a pointer to the
-  /// created node on success, 0 on failure.
+
+  /// Load in a color file, creating a storage node. Returns a pointer to the
+  /// created node on success, 0 on failure (no file, invalid color file). The
+  /// name of the created color node is \a nodeName if specified or the fileName
+  /// otherwise.
   vtkMRMLColorNode* LoadColorFile(const char *fileName, const char *nodeName = NULL);
 
   /// Get/Set the user defined paths where to look for extra colour files
