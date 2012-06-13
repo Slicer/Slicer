@@ -134,7 +134,7 @@ void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
 //  MultiVolume.FrameFileList
 //
 int vtkSlicerMultiVolumeExplorerLogic
-::InitializeMultivolumeNode(std::string dir, vtkMRMLMultiVolumeNode *mvNode)
+::InitializeMultivolumeNode(vtkStringArray *filenames, vtkMRMLMultiVolumeNode *mvNode)
 {
 
   std::cout << "InitializeMultivolumeNode() called" << std::endl;
@@ -162,10 +162,11 @@ int vtkSlicerMultiVolumeExplorerLogic
   std::vector<std::string>  VolumeIdentifyingTagNames;
 
   VolumeIdentifyingTagNames.push_back(std::string("TriggerTime"));
-  VolumeIdentifyingTagNames.push_back(std::string("TE")); 
-  VolumeIdentifyingTagNames.push_back(std::string("FA")); 
-  VolumeIdentifyingTagNames.push_back(std::string("TR")); 
+  VolumeIdentifyingTagNames.push_back(std::string("EchoTime")); 
+  VolumeIdentifyingTagNames.push_back(std::string("FlipAngle")); 
+  VolumeIdentifyingTagNames.push_back(std::string("RepetitionTime")); 
 
+  /*
   std::vector<std::string> filenames;
 
   DIR *dp;
@@ -182,17 +183,19 @@ int vtkSlicerMultiVolumeExplorerLogic
   closedir(dp);
 
   std::cout << "Processing directory " << dir << std::endl;
-  for(unsigned i=0;i<filenames.size();i++)
+  */
+
+  for(unsigned i=0;i<filenames->GetNumberOfValues();i++)
     {
     DcmFileFormat ff;
-    OFCondition fs = ff.loadFile(filenames[i].c_str());
+    OFCondition fs = ff.loadFile((const char*)filenames->GetValue(i));
     if(fs.good())
       {
       dcmDatasetVector.push_back(ff.getAndRemoveDataset());
       }
    else
       {
-      std::cout << "Error loading file " << filenames[i] << std::endl;
+      std::cout << "Error loading file " << filenames->GetValue(i) << std::endl;
       return 0;
       }
     }
@@ -203,21 +206,30 @@ int vtkSlicerMultiVolumeExplorerLogic
   unsigned numberOfFrames = 0;
   for(unsigned i=0;i<VolumeIdentifyingTags.size();i++)
     {
+    OFCondition status;
     DcmTagKey tag = VolumeIdentifyingTags[i];
     std::cout << "Splitting by " << tag << std::endl;
-    for(unsigned j = 0; j < filenames.size(); ++j)
+    for(unsigned j = 0; j < filenames->GetNumberOfValues(); ++j)
       {
       DcmElement *el;
       char* str;
-      OFCondition status = dcmDatasetVector[j]->findAndGetElement(tag, el);
+      status = dcmDatasetVector[j]->findAndGetElement(tag, el);
       if(status.bad())
-        return 0;
-      el->getString(str);
-      tagVal2FileList[atoi(str)].push_back(filenames[j]);
+        {
+        std::cerr << "Failed to get element from " << filenames->GetValue(j) << std::endl;
+        break;
+        }
+      status = el->getString(str);
+      if(status.bad() || !str)
+        {
+        std::cout << "Failed to process element for " << str << std::endl;
+        break;
+        }
+      tagVal2FileList[atoi(str)].push_back(filenames->GetValue(j));
       }
-    std::cout << std::endl << "Distinct values of tags found: ";
+    std::cerr << std::endl << "Distinct values of tags found: ";
 
-    if(tagVal2FileList.size()==1)
+    if(tagVal2FileList.size()<=1)
       // not a multivolume
       continue;
 
@@ -230,6 +242,7 @@ int vtkSlicerMultiVolumeExplorerLogic
       {
       char str[255];
       sprintf(str, "%i", it->first);
+      std::cout << it->first << " ";
 
       for(std::vector<std::string>::const_iterator fIt=(*it).second.begin();
         fIt!=(*it).second.end();++fIt)
@@ -254,6 +267,8 @@ int vtkSlicerMultiVolumeExplorerLogic
       mvNode->SetAttribute("MultiVolume.FrameLabels", frameLabelsStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.NumberOfFrames", numberOfFramesStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName", VolumeIdentifyingTagNames[i].c_str());
+
+      std::cout << std::endl;
 
       break; // once MV is found, stop
     }
