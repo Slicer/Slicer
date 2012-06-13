@@ -86,6 +86,7 @@ public:
   void setEditMenuActionVisible(bool show);
   
   /// Add a custom QAction to add into the context menu on a right click
+  void appendNodeMenuAction(QAction* action);
   void prependNodeMenuAction(QAction* action);
   void prependSceneMenuAction(QAction* action);
   
