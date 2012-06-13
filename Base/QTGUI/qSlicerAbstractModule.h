@@ -67,7 +67,7 @@ public:
   /// (QAction::property("index").toInt()).
   /// It is typically used in the module selector menu;
   /// triggering the QAction will make the module current.
-  QAction * action();
+  Q_INVOKABLE QAction * action();
 protected:
   QScopedPointer<qSlicerAbstractModulePrivate> d_ptr;
 

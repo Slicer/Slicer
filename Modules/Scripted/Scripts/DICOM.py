@@ -60,10 +60,11 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       qt.QTimer.singleShot(0, self.addMenu);
 
   def addMenu(self):
-    actionIcon = self.parent.icon
-    a = qt.QAction(actionIcon, 'Add DICOM', slicer.util.mainWindow())
-    a.setToolTip('Raise the DICOM module for loading DICOM dataset')
-    a.connect('triggered()', self.select)
+    #actionIcon = self.parent.icon
+    #a = qt.QAction(actionIcon, 'DICOM', slicer.util.mainWindow())
+    #a.setToolTip('Raise the DICOM module for loading DICOM dataset')
+    #a.connect('triggered()', self.select)
+    a = self.parent.action()
 
     menuFile = slicer.util.lookupTopLevelWidget('menuFile')
     if menuFile:
@@ -71,9 +72,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
         if action.text == 'Save':
           menuFile.insertAction(action,a)
 
-  def select(self):
-    m = slicer.util.mainWindow()
-    m.moduleSelector().selectModule('DICOM')
+#  def select(self):
+#    m = slicer.util.mainWindow()
+#    m.moduleSelector().selectModule('DICOM')
 
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
