@@ -282,11 +282,13 @@ class MultiVolumeImporterWidget:
     dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
     dwiDisplayNode.SetScene(slicer.mrmlScene)
     slicer.mrmlScene.AddNode(dwiDisplayNode)
+    dwiDisplayNode.SetReferenceCount(dwiDisplayNode.GetReferenceCount()-1)
     dwiDisplayNode.SetDefaultColorMap()
 
     dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
     dwiNode.SetAndObserveImageData(dwiImage)
     slicer.mrmlScene.AddNode(dwiNode)
+    dwiNode.SetReferenceCount(dwiNode.GetReferenceCount()-1)
     print("DWI node added to the scene")
 
 
