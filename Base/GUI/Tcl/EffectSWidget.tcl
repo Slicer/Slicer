@@ -590,7 +590,6 @@ itcl::body EffectSWidget::postApply {} {
     $node SetAndObserveImageData $o(tempImageData)
     $node SetAndObserveImageData $imageData
   } else {
-    $node SetModifiedSinceRead 1
     $node Modified
   }
   foreach imageData {_outputLabel _extractedBackground _extractedLabel} {

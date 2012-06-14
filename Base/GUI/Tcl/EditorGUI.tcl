@@ -664,7 +664,6 @@ proc EditorRestoreData {restoreCheckPointArray} {
   } else {
     EditorErrorDialog "Sorry - no node for $checkPoint(nodeID)"
   }
-  $node SetModifiedSinceRead 1
   $node Modified
 }
 

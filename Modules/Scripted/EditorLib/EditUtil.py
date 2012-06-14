@@ -151,7 +151,6 @@ class UndoRedo(object):
         pass
       self.stash.Unstash()
       self.volumeNode.GetImageData().DeepCopy( self.stashImage )
-      self.volumeNode.SetModifiedSinceRead( 1 )
       self.volumeNode.Modified()
 
 

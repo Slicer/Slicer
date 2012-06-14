@@ -420,7 +420,6 @@ class LabelEffectLogic(Effect.EffectLogic):
 
     self.painter.Paint()
 
-    labelNode.SetModifiedSinceRead(1)
     labelNode.Modified()
 
   def sliceIJKPlane(self):

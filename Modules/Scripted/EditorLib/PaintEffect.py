@@ -428,7 +428,6 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     sliceLogic = self.sliceWidget.sliceLogic()
     labelLogic = sliceLogic.GetLabelLayer()
     labelNode = labelLogic.GetVolumeNode()
-    labelNode.SetModifiedSinceRead(1)
     labelNode.Modified()
 
   def paintBrush(self, x, y):

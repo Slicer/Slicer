@@ -351,7 +351,6 @@ class EffectLogic(object):
       self.scopedSlicePaint.Paint()
     else:
       print("Invalid scope option %s" % self.scope)
-    volumeNode.SetModifiedSinceRead(1)
     volumeNode.Modified()
 
   def getVisibleCorners(self,layerLogic,slicePaint=None):

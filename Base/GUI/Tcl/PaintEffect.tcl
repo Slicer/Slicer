@@ -469,7 +469,6 @@ itcl::body PaintEffect::paintApply {} {
   # - editing image data of the calling modified on the node
   #   does not pull the pipeline chain
   # - so we trick it by changing the image data first
-  $_layers(label,node) SetModifiedSinceRead 1
   set workaround 1
   if { $workaround } {
     if { ![info exists o(tempImageData)] } {
