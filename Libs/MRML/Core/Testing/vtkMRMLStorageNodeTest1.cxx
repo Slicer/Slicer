@@ -10,13 +10,16 @@
 
 =========================================================================auto=*/
 
-#include "vtkURIHandler.h"
-
-#include <vtkAbstractTransform.h>
-
-
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLLinearTransformNode.h"
+#include "vtkMRMLModelNode.h"
+#include "vtkMRMLStorageNode.h"
 
+// VTK includes
+#include <vtkNew.h>
+
+//---------------------------------------------------------------------------
 class vtkMRMLStorageNodeTestHelper1 : public vtkMRMLStorageNode
 {
 public:
@@ -37,14 +40,39 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  bool CanReadInReferenceNode(vtkMRMLNode *) { return false; }
+  bool CanReadInReferenceNode(vtkMRMLNode * refNode) { return refNode->IsA(this->SupportedClass); }
+  int ReadDataInternal(vtkMRMLNode * refNode) { return this->ReadDataReturnValue; }
+
+  const char* SupportedClass;
+  int ReadDataReturnValue;
+protected:
+  vtkMRMLStorageNodeTestHelper1()
+    :SupportedClass(0)
+    ,ReadDataReturnValue(0)
+  {}
 };
 
+//---------------------------------------------------------------------------
+int TestBasics();
+bool TestReadData();
+bool TestWriteData();
+
+//---------------------------------------------------------------------------
 int vtkMRMLStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 >::New();
+  bool res = true;
+  res = (TestBasics() == EXIT_SUCCESS) && res;
+  res = TestReadData() && res;
+  res = TestWriteData() && res;
+  return EXIT_SUCCESS;
+}
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+//---------------------------------------------------------------------------
+int TestBasics()
+{
+  vtkNew< vtkMRMLStorageNodeTestHelper1 > node1;
+
+  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
   
   vtkMRMLNode * newNode = node1->CreateNodeInstance();
 
@@ -54,9 +82,61 @@ int vtkMRMLStorageNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLStorageNodeTestHelper1, node1);
-  
-  newNode->Delete();
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLStorageNodeTestHelper1, node1.GetPointer());
 
+  newNode->Delete();
   return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+bool TestReadData(int referenceNodeType,
+                  const char* supportedClass,
+                  int readDataReturn,
+                  int expectedRes)
+{
+  vtkNew<vtkMRMLStorageNodeTestHelper1> storageNode;
+  storageNode->SupportedClass = supportedClass;
+  storageNode->ReadDataReturnValue = readDataReturn;
+  storageNode->SetFileName("file.ext");
+  vtkNew<vtkMRMLLinearTransformNode> transformNode;
+  vtkNew<vtkMRMLModelNode> modelNode;
+  vtkMRMLNode* referenceNode = (referenceNodeType == 0 ? vtkMRMLNode::SafeDownCast(0):
+                               (referenceNodeType == 1 ? vtkMRMLNode::SafeDownCast(transformNode.GetPointer()) :
+                                  vtkMRMLNode::SafeDownCast(modelNode.GetPointer())));
+  int res = storageNode->ReadData(referenceNode);
+  if (res != expectedRes)
+    {
+    std::cout << "Failed to read data:"
+              << "Res: " << res << ", "
+              << "StoredTime: " << storageNode->GetStoredTime()
+              << std::endl;
+    return false;
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool TestReadData()
+{
+  bool res = true;
+  res = TestReadData(0, "invalid", 0, 0) && res;
+  res = TestReadData(0, "invalid", 1, 0) && res;
+  res = TestReadData(0, "vtkMRMLModelNode", 0, 0) && res;
+  res = TestReadData(0, "vtkMRMLModelNode", 1, 0) && res;
+  res = TestReadData(1, "invalid", 0, 0) && res;
+  res = TestReadData(1, "invalid", 1, 0) && res;
+  res = TestReadData(1, "vtkMRMLModelNode", 0, 0) && res;
+  res = TestReadData(1, "vtkMRMLModelNode", 1, 0) && res;
+  res = TestReadData(2, "invalid", 0, 0) && res;
+  res = TestReadData(2, "invalid", 1, 0) && res;
+  res = TestReadData(2, "vtkMRMLModelNode", 0, 0) && res;
+  res = TestReadData(2, "vtkMRMLModelNode", 1, 1) && res;
+  return res;
+}
+
+//---------------------------------------------------------------------------
+bool TestWriteData()
+{
+  bool res = true;
+  return true;
 }

@@ -598,6 +598,7 @@
 
 // ----------------------------------------------------------------------------
 #include <vtkStringArray.h>
+#include <vtkURIHandler.h>
 /// For testing nodes in Libs/MRML that are subclasses of the storage node. Calls the basic
 /// mrml methods macro first.
 #define EXERCISE_BASIC_STORAGE_MRML_METHODS( className, node )   \
