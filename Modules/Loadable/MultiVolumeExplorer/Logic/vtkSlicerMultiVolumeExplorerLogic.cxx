@@ -154,10 +154,15 @@ int vtkSlicerMultiVolumeExplorerLogic
 
   std::vector<DcmTagKey>  VolumeIdentifyingTags;
 
-  VolumeIdentifyingTags.push_back(DcmTagKey(0x0018,0x1060)); // DCE
-  VolumeIdentifyingTags.push_back(DcmTagKey(0x0018,0x0081)); // vTE
-  VolumeIdentifyingTags.push_back(DcmTagKey(0x0018,0x1314)); // vFA
-  VolumeIdentifyingTags.push_back(DcmTagKey(0x0018,0x0080)); // vTR
+  DcmTagKey temporalPositionTag = DcmTagKey(0x0018,0x1060);
+  DcmTagKey teTag = DcmTagKey(0x0018,0x0081);
+  DcmTagKey faTag = DcmTagKey(0x0018,0x1314);
+  DcmTagKey trTag = DcmTagKey(0x0018,0x0080);
+
+  VolumeIdentifyingTags.push_back(DcmTagKey(temporalPositionTag)); // DCE
+  VolumeIdentifyingTags.push_back(DcmTagKey(teTag)); // vTE
+  VolumeIdentifyingTags.push_back(DcmTagKey(faTag)); // vFA
+  VolumeIdentifyingTags.push_back(DcmTagKey(trTag)); // vTR
 
   std::vector<std::string>  VolumeIdentifyingTagNames;
 
@@ -268,6 +273,32 @@ int vtkSlicerMultiVolumeExplorerLogic
       mvNode->SetAttribute("MultiVolume.FrameLabels", frameLabelsStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.NumberOfFrames", numberOfFramesStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName", VolumeIdentifyingTagNames[i].c_str());
+
+      if(i==0)
+        {
+        // MV is a DCE sequence, store TE, TR and FA
+        OFCondition status;
+        DcmElement *el;
+        char* str;
+        status = dcmDatasetVector[0]->findAndGetElement(teTag, el);
+        if(status.good())
+          {
+          el->getString(str);
+          mvNode->SetAttribute("MultiVolume.DICOM.EchoTime", str);
+          }
+        status = dcmDatasetVector[0]->findAndGetElement(trTag, el);
+        if(status.good())
+          {
+          el->getString(str);
+          mvNode->SetAttribute("MultiVolume.DICOM.RepetitionTime", str);
+          }
+        status = dcmDatasetVector[0]->findAndGetElement(faTag, el);
+        if(status.good())
+          {
+          el->getString(str);
+          mvNode->SetAttribute("MultiVolume.DICOM.FlipAngle", str);
+          }
+        }
 
       std::cout << std::endl;
 
