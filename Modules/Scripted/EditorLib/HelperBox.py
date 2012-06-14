@@ -595,7 +595,8 @@ class HelperBox(object):
     self.structures.setHeaderData(3,1,"Label Volume")
     self.structures.setHeaderData(4,1,"Order")
     self.structuresView.setModel(self.structures)
-    
+    self.structuresView.selectionModel().connect("currentChanged(QModelIndex,QModelIndex)", self.onStructuresClicked)
+
   #
   # callback helpers (slots)
   #
@@ -753,7 +754,6 @@ class HelperBox(object):
     self.addStructureButton.connect("clicked()", self.addStructure)
     self.deleteStructuresButton.connect("clicked()", self.deleteStructures)
     # selection changed event
-    self.structuresView.connect("activated(QModelIndex)", self.onStructuresClicked)
     # invoked event
     self.splitButton.connect("clicked()", self.split)
     self.mergeButton.connect("clicked()", self.mergeStructures)
