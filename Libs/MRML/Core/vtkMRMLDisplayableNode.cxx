@@ -401,7 +401,6 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
   if (this->PolyData && this->PolyData == vtkPolyData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
-    this->ModifiedSinceRead = true;
     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, NULL);
     }
   return;
@@ -456,4 +455,11 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
 void vtkMRMLDisplayableNode::GetRASBounds(double bounds[6])
 {
   vtkMath::UninitializeBounds(bounds);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLDisplayableNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->PolyData && this->PolyData->GetMTime() > this->GetStoredTime());
 }

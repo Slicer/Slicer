@@ -36,6 +36,7 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkStringArray.h>
 
 // ITKSys includes
 
@@ -52,153 +53,23 @@ vtkMRMLNodeNewMacro(vtkMRMLFreeSurferModelOverlayStorageNode);
 //----------------------------------------------------------------------------
 vtkMRMLFreeSurferModelOverlayStorageNode::vtkMRMLFreeSurferModelOverlayStorageNode()
 {
-  // set up the list of known surface overlay file extensions
-  this->AddFileExtension(std::string(".w"));
-  this->AddFileExtension(std::string(".thickness"));
-  this->AddFileExtension(std::string(".curv"));
-  this->AddFileExtension(std::string(".avg_curv"));
-  this->AddFileExtension(std::string(".sulc"));
-  this->AddFileExtension(std::string(".area"));
-  this->AddFileExtension(std::string(".annot"));
-  this->AddFileExtension(std::string(".mgz"));
-  this->AddFileExtension(std::string(".mgh"));
-  this->AddFileExtension(std::string(".label"));
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLFreeSurferModelOverlayStorageNode::~vtkMRMLFreeSurferModelOverlayStorageNode()
 {
-
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelOverlayStorageNode::WriteXML(ostream& of, int indent)
-{
-  Superclass::WriteXML(of, indent);
-  if (this->GetNumberOfKnownFileExtensions() > 0)
-    {
-    of << " knownFileExtensions=\"";
-    for ( int i = 0; i < this->GetNumberOfKnownFileExtensions(); i++)
-      {
-      of << this->KnownFileExtensions[i];
-      if (i < this->GetNumberOfKnownFileExtensions() - 1)
-        {
-        // don't put a space after the last one
-        of << " ";
-        }
-      }
-    of << "\"" << endl;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelOverlayStorageNode::ReadXMLAttributes(const char** atts)
-{
-  vtkDebugMacro("ReadXMLAttributes called... calling superclass");
-
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "knownFileExtensions"))
-      {
-
-      // one per line
-      char *extNames = const_cast<char*>(attValue);
-      vtkDebugMacro("Have scalar overlay file extensions: " << extNames);
-      char *ptr = strtok(extNames, " ");
-      vtkDebugMacro("Got ext name " << ptr);
-      while (ptr != NULL)
-        {
-        this->AddFileExtension(ptr);
-        ptr = strtok(NULL, " ");
-        vtkDebugMacro("\text = " << ptr);
-        }
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLFreeSurferModelOverlayStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-
-  vtkMRMLFreeSurferModelOverlayStorageNode *node = (vtkMRMLFreeSurferModelOverlayStorageNode*)anode;
-
-  for (int i = 0; i < node->GetNumberOfKnownFileExtensions(); i++)
-    {
-    this->AddFileExtension(node->GetKnownFileExtension(i));
-    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferModelOverlayStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-
-  vtkMRMLStorageNode::PrintSelf(os,indent);
-
-  os << indent << "Known File Extensions: " << endl;
-  if (this->GetNumberOfKnownFileExtensions() > 0)
-    {
-    for ( int i = 0; i < this->GetNumberOfKnownFileExtensions(); i++)
-      {
-      os << indent << indent << this->GetKnownFileExtension(i) << endl;
-      }
-    }
-  else
-    {
-    os << indent << indent << "(none)" << endl;
-    }
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelOverlayStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
-{
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("vtkMRMLFreeSurferModelOverlayStorageNode::ReadData: Reference node is null.");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if (  !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLModelNode") )
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
-    return 0;
-    }
-
-
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkDebugMacro("ReadData: remote file download hasn't finished");
-    return 0;
-    }
-
-  vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
   if (modelNode == NULL ||
       modelNode->GetPolyData() == NULL ||
@@ -790,20 +661,21 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (modelNode->GetPolyData() != NULL)
     {
-    modelNode->GetPolyData()->Modified();
+    //modelNode->GetPolyData()->Modified();
     }
 
-  // now reset read state to idle
-  this->SetReadStateIdle();
-
-  modelNode->SetModifiedSinceRead(0);
   vtkDebugMacro("ReadData: Returning " << result);
   return result;
 }
 
+//----------------------------------------------------------------------------
+bool vtkMRMLFreeSurferModelOverlayStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+{
+  return false;
+}
 
 //----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelOverlayStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLFreeSurferModelOverlayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   vtkErrorMacro("Model Writing not supported for FreeSurfer models. For RemoteIO, please see the CopyData method as a possible workaround.");
   return 0;
@@ -830,11 +702,6 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::WriteData(vtkMRMLNode *refNode)
 
   result = 0;
   vtkErrorMacro("No Writer for file extension: " << fullName.c_str() );
-
-  if (result != 0)
-    {
-    this->StageWriteData(refNode);
-    }
 
   return result;
 }
@@ -887,90 +754,19 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::CopyData(vtkMRMLNode *refNode,
   return 1;
 }
 
-
-
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelOverlayStorageNode::AddFileExtension(std::string ext)
+void vtkMRMLFreeSurferModelOverlayStorageNode::InitializeSupportedReadFileTypes()
 {
-  if (!IsKnownFileExtension(ext))
-    {
-    this->KnownFileExtensions.push_back(ext);
-    }
-}
-//----------------------------------------------------------------------------
-bool vtkMRMLFreeSurferModelOverlayStorageNode::IsKnownFileExtension(std::string ext)
-{
-  std::vector< std::string >::iterator iter;
-  for (iter = this->KnownFileExtensions.begin(); iter != this->KnownFileExtensions.end(); ++iter)
-    {
-    if ((*iter) == ext)
-      {
-      return true;
-      }
-    }
-  return false;
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelOverlayStorageNode::GetNumberOfKnownFileExtensions()
-{
-  return this->KnownFileExtensions.size();
-}
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLFreeSurferModelOverlayStorageNode::GetKnownFileExtension(int i)
-{
-  if (i < 0 || i > this->GetNumberOfKnownFileExtensions())
-    {
-    vtkErrorMacro("GetKnownFileExtension: i " << i << " is out of range 0 - " << this->GetNumberOfKnownFileExtensions());
-    return NULL;
-    }
-  else
-    {
-    return this->KnownFileExtensions[i].c_str();
-    }
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelOverlayStorageNode::SupportedFileType(const char *fileName)
-{
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos )
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (this->IsKnownFileExtension(extension))
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue(".w");
+  this->SupportedReadFileTypes->InsertNextValue(".thickness");
+  this->SupportedReadFileTypes->InsertNextValue(".curv");
+  this->SupportedReadFileTypes->InsertNextValue(".avg_curv");
+  this->SupportedReadFileTypes->InsertNextValue(".sulc");
+  this->SupportedReadFileTypes->InsertNextValue(".area");
+  this->SupportedReadFileTypes->InsertNextValue(".annot");
+  this->SupportedReadFileTypes->InsertNextValue(".mgz");
+  this->SupportedReadFileTypes->InsertNextValue(".mgh");
+  this->SupportedReadFileTypes->InsertNextValue(".label");
 }
 
 //----------------------------------------------------------------------------

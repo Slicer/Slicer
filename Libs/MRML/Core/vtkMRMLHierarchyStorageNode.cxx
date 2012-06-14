@@ -12,7 +12,6 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
-
 #include "vtkMRMLHierarchyStorageNode.h"
 #include "vtkMRMLHierarchyNode.h"
 #include "vtkMRMLScene.h"
@@ -34,74 +33,20 @@ vtkMRMLHierarchyStorageNode::~vtkMRMLHierarchyStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLHierarchyStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLHierarchyStorageNode::ReadXMLAttributes(const char** atts)
-{
-  Superclass::ReadXMLAttributes(atts);
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLHierarchyStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLHierarchyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
-{  
+{
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLHierarchyStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLHierarchyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLHierarchyNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-  
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-  
-  vtkDebugMacro("Reading hierarchy data");
-  // test whether refNode is a valid node to hold a hierarchy
-  if ( !( refNode->IsA("vtkMRMLHierarchyNode"))
-       ) 
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLHierarchyNode");
-    return 0;         
-    }
-  
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name and uri not set");
-    return 0;
-    }
-  
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: Read state is pending, returning.");
-    return 0;
-    }
-  
   std::string fullName = this->GetFullNameFromFileName(); 
   
   if (fullName == std::string("")) 
@@ -145,36 +90,16 @@ int vtkMRMLHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("ERROR opening file " << this->FileName << endl);
     return 0;
     }
-  
-  this->SetReadStateIdle();
 
   // make sure that the list node points to this storage node
   //-------------------------> hierarchyNode->SetAndObserveStorageNodeID(this->GetID());
-  
-
-  // mark it unmodified since read
-  hierarchyNode->ModifiedSinceReadOff();
 
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLHierarchyNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLHierarchyNode");
-    return 0;         
-    }
-  
-  if (this->GetFileName() == NULL) 
-    {
-    vtkErrorMacro("WriteData: file name is not set");
-    return 0;
-    }
-  
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
@@ -211,56 +136,26 @@ int vtkMRMLHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
 
   of.close();
   
-  Superclass::StageWriteData(refNode);
+  this->StageWriteData(refNode);
   
   return 1;
 
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLHierarchyStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLHierarchyStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-  
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".txt") == 0)
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLHierarchyStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLHierarchyStorageNode::GetDefaultWriteFileExtension()
+{
+  return "txt";
 }

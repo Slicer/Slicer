@@ -76,6 +76,7 @@ Version:   $Revision: 1.18 $
 #include <vtkDebugLeaks.h>
 #include <vtkErrorCode.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 // VTKSYS includes
 #include <vtksys/SystemTools.hxx>
@@ -967,6 +968,7 @@ int vtkMRMLScene::Import()
   importingTimer->Delete();
   timer->Delete();
 #endif
+  this->StoredTime.Modified();
   return returnCode;
 }
 
@@ -1193,6 +1195,7 @@ int vtkMRMLScene::Commit(const char* url)
 #else
   this->SetErrorCode(vtkErrorCode::GetErrorCodeFromString("NoError"));
 #endif
+  this->StoredTime.Modified();
   return 1;
 }
 
@@ -1418,7 +1421,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 
   this->RemoveUnusedNodeReferences();
 
-  //this->Modified();
+  this->Modified();
 }
 
 //------------------------------------------------------------------------------
@@ -1806,6 +1809,34 @@ vtkCollection* vtkMRMLScene::GetNodesByName(const char* name)
       }
     }
   return nodes;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLScene::GetFirstNode(const char* byName,
+                                        const char* byClass,
+                                        const int* byHideFromEditors)
+{
+  vtkCollectionSimpleIterator it;
+  vtkMRMLNode* node;
+  for (this->Nodes->InitTraversal(it);
+       (node= vtkMRMLNode::SafeDownCast(
+          this->Nodes->GetNextItemAsObject(it))) ;)
+    {
+    if (byName && node->GetName() != 0 && strcmp(node->GetName(), byName) != 0)
+      {
+      continue;
+      }
+    if (byClass && !node->IsA(byClass))
+      {
+      continue;
+      }
+    if (byHideFromEditors && node->GetHideFromEditors() != *byHideFromEditors)
+      {
+      continue;
+      }
+    return node;
+    }
+  return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -3194,7 +3225,6 @@ const std::vector< vtkMRMLNode* >& vtkMRMLScene::GetReferencingNodes()
   return this->ReferencingNodes;
 }
 
-
 //-----------------------------------------------------------------------------
 unsigned long vtkMRMLScene::GetSceneModifiedTime()
 {
@@ -3203,4 +3233,42 @@ unsigned long vtkMRMLScene::GetSceneModifiedTime()
     this->SceneModifiedTime = this->Nodes->GetMTime();
     }
   return this->SceneModifiedTime;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLScene::GetModifiedSinceRead()
+{
+  int hideFromEditors = 0;
+  bool hasAtLeast1DisplayableNode =
+    (this->GetFirstNode(0, "vtkMRMLDisplayableNode", &hideFromEditors) != 0);
+  return this->GetMTime() > this->StoredTime &&
+    // There is no need to save the scene if it just has view nodes
+    hasAtLeast1DisplayableNode;
+}
+
+//-----------------------------------------------------------------------------
+bool vtkMRMLScene
+::GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes)
+{
+  bool found = false;
+  vtkSmartPointer<vtkCollection> storableNodes;
+  storableNodes.TakeReference(
+    this->GetNodesByClass("vtkMRMLStorableNode"));
+  vtkCollectionSimpleIterator it;
+  vtkMRMLStorableNode* storableNode;
+  for (storableNodes->InitTraversal(it);
+       (storableNode= vtkMRMLStorableNode::SafeDownCast(
+          storableNodes->GetNextItemAsObject(it))) ;)
+    {
+    if (!storableNode->GetHideFromEditors() &&
+         storableNode->GetModifiedSinceRead())
+      {
+      found = true;
+      if (modifiedStorableNodes)
+        {
+        modifiedStorableNodes->AddItem(storableNode);
+        }
+      }
+    }
+  return found;
 }

@@ -178,7 +178,8 @@ std::vector<std::string> vtkSlicerColorLogic::FindColorFiles(const std::vector<s
           {
           // check that it's a supported file type
           // create a storage node so can check for supported file types
-          vtkSmartPointer<vtkMRMLColorTableStorageNode>colorStorageNode =       vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
+          vtkSmartPointer<vtkMRMLColorTableStorageNode>colorStorageNode =
+            vtkSmartPointer<vtkMRMLColorTableStorageNode>::New();
           if (colorStorageNode->SupportedFileType(fileToCheck.c_str()))
             {
             vtkDebugMacro("FindColorFiles: Adding " << fileToCheck.c_str() << " to list of potential colour files. Type = " << fileType);

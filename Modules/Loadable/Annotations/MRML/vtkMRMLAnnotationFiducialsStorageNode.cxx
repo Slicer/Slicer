@@ -106,13 +106,6 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotationFiducialsData(vtkMRMLAn
     vtkErrorMacro("Error adding control point to list, coord = " << coord[0] << " " << coord[1] << " " << coord[2]);
     return -1;
     }
-  
-  // make sure that the list node points to this storage node
-  refNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  //newNode->ModifiedSinceReadOff();
-  
   //newNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, newCPDisplayNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
   
   return 1;
@@ -306,43 +299,20 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadAnnotation(vtkMRMLAnnotationFiduc
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationFiducialsStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationFiducialsStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
+  return refNode->IsA("vtkMRMLAnnotationFiducialNode");
+}
 
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if (!this->GetAddToScene())
-    {
-    return 1;
-    }
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
+  vtkMRMLAnnotationFiducialNode *fiducialNode =
+    vtkMRMLAnnotationFiducialNode::SafeDownCast(refNode);
 
-  if (!refNode->IsA("vtkMRMLAnnotationFiducialNode") ) 
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLAnnotationFiducialNode");
-    return 0;
-    }
+  int res = this->ReadAnnotation(fiducialNode);
 
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-
-  vtkMRMLAnnotationFiducialNode *fiducialNode = dynamic_cast <vtkMRMLAnnotationFiducialNode *> (refNode);
-  
-  if (!this->ReadAnnotation(fiducialNode))
-    {
-    return 0;
-    }
-
-  fiducialNode->SetModifiedSinceRead(0);
-  
-  return 1;
+  return res;
 }
 
 //----------------------------------------------------------------------------
@@ -453,44 +423,13 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
     }
   
   refNode->SetDisableModifiedEvent(modFlag);
-    
-  refNode->SetModifiedSinceRead(0);
   
   return 1;
 }
 
 //----------------------------------------------------------------------------
-// int vtkMRMLAnnotationFiducialsStorageNode::ReadData(vtkMRMLNode *refNode)
+// int vtkMRMLAnnotationFiducialsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 // {
-//   // do not read if if we are not in the scene (for example inside snapshot)
-//   if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-//     {
-//     return 1;
-//     }
-// 
-//   vtkDebugMacro("Reading Annotation data");
-//   // test whether refNode is a valid node to hold a fiducial list
-//   if ( !( refNode->IsA("vtkMRMLAnnotationFiducialsNode"))
-//      ) 
-//     {
-//     vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationFiducialsNode");
-//     return 0;         
-//     }
-// 
-//   if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-//     {
-//     vtkErrorMacro("ReadData: file name and uri not set");
-//     return 0;
-//     }
-// 
-//   Superclass::StageReadData(refNode);
-//   if ( this->GetReadState() != this->TransferDone )
-//     {
-//     // remote file download hasn't finished
-//     vtkWarningMacro("ReadData: Read state is pending, returning.");
-//     return 0;
-//     }
-//   
 //   std::string fullName = this->GetFullNameFromFileName(); 
 // 
 //   if (fullName == std::string("")) 
@@ -827,14 +766,6 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //     return 0;
 //     }
 //   
-//   this->SetReadStateIdle();
-//   
-//   // make sure that the list node points to this storage node
-//   annotationNode->SetAndObserveStorageNodeID(this->GetID());
-// 
-//   // mark it unmodified since read
-//   annotationNode->ModifiedSinceReadOff();
-//   
 //   return 1;
 // }
 
@@ -842,7 +773,6 @@ int vtkMRMLAnnotationFiducialsStorageNode::ReadOneFiducial(fstream & fstr, vtkMR
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationFiducialsStorageNode::InitializeSupportedWriteFileTypes()
 {
-  Superclass::InitializeSupportedWriteFileTypes();
-  
+  this->Superclass::InitializeSupportedWriteFileTypes();
   this->SupportedWriteFileTypes->InsertNextValue("Fiducial List CSV (.fcsv)");
 }

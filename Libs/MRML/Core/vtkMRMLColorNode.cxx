@@ -366,16 +366,19 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
 //---------------------------------------------------------------------------
 int vtkMRMLColorNode::SetColorName(int ind, const char *name)
 {
-    if (ind < (int)this->Names.size() && ind >= 0)
+  if (ind >= static_cast<int>(this->Names.size()) || ind < 0)
     {
-    this->Names[ind] = std::string(name);
-    return 1;
-    }
-  else
-    {
-    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: " << ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == NULL ? "null" : this->GetName()));
+    vtkErrorMacro("ERROR: SetColorName, index was out of bounds: "<< ind << ", current size is " << this->Names.size() << ", table name = " << (this->GetName() == NULL ? "null" : this->GetName()));
     return 0;
     }
+  std::string newName(name);
+  if (this->Names[ind] != newName)
+    {
+    this->Names[ind] = newName;
+    this->StorableModifiedTime.Modified();
+    // TBD: fire Modified?
+    }
+  return 1;
 }
 
 //---------------------------------------------------------------------------
@@ -397,12 +400,6 @@ int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const ch
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLColorNode::AddColorName(const char *name)
-{
-  this->Names.push_back(std::string(name));
-}
-
-//---------------------------------------------------------------------------
 int vtkMRMLColorNode::GetNumberOfColors()
 {
   return static_cast<int>(this->Names.size());
@@ -420,4 +417,12 @@ void vtkMRMLColorNode::Reset()
   // don't need to call reset on color nodes, as all but the User color table
   // node are static, and that's taken care of in the vtkMRMLColorTableNode
   //Superclass::Reset();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLColorNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->GetScalarsToColors() &&
+     this->GetScalarsToColors()->GetMTime() > this->GetStoredTime());
 }

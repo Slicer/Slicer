@@ -50,75 +50,21 @@ vtkMRMLTransformStorageNode::vtkMRMLTransformStorageNode()
 vtkMRMLTransformStorageNode::~vtkMRMLTransformStorageNode()
 {
 }
-
-void vtkMRMLTransformStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformStorageNode::ReadXMLAttributes(const char** atts)
-{
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLTransformStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
 //----------------------------------------------------------------------------
 void vtkMRMLTransformStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  vtkMRMLStorageNode::PrintSelf(os,indent);
-
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLTransformStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLTransformNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if (  !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLTransformNode") ) 
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLTransformNode");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-  
   vtkMRMLTransformNode *transformNode = dynamic_cast <vtkMRMLTransformNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName(); 
@@ -613,33 +559,14 @@ int vtkMRMLTransformStorageNode::ReadData(vtkMRMLNode *refNode)
 
   if (transformNode->GetTransformToParent() != NULL) 
     {
-    transformNode->GetTransformToParent()->Modified();
+    //transformNode->GetTransformToParent()->Modified();
     }
-  transformNode->SetModifiedSinceRead(0);
-
-  this->SetReadStateIdle();
-   
   return result;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLTransformStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a transform
-  if (!refNode->IsA("vtkMRMLTransformNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLTransformNode");
-    return 0;
-    }
-  
-  //vtkMRMLTransformNode *transformNode = vtkMRMLTransformNode::SafeDownCast(refNode);
-  
   std::string fullName =  this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
@@ -847,29 +774,8 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
 }
-
 //----------------------------------------------------------------------------
-int vtkMRMLTransformStorageNode::SupportedFileType(const char *fileName)
+const char* vtkMRMLTransformStorageNode::GetDefaultWriteFileExtension()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-  {
-    name = std::string(fileName);
-  }
-  else if (this->FileName != NULL)
-  {
-    name = std::string(this->FileName);
-  }
-  else if (this->URI != NULL)
-  {
-    name = std::string(this->URI);
-  }
-  else
-  {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-  }
-
-  return 1;
+  return "tfm";
 }

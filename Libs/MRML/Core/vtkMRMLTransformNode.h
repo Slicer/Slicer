@@ -105,6 +105,7 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
+  virtual bool GetModifiedSinceRead();
 protected:
   vtkMRMLTransformNode();
   ~vtkMRMLTransformNode();

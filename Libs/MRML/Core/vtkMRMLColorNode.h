@@ -103,13 +103,11 @@ public:
   /// Get the 0th based nth name of this colour, replacing the spaces with
   /// subst
   std::string GetColorNameWithoutSpaces(int ind, const char *subst);
-  
-  /// 
-  /// Add a color name to the vector
-  void AddColorName(const char *name);
-  /// 
-  /// Set the 0th based nth name of this colour. Returns 1 on success, 0 on failure.
+
+  /// Set the 0th based nth name of this colour.
+  /// Returns 1 on success, 0 on failure.
   int SetColorName(int ind, const char *name);
+
   /// 
   /// Set the 0th based nth name of this colour, replacing the subst character
   /// with spaces. Returns 1 on success, 0 on failure
@@ -153,6 +151,8 @@ public:
   /// Set values in the names vector from the colours in the node
   void SetNamesFromColors();
 
+  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
+  virtual bool GetModifiedSinceRead();
 protected:
   vtkMRMLColorNode();
   virtual ~vtkMRMLColorNode();

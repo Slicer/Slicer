@@ -1553,7 +1553,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnVolumeNodes()
         }
       }
 
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -1709,7 +1709,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnModelNodes()
         t->AddOrUpdateTag ( "SlicerDataType", dtype, 1 );
         }
       }
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -1776,7 +1776,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiberBundleNodes()
     vtkTagTable *tt = fiberBundleNode->GetUserTagTable();
     tt->AddOrUpdateTag ( "SlicerDataType", fiberBundleNode->GetSlicerDataType(), 1 );
 
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -1825,11 +1825,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
       {
       continue;
       }
-    if (snode == NULL && !node->GetModifiedSinceRead())
+    if (snode == NULL )//&& !node->GetModifiedSinceRead())
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead())
+    if (snode == NULL )//&& node->GetModifiedSinceRead())
       {
         vtkMRMLUnstructuredGridStorageNode *storageNode = vtkMRMLUnstructuredGridStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());
@@ -1876,7 +1876,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnUnstructuredGridNodes()
         }
       }
 
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -1930,7 +1930,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
       // storage node is created, so we may never fall into this
       // method and will consequently skip tagging a
       // fiducialListNode when it's created (but empty)
-    if (snode == NULL && !node->GetModifiedSinceRead())
+    if (snode == NULL ) // && !node->GetModifiedSinceRead())
       {
       continue;
       }
@@ -1941,7 +1941,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
       storageNode->SetScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(storageNode);
       flnode->SetAndObserveStorageNodeID(storageNode->GetID());
-      flnode->ModifiedSinceReadOn();
+      //flnode->ModifiedSinceReadOn();
       storageNode->Delete();
       snode = flnode->GetStorageNode();
       }
@@ -1989,7 +1989,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnFiducialListNodes()
         t->AddOrUpdateTag ( "SlicerDataType", flnode->GetSlicerDataType(), 1 );
         }
       }
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -2033,11 +2033,11 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
       continue;
       }
     vtkMRMLStorageNode* snode = cnode->GetStorageNode();
-    if (snode == NULL && !node->GetModifiedSinceRead())
+    if (snode == NULL)//&& !node->GetModifiedSinceRead())
       {
       continue;
       }
-    if (snode == NULL && node->GetModifiedSinceRead())
+    if (snode == NULL)// && node->GetModifiedSinceRead())
       {
       vtkMRMLColorTableStorageNode *storageNode = vtkMRMLColorTableStorageNode::New();
       storageNode->SetScene(this->GetMRMLScene());
@@ -2090,7 +2090,7 @@ void vtkFetchMILogic::SetSlicerDataTypeOnColorTableNodes()
         t->AddOrUpdateTag ( "SlicerDataType", cnode->GetSlicerDataType(), 1 );
         }
       }
-    if (node->GetModifiedSinceRead())
+    //if (node->GetModifiedSinceRead())
       {
       this->AddModifiedNode(node->GetID());
       this->AddSelectedStorableNode(node->GetID() );
@@ -3888,36 +3888,6 @@ int vtkFetchMILogic::CheckStorageNodeFileNames()
   return (1);
 
 }
-
-
-//----------------------------------------------------------------------------
-int vtkFetchMILogic::CheckModifiedSinceRead()
-{
-  // Before upload, check to make sure all storable nodes have
-  // set storage nodes with filenames
-
-  //--- Get the MRML Scene
-  if ( this->GetMRMLScene() == NULL )
-    {
-    vtkErrorMacro ("CheckModifiedSinceRead: Null scene. ");
-    return(0);
-    }
-
-  vtkMRMLNode *node;
-  for (unsigned int n = 0; n < this->SelectedStorableNodeIDs.size(); n++)
-    {
-    node = this->GetMRMLScene()->GetNodeByID( this->SelectedStorableNodeIDs[n] );
-    if (node->GetModifiedSinceRead())
-      {
-      vtkErrorMacro("CheckModifiedSinceRead: error, node " << this->SelectedStorableNodeIDs[n] << " has been modified. Please save all unsaved nodes first");
-      return (0);
-      }
-    }
-  return (1);
-
-}
-
-
 
 //---------------------------------------------------------------------------
 void vtkFetchMILogic::SaveNewURIOnSelectedResource ( const char *olduri, const char *newuri )

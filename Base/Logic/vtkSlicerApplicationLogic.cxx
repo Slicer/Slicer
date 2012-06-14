@@ -1044,7 +1044,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           storageNode->SetURI(req.GetFilename().c_str());
           vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", uri = " << storageNode->GetURI());
-          storageNode->ReadData( nd );
+          storageNode->ReadData( nd, /*temporary*/true );
           if (!storageNodeExists)
             {
             storageNode->SetURI(NULL);
@@ -1054,15 +1054,12 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
           {
           storageNode->SetFileName( req.GetFilename().c_str() );
            vtkDebugMacro("ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
-          storageNode->ReadData( nd );
+          storageNode->ReadData( nd, /*temporary*/true );
           if (!storageNodeExists)
             {
             storageNode->SetFileName( NULL ); // clear temp file name
             }
           }
-        // since this was read from a temp location,
-        // mark it as needing to be saved when the scene is saved
-        nd->SetModifiedSinceRead(1);
         }
       catch (itk::ExceptionObject& exc)
         {
@@ -1112,12 +1109,6 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
         information << "Unable to delete temporary file "
                     << req.GetFilename() << std::endl;
         vtkWarningMacro( << information.str().c_str() );
-        }
-      else
-        {
-        // since we deleted the file on disk, or it was never on disk, mark
-        // the node as modified since read so it can be saved easily
-        nd->ModifiedSinceReadOn();
         }
       }
 
@@ -1389,7 +1380,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
           {
           // set the model node to be modified, as it was read from a temp
           // location
-          smnd->SetModifiedSinceRead(1);
+          //smnd->SetModifiedSinceRead(1);
           // get display node BEFORE we add nodes to the target scene
           vtkMRMLDisplayNode *sdnd1 = smnd->GetDisplayNode();
 
@@ -1446,7 +1437,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 if (smnd1)
                   {
                   // set it as modified
-                  smnd1->SetModifiedSinceRead(1);
+                  //smnd1->SetModifiedSinceRead(1);
                   // get display node BEFORE we add nodes to the target scene
                   vtkMRMLDisplayNode *sdnd2 = smnd1->GetDisplayNode();
 

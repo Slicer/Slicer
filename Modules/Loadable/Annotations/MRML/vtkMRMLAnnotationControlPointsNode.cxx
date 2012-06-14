@@ -613,7 +613,6 @@ const char* vtkMRMLAnnotationControlPointsNode::GetNumberingSchemeAsString(int s
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::SetNumberingSchemeFromString(const char *schemeString)
 {
-  int changed = 1;
   if (!strcmp(schemeString, "UseID"))
     {
     this->SetNumberingScheme(this->UseID);
@@ -629,12 +628,20 @@ void vtkMRMLAnnotationControlPointsNode::SetNumberingSchemeFromString(const char
   else
     {
     vtkErrorMacro("Invalid numbering scheme string: " << schemeString);
-    changed = 0;
     }
-  if (changed)
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationControlPointsNode
+::SetNumberingScheme(int numberingScheme)
+{
+  if (numberingScheme == this->NumberingScheme)
     {
-    this->ModifiedSinceReadOn();
-    }  
+    return;
+    }
+  this->NumberingScheme = numberingScheme;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

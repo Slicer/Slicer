@@ -143,13 +143,12 @@ void vtkMRMLAnnotationLineDisplayNode::SetLineThickness(double thickness)
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting LineThickness to " << thickness);
     this->LineThickness = thickness;
    
-    if (!this->GetDisableModifiedEvent())
-      {
+    //if (!this->GetDisableModifiedEvent())
+    //  {
       // invoke a display modified event
       // KP this->InvokeEvent(vtkMRMLAnnotationLineDisplayNode::DisplayModifiedEvent);
-      this->Modified();
-      }
-    this->ModifiedSinceReadOn();
+    //  }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

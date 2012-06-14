@@ -121,8 +121,9 @@ public:
   vtkSetMacro(Visible, int);
   vtkBooleanMacro(Visible, int);
 
-  // Description:
-  // If set to 1 then parameters should not be changed 
+  /// If set to 1 then parameters should not be changed.
+  /// Fires vtkMRMLAnnotationNode::LockModifiedEvent if changed except if
+  /// GetDisableModifiedEvent() is true.
   vtkGetMacro(Locked, int);
   void SetLocked(int init);
 

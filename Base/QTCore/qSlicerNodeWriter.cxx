@@ -143,7 +143,6 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   if (res)
     {
     this->setWrittenNodes(QStringList() << node->GetID());
-    node->SetModifiedSinceRead(0);
     }
 
   return res;

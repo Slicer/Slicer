@@ -42,7 +42,6 @@ int vtkMRMLAnnotationStorageNodeTest1(int , char * [] )
 
   annNode->Modified();
 
-  node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationStorageNodeTest.acsv");
   int writeResult = node2->WriteData(annNode);

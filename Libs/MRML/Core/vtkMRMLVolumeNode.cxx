@@ -176,19 +176,11 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
       }
     }
 
-  int modified = anode->GetModifiedSinceRead();
-  //unsigned long mtime = anode->GetMTime(); UNUSED
-
   if (node->ImageData != NULL)
     {
     this->SetAndObserveImageData(node->ImageData);
     }
 
-  // this is to work around the SetAndObserveImageData causing 
-  // ModifiedSinceRead become 1 on both nodes
-  this->SetModifiedSinceRead (modified);
-
-  anode->SetModifiedSinceRead (modified);
   anode->SetDisableModifiedEvent(amode);
 
   this->EndModify(disabledModify);
@@ -692,7 +684,6 @@ void vtkMRMLVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
   if (this->ImageData && this->ImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
     {
-    this->ModifiedSinceRead = true;
     this->InvokeEvent(vtkMRMLVolumeNode::ImageDataModifiedEvent, NULL);
     return;
     }
@@ -805,3 +796,9 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
     }
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumeNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->ImageData && this->ImageData->GetMTime() > this->GetStoredTime());
+}

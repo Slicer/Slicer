@@ -22,11 +22,13 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QKeySequence>
+#include <QMenu>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QSettings>
 #include <QShowEvent>
 #include <QTimer>
 #include <QToolButton>
-#include <QMenu>
 
 #include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
 #include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT and Slicer_USE_QtTesting
@@ -413,7 +415,43 @@ void qSlicerAppMainWindowPrivate::writeSettings()
 bool qSlicerAppMainWindowPrivate::confirmClose()
 {
   Q_Q(qSlicerAppMainWindow);
-  return ctkMessageBox::confirmExit("MainWindow/DontConfirmExit", q);
+  vtkMRMLScene* scene = qSlicerApplication::application()->mrmlScene();
+  QString question;
+  if (scene->GetStorableNodesModifiedSinceRead())
+    {
+    question = q->tr("Some data have been modified. Do you want to save them before exit?");
+    }
+  else if (scene->GetModifiedSinceRead())
+    {
+    question = q->tr("The scene has been modified. Do you want to save it before exit?");
+    }
+  bool close = false;
+  if (!question.isEmpty())
+    {
+    QMessageBox messageBox(QMessageBox::Warning, q->tr("Save before exit?"), question, QMessageBox::NoButton, q);
+    QAbstractButton* saveButton =
+       messageBox.addButton(q->tr("Save"), QMessageBox::ActionRole);
+    QAbstractButton* exitButton =
+       messageBox.addButton(q->tr("Exit (discard modifications)"), QMessageBox::ActionRole);
+    QAbstractButton* cancelButton =
+       messageBox.addButton(q->tr("Cancel exit"), QMessageBox::ActionRole);
+    messageBox.exec();
+    if (messageBox.clickedButton() == saveButton)
+      {
+      // \todo Check if the save data dialog was "applied" and close the
+      // app in that case
+      this->actionFileSaveScene->trigger();
+      }
+    else if (messageBox.clickedButton() == exitButton)
+      {
+      close = true;
+      }
+    }
+  else
+    {
+    close = ctkMessageBox::confirmExit("MainWindow/DontConfirmExit", q);
+    }
+  return close;
 }
 
 //-----------------------------------------------------------------------------

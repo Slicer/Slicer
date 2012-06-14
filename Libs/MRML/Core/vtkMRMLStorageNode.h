@@ -41,16 +41,19 @@ public:
   virtual void ReadXMLAttributes( const char** atts);
   
   /// 
-  /// Read data and set it in the referenced node. 
+  /// Read data and set it in the referenced node.
+  /// If temporary is true, it informs the reader that the file
+  /// is temporary meaning that it should probably be saved before leaving
+  /// the application.
   /// Return 1 on success, 0 on failure.
   /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode) = 0;
+  virtual int ReadData(vtkMRMLNode *refNode, bool temporary = false);
 
   /// 
   /// Write data from a  referenced node
   /// Return 1 on success, 0 on failure.
   /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode) = 0;
+  virtual int WriteData(vtkMRMLNode *refNode);
 
   /// 
   /// Write this node's information to a MRML file in XML format.
@@ -90,14 +93,9 @@ public:
   /// Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  /// 
-  /// If the URI is not null, fetch it and save it to the node's FileName location or
-  /// load directly into the reference node.
-  void StageReadData ( vtkMRMLNode *refNode );
-  /// 
-  /// Copy data from the local file location (node->FileName) or node to the remote
-  /// location specified by the URI
-  void StageWriteData ( vtkMRMLNode *refNode );
+  /// Set dependencies between this node and the parent node
+  /// when parsing XML file
+  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
   /// 
   /// Possible Read and Write states
@@ -153,6 +151,11 @@ public:
   /// 1 if is supported, 0 otherwise.
   /// Subclasses should implement this method.
   virtual int SupportedFileType(const char *fileName);
+
+  /// 
+  /// Get all the supported read file types
+  /// Subclasses should overwrite InitializeSupportedReadFileTypes().
+  virtual vtkStringArray* GetSupportedReadFileTypes();
 
   /// 
   /// Get all the supported write file types
@@ -239,13 +242,56 @@ public:
   /// A temporary file name used to calculate absolute paths
   vtkSetStringMacro(TempFileName);
   vtkGetStringMacro(TempFileName);
-  
+
+  /// Inform that the file that has been last read or write
+  /// has been deleted.
+  /// Use with care, typically called by the cache manager.
+  void InvalidateFile();
+
+  /// Return the last time stamp when a reference node has been
+  /// read in or written from.
+  vtkTimeStamp GetStoredTime();
+
+  /// Return true if the node can be read in. Used by ReadData to know
+  /// if the file can be read into the reference node.
+  /// Subclasses must reimplement the method.
+  /// Typically it's a check on the node type (e.g. the model storage node
+  /// can only read in model nodes)
+  /// \sa CanWriteFromReferenceNode, ReadData
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode) = 0;
+  /// Return true if the node can be written from. Used by WriteData to know
+  /// if the file can be written from the reference node.
+  /// By default it returns the same than CanReadInReferenceNode.
+  /// Subclasses can reimplement the method.
+  /// \sa CanReadInReferenceNode, WriteData
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode);
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();
   vtkMRMLStorageNode(const vtkMRMLStorageNode&);
   void operator=(const vtkMRMLStorageNode&);
-  
+
+  /// Does the actual reading. Returns 1 on success, 0 otherwise.
+  /// Returns 0 by default (read not supported).
+  /// To be reimplemented in subclass.
+  virtual int ReadDataInternal(vtkMRMLNode* refNode);
+
+  /// Does the actual writing. Returns 1 on success, 0 otherwise.
+  /// Returns 0 by default (write not supported).
+  /// To be reimplemented in subclass.
+  virtual int WriteDataInternal(vtkMRMLNode* refNode);
+
+  /// 
+  /// If the URI is not null, fetch it and save it to the node's FileName location or
+  /// load directly into the reference node.
+  void StageReadData ( vtkMRMLNode *refNode );
+
+  /// 
+  /// Copy data from the local file location (node->FileName) or node to the remote
+  /// location specified by the URI
+  void StageWriteData ( vtkMRMLNode *refNode );
+
   char *FileName;
   char *TempFileName;
   char *URI;
@@ -260,14 +306,26 @@ protected:
   /// 
   /// An array of URI's, should contain the URI but may not
   std::vector<std::string> URIList;
+  /// List of supported extensions to read in
+  vtkStringArray* SupportedReadFileTypes;
+
+  /// List of supported extensions to write in
   vtkStringArray* SupportedWriteFileTypes;
   char* WriteFileFormat;
 
+  /// Initialize all the supported read file types
+  /// Subclasses can derive this method to initialize SupportedReadFileTypes
+  virtual void InitializeSupportedReadFileTypes();
   /// 
   /// Initialize all the supported write file types
   /// Subclasses should use this method to initialize SupportedWriteFileTypes.
   virtual void InitializeSupportedWriteFileTypes();
 
+  /// Time when data was last read or written.
+  /// This is used by the storable node to know when it needs to save its data
+  /// Can be reset with InvalidateFile.
+  /// \sa InvalidateFile
+  vtkTimeStamp* StoredTime;
 };
 
 #endif

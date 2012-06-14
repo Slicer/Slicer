@@ -20,12 +20,13 @@
 
 #include "vtkMRMLStorageNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorageNode
+class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode
+  : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLUnstructuredGridStorageNode *New();
   vtkTypeMacro(vtkMRMLUnstructuredGridStorageNode,vtkMRMLStorageNode);
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
@@ -33,40 +34,30 @@ class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode : public vtkMRMLStorage
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "UnstructuredGridStorage";};
 
- /// Description:
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
-  /// 
-  /// Check to see if this storage node can handle the file type in the input
-  /// string. If input string is null, check URI, then check FileName. 
-  /// Subclasses should implement this method.
-  virtual int SupportedFileType(const char *fileName);
-
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
-
   /// 
   /// Return a defualt file extension for writting
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return "vtk";
-    };
+  virtual const char* GetDefaultWriteFileExtension();
+
+  /// Return true if the node can be read in
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
 
 protected:
   vtkMRMLUnstructuredGridStorageNode(){};
   ~vtkMRMLUnstructuredGridStorageNode(){};
   vtkMRMLUnstructuredGridStorageNode(const vtkMRMLUnstructuredGridStorageNode&);
   void operator=(const vtkMRMLUnstructuredGridStorageNode&);
+
+  /// Initialize all the supported read file types
+  virtual void InitializeSupportedReadFileTypes();
+
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+
+  /// Write data from a  referenced node
+  virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
 };
 

@@ -175,6 +175,7 @@ class SampleDataLogic:
     if volumeNode:
       storageNode = volumeNode.GetStorageNode()
       if storageNode:
+        storageNode.InvalidateFile()
         # Automatically select the volume to display
         self.logMessage('<i>Displaying...</i>')
         appLogic = slicer.app.applicationLogic()

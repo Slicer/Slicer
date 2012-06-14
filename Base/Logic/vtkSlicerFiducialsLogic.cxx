@@ -116,7 +116,6 @@ vtkMRMLFiducialListNode *vtkSlicerFiducialsLogic::AddFiducialList()
       snode->SetScene(this->GetMRMLScene());
       this->GetMRMLScene()->AddNode(snode);
       storableNode->SetAndObserveStorageNodeID(snode->GetID());
-      storableNode->ModifiedSinceReadOn();
       snode->Delete();
       }
     }

@@ -156,6 +156,11 @@ public:
   vtkCollection *GetNodesByName(const char* name);
   vtkMRMLNode *GetFirstNodeByName(const char* name);
 
+  /// Return the first node in the scene that matches the filtering
+  /// criterias if specified.
+  vtkMRMLNode *GetFirstNode(const char* byName = 0, const char* byClass = 0,
+                            const int* byHideFromEditors = 0);
+
   /// Get node given a unique ID
   vtkMRMLNode *GetNodeByID(const char* name);
   vtkMRMLNode *GetNodeByID(std::string name);
@@ -516,6 +521,16 @@ public:
   /// Copies all singleton nodes into the parameter scene
   void CopySingletonNodesToScene(vtkMRMLScene *scene);
 
+  /// Returns true if the scene has been "significantly" modified since the
+  /// last time it was read or written
+  bool GetModifiedSinceRead();
+
+  /// Search the scene for storable nodes that are "ModifiedSinceRead".
+  /// Returns true if at least 1 matching node is found.
+  /// If \a modifiedStorableNodes is passed the modified nodes are appended.
+  /// Note that the nodes see their reference count being incremented while
+  /// being in the list. Don't forget to clear it as soon as you don't need it.
+  bool GetStorableNodesModifiedSinceRead(vtkCollection* modifiedStorableNodes = 0);
 protected:
 
   vtkMRMLScene();
@@ -614,6 +629,9 @@ private:
   unsigned long ErrorCode;
 
   char* ClassNameList;
+
+  /// Time when the scene was last read or written.
+  vtkTimeStamp StoredTime;
 
   static vtkMRMLScene *ActiveScene;
 };

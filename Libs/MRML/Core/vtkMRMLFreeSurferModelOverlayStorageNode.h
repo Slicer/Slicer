@@ -20,33 +20,15 @@
 
 #include "vtkMRMLModelStorageNode.h"
 
-class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLModelStorageNode
+class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode
+  : public vtkMRMLModelStorageNode
 {
-  public:
+public:
   static vtkMRMLFreeSurferModelOverlayStorageNode *New();
   vtkTypeMacro(vtkMRMLFreeSurferModelOverlayStorageNode,vtkMRMLModelStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
-
-  /// 
-  /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
-
-   /// 
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-  
-  /// 
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-  
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
 
   /// 
   /// Copy data from a  referenced node's filename to new location.
@@ -55,39 +37,11 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelOverlayStorageNode : public vtkMRMLM
   virtual int CopyData(vtkMRMLNode *refNode, const char *newFileName);
 
   /// 
-  /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
-
-  /// 
-  /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-
-  /// 
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "FreeSurferModelOverlayStorage";};
-  
-  /// 
-  /// Add a known overlay file extension
-  void AddFileExtension(std::string ext);
-  /// 
-  /// returns true if on the list, false otherwise
-  bool IsKnownFileExtension(std::string ext);
 
-  /// 
-  /// return the number of known file extensions
-  int GetNumberOfKnownFileExtensions();
-  
-  /// 
-  /// return the indexed file extension, null if i out of range
-  const char *GetKnownFileExtension(int i);
-
-  /// 
-  /// can I load files with extensions like this filename has?
-  int SupportedFileType(const char *fileName);
-
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  /// Return true if reference node can be written from
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode);
 
 protected:
   vtkMRMLFreeSurferModelOverlayStorageNode();
@@ -95,9 +49,22 @@ protected:
   vtkMRMLFreeSurferModelOverlayStorageNode(const vtkMRMLFreeSurferModelOverlayStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelOverlayStorageNode&);
 
+  /// Initialize all the supported read file types
+  virtual void InitializeSupportedReadFileTypes();
+
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
   /// 
-  /// a list of valid overlay file extensions
-  std::vector< std::string > KnownFileExtensions; 
+  /// Read data and set it in the referenced node
+  /// NOTE: Subclasses should implement this method
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+  
+  /// 
+  /// Write data from a  referenced node
+  /// NOTE: Subclasses should implement this method
+  virtual int WriteDataInternal(vtkMRMLNode *refNode);
+
 };
 
 #endif

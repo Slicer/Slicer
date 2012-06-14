@@ -77,7 +77,6 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
   annNode->Modified();
 
   mrmlScene->AddNode(node2);
-  node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   std::string fileName = "AnnotationFiducialList.acsv";
   std::vector<std::string> pathComponents;

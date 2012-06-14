@@ -260,18 +260,14 @@ vtkMRMLAnnotationTextDisplayNode::UpdateScene(vtkMRMLScene *scene)
 void
 vtkMRMLAnnotationTextDisplayNode::SetTextScale(double scale)
 {
-
+  if (this->TextScale == scale)
+    {
+    return;
+    }
   //vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TextScale to " << scale);
   this->TextScale = scale;
 
-  if (!this->GetDisableModifiedEvent())
-    {
-      // invoke a display modified event
-      // this->InvokeEvent(vtkMRMLAnnotationTextDisplayNode::DisplayModifiedEvent);
-      this->Modified();
-    }
-  //this->InvokeEvent(vtkCommand::ModifiedEvent);
-  this->ModifiedSinceReadOn();
+  this->Modified();
 }
 
 

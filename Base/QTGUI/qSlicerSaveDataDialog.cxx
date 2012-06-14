@@ -246,7 +246,8 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->setItem(row, NodeTypeColumn, sceneTypeItem);
 
   // Scene Status
-  QTableWidgetItem* sceneModifiedItem = new QTableWidgetItem("Modified");
+  QTableWidgetItem* sceneModifiedItem = new QTableWidgetItem(
+    this->MRMLScene->GetModifiedSinceRead() ? "Modified" : "Not Modified");
   sceneModifiedItem->setFlags(sceneModifiedItem->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsEnabled);
   this->FileWidget->setItem(row, NodeStatusColumn, sceneModifiedItem);
 
@@ -449,6 +450,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStor
   // If the data is sitting in cache, it's vulnerable to overwriting or deleting.
   // Mark the node as modified since read so that a user will be more likely
   // to save it to a reliable location on local (or remote) disk.
+  /*
   if ( this->MRMLScene->GetCacheManager() )
     {
     if ( this->MRMLScene->GetCacheManager()->GetRemoteCacheDirectory() )
@@ -476,7 +478,7 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStor
       "directory, so not able to check whether any datafiles are residing in cache "
       "and should be marked for save by default. Please take care when saving data.";
     }
-
+  */
   QTableWidgetItem *nodeModifiedItem =
     new QTableWidgetItem(node->GetModifiedSinceRead() ?
                          tr("Modified") : tr("Not Modified"));

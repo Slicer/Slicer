@@ -84,74 +84,21 @@ vtkMRMLModelStorageNode::~vtkMRMLModelStorageNode()
 {
 }
 
-void vtkMRMLModelStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLModelStorageNode::ReadXMLAttributes(const char** atts)
-{
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLModelStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-
   vtkMRMLStorageNode::PrintSelf(os,indent);
-
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLModelStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLModelNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLModelNode") ) 
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -314,7 +261,6 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
     result = 0;
   }
 
-  this->SetReadStateIdle();
   if (modelNode->GetPolyData() != NULL) 
     {
     // is there an active scalar array?
@@ -327,28 +273,14 @@ int vtkMRMLModelStorageNode::ReadData(vtkMRMLNode *refNode)
         modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
         }
       }
-    modelNode->GetPolyData()->Modified();
-    } 
-  modelNode->SetModifiedSinceRead(0);
+    //modelNode->GetPolyData()->Modified();
+    }
   return result;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a model
-  if (!refNode->IsA("vtkMRMLModelNode") ) 
-  {
-    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
-    return 0;
-  }
-
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -411,61 +343,19 @@ int vtkMRMLModelStorageNode::WriteData(vtkMRMLNode *refNode)
     vtkErrorMacro( << "No file extension recognized: " << fullName.c_str() );
     }
 
-  if (result != 0)
-  {
-    this->StageWriteData(refNode);
-  }
-
   return result;
 }
 
-
 //----------------------------------------------------------------------------
-int vtkMRMLModelStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-  {
-    name = std::string(fileName);
-  }
-  else if (this->FileName != NULL)
-  {
-    name = std::string(this->FileName);
-  }
-  else if (this->URI != NULL)
-  {
-    name = std::string(this->URI);
-  }
-  else
-  {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-  }
-
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-  {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-  }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".vtk") == 0 ||
-    extension.compare(".vtp") == 0 ||
-    extension.compare(".g") == 0 ||
-    extension.compare(".byu") == 0 ||
-    extension.compare(".meta") == 0 ||
-    extension.compare(".stl") == 0 ||
-    extension.compare(".obj") == 0 )
-  {
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
+  this->SupportedReadFileTypes->InsertNextValue("Poly Data (.vtk)");
+  this->SupportedReadFileTypes->InsertNextValue("Poly Data (.vtp)");
+  this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
+  this->SupportedReadFileTypes->InsertNextValue("BYU (.byu)");
+  this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
+  this->SupportedReadFileTypes->InsertNextValue("STL (.stl)");
+  this->SupportedReadFileTypes->InsertNextValue("OBJ (.obj)");
 }
 
 //----------------------------------------------------------------------------
@@ -480,3 +370,10 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
   this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
 }
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLModelStorageNode::GetDefaultWriteFileExtension()
+{
+  return "vtk";
+}
+

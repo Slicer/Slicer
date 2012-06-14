@@ -219,12 +219,18 @@ void vtkMRMLAnnotationNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
-                                           void *callData )
+void vtkMRMLAnnotationNode::ProcessMRMLEvents( vtkObject *caller,
+                                               unsigned long event,
+                                               void *callData )
 {
-  Superclass::ProcessMRMLEvents(caller, event, callData);
+  /// Display properties are saved in file, mark data as dirty.
+  if (vtkMRMLDisplayNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->StorableModifiedTime.Modified();
+    }
 
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
   // Not necessary bc vtkMRMLAnnotationTextDisplayNode is subclass of vtkMRMLModelDisplayNode 
   // => will be taken care of  in vtkMRMLModelNode
 }
@@ -639,20 +645,19 @@ double vtkMRMLAnnotationNode::GetTextScale()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::SetLocked(int locked)
 {
-    if (this->Locked == locked)
+  if (this->Locked == locked)
     {
-        return;
+    return;
     }
-    this->Locked = locked;
-    if(!this->GetDisableModifiedEvent())
+  this->Locked = locked;
+  if(!this->GetDisableModifiedEvent())
     {
-      // invoke a lock modified event
-      this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
-      this->Modified();
+    // invoke a lock modified event
+    this->InvokeEvent(vtkMRMLAnnotationNode::LockModifiedEvent);
     }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
-   
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::Initialize(vtkMRMLScene* mrmlScene)

@@ -48,11 +48,6 @@ void vtkMRMLAnnotationLinesStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
-}
-//----------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesStorageNode::ReadAnnotationLineDisplayProperties(vtkMRMLAnnotationLineDisplayNode *refNode, std::string lineString, std::string preposition)
 {
   if (refNode == NULL)
@@ -307,16 +302,17 @@ int vtkMRMLAnnotationLinesStorageNode::ReadAnnotation(vtkMRMLAnnotationLinesNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationLinesStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
+  return refNode->IsA("vtkMRMLAnnotationLinesNode");
+}
 
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
   // cast the input node
-  vtkMRMLAnnotationLinesNode *aNode = dynamic_cast <vtkMRMLAnnotationLinesNode *> (refNode);
+  vtkMRMLAnnotationLinesNode *aNode =
+    vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
   if (aNode == NULL)
     {
@@ -331,14 +327,6 @@ int vtkMRMLAnnotationLinesStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 0;
     }
-
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  aNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  aNode->ModifiedSinceReadOff();
 
   aNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, aNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
 
@@ -396,47 +384,17 @@ void vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream& of)
 {
-  // open the file for writing
-  fstream of;
-  if (!this->OpenFileToWrite(of)) 
-    {
-    vtkWarningMacro(" vtkMRMLAnnotationLinesStorageNode::WriteData: can't open file to write");
-    return 0;
-    } 
-
-  int flag = this->WriteData(refNode,of);
-
-  of.close();
-
-  Superclass::StageWriteData(refNode);
-
-  vtkDebugMacro(" vtkMRMLAnnotationLinesStorageNode::WriteData: returning flag " << flag);
-  return flag;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteData(vtkMRMLNode *refNode, fstream& of)
-{
-  int retval = Superclass::WriteData(refNode,of);
+  int retval = this->Superclass::WriteDataInternal(refNode,of);
   if (!retval)
     {
     vtkWarningMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: can't call WriteData on superclass, retval = " << retval);
     return 0;
     }
 
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLAnnotationLinesNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationLinesNode");
-    return 0;         
-    }
-
-
   // cast the input nod
-  vtkMRMLAnnotationLinesNode *aNode = dynamic_cast <vtkMRMLAnnotationLinesNode *> (refNode);
+  vtkMRMLAnnotationLinesNode *aNode = vtkMRMLAnnotationLinesNode::SafeDownCast(refNode);
 
   if (aNode == NULL)
     {

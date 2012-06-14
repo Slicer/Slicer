@@ -366,7 +366,6 @@
     TEST_SET_GET_STRING( node, SceneRootDir );                          \
     TEST_SET_GET_STRING( node, Name );                                  \
     TEST_SET_GET_STRING( node, SingletonTag );                          \
-    TEST_SET_GET_BOOLEAN( node, ModifiedSinceRead );                    \
     TEST_SET_GET_BOOLEAN( node, SaveWithScene );                        \
     TEST_SET_GET_BOOLEAN( node, AddToScene );                           \
     TEST_SET_GET_BOOLEAN( node, DisableModifiedEvent);                  \
@@ -606,8 +605,6 @@
     EXERCISE_BASIC_MRML_METHODS(className, node);    \
     node->ReadData(NULL);                           \
     node->WriteData(NULL);                          \
-    node->StageReadData(NULL);                      \
-    node->StageWriteData(NULL);                     \
     TEST_SET_GET_STRING(node, FileName);            \
     const char *f0 = node->GetNthFileName(0);       \
     std::cout << "Filename 0 = " << (f0 == NULL ? "NULL" : f0) << std::endl; \

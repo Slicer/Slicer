@@ -59,6 +59,7 @@ vtkMRMLVolumeArchetypeStorageNode::~vtkMRMLVolumeArchetypeStorageNode()
 {
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeArchetypeStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
@@ -143,55 +144,21 @@ void vtkMRMLVolumeArchetypeStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeArchetypeStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLVolumeArchetypeStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
+         refNode->IsA("vtkMRMLVectorVolumeNode" );
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeArchetypeStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
+  return refNode->IsA("vtkMRMLScalarVolumeNode");
+}
 
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-   
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) ) )
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return 0;         
-    }
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: both filename and uri are null.");
-    return 0;
-    }
-  
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: read state is pending, remote download hasn't finished yet");
-    return 0;
-    }
-  else
-    {
-    vtkDebugMacro("ReadData: read state is ready, URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
-    }
-  
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
   std::string fullName = this->GetFullNameFromFileName();
   vtkDebugMacro("ReadData: got full archetype name " << fullName);
 
@@ -341,7 +308,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   // set volume attributes
-  volNode->SetAndObserveStorageNodeID(this->GetID());
   volNode->SetMetaDataDictionary( reader->GetMetaDataDictionary() );
 
   // get all the file names from the reader
@@ -379,7 +345,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
       vtkSmartPointer<vtkImageData>::New();
     iciOutputCopy->ShallowCopy(ici->GetOutput());
     volNode->SetAndObserveImageData(iciOutputCopy.GetPointer());
-    volNode->ModifiedSinceReadOff();
     }
 
   vtkMatrix4x4* mat = reader->GetRasToIjkMatrix();
@@ -391,36 +356,16 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadData(vtkMRMLNode *refNode)
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 
-  this->SetReadStateIdle();
-
   return result;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeArchetypeStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-  
   int result = 1;
 
-  // test whether refNode is a valid node to hold a volume
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return 0;
-    }
-  
-  vtkMRMLVolumeNode *volNode = NULL;
-  
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-    }
-  
+  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+
   if (volNode->GetImageData() == NULL) 
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
@@ -535,38 +480,9 @@ int vtkMRMLVolumeArchetypeStorageNode::WriteData(vtkMRMLNode *refNode)
       result = 0;
       }
     }
-  
-  Superclass::StageWriteData(refNode);
-  
+
   return result;
 
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLVolumeArchetypeStorageNode::SupportedFileType(const char *fileName)
-{
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-
-  // for now, return 1
-  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -585,6 +501,12 @@ void vtkMRMLVolumeArchetypeStorageNode::InitializeSupportedWriteFileTypes()
                                                      supportedFormats->GetValue(i));
       }
     }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLVolumeArchetypeStorageNode::GetDefaultWriteFileExtension()
+{
+  return "nrrd";
 }
 
 //----------------------------------------------------------------------------

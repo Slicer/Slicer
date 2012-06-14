@@ -27,43 +27,13 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   // Description:
-  // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
-
-   // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
-
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
-  // Description:
-  // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-
-  // Description:
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "AnnotationControlPointsStorage";};
 
-  // Description:
   // Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
 
 protected:
-
-
   vtkMRMLAnnotationControlPointsStorageNode();
   ~vtkMRMLAnnotationControlPointsStorageNode();
   vtkMRMLAnnotationControlPointsStorageNode(const vtkMRMLAnnotationControlPointsStorageNode&);
@@ -82,7 +52,10 @@ protected:
   int ReadAnnotationControlPointsProperties(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int &typeColumn, 
                         int& xColumn,    int& yColumn,     int& zColumn, int& selColumn, int& visColumn, int& numColumns);
 
-  int WriteData(vtkMRMLNode *refNode, fstream &of);
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+
+  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream &of);
 };
 
 #endif

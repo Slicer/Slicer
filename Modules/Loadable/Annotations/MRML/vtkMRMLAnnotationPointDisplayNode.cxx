@@ -116,11 +116,10 @@ void vtkMRMLAnnotationPointDisplayNode::SetGlyphTypeFromString(const char *glyph
   for (int ID = GlyphMin; ID <= GlyphMax; ID++)
     {
       if (!strcmp(glyphString,GlyphTypesNames[ID]))
-    {
+      {
       this->SetGlyphType(ID);
-      this->ModifiedSinceReadOn();
       return;
-    }
+      }
     }
   vtkErrorMacro("Invalid glyph type string: " << glyphString);
 }
@@ -173,33 +172,20 @@ void  vtkMRMLAnnotationPointDisplayNode::SetGlyphType(int type)
     }
   vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphType to " << type);
   this->GlyphType = type;
-  
-  if (!this->GetDisableModifiedEvent())
-    {
-    // invoke a display modified event
-    // this->InvokeEvent(vtkMRMLAnnotationPointDisplayNode::DisplayModifiedEvent);
-    this->Modified();
-    }
-  this->ModifiedSinceReadOn();
+
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationPointDisplayNode::SetGlyphScale(double scale)
 {
-    if (this->GlyphScale == scale)
+  if (this->GlyphScale == scale)
     {
-        return;
+    return;
     }
-    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
-    this->GlyphScale = scale;
-   
-    if (!this->GetDisableModifiedEvent())
-      {
-      // invoke a display modified event
-      // KP this->InvokeEvent(vtkMRMLAnnotationPointDisplayNode::DisplayModifiedEvent);
-      this->Modified();
-      }
-    this->ModifiedSinceReadOn();
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting GlyphScale to " << scale);
+  this->GlyphScale = scale;
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------

@@ -45,17 +45,6 @@ vtkMRMLNodeNewMacro(vtkMRMLFreeSurferModelStorageNode);
 vtkMRMLFreeSurferModelStorageNode::vtkMRMLFreeSurferModelStorageNode()
 {
   this->UseStripper = 1;
-  // set up the list of known surface file extensions
-  this->AddFileExtension(std::string(".orig"));
-  this->AddFileExtension(std::string(".inflated"));
-  this->AddFileExtension(std::string(".sphere"));
-  this->AddFileExtension(std::string(".white"));
-  this->AddFileExtension(std::string(".smoothwm"));
-  this->AddFileExtension(std::string(".pial"));
-
-  // this is for reading in files that have been saved in vtk format
-  this->AddFileExtension(std::string(".vtk"));
-  this->AddFileExtension(std::string(".vtp"));
 }
 
 //----------------------------------------------------------------------------
@@ -100,7 +89,7 @@ void vtkMRMLFreeSurferModelStorageNode::ReadXMLAttributes(const char** atts)
 // Does NOT copy: ID, FilePrefix, Name, StorageID
 void vtkMRMLFreeSurferModelStorageNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(anode);
+  this->Superclass::Copy(anode);
 
   vtkMRMLFreeSurferModelStorageNode *node = (vtkMRMLFreeSurferModelStorageNode*)anode;
   this->SetUseStripper(node->GetUseStripper());
@@ -116,44 +105,8 @@ void vtkMRMLFreeSurferModelStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+int vtkMRMLFreeSurferModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
-{
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("vtkMRMLFreeSurferModelStorageNode::ReadData: Reference node is null.");
-    return 0;
-    }
-    
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if (  !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLModelNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLModelNode");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-  
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
@@ -178,94 +131,86 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
   int result = 1;
   try
     {
-    if ( this->IsKnownFileExtension(extension))
-      {
-      vtkDebugMacro("Reading in a freesurfer surface file, extension = " << extension.c_str());
+    vtkDebugMacro("Reading in a freesurfer surface file, extension = " << extension.c_str());
 
-      if ( extension == std::string(".vtk"))
+    if ( extension == std::string(".vtk"))
+      {
+      // read in a binary vtk surface file
+      vtkPolyDataReader *reader = vtkPolyDataReader::New();
+      reader->SetFileName(fullName.c_str());
+      if (!reader->IsFilePolyData())
         {
-        // read in a binary vtk surface file
-        vtkPolyDataReader *reader = vtkPolyDataReader::New();
-        reader->SetFileName(fullName.c_str());
-        if (!reader->IsFilePolyData())
+        vtkErrorMacro("File " << fullName.c_str() << " is not polydata, cannot be read with this reader");
+        result = 0;
+        }
+      else
+        {
+        reader->Update();
+        if (reader->GetOutput() == NULL)
           {
-          vtkErrorMacro("File " << fullName.c_str() << " is not polydata, cannot be read with this reader");
+          vtkErrorMacro("Unable to read file " << fullName.c_str());
           result = 0;
           }
         else
           {
-          reader->Update();
-          if (reader->GetOutput() == NULL)
-            {
-            vtkErrorMacro("Unable to read file " << fullName.c_str());
-            result = 0;
-            }
-          else
-            {
-            modelNode->SetAndObservePolyData(reader->GetOutput());
-            }
+          modelNode->SetAndObservePolyData(reader->GetOutput());
           }
-        reader->Delete();
         }
-      else if (extension == std::string(".vtp"))
+      reader->Delete();
+      }
+    else if (extension == std::string(".vtp"))
+      {
+      // read in an ascii vtk surface file
+      vtkXMLPolyDataReader *reader = vtkXMLPolyDataReader::New();
+      reader->SetFileName(fullName.c_str());
+      reader->Update();
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Delete();
+      }
+    else
+      {
+      //read in a free surfer file
+      // -- create normals and triangle strips also
+      vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
+      vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
+      vtkStripper *stripper = vtkStripper::New();
+      
+      reader->SetFileName(fullName.c_str());
+      normals->SetSplitting(0);
+      normals->SetInput( reader->GetOutput() );
+      if ( this->GetUseStripper() )
         {
-        // read in an ascii vtk surface file
-        vtkXMLPolyDataReader *reader = vtkXMLPolyDataReader::New();
-        reader->SetFileName(fullName.c_str());
-        reader->Update();
-        modelNode->SetAndObservePolyData(reader->GetOutput());
-        reader->Delete();
-        }
-      else
-        {
-        //read in a free surfer file
-        // -- create normals and triangle strips also
-        vtkFSSurfaceReader *reader = vtkFSSurfaceReader::New();
-        vtkPolyDataNormals *normals = vtkPolyDataNormals::New();
-        vtkStripper *stripper = vtkStripper::New();
-        
-        reader->SetFileName(fullName.c_str());
-        normals->SetSplitting(0);
-        normals->SetInput( reader->GetOutput() );
-        if ( this->GetUseStripper() )
+        stripper->SetInput( normals->GetOutput() );
+        stripper->Update();
+        if (stripper->GetOutput() == NULL ||
+            stripper->GetOutput()->GetNumberOfCells() == 0)
           {
-          stripper->SetInput( normals->GetOutput() );
-          stripper->Update();
-          if (stripper->GetOutput() == NULL ||
-              stripper->GetOutput()->GetNumberOfCells() == 0)
-            {
-            vtkDebugMacro("Surface file error: no output from triangle stripper.");
-            result = 0;
-            }
-          else
-            {
-            modelNode->SetAndObservePolyData(stripper->GetOutput());
-            }
+          vtkDebugMacro("Surface file error: no output from triangle stripper.");
+          result = 0;
           }
         else
           {
-          normals->Update();
-          if (normals->GetOutput() == NULL ||
-              normals->GetOutput()->GetNumberOfCells() == 0)
-            {
-            vtkDebugMacro("Surface file error: no output from the normals");
-            result = 0;
-            }
-          else
-            {
-            modelNode->SetAndObservePolyData(normals->GetOutput());
-            }
+          modelNode->SetAndObservePolyData(stripper->GetOutput());
           }
-        
-        reader->Delete();
-        normals->Delete();
-        stripper->Delete();    
         }
-      }
-    else 
-      {
-      vtkErrorMacro("MRML FreeSurfer ModelStorage Node: Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
-      return 0;
+      else
+        {
+        normals->Update();
+        if (normals->GetOutput() == NULL ||
+            normals->GetOutput()->GetNumberOfCells() == 0)
+          {
+          vtkDebugMacro("Surface file error: no output from the normals");
+          result = 0;
+          }
+        else
+          {
+          modelNode->SetAndObservePolyData(normals->GetOutput());
+          }
+        }
+      
+      reader->Delete();
+      normals->Delete();
+      stripper->Delete();    
       }
     }
   catch (...)
@@ -275,12 +220,9 @@ int vtkMRMLFreeSurferModelStorageNode::ReadData(vtkMRMLNode *refNode)
   
   if (modelNode->GetPolyData() != NULL) 
     {
-    modelNode->GetPolyData()->Modified();
+    //modelNode->GetPolyData()->Modified();
     }
 
-  this->SetReadStateIdle();
-  
-  modelNode->SetModifiedSinceRead(0);
   return result;
 }
 
@@ -335,67 +277,15 @@ int vtkMRMLFreeSurferModelStorageNode::CopyData(vtkMRMLNode *refNode,
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFreeSurferModelStorageNode::AddFileExtension(std::string ext)
+void vtkMRMLFreeSurferModelStorageNode::InitializeSupportedReadFileTypes()
 {
-  if (!IsKnownFileExtension(ext))
-    {
-    this->KnownFileExtensions.push_back(ext);
-    }
+  this->SupportedWriteFileTypes->InsertNextValue(".orig");
+  this->SupportedWriteFileTypes->InsertNextValue(".inflated");
+  this->SupportedWriteFileTypes->InsertNextValue(".sphere");
+  this->SupportedWriteFileTypes->InsertNextValue(".white");
+  this->SupportedWriteFileTypes->InsertNextValue(".smoothwm");
+  this->SupportedWriteFileTypes->InsertNextValue(".pial");
+  // this is for reading in files that have been saved in vtk format
+  this->SupportedWriteFileTypes->InsertNextValue(".vtk");
+  this->SupportedWriteFileTypes->InsertNextValue(".vtp");
 }
-
-//----------------------------------------------------------------------------
-bool vtkMRMLFreeSurferModelStorageNode::IsKnownFileExtension(std::string ext)
-{
-  std::vector< std::string >::iterator iter;
-  for (iter = this->KnownFileExtensions.begin(); iter != this->KnownFileExtensions.end(); ++iter)
-    {
-    if ((*iter) == ext)
-      {
-      return true;
-      }
-    }
-  return false;  
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLFreeSurferModelStorageNode::SupportedFileType(const char *fileName)
-{
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (this->IsKnownFileExtension(extension))
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
-}
-

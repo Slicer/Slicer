@@ -391,4 +391,3 @@ int vtkMRMLDiffusionTensorVolumeDisplayNode::GetNthScalarInvariant(int i)
   static std::vector<int> modes = vtkMRMLDiffusionTensorVolumeDisplayNode::GetSupportedColorModes();
   return modes[i];
 }
-

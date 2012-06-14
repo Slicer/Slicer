@@ -23,38 +23,11 @@ vtkMRMLAnnotationControlPointsStorageNode::~vtkMRMLAnnotationControlPointsStorag
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationControlPointsStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
-}
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotationPointDisplayProperties(vtkMRMLAnnotationPointDisplayNode *refNode, std::string lineString, std::string preposition)
 {
@@ -336,18 +309,18 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadAnnotation(vtkMRMLAnnotationC
     return 1;
 
 }
+//----------------------------------------------------------------------------
+bool vtkMRMLAnnotationControlPointsStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
+{
+  return refNode->IsA("vtkMRMLAnnotationControlPointsNode");
+}
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
-
   // cast the input node
-  vtkMRMLAnnotationControlPointsNode *aCPNode = dynamic_cast <vtkMRMLAnnotationControlPointsNode *> (refNode);
+  vtkMRMLAnnotationControlPointsNode *aCPNode =
+    vtkMRMLAnnotationControlPointsNode::SafeDownCast(refNode);
 
   if (aCPNode == NULL)
     {
@@ -362,14 +335,6 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 0;
     }
-
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  aCPNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  aCPNode->ModifiedSinceReadOff();
 
   aCPNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, aCPNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
 
@@ -427,18 +392,11 @@ void vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode,  fstream &of)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteDataInternal(vtkMRMLNode *refNode,  fstream &of)
 {
-  if (!Superclass::WriteData(refNode,of)) 
+  if (!Superclass::WriteDataInternal(refNode,of))
     {
-      return 0;
-    }
-
-  // test whether refNode is a valid node to hold a control point
-  if ( !( refNode->IsA("vtkMRMLAnnotationControlPointsNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationControlPointsNode");
-    return 0;         
+    return 0;
     }
 
   // cast the input node
@@ -452,49 +410,12 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode,  
 
 
   // Control Points Properties
-  if (!WriteAnnotationControlPointsProperties(of, annCPNode))
+  if (!this->WriteAnnotationControlPointsProperties(of, annCPNode))
     {
       return 0;
     }
 
   // Control Points
-  WriteAnnotationControlPointsData(of, annCPNode);
+  this->WriteAnnotationControlPointsData(of, annCPNode);
   return 1;
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteData(vtkMRMLNode *refNode)
-{
-    /*
-  // special case: if this annotation is in a hierarchy, the hierarchy took
-  // care of writing it already
-  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
-  
-  if (hnode &&
-      hnode->GetParentNodeID())
-    {
-    vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
-    return 1;
-    }
-    */
-  // open the file for writing
-  fstream of;
-  if (!this->OpenFileToWrite(of)) 
-    {
-      return 0;
-    } 
-
-  int flag = this->WriteData(refNode,of);
- 
-  of.close();
-
-  Superclass::StageWriteData(refNode);
-  
-  return flag;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::InitializeSupportedWriteFileTypes()
-{
-  Superclass::InitializeSupportedWriteFileTypes();
 }

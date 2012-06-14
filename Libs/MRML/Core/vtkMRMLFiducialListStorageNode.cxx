@@ -35,99 +35,21 @@ vtkMRMLFiducialListStorageNode::~vtkMRMLFiducialListStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialListStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLFiducialListStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-/*
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "centerImage")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->CenterImage;
-      }
-    }
-*/
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLFiducialListStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-  //vtkMRMLFiducialListStorageNode *node = (vtkMRMLFiducialListStorageNode *) anode;
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLFiducialListStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLFiducialListStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLFiducialListStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLFiducialListNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLFiducialListStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  vtkDebugMacro("Reading Fiducial list data");
-  // test whether refNode is a valid node to hold a fiducial list
-  if ( !( refNode->IsA("vtkMRMLFiducialListNode"))
-     ) 
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLFiducialListNode");
-    return 0;         
-    }
-
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name and uri not set");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: Read state is pending, returning.");
-    return 0;
-    }
-  
-  std::string fullName = this->GetFullNameFromFileName(); 
+  std::string fullName = this->GetFullNameFromFileName();
 
   if (fullName == std::string("")) 
     {
@@ -136,24 +58,13 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
   // cast the input node
-  vtkMRMLFiducialListNode *fiducialListNode = NULL;
-  if ( refNode->IsA("vtkMRMLFiducialListNode") )
-    {
-    fiducialListNode = dynamic_cast <vtkMRMLFiducialListNode *> (refNode);
-    }
-
-  if (fiducialListNode == NULL)
-    {
-    vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a fiducial list node");
-    return 0;
-    }
+  vtkMRMLFiducialListNode *fiducialListNode =
+    vtkMRMLFiducialListNode::SafeDownCast(refNode);
 
   // open the file for reading input
   fstream fstr;
 
   fstr.open(fullName.c_str(), fstream::in);
-
-  bool glyphTypeChanged = false;
 
   if (fstr.is_open())
     {
@@ -503,8 +414,6 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     if (glyphType != fiducialListNode->GetGlyphType())
       {
-      // glyphTypeChanged will flag that need to set the node modified since read
-      glyphTypeChanged = true;
       vtkWarningMacro("ReadData: updating glyph type from " <<  fiducialListNode->GetGlyphType() << " to " << glyphType << " for Slicer3.6");
       fiducialListNode->SetGlyphType(glyphType);
       // now it's set to be the current version
@@ -517,47 +426,12 @@ int vtkMRMLFiducialListStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
- 
-  
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  fiducialListNode->SetAndObserveStorageNodeID(this->GetID());
-
-  if (glyphTypeChanged)
-    {
-    fiducialListNode->ModifiedSinceReadOn();
-    }
-  else
-    {
-    // mark it unmodified since read
-    fiducialListNode->ModifiedSinceReadOff();
-    }
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLFiducialListStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLFiducialListNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLFiducialListNode");
-    return 0;         
-    }
-
-  if (this->GetFileName() == NULL) 
-    {
-    vtkErrorMacro("WriteData: file name is not set");
-    return 0;
-    }
-
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
@@ -627,61 +501,24 @@ int vtkMRMLFiducialListStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   of.close();
 
-  Superclass::StageWriteData(refNode);
-  
   return 1;
   
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLFiducialListStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLFiducialListStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".fcsv") == 0)
-    {
-    return 1;
-    }
-  else if (extension.compare(".txt") == 0)
-    {
-    vtkErrorMacro("SupportedFileType: extension .txt no longer supported, please use .fcsv");
-    return 0;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Fiducial List CSV (.fcsv)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLFiducialListStorageNode::GetDefaultWriteFileExtension()
+{
+  return "fcsv";
 }

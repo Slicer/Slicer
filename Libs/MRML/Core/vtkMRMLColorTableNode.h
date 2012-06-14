@@ -52,10 +52,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ColorTable";};
 
-  /// 
-  /// 
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
   vtkGetObjectMacro(LookupTable, vtkLookupTable);
   virtual void SetLookupTable(vtkLookupTable* newLookupTable);
 

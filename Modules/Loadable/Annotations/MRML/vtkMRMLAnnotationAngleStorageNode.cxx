@@ -19,37 +19,9 @@ vtkMRMLAnnotationAngleStorageNode::~vtkMRMLAnnotationAngleStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationAngleStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLAnnotationAngleStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationAngleStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
 }
 
  //----------------------------------------------------------------------------
@@ -279,16 +251,17 @@ int vtkMRMLAnnotationAngleStorageNode::ReadAnnotation(vtkMRMLAnnotationAngleNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationAngleStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationAngleStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
+  return refNode->IsA("vtkMRMLAnnotationAngleNode");
+}
 
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationAngleStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
   // cast the input node
-  vtkMRMLAnnotationAngleNode *aNode = dynamic_cast <vtkMRMLAnnotationAngleNode *> (refNode);
+  vtkMRMLAnnotationAngleNode *aNode =
+    vtkMRMLAnnotationAngleNode::SafeDownCast(refNode);
 
   if (aNode == NULL)
     {
@@ -303,14 +276,6 @@ int vtkMRMLAnnotationAngleStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 0;
     }
-
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  aNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  aNode->ModifiedSinceReadOff();
 
   aNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, aNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
 
@@ -348,44 +313,17 @@ void vtkMRMLAnnotationAngleStorageNode::WriteAnnotationAngleData(fstream& of, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationAngleStorageNode::WriteData(vtkMRMLNode *refNode)
-{
-  // open the file for writing
-  fstream of;
-  if (!this->OpenFileToWrite(of)) 
-    {
-      return 0;
-    } 
-
-  int flag = this->WriteData(refNode,of);
-
-  of.close();
-
-  Superclass::StageWriteData(refNode);
-  
-  return flag;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLAnnotationAngleStorageNode::WriteData(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationAngleStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream& of)
 {
   
-  if (!Superclass::WriteData(refNode,of))
+  if (!this->Superclass::WriteDataInternal(refNode,of))
     {
       return 0;
     }
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLAnnotationAngleNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationAngleNode");
-    return 0;         
-    }
-
 
   // cast the input nod
-  vtkMRMLAnnotationAngleNode *aNode = dynamic_cast <vtkMRMLAnnotationAngleNode *> (refNode);
+  vtkMRMLAnnotationAngleNode *aNode =
+    vtkMRMLAnnotationAngleNode::SafeDownCast(refNode);
 
   if (aNode == NULL)
     {
@@ -394,13 +332,12 @@ int vtkMRMLAnnotationAngleStorageNode::WriteData(vtkMRMLNode *refNode, fstream& 
     }
 
   // Control Points Properties
-  if (!WriteAnnotationAngleProperties(of, aNode))
+  if (!this->WriteAnnotationAngleProperties(of, aNode))
     {
       return 0;
     }
 
-  WriteAnnotationAngleData(of, aNode);
+  this->WriteAnnotationAngleData(of, aNode);
 
   return 1;
 }
-

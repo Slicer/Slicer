@@ -276,16 +276,17 @@ int vtkMRMLAnnotationRulerStorageNode::ReadAnnotation(vtkMRMLAnnotationRulerNode
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationRulerStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
+  return refNode->IsA("vtkMRMLAnnotationRulerNode");
+}
 
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationRulerStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
   // cast the input node
-  vtkMRMLAnnotationRulerNode *aNode = dynamic_cast <vtkMRMLAnnotationRulerNode *> (refNode);
+  vtkMRMLAnnotationRulerNode *aNode =
+    vtkMRMLAnnotationRulerNode::SafeDownCast(refNode);
 
   if (aNode == NULL)
     {
@@ -300,14 +301,6 @@ int vtkMRMLAnnotationRulerStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 0;
     }
-
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  aNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  aNode->ModifiedSinceReadOff();
 
   aNode->InvokeEvent(vtkMRMLScene::NodeAddedEvent, aNode);//vtkMRMLAnnotationNode::DisplayModifiedEvent);
 
@@ -375,44 +368,10 @@ void vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vt
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode)
-{
-  /* For now, disable this as can't read it yet
-   // special case: if this annotation is in a hierarchy, the hierarchy took
-   // care of writing it already
-   vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
-   
-   if (hnode &&
-       hnode->GetParentNodeID())
-     {
-     vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
-     return 1;
-     }  
-  */
-  // open the file for writing
-  fstream of;
-  if (!this->OpenFileToWrite(of)) 
-    {
-    vtkWarningMacro("WriteData: cannot open file to write");
-    return 0;
-    } 
-
-  int flag = this->WriteData(refNode,of);
-
-  of.close();
-
-  Superclass::StageWriteData(refNode);
-
-  vtkDebugMacro("RulerStorageNode: WriteData: returning " << flag);
-  return flag;
-}
-
-
-//----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteData(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationRulerStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream& of)
 {
 
-  int retval = Superclass::WriteData(refNode,of);
+  int retval = this->Superclass::WriteDataInternal(refNode,of);
   if (!retval)
     {
     vtkWarningMacro("Ruler: WriteData: unable to call superclass WriteData, retval = " << retval);

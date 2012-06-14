@@ -212,6 +212,7 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
+  virtual bool GetModifiedSinceRead();
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();

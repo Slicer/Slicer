@@ -306,11 +306,6 @@ class VTK_SLICER_FETCHMI_MODULE_LOGIC_EXPORT vtkFetchMILogic : public vtkSlicerM
   int CheckStorageNodeFileNames();
 
   // Description:
-  // Before an upload, this method checks to make sure all nodes
-  // have been saved to local disk (as safety catch.)
-  int CheckModifiedSinceRead ( );
-
-  // Description:
   // This method is called when user requests data upload to XND.
   // It changes a storable node's write state to 'idle' which readies
   // it for the remoteIO pipeline.

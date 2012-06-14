@@ -109,6 +109,9 @@ public:
     GetColorTransferFunctionFromString(std::string (str), result);
   };
 
+  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
+  virtual bool GetModifiedSinceRead();
+
 protected:
   /// Use ::New() to get a new instance.
   vtkMRMLVolumePropertyNode(void);

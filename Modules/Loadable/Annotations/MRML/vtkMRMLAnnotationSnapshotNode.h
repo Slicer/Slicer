@@ -33,8 +33,8 @@ public:
 
   virtual const char* GetIcon() {return ":/Icons/ViewCamera.png";};
 
-  void SetSnapshotDescription(vtkStdString newDescription) {this->Description = newDescription;}
-  vtkStdString GetSnapshotDescription() {return this->Description;}
+  void SetSnapshotDescription(const vtkStdString& newDescription);
+  vtkGetMacro(SnapshotDescription, vtkStdString)
 
   void WriteXML(ostream& of, int nIndent);
   void ReadXMLAttributes(const char** atts);
@@ -54,8 +54,8 @@ public:
   /// 3: Green Slice View
   /// 4: Full layout
   // TODO use an enum for the types
-  void SetScreenShotType(int type) {this->ScreenShotType = type;}
-  int GetScreenShotType() {return this->ScreenShotType;}
+  void SetScreenShotType(int type);
+  vtkGetMacro(ScreenShotType, int)
 
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
@@ -78,7 +78,7 @@ protected:
   void operator=(const vtkMRMLAnnotationSnapshotNode&);
 
   /// The associated Description
-  vtkStdString Description;
+  vtkStdString SnapshotDescription;
 
   /// The vtkImageData of the screenshot
   vtkImageData* ScreenShot;

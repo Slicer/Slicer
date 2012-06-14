@@ -33,52 +33,11 @@ vtkMRMLColorTableStorageNode::vtkMRMLColorTableStorageNode()
 {
   // use 32K as a maximum color id for now 
   this->MaximumColorID = 32768;
-  this->InitializeSupportedWriteFileTypes();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLColorTableStorageNode::~vtkMRMLColorTableStorageNode()
 {
-}
-
-void vtkMRMLColorTableStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-  vtkIndent indent(nIndent);
-
-  std::stringstream ss;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLColorTableStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-/*
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL) 
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-    if (!strcmp(attName, "centerImage")) 
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->CenterImage;
-      }
-    }
-*/
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLColorTableStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-  //vtkMRMLColorTableStorageNode *node = (vtkMRMLColorTableStorageNode *) anode;
 }
 
 //----------------------------------------------------------------------------
@@ -88,62 +47,19 @@ void vtkMRMLColorTableStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLColorTableStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
+  return refNode->IsA("vtkMRMLColorTableNode");
+}
 
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  vtkDebugMacro("Reading ColorTable data");
-  // test whether refNode is a valid node to hold a color table
-  if ( !( refNode->IsA("vtkMRMLColorTableNode"))
-     ) 
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLColorNode");
-    return 0;         
-    }
-
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name and uri not set");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: Read state is pending, returning.");
-    return 0;
-    }
-  
-  std::string fullName = this->GetFullNameFromFileName(); 
-
-  if (fullName == std::string("")) 
-    {
-    vtkErrorMacro("vtkMRMLColorTableStorageNode: File name not specified");
-    return 0;
-    }
+//----------------------------------------------------------------------------
+int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
+  std::string fullName = this->GetFullNameFromFileName();
 
   // cast the input node
-  vtkMRMLColorTableNode *colorNode = NULL;
-  if ( refNode->IsA("vtkMRMLColorTableNode") )
-    {
-    colorNode = dynamic_cast <vtkMRMLColorTableNode *> (refNode);
-    }
+  vtkMRMLColorTableNode *colorNode =
+    vtkMRMLColorTableNode::SafeDownCast(refNode);
 
   if (colorNode == NULL)
     {
@@ -257,37 +173,13 @@ int vtkMRMLColorTableStorageNode::ReadData(vtkMRMLNode *refNode)
     vtkErrorMacro("ERROR opening colour file " << this->FileName << endl);
     return 0;
     }
-  
-  this->SetReadStateIdle();
-  
-  // make sure that the color node points to this storage node
-  colorNode->SetAndObserveStorageNodeID(this->GetID());
-  
+
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLColorTableNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLColorTableNode");
-    return 0;         
-    }
-
-  if (this->GetFileName() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name is not set");
-    return 0;
-    }
-
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
@@ -346,59 +238,25 @@ int vtkMRMLColorTableStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   of.close();
 
-  Superclass::StageWriteData(refNode);
-  
   return 1;
-  
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLColorTableStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLColorTableStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".ctbl") == 0 ||
-      extension.compare(".txt") == 0)
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("Color Table (.ctbl)");
+  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableStorageNode::InitializeSupportedWriteFileTypes()
 {
-  Superclass::InitializeSupportedWriteFileTypes();
   this->SupportedWriteFileTypes->InsertNextValue("Color Table (.ctbl)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLColorTableStorageNode::GetDefaultWriteFileExtension()
+{
+  return "ctbl";
 }

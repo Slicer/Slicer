@@ -303,12 +303,6 @@ public:
   vtkGetStringMacro(SingletonTag);
 
   /// 
-  /// Describes if the data has been modified
-  vtkGetMacro(ModifiedSinceRead, int);
-  vtkSetMacro(ModifiedSinceRead, int);
-  vtkBooleanMacro(ModifiedSinceRead, int);
-
-  /// 
   /// Save node with MRML scene
   vtkGetMacro(SaveWithScene, int);
   vtkSetMacro(SaveWithScene, int);
@@ -472,7 +466,6 @@ protected:
   int Selected;
   int AddToScene;
 
-  int  ModifiedSinceRead;
   int  SaveWithScene;
 
   vtkMRMLScene *Scene;

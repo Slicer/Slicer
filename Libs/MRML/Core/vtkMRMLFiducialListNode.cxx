@@ -536,9 +536,9 @@ void vtkMRMLFiducialListNode::SetGlyphTypeFromString(const char *glyphString)
     }
   if (changed)
     {
-    this->ModifiedSinceReadOn();
+    this->StorableModifiedTime.Modified();
+    this->Modified();
     }
-  
 }
 
 //----------------------------------------------------------------------------
@@ -588,10 +588,11 @@ void vtkMRMLFiducialListNode::SetNumberingSchemeFromString(const char *schemeStr
     }
   if (changed)
     {
-    this->ModifiedSinceReadOn();
-    }  
+    this->StorableModifiedTime.Modified();
+    this->Modified();
+    }
 }
-  
+
 //----------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::PrintSelf(ostream& os, vtkIndent indent)
 {
@@ -725,7 +726,8 @@ int vtkMRMLFiducialListNode::SetNthFiducialXYZ(int n, float x, float y, float z)
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    this->ModifiedSinceReadOn();
+    this->StorableModifiedTime.Modified();
+    this->Modified();
     }
     node = NULL;
     return 0;
@@ -823,9 +825,10 @@ int vtkMRMLFiducialListNode::SetNthFiducialOrientation(int n, float w, float x, 
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    node = NULL;
-    this->ModifiedSinceReadOn();
-    return 0;
+  node = NULL;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -860,9 +863,10 @@ int vtkMRMLFiducialListNode::SetNthFiducialLabelText(int n, const char *text)
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    node = NULL;
-    this->ModifiedSinceReadOn();
-    return 0;
+  node = NULL;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -897,9 +901,10 @@ int vtkMRMLFiducialListNode::SetNthFiducialSelected(int n, int flag)
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    node = NULL;
-    this->ModifiedSinceReadOn();
-    return 0;
+  node = NULL;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -948,7 +953,8 @@ int vtkMRMLFiducialListNode::SetAllFiducialsSelected(int flag)
      vtkDebugMacro("SetAllFidsSelected: throwing a fid modified event w/null");
      this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
      }
-   this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
   return (retVal == 0 ? 0 : 1);
 }
 
@@ -968,9 +974,10 @@ int vtkMRMLFiducialListNode::SetNthFiducialVisibility(int n, int flag)
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    this->ModifiedSinceReadOn();
-    node = NULL;
-    return 0;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+  node = NULL;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -1021,7 +1028,8 @@ int vtkMRMLFiducialListNode::SetAllFiducialsVisibility(int flag)
     vtkDebugMacro("SetAllFidsVisib: throwing fid mod event with null");
     this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, NULL);
     }
-  this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
   return (retVal == 0 ? 0 : 1);
 }
 
@@ -1041,7 +1049,7 @@ int vtkMRMLFiducialListNode::SetNthFiducialID(int n, const char *id)
       std::string pointIDStr = node->GetID();
       this->InvokeEvent(vtkMRMLFiducialListNode::FiducialModifiedEvent, (void*)&pointIDStr);
       }
-    this->ModifiedSinceReadOn();
+    this->StorableModifiedTime.Modified();
     node = NULL;
     return 0;
 }
@@ -1112,7 +1120,6 @@ int vtkMRMLFiducialListNode::AddFiducial()
 
   // this list is now modified...
   //this->Modified();
-  this->ModifiedSinceReadOn();
 
   // return an index for use in getting the item again via GetNthFiducial
   vtkDebugMacro("AddFiducial: added a fiducial to the list at index " << itemIndex << endl);
@@ -1172,7 +1179,6 @@ int vtkMRMLFiducialListNode::AddFiducialWithXYZ(float x, float y, float z, int s
 
   // this list is now modified...
   //this->Modified();
-  this->ModifiedSinceReadOn();
 
   // return an index for use in getting the item again via GetNthFiducial
   vtkDebugMacro("AddFiducial: added a fiducial to the list at index " << itemIndex << endl);
@@ -1222,8 +1228,7 @@ int vtkMRMLFiducialListNode::AddFiducialWithLabelXYZSelectedVisibility(const cha
     }
 
   // this list is now modified...
-  //this->Modified();
-  this->ModifiedSinceReadOn();
+  this->Modified();
 
   // return an index for use in getting the item again via GetNthFiducial
   vtkDebugMacro("AddFiducialWithLabelXYZSelectedVisibility: added a fiducial to the list at index " << itemIndex << endl);
@@ -1246,7 +1251,7 @@ void vtkMRMLFiducialListNode::RemoveFiducial(vtkMRMLFiducial *o)
       // let interested observers know that a fiducial was removed
       this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
       }
-    this->ModifiedSinceReadOn();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -1260,7 +1265,7 @@ void vtkMRMLFiducialListNode::RemoveFiducial(int i)
     this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, (void*)&pointIDStr);
     }
   node = NULL;
-  this->ModifiedSinceReadOn();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -1286,8 +1291,7 @@ void vtkMRMLFiducialListNode::RemoveAllFiducials()
         fid = NULL;
         }
       }
-    this->Modified();
-    this->ModifiedSinceReadOn();
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -1378,7 +1382,8 @@ void vtkMRMLFiducialListNode::SetColor(double r, double g, double b)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1400,7 +1405,8 @@ void vtkMRMLFiducialListNode::SetSelectedColor(double r, double g, double b)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1432,7 +1438,8 @@ void vtkMRMLFiducialListNode::SetTextScale(double scale)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1450,7 +1457,8 @@ void vtkMRMLFiducialListNode::SetSymbolScale(double scale)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1481,7 +1489,8 @@ void vtkMRMLFiducialListNode::SetGlyphType(int type)
     // invoke a display modified event
     this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
     }
-  this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1499,7 +1508,8 @@ void vtkMRMLFiducialListNode::SetVisibility(int visible)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1517,9 +1527,9 @@ void vtkMRMLFiducialListNode::SetLocked(int locked)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
-    
 
 //---------------------------------------------------------------------------
 void vtkMRMLFiducialListNode::SetOpacity(double opacity)
@@ -1540,7 +1550,8 @@ void vtkMRMLFiducialListNode::SetOpacity(double opacity)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1562,7 +1573,8 @@ void vtkMRMLFiducialListNode::SetAmbient(double val)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 
@@ -1586,7 +1598,8 @@ void vtkMRMLFiducialListNode::SetDiffuse(double val)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 
@@ -1610,7 +1623,8 @@ void vtkMRMLFiducialListNode::SetSpecular(double val)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 
@@ -1634,7 +1648,8 @@ void vtkMRMLFiducialListNode::SetPower(double val)
       // invoke a display modified event
       this->InvokeEvent(vtkMRMLFiducialListNode::DisplayModifiedEvent);
       }
-    this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1686,7 +1701,8 @@ void vtkMRMLFiducialListNode::ApplyTransformMatrix(vtkMatrix4x4* transformMatrix
 
 //  orientationMatrix->Delete();
 //  newOrientationMatrix->Delete();
-  this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1715,7 +1731,8 @@ void vtkMRMLFiducialListNode::ApplyTransform(vtkAbstractTransform* transform)
     orientationOut[3] = orientationNormalOut[2];
     node->SetOrientationWXYZ(orientationOut);
     }
-  this->ModifiedSinceReadOn();
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }
 
 //---------------------------------------------------------------------------
@@ -1794,7 +1811,7 @@ int vtkMRMLFiducialListNode::MoveFiducialUp(int fidIndex)
   // it's held onto by the collection now
 //  copyFidAbove->Delete();
 
-  this->ModifiedSinceReadOn();
+  this->Modified();
   
   //this->Modified();
   // let any interested parties know that two fiducials have swapped indices
@@ -1856,7 +1873,7 @@ int vtkMRMLFiducialListNode::MoveFiducialDown(int fidIndex)
   this->InvokeEvent(vtkMRMLFiducialListNode::FiducialIndexModifiedEvent, (void*)&swap); 
 
 
-  this->ModifiedSinceReadOn();
+  this->Modified();
   
   return newIndex;
 }

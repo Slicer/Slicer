@@ -1,5 +1,5 @@
-#include <sstream>
-
+// MRML includes
+#include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
 
 // VTKsys includes
@@ -9,7 +9,8 @@
 #include <vtkImageData.h>
 #include <vtkObjectFactory.h>
 
-vtkCxxSetObjectMacro(vtkMRMLAnnotationSnapshotNode, ScreenShot, vtkImageData);
+// STD includes
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLAnnotationSnapshotNode::vtkMRMLAnnotationSnapshotNode()
@@ -116,4 +117,35 @@ void vtkMRMLAnnotationSnapshotNode::ApplyTransform(vtkAbstractTransform* vtkNotU
 vtkMRMLStorageNode* vtkMRMLAnnotationSnapshotNode::CreateDefaultStorageNode()
 {
   return vtkMRMLAnnotationSnapshotStorageNode::New();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationSnapshotNode::SetSnapshotDescription(const vtkStdString& newDescription)
+{
+  if (this->SnapshotDescription == newDescription)
+    {
+    return;
+    }
+  this->SnapshotDescription = newDescription;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationSnapshotNode::SetScreenShot(vtkImageData* newScreenShot)
+{
+  this->StorableModifiedTime.Modified();
+  vtkSetObjectBodyMacro(ScreenShot, vtkImageData, newScreenShot);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationSnapshotNode::SetScreenShotType(int newScreenShotType)
+{
+  if (this->ScreenShotType == newScreenShotType)
+    {
+    return;
+    }
+  this->ScreenShotType = newScreenShotType;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }

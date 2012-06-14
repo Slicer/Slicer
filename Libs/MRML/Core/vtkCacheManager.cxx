@@ -693,7 +693,7 @@ void vtkCacheManager::MarkNode ( std::string str )
           uri = node->GetNthStorageNode(i)->GetFullNameFromFileName();
           if ( str == uri )
             {
-            node->ModifiedSinceReadOn();
+            node->GetNthStorageNode(i)->InvalidateFile();
             }
           }
         }

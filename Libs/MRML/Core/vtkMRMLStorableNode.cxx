@@ -488,3 +488,24 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
   return;
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLStorableNode::GetModifiedSinceRead()
+{
+  vtkTimeStamp storedTime = this->GetStoredTime();
+  return storedTime < this->StorableModifiedTime;
+}
+
+//---------------------------------------------------------------------------
+vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
+{
+  vtkTimeStamp storedTime;
+  for (unsigned int i = 0; i < this->StorageNodes.size(); ++i)
+    {
+    vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
+    if (storedTime < dnode->GetStoredTime())
+      {
+      storedTime = dnode->GetStoredTime();
+      }
+    }
+  return storedTime;
+}

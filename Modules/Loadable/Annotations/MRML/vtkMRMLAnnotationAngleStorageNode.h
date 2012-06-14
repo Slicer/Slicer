@@ -12,51 +12,24 @@
 class vtkMRMLAnnotationAngleNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationAngleStorageNode : public vtkMRMLAnnotationLinesStorageNode
+class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationAngleStorageNode
+  : public vtkMRMLAnnotationLinesStorageNode
 {
-  public:
+public:
   static vtkMRMLAnnotationAngleStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationAngleStorageNode,vtkMRMLAnnotationLinesStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-
-  // Description:
-  // Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
-
-  // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
-
-  // Description:
-  // Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
-
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
-  // Description:
-  // Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-
   // Description:
   // Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "AnnotationAngleStorage";};
 
+  /// Return true if the node can be read in
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
+
 protected:
-
-
   vtkMRMLAnnotationAngleStorageNode();
   ~vtkMRMLAnnotationAngleStorageNode();
   vtkMRMLAnnotationAngleStorageNode(const vtkMRMLAnnotationAngleStorageNode&);
@@ -71,9 +44,11 @@ protected:
   int ReadAnnotationAngleData(vtkMRMLAnnotationAngleNode *refNode, char line[1024], int typeColumn, int line1IDColumn, int line2IDColumn, int selColumn,  int visColumn, int numColumns);
   int ReadAnnotationAngleProperties(vtkMRMLAnnotationAngleNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn,    int& line2Column, int& selColumn, int& visColumn, int& numColumns);
 
-  // Description:
-  int WriteData(vtkMRMLNode *refNode, fstream & of);
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
+  /// Write data from a  referenced node
+  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream & of);
 };
 
 #endif

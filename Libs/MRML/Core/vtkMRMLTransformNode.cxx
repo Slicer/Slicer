@@ -241,3 +241,11 @@ vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
 {
   return vtkMRMLTransformStorageNode::New();
 }
+
+//---------------------------------------------------------------------------
+bool vtkMRMLTransformNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->TransformToParent &&
+     this->TransformToParent->GetMTime() > this->GetStoredTime());
+}

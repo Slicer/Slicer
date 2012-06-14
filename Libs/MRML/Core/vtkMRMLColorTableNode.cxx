@@ -184,15 +184,6 @@ void vtkMRMLColorTableNode::PrintSelf(ostream& os, vtkIndent indent)
 */
 }
 
-//-----------------------------------------------------------
-
-void vtkMRMLColorTableNode::UpdateScene(vtkMRMLScene *scene)
-{
-  // UpdateScene on the displayable node superclass will set up the storage
-  // node and call ReadData
-  Superclass::UpdateScene(scene); 
-}
-
 //----------------------------------------------------------------------------
 void vtkMRMLColorTableNode::SetTypeToFullRainbow()
 {

@@ -29,51 +29,28 @@ Version:   $Revision: 1.2 $
 vtkMRMLNodeNewMacro(vtkMRMLUnstructuredGridStorageNode);
 
 //----------------------------------------------------------------------------
-void vtkMRMLUnstructuredGridStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+void vtkMRMLUnstructuredGridStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->ReadData(parentNode);
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLUnstructuredGridStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
+  return refNode->IsA("vtkMRMLUnstructuredGridNode");
+}
 
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLUnstructuredGridNode") ) 
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLUnstructuredGridNode");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-  
+//----------------------------------------------------------------------------
+int vtkMRMLUnstructuredGridStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
+  int result = 0;
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
     {
     vtkErrorMacro("ReadData: File name not specified");
-    return 0;
+    return result;
     }
 
   // compute file prefix
@@ -82,13 +59,12 @@ int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
   if( loc == std::string::npos ) 
     {
     vtkErrorMacro("ReadData: no file extension specified: " << name.c_str());
-    return 0;
+    return result;
     }
   std::string extension = name.substr(loc);
 
   vtkDebugMacro("ReadData: extension = " << extension.c_str());
 
-  int result = 1;
   try
     {
     if (extension == std::string(".vtk")) 
@@ -99,52 +75,34 @@ int vtkMRMLUnstructuredGridStorageNode::ReadData(vtkMRMLNode *refNode)
       if (reader->GetOutput() == NULL)
         {
         vtkErrorMacro("Unable to read file " << fullName.c_str());
-        result = 0;
         }
       else
         {
         modelNode->SetAndObserveUnstructuredGrid(reader->GetOutput());
+        result = 1;
         }
       reader->Delete();
-      }  
-    else 
+      }
+    else
       {
       vtkWarningMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
-      return 0;
       }
     }
   catch (...)
     {
-    result = 0;
     }
 
-  this->SetReadStateIdle();
-  
   if (modelNode->GetUnstructuredGrid() != NULL) 
     {
-    modelNode->GetUnstructuredGrid()->Modified();
+    //modelNode->GetUnstructuredGrid()->Modified();
     }
-  modelNode->SetModifiedSinceRead(0);
   return result;
 }
 
 
 //----------------------------------------------------------------------------
-int vtkMRMLUnstructuredGridStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLUnstructuredGridStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-  
-  // test whether refNode is a valid node to hold a model
-  if (!refNode->IsA("vtkMRMLUnstructuredGridNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLUnstructuredGridNode");
-    return 0;
-    }
-  
   vtkMRMLUnstructuredGridNode *modelNode = vtkMRMLUnstructuredGridNode::SafeDownCast(refNode);
   
   std::string fullName = this->GetFullNameFromFileName();
@@ -187,45 +145,10 @@ int vtkMRMLUnstructuredGridStorageNode::WriteData(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLUnstructuredGridStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLUnstructuredGridStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".vtk") == 0)
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue(
+    "Unstructured Grid (.vtk)");
 }
 
 //----------------------------------------------------------------------------
@@ -233,4 +156,10 @@ void vtkMRMLUnstructuredGridStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue(
     "Unstructured Grid (.vtk)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLUnstructuredGridStorageNode::GetDefaultWriteFileExtension()
+{
+  return "vtk";
 }

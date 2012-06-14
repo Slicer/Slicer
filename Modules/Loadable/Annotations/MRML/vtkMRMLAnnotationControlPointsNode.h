@@ -145,7 +145,7 @@ public:
 
 
   /// Flag determining how to number the next added fiducial
-  vtkSetMacro(NumberingScheme, int);
+  virtual void SetNumberingScheme(int numberingScheme);
   vtkGetMacro(NumberingScheme, int);
 
   /// Return a string representing the numbering scheme, set it from a string

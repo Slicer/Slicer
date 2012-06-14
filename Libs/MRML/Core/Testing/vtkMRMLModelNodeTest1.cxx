@@ -49,7 +49,5 @@ int vtkMRMLModelNodeTest1(int , char * [] )
   std::cout << "Active cell scalars name = " << (name == NULL ? "null" : name) << std::endl;
   node1->RemoveScalars("testingArray");
 
-  std::cout << "Model node default write ext = " << node1->GetDefaultWriteFileExtension() << std::endl;
-
   return EXIT_SUCCESS;
 }

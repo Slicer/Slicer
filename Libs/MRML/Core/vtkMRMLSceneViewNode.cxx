@@ -6,7 +6,7 @@ See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLTransformNode.cxx,v $
+Module:    $RCSfile: vtkMRMLSceneViewNode.cxx,v $
 Date:      $Date: 2006/03/17 17:01:53 $
 Version:   $Revision: 1.14 $
 
@@ -31,8 +31,6 @@ Version:   $Revision: 1.14 $
 #include <cassert>
 #include <sstream>
 #include <stack>
-
-vtkCxxSetObjectMacro(vtkMRMLSceneViewNode, ScreenShot, vtkImageData);
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSceneViewNode);
@@ -572,4 +570,35 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
 vtkMRMLStorageNode* vtkMRMLSceneViewNode::CreateDefaultStorageNode()
 {
   return vtkMRMLSceneViewStorageNode::New();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSceneViewNode::SetSceneViewDescription(const vtkStdString& newDescription)
+{
+  if (this->SceneViewDescription == newDescription)
+    {
+    return;
+    }
+  this->SceneViewDescription = newDescription;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSceneViewNode::SetScreenShot(vtkImageData* newScreenShot)
+{
+  this->StorableModifiedTime.Modified();
+  vtkSetObjectBodyMacro(ScreenShot, vtkImageData, newScreenShot);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSceneViewNode::SetScreenShotType(int newScreenShotType)
+{
+  if (this->ScreenShotType == newScreenShotType)
+    {
+    return;
+    }
+  this->ScreenShotType = newScreenShotType;
+  this->StorableModifiedTime.Modified();
+  this->Modified();
 }

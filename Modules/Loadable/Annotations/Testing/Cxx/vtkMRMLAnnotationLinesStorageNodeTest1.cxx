@@ -74,7 +74,6 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   cout << "AnnotationPointDisplayNode Passed" << endl;
 
   annNode->Modified();
-  node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationLinesStorageNodeTest.acsv");
   node2->WriteData(annNode);

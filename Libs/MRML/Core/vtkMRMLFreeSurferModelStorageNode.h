@@ -35,16 +35,6 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   /// 
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-  
-  /// 
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
   /// 
   /// Copy data from a  referenced node's filename to new location.
   /// NOTE: use this instead of Write Data in the Remote IO Pipeline
@@ -67,14 +57,6 @@ class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelSto
   /// Control use of the triangle stipper when reading the polydata
   vtkGetMacro(UseStripper, int);
   vtkSetMacro(UseStripper, int);
-  
-  /// 
-  /// Add a known file extension
-  void AddFileExtension(std::string ext);
-  /// 
-  /// returns true if on the list, false otherwise
-  bool IsKnownFileExtension(std::string ext);
-  virtual int SupportedFileType(const char *fileName);
 
 protected:
   vtkMRMLFreeSurferModelStorageNode();
@@ -82,9 +64,11 @@ protected:
   vtkMRMLFreeSurferModelStorageNode(const vtkMRMLFreeSurferModelStorageNode&);
   void operator=(const vtkMRMLFreeSurferModelStorageNode&);
 
-  /// 
-  /// a list of valid file extensions
-  std::vector< std::string > KnownFileExtensions;
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedReadFileTypes();
+
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
   int UseStripper;
 };

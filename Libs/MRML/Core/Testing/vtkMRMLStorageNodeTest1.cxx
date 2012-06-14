@@ -37,10 +37,9 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  virtual int ReadData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
-  virtual int WriteData(vtkMRMLNode *vtkNotUsed(refNode)) { return 0; }
+  bool CanReadInReferenceNode(vtkMRMLNode *) { return false; }
 };
- 
+
 int vtkMRMLStorageNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLStorageNodeTestHelper1 >::New();

@@ -22,9 +22,10 @@
 
 class vtkImageData;
 
-class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorageNode
+class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
+  : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLVolumeHeaderlessStorageNode *New();
   vtkTypeMacro(vtkMRMLVolumeHeaderlessStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -35,24 +36,9 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   /// 
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
   /// 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-
- /// Description:
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
   /// 
   /// Copy the node's attributes to this object
@@ -127,23 +113,25 @@ class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode : public vtkMRMLStorage
   vtkGetMacro(CenterImage, int);
   vtkSetMacro(CenterImage, int);
 
-  /// 
-  /// Check to see if this storage node can handle the file type in the input
-  /// string. If input string is null, check URI, then check FileName. 
-  /// Subclasses should implement this method.
-  virtual int SupportedFileType(const char *fileName);
-
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
+  /// Return true if node can be read in
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode *refNode);
 
 protected:
-
 
   vtkMRMLVolumeHeaderlessStorageNode();
   ~vtkMRMLVolumeHeaderlessStorageNode();
   vtkMRMLVolumeHeaderlessStorageNode(const vtkMRMLVolumeHeaderlessStorageNode&);
   void operator=(const vtkMRMLVolumeHeaderlessStorageNode&);
+
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+
+  /// Write data from a  referenced node
+  virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
   char *FileScanOrder;
   int FileScalarType;

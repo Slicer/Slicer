@@ -34,76 +34,20 @@ vtkMRMLDoubleArrayStorageNode::~vtkMRMLDoubleArrayStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDoubleArrayStorageNode::WriteXML(ostream& of, int nIndent)
-{
-    Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDoubleArrayStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-    Superclass::ReadXMLAttributes(atts);
-
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLDoubleArrayStorageNode::Copy(vtkMRMLNode *anode)
-{
-    Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLDoubleArrayStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
     vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDoubleArrayStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLDoubleArrayStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-    this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLDoubleArrayNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLDoubleArrayStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLDoubleArrayStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-    // do not read if if we are not in the scene (for example inside snapshot)
-    if ( !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-        return 1;
-    }
-
-    if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-    vtkDebugMacro("Reading measurement data");
-    // test whether refNode is a valid node to hold a measurement list
-    if ( !( refNode->IsA("vtkMRMLDoubleArrayNode"))
-        ) 
-    {
-        vtkErrorMacro("Reference node is not a proper vtkMRMLDoubleArrayNode");
-        return 0;         
-    }
-
-    if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-        vtkErrorMacro("ReadData: file name and uri not set");
-        return 0;
-    }
-
-    Superclass::StageReadData(refNode);
-    if ( this->GetReadState() != this->TransferDone )
-    {
-        // remote file download hasn't finished
-        vtkWarningMacro("ReadData: Read state is pending, returning.");
-        return 0;
-    }
-
     std::string fullName = this->GetFullNameFromFileName(); 
 
     if (fullName == std::string("")) 
@@ -113,17 +57,14 @@ int vtkMRMLDoubleArrayStorageNode::ReadData(vtkMRMLNode *refNode)
     }
 
     // cast the input node
-    vtkMRMLDoubleArrayNode *doubleArrayNode = NULL;
-    if ( refNode->IsA("vtkMRMLDoubleArrayNode") )
-    {
-        doubleArrayNode = dynamic_cast <vtkMRMLDoubleArrayNode *> (refNode);
-    }
+    vtkMRMLDoubleArrayNode *doubleArrayNode =
+      vtkMRMLDoubleArrayNode::SafeDownCast(refNode);
 
     if (doubleArrayNode == NULL)
-    {
-        vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a double array (measurement) node");
-        return 0;
-    }
+      {
+      vtkErrorMacro("ReadData: unable to cast input node " << refNode->GetID() << " to a double array (measurement) node");
+      return 0;
+      }
 
     // open the file for reading input
     fstream fstr;
@@ -265,29 +206,12 @@ int vtkMRMLDoubleArrayStorageNode::ReadData(vtkMRMLNode *refNode)
         return 0;
     }
 
-    this->SetReadStateIdle();
-
-    // make sure that the list node points to this storage node
-    //-------------------------> doubleArrayNode->SetAndObserveStorageNodeID(this->GetID());
-
-
-    // mark it unmodified since read
-    doubleArrayNode->ModifiedSinceReadOff();
-
-    return 1;
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLDoubleArrayStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLDoubleArrayStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-
-    // test whether refNode is a valid node to hold a volume
-    if ( !( refNode->IsA("vtkMRMLDoubleArrayNode") ) )
-    {
-        vtkErrorMacro("Reference node is not a proper vtkMRMLDoubleArrayNode");
-        return 0;         
-    }
-
     if (this->GetFileName() == NULL) 
     {
         vtkErrorMacro("WriteData: file name is not set");
@@ -302,17 +226,14 @@ int vtkMRMLDoubleArrayStorageNode::WriteData(vtkMRMLNode *refNode)
     }
 
     // cast the input node
-    vtkMRMLDoubleArrayNode *doubleArrayNode = NULL;
-    if ( refNode->IsA("vtkMRMLDoubleArrayNode") )
-    {
-        doubleArrayNode = dynamic_cast <vtkMRMLDoubleArrayNode *> (refNode);
-    }
+    vtkMRMLDoubleArrayNode *doubleArrayNode =
+      vtkMRMLDoubleArrayNode::SafeDownCast(refNode);
 
     if (doubleArrayNode == NULL)
-    {
-        vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known double array node");
-        return 0;
-    }
+      {
+      vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known double array node");
+      return 0;
+      }
 
     // open the file for writing
     fstream of;
@@ -358,60 +279,28 @@ int vtkMRMLDoubleArrayStorageNode::WriteData(vtkMRMLNode *refNode)
             of << endl;
         }
     }
-    of.close();
+  of.close();
 
-    Superclass::StageWriteData(refNode);
 
-    return 1;
-
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLDoubleArrayStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLDoubleArrayStorageNode::InitializeSupportedReadFileTypes()
 {
-    // check to see which file name we need to check
-    std::string name;
-    if (fileName)
-    {
-        name = std::string(fileName);
-    }
-    else if (this->FileName != NULL)
-    {
-        name = std::string(this->FileName);
-    }
-    else if (this->URI != NULL)
-    {
-        name = std::string(this->URI);
-    }
-    else
-    {
-        vtkWarningMacro("SupportedFileType: no file name to check");
-        return 0;
-    }
-
-    std::string::size_type loc = name.find_last_of(".");
-    if( loc == std::string::npos ) 
-    {
-        vtkErrorMacro("SupportedFileType: no file extension specified");
-        return 0;
-    }
-    std::string extension = name.substr(loc);
-
-    vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-    if (extension.compare(".mcsv") == 0 ||
-       extension.compare(".txt") == 0)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("Measurement CSV (.mcsv)");
+  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLDoubleArrayStorageNode::InitializeSupportedWriteFileTypes()
 {
-    this->SupportedWriteFileTypes->InsertNextValue("Measurement CSV (.mcsv)");
-    this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+  this->SupportedWriteFileTypes->InsertNextValue("Measurement CSV (.mcsv)");
+  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLDoubleArrayStorageNode::GetDefaultWriteFileExtension()
+{
+  return "mcsv";
 }

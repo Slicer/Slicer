@@ -79,13 +79,12 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   void SetAbsentStorageFileNames();
 
   /// A description of this sceneView
-  void SetSceneViewDescription(vtkStdString newDescription) {this->Description = newDescription;}
-  vtkStdString GetSceneViewDescription() {return this->Description;}
+  void SetSceneViewDescription(const vtkStdString& newDescription);
+  vtkGetMacro(SceneViewDescription, vtkStdString);
 
   /// The attached screenshot of this sceneView
-  virtual void SetScreenShot(vtkImageData*);
+  virtual void SetScreenShot(vtkImageData* newScreenShot);
   vtkGetObjectMacro(ScreenShot, vtkImageData);
-
 
   /// The screenshot type of this sceneView
   /// 0: 3D View
@@ -94,8 +93,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// 3: Green Slice View
   /// 4: Full layout
   // TODO use an enum for the types
-  void SetScreenShotType(int type) {this->ScreenShotType = type;}
-  int GetScreenShotType() {return this->ScreenShotType;}
+  virtual void SetScreenShotType(int type);
+  vtkGetMacro(ScreenShotType, int);
 
 
   /// 
@@ -112,7 +111,7 @@ protected:
   vtkMRMLScene* Nodes;
 
   /// The associated Description
-  vtkStdString Description;
+  vtkStdString SceneViewDescription;
 
   /// The vtkImageData of the screenshot
   vtkImageData* ScreenShot;

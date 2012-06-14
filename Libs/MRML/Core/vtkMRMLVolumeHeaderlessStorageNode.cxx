@@ -297,50 +297,15 @@ void vtkMRMLVolumeHeaderlessStorageNode::PrintSelf(ostream& os, vtkIndent indent
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeHeaderlessStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLVolumeHeaderlessStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
+         refNode->IsA("vtkMRMLVectorVolumeNode");
 }
 
 //----------------------------------------------------------------------------
-
-int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLVolumeHeaderlessStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if (  !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !(refNode->IsA("vtkMRMLScalarVolumeNode")) || refNode->IsA("vtkMRMLVectorVolumeNode" ) )
-    {
-    //vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return 0;         
-    }
-  if (this->GetFileName() == NULL) 
-    {
-      return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    return 0;
-    }
-  
   vtkMRMLVolumeNode *volNode = NULL;
 
   if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
@@ -429,10 +394,6 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
       }
     }
 
-  // set volume attributes
-  volNode->SetAndObserveStorageNodeID(this->GetID());
-  //TODO update scene to send Modified event
- 
   vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
   ici->SetInput (image);
   ici->SetOutputSpacing( 1, 1, 1 );
@@ -461,33 +422,20 @@ int vtkMRMLVolumeHeaderlessStorageNode::ReadData(vtkMRMLNode *refNode)
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 
-  this->SetReadStateIdle();
   return result;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
+bool vtkMRMLVolumeHeaderlessStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
+  return refNode->IsA("vtkMRMLScalarVolumeNode");
+}
 
-  // test whether refNode is a valid node to hold a volume
-  if (!refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLVolumeNode");
-    return 0;
-    }
-  
-  vtkMRMLVolumeNode *volNode = NULL;
-  
-  if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
-    {
-    volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
-    }
-  
+//----------------------------------------------------------------------------
+int vtkMRMLVolumeHeaderlessStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+{
+  vtkMRMLVolumeNode *volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);
+
   if (volNode->GetImageData() == NULL) 
     {
     vtkErrorMacro("cannot write ImageData, it's NULL");
@@ -526,39 +474,9 @@ int vtkMRMLVolumeHeaderlessStorageNode::WriteData(vtkMRMLNode *refNode)
     result = 0;
     }
 
-  Superclass::StageWriteData(refNode);
-  
   return result;
-
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLVolumeHeaderlessStorageNode::SupportedFileType(const char *fileName)
-{
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-
-  // for now, return 1
-  return 1;
-  
-}
 
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeHeaderlessStorageNode::InitializeSupportedWriteFileTypes()

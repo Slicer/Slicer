@@ -41,6 +41,7 @@ vtkMRMLNRRDStorageNode::~vtkMRMLNRRDStorageNode()
 {
 }
 
+//----------------------------------------------------------------------------
 void vtkMRMLNRRDStorageNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
@@ -98,63 +99,20 @@ void vtkMRMLNRRDStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
   os << indent << "CenterImage:   " << this->CenterImage << "\n";
-
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNRRDStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLNRRDStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLScalarVolumeNode") ||
+         refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
+         refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
+         refNode->IsA("vtkMRMLDiffusionTensorVolumeNode");
 }
 
 //----------------------------------------------------------------------------
-
-int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-   if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  if ( !refNode->GetAddToScene() )
-    {
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    return 1;
-    }
-
-  vtkDebugMacro("Reading NRRD data");
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
-          refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
-          refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
-     )
-    {
-    //vtkErrorMacro("Reference node is not a proper vtkMRMLVolumeNode");
-    return 0;         
-    }
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name and uri are null.");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: read state is pending, remote download hasn't finished yet");
-    return 0;
-    }
-  else
-    {
-    vtkDebugMacro("ReadData: read state is ready, URI = " << (this->GetURI() == NULL ? "null" : this->GetURI()) << ", filename = " << (this->GetFileName() == NULL ? "null" : this->GetFileName()));
-    }
-  
   vtkMRMLVolumeNode *volNode = NULL;
 
   vtkSmartPointer<vtkNRRDReader> reader;
@@ -305,9 +263,6 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
     dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (volNode)->SetBValues(bvalue);
     }
 
-  volNode->SetAndObserveStorageNodeID(this->GetID());
-  //TODO update scene to send Modified event
- 
   vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
   ici->SetInput (reader->GetOutput());
   ici->SetOutputSpacing( 1, 1, 1 );
@@ -315,31 +270,12 @@ int vtkMRMLNRRDStorageNode::ReadData(vtkMRMLNode *refNode)
   ici->Update();
 
   volNode->SetAndObserveImageData (ici->GetOutput());
-
-  this->SetReadStateIdle();
-  
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a volume
-  if ( !( refNode->IsA("vtkMRMLScalarVolumeNode") || refNode->IsA("vtkMRMLVectorVolumeNode" ) || 
-          refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
-          refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
-     )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLVolumeNode");
-    return 0;         
-    }    
-  
   vtkMRMLVolumeNode *volNode = NULL;
   //Store volume nodes attributes.
   vtkSmartPointer<vtkMatrix4x4> mf = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -419,9 +355,8 @@ int vtkMRMLNRRDStorageNode::WriteData(vtkMRMLNode *refNode)
     }
   
   this->StageWriteData(refNode);
-  
-  return writeFlag;
 
+  return writeFlag;
 }
 
 //----------------------------------------------------------------------------
@@ -525,47 +460,10 @@ int vtkMRMLNRRDStorageNode::ParseDiffusionInformation(vtkNRRDReader *reader,vtkD
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLNRRDStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLNRRDStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".nrrd") == 0 ||
-      extension.compare(".nhdr") == 0)
-    {
-    return 1;
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: can't read files with extension " << extension.c_str());
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("NRRD (.nrrd)");
+  this->SupportedReadFileTypes->InsertNextValue("NRRD (.nhdr)");
 }
 
 //----------------------------------------------------------------------------
@@ -573,4 +471,10 @@ void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nrrd)");
   this->SupportedWriteFileTypes->InsertNextValue("NRRD (.nhdr)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLNRRDStorageNode::GetDefaultWriteFileExtension()
+{
+  return "nhdr";
 }

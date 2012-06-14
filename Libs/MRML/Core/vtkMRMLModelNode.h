@@ -111,13 +111,6 @@ public:
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
-  /// 
-  /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return "vtk";
-    };
-
 protected:
   vtkMRMLModelNode();
   ~vtkMRMLModelNode();

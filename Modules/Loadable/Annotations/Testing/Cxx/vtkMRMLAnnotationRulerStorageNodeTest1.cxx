@@ -64,7 +64,6 @@ int vtkMRMLAnnotationRulerStorageNodeTest1(int , char * [] )
 
   annNode->Modified();
 
-  node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationRulerStorageNodeTest.acsv");
   node2->WriteData(annNode);

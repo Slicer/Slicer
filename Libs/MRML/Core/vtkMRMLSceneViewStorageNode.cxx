@@ -47,78 +47,21 @@ vtkMRMLSceneViewStorageNode::~vtkMRMLSceneViewStorageNode()
 {
 }
 
-void vtkMRMLSceneViewStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSceneViewStorageNode::ReadXMLAttributes(const char** atts)
-{
-  vtkMRMLStorageNode::ReadXMLAttributes(atts);
-  vtkDebugMacro("ReadXMLAttributes: file name = " << this->GetFileName());
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLSceneViewStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-
-  vtkMRMLStorageNode::PrintSelf(os,indent);
-
-  os << indent << "FileName: " <<
-    (this->FileName ? this->FileName : "(none)") << "\n";
+  return this->PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSceneViewStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLSceneViewStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLSceneViewNode");
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("ReadData: can't read into a null node");
-    return 0;
-    }
-
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode->GetAddToScene() )
-    {
-    vtkDebugMacro("ReadData: reference node not to be added to the scene");
-    return 1;
-    }
-
-  if (this->GetScene() && this->GetScene()->GetReadDataOnLoad() == 0)
-    {
-    vtkDebugMacro("ReadData: get read data on load is zero");
-    return 1;
-    }
-
-  if (!refNode->IsA("vtkMRMLSceneViewNode") ) 
-    {
-    vtkErrorMacro("Reference node is not a vtkMRMLSceneViewNode");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: remote file download hasn't finished");
-    return 0;
-    }
-
   vtkMRMLSceneViewNode *sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
@@ -205,29 +148,12 @@ int vtkMRMLSceneViewStorageNode::ReadData(vtkMRMLNode *refNode)
   sceneViewNode->GetScreenShot()->SetScalarType(VTK_UNSIGNED_CHAR);
   imageData->Delete();
 
-  this->SetReadStateIdle();
-  
-  sceneViewNode->SetModifiedSinceRead(0);
-
   return result;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLSceneViewStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
-  if (refNode == NULL)
-    {
-    vtkErrorMacro("WriteData: can't write, input node is null");
-    return 0;
-    }
-
-  // test whether refNode is a valid node to hold a scene view
-  if (!refNode->IsA("vtkMRMLSceneViewNode") ) 
-  {
-    vtkErrorMacro("Reference node is not a vtkMRMLSceneViewNode");
-    return 0;
-  }
-
   vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(refNode);
 
   if (sceneViewNode->GetScreenShot() == NULL)
@@ -316,61 +242,28 @@ int vtkMRMLSceneViewStorageNode::WriteData(vtkMRMLNode *refNode)
   return result;
 }
 
-
 //----------------------------------------------------------------------------
-int vtkMRMLSceneViewStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLSceneViewStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-  {
-    name = std::string(fileName);
-  }
-  else if (this->FileName != NULL)
-  {
-    name = std::string(this->FileName);
-  }
-  else if (this->URI != NULL)
-  {
-    name = std::string(this->URI);
-  }
-  else
-  {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-  }
-
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-  {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-  }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".png") == 0 ||
-        extension.compare(".jpeg") == 0 ||
-        extension.compare(".jpg") == 0 ||
-        extension.compare(".tiff") == 0 ||
-        extension.compare(".bmp") == 0)
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("PNG (.png)");
+  this->SupportedReadFileTypes->InsertNextValue("JPG (.jpg)");
+  this->SupportedReadFileTypes->InsertNextValue("JPEG (.jpeg)");
+  this->SupportedReadFileTypes->InsertNextValue("TIFF (.tiff)");
+  this->SupportedReadFileTypes->InsertNextValue("BMP (.bmp)");
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewStorageNode::InitializeSupportedWriteFileTypes()
 {
-  // Look at WriteData(), .g and .meta are not being written even though 
-  // SupportedFileType() says they are supported
   this->SupportedWriteFileTypes->InsertNextValue("PNG (.png)");
   this->SupportedWriteFileTypes->InsertNextValue("JPG (.jpg)");
   this->SupportedWriteFileTypes->InsertNextValue("JPEG (.jpeg)");
   this->SupportedWriteFileTypes->InsertNextValue("TIFF (.tiff)");
   this->SupportedWriteFileTypes->InsertNextValue("BMP (.bmp)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSceneViewStorageNode::GetDefaultWriteFileExtension()
+{
+  return "png";
 }

@@ -842,11 +842,9 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   // create a volume node as copy of source volume
   vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
 
-  int modifiedSinceRead = volumeNode->GetModifiedSinceRead();
   labelNode->CopyWithScene(volumeNode);
   
   labelNode->SetAndObserveStorageNodeID(NULL);
-  labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
 
   // associate it with the source volume
@@ -854,9 +852,6 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
     {
     labelNode->SetAttribute("AssociatedNodeID", volumeNode->GetID());
     }
-
-  // restore modifiedSinceRead value since copy cause Modify on image data.
-  volumeNode->SetModifiedSinceRead(modifiedSinceRead);
 
   // set the display node to have a label map lookup table
   if (this->ColorLogic)
@@ -917,8 +912,6 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate (vtk
   origName.assign(labelNode->GetName());
   labelNode->Copy(templateNode);
   labelNode->SetName(origName.c_str());
-
-  labelNode->SetModifiedSinceRead(1);
   labelNode->SetLabelMap(1);
 
   // set the display node to have a label map lookup table
@@ -998,8 +991,6 @@ CloneVolume (vtkMRMLScene *scene,
     } else {
       vtkErrorMacro("CloneVolume: The ImageData of VolumeNode with ID " << volumeNode->GetID() << " is null !");
     }
-
-  clonedVolumeNode->SetModifiedSinceRead(1);
 
   // add the cloned volume to the scene
   scene->AddNode(clonedVolumeNode);

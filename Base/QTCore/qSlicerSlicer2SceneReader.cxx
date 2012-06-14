@@ -705,7 +705,6 @@ void qSlicerSlicer2SceneReaderPrivate::importVolumeNode(NodeType& node)
     q->mrmlScene()->AddNode(volumeNode);
     q->mrmlScene()->AddNode(volumeDisplayNode);
     volumeNode->SetAndObserveDisplayNodeID(volumeDisplayNode->GetID());
-    volumeNode->SetModifiedSinceRead(1);
     this->LoadedNodes << volumeNode->GetID() << volumeDisplayNode->GetID();
     
     // use the RASToIJK information from the file, to override what the 

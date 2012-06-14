@@ -17,7 +17,7 @@
 
 #include "vtkStringArray.h"
 
-
+#include <fstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLAnnotationHierarchyStorageNode);
@@ -34,54 +34,23 @@ vtkMRMLAnnotationHierarchyStorageNode::~vtkMRMLAnnotationHierarchyStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationHierarchyStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
+bool vtkMRMLAnnotationHierarchyStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 {
-  this->ReadData(parentNode);
+  return refNode->IsA("vtkMRMLAnnotationHierarchyNode");
 }
 
-
-
-
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationHierarchyStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode ||
-       !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
   // cast the input node
-  vtkMRMLAnnotationHierarchyNode *annotationHierarchyNode = NULL;
-  annotationHierarchyNode  = dynamic_cast <vtkMRMLAnnotationHierarchyNode *> (refNode);
+  vtkMRMLAnnotationHierarchyNode *annotationHierarchyNode =
+    vtkMRMLAnnotationHierarchyNode::SafeDownCast(refNode);
 
   if (annotationHierarchyNode == NULL)
     {
@@ -93,24 +62,6 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
 //  annotationHierarchyNode->RemoveAllHierarchyChildrenNodes();
 
   // READ
-  
-  // open the file
-  fstream fstr;
-  if (this->GetFileName() == NULL && this->GetURI() == NULL) 
-    {
-    vtkErrorMacro("ReadData: file name and uri not set");
-    return 0;
-    }
-
-  Superclass::StageReadData(refNode);
-
-  if ( this->GetReadState() != this->TransferDone )
-    {
-    // remote file download hasn't finished
-    vtkWarningMacro("ReadData: Read state is pending, returning.");
-    return 0;
-    }
-  
   std::string fullName = this->GetFullNameFromFileName(); 
 
   if (fullName == std::string("")) 
@@ -119,6 +70,8 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
     return 0;
     }
 
+  // open the file
+  fstream fstr;
   fstr.open(fullName.c_str(), fstream::in);
   if (!fstr.is_open())
     {
@@ -224,23 +177,15 @@ int vtkMRMLAnnotationHierarchyStorageNode::ReadData(vtkMRMLNode *refNode)
   
   // close the file
   fstr.close();
-   
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-//  annotationHierarchyNode->SetAndObserveStorageNodeID(this->GetID());
-  
+
   // mark it unmodified since read
-  annotationHierarchyNode->ModifiedSinceReadOff();
   this->InvokeEvent(vtkMRMLScene::NodeAddedEvent, annotationHierarchyNode);
 
   return 1;
 }
 
-
-
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationHierarchyStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   if (!refNode)
     {
@@ -255,8 +200,8 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     }
   
-  vtkMRMLAnnotationHierarchyNode *hNode = NULL;
-  hNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(refNode);
+  vtkMRMLAnnotationHierarchyNode *hNode =
+    vtkMRMLAnnotationHierarchyNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();  
   if (fullName == std::string("")) 
@@ -329,7 +274,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
              // separate this annotation by a comment line 
             of << "# New Annotation: " << annotationNode->GetClassName() << endl;
             vtkMRMLAnnotationFiducialsStorageNode *fidStorageNode = vtkMRMLAnnotationFiducialsStorageNode::SafeDownCast(annotationStorageNode);
-            int retval = fidStorageNode->WriteData(annotationNode, of);
+            int retval = fidStorageNode->WriteDataInternal(annotationNode, of);
             if (!retval)
               {
               vtkErrorMacro("Error writing data for fiducial annotation " << annotationNode->GetName());
@@ -339,7 +284,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
             {
             of << "# New Annotation: " << annotationNode->GetClassName() << endl;
             vtkMRMLAnnotationControlPointsStorageNode *cpStorageNode = vtkMRMLAnnotationControlPointsStorageNode::SafeDownCast(annotationStorageNode);
-            int retval = cpStorageNode->WriteData(annotationNode, of);
+            int retval = cpStorageNode->WriteDataInternal(annotationNode, of);
             if (!retval)
               {
               vtkErrorMacro("Error writing data for fiducial annotation " << annotationNode->GetName());
@@ -359,59 +304,7 @@ int vtkMRMLAnnotationHierarchyStorageNode::WriteData(vtkMRMLNode *refNode)
     }
 
   of.close();
-  
-  Superclass::StageWriteData(refNode);
 
   return 1;
-  
 }
 
-//----------------------------------------------------------------------------
-int vtkMRMLAnnotationHierarchyStorageNode::SupportedFileType(const char *fileName)
-{
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".acsv") == 0 ||
-      extension.compare(".txt") == 0) 
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationHierarchyStorageNode::InitializeSupportedWriteFileTypes()
-{
-  this->SupportedWriteFileTypes->InsertNextValue("Annotation List CSV (.acsv)");
-  this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
-}

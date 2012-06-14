@@ -30,58 +30,32 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   /// 
-  /// Read node attributes from XML file
-  virtual void ReadXMLAttributes( const char** atts);
-
-  /// 
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
-  /// 
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
-  /// 
-  /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML(ostream& of, int indent);
-
-  /// 
-  /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-
-  /// 
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName()  {return "ModelStorage";};
 
-  /// 
-  /// Check to see if this storage node can handle the file type in the input
-  /// string. If input string is null, check URI, then check FileName. 
-  /// Subclasses should implement this method.
-  virtual int SupportedFileType(const char *fileName);
-
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
-
- /// Description:
   /// Return a default file extension for writting
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return "vtk";
-    };
+  virtual const char* GetDefaultWriteFileExtension();
+
+  /// Return true if the reference node can be read in
+  virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 
 protected:
   vtkMRMLModelStorageNode();
   ~vtkMRMLModelStorageNode();
   vtkMRMLModelStorageNode(const vtkMRMLModelStorageNode&);
   void operator=(const vtkMRMLModelStorageNode&);
+
+  /// Initialize all the supported read file types
+  virtual void InitializeSupportedReadFileTypes();
+
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+
+  /// Write data from a  referenced node
+  virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
 };
 

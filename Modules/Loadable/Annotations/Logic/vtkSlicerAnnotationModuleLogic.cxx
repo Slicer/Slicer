@@ -3093,7 +3093,6 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
     newSnapshotNode->SetSnapshotDescription(description);
     newSnapshotNode->SetScreenShotType(screenshotType);
     newSnapshotNode->SetScreenShot(screenshot);
-    newSnapshotNode->ModifiedSinceReadOn();
     newSnapshotNode->SetScaleFactor(scaleFactor);
     newSnapshotNode->HideFromEditorsOff();
     this->GetMRMLScene()->AddNode(newSnapshotNode);
@@ -3149,9 +3148,7 @@ vtkMRMLAnnotationHierarchyNode *vtkSlicerAnnotationModuleLogic::GetActiveHierarc
     snapshotNode->SetSnapshotDescription(description);
     snapshotNode->SetScreenShotType(screenshotType);
     snapshotNode->SetScreenShot(screenshot);
-    snapshotNode->ModifiedSinceReadOn();
     snapshotNode->SetScaleFactor(scaleFactor);
-    snapshotNode->Modified();
     snapshotNode->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent,
         snapshotNode);
 

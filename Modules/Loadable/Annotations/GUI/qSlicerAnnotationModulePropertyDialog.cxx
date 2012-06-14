@@ -1372,16 +1372,6 @@ void qSlicerAnnotationModulePropertyDialog::onDialogAccepted()
   // delete all backups
   this->m_logic->DeleteBackupNodes(this->m_id.c_str());
 
-  if (this->m_logic->GetMRMLScene())
-    {
-    // mark the annotation as modified since read to prompt it to be saved
-    vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
-    if (mrmlNode)
-      {
-      mrmlNode->ModifiedSinceReadOn();
-      }
-    }
-  
   emit dialogAccepted();
 }
 

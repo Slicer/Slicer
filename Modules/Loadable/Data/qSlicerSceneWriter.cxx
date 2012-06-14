@@ -156,8 +156,6 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
     qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
     sceneViewNode->SetScreenShot(imageData);
-    // mark it modified since read so that the screen shot will get saved to disk
-    sceneViewNode->ModifiedSinceReadOn();
     }
   sceneViewNode->StoreScene();
 

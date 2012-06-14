@@ -12,7 +12,8 @@
 class vtkMRMLAnnotationRulerNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode : public vtkMRMLAnnotationLinesStorageNode
+class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode
+  : public vtkMRMLAnnotationLinesStorageNode
 {
   /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
   /// call the protected function WriteData(refNode, of)
@@ -29,17 +30,6 @@ public:
   // Description:
   // Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-
-  // Description:
-  // Read data and set it in the referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
-  // Description:
-  // Write data from a  referenced node
-  // NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
-
 
   // Description:
   // Write this node's information to a MRML file in XML format.
@@ -62,9 +52,10 @@ public:
   /// storage node
   int ReadOneRuler(fstream & fstr, vtkMRMLAnnotationRulerNode *refNode);
 
+  /// Return true if the node can be read in
+  bool CanReadInReferenceNode(vtkMRMLNode* refNode);
+
 protected:
-
-
   vtkMRMLAnnotationRulerStorageNode();
   ~vtkMRMLAnnotationRulerStorageNode();
   vtkMRMLAnnotationRulerStorageNode(const vtkMRMLAnnotationRulerStorageNode&);
@@ -79,9 +70,10 @@ protected:
   int ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns);
   int ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns);
 
-  // Description:
-  int WriteData(vtkMRMLNode *refNode, fstream & of);
+  // Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
+  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream & of);
 };
 
 #endif

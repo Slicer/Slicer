@@ -75,7 +75,6 @@ bool vtkSlicerTransformLogic::hardenTransform(vtkMRMLTransformableNode* transfor
     }
 
   transformableNode->SetAndObserveTransformNodeID(NULL);
-  transformableNode->SetModifiedSinceRead(1);
   return true;
 }
 

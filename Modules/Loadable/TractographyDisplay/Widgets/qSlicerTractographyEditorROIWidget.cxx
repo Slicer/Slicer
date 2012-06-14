@@ -254,7 +254,6 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
           fiberBundleFromSelection->CreateDefaultStorageNode();
         }
       
-      fiberBundleFromSelection->SetModifiedSinceRead(1);
       fiberBundleFromSelection->SetAndObserveTransformNodeID(d->FiberBundleNode->GetTransformNodeID());
       fiberBundleFromSelection->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
     }

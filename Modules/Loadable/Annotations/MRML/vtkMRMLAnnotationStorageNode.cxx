@@ -23,39 +23,10 @@ vtkMRMLAnnotationStorageNode::~vtkMRMLAnnotationStorageNode()
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-}
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, StorageID
-void vtkMRMLAnnotationStorageNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-}
-
-//----------------------------------------------------------------------------
 void vtkMRMLAnnotationStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {  
   vtkMRMLStorageNode::PrintSelf(os,indent);
 }
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
-}
-
 
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotationDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
@@ -177,7 +148,6 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotationDisplayProperties(vtkMRMLAnnotat
 
  return 0;
 }
-
 
 //----------------------------------------------------------------------------
 int vtkMRMLAnnotationStorageNode::ReadAnnotationTextDisplayProperties(vtkMRMLAnnotationTextDisplayNode *annotationDisplayNode, std::string lineString, std::string preposition)
@@ -468,15 +438,14 @@ int vtkMRMLAnnotationStorageNode::ReadAnnotation(vtkMRMLAnnotationNode *annotati
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::ReadData(vtkMRMLNode *refNode)
+bool vtkMRMLAnnotationStorageNode::CanReadInReferenceNode(vtkMRMLNode* refNode)
 {
-  // do not read if if we are not in the scene (for example inside snapshot)
-  if ( !refNode ||
-       !this->GetAddToScene() || !refNode->GetAddToScene() )
-    {
-      return 1;
-    }
+  return refNode->IsA("vtkMRMLAnnotationNode");
+}
 
+//----------------------------------------------------------------------------
+int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
+{
   /*
   // special case: if this annotation is in a hierarchy, the hierarchy took
   // care of reading it already
@@ -489,8 +458,8 @@ int vtkMRMLAnnotationStorageNode::ReadData(vtkMRMLNode *refNode)
     }
   */
   // cast the input node
-  vtkMRMLAnnotationNode *annotationNode = NULL;
-  annotationNode = dynamic_cast <vtkMRMLAnnotationNode *> (refNode);
+  vtkMRMLAnnotationNode *annotationNode =
+    vtkMRMLAnnotationNode::SafeDownCast (refNode);
 
   if (annotationNode == NULL)
     {
@@ -504,14 +473,7 @@ int vtkMRMLAnnotationStorageNode::ReadData(vtkMRMLNode *refNode)
     {
       return 0;
     }
-  
-  this->SetReadStateIdle();
-  
-  // make sure that the list node points to this storage node
-  annotationNode->SetAndObserveStorageNodeID(this->GetID());
-  
-  // mark it unmodified since read
-  annotationNode->ModifiedSinceReadOff();
+
   this->InvokeEvent(vtkMRMLScene::NodeAddedEvent, annotationNode);
 
   return 1;
@@ -625,20 +587,13 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
+int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream &of)
 {
   vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData");
-  // test whether refNode is a valid node to hold a volume
-  if ( !refNode ||
-       !( refNode->IsA("vtkMRMLAnnotationNode") ) )
-    {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationNode");
-    return 0;         
-    }
 
   // cast the input node
-  vtkMRMLAnnotationNode *annotationNode = NULL;
-  annotationNode = dynamic_cast <vtkMRMLAnnotationNode *> (refNode);
+  vtkMRMLAnnotationNode *annotationNode =
+    vtkMRMLAnnotationNode::SafeDownCast(refNode);
 
   if (annotationNode == NULL)
     {
@@ -646,13 +601,14 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode, fstream &of)
     return 0;
     }
 
-  WriteAnnotationTextProperties(of, annotationNode);
-  WriteAnnotationData(of, annotationNode);
+  this->WriteAnnotationTextProperties(of, annotationNode);
+  this->WriteAnnotationData(of, annotationNode);
   vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData: returning 1");
   return 1;
 }
+
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
+int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   if (!refNode)
     {
@@ -681,58 +637,19 @@ int vtkMRMLAnnotationStorageNode::WriteData(vtkMRMLNode *refNode)
     return 0;
     } 
 
-  int flag = this->WriteData(refNode,of);
+  int flag = this->WriteDataInternal(refNode,of);
 
   of.close();
 
-  Superclass::StageWriteData(refNode);
-
   vtkDebugMacro("WriteData: returning " << flag);
   return flag;
-  
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::SupportedFileType(const char *fileName)
+void vtkMRMLAnnotationStorageNode::InitializeSupportedReadFileTypes()
 {
-  // check to see which file name we need to check
-  std::string name;
-  if (fileName)
-    {
-    name = std::string(fileName);
-    }
-  else if (this->FileName != NULL)
-    {
-    name = std::string(this->FileName);
-    }
-  else if (this->URI != NULL)
-    {
-    name = std::string(this->URI);
-    }
-  else
-    {
-    vtkWarningMacro("SupportedFileType: no file name to check");
-    return 0;
-    }
-  
-  std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
-    {
-    vtkErrorMacro("SupportedFileType: no file extension specified");
-    return 0;
-    }
-  std::string extension = name.substr(loc);
-
-  vtkDebugMacro("SupportedFileType: extension = " << extension.c_str());
-  if (extension.compare(".acsv") == 0 ||
-      extension.compare(".txt") == 0) 
-    {
-    return 1;
-    }
-  else
-    {
-    return 0;
-    }
+  this->SupportedReadFileTypes->InsertNextValue("Annotation List CSV (.acsv)");
+  this->SupportedReadFileTypes->InsertNextValue("Text (.txt)");
 }
 
 //----------------------------------------------------------------------------
@@ -740,4 +657,10 @@ void vtkMRMLAnnotationStorageNode::InitializeSupportedWriteFileTypes()
 {
   this->SupportedWriteFileTypes->InsertNextValue("Annotation List CSV (.acsv)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLAnnotationStorageNode::GetDefaultWriteFileExtension()
+{
+  return "acsv";
 }

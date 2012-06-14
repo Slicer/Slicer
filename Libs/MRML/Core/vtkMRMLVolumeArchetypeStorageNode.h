@@ -36,11 +36,6 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-   /// 
-  /// Read data and set it in the referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode);
-
   /// 
   /// Do a temp write to update the file list in this storage node with all
   /// file names that are written when write out the ref node
@@ -48,20 +43,10 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   /// only the written files, for use in a move instead of a double
   /// write. Otherwise return an empty string.
   std::string UpdateFileList(vtkMRMLNode *refNode, int move = 0);
-  
-  /// 
-  /// Write data from a  referenced node
-  /// NOTE: Subclasses should implement this method
-  virtual int WriteData(vtkMRMLNode *refNode);
 
   /// 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
-
- /// Description:
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
 
   /// 
   /// Copy the node's attributes to this object
@@ -87,29 +72,27 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   vtkGetMacro(UseOrientationFromFile, int);
 
   /// 
-  /// Check to see if this storage node can handle the file type in the input
-  /// string. If input string is null, check URI, then check FileName. 
-  /// Subclasses should implement this method.
-  virtual int SupportedFileType(const char *fileName);
-
-  /// 
-  /// Initialize all the supported write file types
-  virtual void InitializeSupportedWriteFileTypes();
-
-  /// 
   /// Return a defualt file extension for writting
-  virtual const char* GetDefaultWriteFileExtension()
-    {
-    return "nrrd";
-    };
+  virtual const char* GetDefaultWriteFileExtension();
+
+  /// Return true if the reference node is supported by the storage node
+  virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
+  virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode);
 
 protected:
-
-
   vtkMRMLVolumeArchetypeStorageNode();
   ~vtkMRMLVolumeArchetypeStorageNode();
   vtkMRMLVolumeArchetypeStorageNode(const vtkMRMLVolumeArchetypeStorageNode&);
   void operator=(const vtkMRMLVolumeArchetypeStorageNode&);
+
+  /// Initialize all the supported write file types
+  virtual void InitializeSupportedWriteFileTypes();
+
+  /// Read data and set it in the referenced node
+  virtual int ReadDataInternal(vtkMRMLNode *refNode);
+
+  /// Write data from a referenced node
+  virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
   int CenterImage;
   int SingleFile;

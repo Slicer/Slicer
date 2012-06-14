@@ -62,7 +62,6 @@ vtkMRMLNode::vtkMRMLNode()
   this->MRMLCallbackCommand->SetClientData( reinterpret_cast<void *>(this) );
   this->MRMLCallbackCommand->SetCallback( vtkMRMLNode::MRMLCallback );
   this->InMRMLCallbackFlag = 0;
-  this->ModifiedSinceRead = false;
   this->SaveWithScene = true;
 
   this->MRMLObserverManager = vtkObserverManager::New();
@@ -142,7 +141,6 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     this->SetName(node->GetName());
     }
   this->HideFromEditors = node->HideFromEditors;
-  this->ModifiedSinceRead = node->ModifiedSinceRead;
   this->SaveWithScene = node->SaveWithScene ;
   this->Selectable = node->Selectable;
   this->AddToScene = node->AddToScene;
@@ -198,8 +196,6 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
     (this->SingletonTag ? this->SingletonTag : "(none)") << "\n";
   
   os << indent << "HideFromEditors: " << this->HideFromEditors << "\n";
-
-  os << indent << "ModifiedSinceRead: " << this->ModifiedSinceRead << "\n";
 
   os << indent << "Selectable: " << this->Selectable << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
@@ -362,10 +358,7 @@ void vtkMRMLNode::SetAttribute(const char* name, const char* value)
     {
     this->Attributes.erase(std::string(name));
     }
-  int wasModifying = this->StartModify();
-  this->SetModifiedSinceRead(1);
   this->Modified();
-  this->EndModify(wasModifying);
 }
 
 //----------------------------------------------------------------------------

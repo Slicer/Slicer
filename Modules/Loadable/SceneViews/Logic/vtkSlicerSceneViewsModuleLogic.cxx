@@ -264,8 +264,7 @@ void vtkSlicerSceneViewsModuleLogic::CreateSceneView(const char* name, const cha
   newSceneViewNode->StoreScene();
   //newSceneViewNode->HideFromEditorsOff();
   // mark it modified since read so that the screen shot will get saved to disk
-  newSceneViewNode->ModifiedSinceReadOn();
-  
+
   this->GetMRMLScene()->AddNode(newSceneViewNode);
 
   // put it in a hierarchy
@@ -316,9 +315,7 @@ void vtkSlicerSceneViewsModuleLogic::ModifySceneView(vtkStdString id, const char
   viewNode->SetSceneViewDescription(descriptionString);
   viewNode->SetScreenShotType(screenshotType);
   viewNode->SetScreenShot(screenshot);
-  viewNode->ModifiedSinceReadOn();
 
-  viewNode->Modified();
   // TODO: Listen to the node directly, probably in OnMRMLSceneNodeAddedEvent
   this->OnMRMLNodeModified(viewNode);
 }

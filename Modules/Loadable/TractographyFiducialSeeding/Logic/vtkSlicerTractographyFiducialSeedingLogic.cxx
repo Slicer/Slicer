@@ -564,8 +564,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       {
       fiberNode->SetAndObserveTransformNodeID(NULL);
       }
-
-    fiberNode->SetModifiedSinceRead(1);
   }
 
   // Delete everything: Still trying to figure out what is going on

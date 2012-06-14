@@ -571,8 +571,6 @@ const char *vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const 
     // assumes has been passed a screen shot of the full layout
     newSceneViewNode->SetScreenShotType(4);
     newSceneViewNode->SetScreenShot(screenShot);
-    // mark it modified since read so that the screen shot will get saved to disk
-    newSceneViewNode->ModifiedSinceReadOn();
     }
   // save the scene view
   newSceneViewNode->StoreScene();

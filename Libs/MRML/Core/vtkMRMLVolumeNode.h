@@ -166,6 +166,7 @@ public:
 
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
 
+  virtual bool GetModifiedSinceRead();
 protected:
   vtkMRMLVolumeNode();
   ~vtkMRMLVolumeNode();

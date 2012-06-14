@@ -843,6 +843,7 @@ void vtkMRMLColorLogic::AddDefaultFileNode(int i)
       {
         //this->GetMRMLScene()->RequestNodeID(ctnode, ctnode->GetSingletonTag());
         this->GetMRMLScene()->AddNode(ctnode);
+        ctnode->Delete();
         vtkDebugMacro("AddDefaultColorFiles: Read and added file node: " <<  this->ColorFiles[i].c_str());
       }
     //else
@@ -854,7 +855,6 @@ void vtkMRMLColorLogic::AddDefaultFileNode(int i)
     {
     vtkWarningMacro("Unable to read color file " << this->ColorFiles[i].c_str());
     }
-  ctnode->Delete();
 }
 
 //----------------------------------------------------------------------------------------

@@ -390,3 +390,11 @@ void vtkMRMLVolumePropertyNode
     this->VolumeProperty->GetRGBTransferFunction(component),
     this->ObservedEvents);
 }
+
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumePropertyNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->VolumeProperty &&
+     this->VolumeProperty->GetMTime() > this->GetStoredTime());
+}

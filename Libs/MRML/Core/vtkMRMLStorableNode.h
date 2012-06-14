@@ -145,6 +145,9 @@ public:
     return NULL;
     };
 
+  /// Returns true if the node is more recent than the file on disk.
+  virtual bool GetModifiedSinceRead();
+
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();
@@ -165,7 +168,11 @@ public:
   std::string SlicerDataType;
   std::vector<vtkMRMLStorageNode *> StorageNodes;
 
-  //char *StorageNodeID;
+  /// Compute the oldest time when the storable nodes were read/written.
+  virtual vtkTimeStamp GetStoredTime();
+
+  /// Time when a storable property was last modified
+  vtkTimeStamp StorableModifiedTime;
 };
 
 #endif

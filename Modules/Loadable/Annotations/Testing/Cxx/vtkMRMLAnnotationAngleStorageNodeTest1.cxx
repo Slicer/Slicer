@@ -72,7 +72,6 @@ int vtkMRMLAnnotationAngleStorageNodeTest1(int , char * [] )
 
   annNode->Modified();
 
-  node2->InitializeSupportedWriteFileTypes();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationAngleStorageNodeTest.acsv");
   node2->WriteData(annNode);
