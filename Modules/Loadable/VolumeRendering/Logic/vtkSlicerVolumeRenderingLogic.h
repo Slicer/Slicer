@@ -52,8 +52,17 @@ class vtkVolumeProperty;
 class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerVolumeRenderingLogic :
-  public vtkSlicerModuleLogic
+/// Collection of utility methods to control the Volume Rendering nodes.
+/// The fastest to volume render of vtkMRMLVolumeNode is to use
+/// \a CreateVolumeRenderingDisplayNode and
+/// \a UpdateDisplayNodeFromVolumeNode():
+/// <code>
+/// vtkMRMLVolumeRenderingDisplayNode* displayNode =
+///   logic->CreateVolumeRenderingDisplayNode();
+/// logic->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode);
+/// </code>
+class VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerVolumeRenderingLogic
+  : public vtkSlicerModuleLogic
 {
 public:
 
@@ -86,9 +95,19 @@ public:
   void AddAllVolumeRenderingDisplayNodes();
   void RemoveAllVolumeRenderingDisplayNodes();
 
+  /// Applies the properties (window level, threshold and color function) of
+  /// a volume display node to the volume rendering displaynode.
+  /// If displayNode is 0, it uses the first display node.
+  /// It's a utility method that internally calls
+  /// \a CopyScalarDisplayToVolumeRenderingDisplayNode or
+  /// \a CopyLabelMapDisplayToVolumeRenderingDisplayNode based on the type of
+  /// displayNode.
+  /// \sa CopyScalarDisplayToVolumeRenderingDisplayNode,
+  /// \sa CopyLabelMapDisplayToVolumeRenderingDisplayNode
   void CopyDisplayToVolumeRenderingDisplayNode(
     vtkMRMLVolumeRenderingDisplayNode* node,
     vtkMRMLVolumeDisplayNode* displayNode = 0);
+
   /// Applies the properties (window level, threshold and color function) of
   /// the scalar display node to the volume rendering displaynode.
   /// If scalarDisplayNode is 0, it uses the first display node.
@@ -103,61 +122,71 @@ public:
     vtkMRMLVolumeRenderingDisplayNode* volumeRenderingDisplayNode,
     vtkMRMLLabelMapVolumeDisplayNode* labelMapDisplayNode = 0);
 
+  /// Applies a threshold to a volume property
+  /// \a scalarRange is the entire range of the transfer function
+  /// \a threshold is the range where the threshold is applied
+  /// \a node is the container of the transfer function to save
+  /// \a linearRamp controls the shape of the threshold:
+  /// <code>
+  ///  true:            false:    _   
+  ///        __/|__            __| |__
+  /// </code>
+  /// \a stayUpAtUpperLimit controls whether the threshold not maxed out:
+  ///  <code>
+  ///  true:    ______  false:          
+  ///        __/               __/|_____
+  ///  </code>
+  /// \sa SetWindowLevelToVolumeProp
   void SetThresholdToVolumeProp(
     double scalarRange[2], double threshold[2],
     vtkVolumeProperty* node,
     bool linearRamp = false, bool stayUpAtUpperLimit = false);
 
+  /// \sa SetThresholdToVolumeProp
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
-  void SetLabelMapToVolumeProp(vtkScalarsToColors* colors, vtkVolumeProperty* node);
 
-  // Description:
-  // Update DisplayNode from VolumeNode,
-  // if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
-  // and initialize them from VolumeNode
-  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
-                                          vtkMRMLVolumeNode *volumeNode, 
-                                          vtkMRMLVolumePropertyNode **propNode,
-                                          vtkMRMLAnnotationROINode **roiNode);
-  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
-                                          vtkMRMLVolumeNode *volumeNode)
-    {
-    vtkMRMLVolumePropertyNode *propNode = NULL;
-    vtkMRMLAnnotationROINode            *roiNode = NULL;
-    this->UpdateDisplayNodeFromVolumeNode(paramNode, volumeNode, &propNode, &roiNode);
-    };
+  /// Create a LUT based on the labelmap transfer function
+  void SetLabelMapToVolumeProp(
+    vtkScalarsToColors* colors, vtkVolumeProperty* node);
 
-  // Description:
-  // Create VolumeRenderingScenarioNode
+  /// Update DisplayNode from VolumeNode,
+  /// if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
+  /// and initialize them from VolumeNode
+  void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
+                                       vtkMRMLVolumeNode *volumeNode, 
+                                       vtkMRMLVolumePropertyNode **propNode,
+                                       vtkMRMLAnnotationROINode **roiNode);
+  /// Utility function that calls UpdateDisplayNodeFromVolumeNode()
+  inline void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode, 
+                                              vtkMRMLVolumeNode *volumeNode);
+
+  /// Create and add into the scene a vtkMRMLVolumeRenderingScenarioNode
+  /// \deprecated
   vtkMRMLVolumeRenderingScenarioNode* CreateScenarioNode();
 
-  // Description:
-  // Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
+  /// Remove ViewNode from VolumeRenderingDisplayNode for a VolumeNode,
   void RemoveViewFromVolumeDisplayNodes(vtkMRMLVolumeNode *volumeNode, 
                                         vtkMRMLViewNode *viewNode);
 
-  // Description:
-  // Find volume rendering display node reference in the volume
+  /// Find volume rendering display node reference in the volume
   vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeByID(vtkMRMLVolumeNode *volumeNode, 
                                                                     char *displayNodeID);
-  // Description:
-  // Find volume rendering display node referencing the view node and volume node
+
+  /// Find volume rendering display node referencing the view node and volume node
   vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
                                                         vtkMRMLVolumeNode *volumeNode, 
                                                         vtkMRMLViewNode *viewNode);
-  // Description:
-  // Find volume rendering display node referencing the view node in the scene
+
+  /// Find volume rendering display node referencing the view node in the scene
   vtkMRMLVolumeRenderingDisplayNode* GetVolumeRenderingDisplayNodeForViewNode(
                                                         vtkMRMLViewNode *viewNode);
 
-  // Description:
-  // Find first volume rendering display node
+  /// Find first volume rendering display node
   vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNode(vtkMRMLVolumeNode *volumeNode);
 
-  // Description
-  // Find the first volume rendering display node that uses the ROI
+  /// Find the first volume rendering display node that uses the ROI
   vtkMRMLVolumeRenderingDisplayNode* GetFirstVolumeRenderingDisplayNodeByROINode(vtkMRMLAnnotationROINode* roiNode);
 
   void UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -177,8 +206,13 @@ public:
   /// into.
   vtkMRMLScene* GetPresetsScene();
 
+  /// Utility function that checks if the piecewise functions are equal
+  /// Returns true if different
   bool IsDifferentFunction(vtkPiecewiseFunction* function1,
                            vtkPiecewiseFunction* function2) const;
+
+  /// Utility function that checks if the color transfer functions are equal
+  /// Returns true if different
   bool IsDifferentFunction(vtkColorTransferFunction* function1,
                            vtkColorTransferFunction* function2) const;
 
@@ -210,6 +244,16 @@ private:
   vtkSlicerVolumeRenderingLogic(const vtkSlicerVolumeRenderingLogic&); // Not implemented
   void operator=(const vtkSlicerVolumeRenderingLogic&);               // Not implemented
 };
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode,
+                                  vtkMRMLVolumeNode *volumeNode)
+{
+  vtkMRMLVolumePropertyNode *propNode = NULL;
+  vtkMRMLAnnotationROINode *roiNode = NULL;
+  this->UpdateDisplayNodeFromVolumeNode(paramNode, volumeNode, &propNode, &roiNode);
+}
 
 #endif
 
