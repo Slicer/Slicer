@@ -54,11 +54,6 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/slicer/__init__.py
   @ONLY
   )
-configure_file(
-  slicer/slicerappdatapaths.py.in
-  ${Slicer_BINARY_DIR}/bin/Python/slicer/slicerappdatapaths.py
-  @ONLY
-  )
 
 list(APPEND Slicer_PYTHON_SCRIPTS ${CMAKE_CURRENT_BINARY_DIR}/slicer/__init__.py)
 

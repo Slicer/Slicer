@@ -161,11 +161,17 @@ slicer_add_python_unittest(
 # Tutorial tests
 #
 
-if(Slicer_USE_QtTesting)
+if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
+
+  configure_file(
+  slicerappdatapaths.py.in
+  ${Slicer_BINARY_DIR}/bin/Python/slicer/slicerappdatapaths.py
+  @ONLY
+  )
 
   set(tests_using_qttesting)
 
-  if(Slicer_BUILD_CLI AND Slicer_USE_PYTHONQT)
+  if(Slicer_BUILD_CLI)
     slicer_add_python_test(
       SCRIPT NeurosurgicalPlanningTutorial.py
       SLICER_ARGS --launcher-no-splash --qt-testing
