@@ -6,7 +6,9 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
 =========================================================================auto=*/
-
+/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the
+///  Annotation Module Logic
+///
 ///  vtkSlicerFiducialsLogic - slicer logic class for volumes manipulation
 /// 
 /// This class manages the logic associated with reading, saving,

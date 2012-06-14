@@ -11,7 +11,10 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-///  vtkMRMLFiducialListStorageNode - MRML node for representing a volume storage
+/// \deprecated Used for reading in Slicer3 fiducial lists, please use the
+///  Annotation Module MRML storage nodes
+///
+///  vtkMRMLFiducialListStorageNode - MRML node for handling fiducial list storage
 /// 
 /// vtkMRMLFiducialListStorageNode nodes describe the fiducial storage
 /// node that allows to read/write point data from/to file.

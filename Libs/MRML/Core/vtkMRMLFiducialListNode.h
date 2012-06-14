@@ -11,6 +11,9 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
+/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the
+///  Annotation Module MRML nodes
+///
 ///  vtkMRMLFiducialListNode - MRML node to represent a list of points in 3D
 /// 
 /// Fiducial list nodes describe a list of points in 3d space.  They indicate
