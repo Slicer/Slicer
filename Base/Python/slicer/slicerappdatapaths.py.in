@@ -1,0 +1,2 @@
+input = '@SlicerApp_SOURCE_DIR@/Data/Input'
+baseline = '@SlicerApp_SOURCE_DIR@/Data/Baseline'
