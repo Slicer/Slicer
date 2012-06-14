@@ -164,10 +164,10 @@ slicer_add_python_unittest(
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
 
   configure_file(
-  slicerappdatapaths.py.in
-  ${Slicer_BINARY_DIR}/bin/Python/slicer/slicerappdatapaths.py
-  @ONLY
-  )
+    slicerappdatapaths.py.in
+    ${Slicer_BINARY_DIR}/bin/Python/slicer/slicerappdatapaths.py
+    @ONLY
+    )
 
   set(tests_using_qttesting)
 
