@@ -50,16 +50,9 @@ int vtkMRMLColorLogicTest1(int , char * [] )
             << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
   overallTimer->StartTimer();
 
-  vtkMRMLColorNode* colorNode = colorLogic->LoadColorFile("/Users/exxos/Work/Data/lut.ctbl");
-  colorNode->Print(std::cout);
-  double color[4];
-  std::cout << ">> " << colorNode->GetLookupTable()->GetIndex(2.)
-            << " " << colorNode->GetLookupTable()->GetTableValue(2)[0]
-            << ", " << colorNode->GetLookupTable()->GetTableValue(2)[1]
-            << ", " << std::endl;
-
   colorLogic->Delete();
 
+  overallTimer->StopTimer();
   std::cout << "RemoveDefaultColorNodes: " << overallTimer->GetElapsedTime() << "s"
             << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
 

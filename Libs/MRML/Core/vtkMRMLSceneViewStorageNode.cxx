@@ -50,7 +50,7 @@ vtkMRMLSceneViewStorageNode::~vtkMRMLSceneViewStorageNode()
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  return this->PrintSelf(os, indent);
+  return this->Superclass::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
