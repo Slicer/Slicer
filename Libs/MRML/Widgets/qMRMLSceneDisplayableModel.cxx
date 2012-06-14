@@ -139,16 +139,14 @@ bool qMRMLSceneDisplayableModel::canBeAParent(vtkMRMLNode* node)const
 }
 
 //------------------------------------------------------------------------------
-QStandardItem* qMRMLSceneDisplayableModel::insertNode(vtkMRMLNode* node, QStandardItem* parent, int row)
+void qMRMLSceneDisplayableModel::observeNode(vtkMRMLNode* node)
 {
-  QStandardItem* insertedItem = this->Superclass::insertNode(node, parent, row);
-  if (this->listenNodeModifiedEvent() &&
-      node->IsA("vtkMRMLDisplayableNode"))
+  this->Superclass::observeNode(node);
+  if (node->IsA("vtkMRMLDisplayableNode"))
     {
     qvtkConnect(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
                 this, SLOT(onMRMLNodeModified(vtkObject*)));
     }
-  return insertedItem;
 }
 
 //------------------------------------------------------------------------------

@@ -218,6 +218,7 @@ protected:
   virtual void populateScene();
   virtual QStandardItem* insertNode(vtkMRMLNode* node);
   virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
+  virtual void observeNode(vtkMRMLNode* node);
 
   virtual bool isANode(const QStandardItem* item)const;
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;

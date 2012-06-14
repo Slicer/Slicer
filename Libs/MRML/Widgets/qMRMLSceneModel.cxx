@@ -119,23 +119,16 @@ QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID)const
 void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
 {
   Q_Q(qMRMLSceneModel);
-  q->qvtkDisconnect(0, vtkCommand::ModifiedEvent, q, SLOT(onMRMLNodeModified(vtkObject*)));
-  q->qvtkDisconnect(0, vtkMRMLNode::IDChangedEvent,
-                    q, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
-
-  if (!this->ListenNodeModifiedEvent)
-    {
-    return;
-    }
   QModelIndex sceneIndex = q->mrmlSceneIndex();
   const int count = q->rowCount(sceneIndex);
   for (int i = 0; i < count; ++i)
     {
     vtkMRMLNode* node = q->mrmlNodeFromIndex(sceneIndex.child(i,0));
-    q->qvtkConnect(node,vtkCommand::ModifiedEvent,
-                   q, SLOT(onMRMLNodeModified(vtkObject*)));
-    q->qvtkConnect(node, vtkMRMLNode::IDChangedEvent,
-                   q, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
+    q->qvtkDisconnect(node, vtkCommand::NoEvent, q, 0);
+    if (this->ListenNodeModifiedEvent)
+      {
+      q->observeNode(node);
+      }
     }
 }
 
@@ -774,12 +767,18 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
   // TODO: don't listen to nodes that are hidden from editors ?
   if (d->ListenNodeModifiedEvent)
     {
-    qvtkConnect(node, vtkCommand::ModifiedEvent,
-                this, SLOT(onMRMLNodeModified(vtkObject*)));
-    qvtkConnect(node, vtkMRMLNode::IDChangedEvent,
-                this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
+    this->observeNode(node);
     }
   return items[0];
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneModel::observeNode(vtkMRMLNode* node)
+{
+  qvtkConnect(node, vtkCommand::ModifiedEvent,
+              this, SLOT(onMRMLNodeModified(vtkObject*)));
+  qvtkConnect(node, vtkMRMLNode::IDChangedEvent,
+              this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
 }
 
 //------------------------------------------------------------------------------
@@ -1132,8 +1131,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
              " vtkMRMLScene::AddNodeNoNotify() has been used instead of "
              "vtkMRMLScene::AddNode");
   Q_UNUSED(connectionsRemoved);
-  qvtkDisconnect(node, vtkMRMLNode::IDChangedEvent,
-                 this, SLOT(onMRMLNodeIDChanged(vtkObject*,void*)));
+  // Remove all the observations on the node
+  qvtkDisconnect(node, vtkCommand::NoEvent, this, 0);
 
   // TODO: can be fasten by browsing the tree only once
   QModelIndexList indexes = this->match(this->mrmlSceneIndex(), qMRMLSceneModel::UIDRole,
@@ -1266,6 +1265,9 @@ void qMRMLSceneModel::onMRMLNodeIDChanged(vtkObject* node, void* callData)
 void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
 {
   Q_D(qMRMLSceneModel);
+  // If there is an assert here that means the node has been removed from the
+  // scene but the scene model hasn't been notified or that the scene model is
+  // still observing the node (in a subclass)
   Q_ASSERT(node && node->GetScene());
   //Q_ASSERT(node->GetScene()->IsNodePresent(node));
   QModelIndexList nodeIndexes = d->indexes(nodeUID);

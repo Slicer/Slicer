@@ -60,17 +60,13 @@ public:
   /// fast function that only check the type of the node to know if it can be a parent.
   virtual bool         canBeAParent(vtkMRMLNode* node)const;
 
-  ///
-  /// As we reimplement insertNode, we need don't want to hide the other functions.
-  using qMRMLSceneModel::insertNode;
-  /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
-  /// visibility check state changes.
-  virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row);
-
 protected:
   qMRMLSceneDisplayableModel(qMRMLSceneDisplayableModelPrivate* pimpl,
                              QObject *parent=0);
 
+  /// Reimplemented to listen to the displayable DisplayModifiedEvent event for
+  /// visibility check state changes.
+  virtual void observeNode(vtkMRMLNode* node);
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
