@@ -50,6 +50,7 @@ protected slots:
   void updateSize();
   void onSceneFormatChanged();
   void enableNodes(bool);
+  void saveSceneAsDataBundle();
 
 protected:
   enum ColumnType

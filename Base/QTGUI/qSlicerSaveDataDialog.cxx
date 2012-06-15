@@ -149,6 +149,8 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
           this, SLOT(selectModifiedSceneData()));
   connect(this->SelectDataButton, SIGNAL(clicked()),
           this, SLOT(selectModifiedData()));
+  connect(this->DataBundleButton, SIGNAL(clicked()),
+          this, SLOT(saveSceneAsDataBundle()));
   connect(this->ShowMoreCheckBox, SIGNAL(toggled(bool)),
           this, SLOT(showMoreColumns(bool)));
   this->showMoreColumns(this->ShowMoreCheckBox->isChecked());
@@ -867,6 +869,20 @@ void qSlicerSaveDataDialogPrivate::selectModifiedSceneData()
     Q_ASSERT(selectItem);
     selectItem->setCheckState(
       statusItem->text() == tr("Modified") ? Qt::Checked : Qt::Unchecked);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::saveSceneAsDataBundle()
+{
+  int sceneRow = this->findSceneRow();
+  QComboBox* box = qobject_cast<QComboBox*>(
+    this->FileWidget->cellWidget(sceneRow, FileFormatColumn));
+  int mrbIndex = box->findText("mrb", Qt::MatchContains);
+  // Select scene data bundle entry
+  if (mrbIndex != -1)
+    {
+    box->setCurrentIndex(mrbIndex);
     }
 }
 
