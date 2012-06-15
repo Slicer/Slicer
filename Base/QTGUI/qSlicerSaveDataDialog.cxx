@@ -294,7 +294,8 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   // Scene Selected
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
   selectItem->setFlags(selectItem->flags() | Qt::ItemIsUserCheckable);
-  selectItem->setCheckState(Qt::Checked);
+  selectItem->setCheckState(
+    this->MRMLScene->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -377,8 +378,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   // Select modified nodes by default
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
   selectItem->setCheckState(
-    storableNode->GetModifiedSinceRead() ||
-    this->nodeFileInfo(storableNode) != fileInfo? Qt::Checked : Qt::Unchecked);
+    storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
 }
 
 //-----------------------------------------------------------------------------
@@ -445,8 +445,10 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeTypeItem(vtkMRMLStorab
 }
 
 //-----------------------------------------------------------------------------
-QTableWidgetItem* qSlicerSaveDataDialogPrivate::createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo)
+QTableWidgetItem* qSlicerSaveDataDialogPrivate
+::createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo)
 {
+  Q_UNUSED(fileInfo);
   // Node status (modified / not modified)
   // As a safety measure:
   // If the data is sitting in cache, it's vulnerable to overwriting or deleting.
@@ -660,8 +662,6 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     // node
     QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
     vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1());
-    vtkMRMLStorageNode* snode = vtkMRMLStorageNode::SafeDownCast(
-      this->MRMLScene->GetNodeByID(nodeIDs[1].toLatin1()));
 
     // check if the file already exists
     if (file.exists())
