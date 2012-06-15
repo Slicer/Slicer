@@ -235,7 +235,7 @@ protected:
   /// To reimplement if you want custom display of the QStandardItem from
   /// the MRML node.
   /// Example:
-  /// <code>
+  /// \code
   /// void MySceneModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
   /// if (column == 3)
   ///   {
@@ -244,7 +244,7 @@ protected:
   ///   }
   /// this->Superclass::updateItemDataFromNode(item, node, column);
   /// }
-  /// </code>
+  /// \endcode
   /// \sa updateNodeFromItemData, updateNodeFromItem, updateItemFromNode,
   /// nodeFlags
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);

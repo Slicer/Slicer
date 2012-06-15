@@ -11,16 +11,17 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLTimeSeriesVolumeNode - MRML node for representing timeseries data
-/// 
+/// \class vtkMRMLTimeSeriesVolumeNode
+/// \brief MRML node for representing timeseries data
+///
 /// Time Series Volume Node describes time series datasets, e.g. fMRI data
 /// dynamic contrast enhanced MR, CT cardiac data, etc.  A primary goal of this class
 /// is to provide fast access to extremely large data sets, in theory several
 /// times larger than main memory.  To accomplish this goal, data will be read
 /// from the primary volumes and cached on the local file system.
-//
+///
 /// Several modes of access will be available to Slicer.
-/// 
+///
 /// <b>Linear access</b>
 /// The most straightforward
 /// use of this class is to fetch each volume one at a time in serial order.
@@ -30,7 +31,7 @@
 /// \li <tt>GetImageDataAndIncrement()</tt> - returns the current volume, and increments the index
 /// \li <tt>SetImageIndex ( int idx )</tt> - set the index of the next volume to return
 /// \li <tt>PrefetchImage ( int idx )</tt> - background prefetch the indicated volume
-//
+///
 /// <b>Slice access</b>
 /// Data may also be accessed by slice, mainly for display purposes.  Slices may be accessed
 /// in any orientation.  A slice may be selected from the current volume, or from an arbitrary
@@ -39,25 +40,25 @@
 /// \li <tt>GetSlice(int s, int v)</tt> - get the specified slice from the specified volume
 /// \li <tt>GetSlice(int s, int v, int o)</tt> - get a specified slice in the requested orientation
 /// \li <tt>GetSliceVolume(int s[, int o])</tt> - returns a volume composed of slices from each index, may be oriented
-//
+///
 /// <b>Voxel access</b>
 /// Perhaps of most use in fMRI, individual time series may be access for each pixel.
 /// \li <tt>GetVoxelData(int x, int y, int z)</tt> - return in a vtkDoubleArray, the voxel time course
 /// \li <tt>GetNextVoxelData(int &x, int &y, int &z)</tt> - walk the voxels in the most efficient manner, returns NULL when finished
 /// \li <tt>ResetVoxelIndex()</tt> - restart the voxel walk
-//
+///
 /// If voxels are walked using ResetVoxelIndex and GetNextVoxelData, the class
 /// will prefetch voxel data and enable rapid processing of all the image
-/// data.  This will be the most efficient method of accessing all the voxel 
+/// data.  This will be the most efficient method of accessing all the voxel
 /// data will likely look something like this:
-//
+///
 /// \code
 /// vtkDoubleArray* voxelTS;
-/// vtkImageData* volume = vtkImageData::New();
+/// vtkNew<vtkImageData> volume;
 /// volume->SetDimensions ( x, y, z );
 /// volume->SetScalarTypeToDouble();
 /// volume->AllocateScalars();
-//
+///
 /// node->ResetVoxelIndex();
 /// while ( (voxelTS = node->GetNextVoxelData ( x, y, z ) ) != NULL )
 /// {
@@ -65,7 +66,6 @@
 ///   volume->SetScalarComponentFromDouble ( x, y, z, 0, v );
 /// }
 /// \endcode
-
 
 #ifndef __vtkMRMLTimeSeriesVolumeNode_h
 #define __vtkMRMLTimeSeriesVolumeNode_h

@@ -166,8 +166,8 @@ public:
   /// is a file, \a filePermissions will be set otherwise \a directoryPermissions will be set.
   /// \note If for some reason, permissions on a file or directory failed to be set, the
   /// traversing will be aborted and the permission already set won't be reverted.
-  /// \return <code>true</code> on success, <code>false</code> otherwise.
-  /// \sa QFile::setPermissions
+  /// \return \c true on success, \c false otherwise.
+  /// \sa QFile::setPermissions()
   static bool setPermissionsRecursively(const QString &path,
                                         QFile::Permissions directoryPermissions,
                                         QFile::Permissions filePermissions);

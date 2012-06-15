@@ -96,7 +96,7 @@ public:
   /// display. For example, labelmaps are defined with the "LabelMap"
   /// attribute. In the following, the combobox only display the volume nodes
   /// that are labelmaps.
-  /// <code>addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");</code>
+  /// \code addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1"); \endcode
   /// \note The attributes are used for filtering but also when "AddNode" is
   /// called: the attributes will be set to the new node
   Q_INVOKABLE void addAttribute(const QString& nodeType,

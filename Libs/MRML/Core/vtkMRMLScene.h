@@ -436,7 +436,7 @@ public:
   /// RestoreState and if the scene is not already in a BatchProcessState
   /// state, it also fires the event StartBatchProcessEvent.
   /// Example:
-  /// <code>
+  /// \code
   /// scene->StartState(vtkMRMLScene::ImportState);
   /// // fires: StartBatchProcessEvent, StartImportEvent
   /// scene->StartState(vtkMRMLScene::ImportState);
@@ -449,7 +449,7 @@ public:
   /// // doesn't fire anything
   /// scene->EndState(vtkMRMLScene::ImportState);
   /// // fires: EndImportEvent, StartBatchProcessEvent
-  /// </code>
+  /// \endcode
   /// StartState internally pushes the state into a stack.
   /// \sa EndState, GetStates
   void StartState(const StateType& state, int anticipatedMaxProgress = 0);

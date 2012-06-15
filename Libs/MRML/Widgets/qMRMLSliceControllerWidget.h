@@ -39,14 +39,14 @@ class vtkMRMLSliceNode;
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
 /// can be changed.
 /// To be valid, it needs at least a MRML scene and a MRML slice node:
-/// <code>
+/// \code
 /// qMRMLSliceControllerWidget controllerWidget;
 /// controllerWidget.setSliceViewName("Red");
 /// controllerWidget.setSliceViewLabel("R");
 /// controllerWidget.setSliceViewColor(Qt::red);
 /// controllerWidget.setMRMLScene(scene);
 /// controllerWidget.setMRMLSliceNode(sliceNode);
-/// </code>
+/// \endcode
 class QMRML_WIDGETS_EXPORT qMRMLSliceControllerWidget
   : public qMRMLViewControllerBar
 {

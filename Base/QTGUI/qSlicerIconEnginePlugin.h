@@ -34,11 +34,17 @@
 /// subdirectory (Resources/Icons/Small, Resources/Icons/Medium...) using the
 /// same file name. All files must be referenced in the resource file (.qrc).
 /// In the code, only refer to one icon resolution.
-/// e.g. <code>QIcon icon(":Medium/AnIcon.png");</code>)
+/// Example:
+/// \code
+/// QIcon icon(":Medium/AnIcon.png");
+/// \endcode
 /// When the icon is asked for a pixmap at a given resolution, automatically,
 /// the icon engine picks the best icon file for the requested size.
-/// e.g. <code>icon.pixmap(128, 128);</code> will use the icon in the XLarge
-/// subdirectory instead of the icon in the Medium subdirectory.
+/// \code
+/// icon.pixmap(128, 128);
+/// \endcode
+/// will use the icon in the XLarge subdirectory instead of the icon in the
+/// Medium subdirectory.
 class Q_SLICER_BASE_QTGUI_ICON_ENGINE_EXPORT qSlicerIconEnginePlugin: public ctkIconEnginePlugin
 {
   Q_OBJECT

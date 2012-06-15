@@ -12,7 +12,7 @@
 
 =========================================================================auto=*/
 
-//
+// Volume Rendering includes
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
 #include "vtkMRMLSliceLogic.h"
