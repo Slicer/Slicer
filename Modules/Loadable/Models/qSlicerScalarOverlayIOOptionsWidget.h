@@ -45,7 +45,7 @@ protected slots:
   void updateProperties();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerScalarOverlayIOOptionsWidget);
   Q_DISABLE_COPY(qSlicerScalarOverlayIOOptionsWidget);
 };
 

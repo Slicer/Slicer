@@ -49,7 +49,7 @@ protected slots:
   virtual void setUseCompression(bool use);
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerNodeWriterOptionsWidget);
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerNodeWriterOptionsWidget);
 };
 
 #endif

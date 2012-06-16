@@ -49,7 +49,7 @@ protected slots:
   void updateProperties();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerVolumesIOOptionsWidget);
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerVolumesIOOptionsWidget);
   Q_DISABLE_COPY(qSlicerVolumesIOOptionsWidget);
 };
 

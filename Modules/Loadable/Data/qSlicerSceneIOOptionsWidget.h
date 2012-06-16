@@ -42,7 +42,8 @@ protected slots:
   void updateProperties();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSceneIOOptionsWidget);
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr),
+                      qSlicerSceneIOOptionsWidget);
   Q_DISABLE_COPY(qSlicerSceneIOOptionsWidget);
 };
 

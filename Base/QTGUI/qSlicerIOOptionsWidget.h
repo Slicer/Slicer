@@ -49,10 +49,10 @@ signals:
   void validChanged(bool);
 
 protected:
-  Q_DECLARE_PRIVATE(qSlicerIOOptions);
+  using Superclass::d_ptr;
+  Q_DECLARE_PRIVATE_D(qGetPtrHelper(qSlicerIOOptions::d_ptr), qSlicerIOOptions);
   qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parent);
   virtual void updateValid();
-  using Superclass::d_ptr;
 };
 
 #endif
