@@ -27,13 +27,15 @@
 #include <ctkUtils.h>
 
 /// Annotations includes
+#include <qSlicerIOOptions_p.h>
 #include "qSlicerAnnotationsIOOptionsWidget.h"
 #include "ui_qSlicerAnnotationModuleIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotations
-class qSlicerAnnotationsIOOptionsWidgetPrivate:
-  public Ui_qSlicerAnnotationModuleIOOptionsWidget
+class qSlicerAnnotationsIOOptionsWidgetPrivate
+  : public qSlicerIOOptionsPrivate
+  , public Ui_qSlicerAnnotationModuleIOOptionsWidget
 {
 public:
   //void init();
@@ -41,8 +43,7 @@ public:
 
 //-----------------------------------------------------------------------------
 qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* parentWidget)
-  : qSlicerIOOptionsWidget(parentWidget)
-  , d_ptr(new qSlicerAnnotationsIOOptionsWidgetPrivate)
+  : qSlicerIOOptionsWidget(new qSlicerAnnotationsIOOptionsWidgetPrivate, parentWidget)
 {
   Q_D(qSlicerAnnotationsIOOptionsWidget);
   d->setupUi(this);
@@ -100,7 +101,7 @@ qSlicerAnnotationsIOOptionsWidget::~qSlicerAnnotationsIOOptionsWidget()
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationsIOOptionsWidget::updateProperties()
 {
-  Q_D(const qSlicerAnnotationsIOOptionsWidget);
+  Q_D(qSlicerAnnotationsIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
     {
     QStringList names = d->NameLineEdit->text().split(';');
@@ -108,17 +109,17 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
       {
       names[i] = names[i].trimmed();
       }
-    this->Properties["name"] = names;
+    d->Properties["name"] = names;
     }
   else
     {
-    this->Properties.remove("name");
+    d->Properties.remove("name");
     }
 
-  this->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
-  this->Properties["ruler"] = d->RulerRadioButton->isChecked();
-  this->Properties["roi"] = d->ROIRadioButton->isChecked();
-//  this->Properties["list"] = d->ListRadioButton->isChecked();
+  d->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
+  d->Properties["ruler"] = d->RulerRadioButton->isChecked();
+  d->Properties["roi"] = d->ROIRadioButton->isChecked();
+//  d->Properties["list"] = d->ListRadioButton->isChecked();
 }
 
 //-----------------------------------------------------------------------------

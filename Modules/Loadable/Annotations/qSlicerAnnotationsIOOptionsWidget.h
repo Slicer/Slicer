@@ -21,9 +21,6 @@
 #ifndef __qSlicerAnnotationsIOOptionsWidget_h
 #define __qSlicerAnnotationsIOOptionsWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
 #include "qSlicerIOOptionsWidget.h"
 
@@ -49,8 +46,6 @@ public slots:
 
 protected slots:
   void updateProperties();
-protected:
-  QScopedPointer<qSlicerAnnotationsIOOptionsWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerAnnotationsIOOptionsWidget);

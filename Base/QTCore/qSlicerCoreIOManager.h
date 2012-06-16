@@ -64,6 +64,7 @@ public:
 
   /// Return the file option associated with a \a file type
   qSlicerIOOptions* fileOptions(const QString& fileDescription)const;
+  qSlicerIOOptions* fileWriterOptions(vtkObject* object, const QString& extension)const;
 
   /// Load a list of nodes corresponding to \a fileType. A given \a fileType corresponds
   /// to a specific reader qSlicerIO.

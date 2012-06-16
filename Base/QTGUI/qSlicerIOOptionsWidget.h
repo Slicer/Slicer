@@ -25,12 +25,15 @@
 #include "qSlicerBaseQTGUIExport.h"
 #include "qSlicerIOOptions.h"
 #include "qSlicerWidget.h"
+class qSlicerIOOptionsWidgetPrivate;
 
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerIOOptionsWidget
-  : public qSlicerWidget, public qSlicerIOOptions
+  : public qSlicerWidget
+  , public qSlicerIOOptions
 {
   Q_OBJECT
 public:
+  typedef qSlicerIOOptions Superclass;
   explicit qSlicerIOOptionsWidget(QWidget* parent = 0);
   virtual ~qSlicerIOOptionsWidget();
 
@@ -44,6 +47,12 @@ public slots:
 
 signals:
   void validChanged(bool);
+
+protected:
+  Q_DECLARE_PRIVATE(qSlicerIOOptions);
+  qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parent);
+  virtual void updateValid();
+  using Superclass::d_ptr;
 };
 
 #endif

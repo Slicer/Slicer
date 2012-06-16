@@ -47,8 +47,6 @@ public slots:
 
 protected slots:
   void updateProperties();
-protected:
-  QScopedPointer<qSlicerVolumesIOOptionsWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qSlicerVolumesIOOptionsWidget);

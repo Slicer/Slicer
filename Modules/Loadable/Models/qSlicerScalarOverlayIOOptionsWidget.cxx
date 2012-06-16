@@ -22,6 +22,7 @@
 #include <QDebug>
 
 /// ScalarOverlay includes
+#include "qSlicerIOOptions_p.h"
 #include "qSlicerScalarOverlayIOOptionsWidget.h"
 #include "ui_qSlicerScalarOverlayIOOptionsWidget.h"
 
@@ -29,15 +30,16 @@
 #include <vtkMRMLNode.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerScalarOverlayIOOptionsWidgetPrivate:
-  public Ui_qSlicerScalarOverlayIOOptionsWidget
+class qSlicerScalarOverlayIOOptionsWidgetPrivate
+  : public qSlicerIOOptionsPrivate
+  , public Ui_qSlicerScalarOverlayIOOptionsWidget
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
 qSlicerScalarOverlayIOOptionsWidget::qSlicerScalarOverlayIOOptionsWidget(QWidget* parentWidget)
-  : Superclass(parentWidget), d_ptr(new qSlicerScalarOverlayIOOptionsWidgetPrivate)
+  : Superclass(new qSlicerScalarOverlayIOOptionsWidgetPrivate, parentWidget)
 {
   Q_D(qSlicerScalarOverlayIOOptionsWidget);
   d->setupUi(this);
@@ -54,28 +56,23 @@ qSlicerScalarOverlayIOOptionsWidget::~qSlicerScalarOverlayIOOptionsWidget()
 //-----------------------------------------------------------------------------
 bool qSlicerScalarOverlayIOOptionsWidget::isValid()const
 {
+  Q_D(const qSlicerScalarOverlayIOOptionsWidget);
   return this->qSlicerIOOptionsWidget::isValid() &&
-    this->Properties.contains("modelNodeId");
+    d->Properties.contains("modelNodeId");
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerScalarOverlayIOOptionsWidget::updateProperties()
 {
-  Q_D(const qSlicerScalarOverlayIOOptionsWidget);
-  bool oldValid = this->isValid();
+  Q_D(qSlicerScalarOverlayIOOptionsWidget);
   vtkMRMLNode* modelNode = d->ModelSelector->currentNode();
-  qDebug() << "::updateProperties" << modelNode;
   if (modelNode)
     {
-    this->Properties["modelNodeId"] = QString(modelNode->GetID());
+    d->Properties["modelNodeId"] = QString(modelNode->GetID());
     }
   else
     {
-    this->Properties.remove("modelNodeId");
+    d->Properties.remove("modelNodeId");
     }
-  bool newValid = this->isValid();
-  if (oldValid != newValid)
-    {
-    emit this->validChanged(newValid);
-    }
+  this->updateValid();
 }

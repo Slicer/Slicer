@@ -21,8 +21,9 @@
 // Qt includes
 #include <QFileInfo>
 
-// QtCore includes
+// QtGUI includes
 #include "qSlicerNodeWriter.h"
+#include "qSlicerNodeWriterOptionsWidget.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -40,12 +41,14 @@ public:
   QString Description;
   qSlicerIO::IOFileType FileType;
   QStringList NodeClassNames;
+  bool SupportUseCompression;
 };
 
 //----------------------------------------------------------------------------
 qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
                                      const qSlicerIO::IOFileType& fileIO,
                                      const QStringList& nodeClassNames,
+                                     bool supportUseCompression,
                                      QObject* parentObject)
   : Superclass(parentObject)
   , d_ptr(new qSlicerNodeWriterPrivate)
@@ -53,6 +56,7 @@ qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
   Q_D(qSlicerNodeWriter);
   d->Description = description;
   d->FileType = fileIO;
+  d->SupportUseCompression = true;
   this->setNodeClassNames(nodeClassNames);
 }
 
@@ -137,7 +141,10 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
     properties.value("fileFormat", QFileInfo(fileName).suffix()).toString();
   snode->SetWriteFileFormat(fileFormat.toLatin1());
   snode->SetURI(0);
-
+  if (properties.contains("useCompression"))
+    {
+    snode->SetUseCompression(properties["useCompression"].toInt());
+    }
   bool res = snode->WriteData(node);
 
   if (res)
@@ -160,4 +167,26 @@ QStringList qSlicerNodeWriter::nodeClassNames()const
 {
   Q_D(const qSlicerNodeWriter);
   return d->NodeClassNames;
+}
+
+//----------------------------------------------------------------------------
+void qSlicerNodeWriter::setSupportUseCompression(bool support)
+{
+  Q_D(qSlicerNodeWriter);
+  d->SupportUseCompression = support;
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerNodeWriter::supportUseCompression()const
+{
+  Q_D(const qSlicerNodeWriter);
+  return d->SupportUseCompression;
+}
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerNodeWriter::options()const
+{
+  Q_D(const qSlicerNodeWriter);
+  qSlicerNodeWriterOptionsWidget* options = new qSlicerNodeWriterOptionsWidget;
+  options->setShowUseCompression(d->SupportUseCompression);
+  return options;
 }

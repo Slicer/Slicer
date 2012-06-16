@@ -26,22 +26,22 @@
 #include <ctkUtils.h>
 
 /// Volumes includes
+#include "qSlicerIOOptions_p.h"
 #include "qSlicerVolumesIOOptionsWidget.h"
 #include "ui_qSlicerVolumesIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
-class qSlicerVolumesIOOptionsWidgetPrivate:
-  public Ui_qSlicerVolumesIOOptionsWidget
+class qSlicerVolumesIOOptionsWidgetPrivate
+  : public qSlicerIOOptionsPrivate
+  , public Ui_qSlicerVolumesIOOptionsWidget
 {
 public:
-  //void init();
 };
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesIOOptionsWidget::qSlicerVolumesIOOptionsWidget(QWidget* parentWidget)
-  : qSlicerIOOptionsWidget(parentWidget)
-  , d_ptr(new qSlicerVolumesIOOptionsWidgetPrivate)
+  : qSlicerIOOptionsWidget(new qSlicerVolumesIOOptionsWidgetPrivate, parentWidget)
 {
   Q_D(qSlicerVolumesIOOptionsWidget);
   d->setupUi(this);
@@ -92,7 +92,7 @@ qSlicerVolumesIOOptionsWidget::~qSlicerVolumesIOOptionsWidget()
 //-----------------------------------------------------------------------------
 void qSlicerVolumesIOOptionsWidget::updateProperties()
 {
-  Q_D(const qSlicerVolumesIOOptionsWidget);
+  Q_D(qSlicerVolumesIOOptionsWidget);
   if (!d->NameLineEdit->text().isEmpty())
     {
     QStringList names = d->NameLineEdit->text().split(';');
@@ -100,16 +100,16 @@ void qSlicerVolumesIOOptionsWidget::updateProperties()
       {
       names[i] = names[i].trimmed();
       }
-    this->Properties["name"] = names;
+    d->Properties["name"] = names;
     }
   else
     {
-    this->Properties.remove("name");
+    d->Properties.remove("name");
     }
-  this->Properties["labelmap"] = d->LabelMapCheckBox->isChecked();
-  this->Properties["center"] = d->CenteredCheckBox->isChecked();
-  this->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
-  this->Properties["discardOrientation"] = d->OrientationCheckBox->isChecked();
+  d->Properties["labelmap"] = d->LabelMapCheckBox->isChecked();
+  d->Properties["center"] = d->CenteredCheckBox->isChecked();
+  d->Properties["singleFile"] = d->SingleFileCheckBox->isChecked();
+  d->Properties["discardOrientation"] = d->OrientationCheckBox->isChecked();
 }
 
 //-----------------------------------------------------------------------------

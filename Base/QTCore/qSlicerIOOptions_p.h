@@ -18,35 +18,18 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScalarOverlayIOOptionsWidget_h
-#define __qSlicerScalarOverlayIOOptionsWidget_h
+#include "qSlicerIO.h"
 
-// CTK includes
-#include <ctkPimpl.h>
+#ifndef __qSlicerIOOptionsWidget_p_h
+#define __qSlicerIOOptionsWidget_p_h
 
-// SlicerQt includes
-#include "qSlicerIOOptionsWidget.h"
-#include "qSlicerModelsModuleExport.h"
-
-class qSlicerScalarOverlayIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerScalarOverlayIOOptionsWidget
-  : public qSlicerIOOptionsWidget
+//-----------------------------------------------------------------------------
+class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIOOptionsPrivate
 {
-  Q_OBJECT
 public:
-  typedef qSlicerIOOptionsWidget Superclass;
-  qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=0);
-  virtual ~qSlicerScalarOverlayIOOptionsWidget();
-
-  virtual bool isValid()const;
-
-protected slots:
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerScalarOverlayIOOptionsWidget);
+  virtual ~qSlicerIOOptionsPrivate();
+  qSlicerIO::IOProperties Properties;
+  bool ArePropertiesValid;
 };
 
 #endif

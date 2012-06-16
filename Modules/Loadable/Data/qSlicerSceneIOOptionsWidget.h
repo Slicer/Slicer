@@ -41,9 +41,6 @@ public:
 protected slots:
   void updateProperties();
 
-protected:
-  QScopedPointer<qSlicerSceneIOOptionsWidgetPrivate> d_ptr;
-
 private:
   Q_DECLARE_PRIVATE(qSlicerSceneIOOptionsWidget);
   Q_DISABLE_COPY(qSlicerSceneIOOptionsWidget);

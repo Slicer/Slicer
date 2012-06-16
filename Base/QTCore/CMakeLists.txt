@@ -52,14 +52,13 @@ set(KIT_SRCS
   qSlicerIO.h
   qSlicerIOOptions.cxx
   qSlicerIOOptions.h
+  qSlicerIOOptions_p.h
   qSlicerLoadableModuleFactory.cxx
   qSlicerLoadableModuleFactory.h
   qSlicerModuleFactoryManager.cxx
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.cxx
   qSlicerModuleManager.h
-  qSlicerNodeWriter.cxx
-  qSlicerNodeWriter.cxx
   qSlicerObject.cxx
   qSlicerObject.h
   qSlicerSceneBundleIO.cxx
@@ -101,7 +100,6 @@ set(KIT_MOC_SRCS
   qSlicerIO.h
   qSlicerModuleFactoryManager.h
   qSlicerModuleManager.h
-  qSlicerNodeWriter.h
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.h
   qSlicerXcedeCatalogIO.h

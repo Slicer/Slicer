@@ -18,35 +18,31 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerScalarOverlayIOOptionsWidget_h
-#define __qSlicerScalarOverlayIOOptionsWidget_h
+#ifndef __qSlicerFileWriterOptionsWidget_h
+#define __qSlicerFileWriterOptionsWidget_h
 
-// CTK includes
-#include <ctkPimpl.h>
-
-// SlicerQt includes
+/// QtGUI includes
 #include "qSlicerIOOptionsWidget.h"
-#include "qSlicerModelsModuleExport.h"
+class qSlicerFileWriterOptionsWidgetPrivate;
 
-class qSlicerScalarOverlayIOOptionsWidgetPrivate;
-
-class Q_SLICER_QTMODULES_MODELS_EXPORT qSlicerScalarOverlayIOOptionsWidget
+/// Base class for all the Writer Options widget.
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileWriterOptionsWidget
   : public qSlicerIOOptionsWidget
 {
   Q_OBJECT
+
 public:
   typedef qSlicerIOOptionsWidget Superclass;
-  qSlicerScalarOverlayIOOptionsWidget(QWidget *parent=0);
-  virtual ~qSlicerScalarOverlayIOOptionsWidget();
+  explicit qSlicerFileWriterOptionsWidget(QWidget* parent = 0);
+  virtual ~qSlicerFileWriterOptionsWidget();
 
-  virtual bool isValid()const;
+public slots:
+  /// Set the object to write (typically a scene or a MRML node)
+  virtual void setObject(vtkObject* object);
 
-protected slots:
-  void updateProperties();
-
-private:
-  Q_DECLARE_PRIVATE(qSlicerScalarOverlayIOOptionsWidget);
-  Q_DISABLE_COPY(qSlicerScalarOverlayIOOptionsWidget);
+protected:
+  qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl,
+                                 QWidget* parent);
 };
 
 #endif

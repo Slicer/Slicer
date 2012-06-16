@@ -7,15 +7,14 @@
 #include <QFileInfo>
 #include <QStyledItemDelegate>
 
-// CTK includes
-#include <ctkPimpl.h>
-
 // SlicerQt includes
+#include "qSlicerIOOptions.h"
 #include "qSlicerSaveDataDialog.h"
 #include "ui_qSlicerSaveDataDialog.h"
 
 class vtkMRMLNode;
 class vtkMRMLStorableNode;
+class vtkObject;
 
 //-----------------------------------------------------------------------------
 class qSlicerSaveDataDialogPrivate
@@ -59,9 +58,10 @@ protected:
     FileNameColumn = 0,
     FileFormatColumn = 1,
     FileDirectoryColumn = 2,
-    NodeNameColumn = 3,
-    NodeTypeColumn = 4,
-    NodeStatusColumn = 5
+    OptionsColumn = 3,
+    NodeNameColumn = 4,
+    NodeTypeColumn = 5,
+    NodeStatusColumn = 6
   };
 
   int               findSceneRow()const;
@@ -69,6 +69,7 @@ protected:
   bool              prepareForSaving();
   void              restoreAfterSaving();
   void              setSceneRootDirectory(const QString& rootDirectory);
+  void              updateOptionsWidget(int row);
 
   void              populateScene();
   void              populateNode(vtkMRMLNode* node);
@@ -80,6 +81,12 @@ protected:
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
   QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
+
+  QFileInfo         file(int row)const;
+  vtkObject*        object(int row)const;
+  QString           format(int row)const;
+  QString           type(int row)const;
+  qSlicerIOOptions* options(int row)const;
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;

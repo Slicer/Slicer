@@ -34,6 +34,7 @@
 /// SlicerQt includes
 #include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
+#include "qSlicerFileWriterOptionsWidget.h"
 #include "qSlicerSaveDataDialog_p.h"
 #include "qSlicerLayoutManager.h"
 #include "qMRMLUtils.h"
@@ -296,6 +297,9 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   selectItem->setFlags(selectItem->flags() | Qt::ItemIsUserCheckable);
   selectItem->setCheckState(
     this->MRMLScene->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
+
+  // Options
+  this->updateOptionsWidget(row);
 }
 
 //-----------------------------------------------------------------------------
@@ -379,6 +383,9 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
   selectItem->setCheckState(
     storableNode->GetModifiedSinceRead() ? Qt::Checked : Qt::Unchecked);
+
+  // Options
+  this->updateOptionsWidget(row);
 }
 
 //-----------------------------------------------------------------------------
@@ -625,20 +632,10 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
 
     QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
     QTableWidgetItem* nodeNameItem = this->FileWidget->item(row, NodeNameColumn);
-    QTableWidgetItem* nodeTypeItem = this->FileWidget->item(row, NodeTypeColumn);
     QTableWidgetItem* nodeStatusItem = this->FileWidget->item(row, NodeStatusColumn);
-    QComboBox* fileFormatComboBox = qobject_cast<QComboBox*>(
-      this->FileWidget->cellWidget(row, FileFormatColumn));
-    QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
-    ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
-      this->FileWidget->cellWidget(row, FileDirectoryColumn));
 
     Q_ASSERT(selectItem);
     Q_ASSERT(nodeNameItem);
-    Q_ASSERT(nodeTypeItem);
-    Q_ASSERT(fileFormatComboBox);
-    Q_ASSERT(fileNameItem);
-    Q_ASSERT(fileDirectoryButton);
 
     // don't save unchecked nodes
     if (selectItem->checkState() != Qt::Checked ||
@@ -647,21 +644,18 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
       continue;
       }
 
-    if (fileNameItem->text().isEmpty())
+    // file properties
+    QFileInfo file = this->file(row);
+    QString format = this->format(row);
+    qSlicerIOOptions* options = this->options(row);
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(this->object(row));
+
+    if (file.fileName().isEmpty())
       {
       QMessageBox::warning(this, tr("Saving node..."),
                            tr("Node %1 not saved, file name is empty.").arg(nodeNameItem->text()));
       continue;
       }
-
-    // file properties
-    QDir directory = fileDirectoryButton->directory();
-    QFileInfo file = QFileInfo(directory, fileNameItem->text());
-    QString format = fileFormatComboBox->currentText();
-
-    // node
-    QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
-    vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1());
 
     // check if the file already exists
     if (file.exists())
@@ -700,6 +694,12 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     Q_ASSERT(coreIOManager);
     qSlicerIO::IOFileType fileType = coreIOManager->fileWriterFileType(node);
     qSlicerIO::IOProperties savingParameters;
+    if (options)
+      {
+      // options properties nodeID and fileName will be overwritten
+      // \todo fileName is wrong as it contains an obsolete directory
+      savingParameters = options->properties();
+      }
     savingParameters["nodeID"] = QString(node->GetID());
     savingParameters["fileName"] = file.absoluteFilePath();
     savingParameters["fileFormat"] = format;
@@ -724,6 +724,61 @@ bool qSlicerSaveDataDialogPrivate::saveNodes()
     nodeStatusItem->setText("Not Modified");
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
+{
+  QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
+  Q_ASSERT(fileNameItem);
+
+  ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
+    this->FileWidget->cellWidget(row, FileDirectoryColumn));
+  Q_ASSERT(fileDirectoryButton);
+
+  QDir directory = fileDirectoryButton->directory();
+  return QFileInfo(directory, fileNameItem->text());
+}
+
+//-----------------------------------------------------------------------------
+vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
+{
+  if (this->type(row) == tr("Scene"))
+    {
+    return this->MRMLScene;
+    }
+  QTableWidgetItem* nodeNameItem = this->FileWidget->item(row, NodeNameColumn);
+  Q_ASSERT(nodeNameItem);
+
+  /// \todo support mrmlScene row
+  QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
+  vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1());
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSaveDataDialogPrivate::format(int row)const
+{
+  QComboBox* fileFormatComboBox = qobject_cast<QComboBox*>(
+    this->FileWidget->cellWidget(row, FileFormatColumn));
+  Q_ASSERT(fileFormatComboBox);
+  return fileFormatComboBox->currentText();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerSaveDataDialogPrivate::type(int row)const
+{
+  QTableWidgetItem* typeItem = this->FileWidget->item(row, NodeTypeColumn);
+  Q_ASSERT(typeItem);
+  return typeItem->data(Qt::UserRole).toString();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerSaveDataDialogPrivate::options(int row)const
+{
+  qSlicerIOOptionsWidget* optionsWidget = qobject_cast<qSlicerIOOptionsWidget*>(
+    this->FileWidget->cellWidget(row, OptionsColumn));
+  return optionsWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -829,6 +884,12 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   this->show();
   properties["screenShot"] = screenShot;
 
+  qSlicerIOOptions* options = this->options(this->findSceneRow());
+  if (options)
+    {
+    properties.unite(options->properties());
+    }
+
   bool res = qSlicerApplication::application()->coreIOManager()->saveNodes(
     qSlicerIO::SceneFile, properties);
   return res;
@@ -924,11 +985,42 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
   Q_ASSERT(selectItem);
   selectItem->setCheckState(Qt::Checked);
+
+  this->updateOptionsWidget(row);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerSaveDataDialogPrivate::updateOptionsWidget(int row)
+{
+  qSlicerCoreIOManager* coreIOManager =
+    qSlicerCoreApplication::application()->coreIOManager();
+  qSlicerIOOptions* options =
+    coreIOManager->fileWriterOptions(this->object(row), this->format(row));
+  qSlicerFileWriterOptionsWidget* optionsWidget =
+    dynamic_cast<qSlicerFileWriterOptionsWidget*>(options);
+  if (optionsWidget)
+    {
+    // The optionsWidget can use the filename to initialize some options.
+    optionsWidget->setFileName(this->file(row).absoluteFilePath());
+    optionsWidget->setObject(this->object(row));
+    // TODO: support uneven rows. Until that day, we want to make sure the whole
+    // widget is visible
+    optionsWidget->setMinimumWidth(optionsWidget->sizeHint().width());
+    // TODO: connect signal validChanged(bool) with the accept button
+    }
+  else
+    {
+    // we can't use options that are not widgets
+    delete options;
+    }
+  this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
+  this->FileWidget->resizeColumnToContents(OptionsColumn);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerSaveDataDialogPrivate::showMoreColumns(bool show)
 {
+  this->FileWidget->setColumnHidden(OptionsColumn, !show);
   this->FileWidget->setColumnHidden(NodeNameColumn, !show);
   this->FileWidget->setColumnHidden(NodeTypeColumn, !show);
   this->FileWidget->setColumnHidden(NodeStatusColumn, !show);
@@ -957,6 +1049,7 @@ void qSlicerSaveDataDialogPrivate::onSceneFormatChanged()
   int sceneRow = this->findSceneRow();
   QComboBox* box = qobject_cast<QComboBox*>(
     this->FileWidget->cellWidget(sceneRow, FileFormatColumn));
+  // Gray out all the nodes when saving scene as bundle
   this->enableNodes(box->currentIndex() == 0);
 }
 

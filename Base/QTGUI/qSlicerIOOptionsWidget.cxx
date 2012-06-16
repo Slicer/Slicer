@@ -21,14 +21,22 @@
 // Qt includes
 
 // qSlicer includes
+#include "qSlicerIOOptions_p.h"
 #include "qSlicerIOOptionsWidget.h"
 
 //------------------------------------------------------------------------------
 qSlicerIOOptionsWidget::qSlicerIOOptionsWidget(QWidget* parentWidget)
-  :qSlicerWidget(parentWidget)
+  : qSlicerWidget(parentWidget)
 {
 }
 
+//------------------------------------------------------------------------------
+qSlicerIOOptionsWidget
+::qSlicerIOOptionsWidget(qSlicerIOOptionsPrivate* pimpl, QWidget* parentWidget)
+  : qSlicerWidget(parentWidget)
+  , qSlicerIOOptions(pimpl)
+{
+}
 //------------------------------------------------------------------------------
 qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget()
 {
@@ -37,34 +45,43 @@ qSlicerIOOptionsWidget::~qSlicerIOOptionsWidget()
 //------------------------------------------------------------------------------
 bool qSlicerIOOptionsWidget::isValid()const
 {
-  return this->Properties.contains("fileName") || this->Properties.contains("fileNames");
+  Q_D(const qSlicerIOOptions);
+  return d->Properties.contains("fileName") || d->Properties.contains("fileNames");
+}
+
+//------------------------------------------------------------------------------
+void qSlicerIOOptionsWidget::updateValid()
+{
+  Q_D(const qSlicerIOOptions);
+  bool wasValid = d->ArePropertiesValid;
+  this->Superclass::updateValid();
+  if (wasValid != d->ArePropertiesValid)
+    {
+    emit this->validChanged(d->ArePropertiesValid);
+    }
 }
 
 //------------------------------------------------------------------------------
 void qSlicerIOOptionsWidget::setFileName(const QString& fileName)
 {
-  bool oldValid = this->isValid();
+  Q_D(qSlicerIOOptions);
   // replace the old filename if any
   if (!fileName.isEmpty())
     {
-    this->Properties["fileName"] = fileName;
+    d->Properties["fileName"] = fileName;
     }
   else
     {
-    this->Properties.remove("fileName");
+    d->Properties.remove("fileName");
     }
-  this->Properties.remove("fileNames");
-  bool newValid = this->isValid();
-  if (oldValid != newValid)
-    {
-    emit this->validChanged(newValid);
-    }
+  d->Properties.remove("fileNames");
+  this->updateValid();
 }
 
 //------------------------------------------------------------------------------
 void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
 {
-  bool oldValid = this->isValid();
+  Q_D(qSlicerIOOptions);
   /*
   if (fileNames.count())
     {
@@ -76,10 +93,6 @@ void qSlicerIOOptionsWidget::setFileNames(const QStringList& fileNames)
     }
   this->Properties.remove("fileName");
   */
-  this->Properties["fileName"] = fileNames;
-  bool newValid = this->isValid();
-  if (oldValid != newValid)
-    {
-    emit this->validChanged(newValid);
-    }
+  d->Properties["fileName"] = fileNames;
+  this->updateValid();
 }

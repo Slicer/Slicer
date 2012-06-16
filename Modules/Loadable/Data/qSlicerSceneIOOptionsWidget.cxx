@@ -26,21 +26,22 @@
 #include <ctkUtils.h>
 
 /// Scene includes
+#include "qSlicerIOOptions_p.h"
 #include "qSlicerSceneIOOptionsWidget.h"
 #include "ui_qSlicerSceneIOOptionsWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Scene
-class qSlicerSceneIOOptionsWidgetPrivate:
-  public Ui_qSlicerSceneIOOptionsWidget
+class qSlicerSceneIOOptionsWidgetPrivate
+  : public qSlicerIOOptionsPrivate
+  , public Ui_qSlicerSceneIOOptionsWidget
 {
 public:
 };
 
 //-----------------------------------------------------------------------------
 qSlicerSceneIOOptionsWidget::qSlicerSceneIOOptionsWidget(QWidget* parentWidget)
-  : qSlicerIOOptionsWidget(parentWidget)
-  , d_ptr(new qSlicerSceneIOOptionsWidgetPrivate)
+  : qSlicerIOOptionsWidget(new qSlicerSceneIOOptionsWidgetPrivate, parentWidget)
 {
   Q_D(qSlicerSceneIOOptionsWidget);
   d->setupUi(this);
@@ -63,8 +64,8 @@ qSlicerSceneIOOptionsWidget::~qSlicerSceneIOOptionsWidget()
 //-----------------------------------------------------------------------------
 void qSlicerSceneIOOptionsWidget::updateProperties()
 {
-  Q_D(const qSlicerSceneIOOptionsWidget);
+  Q_D(qSlicerSceneIOOptionsWidget);
 
-  this->Properties["clear"] = d->ClearSceneCheckBox->isChecked();
-  this->Properties["copyCameras"] = d->CopyCameraCheckBox->isChecked();
+  d->Properties["clear"] = d->ClearSceneCheckBox->isChecked();
+  d->Properties["copyCameras"] = d->CopyCameraCheckBox->isChecked();
 }

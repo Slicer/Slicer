@@ -35,6 +35,8 @@ set(KIT_SRCS
 
   qSlicerFileDialog.cxx
   qSlicerFileDialog.h
+  qSlicerFileWriterOptionsWidget.cxx
+  qSlicerFileWriterOptionsWidget.h
   qSlicerIOManager.cxx
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.cxx
@@ -63,6 +65,10 @@ set(KIT_SRCS
   qSlicerMouseModeToolBar.cxx
   qSlicerMouseModeToolBar.h
   qSlicerMouseModeToolBar_p.h
+  qSlicerNodeWriter.cxx
+  qSlicerNodeWriter.h
+  qSlicerNodeWriterOptionsWidget.cxx
+  qSlicerNodeWriterOptionsWidget.h
   qSlicerQListQVariantMapMetaType.h
   qSlicerSaveDataDialog.cxx
   qSlicerSaveDataDialog.h
@@ -144,6 +150,7 @@ set(KIT_MOC_SRCS
   qSlicerDataDialog_p.h
   qSlicerDirectoryListView.h
   qSlicerFileDialog.h
+  qSlicerFileWriterOptionsWidget.h
   qSlicerIOManager.h
   qSlicerIOOptionsWidget.h
   qSlicerLayoutManager.h
@@ -159,6 +166,8 @@ set(KIT_MOC_SRCS
   qSlicerModuleSelectorToolBar.h
   qSlicerMouseModeToolBar.h
   qSlicerMouseModeToolBar_p.h
+  qSlicerNodeWriter.h
+  qSlicerNodeWriterOptionsWidget.h
   qSlicerSaveDataDialog.h
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsCachePanel.h
@@ -205,6 +214,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerDataDialog.ui
   Resources/UI/qSlicerModelsDialog.ui
   Resources/UI/qSlicerModulePanel.ui
+  Resources/UI/qSlicerNodeWriterOptionsWidget.ui
   Resources/UI/qSlicerSaveDataDialog.ui
   Resources/UI/qSlicerSettingsCachePanel.ui
   Resources/UI/qSlicerSettingsGeneralPanel.ui

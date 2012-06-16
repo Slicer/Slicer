@@ -21,9 +21,13 @@
 #ifndef __qSlicerIOOptions_h
 #define __qSlicerIOOptions_h
 
+// Qt includes
+#include <QScopedPointer>
+
 /// QtCore includes
 #include "qSlicerIO.h"
 #include "qSlicerBaseQTCoreExport.h"
+class qSlicerIOOptionsPrivate;
 
 class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIOOptions
 {
@@ -32,9 +36,22 @@ public:
   explicit qSlicerIOOptions();
   virtual ~qSlicerIOOptions();
 
+  /// Returns true if the options have been set and if they are
+  /// meaningful. By default, checks that there is at least 1 option.
+  /// To be reimplemented in subclasses
+  virtual bool isValid()const;
+
   const qSlicerIO::IOProperties& properties()const;
 protected:
-  qSlicerIO::IOProperties Properties;
+  qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl);
+  QScopedPointer<qSlicerIOOptionsPrivate> d_ptr;
+
+  /// Must be called anytime the result of isValid() can change
+  virtual void updateValid();
+
+private:
+  Q_DECLARE_PRIVATE(qSlicerIOOptions);
+  Q_DISABLE_COPY(qSlicerIOOptions);
 };
 
 #endif

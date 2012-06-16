@@ -22,22 +22,29 @@
 #define __qSlicerNodeWriter_h
 
 // QtCore includes
+#include "qSlicerBaseQTGUIExport.h"
 #include "qSlicerFileWriter.h"
 class qSlicerNodeWriterPrivate;
 
 /// Utility class that is ready to use for most of the nodes.
-class Q_SLICER_BASE_QTCORE_EXPORT qSlicerNodeWriter
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriter
   : public qSlicerFileWriter
 {
   Q_OBJECT
+  /// Some storage nodes don't support the compression option
+  Q_PROPERTY(bool supportUseCompression READ supportUseCompression WRITE setSupportUseCompression);
 public:
   typedef qSlicerFileWriter Superclass;
   qSlicerNodeWriter(const QString& description,
                     const qSlicerIO::IOFileType& fileType,
                     const QStringList& nodeTags,
+                    bool useCompression = true,
                     QObject* parent = 0);
 
   virtual ~qSlicerNodeWriter();
+
+  void setSupportUseCompression(bool useCompression);
+  bool supportUseCompression()const;
 
   virtual QString description()const;
   virtual IOFileType fileType()const;
@@ -51,6 +58,9 @@ public:
   virtual QStringList extensions(vtkObject* object)const;
 
   virtual bool write(const qSlicerIO::IOProperties& properties);
+
+  /// Return a qSlicerIONodeWriterOptionsWidget
+  virtual qSlicerIOOptions* options()const;
 
 protected:
   void setNodeClassNames(const QStringList& nodeClassNames);

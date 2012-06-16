@@ -66,6 +66,11 @@
      </column>
      <column>
       <property name="text">
+       <string>Options</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Node Name</string>
       </property>
      </column>
@@ -124,7 +129,7 @@
    <item row="0" column="5">
     <widget class="QCheckBox" name="ShowMoreCheckBox">
      <property name="text">
-      <string>Show more</string>
+      <string>Show options</string>
      </property>
     </widget>
    </item>

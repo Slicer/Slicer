@@ -18,48 +18,33 @@
 
 ==============================================================================*/
 
-#include "qSlicerIOOptions.h"
+// Qt includes
+
+// qSlicer includes
 #include "qSlicerIOOptions_p.h"
+#include "qSlicerFileWriterOptionsWidget.h"
 
 //------------------------------------------------------------------------------
-qSlicerIOOptionsPrivate::~qSlicerIOOptionsPrivate()
+qSlicerFileWriterOptionsWidget::qSlicerFileWriterOptionsWidget(QWidget* parentWidget)
+  : Superclass(parentWidget)
 {
 }
 
 //------------------------------------------------------------------------------
-qSlicerIOOptions::qSlicerIOOptions()
-  : d_ptr(new qSlicerIOOptionsPrivate)
+qSlicerFileWriterOptionsWidget
+::qSlicerFileWriterOptionsWidget(qSlicerIOOptionsPrivate* pimpl,
+                                   QWidget* parentWidget)
+  : Superclass(pimpl, parentWidget)
 {
 }
 
 //------------------------------------------------------------------------------
-qSlicerIOOptions::qSlicerIOOptions(qSlicerIOOptionsPrivate* pimpl)
-  : d_ptr(pimpl)
+qSlicerFileWriterOptionsWidget::~qSlicerFileWriterOptionsWidget()
 {
 }
 
 //------------------------------------------------------------------------------
-qSlicerIOOptions::~qSlicerIOOptions()
+void qSlicerFileWriterOptionsWidget::setObject(vtkObject* object)
 {
-}
-
-//------------------------------------------------------------------------------
-bool qSlicerIOOptions::isValid()const
-{
-  Q_D(const qSlicerIOOptions);
-  return d->Properties.size() > 0;
-}
-
-//------------------------------------------------------------------------------
-const qSlicerIO::IOProperties& qSlicerIOOptions::properties()const
-{
-  Q_D(const qSlicerIOOptions);
-  return d->Properties;
-}
-
-//------------------------------------------------------------------------------
-void qSlicerIOOptions::updateValid()
-{
-  Q_D(qSlicerIOOptions);
-  d->ArePropertiesValid = this->isValid();
+  Q_UNUSED(object);
 }

@@ -209,7 +209,6 @@ QStringList qSlicerCoreIOManager::fileWriterDescriptions(
   return matchingDescriptions;
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerCoreIOManager::fileWriterExtensions(
   vtkObject* object)const
@@ -238,6 +237,26 @@ qSlicerIOOptions* qSlicerCoreIOManager::fileOptions(const QString& readerDescrip
     }
   reader->setMRMLScene(d->currentScene());
   return reader->options();
+}
+
+//-----------------------------------------------------------------------------
+qSlicerIOOptions* qSlicerCoreIOManager::fileWriterOptions(
+  vtkObject* object, const QString& extension)const
+{
+  Q_D(const qSlicerCoreIOManager);
+  qSlicerFileWriter* bestWriter = 0;
+  foreach(qSlicerFileWriter* writer, d->Writers)
+    {
+    if (writer->canWriteObject(object))
+      {
+      if (writer->extensions(object).contains(extension))
+        {
+        writer->setMRMLScene(d->currentScene());
+        bestWriter = writer;
+        }
+      }
+    }
+  return bestWriter ? bestWriter->options() : 0;
 }
 
 //-----------------------------------------------------------------------------
