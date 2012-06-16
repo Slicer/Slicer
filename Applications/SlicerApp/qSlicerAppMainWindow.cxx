@@ -435,6 +435,7 @@ bool qSlicerAppMainWindowPrivate::confirmClose()
        messageBox.addButton(q->tr("Exit (discard modifications)"), QMessageBox::ActionRole);
     QAbstractButton* cancelButton =
        messageBox.addButton(q->tr("Cancel exit"), QMessageBox::ActionRole);
+    Q_UNUSED(cancelButton);
     messageBox.exec();
     if (messageBox.clickedButton() == saveButton)
       {

@@ -56,7 +56,7 @@ qSlicerNodeWriter::qSlicerNodeWriter(const QString& description,
   Q_D(qSlicerNodeWriter);
   d->Description = description;
   d->FileType = fileIO;
-  d->SupportUseCompression = true;
+  d->SupportUseCompression = supportUseCompression;
   this->setNodeClassNames(nodeClassNames);
 }
 
@@ -121,7 +121,6 @@ QStringList qSlicerNodeWriter::extensions(vtkObject* object)const
 //----------------------------------------------------------------------------
 bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
 {
-  Q_D(qSlicerNodeWriter);
   this->setWrittenNodes(QStringList());
 
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
