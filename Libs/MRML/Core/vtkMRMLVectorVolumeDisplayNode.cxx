@@ -90,7 +90,7 @@ void vtkMRMLVectorVolumeDisplayNode::SetBackgroundImageData(vtkImageData *imageD
 //----------------------------------------------------------------------------
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetInputImageData()
 {
-  return vtkImageData::SafeDownCast(this->RGBToHSI->GetInput());
+  return vtkImageData::SafeDownCast(this->ShiftScale->GetInput());
 }
 
 //----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetOutputImageData()
 //---------------------------------------------------------------------------
 vtkImageData* vtkMRMLVectorVolumeDisplayNode::GetScalarImageData()
 {
-  return vtkImageData::SafeDownCast(this->ExtractIntensity->GetOutput());
+  return vtkImageData::SafeDownCast(this->ShiftScale->GetInput());
 }
 
 //----------------------------------------------------------------------------
