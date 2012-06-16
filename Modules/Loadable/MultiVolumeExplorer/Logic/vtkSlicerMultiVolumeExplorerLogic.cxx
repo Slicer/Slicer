@@ -59,7 +59,6 @@
 
 // STD includes
 #include <sys/types.h>
-#include <dirent.h>
 #include <errno.h>
 
 
@@ -170,25 +169,6 @@ int vtkSlicerMultiVolumeExplorerLogic
   VolumeIdentifyingTagNames.push_back(std::string("EchoTime")); 
   VolumeIdentifyingTagNames.push_back(std::string("FlipAngle")); 
   VolumeIdentifyingTagNames.push_back(std::string("RepetitionTime")); 
-
-  /*
-  std::vector<std::string> filenames;
-
-  DIR *dp;
-  struct dirent *dirp;
-  if((dp  = opendir(dir.c_str())) == NULL) {
-    cout << "Error(" << errno << ") opening " << dir << endl;
-    return 0;
-  }
-  while ((dirp = readdir(dp)) != NULL) {
-    if(dirp->d_name[0] == '.')
-      continue;
-    filenames.push_back(dir+std::string("/")+std::string(dirp->d_name));
-  }
-  closedir(dp);
-
-  std::cout << "Processing directory " << dir << std::endl;
-  */
 
   for(unsigned i=0;i<filenames->GetNumberOfValues();i++)
     {
