@@ -627,14 +627,14 @@ void vtkMRMLFiberBundleNode::CleanROISelection()
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLFiberBundleNode::CreateDefaultStorageNode()
 {
-  vtkWarningMacro("vtkMRMLFiberBundleNode::CreateDefaultStorageNode");
+  vtkDebugMacro("vtkMRMLFiberBundleNode::CreateDefaultStorageNode");
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLFiberBundleStorageNode::New());
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes()
 {
-  vtkWarningMacro("vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes");
+  vtkDebugMacro("vtkMRMLFiberBundleNode::CreateDefaultDisplayNodes");
   
   vtkMRMLFiberBundleDisplayNode *fbdn = this->AddLineDisplayNode();
   fbdn->SetVisibility(1);
