@@ -71,13 +71,6 @@ void vtkMRMLVectorVolumeDisplayNode::SetInputToImageDataPipeline(vtkImageData *i
 {
   this->ShiftScale->SetInput( imageData );
   this->RGBToHSI->SetInput( imageData );
-
-  // TODO: Move theh following to UpdateImageDataPipeline()
-  this->AppendComponents->RemoveAllInputs();
-  //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
-  //this->AppendComponents->SetInput(0, imageData);
-  this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
-  this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
 }
 
 //----------------------------------------------------------------------------
