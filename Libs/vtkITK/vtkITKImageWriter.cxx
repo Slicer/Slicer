@@ -22,15 +22,18 @@
 
 #include "vtkITKUtility.h"
 
+// VTKsys includes
+#include <vtksys/SystemTools.hxx>
+
 vtkStandardNewMacro(vtkITKImageWriter);
 vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")
 
 // helper function
-template <class  TPixelType>
-void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
+template <class  TPixelType, int Dimension>
+void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
                       vtkMatrix4x4* rasToIjkMatrix, TPixelType vtkNotUsed(dummy)) {
 
-  typedef  itk::Image<TPixelType, 3> ImageType;
+  typedef  itk::Image<TPixelType, Dimension> ImageType;
 
   vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
 
@@ -83,11 +86,18 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
   vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
 
-  for ( i=0; i<3; i++) {
+  for ( i=0; i<Dimension; i++) {
     origin[i] =  ijkToRasMatrix->GetElement(3,i);
     int j;
-    for (j=0; j<3; j++) {
-      direction[j][i] =  ijkToLpsMatrix->GetElement(i,j);
+    for (j=0; j<Dimension; j++) {
+      if (Dimension == 2)
+        {
+        direction[j][i] = (i == j) ? 1. : 0;
+        }
+      else
+        {
+        direction[j][i] =  ijkToLpsMatrix->GetElement(i,j);
+        }
     }
   }
 
@@ -154,6 +164,24 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkFlip->Delete();
 }
 
+//----------------------------------------------------------------------------
+template <class  TPixelType>
+void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
+                      vtkMatrix4x4* rasToIjkMatrix)
+{
+  std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  bool saveAsJPEG =
+    (fileExtension == ".jpg") || (fileExtension == ".JPG") ||
+    (fileExtension == ".jpeg") || (fileExtension == ".JPEG");
+  if (saveAsJPEG)
+    {
+    ITKWriteVTKImage<TPixelType, 2>(self, inputImage, fileName, rasToIjkMatrix);
+    }
+  else // 3D
+    {
+    ITKWriteVTKImage<TPixelType, 3>(self, inputImage, fileName, rasToIjkMatrix);
+    }
+}
 
 //----------------------------------------------------------------------------
 vtkITKImageWriter::vtkITKImageWriter()
