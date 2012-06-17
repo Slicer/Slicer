@@ -13,8 +13,13 @@
 ==========================================================================*/
 #include "vtkITKArchetypeImageSeriesReader.h"
 
+#include <vector>
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
+#include "itkMetaDataDictionary.h"
+#include "itkMetaDataObjectBase.h"
+#include "itkMetaDataObject.h"
+
 #include "vtkMath.h"
 
 #include "itkTimeProbe.h"
@@ -85,6 +90,8 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
   this->SingleFile = 1;
   this->UseOrientationFromFile = 1;
   this->RasToIjkMatrix = NULL;
+  this->MeasurementFrameMatrix = vtkMatrix4x4::New();
+  this->MeasurementFrameMatrix->Identity();
   this->SetDesiredCoordinateOrientationToAxial();
   this->UseNativeCoordinateOrientation = 0;
   this->FileNameSliceOffset = 0;
@@ -212,13 +219,24 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
    RasToIjkMatrix->Delete();
    RasToIjkMatrix = NULL;
    }
-  
+  if (MeasurementFrameMatrix)
+   {
+   MeasurementFrameMatrix->Delete();
+   MeasurementFrameMatrix = NULL;
+   }
+ 
 }
 
 vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
 {
   this->UpdateInformation();
   return RasToIjkMatrix;
+}
+
+vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetMeasurementFrameMatrix()
+{
+  this->UpdateInformation();
+  return MeasurementFrameMatrix;
 }
 
 //----------------------------------------------------------------------------
@@ -546,6 +564,36 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       extent[3] = region.GetIndex()[1] + region.GetSize()[1] - 1;
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
+
+      typedef std::vector<std::vector<double> >    DoubleVectorType;
+      typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
+      const itk::MetaDataDictionary &        dictionary = imageReader->GetMetaDataDictionary();
+      itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
+      itk::MetaDataDictionary::ConstIterator end = dictionary.End();
+      while( itr != end )
+        {
+        itk::MetaDataObjectBase::Pointer  entry = itr->second;
+        MetaDataDoubleVectorType::Pointer entryvalue1
+          = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+        if( entryvalue1 )
+          {
+          int pos = itr->first.find( "NRRD_measurement frame" );
+          if( pos != -1 )
+            {
+            DoubleVectorType tagvalue = entryvalue1->GetMetaDataObjectValue();
+            for( int i = 0; i < 3; i++ )
+              {
+              for( int j = 0; j < 3; j++ )
+                {
+                this->MeasurementFrameMatrix->SetElement(i,j, tagvalue.at( j ).at( i ));
+                }
+              }
+            }
+          }
+        ++itr;
+        }
+
+
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == NULL) 
         {
@@ -605,6 +653,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       extent[4] = region.GetIndex()[2];
       extent[5] = region.GetIndex()[2] + region.GetSize()[2] - 1;
       imageIO = seriesReader->GetImageIO();
+
       }
     }
     catch (...)

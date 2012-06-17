@@ -18,11 +18,13 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLScene.h"
 #ifdef MRML_USE_vtkTeem
 #include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 #endif
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 
 // VTK ITK includes
 #include "vtkITKArchetypeImageSeriesScalarReader.h"
+#include "vtkITKArchetypeDiffusionTensorImageReaderFile.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderFile.h"
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
 #include "vtkITKImageWriter.h"
@@ -217,6 +219,14 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
   else 
 #endif
+    if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
+      {
+      volNode = dynamic_cast <vtkMRMLDiffusionTensorVolumeNode *> (refNode);
+      reader = vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile>::New();  
+      reader->SetSingleFile( this->GetSingleFile() );
+      reader->SetUseOrientationFromFile( this->GetUseOrientationFromFile() );
+      }
+  else
     if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
       {
       volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
@@ -290,15 +300,16 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  if (reader->GetOutput() == NULL 
-      || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0) 
+  if (reader->GetOutput() == NULL
+      || (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && reader->GetOutput()->GetPointData()->GetTensors()->GetNumberOfTuples() == 0)
+      || (!volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0))
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     return 0;
     }
   
-  if ( !volNode->IsA("vtkMRMLVectorVolumeNode") &&
+  if ( !volNode->IsA("vtkMRMLVectorVolumeNode") && !volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") &&
         volNode->IsA("vtkMRMLScalarVolumeNode") && reader->GetNumberOfComponents() != 1 ) 
     {
     volNode->SetAndObserveImageData(NULL);
@@ -353,6 +364,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     vtkErrorMacro ("Reader returned NULL RasToIjkMatrix");
     }
   volNode->SetRASToIJKMatrix(mat);
+
+  if (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    {
+    vtkMRMLDiffusionTensorVolumeNode* dtvn = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(volNode);
+    dtvn->SetMeasurementFrameMatrix(reader->GetMeasurementFrameMatrix());
+    }
 
   reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
 

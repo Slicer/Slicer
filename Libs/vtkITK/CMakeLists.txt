@@ -61,6 +61,7 @@ set(vtkITK_SRCS
   vtkITKArchetypeImageSeriesScalarReader.cxx
   vtkITKArchetypeImageSeriesVectorReaderFile.cxx
   vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
+  vtkITKArchetypeDiffusionTensorImageReaderFile.cxx
   vtkITKImageWriter.cxx
   vtkITKImageToImageFilter.h
   vtkITKImageToImageFilterFF.h

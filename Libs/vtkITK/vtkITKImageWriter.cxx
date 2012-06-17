@@ -14,12 +14,18 @@
 
 #include "vtkITKImageWriter.h"
 
+#include "vtkSmartPointer.h"
 #include "vtkImageExport.h"
 #include "vtkImageFlip.h"
+#include "vtkPointData.h"
+#include "vtkFloatArray.h"
 
+#include "itkMetaDataDictionary.h"
+#include "itkMetaDataObjectBase.h"
+#include "itkMetaDataObject.h"
 #include "itkVTKImageImport.h"
 #include "itkImageFileWriter.h"
-
+#include "itkDiffusionTensor3D.h"
 #include "vtkITKUtility.h"
 
 // VTKsys includes
@@ -31,7 +37,7 @@ vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")
 // helper function
 template <class  TPixelType, int Dimension>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix) {
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* MeasurementFrameMatrix=NULL) {
 
   typedef  itk::Image<TPixelType, Dimension> ImageType;
 
@@ -151,6 +157,44 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
       }
     }
   itkImageWriter->SetInput(itkImporter->GetOutput());
+
+  if (MeasurementFrameMatrix != NULL)
+    {
+    typedef std::vector<std::vector<double> >    DoubleVectorType;
+    typedef itk::MetaDataObject<DoubleVectorType>     MetaDataDoubleVectorType;
+    const itk::MetaDataDictionary &        dictionary = itkImageWriter->GetMetaDataDictionary();
+
+    itk::MetaDataDictionary::ConstIterator itr = dictionary.Begin();
+    itk::MetaDataDictionary::ConstIterator end = dictionary.End();
+
+    while( itr != end )
+      {
+      // Get Measurement Frame
+      itk::MetaDataObjectBase::Pointer  entry = itr->second;
+      MetaDataDoubleVectorType::Pointer entryvalue
+        = dynamic_cast<MetaDataDoubleVectorType *>( entry.GetPointer() );
+      if( entryvalue )
+        {
+        int pos = itr->first.find( "NRRD_measurement frame" );
+        if( pos != -1 )
+          {
+          DoubleVectorType tagvalue;
+          tagvalue.resize( 3 );
+          for( int i = 0; i < 3; i++ )
+            {
+            tagvalue[i].resize( 3 );
+            for( int j = 0; j < 3; j++ )
+              {
+              tagvalue[i][j] = MeasurementFrameMatrix->GetElement(i, j);
+              }
+            }
+          entryvalue->SetMetaDataObjectValue( tagvalue );
+          }
+        }
+        ++itr;
+        }
+      }
+
   try
     {
     itkImporter->GetOutput()->SetDirection(direction);
@@ -173,7 +217,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 //----------------------------------------------------------------------------
 template <class  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName,
-                      vtkMatrix4x4* rasToIjkMatrix)
+                      vtkMatrix4x4* rasToIjkMatrix, vtkMatrix4x4* measurementFrameMatrix=NULL)
 {
   std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(fileName);
   bool saveAsJPEG =
@@ -185,7 +229,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
     }
   else // 3D
     {
-    ITKWriteVTKImage<TPixelType, 3>(self, inputImage, fileName, rasToIjkMatrix);
+    ITKWriteVTKImage<TPixelType, 3>(self, inputImage, fileName, rasToIjkMatrix, measurementFrameMatrix);
     }
 }
 
@@ -194,6 +238,7 @@ vtkITKImageWriter::vtkITKImageWriter()
 {
   this->FileName = NULL;
   this->RasToIJKMatrix = NULL;
+  this->MeasurementFrameMatrix = NULL;
   this->UseCompression = 0;
   this->ImageIOClassName = NULL;
 }
@@ -278,6 +323,7 @@ void vtkITKImageWriter::Write()
 
   this->GetInput()->UpdateInformation();
   this->GetInput()->SetUpdateExtent(this->GetInput()->GetWholeExtent());
+
 
   if (this->GetInput()->GetNumberOfScalarComponents() == 1) {
 
@@ -386,6 +432,49 @@ void vtkITKImageWriter::Write()
         return; 
       }
   } // vector
+  else if (this->GetInput()->GetNumberOfScalarComponents() == 9) {
+
+    // take into consideration the scalar type
+    switch (this->GetInput()->GetScalarType())
+      {
+      case VTK_FLOAT:
+        {
+        typedef itk::DiffusionTensor3D<float> TensorPixelType;
+        vtkSmartPointer<vtkImageData> outImage = vtkSmartPointer<vtkImageData>::New();
+        outImage->SetDimensions(this->GetInput()->GetDimensions());
+        outImage->SetWholeExtent(this->GetInput()->GetWholeExtent());
+        outImage->SetOrigin(0, 0, 0);
+        outImage->SetSpacing(1, 1, 1);
+        outImage->SetNumberOfScalarComponents(6);
+        outImage->SetScalarTypeToFloat();
+        outImage->AllocateScalars();
+        vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
+        vtkFloatArray* in = vtkFloatArray::SafeDownCast(this->GetInput()->GetPointData()->GetTensors());
+        float inValue[9];
+        float outValue[6];
+        for(int i=0; i<out->GetNumberOfTuples(); i++)
+          {
+          in->GetTupleValue(i, inValue);
+          //ITK expect tensors saved in upper-triangular format
+          outValue[0] = inValue[0];
+          outValue[1] = inValue[1];
+          outValue[2] = inValue[2];
+          outValue[3] = inValue[4];
+          outValue[4] = inValue[7];
+          outValue[5] = inValue[8];
+          out->SetTuple(i, outValue);
+          }
+
+        ITKWriteVTKImage<TensorPixelType>(this, outImage,
+          this->GetFileName(), this->RasToIJKMatrix, this->MeasurementFrameMatrix);
+        }
+        this->GetInput()->GetPointData()->SetScalars(NULL);
+        break;
+      default:
+        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+        return; 
+      }
+  }
   else {
     vtkErrorMacro(<< "Can only export 1 or 3 component images");
     return; 

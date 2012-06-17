@@ -71,12 +71,18 @@ public:
     RasToIJKMatrix = mat;
   }
 
+  /// Set orienation matrix
+  void SetMeasurementFrameMatrix( vtkMatrix4x4* mat) {
+    MeasurementFrameMatrix = mat;
+  }
+
 protected:
   vtkITKImageWriter();
   ~vtkITKImageWriter();
 
   char *FileName;
   vtkMatrix4x4* RasToIJKMatrix;
+  vtkMatrix4x4* MeasurementFrameMatrix;
   int UseCompression;
   char* ImageIOClassName;
 

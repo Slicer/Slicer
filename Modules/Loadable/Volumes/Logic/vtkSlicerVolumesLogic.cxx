@@ -308,10 +308,10 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   // check to see if can read this type of file
   if (storageNode->SupportedFileType(filename) == 0)
     {
-      vtkErrorMacro("LoadArchetypeScalarVolume: volume archetype storage node can't read this kind of file: " << filename);
+      vtkErrorMacro("AddArchetypeScalarVolume: volume archetype storage node can't read this kind of file: " << filename);
       return NULL;
     }
-  else { vtkDebugMacro("LoadArchetypeScalarVolume: filename is a supported type"); }
+  else { vtkDebugMacro("AddArchetypeScalarVolume: filename is a supported type"); }
 
   storageNode->SetCenterImage(centerImage);
   storageNode->SetSingleFile(singleFile);
@@ -321,7 +321,13 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
   if (volname == NULL)
     {
     const std::string fname(filename);
+    std::string ext = vtksys::SystemTools::GetFilenameLastExtension(filename);
     std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+    if (ext == "gz")
+      {
+      ext =  vtksys::SystemTools::GetFilenameLastExtension(basename) + ext;
+      basename =  vtksys::SystemTools::GetFilenameWithoutExtension(basename);
+      }
     std::string uname = this->GetMRMLScene()->GetUniqueNameByString(basename.c_str());
     scalarNode->SetName(uname.c_str());
     }
@@ -330,7 +336,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
     std::string name = this->GetMRMLScene()->GetUniqueNameByString(volname);
     scalarNode->SetName(name.c_str());
     }
-  vtkDebugMacro("LoadArchetypeScalarVolume: set scalar node name: " << scalarNode->GetName());
+  vtkDebugMacro("AddArchetypeScalarVolume: set scalar node name: " << scalarNode->GetName());
   scalarNode->SetLabelMap(labelMap);
   
   this->GetMRMLScene()->SaveStateForUndo();
@@ -357,15 +363,15 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
       }
     }
   
-  vtkDebugMacro("LoadArchetypeScalarVolume: adding storage node to the scene");
+  vtkDebugMacro("AddArchetypeScalarVolume: adding storage node to the scene");
   this->GetMRMLScene()->AddNode(storageNode);
-  vtkDebugMacro("LoadArchetypeScalarVolume: adding display node to the scene");
+  vtkDebugMacro("AddArchetypeScalarVolume: adding display node to the scene");
   this->GetMRMLScene()->AddNode(displayNode);
   
   scalarNode->SetAndObserveStorageNodeID(storageNode->GetID());
   scalarNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
-  vtkDebugMacro("LoadArchetypeScalarVolume: adding scalar node to the scene");
+  vtkDebugMacro("AddArchetypeScalarVolume: adding scalar node to the scene");
   this->GetMRMLScene()->AddNode(scalarNode);
 
 
@@ -569,7 +575,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   dtdisplayNode->SetAutoWindowLevel(1);
   this->GetMRMLScene()->AddNode(dtdisplayNode);
   this->GetMRMLScene()->AddNode(tensorNode);
-  tensorNode->SetAndObserveStorageNodeID(storageNode1->GetID());
+  tensorNode->SetAndObserveStorageNodeID(storageNode2->GetID());
   tensorNode->SetAndObserveDisplayNodeID(dtdisplayNode->GetID());
     
   // set up the vector node's support nodes
@@ -609,13 +615,13 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     vtkDebugMacro("Done setting volumeNode to class: "<<volumeNode->GetClassName());
     nodeSetUsed = 1;
     }
-  else if (storageNode1->ReadData(tensorNode))
+  else if (storageNode2->ReadData(tensorNode))
     {
     vtkDebugMacro("Tensor HAS BEEN READ");    
     displayNode = dtdisplayNode;
     dtdisplayNode->AddSliceGlyphDisplayNodes(tensorNode);
     volumeNode = tensorNode;
-    storageNode = storageNode1;
+    storageNode = storageNode2;
     nodeSetUsed = 2;
     }
   else if (storageNode1->ReadData(vectorNode))
@@ -778,7 +784,7 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
   // Use NRRD writer if we are dealing with DWI, DTI or vector volumes
 
   if (volumeNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") ||
-      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") ||
+//      volumeNode->IsA("vtkMRMLDiffusionTensorVolumeNode") ||
       volumeNode->IsA("vtkMRMLVectorVolumeNode"))
     {
 
