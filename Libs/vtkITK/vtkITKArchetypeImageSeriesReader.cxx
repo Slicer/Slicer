@@ -11,18 +11,24 @@
   Version:   $Revision$
 
 ==========================================================================*/
+
+// VTKITK includes
 #include "vtkITKArchetypeImageSeriesReader.h"
 
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkMath.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+
+// ITK includes
+#include <itkMetaDataDictionary.h>
+#include <itkMetaDataObjectBase.h>
+#include <itkMetaDataObject.h>
+#include <itkTimeProbe.h>
+
+// STD includes
 #include <vector>
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
-#include "itkMetaDataDictionary.h"
-#include "itkMetaDataObjectBase.h"
-#include "itkMetaDataObject.h"
-
-#include "vtkMath.h"
-
-#include "itkTimeProbe.h"
 
 // Commented out redefinition of ExceptionMacro
 #ifdef REDEFINE_EXCEPTION_MACROS
@@ -810,6 +816,18 @@ void vtkITKArchetypeImageSeriesReader::AssembleNthVolume ( int n )
     this->FileNames.push_back(nameInString);
   }
 
+}
+
+//----------------------------------------------------------------------------
+unsigned int vtkITKArchetypeImageSeriesReader::GetNumberOfFileNames()
+{
+  return this->FileNames.size();
+}
+
+//----------------------------------------------------------------------------
+const std::vector<std::string>& vtkITKArchetypeImageSeriesReader::GetFileNames()
+{
+  return this->FileNames;
 }
 
 //----------------------------------------------------------------------------

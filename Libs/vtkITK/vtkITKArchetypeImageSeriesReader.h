@@ -27,21 +27,20 @@ Version:   $Revision$
 #ifndef __vtkITKArchetypeImageSeriesReader_h
 #define __vtkITKArchetypeImageSeriesReader_h
 
-#include "vtkImageSource.h"
-#include "vtkMatrix4x4.h"
-#include "itkSpatialOrientation.h"
-#include <vector>
-#include <string>
-
-#include "itkMetaDataDictionary.h"
-#if ITK_VERSION_MAJOR < 4
-#include "gdcmDictSet.h"        /// access to dictionary
-#endif
-#include "gdcmDict.h"           /// access to dictionary
-#include "gdcmDictEntry.h"      /// access to dictionary
-#include "gdcmGlobal.h"         /// access to dictionary
-
+// VTKITK includes
 #include "vtkITK.h"
+
+// VTK includes
+#include "vtkImageSource.h"
+class vtkMatrix4x4;
+
+// ITK includes
+#include "itkMetaDataDictionary.h"
+#include "itkSpatialOrientation.h"
+
+// STD includes
+#include <string>
+#include <vector>
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
 {
@@ -57,12 +56,12 @@ public:
   vtkSetStringMacro(Archetype);
   vtkGetStringMacro(Archetype);
 
-  /// 
+  ///
   /// See how many file names were generated during ExecuteInformation
-  unsigned int GetNumberOfFileNames()
-    {
-    return this->FileNames.size();
-    };
+  unsigned int GetNumberOfFileNames();
+  ///
+  /// Return all the file names
+  const std::vector<std::string>& GetFileNames();
 
   /// 
   /// Specify the file names to be used when looking for extra files
@@ -138,6 +137,8 @@ public:
     this->UseNativeCoordinateOrientation = 1;
     this->Modified();
     }
+  vtkGetMacro(DesiredCoordinateOrientation, CoordinateOrientationCode);
+  vtkGetMacro(UseNativeCoordinateOrientation, char);
 
   /// 
   /// Set the data type of pixels in the file.  

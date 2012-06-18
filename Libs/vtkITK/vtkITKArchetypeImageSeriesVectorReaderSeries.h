@@ -16,23 +16,31 @@
 #define __vtkITKArchetypeImageSeriesVectorReaderSeries_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
-
-#include "itkImageFileReader.h"
+namespace itk
+{
+  class ProcessObject;
+  class ProgressEvent;
+};
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReaderSeries : public vtkITKArchetypeImageSeriesReader
 {
- public:
+public:
   static vtkITKArchetypeImageSeriesVectorReaderSeries *New();
   vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
- protected:
+protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
   void ExecuteData(vtkDataObject *data);
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
   /// private:
+  template<class T>
+  friend void vtkITKExecuteDataFromSeriesVector(
+    vtkITKArchetypeImageSeriesVectorReaderSeries* self,
+    vtkImageData* data,
+    vtkDataObject* output);
 };
 
 #endif

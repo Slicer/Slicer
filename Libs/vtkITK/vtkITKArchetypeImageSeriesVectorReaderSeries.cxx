@@ -12,16 +12,28 @@
 
 ==========================================================================*/
 
+// VTKITK includes
 #include "vtkITKArchetypeImageSeriesVectorReaderSeries.h"
 
-#include "vtkDataArray.h"
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
+// VTK includes
 #include <vtkCommand.h>
+#include <vtkDataArray.h>
+#include <vtkImageData.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 
-#include "itkOrientImageFilter.h"
-#include "itkImageSeriesReader.h"
+// ITK includes
+#include <itkImageFileReader.h>
+#include <itkImageSeriesReader.h>
+#include <itkOrientImageFilter.h>
+
+// GDCM includes
+#include "gdcmDict.h"           /// access to dictionary
+#include "gdcmDictEntry.h"      /// access to dictionary
+#if ITK_VERSION_MAJOR < 4
+#include "gdcmDictSet.h"        /// access to dictionary
+#endif
+#include "gdcmGlobal.h"         /// access to dictionary
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReaderSeries);
 vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderSeries, "$Revision: 4068 $");
@@ -44,6 +56,48 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::PrintSelf(ostream& os, vtkInd
 }
 
 //----------------------------------------------------------------------------
+template <class T>
+void vtkITKExecuteDataFromSeriesVector(
+  vtkITKArchetypeImageSeriesVectorReaderSeries* self,
+  vtkImageData* data,
+  vtkDataObject* output)
+{
+  typedef T VectorPixelType;
+  typedef itk::VectorImage<VectorPixelType,3> image;
+  typedef itk::ImageSource<image> FilterType;
+  FilterType::Pointer filter;
+  itk::ImageSeriesReader<image>::Pointer reader =
+  itk::ImageSeriesReader<image>::New();
+  itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New();
+  pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&self->ReadProgressCallback);
+  pcl->SetClientData(self);
+  reader->SetFileNames(self->GetFileNames());
+  reader->ReleaseDataFlagOn();
+  reader->GetOutput()->SetVectorLength(3);
+  if (self->GetUseNativeCoordinateOrientation())
+    {
+    filter = reader;
+    }
+  else
+    {
+    itk::OrientImageFilter<image,image>::Pointer orient =
+        itk::OrientImageFilter<image,image>::New();
+    orient->SetDebug(self->GetDebug());
+    orient->SetInput(reader->GetOutput());
+    orient->UseImageDirectionOn();
+    orient->SetDesiredCoordinateOrientation(
+      self->GetDesiredCoordinateOrientation());
+    filter = orient;
+    }
+  filter->UpdateLargestPossibleRegion();
+  itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer;
+  PixelContainer = filter->GetOutput()->GetPixelContainer();
+  void *ptr = static_cast<void *> (PixelContainer->GetBufferPointer());
+  (dynamic_cast<vtkImageData *>(output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer->Size(), 0);
+  PixelContainer->ContainerManageMemoryOff();
+}
+
+//----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
 void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *output)
@@ -60,48 +114,6 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
 
-  /// VECTOR MACRO
-#define vtkITKExecuteDataFromSeriesVector(typeN, type) \
-    case typeN: \
-    {\
-      typedef type    VectorPixelType;\
-      typedef itk::VectorImage<VectorPixelType,3> image##typeN;\
-      typedef itk::ImageSource<image##typeN> FilterType; \
-      FilterType::Pointer filter; \
-      itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-      itk::ImageSeriesReader<image##typeN>::New(); \
-      itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
-      pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
-      pcl->SetClientData(this); \
-      reader##typeN->SetFileNames(this->FileNames); \
-      reader##typeN->ReleaseDataFlagOn(); \
-      reader##typeN->GetOutput()->SetVectorLength(3); \
-      if (this->UseNativeCoordinateOrientation) \
-        { \
-        filter = reader##typeN; \
-        } \
-      else \
-        { \
-        itk::OrientImageFilter<image##typeN,image##typeN>::Pointer orient##typeN = \
-            itk::OrientImageFilter<image##typeN,image##typeN>::New(); \
-        if (this->Debug) {orient##typeN->DebugOn();} \
-        orient##typeN->SetInput(reader##typeN->GetOutput()); \
-        orient##typeN->UseImageDirectionOn(); \
-        orient##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
-        filter = orient##typeN; \
-        }\
-      filter->UpdateLargestPossibleRegion(); \
-      itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer##typeN;\
-      PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
-      void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
-      (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0);\
-      PixelContainer##typeN->ContainerManageMemoryOff();\
-    }\
-    break
-
-  // END VECTOR MACRO
-
-
     // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
     {
@@ -114,16 +126,16 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
       {
       switch (this->OutputScalarType)
         {
-        vtkITKExecuteDataFromSeriesVector(VTK_DOUBLE, double);
-        vtkITKExecuteDataFromSeriesVector(VTK_FLOAT, float);
-        vtkITKExecuteDataFromSeriesVector(VTK_LONG, long);
-        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_LONG, unsigned long);
-        vtkITKExecuteDataFromSeriesVector(VTK_INT, int);
-        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_INT, unsigned int);
-        vtkITKExecuteDataFromSeriesVector(VTK_SHORT, short);
-        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_SHORT, unsigned short);
-        vtkITKExecuteDataFromSeriesVector(VTK_CHAR, char);
-        vtkITKExecuteDataFromSeriesVector(VTK_UNSIGNED_CHAR, unsigned char);
+        vtkTemplateMacroCase(VTK_DOUBLE, double, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_FLOAT, float, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_LONG, long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_INT, int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_SHORT, short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_CHAR, char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
         default:
           vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
         }
