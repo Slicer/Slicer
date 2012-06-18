@@ -57,11 +57,11 @@ endif()
 # --------------------------------------------------------------------------
 set(vtkITK_SRCS
   vtkITKNumericTraits.cxx
+  vtkITKArchetypeDiffusionTensorImageReaderFile.cxx
   vtkITKArchetypeImageSeriesReader.cxx
   vtkITKArchetypeImageSeriesScalarReader.cxx
   vtkITKArchetypeImageSeriesVectorReaderFile.cxx
   vtkITKArchetypeImageSeriesVectorReaderSeries.cxx
-  vtkITKArchetypeDiffusionTensorImageReaderFile.cxx
   vtkITKImageWriter.cxx
   vtkITKImageToImageFilter.h
   vtkITKImageToImageFilterFF.h

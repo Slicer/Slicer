@@ -14,22 +14,23 @@
 
 #include "vtkITKImageWriter.h"
 
-#include "vtkSmartPointer.h"
+#include "vtkFloatArray.h"
 #include "vtkImageExport.h"
 #include "vtkImageFlip.h"
-#include "vtkPointData.h"
-#include "vtkFloatArray.h"
-
-#include "itkMetaDataDictionary.h"
-#include "itkMetaDataObjectBase.h"
-#include "itkMetaDataObject.h"
-#include "itkVTKImageImport.h"
-#include "itkImageFileWriter.h"
-#include "itkDiffusionTensor3D.h"
 #include "vtkITKUtility.h"
+#include "vtkPointData.h"
+#include "vtkSmartPointer.h"
 
 // VTKsys includes
 #include <vtksys/SystemTools.hxx>
+
+#include "itkImageFileWriter.h"
+#include "itkDiffusionTensor3D.h"
+#include "itkMetaDataDictionary.h"
+#include "itkMetaDataObject.h"
+#include "itkMetaDataObjectBase.h"
+#include "itkVTKImageImport.h"
+
 
 vtkStandardNewMacro(vtkITKImageWriter);
 vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision$")

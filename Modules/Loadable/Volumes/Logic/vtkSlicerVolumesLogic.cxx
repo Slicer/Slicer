@@ -323,7 +323,7 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume (const 
     const std::string fname(filename);
     std::string ext = vtksys::SystemTools::GetFilenameLastExtension(filename);
     std::string basename = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
-    if (ext == "gz")
+    if (ext == ".gz")
       {
       ext =  vtksys::SystemTools::GetFilenameLastExtension(basename) + ext;
       basename =  vtksys::SystemTools::GetFilenameWithoutExtension(basename);

@@ -51,6 +51,7 @@ public:
   /// use compression if possible
   vtkGetMacro (UseCompression, int);
   vtkSetMacro (UseCompression, int);
+  vtkBooleanMacro(UseCompression, int);
 
   /// 
   /// Set/Get the input object from the image pipeline.

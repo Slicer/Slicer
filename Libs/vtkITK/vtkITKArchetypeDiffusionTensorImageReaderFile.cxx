@@ -14,17 +14,19 @@
 
 #include "vtkITKArchetypeDiffusionTensorImageReaderFile.h"
 
-#include "vtkDataArray.h"
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkSmartPointer.h"
-#include "vtkFloatArray.h"
-#include <vtkCommand.h>
 
-#include "itkOrientImageFilter.h"
-#include "itkDiffusionTensor3D.h"
+#include "vtkCommand.h"
+#include "vtkDataArray.h"
+#include "vtkFloatArray.h"
+#include "vtkImageData.h"
+#include "vtkPointData.h"
+#include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
+
+
 #include "itkImageRegionConstIteratorWithIndex.h"
+#include "itkDiffusionTensor3D.h"
+#include "itkOrientImageFilter.h"
 
 vtkStandardNewMacro(vtkITKArchetypeDiffusionTensorImageReaderFile);
 vtkCxxRevisionMacro(vtkITKArchetypeDiffusionTensorImageReaderFile, "$Revision: 4068 $");
