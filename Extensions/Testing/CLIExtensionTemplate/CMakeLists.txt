@@ -33,13 +33,13 @@ configure_file(
 #add_subdirectory(Logic)
 
 #-----------------------------------------------------------------------------
-set(cli_module_include_directories
+set(MODULE_INCLUDE_DIRECTORIES
   )
 
-set(cli_module_SRCS
+set(MODULE_SRCS
   )
 
-set(cli_module_target_libraries
+set(MODULE_TARGET_LIBRARIES
   ${ITK_LIBRARIES}
   )
 
@@ -47,9 +47,9 @@ set(cli_module_target_libraries
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   #LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
-  TARGET_LIBRARIES ${cli_module_target_libraries}
-  INCLUDE_DIRECTORIES ${cli_module_include_directories}
-  ADDITIONAL_SRCS ${cli_module_SRCS}
+  TARGET_LIBRARIES ${MODULE_TARGET_LIBRARIES}
+  INCLUDE_DIRECTORIES ${MODULE_INCLUDE_DIRECTORIES}
+  ADDITIONAL_SRCS ${MODULE_SRCS}
   #EXECUTABLE_ONLY
   )
 
