@@ -11,8 +11,8 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-/// \deprecated Used for reading in Slicer3 fiducial lists, please use the
-///  Annotation Module MRML storage nodes
+/// \deprecated Used for reading in Slicer3 fiducial lists, please use the Annotation Module MRML storage nodes
+/// \sa vtkMRMLAnnotationStorageNode, vtkMRMLAnnotationFiducialsStorageNode
 ///
 ///  vtkMRMLFiducialListStorageNode - MRML node for handling fiducial list storage
 /// 
@@ -28,6 +28,9 @@ class VTK_MRML_EXPORT vtkMRMLFiducialListStorageNode
   : public vtkMRMLStorageNode
 {
 public:
+  /// \deprecated Used for reading in Slicer3 fiducial lists, please use the Annotation Module MRML storage nodes
+  /// \sa vtkMRMLAnnotationStorageNode, vtkMRMLAnnotationFiducialsStorageNode
+  ///
   static vtkMRMLFiducialListStorageNode *New();
   vtkTypeMacro(vtkMRMLFiducialListStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);

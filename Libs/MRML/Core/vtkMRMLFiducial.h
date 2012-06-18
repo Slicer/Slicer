@@ -11,8 +11,8 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the
-///  Annotation Module MRML nodes
+/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
+/// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
 ///
 ///  vtkMRMLFiducial - MRML object to represent a 3D point.
 /// 
@@ -30,6 +30,9 @@ class vtkMatrix4x4;
 class VTK_MRML_EXPORT vtkMRMLFiducial : public vtkObject
 {
 public:
+  /// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
+  /// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
+  ///
   static vtkMRMLFiducial *New();
   vtkTypeMacro(vtkMRMLFiducial,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
