@@ -33,28 +33,6 @@
       <index>1</index>
       <description><![CDATA[Tractography result]]></description>
     </geometry>
-    <boolean>
-      <name>WriteToFile</name>
-      <label>Write Fibers To Disk</label>
-      <longflag>--writetofile</longflag>
-      <description><![CDATA[Write fibers to disk or create in the scene?]]></description>
-      <default>false</default>
-    </boolean>
-    <directory>
-      <name>OutputDirectory</name>
-      <label>Output Directory</label>
-      <channel>output</channel>
-      <longflag>--outputdirectory</longflag>
-      <description><![CDATA[Directory in which to save fiber(s)]]></description>
-    </directory>
-    <string>
-      <name>FilePrefix</name>
-      <label>File Prefix Name</label>
-      <flag>-n</flag>
-      <longflag>--name</longflag>
-      <description><![CDATA[Name to use for fiber files]]></description>
-      <default>line</default>
-    </string>
   </parameters>
   <parameters>
     <label>Seed Placement Options</label>
@@ -192,5 +170,31 @@
       <description><![CDATA[Label value that defines seeding region.]]></description>
       <default>1</default>
     </integer>
+  </parameters>
+  <parameters>
+    <label>Multiple File Output</label>
+    <description><![CDATA[Multiple file output parameters]]></description>
+    <boolean>
+      <name>WriteToFile</name>
+      <label>Write Fibers To Disk</label>
+      <longflag>--writetofile</longflag>
+      <description><![CDATA[Write fibers to disk or create in the scene?]]></description>
+      <default>false</default>
+    </boolean>
+    <directory>
+      <name>OutputDirectory</name>
+      <label>Output Directory</label>
+      <channel>output</channel>
+      <longflag>--outputdirectory</longflag>
+      <description><![CDATA[Directory in which to save fiber(s)]]></description>
+    </directory>
+    <string>
+      <name>FilePrefix</name>
+      <label>File Prefix Name</label>
+      <flag>-n</flag>
+      <longflag>--name</longflag>
+      <description><![CDATA[Name to use for fiber files]]></description>
+      <default>line</default>
+    </string>
   </parameters>
 </executable>
