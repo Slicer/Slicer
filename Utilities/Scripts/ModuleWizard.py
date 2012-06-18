@@ -18,6 +18,7 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.py") or \
               fnmatch.fnmatch(file, "*.xml") or \
               fnmatch.fnmatch(file, "*.xml.in") or \
+              fnmatch.fnmatch(file, "*.md5") or \
               fnmatch.fnmatch(file, "*.png"):
             file = os.path.join(root,file)
             file = file[len(dir):] # strip common dir 
