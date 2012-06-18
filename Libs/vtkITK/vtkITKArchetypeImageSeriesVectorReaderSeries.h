@@ -29,18 +29,14 @@ public:
   vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesVectorReaderSeries,vtkITKArchetypeImageSeriesReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  static void ReadProgressCallback(itk::ProcessObject* obj,
+                                   const itk::ProgressEvent&,
+                                   void* data);
 protected:
   vtkITKArchetypeImageSeriesVectorReaderSeries();
   ~vtkITKArchetypeImageSeriesVectorReaderSeries();
 
   void ExecuteData(vtkDataObject *data);
-  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
-  /// private:
-  template<class T>
-  friend void vtkITKExecuteDataFromSeriesVector(
-    vtkITKArchetypeImageSeriesVectorReaderSeries* self,
-    vtkImageData* data,
-    vtkDataObject* output);
 };
 
 #endif

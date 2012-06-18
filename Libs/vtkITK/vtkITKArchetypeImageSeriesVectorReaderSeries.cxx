@@ -59,14 +59,13 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::PrintSelf(ostream& os, vtkInd
 template <class T>
 void vtkITKExecuteDataFromSeriesVector(
   vtkITKArchetypeImageSeriesVectorReaderSeries* self,
-  vtkImageData* data,
-  vtkDataObject* output)
+  vtkImageData* data)
 {
   typedef T VectorPixelType;
   typedef itk::VectorImage<VectorPixelType,3> image;
   typedef itk::ImageSource<image> FilterType;
-  FilterType::Pointer filter;
-  itk::ImageSeriesReader<image>::Pointer reader =
+  typename FilterType::Pointer filter;
+  typename itk::ImageSeriesReader<image>::Pointer reader =
   itk::ImageSeriesReader<image>::New();
   itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New();
   pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&self->ReadProgressCallback);
@@ -80,7 +79,7 @@ void vtkITKExecuteDataFromSeriesVector(
     }
   else
     {
-    itk::OrientImageFilter<image,image>::Pointer orient =
+    typename itk::OrientImageFilter<image,image>::Pointer orient =
         itk::OrientImageFilter<image,image>::New();
     orient->SetDebug(self->GetDebug());
     orient->SetInput(reader->GetOutput());
@@ -90,10 +89,10 @@ void vtkITKExecuteDataFromSeriesVector(
     filter = orient;
     }
   filter->UpdateLargestPossibleRegion();
-  itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer;
+  typename itk::ImportImageContainer<unsigned long, VectorPixelType>::Pointer PixelContainer;
   PixelContainer = filter->GetOutput()->GetPixelContainer();
   void *ptr = static_cast<void *> (PixelContainer->GetBufferPointer());
-  (dynamic_cast<vtkImageData *>(output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer->Size(), 0);
+  data->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer->Size(), 0);
   PixelContainer->ContainerManageMemoryOff();
 }
 
@@ -126,16 +125,16 @@ void vtkITKArchetypeImageSeriesVectorReaderSeries::ExecuteData(vtkDataObject *ou
       {
       switch (this->OutputScalarType)
         {
-        vtkTemplateMacroCase(VTK_DOUBLE, double, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_FLOAT, float, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_LONG, long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_INT, int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_SHORT, short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_CHAR, char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
-        vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data, output));
+        vtkTemplateMacroCase(VTK_DOUBLE, double, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_FLOAT, float, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_LONG, long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_INT, int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_SHORT, short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_CHAR, char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
+        vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, vtkITKExecuteDataFromSeriesVector<VTK_TT>(this, data));
         default:
           vtkErrorMacro(<< "UpdateFromFile Series: Unknown data type " << this->OutputScalarType);
         }

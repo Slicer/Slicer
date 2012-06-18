@@ -37,7 +37,7 @@ vtkITKArchetypeDiffusionTensorImageReaderFile::vtkITKArchetypeDiffusionTensorIma
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorImageReaderFile() 
+vtkITKArchetypeDiffusionTensorImageReaderFile::~vtkITKArchetypeDiffusionTensorImageReaderFile()
 {
 }
 
@@ -58,9 +58,9 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   typedef itk::DiffusionTensor3D<T> DiffusionTensor3DPixelType;
   typedef itk::Image<DiffusionTensor3DPixelType,3> ImageType;
   typedef itk::ImageSource<ImageType> FilterType;
-  FilterType::Pointer filter;
+  typename FilterType::Pointer filter;
   typedef itk::ImageFileReader<ImageType> ReaderType;
-  ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(self->GetFileName(0));
   if (self->GetUseNativeCoordinateOrientation())
     {
@@ -68,7 +68,7 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
     }
   else
     {
-    itk::OrientImageFilter<ImageType,ImageType>::Pointer orient2 =
+    typename itk::OrientImageFilter<ImageType,ImageType>::Pointer orient2 =
       itk::OrientImageFilter<ImageType,ImageType>::New();
     orient2->SetDebug(self->GetDebug());
     orient2->SetInput(reader->GetOutput());
