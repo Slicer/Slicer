@@ -669,7 +669,8 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLFreeSurferModelOverlayStorageNode::CanWriteFromReferenceNode(vtkMRMLNode *refNode)
+bool vtkMRMLFreeSurferModelOverlayStorageNode
+::CanWriteFromReferenceNode(vtkMRMLNode *vtkNotUsed(refNode))
 {
   return false;
 }
