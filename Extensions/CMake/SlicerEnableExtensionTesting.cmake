@@ -15,6 +15,8 @@ endif()
 find_package(Git)
 find_package(Subversion)
 
+set(Slicer_EXTENSIONS_TRACK_QUALIFIER "master" CACHE STRING "CDash extensions track qualifier (master, 4.1, ...)")
+
 set(CTEST_MODEL "Experimental")
 include(SlicerBlockUploadExtension)
 add_custom_target(Experimental${target_qualifier}
