@@ -2,7 +2,9 @@
 #include "vtkImageData.h"
 #include "ProbeVolumeWithModelCLP.h"
 
+#include "vtkPolyData.h"
 #include "vtkXMLPolyDataReader.h"
+#include "vtkPolyDataReader.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkProbeFilter.h"
@@ -23,9 +25,24 @@ int main( int argc, char * argv[] )
   //  return EXIT_FAILURE;
   //  }
 
-  vtkXMLPolyDataReader *readerPD = vtkXMLPolyDataReader::New();
-  readerPD->SetFileName(InputModel.c_str() );
-  readerPD->Update();
+  vtkXMLPolyDataReader *readerXMLPD = vtkXMLPolyDataReader::New();
+  vtkPolyDataReader *readerVTKPD = vtkPolyDataReader::New();
+  vtkPolyData* polyDataRead = NULL;
+
+  if (readerXMLPD->CanReadFile(InputModel.c_str()))
+  {
+    readerXMLPD->SetFileName(InputModel.c_str() );
+    readerXMLPD->Update();
+    polyDataRead = readerXMLPD->GetOutput();
+  }
+  else if (readerVTKPD->IsFileValid(InputModel.c_str()))
+  {
+    readerVTKPD->SetFileName(InputModel.c_str() );
+    readerVTKPD->Update();
+    polyDataRead = readerVTKPD->GetOutput();
+  } else {
+    return -1;
+  }
 
   vtkProbeFilter *probe = vtkProbeFilter::New();
 
@@ -54,7 +71,7 @@ int main( int argc, char * argv[] )
   // 3. Transform fibers
   vtkTransformPolyDataFilter *transformer = vtkTransformPolyDataFilter::New();
   transformer->SetTransform( trans );
-  transformer->SetInput( readerPD->GetOutput() );
+  transformer->SetInput( polyDataRead );
   transformer->Update();
 
   // 4. Probe's input data is polydata (fibers)
@@ -86,7 +103,8 @@ int main( int argc, char * argv[] )
   trans->Delete();
   trans2->Delete();
   ROI_A_RASToIJK->Delete();
-  readerPD->Delete();
+  readerXMLPD->Delete();
+  readerVTKPD->Delete();
   readerVol->Delete();
 
   return EXIT_SUCCESS;
