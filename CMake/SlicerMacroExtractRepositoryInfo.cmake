@@ -119,13 +119,10 @@ macro(SlicerMacroExtractRepositoryInfo)
 
     else()
 
-      find_package(CVS REQUIRED)
-
       # Is <SOURCE_DIR> a CVS working copy ?
       if(EXISTS ${MY_SOURCE_DIR}/CVS)
 
-        # TODO
-        message(AUTHOR_WARNING "CVS info extraction not yet implemented !")
+        message(AUTHOR_WARNING "CVS info extraction *NOT* implemented !")
 
       endif()
     endif()
