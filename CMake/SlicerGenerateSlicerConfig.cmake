@@ -99,6 +99,10 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG PythonLibs PythonInterp)
 endif()
 
+if(Slicer_BUILD_CLI_SUPPORT)
+  set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES})
+endif()
+
 # Export Targets file.
 set(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
 

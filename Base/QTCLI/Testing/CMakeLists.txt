@@ -1,6 +1,6 @@
 set(KIT ${PROJECT_NAME})
 
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME CLIModule4Test
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   NO_INSTALL

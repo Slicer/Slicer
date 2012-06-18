@@ -36,7 +36,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git"
-    GIT_TAG "6543a3d9dc21078b544d4071973aa5c46993809d"
+    GIT_TAG "d79a25543ee101e6f5a12be9dd41f1b6e0c9b6aa"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     UPDATE_COMMAND ""

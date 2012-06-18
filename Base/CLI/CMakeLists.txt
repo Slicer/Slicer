@@ -6,20 +6,24 @@ project(SlicerBaseCLI)
 find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
 
 # --------------------------------------------------------------------------
-# Update Slicer_BaseCLI_INCLUDE_DIRS
+# Include dirs
 # --------------------------------------------------------------------------
 set(Slicer_BaseCLI_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-  CACHE INTERNAL "Slicer BaseCLI includes" FORCE)
-
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
+  )
 set(include_dirs
   ${Slicer_BaseCLI_INCLUDE_DIRS}
   ${ModuleDescriptionParser_INCLUDE_DIRS}
   )
 include_directories(${include_dirs})
+
+# --------------------------------------------------------------------------
+# Update SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES
+# --------------------------------------------------------------------------
+set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES
+  ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES} ${Slicer_BaseCLI_INCLUDE_DIRS}
+  CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE
+  )
 
 # --------------------------------------------------------------------------
 # Update Slicer_Base_INCLUDE_DIRS

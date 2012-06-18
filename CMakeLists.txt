@@ -675,6 +675,11 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 
 #-----------------------------------------------------------------------------
+# SlicerExecutionModel settings
+#-----------------------------------------------------------------------------
+set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES "" CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE)
+
+#-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables
 #-----------------------------------------------------------------------------
 set(GenerateLM_DIR ${Slicer_BINARY_DIR}/Libs/GenerateLM)
