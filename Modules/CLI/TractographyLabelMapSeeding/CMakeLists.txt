@@ -16,7 +16,7 @@ slicerMacroBuildCLI(
     ${vtkITK_BINARY_DIR}
     ${vtkTeem_SOURCE_DIR}
     ${vtkTeem_BINARY_DIR}
-  EXECUTABLE_ONLY
+    #  EXECUTABLE_ONLY
   )
 
 #-----------------------------------------------------------------------------

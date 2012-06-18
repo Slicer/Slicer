@@ -10,12 +10,13 @@
 
 // VTK includes
 #include <vtkSmartPointer.h>
-#include <vtkNRRDReader.h>
+#include <vtkITKArchetypeDiffusionTensorImageReaderFile.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkMath.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
+#include <vtkPointData.h>
 
 int main( int argc, char * argv[] )
 {
@@ -27,8 +28,9 @@ int main( int argc, char * argv[] )
   PARSE_ARGS;
   try
     {
-    vtkSmartPointer<vtkNRRDReader> reader = vtkSmartPointer<vtkNRRDReader>::New();
-    reader->SetFileName(InputVolume.c_str() );
+    vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile> reader = vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile>::New();
+    reader->SetArchetype(InputVolume.c_str() );
+    reader->SetSingleFile(1);
     reader->Update();
 
     if( reader->GetOutput()->GetPointData()->GetTensors() == NULL )
@@ -39,7 +41,7 @@ int main( int argc, char * argv[] )
 
 
     vtkSmartPointer<vtkImageData> ROI;
-    vtkSmartPointer<vtkNRRDReader> reader2 = vtkSmartPointer<vtkNRRDReader>::New();
+    vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader2 = vtkSmartPointer<vtkITKArchetypeImageSeriesReader>::New();
     vtkSmartPointer<vtkImageCast> imageCast = vtkSmartPointer<vtkImageCast>::New();
     vtkSmartPointer<vtkDiffusionTensorMathematics> math = vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
     vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
@@ -47,7 +49,7 @@ int main( int argc, char * argv[] )
 
     if (InputROI.length() > 0)
     {
-      reader2->SetFileName(InputROI.c_str() );
+      reader2->AddFileName(InputROI.c_str() );
       reader2->Update();
 
       if( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
@@ -70,7 +72,7 @@ int main( int argc, char * argv[] )
       // ROI and tensor volumes.
       //
       ROIRASToIJK->DeepCopy(reader2->GetRasToIjkMatrix() );
-    } else {
+    } else { // If the mask does not exist, create one
       math->SetInput(0, reader->GetOutput());
 
       if( StoppingMode == std::string("LinearMeasurement") || StoppingMode == std::string("LinearMeasure") )
@@ -173,42 +175,6 @@ int main( int argc, char * argv[] )
     // vtkSmartPointer<vtkNRRDWriter> iwriter = vtkSmartPointer<vtkNRRDWriter>::New();
 
     // 3. Set up ROI (not based on Cl mask), from input now
-
-
-    // Create Cl mask
-    /**
-    iwriter->SetInput(imageCast->GetOutput());
-    iwriter->SetFileName("C:/Temp/cast.nhdr");
-    iwriter->Write();
-
-
-    vtkSmartPointer<vtkDiffusionTensorMathematicsSimple> math = vtkSmartPointer<vtkDiffusionTensorMathematicsSimple>::New();
-    math->SetInput(0, reader->GetOutput());
-    // math->SetInput(1, reader->GetOutput());
-    math->SetScalarMask(imageCast->GetOutput());
-    math->MaskWithScalarsOn();
-    math->SetMaskLabelValue(ROIlabel);
-    math->SetOperationToLinearMeasure();
-    math->Update();
-
-    iwriter->SetInput(math->GetOutput());
-    iwriter->SetFileName("C:/Temp/math.nhdr");
-    iwriter->Write();
-
-    vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
-    th->SetInput(math->GetOutput());
-    th->ThresholdBetween(ClTh,1);
-    th->SetInValue(1);
-    th->SetOutValue(0);
-    th->ReplaceInOn();
-    th->ReplaceOutOn();
-    th->SetOutputScalarTypeToShort();
-    th->Update();
-
-    iwriter->SetInput(th->GetOutput());
-    iwriter->SetFileName("C:/Temp/th.nhdr");
-    iwriter->Write();
-    **/
 
     vtkSmartPointer<vtkTransform> trans2 = vtkSmartPointer<vtkTransform>::New();
     trans2->Identity();
