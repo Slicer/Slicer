@@ -4,8 +4,9 @@
 #include "vtkSeedTracts.h"
 
 // ITK includes
+#include <itkConfigure.h>
 #if ITK_VERSION_MAJOR >= 4
-#include "itkFloatingPointExceptions.h"
+#include <itkFloatingPointExceptions.h>
 #endif
 
 // VTK includes
