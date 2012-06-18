@@ -12,11 +12,15 @@
 #include <vtkSmartPointer.h>
 #include <vtkITKArchetypeDiffusionTensorImageReaderFile.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkPolyDataWriter.h>
 #include <vtkMath.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
 #include <vtkImageThreshold.h>
 #include <vtkPointData.h>
+#include <vtksys/SystemTools.hxx>
+
+#include <string>
 
 int main( int argc, char * argv[] )
 {
@@ -254,16 +258,32 @@ int main( int argc, char * argv[] )
     vtkSmartPointer<vtkPolyData> outFibers = vtkSmartPointer<vtkPolyData>::New();
 
     // Save result
-    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-    if( !WriteToFile )
+    if ( !WriteToFile )
       {
-      seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
-      writer->SetFileName(OutputFibers.c_str() );
-      // writer->SetFileTypeToBinary();
-      writer->SetInput(outFibers);
-      writer->Write();
+      std::string fileExtension = vtksys::SystemTools::GetFilenameLastExtension(OutputFibers.c_str());
+      if (fileExtension == ".vtk")
+        {
+          vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+          seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+          writer->SetFileName(OutputFibers.c_str());
+          writer->SetFileTypeToBinary();
+          writer->SetInput(outFibers);
+          writer->Write();
+        }
+      else 
+        {
+        if (fileExtension != ".vtp")
+          {
+          cerr << "Extension not recognize, saving the information in VTP format" << endl;
+          }
+        vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+        seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+        writer->SetFileName(OutputFibers.c_str() );
+        writer->SetInput(outFibers);
+        writer->Write();
+        }
       }
-    }
+  }
   catch( ... )
     {
     cout << "default exception";
