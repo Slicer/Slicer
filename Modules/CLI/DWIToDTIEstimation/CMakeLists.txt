@@ -3,7 +3,7 @@
 set(MODULE_NAME DWIToDTIEstimation) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
   TARGET_LIBRARIES MRMLCore vtkTeem SlicerBaseLogic

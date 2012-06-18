@@ -3,7 +3,7 @@
 set(MODULE_NAME ACPCTransform) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS

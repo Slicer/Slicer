@@ -8,7 +8,7 @@ if(WIN32)
 endif(WIN32)
 
 #-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   #LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   ADDITIONAL_SRCS

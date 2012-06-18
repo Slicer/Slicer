@@ -17,7 +17,7 @@ include(${SLICERLIBCURL_USE_FILE})
 find_package(GenerateCLP REQUIRED)
 include(${GenerateCLP_USE_FILE})
 
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${PROJECT_NAME}
   #LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${SLICERLIBCURL_LIBRARIES} ${ITK_LIBRARIES}

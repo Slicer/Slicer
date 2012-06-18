@@ -9,7 +9,7 @@ foreach(varname ITK_USE_REVIEW ITK_USE_REVIEW_STATISTICS ITK_USE_OPTIMIZED_REGIS
 endforeach()
 
 #-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES}

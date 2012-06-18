@@ -4,7 +4,7 @@ set(MODULE_NAME ModelMaker) # Do not use 'project()'
 
 #-----------------------------------------------------------------------------
 # TODO: Remove SlicerBaseLogic once pass in color node information
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
   TARGET_LIBRARIES vtkITK ModuleDescriptionParser MRMLCore SlicerBaseLogic SlicerBaseCLI

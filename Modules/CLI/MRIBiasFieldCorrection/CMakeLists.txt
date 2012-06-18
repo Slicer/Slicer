@@ -10,7 +10,7 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
-slicerMacroBuildCLI(
+SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/MIT_NAMIC_Logo.h
   TARGET_LIBRARIES ${ITK_LIBRARIES} vtkIO vtkImaging
