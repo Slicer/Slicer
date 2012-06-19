@@ -9,12 +9,15 @@ endif()
 # -------------------------------------------------------------------------
 # Install ITK
 # -------------------------------------------------------------------------
-set(component ALL)
-if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(component RuntimeLibraries)
-endif()
 if(NOT "${ITK_DIR}" STREQUAL "" AND EXISTS "${ITK_DIR}/CMakeCache.txt")
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;${component};/")
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;RuntimeLibraries;/")
+  if(${ITK_VERSION_MAJOR} STREQUAL "4")
+    # GDCM
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;Libraries;/")
+    # HDF5
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;Runtime;/")
+    set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;Unspecified;/")
+  endif()
 endif()
 
 # -------------------------------------------------------------------------
