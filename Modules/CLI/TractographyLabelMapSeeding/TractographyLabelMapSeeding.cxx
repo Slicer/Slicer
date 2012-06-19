@@ -5,9 +5,6 @@
 
 // ITK includes
 #include <itkConfigure.h>
-#if ITK_VERSION_MAJOR >= 4
-#include <itkFloatingPointExceptions.h>
-#endif
 
 // VTK includes
 #include <vtkSmartPointer.h>
@@ -25,11 +22,6 @@
 
 int main( int argc, char * argv[] )
 {
-
-#if ITK_VERSION_MAJOR >= 4
-  itk::FloatingPointExceptions::Disable();
-#endif
-
   PARSE_ARGS;
   try
     {
