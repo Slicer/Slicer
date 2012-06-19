@@ -21,7 +21,9 @@
 /* ITKv4 has mangled the items taken from teem so that they do not conflict*/
 #else
 /* Thus requiring explicit inclusion of teem headers  (or better yet, using the ITK mangled version of these enumerations)*/
+#ifndef NRRD_SPACE_MAX
 #include <NrrdIO.h>
+#endif
 #endif
 
 namespace itk
