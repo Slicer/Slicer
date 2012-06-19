@@ -24,7 +24,7 @@
      <x>0</x>
      <y>0</y>
      <width>1011</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -75,6 +75,7 @@
      <addaction name="actionViewLayoutCompareWidescreen"/>
      <addaction name="actionViewLayoutCompareGrid"/>
      <addaction name="actionViewLayoutThreeOverThree"/>
+     <addaction name="actionViewLayoutThreeOverThreeQuantitative"/>
      <addaction name="actionViewLayoutFourOverFour"/>
      <addaction name="actionViewLayoutTwoOverTwo"/>
     </widget>
@@ -83,6 +84,11 @@
       <string>&amp;Toolbars</string>
      </property>
      <addaction name="actionWindowToolbarsResetToDefault"/>
+    </widget>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string/>
+     </property>
     </widget>
     <addaction name="actionWindowPythonInteractor"/>
     <addaction name="actionViewExtensionManager"/>
@@ -251,6 +257,7 @@
    <addaction name="actionViewLayoutCompareWidescreen"/>
    <addaction name="actionViewLayoutCompareGrid"/>
    <addaction name="actionViewLayoutThreeOverThree"/>
+   <addaction name="actionViewLayoutThreeOverThreeQuantitative"/>
    <addaction name="actionViewLayoutFourOverFour"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
@@ -1079,6 +1086,18 @@
    </property>
    <property name="visible">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionViewLayoutThreeOverThreeQuantitative">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Three Over Three Quantitative</string>
+   </property>
+   <property name="toolTip">
+    <string>Three Over Three Quantitative</string>
    </property>
   </action>
  </widget>
