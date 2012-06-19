@@ -16,10 +16,12 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QRadioButton>
+#include <QToolButton.h>
 
 // CTK includes
 #include <ctkDirectoryButton.h>
 #include <ctkFlowLayout.h>
+#include <ctkPathLineEdit.h>
 #include <ctkSliderWidget.h>
 
 // qMRML includes
@@ -96,8 +98,8 @@ WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeId, setCurrentNode, St
 WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
 WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
 WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Directory, ctkDirectoryButton, directory, setDirectory, String, directoryChanged(const QString&));
-WIDGET_VALUE_WRAPPER(File, QLineEdit, text, setText, String, textChanged(const QString&));
+WIDGET_VALUE_WRAPPER(Directory, ctkDirectoryButton, directory, setDirectory, String, directoryChanged(QString));
+WIDGET_VALUE_WRAPPER(File, ctkPathLineEdit, currentPath, setCurrentPath, String, currentPathChanged(QString));
 WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setCheckedValue, String, valueChanged());
 
 //-----------------------------------------------------------------------------
@@ -740,13 +742,24 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDirectoryTagWidget(const ModuleP
 //-----------------------------------------------------------------------------
 QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParameter& moduleParameter)
 {
-  QString _label = QString::fromStdString(moduleParameter.GetLabel());
-  QString _name = QString::fromStdString(moduleParameter.GetName());
-  
-  QLineEdit* widget = new QLineEdit(QString("Input %1").arg(_name));
+  QString label = QString::fromStdString(moduleParameter.GetLabel());
+  QString name = QString::fromStdString(moduleParameter.GetName());
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(File, _name, _label, widget);
-  
+  QWidget* widget = new QWidget;
+  ctkPathLineEdit* pathLineEdit =
+    new ctkPathLineEdit(name, QStringList() << QString("*.*"), ctkPathLineEdit::Files, widget);
+  QToolButton* browseButton = new QToolButton(widget);
+  browseButton->setText("...");
+  QObject::connect(browseButton, SIGNAL(clicked()),
+                   pathLineEdit, SLOT(browse()));
+
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(File, name, label, pathLineEdit);
+
+  QHBoxLayout* hBoxLayout = new QHBoxLayout;
+  hBoxLayout->setContentsMargins(0,0,0,0);
+  hBoxLayout->addWidget(pathLineEdit);
+  hBoxLayout->addWidget(browseButton);
+  widget->setLayout(hBoxLayout);
   return widget;
 }
 
