@@ -21,8 +21,7 @@
 /* ITKv4 has mangled the items taken from teem so that they do not conflict*/
 #else
 /* Thus requiring explicit inclusion of teem headers  (or better yet, using the ITK mangled version of these enumerations)*/
-#include <teem/nrrdEnums.h>
-#include <teem/ten.h>
+#include <NrrdIO.h>
 #endif
 
 namespace itk
