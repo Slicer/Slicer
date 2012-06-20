@@ -18,6 +18,7 @@
 #include "vtkTeemConfigure.h"
 
 class vtkImageData;
+class AttributeMapType;
 
 class VTK_Teem_EXPORT vtkNRRDWriter : public vtkWriter
 {
@@ -64,7 +65,12 @@ public:
   vtkBooleanMacro(WriteError, int);
   vtkSetMacro(WriteError, int);
   vtkGetMacro(WriteError, int);
-  
+
+  /// Method to set an attribute that will be passed into the NRRD
+  /// file on write
+  void SetAttribute(const std::string& name, const std::string& value);
+
+
 protected:
   vtkNRRDWriter();
   ~vtkNRRDWriter();
@@ -90,6 +96,7 @@ protected:
   int UseCompression;
   int FileType;
   
+  AttributeMapType *Attributes;
   
 private:
   vtkNRRDWriter(const vtkNRRDWriter&);  /// Not implemented.

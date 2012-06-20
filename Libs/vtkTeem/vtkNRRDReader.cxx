@@ -125,6 +125,18 @@ char* vtkNRRDReader::GetHeaderKeys()
   return HeaderKeys;
 }
 
+std::vector<std::string> vtkNRRDReader::GetHeaderKeysVector()
+{
+  std::vector<std::string> keys;
+
+  for (std::map<std::string,std::string>::iterator i = HeaderKeyValue.begin();
+       i != HeaderKeyValue.end(); i++) 
+    {
+    keys.push_back( i->first );
+    }
+  return keys;
+}
+
 const char* vtkNRRDReader::GetHeaderValue(const char *key)
 {
   std::map<std::string,std::string>::iterator i = HeaderKeyValue.find(key);

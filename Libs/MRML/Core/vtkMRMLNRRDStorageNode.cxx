@@ -17,6 +17,7 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLNRRDStorageNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLVectorVolumeNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 #include "vtkImageChangeInformation.h"
 #include "vtkImageData.h"
@@ -132,6 +133,17 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   else if ( refNode->IsA("vtkMRMLScalarVolumeNode") ) 
     {
     volNode = dynamic_cast <vtkMRMLScalarVolumeNode *> (refNode);
+    }
+  else if ( refNode->IsA("vtkMRMLVolumeNode") )
+    {
+    // Generic case used for any VolumeNode. Used when Extensions add
+    // node types that are subclasses of VolumeNode.
+    volNode = dynamic_cast<vtkMRMLVolumeNode *>(refNode);
+    }
+  else
+    {
+    vtkErrorMacro(<< "Do not recognize node type " << refNode->GetClassName());
+    return 0;
     }
 
   reader = vtkSmartPointer<vtkNRRDReader>::New();
@@ -249,7 +261,7 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     }
 
-  // parse additional key-value pairs
+  // parse additional diffusion key-value pairs and handle specially
   if ( refNode->IsA("vtkMRMLDiffusionWeightedVolumeNode") )
     {
     vtkSmartPointer<vtkDoubleArray> grad = vtkSmartPointer<vtkDoubleArray>::New();
@@ -262,6 +274,15 @@ int vtkMRMLNRRDStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (volNode)->SetDiffusionGradients(grad);
     dynamic_cast <vtkMRMLDiffusionWeightedVolumeNode *> (volNode)->SetBValues(bvalue);
     }
+
+  // parse non-specific key-value pairs 
+  std::vector<std::string> keys = reader->GetHeaderKeysVector();
+  for ( std::vector<std::string>::iterator kit = keys.begin();
+        kit != keys.end(); ++kit)
+    {
+    volNode->SetAttribute((*kit).c_str(), reader->GetHeaderValue((*kit).c_str()));    
+    }
+
 
   vtkSmartPointer<vtkImageChangeInformation> ici = vtkSmartPointer<vtkImageChangeInformation>::New();
   ici->SetInput (reader->GetOutput());
@@ -314,6 +335,17 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     volNode = vtkMRMLScalarVolumeNode::SafeDownCast(refNode);    
     }
+  else if ( refNode->IsA("vtkMRMLVolumeNode") )
+    {
+    // Generic case used for any VolumeNode. Used when Extensions add
+    // node types that are subclasses of VolumeNode.
+    volNode = vtkMRMLVolumeNode::SafeDownCast(refNode);
+    }
+  else
+    {
+    vtkErrorMacro(<< "Do not recognize node type " << refNode->GetClassName());
+    return 0;
+    }
 
   volNode->GetIJKToRASMatrix(ijkToRas);
   
@@ -344,6 +376,14 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   if (bValues)
     {
     writer->SetBValues(bValues);
+    }
+
+  // pass down all MRML attributes to NRRD
+  std::vector<std::string> attributeNames = volNode->GetAttributeNames();
+  std::vector<std::string>::iterator ait = attributeNames.begin();
+  for (; ait != attributeNames.end(); ++ait)
+    {
+    writer->SetAttribute((*ait), volNode->GetAttribute((*ait).c_str()));
     }
   
   writer->Write();

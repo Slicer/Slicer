@@ -1,3 +1,4 @@
+#include <map>
 
 #include "vtkNRRDWriter.h"
 
@@ -7,6 +8,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkInformation.h"
 
+class AttributeMapType: public std::map<std::string, std::string> {};
 
 vtkCxxRevisionMacro(vtkNRRDWriter, "$Revision: 1.28 $");
 vtkStandardNewMacro(vtkNRRDWriter);
@@ -23,6 +25,7 @@ vtkNRRDWriter::vtkNRRDWriter()
   this->DiffusionWeigthedData = 0;
   this->FileType = VTK_BINARY;
   this->WriteErrorOff();
+  this->Attributes = new AttributeMapType;
 }
 
 //----------------------------------------------------------------------------
@@ -49,6 +52,10 @@ vtkNRRDWriter::~vtkNRRDWriter()
     {
     this->MeasurementFrameMatrix->Delete();
     }      
+  if (this->Attributes)
+    {
+    delete this->Attributes;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -309,6 +316,13 @@ void vtkNRRDWriter::WriteData()
       }
     }
 
+  // 3. Write out any attributes
+  AttributeMapType::iterator ait;
+  for (ait = this->Attributes->begin(); ait != this->Attributes->end(); ++ait)
+    {
+    nrrdKeyValueAdd(nrrd, (*ait).first.c_str(), (*ait).second.c_str());
+    }
+
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
   if ( this->GetUseCompression() && nrrdEncodingGzip->available() )
     {
@@ -355,4 +369,14 @@ void vtkNRRDWriter::PrintSelf(ostream& os, vtkIndent indent)
      this->IJKToRASMatrix->PrintSelf(os,indent);
   os << indent << "Measurement frame: ";
      this->MeasurementFrameMatrix->PrintSelf(os,indent);
+}
+
+void vtkNRRDWriter::SetAttribute(const std::string& name, const std::string& value)
+{
+  if (!this->Attributes)
+    {
+    return;
+    }
+
+  (*this->Attributes)[name] = value;
 }

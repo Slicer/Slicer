@@ -69,8 +69,14 @@ public:
 
   /// 
   /// Get a space separated list of all keys in the header
-  /// the string is allocated and deleted in this object
+  /// the string is allocated and deleted in this object.  This method
+  /// does not support spaces in key names.
   char* GetHeaderKeys();
+
+  /// 
+  /// Get a list of keys in the header. Preferred method to use as it
+  /// supports spaces in key names.
+  std::vector<std::string> GetHeaderKeysVector();
 
   /// 
   /// Get a value given a key in the header
