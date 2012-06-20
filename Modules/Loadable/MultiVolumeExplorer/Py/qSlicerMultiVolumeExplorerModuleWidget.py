@@ -17,8 +17,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     # this flag is 1 if there is an update in progress
     self.__updating = 1
 
-    self.__dwvNode = None
-    self.__vcNode = None
+    self.__mvNode = None
     self.extractFrame = False
 
     # chart view node
@@ -68,16 +67,16 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.layout.addWidget(self.plotFrame)
 
     label = qt.QLabel('Input multivolume')
-    self.__vcSelector = slicer.qMRMLNodeComboBox()
-    self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
-    self.__vcSelector.setMRMLScene(slicer.mrmlScene)
-    self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
-    self.__vcSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
-    self.__vcSelector.addEnabled = 0
+    self.__mvSelector = slicer.qMRMLNodeComboBox()
+    self.__mvSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.__mvSelector.setMRMLScene(slicer.mrmlScene)
+    self.__mvSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVCMRMLSceneChanged)
+    self.__mvSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onInputChanged)
+    self.__mvSelector.addEnabled = 0
 
-    inputFrameLayout.addRow(label, self.__vcSelector)
+    inputFrameLayout.addRow(label, self.__mvSelector)
     ##self.layout.addWidget(label)
-    ##self.layout.addWidget(self.__vcSelector)
+    ##self.layout.addWidget(self.__mvSelector)
 
 
     # TODO: initialize the slider based on the contents of the labels array
@@ -169,9 +168,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def onLabelVolumeChanged(self):
     # iterate over the label image and collect the IJK for each label element
     labelNode = self.__fSelector.currentNode()
-    vcNode = self.__vcSelector.currentNode()
+    mvNode = self.__mvSelector.currentNode()
 
-    if labelNode != None and vcNode != None:
+    if labelNode != None and mvNode != None:
       labelID = labelNode.GetID()
       img = labelNode.GetImageData()
       extent = img.GetWholeExtent()
@@ -189,21 +188,21 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       # go over all elements, calculate the mean in each frame for each label
       # and add to the chart array
-      nComponents = self.__dwvNode.GetNumberOfGradients()
+      nComponents = self.__mvNode.GetNumberOfFrames()
       dataNodes = {}
       for k in labeledVoxels.keys():
         dataNodes[k] = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
         dataNodes[k].SetReferenceCount(1)
         dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
         slicer.mrmlScene.AddNode(dataNodes[k])
-      dwvImage = self.__dwvNode.GetImageData()
+      mvImage = self.__mvNode.GetImageData()
       for c in range(nComponents):
         for k in labeledVoxels.keys():
           arr = dataNodes[k].GetArray()
           mean = 0.
           cnt = 0.
           for v in labeledVoxels[k]:
-            mean = mean+dwvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
+            mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
             cnt = cnt+1
           arr.SetComponent(c, 0, c)
           arr.SetComponent(c, 1, mean/cnt)
@@ -231,20 +230,20 @@ class qSlicerMultiVolumeExplorerModuleWidget:
   def onSliderChanged(self, newValue):
     value = self.__mdSlider.value
 
-    if self.__dwvNode != None:
-      dwvDisplayNode = self.__dwvNode.GetDisplayNode()
-      dwvDisplayNode.SetDiffusionComponent(newValue)
+    if self.__mvNode != None:
+      mvDisplayNode = self.__mvNode.GetDisplayNode()
+      mvDisplayNode.SetFrameComponent(newValue)
       
     if self.extractFrame == True:
       frameVolume = self.__vfSelector.currentNode()
-      if frameVolume == None or self.__dwvNode == None:
+      if frameVolume == None or self.__mvNode == None:
         return
-      dwvImage = self.__dwvNode.GetImageData()
+      mvImage = self.__mvNode.GetImageData()
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
       cast = vtk.vtkImageCast()
-      extract.SetInput(dwvImage)
+      extract.SetInput(mvImage)
       extract.SetComponents(frameId)
       cast.SetInput(extract.GetOutput())
       cast.SetOutputScalarTypeToShort()
@@ -254,8 +253,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       ras2ijk = vtk.vtkMatrix4x4()
       ijk2ras = vtk.vtkMatrix4x4()
-      self.__dwvNode.GetRASToIJKMatrix(ras2ijk)
-      self.__dwvNode.GetIJKToRASMatrix(ijk2ras)
+      self.__mvNode.GetRASToIJKMatrix(ras2ijk)
+      self.__mvNode.GetIJKToRASMatrix(ijk2ras)
       frameImage = frameVolume.GetImageData()
       if frameImage == None:
         frameVolume.SetAndObserveImageData(frame)
@@ -275,17 +274,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         displayNode.SetDefaultColorMap()
         frameVolume.SetAndObserveDisplayNodeID(displayNode.GetID())
 
-      frameName = '%s frame %d' % (self.__dwvNode.GetName(), frameId)
+      frameName = '%s frame %d' % (self.__mvNode.GetName(), frameId)
       frameVolume.SetName(frameName)
 
-      # TODO: read again J2's instructions about memory deallocation
-      #ras2ijk.SetReferenceCount(1)
-      #ijk2ras.SetReferenceCount(1)
-      #ras2ijk.Delete()
-      #ijk2ras.Delete()
-
   def onVCMRMLSceneChanged(self, mrmlScene):
-    self.__vcSelector.setMRMLScene(slicer.mrmlScene)
+    self.__mvSelector.setMRMLScene(slicer.mrmlScene)
     self.onInputChanged()
 
   def onLVMRMLSceneChanged(self, mrmlScene):
@@ -301,20 +294,17 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.iCharting.text = 'Enable interactive charting'
 
   def onInputChanged(self):
-    self.__vcNode = self.__vcSelector.currentNode()
-    if self.__vcNode != None:
-      self.__dwvNode = slicer.mrmlScene.GetNodeByID(self.__vcNode.GetDWVNodeID())
+    self.__mvNode = self.__mvSelector.currentNode()
 
-      if self.__dwvNode == None:
-        return
+    if self.__mvNode != None:
 
-      Helper.SetBgFgVolumes(self.__dwvNode.GetID(), None)
+      Helper.SetBgFgVolumes(self.__mvNode.GetID(), None)
 
-      if self.__dwvNode != None:
-        nGradients = self.__dwvNode.GetNumberOfGradients()
+      if self.__mvNode != None:
+        nFrames = self.__mvNode.GetNumberOfFrames()
         self.__mdSlider.minimum = 0
-        self.__mdSlider.maximum = nGradients-1
-        self.__chartTable.SetNumberOfRows(nGradients)
+        self.__mdSlider.maximum = nFrames-1
+        self.__chartTable.SetNumberOfRows(nFrames)
 
         if self.__cvn != None:
           self.__cvn.SetChartNodeID(self.__cn.GetID())
@@ -331,7 +321,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
 
   def onPlayButtonToggled(self,checked):
-    if self.__vcNode == None:
+    if self.__mvNode == None:
       return
     if checked:
       self.timer.start()
@@ -425,16 +415,16 @@ class qSlicerMultiVolumeExplorerModuleWidget:
             except ValueError:
               index = 0
             ijk.append(index)
-          if self.__dwvNode != None:
+          if self.__mvNode != None:
             # get the vector of values at IJK
-            dwvImage = self.__dwvNode.GetImageData()
-            nComponents = self.__dwvNode.GetNumberOfGradients()
+            mvImage = self.__mvNode.GetImageData()
+            nComponents = self.__mvNode.GetNumberOfFrames()
             values = ''
-            extent = dwvImage.GetExtent()
+            extent = mvImage.GetExtent()
             # a = self.__dn.GetArray()
             for c in range(nComponents):
               if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
-                val = dwvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+                val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
                 values = values + str(val)+' '
                 self.__chartTable.SetValue(c, 0, c)
                 self.__chartTable.SetValue(c, 1, val)
@@ -445,7 +435,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
               #self.__vcValue.setText(values)
               self.__chart.RemovePlot(0)
               self.__chart.RemovePlot(0)
-              # self.__chart.GetAxis(0).SetTitle(self.__vcNode.GetLabel ???)
+              # self.__chart.GetAxis(0).SetTitle(self.__mvNode.GetLabel ???)
               plot = self.__chart.AddPlot(0)
               plot.SetInput(self.__chartTable, 0, 1)
               # seems to update only after another plot?..

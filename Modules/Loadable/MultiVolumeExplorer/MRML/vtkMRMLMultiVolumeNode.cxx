@@ -18,8 +18,9 @@ Version:   $Revision: 1.2 $
 #include <vtkObjectFactory.h>
 
 // MRML includes
-#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLMultiVolumeDisplayNode.h>
 #include <vtkMRMLVolumeNode.h>
+#include <vtkMRMLNRRDStorageNode.h>
 
 // CropModuleMRML includes
 #include <vtkMRMLMultiVolumeNode.h>
@@ -43,18 +44,6 @@ vtkMRMLMultiVolumeNode::vtkMRMLMultiVolumeNode()
 //----------------------------------------------------------------------------
 vtkMRMLMultiVolumeNode::~vtkMRMLMultiVolumeNode()
 {
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLMultiVolumeNode::GetDWVNodeID()
-{
-  return this->DWVNodeID;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLMultiVolumeNode::SetDWVNodeID(const std::string& id)
-{
-  this->DWVNodeID = id;
 }
 
 //----------------------------------------------------------------------------
@@ -102,12 +91,6 @@ void vtkMRMLMultiVolumeNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "DWVNodeID"))
-      {
-      std::cout << "DWVNodeID is " << attValue << std::endl;
-      this->DWVNodeID = attValue;
-      continue;
-      }
     if (!strcmp(attName, "LabelArray"))
       {
       std::vector<double> labels;
@@ -147,7 +130,6 @@ void vtkMRMLMultiVolumeNode::WriteXML(ostream& of, int nIndent)
   this->Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
-  of << indent << " DWVNodeID=\"" << this->DWVNodeID << "\"";
   if (this->LabelArray)
     {
     int nItems = this->LabelArray->GetNumberOfTuples();
@@ -172,7 +154,6 @@ void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode *anode)
 
   this->Superclass::Copy(anode);
 
-  this->DWVNodeID = multiVolumeNode->DWVNodeID;
   if (multiVolumeNode->LabelArray)
     {
     vtkDoubleArray *arr = multiVolumeNode->LabelArray;
@@ -193,33 +174,11 @@ void vtkMRMLMultiVolumeNode::Copy(vtkMRMLNode *anode)
   this->LabelName = multiVolumeNode->LabelName;
 }
 
-#if 0
-//-----------------------------------------------------------
-void vtkMRMLMultiVolumeNode::UpdateScene(vtkMRMLScene *scene)
-{
-  this->Superclass::UpdateScene(scene);
-  this->SetAndObserveInputVolumeNodeID(this->InputVolumeNodeID);
-  this->SetAndObserveOutputVolumeNodeID(this->OutputVolumeNodeID);
-  this->SetAndObserveROINodeID(this->ROINodeID);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLMultiVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData )
-{
-  this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
-}
-
-#endif // 0
-
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << "DWVNodeID: " << this->DWVNodeID << "\n";
   if (this->LabelArray)
     {
     os << "LabelArray: ";
@@ -230,4 +189,19 @@ void vtkMRMLMultiVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
     os << std::endl;
     }
   os << "LabelName: " << this->LabelName << std::endl;
+}
+
+vtkMRMLMultiVolumeDisplayNode* vtkMRMLMultiVolumeNode::GetMultiVolumeDisplayNode()
+{
+  return vtkMRMLMultiVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+}
+
+vtkMRMLStorageNode* vtkMRMLMultiVolumeNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLNRRDStorageNode::New();
+}
+
+void vtkMRMLMultiVolumeNode::SetNumberOfFrames(int nf)
+{
+  this->NumberOfFrames = nf;
 }
