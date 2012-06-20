@@ -135,8 +135,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     filesPerFrame = nFiles/nFrames
     frames = []
 
-    dwiImage = vtk.vtkImageData()
-    dwiImageArray = None
+    mvImage = vtk.vtkImageData()
+    mvImageArray = None
 
     scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
 
@@ -171,11 +171,11 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         frameExtent = frameImage.GetExtent()
         frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
 
-        dwiImage.SetExtent(frameExtent)
-        dwiImage.SetNumberOfScalarComponents(nFrames)
+        mvImage.SetExtent(frameExtent)
+        mvImage.SetNumberOfScalarComponents(nFrames)
 
-        dwiImage.AllocateScalars()
-        dwiImageArray = vtk.util.numpy_support.vtk_to_numpy(dwiImage.GetPointData().GetScalars())
+        mvImage.AllocateScalars()
+        mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
         # create and initialize a blank DWI node
         bValues = vtk.vtkDoubleArray()
@@ -192,38 +192,32 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         bValuesArray[:] = 0
         gradientsArray[:] = 1
 
-        dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
-        dwiNode.SetName('MultiVolume DisplayVolume')
-        dwiNode.SetScene(slicer.mrmlScene)
-        dwiNode.SetBValues(bValues)
-        dwiNode.SetDiffusionGradients(gradients)
+        mvNode.SetScene(slicer.mrmlScene)
 
         mat = vtk.vtkMatrix4x4()
         frame.GetRASToIJKMatrix(mat)
-        dwiNode.SetRASToIJKMatrix(mat)
+        mvNode.SetRASToIJKMatrix(mat)
         frame.GetIJKToRASMatrix(mat)
-        dwiNode.SetIJKToRASMatrix(mat)
+        mvNode.SetIJKToRASMatrix(mat)
 
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
-      dwiImageArray.T[frameNumber] = frameImageArray
+      mvImageArray.T[frameNumber] = frameImageArray
       self.annihilateScalarNode(frame)
 
     # create additional nodes that are needed for the DWI to be added to the
     # scene
-    dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
-    dwiDisplayNode.SetScene(slicer.mrmlScene)
-    slicer.mrmlScene.AddNode(dwiDisplayNode)
-    dwiDisplayNode.SetReferenceCount(dwiDisplayNode.GetReferenceCount()-1)
-    dwiDisplayNode.SetDefaultColorMap()
+    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+    mvDisplayNode.SetScene(slicer.mrmlScene)
+    slicer.mrmlScene.AddNode(mvDisplayNode)
+    mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
+    mvDisplayNode.SetDefaultColorMap()
 
-    dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
-    dwiNode.SetAndObserveImageData(dwiImage)
-    slicer.mrmlScene.AddNode(dwiNode)
-    dwiNode.SetReferenceCount(dwiNode.GetReferenceCount()-1)
+    mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
+    mvNode.SetAndObserveImageData(mvImage)
+    mvNode.SetNumberOfFrames(nFrames)
+    #mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
     print("Number of frames :"+str(nFrames))
-
-    mvNode.SetDWVNodeID(dwiNode.GetID())
 
     slicer.mrmlScene.AddNode(mvNode)
     print('MV node added to the scene')

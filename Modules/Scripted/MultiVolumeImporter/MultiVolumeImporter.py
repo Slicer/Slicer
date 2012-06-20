@@ -64,12 +64,12 @@ class MultiVolumeImporterWidget:
     dummyFormLayout.addRow(label, self.__fDialog)
 
     label = qt.QLabel('Output node:')
-    self.__vcSelector = slicer.qMRMLNodeComboBox()
-    self.__vcSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
-    self.__vcSelector.setMRMLScene(slicer.mrmlScene)
-    self.__vcSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
-    self.__vcSelector.addEnabled = 1
-    dummyFormLayout.addRow(label, self.__vcSelector)
+    self.__mvSelector = slicer.qMRMLNodeComboBox()
+    self.__mvSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.__mvSelector.setMRMLScene(slicer.mrmlScene)
+    self.__mvSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onMRMLSceneChanged)
+    self.__mvSelector.addEnabled = 1
+    dummyFormLayout.addRow(label, self.__mvSelector)
 
     label = qt.QLabel('Input data type:')
     self.__modeSelector = qt.QComboBox()
@@ -152,13 +152,13 @@ class MultiVolumeImporterWidget:
     self.__veStep.value = 1
 
   def onMRMLSceneChanged(self, mrmlScene):
-    self.__vcSelector.setMRMLScene(slicer.mrmlScene)
+    self.__mvSelector.setMRMLScene(slicer.mrmlScene)
     return
 
   def onImportButtonClicked(self):
     # check if the output container exists
-    vcNode = self.__vcSelector.currentNode()
-    if vcNode == None:
+    mvNode = self.__mvSelector.currentNode()
+    if mvNode == None:
       self.__status.text = 'Status: Select output node!'
       return
 
@@ -234,39 +234,18 @@ class MultiVolumeImporterWidget:
     frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
 
     nFrames = len(fileNames)
-    dwiImage = vtk.vtkImageData()
-    dwiImage.SetExtent(frameExtent)
-    dwiImage.SetNumberOfScalarComponents(nFrames)
+    mvImage = vtk.vtkImageData()
+    mvImage.SetExtent(frameExtent)
+    mvImage.SetNumberOfScalarComponents(nFrames)
 
-    dwiImage.AllocateScalars()
-    dwiImageArray = vtk.util.numpy_support.vtk_to_numpy(dwiImage.GetPointData().GetScalars())
-
-    # create and initialize a blank DWI node
-    bValues = vtk.vtkDoubleArray()
-    bValues.Allocate(nFrames)
-    bValues.SetNumberOfComponents(1)
-    bValues.SetNumberOfTuples(nFrames)
-    gradients = vtk.vtkDoubleArray()
-    gradients.Allocate(nFrames*3)
-    gradients.SetNumberOfComponents(3)
-    gradients.SetNumberOfTuples(nFrames)
-
-    bValuesArray = vtk.util.numpy_support.vtk_to_numpy(bValues)
-    gradientsArray = vtk.util.numpy_support.vtk_to_numpy(gradients)
-    bValuesArray[:] = 0
-    gradientsArray[:] = 1
-
-    dwiNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeNode')
-    dwiNode.SetName(processingMode[3]+'DisplayVolume')
-    dwiNode.SetScene(slicer.mrmlScene)
-    dwiNode.SetBValues(bValues)
-    dwiNode.SetDiffusionGradients(gradients)
+    mvImage.AllocateScalars()
+    mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
     mat = vtk.vtkMatrix4x4()
     frame.GetRASToIJKMatrix(mat)
-    dwiNode.SetRASToIJKMatrix(mat)
+    mvNode.SetRASToIJKMatrix(mat)
     frame.GetIJKToRASMatrix(mat)
-    dwiNode.SetIJKToRASMatrix(mat)
+    mvNode.SetIJKToRASMatrix(mat)
 
     self.annihilateScalarNode(frame)
 
@@ -276,28 +255,26 @@ class MultiVolumeImporterWidget:
       frame = volumesLogic.AddArchetypeVolume(fullName, 'Frame'+str(frameId), 0)
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
-      dwiImageArray.T[frameId] = frameImageArray
+      mvImageArray.T[frameId] = frameImageArray
       self.annihilateScalarNode(frame)
 
-    dwiDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDiffusionWeightedVolumeDisplayNode')
-    dwiDisplayNode.SetScene(slicer.mrmlScene)
-    slicer.mrmlScene.AddNode(dwiDisplayNode)
-    dwiDisplayNode.SetReferenceCount(dwiDisplayNode.GetReferenceCount()-1)
-    dwiDisplayNode.SetDefaultColorMap()
+    mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
+    mvDisplayNode.SetScene(slicer.mrmlScene)
+    slicer.mrmlScene.AddNode(mvDisplayNode)
+    mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
+    mvDisplayNode.SetDefaultColorMap()
 
-    dwiNode.SetAndObserveDisplayNodeID(dwiDisplayNode.GetID())
-    dwiNode.SetAndObserveImageData(dwiImage)
-    slicer.mrmlScene.AddNode(dwiNode)
-    dwiNode.SetReferenceCount(dwiNode.GetReferenceCount()-1)
-    print("DWI node added to the scene")
+    mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
+    mvNode.SetAndObserveImageData(mvImage)
+    mvNode.SetNumberOfFrames(nFrames)
+    slicer.mrmlScene.AddNode(mvNode)
+    mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
+    mvNode.SetLabelArray(volumeLabels)
+    mvNode.SetLabelName(self.__veLabel.text)
+    print("MultiVolume node setup complete !")
 
-    vcNode.SetDWVNodeID(dwiNode.GetID())
-    vcNode.SetLabelArray(volumeLabels)
-    vcNode.SetLabelName(self.__veLabel.text)
-    print("VC node setup complete !")
-
-    Helper.SetBgFgVolumes(dwiNode.GetID(),None)
+    Helper.SetBgFgVolumes(mvNode.GetID(),None)
 
   # leave no trace of the temporary nodes
   def annihilateScalarNode(self, node):
