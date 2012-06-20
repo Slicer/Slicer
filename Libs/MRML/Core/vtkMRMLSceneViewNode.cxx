@@ -550,7 +550,7 @@ void vtkMRMLSceneViewNode::SetAbsentStorageFileNames()
       {
       // for storage nodes replace full path with relative
       vtkMRMLStorageNode *snode = vtkMRMLStorageNode::SafeDownCast(node);
-      if (snode && (snode->GetFileName() == NULL || std::string(snode->GetFileName()) == "") )
+      if (snode)
         {
         vtkMRMLNode *node1 = this->Scene->GetNodeByID(snode->GetID());
         if (node1)
