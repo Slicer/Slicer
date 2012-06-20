@@ -223,20 +223,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     dwiNode.SetReferenceCount(dwiNode.GetReferenceCount()-1)
     print("Number of frames :"+str(nFrames))
 
-    frameLabelsArray = vtk.vtkDoubleArray()
-    frameLabelsArray.Allocate(nFrames)
-    frameLabelsArray.SetNumberOfComponents(1)
-    frameLabelsArray.SetNumberOfTuples(nFrames)
-    i = 0
-    '''
-    frameLabelsStr = mvNode.GetAttribute('MultiVolume.FrameLabels')
-    for label in string.split(frameLabelsStr, ' '):
-      frameLabelsArray.SetComponent(i, 0, float(label))
-      i = i+1
-    '''
-    mvNode.SetLabelArray(frameLabelsArray)
     mvNode.SetDWVNodeID(dwiNode.GetID())
-    mvNode.SetLabelName('Label name')
 
     slicer.mrmlScene.AddNode(mvNode)
     print('MV node added to the scene')
