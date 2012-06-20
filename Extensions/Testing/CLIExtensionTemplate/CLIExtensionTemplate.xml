@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>@EXTENSION_CATEGORY@</category>
-  <title>@EXTENSION_NAME@</title>
-  <description><![CDATA[@EXTENSION_DESCRIPTION@]]></description>
-  <version>@EXTENSION_MAJOR_VERSION@.@EXTENSION_MINOR_VERSION@.@EXTENSION_PATCH_VERSION@-@EXTENSION_STATUS@</version>
-  <documentation-url>@EXTENSION_HOMEPAGE@</documentation-url>
-  <license>@EXTENSION_LICENSE_SHORT_DESCRIPTION@</license>
-  <contributor>@EXTENSION_CONTRIBUTORS@</contributor>
-  <acknowledgements><![CDATA[@EXTENSION_ACKNOWLEDGEMENTS@]]></acknowledgements>
+  <category>Examples</category>
+  <title>CLIExtensionTemplate</title>
+  <description><![CDATA[This is a CLI module (based on GaussianBlurImageFilter) bundled in an extension]]></description>
+  <version>0.0.1</version>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/CLIExtensionTemplate</documentation-url>
+  <license>Slicer</license>
+  <contributor>Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)</contributor>
+  <acknowledgements>This work was partially funded by NIH grant 3P41RR013218-12S1</acknowledgements>
   <parameters>
     <double>
       <name>sigma</name>

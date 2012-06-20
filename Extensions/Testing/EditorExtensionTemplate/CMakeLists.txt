@@ -1,15 +1,16 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME EditorExtensionTemplate) # Do not use 'project()'
+if(NOT Slicer_SOURCE_DIR)
+  set(EXTENSION_NAME EditorExtensionTemplate)
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/EditorExtensionTemplate")
+  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_CONTRIBUTORS "Steve Pieper (Isomics)")
+  set(EXTENSION_DESCRIPTION "This is an example of extension bundling one scripted loadable editor effect")
+endif()
 
 #-----------------------------------------------------------------------------
-if(NOT Slicer_SOURCE_DIR)
-  set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
-  set(MODULE_CATEGORY "Examples")
-  set(MODULE_STATUS "Beta")
-  set(MODULE_DESCRIPTION "This is an example of scripted loadable editor effect built as an extension")
-endif()
+set(MODULE_NAME EditorExtensionTemplate)
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)

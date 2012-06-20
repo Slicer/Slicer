@@ -1,18 +1,19 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ScriptedLoadableExtensionTemplate) # Do not use 'project()'
+if(NOT Slicer_SOURCE_DIR)
+  set(EXTENSION_NAME ScriptedLoadableExtensionTemplate)
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/ScriptedLoadableExtensionTemplate")
+  set(EXTENSION_CATEGORY "Examples")
+  set(EXTENSION_STATUS "Beta")
+  set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
+  set(EXTENSION_DESCRIPTION "This is an example of extension bundling a scripted loadable module")
+  set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
+  set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png")
+endif()
 
 #-----------------------------------------------------------------------------
-if(NOT Slicer_SOURCE_DIR)
-  set(MODULE_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
-  set(MODULE_CATEGORY "Examples")
-  set(MODULE_STATUS "Beta")
-  set(MODULE_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
-  set(MODULE_DESCRIPTION "This is an example of scripted Qt loadable module built as an extension")
-  set(MODULE_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
-  set(MODULE_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png")
-endif()
+set(MODULE_NAME ScriptedLoadableExtensionTemplate)
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)

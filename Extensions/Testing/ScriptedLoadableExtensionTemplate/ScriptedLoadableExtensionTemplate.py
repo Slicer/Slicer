@@ -11,7 +11,7 @@ class ScriptedLoadableExtensionTemplate:
     parent.dependencies = []
     parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
-    Example of scripted loadable extension.
+    This is an example of scripted loadable module bundled in an extension.
     """
     parent.acknowledgementText = """
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc. and Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
@@ -46,7 +46,7 @@ class ScriptedLoadableExtensionTemplateWidget:
     self.reloadButton.name = "ScriptedLoadableExtensionTemplate Reload"
     self.layout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
-    
+
 
     # Collapsible button
     dummyCollapsibleButton = ctk.ctkCollapsibleButton()

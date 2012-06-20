@@ -62,8 +62,7 @@ qSlicerLoadableExtensionTemplateModule::~qSlicerLoadableExtensionTemplateModule(
 //-----------------------------------------------------------------------------
 QString qSlicerLoadableExtensionTemplateModule::helpText()const
 {
-  return "This LoadableExtensionTemplate module illustrates how a loadable module should "
-      "be implemented.";
+  return "This is a loadable module bundled in an extension";
 }
 
 //-----------------------------------------------------------------------------

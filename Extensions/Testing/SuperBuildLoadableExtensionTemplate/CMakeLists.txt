@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 2.8.7)
 
 #-----------------------------------------------------------------------------
-set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate) # Do not use 'project()'
+set(EXTENSION_NAME SuperBuildLoadableExtensionTemplate)
 
 #-----------------------------------------------------------------------------
-set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/ExtensionWriting")
+set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/SuperBuildLoadableExtensionTemplate")
 set(EXTENSION_CATEGORY "Examples")
-set(EXTENSION_STATUS "Beta")
 set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
-set(EXTENSION_DESCRIPTION "This is an example of Qt loadable module using SuperBuild built as an extension")
+set(EXTENSION_DESCRIPTION "This is an example of extension bundling a loadable module built using SuperBuild")
 set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/SuperBuildLoadableExtensionTemplate/Resources/Icons/SuperBuildLoadableExtensionTemplate.png?revision=19437&view=co")
 set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/b/b3/Slicer-r19441-SuperBuildLoadableExtensionTemplate-screenshot.png")
 set(EXTENSION_DEPENDS CLIExtensionTemplate) # Specified as a space separated list or 'NA' if any
