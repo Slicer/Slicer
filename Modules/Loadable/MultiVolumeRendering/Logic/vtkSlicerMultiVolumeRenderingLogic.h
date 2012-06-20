@@ -27,13 +27,28 @@
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
 
-// MRML includes
-
 // STD includes
 #include <cstdlib>
 
 #include "vtkSlicerMultiVolumeRenderingModuleLogicExport.h"
 
+// MRML includes
+class vtkMRMLAnnotationROINode;
+class vtkMRMLLabelMapVolumeDisplayNode;
+class vtkMRMLNode;
+class vtkMRMLScalarVolumeDisplayNode;
+class vtkMRMLScalarVolumeNode;
+class vtkMRMLViewNode;
+class vtkMRMLVolumeDisplayNode;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumePropertyNode;
+
+// VTK includes
+class vtkColorTransferFunction;
+class vtkPiecewiseFunction;
+class vtkVolumeProperty;
+
+class vtkMRMLMultiVolumeRenderingDisplayNode;
 
 /// \ingroup Slicer_QtModules_MultiVolumeRendering
 class VTK_SLICER_MULTIVOLUMERENDERING_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeRenderingLogic :
@@ -45,6 +60,19 @@ public:
   vtkTypeMacro(vtkSlicerMultiVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+public:
+  // Description:
+  // Find first volume rendering display node matching bg, fg, and labelmap set
+  vtkMRMLMultiVolumeRenderingDisplayNode* FindFirstMatchedDisplayNode(vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label);
+  
+  // Description:
+  // Create a new display node
+  vtkMRMLMultiVolumeRenderingDisplayNode* CreateDisplayNode();
+  
+  // Description:
+  // Find volume rendering display node reference in the volume
+  vtkMRMLMultiVolumeRenderingDisplayNode* GetDisplayNodeByID(vtkMRMLVolumeNode *volumeNode, char *displayNodeID);
+  
 protected:
   vtkSlicerMultiVolumeRenderingLogic();
   virtual ~vtkSlicerMultiVolumeRenderingLogic();
@@ -59,6 +87,8 @@ private:
 
   vtkSlicerMultiVolumeRenderingLogic(const vtkSlicerMultiVolumeRenderingLogic&); // Not implemented
   void operator=(const vtkSlicerMultiVolumeRenderingLogic&);               // Not implemented
+  
+  bool IsDisplayNodeMatch(vtkMRMLMultiVolumeRenderingDisplayNode *dnode, vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label);
 };
 
 #endif

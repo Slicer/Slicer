@@ -24,7 +24,12 @@
 #include "qSlicerMultiVolumeRenderingModuleExport.h"
 
 class qSlicerMultiVolumeRenderingModuleWidgetPrivate;
+class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
+class vtkMRMLScalarVolumeNode;
+class vtkMRMLViewNode;
+class vtkMRMLMultiVolumeRenderingDisplayNode;
+class vtkMRMLVolumePropertyNode;
 
 /// \ingroup Slicer_QtModules_MultiVolumeRendering
 class Q_SLICER_QTMODULES_MULTIVOLUMERENDERING_EXPORT qSlicerMultiVolumeRenderingModuleWidget :
@@ -38,9 +43,27 @@ public:
   qSlicerMultiVolumeRenderingModuleWidget(QWidget *parent=0);
   virtual ~qSlicerMultiVolumeRenderingModuleWidget();
 
+  vtkMRMLScalarVolumeNode* getCurrentBgVolumeNode()const;
+  vtkMRMLScalarVolumeNode* getCurrentFgVolumeNode()const;
+  vtkMRMLScalarVolumeNode* getCurrentLabelmapVolumeNode()const;
+  
 public slots:
-
-
+  
+  void setMRMLDisplayNode(vtkMRMLNode* node);
+  
+protected slots:
+  void onVisibilityBgVolumeChanged(bool);
+  void onVisibilityFgVolumeChanged(bool);
+  void onVisibilityLabelmapVolumeChanged(bool);
+  
+  void onCurrentBgVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
+  void onCurrentFgVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
+  void onCurrentLabelmapVolumeMRMLImageNodeChanged(vtkMRMLNode* node);
+  
+  void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
+  
+  void updateRenderingFromMRMLDisplayNode();
+  
 protected:
   QScopedPointer<qSlicerMultiVolumeRenderingModuleWidgetPrivate> d_ptr;
   

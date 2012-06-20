@@ -17,13 +17,32 @@
 
 // MultiVolumeRendering includes
 #include "vtkSlicerMultiVolumeRenderingLogic.h"
+#include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 
 // MRML includes
+#include <vtkCacheManager.h>
+#include <vtkMRMLColorNode.h>
+#include <vtkMRMLLabelMapVolumeDisplayNode.h>
+#include <vtkMRMLViewNode.h>
+#include <vtkMRMLVectorVolumeDisplayNode.h>
+#include <vtkMRMLVectorVolumeNode.h>
+#include <vtkMRMLVolumePropertyNode.h>
+#include <vtkMRMLVolumePropertyStorageNode.h>
 
 // VTK includes
+#include <vtkColorTransferFunction.h>
+#include <vtkImageData.h>
+#include <vtkLookupTable.h>
 #include <vtkNew.h>
+#include <vtkPiecewiseFunction.h>
+#include <vtkPointData.h>
+#include <vtkVolumeProperty.h>
+
+// VTKSYS includes
+#include <itksys/SystemTools.hxx>
 
 // STD includes
+#include <algorithm>
 #include <cassert>
 
 //----------------------------------------------------------------------------
@@ -79,3 +98,112 @@ void vtkSlicerMultiVolumeRenderingLogic
 {
 }
 
+bool vtkSlicerMultiVolumeRenderingLogic::IsDisplayNodeMatch(vtkMRMLMultiVolumeRenderingDisplayNode *dnode,
+                                                            vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label)
+{
+  if (!dnode)
+    return false;
+    
+  vtkMRMLVolumeNode *b, *f, *l;
+      
+  b = dnode->GetBgVolumeNode();
+  f = dnode->GetFgVolumeNode();
+  l = dnode->GetLabelmapVolumeNode();
+      
+  if (b == bg && f == fg && l == label)
+    return true;
+  else   
+    return false;
+}
+
+vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
+::FindFirstMatchedDisplayNode(vtkMRMLVolumeNode *bg, vtkMRMLVolumeNode *fg, vtkMRMLVolumeNode *label)
+{
+  if (bg == NULL && fg == NULL && label == NULL)
+    return NULL;
+  
+  int ndnodes = 0;
+  
+  if (bg)
+    bg->GetNumberOfDisplayNodes();
+  
+  for (int i=0; i<ndnodes; i++)
+  {
+    vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
+                                                          bg->GetNthDisplayNode(i));
+    if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
+      return dnode;
+  }
+  
+  ndnodes = 0;
+  
+  if (fg)
+    ndnodes = fg->GetNumberOfDisplayNodes();
+  
+  for (int i=0; i<ndnodes; i++)
+  {
+    vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
+                                                          fg->GetNthDisplayNode(i));
+    if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
+      return dnode;
+  }
+  
+  ndnodes = 0;
+  
+  if (label)
+    ndnodes = label->GetNumberOfDisplayNodes();
+  
+  for (int i=0; i<ndnodes; i++)
+  {
+    vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
+                                                          label->GetNthDisplayNode(i));
+    if (dnode && this->IsDisplayNodeMatch(dnode, bg, fg, label) )
+      return dnode;
+  }
+  
+  return NULL;
+}
+
+vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic::CreateDisplayNode()
+{
+  vtkMRMLMultiVolumeRenderingDisplayNode *node = NULL;
+
+  if (this->GetMRMLScene() == 0)
+  {
+    return node;
+  }
+  
+  node = vtkMRMLMultiVolumeRenderingDisplayNode::New();
+  
+  this->GetMRMLScene()->AddNode(node);
+  node->Delete();
+
+  return node;
+}
+
+// Description:
+// Find volume rendering display node reference in the volume
+//----------------------------------------------------------------------------
+vtkMRMLMultiVolumeRenderingDisplayNode* vtkSlicerMultiVolumeRenderingLogic
+                                        ::GetDisplayNodeByID(vtkMRMLVolumeNode *volumeNode, char *displayNodeID)
+{
+  if (displayNodeID == NULL || volumeNode == NULL)
+  {
+    return NULL;
+  }
+
+  int ndnodes = volumeNode->GetNumberOfDisplayNodes();
+  
+  for (int i = 0; i < ndnodes; i++)
+  {
+    vtkMRMLMultiVolumeRenderingDisplayNode *dnode = vtkMRMLMultiVolumeRenderingDisplayNode::SafeDownCast(
+                                                    volumeNode->GetNthDisplayNode(i));
+    
+    if (dnode && !strcmp(displayNodeID, dnode->GetID()))
+    {
+      return dnode;
+    }
+  }
+  
+  return NULL;
+}

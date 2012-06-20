@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>702</height>
+    <width>465</width>
+    <height>854</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,11 +28,14 @@
      <property name="text">
       <string>Rendering</string>
      </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="labelRenderingMode">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -45,7 +48,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="2" column="1">
        <widget class="QComboBox" name="comboBoxRenderingMode">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -63,31 +66,16 @@
           <string>Independent Multi-Volume Rendering</string>
          </property>
         </item>
-        <item>
-         <property name="text">
-          <string>Background Volume Rendering</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Foreground Volume Rendering</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Labelmap Volume Rendering</string>
-         </property>
-        </item>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="labelGPUMemSize">
         <property name="text">
          <string>GPU Memory Size</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="3" column="1">
        <widget class="QComboBox" name="comboBoxGPUMemSize">
         <item>
          <property name="text">
@@ -111,14 +99,14 @@
         </item>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="labelQualityControl">
         <property name="text">
          <string>Quality Control</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="4" column="1">
        <widget class="QComboBox" name="comboBoxQualityControl">
         <item>
          <property name="text">
@@ -137,14 +125,14 @@
         </item>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="7" column="0">
        <widget class="QLabel" name="labelFps">
         <property name="text">
          <string>Interactive Speed</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="7" column="1">
        <widget class="ctkSliderWidget" name="SliderWidgetFps">
         <property name="decimals">
          <number>0</number>
@@ -163,6 +151,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxDisplayNode"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelDisplayNode">
+        <property name="text">
+         <string>Display Node</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -170,6 +168,9 @@
     <widget class="ctkCollapsibleButton" name="CollapsibleButtonVolumes">
      <property name="text">
       <string>Volumes</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
      </property>
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -179,15 +180,56 @@
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxLabelmap"/>
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxLabelmapVolume">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxForeground"/>
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxForegroundVolume">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="hideChildNodeTypes">
+         <stringlist>
+          <string>vtkMRMLDiffusionTensorVolumeNode</string>
+          <string>vtkMRMLDiffusionWeightedVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="2" column="0">
-       <widget class="ctkCheckBox" name="CheckBoxLabelmap">
+       <widget class="ctkCheckBox" name="CheckBoxLabelmapVolume">
         <property name="text">
          <string>Labelmap</string>
+        </property>
+        <property name="indicatorIcon">
+         <iconset resource="../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
+          <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
+          <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+        </property>
+        <property name="indicatorIconSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -196,15 +238,55 @@
         <property name="text">
          <string>Background</string>
         </property>
+        <property name="indicatorIcon">
+         <iconset resource="../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
+          <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
+          <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+        </property>
+        <property name="indicatorIconSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxBgVolume"/>
+       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxBackgroundVolume">
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLScalarVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="hideChildNodeTypes">
+         <stringlist>
+          <string>vtkMRMLDiffusionWeightedVolumeNode</string>
+          <string>vtkMRMLDiffusionTensorVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="ctkCheckBox" name="CheckBoxFgVolume">
         <property name="text">
          <string>Foreground</string>
+        </property>
+        <property name="indicatorIcon">
+         <iconset resource="../../../Annotations/Resources/qSlicerAnnotationModule.qrc">
+          <normaloff>:/Icons/AnnotationVisibility.png</normaloff>
+          <normalon>:/Icons/AnnotationInvisible.png</normalon>:/Icons/AnnotationVisibility.png</iconset>
+        </property>
+        <property name="indicatorIconSize">
+         <size>
+          <width>21</width>
+          <height>21</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -215,6 +297,9 @@
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
@@ -233,16 +318,6 @@
       <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelDisplayNodeBg">
-        <property name="text">
-         <string>Display Node</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxDisplayNodeBg"/>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="labelROINodeBg">
         <property name="text">
@@ -267,7 +342,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="labelPropertyNodeBg">
         <property name="text">
-         <string>Property Node</string>
+         <string>Property</string>
         </property>
        </widget>
       </item>
@@ -298,6 +373,12 @@
          </property>
          <item>
           <widget class="QTabWidget" name="tabWidgetAdvancedBg">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="currentIndex">
             <number>0</number>
            </property>
@@ -390,50 +471,40 @@
       <string>Parameters (Fg Volume)</string>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="1" column="0">
-       <widget class="QLabel" name="labelDisplayNodeFg">
-        <property name="text">
-         <string>Display Node</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxDisplayNodeFg"/>
-      </item>
-      <item row="2" column="0">
        <widget class="QLabel" name="labelROINodeFg">
         <property name="text">
          <string>ROI Node</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="labelPropertyNodeFg">
         <property name="text">
-         <string>Property Node</string>
+         <string>Property</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
        <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxPropertyFg"/>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="labelPresetsFg">
         <property name="text">
          <string>Preset</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="3" column="1">
        <widget class="qSlicerPresetComboBox" name="PresetComboBoxFg"/>
       </item>
-      <item row="2" column="1">
+      <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxROINodeFg"/>
@@ -447,6 +518,48 @@
         </item>
        </layout>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBoxAdvancedFg">
+        <property name="title">
+         <string>Advanced</string>
+        </property>
+        <property name="collapsed">
+         <bool>true</bool>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTabWidget" name="tabWidgetAdvancedFg">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="tabTechniqueFg">
+            <attribute name="title">
+             <string>Technique</string>
+            </attribute>
+           </widget>
+           <widget class="QWidget" name="tabVolumePropertyFg">
+            <attribute name="title">
+             <string>Volume Property</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="qMRMLVolumePropertyNodeWidget" name="MRMLVolumePropertyNodeWidget"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabROIFg">
+            <attribute name="title">
+             <string>ROI</string>
+            </attribute>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -458,6 +571,29 @@
      <property name="contentsFrameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelROINodeLabelmap">
+        <property name="text">
+         <string>ROI Node</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="qMRMLNodeComboBox" name="MRMLNodeComboBoxROINodeLabelmap"/>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxCropLabelmap">
+          <property name="text">
+           <string>Crop</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -517,6 +653,57 @@
    <header>ctkSliderWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../../../Annotations/Resources/qSlicerAnnotationModule.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBoxBackgroundVolume</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBoxForegroundVolume</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLNodeComboBoxLabelmapVolume</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>232</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>290</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
