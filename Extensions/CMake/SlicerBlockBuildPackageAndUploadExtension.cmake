@@ -61,7 +61,7 @@ endforeach()
 
 set(optional_vars EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_DESCRIPTION EXTENSION_SCREENSHOTURLS EXTENSION_STATUS)
 foreach(var ${optional_vars})
-  if("${MY_${var}}" STREQUAL "" AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
+  if("${${var}}" STREQUAL "" AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
     message(AUTHOR_WARNING "CMake variable ${var} is empty !")
     set(${var}_AUTHOR_WARN "DONE")
   endif()
