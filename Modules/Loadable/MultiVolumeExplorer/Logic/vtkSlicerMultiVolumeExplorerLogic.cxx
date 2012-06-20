@@ -151,24 +151,30 @@ int vtkSlicerMultiVolumeExplorerLogic
   std::string result = "";
   std::vector<DcmDataset*> dcmDatasetVector;
 
-  std::vector<DcmTagKey>  VolumeIdentifyingTags;
 
   DcmTagKey temporalPositionTag = DcmTagKey(0x0018,0x1060);
   DcmTagKey teTag = DcmTagKey(0x0018,0x0081);
   DcmTagKey faTag = DcmTagKey(0x0018,0x1314);
   DcmTagKey trTag = DcmTagKey(0x0018,0x0080);
 
-  VolumeIdentifyingTags.push_back(DcmTagKey(temporalPositionTag)); // DCE
-  VolumeIdentifyingTags.push_back(DcmTagKey(teTag)); // vTE
-  VolumeIdentifyingTags.push_back(DcmTagKey(faTag)); // vFA
-  VolumeIdentifyingTags.push_back(DcmTagKey(trTag)); // vTR
+  std::vector<DcmTagKey> tagOrderedList;
+  tagOrderedList.push_back(temporalPositionTag);
+  tagOrderedList.push_back(teTag);
+  tagOrderedList.push_back(faTag);
+  tagOrderedList.push_back(trTag);
 
-  std::vector<std::string>  VolumeIdentifyingTagNames;
+  std::map<DcmTagKey,std::string> tagToName;
+  std::map<DcmTagKey,std::string> tagToUnit;
 
-  VolumeIdentifyingTagNames.push_back(std::string("TriggerTime"));
-  VolumeIdentifyingTagNames.push_back(std::string("EchoTime")); 
-  VolumeIdentifyingTagNames.push_back(std::string("FlipAngle")); 
-  VolumeIdentifyingTagNames.push_back(std::string("RepetitionTime")); 
+  tagToName[temporalPositionTag] = "Trigger Time";
+  tagToName[teTag] = "Echo Time";
+  tagToName[faTag] = "Flip Angle";
+  tagToName[trTag] = "Repetition Time";
+
+  tagToUnit[temporalPositionTag] = "ms";
+  tagToUnit[teTag] = "ms";
+  tagToUnit[faTag] = "deg";
+  tagToUnit[trTag] = "ms";
 
   for(unsigned i=0;i<filenames->GetNumberOfValues();i++)
     {
@@ -189,10 +195,10 @@ int vtkSlicerMultiVolumeExplorerLogic
   std::map<int,std::vector<std::string> > tagVal2FileList;
 
   unsigned numberOfFrames = 0;
-  for(unsigned i=0;i<VolumeIdentifyingTags.size();i++)
+  for(std::vector<DcmTagKey>::const_iterator tagIt=tagOrderedList.begin();tagIt!=tagOrderedList.end();++tagIt)
     {
     OFCondition status;
-    DcmTagKey tag = VolumeIdentifyingTags[i];
+    DcmTagKey tag = *tagIt;
     std::cerr << "Splitting by " << tag << std::endl;
     for(unsigned j = 0; j < filenames->GetNumberOfValues(); ++j)
       {
@@ -222,28 +228,32 @@ int vtkSlicerMultiVolumeExplorerLogic
     std::ostringstream frameFileListStream;
     std::ostringstream frameLabelsStream;
     std::ostringstream numberOfFramesStream;
+        
+    vtkSmartPointer<vtkDoubleArray> labelArray = vtkSmartPointer<vtkDoubleArray>::New(); 
 
-    for(std::map<int,std::vector<std::string> >::const_iterator it=tagVal2FileList.begin();
-      it!=tagVal2FileList.end();++it)
+    for(std::map<int,std::vector<std::string> >::const_iterator fileListMapIt=tagVal2FileList.begin();
+      fileListMapIt!=tagVal2FileList.end();++fileListMapIt)
       {
       char str[255];
-      sprintf(str, "%i", it->first);
-      std::cerr << it->first << " ";
+      sprintf(str, "%i", fileListMapIt->first);
+      std::cerr << fileListMapIt->first << " ";
 
-      for(std::vector<std::string>::const_iterator fIt=(*it).second.begin();
-        fIt!=(*it).second.end();++fIt)
+      for(std::vector<std::string>::const_iterator fileListIt=(*fileListMapIt).second.begin();
+        fileListIt!=(*fileListMapIt).second.end();++fileListIt)
         {
-        frameFileListStream << *fIt;
-        if(fIt != (*it).second.end())
+        frameFileListStream << *fileListIt;
+        if(fileListIt != (*fileListMapIt).second.end())
           frameFileListStream << " ";
         }
 
-      frameLabelsStream << it->first;
+      frameLabelsStream << fileListMapIt->first;
 
       if(numberOfFrames != tagVal2FileList.size())
         {
         frameLabelsStream << " ";
         }
+
+      labelArray->InsertNextValue(fileListMapIt->first);
       }
 
       numberOfFramesStream << tagVal2FileList.size();
@@ -252,9 +262,9 @@ int vtkSlicerMultiVolumeExplorerLogic
       mvNode->SetAttribute("MultiVolume.FrameFileList", frameFileListStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.FrameLabels", frameLabelsStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.NumberOfFrames", numberOfFramesStream.str().c_str());
-      mvNode->SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName", VolumeIdentifyingTagNames[i].c_str());
+      mvNode->SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName", tagToName[*tagIt].c_str());
 
-      if(i==0)
+      if(tag == temporalPositionTag)
         {
         // MV is a DCE sequence, store TE, TR and FA
         OFCondition status;
@@ -279,6 +289,9 @@ int vtkSlicerMultiVolumeExplorerLogic
           mvNode->SetAttribute("MultiVolume.DICOM.FlipAngle", str);
           }
         }
+
+      mvNode->SetLabelName(tagToUnit[tag]);
+      mvNode->SetLabelArray(labelArray);
 
       std::cout << std::endl;
 
