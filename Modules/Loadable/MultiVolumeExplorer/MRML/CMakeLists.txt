@@ -8,6 +8,8 @@ set(module_mrml_include_directory
 set(module_mrml_SRCS
   vtkMRMLMultiVolumeNode.cxx
   vtkMRMLMultiVolumeNode.h
+  vtkMRMLMultiVolumeDisplayNode.cxx
+  vtkMRMLMultiVolumeDisplayNode.h
   )
 
 # Additional Target libraries
