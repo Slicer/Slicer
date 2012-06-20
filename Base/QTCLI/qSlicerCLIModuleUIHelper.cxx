@@ -16,7 +16,7 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QRadioButton>
-#include <QToolButton.h>
+#include <QToolButton>
 
 // CTK includes
 #include <ctkDirectoryButton.h>
