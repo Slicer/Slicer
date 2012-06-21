@@ -49,6 +49,7 @@ Version:   $Revision: 1.18 $
 #include "vtkMRMLUnstructuredGridDisplayNode.h"
 #include "vtkMRMLUnstructuredGridNode.h"
 #include "vtkMRMLUnstructuredGridStorageNode.h"
+#include "vtkMRMLVectorVolumeDisplayNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLVolumeArchetypeStorageNode.h"
 #include "vtkURIHandler.h"
@@ -255,6 +256,10 @@ vtkMRMLScene::vtkMRMLScene()
   vvoln->Delete();
 
 #endif
+
+  vtkMRMLVectorVolumeDisplayNode *vvoldn = vtkMRMLVectorVolumeDisplayNode::New();
+  this->RegisterNodeClass( vvoldn );
+  vvoldn->Delete();
 
   vtkMRMLDiffusionWeightedVolumeDisplayNode *dwvdn =
                          vtkMRMLDiffusionWeightedVolumeDisplayNode::New();
