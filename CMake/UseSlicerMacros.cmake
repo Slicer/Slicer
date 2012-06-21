@@ -44,6 +44,9 @@ endfunction()
 #   "-- Setting <varname> ........: ${<varname>}"
 # and will ensure that the message is consistenly padded.
 #
+# If the variable is not defined, it will display:
+#   "-- Setting <varname> ........: <NOT DEFINED>"
+#
 # If the optional argument 'SKIP_TRUNCATE' is provided, the
 # text will NOT be truncated it too long.
 #
@@ -69,16 +72,21 @@ function(slicer_setting_variable_message varname)
   set(fill_char ".")
   set(truncated_text_length 120)
 
+  set(value ${${varname}})
+  if(NOT DEFINED ${varname})
+    set(value "NOT DEFINED")
+  endif()
+
   set(pretext "Setting ${varname}")
   string(LENGTH ${pretext} pretext_length)
   math(EXPR pad_length "${pretext_right_jusitfy_length} - ${pretext_length} - 1")
   if(pad_length GREATER 0)
     string(RANDOM LENGTH ${pad_length} ALPHABET ${fill_char} pretext_dots)
-    set(text "${pretext} ${pretext_dots}: ${${varname}}")
+    set(text "${pretext} ${pretext_dots}: ${value}")
   elseif(pad_length EQUAL 0)
-    set(text "${pretext} : ${${varname}}")
+    set(text "${pretext} : ${value}")
   else()
-    set(text "${pretext}: ${${varname}}")
+    set(text "${pretext}: ${value}")
   endif()
   string(LENGTH ${text} text_length)
   if(${truncate} AND ${text_length} GREATER ${truncated_text_length})
