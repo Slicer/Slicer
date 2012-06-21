@@ -230,7 +230,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
       this->SetActiveFiducialListID(attValue);
       //this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
       }
-    if (!strcmp(attName, "activeFiducialListID"))
+    if (!strcmp(attName, "activeAnnotationID"))
       {
       this->SetActiveAnnotationID(attValue);
       //this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
