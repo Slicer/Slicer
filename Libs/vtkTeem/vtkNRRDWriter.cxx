@@ -263,10 +263,18 @@ void vtkNRRDWriter::WriteData()
   nrrdAxisInfoSet_nva(nrrd, nrrdAxisInfoSpaceDirection, spaceDir);
   nrrd->space = nrrdSpaceRightAnteriorSuperior;
 
-  // Go through MetaDataDictionary and set either specific nrrd field
-  // or a key/value pair
-  // We basically care about finding if we have diffusion information
-  // and measurement frame information
+  // Write out attributes, diffusion information and the measurement frame.
+  //
+
+  // 0. Write out any attributes. Write non-specific attributes first. This allows
+  // variables like the diffusion gradients and B-values that are saved as
+  // attributes on disk to overwrite the attributes later. (This
+  // should ensure the version written to disk has the best information.)
+  AttributeMapType::iterator ait;
+  for (ait = this->Attributes->begin(); ait != this->Attributes->end(); ++ait)
+    {
+    nrrdKeyValueAdd(nrrd, (*ait).first.c_str(), (*ait).second.c_str());
+    }
 
   // 1. Measurement Frame
   if (this->MeasurementFrameMatrix)
@@ -314,13 +322,6 @@ void vtkNRRDWriter::WriteData()
         nrrdKeyValueAdd(nrrd,key, value);
         }
       }
-    }
-
-  // 3. Write out any attributes
-  AttributeMapType::iterator ait;
-  for (ait = this->Attributes->begin(); ait != this->Attributes->end(); ++ait)
-    {
-    nrrdKeyValueAdd(nrrd, (*ait).first.c_str(), (*ait).second.c_str());
     }
 
   // set encoding for data: compressed (raw), (uncompressed) raw, or ascii
