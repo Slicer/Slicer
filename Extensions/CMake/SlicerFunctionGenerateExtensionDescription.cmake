@@ -25,18 +25,10 @@ function(slicerFunctionGenerateExtensionDescription)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
-  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_CATEGORY EXTENSION_HOMEPAGE EXTENSION_DEPENDS EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_DEPENDS EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL SLICER_WC_REVISION SLICER_WC_ROOT)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "CMake variable ${var} is empty !")
-    endif()
-  endforeach()
-
-  set(optional_vars EXTENSION_ICONURL EXTENSION_CONTRIBUTORS EXTENSION_DESCRIPTION EXTENSION_SCREENSHOTURLS EXTENSION_STATUS)
-  foreach(var ${optional_vars})
-    if("${MY_${var}}" STREQUAL "" AND NOT "${${var}_AUTHOR_WARN}" STREQUAL "DONE")
-      message(AUTHOR_WARNING "CMake variable ${var} is empty !")
-      set(${var}_AUTHOR_WARN "DONE")
     endif()
   endforeach()
 
