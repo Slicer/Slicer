@@ -37,17 +37,12 @@ if(UNIX)
     set(LDFLAGS "${LDFLAGS} ${osx_flags} -undefined dynamic_lookup")
   endif(APPLE)
 
+  set(ENV{CC}  "@CMAKE_C_COMPILER@")
   set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
   foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
     set(ENV{${v}} ${${v}})
   endforeach()
 
-  #message(CXX:[$ENV{CXX}])
-  #message(CFLAGS:[$ENV{CFLAGS}])
-  #message(CXXFLAGS:[$ENV{CXXFLAGS}])
-  #message(CPPFLAGS:[$ENV{CPPFLAGS}])
-  #message(LDFLAGS:[$ENV{LDFLAGS}])
-  #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   set(extra_make_flags)
   # Warning: To avoid error on macosx, let's disable parallel build using '-j1'

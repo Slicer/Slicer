@@ -57,6 +57,7 @@ if(UNIX)
     set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
   endif(APPLE)
 
+  set(ENV{CC}  "@CMAKE_C_COMPILER@")
   set(ENV{CXX} "@CMAKE_CXX_COMPILER@")
   foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
     set(ENV{${v}} ${${v}})
