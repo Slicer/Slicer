@@ -25,4 +25,4 @@ foreach(testname ${KIT_TEST_NAMES})
   SIMPLE_TEST( ${testname} )
 endforeach()
 
-# Using SIMPLE_TEST(), you could add your test after this line.
+# Add your test after this line, using SIMPLE_TEST( <testname> )
