@@ -3,6 +3,9 @@ set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{DYLD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
+# The working path must be set to the location of the SimpleITK.py
+# file so that it will be picked up by distuils setup, and installed
 execute_process(
+  WORKING_DIRECTORY "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping"
   COMMAND "@slicer_PYTHON_EXECUTABLE@" "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/PythonPackage/setup.py" install )
 
