@@ -45,13 +45,6 @@ set(ep_base        "${CMAKE_BINARY_DIR}")
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
-set(ep_common_compiler_args
-  -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-  -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-  -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-  -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-  )
-
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
   set(gen "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
@@ -308,7 +301,12 @@ ExternalProject_Add(${proj}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR Slicer-build
   CMAKE_GENERATOR ${gen}
+  UPDATE_COMMAND ""
   CMAKE_ARGS
+    -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+    -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+    -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+    -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     ${ep_superbuild_boolean_args}
     ${ep_superbuild_extra_args}
     ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}

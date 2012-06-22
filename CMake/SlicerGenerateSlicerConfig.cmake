@@ -20,6 +20,12 @@
 
 set(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
 
+# Compilation settings
+set(Slicer_CMAKE_CXX_COMPILER_CONFIG ${CMAKE_CXX_COMPILER})
+set(Slicer_CMAKE_CXX_FLAGS_CONFIG    ${ep_common_cxx_flags})
+set(Slicer_CMAKE_C_COMPILER_CONFIG   ${CMAKE_C_COMPILER})
+set(Slicer_CMAKE_C_FLAGS_CONFIG      ${ep_common_c_flags})
+
 # Launcher command
 set(Slicer_LAUNCHER_EXECUTABLE_CONFIG ${Slicer_LAUNCHER_EXECUTABLE})
 set(Slicer_LAUNCH_COMMAND_CONFIG ${Slicer_LAUNCH_COMMAND})

@@ -206,7 +206,7 @@ macro(slicer_config_set_ep var value)
   endif()
 endmacro()
 
-# For sake of simplification, the macro 'slicer_config_set_ep' is not invoked confitionally, if
+# For sake of simplification, the macro 'slicer_config_set_ep' is not invoked conditionally, if
 # the configured 'value' parameter is an empty string, the macro 'slicer_config_set_ep' is a no-op.
 
 slicer_config_set_ep(
@@ -286,6 +286,49 @@ slicer_config_set_ep(
   VTK_DIR
   "@VTK_DIR_CONFIG@"
   CACHE PATH "Path to VTK build or install directory")
+
+# --------------------------------------------------------------------------
+# Consistent Compiler Selections
+# --------------------------------------------------------------------------
+# Compilation Commands
+set(Slicer_CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@")
+set(Slicer_CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@")
+set(Slicer_CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
+set(Slicer_CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
+
+# With the help of SuperBuild, Slicer has been configured with specific compiler
+#
+# Considering that, by default, Slicer and most of its dependent external projects are
+# built with a particular compiler, it's important to make sure that the project including
+# SlicerConfig.cmake (this file) is built against the same compliant compiler
+#
+# A typical use of this macro is illustrated below:
+#    slicer_config_set_compiler_ep("CMAKE_C_COMPILER", "@Slicer_CMAKE_C_COMPILER@")
+#    slicer_config_set_compiler_ep("CMAKE_CXX_COMPILER", "@Slicer_CMAKE_CXX_COMPILER@")
+#
+macro(slicer_config_set_compiler_ep var value)
+  if(NOT "${value}" STREQUAL "")
+    if(DEFINED ${var})
+      get_filename_component(var_realpath "${${var}}" REALPATH)
+      get_filename_component(value_realpath ${value} REALPATH)
+      if(NOT ${var_realpath} STREQUAL ${value_realpath})
+        message(FATAL_ERROR "Variable ${var} defined prior calling 'find_package(Slicer)' does NOT "
+                            "match value used to configure Slicer. It probably means that a different "
+                            "${var} has been used to configure this project and Slicer.\n"
+                            "${var}=${${var}}\n"
+                            "Slicer_${var}=${value}")
+      endif()
+    endif()
+    set(${var} "${value}" ${ARGN})
+  endif()
+endmacro()
+slicer_config_set_compiler_ep( CMAKE_C_COMPILER   "@Slicer_CMAKE_C_COMPILER_CONFIG@"
+   CACHE PATH "Path to C compiler used in Slicer build" FORCE )
+slicer_config_set_compiler_ep( CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CONFIG@"
+   CACHE PATH "Path to CXX compiler used in Slicer build" FORCE )
+
+set(CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
+set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)

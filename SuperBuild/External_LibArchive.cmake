@@ -6,6 +6,11 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+# Sanity checks
+if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
+  message(FATAL_ERROR "LibArchive_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
 # Set dependency list
 set(LibArchive_DEPENDENCIES "")
 if(WIN32)
@@ -15,6 +20,7 @@ endif()
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(LibArchive)
 set(proj LibArchive)
+
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   #
@@ -32,19 +38,6 @@ if(NOT DEFINED LibArchive_DIR)
       -DZLIB_LIBRARY:FILEPATH=${zlib_DIR}/lib/zlib.lib
       -DZLIB_ROOT:PATH=${zlib_DIR}
       )
-  else()
-    if(${CMAKE_VERSION} VERSION_GREATER "2.8.5")
-      # Note that CMAKE_DISABLE_FIND_PACKAGE_* is only supported in CMake >= 2.8.6
-      list(APPEND ADDITIONAL_CMAKE_ARGS
-        -DCMAKE_DISABLE_FIND_PACKAGE_OpenSSL:BOOL=TRUE
-        )
-      message(STATUS "${proj} - Configured *WITHOUT* OpenSSL support.")
-    else()
-      message(STATUS "${proj} - Configured *WITH* OpenSSL support.")
-    endif()
-    list(APPEND ADDITIONAL_CMAKE_ARGS
-      -DCRYPTO_LIBRARY:FILEPATH=
-      )
   endif()
 
   # Set CMake OSX variable to pass down the external project
@@ -56,18 +49,25 @@ if(NOT DEFINED LibArchive_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
+  if(NOT DEFINED git_protocol)
+    set(git_protocol "git")
+  endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/libarchive/libarchive.git"
     GIT_TAG "v3.0.4"
-    SOURCE_DIR LibArchive
-    BINARY_DIR LibArchive-build
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
+    BINARY_DIR ${proj}-build
+    UPDATE_COMMAND ""
     INSTALL_DIR LibArchive-install
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+    # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+    # Not used -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      # -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DENABLE_ACL:BOOL=OFF
       -DENABLE_CPIO:BOOL=OFF

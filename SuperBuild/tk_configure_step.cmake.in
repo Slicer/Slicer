@@ -1,3 +1,8 @@
+set(ENV{CC} "@CMAKE_C_COMPILER@ @CMAKE_C_COMPILER_ARG1@")
+set(ENV{CFLAGS} "@CMAKE_C_FLAGS@ @CMAKE_C_FLAGS_RELEASE@")
+set(ENV{CXX} "@CMAKE_CXX_COMPILER@ @CMAKE_CXX_COMPILER_ARG1@")
+set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
+set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 
 set(configure_cflags)
 #
@@ -12,9 +17,6 @@ endif()
 # it seems that you need to run configure in the unix directory
 # and not from the parent directory relatively i.e. sh /unix/configure
 # use this step so we can set the WORKING_DIRECTORY appropriately
-
-set(ENV{CC} @CMAKE_C_COMPILER@)
-set(ENV{CXX} @CMAKE_CXX_COMPILER@)
 
 if(APPLE)
   set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")

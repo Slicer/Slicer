@@ -42,11 +42,12 @@ if(NOT DEFINED SlicerExecutionModel_DIR)
     UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      ${ep_common_compiler_args}
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
       -DBUILD_TESTING:BOOL=OFF
       -DITK_DIR:PATH=${ITK_DIR}
       -DSlicerExecutionModel_LIBRARY_PROPERTIES:STRING=${Slicer_LIBRARY_PROPERTIES}
