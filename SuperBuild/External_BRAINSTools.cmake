@@ -30,9 +30,9 @@ set(proj BRAINSTools)
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(GIT_TAG "03ce71cca9bbfb1f0da0040b139011211694b1c6")
+  set(GIT_TAG "03ce71cca9bbfb1f0da0040b139011211694b1c6" CACHE STRING "" FORCE)
 else()
-  set(GIT_TAG "d3cdf75cbf8ffccfa54f0db7dd4a772aebf891fe") # June 19, 2012 tag
+  set(GIT_TAG "12b6d41a74ec30465a07df9c361237f2b77c2955" CACHE STRING "" FORCE) # June 19, 2012 tag
 endif()
 
   if(NOT DEFINED git_protocol)

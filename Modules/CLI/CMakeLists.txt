@@ -149,6 +149,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(USE_BRAINSMultiModeSegment         OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSCut                      OFF CACHE BOOL "" FORCE)
   set(USE_ImageCalculator                OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSSurfaceTools             OFF CACHE BOOL "" FORCE)
 
   set(ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR} CACHE STRING "")
   set(BRAINSTools_SUPERBUILD             OFF CACHE BOOL "" FORCE)
