@@ -793,3 +793,9 @@ std::string vtkMRMLVolumeArchetypeStorageNode::UpdateFileList(vtkMRMLNode *refNo
     return tempDir;
     }
 }
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeArchetypeStorageNode::ConfigureForDataExchange()
+{
+  this->UseCompressionOff();
+}

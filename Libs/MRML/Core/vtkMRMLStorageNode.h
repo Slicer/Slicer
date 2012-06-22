@@ -266,6 +266,13 @@ public:
   /// \sa CanReadInReferenceNode, WriteData
   virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode);
 
+  ///
+  /// Configure the storage node for data exchange. This is an
+  /// opportunity to optimize the storage node's settings, for
+  /// instance to turn off compression.
+  virtual void ConfigureForDataExchange() {};
+
+
 protected:
   vtkMRMLStorageNode();
   ~vtkMRMLStorageNode();

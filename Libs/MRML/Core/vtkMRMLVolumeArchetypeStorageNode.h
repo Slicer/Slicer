@@ -79,6 +79,12 @@ class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageN
   virtual bool CanReadInReferenceNode(vtkMRMLNode* refNode);
   virtual bool CanWriteFromReferenceNode(vtkMRMLNode* refNode);
 
+  ///
+  /// Configure the storage node for data exchange. This is an
+  /// opportunity to optimize the storage node's settings, for
+  /// instance to turn off compression.
+  virtual void ConfigureForDataExchange();
+
 protected:
   vtkMRMLVolumeArchetypeStorageNode();
   ~vtkMRMLVolumeArchetypeStorageNode();

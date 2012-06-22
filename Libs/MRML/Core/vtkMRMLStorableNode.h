@@ -140,6 +140,7 @@ public:
     return this->StorageNodes;
     };
 
+  /// Create a storage node for this node type
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
     {
     return NULL;

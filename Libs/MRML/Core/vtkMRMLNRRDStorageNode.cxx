@@ -303,7 +303,7 @@ int vtkMRMLNRRDStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkDoubleArray *grads = NULL;
   vtkDoubleArray *bValues = NULL;
   vtkSmartPointer<vtkMatrix4x4> ijkToRas = vtkSmartPointer<vtkMatrix4x4>::New();
-  
+
   if ( refNode->IsA("vtkMRMLDiffusionTensorVolumeNode") )
     {
     volNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(refNode);
@@ -517,4 +517,10 @@ void vtkMRMLNRRDStorageNode::InitializeSupportedWriteFileTypes()
 const char* vtkMRMLNRRDStorageNode::GetDefaultWriteFileExtension()
 {
   return "nhdr";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNRRDStorageNode::ConfigureForDataExchange()
+{
+  this->UseCompressionOff();
 }

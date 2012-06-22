@@ -64,6 +64,12 @@ class VTK_MRML_EXPORT vtkMRMLNRRDStorageNode : public vtkMRMLStorageNode
   /// Return true if the node can be read in.
   virtual bool CanReadInReferenceNode(vtkMRMLNode *refNode);
 
+  ///
+  /// Configure the storage node for data exchange. This is an
+  /// opportunity to optimize the storage node's settings, for
+  /// instance to turn off compression.
+  virtual void ConfigureForDataExchange();
+
 protected:
   vtkMRMLNRRDStorageNode();
   ~vtkMRMLNRRDStorageNode();
