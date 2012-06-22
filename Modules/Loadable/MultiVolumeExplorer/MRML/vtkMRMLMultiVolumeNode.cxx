@@ -20,7 +20,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include <vtkMRMLMultiVolumeDisplayNode.h>
 #include <vtkMRMLVolumeNode.h>
-#include <vtkMRMLNRRDStorageNode.h>
+#include <vtkMRMLMultiVolumeStorageNode.h>
 
 // CropModuleMRML includes
 #include <vtkMRMLMultiVolumeNode.h>
@@ -198,7 +198,7 @@ vtkMRMLMultiVolumeDisplayNode* vtkMRMLMultiVolumeNode::GetMultiVolumeDisplayNode
 
 vtkMRMLStorageNode* vtkMRMLMultiVolumeNode::CreateDefaultStorageNode()
 {
-  return vtkMRMLNRRDStorageNode::New();
+  return vtkMRMLMultiVolumeStorageNode::New();
 }
 
 void vtkMRMLMultiVolumeNode::SetNumberOfFrames(int nf)
