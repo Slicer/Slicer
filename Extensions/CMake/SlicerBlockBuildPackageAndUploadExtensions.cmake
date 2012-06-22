@@ -189,6 +189,7 @@ foreach(extension_name ${EXTENSION_LIST})
         else()
 
           list(APPEND sext_ep_cmake_args
+            -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
             -DBUILD_TESTING:BOOL=${BUILD_TESTING}
             -DSlicer_DIR:PATH=${Slicer_DIR}
