@@ -416,10 +416,12 @@ void vtkMRMLSliceLogic::UpdateSliceNodes()
     {
     return;
     }
-  // Set up the nodes and models
-  this->CreateSliceModel();
+  // Set up the nodes
   this->UpdateSliceNode();
   this->UpdateSliceCompositeNode();
+
+  // Set up the models
+  this->CreateSliceModel();
 
   this->UpdatePipeline();
 }
@@ -1307,24 +1309,10 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);
-    // try to auto-set the colors based on the slice name
-    // cannot use the vtkSlicerColor class since it is in the GUI
-    // TODO: need a better mapping than this
-    //
-    if (this->Name != 0)
+    if (this->SliceNode)
       {
-      if ( !strcmp(this->Name, "Red") )
-        {
-        this->SliceModelDisplayNode->SetColor(0.952941176471, 0.290196078431, 0.2);
-        }
-      if ( !strcmp(this->Name, "Green") )
-        {
-        this->SliceModelDisplayNode->SetColor(0.43137254902, 0.690196078431, 0.294117647059);
-        }
-      if ( !strcmp(this->Name, "Yellow") )
-        {
-        this->SliceModelDisplayNode->SetColor(0.929411764706, 0.835294117647, 0.298039215686);
-        }
+      // Auto-set the colors based on the slice node
+      this->SliceModelDisplayNode->SetColor(this->SliceNode->GetLayoutColor());
       }
     this->SliceModelDisplayNode->SetAmbient(1);
     this->SliceModelDisplayNode->SetBackfaceCulling(0);
