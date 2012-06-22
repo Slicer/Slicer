@@ -228,6 +228,10 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
     {
     this->StartBlend();
     }
+  else
+    {
+    this->StartAdjustWindowLevel();
+    }
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
   this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
   this->Superclass::OnLeftButtonDown();
@@ -242,6 +246,10 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
   else if (this->ActionState == this->Blend)
     {
     this->EndBlend();
+    }
+  else
+    {
+    this->EndAdjustWindowLevel();
     }
   this->Superclass::OnLeftButtonUp();
 }
@@ -302,6 +310,28 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         {
         sliceCompositeNode->SetLabelOpacity(newLabelOpacity);
         }
+      }
+      break;
+    case vtkSliceViewInteractorStyle::AdjustWindowLevel:
+      {
+      int startX = this->GetActionStartWindow()[0];
+      int startY = this->GetActionStartWindow()[0];
+      int deltaX = windowX - startX;
+      int deltaY = windowY - startY;
+      int deltaSX = (windowX - startX)*(windowX - startX);
+      int deltaSY = (windowY - startY)*(windowY - startY);
+
+      double rangeLow = this->GetActionStartVolumeRangeLow();
+      double rangeHigh = this->GetActionStartVolumeRangeHigh();
+      double gain = (rangeHigh - rangeLow) / 10.0;
+      double newWindow = this->GetActionStartVolumeWindow() + (gain * deltaX);
+      double newLevel = this->GetActionStartVolumeLevel() + (gain * deltaY);
+
+      // Ignore the first point because it is not initialized correctly.
+      //if ( (lastX == 0) || (lastY == 0) ) window = 0;
+      // Filter out small changes from incidental clicks
+      if ( !(deltaSX < 2 || deltaSY < 2) )
+        this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
       }
       break;
     default:
@@ -435,6 +465,31 @@ void vtkSliceViewInteractorStyle::EndBlend()
   this->SetActionStartForegroundOpacity(sliceCompositeNode->GetForegroundOpacity());
   this->SetActionStartLabelOpacity(sliceCompositeNode->GetLabelOpacity());
 }
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::StartAdjustWindowLevel()
+{
+  this->SetActionState(this->AdjustWindowLevel);
+  double window = 0.0;
+  double level = 0.0;
+  double rangeLow = 0.0;
+  double rangeHigh = 0.0;
+  this->SliceLogic->GetBackgroundWindowLevelAndRange(window, level,
+                                                     rangeLow, rangeHigh);
+  this->SetActionStartVolumeWindow(window);
+  this->SetActionStartVolumeLevel(level);
+  this->SetActionStartVolumeRangeLow(rangeLow);
+  this->SetActionStartVolumeRangeHigh(rangeHigh);
+}
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::EndAdjustWindowLevel()
+{
+  this->SetActionState(this->None);
+  this->SetActionStartVolumeWindow(0);
+  this->SetActionStartVolumeLevel(0);
+}
+
 
 //----------------------------------------------------------------------------
 void vtkSliceViewInteractorStyle::GetEventRAS(double ras[4])

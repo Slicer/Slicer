@@ -84,7 +84,8 @@ public:
     Translate,
     Zoom,
     Rotate, /* Rotate not currently used */
-    Blend /* fg to bg, labelmap to bg */
+    Blend, /* fg to bg, labelmap to bg */
+    AdjustWindowLevel
     };
   vtkGetMacro(ActionState, int);
   vtkSetMacro(ActionState, int);
@@ -109,6 +110,18 @@ public:
   vtkSetMacro(ActionStartForegroundOpacity, double);
   vtkGetMacro(ActionStartLabelOpacity, double);
   vtkSetMacro(ActionStartLabelOpacity, double);
+
+  /// what was the state of the Window/Level when the action started
+  vtkGetMacro(ActionStartVolumeWindow, double);
+  vtkSetMacro(ActionStartVolumeWindow, double);
+  vtkGetMacro(ActionStartVolumeLevel, double);
+  vtkSetMacro(ActionStartVolumeLevel, double);
+
+  /// what was the state of the Scalar Range when the action started
+  vtkGetMacro(ActionStartVolumeRangeLow, double);
+  vtkSetMacro(ActionStartVolumeRangeLow, double);
+  vtkGetMacro(ActionStartVolumeRangeHigh, double);
+  vtkSetMacro(ActionStartVolumeRangeHigh, double);
 
   /// what was the state of the slice node when the action started
   vtkGetObjectMacro(ActionStartSliceToRAS, vtkMatrix4x4);
@@ -144,6 +157,11 @@ public:
   void StartBlend();
   void EndBlend();
 
+  /// Enter a mode where the mouse moves are used to change the window/level
+  /// setting.
+  void StartAdjustWindowLevel();
+  void EndAdjustWindowLevel();
+
   /// Get the RAS coordinates of the interactor's EventPosition
   /// with respect to the current poked renderer (taking into
   /// account the lightbox)
@@ -176,6 +194,10 @@ protected:
 
   double ActionStartForegroundOpacity;
   double ActionStartLabelOpacity;
+  double ActionStartVolumeWindow;
+  double ActionStartVolumeLevel;
+  double ActionStartVolumeRangeLow;
+  double ActionStartVolumeRangeHigh;
 
   vtkMatrix4x4 *ActionStartSliceToRAS;
   vtkMatrix4x4 *ActionStartXYToRAS;
