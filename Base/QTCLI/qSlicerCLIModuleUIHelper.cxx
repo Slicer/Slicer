@@ -254,6 +254,10 @@ void qSlicerCLIModuleUIHelperPrivate::initializeMaps()
   Self::ImageTypeAttributeToNodeType["vector"] = "vtkMRMLVectorVolumeNode";
   Self::ImageTypeAttributeToNodeType["tensor"] = "vtkMRMLDiffusionTensorVolumeNode";
   Self::ImageTypeAttributeToNodeType["diffusion-weighted"] = "vtkMRMLDiffusionWeightedVolumeNode";
+  Self::ImageTypeAttributeToNodeType["signal"] = "vtkMRMLMultiVolumeNode";
+  Self::ImageTypeAttributeToNodeType["multichannel"] = "vtkMRMLMultiVolumeNode";
+  Self::ImageTypeAttributeToNodeType["dynamic-contrast-enhanced"] = "vtkMRMLMultiVolumeNode";
+
 
   // Geometry type attribute mapping
   Self::GeometryTypeAttributeToNodeType["fiberbundle"] = "vtkMRMLFiberBundleNode";
