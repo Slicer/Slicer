@@ -19,6 +19,7 @@
 
 #include "vtkMRMLNode.h"
 class vtkDoubleArray;
+class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
 {
@@ -154,6 +155,10 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   // Description:
   //Get labels
   const LabelsVectorType & GetLabels() const;
+
+  /// 
+  /// Create default storage node or NULL if does not have one
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   //----------------------------------------------------------------
   /// Constructor and destroctor

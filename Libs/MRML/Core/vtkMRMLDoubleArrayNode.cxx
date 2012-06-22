@@ -14,6 +14,7 @@ Version:   $Revision: 1.2 $
 
 // MRML includes
 #include "vtkMRMLDoubleArrayNode.h"
+#include "vtkMRMLDoubleArrayStorageNode.h"
 
 // VTK includes
 #include <vtkDoubleArray.h>
@@ -576,3 +577,9 @@ const vtkMRMLDoubleArrayNode::LabelsVectorType & vtkMRMLDoubleArrayNode::GetLabe
     return this->Labels;
 }
 
+
+//---------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLDoubleArrayNode::CreateDefaultStorageNode()
+{
+  return vtkMRMLDoubleArrayStorageNode::New();
+};
