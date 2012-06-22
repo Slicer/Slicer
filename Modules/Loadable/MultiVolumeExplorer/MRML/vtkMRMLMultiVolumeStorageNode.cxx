@@ -15,6 +15,9 @@ Version:   $Revision: 1.6 $
 #include "vtkMRMLMultiVolumeStorageNode.h"
 #include "vtkMRMLMultiVolumeNode.h"
 
+#include "vtkObjectFactory.h"
+
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLMultiVolumeStorageNode);
 
@@ -24,7 +27,7 @@ vtkMRMLMultiVolumeStorageNode::vtkMRMLMultiVolumeStorageNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLNRRDStorageNode::~vtkMRMLNRRDStorageNode()
+vtkMRMLMultiVolumeStorageNode::~vtkMRMLMultiVolumeStorageNode()
 {
 }
 

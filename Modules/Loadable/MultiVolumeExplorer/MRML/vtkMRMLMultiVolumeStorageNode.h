@@ -30,7 +30,6 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeStorag
 
   static vtkMRMLMultiVolumeStorageNode *New();
   vtkTypeMacro(vtkMRMLMultiVolumeStorageNode,vtkMRMLNRRDStorageNode);
-  void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
