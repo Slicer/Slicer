@@ -148,7 +148,6 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
     }
-  this->discoverSlicerBinDirectory();
 
   this->SlicerHome = this->discoverSlicerHomeDirectory();
   this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
@@ -296,8 +295,6 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
-  Q_Q(qSlicerCoreApplication);
-
   // Since some standalone executable (i.e EMSegmentCommandLine) can create
   // an instance of qSlicer(Core)Application so that the environment and the
   // python manager are properly initialized. This executable will have
@@ -307,10 +304,11 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   QString slicerHome = this->Environment.value("SLICER_HOME");
   if (!slicerHome.isEmpty())
     {
-#ifndef Q_OS_MAC
+#ifdef Q_OS_WIN32
+    Q_Q(qSlicerCoreApplication);
     if (this->IntDir.isEmpty())
       {
-      // Additionally, in an attempt to compute InDir, let's note that its value
+      // Additionally, in an attempt to compute IntDir, let's note that its value
       // is first set with the help of "pathWithoutIntDir" in the method
       // "discoverSlicerBinDirectory" happening before this call.
       // When first called, the parameters to "pathWithoutIntDir" are "applicationDirPath" and "Slicer_BIN_DIR".
@@ -323,13 +321,17 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
     //qDebug() << "qSlicerCoreApplication: SLICER_HOME externally set to" << slicerHome;
     return slicerHome;
     }
-  QDir slicerBinDir(this->SlicerBin);
-  bool cdUpRes = slicerBinDir.cdUp();
-  if (!cdUpRes)
+  else
     {
-    qDebug() << "Warning, can't cdUp in " << slicerBinDir;
+    this->discoverSlicerBinDirectory();
+    QDir slicerBinDir(this->SlicerBin);
+    bool cdUpRes = slicerBinDir.cdUp();
+    if (!cdUpRes)
+      {
+      qDebug() << "Warning, can't cdUp in " << slicerBinDir;
+      }
+    return slicerBinDir.canonicalPath();
     }
-  return slicerBinDir.canonicalPath();
 }
 
 //-----------------------------------------------------------------------------
@@ -418,8 +420,8 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     slicerBinAsDir.cd(Slicer_BIN_DIR);
     }
   this->SlicerBin = slicerBinAsDir.path();
-  Q_ASSERT(qSlicerUtils::pathEndsWith(this->SlicerBin, Slicer_BIN_DIR));
 #endif
+  Q_ASSERT(qSlicerUtils::pathEndsWith(this->SlicerBin, Slicer_BIN_DIR));
 }
 
 //-----------------------------------------------------------------------------
