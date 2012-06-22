@@ -30,6 +30,7 @@
 #include <vtkMRMLScalarVolumeNode.h>
 #include <vtkMRMLMultiVolumeNode.h>
 #include <vtkMRMLMultiVolumeDisplayNode.h>
+#include <vtkMRMLMultiVolumeStorageNode.h>
 #include <vtkMRMLVolumeArchetypeStorageNode.h>
 
 // VTK includes
@@ -119,6 +120,7 @@ void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
     }
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeNode>().GetPointer());
   this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeDisplayNode>().GetPointer());
+  this->GetMRMLScene()->RegisterNodeClass(vtkNew<vtkMRMLMultiVolumeStorageNode>().GetPointer());
 }
 
 //----------------------------------------------------------------------------
