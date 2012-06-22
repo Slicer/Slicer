@@ -10,6 +10,8 @@ set(module_mrml_SRCS
   vtkMRMLMultiVolumeNode.h
   vtkMRMLMultiVolumeDisplayNode.cxx
   vtkMRMLMultiVolumeDisplayNode.h
+  vtkMRMLMultiVolumeStorageNode.cxx
+  vtkMRMLMultiVolumeStorageNode.h
   )
 
 # Additional Target libraries
