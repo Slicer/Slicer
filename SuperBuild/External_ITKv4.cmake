@@ -58,13 +58,14 @@ if(NOT DEFINED ITK_DIR)
   string(REPLACE "-fopenmp" "" ITK_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
   string(REPLACE "-fopenmp" "" ITK_CMAKE_CXX_FLAGS "${CMAKE_CX_FLAGS}")
 
-  set(ITKv4_REPOSITORY git://itk.org/ITK.git)
-  #set(ITKv4_GIT_TAG v4.1.0)
-  set(ITKv4_GIT_TAG 6ab33bd3ff830d9277b09a3b31aa6303414e78a4) ## 2012-06-08 The feature freeze version that will become v4.2.0rc2
-
   if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
+      set(git_protocol "git")
   endif()
+
+  set(ITKv4_REPOSITORY ${git_protocol}://itk.org/ITK.git)
+  #set(ITKv4_GIT_TAG v4.1.0)
+  set(ITKv4_GIT_TAG dd2474336fe3e49152b9ab00ad268543d8ec6fee)
+  ## 2012-06-19 The feature freeze version that will become v4.2.0rc3
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
