@@ -15,23 +15,13 @@
 #include "vtkSlicerTask.h"
 
 // MRML includes
-#include <vtkMRMLColorTableNode.h>
-#include <vtkMRMLColorTableStorageNode.h>
 #include <vtkMRMLDisplayNode.h>
-#include <vtkMRMLDoubleArrayNode.h>
-#include <vtkMRMLDoubleArrayStorageNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLDiffusionWeightedVolumeNode.h>
+#include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLFiducialListNode.h>
-#include <vtkMRMLModelNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
-#include <vtkMRMLModelStorageNode.h>
-#include <vtkMRMLNRRDStorageNode.h>
 #include <vtkMRMLROIListNode.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLTransformStorageNode.h>
-#include <vtkMRMLVectorVolumeNode.h>
-#include <vtkMRMLVolumeArchetypeStorageNode.h>
+#include <vtkMRMLColorNode.h>
 
 // VTK includes
 #include <vtkStringArray.h>
@@ -179,7 +169,7 @@ vtkSlicerCLIModuleLogic
 std::string
 vtkSlicerCLIModuleLogic
 ::ConstructTemporaryFileName(const std::string& tag,
-                             const std::string& vtkNotUsed(type),
+                             const std::string& type,
                              const std::string& name,
                              const std::vector<std::string>& extensions,
                              CommandLineModuleType commandType)
@@ -243,7 +233,7 @@ vtkSlicerCLIModuleLogic
 
   if (tag == "image")
     {
-    if ( commandType == CommandLineModule )
+    if ( commandType == CommandLineModule || type == "dynamic-contrast-enhanced")
       {
       // If running an executable 
 
@@ -608,6 +598,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // write out the input datasets
   //
   //
+  std::set<std::string> MemoryTransferPossible;
+  MemoryTransferPossible.insert("vtkMRMLScalarVolumeNode");
+  MemoryTransferPossible.insert("vtkMRMLVectorVolumeNode");
+  MemoryTransferPossible.insert("vtkMRMLDiffusionWeightedVolumeNode");
+  MemoryTransferPossible.insert("vtkMRMLDiffusionTensorVolumeNode");
+
   MRMLIDToFileNameMap::const_iterator id2fn0;
     
   for (id2fn0 = nodesToWrite.begin();
@@ -617,42 +613,17 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     vtkMRMLNode *nd
       = this->GetMRMLScene()->GetNodeByID( (*id2fn0).first.c_str() );
     
-    vtkMRMLDiffusionTensorVolumeNode *dtvnd = NULL;
-    vtkMRMLDiffusionWeightedVolumeNode *dwvnd = NULL;
-    vtkMRMLVectorVolumeNode *vvnd = NULL;
-    vtkMRMLScalarVolumeNode *svnd = NULL;
-
-    if (nd->IsA("vtkMRMLDiffusionTensorVolumeNode"))
+    vtkSmartPointer<vtkMRMLStorageNode> out = 0;
+    vtkSmartPointer<vtkMRMLStorageNode> defaultOut = 0;
+    vtkMRMLStorableNode *sn = dynamic_cast<vtkMRMLStorableNode *>(nd);
+    if (sn)
       {
-      dtvnd = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(nd);
+      defaultOut.TakeReference(sn->CreateDefaultStorageNode());
+      if (defaultOut)
+        {
+        defaultOut->ConfigureForDataExchange();
+        }
       }
-    else if (nd->IsA("vtkMRMLDiffusionWeightedVolumeNode"))
-      {
-      dwvnd = vtkMRMLDiffusionWeightedVolumeNode::SafeDownCast(nd);
-      }
-    else if (nd->IsA("vtkMRMLVectorVolumeNode"))
-      {
-      vvnd = vtkMRMLVectorVolumeNode::SafeDownCast(nd);
-      }
-    else if (nd->IsA("vtkMRMLScalarVolumeNode"))
-      {
-      svnd = vtkMRMLScalarVolumeNode::SafeDownCast(nd);
-      }
-
-    vtkMRMLModelNode *mnd
-      = vtkMRMLModelNode::SafeDownCast(nd);
-    vtkMRMLDisplayableNode *fbnd = vtkMRMLDisplayableNode::SafeDownCast(nd);
-    vtkMRMLTransformNode *tnd
-      = vtkMRMLTransformNode::SafeDownCast(nd);
-    vtkMRMLColorTableNode *ctnd
-      = vtkMRMLColorTableNode::SafeDownCast(nd);
-    vtkMRMLModelHierarchyNode *mhnd
-      = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
-    vtkMRMLDoubleArrayNode *dand
-      = vtkMRMLDoubleArrayNode::SafeDownCast(nd);
-
-    
-    vtkMRMLStorageNode *out = 0;
 
     // Determine if and how a node is to be written.  If we update the
     // MRMLIDImageIO, then we can change these conditions for the
@@ -664,33 +635,27 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // No need to write anything out with Python
       continue;
       }
-    if ((commandType == CommandLineModule) && (svnd || vvnd))
+    if ((commandType == CommandLineModule) && defaultOut)
       {
-      // only write out scalar & vector image nodes if running an executable
-      out = vtkMRMLVolumeArchetypeStorageNode::New();
-      out->UseCompressionOff();
+      // Default case for CommandLineModule is to use a storage node
+      out = defaultOut;
       }
-    else if ((commandType == CommandLineModule) && (dtvnd || dwvnd))
+    if ((commandType == SharedObjectModule) && defaultOut)
       {
-      // only write out diffusion image & tensor nodes if running an executable
-      out = vtkMRMLNRRDStorageNode::New();
-      out->UseCompressionOff();
+      std::cerr << nd->GetName() << " is " << nd->GetClassName() << std::endl;
+      // Check if we can transfer the datatype using a direct memory transfer
+      if (std::find(MemoryTransferPossible.begin(), MemoryTransferPossible.end(), 
+                    nd->GetClassName()) == MemoryTransferPossible.end())
+        {
+        // Cannot use a memory transfer, use a StorageNode
+        out = defaultOut;
+        }
       }
-    else if (fbnd && fbnd->IsA("vtkMRMLFiberBundleNode"))
+
+    vtkMRMLTransformNode *tnd = vtkMRMLTransformNode::SafeDownCast(nd);
+    if (tnd)
       {
-      out = fbnd->CreateDefaultStorageNode();
-      }
-    else if (mnd)
-      {
-      // always write out model nodes
-      out = vtkMRMLModelStorageNode::New();
-      }
-    else if (tnd)
-      {
-      // always write out transform nodes
-      //
-      // depending on the extension used, we may use a storage node or
-      // may put a copy of the node in a miniscene
+      // Transform nodes will use either a storage node OR a miniscene
 
       std::string::size_type loc = (*id2fn0).second.find_last_of(".");
       if (loc != std::string::npos)
@@ -703,29 +668,18 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           {
           // not using a storage node.  using a mini-scene to transfer
           // the node
+          out = 0;  // don't use the storage node
+
           vtkMRMLNode *cp = miniscene->CopyNode(nd);
 
           // Keep track what scene node corresponds to what miniscene node
           sceneToMiniSceneMap[nd->GetID()] = cp->GetID();
           }
-        else
-          {
-          // use a storage node
-          out = vtkMRMLTransformStorageNode::New();
-          }
         }
       }
-    else if (ctnd)
-      {
-      // always write out color table nodes
-      out = vtkMRMLColorTableStorageNode::New();
-      }
-    else if (dand)
-      {
-      // always write out double array nodes
-      out = vtkMRMLDoubleArrayStorageNode::New();
-      }
-    else if (mhnd)
+
+    vtkMRMLModelHierarchyNode *mhnd = vtkMRMLModelHierarchyNode::SafeDownCast(nd);
+    if (mhnd)
       {
       // model hierarchy nodes need to get put in a scene
       vtkMRMLNode *cp = miniscene->CopyNode(nd);
@@ -756,7 +710,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         {
         vtkErrorMacro("ERROR writing file " << out->GetFileName());
         }
-      out->Delete();
+      out = 0;
       }
     }
 
