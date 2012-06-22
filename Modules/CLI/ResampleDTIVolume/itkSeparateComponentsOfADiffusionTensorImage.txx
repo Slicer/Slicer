@@ -24,9 +24,15 @@ SeparateComponentsOfADiffusionTensorImage<TInput, TOutput>
 ::SeparateComponentsOfADiffusionTensorImage()
 {
   this->SetNumberOfRequiredInputs( 1 );
+#if ITK_VERSION_MAJOR < 4
   this->SetNumberOfOutputs( 6 );
+  const unsigned int numOfIdexedOutputs = this->GetNumberOfOutputs();
+#else
+  this->SetNumberOfIndexedOutputs( 6 );
+  const unsigned int numOfIdexedOutputs = this->GetNumberOfIndexedOutputs();
+#endif
   this->SetNumberOfRequiredOutputs( 6 );
-  for( unsigned int i = 1; i < this->GetNumberOfOutputs(); i++ )  // we skip output0 because it is created by default
+  for( unsigned int i = 1; i < numOfIdexedOutputs; i++ )  // we skip output0 because it is created by default
     {
     OutputImagePointerType output
       = static_cast<OutputImageType *>( this->MakeOutput( i ).GetPointer() );

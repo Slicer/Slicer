@@ -527,7 +527,11 @@ void vtkTeemEstimateDiffusionTensor::ThreadedExecute(vtkImageData *inData,
   void *inPtrs;
   void *outPtr = outData->GetScalarPointerForExtent(outExt);
 
+#if ITK_VERSION_MAJOR < 4
   vtkDebugMacro("in threaded execute, " << this->GetNumberOfInputs() << " inputs ");
+#else
+  vtkDebugMacro("in threaded execute, " << this->GetNumberOfIndexedInputs() << " inputs ");
+#endif
 
   // Loop through to fill input pointer array
   inPtrs = inData->GetScalarPointerForExtent(outExt);

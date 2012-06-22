@@ -76,13 +76,13 @@ void OtsuThreshold<TInputImage, TOutputImage>
 {
   double totalSamples = itk::NumericTraits<double>::Zero;
 
-  for( int k = 0; k < this->GetNumberOfThreads(); ++k )
+  for( unsigned int k = 0; k < this->GetNumberOfThreads(); ++k )
     {
     totalSamples += m_ThreadCount[k];
     }
   for( unsigned int b = 0; b < m_Bins; ++b )
     {
-    for( int k = 1; k < this->GetNumberOfThreads(); ++k )
+    for( unsigned int k = 1; k < this->GetNumberOfThreads(); ++k )
       {
       m_ThreadHist[0][b] += m_ThreadHist[k][b];
       }

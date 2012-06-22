@@ -95,7 +95,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
     }
   double     costheta = dot_product( e1.GetVnlVector(), n1.GetVnlVector() );
   VectorType axis;
-  axis.Set_vnl_vector( vnl_cross_3d( e1.GetVnlVector(), n1.GetVnlVector() ) );
+  axis.SetVnlVector( vnl_cross_3d( e1.GetVnlVector(), n1.GetVnlVector() ) );
   double              norm = axis.GetVnlVector().two_norm();
   MatrixTransformType r1;
   if( norm < 0.00001 )
@@ -113,7 +113,7 @@ DiffusionTensor3DPPDAffineTransform<TData>
   r1e2 /= r1e2.GetVnlVector().two_norm();
   costheta = dot_product( r1e2.GetVnlVector(), pn2.GetVnlVector() );
   MatrixTransformType r2;
-  axis.Set_vnl_vector( vnl_cross_3d( r1e2.GetVnlVector(), pn2.GetVnlVector() ) );
+  axis.SetVnlVector( vnl_cross_3d( r1e2.GetVnlVector(), pn2.GetVnlVector() ) );
   norm = axis.GetVnlVector().two_norm();
   if( norm < .00001 )
     {

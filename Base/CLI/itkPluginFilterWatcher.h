@@ -64,7 +64,7 @@ virtual void ShowProgress()
 
         this->GetTimeProbe().Stop();
         m_ProcessInformation->ElapsedTime
-          = this->GetTimeProbe().GetMeanTime()
+          = this->GetTimeProbe().GetMean()
           * this->GetTimeProbe().GetNumberOfStops();
         this->GetTimeProbe().Start();
 
@@ -155,7 +155,7 @@ virtual void EndFilter()
       m_ProcessInformation->StageProgress = 0;
 
       m_ProcessInformation->ElapsedTime
-        = this->GetTimeProbe().GetMeanTime()
+        = this->GetTimeProbe().GetMean()
         * this->GetTimeProbe().GetNumberOfStops();
       
       if (m_ProcessInformation->ProgressCallbackFunction
@@ -174,7 +174,7 @@ virtual void EndFilter()
                 << "</filter-name>"
                 << std::endl;
       std::cout << "<filter-time>"
-                << this->GetTimeProbe().GetMeanTime()
+                << this->GetTimeProbe().GetMean()
                 << "</filter-time>"
                 << std::endl;
       std::cout << "</filter-end>";

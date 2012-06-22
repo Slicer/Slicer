@@ -1100,7 +1100,7 @@ void vtkITKArchetypeImageSeriesReader::AnalyzeDicomHeaders()
 
   AnalyzeTime.Stop();
 
-  // double timeelapsed = AnalyzeTime.GetMeanTime(); UNUSED
+  // double timeelapsed = AnalyzeTime.GetMean(); UNUSED
   AnalyzeHeader = false;
   return;
 }
