@@ -112,8 +112,13 @@ public:
   void SetLabelOpacity(double LabelOpacity);
 
   /// 
-  /// Helper to adjust the background layer Window setting
-  void ChangeBackgroundWindowLevel(signed int dwindow, signed int dlevel);
+  /// Helper to set the background layer Window/Level
+  void SetBackgroundWindowLevel(double window, double level);
+
+  ///
+  /// Helper to aget the background layer Window/Level
+  void GetBackgroundWindowLevelAndRange(double& window, double& level,
+                                      double& rangeLow, double& rangeHigh);
 
   /// 
   /// Model slice plane 

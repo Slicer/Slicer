@@ -748,37 +748,48 @@ void vtkMRMLSliceLogic::SetLabelOpacity(double labelOpacity)
 }
 
 void vtkMRMLSliceLogic
-::ChangeBackgroundWindowLevel(signed int dwindow, signed int dlevel)
+::SetBackgroundWindowLevel(double newWindow, double newLevel)
 {
   vtkMRMLScalarVolumeNode* volumeNode = 
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) ); 
-    // 0 is background layer, definied in this::GetLayerVolumeNode
+    // 0 is background layer, defined in this::GetLayerVolumeNode
   vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
   if (volumeNode)
     {
      volumeDisplayNode = 
       vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
     }
+  int disabledModify = volumeDisplayNode->StartModify();
+  volumeDisplayNode->SetAutoWindowLevel(0);
+  volumeDisplayNode->SetWindowLevel(newWindow, newLevel);
+  volumeDisplayNode->EndModify(disabledModify);
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSliceLogic
+::GetBackgroundWindowLevelAndRange(double& window, double& level,
+                                         double& rangeLow, double& rangeHigh)
+{
+  vtkMRMLScalarVolumeNode* volumeNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) );
+    // 0 is background layer, definied in this::GetLayerVolumeNode
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
+  if (volumeNode)
+    {
+     volumeDisplayNode =
+      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
+    }
   vtkImageData* imageData;
   if (volumeDisplayNode && (imageData = volumeDisplayNode->GetImageData()) )
     {
-    double s_window = volumeDisplayNode->GetWindow();
-    double s_level = volumeDisplayNode->GetLevel();
-    double* scalarRange = imageData->GetScalarRange();
-    
-    double gain = 1 + (scalarRange[1] - scalarRange[0]) * 7.0;
-    double window = s_window + (gain * dwindow);
-    double level = s_level + (gain * dlevel);
-    if (window < 0) window = 0;
-  
-    int disabledModify = volumeDisplayNode->StartModify();
-    volumeDisplayNode->SetAutoWindowLevel(0);
-    volumeDisplayNode->SetWindowLevel(window, level);
-    volumeDisplayNode->EndModify(disabledModify);
-    this->Modified();
+    window = volumeDisplayNode->GetWindow();
+    level = volumeDisplayNode->GetLevel();
+    double* range = imageData->GetScalarRange();
+    rangeLow = range[0];
+    rangeHigh = range[1];
     }
 }
-
 
 //----------------------------------------------------------------------------
 vtkImageData * vtkMRMLSliceLogic::GetImageData()
