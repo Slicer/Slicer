@@ -41,7 +41,9 @@ if(UNIX)
     set(CFLAGS "${CFLAGS} ${osx_flags}")
     set(CXXFLAGS "${CXXFLAGS} ${osx_flags}")
     set(CPPFLAGS "${CPPFLAGS} ${osx_flags}")
-    set(LDFLAGS "${LDFLAGS} ${osx_flags} -undefined dynamic_lookup")
+    set(LDFLAGS "${LDFLAGS} ${osx_flags}")
+    # http://bugs.python.org/issue11334 indicates that dynamic_lookup causes build issues, confirmed on 10.7.4
+    #set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
   endif(APPLE)
 
   foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)

@@ -15,7 +15,8 @@ if(UNIX)
     set(LD_LIBRARY_PATH "@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib:${LD_LIBRARY_PATH}")
     set(LDFLAGS "-L@CMAKE_CURRENT_BINARY_DIR@/tcl-build/lib")
     set(CPPFLAGS "-I@CMAKE_CURRENT_BINARY_DIR@/tcl-build/include")
-    set(with_tcl_param "--with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build")
+    # --with-tcl is not a valid option for either Python 2.6 or Python 2.7
+    #set(with_tcl_param "--with-tcl=@CMAKE_CURRENT_BINARY_DIR@/tcl-build")
   endif()
 
   set(extra_configure_flags)
@@ -59,7 +60,8 @@ if(UNIX)
     set(CXXFLAGS "${CXXFLAGS} ${osx_flags}")
     set(CPPFLAGS "${CPPFLAGS} ${osx_flags}")
     set(LDFLAGS "${LDFLAGS} ${osx_flags}")
-    set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
+    # http://bugs.python.org/issue11334 indicates that dynamic_lookup causes build issues, confirmed on 10.7.4
+    #set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
   endif(APPLE)
 
   foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
@@ -74,7 +76,7 @@ if(UNIX)
   #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
-    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build ${with_tcl_param} --enable-unicode=ucs2 --enable-shared
+    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
     #RESULT_VARIABLE rv
     )
