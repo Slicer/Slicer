@@ -31,6 +31,7 @@
 // VTK includes
 #include <vtkActor2D.h>
 #include <vtkCallbackCommand.h>
+#include <vtkEventBroker.h>
 #include <vtkMatrix4x4.h>
 #include <vtkPlane.h>
 #include <vtkPolyDataMapper2D.h>
@@ -48,6 +49,8 @@
 // STD includes
 #include <algorithm>
 #include <cassert>
+#include <set>
+#include <map>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLModelSliceDisplayableManager );
@@ -59,55 +62,54 @@ class vtkMRMLModelSliceDisplayableManager::vtkInternal
 public:
   struct Pipeline
     {
-    vtkProp* actor;
-    vtkCutter* cutter;
-    vtkTransform* nodeToWorld;
+    vtkMatrix4x4* nodeToWorld;
+    vtkTransform* transformToSlice;
     vtkTransformPolyDataFilter* transformer;
     vtkPlane* plane;
+    vtkCutter* cutter;
+    vtkProp* actor;
     };
 
   typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
-  
-  void UpdateDisplayNodePipelineTransforms(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline);
-  vtkMatrix4x4* GetDisplayNodeMatrixToWorld(vtkMRMLDisplayNode* displayNode);
+  PipelinesCacheType DisplayPipelines;
+
+  typedef std::map < vtkMRMLDisplayableNode*, std::set< vtkMRMLDisplayNode* > > ModelToDisplayCacheType;
+  ModelToDisplayCacheType ModelToDisplayNodes;
+
+  // Transforms
+  void UpdateDisplayableTransforms(vtkMRMLDisplayableNode *node);
+  void SetPipelineTransform(vtkMRMLDisplayNode *displayNode, Pipeline* pipeline, vtkMatrix4x4 *matrix);
+  void GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* matrixOut);
   
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
   void UpdateSliceNode();
   void SetSlicePlaneFromMatrix(vtkMatrix4x4* matrix, vtkPlane* plane);
   
-  // Display Node
-  void UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
-  void RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode);
+  // Display Nodes
+  void AddDisplayNode(vtkMRMLDisplayableNode*, vtkMRMLDisplayNode*);
+  void UpdateDisplayNode(vtkMRMLDisplayNode* displayNode);
+  void UpdateDisplayNodePipeline(vtkMRMLDisplayNode*, const Pipeline*);
+  void RemoveDisplayNode(vtkMRMLDisplayNode* displayNode);
+  
+  // Observations
+  void AddObservations(vtkMRMLDisplayableNode* node);
+  void RemoveObservations(vtkMRMLDisplayableNode* node);
+  bool IsNodeObserved(vtkMRMLDisplayableNode* node);
+  
+  // Helper functions
   bool IsVisible(vtkMRMLDisplayNode* displayNode);
-  bool IsDisplayable(vtkMRMLDisplayNode* displayNode);
-  vtkPolyData* GetDisplayNodePolyData(vtkMRMLDisplayNode* displayNode);
-  void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode, vtkMRMLDisplayNode* displayNode);
+  bool UseDisplayNode(vtkMRMLDisplayNode* displayNode);
+  bool UseDisplayableNode(vtkMRMLDisplayableNode* displayNode);
+  void ClearDisplayableNodes();
 
-  // Displayable Node caching (for transform events)
-  void AddUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode);
-  void RemoveUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode);
-  void UpdateDisplayableNodeRefs();
-  void UpdateDisplayableNodePipeline(vtkMRMLDisplayableNode* node);
-  
-  // Actors
-  void AddActor(vtkMRMLDisplayNode* displayNode);
-  void UpdateActor(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline);
-  void RemoveActor(vtkMRMLDisplayNode* displayNode);
-  
   vtkInternal( vtkMRMLModelSliceDisplayableManager* external );
   ~vtkInternal();
   
 private:
-  PipelinesCacheType DisplayPipelines;
-    
-  std::map<vtkMRMLDisplayableNode*, vtkMRMLDisplayNode*> DisplayableNodes;
-  std::vector<vtkMRMLDisplayNode*> DisplayNodesToUpdateDisplayable;
-  
+  vtkMatrix4x4* SliceXYToRAS;
   vtkMRMLSliceNode* SliceNode;
-  
   vtkMRMLModelSliceDisplayableManager* External;
-  
 };
 
 //---------------------------------------------------------------------------
@@ -117,103 +119,36 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 {
   this->External = external;
   this->SliceNode = 0;
+  this->SliceXYToRAS = vtkMatrix4x4::New();
+  this->SliceXYToRAS->Identity();
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::~vtkInternal()
 {
-  PipelinesCacheType::iterator pipelinesIt;
-  for (pipelinesIt = this->DisplayPipelines.begin();
-       pipelinesIt != this->DisplayPipelines.end();
-       pipelinesIt = this->DisplayPipelines.begin())
-    {
-    this->External->RemoveDisplayNode(pipelinesIt->first);
-    }
-  assert(this->DisplayPipelines.size() == 0);
+  this->SliceNode = 0;
+  this->SliceXYToRAS->Delete();
+  this->ClearDisplayableNodes();
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelSliceDisplayableManager::vtkInternal
-::IsDisplayable(vtkMRMLDisplayNode* displayNode)
+::UseDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
-  return displayNode && displayNode->IsA("vtkMRMLModelDisplayNode");
+  // Check whether DisplayNode should be shown in this view
+  bool show = displayNode 
+              && displayNode->IsA("vtkMRMLModelDisplayNode")
+              && ( !displayNode->IsA("vtkMRMLFiberBundleLineDisplayNode") )
+              && ( !displayNode->IsA("vtkMRMLFiberBundleGlyphDisplayNode") ) ;
+  return show;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::IsVisible(vtkMRMLDisplayNode* displayNode)
 {
-  // TBD: hide when !visible or !scalarsvisible?
-  return (displayNode->GetSliceIntersectionVisibility() != 0);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode,
-                     vtkMRMLDisplayNode* displayNode)
-{
-  displayableNode->AddObserver(vtkMRMLDisplayableNode::TransformModifiedEvent,
-                               this->External->GetMRMLNodesCallbackCommand() );
-  this->DisplayableNodes[displayableNode] = displayNode;
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::AddUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode)
-{
-  this->DisplayNodesToUpdateDisplayable.push_back(displayNode);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::RemoveUpdateDisplayableNodeRef(vtkMRMLDisplayNode* displayNode)
-{
-  std::vector<vtkMRMLDisplayNode*>::iterator it =
-    std::find( this->DisplayNodesToUpdateDisplayable.begin(),
-               this->DisplayNodesToUpdateDisplayable.end(),
-               displayNode);
-  if (it == this->DisplayNodesToUpdateDisplayable .end())
-    {
-    return;
-    }
-  this->DisplayNodesToUpdateDisplayable.erase(it);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UpdateDisplayableNodeRefs()
-{
-  // The DisplayableNode reference may not be available when NodeAdded fires
-  //   so AddActor pushes to the UpdateNodeRef queue to try again.
-  //   This gives up after one call - maybe incorrect, but we don't want to
-  //   call GetDisplayableNode() every single update. 
-  //   At worst, transform updates are not observed.
-  
-  std::vector<vtkMRMLDisplayNode*>::iterator it;
-  for (it = DisplayNodesToUpdateDisplayable.begin();
-       it != DisplayNodesToUpdateDisplayable.end(); it++)
-    {
-    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(*it);
-    vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
-    if (displayableNode)
-      {
-      this->AddDisplayableNode(displayableNode, displayNode);
-      }
-    }
-  // This is safer cross-platform than erasing in the loop
-  this->DisplayNodesToUpdateDisplayable.clear();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UpdateDisplayableNodePipeline(vtkMRMLDisplayableNode* displayableNode)
-{
-  vtkMRMLDisplayNode* displayNode = this->DisplayableNodes[displayableNode];
-  if (displayNode)
-    {
-    this->UpdateDisplayNodePipeline(displayNode);
-    }
+  return displayNode && (displayNode->GetSliceIntersectionVisibility() != 0);
 }
 
 //---------------------------------------------------------------------------
@@ -230,10 +165,14 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UpdateSliceNode()
 {
+  // Update the Slice node transform
+  //   then update the DisplayNode pipelines to account for plane location
+
+  this->SliceXYToRAS->DeepCopy( this->SliceNode->GetXYToRAS() );
   PipelinesCacheType::iterator it;
   for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end(); ++it)
     {
-    this->UpdateDisplayNodePipelineTransforms(it->first, it->second);
+    this->UpdateDisplayNodePipeline(it->first, it->second);
     }
 }
 
@@ -244,7 +183,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   double normal[3];
   double origin[3];
   
-  // +/-1: relative orientation of the normal
+  // +/-1: orientation of the normal
   const int planeOrientation = 1;
   for (int i = 0; i < 3; i++)
     {
@@ -257,14 +196,14 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-vtkMatrix4x4* vtkMRMLModelSliceDisplayableManager::vtkInternal
-::GetDisplayNodeMatrixToWorld(vtkMRMLDisplayNode* displayNode)
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* outMat)
 {
-  vtkMRMLDisplayableNode* node = displayNode->GetDisplayableNode();
-  vtkSmartPointer<vtkMatrix4x4> nodeMatrixToWorld = vtkSmartPointer<vtkMatrix4x4>::New(); 
-  //TBD: do anything special if Displayable is not available?
-  if (!node)
-    return nodeMatrixToWorld;
+  vtkMatrix4x4* nodeMatrixToWorld = vtkMatrix4x4::New();
+  nodeMatrixToWorld->Identity();
+
+  if (!node || !outMat)
+    return;
 
   vtkMRMLTransformNode* tnode = 
     node->GetParentTransformNode();
@@ -273,53 +212,32 @@ vtkMatrix4x4* vtkMRMLModelSliceDisplayableManager::vtkInternal
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(nodeMatrixToWorld);
     }
-  return nodeMatrixToWorld;
+  outMat->DeepCopy(nodeMatrixToWorld);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UpdateDisplayNodePipelineTransforms(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
+::UpdateDisplayableTransforms(vtkMRMLDisplayableNode* mNode)
 {
-  /*  TODO: I think it should be possible to split the transforms in two:
-   *    modelPolyData -> TransformPDFilter{modelToWorldMatrix} -> 
-   *    cutter{slicePlane in world space}
-   *  this might avoid updating the TransformPDFilter part of the pipeline
-   *  when the modelToWorldMatrix has not changed (which is most of the time)
-   */
-  vtkSmartPointer<vtkMatrix4x4> modelMatrixToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
-  modelMatrixToWorld->DeepCopy(this->GetDisplayNodeMatrixToWorld(displayNode));
-  
-  vtkSmartPointer<vtkMatrix4x4> rasToXY = vtkSmartPointer<vtkMatrix4x4>::New();
-  rasToXY->DeepCopy(this->SliceNode->GetXYToRAS());
-  rasToXY->Invert();
-  
-  vtkSmartPointer<vtkMatrix4x4> mat = vtkSmartPointer<vtkMatrix4x4>::New();
-  vtkMatrix4x4::Multiply4x4(rasToXY, modelMatrixToWorld, mat);
-  rasToXY->DeepCopy(mat);
-  
-  pipeline->nodeToWorld->SetMatrix(rasToXY);
+  // Update the NodeToWorld matrix for all tracked DisplayableNode
 
-  modelMatrixToWorld->Invert();
-  
-  rasToXY->DeepCopy(this->SliceNode->GetXYToRAS());
-  vtkMatrix4x4::Multiply4x4(modelMatrixToWorld, rasToXY, mat);
-  rasToXY->DeepCopy(mat);
-  
-  this->SetSlicePlaneFromMatrix(rasToXY, pipeline->plane);
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::RemoveDisplayNodePipeline(vtkMRMLDisplayNode* displayNode)
-{
-  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
-  if (displayableNode)
+  PipelinesCacheType::iterator pipelinesIter;
+  std::set<vtkMRMLDisplayNode *> displayNodes = this->ModelToDisplayNodes[mNode];
+  std::set<vtkMRMLDisplayNode *>::iterator dnodesIter;
+  for ( dnodesIter = displayNodes.begin(); dnodesIter != displayNodes.end(); dnodesIter++ )
     {
-    displayableNode->RemoveObservers(
-      vtkMRMLDisplayableNode::TransformModifiedEvent,
-      this->External->GetMRMLNodesCallbackCommand());
-    this->DisplayableNodes.erase(displayableNode);
+    if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
+      {
+      this->GetNodeMatrixToWorld( mNode, pipelinesIter->second->nodeToWorld );
+      this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
+      }
     }
+}
+  
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::RemoveDisplayNode(vtkMRMLDisplayNode* displayNode)
+{
   PipelinesCacheType::iterator actorsIt = this->DisplayPipelines.find(displayNode);
   if(actorsIt == this->DisplayPipelines.end())
     {
@@ -329,23 +247,19 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   this->External->GetRenderer()->RemoveActor(pipeline->actor);
   pipeline->actor->Delete();
   pipeline->cutter->Delete();
-  pipeline->nodeToWorld->Delete();
-  pipeline->transformer->Delete();
   pipeline->plane->Delete();
+  pipeline->nodeToWorld->Delete();
+  pipeline->transformToSlice->Delete();
+  pipeline->transformer->Delete();
   delete pipeline;
   this->DisplayPipelines.erase(actorsIt);
-  this->External->RequestRender();
 }
 
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::AddActor(vtkMRMLDisplayNode* displayNode)
-{  
-  // TBD: probably could avoid searching every time
-  if ( !this->IsDisplayable(displayNode) && 
-        this->DisplayPipelines.find(displayNode) != this->DisplayPipelines.end() )
-    {
+::AddDisplayNode(vtkMRMLDisplayableNode* mNode, vtkMRMLDisplayNode* displayNode)
+{
+  if (!mNode || !displayNode)
     return;
-    }
     
   vtkActor2D* actor = vtkActor2D::New();
   if (displayNode->IsA("vtkMRMLModelDisplayNode"))
@@ -355,87 +269,210 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     actor->SetMapper( mapper );
     }
 
-  Pipeline* pNew = new Pipeline();
-  pNew->actor = actor;
-  pNew->cutter = vtkCutter::New();
-  pNew->nodeToWorld = vtkTransform::New();
-  pNew->transformer = vtkTransformPolyDataFilter::New();
-  pNew->plane = vtkPlane::New();
-  
-  pNew->cutter->SetCutFunction(pNew->plane);
-  pNew->cutter->SetGenerateCutScalars(0);
-  pNew->transformer->SetTransform(pNew->nodeToWorld);
+  // Create pipeline
+  Pipeline* pipeline = new Pipeline();
+  pipeline->actor = actor;
+  pipeline->cutter = vtkCutter::New();
+  pipeline->transformToSlice = vtkTransform::New();
+  pipeline->nodeToWorld = vtkMatrix4x4::New();
+  pipeline->transformer = vtkTransformPolyDataFilter::New();
+  pipeline->plane = vtkPlane::New();
 
-  this->External->GetRenderer()->AddActor( actor );
-  this->DisplayPipelines.insert( std::make_pair(displayNode, pNew) );
-  this->UpdateActor(displayNode, pNew);
+  // Set up pipeline
+  pipeline->transformer->SetTransform(pipeline->transformToSlice);
+  pipeline->transformer->SetInputConnection(pipeline->cutter->GetOutputPort());
+  pipeline->cutter->SetCutFunction(pipeline->plane);
+  pipeline->cutter->SetGenerateCutScalars(0);
+  pipeline->actor->SetVisibility(0);
+
+  // Add actor to Renderer and local cache
+  this->External->GetRenderer()->AddActor( pipeline->actor );
+  this->DisplayPipelines.insert( std::make_pair(displayNode, pipeline) );
+
+  // Update cached matrices. Calls UpdateDisplayNodePipeline
+  this->UpdateDisplayableTransforms(mNode);
 }
 
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UpdateActor(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
+::UpdateDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
+  // If the DisplayNode already exists, just update.
+  //   otherwise, add as new node
+
+  if (!displayNode)
+    return;
+  PipelinesCacheType::iterator it;
+  it = this->DisplayPipelines.find(displayNode);
+  if (it != this->DisplayPipelines.end())
+    {
+    this->UpdateDisplayNodePipeline(displayNode, it->second);
+    }
+  else
+    {
+    //this->External->AddDisplayableNode( displayNode->GetDisplayableNode() );
+    }
+}
+
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
+{
+  // Sets visibility, set pipeline polydata input, update color
+  //   calculate and set pipeline transforms.
+
+  if (!displayNode || !pipeline)
+    {
+    return;
+    }
+
+
+  // Update visibility
   bool visible = this->IsVisible(displayNode);
   pipeline->actor->SetVisibility(visible);
-  
-  if (visible && displayNode->IsA("vtkMRMLModelDisplayNode"))
+
+  if (visible)
     {
     vtkMRMLModelDisplayNode* modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
-    vtkPolyData* polyData = this->GetDisplayNodePolyData(modelDisplayNode);
+    vtkPolyData* polyData = modelDisplayNode->GetPolyData();
     if (!polyData)
       {
       return;
       }
+    pipeline->cutter->SetInput(polyData);
+    
+    // Update transform matrices
 
-    this->UpdateDisplayNodePipelineTransforms(displayNode, pipeline);
+    vtkSmartPointer<vtkMatrix4x4> tempMat1 = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> tempMat2 = vtkSmartPointer<vtkMatrix4x4>::New();
+    tempMat1->Identity();
+    tempMat2->Identity();
 
-    pipeline->cutter->SetInput( polyData );
+    //    Set Plane Transform
+    tempMat1->Identity();
+    tempMat1->DeepCopy(pipeline->nodeToWorld);
+    tempMat1->Invert();
+    vtkMatrix4x4::Multiply4x4(tempMat1, this->SliceXYToRAS, tempMat2);
+    this->SetSlicePlaneFromMatrix(tempMat2, pipeline->plane);
+    pipeline->plane->Modified();
+    
+    //    Set PolyData Transform
+    tempMat1->DeepCopy(this->SliceXYToRAS);
+    tempMat1->Invert();
+    vtkMatrix4x4::Multiply4x4(tempMat1,
+                              pipeline->nodeToWorld, tempMat2);
+    pipeline->transformToSlice->SetMatrix(tempMat2);
+    pipeline->transformToSlice->Modified();
 
-    pipeline->transformer->SetInputConnection( pipeline->cutter->GetOutputPort() );
-    vtkActor2D* actor2D = vtkActor2D::SafeDownCast(pipeline->actor);
+    // Update pipeline actor
+    vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
-      actor2D->GetMapper());
-      
-    actor2D->SetPosition(0,0);  
-
-    vtkProperty2D* actorProperties = actor2D->GetProperty();
-    actorProperties->SetColor(displayNode->GetColor() );
-
+      actor->GetMapper());
     mapper->SetInputConnection( pipeline->transformer->GetOutputPort() );
-    mapper->SetLookupTable( modelDisplayNode->GetColorNode() ?
-                            modelDisplayNode->GetColorNode()->GetScalarsToColors() : 0);
-    mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
+    mapper->SetLookupTable( displayNode->GetColorNode() ?
+                            displayNode->GetColorNode()->GetScalarsToColors() : 0);
+    mapper->SetScalarRange(modelDisplayNode->GetScalarRange());  
+    actor->SetPosition(0,0);
+    vtkProperty2D* actorProperties = actor->GetProperty();
+    actorProperties->SetColor(displayNode->GetColor() );
     }
-
-  // TBD: Not sure a render request has to systematically be called
-  pipeline->cutter->Modified();
-  this->External->RequestRender();
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
-::UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode)
+::AddObservations(vtkMRMLDisplayableNode* node)
 {
-  PipelinesCacheType::iterator it;
-  if (!displayNode 
-      || !this->IsDisplayable(displayNode)
-      || (it = this->DisplayPipelines.find(displayNode)) == this->DisplayPipelines.end()
-      )
+  vtkEventBroker* broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation* > observations;
+  
+  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::TransformModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
+  if (observations.size() == 0)
     {
-    return;
+    broker->AddObservation(node, vtkMRMLDisplayableNode::TransformModifiedEvent, 
+                            this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
-  if (this->DisplayNodesToUpdateDisplayable.size() > 0)
+  
+  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::DisplayModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
+  if (observations.size() == 0)
     {
-    this->UpdateDisplayableNodeRefs();
+    broker->AddObservation(node, vtkMRMLDisplayableNode::DisplayModifiedEvent, 
+                            this->External, this->External->GetMRMLNodesCallbackCommand() );
+    }  
+  
+  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+                                          this->External, this->External->GetMRMLNodesCallbackCommand() );
+  if (observations.size() == 0)
+    {
+    broker->AddObservation(node, vtkMRMLDisplayableNode::PolyDataModifiedEvent, 
+                            this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
-  this->UpdateActor(displayNode, it->second);
 }
 
-vtkPolyData* vtkMRMLModelSliceDisplayableManager::vtkInternal
-::GetDisplayNodePolyData(vtkMRMLDisplayNode* displayNode)
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::RemoveObservations(vtkMRMLDisplayableNode* node)
 {
-  // Allow customization of PD handling if needed.
-  vtkPolyData* polyData = displayNode->GetPolyData();
-  return polyData;
+  vtkEventBroker* broker = vtkEventBroker::GetInstance();
+  std::vector< vtkObservation* > observations;
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  broker->RemoveObservations(observations);
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  broker->RemoveObservations(observations);
+  observations = broker->GetObservations(
+    node, vtkMRMLDisplayableNode::TransformModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+  broker->RemoveObservations(observations);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLModelSliceDisplayableManager::vtkInternal
+::IsNodeObserved(vtkMRMLDisplayableNode* node)
+{
+  vtkEventBroker* broker = vtkEventBroker::GetInstance();
+  vtkCollection* observations;
+  observations = broker->GetObservationsForSubject(node);
+  if (observations->GetNumberOfItems() > 0)
+    {
+    return true;
+    }
+  else
+    {
+    return false;
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::vtkInternal
+::ClearDisplayableNodes()
+{
+  // Remove all DisplayableNodes from DisplayableManager
+
+  vtkMRMLScene* scene = this->External->GetMRMLScene();
+  if (!scene)
+    return;
+    
+  PipelinesCacheType::iterator it;
+  for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end(); ++it)
+    {
+    this->RemoveDisplayNode(it->first);
+    }
+  assert(this->DisplayPipelines.size() == 0);
+  this->ModelToDisplayNodes.clear();
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLModelSliceDisplayableManager::vtkInternal
+::UseDisplayableNode(vtkMRMLDisplayableNode* node)
+{
+  bool show = node && node->IsA("vtkMRMLModelNode");
+
+  // Ignore the slice model node for this slice DM.
+  std::string cmpstr = std::string(this->SliceNode->GetLayoutName()) + " Volume Slice";
+  show = show && ( cmpstr.compare(node->GetName()) );
+
+  return show;
 }
 
 //---------------------------------------------------------------------------
@@ -460,90 +497,177 @@ void vtkMRMLModelSliceDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelSliceDisplayableManager::AddDisplayNode(
-  vtkMRMLDisplayNode* displayNode)
+void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
+  vtkMRMLDisplayableNode* node)
 {
-  this->Internal->AddActor(displayNode);
-  displayNode->AddObserver(vtkCommand::ModifiedEvent, this->GetMRMLNodesCallbackCommand() );
-  
-  // Observe the displayable node for TransformModified events
-  vtkMRMLDisplayableNode* displayableNode = displayNode->GetDisplayableNode();
-  if (displayableNode)
+  // Check if node should be used
+  if (!this->Internal->UseDisplayableNode(node))
     {
-    this->Internal->AddDisplayableNode(displayableNode, displayNode);
+    return;
     }
-  else
+
+  this->Internal->AddObservations(node);
+  
+  // Add Display Nodes
+  std::vector<vtkMRMLDisplayNode *> dnodes = node->GetDisplayNodes();
+  std::vector<vtkMRMLDisplayNode *>::iterator diter;
+  for ( diter = dnodes.begin(); diter != dnodes.end(); diter++)
     {
-    this->Internal->AddUpdateDisplayableNodeRef(displayNode);
+    if ( this->Internal->UseDisplayNode(*diter) )
+      {
+      this->Internal->ModelToDisplayNodes[node].insert(*diter);
+      this->Internal->AddDisplayNode( node, *diter );
+      }
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
-::RemoveDisplayNode(vtkMRMLDisplayNode* displayNode)
+::RemoveDisplayableNode(vtkMRMLDisplayableNode* node)
 {
-  displayNode->RemoveObserver(this->GetMRMLNodesCallbackCommand());
-  this->Internal->RemoveDisplayNodePipeline(displayNode);
+  // Remove single DisplayableNode
+
+  if (!node)
+    return;
+
+  std::set<vtkMRMLDisplayNode *> dnodes = this->Internal->ModelToDisplayNodes[node];
+  std::set<vtkMRMLDisplayNode *>::iterator diter;
+  for ( diter = dnodes.begin(); diter != dnodes.end(); diter++)
+    {
+    this->Internal->RemoveDisplayNode(*diter);
+    }
+  this->Internal->RemoveObservations(node);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
-  if ( !node->IsA("vtkMRMLModelDisplayNode") 
-      || node->IsA("vtkMRMLFiberBundleLineDisplayNode")
-      || node->IsA("vtkMRMLFiberBundleGlyphDisplayNode") )
+  if ( !node->IsA("vtkMRMLModelNode") )
     {
     return;
     }
-  this->AddDisplayNode(vtkMRMLModelDisplayNode::SafeDownCast(node));
+  this->AddDisplayableNode(vtkMRMLDisplayableNode::SafeDownCast(node));
+  this->RequestRender();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  vtkMRMLModelDisplayNode* displayNode =
-    vtkMRMLModelDisplayNode::SafeDownCast(node);
-  if ( !displayNode )
+  if ( node && (!node->IsA("vtkMRMLModelNode")) && (!node->IsA("vtkMRMLModelDisplayNode")) )
+    return;
+
+  vtkMRMLDisplayableNode* modelNode = NULL;
+  vtkMRMLDisplayNode* displayNode = NULL;
+
+  if ( (modelNode = vtkMRMLDisplayableNode::SafeDownCast(node)) )
+    {
+    this->RemoveDisplayableNode(modelNode);
+    this->RequestRender();
+    return;
+    }
+  else if ( (displayNode = vtkMRMLDisplayNode::SafeDownCast(node)) )
+    {
+    this->Internal->RemoveDisplayNode(displayNode);
+    this->RequestRender();
+    return;
+    }
+  else
     {
     return;
     }
-  this->Internal->RemoveUpdateDisplayableNodeRef(displayNode);
-  this->RemoveDisplayNode(displayNode);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager
 ::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
-{
+{  
   vtkMRMLDisplayNode* displayNode;
   vtkMRMLDisplayableNode* displayableNode;
-  if (event == vtkCommand::ModifiedEvent)
+  vtkMRMLScene* scene = this->GetMRMLScene();
+
+  if ( scene->IsBatchProcessing() )
     {
-    if ( vtkMRMLSliceNode::SafeDownCast(caller) )
+    return;
+    }
+
+  if ( (displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller)) )
+    {
+    if ( (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
+          && (displayNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData)) )
+      {
+      this->Internal->UpdateDisplayNode(displayNode);
+      this->RequestRender();
+      }
+    else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
+             || (event == vtkMRMLDisplayableNode::PolyDataModifiedEvent))
+      {
+      this->Internal->UpdateDisplayableTransforms(displayableNode);
+      this->RequestRender();
+      }
+    }
+  else if ( vtkMRMLSliceNode::SafeDownCast(caller) )
       {
       this->Internal->UpdateSliceNode();
-      }
-    else if ( (displayNode = vtkMRMLDisplayNode::SafeDownCast(caller)) )
-      {
-      this->Internal->UpdateDisplayNodePipeline(displayNode);
-      }
-    }
-  else if (vtkMRMLDisplayableNode::TransformModifiedEvent &&
-           (displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller)) )
-    {
-    this->Internal->UpdateDisplayableNodePipeline(displayableNode);
-    }
-      
+      this->RequestRender();
+      }    
   else
     {
     this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
-    }    
+    }
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
+{
+  this->SetUpdateFromMRMLRequested(0);
+
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+    {
+    vtkDebugMacro( "vtkMRMLModelSliceDisplayableManager->UpdateFromMRML: Scene is not set.")
+    return;
+    }
+  this->Internal->ClearDisplayableNodes();
+
+  vtkMRMLDisplayableNode* mNode = NULL;
+  std::vector<vtkMRMLNode *> mNodes;
+  int nnodes = scene ? scene->GetNodesByClass("vtkMRMLDisplayableNode", mNodes) : 0;
+  for (int i=0; i<nnodes; i++)
+    {
+    mNode  = vtkMRMLDisplayableNode::SafeDownCast(mNodes[i]);
+    if (mNode)
+      {
+      this->AddDisplayableNode(mNode);
+      }
+    }
+  this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneStartClose()
+{
+  this->Internal->ClearDisplayableNodes();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneEndClose()
+{
+  this->SetUpdateFromMRMLRequested(1);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneEndBatchProcess()
+{
+  this->SetUpdateFromMRMLRequested(1);
+}
+
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::Create()
 {
   this->Internal->SetSliceNode(this->GetMRMLSliceNode());
+  this->SetUpdateFromMRMLRequested(1);
 }
+

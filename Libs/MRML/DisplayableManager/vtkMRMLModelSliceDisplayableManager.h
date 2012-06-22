@@ -30,7 +30,7 @@
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkMRMLDisplayNode;
+class vtkMRMLDisplayableNode;
 class vtkCutter;
 class vtkProp;
 
@@ -45,9 +45,9 @@ public:
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // DisplayNode handling customizations
-  void AddDisplayNode(vtkMRMLDisplayNode* displayNode);
-  void RemoveDisplayNode(vtkMRMLDisplayNode* displayNode);
+  // DisplayableNode handling customizations
+  void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
+  void RemoveDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
 
 protected:
 
@@ -57,6 +57,11 @@ protected:
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);
+  
+  virtual void UpdateFromMRML();
+  virtual void OnMRMLSceneStartClose();
+  virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneEndBatchProcess();
 
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
