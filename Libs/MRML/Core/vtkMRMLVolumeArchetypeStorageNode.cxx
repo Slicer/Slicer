@@ -300,9 +300,18 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
-  if (reader->GetOutput() == NULL
-      || (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && reader->GetOutput()->GetPointData()->GetTensors()->GetNumberOfTuples() == 0)
-      || (!volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0))
+  if (reader->GetOutput() == NULL 
+      || reader->GetOutput()->GetPointData() == NULL
+      || (volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && (
+          reader->GetOutput()->GetPointData()->GetTensors() == NULL
+          || reader->GetOutput()->GetPointData()->GetTensors()->GetNumberOfTuples() == 0)
+        )
+      || (!volNode->IsA("vtkMRMLDiffusionTensorVolumeNode") && (
+          reader->GetOutput()->GetPointData()->GetScalars() == NULL
+          || reader->GetOutput()->GetPointData()->GetScalars()->GetNumberOfTuples() == 0
+          )
+        )
+      )
     {
     vtkErrorMacro("ReadData: Unable to read data from file: " << fullName.c_str() );
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);

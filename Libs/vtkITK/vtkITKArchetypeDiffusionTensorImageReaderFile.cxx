@@ -135,7 +135,7 @@ void vtkITKArchetypeDiffusionTensorImageReaderFile::ExecuteData(vtkDataObject *o
   else
     {
     // ERROR - should have used the series reader
-    vtkErrorMacro("There is more than one file, use the DiffusionTensor3DReaderSeries instead");
+    vtkErrorMacro("There is more than one file, use the vtkITKArchetypeImageSeriesReader instead");
     }
 }
 
