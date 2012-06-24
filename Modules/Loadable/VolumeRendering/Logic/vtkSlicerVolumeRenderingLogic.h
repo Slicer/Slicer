@@ -41,6 +41,7 @@ class vtkScalarsToColors;
 class vtkVolumeProperty;
 
 // STD includes
+#include <map>
 #include <vector>
 
 class vtkStringArray;
@@ -64,12 +65,20 @@ public:
   vtkTypeRevisionMacro(vtkSlicerVolumeRenderingLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Inform the logic and observers that a rendering method (class deriving
+  /// from vtkMRMLVolumeRenderingDisplayNode) is available.
+  /// The event ModifiedEvent gets fired.
+  /// \sa GetRenderingMethods
+  void RegisterRenderingMethod(const char* methodName,
+                               const char* displayNodeClassName);
+  /// \sa RegisterRenderingMethod
+  std::map<std::string, std::string> GetRenderingMethods();
   /// The default rendering method is set to display nodes created in
   /// CreateVolumeRenderingDisplayNode(). If no rendering method is given
   /// the VTKCPURayCast is set.
   /// \sa CreateVolumeRenderingDisplayNode()
-  vtkSetMacro(DefaultRenderingMethod, int);
-  vtkGetMacro(DefaultRenderingMethod, int);
+  vtkSetStringMacro(DefaultRenderingMethod);
+  vtkGetStringMacro(DefaultRenderingMethod);
 
   /// Use a linear ramp (true) or a sharp ramp (false) when copying the volume
   /// display node threshold values into the volume rendering display node.
@@ -78,11 +87,15 @@ public:
   vtkGetMacro(UseLinearRamp, bool);
 
   /// Create and add into the scene a volume rendering display node.
-  /// The new node is initialized with default properties such as
-  /// CurrentVolumeMapper.
-  /// Return the created node or 0 if there is no scene.
+  /// The create node is of type renderingType if not null,
+  /// DefaultRenderingMethod if not null or
+  /// vtkMRMLCPURayCastVolumeRenderingDisplayNode in that order.
+  /// Return the created node or 0 if there is no scene or the class name
+  /// doesn't exist.
+  /// If renderingClassName is 0, the returned node has a name generated
+  /// using "VolumeRendering" as base name.
   /// \sa setDefaultRenderingMethod()
-  vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode();
+  vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode(const char* renderingClassName = 0);
 
   void AddVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
   void RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
@@ -229,7 +242,8 @@ protected:
   // Update from
   void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
 
-  int DefaultRenderingMethod;
+  std::map<std::string, std::string> RenderingMethods;
+  char* DefaultRenderingMethod;
   bool UseLinearRamp;
 
   typedef std::vector<vtkMRMLNode*> DisplayNodesType;
@@ -237,8 +251,8 @@ protected:
 
   bool LoadPresets(vtkMRMLScene* scene);
   vtkMRMLScene* PresetsScene;
-private:
 
+private:
   vtkSlicerVolumeRenderingLogic(const vtkSlicerVolumeRenderingLogic&); // Not implemented
   void operator=(const vtkSlicerVolumeRenderingLogic&);               // Not implemented
 };
@@ -254,4 +268,3 @@ void vtkSlicerVolumeRenderingLogic
 }
 
 #endif
-

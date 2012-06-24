@@ -40,7 +40,8 @@ class vtkRenderWindow;
 class vtkVolumeProperty;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPURayCastMultiVolumeMapper : public vtkSlicerGPUMultiVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPURayCastMultiVolumeMapper
+  : public vtkSlicerGPUMultiVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerGPURayCastMultiVolumeMapper,vtkSlicerGPUMultiVolumeMapper);

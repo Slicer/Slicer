@@ -8,6 +8,16 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  vtkMRMLCPURayCastVolumeRenderingDisplayNode.cxx
+  vtkMRMLCPURayCastVolumeRenderingDisplayNode.h
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode.cxx
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode.h
+  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.cxx
+  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h
+  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.cxx
+  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h
+  vtkMRMLNCIRayCastVolumeRenderingDisplayNode.cxx
+  vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx

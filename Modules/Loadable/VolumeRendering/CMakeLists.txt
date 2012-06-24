@@ -7,9 +7,10 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
 add_subdirectory(MRML)
-add_subdirectory(Widgets)
 add_subdirectory(VolumeRenderingReplacements)
 add_subdirectory(Logic)
+add_subdirectory(MRMLDisplayableManager)
+add_subdirectory(Widgets)
 
 #-----------------------------------------------------------------------------
 set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
@@ -18,64 +19,41 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
-  ${CMAKE_CURRENT_BINARY_DIR}/MRMLDisplayableManager
   ${CMAKE_CURRENT_SOURCE_DIR}/Logic
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
-  ${CMAKE_CURRENT_SOURCE_DIR}/VolumeRenderingReplacements
-  ${CMAKE_CURRENT_BINARY_DIR}/VolumeRenderingReplacements
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${qSlicerAnnotationsModuleWidgets_SOURCE_DIR}
   ${qSlicerAnnotationsModuleWidgets_BINARY_DIR}
   )
 
-set(qt_module_displayable_manager_SRCS
-  MRMLDisplayableManager/vtkMRMLVolumeRenderingDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLVolumeRenderingDisplayableManager.h
-  )
-
-set(VTK_USE_INSTANTIATOR_NEW 1)
-VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"
-  qt_module_displayable_manager_instantiator_SRCS
-  "${qt_module_displayable_manager_SRCS}"
-  "${MODULE_EXPORT_DIRECTIVE}"
-  ${CMAKE_CURRENT_BINARY_DIR}
-  "qSlicer${MODULE_NAME}ModuleExport.h"
-  )
-
 set(MODULE_SRCS
-  ${qt_module_displayable_manager_SRCS}
-  ${qt_module_displayable_manager_instantiator_SRCS}
   qSlicerVolumeRenderingIO.cxx
   qSlicerVolumeRenderingIO.h
-  qSlicerVolumeRenderingSettingsPanel.cxx
-  qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.cxx
   qSlicerVolumeRenderingModule.h
-  qSlicerVolumeRenderingModuleWidget.cxx
-  qSlicerVolumeRenderingModuleWidget.h
+  qSlicerVolumeRenderingSettingsPanel.cxx
+  qSlicerVolumeRenderingSettingsPanel.h
   )
 
 set(MODULE_MOC_SRCS
   qSlicerVolumeRenderingIO.h
-  qSlicerVolumeRenderingSettingsPanel.h
   qSlicerVolumeRenderingModule.h
-  qSlicerVolumeRenderingModuleWidget.h
+  qSlicerVolumeRenderingSettingsPanel.h
   )
 
 set(MODULE_UI_SRCS
   Resources/UI/qSlicerVolumeRenderingSettingsPanel.ui
-  Resources/UI/qSlicerVolumeRenderingModule.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerVolumeRenderingModuleLogic
-  vtkSlicerVolumeRenderingModuleMRML
-  VolumeRenderingReplacements
+  vtkSlicer${MODULE_NAME}ModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
+  qSlicer${MODULE_NAME}ModuleWidgets
+
   vtkSlicerAnnotationsModuleMRML
   qSlicerAnnotationsModuleWidgets
-  qSlicerVolumeRenderingModuleWidgets
   )
 
 set(MODULE_RESOURCES

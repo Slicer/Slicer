@@ -1,3 +1,23 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Alex Yarmakovich, Isomics Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
 #ifndef __qSlicerVolumeRenderingModuleWidget_h
 #define __qSlicerVolumeRenderingModuleWidget_h
 
@@ -6,8 +26,9 @@
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
-#include "qSlicerVolumeRenderingModuleExport.h"
+#include "qSlicerVolumeRenderingModuleWidgetsExport.h"
 
+class qSlicerVolumeRenderingPropertiesWidget;
 class qSlicerVolumeRenderingModuleWidgetPrivate;
 class vtkMRMLAnnotationROINode;
 class vtkMRMLNode;
@@ -17,7 +38,7 @@ class vtkMRMLVolumeRenderingDisplayNode;
 class vtkMRMLVolumePropertyNode;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingModuleWidget :
+class Q_SLICER_MODULE_VOLUMERENDERING_WIDGETS_EXPORT qSlicerVolumeRenderingModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
@@ -34,9 +55,11 @@ public:
   vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
   QList<vtkMRMLViewNode*> mrmlViewNodes()const;
 
+  void addRenderingMethodWidget(const QString& methodClassName,
+                                qSlicerVolumeRenderingPropertiesWidget* widget);
+
 public slots:
 
-  /// 
   /// Set the MRML node of interest
   void setMRMLVolumeNode(vtkMRMLNode* node);
 
@@ -49,8 +72,9 @@ public slots:
   void addVolumeIntoView(vtkMRMLNode* node);
 
   void fitROIToVolume();
-  
+
   void applyPreset(vtkMRMLNode* volumePropertyNode);
+
 protected slots:
   void onCurrentMRMLVolumeNodeChanged(vtkMRMLNode* node);
   void onVisibilityChanged(bool);
@@ -65,15 +89,6 @@ protected slots:
   void onCurrentMemorySizeChanged(int index);
   void onCurrentQualityControlChanged(int index);
   void onCurrentFramerateChanged(double fps);
-  void onCurrentRenderingTechniqueChanged(int index);
-
-  void onCurrentDistanceColorBlendingChanged(double value);
-  void onCurrentICPEScaleChanged(double value);
-  void onCurrentICPESmoothnessChanged(double value);
-  void onCurrentDepthPeelingThreshold(double value);
-  void onCurrentRenderingTechniqueFgChanged(int index);
-  void onCurrentFusionChanged(int index);
-  void onCurrentBgFgRatioChanged(double value);
 
   void startInteraction();
   void endInteraction();

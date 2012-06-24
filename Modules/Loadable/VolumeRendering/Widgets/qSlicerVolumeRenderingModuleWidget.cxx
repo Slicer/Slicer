@@ -1,4 +1,25 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Alex Yarmakovich, Isomics Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
 // Qt includes
+#include <QDebug>
 #include <QSettings>
 
 // CTK includes
@@ -12,6 +33,10 @@
 #include "ui_qSlicerVolumeRenderingModule.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
+#include "qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
+#include "qSlicerGPURayCastVolumeRenderingPropertiesWidget.h"
+#include "qSlicerNCIRayCastVolumeRenderingPropertiesWidget.h"
+#include "qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.h"
 
 // MRML includes
 #include "vtkMRMLAnnotationROINode.h"
@@ -25,6 +50,7 @@
 #include <vtkPiecewiseFunction.h>
 #include <vtkVector.h>
 #include <vtkVolumeProperty.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <cassert>
@@ -49,6 +75,7 @@ public:
   vtkMRMLVolumeRenderingDisplayNode* DisplayNode;
   QMap<int, int>                     LastTechniques;
   double                             OldPresetPosition;
+  QMap<QString, QWidget*>            RenderingMethodWidgets;
 };
 
 //-----------------------------------------------------------------------------
@@ -88,7 +115,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->ViewCheckableNodeComboBox,
                    SIGNAL(checkedNodesChanged()),
                    q, SLOT(onCheckedViewNodesChanged()));
-                   
+
   // Rendering
   QObject::connect(this->ROICropCheckBox,
                    SIGNAL(toggled(bool)),
@@ -98,9 +125,28 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(fitROIToVolume()));
 
   // Techniques
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
+  std::map<std::string, std::string> methods =
+    volumeRenderingLogic->GetRenderingMethods();
+  std::map<std::string, std::string>::const_iterator it;
+  for (it = methods.begin(); it != methods.end(); ++it)
+    {
+    this->RenderingMethodComboBox->addItem(
+      QString::fromStdString(it->first), QString::fromStdString(it->second));
+    }
   QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(onCurrentRenderingMethodChanged(int)));
-
+  // Add empty widget at index 0 for the volume rendering methods with no widget.
+  this->RenderingMethodStackedWidget->addWidget(new QWidget());
+  q->addRenderingMethodWidget("vtkMRMLCPURayCastVolumeRenderingDisplayNode",
+                              new qSlicerCPURayCastVolumeRenderingPropertiesWidget);
+  q->addRenderingMethodWidget("vtkMRMLGPURayCastVolumeRenderingDisplayNode",
+                              new qSlicerGPURayCastVolumeRenderingPropertiesWidget);
+  q->addRenderingMethodWidget("vtkMRMLNCIRayCastVolumeRenderingDisplayNode",
+                              new qSlicerNCIRayCastVolumeRenderingPropertiesWidget);
+  //q->addRenderingMethodWidget("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode",
+  //                            new qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget);
   QSettings settings;
   int defaultGPUMemorySize = settings.value("VolumeRendering/GPUMemorySize").toInt();
   this->MemorySizeComboBox->addItem(
@@ -122,43 +168,8 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
                    q, SLOT(onCurrentQualityControlChanged(int)));
   QObject::connect(this->FramerateSliderWidget, SIGNAL(valueChanged(double)),
                    q, SLOT(onCurrentFramerateChanged(double)));
-  QObject::connect(this->RenderingTechniqueComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurrentRenderingTechniqueChanged(int)));
-  // NCI Raycast mapper
-  QObject::connect(this->DistColorBlendingSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onCurrentDistanceColorBlendingChanged(double)));
-  QObject::connect(this->ICPEScaleSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onCurrentICPEScaleChanged(double)));
-  QObject::connect(this->ICPESmoothnessSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onCurrentICPESmoothnessChanged(double)));
-  QObject::connect(this->DepthPeelingSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onCurrentDepthPeelingThreshold(double)));
-  QObject::connect(this->RenderingTechniqueFgComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurrentRenderingTechniqueFgChanged(int)));
-  QObject::connect(this->FusionComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(onCurrentFusionChanged(int)));
-  QObject::connect(this->BgFgRatioSliderWidget, SIGNAL(valueChanged(double)),
-                   q, SLOT(onCurrentBgFgRatioChanged(double)));
-  this->RenderingTechniqueFgComboBox->addItem(
-    "Composite With Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
-  this->RenderingTechniqueFgComboBox->addItem(
-      "Composite Pseudo Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
-  this->RenderingTechniqueFgComboBox->addItem(
-    "Maximum Intensity Projection",
-      vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection);
-  this->RenderingTechniqueFgComboBox->addItem(
-      "Minimum Intensity Projection",
-      vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection);
-  this->RenderingTechniqueFgComboBox->addItem(
-    "Gradient Magnitude Opacity Modulation",
-    vtkMRMLVolumeRenderingDisplayNode::GradiantMagnitudeOpacityModulation);
-  this->RenderingTechniqueFgComboBox->addItem(
-    "Illustrative Context Preserving Exploration",
-    vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
 
   // Volume Properties
-  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
-    vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
   this->PresetsNodeComboBox->setMRMLScene(volumeRenderingLogic->GetPresetsScene());
   this->PresetsNodeComboBox->setCurrentNode(0);
 
@@ -254,50 +265,6 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
 
 // --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidgetPrivate
-::populateRenderingTechniqueComboBox()
-{
-  Q_Q(qSlicerVolumeRenderingModuleWidget);
-  this->RenderingTechniqueComboBox->clear();
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = q->mrmlDisplayNode();
-  int volumeMapper = displayNode ?
-    displayNode->GetCurrentVolumeMapper() : vtkMRMLVolumeRenderingDisplayNode::None;
-  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::None)
-    {
-    return;
-    }
-  this->RenderingTechniqueComboBox->addItem(
-    "Composite With Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
-  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast ||
-      volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume)
-    {
-    this->RenderingTechniqueComboBox->addItem(
-      "Composite Pseudo Shading", vtkMRMLVolumeRenderingDisplayNode::Composite);
-    }
-  if (volumeMapper != vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping)
-    {
-    this->RenderingTechniqueComboBox->addItem(
-      "Maximum Intensity Projection",
-      vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection);
-    this->RenderingTechniqueComboBox->addItem(
-      "Minimum Intensity Projection",
-      vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection);
-    }
-  if (volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast ||
-      volumeMapper == vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume)
-    {
-    this->RenderingTechniqueComboBox->addItem(
-      "Gradient Magnitude Opacity Modulation",
-      vtkMRMLVolumeRenderingDisplayNode::GradiantMagnitudeOpacityModulation);
-    this->RenderingTechniqueComboBox->addItem(
-      "Illustrative Context Preserving Exploration",
-      vtkMRMLVolumeRenderingDisplayNode::IllustrativeContextPreservingExploration);
-    }
-  this->RenderingTechniqueComboBox->setEnabled(
-    volumeMapper != vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidgetPrivate
 ::populatePresetsIcons(qMRMLNodeComboBox* presetsNodeComboBox)
 {
   // This is a hack and doesn't work yet
@@ -321,7 +288,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate
 qSlicerVolumeRenderingModuleWidget
 ::qSlicerVolumeRenderingModuleWidget(QWidget* parentWidget)
   : Superclass( parentWidget )
-    , d_ptr( new qSlicerVolumeRenderingModuleWidgetPrivate(*this) )
+  , d_ptr( new qSlicerVolumeRenderingModuleWidgetPrivate(*this) )
 {
   // setup the UI only in setup where the logic is available
 }
@@ -383,24 +350,10 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentMRMLVolumeNodeChanged(vtkMRMLN
       {
       // Because the displayable manager can only display 1 volume at
       // a time, here the displayable manager is told that the display node
-      // is the new "current" display node and it should be displayed 
+      // is the new "current" display node and it should be displayed
       // instead of whichever current one.
       dnode->Modified();
       }
-    }
-
-  // DepthPeelingThresholdSliderWidget depends on the scalar range of the volume
-  // Set the range here before the display node is set and the
-  // DepthPeelingThreshold slider value updated.
-  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-  if (imageData)
-    {
-    double range[2];
-    imageData->GetScalarRange(range);
-    bool oldBlockSignals =
-      d->DepthPeelingSliderWidget->blockSignals(true);
-    d->DepthPeelingSliderWidget->setRange(range[0], range[1]);
-    d->DepthPeelingSliderWidget->blockSignals(oldBlockSignals);
     }
 
   this->setMRMLDisplayNode(dnode);
@@ -468,6 +421,18 @@ void qSlicerVolumeRenderingModuleWidget
 }
 
 // --------------------------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::addRenderingMethodWidget(
+  const QString& methodClassName,
+  qSlicerVolumeRenderingPropertiesWidget* widget)
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+  this->connect(d->DisplayNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
+                widget, SLOT(setMRMLNode(vtkMRMLNode*)));
+  d->RenderingMethodStackedWidget->addWidget(widget);
+  d->RenderingMethodWidgets[methodClassName] = widget;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
@@ -501,12 +466,14 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 
   // Techniques tab
   QSettings settings;
-  int defaultRenderingMethod =
+  QString defaultRenderingMethod =
     settings.value("VolumeRendering/RenderingMethod",
-                   vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast).toInt();
-  int currentVolumeMapper = d->DisplayNode ?
-    d->DisplayNode->GetCurrentVolumeMapper() : defaultRenderingMethod;
-  d->RenderingMethodComboBox->setCurrentIndex( currentVolumeMapper );
+                   QString("vtkMRMLCPURayCastVolumeRenderinDisplayNode")).toString();
+  qDebug()<< "Default: " << defaultRenderingMethod;
+  QString currentVolumeMapper = d->DisplayNode ?
+    QString(d->DisplayNode->GetClassName()) : defaultRenderingMethod;
+  d->RenderingMethodComboBox->setCurrentIndex(
+    d->RenderingMethodComboBox->findData(currentVolumeMapper) );
   int index = d->DisplayNode ?
     d->MemorySizeComboBox->findData(QVariant(d->DisplayNode->GetGPUMemorySize())) : -1;
   d->MemorySizeComboBox->setCurrentIndex(index);
@@ -516,41 +483,6 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     {
     d->FramerateSliderWidget->setValue(d->DisplayNode->GetExpectedFPS());
     }
-  // Rendering technique
-  d->RenderingTechniqueComboBox->blockSignals(true);
-  d->populateRenderingTechniqueComboBox();
-  int technique = d->DisplayNode ? d->DisplayNode->GetRaycastTechnique() : -1;
-  index = d->RenderingTechniqueComboBox->findData(QVariant(technique));
-  if (index == -1 && d->LastTechniques.contains(currentVolumeMapper))
-    {
-    index = d->RenderingTechniqueComboBox->findData(
-      d->LastTechniques[currentVolumeMapper]);
-    }
-  if (index == -1)
-    {
-    index = 0;
-    }
-  d->RenderingTechniqueComboBox->setCurrentIndex(-1);
-  d->RenderingTechniqueComboBox->blockSignals(false);
-  d->RenderingTechniqueComboBox->setCurrentIndex(index);
-
-  // NCI Raycast mapper
-  d->DistColorBlendingSliderWidget->setValue(
-    d->DisplayNode ? d->DisplayNode->GetDistanceColorBlending() : 0.);
-  d->ICPEScaleSliderWidget->setValue(
-    d->DisplayNode ? d->DisplayNode->GetICPEScale() : 0.);
-  d->ICPESmoothnessSliderWidget->setValue(
-    d->DisplayNode ? d->DisplayNode->GetICPESmoothness() : 0.);
-  d->DepthPeelingSliderWidget->setValue(
-    d->DisplayNode ? d->DisplayNode->GetDepthPeelingThreshold() : 0.);
-  technique = d->DisplayNode ? d->DisplayNode->GetRaycastTechniqueFg() : -1;
-  index = d->RenderingTechniqueFgComboBox->findData(QVariant(technique));
-  d->RenderingTechniqueFgComboBox->setCurrentIndex(index);
-  d->FusionComboBox->setCurrentIndex(
-    d->DisplayNode ? d->DisplayNode->GetMultiVolumeFusionMethod() :
-    vtkMRMLVolumeRenderingDisplayNode::AlphaBlendingOR);
-  d->BgFgRatioSliderWidget->setValue(
-    d->DisplayNode ? d->DisplayNode->GetBgFgRatio() : 0.);
 
   // Opacity/color
   bool follow = d->DisplayNode ? d->DisplayNode->GetFollowVolumeDisplayNode() != 0 : false;
@@ -561,6 +493,18 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
   d->SynchronizeScalarDisplayNodeButton->setChecked(follow);
   d->IgnoreVolumesThresholdCheckBox->setChecked( d->DisplayNode ?
     d->DisplayNode->GetIgnoreVolumeDisplayNodeThreshold() != 0 : false);
+
+  // Properties
+  if (d->RenderingMethodWidgets[currentVolumeMapper])
+    {
+    d->RenderingMethodStackedWidget->setCurrentWidget(
+      d->RenderingMethodWidgets[currentVolumeMapper]);
+    }
+  else
+    {
+    // index 0 is an empty widget
+    d->RenderingMethodStackedWidget->setCurrentIndex(0);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -721,7 +665,25 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
     {
     return;
     }
-  d->DisplayNode->SetCurrentVolumeMapper(index);
+  QString renderingClassName = d->RenderingMethodComboBox->itemData(index).toString();
+  // Display node is already the right type, don't change anything
+  if (renderingClassName.isEmpty() ||
+      renderingClassName == d->DisplayNode->GetClassName())
+    {
+    return;
+    }
+  vtkSlicerVolumeRenderingLogic* volumeRenderingLogic =
+    vtkSlicerVolumeRenderingLogic::SafeDownCast(this->logic());
+  vtkMRMLVolumeRenderingDisplayNode* displayNode =
+    volumeRenderingLogic->CreateVolumeRenderingDisplayNode(
+      renderingClassName.toLatin1());
+  vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> oldDisplayNode = d->DisplayNode;
+  displayNode->vtkMRMLVolumeRenderingDisplayNode::Copy(d->DisplayNode);
+  d->DisplayNodeComboBox->setCurrentNode(displayNode);
+  if (oldDisplayNode.GetPointer())
+    {
+    this->mrmlScene()->RemoveNode(oldDisplayNode);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -759,105 +721,6 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentFramerateChanged(double fps)
     }
 
   d->DisplayNode->SetExpectedFPS(fps);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingTechniqueChanged(int index)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  int technique = d->RenderingTechniqueComboBox->itemData(index).toInt();
-  d->LastTechniques[d->DisplayNode->GetCurrentVolumeMapper()] = technique;
-  d->DisplayNode->SetRaycastTechnique(technique);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentDistanceColorBlendingChanged(double value)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetDistanceColorBlending(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentICPEScaleChanged(double value)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetICPEScale(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentICPESmoothnessChanged(double value)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetICPESmoothness(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentDepthPeelingThreshold(double value)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetDepthPeelingThreshold(value);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingTechniqueFgChanged(int index)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  int technique = d->RenderingTechniqueFgComboBox->itemData(index).toInt();
-  d->DisplayNode->SetRaycastTechniqueFg(technique);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentFusionChanged(int index)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetMultiVolumeFusionMethod(index);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCurrentBgFgRatioChanged(double value)
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-  if (!d->DisplayNode)
-    {
-    return;
-    }
-
-  d->DisplayNode->SetBgFgRatio(value);
 }
 
 // --------------------------------------------------------------------------

@@ -59,7 +59,8 @@ typedef struct{
 }GPUGradientsArgsType;
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPUMultiVolumeMapper : public vtkVolumeMapper
+class Q_SLICER_QTMODULES_VOLUMERENDERING_REPLACEMENTS_EXPORT vtkSlicerGPUMultiVolumeMapper
+  : public vtkVolumeMapper
 {
 public:
   vtkTypeRevisionMacro(vtkSlicerGPUMultiVolumeMapper,vtkVolumeMapper);

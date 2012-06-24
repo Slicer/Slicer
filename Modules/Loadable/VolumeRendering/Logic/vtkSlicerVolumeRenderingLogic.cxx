@@ -13,10 +13,16 @@
 =========================================================================auto=*/
 
 // Volume Rendering includes
+#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkMRMLVolumeRenderingScenarioNode.h"
-#include "vtkMRMLSliceLogic.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
+#include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h"
+#include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
 // Annotations includes
 #include <vtkMRMLAnnotationROINode.h>
@@ -81,14 +87,29 @@ vtkStandardNewMacro(vtkSlicerVolumeRenderingLogic);
 //----------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic()
 {
-  this->DefaultRenderingMethod = vtkMRMLVolumeRenderingDisplayNode::None;
+  this->DefaultRenderingMethod = NULL;
   this->UseLinearRamp = true;
   this->PresetsScene = 0;
+
+  this->RegisterRenderingMethod("VTK CPU Ray Casting",
+                                "vtkMRMLCPURayCastVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK GPU Ray Casting",
+                                "vtkMRMLGPURayCastVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("VTK OpenGL 3D Texture Mapping",
+                                "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode");
+  this->RegisterRenderingMethod("NCI GPU Ray Casting",
+                                "vtkMRMLNCIRayCastVolumeRenderingDisplayNode");
+  //this->RegisterRenderingMethod("NCI GPU MultiVolume Ray Casting",
+  //                              "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode");
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerVolumeRenderingLogic::~vtkSlicerVolumeRenderingLogic()
 {
+  if (this->DefaultRenderingMethod)
+    {
+    delete [] this->DefaultRenderingMethod;
+    }
   if (this->PresetsScene)
     {
     this->PresetsScene->Delete();
@@ -123,6 +144,35 @@ void vtkSlicerVolumeRenderingLogic::RegisterNodes()
 
   vtkNew<vtkMRMLVolumeRenderingDisplayNode> vrpNode;
   this->GetMRMLScene()->RegisterNodeClass( vrpNode.GetPointer() );
+
+  vtkNew<vtkMRMLCPURayCastVolumeRenderingDisplayNode> cpuVRNode;
+  this->GetMRMLScene()->RegisterNodeClass( cpuVRNode.GetPointer() );
+
+  vtkNew<vtkMRMLNCIRayCastVolumeRenderingDisplayNode> nciNode;
+  this->GetMRMLScene()->RegisterNodeClass( nciNode.GetPointer() );
+
+  vtkNew<vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode> nciMVNode;
+  this->GetMRMLScene()->RegisterNodeClass( nciMVNode.GetPointer() );
+
+  vtkNew<vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode> tmNode;
+  this->GetMRMLScene()->RegisterNodeClass( tmNode.GetPointer() );
+
+  vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> gpuNode;
+  this->GetMRMLScene()->RegisterNodeClass( gpuNode.GetPointer() );
+}
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::RegisterRenderingMethod(const char* methodName, const char* displayNodeClassName)
+{
+  this->RenderingMethods[methodName] = displayNodeClassName;
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+std::map<std::string, std::string> vtkSlicerVolumeRenderingLogic
+::GetRenderingMethods()
+{
+  return this->RenderingMethods;
 }
 
 //----------------------------------------------------------------------------
@@ -567,9 +617,13 @@ void vtkSlicerVolumeRenderingLogic
   this->SetThresholdToVolumeProp(
     scalarRange, threshold, prop,
     this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
-  // NCI raycast mapper applies a second threshold in addition to the opacity
-  // transfer function
-  vspNode->SetDepthPeelingThreshold(scalarRange[0]);
+  if (vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
+    {
+    // NCI raycast mapper applies a second threshold in addition to the opacity
+    // transfer function
+    vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode)
+      ->SetDepthPeelingThreshold(scalarRange[0]);
+    }
   this->SetWindowLevelToVolumeProp(
     scalarRange, windowLevel, lut, prop);
   vspNode->EndModify(disabledModify);
@@ -631,7 +685,8 @@ void vtkSlicerVolumeRenderingLogic::FitROIToVolume(vtkMRMLVolumeRenderingDisplay
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()
+vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
+::CreateVolumeRenderingDisplayNode(const char* renderingClassName)
 {
   vtkMRMLVolumeRenderingDisplayNode *node = NULL;
 
@@ -639,10 +694,25 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateVolumeRe
     {
     return node;
     }
-  node = vtkMRMLVolumeRenderingDisplayNode::New();
-  node->SetCurrentVolumeMapper(
-    this->DefaultRenderingMethod != vtkMRMLVolumeRenderingDisplayNode::None ?
-    this->DefaultRenderingMethod : vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast);
+  bool volumeRenderingUniqueName = true;
+  if (renderingClassName == 0 || strlen(renderingClassName)==0)
+    {
+    renderingClassName = this->DefaultRenderingMethod;
+    }
+  else
+    {
+    volumeRenderingUniqueName = false;
+    }
+  if (renderingClassName == 0 || strlen(renderingClassName)==0)
+    {
+    renderingClassName = "vtkMRMLCPURayCastVolumeRenderingDisplayNode";
+    }
+  node = vtkMRMLVolumeRenderingDisplayNode::SafeDownCast(
+    this->GetMRMLScene()->CreateNodeByClass(renderingClassName));
+  if (volumeRenderingUniqueName)
+    {
+    node->SetName(this->GetMRMLScene()->GenerateUniqueName("VolumeRendering").c_str());
+    }
   this->GetMRMLScene()->AddNode(node);
   node->Delete();
 

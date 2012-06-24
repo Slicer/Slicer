@@ -46,7 +46,7 @@ bool testDefaultRenderingMethod()
 
   vtkMRMLVolumeRenderingDisplayNode* displayNode =
     logic->CreateVolumeRenderingDisplayNode();
-  if (logic->GetDefaultRenderingMethod() != vtkMRMLVolumeRenderingDisplayNode::None ||
+  if (logic->GetDefaultRenderingMethod() != 0 ||
       displayNode != 0)
     {
     std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
@@ -60,25 +60,25 @@ bool testDefaultRenderingMethod()
   logic->SetMRMLScene(scene.GetPointer());
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   if (displayNode == 0 ||
-      displayNode->GetCurrentVolumeMapper() != vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast)
+      displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
     {
     std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
               << __LINE__ << " failed:" << std::endl
               << displayNode << " "
-              << (displayNode ? displayNode->GetCurrentVolumeMapper() : -2) << " "
+              << (displayNode ? displayNode->GetClassName() : "none") << " "
               << std::endl;
     return false;
     }
 
-  logic->SetDefaultRenderingMethod(vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast);
+  logic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   if (displayNode == 0 ||
-      displayNode->GetCurrentVolumeMapper() != vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast)
+      displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
     {
     std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
               << __LINE__ << " failed:" << std::endl
               << displayNode << " "
-              << (displayNode ? displayNode->GetCurrentVolumeMapper() : -2) << " "
+              << (displayNode ? displayNode->GetClassName() : "none") << " "
               << std::endl;
     return false;
     }

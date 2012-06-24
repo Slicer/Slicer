@@ -22,6 +22,7 @@
 #define __qSlicerVolumeRenderingSettingsPanel_h
 
 // CTK includes
+#include <ctkVTKObject.h>
 #include <ctkSettingsPanel.h>
 
 // VolumeRendering includes
@@ -33,7 +34,9 @@ class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT qSlicerVolumeRenderingSettingsPa
   : public ctkSettingsPanel
 {
   Q_OBJECT
+  QVTK_OBJECT
   Q_PROPERTY(int gpuMemory READ gpuMemory WRITE setGPUMemory NOTIFY gpuMemoryChanged)
+  Q_PROPERTY(QString defaultRenderingMethod READ defaultRenderingMethod WRITE setDefaultRenderingMethod NOTIFY defaultRenderingMethodChanged)
 public:
   /// Superclass typedef
   typedef ctkSettingsPanel Superclass;
@@ -52,11 +55,16 @@ public:
   int gpuMemory()const;
   void setGPUMemory(int gpuMemory);
 
+  QString defaultRenderingMethod()const;
+  void setDefaultRenderingMethod(const QString& method);
 signals:
   void gpuMemoryChanged(int);
+  void defaultRenderingMethodChanged(const QString&);
 
 protected slots:
+  void onVolumeRenderingLogicModified();
   void onGPUMemoryChanged();
+  void onDefaultRenderingMethodChanged(int);
   void updateVolumeRenderingLogicDefaultRenderingMethod();
 
 protected:

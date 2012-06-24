@@ -83,26 +83,6 @@
      <property name="toolTip">
       <string>Default rendering method</string>
      </property>
-     <item>
-      <property name="text">
-       <string>VTK CPU Ray Casting</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>VTK GPU Ray Casting</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>VTK OpenGL 3D Texture Mapping</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>NCI GPU Ray Casting</string>
-      </property>
-     </item>
     </widget>
    </item>
   </layout>

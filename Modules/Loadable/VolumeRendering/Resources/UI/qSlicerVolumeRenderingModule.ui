@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>410</width>
-    <height>312</height>
+    <width>456</width>
+    <height>794</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -268,26 +268,6 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
-        <item>
-         <property name="text">
-          <string>VTK CPU Ray Casting</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>VTK GPU Ray Casting</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>VTK OpenGL 3D Texture Mapping</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>NCI GPU Ray Casting</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="1" column="1">
@@ -340,10 +320,10 @@
       <string>Advanced...</string>
      </property>
      <property name="checked">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="collapsed">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="contentsFrameShape">
       <enum>QFrame::NoFrame</enum>
@@ -352,7 +332,7 @@
       <item>
        <widget class="QTabWidget" name="AdvancedTabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="TechniquesTab">
          <attribute name="title">
@@ -437,7 +417,7 @@
              <string>Advanced Rendering Properties</string>
             </property>
             <property name="checked">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <layout class="QFormLayout" name="formLayout_7">
              <property name="fieldGrowthPolicy">
@@ -446,202 +426,11 @@
              <property name="margin">
               <number>0</number>
              </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="RenderingTechniqueLabel">
-               <property name="text">
-                <string>Technique (bg):</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="RenderingTechniqueComboBox">
-               <property name="toolTip">
-                <string>Select Ray casting technique for the background (default) volume.</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" colspan="2">
-              <widget class="QStackedWidget" name="stackedWidget">
+             <item row="0" column="0" colspan="2">
+              <widget class="QStackedWidget" name="RenderingMethodStackedWidget">
                <property name="currentIndex">
-                <number>0</number>
+                <number>-1</number>
                </property>
-               <widget class="QWidget" name="VTKCPUPage">
-                <layout class="QFormLayout" name="formLayout_4">
-                 <property name="fieldGrowthPolicy">
-                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                 </property>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="VKTGPUPage">
-                <layout class="QFormLayout" name="formLayout_6"/>
-               </widget>
-               <widget class="QWidget" name="VTKGPUTexturePage"/>
-               <widget class="QWidget" name="NCIGPUPage">
-                <layout class="QFormLayout" name="formLayout_8">
-                 <property name="margin">
-                  <number>0</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="DistColorBlendingLabel">
-                   <property name="text">
-                    <string>Dist. Color Blending:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="ctkSliderWidget" name="DistColorBlendingSliderWidget">
-                   <property name="toolTip">
-                    <string>Distance Color Blending: Voxels with longer distance to eye/camera would be more darker to reveal depth information in volume. Higher value indicates stronger darking effect. Setting the value to 0 will turn off the effect.</string>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="pageStep">
-                    <double>0.200000000000000</double>
-                   </property>
-                   <property name="maximum">
-                    <double>1.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="ctkSliderWidget" name="ICPEScaleSliderWidget">
-                   <property name="toolTip">
-                    <string>Parameter scale (kt) for Illustrative Context Preserving Exploration, which simulates depth penetrating into volume.</string>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="pageStep">
-                    <double>4.000000000000000</double>
-                   </property>
-                   <property name="maximum">
-                    <double>20.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="ctkSliderWidget" name="ICPESmoothnessSliderWidget">
-                   <property name="toolTip">
-                    <string>Parameter smoothness (ks) for Illustrative Context Preserving Exploration.</string>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="pageStep">
-                    <double>0.200000000000000</double>
-                   </property>
-                   <property name="maximum">
-                    <double>1.000000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>0.500000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="ctkSliderWidget" name="DepthPeelingSliderWidget">
-                   <property name="toolTip">
-                    <string>Set threshold for Volumetric Depth Peeling. Volume rendering starts after we have met scalar values higher than the threshold. Use with transfer functions together.</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="ICPEScaleLabel">
-                   <property name="text">
-                    <string>ICPE Scale:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="ICPESmoothnessLabel">
-                   <property name="text">
-                    <string>ICPE: Smoothness:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="DepthPeelingLabel">
-                   <property name="text">
-                    <string>Vol. Depth Peeling:</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="NCIGPUMultiPage">
-                <layout class="QFormLayout" name="formLayout_9">
-                 <property name="margin">
-                  <number>0</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="RenderingTechniqueFgLabel">
-                   <property name="text">
-                    <string>Technique (fg):</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QComboBox" name="RenderingTechniqueFgComboBox">
-                   <property name="toolTip">
-                    <string>Select GPU ray casting technique for fg volume.</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="FusionLabel">
-                   <property name="text">
-                    <string>Fusion:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QComboBox" name="FusionComboBox">
-                   <property name="toolTip">
-                    <string>Select color fusion method in multi-volume rendering</string>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>Alpha Blending (OR)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Alpha Blending (AND)</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Alpha Blending (NOT)</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="BgFgRatioLabel">
-                   <property name="text">
-                    <string>Bg|Fg ratio:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="ctkSliderWidget" name="BgFgRatioSliderWidget">
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="pageStep">
-                    <double>0.200000000000000</double>
-                   </property>
-                   <property name="maximum">
-                    <double>1.000000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>0.500000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
               </widget>
              </item>
             </layout>
@@ -982,22 +771,6 @@
     <hint type="destinationlabel">
      <x>332</x>
      <y>19</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>RenderingMethodComboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>418</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>151</x>
-     <y>492</y>
     </hint>
    </hints>
   </connection>

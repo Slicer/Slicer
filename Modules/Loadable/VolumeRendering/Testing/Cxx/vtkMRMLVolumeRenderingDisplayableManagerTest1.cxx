@@ -19,6 +19,8 @@
 ==============================================================================*/
 
 // VolumeRendering includes
+#include <vtkMRMLGPURayCastVolumeRenderingDisplayNode.h>
+#include <vtkMRMLVolumeRenderingDisplayNode.h>
 #include <vtkMRMLVolumeRenderingDisplayableManager.h>
 #include <vtkSlicerVolumeRenderingLogic.h>
 
@@ -118,14 +120,9 @@ int vtkMRMLVolumeRenderingDisplayableManagerTest1(int argc, char* argv[])
   vtkNew<vtkMRMLVolumePropertyNode> volumePropertyNode;
   scene->AddNode(volumePropertyNode.GetPointer());
 
-  vtkNew<vtkMRMLVolumeRenderingDisplayNode> vrDisplayNode;
+  vtkNew<vtkMRMLGPURayCastVolumeRenderingDisplayNode> vrDisplayNode;
   vrDisplayNode->SetAndObserveVolumeNodeID(volumeNode->GetID());
   vrDisplayNode->SetAndObserveVolumePropertyNodeID(volumePropertyNode->GetID());
-  vrDisplayNode->SetCurrentVolumeMapper(
-    //vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast);
-    vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast);
-    //vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping);
-    //vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast);
 
   displayableManagerGroup->GetInteractor()->Initialize();
 

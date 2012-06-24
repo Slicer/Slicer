@@ -51,8 +51,11 @@ protected:
 public:
   qSlicerVolumeRenderingSettingsPanelPrivate(qSlicerVolumeRenderingSettingsPanel& object);
   void init();
+
   int memoryFromString(const QString& memory)const;
   QString memoryToString(int memory)const;
+
+  void addRenderingMethod(const QString& methodName, const QString& methodClassName);
 
   QRegExp MemoryRegExp;
   vtkSmartPointer<vtkSlicerVolumeRenderingLogic> VolumeRenderingLogic;
@@ -81,7 +84,7 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
     new QRegExpValidator(this->MemoryRegExp, q));
   this->GPUMemoryComboBox->insertItem(0, q->tr("0 Mo"));
   this->GPUMemoryComboBox->insertSeparator(1);
-  
+
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(editTextChanged(QString)),
                    q, SLOT(onGPUMemoryChanged()));
   QObject::connect(this->GPUMemoryComboBox, SIGNAL(currentIndexChanged(QString)),
@@ -102,13 +105,6 @@ void qSlicerVolumeRenderingSettingsPanelPrivate::init()
 
   q->registerProperty("VolumeRendering/GPUMemorySize", q, "gpuMemory",
                       SIGNAL(gpuMemoryChanged(int)));
-
-  // Default rendering method
-  QObject::connect(this->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
-                   q, SLOT(updateVolumeRenderingLogicDefaultRenderingMethod()));
-
-  q->registerProperty("VolumeRendering/RenderingMethod", this->RenderingMethodComboBox,
-                      "currentIndex", SIGNAL(currentIndexChanged(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -142,6 +138,14 @@ QString qSlicerVolumeRenderingSettingsPanelPrivate::memoryToString(int memory)co
 }
 
 // --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanelPrivate
+::addRenderingMethod(const QString& methodName, const QString& methodClassName)
+{
+  this->RenderingMethodComboBox->addItem(
+    methodName, methodClassName);
+}
+
+// --------------------------------------------------------------------------
 // qSlicerVolumeRenderingSettingsPanel methods
 
 // --------------------------------------------------------------------------
@@ -159,12 +163,51 @@ qSlicerVolumeRenderingSettingsPanel::~qSlicerVolumeRenderingSettingsPanel()
 }
 
 // --------------------------------------------------------------------------
+vtkSlicerVolumeRenderingLogic* qSlicerVolumeRenderingSettingsPanel
+::volumeRenderingLogic()const
+{
+  Q_D(const qSlicerVolumeRenderingSettingsPanel);
+  return d->VolumeRenderingLogic;
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingSettingsPanel
 ::setVolumeRenderingLogic(vtkSlicerVolumeRenderingLogic* logic)
 {
   Q_D(qSlicerVolumeRenderingSettingsPanel);
+
+  qvtkReconnect(d->VolumeRenderingLogic, logic, vtkCommand::ModifiedEvent,
+                this, SLOT(onVolumeRenderingLogicModified()));
   d->VolumeRenderingLogic = logic;
-  this->updateVolumeRenderingLogicDefaultRenderingMethod();
+
+  this->onVolumeRenderingLogicModified();
+
+  this->registerProperty("VolumeRendering/RenderingMethod", this,
+                         "defaultRenderingMethod", SIGNAL(defaultRenderingMethodChanged(QString)));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel
+::onVolumeRenderingLogicModified()
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  const std::map<std::string, std::string>& renderingMethods =
+    d->VolumeRenderingLogic->GetRenderingMethods();
+  /// \todo not the best test to make sure the list is different
+  if (renderingMethods.size() != d->RenderingMethodComboBox->count())
+    {
+    std::map<std::string, std::string>::const_iterator it;
+    for (it = renderingMethods.begin(); it != renderingMethods.end(); ++it)
+      {
+      d->addRenderingMethod(it->first.c_str(), it->second.c_str());
+      }
+    }
+  QObject::connect(d->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
+                   this, SLOT(onDefaultRenderingMethodChanged(int)),Qt::UniqueConnection);
+
+  int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(
+    QString(d->VolumeRenderingLogic->GetDefaultRenderingMethod()));
+  d->RenderingMethodComboBox->setCurrentIndex(defaultRenderingMethodIndex);
 }
 
 // --------------------------------------------------------------------------
@@ -214,6 +257,35 @@ void qSlicerVolumeRenderingSettingsPanel::onGPUMemoryChanged()
 }
 
 // --------------------------------------------------------------------------
+QString qSlicerVolumeRenderingSettingsPanel
+::defaultRenderingMethod()const
+{
+  Q_D(const qSlicerVolumeRenderingSettingsPanel);
+  QString renderingClassName =
+    d->RenderingMethodComboBox->itemData(
+      d->RenderingMethodComboBox->currentIndex()).toString();
+  return renderingClassName;
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel
+::setDefaultRenderingMethod(const QString& method)
+{
+  Q_D(qSlicerVolumeRenderingSettingsPanel);
+  int methodIndex = d->RenderingMethodComboBox->findData(method);
+  d->RenderingMethodComboBox->setCurrentIndex(methodIndex);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerVolumeRenderingSettingsPanel
+::onDefaultRenderingMethodChanged(int index)
+{
+  Q_UNUSED(index);
+  this->updateVolumeRenderingLogicDefaultRenderingMethod();
+  emit defaultRenderingMethodChanged(this->defaultRenderingMethod());
+}
+
+// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingSettingsPanel
 ::updateVolumeRenderingLogicDefaultRenderingMethod()
 {
@@ -223,5 +295,5 @@ void qSlicerVolumeRenderingSettingsPanel
     return;
     }
   d->VolumeRenderingLogic->SetDefaultRenderingMethod(
-    d->RenderingMethodComboBox->currentIndex());
+    this->defaultRenderingMethod().toLatin1());
 }

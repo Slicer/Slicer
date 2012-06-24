@@ -1,54 +1,76 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Copyright (c) Kitware Inc.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
+
 #ifndef __vtkMRMLVolumeRenderingDisplayableManager_h
 #define __vtkMRMLVolumeRenderingDisplayableManager_h
 
-#include "vtkSlicerModuleLogic.h"
-#include "vtkVolumeMapper.h"
-#include "vtkVolume.h"
-
-#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
-
-#include "vtkMRMLVolumeRenderingDisplayNode.h"
-#include "vtkMRMLVolumeRenderingScenarioNode.h"
-#include "vtkSlicerVolumeRenderingLogic.h"
-
-#include "qSlicerVolumeRenderingModuleExport.h"
-
-class vtkSlicerVolumeTextureMapper3D;
+// VolumeRendering includes
+#include "vtkSlicerVolumeRenderingModuleMRMLDisplayableManagerExport.h"
+class vtkGPUVolumeRayCastMapper;
 class vtkFixedPointVolumeRayCastMapper;
+class vtkMRMLCPURayCastVolumeRenderingDisplayNode;
+class vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode;
+class vtkMRMLGPURayCastVolumeRenderingDisplayNode;
+class vtkMRMLNCIRayCastVolumeRenderingDisplayNode;
+class vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode;
+class vtkMRMLVolumeNode;
+class vtkMRMLVolumeRenderingDisplayNode;
+class vtkMRMLVolumeRenderingScenarioNode;
+class vtkSlicerVolumeRenderingLogic;
+class vtkSlicerVolumeTextureMapper3D;
 class vtkSlicerGPURayCastVolumeMapper;
 class vtkSlicerGPURayCastMultiVolumeMapper;
-class vtkGPUVolumeRayCastMapper;
+class vtkVolumeProperty;
 
+// MRML DisplayableManager includes
+#include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
+
+// VTK includes
 class vtkIntArray;
 class vtkMatrix4x4;
 class vtkPlanes;
 class vtkTimerLog;
+class vtkVolume;
+class vtkVolumeMapper;
+class vtkVolumeProperty;
 
 #define VTKIS_VOLUME_PROPS 100
 
 /// \ingroup Slicer_QtModules_VolumeRendering
-class Q_SLICER_QTMODULES_VOLUMERENDERING_EXPORT vtkMRMLVolumeRenderingDisplayableManager  :
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeRenderingDisplayableManager
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLVolumeRenderingDisplayableManager *New();
   vtkTypeRevisionMacro(vtkMRMLVolumeRenderingDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  void Reset();
+  virtual void Reset();
 
   void SetGUICallbackCommand(vtkCommand* callback);
 
   virtual void Create();
-  
-  // Description:
-  // Get, Set and Observe DisplayNode
-  //vtkGetObjectMacro (DisplayNode, vtkMRMLVolumeRenderingDisplayNode);
-  //void SetAndObserveDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   ///
   /// Return the volume mapper of the volume rendering display node
-  vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual vtkVolumeMapper* GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   ///
   /// Configure mapper with volume nodes
@@ -66,7 +88,7 @@ public:
   // -1: requested mapper not supported
   //  0: invalid input parameter
   //  1: success
-  int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual int SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   // Description:
   // Get Volume Actor
@@ -75,18 +97,27 @@ public:
   void SetupHistograms(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSet(){return this->Histograms;}
 
-  void SetupHistogramsFg(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void SetupHistogramsFg(vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode);
   //vtkKWHistogramSet* GetHistogramSetFg(){return this->HistogramsFg;}
 
-  void SetExpectedFPS(double fps);
-  void SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void SetGPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void SetGPURaycastIIParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void SetGPURaycast3Parameters(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void SetROI(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual bool UpdateMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+
+  void UpdateMapper(vtkVolumeMapper* mapper,
+                    vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void UpdateCPURaycastMapper(vtkFixedPointVolumeRayCastMapper* mapper,
+                              vtkMRMLCPURayCastVolumeRenderingDisplayNode* vspNode);
+  void UpdateNCIRaycastMapper(vtkSlicerGPURayCastVolumeMapper* mapper,
+                              vtkMRMLNCIRayCastVolumeRenderingDisplayNode* vspNode);
+  void UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper* mapper,
+                                         vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode);
+  void UpdateGPUTextureMappingMapper(vtkSlicerVolumeTextureMapper3D* mapper,
+                                     vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode* vspNode);
+  void UpdateGPURaycastMapper(vtkGPUVolumeRayCastMapper* mapper,
+                              vtkMRMLGPURayCastVolumeRenderingDisplayNode* vspNode);
+  void UpdateDesiredUpdateRate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  void UpdateClipping(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   void CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode);
-  void UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   //void CreateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   //void UpdateVolumePropertyGPURaycast3(vtkMRMLVolumeRenderingDisplayNode* vspNode);
@@ -101,7 +132,9 @@ public:
    * 0: mapper not supported
    * 1: mapper supported
    */
-  int IsCurrentMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  int IsMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual int IsMapperSupported(vtkVolumeMapper* volumeMapper,
+                                vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
   virtual void OnMRMLSceneStartClose();
   virtual void OnMRMLSceneEndClose();
@@ -201,8 +234,6 @@ protected:
   void OnScenarioNodeModified();
   void OnVolumeRenderingDisplayNodeModified(vtkMRMLVolumeRenderingDisplayNode* dnode);
 
-
-  void ComputeInternalVolumeSize(int index);
   void CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output);
   void EstimateSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
@@ -214,6 +245,9 @@ protected:
   bool IsVolumeInView(vtkVolume* volume);
   void UpdatePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
   int ValidateDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  double GetSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  double GetFramerate(vtkMRMLVolumeRenderingDisplayNode* vspNode);
+  virtual int GetMaxMemory(vtkVolumeMapper* mapper, vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
 };
 

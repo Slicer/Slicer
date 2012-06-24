@@ -1,4 +1,22 @@
+/*==============================================================================
 
+  Program: 3D Slicer
+
+  Copyright (c) Kitware Inc.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+  This file was originally developed by Julien Finet, Kitware Inc.
+  and was partially funded by NIH grant 3P41RR013218-12S1
+
+==============================================================================*/
 
 // Slicer includes
 #include "vtkImageGradientMagnitude.h"
@@ -8,6 +26,12 @@
 #include "vtkSlicerGPURayCastVolumeMapper.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "vtkSlicerVolumeTextureMapper3D.h"
+
+#include "vtkMRMLCPURayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h"
+#include "vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h"
+#include "vtkMRMLGPURayCastVolumeRenderingDisplayNode.h"
 
 // MRML includes
 #include "vtkEventBroker.h"
@@ -41,6 +65,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
+#include "vtkVolume.h"
 #include "vtkVolumeProperty.h"
 
 // ITKSys includes
@@ -292,9 +317,11 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistograms(vtkMRMLVolumeRend
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetupHistogramsFg(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkMRMLVolumeRenderingDisplayableManager
+::SetupHistogramsFg(vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode)
 {
-  vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData();
+  vtkImageData *input = vtkMRMLScalarVolumeNode::SafeDownCast(
+    vspNode->GetFgVolumeNode())->GetImageData();
   if (input == NULL)
     {
     return;
@@ -329,70 +356,96 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetupHistogramsFg(vtkMRMLVolumeRe
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::ComputeInternalVolumeSize(int memory)
+int vtkMRMLVolumeRenderingDisplayableManager
+::GetMaxMemory(vtkVolumeMapper* volumeMapper,
+               vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+
+  int memory = vspNode && vspNode->GetGPUMemorySize() ?
+    vspNode->GetGPUMemorySize() :
+    vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize;
+
+  int nciRayCastMapper = 200; // 200^3
+  int nciMultiVolumeMapper = 200;
+  int textureMappingMapper = 128; //has to be power-of-two in this mapper
+  int gpuRayCastMapper = 128*1024*1024;
   if (memory <= 128)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(200);
-    this->MapperGPURaycastII->SetInternalVolumeSize(200);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(128*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(128);//has to be power-of-two in this mapper
     }
   else if (memory <= 256)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(256);//256^3
-    this->MapperGPURaycastII->SetInternalVolumeSize(320);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(256*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(256);
+    nciRayCastMapper = 256;
+    nciMultiVolumeMapper = 320;
+    gpuRayCastMapper = 256*1024*1024;
+    textureMappingMapper = 256;
     }
   else if (memory <= 512)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(320);
-    this->MapperGPURaycastII->SetInternalVolumeSize(500);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(512*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(256);
+    nciRayCastMapper = 320;
+    nciMultiVolumeMapper = 500;
+    textureMappingMapper = 256;
+    gpuRayCastMapper = 512*1024*1024;
     }
   else if (memory <= 1024)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(400);
-    this->MapperGPURaycastII->SetInternalVolumeSize(620);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(1024*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(256);
+    nciRayCastMapper = 400;
+    nciMultiVolumeMapper = 620;
+    textureMappingMapper = 256;
+    gpuRayCastMapper = 1024*1024*1024;
     }
   else if (memory <= 1536)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(460);
-    this->MapperGPURaycastII->SetInternalVolumeSize(700);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(1536*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(256);
+    nciRayCastMapper = 460;
+    nciMultiVolumeMapper = 700;
+    textureMappingMapper = 256;
+    gpuRayCastMapper = 1536*1024*1024;
     }
   else if (memory <= 2048)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(512);
-    this->MapperGPURaycastII->SetInternalVolumeSize(775);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(512);
+    nciRayCastMapper = 512;
+    nciMultiVolumeMapper = 775;
+    textureMappingMapper = 512;
+    gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 3072)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(700);
-    this->MapperGPURaycastII->SetInternalVolumeSize(900);
-//    this->MapperGPURaycast3->SetMaxMemoryInBytes(3071*1024*1024);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(512);
+    nciRayCastMapper = 700;
+    nciMultiVolumeMapper = 900;
+    textureMappingMapper = 512;
+    gpuRayCastMapper = 2047*1024*1024;
     }
   else if (memory <= 4096)
     {
-    this->MapperGPURaycast->SetInternalVolumeSize(800);
-    this->MapperGPURaycastII->SetInternalVolumeSize(1000);
-//    this->MapperGPURaycast3->SetMaxMemoryInBytes(4095*1024*1024);
-    this->MapperGPURaycast3->SetMaxMemoryInBytes(2047*1024*1024);
-    this->MapperTexture->SetInternalVolumeSize(512);
+    nciRayCastMapper = 800;
+    nciMultiVolumeMapper = 1000;
+    textureMappingMapper = 512;
+    gpuRayCastMapper = 2047*1024*1024;
     }
+
+  if (volumeMapper->IsA("vtkSlicerGPURayCastVolumeMapper"))
+    {
+    return nciRayCastMapper;
+    }
+  else if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
+    {
+    return nciMultiVolumeMapper;
+    }
+  else if (volumeMapper->IsA("vtkSlicerVolumeTextureMapper3D"))
+    {
+    return textureMappingMapper;
+    }
+  else if (volumeMapper->IsA("vtkGPUVolumeRayCastMapper"))
+    {
+    return gpuRayCastMapper;
+    }
+
+  // By default, return the node memory
+  return memory * 1024 * 1024;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output)
+void vtkMRMLVolumeRenderingDisplayableManager
+::CalculateMatrix(vtkMRMLVolumeRenderingDisplayNode *vspNode, vtkMatrix4x4 *output)
 {
   //Update matrix
   //Check for NUll Pointer
@@ -400,13 +453,14 @@ void vtkMRMLVolumeRenderingDisplayableManager::CalculateMatrix(vtkMRMLVolumeRend
     {
     return;
     }
-  vtkMRMLTransformNode *tmp = vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetParentTransformNode();
+  vtkMRMLTransformNode *tmp = vtkMRMLScalarVolumeNode::SafeDownCast(
+    vspNode->GetVolumeNode())->GetParentTransformNode();
   //check if we have a TransformNode
   if(tmp == NULL)
-  {
+    {
     vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetIJKToRASMatrix(output);
     return;
-  }
+    }
 
   //IJK to ras
   vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
@@ -424,175 +478,216 @@ void vtkMRMLVolumeRenderingDisplayableManager::CalculateMatrix(vtkMRMLVolumeRend
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetExpectedFPS(double fps)
+double vtkMRMLVolumeRenderingDisplayableManager
+::GetFramerate(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  fps = std::max(fps, 0.0001);
-
-  this->MapperTexture->SetFramerate(fps);
-  this->MapperGPURaycast->SetFramerate(fps);
-  this->MapperGPURaycastII->SetFramerate(fps);
+  double framerate = vspNode ? vspNode->GetExpectedFPS() : 15.;
+  if (!this->GetRenderer()->GetRenderWindow()->GetEventPending())
+    {
+    framerate = 0.0001;
+    }
+  return std::max(framerate, 0.0001);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetCPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+double vtkMRMLVolumeRenderingDisplayableManager
+::GetSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  vtkMRMLVolumeNode* volumeNode = vspNode ? vspNode->GetVolumeNode() : 0;
+  double minSpacing = volumeNode->GetMinSpacing() > 0 ?
+    volumeNode->GetMinSpacing() : 1.;
+  double sampleDistance = minSpacing / vspNode->GetEstimatedSampleDistance();
+  return sampleDistance;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateMapper(
+  vtkVolumeMapper* mapper,
+  vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  this->UpdateClipping(mapper, vspNode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateCPURaycastMapper(
+  vtkFixedPointVolumeRayCastMapper* mapper,
+  vtkMRMLCPURayCastVolumeRenderingDisplayNode* vspNode)
+{
+  this->UpdateMapper(mapper, vspNode);
+  mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
   switch(vspNode->GetRaycastTechnique())
     {
     case vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection:
-      this->MapperRaycast->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
       break;
     case vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection:
-      this->MapperRaycast->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
       break;
     case vtkMRMLVolumeRenderingDisplayNode::Composite:
     default:
-      this->MapperRaycast->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
     }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycastParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateNCIRaycastMapper(
+  vtkSlicerGPURayCastVolumeMapper* mapper,
+  vtkMRMLNCIRayCastVolumeRenderingDisplayNode* vspNode)
 {
-  this->MapperGPURaycast->SetDepthPeelingThreshold(vspNode->GetDepthPeelingThreshold());
-  this->MapperGPURaycast->SetDistanceColorBlending(vspNode->GetDistanceColorBlending());
-  this->MapperGPURaycast->SetICPEScale(vspNode->GetICPEScale());
-  this->MapperGPURaycast->SetICPESmoothness(vspNode->GetICPESmoothness());
-  this->MapperGPURaycast->SetTechnique(vspNode->GetRaycastTechnique());
+  this->UpdateMapper(mapper, vspNode);
+  mapper->SetInternalVolumeSize(this->GetMaxMemory(mapper, vspNode));
+  mapper->SetFramerate(this->GetFramerate(vspNode));
+
+  mapper->SetDepthPeelingThreshold(vspNode->GetDepthPeelingThreshold());
+  mapper->SetDistanceColorBlending(vspNode->GetDistanceColorBlending());
+  mapper->SetICPEScale(vspNode->GetICPEScale());
+  mapper->SetICPESmoothness(vspNode->GetICPESmoothness());
+  mapper->SetTechnique(vspNode->GetRaycastTechnique());
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycastIIParameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateNCIMultiVolumeRaycastMapper(
+  vtkSlicerGPURayCastMultiVolumeMapper* mapper,
+  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* vspNode)
 {
+  this->UpdateMapper(mapper, vspNode);
+  mapper->SetInternalVolumeSize(this->GetMaxMemory(mapper, vspNode));
+  mapper->SetFramerate(this->GetFramerate(vspNode));
+
+  mapper->SetDepthPeelingThreshold(vspNode->GetDepthPeelingThreshold());
   //ratio may not be used depending on techniques selected
-  this->MapperGPURaycastII->SetFgBgRatio(vspNode->GetBgFgRatio());
-  this->MapperGPURaycastII->SetTechniques(
+  mapper->SetFgBgRatio(vspNode->GetBgFgRatio());
+  mapper->SetTechniques(
     vspNode->GetRaycastTechnique(), vspNode->GetRaycastTechniqueFg());
-  this->MapperGPURaycastII->SetColorOpacityFusion(vspNode->GetMultiVolumeFusionMethod());
+  mapper->SetColorOpacityFusion(vspNode->GetMultiVolumeFusionMethod());
+
+  this->CreateVolumePropertyGPURaycastII(vspNode);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetGPURaycast3Parameters(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateGPUTextureMappingMapper(
+  vtkSlicerVolumeTextureMapper3D* mapper,
+  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode* vspNode)
 {
+  this->UpdateMapper(mapper, vspNode);
+  mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
+  mapper->SetInternalVolumeSize(this->GetMaxMemory(mapper, vspNode));
+  mapper->SetFramerate(this->GetFramerate(vspNode));
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager
+::UpdateGPURaycastMapper(
+  vtkGPUVolumeRayCastMapper* mapper,
+  vtkMRMLGPURayCastVolumeRenderingDisplayNode* vspNode)
+{
+  this->UpdateMapper(mapper, vspNode);
+  mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
+  mapper->SetMaxMemoryInBytes(this->GetMaxMemory(mapper, vspNode));
+
   switch(vspNode->GetRaycastTechnique())
     {
     case vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection:
-      this->MapperGPURaycast3->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::MAXIMUM_INTENSITY_BLEND);
       break;
     case vtkMRMLVolumeRenderingDisplayNode::MinimumIntensityProjection:
-      this->MapperGPURaycast3->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::MINIMUM_INTENSITY_BLEND);
       break;
     case vtkMRMLVolumeRenderingDisplayNode::Composite:
     default:
-      this->MapperGPURaycast3->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
+      mapper->SetBlendMode(vtkVolumeMapper::COMPOSITE_BLEND);
       break;
     }
 }
 
 //---------------------------------------------------------------------------
-int vtkMRMLVolumeRenderingDisplayableManager::IsCurrentMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+int vtkMRMLVolumeRenderingDisplayableManager
+::IsMapperSupported(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  if (vspNode == NULL)
-    return 0;
+  return this->IsMapperSupported( this->GetVolumeMapper(vspNode), vspNode);
+}
 
+//---------------------------------------------------------------------------
+int vtkMRMLVolumeRenderingDisplayableManager
+::IsMapperSupported(vtkVolumeMapper* volumeMapper, vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  if (volumeMapper == 0)
+    {
+    return 0;
+    }
   vtkRenderWindow* window = this->GetRenderer()->GetRenderWindow();
 
-  switch(vspNode->GetCurrentVolumeMapper())//mapper specific initialization
-  {
-  case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
-    return 1;
-  case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
+  volumeMapper->SetInput(vtkMRMLScalarVolumeNode::SafeDownCast(
+                           vspNode->GetVolumeNode())->GetImageData() );
+  if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper) &&
+      vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
     {
-      vtkSlicerGPURayCastVolumeMapper* MapperGPURaycast = vtkSlicerGPURayCastVolumeMapper::New();
-
-      MapperGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
-
-      if (MapperGPURaycast->IsRenderSupported(window,vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-      {
-        MapperGPURaycast->Delete();
-        return 1;
-      }
-      else
-      {
-        MapperGPURaycast->Delete();
-        return 0;
-      }
+    vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->SetNthInput(
+      1, vtkMRMLScalarVolumeNode::SafeDownCast(
+        vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode)
+                                              ->GetFgVolumeNode())->GetImageData());
     }
-  case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
+  int supported = 0;
+  if (volumeMapper->IsA("vtkFixedPointVolumeRayCastMapper"))
     {
-      vtkSlicerGPURayCastMultiVolumeMapper* MapperGPURaycastII = vtkSlicerGPURayCastMultiVolumeMapper::New();
-
-      MapperGPURaycastII->SetNthInput(0, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData());
-      if (vspNode->GetFgVolumeNode())
-        MapperGPURaycastII->SetNthInput(1, vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetFgVolumeNode())->GetImageData());
-
-      if (MapperGPURaycastII->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-      {
-        MapperGPURaycastII->Delete();
-        return 1;
-      }
-      else
-      {
-        MapperGPURaycastII->Delete();
-        return 0;
-      }
+    supported = 1;
     }
-  case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
+  else if (volumeMapper->IsA("vtkSlicerGPURayCastVolumeMapper"))
     {
-      vtkSlicerVolumeTextureMapper3D* MapperTexture = vtkSlicerVolumeTextureMapper3D::New();
-
-      MapperTexture->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
-
-      if (MapperTexture->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-      {
-        MapperTexture->Delete();
-        return 1;
-      }
-      else
-      {
-        MapperTexture->Delete();
-        return 0;
-      }
+    supported = vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
+      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
     }
-  case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
+  else if (volumeMapper->IsA("vtkSlicerGPURayCastMultiVolumeMapper"))
     {
-    vtkGPUVolumeRayCastMapper* VTKGPURaycast = vtkGPUVolumeRayCastMapper::New();
-    VTKGPURaycast->SetInput( vtkMRMLScalarVolumeNode::SafeDownCast(vspNode->GetVolumeNode())->GetImageData() );
-    if (VTKGPURaycast->IsRenderSupported(window,vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-      {
-        VTKGPURaycast->Delete();
-        return 1;
-      }
-      else
-      {
-        VTKGPURaycast->Delete();
-        return 0;
-      }
+    supported = vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
+      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
     }
-  default:
-    return 0;
-  }
+  else if (volumeMapper->IsA("vtkSlicerVolumeTextureMapper3D"))
+    {
+    supported = vtkSlicerVolumeTextureMapper3D::SafeDownCast(volumeMapper)->IsRenderSupported(
+      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+    }
+  else if (volumeMapper->IsA("vtkGPUVolumeRayCastMapper"))
+    {
+    supported = vtkGPUVolumeRayCastMapper::SafeDownCast(volumeMapper)->IsRenderSupported(
+      window,vspNode->GetVolumePropertyNode()->GetVolumeProperty());
+    }
+  //std::cout << vspNode->GetClassName() << " mapper supported: " << supported << std::endl;
+  return supported;
 }
 
 //---------------------------------------------------------------------------
 vtkVolumeMapper* vtkMRMLVolumeRenderingDisplayableManager
 ::GetVolumeMapper(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  switch(vspNode ? vspNode->GetCurrentVolumeMapper()
-          : vtkMRMLVolumeRenderingDisplayNode::None)
+  if (!vspNode)
     {
-    case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
-      return this->MapperRaycast;
-    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
-      return this->MapperGPURaycast;
-    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
-      return this->MapperGPURaycastII;
-    case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
-      return this->MapperTexture;
-    case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
-      return this->MapperGPURaycast3;
-    case vtkMRMLVolumeRenderingDisplayNode::None:
-    default:
-      return 0;
+    return 0;
+    }
+  if (vspNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
+    {
+    return this->MapperRaycast;
+    }
+  else if (vspNode->IsA("vtkMRMLNCIRayCastVolumeRenderingDisplayNode"))
+    {
+    return this->MapperGPURaycast;
+    }
+  else if (vspNode->IsA("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode"))
+    {
+    return this->MapperGPURaycastII;
+    }
+  else if (vspNode->IsA("vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode"))
+    {
+    return this->MapperTexture;
+    }
+  else if (vspNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
+    {
+    return this->MapperGPURaycast3;
     }
   return 0;
 }
@@ -613,17 +708,22 @@ void vtkMRMLVolumeRenderingDisplayableManager
     }
   this->SetupMapperFromVolumeNode(volumeNode, this->GetVolumeMapper(vspNode), 0);
 
-  vtkMRMLVolumeNode* fgVolumeNode = vspNode ? vspNode->GetFgVolumeNode() : 0;
-  //Add observer to trigger update of transform
-  if (fgVolumeNode && !vtkIsObservedMRMLNodeEventMacro(
-        fgVolumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
+  if (vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode))
     {
-    vtkNew<vtkIntArray> events;
-    events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-    events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
-    vtkObserveMRMLNodeEventsMacro(fgVolumeNode, events.GetPointer());
+    vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* multiVolumeNode =
+      vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode);
+    vtkMRMLVolumeNode* fgVolumeNode = multiVolumeNode->GetFgVolumeNode();
+    //Add observer to trigger update of transform
+    if (fgVolumeNode && !vtkIsObservedMRMLNodeEventMacro(
+          fgVolumeNode, vtkMRMLTransformableNode::TransformModifiedEvent))
+      {
+      vtkNew<vtkIntArray> events;
+      events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+      events->InsertNextValue(vtkMRMLScalarVolumeNode::ImageDataModifiedEvent);
+      vtkObserveMRMLNodeEventsMacro(fgVolumeNode, events.GetPointer());
+      }
+    this->SetupMapperFromVolumeNode(fgVolumeNode, this->GetVolumeMapper(vspNode), 1);
     }
-  this->SetupMapperFromVolumeNode(fgVolumeNode, this->GetVolumeMapper(vspNode), 1);
 }
 
 //---------------------------------------------------------------------------
@@ -633,7 +733,8 @@ void vtkMRMLVolumeRenderingDisplayableManager
                             int index)
 {
   vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : 0;
-  if (volumeMapper->GetNumberOfInputPorts() > index)
+  if (volumeMapper &&
+      volumeMapper->GetNumberOfInputPorts() > index)
     {
     volumeMapper->SetInputConnection(index, imageData ? imageData->GetProducerPort() : 0);
     }
@@ -645,111 +746,86 @@ void vtkMRMLVolumeRenderingDisplayableManager
  *  0: invalid input parameter
  *  1: success
  */
- //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 int vtkMRMLVolumeRenderingDisplayableManager
 ::SetupMapperFromParametersNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   vtkMRMLVolumeNode* volumeNode = vspNode ? vspNode->GetVolumeNode() : NULL;
-  if (vspNode == NULL || vspNode->GetVolumeNode() == NULL)
+  if (vspNode == NULL || volumeNode == NULL)
     {
     return 0;
     }
 
-  double minSpacing = volumeNode->GetMinSpacing() > 0 ?
-    volumeNode->GetMinSpacing() : 1.;
-  double sampleDistance = minSpacing / vspNode->GetEstimatedSampleDistance();
+  vtkVolumeMapper* volumeMapper = 0;
+  vtkVolumeProperty* volumeProperty = 0;
 
-  vtkRenderWindow* window = this->GetRenderer()->GetRenderWindow();
-
-  switch(vspNode->GetCurrentVolumeMapper())//mapper specific initialization
+  if ( this->IsMapperSupported(vspNode) &&
+       this->UpdateMapper(vspNode))
     {
-    case vtkMRMLVolumeRenderingDisplayNode::VTKCPURayCast:
-      this->MapperRaycast->SetSampleDistance(sampleDistance);
-      this->SetCPURaycastParameters(vspNode);
-      this->Volume->SetMapper(this->MapperRaycast);
-      if (vspNode->GetVolumePropertyNode())
-        {
-        this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-        }
-      break;
-    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCast:
-      this->SetGPURaycastParameters(vspNode);
-      if ( vspNode->GetVolumePropertyNode() && vspNode->GetVolumePropertyNode()->GetVolumeProperty() )
-        {
-        if (this->MapperGPURaycast->IsRenderSupported(window,vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-          {
-          this->Volume->SetMapper(this->MapperGPURaycast);
-          if (vspNode->GetVolumePropertyNode())
-            {
-            this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-            }
-          }
-        else
-          {
-          this->Volume->SetMapper(0);
-          this->Volume->SetProperty(0);
-          }
-        }
-      else
-        {
-        return -1;
-        }
-      break;
-    case vtkMRMLVolumeRenderingDisplayNode::NCIGPURayCastMultiVolume:
-      this->SetGPURaycastIIParameters(vspNode);
-      if (this->MapperGPURaycastII->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-        {
-        this->Volume->SetMapper(this->MapperGPURaycastII);
-        this->CreateVolumePropertyGPURaycastII(vspNode);
-        this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
-        }
-      else
-        {
-        this->Volume->SetMapper(0);
-        this->Volume->SetProperty(0);
-        }
-      break;
-    case vtkMRMLVolumeRenderingDisplayNode::VTKGPUTextureMapping:
-      this->MapperTexture->SetSampleDistance(sampleDistance);
-      if (this->MapperTexture->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-        {
-        this->Volume->SetMapper(this->MapperTexture);
-        if (vspNode->GetVolumePropertyNode())
-          {
-          this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-          }
-        }
-      else
-        {
-        this->Volume->SetMapper(0);
-        this->Volume->SetProperty(0);
-        }
-      break;
-    case vtkMRMLVolumeRenderingDisplayNode::VTKGPURayCast:
-      this->MapperGPURaycast3->SetSampleDistance(sampleDistance);
-      this->SetGPURaycast3Parameters(vspNode);
-       if (this->MapperGPURaycast3->IsRenderSupported(window, vspNode->GetVolumePropertyNode()->GetVolumeProperty()))
-        {
-        this->Volume->SetMapper(this->MapperGPURaycast3);
-        if (vspNode->GetVolumePropertyNode())
-          {
-          this->Volume->SetProperty(vspNode->GetVolumePropertyNode()->GetVolumeProperty());
-          }
-        }
-      else
-        {
-        this->Volume->SetMapper(0);
-        this->Volume->SetProperty(0);
-        }
-      //else
-      //  return -1;
-      break;
-    default:
-      this->Volume->SetMapper(0);
-      this->Volume->SetProperty(0);
-      break;
+    volumeMapper = this->GetVolumeMapper(vspNode);
+    volumeProperty = vspNode->GetVolumePropertyNode() ?
+      vspNode->GetVolumePropertyNode()->GetVolumeProperty() : 0;
     }
 
+  this->Volume->SetMapper(volumeMapper);
+  this->Volume->SetProperty(volumeProperty);
+
+  vtkNew<vtkMatrix4x4> matrix;
+  this->CalculateMatrix(vspNode, matrix.GetPointer());
+  this->Volume->PokeMatrix(matrix.GetPointer());
+
+  this->UpdateDesiredUpdateRate(vspNode);
+
+  return (volumeMapper != 0 ? 1 : -1);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLVolumeRenderingDisplayableManager::UpdateMapper(
+  vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
+  vtkVolumeMapper* volumeMapper = this->GetVolumeMapper(vspNode);
+  if (vspNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
+    {
+    this->UpdateCPURaycastMapper(vtkFixedPointVolumeRayCastMapper::SafeDownCast(volumeMapper),
+                                 vtkMRMLCPURayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
+    }
+  else if (vspNode->IsA("vtkMRMLNCIRayCastVolumeRenderingDisplayNode"))
+    {
+    this->UpdateNCIRaycastMapper(vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper),
+                                 vtkMRMLNCIRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
+    }
+  else if (vspNode->IsA("vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode"))
+    {
+    this->UpdateNCIMultiVolumeRaycastMapper(vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper),
+                                            vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
+    }
+  else if (vspNode->IsA("vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode"))
+    {
+    this->UpdateGPUTextureMappingMapper(vtkSlicerVolumeTextureMapper3D::SafeDownCast(volumeMapper),
+                                        vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode::SafeDownCast(vspNode));
+    }
+  else if (vspNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
+    {
+    this->UpdateGPURaycastMapper(vtkGPUVolumeRayCastMapper::SafeDownCast(volumeMapper),
+                                 vtkMRMLGPURayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode));
+    }
+  else
+    {
+    return false;
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::SetVolumeVisibility(int isVisible)
+{
+  this->Volume->SetVisibility(isVisible);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayableManager::UpdateDesiredUpdateRate(
+  vtkMRMLVolumeRenderingDisplayNode* vspNode)
+{
   double fps = vspNode->GetExpectedFPS();
   vtkRenderWindow* renderWindow = this->GetRenderer()->GetRenderWindow();
   vtkRenderWindowInteractor* renderWindowInteractor =
@@ -776,50 +852,35 @@ int vtkMRMLVolumeRenderingDisplayableManager
       }
     //renderWindowInteractor->SetStillUpdateRate(0.0001);
     }
-  this->SetExpectedFPS(fps);
-
-  // fps is set when interaction occurs
-  this->ComputeInternalVolumeSize( vspNode->GetGPUMemorySize() ?
-    vspNode->GetGPUMemorySize() :
-    vtkMRMLVolumeRenderingDisplayableManager::DefaultGPUMemorySize);
-
-  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
-  this->CalculateMatrix(vspNode, matrix);
-  this->Volume->PokeMatrix(matrix);
-  matrix->Delete();
-
-  return 1;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetVolumeVisibility(int isVisible)
+void vtkMRMLVolumeRenderingDisplayableManager::UpdateClipping(
+  vtkVolumeMapper* volumeMapper,
+  vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  if (isVisible)
-    this->Volume->VisibilityOn();
-  else
-    this->Volume->VisibilityOff();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::SetROI(vtkMRMLVolumeRenderingDisplayNode* vspNode)
-{
+  if (!volumeMapper)
+    {
+    return;
+    }
   if (!vspNode
       || vspNode->GetROINode() == NULL
       || !vspNode->GetCroppingEnabled())
     {
-    this->MapperTexture->RemoveAllClippingPlanes();
-    this->MapperRaycast->RemoveAllClippingPlanes();
-    this->MapperGPURaycast->RemoveAllClippingPlanes();
-    this->MapperGPURaycast->ClippingOff();
-    this->MapperGPURaycastII->RemoveAllClippingPlanes();
-    this->MapperGPURaycastII->ClippingOff();
-    this->MapperGPURaycast3->RemoveAllClippingPlanes();
-
+    volumeMapper->RemoveAllClippingPlanes();
+    if (vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper))
+      {
+      vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->ClippingOff();
+      }
+    else if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
+      {
+      vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->ClippingOff();
+      }
     return;
     }
 
-  vtkPlanes *planes = vtkPlanes::New();
-  vspNode->GetROINode()->GetTransformedPlanes(planes);
+  vtkNew<vtkPlanes> planes;
+  vspNode->GetROINode()->GetTransformedPlanes(planes.GetPointer());
   if ( planes->GetTransform() )
     {
     double zero[3] = {0,0,0};
@@ -841,19 +902,15 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetROI(vtkMRMLVolumeRenderingDisp
                                    origin[2]-translation[2]);
       }
     }
-
-  this->MapperTexture->SetClippingPlanes(planes);
-  this->MapperRaycast->SetClippingPlanes(planes);
-
-  this->MapperGPURaycast->SetClippingPlanes(planes);
-  this->MapperGPURaycast->ClippingOn();
-
-  this->MapperGPURaycastII->SetClippingPlanes(planes);
-  this->MapperGPURaycastII->ClippingOn();
-
-  this->MapperGPURaycast3->SetClippingPlanes(planes);
-
-  planes->Delete();
+  volumeMapper->SetClippingPlanes(planes.GetPointer());
+  if (vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper))
+    {
+    vtkSlicerGPURayCastVolumeMapper::SafeDownCast(volumeMapper)->ClippingOn();
+    }
+  else if (vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper))
+    {
+    vtkSlicerGPURayCastMultiVolumeMapper::SafeDownCast(volumeMapper)->ClippingOn();
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -863,47 +920,35 @@ void vtkMRMLVolumeRenderingDisplayableManager::TransformModified(vtkMRMLVolumeRe
     {
     return;
     }
-  vtkMatrix4x4 *matrix = vtkMatrix4x4::New();
-  this->CalculateMatrix(vspNode, matrix);
-  this->Volume->PokeMatrix(matrix);
+  vtkNew<vtkMatrix4x4> matrix;
+  this->CalculateMatrix(vspNode, matrix.GetPointer());
+  this->Volume->PokeMatrix(matrix.GetPointer());
 
   this->VolumeRenderingLogic->FitROIToVolume(vspNode);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::UpdateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkMRMLVolumeRenderingDisplayableManager
+::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  if (vspNode->GetCurrentVolumeMapper() == 4)
-  {
-    this->CreateVolumePropertyGPURaycastII(vspNode);
-    this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
-  }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayableManager::CreateVolumePropertyGPURaycastII(vtkMRMLVolumeRenderingDisplayNode* vspNode)
-{
-  if (vspNode->GetCurrentVolumeMapper() != 4)
-    return;
-
   vtkNew<vtkVolumeProperty> newVolumeProperty;
   vtkSetMRMLNodeMacro(this->VolumePropertyGPURaycastII,
                       newVolumeProperty.GetPointer());
 
   //copy bg property into 1st compoent property
   vtkVolumeProperty* prop = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
-  {
+    {
     int colorChannels = prop->GetColorChannels(0);
 
     switch(colorChannels)
-    {
-    case 1:
-      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetGrayTransferFunction(0));
-      break;
-    case 3:
-      this->VolumePropertyGPURaycastII->SetColor(0, prop->GetRGBTransferFunction(0));
-      break;
-    }
+      {
+      case 1:
+        this->VolumePropertyGPURaycastII->SetColor(0, prop->GetGrayTransferFunction(0));
+        break;
+      case 3:
+        this->VolumePropertyGPURaycastII->SetColor(0, prop->GetRGBTransferFunction(0));
+        break;
+      }
 
     this->VolumePropertyGPURaycastII->SetScalarOpacity(0, prop->GetScalarOpacity(0));
     this->VolumePropertyGPURaycastII->SetGradientOpacity(0, prop->GetGradientOpacity(0));
@@ -919,48 +964,52 @@ void vtkMRMLVolumeRenderingDisplayableManager::CreateVolumePropertyGPURaycastII(
 
     this->VolumePropertyGPURaycastII->SetIndependentComponents(prop->GetIndependentComponents());
     this->VolumePropertyGPURaycastII->SetInterpolationType(prop->GetInterpolationType());
-  }
+    }
 
+  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* multiVolumeNode =
+    vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode);
   if (vspNode->GetUseSingleVolumeProperty())
-  {
+    {
     vtkVolumeProperty* propFg = vspNode->GetVolumePropertyNode()->GetVolumeProperty();
     int colorChannels = propFg->GetColorChannels(0);
 
     switch(colorChannels)
-    {
+      {
     case 1:
       this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
       break;
     case 3:
       this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
       break;
-    }
+      }
 
     this->VolumePropertyGPURaycastII->SetScalarOpacity(1, propFg->GetScalarOpacity(0));
     this->VolumePropertyGPURaycastII->SetGradientOpacity(1, propFg->GetGradientOpacity(0));
     this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
     this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
-  }
-  else if (vspNode->GetFgVolumePropertyNode())//copy fg property into 2nd component property
-  {
-    vtkVolumeProperty* propFg = vspNode->GetFgVolumePropertyNode()->GetVolumeProperty();
+    }
+  //copy fg property into 2nd component property
+  else if (multiVolumeNode && multiVolumeNode->GetFgVolumePropertyNode())
+    {
+    vtkVolumeProperty* propFg = vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode)
+      ->GetFgVolumePropertyNode()->GetVolumeProperty();
     int colorChannels = propFg->GetColorChannels(0);
 
     switch(colorChannels)
-    {
-    case 1:
-      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
-      break;
-    case 3:
-      this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
-      break;
-    }
+      {
+      case 1:
+        this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetGrayTransferFunction(0));
+        break;
+      case 3:
+        this->VolumePropertyGPURaycastII->SetColor(1, propFg->GetRGBTransferFunction(0));
+        break;
+      }
 
     this->VolumePropertyGPURaycastII->SetScalarOpacity(1, propFg->GetScalarOpacity(0));
     this->VolumePropertyGPURaycastII->SetGradientOpacity(1, propFg->GetGradientOpacity(0));
     this->VolumePropertyGPURaycastII->SetScalarOpacityUnitDistance(1, propFg->GetScalarOpacityUnitDistance(0));
     this->VolumePropertyGPURaycastII->SetDisableGradientOpacity(1, propFg->GetDisableGradientOpacity(0));
-  }
+    }
 
   this->Volume->SetProperty(this->VolumePropertyGPURaycastII);
 }
@@ -1153,7 +1202,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
         this->VolumeRenderingLogic->
         GetFirstVolumeRenderingDisplayNodeByROINode(roiNode);
 
-      this->SetROI(vspNode);
+      this->UpdateClipping(this->GetVolumeMapper(vspNode), vspNode);
       this->RequestRender();
       }
     }
@@ -1239,12 +1288,15 @@ void vtkMRMLVolumeRenderingDisplayableManager
 void vtkMRMLVolumeRenderingDisplayableManager
 ::UpdatePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  std::cout << "UpdatePipelineFromDisplayNode ";
   if (!vspNode ||
       !this->ValidateDisplayNode(vspNode))
     {
+    std::cout << "not valid" << std::endl;
     return;
     }
 
+  std::cout << "valid: " << vspNode->GetClassName() <<std::endl;
   //this->RemoveVolumeFromView();
 
   //this->GetInteractor()->Disable();
@@ -1258,7 +1310,6 @@ void vtkMRMLVolumeRenderingDisplayableManager
     {
     roiNode->InsideOutOn();
     }
-  this->SetROI(vspNode);
 
   //prepare rendering frame
   //this->DeleteRenderingFrame();
@@ -1286,11 +1337,13 @@ void vtkMRMLVolumeRenderingDisplayableManager::OnInteractorStyleEvent(int eventi
   switch(eventid)
     {
     case vtkCommand::EndInteractionEvent:
-      this->SetExpectedFPS(0.0001);
+      //this->SetExpectedFPS(0.0001);
+      this->SetupMapperFromParametersNode(this->DisplayedNode);
       break;
     case vtkCommand::StartInteractionEvent:
-      this->SetExpectedFPS(
-        this->DisplayedNode ? this->DisplayedNode->GetExpectedFPS() : 15);
+      this->SetupMapperFromParametersNode(this->DisplayedNode);
+      //this->SetExpectedFPS(
+      //  this->DisplayedNode ? this->DisplayedNode->GetExpectedFPS() : 15);
       break;
     default:
       break;
@@ -1320,11 +1373,18 @@ int vtkMRMLVolumeRenderingDisplayableManager::ValidateDisplayNode(vtkMRMLVolumeR
     return 0;
     }
 
-  if (vspNode->GetVolumeNodeID() && strcmp(vspNode->GetVolumeNodeID(), "NULL") != 0 && vspNode->GetVolumeNode() == NULL)
+  if (vspNode->GetVolumeNodeID() &&
+      strcmp(vspNode->GetVolumeNodeID(), "NULL") != 0 &&
+      vspNode->GetVolumeNode() == NULL)
     {
     return 0;
     }
-  if (vspNode->GetFgVolumeNodeID() && strcmp(vspNode->GetFgVolumeNodeID(), "NULL") != 0 && vspNode->GetFgVolumeNode() == NULL)
+  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode* multiVolumeNode =
+    vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SafeDownCast(vspNode);
+  if (multiVolumeNode &&
+      multiVolumeNode->GetFgVolumeNodeID() &&
+      strcmp(multiVolumeNode->GetFgVolumeNodeID(), "NULL") != 0 &&
+      multiVolumeNode->GetFgVolumeNode() == NULL)
     {
     return 0;
     }
