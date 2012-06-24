@@ -247,14 +247,14 @@ int vtkSlicerMultiVolumeExplorerLogic
         {
         frameFileListStream << *fileListIt;
         if(fileListIt != (*fileListMapIt).second.end())
-          frameFileListStream << " ";
+          frameFileListStream << ",";
         }
 
       frameLabelsStream << fileListMapIt->first;
 
       if(numberOfFrames != tagVal2FileList.size())
         {
-        frameLabelsStream << " ";
+        frameLabelsStream << ",";
         }
 
       labelArray->InsertNextValue(fileListMapIt->first);
