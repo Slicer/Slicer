@@ -331,7 +331,9 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       //if ( (lastX == 0) || (lastY == 0) ) window = 0;
       // Filter out small changes from incidental clicks
       if ( !(deltaSX < 2 || deltaSY < 2) )
+        {
         this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
+        }
       }
       break;
     default:

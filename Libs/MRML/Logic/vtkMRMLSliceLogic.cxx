@@ -753,11 +753,11 @@ void vtkMRMLSliceLogic
   vtkMRMLScalarVolumeNode* volumeNode = 
     vtkMRMLScalarVolumeNode::SafeDownCast( this->GetLayerVolumeNode (0) ); 
     // 0 is background layer, defined in this::GetLayerVolumeNode
-  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode = NULL;
-  if (volumeNode)
+  vtkMRMLScalarVolumeDisplayNode* volumeDisplayNode =
+    volumeNode ? volumeNode->GetScalarVolumeDisplayNode() : 0;
+  if (!volumeDisplayNode)
     {
-     volumeDisplayNode = 
-      vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
+    return;
     }
   int disabledModify = volumeDisplayNode->StartModify();
   volumeDisplayNode->SetAutoWindowLevel(0);

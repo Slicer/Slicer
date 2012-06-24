@@ -454,7 +454,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     return;
     
   PipelinesCacheType::iterator it;
-  for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end(); ++it)
+  for (it = this->DisplayPipelines.begin();
+       it != this->DisplayPipelines.end();
+       it = this->DisplayPipelines.begin())
     {
     this->RemoveDisplayNode(it->first);
     }
