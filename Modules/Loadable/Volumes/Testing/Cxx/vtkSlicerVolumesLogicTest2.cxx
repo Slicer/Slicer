@@ -117,11 +117,12 @@ int main( int argc, char * argv[] )
       !isImageDataValid(vectorVolume->GetImageData()))
     {
     std::cerr << "Failed to load RGB image." << std::endl;
-    if (vectorVolume && vectorVolume->GetImageData())
-      {
-      vectorVolume->GetImageData()->Print(std::cerr);
-      }
     return EXIT_FAILURE;
+    }
+
+  if (vectorVolume && vectorVolume->GetImageData())
+    {
+    vectorVolume->GetImageData()->Print(std::cerr);
     }
 
   return EXIT_SUCCESS;

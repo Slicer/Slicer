@@ -87,11 +87,13 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
       !isImageDataValid(volume->GetImageData()))
     {
     std::cerr << "Failed to load scalar image." << std::endl;
-    if (volume && volume->GetImageData())
-      {
-      volume->GetImageData()->Print(std::cerr);
-      }
     return EXIT_FAILURE;
     }
+
+  if (volume && volume->GetImageData())
+    {
+    volume->GetImageData()->Print(std::cerr);
+    }
+
   return EXIT_SUCCESS;
 }
