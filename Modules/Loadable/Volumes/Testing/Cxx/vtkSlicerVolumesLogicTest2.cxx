@@ -111,7 +111,7 @@ int main( int argc, char * argv[] )
 
   vtkSmartPointer<vtkMRMLVectorVolumeNode> vectorVolume =
     vtkMRMLVectorVolumeNode::SafeDownCast(
-      logic->AddArchetypeVolume(argv[argc-1], "rgbVolume", 0, fileNameList));
+      logic->AddArchetypeVolume(fileNameList->GetValue(0), "rgbVolume", 0, fileNameList));
 
   if (!vectorVolume ||
       !isImageDataValid(vectorVolume->GetImageData()))
