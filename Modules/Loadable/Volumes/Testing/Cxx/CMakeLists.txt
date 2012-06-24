@@ -5,6 +5,7 @@ set(KIT_TEST_NAMES)
 set(KIT_TEST_NAMES_CXX)
 SlicerMacroConfigureGenericCxxModuleTests(${MODULE_NAME} KIT_TEST_SRCS KIT_TEST_NAMES KIT_TEST_NAMES_CXX)
 
+
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
@@ -27,3 +28,11 @@ endforeach()
 SIMPLE_TEST( qSlicerVolumesIOOptionsWidgetTest1 )
 SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE})
 SIMPLE_TEST( vtkSlicerVolumesLogicTest1 ${VOLUME_FILE})
+  
+
+set(TEMP ${Slicer_BINARY_DIR}/Testing/Temporary)
+add_executable(vtkSlicerVolumesLogicTest2 vtkSlicerVolumesLogicTest2.cxx)
+target_link_libraries(vtkSlicerVolumesLogicTest2 ${KIT})
+add_test(NAME vtkSlicerVolumesLogicTest2 
+  COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:vtkSlicerVolumesLogicTest2>
+  vtkSlicerVolumesLogicTest2 ${TEMP})
