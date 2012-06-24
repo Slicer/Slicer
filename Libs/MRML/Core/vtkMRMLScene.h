@@ -204,8 +204,11 @@ public:
   vtkMRMLNode * GetNthRegisteredNodeClass(int n);
 
   /// Generate a node name that is unique in the scene.
+  /// Calling this function successively with the same baseName returns a
+  /// different name: e.g. baseName1, baseName2, baseName3
   std::string GenerateUniqueName(const std::string& baseName);
 
+  /// \deprecated GetUniqueNameByString
   /// Obsolete utility function that provides an unsafe API for
   /// GenerateUniqueName()
   /// \sa GenerateUniqueName, GenerateUniqueID
@@ -557,8 +560,15 @@ protected:
   int GetUniqueIDIndex(const std::string& baseID);
   std::string BuildID(const std::string& baseID, int idIndex)const;
 
+  /// Return a unique name for a MRML node. It uses the node tag as the base.
   std::string GenerateUniqueName(vtkMRMLNode* node);
+
+  /// Returns a unique index for a given baseName.
+  /// Calling this function succesively with the same baseName returns an
+  /// incremented index: 1, 2, 3...
+  /// \sa GenerateUniqueName
   int GetUniqueNameIndex(const std::string& baseName);
+  /// Combine a basename and an index to produce a full name.
   std::string BuildName(const std::string& baseName, int nameIndex)const;
 
   vtkCollection*  Nodes;
