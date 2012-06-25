@@ -75,6 +75,7 @@ set(script_arg_list
   EXTENSION_SUPERBUILD_BINARY_DIR=${EXTENSION_SUPERBUILD_BINARY_DIR}
   EXTENSION_BUILD_SUBDIRECTORY=${EXTENSION_BUILD_SUBDIRECTORY}
   EXTENSION_ENABLED=${EXTENSION_ENABLED}
+  EXTENSION_DEPENDS=${EXTENSION_DEPENDS}
   Slicer_CMAKE_DIR=${Slicer_CMAKE_DIR}
   Slicer_DIR=${Slicer_DIR}
   Slicer_EXTENSIONS_TRACK_QUALIFIER=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
@@ -86,6 +87,9 @@ set(script_arg_list
 if(NOT "${CTEST_MODEL}" STREQUAL "")
   list(APPEND script_arg_list CTEST_MODEL=${CTEST_MODEL})
 endif()
+foreach(dep ${EXTENSION_DEPENDS})
+  list(APPEND script_arg_list ${dep}_DIR=${${dep}_DIR})
+endforeach()
 
 
 #-----------------------------------------------------------------------------

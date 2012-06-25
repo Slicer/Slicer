@@ -25,16 +25,19 @@ function(slicerFunctionGenerateExtensionDescription)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   # Sanity checks
-  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_DEPENDS EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL SLICER_WC_REVISION SLICER_WC_ROOT)
+  set(expected_nonempty_vars EXTENSION_NAME EXTENSION_WC_TYPE EXTENSION_WC_REVISION EXTENSION_WC_ROOT EXTENSION_WC_URL SLICER_WC_REVISION SLICER_WC_ROOT)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "CMake variable ${var} is empty !")
     endif()
   endforeach()
 
-  if(NOT "${MY_EXTENSION_DEPENDS}" STREQUAL "NA")
-    # A list of extension names without spaces is expected
-    #TODO if()
+
+  # A list of extension names without spaces is expected
+  #TODO if()
+
+  if("${MY_EXTENSION_DEPENDS}" STREQUAL "")
+    set(MY_EXTENSION_DEPENDS "NA")
   endif()
 
   if(NOT DEFINED MY_EXTENSION_ENABLED)

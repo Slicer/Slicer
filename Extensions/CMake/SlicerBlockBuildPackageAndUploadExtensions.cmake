@@ -60,7 +60,6 @@ foreach(extension_name ${EXTENSION_LIST})
 
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
-  string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS "${EXTENSION_SEXT_DEPENDS}")
   set(EXTENSION_CATEGORY ${EXTENSION_SEXT_CATEGORY})
   set(EXTENSION_STATUS ${EXTENSION_SEXT_STATUS})
   set(EXTENSION_ICONURL ${EXTENSION_SEXT_ICONURL})
@@ -69,6 +68,7 @@ foreach(extension_name ${EXTENSION_LIST})
   set(EXTENSION_HOMEPAGE ${EXTENSION_SEXT_HOMEPAGE})
   set(EXTENSION_SCREENSHOTURLS ${EXTENSION_SEXT_SCREENSHOTURLS})
   set(EXTENSION_ENABLED ${EXTENSION_SEXT_ENABLED})
+  set(EXTENSION_DEPENDS ${EXTENSION_SEXT_DEPENDS})
 
   #foreach(v SCM SCMURL SCMREVISION SVNUSERNAME SVNPASSWORD DEPENDS BUILD_SUBDIRECTORY HOMEPAGE
   #          CATEGORY CONTRIBUTORS ICONURL STATUS DESCRIPTION SCREENSHOTURLS ENABLED)
@@ -127,20 +127,24 @@ foreach(extension_name ${EXTENSION_LIST})
         # Set external project DEPENDS parameter
         set(EP_ARG_EXTENSION_DEPENDS)
         if(Slicer_SOURCE_DIR)
-          set(EXTENSIONEP_ARG_EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_SEXT_DEPENDS})
+          set(EXTENSIONEP_ARG_EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_DEPENDS})
         else()
-          if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
-            set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_SEXT_DEPENDS})
+          if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
+            set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_DEPENDS})
           endif()
         endif()
         set(EXTENSION_REBUILD_DEPENDS)
-        if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
+        if(NOT "${EXTENSION_DEPENDS}" STREQUAL "")
           set(EP_ARG_EXTENSION_REBUILD_DEPENDS DEPENDS)
-          foreach(dep ${EXTENSION_SEXT_DEPENDS})
+          foreach(dep ${EXTENSION_DEPENDS})
             list(APPEND EP_ARG_EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
           endforeach()
         endif()
+        foreach(dep ${EXTENSION_DEPENDS})
+          set(${dep}_DIR ${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
+        endforeach()
         if(Slicer_UPLOAD_EXTENSIONS)
+
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: TRUE
           #-----------------------------------------------------------------------------
@@ -186,8 +190,12 @@ foreach(extension_name ${EXTENSION_LIST})
               )
             set_property(TARGET ${proj}-rebuild PROPERTY EXCLUDE_FROM_ALL TRUE)
           endif()
+
         else()
 
+          #-----------------------------------------------------------------------------
+          # Slicer_UPLOAD_EXTENSIONS: FALSE
+          #-----------------------------------------------------------------------------
           list(APPEND sext_ep_cmake_args
             -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -196,14 +204,16 @@ foreach(extension_name ${EXTENSION_LIST})
             -DSlicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
             -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
             -DEXTENSION_ENABLED:BOOL=${EXTENSION_ENABLED}
+            -DEXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
             -DMIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
             -DMIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
             -DMIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
             )
 
-          #-----------------------------------------------------------------------------
-          # Slicer_UPLOAD_EXTENSIONS: FALSE
-          #-----------------------------------------------------------------------------
+          foreach(dep ${EXTENSION_DEPENDS})
+            list(APPEND sext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_DIR})
+          endforeach()
+
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}

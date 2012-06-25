@@ -12,7 +12,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
-INCLUDE(ExternalProject)
+include(ExternalProject)
 set(ep_base        "${CMAKE_BINARY_DIR}")
 
 # Compute -G arg for configuring external projects with the same CMake generator:
@@ -29,6 +29,12 @@ endif()
 set(inner_DEPENDENCIES "")
 
 SlicerMacroCheckExternalProjectDependency(inner)
+
+set(ep_cmake_args)
+foreach(dep ${EXTENSION_DEPENDS})
+  list(APPEND ep_cmake_args -D${dep}_DIR:PATH=${${dep}_DIR})
+  message("--------------dep:${dep}")
+endforeach()
 
 set(proj inner)
 ExternalProject_Add(${proj}
@@ -49,6 +55,7 @@ ExternalProject_Add(${proj}
     -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${EXTENSION_NAME}_BINARY_DIR}
     # Slicer
     -DSlicer_DIR:PATH=${Slicer_DIR}
+    ${ep_cmake_args}
   DEPENDS
     ${${proj}_DEPENDENCIES}
   )

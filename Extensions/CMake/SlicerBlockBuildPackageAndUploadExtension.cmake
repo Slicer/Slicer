@@ -139,7 +139,12 @@ Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
 MIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}
 MIDAS_PACKAGE_EMAIL:STRING=${MIDAS_PACKAGE_EMAIL}
 MIDAS_PACKAGE_API_KEY:STRING=${MIDAS_PACKAGE_API_KEY}
+EXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
 ")
+
+foreach(dep ${EXTENSION_DEPENDS})
+  set(cmakecache_content "${cmakecache_content}\n${dep}_DIR:PATH=${${dep}_DIR}")
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Write CMakeCache.txt only if required

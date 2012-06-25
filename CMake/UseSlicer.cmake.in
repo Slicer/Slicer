@@ -325,7 +325,9 @@ endif()
 
 if(NOT ${EXTENSION_HAS_ONLY_ONE_MODULE})
   foreach(var DEPENDS LICENSE_FILE LICENSE_SHORT_DESCRIPTION README_FILE)
-    set(EXTENSION_${var} ${MODULE_${var}})
+    if(NOT DEFINED EXTENSION_${var})
+      set(EXTENSION_${var} ${MODULE_${var}})
+    endif()
   endforeach()
 endif()
 

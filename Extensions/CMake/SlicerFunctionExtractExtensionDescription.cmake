@@ -105,6 +105,11 @@ function(slicerFunctionExtractExtensionDescription)
     string(REGEX REPLACE "[ \t\r\n]+$" "" str "${str}")
     set(sext_${upper_case_token} ${str})
 
+    if(${token} STREQUAL "depends")
+      string(REGEX REPLACE "^NA$" "" sext_${upper_case_token} "${sext_${upper_case_token}}")
+      string(REPLACE " " ";" sext_${upper_case_token} "${sext_${upper_case_token}}")
+    endif()
+
     set(${MY_VAR_PREFIX}_SEXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
   endforeach()
 
