@@ -13,6 +13,9 @@
 #
 #   include(${Slicer_USE_FILE})
 #
+# Note also that setting Slicer_DONT_USE_EXTENSION to TRUE allows to disable
+# extension support.
+#
 # The variable allowing to customize the behavior are:
 #
 #  Slicer_SKIP_SlicerBlockSetCMakeOSXVariables
@@ -56,6 +59,10 @@ function(_slicer_skip_message text)
   endif()
 endfunction()
 
+# --------------------------------------------------------------------------
+if(NOT DEFINED Slicer_DONT_USE_EXTENSION)
+  set(Slicer_DONT_USE_EXTENSION FALSE)
+endif()
 
 # --------------------------------------------------------------------------
 if(NOT DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
@@ -72,18 +79,23 @@ endif()
 # --------------------------------------------------------------------------
 # Setting EXTENSION_HAS_ONLY_ONE_MODULE
 # --------------------------------------------------------------------------
-slicer_check_variable(EXTENSION_NAME _EXTENSION_NAME_SET)
-slicer_check_variable(MODULE_NAME _MODULE_NAME_SET)
+if(NOT Slicer_DONT_USE_EXTENSION)
+  slicer_check_variable(EXTENSION_NAME _EXTENSION_NAME_SET)
+  slicer_check_variable(MODULE_NAME _MODULE_NAME_SET)
 
-set(EXTENSION_HAS_ONLY_ONE_MODULE FALSE)
-if(NOT ${_EXTENSION_NAME_SET} AND ${_MODULE_NAME_SET})
-  set(EXTENSION_HAS_ONLY_ONE_MODULE TRUE)
+  set(EXTENSION_HAS_ONLY_ONE_MODULE FALSE)
+  if(NOT ${_EXTENSION_NAME_SET} AND ${_MODULE_NAME_SET})
+    set(EXTENSION_HAS_ONLY_ONE_MODULE TRUE)
+  endif()
+  slicer_setting_variable_message("EXTENSION_HAS_ONLY_ONE_MODULE")
 endif()
-slicer_setting_variable_message("EXTENSION_HAS_ONLY_ONE_MODULE")
 
 # --------------------------------------------------------------------------
 # Setting and checking EXTENSION_NAME
 # --------------------------------------------------------------------------
+if(Slicer_DONT_USE_EXTENSION)
+  set(Slicer_SKIP_EXTENSION_NAME_CHECK TRUE)
+endif()
 if(NOT DEFINED Slicer_SKIP_EXTENSION_NAME_CHECK)
   set(Slicer_SKIP_EXTENSION_NAME_CHECK FALSE)
 endif()
@@ -100,31 +112,33 @@ endif()
 # Setup project
 # --------------------------------------------------------------------------
 
-if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
-  set(Slicer_SKIP_PROJECT_COMMAND FALSE)
-endif()
-if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-  set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK ${Slicer_SKIP_PROJECT_COMMAND})
-endif()
-if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-  if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT UseSlicer_INCLUDED_ONCE)
-    message(FATAL_ERROR "Since calling 'include(\${Slicer_USE_FILE})' automatically calls 'project(${EXTENSION_NAME})'. "
-                        "Make sure to remove any call to project(${EXTENSION_NAME}). "
-                        "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
-                        )
+if(NOT Slicer_DONT_USE_EXTENSION)
+  if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
+    set(Slicer_SKIP_PROJECT_COMMAND FALSE)
   endif()
-  set(UseSlicer_INCLUDED_ONCE 1 CACHE INTERNAL "True if UseSlicer has already been included")
-else()
-  _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
-endif()
+  if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
+    set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK ${Slicer_SKIP_PROJECT_COMMAND})
+  endif()
+  if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
+    if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT UseSlicer_INCLUDED_ONCE)
+      message(FATAL_ERROR "Since calling 'include(\${Slicer_USE_FILE})' automatically calls 'project(${EXTENSION_NAME})'. "
+                          "Make sure to remove any call to project(${EXTENSION_NAME}). "
+                          "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
+                          )
+    endif()
+    set(UseSlicer_INCLUDED_ONCE 1 CACHE INTERNAL "True if UseSlicer has already been included")
+  else()
+    _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
+  endif()
 
-if(Slicer_SKIP_EXTENSION_NAME_CHECK)
-  set(Slicer_SKIP_PROJECT_COMMAND TRUE)
-endif()
-if(NOT Slicer_SKIP_PROJECT_COMMAND)
-  project(${EXTENSION_NAME})
-else()
-  _slicer_skip_message("'project(${EXTENSION_NAME})'")
+  if(Slicer_SKIP_EXTENSION_NAME_CHECK)
+    set(Slicer_SKIP_PROJECT_COMMAND TRUE)
+  endif()
+  if(NOT Slicer_SKIP_PROJECT_COMMAND)
+    project(${EXTENSION_NAME})
+  else()
+    _slicer_skip_message("'project(${EXTENSION_NAME})'")
+  endif()
 endif()
 
 # --------------------------------------------------------------------------
@@ -266,20 +280,23 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "MinSizeRel" "RelWithDebInfo")
 endif()
 
-#-----------------------------------------------------------------------------
-# Configure additional launcher settings
-#-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_SKIP_SlicerBlockAdditionalLauncherSettings)
-  set(Slicer_SKIP_SlicerBlockAdditionalLauncherSettings FALSE)
-endif()
-if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
-  include(SlicerBlockAdditionalLauncherSettings)
-endif()
+if(NOT Slicer_DONT_USE_EXTENSION)
+  #-----------------------------------------------------------------------------
+  # Configure additional launcher settings
+  #-----------------------------------------------------------------------------
+  if(NOT DEFINED Slicer_SKIP_SlicerBlockAdditionalLauncherSettings)
+    set(Slicer_SKIP_SlicerBlockAdditionalLauncherSettings FALSE)
+  endif()
+  if(NOT ${Slicer_SKIP_SlicerBlockAdditionalLauncherSettings})
+    include(SlicerBlockAdditionalLauncherSettings)
+  endif()
 
-#-----------------------------------------------------------------------------
-# Set Slicer_EXTENSION_CMAKE_GENERATOR and EXTENSION_{COMPILER, ARCHITECTURE, BITNESS, OPERATING_SYSTEM}
-#-----------------------------------------------------------------------------
-include(SlicerBlockUploadExtensionPrerequisites)
+  #-----------------------------------------------------------------------------
+  # Set Slicer_EXTENSION_CMAKE_GENERATOR and EXTENSION_{COMPILER, ARCHITECTURE, BITNESS, OPERATING_SYSTEM}
+  #-----------------------------------------------------------------------------
+
+  include(SlicerBlockUploadExtensionPrerequisites)
+endif()
 
 #-----------------------------------------------------------------------------
 # Set Slicer_BUNDLE_EXTENSIONS_LOCATION variable
@@ -319,70 +336,72 @@ endif()
 #-----------------------------------------------------------------------------
 # Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
-if(NOT DEFINED MODULE_DEPENDS)
-  set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
-endif()
-if(NOT DEFINED MODULE_LICENSE_FILE)
-  set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
-endif()
-if(NOT DEFINED MODULE_LICENSE_SHORT_DESCRIPTION)
-  set(MODULE_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
-endif()
-if(NOT DEFINED MODULE_README_FILE)
-  set(MODULE_README_FILE ${Slicer_README_FILE})
-endif()
+if(NOT Slicer_DONT_USE_EXTENSION)
+  if(NOT DEFINED MODULE_DEPENDS)
+    set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
+  endif()
+  if(NOT DEFINED MODULE_LICENSE_FILE)
+    set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
+  endif()
+  if(NOT DEFINED MODULE_LICENSE_SHORT_DESCRIPTION)
+    set(MODULE_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
+  endif()
+  if(NOT DEFINED MODULE_README_FILE)
+    set(MODULE_README_FILE ${Slicer_README_FILE})
+  endif()
 
-if(NOT ${EXTENSION_HAS_ONLY_ONE_MODULE})
-  foreach(var DEPENDS LICENSE_FILE LICENSE_SHORT_DESCRIPTION README_FILE)
-    if(NOT DEFINED EXTENSION_${var})
-      set(EXTENSION_${var} ${MODULE_${var}})
-    endif()
-  endforeach()
-endif()
+  if(NOT ${EXTENSION_HAS_ONLY_ONE_MODULE})
+    foreach(var DEPENDS LICENSE_FILE LICENSE_SHORT_DESCRIPTION README_FILE)
+      if(NOT DEFINED EXTENSION_${var})
+        set(EXTENSION_${var} ${MODULE_${var}})
+      endif()
+    endforeach()
+  endif()
 
-if(NOT DEFINED EXTENSION_SOURCE_DIR)
-  set(EXTENSION_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-endif()
-if(NOT DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
-  set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_BINARY_DIR})
-endif()
-if(NOT DEFINED EXTENSION_BUILD_SUBDIRECTORY)
-  set(EXTENSION_BUILD_SUBDIRECTORY ".")
-endif()
-if(NOT DEFINED EXTENSION_ENABLED)
-  set(EXTENSION_ENABLED 1)
-endif()
+  if(NOT DEFINED EXTENSION_SOURCE_DIR)
+    set(EXTENSION_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+  endif()
+  if(NOT DEFINED EXTENSION_SUPERBUILD_BINARY_DIR)
+    set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_BINARY_DIR})
+  endif()
+  if(NOT DEFINED EXTENSION_BUILD_SUBDIRECTORY)
+    set(EXTENSION_BUILD_SUBDIRECTORY ".")
+  endif()
+  if(NOT DEFINED EXTENSION_ENABLED)
+    set(EXTENSION_ENABLED 1)
+  endif()
 
-#-----------------------------------------------------------------------------
-# Convert MODULE_* variables into EXTENSION_* variables if it applies
-#-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
+  # Convert MODULE_* variables into EXTENSION_* variables if it applies
+  #-----------------------------------------------------------------------------
 
-if(NOT DEFINED Slicer_SKIP_SlicerBlockModuleToExtensionMetadata)
-  set(Slicer_SKIP_SlicerBlockModuleToExtensionMetadata FALSE)
-endif()
-if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata}
-   AND NOT "${EXTENSION_NAME}" STREQUAL "")
-  slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
-  slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
-  slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
-  include(SlicerBlockModuleToExtensionMetadata)
-endif()
+  if(NOT DEFINED Slicer_SKIP_SlicerBlockModuleToExtensionMetadata)
+    set(Slicer_SKIP_SlicerBlockModuleToExtensionMetadata FALSE)
+  endif()
+  if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata}
+     AND NOT "${EXTENSION_NAME}" STREQUAL "")
+    slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
+    slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
+    slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
+    include(SlicerBlockModuleToExtensionMetadata)
+  endif()
 
-#-----------------------------------------------------------------------------
-set(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3" CACHE STRING "MIDAS URL where the extension should be uploaded.")
-set(MIDAS_PACKAGE_EMAIL "YOUR-MIDAS-LOGIN-NOTFOUND" CACHE STRING "Email allowing to authenticate to the MIDAS server.")
-set(MIDAS_PACKAGE_API_KEY "YOUR-MIDAS-APIKEY-NOTFOUND" CACHE STRING "Token allowing to authenticate to the MIDAS server.")
+  #-----------------------------------------------------------------------------
+  set(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3" CACHE STRING "MIDAS URL where the extension should be uploaded.")
+  set(MIDAS_PACKAGE_EMAIL "YOUR-MIDAS-LOGIN-NOTFOUND" CACHE STRING "Email allowing to authenticate to the MIDAS server.")
+  set(MIDAS_PACKAGE_API_KEY "YOUR-MIDAS-APIKEY-NOTFOUND" CACHE STRING "Token allowing to authenticate to the MIDAS server.")
 
-slicer_setting_variable_message("MIDAS_PACKAGE_URL")
-slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
-slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
+  slicer_setting_variable_message("MIDAS_PACKAGE_URL")
+  slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
+  slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
 
 
-#-----------------------------------------------------------------------------
-if(NOT DEFINED Slicer_SKIP_SlicerEnableExtensionTesting)
-  set(Slicer_SKIP_SlicerEnableExtensionTesting FALSE)
-endif()
-if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting}
-   AND NOT "${EXTENSION_NAME}" STREQUAL "")
-  include(SlicerEnableExtensionTesting)
+  #-----------------------------------------------------------------------------
+  if(NOT DEFINED Slicer_SKIP_SlicerEnableExtensionTesting)
+    set(Slicer_SKIP_SlicerEnableExtensionTesting FALSE)
+  endif()
+  if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting}
+     AND NOT "${EXTENSION_NAME}" STREQUAL "")
+    include(SlicerEnableExtensionTesting)
+  endif()
 endif()
