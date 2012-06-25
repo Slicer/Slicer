@@ -56,6 +56,7 @@ SlicerMacroBuildModuleWidgets(
   UI_SRCS ${${KIT}_UI_SRCS}
   TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
   RESOURCES ${${KIT}_RESOURCES}
+  WRAP_PYTHONQT
   )
 
 #-----------------------------------------------------------------------------
