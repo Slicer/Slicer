@@ -38,15 +38,15 @@ foreach(file ${s4extfiles})
   message(STATUS "Extension:${file}")
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
-  #message(DEPENDS:${EXTENSION_SEXT_DEPENDS})
+  #message(DEPENDS:${EXTENSION_EXT_DEPENDS})
   # Extract file basename
   get_filename_component(EXTENSION_NAME ${file} NAME_WE)
   if("${EXTENSION_NAME}" STREQUAL "")
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     list(APPEND EXTENSION_LIST ${EXTENSION_NAME})
-    string(REGEX REPLACE "^NA$" "" EXTENSION_SEXT_DEPENDS "${EXTENSION_SEXT_DEPENDS}")
-    set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_SEXT_DEPENDS})
+    string(REGEX REPLACE "^NA$" "" EXTENSION_EXT_DEPENDS "${EXTENSION_EXT_DEPENDS}")
+    set(EXTENSION_${EXTENSION_NAME}_DEPENDS ${EXTENSION_EXT_DEPENDS})
   endif()
 endforeach()
 
@@ -60,19 +60,19 @@ foreach(extension_name ${EXTENSION_LIST})
 
   # Extract extension description info
   slicerFunctionExtractExtensionDescription(EXTENSION_FILE ${file} VAR_PREFIX EXTENSION)
-  set(EXTENSION_CATEGORY ${EXTENSION_SEXT_CATEGORY})
-  set(EXTENSION_STATUS ${EXTENSION_SEXT_STATUS})
-  set(EXTENSION_ICONURL ${EXTENSION_SEXT_ICONURL})
-  set(EXTENSION_CONTRIBUTORS ${EXTENSION_SEXT_CONTRIBUTORS})
-  set(EXTENSION_DESCRIPTION ${EXTENSION_SEXT_DESCRIPTION})
-  set(EXTENSION_HOMEPAGE ${EXTENSION_SEXT_HOMEPAGE})
-  set(EXTENSION_SCREENSHOTURLS ${EXTENSION_SEXT_SCREENSHOTURLS})
-  set(EXTENSION_ENABLED ${EXTENSION_SEXT_ENABLED})
-  set(EXTENSION_DEPENDS ${EXTENSION_SEXT_DEPENDS})
+  set(EXTENSION_CATEGORY ${EXTENSION_EXT_CATEGORY})
+  set(EXTENSION_STATUS ${EXTENSION_EXT_STATUS})
+  set(EXTENSION_ICONURL ${EXTENSION_EXT_ICONURL})
+  set(EXTENSION_CONTRIBUTORS ${EXTENSION_EXT_CONTRIBUTORS})
+  set(EXTENSION_DESCRIPTION ${EXTENSION_EXT_DESCRIPTION})
+  set(EXTENSION_HOMEPAGE ${EXTENSION_EXT_HOMEPAGE})
+  set(EXTENSION_SCREENSHOTURLS ${EXTENSION_EXT_SCREENSHOTURLS})
+  set(EXTENSION_ENABLED ${EXTENSION_EXT_ENABLED})
+  set(EXTENSION_DEPENDS ${EXTENSION_EXT_DEPENDS})
 
   #foreach(v SCM SCMURL SCMREVISION SVNUSERNAME SVNPASSWORD DEPENDS BUILD_SUBDIRECTORY HOMEPAGE
   #          CATEGORY CONTRIBUTORS ICONURL STATUS DESCRIPTION SCREENSHOTURLS ENABLED)
-  #  message(${v}:${EXTENSION_SEXT_${v}})
+  #  message(${v}:${EXTENSION_EXT_${v}})
   #endforeach()
 
   # Extract file basename
@@ -81,47 +81,47 @@ foreach(extension_name ${EXTENSION_LIST})
     message(WARNING "Failed to extract extension name associated with file: ${file}")
   else()
     message(STATUS "Configuring extension: ${EXTENSION_NAME}")
-    if("${EXTENSION_SEXT_SCM}" STREQUAL "" AND "${EXTENSION_SEXT_SCMURL}" STREQUAL "")
+    if("${EXTENSION_EXT_SCM}" STREQUAL "" AND "${EXTENSION_EXT_SCMURL}" STREQUAL "")
       message(WARNING "Failed to extract extension information associated to file: ${file}")
     else()
       set(sext_add_project True)
       set(sext_ep_options_repository)
       set(sext_ep_cmake_args)
-      set(sext_revision ${EXTENSION_SEXT_SCMREVISION})
-      if(${EXTENSION_SEXT_SCM} STREQUAL "git")
+      set(sext_revision ${EXTENSION_EXT_SCMREVISION})
+      if(${EXTENSION_EXT_SCM} STREQUAL "git")
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
         if("${sext_revision}" STREQUAL "")
           set(sext_revision "origin/master")
         endif()
         set(sext_ep_options_repository
-          GIT_REPOSITORY ${EXTENSION_SEXT_SCMURL} GIT_TAG ${sext_revision})
+          GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${sext_revision})
         list(APPEND sext_ep_cmake_args
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
-      elseif(${EXTENSION_SEXT_SCM} STREQUAL "svn")
+      elseif(${EXTENSION_EXT_SCM} STREQUAL "svn")
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
         if("${sext_revision}" STREQUAL "")
           set(sext_revision "HEAD")
         endif()
         set(sext_ep_options_repository
-          SVN_REPOSITORY ${EXTENSION_SEXT_SCMURL} SVN_REVISION -r ${sext_revision})
+          SVN_REPOSITORY ${EXTENSION_EXT_SCMURL} SVN_REVISION -r ${sext_revision})
         list(APPEND sext_ep_cmake_args
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
-        if(NOT ${EXTENSION_SEXT_SVNUSERNAME} STREQUAL "")
+        if(NOT ${EXTENSION_EXT_SVNUSERNAME} STREQUAL "")
            list(APPEND sext_ep_options_repository
-             SVN_USERNAME "${EXTENSION_SEXT_SVNUSERNAME}"
-             SVN_PASSWORD "${EXTENSION_SEXT_SVNPASSWORD}"
+             SVN_USERNAME "${EXTENSION_EXT_SVNUSERNAME}"
+             SVN_PASSWORD "${EXTENSION_EXT_SVNPASSWORD}"
              SVN_TRUST_CERT 1
              )
         endif()
-      elseif(${EXTENSION_SEXT_SCM} STREQUAL "local")
+      elseif(${EXTENSION_EXT_SCM} STREQUAL "local")
         set(sext_ep_options_repository DOWNLOAD_COMMAND "")
-        set(EXTENSION_SOURCE_DIR ${EXTENSION_SEXT_SCMURL})
+        set(EXTENSION_SOURCE_DIR ${EXTENSION_EXT_SCMURL})
         if(NOT EXISTS ${EXTENSION_SOURCE_DIR})
           set(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
         endif()
       else()
         set(sext_add_project False)
-        message(WARNING "Unknown type of SCM [${EXTENSION_SEXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
+        message(WARNING "Unknown type of SCM [${EXTENSION_EXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
       endif()
       if(sext_add_project)
         # Set external project DEPENDS parameter
@@ -149,7 +149,7 @@ foreach(extension_name ${EXTENSION_LIST})
           # Slicer_UPLOAD_EXTENSIONS: TRUE
           #-----------------------------------------------------------------------------
           set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
-          set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_SEXT_BUILD_SUBDIRECTORY})
+          set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
           include(SlicerBlockUploadExtension)
           # Add extension external project
           set(proj ${EXTENSION_NAME})
@@ -202,7 +202,7 @@ foreach(extension_name ${EXTENSION_LIST})
             -DBUILD_TESTING:BOOL=${BUILD_TESTING}
             -DSlicer_DIR:PATH=${Slicer_DIR}
             -DSlicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${Slicer_EXTENSIONS_TRACK_QUALIFIER}
-            -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_SEXT_BUILD_SUBDIRECTORY}
+            -DEXTENSION_BUILD_SUBDIRECTORY:STRING=${EXTENSION_EXT_BUILD_SUBDIRECTORY}
             -DEXTENSION_ENABLED:BOOL=${EXTENSION_ENABLED}
             -DEXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
             -DMIDAS_PACKAGE_URL:STRING=${MIDAS_PACKAGE_URL}

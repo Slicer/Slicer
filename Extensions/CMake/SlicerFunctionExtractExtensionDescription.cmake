@@ -24,20 +24,20 @@
 # is used to extract information associated with a given extension <file>.
 #
 # The function defines the following variables in the caller scope:
-#  <var-prefix>_SEXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
-#  <var-prefix>_SEXT_SCMURL - URL of the associated source repository
-#  <var-prefix>_SEXT_SVNUSERNAME - Username for Subversion checkout and update
-#  <var-prefix>_SEXT_SVNPASSWORD - Password for Subversion checkout and update
-#  <var-prefix>_SEXT_SCMREVISION - REVISION associated with the source repository
-#  <var-prefix>_SEXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
-#  <var-prefix>_SEXT_DEPENDS - list of dependencies
-#  <var-prefix>_SEXT_HOMEPAGE - homepage
-#  <var-prefix>_SEXT_CATEGORY - category
-#  <var-prefix>_SEXT_ICONURL - url to icon (png, size 128x128 pixels)
-#  <var-prefix>_SEXT_STATUS - status
-#  <var-prefix>_SEXT_DESCRIPTION - one line description
-#  <var-prefix>_SEXT_SCREENSHOTURLS - space separated list of urls
-#  <var-prefix>_SEXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
+#  <var-prefix>_EXT_SCM - type of source repository (i.e. 'svn', 'git', 'local')
+#  <var-prefix>_EXT_SCMURL - URL of the associated source repository
+#  <var-prefix>_EXT_SVNUSERNAME - Username for Subversion checkout and update
+#  <var-prefix>_EXT_SVNPASSWORD - Password for Subversion checkout and update
+#  <var-prefix>_EXT_SCMREVISION - REVISION associated with the source repository
+#  <var-prefix>_EXT_BUILD_SUBDIRECTORY - Corresponds to the extension inner build directory (default is ".")
+#  <var-prefix>_EXT_DEPENDS - list of dependencies
+#  <var-prefix>_EXT_HOMEPAGE - homepage
+#  <var-prefix>_EXT_CATEGORY - category
+#  <var-prefix>_EXT_ICONURL - url to icon (png, size 128x128 pixels)
+#  <var-prefix>_EXT_STATUS - status
+#  <var-prefix>_EXT_DESCRIPTION - one line description
+#  <var-prefix>_EXT_SCREENSHOTURLS - space separated list of urls
+#  <var-prefix>_EXT_ENABLED - indicate if the extension should be enabled after its installation (default is 1)
 #
 
 function(slicerFunctionExtractExtensionDescription)
@@ -110,7 +110,7 @@ function(slicerFunctionExtractExtensionDescription)
       string(REPLACE " " ";" sext_${upper_case_token} "${sext_${upper_case_token}}")
     endif()
 
-    set(${MY_VAR_PREFIX}_SEXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
+    set(${MY_VAR_PREFIX}_EXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
   endforeach()
 
 endfunction()
