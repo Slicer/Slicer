@@ -56,6 +56,9 @@ public:
   /// Instanciate settings object
   QSettings* instantiateSettings(const QString& suffix, bool useTmp);
 
+  /// Return true is this instance of Slicer is running from an installed directory
+  bool isInstalled(const QString& slicerHome)const;
+
   /// Given the program name, should return Slicer Home Directory
   QString discoverSlicerHomeDirectory();
 
@@ -74,9 +77,10 @@ public:
   void updateEnvironmentVariable(
     const QString& key, const QString& value, QChar separator, bool prepend = false);
 
-  /// If it successfully obtains 'applicationDirPath()', sets the variable 'SlicerBin'
+  /// If it successfully obtains 'applicationDirPath()', returns Slicer binary directory
+  /// \note SlicerBin doesn't contain Debug/Release/... (see IntDir)
   /// \sa QCoreApplication::applicationDirPath
-  void discoverSlicerBinDirectory();
+  QString discoverSlicerBinDirectory();
 
   /// Set 'ITKFactoriesDir' variable using 'ITK_AUTOLOAD_PATH' environment variable
   QString discoverITKFactoriesDirectory();
@@ -110,8 +114,6 @@ public:
   /// Data manager
   vtkSmartPointer<vtkDataIOManagerLogic>      DataIOManagerLogic;
 
-  /// SlicerBin doesn't contain Debug/Release/... (see IntDir)
-  QString                                     SlicerBin;
   QString                                     SlicerHome;
   QString                                     ITKFactoriesDir;
   /// On windows platform, after the method 'discoverSlicerBinDirectory' has been called,

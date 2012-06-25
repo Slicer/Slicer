@@ -293,6 +293,12 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suf
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreApplicationPrivate::isInstalled(const QString& slicerHome)const
+{
+  return !QFile::exists(slicerHome + "/CMakeCache.txt");
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 {
   // Since some standalone executable (i.e EMSegmentCommandLine) can create
@@ -302,36 +308,29 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
   // executable will be considered and initialization code expecting SLICER_HOME
   // to be properly set will fail.
   QString slicerHome = this->Environment.value("SLICER_HOME");
-  if (!slicerHome.isEmpty())
+  if (slicerHome.isEmpty())
     {
+    QString slicerBin = this->discoverSlicerBinDirectory();
+    QDir slicerBinDir(slicerBin);
+    bool cdUpRes = slicerBinDir.cdUp();
+    Q_ASSERT(cdUpRes);
+    slicerHome = slicerBinDir.canonicalPath();
+    }
+
 #ifdef Q_OS_WIN32
-    Q_Q(qSlicerCoreApplication);
+  Q_Q(qSlicerCoreApplication);
+  if (this->IntDir.isEmpty())
+    {
+    qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
     if (this->IntDir.isEmpty())
       {
-      // Additionally, in an attempt to compute IntDir, let's note that its value
-      // is first set with the help of "pathWithoutIntDir" in the method
-      // "discoverSlicerBinDirectory" happening before this call.
-      // When first called, the parameters to "pathWithoutIntDir" are "applicationDirPath" and "Slicer_BIN_DIR".
-      // If set to an empty value, we should then consider the case of command line module,
-      // by trying with "Slicer_CLIMODULES_BIN_DIR".
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_CLIMODULES_BIN_DIR, this->IntDir);
       }
+    }
+  Q_ASSERT(this->isInstalled(slicerHome) ? this->IntDir.isEmpty() : !this->IntDir.isEmpty());
 #endif
 
-    //qDebug() << "qSlicerCoreApplication: SLICER_HOME externally set to" << slicerHome;
-    return slicerHome;
-    }
-  else
-    {
-    this->discoverSlicerBinDirectory();
-    QDir slicerBinDir(this->SlicerBin);
-    bool cdUpRes = slicerBinDir.cdUp();
-    if (!cdUpRes)
-      {
-      qDebug() << "Warning, can't cdUp in " << slicerBinDir;
-      }
-    return slicerBinDir.canonicalPath();
-    }
+  return slicerHome;
 }
 
 //-----------------------------------------------------------------------------
@@ -389,18 +388,19 @@ void qSlicerCoreApplicationPrivate::updateEnvironmentVariable(const QString& key
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
+QString qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
 {
   Q_Q(qSlicerCoreApplication);
+  QString slicerBin;
   // Note: On Linux, QCoreApplication::applicationDirPath() will attempt
   //       to get the path using the "/proc" filesystem.
   if (!QFile::exists(q->applicationDirPath()))
     {
     qCritical() << "Cannot find Slicer executable" << q->applicationDirPath();
-    return ;
+    return slicerBin;
     }
 #ifndef Q_OS_MAC
-  this->SlicerBin =
+  slicerBin =
       qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
 #else
   // There are two cases to consider, the application could be started from:
@@ -419,9 +419,10 @@ void qSlicerCoreApplicationPrivate::discoverSlicerBinDirectory()
     slicerBinAsDir.cdUp(); // Move from /path/to/build-dir/bin/Foo.app          to /path/to/build-dir/bin
     slicerBinAsDir.cd(Slicer_BIN_DIR);
     }
-  this->SlicerBin = slicerBinAsDir.path();
+  slicerBin = slicerBinAsDir.path();
 #endif
-  Q_ASSERT(qSlicerUtils::pathEndsWith(this->SlicerBin, Slicer_BIN_DIR));
+  Q_ASSERT(qSlicerUtils::pathEndsWith(slicerBin, Slicer_BIN_DIR));
+  return slicerBin;
 }
 
 //-----------------------------------------------------------------------------
@@ -889,7 +890,7 @@ CTK_GET_CPP(qSlicerCoreApplication, QString, intDir, IntDir);
 bool qSlicerCoreApplication::isInstalled()const
 {
   Q_D(const qSlicerCoreApplication);
-  return !QFile::exists(d->SlicerHome + "/CMakeCache.txt");
+  return d->isInstalled(d->SlicerHome);
 }
 
 //-----------------------------------------------------------------------------
