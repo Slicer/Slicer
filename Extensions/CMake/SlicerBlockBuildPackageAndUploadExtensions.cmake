@@ -125,19 +125,19 @@ foreach(extension_name ${EXTENSION_LIST})
       endif()
       if(sext_add_project)
         # Set external project DEPENDS parameter
-        set(EXTENSION_DEPENDS)
+        set(EP_ARG_EXTENSION_DEPENDS)
         if(Slicer_SOURCE_DIR)
-          set(EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_DEPENDS})
+          set(EXTENSIONEP_ARG_EXTENSION_DEPENDS DEPENDS Slicer ${EXTENSION_SEXT_DEPENDS})
         else()
           if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
-            set(EXTENSION_DEPENDS DEPENDS ${EXTENSION_SEXT_DEPENDS})
+            set(EP_ARG_EXTENSION_DEPENDS DEPENDS ${EXTENSION_SEXT_DEPENDS})
           endif()
         endif()
         set(EXTENSION_REBUILD_DEPENDS)
         if(NOT "${EXTENSION_SEXT_DEPENDS}" STREQUAL "")
-          set(EXTENSION_REBUILD_DEPENDS DEPENDS)
+          set(EP_ARG_EXTENSION_REBUILD_DEPENDS DEPENDS)
           foreach(dep ${EXTENSION_SEXT_DEPENDS})
-            list(APPEND EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
+            list(APPEND EP_ARG_EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
           endforeach()
         endif()
         if(Slicer_UPLOAD_EXTENSIONS)
@@ -156,7 +156,7 @@ foreach(extension_name ${EXTENSION_LIST})
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
             INSTALL_COMMAND ""
-            ${EXTENSION_DEPENDS}
+            ${EP_ARG_EXTENSION_DEPENDS}
             )
           # This custom external project step forces the build and later
           # steps to run whenever a top level build is done...
@@ -175,7 +175,7 @@ foreach(extension_name ${EXTENSION_LIST})
               CONFIGURE_COMMAND ""
               BUILD_COMMAND ${EXTENSION_UPLOAD_COMMAND}
               INSTALL_COMMAND ""
-              ${EXTENSION_REBUILD_DEPENDS}
+              ${EP_ARG_EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later
             # steps to run whenever a top level build is done...
@@ -214,7 +214,7 @@ foreach(extension_name ${EXTENSION_LIST})
             CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
             CMAKE_ARGS
               ${sext_ep_cmake_args}
-            ${EXTENSION_DEPENDS}
+            ${EP_ARG_EXTENSION_DEPENDS}
             )
           # This custom external project step forces the build and later
           # steps to run whenever a top level build is done...
@@ -234,7 +234,7 @@ foreach(extension_name ${EXTENSION_LIST})
               CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
               CMAKE_ARGS
                 ${sext_ep_cmake_args}
-              ${EXTENSION_REBUILD_DEPENDS}
+              ${EP_ARG_EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later
             # steps to run whenever a top level build is done...
