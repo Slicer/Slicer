@@ -437,7 +437,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
 
   vtkRenderWindow * renderWindow = this->External->GetRenderer()->GetRenderWindow();
   int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
-
+  std::cout << "Change stereo" << std::endl;
   if (stereoType == vtkMRMLViewNode::RedBlue)
     {
     renderWindow->SetStereoTypeToRedBlue();

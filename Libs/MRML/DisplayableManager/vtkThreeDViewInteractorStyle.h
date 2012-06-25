@@ -54,6 +54,10 @@ public:
   vtkTypeRevisionMacro(vtkThreeDViewInteractorStyle,vtkInteractorStyle);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Reimplemented for camera orientation
+  virtual void OnChar();
+  virtual void OnKeyPress();
+
   /// 
   /// Event bindings controlling the effects of pressing mouse buttons
   /// or moving the mouse.

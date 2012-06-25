@@ -45,6 +45,119 @@ vtkThreeDViewInteractorStyle::~vtkThreeDViewInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnChar()
+{
+  // Ignore KeyPad strokes, they are handled by OnKeyPress instead.
+  if (strncmp(this->Interactor->GetKeySym(), "KP_", 3) == 0 ||
+      this->Interactor->GetKeyCode() == '3')
+    {
+    return;
+    }
+  this->Superclass::OnChar();
+}
+
+//----------------------------------------------------------------------------
+void vtkThreeDViewInteractorStyle::OnKeyPress()
+{
+  this->Superclass::OnKeyPress();
+  if (this->Interactor->GetKeySym())
+    {
+    bool shift = (this->Interactor->GetShiftKey() != 0);
+
+    if (strcmp(this->Interactor->GetKeySym(), "KP_1") == 0 ||
+        strcmp(this->Interactor->GetKeySym(), "End") == 0)
+      {
+      this->CameraNode->RotateTo(
+        shift ? vtkMRMLCameraNode::Posterior : vtkMRMLCameraNode::Anterior );
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_3") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Next") == 0) // PageDown
+      {
+      this->CameraNode->RotateTo(
+        shift ? vtkMRMLCameraNode::Right : vtkMRMLCameraNode::Left);
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_7") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Home") == 0)
+      {
+      this->CameraNode->RotateTo(
+        shift ? vtkMRMLCameraNode::Inferior : vtkMRMLCameraNode::Superior);
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_2") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Down") == 0)
+      {
+      if (shift)
+        {
+        this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Y, false);
+        }
+      else
+        {
+        this->CameraNode->RotateAround(vtkMRMLCameraNode::R, true);
+        }
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_8") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Up") == 0)
+      {
+      if (shift)
+        {
+        this->CameraNode->TranslateAlong(vtkMRMLCameraNode::Y, true);
+        }
+      else
+        {
+        this->CameraNode->RotateAround(vtkMRMLCameraNode::R, false);
+        }
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_4") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Left") == 0)
+      {
+      if (shift)
+        {
+        this->CameraNode->TranslateAlong(vtkMRMLCameraNode::X, true);
+        }
+      else
+        {
+        this->CameraNode->RotateAround(vtkMRMLCameraNode::S, true);
+        }
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_6") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Right") == 0)
+      {
+      if (shift)
+        {
+        this->CameraNode->TranslateAlong(vtkMRMLCameraNode::X, false);
+        }
+      else
+        {
+        this->CameraNode->RotateAround(vtkMRMLCameraNode::S, false);
+        }
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_5") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Clear") == 0)
+      {
+      this->CameraNode->Reset(
+        !shift,
+        shift,
+        false,
+        this->Interactor->FindPokedRenderer(0,0));
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "KP_0") == 0 ||
+             strcmp(this->Interactor->GetKeySym(), "Insert") == 0)
+      {
+      this->CameraNode->Reset(
+        true, true, true,
+        this->Interactor->FindPokedRenderer(0,0));
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "plus") == 0)
+      {
+      this->Dolly(1.2);
+      }
+    else if (strcmp(this->Interactor->GetKeySym(), "minus") == 0)
+      {
+      this->Dolly(0.8);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkThreeDViewInteractorStyle::OnMouseMove() 
 { 
   int x = this->Interactor->GetEventPosition()[0];

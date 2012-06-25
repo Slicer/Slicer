@@ -24,6 +24,7 @@
 // VTK includes
 class vtkCamera;
 class vtkMatrix4x4;
+class vtkRenderer;
 
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
@@ -84,7 +85,8 @@ public:
   /// 
   /// Set camera Position 
   void SetPosition(double position[3]);
-  
+  inline void SetPosition(double x, double y, double z);
+
   /// 
   /// Get camera Position   
   double *GetPosition();
@@ -92,6 +94,7 @@ public:
   /// 
   /// Set camera Focal Point 
   void SetFocalPoint(double focalPoint[3]);
+  inline void SetFocalPoint(double x, double y, double z);
   
   /// 
   /// Get camera Focal Point 
@@ -134,6 +137,53 @@ public:
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  enum Direction{
+    Right = 0,
+    Left = 1,
+    Anterior = 2,
+    Posterior = 3,
+    Superior = 4,
+    Inferior = 5
+  };
+
+  enum RASAxis{
+    R = 0,
+    A = 1,
+    S = 2,
+  };
+
+  enum ScreenAxis{
+    X = 0,
+    Y = 1,
+    Z = 2
+  };
+
+  /// Moves the camera toward a position.
+  /// Keeps the same distance to the focal point.
+  void RotateTo(Direction position);
+
+  /// Utility function that rotates of 15 degrees around an
+  /// axis. Call RotateAround 6 times to make a right angle
+  void RotateAround(RASAxis axis, bool clockWise);
+
+  /// 15 degrees by default
+  void RotateAround(RASAxis axis, double angle = 15.);
+
+  /// Translate the camera and focal point of a 6th of the screen width.
+  /// Call TranslateAround 6 times to not see what was on screen before.
+  void TranslateAlong(ScreenAxis axis, bool positive);
+
+  /// Reset the camera
+  /// If resetRotation is true, the camera rotates to the closest direction
+  /// If resetTranslation is true, the focal point is moved to the center
+  /// of the renderer props not changing the rotation.
+  /// If resetDistance is true, the camera to moved to make sure the view
+  /// contains the renderer bounds.
+  using vtkMRMLNode::Reset;
+  void Reset(bool resetRotation,
+             bool resetTranslation = true,
+             bool resetDistance = true,
+             vtkRenderer* renderer = 0);
 protected:
   vtkMRMLCameraNode();
   ~vtkMRMLCameraNode();
@@ -152,5 +202,19 @@ protected:
 
   vtkMatrix4x4 *AppliedTransform;
 };
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetPosition(double x, double y, double z)
+{
+  double pos[3] = {x, y, z};
+  this->SetPosition(pos);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetFocalPoint(double x, double y, double z)
+{
+  double pos[3] = {x, y, z};
+  this->SetFocalPoint(pos);
+}
 
 #endif

@@ -23,8 +23,10 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 #include <vtkCamera.h>
-#include <vtkTransform.h>
+#include <vtkMath.h>
+#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, Camera, vtkCamera);
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, AppliedTransform, vtkMatrix4x4);
@@ -523,4 +525,183 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char *tag)
     }
 
   return NULL;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::RotateTo(Direction position)
+{
+  double directionOfView[3];
+  vtkMath::Subtract(this->GetFocalPoint(), this->GetPosition(),
+                    directionOfView);
+  double norm = vtkMath::Norm(directionOfView);
+
+  double newDirectionOfView[3] = {0., 0., 0.};
+  double newViewUp[3] = {0., 0., 0.};
+  switch (position)
+    {
+    case Right:
+      newDirectionOfView[0] = -1.;
+      newViewUp[2] = 1.;
+      break;
+    case Left:
+      newDirectionOfView[0] = 1.;
+      newViewUp[2] = 1.;
+      break;
+    case Superior:
+      newDirectionOfView[2] = -1.;
+      newViewUp[1] = -1.;
+      break;
+    case Inferior:
+      newDirectionOfView[2] = 1.;
+      newViewUp[1] = 1.;
+      break;
+    case Anterior:
+      newDirectionOfView[1] = -1.;
+      newViewUp[2] = 1.;
+      break;
+    case Posterior:
+      newDirectionOfView[1] = 1.;
+      newViewUp[2] = 1.;
+      break;
+    }
+  vtkMath::MultiplyScalar(newDirectionOfView, norm);
+
+  double newPosition[3];
+  vtkMath::Subtract(this->GetFocalPoint(), newDirectionOfView, newPosition);
+
+  int wasModifying = this->StartModify();
+  this->SetPosition(newPosition);
+  this->SetViewUp(newViewUp);
+  this->EndModify(wasModifying);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::RotateAround(RASAxis axis, bool clockWise)
+{
+  this->RotateAround(axis, clockWise ? -15. : 15.);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::RotateAround(RASAxis axis, double angle)
+{
+  switch (axis)
+    {
+    case R:
+      this->Camera->Elevation(angle);
+      break;
+    case S:
+      this->Camera->Azimuth(angle);
+      break;
+    case A:
+      this->Camera->Yaw(angle);
+      break;
+    }
+  this->Camera->OrthogonalizeViewUp();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::TranslateAlong(ScreenAxis screenAxis, bool positive)
+{
+  const double distance = this->Camera->GetDistance();
+  const double viewAngle = vtkMath::RadiansFromDegrees( this->Camera->GetViewAngle() );
+  const double height = tan( viewAngle / 2) * distance * 2.;
+  const double shift = (positive ? 1. : -1. ) * height / 6.;
+  double offset[3] = {0., 0., 0.};
+  switch(screenAxis)
+    {
+    case X:
+      {
+      double* x = offset;
+      double* y = this->GetViewUp();
+      double z[3];
+      this->Camera->GetDirectionOfProjection(z);
+      vtkMath::Cross(y, z, x);
+      break;
+      }
+    case Y:
+      {
+      this->Camera->GetViewUp(offset);
+      break;
+      }
+    case Z:
+      {
+      this->Camera->GetDirectionOfProjection(offset);
+      break;
+      }
+    }
+  vtkMath::MultiplyScalar(offset, shift);
+  int wasModifying = this->StartModify();
+  const double* position = this->Camera->GetPosition();
+  this->SetPosition(position[0] + offset[X],
+                    position[1] + offset[Y],
+                    position[2] + offset[Z]);
+  const double* focalPoint = this->Camera->GetFocalPoint();
+  this->SetFocalPoint(focalPoint[0] + offset[X],
+                      focalPoint[1] + offset[Y],
+                      focalPoint[2] + offset[Z]);
+  this->EndModify(wasModifying);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::Reset(bool resetRotation,
+                              bool resetTranslation,
+                              bool resetDistance,
+                              vtkRenderer* renderer)
+{
+  double bounds[6] = {-5.0, 5.0, -5.0, 5.0, -5.0, 5.0};
+  double center[3] = {0., 0., 0.};
+  double distance = 10.;
+  if (renderer)
+    {
+    renderer->ComputeVisiblePropBounds(bounds);
+    center[0] = (bounds[1] + bounds[0]) / 2.0;
+    center[1] = (bounds[3] + bounds[2]) / 2.0;
+    center[2] = (bounds[5] + bounds[4]) / 2.0;
+    const double w1 = bounds[1] - bounds[0];
+    const double w2 = bounds[3] - bounds[2];
+    const double w3 = bounds[5] - bounds[4];
+    double radius = w1*w1 + w2*w2 + w3*w3;
+    radius = (radius==0)?(1.0):(radius);
+    // compute the radius of the enclosing sphere
+    radius = sqrt(radius)*0.5;
+    const double angle = vtkMath::RadiansFromDegrees(this->Camera->GetViewAngle());
+    distance = radius / sin(angle / 2.);
+    }
+  int wasModifying = this->StartModify();
+  if (resetRotation)
+    {
+    double position[3];
+    this->Camera->GetPosition(position);
+    vtkMath::Normalize(position); // not really needed
+    int i = position[0]*position[0] > position[1]*position[1] ? 0 : 1;
+    i = (position[i]*position[i] > position[2]*position[2]) ? i : 2;
+    RASAxis closestAxis = (i == 0) ? R :((i == 1) ? A : S);
+    int direction = position[i] > 0 ? 0: 1;
+    this->RotateTo(static_cast<Direction>(2 * closestAxis  + direction));
+    }
+  if (resetTranslation)
+    {
+    double newPosition[3];
+    this->Camera->GetViewPlaneNormal(newPosition);
+    vtkMath::MultiplyScalar(newPosition, this->Camera->GetDistance());
+    vtkMath::Add(center, newPosition, newPosition);
+    this->SetFocalPoint(center);
+    this->SetPosition(newPosition);
+    }
+  if (resetDistance)
+    {
+    double newPosition[3];
+    this->Camera->GetViewPlaneNormal(newPosition);
+    vtkMath::MultiplyScalar(newPosition, distance);
+    vtkMath::Add(this->Camera->GetFocalPoint(), newPosition, newPosition);
+    this->SetPosition(newPosition);
+    }
+  this->Camera->ComputeViewPlaneNormal();
+  this->Camera->OrthogonalizeViewUp();
+  if (renderer)
+    {
+    renderer->ResetCameraClippingRange(bounds);
+    renderer->UpdateLightsGeometryToFollowCamera();
+    }
+  this->EndModify(wasModifying);
 }
