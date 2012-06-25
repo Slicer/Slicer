@@ -17,6 +17,7 @@
 #
 #  Slicer_SKIP_SlicerBlockSetCMakeOSXVariables
 #  Slicer_SKIP_USE_FILE_INCLUDE_CHECK
+#  Slicer_SKIP_EXTENSION_NAME_CHECK
 #  Slicer_SKIP_PROJECT_COMMAND
 #  Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE
 #  Slicer_SKIP_EXTERNAL_DATA
@@ -81,13 +82,18 @@ endif()
 slicer_setting_variable_message("EXTENSION_HAS_ONLY_ONE_MODULE")
 
 # --------------------------------------------------------------------------
-# Seting and checking EXTENSION_NAME
+# Setting and checking EXTENSION_NAME
 # --------------------------------------------------------------------------
-if(EXTENSION_HAS_ONLY_ONE_MODULE)
-  set(EXTENSION_NAME ${MODULE_NAME})
+if(NOT DEFINED Slicer_SKIP_EXTENSION_NAME_CHECK)
+  set(Slicer_SKIP_EXTENSION_NAME_CHECK FALSE)
 endif()
-if("${EXTENSION_NAME}" STREQUAL "")
-  message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME or MODULE_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
+if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK)
+  if(EXTENSION_HAS_ONLY_ONE_MODULE)
+    set(EXTENSION_NAME ${MODULE_NAME})
+  endif()
+  if("${EXTENSION_NAME}" STREQUAL "")
+    message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME or MODULE_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
+  endif()
 endif()
 
 # --------------------------------------------------------------------------
@@ -112,6 +118,9 @@ else()
   _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
 endif()
 
+if(Slicer_SKIP_EXTENSION_NAME_CHECK)
+  set(Slicer_SKIP_PROJECT_COMMAND TRUE)
+endif()
 if(NOT Slicer_SKIP_PROJECT_COMMAND)
   project(${EXTENSION_NAME})
 else()
@@ -351,7 +360,8 @@ endif()
 if(NOT DEFINED Slicer_SKIP_SlicerBlockModuleToExtensionMetadata)
   set(Slicer_SKIP_SlicerBlockModuleToExtensionMetadata FALSE)
 endif()
-if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata})
+if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata}
+   AND NOT "${EXTENSION_NAME}" STREQUAL "")
   slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
   slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
   slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
@@ -372,6 +382,7 @@ slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
 if(NOT DEFINED Slicer_SKIP_SlicerEnableExtensionTesting)
   set(Slicer_SKIP_SlicerEnableExtensionTesting FALSE)
 endif()
-if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting})
+if(NOT ${Slicer_SKIP_SlicerEnableExtensionTesting}
+   AND NOT "${EXTENSION_NAME}" STREQUAL "")
   include(SlicerEnableExtensionTesting)
 endif()
