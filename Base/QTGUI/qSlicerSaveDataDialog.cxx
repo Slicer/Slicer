@@ -977,7 +977,7 @@ void qSlicerSaveDataDialogPrivate::formatChanged()
     }
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   Q_ASSERT(fileNameItem);
-  fileNameItem->setText(QFileInfo(fileNameItem->text()).baseName() + extension);
+  fileNameItem->setText(QFileInfo(fileNameItem->text()).completeBaseName() + extension);
   fileNameItem->setData(Qt::UserRole, extension);
 
   // If the user changed the format, that means he wants to save the node
