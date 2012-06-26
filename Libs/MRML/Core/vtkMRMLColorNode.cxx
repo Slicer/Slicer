@@ -327,7 +327,7 @@ const char *vtkMRMLColorNode::GetColorName(int ind)
     {
     this->SetNamesFromColors();
     }
-  
+
   if (ind < (int)this->Names.size() && ind >= 0)
     {
     if (strcmp(this->Names[ind].c_str(), "") == 0)
@@ -361,6 +361,29 @@ std::string vtkMRMLColorNode::GetColorNameWithoutSpaces(int ind, const char *sub
     }
 
   return name;
+}
+
+//---------------------------------------------------------------------------
+std::string vtkMRMLColorNode::GetColorNameAsFileName(int colorIndex, const char *subst)
+{
+  std::string fileName(this->GetColorName(colorIndex));
+  std::string validCharacters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabscdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "-_.()$!~#'%^{}";
+  std::string::size_type pos = 0;
+  size_t substLength = strlen(subst);
+  while ((pos = fileName.find_first_not_of(validCharacters, pos)) != std::string::npos)
+    {
+    fileName.replace(pos, 1, subst, substLength);
+    pos += substLength;
+    if (pos > 255)
+      {
+      break;
+      }
+    }
+  // Truncate to 256 chars
+  return fileName.substr(0, 256);
 }
 
 //---------------------------------------------------------------------------

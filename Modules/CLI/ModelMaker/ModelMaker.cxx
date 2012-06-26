@@ -820,7 +820,7 @@ int main(int argc, char * argv[])
       std::string stringI =    stream.str();
       if( colorNode != NULL )
         {
-        std::string colorName = std::string(colorNode->GetColorNameWithoutSpaces(i, "_") );
+        std::string colorName = std::string(colorNode->GetColorNameAsFileName(i) );
         if( colorName.c_str() != NULL )
           {
           if( !SkipUnNamed ||
@@ -883,12 +883,12 @@ int main(int argc, char * argv[])
       /*
       if (colorNode != NULL)
         {
-        if (colorNode->GetColorNameWithoutSpaces(i, "_").c_str() != NULL)
+        if (colorNode->GetColorNameAsFileName(i).c_str() != NULL)
           {
           std::stringstream    stream;
           stream <<    i;
           std::string stringI =    stream.str();
-          labelName = Name + std::string("_") + stringI + std::string("_") + std::string(colorNode->GetColorNameWithoutSpaces(i, "_"));
+          labelName = Name + std::string("_") + stringI + std::string("_") + std::string(colorNode->GetColorNameAsFileName(i));
           }
         }
       else
