@@ -83,7 +83,6 @@ int main( int argc, char * argv[] )
 
     std::ostringstream sstr;
     sstr << argv[argc-1] << "/rgb_test_image" << i << ".png";
-    std::cout << sstr.str() << std::endl;
     fileNameList->InsertNextValue(sstr.str().c_str());
     ImageType::Pointer im1 = ImageType::New();
 
@@ -97,7 +96,6 @@ int main( int argc, char * argv[] )
 
     WriterType::Pointer w = WriterType::New();
     w->SetInput(im1);
-    std::cout << "Will write test file to " << sstr.str() << std::endl;
     w->SetFileName(sstr.str().c_str());
     w->Update();
     }
