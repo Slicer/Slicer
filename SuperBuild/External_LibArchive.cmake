@@ -24,21 +24,24 @@ set(proj LibArchive)
 if(NOT DEFINED LibArchive_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   #
-  # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git 
-  #         for all platforms.  For notes on cross-platform issues with earlier versions 
+  # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git
+  #         for all platforms.  For notes on cross-platform issues with earlier versions
   #         of LibArchive, see the repository for earlier revisions of this file.
   #
   set(ADDITIONAL_CMAKE_ARGS)
   if(WIN32)
     # CMake arguments specific to LibArchive >= 2.8.4
     list(APPEND ADDITIONAL_CMAKE_ARGS
-      -DBUILD_TESTING:BOOL=OFF
-      -DENABLE_OPENSSL:BOOL=OFF
       -DZLIB_INCLUDE_DIR:PATH=${zlib_DIR}/include
       -DZLIB_LIBRARY:FILEPATH=${zlib_DIR}/lib/zlib.lib
       -DZLIB_ROOT:PATH=${zlib_DIR}
       )
   endif()
+  # CMake arguments specific to LibArchive >= 2.8.4
+  list(APPEND ADDITIONAL_CMAKE_ARGS
+    -DBUILD_TESTING:BOOL=OFF
+    -DENABLE_OPENSSL:BOOL=OFF
+    )
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
