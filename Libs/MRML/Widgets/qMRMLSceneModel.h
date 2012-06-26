@@ -43,6 +43,7 @@ class qMRMLSceneModelPrivate;
 /// See below an example of model when nameColumn = 0 (default) and idColumn = 1
 /// with 1 postItem ("Add new node"):
 ///
+/// \verbatim
 ///    Column 0           Column 1
 ///
 ///  - Scene
@@ -51,6 +52,7 @@ class qMRMLSceneModelPrivate;
 ///    ...
 ///    |- my_volume.nrrd  vtkMRMLScalarVolumeNode1
 ///    |- Add new node
+/// \endverbatim
 ///
 class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
 {
