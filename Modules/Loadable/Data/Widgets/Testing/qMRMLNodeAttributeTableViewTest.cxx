@@ -66,6 +66,9 @@ private slots:
 
   void testRemove();
   void testRemove_data();
+
+  void testSelectAndAdd();
+  void testSelectAndAdd_data();
 };
 
 Q_DECLARE_METATYPE(QList<int>)
@@ -379,7 +382,7 @@ void qMRMLNodeAttributeTableViewTester::testRename()
   QFETCH(int, renamedAttributeRowIndex);
 
   // Make the new attribute name the current so that the view can store its name
-  //   This way in case of duplicated names, the original name is restored (default behavior)
+  // This way in case of duplicated names, the original name is restored (default behavior)
   this->NodeAttributeTableView->selectItemRange(
     renamedAttributeRowIndex,0,renamedAttributeRowIndex,0);
   QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
@@ -480,6 +483,77 @@ void qMRMLNodeAttributeTableViewTester::testRemove_data()
                          << AttributeEmptyType("Attribute2", true)
                          << AttributeEmptyType("Attribute3", false));
   }
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testSelectAndAdd()
+{
+  QFETCH(QList<AttributeType>, attributes);
+  vtkNew<vtkMRMLModelNode> node;
+
+  foreach(const AttributeType& attribute, attributes)
+    {
+    node->SetAttribute(attribute.first.toLatin1(), attribute.second.toLatin1());
+    }
+
+  this->NodeAttributeTableView->setInspectedNode(node.GetPointer());
+
+  QFETCH(QList<int>, rangeToSelect);
+  this->NodeAttributeTableView->selectItemRange( rangeToSelect[0]
+                                                ,rangeToSelect[1]
+                                                ,rangeToSelect[2]
+                                                ,rangeToSelect[3] );
+  QModelIndex index(this->NodeAttributeTableView->selectionModel()->selectedIndexes().at(0));
+  this->NodeAttributeTableView->selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+
+  this->NodeAttributeTableView->addAttribute();
+
+  QFETCH(QList<AttributeType>, expectedAttributes);
+  QStringList resultAttributes = this->NodeAttributeTableView->attributes();
+  int i = 0;
+  foreach (QString attribute, resultAttributes)
+    {
+    QCOMPARE(attribute, expectedAttributes[i].first);
+    QCOMPARE(this->NodeAttributeTableView->attributeValue(attribute),
+             expectedAttributes[i].second);
+    ++i;
+    }
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLNodeAttributeTableViewTester::testSelectAndAdd_data()
+{
+  QTest::addColumn<QList<AttributeType> >("attributes");
+  QTest::addColumn<QList<int> >("rangeToSelect"); // top, left, bottom, right
+  QTest::addColumn<QList<AttributeType> >("expectedAttributes");
+
+  QTest::newRow("attribute name selected")
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2") )
+    << ( QList<int>() << 1 << 0 << 1 << 0 )
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2")
+                  << AttributeType("NewAttributeName", "") );
+  QTest::newRow("attribute value selected")
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2") )
+    << ( QList<int>() << 1 << 1 << 1 << 1 )
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2")
+                  << AttributeType("NewAttributeName", "") );
+  QTest::newRow("multiple selected")
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2") )
+    << ( QList<int>() << 0 << 0 << 1 << 1 )
+    << ( QList<AttributeType>()
+                  << AttributeType("Attribute1", "Value1")
+                  << AttributeType("Attribute2", "Value2")
+                  << AttributeType("NewAttributeName", "") );
 }
 
 // ----------------------------------------------------------------------------

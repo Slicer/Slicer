@@ -30,7 +30,7 @@
 // MRML includes
 #include <vtkMRMLNode.h>
 
-// STL incudes
+// STL includes
 #include <set>
 
 // --------------------------------------------------------------------------
@@ -265,6 +265,11 @@ void qMRMLNodeAttributeTableView::addAttribute()
   d->setMessage(QString());
 
   int rowCountBefore = d->NodeAttributesTable->rowCount();
+
+  // Reset selected attribute text so that the added
+  // item is renamed even if one is already selected
+  d->SelectedAttributeTableItemText = QString();
+
   d->NodeAttributesTable->insertRow( rowCountBefore );
   d->NodeAttributesTable->setItem( rowCountBefore, 0,
     new QTableWidgetItem(this->generateNewAttributeName()) );
