@@ -243,17 +243,9 @@
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerVolumesModule/DisplayCollapsibleButton/VolumeDisplayWidget/qSlicerDiffusionWeightedVolumeDisplayWidget/ScalarDisplayGroupBox/ScalarVolumeDisplayWidget/MRMLWindowLevelWidget/RangeWidgetPopup" command="popupOpen" arguments="false"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="D"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,68,33554432,D,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,87,33554432,W,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="DW"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,87,33554432,W,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,73,33554432,I,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="DWI"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,73,33554432,I,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777248,0,,0,1"/>
-        <event widget="1QListView0" command="mousePress" arguments="1,1,0,89,7,/4:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="DWI to DTI Estimation"/>
-        <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,89,7,/4:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="DWI to DTI Estimation"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="DWI to DTI Estimation"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget" command="popupOpen" arguments="true"/>
@@ -290,27 +282,12 @@
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/1QWidget0/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="12"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="D"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777248,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,68,0,d,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,73,0,i,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Di"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,73,0,i,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,70,0,f,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Dif"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,70,0,f,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,70,0,f,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Diff"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,70,0,f,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,85,0,u,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Diffu"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,85,0,u,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Curvature Anisotropic Diffusion"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Diffusion Tensor Scalar Measurements"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Diffusion Tensor Scalar Measurements"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Diffusion Tensor Scalar Measurements"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerCLIModuleWidget/scrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/ModuleCollapsibleButton/1ctkCollapsibleButton1/1ButtonGroupWidgetWrapper0/1QRadioButton0" command="set_boolean" arguments="true"/>
@@ -1978,25 +1955,12 @@
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/1ctkCollapsibleButton1/1QFrame1/1QFrame0/1QPushButton0" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="t"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tr"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tra"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,67,0,c,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="trac"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,67,0,c,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tract"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,79,0,o,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tracto"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,79,0,o,0,1"/>
-        <event widget="1QListView0" command="mousePress" arguments="1,1,0,135,6,/3:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Label Map Seeding"/>
-        <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,135,6,/3:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Label Map Seeding"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Label Map Seeding"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerCLIModuleWidget/scrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/ModuleCollapsibleButton/1ctkCollapsibleButton0/1qMRMLNodeComboBox1" command="currentNodeChanged" arguments="vtkMRMLScalarVolumeNode5"/>
@@ -2215,22 +2179,11 @@
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/ThreeDWidget1/1qMRMLThreeDView0/1QVTKWidget0" command="mouseRelease" arguments="(-0.648953,-0.223776,1,0,0)"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="t"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tr"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tra"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,67,0,c,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="trac"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,67,0,c,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tract"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="mousePress" arguments="1,1,0,94,8,/3:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Display"/>
-        <event widget="1QListView0" command="mouseRelease" arguments="1,0,0,94,8,/3:0"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Display"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Display"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyDisplayModule/BasicDisplayWidget/GlyphVisibility" command="set_boolean" arguments="true"/>
@@ -2329,32 +2282,14 @@
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Editor"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="t"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tr"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tra"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,67,0,c,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="trac"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,67,0,c,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="ChangeTracker"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="DWI to Full Brain Tractography"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Extract Skeleton"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Subtract Scalar Volumes"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Display"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Display"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Display"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyDisplayModule/CollapsibleButton" command="set_boolean" arguments="true"/>
@@ -2626,32 +2561,14 @@
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerAnnotationModule/CTKCollapsibleButton/CTKCollapsibleGroupBox_3/hierarchyTreeView" command="editAccepted" arguments="0.0.0.0.0.0.0.5,leftCingulum"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="t"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,82,0,r,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tr"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,65,0,a,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tra"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,82,0,r,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,65,0,a,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,67,0,c,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="trac"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,67,0,c,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,84,0,t,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tract"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,84,0,t,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,79,0,o,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tracto"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,79,0,o,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="DWI to Full Brain Tractography"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Display"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777237,0,,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Fiducial Seeding"/>
-        <event widget="1QListView0" command="keyEvent" arguments="7,16777237,0,,0,1"/>
-        <event widget="1QListView0" command="keyEvent" arguments="6,16777220,0,&#13;,0,1"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Fiducial Seeding"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Fiducial Seeding"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyFiducialSeedingModule/InputsCollapsibleButton/FiberNodeSelector" command="currentNodeChanged" arguments="vtkMRMLFiberBundleNode2"/>
