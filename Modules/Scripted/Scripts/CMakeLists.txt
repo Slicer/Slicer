@@ -1,13 +1,18 @@
 
 set(KIT_PYTHON_SCRIPTS
     DataProbe.py
-    DICOM.py
     Editor.py
     LabelStatistics.py
     PerformanceTests.py
     SampleData.py
     VectorToScalarVolume.py
   )
+
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND KIT_PYTHON_SCRIPTS
+    DICOM.py
+    )
+endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   list(APPEND KIT_PYTHON_SCRIPTS

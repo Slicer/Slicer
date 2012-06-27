@@ -51,6 +51,8 @@
 #  define Slicer_BUNDLE_EXTENSIONS_DIRNAME "@Slicer_BUNDLE_EXTENSIONS_DIRNAME@"
 #endif
 
+#cmakedefine Slicer_BUILD_DICOM_SUPPORT
+
 #cmakedefine Slicer_BUILD_CLI_SUPPORT
 #cmakedefine Slicer_BUILD_CLI
 #define Slicer_CLIMODULES_SUBDIR "@Slicer_CLIMODULES_SUBDIR@"

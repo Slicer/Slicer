@@ -9,7 +9,6 @@ set(cli_modules
   CastScalarVolume
   CheckerBoardFilter
   ConnectedComponent
-  CreateDICOMSeries
   CurvatureAnisotropicDiffusion
   DiffusionTensorScalarMeasurements
   DiffusionWeightedVolumeMasking
@@ -49,6 +48,12 @@ set(cli_modules
   VotingBinaryHoleFillingImageFilter
   )
 
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND cli_modules
+    CreateDICOMSeries
+    )
+endif()
+
 if(Slicer_BUILD_LEGACY_CLI)
   set(legacy_cli_modules
     AffineRegistration
@@ -76,8 +81,10 @@ if (Slicer_BUILD_EMSegment)
 endif()
 
 if("${ITK_VERSION_MAJOR}" LESS 4)
-  list(APPEND cli_modules DicomToNrrdConverter)
-  list(APPEND cli_modules PETStandardUptakeValueComputation)
+  if(Slicer_BUILD_DICOM_SUPPORT)
+    list(APPEND cli_modules DicomToNrrdConverter)
+    list(APPEND cli_modules PETStandardUptakeValueComputation)
+  endif()
 endif()
 
 if(Slicer_USE_MIDAS)

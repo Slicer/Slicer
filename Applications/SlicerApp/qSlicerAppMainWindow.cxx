@@ -30,8 +30,7 @@
 #include <QTimer>
 #include <QToolButton>
 
-#include "qSlicerApplication.h" // Indirectly includes vtkSlicerConfigure.h
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT and Slicer_USE_QtTesting
+#include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT, Slicer_USE_PYTHONQT, Slicer_USE_QtTesting
 
 // CTK includes
 #include <ctkErrorLogWidget.h>
@@ -46,6 +45,7 @@
 #include <ctkVTKSliceView.h>
 
 // SlicerApp includes
+#include "qSlicerApplication.h"
 #include "qSlicerAppMainWindow.h"
 #include "ui_qSlicerAppMainWindow.h"
 #include "qSlicerAbstractModule.h"
@@ -471,6 +471,11 @@ qSlicerAppMainWindow::qSlicerAppMainWindow(QWidget *_parent):Superclass(_parent)
   this->setupMenuActions();
   d->StartupState = this->saveState();
   d->readSettings();
+
+#ifndef Slicer_BUILD_DICOM_SUPPORT
+  d->actionLoadDICOM->setVisible(false);
+#endif
+
 }
 
 //-----------------------------------------------------------------------------

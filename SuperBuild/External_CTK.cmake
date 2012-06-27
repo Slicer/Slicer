@@ -85,7 +85,7 @@ if(NOT DEFINED CTK_DIR)
       -DCTK_LIB_ImageProcessing/ITK/Core:BOOL=ON
       -DCTK_LIB_PluginFramework:BOOL=OFF
       -DCTK_PLUGIN_org.commontk.eventbus:BOOL=OFF
-      -DCTK_APP_ctkDICOM:BOOL=ON
+      -DCTK_APP_ctkDICOM:BOOL=${Slicer_BUILD_DICOM_SUPPORT}
       -DCTK_USE_QTTESTING:BOOL=${Slicer_USE_QtTesting}
       -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
       ${optional_ep_args}
