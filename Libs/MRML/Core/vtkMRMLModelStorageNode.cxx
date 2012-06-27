@@ -285,10 +285,10 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string("")) 
-  {
+    {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
     return 0;
-  }
+    }
 
   std::string extension = itksys::SystemTools::GetFilenameLastExtension(fullName);
 
@@ -297,6 +297,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
     writer->SetFileName(fullName.c_str());
+    writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
     writer->SetInput( modelNode->GetPolyData() );
     try
       {
@@ -311,6 +312,10 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     {
     vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
     writer->SetFileName(fullName.c_str());
+    writer->SetCompressorType(
+      this->GetUseCompression() ? vtkXMLWriter::ZLIB : vtkXMLWriter::NONE);
+    writer->SetDataMode(
+      this->GetUseCompression() ? vtkXMLWriter::Appended : vtkXMLWriter::Ascii);
     writer->SetInput( modelNode->GetPolyData() );
     try
       {
@@ -326,6 +331,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
     vtkSmartPointer<vtkTriangleFilter> triangulator = vtkSmartPointer<vtkTriangleFilter>::New();
     vtkSmartPointer<vtkSTLWriter> writer = vtkSmartPointer<vtkSTLWriter>::New();
     writer->SetFileName(fullName.c_str());
+    writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
     triangulator->SetInput( modelNode->GetPolyData() );
     writer->SetInput( triangulator->GetOutput() );
     try
@@ -361,7 +367,7 @@ void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
 //----------------------------------------------------------------------------
 void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
 {
-  // Look at WriteData(), .g and .meta are not being written even though 
+  // Look at WriteData(), .g and .meta are not being written even though
   // SupportedFileType() says they are supported
   this->SupportedWriteFileTypes->InsertNextValue("Poly Data (.vtk)");
   this->SupportedWriteFileTypes->InsertNextValue("XML Poly Data (.vtp)");
