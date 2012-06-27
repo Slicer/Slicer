@@ -62,12 +62,12 @@ class vtkMRMLModelSliceDisplayableManager::vtkInternal
 public:
   struct Pipeline
     {
-    vtkMatrix4x4* nodeToWorld;
-    vtkTransform* transformToSlice;
-    vtkTransformPolyDataFilter* transformer;
-    vtkPlane* plane;
-    vtkCutter* cutter;
-    vtkProp* actor;
+    vtkMatrix4x4* NodeToWorld;
+    vtkTransform* TransformToSlice;
+    vtkTransformPolyDataFilter* Transformer;
+    vtkPlane* Plane;
+    vtkCutter* Cutter;
+    vtkProp* Actor;
     };
 
   typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
@@ -227,7 +227,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     if ( ((pipelinesIter = this->DisplayPipelines.find(*dnodesIter)) != this->DisplayPipelines.end()) )
       {
-      this->GetNodeMatrixToWorld( mNode, pipelinesIter->second->nodeToWorld );
+      this->GetNodeMatrixToWorld( mNode, pipelinesIter->second->NodeToWorld );
       this->UpdateDisplayNodePipeline(pipelinesIter->first, pipelinesIter->second);
       }
     }
@@ -243,13 +243,13 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     return;
     }
   const Pipeline* pipeline = actorsIt->second;
-  this->External->GetRenderer()->RemoveActor(pipeline->actor);
-  pipeline->actor->Delete();
-  pipeline->cutter->Delete();
-  pipeline->plane->Delete();
-  pipeline->nodeToWorld->Delete();
-  pipeline->transformToSlice->Delete();
-  pipeline->transformer->Delete();
+  this->External->GetRenderer()->RemoveActor(pipeline->Actor);
+  pipeline->Actor->Delete();
+  pipeline->Cutter->Delete();
+  pipeline->Plane->Delete();
+  pipeline->NodeToWorld->Delete();
+  pipeline->TransformToSlice->Delete();
+  pipeline->Transformer->Delete();
   delete pipeline;
   this->DisplayPipelines.erase(actorsIt);
 }
@@ -270,22 +270,22 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Create pipeline
   Pipeline* pipeline = new Pipeline();
-  pipeline->actor = actor;
-  pipeline->cutter = vtkCutter::New();
-  pipeline->transformToSlice = vtkTransform::New();
-  pipeline->nodeToWorld = vtkMatrix4x4::New();
-  pipeline->transformer = vtkTransformPolyDataFilter::New();
-  pipeline->plane = vtkPlane::New();
+  pipeline->Actor = actor;
+  pipeline->Cutter = vtkCutter::New();
+  pipeline->TransformToSlice = vtkTransform::New();
+  pipeline->NodeToWorld = vtkMatrix4x4::New();
+  pipeline->Transformer = vtkTransformPolyDataFilter::New();
+  pipeline->Plane = vtkPlane::New();
 
   // Set up pipeline
-  pipeline->transformer->SetTransform(pipeline->transformToSlice);
-  pipeline->transformer->SetInputConnection(pipeline->cutter->GetOutputPort());
-  pipeline->cutter->SetCutFunction(pipeline->plane);
-  pipeline->cutter->SetGenerateCutScalars(0);
-  pipeline->actor->SetVisibility(0);
+  pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
+  pipeline->Transformer->SetInputConnection(pipeline->Cutter->GetOutputPort());
+  pipeline->Cutter->SetCutFunction(pipeline->Plane);
+  pipeline->Cutter->SetGenerateCutScalars(0);
+  pipeline->Actor->SetVisibility(0);
 
   // Add actor to Renderer and local cache
-  this->External->GetRenderer()->AddActor( pipeline->actor );
+  this->External->GetRenderer()->AddActor( pipeline->Actor );
   this->DisplayPipelines.insert( std::make_pair(displayNode, pipeline) );
 
   // Update cached matrices. Calls UpdateDisplayNodePipeline
@@ -326,7 +326,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
   // Update visibility
   bool visible = this->IsVisible(displayNode);
-  pipeline->actor->SetVisibility(visible);
+  pipeline->Actor->SetVisibility(visible);
 
   if (visible)
     {
@@ -337,7 +337,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       {
       return;
       }
-    pipeline->cutter->SetInput(polyData);
+    pipeline->Cutter->SetInput(polyData);
 
     // Update transform matrices
 
@@ -348,25 +348,25 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 
     //    Set Plane Transform
     tempMat1->Identity();
-    tempMat1->DeepCopy(pipeline->nodeToWorld);
+    tempMat1->DeepCopy(pipeline->NodeToWorld);
     tempMat1->Invert();
     vtkMatrix4x4::Multiply4x4(tempMat1, this->SliceXYToRAS, tempMat2);
-    this->SetSlicePlaneFromMatrix(tempMat2, pipeline->plane);
-    pipeline->plane->Modified();
+    this->SetSlicePlaneFromMatrix(tempMat2, pipeline->Plane);
+    pipeline->Plane->Modified();
 
     //    Set PolyData Transform
     tempMat1->DeepCopy(this->SliceXYToRAS);
     tempMat1->Invert();
     vtkMatrix4x4::Multiply4x4(tempMat1,
-                              pipeline->nodeToWorld, tempMat2);
-    pipeline->transformToSlice->SetMatrix(tempMat2);
-    pipeline->transformToSlice->Modified();
+                              pipeline->NodeToWorld, tempMat2);
+    pipeline->TransformToSlice->SetMatrix(tempMat2);
+    pipeline->TransformToSlice->Modified();
 
     // Update pipeline actor
-    vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->actor);
+    vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
       actor->GetMapper());
-    mapper->SetInputConnection( pipeline->transformer->GetOutputPort() );
+    mapper->SetInputConnection( pipeline->Transformer->GetOutputPort() );
     mapper->SetLookupTable( displayNode->GetColorNode() ?
                             displayNode->GetColorNode()->GetScalarsToColors() : 0);
     mapper->SetScalarRange(modelDisplayNode->GetScalarRange());
