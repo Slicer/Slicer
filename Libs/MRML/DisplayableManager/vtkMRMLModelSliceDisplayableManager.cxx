@@ -33,6 +33,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkEventBroker.h>
 #include <vtkMatrix4x4.h>
+#include <vtkNew.h>
 #include <vtkPlane.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
@@ -198,20 +199,22 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* outMat)
 {
-  vtkMatrix4x4* nodeMatrixToWorld = vtkMatrix4x4::New();
+  vtkNew<vtkMatrix4x4> nodeMatrixToWorld;
   nodeMatrixToWorld->Identity();
 
   if (!node || !outMat)
+    {
     return;
+    }
 
   vtkMRMLTransformNode* tnode =
     node->GetParentTransformNode();
   if (tnode != 0 && tnode->IsLinear())
     {
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
-    lnode->GetMatrixTransformToWorld(nodeMatrixToWorld);
+    lnode->GetMatrixTransformToWorld(nodeMatrixToWorld.GetPointer());
     }
-  outMat->DeepCopy(nodeMatrixToWorld);
+  outMat->DeepCopy(nodeMatrixToWorld.GetPointer());
 }
 
 //---------------------------------------------------------------------------
@@ -447,15 +450,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::ClearDisplayableNodes()
 {
   // Remove all DisplayableNodes from DisplayableManager
-
-  vtkMRMLScene* scene = this->External->GetMRMLScene();
-  if (!scene)
-    return;
-
   PipelinesCacheType::iterator it;
   for (it = this->DisplayPipelines.begin();
        it != this->DisplayPipelines.end();
-       it = this->DisplayPipelines.begin())
+       ++it)
     {
     this->RemoveDisplayNode(it->first);
     }
