@@ -205,8 +205,13 @@ void qSlicerVolumeRenderingSettingsPanel
   QObject::connect(d->RenderingMethodComboBox, SIGNAL(currentIndexChanged(int)),
                    this, SLOT(onDefaultRenderingMethodChanged(int)),Qt::UniqueConnection);
 
+  const char* defaultRenderingMethod = d->VolumeRenderingLogic->GetDefaultRenderingMethod();
+  if (defaultRenderingMethod == 0)
+    {
+    defaultRenderingMethod = "vtkMRMLCPURayCastVolumeRenderingDisplayNode";
+    }
   int defaultRenderingMethodIndex = d->RenderingMethodComboBox->findData(
-    QString(d->VolumeRenderingLogic->GetDefaultRenderingMethod()));
+    QString(defaultRenderingMethod));
   d->RenderingMethodComboBox->setCurrentIndex(defaultRenderingMethodIndex);
 }
 

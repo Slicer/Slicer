@@ -138,9 +138,9 @@ void qSlicerVolumeRenderingModule::setup()
     {
     qSlicerVolumeRenderingSettingsPanel* panel =
       new qSlicerVolumeRenderingSettingsPanel;
-    panel->setVolumeRenderingLogic(volumeRenderingLogic);
     qSlicerApplication::application()->settingsDialog()->addPanel(
       "Volume rendering", panel);
+    panel->setVolumeRenderingLogic(volumeRenderingLogic);
     }
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();

@@ -56,7 +56,9 @@ public:
   void setGPUMemory(int gpuMemory);
 
   QString defaultRenderingMethod()const;
+public slots:
   void setDefaultRenderingMethod(const QString& method);
+
 signals:
   void gpuMemoryChanged(int);
   void defaultRenderingMethodChanged(const QString&);
