@@ -63,12 +63,12 @@ class vtkMRMLModelSliceDisplayableManager::vtkInternal
 public:
   struct Pipeline
     {
-    vtkMatrix4x4* NodeToWorld;
-    vtkTransform* TransformToSlice;
-    vtkTransformPolyDataFilter* Transformer;
-    vtkPlane* Plane;
-    vtkCutter* Cutter;
-    vtkProp* Actor;
+    vtkSmartPointer<vtkMatrix4x4> NodeToWorld;
+    vtkSmartPointer<vtkTransform> TransformToSlice;
+    vtkSmartPointer<vtkTransformPolyDataFilter> Transformer;
+    vtkSmartPointer<vtkPlane> Plane;
+    vtkSmartPointer<vtkCutter> Cutter;
+    vtkSmartPointer<vtkProp> Actor;
     };
 
   typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
@@ -107,8 +107,8 @@ public:
   ~vtkInternal();
 
 private:
-  vtkMatrix4x4* SliceXYToRAS;
-  vtkMRMLSliceNode* SliceNode;
+  vtkSmartPointer<vtkMatrix4x4> SliceXYToRAS;
+  vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
   vtkMRMLModelSliceDisplayableManager* External;
 };
 
@@ -118,8 +118,7 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::vtkInternal(vtkMRMLModelSliceDisplayableManager* external)
 {
   this->External = external;
-  this->SliceNode = 0;
-  this->SliceXYToRAS = vtkMatrix4x4::New();
+  this->SliceXYToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
   this->SliceXYToRAS->Identity();
 }
 
@@ -127,8 +126,6 @@ vtkMRMLModelSliceDisplayableManager::vtkInternal
 vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::~vtkInternal()
 {
-  this->SliceNode = 0;
-  this->SliceXYToRAS->Delete();
   this->ClearDisplayableNodes();
 }
 
@@ -156,7 +153,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::SetSliceNode(vtkMRMLSliceNode* sliceNode)
 {
   if (!sliceNode || this->SliceNode == sliceNode)
+    {
     return;
+    }
   this->SliceNode = sliceNode;
   this->UpdateSliceNode();
 }
@@ -247,38 +246,33 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     }
   const Pipeline* pipeline = actorsIt->second;
   this->External->GetRenderer()->RemoveActor(pipeline->Actor);
-  pipeline->Actor->Delete();
-  pipeline->Cutter->Delete();
-  pipeline->Plane->Delete();
-  pipeline->NodeToWorld->Delete();
-  pipeline->TransformToSlice->Delete();
-  pipeline->Transformer->Delete();
   delete pipeline;
   this->DisplayPipelines.erase(actorsIt);
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::AddDisplayNode(vtkMRMLDisplayableNode* mNode, vtkMRMLDisplayNode* displayNode)
 {
   if (!mNode || !displayNode)
+    {
     return;
+    }
 
-  vtkActor2D* actor = vtkActor2D::New();
+  vtkNew<vtkActor2D> actor;
   if (displayNode->IsA("vtkMRMLModelDisplayNode"))
     {
-    vtkSmartPointer<vtkPolyDataMapper2D> mapper =
-      vtkSmartPointer<vtkPolyDataMapper2D>::New();
-    actor->SetMapper( mapper );
+    actor->SetMapper( vtkNew<vtkPolyDataMapper2D>().GetPointer() );
     }
 
   // Create pipeline
   Pipeline* pipeline = new Pipeline();
-  pipeline->Actor = actor;
-  pipeline->Cutter = vtkCutter::New();
-  pipeline->TransformToSlice = vtkTransform::New();
-  pipeline->NodeToWorld = vtkMatrix4x4::New();
-  pipeline->Transformer = vtkTransformPolyDataFilter::New();
-  pipeline->Plane = vtkPlane::New();
+  pipeline->Actor = actor.GetPointer();
+  pipeline->Cutter = vtkSmartPointer<vtkCutter>::New();
+  pipeline->TransformToSlice = vtkSmartPointer<vtkTransform>::New();
+  pipeline->NodeToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  pipeline->Transformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  pipeline->Plane = vtkSmartPointer<vtkPlane>::New();
 
   // Set up pipeline
   pipeline->Transformer->SetTransform(pipeline->TransformToSlice);
@@ -295,6 +289,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   this->UpdateDisplayableTransforms(mNode);
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UpdateDisplayNode(vtkMRMLDisplayNode* displayNode)
 {
@@ -302,7 +297,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   //   otherwise, add as new node
 
   if (!displayNode)
+    {
     return;
+    }
   PipelinesCacheType::iterator it;
   it = this->DisplayPipelines.find(displayNode);
   if (it != this->DisplayPipelines.end())
@@ -315,6 +312,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     }
 }
 
+//---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
 {
@@ -325,7 +323,6 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     return;
     }
-
 
   // Update visibility
   bool visible = this->IsVisible(displayNode);
@@ -527,7 +524,9 @@ void vtkMRMLModelSliceDisplayableManager
   // Remove single DisplayableNode
 
   if (!node)
+    {
     return;
+    }
 
   std::set<vtkMRMLDisplayNode *> dnodes = this->Internal->ModelToDisplayNodes[node];
   std::set<vtkMRMLDisplayNode *>::iterator diter;
@@ -555,7 +554,9 @@ void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if ( node && (!node->IsA("vtkMRMLModelNode")) && (!node->IsA("vtkMRMLModelDisplayNode")) )
+    {
     return;
+    }
 
   vtkMRMLDisplayableNode* modelNode = NULL;
   vtkMRMLDisplayNode* displayNode = NULL;
@@ -662,11 +663,9 @@ void vtkMRMLModelSliceDisplayableManager::OnMRMLSceneEndBatchProcess()
   this->SetUpdateFromMRMLRequested(1);
 }
 
-
 //---------------------------------------------------------------------------
 void vtkMRMLModelSliceDisplayableManager::Create()
 {
   this->Internal->SetSliceNode(this->GetMRMLSliceNode());
   this->SetUpdateFromMRMLRequested(1);
 }
-
