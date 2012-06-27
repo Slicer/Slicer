@@ -341,7 +341,7 @@
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget" command="popupOpen" arguments="true"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/ForegroundComboBox" command="currentNodeChanged" arguments="vtkMRMLDiffusionTensorVolumeNode2"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/ForegroundOpacitySlider/DoubleSliderPopup" command="popupOpen" arguments="true"/>
-        <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/ForegroundOpacitySlider/SpinBox" command="set_int" arguments="0.5"/>
+        <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/ForegroundOpacitySlider/SpinBox" command="set_double" arguments="0.5"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget" command="popupOpen" arguments="true"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/ForegroundComboBox" command="currentNodeChanged" arguments="None"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/BackgroundComboBox" command="currentNodeChanged" arguments="vtkMRMLDiffusionTensorVolumeNode2"/>
