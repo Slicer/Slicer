@@ -23,11 +23,11 @@
 
 // Qt includes
 #include <QTreeView>
-#include <QStyledItemDelegate>
+//#include <QStyledItemDelegate>
 class QShowEvent;
 
 // CTK includes
-#include <ctkPimpl.h>
+#include <ctkVTKObject.h>
 
 // MRMLWidgets includes
 #include "qMRMLSortFilterProxyModel.h"
@@ -38,20 +38,56 @@ class qMRMLTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
 
-// TODO: Rename to qMRMLSceneTreeView
+/// \todo Rename to qMRMLSceneTreeView
 class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 {
   Q_OBJECT
   QVTK_OBJECT
+  /// This property controls what type of scene representation 
+  /// (which qMRMLSceneModel implementation/subclass)is used to populate
+  /// the nodes of the scene.
+  /// Some built-in model types are available :
+  /// - "" -> qMRMLSceneModel
+  /// - "Transform" -> qMRMLSceneTransformModel
+  /// - "Displayable" -> qMRMLSceneDisplayableModel
+  /// - "ModelHierarchy" -> qMRMLSceneModelHierarchyModel
+  /// Transform by default
+  /// \sa setSceneModel()
   Q_PROPERTY(QString sceneModelType READ sceneModelType WRITE setSceneModelType)
   /// This property controls whether to actively listen to the nodes
   /// to synchronize their representation. As it can be time consuming, you
   /// can disable it if you want a lazy update.
   /// True by default.
   Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  /// This property controls which node types are visible in the view.
+  /// This behaves as a filter, the nodes that have a type not included in the
+  /// list will be hidden.
+  /// For example, a value of "vtkMRMLModelHierarchyNode", "vtkMRMLModelNode"
+  /// will show the model nodes. When dealing with hierarchies, please note
+  /// that the node type of the parents should not be filtered out (should
+  /// be included in nodeTypes) to ensure the children are visible.
+  /// All nodes are visible by default (QStringList()).
+  /// \sa qMRMLSortFilterProxyModel::nodeTypes
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
+  /// This property controls whether the list auto resize to fit its size
+  /// to show the number indexes without scrollbar.
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
+  /// This property controls whether the "Rename" context menu entry is visible
+  /// Visible by default
+  /// \sa deleteMenuActionVisible, editMenuActionVisible, prependNodeMenuAction()
+  Q_PROPERTY(bool renameMenuActionVisible READ isRenameMenuActionVisible WRITE setRenameMenuActionVisible)
+  /// This property controls whether the "Delete" context menu entry is visible
+  /// Visible by default
+  /// \sa renameMenuActionVisible, editMenuActionVisible, prependNodeMenuAction()
+  Q_PROPERTY(bool deleteMenuActionVisible READ isDeleteMenuActionVisible WRITE setDeleteMenuActionVisible)
+  /// This property controls whether the "Edit properties..." context menu entry is visible
+  /// Hidden by default
+  /// \sa renameMenuActionVisible, deleteMenuActionVisible, prependNodeMenuAction()
   Q_PROPERTY(bool editMenuActionVisible READ isEditMenuActionVisible WRITE setEditMenuActionVisible)
+  /// This property controls whether nodes with the property
+  /// vtkMRMLNode::HideFromEditors set to true are visible in the view.
+  /// False by default (only nodes with HideFromEditors = 0 are visible)
+  /// \sa vtkMRMLNode::GetHideFromEditors()
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
 
 public:
@@ -61,10 +97,15 @@ public:
   virtual ~qMRMLTreeView();
 
   vtkMRMLScene* mrmlScene()const;
-  
+
+  /// Return a pointer to the current node (not necessarilly selected),
+  /// 0 if no node is current
+  /// \sa QItemSelectionModel::currentIndex(), QItemSelectionModel::selectedIndexes()
   vtkMRMLNode* currentNode()const;
 
-  /// Could be Transform, Displayable, ModelHierarchy or ""
+  /// Could be "", "Transform", "Displayable", "ModelHierarchy" or the type
+  /// associated with the scene model added with qMRMLTreeView::setSceneModel()
+  /// \sa setSceneModel()
   QString sceneModelType()const;
 
   /// \sa qMRMLSceneModel::setListenNodeModifiedEvent
@@ -74,22 +115,38 @@ public:
 
   /// Customize the model
   void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);
-  
+
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
   /// vtkMRMLTransformNode
   QStringList nodeTypes()const;
   void setNodeTypes(const QStringList& nodeTypes);
 
+  /// Show/Hide the "Rename" menu item on right context menu
+  /// Visible by default
+  bool isRenameMenuActionVisible()const;
+  void setRenameMenuActionVisible(bool show);
+
+  /// Show/Hide the "Delete" menu item on right context menu
+  /// Visible by default
+  bool isDeleteMenuActionVisible()const;
+  void setDeleteMenuActionVisible(bool show);
+
   /// Show/Hide the "Edit properties..." menu item on right context menu
+  /// Hidden by default
   bool isEditMenuActionVisible()const;
   void setEditMenuActionVisible(bool show);
-  
+
   /// Add a custom QAction to add into the context menu on a right click
+  /// \sa prependNodeMenuAction()
   void appendNodeMenuAction(QAction* action);
+
+  /// \sa prependSceneMenuAction(), appendNodeMenuAction()
   void prependNodeMenuAction(QAction* action);
+
+  /// \sa prependNodeMenuAction()
   void prependSceneMenuAction(QAction* action);
-  
+
   /// Remove action from the "NodeMenu"
   void removeNodeMenuAction(QAction* action);
 

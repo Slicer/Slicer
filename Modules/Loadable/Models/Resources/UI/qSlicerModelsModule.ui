@@ -46,7 +46,13 @@
      <property name="listenNodeModifiedEvent">
       <bool>true</bool>
      </property>
-     <property name="nodeTypes">
+      <property name="renameMenuActionVisible">
+        <bool>false</bool>
+      </property>
+      <property name="deleteMenuActionVisible">
+        <bool>false</bool>
+      </property>
+      <property name="nodeTypes">
       <stringlist>
        <string>vtkMRMLModelHierarchyNode</string>
        <string>vtkMRMLModelNode</string>

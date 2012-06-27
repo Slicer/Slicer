@@ -52,6 +52,8 @@ public:
   mutable QSize              TreeViewSizeHint;
 
   QMenu*                     NodeMenu;
+  QAction*                   RenameAction;
+  QAction*                   DeleteAction;
   QAction*                   EditAction;
   QMenu*                     SceneMenu;
 

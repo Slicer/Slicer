@@ -52,6 +52,8 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->FitSizeToVisibleIndexes = true;
   this->TreeViewSizeHint = QSize();
   this->NodeMenu = 0;
+  this->RenameAction = 0;
+  this->DeleteAction = 0;
   this->EditAction = 0;
   this->SceneMenu = 0;
 }
@@ -91,17 +93,17 @@ void qMRMLTreeViewPrivate::init()
   this->NodeMenu->setObjectName("nodeMenuTreeView");
 
   // rename node
-  QAction* renameAction =
+  this->RenameAction =
     new QAction(qMRMLTreeView::tr("Rename"),this->NodeMenu);
-  this->NodeMenu->addAction(renameAction);
-  QObject::connect(renameAction, SIGNAL(triggered()),
+  this->NodeMenu->addAction(this->RenameAction);
+  QObject::connect(this->RenameAction, SIGNAL(triggered()),
                    q, SLOT(renameCurrentNode()));
 
   // delete node
-  QAction* deleteAction =
+  this->DeleteAction =
     new QAction(qMRMLTreeView::tr("Delete"),this->NodeMenu);
-  this->NodeMenu->addAction(deleteAction);
-  QObject::connect(deleteAction, SIGNAL(triggered()),
+  this->NodeMenu->addAction(this->DeleteAction);
+  QObject::connect(this->DeleteAction, SIGNAL(triggered()),
                    q, SLOT(deleteCurrentNode()));
   // EditAction is hidden by default
   this->EditAction =
@@ -345,6 +347,50 @@ QStringList qMRMLTreeView::nodeTypes()const
 void qMRMLTreeView::setNodeTypes(const QStringList& _nodeTypes)
 {
   this->sortFilterProxyModel()->setNodeTypes(_nodeTypes);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLTreeView::isRenameMenuActionVisible()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->NodeMenu->actions().contains(d->RenameAction);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setRenameMenuActionVisible(bool show)
+{
+  Q_D(qMRMLTreeView);
+  if (show)
+    {
+    // Prepend the action in the menu
+    this->prependNodeMenuAction(d->RenameAction);
+    }
+  else
+    {
+    d->NodeMenu->removeAction(d->RenameAction);
+    }
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLTreeView::isDeleteMenuActionVisible()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->NodeMenu->actions().contains(d->DeleteAction);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setDeleteMenuActionVisible(bool show)
+{
+  Q_D(qMRMLTreeView);
+  if (show)
+    {
+    // Prepend the action in the menu
+    this->prependNodeMenuAction(d->DeleteAction);
+    }
+  else
+    {
+    d->NodeMenu->removeAction(d->DeleteAction);
+    }
 }
 
 //--------------------------------------------------------------------------
