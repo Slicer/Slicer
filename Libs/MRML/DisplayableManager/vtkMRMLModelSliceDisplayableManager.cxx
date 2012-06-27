@@ -78,7 +78,6 @@ public:
 
   // Transforms
   void UpdateDisplayableTransforms(vtkMRMLDisplayableNode *node);
-  void SetPipelineTransform(vtkMRMLDisplayNode *displayNode, Pipeline* pipeline, vtkMatrix4x4 *matrix);
   void GetNodeMatrixToWorld(vtkMRMLTransformableNode* node, vtkMatrix4x4* matrixOut);
 
   // Slice Node
