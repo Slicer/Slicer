@@ -15,31 +15,30 @@
 #include "vtkSlicerTractographyFiducialSeedingLogic.h"
 
 // MRML includes
-#include <vtkMRMLFiberBundleDisplayNode.h>
-#include <vtkMRMLDiffusionTensorVolumeNode.h>
-#include <vtkMRMLScalarVolumeNode.h>
-#include <vtkMRMLAnnotationHierarchyNode.h>
 #include <vtkMRMLAnnotationControlPointsNode.h>
 #include <vtkMRMLAnnotationFiducialNode.h>
+#include <vtkMRMLAnnotationHierarchyNode.h>
+#include <vtkMRMLDiffusionTensorVolumeNode.h>
+#include <vtkMRMLFiberBundleDisplayNode.h>
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleStorageNode.h>
+#include <vtkMRMLScalarVolumeNode.h>
+#include "vtkMRMLTractographyFiducialSeedingNode.h"
 #include <vtkMRMLTransformNode.h>
 
-// VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkSeedTracts.h>
-#include <vtkMath.h>
-#include <vtkPointData.h>
-#include <vtkMaskPoints.h>
-#include <vtkImageChangeInformation.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageCast.h>
+// vtkTeem includes
 #include <vtkDiffusionTensorMathematics.h>
+
+// VTK includes
+#include <vtkImageCast.h>
+#include <vtkImageChangeInformation.h>
 #include <vtkImageThreshold.h>
-
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
-
-// ITKSYS includes
+#include <vtkMaskPoints.h>
+#include <vtkMath.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkSeedTracts.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <algorithm>
@@ -62,7 +61,6 @@ vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeeding
   this->RemoveMRMLNodesObservers();
   vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
-
 }
 
 //----------------------------------------------------------------------------
@@ -81,7 +79,6 @@ void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent
   this->vtkObject::PrintSelf(os, indent);
 }
 
-
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
 {
@@ -99,11 +96,6 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
     }
 
   this->ProcessMRMLNodesEvents(this->TractographyFiducialSeedingNode, vtkCommand::ModifiedEvent, NULL);
-  //this->RemoveMRMLNodesObservers();
-
-  //this->AddMRMLNodesObservers();
-
-  return;
 }
 
 //----------------------------------------------------------------------------
@@ -124,44 +116,49 @@ void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
     if (annotationHierarchyNode)
       {
       this->ObservedNodes.push_back(NULL);
-      vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-      events->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeAddedEvent );
-      events->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeRemovedEvent );
-      events->InsertNextValue ( vtkMRMLNode::HierarchyModifiedEvent );
+      vtkNew<vtkIntArray> annotationHierarchyNodeEvents;
+      annotationHierarchyNodeEvents->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeAddedEvent );
+      annotationHierarchyNodeEvents->InsertNextValue ( vtkMRMLHierarchyNode::ChildNodeRemovedEvent );
+      annotationHierarchyNodeEvents->InsertNextValue ( vtkMRMLNode::HierarchyModifiedEvent );
 
-      vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
-                                          annotationHierarchyNode, events);
+      vtkSetAndObserveMRMLNodeEventsMacro(
+            this->ObservedNodes[this->ObservedNodes.size()-1],
+            annotationHierarchyNode,
+            annotationHierarchyNodeEvents.GetPointer());
 
-      vtkCollection *annotationNodes = vtkCollection::New();
-      annotationHierarchyNode->GetDirectChildren(annotationNodes);
+      vtkNew<vtkCollection> annotationNodes;
+      annotationHierarchyNode->GetDirectChildren(annotationNodes.GetPointer());
       int nf = annotationNodes->GetNumberOfItems();
       for (int f=0; f<nf; f++)
         {
         vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(
-                                                      annotationNodes->GetItemAsObject(f));   
+                                                      annotationNodes->GetItemAsObject(f));
         if (annotationNode)
           {
           this->ObservedNodes.push_back(NULL);
-          vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
-          events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
-          events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
-          events->InsertNextValue ( vtkCommand::ModifiedEvent );
-          vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
-                                              annotationNode, events);
+
+          vtkNew<vtkIntArray> annotationNodeEvents;
+          annotationNodeEvents->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
+          annotationNodeEvents->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
+          annotationNodeEvents->InsertNextValue ( vtkCommand::ModifiedEvent );
+
+          vtkSetAndObserveMRMLNodeEventsMacro(
+                this->ObservedNodes[this->ObservedNodes.size()-1],
+                annotationNode,
+                annotationNodeEvents.GetPointer());
           }
         }
-      annotationNodes->Delete();
       }
     else if (transformableNode)
       {
       this->ObservedNodes.push_back(NULL);
-      vtkSmartPointer<vtkIntArray> events = vtkSmartPointer<vtkIntArray>::New();
+      vtkNew<vtkIntArray> events;
       events->InsertNextValue ( vtkMRMLTransformableNode::TransformModifiedEvent );
       events->InsertNextValue ( vtkMRMLModelNode::PolyDataModifiedEvent );
       events->InsertNextValue ( vtkMRMLVolumeNode::ImageDataModifiedEvent );
       events->InsertNextValue ( vtkCommand::ModifiedEvent );
-      vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1], 
-                                          transformableNode, events);
+      vtkSetAndObserveMRMLNodeEventsMacro(this->ObservedNodes[this->ObservedNodes.size()-1],
+                                          transformableNode, events.GetPointer());
       }
     }
   else
@@ -183,9 +180,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::IsObservedNode(vtkMRMLNode *node)
 void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLTransformableNode *transformableNode,
-                                                            int stoppingMode, 
-                                                            double stoppingValue, 
-                                                            double stoppingCurvature, 
+                                                            int stoppingMode,
+                                                            double stoppingValue,
+                                                            double stoppingCurvature,
                                                             double integrationStepLength,
                                                             double minPathLength,
                                                             double regionSize, double sampleStep,
@@ -198,79 +195,78 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
   //2. Set Up matrices
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
   vtkMRMLTransformNode* fxformNode = transformableNode->GetParentTransformNode();
-  vtkMatrix4x4* transformVolumeToFiducial = vtkMatrix4x4::New();
+  vtkNew<vtkMatrix4x4> transformVolumeToFiducial;
   transformVolumeToFiducial->Identity();
   if (fxformNode != NULL )
     {
-    fxformNode->GetMatrixTransformToNode(vxformNode, transformVolumeToFiducial);
-    } 
-  else if (vxformNode != NULL ) 
+    fxformNode->GetMatrixTransformToNode(vxformNode, transformVolumeToFiducial.GetPointer());
+    }
+  else if (vxformNode != NULL )
     {
-    vxformNode->GetMatrixTransformToNode(fxformNode, transformVolumeToFiducial);
+    vxformNode->GetMatrixTransformToNode(fxformNode, transformVolumeToFiducial.GetPointer());
     transformVolumeToFiducial->Invert();
     }
-  vtkTransform *transFiducial = vtkTransform::New();
+  vtkNew<vtkTransform> transFiducial;
   transFiducial->Identity();
   transFiducial->PreMultiply();
-  transFiducial->SetMatrix(transformVolumeToFiducial);
+  transFiducial->SetMatrix(transformVolumeToFiducial.GetPointer());
 
-  vtkMatrix4x4 *mat = vtkMatrix4x4::New();
-  volumeNode->GetRASToIJKMatrix(mat);
-  
-  vtkMatrix4x4 *TensorRASToIJK = vtkMatrix4x4::New();
-  TensorRASToIJK->DeepCopy(mat);
-  mat->Delete();
+  vtkNew<vtkMatrix4x4> mat;
+  volumeNode->GetRASToIJKMatrix(mat.GetPointer());
 
+  vtkNew<vtkMatrix4x4> tensorRASToIJK;
+  tensorRASToIJK->DeepCopy(mat.GetPointer());
 
-  vtkTransform *trans = vtkTransform::New();
+  vtkNew<vtkTransform> trans;
   trans->Identity();
   trans->PreMultiply();
-  trans->SetMatrix(TensorRASToIJK);
+  trans->SetMatrix(tensorRASToIJK.GetPointer());
   // Trans from IJK to RAS
   trans->Inverse();
   // Take into account spacing to compute Scaled IJK
   trans->Scale(1/sp[0],1/sp[1],1/sp[2]);
   trans->Inverse();
-  
+
   //Set Transformation to seeding class
-  seed->SetWorldToTensorScaledIJK(trans);
-  
-  vtkMatrix4x4 *TensorRASToIJKRotation = vtkMatrix4x4::New();
-  TensorRASToIJKRotation->DeepCopy(TensorRASToIJK);
-  
+  seed->SetWorldToTensorScaledIJK(trans.GetPointer());
+
+  vtkNew<vtkMatrix4x4> tensorRASToIJKRotation;
+  tensorRASToIJKRotation->DeepCopy(tensorRASToIJK.GetPointer());
+
   //Set Translation to zero
   for (int i=0;i<3;i++)
     {
-    TensorRASToIJKRotation->SetElement(i,3,0);
+    tensorRASToIJKRotation->SetElement(i,3,0);
     }
   //Remove scaling in rasToIjk to make a real roation matrix
   double col[3];
-  for (int jjj = 0; jjj < 3; jjj++) 
+  for (int jjj = 0; jjj < 3; jjj++)
     {
     for (int iii = 0; iii < 3; iii++)
       {
-      col[iii]=TensorRASToIJKRotation->GetElement(iii,jjj);
+      col[iii]=tensorRASToIJKRotation->GetElement(iii,jjj);
       }
     vtkMath::Normalize(col);
     for (int iii = 0; iii < 3; iii++)
       {
-      TensorRASToIJKRotation->SetElement(iii,jjj,col[iii]);
-     }  
+      tensorRASToIJKRotation->SetElement(iii,jjj,col[iii]);
+     }
   }
-  TensorRASToIJKRotation->Invert();
-  seed->SetTensorRotationMatrix(TensorRASToIJKRotation);  
+  tensorRASToIJKRotation->Invert();
+  seed->SetTensorRotationMatrix(tensorRASToIJKRotation.GetPointer());
 
   //ROI comes from tensor, IJKToRAS is the same
   // as the tensor
-  vtkTransform *trans2 = vtkTransform::New();
+  vtkNew<vtkTransform> trans2;
   trans2->Identity();
-  trans2->SetMatrix(TensorRASToIJK);
+  trans2->SetMatrix(tensorRASToIJK.GetPointer());
   trans2->Inverse();
-  seed->SetROIToWorld(trans2);
-  
+  seed->SetROIToWorld(trans2.GetPointer());
+
   seed->UseVtkHyperStreamlinePoints();
-  vtkHyperStreamlineDTMRI *streamer=vtkHyperStreamlineDTMRI::New();
-  seed->SetVtkHyperStreamlinePointsSettings(streamer);
+
+  vtkNew<vtkHyperStreamlineDTMRI> streamer;
+  seed->SetVtkHyperStreamlinePointsSettings(streamer.GetPointer());
   seed->SetMinimumPathLength(minPathLength);
 
   if ( stoppingMode == 0 )
@@ -278,11 +274,11 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
      streamer->SetStoppingModeToLinearMeasure();
     }
   else if ( stoppingMode == 1 )
-    {  
+    {
     streamer->SetStoppingModeToFractionalAnisotropy();
     }
   else if ( stoppingMode == 2 )
-    {  
+    {
     streamer->SetStoppingModeToPlanarMeasure();
     }
 
@@ -293,14 +289,14 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
 
   // Temp fix to provide a scalar
   seed->GetInputTensorField()->GetPointData()->SetScalars(volumeNode->GetImageData()->GetPointData()->GetScalars());
-  
+
   vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(transformableNode);
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(transformableNode);
 
 
   // if annotation
   if (annotationNode && annotationNode->GetNumberOfControlPoints() &&
-     (!seedSelectedFiducials || (seedSelectedFiducials && annotationNode->GetSelected())) ) 
+     (!seedSelectedFiducials || (seedSelectedFiducials && annotationNode->GetSelected())) )
     {
     for (int i=0; i < annotationNode->GetNumberOfControlPoints(); i++)
       {
@@ -323,7 +319,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
         }
       }
     }
-  else if (modelNode) 
+  else if (modelNode)
     {
     this->MaskPoints->SetInput(modelNode->GetPolyData());
     this->MaskPoints->SetRandomMode(1);
@@ -337,35 +333,21 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
       double *xyzf = mpoly->GetPoint(f);
 
       double *xyz = transFiducial->TransformDoublePoint(xyzf);
-           
+
       //Run the thing
       seed->SeedStreamlineFromPoint(xyz[0], xyz[1], xyz[2]);
       }
     }
-
-  // Delete everything: Still trying to figure out what is going on
-
-  TensorRASToIJK->Delete();
-  TensorRASToIJKRotation->Delete();
-  trans2->Delete();
-  trans->Delete();
-  streamer->Delete();
-  transformVolumeToFiducial->Delete();
-  transFiducial->Delete();
-
 }
-
-
-
 
 //----------------------------------------------------------------------------
 int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyFiducialSeedingNode *parametersNode,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLNode *seedingyNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
-                                                            int stoppingMode, 
-                                                            double stoppingValue, 
-                                                            double stoppingCurvature, 
+                                                            int stoppingMode,
+                                                            double stoppingValue,
+                                                            double stoppingCurvature,
                                                             double integrationStepLength,
                                                             double minPathLength,
                                                             double regionSize, double sampleStep,
@@ -383,12 +365,12 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       }
     return 0;
     }
-    
-  vtkPolyData *oldPoly = fiberNode->GetPolyData();
-   
-  vtkSeedTracts *seed = vtkSeedTracts::New();
 
-  
+  vtkPolyData *oldPoly = fiberNode->GetPolyData();
+
+  vtkNew<vtkSeedTracts> seed;
+
+
   //1. Set Input
 
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
@@ -411,7 +393,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
   //Do scale IJK
   double sp[3];
   volumeNode->GetSpacing(sp);
-  vtkImageChangeInformation *ici = vtkImageChangeInformation::New();
+  vtkNew<vtkImageChangeInformation> ici;
   ici->SetOutputSpacing(sp);
   ici->SetInput(volumeNode->GetImageData());
   ici->GetOutput()->Update();
@@ -420,24 +402,24 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
 
   if (labelMapNode)
     {
-    
-    this->CreateTractsForLabelMap(seed, volumeNode, labelMapNode,
+
+    this->CreateTractsForLabelMap(seed.GetPointer(), volumeNode, labelMapNode,
                                   parametersNode->GetROILabel(),
                                   parametersNode->GetUseIndexSpace(),
                                   parametersNode->GetSeedSpacing(),
                                   parametersNode->GetRandomGrid(),
                                   parametersNode->GetLinearMeasureStart(),
-                                  parametersNode->GetStoppingMode(), 
-                                  parametersNode->GetStoppingValue(), 
-                                  parametersNode->GetStoppingCurvature(), 
+                                  parametersNode->GetStoppingMode(),
+                                  parametersNode->GetStoppingValue(),
+                                  parametersNode->GetStoppingCurvature(),
                                   parametersNode->GetIntegrationStep(),
                                   parametersNode->GetMinimumPathLength(),
                                   parametersNode->GetMaximumPathLength());
     }
   else if (annotationListNode) // loop over annotation nodes
     {
-    vtkCollection *annotationNodes = vtkCollection::New();
-    annotationListNode->GetDirectChildren(annotationNodes);
+    vtkNew<vtkCollection> annotationNodes;
+    annotationListNode->GetDirectChildren(annotationNodes.GetPointer());
     int nf = annotationNodes->GetNumberOfItems();
     for (int f=0; f<nf; f++)
       {
@@ -449,45 +431,42 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
         }
 
 
-      this->CreateTractsForOneSeed(seed, volumeNode, annotationNode, 
-                                   stoppingMode, stoppingValue, stoppingCurvature, 
-                                   integrationStepLength, minPathLength, regionSize, 
+      this->CreateTractsForOneSeed(seed.GetPointer(), volumeNode, annotationNode,
+                                   stoppingMode, stoppingValue, stoppingCurvature,
+                                   integrationStepLength, minPathLength, regionSize,
                                    sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
 
       }
-      annotationNodes->Delete();
     }
   else if (annotationNode) // loop over points in the models
     {
-    this->CreateTractsForOneSeed(seed, volumeNode, annotationNode,
-                                 stoppingMode, stoppingValue, stoppingCurvature, 
-                                 integrationStepLength, minPathLength, regionSize, 
+    this->CreateTractsForOneSeed(seed.GetPointer(), volumeNode, annotationNode,
+                                 stoppingMode, stoppingValue, stoppingCurvature,
+                                 integrationStepLength, minPathLength, regionSize,
                                  sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
 
     }
-
   else if (modelNode) // loop over points in the models
     {
-    this->CreateTractsForOneSeed(seed, volumeNode, modelNode,
-                                 stoppingMode, stoppingValue, stoppingCurvature, 
-                                 integrationStepLength, minPathLength, regionSize, 
+    this->CreateTractsForOneSeed(seed.GetPointer(), volumeNode, modelNode,
+                                 stoppingMode, stoppingValue, stoppingCurvature,
+                                 integrationStepLength, minPathLength, regionSize,
                                  sampleStep, maxNumberOfSeeds, seedSelectedFiducials);
 
     }
-  ici->Delete();
-  
+
   //6. Extra5ct PolyData in RAS
   if( !parametersNode->GetWriteToFile()  )
   {
-    vtkPolyData *outFibers = vtkPolyData::New();
-    
-    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers);
+    vtkNew<vtkPolyData> outFibers;
 
-    fiberNode->SetAndObservePolyData(outFibers);
+    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
+
+    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
 
     //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
     fiberNode->SetSubsamplingRatio(1.);
-    
+
     int newNode = 0;
     vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetTubeDisplayNode();
     if (dnode == NULL || oldPoly == NULL)
@@ -546,38 +525,35 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       }
 
 
-    if (fiberNode->GetStorageNode() == NULL) 
+    if (fiberNode->GetStorageNode() == NULL)
       {
-      vtkMRMLFiberBundleStorageNode *storageNode = vtkMRMLFiberBundleStorageNode::New();
-      fiberNode->GetScene()->AddNode(storageNode);
+      vtkNew<vtkMRMLFiberBundleStorageNode> storageNode;
+      fiberNode->GetScene()->AddNode(storageNode.GetPointer());
       fiberNode->SetAndObserveStorageNodeID(storageNode->GetID());
-      storageNode->Delete();
       }
 
     fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
-   
+
     if (vxformNode != NULL )
-      { 
+      {
       fiberNode->SetAndObserveTransformNodeID(vxformNode->GetID());
-      } 
-    else 
+      }
+    else
       {
       fiberNode->SetAndObserveTransformNodeID(NULL);
       }
   }
 
-  // Delete everything: Still trying to figure out what is going on
-  seed->Delete();
   return 1;
 }
 
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject *caller,
                                                                       unsigned long event,
-                                                                      void *callData) 
+                                                                      void *callData)
 {
 
-  vtkMRMLScene* scene = this->GetMRMLScene(); 
+  vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
     return;
@@ -592,12 +568,12 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject
 
   if (event == vtkMRMLHierarchyNode::ChildNodeAddedEvent ||
       event == vtkMRMLHierarchyNode::ChildNodeRemovedEvent ||
-      event == vtkMRMLNode::HierarchyModifiedEvent || 
+      event == vtkMRMLNode::HierarchyModifiedEvent ||
       event == vtkMRMLTransformableNode::TransformModifiedEvent ||
       event == vtkMRMLModelNode::PolyDataModifiedEvent)
     {
     this->OnMRMLNodeModified(NULL);
-    }    
+    }
   else
     {
     Superclass::ProcessMRMLNodesEvents(caller, event, callData);
@@ -625,7 +601,7 @@ void vtkSlicerTractographyFiducialSeedingLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (node == NULL || !this->IsObservedNode(node))
-    {      
+    {
     return;
     }
   this->OnMRMLNodeModified(node);
@@ -650,17 +626,17 @@ void vtkSlicerTractographyFiducialSeedingLogic
     vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
       this->GetMRMLScene()->GetNodeByID(snode->GetInputVolumeRef()));
   vtkMRMLNode *seedingNode = this->GetMRMLScene()->GetNodeByID(snode->GetInputFiducialRef());
-  vtkMRMLFiberBundleNode *fiberNode = 
+  vtkMRMLFiberBundleNode *fiberNode =
     vtkMRMLFiberBundleNode::SafeDownCast(
       this->GetMRMLScene()->GetNodeByID(snode->GetOutputFiberRef()));
 
-  if(volumeNode == NULL || seedingNode == NULL || fiberNode == NULL) 
+  if(volumeNode == NULL || seedingNode == NULL || fiberNode == NULL)
     {
     return;
     }
-  
-  this->CreateTracts(snode, volumeNode, seedingNode, fiberNode, 
-                     snode->GetStoppingMode(), 
+
+  this->CreateTracts(snode, volumeNode, seedingNode, fiberNode,
+                     snode->GetStoppingMode(),
                      snode->GetStoppingValue(),
                      snode->GetStoppingCurvature(),
                      snode->GetIntegrationStep(),
@@ -676,7 +652,7 @@ void vtkSlicerTractographyFiducialSeedingLogic
 //----------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
 {
-  vtkMRMLScene* scene = this->GetMRMLScene(); 
+  vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
     return;
@@ -689,11 +665,10 @@ void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyFiducialSeedingLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
-  vtkIntArray *events = vtkIntArray::New();
+  vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
-  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
-  events->Delete();
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
 //----------------------------------------------------------------------------
@@ -706,9 +681,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
                                                             double seedSpacing,
                                                             int randomGrid,
                                                             double linearMeasureStart,
-                                                            int stoppingMode, 
-                                                            double stoppingValue, 
-                                                            double stoppingCurvature, 
+                                                            int stoppingMode,
+                                                            double stoppingValue,
+                                                            double stoppingCurvature,
                                                             double integrationStepLength,
                                                             double minPathLength,
                                                             double maxPathLength)
@@ -726,11 +701,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
     }
 
   vtkSmartPointer<vtkImageData> ROI;
-  vtkSmartPointer<vtkImageCast> imageCast = vtkSmartPointer<vtkImageCast>::New();
-  vtkSmartPointer<vtkDiffusionTensorMathematics> math = vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
-  vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
-  vtkSmartPointer<vtkMatrix4x4> ROIRASToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-  
+  vtkNew<vtkImageCast> imageCast;
+  vtkNew<vtkDiffusionTensorMathematics> math;
+  vtkNew<vtkImageThreshold> th;
+  vtkNew<vtkMatrix4x4> ROIRASToIJK;
+
   // 1. Set Input
 
   if (seedingNode->GetImageData())
@@ -756,9 +731,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
     // This will only work if no transform is applied to
     // ROI and tensor volumes.
     //
-    seedingNode->GetRASToIJKMatrix(ROIRASToIJK) ;
-    } 
-  else 
+    seedingNode->GetRASToIJKMatrix(ROIRASToIJK.GetPointer()) ;
+    }
+  else
     {
     math->SetInput(0, volumeNode->GetImageData());
     if ( stoppingMode == 0 )
@@ -766,7 +741,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
       math->SetOperationToLinearMeasure();
       }
     else
-      {  
+      {
       math->SetOperationToFractionalAnisotropy();
       }
     math->Update();
@@ -786,13 +761,13 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
     // since  we have no access to external transforms.
     // This will only work if no transform is applied to
     // ROI and tensor volumes.
-    volumeNode->GetRASToIJKMatrix(ROIRASToIJK) ;
+    volumeNode->GetRASToIJKMatrix(ROIRASToIJK.GetPointer()) ;
   }
 
   // 2. Set Up matrices
-  vtkSmartPointer<vtkMatrix4x4> TensorRASToIJK = vtkSmartPointer<vtkMatrix4x4>::New();
-  
-  volumeNode->GetRASToIJKMatrix(TensorRASToIJK);
+  vtkNew<vtkMatrix4x4> tensorRASToIJK;
+
+  volumeNode->GetRASToIJKMatrix(tensorRASToIJK.GetPointer());
 
   // VTK seeding is in ijk space with voxel scale included.
   // Calculate the matrix that goes from tensor "scaled IJK",
@@ -800,10 +775,10 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   // to our RAS.
   double sp[3];
   volumeNode->GetSpacing(sp);
-  vtkSmartPointer<vtkTransform> trans = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> trans;
   trans->Identity();
   trans->PreMultiply();
-  trans->SetMatrix(TensorRASToIJK);
+  trans->SetMatrix(tensorRASToIJK.GetPointer());
   // Trans from IJK to RAS
   trans->Inverse();
   // Take into account spacing (remove from matrix) to compute Scaled IJK to RAS matrix
@@ -811,7 +786,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   trans->Inverse();
 
   // Set Transformation to seeding class
-  seed->SetWorldToTensorScaledIJK(trans);
+  seed->SetWorldToTensorScaledIJK(trans.GetPointer());
 
   // Rotation part of matrix is only thing tensor is transformed by.
   // This is to transform output tensors into RAS space.
@@ -820,12 +795,12 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   // The following should be replaced with finite strain method
   // rather than assuming rotation part of the matrix according to
   // slicer convention.
-  vtkSmartPointer<vtkMatrix4x4> TensorRASToIJKRotation = vtkSmartPointer<vtkMatrix4x4>::New();
-  TensorRASToIJKRotation->DeepCopy(TensorRASToIJK);
+  vtkNew<vtkMatrix4x4> tensorRASToIJKRotation;
+  tensorRASToIJKRotation->DeepCopy(tensorRASToIJK.GetPointer());
   // Set Translation to zero
   for( int i = 0; i < 3; i++ )
     {
-    TensorRASToIJKRotation->SetElement(i, 3, 0);
+    tensorRASToIJKRotation->SetElement(i, 3, 0);
     }
   // Remove scaling in rasToIjk to make a real rotation matrix
   double col[3];
@@ -833,18 +808,18 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
     {
     for( int iii = 0; iii < 3; iii++ )
       {
-      col[iii] = TensorRASToIJKRotation->GetElement(iii, jjj);
+      col[iii] = tensorRASToIJKRotation->GetElement(iii, jjj);
       }
     vtkMath::Normalize(col);
     for( int iii = 0; iii < 3; iii++ )
       {
-      TensorRASToIJKRotation->SetElement(iii, jjj, col[iii]);
+      tensorRASToIJKRotation->SetElement(iii, jjj, col[iii]);
       }
     }
-  TensorRASToIJKRotation->Invert();
-  seed->SetTensorRotationMatrix(TensorRASToIJKRotation);
+  tensorRASToIJKRotation->Invert();
+  seed->SetTensorRotationMatrix(tensorRASToIJKRotation.GetPointer());
 
-  // vtkSmartPointer<vtkNRRDWriter> iwriter = vtkSmartPointer<vtkNRRDWriter>::New();
+  // vtkNew<vtkNRRDWriter> iwriter;
 
   // 3. Set up ROI (not based on Cl mask), from input now
 
@@ -856,7 +831,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   iwriter->Write();
 
 
-  vtkSmartPointer<vtkDiffusionTensorMathematicsSimple> math = vtkSmartPointer<vtkDiffusionTensorMathematicsSimple>::New();
+  vtkNew<vtkDiffusionTensorMathematicsSimple> math;
   math->SetInput(0, volumeNode->GetImageData());
   // math->SetInput(1, volumeNode->GetImageData());
   math->SetScalarMask(imageCast->GetOutput());
@@ -869,7 +844,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   iwriter->SetFileName("C:/Temp/math.nhdr");
   iwriter->Write();
 
-  vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
+  vtkNew<vtkImageThreshold> th;
   th->SetInput(math->GetOutput());
   th->ThresholdBetween(linearMeasureStart,1);
   th->SetInValue(1);
@@ -884,15 +859,15 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   iwriter->Write();
   **/
 
-  vtkSmartPointer<vtkTransform> trans2 = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> trans2;
   trans2->Identity();
   trans2->PreMultiply();
 
   // no longer assume this ROI is in tensor space
-  // trans2->SetMatrix(TensorRASToIJK);
-  trans2->SetMatrix(ROIRASToIJK);
+  // trans2->SetMatrix(tensorRASToIJK.GetPointer());
+  trans2->SetMatrix(ROIRASToIJK.GetPointer());
   trans2->Inverse();
-  seed->SetROIToWorld(trans2);
+  seed->SetROIToWorld(trans2.GetPointer());
 
 
   // PENDING: Do merging with input ROI
@@ -919,19 +894,19 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
   seed->SetIsotropicSeedingResolution(seedSpacing);
   seed->SetMinimumPathLength(minPathLength);
   seed->UseVtkHyperStreamlinePoints();
-  vtkSmartPointer<vtkHyperStreamlineDTMRI> streamer = vtkSmartPointer<vtkHyperStreamlineDTMRI>::New();
-  seed->SetVtkHyperStreamlinePointsSettings(streamer);
+  vtkNew<vtkHyperStreamlineDTMRI> streamer;
+  seed->SetVtkHyperStreamlinePointsSettings(streamer.GetPointer());
 
   if ( stoppingMode == 0 )
     {
      streamer->SetStoppingModeToLinearMeasure();
     }
   else if ( stoppingMode == 1 )
-    {  
+    {
     streamer->SetStoppingModeToFractionalAnisotropy();
     }
   else if ( stoppingMode == 2 )
-    {  
+    {
     streamer->SetStoppingModeToPlanarMeasure();
     }
 

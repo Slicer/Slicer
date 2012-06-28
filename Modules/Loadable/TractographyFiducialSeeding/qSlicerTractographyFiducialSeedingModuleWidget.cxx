@@ -16,6 +16,9 @@
 #include "qSlicerTractographyFiducialSeedingModuleWidget.h"
 #include "ui_qSlicerTractographyFiducialSeedingModule.h"
 
+// VTK includes
+#include <vtkNew.h>
+
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_TractographyFiducialSeeding
 class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
@@ -54,38 +57,33 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onEnter()
     return;
     }
 
-  vtkMRMLNode *node = 0;
-  vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
-
-  // first check the logic if it has a parameter node
   vtkSlicerTractographyFiducialSeedingLogic* logic =
            vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
   if (!logic)
     {
     return;
     }
-  tnode = logic->GetTractographyFiducialSeedingNode();
-  if (tnode)
+
+  // first check the logic if it has a parameter node
+  if (logic->GetTractographyFiducialSeedingNode())
     {
-    this->setTractographyFiducialSeedingNode(tnode);
+    this->setTractographyFiducialSeedingNode(logic->GetTractographyFiducialSeedingNode());
     }
 
   // if we have a parameter node select it
   if (this->TractographyFiducialSeedingNode == 0)
     {
-    node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+    vtkMRMLNode * node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
     if (node)
       {
-      tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
-      this->setTractographyFiducialSeedingNode(tnode);
+      this->setTractographyFiducialSeedingNode(node);
       return;
       }
     else
       {
-      tnode = vtkMRMLTractographyFiducialSeedingNode::New();
-      this->mrmlScene()->AddNode(tnode);
-      tnode->Delete();
-      this->setTractographyFiducialSeedingNode(tnode);
+      vtkMRMLNode * nodeAdded =
+          this->mrmlScene()->AddNode(vtkNew<vtkMRMLTractographyFiducialSeedingNode>().GetPointer());
+      this->setTractographyFiducialSeedingNode(nodeAdded);
       }
     }
   else
@@ -130,11 +128,11 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onEnter()
   this->mrmlScene()->GetNodesByClass("vtkMRMLFiberBundleNode", nodes);
   if (nodes.size() == 0 && d->FiberNodeSelector->currentNode() == 0)
     {
-    vtkMRMLFiberBundleNode *fnode = vtkMRMLFiberBundleNode::New();
-    this->mrmlScene()->AddNode(fnode);
-    fnode->SetName(std::string(std::string("FiberBundle")).c_str()); //+fiducialName).c_str());
-    fnode->Delete();
-    this->setFiberBundleNode(fnode);
+    vtkMRMLNode * nodeAdded =
+        this->mrmlScene()->AddNode(vtkNew<vtkMRMLFiberBundleNode>().GetPointer());
+    Q_ASSERT(nodeAdded);
+    nodeAdded->SetName("FiberBundle");
+    this->setFiberBundleNode(nodeAdded);
     }
 
   this->updateWidgetFromMRML();
