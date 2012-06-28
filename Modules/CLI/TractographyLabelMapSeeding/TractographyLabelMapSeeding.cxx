@@ -9,6 +9,7 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 #include <vtkITKArchetypeDiffusionTensorImageReaderFile.h>
+#include <vtkITKArchetypeImageSeriesScalarReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkMath.h>
@@ -38,7 +39,7 @@ int main( int argc, char * argv[] )
 
 
     vtkSmartPointer<vtkImageData> ROI;
-    vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader2 = vtkSmartPointer<vtkITKArchetypeImageSeriesReader>::New();
+    vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader> reader2 = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();
     vtkSmartPointer<vtkImageCast> imageCast = vtkSmartPointer<vtkImageCast>::New();
     vtkSmartPointer<vtkDiffusionTensorMathematics> math = vtkSmartPointer<vtkDiffusionTensorMathematics>::New();
     vtkSmartPointer<vtkImageThreshold> th = vtkSmartPointer<vtkImageThreshold>::New();
@@ -46,7 +47,8 @@ int main( int argc, char * argv[] )
 
     if (InputROI.length() > 0)
     {
-      reader2->AddFileName(InputROI.c_str() );
+      reader2->SetArchetype(InputROI.c_str());
+      reader2->SetSingleFile(1);
       reader2->Update();
 
       if( reader2->GetOutput()->GetPointData()->GetScalars() == NULL )
