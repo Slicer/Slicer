@@ -447,13 +447,13 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::ClearDisplayableNodes()
 {
   // Remove all DisplayableNodes from DisplayableManager
-  PipelinesCacheType::iterator it;
-  for (it = this->DisplayPipelines.begin();
-       it != this->DisplayPipelines.end();
-       it = this->DisplayPipelines.begin())
-     {
-     this->RemoveDisplayNode(it->first);
-     }
+  PipelinesCacheType::iterator displayPipelineIt = this->DisplayPipelines.begin();
+  while(displayPipelineIt != this->DisplayPipelines.end())
+    {
+    PipelinesCacheType::iterator displayPipelineItToErase = displayPipelineIt;
+    ++displayPipelineIt;
+    this->RemoveDisplayNode(displayPipelineItToErase->first);
+    }
   assert(this->DisplayPipelines.size() == 0);
   this->ModelToDisplayNodes.clear();
 }
