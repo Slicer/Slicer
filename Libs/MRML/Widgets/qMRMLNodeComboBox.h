@@ -27,14 +27,32 @@
 // qMRML includes
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLWidgetsExport.h"
-
-class vtkMRMLNode;
-class vtkMRMLScene;
-
 class qMRMLNodeFactory;
 class qMRMLNodeComboBoxPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
+// VTK includes
+class vtkMRMLNode;
+class vtkMRMLScene;
+
+/// \class qMRMLNodeComboBox
+/// \brief Combobox that automatically displays all the nodes of the scene that
+/// match filtering criteria.
+///
+/// qMRMLNodeComboBox observes a MRML scene and gets automatically
+/// populated with nodes of the scene that are of type \a nodeTypes,
+/// and that are not hidden from editor (see vtkMRMLNode::GetHideFromEditor())
+/// except if \a showHidden is true.
+/// Sometimes, having no current node can be a valid choice, \a noneEnabled
+/// allows the user to select or not "None" as the current node.
+/// qMRMLNodeComboBox is disabled (grayed out) until a valid scene (not null)
+/// is provided via setMRMLScene(). Setting the scene can be done from the
+/// designer by connecting a mrmlSceneChanged(vtkMRMLScene*) signal with the
+/// slot qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene*).
+/// In addition to the populated nodes, qMRMLNodeComboBox contains menu
+/// items to add, delete, edit or rename the currently selected node. Each item
+/// can be hidden.
+class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
+  : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
@@ -52,7 +70,6 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox : public QWidget
   Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
 
 public:
-  /// Superclass typedef
   typedef QWidget Superclass;
 
   /// Construct an empty qMRMLNodeComboBox with a null scene,
@@ -60,10 +77,13 @@ public:
   explicit qMRMLNodeComboBox(QWidget* parent = 0);
   virtual ~qMRMLNodeComboBox();
 
-  /// Get MRML scene
+  /// Get MRML scene that has been set by setMRMLScene(), there is no scene
+  /// by default (0).
+  /// \sa setMRMLScene
   vtkMRMLScene* mrmlScene()const;
+
   /// Retrieve the sortFilterProxyModel used to filter/sort
-  /// the nodes
+  /// the nodes.
   qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
   /// Set/Get node types to display in the list
@@ -253,6 +273,9 @@ protected:
   QAbstractItemModel* rootModel()const;
 
   void setComboBox(QComboBox* comboBox);
+
+  /// Exposed internal combobox to tweak its behavior such as changing the
+  /// QComboBox view or item delegate.
   QComboBox* comboBox()const;
 
   virtual void changeEvent(QEvent* event);
