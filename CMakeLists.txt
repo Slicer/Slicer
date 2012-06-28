@@ -779,6 +779,7 @@ set(files
   Utilities/Scripts/computeCodeCoverageLocally.sh
   Utilities/Scripts/computeCodeCoverageForOneTest.sh
   Utilities/Scripts/runExperimentalOffScreen.sh
+  Utilities/Scripts/setupSlicerEnvironment.sh
   )
 foreach(f ${files})
   configure_file(

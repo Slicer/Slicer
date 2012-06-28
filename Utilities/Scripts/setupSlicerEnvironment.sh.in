@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if [ -z $SLICER_HOME ]; then
+      echo "Environment variable SLICER_HOME is not defined"
+              exit 1
+fi
+for a in $($SLICER_HOME/Slicer  --launcher-dump-environment | grep -v SLICER_HOME | sed 's/ /:/g;s/^\([A-Z].*\)=\(.*\)/\1=\2:$\1/g;') ; do 
+  eval export $a
+done
+
