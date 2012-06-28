@@ -450,10 +450,10 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   PipelinesCacheType::iterator it;
   for (it = this->DisplayPipelines.begin();
        it != this->DisplayPipelines.end();
-       ++it)
-    {
-    this->RemoveDisplayNode(it->first);
-    }
+       it = this->DisplayPipelines.begin())
+     {
+     this->RemoveDisplayNode(it->first);
+     }
   assert(this->DisplayPipelines.size() == 0);
   this->ModelToDisplayNodes.clear();
 }
