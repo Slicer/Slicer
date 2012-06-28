@@ -68,7 +68,8 @@ void qMRMLModelInfoWidgetPrivate::init()
 {
   Q_Q(qMRMLModelInfoWidget);
   this->setupUi(q);
-  
+  this->ExpandButton->setOrientation(Qt::Vertical);
+  this->ExpandButton->setChecked(false);
   q->setEnabled(this->MRMLModelNode != 0);
 }
 
@@ -134,6 +135,11 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
 
     d->NumberOfPointsSpinBox->setValue(poly->GetNumberOfPoints());
     d->NumberOfCellsSpinBox->setValue(poly->GetNumberOfCells());
+    d->NumberOfVertsValueLabel->setText(QString::number(poly->GetNumberOfVerts()));
+    d->NumberOfLinesValueLabel->setText(QString::number(poly->GetNumberOfLines()));
+    d->NumberOfPolysValueLabel->setText(QString::number(poly->GetNumberOfPolys()));
+    d->NumberOfStripsValueLabel->setText(QString::number(poly->GetNumberOfStrips()));
+    d->MaxCellSizeValueLabel->setText(QString::number(poly->GetMaxCellSize()));
     d->NumberOfPointsScalarsSpinBox->setValue(poly->GetPointData()->GetNumberOfComponents());
     d->NumberOfCellsScalarsSpinBox->setValue(poly->GetCellData()->GetNumberOfComponents());
     }
@@ -144,6 +150,11 @@ void qMRMLModelInfoWidget::updateWidgetFromMRML()
 
     d->NumberOfPointsSpinBox->setValue(0);
     d->NumberOfCellsSpinBox->setValue(0);
+    d->NumberOfVertsValueLabel->setText("0");
+    d->NumberOfLinesValueLabel->setText("0");
+    d->NumberOfPolysValueLabel->setText("0");
+    d->NumberOfStripsValueLabel->setText("0");
+    d->MaxCellSizeValueLabel->setText("0");
     d->NumberOfPointsScalarsSpinBox->setValue(0);
     d->NumberOfCellsScalarsSpinBox->setValue(0);
     }
