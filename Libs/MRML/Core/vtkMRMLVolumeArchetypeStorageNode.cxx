@@ -291,11 +291,12 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     }
     catch (...)
     {
-    vtkErrorMacro("ReadData: Cannot read file, fullName = " << fullName.c_str() << ", number of files listed in the node = " << this->GetNumberOfFileNames() << ", the ITK reader says it was able to read " << reader->GetNumberOfFileNames() << " files, the reader used the archetype file name of " << reader->GetArchetype());
+    std::string reader0thFileName;
     if (reader->GetFileName(0) != NULL)
       {
-      vtkErrorMacro("reader 0th file name = " << reader->GetFileName(0) );
+      reader0thFileName = std::string("\n\treader 0th file name = ") + std::string(reader->GetFileName(0));
       }
+    vtkErrorMacro("ReadData: Cannot read file as a volume of type " << (refNode ? refNode->GetNodeTagName() : "null") << ".\n\tfullName = " << fullName.c_str() << "\n\tNumber of files listed in the node = " << this->GetNumberOfFileNames() << ", the ITK reader says it was able to read " << reader->GetNumberOfFileNames() << " files.\n\tThe file reader used the archetype file name of " << reader->GetArchetype() << reader0thFileName.c_str() << "\n\tVolumes logic may try another volume type.");
     reader->RemoveObservers( vtkCommand::ProgressEvent,  this->MRMLCallbackCommand);
     return 0;
     }
