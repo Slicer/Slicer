@@ -84,7 +84,7 @@ qSlicerIO::IOFileType qSlicerModelsIO::fileType()const
 QStringList qSlicerModelsIO::extensions()const
 {
   return QStringList()
-    << "Model (*.vtk *.vtp *.g *.byu *.stl *.orig"
+    << "Model (*.vtk *.vtp *.g *.byu *.stl *.ply *.orig"
          "*.inflated *.sphere *.white *.smoothwm *.pial *.obj)";
 }
 

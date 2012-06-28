@@ -1,10 +1,10 @@
 /*=auto=========================================================================
 
   Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
-  
+
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
-  
+
   Program:   3D Slicer
   Module:    $RCSfile: vtkMRMLModelStorageNode.cxx,v $
   Date:      $Date: 2006/03/17 15:10:09 $
@@ -12,32 +12,31 @@
 
 =========================================================================auto=*/
 
-
-#include "vtkObjectFactory.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkBYUReader.h" 
-#include "vtkPolyDataReader.h"
-#include "vtkXMLPolyDataReader.h"
-#include "vtkUnstructuredGridReader.h"
-#include "vtkSTLReader.h"
-#include "vtkOBJReader.h"
-
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkSTLWriter.h"
-#include "vtkTriangleFilter.h"
-
-#include "vtkStringArray.h"
+// VTK includes
+#include "vtkBYUReader.h"
 #include "vtkCellArray.h"
-
-#include "vtkUnstructuredGrid.h"
 #include "vtkDataSetSurfaceFilter.h"
-
+#include "vtkOBJReader.h"
+#include "vtkObjectFactory.h"
+#include "vtkPLYReader.h"
+#include "vtkPLYWriter.h"
+#include "vtkPolyDataReader.h"
+#include "vtkSTLReader.h"
+#include "vtkSTLWriter.h"
 #include "vtkSmartPointer.h"
+#include "vtkStringArray.h"
+#include "vtkTriangleFilter.h"
+#include "vtkUnstructuredGrid.h"
+#include "vtkUnstructuredGridReader.h"
+#include "vtkXMLPolyDataReader.h"
+#include "vtkXMLPolyDataWriter.h"
 
+// ITK includes
 #include "itkDefaultDynamicMeshTraits.h"
 #include "itkSpatialObjectReader.h"
 #include "itkSpatialObjectWriter.h"
@@ -48,7 +47,7 @@ typedef itk::Mesh<vtkFloatingPointType,3,MeshTrait> floatMesh;
 /** Hold on to the type information specified by the template parameters. */
 typedef  floatMesh::Pointer             MeshPointer;
 typedef  MeshTrait::PointType           MeshPointType;
-typedef  MeshTrait::PixelType           MeshPixelType;  
+typedef  MeshTrait::PixelType           MeshPixelType;
 
 /** Some convenient typedefs. */
 typedef  floatMesh::Pointer              MeshPointer;
@@ -67,8 +66,8 @@ typedef itk::SpatialObjectWriter<3,vtkFloatingPointType,MeshTrait> MeshWriterTyp
 
 
 
-// Initialize static member that controls resampling -- 
-// old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
+// Initialize static member that controls resampling --
+// old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer
 // development meeting, to move ijk coordinates to voxel centers."
 
 //----------------------------------------------------------------------------
@@ -102,7 +101,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   vtkMRMLModelNode *modelNode = dynamic_cast <vtkMRMLModelNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("ReadData: File name not specified");
     return 0;
@@ -111,7 +110,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   // compute file prefix
   std::string name(fullName);
   std::string::size_type loc = name.find_last_of(".");
-  if( loc == std::string::npos ) 
+  if( loc == std::string::npos )
     {
     vtkErrorMacro("ReadData: no file extension specified: " << name.c_str());
     return 0;
@@ -122,8 +121,8 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 
   int result = 1;
   try
-  {
-    if ( extension == std::string(".g") || extension == std::string(".byu") ) 
+    {
+    if ( extension == std::string(".g") || extension == std::string(".byu") )
       {
       vtkSmartPointer<vtkBYUReader> reader = vtkSmartPointer<vtkBYUReader>::New();
       reader->SetGeometryFileName(fullName.c_str());
@@ -168,16 +167,23 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         modelNode->SetAndObservePolyData(output);
         }
       }
-    else if (extension == std::string(".vtp")) 
+    else if (extension == std::string(".vtp"))
       {
       vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
       reader->SetFileName(fullName.c_str());
       reader->Update();
       modelNode->SetAndObservePolyData(reader->GetOutput());
-      }  
-    else if (extension == std::string(".stl")) 
+      }
+    else if (extension == std::string(".stl"))
       {
       vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
+      reader->SetFileName(fullName.c_str());
+      modelNode->SetAndObservePolyData(reader->GetOutput());
+      reader->Update();
+      }
+    else if (extension == std::string(".ply"))
+      {
+      vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
       reader->SetFileName(fullName.c_str());
       modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
@@ -189,27 +195,27 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       modelNode->SetAndObservePolyData(reader->GetOutput());
       reader->Update();
       }
-    else if (extension == std::string(".meta"))  // model in meta format 
+    else if (extension == std::string(".meta"))  // model in meta format
       {
       floatMesh::Pointer surfaceMesh = floatMesh::New();
       MeshReaderType::Pointer readerSH = MeshReaderType::New();
       try
-      {
+        {
         readerSH->SetFileName(fullName.c_str());
         readerSH->Update();
-        MeshReaderType::SceneType::Pointer scene = readerSH->GetScene();  
+        MeshReaderType::SceneType::Pointer scene = readerSH->GetScene();
         MeshReaderType::SceneType::ObjectListType * objList =  scene->GetObjects(1,NULL);
 
         MeshReaderType::SceneType::ObjectListType::iterator it = objList->begin();
         itk::SpatialObject<3> * curObj = *it;
         MeshSpatialObjectType::Pointer  SOMesh = dynamic_cast<MeshSpatialObjectType*> (curObj);
         surfaceMesh = SOMesh->GetMesh();
-      }
+        }
       catch(itk::ExceptionObject ex)
-      {
+        {
         std::cout<<ex.GetDescription()<<std::endl;
         result = 0;
-      }
+        }
       vtkSmartPointer<vtkPolyData> vtkMesh = vtkSmartPointer<vtkPolyData>::New();
       // Get the number of points in the mesh
       int numPoints = surfaceMesh->GetNumberOfPoints();
@@ -223,45 +229,45 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       floatMesh::PointsContainer::Pointer points = surfaceMesh->GetPoints();
       for(floatMesh::PointsContainer::Iterator i = points->Begin();
         i != points->End(); ++i)
-      {
+        {
         // Get the point index from the point container iterator
         int idx = i->Index();
         vpoints->SetPoint(idx, const_cast<vtkFloatingPointType*>(i->Value().GetDataPointer()));
-      }
+        }
       vtkMesh->SetPoints(vpoints);
 
       vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
       floatMesh::CellsContainerIterator itCells = surfaceMesh->GetCells()->begin();
       floatMesh::CellsContainerIterator itCellsEnd = surfaceMesh->GetCells()->end();
       for ( ; itCells != itCellsEnd; ++itCells )
-      {
+        {
         floatMesh::CellTraits::PointIdIterator itPt = itCells->Value()->PointIdsBegin();
         vtkIdType ptIdList[64];
         int nPts = 0;
         for ( ; itPt != itCells->Value()->PointIdsEnd(); ++itPt )
-        {
+          {
           ptIdList[nPts] = *itPt;
           nPts ++;
-        }
+          }
         cells->InsertNextCell(nPts, ptIdList);
-      }
+        }
 
       vtkMesh->SetPolys ( cells );
 
       modelNode->SetAndObservePolyData( vtkMesh );
-    }
-    else 
-    {
+      }
+    else
+      {
       vtkDebugMacro("Cannot read model file '" << name.c_str() << "' (extension = " << extension.c_str() << ")");
       return 0;
+      }
     }
-  }
   catch (...)
-  {
+    {
     result = 0;
-  }
+    }
 
-  if (modelNode->GetPolyData() != NULL) 
+  if (modelNode->GetPolyData() != NULL)
     {
     // is there an active scalar array?
     if (modelNode->GetDisplayNode())
@@ -284,7 +290,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
-  if (fullName == std::string("")) 
+  if (fullName == std::string(""))
     {
     vtkErrorMacro("vtkMRMLModelNode: File name not specified");
     return 0;
@@ -343,6 +349,23 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
       result = 0;
       }
     }
+  else if (extension == ".ply")
+    {
+    vtkSmartPointer<vtkTriangleFilter> triangulator = vtkSmartPointer<vtkTriangleFilter>::New();
+    vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
+    writer->SetFileName(fullName.c_str());
+    writer->SetFileType(this->GetUseCompression() ? VTK_BINARY : VTK_ASCII );
+    triangulator->SetInput( modelNode->GetPolyData() );
+    writer->SetInput( triangulator->GetOutput() );
+    try
+      {
+      writer->Write();
+      }
+    catch (...)
+      {
+      result = 0;
+      }
+    }
   else
     {
     result = 0;
@@ -361,7 +384,8 @@ void vtkMRMLModelStorageNode::InitializeSupportedReadFileTypes()
   this->SupportedReadFileTypes->InsertNextValue("BYU (.byu)");
   this->SupportedReadFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
   this->SupportedReadFileTypes->InsertNextValue("STL (.stl)");
-  this->SupportedReadFileTypes->InsertNextValue("OBJ (.obj)");
+  this->SupportedReadFileTypes->InsertNextValue("PLY (.ply)");
+  this->SupportedReadFileTypes->InsertNextValue("Wavefront OBJ (.obj)");
 }
 
 //----------------------------------------------------------------------------
@@ -375,6 +399,7 @@ void vtkMRMLModelStorageNode::InitializeSupportedWriteFileTypes()
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.g)");
   //this->SupportedWriteFileTypes->InsertNextValue("vtkXMLPolyDataReader (.meta)");
   this->SupportedWriteFileTypes->InsertNextValue("STL (.stl)");
+  this->SupportedWriteFileTypes->InsertNextValue("PLY (.ply)");
 }
 
 //----------------------------------------------------------------------------
