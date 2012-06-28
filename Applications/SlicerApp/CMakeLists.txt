@@ -78,6 +78,27 @@ set(SlicerApp_INCLUDE_DIRECTORIES
 include_directories(${SlicerApp_INCLUDE_DIRECTORIES})
 
 # --------------------------------------------------------------------------
+# Translation
+# --------------------------------------------------------------------------
+set(lib_name "qSlicerApp")
+
+set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/")
+get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
+
+include(${Slicer_SOURCE_DIR}/CMake/SlicerMacroTranslation.cmake)
+SlicerMacroTranslation(
+  SRCS ${SlicerApp_SRCS}
+  UI_SRCS ${SlicerApp_UI_SRCS}
+  TS_DIR ${TS_DIR}
+  TS_BASEFILENAME ${lib_name}
+  TS_LANGUAGES ${Slicer_LANGUAGES}
+  QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
+  QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
+  )
+
+set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
+
+# --------------------------------------------------------------------------
 # Build the library
 # --------------------------------------------------------------------------
 set(KIT_LIBRARY_NAME "q${PROJECT_NAME}")
@@ -86,6 +107,7 @@ add_library(${KIT_LIBRARY_NAME}
   ${SlicerApp_SRCS}
   ${SlicerApp_UI_CXX}
   ${SlicerApp_QRC_SRCS}
+  ${QM_OUTPUT_FILES}
   )
 set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES LABELS ${PROJECT_NAME})
 

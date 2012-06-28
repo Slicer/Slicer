@@ -74,10 +74,12 @@ set(KIT_SRCS
   qSlicerSaveDataDialog.h
   qSlicerSettingsCachePanel.cxx
   qSlicerSettingsCachePanel.h
-  qSlicerSettingsModulesPanel.cxx
-  qSlicerSettingsModulesPanel.h
   qSlicerSettingsGeneralPanel.cxx
   qSlicerSettingsGeneralPanel.h
+  qSlicerSettingsInternationalizationPanel.cxx
+  qSlicerSettingsInternationalizationPanel.h
+  qSlicerSettingsModulesPanel.cxx
+  qSlicerSettingsModulesPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerViewersToolBar.cxx
@@ -172,6 +174,7 @@ set(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsCachePanel.h
   qSlicerSettingsGeneralPanel.h
+  qSlicerSettingsInternationalizationPanel.h
   qSlicerSettingsModulesPanel.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
@@ -218,6 +221,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSaveDataDialog.ui
   Resources/UI/qSlicerSettingsCachePanel.ui
   Resources/UI/qSlicerSettingsGeneralPanel.ui
+  Resources/UI/qSlicerSettingsInternationalizationPanel.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
 )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)

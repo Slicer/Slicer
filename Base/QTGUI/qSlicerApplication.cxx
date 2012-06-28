@@ -54,6 +54,7 @@
 #endif
 #include "qSlicerSettingsCachePanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
+#include "qSlicerSettingsInternationalizationPanel.h"
 #ifdef Slicer_USE_QtTesting
 # include "qSlicerSettingsQtTestingPanel.h"
 #endif
@@ -183,6 +184,10 @@ void qSlicerApplicationPrivate::init()
   qSlicerSettingsCachePanel* cachePanel = new qSlicerSettingsCachePanel;
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
   this->SettingsDialog->addPanel("Cache", cachePanel);
+
+  qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel =
+      new qSlicerSettingsInternationalizationPanel;
+  this->SettingsDialog->addPanel("Internationalization", qtInternationalizationPanel);
 
 #ifdef Slicer_USE_QtTesting
   qSlicerSettingsQtTestingPanel* qtTestingPanel = new qSlicerSettingsQtTestingPanel;

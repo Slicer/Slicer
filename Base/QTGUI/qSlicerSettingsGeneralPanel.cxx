@@ -32,6 +32,8 @@
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
 
+#include "vtkSlicerConfigure.h" // For Slicer_QM_OUTPUT_DIRS
+
 // --------------------------------------------------------------------------
 // qSlicerSettingsGeneralPanelPrivate
 
@@ -63,6 +65,17 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   Q_Q(qSlicerSettingsGeneralPanel);
 
   this->setupUi(q);
+  bool internationalizationEnabled =
+      qSlicerApplication::application()->settings()->value("Internationalization/Enabled").toBool();
+
+  this->LanguageLabel->setVisible(internationalizationEnabled);
+  this->LanguageComboBox->setVisible(internationalizationEnabled);
+  /// Default values
+  this->LanguageComboBox->setDefaultLanguage("en");
+  /// set the directory where all the translations files are.
+  this->LanguageComboBox->setDirectory(
+      QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
+
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));
   QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
@@ -95,6 +108,10 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       exitMapper, "valueAsInt", SIGNAL(valueAsIntChanged(int)));
   q->registerProperty("SlicerWikiURL", this->SlicerWikiURLLineEdit, "text",
                       SIGNAL(textChanged(QString)));
+  q->registerProperty("language", this->LanguageComboBox, "currentLanguage",
+                      SIGNAL(currentLanguageNameChanged(const QString&)),
+                      "Enable/Disable languages",
+                      ctkSettingsPanel::OptionRequireRestart);
 }
 
 // --------------------------------------------------------------------------

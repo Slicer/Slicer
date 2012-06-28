@@ -19,12 +19,15 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QList>
 #include <QSettings>
 #include <QSplashScreen>
+#include <QString>
 #include <QTimer>
+#include <QTranslator>
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT Slicer_QM_OUTPUT_DIRS, Slicer_INSTALL_QM_DIR
 
 // CTK includes
 #include <ctkAbstractLibraryFactory.h>
@@ -213,6 +216,56 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 }
 
 //----------------------------------------------------------------------------
+void loadTranslations(const QString& dir)
+{
+  qSlicerApplication * app = qSlicerApplication::application();
+  Q_ASSERT(app);
+
+  QString localeFilter =
+      QString( QString("*") + app->settings()->value("language").toString());
+  localeFilter.resize(3);
+  localeFilter += QString(".qm");
+
+  QDir directory(dir);
+  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
+
+  foreach(QString qmFile, qmFiles)
+    {
+    QTranslator* translator = new QTranslator();
+    QString qmFilePath = QString(dir + QString("/") + qmFile);
+
+    if(!translator->load(qmFilePath))
+      {
+      qDebug() << "The File " << qmFile << " hasn't been loaded in the translator";
+      return;
+      }
+    app->installTranslator(translator);
+    }
+}
+
+//----------------------------------------------------------------------------
+void loadLanguage()
+{
+  qSlicerApplication * app = qSlicerApplication::application();
+  Q_ASSERT(app);
+
+  // we check if the application is installed or not.
+  if (app->isInstalled())
+    {
+    QString qmDir = QString(Slicer_QM_DIR);
+    loadTranslations(qmDir);
+    }
+  else
+    {
+    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
+    foreach(QString qmDir, qmDirs)
+      {
+      loadTranslations(qmDir);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 int SlicerAppMain(int argc, char* argv[])
 {
   QCoreApplication::setApplicationName("Slicer");
@@ -226,6 +279,9 @@ int SlicerAppMain(int argc, char* argv[])
     {
     return app.returnCode();
     }
+
+  // We load the language selected for the application
+  loadLanguage();
 
 #ifdef Slicer_USE_QtTesting
   setEnableQtTesting(); // disabled the native menu bar.

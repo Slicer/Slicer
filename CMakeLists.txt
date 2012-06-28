@@ -29,6 +29,14 @@ set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 
 #-----------------------------------------------------------------------------
+# VAriable Slicer_LANGUAGES
+#-----------------------------------------------------------------------------
+set(Slicer_LANGUAGES
+  "fr"
+  )
+set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
+
+#-----------------------------------------------------------------------------
 # Sanity checks
 #------------------------------------------------------------------------------
 if(WIN32)
@@ -85,6 +93,7 @@ include(SlicerMacroExtractRepositoryInfo)
 include(SlicerMacroGetOperatingSystemArchitectureBitness)
 include(SlicerMacroParseArguments)
 include(SlicerMacroEmptyExternalProject)
+include(SlicerMacroTranslation)
 include(SlicerFunctionInstallLibrary)
 
 #-----------------------------------------------------------------------------
@@ -188,6 +197,8 @@ option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
 mark_as_advanced(Slicer_USE_QtTesting)
+option(Slicer_UPDATE_TRANSLATION "update translation" OFF )
+mark_as_advanced(Slicer_UPDATE_TRANSLATION)
 
 set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
@@ -344,6 +355,7 @@ set(Slicer_LIB_DIR "lib/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_INCLUDE_DIR "include/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_SHARE_DIR "share/Slicer-${Slicer_VERSION_MAJOR}.${Slicer_VERSION_MINOR}")
 set(Slicer_ITKFACTORIES_DIR "${Slicer_LIB_DIR}/ITKFactories")
+set(Slicer_QM_DIR "${Slicer_BIN_DIR}/Translations")
 
 if(Slicer_BUILD_CLI_SUPPORT)
   # NOTE: Make sure to update vtkSlicerApplicationLogic::GetModuleShareDirectory()
@@ -371,6 +383,7 @@ set(Slicer_INSTALL_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_LIB_DIR}")
 set(Slicer_INSTALL_INCLUDE_DIR "${Slicer_INSTALL_ROOT}${Slicer_INCLUDE_DIR}")
 set(Slicer_INSTALL_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR}")
 set(Slicer_INSTALL_ITKFACTORIES_DIR "${Slicer_INSTALL_LIB_DIR}/ITKFactories")
+set(Slicer_INSTALL_QM_DIR "${Slicer_INSTALL_ROOT}${Slicer_QM_DIR}")
 
 if(Slicer_BUILD_CLI_SUPPORT)
   set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
@@ -743,32 +756,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} ${Slicer_REQUIRED_CXX_FLAGS} ${ITK_
 #-----------------------------------------------------------------------------
 set(QMRML_EXPORT_HEADER_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/Libs/MRML/Widgets/CMake/qMRMLExport.h.in")
 
-# --------------------------------------------------------------------------
-# Configure and install headers
-# --------------------------------------------------------------------------
-
-if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
-  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
-endif()
-
-set(files
-  vtkSlicerConfigure.h
-  vtkSlicerVersionConfigure.h
-  )
-foreach(f ${files})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${f}
-    )
-endforeach()
-if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
-  install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
-    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
-    )
-endif()
-
 #-----------------------------------------------------------------------------
 # Configure testing scripts
 #-----------------------------------------------------------------------------
@@ -826,6 +813,37 @@ set(Slicer_GUI_LIBRARY qSlicerBaseQTGUI)
 #-----------------------------------------------------------------------------
 add_subdirectory(Modules)
 add_subdirectory(Applications)
+
+# --------------------------------------------------------------------------
+# Recover the QM output directories
+# --------------------------------------------------------------------------
+get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
+
+# --------------------------------------------------------------------------
+# Configure and install headers
+# --------------------------------------------------------------------------
+
+if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
+  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+endif()
+
+set(files
+  vtkSlicerConfigure.h
+  vtkSlicerVersionConfigure.h
+  )
+foreach(f ${files})
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${f}
+    )
+endforeach()
+if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
+  install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerConfigure.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerVersionConfigure.h"
+    DESTINATION ${Slicer_INSTALL_INCLUDE_DIR} COMPONENT Development
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 # Testing

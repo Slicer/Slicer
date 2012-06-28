@@ -149,6 +149,28 @@ macro(SlicerMacroBuildBaseQtLibrary)
   )
 
   # --------------------------------------------------------------------------
+  # Translation
+  # --------------------------------------------------------------------------
+
+  set(TS_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/Resources/Translations/"
+  )
+  get_property(Slicer_LANGUAGES GLOBAL PROPERTY Slicer_LANGUAGES)
+
+  include(SlicerMacroTranslation)
+  SlicerMacroTranslation(
+    SRCS ${SLICERQTBASELIB_SRCS}
+    UI_SRCS ${SLICERQTBASELIB_UI_SRCS}
+    TS_DIR ${TS_DIR}
+    TS_BASEFILENAME ${SLICERQTBASELIB_NAME}
+    TS_LANGUAGES ${Slicer_LANGUAGES}
+    QM_OUTPUT_DIR_VAR QM_OUTPUT_DIR
+    QM_OUTPUT_FILES_VAR QM_OUTPUT_FILES
+    )
+
+  set_property(GLOBAL APPEND PROPERTY Slicer_QM_OUTPUT_DIRS ${QM_OUTPUT_DIR})
+
+  # --------------------------------------------------------------------------
   # Build the library
   # --------------------------------------------------------------------------
   add_library(${lib_name}
@@ -156,6 +178,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
     ${SLICERQTBASELIB_MOC_OUTPUT}
     ${SLICERQTBASELIB_UI_CXX}
     ${SLICERQTBASELIB_QRC_SRCS}
+    ${QM_OUTPUT_FILES}
     )
   set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
