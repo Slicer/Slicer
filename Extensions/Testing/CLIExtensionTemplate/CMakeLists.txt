@@ -9,7 +9,6 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling one CLI module")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/CLIExtensionTemplate/CLIExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/a/ab/Slicer-r19441-CLIExtensionTemplate-screenshot.png http://wiki.slicer.org/slicerWiki/images/1/1e/Slicer-r19441-CLIExtensionTemplate-screenshot-2.png")
-  set(EXTENSION_STATUS "NA")
 endif()
 
 #-----------------------------------------------------------------------------
