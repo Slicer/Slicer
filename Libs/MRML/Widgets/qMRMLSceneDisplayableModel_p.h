@@ -36,7 +36,7 @@ class vtkMRMLHierarchyNode;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class qMRMLSceneDisplayableModelPrivate: public qMRMLSceneHierarchyModelPrivate
+class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModelPrivate: public qMRMLSceneHierarchyModelPrivate
 {
 protected:
   Q_DECLARE_PUBLIC(qMRMLSceneDisplayableModel);

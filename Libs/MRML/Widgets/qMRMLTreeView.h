@@ -189,10 +189,10 @@ public:
   virtual void showEvent(QShowEvent* show);
   virtual bool eventFilter(QObject* object, QEvent* e);
 
-  bool clickDecoration(const QModelIndex& index);
+  virtual bool clickDecoration(const QModelIndex& index);
 
 public slots:
-  void setMRMLScene(vtkMRMLScene* scene);
+  virtual void setMRMLScene(vtkMRMLScene* scene);
 
   /// If the modelType doesn't match any known model, nothing
   /// will happen
@@ -222,7 +222,7 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseReleaseEvent(QMouseEvent* event);
 
-  void toggleVisibility(const QModelIndex& index);
+  virtual void toggleVisibility(const QModelIndex& index);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTreeView);

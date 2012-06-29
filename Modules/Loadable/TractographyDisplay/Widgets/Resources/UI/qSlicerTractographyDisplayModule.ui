@@ -18,6 +18,50 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="ctkCollapsibleButton" name="FiberBundleTableDisplay">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Simple Display</string>
+     </property>
+     <property name="collapsed">
+      <bool>false</bool>
+     </property>
+     <property name="collapsedHeight">
+      <number>0</number>
+     </property>
+     <property name="contentsFrameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_table">
+      <item row="1" column="0">
+       <widget class="qMRMLTractographyDisplayTreeView" name="TractographyDisplayTreeView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="uniformRowHeights">
+         <bool>true</bool>
+        </property>
+        <property name="listenNodeModifiedEvent" stdset="0">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="ctkCheckBox" name="SolidTubeColorCheckbox">
+        <property name="text">
+         <string>Solid Tube Color</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="SelectFiberBundleLabel">
@@ -39,16 +83,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="qSlicerTractographyDisplayBasicWidget" name="BasicDisplayWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
    </item>
    <item>
     <widget class="QWidget" name="widget_3" native="true">
@@ -269,17 +303,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkCollapsibleButton</class>
-   <extends>QWidget</extends>
-   <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkSliderWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
@@ -289,6 +312,22 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerTractographyDisplayWidget</class>
@@ -303,16 +342,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qSlicerTractographyDisplayBasicWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerTractographyDisplayBasicWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>qSlicerTractographyEditorROIWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerTractographyEditorROIWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLTractographyDisplayTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLTractographyDisplayTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -414,25 +452,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>FiberBundleNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>BasicDisplayWidget</receiver>
-   <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>218</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>174</x>
-     <y>48</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>qSlicerTractographyDisplayModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>BasicDisplayWidget</receiver>
+   <receiver>TractographyDisplayTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

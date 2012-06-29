@@ -20,12 +20,13 @@
 
 #include "qSlicerTractographyDisplayModuleWidget.h"
 #include "ui_qSlicerTractographyDisplayModule.h"
-
+#include "qMRMLSceneTractographyDisplayModel.h"
 // MRML includes
 
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
+#include "vtkMRMLFiberBundleTubeDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 //-----------------------------------------------------------------------------
@@ -64,6 +65,13 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
                    q, SLOT(setPercentageOfFibersShown(double)));
   QObject::connect(q, SIGNAL(percentageOfFibersShownChanged(double)),
                    this->percentageOfFibersShown, SLOT(setValue(double)));
+  QObject::connect(this->SolidTubeColorCheckbox, SIGNAL(clicked(bool)),
+                   q, SLOT(setSolidTubeColor(bool)));
+
+  QObject::connect(this->TractographyDisplayTreeView, SIGNAL(visibilityChanged(int)),
+                   this->tabWidget, SLOT(setCurrentIndex (int)));
+
+  
 }
 
 
@@ -124,3 +132,24 @@ void qSlicerTractographyDisplayModuleWidget::setPercentageOfFibersShown(double p
     emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
     }
 }
+void qSlicerTractographyDisplayModuleWidget::setSolidTubeColor(bool solid)
+{
+  std::vector<vtkMRMLNode *> nodes;
+  this->mrmlScene()->GetNodesByClass("vtkMRMLFiberBundleTubeDisplayNode", nodes);
+
+  vtkMRMLFiberBundleTubeDisplayNode *node = 0;
+  for (unsigned int i=0; i<nodes.size(); i++)
+    {
+    node = vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast(nodes[i]);
+    if (solid)
+      {
+      node->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeSolid);
+      }
+    else
+      {
+      node->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeScalar);
+      }
+    }
+
+}
+

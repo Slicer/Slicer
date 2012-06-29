@@ -11,6 +11,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
+  qMRMLTractographyDisplayTreeView.h
+  qMRMLTractographyDisplayTreeView.cxx
+  qMRMLSceneTractographyDisplayModel.h
+  qMRMLSceneTractographyDisplayModel.cxx
   qSlicerTractographyDisplayModuleWidget.cxx
   qSlicerTractographyDisplayModuleWidget.h
   qSlicerTractographyDisplayBasicWidget.cxx
@@ -25,10 +29,12 @@ set(${KIT}_SRCS
 
 set(${KIT}_MOC_SRCS
   qSlicerTractographyDisplayModuleWidget.h
-  qSlicerTractographyDisplayBasicWidget.h
+  qSlicerTractographyDisplayBasicWidget.h  
   qSlicerTractographyEditorROIWidget.h
   qSlicerTractographyDisplayGlyphWidget.h
   qSlicerTractographyDisplayWidget.h
+  qMRMLTractographyDisplayTreeView.h
+  qMRMLSceneTractographyDisplayModel.h
   )
 
 set(${KIT}_UI_SRCS

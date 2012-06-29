@@ -18,13 +18,13 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLAnnotationTreeView_h
-#define __qMRMLAnnotationTreeView_h
+#ifndef __qMRMLTractographyDisplayTreeView_h
+#define __qMRMLTractographyDisplayTreeView_h
 
 // Qt includes
 #include <QTreeView>
-// Annotation QT includes
-#include "GUI/qSlicerAnnotationModuleWidget.h"
+// TractographyDisplay QT includes
+#include "qSlicerTractographyDisplayModuleWidget.h"
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -32,55 +32,46 @@
 // qMRML includes
 #include "qMRMLTreeView.h"
 
-#include "qSlicerAnnotationsModuleExport.h"
+#include "qSlicerTractographyDisplayModuleWidgetsExport.h"
 
 // Logic includes
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 class qMRMLSortFilterProxyModel;
-class qMRMLAnnotationTreeViewPrivate;
+class qMRMLTractographyDisplayTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
+class vtkSlicerFiberBundleLogic;
 
-/// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLAnnotationTreeView : public qMRMLTreeView
+/// \ingroup Slicer_QtModules_TractographyDisplay
+class Q_SLICER_MODULE_TRACTOGRAPHYDISPLAY_WIDGETS_EXPORT qMRMLTractographyDisplayTreeView : public qMRMLTreeView
 {
   Q_OBJECT
 
 public:
-  qMRMLAnnotationTreeView(QWidget *parent=0);
-  virtual ~qMRMLAnnotationTreeView();
+  typedef qMRMLTreeView Superclass;
 
-  void hideScene();
+  qMRMLTractographyDisplayTreeView(QWidget *parent=0);
+  virtual ~qMRMLTractographyDisplayTreeView();
 
-  const char* firstSelectedNode();
+  virtual void setMRMLScene(vtkMRMLScene* scene);
 
   // Register the logic
-  void setLogic(vtkSlicerAnnotationModuleLogic* logic);
+  void setLogic(vtkSlicerFiberBundleLogic* logic);
 
+  virtual bool clickDecoration(const QModelIndex& index);
 
-  void toggleLockForSelected();
-
-  void toggleVisibilityForSelected();
-
-  void deleteSelected();
-
-  void selectedAsCollection(vtkCollection* collection);
-
-  void setSelectedNode(const char* id);
-
-public slots:
-  void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
   void onPropertyEditButtonClicked(QString id);
+  // type 0-line 1-tube 2-glyph
+  void visibilityChanged(int type);
 
 protected slots:
   void onClicked(const QModelIndex& index);
 
 protected:
-  QScopedPointer<qMRMLAnnotationTreeViewPrivate> d_ptr;
+  QScopedPointer<qMRMLTractographyDisplayTreeViewPrivate> d_ptr;
   #ifndef QT_NO_CURSOR
     void mouseMoveEvent(QMouseEvent* e);
     bool viewportEvent(QEvent* e);
@@ -88,16 +79,13 @@ protected:
   virtual void mousePressEvent(QMouseEvent* event);
 
 private:
-  Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);
-  Q_DISABLE_COPY(qMRMLAnnotationTreeView);
+  Q_DECLARE_PRIVATE(qMRMLTractographyDisplayTreeView);
+  Q_DISABLE_COPY(qMRMLTractographyDisplayTreeView);
 
-  vtkSlicerAnnotationModuleLogic* m_Logic;
+  vtkSlicerFiberBundleLogic* m_Logic;
   
-  // toggle the visibility of an annotation
+  // toggle the visibility of an TractographyDisplay
   void onVisibilityColumnClicked(vtkMRMLNode* node);
-
-  // toggle un-/lock of an annotation
-  void onLockColumnClicked(vtkMRMLNode* node);
 
 };
 

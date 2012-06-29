@@ -119,17 +119,6 @@ qMRMLAnnotationTreeView::~qMRMLAnnotationTreeView()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::setMRMLScene(vtkMRMLScene* scene)
-{
-  Q_D(qMRMLAnnotationTreeView);
-  Q_ASSERT(d->SortFilterModel);
-  // only qMRMLSceneModel needs the scene, the other proxies don't care.
-  d->SceneModel->setMRMLScene(scene);
-
-  this->expandAll();
-}
-
-//------------------------------------------------------------------------------
 //
 // Click and selected event handling
 //
