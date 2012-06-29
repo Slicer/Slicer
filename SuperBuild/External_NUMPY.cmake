@@ -1,6 +1,11 @@
 ## NUMPY requires fortran, so set up the fortran compiler properly
 ## http://www.cmake.org/Wiki/CMakeForFortranExample
 
+# Work-around for CMake issue 0009220
+if(DEFINED CMAKE_Fortran_COMPILER AND CMAKE_Fortran_COMPILER MATCHES "^$")
+  set(CMAKE_Fortran_COMPILER CMAKE_Fortran_COMPILER-NOTFOUND)
+endif()
+
 enable_language(Fortran OPTIONAL)
 
 # Make sure this file is included only once
