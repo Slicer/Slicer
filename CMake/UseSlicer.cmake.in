@@ -29,7 +29,6 @@
 #  Slicer_SKIP_ITKPlatformSpecificChecks
 #  Slicer_SKIP_SlicerBlockCXXRequiredFlags
 #  Slicer_SKIP_SlicerBlockAdditionalLauncherSettings
-#  Slicer_SKIP_SlicerBlockModuleToExtensionMetadata
 #  Slicer_SKIP_SlicerEnableExtensionTesting
 #
 # By default, if any 'Slicer_SKIP_<DoSomething>' variable is set to TRUE,
@@ -77,33 +76,17 @@ else()
 endif()
 
 # --------------------------------------------------------------------------
-# Setting EXTENSION_HAS_ONLY_ONE_MODULE
+# Setting and checking EXTENSION_NAME
 # --------------------------------------------------------------------------
 if(NOT Slicer_DONT_USE_EXTENSION)
   slicer_check_variable(EXTENSION_NAME _EXTENSION_NAME_SET)
   slicer_check_variable(MODULE_NAME _MODULE_NAME_SET)
 
-  set(EXTENSION_HAS_ONLY_ONE_MODULE FALSE)
   if(NOT ${_EXTENSION_NAME_SET} AND ${_MODULE_NAME_SET})
-    set(EXTENSION_HAS_ONLY_ONE_MODULE TRUE)
-  endif()
-  slicer_setting_variable_message("EXTENSION_HAS_ONLY_ONE_MODULE")
-endif()
-
-# --------------------------------------------------------------------------
-# Setting and checking EXTENSION_NAME
-# --------------------------------------------------------------------------
-if(Slicer_DONT_USE_EXTENSION)
-  set(Slicer_SKIP_EXTENSION_NAME_CHECK TRUE)
-endif()
-if(NOT DEFINED Slicer_SKIP_EXTENSION_NAME_CHECK)
-  set(Slicer_SKIP_EXTENSION_NAME_CHECK FALSE)
-endif()
-if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK)
-  if(EXTENSION_HAS_ONLY_ONE_MODULE)
     set(EXTENSION_NAME ${MODULE_NAME})
+    slicer_setting_variable_message("EXTENSION_NAME")
   endif()
-  if("${EXTENSION_NAME}" STREQUAL "")
+  if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK AND "${EXTENSION_NAME}" STREQUAL "")
     message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME or MODULE_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
   endif()
 endif()
@@ -337,25 +320,14 @@ endif()
 # Set extension defaults if not already specified
 #-----------------------------------------------------------------------------
 if(NOT Slicer_DONT_USE_EXTENSION)
-  if(NOT DEFINED MODULE_DEPENDS)
-    set(MODULE_DEPENDS NA) # Specified as a space separated list or 'NA' if any
+  if(NOT DEFINED EXTENSION_DEPENDS)
+    set(EXTENSION_DEPENDS NA) # Specified as a space separated list or 'NA' if any
   endif()
-  if(NOT DEFINED MODULE_LICENSE_FILE)
-    set(MODULE_LICENSE_FILE ${Slicer_LICENSE_FILE})
+  if(NOT DEFINED EXTENSION_LICENSE_FILE)
+    set(EXTENSION_LICENSE_FILE ${Slicer_LICENSE_FILE})
   endif()
-  if(NOT DEFINED MODULE_LICENSE_SHORT_DESCRIPTION)
-    set(MODULE_LICENSE_SHORT_DESCRIPTION ${Slicer_LICENSE_SHORT_DESCRIPTION})
-  endif()
-  if(NOT DEFINED MODULE_README_FILE)
-    set(MODULE_README_FILE ${Slicer_README_FILE})
-  endif()
-
-  if(NOT ${EXTENSION_HAS_ONLY_ONE_MODULE})
-    foreach(var DEPENDS LICENSE_FILE LICENSE_SHORT_DESCRIPTION README_FILE)
-      if(NOT DEFINED EXTENSION_${var})
-        set(EXTENSION_${var} ${MODULE_${var}})
-      endif()
-    endforeach()
+  if(NOT DEFINED EXTENSION_README_FILE)
+    set(EXTENSION_README_FILE ${Slicer_README_FILE})
   endif()
 
   if(NOT DEFINED EXTENSION_SOURCE_DIR)
@@ -371,20 +343,9 @@ if(NOT Slicer_DONT_USE_EXTENSION)
     set(EXTENSION_ENABLED 1)
   endif()
 
-  #-----------------------------------------------------------------------------
-  # Convert MODULE_* variables into EXTENSION_* variables if it applies
-  #-----------------------------------------------------------------------------
-
-  if(NOT DEFINED Slicer_SKIP_SlicerBlockModuleToExtensionMetadata)
-    set(Slicer_SKIP_SlicerBlockModuleToExtensionMetadata FALSE)
-  endif()
-  if(NOT ${Slicer_SKIP_SlicerBlockModuleToExtensionMetadata}
-     AND NOT "${EXTENSION_NAME}" STREQUAL "")
-    slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
-    slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
-    slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
-    include(SlicerBlockModuleToExtensionMetadata)
-  endif()
+  slicer_setting_variable_message("EXTENSION_SOURCE_DIR" SKIP_TRUNCATE)
+  slicer_setting_variable_message("EXTENSION_SUPERBUILD_BINARY_DIR" SKIP_TRUNCATE)
+  slicer_setting_variable_message("EXTENSION_BUILD_SUBDIRECTORY" SKIP_TRUNCATE)
 
   #-----------------------------------------------------------------------------
   set(MIDAS_PACKAGE_URL "http://slicer.kitware.com/midas3" CACHE STRING "MIDAS URL where the extension should be uploaded.")
@@ -395,6 +356,12 @@ if(NOT Slicer_DONT_USE_EXTENSION)
   slicer_setting_variable_message("MIDAS_PACKAGE_EMAIL")
   slicer_setting_variable_message("MIDAS_PACKAGE_API_KEY")
 
+  set(optional_vars HOMEPAGE CATEGORY ICONURL CONTRIBUTORS DESCRIPTION
+                    SCREENSHOTURLS DEPENDS LICENSE_FILE README_FILE
+                    )
+  foreach(var ${optional_vars})
+    slicer_setting_variable_message(EXTENSION_${var})
+  endforeach()
 
   #-----------------------------------------------------------------------------
   if(NOT DEFINED Slicer_SKIP_SlicerEnableExtensionTesting)
