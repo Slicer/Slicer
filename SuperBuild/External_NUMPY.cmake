@@ -1,3 +1,31 @@
+## NUMPY requires fortran, so set up the fortran compiler properly
+## http://www.cmake.org/Wiki/CMakeForFortranExample
+
+if(NOT "${CMAKE_GENERATOR}" MATCHES "Ninja") #Ninja generator does not support fortran
+  enable_language (Fortran)
+endif()
+
+# FFLAGS depend on the compiler
+get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+
+if(Fortran_COMPILER_NAME STREQUAL "gfortran")
+  # gfortran
+  set(CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
+  set(CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
+elseif(Fortran_COMPILER_NAME STREQUAL "ifort")
+  # ifort (untested)
+  set(CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
+  set(CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
+elseif(Fortran_COMPILER_NAME STREQUAL "g77")
+  # g77
+  message(FATAL_ERROR "The g77 compiler should not be used as specified on NUMPY page http://www.scipy.org/Installing_SciPy/Linux")
+else()
+  message("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
+  message("Fortran compiler: " ${Fortran_COMPILER_NAME})
+  message("No optimized Fortran compiler flags are known, we just try -O2...")
+  set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
+  set(CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
+endif()
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -38,6 +66,10 @@ configure_file(
 
 # Create an external project to download numpy,
 # and configure and build it
+#set(GIT_TAG "master")
+#GIT_REPOSITORY "${git_protocol}://github.com/numpy/numpy.git"
+#GIT_TAG "${GIT_TAG}"
+
 ExternalProject_Add(${proj}
   URL ${numpy_URL}
   URL_MD5 ${numpy_MD5}
