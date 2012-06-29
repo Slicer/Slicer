@@ -57,10 +57,14 @@ macro(SlicerMacroCheckExternalProjectDependency proj)
     endif()
   endforeach()
 
+  set(__${proj}_superbuild_message "SuperBuild - ${__indent}${proj}[OK]")
+  set(__${proj}_indent ${__indent})
+
   # If project being process has dependencies, indicates it has also been added.
   if(NOT "${${proj}_DEPENDENCIES}" STREQUAL "")
-    message(STATUS "SuperBuild - ${__indent}${proj}[OK]")
+    message(STATUS ${__${proj}_superbuild_message})
   endif()
+
 
   # Update indent variable
   string(LENGTH "${__indent}" __indent_length)

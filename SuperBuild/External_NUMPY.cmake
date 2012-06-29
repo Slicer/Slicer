@@ -3,6 +3,20 @@
 
 enable_language(Fortran OPTIONAL)
 
+# Make sure this file is included only once
+get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
+if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
+  return()
+endif()
+set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
+
+# Set dependency list
+set(NUMPY_DEPENDENCIES CLAPACK python)
+
+# Include dependent projects if any
+SlicerMacroCheckExternalProjectDependency(NUMPY)
+set(proj NUMPY)
+
 if(CMAKE_Fortran_COMPILER_WORKS)
   # FFLAGS depend on the compiler
   get_filename_component(Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
@@ -19,29 +33,17 @@ if(CMAKE_Fortran_COMPILER_WORKS)
     # g77
     message(FATAL_ERROR "The g77 compiler should not be used as specified on NUMPY page http://www.scipy.org/Installing_SciPy/Linux")
   else()
-    message(STATUS "CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
-    message(STATUS "Fortran compiler: " ${Fortran_COMPILER_NAME})
-    message(STATUS "No optimized Fortran compiler flags are known, we just try -O2...")
+    message(STATUS "No optimized Fortran compiler flags are known, defaulting to-O2...")
     set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
     set(CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
   endif()
+  message(STATUS "${__${proj}_superbuild_message} - CMAKE_Fortran_COMPILER: " ${CMAKE_Fortran_COMPILER})
+  message(STATUS "${__${proj}_superbuild_message} - Fortran_COMPILER_NAME: " ${Fortran_COMPILER_NAME})
+  message(STATUS "${__${proj}_superbuild_message} - CMAKE_Fortran_FLAGS_RELEASE: " ${CMAKE_Fortran_FLAGS_RELEASE})
+  message(STATUS "${__${proj}_superbuild_message} - CMAKE_Fortran_FLAGS_DEBUG: " ${CMAKE_Fortran_FLAGS_DEBUG})
 else()
-  message(STATUS "No Fortran compiler found - Non-optimized code will be built !")
+  message(STATUS "${__${proj}_superbuild_message} - No Fortran compiler found - Non-optimized code will be built !")
 endif()
-
-# Make sure this file is included only once
-get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
-if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
-  return()
-endif()
-set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
-
-# Set dependency list
-set(NUMPY_DEPENDENCIES CLAPACK python)
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(NUMPY)
-set(proj NUMPY)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
