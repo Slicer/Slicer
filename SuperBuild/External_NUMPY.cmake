@@ -1,30 +1,32 @@
 ## NUMPY requires fortran, so set up the fortran compiler properly
 ## http://www.cmake.org/Wiki/CMakeForFortranExample
 
-if(NOT "${CMAKE_GENERATOR}" MATCHES "Ninja") #Ninja generator does not support fortran
-  enable_language(Fortran)
-endif()
+enable_language(Fortran OPTIONAL)
 
-# FFLAGS depend on the compiler
-get_filename_component(Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
+if(CMAKE_Fortran_COMPILER_WORKS)
+  # FFLAGS depend on the compiler
+  get_filename_component(Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
-if(Fortran_COMPILER_NAME STREQUAL "gfortran")
-  # gfortran
-  set(CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
-  set(CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
-elseif(Fortran_COMPILER_NAME STREQUAL "ifort")
-  # ifort (untested)
-  set(CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
-  set(CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
-elseif(Fortran_COMPILER_NAME STREQUAL "g77")
-  # g77
-  message(FATAL_ERROR "The g77 compiler should not be used as specified on NUMPY page http://www.scipy.org/Installing_SciPy/Linux")
+  if(Fortran_COMPILER_NAME STREQUAL "gfortran")
+    # gfortran
+    set(CMAKE_Fortran_FLAGS_RELEASE "-funroll-all-loops -fno-f2c -O3")
+    set(CMAKE_Fortran_FLAGS_DEBUG   "-fno-f2c -O0 -g")
+  elseif(Fortran_COMPILER_NAME STREQUAL "ifort")
+    # ifort (untested)
+    set(CMAKE_Fortran_FLAGS_RELEASE "-f77rtl -O3")
+    set(CMAKE_Fortran_FLAGS_DEBUG   "-f77rtl -O0 -g")
+  elseif(Fortran_COMPILER_NAME STREQUAL "g77")
+    # g77
+    message(FATAL_ERROR "The g77 compiler should not be used as specified on NUMPY page http://www.scipy.org/Installing_SciPy/Linux")
+  else()
+    message(STATUS "CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
+    message(STATUS "Fortran compiler: " ${Fortran_COMPILER_NAME})
+    message(STATUS "No optimized Fortran compiler flags are known, we just try -O2...")
+    set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
+    set(CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
+  endif()
 else()
-  message(STATUS "CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
-  message(STATUS "Fortran compiler: " ${Fortran_COMPILER_NAME})
-  message(STATUS "No optimized Fortran compiler flags are known, we just try -O2...")
-  set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
-  set(CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g")
+  message(STATUS "No Fortran compiler found - Non-optimized code will be built !")
 endif()
 
 # Make sure this file is included only once
