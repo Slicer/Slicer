@@ -101,7 +101,15 @@ public:
   virtual QWidget* createEditor( QWidget * parent,
                                  const QStyleOptionViewItem & option,
                                  const QModelIndex & index ) const;
+  virtual void setModelData(QWidget *editor,
+                            QAbstractItemModel *model,
+                            const QModelIndex &index) const;
   static QString fixupFileName(const QString& fileName, const QString& extension = QString());
+  /// Generate a regular expression that can ensure a filename has a valid
+  /// extension.
+  /// Example of supported extensions:
+  /// "", "*", ".*", ".jpg", ".png" ".tar.gz"...
+  /// An empty extension or "*" means any filename (or directory) is valid
   static QRegExp fileNameRegExp(const QString& extension = QString());
 };
 

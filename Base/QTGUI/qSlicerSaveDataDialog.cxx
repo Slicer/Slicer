@@ -82,6 +82,21 @@ QWidget* qSlicerFileNameItemDelegate
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerFileNameItemDelegate
+::setModelData(QWidget *editor, QAbstractItemModel *model,
+               const QModelIndex &index) const
+{
+  QLineEdit* lineEdit = qobject_cast<QLineEdit*>(editor);
+  if (lineEdit)
+    {
+    QString extension = model->data(index, Qt::UserRole).toString();
+    lineEdit->setText(
+      qSlicerFileNameItemDelegate::fixupFileName(lineEdit->text(), extension));
+    }
+  this->Superclass::setModelData(editor, model, index);
+}
+
+//-----------------------------------------------------------------------------
 QString qSlicerFileNameItemDelegate::fixupFileName(const QString& fileName, const QString& extension)
 {
   QString fixup;
