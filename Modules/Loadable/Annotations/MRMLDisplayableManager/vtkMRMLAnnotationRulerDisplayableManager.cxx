@@ -1,8 +1,8 @@
 
-// AnnotationModule/Logic includes
+// Annotation Logic includes
 #include <vtkSlicerAnnotationModuleLogic.h>
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationDisplayableManager.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
 #include <vtkMRMLAnnotationNode.h>
@@ -10,10 +10,10 @@
 #include <vtkMRMLAnnotationRulerNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.h"
+// Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationRulerDisplayableManager.h"
 
-// AnnotationModule/VTKWidgets includes
+// Annotation VTKWidgets includes
 #include <vtkAnnotationRulerRepresentation.h>
 #include <vtkAnnotationRulerRepresentation3D.h>
 #include <vtkAnnotationRulerWidget.h>

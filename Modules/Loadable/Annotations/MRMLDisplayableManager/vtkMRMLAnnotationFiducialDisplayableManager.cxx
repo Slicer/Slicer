@@ -1,18 +1,18 @@
 
-// AnnotationModule/Logic includes
+// Annotation Logic includes
 #include <vtkSlicerAnnotationModuleLogic.h>
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationFiducialNode.h>
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
 #include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 
-// AnnotationModule/VTKWidgets includes
+// Annotation VTKWidgets includes
 #include <vtkAnnotationGlyphSource2D.h>
 
 // MRMLDisplayableManager includes
@@ -471,7 +471,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   // update visibility status
   this->Helper->UpdateVisible(node);
-  
+
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
 
@@ -632,7 +632,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnClickInRenderWindow(double x
   // save for undo and add the node to the scene after any reset of the
   // interaction node so that don't end up back in place mode
   this->GetMRMLScene()->SaveStateForUndo();
-  
+
   // is there a node associated with this?
   if (associatedNodeID)
     {

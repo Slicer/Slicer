@@ -1,13 +1,13 @@
 
-// AnnotationModule/Logic includes
+// Annotation Logic includes
 #include <vtkSlicerAnnotationModuleLogic.h>
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 #include <vtkMRMLAnnotationTextNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkMRMLAnnotationTextDisplayableManager.h"
 
@@ -608,7 +608,7 @@ void vtkMRMLAnnotationTextDisplayableManager::OnClickInRenderWindow(double x, do
     {
     textNode->SetAttribute("AssociatedNodeID", associatedNodeID);
     }
-  
+
   textNode->Initialize(this->GetMRMLScene());
 
   textNode->Delete();

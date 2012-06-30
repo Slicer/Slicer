@@ -1,11 +1,14 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
-// AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationSplineNode.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
+// Annotation Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
+
+// Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationSplineDisplayableManager.h"
+
+// Annotation MRML includes
+#include <vtkMRMLAnnotationSplineNode.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationDisplayableManager.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -361,7 +364,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
       {
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
-    
+
     this->GetMRMLScene()->SaveStateForUno();
 
     // is there a node associated with this?
@@ -369,7 +372,7 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
       {
       splineNode->SetAttribute("AssociatedNodeID", associatedNodeID);
       }
-  
+
     splineNode->Initialize(this->GetMRMLScene());
 
     splineNode->SetName(splineNode->GetScene()->GetUniqueNameByString("S"));
@@ -379,8 +382,8 @@ void vtkMRMLAnnotationSplineDisplayableManager::OnClickInRenderWindow(double x, 
     // reset updating state
     this->m_Updating = 0;
 
-   
-    
+
+
     }
 
   }

@@ -16,10 +16,10 @@
 #ifndef __vtkMRMLAnnotationFiducialDisplayableManager_h
 #define __vtkMRMLAnnotationFiducialDisplayableManager_h
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationFiducialNode;

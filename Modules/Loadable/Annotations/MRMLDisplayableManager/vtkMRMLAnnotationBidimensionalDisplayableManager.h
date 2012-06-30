@@ -16,10 +16,10 @@
 #ifndef __vtkMRMLAnnotationBidimensionalDisplayableManager_h
 #define __vtkMRMLAnnotationBidimensionalDisplayableManager_h
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationBidimensionalNode;
@@ -47,7 +47,7 @@ public:
   // update just the position, called from PropagateMRMLToWidget and in
   // response to slice node modified events
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
-  
+
 protected:
 
   vtkMRMLAnnotationBidimensionalDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}

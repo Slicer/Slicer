@@ -16,10 +16,10 @@
 #ifndef __vtkMRMLAnnotationDisplayableManager_h
 #define __vtkMRMLAnnotationDisplayableManager_h
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationClickCounter.h"
 #include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
@@ -74,7 +74,7 @@ public:
   void GetDisplayToWorldCoordinates(double * displayCoordinates, double * worldCoordinates);
 
   /// Convert world coordinates to local using mrml parent transform
-  virtual void GetWorldToLocalCoordinates(vtkMRMLAnnotationNode *node, 
+  virtual void GetWorldToLocalCoordinates(vtkMRMLAnnotationNode *node,
                                   double *worldCoordinates, double *localCoordinates);
 
   /// Set mrml parent transform to widgets
@@ -95,7 +95,7 @@ protected:
 
   /// wrap the superclass render request in a check for batch processing
   virtual void RequestRender();
-  
+
   /// Remove MRML observers
   virtual void RemoveMRMLObservers();
 
@@ -199,7 +199,7 @@ protected:
 
   /// Accessor for internal flag that disables interactor style event processing
   vtkGetMacro(DisableInteractorStyleEventsProcessing, int);
-  
+
   vtkMRMLAnnotationDisplayableManagerHelper * Helper;
 
   double LastClickWorldCoordinates[4];

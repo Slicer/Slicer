@@ -1,5 +1,5 @@
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationClickCounter.h"
 
 // VTK includes

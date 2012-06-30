@@ -16,10 +16,10 @@
 #ifndef __vtkMRMLAnnotationTextDisplayableManager_h
 #define __vtkMRMLAnnotationTextDisplayableManager_h
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationTextNode;

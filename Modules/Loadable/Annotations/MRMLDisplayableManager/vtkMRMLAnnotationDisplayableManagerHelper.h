@@ -15,10 +15,10 @@
 #ifndef VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
 #define VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationNode.h>
 
 // VTK includes
@@ -67,7 +67,7 @@ public:
 
   /// Search the annotation node list and return the annotation node that has this display node
   vtkMRMLAnnotationNode * GetAnnotationNodeFromDisplayNode(vtkMRMLAnnotationDisplayNode *displayNode);
-  
+
   //----------------------------------------------------------------------------------
   // The Lists!!
   //

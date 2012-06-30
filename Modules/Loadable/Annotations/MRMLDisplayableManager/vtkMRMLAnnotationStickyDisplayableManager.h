@@ -16,11 +16,11 @@
 #ifndef __vtkMRMLAnnotationStickyDisplayableManager_h
 #define __vtkMRMLAnnotationStickyDisplayableManager_h
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
 // MRMLDisplayableManager includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationStickyNode;
 class vtkSlicerViewerWidget;

@@ -1,11 +1,14 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
-// AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationDisplayableManager.h"
-#include "vtkMRMLAnnotationNode.h"
-#include "vtkMRMLAnnotationStickyNode.h"
+// Annotation Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
+
+// Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationStickyDisplayableManager.h"
+
+// Annotation MRML includes
+#include <vtkMRMLAnnotationDisplayableManager.h>
+#include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationStickyNode.h>
 
 #include <vtkMRMLInteractionNode.h>
 
@@ -349,7 +352,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
       {
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
-    
+
     this->GetMRMLScene()->SaveStateForUno();
 
     // is there a node associated with this?
@@ -357,7 +360,7 @@ void vtkMRMLAnnotationStickyDisplayableManager::OnClickInRenderWindow(double x, 
       {
       stickyNode->SetAttribute("AssociatedNodeID", associatedNodeID);
       }
-    
+
     stickyNode->Initialize(this->GetMRMLScene());
 
     stickyNode->SetStickyCoordinates(worldCoordinates);

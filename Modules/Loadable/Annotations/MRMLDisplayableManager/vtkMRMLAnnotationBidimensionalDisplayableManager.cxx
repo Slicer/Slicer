@@ -1,8 +1,8 @@
 
-// AnnotationModule/Logic includes
+// Annotation Logic includes
 #include <vtkSlicerAnnotationModuleLogic.h>
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationBidimensionalNode.h>
 #include <vtkMRMLAnnotationDisplayableManager.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
@@ -10,10 +10,10 @@
 #include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationBidimensionalDisplayableManager.h"
 
-// AnnotationModule/VTKWidgets includes
+// Annotation VTKWidgets includes
 #include <vtkAnnotationBidimensionalRepresentation.h>
 #include <vtkAnnotationBidimensionalWidget.h>
 
@@ -445,9 +445,9 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::PropagateMRMLToWidget(vtk
         }
       }
     }
-  
+
   this->UpdatePosition(widget, node);
-  
+
   rep->NeedToRenderOn();
   bidimensionalWidget->Modified();
 
@@ -503,7 +503,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstrac
 
   double worldCoordinates4[4];
   bidimensionalNode->GetControlPointWorldCoordinates(3, worldCoordinates4);
-  
+
   double displayCoordinates1[4];
   double displayCoordinates2[4];
   double displayCoordinates3[4];
@@ -512,7 +512,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::UpdatePosition(vtkAbstrac
   double displayCoordinatesBuffer2[4];
   double displayCoordinatesBuffer3[4];
   double displayCoordinatesBuffer4[4];
-  
+
   // update the location
   if (this->Is2DDisplayableManager())
     {
@@ -830,7 +830,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
       {
       interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
       }
-    
+
     this->GetMRMLScene()->SaveStateForUndo();
 
     // is there a node associated with this?
@@ -838,7 +838,7 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnClickInRenderWindow(dou
       {
       bidimensionalNode->SetAttribute("AssociatedNodeID", associatedNodeID);
       }
-    
+
     bidimensionalNode->Initialize(this->GetMRMLScene());
 
     bidimensionalNode->Delete();

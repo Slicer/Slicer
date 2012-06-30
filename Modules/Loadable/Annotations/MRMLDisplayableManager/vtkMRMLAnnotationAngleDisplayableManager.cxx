@@ -1,11 +1,14 @@
-// AnnotationModule includes
-#include "MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.h"
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
-// AnnotationModule/MRML includes
-#include "vtkMRMLAnnotationAngleNode.h"
-#include "vtkMRMLAnnotationDisplayableManager.h"
-#include "vtkMRMLAnnotationNode.h"
+// Annotation Logic includes
+#include <vtkSlicerAnnotationModuleLogic.h>
+
+// Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationAngleDisplayableManager.h"
+
+// Annotation MRML includes
+#include <vtkMRMLAnnotationAngleNode.h>
+#include <vtkMRMLAnnotationDisplayableManager.h>
+#include <vtkMRMLAnnotationNode.h>
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
@@ -247,7 +250,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   vtkAngleRepresentation3D *rep = vtkAngleRepresentation3D::SafeDownCast(angleWidget->GetRepresentation());
 
   this->UpdatePosition(widget, node);
-  
+
   rep->NeedToRenderOn();
   angleWidget->Modified();
 
@@ -424,7 +427,7 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
       {
       angleNode->SetAttribute("AssociatedNodeID", associatedNodeID);
       }
-    
+
     angleNode->Initialize(this->GetMRMLScene());
 
     angleNode->SetName(angleNode->GetScene()->GetUniqueNameByString("A"));

@@ -1,9 +1,9 @@
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // VTK includes
@@ -245,7 +245,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
     widgetIterator->second->Delete();
     }
   this->Widgets.clear();
-  
+
   WidgetIntersectionsIt intIt;
   for (intIt = this->WidgetIntersections.begin();
        intIt != this->WidgetIntersections.end();
@@ -351,7 +351,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::PlaceSeed(double x, double y, vt
     seedWidget->ManagesCursorOff();
     seedWidget->ProcessEventsOff();
 
-    
+
     this->SeedWidget = seedWidget;
 
     }

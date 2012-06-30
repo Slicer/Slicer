@@ -15,7 +15,7 @@
 #ifndef VTKMRMLANNOTATIONCLICKCOUNTER_H_
 #define VTKMRMLANNOTATIONCLICKCOUNTER_H_
 
-// AnnotationModule includes
+// Annotation includes
 #include "qSlicerAnnotationsModuleExport.h"
 
 // VTK include

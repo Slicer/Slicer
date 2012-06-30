@@ -1,15 +1,15 @@
-// AnnotationModule/Logic includes
+// Annotation Logic includes
 #include <vtkSlicerAnnotationModuleLogic.h>
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationROINode.h>
 
-// AnnotationModule/DisplayableManager includes
+// Annotation DisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkMRMLAnnotationROIDisplayableManager.h"
 
-// AnnotationModule/VTKWidgets includes
+// Annotation VTKWidgets includes
 #include <vtkAnnotationROIRepresentation2D.h>
 #include <vtkAnnotationROIRepresentation.h>
 #include <vtkAnnotationROIWidget2D.h>

@@ -1,11 +1,11 @@
 
-// AnnotationModule/MRML includes
+// Annotation MRML includes
 #include <vtkMRMLAnnotationControlPointsNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationRulerNode.h>
 
-// AnnotationModule/MRMLDisplayableManager includes
+// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
 // MRMLDisplayableManager includes
@@ -1232,7 +1232,7 @@ void vtkMRMLAnnotationDisplayableManager::OnClickInRenderWindowGetCoordinates()
               size_t ptr = desc.find("CompositeID");
               // does it have the string CompositeID in the description with
               // something after it?
-              vtkDebugMacro("Desc len = " << desc.length() << ", ptr = " << ptr); 
+              vtkDebugMacro("Desc len = " << desc.length() << ", ptr = " << ptr);
               if (ptr != std::string::npos &&
                   (desc.length() > (ptr + 12)))
                 {
@@ -1558,7 +1558,7 @@ bool vtkMRMLAnnotationDisplayableManager::GetWorldCoordinatesChanged(double * wo
 
   // TODO find a better value?
   // - use a smaller number to make fiducial seeding more smooth
-  if (distance > VTK_DBL_EPSILON) 
+  if (distance > VTK_DBL_EPSILON)
     {
     changed = true;
     }
