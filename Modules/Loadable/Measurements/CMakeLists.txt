@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Measurements") # Do not use 'project()'
+set(MODULE_NAME Measurements)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -15,31 +15,31 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerMeasurementsModule.cxx
-  qSlicerMeasurementsModule.h
-  qSlicerMeasurementsModuleWidget.cxx
-  qSlicerMeasurementsModuleWidget.h
-  Widgets/qSlicerMeasurementsAngleWidget.cxx
-  Widgets/qSlicerMeasurementsAngleWidget.h
-  Widgets/qSlicerMeasurementsRulerWidget.cxx
-  Widgets/qSlicerMeasurementsRulerWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  Widgets/qSlicer${MODULE_NAME}AngleWidget.cxx
+  Widgets/qSlicer${MODULE_NAME}AngleWidget.h
+  Widgets/qSlicer${MODULE_NAME}RulerWidget.cxx
+  Widgets/qSlicer${MODULE_NAME}RulerWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerMeasurementsModule.h
-  qSlicerMeasurementsModuleWidget.h
-  Widgets/qSlicerMeasurementsAngleWidget.h
-  Widgets/qSlicerMeasurementsRulerWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  Widgets/qSlicer${MODULE_NAME}AngleWidget.h
+  Widgets/qSlicer${MODULE_NAME}RulerWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerMeasurementsModule.ui
-  Resources/UI/qSlicerMeasurementsAngleWidget.ui
-  Resources/UI/qSlicerMeasurementsRulerWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
+  Resources/UI/qSlicer${MODULE_NAME}AngleWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}RulerWidget.ui
 )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerMeasurementsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
 )
 
 set(MODULE_TARGET_LIBRARIES

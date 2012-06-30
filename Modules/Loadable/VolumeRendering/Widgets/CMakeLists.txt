@@ -5,49 +5,49 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicerVolumeRenderingModuleMRML_SOURCE_DIR}
-  ${vtkSlicerVolumeRenderingModuleMRML_BINARY_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
-  qSlicerCPURayCastVolumeRenderingPropertiesWidget.cxx
-  qSlicerCPURayCastVolumeRenderingPropertiesWidget.h
-  qSlicerGPURayCastVolumeRenderingPropertiesWidget.cxx
-  qSlicerGPURayCastVolumeRenderingPropertiesWidget.h
-  qSlicerNCIRayCastVolumeRenderingPropertiesWidget.cxx
-  qSlicerNCIRayCastVolumeRenderingPropertiesWidget.h
-  qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.cxx
-  qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.h
+  qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.cxx
+  qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.cxx
+  qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerNCIRayCast${MODULE_NAME}PropertiesWidget.cxx
+  qSlicerNCIRayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerNCIMultiVolumeRayCast${MODULE_NAME}PropertiesWidget.cxx
+  qSlicerNCIMultiVolumeRayCast${MODULE_NAME}PropertiesWidget.h
   qSlicerPresetComboBox.cxx
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
-  qSlicerVolumeRenderingModuleWidget.cxx
-  qSlicerVolumeRenderingModuleWidget.h
-  qSlicerVolumeRenderingPropertiesWidget.cxx
-  qSlicerVolumeRenderingPropertiesWidget.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}PropertiesWidget.cxx
+  qSlicer${MODULE_NAME}PropertiesWidget.h
   qMRMLVolumePropertyNodeWidget.cxx
   qMRMLVolumePropertyNodeWidget.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicerCPURayCastVolumeRenderingPropertiesWidget.h
-  qSlicerGPURayCastVolumeRenderingPropertiesWidget.h
-  qSlicerNCIRayCastVolumeRenderingPropertiesWidget.h
-  qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.h
+  qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerNCIRayCast${MODULE_NAME}PropertiesWidget.h
+  qSlicerNCIMultiVolumeRayCast${MODULE_NAME}PropertiesWidget.h
   qSlicerPresetComboBox.h
   qSlicerPresetComboBox_p.h
-  qSlicerVolumeRenderingModuleWidget.h
-  qSlicerVolumeRenderingPropertiesWidget.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}PropertiesWidget.h
   qMRMLVolumePropertyNodeWidget.h
   )
 
 set(${KIT}_UI_SRCS
   ../Resources/UI/qMRMLVolumePropertyNodeWidget.ui
-  ../Resources/UI/qSlicerCPURayCastVolumeRenderingPropertiesWidget.ui
-  ../Resources/UI/qSlicerGPURayCastVolumeRenderingPropertiesWidget.ui
-  ../Resources/UI/qSlicerNCIRayCastVolumeRenderingPropertiesWidget.ui
-  ../Resources/UI/qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget.ui
-  ../Resources/UI/qSlicerVolumeRenderingModule.ui
+  ../Resources/UI/qSlicerCPURayCast${MODULE_NAME}PropertiesWidget.ui
+  ../Resources/UI/qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.ui
+  ../Resources/UI/qSlicerNCIRayCast${MODULE_NAME}PropertiesWidget.ui
+  ../Resources/UI/qSlicerNCIMultiVolumeRayCast${MODULE_NAME}PropertiesWidget.ui
+  ../Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(${KIT}_RESOURCES

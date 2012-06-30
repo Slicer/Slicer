@@ -8,17 +8,17 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkFetchMILogic.cxx
-  vtkFetchMIParser.cxx
-  vtkFetchMIParserHID.cxx
-  vtkFetchMIParserXND.cxx
-  vtkFetchMIServerCollection.cxx
-  vtkFetchMIServer.cxx
-  vtkFetchMIWebServicesClient.cxx
-  vtkFetchMIWebServicesClientXND.cxx
-  vtkFetchMIWriter.cxx
-  vtkFetchMIWriterXND.cxx
-  vtkMRMLFetchMINode.cxx
+  vtk${MODULE_NAME}Logic.cxx
+  vtk${MODULE_NAME}Parser.cxx
+  vtk${MODULE_NAME}ParserHID.cxx
+  vtk${MODULE_NAME}ParserXND.cxx
+  vtk${MODULE_NAME}ServerCollection.cxx
+  vtk${MODULE_NAME}Server.cxx
+  vtk${MODULE_NAME}WebServicesClient.cxx
+  vtk${MODULE_NAME}WebServicesClientXND.cxx
+  vtk${MODULE_NAME}Writer.cxx
+  vtk${MODULE_NAME}WriterXND.cxx
+  vtkMRML${MODULE_NAME}Node.cxx
   )
 
 set(${KIT}_TARGET_LIBRARIES

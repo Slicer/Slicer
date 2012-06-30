@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "ViewControllers") # Do not use 'project()'
+set(MODULE_NAME ViewControllers)
 set(MODULE_TITLE "View Controllers")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -13,26 +13,26 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerViewControllersModule.cxx
-  qSlicerViewControllersModule.h
-  qSlicerViewControllersModuleWidget.cxx
-  qSlicerViewControllersModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerViewControllersModule.h
-  qSlicerViewControllersModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerViewControllersModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerViewControllersModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

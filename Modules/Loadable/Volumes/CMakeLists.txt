@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Volumes") # Do not use 'project()'
+set(MODULE_NAME Volumes)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -21,35 +21,35 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerVolumesIO.cxx
-  qSlicerVolumesIO.h
-  qSlicerVolumesIOOptionsWidget.cxx
-  qSlicerVolumesIOOptionsWidget.h
-  qSlicerVolumesModule.cxx
-  qSlicerVolumesModule.h
-  qSlicerVolumesModuleWidget.cxx
-  qSlicerVolumesModuleWidget.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}IOOptionsWidget.cxx
+  qSlicer${MODULE_NAME}IOOptionsWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerVolumesIO.h
-  qSlicerVolumesIOOptionsWidget.h
-  qSlicerVolumesModule.h
-  qSlicerVolumesModuleWidget.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}IOOptionsWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerVolumesIOOptionsWidget.ui
-  Resources/UI/qSlicerVolumesModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}IOOptionsWidget.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  qSlicerVolumesModuleWidgets
-  vtkSlicerVolumesModuleLogic
+  qSlicer${MODULE_NAME}ModuleWidgets
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerVolumesModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

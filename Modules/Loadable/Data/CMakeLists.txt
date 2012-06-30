@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Data") # Do not use 'project()'
+set(MODULE_NAME Data)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -23,10 +23,10 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerDataModule.cxx
-  qSlicerDataModule.h
-  qSlicerDataModuleWidget.cxx
-  qSlicerDataModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicerSceneIO.cxx
   qSlicerSceneIO.h
   qSlicerSceneIOOptionsWidget.cxx
@@ -36,26 +36,26 @@ set(MODULE_SRCS
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerDataModule.h
-  qSlicerDataModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicerSceneIO.h
   qSlicerSceneIOOptionsWidget.h
   qSlicerSceneWriter.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerDataModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   Resources/UI/qSlicerSceneIOOptionsWidget.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  qSlicerDataModuleWidgets
-  vtkSlicerDataModuleLogic
+  qSlicer${MODULE_NAME}ModuleWidgets
+  vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicerCamerasModuleLogic
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerDataModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

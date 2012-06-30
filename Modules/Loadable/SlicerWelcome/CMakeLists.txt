@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Welcome") # Do not use 'project()'
+set(MODULE_NAME Welcome)
 set(MODULE_TITLE "Welcome to Slicer")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -15,23 +15,23 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerWelcomeModule.cxx
-  qSlicerWelcomeModule.h
-  qSlicerWelcomeModuleWidget.cxx
-  qSlicerWelcomeModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerWelcomeModule.h
-  qSlicerWelcomeModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerWelcomeModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerWelcomeModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 set(MODULE_TARGET_LIBRARIES

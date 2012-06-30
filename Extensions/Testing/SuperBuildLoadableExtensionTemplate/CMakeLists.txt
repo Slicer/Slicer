@@ -45,27 +45,27 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerSuperBuildLoadableExtensionTemplateModule.cxx
-  qSlicerSuperBuildLoadableExtensionTemplateModule.h
-  qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.cxx
-  qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerSuperBuildLoadableExtensionTemplateModule.h
-  qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerSuperBuildLoadableExtensionTemplateModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerSuperBuildLoadableExtensionTemplateModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerSuperBuildLoadableExtensionTemplateModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

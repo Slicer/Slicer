@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "AtlasCreator")  # Do not use 'project()'
+set(MODULE_NAME AtlasCreator)
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 

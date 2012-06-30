@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "CropVolume") # Do not use 'project()'
+set(MODULE_NAME CropVolume)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -23,29 +23,29 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerCropVolumeModule.cxx
-  qSlicerCropVolumeModule.h
-  qSlicerCropVolumeModuleWidget.cxx
-  qSlicerCropVolumeModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerCropVolumeModule.h
-  qSlicerCropVolumeModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerCropVolumeModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerCropVolumeModuleMRML
-  vtkSlicerCropVolumeModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicerVolumesModuleLogic
 )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerCropVolumeModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

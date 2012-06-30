@@ -4,23 +4,23 @@ set(KIT ${PROJECT_NAME}Plugins)
 set(${KIT}_EXPORT "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_WIDGETS_PLUGINS_EXPORT")
 
 set(${KIT}_SRCS
-  qSlicerModelsWidgetsAbstractPlugin.cxx
-  qSlicerModelsWidgetsAbstractPlugin.h
-  qSlicerModelsWidgetsPlugin.cxx
-  qSlicerModelsWidgetsPlugin.h
+  qSlicer${MODULE_NAME}WidgetsAbstractPlugin.cxx
+  qSlicer${MODULE_NAME}WidgetsAbstractPlugin.h
+  qSlicer${MODULE_NAME}WidgetsPlugin.cxx
+  qSlicer${MODULE_NAME}WidgetsPlugin.h
 
   qMRMLModelDisplayNodeWidgetPlugin.cxx
   qMRMLModelDisplayNodeWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicerModelsWidgetsPlugin.h
+  qSlicer${MODULE_NAME}WidgetsPlugin.h
 
   qMRMLModelDisplayNodeWidgetPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  qSlicerModelsModuleWidgets
+  qSlicer${MODULE_NAME}ModuleWidgets
   )
 
 #-----------------------------------------------------------------------------

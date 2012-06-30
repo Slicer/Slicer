@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkMRMLCropVolumeParametersNode.cxx
-  vtkMRMLCropVolumeParametersNode.h
+  vtkMRML${MODULE_NAME}ParametersNode.cxx
+  vtkMRML${MODULE_NAME}ParametersNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

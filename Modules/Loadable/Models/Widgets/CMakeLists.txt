@@ -21,7 +21,7 @@ set(${KIT}_UI_SRCS
   )
 
 set(${KIT}_RESOURCES
-  Resources/qSlicerModelsModuleWidgets.qrc
+  Resources/qSlicer${MODULE_NAME}ModuleWidgets.qrc
   )
 
 set(${KIT}_TARGET_LIBRARIES

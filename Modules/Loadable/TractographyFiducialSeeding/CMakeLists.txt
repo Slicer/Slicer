@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "TractographyFiducialSeeding") # Do not use 'project()'
+set(MODULE_NAME TractographyFiducialSeeding)
 set(MODULE_TITLE "Tractography Fiducial Seeding")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -18,28 +18,28 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerTractographyFiducialSeedingModule.cxx
-  qSlicerTractographyFiducialSeedingModule.h
-  qSlicerTractographyFiducialSeedingModuleWidget.cxx
-  qSlicerTractographyFiducialSeedingModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerTractographyFiducialSeedingModule.h
-  qSlicerTractographyFiducialSeedingModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerTractographyFiducialSeedingModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerTractographyFiducialSeedingModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleLogic
   vtkSlicerAnnotationsModuleMRML
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerTractographyFiducialSeedingModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

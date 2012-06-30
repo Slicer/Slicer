@@ -6,24 +6,24 @@ set(${KIT}_EXPORT "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_PLUGINS_EXPORT")
 set(${KIT}_SRCS
   qMRMLVolumePropertyNodeWidgetPlugin.cxx
   qMRMLVolumePropertyNodeWidgetPlugin.h
-  qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.cxx
-  qSlicerVolumeRenderingModuleWidgetsAbstractPlugin.h
-  qSlicerVolumeRenderingModuleWidgetsPlugin.cxx
-  qSlicerVolumeRenderingModuleWidgetsPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsAbstractPlugin.cxx
+  qSlicer${MODULE_NAME}ModuleWidgetsAbstractPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.cxx
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
 
   qSlicerPresetComboBoxPlugin.cxx
   qSlicerPresetComboBoxPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicerVolumeRenderingModuleWidgetsPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
 
   qMRMLVolumePropertyNodeWidgetPlugin.h
   qSlicerPresetComboBoxPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  qSlicerVolumeRenderingModuleWidgets
+  qSlicer${MODULE_NAME}ModuleWidgets
   )
 
 #-----------------------------------------------------------------------------

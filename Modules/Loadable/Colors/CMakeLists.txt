@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Colors") # Do not use 'project()'
+set(MODULE_NAME Colors)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -18,30 +18,30 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerColorsIO.cxx
-  qSlicerColorsIO.h
-  qSlicerColorsModule.cxx
-  qSlicerColorsModule.h
-  qSlicerColorsModuleWidget.cxx
-  qSlicerColorsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerColorsIO.h
-  qSlicerColorsModule.h
-  qSlicerColorsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerColorsModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerColorsModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerColorsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

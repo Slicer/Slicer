@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "MultiVolumeRendering") # Do not use 'project()'
+set(MODULE_NAME MultiVolumeRendering)
 set(MODULE_TITLE "Volume Rendering II")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -27,29 +27,29 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerMultiVolumeRenderingModule.cxx
-  qSlicerMultiVolumeRenderingModule.h
-  qSlicerMultiVolumeRenderingModuleWidget.cxx
-  qSlicerMultiVolumeRenderingModuleWidget.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerMultiVolumeRenderingModule.h
-  qSlicerMultiVolumeRenderingModuleWidget.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerMultiVolumeRenderingModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  vtkSlicerMultiVolumeRenderingModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicerVolumeRenderingModuleWidgets
   qSlicerAnnotationsModuleWidgets
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerMultiVolumeRenderingModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

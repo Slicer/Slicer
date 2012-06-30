@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkSlicerLoadableExtensionTemplateLogic.cxx
-  vtkSlicerLoadableExtensionTemplateLogic.h
+  vtkSlicer${MODULE_NAME}Logic.cxx
+  vtkSlicer${MODULE_NAME}Logic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -8,10 +8,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkSlicerTractographyFiducialSeedingLogic.h
-  vtkSlicerTractographyFiducialSeedingLogic.cxx
-  vtkMRMLTractographyFiducialSeedingNode.h
-  vtkMRMLTractographyFiducialSeedingNode.cxx
+  vtkSlicer${MODULE_NAME}Logic.h
+  vtkSlicer${MODULE_NAME}Logic.cxx
+  vtkMRML${MODULE_NAME}Node.h
+  vtkMRML${MODULE_NAME}Node.cxx
   )
 
 set(${KIT}_TARGET_LIBRARIES

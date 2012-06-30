@@ -6,8 +6,8 @@ set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT
 
 set(${KIT}_INCLUDE_DIRECTORIES
   ${MRML_LIBRARIES}
-  ${vtkSlicerTractographyDisplayModuleMRML_SOURCE_DIR}
-  ${vtkSlicerTractographyDisplayModuleMRML_BINARY_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
@@ -18,7 +18,7 @@ set(${KIT}_SRCS
 set(${KIT}_TARGET_LIBRARIES
   ${ITK_LIBRARIES}
   ${MRML_LIBRARIES}
-  vtkSlicerTractographyDisplayModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleMRML
   )
 
 #-----------------------------------------------------------------------------

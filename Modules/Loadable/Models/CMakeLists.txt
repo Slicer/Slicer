@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Models") # Do not use 'project()'
+set(MODULE_NAME Models)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -22,12 +22,12 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerModelsIO.cxx
-  qSlicerModelsIO.h
-  qSlicerModelsModule.cxx
-  qSlicerModelsModule.h
-  qSlicerModelsModuleWidget.cxx
-  qSlicerModelsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicerScalarOverlayIO.cxx
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.cxx
@@ -35,25 +35,25 @@ set(MODULE_SRCS
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerModelsIO.h
-  qSlicerModelsModule.h
-  qSlicerModelsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   qSlicerScalarOverlayIO.h
   qSlicerScalarOverlayIOOptionsWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerModelsModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   Resources/UI/qSlicerScalarOverlayIOOptionsWidget.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-  qSlicerModelsModuleWidgets
-  vtkSlicerModelsModuleLogic
+  qSlicer${MODULE_NAME}ModuleWidgets
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerModelsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

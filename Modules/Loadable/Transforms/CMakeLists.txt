@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Transforms") # Do not use 'project()'
+set(MODULE_NAME Transforms)
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -13,29 +13,29 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerTransformsIO.cxx
-  qSlicerTransformsIO.h
-  qSlicerTransformsModule.cxx
-  qSlicerTransformsModule.h
-  qSlicerTransformsModuleWidget.cxx
-  qSlicerTransformsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerTransformsIO.h
-  qSlicerTransformsModule.h
-  qSlicerTransformsModuleWidget.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerTransformsModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerTransformsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

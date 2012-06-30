@@ -8,13 +8,13 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkSlicerCropVolumeLogic.cxx
-  vtkSlicerCropVolumeLogic.h
+  vtkSlicer${MODULE_NAME}Logic.cxx
+  vtkSlicer${MODULE_NAME}Logic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
   ${ITK_LIBRARIES}
-  vtkSlicerCropVolumeModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicerAnnotationsModuleMRML
   vtkSlicerVolumesModuleLogic
   )

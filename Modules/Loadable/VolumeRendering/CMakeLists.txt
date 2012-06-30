@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "VolumeRendering") # Do not use 'project()'
+set(MODULE_NAME VolumeRendering)
 set(MODULE_TITLE "Volume Rendering")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -28,22 +28,22 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(MODULE_SRCS
-  qSlicerVolumeRenderingIO.cxx
-  qSlicerVolumeRenderingIO.h
-  qSlicerVolumeRenderingModule.cxx
-  qSlicerVolumeRenderingModule.h
-  qSlicerVolumeRenderingSettingsPanel.cxx
-  qSlicerVolumeRenderingSettingsPanel.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}SettingsPanel.cxx
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerVolumeRenderingIO.h
-  qSlicerVolumeRenderingModule.h
-  qSlicerVolumeRenderingSettingsPanel.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerVolumeRenderingSettingsPanel.ui
+  Resources/UI/qSlicer${MODULE_NAME}SettingsPanel.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
@@ -57,7 +57,7 @@ set(MODULE_TARGET_LIBRARIES
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerVolumeRenderingModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

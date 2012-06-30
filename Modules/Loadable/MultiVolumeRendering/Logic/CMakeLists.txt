@@ -5,18 +5,18 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicerMultiVolumeRenderingModuleMRML_SOURCE_DIR}
-  ${vtkSlicerMultiVolumeRenderingModuleMRML_BINARY_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
-  vtkSlicerMultiVolumeRenderingLogic.cxx
-  vtkSlicerMultiVolumeRenderingLogic.h
+  vtkSlicer${MODULE_NAME}Logic.cxx
+  vtkSlicer${MODULE_NAME}Logic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
   ${ITK_LIBRARIES}
-  vtkSlicerMultiVolumeRenderingModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicerAnnotationsModuleMRML
   )
 

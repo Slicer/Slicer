@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------
-set(MODULE_NAME "SceneViews") # Do not use 'project()'
+set(MODULE_NAME SceneViews)
 set(MODULE_TITLE "Scene Views")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
@@ -20,42 +20,42 @@ set(MODULE_INCLUDE_DIRECTORIES
   )
 
 set(GUI_SRCS
-  GUI/qMRMLSceneViewsModel.cxx
-  GUI/qMRMLSceneViewsModel.h
-  GUI/qMRMLSceneViewsTreeView.cxx
-  GUI/qMRMLSceneViewsTreeView.h
-  GUI/qSlicerSceneViewsModuleWidget.cxx
-  GUI/qSlicerSceneViewsModuleWidget.h
-  GUI/qSlicerSceneViewsModuleDialog.cxx
-  GUI/qSlicerSceneViewsModuleDialog.h
+  GUI/qMRML${MODULE_NAME}Model.cxx
+  GUI/qMRML${MODULE_NAME}Model.h
+  GUI/qMRML${MODULE_NAME}TreeView.cxx
+  GUI/qMRML${MODULE_NAME}TreeView.h
+  GUI/qSlicer${MODULE_NAME}ModuleWidget.cxx
+  GUI/qSlicer${MODULE_NAME}ModuleWidget.h
+  GUI/qSlicer${MODULE_NAME}ModuleDialog.cxx
+  GUI/qSlicer${MODULE_NAME}ModuleDialog.h
   )
 
 set(MODULE_SRCS
   ${GUI_SRCS}
-  qSlicerSceneViewsModule.cxx
-  qSlicerSceneViewsModule.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
   )
 
 set(MODULE_MOC_SRCS
-  qSlicerSceneViewsModule.h
-  GUI/qMRMLSceneViewsModel.h
-  GUI/qMRMLSceneViewsTreeView.h
-  GUI/qSlicerSceneViewsModuleWidget.h
-  GUI/qSlicerSceneViewsModuleDialog.h
+  qSlicer${MODULE_NAME}Module.h
+  GUI/qMRML${MODULE_NAME}Model.h
+  GUI/qMRML${MODULE_NAME}TreeView.h
+  GUI/qSlicer${MODULE_NAME}ModuleWidget.h
+  GUI/qSlicer${MODULE_NAME}ModuleDialog.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerSceneViewsModule.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerSceneViewsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 set(MODULE_TARGET_LIBRARIES
   qSlicerBaseQTCore
   qMRMLWidgets
-  vtkSlicerSceneViewsModuleLogic
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 #-----------------------------------------------------------------------------

@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkSlicerDataModuleLogic.cxx
-  vtkSlicerDataModuleLogic.h
+  vtkSlicer${MODULE_NAME}ModuleLogic.cxx
+  vtkSlicer${MODULE_NAME}ModuleLogic.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -8,14 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-#  vtkMRMLVolumePropertyNode.cxx
-#  vtkMRMLVolumePropertyNode.h
-#  vtkMRMLVolumePropertyStorageNode.cxx
-#  vtkMRMLVolumePropertyStorageNode.h
-  vtkMRMLMultiVolumeRenderingDisplayNode.cxx
-  vtkMRMLMultiVolumeRenderingDisplayNode.h
-#  vtkMRMLVolumeRenderingScenarioNode.cxx
-#  vtkMRMLVolumeRenderingScenarioNode.h
+  vtkMRML${MODULE_NAME}DisplayNode.cxx
+  vtkMRML${MODULE_NAME}DisplayNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

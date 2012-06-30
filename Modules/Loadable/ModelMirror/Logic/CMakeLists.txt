@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkModelMirrorLogic.cxx
-  vtkMRMLModelMirrorNode.cxx
+  vtk${MODULE_NAME}Logic.cxx
+  vtkMRML${MODULE_NAME}Node.cxx
   )
 
 set(${KIT}_TARGET_LIBRARIES

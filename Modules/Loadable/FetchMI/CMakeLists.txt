@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "FetchMI") # Do not use 'project()'
+set(MODULE_NAME FetchMI)
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 

@@ -8,24 +8,24 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkMRMLCPURayCastVolumeRenderingDisplayNode.cxx
-  vtkMRMLCPURayCastVolumeRenderingDisplayNode.h
-  vtkMRMLGPURayCastVolumeRenderingDisplayNode.cxx
-  vtkMRMLGPURayCastVolumeRenderingDisplayNode.h
-  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.cxx
-  vtkMRMLGPUTextureMappingVolumeRenderingDisplayNode.h
-  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.cxx
-  vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode.h
-  vtkMRMLNCIRayCastVolumeRenderingDisplayNode.cxx
-  vtkMRMLNCIRayCastVolumeRenderingDisplayNode.h
+  vtkMRMLCPURayCast${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLCPURayCast${MODULE_NAME}DisplayNode.h
+  vtkMRMLGPURayCast${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLGPURayCast${MODULE_NAME}DisplayNode.h
+  vtkMRMLGPUTextureMapping${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLGPUTextureMapping${MODULE_NAME}DisplayNode.h
+  vtkMRMLNCIMultiVolumeRayCast${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLNCIMultiVolumeRayCast${MODULE_NAME}DisplayNode.h
+  vtkMRMLNCIRayCast${MODULE_NAME}DisplayNode.cxx
+  vtkMRMLNCIRayCast${MODULE_NAME}DisplayNode.h
   vtkMRMLVolumePropertyNode.cxx
   vtkMRMLVolumePropertyNode.h
   vtkMRMLVolumePropertyStorageNode.cxx
   vtkMRMLVolumePropertyStorageNode.h
-  vtkMRMLVolumeRenderingDisplayNode.cxx
-  vtkMRMLVolumeRenderingDisplayNode.h
-  vtkMRMLVolumeRenderingScenarioNode.cxx
-  vtkMRMLVolumeRenderingScenarioNode.h
+  vtkMRML${MODULE_NAME}DisplayNode.cxx
+  vtkMRML${MODULE_NAME}DisplayNode.h
+  vtkMRML${MODULE_NAME}ScenarioNode.cxx
+  vtkMRML${MODULE_NAME}ScenarioNode.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
