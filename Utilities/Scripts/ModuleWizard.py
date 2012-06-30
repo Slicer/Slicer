@@ -19,7 +19,8 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.xml") or \
               fnmatch.fnmatch(file, "*.xml.in") or \
               fnmatch.fnmatch(file, "*.md5") or \
-              fnmatch.fnmatch(file, "*.png"):
+              fnmatch.fnmatch(file, "*.png") or \
+              fnmatch.fnmatch(file, "*.dox"):
             file = os.path.join(root,file)
             file = file[len(dir):] # strip common dir 
             fileList.append(file)
@@ -46,7 +47,7 @@ def usage():
   print ""
   print "Usage:"
   print "ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>"
-  print "  --template default ./Modules/Loadable/ModuleTemplate"
+  print "  --template default ./Extensions/Testing/LoadableExtensionTemplate"
   print "  --templateKey default is dirname of template"
   print "  --target default ./Modules/Loadable/<moduleName>"
   print "Examples (from Slicer source directory):"
@@ -86,7 +87,7 @@ def main(argv):
     exit()
 
   if template == "":
-    template = "Modules/Loadable/ModuleTemplate/"
+    template = "Extensions/Testing/LoadableExtensionTemplate/"
   if template[-1] != '/':
     template += '/'
 

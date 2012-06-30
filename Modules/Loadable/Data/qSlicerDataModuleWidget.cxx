@@ -18,15 +18,13 @@
 
 ==============================================================================*/
 
-// Qt includes
-
 // SlicerQt includes
 #include "qSlicerDataModuleWidget.h"
 #include "ui_qSlicerDataModule.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 
-// ModuleTemplate includes
+// Data Logic includes
 #include "vtkSlicerDataModuleLogic.h"
 
 // SlicerLibs includes
@@ -67,7 +65,7 @@ qSlicerDataModuleWidgetPrivate::logic() const
 {
   Q_Q(const qSlicerDataModuleWidget);
   return vtkSlicerDataModuleLogic::SafeDownCast(q->logic());
-} 
+}
 
 //-----------------------------------------------------------------------------
 qSlicerDataModuleWidget::qSlicerDataModuleWidget(QWidget* parentWidget)

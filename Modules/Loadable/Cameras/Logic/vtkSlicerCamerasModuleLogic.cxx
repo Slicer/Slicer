@@ -18,7 +18,7 @@
 
 ==============================================================================*/
 
-// ModuleTemplate includes
+// Cameras Logic includes
 #include "vtkSlicerCamerasModuleLogic.h"
 
 // MRML includes
@@ -31,7 +31,7 @@
 #include <vtkNew.h>
 
 // STD includes
-#include <cassert> 
+#include <cassert>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerCamerasModuleLogic);

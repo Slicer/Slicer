@@ -28,9 +28,6 @@ if(Slicer_BUILD_CLI_SUPPORT)
     CropVolume
     )
 endif()
-if(BUILD_TESTING)
-  list(APPEND qtmodules ModuleTemplate)
-endif()
 
 foreach(module ${qtmodules})
   list(FIND Slicer_QTLOADABLEMODULES_DISABLED ${module} _module_disabled)

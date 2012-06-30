@@ -19,7 +19,7 @@
 
 ==============================================================================*/
 
-// ModuleTemplate includes
+// Data Logic includes
 #include "vtkSlicerDataModuleLogic.h"
 
 // MRML includes
@@ -29,7 +29,7 @@
 #include <vtkNew.h>
 
 // STD includes
-#include <cassert> 
+#include <cassert>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerDataModuleLogic);

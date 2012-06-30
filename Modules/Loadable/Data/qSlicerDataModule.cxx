@@ -40,7 +40,7 @@
 // SlicerLogic includes
 #include <vtkSlicerApplicationLogic.h>
 
-// ModuleTemplate includes
+// Data Logic includes
 #include "vtkSlicerDataModuleLogic.h"
 
 // Logic includes

@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-// ModuleTemplate includes
+// SuperBuildLoadableExtensionTemplate Logic includes
 #include "vtkSlicerSuperBuildLoadableExtensionTemplateLogic.h"
 
 // MRML includes
