@@ -1,12 +1,15 @@
 ## NUMPY requires fortran, so set up the fortran compiler properly
 ## http://www.cmake.org/Wiki/CMakeForFortranExample
 
-# Work-around for CMake issue 0009220
-if(DEFINED CMAKE_Fortran_COMPILER AND CMAKE_Fortran_COMPILER MATCHES "^$")
-  set(CMAKE_Fortran_COMPILER CMAKE_Fortran_COMPILER-NOTFOUND)
-endif()
+set(CMAKE_Fortran_COMPILER_WORKS FALSE)
+if(NOT WIN32)
+  # Work-around for CMake issue 0009220
+  if(DEFINED CMAKE_Fortran_COMPILER AND CMAKE_Fortran_COMPILER MATCHES "^$")
+    set(CMAKE_Fortran_COMPILER CMAKE_Fortran_COMPILER-NOTFOUND)
+  endif()
 
-enable_language(Fortran OPTIONAL)
+  enable_language(Fortran OPTIONAL)
+endif()
 
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
