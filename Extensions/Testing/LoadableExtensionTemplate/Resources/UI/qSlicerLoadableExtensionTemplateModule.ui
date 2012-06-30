@@ -15,14 +15,15 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Display</string>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3"/>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="qSlicerFooBarWidget" name="FooBar" native="true"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -51,6 +52,12 @@
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerFooBarWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerFooBarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
