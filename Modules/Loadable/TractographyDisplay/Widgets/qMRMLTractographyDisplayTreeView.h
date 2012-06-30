@@ -67,16 +67,12 @@ signals:
   // type 0-line 1-tube 2-glyph
   void visibilityChanged(int type);
 
-protected slots:
-  void onClicked(const QModelIndex& index);
 
 protected:
   QScopedPointer<qMRMLTractographyDisplayTreeViewPrivate> d_ptr;
   #ifndef QT_NO_CURSOR
-    void mouseMoveEvent(QMouseEvent* e);
     bool viewportEvent(QEvent* e);
   #endif
-  virtual void mousePressEvent(QMouseEvent* event);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTractographyDisplayTreeView);

@@ -129,85 +129,6 @@ qMRMLTractographyDisplayTreeView::~qMRMLTractographyDisplayTreeView()
 {
 }
 
-//------------------------------------------------------------------------------
-//
-// Click and selected event handling
-//
-//------------------------------------------------------------------------------
-
-
-
-//------------------------------------------------------------------------------
-void qMRMLTractographyDisplayTreeView::onClicked(const QModelIndex& index)
-{
-/**
-  Q_D(qMRMLTractographyDisplayTreeView);
-
-  vtkMRMLNode *mrmlNode = d->SortFilterModel->mrmlNodeFromIndex(index);
-  if (!mrmlNode)
-    {
-    return;
-    }
-  // if the user clicked on a hierarchy, set this as the active one
-  // this means, new TractographyDisplays or new user-created hierarchies will be created
-  // as childs of this one
-
-  if(mrmlNode->IsA("vtkMRMLTractographyDisplayHierarchyNode"))
-    {
-    this->m_Logic->SetActiveHierarchyNodeID(mrmlNode->GetID());
-    }
-  else
-    {
-    // if the user clicked on a row that isn't a hierarchy node, reset the
-    // active hierarchy to the parent hierarchy of this node (going via the
-    // hierarchy node associated with this node)
-    if(mrmlNode &&
-       !mrmlNode->IsA("vtkMRMLTractographyDisplayHierarchyNode"))
-      {
-      vtkMRMLHierarchyNode *hnode = vtkMRMLTractographyDisplayHierarchyNode::GetAssociatedHierarchyNode(this->mrmlScene(), mrmlNode->GetID());
-      if (hnode && hnode->GetParentNode())
-        {
-        this->m_Logic->SetActiveHierarchyNodeID(hnode->GetParentNode()->GetID());
-        }
-      }
-    }
-
-  // check if user clicked on icon, this can happen even after we marked a
-  // hierarchy as active
-  if (index.column() == qMRMLSceneTractographyDisplayModel::CheckedColumn)
-    {
-    // Let the superclass view to handle the event, it will update the item
-    // which will update the node.
-    }
-  else if (index.column() == qMRMLSceneTractographyDisplayModel::VisibilityColumn)
-    {
-    // user wants to toggle the visibility of the TractographyDisplay
-    this->onVisibilityColumnClicked(mrmlNode);
-    }
-  else if (index.column() == qMRMLSceneTractographyDisplayModel::LockColumn)
-    {
-    // user wants to toggle the un-/lock of the TractographyDisplay
-    this->onLockColumnClicked(mrmlNode);
-    }
-  else if (index.column() == qMRMLSceneTractographyDisplayModel::EditColumn)
-    {
-    // user wants to edit the properties of this TractographyDisplay
-    // signal the widget
-    this->onPropertyEditButtonClicked(QString(mrmlNode->GetID()));
-//    this->m_Widget->propertyEditButtonClicked(QString(mrmlNode->GetID()));
-    }
-    **/
-
-}
-
-
-
-//------------------------------------------------------------------------------
-//
-// MouseMove event handling
-//
-//------------------------------------------------------------------------------
-
 #ifndef QT_NO_CURSOR
 //------------------------------------------------------------------------------
 bool qMRMLTractographyDisplayTreeView::viewportEvent(QEvent* e)
@@ -222,45 +143,9 @@ bool qMRMLTractographyDisplayTreeView::viewportEvent(QEvent* e)
   return QTreeView::viewportEvent(e);
 }
 
-//------------------------------------------------------------------------------
-void qMRMLTractographyDisplayTreeView::mouseMoveEvent(QMouseEvent* e)
-{
-  this->QTreeView::mouseMoveEvent(e);
-/**
-  // get the index of the current column
-  QModelIndex index = indexAt(e->pos());
 
-  if (index.column() == qMRMLSceneTractographyDisplayModel::VisibilityColumn || index.column() == qMRMLSceneTractographyDisplayModel::LockColumn || index.column() == qMRMLSceneTractographyDisplayModel::EditColumn)
-    {
-    // we are over a column with a clickable icon
-    // let's change the cursor
-    QCursor handCursor(Qt::PointingHandCursor);
-    this->setCursor(handCursor);
-    // .. and bail out
-    return;
-    }
-  else if(this->cursor().shape() == Qt::PointingHandCursor)
-    {
-    // if we are NOT over such a column and we already have a changed cursor,
-    // reset it!
-    this->setCursor(QCursor());
-    }
-**/
-}
 #endif
 
-//------------------------------------------------------------------------------
-//
-// Layout and behavior customization
-//
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-//
-// In-Place Editing of TractographyDisplays
-//
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 void qMRMLTractographyDisplayTreeView::onVisibilityColumnClicked(vtkMRMLNode* node)
@@ -271,41 +156,7 @@ void qMRMLTractographyDisplayTreeView::onVisibilityColumnClicked(vtkMRMLNode* no
     // no node found!
     return;
     }
-/**
-  vtkMRMLTractographyDisplayNode* TractographyDisplayNode = vtkMRMLTractographyDisplayNode::SafeDownCast(node);
-
-  if (TractographyDisplayNode)
-    {
-    // this is a valid TractographyDisplayNode
-    TractographyDisplayNode->SetVisible(!TractographyDisplayNode->GetVisible());
-
-    }
-
-  // taking out the switch for hierarchy nodes, do it via the buttons above
-/*
-  vtkMRMLTractographyDisplayHierarchyNode* hierarchyNode = vtkMRMLTractographyDisplayHierarchyNode::SafeDownCast(node);
-
-  if (hierarchyNode)
-    {
-    this->m_Logic->SetHierarchyTractographyDisplaysVisibleFlag(hierarchyNode, true);
-    } // if hierarchyNode
-    **/
 }
-
-
-
-//------------------------------------------------------------------------------
-void qMRMLTractographyDisplayTreeView::mousePressEvent(QMouseEvent* event)
-{
-  // skip qMRMLTreeView
-  this->QTreeView::mousePressEvent(event);
-}
-
-//------------------------------------------------------------------------------
-//
-// Connections to other classes
-//
-//------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
