@@ -168,7 +168,7 @@ void qMRMLTractographyDisplayTreeView::setLogic(vtkSlicerFiberBundleLogic* logic
     return;
     }
 
-  Q_D(qMRMLTractographyDisplayTreeView);
+  //Q_D(qMRMLTractographyDisplayTreeView);
 
   this->m_Logic = logic;
 

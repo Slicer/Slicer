@@ -63,7 +63,7 @@ qMRMLSceneTractographyDisplayModelPrivate
 //------------------------------------------------------------------------------
 void qMRMLSceneTractographyDisplayModelPrivate::init()
 {
-  Q_Q(qMRMLSceneTractographyDisplayModel);
+  //Q_Q(qMRMLSceneTractographyDisplayModel);
 
   //q->setVisibilityColumn(q->nameColumn());
 }
@@ -161,7 +161,7 @@ QFlags<Qt::ItemFlag> qMRMLSceneTractographyDisplayModel::nodeFlags(vtkMRMLNode* 
 void qMRMLSceneTractographyDisplayModel
 ::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
-  Q_D(qMRMLSceneTractographyDisplayModel);
+  //Q_D(qMRMLSceneTractographyDisplayModel);
 
   vtkMRMLFiberBundleNode *fbNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
   if (!fbNode)
@@ -194,7 +194,7 @@ void qMRMLSceneTractographyDisplayModel
     vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetLineDisplayNode();
     if (displayNode)
       {
-      this->updateVilibilityFromNode(item, displayNode, column);
+      this->updateVilibilityFromNode(item, displayNode);
       }
   }
   else if (column == this->tubeVisibilityColumn())
@@ -202,7 +202,7 @@ void qMRMLSceneTractographyDisplayModel
     vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetTubeDisplayNode();
     if (displayNode)
       {
-      this->updateVilibilityFromNode(item, displayNode, column);
+      this->updateVilibilityFromNode(item, displayNode);
       }
     }
   else if (column == this->tubeIntersectionVisibilityColumn())
@@ -210,7 +210,7 @@ void qMRMLSceneTractographyDisplayModel
     vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetTubeDisplayNode();
     if (displayNode)
       {
-      this->updateVilibilityFromNode(item, displayNode, column, true);
+      this->updateVilibilityFromNode(item, displayNode, true);
       }
     }
   else if (column == this->glyphVisibilityColumn())
@@ -218,7 +218,7 @@ void qMRMLSceneTractographyDisplayModel
     vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetGlyphDisplayNode();
     if (displayNode)
       {
-      this->updateVilibilityFromNode(item, displayNode, column);
+      this->updateVilibilityFromNode(item, displayNode);
       }
     }
   else
@@ -229,7 +229,7 @@ void qMRMLSceneTractographyDisplayModel
 
 
 void qMRMLSceneTractographyDisplayModel
-::updateVilibilityFromNode(QStandardItem* item, vtkMRMLNode* node, int column, bool slice)
+::updateVilibilityFromNode(QStandardItem* item, vtkMRMLNode* node, bool slice)
 {
   Q_D(qMRMLSceneTractographyDisplayModel);
 
@@ -285,7 +285,7 @@ void qMRMLSceneTractographyDisplayModel
 ::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
  
-  Q_D(qMRMLSceneTractographyDisplayModel);
+  //Q_D(qMRMLSceneTractographyDisplayModel);
 
   vtkMRMLFiberBundleNode *fbNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
   if (!fbNode)

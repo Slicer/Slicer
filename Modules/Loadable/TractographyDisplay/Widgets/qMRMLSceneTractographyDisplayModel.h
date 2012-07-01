@@ -104,7 +104,7 @@ protected:
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
   virtual int maxColumnId()const;
 
-  void updateVilibilityFromNode(QStandardItem* item, vtkMRMLNode* node, int column, bool slice=false);
+  void updateVilibilityFromNode(QStandardItem* item, vtkMRMLNode* node, bool slice=false);
   void updateVilibilityFromItem(QStandardItem* item, vtkMRMLNode* node, bool slice=false);
 
 private:
