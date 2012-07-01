@@ -29,6 +29,14 @@ public:
   qSlicerTractographyDisplayWidget(QWidget *parent=0);
   virtual ~qSlicerTractographyDisplayWidget();
 
+  QColor color()const;
+  double opacity()const;
+  double ambient()const;
+  double diffuse()const;
+  double specular()const;
+  double specularPower()const;
+  bool backfaceCulling()const;
+
   vtkMRMLFiberBundleNode* FiberBundleNode()const;
   vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode()const;
   vtkMRMLDiffusionTensorDisplayPropertiesNode* DiffusionTensorDisplayPropertiesNode()const;
@@ -55,6 +63,13 @@ public slots:
   void setColorByCellScalarsColorTable(vtkMRMLNode*);
   void setOpacity(double); 
   
+  /// Set the values on the display node
+  void setColor(const QColor&);
+  void setAmbient(double);
+  void setDiffuse(double);
+  void setSpecular(double);
+  void setSpecularPower(double);
+  void setBackfaceCulling(bool);
   
   
 protected slots:

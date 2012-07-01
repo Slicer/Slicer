@@ -256,6 +256,23 @@ QCheckBox::indicator:unchecked {
         </item>
        </layout>
       </item>
+
+      <item>
+        <widget class="ctkCollapsibleGroupBox" name="MaterialPropertyGroupBox">
+          <property name="title">
+            <string>&amp;Material Properties</string>
+          </property>
+          <property name="collapsed">
+            <bool>true</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+              <widget class="ctkMaterialPropertyWidget" name="MaterialPropertyWidget"/>
+            </item>
+          </layout>
+        </widget>
+      </item>
+
      </layout>
     </widget>
    </item>

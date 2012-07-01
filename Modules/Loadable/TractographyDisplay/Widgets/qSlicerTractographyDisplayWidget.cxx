@@ -10,6 +10,7 @@
 #include <vtkPointData.h>
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleDisplayNode.h>
+#include <vtkMRMLFiberBundleLineDisplayNode.h>
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
 // VTK includes
@@ -78,6 +79,21 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
   QObject::connect( this->ColorByPointFiberOrientationRadioButton, SIGNAL(clicked()), q, SLOT(setColorByPointFiberOrientation()) );
 
   QObject::connect( this->OpacitySlider, SIGNAL(valueChanged(double)), q, SLOT(setOpacity(double)) );
+
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(colorChanged(QColor)),
+                   q, SLOT(setColor(QColor)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(opacityChanged(double)),
+                   q, SLOT(setOpacity(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(ambientChanged(double)),
+                   q, SLOT(setAmbient(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(diffuseChanged(double)),
+                   q, SLOT(setDiffuse(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularChanged(double)),
+                   q, SLOT(setSpecular(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularPowerChanged(double)),
+                   q, SLOT(setSpecularPower(double)));
+  QObject::connect(this->MaterialPropertyWidget, SIGNAL(backfaceCullingChanged(bool)),
+                   q, SLOT(setBackfaceCulling(bool)));
 }
 
 
@@ -157,6 +173,18 @@ void qSlicerTractographyDisplayWidget::setFiberBundleDisplayNode(vtkMRMLFiberBun
   
   d->FiberBundleDisplayNode = FiberBundleDisplayNode;
   
+  if (vtkMRMLFiberBundleLineDisplayNode::SafeDownCast(d->FiberBundleDisplayNode))
+    {
+    d->MaterialPropertyWidget->setHidden(true);
+    d->MaterialPropertyGroupBox->setHidden(true);
+    }
+  else
+    {
+    d->MaterialPropertyWidget->setHidden(false);
+    d->MaterialPropertyGroupBox->setHidden(false);
+    }
+
+
   qvtkReconnect( oldDisplayNode, this->FiberBundleDisplayNode(),
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
   qvtkReconnect( oldDisplayPropertiesNode, this->DiffusionTensorDisplayPropertiesNode(),
@@ -370,6 +398,122 @@ void qSlicerTractographyDisplayWidget::setOpacity(double opacity)
 
 
 //------------------------------------------------------------------------------
+QColor qSlicerTractographyDisplayWidget::color()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->color();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setColor(const QColor& color)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  // QColors loose precision in the numbers, don't reset the color if it didn't
+  // "really" change.
+  double* oldColor = d->FiberBundleDisplayNode->GetColor();
+  if (QColor::fromRgbF(oldColor[0], oldColor[1], oldColor[2]) != color)
+    {
+    d->FiberBundleDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
+    }
+}
+
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setAmbient(double ambient)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetAmbient(ambient);
+}
+
+//------------------------------------------------------------------------------
+double qSlicerTractographyDisplayWidget::ambient()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->ambient();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setDiffuse(double diffuse)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetDiffuse(diffuse);
+}
+
+//------------------------------------------------------------------------------
+double qSlicerTractographyDisplayWidget::diffuse()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->diffuse();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setSpecular(double specular)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetSpecular(specular);
+}
+
+//------------------------------------------------------------------------------
+double qSlicerTractographyDisplayWidget::specular()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->specular();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setSpecularPower(double specularPower)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetPower(specularPower);
+}
+
+//------------------------------------------------------------------------------
+double qSlicerTractographyDisplayWidget::specularPower()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->specularPower();
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setBackfaceCulling(bool backfaceCulling)
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+  if (!d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+  d->FiberBundleDisplayNode->SetBackfaceCulling(backfaceCulling);
+}
+
+//------------------------------------------------------------------------------
+bool qSlicerTractographyDisplayWidget::backfaceCulling()const
+{
+  Q_D(const qSlicerTractographyDisplayWidget);
+  return d->MaterialPropertyWidget->backfaceCulling();
+}
+
+
+//------------------------------------------------------------------------------
 void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
 {
   Q_D(qSlicerTractographyDisplayWidget);
@@ -450,4 +594,16 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         }
         break;
    }
+
+  d->MaterialPropertyWidget->setColor(
+    QColor::fromRgbF(d->FiberBundleDisplayNode->GetColor()[0],
+                     d->FiberBundleDisplayNode->GetColor()[1],
+                     d->FiberBundleDisplayNode->GetColor()[2]));
+  d->MaterialPropertyWidget->setOpacity(d->FiberBundleDisplayNode->GetOpacity());
+  d->MaterialPropertyWidget->setAmbient(d->FiberBundleDisplayNode->GetAmbient());
+  d->MaterialPropertyWidget->setDiffuse(d->FiberBundleDisplayNode->GetDiffuse());
+  d->MaterialPropertyWidget->setSpecular(d->FiberBundleDisplayNode->GetSpecular());
+  d->MaterialPropertyWidget->setSpecularPower(d->FiberBundleDisplayNode->GetPower());
+  d->MaterialPropertyWidget->setBackfaceCulling(d->FiberBundleDisplayNode->GetBackfaceCulling());
+
 }
