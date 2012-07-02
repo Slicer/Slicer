@@ -684,9 +684,6 @@ void qSlicerAppMainWindow::setupMenuActions()
   // Main ToolBar actions (where are actions for load data and save?
   connect(d->actionLoadDICOM, SIGNAL(triggered()),
           this, SLOT(loadDICOMActionTriggered()));
-  // Module ToolBar actions
-  connect(d->actionModuleHome, SIGNAL(triggered()),
-          this, SLOT(setHomeModuleCurrent()));
 
   QSettings settings;
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT

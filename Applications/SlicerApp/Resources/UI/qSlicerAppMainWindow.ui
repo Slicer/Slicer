@@ -206,7 +206,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionModuleHome"/>
   </widget>
   <widget class="QToolBar" name="UndoRedoToolBar">
    <property name="windowTitle">

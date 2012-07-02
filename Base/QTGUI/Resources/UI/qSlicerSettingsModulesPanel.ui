@@ -391,7 +391,7 @@
    <item row="7" column="0">
     <widget class="QLabel" name="HomeModuleLabel">
      <property name="text">
-      <string>Home:</string>
+      <string>Default startup module:</string>
      </property>
     </widget>
    </item>
