@@ -194,6 +194,10 @@ bool qMRMLTractographyDisplayTreeView::clickDecoration(const QModelIndex& index)
   vtkMRMLFiberBundleNode* fbNode = vtkMRMLFiberBundleNode::SafeDownCast(
           this->sortFilterProxyModel()->mrmlNodeFromIndex(index));
 
+  vtkMRMLFiberBundleDisplayNode* lineDisplayNode = fbNode->GetLineDisplayNode();
+  vtkMRMLFiberBundleDisplayNode* tubeDisplayNode = fbNode->GetTubeDisplayNode();
+  vtkMRMLFiberBundleDisplayNode* glyphDisplayNode = fbNode->GetGlyphDisplayNode();
+
   qMRMLSceneTractographyDisplayModel* model = dynamic_cast< qMRMLSceneTractographyDisplayModel* >(this->sceneModel());
   
   if (!(sourceIndex.flags() & Qt::ItemIsEnabled))
@@ -203,42 +207,57 @@ bool qMRMLTractographyDisplayTreeView::clickDecoration(const QModelIndex& index)
   else if (sourceIndex.column() == model->lineVisibilityColumn())
     {
     type = 0;
-    vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetLineDisplayNode();
-    if (displayNode)
+    if (lineDisplayNode)
       {
-      displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
+      lineDisplayNode->SetVisibility(lineDisplayNode->GetVisibility() ? 0 : 1);
       res = true;
       }
   }
   else if (sourceIndex.column() == model->tubeVisibilityColumn())
     {
     type = 1;
-    vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetTubeDisplayNode();
-    if (displayNode)
+    if (tubeDisplayNode)
       {
-      displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
+      tubeDisplayNode->SetVisibility(tubeDisplayNode->GetVisibility() ? 0 : 1);
       res = true;
       }
   }
   else if (sourceIndex.column() == model->tubeIntersectionVisibilityColumn())
     {
-    vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetTubeDisplayNode();
-    if (displayNode)
+    if (tubeDisplayNode)
       {
-      displayNode->SetSliceIntersectionVisibility(displayNode->GetSliceIntersectionVisibility() ? 0 : 1);
+      tubeDisplayNode->SetSliceIntersectionVisibility(tubeDisplayNode->GetSliceIntersectionVisibility() ? 0 : 1);
       res = true;
       }
   }
   else if (sourceIndex.column() == model->glyphVisibilityColumn())
     {
     type = 2;
-    vtkMRMLFiberBundleDisplayNode* displayNode = fbNode->GetGlyphDisplayNode();
-    if (displayNode)
+    if (glyphDisplayNode)
       {
-      displayNode->SetVisibility(displayNode->GetVisibility() ? 0 : 1);
+      glyphDisplayNode->SetVisibility(glyphDisplayNode->GetVisibility() ? 0 : 1);
       res = true;
       }
   }
+
+  if (glyphDisplayNode->GetVisibility() == 0 &&
+      tubeDisplayNode->GetVisibility() == 0  &&
+      lineDisplayNode->GetVisibility() == 1)
+    {
+    type = 0;
+    }
+  if (glyphDisplayNode->GetVisibility() == 0 &&
+      tubeDisplayNode->GetVisibility() == 1  &&
+      lineDisplayNode->GetVisibility() == 0)
+    {
+    type = 1;
+    }
+  if (glyphDisplayNode->GetVisibility() == 1 &&
+      tubeDisplayNode->GetVisibility() == 0  &&
+      lineDisplayNode->GetVisibility() == 0)
+    {
+    type = 2;
+    }
 
   if (res)
     {
