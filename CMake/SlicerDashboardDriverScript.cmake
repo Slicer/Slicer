@@ -66,7 +66,15 @@ if(WITH_PACKAGES)
   endif()
 endif()
 
-set(repository http://svn.slicer.org/Slicer4/trunk)
+if(NOT DEFINED GIT_REPOSITORY)
+  set(repository http://svn.slicer.org/Slicer4/trunk)
+else()
+  set(repository ${GIT_REPOSITORY})
+  set(git_branch_option "")
+  if(NOT "${GIT_TAG}" STREQUAL "")
+    set(git_branch_option "-b ${GIT_TAG}")
+  endif()
+endif()
 
 # Should binary directory be cleaned?
 set(empty_binary_directory FALSE)
@@ -112,10 +120,18 @@ if(empty_binary_directory)
 endif()
 
 if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
-  set(CTEST_CHECKOUT_COMMAND "${CTEST_SVN_COMMAND} checkout ${repository} ${CTEST_SOURCE_DIRECTORY}")
+  if(NOT DEFINED GIT_REPOSITORY)
+    set(CTEST_CHECKOUT_COMMAND "${CTEST_SVN_COMMAND} checkout ${repository} ${CTEST_SOURCE_DIRECTORY}")
+  else()
+    set(CTEST_CHECKOUT_COMMAND "${CTEST_GIT_COMMAND} clone ${git_branch_option} ${repository} ${CTEST_SOURCE_DIRECTORY}")
+  endif()
 endif()
 
-set(CTEST_UPDATE_COMMAND "${CTEST_SVN_COMMAND}")
+if(NOT DEFINED GIT_REPOSITORY)
+  set(CTEST_UPDATE_COMMAND "${CTEST_SVN_COMMAND}")
+else()
+  set(CTEST_UPDATE_COMMAND "${CTEST_GIT_COMMAND}")
+endif()
 
 set(CTEST_SOURCE_DIRECTORY "${CTEST_SOURCE_DIRECTORY}")
 
