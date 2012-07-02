@@ -57,10 +57,9 @@ bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
   if (logic->GetDefaultRenderingMethod() != 0 ||
       displayNode != 0)
     {
-    std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
-              << __LINE__ << " failed:" << std::endl
-              << displayNode << " "
-              << std::endl;
+    std::cerr << "Line " << __LINE__
+              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
+              << std::endl << "displayNode:" << displayNode << std::endl;
     return false;
     }
 
@@ -68,26 +67,24 @@ bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
   logic->SetMRMLScene(scene.GetPointer());
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   if (displayNode == 0 ||
-      displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
+      !displayNode->IsA("vtkMRMLCPURayCastVolumeRenderingDisplayNode"))
     {
-    std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
-              << __LINE__ << " failed:" << std::endl
-              << displayNode << " "
-              << (displayNode ? displayNode->GetClassName() : "none") << " "
-              << std::endl;
+    std::cerr << "Line " << __LINE__
+              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
+              << std::endl << "displayNode:" << displayNode << " ("
+              << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
     return false;
     }
 
   logic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   displayNode = logic->CreateVolumeRenderingDisplayNode();
   if (displayNode == 0 ||
-      displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
+      !displayNode->IsA("vtkMRMLGPURayCastVolumeRenderingDisplayNode"))
     {
-    std::cerr << "vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode():"
-              << __LINE__ << " failed:" << std::endl
-              << displayNode << " "
-              << (displayNode ? displayNode->GetClassName() : "none") << " "
-              << std::endl;
+    std::cerr << "Line " << __LINE__
+              << " - Problem with vtkSlicerVolumeRenderingLogic::CreateVolumeRenderingDisplayNode()"
+              << std::endl << "displayNode:" << displayNode << " ("
+              << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
     return false;
     }
 
@@ -102,9 +99,8 @@ bool testPresets(const std::string& moduleShareDirectory)
 
   if (logic->GetPresetsScene() == 0)
     {
-    std::cerr << "vtkSlicerVolumeRenderingLogic::vtkSlicerVolumeRenderingLogic() failed:\n"
-              << logic->GetPresetsScene() << " "
-              << std::endl;
+    std::cerr << "Line " << __LINE__
+              << " - Problem with vtkSlicerVolumeRenderingLogic::GetPresetsScene()" << std::endl;
     return false;
     }
   return true;
