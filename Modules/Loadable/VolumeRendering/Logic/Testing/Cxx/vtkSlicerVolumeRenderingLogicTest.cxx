@@ -27,22 +27,30 @@
 #include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
-bool testDefaultRenderingMethod();
-bool testPresets();
+bool testDefaultRenderingMethod(const std::string& moduleShareDirectory);
+bool testPresets(const std::string &moduleShareDirectory);
 
 //----------------------------------------------------------------------------
-int vtkSlicerVolumeRenderingLogicTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
+int vtkSlicerVolumeRenderingLogicTest(int argc, char* argv[])
 {
+  if (argc != 2)
+    {
+    std::cout << "Missing moduleShareDirectory argument !" << std::endl;
+    return EXIT_FAILURE;
+    }
+  std::string moduleShareDirectory(argv[1]);
+
   bool res = true;
-  res = testDefaultRenderingMethod() && res;
-  res = testPresets() && res;
+  res = testDefaultRenderingMethod(moduleShareDirectory) && res;
+  res = testPresets(moduleShareDirectory) && res;
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 //----------------------------------------------------------------------------
-bool testDefaultRenderingMethod()
+bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
 {
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
+  logic->SetModuleShareDirectory(moduleShareDirectory);
 
   vtkMRMLVolumeRenderingDisplayNode* displayNode =
     logic->CreateVolumeRenderingDisplayNode();
@@ -87,9 +95,10 @@ bool testDefaultRenderingMethod()
 }
 
 //----------------------------------------------------------------------------
-bool testPresets()
+bool testPresets(const std::string& moduleShareDirectory)
 {
   vtkNew<vtkSlicerVolumeRenderingLogic> logic;
+  logic->SetModuleShareDirectory(moduleShareDirectory);
 
   if (logic->GetPresetsScene() == 0)
     {

@@ -11,5 +11,5 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 
 set(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
-SIMPLE_TEST( vtkSlicerVolumeRenderingLogicTest )
+SIMPLE_TEST( vtkSlicerVolumeRenderingLogicTest ${Slicer_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME})
 
