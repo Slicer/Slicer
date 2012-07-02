@@ -98,8 +98,8 @@ void qMRMLTractographyDisplayTreeViewPrivate::init()
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
 
-  QObject::connect(q, SIGNAL(clicked(QModelIndex)),
-                   q, SLOT(onClicked(QModelIndex)));
+  //QObject::connect(q, SIGNAL(clicked(QModelIndex)),
+  //                 q, SLOT(onClicked(QModelIndex)));
 
   /***
   QObject::connect( q->selectionModel(),

@@ -23,6 +23,7 @@
 #include "qMRMLSceneTractographyDisplayModel.h"
 // MRML includes
 
+#include "vtkMRMLNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
@@ -71,7 +72,6 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
   QObject::connect(this->TractographyDisplayTreeView, SIGNAL(visibilityChanged(int)),
                    this->tabWidget, SLOT(setCurrentIndex (int)));
 
-  
 }
 
 
@@ -104,22 +104,25 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLNode* inp
 void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBundleNode* fiberBundleNode)
 {
   Q_D(qSlicerTractographyDisplayModuleWidget);
-  if (vtkMRMLFiberBundleNode::SafeDownCast(fiberBundleNode))
-    {
-    d->fiberBundleNode = fiberBundleNode;
 
-    d->LineDisplayWidget->setFiberBundleNode(fiberBundleNode);
-    d->TubeDisplayWidget->setFiberBundleNode(fiberBundleNode);
-    d->GlyphDisplayWidget->setFiberBundleNode(fiberBundleNode);
+  if (d->fiberBundleNode == fiberBundleNode)
+    return;
 
-    d->LineDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
-    d->TubeDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
-    d->GlyphDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
-    d->GlyphPropertiesWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
-    
-    d->PercentageOfFibersShown = fiberBundleNode->GetSubsamplingRatio() * 100.;
-    emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
-    }
+  d->fiberBundleNode = fiberBundleNode;
+
+  d->LineDisplayWidget->setFiberBundleNode(fiberBundleNode);
+  d->TubeDisplayWidget->setFiberBundleNode(fiberBundleNode);
+  d->GlyphDisplayWidget->setFiberBundleNode(fiberBundleNode);
+
+  d->LineDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
+  d->TubeDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
+  d->GlyphDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+  d->GlyphPropertiesWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+  
+  d->PercentageOfFibersShown = fiberBundleNode->GetSubsamplingRatio() * 100.;
+
+  emit currentNodeChanged(d->fiberBundleNode);
+  emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
 }
 
 void qSlicerTractographyDisplayModuleWidget::setPercentageOfFibersShown(double percentage)

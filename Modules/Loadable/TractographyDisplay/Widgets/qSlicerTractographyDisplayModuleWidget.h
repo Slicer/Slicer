@@ -51,6 +51,8 @@ public slots:
 
 signals:
   void percentageOfFibersShownChanged(double);
+  void currentNodeChanged(vtkMRMLNode*);
+  void currentNodeChanged(vtkMRMLFiberBundleNode*);
 
 protected:
   virtual void setup();

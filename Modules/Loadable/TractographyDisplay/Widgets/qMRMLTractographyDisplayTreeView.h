@@ -62,10 +62,10 @@ public:
 
 
 signals:
-  void currentNodeChanged(vtkMRMLNode* node);
   void onPropertyEditButtonClicked(QString id);
   // type 0-line 1-tube 2-glyph
   void visibilityChanged(int type);
+public slots:
 
 
 protected:

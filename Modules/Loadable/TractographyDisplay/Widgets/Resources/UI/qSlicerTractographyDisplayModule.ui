@@ -62,29 +62,6 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="SelectFiberBundleLabel">
-       <property name="text">
-        <string>FiberBundle:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="qMRMLNodeComboBox" name="FiberBundleNodeSelector">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="nodeTypes">
-        <stringlist>
-         <string>vtkMRMLFiberBundleNode</string>
-        </stringlist>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <widget class="QWidget" name="widget_3" native="true">
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
@@ -167,7 +144,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -303,11 +280,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -351,42 +323,14 @@
    <class>qMRMLTractographyDisplayTreeView</class>
    <extends>QTreeView</extends>
    <header>qMRMLTractographyDisplayTreeView.h</header>
+   <slots>
+    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+    <slot>setCurrentNode(vtkMRMLNode*)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>FiberBundleNodeSelector</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>161</x>
-     <y>115</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>205</x>
-     <y>22</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>FiberBundleNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>qSlicerTractographyDisplayModule</receiver>
-   <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>205</x>
-     <y>22</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>161</x>
-     <y>115</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>qSlicerTractographyDisplayModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
@@ -398,8 +342,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>161</x>
-     <y>87</y>
+     <x>135</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -414,8 +358,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>161</x>
-     <y>87</y>
+     <x>111</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -430,8 +374,8 @@
      <y>43</y>
     </hint>
     <hint type="destinationlabel">
-     <x>222</x>
-     <y>121</y>
+     <x>111</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -446,8 +390,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>161</x>
-     <y>103</y>
+     <x>135</x>
+     <y>463</y>
     </hint>
    </hints>
   </connection>
@@ -462,8 +406,8 @@
      <y>349</y>
     </hint>
     <hint type="destinationlabel">
-     <x>174</x>
-     <y>48</y>
+     <x>198</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -478,26 +422,29 @@
      <y>349</y>
     </hint>
     <hint type="destinationlabel">
-     <x>210</x>
-     <y>143</y>
+     <x>234</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>FiberBundleNodeSelector</sender>
+   <sender>TractographyDisplayTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>ROIEditorWidget</receiver>
+   <receiver>qSlicerTractographyDisplayModule</receiver>
    <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>23</y>
+     <x>277</x>
+     <y>184</y>
     </hint>
     <hint type="destinationlabel">
-     <x>210</x>
-     <y>143</y>
+     <x>415</x>
+     <y>15</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
+ </slots>
 </ui>
