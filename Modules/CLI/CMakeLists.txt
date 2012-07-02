@@ -120,10 +120,13 @@ if(BUILD_TESTING)
   endif()
 endif()
 
-foreach(cli_module ${cli_modules})
-  set(${cli_module}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${cli_module})
-  add_subdirectory(${cli_module})
-endforeach()
+foreach(module ${cli_modules})
+  list(FIND Slicer_CLIMODULES_DISABLED ${module} _module_disabled)
+  if(${_module_disabled} STREQUAL "-1")
+    set(${module}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${module})
+    add_subdirectory(${module})
+  endif()
+endforeach(module)
 
 if(Slicer_BUILD_BRAINSTOOLS)
   # NOTE: BRAINSTools source code is checkout using "External_BRAINSTools.cmake".

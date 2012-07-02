@@ -248,7 +248,9 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND ep_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
-if(Slicer_BUILD_CLI_SUPPORT)
+if(Slicer_BUILD_CLI_SUPPORT)  
+  # Provide a mechanism to disable one or more CLI modules.
+  list(APPEND ep_superbuild_extra_args -DSlicer_CLIMODULES_DISABLED:STRING=${Slicer_CLIMODULES_DISABLED})
   list(APPEND ep_superbuild_extra_args -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR})
 endif()
 
