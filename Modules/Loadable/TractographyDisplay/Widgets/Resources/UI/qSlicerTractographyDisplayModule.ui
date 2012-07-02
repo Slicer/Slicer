@@ -62,7 +62,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget_3" native="true">
+    <widget class="QWidget" name="percentageWidget" native="true">
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
@@ -136,7 +136,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="TractDisplayModesTabWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
@@ -144,9 +144,9 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="LineTab">
          <attribute name="title">
           <string>Line</string>
          </attribute>
@@ -179,7 +179,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="TubeTab">
          <attribute name="title">
           <string>Tube</string>
          </attribute>
@@ -212,7 +212,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_3">
+        <widget class="QWidget" name="GlyphTab">
          <attribute name="title">
           <string>Glyph</string>
          </attribute>
@@ -318,6 +318,9 @@
    <extends>QWidget</extends>
    <header>qSlicerTractographyEditorROIWidget.h</header>
    <container>1</container>
+   <slots>
+    <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>qMRMLTractographyDisplayTreeView</class>
@@ -342,8 +345,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>135</x>
-     <y>443</y>
+     <x>111</x>
+     <y>477</y>
     </hint>
    </hints>
   </connection>
@@ -359,7 +362,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>111</x>
-     <y>443</y>
+     <y>477</y>
     </hint>
    </hints>
   </connection>
@@ -374,8 +377,8 @@
      <y>43</y>
     </hint>
     <hint type="destinationlabel">
-     <x>111</x>
-     <y>443</y>
+     <x>159</x>
+     <y>477</y>
     </hint>
    </hints>
   </connection>
@@ -390,8 +393,8 @@
      <y>115</y>
     </hint>
     <hint type="destinationlabel">
-     <x>135</x>
-     <y>463</y>
+     <x>111</x>
+     <y>484</y>
     </hint>
    </hints>
   </connection>
@@ -422,8 +425,8 @@
      <y>349</y>
     </hint>
     <hint type="destinationlabel">
-     <x>234</x>
-     <y>351</y>
+     <x>258</x>
+     <y>396</y>
     </hint>
    </hints>
   </connection>
@@ -443,8 +446,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>TractographyDisplayTreeView</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>ROIEditorWidget</receiver>
+   <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>342</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
+  <signal>currentNodeChanged(vtkMRMLNode*)</signal>
   <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
  </slots>
 </ui>

@@ -70,7 +70,7 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
                    q, SLOT(setSolidTubeColor(bool)));
 
   QObject::connect(this->TractographyDisplayTreeView, SIGNAL(visibilityChanged(int)),
-                   this->tabWidget, SLOT(setCurrentIndex (int)));
+                   this->TractDisplayModesTabWidget, SLOT(setCurrentIndex (int)));
 
 }
 

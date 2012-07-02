@@ -37,7 +37,6 @@ public:
 
   vtkMRMLFiberBundleNode* FiberBundleNode;
   vtkMRMLAnnotationNode* AnnotationMRMLNodeForFiberSelection;
-  vtkMRMLFiberBundleDisplayNode *LineDN, *TubeDN, *GlyphDN;
 };
 
 //------------------------------------------------------------------------------
@@ -106,6 +105,9 @@ void qSlicerTractographyEditorROIWidget::
 {
   Q_D(qSlicerTractographyEditorROIWidget);
 
+  if (d->FiberBundleNode == fiberBundleNode)
+    return;
+
   d->FiberBundleNode = fiberBundleNode;
 
   // TODO: move this to updateWidgetFromMRML section.
@@ -113,8 +115,8 @@ void qSlicerTractographyEditorROIWidget::
   {
     return;
   }
-  vtkMRMLFiberBundleDisplayNode *FiberBundleDisplayNode = vtkMRMLFiberBundleDisplayNode::SafeDownCast(fiberBundleNode->GetLineDisplayNode());
-  if (FiberBundleDisplayNode)
+
+  if (fiberBundleNode->GetNumberOfDisplayNodes() > 1)
   {
     d->AnnotationMRMLNodeForFiberSelection = fiberBundleNode->GetAnnotationNode();
     d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
@@ -145,6 +147,27 @@ void qSlicerTractographyEditorROIWidget::
     {
     return;
     }
+
+  if (d->FiberBundleNode->GetNumberOfDisplayNodes() > 1)
+  {
+    if (d->AnnotationMRMLNodeForFiberSelection != d->FiberBundleNode->GetAnnotationNode())
+    {
+      d->AnnotationMRMLNodeForFiberSelection = d->FiberBundleNode->GetAnnotationNode();
+      d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
+    }
+    if (!d->FiberBundleNode->GetSelectWithAnnotationNode())
+    {
+      d->DisableROI->setChecked(true);
+    }
+    else if (d->FiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection)
+    {
+      d->PositiveROI->setChecked(true);
+    }
+    else if (d->FiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::NegativeAnnotationNodeSelection)
+    {
+      d->NegativeROI->setChecked(true);
+    }
+  }
 }
 
 void qSlicerTractographyEditorROIWidget::setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode* AnnotationMRMLNodeForFiberSelection)
