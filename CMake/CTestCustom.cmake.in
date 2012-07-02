@@ -76,10 +76,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # Mac
   "numpy.core.src.multiarray.descriptor.*was declared here"
 
-  # CLAPACK
-  "CLAPACK.BLAS.SRC"
-  "CLAPACK.F2CLIBS.libf2c"
-
   # Tcl
   "tcl.tcl.unix.*warning: cast"
   #  warning: '...' is deprecated (declared at ...)
