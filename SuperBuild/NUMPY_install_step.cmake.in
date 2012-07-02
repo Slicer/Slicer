@@ -1,4 +1,4 @@
 
 include("@CMAKE_BINARY_DIR@/NUMPY_environment.cmake")
 
-numpy_setup_command("make" build --fcompiler=none)
+numpy_setup_command("install" install)

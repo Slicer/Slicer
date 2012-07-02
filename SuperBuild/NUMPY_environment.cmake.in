@@ -1,0 +1,61 @@
+
+#------------------------------------------------------------------------------
+set(ENV{CC} "@CMAKE_C_COMPILER@ @CMAKE_C_COMPILER_ARG1@")
+set(ENV{CFLAGS} "@CMAKE_C_FLAGS@ @CMAKE_C_FLAGS_RELEASE@")
+set(ENV{CXX} "@CMAKE_CXX_COMPILER@ @CMAKE_CXX_COMPILER_ARG1@")
+set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
+set(ENV{LDFLAGS} "") ## NOTE THIS MUST BE BLANK OR THE FORTRAN COMPILER FAILS!
+set(ENV{F77} "")
+set(ENV{F90} "")
+set(ENV{FFLAGS} "")
+set(ENV{F77FLAGS} "")
+set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{VS_UNICODE_OUTPUT} "")
+
+if(APPLE)
+  set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
+  set(osx_arch_flags)
+  foreach(arch ${CMAKE_OSX_ARCHITECTURES})
+    set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
+  endforeach()
+  set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
+  set(osx_sysroot)
+  set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
+  if(CMAKE_CXX_HAS_ISYSROOT)
+    set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
+  endif()
+  set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
+
+  set(ENV{CFLAGS} "$ENV{CFLAGS} ${osx_flags}")
+  set(ENV{CXXFLAGS} "$ENV{CXXFLAGS} ${osx_flags}")
+  set(ENV{LDFLAGS} "${osx_flags}")
+else()
+
+endif()
+
+#------------------------------------------------------------------------------
+macro(numpy_setup_command stepname)
+  set(setup_cmd setup.py ${ARGN})
+  message(STATUS "NUMPY_DIR: @NUMPY_DIR@")
+  message(STATUS "NUMPY_SETUP_CMD: ${setup_cmd}")
+  execute_process(
+    COMMAND "@slicer_PYTHON_EXECUTABLE@" ${setup_cmd}
+    WORKING_DIRECTORY "@NUMPY_DIR@"
+    RESULT_VARIABLE result
+    OUTPUT_VARIABLE output
+    ERROR_VARIABLE error
+    )
+
+  set(output_file "@CMAKE_BINARY_DIR@/@proj@_${stepname}_step_output.txt")
+  file(WRITE ${output_file} ${output})
+
+  set(error_file "@CMAKE_BINARY_DIR@/@proj@_${stepname}_step_error.txt")
+  file(WRITE ${error_file} ${error})
+
+  if(NOT ${result} EQUAL 0)
+    message("@proj@ Errors detected: \n${output}\n${error}")
+    message(FATAL_ERROR "Error in ${stepname} step of @proj@. See ${output_file} and ${error_file}")
+  endif()
+
+  message("@proj@ ${stepname} worked.")
+endmacro()

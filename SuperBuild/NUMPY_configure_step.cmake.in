@@ -1,76 +1,13 @@
-message("Configuring NUMPY:\n@NUMPY_DIR@")
-set(ENV{CC} "@CMAKE_C_COMPILER@ @CMAKE_C_COMPILER_ARG1@")
-set(ENV{CFLAGS} "@CMAKE_C_FLAGS@ @CMAKE_C_FLAGS_RELEASE@")
-set(ENV{CXX} "@CMAKE_CXX_COMPILER@ @CMAKE_CXX_COMPILER_ARG1@")
-set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
-set(ENV{LDFLAGS} "") ## NOTE THIS MUST BE BLANK OR THE FORTRAN COMPILER FAILS!
-set(ENV{F77} "@CMAKE_Fortran_COMPILER@ @CMAKE_Fortran_COMPILER_ARG1@")
-set(ENV{F90} "@CMAKE_Fortran_COMPILER@ @CMAKE_Fortran_COMPILER_ARG1@")
-set(ENV{FFLAGS} "@CMAKE_Fortran_FLAGS@ @CMAKE_Fortran_FLAGS_RELEASE@")
-set(ENV{F77FLAGS} "@CMAKE_Fortran_FLAGS@ @CMAKE_Fortran_FLAGS_RELEASE@")
-set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
-set(ENV{VS_UNICODE_OUTPUT} "")
 
-if(APPLE)
-  set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
-  set(osx_arch_flags)
-  foreach(arch ${CMAKE_OSX_ARCHITECTURES})
-    set(osx_arch_flags "${osx_arch_flags} -arch ${arch}")
+include("@CMAKE_BINARY_DIR@/NUMPY_environment.cmake")
+
+# Clean logs
+foreach(stepname configure make install)
+  foreach(logtype error output)
+    file(REMOVE "@CMAKE_BINARY_DIR@/@proj@_${stepname}_step_${logtype}.txt")
   endforeach()
-  set(osx_version_flag "-mmacosx-version-min=@CMAKE_OSX_DEPLOYMENT_TARGET@")
-  set(osx_sysroot)
-  set(CMAKE_CXX_HAS_ISYSROOT "@CMAKE_CXX_HAS_ISYSROOT@")
-  if(CMAKE_CXX_HAS_ISYSROOT)
-    set(osx_sysroot "-isysroot @CMAKE_OSX_SYSROOT@")
-  endif()
-  set(osx_flags "${osx_arch_flags} ${osx_version_flag} ${osx_sysroot}")
+endforeach()
 
-  set(ENV{CFLAGS} "${osx_flags}")
-  #set(ENV{CXXFLAGS} "${osx_flags}")
-  #set(ENV{CPPFLAGS} "${osx_flags}")
-  set(ENV{LDFLAGS} "${osx_flags}")
-endif()
+file(WRITE "@NUMPY_DIR@/site.cfg" "")
 
-# As explained in site.cfg.example - See http://projects.scipy.org/numpy/browser/trunk/site.cfg.example
-# Directories listed in variable such as library_dirs or source_dirs should be separated using os.pathsep
-# On windows, the separator is ";" and ":" on unix-like platform
-set(path_sep ":")
-if(WIN32)
-  set(path_sep ";")
-endif()
-
-# As explained in site.cfg.example, the library name without the prefix "lib" should be used.
-# Nevertheless, on windows, only "libf2c" leads to a successful configuration and
-# installation of NUMPY
-set(f2c_libname "f2c")
-if(WIN32)
-  set(f2c_libname "libf2c")
-endif()
-
-# setup the site.cfg file
-file(WRITE "@NUMPY_DIR@/site.cfg"
-"
-[blas]
-library_dirs = @CLAPACK_DIR@/BLAS/SRC/${CONFIG_TYPE}/${path_sep}@CLAPACK_DIR@/F2CLIBS/libf2c/${CONFIG_TYPE}/
-libraries = blas,${f2c_libname}
-
-[lapack]
-library_dirs = @CLAPACK_DIR@/SRC/${CONFIG_TYPE}/
-lapack_libs = lapack
-")
-
-set(output_file "@NUMPY_DIR@/configure_step_output.txt")
-set(error_file "@NUMPY_DIR@/configure_step_error.txt")
-
-execute_process(
-  COMMAND "@slicer_PYTHON_EXECUTABLE@" setup.py config
-  WORKING_DIRECTORY "@NUMPY_DIR@"
-  RESULT_VARIABLE res
-  OUTPUT_FILE ${output_file}
-  ERROR_FILE ${error_file}
-  )
-
-if(NOT ${res} EQUAL 0)
-  message(FATAL_ERROR "Error in config of NUMPY. See configure_step_output.txt and configure_step_error.txt")
-endif()
-message("Numpy config worked.")
+numpy_setup_command("configure" config)
