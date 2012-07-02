@@ -300,25 +300,20 @@ QCheckBox::indicator:unchecked {
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLColorTableComboBox</class>
-   <extends>qMRMLNodeComboBox</extends>
-   <header>qMRMLColorTableComboBox.h</header>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
    <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLRangeWidget</class>
-   <extends>ctkRangeWidget</extends>
-   <header>qMRMLRangeWidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ctkVTKDataSetArrayComboBox</class>
@@ -336,9 +331,24 @@ QCheckBox::indicator:unchecked {
    <header>ctkRangeWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSliderWidget</class>
+   <class>qMRMLColorTableComboBox</class>
+   <extends>qMRMLNodeComboBox</extends>
+   <header>qMRMLColorTableComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLRangeWidget</class>
+   <extends>ctkRangeWidget</extends>
+   <header>qMRMLRangeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
    <extends>QWidget</extends>
-   <header>ctkSliderWidget.h</header>
+   <header>ctkCollapsibleGroupBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkMaterialPropertyWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkMaterialPropertyWidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
