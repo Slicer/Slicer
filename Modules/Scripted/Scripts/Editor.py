@@ -1,8 +1,8 @@
 import os
-from __main__ import tcl
 from __main__ import slicer
 import qt, ctk
 import EditorLib
+import EditUtil
 
 #
 # Editor
@@ -28,14 +28,6 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       slicer.mrmlScene.RegisterNodeClass(node)
       node.Delete()
 
-    if tcl('info exists ::Editor(singleton)') != '':
-      # TODO: cannot call dialog.exec from pythonqt... This is just a warning anyway
-      #dialog = qt.QErrorMessage()
-      #dialog.showMessage("Error: editor singleton already created - Editor initialized twice.")
-      pass
-    tcl('set ::Editor(singleton) this')
-    tcl('set ::Editor(checkPointsEnabled) 1')
-    
     iconDir = slicer.app.slicerHome + '/' + os.environ['SLICER_SHARE_DIR'] + '/Tcl/ImageData'
     parent.icon = qt.QIcon("%s/ToolbarEditorToolbox.png" % iconDir)
 
@@ -117,8 +109,7 @@ class EditorWidget:
 
     # Observe the parameter node in order to make changes to 
     # button states as needed
-    nodeID = tcl('[EditorGetParameterNode] GetID')
-    self.parameterNode = slicer.mrmlScene.GetNodeByID(nodeID)
+    self.parameterNode = self.editUtil.getParameterNode()
     self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
     # resume the current effect, if we left the editor and re-entered or pick default
