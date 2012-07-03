@@ -41,7 +41,7 @@ class vtkStringArray;
 class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   public vtkSlicerModuleLogic
 {
-  public:
+public:
   
   // The Usual vtk class functions
   static vtkSlicerVolumesLogic *New();
@@ -49,12 +49,18 @@ class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkGetObjectMacro(ColorLogic, vtkMRMLColorLogic);
+  vtkMRMLColorLogic* GetColorLogic()const;
+
+  // Description:
+  // Examine the file name to see if the extension is one of the supported
+  // freesurfer volume formats. Used to assign the proper colour node to label
+  // maps.
+  int IsFreeSurferVolume(const char* filename);
 
   // Description:
   // The currently active mrml volume node 
-  vtkGetObjectMacro (ActiveVolumeNode, vtkMRMLVolumeNode);
-  void SetActiveVolumeNode (vtkMRMLVolumeNode *ActiveVolumeNode);
+  void SetActiveVolumeNode(vtkMRMLVolumeNode *ActiveVolumeNode);
+  vtkMRMLVolumeNode* GetActiveVolumeNode()const;
 
   // Description:
   // Sub type of loading an archetype volume that is known to be a scalar
@@ -151,17 +157,13 @@ protected:
                                   unsigned long event,
                                   void * callData);
 
-  // Description:
-  // Examine the file name to see if the extension is one of the supported
-  // freesurfer volume formats. Used to assign the proper colour node to label
-  // maps.
-  int IsFreeSurferVolume (const char* filename);
-  
-  // Description:
-  //
-  vtkMRMLVolumeNode *ActiveVolumeNode;
 
-  vtkMRMLColorLogic* ColorLogic;
+  void InitializeStorageNode(vtkMRMLStorageNode * storageNode,
+                             const char * filename,
+                             vtkStringArray *fileList);
+  
+  vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
+  vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
 };
 
 #endif
