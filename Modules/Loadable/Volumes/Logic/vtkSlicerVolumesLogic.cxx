@@ -91,8 +91,7 @@ vtkMRMLColorLogic* vtkSlicerVolumesLogic::GetColorLogic()const
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::SetActiveVolumeNode(vtkMRMLVolumeNode *activeNode)
 {
-  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, activeNode );
-  this->Modified();
+  vtkSetMRMLNodeMacro(this->ActiveVolumeNode, activeNode);
 }
 
 //----------------------------------------------------------------------------
