@@ -920,6 +920,13 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode*
+vtkSlicerVolumesLogic::CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
+{
+  return Self::CloneVolume(this->GetMRMLScene(), volumeNode, name);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode*
 vtkSlicerVolumesLogic::
 CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
 {
@@ -946,7 +953,7 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
   vtkNew<vtkMRMLScalarVolumeNode> clonedVolumeNode;
   clonedVolumeNode->CopyWithScene(volumeNode);
   clonedVolumeNode->SetAndObserveStorageNodeID(NULL);
-  std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
+  std::string uname = scene->GetUniqueNameByString(name);
   clonedVolumeNode->SetName(uname.c_str());
   clonedVolumeNode->SetAndObserveDisplayNodeID(clonedDisplayNode->GetID());
 
@@ -960,7 +967,8 @@ CloneVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *nam
     }
   else
     {
-    vtkErrorMacro("CloneVolume: The ImageData of VolumeNode with ID " << volumeNode->GetID() << " is null !");
+    vtkErrorWithObjectMacro(scene, "CloneVolume: The ImageData of VolumeNode with ID "
+                            << volumeNode->GetID() << " is null !");
     }
 
   // add the cloned volume to the scene

@@ -47,6 +47,8 @@ public:
   vtkTypeRevisionMacro(vtkSlicerVolumesLogic,vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  typedef vtkSlicerVolumesLogic Self;
+
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
 
@@ -106,10 +108,14 @@ public:
   vtkMRMLScalarVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *labelNode, vtkMRMLVolumeNode *templateNode);
 
 
+  /// Create a deep copy of a \a volumeNode and add it to the current scene
+  /// \sa GetMRMLScene()
+  vtkMRMLScalarVolumeNode *CloneVolume(vtkMRMLVolumeNode *volumeNode, const char *name);
+
   /// Create a deep copy of a \a volumeNode and add it to the \a scene
-  vtkMRMLScalarVolumeNode *CloneVolume(vtkMRMLScene *scene,
-                                       vtkMRMLVolumeNode *volumeNode,
-                                       const char *name);
+  static vtkMRMLScalarVolumeNode *CloneVolume(vtkMRMLScene *scene,
+                                              vtkMRMLVolumeNode *volumeNode,
+                                              const char *name);
 
   /// Computes matrix we need to register
   /// V1Node to V2Node given the "register.dat" matrix from tkregister2 (FreeSurfer)
