@@ -99,13 +99,20 @@ public:
 
   /// Create a label map volume to match the given volume node and add it to the scene
   vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
+  /// Fill in a label map volume to match the given template volume node.
+  /// \sa FillLabelVolumeFromTemplate(vtkMRMLScene*, vtkMRMLScalarVolumeNode*, vtkMRMLVolumeNode*)
+  /// \sa GetMRMLScene()
+  vtkMRMLScalarVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScalarVolumeNode *labelNode,
+                                                       vtkMRMLVolumeNode *templateNode);
 
   /// Fill in a label map volume to match the given template volume node, under
   /// the assumption that the given label map node is already added to the scene.
   /// A display node will be added to it if the label node doesn't already have
   /// one, and the image data associated with the label node will be allocated
   /// according to the template volumeNode.
-  vtkMRMLScalarVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *labelNode, vtkMRMLVolumeNode *templateNode);
+  vtkMRMLScalarVolumeNode *FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
+                                                       vtkMRMLScalarVolumeNode *labelNode,
+                                                       vtkMRMLVolumeNode *templateNode);
 
 
   /// Create a deep copy of a \a volumeNode and add it to the current scene
