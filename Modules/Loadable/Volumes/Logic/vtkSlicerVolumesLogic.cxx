@@ -453,14 +453,14 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     useOrientationFromFile = 0;
     }
 
-  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode = NULL;
-  vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode = NULL;
-  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode= NULL;
+  vtkSmartPointer<vtkMRMLVolumeNode> volumeNode;
+  vtkSmartPointer<vtkMRMLVolumeDisplayNode> displayNode;
+  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> lmdisplayNode;
 
-  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> dtdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode> dwdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode> vdisplayNode = NULL;
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> sdisplayNode = NULL;
+  vtkSmartPointer<vtkMRMLDiffusionTensorVolumeDisplayNode> dtdisplayNode;
+  vtkSmartPointer<vtkMRMLDiffusionWeightedVolumeDisplayNode> dwdisplayNode;
+  vtkSmartPointer<vtkMRMLVectorVolumeDisplayNode> vdisplayNode;
+  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> sdisplayNode;
 
   vtkSmartPointer<vtkMRMLScalarVolumeNode> scalarNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
   vtkSmartPointer<vtkMRMLVectorVolumeNode> vectorNode = vtkSmartPointer<vtkMRMLVectorVolumeNode>::New();
@@ -470,7 +470,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   // Instanciation of the two I/O mechanism
   vtkSmartPointer<vtkMRMLNRRDStorageNode> storageNode1 = vtkSmartPointer<vtkMRMLNRRDStorageNode>::New();
   vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode> storageNode2 = vtkSmartPointer<vtkMRMLVolumeArchetypeStorageNode>::New();
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode = NULL;
+  vtkSmartPointer<vtkMRMLStorageNode> storageNode;
 
   // set the volume name
   std::string volumeName;

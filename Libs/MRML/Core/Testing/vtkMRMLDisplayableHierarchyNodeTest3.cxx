@@ -200,7 +200,7 @@ int vtkMRMLDisplayableHierarchyNodeTest3(int , char * [] )
   // now check that the children are in the order they were added
   for (unsigned int i = 0; i < numModels; i++)
     {
-    vtkSmartPointer<vtkMRMLHierarchyNode> childHierarchy = NULL;
+    vtkSmartPointer<vtkMRMLHierarchyNode> childHierarchy;
     childHierarchy = hnode2->GetNthChildNode(i);
     if (!childHierarchy)
       {

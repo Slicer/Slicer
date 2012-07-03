@@ -115,7 +115,7 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
   // save an explicit default scene view recording the state of the scene when
   // saved to file
   const char *defaultSceneName = "Master Scene View";
-  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode = NULL;
+  vtkSmartPointer<vtkMRMLSceneViewNode> sceneViewNode;
   vtkSmartPointer<vtkCollection> oldSceneViewNodes;
   oldSceneViewNodes.TakeReference(
     this->mrmlScene()->GetNodesByClassByName("vtkMRMLSceneViewNode", defaultSceneName));

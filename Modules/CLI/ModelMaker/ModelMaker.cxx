@@ -178,8 +178,8 @@ int main(int argc, char * argv[])
       }
     rtnd = vtkMRMLModelHierarchyNode::SafeDownCast(rnd);
     }
-  vtkSmartPointer<vtkMRMLColorTableNode>        colorNode = NULL;
-  vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode = NULL;
+  vtkSmartPointer<vtkMRMLColorTableNode>        colorNode;
+  vtkSmartPointer<vtkMRMLColorTableStorageNode> colorStorageNode;
 
   int useColorNode = 0;
   if( ColorTable !=  "" )
@@ -188,31 +188,31 @@ int main(int argc, char * argv[])
     }
 
   // vtk and helper variables
-  vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader = NULL;
+  vtkSmartPointer<vtkITKArchetypeImageSeriesReader> reader;
   vtkImageData *                                    image;
-  vtkSmartPointer<vtkDiscreteMarchingCubes>         cubes = NULL;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother = NULL;
+  vtkSmartPointer<vtkDiscreteMarchingCubes>         cubes;
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smoother;
   bool                                              makeMultiple = false;
   bool                                              useStartEnd = false;
-  vtkSmartPointer<vtkImageAccumulate>               hist = NULL;
+  vtkSmartPointer<vtkImageAccumulate>               hist;
   std::vector<int>                                  skippedModels;
   std::vector<int>                                  madeModels;
-  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smootherSinc = NULL;
-  vtkSmartPointer<vtkSmoothPolyDataFilter>          smootherPoly = NULL;
+  vtkSmartPointer<vtkWindowedSincPolyDataFilter>    smootherSinc;
+  vtkSmartPointer<vtkSmoothPolyDataFilter>          smootherPoly;
 
-  vtkSmartPointer<vtkImageConstantPad>        padder = NULL;
-  vtkSmartPointer<vtkDecimatePro>             decimator = NULL;
-  vtkSmartPointer<vtkMarchingCubes>           mcubes = NULL;
-  vtkSmartPointer<vtkImageThreshold>          imageThreshold = NULL;
-  vtkSmartPointer<vtkThreshold>               threshold = NULL;
-  vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints = NULL;
-  vtkSmartPointer<vtkGeometryFilter>          geometryFilter = NULL;
-  vtkSmartPointer<vtkTransform>               transformIJKtoRAS = NULL;
-  vtkSmartPointer<vtkReverseSense>            reverser = NULL;
-  vtkSmartPointer<vtkTransformPolyDataFilter> transformer = NULL;
-  vtkSmartPointer<vtkPolyDataNormals>         normals = NULL;
-  vtkSmartPointer<vtkStripper>                stripper = NULL;
-  vtkSmartPointer<vtkPolyDataWriter>          writer = NULL;
+  vtkSmartPointer<vtkImageConstantPad>        padder;
+  vtkSmartPointer<vtkDecimatePro>             decimator;
+  vtkSmartPointer<vtkMarchingCubes>           mcubes;
+  vtkSmartPointer<vtkImageThreshold>          imageThreshold;
+  vtkSmartPointer<vtkThreshold>               threshold;
+  vtkSmartPointer<vtkImageToStructuredPoints> imageToStructuredPoints;
+  vtkSmartPointer<vtkGeometryFilter>          geometryFilter;
+  vtkSmartPointer<vtkTransform>               transformIJKtoRAS;
+  vtkSmartPointer<vtkReverseSense>            reverser;
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformer;
+  vtkSmartPointer<vtkPolyDataNormals>         normals;
+  vtkSmartPointer<vtkStripper>                stripper;
+  vtkSmartPointer<vtkPolyDataWriter>          writer;
 
   // keep track of number of models that will be generated, for filter
   // watcher reporting

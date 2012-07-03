@@ -169,7 +169,7 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
   vtkSmartPointer<vtkMRMLModelStorageNode> mStorageNode = vtkSmartPointer<vtkMRMLModelStorageNode>::New();
   vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode> fsmStorageNode = vtkSmartPointer<vtkMRMLFreeSurferModelStorageNode>::New();
   fsmStorageNode->SetUseStripper(0);  // turn off stripping by default (breaks some pickers)
-  vtkSmartPointer<vtkMRMLStorageNode> storageNode = NULL;
+  vtkSmartPointer<vtkMRMLStorageNode> storageNode;
 
   // check for local or remote files
   int useURI = 0; // false;
