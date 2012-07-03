@@ -881,44 +881,38 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate (vtkMRMLScene *scene, vtkMRMLScalarVolumeNode *labelNode, vtkMRMLVolumeNode *templateNode)
+vtkMRMLScalarVolumeNode *
+vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
+                                                   vtkMRMLScalarVolumeNode *labelNode,
+                                                   vtkMRMLVolumeNode *templateNode)
 {
-  if ( templateNode == NULL )
+  if (scene == NULL || labelNode == NULL || templateNode == NULL)
     {
     return NULL;
     }
 
-  // create a display node if the label node does not have one
-  vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode = NULL;
-  if ( labelNode->GetDisplayNode() == NULL )
+  // Create a display node if the label node does not have one
+  vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode> labelDisplayNode =
+      vtkMRMLLabelMapVolumeDisplayNode::SafeDownCast(labelNode->GetDisplayNode());
+  if ( labelDisplayNode.GetPointer() == NULL )
     {
-    labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+    labelDisplayNode = vtkSmartPointer<vtkMRMLLabelMapVolumeDisplayNode>::New();
     scene->AddNode(labelDisplayNode);
     }
 
-  // we need to copy from the volume node to get required attributes, but
+  // We need to copy from the volume node to get required attributes, but
   // the copy copies templateNode's name as well.  So save the original name
   // and re-set the name after the copy.
-  std::string origName;
-  origName.assign(labelNode->GetName());
+  std::string origName(labelNode->GetName());
   labelNode->Copy(templateNode);
   labelNode->SetName(origName.c_str());
   labelNode->SetLabelMap(1);
 
-  // set the display node to have a label map lookup table
-  if ( labelDisplayNode )
-    {
-    if (this->ColorLogic)
-      {
-      labelDisplayNode->SetAndObserveColorNodeID(
-        this->ColorLogic->GetDefaultLabelMapColorNodeID());
-      }
-    labelNode->SetAndObserveDisplayNodeID( labelDisplayNode->GetID() );
-    }
+  // Set the display node to have a label map lookup table
+  SetAndObserveColorNode(this, labelDisplayNode, /* labelMap = */ 1, /* filename= */ 0);
 
-  // make an image data of the same size and shape as the input volume,
-  // but filled with zeros
-  vtkImageThreshold *thresh = vtkImageThreshold::New();
+  // Make an image data of the same size and shape as the input volume, but filled with zeros
+  vtkNew<vtkImageThreshold> thresh;
   thresh->ReplaceInOn();
   thresh->ReplaceOutOn();
   thresh->SetInValue(0);
@@ -927,14 +921,8 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate (vtk
   thresh->SetInput( templateNode->GetImageData() );
   thresh->GetOutput()->Update();
   labelNode->SetAndObserveImageData( thresh->GetOutput() );
-  thresh->Delete();
 
-  if ( labelDisplayNode )
-    {
-    labelDisplayNode->Delete();
-    }
-
-  return (labelNode);
+  return labelNode;
 }
 
 //----------------------------------------------------------------------------
