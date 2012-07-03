@@ -818,23 +818,23 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name)
+vtkMRMLScalarVolumeNode *
+vtkSlicerVolumesLogic::CreateLabelVolume(vtkMRMLScene *scene,
+                                         vtkMRMLVolumeNode *volumeNode,
+                                         const char *name)
 {
-  if ( volumeNode == NULL )
+  if ( scene == NULL || volumeNode == NULL || name == NULL)
     {
     return NULL;
     }
 
   // create a display node
-  vtkMRMLLabelMapVolumeDisplayNode *labelDisplayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
-
-  scene->AddNode(labelDisplayNode);
+  vtkNew<vtkMRMLLabelMapVolumeDisplayNode> labelDisplayNode;
+  scene->AddNode(labelDisplayNode.GetPointer());
 
   // create a volume node as copy of source volume
-  vtkMRMLScalarVolumeNode *labelNode = vtkMRMLScalarVolumeNode::New();
-
+  vtkNew<vtkMRMLScalarVolumeNode> labelNode;
   labelNode->CopyWithScene(volumeNode);
-  
   labelNode->SetAndObserveStorageNodeID(NULL);
   labelNode->SetLabelMap(1);
 
@@ -845,11 +845,8 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
     }
 
   // set the display node to have a label map lookup table
-  if (this->ColorLogic)
-    {
-    labelDisplayNode->SetAndObserveColorNodeID (
-      this->ColorLogic->GetDefaultLabelMapColorNodeID());
-    }
+  SetAndObserveColorNode(this, labelDisplayNode.GetPointer(), /* labelMap= */ 1, /* filename= */ 0);
+
   std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
 
   labelNode->SetName(uname.c_str());
@@ -857,7 +854,7 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
 
   // make an image data of the same size and shape as the input volume,
   // but filled with zeros
-  vtkImageThreshold *thresh = vtkImageThreshold::New();
+  vtkNew<vtkImageThreshold> thresh;
   thresh->ReplaceInOn();
   thresh->ReplaceOutOn();
   thresh->SetInValue(0);
@@ -865,19 +862,15 @@ vtkMRMLScalarVolumeNode *vtkSlicerVolumesLogic::CreateLabelVolume (vtkMRMLScene 
   thresh->SetOutputScalarType (VTK_SHORT);
   thresh->SetInput( volumeNode->GetImageData() );
   thresh->GetOutput()->Update();
-  vtkImageData *imageData = vtkImageData::New();
+
+  vtkNew<vtkImageData> imageData;
   imageData->DeepCopy( thresh->GetOutput() );
-  labelNode->SetAndObserveImageData( imageData );
-  imageData->Delete();
-  thresh->Delete();
+  labelNode->SetAndObserveImageData( imageData.GetPointer() );
 
   // add the label volume to the scene
-  scene->AddNode(labelNode);
+  scene->AddNode(labelNode.GetPointer());
 
-  labelNode->Delete();
-  labelDisplayNode->Delete();
-
-  return (labelNode);
+  return labelNode.GetPointer();
 }
 
 //----------------------------------------------------------------------------
