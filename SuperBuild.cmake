@@ -232,6 +232,11 @@ if(Slicer_BUILD_QTLOADABLEMODULES)
   list(APPEND ep_superbuild_extra_args -DSlicer_QTLOADABLEMODULES_DISABLED:STRING=${Slicer_QTLOADABLEMODULES_DISABLED})
 endif()
 
+if(Slicer_BUILD_QTSCRIPTEDMODULES)
+  # Provide a mechanism to disable one or more scripted modules.
+  list(APPEND eq_superbuild_extra_args -DSlicer_QTSCRIPTEDMODULES_DISABLED:STRING=${Slicer_QTSCRIPTEDMODULES_DISABLED})
+endif()
+
 if(Slicer_USE_BatchMake)
   list(APPEND ep_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()
