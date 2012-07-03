@@ -1,5 +1,4 @@
 import slicer
-from __main__ import tcl
 from __main__ import qt
 from __main__ import vtk
 import ColorBox
@@ -60,7 +59,7 @@ class EditColor(object):
     self.frame.layout().addWidget(self.labelName)
 
     self.colorSpin = qt.QSpinBox(self.frame)
-    self.colorSpin.setValue( int(tcl('EditorGetPaintLabel')) )
+    self.colorSpin.setValue( self.editUtil.getLabel() )
     self.colorSpin.setToolTip( "Click colored patch at right to bring up color selection pop up window.  Use the 'c' key to bring up color popup menu." )
     self.frame.layout().addWidget(self.colorSpin)
 
@@ -87,13 +86,12 @@ class EditColor(object):
     #
     # observe the scene to know when to get the parameter node
     #
-    nodeID = tcl('[EditorGetParameterNode] GetID')
-    node = slicer.mrmlScene.GetNodeByID(nodeID)
-    if node != self.parameterNode:
+    parameterNode = self.editUtil.getParameterNode()
+    if parameterNode != self.parameterNode:
       if self.parameterNode:
         self.parameterNode.RemoveObserver(self.parameterNodeTag)
-      self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
-      self.parameterNode = node
+      self.parameterNode = parameterNode
+      self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   #
   # update the GUI for the given label

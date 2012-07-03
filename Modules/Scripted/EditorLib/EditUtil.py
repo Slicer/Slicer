@@ -27,15 +27,16 @@ class EditUtil(object):
       if n.GetModuleName() == "Editor":
         node = n
     if not node:
-      node = self.createParameterNode()
+      node = self._createParameterNode()
     return node
 
-  def createParameterNode(self):
+  def _createParameterNode(self):
     """create the Editor parameter node - a singleton in the scene
     This is used internally by getParameterNode - shouldn't really
     be called for any other reason.
     """
     node = slicer.vtkMRMLScriptedModuleNode()
+    node.SetSingletonTag( "Editor" )
     node.SetModuleName( "Editor" )
     node.SetParameter( "label", "1" )
     slicer.mrmlScene.AddNode(node)
@@ -115,6 +116,29 @@ class EditUtil(object):
     storedLabel = int(self.getParameterNode().GetParameter('storedLabel'))
     self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
     self.setLabel(storedLabel)
+
+  def getLabelColor(self):
+    """ returns rgba tuple for the current paint color """
+    labelVolume = self.getLabelVolume()
+    if labelVolume:
+      volumeDisplayNode = labelVolume.GetDisplayNode()
+      if volumeDisplayNode != '':
+        colorNode = volumeDisplayNode.GetColorNode()
+        lut = colorNode.GetLookupTable()
+        index = self.getLabel()
+        return lut.GetTableValue(index)
+    return (0,0,0,0)
+
+  def getLabelName(self):
+    """ returns the string name of the currently selected index """
+    labelVolume = self.getLabelVolume()
+    if labelVolume:
+      volumeDisplayNode = labelVolume.GetDisplayNode()
+      if volumeDisplayNode != '':
+        colorNode = volumeDisplayNode.GetColorNode()
+        index = self.getLabel()
+        return colorNode.GetColorName(index)
+    return ""
 
 
 class UndoRedo(object):

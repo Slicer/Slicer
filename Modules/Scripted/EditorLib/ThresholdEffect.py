@@ -177,7 +177,7 @@ class ThresholdEffectOptions(Effect.EffectOptions):
     for tool in self.tools:
       tool.min = min
       tool.max = max
-      tool.preview(self.getPaintColor()[:3] + (opacity,))
+      tool.preview(self.editUtil.getLabelColor()[:3] + (opacity,))
     self.previewState += self.previewStep
     if self.previewState >= self.previewSteps:
       self.previewStep = -1

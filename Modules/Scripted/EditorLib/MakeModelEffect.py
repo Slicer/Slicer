@@ -68,7 +68,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
     self.widgets.append(self.modelNameLabel)
 
     self.modelName = qt.QLineEdit(self.nameFrame)
-    self.modelName.setText( self.getUniqueModelName( self.getPaintName() ) )
+    self.modelName.setText( self.getUniqueModelName( self.editUtil.getLabelName() ) )
     self.nameFrame.layout().addWidget(self.modelName)
     self.widgets.append(self.modelName)
 

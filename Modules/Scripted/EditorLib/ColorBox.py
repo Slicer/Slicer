@@ -1,5 +1,4 @@
 import os
-from __main__ import tcl
 from __main__ import qt
 from __main__ import slicer
 

@@ -1,11 +1,11 @@
 import os
 import re
-from __main__ import tcl
 from __main__ import qt
 from __main__ import ctk
 from __main__ import vtk
 from __main__ import slicer
 import ColorBox
+import EditUtil
 
 #########################################################
 #
@@ -23,6 +23,8 @@ comment = """
 class HelperBox(object):
 
   def __init__(self, parent=None):
+
+    self.editUtil = EditUtil.EditUtil()
 
     # mrml volume node instances
     self.master = None
@@ -127,18 +129,12 @@ class HelperBox(object):
       if self.master:
         self.colorSelectDialog()
 
-    tcl('EffectSWidget::RotateToVolumePlanes') # make sure slices are aligned to volumes
     self.mergeName.setText( mergeText )
     self.updateStructures()
-    # remove all active effects (so that when selected again slice rotation and snap to IJK will happen if needed
-    tcl('::EffectSWidget::RemoveAll')
 
     # trigger a modified event on the parameter node so that other parts of the GUI
     # (such as the EditColor) will know to update and enable themselves
-    nodeID = tcl('[EditorGetParameterNode] GetID')
-    pNode = slicer.mrmlScene.GetNodeByID(nodeID)
-    if pNode:
-      pNode.Modified()
+    self.editUtil.getParameterNode().Modified()
 
     if self.selectCommand:
       self.selectCommand()
@@ -243,7 +239,7 @@ class HelperBox(object):
     if options.find("noEdit") < 0:
       self.edit( label )
 
-  def deleteStructures(self, options="confirm"):
+  def deleteStructures(self, confirm=True):
     """delete all the structures"""
 
     #
@@ -255,22 +251,15 @@ class HelperBox(object):
 
     rows = self.structures.rowCount()
 
-    if options.find("yes") != -1 and not self.confirmDialog( "Delete %d structure volume(s)?" % rows ):
-      return
+    if confirm:
+      if not self.confirmDialog( "Delete %d structure volume(s)?" % rows ):
+        return
 
     slicer.mrmlScene.SaveStateForUndo()
 
-    for row in xrange(rows):
-      structureName = self.structures.item(row,2).text()
-      structureVolume = self.structureVolume(structureName)
-      if row == rows - 1:
-        slicer.mrmlScene.RemoveNode( structureVolume )
-      else:
-        # TODO: use NoNotify method to reduce the number of updates
-        # in other code - for now Qt models need to be informed
-        # of every incremental change
-        # slicer.mrmlScene.RemoveNodeNoNotify( structureVolume )
-        slicer.mrmlScene.RemoveNode( structureVolume )
+    volumeNodes = self.structureVolumes()
+    for volumeNode in volumeNodes:
+      slicer.mrmlScene.RemoveNode( volumeNode )
     self.updateStructures()
 
   def mergeStructures(self,label="all"):
@@ -486,8 +475,24 @@ class HelperBox(object):
       selectionNode.SetReferenceActiveLabelVolumeID( structureVolume.GetID() )
     self.applicationLogic.PropagateVolumeSelection(0)
 
-    tcl('EditorSetPaintLabel %s' % label)
+    self.editUtil.setLabel(label)
 
+  def structureVolumes(self):
+    """return a list of volumeNodes that are per-structure
+    volumes of the current master"""
+    volumeNodes = []
+    masterName = self.master.GetName()
+    slicer.mrmlScene.InitTraversal()
+    vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
+    self.row = 0
+    while vNode:
+      vName = vNode.GetName()
+      # match something like "CT-lung-label1"
+      regexp = "%s-.*-label" % masterName
+      if re.match(regexp, vName):
+        volumeNodes.append(vNode)
+      vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
+    return volumeNodes
 
   def updateStructures(self,caller=None, event=None):
     """re-build the Structures frame
@@ -529,60 +534,54 @@ class HelperBox(object):
     lut = colorNode.GetLookupTable()
 
     masterName = self.master.GetName()
-    slicer.mrmlScene.InitTraversal()
-    vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
-    self.row = 0
-    while vNode:
+    volumeNodes = self.structureVolumes()
+    for vNode in volumeNodes:
       vName = vNode.GetName()
-      # match something like "CT-lung-label1"
-      regexp = "%s-.*-label" % masterName
-      if re.match(regexp, vName):
-        # figure out what name it is
-        # - account for the fact that sometimes a number will be added to the end of the name
-        start = 1+len(masterName)
-        end = vName.rfind("-label")
-        structureName = vName[start:end]
-        structureIndex = colorNode.GetColorIndexByName( structureName )
-        structureColor = lut.GetTableValue(structureIndex)[0:3]
-        brush = qt.QBrush()
-        self.brushes.append(brush)
-        color = qt.QColor()
-        color.setRgb(structureColor[0]*255,structureColor[1]*255,structureColor[2]*255)
-        brush.setColor(color)
-        
-        # label index
-        item = qt.QStandardItem()
-        item.setEditable(False)
-        item.setText( str(structureIndex) )
-        self.structures.setItem(self.row,0,item)
-        self.items.append(item)
-        # label color
-        item = qt.QStandardItem()
-        item.setEditable(False)
-        item.setData(color,1)
-        self.structures.setItem(self.row,1,item)
-        self.items.append(item)
-        # structure name
-        item = qt.QStandardItem()
-        item.setEditable(False)
-        item.setText(structureName)
-        self.structures.setItem(self.row,2,item)
-        self.items.append(item)
-        # volumeName name
-        item = qt.QStandardItem()
-        item.setEditable(False)
-        item.setText(vName)
-        self.structures.setItem(self.row,3,item)
-        self.items.append(item)
-        # sort order
-        item = qt.QStandardItem()
-        item.setEditable(True)
-        item.setText("")
-        self.structures.setItem(self.row,4,item)
-        self.items.append(item)
-        self.row += 1
+      # figure out what name it is
+      # - account for the fact that sometimes a number will be added to the end of the name
+      start = 1+len(masterName)
+      end = vName.rfind("-label")
+      structureName = vName[start:end]
+      structureIndex = colorNode.GetColorIndexByName( structureName )
+      structureColor = lut.GetTableValue(structureIndex)[0:3]
+      brush = qt.QBrush()
+      self.brushes.append(brush)
+      color = qt.QColor()
+      color.setRgb(structureColor[0]*255,structureColor[1]*255,structureColor[2]*255)
+      brush.setColor(color)
+      
+      # label index
+      item = qt.QStandardItem()
+      item.setEditable(False)
+      item.setText( str(structureIndex) )
+      self.structures.setItem(self.row,0,item)
+      self.items.append(item)
+      # label color
+      item = qt.QStandardItem()
+      item.setEditable(False)
+      item.setData(color,1)
+      self.structures.setItem(self.row,1,item)
+      self.items.append(item)
+      # structure name
+      item = qt.QStandardItem()
+      item.setEditable(False)
+      item.setText(structureName)
+      self.structures.setItem(self.row,2,item)
+      self.items.append(item)
+      # volumeName name
+      item = qt.QStandardItem()
+      item.setEditable(False)
+      item.setText(vName)
+      self.structures.setItem(self.row,3,item)
+      self.items.append(item)
+      # sort order
+      item = qt.QStandardItem()
+      item.setEditable(True)
+      item.setText("")
+      self.structures.setItem(self.row,4,item)
+      self.items.append(item)
+      self.row += 1
 
-      vNode = slicer.mrmlScene.GetNextNodeByClass( "vtkMRMLScalarVolumeNode" )
     
     self.structuresView.setColumnWidth(0,70)
     self.structuresView.setColumnWidth(1,50)
@@ -918,15 +917,10 @@ class HelperBox(object):
     self.dialog.showMessage(message)
 
   def confirmDialog(self, message):
-    self.dialog = qt.QMessageBox()
-    self.dialog.setWindowTitle("Editor")
-    self.dialog.setText(message)
-    self.dialogRejectButton = self.addButton("Cancel", 2)
-    self.dialogAcceptButton = self.addButton("Ok", 1)
-    # TODO: cannot call the exec() method from the pythonqt
-    #self.dialog.exec()
-    return True
+    result = qt.QMessageBox.question(slicer.util.mainWindow(), 
+                    'Editor', message, 
+                    qt.QMessageBox.Ok, qt.QMessageBox.Cancel)
+    return result == qt.QMessageBox.Ok
 
   def statusText(self, text):
-    # TODO: need an application level status line (and progress bar)
-    print( text )
+    slicer.util.showStatusMessage( text,1000 )
