@@ -22,10 +22,11 @@
 #include "vtkMRMLStorageNode.h"
 
 class vtkImageData;
+class vtkITKArchetypeImageSeriesReader;
 
 class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLVolumeArchetypeStorageNode *New();
   vtkTypeMacro(vtkMRMLVolumeArchetypeStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -93,6 +94,8 @@ protected:
 
   /// Initialize all the supported write file types
   virtual void InitializeSupportedWriteFileTypes();
+
+  vtkITKArchetypeImageSeriesReader* InstantiateVectorVolumeReader(const std::string &fullName);
 
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
