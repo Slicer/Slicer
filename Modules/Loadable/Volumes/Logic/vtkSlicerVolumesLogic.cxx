@@ -1007,6 +1007,10 @@ void vtkSlicerVolumesLogic::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 int vtkSlicerVolumesLogic::IsFreeSurferVolume (const char* filename)
 {
+  if (filename == NULL)
+    {
+    return 0;
+    }
   std::string fname(filename);
   std::string::size_type loc = fname.find(".");
   if (loc != std::string::npos)
