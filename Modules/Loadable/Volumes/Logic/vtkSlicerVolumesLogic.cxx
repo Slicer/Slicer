@@ -47,6 +47,107 @@
 #include <vector>
 
 //----------------------------------------------------------------------------
+namespace
+{
+
+//----------------------------------------------------------------------------
+class vtkSlicerErrorSink : public vtkCallbackCommand
+{
+public:
+
+  vtkTypeMacro(vtkSlicerErrorSink,vtkCallbackCommand);
+  static vtkSlicerErrorSink *New() {return new vtkSlicerErrorSink; }
+  typedef vtkSlicerErrorSink Self;
+
+  void PrintSelf(ostream& os, vtkIndent indent);
+
+  /// Display errors using vtkOutputWindowDisplayErrorText
+  /// \sa vtkOutputWindowDisplayErrorText
+  void DisplayErrors();
+
+  /// Return True if errors have been recorded
+  bool HasErrors() const;
+
+  /// Clear list of errors
+  void Clear();
+
+protected:
+  vtkSlicerErrorSink();
+  virtual ~vtkSlicerErrorSink(){}
+
+private:
+  static void CallbackFunction(vtkObject*, long unsigned int,
+                               void* clientData, void* callData);
+
+  std::vector<std::string> ErrorList;
+
+private:
+  vtkSlicerErrorSink(const vtkSlicerErrorSink&); // Not implemented
+  void operator=(const vtkSlicerErrorSink&);     // Not implemented
+};
+
+//----------------------------------------------------------------------------
+// vtkSlicerErrorSink methods
+
+//----------------------------------------------------------------------------
+vtkSlicerErrorSink::vtkSlicerErrorSink()
+{
+  this->SetCallback(Self::CallbackFunction);
+  this->SetClientData(this);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerErrorSink::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os, indent);
+  std::vector<std::string>::iterator it = this->ErrorList.begin();
+  os << indent << "ErrorList = \n";
+  while(it != this->ErrorList.end())
+    {
+    os << indent.GetNextIndent() << *it << "\n";
+    ++it;
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerErrorSink::DisplayErrors()
+{
+  std::vector<std::string>::iterator it = this->ErrorList.begin();
+  while(it != this->ErrorList.end())
+    {
+    vtkOutputWindowDisplayErrorText((*it).c_str());
+    ++it;
+    }
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerErrorSink::HasErrors() const
+{
+  return this->ErrorList.size() > 0;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerErrorSink::Clear()
+{
+  this->ErrorList.clear();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerErrorSink::CallbackFunction(vtkObject* vtkNotUsed(caller),
+                                          long unsigned int vtkNotUsed(eventId),
+                                          void* clientData, void* callData)
+{
+  vtkSlicerErrorSink * self = reinterpret_cast<vtkSlicerErrorSink*>(clientData);
+  char * message = reinterpret_cast<char*>(callData);
+  self->ErrorList.push_back(message);
+}
+
+} // end of anonymous namespace
+
+//----------------------------------------------------------------------------
+// vtkSlicerVolumesLogic methods
+
+//----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerVolumesLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumesLogic);
 
@@ -673,21 +774,35 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
     archetypeVolumeNodeSets.push_back(NodeSetsItem(storageNode2.GetPointer(), nodeSet));
   }
 
+  vtkNew<vtkSlicerErrorSink> errorSink;
+  storageNode1->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
+  storageNode2->AddObserver(vtkCommand::ErrorEvent, errorSink.GetPointer());
+
   std::vector<NodeSetsItem>::iterator it;
   for(it = archetypeVolumeNodeSets.begin(); it != archetypeVolumeNodeSets.end(); ++it)
     {
     vtkMRMLVolumeNode * currentNode = (*it).second.Node;
     vtkMRMLStorageNode * currentStorageNode = (*it).first;
 
+    vtkDebugMacro("Attempt to read file as a volume of type "
+                  << currentNode->GetNodeTagName() << " using "
+                  << currentStorageNode->GetClassName() << " [filename = " << filename << "]");
     currentNode->SetAndObserveStorageNodeID(currentStorageNode->GetID());
     if (currentStorageNode->ReadData(currentNode))
       {
       displayNode = (*it).second.DisplayNode;
       volumeNode =  currentNode;
       storageNode = currentStorageNode;
+      vtkDebugMacro(<< "File successfully read as " << currentNode->GetNodeTagName()
+                    << " [filename = " << filename << "]");
       (*it).second.SuccessfullyLoaded = true;
       break;
       }
+    }
+
+  if (volumeNode == 0)
+    {
+    errorSink->DisplayErrors();
     }
 
   storageNode1->RemoveObservers(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
