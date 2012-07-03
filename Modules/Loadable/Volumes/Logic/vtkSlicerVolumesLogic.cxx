@@ -1076,9 +1076,6 @@ void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode
     M->SetElement ( 3, 3, 1.0 );
 }
 
-
-
-
 //-------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
                                                                        vtkMRMLVolumeNode *V2Node,
@@ -1132,13 +1129,13 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
     // volume. But for an Axial volume, these two matrices are different.
     // How do we compute the correct orientation for FreeSurfer Data?
   
-    vtkMatrix4x4 *T = vtkMatrix4x4::New();
-    vtkMatrix4x4 *S = vtkMatrix4x4::New();
-    vtkMatrix4x4 *Sinv = vtkMatrix4x4::New();
-    vtkMatrix4x4 *M = vtkMatrix4x4::New();
-    vtkMatrix4x4 *Minv = vtkMatrix4x4::New();
-    vtkMatrix4x4 *N = vtkMatrix4x4::New();
-    vtkMatrix4x4 *Ninv = vtkMatrix4x4::New();
+    vtkSmartPointer<vtkMatrix4x4> T = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> S = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> Sinv = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> M = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> Minv = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> N = vtkSmartPointer<vtkMatrix4x4>::New();
+    vtkSmartPointer<vtkMatrix4x4> Ninv = vtkSmartPointer<vtkMatrix4x4>::New();
 
     //--
     // compute FreeSurfer tkRegVox2RAS for V1 volume
@@ -1157,19 +1154,10 @@ void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASTo
     vtkMatrix4x4::Invert (M, Minv );
     vtkMatrix4x4::Invert (N, Ninv );
 
-   //    [Ninv]  [Sinv]  [R]  [T]  [Minv]
+    //    [Ninv]  [Sinv]  [R]  [T]  [Minv]
     vtkMatrix4x4::Multiply4x4 ( T, Minv, RAS2RASMatrix );
     vtkMatrix4x4::Multiply4x4 ( FSRegistrationMatrix, RAS2RASMatrix, RAS2RASMatrix );
     vtkMatrix4x4::Multiply4x4 ( Sinv, RAS2RASMatrix, RAS2RASMatrix );
     vtkMatrix4x4::Multiply4x4 ( Ninv, RAS2RASMatrix, RAS2RASMatrix );    
-  
-    // clean up
-    M->Delete();
-    N->Delete();
-    Minv->Delete();
-    Ninv->Delete();
-    S->Delete();
-    T->Delete();
-    Sinv->Delete();
     }
 }
