@@ -97,8 +97,16 @@ public:
   /// Write volume's image data to a specified file
   int SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode);
 
-  /// Create a label map volume to match the given volume node and add it to the scene
-  vtkMRMLScalarVolumeNode *CreateLabelVolume (vtkMRMLScene *scene, vtkMRMLVolumeNode *volumeNode, const char *name);
+  /// Create a label map volume to match the given \a volumeNode and add it to the current scene
+  /// \sa GetMRMLScene()
+  vtkMRMLScalarVolumeNode *CreateLabelVolume(vtkMRMLVolumeNode *volumeNode,
+                                             const char *name);
+
+  /// Create a label map volume to match the given \a volumeNode and add it to the \a scene
+  vtkMRMLScalarVolumeNode *CreateLabelVolume(vtkMRMLScene *scene,
+                                             vtkMRMLVolumeNode *volumeNode,
+                                             const char *name);
+
   /// Fill in a label map volume to match the given template volume node.
   /// \sa FillLabelVolumeFromTemplate(vtkMRMLScene*, vtkMRMLScalarVolumeNode*, vtkMRMLVolumeNode*)
   /// \sa GetMRMLScene()
