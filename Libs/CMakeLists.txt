@@ -109,9 +109,11 @@ set(_vtk_wrapped_libraries
   FreeSurfer
   MRMLCore
   MRMLLogic
-  MRMLDisplayableManager
   RemoteIO
   )
+if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
+  list(APPEND _vtk_wrapped_libraries MRMLDisplayableManager)
+endif()
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND _vtk_wrapped_libraries MRMLCLI)
 endif()

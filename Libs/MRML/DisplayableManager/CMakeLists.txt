@@ -11,7 +11,11 @@ if(POLICY CMP0017)
   cmake_policy(SET CMP0017 OLD)
 endif()
 
-set(MRMLDisplayableManager_USE_PYTHON ${Slicer_USE_PYTHONQT})
+if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
+  set(MRMLDisplayableManager_USE_PYTHON ON)
+else()
+  set(MRMLDisplayableManager_USE_PYTHON OFF)
+endif()
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -185,7 +189,7 @@ install(TARGETS ${lib_name}
 # --------------------------------------------------------------------------
 # Python Wrapping
 # --------------------------------------------------------------------------
-if(MRMLDisplayableManager_USE_PYTHON AND VTK_WRAP_PYTHON)
+if(MRMLDisplayableManager_USE_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
     KIT_SRCS ${KIT_SRCS}
