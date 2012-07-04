@@ -140,10 +140,10 @@ def findChildren(widget=None,name="",text="",title="",className=""):
 # IO
 #
 
-def loadNodeFromFile(filename, filetype, returnNode=False):
+def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
   from slicer import app
   from vtk import vtkCollection
-  properties = {'fileName':filename}
+  properties['fileName'] = filename
 
   if returnNode:
       loadedNodes = vtkCollection()
@@ -156,38 +156,43 @@ def loadNodeFromFile(filename, filetype, returnNode=False):
 def loadColorTable(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.ColorTableFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiberBundle(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.FiberBundleFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiducialList(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.FiducialListFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadModel(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.ModelFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadScalarOverlay(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.ScalarOverlayFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadTransform(filename, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.TransformFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  return loadNodeFromFile(filename, filetype, {}, returnNode)
 
-def loadVolume(filename, returnNode=False):
+def loadLabelVolume(filename, properties, returnNode=False):
   from slicer import qSlicerIO
   filetype = qSlicerIO.VolumeFile
-  return loadNodeFromFile(filename, filetype, returnNode)
+  properties['labelmap'] = True
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
 
+def loadVolume(filename, properties={}, returnNode=False):
+  from slicer import qSlicerIO
+  filetype = qSlicerIO.VolumeFile
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadScene(filename, clear = True):
   from slicer import app, qSlicerIO
@@ -318,5 +323,4 @@ def array(pattern = "", index = 0):
     a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
     return a
   # TODO: accessors for other node types: tensors, polydata (verts, polys...), colors
-
 
