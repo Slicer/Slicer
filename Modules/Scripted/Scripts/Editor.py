@@ -2,7 +2,6 @@ import os
 from __main__ import slicer
 import qt, ctk
 import EditorLib
-import EditUtil
 
 #
 # Editor
