@@ -114,13 +114,15 @@ void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLFiberBund
   d->TubeDisplayWidget->setFiberBundleNode(fiberBundleNode);
   d->GlyphDisplayWidget->setFiberBundleNode(fiberBundleNode);
 
-  d->LineDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
-  d->TubeDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
-  d->GlyphDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
-  d->GlyphPropertiesWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
-  
-  d->PercentageOfFibersShown = fiberBundleNode->GetSubsamplingRatio() * 100.;
-
+  if (fiberBundleNode)
+  {
+    d->LineDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetLineDisplayNode());
+    d->TubeDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetTubeDisplayNode());
+    d->GlyphDisplayWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+    d->GlyphPropertiesWidget->setFiberBundleDisplayNode(fiberBundleNode->GetGlyphDisplayNode());
+    
+    d->PercentageOfFibersShown = fiberBundleNode->GetSubsamplingRatio() * 100.;
+  }
   emit currentNodeChanged(d->fiberBundleNode);
   emit percentageOfFibersShownChanged(d->PercentageOfFibersShown);
 }

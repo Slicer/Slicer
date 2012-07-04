@@ -263,7 +263,7 @@ QCheckBox::indicator:unchecked {
             <string>&amp;Material Properties</string>
           </property>
           <property name="collapsed">
-            <bool>true</bool>
+            <bool>false</bool>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
             <item>

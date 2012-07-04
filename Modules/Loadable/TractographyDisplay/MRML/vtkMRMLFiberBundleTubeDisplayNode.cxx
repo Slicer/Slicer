@@ -36,11 +36,19 @@ vtkMRMLFiberBundleTubeDisplayNode::vtkMRMLFiberBundleTubeDisplayNode()
   this->TensorToColor = vtkPolyDataTensorToColor::New();
   this->ColorMode = vtkMRMLFiberBundleDisplayNode::colorModeScalar;
   this->ColorLinesByOrientation = vtkPolyDataColorLinesByOrientation::New();
+
   this->TubeFilter = vtkTubeFilter::New();
   this->TubeNumberOfSides = 6;
   this->TubeRadius = 0.5;
   
+  this->TubeFilter->SetNumberOfSides(this->GetTubeNumberOfSides());
+  this->TubeFilter->SetRadius(this->GetTubeRadius());
   this->TensorToColor->SetInput(this->TubeFilter->GetOutput());
+
+  this->Ambient = 0.25;
+  this->Diffuse = 0.8;
+  this->Specular = 0.25;
+  this->Power = 20;
 
 }
 
@@ -138,6 +146,8 @@ void vtkMRMLFiberBundleTubeDisplayNode::SetPolyData(vtkPolyData *glyphPolyData)
     Superclass::SetPolyData(glyphPolyData);
     this->ColorLinesByOrientation->SetInput(glyphPolyData);
     this->TubeFilter->SetInput(glyphPolyData);
+  this->TubeFilter->SetNumberOfSides(this->GetTubeNumberOfSides());
+  this->TubeFilter->SetRadius(this->GetTubeRadius());
     }
 }
 
@@ -167,6 +177,9 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
 
     vtkPolyData *IntermediatePolyData;
     this->TubeFilter->SetInput(this->PolyData);
+    this->TubeFilter->SetNumberOfSides(this->GetTubeNumberOfSides());
+    this->TubeFilter->SetRadius(this->GetTubeRadius());
+
     IntermediatePolyData = this->TensorToColor->GetOutput();
 
     // set line coloring

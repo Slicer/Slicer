@@ -84,7 +84,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleTubeDi
   /// Number of tube sides
   vtkSetMacro ( TubeNumberOfSides , int );
   vtkGetMacro ( TubeNumberOfSides , int );
-  vtkBooleanMacro ( TubeNumberOfSides , int );
 
 
  protected:

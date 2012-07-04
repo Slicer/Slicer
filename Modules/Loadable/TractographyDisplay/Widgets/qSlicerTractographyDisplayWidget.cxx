@@ -521,7 +521,8 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
     {
     return;
     }
-  
+  this->m_updating = 1;
+
   d->VisibilityCheckBox->setChecked( d->FiberBundleDisplayNode->GetVisibility() );
   d->OpacitySlider->setValue( d->FiberBundleDisplayNode->GetOpacity() );
   
@@ -605,5 +606,8 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
   d->MaterialPropertyWidget->setSpecular(d->FiberBundleDisplayNode->GetSpecular());
   d->MaterialPropertyWidget->setSpecularPower(d->FiberBundleDisplayNode->GetPower());
   d->MaterialPropertyWidget->setBackfaceCulling(d->FiberBundleDisplayNode->GetBackfaceCulling());
+
+  this->m_updating = 0;
+
 
 }
