@@ -83,6 +83,7 @@ from ${lib_name}Python import *
     RELATIVE "${CMAKE_CURRENT_BINARY_DIR}/Python"
     "${CMAKE_CURRENT_BINARY_DIR}/Python/${PYTHONWRAPMODULEVTKLIBRARY_RELATIVE_PYTHON_DIR}/*.py")
   if(PYFILES)
+    include(ctkMacroCompilePythonScript)
     ctkMacroCompilePythonScript(
       TARGET_NAME ${lib_name}
       SCRIPTS "${PYFILES}"
