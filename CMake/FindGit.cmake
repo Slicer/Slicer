@@ -103,7 +103,14 @@ if(GIT_EXECUTABLE)
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
+    # If there is no 'remote.origin', default to "NA" value and print a warning message.
+    if(NOT ${prefix}_WC_URL)
+      message(WARNING "No remote origin set for git repository: ${dir}" )
+      set( ${prefix}_WC_URL "NA" )
+    else()
+      set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
+    endif()
+
     set(${prefix}_WC_GITSVN False)
 
     # Check if this git is likely to be a git-svn repository
