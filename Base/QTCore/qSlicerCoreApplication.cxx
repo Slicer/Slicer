@@ -314,6 +314,7 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
     QDir slicerBinDir(slicerBin);
     bool cdUpRes = slicerBinDir.cdUp();
     Q_ASSERT(cdUpRes);
+    (void)cdUpRes;
     slicerHome = slicerBinDir.canonicalPath();
     }
 
