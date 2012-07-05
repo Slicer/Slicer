@@ -15,25 +15,28 @@
 
 =========================================================================*/
 
-#include "itkImageFileWriter.h"
+// ModelToLabelMap includes
+#include "ModelToLabelMapCLP.h"
 
+// ITK includes
+#ifdef ITKV3_COMPATIBILITY
+#include "itkAnalyzeImageIOFactory.h"
+#endif
 #include "itkBinaryBallStructuringElement.h"
 #include "itkBinaryErodeImageFilter.h"
 #include "itkBinaryDilateImageFilter.h"
 #include "itkBinaryThresholdImageFunction.h"
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
-
-#include "vtkXMLPolyDataReader.h"
-#include "vtkPolyDataReader.h"
-#include "vtkPolyDataPointSampler.h"
-#include "vtkDebugLeaks.h"
-
+#include "itkImageFileWriter.h"
 #include "itkPluginUtilities.h"
-#include "ModelToLabelMapCLP.h"
 
-#ifdef ITKV3_COMPATIBILITY
-#include "itkAnalyzeImageIOFactory.h"
-#endif
+// VTK includes
+#include <vtkDebugLeaks.h>
+#include <vtkNew.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyDataPointSampler.h>
+#include <vtkPolyDataReader.h>
+#include <vtkXMLPolyDataReader.h>
 
 typedef itk::Image<unsigned char, 3> LabelImageType;
 
@@ -55,7 +58,6 @@ LabelImageType::Pointer BinaryErodeFilter3D( LabelImageType::Pointer & img, unsi
   erodeFilter->SetKernel( ball );
   erodeFilter->Update();
   return erodeFilter->GetOutput();
-
 }
 
 LabelImageType::Pointer BinaryDilateFilter3D( LabelImageType::Pointer & img, unsigned int ballsize )
@@ -94,7 +96,7 @@ LabelImageType::Pointer BinaryClosingFilter3D( LabelImageType::Pointer & img, un
 //
 // Description: A templated procedure to execute the algorithm
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char * argv[])
 {
 
   PARSE_ARGS;
@@ -122,9 +124,9 @@ int DoIt( int argc, char * argv[], T )
   label->FillBuffer( 0 );
 
   // read the poly data
-  vtkPolyData *         polyData = NULL;
-  vtkPolyDataReader *   pdReader = NULL;
-  vtkXMLPolyDataReader *pdxReader = NULL;
+  vtkSmartPointer<vtkPolyData> polyData;
+  vtkSmartPointer<vtkPolyDataReader> pdReader;
+  vtkSmartPointer<vtkXMLPolyDataReader> pdxReader;
 
   // do we have vtk or vtp models?
   std::string::size_type loc = surface.find_last_of(".");
@@ -137,14 +139,14 @@ int DoIt( int argc, char * argv[], T )
 
   if( extension == std::string(".vtk") )
     {
-    pdReader = vtkPolyDataReader::New();
+    pdReader = vtkSmartPointer<vtkPolyDataReader>::New();
     pdReader->SetFileName(surface.c_str() );
     pdReader->Update();
     polyData = pdReader->GetOutput();
     }
   else if( extension == std::string(".vtp") )
     {
-    pdxReader = vtkXMLPolyDataReader::New();
+    pdxReader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
     pdxReader->SetFileName(surface.c_str() );
     pdxReader->Update();
     polyData = pdxReader->GetOutput();
@@ -167,9 +169,7 @@ int DoIt( int argc, char * argv[], T )
     }
 
   // do it
-// void PolyDataToLabelMap( vtkPolyData* polyData, LabelImageType::Pointer label)
-
-  vtkPolyDataPointSampler* sampler = vtkPolyDataPointSampler::New();
+  vtkNew<vtkPolyDataPointSampler> sampler;
 
   sampler->SetInput( polyData );
   sampler->SetDistance( sampleDistance );
@@ -245,19 +245,9 @@ int DoIt( int argc, char * argv[], T )
                                        "Write Volume",
                                        CLPProcessInformation);
   writer->SetFileName( OutputVolume.c_str() );
-  writer->SetInput(  label );
+  writer->SetInput( label );
   writer->SetUseCompression(1);
   writer->Update();
-
-  if( pdReader )
-    {
-    pdReader->Delete();
-    }
-  if( pdxReader )
-    {
-    pdxReader->Delete();
-    }
-  sampler->Delete();
 
   return EXIT_SUCCESS;
 }
@@ -282,25 +272,25 @@ int main( int argc, char * argv[] )
       {
       case itk::ImageIOBase::UCHAR:
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
+        return DoIt<char>( argc, argv );
         break;
       case itk::ImageIOBase::USHORT:
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
+        return DoIt<short>( argc, argv );
         break;
       case itk::ImageIOBase::UINT:
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
+        return DoIt<int>( argc, argv );
         break;
       case itk::ImageIOBase::ULONG:
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
+        return DoIt<long>( argc, argv );
         break;
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
+        return DoIt<float>( argc, argv );
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
+        return DoIt<double>( argc, argv );
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
