@@ -815,6 +815,24 @@ add_subdirectory(Modules)
 add_subdirectory(Applications)
 
 # --------------------------------------------------------------------------
+# Bundle extension(s)
+# --------------------------------------------------------------------------
+# List of extension source directories can be passed at configuration time
+# using the following syntax:
+#  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer
+foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
+  get_filename_component(extension_source_dirname ${extension_source_dir} NAME_WE)
+  message(STATUS "Configuring extension: ${extension_source_dirname}")
+  set(ExternalData_SOURCE_ROOT ${extension_source_dir})
+  set(${extension_source_dirname}_SOURCE_DIR ${extension_source_dir})
+  set(${extension_source_dirname}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/Extensions/${extension_source_dirname})
+  add_subdirectory(
+    ${${extension_source_dirname}_SOURCE_DIR}
+    ${${extension_source_dirname}_BINARY_DIR}
+    )
+endforeach()
+
+# --------------------------------------------------------------------------
 # Recover the QM output directories
 # --------------------------------------------------------------------------
 get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
