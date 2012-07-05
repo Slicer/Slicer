@@ -103,14 +103,6 @@ if(GIT_EXECUTABLE)
        OUTPUT_VARIABLE ${prefix}_WC_URL
        OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-    # If there is no 'remote.origin', default to "NA" value and print a warning message.
-    if(NOT ${prefix}_WC_URL)
-      message(WARNING "No remote origin set for git repository: ${dir}" )
-      set( ${prefix}_WC_URL "NA" )
-    else()
-      set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
-    endif()
-
     set(${prefix}_WC_GITSVN False)
 
     # Check if this git is likely to be a git-svn repository
@@ -146,6 +138,15 @@ if(GIT_EXECUTABLE)
           "\\2" ${prefix}_WC_LAST_CHANGED_DATE "${${prefix}_WC_INFO}")
       endif(${git_svn_info_result} EQUAL 0)
     endif(NOT "${git_config_output}" STREQUAL "")
+
+    # If there is no 'remote.origin', default to "NA" value and print a warning message.
+    if(NOT ${prefix}_WC_URL)
+      message(WARNING "No remote origin set for git repository: ${dir}" )
+      set( ${prefix}_WC_URL "NA" )
+    else()
+      set(${prefix}_WC_ROOT ${${prefix}_WC_URL})
+    endif()
+
   endmacro(GIT_WC_INFO)
 endif(GIT_EXECUTABLE)
 
