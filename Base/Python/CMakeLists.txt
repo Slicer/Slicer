@@ -40,11 +40,9 @@ if(Slicer_BUILD_CLI_SUPPORT)
     mrmlcli
     )
   set(Slicer_PYTHON_MODULES_CONFIG "${Slicer_PYTHON_MODULES_CONFIG},
-# slicer libs (Slicer_BUILD_CLI_SUPPORT:ON)
+# CLI logic (Slicer_BUILD_CLI_SUPPORT:ON)
 'mrmlcli',
-# slicer base libs (Slicer_BUILD_CLI_SUPPORT:ON)
 'qSlicerBaseQTCLIPythonQt',
-#CLI logic (Slicer_BUILD_CLI_SUPPORT:ON)
 "
   )
 endif()
