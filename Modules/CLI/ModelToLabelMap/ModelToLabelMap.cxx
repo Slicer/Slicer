@@ -19,9 +19,6 @@
 #include "ModelToLabelMapCLP.h"
 
 // ITK includes
-#ifdef ITKV3_COMPATIBILITY
-#include "itkAnalyzeImageIOFactory.h"
-#endif
 #include "itkBinaryBallStructuringElement.h"
 #include "itkBinaryErodeImageFilter.h"
 #include "itkBinaryDilateImageFilter.h"
@@ -29,6 +26,9 @@
 #include "itkFloodFilledImageFunctionConditionalIterator.h"
 #include "itkImageFileWriter.h"
 #include "itkPluginUtilities.h"
+#ifdef ITKV3_COMPATIBILITY
+#include "itkAnalyzeImageIOFactory.h"
+#endif
 
 // VTK includes
 #include <vtkDebugLeaks.h>
