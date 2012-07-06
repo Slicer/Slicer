@@ -217,7 +217,6 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
   // open a file dialog to let the user choose where to save
   // make sure it was selected and add a .mrb to it if needed
   //
-  QString tempDir = qSlicerCoreApplication::application()->temporaryPath();
   QString fileName = QFileDialog::getSaveFileName(this->widget(), tr("Save Data Bundle File"),
                                                     "", tr("Medical Reality Bundle (*.mrb)"));
 
