@@ -202,8 +202,6 @@ void qSlicerApplicationPrivate::init()
   //----------------------------------------------------------------------------
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   this->ExtensionsManagerDialog = new qSlicerExtensionsManagerDialog(0);
-  this->ExtensionsManagerDialog->setExtensionsManagerModel(
-    q->extensionManagerModel());
 #endif
 
   //----------------------------------------------------------------------------
@@ -507,6 +505,8 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 void qSlicerApplication::openExtensionManagerDialog()
 {
   Q_D(qSlicerApplication);
+  d->ExtensionsManagerDialog->setExtensionsManagerModel(
+        this->extensionManagerModel());
   if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
     {
     this->confirmRestart();
