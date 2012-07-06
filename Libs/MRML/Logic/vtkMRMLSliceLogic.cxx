@@ -592,6 +592,14 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
       {
+      if (this->LabelLayer && this->LabelLayer->GetImageDataUVW())
+        {
+        modelDisplayNode->SetInterpolateTexture(0);
+        }
+      else
+        {
+        modelDisplayNode->SetInterpolateTexture(1);
+        }
       if ( this->SliceCompositeNode != 0 )
         {
         modelDisplayNode->SetSliceIntersectionVisibility( this->SliceCompositeNode->GetSliceIntersectionVisibility() );
@@ -1136,8 +1144,15 @@ void vtkMRMLSliceLogic::UpdatePipeline()
         //this->ExtractModelTexture->Update();
         displayNode->SetAndObserveTextureImageData(this->ExtractModelTexture->GetOutput());
         }
-
-      }
+        if ( this->LabelLayer && this->LabelLayer->GetImageData())
+          {
+          modelDisplayNode->SetInterpolateTexture(0);
+          }
+        else
+          {
+          modelDisplayNode->SetInterpolateTexture(1);
+          }
+       }
     if ( modified )
       {
       if (this->SliceModelNode && this->SliceModelNode->GetPolyData())

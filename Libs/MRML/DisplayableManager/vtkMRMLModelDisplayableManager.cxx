@@ -1477,11 +1477,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           if (actor->GetTexture() == 0)
             {
             vtkTexture *texture = vtkTexture::New();
-            texture->SetInterpolate(0);
             actor->SetTexture(texture);
             texture->Delete();
             }
           actor->GetTexture()->SetInput(modelDisplayNode->GetTextureImageData());
+          actor->GetTexture()->SetInterpolate(modelDisplayNode->GetInterpolateTexture());
           actor->GetProperty()->SetColor(1., 1., 1.);
           }
         else

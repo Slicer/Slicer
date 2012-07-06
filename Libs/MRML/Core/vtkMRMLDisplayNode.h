@@ -209,6 +209,12 @@ public:
   void SetAndObserveTextureImageData(vtkImageData *ImageData);
 
   /// 
+  /// Indicates whether to use interpolate texture
+  vtkBooleanMacro(InterpolateTexture, int);
+  vtkGetMacro(InterpolateTexture, int);
+  vtkSetMacro(InterpolateTexture, int);
+
+  /// 
   /// Set a default color node
 ///  void SetDefaultColorMap();
   
@@ -302,6 +308,7 @@ protected:
   int VectorVisibility;
   int TensorVisibility;
   int AutoScalarRange;
+  int InterpolateTexture;
 
   /// Arrays
   double ScalarRange[2];
