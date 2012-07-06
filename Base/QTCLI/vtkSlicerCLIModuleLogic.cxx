@@ -1023,13 +1023,26 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             vtkSmartPointer<vtkCollection> col = vtkSmartPointer<vtkCollection>::New();
             points->GetChildrenDisplayableNodes(col);
             vtkDebugMacro("Getting children displayable nodes from points " << points->GetID());
+            unsigned int numChildren = 0;
             if (col)
               {
-              unsigned int numChildren = col->GetNumberOfItems();
-              vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
-              for (unsigned int c = 0; c < numChildren; c++)
+              numChildren = col->GetNumberOfItems();
+              }
+            vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
+            for (unsigned int c = 0; c < numChildren; c++)
+              {
+              // the hierarchy nodes have a sorting index that's respected by
+              // GetNthChildNode
+              vtkMRMLHierarchyNode *nthHierarchyNode = points->GetNthChildNode(c);              
+              // then get the displayable node from that hierarchy node
+              if (nthHierarchyNode)
                 {
-                vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(col->GetItemAsObject(c));
+                vtkMRMLDisplayableHierarchyNode *nthDisplayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(nthHierarchyNode);
+                vtkMRMLDisplayableNode *displayableNode = NULL;
+                if (nthDisplayableHierarchyNode)
+                  {
+                  displayableNode = nthDisplayableHierarchyNode->GetDisplayableNode();
+                  }
                 if (displayableNode)
                   {
                   vtkDebugMacro("Found displayable node with id " << displayableNode->GetID());
