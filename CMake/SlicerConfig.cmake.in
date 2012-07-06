@@ -312,7 +312,7 @@ macro(slicer_config_set_compiler_ep var value)
     if(DEFINED ${var})
       get_filename_component(var_realpath "${${var}}" REALPATH)
       get_filename_component(value_realpath ${value} REALPATH)
-      if(NOT ${var_realpath} STREQUAL ${value_realpath})
+      if(NOT MSVC AND NOT ${var_realpath} STREQUAL ${value_realpath})
         message(FATAL_ERROR "Variable ${var} defined prior calling 'find_package(Slicer)' does NOT "
                             "match value used to configure Slicer. It probably means that a different "
                             "${var} has been used to configure this project and Slicer.\n"
