@@ -589,6 +589,10 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../../../../../CTK/Libs/Scripting/Python/Widgets/Resources/ctkScriptingPythonWidgets.qrc">
+     <normaloff>:/python-icon.png</normaloff>:/python-icon.png</iconset>
+   </property>
    <property name="text">
     <string>Python Interactor</string>
    </property>
@@ -1139,6 +1143,7 @@
   <include location="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
   <include location="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc"/>
   <include location="../../../../Resources/qSlicer.qrc"/>
+  <include location="../../../../../CTK/Libs/Scripting/Python/Widgets/Resources/ctkScriptingPythonWidgets.qrc"/>
  </resources>
  <connections/>
 </ui>

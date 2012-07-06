@@ -289,6 +289,7 @@ int SlicerAppMain(int argc, char* argv[])
 
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole pythonConsole;
+  pythonConsole.setWindowTitle("Slicer Python Interactor");
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
     initializePythonConsole(pythonConsole);
