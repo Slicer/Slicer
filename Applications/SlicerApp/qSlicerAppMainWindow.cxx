@@ -155,6 +155,10 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
                    this->ModulePanel, SLOT(setModule(QString)));
 
+  // Ensure the panel dock widget is visible
+  QObject::connect(this->ModuleSelectorToolBar, SIGNAL(moduleSelected(QString)),
+                   this->PanelDockWidget, SLOT(show()));
+
   //----------------------------------------------------------------------------
   // MouseMode ToolBar
   //----------------------------------------------------------------------------
