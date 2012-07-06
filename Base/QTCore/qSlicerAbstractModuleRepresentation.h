@@ -43,10 +43,6 @@ public:
   qSlicerAbstractModuleRepresentation();
   virtual ~qSlicerAbstractModuleRepresentation();
 
-  /// Return the action allowing to show the module
-  /// 0 by default
-  virtual QAction* createAction();
-
   /// Set/Get module name
   QString moduleName()const;
 

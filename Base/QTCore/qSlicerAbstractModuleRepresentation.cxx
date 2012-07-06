@@ -53,12 +53,6 @@ qSlicerAbstractModuleRepresentation::~qSlicerAbstractModuleRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-QAction* qSlicerAbstractModuleRepresentation::createAction()
-{
-  return 0;
-}
-
-//-----------------------------------------------------------------------------
 QString qSlicerAbstractModuleRepresentation::moduleName()const
 {
   Q_D(const qSlicerAbstractModuleRepresentation);
