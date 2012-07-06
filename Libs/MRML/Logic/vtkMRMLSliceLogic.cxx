@@ -781,11 +781,12 @@ void vtkMRMLSliceLogic
       vtkMRMLScalarVolumeDisplayNode::SafeDownCast( volumeNode->GetVolumeDisplayNode() );
     }
   vtkImageData* imageData;
-  if (volumeDisplayNode && (imageData = volumeDisplayNode->GetImageData()) )
+  if (volumeDisplayNode && (imageData = volumeNode->GetImageData()) )
     {
     window = volumeDisplayNode->GetWindow();
     level = volumeDisplayNode->GetLevel();
-    double* range = imageData->GetScalarRange();
+    double range[2];
+    imageData->GetScalarRange(range);
     rangeLow = range[0];
     rangeHigh = range[1];
     }

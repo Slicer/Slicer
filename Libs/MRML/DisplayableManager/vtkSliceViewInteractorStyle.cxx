@@ -315,25 +315,17 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
     case vtkSliceViewInteractorStyle::AdjustWindowLevel:
       {
       int startX = this->GetActionStartWindow()[0];
-      int startY = this->GetActionStartWindow()[0];
+      int startY = this->GetActionStartWindow()[1];
       int deltaX = windowX - startX;
       int deltaY = windowY - startY;
-      int deltaSX = (windowX - startX)*(windowX - startX);
-      int deltaSY = (windowY - startY)*(windowY - startY);
 
       double rangeLow = this->GetActionStartVolumeRangeLow();
       double rangeHigh = this->GetActionStartVolumeRangeHigh();
-      double gain = (rangeHigh - rangeLow) / 10.0;
+      double gain = (rangeHigh - rangeLow) / 500.0;
       double newWindow = this->GetActionStartVolumeWindow() + (gain * deltaX);
+      if (newWindow < 0) newWindow = 0;
       double newLevel = this->GetActionStartVolumeLevel() + (gain * deltaY);
-
-      // Ignore the first point because it is not initialized correctly.
-      //if ( (lastX == 0) || (lastY == 0) ) window = 0;
-      // Filter out small changes from incidental clicks
-      if ( !(deltaSX < 2 || deltaSY < 2) )
-        {
-        this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
-        }
+      this->SliceLogic->SetBackgroundWindowLevel(newWindow, newLevel);
       }
       break;
     default:
