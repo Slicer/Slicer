@@ -65,13 +65,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     loadable = DICOMLib.DICOMLoadable()
     loadable.files = files
     loadable.name = name
+    loadable.tooltip = "First file: " + loadable.files[0]
     loadable.selected = True
-    loadables = [loadable]
+    # add it to the list of loadables later, if pixel data is available in at least one file
 
     # while looping through files, keep track of their
     # position and orientation for later use
     POSITION = "0020,0032"
     ORIENTATION = "0020,0037"
+    PIXEL_DATA = "7fe0,0010"
     positions = {}
     orientations = {}
 
@@ -85,6 +87,9 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         "ImageOrientationPatient":        "0020,0037"
     }
 
+    # it will be set to true if pixel data is found in any of the files
+    pixelDataAvailable = False
+
     #
     # first, look for subseries within this series
     # - build a list of files for each unique value
@@ -94,6 +99,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     subseriesValues = {}
     for file in loadable.files:
       slicer.dicomDatabase.loadFileHeader(file)
+      
+      # check if the image contains pixel data
+      if slicer.dicomDatabase.headerValue(PIXEL_DATA)!='':
+        pixelDataAvailable = True
+      
       # save position and orientation
       v = slicer.dicomDatabase.headerValue(POSITION)
       try:
@@ -119,7 +129,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if not subseriesFiles.has_key((spec,value)):
           subseriesFiles[spec,value] = []
         subseriesFiles[spec,value].append(file)
-
+    
+    loadables = []
+    
+    # If there is no pixel data at all then nothing can be loaded, so return right now
+    if pixelDataAvailable==False:
+      return loadables
+    
+    # Pixel data is available, so add the default loadable to the output
+    loadables.append(loadable)
 
     #
     # second, for any specs that have more than one value, create a new
@@ -132,6 +150,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable = DICOMLib.DICOMLoadable()
           loadable.files = subseriesFiles[spec,value]
           loadable.name = name + " for %s of %s" % (spec,value)
+          loadable.tooltip = "First file: " + loadable.files[0]
           loadable.selected = False
           loadables.append(loadable)
 

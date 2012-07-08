@@ -34,7 +34,7 @@ class DICOMLoadable(object):
 
   def __init__(self):
     # the file list of the data to be loaded
-    self.fileList = []
+    self.files = []
     # name exposed to the user for the node
     self.name = "Unknown"
     # extra information the user sees on mouse over of the thing

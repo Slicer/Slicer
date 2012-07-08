@@ -280,6 +280,40 @@ class DICOMLoadableTable(object):
     self.loadables = {}
     self.setLoadables([])
 
+  def addLoadableRow(self,loadable,row,reader):
+    """Add a row to the loadable table
+    """
+    # set checked state to unckecked if there is a loadable with the same file list in the table already
+    if len(self.loadables) > 0:
+      for addedRow in self.loadables.keys():
+        if len(self.loadables[addedRow].files) == 1 and len(loadable.files) == 1: # needed because of the tuple-sequence comparison does not work, and sometimes tuples are created by some reason
+          if self.loadables[addedRow].files[0] == loadable.files[0]:
+            loadable.selected = False
+            break
+        elif self.loadables[addedRow].files == loadable.files:
+          loadable.selected = False
+          break
+    # name and check state
+    self.loadables[row] = loadable
+    item = qt.QTableWidgetItem(loadable.name)
+    item.setCheckState(loadable.selected * 2)
+    self.items.append(item)
+    self.widget.setItem(row,0,item)
+    item.setToolTip(loadable.tooltip)
+    # reader
+    if reader:
+      readerItem = qt.QTableWidgetItem(reader)
+      self.items.append(readerItem)
+      self.widget.setItem(row,1,readerItem)
+      readerItem.setToolTip(item.toolTip())
+    # warning
+    if loadable.warning:
+      warnItem = qt.QTableWidgetItem(loadable.warning)
+      self.items.append(warnItem)
+      self.widget.setItem(row,2,warnItem)
+      item.setToolTip(item.toolTip() + "\n" + loadable.warning)
+      warnItem.setToolTip(item.toolTip())
+
   def setLoadables(self,loadablesByPlugin):
     """Load the table widget with a list
     of volume options (of class DICOMVolume)
@@ -289,31 +323,22 @@ class DICOMLoadableTable(object):
       for loadable in loadablesByPlugin[plugin]:
         loadableCount += 1
     self.widget.clearContents()
-    self.widget.setColumnCount(2)
-    self.widget.setHorizontalHeaderLabels(['DICOM Data','Warnings'])
+    self.widget.setColumnCount(3)
+    self.widget.setHorizontalHeaderLabels(['DICOM Data','Reader','Warnings'])
     self.widget.setColumnWidth(0,int(self.width * 0.4))
-    self.widget.setColumnWidth(1,int(self.width * 0.6))
+    self.widget.setColumnWidth(1,int(self.width * 0.2))
+    self.widget.setColumnWidth(2,int(self.width * 0.4))
     self.widget.setRowCount(loadableCount)
+    self.loadables = {}
     row = 0
+
     for plugin in loadablesByPlugin:
       for selectState in (True,False):
         for loadable in loadablesByPlugin[plugin]:
           if loadable.selected == selectState:
-            # name and check state
-            self.loadables[row] = loadable
-            item = qt.QTableWidgetItem(loadable.name)
-            item.setCheckState(loadable.selected * 2)
-            self.items.append(item)
-            self.widget.setItem(row,0,item)
-            item.setToolTip(loadable.tooltip)
-            # warning
-            if loadable.warning:
-              warnItem = qt.QTableWidgetItem(loadable.warning)
-              self.items.append(warnItem)
-              self.widget.setItem(row,1,warnItem)
-              item.setToolTip(item.toolTip() + "\n" + loadable.warning)
-              warnItem.setToolTip(item.toolTip())
+            self.addLoadableRow(loadable,row,plugin.loadType)
             row += 1
+
     self.widget.setVerticalHeaderLabels(row * [""])
 
   def updateCheckstate(self):
