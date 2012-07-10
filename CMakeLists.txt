@@ -161,6 +161,7 @@ option(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
+option(Slicer_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." ON)
 CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_QTSCRIPTEDMODULES "Build Slicer Python QT Modules" ON
   "Slicer_USE_PYTHONQT" OFF)
@@ -184,7 +185,6 @@ mark_as_advanced(Slicer_FORCED_WC_REVISION)
 #-----------------------------------------------------------------------------
 # External projects related options
 #-----------------------------------------------------------------------------
-option(Slicer_USE_PYTHONQT    "Integrate a python-QT interpreter into Slicer." ON)
 CMAKE_DEPENDENT_OPTION(
   Slicer_USE_PYTHONQT_WITH_TCL "Enable PythonQt Tcl adapter layer" ON
   "Slicer_USE_PYTHONQT" OFF)
