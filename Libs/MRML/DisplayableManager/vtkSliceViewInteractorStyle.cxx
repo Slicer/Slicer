@@ -271,8 +271,13 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       {
       double xyz[3];
       sliceNode->GetXYZOrigin(xyz);
-      sliceNode->SetSliceOrigin(xyz[0] + this->LastActionWindow[0] - windowX,
-                                xyz[1] + this->LastActionWindow[1] - windowY, 0);
+
+      // account for zoom using XYToSlice matrix
+      this->ScratchMatrix->DeepCopy(sliceNode->GetXYToSlice());
+      double deltaX = this->ScratchMatrix->GetElement(0,0)*(this->LastActionWindow[0] - windowX);
+      double deltaY = this->ScratchMatrix->GetElement(1,1)*(this->LastActionWindow[1] - windowY);
+
+      sliceNode->SetSliceOrigin(xyz[0] + deltaX, xyz[1] + deltaY, 0);
       }
       break;
     case vtkSliceViewInteractorStyle::Zoom:
