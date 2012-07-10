@@ -175,6 +175,8 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_CLI" OFF
   )
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
+option(Slicer_UPDATE_TRANSLATION "update translation" OFF )
+mark_as_advanced(Slicer_UPDATE_TRANSLATION)
 
 set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
 mark_as_advanced(Slicer_FORCED_WC_REVISION)
@@ -197,8 +199,6 @@ option(Slicer_USE_CTKAPPLAUNCHER "Configure ctkAppLauncher." ON)
 mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
 mark_as_advanced(Slicer_USE_QtTesting)
-option(Slicer_UPDATE_TRANSLATION "update translation" OFF )
-mark_as_advanced(Slicer_UPDATE_TRANSLATION)
 
 set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
