@@ -19,24 +19,39 @@
       <label>Spacing</label>
       <default>0,0,0</default>
     </float-vector>
-    <string-enumeration><name>interpolationType</name><flag>-i</flag><longflag>--interpolation</longflag><description><![CDATA[Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;]]></description><label>Interpolation</label><element>linear</element><element>nearestNeighbor</element><element>bspline</element><element>hamming</element><element>cosine</element>'<element>welch</element><element>lanczos</element>'<element>blackman</element><default>linear</default></string-enumeration>
+    <string-enumeration>
+      <name>interpolationType</name>
+      <flag>-i</flag>
+      <longflag>--interpolation</longflag>
+      <description><![CDATA[Sampling algorithm (linear, nearest neighbor, bspline(cubic)  or windowed sinc). There are several sinc algorithms available as described in the following publication: Erik H. W. Meijering, Wiro J. Niessen, Josien P. W. Pluim, Max A. Viergever: Quantitative Comparison of Sinc-Approximating Kernels for Medical Image Interpolation. MICCAI 1999, pp. 210-217. Each window has a radius of 3;]]></description>
+      <label>Interpolation</label>
+      <default>linear</default>
+      <element>linear</element>
+      <element>nearestNeighbor</element>
+      <element>bspline</element>
+      <element>hamming</element>
+      <element>cosine</element>
+      <element>welch</element>
+      <element>lanczos</element>
+      <element>blackman</element>
+    </string-enumeration>
   </parameters>
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>InputVolume</name>
-      <label>Input Volume</label>
-      <channel>input</channel>
       <index>0</index>
       <description><![CDATA[Input volume to be resampled]]></description>
+      <label>Input Volume</label>
+      <channel>input</channel>
     </image>
     <image>
       <name>OutputVolume</name>
-      <label>Output Volume</label>
-      <channel>output</channel>
       <index>1</index>
       <description><![CDATA[Resampled Volume]]></description>
+      <label>Output Volume</label>
+      <channel>output</channel>
     </image>
   </parameters>
 </executable>
