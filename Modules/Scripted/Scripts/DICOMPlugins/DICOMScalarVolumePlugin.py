@@ -46,20 +46,14 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     """
 
     # get the series description to use as base for volume name
-    slicer.dicomDatabase.loadFileHeader(files[0])
     seriesDescription = "0008,103e"
-    d = slicer.dicomDatabase.headerValue(seriesDescription)
-    try:
-      name = d[d.index('[')+1:d.index(']')]
-    except ValueError:
+    name = slicer.dicomDatabase.fileValue(files[0],seriesDescription)
+    if name == "":
       name = "Unknown"
     seriesNumber = "0020,0011"
-    d = slicer.dicomDatabase.headerValue(seriesNumber)
-    try:
-      num = d[d.index('[')+1:d.index(']')]
+    num = slicer.dicomDatabase.fileValue(files[0],seriesNumber)
+    if num != "":
       name = num + ": " + name
-    except ValueError:
-      pass
 
     # default loadable includes all files for series
     loadable = DICOMLib.DICOMLoadable()
@@ -98,30 +92,21 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     subseriesFiles = {}
     subseriesValues = {}
     for file in loadable.files:
-      slicer.dicomDatabase.loadFileHeader(file)
-      
       # check if the image contains pixel data
-      if slicer.dicomDatabase.headerValue(PIXEL_DATA)!='':
+      if slicer.dicomDatabase.fileValue(file,PIXEL_DATA)!='':
         pixelDataAvailable = True
       
       # save position and orientation
-      v = slicer.dicomDatabase.headerValue(POSITION)
-      try:
-        positions[file] = v[v.index('[')+1:v.index(']')]
-      except ValueError:
+      positions[file] = slicer.dicomDatabase.fileValue(file,POSITION)
+      if positions[file] == "":
         positions[file] = None
-      v = slicer.dicomDatabase.headerValue(ORIENTATION)
-      try:
-        orientations[file] = v[v.index('[')+1:v.index(']')]
-      except ValueError:
+      orientations[file] = slicer.dicomDatabase.fileValue(file,ORIENTATION)
+      if orientations[file] == "":
         orientations[file] = None
+
       # check for subseries values
       for spec in subseriesSpecs.keys():
-        v = slicer.dicomDatabase.headerValue(subseriesSpecs[spec])
-        try:
-          value = v[v.index('[')+1:v.index(']')]
-        except ValueError:
-          value = "Unknown"
+        value = slicer.dicomDatabase.fileValue(file,subseriesSpecs[spec])
         if not subseriesValues.has_key(spec):
           subseriesValues[spec] = []
         if not subseriesValues[spec].__contains__(value):
@@ -170,24 +155,15 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       # series and calculate the scan direction (assumed to be perpendicular
       # to the acquisition plane)
       #
-      slicer.dicomDatabase.loadFileHeader(loadable.files[0])
-      v = slicer.dicomDatabase.headerValue(NUMBER_OF_FRAMES)
-      try:
-        value = v[v.index('[')+1:v.index(']')]
-      except ValueError:
-        value = "Unknown"
-      if value != "Unknown":
+      value = slicer.dicomDatabase.fileValue(loadable.files[0], NUMBER_OF_FRAMES)
+      if value != "":
         loadable.warning = "Multi-frame image. If slice orientation or spacing is non-uniform then the image may be displayed incorrectly. Use with caution."
 
       validGeometry = True
       ref = {}
       for tag in [POSITION, ORIENTATION]:
-        v = slicer.dicomDatabase.headerValue(tag)
-        try:
-          value = v[v.index('[')+1:v.index(']')]
-        except ValueError:
-          value = "Unknown"
-        if not value or value == "Unknown":
+        value = slicer.dicomDatabase.fileValue(loadable.files[0], tag)
+        if not value or value == "":
           loadable.warning = "Reference image in series does not contain geometry information.  Please use caution."
           validGeometry = False
           break
@@ -312,11 +288,8 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       instanceUIDs = ""
       instanceUIDTag = "0008,0018"
       for file in loadable.files:
-        slicer.dicomDatabase.loadFileHeader(file)
-        d = slicer.dicomDatabase.headerValue(instanceUIDTag)
-        try:
-          uid = d[d.index('[')+1:d.index(']')]
-        except ValueError:
+        uid = slicer.dicomDatabase.fileValue(file,instanceUIDTag)
+        if uid == "":
           uid = "Unknown"
         instanceUIDs += uid + " "
       instanceUIDs = instanceUIDs[:-1]  # strip last space

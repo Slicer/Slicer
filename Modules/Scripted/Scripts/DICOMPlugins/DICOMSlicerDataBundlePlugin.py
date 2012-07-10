@@ -42,20 +42,20 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     files parameter.
     Look for the special private creator tags that indicate
     a slicer data bundle
+    Note that each data bundle is in a unique series, so 
+    if 'files' is a list of more than one element, then this
+    is not a data bundle.
     """
 
     loadables = []
-    for f in files:
+    if len(files) == 1:
+      f = files[0]
       # get the series description to use as base for volume name
-      slicer.dicomDatabase.loadFileHeader(files[0])
       seriesDescription = "0008,103e"
-      d = slicer.dicomDatabase.headerValue(seriesDescription)
-      try:
-        name = d[d.index('[')+1:d.index(']')]
-      except ValueError:
+      name = slicer.dicomDatabase.fileValue(f, seriesDescription)
+      if name == "":
         name = "Unknown"
-      slicer.dicomDatabase.loadFileHeader(f)
-      candygramValue = slicer.dicomDatabase.headerValue(self.candygramTag)
+      candygramValue = slicer.dicomDatabase.fileValue(f, self.candygramTag)
       if candygramValue:
         # default loadable includes all files for series
         loadable = DICOMLib.DICOMLoadable()
@@ -72,10 +72,8 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     """
     
     f = loadable.files[0]
-    slicer.dicomDatabase.loadFileHeader(f)
-    d = slicer.dicomDatabase.headerValue(self.zipSizeTag)
     try:
-      zipSize = int(d[d.index('[')+1:d.index(']')])
+      zipSize = int(slicer.dicomDatabase.fileValue(f, self.zipSizeTag))
     except ValueError:
       return False
 
