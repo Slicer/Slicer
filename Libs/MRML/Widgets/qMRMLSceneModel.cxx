@@ -893,37 +893,29 @@ void qMRMLSceneModel::updateItemDataFromNode(
       {
       visible = displayableNode->GetDisplayVisibility();
       }
-    switch (visible)
+    // It should be fine to set the icon even if it is the same, but due
+    // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
+    // it would fire a superflous itemChanged() signal.
+    if (item->data(VisibilityRole).isNull() ||
+        item->data(VisibilityRole).toInt() != visible)
       {
-      case 0:
-        // It should be fine to set the icon even if it is the same, but due
-        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-        // it would fire a superflous itemChanged() signal.
-        if (item->icon().cacheKey() != d->HiddenIcon.cacheKey())
-          {
+      item->setData(visible, VisibilityRole);
+      switch (visible)
+        {
+        case 0:
           item->setIcon(d->HiddenIcon);
-          }
-        break;
-      case 1:
-        // It should be fine to set the icon even if it is the same, but due
-        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-        // it would fire a superflous itemChanged() signal.
-        if (item->icon().cacheKey() != d->VisibleIcon.cacheKey())
-          {
+          break;
+        case 1:
           item->setIcon(d->VisibleIcon);
-          }
-        break;
-      case 2:
-        // It should be fine to set the icon even if it is the same, but due
-        // to a bug in Qt (http://bugreports.qt.nokia.com/browse/QTBUG-20248),
-        // it would fire a superflous itemChanged() signal.
-        if (item->icon().cacheKey() != d->PartiallyVisibleIcon.cacheKey())
-          {
+          break;
+        case 2:
           item->setIcon(d->PartiallyVisibleIcon);
-          }
-        break;
-      default:
-        break;
+          break;
+        default:
+          // can get here if not a display or displayable node
+          //qWarning() << "Unsupported visibility value: " << visible;
+          break;
+        }
       }
     }
 }
@@ -980,7 +972,6 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
 //------------------------------------------------------------------------------
 void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
 {
-  Q_D(qMRMLSceneModel);
   if (item->column() == this->nameColumn())
     {
     node->SetName(item->text().toLatin1());
@@ -1009,19 +1000,8 @@ void qMRMLSceneModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* i
       {
       displayNode = displayableHierarchyNode->GetDisplayNode();
       }
-    int visible = -1;
-    if (item->icon().cacheKey() == d->HiddenIcon.cacheKey())
-      {
-      visible = 0;
-      }
-    else if (item->icon().cacheKey() == d->VisibleIcon.cacheKey())
-      {
-      visible = 1;
-      }
-    else if (item->icon().cacheKey() == d->PartiallyVisibleIcon.cacheKey())
-      {
-      visible = 2;
-      }
+    Q_ASSERT(!item->data(VisibilityRole).isNull());
+    int visible = item->data(VisibilityRole).toInt();
     if (displayNode)
       {
       displayNode->SetVisibility(visible);

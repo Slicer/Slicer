@@ -99,7 +99,9 @@ public:
   enum ItemDataRole{
     UIDRole = Qt::UserRole + 1,
     PointerRole,
-    ExtraItemsRole
+    ExtraItemsRole,
+    VisibilityRole,
+    LastRole
     };
 
   /// 0 by default
