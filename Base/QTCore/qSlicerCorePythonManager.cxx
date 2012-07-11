@@ -21,6 +21,9 @@
 // Qt includes
 #include <QBitArray>
 
+// CTK includes
+#include <ctkVTKPythonQtWrapperFactory.h>
+
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -125,7 +128,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
 void qSlicerCorePythonManager::preInitialization()
 {
   Superclass::preInitialization();
-
+  this->addWrapperFactory(new ctkVTKPythonQtWrapperFactory);
   qSlicerCoreApplication* app = qSlicerCoreApplication::application();
   if (app)
     {
