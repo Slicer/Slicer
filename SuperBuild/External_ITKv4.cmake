@@ -63,9 +63,7 @@ if(NOT DEFINED ITK_DIR)
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  #set(ITKv4_GIT_TAG v4.1.0)
-  set(ITKv4_GIT_TAG dd2474336fe3e49152b9ab00ad268543d8ec6fee)
-  ## 2012-06-19 The feature freeze version that will become v4.2.0rc3
+  set(ITKv4_GIT_TAG v4.2.0) ## 2012-07-06
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
