@@ -64,9 +64,9 @@
 
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQtObjectPtr.h>
+# include <PythonQtPythonInclude.h>
 # include "qSlicerPythonManager.h"
 # include "qSlicerSettingsPythonPanel.h"
-# include <dPython.h>
 #endif
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
