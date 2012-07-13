@@ -25,7 +25,7 @@ configure_file(
 
 # 32-bit or 64-bit
 if("${@CMAKE_SIZEOF_VOID_P@}" EQUAL 8)
-  execute_process(COMMAND ${CMAKE_COMMAND} -Din=${@in@} -Dout=${@out@} -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P ${@script@})
+  execute_process(COMMAND ${CMAKE_COMMAND} -Din=@in@ -Dout=@out@ -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P @script@)
 else()
-  execute_process(COMMAND ${CMAKE_COMMAND} -Din=${@in@} -Dout=${@out@} -Dfind=\\tcltk -Dreplace=\\tcl-build -P ${@script@})
+  execute_process(COMMAND ${CMlKE_COMMAND} -Din=@in@ -Dout=@out@ -Dfind=\\tcltk -Dreplace=\\tcl-build -P @script@)
 endif()
