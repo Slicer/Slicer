@@ -62,6 +62,9 @@
      </item>
      <item row="0" column="1">
       <widget class="ctkSliderWidget" name="seedSpacing">
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
        <property name="maximum">
         <double>10.000000000000000</double>
        </property>
@@ -80,7 +83,7 @@
      <item row="2" column="1">
       <widget class="ctkSliderWidget" name="stoppingFAValue">
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <double>0.010000000000000</double>
        </property>
        <property name="maximum">
         <double>1.000000000000000</double>
@@ -100,7 +103,7 @@
      <item row="1" column="1">
       <widget class="ctkSliderWidget" name="minimumFAValueSeed">
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <double>0.010000000000000</double>
        </property>
        <property name="maximum">
         <double>1.000000000000000</double>
@@ -120,7 +123,7 @@
      <item row="3" column="1">
       <widget class="ctkSliderWidget" name="stoppingTrackCurvature">
        <property name="singleStep">
-        <double>0.100000000000000</double>
+        <double>0.010000000000000</double>
        </property>
        <property name="maximum">
         <double>10.000000000000000</double>
