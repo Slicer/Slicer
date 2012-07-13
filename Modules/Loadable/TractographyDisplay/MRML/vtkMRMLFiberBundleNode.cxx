@@ -82,7 +82,6 @@ void vtkMRMLFiberBundleNode::WriteXML(ostream& of, int nIndent)
   of << indent << " SelectWithAnnotationNode=\"" << this->SelectWithAnnotationNode << "\"";
   of << indent << " SelectionWithAnnotationNodeMode=\"" << this->SelectionWithAnnotationNodeMode << "\"";
   of << indent << " SubsamplingRatio=\"" << this->SubsamplingRatio << "\"";
-
 }
 
 
@@ -93,6 +92,11 @@ void vtkMRMLFiberBundleNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
+  if (this->AnnotationNodeID != NULL)
+    {
+    delete[] this->AnnotationNodeID;
+    }
+  this->SelectWithAnnotationNode = 0;
 
   const char* attName;
   const char* attValue;
@@ -103,19 +107,21 @@ void vtkMRMLFiberBundleNode::ReadXMLAttributes(const char** atts)
 
     if (!strcmp(attName, "AnnotationNodeRef")) 
       {
-      this->SetAnnotationNodeID(attValue);
+      const size_t n = strlen(attValue) + 1;
+      this->AnnotationNodeID = new char[n];
+      strcpy(this->AnnotationNodeID, attValue);
       }
     else if (!strcmp(attName, "SelectWithAnnotationNode")) 
       {
-      this->SetSelectWithAnnotationNode(atoi(attValue));
+      this->SelectWithAnnotationNode = atoi(attValue);
       }
     else if (!strcmp(attName, "SelectionWithAnnotationNodeMode")) 
       {
-      this->SetSelectionWithAnnotationNodeMode(atoi(attValue));
+      this->SelectionWithAnnotationNodeMode = atoi(attValue);
       }
     else if (!strcmp(attName, "SubsamplingRatio")) 
       {
-      this->SetSubsamplingRatio(atof(attValue));
+      this->SubsamplingRatio = atof(attValue);
       }
     }
 
@@ -179,7 +185,37 @@ void vtkMRMLFiberBundleNode::ProcessMRMLEvents ( vtkObject *caller,
 void vtkMRMLFiberBundleNode::UpdateScene(vtkMRMLScene *scene)
 {
    Superclass::UpdateScene(scene);
-   this->SetAndObserveAnnotationNodeID(this->GetAnnotationNodeID());
+   int disabledModify = this->StartModify();
+
+  //We are forcing the update of the fields as UpdateScene should only be called after loading data
+
+   if (this->GetAnnotationNodeID() != NULL)
+     {
+     char* AnnotationNodeID = new char[strlen(this->GetAnnotationNodeID()) + 1];
+     strcpy(AnnotationNodeID, this->GetAnnotationNodeID());
+     delete[] this->GetAnnotationNodeID();
+     this->SetAndObserveAnnotationNodeID(NULL);
+     this->SetAndObserveAnnotationNodeID(AnnotationNodeID);
+     }
+   else
+    {
+      this->SelectWithAnnotationNode = 0;
+    }
+
+
+   const int ActualSelectWithAnnotationNode = this->SelectWithAnnotationNode;
+   this->SelectWithAnnotationNode = -1;
+   this->SetSelectWithAnnotationNode(ActualSelectWithAnnotationNode);
+
+   const int ActualSelectionWithAnnotationNodeMode = this->SelectionWithAnnotationNodeMode;
+   this->SelectionWithAnnotationNodeMode = -1;
+   this->SetSelectionWithAnnotationNodeMode(ActualSelectionWithAnnotationNodeMode);
+
+   double ActualSubsamplingRatio = this->SubsamplingRatio;
+   this->SubsamplingRatio = 0.;
+   this->SetSubsamplingRatio(ActualSubsamplingRatio);
+
+   this->EndModify(disabledModify);
 }
 
 //-----------------------------------------------------------
