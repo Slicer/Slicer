@@ -27,9 +27,9 @@ endif()
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
   SVN_REVISION -r "7701"
+  ${slicer_external_update}
   SOURCE_DIR OpenIGTLink
   BINARY_DIR OpenIGTLink-build
-  UPDATE_COMMAND ""
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}

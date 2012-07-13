@@ -50,7 +50,6 @@ ExternalProject_Add(${proj}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_configure_step.cmake
   BUILD_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_make_step.cmake
-  UPDATE_COMMAND ""
   INSTALL_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_install_step.cmake
   DEPENDS

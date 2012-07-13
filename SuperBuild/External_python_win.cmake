@@ -16,17 +16,7 @@ get_filename_component(python_base ${python_sln} PATH)
 get_filename_component(python_home ${python_base} PATH)
 
 #-----------------------------------------------------------------------------
-# Prepare patch command 1
-#-----------------------------------------------------------------------------
-
-set(python_SOURCE_DIR ${python_build})
-configure_file(SuperBuild/python_patch_step_win.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
-  @ONLY)
-set(python_PATCH_COMMAND_ONE ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
-
-#-----------------------------------------------------------------------------
-# Prepare patch command 2
+# Prepare patch command
 #-----------------------------------------------------------------------------
 
 # Point the tkinter build file to the slicer tcl-build
@@ -68,6 +58,12 @@ else()
   set(PythonPCBuildDir ${CMAKE_BINARY_DIR}/python-build/PCbuild)
 endif()
 
+set(python_SOURCE_DIR ${python_build})
+configure_file(SuperBuild/python_patch_step_win.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
+  @ONLY)
+set(python_PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
+
 #-----------------------------------------------------------------------------
 # Convenient helper macro
 #-----------------------------------------------------------------------------
@@ -93,10 +89,10 @@ set_ep_build_command_args(select)
 ExternalProject_Add(${proj}
   URL ${python_URL}
   URL_MD5 ${python_MD5}
+  ${slicer_external_update}
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR python-build
-  UPDATE_COMMAND ${python_PATCH_COMMAND_ONE}
-  PATCH_COMMAND ${python_PATCH_COMMAND_TWO}
+  PATCH_COMMAND ${python_PATCH_COMMAND}
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ${CMAKE_BUILD_TOOL} ${python_sln} ${ep_build_command_args}
   BUILD_IN_SOURCE 1

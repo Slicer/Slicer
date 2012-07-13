@@ -57,13 +57,13 @@ if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
     SVN_REVISION ${incrTcl_SVN_REVISION}
+    ${slicer_external_update}
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${incrTcl_BUILD_IN_SOURCE}
     PATCH_COMMAND ${incrTcl_PATCH_COMMAND}
     CONFIGURE_COMMAND ${incrTcl_CONFIGURE_COMMAND}
     BUILD_COMMAND ${incrTcl_BUILD_COMMAND}
     INSTALL_COMMAND ${incrTcl_INSTALL_COMMAND}
-    UPDATE_COMMAND ""
     DEPENDS
       ${incrTcl_DEPENDENCIES}
   )

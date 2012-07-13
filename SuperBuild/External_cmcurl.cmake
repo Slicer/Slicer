@@ -26,9 +26,9 @@ endif()
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"
   SVN_REVISION -r "138"
+  ${slicer_external_update}
   SOURCE_DIR cmcurl
   BINARY_DIR cmcurl-build
-  UPDATE_COMMAND ""
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
   #Not needed -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}

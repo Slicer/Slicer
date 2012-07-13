@@ -36,12 +36,12 @@ ExternalProject_Add(weave
   # URL ${Slicer_SOURCE_DIR}/Modules/Python/FilteredTractography/weave
   SVN_REPOSITORY http://svn.slicer.org/Slicer3-lib-mirrors/trunk/weave
   SVN_REVISION -r "154"
+  ${slicer_external_update}
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/weave
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/weave
   BUILD_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/weave_make_step.cmake
   CONFIGURE_COMMAND ""
-  UPDATE_COMMAND ""
   INSTALL_COMMAND ""
   DEPENDS
     ${weave_DEPENDENCIES}

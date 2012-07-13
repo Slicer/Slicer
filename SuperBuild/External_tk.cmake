@@ -57,8 +57,8 @@ if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
     SVN_REVISION ${tk_SVN_REVISION}
+    ${slicer_external_update}
     SOURCE_DIR ${tk_SOURCE_DIR}
-    UPDATE_COMMAND ""
     BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
     CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}
     BUILD_COMMAND ${tk_BUILD_COMMAND}

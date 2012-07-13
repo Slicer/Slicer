@@ -21,3 +21,11 @@ configure_file(
   "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_distutils_msvc9compiler.py.in"
   "@python_SOURCE_DIR@/Lib/distutils/msvc9compiler.py"
   COPY)
+
+
+# 32-bit or 64-bit
+if("${@CMAKE_SIZEOF_VOID_P@}" EQUAL 8)
+  execute_process(COMMAND ${CMAKE_COMMAND} -Din=${@in@} -Dout=${@out@} -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P ${@script@})
+else()
+  execute_process(COMMAND ${CMAKE_COMMAND} -Din=${@in@} -Dout=${@out@} -Dfind=\\tcltk -Dreplace=\\tcl-build -P ${@script@})
+endif()

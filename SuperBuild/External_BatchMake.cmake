@@ -30,9 +30,9 @@ endif()
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
   GIT_TAG "43d21fcccd09e5a12497bc1fb924bc6d5718f98c"
+  ${slicer_external_update}
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
-  UPDATE_COMMAND ""
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}

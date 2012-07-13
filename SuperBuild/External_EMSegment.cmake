@@ -23,9 +23,9 @@ if(NOT DEFINED EMSegment_SOURCE_DIR)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk/Modules/EMSegment"
     SVN_REVISION -r "17000"
+    ${slicer_external_update}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
-    UPDATE_COMMAND ""
     CMAKE_GENERATOR ${gen}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
