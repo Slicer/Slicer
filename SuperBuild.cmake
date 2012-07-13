@@ -43,7 +43,7 @@ include(SlicerMacroCheckExternalProjectDependency)
 # For earlier versions, we nullify the update state to prevent undesirable
 # updates.
 if(CMAKE_VERSION VERSION_LESS 2.8.8)
-  set(slicer_external_update "UPDATE_COMMAND \"\"")
+  set(slicer_external_update UPDATE_COMMAND "")
 else()
   set(slicer_external_update)
 endif()
