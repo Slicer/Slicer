@@ -15,32 +15,6 @@ string(REPLACE "/" "\\" python_sln ${python_sln})
 get_filename_component(python_base ${python_sln} PATH)
 get_filename_component(python_home ${python_base} PATH)
 
-#-----------------------------------------------------------------------------
-# Prepare patch command
-#-----------------------------------------------------------------------------
-
-# Point the tkinter build file to the slicer tcl-build
-set(python_PATCH_COMMAND_TWO "")
-if(Slicer_USE_PYTHONQT_WITH_TCL)
-  set(python_tkinter ${python_base}/pyproject.vsprops)
-  # The following if statement is specific to VS2010
-  if("${MSVC_VERSION}" VERSION_GREATER "1599")
-   set(python_tkinter ${python_base}/pyproject.props)
-  endif()
-  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
-
-  set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerBlockStringFindReplace.cmake)
-  set(out ${python_tkinter})
-  set(in ${python_tkinter})
-
-  if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-    set(python_PATCH_COMMAND_TWO
-      ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P ${script})
-  else()
-    set(python_PATCH_COMMAND_TWO
-      ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=\\tcltk -Dreplace=\\tcl-build -P ${script})
-  endif()
-endif()
 
 #-----------------------------------------------------------------------------
 # 32-bit or 64-bit
@@ -58,14 +32,33 @@ else()
   set(PythonPCBuildDir ${CMAKE_BINARY_DIR}/python-build/PCbuild)
 endif()
 
-file(TO_CMAKE_PATH "${in}" in)
-file(TO_CMAKE_PATH "${out}" out)
-file(TO_CMAKE_PATH "${script}" script)
-set(python_SOURCE_DIR ${python_build})
-configure_file(SuperBuild/python_patch_step_win.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
-  @ONLY)
-set(python_PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
+#-----------------------------------------------------------------------------
+# Prepare patch command
+#-----------------------------------------------------------------------------
+
+# Point the tkinter build file to the slicer tcl-build
+set(python_PATCH_COMMAND "")
+if(Slicer_USE_PYTHONQT_WITH_TCL)
+  set(python_tkinter ${python_base}/pyproject.vsprops)
+  # The following if statement is specific to VS2010
+  if("${MSVC_VERSION}" VERSION_GREATER "1599")
+   set(python_tkinter ${python_base}/pyproject.props)
+  endif()
+  string(REPLACE "/" "\\" python_tkinter ${python_tkinter})
+
+  set(script ${CMAKE_CURRENT_SOURCE_DIR}/CMake/SlicerBlockStringFindReplace.cmake)
+  set(out ${python_tkinter})
+  set(in ${python_tkinter})
+
+  file(TO_CMAKE_PATH "${in}" in)
+  file(TO_CMAKE_PATH "${out}" out)
+  file(TO_CMAKE_PATH "${script}" script)
+  set(python_SOURCE_DIR ${python_build})
+  configure_file(SuperBuild/python_patch_step_win.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
+    @ONLY)
+  set(python_PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake)
+endif()
 
 #-----------------------------------------------------------------------------
 # Convenient helper macro
