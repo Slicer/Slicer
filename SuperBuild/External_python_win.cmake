@@ -58,6 +58,9 @@ else()
   set(PythonPCBuildDir ${CMAKE_BINARY_DIR}/python-build/PCbuild)
 endif()
 
+file(TO_CMAKE_PATH "${in}" in)
+file(TO_CMAKE_PATH "${out}" out)
+file(TO_CMAKE_PATH "${script}" script)
 set(python_SOURCE_DIR ${python_build})
 configure_file(SuperBuild/python_patch_step_win.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
@@ -100,16 +103,6 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${python_DEPENDENCIES}
   )
-
-# on Win64 we use tcl 8.5
-if(Slicer_USE_PYTHONQT_WITH_TCL AND NOT "${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
-  # this must match the version of tcl we are building for slicer.
-  ExternalProject_Add_Step(${proj} Patch_tcltk_version
-    COMMAND ${CMAKE_COMMAND} -Din=${in} -Dout=${out} -Dfind=85 -Dreplace=84 -P ${script}
-    DEPENDEES configure
-    DEPENDERS build
-    )
-endif()
 
 build_python_target(make_versioninfo build)
 build_python_target(make_buildinfo Build_make_versioninfo)

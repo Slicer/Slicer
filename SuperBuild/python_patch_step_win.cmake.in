@@ -22,10 +22,15 @@ configure_file(
   "@python_SOURCE_DIR@/Lib/distutils/msvc9compiler.py"
   COPY)
 
-
-# 32-bit or 64-bit
-if("${@CMAKE_SIZEOF_VOID_P@}" EQUAL 8)
-  execute_process(COMMAND ${CMAKE_COMMAND} -Din=@in@ -Dout=@out@ -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P @script@)
-else()
-  execute_process(COMMAND ${CMlKE_COMMAND} -Din=@in@ -Dout=@out@ -Dfind=\\tcltk -Dreplace=\\tcl-build -P @script@)
+# Prevent warning about if(ON).
+cmake_policy(SET CMP0012 NEW)
+if(@Slicer_USE_PYTHONQT_WITH_TCL@)
+  # 32-bit or 64-bit
+  if("${@CMAKE_SIZEOF_VOID_P@}" EQUAL 8)
+    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P "@script@")
+  else()
+    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=\\tcltk -Dreplace=\\tcl-build -P "@script@")
+    # on Win64 we use tcl 8.5
+    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=85 -Dreplace=84 -P "@script@")
+  endif()
 endif()
