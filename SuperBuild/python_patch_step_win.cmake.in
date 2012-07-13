@@ -26,11 +26,11 @@ configure_file(
 cmake_policy(SET CMP0012 NEW)
 if(@Slicer_USE_PYTHONQT_WITH_TCL@)
   # 32-bit or 64-bit
-  if("${@CMAKE_SIZEOF_VOID_P@}" EQUAL 8)
+  if(@CMAKE_SIZEOF_VOID_P@ EQUAL 8)
     execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=\\tcltk64 -Dreplace=\\tcl-build -P "@script@")
+    # on Win64 we use tcl 8.5
+    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=84 -Dreplace=85 -P "@script@")
   else()
     execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=\\tcltk -Dreplace=\\tcl-build -P "@script@")
-    # on Win64 we use tcl 8.5
-    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=85 -Dreplace=84 -P "@script@")
   endif()
 endif()
