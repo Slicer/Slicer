@@ -112,9 +112,15 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// \li  "title" - title displayed on the chart
   /// \li  "showTitle" - show title "on" or "off"
   /// \li  "xAxisLabel" - label displayed on the x-axis
+  /// \li  "xAxisPad" - width of the x-axis padding, which is a factor multiplied by the
+  ///                   data range on the axis to give the axis range so that data points
+  ///                   don't fall on the edges of the axis.
   /// \li  "showXAxisLabel" - show x-axis label "on" or "off"
   /// \li  "xAxisType" - type of data on x-axis, "quantitative", "categorical", "date"
   /// \li  "yAxisLabel" - label displayed on the y-axis
+  /// \li  "yAxisPad" - height of the y-axis padding, which is a factor multiplied by the
+  ///                   data range on the axis to give the axis range so that data points
+  ///                   don't fall on the edges of the axis.
   /// \li  "showYAxisLabel" - show y-axis label "on" or "off"
   /// \li  "yAxisType" - type of data on y-axis, "quantitative", "categorical", "date"
   /// \li  "showGrid" - show grid "on" or "off"
@@ -126,6 +132,8 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///
   /// \li  "showLines" - show lines "on" or "off"
   /// \li  "showMarkers" - show markers "on" or "off"
+  /// \li  "linePattern" - line pattern can be "solid", "dashed", "dotted",
+  ///                      "dashed-dotted"
   /// \li  "color" - color to use for the array lines and points (#RRGGBB)
   /// \li  "lookupTable" - MRMLID of a ColorNode to use to color individual 
   ///         bars in bar chart (useful with categorical data)

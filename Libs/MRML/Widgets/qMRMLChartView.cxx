@@ -312,8 +312,10 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
   // axes labels
   const char *showXAxisLabel = cn->GetProperty("default", "showXAxisLabel");
   const char *xAxisLabel = cn->GetProperty("default", "xAxisLabel");
+  const char *xAxisPad = cn->GetProperty("default", "xAxisPad");
   const char *showYAxisLabel = cn->GetProperty("default", "showYAxisLabel");
   const char *yAxisLabel = cn->GetProperty("default", "yAxisLabel");
+  const char *yAxisPad = cn->GetProperty("default", "yAxisPad");
   
   bool showx = false, showy = false;
   if (showXAxisLabel && !strcmp(showXAxisLabel, "on") && xAxisLabel)
@@ -331,6 +333,10 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       {
       plotOptions << "xaxis: {label: '" << xAxisLabel << "'";
       plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      if (xAxisPad)
+      {
+        plotOptions << ", pad: " << xAxisPad;
+      }
       if (xAxisType && !strcmp(xAxisType, "categorical"))
         {
         plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
@@ -350,6 +356,10 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       {
       plotOptions << "yaxis: {label: '" << yAxisLabel << "'";
       plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      if (yAxisPad)
+      {
+        plotOptions << ", pad: " << yAxisPad;
+      }
       if (yAxisType && !strcmp(yAxisType, "categorical"))
         {
         plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
@@ -453,8 +463,28 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     plotOptions << ", showLine: false";
     }
 
-   // end of seriesDefaults properties
-   plotOptions << "}";
+  // line pattern
+  const char *linePattern = cn->GetProperty("default", "linePattern");
+  
+  if (linePattern && !strcmp(linePattern, "solid"))
+    {
+    // By default the line pattern is solid
+    }
+  else if (linePattern && !strcmp(linePattern, "dashed"))
+    {
+    plotOptions << ", linePattern: 'dashed'";
+    }
+  else if (linePattern && !strcmp(linePattern, "dotted"))
+    {
+    plotOptions << ", linePattern: 'dotted'";
+    }
+  else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
+    {
+    plotOptions << ", linePattern: '-.'";
+    }
+
+  // end of seriesDefaults properties
+  plotOptions << "}";
   
   // series level properties
   //
@@ -491,6 +521,26 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     else if (lines && !strcmp(lines, "off"))
       {
       plotOptions << ", showLine: false";
+      }
+
+    // line pattern
+    const char *linePattern = cn->GetProperty(arrayName.c_str(), "linePattern");
+    
+    if (linePattern && !strcmp(linePattern, "solid"))
+      {
+      plotOptions << ", linePattern: 'solid'";
+      }
+    if (linePattern && !strcmp(linePattern, "dashed"))
+      {
+      plotOptions << ", linePattern: 'dashed'";
+      }
+    else if (linePattern && !strcmp(linePattern, "dotted"))
+      {
+      plotOptions << ", linePattern: 'dotted'";
+      }
+    else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
+      {
+      plotOptions << ", linePattern: '-.'";
       }
 
     // color
