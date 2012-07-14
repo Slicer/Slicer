@@ -32,5 +32,7 @@ if(@Slicer_USE_PYTHONQT_WITH_TCL@)
     execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=84 -Dreplace=85 -P "@script@")
   else()
     execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=\\tcltk -Dreplace=\\tcl-build -P "@script@")
+    # on Win32 we use tcl 8.4
+    execute_process(COMMAND ${CMAKE_COMMAND} -Din:FILEPATH=@in@ -Dout:FILEPATH=@out@ -Dfind=85 -Dreplace=84 -P "@script@")
   endif()
 endif()
