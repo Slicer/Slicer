@@ -470,7 +470,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
   this->Helper->UpdateLocked(node);
 
   // update visibility status
-  this->Helper->UpdateVisible(node);
+  bool displayableInViewer = true;
+  // IsWidgetDisplayable is only defined on 2d slice viewers
+  if (this->Is2DDisplayableManager())
+    {
+    displayableInViewer = this->IsWidgetDisplayable(this->GetSliceNode(), node);
+    }
+  this->Helper->UpdateVisible(node, displayableInViewer);
 
   seedRepresentation->NeedToRenderOn();
   seedWidget->Modified();
@@ -525,13 +531,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
 
-  double worldCoordinates1[4];
+  double worldCoordinates1[4] = {0.0,0.0,0.0,1.0};
 
   if (this->Is2DDisplayableManager())
     {
     // 2D widget was changed
 
-    double displayCoordinates1[4];
+    double displayCoordinates1[4] = {0.0,0.0,0.0,1.0};
     seedRepresentation->GetSeedDisplayPosition(0,displayCoordinates1);
     vtkDebugMacro("PropagateWidgetToMRML: 2d displayable manager: widget display coords = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", " << displayCoordinates1[2]);
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
@@ -546,7 +552,7 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
 
   // was there a change?
   bool positionChanged = false;
-  double currentCoordinates[4];
+  double currentCoordinates[4] = {0.0, 0.0, 0.0, 1.0};
   fiducialNode->GetFiducialWorldCoordinates(currentCoordinates);
   vtkDebugMacro("PropagateWidgetToMRML: fiducial current world coordinates = " << currentCoordinates[0] << ", " << currentCoordinates[1] << ", " << currentCoordinates[2]);
 

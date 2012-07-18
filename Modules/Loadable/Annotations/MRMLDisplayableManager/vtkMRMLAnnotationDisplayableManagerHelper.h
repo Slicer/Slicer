@@ -50,8 +50,9 @@ public:
   void UpdateLockedAllWidgets(bool locked);
   /// Lock/Unlock a widget
   void UpdateLocked(vtkMRMLAnnotationNode* node);
-  /// Hide/Show a widget
-  void UpdateVisible(vtkMRMLAnnotationNode* node);
+  /// Hide/Show a widget according to node's visible flag and if it can be
+  /// displayed in this viewer
+  void UpdateVisible(vtkMRMLAnnotationNode* node, bool displayableInViewer = true);
   /// Update lock and visibility of a widget
   void UpdateWidget(vtkMRMLAnnotationNode* node);
 
