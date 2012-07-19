@@ -67,7 +67,7 @@ endif()
 
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
-set(Slicer_DEPENDENCIES cmcurl teem VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
+set(Slicer_DEPENDENCIES cmcurl teem DCMTK VTK ${ITK_EXTERNAL_NAME} CTK jqPlot LibArchive)
 
 if(Slicer_USE_OpenIGTLink)
   list(APPEND Slicer_DEPENDENCIES OpenIGTLink)
