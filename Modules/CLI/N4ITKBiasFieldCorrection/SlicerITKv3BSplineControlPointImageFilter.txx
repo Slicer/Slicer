@@ -892,7 +892,7 @@ template <class InputImage, class TOutputImage>
 void
 BSplineControlPointImageFilter<InputImage, TOutputImage>
 ::EvaluateHessian( PointType params, GradientType & hessian,
-                   unsigned int component = 0 )
+                   unsigned int component )
 {
   vnl_vector<RealType> p( ImageDimension );
   for( unsigned int i = 0; i < ImageDimension; i++ )

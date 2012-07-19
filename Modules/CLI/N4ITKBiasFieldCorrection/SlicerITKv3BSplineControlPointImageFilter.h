@@ -311,7 +311,8 @@ public:
   void EvaluateHessianAtContinuousIndex( ContinuousIndexType,
                                          GradientType &, unsigned int );
 
-  void EvaluateHessian( PointType, GradientType &, unsigned int );
+  void EvaluateHessian( PointType params, GradientType & hessian,
+     unsigned int component = 0 );
 
   /**
    * Given a B-spline object value and an initial parametric guess, use
