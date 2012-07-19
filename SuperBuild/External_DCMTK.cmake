@@ -23,8 +23,8 @@ if(NOT DEFINED DCMTK_DIR)
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
-  set(DCMTK_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk.git.rt)
-  set(DCMTK_GIT_TAG "master")
+  set(DCMTK_REPOSITORY ${git_protocol}://git.dcmtk.org/dcmtk.git)
+  set(DCMTK_GIT_TAG "ab844899a92f46e2d880c38c85ce098933533aef")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}
