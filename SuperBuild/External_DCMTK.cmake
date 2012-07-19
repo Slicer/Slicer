@@ -32,7 +32,7 @@ if(NOT DEFINED DCMTK_DIR)
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR ${proj}-install
-    UPDATE_COMMAND ""
+    ${slicer_external_update}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
