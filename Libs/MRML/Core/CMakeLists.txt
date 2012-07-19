@@ -124,7 +124,6 @@ set(MRMLCore_SRCS
   vtkMRMLSnapshotClipNode.cxx
   vtkMRMLStorableNode.cxx
   vtkMRMLStorageNode.cxx
-  vtkMRMLTimeSeriesVolumeNode.cxx
   vtkMRMLTransformNode.cxx
   vtkMRMLTransformStorageNode.cxx
   vtkMRMLTransformableNode.cxx

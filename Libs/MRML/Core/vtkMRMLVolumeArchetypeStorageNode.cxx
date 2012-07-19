@@ -273,8 +273,6 @@ int vtkMRMLVolumeArchetypeStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   //
   // vtkMRMLVolumeNode
   //   |
-  //   |--vtkMRMLTimeSeriesVolumeNode
-  //   |
   //   |--vtkMRMLScalarVolumeNode
   //         |
   //         |----vtkMRMLDiffusionWeightedVolumeNode
