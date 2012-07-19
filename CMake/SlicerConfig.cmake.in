@@ -221,6 +221,11 @@ slicer_config_set_ep(
   CACHE PATH "Path to BatchMake build or install directory" FORCE)
 
 slicer_config_set_ep(
+  DCMTK_DIR
+  "@DCMTK_DIR_CONFIG@"
+  CACHE PATH "Path to DCMTK build or install directory" FORCE)
+
+slicer_config_set_ep(
   CTK_DIR
   "@CTK_DIR_CONFIG@"
   CACHE PATH "Path to CTK build or install directory" FORCE)
