@@ -11,9 +11,9 @@ QT4_GENERATE_MOCS(
   qMRMLNodeAttributeTableWidgetTest.cxx
   )
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX} ${Tests_UtilityFiles})
+add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 SIMPLE_TEST( qMRMLNodeAttributeTableViewTest )
