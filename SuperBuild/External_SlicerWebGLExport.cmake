@@ -27,7 +27,7 @@ if(NOT DEFINED SlicerWebGLExport_SOURCE_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/xtk/SlicerWebGLExport.git"
     GIT_TAG "be54b2a30017971f938a9c2878db948fb3608cd9"
-    ${slicer_external_update}
+    "${slicer_external_update}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

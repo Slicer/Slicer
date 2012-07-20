@@ -42,7 +42,7 @@ endif()
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSStandAlone.git"
     GIT_TAG "${GIT_TAG}"
-    ${slicer_external_update}
+    "${slicer_external_update}"
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

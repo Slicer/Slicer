@@ -48,7 +48,7 @@ set(python_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pytho
 ExternalProject_Add(${proj}
   URL ${python_URL}
   URL_MD5 ${python_MD5}
-  ${slicer_external_update}
+  "${slicer_external_update}"
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR ${python_SOURCE_DIR}
   BUILD_IN_SOURCE ${python_BUILD_IN_SOURCE}
