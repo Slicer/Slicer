@@ -39,10 +39,10 @@ include(SlicerBlockFindQtAndCheckVersion)
 include(ExternalProject)
 include(SlicerMacroCheckExternalProjectDependency)
 
-# With CMake 2.8.8 or later the UPDATE_COMMAND is required for updates to occur.
-# For earlier versions, we nullify the update state to prevent undesirable
-# updates.
-if(CMAKE_VERSION VERSION_LESS 2.8.8)
+# With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
+# For earlier versions, we nullify the update state to prevent updates and
+# undesirable rebuild.
+if(CMAKE_VERSION VERSION_LESS 2.8.9)
   set(slicer_external_update UPDATE_COMMAND "")
 else()
   set(slicer_external_update)
