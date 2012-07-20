@@ -634,6 +634,10 @@ if(Slicer_USE_PYTHONQT)
   include(vtkMacroKitPythonWrap)
 
   set(PYTHONQT_INSTALL_DIR ${CTK_PYTHONQT_INSTALL_DIR})
+  # Find PythonQt package so that PYTHONQT_USE_RELEASE_PYTHON_FALLBACK is defined
+  # See https://github.com/commontk/PythonQt/issues/7
+  # and https://github.com/commontk/PythonQt/issues/8
+  find_package(PythonQt REQUIRED)
   link_directories(${PYTHONQT_INSTALL_DIR}/lib)
   include(ctkMacroWrapPythonQt)
   include(ctkMacroCompilePythonScript)
