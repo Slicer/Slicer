@@ -78,4 +78,4 @@ ExternalProject_add(SimpleITK
   INSTALL_COMMAND ${SimpleITK_INSTALL_COMMAND}
   #
   DEPENDS ${SimpleITK_DEPENDENCIES}
-)
+  )

@@ -54,4 +54,3 @@ ExternalProject_Add(${proj}
   )
 
 set(BatchMake_DIR ${CMAKE_BINARY_DIR}/BatchMake-build)
-

@@ -1,3 +1,4 @@
+
 # Make sure this file is included only once
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
 if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
@@ -43,4 +44,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${MultiVolumeImporter_DEPENDENCIES}")
 endif()
-

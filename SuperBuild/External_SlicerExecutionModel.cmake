@@ -71,4 +71,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${SlicerExecutionModel_DEPENDENCIES}")
 endif()
-

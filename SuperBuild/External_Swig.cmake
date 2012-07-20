@@ -39,15 +39,14 @@ if(NOT SWIG_DIR)
     #
 
     # swig uses bison find it by cmake and pass it down
-    find_package ( BISON )
-    set ( BISON_FLAGS "" CACHE STRING "Flags used by bison" )
-    mark_as_advanced ( BISON_FLAGS )
-
+    find_package(BISON)
+    set(BISON_FLAGS "" CACHE STRING "Flags used by bison")
+    mark_as_advanced(BISON_FLAGS)
 
     # follow the standard EP_PREFIX locations
-    set ( swig_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig-build )
-    set ( swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig )
-    set ( swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig )
+    set(swig_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig-build)
+    set(swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig)
+    set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig)
 
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/swig_configure_step.cmake.in
@@ -66,4 +65,4 @@ if(NOT SWIG_DIR)
     set(SWIG_EXECUTABLE ${swig_install_dir}/bin/swig)
     set(Swig_DEPEND Swig)
   endif()
-endif(NOT SWIG_DIR)
+endif()

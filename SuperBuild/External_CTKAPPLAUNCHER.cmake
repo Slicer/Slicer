@@ -45,4 +45,3 @@ if(Slicer_USE_CTKAPPLAUNCHER)
   endif()
 
 endif()
-

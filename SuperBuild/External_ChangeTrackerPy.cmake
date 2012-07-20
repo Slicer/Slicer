@@ -44,4 +44,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${ChangeTrackerPy_DEPENDENCIES}")
 endif()
-

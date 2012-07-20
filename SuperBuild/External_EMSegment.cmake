@@ -39,4 +39,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${EMSegment_DEPENDENCIES}")
 endif()
-

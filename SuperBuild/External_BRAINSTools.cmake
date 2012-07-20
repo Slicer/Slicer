@@ -18,15 +18,6 @@ set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
 set(proj BRAINSTools)
 
-# Set CMake OSX variable to pass down the external project
-#set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
-#if(APPLE)
-#  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
-#    -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
-#    -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
-#    -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
-#endif()
-
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 if(${ITK_VERSION_MAJOR} STREQUAL "3")

@@ -101,4 +101,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${CTK_DEPENDENCIES}")
 endif()
-

@@ -88,4 +88,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${LibArchive_DEPENDENCIES}")
 endif()
-

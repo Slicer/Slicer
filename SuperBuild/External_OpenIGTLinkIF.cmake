@@ -41,4 +41,3 @@ else()
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${OpenIGTLinkIF_DEPENDENCIES}")
 endif()
-

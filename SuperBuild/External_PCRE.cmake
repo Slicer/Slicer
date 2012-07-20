@@ -22,15 +22,15 @@ SlicerMacroCheckExternalProjectDependency(PCRE)
 #
 
 # follow the standard EP_PREFIX locations
-set ( pcre_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE-build )
-set ( pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE )
-set ( pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE )
+set(pcre_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE-build)
+set(pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE)
+set(pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/pcre_configure_step.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake
   @ONLY)
-set ( pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake )
+set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_configure_step.cmake)
 
 ExternalProject_add(PCRE
   URL http://downloads.sourceforge.net/project/pcre/pcre/8.12/pcre-8.12.tar.gz
@@ -38,4 +38,3 @@ ExternalProject_add(PCRE
   "${slicer_external_update}"
   CONFIGURE_COMMAND ${pcre_CONFIGURE_COMMAND}
   )
-

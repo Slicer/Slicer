@@ -47,4 +47,3 @@ ExternalProject_Add(${proj}
 )
 
 set(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/OpenIGTLink-build)
-
