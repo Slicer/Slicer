@@ -332,8 +332,8 @@ class DICOMLoadableTable(object):
     self.loadables = {}
     row = 0
 
-    for plugin in loadablesByPlugin:
-      for selectState in (True,False):
+    for selectState in (True,False):
+      for plugin in loadablesByPlugin:
         for loadable in loadablesByPlugin[plugin]:
           if loadable.selected == selectState:
             self.addLoadableRow(loadable,row,plugin.loadType)
