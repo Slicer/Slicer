@@ -386,7 +386,7 @@ BSplineImageToImageRegistrationMethod<TImage>
   bool failure = false;
   try
     {
-    reg->StartRegistration();
+    reg->Update();
     }
   catch( itk::ExceptionObject & excep )
     {

@@ -535,7 +535,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
 
     try
       {
-      reg->StartRegistration();
+      reg->Update();
       }
     catch( itk::ExceptionObject & excep )
       {
@@ -622,7 +622,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
   bool failure = false;
   try
     {
-    reg->StartRegistration();
+    reg->Update();
     }
   catch( itk::ExceptionObject & excep )
     {

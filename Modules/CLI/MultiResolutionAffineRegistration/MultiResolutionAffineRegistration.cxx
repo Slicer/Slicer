@@ -411,7 +411,7 @@ int main( int argc, char * argv[] )
     reg->SetTransform(nt);
     reg->SetInitialTransformParameters( nt->GetParameters() );
 
-    reg->StartRegistration();
+    reg->Update();
     // std::cout << "params" << reg->GetInitialTransformParameters() << std::endl;
 
     nt->SetParameters( reg->GetLastTransformParameters() );
@@ -791,7 +791,7 @@ int main( int argc, char * argv[] )
                 << *pit << std::endl;
       }
 
-    reg->StartRegistration();
+    reg->Update();
 
     SimilarityParameters pm = reg->GetLastTransformParameters();
 
@@ -828,7 +828,7 @@ int main( int argc, char * argv[] )
       opt->SetScales(optimizerScales);
 
       reg->SetInitialTransformParameters(pm);
-      reg->StartRegistration();
+      reg->Update();
 
       pm = reg->GetLastTransformParameters();
 
@@ -964,7 +964,7 @@ int main( int argc, char * argv[] )
   reg->SetTransform(affinet);
   reg->SetInitialTransformParameters(affineparams);
 
-  reg->StartRegistration();
+  reg->Update();
 
   AffineTransform::ParametersType mm2p = reg->GetLastTransformParameters();
 
@@ -1005,7 +1005,7 @@ int main( int argc, char * argv[] )
   reg->SetMovingImage(mpyramid->GetOutput(mnumberoflevels >= 4 ? 3 : mnumberoflevels - 1) );
   reg->SetInitialTransformParameters(reg->GetLastTransformParameters() );
 
-  reg->StartRegistration();
+  reg->Update();
 
   AffineTransform::ParametersType finalp = reg->GetLastTransformParameters();
 
