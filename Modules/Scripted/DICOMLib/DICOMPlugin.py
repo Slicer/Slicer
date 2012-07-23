@@ -43,6 +43,15 @@ class DICOMLoadable(object):
     self.warning = ""
     # is the object checked for loading by default
     self.selected = False
+    # confidence - from 0 to 1 where 0 means low chance
+    # that the user actually wants to load their data this
+    # way up to 1, which means that the plugin is very confident
+    # that this is the best way to load the data.
+    # When more than one plugin marks the same series as
+    # selected, the one with the highest confidence is
+    # actually selected by default.  In the case of a tie,
+    # both series are selected for loading.
+    self.confidence = 0.5
 
 #
 # DICOMExporter

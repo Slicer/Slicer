@@ -173,6 +173,36 @@ class DICOMDetailsPopup(object):
     if self.widgetType == 'dialog':
       self.window.setModal(modality)
 
+  def organizeLoadables(self):
+    """Review the selected state and confidence of the loadables
+    across plugins so that the options the user is most likely
+    to want are listed at the top of the table and are selected
+    by default.  Only offer one pre-selected loadable per series
+    unless both plugins mark it as selected and they have equal
+    confidence."""
+
+    # first, get all loadables corresponding to a series
+    seriesUIDTag = "0020,000E"
+    loadablesBySeries = {}
+    for plugin in self.loadablesByPlugin:
+      for loadable in self.loadablesByPlugin[plugin]:
+        seriesUID = slicer.dicomDatabase.fileValue(loadable.files[0],seriesUIDTag)
+        if not loadablesBySeries.has_key(seriesUID):
+          loadablesBySeries[seriesUID] = [loadable]
+        else:
+          loadablesBySeries[seriesUID].append(loadable)
+
+    # now for each series, find the highest confidence selected loadables
+    # and set all others to be unselected
+    for series in loadablesBySeries:
+      highestConfidenceValue = -1
+      for loadable in loadablesBySeries[series]:
+        if loadable.confidence > highestConfidenceValue:
+          highestConfidenceValue = loadable.confidence
+      for loadable in loadablesBySeries[series]:
+        if loadable.confidence < highestConfidenceValue:
+          loadable.selected = False
+
   def offerLoadables(self,uid,role):
     """Get all the loadable options at the currently selected level
     and present them in the loadable table"""
@@ -229,6 +259,7 @@ class DICOMDetailsPopup(object):
       loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
       step +=1
     self.loadButton.enabled = loadEnabled
+    self.organizeLoadables()
     self.loadableTable.setLoadables(self.loadablesByPlugin)
     self.progress.close()
     self.progress = None
@@ -283,10 +314,13 @@ class DICOMLoadableTable(object):
   def addLoadableRow(self,loadable,row,reader):
     """Add a row to the loadable table
     """
-    # set checked state to unckecked if there is a loadable with the same file list in the table already
+    # set checked state to unckecked if there is a loadable with the 
+    # same file list in the table already
     if len(self.loadables) > 0:
       for addedRow in self.loadables.keys():
-        if len(self.loadables[addedRow].files) == 1 and len(loadable.files) == 1: # needed because of the tuple-sequence comparison does not work, and sometimes tuples are created by some reason
+        if len(self.loadables[addedRow].files) == 1 and len(loadable.files) == 1:
+          # needed because of the tuple-sequence comparison does not work, 
+          # and sometimes tuples are created by some reason
           if self.loadables[addedRow].files[0] == loadable.files[0]:
             loadable.selected = False
             break
