@@ -388,7 +388,7 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   vtkPointData *pd;
   int numPts;
   // time
-  clock_t tStart=0;
+  clock_t tStart, tEnd, tDiff;
   tStart = clock();
   // working matrices
   double *m[3], w[3], *v[3];
@@ -785,7 +785,9 @@ static void vtkDiffusionTensorMathematicsExecute1Eigen(vtkDiffusionTensorMathema
   // Cleanup     
   trans->Delete();     
  
-  //cout << "tensor math time: " << clock() - tStart << endl;
+  tEnd = clock();
+  tDiff = tEnd - tStart;
+  vtkDebugWithObjectMacro(self, << "tDiff:" << tDiff);
 }
 
 //----------------------------------------------------------------------------
