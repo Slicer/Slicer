@@ -338,6 +338,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
 
   // Until we come up with a solution for all use cases, the resetting
   // of the camera is disabled
+  // See http://www.na-mic.org/Bug/view.php?id=2341
 #if 0
   if (bBoxChanged)
     {
@@ -345,6 +346,8 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * render
     renderer->GetActiveCamera()->Dolly(1.5);
     renderer->ResetCameraClippingRange();
     }
+#else
+  (void)bBoxChanged;
 #endif
 }
 
