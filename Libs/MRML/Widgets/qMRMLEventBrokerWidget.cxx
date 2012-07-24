@@ -27,6 +27,7 @@
 
 // qMRML includes
 #include "qMRMLEventBrokerWidget.h"
+#include "qMRMLWidgetsConfigure.h"
 
 // MRML includes
 #include <vtkEventBroker.h>
@@ -35,6 +36,11 @@
 
 // VTK includes
 #include <vtkCallbackCommand.h>
+
+// STD includes
+#ifdef HAVE_STDINT_H
+# include <stdint.h> // For intptr_t
+#endif
 
 namespace
 {
