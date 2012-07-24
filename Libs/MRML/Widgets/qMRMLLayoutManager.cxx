@@ -520,7 +520,7 @@ void qMRMLLayoutManagerPrivate::onSceneClosedEvent()
 }
 
 //------------------------------------------------------------------------------
-void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* layoutNode)
+void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(layoutNode))
 {
   if (!this->MRMLScene || this->MRMLScene->IsBatchProcessing())
     {

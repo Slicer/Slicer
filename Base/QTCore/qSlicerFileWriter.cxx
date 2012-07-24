@@ -43,6 +43,7 @@ qSlicerFileWriter::~qSlicerFileWriter()
 //----------------------------------------------------------------------------
 bool qSlicerFileWriter::canWriteObject(vtkObject* object)const
 {
+  Q_UNUSED(object);
   return false;
 }
 

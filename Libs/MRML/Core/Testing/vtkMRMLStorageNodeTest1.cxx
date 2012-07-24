@@ -40,8 +40,14 @@ public:
   virtual bool CanApplyNonLinearTransforms() { return false; }
   virtual void ApplyTransform(vtkAbstractTransform* vtkNotUsed(transform)) { return; }
 
-  bool CanReadInReferenceNode(vtkMRMLNode * refNode) { return refNode->IsA(this->SupportedClass); }
-  int ReadDataInternal(vtkMRMLNode * refNode) { return this->ReadDataReturnValue; }
+  bool CanReadInReferenceNode(vtkMRMLNode * refNode)
+    {
+    return refNode->IsA(this->SupportedClass);
+    }
+  int ReadDataInternal(vtkMRMLNode * vtkNotUsed(refNode))
+    {
+    return this->ReadDataReturnValue;
+    }
 
   const char* SupportedClass;
   int ReadDataReturnValue;
@@ -138,5 +144,5 @@ bool TestReadData()
 bool TestWriteData()
 {
   bool res = true;
-  return true;
+  return res;
 }

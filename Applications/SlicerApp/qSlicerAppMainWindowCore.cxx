@@ -326,6 +326,8 @@ void qSlicerAppMainWindowCore::onWindowPythonInteractorActionTriggered(bool show
     {
     console->close();
     }
+#else
+  Q_UNUSED(show);
 #endif
 }
 

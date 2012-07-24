@@ -172,7 +172,7 @@ bool storeAndRemoveVolume()
   // The following instantiate a new scalar volume node which may use the
   // same pointer than the removed/deleted node.
   vtkNew<vtkMRMLScalarVolumeNode> uselessVolumeNode;
-  uselessVolumeNode;
+  (void)uselessVolumeNode;
 
   sceneViewNode->RestoreScene();
 
