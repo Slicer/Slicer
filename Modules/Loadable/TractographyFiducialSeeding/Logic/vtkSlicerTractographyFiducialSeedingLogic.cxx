@@ -458,6 +458,11 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
   //6. Extra5ct PolyData in RAS
   if( !parametersNode->GetWriteToFile()  )
   {
+    vtkNew<vtkPolyData> outFibers;
+
+    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
+
+    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
 
     //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
     fiberNode->SetSubsamplingRatio(1.);
@@ -537,20 +542,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       {
       fiberNode->SetAndObserveTransformNodeID(NULL);
       }
-
-    vtkNew<vtkPolyData> outFibers;
-    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
-
-    if (oldPoly)
-      {
-      oldPoly->DeepCopy(outFibers.GetPointer());
-      //fiberNode->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
-      }
-    else
-      {
-      fiberNode->SetAndObservePolyData(outFibers.GetPointer());
-      }
-
   }
 
   return 1;
