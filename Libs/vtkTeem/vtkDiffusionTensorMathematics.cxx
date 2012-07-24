@@ -219,14 +219,8 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
   double tensor[3][3];
   vtkPointData *pd;
   // time
-  clock_t tStart=0;
+  clock_t tStart, tEnd, tDiff;
   tStart = clock();
-  // working matrices
-  double *m[3], *v[3];
-  double m0[3], m1[3], m2[3];
-  double v0[3], v1[3], v2[3];
-  m[0] = m0; m[1] = m1; m[2] = m2; 
-  v[0] = v0; v[1] = v1; v[2] = v2;
   // scaling
   double scaleFactor = self->GetScaleFactor();
 
@@ -354,7 +348,9 @@ static void vtkDiffusionTensorMathematicsExecute1(vtkDiffusionTensorMathematics 
     inMaskPtr += maskIncZ;
     }
 
-  //cout << "tensor math time: " << clock() - tStart << endl;
+  tEnd = clock();
+  tDiff = tEnd - tStart;
+  vtkDebugWithObjectMacro(self, << "tDiff:" << tDiff);
 }
 
 // copied from 
