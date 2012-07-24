@@ -13,6 +13,9 @@ endif()
 
 # Set dependency list
 set(ITKv4_DEPENDENCIES "")
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND ITKv4_DEPENDENCIES DCMTK)
+endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(ITKv4)
@@ -28,6 +31,13 @@ if(NOT DEFINED ITK_DIR)
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
+  endif()
+
+  set(ITKv4_DCMTK_ARGS)
+  if(Slicer_BUILD_DICOM_SUPPORT)
+    set(ITKv4_DCMTK_ARGS
+      -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      )
   endif()
 
   set(ITKv4_WRAP_ARGS)
@@ -92,8 +102,8 @@ if(NOT DEFINED ITK_DIR)
       -DITK_BUILD_ALL_MODULES:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DUSE_WRAP_ITK:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
-      -DUSE_SYSTEM_DCMTK:BOOL=ON
-      -DDCMTK_DIR=${DCMTK_DIR}
+      -DUSE_SYSTEM_DCMTK:BOOL=${Slicer_BUILD_DICOM_SUPPORT}
+      ${ITKv4_DCMTK_ARGS}
       ${ITKv4_WRAP_ARGS}
     INSTALL_COMMAND ""
     DEPENDS

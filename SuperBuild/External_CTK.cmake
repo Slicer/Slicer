@@ -12,9 +12,12 @@ if(DEFINED CTK_DIR AND NOT EXISTS ${CTK_DIR})
 endif()
 
 # Set dependency list
-set(CTK_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME} DCMTK)
+set(CTK_DEPENDENCIES VTK ${ITK_EXTERNAL_NAME})
 if(Slicer_USE_PYTHONQT)
   list(APPEND CTK_DEPENDENCIES python)
+endif()
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND CTK_DEPENDENCIES DCMTK)
 endif()
 
 # Include dependent projects if any
@@ -51,6 +54,12 @@ if(NOT DEFINED CTK_DIR)
       )
   endif()
 
+  if(Slicer_BUILD_DICOM_SUPPORT)
+    list(APPEND optional_ep_args
+      -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      )
+  endif()
+
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
@@ -77,7 +86,6 @@ if(NOT DEFINED CTK_DIR)
       -DCTK_INSTALL_QTPLUGIN_DIR:STRING=${Slicer_INSTALL_QtPlugins_DIR}
       -DCTK_USE_GIT_PROTOCOL:BOOL=${Slicer_USE_GIT_PROTOCOL}
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DVTK_DIR:PATH=${VTK_DIR}
       -DITK_DIR:PATH=${ITK_DIR}
       -DCTK_LIB_Widgets:BOOL=ON
