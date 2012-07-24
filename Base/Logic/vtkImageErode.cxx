@@ -184,6 +184,7 @@ static void vtkImageErodeExecute(vtkImageErode *self,
 
   tEnd = clock();
   tDiff = tEnd - tStart;
+  vtkDebugWithObjectMacro(self, << "tDiff:" << tDiff);
 }
 
 //----------------------------------------------------------------------------
