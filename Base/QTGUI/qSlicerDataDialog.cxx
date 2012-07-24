@@ -147,9 +147,8 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
     }
   if (!this->FileWidget->findItems(file.absoluteFilePath(),
                                    Qt::MatchExactly).isEmpty())
-    {// file already exists
-    qDebug() <<"already exists";
-    return;
+    {
+    return; // file already exists
     }
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();
@@ -248,7 +247,6 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
   QList<qSlicerIO::IOProperties> files;
   for (int row = 0; row < this->FileWidget->rowCount(); ++row)
     {
-    qDebug() << "qSlicerDataDialogPrivate::selectedFiles - row: " << row;
     qSlicerIO::IOProperties properties;
     QTableWidgetItem* fileItem = this->FileWidget->item(row, FileColumn);
     QComboBox* descriptionComboBox = 
@@ -257,7 +255,6 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
     Q_ASSERT(descriptionComboBox);
     if (fileItem->checkState() != Qt::Checked)
       {
-      qDebug() << QString("qSlicerDataDialogPrivate::selectedFiles - row: %1 - UnChecked").arg(row);
       continue;
       }
     // TBD: fileType is not good enough to describe what reader to use
