@@ -56,7 +56,8 @@ int vtkMRMLNodeTest1(int , char * [] )
 //---------------------------------------------------------------------------
 bool TestSetAttribute(const char* attribute, const char* value,
                       const char* expectedValue,
-                      int expectedSize = 1, int expectedModified = 0)
+                      size_t expectedSize = 1,
+                      int expectedModified = 0)
 {
   vtkNew<vtkMRMLNodeTestHelper1> node;
   node->SetAttribute("Attribute0", "Value0");
