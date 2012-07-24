@@ -70,7 +70,7 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
   int idx0, idx1, idx2;
   vtkIdType inInc0, inInc1, inInc2;
   T *inPtr0, *inPtr1, *inPtr2;
-  vtkFloatingPointType *origin, *spacing;
+  vtkFloatingPointType *origin;
   int offset;
   int outExt[6];
   unsigned long count = 0;
@@ -86,7 +86,6 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
   inData->GetIncrements(inInc0, inInc1, inInc2);
   outData->GetExtent(outExt);
   origin = outData->GetOrigin();
-  spacing = outData->GetSpacing();
   offset = (int)(-origin[0]);
 
   // Ignore all components other than first one.
