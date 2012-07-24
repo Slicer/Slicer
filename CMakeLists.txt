@@ -66,6 +66,14 @@ include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
 
 #-----------------------------------------------------------------------------
+# Overwrite default options
+#-----------------------------------------------------------------------------
+set(_overwrite_options_file ${Slicer_CMAKE_DIR}/SlicerOverwriteDefaultOptions.cmake)
+if(EXISTS ${_overwrite_options_file})
+  include(${_overwrite_options_file})
+endif()
+
+#-----------------------------------------------------------------------------
 # Set a default build type if none was specified
 #-----------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -281,13 +289,6 @@ mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
 
 # Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
 find_package(Doxygen QUIET)
-
-#-----------------------------------------------------------------------------
-# Overwrite default options
-set(_overwrite_options_file ${Slicer_CMAKE_DIR}/SlicerOverwriteDefaultOptions.cmake)
-if(EXISTS ${_overwrite_options_file})
-  include(${_overwrite_options_file})
-endif()
 
 #-----------------------------------------------------------------------------
 # CTestCustom
