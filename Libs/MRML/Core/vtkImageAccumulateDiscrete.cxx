@@ -71,7 +71,7 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
   vtkIdType inInc0, inInc1, inInc2;
   T *inPtr0, *inPtr1, *inPtr2;
   vtkFloatingPointType *origin, *spacing;
-  int numC, offset;
+  int offset;
   int outExt[6];
   unsigned long count = 0;
   unsigned long target;
@@ -82,7 +82,6 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
      (max0-min0+1)*(max1-min1+1)*(max2-min2+1)*sizeof(int));
 
   // Get information to march through data
-  numC = inData->GetNumberOfScalarComponents();
   inData->GetExtent(min0, max0, min1, max1, min2, max2);
   inData->GetIncrements(inInc0, inInc1, inInc2);
   outData->GetExtent(outExt);
@@ -91,7 +90,7 @@ static void vtkImageAccumulateDiscreteExecute(vtkImageAccumulateDiscrete *self,
   offset = (int)(-origin[0]);
 
   // Ignore all components other than first one.
-  // NOTE: GetIncrements takes numC into account
+  // NOTE: GetIncrements takes the number of components into account
 
   target = (unsigned long)((max2 - min2 + 1)*(max1 - min1 +1)/50.0);
   target++;
