@@ -39,6 +39,7 @@ protected:
   virtual void setModel(QAbstractItemModel* model);
 public:
   qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object);
+  virtual ~qMRMLNodeComboBoxPrivate();
   virtual void init(QAbstractItemModel* model);
 
   vtkMRMLNode* mrmlNode(int row)const;

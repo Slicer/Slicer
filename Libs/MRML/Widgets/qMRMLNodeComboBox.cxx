@@ -56,6 +56,11 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
 }
 
 // --------------------------------------------------------------------------
+qMRMLNodeComboBoxPrivate::~qMRMLNodeComboBoxPrivate()
+{
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
 {
   Q_Q(qMRMLNodeComboBox);
