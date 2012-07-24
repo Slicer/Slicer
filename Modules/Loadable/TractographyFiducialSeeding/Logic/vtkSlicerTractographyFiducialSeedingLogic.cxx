@@ -538,16 +538,16 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       fiberNode->SetAndObserveTransformNodeID(NULL);
       }
 
+    vtkNew<vtkPolyData> outFibers;
+    seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
+
     if (oldPoly)
       {
-      oldPoly->Initialize();
-      seed->TransformStreamlinesToRASAndAppendToPolyData(oldPoly);
-      fiberNode->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
+      oldPoly->DeepCopy(outFibers.GetPointer());
+      //fiberNode->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent);
       }
     else
       {
-      vtkNew<vtkPolyData> outFibers;
-      seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
       fiberNode->SetAndObservePolyData(outFibers.GetPointer());
       }
 
