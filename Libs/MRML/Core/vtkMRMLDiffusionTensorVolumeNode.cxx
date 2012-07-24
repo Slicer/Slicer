@@ -13,11 +13,13 @@ Version:   $Revision: 1.14 $
 =========================================================================auto=*/
 
 
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLDiffusionTensorVolumeNode.h"
+// MRML includes
 #include "vtkMRMLDiffusionTensorVolumeDisplayNode.h"
+#include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLNRRDStorageNode.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLDiffusionTensorVolumeNode);
@@ -36,68 +38,14 @@ void vtkMRMLDiffusionTensorVolumeNode::SetAndObserveDisplayNodeID(const char *di
   vtkMRMLNode* displayNode =  this->GetDisplayNode();
   if (displayNode && !vtkMRMLDiffusionTensorVolumeDisplayNode::SafeDownCast(displayNode))
     {
-    vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display " << displayNodeID << " can not display diffusion tensors");
+    vtkWarningMacro("SetAndObserveDisplayNodeID: The node to display "
+                    << displayNodeID << " can NOT display diffusion tensors");
     }
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDiffusionTensorVolumeNode::~vtkMRMLDiffusionTensorVolumeNode()
 {
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::WriteXML(ostream& of, int nIndent)
-{
-  Superclass::WriteXML(of, nIndent);
- 
-  vtkIndent indent(nIndent);
-
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::ReadXMLAttributes(const char** atts)
-{
-
-  Superclass::ReadXMLAttributes(atts);
-
-  const char* attName;
-  const char* attValue;
-  while (*atts != NULL)
-    {
-    attName = *(atts++);
-    attValue = *(atts++);
-  }      
-
-} 
-
-
-//----------------------------------------------------------------------------
-// Copy the node's attributes to this object.
-// Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLDiffusionTensorVolumeNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
-  //vtkMRMLDiffusionTensorVolumeNode *node = (vtkMRMLDiffusionTensorVolumeNode *) anode;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
-{
-  Superclass::UpdateReferenceID(oldID,newID);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::UpdateReferences()
-{
-  Superclass::UpdateReferences();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
-                                           void *callData )
-{
-  Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //----------------------------------------------------------------------------
@@ -118,5 +66,3 @@ vtkMRMLStorageNode* vtkMRMLDiffusionTensorVolumeNode::CreateDefaultStorageNode()
 {
   return vtkMRMLNRRDStorageNode::New();
 }
-
- 
