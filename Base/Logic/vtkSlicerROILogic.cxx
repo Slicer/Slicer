@@ -26,7 +26,6 @@ void vtkSlicerROILogic::PrintSelf(ostream& os, vtkIndent indent)
   Superclass::PrintSelf(os, indent);
 }
 
-
 //----------------------------------------------------------------------------
 vtkMRMLROIListNode *vtkSlicerROILogic::AddROIList()
 {
@@ -38,9 +37,6 @@ vtkMRMLROIListNode *vtkSlicerROILogic::AddROIList()
     {
     return NULL;
     }
-  const char *name;
-  name = this->GetMRMLScene()->GetTagByClassName("vtkMRMLROIListNode");
-  //  node->SetName(this->GetMRMLScene()->GetUniqueNameByString(name));
   node->SetName(this->GetMRMLScene()->GetUniqueNameByString("R"));
   this->GetMRMLScene()->AddNode(node);
   return vtkMRMLROIListNode::SafeDownCast(node);
