@@ -334,17 +334,13 @@ void vtkPreciseHyperStreamline::Execute()
   vtkFloatingPointType d, step;
   vtkFloatingPointType *w;
   vtkFloatingPointType deitActual, error, dirStart[3];
-  vtkFloatingPointType *m[3], *v[3];
+  vtkFloatingPointType *m[3];
   vtkFloatingPointType totalLength =0.0;
-  //   float m0[3], m1[3], m2[3];
-  //   float v0[3], v1[3], v2[3];
   vtkFloatingPointType m0[9];
-  vtkFloatingPointType v0[9];
   vtkDataArray *cellTensors;
   vtkDataArray *cellScalars;
   // set up working matrices
-  v[0] = v0; v[1] = &(v0[3]); v[2] = &(v0[6]); 
-  m[0] = m0; m[1] = &(m0[3]); m[2] = &(m0[6]); 
+  m[0] = m0; m[1] = &(m0[3]); m[2] = &(m0[6]);
 
   vtkDebugMacro(<<"Generating hyperstreamline(s)");
   this->NumberOfStreamers = 0;
