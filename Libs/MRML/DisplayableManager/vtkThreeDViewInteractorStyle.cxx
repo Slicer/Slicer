@@ -223,7 +223,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
   
   // get the scene's mouse interaction mode
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
-  int placeModePersistence = 0;
   vtkMRMLInteractionNode *interactionNode = 0;
     
   if ( this->GetCameraNode() != 0 )
@@ -234,7 +233,6 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
     if (interactionNode != 0)
       {
       mouseInteractionMode = interactionNode->GetCurrentInteractionMode();
-      placeModePersistence = interactionNode->GetPlaceModePersistence();
       vtkDebugMacro("OnLeftButtonDown: mouse interaction mode = " << mouseInteractionMode);
       }
     else
