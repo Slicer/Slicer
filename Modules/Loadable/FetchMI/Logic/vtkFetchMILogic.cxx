@@ -3908,8 +3908,6 @@ void vtkFetchMILogic::SaveNewURIOnSelectedResource ( const char *olduri, const c
     {
     oldstr = olduri;
     }
-  const char *otst;
-  const char *ntst;
 
   std::map<std::string, std::string>::iterator iter;
   for ( iter = this->OldAndNewURIs.begin();
@@ -3919,15 +3917,9 @@ void vtkFetchMILogic::SaveNewURIOnSelectedResource ( const char *olduri, const c
       {
       iter->second.clear();
       iter->second = newstr;
-      //--- test
-      otst = iter->first.c_str();
-      ntst = iter->second.c_str();
       }
     }
 }
-
-
-
 
 //---------------------------------------------------------------------------
 void vtkFetchMILogic::SaveOldURIsOnSelectedResources()
