@@ -11,7 +11,7 @@ class SampleData:
     import string
     parent.title = "Sample Data"
     parent.categories = ["Informatics"]
-    parent.contributors = ["Steve Pieper (Isomics)"]
+    parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
     parent.helpText = string.Template("""
 The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection. 
 See <a href=\"$a/Documentation/$b.$c/Modules/SampleData\">$a/Documentation/$b.$c/Modules/SampleData</a> for more information.
@@ -124,40 +124,46 @@ class SampleDataLogic:
     print(message)
 
   def downloadMRHead(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MR-head.nrrd')
+    return self.loadVolume(filePath, 'MRHead')
 
   def downloadCTChest(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CTChest')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CT-chest.nrrd')
+    return self.loadVolume(filePath, 'CTChest')
 
   def downloadCTACardio(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTACardio')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTA-cardio.nrrd')
+    return self.loadVolume(filePath, 'CTACardio')
 
   def downloadDTIBrain(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTIBrain')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTI-Brain.nrrd')
+    return self.loadVolume(filePath, 'DTIBrain')
 
   def downloadMRBrainTumor1(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'MRBrainTumor1')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd')
+    return self.loadVolume(filePath, 'MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    return self.loadVolume('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'MRBrainTumor2')
+    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd')
+    return self.loadVolume(filePath, 'MRBrainTumor2')
 
   def downloadWhiteMatterExplorationBaselineVolume(self):
-    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
-    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2009,1', destFolderPath, 'BaselineVolume.nrrd')
+    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd')
     return self.loadVolume(filePath, 'BaselineVolume')
 
   def downloadWhiteMatterExplorationDTIVolume(self):
-    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
-    filepath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2011,1', destFolderPath, 'DTIVolume.raw.gz')
-    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2010,1', destFolderPath, 'DTIVolume.nhdr')
+    self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2011,1', 'DTIVolume.raw.gz')
+    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2010,1', 'DTIVolume.nhdr')
     return self.loadVolume(filePath, 'DTIVolume');
 
   def downloadDiffusionMRIDWIVolume(self):
-    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
-    self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2142,1', destFolderPath, 'dwi.raw.gz')
-    filePath = self.downloadFile('http://slicer.kitware.com/midas3/download/?items=2141,1', destFolderPath, 'dwi.nhdr')
+    self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2142,1', 'dwi.raw.gz')
+    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2141,1', 'dwi.nhdr')
     return self.loadVolume(filePath, 'dwi');
 
+  def downloadFileIntoCache(self, uri, name):
+    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    return self.downloadFile(uri, destFolderPath, name)
 
   def downloadFile(self, uri, destFolderPath, name):
     import urllib
@@ -170,21 +176,9 @@ class SampleDataLogic:
 
   def loadVolume(self, uri, name):
     self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
-    vl = slicer.modules.volumes.logic()
-    volumeNode = vl.AddArchetypeVolume(uri, name, 0)
+    volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name})
     if volumeNode:
-      storageNode = volumeNode.GetStorageNode()
-      if storageNode:
-        storageNode.InvalidateFile()
-        # Automatically select the volume to display
-        self.logMessage('<i>Displaying...</i>')
-        appLogic = slicer.app.applicationLogic()
-        selNode = appLogic.GetSelectionNode()
-        selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
-        appLogic.PropagateVolumeSelection(1)
-        self.logMessage('<i>finished.</i>\n')
-      else:
-        self.logMessage('<b>Load failed!</b>\n')
+      self.logMessage('<i>finished.</i>\n')
     else:
       self.logMessage('<b>Load failed!</b>\n')
     return volumeNode
