@@ -41,6 +41,8 @@ protected:
 public:
   qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate(
     qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget& object);
+  virtual ~qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate();
+
   virtual void setupUi(qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget*);
   void populateRenderingTechniqueComboBox();
   void populateRenderingTechniqueFgComboBox();
@@ -51,6 +53,12 @@ qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate
 ::qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate(
   qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidget& object)
   : q_ptr(&object)
+{
+}
+
+// --------------------------------------------------------------------------
+qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate::
+~qSlicerNCIMultiVolumeRayCastVolumeRenderingPropertiesWidgetPrivate()
 {
 }
 

@@ -41,6 +41,8 @@ protected:
 public:
   qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate(
     qSlicerNCIRayCastVolumeRenderingPropertiesWidget& object);
+  virtual ~qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate();
+
   virtual void setupUi(qSlicerNCIRayCastVolumeRenderingPropertiesWidget*);
   void populateRenderingTechniqueComboBox();
 };
@@ -50,6 +52,12 @@ qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate
 ::qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate(
   qSlicerNCIRayCastVolumeRenderingPropertiesWidget& object)
   : q_ptr(&object)
+{
+}
+
+// --------------------------------------------------------------------------
+qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate::
+~qSlicerNCIRayCastVolumeRenderingPropertiesWidgetPrivate()
 {
 }
 

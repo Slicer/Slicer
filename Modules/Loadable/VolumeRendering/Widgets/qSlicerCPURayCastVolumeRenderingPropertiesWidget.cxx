@@ -35,6 +35,8 @@ protected:
 public:
   qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate(
     qSlicerCPURayCastVolumeRenderingPropertiesWidget& object);
+  virtual ~qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate();
+
   virtual void setupUi(qSlicerCPURayCastVolumeRenderingPropertiesWidget*);
   void populateRenderingTechniqueComboBox();
 };
@@ -44,6 +46,12 @@ qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate
 ::qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate(
   qSlicerCPURayCastVolumeRenderingPropertiesWidget& object)
   : q_ptr(&object)
+{
+}
+
+// --------------------------------------------------------------------------
+qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate::
+~qSlicerCPURayCastVolumeRenderingPropertiesWidgetPrivate()
 {
 }
 
