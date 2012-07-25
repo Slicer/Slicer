@@ -194,7 +194,7 @@ void qSlicerVolumeRenderingSettingsPanel
   const std::map<std::string, std::string>& renderingMethods =
     d->VolumeRenderingLogic->GetRenderingMethods();
   /// \todo not the best test to make sure the list is different
-  if (renderingMethods.size() != d->RenderingMethodComboBox->count())
+  if (static_cast<int>(renderingMethods.size()) != d->RenderingMethodComboBox->count())
     {
     std::map<std::string, std::string>::const_iterator it;
     for (it = renderingMethods.begin(); it != renderingMethods.end(); ++it)
