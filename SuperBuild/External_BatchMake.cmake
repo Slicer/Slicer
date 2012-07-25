@@ -29,7 +29,7 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
-  GIT_TAG "43d21fcccd09e5a12497bc1fb924bc6d5718f98c"
+  GIT_TAG "1f5bf4f92e8678c34dc6f7558be5e6613804d988"
   "${slicer_external_update}"
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
