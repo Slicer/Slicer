@@ -250,41 +250,34 @@ void vtkSlicerGPURayCastMultiVolumeMapper::SetupRayCastParameters(vtkRenderer *v
       double lowerBounds[3];
       double upperBounds[3];
 
-      double *pNormal = NULL;
       double *pOrigin = NULL;
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(0));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       lowerBounds[0] = pOrigin[0];
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(1));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       upperBounds[0] = pOrigin[0];
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(2));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       lowerBounds[1] = pOrigin[1];
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(3));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       upperBounds[1] = pOrigin[1];
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(4));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       lowerBounds[2] = pOrigin[2];
 
       plane = static_cast<vtkPlane *>(clipPlanes->GetItemAsObject(5));
-      pNormal = plane->GetNormal();
       pOrigin = plane->GetOrigin();
 
       upperBounds[2] = pOrigin[2];
