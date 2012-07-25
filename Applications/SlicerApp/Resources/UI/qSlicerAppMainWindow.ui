@@ -31,8 +31,14 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuRecentlyLoaded">
+     <property name="title">
+      <string>Recently Loaded</string>
+     </property>
+    </widget>
     <addaction name="actionFileAddData"/>
     <addaction name="actionFileSaveScene"/>
+    <addaction name="menuRecentlyLoaded"/>
     <addaction name="actionFileCloseScene"/>
     <addaction name="separator"/>
     <addaction name="actionFileExit"/>
@@ -1115,6 +1121,7 @@
    <class>qSlicerModulePanel</class>
    <extends>qSlicerWidget</extends>
    <header>qSlicerModulePanel.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerMouseModeToolBar</class>

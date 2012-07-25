@@ -301,6 +301,9 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     }
   Q_ASSERT(!parameters["fileName"].toString().isEmpty());
 
+  qSlicerIO::IOProperties parametersWithFileType = parameters;
+  parametersWithFileType.insert("fileType", fileType);
+
   const QList<qSlicerFileReader*>& readers = this->readers(fileType);
 
   // If no readers were able to read and load the file(s), success will remain false
@@ -324,6 +327,8 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
     success = true;
     break;
     }
+
+  emit newFileLoaded(parametersWithFileType);
 
   if (loadedNodes)
     {

@@ -10,6 +10,7 @@
 #include <ctkVTKObject.h>
 
 // SlicerQ includes
+#include "qSlicerApplication.h"
 #include "qSlicerCoreIOManager.h"
 #include "qSlicerFileDialog.h"
 
@@ -76,6 +77,7 @@ public slots:
   bool openLoadSceneDialog();
   bool openAddSceneDialog();
   inline bool openAddDataDialog();
+  inline bool openAddDataDialog(QString fileName);
   inline bool openAddVolumeDialog();
   inline bool openAddVolumesDialog();
   inline bool openAddModelDialog();
@@ -99,6 +101,14 @@ private:
   Q_DECLARE_PRIVATE(qSlicerIOManager);
   Q_DISABLE_COPY(qSlicerIOManager);
 };
+
+//------------------------------------------------------------------------------
+bool qSlicerIOManager::openAddDataDialog(QString fileName)
+{
+  qSlicerIO::IOProperties ioProperties;
+  ioProperties["fileName"] = fileName;
+  return this->openDialog(qSlicerIO::NoFile, qSlicerFileDialog::Read, ioProperties);
+}
 
 //------------------------------------------------------------------------------
 bool qSlicerIOManager::openAddDataDialog()

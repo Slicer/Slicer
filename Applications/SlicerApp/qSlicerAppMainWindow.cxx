@@ -25,8 +25,10 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QQueue>
 #include <QSettings>
 #include <QShowEvent>
+#include <QSignalMapper>
 #include <QTimer>
 #include <QToolButton>
 
@@ -82,19 +84,29 @@ class qSlicerAppMainWindowPrivate: public Ui_qSlicerAppMainWindow
 protected:
   qSlicerAppMainWindow* const q_ptr;
 public:
+  typedef qSlicerAppMainWindowPrivate Self;
   qSlicerAppMainWindowPrivate(qSlicerAppMainWindow& object);
   void setupUi(QMainWindow * mainWindow);
 
   void readSettings();
   void writeSettings();
+
+  void setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties);
+
+  void filterRecentlyLoadedFileProperties();
+
+  static QList<qSlicerIO::IOProperties> readRecentlyLoadedFiles();
+  static void writeRecentlyLoadedFiles(const QList<qSlicerIO::IOProperties>& fileProperties);
+
   bool confirmClose();
 
-  qSlicerAppMainWindowCore*        Core;
-  qSlicerModuleSelectorToolBar* ModuleSelectorToolBar;
-  QStringList                   FavoriteModules;
-  qSlicerLayoutManager*         LayoutManager;
+  qSlicerAppMainWindowCore*       Core;
+  qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
+  QStringList                     FavoriteModules;
+  qSlicerLayoutManager*           LayoutManager;
+  QQueue<qSlicerIO::IOProperties> RecentlyLoadedFileProperties;
 
-  QByteArray                    StartupState;
+  QByteArray                      StartupState;
 };
 
 //-----------------------------------------------------------------------------
@@ -114,6 +126,14 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   Q_Q(qSlicerAppMainWindow);
 
   this->Ui_qSlicerAppMainWindow::setupUi(mainWindow);
+
+  qSlicerApplication * app = qSlicerApplication::application();
+
+  //----------------------------------------------------------------------------
+  // Recently loaded files
+  //----------------------------------------------------------------------------
+  QObject::connect(app->coreIOManager(), SIGNAL(newFileLoaded(qSlicerIO::IOProperties)),
+                   q, SLOT(onNewFileLoaded(qSlicerIO::IOProperties)));
 
   //----------------------------------------------------------------------------
   // ModulePanel
@@ -397,6 +417,13 @@ void qSlicerAppMainWindowPrivate::readSettings()
     }
   settings.endGroup();
   this->FavoriteModules << settings.value("Modules/FavoriteModules").toStringList();
+
+  foreach(const qSlicerIO::IOProperties& fileProperty, Self::readRecentlyLoadedFiles())
+    {
+    this->RecentlyLoadedFileProperties.enqueue(fileProperty);
+    }
+  this->filterRecentlyLoadedFileProperties();
+  this->setupRecentlyLoadedMenu(this->RecentlyLoadedFileProperties);
 }
 
 //-----------------------------------------------------------------------------
@@ -413,6 +440,77 @@ void qSlicerAppMainWindowPrivate::writeSettings()
     settings.setValue("layout", this->LayoutManager->layout());
     }
   settings.endGroup();
+  Self::writeRecentlyLoadedFiles(this->RecentlyLoadedFileProperties);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO::IOProperties>& fileProperties)
+{
+  Q_Q(qSlicerAppMainWindow);
+
+  this->menuRecentlyLoaded->setEnabled(fileProperties.size() > 0);
+  this->menuRecentlyLoaded->clear();
+
+  QListIterator<qSlicerIO::IOProperties> iterator(fileProperties);
+  iterator.toBack();
+  while (iterator.hasPrevious())
+    {
+    qSlicerIO::IOProperties filePropertie = iterator.previous();
+    QString fileName = filePropertie.value("fileName").toString();
+    Q_ASSERT(!fileName.isEmpty());
+    QAction * action =
+        this->menuRecentlyLoaded->addAction(fileName, q, SLOT(onFileRecentLoadedActionTriggered()));
+    action->setProperty("fileParameters", filePropertie);
+    action->setEnabled(QFile::exists(fileName));
+    }
+
+  // Add separator and clear action
+  this->menuRecentlyLoaded->addSeparator();
+  QAction * clearAction = this->menuRecentlyLoaded->addAction("Clear Menu", q, SLOT(onFileRecentLoadedActionTriggered()));
+  clearAction->setProperty("clearMenu", QVariant(true));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindowPrivate::filterRecentlyLoadedFileProperties()
+{
+  int numberOfFilesToKeep = QSettings().value("RecentlyLoadedFiles/NumberToKeep").toInt();
+
+  // Remove extra element
+  while (this->RecentlyLoadedFileProperties.size() > numberOfFilesToKeep)
+    {
+    this->RecentlyLoadedFileProperties.dequeue();
+    }
+}
+
+//-----------------------------------------------------------------------------
+QList<qSlicerIO::IOProperties> qSlicerAppMainWindowPrivate::readRecentlyLoadedFiles()
+{
+  QList<qSlicerIO::IOProperties> fileProperties;
+
+  QSettings settings;
+  int size = settings.beginReadArray("RecentlyLoadedFiles/RecentFiles");
+  for(int i = 0; i < size; ++i)
+    {
+    settings.setArrayIndex(i);
+    QVariant file = settings.value("file");
+    fileProperties << file.toMap();
+    }
+  settings.endArray();
+
+  return fileProperties;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindowPrivate::writeRecentlyLoadedFiles(const QList<qSlicerIO::IOProperties>& fileProperties)
+{
+  QSettings settings;
+  settings.beginWriteArray("RecentlyLoadedFiles/RecentFiles", fileProperties.size());
+  for (int i = 0; i < fileProperties.size(); ++i)
+    {
+    settings.setArrayIndex(i);
+    settings.setValue("file", fileProperties.at(i));
+    }
+  settings.endArray();
 }
 
 //-----------------------------------------------------------------------------
@@ -515,6 +613,33 @@ qSlicerModuleSelectorToolBar* qSlicerAppMainWindow::moduleSelector()const
 {
   Q_D(const qSlicerAppMainWindow);
   return d->ModuleSelectorToolBar;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAppMainWindow::onFileRecentLoadedActionTriggered()
+{
+  Q_D(qSlicerAppMainWindow);
+
+  QAction* loadRecentFileAction = qobject_cast<QAction*>(this->sender());
+  Q_ASSERT(loadRecentFileAction);
+
+  // Clear menu if it applies
+  if (loadRecentFileAction->property("clearMenu").isValid())
+    {
+    d->RecentlyLoadedFileProperties.clear();
+    d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
+    return;
+    }
+
+  QVariant fileParameters = loadRecentFileAction->property("fileParameters");
+  Q_ASSERT(fileParameters.isValid());
+
+  qSlicerIO::IOProperties fileProperties = fileParameters.toMap();
+  qSlicerIO::IOFileType fileType =
+      static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toInt());
+
+  qSlicerApplication* app = qSlicerApplication::application();
+  app->coreIOManager()->loadNodes(fileType, fileProperties);
 }
 
 //-----------------------------------------------------------------------------
@@ -737,6 +862,23 @@ void qSlicerAppMainWindow::loadDICOMActionTriggered()
 void qSlicerAppMainWindow::onEditApplicationSettingsActionTriggered()
 {
   qSlicerApplication::application()->settingsDialog()->exec();
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& fileProperties)
+{
+  Q_D(qSlicerAppMainWindow);
+
+  d->RecentlyLoadedFileProperties.removeAll(fileProperties);
+
+  d->RecentlyLoadedFileProperties.enqueue(fileProperties);
+
+  d->filterRecentlyLoadedFileProperties();
+
+  d->setupRecentlyLoadedMenu(d->RecentlyLoadedFileProperties);
+
+  // Keep the settings up-to-date
+  qSlicerAppMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
 }
 
 //---------------------------------------------------------------------------

@@ -22,8 +22,10 @@
 #define __qSlicerCoreIOManager_h
 
 // Qt includes
-#include <QObject>
+#include <QList>
 #include <QMap>
+#include <QObject>
+#include <QVariantMap>
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -112,7 +114,13 @@ public:
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io
   void registerIO(qSlicerIO* io);
-  
+
+signals:
+
+  /// This signal is emitted each time a file is loaded using loadNodes()
+  /// \sa loadNodes(const qSlicerIO::IOFileType&, const qSlicerIO::IOProperties&, vtkCollection*)
+  void newFileLoaded(const qSlicerIO::IOProperties& parametersWithFileType);
+
 protected:
 
   /// Returns the list of registered readers

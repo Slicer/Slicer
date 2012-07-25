@@ -409,6 +409,14 @@ bool qSlicerDataDialog::exec(const qSlicerIO::IOProperties& readerProperties)
 {
   Q_D(qSlicerDataDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
+  if (readerProperties.contains("fileNames"))
+    {
+    QStringList fileNames = readerProperties["fileNames"].toStringList();
+    foreach(QString fileName, fileNames)
+      {
+      d->addFile(QFileInfo(fileName));
+      }
+    }
 
   bool res = false;
   if (d->exec() != QDialog::Accepted)

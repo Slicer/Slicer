@@ -23,12 +23,15 @@
 
 // Qt includes
 #include <QMainWindow>
+#include <QVariantMap>
 
 // CTK includes
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
+// Slicer includes
 #include "qSlicerAppExport.h"
+#include "qSlicerIO.h"
 
 class qSlicerAbstractCoreModule;
 class qSlicerModulePanel;
@@ -61,6 +64,9 @@ protected slots:
   void onModuleAboutToBeUnloaded(const QString& moduleName);
   void onEditApplicationSettingsActionTriggered();
   void onViewExtensionManagerActionTriggered();
+
+  void onFileRecentLoadedActionTriggered();
+  void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);
 
   void onMRMLSceneModified(vtkObject*);
   void onLayoutActionTriggered(QAction* action);

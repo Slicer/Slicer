@@ -112,6 +112,10 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       SIGNAL(currentLanguageNameChanged(const QString&)),
                       "Enable/Disable languages",
                       ctkSettingsPanel::OptionRequireRestart);
+  q->registerProperty("RecentlyLoadedFiles/NumberToKeep", this->NumOfRecentlyLoadedFiles, "value",
+                      SIGNAL(valueChanged(int)),
+                      "Max. number of 'Recently Loaded' menu items",
+                      ctkSettingsPanel::OptionRequireRestart);
 }
 
 // --------------------------------------------------------------------------
