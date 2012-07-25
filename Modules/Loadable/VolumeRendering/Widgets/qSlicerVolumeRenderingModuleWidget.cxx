@@ -66,6 +66,8 @@ protected:
 
 public:
   qSlicerVolumeRenderingModuleWidgetPrivate(qSlicerVolumeRenderingModuleWidget& object);
+  virtual ~qSlicerVolumeRenderingModuleWidgetPrivate();
+
   virtual void setupUi(qSlicerVolumeRenderingModuleWidget*);
   vtkMRMLVolumeRenderingDisplayNode* createVolumeRenderingDisplayNode(
     vtkMRMLVolumeNode* volumeNode);
@@ -89,6 +91,11 @@ qSlicerVolumeRenderingModuleWidgetPrivate
 {
   this->DisplayNode = 0;
   this->OldPresetPosition = 0.;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerVolumeRenderingModuleWidgetPrivate::~qSlicerVolumeRenderingModuleWidgetPrivate()
+{
 }
 
 //-----------------------------------------------------------------------------
