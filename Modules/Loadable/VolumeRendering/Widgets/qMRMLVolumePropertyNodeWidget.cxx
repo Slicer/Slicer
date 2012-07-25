@@ -41,6 +41,8 @@ protected:
 
 public:
   qMRMLVolumePropertyNodeWidgetPrivate(qMRMLVolumePropertyNodeWidget& object);
+  virtual ~qMRMLVolumePropertyNodeWidgetPrivate();
+
   virtual void setupUi();
 
   vtkMRMLVolumePropertyNode*                   VolumePropertyNode;
@@ -52,6 +54,11 @@ qMRMLVolumePropertyNodeWidgetPrivate::qMRMLVolumePropertyNodeWidgetPrivate(
   : q_ptr(&object)
 {
   this->VolumePropertyNode = 0;
+}
+
+// --------------------------------------------------------------------------
+qMRMLVolumePropertyNodeWidgetPrivate::~qMRMLVolumePropertyNodeWidgetPrivate()
+{
 }
 
 // --------------------------------------------------------------------------
