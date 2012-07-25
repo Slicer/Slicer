@@ -21,6 +21,7 @@
 // Qt includes
 #include <QCloseEvent>
 #include <QDebug>
+#include <QFile>
 #include <QKeySequence>
 #include <QMenu>
 #include <QMessageBox>
