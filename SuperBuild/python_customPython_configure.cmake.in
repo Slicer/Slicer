@@ -17,15 +17,6 @@ set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 set(slicer_PYTHON_SHARED_LIBRARY_DIR "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(slicer_PYTHON_EXECUTABLE "@slicer_PYTHON_EXECUTABLE@")
 set(slicer_PYTHON_REAL_EXECUTABLE "@slicer_PYTHON_REAL_EXECUTABLE@")
-set(slicer_CUSTOM_PYTHON_SPASH_HACK "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/python_customPython_splash.png")
-
-# Sanity checks
-set(expected_existing_vars slicer_CUSTOM_PYTHON_SPASH_HACK)
-foreach(var ${expected_existing_vars})
-  if(NOT EXISTS ${${var}})
-    message(FATAL_ERROR "error: ${var} points to an inexistent file or directory: ${${var}}")
-  endif()
-endforeach()
 
 # Configure customPython launcher settings.
 get_filename_component(python_bin_dir "${slicer_PYTHON_REAL_EXECUTABLE}" PATH)

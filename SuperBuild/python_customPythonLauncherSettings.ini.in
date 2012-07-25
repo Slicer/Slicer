@@ -1,6 +1,5 @@
 [General]
-additionalLauncherNoSplashArguments=-c
-launcherSplashImagePath=@slicer_CUSTOM_PYTHON_SPASH_HACK@
+launcherNoSplashScreen=True
 
 [Application]
 path=@slicer_PYTHON_REAL_EXECUTABLE@

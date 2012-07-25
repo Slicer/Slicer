@@ -21,7 +21,7 @@ if(Slicer_USE_CTKAPPLAUNCHER)
 
   if(NOT DEFINED CTKAPPLAUNCHER_DIR)
     SlicerMacroGetOperatingSystemArchitectureBitness(VAR_PREFIX CTKAPPLAUNCHER)
-    set(launcher_version "0.1.5")
+    set(launcher_version "0.1.7")
     # On windows, use i386 launcher unconditionally
     if("${CTKAPPLAUNCHER_OS}" STREQUAL "win")
       set(CTKAPPLAUNCHER_ARCHITECTURE "i386")
