@@ -166,6 +166,16 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         biggerThanOne = true;
         }
       // the file values are 0-255, colour look up table needs 0-1
+      // clamp the colors just in case
+      r = r > 255.0 ? 255.0 : r;
+      r = r < 0.0 ? 0.0 : r;
+      g = g > 255.0 ? 255.0 : g;
+      g = g < 0.0 ? 0.0 : g;
+      b = b > 255.0 ? 255.0 : b;
+      b = b < 0.0 ? 0.0 : b;
+      a = a > 255.0 ? 255.0 : a;
+      a = a < 0.0 ? 0.0 : a;
+      // now shift to 0-1
       r = r / 255.0;
       g = g / 255.0;
       b = b / 255.0;
