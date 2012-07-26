@@ -151,8 +151,16 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
       self.actor.VisibilityOff()
 
   def preview(self,xy):
-    self.tracingFilter.SetInput( self.editUtil.getBackgroundImage() )
+    """calculate the current level trace view if the
+    mouse is inside the volume extent"""
+    self.xyPoints.Reset()
+    backgroundImage = self.editUtil.getBackgroundImage()
     ijk = self.logic.backgroundXYToIJK( xy )
+    dimensions = backgroundImage.GetDimensions()
+    for index in xrange(3):
+      if ijk[index] < 0 or ijk[index] >= dimensions[index]:
+        return
+    self.tracingFilter.SetInput( self.editUtil.getBackgroundImage() )
     self.tracingFilter.SetSeed( ijk )
 
     # select the plane corresponding to current slice orientation
@@ -168,7 +176,6 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     self.tracingFilter.Update()
     polyData = self.tracingFilter.GetOutput()
 
-    self.xyPoints.Reset()
     backgroundLayer = self.logic.sliceLogic.GetBackgroundLayer()
     xyToIJK = backgroundLayer.GetXYToIJKTransform().GetMatrix()
     self.ijkToXY.SetMatrix( xyToIJK )
