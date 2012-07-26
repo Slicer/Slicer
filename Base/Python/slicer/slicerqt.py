@@ -53,14 +53,6 @@ class _Internal():
       factoryManager.connect( 'modulesRegistered(QStringList)', self.setSlicerModuleNames )
       moduleManager.connect( 'moduleLoaded(QString)', self.setSlicerModules )
 
-    # Add module 'slicer.moduleNames'
-    _moduleNames = imp.new_module( 'moduleNames' )
-    setattr( slicer, _moduleNames.__name__, _moduleNames )
-
-    # Add module 'slicer.modules'
-    _modules = imp.new_module( 'modules' )
-    setattr( slicer, _modules.__name__, _modules )
-
     # Retrieve current instance of the scene and set 'slicer.mrmlScene'
     setattr( slicer, 'mrmlScene', slicer.app.mrmlScene() )
 
