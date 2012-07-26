@@ -10,7 +10,6 @@ if(BUILD_TESTING)
     qSlicerDataDialogTest1.cxx
     qSlicerDirectoryListViewTest1.cxx
     qSlicerLayoutManagerTest1.cxx
-    qSlicerLoadableModuleTest1.cxx
     qSlicerModulePanelTest1.cxx
     qSlicerMouseModeToolBarTest1.cxx
     qSlicerSaveDataDialogCustomFileWriterTest.cxx
@@ -23,6 +22,7 @@ if(BUILD_TESTING)
   endif()
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
+      qSlicerLoadableModuleWithPythonTest.cxx
       qSlicerPythonManagerWithoutApplicationTest.cxx
       qSlicerScriptedLoadableModuleTest.cxx
       qSlicerScriptedLoadableModuleWidgetTest.cxx
@@ -33,12 +33,16 @@ if(BUILD_TESTING)
     EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
     )
 
+  set(KIT_TEST_MOC_SRCS
+    )
   if(Slicer_USE_PYTHONQT)
-    QT4_GENERATE_MOCS(
+    list(APPEND KIT_TEST_MOC_SRCS
+      qSlicerLoadableModuleWithPythonTest.cxx
       qSlicerPythonManagerWithoutApplicationTest.cxx
       qSlicerScriptedLoadableModuleTest.cxx
       qSlicerScriptedLoadableModuleWidgetTest.cxx
       )
+    QT4_GENERATE_MOCS(${KIT_TEST_MOC_SRCS})
   endif()
 
   QT4_ADD_RESOURCES(Tests Resources/${KIT}Testing.qrc)
@@ -57,7 +61,6 @@ if(BUILD_TESTING)
   SIMPLE_TEST( qSlicerDataDialogTest1 )
   SIMPLE_TEST( qSlicerDirectoryListViewTest1 )
   SIMPLE_TEST( qSlicerLayoutManagerTest1 )
-  SIMPLE_TEST( qSlicerLoadableModuleTest1 )
   SIMPLE_TEST( qSlicerModulePanelTest1 )
   SIMPLE_TEST( qSlicerMouseModeToolBarTest1 )
   SIMPLE_TEST( qSlicerSaveDataDialogCustomFileWriterTest )
@@ -68,6 +71,7 @@ if(BUILD_TESTING)
   endif()
 
   if(Slicer_USE_PYTHONQT)
+    SIMPLE_TEST( qSlicerLoadableModuleWithPythonTest )
     SIMPLE_TEST( qSlicerPythonManagerWithoutApplicationTest )
     SIMPLE_TEST( qSlicerScriptedLoadableModuleTest )
     SIMPLE_TEST( qSlicerScriptedLoadableModuleWidgetTest )

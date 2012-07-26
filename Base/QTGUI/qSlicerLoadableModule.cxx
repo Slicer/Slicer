@@ -95,6 +95,52 @@ bool qSlicerLoadableModule::importModulePythonExtensions(
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerLoadableModule::addModuleToSlicerModules(
+    qSlicerCorePythonManager * pythonManager,
+    qSlicerAbstractModule * module,
+    const QString& moduleName)
+{
+#ifdef Slicer_USE_PYTHONQT
+  if(!pythonManager || !module || moduleName.isEmpty())
+    {
+    return false;
+    }
+  pythonManager->addObjectToPythonMain("_tmp_module_variable", module);
+  pythonManager->executeString(
+        QString("import __main__;"
+                "setattr( slicer.modules, '%1', __main__._tmp_module_variable);"
+                "del __main__._tmp_module_variable").arg(
+          moduleName.toLower()));
+  return !pythonManager->pythonErrorOccured();
+#else
+  Q_UNUSED(pythonManager);
+  Q_UNUSED(module);
+  Q_UNUSED(moduleName);
+#endif
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
+    qSlicerCorePythonManager * pythonManager,
+    const QString& moduleName)
+{
+#ifdef Slicer_USE_PYTHONQT
+  if(!pythonManager || moduleName.isEmpty())
+    {
+    return false;
+    }
+  pythonManager->executeString(
+        QString("import __main__;"
+                "setattr( slicer.moduleNames, '%1', '%2')").arg(
+          moduleName.toLower()).arg(moduleName));
+  return !pythonManager->pythonErrorOccured();
+#else
+  Q_UNUSED(pythonManager);
+  Q_UNUSED(moduleName);
+#endif
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerLoadableModule::setup()
 {
 #ifndef QT_NO_DEBUG
