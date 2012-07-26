@@ -18,9 +18,14 @@
 
 ==============================================================================*/
 
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+
 // Qt includes
 #include <QDir>
 #include <QTimer>
+#ifdef Slicer_USE_PYTHONQT
+# include <QVariant>
+#endif
 #include <QWidget>
 
 // SlicerQt includes
@@ -70,13 +75,38 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
   module->setPath(modulePath);
 
 #ifdef Slicer_USE_PYTHONQT
+  qSlicerPythonManager * pythonManager = app.pythonManager();
   {
     bool current = qSlicerLoadableModule::importModulePythonExtensions(
-          app.pythonManager(), app.intDir(), module->path());
+          pythonManager, app.intDir(), module->path());
     bool expected = true;
     if (current != expected)
       {
       std::cerr << "Line " << __LINE__ << " Problem with importModulePythonExtensions\n"
+                << "\tcurrent:" << current << "\n"
+                << "\texpected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+  {
+    bool current = qSlicerLoadableModule::addModuleToSlicerModules(
+          pythonManager, module, "@MODULENAME@");
+    bool expected = true;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " Problem with addModuleToSlicerModules\n"
+                << "\tcurrent:" << current << "\n"
+                << "\texpected:" << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
+  {
+    bool current = qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
+          pythonManager, "@MODULENAME@");
+    bool expected = true;
+    if (current != expected)
+      {
+      std::cerr << "Line " << __LINE__ << " Problem with addModuleNameToSlicerModuleNames\n"
                 << "\tcurrent:" << current << "\n"
                 << "\texpected:" << expected << std::endl;
       return EXIT_FAILURE;
