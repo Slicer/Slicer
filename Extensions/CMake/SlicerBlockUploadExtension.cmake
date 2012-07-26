@@ -108,7 +108,7 @@ set(script_arg_list_for_test ${script_arg_list})
 list(APPEND script_arg_list_for_test RUN_CTEST_UPLOAD=FALSE)
 set(script_args "${ctest_build_configuration_arg}")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_test}" script_args)
-set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
+set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
 
 #-----------------------------------------------------------------------------
 # Set EXTENSION_UPLOAD_COMMAND
