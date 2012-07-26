@@ -839,6 +839,22 @@ void qSlicerCoreApplication::handleCommandLineArguments()
       }
     }
 #endif
+  QStringList unparsedArguments = options->unparsedArguments();
+  if (unparsedArguments.length() > 0)
+    {
+    foreach(QString fileName, unparsedArguments)
+      {
+      QFileInfo file(fileName);
+      if (file.exists())
+        {
+        qSlicerCoreIOManager* ioManager =this->coreIOManager();
+        qSlicerIO::IOFileType fileType = ioManager->fileType(fileName);
+        qSlicerIO::IOProperties fileProperties;
+        fileProperties.insert("fileName", fileName);
+        ioManager->loadNodes(fileType, fileProperties);
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
