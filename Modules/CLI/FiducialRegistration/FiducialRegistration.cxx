@@ -89,7 +89,10 @@ int main(int argc, char* argv[])
   PARSE_ARGS;
 
   double invalidRMS = -1;
-
+  
+  
+    // Checking conditions.
+  
   if( fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
     fixedLandmarks.size() != movingLandmarks.size() )
   {
@@ -97,8 +100,6 @@ int main(int argc, char* argv[])
       << "and contain at least one point" << std::endl;
     outputMessage = "Fixed and moving landmark lists must be of the same size and contain at least one point";
     rms = invalidRMS;
-    //return EXIT_FAILURE;
-
   }
 
   if( saveTransform == "" )
@@ -109,8 +110,6 @@ int main(int argc, char* argv[])
       outputMessage = "An output transform must be specified";
       rms = invalidRMS;
     }
-
-    //return EXIT_FAILURE;
   }
 
 
@@ -123,137 +122,158 @@ int main(int argc, char* argv[])
       outputMessage = "At least 3 fiducual points must be specified for Rigid or Similarity transforms";
       rms = invalidRMS;
     }
-    //return EXIT_FAILURE;
   }
+  
+  
+    // Return if conditions not met.
 
-  // only calculate if the above conditions hold
-  if (rms != invalidRMS){
-    typedef  std::vector<itk::Point<double, 3> > PointList;
-
-    PointList fixedPoints(fixedLandmarks.size() );
-    PointList movingPoints(movingLandmarks.size() );
-
-    // Convert both points lists to ITK points and convert RAS -> LPS
-
-    std::transform(fixedLandmarks.begin(), fixedLandmarks.end(),
-      fixedPoints.begin(),
-      convertStdVectorToITKPoint);
-
-    std::transform(movingLandmarks.begin(), movingLandmarks.end(),
-      movingPoints.begin(),
-      convertStdVectorToITKPoint);
-
-    // Our input into landmark based initialize will be of this form
-    // The format for saving to slicer is defined later
-    typedef itk::Similarity3DTransform<double> SimilarityTransformType;
-    SimilarityTransformType::Pointer transform = SimilarityTransformType::New();
-    transform->SetIdentity();
-    // workaround a bug in older versions of ITK
-    transform->SetScale(1.0);
-
-
-    typedef itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
-      itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
-    InitializerType::Pointer initializer = InitializerType::New();
-
-    // This expects a VersorRigid3D.  The similarity transform works because
-    // it derives from that class
-    initializer->SetTransform(transform);
-
-    initializer->SetFixedLandmarks(fixedPoints);
-    initializer->SetMovingLandmarks(movingPoints);
-
-    initializer->InitializeTransform();
-
-    typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
-
-    typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
-    PointsContainerConstIterator
-      mitr = movingPoints.begin();
-    PointsContainerConstIterator
-      fitr = fixedPoints.begin();
-
-    typedef itk::VersorRigid3DTransform< double > TransformType;
-    TransformType::OutputVectorType   errortr;
-    TransformType::OutputVectorType::RealValueType sum;
-
-    sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >
-      ::ZeroValue();
-
-    int counter = itk::NumericTraits< int >::ZeroValue();
-
-    typedef InitializerType::LandmarkPointType PointType;
-    PointType transformedFixedPoint;
-
-    while( mitr != movingPoints.end() ) 
-    {
-      transformedFixedPoint = transform->TransformPoint( *fitr );
-      errortr = *mitr - transformedFixedPoint;
-      sum = sum + errortr.GetSquaredNorm();
-      ++mitr;
-      ++fitr;
-      counter++;
-    }
-
-    rms = sqrt( sum / counter );
-
-    if( transformType == "Translation" )
-    {
-      // Clear out the computed rotaitoin if we only requested translation
-      itk::Versor<double> v;
-      v.SetIdentity();
-      transform->SetRotation(v);
-    }
-    else if( transformType == "Rigid" )
-    {
-      // do nothing
-    }
-    else if( transformType == "Similarity" )
-    {
-      // Compute the scaling factor and add that in
-      itk::Point<double, 3> fixedCenter(transform->GetCenter() );
-      itk::Point<double, 3> movingCenter(transform->GetCenter() + transform->GetTranslation() );
-
-      double s = computeSymmetricScale(fixedPoints, movingPoints,
-        fixedCenter, movingCenter);
-      transform->SetScale(s);
-    }
-    else if( transformType == "Affine" )
-    {
-      // itk::Matrix<double, 3> a =
-      //   computeAffineTransform(fixedPoints, movingPoints,
-      //                          fixedCenter, movingCenter);
-      std::cerr << "Unsupported transform type: " << transformType << std::endl;
-      // return EXIT_FAILURE;
-    }
-    else
-    {
-      std::cerr << "Unsupported transform type: " << transformType << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    // Convert into an affine transform for saving to slicer
-
-    itk::AffineTransform<double, 3>::Pointer atransform =
-      itk::AffineTransform<double, 3>::New();
-
-    atransform->SetCenter(transform->GetCenter() );
-    atransform->SetMatrix(transform->GetMatrix() );
-    atransform->SetTranslation(transform->GetTranslation() );
-
-    itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
-    twriter->SetInput(atransform);
-    twriter->SetFileName(saveTransform);
-
-    twriter->Update();
-  }
-
-  if (outputMessage == "")
+  if ( rms == invalidRMS )
   {
-    outputMessage = "Success";
+    // Write out the return parameters in "name = value" form
+    std::ofstream rts;
+    rts.open(returnParameterFile.c_str() );
+    rts << "rms = " << rms << std::endl; 
+    rts << "outputMessage = " << outputMessage <<std::endl;
+    rts.close();
+
+    return EXIT_SUCCESS;
   }
 
-  // Write out the return parameters in "name = value" form
+  
+  // only calculate if the above conditions hold
+  
+  typedef  std::vector<itk::Point<double, 3> > PointList;
+
+  PointList fixedPoints(fixedLandmarks.size() );
+  PointList movingPoints(movingLandmarks.size() );
+
+  // Convert both points lists to ITK points and convert RAS -> LPS
+
+  std::transform(fixedLandmarks.begin(), fixedLandmarks.end(),
+    fixedPoints.begin(),
+    convertStdVectorToITKPoint);
+
+  std::transform(movingLandmarks.begin(), movingLandmarks.end(),
+    movingPoints.begin(),
+    convertStdVectorToITKPoint);
+
+  // Our input into landmark based initialize will be of this form
+  // The format for saving to slicer is defined later
+  typedef itk::Similarity3DTransform<double> SimilarityTransformType;
+  SimilarityTransformType::Pointer transform = SimilarityTransformType::New();
+  transform->SetIdentity();
+  // workaround a bug in older versions of ITK
+  transform->SetScale(1.0);
+
+
+  typedef itk::LandmarkBasedTransformInitializer<SimilarityTransformType,
+    itk::Image<short, 3>, itk::Image<short, 3> > InitializerType;
+  InitializerType::Pointer initializer = InitializerType::New();
+
+  // This expects a VersorRigid3D.  The similarity transform works because
+  // it derives from that class
+  initializer->SetTransform(transform);
+
+  initializer->SetFixedLandmarks(fixedPoints);
+  initializer->SetMovingLandmarks(movingPoints);
+
+  initializer->InitializeTransform();
+
+
+    // Handle different transform types.
+  
+  if( transformType == "Translation" )
+  {
+    // Clear out the computed rotaitoin if we only requested translation
+    itk::Versor<double> v;
+    v.SetIdentity();
+    transform->SetRotation(v);
+  }
+  else if( transformType == "Rigid" )
+  {
+    // do nothing
+  }
+  else if( transformType == "Similarity" )
+  {
+    // Compute the scaling factor and add that in
+    itk::Point<double, 3> fixedCenter(transform->GetCenter() );
+    itk::Point<double, 3> movingCenter(transform->GetCenter() + transform->GetTranslation() );
+
+    double s = computeSymmetricScale(fixedPoints, movingPoints,
+      fixedCenter, movingCenter);
+    transform->SetScale(s);
+  }
+  else if( transformType == "Affine" )
+  {
+    // itk::Matrix<double, 3> a =
+    //   computeAffineTransform(fixedPoints, movingPoints,
+    //                          fixedCenter, movingCenter);
+    std::cerr << "Unsupported transform type: " << transformType << std::endl;
+    // return EXIT_FAILURE;
+  }
+  else
+  {
+    std::cerr << "Unsupported transform type: " << transformType << std::endl;
+    return EXIT_FAILURE;
+  }
+  
+  
+    // Compute RMS error.
+  
+  typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
+
+  typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
+  PointsContainerConstIterator
+    mitr = movingPoints.begin();
+  PointsContainerConstIterator
+    fitr = fixedPoints.begin();
+
+  typedef itk::VersorRigid3DTransform< double > TransformType;
+  TransformType::OutputVectorType   errortr;
+  TransformType::OutputVectorType::RealValueType sum;
+
+  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >::ZeroValue();
+
+  int counter = itk::NumericTraits< int >::ZeroValue();
+
+  typedef InitializerType::LandmarkPointType PointType;
+  PointType transformedFixedPoint;
+
+  while( mitr != movingPoints.end() ) 
+  {
+    transformedFixedPoint = transform->TransformPoint( *fitr );
+    errortr = *mitr - transformedFixedPoint;
+    sum = sum + errortr.GetSquaredNorm();
+    ++mitr;
+    ++fitr;
+    counter++;
+  }
+
+  rms = sqrt( sum / counter );
+
+  
+  
+  // Convert into an affine transform for saving to slicer
+
+  itk::AffineTransform<double, 3>::Pointer atransform =
+    itk::AffineTransform<double, 3>::New();
+
+  atransform->SetCenter(transform->GetCenter() );
+  atransform->SetMatrix(transform->GetMatrix() );
+  atransform->SetTranslation(transform->GetTranslation() );
+
+  itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
+  twriter->SetInput(atransform);
+  twriter->SetFileName(saveTransform);
+
+  twriter->Update();
+
+  
+  outputMessage = "Success";
+  
+  
+    // Write out the return parameters in "name = value" form
+  
   std::ofstream rts;
   rts.open(returnParameterFile.c_str() );
   rts << "rms = " << rms << std::endl; 
