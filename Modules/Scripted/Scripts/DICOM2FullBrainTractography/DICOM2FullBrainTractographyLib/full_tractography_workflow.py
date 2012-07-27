@@ -93,6 +93,7 @@ class WorkflowConfiguration:
                 file_path = data[step_object.id()]['outputVolume']
                 result_status, node = slicer.util.loadVolume(
                     file_path,
+                    {},
                     True
                 )
             else:
@@ -105,6 +106,7 @@ class WorkflowConfiguration:
         elif data[step_object.id()]['NRRDDWIRadioButton']:
             result_status, node = slicer.util.loadVolume(
                 data[step_object.id()]['inputNRRDVolume'],
+                {},
                 True
             )
 
