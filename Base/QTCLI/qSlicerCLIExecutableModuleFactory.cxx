@@ -53,13 +53,45 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 
   ctkScopedCurrentDir scopedCurrentDir(QFileInfo(this->path()).path());
 
+  int cliProcessTimeoutInMs = 5000;
   QProcess cli;
   cli.start(this->path(), QStringList(QString("--xml")));
-  bool res = cli.waitForFinished(5000);
+  bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
     {
     this->appendInstantiateErrorString(QString("CLI executable: %1").arg(this->path()));
-    this->appendInstantiateErrorString(QString("Failed to execute"));
+    QString errorString;
+    switch(cli.error())
+      {
+      case QProcess::FailedToStart:
+        errorString = QLatin1String(
+              "The process failed to start. Either the invoked program is missing, or "
+              "you may have insufficient permissions to invoke the program.");
+        break;
+      case QProcess::Crashed:
+        errorString = QLatin1String(
+              "The process crashed some time after starting successfully.");
+        break;
+      case QProcess::Timedout:
+        errorString = QString(
+              "The process timed out after %1 msecs.").arg(cliProcessTimeoutInMs);
+        break;
+      case QProcess::WriteError:
+        errorString = QLatin1String(
+              "An error occurred when attempting to read from the process. "
+              "For example, the process may not be running.");
+        break;
+      case QProcess::ReadError:
+        errorString = QLatin1String(
+              "An error occurred when attempting to read from the process. "
+              "For example, the process may not be running.");
+        break;
+      case QProcess::UnknownError:
+        errorString = QLatin1String(
+              "Failed to execute process. An unknown error occurred.");
+        break;
+      }
+    this->appendInstantiateErrorString(errorString);
     return 0;
     }
   QString errors = cli.readAllStandardError();
