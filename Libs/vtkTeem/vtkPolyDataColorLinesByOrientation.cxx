@@ -222,7 +222,7 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
         lastPoint[2] = point[2];
       }
 
-      if ((this->ColorMode == vtkPolyDataColorLinesByOrientation::colorModePointFiberOrientation))
+      if (this->ColorMode == vtkPolyDataColorLinesByOrientation::colorModePointFiberOrientation)
       {
         if (npts > 1)
         {
