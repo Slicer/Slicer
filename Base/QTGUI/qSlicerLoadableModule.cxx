@@ -116,6 +116,7 @@ bool qSlicerLoadableModule::addModuleToSlicerModules(
   Q_UNUSED(pythonManager);
   Q_UNUSED(module);
   Q_UNUSED(moduleName);
+  return false;
 #endif
 }
 
@@ -137,6 +138,7 @@ bool qSlicerLoadableModule::addModuleNameToSlicerModuleNames(
 #else
   Q_UNUSED(pythonManager);
   Q_UNUSED(moduleName);
+  return false;
 #endif
 }
 
