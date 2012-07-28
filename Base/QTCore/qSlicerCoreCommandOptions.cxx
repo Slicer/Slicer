@@ -152,7 +152,9 @@ bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
 QStringList qSlicerCoreCommandOptions::additonalModulePaths()const
 {
   Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("additional-module-paths").toStringList();
+  return QStringList()
+      << d->ParsedArgs.value("additional-module-path").toStringList()
+      << d->ParsedArgs.value("additional-module-paths").toStringList();
 }
 
 //-----------------------------------------------------------------------------
@@ -285,6 +287,9 @@ void qSlicerCoreCommandOptions::addArguments()
   this->addArgument("ignore-slicerrc", "", QVariant::Bool,
                     "Do not load the Slicer resource file (~/.slicerrc.py).");
 #endif
+
+  this->addArgument("additional-module-path", "", QVariant::String,
+                    "Additional module path to consider when searching for modules to load.");
 
   this->addArgument("additional-module-paths", "", QVariant::StringList,
                     "List of additional module path to consider when searching for modules to load.");
