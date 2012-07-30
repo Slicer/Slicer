@@ -6,7 +6,7 @@ from __main__ import vtk, qt, ctk, slicer
 
 class ScriptedLoadableExtensionTemplate:
   def __init__(self, parent):
-    parent.title = "Scripted Loadable Extension Template"
+    parent.title = "ScriptedLoadableExtensionTemplate" # TODO make this more human readable by adding spaces
     parent.categories = ["Examples"]
     parent.dependencies = []
     parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
