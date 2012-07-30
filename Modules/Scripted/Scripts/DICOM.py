@@ -283,7 +283,7 @@ class DICOMWidget:
     fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
     label = qt.QLabel("<p><p>The Slicer DICOM module stores a local database with an index to all datasets that are <br>pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.<p>Be sure you have write access to the selected directory.", fileDialog)
     fileDialog.setBottomWidget(label)
-    fileDialog.open()
+    fileDialog.exec_()
 
   def onTreeClicked(self,index):
     self.model = index.model()
