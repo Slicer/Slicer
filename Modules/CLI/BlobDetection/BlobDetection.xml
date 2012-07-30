@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Filtering</category>
+  <title>Blob Detection</title>
+  <description><![CDATA[Blob Detection based on ITK MultiScaleHessianBasedMeasureImageFilter and HessianToObjectnessMeasureImageFilter.]]></description>
+  <version>0.1.0.$Revision: 19363 $(alpha)</version>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/BlobDetection</documentation-url>
+  <license/>
+  <contributor>Yanling Liu (SAIC-Frederick)</contributor>
+  <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>
+  <parameters>
+    <label>Basic Parameters</label>
+    <description><![CDATA[Input/output parameters]]></description>
+    <image>
+      <name>InputVolume</name>
+      <label>Input Volume</label>
+      <channel>input</channel>
+      <index>0</index>
+      <description><![CDATA[Input volume]]></description>
+    </image>
+    <image>
+      <name>OutputVolume</name>
+      <label>Output Volume</label>
+      <channel>output</channel>
+      <index>1</index>
+      <description><![CDATA[Output volume]]></description>
+    </image>
+    <double>
+      <label>Scale</label>
+      <name>scale</name>
+      <longflag>--scale</longflag>
+      <description><![CDATA[Scale in unit of spacing. This parameter goes to MultiScaleHessianBasedMeasureImageFilter::SetSigmaMaximum().]]></description>
+      <default>0.1</default>
+      <constraints>
+        <minimum>0.001</minimum>
+        <maximum>100.0</maximum>
+        <step>0.001</step>
+      </constraints>
+    </double>
+    <integer>
+      <label>Steps</label>
+      <name>steps</name>
+      <longflag>--steps</longflag>
+      <description><![CDATA[Scale steps. 0 means to use automatically determined number of steps. Enter non-zero positive number to override automatic step calculation. This parameter goes to MultiScaleHessianBasedMeasureImageFilter::SetNumberOfSigmaSteps().]]></description>
+      <default>0</default>
+    </integer>
+  </parameters>
+  <parameters advanced="true">
+    <label>Advanced Parameters</label>
+    <description><![CDATA[Advanced parameters for blob detection.]]></description>
+    <boolean>
+      <name>DetectBrightObjects</name>
+      <longflag>--detectBrightObjects</longflag>
+      <label>Detect Bright Objects</label>
+      <default>true</default>
+    </boolean>
+    <double>
+      <label>Alpha</label>
+      <name>alpha</name>
+      <longflag>--alpha</longflag>
+      <description><![CDATA[This parameter goes to HessianToObjectnessMeasureImageFilter::SetAlpha().]]></description>
+      <default>0.5</default>
+    </double>
+    <double>
+      <label>Beta</label>
+      <name>beta</name>
+      <longflag>--beta</longflag>
+      <description><![CDATA[This parameter goes to HessianToObjectnessMeasureImageFilter::SetBeta().]]></description>
+      <default>0.5</default>
+    </double>
+    <double>
+      <label>Gamma</label>
+      <name>gamma</name>
+      <longflag>--gamma</longflag>
+      <description><![CDATA[This parameter goes to HessianToObjectnessMeasureImageFilter::SetGamma().]]></description>
+      <default>5.0</default>
+    </double>
+  </parameters>
+</executable>
