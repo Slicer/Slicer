@@ -139,6 +139,10 @@ ExternalProject_Add_Step(${proj} Copy_ctypesPyd
   COMMAND ${CMAKE_COMMAND} -E copy ${PythonPCBuildDir}/_ctypes.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/_ctypes.pyd
   DEPENDEES install
   )
+ExternalProject_Add_Step(${proj} Copy_pyexpatPyd
+  COMMAND ${CMAKE_COMMAND} -E copy ${PythonPCBuildDir}/pyexpat.pyd ${CMAKE_BINARY_DIR}/python-build/Lib/pyexpat.pyd
+  DEPENDEES install
+  )
 
 ExternalProject_Add_Step(${proj} CopyPythonDll
   COMMAND ${CMAKE_COMMAND} -E copy ${PythonPCBuildDir}/python${PYVER_SHORT}.dll ${CMAKE_BINARY_DIR}/python-build/bin/${CMAKE_CFG_INTDIR}/python${PYVER_SHORT}.dll
