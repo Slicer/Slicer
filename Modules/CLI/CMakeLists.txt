@@ -6,6 +6,7 @@
 set(cli_modules
   ACPCTransform
   AddScalarVolumes
+  BlobDetection
   CastScalarVolume
   CheckerBoardFilter
   ConnectedComponent
