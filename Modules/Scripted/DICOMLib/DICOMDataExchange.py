@@ -28,8 +28,6 @@ for elements like slicer.dicomDatatabase and slicer.mrmlScene
 
 class DICOMLoader(object):
   """Code to load dicom files into slicer
-  Includes experimental 'method' option to bypass itk
-  and load dicom directly
   """
 
   def __init__(self,files=None,name=None,method='archetype'):
@@ -41,17 +39,8 @@ class DICOMLoader(object):
 
   def loadFiles(self):
     if self.method == 'auto':
-      try:
-        import dicom
-        self.method = 'pydicom'
-      except ImportError:
         self.method = 'archetype'
-    if self.method == 'pydicom':
-      self.loadFilesWithPyDICOM()
     elif self.method == 'archetype':
-      self.loadFilesWithArchetype()
-    elif self.method == 'both':
-      self.loadFilesWithPyDICOM()
       self.loadFilesWithArchetype()
     else:
       raise RuntimeError("Unknown dicom load method '%s'" % self.method)
@@ -80,74 +69,6 @@ class DICOMLoader(object):
     if self.volumeNode:
       selNode.SetReferenceActiveVolumeID(self.volumeNode.GetID())
       appLogic.PropagateVolumeSelection()
-
-  def loadFilesWithPyDICOM(self):
-    """ 
-    Experimental method - not ready to be used yet.
-    * Goal is to perform timing comparisons between 
-      ITK dicom loading vs something that bypasses ITK
-    """
-    import dicom
-    import numpy
-    import vtk.util.numpy_support
-    dataset0 = dicom.read_file(self.files[0])
-    dims = (dataset0.Columns, dataset0.Rows, len(self.files))
-    originLPS = dataset0.ImagePositionPatient
-    rowToLPS = dataset0.ImageOrientationPatient[:3]
-    colToLPS = dataset0.ImageOrientationPatient[3:]
-    originRAS = [-1 * originLPS[0], -1 * originLPS[1], originLPS[2]]
-    rowToRAS = [-1 * rowToLPS[0], -1 * rowToLPS[1], rowToLPS[2]]
-    colToRAS = [-1 * colToLPS[0], -1 * colToLPS[1], rowToLPS[2]]
-    sliceToRAS = numpy.cross(rowToRAS, colToRAS)
-    spacing = dataset0.PixelSpacing
-    if len(self.files) > 1:
-      dataset1 = dicom.read_file(self.files[1])
-      o0 = numpy.array(originLPS)
-      o1 = numpy.array(dataset1.ImagePositionPatient)
-      sliceSpacing = numpy.sqrt(abs(numpy.sum(o1-o0)))
-    else:
-      sliceSpacing = 1.
-    spacing.append(sliceSpacing)
-
-    typeMap = {'int16': 4, 'uint16' : 5}
-    imageData = vtk.vtkImageData()
-    imageData.SetDimensions(dims)
-    imageData.SetScalarType(typeMap[str(dataset0.pixel_array.dtype)])
-    imageData.AllocateScalars()
-    imageArray = vtk.util.numpy_support.vtk_to_numpy(imageData.GetPointData().GetScalars())
-    imageArray = imageArray.reshape(dims[::-1])
-
-    slice = 0
-    for f in self.files:
-      dataset = dicom.read_file(f)
-      imageArray[slice] = dataset.pixel_array
-      slice += 1
-
-    #TODO: 
-    # figure out datatype...
-    # set window/level
-    # any error checking?
-    # multi-frame data?
-    # check number of components
-    # detect DWI
-    # add progress
-
-    self.volumeNode = slicer.vtkMRMLScalarVolumeNode()
-    self.volumeNode.SetName(self.name)
-    self.volumeNode.SetOrigin(originRAS)
-    self.volumeNode.SetIToRASDirection(rowToRAS[0], rowToRAS[1], rowToRAS[2])
-    self.volumeNode.SetJToRASDirection(colToRAS[0], colToRAS[1], colToRAS[2])
-    self.volumeNode.SetKToRASDirection(sliceToRAS[0], sliceToRAS[1], sliceToRAS[2])
-    self.volumeNode.SetSpacing(spacing)
-    self.volumeNode.SetAndObserveImageData(imageData)
-
-    displayNode = slicer.vtkMRMLScalarVolumeDisplayNode()
-    colorLogic = slicer.modules.colors.logic()
-    displayNode.SetAndObserveColorNodeID(colorLogic.GetDefaultVolumeColorNodeID())
-    
-    slicer.mrmlScene.AddNode(displayNode)
-    slicer.mrmlScene.AddNode(self.volumeNode)
-    self.volumeNode.SetAndObserveDisplayNodeID(displayNode.GetID())
 
   def loadFilesWithArchetype(self):
     """Load files in the traditional Slicer manner
