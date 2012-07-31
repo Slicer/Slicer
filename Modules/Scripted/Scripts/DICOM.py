@@ -533,7 +533,7 @@ class DICOMWidget:
     self.mb.setWindowTitle(title)
     self.mb.setText(text)
     self.mb.setWindowModality(1)
-    self.mb.open()
+    self.mb.exec_()
     return
 
   def question(self,text,title='DICOM'):
