@@ -205,9 +205,7 @@ int main(int argc, char* argv[])
   }
   else if( transformType == "Affine" )
   {
-    // itk::Matrix<double, 3> a =
-    //   computeAffineTransform(fixedPoints, movingPoints,
-    //                          fixedCenter, movingCenter);
+    // itk::Matrix<double, 3> a = computeAffineTransform(fixedPoints, movingPoints, fixedCenter, movingCenter);
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
     // return EXIT_FAILURE;
   }
@@ -218,42 +216,39 @@ int main(int argc, char* argv[])
   }
   
   
-    // Convert into an affine transform for saving to slicer
+    // Convert into an affine transform for saving to Slicer.
 
-  itk::AffineTransform<double, 3>::Pointer atransform = itk::AffineTransform<double, 3>::New();
+  typedef itk::AffineTransform<double, 3> AffineTransform;
+  AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
   
-  atransform->SetCenter( transform->GetCenter() );
-  atransform->SetMatrix( transform->GetMatrix() );
-  atransform->SetTranslation( transform->GetTranslation() );
+  fixedToMovingT->SetCenter( transform->GetCenter() );
+  fixedToMovingT->SetMatrix( transform->GetMatrix() );
+  fixedToMovingT->SetTranslation( transform->GetTranslation() );
   
   
-    // Compute RMS error.
+    // Compute RMS error in the target coordinate system.
+  
+  AffineTransform::Pointer movingToFixedT = AffineTransform::New();
+  fixedToMovingT->GetInverse( movingToFixedT );
   
   typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
 
   typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
   PointsContainerConstIterator mitr = movingPoints.begin();
   PointsContainerConstIterator fitr = fixedPoints.begin();
-
-  // typedef itk::VersorRigid3DTransform< double > TransformType;
-  // TransformType::OutputVectorType   errortr;
-  // TransformType::OutputVectorType::RealValueType sum;
   
-  SimilarityTransformType::OutputVectorType errortr;
-  SimilarityTransformType::OutputVectorType::RealValueType sum;
-  
+  SimilarityTransformType::OutputVectorType                 errortr;
+  SimilarityTransformType::OutputVectorType::RealValueType  sum;
+  InitializerType::LandmarkPointType                        movingPointInFixed;
+  int                                                       counter;
   
   sum = itk::NumericTraits< SimilarityTransformType::OutputVectorType::RealValueType >::ZeroValue();
-
-  int counter = itk::NumericTraits< int >::ZeroValue();
-  
-  typedef InitializerType::LandmarkPointType PointType;
-  PointType transformedFixedPoint;
+  counter = itk::NumericTraits< int >::ZeroValue();
   
   while( mitr != movingPoints.end() ) 
   {
-    transformedFixedPoint = atransform->TransformPoint( *fitr );
-    errortr = *mitr - transformedFixedPoint;
+    movingPointInFixed = movingToFixedT->TransformPoint( *mitr );
+    errortr = *fitr - movingPointInFixed;
     sum = sum + errortr.GetSquaredNorm();
     ++mitr;
     ++fitr;
@@ -264,7 +259,7 @@ int main(int argc, char* argv[])
   
   
   itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
-  twriter->SetInput( atransform );
+  twriter->SetInput( fixedToMovingT );
   twriter->SetFileName( saveTransform );
 
   twriter->Update();
