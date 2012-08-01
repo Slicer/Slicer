@@ -40,6 +40,7 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLVolumeArchetypeStorageNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLMultiVolumeNode;
+class vtkSlicerVolumesLogic;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
 class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_LOGIC_EXPORT vtkSlicerMultiVolumeExplorerLogic :
@@ -57,6 +58,10 @@ public:
                          std::string dcmTag, vtkDoubleArray*);
 
   int InitializeMultivolumeNode(vtkStringArray*, vtkMRMLMultiVolumeNode*);
+
+  /// Register the factory that the MultiVolume needs to manage nrrd
+  /// file with the specified volumes logic
+  void RegisterArchetypeVolumeNodeSetFactory(vtkSlicerVolumesLogic* volumesLogic);
 
 protected:
   vtkSlicerMultiVolumeExplorerLogic();

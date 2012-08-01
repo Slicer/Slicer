@@ -111,6 +111,44 @@ void vtkSlicerMultiVolumeExplorerLogic
 {
 }
 
+namespace {
+
+ArchetypeVolumeNodeSet MultiVolumeNodeSetFactory(std::string& volumeName, vtkMRMLScene* scene, int options)
+{
+  ArchetypeVolumeNodeSet nodeSet(scene);
+
+  // set up the scalar node's support nodes
+  vtkNew<vtkMRMLMultiVolumeNode> multiVolumeNode;
+  multiVolumeNode->SetName(volumeName.c_str());
+  nodeSet.Scene->AddNode(multiVolumeNode.GetPointer());
+
+  vtkNew<vtkMRMLMultiVolumeDisplayNode> mdisplayNode;
+  nodeSet.Scene->AddNode(mdisplayNode.GetPointer());
+  multiVolumeNode->SetAndObserveDisplayNodeID(mdisplayNode->GetID());
+
+  vtkNew<vtkMRMLMultiVolumeStorageNode> storageNode;
+  storageNode->SetCenterImage(options & vtkSlicerVolumesLogic::CenterImage);
+  nodeSet.Scene->AddNode(storageNode.GetPointer());
+  multiVolumeNode->SetAndObserveStorageNodeID(storageNode->GetID());
+
+  nodeSet.StorageNode = storageNode.GetPointer();
+  nodeSet.DisplayNode = mdisplayNode.GetPointer();
+  nodeSet.Node = multiVolumeNode.GetPointer();
+
+  return nodeSet;
+}
+
+};
+
+//----------------------------------------------------------------------------
+void vtkSlicerMultiVolumeExplorerLogic::RegisterArchetypeVolumeNodeSetFactory(vtkSlicerVolumesLogic* volumesLogic)
+{
+  if (volumesLogic)
+    {
+    volumesLogic->PreRegisterArchetypeVolumeNodeSetFactory(MultiVolumeNodeSetFactory);
+    }
+}
+
 //----------------------------------------------------------------------------
 void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
 {
