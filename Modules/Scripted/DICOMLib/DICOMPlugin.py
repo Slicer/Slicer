@@ -6,15 +6,15 @@ import DICOMLib
 
 #########################################################
 #
-# 
+#
 comment = """
 
-  DICOMPlugin is a superclass for code that plugs into the 
+  DICOMPlugin is a superclass for code that plugs into the
   slicer DICOM module.
 
   These classes are Abstract.
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -60,9 +60,9 @@ class DICOMLoadable(object):
 class DICOMExporterWorkInProgress(object):
   """Container class for ways of exporting
   slicer data into DICOM.
-  Each plugin returns a list of instances of this 
-  from its exportOptions method 
-  so the DICOM module can build an appropriate 
+  Each plugin returns a list of instances of this
+  from its exportOptions method
+  so the DICOM module can build an appropriate
   interface to offer user the options to export
   and perform the exporting operation.
   """
@@ -90,8 +90,18 @@ class DICOMPlugin(object):
   """
 
   def __init__(self):
+    # displayed for the user as the pluging handling the load
     self.loadType = "Generic DICOM"
+    # a dictionary that maps a list of files to a list of loadables
+    # (so that subsequent requests for the same info can be
+    #  serviced quickly)
     self.loadableCache = {}
+    # tags is a dictionary of symbolic name keys mapping to
+    # hex tag number values (as in {'pixelData': '7fe0,0010'}).
+    # Each subclass should define the tags it will be using in
+    # calls to the dicom database so that any needed values
+    # can be effiently pre-fetched if possible.
+    self.tags = {}
 
   def hashFiles(self,files):
     """Create a hash key for a list of files"""
@@ -133,7 +143,7 @@ class DICOMPlugin(object):
     return True
 
   def exportOptions(self):
-    """Return a list of DICOMExporter instances that describe the 
+    """Return a list of DICOMExporter instances that describe the
     available techniques that this plugin offers to convert MRML
     data into DICOM data
     Virtual: should be overridden by the subclass

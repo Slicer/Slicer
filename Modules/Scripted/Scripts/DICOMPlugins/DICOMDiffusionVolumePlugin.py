@@ -14,7 +14,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
   """
 
   def __init__(self):
-    super(DICOMPlugin,self).__init__()
+    super(DICOMDiffusionVolumePluginClass,self).__init__()
     self.loadType = "Diffusion Volume"
     # these are the required tags for each vendor
     # TODO: it doesn't seem that DicomToNrrd supports
@@ -43,10 +43,19 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
             '2005,10b2', # "Diffusion Direction F/H"
           ],
         }
+    # note: the tags here are organized by vendor above, but
+    # for the tag caching, we create a compatible tags
+    # array for use by the application
+    tagIndex = 0
+    for vendor in self.diffusionTags.keys():
+      for tag in self.diffusionTags[vendor]:
+        self.tags[tagIndex] = tag
+        tagIndex += 1
+    self.tags['seriesDescription'] = "0008,103e"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     fileLists parameter.
     """
     loadables = []
@@ -56,7 +65,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
 
   def examineFiles(self,files):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     files parameter.
     Process is to look for 'known' private tags corresponding
     to the types of diffusion datasets that the DicomToNrrd utility
@@ -70,8 +79,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     """
 
     # get the series description to use as base for volume name
-    seriesDescription = "0008,103e"
-    name = slicer.dicomDatabase.fileValue(files[0], seriesDescription)
+    name = slicer.dicomDatabase.fileValue(files[0], self.tags['seriesDescription'])
     if name == "":
       name = "Unknown"
 
@@ -80,7 +88,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     for vendor in self.diffusionTags:
       matchesVendor = True
       for tag in self.diffusionTags[vendor]:
-        value = slicer.dicomDatabase.fileValue(files[0], seriesDescription)
+        value = slicer.dicomDatabase.fileValue(files[0], tag)
         hasTag = value != ""
         matchesVendor &= hasTag
       if matchesVendor:
@@ -114,9 +122,6 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
         success = True
     return success
 
-    
-
-
 
 #
 # DICOMDiffusionVolumePlugin
@@ -137,7 +142,7 @@ class DICOMDiffusionVolumePlugin:
     No module interface here, only in the DICOM module
     """
     parent.acknowledgementText = """
-    This DICOM Plugin was developed by 
+    This DICOM Plugin was developed by
     Steve Pieper, Isomics, Inc.
     and was partially funded by NIH grant 3P41RR013218.
     """
@@ -161,14 +166,14 @@ class DICOMDiffusionVolumePlugin:
 class DICOMDiffusionVolumeWidget:
   def __init__(self, parent = None):
     self.parent = parent
-    
+
   def setup(self):
     # don't display anything for this widget - it will be hidden anyway
     pass
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 

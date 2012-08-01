@@ -188,6 +188,7 @@ class DICOMWidget:
     #   in the CTK code to avoid the findChildren calls
     #
     self.dicomApp = ctk.ctkDICOMAppWidget()
+    self.setDatabasePrecacheTags()
     self.dicomFrame.layout().addWidget(self.dicomApp)
     if self.hideSearch:
       # hide the search options - doesn't work yet and doesn't fit 
@@ -228,10 +229,12 @@ class DICOMWidget:
     # make the tree view a bit bigger
     self.tree.setMinimumHeight(250)
 
+    # initialize the dicomDatabase
     if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
     else:
       self.onDatabaseDirectoryChanged(self.dicomApp.databaseDirectory)
+
     if hasattr(slicer, 'dicomListener'):
       slicer.dicomListener.fileToBeAddedCallback = self.onListenerToAddFile
       slicer.dicomListener.fileAddedCallback = self.onListenerAddedFile
@@ -265,6 +268,7 @@ class DICOMWidget:
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
       slicer.dicomDatabase = ctk.ctkDICOMDatabase()
+      self.setDatabasePrecacheTags()
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
@@ -274,6 +278,20 @@ class DICOMWidget:
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
     if self.dicomApp.databaseDirectory != databaseDirectory:
       self.dicomApp.databaseDirectory = databaseDirectory
+
+  def setDatabasePrecacheTags(self):
+    """query each plugin for tags that should be cached on import
+       and set them for the dicom app widget and slicer"""
+    tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
+    for pluginClass in slicer.modules.dicomPlugins:
+      plugin = slicer.modules.dicomPlugins[pluginClass]()
+      tagsToPrecache += plugin.tags.values()
+    tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
+    tagsToPrecache.sort()
+    if hasattr(slicer, 'dicomDatabase'):
+      slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
+    self.dicomApp.tagsToPrecache = tagsToPrecache
+
 
   def promptForDatabaseDirectory(self):
     fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())

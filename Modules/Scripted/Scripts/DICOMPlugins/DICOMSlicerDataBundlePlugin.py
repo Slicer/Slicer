@@ -16,13 +16,14 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
   def __init__(self):
     super(DICOMSlicerDataBundlePluginClass,self).__init__()
     self.loadType = "Slicer Data Bundle"
-    self.candygramTag = "cadb,0010"
-    self.zipSizeTag = "cadb,1008"
-    self.zipdataTag = "cadb,1010"
+    self.tags['seriesDescription'] = "0008,103e"
+    self.tags['candygram'] = "cadb,0010"
+    self.tags['zipSize'] = "cadb,1008"
+    self.tags['zipData'] = "cadb,1010"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     fileLists parameter.
     """
     loadables = []
@@ -38,11 +39,11 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
 
   def examineFiles(self,files):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     files parameter.
     Look for the special private creator tags that indicate
     a slicer data bundle
-    Note that each data bundle is in a unique series, so 
+    Note that each data bundle is in a unique series, so
     if 'files' is a list of more than one element, then this
     is not a data bundle.
     """
@@ -51,11 +52,10 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     if len(files) == 1:
       f = files[0]
       # get the series description to use as base for volume name
-      seriesDescription = "0008,103e"
-      name = slicer.dicomDatabase.fileValue(f, seriesDescription)
+      name = slicer.dicomDatabase.fileValue(f, self.tags['seriesDescription'])
       if name == "":
         name = "Unknown"
-      candygramValue = slicer.dicomDatabase.fileValue(f, self.candygramTag)
+      candygramValue = slicer.dicomDatabase.fileValue(f, self.tags['candygram'])
       if candygramValue:
         # default loadable includes all files for series
         loadable = DICOMLib.DICOMLoadable()
@@ -70,10 +70,10 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     """Load the selection as a diffusion volume
     using the dicom to nrrd converter module
     """
-    
+
     f = loadable.files[0]
     try:
-      zipSize = int(slicer.dicomDatabase.fileValue(f, self.zipSizeTag))
+      zipSize = int(slicer.dicomDatabase.fileValue(f, self.tags['zipSize']))
     except ValueError:
       return False
 
@@ -101,10 +101,6 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
 
     return True
 
-    
-
-
-
 #
 # DICOMSlicerDataBundlePlugin
 #
@@ -124,7 +120,7 @@ class DICOMSlicerDataBundlePlugin:
     No module interface here, only in the DICOM module
     """
     parent.acknowledgementText = """
-    This DICOM Plugin was developed by 
+    This DICOM Plugin was developed by
     Steve Pieper, Isomics, Inc.
     and was partially funded by NIH grant 3P41RR013218.
     """
@@ -148,14 +144,14 @@ class DICOMSlicerDataBundlePlugin:
 class DICOMSlicerDataBundleWidget:
   def __init__(self, parent = None):
     self.parent = parent
-    
+
   def setup(self):
     # don't display anything for this widget - it will be hidden anyway
     pass
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 
