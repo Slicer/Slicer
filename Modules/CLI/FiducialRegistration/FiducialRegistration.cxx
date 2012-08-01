@@ -218,30 +218,41 @@ int main(int argc, char* argv[])
   }
   
   
+    // Convert into an affine transform for saving to slicer
+
+  itk::AffineTransform<double, 3>::Pointer atransform = itk::AffineTransform<double, 3>::New();
+  
+  atransform->SetCenter( transform->GetCenter() );
+  atransform->SetMatrix( transform->GetMatrix() );
+  atransform->SetTranslation( transform->GetTranslation() );
+  
+  
     // Compute RMS error.
   
   typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
 
   typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
-  PointsContainerConstIterator
-    mitr = movingPoints.begin();
-  PointsContainerConstIterator
-    fitr = fixedPoints.begin();
+  PointsContainerConstIterator mitr = movingPoints.begin();
+  PointsContainerConstIterator fitr = fixedPoints.begin();
 
-  typedef itk::VersorRigid3DTransform< double > TransformType;
-  TransformType::OutputVectorType   errortr;
-  TransformType::OutputVectorType::RealValueType sum;
-
-  sum = itk::NumericTraits< TransformType::OutputVectorType::RealValueType >::ZeroValue();
+  // typedef itk::VersorRigid3DTransform< double > TransformType;
+  // TransformType::OutputVectorType   errortr;
+  // TransformType::OutputVectorType::RealValueType sum;
+  
+  SimilarityTransformType::OutputVectorType errortr;
+  SimilarityTransformType::OutputVectorType::RealValueType sum;
+  
+  
+  sum = itk::NumericTraits< SimilarityTransformType::OutputVectorType::RealValueType >::ZeroValue();
 
   int counter = itk::NumericTraits< int >::ZeroValue();
-
+  
   typedef InitializerType::LandmarkPointType PointType;
   PointType transformedFixedPoint;
-
+  
   while( mitr != movingPoints.end() ) 
   {
-    transformedFixedPoint = transform->TransformPoint( *fitr );
+    transformedFixedPoint = atransform->TransformPoint( *fitr );
     errortr = *mitr - transformedFixedPoint;
     sum = sum + errortr.GetSquaredNorm();
     ++mitr;
@@ -250,21 +261,11 @@ int main(int argc, char* argv[])
   }
 
   rms = sqrt( sum / counter );
-
   
   
-  // Convert into an affine transform for saving to slicer
-
-  itk::AffineTransform<double, 3>::Pointer atransform =
-    itk::AffineTransform<double, 3>::New();
-
-  atransform->SetCenter(transform->GetCenter() );
-  atransform->SetMatrix(transform->GetMatrix() );
-  atransform->SetTranslation(transform->GetTranslation() );
-
   itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
-  twriter->SetInput(atransform);
-  twriter->SetFileName(saveTransform);
+  twriter->SetInput( atransform );
+  twriter->SetFileName( saveTransform );
 
   twriter->Update();
 
