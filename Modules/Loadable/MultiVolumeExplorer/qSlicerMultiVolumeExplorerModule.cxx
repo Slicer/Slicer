@@ -20,6 +20,9 @@
 #include <QScopedPointer>
 #include <QtPlugin>
 
+// Slicer includes
+#include <vtkSlicerVolumesLogic.h>
+
 // MultiVolumeExplorer Logic includes
 #include <vtkSlicerMultiVolumeExplorerLogic.h>
 
@@ -30,6 +33,7 @@
 #include <qSlicerUtils.h>
 #include <qSlicerModuleManager.h>
 #include <qSlicerScriptedLoadableModuleWidget.h>
+#include <qSlicerApplication.h>
 #include <vtkSlicerConfigure.h>
 
 //-----------------------------------------------------------------------------
@@ -114,6 +118,20 @@ QStringList qSlicerMultiVolumeExplorerModule::contributors()const
 void qSlicerMultiVolumeExplorerModule::setup()
 {
   this->Superclass::setup();
+
+  // Register the IO module for loading MultiVolumes as a variant of nrrd files
+  qSlicerAbstractCoreModule* volumes = qSlicerApplication::application()->moduleManager()->module("Volumes");
+  if (volumes)
+    {
+    vtkSlicerVolumesLogic* volumesLogic 
+      = dynamic_cast<vtkSlicerVolumesLogic*>(volumes->logic());
+    vtkSlicerMultiVolumeExplorerLogic* logic
+      = dynamic_cast<vtkSlicerMultiVolumeExplorerLogic*>(this->logic());
+    if (volumesLogic && logic)
+      {
+      logic->RegisterArchetypeVolumeNodeSetFactory( volumesLogic );
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------

@@ -45,6 +45,13 @@ protected:
   ~vtkMRMLMultiVolumeStorageNode();
   vtkMRMLMultiVolumeStorageNode(const vtkMRMLMultiVolumeStorageNode&);
   void operator=(const vtkMRMLMultiVolumeStorageNode&);
+
+  /// Does the actual reading. Returns 1 on success, 0 otherwise.
+  /// Returns 0 by default (read not supported).
+  /// This implementation delegates most everything to the superclass
+  /// but it has an early exit if the file to be read is not a
+  /// MultiVolume, e.g. the file is a NRRD but not a MultiVolume NRRD.
+  virtual int ReadDataInternal(vtkMRMLNode* refNode);
 };
 
 #endif
