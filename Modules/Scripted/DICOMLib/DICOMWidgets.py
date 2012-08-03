@@ -253,6 +253,7 @@ class DICOMDetailsPopup(object):
       if self.progress.wasCanceled:
         break
       self.progress.labelText = '\nChecking %s' % pluginClass
+      slicer.app.processEvents()
       self.progress.setValue(step)
       slicer.app.processEvents()
       self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
