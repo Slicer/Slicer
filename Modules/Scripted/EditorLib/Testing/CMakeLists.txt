@@ -1,2 +1,3 @@
 
 slicer_add_python_unittest(SCRIPT ThresholdThreadingTest.py)
+slicer_add_python_unittest(SCRIPT StandaloneEditorWidgetTest.py)

@@ -209,10 +209,11 @@ class EditorWidget:
     # put the tool options below the color selector
     self.editLabelMapsFrame.layout().addWidget(self.effectOptionsFrame)
 
-    # add a callback to collapse/open the frame based on the validity of the label volume
-    self.helper.mergeValidCommand = self.updateLabelFrame 
-    # add a callback to reset the tool when a new volume is selected
-    self.helper.selectCommand = self.toolsBox.defaultEffect
+    if self.helper:
+      # add a callback to collapse/open the frame based on the validity of the label volume
+      self.helper.mergeValidCommand = self.updateLabelFrame 
+      # add a callback to reset the tool when a new volume is selected
+      self.helper.selectCommand = self.toolsBox.defaultEffect
 
 
     # Add spacer to layout
