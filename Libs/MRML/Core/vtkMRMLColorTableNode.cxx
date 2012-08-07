@@ -64,7 +64,7 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
       {
       double *rgba;
       rgba = this->LookupTable->GetTableValue(i);
-      of <<  i << " '" << this->GetColorNameWithoutSpaces(i, "_") << "' " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
+      of <<  i << " " << this->GetColorNameWithoutSpaces(i, "_") << " " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
       }
     of << "\"";
     } 
@@ -119,6 +119,15 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
         ss >> g;
         ss >> b;
         ss >> a;
+        // might have a version of a mrml file that has tick marks around
+        // the name
+        const char *tickPtr = strstr(name.c_str(), "'");
+        if (tickPtr)
+          {
+          size_t firstValidChar = name.find_first_not_of("'");
+          size_t lastValidChar = name.find_last_not_of("'");
+          name = name.substr(firstValidChar, 1 + lastValidChar - firstValidChar);
+          }
         vtkDebugMacro("Adding colour at index " << index << ", r = " << r << ", g = " << g << ", b = " << b << ", a = " << a << " and then setting name to " << name.c_str() << endl);
         
         if (this->SetColorNameWithSpaces(index, name.c_str(), "_") != 0)
