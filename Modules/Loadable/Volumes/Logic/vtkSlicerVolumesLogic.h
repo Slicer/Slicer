@@ -30,6 +30,7 @@
 
 // STD includes
 #include <cstdlib>
+#include <list>
 
 #include "vtkSlicerVolumesModuleLogicExport.h"
 
@@ -37,6 +38,23 @@ class vtkMRMLScalarVolumeNode;
 class vtkMRMLScalarVolumeDisplayNode;
 class vtkMRMLVolumeHeaderlessStorageNode;
 class vtkStringArray;
+
+struct ArchetypeVolumeNodeSet
+{
+  ArchetypeVolumeNodeSet(vtkMRMLScene * scene):Scene(scene), LabelMap(false){}
+  ArchetypeVolumeNodeSet(const ArchetypeVolumeNodeSet& set) {
+    Node = set.Node;
+    DisplayNode = set.DisplayNode;
+    StorageNode = set.StorageNode;
+    Scene = set.Scene;
+    LabelMap = set.LabelMap;
+  }
+  vtkSmartPointer<vtkMRMLVolumeNode> Node;
+  vtkSmartPointer<vtkMRMLVolumeDisplayNode> DisplayNode;
+  vtkSmartPointer<vtkMRMLStorageNode> StorageNode;
+  vtkSmartPointer<vtkMRMLScene> Scene;
+  bool LabelMap;  // is this node set for labelmaps?
+};
 
 class VTK_SLICER_VOLUMES_MODULE_LOGIC_EXPORT vtkSlicerVolumesLogic :
   public vtkSlicerModuleLogic
@@ -48,6 +66,20 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   typedef vtkSlicerVolumesLogic Self;
+  
+  /// Loading options, bitfield
+  enum LoadingOptions {
+    LabelMap = 1, 
+    CenterImage = 2,
+    SingleFile = 4,
+    AutoWindowLevel = 8,
+    DiscardOrientation = 16
+  };
+
+  /// Factory function to create a volume node, display node, and
+  /// storage node, configure the in the specified scene, and
+  /// initialize the storage node with the "options".
+  typedef ArchetypeVolumeNodeSet (*ArchetypeVolumeNodeSetFactory)(std::string& volumeName, vtkMRMLScene* scene, int options);
 
   virtual void SetColorLogic(vtkMRMLColorLogic* colorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
@@ -68,11 +100,33 @@ public:
     return this->AddArchetypeScalarVolume( filename, volname, 0);
     }
 
+  /// Register a factory method that can create and configure a node
+  /// set (ArchetypeVolumeNodeSet) containing a volume node, display
+  /// node, and storage node. The nodes are configured within the
+  /// factory method with default settings and are added to the scene
+  /// and cross-referenced appropriately. Node types must be
+  /// registered with the scene beforehand the factory is
+  /// called. Factories are tested in the order they are registered.
+  void RegisterArchetypeVolumeNodeSetFactory(ArchetypeVolumeNodeSetFactory factory);
+
+  /// Register a factory method that can create and configure a node
+  /// set (ArchetypeVolumeNodeSet) containing a volume node, display
+  /// node, and storage node. The nodes are configured within the
+  /// factory method with default settings and are added to the scene
+  /// and cross-referenced appropriately. Node types must be
+  /// registered with the scene beforehand the factory is called.
+  /// This version inserts the factory at the head of the list, and
+  /// hence the factory will be tested first, rather than pushing onto
+  /// the back of the list of factories.
+  void PreRegisterArchetypeVolumeNodeSetFactory(ArchetypeVolumeNodeSetFactory factory);
+
   /// Overloaded function of AddArchetypeVolume to provide more
   /// loading options, where variable loadingOptions is bit-coded as following:
   /// bit 0: label map
   /// bit 1: centered
   /// bit 2: loading single file
+  /// bit 3: calculate window level automatically
+  /// bit 4: discard image orientation
   /// higher bits are reserved for future use
   vtkMRMLVolumeNode* AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions) 
     {
@@ -160,6 +214,9 @@ protected:
   
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
+  
+  typedef std::list<ArchetypeVolumeNodeSetFactory> NodeSetFactoryRegistry;
+  NodeSetFactoryRegistry VolumeRegistry;
 };
 
 #endif
