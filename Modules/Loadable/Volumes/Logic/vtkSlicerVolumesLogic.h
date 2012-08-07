@@ -92,13 +92,6 @@ public:
   void SetActiveVolumeNode(vtkMRMLVolumeNode *ActiveVolumeNode);
   vtkMRMLVolumeNode* GetActiveVolumeNode()const;
 
-  /// Sub type of loading an archetype volume that is known to be a scalar
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname, int loadingOptions);
-
-  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume (const char *filename, const char* volname) 
-    {
-    return this->AddArchetypeScalarVolume( filename, volname, 0);
-    }
 
   /// Register a factory method that can create and configure a node
   /// set (ArchetypeVolumeNodeSet) containing a volume node, display
@@ -137,16 +130,6 @@ public:
     {
     return this->AddArchetypeVolume( filename, volname, 0, NULL);
     }
-
-  /// Overloaded function of AddHeaderVolume to provide more
-  /// loading options, where variable loadingOptions is bit-coded as following:
-  /// bit 0: label map
-  /// bit 1: centered
-  /// bit 2: loading signal file
-  /// higher bits are reserved for future use
-  vtkMRMLVolumeNode* AddHeaderVolume (const char* filename, const char* volname, 
-                                      vtkMRMLVolumeHeaderlessStorageNode *headerStorage,
-                                      int loadingOptions);
 
   /// Write volume's image data to a specified file
   int SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode);

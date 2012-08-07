@@ -66,20 +66,6 @@ int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
 
   logic->SetMRMLScene(scene.GetPointer());
 
-  vtkMRMLScalarVolumeNode* scalarVolume =
-    logic->AddArchetypeScalarVolume(argv[1], "scalarVolume");
-
-  if (!scalarVolume ||
-      !isImageDataValid(scalarVolume->GetImageData()))
-    {
-    std::cerr << "Failed to load scalar image." << std::endl;
-    if (scalarVolume && scalarVolume->GetImageData())
-      {
-      scalarVolume->GetImageData()->Print(std::cerr);
-      }
-    return EXIT_FAILURE;
-    }
-
   vtkMRMLVolumeNode* volume =
     logic->AddArchetypeVolume(argv[1], "volume", 0);
 
