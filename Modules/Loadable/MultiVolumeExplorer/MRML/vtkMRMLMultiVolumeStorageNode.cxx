@@ -12,6 +12,8 @@ Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
 
+#include <algorithm>
+
 #include "vtkMRMLMultiVolumeStorageNode.h"
 #include "vtkMRMLMultiVolumeNode.h"
 
