@@ -40,7 +40,7 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
   public:
 
   static vtkMRMLMultiVolumeNode *New();
-  vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLVolumeNode);
+  vtkTypeMacro(vtkMRMLMultiVolumeNode,vtkMRMLScalarVolumeNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
