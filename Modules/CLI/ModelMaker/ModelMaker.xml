@@ -117,11 +117,12 @@
       <name>Decimate</name>
       <label>Decimate</label>
       <longflag>--decimate</longflag>
-      <description><![CDATA[Chose the target reduction in number of polygons as a decimal percentage (between 0 and 1) of the number of polygons. Use 1 if you wish no decimation.]]></description>
+      <description><![CDATA[Chose the target reduction in number of polygons as a decimal percentage (between 0 and 1) of the number of polygons. Specifies the percentage of triangles to be removed. For example, 0.1 means 10% reduction and 0.9 means 90% reduction.]]></description>
       <default>0.25</default>
       <constraints>
         <minimum>0.0</minimum>
         <maximum>1.0</maximum>
+        <step>0.01</step>
       </constraints>
     </float>
     <boolean>
