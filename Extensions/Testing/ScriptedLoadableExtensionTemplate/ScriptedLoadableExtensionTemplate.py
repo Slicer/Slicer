@@ -100,6 +100,12 @@ class ScriptedLoadableExtensionTemplateWidget:
         child.hide()
       except AttributeError:
         pass
+    # Remove spacer items
+    item = parent.layout().itemAt(0)
+    while item:
+      parent.layout().removeItem(item)
+      item = parent.layout().itemAt(0)
+    # create new widget inside existing parent
     globals()[widgetName.lower()] = eval(
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
