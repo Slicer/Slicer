@@ -32,7 +32,6 @@
 #include <vtkDoubleArray.h>
 #include <vtkSmartPointer.h>
 
-class vtkMRMLAnnotationROINode;
 class vtkMRMLMultiVolumeDisplayNode;
 
 /// \ingroup Slicer_QtModules_MultiVolumeNode
