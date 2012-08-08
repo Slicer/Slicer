@@ -12,6 +12,9 @@
 
 =========================================================================auto=*/
 
+// STD includes
+#include <algorithm>
+
 // Volumes includes
 #include "vtkSlicerVolumesLogic.h"
 
