@@ -284,6 +284,7 @@ class DICOMDetailsPopup(object):
         if self.progress.wasCanceled:
           break
         self.progress.labelText = '\nLoading %s' % loadable.name
+        slicer.app.processEvents()
         self.progress.setValue(step)
         slicer.app.processEvents()
         if loadable.selected:
@@ -379,7 +380,7 @@ class DICOMLoadableTable(object):
   def updateCheckstate(self):
     for row in xrange(self.widget.rowCount):
       item = self.widget.item(row,0)
-      self.loadables[row].selected = item.checkState()
+      self.loadables[row].selected = (item.checkState() != 0)
 
 class DICOMHeaderWidget(object):
   """Implement the Qt code for a table of
