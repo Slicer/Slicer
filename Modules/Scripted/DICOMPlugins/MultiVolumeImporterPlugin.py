@@ -22,7 +22,21 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.tags['seriesInstanceUID'] = "0020,000E"
     self.tags['seriesDescription'] = "0008,103E"
 
-    # TODO: add tags used to identify multivolumes
+    # tags used to identify multivolumes
+    self.multiVolumeTags = {}
+    self.multiVolumeTags['TriggerTime'] = "0018,1060"
+    self.multiVolumeTags['EchoTime'] = "0018,0081"
+    self.multiVolumeTags['FlipAngle'] = "0018,1314"
+    self.multiVolumeTags['RepetitionTime'] = "0018,0080"
+
+    for tagName,tagVal in self.multiVolumeTags.iteritems():
+      self.tags[tagName] = tagVal
+
+    self.multiVolumeTagsUnits = {}
+    self.multiVolumeTagsUnits['TriggerTime'] = "ms"
+    self.multiVolumeTagsUnits['EchoTime'] = "ms"
+    self.multiVolumeTagsUnits['FlipAngle'] = "deg"
+    self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -55,8 +69,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for file in files:
 
       slicer.dicomDatabase.loadFileHeader(file)
-      v = slicer.dicomDatabase.fileValue(self.tags['seriesInstanceUID']) # SeriesInstanceUID
-      d = slicer.dicomDatabase.fileValue(self.tags['seriesDescription']) # SeriesDescription
+      value = slicer.dicomDatabase.fileValue(file,self.tags['seriesInstanceUID']) # SeriesInstanceUID
+      desc = slicer.dicomDatabase.fileValue(file,self.tags['seriesDescription']) # SeriesDescription
 
       if value == "":
         value = "Unknown"
@@ -75,6 +89,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvNode = None
     for key in subseriesLists.keys():
       if mvNode == None:
+        # TODO: fix memory leaks here!
         mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
         mvNode.SetName('MultiVolume node')
         mvNode.SetScene(slicer.mrmlScene)
@@ -83,7 +98,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       for item in subseriesLists[key]:
         filevtkStringArray.InsertNextValue(item)
 
-      nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(filevtkStringArray, mvNode)
+      mvNodes = self.initMultiVolumes(subseriesLists[key])
+
+      if len(mvNodes) != 0:
+        print 'Found ',len(mvNodes),' multivolumes! Here is the first one:'
+        print mvNodes[0]
+
+      return []
+      
+      # nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(filevtkStringArray, mvNode)
 
       if nFrames > 1:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
@@ -117,6 +140,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     print('MultiVolumeImportPlugin load()')
     # create a clean temporary directory
+    # TODO: clean this up -- tmp dir is not used anymore!
     tmpDir = slicer.app.settings().value('Modules/TemporaryDirectory')
     if not os.path.exists(tmpDir):
       os.mkdir(tmpDir)
@@ -179,6 +203,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
         # create and initialize a blank DWI node
+        # TODO: need to clean up DWI-related junk!
         bValues = vtk.vtkDoubleArray()
         bValues.Allocate(nFrames)
         bValues.SetNumberOfComponents(1)
@@ -237,6 +262,101 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     slicer.mrmlScene.RemoveNode(dn)
     slicer.mrmlScene.RemoveNode(sn)
     slicer.mrmlScene.RemoveNode(node)
+
+  def initMultiVolumes(self, files):
+    tag2ValueFileList = {}
+    multivolumes = []
+
+    # iterate over all files
+    for file in files:
+      slicer.dicomDatabase.loadFileHeader(file)
+
+      # iterate over the tags that can be used to separate individual frames
+      for frameTag in self.multiVolumeTags.keys():
+        try:
+          tagValue2FileList = tag2ValueFileList[frameTag]
+        except:
+          tagValue2FileList = {}
+          tag2ValueFileList[frameTag] = tagValue2FileList
+
+        tagValue = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
+        if tagValue == '':
+          # not found?
+          continue
+
+        try:
+          tagValue2FileList[tagValue].append(file)
+        except:
+          tagValue2FileList[tagValue] = [file]
+
+    # iterate over the parsed items and decide which ones can qualify as mv
+    for frameTag in self.multiVolumeTags.keys():
+
+      try:
+        tagValue2FileList = tag2ValueFileList[frameTag]
+      except:
+        # didn't find the tag
+        continue
+
+      if len(tagValue2FileList)<2:
+        # not enough frames
+        continue
+  
+      firstFrameSize = len(tagValue2FileList[tagValue2FileList.keys()[0]])
+      frameInvalid = False
+      for tagValue,frameFileList in tagValue2FileList.iteritems():
+        if len(frameFileList) != firstFrameSize:
+          # number of frames does not match
+          frameInvalid = True
+      if frameInvalid == True:
+        continue
+
+      # now this looks like a serious mv!
+      print 'Found what seems to be a multivolume:'
+      print tagValue2FileList
+
+      # initialize the needed attributes for a new mvNode
+      frameFileListStr = ""
+      frameLabelsStr = ""
+      frameLabelsArray = vtk.vtkDoubleArray()
+      for tagValue,frameFileList in tagValue2FileList.iteritems():
+        for file in frameFileList:
+          frameFileListStr = frameFileListStr+file+','
+
+        frameLabelsStr = frameLabelsStr+tagValue+','
+        frameLabelsArray.InsertNextValue(float(tagValue))
+
+      frameFileListStr = frameFileListStr[:-1]
+      frameLabelsStr = frameLabelsStr[:-1]
+
+      mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
+      mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
+      mvNode.SetScene(slicer.mrmlScene)
+      mvNode.SetAttribute("MultiVolume.FrameFileList",frameFileListStr)
+      mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
+      mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(len(tagValue2FileList)))
+      mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
+
+      if frameTag == 'TriggerTime':
+        # this is DCE, so let's keep the tag values that will be needed for
+        # the analysis
+        firstFile = frameFileList[0]
+        slicer.dicomDatabase.loadFileHeader(firstFile)
+        echoTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['EchoTime'])
+        repetitionTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['RepetitionTime'])
+        flipAngle = slicer.dicomDatabase.fileValue(firstFile, self.tags['FlipAngle'])
+        
+        mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
+        mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
+        mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
+        
+        mvNode.SetNumberOfFrames(len(tagValue2FileList))
+        mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
+        mvNode.SetLabelArray(frameLabelsArray)
+
+        multivolumes.append(mvNode)
+
+    return multivolumes
 
 '''
 
