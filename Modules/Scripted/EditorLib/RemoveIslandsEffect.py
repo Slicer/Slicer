@@ -198,8 +198,8 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     # TODO $this setProgressFilter $postThresh "Applying to Label Map..."
     postThresh.Update()
 
-    postThresh.SetOutput( None )
     self.applyScopedLabel()
+    postThresh.SetOutput( None )
 
 
     if False:

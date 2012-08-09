@@ -179,9 +179,9 @@ class ChangeLabelEffectLogic(Effect.EffectLogic):
     # TODO
     #$this setProgressFilter $change "Change Label"
     change.Update()
-    change.SetOutput( None )
 
     self.applyScopedLabel()
+    change.SetOutput( None )
 
 
 #

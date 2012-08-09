@@ -150,8 +150,8 @@ class ErodeEffectLogic(MorphologyEffect.MorphologyEffectLogic):
       print('updating')
       eroder.Update()
 
-    eroder.SetOutput( None )
     self.applyScopedLabel()
+    eroder.SetOutput( None )
 
 
 

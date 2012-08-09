@@ -150,9 +150,9 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
     connectivity.SetSeed( ijk )
     # TODO: $this setProgressFilter $connectivity "Change Island"
     connectivity.Update()
-    connectivity.SetOutput( None )
 
     self.applyScopedLabel()
+    connectivity.SetOutput( None )
 
 #
 # The ChangeIslandEffect class definition 
