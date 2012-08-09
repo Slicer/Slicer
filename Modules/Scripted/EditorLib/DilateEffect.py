@@ -149,6 +149,7 @@ class DilateEffectLogic(MorphologyEffect.MorphologyEffectLogic):
       # TODO: $this setProgressFilter eroder "Dilate ($i)"
       eroder.Update()
 
+    eroder.SetOutput( None )
     self.applyScopedLabel()
 
 

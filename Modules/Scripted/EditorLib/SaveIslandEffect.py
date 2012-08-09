@@ -150,6 +150,7 @@ class SaveIslandEffectLogic(IslandEffect.IslandEffectLogic):
     # TODO: $this setProgressFilter $connectivity "Save Island"
     connectivity.Update()
 
+    connectivity.SetOutput( None )
     self.applyScopedLabel()
 
 #

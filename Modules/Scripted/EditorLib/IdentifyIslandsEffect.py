@@ -166,6 +166,7 @@ class IdentifyIslandsEffectLogic(IslandEffect.IslandEffectLogic):
     ignoredIslands = islandOrigCount - islandCount
     print( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
 
+    castOut.SetOutput( None )
     self.applyScopedLabel()
 
 #
