@@ -181,9 +181,9 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   
   nodeSelector.addAttribute("vtkMRMLViewNode", "foo", QString("bar2"));
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
-  if (nodeSelector.nodeCount() != 4)
+  if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector: attribute filtering failed."
+    std::cerr << __LINE__ << " - qMRMLNodeSelector: attribute filtering failed, expected 1 node with attribute foo set to bar2. nodeCount = "
               << nodeSelector.nodeCount() << std::endl;
     return EXIT_FAILURE;
     }
@@ -219,7 +219,9 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
 
   // Checks with more than 1 type
   QStringList types;
-  types << "vtkMRMLViewNode" << "vtkMRMLCameraNode";
+  //types << "vtkMRMLViewNode" << "vtkMRMLCameraNode";
+  // don't use the view node as that has an attribute filter on it
+  types << "vtkMRMLModelNode" << "vtkMRMLCameraNode";
   //test setNodeTypes()/nodeTypes()
   nodeSelector.setNodeTypes(types);
   
@@ -238,15 +240,17 @@ int qMRMLNodeComboBoxTest1( int argc, char * argv [] )
   sceneFactory.generateNode(types[1]);
 
   nodeSelector.setMRMLScene(sceneFactory.mrmlScene());
+  // had added 5 nodes of the right type, and one extra
   if (nodeSelector.nodeCount() != 5)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: setMRMLScene fails." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: setMRMLScene fails, expected node count of 5, got " << nodeSelector.nodeCount() << std::endl;
     return EXIT_FAILURE;
     }
+  // add another node of the right type, expect 6 now
   sceneFactory.generateNode(types[1]);
   if (nodeSelector.nodeCount() != 6)
     {
-    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: node added to the scene fails." << std::endl;
+    std::cerr << __LINE__ << " - qMRMLNodeSelector:NodeTypeS: node added to the scene fails, expected nodeCount of 6, got " << nodeSelector.nodeCount() << std::endl;
     return EXIT_FAILURE;
     }
 

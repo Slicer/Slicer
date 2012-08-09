@@ -113,10 +113,11 @@ public:
   void setShowHiddenForTypes(const QStringList& nodeTypes);
 
   /// Add node type attribute that filter the nodes to
-  /// display
+  /// display. The default of a null QVariant means that
+  /// any non null attributeValue will match
   void addAttribute(const QString& nodeType,
                     const QString& attributeName,
-                    const QVariant& attributeValue);
+                    const QVariant& attributeValue = QVariant());
 
   /// Display or not the nodes that are excluded by
   /// the ExcludedChildNodeTypes list.

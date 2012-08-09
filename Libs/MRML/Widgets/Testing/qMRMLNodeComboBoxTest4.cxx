@@ -48,7 +48,7 @@ int qMRMLNodeComboBoxTest4( int argc, char * argv [] )
   vtkMRMLNode* node = nodeSelector.addNode();
   if (nodeSelector.nodeCount() != 1)
     {
-    std::cerr << "qMRMLNodeComboBox::addAttribute is broken" << std::endl;
+    std::cerr << "qMRMLNodeComboBox::addNode is broken" << std::endl;
     return EXIT_FAILURE;
     }
 

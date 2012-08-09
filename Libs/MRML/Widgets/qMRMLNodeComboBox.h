@@ -119,9 +119,12 @@ public:
   /// \code addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1"); \endcode
   /// \note The attributes are used for filtering but also when "AddNode" is
   /// called: the attributes will be set to the new node
+  /// \note An undefined attributeValue will match any value as long as the node
+  /// has the attribute defined. An empty string will only match an empty
+  /// string. Otherwise the attributeValue has to match the node's value exactly.
   Q_INVOKABLE void addAttribute(const QString& nodeType,
                                 const QString& attributeName,
-                                const QVariant& attributeValue);
+                                const QVariant& attributeValue = QVariant());
 
   /// BaseName is the name used to generate a node name for all the new created
   /// nodes.

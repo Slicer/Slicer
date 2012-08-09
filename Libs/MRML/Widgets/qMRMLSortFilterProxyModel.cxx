@@ -233,12 +233,42 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
         const_cast<qMRMLSortFilterProxyModel*>(this),
         SLOT(invalidate()),0., Qt::UniqueConnection);
 
-      QString nodeAttribute =
-        node->GetAttribute(d->Attributes[nodeType].first.toLatin1());
-      if (!nodeAttribute.isEmpty() &&
-           nodeAttribute != d->Attributes[nodeType].second.toString())
+      QString attributeName = d->Attributes[nodeType].first;
+      const char *nodeAttribute = node->GetAttribute(attributeName.toLatin1());
+      QString nodeAttributeQString = node->GetAttribute(attributeName.toLatin1());
+      QString testAttribute = d->Attributes[nodeType].second.toString();
+
+      //std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString = " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;
+
+      // if the filter test attribute value has been set to a null QVariant
+      if ( d->Attributes[nodeType].second == QVariant())
         {
-        return false;
+        // only fails if the attribute hasn't been set on the node
+        if (nodeAttribute == 0)
+          {
+          //std::cout << "\tNO MATCH: filter is null, node attribute is null (must have been set to something)" << std::endl;
+          return false;
+          }
+        }
+      else
+        {
+        // if the test attribute is an empty string, the node attribute has to
+        // have been set to an empty string (fails if not set at all)
+        if (testAttribute.size() == 0)
+          {
+          if (nodeAttribute == NULL ||
+              (nodeAttribute != NULL && nodeAttributeQString.compare("") != 0))
+            {
+            //std::cout << "\tNO MATCH: filter is empty string, node attribute is either null or not an empty string" << std::endl;
+            return false;
+            }
+          }
+        // if the test attribute isn't null or an empty string, the node attribute has to match,
+        else if (nodeAttributeQString != testAttribute)
+          {
+          //std::cout << "\tNO MATCH: filter is not null, node attribute doesn't match" << std::endl;
+          return false;
+          }
         }
       }
     // Apply filter if any
