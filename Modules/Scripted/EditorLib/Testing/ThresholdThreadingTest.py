@@ -32,7 +32,6 @@ class ThresholdThreading(unittest.TestCase):
     roi.SetXYZ(-2, 104, -80)
     roi.SetRadiusXYZ(30, 30, 30)
 
-    return
     #
     # apply the cropping to the head
     #
