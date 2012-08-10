@@ -90,3 +90,65 @@ class EditorLibTesting(unittest.TestCase):
       print("Ahh... test passed.")
 
     self.assertEqual((postArray - preArray).max(), 0)
+
+
+#
+# EditorLibSelfTest
+#
+
+class EditorLibSelfTest:
+  """
+  This class is the 'hook' for slicer to detect and recognize the test
+  as a loadable scripted module (with a hidden interface)
+  """
+  def __init__(self, parent):
+    parent.title = "EditorLibSelfTest"
+    parent.categories = ["Testing"]
+    parent.contributors = ["Steve Pieper (Isomics Inc.)"]
+    parent.helpText = """
+    Self test for the editor.
+    No module interface here, only used in SelfTests module
+    """
+    parent.acknowledgementText = """
+    This DICOM Plugin was developed by
+    Steve Pieper, Isomics, Inc.
+    and was partially funded by NIH grant 3P41RR013218.
+    """
+
+    # don't show this module
+    parent.hidden = True
+
+    # Add this test to the SelfTest module's list for discovery when the module
+    # is created.  Since this module may be discovered before SelfTests itself,
+    # create the list if it doesn't already exist.
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
+    slicer.selfTests['EditorLibSelfTest'] = self.runTest
+
+  def runTest(self):
+    tester = EditorLibTesting()
+    tester.setup()
+    tester.test_ThresholdThreading()
+
+
+#
+# EditorLibSelfTestWidget
+#
+
+class EditorLibSelfTestWidget:
+  def __init__(self, parent = None):
+    self.parent = parent
+
+  def setup(self):
+    # don't display anything for this widget - it will be hidden anyway
+    pass
+
+  def enter(self):
+    pass
+
+  def exit(self):
+    pass
+
+
