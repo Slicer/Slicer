@@ -3,9 +3,12 @@ import unittest
 import slicer
 import EditorLib
 
-class EditorLibTesting(unittest.TestCase):
+class ThresholdThreading(unittest.TestCase):
   def setUp(self):
     pass
+
+  def runTest(self):
+    self.test_ThresholdThreading()
 
   def test_ThresholdThreading(self):
     """
@@ -29,6 +32,7 @@ class EditorLibTesting(unittest.TestCase):
     roi.SetXYZ(-2, 104, -80)
     roi.SetRadiusXYZ(30, 30, 30)
 
+    return
     #
     # apply the cropping to the head
     #
@@ -93,16 +97,16 @@ class EditorLibTesting(unittest.TestCase):
 
 
 #
-# EditorLibSelfTest
+# ThresholdThreadingTest
 #
 
-class EditorLibSelfTest:
+class ThresholdThreadingTest:
   """
   This class is the 'hook' for slicer to detect and recognize the test
   as a loadable scripted module (with a hidden interface)
   """
   def __init__(self, parent):
-    parent.title = "EditorLibSelfTest"
+    parent.title = "ThresholdThreadingTest"
     parent.categories = ["Testing"]
     parent.contributors = ["Steve Pieper (Isomics Inc.)"]
     parent.helpText = """
@@ -125,12 +129,12 @@ class EditorLibSelfTest:
       slicer.selfTests
     except AttributeError:
       slicer.selfTests = {}
-    slicer.selfTests['EditorLibSelfTest'] = self.runTest
+    slicer.selfTests['ThresholdThreadingTest'] = self.runTest
 
   def runTest(self):
-    tester = EditorLibTesting()
-    tester.setup()
-    tester.test_ThresholdThreading()
+    tester = ThresholdThreading()
+    tester.setUp()
+    tester.runTest()
 
 
 #
