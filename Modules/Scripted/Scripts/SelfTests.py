@@ -107,6 +107,7 @@ class SelfTestsWidget:
     self.testMapper.connect('mapped(const QString&)', self.onRun)
     for test in slicer.selfTests.keys():
       self.testButtons[test] = qt.QPushButton(test)
+      self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
       self.testList.layout().addWidget(self.testButtons[test])
       self.testMapper.setMapping(self.testButtons[test],test)
       self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
@@ -116,6 +117,7 @@ class SelfTestsWidget:
 
   def onRunAll(self):
     self.logic.run(continueCheck=self.continueCheck)
+    self.information(self.logic)
 
   def onRun(self,test):
     self.logic.run([test,], continueCheck=self.continueCheck)
@@ -123,6 +125,9 @@ class SelfTestsWidget:
   def continueCheck(self,logic):
     slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
     return True
+
+  def information(self,text,title='SelfTests'):
+    qt.QMessageBox.information(slicer.util.mainWindow(), title, text)
 
   def question(self,text,title='SelfTests'):
     return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x14000) == 0x4000
@@ -138,6 +143,18 @@ class SelfTestsLogic:
     self.results = {}
     self.passed = []
     self.failed = []
+
+  def __str__(self):
+    testsRun = len(self.results.keys())
+    if testsRun == 0:
+      return "No tests run"
+    s = "%.0f%% passed (%d of %d)" % (
+        (100. * len(self.passed) / testsRun), 
+        len(self.passed), testsRun )
+    s +="\n---\n"
+    for test in self.results:
+      s += "%s\t%s\n" % (test, self.results[test])
+    return s
 
   def run(self,tests=None,continueCheck=None):
     if not tests:
