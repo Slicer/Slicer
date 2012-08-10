@@ -6,6 +6,7 @@ set(KIT_PYTHON_SCRIPTS
     PerformanceTests.py
     SampleData.py
     VectorToScalarVolume.py
+    SelfTests.py
   )
 
 if(Slicer_BUILD_DICOM_SUPPORT)
