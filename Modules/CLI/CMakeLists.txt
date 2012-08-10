@@ -6,10 +6,10 @@
 set(cli_modules
   ACPCTransform
   AddScalarVolumes
-  BlobDetection
+#  BlobDetection
   CastScalarVolume
   CheckerBoardFilter
-  ConnectedComponent
+#  ConnectedComponent
   CurvatureAnisotropicDiffusion
   DiffusionTensorScalarMeasurements
   DiffusionWeightedVolumeMasking
