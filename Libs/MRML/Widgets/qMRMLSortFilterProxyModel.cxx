@@ -239,34 +239,17 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
       QString testAttribute = d->Attributes[nodeType].second.toString();
 
       //std::cout << "attribute name = " << qPrintable(attributeName) << "\n\ttestAttribute = " << qPrintable(testAttribute) << "\n\t" << node->GetID() << " nodeAttributeQString = " << qPrintable(nodeAttributeQString) << "\n\t\tas char str = " << (nodeAttribute ? nodeAttribute : "null") << "." << std::endl;
-
-      // if the filter test attribute value has been set to a null QVariant
-      if ( d->Attributes[nodeType].second == QVariant())
+      // fail if the attribute isn't defined on the node at all
+      if (nodeAttribute == 0)
         {
-        // only fails if the attribute hasn't been set on the node
-        if (nodeAttribute == 0)
-          {
-          //std::cout << "\tNO MATCH: filter is null, node attribute is null (must have been set to something)" << std::endl;
-          return false;
-          }
+        return false;
         }
-      else
+      // if the filter value is null, any node attribute value will match
+      if (!d->Attributes[nodeType].second.isNull())
         {
-        // if the test attribute is an empty string, the node attribute has to
-        // have been set to an empty string (fails if not set at all)
-        if (testAttribute.size() == 0)
+        // otherwise, the node and filter attributes have to match
+        if (testAttribute != nodeAttribute)
           {
-          if (nodeAttribute == NULL ||
-              (nodeAttribute != NULL && nodeAttributeQString.compare("") != 0))
-            {
-            //std::cout << "\tNO MATCH: filter is empty string, node attribute is either null or not an empty string" << std::endl;
-            return false;
-            }
-          }
-        // if the test attribute isn't null or an empty string, the node attribute has to match,
-        else if (nodeAttributeQString != testAttribute)
-          {
-          //std::cout << "\tNO MATCH: filter is not null, node attribute doesn't match" << std::endl;
           return false;
           }
         }
