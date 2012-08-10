@@ -85,30 +85,16 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # now iterate over all subseries file lists and try to parse the
     # multivolumes
 
-    mvNode = None
     for key in subseriesLists.keys():
-      if mvNode == None:
-        # TODO: fix memory leaks here!
-        mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
-        mvNode.SetName('MultiVolume node')
-        mvNode.SetScene(slicer.mrmlScene)
-      
-      filevtkStringArray = vtk.vtkStringArray()
-      for item in subseriesLists[key]:
-        filevtkStringArray.InsertNextValue(item)
 
       mvNodes = self.initMultiVolumes(subseriesLists[key])
 
-      if len(mvNodes) != 0:
-        print 'Found ',len(mvNodes),' multivolumes! Here is the first one:'
-        print mvNodes[0]
+      print('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
 
-      return []
-      
-      # nFrames = slicer.modules.multivolumeexplorer.logic().InitializeMultivolumeNode(filevtkStringArray, mvNode)
-
-      if nFrames > 1:
+      for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
+        nFrames = mvNode.GetNumberOfFrames()
+        
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
         loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
@@ -116,13 +102,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadable.selected = True
         loadable.multivolume = mvNode
         loadables.append(loadable)
-
-        mvNode = None
-      else:
-        print('No multivolumes found!')
-
-    if mvNode != None:
-      mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
     return loadables
 
@@ -136,22 +115,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode = loadable.multivolume
     except AttributeError:
       return
-
-    print('MultiVolumeImportPlugin load()')
-    # create a clean temporary directory
-    # TODO: clean this up -- tmp dir is not used anymore!
-    tmpDir = slicer.app.settings().value('Modules/TemporaryDirectory')
-    if not os.path.exists(tmpDir):
-      os.mkdir(tmpDir)
-    tmpDir = tmpDir+'/MultiVolumeImportPlugin'
-    if not os.path.exists(tmpDir):
-      os.mkdir(tmpDir)
-    else:
-      # clean it up
-      print 'tmpDir = '+tmpDir
-      fileNames = os.listdir(tmpDir)
-      for f in fileNames:
-        os.unlink(tmpDir+'/'+f)
 
     nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
     files = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
@@ -201,22 +164,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvImage.AllocateScalars()
         mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
-        # create and initialize a blank DWI node
-        # TODO: need to clean up DWI-related junk!
-        bValues = vtk.vtkDoubleArray()
-        bValues.Allocate(nFrames)
-        bValues.SetNumberOfComponents(1)
-        bValues.SetNumberOfTuples(nFrames)
-        gradients = vtk.vtkDoubleArray()
-        gradients.Allocate(nFrames*3)
-        gradients.SetNumberOfComponents(3)
-        gradients.SetNumberOfTuples(nFrames)
-
-        bValuesArray = vtk.util.numpy_support.vtk_to_numpy(bValues)
-        gradientsArray = vtk.util.numpy_support.vtk_to_numpy(gradients)
-        bValuesArray[:] = 0
-        gradientsArray[:] = 1
-
         mvNode.SetScene(slicer.mrmlScene)
 
         mat = vtk.vtkMatrix4x4()
@@ -230,24 +177,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvImageArray.T[frameNumber] = frameImageArray
       self.annihilateScalarNode(frame)
 
-    # create additional nodes that are needed for the DWI to be added to the
-    # scene
+    # create additional nodes that are needed for the DWI to be added to the scene
     mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
-    mvDisplayNode.SetScene(slicer.mrmlScene)
-    slicer.mrmlScene.AddNode(mvDisplayNode)
     mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
+    mvDisplayNode.SetScene(slicer.mrmlScene)
     mvDisplayNode.SetDefaultColorMap()
+    slicer.mrmlScene.AddNode(mvDisplayNode)
 
     mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
     mvNode.SetAndObserveImageData(mvImage)
     mvNode.SetNumberOfFrames(nFrames)
-    #mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
-    print("Number of frames :"+str(nFrames))
-
     slicer.mrmlScene.AddNode(mvNode)
-    print('MV node added to the scene')
-
-    mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
     return True
 
@@ -281,7 +221,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if tagValue == '':
           # not found?
           continue
-
+        tagValue = float(tagValue)
         try:
           tagValue2FileList[tagValue].append(file)
         except:
@@ -300,29 +240,35 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # not enough frames
         continue
   
-      firstFrameSize = len(tagValue2FileList[tagValue2FileList.keys()[0]])
+      tagValues = tagValue2FileList.keys()
+      # sort the frames
+      tagValues.sort()
+      firstFrameSize = len(tagValue2FileList[tagValues[0]])
       frameInvalid = False
-      for tagValue,frameFileList in tagValue2FileList.iteritems():
-        if len(frameFileList) != firstFrameSize:
+      for tagValue in tagValues:
+        if len(tagValue2FileList[tagValue]) != firstFrameSize:
           # number of frames does not match
+
           frameInvalid = True
       if frameInvalid == True:
         continue
 
       # now this looks like a serious mv!
-      print 'Found what seems to be a multivolume:'
-      print tagValue2FileList
 
       # initialize the needed attributes for a new mvNode
       frameFileListStr = ""
       frameLabelsStr = ""
       frameLabelsArray = vtk.vtkDoubleArray()
-      for tagValue,frameFileList in tagValue2FileList.iteritems():
+      for tagValue in tagValues:
+        frameFileList = tagValue2FileList[tagValue]
         for file in frameFileList:
           frameFileListStr = frameFileListStr+file+','
 
-        frameLabelsStr = frameLabelsStr+tagValue+','
-        frameLabelsArray.InsertNextValue(float(tagValue))
+        frameLabelsStr = frameLabelsStr+str(tagValue)+','
+        frameLabelsArray.InsertNextValue(tagValue)
+
+      print 'File list: ',frameFileList
+      print 'Labels: ',frameLabelsStr
 
       frameFileListStr = frameFileListStr[:-1]
       frameLabelsStr = frameLabelsStr[:-1]
@@ -346,6 +292,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
         mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
         mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
+        mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
         
         mvNode.SetNumberOfFrames(len(tagValue2FileList))
         mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
