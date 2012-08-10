@@ -176,8 +176,8 @@ class SampleDataLogic:
 
   def loadVolume(self, uri, name):
     self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
-    volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name})
-    if volumeNode:
+    success, volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name}, returnNode=True)
+    if success:
       self.logMessage('<i>finished.</i>\n')
     else:
       self.logMessage('<b>Load failed!</b>\n')
