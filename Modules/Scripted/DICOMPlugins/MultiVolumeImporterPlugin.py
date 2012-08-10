@@ -68,7 +68,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     for file in files:
 
-      slicer.dicomDatabase.loadFileHeader(file)
       value = slicer.dicomDatabase.fileValue(file,self.tags['seriesInstanceUID']) # SeriesInstanceUID
       desc = slicer.dicomDatabase.fileValue(file,self.tags['seriesDescription']) # SeriesDescription
 
@@ -269,7 +268,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     # iterate over all files
     for file in files:
-      slicer.dicomDatabase.loadFileHeader(file)
 
       # iterate over the tags that can be used to separate individual frames
       for frameTag in self.multiVolumeTags.keys():
@@ -341,7 +339,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         # this is DCE, so let's keep the tag values that will be needed for
         # the analysis
         firstFile = frameFileList[0]
-        slicer.dicomDatabase.loadFileHeader(firstFile)
         echoTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['EchoTime'])
         repetitionTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['RepetitionTime'])
         flipAngle = slicer.dicomDatabase.fileValue(firstFile, self.tags['FlipAngle'])
