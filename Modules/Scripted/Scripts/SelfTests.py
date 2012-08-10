@@ -1,7 +1,5 @@
-import os
-import glob
+import traceback
 from __main__ import qt
-from __main__ import vtk
 from __main__ import ctk
 from __main__ import slicer
 
@@ -12,6 +10,16 @@ from __main__ import slicer
 # The purpose is to provide a BIST (http://en.wikipedia.org/wiki/Built-in_self-test)
 # framework for slicer as discussed here: http://na-mic.org/Bug/view.php?id=1922
 #
+
+class ExampleSelfTests(object):
+
+  @staticmethod
+  def closeScene():
+    """Close the scene"""
+    slicer.mrmlScene.Clear(0)
+
+
+
 
 class SelfTests:
   def __init__(self, parent):
@@ -29,6 +37,23 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     #parent.icon = qt.QIcon(':Icons/Medium/SlicerLoadSelfTests.png')
     self.parent = parent
 
+    # 
+    # slicer.selfTests is a dictionary of tests that are registered
+    # here or in other parts of the code.  The key is the name of the test
+    # and the value is a python callable that runs the test and returns
+    # if the test passed or raises and exception if it fails.
+    # the __doc__ attribute of the test is used as a tooltip for the test
+    # button.
+    #
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
+
+    # register the example tests
+    slicer.selfTests['MRMLSceneExists'] = lambda : slicer.app.mrmlScene
+    slicer.selfTests['CloseScene'] = ExampleSelfTests.closeScene
+
 #
 # SelfTests widget
 #
@@ -39,6 +64,7 @@ class SelfTestsWidget:
   """
 
   def __init__(self, parent=None):
+    self.logic = SelfTestsLogic(slicer.selfTests)
     
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -59,9 +85,6 @@ class SelfTestsWidget:
   def exit(self):
     pass
 
-  def updateGUIFromMRML(self, caller, event):
-    pass
-
   # sets up the widget
   def setup(self):
 
@@ -79,11 +102,27 @@ class SelfTestsWidget:
     self.testList.layout().addWidget(self.runAll)
     self.runAll.connect('clicked()', self.onRunAll)
 
+    self.testButtons = {}
+    self.testMapper = qt.QSignalMapper() 
+    self.testMapper.connect('mapped(const QString&)', self.onRun)
+    for test in slicer.selfTests.keys():
+      self.testButtons[test] = qt.QPushButton(test)
+      self.testList.layout().addWidget(self.testButtons[test])
+      self.testMapper.setMapping(self.testButtons[test],test)
+      self.testButtons[test].connect('clicked()', self.testMapper, 'map()')
+
     # Add spacer to layout
     self.layout.addStretch(1)
 
   def onRunAll(self):
-    print("Running all tests...")
+    self.logic.run(continueCheck=self.continueCheck)
+
+  def onRun(self,test):
+    self.logic.run([test,], continueCheck=self.continueCheck)
+
+  def continueCheck(self,logic):
+    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
+    return True
 
   def question(self,text,title='SelfTests'):
     return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x14000) == 0x4000
@@ -91,14 +130,39 @@ class SelfTestsWidget:
   def okayCancel(self,text,title='SelfTests'):
     return qt.QMessageBox.question(slicer.util.mainWindow(), title, text, 0x400400) == 0x400
 
+class SelfTestsLogic:
+  """Logic to handle invoking the tests and reporting the results"""
+
+  def __init__(self,selfTests):
+    self.selfTests = selfTests
+    self.results = {}
+    self.passed = []
+    self.failed = []
+
+  def run(self,tests=None,continueCheck=None):
+    if not tests:
+      tests = self.selfTests.keys()
+
+    for test in tests:
+      try:
+        result = self.selfTests[test]()
+        self.passed.append(test)
+      except Exception, e:
+        traceback.print_exc()
+        result = "Failed with: %s" % e
+        self.failed.append(test)
+      self.results[test] = result
+      if continueCheck:
+        if not continueCheck(self):
+          return
+
 def SelfTestsTest():
-  w = slicer.modules.selftests.widgetRepresentation()
-  runAllButton = slicer.util.findChildren(w.dicomApp, text='Run All')[0]
-  runAllButton.click()
-
-
+  if hasattr(slicer,'selfTests'):
+    logic = SelfTestsLogic(slicer.selfTests.keys())
+    logic.run()
+  print(logic.results)
   print("SelfTestsTest Passed!")
-  return True
+  return logic.failed == []
 
 def SelfTestsDemo():
   pass
