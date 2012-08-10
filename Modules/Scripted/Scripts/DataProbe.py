@@ -53,6 +53,7 @@ class DataProbeInfoWidget(object):
 
   def __init__(self, parent=None,type='small'):
     self.type = type
+    self.nameSize = 24
 
     # keep list of pairs: [observee,tag] so they can be removed easily
     self.styleObserverTags = []
@@ -74,6 +75,14 @@ class DataProbeInfoWidget(object):
 
   def __del__(self):
     self.removeObservers()
+
+  def fitName(self,name):
+    if len(name) > self.nameSize:
+      preSize = self.nameSize / 2
+      postSize = preSize - 3
+      name = name[:preSize] + "..." + name[-postSize:]
+    return name
+
 
   def removeObservers(self):
     # remove observers and reset
@@ -211,7 +220,7 @@ class DataProbeInfoWidget(object):
         ijkLabel = ""
         valueLabel = ""
         if volumeNode:
-          nameLabel = volumeNode.GetName()
+          nameLabel = self.fitName(volumeNode.GetName())
           xyToIJK = layerLogic.GetXYToIJKTransform().GetMatrix()
           ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
           ijk = []
