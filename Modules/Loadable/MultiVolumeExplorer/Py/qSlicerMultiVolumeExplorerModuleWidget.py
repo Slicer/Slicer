@@ -109,6 +109,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__vfSelector.setMRMLScene(slicer.mrmlScene)
     self.__vfSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onVFMRMLSceneChanged)
     self.__vfSelector.addEnabled = 1
+    self.__vfSelector.enabled = 0
     # do not show "children" of vtkMRMLScalarVolumeNode
     self.__vfSelector.hideChildNodeTypes = ["vtkMRMLDiffusionWeightedVolumeNode", \
         "vtkMRMLDiffusionTensorVolumeNode", "vtkMRMLVectorVolumeNode"]
@@ -300,25 +301,30 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       Helper.SetBgFgVolumes(self.__mvNode.GetID(), None)
 
-      if self.__mvNode != None:
-        nFrames = self.__mvNode.GetNumberOfFrames()
-        self.__mdSlider.minimum = 0
-        self.__mdSlider.maximum = nFrames-1
-        self.__chartTable.SetNumberOfRows(nFrames)
+      nFrames = self.__mvNode.GetNumberOfFrames()
+      self.__mdSlider.minimum = 0
+      self.__mdSlider.maximum = nFrames-1
+      self.__chartTable.SetNumberOfRows(nFrames)
 
-        if self.__cvn != None:
-          self.__cvn.SetChartNodeID(self.__cn.GetID())
+      if self.__cvn != None:
+        self.__cvn.SetChartNodeID(self.__cn.GetID())
 
       self.ctrlFrame.enabled = True
       self.plotFrame.enabled = True
       self.ctrlFrame.collapsed = 0
       self.plotFrame.collapsed = 0
+
+      mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
+      mvNodeFrameCopy.SetName(self.__mvNode.GetName()+' frame')
+      mvNodeFrameCopy.SetScene(slicer.mrmlScene)
+      slicer.mrmlScene.AddNode(mvNodeFrameCopy)
+      self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
+
     else:
       self.ctrlFrame.enabled = False
       self.plotFrame.enabled = False
       self.ctrlFrame.collapsed = 1
       self.plotFrame.collapsed = 1
-
 
   def onPlayButtonToggled(self,checked):
     if self.__mvNode == None:
