@@ -155,7 +155,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         return False
 
       if frameNumber == 0:
-        # initialize DWI node based on the parameters of the first frame
         frameImage = frame.GetImageData()
         frameExtent = frameImage.GetExtent()
         frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
@@ -178,9 +177,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
 
       mvImageArray.T[frameNumber] = frameImageArray
-      self.annihilateScalarNode(frame)
 
-    # create additional nodes that are needed for the DWI to be added to the scene
     mvDisplayNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeDisplayNode')
     mvDisplayNode.SetReferenceCount(mvDisplayNode.GetReferenceCount()-1)
     mvDisplayNode.SetScene(slicer.mrmlScene)
@@ -193,17 +190,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     slicer.mrmlScene.AddNode(mvNode)
 
     return True
-
-  # leave no trace of the temporary nodes
-  def annihilateScalarNode(self, node):
-    return
-    dn = node.GetDisplayNode()
-    sn = node.GetStorageNode()
-    node.SetAndObserveDisplayNodeID(None)
-    node.SetAndObserveStorageNodeID(None)
-    slicer.mrmlScene.RemoveNode(dn)
-    slicer.mrmlScene.RemoveNode(sn)
-    slicer.mrmlScene.RemoveNode(node)
 
   def initMultiVolumes(self, files):
     tag2ValueFileList = {}
