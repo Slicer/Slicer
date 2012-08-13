@@ -28,6 +28,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['EchoTime'] = "0018,0081"
     self.multiVolumeTags['FlipAngle'] = "0018,1314"
     self.multiVolumeTags['RepetitionTime'] = "0018,0080"
+    self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
 
     for tagName,tagVal in self.multiVolumeTags.iteritems():
       self.tags[tagName] = tagVal
@@ -37,6 +38,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['EchoTime'] = "ms"
     self.multiVolumeTagsUnits['FlipAngle'] = "deg"
     self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
+    self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -121,7 +123,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     nFiles = len(files)
     filesPerFrame = nFiles/nFrames
     frames = []
-
+    
     mvImage = vtk.vtkImageData()
     mvImageArray = None
 
@@ -132,7 +134,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for frameNumber in range(nFrames):
       
       sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
-      sNode.SetFileName(files[0])
       sNode.ResetFileNameList();
 
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
@@ -143,7 +144,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         return
       for f in svLoadables[0].files:
         sNode.AddFileName(f)
-      
+
+      sNode.SetFileName(frameFileList[0]) # only used when num files/frame = 1
       sNode.SetSingleFile(0)
       frame = slicer.vtkMRMLScalarVolumeNode()
       sNode.ReadData(frame)
@@ -174,6 +176,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
+
       mvImageArray.T[frameNumber] = frameImageArray
       self.annihilateScalarNode(frame)
 
@@ -237,7 +240,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         continue
 
       if len(tagValue2FileList)<2:
-        # not enough frames
+        # not enough frames for this tag to be a multivolume
         continue
   
       tagValues = tagValue2FileList.keys()
@@ -280,8 +283,13 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(len(tagValue2FileList)))
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
+      mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
 
-      if frameTag == 'TriggerTime':
+      mvNode.SetNumberOfFrames(len(tagValue2FileList))
+      mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
+      mvNode.SetLabelArray(frameLabelsArray)
+
+      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime':
         # this is DCE, so let's keep the tag values that will be needed for
         # the analysis
         firstFile = frameFileList[0]
@@ -292,13 +300,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
         mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
         mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
-        mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
-        
-        mvNode.SetNumberOfFrames(len(tagValue2FileList))
-        mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
-        mvNode.SetLabelArray(frameLabelsArray)
 
-        multivolumes.append(mvNode)
+      # add the node
+      multivolumes.append(mvNode)
 
     return multivolumes
 
