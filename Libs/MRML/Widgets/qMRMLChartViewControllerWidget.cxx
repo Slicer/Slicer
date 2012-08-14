@@ -77,16 +77,10 @@ void qMRMLChartViewControllerWidgetPrivate::setupPopupUi()
   this->PopupWidget->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
   this->Ui_qMRMLChartViewControllerWidget::setupUi(this->PopupWidget);
   
-  // configure the Chart selector
-  this->chartComboBox->addAttribute("vtkMRMLChartNode", "Chart", "1");
-
   // Connect Chart selector
   this->connect(this->chartComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                 SLOT(onChartNodeSelected(vtkMRMLNode*)));
 
-  // configure the Array selector
-  this->arrayComboBox->addAttribute("vtkMRMLDoubleArrayNode", "Array", "1");
-  
   // Connect Array selector
   this->connect(this->arrayComboBox, SIGNAL(checkedNodesChanged()),
                 SLOT(onArrayNodesSelected()));
