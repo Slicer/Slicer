@@ -488,10 +488,10 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
 {
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
-  int labelMap = 0;
+  bool labelMap = false;
   if ( loadingOptions & 1 )    // labelMap is true
     {
-    labelMap = 1;
+    labelMap = true;
     }
 
   this->GetMRMLScene()->SaveStateForUndo();
