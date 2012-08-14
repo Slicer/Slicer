@@ -407,6 +407,12 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::CreateDefaultDisplayNodes()
+{
+  // does nothing by default
+}
+
+//---------------------------------------------------------------------------
 int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
   std::vector<vtkMRMLDisplayNode*>::iterator it =

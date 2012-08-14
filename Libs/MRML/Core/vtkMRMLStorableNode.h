@@ -140,13 +140,24 @@ public:
     return this->StorageNodes;
     };
 
-  /// Create a storage node for this node type
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return NULL;
-    };
+  /// Create a storage node for this node type or NULL if it doesn't have one.
+  /// Null by default.
+  /// This must be overwritten by subclasses that use storage nodes.
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   /// Returns true if the node is more recent than the file on disk.
+  /// This information can be used by the application to know which node
+  /// has been modified since it has been last read or written.
+  /// Only storable properties are considered:
+  /// even if a "non storable" property (e.g. color of a mesh) is modified after
+  /// the node is being loaded, GetModifiedSinceRead() should
+  /// return false; the new property value won't be stored on file (only in the
+  /// MRML scene).
+  /// By default, calling Modified() on the node doesn't make the node "modified
+  /// since read", only calling Modified() on StorableModifiedTime does.
+  /// GetModifiedSinceRead() can be overwritten to handle special storable
+  /// property modification time.
+  /// \sa GetStoredTime() StorableModifiedTime Modified()
   virtual bool GetModifiedSinceRead();
 
  protected:
@@ -169,10 +180,23 @@ public:
   std::string SlicerDataType;
   std::vector<vtkMRMLStorageNode *> StorageNodes;
 
-  /// Compute the oldest time when the storable nodes were read/written.
+  /// Compute when the storable node was read/written for the last time.
+  /// This information is used by GetModifiedSinceRead() to know if the node
+  /// has been modified since the last time it was read or written
+  /// By default, it retrieves the information from the associated storage
+  /// nodes.
+  /// \sa GetModifiedSinceRead(), StorableModifiedTime,
+  /// vtkMRMLStorageNode::GetStoredTime()
   virtual vtkTimeStamp GetStoredTime();
 
-  /// Time when a storable property was last modified
+  /// Last time when a storable property was modified. This is used to know
+  /// if the node has been modified since the last time it was read or written
+  /// on disk.
+  /// The time stamp must be updated (Modified()) - in the derived classes - any
+  /// time a "storable" property is changed. A storable property is a property
+  /// that is stored on disk, not in the MRML scene: e.g. points and cells for a
+  /// Model, voxel intensity or origin for a Volume...
+  /// \sa GetModifiedSinceRead(), GetStoredTime()
   vtkTimeStamp StorableModifiedTime;
 };
 

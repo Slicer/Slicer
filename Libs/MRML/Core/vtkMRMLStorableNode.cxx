@@ -489,6 +489,12 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+vtkMRMLStorageNode* vtkMRMLStorableNode::CreateDefaultStorageNode()
+{
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLStorableNode::GetModifiedSinceRead()
 {
   vtkTimeStamp storedTime = this->GetStoredTime();

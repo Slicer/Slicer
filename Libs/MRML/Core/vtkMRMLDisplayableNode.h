@@ -182,7 +182,12 @@ public:
   /// has not yet any associated display node in the scene, then
   /// DisplayModifiedEvent is not fired until found for the first time in
   /// the scene, e.g. Get(Nth)DisplayNode(), UpdateScene()...
-  /// PolyDataModifiedEvent is fired when PloyData is changed
+  /// PolyDataModifiedEvent is fired when PolyData is changed.
+  /// While it is possible for the subclasses to fire PolyDataModifiedEvent
+  /// without modifying the polydata, it is not recommended to do so as it
+  /// doesn't mark the polydata as modified, which my result in an incorrect
+  /// return value for GetModifiedSinceRead()
+  /// \sa GetModifiedSinceRead()
   enum
     {
       DisplayModifiedEvent = 17000,
@@ -190,16 +195,9 @@ public:
     };
 
   /// Create and observe default display node(s)
-  ///
-  virtual void CreateDefaultDisplayNodes()
-    {
-    };
-    
-  /// Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode()
-    {
-    return Superclass::CreateDefaultStorageNode();
-    };
+  /// Does nothing by default, must be reimplemented by subclasses that have
+  /// display nodes.
+  virtual void CreateDefaultDisplayNodes();
 
   /// TODO: Change it to Get/SetVisibility() for consistency with
   /// vtkMRMLDisplayNode.
@@ -212,7 +210,15 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
+  /// Reimplemented to take into account the modified time of the polydata.
+  /// Returns true if the node (default behavior) or the polydata are modified
+  /// since read/written.
+  /// Note: The MTime of the polydata is used to know if it has been modified.
+  /// So if you invoke PolyDataModifiedEvent without calling Modified() on the
+  /// polydata, GetModifiedSinceRead() won't return true.
+  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   virtual bool GetModifiedSinceRead();
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();
