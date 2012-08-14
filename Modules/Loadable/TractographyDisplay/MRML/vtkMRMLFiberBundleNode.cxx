@@ -442,7 +442,6 @@ void vtkMRMLFiberBundleNode::SetSelectWithAnnotationNode(int _arg)
   if (this->SelectWithAnnotationNode != _arg)
     { 
     this->SelectWithAnnotationNode = _arg;
-    this->StorableModifiedTime.Modified();
     this->Modified();
     this->UpdateReferences();
     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
@@ -466,7 +465,6 @@ void vtkMRMLFiberBundleNode::SetSelectionWithAnnotationNodeMode(int _arg)
       this->ExtractPolyDataGeometry->ExtractBoundaryCellsOff();
     }
 
-    this->StorableModifiedTime.Modified();
     this->Modified();
     this->UpdateReferences();
     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);

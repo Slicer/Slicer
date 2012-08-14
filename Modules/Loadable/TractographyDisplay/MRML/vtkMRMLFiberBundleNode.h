@@ -120,6 +120,9 @@ public:
   //--------------------------------------------------------------------------
   /// Interactive Selection Support
   //--------------------------------------------------------------------------
+  
+  ///
+  /// Enable or disable the selection with an annotation node
   virtual void SetSelectWithAnnotationNode(int);
   vtkGetMacro(SelectWithAnnotationNode, int);
   vtkBooleanMacro(SelectWithAnnotationNode, int);
@@ -130,6 +133,9 @@ public:
     NegativeAnnotationNodeSelection
   };
 
+
+  ///
+  /// Set the mode (positive or negative) of the selection with the annotation node
   vtkGetMacro(SelectionWithAnnotationNodeMode, int);
   virtual void SetSelectionWithAnnotationNodeMode(int);
   virtual void SetSelectionWithAnnotationNodeModeToPositive()
