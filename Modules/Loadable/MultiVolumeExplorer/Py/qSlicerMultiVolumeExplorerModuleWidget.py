@@ -28,6 +28,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     # chart node
     self.__cn = slicer.vtkMRMLChartNode()
+    self.__cn.SetScene(slicer.mrmlScene)
     slicer.mrmlScene.AddNode(self.__cn)
 
     # image play setup
@@ -192,10 +193,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       nComponents = self.__mvNode.GetNumberOfFrames()
       dataNodes = {}
       for k in labeledVoxels.keys():
-        dataNodes[k] = slicer.mrmlScene.CreateNodeByClass('vtkMRMLDoubleArrayNode')
-        dataNodes[k].SetReferenceCount(1)
+        dataNodes[k] = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
         dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
-        slicer.mrmlScene.AddNode(dataNodes[k])
       mvImage = self.__mvNode.GetImageData()
       for c in range(nComponents):
         for k in labeledVoxels.keys():
@@ -211,12 +210,13 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       # setup color node
       colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
-      lut = labelNode.GetDisplayNode().GetColorNode().GetLookupTable()
+      colorNode = labelNode.GetDisplayNode().GetColorNode()
+      lut = colorNode.GetLookupTable()
 
       # add initialized data nodes to the chart
       self.__cn.ClearArrays()
       for k in labeledVoxels.keys():
-        name = 'Label '+str(k)
+        name = colorNode.GetColorName(k)
         self.__cn.AddArray(name, dataNodes[k].GetID())
         #self.__cn.SetProperty(name, "lookupTable", colorNodeID)
         rgb = lut.GetTableValue(int(k))
@@ -224,6 +224,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
         self.__cn.SetProperty(name, "color", colorStr)
         self.__cvn.Modified()
+
+      self.__cn.SetProperty('default','xAxisLabel',mvNode.GetLabelName())
+      self.__cn.SetProperty('default','yAxisLabel','mean image intensity')
+      self.__cvn.SetChartNodeID(self.__cn.GetID())
 
   def RGBtoHex(self,r,g,b):
     return '#%02X%02X%02X' % (r,g,b)
