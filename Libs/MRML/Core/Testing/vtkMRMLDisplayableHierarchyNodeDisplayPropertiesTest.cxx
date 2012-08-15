@@ -66,7 +66,7 @@ int DEFAULT_HIERARCHY_VISIBILITY[3] = {1, 1, 1};
 } // end of anonymous namespace
 
 //---------------------------------------------------------------------------
-int vtkMRMLDisplayableHierarchyNodeTestDisplayProperties(int vtkNotUsed(argc),
+int vtkMRMLDisplayableHierarchyNodeDisplayPropertiesTest(int vtkNotUsed(argc),
                                                          char * vtkNotUsed(argv)[] )
 {
   if (!TestExpand())
