@@ -29,6 +29,10 @@ int main( int argc, char * argv[] )
     vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile> reader = vtkSmartPointer<vtkITKArchetypeDiffusionTensorImageReaderFile>::New();
     reader->SetArchetype(InputVolume.c_str() );
     reader->SetSingleFile(1);
+    reader->SetUseOrientationFromFile(1);
+    reader->SetUseNativeOriginOn();
+    reader->SetOutputScalarTypeToNative();
+    reader->SetDesiredCoordinateOrientationToNative();
     reader->Update();
 
     if( reader->GetOutput()->GetPointData()->GetTensors() == NULL )
@@ -48,6 +52,10 @@ int main( int argc, char * argv[] )
     if (InputROI.length() > 0)
     {
       reader2->SetArchetype(InputROI.c_str());
+      reader2->SetUseOrientationFromFile(1);
+      reader2->SetUseNativeOriginOn();
+      reader2->SetOutputScalarTypeToNative();
+      reader2->SetDesiredCoordinateOrientationToNative();
       reader2->SetSingleFile(1);
       reader2->Update();
 
