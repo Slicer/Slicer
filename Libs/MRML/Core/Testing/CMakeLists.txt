@@ -9,7 +9,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLColorTableNodeTest1.cxx
   vtkMRMLColorTableStorageNodeTest1.cxx
   vtkMRMLCrosshairNodeTest1.cxx
-  vtkMRMLdGEMRICProceduralColorNodeTest1.cxx
   vtkMRMLDiffusionImageVolumeNodeTest1.cxx
   vtkMRMLDiffusionTensorDisplayPropertiesNodeTest1.cxx
   vtkMRMLDiffusionTensorVolumeDisplayNodeTest1.cxx
@@ -17,24 +16,24 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLDiffusionTensorVolumeSliceDisplayNodeTest1.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1.cxx
   vtkMRMLDiffusionWeightedVolumeNodeTest1.cxx
-  vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLDisplayNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeTest2.cxx
+  vtkMRMLDisplayableHierarchyNodeTest3.cxx
   vtkMRMLDisplayableHierarchyNodeTestDisplayProperties.cxx
+  vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLDoubleArrayNodeTest1.cxx
   vtkMRMLFiducialListNodeTest1.cxx
   vtkMRMLFiducialListStorageNodeTest1.cxx
   vtkMRMLFreeSurferModelOverlayStorageNodeTest1.cxx
   vtkMRMLFreeSurferModelStorageNodeTest1.cxx
   vtkMRMLFreeSurferProceduralColorNodeTest1.cxx
+  vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1.cxx
   vtkMRMLGlyphableVolumeDisplayNodeTest1.cxx
   vtkMRMLGlyphableVolumeSliceDisplayNodeTest1.cxx
-  vtkMRMLGlyphVolumeDisplayPropertiesNodeTest1.cxx
   vtkMRMLGridTransformNodeTest1.cxx
   vtkMRMLHierarchyNodeTest1.cxx
   vtkMRMLHierarchyNodeTest3.cxx
-  vtkMRMLDisplayableHierarchyNodeTest1.cxx
-  vtkMRMLDisplayableHierarchyNodeTest2.cxx
-  vtkMRMLDisplayableHierarchyNodeTest3.cxx
   vtkMRMLInteractionNodeTest1.cxx
   vtkMRMLLabelMapVolumeDisplayNodeTest1.cxx
   vtkMRMLLayoutNodeTest1.cxx
@@ -44,9 +43,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLModelHierarchyNodeTest1.cxx
   vtkMRMLModelNodeTest1.cxx
   vtkMRMLModelStorageNodeTest1.cxx
+  vtkMRMLNRRDStorageNodeTest1.cxx
   vtkMRMLNodeTest1.cxx
   vtkMRMLNonlinearTransformNodeTest1.cxx
-  vtkMRMLNRRDStorageNodeTest1.cxx
   vtkMRMLOrthogonalLinePlotNodeTest1.cxx
   vtkMRMLPETProceduralColorNodeTest1.cxx
   vtkMRMLPlotNodeTest1.cxx
@@ -58,16 +57,16 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLScalarVolumeNodeTest2.cxx
   vtkMRMLSceneAddSingletonTest.cxx
   vtkMRMLSceneBatchProcessTest.cxx
-  vtkMRMLSceneImportTest.cxx
-  vtkMRMLSceneImportIDConflictTest.cxx
   vtkMRMLSceneIDTest.cxx
+  vtkMRMLSceneImportIDConflictTest.cxx
+  vtkMRMLSceneImportTest.cxx
   vtkMRMLSceneTest1.cxx
   #vtkMRMLSceneTest2.cxx
-  vtkMRMLSceneViewStorageNodeTest1.cxx
   vtkMRMLSceneViewNodeEventsTest.cxx
   vtkMRMLSceneViewNodeRestoreSceneTest.cxx
   vtkMRMLSceneViewNodeStoreSceneTest.cxx
   vtkMRMLSceneViewNodeTest1.cxx
+  vtkMRMLSceneViewStorageNodeTest1.cxx
   vtkMRMLSelectionNodeTest1.cxx
   vtkMRMLSliceCompositeNodeTest1.cxx
   vtkMRMLSliceNodeTest1.cxx
@@ -75,9 +74,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLStorableNodeTest1.cxx
   vtkMRMLStorageNodeTest1.cxx
   vtkMRMLTensorVolumeNodeTest1.cxx
-  vtkMRMLTransformableNodeTest1.cxx
   vtkMRMLTransformNodeTest1.cxx
   vtkMRMLTransformStorageNodeTest1.cxx
+  vtkMRMLTransformableNodeTest1.cxx
   vtkMRMLUnstructuredGridDisplayNodeTest1.cxx
   vtkMRMLUnstructuredGridNodeTest1.cxx
   vtkMRMLUnstructuredGridStorageNodeTest1.cxx
@@ -87,9 +86,10 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeArchetypeStorageNodeTest1.cxx
   vtkMRMLVolumeDisplayNodeTest1.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
-  vtkMRMLVolumeNodeTest1.cxx
   vtkMRMLVolumeNodeEventsTest.cxx
+  vtkMRMLVolumeNodeTest1.cxx
   vtkMRMLXYPlotManagerNodeTest1.cxx
+  vtkMRMLdGEMRICProceduralColorNodeTest1.cxx
   vtkObserverManagerTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
