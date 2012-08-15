@@ -19,6 +19,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLDiffusionWeightedVolumeNodeTest1.cxx
   vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLDisplayNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeTestDisplayProperties.cxx
   vtkMRMLDoubleArrayNodeTest1.cxx
   vtkMRMLFiducialListNodeTest1.cxx
   vtkMRMLFiducialListStorageNodeTest1.cxx
@@ -129,6 +130,7 @@ SIMPLE_TEST( vtkMRMLHierarchyNodeTest3 )
 SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTest1 )
 SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTest2 )
 SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTest3 )
+SIMPLE_TEST( vtkMRMLDisplayableHierarchyNodeTestDisplayProperties )
 SIMPLE_TEST( vtkMRMLInteractionNodeTest1 )
 SIMPLE_TEST( vtkMRMLLabelMapVolumeDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLLayoutNodeTest1 )
