@@ -674,9 +674,13 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   LpsToRasMatrix->SetElement(0,0,-1);
   LpsToRasMatrix->SetElement(1,1,-1);
 
-  vtkMatrix4x4::Multiply4x4(LpsToRasMatrix,IjkToLpsMatrix, RasToIjkMatrix);
+  vtkMatrix4x4* LPSMeasurementFrameMatrix = vtkMatrix4x4::New();
+  LPSMeasurementFrameMatrix->DeepCopy(this->MeasurementFrameMatrix);
 
+  vtkMatrix4x4::Multiply4x4(LpsToRasMatrix,IjkToLpsMatrix, RasToIjkMatrix);
+  vtkMatrix4x4::Multiply4x4(LpsToRasMatrix,LPSMeasurementFrameMatrix, this->MeasurementFrameMatrix);
   LpsToRasMatrix->Delete();
+  LPSMeasurementFrameMatrix->Delete();
 
   // If it looks like the pipeline did not provide the spacing and
   // origin, modify the spacing and origin with the defaults
