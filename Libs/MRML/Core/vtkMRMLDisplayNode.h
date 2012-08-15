@@ -105,111 +105,135 @@ public:
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  /// 
-  /// Model's color (r,g,b)
+  /// Model's color (r,g,b).
+  /// Gray (0.5, 0.5, 0.5) by default.
+  /// \sa SelectedColor, Ambient, Diffuse, Specular, Power
   vtkSetVector3Macro(Color, double);
   vtkGetVector3Macro(Color, double);
 
-  /// Descripton:
-  /// Node's selected ambient color (r,g,b)
+  /// Node's selected ambient color (r,g,b).
+  /// Red (1., 0., 0.) by default.
+  /// \sa Color, SelectedAmbient, SelectedSpecular
   vtkSetVector3Macro(SelectedColor, double);
   vtkGetVector3Macro(SelectedColor, double);
-  /// 
-  /// Node's selected ambient
+
+  /// Node's selected ambient.
+  /// 0.4 by default.
+  /// \sa SelectedColor, Ambient, SelectedSpecular
   vtkSetMacro(SelectedAmbient, double);
   vtkGetMacro(SelectedAmbient, double);
-  /// 
-  /// Node's selected specular
+
+  /// Node's selected specular.
+  /// 0.5 by default.
+  /// \sa SelectedColor, SelectedAmbient, Specular
   vtkSetMacro(SelectedSpecular, double);
   vtkGetMacro(SelectedSpecular, double);
-  
-  /// 
-  /// Opacity of the surface expressed as a number from 0 to 1
+
+  /// Opacity of the surface expressed as a number from 0 to 1.
+  /// Opaque (1.) by default.
+  /// \sa Color, Visibility, Clipping
   vtkSetMacro(Opacity, double);
   vtkGetMacro(Opacity, double);
 
-  /// 
-  /// Ambient of the surface expressed as a number from 0 to 100
+  /// Ambient of the surface expressed as a number from 0 to 1.
+  /// 0. by default.
+  /// \sa Color, SelectedAmbient, Diffuse, Specular, Power
   vtkSetMacro(Ambient, double);
   vtkGetMacro(Ambient, double);
-  
-  /// 
-  /// Diffuse of the surface expressed as a number from 0 to 100
+
+  /// Diffuse of the surface expressed as a number from 0 to 1.
+  /// 1. by default.
+  /// \sa Color, Ambient, Specular, Power
   vtkSetMacro(Diffuse, double);
   vtkGetMacro(Diffuse, double);
-  
-  /// 
-  /// Specular of the surface expressed as a number from 0 to 100
+
+  /// Specular of the surface expressed as a number from 0 to 1.
+  /// 0. by default.
+  /// \sa Color, Ambient, Diffuse, Power
   vtkSetMacro(Specular, double);
   vtkGetMacro(Specular, double);
 
-  /// 
-  /// Power of the surface expressed as a number from 0 to 100
+  /// Power of the surface specularity expressed as a number from 0 to 100.
+  /// 1. by default.
+  /// \sa Color, Ambient, Diffuse, Specular
   vtkSetMacro(Power, double);
   vtkGetMacro(Power, double);
 
-  /// 
   /// Indicates if the surface is visible
+  /// True by default.
+  /// \sa Color, Opacity, Clipping
   vtkBooleanMacro(Visibility, int);
   vtkGetMacro(Visibility, int);
   vtkSetMacro(Visibility, int);
 
-  /// 
-  /// Specifies whether to clip the surface with the slice planes
+  /// Specifies whether to clip the surface with the slice planes.
+  /// 0 by default.
+  /// \sa Visibility, SliceIntersectionVisibility
   vtkBooleanMacro(Clipping, int);
   vtkGetMacro(Clipping, int);
   vtkSetMacro(Clipping, int);
 
-  /// 
-  /// Specifies whether to show model intersections on slice planes
+  /// Specifies whether to show model intersections on slice planes.
+  /// 0 by default.
+  /// \sa Visibility, Clipping
   vtkBooleanMacro(SliceIntersectionVisibility, int);
   vtkGetMacro(SliceIntersectionVisibility, int);
   vtkSetMacro(SliceIntersectionVisibility, int);
 
-  /// 
-  /// Indicates whether to cull (not render) the backface of the surface
+  /// Indicates whether to cull (not render) the backface of the surface.
+  /// 1 by default.
+  /// \sa Visibility, Clipping
   vtkBooleanMacro(BackfaceCulling, int);
   vtkGetMacro(BackfaceCulling, int);
   vtkSetMacro(BackfaceCulling, int);
 
-  /// 
-  /// Indicates whether to render the scalar value associated with each polygon vertex
+  /// Indicates whether to render the scalar value associated with each polygon
+  /// vertex.
+  /// 0 by default.
+  /// \sa Visibility, VectorVisibility, TensorVisibility
   vtkBooleanMacro(ScalarVisibility, int);
   vtkGetMacro(ScalarVisibility, int);
   vtkSetMacro(ScalarVisibility, int);
 
-  /// 
-  /// Indicates whether to render the vector value associated with each polygon vertex
+  /// Indicates whether to render the vector value associated with each polygon
+  /// vertex.
+  /// 0 by default.
+  /// \sa Visibility, ScalarVisibility, TensorVisibility
   vtkBooleanMacro(VectorVisibility, int);
   vtkGetMacro(VectorVisibility, int);
   vtkSetMacro(VectorVisibility, int);
 
-  /// 
-  /// Indicates whether to render the tensor value associated with each polygon vertex
+  /// Indicates whether to render the tensor value associated with each polygon
+  /// vertex.
+  /// 0 by default.
+  /// \sa Visibility, ScalarVisibility, VectorVisibility
   vtkBooleanMacro(TensorVisibility, int);
   vtkGetMacro(TensorVisibility, int);
   vtkSetMacro(TensorVisibility, int);
 
-
-  /// 
-  /// Indicates whether to use scalar range from polydata or the one specidied by ScalarRange
+  /// Indicates whether to use scalar range from polydata or the one specidied
+  /// by ScalarRange.
+  /// 1 by default.
+  /// \sa ScalarRange
   vtkBooleanMacro(AutoScalarRange, int);
   vtkGetMacro(AutoScalarRange, int);
   vtkSetMacro(AutoScalarRange, int);
 
-  /// 
-  /// Range of scalar values to render rather than the single color designated by colorName
+  /// Range of scalar values to render rather than the single color designated
+  /// by colorName.
+  /// (0, 100) by default.
   vtkSetVector2Macro(ScalarRange, double);
   vtkGetVector2Macro(ScalarRange, double);
 
-
-  /// 
-  /// Associated ImageData
+  /// Associated ImageData to apply as texture.
+  /// No texture (NULL) by default.
+  /// \sa InterpolateTexture
   vtkGetObjectMacro(TextureImageData, vtkImageData);
   void SetAndObserveTextureImageData(vtkImageData *ImageData);
 
-  /// 
-  /// Indicates whether to use interpolate texture
+  /// Indicates whether to use interpolate texture.
+  /// 0 by default.
+  /// \sa TextureImageData
   vtkBooleanMacro(InterpolateTexture, int);
   vtkGetMacro(InterpolateTexture, int);
   vtkSetMacro(InterpolateTexture, int);
