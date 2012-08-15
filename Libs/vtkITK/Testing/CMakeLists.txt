@@ -36,3 +36,25 @@ add_test(
   NAME VTKITKBSplineTransform
   COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:VTKITKBSplineTransform> VTKITKBSplineTransform
   )
+
+slicer_add_python_unittest(SCRIPT vtkITKArchetypeDiffusionTensorReaderFile.py)
+slicer_add_python_unittest(SCRIPT vtkITKArchetypeScalarReaderFile.py)
+ 
+
+set(KIT_PYTHON_SCRIPTS
+  vtkITKArchetypeDiffusionTensorReaderFile.py
+  vtkITKArchetypeScalarReaderFile
+  )
+
+set(KIT_PYTHON_RESOURCES
+  )
+
+ctkMacroCompilePythonScript(
+  TARGET_NAME vtkITKTests
+  SCRIPTS "${KIT_PYTHON_SCRIPTS}"
+  RESOURCES "${KIT_PYTHON_RESOURCES}"
+  DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+  INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
+  NO_INSTALL_SUBDIR
+  )
+
