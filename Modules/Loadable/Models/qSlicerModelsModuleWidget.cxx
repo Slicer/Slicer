@@ -90,19 +90,7 @@ void qSlicerModelsModuleWidget::setup()
   // add an add hierarchy right click action on the scene and hierarchy nodes
   connect(d->ModelHierarchyTreeView,  SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
-  bool expRet = connect(d->ModelHierarchyTreeView, SIGNAL(expanded(QModelIndex)),
-          this, SLOT(onExpanded(QModelIndex)));
-  bool colRet = connect(d->ModelHierarchyTreeView, SIGNAL(collapsed(QModelIndex)),
-          this, SLOT(onCollapsed(QModelIndex)));
-  if (!expRet)
-    {
-    qDebug() << "Connecting expanded failed";
-    }
-  if (!colRet)
-    {
-    qDebug() << "Connecting collapsed failed";
-    }
-  
+
   d->InsertHierarchyAction = new QAction(tr("Insert hierarchy"), this);
   d->ModelHierarchyTreeView->prependSceneMenuAction(d->InsertHierarchyAction);
   connect(d->InsertHierarchyAction, SIGNAL(triggered()),
@@ -138,6 +126,8 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
     d->ModelHierarchyTreeView->sceneModel())->setColorColumn(1);
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
     d->ModelHierarchyTreeView->sceneModel())->setOpacityColumn(2);
+  qobject_cast<qMRMLSceneModelHierarchyModel*>(
+    d->ModelHierarchyTreeView->sceneModel())->setExpandColumn(0);
 
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
     d->ModelHierarchyTreeView->sceneModel())->setColumnCount(3);
@@ -285,54 +275,6 @@ void qSlicerModelsModuleWidget::onCurrentNodeChanged(vtkMRMLNode* newCurrentNode
     {
     d->ModelHierarchyTreeView->removeNodeMenuAction(d->InsertHierarchyAction);
     }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onCollapsed(const QModelIndex & index)
-{
-  Q_D(qSlicerModelsModuleWidget);
-//  qDebug() << "qSlicerModelsModuleWidget::onCollapsed";
-  
-  vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-  if (!node)
-    {
-    qDebug() << "qSlicerModelsModuleWidget::onCollapsed: node not found for this index";
-    return;
-    }
-  vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-  if (!hnode)
-    {
-    qWarning() << "qSlicerModelsModuleWidget::onCollapsed: node is not a displayable hierarchy node";
-    return;
-    }
-//  qDebug() << "qSlicerModelsModuleWidget::onCollapsed: found displayable hierarchy node "<< hnode->GetID();
-
-  hnode->SetExpanded(0);
-//  qDebug() << "qSlicerModelsModuleWidget::onCollapsed: set hierarchy node to collapsed";
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onExpanded(const QModelIndex & index)
-{
-  Q_D(qSlicerModelsModuleWidget);
-//  qDebug() << "qSlicerModelsModuleWidget::onExpanded";
-  
-  vtkMRMLNode *node = d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-  if (!node)
-    {
-    qWarning() << "qSlicerModelsModuleWidget::onExpanded: node not found for this index";
-    return;
-    }
-  vtkMRMLDisplayableHierarchyNode *hnode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
-  if (!hnode)
-    {
-    qWarning() << "qSlicerModelsModuleWidget::onExpanded: node is not a displayable hierarchy node";
-    return;
-    }
-//  qDebug() << "qSlicerModelsModuleWidget::onExpanded: found displayable hierarchy node " << hnode->GetID();
-
-  hnode->SetExpanded(1);
-//  qDebug() << "qSlicerModelsModuleWidget::onExpanded: set hierarchy node to expanded";
 }
 
 //-----------------------------------------------------------------------------

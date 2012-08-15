@@ -25,8 +25,9 @@
 #include "qMRMLSceneHierarchyModel_p.h"
 
 // MRML includes
-#include <vtkMRMLScene.h>
+#include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLHierarchyNode.h>
+#include <vtkMRMLScene.h>
 
 // VTK includes
 #include <vtkCollection.h>
@@ -36,6 +37,12 @@
 qMRMLSceneHierarchyModelPrivate
 ::qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object)
   : qMRMLSceneModelPrivate(object)
+  , ExpandColumn(-1)
+{
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModelPrivate::init()
 {
 }
 
@@ -64,6 +71,31 @@ qMRMLSceneHierarchyModel::qMRMLSceneHierarchyModel(
 qMRMLSceneHierarchyModel::~qMRMLSceneHierarchyModel()
 {
 }
+
+//------------------------------------------------------------------------------
+int qMRMLSceneHierarchyModel::expandColumn()const
+{
+  Q_D(const qMRMLSceneHierarchyModel);
+  return d->ExpandColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModel::setExpandColumn(int column)
+{
+  Q_D(qMRMLSceneHierarchyModel);
+  d->ExpandColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneHierarchyModel::maxColumnId()const
+{
+  Q_D(const qMRMLSceneHierarchyModel);
+  int maxId = this->Superclass::maxColumnId();
+  maxId = qMax(maxId, d->ExpandColumn);
+  return maxId;
+}
+
 
 /*
 
@@ -329,19 +361,63 @@ Qt::DropActions qMRMLSceneHierarchyModel::supportedDropActions()const
 QFlags<Qt::ItemFlag> qMRMLSceneHierarchyModel::nodeFlags(vtkMRMLNode* node, int column)const
 {
   QFlags<Qt::ItemFlag> flags = this->Superclass::nodeFlags(node, column);
-  if (this->canBeAParent(node))
+  if (!this->canBeAParent(node))
     {
-    vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
-    if (hierarchyNode &&
-        (hierarchyNode->GetAssociatedNode() ||
-         (!hierarchyNode->GetAllowMultipleChildren() &&
-           hierarchyNode->GetNumberOfChildrenNodes() > 0)))
-      {
-      flags &= ~Qt::ItemIsDropEnabled;
-      }
+    return flags;
+    }
+  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+  if (!hierarchyNode)
+    {
+    return flags;
+    }
+  if ((hierarchyNode->GetAssociatedNode() ||
+       (!hierarchyNode->GetAllowMultipleChildren() &&
+        hierarchyNode->GetNumberOfChildrenNodes() > 0)))
+    {
+    flags &= ~Qt::ItemIsDropEnabled;
+    }
+  if (column == this->expandColumn())
+    {
+    flags = flags | Qt::ItemIsUserCheckable;
     }
   return flags;
 }
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModel::updateItemDataFromNode(
+  QStandardItem* item, vtkMRMLNode* node, int column)
+{
+  this->Superclass::updateItemDataFromNode(item, node, column);
+  vtkMRMLHierarchyNode* hierarchyNode = vtkMRMLHierarchyNode::SafeDownCast(node);
+  if (hierarchyNode)
+    {
+    if (column == this->expandColumn())
+      {
+      vtkMRMLDisplayableHierarchyNode *hnode =
+        vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+      if (hnode)
+        {
+        item->setCheckState(hnode->GetExpanded() ? Qt::Unchecked : Qt::Checked);
+        }
+      }
+    }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneHierarchyModel::updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item)
+{
+  this->Superclass::updateNodeFromItemData(node, item);
+  if (item->column() == this->expandColumn())
+    {
+    vtkMRMLDisplayableHierarchyNode *hnode =
+      vtkMRMLDisplayableHierarchyNode::SafeDownCast(node);
+    if (hnode)
+      {
+      hnode->SetExpanded(item->checkState() == Qt::Unchecked ? 1 : 0);
+      }
+    }
+}
+
 
 //------------------------------------------------------------------------------
 void qMRMLSceneHierarchyModel::observeNode(vtkMRMLNode* node)

@@ -49,8 +49,6 @@ public slots:
   void deleteMultipleModels();
   void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
-  void onExpanded(const QModelIndex &index);
-  void onCollapsed(const QModelIndex &index);
   void onEndImportEvent();
 
 protected:

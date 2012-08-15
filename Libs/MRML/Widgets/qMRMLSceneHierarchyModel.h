@@ -28,15 +28,26 @@ class qMRMLSceneHierarchyModelPrivate;
 class QMRML_WIDGETS_EXPORT qMRMLSceneHierarchyModel : public qMRMLSceneModel
 {
   Q_OBJECT
+  /// Control in which column vtkMRMLHierarchyNode is displayed (Qt::CheckStateRole)
+  /// A value of -1 hides it. Hidden (-1) by default.
+  /// Note that the expand column should be different than checkableColumn if
+  /// not both set to -1.
+  /// The Expanded property is on vtkMRMLDisplayableHierarchyNode.
+  /// \todo Move the Expanded property to vtkMRMLHierarchyNode.
+  /// \sa nameColumn, idColumn, checkableColumn, visibilityColumn...
+  Q_PROPERTY (int expandColumn READ expandColumn WRITE setExpandColumn)
 
 public:
   typedef qMRMLSceneModel Superclass;
   qMRMLSceneHierarchyModel(QObject *parent=0);
   virtual ~qMRMLSceneHierarchyModel();
 
+  int expandColumn()const;
+  void setExpandColumn(int column);
+
   virtual Qt::DropActions supportedDropActions()const;
 
-  /// 
+  ///
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
   virtual int          nodeIndex(vtkMRMLNode* node)const;
   /// fast function that only check the type of the node to know if it can be a child.
@@ -52,6 +63,16 @@ protected:
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
 
   virtual void observeNode(vtkMRMLNode* node);
+
+  /// Reimplemented to add expandColumn support
+  void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+
+  /// Reimplemented to add expandColumn support
+  void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
+
+  /// Must be reimplemented in subclasses that add new column types
+  virtual int maxColumnId()const;
+
 private:
   Q_DECLARE_PRIVATE(qMRMLSceneHierarchyModel);
   Q_DISABLE_COPY(qMRMLSceneHierarchyModel);

@@ -42,7 +42,10 @@ protected:
 public:
   typedef qMRMLSceneModelPrivate Superclass;
   qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object);
+  virtual void init();
   virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
+
+  int ExpandColumn;
 };
 
 #endif

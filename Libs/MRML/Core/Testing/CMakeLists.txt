@@ -17,10 +17,10 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLDiffusionWeightedVolumeDisplayNodeTest1.cxx
   vtkMRMLDiffusionWeightedVolumeNodeTest1.cxx
   vtkMRMLDisplayNodeTest1.cxx
+  vtkMRMLDisplayableHierarchyNodeDisplayPropertiesTest.cxx
   vtkMRMLDisplayableHierarchyNodeTest1.cxx
   vtkMRMLDisplayableHierarchyNodeTest2.cxx
   vtkMRMLDisplayableHierarchyNodeTest3.cxx
-  vtkMRMLDisplayableHierarchyNodeTestDisplayProperties.cxx
   vtkMRMLDisplayableNodeTest1.cxx
   vtkMRMLDoubleArrayNodeTest1.cxx
   vtkMRMLFiducialListNodeTest1.cxx

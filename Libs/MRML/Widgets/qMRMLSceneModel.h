@@ -53,7 +53,10 @@ class qMRMLSceneModelPrivate;
 ///    |- my_volume.nrrd  vtkMRMLScalarVolumeNode1
 ///    |- Add new node
 /// \endverbatim
-///
+/// More columns can be added by setting the column index of the differen
+/// columns: name, id, checkable, visibility, toolTip, extraItem and the ones
+/// defined in subclasses.
+/// Subclasses must reimplement maxColumnId if they add new column properties
 class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
 {
   Q_OBJECT
@@ -203,6 +206,9 @@ protected slots:
   void onItemChanged(QStandardItem * item);
   void delayedItemChanged();
 
+  /// Recompute the number of columns in the model.
+  /// To be called when a XXXColumn is set.
+  /// Needs maxColumnId() to be reimplemented in subclasses
   void updateColumnCount();
 
 signals :
@@ -279,6 +285,8 @@ protected:
 
   static void onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
                                void* client_data, void* call_data);
+
+  /// Must be reimplemented in subclasses that add new column types
   virtual int maxColumnId()const;
 protected:
   QScopedPointer<qMRMLSceneModelPrivate> d_ptr;

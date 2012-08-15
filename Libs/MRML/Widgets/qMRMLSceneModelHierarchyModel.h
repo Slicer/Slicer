@@ -41,7 +41,7 @@ public:
 
   /// Fast function that only check the type of the node to know if it can be a child.
   virtual bool         canBeAChild(vtkMRMLNode* node)const;
-  
+
   /// Fast function that only check the type of the node to know if it can be a parent.
   virtual bool         canBeAParent(vtkMRMLNode* node)const;
 
