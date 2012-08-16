@@ -156,6 +156,33 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+#
+# MRB SelfTests
+#
+
+if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
+
+  # add as unit test for use at build/test time
+  slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
+
+  # add as hidden module for use at run time
+  set(KIT_PYTHON_SCRIPTS
+    SlicerMRBTest.py
+    )
+
+  set(KIT_PYTHON_RESOURCES
+    )
+
+  ctkMacroCompilePythonScript(
+    TARGET_NAME ApplicationSelfTests
+    SCRIPTS "${KIT_PYTHON_SCRIPTS}"
+    RESOURCES "${KIT_PYTHON_RESOURCES}"
+    DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
+    NO_INSTALL_SUBDIR
+    )
+
+endif()
 
 #
 # Tutorial tests
