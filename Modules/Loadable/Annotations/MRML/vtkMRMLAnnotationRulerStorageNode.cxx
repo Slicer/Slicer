@@ -354,34 +354,35 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerProperties(fstream& o
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
+int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode)
 {
   if (!refNode)
     {
     vtkWarningMacro("WriteAnnotationRulerData: reference node is null");
-    return;
+    return 0;
     }
   int sel = refNode->GetSelected();
   int vis = refNode->GetVisible(); 
   of << this->GetAnnotationStorageType() << "|" << 0  << "|" << sel << "|" << vis << endl;   
 
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationRulerStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream& of)
 {
 
-  int retval = this->Superclass::WriteDataInternal(refNode,of);
+  int retval = this->Superclass::WriteAnnotationDataInternal(refNode,of);
   if (!retval)
     {
-    vtkWarningMacro("Ruler: WriteData: unable to call superclass WriteData, retval = " << retval);
+    vtkWarningMacro("Ruler WriteAnnotationDataInternal: unable to call superclass WriteData, retval = " << retval);
     return 0;
     }
 
   // test whether refNode is a valid node to hold a volume
   if ( !( refNode->IsA("vtkMRMLAnnotationRulerNode") ) )
     {
-    vtkErrorMacro("Reference node is not a proper vtkMRMLAnnotationRulerNode");
+    vtkErrorMacro("WriteAnnotationDataInternal: Reference node is not a proper vtkMRMLAnnotationRulerNode");
     return 0;         
     }
 
@@ -391,18 +392,22 @@ int vtkMRMLAnnotationRulerStorageNode::WriteDataInternal(vtkMRMLNode *refNode, f
 
   if (aNode == NULL)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
+    vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
     return 0;
     }
 
   // Control Points Properties
   if (!WriteAnnotationRulerProperties(of, aNode))
     {
-    vtkWarningMacro("Ruler: WriteData: failure in WriteAnnotationRulerProperties");
+    vtkWarningMacro("Ruler: WriteAnnotationDataInternal: failure in WriteAnnotationRulerProperties");
     return 0;
     }
 
-  WriteAnnotationRulerData(of, aNode);
+  if (!WriteAnnotationRulerData(of, aNode))
+    {
+    vtkWarningMacro("Ruler: WriteAnnotationDataInternal: failure in WriteAnnotationRulerData");
+    return 0;
+    }
 
   return 1;
 }

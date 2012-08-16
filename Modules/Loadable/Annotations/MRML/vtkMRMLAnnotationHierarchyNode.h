@@ -10,8 +10,6 @@
 #include "vtkMRMLDisplayableHierarchyNode.h"
 
 class vtkAbstractTransform;
-class vtkMRMLStorableNode;
-class vtkMRMLStorageNode;
 
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationHierarchyNode : public vtkMRMLDisplayableHierarchyNode
@@ -50,9 +48,6 @@ public:
   virtual bool CanApplyNonLinearTransforms()const;
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  /// From Storable superclass
-  virtual vtkMRMLStorageNode *CreateDefaultStorageNode();
-  
 protected:
   vtkMRMLAnnotationHierarchyNode();
   ~vtkMRMLAnnotationHierarchyNode();

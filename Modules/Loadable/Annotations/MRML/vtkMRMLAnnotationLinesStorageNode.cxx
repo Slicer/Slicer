@@ -334,16 +334,22 @@ int vtkMRMLAnnotationLinesStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstream& of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLineDisplayProperties(fstream& of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition)
 {
   if (!refNode)
    {
-     return;
+   return 0;
    }
-  this->WriteAnnotationDisplayProperties(of,refNode, preposition);
+
+  if (!this->WriteAnnotationDisplayProperties(of,refNode, preposition))
+    {
+    return 0;
+    }
 
   preposition.insert(0,"# ");
   of << preposition + "LineThickness = " << refNode->GetLineThickness() << endl;
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -366,11 +372,11 @@ int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesProperties(fstream& o
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode)
 {
   if (!refNode)
     {
-      return;
+    return 0;
     }
   for (int i = 0; i < refNode->GetNumberOfLines(); i++)
     {
@@ -381,15 +387,16 @@ void vtkMRMLAnnotationLinesStorageNode::WriteAnnotationLinesData(fstream& of, vt
       of << this->GetAnnotationStorageType() << "|" << pointIDs[0] << "|" <<  pointIDs[1]  << "|" << sel << "|" << vis << endl;   
     }
 
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationLinesStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream& of)
+int vtkMRMLAnnotationLinesStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream& of)
 {
-  int retval = this->Superclass::WriteDataInternal(refNode,of);
+  int retval = this->Superclass::WriteAnnotationDataInternal(refNode,of);
   if (!retval)
     {
-    vtkWarningMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: can't call WriteData on superclass, retval = " << retval);
+    vtkWarningMacro("WriteAnnotationDataInternal: with stream: can't call WriteAnnotationDataInternal on superclass, retval = " << retval);
     return 0;
     }
 
@@ -398,20 +405,23 @@ int vtkMRMLAnnotationLinesStorageNode::WriteDataInternal(vtkMRMLNode *refNode, f
 
   if (aNode == NULL)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
+    vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation line node");
     return 0;
     }
 
   // Control Points Properties
   if (!WriteAnnotationLinesProperties(of, aNode))
     {
-    vtkWarningMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: error writing annotation lines properties");
+    vtkWarningMacro("WriteAnnotationDataInternal with stream: error writing annotation lines properties");
     return 0;
     }
 
-  WriteAnnotationLinesData(of, aNode);
+  if (!WriteAnnotationLinesData(of, aNode))
+    {
+    return 0;
+    }
 
-  vtkDebugMacro("vtkMRMLAnnotationLinesStorageNode::WriteData with stream: returning 1");
+  vtkDebugMacro("WriteAnnotationDataInternal with stream: returning 1");
   return 1;
 }
 

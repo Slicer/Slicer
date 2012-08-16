@@ -261,7 +261,6 @@ public:
     Fiducial,
     Ruler,
     ROI,
-    List
   };
 
   

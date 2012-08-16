@@ -342,17 +342,23 @@ int vtkMRMLAnnotationControlPointsStorageNode::ReadDataInternal(vtkMRMLNode *ref
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProperties(fstream& of, vtkMRMLAnnotationPointDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationPointDisplayProperties(fstream& of, vtkMRMLAnnotationPointDisplayNode *refNode, std::string preposition)
 {
   if (!refNode)
    {
-     return;
+   vtkErrorMacro("WriteAnnotationPointDisplayProperties:  null control points display node");
+   return 0;
    }
-  WriteAnnotationDisplayProperties(of,refNode, preposition);
+  if (!WriteAnnotationDisplayProperties(of,refNode, preposition))
+    {
+    return 0;
+    }
 
   preposition.insert(0,"# ");
   of << preposition + "GlyphScale = " << refNode->GetGlyphScale() << endl;
   of << preposition + "GlyphType = " << refNode->GetGlyphType() << endl;
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -361,13 +367,17 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
    // put down a header
   if (refNode == NULL)
     {
-      return 0;
+    vtkErrorMacro("WriteAnnotationControlPointsProperties: null control points node");
+    return 0;
     }
 
   vtkMRMLAnnotationPointDisplayNode *annPointDisNode = refNode->GetAnnotationPointDisplayNode();
 
   of << "# " << this->GetAnnotationStorageType() << "NumberingScheme = " << refNode->GetNumberingScheme() << endl;
-  this->WriteAnnotationPointDisplayProperties(of, annPointDisNode, this->GetAnnotationStorageType());
+  if (!this->WriteAnnotationPointDisplayProperties(of, annPointDisNode, this->GetAnnotationStorageType()))
+    {
+    return 0;
+    }
   of << "# " << this->GetAnnotationStorageType() << "Columns = type|x|y|z|sel|vis" << endl;
 
   return 1;
@@ -375,11 +385,12 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsPrope
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode)
 {
   if (!refNode)
     {
-    return;
+    vtkErrorMacro("WriteAnnotationControlPointsData: null control points node");
+    return 0;
     }
   for (int i = 0; i < refNode->GetNumberOfControlPoints(); i++)
     {
@@ -389,12 +400,13 @@ void vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationControlPointsData
     of << this->GetAnnotationStorageType() << "|" << coord[0] << "|" << coord[1] << "|" << coord[2] << "|" << sel << "|" << vis << endl;   
     }
 
+  return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationControlPointsStorageNode::WriteDataInternal(vtkMRMLNode *refNode,  fstream &of)
+int vtkMRMLAnnotationControlPointsStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode,  fstream &of)
 {
-  if (!Superclass::WriteDataInternal(refNode,of))
+  if (!Superclass::WriteAnnotationDataInternal(refNode,of))
     {
     return 0;
     }
@@ -404,7 +416,7 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteDataInternal(vtkMRMLNode *re
 
   if (annCPNode == NULL)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known annotation control point node");
+    vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation control point node");
     return 0;
     }
 
@@ -412,10 +424,13 @@ int vtkMRMLAnnotationControlPointsStorageNode::WriteDataInternal(vtkMRMLNode *re
   // Control Points Properties
   if (!this->WriteAnnotationControlPointsProperties(of, annCPNode))
     {
-      return 0;
+    return 0;
     }
 
   // Control Points
-  this->WriteAnnotationControlPointsData(of, annCPNode);
+  if (!this->WriteAnnotationControlPointsData(of, annCPNode))
+    {
+    return 0;
+    }
   return 1;
 }

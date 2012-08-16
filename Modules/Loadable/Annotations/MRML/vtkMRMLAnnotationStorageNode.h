@@ -16,10 +16,6 @@ class vtkMRMLAnnotationNode;
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationStorageNode : public vtkMRMLStorageNode
 {
-  /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
-  /// call the protected function WriteData(refNode, of)
-  friend class vtkMRMLAnnotationHierarchyStorageNode;
-
 public:
   static vtkMRMLAnnotationStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationStorageNode,vtkMRMLStorageNode);
@@ -44,11 +40,11 @@ protected:
   vtkMRMLAnnotationStorageNode(const vtkMRMLAnnotationStorageNode&);
   void operator=(const vtkMRMLAnnotationStorageNode&);
 
-  void WriteAnnotationDisplayProperties(fstream & of, vtkMRMLAnnotationDisplayNode *refNode, std::string preposition);
-  void WriteAnnotationTextDisplayProperties(fstream & of, vtkMRMLAnnotationTextDisplayNode *refNode, std::string preposition);
+  int WriteAnnotationDisplayProperties(fstream & of, vtkMRMLAnnotationDisplayNode *refNode, std::string preposition);
+  int WriteAnnotationTextDisplayProperties(fstream & of, vtkMRMLAnnotationTextDisplayNode *refNode, std::string preposition);
 
   int WriteAnnotationTextProperties(fstream & of, vtkMRMLAnnotationNode *refNode);
-  void WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode);
+  int WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode);
   int OpenFileToWrite(fstream& of);
 
   // Description:
@@ -75,10 +71,10 @@ protected:
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
-  /// Write data from a  referenced node
+  /// Write data from a referenced node
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
-
-  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream &of);
+  /// Write data from a referenced node into a passed stream
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of);
 
 };
 

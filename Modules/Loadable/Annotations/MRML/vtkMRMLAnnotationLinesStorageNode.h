@@ -50,9 +50,9 @@ protected:
 
   const char* GetAnnotationStorageType() { return "line"; }
 
-  void WriteAnnotationLineDisplayProperties(fstream & of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition);
+  int WriteAnnotationLineDisplayProperties(fstream & of, vtkMRMLAnnotationLineDisplayNode *refNode, std::string preposition);
   int WriteAnnotationLinesProperties(fstream & of, vtkMRMLAnnotationLinesNode *refNode);
-  void WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode);
+  int WriteAnnotationLinesData(fstream& of, vtkMRMLAnnotationLinesNode *refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationLinesNode *refNode);
   int ReadAnnotationLinesData(vtkMRMLAnnotationLinesNode *refNode, char line[1024], int typeColumn, int startIDColumn, int endIDColumn, int selColumn,  int visColumn, int numColumns);
@@ -63,7 +63,7 @@ protected:
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
   // Description:
-  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream & of);
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of);
 };
 
 #endif

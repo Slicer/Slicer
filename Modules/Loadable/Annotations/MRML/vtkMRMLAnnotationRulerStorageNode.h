@@ -15,10 +15,6 @@ class vtkMRMLAnnotationRulerNode;
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationRulerStorageNode
   : public vtkMRMLAnnotationLinesStorageNode
 {
-  /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
-  /// call the protected function WriteData(refNode, of)
-  friend class vtkMRMLAnnotationHierarchyStorageNode;
-
 public:
   static vtkMRMLAnnotationRulerStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationRulerStorageNode,vtkMRMLAnnotationLinesStorageNode);
@@ -64,16 +60,17 @@ protected:
   const char* GetAnnotationStorageType() { return "ruler"; }
 
   int WriteAnnotationRulerProperties(fstream & of, vtkMRMLAnnotationRulerNode *refNode);
-  void WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode);
+  int WriteAnnotationRulerData(fstream& of, vtkMRMLAnnotationRulerNode *refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationRulerNode *refNode);
   int ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns);
   int ReadAnnotationRulerProperties(vtkMRMLAnnotationRulerNode *refNode, char line[1024], int &typeColumn, int& line1IDColumn, int& selColumn, int& visColumn, int& numColumns);
 
-  // Read data and set it in the referenced node
+  /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
-  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream & of);
+  /// Write data from the referenced node into the stream
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of);
 };
 
 #endif

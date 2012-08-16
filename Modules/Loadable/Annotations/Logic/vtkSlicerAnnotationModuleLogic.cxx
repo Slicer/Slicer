@@ -12,7 +12,6 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 #include "vtkMRMLAnnotationFiducialsStorageNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
-//#include "vtkMRMLAnnotationHierarchyStorageNode.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
 #include "vtkMRMLAnnotationStickyNode.h"
 #include "vtkMRMLAnnotationTextNode.h"
@@ -264,34 +263,6 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
   else if (fileType == this->ROI)
     {
     vtkErrorMacro("LoadAnnotation: ROI reading not supported yet, cannot read " << filename);
-    }
-  else if (fileType == this->List)
-    {
-    vtkErrorMacro("Annotation lists disabled, cannot load the hierarhcy");
-    /*
-    vtkDebugMacro("LoadAnnotation: Loading it as an annotation hierarchy");
-    vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode> hStorageNode = vtkSmartPointer<vtkMRMLAnnotationHierarchyStorageNode>::New();
-    vtkMRMLAnnotationHierarchyNode *hNode = vtkMRMLAnnotationHierarchyNode::New();
-    hNode->SetName(name);
-    hNode->HideFromEditorsOff();
-    // make it a child of the top level annotations
-    hNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
-    hStorageNode->SetFileName(filename);
-    // add the storage node to the scene
-    this->GetMRMLScene()->AddNode(hStorageNode);
-    hNode->SetScene(this->GetMRMLScene());
-
-    this->GetMRMLScene()->AddNode(hNode);
-    hNode->SetAndObserveStorageNodeID(hStorageNode->GetID());
-
-    if (hStorageNode->ReadData(hNode))
-      {
-      vtkDebugMacro("LoadAnnotation: annotation list storage node read " << filename);
-      nodeID =  hNode->GetID();
-      }
-    hStorageNode->Delete();
-    hNode->Delete();
-    */
     }
   else
     {

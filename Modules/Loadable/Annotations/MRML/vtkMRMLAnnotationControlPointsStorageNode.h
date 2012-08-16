@@ -15,10 +15,6 @@ class vtkMRMLAnnotationControlPointsNode;
 /// \ingroup Slicer_QtModules_Annotation
 class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationControlPointsStorageNode : public vtkMRMLAnnotationStorageNode
 {
-  /// Defined as a friend vtkMRMLAnnotationHierarchyStorageNode so that it can
-  /// call the protected function WriteData(refNode, of)
-  friend class vtkMRMLAnnotationHierarchyStorageNode;
-
 public:
   static vtkMRMLAnnotationControlPointsStorageNode *New();
   vtkTypeMacro(vtkMRMLAnnotationControlPointsStorageNode,vtkMRMLAnnotationStorageNode);
@@ -41,9 +37,9 @@ protected:
 
   const char* GetAnnotationStorageType() { return "point"; }
 
-  void WriteAnnotationPointDisplayProperties(fstream & of, vtkMRMLAnnotationPointDisplayNode *refNode, std::string preposition);
+  int WriteAnnotationPointDisplayProperties(fstream & of, vtkMRMLAnnotationPointDisplayNode *refNode, std::string preposition);
   int WriteAnnotationControlPointsProperties(fstream & of, vtkMRMLAnnotationControlPointsNode *refNode);
-  void WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode);
+  int WriteAnnotationControlPointsData(fstream& of, vtkMRMLAnnotationControlPointsNode *refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationControlPointsNode *refNode);
   int ReadAnnotationControlPointsData(vtkMRMLAnnotationControlPointsNode *refNode, char line[1024], int typeColumn, int xColumn, int yColumn, int zColumn,  
@@ -55,7 +51,7 @@ protected:
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
-  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream &of);
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of);
 };
 
 #endif

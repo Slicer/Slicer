@@ -37,8 +37,10 @@ protected:
 
   const char* GetAnnotationStorageType() { return "angle"; }
 
+  /// Write angle node properties from the node to the given stream, return 1
+  /// on success, 0 on failure
   int WriteAnnotationAngleProperties(fstream & of, vtkMRMLAnnotationAngleNode *refNode);
-  void WriteAnnotationAngleData(fstream& of, vtkMRMLAnnotationAngleNode *refNode);
+  int WriteAnnotationAngleData(fstream& of, vtkMRMLAnnotationAngleNode *refNode);
 
   int ReadAnnotation(vtkMRMLAnnotationAngleNode *refNode);
   int ReadAnnotationAngleData(vtkMRMLAnnotationAngleNode *refNode, char line[1024], int typeColumn, int line1IDColumn, int line2IDColumn, int selColumn,  int visColumn, int numColumns);
@@ -47,8 +49,8 @@ protected:
   /// Read data and set it in the referenced node
   virtual int ReadDataInternal(vtkMRMLNode *refNode);
 
-  /// Write data from a  referenced node
-  virtual int WriteDataInternal(vtkMRMLNode *refNode, fstream & of);
+  /// Write data from a referenced node to the stream
+  virtual int WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream & of);
 };
 
 #endif

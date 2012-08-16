@@ -39,7 +39,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkSlicerAnnotationModuleLogicTest1.cxx
   #qSlicerAnnotationModuleAnnotationPropertyDialogTest1.cxx
   #TestAnnAngleWidget3D.cxx
-  vtkMRMLAnnotationHierarchyStorageNodeTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 

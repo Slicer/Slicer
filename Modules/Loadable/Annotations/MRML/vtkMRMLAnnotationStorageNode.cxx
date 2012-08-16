@@ -480,11 +480,11 @@ int vtkMRMLAnnotationStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, vtkMRMLAnnotationDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of, vtkMRMLAnnotationDisplayNode *refNode, std::string preposition)
 {
  if (!refNode)
    {
-     return;
+   return 0;
    }
  preposition.insert(0,"# ");
  of << preposition + "Visibility = " << refNode->GetVisibility() << endl;
@@ -497,21 +497,28 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationDisplayProperties(fstream& of,
  of << preposition + "Diffuse = " << refNode->GetDiffuse() << endl;
  of << preposition + "Specular = " << refNode->GetSpecular() << endl;
  of << preposition + "Power = " << refNode->GetPower() << endl;
+
+ return 1;
 }
 
-
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& of, vtkMRMLAnnotationTextDisplayNode *refNode, std::string preposition)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationTextDisplayProperties(fstream& of, vtkMRMLAnnotationTextDisplayNode *refNode, std::string preposition)
 {
  if (!refNode)
    {
    vtkErrorMacro("WriteAnnotationTextDisplayProperties: null annotation text display node");
-   return;
+   return 0;
    }
- this->WriteAnnotationDisplayProperties(of, refNode, preposition);
+
+ if (!this->WriteAnnotationDisplayProperties(of, refNode, preposition))
+   {
+   return 0;
+   }
 
  preposition.insert(0,"# ");
  of << preposition + "Scale = " << refNode->GetTextScale() << endl;
+
+ return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -538,12 +545,12 @@ int vtkMRMLAnnotationStorageNode::WriteAnnotationTextProperties(fstream& of, vtk
 }
 
 //--------------------------------------------------------------------------
-void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnotationNode *refNode)
 {
   if (!refNode)
     {
     vtkWarningMacro("WriteAnnotationData: reference node is null");
-    return;
+    return 0;
     }
   // if change the ones being included, make sure to update the parsing in ReadData
   for (int i = 0; i < refNode->GetNumberOfTexts(); i++)
@@ -553,7 +560,9 @@ void vtkMRMLAnnotationStorageNode::WriteAnnotationData(fstream& of, vtkMRMLAnnot
     int sel = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_SELECTED);
     int vis = refNode->GetAnnotationAttribute(i, vtkMRMLAnnotationNode::TEXT_VISIBLE);
     of << this->GetAnnotationStorageType() << "|" << nodeText.c_str() << "|" << sel << "|" << vis << endl;   
-    }  
+    }
+
+  return 1;
 }
 
 //----------------------------------------------------------------------------
@@ -587,7 +596,7 @@ int vtkMRMLAnnotationStorageNode::OpenFileToWrite(fstream& of)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstream &of)
+int vtkMRMLAnnotationStorageNode::WriteAnnotationDataInternal(vtkMRMLNode *refNode, fstream &of)
 {
   vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData");
 
@@ -597,13 +606,19 @@ int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode, fstrea
 
   if (annotationNode == NULL)
     {
-    vtkErrorMacro("WriteData: unable to cast input node " << refNode->GetID() << " to a known annotation node");
+    vtkErrorMacro("WriteAnnotationDataInternal: unable to cast input node " << refNode->GetID() << " to a known annotation node");
     return 0;
     }
 
-  this->WriteAnnotationTextProperties(of, annotationNode);
-  this->WriteAnnotationData(of, annotationNode);
-  vtkDebugMacro("vtkMRMLAnnotationStorageNode::WriteData: returning 1");
+  if (!this->WriteAnnotationTextProperties(of, annotationNode))
+    {
+    return 0;
+    }
+  if (!this->WriteAnnotationData(of, annotationNode))
+    {
+    return 0;
+    }
+  vtkDebugMacro("WriteAnnotationDataInternal: returning 1");
   return 1;
 }
 
@@ -612,36 +627,23 @@ int vtkMRMLAnnotationStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 {
   if (!refNode)
     {
-    vtkWarningMacro("WriteData: reference node is null.");
+    vtkWarningMacro("WriteDataInternal: reference node is null.");
     return 0;
     }
-
-  /*
-  // special case: if this annotation is in a hierarchy, the hierarchy took
-  // care of writing it already
-  vtkMRMLHierarchyNode *hnode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(refNode->GetScene(), refNode->GetID());
-  
-  if (hnode &&
-      hnode->GetParentNodeID())
-    {
-    vtkWarningMacro("WriteData: refNode " << refNode->GetName() << " is in a hierarchy, " << hnode->GetName() << ", assuming that it wrote it out already");
-    return 1;
-    }
-  */
 
   // open the file for writing
   fstream of;
   if (!this->OpenFileToWrite(of)) 
     {
-    vtkWarningMacro("WriteData: unable to open file to write");
+    vtkWarningMacro("WriteDataInternal: unable to open file to write");
     return 0;
     } 
 
-  int flag = this->WriteDataInternal(refNode,of);
+  int flag = this->WriteAnnotationDataInternal(refNode,of);
 
   of.close();
 
-  vtkDebugMacro("WriteData: returning " << flag);
+  vtkDebugMacro("WriteDataInternal: returning " << flag);
   return flag;
 }
 
