@@ -48,6 +48,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     loadables = []
     for files in fileLists:
       loadables += self.examineFiles(files)
+
+
+    # add separate check for scalar volumes
+    svLoadables = []
+    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    svLoadables = scalarVolumePlugin.examine(fileLists)
+
+    if len(svLoadables) > 1:
+      # try to coerce the scalar volumes into a mv
+      extraLoadables = self.initMutiVolumeFromScalarVolumeLoadables(svLoadables)
+      # if dimensions, spacing, origin and orientation match for the
+      # individual scalar volumes, assume these are mv frames
     return loadables
 
   def examineFiles(self,files):
@@ -130,7 +142,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
 
     # read each frame into scalar volume
-    volumesLogic = slicer.modules.volumes.logic()
     for frameNumber in range(nFrames):
       
       sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
@@ -191,6 +202,29 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return True
 
+  def tm2ms(tm):
+   
+    try:
+      hhmmss = string.split(tm,'.')[0]
+    except:
+      hhmmss = tm
+
+    try:
+      ssfrac = float('0.'+string.split(tm,'.')[1])
+    except:
+      ssfrac = 0.
+
+    if len(hhmmss)==6: # HHMMSS
+      sec = float(hhmmss[0:2])*60.*60.+float(hhmmss[2:4])*60.+float(hhmmss[4:6])
+    elif len(hhmmss)==4: # HHMM
+      sec = float(hhmmss[0:2])*60.*60.+float(hhmmss[2:4])*60.
+    elif len(hhmmss)==2: # HH
+      sec = float(hhmmss[0:2])*60.*60.
+
+    sec = sec+ssfrac
+
+    return sec
+
   def initMultiVolumes(self, files):
     tag2ValueFileList = {}
     multivolumes = []
@@ -206,11 +240,17 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           tagValue2FileList = {}
           tag2ValueFileList[frameTag] = tagValue2FileList
 
-        tagValue = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
-        if tagValue == '':
+        tagValueStr = slicer.dicomDatabase.fileValue(file,self.tags[frameTag])
+        if tagValueStr == '':
           # not found?
           continue
-        tagValue = float(tagValue)
+        
+        if frameTag = 'AcquisitionTime':
+          # extra parsing is needed to convert from DICOM TM VR into ms
+          tagValue = tm2ms(tagValueStr)/1000. # convert to ms
+        else:
+          tagValue = float(tagValueStr)
+        
         try:
           tagValue2FileList[tagValue].append(file)
         except:
