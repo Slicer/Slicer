@@ -1,4 +1,4 @@
-// Annotation includes
+tatu// Annotation includes
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "../GUI/qSlicerAnnotationModuleWidget.h"
 
@@ -790,12 +790,6 @@ void vtkSlicerAnnotationModuleLogic::RegisterNodes()
       vtkMRMLAnnotationHierarchyNode::New();
   this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyNode);
   annotationHierarchyNode->Delete();
-
-  /*
-  vtkMRMLAnnotationHierarchyStorageNode* annotationHierarchyStorageNode = vtkMRMLAnnotationHierarchyStorageNode::New();
-  this->GetMRMLScene()->RegisterNodeClass(annotationHierarchyStorageNode);
-  annotationHierarchyStorageNode->Delete();
-  */
 }
 
 //---------------------------------------------------------------------------
