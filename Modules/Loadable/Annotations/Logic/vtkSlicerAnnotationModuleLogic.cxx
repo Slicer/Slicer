@@ -1,4 +1,4 @@
-tatu// Annotation includes
+// Annotation includes
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "../GUI/qSlicerAnnotationModuleWidget.h"
 
