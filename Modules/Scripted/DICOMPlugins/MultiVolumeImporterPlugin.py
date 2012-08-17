@@ -223,7 +223,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     sec = sec+ssfrac
 
-    return sec
+    return sec*1000.
 
   def initMultiVolumes(self, files):
     tag2ValueFileList = {}
@@ -245,9 +245,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           # not found?
           continue
         
-        if frameTag = 'AcquisitionTime':
+        if frameTag == 'AcquisitionTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
-          tagValue = tm2ms(tagValueStr)*1000. # convert to ms
+          tagValue = tm2ms(tagValueStr) # convert to ms
         else:
           tagValue = float(tagValueStr)
         
