@@ -202,7 +202,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return True
 
-  def tm2ms(tm):
+  def tm2ms(self,tm):
    
     try:
       hhmmss = string.split(tm,'.')[0]
@@ -247,7 +247,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         
         if frameTag == 'AcquisitionTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
-          tagValue = tm2ms(tagValueStr) # convert to ms
+          tagValue = self.tm2ms(tagValueStr) # convert to ms
         else:
           tagValue = float(tagValueStr)
         
