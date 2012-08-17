@@ -247,7 +247,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         
         if frameTag = 'AcquisitionTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
-          tagValue = tm2ms(tagValueStr)/1000. # convert to ms
+          tagValue = tm2ms(tagValueStr)*1000. # convert to ms
         else:
           tagValue = float(tagValueStr)
         
