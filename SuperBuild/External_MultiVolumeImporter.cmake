@@ -27,7 +27,7 @@ if(NOT DEFINED MultiVolumeImporter_SOURCE_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/MultiVolumeImporter.git"
-    GIT_TAG "f4a6a0af0a4a96fbed2e70662598068807f9618c"
+    GIT_TAG "b988b3253c5f6aea6ef28e8cb8af096c22b30fb1"
     "${slicer_external_update}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
