@@ -49,17 +49,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for files in fileLists:
       loadables += self.examineFiles(files)
 
-
-    # add separate check for scalar volumes
-    svLoadables = []
-    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
-    svLoadables = scalarVolumePlugin.examine(fileLists)
-
-    if len(svLoadables) > 1:
-      # try to coerce the scalar volumes into a mv
-      extraLoadables = self.initMutiVolumeFromScalarVolumeLoadables(svLoadables)
-      # if dimensions, spacing, origin and orientation match for the
-      # individual scalar volumes, assume these are mv frames
     return loadables
 
   def examineFiles(self,files):
