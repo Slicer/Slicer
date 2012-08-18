@@ -29,6 +29,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['FlipAngle'] = "0018,1314"
     self.multiVolumeTags['RepetitionTime'] = "0018,0080"
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
+    self.multiVolumeTags['SeriesTime'] = "0008,0031"
 
     for tagName,tagVal in self.multiVolumeTags.iteritems():
       self.tags[tagName] = tagVal
@@ -39,6 +40,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['FlipAngle'] = "deg"
     self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
+    self.multiVolumeTagsUnits['SeriesTime'] = "ms"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -46,8 +48,36 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     fileLists parameter.
     """
     loadables = []
+    allfiles = []
     for files in fileLists:
       loadables += self.examineFiles(files)
+      allfiles += files
+
+    # here all files are lumped into one list for the situations when
+    # individual frames should be parsed from series
+    loadables += self.examineFilesMultiseries(allfiles)
+
+    return loadables
+
+  def examineFilesMultiseries(self,files):
+
+    loadables = []
+
+    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime'])
+
+    print('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
+
+    for mvNode in mvNodes:
+      tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
+      nFrames = mvNode.GetNumberOfFrames()
+        
+      loadable = DICOMLib.DICOMLoadable()
+      loadable.files = files
+      loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
+      loadable.tooltip = loadable.name
+      loadable.selected = True
+      loadable.multivolume = mvNode
+      loadables.append(loadable)
 
     return loadables
 
@@ -100,7 +130,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
-        loadable.name = desc + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
+        loadable.name = subseriesDescriptions[key] + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.multivolume = mvNode
@@ -214,15 +244,20 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     return sec*1000.
 
-  def initMultiVolumes(self, files):
+  def initMultiVolumes(self, files, prescribedTags=None):
     tag2ValueFileList = {}
     multivolumes = []
+
+    if prescribedTags == None:
+      consideredTags = self.multiVolumeTags.keys()
+    else:
+      consideredTags = prescribedTags
 
     # iterate over all files
     for file in files:
 
       # iterate over the tags that can be used to separate individual frames
-      for frameTag in self.multiVolumeTags.keys():
+      for frameTag in consideredTags:
         try:
           tagValue2FileList = tag2ValueFileList[frameTag]
         except:
@@ -234,7 +269,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           # not found?
           continue
         
-        if frameTag == 'AcquisitionTime':
+        if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
         else:
@@ -270,6 +305,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
           frameInvalid = True
       if frameInvalid == True:
         continue
+
+      # TODO: add a check to confirm individual frames have the same geometry
+      # (check pixel dimensions, orientation, position)
 
       # now this looks like a serious mv!
 
