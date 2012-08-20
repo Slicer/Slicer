@@ -244,13 +244,15 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
       
       if (coord)
         {
-        QString qnum;
-        qnum.setNum(coord[0]);
-        ui.pointsTableWidget->setItem(p,0,new QTableWidgetItem(qnum));
-        qnum.setNum(coord[1]);
-        ui.pointsTableWidget->setItem(p,1,new QTableWidgetItem(qnum));
-        qnum.setNum(coord[2]);
-        ui.pointsTableWidget->setItem(p,2,new QTableWidgetItem(qnum));
+        QTableWidgetItem* xItem = new QTableWidgetItem();
+        xItem->setData(Qt::DisplayRole, QVariant(coord[0]));
+        ui.pointsTableWidget->setItem(p, 0, xItem);
+        QTableWidgetItem* yItem = new QTableWidgetItem();
+        yItem->setData(Qt::DisplayRole, QVariant(coord[1]));
+        ui.pointsTableWidget->setItem(p, 1, yItem);
+        QTableWidgetItem* zItem = new QTableWidgetItem();
+        zItem->setData(Qt::DisplayRole, QVariant(coord[2]));
+        ui.pointsTableWidget->setItem(p,2, zItem);
         }
       }
     }
@@ -853,7 +855,7 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
     }
   int row = tableItem->row();
   int col = tableItem->column();
-  QString newString = tableItem->text();
+  double newValue = tableItem->data(Qt::DisplayRole).toDouble();
 
   vtkMRMLNode *node = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
   if (!node)
@@ -868,7 +870,6 @@ void qSlicerAnnotationModulePropertyDialog::onPointsTableWidgetChanged(QTableWid
 //  std::cout << "onPointsTableWidgetChanged: row = " << row << ", col = " <<  col << ", newValue = " << newValue << std::endl;
  
   // otherwise it's the coordinate that changed
-  double newValue = newString.toDouble();
   // get the point coordinates corresponding to this row
   double *oldCoords = pointsNode->GetControlPointCoordinates(row);
   double newCoords[3];
