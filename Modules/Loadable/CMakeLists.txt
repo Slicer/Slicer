@@ -8,6 +8,7 @@ set(qtmodules
   Transforms
   Annotations
   Data
+  DoubleArrays
   FetchMI
   #Measurements
   Models
