@@ -39,6 +39,16 @@
 qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
+  this->DummySpinBox = new QDoubleSpinBox(0);
+  this->DummySpinBox->setDecimals(2);
+  this->DummySpinBox->setRange(0., 1.);
+}
+
+//------------------------------------------------------------------------------
+qMRMLItemDelegate::~qMRMLItemDelegate()
+{
+  delete this->DummySpinBox;
+  this->DummySpinBox = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -228,12 +238,9 @@ QSize qMRMLItemDelegate
   QVariant editData = index.data(Qt::EditRole);
   if (this->is0To1Value(index))
     {
-    QDoubleSpinBox dummySpinBox;
-    dummySpinBox.setDecimals(2);
-    dummySpinBox.setRange(0., 1.);
-    return dummySpinBox.sizeHint();
+    return this->DummySpinBox->sizeHint();
     }
-  return this->QStyledItemDelegate::sizeHint(option, index);   
+  return this->QStyledItemDelegate::sizeHint(option, index);
 }
 
 //------------------------------------------------------------------------------

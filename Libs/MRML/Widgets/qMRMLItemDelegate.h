@@ -23,16 +23,25 @@
 
 // Qt includes
 #include <QStyledItemDelegate>
+class QDoubleSpinBox;
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
 
+/// \brief Item Delegate for MRML properties
+/// Use custom widgets for properties such as colors, opacities...
+/// If an index has Qt::DecorationRole set to a QColor, its editor will then be
+/// a ctkColorPickerButton linked to a color picker dialog on click
+/// If an index has a Qt::EditRole set to a QString that exactly is on the form
+/// X.YY where X is 0 or 1 and Y is a digit (0 to 9), then the editor will be
+/// a QDoubleSpinBox with a slider poping up on mouse hover.
 class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 {
   Q_OBJECT
 public:
   qMRMLItemDelegate(QObject *parent = 0);
-  
+  virtual ~qMRMLItemDelegate();
+
   bool isColor(const QModelIndex& index)const;
   int colorRole(const QModelIndex& index)const;
   bool is0To1Value(const QModelIndex& index)const;
@@ -58,6 +67,9 @@ public:
 protected slots:
   void commitSenderData();
   void commitAndClose();
+
+protected:
+  QDoubleSpinBox* DummySpinBox;
 };
 
 #endif
