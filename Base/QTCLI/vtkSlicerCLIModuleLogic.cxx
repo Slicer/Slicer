@@ -615,6 +615,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     
     vtkSmartPointer<vtkMRMLStorageNode> out = 0;
     vtkSmartPointer<vtkMRMLStorageNode> defaultOut = 0;
+    
     vtkMRMLStorableNode *sn = dynamic_cast<vtkMRMLStorableNode *>(nd);
     if (sn)
       {
@@ -642,7 +643,8 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     if ((commandType == SharedObjectModule) && defaultOut)
       {
-      std::cerr << nd->GetName() << " is " << nd->GetClassName() << std::endl;
+      //std::cerr << nd->GetName() << " is " << nd->GetClassName() << std::endl;
+
       // Check if we can transfer the datatype using a direct memory transfer
       if (std::find(MemoryTransferPossible.begin(), MemoryTransferPossible.end(), 
                     nd->GetClassName()) == MemoryTransferPossible.end())
