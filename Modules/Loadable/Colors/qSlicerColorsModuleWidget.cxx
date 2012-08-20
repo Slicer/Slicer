@@ -199,6 +199,8 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
     {
     d->LUTRangeWidget->setEnabled(true);
     double* range = colorNode->GetLookupTable()->GetRange();
+    d->LUTRangeWidget->setRange(
+      qMin(range[0], -1024.),qMax(range[1], 3071.));
     d->LUTRangeWidget->setValues(range[0], range[1]);
     d->ScalarBarWidget->GetScalarBarActor()->SetLookupTable(colorNode->GetLookupTable());
     }

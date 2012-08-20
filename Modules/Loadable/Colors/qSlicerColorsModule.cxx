@@ -189,5 +189,5 @@ QStringList qSlicerColorsModule::contributors()const
 //-----------------------------------------------------------------------------
 bool qSlicerColorsModule::isHidden()const
 {
-  return true;
+  return false;
 }
