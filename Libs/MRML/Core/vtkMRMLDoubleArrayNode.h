@@ -17,11 +17,11 @@
 #include <string>
 #include <vector>
 
-#include "vtkMRMLNode.h"
+#include "vtkMRMLStorableNode.h"
 class vtkDoubleArray;
 class vtkMRMLStorageNode;
 
-class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLStorableNode
 {
  
 
@@ -41,7 +41,7 @@ class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLNode
   //----------------------------------------------------------------
 
   static vtkMRMLDoubleArrayNode *New();
-  vtkTypeMacro(vtkMRMLDoubleArrayNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLDoubleArrayNode,vtkMRMLStorableNode);
   
   void PrintSelf(ostream& os, vtkIndent indent);
 
