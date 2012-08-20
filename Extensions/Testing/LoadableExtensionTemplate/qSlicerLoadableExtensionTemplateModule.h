@@ -26,8 +26,9 @@
 class qSlicerLoadableExtensionTemplateModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT qSlicerLoadableExtensionTemplateModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_LOADABLEEXTENSIONTEMPLATE_EXPORT
+qSlicerLoadableExtensionTemplateModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_INTERFACES(qSlicerLoadableModule);
@@ -44,7 +45,6 @@ public:
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 
-  /// Return a custom icon for the module
   virtual QIcon icon()const;
 
   virtual QStringList categories()const;

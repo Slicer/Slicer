@@ -18,10 +18,10 @@
 // Qt includes
 #include <QtPlugin>
 
-// ExtensionTemplate Logic includes
+// LoadableExtensionTemplate Logic includes
 #include <vtkSlicerLoadableExtensionTemplateLogic.h>
 
-// ExtensionTemplate includes
+// LoadableExtensionTemplate includes
 #include "qSlicerLoadableExtensionTemplateModule.h"
 #include "qSlicerLoadableExtensionTemplateModuleWidget.h"
 
@@ -40,7 +40,8 @@ public:
 // qSlicerLoadableExtensionTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableExtensionTemplateModulePrivate::qSlicerLoadableExtensionTemplateModulePrivate()
+qSlicerLoadableExtensionTemplateModulePrivate
+::qSlicerLoadableExtensionTemplateModulePrivate()
 {
 }
 
@@ -48,7 +49,8 @@ qSlicerLoadableExtensionTemplateModulePrivate::qSlicerLoadableExtensionTemplateM
 // qSlicerLoadableExtensionTemplateModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableExtensionTemplateModule::qSlicerLoadableExtensionTemplateModule(QObject* _parent)
+qSlicerLoadableExtensionTemplateModule
+::qSlicerLoadableExtensionTemplateModule(QObject* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerLoadableExtensionTemplateModulePrivate)
 {
@@ -104,7 +106,8 @@ void qSlicerLoadableExtensionTemplateModule::setup()
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerLoadableExtensionTemplateModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerLoadableExtensionTemplateModule
+::createWidgetRepresentation()
 {
   return new qSlicerLoadableExtensionTemplateModuleWidget;
 }
