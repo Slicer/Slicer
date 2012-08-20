@@ -158,10 +158,12 @@ class DataProbeInfoWidget(object):
 
         value = self.calculateTensorScalars(tensor, operation=operation)
         if value is not None:
-            return "%s %0.4g"%(scalarVolumeDisplayNode.GetScalarInvariantAsString(), value)
+            valueString = ("%f" % value).rstrip('0').rstrip('.')
+            return "%s %s"%(scalarVolumeDisplayNode.GetScalarInvariantAsString(), valueString)
         else:
             return scalarVolumeDisplayNode.GetScalarInvariantAsString()
 
+    # default - non label scalar volume
     numberOfComponents = imageData.GetNumberOfScalarComponents()
     if numberOfComponents > 3:
       return "%d components" % numberOfComponents
@@ -169,7 +171,10 @@ class DataProbeInfoWidget(object):
       component = imageData.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
       if component.is_integer():
         component = int(component)
-      pixel += "%0.4g, " % component
+      # format string according to suggestion here:
+      # http://stackoverflow.com/questions/2440692/formatting-floats-in-python-without-superfluous-zeros
+      componentString = ("%f" % component).rstrip('0').rstrip('.')
+      pixel += ("%s, " % componentString)
     return pixel[:-2]
 
 
