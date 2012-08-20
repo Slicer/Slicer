@@ -35,12 +35,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       self.tags[tagName] = tagVal
 
     self.multiVolumeTagsUnits = {}
-    self.multiVolumeTagsUnits['TriggerTime'] = "ms"
-    self.multiVolumeTagsUnits['EchoTime'] = "ms"
-    self.multiVolumeTagsUnits['FlipAngle'] = "deg"
-    self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
-    self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
-    self.multiVolumeTagsUnits['SeriesTime'] = "ms"
+    self.multiVolumeTagsUnits['TriggerTime'] = "time, ms"
+    self.multiVolumeTagsUnits['EchoTime'] = "time, ms"
+    self.multiVolumeTagsUnits['FlipAngle'] = "angle, degrees"
+    self.multiVolumeTagsUnits['RepetitionTime'] = "time, ms"
+    self.multiVolumeTagsUnits['AcquisitionTime'] = "time, ms"
+    self.multiVolumeTagsUnits['SeriesTime'] = "time, ms"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -315,13 +315,19 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       frameFileListStr = ""
       frameLabelsStr = ""
       frameLabelsArray = vtk.vtkDoubleArray()
+      tagValue0 = tagValues[0]
       for tagValue in tagValues:
         frameFileList = tagValue2FileList[tagValue]
         for file in frameFileList:
           frameFileListStr = frameFileListStr+file+','
 
         frameLabelsStr = frameLabelsStr+str(tagValue)+','
-        frameLabelsArray.InsertNextValue(tagValue)
+        # if mv was parsed by series time, probably makes sense to start from
+        # 0
+        if frameTag == 'SeriesTime':
+          frameLabelsArray.InsertNextValue(tagValue-tagValue0)
+        else:
+          frameLabelsArray.InsertNextValue(tagValue)
 
       print 'File list: ',frameFileList
       print 'Labels: ',frameLabelsStr
