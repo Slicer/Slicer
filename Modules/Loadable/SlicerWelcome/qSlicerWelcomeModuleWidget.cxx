@@ -26,6 +26,7 @@
 
 // Slicer includes
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT
+#include "vtkSlicerVersionConfigure.h"
 
 // SlicerQt includes
 #include "qSlicerWelcomeModuleWidget.h"
@@ -185,7 +186,10 @@ bool qSlicerWelcomeModuleWidget::loadRemoteSampleData()
 //-----------------------------------------------------------------------------
 bool qSlicerWelcomeModuleWidget::presentTutorials()
 {
-  QDesktopServices::openUrl(
-        QUrl(QSettings().value("SlicerWikiURL").toString() + "/Slicer3.6:Training"));
+  QDesktopServices::openUrl(QUrl(QString(
+    "%1/Documentation/%2.%3/Training")
+      .arg(QSettings().value("SlicerWikiURL").toString())
+      .arg(Slicer_VERSION_MAJOR)
+      .arg(Slicer_VERSION_MINOR)));
   return true;
 }

@@ -362,18 +362,24 @@ void qSlicerAppMainWindowCore::onHelpKeyboardShortcutsActionTriggered()
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onHelpBrowseTutorialsActionTriggered()
 {
-  QDesktopServices::openUrl(QUrl("http://www.slicer.org/slicerWiki/index.php/Slicer3.6:Training"));
+  QDesktopServices::openUrl(QUrl(QString(
+    "http://www.slicer.org/slicerWiki/index.php/Documentation/%1.%2/Training")
+      .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
 }
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onHelpInterfaceDocumentationActionTriggered()
 {
-  QDesktopServices::openUrl(QUrl(QString("http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2").arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
+  QDesktopServices::openUrl(QUrl(QString(
+    "http://wiki.slicer.org/slicerWiki/index.php/Documentation/%1.%2")
+      .arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR)));
 }
+
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onHelpSlicerPublicationsActionTriggered()
 {
   QDesktopServices::openUrl(QUrl("http://www.slicer.org/publications"));
 }
+
 //---------------------------------------------------------------------------
 void qSlicerAppMainWindowCore::onHelpAboutSlicerAppActionTriggered()
 {
