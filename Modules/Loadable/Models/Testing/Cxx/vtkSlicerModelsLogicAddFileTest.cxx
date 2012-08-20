@@ -74,7 +74,7 @@ bool testAddEmptyFile(const char * filePath)
   modelsLogic->SetMRMLScene(scene.GetPointer());
   int nodeCount = scene->GetNumberOfNodes();
 
-  modelsLogic->AddModel(filePath);
+  model = modelsLogic->AddModel(filePath);
 
   if (model != 0 ||
       scene->GetNumberOfNodes() != nodeCount)
