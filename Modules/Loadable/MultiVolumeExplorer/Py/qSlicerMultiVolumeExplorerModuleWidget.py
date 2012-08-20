@@ -162,8 +162,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__xArray = vtk.vtkFloatArray()
     self.__yArray = vtk.vtkFloatArray()
     # will crash if there is no name
-    self.__xArray.SetName('X')
-    self.__yArray.SetName('Y')
+    self.__xArray.SetName('')
+    self.__yArray.SetName('signal intensity')
     self.__chartTable.AddColumn(self.__xArray)
     self.__chartTable.AddColumn(self.__yArray)
 
@@ -196,6 +196,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         dataNodes[k] = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
         dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
       mvImage = self.__mvNode.GetImageData()
+      mvLabels = self.__mvNode.GetLabelArray()
       for c in range(nComponents):
         for k in labeledVoxels.keys():
           arr = dataNodes[k].GetArray()
@@ -204,7 +205,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           for v in labeledVoxels[k]:
             mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
             cnt = cnt+1
-          arr.SetComponent(c, 0, c)
+          arr.SetComponent(c, 0, mvLabels.GetComponent(c,0))
           arr.SetComponent(c, 1, mean/cnt)
           arr.SetComponent(c, 2, 0)
 
@@ -226,7 +227,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         self.__cvn.Modified()
 
       self.__cn.SetProperty('default','xAxisLabel',mvNode.GetLabelName())
-      self.__cn.SetProperty('default','yAxisLabel','mean image intensity')
+      self.__cn.SetProperty('default','yAxisLabel','mean signal intensity')
       self.__cvn.SetChartNodeID(self.__cn.GetID())
 
   def RGBtoHex(self,r,g,b):
@@ -323,6 +324,34 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       mvNodeFrameCopy.SetScene(slicer.mrmlScene)
       slicer.mrmlScene.AddNode(mvNodeFrameCopy)
       self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
+
+      self.__xArray.SetNumberOfTuples(nFrames)
+      self.__xArray.SetNumberOfComponents(1)
+      self.__xArray.Allocate(nFrames)
+      self.__xArray.SetName(self.__mvNode.GetLabelName())
+      self.__yArray.SetNumberOfTuples(nFrames)
+      self.__yArray.SetNumberOfComponents(1)
+      self.__yArray.Allocate(nFrames)
+      self.__yArray.SetName('signal intensity')
+
+      self.__chartTable = vtk.vtkTable()
+      self.__chartTable.AddColumn(self.__xArray)
+      self.__chartTable.AddColumn(self.__yArray)
+      self.__chartTable.SetNumberOfRows(nFrames)
+
+      # get the range of intensities for the 
+      mvi = self.__mvNode.GetImageData()
+      self.__mvRange = [0,0]
+      for f in range(nFrames):
+        extract = vtk.vtkImageExtractComponents()
+        extract.SetInput(mvi)
+        extract.SetComponents(f)
+        extract.Update()
+
+        frame = extract.GetOutput()
+        frameRange = frame.GetScalarRange()
+        self.__mvRange[0] = min(self.__mvRange[0], frameRange[0])
+        self.__mvRange[1] = max(self.__mvRange[1], frameRange[1])
 
     else:
       self.ctrlFrame.enabled = False
@@ -431,25 +460,25 @@ class qSlicerMultiVolumeExplorerModuleWidget:
             nComponents = self.__mvNode.GetNumberOfFrames()
             values = ''
             extent = mvImage.GetExtent()
-            # a = self.__dn.GetArray()
+            mvLabels = self.__mvNode.GetLabelArray()
             for c in range(nComponents):
               if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
                 val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-                values = values + str(val)+' '
-                self.__chartTable.SetValue(c, 0, c)
+                self.__chartTable.SetValue(c, 0, mvLabels.GetComponent(c,0))
                 self.__chartTable.SetValue(c, 1, val)
               else:
                 break
 
-            if values != '':
-              #self.__vcValue.setText(values)
-              self.__chart.RemovePlot(0)
-              self.__chart.RemovePlot(0)
-              # self.__chart.GetAxis(0).SetTitle(self.__mvNode.GetLabel ???)
-              plot = self.__chart.AddPlot(0)
-              plot.SetInput(self.__chartTable, 0, 1)
-              # seems to update only after another plot?..
-              self.__chart.AddPlot(0)
+            self.__chart.RemovePlot(0)
+            self.__chart.RemovePlot(0)
+            self.__chart.GetAxis(0).SetTitle('signal intensity')
+            self.__chart.GetAxis(1).SetTitle(self.__mvNode.GetLabelName())
+            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
+            self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+            plot = self.__chart.AddPlot(0)
+            plot.SetInput(self.__chartTable, 0, 1)
+            # seems to update only after another plot?..
+            self.__chart.AddPlot(0)
 
   def enter(self):
     if self.__cvn == None:
