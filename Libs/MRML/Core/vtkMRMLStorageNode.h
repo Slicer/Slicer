@@ -39,15 +39,17 @@ public:
   /// 
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
-  /// 
-  /// Read data and set it in the referenced node.
-  /// If temporary is true, it informs the reader that the file
-  /// is temporary meaning that it should probably be saved before leaving
-  /// the application.
+
+  ///
+  /// Read data from \a FileName and set it in the referenced node.
+  /// If temporaryFile is true, it informs the reader that the file to read is
+  /// from a temporary directory. It means that the node should probably be
+  /// saved by the user before leaving the application as the file might already
+  /// be deleted or be deleted soon after.
   /// Return 1 on success, 0 on failure.
-  /// NOTE: Subclasses should implement this method
-  virtual int ReadData(vtkMRMLNode *refNode, bool temporary = false);
+  /// \todo make temporaryFile a property (similar to what FileName)
+  /// \sa SetFileName(), ReadDataInternal(), GetStoredTime()
+  virtual int ReadData(vtkMRMLNode *refNode, bool temporaryFile = false);
 
   /// 
   /// Write data from a  referenced node
@@ -67,10 +69,11 @@ public:
   /// Get node XML tag name (like Storage, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  /// 
-  /// A file name or the archetype file name for a series
+  /// A file name or the archetype file name for a series used for read or write
+  /// \sa ReadData(), WriteData()
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
+
   /// 
   /// return the nth file name, null if doesn't exist
   const char *GetNthFileName(int n) const;
