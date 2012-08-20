@@ -20,6 +20,7 @@
 
 // QT includes
 #include <QApplication>
+#include <QTimer>
 
 // CTK includes
 #include <ctkColorDialog.h>
@@ -71,9 +72,10 @@ int qMRMLColorPickerWidgetTest2(int argc, char * argv [])
 
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
-    return EXIT_SUCCESS;
+    // quits the getColor dialog event loop.
+    QTimer::singleShot(200, &app, SLOT(quit()));
     }
-  QColor color = ctkColorDialog::getColor(Qt::red, 0, "", 0);
+  ctkColorDialog::getColor(Qt::red, 0, "", 0);
   return EXIT_SUCCESS;
 }
 
