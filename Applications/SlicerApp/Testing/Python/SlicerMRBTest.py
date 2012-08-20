@@ -1,6 +1,7 @@
 
 import os
 import unittest
+import vtk
 import slicer
 import EditorLib
 
