@@ -73,7 +73,7 @@ qSlicerAnnotationsIOOptionsWidget::qSlicerAnnotationsIOOptionsWidget(QWidget* pa
   this->FileTypeButtonGroup->addButton(d->RulerRadioButton);
   this->FileTypeButtonGroup->addButton(d->ROIRadioButton);
 //  this->FileTypeButtonGroup->addButton(d->ListRadioButton);
-  this->connect(this->FileTypeButtonGroup, SIGNAL(buttonReleased(int)),
+  this->connect(this->FileTypeButtonGroup, SIGNAL(buttonClicked(int)),
                 this, SLOT(updateProperties()));
 
   
@@ -115,7 +115,6 @@ void qSlicerAnnotationsIOOptionsWidget::updateProperties()
     {
     d->Properties.remove("name");
     }
-
   d->Properties["fiducial"] = d->FiducialRadioButton->isChecked();
   d->Properties["ruler"] = d->RulerRadioButton->isChecked();
   d->Properties["roi"] = d->ROIRadioButton->isChecked();
@@ -145,26 +144,31 @@ void qSlicerAnnotationsIOOptionsWidget::setFileNames(const QStringList& fileName
     QRegExp fiducialName("(\\b|_)(F)(\\b|_)");
     QRegExp rulerName("(\\b|_)(M)(\\b|_)");
     QRegExp roiName("(\\b|_)(R)(\\b|_)");
+    QAbstractButton* activeButton = 0;
 /*    QRegExp listName("(\\b|_)(List)(\\b|_)");
     if (fileInfo.baseName().contains(listName))
       {
       d->ListRadioButton->setChecked(true);
-      } 
+      }
     else
 */
     if (fileInfo.baseName().contains(fiducialName))
       {
-      d->FiducialRadioButton->setChecked(true);
+      activeButton = d->FiducialRadioButton;
       }
     else if (fileInfo.baseName().contains(rulerName))
       {
-      d->RulerRadioButton->setChecked(true);
+      activeButton = d->RulerRadioButton;
       }
     else if (fileInfo.baseName().contains(roiName))
       {
-      d->ROIRadioButton->setChecked(true);
+      activeButton = d->ROIRadioButton;
+      }
+    if (activeButton)
+      {
+      activeButton->click();
       }
     }
-  
+
   this->qSlicerIOOptionsWidget::setFileNames(fileNames);
 }
