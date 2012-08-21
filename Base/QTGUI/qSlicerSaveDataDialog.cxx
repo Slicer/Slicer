@@ -358,7 +358,7 @@ void qSlicerSaveDataDialogPrivate::populateNode(vtkMRMLNode* node)
   Q_ASSERT(coreIOManager);
   // Must be called after nodeFileInfo() as it creates a storage node
   // that is mandatory for fileWriterFileType()
-  if (coreIOManager->fileWriterFileType(node) == qSlicerIO::NoFile)
+  if (coreIOManager->fileWriterFileType(node) == QString("NoFile"))
     {
     return;
     }
@@ -906,7 +906,7 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
     }
 
   bool res = qSlicerApplication::application()->coreIOManager()->saveNodes(
-    qSlicerIO::SceneFile, properties);
+    QString("SceneFile"), properties);
   return res;
 }
 
@@ -1110,7 +1110,7 @@ qSlicerSaveDataDialog::~qSlicerSaveDataDialog()
 qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType()const
 {
   // FIXME: not really a nofile, but more a collection of files
-  return qSlicerIO::NoFile;
+  return QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------

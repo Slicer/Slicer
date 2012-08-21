@@ -147,7 +147,7 @@ void qSlicerVolumeRenderingModule::setup()
   coreIOManager->registerIO(
     new qSlicerVolumeRenderingIO(volumeRenderingLogic, this));
   coreIOManager->registerIO(new qSlicerNodeWriter(
-    "Transfer Function", qSlicerIO::TransferFunctionFile,
+    "Transfer Function", QString("TransferFunctionFile"),
     QStringList() << "vtkMRMLVolumePropertyNode", this));
 }
 

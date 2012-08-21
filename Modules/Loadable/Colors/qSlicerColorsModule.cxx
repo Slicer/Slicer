@@ -101,7 +101,7 @@ void qSlicerColorsModule::setup()
   app->coreIOManager()->registerIO(
     new qSlicerColorsIO(colorLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Colors", qSlicerIO::ColorTableFile,
+    "Colors", QString("ColorTableFile"),
     QStringList() << "vtkMRMLColorNode", this));
 
   QStringList paths = app->settings()->value("QTCoreModules/Colors/ColorFilePaths").toStringList();

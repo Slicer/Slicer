@@ -150,7 +150,7 @@ void qSlicerVolumesModule::setup()
     qSlicerCoreApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerVolumesIO(volumesLogic,this));
   ioManager->registerIO(new qSlicerNodeWriter(
-    "Volumes", qSlicerIO::VolumeFile,
+    "Volumes", QString("VolumeFile"),
     QStringList() << "vtkMRMLVolumeNode", this));
 }
 

@@ -207,7 +207,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
   properties["fileName"] = saveDirName;
   properties["screenShot"] = screenShot;
   qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(qSlicerIO::SceneFile, properties);
+    ->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------
@@ -233,7 +233,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToMRBActionTriggered()
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
   qSlicerCoreApplication::application()->coreIOManager()
-    ->saveNodes(qSlicerIO::SceneFile, properties);
+    ->saveNodes(QString("SceneFile"), properties);
 }
 
 //---------------------------------------------------------------------------

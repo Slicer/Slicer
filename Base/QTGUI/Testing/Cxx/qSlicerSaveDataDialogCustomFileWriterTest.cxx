@@ -69,7 +69,7 @@ bool qSlicerDummyFileWriter::write(const IOProperties& properties)
 int qSlicerSaveDataDialogCustomFileWriterTest(int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
-  app.coreIOManager()->registerIO(new qSlicerDummyFileWriter(qSlicerIO::TransformFile, 0));
+  app.coreIOManager()->registerIO(new qSlicerDummyFileWriter(QString("TransformFile"), 0));
 
   vtkNew<vtkMRMLTransformStorageNode> storageNode;
   app.mrmlScene()->AddNode(storageNode.GetPointer());

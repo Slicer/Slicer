@@ -41,7 +41,7 @@ void qSlicerSceneViewsModule::setup()
   qSlicerCoreIOManager* ioManager =
     qSlicerApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerNodeWriter(
-    "SceneViews", qSlicerIO::SceneViewFile,
+    "SceneViews", QString("SceneViewFile"),
     QStringList() << "vtkMRMLSceneViewNode", this));
 }
 

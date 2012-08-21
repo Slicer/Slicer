@@ -53,7 +53,7 @@ public:
   qSlicerDummyIO(QObject* parent = 0):qSlicerIO(parent){}
   virtual ~qSlicerDummyIO(){}
   virtual QString description()const{return "Dummy";}
-  virtual IOFileType fileType()const{return qSlicerIO::UserFile;}
+  virtual IOFileType fileType()const{return QString("UserFile");}
   virtual QStringList extensions()const{return QStringList(QString("All Files(*)"));}
   virtual qSlicerIOOptions* options()const{return new qSlicerDummyIOOptionsWidget;}
 

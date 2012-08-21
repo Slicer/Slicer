@@ -88,7 +88,7 @@ QString qSlicerVolumeRenderingIO::description()const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerVolumeRenderingIO::fileType()const
 {
-  return qSlicerIO::TransferFunctionFile;
+  return QString("TransferFunctionFile");
 }
 
 //-----------------------------------------------------------------------------

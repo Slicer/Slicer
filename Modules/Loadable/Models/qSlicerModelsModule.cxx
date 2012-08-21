@@ -155,7 +155,7 @@ void qSlicerModelsModule::setup()
   ioManager->registerIO(new qSlicerScalarOverlayIO(modelsLogic, this));
   ioManager->registerDialog(new qSlicerModelsDialog(this));
   ioManager->registerIO(new qSlicerNodeWriter(
-    "Models", qSlicerIO::ModelFile,
+    "Models", QString("ModelFile"),
     QStringList() << "vtkMRMLModelNode", this));
 }
 

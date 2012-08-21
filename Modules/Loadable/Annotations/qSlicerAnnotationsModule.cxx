@@ -92,7 +92,7 @@ void qSlicerAnnotationsModule::setup()
     new qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
 
   ioManager->registerIO(new qSlicerNodeWriter(
-    "Annotations", qSlicerIO::AnnotationFile,
+    "Annotations", QString("AnnotationFile"),
     QStringList() << "vtkMRMLAnnotationNode", this));
 }
 

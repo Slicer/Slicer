@@ -87,7 +87,7 @@ QString qSlicerVolumesIO::description()const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerVolumesIO::fileType()const
 {
-  return qSlicerIO::VolumeFile;
+  return QString("VolumeFile");
 }
 
 //-----------------------------------------------------------------------------

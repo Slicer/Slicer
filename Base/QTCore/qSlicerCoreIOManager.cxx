@@ -132,7 +132,7 @@ qSlicerCoreIOManager::~qSlicerCoreIOManager()
 qSlicerIO::IOFileType qSlicerCoreIOManager::fileType(const QString& fileName)const
 {
   QList<qSlicerIO::IOFileType> matchingFileTypes = this->fileTypes(fileName);
-  return matchingFileTypes.count() ? matchingFileTypes[0] : qSlicerIO::NoFile;
+  return matchingFileTypes.count() ? matchingFileTypes[0] : QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ qSlicerIO::IOFileType qSlicerCoreIOManager
 ::fileTypeFromDescription(const QString& fileDescription)const
 {
   qSlicerFileReader* reader = this->reader(fileDescription);
-  return reader ? reader->fileType() : qSlicerIO::NoFile;
+  return reader ? reader->fileType() : QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ qSlicerIO::IOFileType qSlicerCoreIOManager
       return writer->fileType();
       }
     }
-  return qSlicerIO::NoFile;
+  return QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------
@@ -184,7 +184,8 @@ QStringList qSlicerCoreIOManager::fileDescriptions(const QString& fileName)const
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerCoreIOManager::fileDescriptions(const qSlicerIO::IOFileType fileType)const
+QStringList qSlicerCoreIOManager::
+fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const
 {
   QStringList matchingDescriptions;
   foreach(qSlicerFileReader* reader, this->readers())
@@ -265,7 +266,7 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
   qSlicerIO::IOProperties properties;
   properties["fileName"] = fileName;
   properties["clear"] = clear;
-  return this->loadNodes(qSlicerIO::SceneFile, properties);
+  return this->loadNodes(QString("SceneFile"), properties);
 }
 
 //-----------------------------------------------------------------------------
@@ -343,15 +344,18 @@ bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreIOManager::loadNodes(const QList<qSlicerIO::IOProperties>& files,
-                                     vtkCollection* loadedNodes)
+bool qSlicerCoreIOManager::
+loadNodes(const QList<qSlicerIO::IOProperties>& files,
+          vtkCollection* loadedNodes)
 {
   bool res = true;
   foreach(qSlicerIO::IOProperties fileProperties, files)
     {
-    res = this->loadNodes(static_cast<qSlicerIO::IOFileType>(
-                            fileProperties["fileType"].toInt()),
-                          fileProperties, loadedNodes)
+    res = this->loadNodes(
+      static_cast<qSlicerIO::IOFileType>(fileProperties["fileType"].toString()),
+      fileProperties,
+      loadedNodes)
+
       && res;
     }
   return res;
@@ -394,7 +398,7 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
     }
 
   if (nodes.count() == 0 &&
-      fileType != qSlicerIO::SceneFile)
+      fileType != QString("SceneFile"))
     {
     return false;
     }

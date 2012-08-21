@@ -123,6 +123,6 @@ void qSlicerTransformsModule::setup()
   app->coreIOManager()->registerIO(
     new qSlicerTransformsIO(transformLogic, this));
   app->coreIOManager()->registerIO(new qSlicerNodeWriter(
-    "Transforms", qSlicerIO::TransformFile,
+    "Transforms", QString("TransformFile"),
     QStringList() << "vtkMRMLTransformNode", this));
 }

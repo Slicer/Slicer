@@ -41,32 +41,13 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerIO
   , public qSlicerObject
 {
   Q_OBJECT
-  Q_ENUMS(IOFileType)
+
 public:
   typedef QObject Superclass;
   explicit qSlicerIO(QObject* parent = 0);
   virtual ~qSlicerIO();
 
-  //typedef int IOFileType;
-
-  enum IOFileType
-  {
-    NoFile = 0,
-    SceneFile = 1,
-    VolumeFile = 2,
-    TransformFile = 3,
-    ModelFile = 4,
-    ScalarOverlayFile = 5,
-    ColorTableFile = 7,
-    FiducialListFile = 8,
-    FiberBundleFile = 9,
-    TransferFunctionFile = 10,
-    AnnotationFile = 11,
-    DoubleArrayFile = 12,
-    SceneViewFile = 13,
-    UserFile = 32,
-  };
-
+  typedef QString     IOFileType;
   typedef QVariantMap IOProperties;
 
   /// Unique name of the reader/writer

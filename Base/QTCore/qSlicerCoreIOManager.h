@@ -58,7 +58,7 @@ public:
   /// Usually the description is a short text of one or two words
   /// e.g. Volume, Model, ...
   QStringList fileDescriptions(const QString& file)const;
-  QStringList fileDescriptions(const qSlicerIO::IOFileType fileType)const;
+  QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
   Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object)const;
   QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
@@ -102,7 +102,7 @@ public:
 
   /// Load/import a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
-  /// loadNodes function with qSlicerIO::SceneFile
+  /// loadNodes function with QString("SceneFile")
   bool loadScene(const QString& fileName, bool clear = true);
 
   /// Attributes are typically:

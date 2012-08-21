@@ -637,7 +637,8 @@ void qSlicerAppMainWindow::onFileRecentLoadedActionTriggered()
 
   qSlicerIO::IOProperties fileProperties = fileParameters.toMap();
   qSlicerIO::IOFileType fileType =
-      static_cast<qSlicerIO::IOFileType>(fileProperties.find("fileType").value().toInt());
+      static_cast<qSlicerIO::IOFileType>(
+        fileProperties.find("fileType").value().toString());
 
   qSlicerApplication* app = qSlicerApplication::application();
   app->coreIOManager()->loadNodes(fileType, fileProperties);

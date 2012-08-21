@@ -107,7 +107,7 @@ void qSlicerDoubleArraysModule::setup()
     qSlicerCoreApplication::application()->coreIOManager();
   ioManager->registerIO(new qSlicerDoubleArraysIO(doubleArraysLogic,this));
   ioManager->registerIO(new qSlicerNodeWriter(
-    "Double Arrays", qSlicerIO::DoubleArrayFile,
+    "Double Arrays", QString("DoubleArrayFile"),
     QStringList() << "vtkMRMLDoubleArrayNode", this));
 }
 

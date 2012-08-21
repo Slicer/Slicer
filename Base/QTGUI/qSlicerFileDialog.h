@@ -61,7 +61,7 @@ public:
   /// Return the namefilters of all the readers in IOManager corresponding to
   /// fileType
   static QStringList nameFilters(qSlicerIO::IOFileType fileType =
-                                 qSlicerIO::NoFile);
+                                 QString("NoFile"));
 
 //private:
 //  Q_DECLARE_PRIVATE(qSlicerFileDialog);

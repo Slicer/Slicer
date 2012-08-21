@@ -259,7 +259,7 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
       }
     // TBD: fileType is not good enough to describe what reader to use
     properties["fileType"] = descriptionComboBox->itemData(
-      descriptionComboBox->currentIndex()).toInt();
+      descriptionComboBox->currentIndex()).toString();
     qSlicerIOOptionsWidget* optionsItem = dynamic_cast<qSlicerIOOptionsWidget*>(
       this->FileWidget->cellWidget(row, OptionsColumn));
     if (optionsItem)
@@ -387,7 +387,7 @@ qSlicerDataDialog::~qSlicerDataDialog()
 qSlicerIO::IOFileType qSlicerDataDialog::fileType()const
 {
   // FIXME: not really a scene file, but more a collection of files
-  return qSlicerIO::NoFile;
+  return QString("NoFile");
 }
 
 //-----------------------------------------------------------------------------

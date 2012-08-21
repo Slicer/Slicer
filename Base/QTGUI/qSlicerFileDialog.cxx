@@ -83,7 +83,7 @@ public:
 //-----------------------------------------------------------------------------
 qSlicerStandardFileDialogPrivate::qSlicerStandardFileDialogPrivate()
 {
-  this->FileType = qSlicerIO::NoFile;
+  this->FileType = QString("NoFile");
   this->Action = qSlicerFileDialog::Read;
 }
 
@@ -149,7 +149,7 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     {
     fileDialog->setNameFilters(
       qSlicerFileDialog::nameFilters(
-        (qSlicerIO::IOFileType)ioProperties["fileType"].toInt()));
+        (qSlicerIO::IOFileType)ioProperties["fileType"].toString()));
     }
   fileDialog->setHistory(ioManager->history());
   if (ioManager->favorites().count())
@@ -185,7 +185,8 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
   // warning: we are responsible for the memory of options
-  QStringList fileDescriptions = ioManager->fileDescriptions(this->fileType());
+  QStringList fileDescriptions =
+    ioManager->fileDescriptionsByType(this->fileType());
   qSlicerIOOptions* options = fileDescriptions.count() ?
     ioManager->fileOptions(fileDescriptions[0]) : 0;
   qSlicerIOOptionsWidget* optionsWidget =

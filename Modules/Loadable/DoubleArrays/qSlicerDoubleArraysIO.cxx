@@ -84,7 +84,7 @@ QString qSlicerDoubleArraysIO::description()const
 //-----------------------------------------------------------------------------
 qSlicerIO::IOFileType qSlicerDoubleArraysIO::fileType()const
 {
-  return qSlicerIO::DoubleArrayFile;
+  return QString("DoubleArrayFile");
 }
 
 //-----------------------------------------------------------------------------
