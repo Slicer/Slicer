@@ -2,6 +2,7 @@
 // Annotation MRML includes
 #include <vtkMRMLAnnotationControlPointsNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
+#include <vtkMRMLAnnotationLineDisplayNode.h>
 #include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationRulerNode.h>
 
@@ -841,7 +842,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       // only implemented for ruler yet
 
       vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
-      if (rulerNode)
+      if (rulerNode &&
+          (rulerNode->GetAnnotationLineDisplayNode() && rulerNode->GetAnnotationLineDisplayNode()->GetSliceIntersectionVisibility()))
         {
 
         double transformedP1[4];

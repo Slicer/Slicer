@@ -19,6 +19,9 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LabelVisibility = 1;
   this->TickSpacing = 10.0;
   this->MaxTicks = 99;
+
+  /// bug 2375: don't show the slice intersection until it's correct
+  this->SliceIntersectionVisibility = 0;
 }
 
 //----------------------------------------------------------------------------
