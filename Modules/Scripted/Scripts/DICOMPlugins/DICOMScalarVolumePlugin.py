@@ -173,6 +173,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         if not value or value == "":
           loadable.warning = "Reference image in series does not contain geometry information.  Please use caution."
           validGeometry = False
+          loadable.confidence = 0.2
           break
         ref[tag] = value
 
