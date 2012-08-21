@@ -154,49 +154,40 @@ def loadNodeFromFile(filename, filetype, properties={}, returnNode=False):
       return success
 
 def loadColorTable(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.ColorTableFile
+  filetype = 'ColorTableFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiberBundle(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.FiberBundleFile
+  filetype = 'FiberBundleFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadFiducialList(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.FiducialListFile
+  filetype = 'FiducialListFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadModel(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.ModelFile
+  filetype = 'ModelFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadScalarOverlay(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.ScalarOverlayFile
+  filetype = 'ScalarOverlayFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadTransform(filename, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.TransformFile
+  filetype = 'TransformFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
 def loadLabelVolume(filename, properties, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.VolumeFile
+  filetype = 'VolumeFile'
   properties['labelmap'] = True
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadVolume(filename, properties={}, returnNode=False):
-  from slicer import qSlicerIO
-  filetype = qSlicerIO.VolumeFile
+  filetype = 'VolumeFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
 def loadScene(filename, clear = True):
-  from slicer import app, qSlicerIO
-  filetype = qSlicerIO.SceneFile
+  filetype = 'SceneFile'
   properties = {'fileName':filename}
   return app.coreIOManager().loadNodes(filetype, properties)
 
