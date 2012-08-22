@@ -109,6 +109,13 @@ int vtkMRMLDisplayableHierarchyLogicTest1(int , char * [] )
     std::cout << "m2's hierarchy node has " << numChildren << " children nodes" << std::endl;
     }
 
+  bool retval = displayableHierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(h2));
+  if (!retval)
+    {
+    std::cerr << "Failed to delete hierarchy node and children!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  
   m1->Delete();
   m2->Delete();
   
