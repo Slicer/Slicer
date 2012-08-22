@@ -1,7 +1,6 @@
 set(KIT ${PROJECT_NAME})
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
-  vtkMRMLArrayPlotNodeTest1.cxx
   vtkMRMLBSplineTransformNodeTest1.cxx
   vtkMRMLCameraNodeTest1.cxx
   vtkMRMLClipModelsNodeTest1.cxx
@@ -46,9 +45,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLNRRDStorageNodeTest1.cxx
   vtkMRMLNodeTest1.cxx
   vtkMRMLNonlinearTransformNodeTest1.cxx
-  vtkMRMLOrthogonalLinePlotNodeTest1.cxx
   vtkMRMLPETProceduralColorNodeTest1.cxx
-  vtkMRMLPlotNodeTest1.cxx
   vtkMRMLProceduralColorNodeTest1.cxx
   vtkMRMLROIListNodeTest1.cxx
   vtkMRMLROINodeTest1.cxx
@@ -88,7 +85,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLVolumeHeaderlessStorageNodeTest1.cxx
   vtkMRMLVolumeNodeEventsTest.cxx
   vtkMRMLVolumeNodeTest1.cxx
-  vtkMRMLXYPlotManagerNodeTest1.cxx
   vtkMRMLdGEMRICProceduralColorNodeTest1.cxx
   vtkObserverManagerTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
@@ -97,7 +93,6 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 add_executable(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
 target_link_libraries(${KIT}CxxTests ${KIT})
 
-SIMPLE_TEST( vtkMRMLArrayPlotNodeTest1 )
 SIMPLE_TEST( vtkMRMLBSplineTransformNodeTest1 )
 SIMPLE_TEST( vtkMRMLCameraNodeTest1 )
 SIMPLE_TEST( vtkMRMLClipModelsNodeTest1 )
@@ -143,9 +138,7 @@ SIMPLE_TEST( vtkMRMLNodeTest1 )
 SIMPLE_TEST( vtkMRMLLinearTransformNodeEventsTest )
 SIMPLE_TEST( vtkMRMLNonlinearTransformNodeTest1 )
 SIMPLE_TEST( vtkMRMLNRRDStorageNodeTest1 )
-SIMPLE_TEST( vtkMRMLOrthogonalLinePlotNodeTest1 )
 SIMPLE_TEST( vtkMRMLPETProceduralColorNodeTest1 )
-SIMPLE_TEST( vtkMRMLPlotNodeTest1 )
 SIMPLE_TEST( vtkMRMLProceduralColorNodeTest1 )
 SIMPLE_TEST( vtkMRMLROIListNodeTest1 )
 SIMPLE_TEST( vtkMRMLROINodeTest1 )
@@ -182,7 +175,6 @@ SIMPLE_TEST( vtkMRMLVolumeArchetypeStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeDisplayNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeHeaderlessStorageNodeTest1 )
 SIMPLE_TEST( vtkMRMLVolumeNodeTest1 )
-SIMPLE_TEST( vtkMRMLXYPlotManagerNodeTest1 )
 SIMPLE_TEST( vtkObserverManagerTest1 )
 
 macro(SIMPLE_TEST_WITH_SCENE TESTNAME SCENEFILENAME)

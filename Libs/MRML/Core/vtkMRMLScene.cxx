@@ -55,10 +55,7 @@ Version:   $Revision: 1.18 $
 #include "vtkURIHandler.h"
 #include "vtkMRMLLayoutNode.h"
 
-#include "vtkMRMLArrayPlotNode.h"
-#include "vtkMRMLXYPlotManagerNode.h"
 #include "vtkMRMLDoubleArrayNode.h"
-#include "vtkMRMLOrthogonalLinePlotNode.h"
 #include "vtkMRMLDoubleArrayStorageNode.h"
 #include "vtkMRMLCrosshairNode.h"
 #include "vtkMRMLInteractionNode.h"
@@ -346,25 +343,9 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( btn );
   btn->Delete();
 
-  vtkMRMLArrayPlotNode *apn = vtkMRMLArrayPlotNode::New();
-  this->RegisterNodeClass( apn );
-  apn->Delete();
-
-  vtkMRMLXYPlotManagerNode *xypmn = vtkMRMLXYPlotManagerNode::New();
-  this->RegisterNodeClass( xypmn );
-  xypmn->Delete();
-
   vtkMRMLDoubleArrayNode *dan = vtkMRMLDoubleArrayNode::New();
   this->RegisterNodeClass( dan );
   dan->Delete();
-
-  vtkMRMLPlotNode *pn = vtkMRMLPlotNode::New();
-  this->RegisterNodeClass( pn );
-  pn->Delete();
-
-  vtkMRMLOrthogonalLinePlotNode *olpn = vtkMRMLOrthogonalLinePlotNode::New();
-  this->RegisterNodeClass( olpn );
-  olpn->Delete();
 
   vtkMRMLDoubleArrayStorageNode *dasn = vtkMRMLDoubleArrayStorageNode::New();
   this->RegisterNodeClass(dasn);
