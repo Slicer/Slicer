@@ -49,7 +49,6 @@ public slots:
   void deleteMultipleModels();
   void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
-  void onEndImportEvent();
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;

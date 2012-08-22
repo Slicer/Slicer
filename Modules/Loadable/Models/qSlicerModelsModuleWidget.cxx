@@ -145,7 +145,10 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
     QStringList() << "vtkMRMLModelHierarchyNode");
 
-//  qDebug() << "qSlicerModelsModuleWidget::updateTreeViewModel done";
+  // use lazy update instead of responding to scene import end event
+  d->ModelHierarchyTreeView->sceneModel()->setLazyUpdate(true);
+  
+  // qDebug() << "qSlicerModelsModuleWidget::updateTreeViewModel done";
 }
 
 //-----------------------------------------------------------------------------
@@ -327,21 +330,5 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
     {
     return;
     }
-
-  // listen for import end events
-  qvtkReconnect(this->mrmlScene(), scene,
-                vtkMRMLScene::EndImportEvent,
-                this, SLOT(onEndImportEvent()));
-
   this->Superclass::setMRMLScene(scene);
-
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerModelsModuleWidget::onEndImportEvent()
-{
-  this->updateTreeViewModel();
-  
-//  qDebug() << "qSlicerModelsModuleWidget::onEndImportEvent: after updating tree view model";
 }
