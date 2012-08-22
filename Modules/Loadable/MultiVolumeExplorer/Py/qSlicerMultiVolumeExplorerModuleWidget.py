@@ -152,9 +152,17 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.iCharting.setChecked(True)
     self.iCharting.connect('toggled(bool)', self.onInteractiveChartingChanged)
 
+    label = qt.QLabel("Use intensity range to fix axis extent")
+    label.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
+    self.__fixedAxesCheckbox = qt.QCheckBox()
+    self.__fixedAxesCheckbox.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
+    self.__fixedAxesCheckbox.checked = False
+    plotFrameLayout.addWidget(label, 2, 0)
+    plotFrameLayout.addWidget(self.__fixedAxesCheckbox, 2,1,1,2)
+
     # add chart container widget
     self.__chartView = ctk.ctkVTKChartView(w)
-    plotFrameLayout.addWidget(self.__chartView,2,0,1,3)
+    plotFrameLayout.addWidget(self.__chartView,3,0,1,3)
 
 
     self.__chart = self.__chartView.chart()
@@ -295,9 +303,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
   def onInteractiveChartingChanged(self, checked):
     if checked:
-      self.iCharting.text = 'Disable interactive charting'
+      self.iCharting.text = 'Disable interactive plotting'
     else:
-      self.iCharting.text = 'Enable interactive charting'
+      self.iCharting.text = 'Enable interactive plotting'
 
   def onInputChanged(self):
     self.__mvNode = self.__mvSelector.currentNode()
@@ -473,8 +481,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
             self.__chart.RemovePlot(0)
             self.__chart.GetAxis(0).SetTitle('signal intensity')
             self.__chart.GetAxis(1).SetTitle(self.__mvNode.GetLabelName())
-            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
-            self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+            if self.__fixedAxesCheckbox.checked == True:
+              self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
+              self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+            else:
+              self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
             plot = self.__chart.AddPlot(0)
             plot.SetInput(self.__chartTable, 0, 1)
             # seems to update only after another plot?..
