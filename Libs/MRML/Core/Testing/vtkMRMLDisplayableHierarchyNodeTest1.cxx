@@ -240,7 +240,7 @@ bool TestHierarchyEvents()
       callback->GetNumberOfEvents(
         vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 0)
     {
-    std::cerr << __LINE__ << ": "
+    std::cerr << __LINE__ << ": model modified: "
               << "vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
               << callback->GetErrorString().c_str()
               << " Number of ModifiedEvent: " << callback->GetNumberOfModified()
@@ -259,7 +259,7 @@ bool TestHierarchyEvents()
       callback->GetNumberOfEvents(
         vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 0)
     {
-    std::cerr << __LINE__ << ": "
+    std::cerr << __LINE__ << ": model display modified: "
               <<"vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
               << callback->GetErrorString().c_str()
               << " Number of ModifiedEvent: " << callback->GetNumberOfModified()
@@ -276,9 +276,9 @@ bool TestHierarchyEvents()
   if (!callback->GetErrorString().empty() ||
       callback->GetNumberOfModified() != 0 ||
       callback->GetNumberOfEvents(
-        vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 0)
+        vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent) != 1)
     {
-    std::cerr << __LINE__ << ": "
+    std::cerr << __LINE__ << ": hierarchy display modified: "
               <<"vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent failed "
               << callback->GetErrorString().c_str()
               << " Number of ModifiedEvent: " << callback->GetNumberOfModified()

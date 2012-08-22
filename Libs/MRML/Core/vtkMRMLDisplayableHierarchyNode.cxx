@@ -216,7 +216,7 @@ void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
   if (dnode != NULL && dnode == vtkMRMLDisplayNode::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    this->InvokeEvent(vtkMRMLDisplayableHierarchyNode::DisplayModifiedEvent, NULL);
     }
   return;
 }
