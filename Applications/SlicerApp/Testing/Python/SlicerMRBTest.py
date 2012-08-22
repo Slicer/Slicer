@@ -2,6 +2,7 @@
 import os
 import unittest
 import vtk
+import qt
 import slicer
 import EditorLib
 
@@ -101,9 +102,32 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     if mrbMismatch:
       print('Loaded mrb image does not match original scene image')
 
+    if (sceneMismatch or mrbMismatch):
+      self.imageCompare((self.beforeImage, self.sceneLoadedImage, self.mrbLoadedImage), "before, after scene load, and after mrb load")
+
     self.assertTrue(not sceneMismatch and not mrbMismatch)
 
     print("Scene and MRB loaded and compared")
+
+  def imageCompare(self,images,text='',prefWidth=1500): 
+    """Show images in a window with a text message.
+    """
+    self.imageCompare = qt.QWidget()
+    vbox = qt.QVBoxLayout()
+    self.imageCompare.setLayout(vbox)
+    label = qt.QLabel(self.imageCompare)
+    label.text = text
+    vbox.addWidget(label)
+    imageFrame = qt.QFrame(self.imageCompare)
+    vbox.addWidget(imageFrame)
+    hbox = qt.QHBoxLayout()
+    imageFrame.setLayout(hbox)
+    for image in images:
+      ii = image.scaledToWidth(prefWidth/len(images))
+      label = qt.QLabel(imageFrame)
+      label.pixmap = label.pixmap.fromImage(ii)
+      hbox.addWidget(label)
+    self.imageCompare.show()
 
   def showOneTract(self,tracts,whichTract): 
     """display the named tract's tubes but turn the others off"""
