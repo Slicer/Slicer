@@ -263,3 +263,22 @@ QPalette qSlicerStyle::standardPalette()const
   palette.setColor(QPalette::AlternateBase, QColor("#e4e4fe"));
   return palette;
 }
+
+//------------------------------------------------------------------------------
+int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
+                             QStyleHintReturn *returnData) const
+{
+  int res;
+  switch(hint)
+    {
+    case QStyle::SH_ItemView_ActivateItemOnSingleClick:
+      if (widget && widget->property("SH_ItemView_ActivateItemOnSingleClick").isValid())
+        {
+        res = widget->property("SH_ItemView_ActivateItemOnSingleClick").toBool();
+        break;
+        }
+    default:
+      res = this->Superclass::styleHint(hint, opt, widget, returnData);
+    }
+  return res;
+}

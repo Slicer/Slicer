@@ -594,7 +594,8 @@ class HelperBox(object):
     self.structures.setHeaderData(3,1,"Label Volume")
     self.structures.setHeaderData(4,1,"Order")
     self.structuresView.setModel(self.structures)
-    self.structuresView.selectionModel().connect("currentChanged(QModelIndex,QModelIndex)", self.onStructuresClicked)
+    self.structuresView.connect("activated(QModelIndex)", self.onStructuresClicked)
+    self.structuresView.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
 
   #
   # callback helpers (slots)

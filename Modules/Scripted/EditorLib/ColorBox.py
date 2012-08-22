@@ -57,6 +57,7 @@ class ColorBox(object):
     self.populateColors()
     self.search.connect('textChanged(QString)', self.populateColors)
     self.view.connect('activated(QModelIndex)', self.selected)
+    self.view.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
 
   def cleanup(self):
     pass
