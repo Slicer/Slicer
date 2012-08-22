@@ -63,6 +63,9 @@ protected slots:
   void onModuleLoaded(const QString& moduleName);
   void onModuleAboutToBeUnloaded(const QString& moduleName);
   void onEditApplicationSettingsActionTriggered();
+  void onCutActionTriggered();
+  void onCopyActionTriggered();
+  void onPasteActionTriggered();
   void onViewExtensionManagerActionTriggered();
 
   void onFileRecentLoadedActionTriggered();

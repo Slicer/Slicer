@@ -741,6 +741,13 @@ void qSlicerAppMainWindow::setupMenuActions()
   qSlicerAppMainWindowCore_connect(EditRedo);
 
   qSlicerAppMainWindow_connect(EditApplicationSettings);
+  this->connect(d->actionCut, SIGNAL(triggered()),
+                this, SLOT(onCutActionTriggered()));
+  this->connect(d->actionCopy, SIGNAL(triggered()),
+                this, SLOT(onCopyActionTriggered()));
+  this->connect(d->actionPaste, SIGNAL(triggered()),
+                this, SLOT(onPasteActionTriggered()));
+
   qSlicerAppMainWindow_connect(ViewExtensionManager);
 
   d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
@@ -881,6 +888,57 @@ void qSlicerAppMainWindow::onNewFileLoaded(const qSlicerIO::IOProperties& filePr
 
   // Keep the settings up-to-date
   qSlicerAppMainWindowPrivate::writeRecentlyLoadedFiles(d->RecentlyLoadedFileProperties);
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::onCopyActionTriggered()
+{
+  QWidget* focused = QApplication::focusWidget();
+  if (focused != 0)
+    {
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyPress,
+                                           Qt::Key_C,
+                                           Qt::ControlModifier));
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyRelease,
+                                           Qt::Key_C,
+                                           Qt::ControlModifier));
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::onPasteActionTriggered()
+{
+  QWidget* focused = QApplication::focusWidget();
+  if (focused != 0)
+    {
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyPress,
+                                           Qt::Key_V,
+                                           Qt::ControlModifier));
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyRelease,
+                                           Qt::Key_V,
+                                           Qt::ControlModifier));
+    }
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAppMainWindow::onCutActionTriggered()
+{
+  QWidget* focused = QApplication::focusWidget();
+  if (focused != 0)
+    {
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyPress,
+                                           Qt::Key_X,
+                                           Qt::ControlModifier));
+    QApplication::postEvent(focused,
+                            new QKeyEvent( QEvent::KeyRelease,
+                                           Qt::Key_X,
+                                           Qt::ControlModifier));
+    }
 }
 
 //---------------------------------------------------------------------------
