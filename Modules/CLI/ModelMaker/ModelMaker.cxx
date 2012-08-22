@@ -1099,7 +1099,10 @@ int main(int argc, char * argv[])
           std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
           }
         writer->SetFileName(fileName.c_str() );
-        writer->Write();
+        if (!writer->Write())
+          {
+          std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
+          }
         writer->SetInput(NULL);
         writer = NULL;
         }
@@ -1192,7 +1195,10 @@ int main(int argc, char * argv[])
           std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
           }
         writer->SetFileName(fileName.c_str() );
-        writer->Write();
+        if (!writer->Write())
+          {
+          std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
+          }
         writer->SetInput(NULL);
         writer = NULL;
         }
@@ -1367,7 +1373,10 @@ int main(int argc, char * argv[])
             std::cout << "Writing intermediate file " << fileName.c_str() << std::endl;
             }
           writer->SetFileName(fileName.c_str() );
-          writer->Write();
+          if (!writer->Write())
+            {
+            std::cerr << "ERROR: Failed to write intermediate file " << fileName.c_str() << std::endl;
+            }
           writer->SetInput(NULL);
           writer = NULL;
           }
@@ -1519,7 +1528,10 @@ int main(int argc, char * argv[])
         {
         std::cout << "Writing model " << " " << labelName << " to file " << writer->GetFileName()  << endl;
         }
-      writer->Write();
+      if (!writer->Write())
+        {
+        std::cerr << "ERROR: Failed to write model file " << fileName.c_str() << std::endl;
+        }
 
       writer->SetInput(NULL);
       writer = NULL;
