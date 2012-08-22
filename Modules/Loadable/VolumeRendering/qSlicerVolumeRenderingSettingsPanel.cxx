@@ -113,7 +113,6 @@ int qSlicerVolumeRenderingSettingsPanelPrivate::memoryFromString(const QString& 
   int pos = this->MemoryRegExp.indexIn(memory);
   if (pos < 0)
     {
-    Q_ASSERT(pos >= 0);
     return 0;
     }
 
