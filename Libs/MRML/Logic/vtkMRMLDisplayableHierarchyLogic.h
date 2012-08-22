@@ -46,6 +46,11 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbs
   /// parent and child). Return true on success, false on failure.
   bool AddChildToParent(vtkMRMLDisplayableNode *child, vtkMRMLDisplayableNode *parent);
 
+  /// Delete the passed hierarchy node and all children hierarchy nodes and
+  /// the associated nodes to which they point. Return true on success, false
+  /// on failure. Gets the mrml scene from the node.
+  bool DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode *hnode);
+
 protected:
   vtkMRMLDisplayableHierarchyLogic();
   ~vtkMRMLDisplayableHierarchyLogic();

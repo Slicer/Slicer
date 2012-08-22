@@ -178,3 +178,68 @@ bool vtkMRMLDisplayableHierarchyLogic::AddChildToParent(vtkMRMLDisplayableNode *
     }
   return false;
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLDisplayableHierarchyLogic::DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode *hnode)
+{
+  if (!hnode)
+    {
+    vtkErrorMacro("DeleteHierarchyNodeAndChildren: no hierarchy node given");
+    return false;
+    }
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("DeleteHierarchyNodeAndChildren: no scene defined on this class");
+    return false;
+    }
+
+  // first off, set up batch processing mode on the scene
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+
+  // get all the children nodes
+  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  hnode->GetAllChildrenNodes(allChildren);
+
+  // and loop over them
+  for (unsigned int i = 0; i < allChildren.size(); ++i)
+    {
+    vtkMRMLDisplayableHierarchyNode *dispHierarchyNode = vtkMRMLDisplayableHierarchyNode::SafeDownCast(allChildren[i]);
+    if (dispHierarchyNode)
+      {
+      // get any associated node
+      vtkMRMLNode *associatedNode = dispHierarchyNode->GetAssociatedNode();
+      if (associatedNode)
+        {
+        this->GetMRMLScene()->RemoveNode(associatedNode);
+        }
+      // remove the display node (hierarchy nodes aren't displayable so the
+      // scene doesn't do the housekeeping automatically)
+      vtkMRMLDisplayNode *dispDisplayNode = dispHierarchyNode->GetDisplayNode();
+      if (dispDisplayNode)
+        {
+        this->GetMRMLScene()->RemoveNode(dispDisplayNode);
+        }
+      this->GetMRMLScene()->RemoveNode(dispHierarchyNode);
+      }
+    }
+  // sanity check
+  bool retval = true;
+  if (hnode->GetNumberOfChildrenNodes() != 0)
+    {
+    vtkErrorMacro("Failed to delete all children hierarchy nodes! Still have " << hnode->GetNumberOfChildrenNodes() << " left");
+    retval = false;
+    }
+  // delete it's display node
+  vtkMRMLDisplayNode *dispNode = hnode->GetDisplayNode();
+  if (dispNode)
+    {
+    this->GetMRMLScene()->RemoveNode(dispNode);
+    }
+  // and then delete itself
+  this->GetMRMLScene()->RemoveNode(hnode);
+  
+  // end batch processing
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+  
+  return retval;
+}
