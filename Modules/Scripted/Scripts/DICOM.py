@@ -34,6 +34,7 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       slicer.mrmlScene.RegisterNodeClass(vtkMRMLScriptedModuleNode())
 
     # initialize the dicom infrastructure
+    slicer.dicomDatabase = None
     settings = qt.QSettings()
     # the dicom database is a global object for slicer
     if settings.contains('DatabaseDirectory'):
@@ -41,19 +42,21 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
       if databaseDirectory: 
         slicer.dicomDatabase = ctk.ctkDICOMDatabase()
         slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-        # the dicom listener is also global, but only started on app start if 
-        # the user so chooses
-        if settings.contains('DICOM/RunListenerAtStart'):
-          if bool(settings.value('DICOM/RunListenerAtStart')):
-            if not hasattr(slicer, 'dicomListener'):
-              try:
-                slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
-                slicer.dicomListener.start()
-              except (UserWarning,OSError) as message:
-                # TODO: how to put this into the error log?
-                print ('Problem trying to start DICOMListener:\n %s' % message)
-    else:
-      slicer.dicomDatabase = None
+        if not slicer.dicomDatabase.isOpen:
+          # can't open the database, so prompt the user later if they enter module
+          slicer.dicomDatabase = None
+        else:
+          # the dicom listener is also global, but only started on app start if 
+          # the user so chooses
+          if settings.contains('DICOM/RunListenerAtStart'):
+            if bool(settings.value('DICOM/RunListenerAtStart')):
+              if not hasattr(slicer, 'dicomListener'):
+                try:
+                  slicer.dicomListener = DICOMLib.DICOMListener(slicer.dicomDatabase)
+                  slicer.dicomListener.start()
+                except (UserWarning,OSError) as message:
+                  # TODO: how to put this into the error log?
+                  print ('Problem trying to start DICOMListener:\n %s' % message)
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
@@ -276,6 +279,8 @@ class DICOMWidget:
     slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
     if not slicer.dicomDatabase.isOpen:
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+      self.dicomDatabase = None
+      return
     if self.dicomApp:
       if self.dicomApp.databaseDirectory != databaseDirectory:
         self.dicomApp.databaseDirectory = databaseDirectory
