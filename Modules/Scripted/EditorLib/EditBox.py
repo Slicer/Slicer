@@ -76,6 +76,21 @@ class EditBox(object):
     self.currentOption = None
     self.currentTools = []
 
+    # listen for changes in the Interaction Mode
+    appLogic = slicer.app.applicationLogic()
+    interactionNode = appLogic.GetInteractionNode()
+    self.interactionNodeTag = interactionNode.AddObserver(interactionNode.InteractionModeChangedEvent, self.onInteractionModeChanged)
+
+  def __del__(self):
+    appLogic = slicer.app.applicationLogic()
+    interactionNode = appLogic.GetInteractionNode()
+    interactionNode.RemoveObserver(self.interactionNodeTag)
+
+  def onInteractionModeChanged(self, caller, event):
+    if caller.IsA('vtkMRMLInteractionNode'):
+      if caller.GetCurrentInteractionMode() != caller.ViewTransform:
+        self.defaultEffect()
+
   #
   # Public lists of the available effects provided by the editor
   #
@@ -388,6 +403,11 @@ class EditBox(object):
           #app.setOverrideCursor(cursor, 0, 0)
           cursor = qt.QCursor(1)
           slicer.app.setOverrideCursor(cursor)
+
+          # set the interaction mode in case there was an active place going on
+          appLogic = slicer.app.applicationLogic()
+          interactionNode = appLogic.GetInteractionNode()
+          interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
         else:
           slicer.app.restoreOverrideCursor()
 
