@@ -64,7 +64,7 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
   // Check if this is a NRRD file that we can read
   if (!reader->CanReadFile(fullName.c_str()))
     {
-    vtkDebugMacro("vtkMRMLNRRDStorageNode: This is not a nrrd file");
+    vtkDebugMacro("vtkMRMLMultiVolumeStorageNode: This is not a nrrd file");
     return 0;
     }
 
@@ -92,5 +92,6 @@ int vtkMRMLMultiVolumeStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     }
   
   // delegate to the superclass
-  return Superclass::ReadDataInternal(refNode);
+  int ret = Superclass::ReadDataInternal(refNode);
+  return ret;
 }
