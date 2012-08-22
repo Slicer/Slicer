@@ -58,10 +58,6 @@
       <description><![CDATA[Is this surface model visible in the 3D view?]]></description>
     </parameter>
     <parameter>
-      <label>Selected</label>
-      <description><![CDATA[If this model is selected, it's visual appearance will change.]]></description>
-    </parameter>
-    <parameter>
       <label>Clip</label>
       <description><![CDATA[Is clipping (using the slice planes) enabled for this model? Once it is on, go to the Clipping pane to set the options.]]></description>
     </parameter>

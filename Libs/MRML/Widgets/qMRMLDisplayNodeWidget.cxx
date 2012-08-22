@@ -177,6 +177,7 @@ bool qMRMLDisplayNodeWidget::selected()const
 void qMRMLDisplayNodeWidget::setSelectedVisible(bool visible)
 {
   Q_D(const qMRMLDisplayNodeWidget);
+  d->SelectedLabel->setVisible(visible);
   d->SelectedCheckBox->setVisible(visible);
 }
 
