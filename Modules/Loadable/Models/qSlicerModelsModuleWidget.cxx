@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QModelIndex>
 
 // qMRMLWidgets
@@ -34,6 +35,8 @@
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLScene.h"
+
+#include <vtkMRMLDisplayableHierarchyLogic.h>
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
@@ -99,13 +102,14 @@ void qSlicerModelsModuleWidget::setup()
   // customize the right click menu to offer a delete multiple nodes option,
   // and deal with the hierarchies associated with model nodes
   d->DeleteMultipleNodesAction = new QAction(tr("Delete Model(s)"), this);
-  d->DeleteMultipleNodesAction->setToolTip(tr("Delete one or more models, along with the 1:1 hierarchy nodes that may be associated with them"));
+  d->DeleteMultipleNodesAction->setToolTip(tr("Delete one or more models and/or hierarchies, along with the 1:1 hierarchy nodes that may be associated with them"));
   d->ModelHierarchyTreeView->appendNodeMenuAction(d->DeleteMultipleNodesAction);
   connect(d->DeleteMultipleNodesAction, SIGNAL(triggered()),
           this, SLOT(deleteMultipleModels()));
 
   // customise the right click menu to offer a rename multiple nodes option
-  d->RenameMultipleNodesAction = new QAction(tr("Rename Multiple Models"), this);
+  d->RenameMultipleNodesAction = new QAction(tr("Rename Model(s)"), this);
+  d->RenameMultipleNodesAction->setToolTip(tr("Rename one or more models and/or hierarchies"));
   d->ModelHierarchyTreeView->appendNodeMenuAction(d->RenameMultipleNodesAction);
   connect(d->RenameMultipleNodesAction, SIGNAL(triggered()),
           this, SLOT(renameMultipleModels()));
@@ -150,13 +154,6 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
   Q_D(qSlicerModelsModuleWidget);
   
   vtkMRMLModelHierarchyNode *modelHierarchyNode = vtkMRMLModelHierarchyNode::New();
-
-  vtkMRMLNode* parent = vtkMRMLNode::SafeDownCast(d->ModelHierarchyTreeView->currentNode());
-  if (parent)
-    {
-    modelHierarchyNode->SetParentNodeID(parent->GetID());
-    }
-  this->mrmlScene()->AddNode(modelHierarchyNode);
   modelHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString("Model Hierarchy"));
 
   // also add a display node to the hierarchy node for use when the hierarchy is collapsed
@@ -164,10 +161,23 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
   if (modelDisplayNode)
     {
     this->mrmlScene()->AddNode(modelDisplayNode);
-    modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
+    // qDebug() << "insertHierarchyNode: added a display node for hierarchy node, with id = " << modelDisplayNode->GetID();
+    }
 
+  this->mrmlScene()->AddNode(modelHierarchyNode);
+
+  vtkMRMLNode* parent = vtkMRMLNode::SafeDownCast(d->ModelHierarchyTreeView->currentNode());
+  if (parent)
+    {
+    modelHierarchyNode->SetParentNodeID(parent->GetID());
+    }
+
+  if (modelDisplayNode)
+    {
+    modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
     modelDisplayNode->Delete();
     }
+  
   modelHierarchyNode->Delete();
 }
 
@@ -218,6 +228,36 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
       //qDebug() << i << ": removing model node " << mrmlNode->GetName() << ", id = " << mrmlNode->GetID();
       this->mrmlScene()->RemoveNode(mrmlNode);
       }
+    else if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
+      {
+      // Deleting a model hierarchy node and everything under it
+      // confirm first
+      QMessageBox confirmBox;
+      QString msg = QString("Delete ") + QString(mrmlNode->GetName()) + QString(" and all children?");
+      confirmBox.setText(msg);
+      confirmBox.setStandardButtons(QMessageBox::Cancel | QMessageBox::Ok);
+      confirmBox.setDefaultButton(QMessageBox::Cancel);
+      int ret = confirmBox.exec();
+      switch (ret) {
+        case QMessageBox::Ok :
+          {
+          // delete
+          vtkMRMLDisplayableHierarchyLogic *hierarchyLogic = vtkMRMLDisplayableHierarchyLogic::New();
+          hierarchyLogic->SetMRMLScene(this->mrmlScene());
+          bool retval = hierarchyLogic->DeleteHierarchyNodeAndChildren(vtkMRMLDisplayableHierarchyNode::SafeDownCast(mrmlNode));
+          if (!retval)
+            {
+            qWarning() << "Failed to delete hierarchy and children!";
+            }
+          hierarchyLogic->Delete();
+          break;
+          }
+        default:
+          {
+          qWarning() << "Not deleting hierarchy";
+          }
+        }
+      }
     else
       {
       qWarning() << "Unable to delete model using node id" << qPrintable(modelID);
@@ -243,7 +283,8 @@ void qSlicerModelsModuleWidget::renameMultipleModels()
     {
     QModelIndex index = indexList.at(i);
     vtkMRMLNode *mrmlNode =  d->ModelHierarchyTreeView->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-    if (mrmlNode && mrmlNode->IsA("vtkMRMLModelNode"))
+    if (mrmlNode &&
+        (mrmlNode->IsA("vtkMRMLModelNode") || mrmlNode->IsA("vtkMRMLModelHierarchyNode")))
       {
       // pop up an entry box for the new name, with the old name as default
       QString oldName = mrmlNode->GetName();
