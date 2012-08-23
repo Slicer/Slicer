@@ -1,0 +1,5 @@
+3D Slicer module to support exploration (charting, playback) of the multi-volume data.
+
+Documentation and user guide:
+
+http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/MultiVolumeExplorer
