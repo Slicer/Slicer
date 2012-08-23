@@ -81,12 +81,12 @@ class MultiVolumeImporterWidget:
 
     label = qt.QLabel('Frame identifying DICOM tag (if known):')
     self.__dicomTag = qt.QLineEdit()
-    self.__dicomTag.text = 'Not defined'
+    self.__dicomTag.text = 'NA'
     dummyFormLayout.addRow(label, self.__dicomTag)
 
     label = qt.QLabel('Frame identifying units:')
     self.__veLabel = qt.QLineEdit()
-    self.__veLabel.text = 'not defined'
+    self.__veLabel.text = 'na'
     dummyFormLayout.addRow(label, self.__veLabel)
 
     label = qt.QLabel('Initial value:')
