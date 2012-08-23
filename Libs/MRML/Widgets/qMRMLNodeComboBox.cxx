@@ -467,8 +467,8 @@ QString qMRMLNodeComboBox::currentNodeId()const
 // --------------------------------------------------------------------------
 void qMRMLNodeComboBox::editCurrentNode()
 {
-  //Q_D(const qMRMLNodeComboBox);
-  //FIXME
+  vtkMRMLNode* node = this->currentNode();
+  emit this->nodeAboutToBeEdited(node);
 }
 
 // --------------------------------------------------------------------------

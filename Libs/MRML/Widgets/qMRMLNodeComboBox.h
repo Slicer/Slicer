@@ -269,6 +269,9 @@ signals:
   /// Signal emitted when the current node is renamed
   void currentNodeRenamed(const QString& newName);
 
+  /// Signal emitted when edit node menu action is selected
+  void nodeAboutToBeEdited(vtkMRMLNode* node);
+
 protected:
   /// qMRMLNodeComboBox will not take ownership on the model.
   qMRMLNodeComboBox(QAbstractItemModel* model, QWidget* parent = 0);
