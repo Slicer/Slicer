@@ -1381,15 +1381,18 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
 {
   lock = !lock;
 
-  // top level 
+  // top level
+  // name and visibility are editable via the data panel, so allow editing
+  // them here
+  //  ui.nameLineEdit->setEnabled(lock);
+  //  ui.visibleInvisibleButton->setEnabled(lock);
+  
   ui.allColorPickerButton->setEnabled(lock);
-  ui.nameLineEdit->setEnabled(lock);
   ui.sizeSmallPushButton->setEnabled(lock);
   ui.sizeMediumPushButton->setEnabled(lock);
   ui.sizeLargePushButton->setEnabled(lock);
   ui.DescriptionTextEdit->setEnabled(lock);
   ui.RASCoordinatesWidget->setEnabled(lock);
-  ui.visibleInvisibleButton->setEnabled(lock);
 
   // Text
   ui.annotationTextEdit->setEnabled(lock);
