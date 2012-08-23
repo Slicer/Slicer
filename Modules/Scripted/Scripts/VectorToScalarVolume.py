@@ -69,6 +69,9 @@ class VectorToScalarVolumeWidget:
     self.outputSelector = slicer.qMRMLNodeComboBox(self.outputFrame)
     self.outputSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
     self.outputSelector.setMRMLScene( slicer.mrmlScene )
+    self.outputSelector.addEnabled = True
+    self.outputSelector.renameEnabled = True
+    self.outputSelector.baseName = "Scalar Volume"
     self.outputFrame.layout().addWidget(self.outputSelector)
 
     # Apply button
@@ -83,14 +86,26 @@ class VectorToScalarVolumeWidget:
   def onApply(self):
     inputVolume = self.inputSelector.currentNode()
     outputVolume = self.outputSelector.currentNode()
+    # check for input data
     if not (inputVolume and outputVolume):
       qt.QMessageBox.critical(
           slicer.util.mainWindow(),
           'Luminance', 'Input and output volumes are required for conversion')
       return
+    # check that data has enough components
+    inputImage = inputVolume.GetImageData()
+    if not inputImage or inputImage.GetNumberOfScalarComponents() < 3:
+      qt.QMessageBox.critical(
+          slicer.util.mainWindow(),
+          'Vector to Scalar Volume', 'Input does not have enough components for conversion')
+      return
     # run the filter
+    # - extract the RGB portions 
+    extract = vtk.vtkImageExtractComponents()
+    extract.SetComponents(0,1,2)
+    extract.SetInput(inputVolume.GetImageData())
     luminance = vtk.vtkImageLuminance()
-    luminance.SetInput(inputVolume.GetImageData())
+    luminance.SetInput(extract.GetOutput())
     luminance.GetOutput().Update()
     ijkToRAS = vtk.vtkMatrix4x4()
     inputVolume.GetIJKToRASMatrix(ijkToRAS)
