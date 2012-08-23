@@ -65,6 +65,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   paths << app->slicerHome() + "/" Slicer_BIN_DIR "/Python";
 
   QSettings* settings = app->settings();
+  paths << QSettings().value("Python/AdditionalPythonPaths").toStringList();
   QStringList extraPaths = settings->value("Modules/AdditionalPaths").toStringList();
   QStringList newPythonModulePaths;
   foreach (const QString& s, extraPaths)

@@ -414,6 +414,12 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToApplicationSettings
   QStringList additionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QSettings().setValue("Modules/AdditionalPaths",
                        appendToPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+
+#ifdef Q_OS_MAC
+  QStringList additionalPythonPaths = QSettings().value("Python/AdditionalPythonPaths").toStringList();
+  QSettings().setValue("Python/AdditionalPythonPaths",
+                       appendToPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -423,6 +429,12 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromApplicationSet
   QStringList additionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
   QSettings().setValue("Modules/AdditionalPaths",
                        removeFromPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+
+#ifdef Q_OS_MAC
+  QStringList additionalPythonPaths = QSettings().value("Python/AdditionalPythonPaths").toStringList();
+  QSettings().setValue("Python/AdditionalPythonPaths",
+                       removeFromPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
+#endif
 }
 
 // --------------------------------------------------------------------------
