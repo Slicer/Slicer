@@ -266,20 +266,16 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       cast.SetOutputScalarTypeToShort()
       cast.Update()
 
-      frame = cast.GetOutput()
-
       ras2ijk = vtk.vtkMatrix4x4()
       ijk2ras = vtk.vtkMatrix4x4()
       self.__mvNode.GetRASToIJKMatrix(ras2ijk)
       self.__mvNode.GetIJKToRASMatrix(ijk2ras)
       frameImage = frameVolume.GetImageData()
       if frameImage == None:
-        frameVolume.SetAndObserveImageData(frame)
         frameVolume.SetRASToIJKMatrix(ras2ijk)
         frameVolume.SetIJKToRASMatrix(ijk2ras)
-        frameImage = frame
 
-      frameImage.DeepCopy(frame)
+      frameVolume.SetAndObserveImageData(cast.GetOutput())
 
       displayNode = frameVolume.GetDisplayNode()
 
@@ -497,7 +493,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
           units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
           xTitle = tag+', '+units
-          print('Tag: '+tag+', units: '+units)
           self.__chart.GetAxis(1).SetTitle(xTitle)
           if self.__fixedAxesCheckbox.checked == True:
             self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
