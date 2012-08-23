@@ -194,7 +194,10 @@ protected:
   void InitializeStorageNode(vtkMRMLStorageNode * storageNode,
                              const char * filename,
                              vtkStringArray *fileList);
-  
+
+  void SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
+                                       int labelmap, const char* filename);
+
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   

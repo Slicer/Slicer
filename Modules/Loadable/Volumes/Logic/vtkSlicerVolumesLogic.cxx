@@ -389,26 +389,18 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::GetActiveVolumeNode()const
 }
 
 //----------------------------------------------------------------------------
-namespace
+void vtkSlicerVolumesLogic
+::SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode * displayNode,
+                                  int labelMap, const char* filename)
 {
-
-//----------------------------------------------------------------------------
-void SetAndObserveColorNode(vtkSlicerVolumesLogic * volumesLogic,
-                            vtkMRMLDisplayNode * displayNode,
-                            int labelMap, const char* filename)
-{
-  if (volumesLogic == NULL)
-    {
-    return;
-    }
-  vtkMRMLColorLogic * colorLogic = volumesLogic->GetColorLogic();
+  vtkMRMLColorLogic * colorLogic = this->GetColorLogic();
   if (colorLogic == NULL)
     {
     return;
     }
   if (labelMap)
     {
-    if (volumesLogic->IsFreeSurferVolume(filename))
+    if (this->IsFreeSurferVolume(filename))
       {
       displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID());
       }
@@ -422,9 +414,6 @@ void SetAndObserveColorNode(vtkSlicerVolumesLogic * volumesLogic,
     displayNode->SetAndObserveColorNodeID(colorLogic->GetDefaultVolumeColorNodeID());
     }
 }
-
-} // end of anonymous namespace
-
 
 //----------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::InitializeStorageNode(
@@ -561,7 +550,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   bool modified = false;
   if (volumeNode != NULL)
     {
-    SetAndObserveColorNode(this, displayNode, labelMap, filename);
+    this->SetAndObserveColorToDisplayNode(displayNode, labelMap, filename);
     
     vtkDebugMacro("Name vol node "<<volumeNode->GetClassName());
     vtkDebugMacro("Display node "<<displayNode->GetClassName());
@@ -695,7 +684,9 @@ vtkSlicerVolumesLogic::CreateLabelVolume(vtkMRMLScene *scene,
     }
 
   // set the display node to have a label map lookup table
-  SetAndObserveColorNode(this, labelDisplayNode.GetPointer(), /* labelMap= */ 1, /* filename= */ 0);
+  this->SetAndObserveColorToDisplayNode(labelDisplayNode.GetPointer(),
+                                        /* labelMap= */ 1,
+                                        /* filename= */ 0);
 
   std::string uname = this->GetMRMLScene()->GetUniqueNameByString(name);
 
@@ -760,7 +751,8 @@ vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScene *scene,
   labelNode->SetLabelMap(1);
 
   // Set the display node to have a label map lookup table
-  SetAndObserveColorNode(this, labelDisplayNode, /* labelMap = */ 1, /* filename= */ 0);
+  this->SetAndObserveColorToDisplayNode(labelDisplayNode,
+                                        /* labelMap = */ 1, /* filename= */ 0);
 
   // Make an image data of the same size and shape as the input volume, but filled with zeros
   vtkNew<vtkImageThreshold> thresh;
