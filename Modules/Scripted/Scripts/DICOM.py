@@ -252,6 +252,7 @@ class DICOMWidget:
     self.contextMenu.addAction(self.deleteAction)
     self.contextMenu.connect('triggered(QAction*)', self.onContextMenuTriggered)
 
+    slicer.dicomDatabase.connect('databaseChanged()', self.onDatabaseChanged)
     self.dicomApp.connect('databaseDirectoryChanged(QString)', self.onDatabaseDirectoryChanged)
     selectionModel = self.tree.selectionModel()
     # TODO: can't use this because QList<QModelIndex> is not visible in PythonQt
@@ -269,6 +270,16 @@ class DICOMWidget:
 
     # Add spacer to layout
     self.layout.addStretch(1)
+
+  def onDatabaseChanged(self):
+    """Use this because to update the view in response to things
+    like database inserts.  Ideally the model would do this
+    directly based on signals from the SQLite database, but
+    that is not currently available.
+    https://bugreports.qt-project.org/browse/QTBUG-10775
+    """
+    self.dicomApp.suspendModel()
+    self.dicomApp.resumeModel()
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
