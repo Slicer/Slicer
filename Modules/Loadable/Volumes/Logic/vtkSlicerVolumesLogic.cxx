@@ -684,6 +684,7 @@ vtkSlicerVolumesLogic::CreateLabelVolume(vtkMRMLScene *scene,
   // create a volume node as copy of source volume
   vtkNew<vtkMRMLScalarVolumeNode> labelNode;
   labelNode->CopyWithScene(volumeNode);
+  labelNode->RemoveAllDisplayNodeIDs();
   labelNode->SetAndObserveStorageNodeID(NULL);
   labelNode->SetLabelMap(1);
 
