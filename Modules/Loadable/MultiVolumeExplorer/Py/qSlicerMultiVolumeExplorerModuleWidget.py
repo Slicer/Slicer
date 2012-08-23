@@ -204,7 +204,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         dataNodes[k] = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
         dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
       mvImage = self.__mvNode.GetImageData()
-      mvLabels = self.__mvNode.GetLabelArray()
       for c in range(nComponents):
         for k in labeledVoxels.keys():
           arr = dataNodes[k].GetArray()
@@ -213,7 +212,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           for v in labeledVoxels[k]:
             mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
             cnt = cnt+1
-          arr.SetComponent(c, 0, mvLabels.GetComponent(c,0))
+          arr.SetComponent(c, 0, self.__mvLabels[c])
           arr.SetComponent(c, 1, mean/cnt)
           arr.SetComponent(c, 2, 0)
 
@@ -234,7 +233,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         self.__cn.SetProperty(name, "color", colorStr)
         self.__cvn.Modified()
 
-      self.__cn.SetProperty('default','xAxisLabel',mvNode.GetLabelName())
+      tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
+      units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
+      xTitle = tag+', '+units
+
+      self.__cn.SetProperty('default','xAxisLabel',xTitle)
       self.__cn.SetProperty('default','yAxisLabel','mean signal intensity')
       self.__cvn.SetChartNodeID(self.__cn.GetID())
 
@@ -336,7 +339,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__xArray.SetNumberOfTuples(nFrames)
       self.__xArray.SetNumberOfComponents(1)
       self.__xArray.Allocate(nFrames)
-      self.__xArray.SetName(self.__mvNode.GetLabelName())
+      self.__xArray.SetName('frame')
       self.__yArray.SetNumberOfTuples(nFrames)
       self.__yArray.SetNumberOfComponents(1)
       self.__yArray.Allocate(nFrames)
@@ -361,11 +364,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         self.__mvRange[0] = min(self.__mvRange[0], frameRange[0])
         self.__mvRange[1] = max(self.__mvRange[1], frameRange[1])
 
+      self.__mvLabels = string.split(self.__mvNode.GetAttribute('MultiVolume.FrameLabels'),',')
+      if len(self.__mvLabels) != nFrames:
+        return
+      for l in range(nFrames):
+        self.__mvLabels[l] = float(self.__mvLabels[l])
+
     else:
       self.ctrlFrame.enabled = False
       self.plotFrame.enabled = False
       self.ctrlFrame.collapsed = 1
       self.plotFrame.collapsed = 1
+      self.__mvLabels = []
 
   def onPlayButtonToggled(self,checked):
     if self.__mvNode == None:
@@ -430,11 +440,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     if not self.iCharting.checked:
       return
 
+    if self.__mvNode == None:
+      return
+
+    mvImage = self.__mvNode.GetImageData()
+    nComponents = self.__mvNode.GetNumberOfFrames()
+
     # TODO: use a timer to delay calculation and compress events
     if event == 'LeaveEvent':
       # reset all the readouts
       # TODO: reset the label text
       return
+
     if self.sliceWidgetsPerStyle.has_key(observee):
       sliceWidget = self.sliceWidgetsPerStyle[observee]
       sliceLogic = sliceWidget.sliceLogic()
@@ -462,34 +479,35 @@ class qSlicerMultiVolumeExplorerModuleWidget:
             except ValueError:
               index = 0
             ijk.append(index)
-          if self.__mvNode != None:
-            # get the vector of values at IJK
-            mvImage = self.__mvNode.GetImageData()
-            nComponents = self.__mvNode.GetNumberOfFrames()
-            values = ''
-            extent = mvImage.GetExtent()
-            mvLabels = self.__mvNode.GetLabelArray()
-            for c in range(nComponents):
-              if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
-                val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-                self.__chartTable.SetValue(c, 0, mvLabels.GetComponent(c,0))
-                self.__chartTable.SetValue(c, 1, val)
-              else:
-                break
 
-            self.__chart.RemovePlot(0)
-            self.__chart.RemovePlot(0)
-            self.__chart.GetAxis(0).SetTitle('signal intensity')
-            self.__chart.GetAxis(1).SetTitle(self.__mvNode.GetLabelName())
-            if self.__fixedAxesCheckbox.checked == True:
-              self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
-              self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+          # get the vector of values at IJK
+          values = ''
+          extent = mvImage.GetExtent()
+          for c in range(nComponents):
+            if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
+              val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+              self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
+              self.__chartTable.SetValue(c, 1, val)
             else:
-              self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
-            plot = self.__chart.AddPlot(0)
-            plot.SetInput(self.__chartTable, 0, 1)
-            # seems to update only after another plot?..
-            self.__chart.AddPlot(0)
+              break
+
+          self.__chart.RemovePlot(0)
+          self.__chart.RemovePlot(0)
+          self.__chart.GetAxis(0).SetTitle('signal intensity')
+          tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
+          units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
+          xTitle = tag+', '+units
+          print('Tag: '+tag+', units: '+units)
+          self.__chart.GetAxis(1).SetTitle(xTitle)
+          if self.__fixedAxesCheckbox.checked == True:
+            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
+            self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+          else:
+            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+          plot = self.__chart.AddPlot(0)
+          plot.SetInput(self.__chartTable, 0, 1)
+          # seems to update only after another plot?..
+          self.__chart.AddPlot(0)
 
   def enter(self):
     if self.__cvn == None:
