@@ -217,8 +217,6 @@ class MultiVolumeImporterWidget:
     mvNode.SetAndObserveDisplayNodeID(mvDisplayNode.GetID())
     mvNode.SetAndObserveImageData(mvImage)
     mvNode.SetNumberOfFrames(nFrames)
-    slicer.mrmlScene.AddNode(mvNode)
-    mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
 
     mvNode.SetLabelArray(volumeLabels)
     mvNode.SetLabelName(self.__veLabel.text)
