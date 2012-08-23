@@ -26,6 +26,7 @@
 #include <QMetaType>
 
 // CTK includes
+#include <ctkDICOMDatabase.h>
 #include <ctkVTKObject.h>
 
 // SlicerCore includes
@@ -256,6 +257,14 @@ public:
   /// Return the \a os associated to this build
   /// \sa qSlicerCoreApplicationPrivate::discoverRepository
   QString os()const;
+
+  /// Return the active slicer dicom database (will be NULL until set by dicom
+  /// management code).
+  Q_INVOKABLE ctkDICOMDatabase* dicomDatabase() const;
+
+  /// Set the current application dicomDatabase.
+  Q_INVOKABLE void setDICOMDatabase(ctkDICOMDatabase* dicomDatabase);
+
 
 public slots:
 

@@ -152,6 +152,9 @@ public:
 #if defined(Slicer_USE_PYTHONQT) && defined(Q_WS_WIN)
   QHash<QString, QString>                     EnvironmentVariablesCache;
 #endif
+
+  /// Application-wide database instance
+  QSharedPointer<ctkDICOMDatabase>            DICOMDatabase;
 };
 
 #endif
