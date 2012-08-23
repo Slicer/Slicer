@@ -87,6 +87,10 @@
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_{MINOR, MAJOR}, Slicer_VERSION_FULL
 
+#ifdef Slicer_BUILD_DICOM_SUPPORT
+#include <ctkDICOMDatabase.h>
+#endif
+
 //-----------------------------------------------------------------------------
 // qSlicerCoreApplicationPrivate methods
 
