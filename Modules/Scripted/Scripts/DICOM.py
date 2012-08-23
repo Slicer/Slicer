@@ -57,6 +57,8 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
                 except (UserWarning,OSError) as message:
                   # TODO: how to put this into the error log?
                   print ('Problem trying to start DICOMListener:\n %s' % message)
+        if slicer.dicomDatabase:
+          slicer.app.setDICOMDatabase(slicer.dicomDatabase)
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
@@ -275,19 +277,21 @@ class DICOMWidget:
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
       self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
-      return
-    slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
-    if not slicer.dicomDatabase.isOpen:
-      self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
-      self.dicomDatabase = None
-      return
-    if self.dicomApp:
-      if self.dicomApp.databaseDirectory != databaseDirectory:
-        self.dicomApp.databaseDirectory = databaseDirectory
     else:
-      settings = qt.QSettings()
-      settings.setValue('DatabaseDirectory', databaseDirectory)
-      settings.sync()
+      slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
+      if not slicer.dicomDatabase.isOpen:
+        self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+        self.dicomDatabase = None
+      else:
+        if self.dicomApp:
+          if self.dicomApp.databaseDirectory != databaseDirectory:
+            self.dicomApp.databaseDirectory = databaseDirectory
+        else:
+          settings = qt.QSettings()
+          settings.setValue('DatabaseDirectory', databaseDirectory)
+          settings.sync()
+    if slicer.dicomDatabase:
+      slicer.app.setDICOMDatabase(slicer.dicomDatabase)
 
   def setDatabasePrecacheTags(self):
     """query each plugin for tags that should be cached on import
