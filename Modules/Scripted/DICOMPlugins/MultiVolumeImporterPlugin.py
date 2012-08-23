@@ -35,12 +35,12 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       self.tags[tagName] = tagVal
 
     self.multiVolumeTagsUnits = {}
-    self.multiVolumeTagsUnits['TriggerTime'] = "time, ms"
-    self.multiVolumeTagsUnits['EchoTime'] = "time, ms"
-    self.multiVolumeTagsUnits['FlipAngle'] = "angle, degrees"
-    self.multiVolumeTagsUnits['RepetitionTime'] = "time, ms"
-    self.multiVolumeTagsUnits['AcquisitionTime'] = "time, ms"
-    self.multiVolumeTagsUnits['SeriesTime'] = "time, ms"
+    self.multiVolumeTagsUnits['TriggerTime'] = "ms"
+    self.multiVolumeTagsUnits['EchoTime'] = "ms"
+    self.multiVolumeTagsUnits['FlipAngle'] = "degrees"
+    self.multiVolumeTagsUnits['RepetitionTime'] = "ms"
+    self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
+    self.multiVolumeTagsUnits['SeriesTime'] = "ms"
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
@@ -345,6 +345,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(len(tagValue2FileList)))
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
+      mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',self.multiVolumeTagsUnits[frameTag])
 
       mvNode.SetNumberOfFrames(len(tagValue2FileList))
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
