@@ -1,6 +1,6 @@
 import os
 from __main__ import slicer
-import qt, ctk
+import qt, ctk, vtk
 import EditorLib
 
 #
@@ -119,11 +119,13 @@ class EditorWidget:
     # TODO: not fully implemented
     #self.activateEffect()
 
-    self.helper.onEnter()
+    if self.helper:
+      self.helper.onEnter()
     
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
-    self.helper.onExit()
+    if self.helper:
+      self.helper.onExit()
     if self.toolsBox:
       self.toolsBox.defaultEffect()
 
