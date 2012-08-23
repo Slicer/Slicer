@@ -35,6 +35,6 @@ set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/pcre_
 ExternalProject_add(PCRE
   URL http://downloads.sourceforge.net/project/pcre/pcre/8.12/pcre-8.12.tar.gz
   URL_MD5 fa69e4c5d8971544acd71d1f10d59193
-  "${slicer_external_update}"
+  ${slicer_external_update}
   CONFIGURE_COMMAND ${pcre_CONFIGURE_COMMAND}
   )

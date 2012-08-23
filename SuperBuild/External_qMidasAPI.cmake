@@ -37,7 +37,7 @@ if(NOT DEFINED qMidasAPI_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/Slicer/qMidasAPI.git"
     GIT_TAG "3a92ef0edb6a40005169fe3bc6b6f9123f0b03bc"
-    "${slicer_external_update}"
+    ${slicer_external_update}
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

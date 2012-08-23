@@ -62,7 +62,7 @@ if(NOT DEFINED LibArchive_DIR)
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR LibArchive-install
-    "${slicer_external_update}"
+    ${slicer_external_update}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
     # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}

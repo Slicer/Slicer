@@ -140,7 +140,7 @@ if(NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR)
     BINARY_DIR ${proj}-build
     GIT_REPOSITORY "${git_protocol}://${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG ${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}
-    "${slicer_external_update}"
+    ${slicer_external_update}
     CMAKE_GENERATOR ${gen}
     ${CUSTOM_BUILD_COMMAND}
     CMAKE_ARGS
