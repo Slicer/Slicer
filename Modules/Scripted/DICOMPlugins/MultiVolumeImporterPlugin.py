@@ -331,8 +331,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         else:
           frameLabelsArray.InsertNextValue(tagValue)
 
-      print 'File list: ',frameFileList
-      print 'Labels: ',frameLabelsStr
+      #print 'File list: ',frameFileList
+      #print 'Labels: ',frameLabelsStr
 
       frameFileListStr = frameFileListStr[:-1]
       frameLabelsStr = frameLabelsStr[:-1]
