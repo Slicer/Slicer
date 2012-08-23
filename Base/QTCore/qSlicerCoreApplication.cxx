@@ -26,7 +26,6 @@
 #include <QNetworkProxyFactory>
 
 // CTK includes
-#include <ctkDICOMDatabase.h>
 #include <ctkErrorLogFDMessageHandler.h>
 #include <ctkErrorLogQtMessageHandler.h>
 #include <ctkErrorLogStreamMessageHandler.h>
@@ -102,7 +101,9 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
+#ifdef Slicer_BUILD_DICOM_SUPPORT
   this->DICOMDatabase = QSharedPointer<ctkDICOMDatabase>(0);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1241,6 +1242,7 @@ QString qSlicerCoreApplication::os()const
   return Slicer_OS;
 }
 
+#ifdef Slicer_BUILD_DICOM_SUPPORT
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setDICOMDatabase(ctkDICOMDatabase* dicomDatabase)
 {
@@ -1254,6 +1256,7 @@ ctkDICOMDatabase* qSlicerCoreApplication::dicomDatabase()const
   Q_D(const qSlicerCoreApplication);
   return d->DICOMDatabase.data();
 }
+#endif
 
 
 //-----------------------------------------------------------------------------
