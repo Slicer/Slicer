@@ -306,6 +306,9 @@ namespace itk
   // if the image is properly orriented in the sequel
   // 
   // computed in CORONAL orientation = ITK_COORDINATE_ORIENTATION_LIA
+  //convert C to from RAS to LPS
+  c[0] *= -1;
+  c[1] *= -1;
   float fcx,fcy,fcz;
   fcx = static_cast<float>(m_Dimensions[0])/2.0f;
   fcy = static_cast<float>(m_Dimensions[1])/2.0f;
