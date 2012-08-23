@@ -100,6 +100,8 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
                    q, SLOT(initJavascript()));
 
   this->ProgressBar->setVisible(false);
+
+  this->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOn);
 }
 
 // --------------------------------------------------------------------------
