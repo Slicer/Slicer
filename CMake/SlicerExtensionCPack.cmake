@@ -71,7 +71,12 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
   if(NOT EXISTS "${description_file}")
     message(FATAL_ERROR "error: Failed to generate extension description file: ${description_file}")
   endif()
-  install(FILES ${description_file} DESTINATION ${Slicer_INSTALL_SHARE_DIR} COMPONENT RuntimeLibraries)
+
+  set(description_install_dir ${Slicer_INSTALL_ROOT}${Slicer_SHARE_DIR})
+  if(APPLE)
+    set(description_install_dir ${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_SHARE_DIR})
+  endif()
+  install(FILES ${description_file} DESTINATION ${description_install_dir} COMPONENT RuntimeLibraries)
 endif()
 
 #-----------------------------------------------------------------------------
