@@ -342,7 +342,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetScene(slicer.mrmlScene)
       mvNode.SetAttribute("MultiVolume.FrameFileList",frameFileListStr)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
-      mvNode.SetAttribute("MultiVolume.NumberOfFrames",str(len(tagValue2FileList)))
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
       mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',self.multiVolumeTagsUnits[frameTag])
