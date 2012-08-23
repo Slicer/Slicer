@@ -583,7 +583,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createImageTagWidget(const ModuleParam
   // (e.g. vtkMRMLScalarVolumeNode), don't display subclasses
   // (e.g. vtkMRMLDiffusionTensorVolumeNode)
   if (!type.isEmpty() &&
-      type != "all")
+      type != "any")
     {
     widget->setShowChildNodeTypes(false);
     }
