@@ -112,7 +112,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
-    if(item MATCHES "Slicer-build/@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
+    if(item MATCHES "@Slicer_BINARY_INNER_SUBDIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
       set(path "@executable_path@/../@Slicer_QTLOADABLEMODULES_LIB_DIR@")
     elseif(item MATCHES "@Slicer_QTLOADABLEMODULES_LIB_DIR@/[^/]+\\.(so|dylib)$")
       set(path "@executable_path@/../@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@")

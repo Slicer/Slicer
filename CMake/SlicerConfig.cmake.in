@@ -107,6 +107,8 @@ set(Slicer_ModuleWidgets_INCLUDE_DIRS "@Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG
 # The location of the UseSlicer.cmake file.
 set(Slicer_USE_FILE "@Slicer_USE_FILE_CONFIG@")
 
+set(Slicer_BINARY_INNER_SUBDIR "@Slicer_BINARY_INNER_SUBDIR@")
+
 # Slicer relative build directories.
 set(Slicer_BIN_DIR "@Slicer_BIN_DIR@")
 set(Slicer_LIB_DIR "@Slicer_LIB_DIR@")

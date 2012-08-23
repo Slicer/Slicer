@@ -141,6 +141,8 @@ endif()
 option(Slicer_SUPERBUILD "Build Slicer and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(Slicer_SUPERBUILD)
 
+set(Slicer_BINARY_INNER_SUBDIR Slicer-build)
+
 #-----------------------------------------------------------------------------
 # Build shared lib by default
 #------------------------------------------------------------------------------

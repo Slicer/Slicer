@@ -66,7 +66,7 @@ if(NOT Slicer_SOURCE_DIR)
 else()
   set(Slicer_EXTENSION_DESCRIPTION_DIR ${default_extension_description_dir})
   set(Slicer_LOCAL_EXTENSIONS_DIR ${default_local_extension_dir})
-  set(Slicer_DIR ${Slicer_BINARY_DIR}/Slicer-build)
+  set(Slicer_DIR ${Slicer_BINARY_DIR}/${Slicer_BINARY_INNER_SUBDIR})
   option(Slicer_BUILD_EXTENSIONS "Build Slicer 'trusted' extensions" OFF)
 
   include(SlicerMacroExtractRepositoryInfo)
