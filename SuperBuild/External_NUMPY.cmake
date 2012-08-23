@@ -46,7 +46,7 @@ ExternalProject_Add(${proj}
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/NUMPY
-  ${slicer_external_update}
+  "${slicer_external_update}"
   CONFIGURE_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_configure_step.cmake
   BUILD_COMMAND ${CMAKE_COMMAND}

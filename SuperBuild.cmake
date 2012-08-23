@@ -45,7 +45,7 @@ include(SlicerMacroCheckExternalProjectDependency)
 if(CMAKE_VERSION VERSION_LESS 2.8.9)
   set(slicer_external_update UPDATE_COMMAND "")
 else()
-  set(slicer_external_update)
+  set(slicer_external_update LOG_UPDATE 1)
 endif()
 
 set(ep_base        "${CMAKE_BINARY_DIR}")

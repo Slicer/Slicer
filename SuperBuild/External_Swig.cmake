@@ -19,7 +19,7 @@ if(NOT SWIG_DIR)
       URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
       URL_MD5 4ab8064b1a8894c8577ef9d0fb2523c8
       SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}
-      ${slicer_external_update}
+      "${slicer_external_update}"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""

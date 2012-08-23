@@ -50,7 +50,7 @@ ExternalProject_add(SimpleITK
   GIT_REPOSITORY http://itk.org/SimpleITK.git
   # This is the tag for the "master" branch as of June 8th, 2012
   GIT_TAG 9465b2d518ce39db24d770cff4095c27f6556249 # 2012-07-23
-  ${slicer_external_update}
+  "${slicer_external_update}"
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
