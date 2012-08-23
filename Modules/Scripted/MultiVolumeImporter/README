@@ -1,0 +1,6 @@
+3D Slicer module to support import of multi-volume data from non-DICOM sources, 
+and provide plugin for importing such data from images saved in DICOM.
+
+Documentation and user guide:
+
+http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/MultiVolumeImporter
