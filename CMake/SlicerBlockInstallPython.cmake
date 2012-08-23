@@ -38,7 +38,6 @@ if(Slicer_USE_PYTHONQT)
     REGEX "plat[-].*" EXCLUDE
     REGEX "test/" EXCLUDE
     REGEX "wsgiref*" EXCLUDE
-    REGEX "distutils/" EXCLUDE
     ${extra_exclude_pattern}
     )
   # Install python library
