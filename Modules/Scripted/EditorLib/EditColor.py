@@ -19,13 +19,14 @@ comment = """
 
 class EditColor(object):
 
-  def __init__(self, parent=0, parameter='label'):
+  def __init__(self, parent=0, parameter='label',colorNode=None):
     self.observerTags = []
     self.parameterNode = None
     self.parameterNodeTag = None
     self.parameter = parameter
     self.editUtil = EditUtil.EditUtil()
     self.colorBox = None
+    self.colorNode = colorNode
     if parent == 0:
       self.parent = slicer.qMRMLWidget()
       self.parent.setLayout(qt.QVBoxLayout())
@@ -118,21 +119,25 @@ class EditColor(object):
       self.cleanup()
       return
 
-    colorNode = self.editUtil.getColorNode()
-    if colorNode:
+    if self.colorNode == None:
+      self.colorNode = self.editUtil.getColorNode()
+    if self.colorNode:
       self.frame.setDisabled(0)
-      self.labelName.setText( colorNode.GetColorName( label ) )
-      lut = colorNode.GetLookupTable()
+      self.labelName.setText( self.colorNode.GetColorName( label ) )
+      lut = self.colorNode.GetLookupTable()
       rgb = lut.GetTableValue( label )
       self.colorPatch.setStyleSheet( 
           "background-color: rgb(%s,%s,%s)" % (rgb[0]*255, rgb[1]*255, rgb[2]*255) )
-      self.colorSpin.setMaximum( colorNode.GetNumberOfColors()-1 )
+      self.colorSpin.setMaximum( self.colorNode.GetNumberOfColors()-1 )
     else:
       self.frame.setDisabled(1)
 
 
   def showColorBox(self):
-    if not self.colorBox:
-      self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())
+    if self.colorNode == None:
+      self.colorNode = self.editUtil.getColorNode()
 
-    self.colorBox.show(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.editUtil.getColorNode())
+    if not self.colorBox:
+      self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)
+
+    self.colorBox.show(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)
