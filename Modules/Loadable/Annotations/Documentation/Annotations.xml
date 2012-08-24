@@ -124,6 +124,18 @@
       <label>Description</label>
       <description><![CDATA[A longer text describing this annotation hierarchy]]></description>
     </parameter>
+    <parameter>
+      <label>List Text Scale</label>
+      <description><![CDATA[Set the annotation text scale for all annotations in this hierarchy. This slider is not initialized from the current annotation text scales but from the default text scale for a single annotation. Use the Default button to reset to this default value.]]></description>
+    </parameter>
+    <parameter>
+      <label>List Glyph Scale</label>
+      <description><![CDATA[Set the annotation glyph scale for all annotations in this hierarchy. This slider is not initialized from the current annotation glyph scales but from the default glyph scale for a single annotation. Use the Default button to reset to this default value.]]></description>
+    </parameter>
+    <parameter>
+      <label>List Glyph Type</label>
+      <description><![CDATA[Set the annotation glyph type for all annotations in this hierarchy. This menu is not initialized from the current annotation glyph types but from the default glyph type for a single annotation. Use the Default button to reset to this default value.]]></description>
+    </parameter>
   </parameters>
   <parameters>
     <label>Modify Annotation Properties</label>

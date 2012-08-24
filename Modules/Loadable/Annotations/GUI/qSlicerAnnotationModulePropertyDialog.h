@@ -65,7 +65,23 @@ protected:
 protected slots:
 
   void onNameLineEditChanged();
+  /// change the color on the hierarchy display node as well as on all display
+  /// nodes for all children
   void onAllColorChanged(QColor qcolor);
+  /// change point size for all annotations in this hierarchy
+  void onHierarchyPointSizeChanged(double value);
+  /// reset the hierarchy point size slider to default value
+  void onHierarchyPointSizeDefaultButtonClicked();
+  /// change the text size for all annotations in this hierarchy
+  void onHierarchyTextScaleChanged(double value);
+  /// reset the hierarchy text scale slider to default value
+  void onHierarchyTextScaleDefaultButtonClicked();
+  /// change the glyph type for all annotations in this hierarchy
+  void onHierarchyPointGlyphChanged(QString value);
+  /// reset the hierarchy point glyph combo box to default glyph type
+  void onHierarchyPointGlyphTypeDefaultButtonClicked();
+
+  
   void onSizeSmallPushButtonClicked();
   void onSizeMediumPushButtonClicked();
   void onSizeLargePushButtonClicked();

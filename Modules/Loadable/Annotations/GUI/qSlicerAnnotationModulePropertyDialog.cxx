@@ -149,6 +149,73 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
     {
     ui.hierarchyPushCheckBox->show();
+
+    ui.hierarchyTextScaleLabel->show();
+    ui.hierarchyTextScaleSlider->show();
+    ui.hierarchyPointSizeDefaultButton->show();
+    ui.hierarchyPointSizeLabel->show();
+    ui.hierarchyPointSizeSlider->show();
+    ui.hierarchyPointSizeDefaultButton->show();
+    ui.hierarchyGlyphTypeLabel->show();
+    ui.hierarchyPointGlyphTypeComboBox->show();
+    ui.hierarchyPointGlyphTypeDefaultButton->show();
+    
+    // fill in types if empty
+    if (ui.hierarchyPointGlyphTypeComboBox->count() == 0)
+      {
+      vtkMRMLAnnotationPointDisplayNode *displayNode = vtkMRMLAnnotationPointDisplayNode::New();
+      int min = displayNode->GetMinimumGlyphType();
+      int max = displayNode->GetMaximumGlyphType();
+      bool enabled =  ui.pointGlyphTypeComboBox->isEnabled();
+      ui.hierarchyPointGlyphTypeComboBox->setEnabled(false);
+      for (int i = min; i <= max; i++)
+        {
+        displayNode->SetGlyphType(i);
+        ui.hierarchyPointGlyphTypeComboBox->addItem(displayNode->GetGlyphTypeAsString());
+        }
+      ui.hierarchyPointGlyphTypeComboBox->setEnabled(enabled);
+      displayNode->Delete();
+      }
+    // set default values if not set
+    vtkMRMLAnnotationPointDisplayNode *pdNode = vtkMRMLAnnotationPointDisplayNode::New();
+
+    if (ui.hierarchyPointGlyphTypeComboBox->currentIndex() == 0)
+      {
+      QString glyphType = QString(pdNode->GetGlyphTypeAsString());
+      bool enabled = ui.hierarchyPointGlyphTypeComboBox->isEnabled();
+      ui.hierarchyPointGlyphTypeComboBox->setEnabled(false);
+      int index =  ui.hierarchyPointGlyphTypeComboBox->findData(glyphType);
+      if (index != -1)
+        {
+        ui.hierarchyPointGlyphTypeComboBox->setCurrentIndex(index);
+        }
+      else
+        {
+        // glyph types start at 1, combo box is 0 indexed
+        ui.hierarchyPointGlyphTypeComboBox->setCurrentIndex(pdNode->GetGlyphType() - 1);
+        }
+      ui.hierarchyPointGlyphTypeComboBox->setEnabled(enabled);
+      }
+    if (ui.hierarchyPointSizeSlider->value() == 0)
+      {
+      double glyphScale = pdNode->GetGlyphScale();
+      bool enabled = ui.hierarchyPointSizeSlider->isEnabled();
+      ui.hierarchyPointSizeSlider->setEnabled(false);
+      ui.hierarchyPointSizeSlider->setValue(glyphScale);
+      ui.hierarchyPointSizeSlider->setEnabled(enabled);
+      }
+    pdNode->Delete();
+    if (ui.hierarchyTextScaleSlider->value() == 0)
+      {
+      vtkMRMLAnnotationTextDisplayNode *tdNode = vtkMRMLAnnotationTextDisplayNode::New();
+      double textScale = tdNode->GetTextScale();
+      bool enabled =  ui.hierarchyTextScaleSlider->isEnabled();
+      ui.hierarchyTextScaleSlider->setEnabled(false);
+      ui.hierarchyTextScaleSlider->setValue(textScale);
+      ui.hierarchyTextScaleSlider->setEnabled(enabled);
+      
+      tdNode->Delete();
+    }
     
     ui.sizeLabel->hide();
     ui.sizeSmallPushButton->hide();
@@ -163,6 +230,17 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   else
     {
     ui.hierarchyPushCheckBox->hide();
+
+    ui.hierarchyTextScaleLabel->hide();
+    ui.hierarchyTextScaleSlider->hide();
+    ui.hierarchyTextScaleDefaultButton->hide();
+    ui.hierarchyPointSizeLabel->hide();
+    ui.hierarchyPointSizeSlider->hide();
+    ui.hierarchyPointSizeDefaultButton->hide();
+    ui.hierarchyGlyphTypeLabel->hide();
+    ui.hierarchyPointGlyphTypeComboBox->hide();
+    ui.hierarchyPointGlyphTypeDefaultButton->hide();
+
     }
 
 
@@ -422,6 +500,21 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
                 SLOT(onNameLineEditChanged()));
   this->connect(ui.allColorPickerButton, SIGNAL(colorChanged(QColor)),
                 this, SLOT(onAllColorChanged(QColor)));
+
+  this->connect(ui.hierarchyTextScaleSlider, SIGNAL(valueChanged(double)),
+      this, SLOT(onHierarchyTextScaleChanged(double)));
+  this->connect(ui.hierarchyTextScaleDefaultButton, SIGNAL(clicked()),
+                this, SLOT(onHierarchyTextScaleDefaultButtonClicked()));
+  this->connect(ui.hierarchyPointSizeSlider, SIGNAL(valueChanged(double)),
+      this, SLOT(onHierarchyPointSizeChanged(double)));
+  this->connect(ui.hierarchyPointSizeDefaultButton, SIGNAL(clicked()),
+                this, SLOT(onHierarchyPointSizeDefaultButtonClicked()));
+  this->connect(ui.hierarchyPointGlyphTypeComboBox, SIGNAL(currentIndexChanged(QString)),
+                this, SLOT(onHierarchyPointGlyphChanged(QString)));
+  this->connect(ui.hierarchyPointGlyphTypeDefaultButton, SIGNAL(clicked()),
+                this, SLOT(onHierarchyPointGlyphTypeDefaultButtonClicked()));
+  
+                                                  
   this->connect(ui.sizeSmallPushButton, SIGNAL(clicked()), this, SLOT(onSizeSmallPushButtonClicked()));
   this->connect(ui.sizeMediumPushButton, SIGNAL(clicked()), this, SLOT(onSizeMediumPushButtonClicked()));
   this->connect(ui.sizeLargePushButton, SIGNAL(clicked()), this, SLOT(onSizeLargePushButtonClicked()));
@@ -1552,6 +1645,144 @@ void qSlicerAnnotationModulePropertyDialog::setColorOnAnnotationDisplayNodes(con
     }
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyPointSizeChanged(double value)
+{
+  // is it a hierarchy node?
+  if (!this->m_logic->IsAnnotationHierarchyNode(this->m_id))
+    {
+    return;
+    }
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
+  if (!hnode)
+    {
+    return;
+    }
+  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  hnode->GetAllChildrenNodes(allChildren);
+  for (unsigned int i = 0; i < allChildren.size(); ++i)
+    {
+    // set on the associated node
+    if (allChildren[i]->GetAssociatedNode())
+      {
+      vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = this->m_logic->GetPointDisplayNode(allChildren[i]->GetAssociatedNode()->GetID());
+      if (pointDisplayNode)
+        {
+        pointDisplayNode->SetGlyphScale(value);
+        }
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyPointSizeDefaultButtonClicked()
+{
+  vtkMRMLAnnotationPointDisplayNode *pdNode = vtkMRMLAnnotationPointDisplayNode::New();
+  double glyphScale = pdNode->GetGlyphScale();
+  pdNode->Delete();
+  ui.hierarchyPointSizeSlider->setValue(glyphScale);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyTextScaleChanged(double value)
+{
+  // is it a hierarchy node?
+  if (!this->m_logic->IsAnnotationHierarchyNode(this->m_id))
+    {
+    return;
+    }
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
+  if (!hnode)
+    {
+    return;
+    }
+  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  hnode->GetAllChildrenNodes(allChildren);
+  for (unsigned int i = 0; i < allChildren.size(); ++i)
+    {
+    // set on the associated node
+    if (allChildren[i]->GetAssociatedNode() &&
+        allChildren[i]->GetAssociatedNode()->GetID())
+      {
+      this->m_logic->SetAnnotationTextScale(allChildren[i]->GetAssociatedNode()->GetID(), value);
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyTextScaleDefaultButtonClicked()
+{
+  vtkMRMLAnnotationTextDisplayNode *tdNode = vtkMRMLAnnotationTextDisplayNode::New();
+  double textScale = tdNode->GetTextScale();
+  tdNode->Delete();
+  
+  ui.hierarchyTextScaleSlider->setValue(textScale);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyPointGlyphChanged(QString value)
+{
+  // is it a hierarchy node?
+  if (!this->m_logic->IsAnnotationHierarchyNode(this->m_id))
+    {
+    return;
+    }
+  vtkMRMLNode *mrmlNode = this->m_logic->GetMRMLScene()->GetNodeByID(this->m_id.c_str());
+  if (!mrmlNode)
+    {
+    return;
+    }
+  vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
+  if (!hnode)
+    {
+    return;
+    }
+
+  std::vector< vtkMRMLHierarchyNode *> allChildren;
+  hnode->GetAllChildrenNodes(allChildren);
+  for (unsigned int i = 0; i < allChildren.size(); ++i)
+    {
+    // set on the associated node
+    if (allChildren[i]->GetAssociatedNode() &&
+        allChildren[i]->GetAssociatedNode()->GetID())
+      {
+      this->m_logic->SetAnnotationPointGlyphTypeFromString(allChildren[i]->GetAssociatedNode()->GetID(), value.toLatin1());
+      }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerAnnotationModulePropertyDialog::onHierarchyPointGlyphTypeDefaultButtonClicked()
+{
+  vtkMRMLAnnotationPointDisplayNode *pdNode = vtkMRMLAnnotationPointDisplayNode::New();
+  QString glyphType = QString(pdNode->GetGlyphTypeAsString());
+  int index =  ui.hierarchyPointGlyphTypeComboBox->findData(glyphType);
+  if (index != -1)
+    {
+    ui.hierarchyPointGlyphTypeComboBox->setCurrentIndex(index);
+    }
+  else
+    {
+    // glyph types start at 1, combo box is 0 indexed
+    int newIndex = pdNode->GetGlyphType() - 1;
+    ui.hierarchyPointGlyphTypeComboBox->setCurrentIndex(newIndex);
+    if (newIndex == -1)
+      {
+      qWarning() << "Unable to find default glyph type index for glyph type " << qPrintable(glyphType) << ", combo box count = " << ui.hierarchyPointGlyphTypeComboBox->count();
+      }
+    }
+  pdNode->Delete();
+}
 //-----------------------------------------------------------------------------
 void qSlicerAnnotationModulePropertyDialog::onSizeSmallPushButtonClicked()
 {

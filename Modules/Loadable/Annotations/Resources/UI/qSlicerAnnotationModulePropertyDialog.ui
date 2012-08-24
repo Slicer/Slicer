@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>307</height>
+    <height>418</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -239,6 +239,121 @@
     </layout>
    </item>
    <item>
+    <layout class="QGridLayout" name="gridLayout_7">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_11" columnstretch="0,1,0">
+       <item row="0" column="0">
+        <widget class="QLabel" name="hierarchyTextScaleLabel">
+         <property name="toolTip">
+          <string>Apply text scale to all annotations in this hierarchy</string>
+         </property>
+         <property name="text">
+          <string>List Text Scale:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="ctkSliderWidget" name="hierarchyTextScaleSlider">
+          <property name="toolTip">
+            <string>Apply text scale to all annotations in this hierarchy (current setting may not reflect text scales, this is a push to list only setting, use default button to get back to standard size)</string>
+          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="hierarchyTextScaleDefaultButton">
+         <property name="toolTip">
+          <string>Set to default</string>
+         </property>
+         <property name="text">
+          <string>Default</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <layout class="QGridLayout" name="gridLayout_10" columnstretch="0,1,0">
+       <item row="0" column="0">
+        <widget class="QLabel" name="hierarchyPointSizeLabel">
+         <property name="toolTip">
+          <string>Apply glyph scale to all annotations in this hierarchy</string>
+         </property>
+         <property name="text">
+          <string>List Glyph Scale:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="ctkSliderWidget" name="hierarchyPointSizeSlider">
+          <property name="toolTip">
+            <string>Apply glyph scale to all annotations in this hierarchy (current setting may not reflect glyph scales, this is a push to list only setting, use default button to get back to standard size)</string>
+          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="hierarchyPointSizeDefaultButton">
+         <property name="toolTip">
+          <string>Set to default</string>
+         </property>
+         <property name="text">
+          <string>Default</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0">
+      <layout class="QGridLayout" name="gridLayout_9" columnstretch="0,1,0">
+       <item row="0" column="0">
+        <widget class="QLabel" name="hierarchyGlyphTypeLabel">
+         <property name="toolTip">
+          <string>Apply glyph type to all annotations in this hierarchy</string>
+         </property>
+         <property name="text">
+          <string>List Glyph Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="hierarchyPointGlyphTypeComboBox">
+          <property name="toolTip">
+            <string>Apply glyph type to all annotations in this hierarchy (current setting may not reflect glyph types, this is a push to list only setting, use default button to get back to standard glyph)</string>
+          </property>
+          <property name="accessibleDescription">
+            <string>Glyph type combo box</string>
+          </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="hierarchyPointGlyphTypeDefaultButton">
+         <property name="toolTip">
+          <string>Set to default</string>
+         </property>
+         <property name="text">
+          <string>Default</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="ctkCollapsibleButton" name="advancedCollapsibleButton">
      <property name="text">
       <string>Advanced</string>
@@ -414,12 +529,6 @@
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>4</number>
             </attribute>
             <column>
              <property name="text">
@@ -815,7 +924,7 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_4">
+    <spacer name="verticalSpacer_5">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -883,22 +992,6 @@
  <connections>
   <connection>
    <sender>ButtonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>qSlicerAnnotationModulePropertyDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>ButtonBox</sender>
    <signal>rejected()</signal>
    <receiver>qSlicerAnnotationModulePropertyDialog</receiver>
    <slot>reject()</slot>
@@ -909,6 +1002,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ButtonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>qSlicerAnnotationModulePropertyDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
      <y>274</y>
     </hint>
    </hints>
