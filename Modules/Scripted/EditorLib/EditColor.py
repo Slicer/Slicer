@@ -119,7 +119,7 @@ class EditColor(object):
       self.cleanup()
       return
 
-    if self.colorNode == None:
+    if not self.colorNode:
       self.colorNode = self.editUtil.getColorNode()
     if self.colorNode:
       self.frame.setDisabled(0)
@@ -134,7 +134,7 @@ class EditColor(object):
 
 
   def showColorBox(self):
-    if self.colorNode == None:
+    if not self.colorNode:
       self.colorNode = self.editUtil.getColorNode()
 
     if not self.colorBox:
