@@ -228,6 +228,19 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
 
+  /// Get/Set a flag indicating how the linking behavior should be modified.
+  /// InteractionFlags modifier uses bits defined by InteractionFlagType enum
+  /// that by default are all set and result in the default behavior. If a
+  /// bit is not set, this will result in composite slice node interactions
+  /// not broadcast.
+  void SetInteractionFlagsModifier(unsigned int);
+  vtkGetMacro(InteractionFlagsModifier, unsigned int);
+
+  /// Set all bits of the modifier to 1, resulting in the default linking
+  /// behavior (selection of foreground, background and label volumes being
+  /// broadcast when composite slice nodes are linked).
+  void ResetInteractionFlagsModifier();
+
   
 protected:
   vtkMRMLSliceCompositeNode();
@@ -262,6 +275,7 @@ protected:
 
   int Interacting;
   unsigned int InteractionFlags;
+  unsigned int InteractionFlagsModifier;
 };
 
 #endif
