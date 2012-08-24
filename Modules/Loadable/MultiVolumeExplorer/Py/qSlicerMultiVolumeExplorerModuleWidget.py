@@ -250,11 +250,20 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     if self.__mvNode != None:
       mvDisplayNode = self.__mvNode.GetDisplayNode()
       mvDisplayNode.SetFrameComponent(newValue)
+    else:
+      return
       
     if self.extractFrame == True:
       frameVolume = self.__vfSelector.currentNode()
-      if frameVolume == None or self.__mvNode == None:
+
+      if frameVolume == None:      
+        mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
+        mvNodeFrameCopy.SetName(self.__mvNode.GetName()+' frame')
+        mvNodeFrameCopy.SetScene(slicer.mrmlScene)
+        slicer.mrmlScene.AddNode(mvNodeFrameCopy)
+        self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
         return
+
       mvImage = self.__mvNode.GetImageData()
       frameId = newValue
 
@@ -326,11 +335,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.ctrlFrame.collapsed = 0
       self.plotFrame.collapsed = 0
 
-      mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
-      mvNodeFrameCopy.SetName(self.__mvNode.GetName()+' frame')
-      mvNodeFrameCopy.SetScene(slicer.mrmlScene)
-      slicer.mrmlScene.AddNode(mvNodeFrameCopy)
-      self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
+      self.__vfSelector.setCurrentNode(None)
 
       self.__xArray.SetNumberOfTuples(nFrames)
       self.__xArray.SetNumberOfComponents(1)
