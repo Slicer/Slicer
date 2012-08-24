@@ -152,7 +152,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       return
 
     nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
-    files = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
+    files = loadable.files
     nFiles = len(files)
     filesPerFrame = nFiles/nFrames
     frames = []
@@ -340,7 +340,6 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode = slicer.mrmlScene.CreateNodeByClass('vtkMRMLMultiVolumeNode')
       mvNode.SetReferenceCount(mvNode.GetReferenceCount()-1)
       mvNode.SetScene(slicer.mrmlScene)
-      mvNode.SetAttribute("MultiVolume.FrameFileList",frameFileListStr)
       mvNode.SetAttribute("MultiVolume.FrameLabels",frameLabelsStr)
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
