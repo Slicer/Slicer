@@ -330,7 +330,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           //
 
           // Copy the slice to RAS information
-          if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::SliceToRASFlag)
+          if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+            & vtkMRMLSliceNode::SliceToRASFlag)
             {
             // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
             // does a shallow copy. So we have to explictly call DeepCopy()
@@ -340,7 +341,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           // Copy the field of view information. Use the new
           // prescribed x fov, aspect corrected y fov, and keep z fov
           // constant
-          if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::FieldOfViewFlag)
+          if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+            & vtkMRMLSliceNode::FieldOfViewFlag)
             {
             sNode->SetFieldOfView( sliceNode->GetFieldOfView()[0],
                                    sliceNode->GetFieldOfView()[0]
@@ -363,7 +365,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 
         // Setting the orientation of the slice plane does not
         // require that the orientations initially match.
-        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::OrientationFlag)
+        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::OrientationFlag)
           {
           // We could copy the orientation strings, but we really
           // want the slice to ras to match, so copy that
@@ -379,7 +382,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
 
         // Reseting the field of view does not require the
         // orientations to match
-        if ((sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::ResetFieldOfViewFlag)
+        if ((sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+            & vtkMRMLSliceNode::ResetFieldOfViewFlag)
             && this->GetMRMLApplicationLogic()->GetSliceLogics())
           {
           // need the logic for this slice (sNode)
@@ -399,7 +403,8 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           }
 
         // Broadcasting the rotation from a ReformatWidget
-        if (sliceNode->GetInteractionFlags() & vtkMRMLSliceNode::MultiplanarReformatFlag)
+        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::MultiplanarReformatFlag)
           {
           this->BroadcastLastRotation(sliceNode,sNode);
           }
@@ -439,20 +444,20 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
       {
       if (cNode != sliceCompositeNode)
         {
-        if (sliceCompositeNode->GetInteractionFlags() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
           {
           //std::cerr << "Broadcasting Foreground Volume " << sliceCompositeNode->GetForegroundVolumeID() << std::endl;
           cNode->SetForegroundVolumeID(sliceCompositeNode->GetForegroundVolumeID());
           }
 
-        if (sliceCompositeNode->GetInteractionFlags() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::BackgroundVolumeFlag)
           {
           cNode->SetBackgroundVolumeID(sliceCompositeNode->GetBackgroundVolumeID());
           }
 
-        if (sliceCompositeNode->GetInteractionFlags() 
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::LabelVolumeFlag)
           {
           cNode->SetLabelVolumeID(sliceCompositeNode->GetLabelVolumeID());

@@ -350,6 +350,20 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   void SetInteractionFlags(unsigned int);
   vtkGetMacro(InteractionFlags, unsigned int);
 
+  /// Get/Set a flag indicating how the linking behavior should be modified.
+  /// InteractionFlags modifier uses bits defined by InteractionFlagType enum
+  /// that by default are all set and result in the default behavior. If a
+  /// bit is not set, this will result in slice node interactions
+  /// not broadcast.
+  void SetInteractionFlagsModifier(unsigned int);
+  vtkGetMacro(InteractionFlagsModifier, unsigned int);
+
+  /// Set all flags of the modifier to 1, resulting in the default linking
+  /// behavior (broadcast of the updates to the parameters defined by the
+  /// InteractionFlagType enum).
+  void ResetInteractionFlagsModifier();
+
+
   
   /// Enum to specify the method for setting UVW extents
 
@@ -416,6 +430,7 @@ protected:
 
   int Interacting;
   unsigned int InteractionFlags;
+  unsigned int InteractionFlagsModifier;
 
   int IsUpdatingMatrices;
 };

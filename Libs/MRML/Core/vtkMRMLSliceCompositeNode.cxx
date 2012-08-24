@@ -51,6 +51,7 @@ vtkMRMLSliceCompositeNode::vtkMRMLSliceCompositeNode()
   this->Interacting = 0;
   this->InteractionFlags = 0;
   this->HotLinkedControl = 0;
+  this->InteractionFlagsModifier = (unsigned int) -1;
 }
 
 //----------------------------------------------------------------------------
@@ -148,6 +149,22 @@ void vtkMRMLSliceCompositeNode::SetInteractionFlags(unsigned int flags)
   // Don't call Modified()
   this->InteractionFlags = flags;
 }
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetInteractionFlagsModifier(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlagsModifier = flags;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::ResetInteractionFlagsModifier()
+{
+  // Don't call Modified()
+  this->InteractionFlagsModifier = (unsigned int) -1;
+}
+
+
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferences()

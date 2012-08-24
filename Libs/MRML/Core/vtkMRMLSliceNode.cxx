@@ -102,6 +102,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->Interacting = 0;
   this->InteractionFlags = 0;
+  this->InteractionFlagsModifier = (unsigned int) -1;
 
   this->IsUpdatingMatrices = 0;
 
@@ -163,6 +164,21 @@ void vtkMRMLSliceNode::SetInteractionFlags(unsigned int flags)
   // Don't call Modified()
   this->InteractionFlags = flags;
 }
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetInteractionFlagsModifier(unsigned int flags)
+{
+  // Don't call Modified()
+  this->InteractionFlagsModifier = flags;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::ResetInteractionFlagsModifier()
+{
+  // Don't call Modified()
+  this->InteractionFlagsModifier = (unsigned int) -1;
+}
+
 
 //----------------------------------------------------------------------------
 double* vtkMRMLSliceNode::redColor()
