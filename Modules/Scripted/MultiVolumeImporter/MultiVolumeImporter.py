@@ -139,8 +139,6 @@ class MultiVolumeImporterWidget:
       self.__status.text = 'Status: Select output node!'
       return
 
-    print('Before processing: '+mvNode.GetID())
-  
     # Series of frames alpha-ordered, all in the input directory
     # Assume here that the last mode in the list is for parsing a list of
     # non-DICOM frames
@@ -221,7 +219,6 @@ class MultiVolumeImporterWidget:
     mvNode.SetLabelArray(volumeLabels)
     mvNode.SetLabelName(self.__veLabel.text)
 
-    mvNode.SetAttribute('MultiVolume.FrameFileList',frameFileListAttr)
     mvNode.SetAttribute('MultiVolume.FrameLabels',frameLabelsAttr)
     mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(nFrames))
     mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagName',dicomTagNameAttr)
@@ -235,11 +232,8 @@ class MultiVolumeImporterWidget:
       if faTag != '':
         mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',faTag)
     
-    print("MultiVolume node setup complete !")
-
+    mvNode.SetName(str(nFrames)+' frames MultiVolume')
     Helper.SetBgFgVolumes(mvNode.GetID(),None)
-
-    print('After processing: '+mvNode.GetID())
 
   def readFrame(self,file):
     sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
