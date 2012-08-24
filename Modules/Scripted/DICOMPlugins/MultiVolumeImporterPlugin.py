@@ -74,6 +74,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = files
       loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
+      mvNode.SetName(loadable.name)
       loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
@@ -132,6 +133,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
         loadable.name = subseriesDescriptions[key] + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
+        mvNode.SetName(loadable.name)
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.multivolume = mvNode
