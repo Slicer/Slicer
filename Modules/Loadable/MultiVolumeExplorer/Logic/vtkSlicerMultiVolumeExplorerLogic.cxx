@@ -172,7 +172,6 @@ void vtkSlicerMultiVolumeExplorerLogic::RegisterNodes()
 //  MultiVolume.NumberOfFrames
 //  MultiVolume.FrameIdentifyingUnit
 //  MultiVolume.FrameLabels
-//  MultiVolume.FrameFileList
 //
 int vtkSlicerMultiVolumeExplorerLogic
 ::InitializeMultivolumeNode(vtkStringArray *filenames, vtkMRMLMultiVolumeNode *mvNode)
@@ -301,7 +300,6 @@ int vtkSlicerMultiVolumeExplorerLogic
       numberOfFramesStream << tagVal2FileList.size();
 
 
-      mvNode->SetAttribute("MultiVolume.FrameFileList", frameFileListStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.FrameLabels", frameLabelsStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.NumberOfFrames", numberOfFramesStream.str().c_str());
       mvNode->SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName", tagToName[*tagIt].c_str());
