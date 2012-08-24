@@ -29,6 +29,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLStorableNode.h>
 #include <vtkMRMLStorageNode.h>
+#include <vtkMRMLSceneViewNode.h>
 
 // VTK includes
 #include <vtkStdString.h>
@@ -124,8 +125,9 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
   this->setWrittenNodes(QStringList());
 
   Q_ASSERT(!properties["nodeID"].toString().isEmpty());
+
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(
-    this->mrmlScene()->GetNodeByID(properties["nodeID"].toString().toLatin1()));
+    this->getNodeByID(properties["nodeID"].toString().toLatin1().data()));
   if (!this->canWriteObject(node))
     {
     return false;
@@ -152,6 +154,37 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
     }
 
   return res;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLNode* qSlicerNodeWriter::getNodeByID(const char *id)const
+{
+  vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(id);
+  if (node == 0)
+    {
+    // search in SceneView nodes
+    std::string sID(id);
+    std::vector<vtkMRMLNode *> nodes;
+    this->mrmlScene()->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
+    std::vector<vtkMRMLNode *>::iterator it;
+
+    for (it = nodes.begin(); it != nodes.end(); it++)
+      {
+      vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+      std::vector<vtkMRMLNode *> snodes;
+      svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+      std::vector<vtkMRMLNode *>::iterator sit;
+      for (sit = snodes.begin(); sit != snodes.end(); sit++)
+        {
+        vtkMRMLNode* snode = (*sit);
+        if (std::string(snode->GetID()) == sID)
+          {
+          return snode;
+          }
+        }
+      }
+    }
+  return node;
 }
 
 //----------------------------------------------------------------------------

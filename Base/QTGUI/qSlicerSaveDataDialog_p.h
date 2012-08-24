@@ -87,6 +87,7 @@ protected:
   QString           format(int row)const;
   QString           type(int row)const;
   qSlicerIOOptions* options(int row)const;
+  vtkMRMLNode*      getNodeByID(char *id)const;
 
   vtkMRMLScene* MRMLScene;
   QString MRMLSceneRootDirectoryBeforeSaving;

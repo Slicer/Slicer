@@ -25,6 +25,7 @@
 #include "qSlicerBaseQTGUIExport.h"
 #include "qSlicerFileWriter.h"
 class qSlicerNodeWriterPrivate;
+class vtkMRMLNode;
 
 /// Utility class that is ready to use for most of the nodes.
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerNodeWriter
@@ -58,6 +59,8 @@ public:
   virtual QStringList extensions(vtkObject* object)const;
 
   virtual bool write(const qSlicerIO::IOProperties& properties);
+
+  virtual vtkMRMLNode* getNodeByID(const char *id)const;
 
   /// Return a qSlicerIONodeWriterOptionsWidget
   virtual qSlicerIOOptions* options()const;

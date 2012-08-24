@@ -230,14 +230,42 @@ void qSlicerSaveDataDialogPrivate::populateItems()
 
   this->populateScene();
 
+  // get all storable nodes in the main scene
+  // and store them in the map by ID to avoid duplicates for the scene views
+  std::map<std::string, vtkMRMLNode *> storableNodes;
+  std::vector<vtkMRMLNode *> nodes;
+  this->MRMLScene->GetNodesByClass("vtkMRMLStorableNode", nodes);
+  std::vector<vtkMRMLNode *>::iterator it;
   vtkMRMLNode* node = NULL;
-  vtkCollectionSimpleIterator it;
-  vtkCollection* sceneNodes = this->MRMLScene->GetNodes();
-  for (sceneNodes->InitTraversal(it);
-       (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
+
+  for (it = nodes.begin(); it != nodes.end(); it++)
     {
+    vtkMRMLNode* node = (*it);
     this->populateNode(node);
+    storableNodes[std::string(node->GetID())] = node;
     }
+
+  // get all additioanl storable nodes for all scene views
+  nodes.clear();
+  this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
+  for (it = nodes.begin(); it != nodes.end(); it++)
+    {
+    vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+    std::vector<vtkMRMLNode *> snodes;
+    svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+    std::vector<vtkMRMLNode *>::iterator sit;
+    for (sit = snodes.begin(); sit != snodes.end(); sit++)
+      {
+      vtkMRMLNode* node = (*sit);
+      if (storableNodes.find(std::string(node->GetID())) == storableNodes.end())
+        {
+        // process only new storable nodes
+        this->populateNode(node);
+        storableNodes[std::string(node->GetID())] = node;
+        }
+      }
+    }
+
 
   // Here we could have restore the sorting property but we want to keep the
   // MRML scene the first item of the list so we don't do restore the sorting.
@@ -767,7 +795,38 @@ vtkObject* qSlicerSaveDataDialogPrivate::object(int row)const
 
   /// \todo support mrmlScene row
   QStringList nodeIDs = nodeNameItem->data(Qt::ToolTipRole).toString().split(" ");
-  vtkMRMLNode *node = this->MRMLScene->GetNodeByID(nodeIDs[0].toLatin1());
+  vtkMRMLNode *node = this->getNodeByID(nodeIDs[0].toLatin1().data());
+  return node;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLNode* qSlicerSaveDataDialogPrivate::getNodeByID(char *id)const
+{
+  vtkMRMLNode *node = this->MRMLScene->GetNodeByID(id);
+  if (node == 0)
+    {
+    // search in SceneView nodes
+    std::string sID(id);
+    std::vector<vtkMRMLNode *> nodes;
+    this->MRMLScene->GetNodesByClass("vtkMRMLSceneViewNode", nodes);
+    std::vector<vtkMRMLNode *>::iterator it;
+
+    for (it = nodes.begin(); it != nodes.end(); it++)
+      {
+      vtkMRMLSceneViewNode *svNode = vtkMRMLSceneViewNode::SafeDownCast(*it);
+      std::vector<vtkMRMLNode *> snodes;
+      svNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+      std::vector<vtkMRMLNode *>::iterator sit;
+      for (sit = snodes.begin(); sit != snodes.end(); sit++)
+        {
+        vtkMRMLNode* snode = (*sit);
+        if (std::string(snode->GetID()) == sID)
+          {
+          return snode;
+          }
+        }
+      }
+    }
   return node;
 }
 

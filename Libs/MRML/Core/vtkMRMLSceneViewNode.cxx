@@ -602,3 +602,9 @@ void vtkMRMLSceneViewNode::SetScreenShotType(int newScreenShotType)
   this->StorableModifiedTime.Modified();
   this->Modified();
 }
+//----------------------------------------------------------------------------
+int vtkMRMLSceneViewNode::GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes)
+{
+  return this->Nodes->GetNodesByClass(className, nodes);
+}
+
