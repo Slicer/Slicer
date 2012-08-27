@@ -183,9 +183,27 @@ class EffectTool(object):
       tag = self.interactor.AddObserver(e, self.processEvent, 1.0)
       self.interactorObserverTags.append(tag)
 
+    # spot for tracking the current cursor while it is turned off for paining
+    self.savedCursor = None
+
   def processEvent(self, caller=None, event=None):
     """Default implementation for tools that ignore events"""
     pass
+
+  def cursorOff(self):
+    """Turn off and save the current cursor so
+    the user can see the background image during editing"""
+    self.savedCursor = self.sliceWidget.cursor
+    qt_BlankCursor = 10
+    self.sliceWidget.setCursor(qt.QCursor(qt_BlankCursor))
+
+  def cursorOn(self):
+    """Restore the saved cursor if it exists, otherwise
+    just restore the default cursor"""
+    if self.savedCursor:
+      self.sliceWidget.setCursor(self.savedCursor)
+    else:
+      self.sliceWidget.unsetCursor()
 
   def abortEvent(self,event):
     """Set the AbortFlag on the vtkCommand associated 

@@ -147,11 +147,13 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     # events from the interactory
     if event == "LeftButtonPressEvent":
       self.actionState = "drawing"
+      self.cursorOff()
       xy = self.interactor.GetEventPosition()
       self.addPoint(self.logic.xyToRAS(xy))
       self.abortEvent(event)
     elif event == "LeftButtonReleaseEvent":
       self.actionState = ""
+      self.cursorOn()
     elif event == "RightButtonPressEvent":
       sliceNode = self.sliceWidget.sliceLogic().GetSliceNode()
       self.lastInsertSLiceNodeMTime = sliceNode.GetMTime()

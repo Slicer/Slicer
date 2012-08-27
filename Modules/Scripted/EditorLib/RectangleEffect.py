@@ -163,6 +163,7 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
 
     if event == "LeftButtonPressEvent":
       self.actionState = "dragging"
+      self.cursorOff()
       xy = self.interactor.GetEventPosition()
       self.startXYPosition = xy
       self.currentXYPosition = xy
@@ -176,6 +177,7 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
         self.abortEvent(event)
     elif event == "LeftButtonReleaseEvent":
       self.actionState = ""
+      self.cursorOn()
       self.apply()
       self.startXYPosition = (0,0)
       self.currentXYPosition = (0,0)

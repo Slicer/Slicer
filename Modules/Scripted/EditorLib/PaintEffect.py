@@ -297,6 +297,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     """
     if event == "LeftButtonPressEvent":
       self.actionState = "painting"
+      self.cursorOff()
       xy = self.interactor.GetEventPosition()
       if self.smudge:
         self.editUtil.setLabel(self.getLabelPixel(xy))
@@ -305,6 +306,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     elif event == "LeftButtonReleaseEvent":
       self.paintApply()
       self.actionState = None
+      self.cursorOn()
     elif event == "MouseMoveEvent":
       self.actor.VisibilityOn()
       if self.actionState == "painting":

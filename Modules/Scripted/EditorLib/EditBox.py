@@ -279,6 +279,7 @@ class EditBox(object):
       self.currentOption.__del__()
       self.currentOption = None
       for tool in self.currentTools:
+        tool.sliceWidget.unsetCursor()
         tool.cleanup()
       self.currentTools = []
 
@@ -315,7 +316,7 @@ class EditBox(object):
         self.currentOption = options(self.optionsFrame)
       except NameError, AttributeError:
         # No options for this effect, skip it
-        print('Could not find an implementation class for %s', effectName)
+        pass
 
     self.setActiveToolLabel(effectName)
 
@@ -323,19 +324,15 @@ class EditBox(object):
     toolName = effectName
     if toolName.endswith('Effect'):
       toolName = effectName[:-len('Effect')]
-    mouseTool = toolName in self.mouseTools
 
-    if effectName == "DefaultTool":
-        # do nothing - this will reset cursor mode
-        pass
-    elif effectName ==  "EraseLabel":
+    if effectName ==  "EraseLabel":
         self.editUtil.toggleLabel()
     elif effectName ==  "PreviousCheckPoint":
         self.undoRedo.undo()
     elif effectName == "NextCheckPoint":
         self.undoRedo.redo()
     else:
-        if mouseTool:
+        if toolName in self.mouseTools:
           # make an appropriate cursor for the tool
           cursor = self.cursorForEffect(effectName) 
           for tool in self.currentTools:
@@ -344,10 +341,6 @@ class EditBox(object):
           appLogic = slicer.app.applicationLogic()
           interactionNode = appLogic.GetInteractionNode()
           interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
-        else:
-          # not a mouse tool, remove the cursor
-          for tool in self.currentTools:
-            tool.sliceWidget.unsetCursor()
 
   def cursorForEffect(self,effectName):
     """Return an instance of QCursor customized for the given effectName.
@@ -358,30 +351,24 @@ class EditBox(object):
       baseImage = qt.QImage(":/Icons/AnnotationPointWithArrow.png")
       effectImage = qt.QImage(self.effectIconFiles[effectName])
       width = max(baseImage.width(), effectImage.width())
-      pad = int(baseImage.height()/4)
+      pad = -9
       height = pad + baseImage.height() + effectImage.height()
       width = height = max(width,height)
       center = int(width/2)
       cursorImage = qt.QImage(width, height, qt.QImage().Format_ARGB32)
       painter = qt.QPainter()
+      cursorImage.fill(0)
       painter.begin(cursorImage)
-      transparentColor = qt.QColor(0,0,0,0)
-      painter.fillRect(0,0,width,height, transparentColor)
       point = qt.QPoint(center - (baseImage.width()/2), 0)
       painter.drawImage(point, baseImage)
       point.setX(center - (effectImage.width()/2))
       point.setY(cursorImage.height() - effectImage.height())
       painter.drawImage(point, effectImage)
       painter.end()
-      #cursorImage = cursorImage.scaled(32,32) # standard cursor size
       cursorPixmap = qt.QPixmap()
       cursorPixmap = cursorPixmap.fromImage(cursorImage)
       self.effectCursors[effectName] = qt.QCursor(cursorPixmap,center,0)
     return self.effectCursors[effectName]
-      
-
-
-
 
   def updateUndoRedoButtons(self):
     self.effectButtons["PreviousCheckPoint"].enabled = self.undoRedo.undoEnabled()
