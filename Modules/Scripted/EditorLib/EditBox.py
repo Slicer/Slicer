@@ -26,6 +26,7 @@ class EditBox(object):
   def __init__(self, parent=None, optionsFrame=None):
     self.effects = []
     self.effectButtons = {}
+    self.effectCursors = {}
     self.effectMapper = qt.QSignalMapper()
     self.effectMapper.connect('mapped(const QString&)', self.selectEffect)
     self.editUtil = EditUtil.EditUtil()
@@ -97,47 +98,17 @@ class EditBox(object):
   
   # effects that change the mouse cursor
   availableMouseTools = (
-    "ChangeIsland", "ChooseColor",
-    "ImplicitCube", "ImplicitEllipse", "ImplicitRectangle",
-    "Draw", "RemoveIslands", "ConnectedComponents",
-    "ThresholdBucket", "ThresholdPaintLabel", "SaveIsland", "SlurpColor", "Paint",
-    "DefaultTool", "LevelTracing", "MakeModel", "Wand", "GrowCutSegment",
+    "Paint", "Draw", "LevelTracing", "Rectangle", "ChangeIsland", "SaveIsland",
     )
 
-  # effects that operate from the menu
+  # effects that operate from the menu (non mouse)
   availableOperations = (
-    "ErodeLabel", "DilateLabel", "DeleteFiducials", "LabelOpacity",
-    "ChangeLabel", "FiducialVisibilityOff",
-    "FiducialVisibilityOn", "GoToEditorModule", 
-    "IdentifyIslands",
-    "LabelVisibilityOff", "LabelVisibilityOn", "NextFiducial", 
-    "SnapToGridOff", "SnapToGridOn",
-    "EraseLabel", "Threshold", "PinOpen", "PreviousFiducial", "InterpolateLabels", "LabelOpacity",
-    "ToggleLabelOutline", "Watershed", "PreviousCheckPoint", "NextCheckPoint",
-    )
-
-  # these buttons do not switch you out of the current tool
-  availableNonmodal = (
-    "FiducialVisibilityOn", "LabelVisibilityOff", "LabelVisibilityOn",
-    "NextFiducial", "PreviousFiducial", "DeleteFiducials", "SnapToGridOn", "SnapToGridOff",
-    "EraseLabel", "PreviousCheckPoint", "NextCheckPoint", "ToggleLabelOutline",
-    "SnapToGridOff", "SnapToGridOn", "LabelOpacity"
-    )
-
-  # these buttons start disabled (check points will re-enable when circumstances are right)
-  availableDisabled = (
-    "ChooseColor",
-    "ImplicitCube", "ImplicitEllipse", 
-    "ConnectedComponents", 
-    "SlurpColor", 
-    "ThresholdPaintLabel", "ThresholdBucket",
-    "DeleteFiducials", "LabelOpacity",
-    "FiducialVisibilityOff",
-    "FiducialVisibilityOn", 
-    "LabelVisibilityOff", "LabelVisibilityOn", 
-    "SnapToGridOff", "SnapToGridOn",
-    "InterpolateLabels", "LabelOpacity",
-    "ToggleLabelOutline", "Watershed", "Wand", 
+    "DefaultTool", "EraseLabel", 
+    "IdentifyIslands", "RemoveIslands",
+    "ErodeLabel", "DilateLabel", "ChangeLabel", 
+    "MakeModel", "GrowCutSegment",
+    "Threshold", 
+    "PreviousCheckPoint", "NextCheckPoint",
     )
 
   # allow overriding the developers name of the tool for a more user-friendly label name
@@ -145,27 +116,12 @@ class EditBox(object):
   displayNames["PreviousCheckPoint"] = "Undo"
   displayNames["NextCheckPoint"] = "Redo"
 
-  # calculates the intersection of two flat lists
-  @classmethod
-  def listIntersection(cls, inList1, inList2):
-    outList = [val for val in inList1 if val in inList2]
-    return outList
-
-  # fill the _effects array bases on what you find in the interpreter
   def findEffects(self, path=""):
-
-    # for now, the built in effects are hard-coded to facilitate
-    # the icons and layout
-
-    self.effects = []
-
-    self.mouseTools = EditBox.availableMouseTools
-    self.operations = EditBox.availableOperations
-    self.nonmodal = EditBox.availableNonmodal
-    self.disabled = EditBox.availableDisabled
+    """fill the effects based built in and extension effects"""
 
     # combined list of all effects
-    self.effects = self.mouseTools + self.operations
+    self.mouseTools = EditBox.availableMouseTools
+    self.effects = self.mouseTools + EditBox.availableOperations
 
     # add builtins that have been registered
     self.effects = self.effects + tuple(self.editorBuiltins.keys())
@@ -182,45 +138,37 @@ class EditBox(object):
     self.effectModes = {}
     self.icons = {}
     for effect in self.effects:
-      for iconType in ( "", "Selected", "Disabled" ):
-        self.effectIconFiles[effect,iconType] = iconDir + effect + iconType + '.png'
-        iconMode = ""
-        if self.disabled.__contains__(effect):
-          # - don't use the disabled icon for now - Qt's setEnabled method works fine
-          #iconMode = "Disabled"
-          pass
-
-        self.effectModes[effect] = iconMode
+      self.effectIconFiles[effect] = iconDir + effect + '.png'
 
       if effect in slicer.modules.editorExtensions.keys():
         extensionEffect = slicer.modules.editorExtensions[effect]()
         module = eval('slicer.modules.%s' % effect.lower())
         iconPath = os.path.join( os.path.dirname(module.path),"%s.png" % effect)
-        self.effectIconFiles[effect,""] = iconPath
-        self.effectModes[effect] = ""
+        self.effectIconFiles[effect] = iconPath
+
+    # special case for renamed effect
+    self.effectIconFiles["Rectangle"] = iconDir + "ImplicitRectangle" + '.png'
 
     # TOOD: add icons for builtins as resource or installed image directory
-    self.effectIconFiles["PaintEffect",""] = self.effectIconFiles["Paint",""]
-    self.effectIconFiles["DrawEffect",""] = self.effectIconFiles["Draw",""]
-    self.effectIconFiles["ThresholdEffect",""] = self.effectIconFiles["Threshold",""]
-    self.effectIconFiles["RectangleEffect",""] = self.effectIconFiles["ImplicitRectangle",""]
-    self.effectIconFiles["LevelTracingEffect",""] = self.effectIconFiles["LevelTracing",""]
-    self.effectIconFiles["MakeModelEffect",""] = self.effectIconFiles["MakeModel",""]
-    self.effectIconFiles["ErodeEffect",""] = self.effectIconFiles["ErodeLabel",""]
-    self.effectIconFiles["DilateEffect",""] = self.effectIconFiles["DilateLabel",""]
-    self.effectIconFiles["IdentifyIslandsEffect",""] = self.effectIconFiles["IdentifyIslands",""]
-    self.effectIconFiles["ChangeIslandEffect",""] = self.effectIconFiles["ChangeIsland",""]
-    self.effectIconFiles["RemoveIslandsEffect",""] = self.effectIconFiles["RemoveIslands",""]
-    self.effectIconFiles["SaveIslandEffect",""] = self.effectIconFiles["SaveIsland",""]
-    self.effectIconFiles["ChangeIslandEffect",""] = self.effectIconFiles["ChangeIsland",""]
-    self.effectIconFiles["ChangeLabelEffect",""] = self.effectIconFiles["ChangeLabel",""]
-    self.effectIconFiles["GrowCutEffect",""] = self.effectIconFiles["GrowCutSegment",""]
+    self.effectIconFiles["PaintEffect"] = self.effectIconFiles["Paint"]
+    self.effectIconFiles["DrawEffect"] = self.effectIconFiles["Draw"]
+    self.effectIconFiles["ThresholdEffect"] = self.effectIconFiles["Threshold"]
+    self.effectIconFiles["RectangleEffect"] = self.effectIconFiles["Rectangle"]
+    self.effectIconFiles["LevelTracingEffect"] = self.effectIconFiles["LevelTracing"]
+    self.effectIconFiles["MakeModelEffect"] = self.effectIconFiles["MakeModel"]
+    self.effectIconFiles["ErodeEffect"] = self.effectIconFiles["ErodeLabel"]
+    self.effectIconFiles["DilateEffect"] = self.effectIconFiles["DilateLabel"]
+    self.effectIconFiles["IdentifyIslandsEffect"] = self.effectIconFiles["IdentifyIslands"]
+    self.effectIconFiles["ChangeIslandEffect"] = self.effectIconFiles["ChangeIsland"]
+    self.effectIconFiles["RemoveIslandsEffect"] = self.effectIconFiles["RemoveIslands"]
+    self.effectIconFiles["SaveIslandEffect"] = self.effectIconFiles["SaveIsland"]
+    self.effectIconFiles["ChangeIslandEffect"] = self.effectIconFiles["ChangeIsland"]
+    self.effectIconFiles["ChangeLabelEffect"] = self.effectIconFiles["ChangeLabel"]
+    self.effectIconFiles["GrowCutEffect"] = self.effectIconFiles["GrowCutSegment"]
 
-  #
-  # create a row of the edit box given a list of 
-  # effect names (items in _effects(list)
-  #
   def createButtonRow(self, effects, rowLabel=""):
+    """ create a row of the edit box given a list of 
+    effect names (items in _effects(list) """
 
     f = qt.QFrame(self.parent)
     self.parent.layout().addWidget(f)
@@ -232,11 +180,10 @@ class EditBox(object):
       label = qt.QLabel(rowLabel)
       hbox.addWidget(label)
 
-
     for effect in effects:
       # check that the effect belongs in our list of effects before including
       if (effect in self.effects):
-        i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect,self.effectModes[effect]])
+        i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect])
         a = self.actions[effect] = qt.QAction(i, '', f)
         self.effectButtons[effect] = b = self.buttons[effect] = qt.QToolButton()
         b.setDefaultAction(a)
@@ -244,8 +191,6 @@ class EditBox(object):
         if EditBox.displayNames.has_key(effect):
           b.setToolTip(EditBox.displayNames[effect])
         hbox.addWidget(b)
-        if self.disabled.__contains__(effect):
-          b.setDisabled(1)
 
         # Setup the mapping between button and its associated effect name
         self.effectMapper.setMapping(self.buttons[effect], effect)
@@ -278,8 +223,6 @@ class EditBox(object):
       extensions.append(k)
     self.createButtonRow( extensions )
 
-    # TODO: add back prev/next fiducial
-    #self.createButtonRow( ("PreviousFiducial", "NextFiducial") )
     self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint"), rowLabel="Undo/Redo: " )
 
     #
@@ -324,65 +267,63 @@ class EditBox(object):
       return
     
     #
-    # if a modal effect was selected, build an options GUI
+    # an effect was selected, so build an options GUI
     # - check to see if it is an extension effect,
     # if not, try to create it, else ignore it
     # For extensions, look for 'effect'Options and 'effect'Tool
     # in the editorExtensions map and use those to create the 
     # effect
     #
-    if not self.nonmodal.__contains__(effectName):
+    if self.currentOption:
+      # clean up any existing effect
+      self.currentOption.__del__()
+      self.currentOption = None
+      for tool in self.currentTools:
+        tool.cleanup()
+      self.currentTools = []
 
-      if self.currentOption:
-        # clean up any existing effect
-        self.currentOption.__del__()
-        self.currentOption = None
-        for tool in self.currentTools:
-          tool.cleanup()
-        self.currentTools = []
+    # look at builtins and extensions 
+    # - TODO: other effect styles are deprecated
+    effectClass = None
+    if effectName in slicer.modules.editorExtensions.keys():
+      effectClass = slicer.modules.editorExtensions[effectName]()
+    elif effectName in self.editorBuiltins.keys():
+      effectClass = self.editorBuiltins[effectName]()
+    if effectClass:
+      # for effects, create an options gui and an
+      # instance for every slice view
+      self.currentOption = effectClass.options(self.optionsFrame)
+      self.currentOption.undoRedo = self.undoRedo
+      self.currentOption.defaultEffect = self.defaultEffect
+      self.currentOption.create()
+      self.currentOption.updateGUI()
+      layoutManager = slicer.app.layoutManager()
+      sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
+      for nodeIndex in xrange(sliceNodeCount):
+        # find the widget for each node in scene
+        sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
+        sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
+        if sliceWidget:
+          tool = effectClass.tool(sliceWidget)
+          tool.undoRedo = self.undoRedo
+          self.currentTools.append(tool)
+      self.currentOption.tools = self.currentTools
+    else:
+      # fallback to internal classes
+      try:
+        options = eval("%sOptions" % effectName)
+        self.currentOption = options(self.optionsFrame)
+      except NameError, AttributeError:
+        # No options for this effect, skip it
+        print('Could not find an implementation class for %s', effectName)
 
-      # look at builtins and extensions 
-      # - TODO: other effect styles are deprecated
-      effectClass = None
-      if effectName in slicer.modules.editorExtensions.keys():
-        effectClass = slicer.modules.editorExtensions[effectName]()
-      elif effectName in self.editorBuiltins.keys():
-        effectClass = self.editorBuiltins[effectName]()
-      if effectClass:
-        # for effects, create an options gui and an
-        # instance for every slice view
-        self.currentOption = effectClass.options(self.optionsFrame)
-        self.currentOption.undoRedo = self.undoRedo
-        self.currentOption.defaultEffect = self.defaultEffect
-        self.currentOption.create()
-        self.currentOption.updateGUI()
-        layoutManager = slicer.app.layoutManager()
-        sliceNodeCount = slicer.mrmlScene.GetNumberOfNodesByClass('vtkMRMLSliceNode')
-        for nodeIndex in xrange(sliceNodeCount):
-          # find the widget for each node in scene
-          sliceNode = slicer.mrmlScene.GetNthNodeByClass(nodeIndex, 'vtkMRMLSliceNode')
-          sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
-          if sliceWidget:
-            tool = effectClass.tool(sliceWidget)
-            tool.undoRedo = self.undoRedo
-            self.currentTools.append(tool)
-        self.currentOption.tools = self.currentTools
-      else:
-        # fallback to internal classes
-        try:
-          options = eval("%sOptions" % effectName)
-          self.currentOption = options(self.optionsFrame)
-        except NameError, AttributeError:
-          # No options for this effect, skip it
-          pass
-
-    slicer.app.restoreOverrideCursor()
     self.setActiveToolLabel(effectName)
 
     # mouse tool changes cursor, and dismisses popup/menu
-    mouseTool = False
-    if self.mouseTools.__contains__(effectName):
-      mouseTool = True
+    toolName = effectName
+    if toolName.endswith('Effect'):
+      toolName = effectName[:-len('Effect')]
+    mouseTool = toolName in self.mouseTools
 
     if effectName == "DefaultTool":
         # do nothing - this will reset cursor mode
@@ -395,21 +336,52 @@ class EditBox(object):
         self.undoRedo.redo()
     else:
         if mouseTool:
-          # TODO: make some nice custom cursor shapes
-          # - for now use the built in override cursor
-          #pix = qt.QPixmap()
-          #pix.load(self.effectIconFiles[effectName,""])
-          #cursor = qt.QCursor(pix)
-          #app.setOverrideCursor(cursor, 0, 0)
-          cursor = qt.QCursor(1)
-          slicer.app.setOverrideCursor(cursor)
-
+          # make an appropriate cursor for the tool
+          cursor = self.cursorForEffect(effectName) 
+          for tool in self.currentTools:
+            tool.sliceWidget.setCursor(cursor)
           # set the interaction mode in case there was an active place going on
           appLogic = slicer.app.applicationLogic()
           interactionNode = appLogic.GetInteractionNode()
           interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
         else:
-          slicer.app.restoreOverrideCursor()
+          # not a mouse tool, remove the cursor
+          for tool in self.currentTools:
+            tool.sliceWidget.unsetCursor()
+
+  def cursorForEffect(self,effectName):
+    """Return an instance of QCursor customized for the given effectName.
+    TODO: this could be moved to the EffectTool class so that effects can manage
+    per-widget cursors, possibly turning them off or making them dynamic
+    """
+    if not effectName in self.effectCursors:
+      baseImage = qt.QImage(":/Icons/AnnotationPointWithArrow.png")
+      effectImage = qt.QImage(self.effectIconFiles[effectName])
+      width = max(baseImage.width(), effectImage.width())
+      pad = int(baseImage.height()/4)
+      height = pad + baseImage.height() + effectImage.height()
+      width = height = max(width,height)
+      center = int(width/2)
+      cursorImage = qt.QImage(width, height, qt.QImage().Format_ARGB32)
+      painter = qt.QPainter()
+      painter.begin(cursorImage)
+      transparentColor = qt.QColor(0,0,0,0)
+      painter.fillRect(0,0,width,height, transparentColor)
+      point = qt.QPoint(center - (baseImage.width()/2), 0)
+      painter.drawImage(point, baseImage)
+      point.setX(center - (effectImage.width()/2))
+      point.setY(cursorImage.height() - effectImage.height())
+      painter.drawImage(point, effectImage)
+      painter.end()
+      #cursorImage = cursorImage.scaled(32,32) # standard cursor size
+      cursorPixmap = qt.QPixmap()
+      cursorPixmap = cursorPixmap.fromImage(cursorImage)
+      self.effectCursors[effectName] = qt.QCursor(cursorPixmap,center,0)
+    return self.effectCursors[effectName]
+      
+
+
+
 
   def updateUndoRedoButtons(self):
     self.effectButtons["PreviousCheckPoint"].enabled = self.undoRedo.undoEnabled()
