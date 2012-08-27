@@ -171,6 +171,23 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
   This is the test case for your scripted module.
   """
 
+  def delayDisplay(self,message,msec=1000):
+    """This utility method displays a small dialog and waits.
+    This does two things: 1) it lets the event loop catch up
+    to the state of the test so that rendering and widget updates
+    have all taken place before the test continues and 2) it
+    shows the user/developer/tester the state of the test
+    so that we'll know when it breaks.
+    """
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
+
   def setUp(self):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
@@ -194,6 +211,7 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
     your test should break so they know that the feature is needed.
     """
 
+    self.delayDisplay("Starting the test")
     #
     # first, get some data
     #
@@ -210,9 +228,9 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
       if loader:
         print('Loading %s...\n' % (name,))
         loader(filePath)
-    print('Finished with download and loading\n')
+    self.delayDisplay('Finished with download and loading\n')
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = ScriptedLoadableExtensionTemplateLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
-    print('Test passed!')
+    self.delayDisplay('Test passed!')
