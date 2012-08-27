@@ -113,6 +113,8 @@ class DICOMWidget:
     self.dicomModelTypeRole = self.dicomModelUIDRole + 1
     self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
 
+    self.resumeModelRequested = False
+
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -279,7 +281,21 @@ class DICOMWidget:
     https://bugreports.qt-project.org/browse/QTBUG-10775
     """
     self.dicomApp.suspendModel()
+    self.requestResumeModel()
+
+  def requestResumeModel(self):
+    """This method serves to compress the requests for resuming
+    the dicom model since it is time consuming and there can be
+    many of them coming in a rapid sequence when the 
+    database is active"""
+    if self.resumeModelRequested:
+      return
+    self.resumeModelRequested = True
+    qt.QTimer.singleShot(500, self.onResumeModelRequestTimeout)
+
+  def onResumeModelRequestTimeout(self):
     self.dicomApp.resumeModel()
+    self.resumeModelRequested = False
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
@@ -408,8 +424,7 @@ class DICOMWidget:
     exportDialog.open()
 
   def onExportFinished(self):
-    self.dicomApp.resumeModel()
-    self.dicomApp.resetModel()
+    self.requestResumeModel()
 
   def onSendClicked(self):
     """Perform a dicom store of slicer data to a peer"""
@@ -529,8 +544,7 @@ class DICOMWidget:
     newFile = slicer.dicomListener.lastFileAdded
     if newFile:
       slicer.util.showStatusMessage("Loaded: %s" % newFile, 1000)
-    self.dicomApp.resumeModel()
-    self.dicomApp.resetModel()
+    self.requestResumeModel()
 
   def onToggleServer(self):
     if self.testingServer and self.testingServer.qrRunning():
