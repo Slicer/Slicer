@@ -100,8 +100,6 @@ class DICOMWidget:
     self.testingServer = None
     self.dicomApp = None
     
-    # let the popup window manage data loading
-    self.useDetailsPopup = True
     # hide the search box 
     self.hideSearch = True
 
@@ -113,8 +111,8 @@ class DICOMWidget:
     self.dicomModelTypeRole = self.dicomModelUIDRole + 1
     self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
 
+    # state management for compressing events
     self.resumeModelRequested = False
-
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -208,36 +206,15 @@ class DICOMWidget:
       # well into the frame
       slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
 
-    if self.useDetailsPopup:
-      self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp,setBrowserPersistence=self.setBrowserPersistence)
-      # TODO: move all functions to popup
-      # for now, create dummy buttons just so callbacks work
-      self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
-      self.loadButton = qt.QPushButton('Load to Slicer')
-      self.previewLabel = qt.QLabel()
+    self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp,setBrowserPersistence=self.setBrowserPersistence)
 
-      self.tree = self.detailsPopup.tree
-      
-      self.showBrowser = qt.QPushButton('Show DICOM Browser')
-      self.dicomFrame.layout().addWidget(self.showBrowser)
-      self.showBrowser.connect('clicked()', self.detailsPopup.open)
+    self.tree = self.detailsPopup.tree
+    
+    self.showBrowser = qt.QPushButton('Show DICOM Browser')
+    self.dicomFrame.layout().addWidget(self.showBrowser)
+    self.showBrowser.connect('clicked()', self.detailsPopup.open)
 
-      self.dicomFrame.layout().addStretch(1)
-
-    else:
-      userFrame = slicer.util.findChildren(self.dicomApp, 'UserFrame')[0]
-      userFrame.setLayout(qt.QVBoxLayout())
-      self.previewLabel = qt.QLabel(userFrame)
-      userFrame.layout().addWidget(self.previewLabel)
-      self.loadButton = qt.QPushButton('Load to Slicer')
-      self.loadButton.enabled = False 
-      userFrame.layout().addWidget(self.loadButton)
-      self.loadButton.connect('clicked()', self.onLoadButton)
-      self.exportButton = qt.QPushButton('Export Slicer Data to Study...')
-      self.exportButton.enabled = False 
-      userFrame.layout().addWidget(self.exportButton)
-      self.exportButton.connect('clicked()', self.onExportClicked)
-      self.tree = slicer.util.findChildren(self.dicomApp, 'TreeView')[0]
+    self.dicomFrame.layout().addStretch(1)
 
     # make the tree view a bit bigger
     self.tree.setMinimumHeight(250)
@@ -262,7 +239,6 @@ class DICOMWidget:
     self.tree.connect('clicked(QModelIndex)', self.onTreeClicked)
     self.tree.setContextMenuPolicy(3)
     self.tree.connect('customContextMenuRequested(QPoint)', self.onTreeContextMenuRequested)
-
 
     # enable to the Send button of the app widget and take it over
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
@@ -334,7 +310,6 @@ class DICOMWidget:
     if self.dicomApp:
       self.dicomApp.tagsToPrecache = tagsToPrecache
 
-
   def promptForDatabaseDirectory(self):
     fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())
     fileDialog.setWindowModality(1)
@@ -351,18 +326,13 @@ class DICOMWidget:
     self.selection = index.sibling(index.row(), 0)
     typeRole = self.selection.data(self.dicomModelTypeRole)
     if typeRole > 0:
-      self.loadButton.text = 'Load Selected %s to Slicer' % self.dicomModelTypes[typeRole]
-      self.loadButton.enabled = True
       self.sendButton.enabled = True
     else:
-      self.loadButton.text = 'Load to Slicer'
-      self.loadButton.enabled = False 
       self.sendButton.enabled = False
     if typeRole:
       self.exportAction.enabled = self.dicomModelTypes[typeRole] == "Study"
     else:
       self.exportAction.enabled = False
-    self.previewLabel.text = "Selection: " + self.dicomModelTypes[typeRole]
     self.detailsPopup.open()
     uid = self.selection.data(self.dicomModelUIDRole)
     role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
@@ -392,29 +362,6 @@ class DICOMWidget:
         self.dicomApp.resumeModel()
     elif action == self.exportAction:
       self.onExportClicked()
-
-
-  def onLoadButton(self):
-    self.progress = qt.QProgressDialog(slicer.util.mainWindow())
-    self.progress.minimumDuration = 0
-    self.progress.show()
-    self.progress.setValue(0)
-    self.progress.setMaximum(100)
-    uid = self.selection.data(self.dicomModelUIDRole)
-    role = self.dicomModelTypes[self.selection.data(self.dicomModelTypeRole)]
-    toLoad = {}
-    if role == "Patient":
-      self.progress.show()
-      self.loadPatient(uid)
-    elif role == "Study":
-      self.progress.show()
-      self.loadStudy(uid)
-    elif role == "Series":
-      self.loadSeries(uid)
-    elif role == "Image":
-      pass
-    self.progress.close()
-    self.progress = None
 
   def onExportClicked(self):
     """Associate a slicer volume as a series in the selected dicom study"""
@@ -449,56 +396,9 @@ class DICOMWidget:
     sendDialog = DICOMLib.DICOMSendDialog(files)
     sendDialog.open()
 
-  def loadPatient(self,patientUID):
-    studies = slicer.dicomDatabase.studiesForPatient(patientUID)
-    s = 1
-    self.progress.setLabelText("Loading Studies")
-    self.progress.setValue(1)
-    slicer.app.processEvents()
-    for study in studies:
-      self.progress.setLabelText("Loading Study %d of %d" % (s, len(studies)))
-      slicer.app.processEvents()
-      s += 1
-      self.loadStudy(study)
-      if self.progress.wasCanceled:
-        break
-
-  def loadStudy(self,studyUID):
-    series = slicer.dicomDatabase.seriesForStudy(studyUID)
-    s = 1
-    origText = self.progress.labelText
-    for serie in series:
-      self.progress.setLabelText(origText + "\nLoading Series %d of %d" % (s, len(series)))
-      slicer.app.processEvents()
-      s += 1
-      self.progress.setValue(100.*s/len(series))
-      self.loadSeries(serie)
-      if self.progress.wasCanceled:
-        break
-
-  def loadSeries(self,seriesUID):
-    files = slicer.dicomDatabase.filesForSeries(seriesUID)
-    slicer.dicomDatabase.loadFileHeader(files[0])
-    seriesDescription = "0008,103e"
-    d = slicer.dicomDatabase.headerValue(seriesDescription)
-    try:
-      name = d[d.index('[')+1:d.index(']')]
-    except ValueError:
-      name = "Unknown"
-    self.progress.labelText += '\nLoading %s' % name
-    slicer.app.processEvents()
-    self.loadFiles(slicer.dicomDatabase.filesForSeries(seriesUID), name)
-
-  def loadFiles(self, files, name):
-    loader = DICOMLib.DICOMLoader(files,name)
-    if not loader.volumeNode:
-      qt.QMessageBox.warning(slicer.util.mainWindow(), 'Load', 'Could not load volume for: %s' % name)
-      print('Tried to load volume as %s using: ' % name, files)
-
   def setBrowserPersistence(self,onOff):
     self.detailsPopup.setModality(not onOff)
     self.browserPersistent = onOff
-
 
   def onToggleListener(self):
     if hasattr(slicer, 'dicomListener'):
@@ -528,14 +428,12 @@ class DICOMWidget:
     if newState == 2:
       slicer.util.showStatusMessage("DICOM Listener running")
 
-
   def onListenerToAddFile(self):
     """ Called when the indexer is about to add a file to the database.
     Works around issue where ctkDICOMModel has open queries that keep the
     database locked.
     """
     self.dicomApp.suspendModel()
-
 
   def onListenerAddedFile(self):
     """Called after the listener has added a file.
