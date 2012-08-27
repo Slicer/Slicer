@@ -114,10 +114,10 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     parameters['inputDicomDirectory'] = os.path.dirname(loadable.files[0])
     parameters['outputDirectory'] = slicer.app.temporaryPath
     parameters['outputVolume'] = slicer.app.temporaryPath + '/dwiImport.nhdr'
-    if not hasattr(slicer.modules, 'dicomtonrrd'):
+    if not hasattr(slicer.modules, 'dicomtonrrdconverter'):
       print('No diffusion dicom importer module available')
       return False
-    dicomDWIConverter = slicer.modules.dicomtonrrd
+    dicomDWIConverter = slicer.modules.dicomtonrrdconverter
     cliNode = slicer.cli.run(dicomDWIConverter, None, parameters, wait_for_completion = True)
     success = False
     if cliNode.GetStatusString() == "Completed":
