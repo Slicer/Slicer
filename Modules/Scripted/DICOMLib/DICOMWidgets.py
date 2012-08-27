@@ -123,6 +123,10 @@ class DICOMDetailsPopup(object):
     self.actionButtonLayout = qt.QHBoxLayout()
     self.actionLayout.addLayout(self.actionButtonLayout)
 
+    self.uncheckAllButton = qt.QPushButton('Uncheck All')
+    self.actionButtonLayout.addWidget(self.uncheckAllButton)
+    self.uncheckAllButton.connect('clicked()', self.uncheckAllLoadables)
+
     self.loadButton = qt.QPushButton('Load Selection to Slicer')
     self.loadButton.enabled = False 
     self.actionButtonLayout.addWidget(self.loadButton)
@@ -265,6 +269,9 @@ class DICOMDetailsPopup(object):
     self.progress.close()
     self.progress = None
 
+  def uncheckAllLoadables(self):
+    self.loadableTable.uncheckAll()
+
   def loadCheckedLoadables(self):
     """Invoke the load method on each plugin for the DICOMLoadable
     instances that are selected"""
@@ -377,10 +384,16 @@ class DICOMLoadableTable(object):
 
     self.widget.setVerticalHeaderLabels(row * [""])
 
+  def uncheckAll(self):
+    for row in xrange(self.widget.rowCount):
+      item = self.widget.item(row,0)
+      item.setCheckState(False)
+
   def updateCheckstate(self):
     for row in xrange(self.widget.rowCount):
       item = self.widget.item(row,0)
       self.loadables[row].selected = (item.checkState() != 0)
+
 
 class DICOMHeaderWidget(object):
   """Implement the Qt code for a table of
