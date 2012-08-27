@@ -1,3 +1,5 @@
+import os
+import unittest
 from __main__ import vtk, qt, ctk, slicer
 
 #
@@ -17,6 +19,19 @@ class ScriptedLoadableExtensionTemplate:
     This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc. and Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
 """ # replace with organization, grant and thanks.
     self.parent = parent
+
+    # Add this test to the SelfTest module's list for discovery when the module
+    # is created.  Since this module may be discovered before SelfTests itself,
+    # create the list if it doesn't already exist.
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
+    slicer.selfTests['ScriptedLoadableExtensionTemplate'] = self.runTest
+
+  def runTest(self):
+    tester = ScriptedLoadableExtensionTemplateTest()
+    tester.runTest()
 
 #
 # qScriptedLoadableExtensionTemplateWidget
@@ -47,6 +62,13 @@ class ScriptedLoadableExtensionTemplateWidget:
     self.layout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
 
+    # reload and test button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
+    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
+    self.layout.addWidget(self.reloadAndTestButton)
+    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
     # Collapsible button
     dummyCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -109,3 +131,88 @@ class ScriptedLoadableExtensionTemplateWidget:
     globals()[widgetName.lower()] = eval(
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
+
+  def onReloadAndTest(self,moduleName="ScriptedLoadableExtensionTemplate"):
+    self.onReload()
+    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
+    tester = eval(evalString)
+    tester.runTest()
+
+#
+# ScriptedLoadableExtensionTemplateLogic
+#
+
+class ScriptedLoadableExtensionTemplateLogic:
+  """This class should implement all the actual 
+  computation done by your module.  The interface 
+  should be such that other python code can import
+  this class and make use of the functionality without
+  requiring an instance of the Widget
+  """
+  def __init__(self):
+    pass
+
+  def hasImageData(self,volumeNode):
+    """This is a dummy logic method that 
+    returns true if the passed in volume
+    node has valid image data
+    """
+    if not volumeNode:
+      print('no volume node')
+      return False
+    if volumeNode.GetImageData() == None:
+      print('no image data')
+      return False
+    return True
+
+
+class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
+  """
+  This is the test case for your scripted module.
+  """
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+    """
+    slicer.mrmlScene.Clear(0)
+
+  def runTest(self):
+    """Run as few or as many tests as needed here.
+    """
+    self.setUp()
+    self.test_ScriptedLoadableExtensionTemplate1()
+
+  def test_ScriptedLoadableExtensionTemplate1(self):
+    """ Ideally you should have several levels of tests.  At the lowest level
+    tests sould exercise the functionality of the logic with different inputs
+    (both valid and invalid).  At higher levels your tests should emulate the
+    way the user would interact with your code and confirm that it still works
+    the way you intended.
+    One of the most important features of the tests is that it should alert other
+    developers when their changes will have an impact on the behavior of your
+    module.  For example, if a developer removes a feature that you depend on,
+    your test should break so they know that the feature is needed.
+    """
+
+    #
+    # first, get some data
+    #
+    import urllib
+    downloads = (
+        ('http://slicer.kitware.com/midas3/download?items=5767', 'FA.nrrd', slicer.util.loadVolume),
+        )
+
+    for url,name,loader in downloads:
+      filePath = slicer.app.temporaryPath + '/' + name
+      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+        print('Requesting download %s from %s...\n' % (name, url))
+        urllib.urlretrieve(url, filePath)
+      if loader:
+        print('Loading %s...\n' % (name,))
+        loader(filePath)
+    print('Finished with download and loading\n')
+
+    volumeNode = slicer.util.getNode(pattern="FA")
+    logic = MyScriptLogic()
+    self.assertTrue( logic.hasImageData(volumeNode) )
+    print('Test passed!')

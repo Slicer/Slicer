@@ -5,7 +5,7 @@ if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME ScriptedLoadableExtensionTemplate)
   set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/ScriptedLoadableExtensionTemplate")
   set(EXTENSION_CATEGORY "Examples")
-  set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
+  set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)")
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling a scripted loadable module")
   set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/ScriptedLoadableExtensionTemplate/Resources/Icons/ScriptedLoadableExtensionTemplate.png?revision=19437&view=co")
   set(EXTENSION_SCREENSHOTURLS "http://wiki.slicer.org/slicerWiki/images/e/e2/Slicer-r19441-ScriptedLoadableExtensionTemplate-screenshot.png")
@@ -40,6 +40,12 @@ ctkMacroCompilePythonScript(
 
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
+
+  # this will regiester the unittest subclass in the main script
+  # as a ctest (note that it is also usable as a runtime test).
+  slicer_add_python_unittest(SCRIPT ScriptedLoadableExtensionTemplate.py)
+
+  # additional build-time testing goes in here
   add_subdirectory(Testing)
 endif()
 
