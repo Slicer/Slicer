@@ -166,7 +166,8 @@ class SampleDataLogic:
     return self.downloadFile(uri, destFolderPath, name)
 
   def reportHook(self,blocksSoFar,blockSize,totalSize):
-    self.logMessage('<i>Downloaded %d blocks of size %d out of %d total...</i>' % (blocksSoFar, blockSize, totalSize))
+    percent = int((100. * blocksSoFar * blockSize) / totalSize)
+    self.logMessage('<i>Downloaded %d blocks of size %d (%d%% of %d total)...</i>' % (blocksSoFar, blockSize, percent, totalSize))
 
   def downloadFile(self, uri, destFolderPath, name):
     import urllib
