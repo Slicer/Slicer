@@ -215,6 +215,15 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
     {
     flags = flags | Qt::ItemIsEditable;
     }
+  // if this is an annotation with a hierarchy node that it's a 1:1 node, don't allow
+  // dropping
+  vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode = NULL;
+  displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
+  if (displayableHierarchyNode  && 
+      !displayableHierarchyNode->GetAllowMultipleChildren())
+    {
+    flags = flags & ~Qt::ItemIsDropEnabled;
+    }
   return flags;
 }
 
