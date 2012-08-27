@@ -333,14 +333,14 @@ class EditBox(object):
         self.undoRedo.redo()
     else:
         if toolName in self.mouseTools:
-          # make an appropriate cursor for the tool
-          cursor = self.cursorForEffect(effectName) 
-          for tool in self.currentTools:
-            tool.sliceWidget.setCursor(cursor)
           # set the interaction mode in case there was an active place going on
           appLogic = slicer.app.applicationLogic()
           interactionNode = appLogic.GetInteractionNode()
           interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
+          # make an appropriate cursor for the tool
+          cursor = self.cursorForEffect(effectName) 
+          for tool in self.currentTools:
+            tool.sliceWidget.setCursor(cursor)
 
   def cursorForEffect(self,effectName):
     """Return an instance of QCursor customized for the given effectName.
