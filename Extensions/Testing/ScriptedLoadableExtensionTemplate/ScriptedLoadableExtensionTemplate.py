@@ -213,6 +213,6 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
     print('Finished with download and loading\n')
 
     volumeNode = slicer.util.getNode(pattern="FA")
-    logic = MyScriptLogic()
+    logic = ScriptedLoadableExtensionTemplateLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
     print('Test passed!')
