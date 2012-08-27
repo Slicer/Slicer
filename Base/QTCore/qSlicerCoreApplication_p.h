@@ -155,7 +155,7 @@ public:
 
 #ifdef Slicer_BUILD_DICOM_SUPPORT
   /// Application-wide database instance
-  QSharedPointer<ctkDICOMDatabase>            DICOMDatabase;
+  ctkDICOMDatabase*                           DICOMDatabase;
 #endif
 };
 
