@@ -165,12 +165,15 @@ class SampleDataLogic:
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
     return self.downloadFile(uri, destFolderPath, name)
 
+  def reportHook(self,blocksSoFar,blockSize,totalSize):
+    self.logMessage('<i>Downloaded %d blocks of size %d out of %d total...</i>' % (blocksSoFar, blockSize, totalSize))
+
   def downloadFile(self, uri, destFolderPath, name):
     import urllib
     self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
     # add a progress bar
     filePath = destFolderPath + '/' + name
-    urllib.urlretrieve(uri, filePath)
+    urllib.urlretrieve(uri, filePath, self.reportHook)
     self.logMessage('<b>Download finished</b>')
     return filePath
 
