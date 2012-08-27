@@ -279,10 +279,10 @@ bool TestCollapseLevel0()
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() != hierarchyNode ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() != hierarchyNode)
     {
-    std::cout << "UnExpandedParentNode is wrong:" << std::endl
-              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode()
+    std::cout << "UnExpandedParentNode is wrong (hierarchy node at level 0 collapsed):" << std::endl
+              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << " (expected 0), "
+              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << " (expected " << hierarchyNode << "), "
+              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() << " (expected  " << hierarchyNode << ")"
               << std::endl;
     res = false;
     }
@@ -311,10 +311,10 @@ bool TestCollapseLevel1()
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() != 0 ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() != hierarchyNode)
     {
-    std::cout << "UnExpandedParentNode is wrong:" << std::endl
-              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode()
+    std::cout << "UnExpandedParentNode is wrong (hierarchyNode at level 1 collapsed):" << std::endl
+              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << " (expected 0), "
+              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << " (expected 0), "
+              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() << " (expected " << hierarchyNode << ")"
               << std::endl;
     res = false;
     }
@@ -345,10 +345,10 @@ bool TestCollapseLevels0And1()
       GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() != hierarchyNode ||
       GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() != hierarchyNode)
     {
-    std::cout << "UnExpandedParentNode is wrong:" << std::endl
-              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << ", "
-              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode()
+    std::cout << "UnExpandedParentNode is wrong (hierarchies at levels 0 and 1 collapsed):" << std::endl
+              << GetModelHierarchyNode(scene.GetPointer(), 0)->GetUnExpandedParentNode() << " (expected 0), "
+              << GetModelHierarchyNode(scene.GetPointer(), 1)->GetUnExpandedParentNode() << " (expected " << hierarchyNode << "), "
+              << GetModelHierarchyNode(scene.GetPointer(), 2)->GetUnExpandedParentNode() << " (expected " << hierarchyNode << ")"
               << std::endl;
     res = false;
     }
