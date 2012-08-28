@@ -86,13 +86,13 @@ public:
   vtkMRMLScene* mrmlScene()const;
 
   /// Retrieve the mrml scene index
-  QModelIndex mrmlSceneIndex()const;
+  Q_INVOKABLE QModelIndex mrmlSceneIndex()const;
 
   /// Retrieve the associated vtkMRMLNode
-  vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
+  Q_INVOKABLE vtkMRMLNode* mrmlNodeFromIndex(const QModelIndex& index)const;
 
   /// Retrieve an index for a given vtkMRMLNode
-  QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
+  Q_INVOKABLE QModelIndex indexFromMRMLNode(vtkMRMLNode* node, int column = 0)const;
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
@@ -115,7 +115,7 @@ public:
   /// Add node type attribute that filter the nodes to
   /// display. The default of a null QVariant means that
   /// any non null attributeValue will match
-  void addAttribute(const QString& nodeType,
+  Q_INVOKABLE void addAttribute(const QString& nodeType,
                     const QString& attributeName,
                     const QVariant& attributeValue = QVariant());
 

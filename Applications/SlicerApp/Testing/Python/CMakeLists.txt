@@ -165,6 +165,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   # add as unit test for use at build/test time
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
   slicer_add_python_unittest(SCRIPT labelToggleBug2049.py)
+  slicer_add_python_unittest(SCRIPT fiber_visibility_crash2438.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
