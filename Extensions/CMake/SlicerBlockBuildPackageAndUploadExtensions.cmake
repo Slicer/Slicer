@@ -140,9 +140,6 @@ foreach(extension_name ${EXTENSION_LIST})
             list(APPEND EP_ARG_EXTENSION_REBUILD_DEPENDS ${dep}-rebuild)
           endforeach()
         endif()
-        foreach(dep ${EXTENSION_DEPENDS})
-          set(${dep}_DIR ${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
-        endforeach()
         if(Slicer_UPLOAD_EXTENSIONS)
 
           #-----------------------------------------------------------------------------
@@ -192,7 +189,6 @@ foreach(extension_name ${EXTENSION_LIST})
           endif()
 
         else()
-
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: FALSE
           #-----------------------------------------------------------------------------
@@ -211,7 +207,7 @@ foreach(extension_name ${EXTENSION_LIST})
             )
 
           foreach(dep ${EXTENSION_DEPENDS})
-            list(APPEND sext_ep_cmake_args -D${dep}_DIR:PATH=${${dep}_DIR})
+            list(APPEND sext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
           endforeach()
 
           # Add extension external project

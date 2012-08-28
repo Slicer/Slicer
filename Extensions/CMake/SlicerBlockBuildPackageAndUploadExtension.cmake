@@ -143,7 +143,7 @@ EXTENSION_DEPENDS:STRING=${EXTENSION_DEPENDS}
 ")
 
 foreach(dep ${EXTENSION_DEPENDS})
-  set(cmakecache_content "${cmakecache_content}\n${dep}_DIR:PATH=${${dep}_DIR}")
+  set(cmakecache_content "${cmakecache_content}\n${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/../${dep}-build")
 endforeach()
 
 #-----------------------------------------------------------------------------
