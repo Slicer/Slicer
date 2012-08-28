@@ -194,6 +194,7 @@ void vtkMRMLFiberBundleNode::UpdateScene(vtkMRMLScene *scene)
      char* AnnotationNodeID = new char[strlen(this->GetAnnotationNodeID()) + 1];
      strcpy(AnnotationNodeID, this->GetAnnotationNodeID());
      delete[] this->GetAnnotationNodeID();
+     this->AnnotationNodeID = NULL;
      this->SetAndObserveAnnotationNodeID(NULL);
      this->SetAndObserveAnnotationNodeID(AnnotationNodeID);
      }
