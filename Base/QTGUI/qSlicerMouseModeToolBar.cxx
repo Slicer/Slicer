@@ -239,7 +239,8 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
         {
         actionText = actionText.prepend(QString("vtkMRMLAnnotation"));
         actionText = actionText.append(QString("Node"));
-        const char *thisAnnotID = actionText.toLatin1();
+        QByteArray thisAnnotID_bytes = actionText.toLatin1();
+        const char *thisAnnotID = thisAnnotID_bytes.data();
         if (selectionNode->AnnotationIDInList(thisAnnotID) == -1)
           {
           this->ActionGroup->removeAction(action);
