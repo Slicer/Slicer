@@ -167,7 +167,9 @@ class SampleDataLogic:
 
   def reportHook(self,blocksSoFar,blockSize,totalSize):
     percent = int((100. * blocksSoFar * blockSize) / totalSize)
-    self.logMessage('<i>Downloaded %d blocks of size %d (%d%% of %d total)...</i>' % (blocksSoFar, blockSize, percent, totalSize))
+    if percent == 100 or (percent - self.downloadPercent >= 10):
+      self.logMessage('<i>Downloaded %d blocks of size %d (%d%% of %d total)...</i>' % (blocksSoFar, blockSize, percent, totalSize))
+      self.downloadPercent = percent
 
   def downloadFile(self, uri, destFolderPath, name):
     filePath = destFolderPath + '/' + name
@@ -175,6 +177,7 @@ class SampleDataLogic:
       import urllib
       self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
       # add a progress bar
+      self.downloadPercent = 0
       urllib.urlretrieve(uri, filePath, self.reportHook)
       self.logMessage('<b>Download finished</b>')
     else:
