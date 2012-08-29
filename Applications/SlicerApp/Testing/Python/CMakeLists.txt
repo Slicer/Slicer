@@ -171,6 +171,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   set(KIT_PYTHON_SCRIPTS
     SlicerMRBTest.py
     labelToggleBug2049.py
+    fiber_visibility_crash2438.py
     )
 
   set(KIT_PYTHON_RESOURCES
