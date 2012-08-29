@@ -20,7 +20,7 @@
 34 left_superior_cerebellar_peduncle 139 126 177 255
 35 pons 51 50 135 255
 40 midbrain 145 92 109 255
-41 white_matter_of_right_cerebral_hemisphere 250 250 210 255
+41 white_matter_of_right_cerebral_hemisphere 200 200 168 255
 43 right_lateral_ventricle 88 106 215 255
 44 temporal_horn_of_right_lateral_ventricle 88 106 215 255
 46 white_matter_of_cerebellum_right 220 248 164 255
