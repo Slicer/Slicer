@@ -170,12 +170,15 @@ class SampleDataLogic:
     self.logMessage('<i>Downloaded %d blocks of size %d (%d%% of %d total)...</i>' % (blocksSoFar, blockSize, percent, totalSize))
 
   def downloadFile(self, uri, destFolderPath, name):
-    import urllib
-    self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
-    # add a progress bar
     filePath = destFolderPath + '/' + name
-    urllib.urlretrieve(uri, filePath, self.reportHook)
-    self.logMessage('<b>Download finished</b>')
+    if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+      import urllib
+      self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
+      # add a progress bar
+      urllib.urlretrieve(uri, filePath, self.reportHook)
+      self.logMessage('<b>Download finished</b>')
+    else:
+      self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
 
   def loadVolume(self, uri, name):
