@@ -141,7 +141,7 @@ qMRMLSceneViewsTreeView::~qMRMLSceneViewsTreeView()
 void qMRMLSceneViewsTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
-  // TBD: Is it really better than this->expandToDepth(2) that is the default ?
+  this->setRoot();
   this->expandAll();
 }
 
@@ -388,7 +388,7 @@ void qMRMLSceneViewsTreeView::setSelectedNode(const QString& id)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneViewsTreeView::hideScene()
+void qMRMLSceneViewsTreeView::setRoot()
 {
   Q_D(qMRMLSceneViewsTreeView);
 
@@ -409,6 +409,7 @@ void qMRMLSceneViewsTreeView::hideScene()
       {
       // if we find it, we use it as the root index
       root = d->SceneModel->indexes(toplevelNode)[0];
+      //qDebug() << "setRoot found a top level scene hierarchy node " + QString(toplevelNodeID);
       }
     }
    
@@ -442,4 +443,11 @@ void qMRMLSceneViewsTreeView::setLogic(vtkSlicerSceneViewsModuleLogic* logic)
 
   this->m_Logic = logic;
 
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSceneViewsTreeView::onSceneEndImportEvent()
+{
+  //qDebug() << "qMRMLSceneViewsTreeView::onSceneEndImportEvent";
+  this->setRoot();
 }

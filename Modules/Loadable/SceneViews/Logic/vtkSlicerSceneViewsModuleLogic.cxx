@@ -637,38 +637,81 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     {
     return NULL;
     }
-  const char *toplevelName = "SceneViewToplevelHierarchyNode";
-  char *toplevelNodeID = NULL;
-  //vtkMRMLHierarchyNode* toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(this->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLHierarchyNode"));
-  vtkSmartPointer<vtkCollection> col;
-  col.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLHierarchyNode"));
-  vtkMRMLHierarchyNode* toplevelNode = NULL;
-  unsigned int numNodes = col->GetNumberOfItems();
-  if (numNodes != 0)
+  if (this->GetMRMLScene()->IsBatchProcessing() ||
+      this->GetMRMLScene()->IsImporting() ||
+      this->GetMRMLScene()->IsRestoring())
     {
-    //std::cout << "Found " << numNodes << " hierarchy nodes" << std::endl;
-    // iterate through the hierarchy nodes to find one with a name starting
-    // with the top level name
-    for (unsigned int n = 0; n < numNodes; n++)
+    vtkDebugMacro("GetTopLevelHierarchyNodeID: Scene is busy, returning null");
+    return NULL;
+    }
+  
+  const char *toplevelTag = "SceneViewTopLevel";
+ 
+  char *toplevelNodeID = NULL;
+
+  vtkMRMLHierarchyNode* toplevelNode = NULL;
+  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetSingletonNode(toplevelTag, "vtkMRMLHierarchyNode");
+  if (mrmlNode)
+    {
+    toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(mrmlNode);
+    }
+
+  if (toplevelNode)
+    {
+    toplevelNodeID = toplevelNode->GetID();
+    // if there are nodes with the old top level name, make sure that their
+    // children are reparented here
+    const char *toplevelName = "SceneViewToplevelHierarchyNode";
+
+    vtkSmartPointer<vtkCollection> col;
+    col.TakeReference(this->GetMRMLScene()->GetNodesByName(toplevelName));
+    unsigned int numNodes = col->GetNumberOfItems();
+    if (numNodes > 0)
       {
-      vtkMRMLNode *thisNode = vtkMRMLNode::SafeDownCast(col->GetItemAsObject(n));
-      //std::cout << "\tthisNode name = '" << thisNode->GetName() << "', toplevelname = '" << toplevelName << "', strlen = " << strlen(toplevelName) << std::endl;
-      if (thisNode && thisNode->GetName() &&
-          strncmp(thisNode->GetName(), toplevelName, strlen(toplevelName)) == 0)
+      vtkDebugMacro("\nFound node(s) with top level scene hierarchy name, have " << numNodes);
+      // get the children of the others and reparent them
+      for (unsigned int n = 0; n < numNodes; n++)
         {
-        toplevelNode = vtkMRMLHierarchyNode::SafeDownCast(col->GetItemAsObject(n));
-        //std::cout << "\tfound matching hierarchy node at index " << n << ", named " << toplevelNode->GetName() << std::endl;
-        break;
+        vtkMRMLHierarchyNode *thisTopHierarchy = vtkMRMLHierarchyNode::SafeDownCast(col->GetItemAsObject(n));
+        std::vector< vtkMRMLHierarchyNode* > children = thisTopHierarchy->GetChildrenNodes();
+        // iterate through the children of this top level heirarchy
+        vtkDebugMacro("\ttop level hierarchy " << thisTopHierarchy->GetID() << " has " <<  children.size() << " children");
+        for (unsigned int c = 0; c < children.size(); c++)
+          {
+          vtkDebugMacro("\t\tResetting " << c << "th hierarchy " << children[c]->GetID() << " to point to parent " << toplevelNodeID );
+          children[c]->SetParentNodeID(toplevelNodeID);
+          }
+        }
+      // sanity check: all scene view nodes should have hierarchies that point
+      // to the top level one, enforcing a one level hierarchy
+      vtkSmartPointer<vtkCollection> sceneViewCol;
+      sceneViewCol.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSceneViewNode"));
+      int numSceneViews = sceneViewCol.GetPointer()->GetNumberOfItems();
+      vtkDebugMacro("\tnumber of scene view nodes = " << numSceneViews );
+      for (int s = 0; s <  numSceneViews; s++)
+        {
+        // get the hierarchy node
+        vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(sceneViewCol.GetPointer()->GetItemAsObject(s));
+        vtkMRMLHierarchyNode *hNode = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(this->GetMRMLScene(), sceneViewNode->GetID());
+        // can get here when adding missing hierarchy nodes after a scene
+        // import, skip this part
+        if (hNode &&
+            hNode->GetParentNodeID() == NULL)
+          {
+          vtkDebugMacro("\tWARNING: scene view node " << sceneViewNode->GetID() << "'s hierarchy node " << hNode->GetID() << " doesn't have a parent node id, resetting to the top level" );
+          hNode->SetParentNodeID(toplevelNodeID);
+          }
         }
       }
     }
-  if (!toplevelNode)
+  else
     {
-    //std::cout << "GetTopLevelHierarchyNode: no top level node, making new" << std::endl;
-    // no hierarchy node is currently in the scene, create a new one
+    // there wasn't a top level node, create one
+    vtkDebugMacro("GetTopLevelHierarchyNode: no top level node, making new" );
     toplevelNode = vtkMRMLHierarchyNode::New();
+    toplevelNode->SetSingletonTag(toplevelTag);
     toplevelNode->HideFromEditorsOff();
-    toplevelNode->SetName(this->GetMRMLScene()->GetUniqueNameByString(toplevelName));
+    toplevelNode->SetName("Scene Views");
 
     if (!node)
       {
@@ -679,13 +722,11 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
       this->GetMRMLScene()->InsertBeforeNode(node,toplevelNode);
       }
     toplevelNodeID = toplevelNode->GetID();
+    vtkDebugMacro("Added a new top level node with id " << toplevelNodeID << " and name " << toplevelNode->GetName());
     toplevelNode->Delete();
     }
-  else
-    {
-    toplevelNodeID = toplevelNode->GetID();
-    }
   return toplevelNodeID;
+
 }
 
 //--------------------------------------------------------------------------- 

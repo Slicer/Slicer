@@ -39,8 +39,8 @@ public slots:
     /// User clicked on property edit button
     void editSceneView(const QString& mrmlId);
 
-    /// Refresh the tree from MRML
-    void refreshTree();
+    /// Update the scene view model
+    void updateTreeViewModel();
 
 protected slots:
 

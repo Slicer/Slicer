@@ -53,7 +53,7 @@ public:
   qMRMLSceneViewsTreeView(QWidget *parent=0);
   virtual ~qMRMLSceneViewsTreeView();
 
-  void hideScene();
+  void setRoot();
 
   void setSelectedNode(const QString& id);
 
@@ -66,6 +66,7 @@ public slots:
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
   virtual void setMRMLScene(vtkMRMLScene* scene);
   void deleteSelected();
+  void onSceneEndImportEvent();
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
