@@ -1,16 +1,18 @@
-#include <sstream>
-#include <algorithm>
-
-#include "vtkObjectFactory.h"
+// MRML includes
 #include "vtkMRMLAnnotationControlPointsNode.h"
-
-#include <vtkMRMLScene.h>
-//#include <vtkMRMLHierarchyNode.h>
-
-#include "vtkBitArray.h"
 #include "vtkMRMLAnnotationPointDisplayNode.h"
-#include <vtkPolyData.h>
 #include "vtkMRMLAnnotationControlPointsStorageNode.h"
+#include <vtkMRMLScene.h>
+
+// VTK includes
+#include "vtkBitArray.h"
+#include "vtkObjectFactory.h"
+#include <vtkPolyData.h>
+
+// STD includes
+#include <algorithm>
+#include <cassert>
+#include <sstream>
 
 #define NUMERIC_ZERO 1.0e-6
 
@@ -47,10 +49,10 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
 
-  if (this->PolyData &&  this->PolyData->GetPoints()) 
-    { 
-      vtkPoints *points = this->PolyData->GetPoints(); 
-      int n = points->GetNumberOfPoints();
+  if (this->GetPoints())
+    {
+    vtkPoints *points = this->GetPoints();
+    int n = points->GetNumberOfPoints();
 
       of << indent << " ctrlPtsCoord=\"";
       for (int i = 0; i < n; i++ ) 
@@ -97,11 +99,11 @@ void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::s
 {
   Superclass::WriteCLI(ss, prefix);
 
-  if (this->PolyData &&  this->PolyData->GetPoints()) 
-    { 
-    vtkPoints *points = this->PolyData->GetPoints(); 
+  if (this->GetPoints())
+    {
+    vtkPoints *points = this->GetPoints();
     int n = points->GetNumberOfPoints();
-    
+
     for (int i = 0; i < n; i++ ) 
       {
       double* ptr = points->GetPoint(i);
@@ -224,14 +226,13 @@ void vtkMRMLAnnotationControlPointsNode::PrintAnnotationInfo(ostream& os, vtkInd
 
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
-  if (this->PolyData &&  this->PolyData->GetPoints()) 
-    { 
-      os << indent << "ctrlPtsCoord: " ;
- 
-      vtkPoints *points = this->PolyData->GetPoints(); 
-      int n = points->GetNumberOfPoints();
-      for (int i = 0; i < n; i++ ) 
+  if (this->GetPoints())
     {
+    os << indent << "ctrlPtsCoord: " ;
+    vtkPoints *points = this->GetPoints();
+    int n = points->GetNumberOfPoints();
+    for (int i = 0; i < n; i++ )
+      {
       double* ptr = points->GetPoint(i);
       os << ptr[0] << " "<<  ptr[1] << " "<<  ptr[2] ;
       if (i < n-1) 
@@ -315,14 +316,15 @@ void vtkMRMLAnnotationControlPointsNode::ResetAnnotations()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::CreatePolyData() 
 {
-  Superclass::CreatePolyData(); 
-  vtkPoints *polyPoint = this->GetPolyData()->GetPoints();
-  if (!polyPoint) 
+  Superclass::CreatePolyData();
+  vtkPoints *polyPoint = this->GetPoints();
+  if (!polyPoint)
     {
-      polyPoint = vtkPoints::New();
-      this->GetPolyData()->SetPoints(polyPoint);
-      polyPoint->Delete();  
+    polyPoint = vtkPoints::New();
+    this->GetPolyData()->SetPoints(polyPoint);
+    polyPoint->Delete();
     }
+  std::cout << "CreatePolyData: " << this->GetPoints() << std::endl;
   // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets 
   //if (this->GetAnnotationPointDisplayNode())
   //  {
@@ -336,7 +338,7 @@ void vtkMRMLAnnotationControlPointsNode::ResetControlPoints()
 {
   this->CreatePolyData();
   
-  this->PolyData->GetPoints()->Reset();
+  this->GetPoints()->Reset();
   
   this->ResetControlPointsAttributesAll();
 }
@@ -344,11 +346,11 @@ void vtkMRMLAnnotationControlPointsNode::ResetControlPoints()
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationControlPointsNode::GetNumberOfControlPoints()
 {
-  if (!this->PolyData || !this->PolyData->GetPoints()) {
+  if (!this->GetPoints())
+    {
     this->ResetControlPoints();
-  }
-  vtkPoints *points = this->PolyData->GetPoints(); 
- 
+    }
+  vtkPoints *points = this->GetPoints();
   return points->GetNumberOfPoints();
 }
 
@@ -356,12 +358,12 @@ int vtkMRMLAnnotationControlPointsNode::GetNumberOfControlPoints()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 {
-  if (!this->PolyData || !this->PolyData->GetPoints()) 
+  if (!this->GetPoints())
     {
-      this->ResetControlPoints();
+    this->ResetControlPoints();
     }
 
-  vtkPoints *points = this->PolyData->GetPoints();  
+  vtkPoints *points = this->GetPoints();
   int n = points->GetNumberOfPoints();
   if (id< 0 || id > n-1) 
     {
@@ -398,15 +400,14 @@ void vtkMRMLAnnotationControlPointsNode::DeleteControlPoint(int id)
 double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType id)
 {
 
-  if (!this->PolyData ||
-      !this->PolyData->GetPoints() ||
-      this->PolyData->GetNumberOfPoints() <= id) 
+  if (!this->GetPoints() ||
+      this->GetPoints()->GetNumberOfPoints() <= id)
     {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
     return 0;
     }
 
-  return this->PolyData->GetPoint(id);
+  return this->GetPoints()->GetPoint(id);
 }
 
 //---------------------------------------------------------------------------
@@ -416,14 +417,13 @@ double* vtkMRMLAnnotationControlPointsNode::GetControlPointCoordinates(vtkIdType
 void vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates(vtkIdType id, double *point)
 {
 
-  if (!this->PolyData ||
-      !this->PolyData->GetPoints() ||
-      this->PolyData->GetNumberOfPoints() <= id) 
+  if (!this->GetPoints() ||
+      this->GetPoints()->GetNumberOfPoints() <= id)
     {
     vtkErrorMacro("vtkMRMLAnnotationControlPointsNode::GetControlPointWorldCoordinates() no control point with index" << id) ;
     return;
     }
-  double *p = this->PolyData->GetPoint(id);
+  double *p = this->GetPoints()->GetPoint(id);
   double localPoint[] = {p[0],p[1],p[2],1};
   this->TransformPointToWorld(localPoint, point);
 }
@@ -464,15 +464,17 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     return 0;
   }
 
+  vtkPoints *points = this->GetPoints();
   // Create if not there
-  if (!this->PolyData || !this->PolyData->GetPoints()) 
+  if (!points)
     {
-      this->ResetControlPoints();
+    this->ResetControlPoints();
+    points = this->GetPoints();
     }
-  else  if (this->PolyData->GetNumberOfPoints() > id)
+  else  if (points->GetNumberOfPoints() > id)
     {
     // check if is different to prevent recursive event loops
-    double *pnt = this->PolyData->GetPoints()->GetPoint(id);
+    double *pnt = points->GetPoint(id);
     if (pnt && fabs(pnt[0]-newControl[0]) < NUMERIC_ZERO &&
                fabs(pnt[1]-newControl[1]) < NUMERIC_ZERO &&
                fabs(pnt[2]-newControl[2]) < NUMERIC_ZERO)
@@ -481,7 +483,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
       }
     }
 
-  vtkPoints *points = this->PolyData->GetPoints(); 
+  assert(points);
   points->InsertPoint(id, newControl);
   // cout << "New ControlPoints Coord:" << this->GetControlPointCoordinates(id)[0] << " " << this->GetControlPointCoordinates(id)[1] << " " << this->GetControlPointCoordinates(id)[2] << endl;
   //vtkIndent blub;
@@ -533,7 +535,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   }
 
   // Create if not there
-  if (!this->PolyData || !this->PolyData->GetPoints()) {
+  if (!this->GetPoints()) {
     this->ResetControlPoints();
   }
 
@@ -550,7 +552,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
     visibleFlag = 1;
     }
 
-  vtkPoints *points = this->PolyData->GetPoints();
+  vtkPoints *points = this->GetPoints();
   points->InsertPoint(id, newControl);
   // cout << "New ControlPoints Coord:" << this->GetControlPointCoordinates(id)[0] << " " << this->GetControlPointCoordinates(id)[1] << " " << this->GetControlPointCoordinates(id)[2] << endl;
   //vtkIndent blub;
@@ -573,11 +575,12 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
 int vtkMRMLAnnotationControlPointsNode::AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag)
 {
   // Create if not there
-  if (!this->PolyData || !this->PolyData->GetPoints()) {
+  if (!this->GetPoints())
+    {
     this->ResetControlPoints();
-  }
+    }
 
-  vtkPoints *points = this->PolyData->GetPoints(); 
+  vtkPoints *points = this->GetPoints();
   int n = points->GetNumberOfPoints();
   if (this->SetControlPoint(n, newControl,selectedFlag, visibleFlag))
     {

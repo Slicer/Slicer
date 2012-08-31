@@ -210,6 +210,7 @@ set(VTK_LIBRARIES
   #vtkFiltering # Provided by vtkITK, FreeSurfer
   vtkGraphics
   vtkHybrid
+  vtkInfovis
   #vtkIO # Provided by FreeSurfer
   #vtkImaging # Provided by vtkITK
   )

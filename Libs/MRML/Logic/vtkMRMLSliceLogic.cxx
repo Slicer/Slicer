@@ -1332,7 +1332,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     this->SliceModelDisplayNode->SetScene(this->GetMRMLScene());
     this->SliceModelDisplayNode->SetDisableModifiedEvent(1);
 
-    this->SliceModelDisplayNode->SetPolyData(this->SliceModelNode->GetPolyData());
+    //this->SliceModelDisplayNode->SetInputPolyData(this->SliceModelNode->GetOutputPolyData());
     this->SliceModelDisplayNode->SetVisibility(0);
     this->SliceModelDisplayNode->SetOpacity(1);
     this->SliceModelDisplayNode->SetColor(1,1,1);

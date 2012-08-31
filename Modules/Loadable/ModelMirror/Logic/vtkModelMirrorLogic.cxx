@@ -571,12 +571,6 @@ int vtkModelMirrorLogic::FlipNormals()
 
     //--- refresh polydata
     this->ModelMirrorNode->GetOutputModel()->SetAndObservePolyData ( cleaner->GetOutput() );
-    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast (this->ModelMirrorNode->GetOutputModel()->GetDisplayNode() );
-    if ( dnode )
-      {
-      dnode->SetPolyData( this->ModelMirrorNode->GetOutputModel()->GetPolyData() );
-      }
-    
     cleaner->Delete();
     cleaner= NULL;
     }

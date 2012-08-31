@@ -50,9 +50,9 @@ int vtkMRMLAnnotationFiducialNode::SetFiducial(double newControl[3],int selected
 bool vtkMRMLAnnotationFiducialNode::GetFiducialCoordinates(double coord[3])
 {
   coord[0] = coord[1] = coord[2] = 0.0;
-  if (this->PolyData && this->PolyData->GetPoints()) 
+  if (this->GetPoints())
     {
-    this->PolyData->GetPoint(0, coord);
+    this->GetPoints()->GetPoint(0, coord);
     return true;
     }
   return false;

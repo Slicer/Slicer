@@ -1168,7 +1168,7 @@ void vtkSlicerApplicationLogic::ProcessReadNodeData(ReadDataRequest& req)
     disp = modelDisplayNode;
     if (mnd->GetPolyData())
       {
-      modelDisplayNode->SetPolyData(mnd->GetPolyData());
+      modelDisplayNode->SetInputPolyData(mnd->GetPolyData());
       }
     if (mnd->GetPolyData() &&
         mnd->GetPolyData()->GetPointData() &&
@@ -1449,11 +1449,6 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   if (sdnd2)
                     {
                     vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd2);
-                    vtkMRMLModelDisplayNode *mdnd = vtkMRMLModelDisplayNode::SafeDownCast(tdnd);
-                    if (mdnd)
-                      {
-                      mdnd->SetPolyData(mnd->GetPolyData());
-                      }
                     mnd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                     }
                   }

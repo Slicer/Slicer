@@ -333,7 +333,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     {
     vtkMRMLModelDisplayNode* modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
-    vtkPolyData* polyData = modelDisplayNode->GetPolyData();
+    vtkPolyData* polyData = modelDisplayNode->GetOutputPolyData();
     if (!polyData)
       {
       return;

@@ -23,6 +23,9 @@
 #include "vtkMRMLDisplayNode.h"
 
 // VTK includes
+class vtkAlgorithmOutput;
+class vtkAssignAttribute;
+class vtkPassThrough;
 class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
@@ -30,29 +33,33 @@ class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 public:
   static vtkMRMLModelDisplayNode *New();
   vtkTypeMacro(vtkMRMLModelDisplayNode,vtkMRMLDisplayNode);
-  
-  //--------------------------------------------------------------------------
-  /// MRMLNode methods
-  //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "ModelDisplay";};
 
-  /// 
-  /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
+  /// Set and observe poly data for this model. It should be the output
+  /// polydata of the model node.
+  virtual void SetInputPolyData(vtkPolyData* polydata);
 
-  /// 
-  /// Set and observe poly data for this model
-  vtkGetObjectMacro(PolyData, vtkPolyData);
-  virtual void SetPolyData(vtkPolyData* polydata);
+  /// Return the polydata that was set by SetInputPolyData
+  virtual vtkPolyData* GetInputPolyData();
 
-  /// 
+  /// Return the polydata that is processed by the display node.
+  /// This is the polydata that needs to be connected with the mappers.
+  vtkPolyData* GetOutputPolyData();
+
+  /// Reimplemented to update pipeline with new value
+  /// \sa SetActiveAttributeLocation()
+  virtual void SetActiveScalarName(const char *scalarName);
+
+  /// Reimplemented to update pipeline with new value
+  /// \sa SetActiveScalarName()
+  virtual void SetActiveAttributeLocation(int location);
+
   /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline() {}
+  virtual void UpdatePolyDataPipeline();
 
 protected:
   vtkMRMLModelDisplayNode();
@@ -64,7 +71,23 @@ protected:
                                  unsigned long event,
                                  void *callData);
 
-  vtkPolyData *PolyData;
+  /// To be reimplemented in subclasses if the input of the pipeline changes
+  virtual void SetInputToPolyDataPipeline(vtkPolyData* polyData);
+
+  /// Return the polydata that is processed by the display node.
+  /// This is the polydata that needs to be connected with the mappers.
+  virtual vtkAlgorithmOutput* GetOutputPort();
+
+  /// Filter that changes the active scalar of the input polydata
+  /// using the ActiveScalarName and ActiveAttributeLocation properties.
+  /// This can be useful to specify what field array is the color array that
+  /// needs to be used by the VTK mappers.
+  vtkAssignAttribute* AssignAttribute;
+
+  /// Default filter when assign attribute is not used, e.g ActiveScalarName is
+  /// null.
+  /// \sa AssignAttribute
+  vtkPassThrough* PassThrough;
 };
 
 #endif

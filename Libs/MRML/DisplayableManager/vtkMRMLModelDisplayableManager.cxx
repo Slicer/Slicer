@@ -28,27 +28,34 @@
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
+#include "vtkMRMLClipModelsNode.h"
+#include "vtkMRMLSliceNode.h"
+//#include "vtkMRMLCameraNode.h"
+//#include "vtkMRMLViewNode.h"
 
 // VTK includes
-#include <vtkMatrix4x4.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
+#include <vtkAssignAttribute.h>
+#include <vtkCellArray.h>
+#include <vtkClipPolyData.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkDataSetAttributes.h>
 #include <vtkImageActor.h>
 #include <vtkImageData.h>
-#include <vtkProperty.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkCellArray.h>
 #include <vtkImplicitBoolean.h>
-#include <vtkPlane.h>
-#include <vtkClipPolyData.h>
 #include <vtkLookupTable.h>
+#include <vtkMatrix4x4.h>
+#include <vtkPlane.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkSmartPointer.h>
 
 // for picking
-#include <vtkWorldPointPicker.h>
-#include <vtkPropPicker.h>
 #include <vtkCellPicker.h>
 #include <vtkPointPicker.h>
+#include <vtkPropPicker.h>
 #include <vtkRendererCollection.h>
+#include <vtkWorldPointPicker.h>
 
 // STD includes
 #include <cassert>
@@ -624,12 +631,12 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node)const
 {
-  vtkMRMLModelDisplayNode* modelNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
-  if (!modelNode)
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
+  if (!modelDisplayNode)
     {
     return false;
     }
-  return modelNode->GetPolyData() ? true : false;
+  return modelDisplayNode->GetInputPolyData() ? true : false;
 }
 
 //---------------------------------------------------------------------------
@@ -818,7 +825,7 @@ void vtkMRMLModelDisplayableManager
     int clipping = displayNode->GetClipping();
     int visibility = displayNode->GetVisibility();
     vtkPolyData *polyData =
-      modelDisplayNode ? modelDisplayNode->GetPolyData() : NULL;
+      modelDisplayNode ? modelDisplayNode->GetOutputPolyData() : NULL;
 
     if (hdnode)
       {
@@ -837,8 +844,12 @@ void vtkMRMLModelDisplayableManager
       hasPolyData = false;
       }
 
+    if (!hasPolyData)
+      {
+      continue;
+      }
     std::map<std::string, vtkProp3D *>::iterator ait;
-    ait = this->Internal->DisplayedActors.find(modelDisplayNode->GetID());
+    ait = this->Internal->DisplayedActors.find(displayNode->GetID());
     if (ait == this->Internal->DisplayedActors.end() )
       {
       if(polyData)
@@ -1360,8 +1371,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           {
           if (modelDisplayNode->GetColorNode() != 0)
             {
+            vtkMRMLProceduralColorNode* proceduralColorNode =
+              vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode());
             if (modelDisplayNode->GetColorNode()->GetLookupTable() != 0)
               {
+              // \tbd: Could slow down if done too often
               // copy lut so that they are not shared between the mappers
               // vtk sets scalar range on lut while rendering
               // that may cause performance problem if lut's are shared
@@ -1370,56 +1384,19 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
               actor->GetMapper()->SetLookupTable(lut);
               lut->Delete();
               }
-            else if (modelDisplayNode->GetColorNode()->IsA("vtkMRMLProceduralColorNode") &&
-                     vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode())->GetColorTransferFunction() != 0)
+            else if (proceduralColorNode->GetColorTransferFunction() != 0)
               {
-              actor->GetMapper()->SetLookupTable((vtkScalarsToColors*)(vtkMRMLProceduralColorNode::SafeDownCast(modelDisplayNode->GetColorNode())->GetColorTransferFunction()));
+              // \tbd maybe the trick above should be applied here too
+              actor->GetMapper()->SetLookupTable(
+                proceduralColorNode->GetColorTransferFunction());
               }
             }
 
-          int cellScalarsActive = 0;
-          if (modelDisplayNode->GetActiveScalarName() == 0)
-            {
-            // see if there are scalars on the poly data that are not set as
-            // active on the display node
-            vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
-            if (mnode)
-              {
-              std::string pointScalarName = std::string(mnode->GetActivePointScalarName("scalars"));
-              std::string cellScalarName = std::string(mnode->GetActiveCellScalarName("scalars"));
-              vtkDebugMacro("Display node active scalar name was 0, but the node says active point scalar name = '" << pointScalarName.c_str() << "', cell = '" << cellScalarName.c_str() << "'");
-              if (pointScalarName.compare("") != 0)
-                {
-                vtkDebugMacro("Setting the display node's active scalar to " << pointScalarName.c_str());
-                modelDisplayNode->SetActiveScalarName(pointScalarName.c_str());
-                }
-              else
-                {
-                if (cellScalarName.compare("") != 0)
-                  {
-                  vtkDebugMacro("Setting the display node's active scalar to " << cellScalarName.c_str());
-                  modelDisplayNode->SetActiveScalarName(cellScalarName.c_str());
-                  }
-                else
-                  {
-                  vtkDebugMacro("No active scalars");
-                  }
-                }
-              }
-            }
-          if (modelDisplayNode->GetActiveScalarName() != 0)
-            {
-            vtkMRMLModelNode *mnode = vtkMRMLModelNode::SafeDownCast(model);
-            if (mnode)
-              {
-              mnode->SetActiveScalars(modelDisplayNode->GetActiveScalarName(), "Scalars");
-              if (strcmp(modelDisplayNode->GetActiveScalarName(), mnode->GetActiveCellScalarName("scalars")) == 0)
-                {
-                cellScalarsActive = 1;
-                }
-              }
-            actor->GetMapper()->SelectColorArray(modelDisplayNode->GetActiveScalarName());
-            }
+          actor->GetMapper()->SelectColorArray(
+            this->GetActiveScalarName(modelDisplayNode,
+                                      vtkMRMLModelNode::SafeDownCast(model)));
+          bool cellScalarsActive = this->IsCellScalarsActive(modelDisplayNode,
+                                                             vtkMRMLModelNode::SafeDownCast(model));
           if (!cellScalarsActive)
             {
             // set the scalar range
@@ -1431,18 +1408,16 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
             // }
             actor->GetMapper()->SetScalarModeToUsePointData();
             actor->GetMapper()->SetColorModeToMapScalars();
-            actor->GetMapper()->UseLookupTableScalarRangeOff();
-            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
             }
           else
             {
             actor->GetMapper()->SetScalarModeToUseCellFieldData();
             actor->GetMapper()->SetColorModeToDefault();
-            actor->GetMapper()->UseLookupTableScalarRangeOff();
-            actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
             }
+          actor->GetMapper()->UseLookupTableScalarRangeOff();
+          actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
           }
-        //// }
+          //// }
         actor->GetProperty()->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
 
         if (modelDisplayNode)
@@ -1497,6 +1472,62 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       }
     }
 
+}
+
+//---------------------------------------------------------------------------
+const char* vtkMRMLModelDisplayableManager
+::GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
+                      vtkMRMLModelNode* modelNode)
+{
+  const char* activeScalarName = 0;
+  if (displayNode)
+    {
+    activeScalarName = displayNode->GetActiveScalarName();
+    }
+  if (activeScalarName)
+    {
+    return activeScalarName;
+    }
+  if (modelNode)
+    {
+    activeScalarName =
+      modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
+    if (activeScalarName)
+      {
+      return activeScalarName;
+      }
+    activeScalarName =
+      modelNode->GetActivePointScalarName(vtkDataSetAttributes::SCALARS);
+    if (activeScalarName)
+      {
+      return activeScalarName;
+      }
+    }
+  return 0;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLModelDisplayableManager
+::IsCellScalarsActive(vtkMRMLDisplayNode* displayNode,
+                      vtkMRMLModelNode* modelNode)
+{
+  if (displayNode && displayNode->GetActiveScalarName())
+    {
+    return (displayNode->GetActiveAttributeLocation() ==
+            vtkAssignAttribute::CELL_DATA);
+    }
+  if (modelNode)
+    {
+    if (modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS))
+      {
+      return true;
+      }
+    if (modelNode->GetActivePointScalarName(vtkDataSetAttributes::SCALARS))
+      {
+      return false;
+      }
+    }
+  return false;
 }
 
 //---------------------------------------------------------------------------

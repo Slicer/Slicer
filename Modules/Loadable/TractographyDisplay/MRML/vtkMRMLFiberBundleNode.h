@@ -147,10 +147,12 @@ public:
     this->SetSelectionWithAnnotationNodeMode(NegativeAnnotationNodeSelection);
   }
 
+  virtual void SetAndObservePolyData(vtkPolyData* polyData);
+
+
   ///
   /// Gets the subsampled PolyData converted from the real data in the node
   virtual vtkPolyData* GetFilteredPolyData();
-
 
   ///
   /// get associated line display node or NULL if not set
@@ -198,14 +200,12 @@ protected:
   vtkMRMLFiberBundleNode(const vtkMRMLFiberBundleNode&);
   void operator=(const vtkMRMLFiberBundleNode&);
 
+  void SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
   // Description:
   // Maximum number of fibers to show per bundle when it is loaded.
   static vtkIdType MaxNumberOfFibersToShowByDefault;
   vtkIdTypeArray* ShuffledIds;
-
-
-  virtual void SetPolyData(vtkPolyData* polyData);
 
   vtkExtractSelectedPolyDataIds* ExtractSelectedPolyDataIds;
   vtkCleanPolyData* CleanPolyDataPostSubsampling;

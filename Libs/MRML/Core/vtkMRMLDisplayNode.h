@@ -214,27 +214,41 @@ public:
 
   /// 
   /// Set a default color node
-///  void SetDefaultColorMap();
-  
-  /// 
-  /// String ID of the color MRML node
+  ///  void SetDefaultColorMap();
+
+  /// String ID of the color MRML node. The color node LUT or Color transfer
+  /// function is set to the VTK mappers.
   /// Note that anytime the color node is modified, the observing display node
   /// fires a Modified event.
+  /// No color node by default.
   virtual void SetAndObserveColorNodeID(const char *ColorNodeID);
+  /// Utility method that conveniently takes a string instead of a char*
   void SetAndObserveColorNodeID(const std::string& ColorNodeID);
   vtkGetStringMacro(ColorNodeID);
 
-  /// 
-  /// Get associated color MRML node
+  /// Get associated color MRML node. Search the node into the scene if the node
+  /// hasn't been cached yet. This can be a slow call.
+  /// \sa SetAndObserveColorNodeID
   virtual vtkMRMLColorNode* GetColorNode();
 
-  /// 
-  /// the name of the currently active scalar field for this model
+  /// Return the name of the currently active scalar field for this model
+  /// \sa SetActiveScalarName(), GetActiveAttributeType()
   vtkGetStringMacro(ActiveScalarName);
-  /// 
-  /// set the active scalar field name, and update the color table if necessary
-  void SetActiveScalarName(const char *scalarName);
-    
+
+  /// Set the active vtkDataSetAttributes::Scalars field name for the
+  /// \a ActiveAttributeLocation array.
+  /// This is typically used to specify what field array is the color array that
+  /// needs to be used by the VTK mappers.
+  /// No active scalar name by default other than the default polydata.
+  /// \sa GetActiveScalarName(), SetActiveAttributeType()
+  virtual void SetActiveScalarName(const char *scalarName);
+
+  /// This property controls on which attribute the \a ActiveScalarName applies.
+  /// Typically vtkAssignAttribute::POINT_DATA or vtkAssignAttribute::CELL_DATA.
+  /// Default to vtkAssignAttribute::POINT_DATA
+  vtkGetMacro(ActiveAttributeLocation, int);
+  vtkSetMacro(ActiveAttributeLocation, int);
+
   /// Add View Node ID for the view to display this node in.
   void AddViewNodeID(const char* viewNodeID);
 
@@ -285,6 +299,7 @@ protected:
   char *ColorNodeID;
 
   char *ActiveScalarName;
+  int ActiveAttributeLocation;
   
   vtkMRMLColorNode *ColorNode;
 

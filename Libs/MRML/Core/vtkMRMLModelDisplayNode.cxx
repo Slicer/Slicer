@@ -11,13 +11,16 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+// MRML includes
 #include "vtkMRMLModelDisplayNode.h"
 
+// VTK includes
+#include <vtkAlgorithmOutput.h>
+#include <vtkAssignAttribute.h>
 #include <vtkCommand.h>
 #include <vtkObjectFactory.h>
+#include <vtkPassThrough.h>
 #include <vtkPolyData.h>
-
-vtkCxxSetObjectMacro(vtkMRMLModelDisplayNode, PolyData, vtkPolyData)
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelDisplayNode);
@@ -25,22 +28,17 @@ vtkMRMLNodeNewMacro(vtkMRMLModelDisplayNode);
 //-----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::vtkMRMLModelDisplayNode()
 {
-  this->PolyData = NULL;
+  this->PassThrough = vtkPassThrough::New();
+  this->AssignAttribute = vtkAssignAttribute::New();
+  // Be careful, virtualization doesn't work in constructors
+  this->UpdatePolyDataPipeline();
 }
 
 //-----------------------------------------------------------------------------
 vtkMRMLModelDisplayNode::~vtkMRMLModelDisplayNode()
 {
-  if ( this->PolyData)
-    {
-    this->PolyData->Delete();
-    }
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
-{
-  Superclass::Copy(anode);
+  this->PassThrough->Delete();
+  this->AssignAttribute->Delete();
 }
 
 //---------------------------------------------------------------------------
@@ -50,8 +48,80 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
-  if (event ==  vtkCommand::ModifiedEvent)
+  if (event == vtkCommand::ModifiedEvent)
     {
     this->UpdatePolyDataPipeline();
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
+{
+  this->SetInputToPolyDataPipeline(polyData);
+  this->Modified();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetInputToPolyDataPipeline(vtkPolyData* polyData)
+{
+  this->PassThrough->SetInput(polyData);
+  this->AssignAttribute->SetInput(polyData);
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLModelDisplayNode::GetInputPolyData()
+{
+  return vtkPolyData::SafeDownCast(this->AssignAttribute->GetInput());
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
+{
+  if (!this->GetOutputPort())
+    {
+    return 0;
+    }
+  return vtkPolyData::SafeDownCast(
+    this->GetOutputPort()->GetProducer()->GetOutputDataObject(
+      this->GetOutputPort()->GetIndex()));
+}
+
+//---------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLModelDisplayNode::GetOutputPort()
+{
+  if (this->GetActiveScalarName())
+    {
+    return this->AssignAttribute->GetOutputPort();
+    }
+  else
+    {
+    return this->PassThrough->GetOutputPort();
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetActiveScalarName(const char *scalarName)
+{
+  int wasModifying = this->StartModify();
+  this->Superclass::SetActiveScalarName(scalarName);
+  this->UpdatePolyDataPipeline();
+  this->EndModify(wasModifying);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::SetActiveAttributeLocation(int location)
+{
+  int wasModifying = this->StartModify();
+  this->Superclass::SetActiveAttributeLocation(location);
+  this->UpdatePolyDataPipeline();
+  this->EndModify(wasModifying);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
+{
+  this->AssignAttribute->Assign(
+    this->GetActiveScalarName(),
+    this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
+    this->GetActiveAttributeLocation());
 }

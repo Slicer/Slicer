@@ -35,9 +35,6 @@ vtkMRMLFiberBundleDisplayNode::vtkMRMLFiberBundleDisplayNode()
 {
   this->BackfaceCulling = 0;
 
-
-  this->OutputPolyData = NULL;
-
   // Enumerated
   this->ColorMode = this->colorModeSolid;
   this->SetColor(1,0.157,0);
@@ -130,22 +127,6 @@ void vtkMRMLFiberBundleDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ColorMode:             " << this->ColorMode << "\n";
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLFiberBundleDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
-                                           void *callData )
-{
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-
-  vtkMRMLFiberBundleNode *node = vtkMRMLFiberBundleNode::SafeDownCast(caller);
-  if (node && (event == vtkMRMLModelNode::PolyDataModifiedEvent))
-  {
-    this->SetPolyData(node->GetFilteredPolyData());
-  }
-
-  return;
-}
-
 //-----------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
@@ -159,7 +140,8 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
 {
   Superclass::UpdateReferences();
 
-  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL && this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == NULL)
+  if (this->DiffusionTensorDisplayPropertiesNodeID != NULL &&
+      this->Scene->GetNodeByID(this->DiffusionTensorDisplayPropertiesNodeID) == NULL)
     {
     this->SetAndObserveDiffusionTensorDisplayPropertiesNodeID(NULL);
     }
@@ -168,7 +150,8 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  if (this->DiffusionTensorDisplayPropertiesNodeID && !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
+  if (this->DiffusionTensorDisplayPropertiesNodeID &&
+      !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
     {
     this->SetDiffusionTensorDisplayPropertiesNodeID(newID);
     }
@@ -214,7 +197,7 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
 
   //The new DiffusionTensorDisplayPropertiesNode can have a different setting on the properties
   //so we emit the event that the polydata has been modified
-  if (cnode && this->PolyData)
+  if (cnode)
     {
     this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
     }

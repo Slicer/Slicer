@@ -45,16 +45,16 @@ vtkMRMLVectorVolumeDisplayNode::vtkMRMLVectorVolumeDisplayNode()
  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
  this->ShiftScale->SetClampOverflow(1);
 
- this->ExtractIntensity->SetInput( this->RGBToHSI->GetOutput() );
+ this->ExtractIntensity->SetInputConnection( this->RGBToHSI->GetOutputPort() );
  this->ExtractIntensity->SetComponents( 2 );
 
- this->Threshold->SetInput( this->ExtractIntensity->GetOutput() );
+ this->Threshold->SetInputConnection( this->ExtractIntensity->GetOutputPort() );
 
  this->AppendComponents->RemoveAllInputs();
  //this->AppendComponents->SetInputConnection(0, this->ShiftScale->GetOutput()->GetProducerPort());
  //this->AppendComponents->SetInput(0, this->RGBToHSI->GetInput());
- this->AppendComponents->SetInput(0, this->ShiftScale->GetOutput());
- this->AppendComponents->SetInput(1, this->Threshold->GetOutput());
+ this->AppendComponents->AddInputConnection(0, this->ShiftScale->GetOutputPort());
+ this->AppendComponents->AddInputConnection(0, this->Threshold->GetOutputPort());
 
 }
 

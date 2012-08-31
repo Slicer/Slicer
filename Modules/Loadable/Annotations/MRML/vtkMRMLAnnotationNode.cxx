@@ -82,7 +82,7 @@ void vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent)
   for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
     {
       of << indent << " " << this->GetAttributeTypesEnumAsString(j) << "=\"";
-      if (textLength && this->PolyData && this->PolyData->GetPointData()) 
+      if (textLength && this->GetPolyData() && this->GetPolyData()->GetPointData())
     {
       for (int i = 0 ; i < textLength - 1; i++) 
         {
@@ -181,6 +181,7 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
 {
+  int wasModifying = this->StartModify();
   Superclass::Copy(anode);
 
   vtkMRMLAnnotationNode *node = (vtkMRMLAnnotationNode *) anode;
@@ -188,7 +189,7 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
     {
     return;
     }
-  
+
   this->SetReferenceNodeID(node->GetReferenceNodeID());
   this->SetVisible(node->GetVisible());
   this->SetLocked(node->GetLocked());
@@ -205,6 +206,7 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
     //poly->ReleaseData();
     poly->Delete();
     }
+  this->EndModify(wasModifying);
 }
 
 
@@ -276,21 +278,21 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
     }
     }
 
-  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++) 
+  for (int j = 0 ; j < NUM_TEXT_ATTRIBUTE_TYPES; j ++)
     {
-      os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
-      if (this->PolyData &&  this->PolyData->GetPointData())
-    {
-      for (int i = 0; i <  this->GetNumberOfTexts(); i++ ) 
+    os << indent << this->GetAttributeTypesEnumAsString(j) <<": ";
+    if (this->GetNumberOfTexts())
+      {
+      for (int i = 0; i <  this->GetNumberOfTexts(); i++ )
         {
-          os << this->GetAnnotationAttribute(i,j) << " " ;
+        os << this->GetAnnotationAttribute(i,j) << " " ;
         }
       os << endl;
-    }
-      else 
-    {
-      os << " None" << endl; 
-    }
+      }
+    else
+      {
+      os << " None" << endl;
+      }
     }
 }
 
@@ -312,7 +314,7 @@ void vtkMRMLAnnotationNode::ResetAnnotations()
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::CreatePolyData()
 {
-  if (!this->PolyData) 
+  if (!this->GetPolyData())
     {
       vtkPolyData *poly = vtkPolyData::New();
       this->SetAndObservePolyData(poly);
@@ -330,6 +332,17 @@ void vtkMRMLAnnotationNode::CreatePolyData()
 
 }
 
+//---------------------------------------------------------------------------
+vtkPoints* vtkMRMLAnnotationNode::GetPoints()
+{
+  return this->GetPolyData() ? this->GetPolyData()->GetPoints() : 0;
+}
+
+//---------------------------------------------------------------------------
+vtkCellArray* vtkMRMLAnnotationNode::GetLines()
+{
+  return this->GetPolyData() ? this->GetPolyData()->GetLines() : 0;
+}
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::ResetTextAttributesAll() {
@@ -342,10 +355,11 @@ void vtkMRMLAnnotationNode::ResetTextAttributesAll() {
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationNode::ResetAttributes(int id) {
-  if (!this->PolyData || !this->PolyData->GetPointData())
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
-      vtkErrorMacro("Annotation: "<< this->GetName() << " PolyData or  this->PolyData->GetPointData() is NULL" ); 
-      return;
+    vtkErrorMacro("Annotation: "<< this->GetName()
+                  << " PolyData or  PolyData->GetPointData() is NULL" );
+    return;
     }
 
   if ((id < 0 ))
@@ -359,7 +373,7 @@ void vtkMRMLAnnotationNode::ResetAttributes(int id) {
   if (!attArray) {
     attArray =  vtkBitArray::New();
     attArray->SetName(this->GetAttributeTypesEnumAsString(id));
-    this->PolyData->GetPointData()->AddArray(attArray);
+    this->GetPolyData()->GetPointData()->AddArray(attArray);
     attArray->Delete();
   } 
   attArray->Initialize();
@@ -370,13 +384,13 @@ void vtkMRMLAnnotationNode::ResetAttributes(int id) {
 //---------------------------------------------------------------------------
 vtkDataArray* vtkMRMLAnnotationNode::GetAnnotationAttributes(int att) 
 {
-  if (!this->PolyData || !this->PolyData->GetPointData()) 
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData()) 
     {
       vtkErrorMacro("Annotation: " << this->GetName() << " PolyData or  PolyData->GetPointData() is NULL" ); 
       return 0;
     }
 
-  return this->PolyData->GetPointData()->GetScalars(this->GetAttributeTypesEnumAsString(att));
+  return this->GetPolyData()->GetPointData()->GetScalars(this->GetAttributeTypesEnumAsString(att));
 }
  
 //---------------------------------------------------------------------------
@@ -465,7 +479,7 @@ void vtkMRMLAnnotationNode::SetText(int id, const char *newText,int selectedFlag
     return;
     }
 
-  if (!this->PolyData || !this->PolyData->GetPointData())
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData())
     {
     this->ResetTextAttributesAll(); 
     }
@@ -543,7 +557,7 @@ int  vtkMRMLAnnotationNode::DeleteText(int id)
 
   this->TextList->Resize(n-1);
 
-  if (!this->PolyData || !this->PolyData->GetPointData()) 
+  if (!this->GetPolyData() || !this->GetPolyData()->GetPointData()) 
     {
       this->ResetTextAttributesAll(); 
       return 1;

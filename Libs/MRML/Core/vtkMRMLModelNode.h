@@ -12,9 +12,12 @@
 
 =========================================================================auto=*/
 ///  vtkMRMLModelNode - MRML node to represent a 3D surface model.
-/// 
-/// Model nodes describe polygonal data.  Models 
-/// are assumed to have been constructed with the orientation and voxel 
+///
+/// Model nodes describe polygonal data.
+/// When a model display node (vtkMRMLModelDisplayNode) is observed by the
+/// model, the output polydata is automatically set to the input of the model
+/// display node: You don't have to manually set the polydata yourself.
+/// Models are assumed to have been constructed with the orientation and voxel
 /// dimensions of the original segmented volume.
 
 #ifndef __vtkMRMLModelNode_h
@@ -26,6 +29,7 @@ class vtkMRMLModelDisplayNode;
 class vtkMRMLStorageNode;
 
 // VTK includes
+class vtkAssignAttributes;
 class vtkDataArray;
 class vtkPolyData;
 
@@ -35,14 +39,13 @@ public:
   static vtkMRMLModelNode *New();
   vtkTypeMacro(vtkMRMLModelNode,vtkMRMLDisplayableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
 
-  /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Model";};
 
@@ -50,17 +53,14 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
-  /// 
   /// Get associated model display MRML node
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
-  /// 
   /// Set and observe poly data for this model
   vtkGetObjectMacro(PolyData, vtkPolyData);
   virtual void SetAndObservePolyData(vtkPolyData *PolyData);
@@ -73,39 +73,71 @@ public:
   /// \sa GetModifiedSinceRead()
   enum
     {
-      PolyDataModifiedEvent = 17001
+    PolyDataModifiedEvent = 17001
     };
 
-  /// 
-  /// add an array to the polydata's point/cell data
+  /// Utility function that adds an array to the polydata's point data.
+  //// \sa AddCellScalars, AddScalars
   void AddPointScalars(vtkDataArray *array);
+
+  /// Add an array to the polydata's cell data.
+  /// \sa AddPointScalars, AddScalars
   void AddCellScalars(vtkDataArray *array);
-  /// 
-  /// remove an array from the polydata's point/cell data
+
+  /// Add an array to the polydata's point or cell data
+  /// location is either vtkAssignAttribute::POINT_DATA or
+  /// vtkAssignAttribute::CELL_DATA
+  void AddScalars(vtkDataArray *array, int location);
+
+  /// Remove an array from the polydata's point/cell data.
   void RemoveScalars(const char *scalarName);
-  
-  /// 
-  /// Get the currently active Point/Cell array name, type =
-  /// scalars, vectors, normals, tcoords, tensors, null checks all in that
-  /// order for an active array. Returns an empty string if it can't find one.
-  const char *GetActivePointScalarName(const char *type);
-  const char *GetActiveCellScalarName(const char *type);
-  
-  /// 
-  /// Set the active poly data Point/Cell scalar array, checks for the
-  /// scalarName as being a valid Point/Cell array, and then will set it to be the active
+
+  /// Return true if the polydata point data has an array with a
+  /// \a scalarName name.
+  /// \sa HasPointScalarName
+  bool HasPointScalarName(const char* scalarName);
+
+  /// Return true if the polydata cell data has an array with a
+  /// \a scalarName name.
+  /// \sa HasCellScalarName
+  bool HasCellScalarName(const char* scalarName);
+
+  /// Set the active poly data point scalar array, checks for the
+  /// scalarName as being a valid point array, and then will set it to be the active
   /// attribute type as designated by typeName (scalars if null or
   /// empty). typeName is one of the valid strings as returned from
   /// vtkDataSetAttributes::GetAttributeTypeAsString, SetActiveScalars converts
   /// it to an integer type to pass onto the Point/Cell methods
   /// Also updates the display node's active scalars
-  int SetActiveScalars(const char *scalarName, const char *typeName);
   int SetActivePointScalars(const char *scalarName, int attributeType);
+
+  /// Get the currently active point array name, type =
+  /// vtkDataSetAttributes::AttributeTypes for an active array.
+  /// Returns an empty string if it can't find one or if no input polydata
+  /// is set.
+  /// \sa GetActiveCellScalarName
+  const char *GetActivePointScalarName(int type);
+
+  /// Set the active poly data point scalar array, checks for the
+  /// scalarName as being a valid point array, and then will set it to be the active
+  /// attribute type as designated by typeName (scalars if null or
+  /// empty). typeName is one of the valid strings as returned from
+  /// vtkDataSetAttributes::GetAttributeTypeAsString, SetActiveScalars converts
+  /// it to an integer type to pass onto the Point/Cell methods
+  /// Also updates the display node's active scalars
   int SetActiveCellScalars(const char *scalarName, int attributeType);
-  
 
+  /// Get the currently active Point/Cell array name, type =
+  /// vtkDataSetAttributes::AttributeTypes for an active array.
+  /// Returns an empty string if it can't find one or if no input polydata
+  /// is set.
+  const char *GetActiveCellScalarName(int type);
 
-  /// 
+  /// Utility function that returns the attribute type from its name.
+  /// It is the opposite of vtkDataSetAttributes::GetAttributeTypeAsString(int)
+  /// \sa vtkDataSetAttributes::GetAttributeTypeAsString()
+  static int GetAttributeTypeFromString(const char* typeName);
+
   /// Take scalar fields and composite them into a new one.
   /// New array will have values from the background array where the overlay is
   /// +/- if showOverlayPositive/Negative are 0.
@@ -115,7 +147,11 @@ public:
   /// New array name is backgroundName+overlayName
   /// Returns 1 on success, 0 on failure.
   /// Based on code from K. Teich, MGH
-  int CompositeScalars(const char* backgroundName, const char* overlayName, float overlayMin, float overlayMax, int showOverlayPositive, int showOverlayNegative, int reverseOverlay);
+  /// Warning: Not demand driven pipeline compliant
+  int CompositeScalars(const char* backgroundName, const char* overlayName,
+                       float overlayMin, float overlayMax,
+                       int showOverlayPositive, int showOverlayNegative,
+                       int reverseOverlay);
 
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
@@ -144,7 +180,13 @@ protected:
   /// to the new display node.
   virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
 
-  virtual void SetPolyData(vtkPolyData* polyData);
+  /// Internal function that sets the polydata to all the display nodes.
+  /// Can be called if the polydata is changed.
+  void SetPolyDataToDisplayNodes();
+
+  /// Internal function that sets the polydata to a display node.
+  /// Can be reimplemented if you want to set a different polydata
+  virtual void SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode);
 
   /// Data
   vtkPolyData *PolyData;

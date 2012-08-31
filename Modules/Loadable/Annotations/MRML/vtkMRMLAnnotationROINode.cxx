@@ -350,9 +350,9 @@ int vtkMRMLAnnotationROINode::GetROIAnnotationVisibility()
 bool vtkMRMLAnnotationROINode::GetXYZ(double point[3])
 {
   point[0] = point[1] = point[2] = 0.0;
-  if (this->PolyData && this->PolyData->GetPoints()) 
+  if (this->GetPoints())
     {
-    this->PolyData->GetPoint(0, point);
+    this->GetPoints()->GetPoint(0, point);
     return true;
     }
   return false;
@@ -362,9 +362,9 @@ bool vtkMRMLAnnotationROINode::GetXYZ(double point[3])
 bool vtkMRMLAnnotationROINode::GetRadiusXYZ(double point[3])
 {
   point[0] = point[1] = point[2] = 0.0;
-  if (this->PolyData && this->PolyData->GetPoints()) 
+  if (this->GetPoints())
     {
-    this->PolyData->GetPoint(1, point);
+    this->GetPoints()->GetPoint(1, point);
     return true;
     }
   return false;

@@ -46,8 +46,8 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
  this->ScalarInvariant = vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation;
  this->DTIMathematics = vtkDiffusionTensorMathematics::New();
  this->DTIMathematicsAlpha = vtkDiffusionTensorMathematics::New();
- this->Threshold->SetInput( this->DTIMathematics->GetOutput());
- this->MapToWindowLevelColors->SetInput( this->DTIMathematics->GetOutput());
+ this->Threshold->SetInputConnection( this->DTIMathematics->GetOutputPort());
+ this->MapToWindowLevelColors->SetInputConnection( this->DTIMathematics->GetOutputPort());
 
  this->ShiftScale = vtkImageShiftScale::New();
  this->ShiftScale->SetOutputScalarTypeToUnsignedChar();
@@ -65,8 +65,7 @@ vtkMRMLDiffusionTensorVolumeDisplayNode::vtkMRMLDiffusionTensorVolumeDisplayNode
 
  this->DiffusionTensorGlyphFilter = vtkDiffusionTensorGlyph::New();
  vtkSphereSource *sphere = vtkSphereSource::New();
- sphere->Update();
- this->DiffusionTensorGlyphFilter->SetSource( sphere->GetOutput() );
+ this->DiffusionTensorGlyphFilter->SetSourceConnection( sphere->GetOutputPort() );
  sphere->Delete();
 
  this->VisualizationMode = 0;

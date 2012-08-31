@@ -195,7 +195,7 @@ void qSlicerTractographyEditorROIWidget::setAnnotationROIMRMLNodeToFiberBundleEn
       double xyz[3];
       double bounds[6];
       double radius[3];
-      vtkPolyData *PolyData = d->FiberBundleNode->GetFilteredPolyData();
+      vtkPolyData *PolyData = d->FiberBundleNode->GetPolyData();
 
       PolyData->ComputeBounds();
       PolyData->GetCenter(xyz);
@@ -264,7 +264,7 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
   {
     if (mrmlScene()) mrmlScene()->SaveStateForUndo();
     vtkPolyData *FilteredPolyData = vtkPolyData::New();
-    FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
+    FilteredPolyData->DeepCopy(d->FiberBundleNode->GetPolyData());
     fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
     FilteredPolyData->Delete();
 
@@ -318,7 +318,7 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
     {
       d->FiberBundleNode->GetScene()->SaveStateForUndo();
       vtkPolyData *FilteredPolyData = vtkPolyData::New();
-      FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
+      FilteredPolyData->DeepCopy(d->FiberBundleNode->GetPolyData());
       d->FiberBundleNode->SetAndObservePolyData(FilteredPolyData);
       FilteredPolyData->Delete();
       d->FiberBundleNode->SetSubsamplingRatio(1);

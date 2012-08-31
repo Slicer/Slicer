@@ -22,6 +22,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellData.h>
 #include <vtkColorTransferFunction.h>
@@ -32,14 +33,11 @@ Version:   $Revision: 1.3 $
 #include <vtkTransformPolyDataFilter.h>
 
 // STD includes
+#include <cassert>
 #include <sstream>
 
 //----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkMRMLModelNode, PolyData, vtkPolyData)
-
-//----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelNode);
-
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::vtkMRMLModelNode()
@@ -61,7 +59,7 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(anode);
   if (modelNode)
     {
-    this->SetPolyData(modelNode->PolyData);
+    this->SetAndObservePolyData(modelNode->GetPolyData());
     }
   this->EndModify(disabledModify);
 }
@@ -76,15 +74,6 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       this->PolyData != 0 &&
       event ==  vtkCommand::ModifiedEvent)
     {
-    for (int i=0; i<this->GetNumberOfDisplayNodes(); ++i)
-      {
-      vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
-        this->GetNthDisplayNode(i));
-      if (dnode != NULL)
-        {
-        dnode->SetPolyData(this->GetPolyData());
-        }
-      }
     this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, NULL);
     }
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -115,80 +104,49 @@ void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
-  int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++)
+  if (polyData == this->PolyData)
     {
-    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
-      this->GetNthDisplayNode(n));
-    if (dnode)
-      {
-      dnode->SetPolyData(polyData);
-      }
+    return;
     }
 
-  if (this->PolyData != NULL)
-    {
-    vtkEventBroker::GetInstance()->RemoveObservations (
-      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
+  vtkPolyData* oldPolyData = this->PolyData;
 
-  unsigned long mtime1, mtime2;
-  mtime1 = this->GetMTime();
-  this->SetPolyData(polyData);
-  mtime2 = this->GetMTime();
+  this->PolyData = polyData;
 
   if (this->PolyData != NULL)
     {
     vtkEventBroker::GetInstance()->AddObservation(
       this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    this->PolyData->Register(this);
     }
 
-  if (mtime1 != mtime2)
+  this->SetPolyDataToDisplayNodes();
+
+  if (oldPolyData != NULL)
     {
-    this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
+    vtkEventBroker::GetInstance()->RemoveObservations (
+      oldPolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    oldPolyData->UnRegister(this);
     }
+
+  this->Modified();
+  this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::AddPointScalars(vtkDataArray *array)
 {
-  if (array == NULL)
-    {
-    return;
-    }
-  if (this->PolyData == NULL)
-    {
-    vtkErrorMacro("AddPointScalars: No poly data on model " << this->GetName());
-    return;
-    }
-  
-  int numScalars = this->PolyData->GetPointData()->GetNumberOfArrays();
-  vtkDebugMacro("Model node has " << numScalars << " point scalars now, adding " << array->GetName());
-  if (numScalars > 0)
-    {
-    // add array
-    this->PolyData->GetPointData()->AddArray(array);
-    } 
-  else
-    {
-    // set the scalars
-    this->PolyData->GetPointData()->SetScalars(array);
-    }
-  // update the scalar range on this node - polydata get scalar range doesn't
-  // work here as it's not quite updated yet.
-  double *scalarRange = array->GetRange(); 
-  if (scalarRange)
-    {
-    vtkDebugMacro("AddPointScalars: Scalar range for new array = " << scalarRange[0] << ", " << scalarRange[1]);
-    if (this->GetDisplayNode())
-      {
-      this->GetDisplayNode()->SetScalarRange(scalarRange);
-      }
-    }
+  this->AddScalars(array, vtkAssignAttribute::POINT_DATA);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
+{
+  this->AddScalars(array, vtkAssignAttribute::CELL_DATA);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::AddScalars(vtkDataArray *array, int location)
 {
   if (array == NULL)
     {
@@ -196,21 +154,24 @@ void vtkMRMLModelNode::AddCellScalars(vtkDataArray *array)
     }
   if (this->PolyData == NULL)
     {
-    vtkErrorMacro("AddCellScalars: No poly data on model " << this->GetName());
+    vtkErrorMacro("AddScalars: No polydata on model "
+                  << (this->GetName() ? this->GetName() : "no_name"));
     return;
     }
-  
-  int numScalars = this->PolyData->GetCellData()->GetNumberOfArrays();
-  vtkDebugMacro("Model node has " << numScalars << " cell scalars now, adding " << array->GetName());
+  vtkDataSetAttributes* data =
+    (location == vtkAssignAttribute::POINT_DATA ?
+     vtkDataSetAttributes::SafeDownCast(this->PolyData->GetPointData()) :
+     vtkDataSetAttributes::SafeDownCast(this->PolyData->GetCellData()));
+
+  int numScalars = data->GetNumberOfArrays();
+  vtkDebugMacro("Model node has " << numScalars << " scalars now, "
+                << "adding " << array->GetName());
+
+  data->AddArray(array);
   if (numScalars > 0)
     {
-    // add array
-    this->PolyData->GetCellData()->AddArray(array);
-    } 
-  else
-    {
     // set the scalars
-    this->PolyData->GetCellData()->SetScalars(array);
+    data->SetActiveScalars(array->GetName());
     }
 }
 
@@ -224,7 +185,8 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
     }
   if (this->PolyData == NULL)
     {
-    vtkErrorMacro("RemoveScalars: No poly data on model " << this->GetName());
+    vtkErrorMacro("RemoveScalars: No poly data on model "
+                  << (this->GetName() ? this->GetName() : "no_name"));
     return;
     }
   // try removing the array from the points first
@@ -242,280 +204,93 @@ void vtkMRMLModelNode::RemoveScalars(const char *scalarName)
 
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLModelNode::GetActivePointScalarName(const char *type)
+const char * vtkMRMLModelNode::GetActivePointScalarName(int type)
 {
-  if (this->PolyData == NULL)
+  if (this->PolyData == NULL ||
+      this->PolyData->GetPointData() == NULL)
     {
-    return "";
+    return NULL;
     }
-  if (this->PolyData->GetPointData() == NULL)
-    {
-    return "";
-    }
-  if (type == NULL)
-    {
-    vtkErrorMacro("GetActivePointScalarName: type is null");
-    return "";
-    }
-  if (strcmp(type, "scalars") == 0)
-    {
-    if (this->PolyData->GetPointData()->GetScalars())
-      {
-      return this->PolyData->GetPointData()->GetScalars()->GetName();
-      }
-    }
-  else if (strcmp(type, "vectors") == 0)
-    {
-    if (this->PolyData->GetPointData()->GetVectors())
-      {
-      return this->PolyData->GetPointData()->GetVectors()->GetName();
-      }
-    }
-  else if (strcmp(type, "normals") == 0)
-    {
-    if (this->PolyData->GetPointData()->GetNormals())
-      {
-      return this->PolyData->GetPointData()->GetNormals()->GetName();
-      }
-    }
-  else if (strcmp(type, "tcoords") == 0)
-    {
-    if (this->PolyData->GetPointData()->GetTCoords())      
-      {
-      return this->PolyData->GetPointData()->GetTCoords()->GetName();
-      }
-    }
-  else if (strcmp(type, "tensors") == 0)
-    {
-    if (this->PolyData->GetPointData()->GetTensors())
-      {
-      return this->PolyData->GetPointData()->GetTensors()->GetName();
-      }
-    }
-  else
-    {
-    vtkErrorMacro("Unknown point scalar type " << type);
-    return "";
-    }
-  vtkDebugMacro("GetActivePointScalarName: node " << this->GetName() << " unable to get " << type << " data to get the name, so active name is returned as an empty string");
-  return "";
+  vtkAbstractArray* attributeArray =
+    this->PolyData->GetPointData()->GetAbstractAttribute(type);
+  return attributeArray ? attributeArray->GetName() : NULL;
 }
 
 //---------------------------------------------------------------------------
-const char * vtkMRMLModelNode::GetActiveCellScalarName(const char *type)
+const char * vtkMRMLModelNode::GetActiveCellScalarName(int type)
 {
-  if (this->PolyData == NULL)
+  if (this->PolyData == NULL ||
+      this->PolyData->GetCellData() == NULL)
     {
-    return "";
+    return NULL;
     }
-  if (this->PolyData->GetCellData() == NULL)
-    {
-    return "";
-    }
-   if (type == NULL)
-    {
-    vtkErrorMacro("GetActiveCellScalarName: type is null");
-    return "";
-    }
-  if (strcmp(type, "scalars") == 0)
-    {
-    if (this->PolyData->GetCellData()->GetScalars())
-      {
-      return this->PolyData->GetCellData()->GetScalars()->GetName();
-      }
-    }
-  else if (strcmp(type, "vectors") == 0)
-    {
-    if (this->PolyData->GetCellData()->GetVectors())
-      {
-      return this->PolyData->GetCellData()->GetVectors()->GetName();
-      }
-    }
-  else if (strcmp(type, "normals") == 0)
-    {
-    if (this->PolyData->GetCellData()->GetNormals())
-      {
-      return this->PolyData->GetCellData()->GetNormals()->GetName();
-      }
-    }
-  else if (strcmp(type, "tcoords") == 0)
-    {
-    if (this->PolyData->GetCellData()->GetTCoords())      
-      {
-      return this->PolyData->GetCellData()->GetTCoords()->GetName();
-      }
-    }
-  else if (strcmp(type, "tensors") == 0)
-    {
-    if (this->PolyData->GetCellData()->GetTensors())
-      {
-      return this->PolyData->GetCellData()->GetTensors()->GetName();
-      }
-    }
-  else
-    {
-    vtkErrorMacro("Unknown point scalar type " << type);
-    return "";
-    }
-  vtkDebugMacro("GetActiveCellScalarName: unable to get " << type << " data to get the name");
-  return "";
+  vtkAbstractArray* attributeArray =
+    this->PolyData->GetCellData()->GetAbstractAttribute(type);
+  return attributeArray ? attributeArray->GetName() : NULL;
 }
 
+//---------------------------------------------------------------------------
+bool vtkMRMLModelNode::HasPointScalarName(const char* scalarName)
+{
+  if (this->PolyData == NULL ||
+      this->PolyData->GetPointData() == NULL)
+    {
+    return false;
+    }
+  return static_cast<bool>(
+    this->PolyData->GetPointData()->HasArray(scalarName));
+}
 
 //---------------------------------------------------------------------------
-int vtkMRMLModelNode::SetActiveScalars(const char *scalarName, const char *typeName)
+bool vtkMRMLModelNode::HasCellScalarName(const char* scalarName)
 {
-  int retval = -1;
-  if (this->PolyData == NULL || scalarName == NULL)
+  if (this->PolyData == NULL ||
+      this->PolyData->GetCellData() == NULL)
     {
-    if (this->PolyData == NULL)
-      {
-      vtkErrorMacro("SetActiveScalars: No poly data on model " << this->GetName());
-      }
-    else
-      {
-      vtkErrorMacro("SetActiveScalars: model " << this->GetName() << " scalar name is null");
-      }
-    return retval;
+    return false;
     }
+  return static_cast<bool>(
+    this->PolyData->GetCellData()->HasArray(scalarName));
+}
 
-  if (strcmp(scalarName, "") == 0)
-    {
-    return retval;
-    }
-
-  int attribute =  vtkDataSetAttributes::SCALARS;
+//---------------------------------------------------------------------------
+int vtkMRMLModelNode::GetAttributeTypeFromString(const char* typeName)
+{
   if (typeName != NULL && (strcmp(typeName, "") != 0))
     {
     for (int a = 0; a < vtkDataSetAttributes::NUM_ATTRIBUTES; a++)
       {
       if (strcmp(typeName, vtkDataSetAttributes::GetAttributeTypeAsString(a)) == 0)
         {
-        attribute =  a;
+        return a;
         }
       }
     }
-  // is it a point scalar?
-  retval = this->SetActivePointScalars(scalarName, attribute);
-  if (retval != -1)
-    {
-    vtkDebugMacro("Set active point " << typeName << " to " << scalarName << " (" <<
-                  this->PolyData->GetPointData()->GetAttributeTypeAsString(retval) <<
-                  ") on model " << this->GetName());
-    if (this->GetModelDisplayNode() != NULL)
-      {
-      this->GetModelDisplayNode()->SetActiveScalarName(scalarName);
-      }
-    return retval;
-    }
-  // is it a cell scalar?
-  retval =  this->SetActiveCellScalars(scalarName, attribute);
-  if (retval != -1)
-    {
-    if (this->GetModelDisplayNode() != NULL)
-      {
-      this->GetModelDisplayNode()->SetActiveScalarName(scalarName);
-      }
-    vtkDebugMacro("Set active cell " << typeName << " to " << scalarName << " (" <<
-                  this->PolyData->GetCellData()->GetAttributeTypeAsString(retval) << ") on model " <<
-                  this->GetName());
-    return retval;
-    }
-  vtkDebugMacro("Unable to find scalar attribute " << typeName << " " << scalarName << " on model " << this->GetName());
-  return retval;
+  return -1;
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attributeType)
 {
-  if (this->PolyData == NULL || scalarName == NULL)
+  if (this->PolyData == NULL ||
+      this->PolyData->GetPointData() == NULL)
     {
-    vtkDebugMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
     return -1;
     }
-  if (this->PolyData->GetPointData() == NULL)
-    {
-    vtkDebugMacro("No point data on this model " << this->GetName());
-    return -1;
-    }
-  // is this array present?
-  if (this->PolyData->GetPointData()->HasArray(scalarName) == 0)
-    {
-    vtkDebugMacro("Model " << this->GetName() << " doesn't have a point data array named " << scalarName);
-    return -1;
-    }
-
-  // is the array named scalarName already an active attribute? get it's index first
-  int arrayIndex;
-  this->PolyData->GetPointData()->GetArray(scalarName, arrayIndex);
-  vtkDebugMacro("SetActivePointScalars: got the array index of " << scalarName << ": " << arrayIndex);
-  // is it currently one of the attributes?
-  int thisAttributeType = this->PolyData->GetPointData()->IsArrayAnAttribute(arrayIndex);
-  vtkDebugMacro("\tarray index " << arrayIndex << " is an attribute type " << thisAttributeType);
-  if (thisAttributeType != -1 && thisAttributeType == attributeType)
-    {
-    // it's already the active attribute
-    return attributeType;
-    }
-  else
-    {
-    // it's not currently the active attribute, so set it
-    if (this->PolyData->GetPointData()->SetActiveAttribute(arrayIndex, attributeType) != -1)
-      {
-      return attributeType;
-      }
-    else
-      {
-      return -1;
-      }
-    }
+  return this->PolyData->GetPointData()->SetActiveAttribute(
+    scalarName, attributeType);
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLModelNode::SetActiveCellScalars(const char *scalarName, int attributeType)
 {
-  if (this->PolyData == NULL || scalarName == NULL)
+  if (this->PolyData == NULL ||
+      this->PolyData->GetCellData() == NULL)
     {
-    vtkDebugMacro("No poly data on model " << this->GetName() << " or the scalar name is null");
     return -1;
     }
-  if (this->PolyData->GetCellData() == NULL)
-    {
-    vtkDebugMacro("No cell data on this model " << this->GetName());
-    return -1;
-    }
-
-  // is this array present?
-  if (this->PolyData->GetCellData()->HasArray(scalarName) == 0)
-    {
-    vtkDebugMacro("Model " << this->GetName() << " doesn't have a cell array named " << scalarName);
-    return -1;
-    }
-
-  // is the array named scalarName already an active attribute? get it's index first
-  int arrayIndex;
-  this->PolyData->GetCellData()->GetArray(scalarName, arrayIndex);
-  vtkDebugMacro("SetActiveCellScalars: got the array index of " << scalarName << ": " << arrayIndex);
-  // is it currently one of the attributes?
-  int thisAttributeType = this->PolyData->GetCellData()->IsArrayAnAttribute(arrayIndex);
-  vtkDebugMacro("\tarray index " << arrayIndex << " is an attribute type " << thisAttributeType);
-  if (thisAttributeType != -1 && thisAttributeType == attributeType)
-    {
-    // it's already the active attribute
-    return attributeType;
-    }
-  else
-    {
-    // it's not currently the active attribute, so set it
-    if (this->PolyData->GetCellData()->SetActiveAttribute(arrayIndex, attributeType) != -1)
-      {
-      return attributeType;
-      }
-    else
-      {
-      return -1;
-      }
-    }
+  return this->PolyData->GetCellData()->SetActiveAttribute(
+    scalarName, attributeType);
 }
 
 //---------------------------------------------------------------------------
@@ -713,7 +488,6 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetTransform(transform);
   transformFilter->Update();
 
-//  this->SetAndObservePolyData(transformFilter->GetOutput());
   this->GetPolyData()->DeepCopy(transformFilter->GetOutput());
 
   transformFilter->Delete();
@@ -722,7 +496,7 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::GetRASBounds(double bounds[6])
 {
-  Superclass::GetRASBounds( bounds);
+  this->Superclass::GetRASBounds( bounds);
 
   if (this->PolyData == NULL)
   {
@@ -800,9 +574,33 @@ void vtkMRMLModelNode::OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode)
     vtkMRMLModelDisplayNode::SafeDownCast(dnode);
   if (modelDisplayNode)
     {
-    modelDisplayNode->SetPolyData(this->GetPolyData());
+    this->SetPolyDataToDisplayNode(modelDisplayNode);
     }
   this->Superclass::OnDisplayNodeAdded(dnode);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode
+::SetPolyDataToDisplayNodes()
+{
+  int ndisp = this->GetNumberOfDisplayNodes();
+  for (int n=0; n<ndisp; n++)
+    {
+    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
+      this->GetNthDisplayNode(n));
+    if (dnode)
+      {
+      this->SetPolyDataToDisplayNode(dnode);
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode
+::SetPolyDataToDisplayNode(vtkMRMLModelDisplayNode* modelDisplayNode)
+{
+  assert(modelDisplayNode);
+  modelDisplayNode->SetInputPolyData(this->PolyData);
 }
 
 //---------------------------------------------------------------------------

@@ -70,12 +70,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
-  ///
-  /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
-                                   unsigned long /*event*/,
-                                   void * /*callData*/ );
-
   //--------------------------------------------------------------------------
   /// Display Information: Geometry to display (not mutually exclusive)
   //--------------------------------------------------------------------------
@@ -186,7 +180,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   static int GetNumberOfScalarInvariants();
   static int GetNthScalarInvariant(int i);
 
-
  protected:
   vtkMRMLFiberBundleDisplayNode ( );
   ~vtkMRMLFiberBundleDisplayNode ( );
@@ -208,10 +201,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleDispla
   /// Arrays
   //double ScalarRange[2];
   //
-  vtkPolyData* OutputPolyData;
-
-
-
 };
 
 #endif

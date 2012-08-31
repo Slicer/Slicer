@@ -29,7 +29,8 @@ class vtkPolyDataTensorToColor;
 class vtkPolyDataColorLinesByOrientation;
 
 
-class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode : public vtkMRMLFiberBundleDisplayNode
+class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDisplayNode
+  : public vtkMRMLFiberBundleDisplayNode
 {
  public:
   static vtkMRMLFiberBundleLineDisplayNode *New (  );
@@ -43,29 +44,8 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDi
   virtual vtkMRMLNode* CreateNodeInstance (  );
 
   ///
-  /// Read node attributes from XML (MRML) file
-  virtual void ReadXMLAttributes ( const char** atts );
-
-  ///
-  /// Write this node's information to a MRML file in XML format.
-  virtual void WriteXML ( ostream& of, int indent );
-
-
-  ///
-  /// Copy the node's attributes to this object
-  virtual void Copy ( vtkMRMLNode *node );
-
-  ///
   /// Get node XML tag name (like Volume, UnstructuredGrid)
   virtual const char* GetNodeTagName ( ) {return "FiberBundleLineDisplayNode";};
-
-  ///
-  /// Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData);
-
-  ///
-  /// Gets resultin glyph PolyData
-  virtual vtkPolyData* GetPolyData();
 
   ///
   /// Update the pipeline based on this node attributes
@@ -78,10 +58,12 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleLineDi
   vtkMRMLFiberBundleLineDisplayNode ( const vtkMRMLFiberBundleLineDisplayNode& );
   void operator= ( const vtkMRMLFiberBundleLineDisplayNode& );
 
+  /// Reimplemented to return the output of the display pipeline
+  virtual vtkAlgorithmOutput* GetOutputPort();
+
+  /// display pipeline
   vtkPolyDataTensorToColor *TensorToColor;
   vtkPolyDataColorLinesByOrientation *ColorLinesByOrientation;
-
-  /// dispaly pipeline
 };
 
 #endif

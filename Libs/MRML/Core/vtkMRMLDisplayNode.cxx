@@ -20,6 +20,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCollection.h>
 #include <vtkImageData.h>
@@ -31,6 +32,7 @@ Version:   $Revision: 1.3 $
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkMRMLDisplayNode, TextureImageData, vtkImageData);
 vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ColorNodeID);
+vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()
@@ -72,6 +74,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->ColorNode = NULL;
 
   this->ActiveScalarName = NULL;
+  this->ActiveAttributeLocation = vtkAssignAttribute::POINT_DATA;
 
   // add observer to process visualization pipeline
   vtkEventBroker::GetInstance()->AddObservation( 
@@ -628,52 +631,6 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLDisplayNode::SetActiveScalarName(const char *scalarName)
-{
-  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting ActiveScalarName to " << (scalarName ? scalarName : "(null)"));
-  
-  if (this->ActiveScalarName == NULL && scalarName == NULL)
-    {
-    return;
-    }
-  if (this->ActiveScalarName && scalarName && (!strcmp(this->ActiveScalarName,scalarName)))
-    {
-    return;
-    }
-  if (this->ActiveScalarName)
-    {
-    delete [] this->ActiveScalarName;
-    }
-
-  if (scalarName)
-    {
-    size_t n = strlen(scalarName) + 1;
-    char *cp1 = new char[n];
-    const char *cp2 = (scalarName);
-    this->ActiveScalarName = cp1;
-    do { *cp1++ = *cp2++; } while ( --n );
-    }
-  else
-    {
-    this->ActiveScalarName = NULL;
-    this->Modified();
-    return;
-    }
-
-  // is it an empty string?
-  if (strcmp(scalarName,"") == 0)
-    {
-    vtkDebugMacro("SetActiveScalarName: scalar name is an emtpy string, not setting the color node on display node " << this->GetID());
-    return;
-    }
-
-  // calls to SetAndObserveColorNodeID will set up the color table for
-  // displaying these scalars
-  
-  this->Modified();
 }
 
 //-------------------------------------------------------

@@ -11,16 +11,17 @@
 
 // MRML includes
 #include "vtkMRMLModelNode.h"
+class vtkMRMLCameraNode;
+class vtkMRMLSliceNode;
 
 // Annotations includes
 #include "vtkSlicerAnnotationsModuleMRMLExport.h"
+class vtkMRMLAnnotationTextDisplayNode;
 
 // VTK includes
 #include <vtkSmartPointer.h>
-
-class vtkMRMLCameraNode;
-class vtkMRMLSliceNode;
-class vtkMRMLAnnotationTextDisplayNode;
+class vtkCellArray;
+class vtkPoints;
 class vtkStringArray;
 
 /// \ingroup Slicer_QtModules_Annotation
@@ -163,7 +164,8 @@ protected:
   void SetAttributeSize(vtkIdType  id, vtkIdType n);
 
   void CreatePolyData();
-
+  vtkPoints* GetPoints();
+  vtkCellArray* GetLines();
 
   vtkStringArray *TextList;
   char *ReferenceNodeID; 

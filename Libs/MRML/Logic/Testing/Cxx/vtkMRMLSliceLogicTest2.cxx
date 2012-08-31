@@ -181,7 +181,7 @@ int vtkMRMLSliceLogicTest2(int argc, char * argv [] )
   
   vtkSmartPointer<vtkImageAppendComponents> appendComponents = vtkSmartPointer<vtkImageAppendComponents>::New();
   appendComponents->RemoveAllInputs();
-  appendComponents->SetInputConnection(0, mapToColors->GetOutput()->GetProducerPort() );
+  appendComponents->AddInputConnection(0, mapToColors->GetOutput()->GetProducerPort() );
   appendComponents->AddInputConnection(0, alphaLogic->GetOutput()->GetProducerPort() );
   
   //displayNode2->GetInput()->SetScalarComponentFromFloat(0, 0, 0, 0, 10.);

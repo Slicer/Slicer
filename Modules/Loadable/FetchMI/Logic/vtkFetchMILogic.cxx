@@ -3502,7 +3502,6 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     this->GetMRMLScene()->AddNode(displayNode);
     modelNode->SetAndObserveStorageNodeID(mStorageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-    displayNode->SetPolyData(modelNode->GetPolyData());
 
     this->GetMRMLScene()->AddNode(modelNode);
     // the scene points to it still
@@ -3546,7 +3545,6 @@ void vtkFetchMILogic::RequestStorableNodeDownload ( const char *uri, const char 
     this->GetMRMLScene()->AddNode(displayNode);
     modelNode->SetAndObserveStorageNodeID(fsmStorageNode->GetID());
     modelNode->SetAndObserveDisplayNodeID(displayNode->GetID());
-    displayNode->SetPolyData(modelNode->GetPolyData());
 
     this->GetMRMLScene()->AddNode(modelNode);
     // the scene points to it still

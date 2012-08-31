@@ -26,41 +26,38 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
+#include "vtkMRMLDisplayableManagerWin32Header.h"
 
 // MRMLLogic includes
 #include "vtkMRMLModelHierarchyLogic.h"
 
 // MRML includes
-#include "vtkMRMLClipModelsNode.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLCameraNode.h"
-#include "vtkMRMLViewNode.h"
+class vtkMRMLClipModelsNode;
+class vtkMRMLDisplayNode;
+class vtkMRMLDisplayableNode;
+class vtkMRMLModelHierarchyLogic;
+class vtkMRMLModelHierarchyNode;
+class vtkMRMLModelNode;
 
 // VTK includes
 #include "vtkRenderWindow.h"
-
-#include "vtkMRMLDisplayableManagerWin32Header.h"
-
-class vtkMRMLDisplayableNode;
-class vtkMRMLDisplayNode;
-class vtkMRMLModelHierarchyNode;
-class vtkMRMLModelHierarchyLogic;
-class vtkPolyData;
-class vtkCellArray;
-class vtkProp3D;
 class vtkActor;
 class vtkActorText;
+class vtkBoundingBox;
+class vtkCellArray;
+class vtkCellPicker;
+class vtkClipPolyData;
 class vtkFollower;
 class vtkImplicitBoolean;
-class vtkPlane;
-class vtkWorldPointPicker;
-class vtkPropPicker;
-class vtkCellPicker;
-class vtkPointPicker;
-class vtkPlane;
-class vtkClipPolyData;
+class vtkMatrix4x4;
 class vtkPMatrix4x4;
-class vtkBoundingBox;
+class vtkPlane;
+class vtkPlane;
+class vtkPointPicker;
+class vtkPolyData;
+class vtkProp3D;
+class vtkPropPicker;
+class vtkWorldPointPicker;
 
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :
     public vtkMRMLAbstractThreeDViewDisplayableManager
@@ -171,6 +168,11 @@ protected:
 
   void SetModelDisplayProperty(vtkMRMLDisplayableNode *model);
   int GetDisplayedModelsVisibility(vtkMRMLDisplayNode *model);
+
+  const char* GetActiveScalarName(vtkMRMLDisplayNode* displayNode,
+                                  vtkMRMLModelNode* model = 0);
+  bool IsCellScalarsActive(vtkMRMLDisplayNode* displayNode,
+                           vtkMRMLModelNode* model = 0);
 
   /// Returns not null if modified
   int UpdateClipSlicesFromMRML();

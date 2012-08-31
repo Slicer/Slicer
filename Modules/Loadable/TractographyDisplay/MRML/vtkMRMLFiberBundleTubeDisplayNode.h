@@ -60,14 +60,6 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleTubeDi
   virtual const char* GetNodeTagName ( ) {return "FiberBundleTubeDisplayNode";};
 
   ///
-  /// Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData);
-
-  ///
-  /// Gets resultin glyph PolyData
-  virtual vtkPolyData* GetPolyData();
-
-  ///
   /// Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
 
@@ -92,6 +84,9 @@ class VTK_SLICER_TRACTOGRAPHYDISPLAY_MODULE_MRML_EXPORT vtkMRMLFiberBundleTubeDi
   vtkMRMLFiberBundleTubeDisplayNode ( const vtkMRMLFiberBundleTubeDisplayNode& );
   void operator= ( const vtkMRMLFiberBundleTubeDisplayNode& );
 
+  ///
+  /// Gets resultin glyph PolyData
+  virtual vtkAlgorithmOutput* GetOutputPort();
 
   /// Enumerated
 

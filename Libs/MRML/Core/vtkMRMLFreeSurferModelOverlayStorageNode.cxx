@@ -165,7 +165,9 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           return 0;
           }
 
-        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str() << "\n\tscalars called " << scalarName.c_str() << ", adding point scalars to model node " << modelNode->GetName());;
+        vtkDebugMacro("Finished reading model overlay file " << fullName.c_str()
+                      << "\n\tscalars called " << scalarName.c_str()
+                      << ", adding point scalars to model node " << modelNode->GetName());
         modelNode->AddPointScalars(floatArray);
         if (displayNode)
           {

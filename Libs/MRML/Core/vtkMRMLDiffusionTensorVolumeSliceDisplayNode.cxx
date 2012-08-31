@@ -45,7 +45,8 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = this->colorModeScalar;
-  this->SliceToXYTransformer->SetInput(this->DiffusionTensorGlyphFilter->GetOutput());
+  this->SliceToXYTransformer->SetInputConnection(
+    this->DiffusionTensorGlyphFilter->GetOutputPort());
 }
 
 

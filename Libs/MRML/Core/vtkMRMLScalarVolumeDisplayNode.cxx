@@ -66,7 +66,7 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->MapToWindowLevelColors->SetLevel(128.);
 
   this->MapToColors->SetOutputFormatToRGB();
-  this->MapToColors->SetInput( this->MapToWindowLevelColors->GetOutput() );
+  this->MapToColors->SetInputConnection( this->MapToWindowLevelColors->GetOutputPort() );
 
   this->Threshold->ReplaceInOn();
   this->Threshold->SetInValue(255);
@@ -78,13 +78,13 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
 
   this->AlphaLogic->SetOperationToAnd();
   this->AlphaLogic->SetOutputTrueValue(255);
-  this->AlphaLogic->SetInput1( this->Threshold->GetOutput() );
-  //this->AlphaLogic->SetInput2( this->Threshold->GetOutput() );
-  this->AlphaLogic->SetInput2( this->ResliceAlphaCast->GetOutput() );
+  this->AlphaLogic->SetInputConnection(0, this->Threshold->GetOutputPort() );
+  //this->AlphaLogic->SetInputConnection(1, this->Threshold->GetOutputPort() );
+  this->AlphaLogic->SetInputConnection(1, this->ResliceAlphaCast->GetOutputPort() );
 
   this->AppendComponents->RemoveAllInputs();
-  this->AppendComponents->SetInputConnection(0, this->MapToColors->GetOutput()->GetProducerPort() );
-  this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutput()->GetProducerPort() );
+  this->AppendComponents->AddInputConnection(0, this->MapToColors->GetOutputPort() );
+  this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
 
   this->Bimodal = NULL;
   this->Accumulate = NULL;

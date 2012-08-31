@@ -38,7 +38,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
   vtkNew<vtkPolyData> polyData;
   modelNode.GetPointer()->SetAndObservePolyData(polyData.GetPointer());
   std::cout << "Polydata pointer = " << polyData.GetPointer() << std::endl;
-  
+
   // Add display node
   vtkNew<vtkMRMLModelDisplayNode> modelDisplayNode;
   scene->AddNode(modelDisplayNode.GetPointer());
@@ -57,10 +57,15 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
     return EXIT_FAILURE;
     }
   // does the display node point to the correct polydata?
-  std::cout<< "Model display node poly data pointer = " << modelDisplayNode.GetPointer()->GetPolyData() << std::endl;
-  if (modelDisplayNode.GetPointer()->GetPolyData() != modelNode.GetPointer()->GetPolyData())
+  std::cout<< "Model display node poly data pointer = "
+           << modelDisplayNode.GetPointer()->GetInputPolyData() << std::endl;
+  if (modelDisplayNode.GetPointer()->GetInputPolyData() !=
+      modelNode.GetPointer()->GetPolyData())
     {
-    std::cerr << "Model display node and model node point to different poly data: model poly data = " <<  modelNode.GetPointer()->GetPolyData() << ", display node polydata = " << modelDisplayNode.GetPointer()->GetPolyData() << std::endl;
+    std::cerr << "Model display node and model node point to different poly data:"
+              <<" model poly data = " <<  modelNode.GetPointer()->GetPolyData()
+              << ", display node polydata = " << modelDisplayNode.GetPointer()->GetInputPolyData()
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -78,7 +83,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
   /// vtkMRMLModelDisplayNode1 with valid polydata from vtkMRMLModelNode1
   /// vtkMRMLModelDisplayNode2 with null polydata
   /// vtkMRMLModelHierarchyNode1 (pointing to vtkMRMLModelDisplayNode2 and vtkMRMLModelNode1)
-  
+
   const char scene1XML[] =
     "<MRML  version=\"18916\" userTags=\"\">"
     "  <Model id=\"vtkMRMLModelNode1\" name=\"New Model1\" displayNodeRef=\"vtkMRMLModelDisplayNode1\" ></Model>"
@@ -102,9 +107,8 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
   /// vtkMRMLModelDisplayNode4 (imported scene vtkMRMLModelDisplayNode2, null polydata)
   /// vtkMRMLModelHierarchyNode2 (imported scene vtkMRMLModelHierarchyNode1,pointing to vtkMRMLModelDisplayNode4, vtkMRMLModelNodel2)
 
-  
   scene->Import();
- 
+
   if (scene->GetNumberOfNodes() != 8 ||
       scene->GetNodeByID("vtkMRMLModelNode1") != modelNode.GetPointer() ||
       scene->GetNodeByID("vtkMRMLModelDisplayNode1") != modelDisplayNode.GetPointer() ||
@@ -119,7 +123,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   vtkMRMLModelNode* modelNode2 = vtkMRMLModelNode::SafeDownCast(
     scene->GetNodeByID("vtkMRMLModelNode2"));
   if (modelNode2 == 0 ||
@@ -130,7 +134,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
       strcmp(modelNode2->GetDisplayNode()->GetName(), "New Display 1") != 0)
     {
     std::cerr << "Failed to import scene: "
-              << "model #2: " << modelNode2 
+              << "model #2: " << modelNode2
               << ", model node 2 display node: " << modelNode2->GetDisplayNode();
     if (modelNode2)
       {
@@ -145,7 +149,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
     std::cerr << std::endl;
     return EXIT_FAILURE;
     }
-  
+
   // check that the hierarchies point to the right display nodes
   vtkMRMLModelHierarchyNode *hierarchyNode2 = vtkMRMLModelHierarchyNode::SafeDownCast(scene->GetNodeByID("vtkMRMLModelHierarchyNode2"));
   if (!hierarchyNode2)
@@ -184,28 +188,31 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << modelNode2->GetPolyData()
               << std::endl;
     }
-  if (modelNode2->GetDisplayNode()->GetPolyData() != NULL)
+  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
+      ->GetInputPolyData() != NULL)
     {
     std::cerr << "Import failed: new model node's display node should have null polydata: "
-              << modelNode2->GetDisplayNode()->GetPolyData()
+              << vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
+                   ->GetInputPolyData()
               << std::endl;
     return EXIT_FAILURE;
     }
   std::cout << "Imported model poly data and display node poly data are properly null" << std::endl;
-  
+
   if (modelNode->GetPolyData() == NULL)
     {
     std::cerr << "Import failed: original model node should not have null polydata"
               << std::endl;
     return EXIT_FAILURE;
     }
-  if (modelNode->GetDisplayNode()->GetPolyData() == NULL)
+  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())->GetInputPolyData() == NULL)
     {
     std::cerr << "Import failed: original model display node should not have null polydata"
               << std::endl;
     return EXIT_FAILURE;
     }
-  if (modelNode->GetPolyData() != modelNode->GetDisplayNode()->GetPolyData())
+  if (modelNode->GetPolyData() != vtkMRMLModelDisplayNode::SafeDownCast(
+        modelNode2->GetDisplayNode())->GetInputPolyData())
     {
     std::cerr << "Import failed: original model node and display node don't have the same poly data"
               << std::endl;

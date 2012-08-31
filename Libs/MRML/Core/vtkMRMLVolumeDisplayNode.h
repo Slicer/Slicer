@@ -79,8 +79,10 @@ public:
   /// the pipeline and the dimension of the input data.
   vtkImageData* GetUpToDateImageData();
 
-  /// Set the pipeline input. Internally calls ConnectInputImageDataToPipeline to be
-  /// reimplemented.
+  /// Set the pipeline input.
+  /// Filters can be applied to the input image data. The output image data
+  /// is the one used by the mappers.
+  /// It internally calls SetInputImageDataPipeline that can be reimplemented.
   virtual void SetInputImageData(vtkImageData *imageData);
 
   /// Gets the pipeline input. To be reimplemented in subclasses.

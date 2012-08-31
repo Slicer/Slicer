@@ -231,7 +231,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
 
     this->GetMRMLScene()->AddNode(storageNode);
     this->GetMRMLScene()->AddNode(displayNode);
-    displayNode->SetPolyData(modelNode->GetPolyData());
 
     // Set the scene so that SetAndObserve[Display|Storage]NodeID can find the
     // node in the scene (so that DisplayNodes return something not empty)

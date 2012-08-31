@@ -34,15 +34,14 @@ void vtkMRMLAnnotationLinesNode::WriteXML(ostream& of, int nIndent)
   
   vtkIndent indent(nIndent);
 
-  if (this->PolyData &&  this->GetNumberOfLines()) 
-    { 
-      int n = this->GetNumberOfLines();
-
-      vtkCellArray *lines = this->PolyData->GetLines();  
-      lines->InitTraversal();
-      of << indent << "linePtsID=\"" ;
-      for (int i = 0; i < n; i++ ) 
+  int n = this->GetNumberOfLines();
+  if (n)
     {
+    vtkCellArray *lines = this->GetLines();
+    lines->InitTraversal();
+    of << indent << "linePtsID=\"" ;
+    for (int i = 0; i < n; i++ )
+      {
       vtkIdType npts = 0;
       vtkIdType *pts = NULL;
       lines->GetNextCell(npts, pts);
@@ -190,15 +189,14 @@ void vtkMRMLAnnotationLinesNode::PrintAnnotationInfo(ostream& os, vtkIndent inde
   Superclass::PrintAnnotationInfo(os, indent, 0);
 
 
-  if (this->PolyData &&  this->GetNumberOfLines()) 
-    { 
-
-      int n = this->GetNumberOfLines();
-      vtkCellArray *lines = this->PolyData->GetLines();  
-      lines->InitTraversal();
-      os << indent << "linePtsID: " ;
-      for (int i = 0; i < n; i++ ) 
+  int n = this->GetNumberOfLines();
+  if (n)
     {
+    vtkCellArray *lines = this->GetLines();
+    lines->InitTraversal();
+    os << indent << "linePtsID: " ;
+    for (int i = 0; i < n; i++ )
+      {
       vtkIdType npts;
       vtkIdType *pts = NULL;
       lines->GetNextCell(npts, pts);
@@ -289,54 +287,56 @@ void vtkMRMLAnnotationLinesNode::ResetAnnotations()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationLinesNode::CreatePolyData() 
+void vtkMRMLAnnotationLinesNode::CreatePolyData()
 {
-  Superclass::CreatePolyData(); 
+  this->Superclass::CreatePolyData();
 
-  if (!this->GetPolyData()->GetLines() || !this->InitializeLinesFlag)
+  if (!this->GetLines() || !this->InitializeLinesFlag)
     {
-      // Remember vtkCellArray *polyLines = this->PolyData->GetLines() is never null as it is a static variable !
-      vtkCellArray *polyLines = vtkCellArray::New();
-      this->PolyData->SetLines(polyLines);
-      polyLines->Delete();
-      this->InitializeLinesFlag = 1;     
+    // Remember vtkCellArray *polyLines = this->PolyData->GetLines() is never
+    // null as it is a static variable !
+    vtkCellArray *polyLines = vtkCellArray::New();
+    this->GetPolyData()->SetLines(polyLines);
+    polyLines->Delete();
+    this->InitializeLinesFlag = 1;
     }
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::ResetLines()
 {
-
   this->CreatePolyData();
-  this->PolyData->GetLines()->Reset();
+  this->GetLines()->Reset();
   this->ResetLinesAttributesAll();
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLAnnotationLinesNode::GetNumberOfLines()
 {
-  if (!this->PolyData || !this->PolyData->GetLines()) {
+  if (!this->GetLines())
+    {
     this->ResetLines();
-  }
-  // have to do it this way bc  this->PolyData->GetLines() is never null before it is initilized ! 
-  return this->PolyData->GetNumberOfLines();
+    }
+  // have to do it this way bc  this->PolyData->GetLines() is never null before it is initilized !
+  return this->GetLines()->GetNumberOfCells();
 }
 
 
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
 {
-  if (!this->PolyData || !this->PolyData->GetLines()) 
+  if (!this->GetLines())
     {
-      this->ResetLines();
+    this->ResetLines();
     }
 
-  vtkCellArray *lines = this->PolyData->GetLines();  
+  vtkCellArray *lines = this->GetLines();
   int n = this->GetNumberOfLines();
-  if (id< 0 || id > n-1) 
+  if (id< 0 || id > n-1)
     {
-      vtkErrorMacro("AnnotationLine " << this->GetName() << " id is out of range !"); 
-      return ;
+    vtkErrorMacro("AnnotationLine " << this->GetName()
+                  << " id is out of range !");
+    return ;
     }
 
 
@@ -383,10 +383,11 @@ void vtkMRMLAnnotationLinesNode::DeleteLine(int id)
 int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID[2])
 {
 
-  if (!this->PolyData || !this->GetNumberOfLines()) 
+  if (this->GetNumberOfLines() == 0)
     {
-      vtkErrorMacro("Annotation: " << this->GetName() << " PolyData or  PolyData->GetLines() is NULL" ); 
-      return 0;
+    vtkErrorMacro("Annotation: " << this->GetName()
+                  << " PolyData or PolyData->GetLines() is NULL" );
+    return 0;
     }
   
   if (id >= this->GetNumberOfLines())
@@ -395,7 +396,7 @@ int vtkMRMLAnnotationLinesNode::GetEndPointsId(vtkIdType id, vtkIdType ctrlPtsID
       return 0;
     }
  
-  vtkCellArray* lines = this->PolyData->GetLines();
+  vtkCellArray* lines = this->GetLines();
   lines->InitTraversal();
 
   vtkIdType npts = 0;
@@ -455,17 +456,17 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
   }
 
   // Create if not there
-  if (!this->PolyData || !this->PolyData->GetPoints()) {
+  if (!this->GetPoints())
+    {
     vtkErrorMacro("No Control Points defined");
     return 0;
-  }
+    }
 
-
-  vtkPoints *points = this->PolyData->GetPoints(); 
-  if (!points->GetPoint(ctrlPtIdStart) || !points->GetPoint(ctrlPtIdEnd)) 
+  vtkPoints *points = this->GetPoints();
+  if (!points->GetPoint(ctrlPtIdStart) || !points->GetPoint(ctrlPtIdEnd))
     {
-      vtkErrorMacro("At least one control point does not exists");
-      return 0;  
+    vtkErrorMacro("At least one control point does not exists");
+    return 0;
     }
 
   // Define line 
@@ -477,7 +478,7 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
       this->CreatePolyData();
     }
 
-  vtkCellArray* cellLine = this->PolyData->GetLines();
+  vtkCellArray* cellLine = this->GetLines();
  
   if (cellLine->GetNumberOfCells() <= id ) 
     {
@@ -513,24 +514,24 @@ int  vtkMRMLAnnotationLinesNode::SetLine(int id, int ctrlPtIdStart, int ctrlPtId
 int vtkMRMLAnnotationLinesNode::AddLine(int ctrlPtIdStart, int ctrlPtIdEnd,int selectedFlag, int visibleFlag)
 {
   // Create if not there
-  if (!this->PolyData || !this->GetNumberOfLines()) 
+  if (this->GetNumberOfLines() == 0)
     {
-      this->ResetLines();
+    this->ResetLines();
     }
 
   // Look if line is already included
   int n = this->GetNumberOfLines();
   int id = n;
-  for (int i =0 ; i < n ; i++) 
+  for (int i =0 ; i < n ; i++)
     {
-      vtkIdType endPts[2];
-      this->GetEndPointsId(i, endPts);
-      if ((endPts[0] == ctrlPtIdStart) && (endPts[1] == ctrlPtIdEnd))
-    {
+    vtkIdType endPts[2];
+    this->GetEndPointsId(i, endPts);
+    if ((endPts[0] == ctrlPtIdStart) && (endPts[1] == ctrlPtIdEnd))
+      {
       id = i;
       break;
+      }
     }
-    } 
 
   if (this->SetLine(id,  ctrlPtIdStart, ctrlPtIdEnd,selectedFlag, visibleFlag)) 
     {

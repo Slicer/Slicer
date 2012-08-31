@@ -46,6 +46,7 @@ int vtkMRMLModelDisplayNodeTest1(int , char * [] )
 bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
                      bool observeDisplayBeforeAddToScene)
 {
+  std::cout << __LINE__ << "TestSetPolyData" << std::endl;
   vtkNew<vtkMRMLScene> scene;
 
   vtkNew<vtkMRMLModelNode> model;
@@ -73,15 +74,18 @@ bool TestSetPolyData(bool observePolyDataBeforeObserveDisplay,
     scene->AddNode(display.GetPointer());
     model->UpdateScene(scene.GetPointer());
     }
-  if (display->GetPolyData() != polyData.GetPointer() ||
-      model->GetPolyData() != polyData.GetPointer())
+  if (display->GetInputPolyData() != model->GetPolyData())
     {
-    std::cout << __LINE__ << ": vtkMRMLModelNode::SetAndObservePolyData "
-      << "failed when before=" << observePolyDataBeforeObserveDisplay << ", "
-      << " and beforeAddToScene=" << observeDisplayBeforeAddToScene << ":\n"
-      << "PolyData: " << polyData.GetPointer() << ", "
-      << "Model: " << model->GetPolyData() << ", "
-      << "Display: " << display->GetPolyData() << std::endl;
+    std::cerr << __LINE__ << ": vtkMRMLModelNode::SetAndObservePolyData "
+              << "failed when polydata is set "
+              << (observePolyDataBeforeObserveDisplay ? "before" : "after")
+              << " the display node is observed and when the display node is "
+              << "added in the scene "
+              << (observeDisplayBeforeAddToScene ? "before" : "after")
+              << " the observation:\n"
+              << "PolyData: " << polyData.GetPointer() << ", "
+              << "Model: " << model->GetPolyData() << ", "
+              << "Display: " << display->GetInputPolyData() << std::endl;
     return false;
     }
   return true;
