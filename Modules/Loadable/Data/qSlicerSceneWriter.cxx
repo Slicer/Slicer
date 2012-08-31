@@ -224,10 +224,10 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   vtkSlicerApplicationLogic* applicationLogic =
     qSlicerCoreApplication::application()->applicationLogic();
   Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
-  const char *retval =
+  bool retval =
     applicationLogic->SaveSceneToSlicerDataBundleDirectory(bundlePath.toLatin1(),
                                                            imageData);
-  if (retval == 0)
+  if (!retval)
     {
     QMessageBox::critical(0, tr("Save scene as MRB"), tr("Failed to create bundle"));
     return false;
@@ -305,11 +305,11 @@ bool qSlicerSceneWriter::writeToDirectory(const qSlicerIO::IOProperties& propert
   vtkSlicerApplicationLogic* applicationLogic =
     qSlicerCoreApplication::application()->applicationLogic();
   Q_ASSERT(this->mrmlScene() == applicationLogic->GetMRMLScene());
-  const char *retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(
+  bool retval = applicationLogic->SaveSceneToSlicerDataBundleDirectory(
     saveDirName.toLatin1(), imageData);
   if (retval)
     {
-    qDebug() << "Saved scene to file " << QString(retval);
+    qDebug() << "Saved scene to dir" << saveDirName;
     }
   else
     {

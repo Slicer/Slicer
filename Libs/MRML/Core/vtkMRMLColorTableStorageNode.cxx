@@ -202,7 +202,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         return 0;
         }
       }
-    if (!biggerThanOne)
+    if (lines.size() > 0 && !biggerThanOne)
       {
       vtkWarningMacro("ReadDataInternal: possibly malformed colour table file:\n" << this->FileName << ".\n\tNo RGB values are greater than 1. Valid values are 0-255");
       }

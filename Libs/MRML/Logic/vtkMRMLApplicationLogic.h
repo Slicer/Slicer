@@ -86,8 +86,8 @@ public:
   
   /// Save the scene into a self contained directory, sdbDir
   /// If screenShot is not null, use it as the screen shot for a scene view
-  /// Returns the path to the self contained directory, null on failure
-  const char *SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
+  /// Returns false if the save failed
+  bool SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
 
   /// Open the file into a temp directory and load the scene file 
   /// inside.  Note that the first mrml file found in the extracted 

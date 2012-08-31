@@ -313,5 +313,14 @@ def array(pattern = "", index = 0):
     shape.reverse()
     a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
     return a
+  elif n.GetClassName() == 'vtkMRMLVectorVolumeNode':
+    i = n.GetImageData()
+    shape = list(n.GetImageData().GetDimensions())
+    shape.reverse()
+    components = i.GetNumberOfScalarComponents()
+    if components > 1:
+      shape.append(components)
+    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
+    return a
   # TODO: accessors for other node types: tensors, polydata (verts, polys...), colors
 

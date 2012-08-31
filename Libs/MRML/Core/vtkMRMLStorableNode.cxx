@@ -508,7 +508,7 @@ vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
   for (unsigned int i = 0; i < this->StorageNodes.size(); ++i)
     {
     vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
-    if (storedTime < dnode->GetStoredTime())
+    if (dnode != NULL && storedTime < dnode->GetStoredTime())
       {
       storedTime = dnode->GetStoredTime();
       }

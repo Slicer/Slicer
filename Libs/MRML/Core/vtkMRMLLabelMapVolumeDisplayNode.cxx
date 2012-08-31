@@ -14,6 +14,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkMRMLLabelMapVolumeDisplayNode.h"
 #include "vtkMRMLProceduralColorNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkImageData.h>
@@ -104,8 +105,11 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
     }
   if (lookupTable == NULL && this->ColorNodeID != NULL)
     {
-    vtkErrorMacro(<< "vtkMRMLLabelMapVolumeDisplayNode: Warning, the color table node: "
-                  << this->ColorNodeID << " can't be found");
+    if (!this->GetScene() || !this->GetScene()->IsImporting())
+      {
+      vtkErrorMacro(<< "vtkMRMLLabelMapVolumeDisplayNode: Warning, the color table node: "
+                    << this->ColorNodeID << " can't be found");
+      }
     }
   this->MapToColors->SetLookupTable(lookupTable);
   // if there is no point, the mapping will fail (not sure)
