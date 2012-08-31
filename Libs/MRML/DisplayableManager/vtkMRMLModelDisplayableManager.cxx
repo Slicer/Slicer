@@ -1130,7 +1130,7 @@ vtkMRMLDisplayNode*  vtkMRMLModelDisplayableManager::GetHierarchyDisplayNode(vtk
         vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(this->GetMRMLScene(), model->GetID()));
     if (mhnode)
       {
-      phnode = mhnode->GetUnExpandedParentNode();
+      phnode = mhnode->GetCollapsedParentNode();
       }
     if (phnode)
       {
