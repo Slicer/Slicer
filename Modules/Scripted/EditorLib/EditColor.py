@@ -60,6 +60,7 @@ class EditColor(object):
     self.frame.layout().addWidget(self.labelName)
 
     self.colorSpin = qt.QSpinBox(self.frame)
+    self.colorSpin.setMaximum( 64000)
     self.colorSpin.setValue( self.editUtil.getLabel() )
     self.colorSpin.setToolTip( "Click colored patch at right to bring up color selection pop up window.  Use the 'c' key to bring up color popup menu." )
     self.frame.layout().addWidget(self.colorSpin)
@@ -108,16 +109,6 @@ class EditColor(object):
       # parameter does not exist - probably intializing
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
-    try:
-      self.colorSpin.setValue(label)
-    except ValueError:
-      # TODO: why does the python class still exist if the widget is destroyed?
-      # - this only happens when reloading the module.  The owner of the 
-      # instance is gone and the widgets are gone, but this instance still
-      # has observer on the parameter node - this indicates memory leaks
-      # that need to be fixed
-      self.cleanup()
-      return
 
     if not self.colorNode:
       self.colorNode = self.editUtil.getColorNode()
@@ -131,6 +122,17 @@ class EditColor(object):
       self.colorSpin.setMaximum( self.colorNode.GetNumberOfColors()-1 )
     else:
       self.frame.setDisabled(1)
+
+    try:
+      self.colorSpin.setValue(label)
+    except ValueError:
+      # TODO: why does the python class still exist if the widget is destroyed?
+      # - this only happens when reloading the module.  The owner of the 
+      # instance is gone and the widgets are gone, but this instance still
+      # has observer on the parameter node - this indicates memory leaks
+      # that need to be fixed
+      self.cleanup()
+      return
 
 
   def showColorBox(self):
