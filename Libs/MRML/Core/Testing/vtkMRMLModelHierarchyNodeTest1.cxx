@@ -49,7 +49,7 @@ int vtkMRMLModelHierarchyNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode1 = node1->GetUnExpandedParentNode();
+  vtkSmartPointer<vtkMRMLModelHierarchyNode> hnode1 = node1->GetCollapsedParentNode();
   std::cout << "Unexpanded parent node = " << (hnode1 == NULL ? "NULL" : hnode1->GetID()) << std::endl;
   vtkSmartPointer<vtkCollection> col =  vtkSmartPointer<vtkCollection>::New();
   node1->GetChildrenModelNodes(col);

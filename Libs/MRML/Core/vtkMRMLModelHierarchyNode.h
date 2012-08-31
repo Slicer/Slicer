@@ -92,7 +92,7 @@ public:
 
   /// 
   /// Get the first parent node in hierarchy which is not expanded
-  vtkMRMLModelHierarchyNode* GetUnExpandedParentNode();
+  vtkMRMLModelHierarchyNode* GetCollapsedParentNode();
   
   /// 
   /// Find all child model nodes in the hierarchy

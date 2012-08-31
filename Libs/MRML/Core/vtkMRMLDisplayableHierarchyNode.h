@@ -98,8 +98,8 @@ public:
   vtkSetMacro(Expanded, int);
 
   /// 
-  /// Get the first parent node in hierarchy which is not expanded
-  vtkMRMLDisplayableHierarchyNode* GetUnExpandedParentNode();
+  /// Get the top parent node in the hierarchy which is not expanded
+  vtkMRMLDisplayableHierarchyNode* GetCollapsedParentNode();
   
   /// 
   /// Find all child displayable nodes in the hierarchy

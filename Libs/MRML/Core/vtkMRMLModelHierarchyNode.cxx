@@ -157,10 +157,10 @@ void vtkMRMLModelHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetUnExpandedParentNode()
+vtkMRMLModelHierarchyNode* vtkMRMLModelHierarchyNode::GetCollapsedParentNode()
 {
   vtkMRMLModelHierarchyNode *node = NULL;
-  vtkMRMLDisplayableHierarchyNode *dhnode = Superclass::GetUnExpandedParentNode();
+  vtkMRMLDisplayableHierarchyNode *dhnode = Superclass::GetCollapsedParentNode();
   if (dhnode != NULL)
     {
     node = vtkMRMLModelHierarchyNode::SafeDownCast(dhnode);

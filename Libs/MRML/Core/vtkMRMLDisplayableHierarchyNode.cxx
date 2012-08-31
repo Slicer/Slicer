@@ -223,24 +223,31 @@ void vtkMRMLDisplayableHierarchyNode::ProcessMRMLEvents ( vtkObject *caller,
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetUnExpandedParentNode()
+vtkMRMLDisplayableHierarchyNode* vtkMRMLDisplayableHierarchyNode::GetCollapsedParentNode()
 {
+  // initialize the return node to null, if there are no collapsed hierarchy
+  // nodes, returns null
   vtkMRMLDisplayableHierarchyNode *node = NULL;
+
+  // build up a vector of collapsed parents
+  std::vector< vtkMRMLDisplayableHierarchyNode * > collapsedParents;
   if (!this->GetExpanded()) 
     {
-    node = this;
+    collapsedParents.push_back(this);
     }
-  else 
+  vtkMRMLDisplayableHierarchyNode *parent = vtkMRMLDisplayableHierarchyNode::SafeDownCast(this->GetParentNode());
+  while (parent)
     {
-    vtkMRMLDisplayableHierarchyNode *parent = vtkMRMLDisplayableHierarchyNode::SafeDownCast(this->GetParentNode());
-    if (parent)
+    if (!parent->GetExpanded())
       {
-      node =  parent->GetUnExpandedParentNode();
+      collapsedParents.push_back(parent);
       }
-    else
-      {
-      node =  NULL;
-      }
+    parent = vtkMRMLDisplayableHierarchyNode::SafeDownCast(parent->GetParentNode());
+    }
+  // return the last collapsed parent
+  if (collapsedParents.size() != 0)
+    {
+    node = collapsedParents.back();
     }
   return node;
 }

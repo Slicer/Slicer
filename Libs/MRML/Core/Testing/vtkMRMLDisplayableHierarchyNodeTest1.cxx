@@ -109,7 +109,7 @@ int TestBasics()
   TEST_SET_GET_BOOLEAN(node1, Expanded);
 
   vtkSmartPointer<vtkMRMLDisplayableHierarchyNode> pnode1 =
-    node1->GetUnExpandedParentNode();
+    node1->GetCollapsedParentNode();
   std::cout << "GetUnexpandedParentNode = "
             << (pnode1 == NULL ? "NULL" : "not null")
             << std::endl;
