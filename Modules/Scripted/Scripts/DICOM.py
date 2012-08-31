@@ -113,6 +113,7 @@ class DICOMWidget:
 
     # state management for compressing events
     self.resumeModelRequested = False
+    self.updateRecentActivityRequested = False
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -200,7 +201,6 @@ class DICOMWidget:
     #   in the CTK code to avoid the findChildren calls
     #
     self.dicomApp = ctk.ctkDICOMAppWidget()
-    self.dicomFrame.layout().addWidget(self.dicomApp)
     if self.hideSearch:
       # hide the search options - doesn't work yet and doesn't fit 
       # well into the frame
@@ -213,8 +213,6 @@ class DICOMWidget:
     self.showBrowser = qt.QPushButton('Show DICOM Browser')
     self.dicomFrame.layout().addWidget(self.showBrowser)
     self.showBrowser.connect('clicked()', self.detailsPopup.open)
-
-    self.dicomFrame.layout().addStretch(1)
 
     # make the tree view a bit bigger
     self.tree.setMinimumHeight(250)
@@ -246,6 +244,17 @@ class DICOMWidget:
     self.sendButton.enabled = False
     self.sendButton.connect('clicked()', self.onSendClicked)
 
+    # the recent activity frame
+    self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
+    self.activityFrame.setLayout(qt.QVBoxLayout())
+    self.activityFrame.setText("Recent DICOM Activity")
+    self.layout.addWidget(self.activityFrame)
+
+    self.recentActivity = DICOMLib.DICOMRecentActivityWidget(self.activityFrame,detailsPopup=self.detailsPopup)
+    self.activityFrame.layout().addWidget(self.recentActivity.widget)
+    self.requestUpdateRecentActivity()
+
+
     # Add spacer to layout
     self.layout.addStretch(1)
 
@@ -258,6 +267,21 @@ class DICOMWidget:
     """
     self.dicomApp.suspendModel()
     self.requestResumeModel()
+    self.requestUpdateRecentActivity()
+
+  def requestUpdateRecentActivity(self):
+    """This method serves to compress the requests for updating
+    the recent activity widget since it is time consuming and there can be
+    many of them coming in a rapid sequence when the 
+    database is active"""
+    if self.updateRecentActivityRequested:
+      return
+    self.updateRecentActivityRequested = True
+    qt.QTimer.singleShot(500, self.onUpateRecentActivityRequestTimeout)
+
+  def onUpateRecentActivityRequestTimeout(self):
+    self.recentActivity.update()
+    self.updateRecentActivityRequested = False
 
   def requestResumeModel(self):
     """This method serves to compress the requests for resuming

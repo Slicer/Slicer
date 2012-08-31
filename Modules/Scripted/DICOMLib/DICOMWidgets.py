@@ -397,7 +397,6 @@ class DICOMLoadableTable(object):
       item = self.widget.item(row,0)
       self.loadables[row].selected = (item.checkState() != 0)
 
-
 class DICOMHeaderWidget(object):
   """Implement the Qt code for a table of
   DICOM header values
@@ -407,8 +406,6 @@ class DICOMHeaderWidget(object):
 
   def __init__(self,parent):
     self.widget = qt.QTableWidget(parent,width=350,height=300)
-    self.widget.setMinimumHeight(height)
-    self.widget.setMinimumWidth(width)
     self.items = []
     self.setHeader(None)
 
@@ -442,6 +439,115 @@ class DICOMHeaderWidget(object):
       self.items.append(item)
       row += 1
 
+class DICOMRecentActivityWidget(object):
+  """Display the recent activity of the slicer DICOM database
+  """
+
+  def __init__(self,parent,dicomDatabase=None,detailsPopup=None):
+    if dicomDatabase:
+      self.dicomDatabase = dicomDatabase
+    else:
+      self.dicomDatabase = slicer.dicomDatabase
+    self.detailsPopup = detailsPopup
+    self.recentSeries = []
+    self.widget = qt.QWidget(parent)
+    self.widget.name = 'recentActivityWidget'
+    self.layout = qt.QVBoxLayout()
+    self.widget.setLayout(self.layout)
+
+    self.statusLabel = qt.QLabel(self.widget)
+    self.layout.addWidget(self.statusLabel)
+    self.statusLabel.text = 'No inserts in the past hour'
+
+    self.scrollArea = qt.QScrollArea()
+    self.layout.addWidget(self.scrollArea)
+    self.listWidget = qt.QListWidget()
+    self.listWidget.name = 'recentActivityListWidget'
+    self.scrollArea.setWidget(self.listWidget)
+    self.scrollArea.setWidgetResizable(True)
+    self.items = []
+    self.listWidget.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
+    self.listWidget.connect('activated(QModelIndex)', self.onActivated)
+
+    self.refreshButton = qt.QPushButton(self.widget)
+    self.layout.addWidget(self.refreshButton)
+    self.refreshButton.text = 'Refresh'
+    self.refreshButton.connect('clicked()', self.update)
+
+    self.tags = {}
+    self.tags['seriesDescription'] = "0008,103e"
+    self.tags['patientName'] = "0010,0010"
+
+  class seriesWithTime(object):
+    """helper class to track series and time..."""
+    def __init__(self,series,elapsedSinceInsert,insertDateTime,text):
+      self.series = series
+      self.elapsedSinceInsert = elapsedSinceInsert
+      self.insertDateTime = insertDateTime
+      self.text = text
+
+  def compareSeriesTimes(self,a,b):
+    if a.elapsedSinceInsert > b.elapsedSinceInsert:
+      return 1
+    else:
+      return -1
+
+  def recentSeriesList(self):
+    """Return a list of series sorted by insert time
+    (counting backwards from today)
+    Assume that first insert time of series is valid 
+    for entire series (should be close enough for this purpose)
+    """
+    recentSeries = []
+    now = qt.QDateTime.currentDateTime()
+    for patient in self.dicomDatabase.patients():
+      for study in self.dicomDatabase.studiesForPatient(patient):
+        for series in self.dicomDatabase.seriesForStudy(study):
+          files = self.dicomDatabase.filesForSeries(series)
+          if len(files) > 0:
+            instance = self.dicomDatabase.instanceForFile(files[0])
+            seriesTime = self.dicomDatabase.insertDateTimeForInstance(instance)
+            patientName = self.dicomDatabase.instanceValue(instance,self.tags['patientName'])
+            seriesDescription = self.dicomDatabase.instanceValue(instance,self.tags['seriesDescription'])
+            elapsed = seriesTime.secsTo(now) 
+            secondsPerHour = 60 * 60
+            secondsPerDay = secondsPerHour * 24
+            if elapsed < secondsPerDay:
+              timeNote = 'Today'
+            elif elapsed < 7 * secondsPerDay:
+              timeNote = 'Past Week'
+            elif elapsed < 30 * 7 * secondsPerDay:
+              timeNote = 'Past Month'
+            text = "%s: %s for %s" % (timeNote, seriesDescription, patientName)
+            recentSeries.append( self.seriesWithTime(series, elapsed, seriesTime, text) )
+    recentSeries.sort(self.compareSeriesTimes)
+    return recentSeries
+
+
+  def update(self):
+    """Load the table widget with header values for the file
+    """
+    self.listWidget.clear()
+    self.items = []
+    secondsPerHour = 60 * 60
+    insertsPastHour = 0
+    self.recentSeries = self.recentSeriesList()
+    for series in self.recentSeries:
+      item = qt.QListWidgetItem(series.text,self.listWidget)
+      self.items.append(item)
+      if series.elapsedSinceInsert < secondsPerHour:
+        insertsPastHour += 1
+    self.statusLabel.text = '%d series added to database in the past hour' % insertsPastHour
+    statusMessage = "Most recent DICOM Database addition: %s" % self.recentSeries[0].insertDateTime.toString()
+    slicer.util.showStatusMessage(statusMessage, 10000)
+
+  def onActivated(self,modelIndex):
+    print('selected row %d' % modelIndex.row())
+    print(self.recentSeries[modelIndex.row()].text)
+    series = self.recentSeries[modelIndex.row()]
+    if self.detailsPopup:
+      self.detailsPopup.open()
+      self.detailsPopup.offerLoadables(series.series,"Series")
 
 class DICOMExportDialog(object):
   """Implement the Qt dialog for selecting slicer data to be exported
