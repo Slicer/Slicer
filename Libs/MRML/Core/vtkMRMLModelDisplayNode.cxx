@@ -13,9 +13,9 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 #include "vtkMRMLModelDisplayNode.h"
 
-#include "vtkObjectFactory.h"
+#include <vtkCommand.h>
+#include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-
 
 vtkCxxSetObjectMacro(vtkMRMLModelDisplayNode, PolyData, vtkPolyData)
 
@@ -43,3 +43,15 @@ void vtkMRMLModelDisplayNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+                                                unsigned long event,
+                                                void *callData )
+{
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  if (event ==  vtkCommand::ModifiedEvent)
+    {
+    this->UpdatePolyDataPipeline();
+    }
+}

@@ -37,24 +37,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance() = 0;
-  
-  /// 
-  /// Gets PlyData converted from the real data in the node
-  virtual vtkPolyData* GetPolyData() {return NULL;}
-  
-  /// 
-  /// Gets ImageData converted from the real data in the node
-  /// The image is the direct output of the pipeline, it might not be
-  /// up-to-date. You can call Update() on the returned vtkImageData or use
-  /// GetUpToDateImageData() instead.
-  /// \sa GetUpToDateImageData()
-  virtual vtkImageData* GetImageData() {return NULL;}
-
-  /// Gets ImageData and ensure it's up-to-date by calling Update() on the
-  /// pipeline.
-  /// Please note that it can be slow, depending on the filters in
-  /// the pipeline and the dimension of the input data.
-  vtkImageData* GetUpToDateImageData();
 
   ///
   /// Returns the first displayable node that is associated to this display node
@@ -62,14 +44,6 @@ public:
   /// displayable node.
   virtual vtkMRMLDisplayableNode* GetDisplayableNode();
 
-  /// 
-  /// Update the pipeline based on this node attributes
-  virtual void UpdatePolyDataPipeline() {}
- 
-  /// 
-  /// Update the pipeline based on this node attributes
-  virtual void UpdateImageDataPipeline() {}
- 
   /// 
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);

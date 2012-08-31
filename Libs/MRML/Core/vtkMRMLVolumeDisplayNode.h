@@ -66,7 +66,18 @@ public:
   virtual vtkImageData* GetBackgroundImageData();
 
   /// Returns the output of the pipeline if there is a not a null input.
+  /// Gets ImageData converted from the real data in the node
+  /// The image is the direct output of the pipeline, it might not be
+  /// up-to-date. You can call Update() on the returned vtkImageData or use
+  /// GetUpToDateImageData() instead.
+  /// \sa GetUpToDateImageData()
   virtual vtkImageData* GetImageData();
+
+  /// Gets ImageData and ensure it's up-to-date by calling Update() on the
+  /// pipeline.
+  /// Please note that it can be slow, depending on the filters in
+  /// the pipeline and the dimension of the input data.
+  vtkImageData* GetUpToDateImageData();
 
   /// Set the pipeline input. Internally calls ConnectInputImageDataToPipeline to be
   /// reimplemented.

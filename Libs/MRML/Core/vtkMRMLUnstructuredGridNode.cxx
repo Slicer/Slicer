@@ -107,7 +107,7 @@ void vtkMRMLUnstructuredGridNode::UpdateScene(vtkMRMLScene *scene)
     {
     // set input/output to/from display pipeline
     node->SetUnstructuredGrid(this->GetUnstructuredGrid());
-    this->SetAndObservePolyData(node->GetPolyData());
+    //this->SetAndObservePolyData(node->GetPolyData());
     }
 }
 

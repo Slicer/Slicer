@@ -138,7 +138,7 @@ void vtkMRMLFiberBundleDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   Superclass::ProcessMRMLEvents(caller, event, callData);
 
   vtkMRMLFiberBundleNode *node = vtkMRMLFiberBundleNode::SafeDownCast(caller);
-  if (node && (event == vtkMRMLDisplayableNode::PolyDataModifiedEvent))
+  if (node && (event == vtkMRMLModelNode::PolyDataModifiedEvent))
   {
     this->SetPolyData(node->GetFilteredPolyData());
   }
@@ -216,7 +216,7 @@ void vtkMRMLFiberBundleDisplayNode::SetAndObserveDiffusionTensorDisplayPropertie
   //so we emit the event that the polydata has been modified
   if (cnode && this->PolyData)
     {
-    this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+    this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
     }
 }
 

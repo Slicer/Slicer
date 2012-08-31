@@ -609,10 +609,10 @@ void vtkMRMLDisplayNode::SetColorNodeInternal(vtkMRMLColorNode* vtkNotUsed(newCo
 
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
-  Superclass::ProcessMRMLEvents(caller, event, callData);
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
 
   if (this->TextureImageData != NULL && this->TextureImageData == vtkImageData::SafeDownCast(caller) &&
     event ==  vtkCommand::ModifiedEvent)
@@ -628,27 +628,6 @@ void vtkMRMLDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     }
-  if (event ==  vtkCommand::ModifiedEvent)
-    {
-    this->UpdatePolyDataPipeline();
-    this->UpdateImageDataPipeline();
-    if (this != caller) 
-      {
-      this->Modified();
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
-vtkImageData* vtkMRMLDisplayNode::GetUpToDateImageData()
-{
-  vtkImageData* imageData = this->GetImageData();
-  if (!imageData)
-    {
-    return NULL;
-    }
-  imageData->Update();
-  return imageData;
 }
 
 //---------------------------------------------------------------------------

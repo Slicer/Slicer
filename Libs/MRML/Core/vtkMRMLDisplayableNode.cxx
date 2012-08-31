@@ -13,37 +13,31 @@ Version:   $Revision: 1.3 $
 =========================================================================auto=*/
 
 // MRML includes
-#include "vtkEventBroker.h"
+#include "vtkMRMLDisplayableNode.h"
 #include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 // when change the display node, update the scalars
-#include "vtkMRMLVolumeNode.h"
+//#include "vtkMRMLVolumeNode.h"
 
 // VTK includes
 #include <vtkCallbackCommand.h>
-#include <vtkPolyData.h>
 #include <vtkMath.h>
 
 // STD includes
 #include <algorithm>
 #include <cassert>
-
-//----------------------------------------------------------------------------
-vtkCxxSetObjectMacro(vtkMRMLDisplayableNode, PolyData, vtkPolyData)
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
-  this->PolyData = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::~vtkMRMLDisplayableNode()
 {
   this->RemoveAllDisplayNodeIDs();
-
-  this->SetAndObservePolyData(NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -131,11 +125,6 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
     this->SetAndObserveNthDisplayNodeID(i, node->GetNthDisplayNodeID(i));
     }
 
-  if (node->PolyData)
-    {
-    this->SetPolyData(node->PolyData);
-    }
-
   this->EndModify(disabledModify);
 }
 
@@ -148,11 +137,6 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "DisplayNodeIDs[" << i << "]: " <<
       this->DisplayNodeIDs[i] << " -> " << this->DisplayNodes[i] << "\n";
-    }
-  os << indent << "\nPoly Data:\n";
-  if (this->PolyData)
-    {
-    this->PolyData->PrintSelf(os, indent.GetNextIndent());
     }
 }
 
@@ -357,32 +341,6 @@ bool vtkMRMLDisplayableNode::HasDisplayNodeID(const char* displayNodeID)
                    std::string(displayNodeID)) != this->DisplayNodeIDs.end();
 }
 
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::SetAndObservePolyData(vtkPolyData *polyData)
-{
-  if (this->PolyData != NULL)
-    {
-    vtkEventBroker::GetInstance()->RemoveObservations (
-      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
-
-  unsigned long mtime1, mtime2;
-  mtime1 = this->GetMTime();
-  this->SetPolyData(polyData);
-  mtime2 = this->GetMTime();
-
-  if (this->PolyData != NULL)
-    {
-    vtkEventBroker::GetInstance()->AddObservation(
-      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
-    }
-
-  if (mtime1 != mtime2)
-    {
-    this->InvokeEvent( vtkMRMLDisplayableNode::PolyDataModifiedEvent , this);
-    }
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event,
@@ -397,11 +355,6 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
       {
       this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, dnode);
       }
-    }
-  if (this->PolyData && this->PolyData == vtkPolyData::SafeDownCast(caller) &&
-    event ==  vtkCommand::ModifiedEvent)
-    {
-    this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, NULL);
     }
   return;
 }
@@ -463,9 +416,3 @@ void vtkMRMLDisplayableNode::GetRASBounds(double bounds[6])
   vtkMath::UninitializeBounds(bounds);
 }
 
-//---------------------------------------------------------------------------
-bool vtkMRMLDisplayableNode::GetModifiedSinceRead()
-{
-  return this->Superclass::GetModifiedSinceRead() ||
-    (this->PolyData && this->PolyData->GetMTime() > this->GetStoredTime());
-}

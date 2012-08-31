@@ -24,6 +24,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
@@ -446,7 +447,7 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
           break;
           }
       case vtkCommand::ModifiedEvent:
-      case vtkMRMLDisplayableNode::PolyDataModifiedEvent:
+      case vtkMRMLModelNode::PolyDataModifiedEvent:
         requestRender = this->OnMRMLDisplayableModelNodeModifiedEvent(
           displayableNode);
         break;
@@ -612,41 +613,23 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 //---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* node)const
 {
-  if (!node)
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
+  if (!modelNode)
     {
     return false;
     }
-  else if (node->GetPolyData())
-    {
-    return true;
-    }
-  else
-    {
-    int ndnodes = node->GetNumberOfDisplayNodes();
-    for (int i=0; i<ndnodes; i++)
-      {
-      vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);
-      if (dnode && dnode->GetPolyData())
-        {
-        return true;
-        }
-      }
-    }
-  return false;
+  return modelNode->GetPolyData() ? true : false;
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node)const
 {
-  // TODO: should probably check the type of the display node instead
-  if (node && node->GetPolyData())
+  vtkMRMLModelDisplayNode* modelNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
+  if (!modelNode)
     {
-    return true;
+    return false;
     }
-  else
-    {
-    return this->IsModelDisplayable(node ? node->GetDisplayableNode() : 0);
-    }
+  return modelNode->GetPolyData() ? true : false;
 }
 
 //---------------------------------------------------------------------------
@@ -809,35 +792,45 @@ void vtkMRMLModelDisplayableManager::UpdateModifiedModel(vtkMRMLDisplayableNode 
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode *model)
+void vtkMRMLModelDisplayableManager
+::UpdateModelPolyData(vtkMRMLDisplayableNode *displayableNode)
 {
-  std::vector< vtkMRMLDisplayNode *> displayNodes = model->GetDisplayNodes();
-  vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(model);
+  std::vector< vtkMRMLDisplayNode *> displayNodes = displayableNode->GetDisplayNodes();
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(displayableNode);
+  vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(displayableNode);
+  vtkMRMLModelNode *hierarchyModelDisplayNode =
+    vtkMRMLModelNode::SafeDownCast(hdnode);
 
   for (unsigned int i=0; i<displayNodes.size(); i++)
     {
-    vtkMRMLDisplayNode *modelDisplayNode = displayNodes[i];
-    if (modelDisplayNode == NULL)
+    vtkMRMLDisplayNode *displayNode = displayNodes[i];
+    vtkMRMLModelDisplayNode *modelDisplayNode =
+      vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+
+    if (displayNode == NULL)
       {
       continue;
       }
+
     vtkProp3D* prop = 0;
     bool hasPolyData = true;
 
-    int clipping = modelDisplayNode->GetClipping();
-    int visibility = modelDisplayNode->GetVisibility();
-    vtkPolyData *polyData = modelDisplayNode->GetPolyData();
+    int clipping = displayNode->GetClipping();
+    int visibility = displayNode->GetVisibility();
+    vtkPolyData *polyData =
+      modelDisplayNode ? modelDisplayNode->GetPolyData() : NULL;
 
     if (hdnode)
       {
       clipping = hdnode->GetClipping();
       //visibility = hdnode->GetVisibility();
-      polyData = hdnode->GetPolyData();
+      polyData = hierarchyModelDisplayNode ?
+        hierarchyModelDisplayNode->GetPolyData() : NULL;
       }
     // hierarchy display nodes may not have poly data pointer
     if (polyData == 0)
       {
-      polyData = model->GetPolyData();
+      polyData = modelNode ? modelNode->GetPolyData() : NULL;
       }
     if (polyData == 0)
       {
@@ -882,7 +875,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
             mapper->SetInput(polyData);
             }
           }
-        vtkMRMLTransformNode* tnode = model->GetParentTransformNode();
+        vtkMRMLTransformNode* tnode = displayableNode->GetParentTransformNode();
         // clipped model could be transformed
         if (clipping == 0 || tnode == 0 || !tnode->IsLinear())
           {
@@ -897,7 +890,7 @@ void vtkMRMLModelDisplayableManager::UpdateModelPolyData(vtkMRMLDisplayableNode 
       {
       if (this->Internal->ClippingOn && modelDisplayNode != 0 && clipping)
         {
-        clipper = this->CreateTransformedClipper(model);
+        clipper = this->CreateTransformedClipper(displayableNode);
         }
 
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
@@ -970,11 +963,11 @@ void vtkMRMLModelDisplayableManager::UpdateModel(vtkMRMLDisplayableNode *model)
   vtkEventBroker *broker = vtkEventBroker::GetInstance();
   std::vector< vtkObservation *> observations;
   // observe polydata
-  observations = broker->GetObservations(model, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+  observations = broker->GetObservations(model, vtkMRMLModelNode::PolyDataModifiedEvent,
                                          this, this->GetMRMLNodesCallbackCommand());
   if (observations.size() == 0)
     {
-    broker->AddObservation(model, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+    broker->AddObservation(model, vtkMRMLModelNode::PolyDataModifiedEvent,
                            this, this->GetMRMLNodesCallbackCommand());
     this->Internal->DisplayableNodes[model->GetID()] = model;
     }
@@ -1281,7 +1274,7 @@ void vtkMRMLModelDisplayableManager::RemoveDisplayableNodeObservers(vtkMRMLDispl
   if (model != 0)
     {
     observations = broker->GetObservations(
-      model, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
+      model, vtkMRMLModelNode::PolyDataModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
     broker->RemoveObservations(observations);
     observations = broker->GetObservations(
       model, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, this->GetMRMLNodesCallbackCommand() );
@@ -1631,7 +1624,8 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
         vtkDebugMacro("Checking model " << modelIter->first.c_str() << "'s polydata");
         if (modelIter->second != 0)
           {
-          if (modelIter->second->GetPolyData() == polyData)
+          if (vtkMRMLModelNode::SafeDownCast(modelIter->second) &&
+              vtkMRMLModelNode::SafeDownCast(modelIter->second)->GetPolyData() == polyData)
             {
             vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
             this->Internal->PickedNodeID = modelIter->first;

@@ -22,7 +22,6 @@
 /// In a Model-View-Controller design pattern, the displayable node is the
 /// model. The display nodes are the views of the model.
 ///
-/// TODO: Remove Polydata from displayable node.
 /// TBD: Check support for a display node to be simultaneously referenced by
 /// different displayable nodes.
 #ifndef __vtkMRMLDisplayableNode_h
@@ -31,9 +30,6 @@
 // MRML includes
 #include "vtkMRMLStorableNode.h"
 class vtkMRMLDisplayNode;
-
-// VTK includes
-class vtkPolyData;
 
 // STD includes
 #include <vector>
@@ -163,12 +159,6 @@ public:
   const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
 
   /// 
-  /// Set and observe poly data for this model
-  vtkGetObjectMacro(PolyData, vtkPolyData);
-  virtual void SetAndObservePolyData(vtkPolyData *PolyData);
-
-
-  /// 
   /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
@@ -182,16 +172,9 @@ public:
   /// has not yet any associated display node in the scene, then
   /// DisplayModifiedEvent is not fired until found for the first time in
   /// the scene, e.g. Get(Nth)DisplayNode(), UpdateScene()...
-  /// PolyDataModifiedEvent is fired when PolyData is changed.
-  /// While it is possible for the subclasses to fire PolyDataModifiedEvent
-  /// without modifying the polydata, it is not recommended to do so as it
-  /// doesn't mark the polydata as modified, which my result in an incorrect
-  /// return value for GetModifiedSinceRead()
-  /// \sa GetModifiedSinceRead()
   enum
     {
-      DisplayModifiedEvent = 17000,
-      PolyDataModifiedEvent = 17001
+    DisplayModifiedEvent = 17000,
     };
 
   /// Create and observe default display node(s)
@@ -209,15 +192,6 @@ public:
 
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
-
-  /// Reimplemented to take into account the modified time of the polydata.
-  /// Returns true if the node (default behavior) or the polydata are modified
-  /// since read/written.
-  /// Note: The MTime of the polydata is used to know if it has been modified.
-  /// So if you invoke PolyDataModifiedEvent without calling Modified() on the
-  /// polydata, GetModifiedSinceRead() won't return true.
-  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
-  virtual bool GetModifiedSinceRead();
 
  protected:
   vtkMRMLDisplayableNode();
@@ -240,11 +214,6 @@ public:
   /// Called when a node is added (list size increased). By default it emits
   /// the DisplayModified event.
   virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
-
-  virtual void SetPolyData(vtkPolyData* polyData);
-
-  /// Data
-  vtkPolyData *PolyData;
 
   ///
   /// List of display node IDs.

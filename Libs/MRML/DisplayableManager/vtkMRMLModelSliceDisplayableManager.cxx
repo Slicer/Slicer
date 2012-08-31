@@ -24,6 +24,7 @@
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLModelDisplayNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLSliceCompositeNode.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
@@ -399,11 +400,11 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
                             this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
 
-  observations = broker->GetObservations(node, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+  observations = broker->GetObservations(node, vtkMRMLModelNode::PolyDataModifiedEvent,
                                           this->External, this->External->GetMRMLNodesCallbackCommand() );
   if (observations.size() == 0)
     {
-    broker->AddObservation(node, vtkMRMLDisplayableNode::PolyDataModifiedEvent,
+    broker->AddObservation(node, vtkMRMLModelNode::PolyDataModifiedEvent,
                             this->External, this->External->GetMRMLNodesCallbackCommand() );
     }
 }
@@ -415,7 +416,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
   std::vector< vtkObservation* > observations;
   observations = broker->GetObservations(
-    node, vtkMRMLDisplayableNode::PolyDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
+    node, vtkMRMLModelNode::PolyDataModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
   broker->RemoveObservations(observations);
   observations = broker->GetObservations(
     node, vtkMRMLDisplayableNode::DisplayModifiedEvent, this->External, this->External->GetMRMLNodesCallbackCommand() );
@@ -596,7 +597,7 @@ void vtkMRMLModelSliceDisplayableManager
       this->RequestRender();
       }
     else if ( (event == vtkMRMLDisplayableNode::TransformModifiedEvent)
-             || (event == vtkMRMLDisplayableNode::PolyDataModifiedEvent))
+             || (event == vtkMRMLModelNode::PolyDataModifiedEvent))
       {
       this->Internal->UpdateDisplayableTransforms(displayableNode);
       this->RequestRender();

@@ -508,20 +508,6 @@
       std::cerr << "ERROR getting 0th display node" << std::endl;       \
       return EXIT_FAILURE;                                              \
       }                                                                 \
-    vtkPolyData *pdata = node1->GetPolyData();                          \
-    if (pdata != NULL)                                                  \
-      {                                                                 \
-      std::cerr << "ERROR getting null polydata" << std::endl;          \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    pdata = vtkPolyData::New();                                         \
-    node1->SetAndObservePolyData(pdata);                                \
-    if (node1->GetPolyData() != pdata)                                  \
-      {                                                                 \
-      std::cerr << "ERROR getting polydata" << std::endl;               \
-      return EXIT_FAILURE;                                              \
-      }                                                                 \
-    pdata->Delete();                                                    \
   }
 
 // ----------------------------------------------------------------------------
@@ -530,22 +516,12 @@
 #define EXERCISE_BASIC_DISPLAY_MRML_METHODS( className, node )   \
   {                                                     \
     EXERCISE_BASIC_MRML_METHODS( className, node);   \
-    if (node->GetPolyData() != NULL)                    \
-      {                                                 \
-      std::cout << "Warning: After "#className << " node created, polydata is not null" << std::endl;  \
-      }                                                         \
-    if (node->GetImageData() != NULL)                    \
-      {                                                 \
-      std::cout << "Warning: After "#className << " node create, image data is not null" << std::endl;  \
-      }                                                         \
     vtkMRMLDisplayableNode *dnode = node->GetDisplayableNode(); \
     if (dnode != NULL)                                          \
       {                                                 \
       std::cerr << "Error getting null displayable node" << std::endl;  \
       return EXIT_FAILURE;                                      \
       }                                                         \
-    node->UpdatePolyDataPipeline();                             \
-    node->UpdateImageDataPipeline();                            \
     node->SetAndObserveTextureImageData(NULL);                  \
     if (node->GetTextureImageData() != NULL)                    \
       {                                                                 \

@@ -11,25 +11,31 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include "vtkMatrix4x4.h"
-
+// MRML includes
+#include "vtkEventBroker.h"
+#include "vtkMRMLFreeSurferProceduralColorNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLModelDisplayNode.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
 
-#include "vtkPointData.h"
-#include "vtkCellData.h"
-#include "vtkFloatArray.h"
-#include "vtkTransformPolyDataFilter.h"
+// VTK includes
+#include <vtkCallbackCommand.h>
+#include <vtkCellData.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkFloatArray.h>
+#include <vtkMatrix4x4.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkTransformPolyDataFilter.h>
 
-#include "vtkMRMLFreeSurferProceduralColorNode.h"
-#include "vtkColorTransferFunction.h"
+// STD includes
+#include <sstream>
+
+//----------------------------------------------------------------------------
+vtkCxxSetObjectMacro(vtkMRMLModelNode, PolyData, vtkPolyData)
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLModelNode);
@@ -38,22 +44,31 @@ vtkMRMLNodeNewMacro(vtkMRMLModelNode);
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::vtkMRMLModelNode()
 {
+  this->PolyData = NULL;
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLModelNode::~vtkMRMLModelNode()
 {
+  this->SetAndObservePolyData(NULL);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
 {
-  Superclass::Copy(anode);
+  int disabledModify = this->StartModify();
+  this->Superclass::Copy(anode);
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(anode);
+  if (modelNode)
+    {
+    this->SetPolyData(modelNode->PolyData);
+    }
+  this->EndModify(disabledModify);
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
 
@@ -63,19 +78,20 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
     {
     for (int i=0; i<this->GetNumberOfDisplayNodes(); ++i)
       {
-      vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(i));
+      vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
+        this->GetNthDisplayNode(i));
       if (dnode != NULL)
         {
         dnode->SetPolyData(this->GetPolyData());
         }
       }
-  }
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-  return;
+    this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, NULL);
+    }
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode() 
+vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode()
 {
   return vtkMRMLModelDisplayNode::SafeDownCast(this->GetDisplayNode());
 }
@@ -83,23 +99,54 @@ vtkMRMLModelDisplayNode* vtkMRMLModelNode::GetModelDisplayNode()
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
+  os << indent << "\nPoly Data:";
+  if (this->PolyData)
+    {
+    os << "\n";
+    this->PolyData->PrintSelf(os, indent.GetNextIndent());
+    }
+  else
+    {
+    os << " none\n";
+    }
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
 {
   int ndisp = this->GetNumberOfDisplayNodes();
-  for (int n=0; n<ndisp; n++) 
+  for (int n=0; n<ndisp; n++)
     {
-    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(this->GetNthDisplayNode(n));
+    vtkMRMLModelDisplayNode *dnode = vtkMRMLModelDisplayNode::SafeDownCast(
+      this->GetNthDisplayNode(n));
     if (dnode)
       {
       dnode->SetPolyData(polyData);
       }
     }
-  Superclass::SetAndObservePolyData(polyData);
+
+  if (this->PolyData != NULL)
+    {
+    vtkEventBroker::GetInstance()->RemoveObservations (
+      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  unsigned long mtime1, mtime2;
+  mtime1 = this->GetMTime();
+  this->SetPolyData(polyData);
+  mtime2 = this->GetMTime();
+
+  if (this->PolyData != NULL)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(
+      this->PolyData, vtkCommand::ModifiedEvent, this, this->MRMLCallbackCommand );
+    }
+
+  if (mtime1 != mtime2)
+    {
+    this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -756,4 +803,11 @@ void vtkMRMLModelNode::OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode)
     modelDisplayNode->SetPolyData(this->GetPolyData());
     }
   this->Superclass::OnDisplayNodeAdded(dnode);
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLModelNode::GetModifiedSinceRead()
+{
+  return this->Superclass::GetModifiedSinceRead() ||
+    (this->PolyData && this->PolyData->GetMTime() > this->GetStoredTime());
 }

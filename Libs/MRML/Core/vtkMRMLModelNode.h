@@ -61,6 +61,22 @@ public:
   vtkMRMLModelDisplayNode* GetModelDisplayNode();
 
   /// 
+  /// Set and observe poly data for this model
+  vtkGetObjectMacro(PolyData, vtkPolyData);
+  virtual void SetAndObservePolyData(vtkPolyData *PolyData);
+
+  /// PolyDataModifiedEvent is fired when PolyData is changed.
+  /// While it is possible for the subclasses to fire PolyDataModifiedEvent
+  /// without modifying the polydata, it is not recommended to do so as it
+  /// doesn't mark the polydata as modified, which my result in an incorrect
+  /// return value for GetModifiedSinceRead()
+  /// \sa GetModifiedSinceRead()
+  enum
+    {
+      PolyDataModifiedEvent = 17001
+    };
+
+  /// 
   /// add an array to the polydata's point/cell data
   void AddPointScalars(vtkDataArray *array);
   void AddCellScalars(vtkDataArray *array);
@@ -100,8 +116,6 @@ public:
   /// Returns 1 on success, 0 on failure.
   /// Based on code from K. Teich, MGH
   int CompositeScalars(const char* backgroundName, const char* overlayName, float overlayMin, float overlayMax, int showOverlayPositive, int showOverlayNegative, int reverseOverlay);
-  
-  virtual void SetAndObservePolyData(vtkPolyData *PolyData);
 
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
@@ -110,6 +124,15 @@ public:
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+
+  /// Reimplemented to take into account the modified time of the polydata.
+  /// Returns true if the node (default behavior) or the polydata are modified
+  /// since read/written.
+  /// Note: The MTime of the polydata is used to know if it has been modified.
+  /// So if you invoke PolyDataModifiedEvent without calling Modified() on the
+  /// polydata, GetModifiedSinceRead() won't return true.
+  /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
+  virtual bool GetModifiedSinceRead();
 
 protected:
   vtkMRMLModelNode();
@@ -121,8 +144,10 @@ protected:
   /// to the new display node.
   virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
 
+  virtual void SetPolyData(vtkPolyData* polyData);
+
   /// Data
-  
+  vtkPolyData *PolyData;
 };
 
 #endif

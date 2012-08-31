@@ -19,7 +19,11 @@
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
 
+// MRML includes
 #include "vtkMRMLDisplayNode.h"
+
+// VTK includes
+class vtkPolyData;
 
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
@@ -46,11 +50,19 @@ public:
   vtkGetObjectMacro(PolyData, vtkPolyData);
   virtual void SetPolyData(vtkPolyData* polydata);
 
+  /// 
+  /// Update the pipeline based on this node attributes
+  virtual void UpdatePolyDataPipeline() {}
+
 protected:
   vtkMRMLModelDisplayNode();
   ~vtkMRMLModelDisplayNode();
   vtkMRMLModelDisplayNode(const vtkMRMLModelDisplayNode&);
   void operator=(const vtkMRMLModelDisplayNode&);
+
+  virtual void ProcessMRMLEvents(vtkObject *caller,
+                                 unsigned long event,
+                                 void *callData);
 
   vtkPolyData *PolyData;
 };

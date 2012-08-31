@@ -445,7 +445,7 @@ void vtkMRMLFiberBundleNode::SetSelectWithAnnotationNode(int _arg)
     this->SelectWithAnnotationNode = _arg;
     this->Modified();
     this->UpdateReferences();
-    this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+    this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
     }
   } 
 
@@ -468,7 +468,7 @@ void vtkMRMLFiberBundleNode::SetSelectionWithAnnotationNodeMode(int _arg)
 
     this->Modified();
     this->UpdateReferences();
-    this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+    this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
     }
 }
 
@@ -595,7 +595,7 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
       node->SetPolyData(this->GetFilteredPolyData());
     }
   }
-  this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+  this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
 }
 
 //----------------------------------------------------------------------------
@@ -643,7 +643,7 @@ void vtkMRMLFiberBundleNode::UpdateROISelection()
     }
    if (this->GetSelectWithAnnotationNode())
    {
-     this->InvokeEvent(vtkMRMLDisplayableNode::PolyDataModifiedEvent, this);
+     this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
    }
   }
 }

@@ -12,10 +12,13 @@ Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-
-
+// MRML includes
 #include "vtkMRMLVolumeDisplayNode.h"
 #include "vtkMRMLVolumeNode.h"
+
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkImageData.h>
 
 // Initialize static member that controls resampling -- 
 // old comment: "This offset will be changed to 0.5 from 0.0 per 2/8/2002 Slicer 
@@ -56,23 +59,34 @@ void vtkMRMLVolumeDisplayNode::Copy(vtkMRMLNode *anode)
 
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+                                                 unsigned long event,
+                                                 void *callData)
+{
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  if (event ==  vtkCommand::ModifiedEvent)
+    {
+    this->UpdateImageDataPipeline();
+    }
+}
+
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::UpdateScene(vtkMRMLScene *scene)
 {
-   Superclass::UpdateScene(scene);
+  this->Superclass::UpdateScene(scene);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::UpdateReferences()
 {
-   Superclass::UpdateReferences();
+  this->Superclass::UpdateReferences();
 }
 
 //---------------------------------------------------------------------------
@@ -127,15 +141,6 @@ void vtkMRMLVolumeDisplayNode::UpdateImageDataPipeline()
 {
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
-                                           void *callData )
-{
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-}
-
-
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeDisplayNode::SetDefaultColorMap()
 {
@@ -146,4 +151,16 @@ void vtkMRMLVolumeDisplayNode::SetDefaultColorMap()
 vtkMRMLVolumeNode* vtkMRMLVolumeDisplayNode::GetVolumeNode()
 {
   return vtkMRMLVolumeNode::SafeDownCast(this->GetDisplayableNode());
+}
+
+//----------------------------------------------------------------------------
+vtkImageData* vtkMRMLVolumeDisplayNode::GetUpToDateImageData()
+{
+  vtkImageData* imageData = this->GetImageData();
+  if (!imageData)
+    {
+    return NULL;
+    }
+  imageData->Update();
+  return imageData;
 }
