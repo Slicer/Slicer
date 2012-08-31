@@ -39,7 +39,7 @@ QStringList qSlicerTractographyFiducialSeedingModule::categories()const
 QString qSlicerTractographyFiducialSeedingModule::helpText()const
 {
   QString help =
-    "The Tractography Fiducial Seeding Module creates fiber tracts at specified seeding location. \n"
+    "The Tractography Interactive Seeding Module creates fiber tracts at specified seeding location. \n"
     "<a href=%1/Documentation/%2.%3/Modules/TractographyFiducialSeeding>%1/Documentation/%2.%3/Modules/TractographyFiducialSeeding</a>";
   return help.arg(this->slicerWikiUrl()).arg(Slicer_VERSION_MAJOR).arg(Slicer_VERSION_MINOR);
 }

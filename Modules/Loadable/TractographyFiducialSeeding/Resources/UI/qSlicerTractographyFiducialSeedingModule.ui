@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Tractography Fiducial Seeding</string>
+   <string>Tractography Interactive Seeding</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

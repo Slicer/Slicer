@@ -1,7 +1,7 @@
 
 #-----------------------------------------------------------------------------
 set(MODULE_NAME TractographyFiducialSeeding)
-set(MODULE_TITLE "Tractography Fiducial Seeding")
+set(MODULE_TITLE "Tractography Interactive Seeding")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
