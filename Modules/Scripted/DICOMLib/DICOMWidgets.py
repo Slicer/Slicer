@@ -465,7 +465,6 @@ class DICOMRecentActivityWidget(object):
     self.listWidget.name = 'recentActivityListWidget'
     self.scrollArea.setWidget(self.listWidget)
     self.scrollArea.setWidgetResizable(True)
-    self.items = []
     self.listWidget.setProperty('SH_ItemView_ActivateItemOnSingleClick', 1)
     self.listWidget.connect('activated(QModelIndex)', self.onActivated)
 
@@ -528,13 +527,11 @@ class DICOMRecentActivityWidget(object):
     """Load the table widget with header values for the file
     """
     self.listWidget.clear()
-    self.items = []
     secondsPerHour = 60 * 60
     insertsPastHour = 0
     self.recentSeries = self.recentSeriesList()
     for series in self.recentSeries:
-      item = qt.QListWidgetItem(series.text,self.listWidget)
-      self.items.append(item)
+      self.listWidget.addItem(series.text)
       if series.elapsedSinceInsert < secondsPerHour:
         insertsPastHour += 1
     self.statusLabel.text = '%d series added to database in the past hour' % insertsPastHour
