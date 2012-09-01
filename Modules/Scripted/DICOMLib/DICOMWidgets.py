@@ -538,8 +538,9 @@ class DICOMRecentActivityWidget(object):
       if series.elapsedSinceInsert < secondsPerHour:
         insertsPastHour += 1
     self.statusLabel.text = '%d series added to database in the past hour' % insertsPastHour
-    statusMessage = "Most recent DICOM Database addition: %s" % self.recentSeries[0].insertDateTime.toString()
-    slicer.util.showStatusMessage(statusMessage, 10000)
+    if len(self.recentSeries) > 0:
+      statusMessage = "Most recent DICOM Database addition: %s" % self.recentSeries[0].insertDateTime.toString()
+      slicer.util.showStatusMessage(statusMessage, 10000)
 
   def onActivated(self,modelIndex):
     print('selected row %d' % modelIndex.row())
