@@ -137,6 +137,9 @@ public:
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  /// Reset the clipping range just based on its position and focal point
+  void ResetClippingRange();
+
   enum Direction{
     Right = 0,
     Left = 1,

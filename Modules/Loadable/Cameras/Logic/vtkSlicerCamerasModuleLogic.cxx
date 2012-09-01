@@ -120,6 +120,7 @@ void vtkSlicerCamerasModuleLogic
         existingCameraWithSameName->SetViewUp(
           cameraNode->GetViewUp());
         // \tbd: Copy AppliedTransform ?
+        existingCameraWithSameName->ResetClippingRange();
         existingCameraWithSameName->EndModify(wasModifying);
         }
       }

@@ -11,22 +11,26 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-
+// MRML includes
 #include "vtkEventBroker.h"
 #include "vtkMRMLCameraNode.h"
+#include "vtkMRMLScene.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLViewNode.h"
-#include "vtkMRMLScene.h"
 
+// VTK includes
 #include <vtkCamera.h>
+#include <vtkCallbackCommand.h>
+#include <vtkObjectFactory.h>
 #include <vtkMath.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
+
+// STD includes
+#include <cassert>
+#include <sstream>
 
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, Camera, vtkCamera);
 vtkCxxSetObjectMacro(vtkMRMLCameraNode, AppliedTransform, vtkMatrix4x4);
@@ -232,8 +236,8 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
 
   Superclass::Copy(anode);
-  vtkMRMLCameraNode *node = (vtkMRMLCameraNode *) anode;
-
+  vtkMRMLCameraNode *node = vtkMRMLCameraNode::SafeDownCast(anode);
+  assert(node);
 
   this->SetPosition(node->GetPosition());
   this->SetFocalPoint(node->GetFocalPoint());
@@ -246,8 +250,10 @@ void vtkMRMLCameraNode::Copy(vtkMRMLNode *anode)
   // a the active camera of the current view will be reset to NULL, and a 
   // new camera will be created on the fly by VTK the next time an active
   // camera is need, one completely disconnected from Slicer3's MRML/internals
-  this->SetInternalActiveTag(node->GetActiveTag()); 
-
+  this->SetInternalActiveTag(node->GetActiveTag());
+  // Maybe the new position and focalpoint combo doesn't fit the existing
+  // clipping range
+  this->ResetClippingRange();
   this->EndModify(disabledModify);
 
 }
@@ -525,6 +531,17 @@ vtkMRMLCameraNode* vtkMRMLCameraNode::FindActiveTagInScene(const char *tag)
     }
 
   return NULL;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraNode::ResetClippingRange()
+{
+  // \tbd: use vtkRenderer::ResetClippingRange ?
+  // Need to get the renderer from the view node associated with the camera
+  if (this->Camera)
+    {
+    this->Camera->SetClippingRange(0.1, this->Camera->GetDistance()*2);
+    }
 }
 
 //---------------------------------------------------------------------------
