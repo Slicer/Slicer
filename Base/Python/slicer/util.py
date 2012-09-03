@@ -304,6 +304,7 @@ def array(pattern = "", index = 0):
   console for quick debugging/testing.  More specific API should be
   used in scripts to be sure you get exactly what you want.
   """
+  vectorTypes = ('vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode')
   import vtk.util.numpy_support
   n = getNode(pattern=pattern, index=index)
   if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
@@ -312,7 +313,7 @@ def array(pattern = "", index = 0):
     shape.reverse()
     a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
     return a
-  elif n.GetClassName() == 'vtkMRMLVectorVolumeNode':
+  elif n.GetClassName() in vectorTypes:
     i = n.GetImageData()
     shape = list(n.GetImageData().GetDimensions())
     shape.reverse()
