@@ -268,12 +268,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       frameId = newValue
 
       extract = vtk.vtkImageExtractComponents()
-      cast = vtk.vtkImageCast()
       extract.SetInput(mvImage)
       extract.SetComponents(frameId)
-      cast.SetInput(extract.GetOutput())
-      cast.SetOutputScalarTypeToShort()
-      cast.Update()
+      extract.Update()
 
       ras2ijk = vtk.vtkMatrix4x4()
       ijk2ras = vtk.vtkMatrix4x4()
@@ -284,7 +281,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         frameVolume.SetRASToIJKMatrix(ras2ijk)
         frameVolume.SetIJKToRASMatrix(ijk2ras)
 
-      frameVolume.SetAndObserveImageData(cast.GetOutput())
+      frameVolume.SetAndObserveImageData(extract.GetOutput())
 
       displayNode = frameVolume.GetDisplayNode()
 
