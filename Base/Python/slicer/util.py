@@ -186,10 +186,9 @@ def loadVolume(filename, properties={}, returnNode=False):
   filetype = 'VolumeFile'
   return loadNodeFromFile(filename, filetype, properties, returnNode)
 
-def loadScene(filename, clear = True):
+def loadScene(filename, properties={}):
   filetype = 'SceneFile'
-  properties = {'fileName':filename}
-  return app.coreIOManager().loadNodes(filetype, properties)
+  return loadNodeFromFile(filename, filetype, properties, returnNode=False)
 
 def openAddDataDialog():
   from slicer import app
