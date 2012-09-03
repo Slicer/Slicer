@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>682</width>
-    <height>353</height>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,17 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="ParametersCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="ParametersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Parameters</string>
      </property>
-     <property name="contentsFrameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
      <layout class="QFormLayout" name="parametersFormLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::FieldsStayAtSizeHint</enum>
+      </property>
+      <property name="verticalSpacing">
+       <number>12</number>
+      </property>
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -37,16 +40,16 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="InputVolumeComboBox">
-        <property name="nodeTypes">
+       <widget class="qMRMLNodeComboBox" name="InputVolumeComboBox" native="true">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
@@ -59,43 +62,37 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="InputROIComboBox">
-        <property name="nodeTypes">
+       <widget class="qMRMLNodeComboBox" name="InputROIComboBox" native="true">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLAnnotationROINode</string>
          </stringlist>
         </property>
-        <property name="editEnabled">
+        <property name="editEnabled" stdset="0">
          <bool>true</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="ROIVisibilityLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>ROI visibility:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QToolButton" name="VisibilityButton">
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>:/Icons/VisibleOff.png</normaloff>
-          <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
+      <item row="6" column="1">
+       <widget class="QWidget" name="EmptyWidget" native="true"/>
       </item>
-      <item row="4" column="0" colspan="2">
+      <item row="7" column="0" colspan="2">
        <widget class="ctkCollapsibleGroupBox" name="InterpolationOptionsGroupBox">
         <property name="title">
          <string>Interpolation options</string>
@@ -117,7 +114,7 @@
          <item row="0" column="1">
           <widget class="QCheckBox" name="IsotropicCheckbox">
            <property name="text">
-            <string> </string>
+            <string/>
            </property>
            <property name="tristate">
             <bool>false</bool>
@@ -197,8 +194,57 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QWidget" name="EmptyWidget" native="true"/>
+      <item row="2" column="0">
+       <widget class="QLabel" name="TechniqueLabel">
+        <property name="text">
+         <string>Technique:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QToolButton" name="VisibilityButton">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>:/Icons/VisibleOff.png</normaloff>
+          <normalon>:/Icons/VisibleOn.png</normalon>:/Icons/VisibleOff.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="TechniqueRadioButtonsHorizontalLayout">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="InterpolationModeRadioButton">
+          <property name="text">
+           <string>Interpolated cropping</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string>TechniqueButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="VoxelBasedModeRadioButton">
+          <property name="text">
+           <string>Voxel based cropping</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string>TechniqueButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -229,7 +275,8 @@
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
+   <header>qmrmlnodecombobox.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -287,5 +334,40 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>InterpolationModeRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>InterpolationOptionsGroupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>InterpolationModeRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>InterpolationOptionsGroupBox</receiver>
+   <slot>setChecked(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>77</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>340</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="TechniqueButtonGroup"/>
+ </buttongroups>
 </ui>

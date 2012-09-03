@@ -25,7 +25,10 @@
 #include "vtkSlicerModuleLogic.h"
 class vtkSlicerCLIModuleLogic;
 class vtkSlicerVolumesLogic;
-
+class vtkMRMLVolumeNode;
+class vtkMRMLAnnotationROINode;
+// vtk includes
+class vtkMatrix4x4;
 // CropVolumes includes
 #include "vtkSlicerCropVolumeModuleLogicExport.h"
 class vtkMRMLCropVolumeParametersNode;
@@ -48,11 +51,21 @@ public:
 
   int Apply(vtkMRMLCropVolumeParametersNode*);
 
+  void CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtkMRMLVolumeNode* inputVolume, vtkMRMLVolumeNode* outputNode);
+
   virtual void RegisterNodes();
+
+  static bool IsVolumeTiltedInRAS(vtkMRMLVolumeNode* inputVolume, vtkMatrix4x4* rotation);
+  static bool ComputeIJKToRASRotationOnlyMatrix(vtkMRMLVolumeNode* inputVolume, vtkMatrix4x4* outputMatrix);
+
+  void SnapROIToVoxelGrid(vtkMRMLAnnotationROINode* inputROI, vtkMRMLVolumeNode* inputVolume);
+
 
 protected:
   vtkSlicerCropVolumeLogic();
   virtual ~vtkSlicerCropVolumeLogic();
+
+  static bool ComputeOrientationMatrixFromScanOrder(const char *order, vtkMatrix4x4 *outputMatrix);
 
 private:
   vtkSlicerCropVolumeLogic(const vtkSlicerCropVolumeLogic&); // Not implemented

@@ -71,6 +71,10 @@ class VTK_SLICER_CROPVOLUME_MODULE_MRML_EXPORT vtkMRMLCropVolumeParametersNode :
   vtkGetMacro(ROIVisibility,bool);
   vtkBooleanMacro(ROIVisibility,bool);
 
+  vtkSetMacro(VoxelBased,bool);
+  vtkGetMacro(VoxelBased,bool);
+  vtkBooleanMacro(VoxelBased,bool);
+
   vtkSetMacro(InterpolationMode, int);
   vtkGetMacro(InterpolationMode, int);
 
@@ -89,6 +93,7 @@ protected:
   char *ROINodeID;
   
   bool ROIVisibility;
+  bool VoxelBased;
   int InterpolationMode;
   bool IsotropicResampling;
   double SpacingScalingConst;

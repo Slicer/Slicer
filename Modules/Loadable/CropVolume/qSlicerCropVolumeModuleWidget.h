@@ -33,6 +33,8 @@ protected:
 
   void initializeParameterNode(vtkMRMLScene*);
 
+
+
 protected slots:
   void initializeNode(vtkMRMLNode*);
   void onInputVolumeChanged();
@@ -45,12 +47,15 @@ protected slots:
   void onSpacingScalingValueChanged(double);
   void onIsotropicModeChanged();
   void onEndCloseEvent();
+  void onVoxelBasedChecked(bool checked);
+
 
 private:
   Q_DECLARE_PRIVATE(qSlicerCropVolumeModuleWidget);
   Q_DISABLE_COPY(qSlicerCropVolumeModuleWidget);
 
   vtkMRMLCropVolumeParametersNode *parametersNode;
+
 };
 
 #endif

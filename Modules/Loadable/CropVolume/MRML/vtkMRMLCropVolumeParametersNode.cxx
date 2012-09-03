@@ -42,6 +42,8 @@ vtkMRMLCropVolumeParametersNode::vtkMRMLCropVolumeParametersNode()
   this->ROIVisibility = false;
   this->InterpolationMode = 2;
 
+  this->VoxelBased = false;
+
   this->SpacingScalingConst = 1.;
 }
 
