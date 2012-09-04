@@ -769,9 +769,9 @@ void vtkMRMLVolumeNode::GetRASBounds(double bounds[6])
       {
       for ( k=0; k<2; k++)
         {
-        doubleDimensions[0] = i*(dimensions[0] - 1);
-        doubleDimensions[1] = j*(dimensions[1] - 1);
-        doubleDimensions[2] = k*(dimensions[2] - 1);
+        doubleDimensions[0] = i*(dimensions[0]) - 0.5;
+        doubleDimensions[1] = j*(dimensions[1]) - 0.5 ;
+        doubleDimensions[2] = k*(dimensions[2]) - 0.5;
         doubleDimensions[3] = 1;
         ijkToRAS->MultiplyPoint( doubleDimensions, rasHDimensions );
         for (int n=0; n<3; n++) {

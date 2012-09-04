@@ -293,6 +293,7 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
         double newFOVy = this->GetActionStartFOV()[1] * percent;
         double newFOVz = this->GetActionStartFOV()[2];
         sliceNode->SetFieldOfView( newFOVx, newFOVy, newFOVz );
+        sliceNode->UpdateMatrices();
         }
       }
       break;

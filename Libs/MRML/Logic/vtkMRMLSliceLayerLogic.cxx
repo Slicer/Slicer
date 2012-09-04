@@ -530,9 +530,10 @@ void vtkMRMLSliceLayerLogic::UpdateTransforms()
   this->ResliceUVW->SetOutputExtent( 0, dimensionsUVW[0]-1,
                                      0, dimensionsUVW[1]-1,
                                      0, dimensionsUVW[2]-1);
+
   this->UpdatingTransforms = 0; 
 
-  if (transformModified)
+  if (transformModified || transformModifiedUVW)
     {
     this->Modified();
     }

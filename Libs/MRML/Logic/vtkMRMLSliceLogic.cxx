@@ -548,18 +548,19 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
       && this->SliceModelNode->GetPolyData() != 0 )
     {
 
-
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
-    int *dims = this->SliceNode->GetUVWDimensions();
 
+    int *dims=0;
     vtkMatrix4x4 *textureToRAS = 0;
     if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
       textureToRAS = this->SliceNode->GetUVWToRAS();
+      dims = this->SliceNode->GetUVWDimensions();
       }
     else
       {
       textureToRAS = this->SliceNode->GetXYToRAS();
+      dims = this->SliceNode->GetDimensions();
       }
 
     // set the plane corner point for use in a model
@@ -1686,11 +1687,11 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
   sliceToRAS->SetElement(2, 3, rasCenter[2]);
   sliceNode->GetSliceToRAS()->DeepCopy(sliceToRAS.GetPointer());
   sliceNode->SetSliceOrigin(0,0,0);
-  sliceNode->SetSliceOffset(offset);
+  //sliceNode->SetSliceOffset(offset);
 
   //TODO Fit UVW space
 
-  //sliceNode->UpdateMatrices( );
+  sliceNode->UpdateMatrices( );
 }
 
 //----------------------------------------------------------------------------
@@ -2083,7 +2084,7 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
   if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatch2DView)
     {
     this->SliceNode->SetUVWExtentsAndDimensions(this->SliceNode->GetFieldOfView(),
-                                                this->SliceNode->GetDimensions());
+                                                this->SliceNode->GetUVWDimensions());
     }
  else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceResolutionMatchVolumes)
     {
@@ -2119,7 +2120,7 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
     this->SliceNode->GetFieldOfView(fov);
     for (int i=0; i<2; i++)
       {
-      dimensions[i] = fov[i]/minSpacing;
+       dimensions[i] = ceil(fov[i]/minSpacing +0.5);
       }
     this->SliceNode->SetUVWExtentsAndDimensions(fov, dimensions);
     }

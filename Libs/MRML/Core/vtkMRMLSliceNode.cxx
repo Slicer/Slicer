@@ -75,7 +75,7 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
   this->UVWExtents[1] = 0;
   this->UVWExtents[2] = 0;
 
-  this->SliceResolutionMode = vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes;
+  this->SliceResolutionMode = vtkMRMLSliceNode::SliceResolutionMatch2DView;
 
   this->XYZOrigin[0] = 0;
   this->XYZOrigin[1] = 0;
@@ -520,12 +520,13 @@ void vtkMRMLSliceNode::UpdateMatrices()
         this->UVWDimensions[1] > 0 &&
         this->UVWDimensions[2] > 0)
       {
-      for (i = 0; i < 3; i++)
+      for (i = 0; i < 2; i++)
         {
-        spacing[i] = this->UVWExtents[i] / this->UVWDimensions[i];
+        spacing[i] = this->UVWExtents[i] / (this->UVWDimensions[i]);
         this->UVWToSlice->SetElement(i, i, spacing[i]);
         this->UVWToSlice->SetElement(i, 3, -this->UVWExtents[i] / 2. + this->UVWOrigin[i]);
         }
+      this->UVWToSlice->SetElement(2, 2, 1.0);
       this->UVWToSlice->SetElement(2, 3, 0.);
       }
 
@@ -1264,13 +1265,19 @@ void vtkMRMLSliceNode::JumpAllSlices(double r, double a, double s)
 
 void vtkMRMLSliceNode::SetFieldOfView(double x, double y, double z)
 {
+  bool modified = false;
   if ( x != this->FieldOfView[0] || 
        y != this->FieldOfView[1] ||
        z != this->FieldOfView[2] )
     {
+    modified = true;
     this->FieldOfView[0] = x;
     this->FieldOfView[1] = y;
     this->FieldOfView[2] = z;
+    }
+
+  if (modified)
+    {
     this->UpdateMatrices();
     }
 }
@@ -1347,6 +1354,8 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
     {
       this->SetUVWOrigin(this->GetXYZOrigin());
     }
+    this->XYToRAS->Identity();
+    this->UVWToRAS->Identity();
     this->Modified();
     this->UpdateMatrices();
   }
