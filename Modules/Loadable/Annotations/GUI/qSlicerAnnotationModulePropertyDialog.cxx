@@ -90,18 +90,27 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 
   ui.typeIcon->setPixmap(pixmap);
 
-  // load the visiblity status
-  int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
-
-  if (!visible)
+  // hide the visib if it's a hierarchy, or else update it
+  if (this->m_logic->IsAnnotationHierarchyNode(this->m_id))
     {
-    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
-    ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
+    ui.visibleInvisibleButton->hide();
     }
   else
     {
-    ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
-    ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
+    ui.visibleInvisibleButton->show();
+    // load the visiblity status
+    int visible = this->m_logic->GetAnnotationVisibility(this->m_id.c_str());
+
+    if (!visible)
+      {
+      ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationInvisible.png"));
+      ui.visibleInvisibleButton->setToolTip(QString("Click to show this annotation"));
+      }
+    else
+      {
+      ui.visibleInvisibleButton->setIcon(QIcon(":/Icons/AnnotationVisibility.png"));
+      ui.visibleInvisibleButton->setToolTip(QString("Click to hide this annotation"));
+      }
     }
   
   // customise the all color picker button
