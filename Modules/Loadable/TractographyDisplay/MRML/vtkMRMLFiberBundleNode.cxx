@@ -556,7 +556,8 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
 {
   vtkDebugMacro(<< this->GetClassName() << "Updating the subsampling");
   vtkSelection* sel = vtkSelection::SafeDownCast(this->ExtractSelectedPolyDataIds->GetInput(1));
-  if (sel)
+  vtkPolyData* polyData = this->GetPolyData();
+  if (sel && polyData)
     {
     vtkSelectionNode* node = sel->GetNode(0);
 
