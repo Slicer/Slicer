@@ -430,7 +430,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
     if (iter == snapshotMap.end() &&
         !node->IsA("vtkMRMLSceneViewNode") &&
         !(hnode && hnode->GetAssociatedNode() && hnode->GetAssociatedNode()->IsA("vtkMRMLSceneViewNode")) &&
-        !(hnode && hnode->GetName() && !strncmp(hnode->GetName(), "SceneViewToplevel", 17)) &&
+        !(hnode && hnode->GetID() && !strncmp(hnode->GetID(), "vtkMRMLHierarchyNodeSceneViewTopLevel", 37)) &&
         !node->IsA("vtkMRMLSnapshotClipNode") &&
         node->GetSaveWithScene())
       {
