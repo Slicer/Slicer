@@ -67,6 +67,7 @@ public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
   void deleteSelected();
   void onSceneEndImportEvent();
+  void onSceneEndRestoreEvent();
 
 signals:
   void currentNodeChanged(vtkMRMLNode* node);

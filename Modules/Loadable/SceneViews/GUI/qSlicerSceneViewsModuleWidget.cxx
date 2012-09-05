@@ -134,6 +134,8 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   // listen to some mrml events
   q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndImportEvent,
                  this->hierarchyTreeView, SLOT(onSceneEndImportEvent()));
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndRestoreEvent,
+                 this->hierarchyTreeView, SLOT(onSceneEndRestoreEvent()));
 
 }
 

@@ -116,6 +116,10 @@ public:
   /// have hierarchy nodes, adding them if missing
   void AddMissingHierarchyNodes();
 
+  /// Flatten the hierarchy enforcing all scene view hierarchy nodes to point
+  /// to the singleton top level node
+  void FlattenSceneViewsHierarchy(const char *toplevelNodeID);
+
 protected:
 
   vtkSlicerSceneViewsModuleLogic();

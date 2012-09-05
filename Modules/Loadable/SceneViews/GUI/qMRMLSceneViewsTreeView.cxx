@@ -142,7 +142,6 @@ void qMRMLSceneViewsTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
   this->setRoot();
-  this->expandAll();
 }
 
 //------------------------------------------------------------------------------
@@ -396,7 +395,7 @@ void qMRMLSceneViewsTreeView::setRoot()
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();
 
-   if (this->m_Logic)
+  if (this->m_Logic)
     {
     // if the logic is already registered, we look for the first HierarchyNode
     vtkMRMLNode* toplevelNode = NULL;
@@ -408,12 +407,14 @@ void qMRMLSceneViewsTreeView::setRoot()
     if (toplevelNode)
       {
       // if we find it, we use it as the root index
-      root = d->SceneModel->indexes(toplevelNode)[0];
+      root = d->SortFilterModel->indexFromMRMLNode(toplevelNode);
       //qDebug() << "setRoot found a top level scene hierarchy node " + QString(toplevelNodeID);
       }
     }
    
-  this->setRootIndex(d->SortFilterModel->mapFromSource(root));
+  this->setRootIndex(root);
+
+  this->expandAll();
 }
 
 //------------------------------------------------------------------------------
@@ -449,5 +450,12 @@ void qMRMLSceneViewsTreeView::setLogic(vtkSlicerSceneViewsModuleLogic* logic)
 void qMRMLSceneViewsTreeView::onSceneEndImportEvent()
 {
   //qDebug() << "qMRMLSceneViewsTreeView::onSceneEndImportEvent";
+  this->setRoot();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSceneViewsTreeView::onSceneEndRestoreEvent()
+{
+  //qDebug() << "qMRMLSceneViewsTreeView::onSceneEndRestoreEvent";
   this->setRoot();
 }
