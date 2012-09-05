@@ -57,8 +57,11 @@ void vtkMRMLModelNode::Copy(vtkMRMLNode *anode)
   int disabledModify = this->StartModify();
   this->Superclass::Copy(anode);
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(anode);
-  if (modelNode)
+  if (modelNode && modelNode->GetPolyData())
     {
+    // Only copy bulk data if it exists - this handles the case
+    // of restoring from SceneViews, where the nodes will not 
+    // have bulk data.
     this->SetAndObservePolyData(modelNode->GetPolyData());
     }
   this->EndModify(disabledModify);

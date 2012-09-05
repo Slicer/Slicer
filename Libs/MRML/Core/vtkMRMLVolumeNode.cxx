@@ -178,6 +178,9 @@ void vtkMRMLVolumeNode::Copy(vtkMRMLNode *anode)
 
   if (node->ImageData != NULL)
     {
+    // Only copy bulk data if it exists - this handles the case
+    // of restoring from SceneViews, where the nodes will not 
+    // have bulk data.
     this->SetAndObserveImageData(node->ImageData);
     }
 
