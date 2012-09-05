@@ -391,6 +391,9 @@ void qMRMLSceneViewsTreeView::setRoot()
 {
   Q_D(qMRMLSceneViewsTreeView);
 
+  // get the starting root so we don't reset it if the same
+  QModelIndex startingRoot = this->rootIndex();
+  
   // first, we set the root index to the mrmlScene
   // this works also if the scene is not defined yet
   QModelIndex root = d->SceneModel->mrmlSceneIndex();
@@ -411,9 +414,16 @@ void qMRMLSceneViewsTreeView::setRoot()
       //qDebug() << "setRoot found a top level scene hierarchy node " + QString(toplevelNodeID);
       }
     }
-   
-  this->setRootIndex(root);
 
+  if (root.row() != startingRoot.row())
+    {
+    //qDebug() << "setRoot: setting root node at index row " << root.row();
+    this->setRootIndex(root);
+    }
+  else
+    {
+    //qDebug() << "setRoot: no change in root row, not resetting";
+    }
   this->expandAll();
 }
 
@@ -454,8 +464,17 @@ void qMRMLSceneViewsTreeView::onSceneEndImportEvent()
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSceneViewsTreeView::onSceneEndBatchProcessEvent()
+{
+  //qDebug() << "qMRMLSceneViewsTreeView::onSceneEndBatchProcessEvent";
+  this->setRoot();
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSceneViewsTreeView::onSceneEndRestoreEvent()
 {
   //qDebug() << "qMRMLSceneViewsTreeView::onSceneEndRestoreEvent";
-  this->setRoot();
+  //this->setRoot();
+  /// TBD: why is setting the root here not causing the proper update of the
+  //tree view? doing it on batch processing end works for now.
 }

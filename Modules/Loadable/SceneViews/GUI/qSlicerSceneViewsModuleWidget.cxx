@@ -136,6 +136,8 @@ void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
                  this->hierarchyTreeView, SLOT(onSceneEndImportEvent()));
   q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndRestoreEvent,
                  this->hierarchyTreeView, SLOT(onSceneEndRestoreEvent()));
+  q->qvtkConnect(this->logic()->GetMRMLScene(), vtkMRMLScene::EndBatchProcessEvent,
+                 this->hierarchyTreeView, SLOT(onSceneEndBatchProcessEvent()));
 
 }
 
