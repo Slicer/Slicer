@@ -172,7 +172,6 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     fa = slicer.util.getNode('FA')
     self.assertTrue( redComposite.GetBackgroundVolumeID() == fa.GetID() )
     self.delayDisplay('Yes, the FA volume is back in the background of the Red viewer')
-    
 
     sceneMismatch = self.beforeImage != self.sceneLoadedImage
     mrbMismatch = self.beforeImage != self.mrbLoadedImage
@@ -183,7 +182,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
     if (sceneMismatch or mrbMismatch):
       self.imageCompare((self.beforeImage, self.sceneLoadedImage, self.mrbLoadedImage), "before, after scene load, and after mrb load")
-      self.delayDisplay('have a quick look...', msec=5000)
+      self.delayDisplay('have a quick look...', msec=2000)
       imagesAndNames = ((self.beforeImage,'before'), (self.sceneLoadedImage,'scene'), (self.mrbLoadedImage,'mrb'))
       for i,name in imagesAndNames:
         tmp = self.tempDirectory('')
@@ -195,6 +194,14 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     self.assertTrue( not self.strict or (not sceneMismatch and not mrbMismatch) )
 
     self.delayDisplay("Scene and MRB loaded and compared")
+
+    for tractName,tubeColor in zip(tracts, tractColors):
+      sceneView = slicer.util.getNode('%s-view' % tractName)
+      sceneView.RestoreScene()
+      self.delayDisplay("Should now see tubes for tract %s in color %s" % (tractName, str(tractColors)))
+
+    self.delayDisplay("Test Finished")
+
 
   def imageCompare(self,images,text='',prefWidth=1500): 
     """Show images in a window with a text message.
