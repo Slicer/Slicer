@@ -71,6 +71,11 @@ int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
     return 0;
     }
 
+  if (itksys::SystemTools::FileExists(fullName.c_str(), true) == false)
+    {
+    vtkErrorMacro("ReadDataInternal: file does not exist: " << fullName.c_str());
+    return 0;
+    }
   // compute file prefix
   std::string name(fullName);
   std::string::size_type loc = name.find_last_of(".");

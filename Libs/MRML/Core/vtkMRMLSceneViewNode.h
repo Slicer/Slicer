@@ -104,6 +104,11 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
  /// Get vector of nodes of a specified class in the scene
   int GetNodesByClass(const char *className, std::vector<vtkMRMLNode *> &nodes);
 
+  /// check if a node should be included in the save/restore cycle. Returns
+  /// false if it's a scene view node, scene view storage node, scene view
+  /// hierarchy node, snapshot clip node, true otherwise
+  bool IncludeNodeInSceneView(vtkMRMLNode *node);
+
 protected:
   vtkMRMLSceneViewNode();
   ~vtkMRMLSceneViewNode();

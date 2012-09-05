@@ -599,6 +599,7 @@ int vtkSlicerSceneViewsModuleLogic::AddHierarchyNodeForNode(vtkMRMLNode* node)
     hierarchyNode->HideFromEditorsOff();
 
     hierarchyNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("SceneViewHierarchy"));
+    hierarchyNode->SetAttribute("SceneViewHierarchy", "true");
 
     this->GetMRMLScene()->AddNode(hierarchyNode);
 
@@ -668,6 +669,7 @@ char * vtkSlicerSceneViewsModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
     toplevelNode->SetSingletonTag(toplevelTag);
     toplevelNode->HideFromEditorsOff();
     toplevelNode->SetName("Scene Views");
+    toplevelNode->SetAttribute("SceneViewHierarchy", "true");
 
     if (!node)
       {
