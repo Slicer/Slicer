@@ -81,6 +81,10 @@ vtkPolyData* vtkMRMLModelDisplayNode::GetOutputPolyData()
     {
     return 0;
     }
+  if (!this->GetInputPolyData())
+    {
+    return 0;
+    }
   return vtkPolyData::SafeDownCast(
     this->GetOutputPort()->GetProducer()->GetOutputDataObject(
       this->GetOutputPort()->GetIndex()));
