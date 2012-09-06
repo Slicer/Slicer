@@ -86,7 +86,7 @@ macro(nowarning_test test_name)
   add_test(
     NAME py_nowarning_${test_name}Test
     COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SlicerApp${SlicerApp_EXE_SUFFIX}>
-    ${ARGN} --testing --python-code "exit(slicer.util.EXIT_SUCCESS)"
+    ${ARGN} --ignore-slicerrc --testing --python-code "exit(slicer.util.EXIT_SUCCESS)"
     )
   set(fail_regexp)
   list(APPEND fail_regexp "Failed to obtain reference to")
