@@ -32,20 +32,6 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
         self.rnrrd.SetFileName(self.file_name)
         self.rnrrd.Update()
 
-    def test_measurement_frame(self):
-        self.assertTrue(
-            compare_vtk_matrix(
-                self.ritk.GetMeasurementFrameMatrix(),
-                self.rnrrd.GetMeasurementFrameMatrix()
-            )
-        )
-
-    def test_ras_to_ijk(self):
-        print "ITK Matrix"
-        print self.ritk.GetRasToIjkMatrix(),
-        print "NRRD Reader Matrix"
-        print self.rnrrd.GetRasToIjkMatrix()
-
         self.assertTrue(
             compare_vtk_matrix(
                 self.ritk.GetRasToIjkMatrix(),
@@ -60,7 +46,6 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
 
     def runTest(self):
       self.setUp()
-      self.test_measurement_frame()
       self.test_pointdata()
       self.test_ras_to_ijk()
 
