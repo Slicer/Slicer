@@ -14,7 +14,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
   """
 
-  def __init__(self,useCase='big',uniqueDirectory=True,strict=False):
+  def __init__(self,methodName='runTest', useCase='big',uniqueDirectory=True,strict=False):
     """
     Tests the use of mrml and mrb save formats with volumes and fiber bundles.
     Checks that scene views are saved and restored as expected.
@@ -29,7 +29,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
                      True then check every detail
                      False then confirm basic operation, but allow non-critical issues to pass
     """
-    unittest.TestCase.__init__(self)
+    unittest.TestCase.__init__(self,methodName)
     self.useCase = useCase
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
@@ -56,6 +56,11 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     Replicate the issue reported in bug 2385 where saving
     and restoring an MRB file does not work.
     """
+
+    print("Running SlicerMRB Test case with:")
+    print("useCase : %s" % self.useCase)
+    print("uniqueDirectory : %s" % self.uniqueDirectory)
+    print("strict : %s" % self.strict)
 
     #
     # first, get the data
