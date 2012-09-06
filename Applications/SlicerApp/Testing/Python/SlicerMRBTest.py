@@ -29,6 +29,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
                      True then check every detail
                      False then confirm basic operation, but allow non-critical issues to pass
     """
+    unittest.TestCase.__init__(self)
     self.useCase = useCase
     self.uniqueDirectory = uniqueDirectory
     self.strict = strict
