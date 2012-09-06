@@ -48,12 +48,6 @@ void vtkMRMLAnnotationRulerStorageNode::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
-}
-
- //----------------------------------------------------------------------------
 int vtkMRMLAnnotationRulerStorageNode::ReadAnnotationRulerData(vtkMRMLAnnotationRulerNode *refNode, char line[1024],
                                    int typeColumn, int line1IDColumn, int selColumn,  int visColumn, int numColumns)
 {

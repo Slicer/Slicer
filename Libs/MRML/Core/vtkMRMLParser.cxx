@@ -138,8 +138,6 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     {
     vtkMRMLNode* parentNode = this->NodeStack.top();
     parentNode->ProcessChildNode(node);
-
-    node->ProcessParentNode(parentNode);
     }
 
   this->NodeStack.push(node);

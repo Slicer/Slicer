@@ -96,10 +96,6 @@ public:
   /// Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
   /// 
   /// Possible Read and Write states
   /// Idle: not currently working on any data, ready for the next transfer

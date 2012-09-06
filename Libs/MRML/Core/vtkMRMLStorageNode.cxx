@@ -1020,12 +1020,6 @@ const char *vtkMRMLStorageNode::GetAbsoluteFilePath(const char *inputPath)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLStorageNode::ProcessParentNode(vtkMRMLNode *parentNode)
-{
-  this->ReadData(parentNode);
-}
-
-//------------------------------------------------------------------------------
 void vtkMRMLStorageNode::InvalidateFile()
 {
   this->StoredTime->Delete();

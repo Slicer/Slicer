@@ -144,11 +144,6 @@ public:
   virtual void UpdateReferences() {};
 
   /// 
-  /// Set dependencies between this node and the parent node
-  /// when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *){};
-
-  /// 
   /// Set dependencies between this node and a child node
   /// when parsing XML file
   virtual void ProcessChildNode(vtkMRMLNode *){};

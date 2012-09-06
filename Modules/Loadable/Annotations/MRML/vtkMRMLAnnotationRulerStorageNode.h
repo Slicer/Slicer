@@ -31,11 +31,6 @@ public:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
- // Description:
-  // Set dependencies between this node and the parent node
-  // when parsing XML file
-  virtual void ProcessParentNode(vtkMRMLNode *parentNode);
-
   // Description:
   // Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
