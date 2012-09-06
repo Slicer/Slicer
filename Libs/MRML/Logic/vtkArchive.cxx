@@ -411,7 +411,7 @@ bool zip(const char* zipFileName, const char* directoryToZip)
     //
     // add the data for this entry
     //
-    fd = fopen(fileName, "r");
+    fd = fopen(fileName, "rb");
     if (!fd)
       {
       vtkArchiveTools::Error("Zip: cannot open:", (*sit).c_str());
