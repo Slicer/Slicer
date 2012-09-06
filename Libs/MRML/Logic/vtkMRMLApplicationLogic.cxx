@@ -406,7 +406,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   // then, save all paths and filenames in the current scene
   //  and replace them with paths to the sdbDir
   // then create a scene view of the contents of the data bundle
-  // then save the scene 
+  // then save the scene
   // -- replace the original paths
   // -- remove the scene view
   //
@@ -495,7 +495,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
       }
     }
 
-  // 
+  //
   // start changing the scene - don't return from below here
   // until scene has been restored to original state
   //
@@ -530,7 +530,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
           storageNode = storableNode->CreateDefaultStorageNode();
           if (storageNode)
             {
-            std::string storageFileName = std::string(storableNode->GetName()) + 
+            std::string storageFileName = std::string(storableNode->GetName()) +
               std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
             vtkDebugMacro("new file name = " << storageFileName.c_str());
             storageNode->SetFileName(storageFileName.c_str());
@@ -556,8 +556,8 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
           origStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
 
           storageNode->SetDataDirectory(dataDir.c_str());
-          vtkDebugMacro("set data directory to " 
-            << dataDir.c_str() << ", storable node " << storableNode->GetID() 
+          vtkDebugMacro("set data directory to "
+            << dataDir.c_str() << ", storable node " << storableNode->GetID()
             << " file name is now: " << storageNode->GetFileName());
           // deal with existing files
           if (vtksys::SystemTools::FileExists(storageNode->GetFileName(), true))
@@ -598,28 +598,27 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   newSceneViewNode->SetScene(this->GetMRMLScene());
   newSceneViewNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("Slicer Data Bundle Scene View"));
   newSceneViewNode->SetSceneViewDescription("Scene at MRML file save point");
+  // save the scene view
+  newSceneViewNode->StoreScene();
+  this->GetMRMLScene()->AddNode(newSceneViewNode);
+
+  vtkMRMLStorageNode *sceneViewStorageNode = 0;
   if (screenShot)
     {
     // assumes has been passed a screen shot of the full layout
     newSceneViewNode->SetScreenShotType(4);
     newSceneViewNode->SetScreenShot(screenShot);
+    // create a storage node
+    vtkMRMLStorageNode *sceneViewStorageNode = newSceneViewNode->CreateDefaultStorageNode();
+    // set the file name from the node name, using a relative path, it will go
+    // at the same level as the  .mrml file
+    std::string sceneViewFileName = std::string(newSceneViewNode->GetName()) + std::string(".png");
+    sceneViewStorageNode->SetFileName(sceneViewFileName.c_str());
+    this->GetMRMLScene()->AddNode(sceneViewStorageNode);
+    newSceneViewNode->SetAndObserveStorageNodeID(sceneViewStorageNode->GetID());
+    // force a write
+    sceneViewStorageNode->WriteData(newSceneViewNode);
     }
-  // save the scene view
-  newSceneViewNode->StoreScene();
-  this->GetMRMLScene()->AddNode(newSceneViewNode);
-  // create a storage node
-  vtkMRMLStorageNode *storageNode = newSceneViewNode->CreateDefaultStorageNode();
-  // set the file name from the node name, using a relative path, it will go
-  // at the same level as the  .mrml file
-  std::string sceneViewFileName = std::string(newSceneViewNode->GetName()) + std::string(".png");
-  storageNode->SetFileName(sceneViewFileName.c_str());
-  this->GetMRMLScene()->AddNode(storageNode);
-  newSceneViewNode->SetAndObserveStorageNodeID(storageNode->GetID());
-  // force a write
-  storageNode->WriteData(newSceneViewNode);
-  // clean up
-  newSceneViewNode->Delete();
-  storageNode->Delete();
 
   // write the scene to disk, changes paths to relative
   vtkDebugMacro("calling commit on the scene, to url " << this->GetMRMLScene()->GetURL());
@@ -628,9 +627,17 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   //
   // Now, restore the state of the scene
   //
-  this->GetMRMLScene()->RemoveNode(newSceneViewNode);
-  this->GetMRMLScene()->RemoveNode(storageNode);
 
+  // clean up scene views
+  this->GetMRMLScene()->RemoveNode(newSceneViewNode);
+  newSceneViewNode->Delete();
+  if (sceneViewStorageNode)
+    {
+    this->GetMRMLScene()->RemoveNode(sceneViewStorageNode);
+    sceneViewStorageNode->Delete();
+    }
+
+  // reset the storage paths
   numNodes = this->GetMRMLScene()->GetNumberOfNodes();
   for (int i = 0; i < numNodes; ++i)
     {
