@@ -434,6 +434,14 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
                                                            unsigned long event,
                                                            void *callData)
 {
+  if ( this->GetInteractor() &&
+     this->GetInteractor()->GetRenderWindow() &&
+     this->GetInteractor()->GetRenderWindow()->CheckInRenderStatus())
+  {
+    vtkDebugMacro("skipping ProcessMRMLNodesEvents during render");
+    return;
+  }
+
   bool isUpdating = this->GetMRMLScene()->IsBatchProcessing();
   if (vtkMRMLDisplayableNode::SafeDownCast(caller))
     {
@@ -660,7 +668,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     assert(dnode);
     bool visible = (dnode->GetVisibility() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
-      this->Internal->DisplayedActors.find(dnode->GetID()) == this->Internal->DisplayedActors.end();
+      this->Internal->DisplayedActors.find(dnode->GetID()) != this->Internal->DisplayedActors.end();
     // If the displayNode is visible and doesn't have actors yet, then request
     // an updated
     if (visible && !hasActor)
