@@ -72,6 +72,7 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
@@ -85,7 +86,12 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
         {
         std::string id;
         ss >> id;
+        vtkMRMLScene *scene = this->GetScene();
+        this->SetScene(0);
         this->AddAndObserveDisplayNodeID(id.c_str());
+        this->SetScene(scene);
+
+        scene->AddReferencedNodeID(id.c_str(), this);
         }
       }
     }
