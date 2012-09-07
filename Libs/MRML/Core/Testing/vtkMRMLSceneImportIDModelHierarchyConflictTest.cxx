@@ -205,14 +205,14 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << std::endl;
     return EXIT_FAILURE;
     }
-  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())->GetInputPolyData() == NULL)
+  if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode())->GetInputPolyData() == NULL)
     {
     std::cerr << "Import failed: original model display node should not have null polydata"
               << std::endl;
     return EXIT_FAILURE;
     }
   if (modelNode->GetPolyData() != vtkMRMLModelDisplayNode::SafeDownCast(
-        modelNode2->GetDisplayNode())->GetInputPolyData())
+        modelNode->GetDisplayNode())->GetInputPolyData())
     {
     std::cerr << "Import failed: original model node and display node don't have the same poly data"
               << std::endl;
