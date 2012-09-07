@@ -15,16 +15,19 @@
       <name>inputTransformName</name>
       <label>BSpline transform that includes bulk affine transform</label>
       <longflag>--tfm</longflag>
+      <channel>input</channel>
     </transform>
     <image>
       <name>referenceImageName</name>
       <label>Reference image</label>
       <longflag>--refImage</longflag>
+      <channel>input</channel>
     </image>
     <image>
       <name>deformationFieldName</name>
       <label>Output deformation field</label>
       <longflag>--defImage</longflag>
+      <channel>output</channel>
     </image>
   </parameters>
 </executable>
