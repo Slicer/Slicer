@@ -73,7 +73,7 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  typedef itk::Image<itk::RGBPixel<unsigned char> > ImageType;
+  typedef itk::Image<itk::RGBPixel<unsigned char>,3 > ImageType;
   typedef itk::ImageFileWriter<ImageType> WriterType;
 
   vtkSmartPointer<vtkStringArray> fileNameList = vtkSmartPointer<vtkStringArray>::New();
