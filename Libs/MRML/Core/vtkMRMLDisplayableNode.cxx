@@ -315,6 +315,7 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNode(int n, vtkMRMLDisplayNo
 {
   bool newNode = (this->DisplayNodes[n] != dnode &&
     // Don't call OnDisplayNodeAdded if deleting the entry
+    dnode &&
     this->DisplayNodes.size() == this->DisplayNodeIDs.size());
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNodes[n], dnode);
   if (newNode)
