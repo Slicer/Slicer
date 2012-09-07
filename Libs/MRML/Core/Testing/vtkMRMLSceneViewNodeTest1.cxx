@@ -49,9 +49,9 @@ int vtkMRMLSceneViewNodeTest1(int , char * [] )
     }
   vtkImageData *imageData = vtkImageData::New();
   node1->SetScreenShot(imageData);
+  imageData->Delete();
   imageData = node1->GetScreenShot();
 
-  imageData->Delete();
   
   TEST_SET_GET_INT_RANGE(node1, ScreenShotType, 0, 4);
   
