@@ -773,6 +773,7 @@ void vtkMRMLTransformStorageNode::InitializeSupportedWriteFileTypes()
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.mat)");
   this->SupportedWriteFileTypes->InsertNextValue("Text (.txt)");
   this->SupportedWriteFileTypes->InsertNextValue("Transform (.*)");
+  this->SupportedWriteFileTypes->InsertNextValue("Deformation field (.nrrd)");
 }
 //----------------------------------------------------------------------------
 const char* vtkMRMLTransformStorageNode::GetDefaultWriteFileExtension()
