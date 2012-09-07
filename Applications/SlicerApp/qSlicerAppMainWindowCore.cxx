@@ -37,6 +37,7 @@
 #ifdef Slicer_USE_QtTesting
 # include <ctkQtTestingUtility.h>
 #endif
+#include <ctkVTKWidgetsUtils.h>
 
 
 // SlicerApp includes
@@ -58,11 +59,6 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
-
-// VTK includes
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkNew.h>
 
 // vtksys includes
 #include <vtksys/SystemTools.hxx>
@@ -198,11 +194,7 @@ void qSlicerAppMainWindowCore::onSDBSaveToDirectoryActionTriggered()
     }
   // pass in a screen shot
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
-  QPixmap screenShot = QPixmap::grabWidget(widget);
-  // convert to vtkImageData
-  vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-  qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
-
+  QImage screenShot = ctk::grabVTKWidget(widget);
   qSlicerIO::IOProperties properties;
   properties["fileName"] = saveDirName;
   properties["screenShot"] = screenShot;

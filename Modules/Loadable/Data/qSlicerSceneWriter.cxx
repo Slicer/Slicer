@@ -151,10 +151,10 @@ bool qSlicerSceneWriter::writeToMRML(const qSlicerIO::IOProperties& properties)
     {
     // take a screen shot of the full layout
     sceneViewNode->SetScreenShotType(4);
-    QPixmap screenShot = properties["screenShot"].value<QPixmap>();
+    QImage screenShot = properties["screenShot"].value<QImage>();  
     // convert to vtkImageData
     vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-    qMRMLUtils::qImageToVtkImageData(screenShot.toImage(), imageData);
+    qMRMLUtils::qImageToVtkImageData(screenShot, imageData);
     sceneViewNode->SetScreenShot(imageData);
     }
   sceneViewNode->StoreScene();

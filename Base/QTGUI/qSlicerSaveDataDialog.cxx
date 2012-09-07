@@ -30,6 +30,7 @@
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
+#include <ctkVTKWidgetsUtils.h>
 
 /// SlicerQt includes
 #include "qSlicerApplication.h"
@@ -236,7 +237,6 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   std::vector<vtkMRMLNode *> nodes;
   this->MRMLScene->GetNodesByClass("vtkMRMLStorableNode", nodes);
   std::vector<vtkMRMLNode *>::iterator it;
-  vtkMRMLNode* node = NULL;
 
   for (it = nodes.begin(); it != nodes.end(); it++)
     {
@@ -954,7 +954,7 @@ bool qSlicerSaveDataDialogPrivate::saveScene()
   // create a screenShot of the full layout
   QWidget* widget = qSlicerApplication::application()->layoutManager()->viewport();
   this->hide();  // don't block the screenshot
-  QPixmap screenShot = QPixmap::grabWidget(widget);
+  QImage screenShot = ctk::grabVTKWidget(widget);
   this->show();
   properties["screenShot"] = screenShot;
 
