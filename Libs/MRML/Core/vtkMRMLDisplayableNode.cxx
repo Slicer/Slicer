@@ -159,9 +159,12 @@ void vtkMRMLDisplayableNode::UpdateScene(vtkMRMLScene *scene)
     // imported/restored). All the nodes are in it.
     // Therefor, there is no reason why there wouldn't be a node
     // for each node id.
-    // If you have an assert here, check in the scene xml if
+    // If you get an error message here, check in the scene xml if
     // DisplayNodeIDs[i] really exists.
-    assert(this->DisplayNodes[i]);
+    if (!this->DisplayNodes[i])
+      {
+      vtkErrorMacro("Displayable node (" << this->GetID() << ") cannot find display node (" << this->DisplayNodeIDs[i].c_str() << ")");
+      }
     }
 }
 
