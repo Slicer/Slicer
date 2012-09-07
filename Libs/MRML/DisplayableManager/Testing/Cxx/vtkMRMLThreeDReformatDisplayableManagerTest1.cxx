@@ -902,6 +902,8 @@ int vtkMRMLThreeDReformatDisplayableManagerTest1(int argc, char* argv[])
   // move back far enough to see the reformat widgets
   renderer->GetActiveCamera()->SetPosition(0,0,-500.);
 
+  renderWindow->Render();
+
   // MRML scene
   vtkMRMLScene* scene = vtkMRMLScene::New();
 
