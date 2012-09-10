@@ -20,15 +20,19 @@ class EditUtil(object):
 
   def getParameterNode(self):
     """Get the Editor parameter node - a singleton in the scene"""
+    node = self._findParameterNodeInScene()
+    if not node:
+      node = self._createParameterNode()
+    return node
+
+  def _findParameterNodeInScene(self):
     node = None
     size =  slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLScriptedModuleNode")
     for i in xrange(size):
       n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
       if n.GetModuleName() == "Editor":
         node = n
-    if not node:
-      node = self._createParameterNode()
-    return node
+      return node
 
   def _createParameterNode(self):
     """create the Editor parameter node - a singleton in the scene
@@ -40,6 +44,9 @@ class EditUtil(object):
     node.SetModuleName( "Editor" )
     node.SetParameter( "label", "1" )
     slicer.mrmlScene.AddNode(node)
+    # Since we are a singleton, the scene won't add our node into the scene,
+    # but will instead insert a copy, so we find that and return it
+    node = self._findParameterNodeInScene()
     return node
 
   def getCompositeNode(self,layoutName='Red'):
