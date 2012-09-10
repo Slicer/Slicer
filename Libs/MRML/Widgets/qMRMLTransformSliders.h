@@ -150,6 +150,16 @@ protected slots:
 protected:
   QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
 
+  ///
+  /// Fill the 'minmax' array with the min/max translation value of the matrix.
+  /// Parameter 'pad' allows to specify (using a value between 0 and 1)
+  /// which percentage of the found min/max value should be substracted/added
+  /// to the min/max value found.
+  void extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
+                                     double& min,
+                                     double& max,
+                                     double pad = 0);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformSliders);
   Q_DISABLE_COPY(qMRMLTransformSliders);

@@ -441,22 +441,6 @@
   <connection>
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>MatrixWidget</receiver>
-   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>273</x>
-     <y>90</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>200</x>
-     <y>197</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>TransformNodeSelector</sender>
-   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>TranslationSliders</receiver>
    <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
    <hints>
@@ -470,7 +454,7 @@
     </hint>
    </hints>
   </connection>
-  <connection>
+   <connection>
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>RotationSliders</receiver>
@@ -486,6 +470,23 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>TransformNodeSelector</sender>
+   <signal>currentNodeChanged(vtkMRMLNode*)</signal>
+   <receiver>MatrixWidget</receiver>
+   <slot>setMRMLTransformNode(vtkMRMLNode*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+
   <connection>
    <sender>TranslationSliders</sender>
    <signal>valuesChanged()</signal>

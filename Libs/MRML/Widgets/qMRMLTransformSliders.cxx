@@ -25,11 +25,14 @@
 #include <QStack>
 
 // qMRML includes
+#include <qMRMLUtils.h>
 
 // MRML includes
 #include "vtkMRMLLinearTransformNode.h"
 
 // VTK includes
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 
 //-----------------------------------------------------------------------------
@@ -146,7 +149,25 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLNode* node)
 void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* transformNode)
 {
   Q_D(qMRMLTransformSliders);
-  
+
+  //Updating the min/max values of the sliders depending on the matrix
+  //Required when loading a transform from a file
+  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  qMRMLUtils::getTransformInCoordinateSystem(transformNode,
+    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
+  vtkMatrix4x4 * mat = transform->GetMatrix();
+  double min = 0;
+  double max = 0;
+  this->extractMinMaxTranslationValue(mat, min, max, 0.3);
+  if(min < this->minimum())
+    {
+    this->setMinimum(fabs(min));
+    }
+  if(max > this->maximum())
+    {
+    this->setMaximum(fabs(max));
+    }
+
   d->LRSlider->setMRMLTransformNode(transformNode);
   d->PASlider->setMRMLTransformNode(transformNode);
   d->ISSlider->setMRMLTransformNode(transformNode);
@@ -363,5 +384,23 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
   emit this->valuesChanged();
 
   d->ActiveSliders.pop();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTransformSliders::extractMinMaxTranslationValue(
+    vtkMatrix4x4 * mat, double& min, double& max, double pad)
+{
+  if (!mat)
+    {
+    Q_ASSERT(mat);
+    return;
+    }
+  for (int i=0; i <3; i++)
+    {
+    min = qMin(min, mat->GetElement(i,3));
+    max = qMax(max, mat->GetElement(i,3));
+    }
+  min = min - pad*min;
+  max = max + pad*max;
 }
 
