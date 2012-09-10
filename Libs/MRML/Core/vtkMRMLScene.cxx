@@ -524,16 +524,16 @@ void vtkMRMLScene::RemoveAllNodesExceptSingletons()
       }
     node = this->GetNextNode();
     }
-    for(unsigned int i=0; i<removeNodes.size(); i++)
-      {
-      //this->RemoveNode(removeNodes[i]);
-      node = removeNodes[i];
-      //node->Register(this);
-      //this->CurrentScene->vtkCollection::RemoveItem(node);
-      this->RemoveNode(node);
-      //this->InvokeEvent(this->NodeRemovedEvent,node);
-      //node->UnRegister(this);
-      }
+  for(unsigned int i=0; i<removeNodes.size(); i++)
+    {
+    //this->RemoveNode(removeNodes[i]);
+    node = removeNodes[i];
+    //node->Register(this);
+    //this->CurrentScene->vtkCollection::RemoveItem(node);
+    this->RemoveNode(node);
+    //this->InvokeEvent(this->NodeRemovedEvent,node);
+    //node->UnRegister(this);
+    }
 
   this->ReferencingNodes = referencingNodes;
 }
