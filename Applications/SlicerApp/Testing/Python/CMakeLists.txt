@@ -166,6 +166,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT AtlasTests.py)
   slicer_add_python_unittest(SCRIPT fiber_visibility_crash2438.py)
   slicer_add_python_unittest(SCRIPT labelToggleBug2049.py)
+  slicer_add_python_unittest(SCRIPT sceneImport2428.py)
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
 
   # add as hidden module for use at run time
@@ -173,6 +174,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     AtlasTests.py
     fiber_visibility_crash2438.py
     labelToggleBug2049.py
+    sceneImport2428.py
     SlicerMRBTest.py
     )
 
