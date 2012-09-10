@@ -46,9 +46,14 @@ def setNodeParameters(node, parameters):
     else:
       print "parameter ", key, " has unsupported type ", value.__class__.__name__
 
-def run(module, node = None, parameters = None, wait_for_completion = False):
+def run(module, node = None, parameters = None, wait_for_completion = False, delete_temporary_files = True):
   '''Runs a CLI, optionally given a node with optional parameters, returning
-  back the node (or the new one if created)'''
+  back the node (or the new one if created)
+  node: existing parameter node (None by default)
+  parameters: dictionary of parameters for cli (None by default)
+  wait_for_completion: block if True (False by default)
+  delete_temporary_files: remove temp files created during exectuion (True by default)
+  '''
   import slicer.util
   if node:
     setNodeParameters(node, parameters)
@@ -58,6 +63,8 @@ def run(module, node = None, parameters = None, wait_for_completion = False):
       return
 
   logic = module.logic()
+
+  logic.SetDeleteTemporaryFiles(1 if delete_temporary_files else 0)
 
   if wait_for_completion:
       logic.ApplyAndWait(node)
