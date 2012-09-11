@@ -541,6 +541,13 @@ void vtkMRMLModelSliceDisplayableManager
     {
     return;
     }
+
+  // Escape if the scene a scene is being closed, imported or connected
+  if (this->GetMRMLScene()->IsBatchProcessing())
+    {
+    return;
+    }
+
   this->AddDisplayableNode(vtkMRMLDisplayableNode::SafeDownCast(node));
   this->RequestRender();
 }
