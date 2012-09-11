@@ -1335,6 +1335,8 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
   tit = req.GetTargetNodes().begin();
   sit = req.GetSourceNodes().begin();
 
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+
   while (sit != req.GetSourceNodes().end())
     {
     vtkMRMLNode *source;
@@ -1482,6 +1484,8 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
     ++sit;
     ++tit;
     }
+
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
 
   // Delete the file if requested
   if (req.GetDeleteFile())
