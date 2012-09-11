@@ -302,6 +302,8 @@ class sceneImport2428Test(unittest.TestCase):
     self.delayDisplay("Models built")
     
     success = self.verifyModels()
+    
+    success = success and (slicer.mrmlScene.GetNumberOfNodesByClass( "vtkMRMLModelNode" ) > 3)
 
     self.delayDisplay("Test finished")
 
@@ -315,6 +317,18 @@ class sceneImport2428Test(unittest.TestCase):
   def verifyModels(self):
     """Return True if the models have unique polydata and have the 
     same polydata as their display nodes have.
+
+# paste this in the slicer console for testing/verifying any scene
+def verifyModels():
+  nn = getNodes('*ModelNode*')
+  for n in nn:
+    mpd = nn[n].GetPolyData()
+    mdpd = nn[n].GetDisplayNode().GetInputPolyData()
+    if mpd != mdpd:
+      print(nn[n].GetName())
+      print(mpd,mdpd)
+
+verifyModels()
     """
 
     #
