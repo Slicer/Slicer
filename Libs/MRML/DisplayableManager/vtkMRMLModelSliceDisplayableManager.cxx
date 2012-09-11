@@ -542,6 +542,8 @@ void vtkMRMLModelSliceDisplayableManager
     return;
     }
 
+  this->SetUpdateFromMRMLRequested(1);
+
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
@@ -557,6 +559,14 @@ void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if ( node && (!node->IsA("vtkMRMLModelNode")) && (!node->IsA("vtkMRMLModelDisplayNode")) )
+    {
+    return;
+    }
+
+  this->SetUpdateFromMRMLRequested(1);
+
+  // Escape if the scene a scene is being closed, imported or connected
+  if (this->GetMRMLScene()->IsBatchProcessing())
     {
     return;
     }
