@@ -43,18 +43,29 @@ public:
   enum OriginReferenceType {ONPLANE, INVOLUME};
   enum AxesReferenceType {axisX=0, axisY, axisZ};
 
+  /// Utility function that sets the normal of the slice plane.
   void setSliceNormal(double x, double y, double z);
-  void setSliceNormal(double normal[3]);
 
 protected:
   virtual void setup();
 
 public slots:
+  /// Set the position of the slice in world coordinates
+  /// \sa setSliceOffsetValue
+  void setWorldPosition(double* newWorldPosition);
+
   /// Set slice \a offset. Used to set a single value.
+  /// \sa setWorldPosition
   void setSliceOffsetValue(double offset);
 
   /// Recenter the active node given its coordinates reference.
   void centerSliceNode();
+
+  /// Set the normal of the slice plane. The origin of the plane is not
+  /// changed. The \a normal is normalized before being set to the node.
+  /// It resets the rotation sliders.
+  /// \sa setWorldPosition.
+  void setSliceNormal(double* normal);
 
   /// Set slice normal to the camera.
   void setNormalToCamera();
@@ -81,9 +92,7 @@ protected slots:
   void onLockReformatWidgetToCamera(bool lock);
 
   void onOriginCoordinateReferenceButtonPressed(int reference);
-  void onWorldPositionChanged();
 
-  void onSliceNormalChanged();
   void onSliceNormalToAxisChanged(AxesReferenceType axis);
   void onSliceOrientationChanged(const QString& orientation);
   void onSliderRotationChanged(double rotationX);

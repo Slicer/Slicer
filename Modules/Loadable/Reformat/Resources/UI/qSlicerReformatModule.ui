@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>530</width>
-    <height>712</height>
+    <height>780</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,28 +41,28 @@
       </widget>
      </item>
      <item>
-      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector">
+      <widget class="qMRMLNodeComboBox" name="SliceNodeSelector" native="true">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>
-       <property name="nodeTypes">
+       <property name="nodeTypes" stdset="0">
         <stringlist>
          <string>vtkMRMLSliceNode</string>
         </stringlist>
        </property>
-       <property name="showHidden">
+       <property name="showHidden" stdset="0">
         <bool>true</bool>
        </property>
-       <property name="noneEnabled">
+       <property name="noneEnabled" stdset="0">
         <bool>true</bool>
        </property>
-       <property name="addEnabled">
+       <property name="addEnabled" stdset="0">
         <bool>false</bool>
        </property>
-       <property name="removeEnabled">
+       <property name="removeEnabled" stdset="0">
         <bool>false</bool>
        </property>
-       <property name="renameEnabled">
+       <property name="renameEnabled" stdset="0">
         <bool>false</bool>
        </property>
       </widget>
@@ -223,30 +223,15 @@
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QGroupBox" name="InVolumeGroupBox">
-           <layout class="QHBoxLayout" name="InVolumeLayout">
-            <property name="margin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QDoubleSpinBox" name="InVolumeXdoubleSpinBox"/>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="InVolumeYdoubleSpinBox"/>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="InVolumeZdoubleSpinBox"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QPushButton" name="CenterPushButton">
            <property name="text">
             <string>Center</string>
            </property>
           </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="ctkCoordinatesWidget" name="InVolumeCoordinatesWidget"/>
          </item>
         </layout>
        </widget>
@@ -406,63 +391,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QGroupBox" name="SetNormalGroupBox">
-           <layout class="QHBoxLayout" name="InVolumeLayout_2">
-            <property name="margin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QDoubleSpinBox" name="NormalXdoubleSpinBox">
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="minimum">
-               <double>-1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="NormalYdoubleSpinBox">
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="minimum">
-               <double>-1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="NormalZdoubleSpinBox">
-              <property name="decimals">
-               <number>3</number>
-              </property>
-              <property name="minimum">
-               <double>-1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="Normal">
            <property name="text">
@@ -472,9 +400,6 @@
          </item>
          <item row="2" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
            <item>
             <widget class="QPushButton" name="NormalXPushButton">
              <property name="text">
@@ -523,6 +448,16 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="ctkCoordinatesWidget" name="NormalCoordinatesWidget">
+           <property name="normalized">
+            <bool>true</bool>
+           </property>
+           <property name="singleStep">
+            <double>0.1</double>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -557,23 +492,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLLinearTransformSlider</class>
-   <extends>ctkSliderWidget</extends>
-   <header>qMRMLLinearTransformSlider.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ctkCheckablePushButton</class>
    <extends>QPushButton</extends>
    <header>ctkCheckablePushButton.h</header>
@@ -601,9 +519,31 @@
    <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
+   <class>ctkCoordinatesWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLLinearTransformSlider</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLLinearTransformSlider.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qMRMLNodeComboBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -214,44 +214,41 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
   // Block signals
   //bool wasOnPlaneXBlocking = this->OnPlaneXdoubleSpinBox->blockSignals(true);
   //bool wasOnPlaneYBlocking = this->OnPlaneYdoubleSpinBox->blockSignals(true);
-  bool wasInVolumeXBlocking = this->InVolumeXdoubleSpinBox->blockSignals(true);
-  bool wasInVolumeYBlocking = this->InVolumeYdoubleSpinBox->blockSignals(true);
-  bool wasInVolumeZBlocking = this->InVolumeZdoubleSpinBox->blockSignals(true);
+  bool wasInVolumeBlocking = this->InVolumeCoordinatesWidget->blockSignals(true);
 
   // Update volumes extremums
   double volumeBounds[6] = {0, 0, 0, 0, 0, 0};
   transformLogic->GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
 
-  this->InVolumeXdoubleSpinBox->setMinimum(volumeBounds[0]);
-  this->InVolumeXdoubleSpinBox->setMaximum(volumeBounds[1]);
-  this->InVolumeYdoubleSpinBox->setMinimum(volumeBounds[2]);
-  this->InVolumeYdoubleSpinBox->setMaximum(volumeBounds[3]);
-  this->InVolumeZdoubleSpinBox->setMinimum(volumeBounds[4]);
-  this->InVolumeZdoubleSpinBox->setMaximum(volumeBounds[5]);
+  /// TODO: set min/max per element
+  double minimum = qMin(volumeBounds[0], qMin(volumeBounds[2], volumeBounds[4]));
+  double maximum = qMax(volumeBounds[1], qMax(volumeBounds[3], volumeBounds[5]));
+  this->InVolumeCoordinatesWidget->setMinimum(minimum);
+  this->InVolumeCoordinatesWidget->setMaximum(maximum);
 
   // TODO : Update plane extremums
-  /*double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
+  /*
+  double sliceBounds[6] = {0, 0, 0, 0, 0, 0};
   this->MRMLSliceLogic->GetLowestVolumeSliceBounds(sliceBounds);
 
   this->OnPlaneXdoubleSpinBox->setMinimum(sliceBounds[0]);
   this->OnPlaneXdoubleSpinBox->setMaximum(sliceBounds[1]);
   this->OnPlaneYdoubleSpinBox->setMinimum(sliceBounds[2]);
-  this->OnPlaneYdoubleSpinBox->setMaximum(sliceBounds[3]);*/
+  this->OnPlaneYdoubleSpinBox->setMaximum(sliceBounds[3]);
+  */
 
   // Update volumes origin coordinates
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
-  this->InVolumeXdoubleSpinBox->setValue(sliceToRAS->GetElement(0,3));
-  this->InVolumeYdoubleSpinBox->setValue(sliceToRAS->GetElement(1,3));
-  this->InVolumeZdoubleSpinBox->setValue(sliceToRAS->GetElement(2,3));
+  this->InVolumeCoordinatesWidget->setCoordinates(sliceToRAS->GetElement(0,3),
+                                                  sliceToRAS->GetElement(1,3),
+                                                  sliceToRAS->GetElement(2,3));
 
   // TODO : Update plane origin coordinates
 
   // Reset signals blocking
   //this->OnPlaneXdoubleSpinBox->blockSignals(wasOnPlaneXBlocking);
   //this->OnPlaneYdoubleSpinBox->blockSignals(wasOnPlaneYBlocking);
-  this->InVolumeXdoubleSpinBox->blockSignals(wasInVolumeXBlocking);
-  this->InVolumeYdoubleSpinBox->blockSignals(wasInVolumeYBlocking);
-  this->InVolumeZdoubleSpinBox->blockSignals(wasInVolumeZBlocking);
+  this->InVolumeCoordinatesWidget->blockSignals(wasInVolumeBlocking);
 }
 
 //------------------------------------------------------------------------------
@@ -270,9 +267,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   this->SliceOrientationSelector->setCurrentIndex(index);
 
   // Update the normal spinboxes
-  bool wasNormalXBlocking = this->NormalXdoubleSpinBox->blockSignals(true);
-  bool wasNormalYBlocking = this->NormalYdoubleSpinBox->blockSignals(true);
-  bool wasNormalZBlocking = this->NormalZdoubleSpinBox->blockSignals(true);
+  bool wasNormalBlocking = this->NormalCoordinatesWidget->blockSignals(true);
 
   double normal[3];
   vtkMatrix4x4* sliceToRAS = this->MRMLSliceNode->GetSliceToRAS();
@@ -281,15 +276,8 @@ void qSlicerReformatModuleWidgetPrivate::updateOrientationGroupBox()
   normal[1] = sliceToRAS->GetElement(1,2);
   normal[2] = sliceToRAS->GetElement(2,2);
 
-  vtkMath::Normalize(normal);
-
-  this->NormalXdoubleSpinBox->setValue(normal[0]);
-  this->NormalYdoubleSpinBox->setValue(normal[1]);
-  this->NormalZdoubleSpinBox->setValue(normal[2]);
-
-  this->NormalXdoubleSpinBox->blockSignals(wasNormalXBlocking);
-  this->NormalYdoubleSpinBox->blockSignals(wasNormalYBlocking);
-  this->NormalZdoubleSpinBox->blockSignals(wasNormalZBlocking);
+  this->NormalCoordinatesWidget->setCoordinates(normal);
+  this->NormalCoordinatesWidget->blockSignals(wasNormalBlocking);
 }
 
 //------------------------------------------------------------------------------
@@ -377,12 +365,8 @@ void qSlicerReformatModuleWidget::setup()
                 SLOT(onOriginCoordinateReferenceButtonPressed(int)));
 
   // Connect World Coordinates of origin spinBoxes
-  this->connect(d->InVolumeXdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onWorldPositionChanged()));
-  this->connect(d->InVolumeYdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onWorldPositionChanged()));
-  this->connect(d->InVolumeZdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onWorldPositionChanged()));
+  this->connect(d->InVolumeCoordinatesWidget, SIGNAL(coordinatesChanged(double*)),
+                this, SLOT(setWorldPosition(double*)));
 
   // Connect Orientation selector
   this->connect(d->SliceOrientationSelector, SIGNAL(currentIndexChanged(QString)),
@@ -393,12 +377,8 @@ void qSlicerReformatModuleWidget::setup()
                 this, SLOT(centerSliceNode()));
 
   // Connect slice normal spinBoxes
-  this->connect(d->NormalXdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onSliceNormalChanged()));
-  this->connect(d->NormalYdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onSliceNormalChanged()));
-  this->connect(d->NormalZdoubleSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(onSliceNormalChanged()));
+  this->connect(d->NormalCoordinatesWidget, SIGNAL(coordinatesChanged(double*)),
+                this, SLOT(setSliceNormal(double*)));
 
   // Connect slice normal pushButtons
   this->connect(d->NormalXPushButton, SIGNAL(pressed()),
@@ -506,16 +486,8 @@ onOriginCoordinateReferenceButtonPressed(int ref)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  if (ref == qSlicerReformatModuleWidget::INVOLUME)
-    {
-    d->OnPlaneGroupBox->setHidden(true);
-    d->InVolumeGroupBox->setHidden(false);
-    }
-  else
-    {
-    d->OnPlaneGroupBox->setHidden(false);
-    d->InVolumeGroupBox->setHidden(true);
-    }
+  d->OnPlaneGroupBox->setHidden(ref == qSlicerReformatModuleWidget::INVOLUME);
+  d->InVolumeCoordinatesWidget->setHidden(ref != qSlicerReformatModuleWidget::INVOLUME);
 }
 
 //------------------------------------------------------------------------------
@@ -548,7 +520,7 @@ onTrackSliceOffsetValueChanged(double offset)
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::onWorldPositionChanged()
+void qSlicerReformatModuleWidget::setWorldPosition(double* worldCoordinates)
 {
   Q_D(qSlicerReformatModuleWidget);
 
@@ -559,11 +531,6 @@ void qSlicerReformatModuleWidget::onWorldPositionChanged()
     {
     return;
     }
-
-  double worldCoordinates[3];
-  worldCoordinates[0] = d->InVolumeXdoubleSpinBox->value();
-  worldCoordinates[1] = d->InVolumeYdoubleSpinBox->value();
-  worldCoordinates[2] = d->InVolumeZdoubleSpinBox->value();
 
   // Insert the widget translation
   transformLogic->SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
@@ -572,35 +539,8 @@ void qSlicerReformatModuleWidget::onWorldPositionChanged()
 //------------------------------------------------------------------------------
 void qSlicerReformatModuleWidget::setSliceNormal(double x, double y, double z)
 {
-  Q_D(qSlicerReformatModuleWidget);
-
-  vtkSlicerReformatLogic* transformLogic =
-    vtkSlicerReformatLogic::SafeDownCast(this->logic());
-
-  if (!d->MRMLSliceNode || !transformLogic)
-    {
-    return;
-    }
-
-  // Reset rotation sliders
-  d->resetSlider(d->LRSlider);
-  d->resetSlider(d->PASlider);
-  d->resetSlider(d->ISSlider);
-
   double sliceNormal[3] = {x,y,z};
-
-  // Insert the widget rotation
-  transformLogic->SetSliceNormal(d->MRMLSliceNode, sliceNormal);
-}
-
-//------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::setSliceNormal(double normal[3])
-{
-  double x = normal[0];
-  double y = normal[1];
-  double z = normal[2];
-
-  this->setSliceNormal(x, y, z);
+  this->setSliceNormal(sliceNormal);
 }
 
 //------------------------------------------------------------------------------
@@ -652,26 +592,37 @@ void qSlicerReformatModuleWidget::onSliceNormalToAxisChanged(AxesReferenceType
                                                              axis)
 {
   double sliceNormal[3];
-  sliceNormal[0] = (axis == axisX) ? 1 : 0;
-  sliceNormal[1] = (axis == axisY) ? 1 : 0;
-  sliceNormal[2] = (axis == axisZ) ? 1 : 0;
+  sliceNormal[0] = (axis == axisX) ? 1. : 0.;
+  sliceNormal[1] = (axis == axisY) ? 1. : 0.;
+  sliceNormal[2] = (axis == axisZ) ? 1. : 0.;
 
   // Insert the widget rotation
   this->setSliceNormal(sliceNormal);
 }
 
 //------------------------------------------------------------------------------
-void qSlicerReformatModuleWidget::onSliceNormalChanged()
+void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  double sliceNormal[3];
-  sliceNormal[0] = d->NormalXdoubleSpinBox->value();
-  sliceNormal[1] = d->NormalYdoubleSpinBox->value();
-  sliceNormal[2] = d->NormalZdoubleSpinBox->value();
+  vtkSlicerReformatLogic* transformLogic =
+    vtkSlicerReformatLogic::SafeDownCast(this->logic());
+
+  if (!d->MRMLSliceNode || !transformLogic)
+    {
+    return;
+    }
+
+  // Reset rotation sliders
+  d->resetSlider(d->LRSlider);
+  d->resetSlider(d->PASlider);
+  d->resetSlider(d->ISSlider);
+
+  double normalizedSliceNormal[3] = {sliceNormal[0], sliceNormal[1], sliceNormal[2]};
+  vtkMath::Normalize(normalizedSliceNormal);
 
   // Insert the widget rotation
-  this->setSliceNormal(sliceNormal);
+  transformLogic->SetSliceNormal(d->MRMLSliceNode, normalizedSliceNormal);
 }
 
 //------------------------------------------------------------------------------
