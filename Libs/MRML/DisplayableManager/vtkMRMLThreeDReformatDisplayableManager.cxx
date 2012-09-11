@@ -290,9 +290,21 @@ UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
   // Update Bound size
   vtkMRMLSliceCompositeNode* sliceCompositeNode =
     vtkMRMLSliceLogic::GetSliceCompositeNode(sliceNode);
-  const char* backgroundVolumeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
+  const char* volumeNodeID = 0;
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
+    }
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetForegroundVolumeID() : 0;
+    }
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetLabelVolumeID() : 0;
+    }
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(
-    this->External->GetMRMLScene()->GetNodeByID(backgroundVolumeID));
+    this->External->GetMRMLScene()->GetNodeByID(volumeNodeID));
   if (volumeNode)
     {
     double dimensions[3], center[3];

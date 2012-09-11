@@ -167,11 +167,22 @@ void vtkSlicerReformatLogic::GetVolumeBounds(vtkMRMLSliceNode* node,
     return;
     }
 
-  const char* backgroundVolumeID =
-    sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
+  const char* volumeNodeID = 0;
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetBackgroundVolumeID() : 0;
+    }
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetForegroundVolumeID() : 0;
+    }
+  if (!volumeNodeID)
+    {
+    volumeNodeID = sliceCompositeNode ? sliceCompositeNode->GetLabelVolumeID() : 0;
+    }
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(
-   this->GetMRMLScene()->GetNodeByID(backgroundVolumeID));
+   this->GetMRMLScene()->GetNodeByID(volumeNodeID));
 
   if (volumeNode)
     {
