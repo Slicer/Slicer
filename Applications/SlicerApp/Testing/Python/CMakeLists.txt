@@ -157,7 +157,8 @@ slicer_add_python_unittest(
   )
 
 #
-# MRB SelfTests
+# SelfTests
+# see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule
 #
 
 if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
