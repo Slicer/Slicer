@@ -32,7 +32,7 @@ class EditUtil(object):
       n  = slicer.mrmlScene.GetNthNodeByClass( i, "vtkMRMLScriptedModuleNode" )
       if n.GetModuleName() == "Editor":
         node = n
-      return node
+    return node
 
   def _createParameterNode(self):
     """create the Editor parameter node - a singleton in the scene
