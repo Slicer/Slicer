@@ -58,6 +58,10 @@ public:
   /// Example: "Image (*.jpg *.png *.tiff)", "Model (*.vtk)"
   virtual QStringList extensions(vtkObject* object)const;
 
+  /// Write the node referenced by "nodeID" into the "fileName" file.
+  /// Optionally, "useCompression" can be specified.
+  /// Return true on success, false otherwise.
+  /// Create a storage node if the storable node doesn't have any.
   virtual bool write(const qSlicerIO::IOProperties& properties);
 
   virtual vtkMRMLNode* getNodeByID(const char *id)const;

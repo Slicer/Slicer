@@ -61,7 +61,7 @@ public:
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
   Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object)const;
-  QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
+  Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   QStringList fileWriterExtensions(vtkObject* object)const;
 
   /// Return the file option associated with a \a file type
@@ -77,7 +77,7 @@ public:
   /// More specific parameters could also be set. For example, the volume reader qSlicerVolumesIO
   /// could also be called with the following parameters: LabelMap (bool), Center (bool)
   /// \note Make also sure the case of parameter name is respected
-  /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType
+  /// \sa qSlicerIO::IOProperties, qSlicerIO::IOFileType, saveNodes()
 #if QT_VERSION < 0x040700
   Q_INVOKABLE virtual bool loadNodes(const qSlicerIO::IOFileType& fileType,
                                      const QVariantMap& parameters,
@@ -98,18 +98,26 @@ public:
   /// with a vtkCollection parameter and retrieve the first element.
   vtkMRMLNode* loadNodesAndGetFirst(qSlicerIO::IOFileType fileType,
                                     const qSlicerIO::IOProperties& parameters);
-   
 
   /// Load/import a scene corresponding to \a fileName
   /// This function is provided for convenience and is equivalent to call
   /// loadNodes function with QString("SceneFile")
   bool loadScene(const QString& fileName, bool clear = true);
 
+  /// Save nodes (or scene) using the registered writers.
+  /// Return true on success, false otherwise.
   /// Attributes are typically:
-  /// All: fileName[s] 
-  /// Volume: LabelMap:bool, Center:bool, fileNames:QList<QString>...
-  bool saveNodes(qSlicerIO::IOFileType fileType,
-                 const qSlicerIO::IOProperties& parameters);
+  /// For all: QString fileName (or QStringList fileNames)
+  /// For nodes: QString nodeID, bool useCompression
+  /// \sa qSlicerNodeWriter, qSlicerIO::IOProperties, qSlicerIO::IOFileType,
+  /// loadNodes()
+#if QT_VERSION < 0x040700
+  Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
+                             const QVariantMap& parameters);
+#else
+  Q_INVOKABLE bool saveNodes(qSlicerIO::IOFileType fileType,
+                             const qSlicerIO::IOProperties& parameters);
+#endif
 
   /// Register the reader/writer \a io
   /// Note also that the IOManager takes ownership of \a io

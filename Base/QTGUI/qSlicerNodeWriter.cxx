@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
 #include <QFileInfo>
 
 // QtGUI includes
@@ -85,11 +86,6 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
 {
   Q_D(const qSlicerNodeWriter);
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(object);
-  vtkMRMLStorageNode* snode = node ? node->GetStorageNode() : 0;
-  if (snode == 0)
-    {
-    return false;
-    }
   foreach(QString className, d->NodeClassNames)
     {
     if (node->IsA(className.toLatin1()))
@@ -133,6 +129,21 @@ bool qSlicerNodeWriter::write(const qSlicerIO::IOProperties& properties)
     return false;
     }
   vtkMRMLStorageNode* snode = node ? node->GetStorageNode() : 0;
+  if (snode == 0 && node != 0)
+    {
+    snode = node->CreateDefaultStorageNode();
+    if (snode != 0)
+      {
+      node->GetScene()->AddNode(snode);
+      snode->Delete();
+      node->SetAndObserveStorageNodeID(snode->GetID());
+      }
+    }
+  if (snode == 0)
+    {
+    qDebug() << "No storage node for node" << properties["nodeID"].toString();
+    return false;
+    }
 
   Q_ASSERT(!properties["fileName"].toString().isEmpty());
   QString fileName = properties["fileName"].toString();
