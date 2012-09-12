@@ -60,11 +60,18 @@ void vtkMRMLColorTableNode::WriteXML(ostream& of, int nIndent)
     {
     of << " numcolors=\"" << this->LookupTable->GetNumberOfTableValues() << "\"";
     of << " colors=\"";
+    const char *noName = this->GetNoName();
     for (int i = 0; i < this->LookupTable->GetNumberOfTableValues(); i++)
       {
-      double *rgba;
-      rgba = this->LookupTable->GetTableValue(i);
-      of <<  i << " " << this->GetColorNameWithoutSpaces(i, "_") << " " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
+      const char *colorName = this->GetColorName(i);
+      if (colorName &&
+          noName &&
+          strcmp(colorName,noName) != 0)
+        {
+        double *rgba;
+        rgba = this->LookupTable->GetTableValue(i);
+        of <<  i << " " << this->GetColorNameWithoutSpaces(i, "_") << " " << rgba[0] << " " << rgba[1] << " " << rgba[2] << " " << rgba[3] << " ";
+        }
       }
     of << "\"";
     } 
@@ -84,23 +91,23 @@ void vtkMRMLColorTableNode::ReadXMLAttributes(const char** atts)
   {
       attName = *(atts++);
       attValue = *(atts++);
-      if (!strcmp(attName, "name"))
-      {
-          this->SetName(attValue);
-      }
-      else if (!strcmp(attName, "id"))
-      {
-          // handled at the vtkMRMLNode level
-      }
-      else if (!strcmp(attName, "numcolors"))
+      if (!strcmp(attName, "numcolors"))
         {
         std::stringstream ss;
         ss << attValue;
         ss >> numColours;
         vtkDebugMacro("Setting the look up table size to " << numColours << "\n");
-        this->LookupTable->SetNumberOfTableValues(numColours);
-        this->Names.clear();
-        this->Names.resize(numColours);
+        this->SetNumberOfColors(numColours);
+        // init the table to black/opacity 0 with no name, just in case we're missing values
+        const char *noName = this->GetNoName();
+        if (!noName)
+          {
+          noName = "(none)";
+          }
+        for (int i = 0; i < numColours; i++)
+          {
+          this->SetColor(i, noName, 0.0, 0.0, 0.0, 0.0);
+          }
         }
       else  if (!strcmp(attName, "colors")) 
       {

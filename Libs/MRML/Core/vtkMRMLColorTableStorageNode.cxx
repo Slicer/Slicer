@@ -256,6 +256,14 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
   of << "# " << colorNode->GetLookupTable()->GetNumberOfTableValues() << " values" << endl;
   for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)
     {
+    // is it an unnamed color?
+    if (colorNode->GetNoName() &&
+        colorNode->GetColorName(i) &&
+        strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
+      {
+      continue;
+      }
+    
     double *rgba;
     rgba = colorNode->GetLookupTable()->GetTableValue(i);
     // the colour look up table uses 0-1, file values are 0-255,
