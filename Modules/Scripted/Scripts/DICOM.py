@@ -335,14 +335,24 @@ class DICOMWidget:
       self.dicomApp.tagsToPrecache = tagsToPrecache
 
   def promptForDatabaseDirectory(self):
-    fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())
-    fileDialog.setWindowModality(1)
-    fileDialog.setWindowTitle("Select DICOM Database Directory")
-    fileDialog.setFileMode(2) # prompt for directory
-    fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
-    label = qt.QLabel("<p><p>The Slicer DICOM module stores a local database with an index to all datasets that are <br>pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.<p>Be sure you have write access to the selected directory.", fileDialog)
-    fileDialog.setBottomWidget(label)
-    fileDialog.exec_()
+    """Ask the user to pick a database directory.
+    But, if the application is in testing mode, just pick
+    a temp directory
+    """
+    commandOptions = slicer.app.commandOptions()
+    if commandOptions.testingEnabled:
+      databaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
+      qt.QDir().mkpath(databaseDirectory)
+      self.onDatabaseDirectoryChanged(databaseDirectory)
+    else:
+      fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())
+      fileDialog.setWindowModality(1)
+      fileDialog.setWindowTitle("Select DICOM Database Directory")
+      fileDialog.setFileMode(2) # prompt for directory
+      fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
+      label = qt.QLabel("<p><p>The Slicer DICOM module stores a local database with an index to all datasets that are <br>pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.<p>Be sure you have write access to the selected directory.", fileDialog)
+      fileDialog.setBottomWidget(label)
+      fileDialog.exec_()
 
   def onTreeClicked(self,index):
     self.model = index.model()
