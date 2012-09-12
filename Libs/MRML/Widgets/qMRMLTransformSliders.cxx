@@ -400,7 +400,8 @@ void qMRMLTransformSliders::extractMinMaxTranslationValue(
     min = qMin(min, mat->GetElement(i,3));
     max = qMax(max, mat->GetElement(i,3));
     }
-  min = min - pad*min;
-  max = max + pad*max;
+  double range = max - min;
+  min = min - pad*range;
+  max = max + pad*range;
 }
 
