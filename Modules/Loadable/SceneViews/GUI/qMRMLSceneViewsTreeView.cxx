@@ -275,7 +275,7 @@ void qMRMLSceneViewsTreeView::deleteSelected()
   // get confirmation to delete
   QMessageBox msgBox;
   msgBox.setText("Do you really want to delete the selected SceneView?");
-  msgBox.setInformativeText("This does not include hierarchies. This can not be undone.");
+  msgBox.setInformativeText("This cannot be undone.");
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
   int ret = msgBox.exec();
