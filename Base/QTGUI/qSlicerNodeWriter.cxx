@@ -86,11 +86,14 @@ bool qSlicerNodeWriter::canWriteObject(vtkObject* object)const
 {
   Q_D(const qSlicerNodeWriter);
   vtkMRMLStorableNode* node = vtkMRMLStorableNode::SafeDownCast(object);
-  foreach(QString className, d->NodeClassNames)
+  if (node)
     {
-    if (node->IsA(className.toLatin1()))
+    foreach(QString className, d->NodeClassNames)
       {
-      return true;
+      if (node->IsA(className.toLatin1()))
+        {
+        return true;
+        }
       }
     }
   return false;
