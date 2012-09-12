@@ -88,21 +88,21 @@ void qMRMLSceneViewsModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNo
     case qMRMLSceneViewsModel::ThumbnailColumn:
       if (viewNode)
         {
+        QImage qimage;
         if (viewNode->GetScreenShot())
-          {
-          QImage qimage;
+          {         
           qMRMLUtils::vtkImageDataToQImage(viewNode->GetScreenShot(),qimage);
-          QSize imageSize = qimage.size();
-//          std::cout << "Image size = " << imageSize.width() << "x" << imageSize.height() << std::endl;
-          QPixmap screenshot;
-          screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
-          item->setData(screenshot.scaled(80,80,Qt::KeepAspectRatio,Qt::SmoothTransformation),Qt::DecorationRole);
-          item->setData(QSize(80,80),Qt::SizeHintRole);
           }
         else
           {
-//          std::cout << "view node's screen shot is null, storage node is " << (viewNode->GetStorageNode() == NULL ? "null" : viewNode->GetStorageNode()->GetID()) << std::endl;
+          // std::cout << "view node's screen shot is null" << std::endl;
+          qimage = QImage(80,80, QImage::Format_RGB32);
+          qimage.fill(0);
           }
+        QPixmap screenshot;
+        screenshot = QPixmap::fromImage(qimage, Qt::AutoColor);
+        item->setData(screenshot.scaled(80,80,Qt::KeepAspectRatio,Qt::SmoothTransformation),Qt::DecorationRole);
+        item->setData(QSize(80,80),Qt::SizeHintRole);
         }
       break;
     case qMRMLSceneViewsModel::RestoreColumn:
