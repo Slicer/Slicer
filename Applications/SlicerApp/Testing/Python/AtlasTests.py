@@ -292,4 +292,17 @@ class AtlasTestsTest(unittest.TestCase):
     volumeNode = slicer.util.getNode(pattern=testVolumePattern)
     logic = AtlasTestsLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
+
+    # go to the scene views module
+    m = slicer.util.mainWindow()
+    m.moduleSelector().selectModule('SceneViews')
+    self.delayDisplay("Entered Scene Views module")
+
+    # iterate over the scene views and restore them
+    numSceneViews = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLSceneViewNode")
+    for s in range(numSceneViews): 
+      sv = slicer.mrmlScene.GetNthNodeByClass(s, "vtkMRMLSceneViewNode")
+      self.delayDisplay("Restoring scene " + sv.GetName())
+      sv.RestoreScene()
+
     self.delayDisplay('Test passed!')
