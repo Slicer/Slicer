@@ -178,6 +178,7 @@ protected:
   /// 
   /// Set values in the names vector from the colours in the node
   virtual bool SetNameFromColor(int index);
+  virtual bool HasNameFromColor(int index);
   
   /// 
   /// Which type of look up table does this node hold? 

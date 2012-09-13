@@ -1517,7 +1517,10 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
     return 1;
     }
   this->GetLookupTable()->SetTableValue(entry, r, g, b, a);
-  this->SetNameFromColor(entry);
+  if (this->HasNameFromColor(entry))
+    {
+    this->SetNameFromColor(entry);
+    }
 
   // trigger a modified event
   this->Modified();
@@ -1527,12 +1530,6 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b, dou
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
 {
-  if (this->GetType() != this->User &&
-      this->GetType() != this->File)
-    {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
-      return 0;
-    }
   if (entry < 0 ||
       entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
@@ -1540,27 +1537,12 @@ int vtkMRMLColorTableNode::SetColor(int entry, double r, double g, double b)
       return 0;
     }
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
-  if (rgba[0] == r && rgba[1] == g && rgba[2] == b)
-    {
-    return 1;
-    }
-  this->GetLookupTable()->SetTableValue(entry, r, g, b, rgba[3]);
-  this->SetNameFromColor(entry);
-
-  // trigger a modified event
-  this->Modified();
-  return 1;
+  return this->SetColor(entry, r,g,b,rgba[3]);
 }
 
 //---------------------------------------------------------------------------
 int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
 {
-  if (this->GetType() != this->User &&
-      this->GetType() != this->File)
-    {
-      vtkErrorMacro( "vtkMRMLColorTableNode::SetColor: ERROR: can't set a colour if not a user defined colour table, reset the type first to User or File\n");
-      return 0;
-    }
   if (entry < 0 ||
       entry >= this->GetLookupTable()->GetNumberOfTableValues())
     {
@@ -1568,16 +1550,7 @@ int vtkMRMLColorTableNode::SetOpacity(int entry, double opacity)
       return 0;
     }
   double* rgba = this->GetLookupTable()->GetTableValue(entry);
-  if (rgba[3] == opacity)
-    {
-    return 1;
-    }
-  this->GetLookupTable()->SetTableValue(entry, rgba[0], rgba[1], rgba[2], opacity);
-  this->SetNameFromColor(entry);
-
-  // trigger a modified event
-  this->Modified();
-  return 1;
+  return this->SetColor(entry, rgba[0], rgba[1], rgba[2], opacity);
 }
 
 //---------------------------------------------------------------------------

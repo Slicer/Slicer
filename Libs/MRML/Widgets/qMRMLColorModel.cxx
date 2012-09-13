@@ -378,6 +378,7 @@ void qMRMLColorModel::updateColorFromItem(int color, QStandardItem* item)
       {
       QColor rgba(item->data(qMRMLColorModel::ColorRole).value<QColor>());
       colorTableNode->SetColor(color, rgba.redF(), rgba.greenF(), rgba.blueF(), rgba.alphaF());
+      break;
       }
     case qMRMLColorModel::LabelColumn:
       colorTableNode->SetColorName(color, item->text().toLatin1());
