@@ -140,8 +140,8 @@ void qSlicerVolumesIOOptionsWidget::setFileNames(const QStringList& fileNames)
       }
     // Because '_' is considered as a word character (\w), \b
     // doesn't consider '_' as a word boundary.
-    QRegExp labelMapName("(\\b|_)(-label)(\\b|_)");
-    QRegExp segName("(\\b|_)(seg)(\\b|_)");
+    QRegExp labelMapName("(\\b|_)([Ll]abel(s)?)(\\b|_)");
+    QRegExp segName("(\\b|_)([Ss]eg)(\\b|_)");
     if (fileInfo.baseName().contains(labelMapName) ||
         fileInfo.baseName().contains(segName))
       {
