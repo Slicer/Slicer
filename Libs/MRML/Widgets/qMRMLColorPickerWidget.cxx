@@ -73,6 +73,8 @@ void qMRMLColorPickerWidgetPrivate::init()
                    q, SIGNAL(colorEntrySelected(int)));
   QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QColor)),
                    q, SIGNAL(colorSelected(QColor)));
+  QObject::connect(this->MRMLColorListView, SIGNAL(colorSelected(QString)),
+                   q, SIGNAL(colorNameSelected(QString)));
 
   // SearchBox
   this->SearchBox->setPlaceholderText("Search color...");

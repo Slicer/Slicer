@@ -144,6 +144,8 @@ void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModel
     emit this->colorSelected(colorEntry);
     QColor color = this->colorModel()->qcolorFromColor(colorEntry);
     emit this->colorSelected(color);
+    QString name = this->colorModel()->nameFromColor(colorEntry);
+    emit this->colorSelected(name);
     }
   this->QListView::currentChanged(current, previous);
 }

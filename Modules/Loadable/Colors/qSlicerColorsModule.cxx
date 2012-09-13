@@ -118,7 +118,8 @@ void qSlicerColorsModule::setup()
   // Color picker
   d->ColorDialogPickerWidget->setMRMLColorLogic(colorLogic);
   ctkColorDialog::addDefaultTab(d->ColorDialogPickerWidget.data(),
-                                "Labels", SIGNAL(colorSelected(QColor)));
+                                "Labels", SIGNAL(colorSelected(QColor)),
+                                SIGNAL(colorNameSelected(QString)));
   ctkColorDialog::setDefaultTab(1);
 }
 

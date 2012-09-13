@@ -70,6 +70,11 @@ signals:
 
   /// Fired when the user selects a color in the list
   void colorSelected(const QColor& color);
+
+  /// Fired when the user selects a color in the list.
+  /// name is the name of the color node entry.
+  void colorNameSelected(const QString& name);
+
 protected slots:
   void onNodeAdded(vtkObject*, vtkObject*);
   void onCurrentColorNodeChanged(vtkMRMLNode* node);

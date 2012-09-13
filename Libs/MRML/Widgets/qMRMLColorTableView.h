@@ -34,6 +34,9 @@ class qMRMLColorModel;
 class vtkMRMLColorNode;
 class vtkMRMLNode;
 
+/// \brief Table view for color table nodes.
+/// Edition of color (opening dialog) and opacity (slider popup) is handled by
+/// qMRMLItemDelegate.
 class QMRML_WIDGETS_EXPORT qMRMLColorTableView : public QTableView
 {
   Q_OBJECT

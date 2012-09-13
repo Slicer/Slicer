@@ -224,6 +224,17 @@ QColor qMRMLColorModel::qcolorFromColor(int entry)const
 }
 
 //------------------------------------------------------------------------------
+QString qMRMLColorModel::nameFromColor(int entry)const
+{
+  Q_D(const qMRMLColorModel);
+  if (d->MRMLColorNode == 0 || entry < 0)
+    {
+    return QString();
+    }
+  return QString(d->MRMLColorNode->GetColorName(entry));
+}
+
+//------------------------------------------------------------------------------
 void qMRMLColorModel::updateNode()
 {
   Q_D(qMRMLColorModel);
@@ -336,6 +347,7 @@ void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int co
         }
       else
         {
+        item->setText(QString());
         item->setData((validColor ? pixmap.size() : QVariant()),Qt::SizeHintRole);
         //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         }

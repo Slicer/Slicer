@@ -59,6 +59,7 @@ signals:
   /// (not fired on the activated signal).
   void colorSelected(int index);
   void colorSelected(const QColor& color);
+  void colorSelected(const QString& name);
 
 protected slots:
   virtual void currentChanged(const QModelIndex&, const QModelIndex&);

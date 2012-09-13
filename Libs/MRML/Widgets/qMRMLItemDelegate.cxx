@@ -195,6 +195,7 @@ void qMRMLItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
     ctkColorPickerButton* colorPicker = qobject_cast<ctkColorPickerButton*>(editor);
     Q_ASSERT(colorPicker);
     QColor color = colorPicker->color();
+    // the color role depends on what is the underlying model.
     model->setData(index, color, this->colorRole(index));
     }
   else if (this->is0To1Value(index))

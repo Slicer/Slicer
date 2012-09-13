@@ -48,13 +48,18 @@ public:
   typedef QAbstractItemModel Superclass;
   qMRMLColorModel(QObject *parent=0);
   virtual ~qMRMLColorModel();
-  
+
+  /// ColorRole is an invivisble role that contains the true color (QColor) when
+  /// Qt::DecorationRole contains a pixmap of the color.
   enum ItemDataRole{
     ColorEntryRole = Qt::UserRole,
     PointerRole,
     ColorRole
   };
- 
+
+  /// The color column contains a Qt::DecorationRole with a pixmap of the color,
+  /// the ColorRole with the color QColor, the colorName as Qt::TooltipRole and
+  /// the colorName as Qt::DisplayRole only if LabelInColorColumn is true.
   enum Columns{
     ColorColumn = 0,
     LabelColumn = 1,
@@ -84,6 +89,10 @@ public:
   inline QColor qcolorFromIndex(const QModelIndex& nodeIndex)const;
   inline QColor qcolorFromItem(QStandardItem* nodeItem)const;
   QColor qcolorFromColor(int color)const;
+
+  /// Return the name of the color \a colorEntry
+  QString nameFromColor(int colorEntry)const;
+
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
   void onItemChanged(QStandardItem * item);
