@@ -72,7 +72,6 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
-
   const char* attName;
   const char* attValue;
   while (*atts != NULL)
@@ -86,12 +85,7 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
         {
         std::string id;
         ss >> id;
-        vtkMRMLScene *scene = this->GetScene();
-        this->SetScene(0);
         this->AddAndObserveDisplayNodeID(id.c_str());
-        this->SetScene(scene);
-
-        scene->AddReferencedNodeID(id.c_str(), this);
         }
       }
     }
@@ -102,7 +96,7 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
-  Superclass::UpdateReferenceID(oldID, newID);
+  this->Superclass::UpdateReferenceID(oldID, newID);
   int wasModifying = this->StartModify();
   for (unsigned int i=0; i<this->DisplayNodeIDs.size(); i++)
     {
@@ -143,6 +137,16 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << "DisplayNodeIDs[" << i << "]: " <<
       this->DisplayNodeIDs[i] << " -> " << this->DisplayNodes[i] << "\n";
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLDisplayableNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  for (unsigned int i=0; i<this->DisplayNodeIDs.size(); ++i)
+    {
+    this->Scene->AddReferencedNodeID(this->DisplayNodeIDs[i].c_str(), this);
     }
 }
 

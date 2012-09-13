@@ -326,9 +326,14 @@ bool references()
               << sceneViewVolumeNode << ": "
               << sceneViewReferencedNodes->GetItemAsObject(0) << ", "
               << sceneViewReferencedNodes->GetItemAsObject(1) << std::endl;
-    std::cout << "Referencing nodes: "
-              << sceneViewNode->GetNodes()->GetReferencingNodes().size() << " "
-              << sceneViewNode->GetNodes()->GetReferencingNodes()[0] << std::endl;
+    unsigned int referencingNodesSize = sceneViewNode->GetNodes()->GetReferencingNodes().size();
+    std::cout << "Referencing nodes: " << referencingNodesSize << "(1 expected) ";
+    for (unsigned int i = 0; i < referencingNodesSize; ++i)
+      {
+      std::cout << sceneViewNode->GetNodes()->GetReferencingNodes()[i] << "("
+                << sceneViewNode->GetNodes()->GetReferencingNodes()[i]->GetID() << ") ";
+      }
+    std::cout << std::endl;
     std::cout << referencedNodes->GetNumberOfItems() << " items in scene for "
               << volumeNode << ": "
               << referencedNodes->GetItemAsObject(0) << ", "

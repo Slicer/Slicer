@@ -202,9 +202,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
 
       // convert to absolute filename
       std::string name;
-      if (this->GetScene() && this->IsFilePathRelative(filename.c_str()))
+      if (this->GetSceneRootDir() && this->IsFilePathRelative(filename.c_str()))
         {
-        name = this->GetScene()->GetRootDirectory();
+        name = this->GetSceneRootDir();
         if (name[name.size()-1] != '/')
           {
           name = name + std::string("/");
@@ -225,9 +225,9 @@ void vtkMRMLStorageNode::ReadXMLAttributes(const char** atts)
       
       // convert to absolute filename
       std::string name;
-      if (this->GetScene() && this->IsFilePathRelative(filename.c_str()))
+      if (this->GetSceneRootDir() && this->IsFilePathRelative(filename.c_str()))
         {
-        name = this->GetScene()->GetRootDirectory();
+        name = this->GetSceneRootDir();
         if (name[name.size()-1] != '/')
           {
           name = name + std::string("/");
@@ -998,13 +998,13 @@ const char *vtkMRMLStorageNode::GetAbsoluteFilePath(const char *inputPath)
     // the path is already absolute, return it
     return inputPath;
     }
-  if (!this->GetScene())
+  if (!this->GetSceneRootDir())
     {
     vtkErrorMacro("GetAbsoluteFilePath: have a relative path " << inputPath << " but no scene to find it from!");
     return NULL;
     }
 
-  std::string path = this->GetScene()->GetRootDirectory();
+  std::string path = this->GetSceneRootDir();
   if (path.size() > 0 &&
       path[path.size()-1] != '/')
     {

@@ -14,6 +14,7 @@ Version:   $Revision: 1.11 $
 
 // MRML includes
 #include "vtkMRMLNode.h"
+#include "vtkMRMLScene.h"
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -258,6 +259,23 @@ void vtkMRMLNode::WriteNodeBodyXML(ostream &, int )
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ProcessMRMLEvents ( vtkObject *, unsigned long , void *)
 {
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetScene(vtkMRMLScene* scene)
+{
+  this->Scene = scene;
+  if (this->Scene)
+    {
+    this->SetSceneReferences();
+    this->SetSceneRootDir(scene->GetRootDirectory());
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::SetSceneReferences()
+{
+  assert(this->Scene); // must always have a valid scene when called.
 }
 
 //----------------------------------------------------------------------------

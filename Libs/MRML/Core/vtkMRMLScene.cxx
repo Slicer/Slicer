@@ -1269,7 +1269,6 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       }
     }
 
-  n->SetSceneRootDir(this->RootDirectory.c_str());
   // Set a default name if none is given automatically
   if (n->GetName() == NULL|| n->GetName()[0] == '\0')
     {
@@ -2802,11 +2801,29 @@ void vtkMRMLScene::ClearRedoStack()
 //------------------------------------------------------------------------------
 void vtkMRMLScene::AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
 {
-  if (id && refrencingNode && refrencingNode->GetScene() && refrencingNode->GetID())
+  if (id && refrencingNode &&
+      refrencingNode->GetScene() && refrencingNode->GetID() &&
+      !this->IsNodeReferencingNodeID(refrencingNode, id))
     {
     this->ReferencedIDs.push_back(id);
     this->ReferencingNodes.push_back(refrencingNode);
     }
+}
+
+//------------------------------------------------------------------------------
+bool vtkMRMLScene::IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id)
+{
+  std::vector<std::string>::iterator idIt = this->ReferencedIDs.begin();
+  std::vector<vtkMRMLNode*>::iterator nodeIt = this->ReferencingNodes.begin();
+  for ( ; idIt != this->ReferencedIDs.end(); ++idIt, ++nodeIt)
+    {
+    if (*idIt == std::string(id) &&
+        *nodeIt == referencingNode)
+      {
+      return true;
+      }
+    }
+  return false;
 }
 
 //------------------------------------------------------------------------------

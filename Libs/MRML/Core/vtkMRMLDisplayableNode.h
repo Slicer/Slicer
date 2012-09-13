@@ -64,6 +64,9 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
+  /// Set the display node IDs as references to the scene.
+  virtual void SetSceneReferences();
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
@@ -71,7 +74,7 @@ public:
 
   /// 
   /// Clears out the list of display nodes, and repopulate it from
-  /// the liste of display node ids.
+  /// the list of display node ids.
   virtual void UpdateScene(vtkMRMLScene *scene);
 
   /// 

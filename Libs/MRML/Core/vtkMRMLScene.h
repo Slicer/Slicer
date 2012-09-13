@@ -256,6 +256,7 @@ public:
   void SaveStateForUndo(std::vector<vtkMRMLNode *> nodes);
 
   void AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode);
+  bool IsNodeReferencingNodeID(vtkMRMLNode* referencingNode, const char* id);
 
   void ClearReferencedNodeID()
   {

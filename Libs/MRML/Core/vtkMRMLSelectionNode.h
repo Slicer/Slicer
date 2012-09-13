@@ -51,6 +51,9 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Selection";};
 
+  /// Set the nodes as references to the current scene.
+  virtual void SetSceneReferences();
+
   /// 
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);

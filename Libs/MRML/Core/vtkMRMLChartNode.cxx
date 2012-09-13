@@ -203,33 +203,10 @@ void vtkMRMLChartNode::Copy(vtkMRMLNode *anode)
     {
     *(this->DoubleArrayIDs) = *(achartnode->DoubleArrayIDs);
     *(this->Properties) = *(achartnode->Properties);
-
-    // add the new references
-    //
-    //
-
-    // references in the array list 
-    DoubleArrayIDMap::iterator it;
-    for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end(); ++it)
+    // Add new references
+    if (this->Scene)
       {
-      if (this->Scene)
-        {
-        this->Scene->AddReferencedNodeID((*it).second.c_str(), this);
-        }
-      }
-
-    // references in the properties
-    ChartPropertyMap::iterator pit;
-    for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
-      {
-      ArrayPropertyMap::iterator ait = (*pit).second.find("lookupTable");
-      if (ait != (*pit).second.end())
-        {
-        if (this->Scene)
-          {
-          this->Scene->AddReferencedNodeID((*ait).second.c_str(), this);
-          }
-        }
+      this->SetSceneReferences();
       }
     }
 
@@ -516,6 +493,30 @@ void vtkMRMLChartNode::ClearProperties()
   this->Modified();
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLChartNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  // references in the array list
+  DoubleArrayIDMap::iterator it;
+  for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end(); ++it)
+    {
+    this->Scene->AddReferencedNodeID((*it).second.c_str(), this);
+    }
+
+    // references in the properties
+  ChartPropertyMap::iterator pit;
+  for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
+    {
+    ArrayPropertyMap::iterator ait = (*pit).second.find("lookupTable");
+    if (ait != (*pit).second.end())
+      {
+      this->Scene->AddReferencedNodeID((*ait).second.c_str(), this);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLChartNode::UpdateReferences()
 {
    Superclass::UpdateReferences();

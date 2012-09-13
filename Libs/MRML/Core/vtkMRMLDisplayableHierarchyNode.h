@@ -53,7 +53,10 @@ public:
   /// Get node XML tag name (like Volume, DisplayableHierarchy)
   virtual const char* GetNodeTagName() {return "DisplayableHierarchy";};
 
-   /// 
+  /// Set the display node as reference into the scene
+  virtual void SetSceneReferences();
+
+  ///
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
   virtual void UpdateReferences();

@@ -120,6 +120,18 @@ void vtkMRMLSelectionNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->ActiveVolumeID, this);
+  this->Scene->AddReferencedNodeID(this->ActiveLabelVolumeID, this);
+  this->Scene->AddReferencedNodeID(this->ActiveFiducialListID, this);
+  this->Scene->AddReferencedNodeID(this->ActiveCameraID, this);
+  this->Scene->AddReferencedNodeID(this->ActiveViewID, this);
+  this->Scene->AddReferencedNodeID(this->ActiveLayoutID, this);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);

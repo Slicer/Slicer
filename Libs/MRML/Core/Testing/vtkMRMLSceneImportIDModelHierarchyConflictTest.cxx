@@ -36,7 +36,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
 
   // add poly data
   vtkNew<vtkPolyData> polyData;
-  modelNode.GetPointer()->SetAndObservePolyData(polyData.GetPointer());
+  modelNode->SetAndObservePolyData(polyData.GetPointer());
   std::cout << "Polydata pointer = " << polyData.GetPointer() << std::endl;
 
   // Add display node
@@ -58,9 +58,9 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
     }
   // does the display node point to the correct polydata?
   std::cout<< "Model display node poly data pointer = "
-           << modelDisplayNode.GetPointer()->GetInputPolyData() << std::endl;
-  if (modelDisplayNode.GetPointer()->GetInputPolyData() !=
-      modelNode.GetPointer()->GetPolyData())
+           << modelDisplayNode->GetInputPolyData() << std::endl;
+  if (modelDisplayNode->GetInputPolyData() !=
+      modelNode->GetPolyData())
     {
     std::cerr << "Model display node and model node point to different poly data:"
               <<" model poly data = " <<  modelNode.GetPointer()->GetPolyData()
@@ -114,8 +114,8 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
       scene->GetNodeByID("vtkMRMLModelDisplayNode1") != modelDisplayNode.GetPointer() ||
       modelNode->GetDisplayNode() != modelDisplayNode.GetPointer())
     {
-    std::cerr << "Failed to import scene "
-              << "number of nodes: " << scene->GetNumberOfNodes()
+    std::cerr << "Failed to import scene at line" << __LINE__
+              << ", number of nodes: " << scene->GetNumberOfNodes()
               << ", scene model node1 "  << scene->GetNodeByID("vtkMRMLModelNode1")
               << " != original model node" <<  modelNode.GetPointer()
               << " or scene model display node 1 " << scene->GetNodeByID("vtkMRMLModelDisplayNode1")
@@ -133,8 +133,8 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
       strcmp(modelNode2->GetDisplayNode()->GetID(), "vtkMRMLModelDisplayNode3") != 0 ||
       strcmp(modelNode2->GetDisplayNode()->GetName(), "New Display 1") != 0)
     {
-    std::cerr << "Failed to import scene: "
-              << "model #2: " << modelNode2
+    std::cerr << "Failed to import scene at line " << __LINE__ << " :"
+              << " model #2: " << modelNode2
               << ", model node 2 display node: " << modelNode2->GetDisplayNode();
     if (modelNode2)
       {

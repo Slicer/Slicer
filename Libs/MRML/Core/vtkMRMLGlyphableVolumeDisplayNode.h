@@ -83,6 +83,9 @@ class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVo
     this->SetVisualizationMode(this->visModeBoth);
   };
 
+  /// Set Glyph color node ID as reference to the scene
+  virtual void SetSceneReferences();
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene

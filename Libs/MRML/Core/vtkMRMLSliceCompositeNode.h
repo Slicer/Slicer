@@ -47,6 +47,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "SliceComposite";};
 
+  /// Set the volumes as reference in the scene
+  virtual void SetSceneReferences();
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene

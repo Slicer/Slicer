@@ -65,6 +65,13 @@ void vtkMRMLDisplayableHierarchyNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLDisplayableHierarchyNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayableHierarchyNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   Superclass::UpdateReferenceID(oldID, newID);
@@ -90,13 +97,11 @@ void vtkMRMLDisplayableHierarchyNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "displayableNodeID")) 
       {
       this->SetDisplayableNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->DisplayableNodeIDReference, this);
       }
     else if (!strcmp(attName, "displayNodeRef") ||
              !strcmp(attName, "displayNodeID")) 
       {
       this->SetDisplayNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->DisplayNodeID, this);
       }
     else if (!strcmp(attName, "expanded")) 
         {
@@ -204,6 +209,11 @@ void vtkMRMLDisplayableHierarchyNode::SetAndObserveDisplayNodeID(const char *dis
   vtkMRMLDisplayNode *dnode = this->GetDisplayNode();
 
   vtkSetAndObserveMRMLObjectMacro(this->DisplayNode, dnode);
+
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(displayNodeID, this);
+    }
 }
 
 //---------------------------------------------------------------------------

@@ -254,6 +254,16 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLStorableNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  for (unsigned int i=0; i<this->StorageNodeIDs.size(); ++i)
+    {
+    this->Scene->AddReferencedNodeID(this->StorageNodeIDs[i].c_str(), this);
+    }
+}
+
 //-----------------------------------------------------------
 void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
 {
@@ -341,10 +351,10 @@ void vtkMRMLStorableNode::SetStorageNodeID(const char *storageNodeID)
     {
     this->StorageNodeIDs.push_back(std::string(storageNodeID));
     }
-  if (storageNodeID) 
-    { 
-    this->Scene->AddReferencedNodeID(storageNodeID, this); 
-    } 
+  if (storageNodeID && this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(storageNodeID, this);
+    }
 }
 
 //----------------------------------------------------------------------------

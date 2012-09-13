@@ -80,7 +80,6 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "transformNodeRef")) 
       {
       this->SetAndObserveTransformNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
       }
     }
 
@@ -144,9 +143,14 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   vtkSetAndObserveMRMLObjectEventsMacro(this->TransformNode, tnode, events);
   events->Delete();
-  
+
   this->EndModify(wasModifying);
   this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent);
+
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -169,6 +173,13 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
     //this->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
     }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLTransformableNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->TransformNodeID, this);
 }
 
 //-----------------------------------------------------------

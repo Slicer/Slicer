@@ -175,6 +175,17 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
+  for (unsigned int i=0; i<this->ViewNodeIDs.size(); i++)
+    {
+    this->Scene->AddReferencedNodeID(this->ViewNodeIDs[i].c_str(), this);
+    }
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
@@ -380,7 +391,6 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
              !strcmp(attName, "colorNodeRef")) 
       {
       this->SetAndObserveColorNodeID(attValue);
-      //this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
       }
     else if (!strcmp(attName, "activeScalarName"))
       {
@@ -597,6 +607,10 @@ void vtkMRMLDisplayNode::SetAndObserveColorNodeID(const char *colorNodeID)
   vtkSetAndObserveMRMLObjectMacro(this->ColorNode, cnode);
   this->SetColorNodeInternal(cnode);
   this->SetColorNodeID(colorNodeID);
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(this->ColorNodeID, this);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -641,13 +655,16 @@ void vtkMRMLDisplayNode::AddViewNodeID(const char* viewNodeID)
     return;
     }
 
-  if (IsViewNodeIDPresent(viewNodeID))
+  if (this->IsViewNodeIDPresent(viewNodeID))
     {
     return; // already exists, do nothing
     }
 
-  ViewNodeIDs.push_back(std::string(viewNodeID));
-  this->Scene->AddReferencedNodeID(viewNodeID, this); 
+  this->ViewNodeIDs.push_back(std::string(viewNodeID));
+  if (this->Scene)
+    {
+    this->Scene->AddReferencedNodeID(viewNodeID, this);
+    }
 
   this->Modified();
 }

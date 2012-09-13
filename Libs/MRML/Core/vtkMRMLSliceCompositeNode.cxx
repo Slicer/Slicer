@@ -164,7 +164,14 @@ void vtkMRMLSliceCompositeNode::ResetInteractionFlagsModifier()
   this->InteractionFlagsModifier = (unsigned int) -1;
 }
 
-
+//-----------------------------------------------------------
+void vtkMRMLSliceCompositeNode::SetSceneReferences()
+{
+   Superclass::SetSceneReferences();
+   this->Scene->AddReferencedNodeID(this->BackgroundVolumeID, this);
+   this->Scene->AddReferencedNodeID(this->ForegroundVolumeID, this);
+   this->Scene->AddReferencedNodeID(this->LabelVolumeID, this);
+}
 
 //-----------------------------------------------------------
 void vtkMRMLSliceCompositeNode::UpdateReferences()

@@ -396,9 +396,18 @@ public:
     this->CopyWithScene(node);
     this->SetDisableModifiedEvent(oldMode);
     }
-  
+
+  ///
+  /// Only the scene can set itself to the node
+  /// Internally calls SetSceneReferences()
+  /// \sa SetSceneReferences()
   vtkGetObjectMacro(Scene, vtkMRMLScene);
-  void SetScene(vtkMRMLScene* scene) {this->Scene = scene;};
+  virtual void SetScene(vtkMRMLScene* scene);
+
+  /// Update the references of the node to the scene.
+  /// You must unsure that a valid scene is set before calling
+  /// SetSceneReferences().
+  virtual void SetSceneReferences();
 
   /// 
   /// Update the stored reference to another node in the scene

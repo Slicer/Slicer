@@ -66,6 +66,9 @@ public:
   /// Propagate Progress Event generated in ReadData
   virtual void ProcessMRMLEvents ( vtkObject *caller, unsigned long event, void *callData );
 
+  /// Mark the color and views nodes as references.
+  virtual void SetSceneReferences();
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
