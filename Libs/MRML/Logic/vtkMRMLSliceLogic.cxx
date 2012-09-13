@@ -1637,8 +1637,6 @@ void vtkMRMLSliceLogic::FitSliceToVolume(vtkMRMLVolumeNode *volumeNode, int widt
     return;
     }
 
-  double offset = sliceNode->GetSliceOffset();
-
   double rasDimensions[3], rasCenter[3];
   this->GetVolumeRASBox (volumeNode, rasDimensions, rasCenter);
   double sliceDimensions[3], sliceCenter[3];
