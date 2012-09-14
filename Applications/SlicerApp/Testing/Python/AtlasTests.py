@@ -293,8 +293,36 @@ class AtlasTestsTest(unittest.TestCase):
     logic = AtlasTestsLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
 
-    # go to the scene views module
     m = slicer.util.mainWindow()
+
+    # go to the models module
+    m.moduleSelector().selectModule('Models')
+    self.delayDisplay("Entered Models module")
+
+    # get model hierarchy nodes that have children hierarchies
+    numModelHierarchies = slicer.mrmlScene.GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode")
+    for h in range(numModelHierarchies):
+      mh = slicer.mrmlScene.GetNthNodeByClass(h, "vtkMRMLModelHierarchyNode")
+      numChildren = mh.GetNumberOfChildrenNodes()
+      if numChildren > 0:
+        self.delayDisplay("Manipulating model hierarchy " + mh.GetName())
+        mhd = mh.GetDisplayNode()
+        hierarchyOriginalColour = mhd.GetColor()
+        hierarchyOriginalVisibility = mhd.GetVisibility()
+        hierarchyOriginalExpanded = mh.GetExpanded()
+        # collapse and change the colour on the hierarchy to full red
+        mh.SetExpanded(0)
+        mhd.SetColor(1,0,0)
+        # set the collapsed visibility to 0
+        mhd.SetVisibility(0)
+        # expand, should see all models in correct colour
+        mh.SetExpanded(1)
+        # reset the hierarchy 
+        mhd.SetVisibility(hierarchyOriginalVisibility)
+        mhd.SetColor(hierarchyOriginalColour)
+        mh.SetExpanded(hierarchyOriginalExpanded)
+
+    # go to the scene views module
     m.moduleSelector().selectModule('SceneViews')
     self.delayDisplay("Entered Scene Views module")
 
