@@ -357,13 +357,26 @@ void vtkMRMLVolumeRenderingDisplayNode::UpdateScene(vtkMRMLScene *scene)
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
-                                                    unsigned long event,
-                                                    void *callData )
+void vtkMRMLVolumeRenderingDisplayNode::ProcessMRMLEvents(vtkObject *caller,
+                                                          unsigned long event,
+                                                          void *callData)
 {
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  if (this->VolumePropertyNode != NULL &&
+      this->VolumePropertyNode == vtkMRMLVolumePropertyNode::SafeDownCast(caller) &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
+  if (this->ROINode != NULL &&
+      this->ROINode == vtkMRMLAnnotationROINode::SafeDownCast(caller) &&
+      event == vtkCommand::ModifiedEvent)
+    {
+    this->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
+    }
+
   if (event == vtkCommand::StartEvent ||
-      // ModifiedEvent is already forwarded by Superclass::ProcessMRMLEvents
       event == vtkCommand::EndEvent ||
       event == vtkCommand::StartInteractionEvent ||
       event == vtkCommand::InteractionEvent ||
