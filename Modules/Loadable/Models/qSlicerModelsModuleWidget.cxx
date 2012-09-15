@@ -131,7 +131,7 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
     d->ModelHierarchyTreeView->sceneModel())->setOpacityColumn(2);
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setExpandColumn(0);
+    d->ModelHierarchyTreeView->sceneModel())->setExpandColumn(1);
 
   qobject_cast<qMRMLSceneModelHierarchyModel*>(
     d->ModelHierarchyTreeView->sceneModel())->setColumnCount(3);
