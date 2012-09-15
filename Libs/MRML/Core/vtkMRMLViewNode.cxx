@@ -55,6 +55,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
   this->ViewLabel = new char[2];
   strcpy(this->ViewLabel, "1");
+  this->FPSVisible = 0;
  }
 
 //----------------------------------------------------------------------------

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>68</height>
+    <width>216</width>
+    <height>80</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,20 +23,20 @@
    <property name="margin">
     <number>0</number>
    </property>
-    <item>
-     <widget class="ctkAxesWidget" name="AxesWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="autoReset">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
+   <item>
+    <widget class="ctkAxesWidget" name="AxesWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="autoReset">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="spacing">
       <number>0</number>
@@ -256,6 +256,20 @@
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QToolButton" name="FPSButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="icon">
+        <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/ViewFPS.png</normaloff>:/Icons/ViewFPS.png</iconset>
        </property>
       </widget>
      </item>

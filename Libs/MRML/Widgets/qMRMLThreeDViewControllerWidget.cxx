@@ -135,6 +135,10 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
                    q, SLOT(set3DAxisLabelVisible(bool)));
 
+  // FPS
+  QObject::connect(this->FPSButton, SIGNAL(toggled(bool)),
+                   q, SLOT(setFPSVisible(bool)));
+
   // Background color
   QActionGroup* backgroundColorActions = new QActionGroup(this->PopupWidget);
   backgroundColorActions->setExclusive(true);
@@ -250,6 +254,8 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
   d->actionSet3DAxisVisible->setChecked(d->ViewNode->GetBoxVisible());
   d->actionSet3DAxisLabelVisible->setChecked(
     d->ViewNode->GetAxisLabelsVisible());
+
+  d->FPSButton->setChecked(d->ViewNode->GetFPSVisible());
 
   double* color = d->ViewNode->GetBackgroundColor();
   QColor backgroundColor = QColor::fromRgbF(color[0], color[1], color[2]);
@@ -398,6 +404,17 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
     return;
     }
   d->ViewNode->SetAxisLabelsVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setFPSVisible(bool visible)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+  d->ViewNode->SetFPSVisible(visible ? 1 : 0);
 }
 
 // --------------------------------------------------------------------------

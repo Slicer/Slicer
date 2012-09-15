@@ -159,7 +159,12 @@ public:
   /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
   vtkSetStringMacro(ViewLabel);
   vtkGetStringMacro(ViewLabel);
-  
+
+  /// Show FPS in the lower right side of the screen.
+  /// 0 by default.
+  vtkGetMacro ( FPSVisible, int );
+  vtkSetMacro ( FPSVisible, int );
+
   /// Modes for automatically controlling camera 
   enum
     {
@@ -266,7 +271,10 @@ protected:
 
   /// Label to show for the view (shortcut for the name)
   char * ViewLabel;
-  
+
+  /// Show the Frame per second as text on the lower right part of the view
+  int FPSVisible;
+
   /// 
   /// When a view is set Active, make other views inactive.
   virtual void RemoveActiveFlagInScene();

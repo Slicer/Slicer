@@ -73,6 +73,8 @@ public slots:
   void set3DAxisVisible(bool visible);
   void set3DAxisLabelVisible(bool visible);
 
+  void setFPSVisible(bool visible);
+
   /// Utility function to change the color of the background to blue
   void setLightBlueBackground();
 
