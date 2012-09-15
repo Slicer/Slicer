@@ -42,6 +42,7 @@
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
+#include <vtkgl.h>
 #include <vtkImageData.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
@@ -126,6 +127,13 @@ void vtkSlicerVolumeRenderingLogic::PrintSelf(ostream& os, vtkIndent indent)
     {
     os << indent << this->DisplayNodes[i]->GetID() << std::endl;
     }
+  const char *gl_vendor=reinterpret_cast<const char *>(glGetString(GL_VENDOR));
+  os << indent << "Vendor: " << gl_vendor << std::endl;
+  const char *gl_version=reinterpret_cast<const char *>(glGetString(GL_VERSION));
+  os << indent << "Version: " << gl_version << std::endl;
+  const char *glsl_version=
+    reinterpret_cast<const char *>(glGetString(vtkgl::SHADING_LANGUAGE_VERSION));
+  os << indent << "Shading Language Version: " << glsl_version << std::endl;
 }
 
 //----------------------------------------------------------------------------
