@@ -22,6 +22,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkAssignAttribute.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCellData.h>
@@ -30,7 +31,9 @@ Version:   $Revision: 1.3 $
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkTrivialProducer.h>
 
 // STD includes
 #include <cassert>
@@ -491,8 +494,22 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetTransform(transform);
   transformFilter->Update();
 
-  this->GetPolyData()->DeepCopy(transformFilter->GetOutput());
-
+  bool isInPipeline = !vtkTrivialProducer::SafeDownCast(
+    this->GetPolyData()->GetProducerPort()->GetProducer());
+  vtkSmartPointer<vtkPolyData> polyData;
+  if (isInPipeline)
+    {
+    polyData = vtkSmartPointer<vtkPolyData>::New();
+    }
+  else
+    {
+    polyData = this->GetPolyData();
+    }
+  polyData->DeepCopy(transformFilter->GetOutput());
+  if (isInPipeline)
+    {
+    this->SetAndObservePolyData(polyData);
+    }
   transformFilter->Delete();
 }
 
