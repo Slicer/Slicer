@@ -399,6 +399,7 @@ void qMRMLSceneHierarchyModel::updateItemDataFromNode(
         {
         item->setCheckState(hnode->GetExpanded() ? Qt::Unchecked : Qt::Checked);
         }
+      item->setToolTip(tr("Checked: Force color to children"));
       }
     }
 }

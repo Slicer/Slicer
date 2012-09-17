@@ -123,22 +123,19 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
   Q_D(qSlicerModelsModuleWidget);
 
   d->ModelHierarchyTreeView->setSceneModelType(QString("ModelHierarchy"));
-  
-  qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setIDColumn(-1);
-  qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setColorColumn(1);
-  qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setOpacityColumn(2);
-  qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setExpandColumn(1);
+  qMRMLSceneModelHierarchyModel* sceneModel =
+    qobject_cast<qMRMLSceneModelHierarchyModel*>(
+      d->ModelHierarchyTreeView->sceneModel());
+  sceneModel->setIDColumn(-1);
+  sceneModel->setExpandColumn(1);
+  sceneModel->setColorColumn(2);
+  sceneModel->setOpacityColumn(3);
 
-  qobject_cast<qMRMLSceneModelHierarchyModel*>(
-    d->ModelHierarchyTreeView->sceneModel())->setColumnCount(3);
   d->ModelHierarchyTreeView->header()->setStretchLastSection(false);
-  d->ModelHierarchyTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
-  d->ModelHierarchyTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
-  d->ModelHierarchyTreeView->header()->setResizeMode(2, QHeaderView::ResizeToContents);
+  d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->nameColumn(), QHeaderView::Stretch);
+  d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->expandColumn(), QHeaderView::ResizeToContents);
+  d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->colorColumn(), QHeaderView::ResizeToContents);
+  d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->opacityColumn(), QHeaderView::ResizeToContents);
 
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setHideChildNodeTypes(
     QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
@@ -146,7 +143,7 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
     QStringList() << "vtkMRMLModelHierarchyNode");
 
   // use lazy update instead of responding to scene import end event
-  d->ModelHierarchyTreeView->sceneModel()->setLazyUpdate(true);
+  sceneModel->setLazyUpdate(true);
   
   // qDebug() << "qSlicerModelsModuleWidget::updateTreeViewModel done";
 }
