@@ -66,6 +66,7 @@ public:
 
 bool TestAddDisplayNodeID();
 bool TestAddDisplayNodeIDWithNoScene();
+bool TestAddDisplayNodeIDEventsWithNoScene();
 bool TestAddDelayedDisplayNode();
 bool TestRemoveDisplayNodeID();
 bool TestRemoveDisplayNode();
@@ -85,6 +86,7 @@ int vtkMRMLDisplayableNodeTest1(int , char * [] )
   bool res = true;
   res = TestAddDisplayNodeID() && res;
   res = TestAddDisplayNodeIDWithNoScene() && res;
+  //res = TestAddDisplayNodeIDEventsWithNoScene() && res;
   res = TestAddDelayedDisplayNode() && res;
   res = TestRemoveDisplayNodeID() && res;
   res = TestRemoveDisplayNode() && res;
@@ -270,7 +272,61 @@ bool TestAddDisplayNodeIDWithNoScene()
       strcmp(displayableNode->GetNthDisplayNodeID(0), displayNode2->GetID()) ||
       displayableNode->GetNthDisplayNode(0) != displayNode2.GetPointer())
     {
-    std::cout << __LINE__ << ": SetScene failed" << std::endl;
+    std::cout << __LINE__ << ": AddNode failed" << std::endl;
+    return false;
+    }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestAddDisplayNodeIDEventsWithNoScene()
+{
+  // Make sure that the DisplayableModifiedEvent is fired even when the
+  // display node is observed when the displayable is not in the scene.
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkNew<vtkMRMLDisplayableNodeTestHelper1> displayableNode;
+
+  vtkNew<vtkMRMLDisplayNodeTestHelper> displayNode;
+  scene->AddNode(displayNode.GetPointer());
+  displayableNode->SetAndObserveDisplayNodeID(displayNode->GetID());
+
+  vtkNew<vtkMRMLNodeCallback> callback;
+  displayableNode->AddObserver(vtkCommand::AnyEvent, callback.GetPointer());
+
+  scene->AddNode(displayableNode.GetPointer());
+
+  if (!callback->GetErrorString().empty() ||
+      // called because added into the scene
+      callback->GetNumberOfModified() != 1 ||
+      // called because display node pointer is retrieved by scene and is
+      // observed by displayable node
+      callback->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
+    {
+    std::cerr << "ERROR line " << __LINE__ << ": " << std::endl
+              << "vtkMRMLScene::AddNode(displayableNode) failed. "
+              << callback->GetErrorString().c_str() << " "
+              << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
+              << "Number of DisplayModifiedEvent: "
+              << callback->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent)
+              << std::endl;
+    return false;
+    }
+  callback->ResetNumberOfEvents();
+
+  displayNode->Modified();
+  if (!callback->GetErrorString().empty() ||
+      callback->GetNumberOfModified() != 0 ||
+      callback->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
+    {
+    std::cerr << "ERROR line " << __LINE__ << ": " << std::endl
+              << "vtkMRMLDisplayNode::Modified() failed. "
+              << callback->GetErrorString().c_str() << " "
+              << "Number of ModifiedEvent: " << callback->GetNumberOfModified() << " "
+              << "Number of DisplayModifiedEvent: "
+              << callback->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent)
+              << std::endl;
     return false;
     }
 
