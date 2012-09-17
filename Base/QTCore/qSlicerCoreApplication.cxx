@@ -250,6 +250,12 @@ void qSlicerCoreApplicationPrivate::init()
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 
+# ifdef Q_OS_MAC
+  this->createDirectory(this->defaultExtensionsInstallPathForMacOSX(), "extensions"); // Make sure the path exists
+  q->addLibraryPath(this->defaultExtensionsInstallPathForMacOSX());
+  q->setExtensionsInstallPath(this->defaultExtensionsInstallPathForMacOSX());
+# endif
+
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
   qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
@@ -264,11 +270,6 @@ void qSlicerCoreApplicationPrivate::init()
     {
     qDebug() << "Successfully uninstalled extension" << extensionName;
     }
-
-# ifdef Q_OS_MAC
-  q->addLibraryPath(this->defaultExtensionsInstallPathForMacOSX());
-  q->setExtensionsInstallPath(this->defaultExtensionsInstallPathForMacOSX());
-# endif
 
 #endif
 }
@@ -544,9 +545,7 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
     {
     QDir slicerHomeDir(q->slicerHome());
     slicerHomeDir.cdUp();
-    slicerHomeDir.cd("Contents");
-    slicerHomeDir.cd(Slicer_BUNDLE_EXTENSIONS_DIRNAME);
-    return slicerHomeDir.absolutePath();
+    return slicerHomeDir.absolutePath() + "Contents/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
     }
   else
     {
