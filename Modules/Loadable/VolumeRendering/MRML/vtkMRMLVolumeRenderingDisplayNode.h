@@ -77,7 +77,7 @@ public:
 
   /// the ID of a parameter MRMLROINode
   vtkGetStringMacro (ROINodeID);
-  void SetAndObserveROINodeID(const char *rOINodeID);
+  void SetAndObserveROINodeID(const char *roiNodeID);
 
   /// Associated transform MRML node
   vtkMRMLAnnotationROINode* GetROINode();

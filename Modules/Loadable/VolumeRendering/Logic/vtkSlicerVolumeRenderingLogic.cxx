@@ -441,8 +441,8 @@ void vtkSlicerVolumeRenderingLogic
   const int size = lut ? lut->GetNumberOfTableValues() : 0;
   if (size == 0)
     {
-    double black[3] = {0., 0., 0.};
-    double white[3] = {1., 1., 1.};
+    const double black[3] = {0., 0., 0.};
+    const double white[3] = {1., 1., 1.};
     colorTransfer->AddRGBPoint(scalarRange[0], black[0], black[1], black[2]);
     colorTransfer->AddRGBPoint(windowLevelMinMax[0], black[0], black[1], black[2]);
     colorTransfer->AddRGBPoint(windowLevelMinMax[1], white[0], white[1], white[2]);

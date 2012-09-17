@@ -83,6 +83,7 @@ public:
   /// Use a linear ramp (true) or a sharp ramp (false) when copying the volume
   /// display node threshold values into the volume rendering display node.
   /// True by default.
+  /// \sa CopyScalarDisplayToVolumeRenderingDisplayNode()
   vtkSetMacro(UseLinearRamp, bool);
   vtkGetMacro(UseLinearRamp, bool);
 
@@ -94,12 +95,27 @@ public:
   /// doesn't exist.
   /// If renderingClassName is 0, the returned node has a name generated
   /// using "VolumeRendering" as base name.
-  /// \sa setDefaultRenderingMethod()
+  /// \sa SetDefaultRenderingMethod()
   vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode(const char* renderingClassName = 0);
 
+  /// Observe the volume rendering display node to copy the volume display
+  /// node if needed.
+  /// This function is called automatically when a display node is added into
+  /// the scene. You shouldn't have to call it.
+  /// \sa vtkMRMLVolumeRenderingDisplayNode::FollowVolumeDisplayNode
+  /// \sa RemoveVolumeRenderingDisplayNode
   void AddVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+
+  /// Unobserve the volume rendering display node.
+  /// \sa AddVolumeRenderingDisplayNode
   void RemoveVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
+
+  /// Observe all the volume rendering display nodes of the scene.
+  /// \sa AddVolumeRenderingDisplayNode
   void AddAllVolumeRenderingDisplayNodes();
+
+  /// Unobserve all the volume rendering display nodes of the scene.
+  /// \sa AddVolumeRenderingDisplayNode, AddAllVolumeRenderingDisplayNodes
   void RemoveAllVolumeRenderingDisplayNodes();
 
   /// Applies the properties (window level, threshold and color function) of
@@ -146,24 +162,47 @@ public:
   /// \verbatim
   ///  true:    ______  false:
   ///        __/               __/|_____
-  ///  \endverbatim
+  /// \endverbatim
   /// \sa SetWindowLevelToVolumeProp()
   void SetThresholdToVolumeProp(
     double scalarRange[2], double threshold[2],
     vtkVolumeProperty* node,
     bool linearRamp = false, bool stayUpAtUpperLimit = false);
 
+  /// Create a color transfer function that ranges from \a scalarRange[0] to
+  /// \a scalarRange[1] and containing a \a windowLevel[0] wide ramp centered
+  /// on \a level:
+  /// \verbatim
+  ///                         max = level + window/2      scalarRange[1]
+  ///                         .___________________________.
+  ///  .____________________./
+  ///  scalarRange[0]       min = level - window/2
+  /// \endverbatim
+  /// The generated transfer function contains at least 4 points located in:
+  ///  * scalarRange[0]
+  ///  * min = level - window/2
+  ///  * max = level + window/2
+  ///  * scalarRange[1]
+  ///
+  /// If \a lut is 0, the colors go from black (0, 0, 0) to white (1, 1, 1)
+  /// If \a lut contains only 1 value, that color is used for all the
+  /// generated points.
+  /// If \a lut contains more than 1 value, each color is used in the ramp.
+  /// The generated transfer function will be made of lut->size() + 2 points.
+  /// The function is then applied to the volume property \a node.
   /// \sa SetThresholdToVolumeProp
   void SetWindowLevelToVolumeProp(
     double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
 
-  /// Create a LUT based on the labelmap transfer function
+  /// Generate and set to the volume property \a node an opacity and color
+  /// transfer function from the labelmap LUT \a colors.
+  /// \sa SetWindowLevelToVolumeProp, SetThresholdToVolumeProp
   void SetLabelMapToVolumeProp(
-    vtkScalarsToColors* colors, vtkVolumeProperty* node);
+    vtkScalarsToColors* lut, vtkVolumeProperty* node);
 
   /// Update DisplayNode from VolumeNode,
-  /// if needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
+  /// If needed create vtkMRMLVolumePropertyNode and vtkMRMLAnnotationROINode
   /// and initialize them from VolumeNode
   void UpdateDisplayNodeFromVolumeNode(vtkMRMLVolumeRenderingDisplayNode *paramNode,
                                        vtkMRMLVolumeNode *volumeNode,
@@ -208,13 +247,21 @@ public:
 
   //void SetupFgVolumePropertyFromImageData(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
+  /// Utility function that modifies the ROI node of the display node
+  /// to fit the boundaries of the volume node
+  /// \sa vtkMRMLVolumeRenderingDisplayNode::GetROINode
   void FitROIToVolume(vtkMRMLVolumeRenderingDisplayNode* vspNode);
 
+  /// Load from file and add into the scene a transfer function.
+  /// \sa vtkMRMLVolumePropertyStorageNode
   vtkMRMLVolumePropertyNode* AddVolumePropertyFromFile (const char* filename);
 
   /// Return the scene containing the volume rendering presets.
   /// If there is no presets scene, a scene is created and presets are loaded
   /// into.
+  /// The presets scene is loaded from a file (presets.xml) located in the
+  /// module share directory
+  /// \sa vtkMRMLVolumePropertyNode, GetModuleShareDirectory()
   vtkMRMLScene* GetPresetsScene();
 
   /// Utility function that checks if the piecewise functions are equal
