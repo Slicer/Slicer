@@ -1490,6 +1490,11 @@ const char* vtkMRMLModelDisplayableManager
   const char* activeScalarName = 0;
   if (displayNode)
     {
+    vtkMRMLModelDisplayNode *modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+    if (modelDisplayNode && modelDisplayNode->GetOutputPolyData())
+      {
+      modelDisplayNode->GetOutputPolyData()->Update();
+      }
     activeScalarName = displayNode->GetActiveScalarName();
     }
   if (activeScalarName)
@@ -1498,6 +1503,10 @@ const char* vtkMRMLModelDisplayableManager
     }
   if (modelNode)
     {
+    if (modelNode->GetPolyData())
+      {
+      modelNode->GetPolyData()->Update();
+      }
     activeScalarName =
       modelNode->GetActiveCellScalarName(vtkDataSetAttributes::SCALARS);
     if (activeScalarName)

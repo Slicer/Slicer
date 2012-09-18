@@ -283,6 +283,7 @@ int vtkMRMLModelNode::SetActivePointScalars(const char *scalarName, int attribut
     {
     return -1;
     }
+  this->PolyData->Update();
   return this->PolyData->GetPointData()->SetActiveAttribute(
     scalarName, attributeType);
 }
