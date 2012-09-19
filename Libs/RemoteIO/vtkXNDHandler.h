@@ -73,4 +73,3 @@ class VTK_RemoteIO_EXPORT vtkXNDHandler : public vtkHTTPHandler
 };
 
 #endif
-

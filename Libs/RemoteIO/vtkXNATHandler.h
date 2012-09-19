@@ -59,4 +59,3 @@ class VTK_RemoteIO_EXPORT vtkXNATHandler : public vtkURIHandler
 };
 
 #endif
-

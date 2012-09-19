@@ -30,9 +30,3 @@ class VTK_RemoteIO_EXPORT vtkHIDTagTable : public vtkTagTable
 };
 
 #endif
-
-
-
-
-
-

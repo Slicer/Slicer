@@ -49,4 +49,3 @@ class VTK_RemoteIO_EXPORT vtkSRBHandler : public vtkURIHandler
 };
 
 #endif
-

@@ -56,4 +56,3 @@ class VTK_RemoteIO_EXPORT vtkHIDHandler : public vtkHTTPHandler
 };
 
 #endif
-

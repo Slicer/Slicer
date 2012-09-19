@@ -11,5 +11,3 @@
 #ifndef BUILD_SHARED_LIBS
 #define VTKRemoteIO_STATIC
 #endif
-
-
