@@ -149,7 +149,7 @@ protected slots:
   void onMaximumChanged(double max);
 
   ///
-  /// Triggered upon MRML scene updates
+  /// Triggered upon MRML node transform modified events
   void onMRMLTransformNodeModified(vtkObject* caller);
 
 protected:

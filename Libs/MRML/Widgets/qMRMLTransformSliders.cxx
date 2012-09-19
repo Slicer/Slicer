@@ -154,9 +154,14 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
                       vtkMRMLTransformableNode::TransformModifiedEvent,
                       this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
+  this->onMRMLTransformNodeModified(transformNode);
+
   d->LRSlider->setMRMLTransformNode(transformNode);
   d->PASlider->setMRMLTransformNode(transformNode);
   d->ISSlider->setMRMLTransformNode(transformNode);
+
+  // If the node is NULL, any action on the widget is meaningless, this is why
+  // the widget is disabled
   this->setEnabled(transformNode != 0);
   d->MRMLTransformNode = transformNode;
 }
