@@ -34,10 +34,10 @@ class vtkMRMLSliceCompositeNode;
 class vtkMRMLSliceLogic;
 class vtkMRMLSliceNode;
 
-///
 /// qMRMLSliceControllerWidget offers controls to a slice view (vtkMRMLSliceNode
 ///  and vtkMRMLSliceCompositeNode). It internally creates a slice logic that
 /// can be changed.
+///
 /// To be valid, it needs at least a MRML scene and a MRML slice node:
 /// \code
 /// qMRMLSliceControllerWidget controllerWidget;

@@ -30,8 +30,7 @@ class vtkMRMLChartViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
-///
-/// qMRMLChartView is the display canvas for a Chart.  
+/// \brief qMRMLChartView is the display canvas for a Chart.
 ///
 /// qMRMLChartView is currently implemented as a subclass of QWebView and charting
 /// is implemented using a jQuery library called jqPlot. This is

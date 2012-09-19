@@ -14,6 +14,7 @@
   limitations under the License.
 
 ==============================================================================*/
+
 #ifndef __qMRMLChartWidget_h
 #define __qMRMLChartWidget_h
 
@@ -32,13 +33,12 @@ class vtkMRMLChartViewNode;
 class vtkMRMLColorLogic;
 class vtkMRMLScene;
 
-/// qMRMLChartWidget is the toplevel charting widget that can be
+/// \brief qMRMLChartWidget is the toplevel charting widget that can be
 /// packed in a layout.
 ///
 /// qMRMLChartWidget provides charting capabilities with a display
 /// canvas for the chart and a controller widget to control the
 /// content and properties of the chart.
-/// 
 class QMRML_WIDGETS_EXPORT qMRMLChartWidget : public qMRMLWidget
 {
   Q_OBJECT

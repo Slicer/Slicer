@@ -1,5 +1,3 @@
-
-
 #ifndef __qMRMLChartView_p_h
 #define __qMRMLChartView_p_h
 

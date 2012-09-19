@@ -37,8 +37,6 @@ class QAction;
 
 class qMRMLSceneModelPrivate;
 
-//------------------------------------------------------------------------------
-///
 /// qMRMLSceneModel has at least 1 column with the scene as a top level item.
 /// See below an example of model when nameColumn = 0 (default) and idColumn = 1
 /// with 1 postItem ("Add new node"):

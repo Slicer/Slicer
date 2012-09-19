@@ -27,18 +27,18 @@
 // MRMLWidgets includes
 #include "qMRMLWidgetsExport.h"
 
-/// Abstract Item delegate to show unselectable items highlighed when the mouse is
+class QComboBox;
+
+/// \brief Abstract Item delegate to show unselectable items highlighed when the mouse is
 /// over them to give a feeling of selectable item.
+///
 /// This is used in qMRMLNodeComboBox for the extra items:
 /// e.g. "Add/Remove/Edit node" actions
 /// The highlight color is slightly more treansparent than the style palette
 /// highlight color to indicates that the item is not really selectable
 /// but correspond to an action.
-
+///
 /// We reimplemente the code from QT "QComboMenuDelegate" used in the class QComboBox.
-
-class QComboBox;
-
 class QMRML_WIDGETS_EXPORT qMRMLNodeComboBoxMenuDelegate: public QAbstractItemDelegate
 {
   Q_OBJECT
@@ -62,6 +62,5 @@ private:
   QComboBox *mCombo;
   Q_DISABLE_COPY(qMRMLNodeComboBoxMenuDelegate);
 };
-
 
 #endif // __qMRMLNodeComboBoxMenuDelegate_h

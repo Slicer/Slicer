@@ -29,7 +29,6 @@
 
 /// Concrete implementation of pqWidgetEventPlayer that translates
 /// high-level events into low-level Qt events.
-
 class QMRML_WIDGETS_EXPORT qMRMLCheckableNodeComboBoxEventPlayer :
   public pqWidgetEventPlayer
 {

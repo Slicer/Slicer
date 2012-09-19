@@ -29,11 +29,6 @@
 // qMRMLWidget includes
 #include "qMRMLWidgetsExport.h"
 
-// VTK includes
-//#include <vtkStdString.h>
-//#include <vtkImageData.h>
-//#include "vtkImageData.h"
-
 class qMRMLLayoutManager;
 class vtkImageData;
 
@@ -111,4 +106,3 @@ private:
 Q_DECLARE_METATYPE(qMRMLScreenShotDialog::WidgetType)
 
 #endif
-
