@@ -12,11 +12,10 @@
 
 class vtkITKBSplineTransformHelper;
 
-/// A BSpline transform.
+/// \brief A BSpline transform.
 //
 /// See the ITK BSplineTransform documentation for details on the
 /// underlying functionality and dependencies of this class.
-
 class VTK_ITK_EXPORT vtkITKBSplineTransform : public vtkWarpTransform
 {
 public:

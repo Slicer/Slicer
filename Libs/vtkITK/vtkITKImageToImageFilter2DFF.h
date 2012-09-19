@@ -12,13 +12,8 @@
 
 ==========================================================================*/
 
-///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-/// 
-/// vtkITKImageToImageFilter provides a 
-
 #ifndef __vtkITKImageToImageFilter2DFF_h
 #define __vtkITKImageToImageFilter2DFF_h
-
 
 #include "vtkITKImageToImageFilter.h"
 #include "vtkImageToImageFilter.h"
@@ -26,7 +21,6 @@
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
 #include "vtkITKUtility.h"
-
 
 class VTK_ITK_EXPORT vtkITKImageToImageFilter2DFF : public vtkITKImageToImageFilter
 {

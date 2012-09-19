@@ -12,10 +12,6 @@
 
 ==========================================================================*/
 
-///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-/// 
-/// vtkITKImageToImageFilter provides a 
-
 #ifndef __vtkITKImageWriter_h
 #define __vtkITKImageWriter_h
 
@@ -32,7 +28,6 @@ class vtkStringArray;
 class VTK_ITK_EXPORT vtkITKImageWriter : public vtkProcessObject
 {
 public:
-
   static vtkITKImageWriter *New();
   vtkTypeRevisionMacro(vtkITKImageWriter,vtkProcessObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -95,10 +90,3 @@ private:
 //vtkStandardNewMacro(vtkITKImageWriter)
 
 #endif
-
-
-
-
-
-
-

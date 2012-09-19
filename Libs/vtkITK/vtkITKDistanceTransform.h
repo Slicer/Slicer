@@ -7,21 +7,16 @@
 
 ==========================================================================*/
 
-///  vtkITKDistanceTransform - Wrapper class around itk::SignedMaurerDistanceMapImageFilter
-/// 
-/// vtkITKDistanceTransform
-
-
 #ifndef __vtkITKDistanceTransform_h
 #define __vtkITKDistanceTransform_h
-
 
 #include "vtkITK.h"
 #include "vtkSimpleImageToImageFilter.h"
 
+/// \brief Wrapper class around itk::SignedMaurerDistanceMapImageFilter.
 class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkSimpleImageToImageFilter
 {
- public:
+public:
   static vtkITKDistanceTransform *New();
   vtkTypeRevisionMacro(vtkITKDistanceTransform, vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -60,7 +55,3 @@ private:
 };
 
 #endif
-
-
-
-

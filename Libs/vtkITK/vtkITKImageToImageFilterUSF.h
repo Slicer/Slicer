@@ -12,13 +12,8 @@
 
 ==========================================================================*/
 
-///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-/// 
-/// vtkITKImageToImageFilter provides a 
-
 #ifndef __vtkITKImageToImageFilterUSF
 #define __vtkITKImageToImageFilterUSF
-
 
 #include "vtkITKImageToImageFilter.h"
 #include "vtkImageToImageFilter.h"
@@ -81,7 +76,3 @@ private:
 };
 
 #endif
-
-
-
-

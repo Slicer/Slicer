@@ -1,8 +1,3 @@
-///  vtkITKWandImageFilter - Wand tool implemented using connected threshold
-/// 
-/// itk::WandImageFilter
-/// WandImageFilter selects all pixels connected to a seed point that
-/// are within a specified intensity difference of the seed point
 
 #ifndef __vtkITKWandImageFilter_h
 #define __vtkITKWandImageFilter_h
@@ -10,6 +5,11 @@
 #include "vtkITK.h"
 #include "vtkSimpleImageToImageFilter.h"
 
+/// \brief Wand tool implemented using connected threshold.
+///
+/// itk::WandImageFilter
+/// WandImageFilter selects all pixels connected to a seed point that
+/// are within a specified intensity difference of the seed point.
 class VTK_ITK_EXPORT vtkITKWandImageFilter : public vtkSimpleImageToImageFilter
 {
 public:
@@ -39,6 +39,5 @@ private:
   vtkITKWandImageFilter(const vtkITKWandImageFilter&);  /// Not implemented.
   void operator=(const vtkITKWandImageFilter&);  /// Not implemented.
 };
-
 
 #endif

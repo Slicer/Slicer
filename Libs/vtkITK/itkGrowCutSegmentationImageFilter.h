@@ -459,11 +459,4 @@ template<class TInputImage,
 #include "itkGrowCutSegmentationImageFilter.txx"
 #endif
 
-
-
-
-
-
-
-
 #endif

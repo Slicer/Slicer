@@ -12,18 +12,6 @@ Version:   $Revision$
 
 ==========================================================================*/
 
-///  vtkITKArchetypeImageSeriesReader - Read a series of files
-/// that have a common naming convention
-/// 
-/// ArchetypeImageSeriesReader creates a volume from a series of images
-/// stored in files. The series are represented by one filename. This
-/// filename, the archetype, is any one of the files in the series.
-//
-/// \note
-/// This work is part of the National Alliance for Medical Image Computing 
-/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
-/// for Medical Research, Grant U54 EB005149.
-
 #ifndef __vtkITKArchetypeImageSeriesReader_h
 #define __vtkITKArchetypeImageSeriesReader_h
 
@@ -42,6 +30,16 @@ class vtkMatrix4x4;
 #include <string>
 #include <vector>
 
+/// \brief Read a series of files that have a common naming convention.
+///
+/// ArchetypeImageSeriesReader creates a volume from a series of images
+/// stored in files. The series are represented by one filename. This
+/// filename, the archetype, is any one of the files in the series.
+///
+/// \note
+/// This work is part of the National Alliance for Medical Image Computing 
+/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
+/// for Medical Research, Grant U54 EB005149.
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
 {
 public:

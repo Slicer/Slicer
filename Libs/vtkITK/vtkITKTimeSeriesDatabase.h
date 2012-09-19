@@ -12,19 +12,10 @@
 
 ==========================================================================*/
 
-///  vtkITKTimeSeriesDatabase - Effeciently process large datasets in small memory
-/// 
-/// TimeSeriesDatabase creates a database on disk from a series of volumes
-/// stored on disk.  The database allows efficient access to volumes,
-/// slices and voxels through time. 
-//
-/// \note
-/// This work is part of the National Alliance for Medical Image Computing 
-/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
-/// for Medical Research, Grant U54 EB005149.
-
 #ifndef __vtkITKTimeSeriesDatabase_h
 #define __vtkITKTimeSeriesDatabase_h
+
+#include <vector>
 
 #include "vtkImageData.h"
 #include "vtkPointData.h"
@@ -32,12 +23,20 @@
 #include "itkTimeSeriesDatabase.h"
 #include "vtkImageImport.h"
 #include "itkVTKImageExport.h"
-#include <vector>
 
 #include "vtkITK.h"
 #include "vtkITKUtility.h"
 
-
+/// \brief Effeciently process large datasets in small memory.
+///
+/// TimeSeriesDatabase creates a database on disk from a series of volumes
+/// stored on disk.  The database allows efficient access to volumes,
+/// slices and voxels through time.
+///
+/// \note
+/// This work is part of the National Alliance for Medical Image Computing
+/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
+/// for Medical Research, Grant U54 EB005149.
 class VTK_ITK_EXPORT vtkITKTimeSeriesDatabase : public vtkImageSource
 {
 public:
@@ -97,7 +96,6 @@ protected:
 private:
   vtkITKTimeSeriesDatabase(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
   void operator=(const vtkITKTimeSeriesDatabase&);  /// Not implemented.
-
 
 };
 

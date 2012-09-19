@@ -6,7 +6,8 @@
 #include "itkSimpleDataObjectDecorator.h"
 #include "itkChainCodePath.h"
 
-namespace itk{
+namespace itk
+{
 
 /** /class LevelTracingImageFilter
  * \brief Trace a level curve/surface given a seed point on the level curve/surface.
@@ -139,7 +140,7 @@ private:
 ///  /** End concept checking */
 //#endif
 
-}
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkLevelTracingImageFilter.txx"

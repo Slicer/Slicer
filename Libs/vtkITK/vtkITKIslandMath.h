@@ -7,18 +7,13 @@
 
 ==========================================================================*/
 
-///  vtkITKIslandMath - ITK-based utilities for manipulating connected regions in label maps
-/// 
-/// vtkITKIslandMath
-
-
 #ifndef __vtkITKIslandMath_h
 #define __vtkITKIslandMath_h
-
 
 #include "vtkITK.h"
 #include "vtkSimpleImageToImageFilter.h"
 
+/// \brief ITK-based utilities for manipulating connected regions in label maps.
 class VTK_ITK_EXPORT vtkITKIslandMath : public vtkSimpleImageToImageFilter
 {
  public:
@@ -81,7 +76,3 @@ private:
 };
 
 #endif
-
-
-
-

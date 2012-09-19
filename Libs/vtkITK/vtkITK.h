@@ -19,4 +19,3 @@
 #include "vtkITKNumericTraits.h"
 
 #endif
-

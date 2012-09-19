@@ -12,18 +12,15 @@
 
 ==========================================================================*/
 
-///  vtkITKGradientAnisotropicDiffusionImageFilter - Wrapper class around itk::GradientAnisotropicDiffusionImageFilterImageFilter
-/// 
-/// vtkITKGradientAnisotropicDiffusionImageFilter
-
-
 #ifndef __vtkITKGradientAnisotropicDiffusionImageFilter_h
 #define __vtkITKGradientAnisotropicDiffusionImageFilter_h
-
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkGradientAnisotropicDiffusionImageFilter.h"
 
+/// \brief Wrapper class around itk::GradientAnisotropicDiffusionImageFilterImageFilter.
+///
+/// vtkITKGradientAnisotropicDiffusionImageFilter
 class VTK_ITK_EXPORT vtkITKGradientAnisotropicDiffusionImageFilter : public vtkITKImageToImageFilterFF
 {
  public:
@@ -81,7 +78,3 @@ private:
 };
 
 #endif
-
-
-
-

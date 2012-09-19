@@ -12,10 +12,6 @@
 
 ==========================================================================*/
 
-///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-/// 
-/// vtkITKImageToImageFilter provides a 
-
 #ifndef __vtkITKImageToImageFilterF2F_h
 #define __vtkITKImageToImageFilterF2F_h
 

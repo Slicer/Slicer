@@ -20,7 +20,8 @@
 #include "itkImageToImageFilter.h"
 #include "itkFixedArray.h"
 
-namespace itk {
+namespace itk
+{
 
 /** \class NewOtsuThresholdImageFilter 
  * \brief Threshold an image using the Otsu Threshold
@@ -37,7 +38,6 @@ namespace itk {
  * \sa BinaryThresholdImageFilter
  * \ingroup IntensityImageFilters  Multithreaded
  */
-
 template<class TInputImage, class TOutputImage>
 class ITK_EXPORT NewOtsuThresholdImageFilter : 
     public ImageToImageFilter<TInputImage, TOutputImage>

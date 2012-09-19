@@ -11,18 +11,6 @@
   Version:   $Revision: 1.1.2.1 $
 
 =========================================================================auto=*/
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkITKNewOtsuThresholdImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2006/03/16 20:00:18 $
-  Version:   $Revision: 1.1.2.1 $
-*/
-///  vtkITKNewOtsuThresholdImageFilter - Wrapper class around itk::NewOtsuThresholdImageFilter
-/// 
-/// vtkITKNewOtsuThresholdImageFilter
-
 
 #ifndef __vtkITKNewOtsuThresholdImageFilter_h
 #define __vtkITKNewOtsuThresholdImageFilter_h
@@ -33,9 +21,10 @@
 #include "itkNewOtsuThresholdImageFilter.h"
 #include "vtkObjectFactory.h"
 
+/// \brief Wrapper class around itk::NewOtsuThresholdImageFilter.
 class VTK_ITK_EXPORT vtkITKNewOtsuThresholdImageFilter : public vtkITKImageToImageFilterSS
 {
- public:
+public:
   static vtkITKNewOtsuThresholdImageFilter *New();
   vtkTypeRevisionMacro(vtkITKNewOtsuThresholdImageFilter, vtkITKImageToImageFilterSS);
   

@@ -15,7 +15,6 @@
 #ifndef __vtkITKUtility_h
 #define __vtkITKUtility_h
 
-
 #include "vtkObjectFactory.h"
 #include "vtkSetGet.h"
 
@@ -113,7 +112,5 @@ if ( 1 ) { \
 ///   progressEvent->SetCallbackFunction(&progressDisplay,
 ///                                      &ProgressDisplay::Display);
 ///   denoiser->AddObserver(itk::ProgressEvent(), progressEvent);
-
-
 
 #endif

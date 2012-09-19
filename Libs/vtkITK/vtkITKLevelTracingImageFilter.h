@@ -1,21 +1,21 @@
-///  vtkITKLevelTracingImageFilter - Wrapper class around itk::LevelTracingImageFilterImageFilter
-/// 
-/// itk::LevelTracingImageFilter
-/// LevelTracingImageFilter traces a level curve (or surface) from a
-/// seed point.  The pixels on this level curve "boundary" are labeled
-/// as 1. Does nothing if seed is in uniform area.
-
-/// .SECTION Caveats
-/// This filter is specialized to volumes. If you are interested in 
-/// contouring other types of data, use the general vtkContourFilter. If you
-/// want to contour an image (i.e., a volume slice), use vtkMarchingSquares.
 
 #ifndef __vtkITKLevelTracingImageFilter_h
 #define __vtkITKLevelTracingImageFilter_h
+
 #include "vtkITK.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkObjectFactory.h"
 
+/// \brief Wrapper class around itk::LevelTracingImageFilterImageFilter.
+///
+/// itk::LevelTracingImageFilter
+/// LevelTracingImageFilter traces a level curve (or surface) from a
+/// seed point.  The pixels on this level curve "boundary" are labeled
+/// as 1. Does nothing if seed is in uniform area.
+///
+/// This filter is specialized to volumes. If you are interested in 
+/// contouring other types of data, use the general vtkContourFilter. If you
+/// want to contour an image (i.e., a volume slice), use vtkMarchingSquares.
 class VTK_ITK_EXPORT vtkITKLevelTracingImageFilter : public vtkPolyDataAlgorithm
 {
 public:
@@ -49,6 +49,5 @@ private:
   vtkITKLevelTracingImageFilter(const vtkITKLevelTracingImageFilter&);  /// Not implemented.
   void operator=(const vtkITKLevelTracingImageFilter&);  /// Not implemented.
 };
-
 
 #endif

@@ -12,13 +12,8 @@
 
 ==========================================================================*/
 
-///  vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
-/// 
-/// vtkITKImageToImageFilter provides a foo
-
 #ifndef __vtkITKImageToImageFilter_h
 #define __vtkITKImageToImageFilter_h
-
 
 #include "itkCommand.h"
 #include "vtkCommand.h"
@@ -48,6 +43,9 @@
   std::cout << message.str() << std::endl; \
   }
 
+/// \brief Abstract base class for connecting ITK and VTK.
+///
+/// vtkITKImageToImageFilter provides a foo.
 class VTK_ITK_EXPORT vtkITKImageToImageFilter : public vtkImageToImageFilter
 {
 public:
@@ -244,7 +242,3 @@ private:
 };
 
 #endif
-
-
-
-
