@@ -11,16 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceAnnotationReader - read a surface annotation and
-/// color table file from
-/// Freesurfer tools
-/// .SECTION Description
-
-/// Reads a surface annotation file from FreeSurfer and outputs a
-/// vtkIntArray and has an access function to get the vtkLookupTable
-/// with the color values. Use the SetFileName function to specify the
-/// file name. The number of values in the array should be equal to the
-/// number of vertices/points in the surface.
 
 #ifndef __vtkFSSurfaceAnnotationReader_h
 #define __vtkFSSurfaceAnnotationReader_h
@@ -35,6 +25,15 @@
 class vtkIntArray;
 class vtkLookupTable;
 
+/// \brief Read a surface annotation and
+/// color table file from Freesurfer tools.
+///
+///
+/// Reads a surface annotation file from FreeSurfer and outputs a
+/// vtkIntArray and has an access function to get the vtkLookupTable
+/// with the color values. Use the SetFileName function to specify the
+/// file name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceAnnotationReader : public vtkDataReader
 {
 public:
@@ -105,6 +104,5 @@ private:
   vtkFSSurfaceAnnotationReader(const vtkFSSurfaceAnnotationReader&);  /// Not implemented.
   void operator=(const vtkFSSurfaceAnnotationReader&);  /// Not implemented.
 };
-
 
 #endif

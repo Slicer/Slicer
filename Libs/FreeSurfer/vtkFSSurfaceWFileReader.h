@@ -11,13 +11,6 @@
   Version:   $Revision: 1.5 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceWFileReader - read a surface w file (*.w) file
-/// from Freesurfer tools
-/// .SECTION Description
-/// Reads a surface w file file from FreeSurfer and outputs a
-/// vtkFloatArray. Use the SetFileName function to specify the file
-/// name. The number of values in the array should be equal to the
-/// number of vertices/points in the surface.
 
 #ifndef __vtkFSSurfaceWFileReader_h
 #define __vtkFSSurfaceWFileReader_h
@@ -30,6 +23,13 @@
 
 class vtkFloatArray;
 
+/// \brief Read a surface w file (*.w) file
+/// from Freesurfer tools.
+///
+/// Reads a surface w file file from FreeSurfer and outputs a
+/// vtkFloatArray. Use the SetFileName function to specify the file
+/// name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceWFileReader : public vtkDataReader
 {
 public:
@@ -78,6 +78,5 @@ private:
   vtkFSSurfaceWFileReader(const vtkFSSurfaceWFileReader&);  /// Not implemented.
   void operator=(const vtkFSSurfaceWFileReader&);  /// Not implemented.
 };
+
 #endif
-
-

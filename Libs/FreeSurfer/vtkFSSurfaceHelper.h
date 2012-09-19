@@ -11,9 +11,6 @@
   Version:   $Revision: 1.9 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceHelper - Provides tools
-/// .SECTION Description
-/// Utility functions associated to FreeSurfer data.
 
 #ifndef __vtkFSSurfaceHelper_h
 #define __vtkFSSurfaceHelper_h
@@ -25,6 +22,9 @@
 
 class vtkMatrix4x4;
 
+/// \brief Provides tools.
+///
+/// Utility functions associated to FreeSurfer data.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceHelper: public vtkObject
 {
 public:

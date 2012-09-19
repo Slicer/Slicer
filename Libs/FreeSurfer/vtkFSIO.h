@@ -11,10 +11,6 @@
   Version:   $Revision: 1.10 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSIO - Some IO functions for irregular FreeSurface files.
-/// .SECTION Description
-/// Some simple functions for doing silly things like reading three
-/// byte ints, common in FreeSurfer file types.
 
 #ifndef __vtkFSIO_h
 #define __vtkFSIO_h
@@ -27,6 +23,10 @@
 // STD includes
 #include <cstdio>
 
+/// \brief Some IO functions for irregular FreeSurface files.
+///
+/// Some simple functions for doing silly things like reading three
+/// byte ints, common in FreeSurfer file types.
 namespace vtkFSIO {
 
   /// These use FILE types instead of file streams for no good reason,

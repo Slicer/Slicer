@@ -11,10 +11,6 @@
   Version:   $Revision: 1.4 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSLookupTable - A look up table for FreeSurfer colour scales.
-/// .SECTION Description
-/// Reimplements vtkLookupTable to provide custom mapping of scalars to colours.
-//
 
 #ifndef __vtkFSLookupTable_h
 #define __vtkFSLookupTable_h
@@ -25,6 +21,9 @@
 // VTK includes
 #include <vtkLookupTable.h>
 
+/// \brief A look up table for FreeSurfer colour scales.
+///
+/// Reimplements vtkLookupTable to provide custom mapping of scalars to colours.
 class VTK_FreeSurfer_EXPORT vtkFSLookupTable : public vtkLookupTable
 {
 public:
@@ -161,4 +160,3 @@ protected:
 };
 
 #endif
-

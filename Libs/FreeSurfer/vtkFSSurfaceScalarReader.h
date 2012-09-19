@@ -11,13 +11,6 @@
   Version:   $Revision: 1.9 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceScalarReader - read a surface scalar file from
-/// Freesurfer tools
-/// .SECTION Description
-/// Reads a surface scalar file from FreeSurfer and outputs a
-/// vtkFloatArray. Use the SetFileName function to specify the file
-/// name. The number of values in the array should be equal to the
-/// number of vertices/points in the surface.
 
 #ifndef __vtkFSSurfaceScalarReader_h
 #define __vtkFSSurfaceScalarReader_h
@@ -30,6 +23,13 @@
 
 class vtkFloatArray;
 
+/// \brief Read a surface scalar file from
+/// Freesurfer tools.
+///
+/// Reads a surface scalar file from FreeSurfer and outputs a
+/// vtkFloatArray. Use the SetFileName function to specify the file
+/// name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceScalarReader : public vtkDataReader
 {
 public:
@@ -64,7 +64,4 @@ private:
   void operator=(const vtkFSSurfaceScalarReader&);  /// Not implemented.
 };
 
-
 #endif
-
-

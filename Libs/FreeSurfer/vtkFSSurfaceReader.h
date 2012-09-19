@@ -11,10 +11,6 @@
   Version:   $Revision: 1.9 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceReader - read a surface file from Freesurfer tools
-/// .SECTION Description
-/// Reads a surface file from FreeSurfer and output PolyData. Use the
-/// SetFileName function to specify the file name.
 
 #ifndef __vtkFSSurfaceReader_h
 #define __vtkFSSurfaceReader_h
@@ -35,6 +31,11 @@
 class vtkInformation;
 class vtkInformationVector;
 class vtkPolyData;
+
+/// \brief Read a surface file from Freesurfer tools
+///
+/// Reads a surface file from FreeSurfer and output PolyData. Use the
+/// SetFileName function to specify the file name.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceReader : public vtkDataReader
 {
 public:
@@ -102,5 +103,3 @@ typedef struct {
 #endif
 
 #endif
-
-

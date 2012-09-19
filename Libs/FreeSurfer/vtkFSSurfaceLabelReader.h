@@ -11,14 +11,6 @@
   Version:   $Revision: 1.5 $
 
 =========================================================================auto=*/
-/// .NAME vtkFSSurfaceLabelReader - read a label surface overlay file (*.label)
-/// from Freesurfer tools
-/// .SECTION Description
-/// Reads a surface overlay file file from FreeSurfer and outputs a
-/// vtkFloatArray. Use the SetFileName function to specify the file
-/// name. The number of values in the array should be equal to the
-/// number of vertices/points in the surface, but not all elements may be found
-/// in the label file.
 
 #ifndef __vtkFSSurfaceLabelReader_h
 #define __vtkFSSurfaceLabelReader_h
@@ -31,6 +23,14 @@
 
 class vtkFloatArray;
 
+/// \brief Read a label surface overlay file (*.label)
+/// from Freesurfer tools.
+///
+/// Reads a surface overlay file file from FreeSurfer and outputs a
+/// vtkFloatArray. Use the SetFileName function to specify the file
+/// name. The number of values in the array should be equal to the
+/// number of vertices/points in the surface, but not all elements may be found
+/// in the label file.
 class VTK_FreeSurfer_EXPORT vtkFSSurfaceLabelReader : public vtkDataReader
 {
 public:
@@ -108,6 +108,5 @@ private:
   vtkFSSurfaceLabelReader(const vtkFSSurfaceLabelReader&);  /// Not implemented.
   void operator=(const vtkFSSurfaceLabelReader&);  /// Not implemented.
 };
+
 #endif
-
-
