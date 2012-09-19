@@ -18,13 +18,6 @@
 
 ==============================================================================*/
 
-/// Superclass for displayable manager classes.
-/// 
-/// A displayable manager class is responsible to represent a
-/// MRMLDisplayable node in a renderer.
-/// 
-
-
 #ifndef __vtkMRMLAbstractDisplayableManager_h
 #define __vtkMRMLAbstractDisplayableManager_h
 
@@ -42,11 +35,14 @@ class vtkMRMLScene;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
+/// \brief Superclass for displayable manager classes.
+///
+/// A displayable manager class is responsible to represent a
+/// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
   : public vtkMRMLAbstractLogic
 {
 public:
-  
   static vtkMRMLAbstractDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractDisplayableManager, vtkMRMLAbstractLogic);
@@ -217,4 +213,3 @@ private:
 };
 
 #endif
-

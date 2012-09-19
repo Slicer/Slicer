@@ -38,7 +38,6 @@ public:
   void SetPythonSource(const std::string& pythonSource);
 
 protected:
-
   vtkMRMLScriptedDisplayableManager();
   virtual ~vtkMRMLScriptedDisplayableManager();
 
@@ -58,13 +57,11 @@ protected:
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
   
 private:
-
   vtkMRMLScriptedDisplayableManager(const vtkMRMLScriptedDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLScriptedDisplayableManager&);                   // Not Implemented
-  
+
   class vtkInternal;
   vtkInternal * Internal;
-
 };
 
 #endif

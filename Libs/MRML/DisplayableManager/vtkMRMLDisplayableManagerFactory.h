@@ -18,12 +18,6 @@
 
 ==============================================================================*/
 
-/// Factory where displayable manager classe should be registered with
-/// 
-/// A displayable manager class is responsible to represente a 
-/// MRMLDisplayable node in a renderer.
-/// 
-
 #ifndef __vtkMRMLDisplayableManagerFactory_h
 #define __vtkMRMLDisplayableManagerFactory_h
 
@@ -36,10 +30,13 @@ class vtkRenderer;
 class vtkMRMLApplicationLogic;
 class vtkMRMLDisplayableManagerGroup;
 
+/// \brief Factory where displayable manager classes are registered.
+///
+/// A displayable manager class is responsible to represente a 
+/// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLDisplayableManagerFactory : public vtkObject
 {
 public:
-
   static vtkMRMLDisplayableManagerFactory* New();
   vtkTypeRevisionMacro(vtkMRMLDisplayableManagerFactory,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -104,5 +101,3 @@ private:
 };
 
 #endif
-
-

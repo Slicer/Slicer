@@ -18,11 +18,6 @@
 
 ==============================================================================*/
 
-/// Proxy class to provide mechanisms for a displayable manager to
-/// communicate with 3rd party renderer managers (like CTK).
-///
-/// 
-
 #ifndef __vtkMRMLLightBoxRendererManagerProxy_h
 #define __vtkMRMLLightBoxRendererManagerProxy_h
 
@@ -32,6 +27,8 @@
 
 class vtkRenderer;
 
+/// \brief Proxy class to provide mechanisms for a displayable manager to
+/// communicate with 3rd party renderer managers (like CTK).
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLLightBoxRendererManagerProxy
   : public vtkMRMLAbstractLogic
 {

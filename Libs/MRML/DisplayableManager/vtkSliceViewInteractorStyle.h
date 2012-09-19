@@ -13,19 +13,6 @@
 
 =========================================================================*/
 
-///  vtkSliceViewInteractorStyle - provides customizable interaction routines
-/// 
-/// 
-/// Relies on vtkInteractorStyleUser, but with MouseWheelEvents.
-/// and mapping to control the slicer slice logic (manipulates the 
-/// vtkMRMLSliceNode and vtkMRMLSliceCompositeNode.
-
-/// TODO:
-/// * Do we need Rotate Mode?  Probably better to just rely on the reformat widget
-/// * Do we need to set the slice spacing on EnterEvent (I say no, nothing to do
-///   with linked slices should go in here)
-///
-
 #ifndef __vtkSliceViewInteractorStyle_h
 #define __vtkSliceViewInteractorStyle_h
 
@@ -36,9 +23,17 @@
 // MRML includes
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-
 class vtkMRMLSliceLogic;
 
+/// \brief Provides customizable interaction routines.
+///
+/// Relies on vtkInteractorStyleUser, but with MouseWheelEvents.
+/// and mapping to control the slicer slice logic (manipulates the 
+/// vtkMRMLSliceNode and vtkMRMLSliceCompositeNode.
+/// TODO:
+/// * Do we need Rotate Mode?  Probably better to just rely on the reformat widget
+/// * Do we need to set the slice spacing on EnterEvent (I say no, nothing to do
+///   with linked slices should go in here)
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkSliceViewInteractorStyle : public vtkInteractorStyleUser
 {
 public:

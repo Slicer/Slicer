@@ -18,16 +18,16 @@
 
 ==============================================================================*/
 
-/// Displayable manager for ImplicitePlaneWidget2 in 3D views
-///
-/// Responsible for any display based on the reformat widgets.
-#ifndef vtkMRMLThreeDReformatDisplayableManager_h
-#define vtkMRMLThreeDReformatDisplayableManager_h
+#ifndef __vtkMRMLThreeDReformatDisplayableManager_h
+#define __vtkMRMLThreeDReformatDisplayableManager_h
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
+/// \brief Displayable manager for ImplicitPlaneWidget2 in 3D views.
+///
+/// Responsible for any display based on the reformat widgets.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDReformatDisplayableManager :
   public vtkMRMLAbstractThreeDViewDisplayableManager
 {

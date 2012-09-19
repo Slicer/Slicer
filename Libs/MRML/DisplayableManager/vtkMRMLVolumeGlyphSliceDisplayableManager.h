@@ -18,11 +18,6 @@
 
 ==============================================================================*/
 
-/// Displayable manager for slice (2D) views
-///
-/// Responsible for any display on Slice views that is not the slice themselves
-/// nor the annotations
-
 #ifndef __vtkMRMLVolumeGlyphSliceDisplayableManager_h
 #define __vtkMRMLVolumeGlyphSliceDisplayableManager_h
 
@@ -30,6 +25,10 @@
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
+/// \brief Displayable manager for slice (2D) views.
+///
+/// Responsible for any display on Slice views that is not the slice themselves
+/// nor the annotations.
 /// Currently support only glyph display for Diffusion Tensor volumes.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVolumeGlyphSliceDisplayableManager
   : public vtkMRMLAbstractSliceViewDisplayableManager

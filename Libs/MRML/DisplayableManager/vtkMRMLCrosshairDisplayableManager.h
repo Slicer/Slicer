@@ -18,10 +18,6 @@
 
 ==============================================================================*/
 
-/// Displayable manager for the crosshair on slice (2D) views
-///
-/// Responsible for any display of the crosshair on Slice views 
-
 #ifndef __vtkMRMLCrosshairDisplayableManager_h
 #define __vtkMRMLCrosshairDisplayableManager_h
 
@@ -31,10 +27,12 @@
 
 class vtkMRMLLightBoxRendererManagerProxy;
 
+/// \brief Displayable manager for the crosshair on slice (2D) views
+///
+/// Responsible for any display of the crosshair on Slice views.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLCrosshairDisplayableManager :
   public vtkMRMLAbstractSliceViewDisplayableManager
 {
-
 public:
   static vtkMRMLCrosshairDisplayableManager* New();
   vtkTypeRevisionMacro(vtkMRMLCrosshairDisplayableManager,
@@ -45,7 +43,6 @@ public:
   virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);
 
 protected:
-
   vtkMRMLCrosshairDisplayableManager();
   virtual ~vtkMRMLCrosshairDisplayableManager();
 
@@ -66,7 +63,6 @@ protected:
   virtual void AdditionalInitializeStep();
 
 private:
-
   vtkMRMLCrosshairDisplayableManager(const vtkMRMLCrosshairDisplayableManager&);// Not implemented
   void operator=(const vtkMRMLCrosshairDisplayableManager&);                     // Not Implemented
 

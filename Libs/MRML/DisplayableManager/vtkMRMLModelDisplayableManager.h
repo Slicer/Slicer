@@ -12,15 +12,6 @@
 
 ==========================================================================*/
 
-///  vtkSlicerNodeSelectorWidget - menu to select volumes from current mrml scene
-/// 
-/// Inherits most behavior from kw widget, but is specialized to observe
-/// the current mrml scene and update the entries of the pop up menu to correspond
-/// to the currently available volumes.  This widget also has a notion of the current selection
-/// that can be observed or set externally
-//
-
-
 #ifndef __vtkMRMLModelDisplayableManager_h
 #define __vtkMRMLModelDisplayableManager_h
 
@@ -59,6 +50,12 @@ class vtkProp3D;
 class vtkPropPicker;
 class vtkWorldPointPicker;
 
+/// \brief menu to select volumes from current mrml scene.
+///
+/// Inherits most behavior from kw widget, but is specialized to observe
+/// the current mrml scene and update the entries of the pop up menu to correspond
+/// to the currently available volumes.  This widget also has a notion of the current selection
+/// that can be observed or set externally.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :
     public vtkMRMLAbstractThreeDViewDisplayableManager
 {
@@ -201,4 +198,3 @@ private:
 };
 
 #endif
-

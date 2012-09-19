@@ -18,13 +18,6 @@
 
 ==============================================================================*/
 
-/// Superclass for displayable manager classes.
-/// 
-/// A displayable manager class is responsible to represent a
-/// MRMLDisplayable node in a renderer.
-/// 
-
-
 #ifndef __vtkMRMLAbstractThreeDViewDisplayableManager_h
 #define __vtkMRMLAbstractThreeDViewDisplayableManager_h
 
@@ -35,6 +28,10 @@
 
 class vtkMRMLViewNode;
 
+/// \brief Superclass for displayable manager classes.
+///
+/// A displayable manager class is responsible to represent a
+/// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractThreeDViewDisplayableManager :
     public vtkMRMLAbstractDisplayableManager
 {
@@ -65,4 +62,3 @@ private:
 };
 
 #endif
-

@@ -12,25 +12,6 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkThreeDViewInteractorStyle - interactive manipulation of the camera
-/// 
-/// This class is based on vtkInteractorStyleTrackballCamera, but includes
-/// extra features and event invocations to support extra features of slicer.
-//
-/// vtkInteractorStyleTrackballCamera allows the user to interactively
-/// manipulate (rotate, pan, etc.) the camera, the viewpoint of the scene.  In
-/// trackball interaction, the magnitude of the mouse motion is proportional
-/// to the camera motion associated with a particular mouse binding. For
-/// example, small left-button motions cause small changes in the rotation of
-/// the camera around its focal point. For a 3-button mouse, the left button
-/// is for rotation, the right button for zooming, the middle button for
-/// panning, and ctrl + left button for spinning.  (With fewer mouse buttons,
-/// ctrl + shift + left button is for zooming, and shift + left button is for
-/// panning.)
-
-/// .SECTION See Also
-/// vtkInteractorStyleTrackballActor vtkInteractorStyleJoystickCamera
-/// vtkInteractorStyleJoystickActor
 
 #ifndef __vtkThreeDViewInteractorStyle_h
 #define __vtkThreeDViewInteractorStyle_h
@@ -46,6 +27,25 @@
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
 class vtkMRMLModelDisplayableManager;
+
+/// \brief Interactive manipulation of the camera.
+///
+/// This class is based on vtkInteractorStyleTrackballCamera, but includes
+/// extra features and event invocations to support extra features of slicer.
+///
+/// vtkInteractorStyleTrackballCamera allows the user to interactively
+/// manipulate (rotate, pan, etc.) the camera, the viewpoint of the scene.  In
+/// trackball interaction, the magnitude of the mouse motion is proportional
+/// to the camera motion associated with a particular mouse binding. For
+/// example, small left-button motions cause small changes in the rotation of
+/// the camera around its focal point. For a 3-button mouse, the left button
+/// is for rotation, the right button for zooming, the middle button for
+/// panning, and ctrl + left button for spinning.  (With fewer mouse buttons,
+/// ctrl + shift + left button is for zooming, and shift + left button is for
+/// panning.)
+/// \sa vtkInteractorStyleTrackballActor
+/// \sa vtkInteractorStyleJoystickCamera
+/// \sa vtkInteractorStyleJoystickActor
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkThreeDViewInteractorStyle :
     public vtkInteractorStyle
 {

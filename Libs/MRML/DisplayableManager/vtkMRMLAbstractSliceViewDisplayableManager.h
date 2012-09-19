@@ -18,13 +18,6 @@
 
 ==============================================================================*/
 
-/// Superclass for displayable manager classes.
-/// 
-/// A displayable manager class is responsible to represent a
-/// MRMLDisplayable node in a renderer.
-/// 
-
-
 #ifndef __vtkMRMLAbstractSliceViewDisplayableManager_h
 #define __vtkMRMLAbstractSliceViewDisplayableManager_h
 
@@ -35,6 +28,10 @@
 
 class vtkMRMLSliceNode;
 
+/// \brief Superclass for displayable manager classes.
+///
+/// A displayable manager class is responsible to represent a
+/// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractSliceViewDisplayableManager :
     public vtkMRMLAbstractDisplayableManager
 {
@@ -77,4 +74,3 @@ private:
 };
 
 #endif
-

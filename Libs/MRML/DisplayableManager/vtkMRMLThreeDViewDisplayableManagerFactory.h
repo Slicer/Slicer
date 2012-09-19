@@ -18,12 +18,6 @@
 
 ==============================================================================*/
 
-/// Factory where displayable manager classe should be registered with
-/// 
-/// A displayable manager class is responsible to represente a 
-/// MRMLDisplayable node in a renderer.
-/// 
-
 #ifndef __vtkMRMLThreeDViewDisplayableManagerFactory_h
 #define __vtkMRMLThreeDViewDisplayableManagerFactory_h
 
@@ -37,6 +31,10 @@
 
 class vtkRenderer;
 
+/// \brief Factory where displayable manager classes are registered.
+///
+/// A displayable manager class is responsible to represente a 
+/// MRMLDisplayable node in a renderer.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLThreeDViewDisplayableManagerFactory
   : public vtkMRMLDisplayableManagerFactory
 {
@@ -73,5 +71,3 @@ VTK_SINGLETON_DECLARE_INITIALIZER(VTK_MRML_DISPLAYABLEMANAGER_EXPORT,
                                   vtkMRMLThreeDViewDisplayableManagerFactory);
 
 #endif
-
-
