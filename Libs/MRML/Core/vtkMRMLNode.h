@@ -11,11 +11,6 @@
   Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
-///  vtkMRMLNode - Abstract Superclass for all specific types of MRML nodes.
-/// 
-/// This node encapsulates the functionality common to all types of MRML nodes.
-/// This includes member variables for ID, Description, and Options,
-/// as well as member functions to Copy() and Write().
 
 #ifndef __vtkMRMLNode_h
 #define __vtkMRMLNode_h
@@ -115,6 +110,11 @@ void class::Set##name (const char* _arg)            \
   }
 #endif
 
+/// \brief Abstract Superclass for all specific types of MRML nodes.
+///
+/// This node encapsulates the functionality common to all types of MRML nodes.
+/// This includes member variables for ID, Description, and Options,
+/// as well as member functions to Copy() and Write().
 class VTK_MRML_EXPORT vtkMRMLNode : public vtkObject
 {
   /// 
@@ -501,6 +501,3 @@ private:
 };
 
 #endif
-
-
-

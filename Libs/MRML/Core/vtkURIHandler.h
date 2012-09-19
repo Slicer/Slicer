@@ -10,7 +10,7 @@ class vtkPermissionPrompter;
 
 class VTK_MRML_EXPORT vtkURIHandler : public vtkObject 
 {
-  public:
+public:
   /// The Usual vtk class functions
   //static vtkURIHandler *New() { return NULL; };
     static vtkURIHandler *New();
@@ -100,9 +100,3 @@ class VTK_MRML_EXPORT vtkURIHandler : public vtkObject
 };
 
 #endif
-
-
-
-
-
-

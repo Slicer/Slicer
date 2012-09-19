@@ -11,6 +11,7 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+
 #ifndef __vtkMRMLScriptedModuleNode_h
 #define __vtkMRMLScriptedModuleNode_h
 
@@ -23,7 +24,6 @@
 
 /// The scripted module node is simply a MRMLNode container for
 /// an arbitrary keyword value pair map
-
 class VTK_MRML_EXPORT vtkMRMLScriptedModuleNode : public vtkMRMLNode
 {
 public:
@@ -86,4 +86,3 @@ protected:
 };
 
 #endif
-

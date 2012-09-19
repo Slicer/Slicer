@@ -11,10 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLTransformableNode - MRML node for representing a node with a tranform
-/// 
-/// A supercalss for other nodes that can have a transform to parent node 
-/// like volume, model and transformation nodes
 
 #ifndef __vtkMRMLTransformableNode_h
 #define __vtkMRMLTransformableNode_h
@@ -27,6 +23,10 @@ class vtkMRMLTransformNode;
 class vtkAbstractTransform;
 class vtkMatrix4x4;
 
+/// \brief MRML node for representing a node with a tranform.
+///
+/// A superclass for other nodes that can have a transform to parent node
+/// like volume, model and transformation nodes.
 class VTK_MRML_EXPORT vtkMRMLTransformableNode : public vtkMRMLNode
 {
 public:

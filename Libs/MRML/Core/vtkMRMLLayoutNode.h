@@ -6,7 +6,8 @@
 
 class vtkXMLDataElement;
 
-/// Node that describes the view layout of the application
+/// \brief Node that describes the view layout of the application.
+///
 /// When the scene is closing (vtkMRMLScene::Clear), the view arrangement is
 /// set to none due to the Copy() call on an empty node.
 class VTK_MRML_EXPORT vtkMRMLLayoutNode : public vtkMRMLNode

@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLStorageNode - a supercalss for other storage nodes
-/// 
-/// a supercalss for other storage nodes like volume and model
 
 #ifndef __vtkMRMLStorageNode_h
 #define __vtkMRMLStorageNode_h
@@ -28,6 +25,9 @@ class vtkStringArray;
 // STD includes
 #include <vector>
 
+/// \brief A supercalss for other storage nodes.
+///
+/// A superclass for other storage nodes like volume and model.
 class VTK_MRML_EXPORT vtkMRMLStorageNode : public vtkMRMLNode
 {
 public:
@@ -335,6 +335,3 @@ protected:
 };
 
 #endif
-
-
-

@@ -11,15 +11,15 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLModelStorageNode - MRML node for model storage on disk
-/// 
-/// Storage nodes has methods to read/write vtkPolyData to/from disk
 
 #ifndef __vtkMRMLModelStorageNode_h
 #define __vtkMRMLModelStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
+/// \brief MRML node for model storage on disk.
+///
+/// Storage nodes has methods to read/write vtkPolyData to/from disk.
 class VTK_MRML_EXPORT vtkMRMLModelStorageNode : public vtkMRMLStorageNode
 {
 public:
@@ -60,6 +60,3 @@ protected:
 };
 
 #endif
-
-
-

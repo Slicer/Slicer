@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLScalarVolumeDisplayNode - MRML node for representing a volume display attributes
-/// 
-/// vtkMRMLScalarVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLScalarVolumeDisplayNode_h
 #define __vtkMRMLScalarVolumeDisplayNode_h
@@ -35,6 +32,9 @@ class vtkImageThreshold;
 // STD includes
 #include <vector>
 
+/// \brief MRML node for representing a volume display attributes.
+///
+/// vtkMRMLScalarVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
   public:
@@ -236,4 +236,3 @@ protected:
 };
 
 #endif
-

@@ -11,19 +11,19 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-/// \deprecated Used for reading in Slicer3 fiducial lists, please use the Annotation Module MRML storage nodes
-/// \sa vtkMRMLAnnotationStorageNode, vtkMRMLAnnotationFiducialsStorageNode
-///
-///  vtkMRMLFiducialListStorageNode - MRML node for handling fiducial list storage
-/// 
-/// vtkMRMLFiducialListStorageNode nodes describe the fiducial storage
-/// node that allows to read/write point data from/to file.
 
 #ifndef __vtkMRMLFiducialListStorageNode_h
 #define __vtkMRMLFiducialListStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
+/// \brief MRML node for handling fiducial list storage
+///
+/// \deprecated Used for reading in Slicer3 fiducial lists, please use the Annotation Module MRML storage nodes
+/// \sa vtkMRMLAnnotationStorageNode, vtkMRMLAnnotationFiducialsStorageNode
+///
+/// vtkMRMLFiducialListStorageNode nodes describe the fiducial storage
+/// node that allows to read/write point data from/to file.
 class VTK_MRML_EXPORT vtkMRMLFiducialListStorageNode
   : public vtkMRMLStorageNode
 {

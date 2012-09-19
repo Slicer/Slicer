@@ -11,12 +11,6 @@
   Version:   $Revision: 1.0 $
 
 =========================================================================auto=*/
-///  vtkMRMLProceduralColorNode - MRML node to represent procedurally
-/// defined color information.
-/// 
-/// Procedural nodes define methods that are used to map colours to scalar
-/// values. Usually they will incorporate a custom subclass of a
-/// vtkLookupTable, or a vtkColorTransferFunction.
 
 #ifndef __vtkMRMLProceduralColorNode_h
 #define __vtkMRMLProceduralColorNode_h
@@ -25,6 +19,11 @@
 
 class vtkColorTransferFunction;
 
+/// \brief MRML node to represent procedurally defined color information.
+///
+/// Procedural nodes define methods that are used to map colours to scalar
+/// values. Usually they will incorporate a custom subclass of a
+/// vtkLookupTable, or a vtkColorTransferFunction.
 class VTK_MRML_EXPORT vtkMRMLProceduralColorNode : public vtkMRMLColorNode
 {
 public:

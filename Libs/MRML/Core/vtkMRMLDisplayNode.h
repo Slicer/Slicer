@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLDisplayNode - a supercalss for other storage nodes
-/// 
-/// a supercalss for other storage nodes like volume and model
 
 #ifndef __vtkMRMLDisplayNode_h
 #define __vtkMRMLDisplayNode_h
@@ -30,6 +27,9 @@ class vtkPolyData;
 // STD includes
 #include <vector>
 
+/// \brief A superclass for other storage nodes.
+///
+/// A superclass for other storage nodes like volume and model.
 class VTK_MRML_EXPORT vtkMRMLDisplayNode : public vtkMRMLNode
 {
 public:

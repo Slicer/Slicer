@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLTransformStorageNode - MRML node for transform storage on disk
-/// 
-/// Storage nodes has methods to read/write transforms to/from disk
 
 #ifndef __vtkMRMLTransformStorageNode_h
 #define __vtkMRMLTransformStorageNode_h
@@ -22,6 +19,9 @@
 
 class vtkImageData;
 
+/// \brief MRML node for transform storage on disk.
+///
+/// Storage nodes has methods to read/write transforms to/from disk.
 class VTK_MRML_EXPORT vtkMRMLTransformStorageNode : public vtkMRMLStorageNode
 {
   public:
@@ -61,6 +61,3 @@ protected:
 };
 
 #endif
-
-
-

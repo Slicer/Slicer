@@ -11,9 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLClipModelsNode - MRML node to represent camera node
-/// 
-/// Camera node uses vtkCamera to store the state of the camera
 
 #ifndef __vtkMRMLCameraNode_h
 #define __vtkMRMLCameraNode_h
@@ -26,6 +23,9 @@ class vtkCamera;
 class vtkMatrix4x4;
 class vtkRenderer;
 
+/// \brief MRML node to represent camera node
+///
+/// Camera node uses vtkCamera to store the state of the camera
 class VTK_MRML_EXPORT vtkMRMLCameraNode : public vtkMRMLTransformableNode
 {
 public:

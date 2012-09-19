@@ -11,11 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLSelectionNode - MRML node for storing a slice through RAS space
-/// 
-/// This node stores the information about the currently selected volume
-/// 
-//
 
 #ifndef __vtkMRMLSelectionNode_h
 #define __vtkMRMLSelectionNode_h
@@ -26,6 +21,9 @@
 // STD includes
 #include <vector>
 
+/// \brief  MRML node for storing a slice through RAS space.
+///
+/// This node stores the information about the currently selected volume.
 class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
 {
   public:
@@ -169,4 +167,3 @@ protected:
 };
 
 #endif
-

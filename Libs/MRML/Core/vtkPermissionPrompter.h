@@ -65,4 +65,3 @@ class VTK_MRML_EXPORT vtkPermissionPrompter : public vtkObject
 };
 
 #endif
-

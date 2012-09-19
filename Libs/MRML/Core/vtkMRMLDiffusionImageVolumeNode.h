@@ -11,15 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLDiffusionImageVolumeNode - MRML node for representing diffusion weighted MRI volume 
-/// 
-/// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
-/// images. These images are the basis for computing the diffusion tensor.
-/// The node is a container for the neccesary information to interpert DW images:
-/// 1. Gradient information.
-/// 2. B value for each gradient.
-/// 3. Measurement frame that relates the coordinate system where the gradients are given 
-///  to RAS.
 
 #ifndef __vtkMRMLDiffusionImageVolumeNode_h
 #define __vtkMRMLDiffusionImageVolumeNode_h
@@ -27,6 +18,15 @@
 #include "vtkMRMLTensorVolumeNode.h"
 class vtkMRMLDiffusionWeightedVolumeNode;
 
+/// \brief MRML node for representing diffusion weighted MRI volume
+///
+/// Diffusion Weigthed Volume nodes describe data sets that encode diffusion weigthed
+/// images. These images are the basis for computing the diffusion tensor.
+/// The node is a container for the neccesary information to interpert DW images:
+/// 1. Gradient information.
+/// 2. B value for each gradient.
+/// 3. Measurement frame that relates the coordinate system where the gradients are given
+///  to RAS.
 class VTK_MRML_EXPORT vtkMRMLDiffusionImageVolumeNode : public vtkMRMLTensorVolumeNode
 {
   public:

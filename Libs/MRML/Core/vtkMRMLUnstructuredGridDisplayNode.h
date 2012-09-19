@@ -11,13 +11,6 @@
   Version:   $Revision: 1.6 $
 
   =========================================================================auto=*/
-///  vtkMRMLUnstructuredGridDisplayNode - MRML node to represent display properties for tractography.
-/// 
-/// vtkMRMLUnstructuredGridDisplayNode nodes store display properties of trajectories 
-/// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-/// or by scalar invariants), display on/off for tensor glyphs and display of 
-/// trajectory as a line or tube.
-//
 
 #ifndef __vtkMRMLUnstructuredGridDisplayNode_h
 #define __vtkMRMLUnstructuredGridDisplayNode_h
@@ -31,6 +24,12 @@ class vtkPolyData;
 class vtkShrinkPolyData;
 class vtkUnstructuredGrid;
 
+/// \brief MRML node to represent display properties for tractography.
+///
+/// vtkMRMLUnstructuredGridDisplayNode nodes store display properties of trajectories
+/// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
+/// or by scalar invariants), display on/off for tensor glyphs and display of 
+/// trajectory as a line or tube.
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridDisplayNode : public vtkMRMLDisplayNode
 {
  public:

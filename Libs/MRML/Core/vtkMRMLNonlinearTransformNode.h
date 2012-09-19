@@ -11,10 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLNonlinearTransformNode - MRML node for representing a nonlinear transformation to the parent node
-/// 
-/// MRML node for representing a nonlinear transformation to the parent
-/// node in the form of a vtkWarpTransform 
 
 #ifndef __vtkMRMLNonlinearTransformNode_h
 #define __vtkMRMLNonlinearTransformNode_h
@@ -24,6 +20,10 @@
 class vtkWarpTransform;
 class vtkMRMLStorageNode;
 
+/// \brief MRML node for representing a nonlinear transformation to the parent node.
+///
+/// MRML node for representing a nonlinear transformation to the parent
+/// node in the form of a vtkWarpTransform.
 class VTK_MRML_EXPORT vtkMRMLNonlinearTransformNode : public vtkMRMLTransformNode
 {
   public:
@@ -100,4 +100,3 @@ protected:
 };
 
 #endif
-

@@ -11,13 +11,6 @@
   Version:   $Revision: 1.23 $
 
 =========================================================================auto=*/
-///  vtkImageBimodalAnalysis - Analysis bimodal histograms
-/// 
-/// vtkImageBimodalAnalysis - This filter assumes the input comes
-/// from vtkImageAccumulateDiscrete, so there.
-/// .SECTION Warning
-/// FIXME: only works on output floating point
-/// FIXME: should use vtkTemplateMacro
 
 #ifndef __vtkImageBimodalAnalysis_h
 #define __vtkImageBimodalAnalysis_h
@@ -31,6 +24,13 @@
 #define VTK_BIMODAL_MODALITY_CT 0
 #define VTK_BIMODAL_MODALITY_MR 1
 
+/// \brief Analysis bimodal histograms
+///
+/// This filter assumes the input comes
+/// from vtkImageAccumulateDiscrete, so there.
+/// \warning
+/// FIXME: only works on output floating point
+/// FIXME: should use vtkTemplateMacro
 class VTK_MRML_EXPORT vtkImageBimodalAnalysis : public vtkImageToImageFilter
 {
 public:

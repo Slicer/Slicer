@@ -11,19 +11,19 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLGridTransformNode - MRML node for representing a nonlinear transformation to the parent node using a grid transform
-/// 
-/// MRML node for representing a nonlinear transformation to the parent
-/// node in the form of a vtkGridTransform 
 
 #ifndef __vtkMRMLGridTransformNode_h
 #define __vtkMRMLGridTransformNode_h
 
 #include "vtkMRMLNonlinearTransformNode.h"
 
+/// \brief MRML node for representing a nonlinear transformation to the parent node using a grid transform.
+///
+/// MRML node for representing a nonlinear transformation to the parent
+/// node in the form of a vtkGridTransform.
 class VTK_MRML_EXPORT vtkMRMLGridTransformNode : public vtkMRMLNonlinearTransformNode
 {
-  public:
+public:
   static vtkMRMLGridTransformNode *New();
   vtkTypeMacro(vtkMRMLGridTransformNode,vtkMRMLNonlinearTransformNode);
   void PrintSelf(ostream& os, vtkIndent indent);

@@ -11,17 +11,16 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLCrosshairNode - MRML node for storing a crosshair through RAS space
-/// 
-/// This node stores the information about a crosshair (position,
-/// style, attributes)
-//
 
 #ifndef __vtkMRMLCrosshairNode_h
 #define __vtkMRMLCrosshairNode_h
 
 #include "vtkMRMLNode.h"
 
+/// \brief MRML node for storing a crosshair through RAS space
+///
+/// This node stores the information about a crosshair (position,
+/// style, attributes)
 class VTK_MRML_EXPORT vtkMRMLCrosshairNode : public vtkMRMLNode
 {
   public:

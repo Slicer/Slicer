@@ -11,17 +11,17 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLHierarchyStorageNode - MRML node for representing a no-op hierarchy storage
-// .SECTION Description
-// vtkMRMLHierarchyStorageNode nodes describe the storage that is a place
-// holder for hierarchy nodes that don't need to write anything to file,
-// subclasses should reimplement ReadData and WriteData
 
 #ifndef __vtkMRMLHierarchyStorageNode_h
 #define __vtkMRMLHierarchyStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
+/// \brief MRML node for representing a no-op hierarchy storage.
+///
+/// vtkMRMLHierarchyStorageNode nodes describe the storage that is a place
+/// holder for hierarchy nodes that don't need to write anything to file,
+/// subclasses should reimplement ReadData and WriteData
 class VTK_MRML_EXPORT vtkMRMLHierarchyStorageNode : public vtkMRMLStorageNode
 {
 public:

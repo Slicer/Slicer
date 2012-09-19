@@ -11,13 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLSliceNode - MRML node for storing a slice through RAS space
-/// 
-/// This node stores the information about how to map from RAS space to 
-/// the desired slice plane.
-/// -- SliceToRAS is the matrix that rotates and translates the slice plane
-/// -- FieldOfView tells the size of  slice plane
-//
 
 #ifndef __vtkMRMLSliceNode_h
 #define __vtkMRMLSliceNode_h
@@ -27,6 +20,12 @@ class vtkMRMLVolumeNode;
 
 class vtkMatrix4x4;
 
+/// \brief MRML node for storing a slice through RAS space.
+///
+/// This node stores the information about how to map from RAS space to
+/// the desired slice plane.
+/// \li SliceToRAS is the matrix that rotates and translates the slice plane
+/// \li FieldOfView tells the size of  slice plane
 class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
 {
   public:
@@ -436,4 +435,3 @@ protected:
 };
 
 #endif
-

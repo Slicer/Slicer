@@ -11,13 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLUnstructuredGridNode - MRML node to represent a fiber bundle from tractography in DTI data.
-/// 
-/// UnstructuredGrid nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
-/// A UnstructuredGrid node contains many fibers and forms the smallest logical unit of tractography 
-/// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
-/// Visualization parameters for these nodes are controlled by the vtkMRMLUnstructuredGridDisplayNode class.
-//
 
 #ifndef __vtkMRMLUnstructuredGridNode_h
 #define __vtkMRMLUnstructuredGridNode_h
@@ -26,6 +19,12 @@
 
 class vtkUnstructuredGrid;
 
+/// \brief MRML node to represent a fiber bundle from tractography in DTI data.
+/// 
+/// UnstructuredGrid nodes contain trajectories ("fibers") from tractography, internally represented as vtkPolyData.
+/// A UnstructuredGrid node contains many fibers and forms the smallest logical unit of tractography 
+/// that MRML will manage/read/write. Each fiber has accompanying tensor data.  
+/// Visualization parameters for these nodes are controlled by the vtkMRMLUnstructuredGridDisplayNode class.
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridNode : public vtkMRMLDisplayableNode
 {
 public:

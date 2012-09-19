@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLVolumeHeaderlessStorageNode - MRML node for representing a volume strorage
-/// 
-/// vtkMRMLVolumeHeaderlessStorageNode nodes describes how volume data sets is stored on disk
 
 #ifndef __vtkMRMLVolumeHeaderlessStorageNode_h
 #define __vtkMRMLVolumeHeaderlessStorageNode_h
@@ -22,6 +19,9 @@
 
 class vtkImageData;
 
+/// \brief MRML node for representing a volume storage.
+///
+/// vtkMRMLVolumeHeaderlessStorageNode nodes describes how volume data sets is stored on disk.
 class VTK_MRML_EXPORT vtkMRMLVolumeHeaderlessStorageNode
   : public vtkMRMLStorageNode
 {
@@ -146,6 +146,3 @@ protected:
 };
 
 #endif
-
-
-

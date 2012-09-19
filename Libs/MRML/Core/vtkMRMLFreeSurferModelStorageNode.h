@@ -11,17 +11,17 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLFreeSurferModelStorageNode - MRML node for model storage on disk
-/// 
-/// Storage nodes has methods to read/write vtkPolyData to/from disk
-/// It uses the superclass vtkMRMLModelStorageNode for writting
-/// (same file format supported).
 
 #ifndef __vtkMRMLFreeSurferModelStorageNode_h
 #define __vtkMRMLFreeSurferModelStorageNode_h
 
 #include "vtkMRMLModelStorageNode.h"
 
+/// \brief MRML node for model storage on disk.
+///
+/// Storage nodes has methods to read/write vtkPolyData to/from disk
+/// It uses the superclass vtkMRMLModelStorageNode for writting
+/// (same file format supported).
 class VTK_MRML_EXPORT vtkMRMLFreeSurferModelStorageNode : public vtkMRMLModelStorageNode
 {
   public:

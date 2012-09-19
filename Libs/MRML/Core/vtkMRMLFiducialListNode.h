@@ -11,13 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
-/// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
-///
-///  vtkMRMLFiducialListNode - MRML node to represent a list of points in 3D
-/// 
-/// Fiducial list nodes describe a list of points in 3d space.  They indicate
-/// how to render it (color, opacity, etc). 
 
 #ifndef __vtkMRMLFiducialListNode_h
 #define __vtkMRMLFiducialListNode_h
@@ -43,6 +36,13 @@ typedef struct
     int second;
 } FiducialListSwappedIndices;
 
+/// \brief MRML node to represent a list of points in 3D.
+///
+/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
+/// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
+///
+/// Fiducial list nodes describe a list of points in 3d space.  They indicate
+/// how to render it (color, opacity, etc).
 class VTK_MRML_EXPORT vtkMRMLFiducialListNode : public vtkMRMLStorableNode
 {
 public:

@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLLabelMapVolumeDisplayNode - MRML node for representing a volume display attributes
-/// 
-/// vtkMRMLLabelMapVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLLabelMapVolumeDisplayNode_h
 #define __vtkMRMLLabelMapVolumeDisplayNode_h
@@ -22,6 +19,9 @@
 
 class vtkImageMapToColors;
 
+/// \brief MRML node for representing a volume display attributes.
+///
+/// vtkMRMLLabelMapVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLLabelMapVolumeDisplayNode : public vtkMRMLVolumeDisplayNode
 {
   public:
@@ -66,4 +66,3 @@ protected:
 };
 
 #endif
-

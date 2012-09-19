@@ -11,17 +11,16 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLSliceCompositeNode - MRML node for storing a slice through RAS space
-/// 
-/// This node stores the information about how to composite two
-/// vtkMRMLVolumes into a single display image
-//
 
 #ifndef __vtkMRMLSliceCompositeNode_h
 #define __vtkMRMLSliceCompositeNode_h
 
 #include "vtkMRMLNode.h"
 
+/// \brief MRML node for storing a slice through RAS space.
+///
+/// This node stores the information about how to composite two
+/// vtkMRMLVolumes into a single display image.
 class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
 {
   public:
@@ -282,4 +281,3 @@ protected:
 };
 
 #endif
-

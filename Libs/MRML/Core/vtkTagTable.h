@@ -105,9 +105,3 @@ class VTK_MRML_EXPORT vtkTagTable : public vtkObject
 };
 
 #endif
-
-
-
-
-
-

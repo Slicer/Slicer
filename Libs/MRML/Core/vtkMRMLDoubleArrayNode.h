@@ -11,6 +11,7 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+
 #ifndef __vtkMRMLDoubleArrayNode_h
 #define __vtkMRMLDoubleArrayNode_h
 
@@ -23,10 +24,7 @@ class vtkMRMLStorageNode;
 
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayNode : public vtkMRMLStorableNode
 {
- 
-
- public:
-
+public:
   //----------------------------------------------------------------
   /// Constants
   //----------------------------------------------------------------

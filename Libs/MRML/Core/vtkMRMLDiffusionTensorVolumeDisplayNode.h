@@ -11,15 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLDiffusionTensorVolumeDisplayNode - MRML node for representing a volume (image stack).
-/// 
-/// Volume nodes describe data sets that can be thought of as stacks of 2D 
-/// images that form a 3D volume.  Volume nodes describe where the images 
-/// are stored on disk, how to render the data (window and level), and how 
-/// to read the files.  This information is extracted from the image 
-/// headers (if they exist) at the time the MRML file is generated.  
-/// Consequently, MRML files isolate MRML browsers from understanding how 
-/// to read the myriad of file formats for medical data. 
 
 #ifndef __vtkMRMLDiffusionTensorVolumeDisplayNode_h
 #define __vtkMRMLDiffusionTensorVolumeDisplayNode_h
@@ -36,6 +27,15 @@ class vtkImageExtractComponents;
 class vtkImageShiftScale;
 class vtkImageMathematics;
 
+/// \brief MRML node for representing a volume (image stack).
+///
+/// Volume nodes describe data sets that can be thought of as stacks of 2D
+/// images that form a 3D volume.  Volume nodes describe where the images
+/// are stored on disk, how to render the data (window and level), and how
+/// to read the files.  This information is extracted from the image
+/// headers (if they exist) at the time the MRML file is generated.
+/// Consequently, MRML files isolate MRML browsers from understanding how
+/// to read the myriad of file formats for medical data.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeDisplayNode : public vtkMRMLGlyphableVolumeDisplayNode
 {
   public:

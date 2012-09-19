@@ -11,17 +11,18 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLClipModelsNode - MRML node to represent three clipping planes.
-/// 
-/// The vtkMRMLClipModelsNode MRML node stores 
-/// the direction of clipping for each of the three clipping planes.
-/// It also stored  the type of combined clipping operation as either intersection or union
 
 #ifndef __vtkMRMLClipModelsNode_h
 #define __vtkMRMLClipModelsNode_h
 
 #include "vtkMRMLNode.h"
 
+/// \brief MRML node to represent three clipping planes.
+///
+/// The vtkMRMLClipModelsNode MRML node stores
+/// the direction of clipping for each of the three clipping planes.
+/// It also stores the type of combined clipping operation as either an
+/// intersection or union.
 class VTK_MRML_EXPORT vtkMRMLClipModelsNode : public vtkMRMLNode
 {
 public:

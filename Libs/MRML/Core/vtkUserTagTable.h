@@ -8,7 +8,7 @@
 
 class VTK_MRML_EXPORT vtkUserTagTable : public vtkTable
 {
-  public:
+public:
   /// The Usual vtk class functions
   static vtkUserTagTable *New();
   vtkTypeRevisionMacro(vtkUserTagTable, vtkTable);
@@ -73,9 +73,3 @@ class VTK_MRML_EXPORT vtkUserTagTable : public vtkTable
 };
 
 #endif
-
-
-
-
-
-

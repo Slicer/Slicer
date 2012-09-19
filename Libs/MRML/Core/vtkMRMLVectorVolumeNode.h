@@ -11,9 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLVectorVolumeNode - MRML node for representing a vector volume (image stack).
-/// 
-/// Volume with vector pixel type.
 
 #ifndef __vtkMRMLVectorVolumeNode_h
 #define __vtkMRMLVectorVolumeNode_h
@@ -22,6 +19,9 @@
 class vtkMRMLVolumeArchetypeStorageNode;
 class vtkMRMLVectorVolumeDisplayNode;
 
+/// \brief MRML node for representing a vector volume (image stack).
+///
+/// Volume with vector pixel type.
 class VTK_MRML_EXPORT vtkMRMLVectorVolumeNode : public vtkMRMLTensorVolumeNode
 {
   public:
@@ -64,7 +64,3 @@ protected:
 };
 
 #endif
-
-
- 
-

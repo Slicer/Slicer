@@ -11,12 +11,6 @@
   Version:   $Revision: 1.21 $
 
 =========================================================================auto=*/
-///  vtkImageAccumulateDiscrete - Generalized histograms up to 4 dimensions.
-/// 
-/// vtkImageAccumulateDiscrete - This filter divides component space into
-/// discrete bins.  It then counts the number of pixels associated
-/// with each bin.  The output is this "scatter plot".
-/// The input can be any type, but the output is always int.
 
 #ifndef __vtkImageAccumulateDiscrete_h
 #define __vtkImageAccumulateDiscrete_h
@@ -27,6 +21,12 @@
 // VTK includes
 #include <vtkImageToImageFilter.h>
 
+/// \brief Generalized histograms up to 4 dimensions.
+///
+/// This filter divides component space into
+/// discrete bins.  It then counts the number of pixels associated
+/// with each bin.  The output is this "scatter plot".
+/// The input can be any type, but the output is always int.
 class VTK_MRML_EXPORT vtkImageAccumulateDiscrete : public vtkImageToImageFilter
 {
 public:

@@ -6,9 +6,7 @@ class vtkMRMLROINode;
 
 class vtkCollection;
 
-///  vtkMRMLROIListNode - MRML list node to represent a list of ROINODE 
-/// 
-
+/// \brief MRML list node to represent a list of ROINODE.
 class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
 {
   public:
@@ -201,4 +199,5 @@ class VTK_MRML_EXPORT vtkMRMLROIListNode : public vtkMRMLNode
     /// The ID of the volume node that is associated with the ROI 
     char *VolumeNodeID;
 };
+
 #endif

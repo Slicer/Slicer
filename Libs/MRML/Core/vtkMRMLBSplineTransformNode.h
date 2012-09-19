@@ -11,10 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLBSplineTransformNode - MRML node for representing a nonlinear transformation to the parent node using a bspline transform
-/// 
-/// MRML node for representing a nonlinear transformation to the parent
-/// node in the form of a vtkBSplineDeformableTransform
 
 #ifndef __vtkMRMLBSplineTransformNode_h
 #define __vtkMRMLBSplineTransformNode_h
@@ -23,6 +19,11 @@
 
 class vtkMRMLStorageNode;
 
+/// \brief MRML node for representing a nonlinear transformation to the parent node
+/// using a bspline transform.
+///
+/// MRML node for representing a nonlinear transformation to the parent
+/// node in the form of a vtkBSplineDeformableTransform.
 class VTK_MRML_EXPORT vtkMRMLBSplineTransformNode : public vtkMRMLNonlinearTransformNode
 {
   public:

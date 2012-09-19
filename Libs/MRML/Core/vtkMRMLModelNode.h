@@ -11,14 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLModelNode - MRML node to represent a 3D surface model.
-///
-/// Model nodes describe polygonal data.
-/// When a model display node (vtkMRMLModelDisplayNode) is observed by the
-/// model, the output polydata is automatically set to the input of the model
-/// display node: You don't have to manually set the polydata yourself.
-/// Models are assumed to have been constructed with the orientation and voxel
-/// dimensions of the original segmented volume.
 
 #ifndef __vtkMRMLModelNode_h
 #define __vtkMRMLModelNode_h
@@ -33,6 +25,14 @@ class vtkAssignAttributes;
 class vtkDataArray;
 class vtkPolyData;
 
+/// \brief MRML node to represent a 3D surface model.
+///
+/// Model nodes describe polygonal data.
+/// When a model display node (vtkMRMLModelDisplayNode) is observed by the
+/// model, the output polydata is automatically set to the input of the model
+/// display node: You don't have to manually set the polydata yourself.
+/// Models are assumed to have been constructed with the orientation and voxel
+/// dimensions of the original segmented volume.
 class VTK_MRML_EXPORT vtkMRMLModelNode : public vtkMRMLDisplayableNode
 {
 public:

@@ -11,10 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLTransformNode - MRML node for representing a transformation
-/// between this node space and a parent node space
-/// 
-/// General Transformation between this node space and a parent node space
 
 #ifndef __vtkMRMLTransformNode_h
 #define __vtkMRMLTransformNode_h
@@ -24,6 +20,10 @@
 class vtkGeneralTransform;
 class vtkMatrix4x4;
 
+/// \brief MRML node for representing a transformation
+/// between this node space and a parent node space.
+///
+/// General Transformation between this node space and a parent node space.
 class VTK_MRML_EXPORT vtkMRMLTransformNode : public vtkMRMLStorableNode
 {
 public:
@@ -117,4 +117,3 @@ protected:
 };
 
 #endif
-

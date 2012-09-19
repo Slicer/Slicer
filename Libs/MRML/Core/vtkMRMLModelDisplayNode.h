@@ -11,10 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLModelDisplayNode - MRML node to represent a dispaly property of 3D surface model.
-/// 
-/// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
-/// including reference to ColorNode, texture, opacity, etc.
 
 #ifndef __vtkMRMLModelDisplayNode_h
 #define __vtkMRMLModelDisplayNode_h
@@ -28,6 +24,10 @@ class vtkAssignAttribute;
 class vtkPassThrough;
 class vtkPolyData;
 
+/// \brief MRML node to represent a dispaly property of 3D surface model.
+///
+/// vtkMRMLModelDisplayNode nodes stores display property of a 3D surface model
+/// including reference to ColorNode, texture, opacity, etc.
 class VTK_MRML_EXPORT vtkMRMLModelDisplayNode : public vtkMRMLDisplayNode
 {
 public:

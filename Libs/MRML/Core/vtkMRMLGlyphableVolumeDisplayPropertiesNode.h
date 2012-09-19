@@ -11,8 +11,15 @@
   Version:   $Revision: 1.3 $
 
   =========================================================================auto=*/
-///  vtkMRMLGlyphableVolumeDisplayPropertiesNode - MRML node for display of a diffusion tensor.
-/// 
+
+#ifndef __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
+#define __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
+
+#include "vtkMRMLColorTableNode.h"
+class vtkPolyData;
+
+/// \brief MRML node for display of a diffusion tensor.
+///
 /// This node describes display properties at the (conceptual) single-tensor level.
 /// A tensor can be displayed using various scalar invariants and glyphs.
 /// This class is used by classes (vtkMRMLFiberBundleDisplayNode, 
@@ -22,14 +29,6 @@
 /// This class inherits from the vtkMRMLColorNode->vtkMRMLColorTableNode superclasses,
 /// used for vtkMRMLModelNodes and vtkMRMLVolumeNodes, in order to
 /// provide specific lookup tables for the scalar invariant display.
-//
-
-#ifndef __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
-#define __vtkMRMLGlyphableVolumeDisplayPropertiesNode_h
-
-#include "vtkMRMLColorTableNode.h"
-class vtkPolyData;
-
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayPropertiesNode : public vtkMRMLColorTableNode
 {
  public:

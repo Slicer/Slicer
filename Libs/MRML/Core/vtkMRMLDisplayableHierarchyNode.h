@@ -11,8 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLDisplayableHierarchyNode - MRML node to represent a hierarchy of
-///  displayable nodes
 
 #ifndef __vtkMRMLDisplayableHierarchyNode_h
 #define __vtkMRMLDisplayableHierarchyNode_h
@@ -23,6 +21,7 @@ class vtkMRMLDisplayNode;
 
 class vtkCallbackCommand;
 
+/// \brief MRML node to represent a hierarchy of displayable nodes
 class VTK_MRML_EXPORT vtkMRMLDisplayableHierarchyNode : public vtkMRMLHierarchyNode
 {
 public:

@@ -11,15 +11,15 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLUnstructuredGridStorageNode - MRML node for fiberBundle storage on disk.
-/// 
-/// The storage node has methods to read/write vtkPolyData to/from disk.
 
 #ifndef __vtkMRMLUnstructuredGridStorageNode_h
 #define __vtkMRMLUnstructuredGridStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
+/// \brief MRML node for fiberBundle storage on disk.
+///
+/// The storage node has methods to read/write vtkPolyData to/from disk.
 class VTK_MRML_EXPORT vtkMRMLUnstructuredGridStorageNode
   : public vtkMRMLStorageNode
 {
@@ -62,6 +62,3 @@ protected:
 };
 
 #endif
-
-
-

@@ -11,7 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLSceneViewNode
 
 #ifndef __vtkMRMLSceneViewNode_h
 #define __vtkMRMLSceneViewNode_h
@@ -130,7 +129,3 @@ protected:
 };
 
 #endif
-
-
- 
-

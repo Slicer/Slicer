@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLGlyphableVolumeDisplayNode - MRML node for representing a volume display attributes
-/// 
-/// vtkMRMLGlyphableVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLGlyphableVolumeDisplayNode_h
 #define __vtkMRMLGlyphableVolumeDisplayNode_h
@@ -27,6 +24,9 @@ class vtkMRMLVolumeNode;
 // STD includes
 #include <vector>
 
+/// \brief MRML node for representing a volume display attributes.
+///
+/// vtkMRMLGlyphableVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLGlyphableVolumeDisplayNode : public vtkMRMLScalarVolumeDisplayNode
 {
   public:

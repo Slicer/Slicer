@@ -11,18 +11,6 @@
   Version:   $Revision: 1.3 $
 
   =========================================================================auto=*/
-///  vtkMRMLDiffusionTensorDisplayPropertiesNode - MRML node for display of a diffusion tensor.
-/// 
-/// This node describes display properties at the (conceptual) single-tensor level.
-/// A tensor can be displayed using various scalar invariants and glyphs.
-/// This class is used by classes (vtkMRMLFiberBundleDisplayNode, 
-/// vtkMRMLDiffusionTensorVolumeDisplayNode) that handle higher-level display
-/// concepts for many diffusion tensors, such as choosing between scalars/glyphs/etc. 
-/// for specific display needs.
-/// This class inherits from the vtkMRMLColorNode->vtkMRMLColorTableNode superclasses,
-/// used for vtkMRMLModelNodes and vtkMRMLVolumeNodes, in order to
-/// provide specific lookup tables for the scalar invariant display.
-//
 
 #ifndef __vtkMRMLDiffusionTensorDisplayPropertiesNode_h
 #define __vtkMRMLDiffusionTensorDisplayPropertiesNode_h
@@ -32,6 +20,17 @@
 // VTK includes
 class vtkPolyData;
 
+/// \brief MRML node for display of a diffusion tensor.
+///
+/// This node describes display properties at the (conceptual) single-tensor level.
+/// A tensor can be displayed using various scalar invariants and glyphs.
+/// This class is used by classes (vtkMRMLFiberBundleDisplayNode,
+/// vtkMRMLDiffusionTensorVolumeDisplayNode) that handle higher-level display
+/// concepts for many diffusion tensors, such as choosing between scalars/glyphs/etc.
+/// for specific display needs.
+/// This class inherits from the vtkMRMLColorNode->vtkMRMLColorTableNode superclasses,
+/// used for vtkMRMLModelNodes and vtkMRMLVolumeNodes, in order to
+/// provide specific lookup tables for the scalar invariant display.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorDisplayPropertiesNode : public vtkMRMLColorTableNode
 {
  public:

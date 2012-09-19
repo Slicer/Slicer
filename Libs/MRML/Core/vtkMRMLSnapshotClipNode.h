@@ -11,7 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLSnapshotClipNode - abstract class representing a hierarchy member
 
 #ifndef __vtkMRMLSnapshotClipNode_h
 #define __vtkMRMLSnapshotClipNode_h
@@ -26,6 +25,7 @@ class vtkCollection;
 // STD includes
 #include <vector>
 
+/// \brief Abstract class representing a hierarchy member.
 class VTK_MRML_EXPORT vtkMRMLSnapshotClipNode : public vtkMRMLNode
 {
   public:
@@ -79,7 +79,3 @@ protected:
 };
 
 #endif
-
-
- 
-

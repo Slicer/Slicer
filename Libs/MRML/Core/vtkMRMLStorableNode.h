@@ -11,11 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLStorableNode - MRML node to represent a 3D surface model.
-/// 
-/// Model nodes describe polygonal data.  Models 
-/// are assumed to have been constructed with the orientation and voxel 
-/// dimensions of the original segmented volume.
 
 #ifndef __vtkMRMLStorableNode_h
 #define __vtkMRMLStorableNode_h
@@ -30,6 +25,11 @@ class vtkTagTable;
 // STD includes
 #include <vector>
 
+/// \brief MRML node to represent a 3D surface model.
+///
+/// Model nodes describe polygonal data.  Models 
+/// are assumed to have been constructed with the orientation and voxel 
+/// dimensions of the original segmented volume.
 class VTK_MRML_EXPORT vtkMRMLStorableNode : public vtkMRMLTransformableNode
 {
 public:

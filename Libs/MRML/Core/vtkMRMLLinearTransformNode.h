@@ -11,12 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLLinearTransformNode - MRML node for representing 
-/// a linear transformation to the parent node
-/// 
-/// MRML node for representing 
-/// a linear transformation to the parent node in the form vtkMatrix4x4
-/// MatrixTransformToParent
 
 #ifndef __vtkMRMLLinearTransformNode_h
 #define __vtkMRMLLinearTransformNode_h
@@ -25,6 +19,12 @@
 
 class vtkMRMLStorageNode;
 
+/// \brief MRML node for representing a linear transformation to the parent
+/// node.
+///
+/// MRML node for representing
+/// a linear transformation to the parent node in the form vtkMatrix4x4
+/// MatrixTransformToParent.
 class VTK_MRML_EXPORT vtkMRMLLinearTransformNode : public vtkMRMLTransformNode
 {
   public:

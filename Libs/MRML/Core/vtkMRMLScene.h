@@ -11,15 +11,6 @@ Date:      $Date: 2006/03/17 15:10:09 $
 Version:   $Revision: 1.18 $
 
 =========================================================================auto=*/
-//
-//
-///  vtkMRMLScene - A set of MRML Nodes that supports serialization and undo/redo
-///
-/// vtkMRMLScene represents and provides methods to manipulate a list of
-/// MRML objects. The list is core and duplicate entries are not prevented.
-//
-/// .SECTION see also
-/// vtkMRMLNode vtkCollection
 
 #ifndef __vtkMRMLScene_h
 #define __vtkMRMLScene_h
@@ -47,6 +38,13 @@ class vtkURIHandler;
 class vtkMRMLNode;
 class vtkMRMLSceneViewNode;
 
+/// \brief A set of MRML Nodes that supports serialization and undo/redo.
+///
+/// vtkMRMLScene represents and provides methods to manipulate a list of
+/// MRML objects. The list is core and duplicate entries are not prevented.
+//
+/// \sa vtkMRMLNode
+/// \sa vtkCollection
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
 public:

@@ -11,20 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLVolumeNode - MRML node for representing a volume (image stack).
-/// 
-/// Volume nodes describe data sets that can be thought of as stacks of 2D 
-/// images that form a 3D volume. Volume nodes contain only the image data,
-/// where it is store on disk and how to read the files is controlled by
-/// the volume storage node, how to render the data (window and level) is
-/// controlled by the volume display nodes. Image information is extracted 
-/// from the image headers (if they exist) at the time the MRML file is
-/// generated.
-/// Consequently, MRML files isolate MRML browsers from understanding how 
-/// to read the myriad of file formats for medical data. 
-/// A scalar volume node can be a labelmap, which is typically the output of
-/// a segmentation that labels each voxel according to its tissue type.
-/// The alternative is a gray-level or color image
 
 #ifndef __vtkMRMLScalarVolumeNode_h
 #define __vtkMRMLScalarVolumeNode_h
@@ -39,6 +25,20 @@ class vtkImageData;
 class vtkImageAccumulateDiscrete;
 class vtkImageBimodalAnalysis;
 
+/// \brief MRML node for representing a volume (image stack).
+///
+/// Volume nodes describe data sets that can be thought of as stacks of 2D 
+/// images that form a 3D volume. Volume nodes contain only the image data,
+/// where it is store on disk and how to read the files is controlled by
+/// the volume storage node, how to render the data (window and level) is
+/// controlled by the volume display nodes. Image information is extracted 
+/// from the image headers (if they exist) at the time the MRML file is
+/// generated.
+/// Consequently, MRML files isolate MRML browsers from understanding how 
+/// to read the myriad of file formats for medical data. 
+/// A scalar volume node can be a labelmap, which is typically the output of
+/// a segmentation that labels each voxel according to its tissue type.
+/// The alternative is a gray-level or color image.
 class VTK_MRML_EXPORT vtkMRMLScalarVolumeNode : public vtkMRMLVolumeNode
 {
   public:
@@ -113,7 +113,3 @@ protected:
 };
 
 #endif
-
-
- 
-

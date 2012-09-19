@@ -11,19 +11,19 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-// .NAME vtkMRMLDoubleArrayStorageNode - MRML node for representing a volume storage
-// .SECTION Description
-// vtkMRMLDoubleArrayStorageNode nodes describe the fiducial storage
-// node that allows to read/write point data from/to file.
 
 #ifndef __vtkMRMLDoubleArrayStorageNode_h
 #define __vtkMRMLDoubleArrayStorageNode_h
 
 #include "vtkMRMLStorageNode.h"
 
+/// \brief MRML node for representing a volume storage
+///
+/// vtkMRMLDoubleArrayStorageNode nodes describe the fiducial storage
+/// node that allows to read/write point data from/to file.
 class VTK_MRML_EXPORT vtkMRMLDoubleArrayStorageNode : public vtkMRMLStorageNode
 {
-  public:
+public:
   static vtkMRMLDoubleArrayStorageNode *New();
   vtkTypeMacro(vtkMRMLDoubleArrayStorageNode,vtkMRMLStorageNode);
   void PrintSelf(ostream& os, vtkIndent indent);

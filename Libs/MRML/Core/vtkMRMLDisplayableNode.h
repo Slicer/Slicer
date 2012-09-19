@@ -11,19 +11,7 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-/// vtkMRMLDisplayableNode - MRML node to represent an item that can be
-/// rendered in a view. It is the base class for models, volumes etc.
-/// A displayable node points to a list of display nodes that control graphical
-/// properties to render the displayable node. For example, if a displayable
-/// node is a 3D surface/mesh, a first display node of the mesh can have a 
-/// red color attribute, while another display node for the mesh has a blue
-/// color attribute. Both red and blue display nodes will be rendered using 
-/// the same 3D mesh data.
-/// In a Model-View-Controller design pattern, the displayable node is the
-/// model. The display nodes are the views of the model.
-///
-/// TBD: Check support for a display node to be simultaneously referenced by
-/// different displayable nodes.
+
 #ifndef __vtkMRMLDisplayableNode_h
 #define __vtkMRMLDisplayableNode_h
 
@@ -34,6 +22,20 @@ class vtkMRMLDisplayNode;
 // STD includes
 #include <vector>
 
+/// \brief MRML node to represent an item that can be rendered in a view.
+///
+/// It is the base class for models, volumes etc.
+/// A displayable node points to a list of display nodes that control graphical
+/// properties to render the displayable node. For example, if a displayable
+/// node is a 3D surface/mesh, a first display node of the mesh can have a
+/// red color attribute, while another display node for the mesh has a blue
+/// color attribute. Both red and blue display nodes will be rendered using
+/// the same 3D mesh data.
+/// In a Model-View-Controller design pattern, the displayable node is the
+/// model. The display nodes are the views of the model.
+///
+/// TBD: Check support for a display node to be simultaneously referenced by
+/// different displayable nodes.
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:

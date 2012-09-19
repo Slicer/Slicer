@@ -11,10 +11,6 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-///  vtkMRMLVolumeArchetypeStorageNode - MRML node for representing a volume storage
-/// 
-/// vtkMRMLVolumeArchetypeStorageNode nodes describe the archetybe based volume storage
-/// node that allows to read/write volume data from/to file using generic ITK mechanism.
 
 #ifndef __vtkMRMLVolumeArchetypeStorageNode_h
 #define __vtkMRMLVolumeArchetypeStorageNode_h
@@ -24,6 +20,10 @@
 class vtkImageData;
 class vtkITKArchetypeImageSeriesReader;
 
+/// \brief MRML node for representing a volume storage.
+///
+/// vtkMRMLVolumeArchetypeStorageNode nodes describe the archetybe based volume storage
+/// node that allows to read/write volume data from/to file using generic ITK mechanism.
 class VTK_MRML_EXPORT vtkMRMLVolumeArchetypeStorageNode : public vtkMRMLStorageNode
 {
 public:
@@ -110,6 +110,3 @@ protected:
 };
 
 #endif
-
-
-

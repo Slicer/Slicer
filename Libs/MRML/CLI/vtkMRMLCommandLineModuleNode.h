@@ -11,6 +11,7 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+
 #ifndef __vtkMRMLCommandLineModuleNode_h
 #define __vtkMRMLCommandLineModuleNode_h
 

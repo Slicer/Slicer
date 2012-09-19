@@ -11,15 +11,15 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLViewNode - MRML node to represent view parameters
-/// 
-/// View node contains view parameters
 
 #ifndef __vtkMRMLViewNode_h
 #define __vtkMRMLViewNode_h
 
 #include "vtkMRMLNode.h"
 
+/// \brief MRML node to represent view parameters.
+///
+/// View node contains view parameters.
 class VTK_MRML_EXPORT vtkMRMLViewNode : public vtkMRMLNode
 {
 public:

@@ -11,7 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkMRMLHierarchyNode - abstract class representing a hierarchy member
 
 #ifndef __vtkMRMLHierarchyNode_h
 #define __vtkMRMLHierarchyNode_h
@@ -25,6 +24,7 @@ class vtkCollection;
 // STD includes
 #include <vector>
 
+/// \brief Abstract class representing a hierarchy member.
 class VTK_MRML_EXPORT vtkMRMLHierarchyNode : public vtkMRMLNode
 {
 public:

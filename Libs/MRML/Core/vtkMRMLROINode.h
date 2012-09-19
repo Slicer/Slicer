@@ -5,11 +5,10 @@
 
 class vtkPlanes;
 
-///  vtkMRMLROINode - MRML node to represent a 3D ROI.
-/// 
-/// Model nodes describe ROI data.  They indicate where the ROI is 
-/// located and the size of the ROI
-
+/// \brief MRML node to represent a 3D ROI.
+///
+/// Model nodes describe ROI data.  They indicate where the ROI is
+/// located and the size of the ROI.
 class VTK_MRML_EXPORT vtkMRMLROINode : public vtkMRMLTransformableNode
 {
 public:
@@ -146,4 +145,5 @@ protected:
   /// The ID of the volume associated with the ROI 
   char *VolumeNodeID;
 };
+
 #endif

@@ -11,7 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkMRMLModelHierarchyNode - MRML node to represent a hierarchyu of models
 
 #ifndef __vtkMRMLModelHierarchyNode_h
 #define __vtkMRMLModelHierarchyNode_h
@@ -20,6 +19,7 @@
 class vtkMRMLModelDisplayNode;
 class vtkMRMLModelNode;
 
+/// \brief MRML node to represent a hierarchyu of models.
 class VTK_MRML_EXPORT vtkMRMLModelHierarchyNode : public vtkMRMLDisplayableHierarchyNode
 {
 public:

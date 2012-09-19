@@ -11,13 +11,6 @@
   Version:   $Revision: 1.6 $
 
   =========================================================================auto=*/
-///  vtkMRMLDiffusionTensorVolumeSliceDisplayNode - MRML node to represent display properties for tractography.
-/// 
-/// vtkMRMLDiffusionTensorVolumeSliceDisplayNode nodes store display properties of trajectories 
-/// from tractography in diffusion MRI data, including color type (by bundle, by fiber, 
-/// or by scalar invariants), display on/off for tensor glyphs and display of 
-/// trajectory as a line or tube.
-//
 
 #ifndef __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
 #define __vtkMRMLDiffusionTensorVolumeSliceDisplayNode_h
@@ -29,6 +22,12 @@ class vtkDiffusionTensorGlyph;
 class vtkMatrix4x4;
 class vtkPolyData;
 
+/// \brief MRML node to represent display properties for tractography.
+///
+/// vtkMRMLDiffusionTensorVolumeSliceDisplayNode nodes store display properties of trajectories
+/// from tractography in diffusion MRI data, including color type (by bundle, by fiber,
+/// or by scalar invariants), display on/off for tensor glyphs and display of
+/// trajectory as a line or tube.
 class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkMRMLGlyphableVolumeSliceDisplayNode
 {
  public:

@@ -11,11 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
-/// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
-///
-///  vtkMRMLFiducial - MRML object to represent a 3D point.
-/// 
 
 #ifndef __vtkMRMLFiducial_h
 #define __vtkMRMLFiducial_h
@@ -27,6 +22,10 @@
 #include "vtkObject.h"
 class vtkMatrix4x4;
 
+/// \brief MRML object to represent a 3D point.
+///
+/// \deprecated Used for backward compatibility for Slicer3 fiducial lists, please use the Annotation Module MRML nodes
+/// \sa vtkMRMLAnnotationNode, vtkMRMLAnnotationFiducialNode
 class VTK_MRML_EXPORT vtkMRMLFiducial : public vtkObject
 {
 public:

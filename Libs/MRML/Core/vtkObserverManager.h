@@ -11,11 +11,6 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-///  vtkObserverManager - class that manages adding and deleting of obserevers with events
-/// 
-/// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object 
-/// it caches tags returned by AddObserver method so that obserevers can be removed properly
 
 #ifndef __vtkObserverManager_h
 #define __vtkObserverManager_h
@@ -38,6 +33,11 @@ class vtkUnsignedLongArray;
 #define vtkObjectPointer(xx) (reinterpret_cast <vtkObject **>( (xx) ))
 #endif
 
+/// \brief Manages adding and deleting of obserevers with events.
+/// 
+/// Class that manages adding and deleting of obserevers with events
+/// This class keeps track of obserevers and events added to each vtk object 
+/// it caches tags returned by AddObserver method so that obserevers can be removed properly.
 class VTK_MRML_EXPORT vtkObserverManager : public vtkObject 
 {
   public:
@@ -99,4 +99,3 @@ protected:
 };
 
 #endif
-

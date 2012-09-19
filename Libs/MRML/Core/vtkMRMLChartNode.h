@@ -11,10 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLChartNode - MRML node for referencing a collection of data
-///  to plot
-/// 
-//
 
 #ifndef __vtkMRMLChartNode_h
 #define __vtkMRMLChartNode_h
@@ -28,6 +24,7 @@ class ChartPropertyMap;
 
 #include <string>
 
+/// \brief MRML node for referencing a collection of data to plot.
 class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
 {
  public:

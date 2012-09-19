@@ -8,8 +8,7 @@
 
 class VTK_MRML_EXPORT vtkXNATPermissionPrompter : public vtkPermissionPrompter
 {
-  public:
-  
+public:
   /// The Usual vtk class functions
   static vtkXNATPermissionPrompter *New();
   vtkTypeRevisionMacro(vtkXNATPermissionPrompter, vtkPermissionPrompter);
@@ -32,4 +31,3 @@ class VTK_MRML_EXPORT vtkXNATPermissionPrompter : public vtkPermissionPrompter
 };
 
 #endif
-

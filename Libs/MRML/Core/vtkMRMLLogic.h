@@ -11,11 +11,6 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-///  vtkMRMLLogic - class that manages adding and deleting of obserevers with events
-/// 
-/// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object 
-/// it caches tags returned by AddObserver method so that obserevers can be removed properly
 
 #ifndef __vtkMRMLLogic_h
 #define __vtkMRMLLogic_h
@@ -27,10 +22,14 @@ class vtkMRMLScene;
 // VTK includes
 #include <vtkObject.h>
 
+/// \brief Class that manages adding and deleting of observers with events.
+///
+/// Class that manages adding and deleting of obserevers with events
+/// This class keeps track of obserevers and events added to each vtk object.
+/// It caches tags returned by AddObserver method so that observers can be removed properly.
 class VTK_MRML_EXPORT vtkMRMLLogic : public vtkObject 
 {
-  public:
-  
+public:
   /// The Usual vtk class functions
   static vtkMRMLLogic *New();
   vtkTypeMacro(vtkMRMLLogic,vtkObject);
@@ -53,4 +52,3 @@ protected:
 };
 
 #endif
-

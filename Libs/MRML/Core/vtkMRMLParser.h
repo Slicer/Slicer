@@ -11,9 +11,6 @@
   See License.txt or http://www.slicer.org/copyright/copyright.txt for details.
 
 ==========================================================================*/
-///  vtkMRMLParser - Parse XML scene file
-/// 
-
 
 #ifndef __vtkMRMLParser_h
 #define __vtkMRMLParser_h
@@ -30,6 +27,7 @@ class vtkCollection;
 // STD includes
 #include <stack>
 
+/// \brief Parse XML scene file.
 class VTK_MRML_EXPORT vtkMRMLParser : public vtkXMLParser
 {
 public:

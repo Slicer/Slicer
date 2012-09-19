@@ -11,19 +11,6 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-///  vtkEventBroker - class that manages adding and deleting of obserevers with events
-/// 
-/// Class that manages adding and deleting of obserevers with events
-/// This class keeps track of obserevers and events added to each vtk object 
-/// it caches tags returned by AddObserver method so that obserevers can be removed properly
-/// See also: 
-/// http://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
-/// http://en.wikipedia.org/wiki/Observer_pattern
-//
-/// other interesting observer implementations:
-/// http://xlobject.sourceforge
-/// http://sigslot.sourceforge.net/
-/// http://doc.trolltech.com/4.3/signalsandslots.html
 
 #ifndef __vtkEventBroker_h
 #define __vtkEventBroker_h
@@ -46,6 +33,19 @@ class vtkCollection;
 class vtkCallbackCommand;
 class vtkObservation;
 
+/// \brief Class that manages adding and deleting of observers with events.
+///
+/// This class keeps track of observers and events added to each vtk object.
+/// It caches tags returned by AddObserver method so that observers can be
+/// removed properly.
+/// See also:
+/// http://wiki.na-mic.org/Wiki/index.php/Slicer3:EventBroker
+/// http://en.wikipedia.org/wiki/Observer_pattern
+//
+/// Other interesting observer implementations:
+/// http://xlobject.sourceforge
+/// http://sigslot.sourceforge.net/
+/// http://doc.trolltech.com/4.3/signalsandslots.html
 class VTK_MRML_EXPORT vtkEventBroker : public vtkObject 
 {
 public:

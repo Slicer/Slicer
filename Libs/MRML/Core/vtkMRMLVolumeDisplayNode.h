@@ -11,9 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLVolumeDisplayNode - MRML node for representing a volume display attributes
-/// 
-/// vtkMRMLVolumeDisplayNode nodes describe how volume is displayed.
 
 #ifndef __vtkMRMLVolumeDisplayNode_h
 #define __vtkMRMLVolumeDisplayNode_h
@@ -26,6 +23,9 @@ class vtkMRMLVolumeNode;
 // VTK includes
 class vtkImageData;
 
+/// \brief MRML node for representing a volume display attributes.
+///
+/// vtkMRMLVolumeDisplayNode nodes describe how volume is displayed.
 class VTK_MRML_EXPORT vtkMRMLVolumeDisplayNode : public vtkMRMLDisplayNode
 {
 public:
@@ -118,4 +118,3 @@ protected:
 };
 
 #endif
-

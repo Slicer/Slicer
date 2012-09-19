@@ -11,22 +11,6 @@
   Version:   $Revision: 1.45 $
 
 =========================================================================auto=*/
-///  vtkObservation - class that stores information about 
-/// the relationship between a Subject and an Observer
-/// 
-/// The Observation is a record of 
-/// - a subject  (vtkObject)
-/// - an event type (unsigned long)
-/// - an objserver (vtkObject)
-/// - a callback (vtkCallbackCommand)
-/// - optional comment strings
-/// This class can be used by the vtkEventBroker to keep track of the registered observers
-/// that it manages, and it can be used by the event queue to keep track of which 
-/// events have been triggered so it can invoke them later
-//
-/// .NOTES
-/// This class does not add or remove observers itself; it just keeps track of them
-/// for the event broker.
 
 #ifndef __vtkObservation_h
 #define __vtkObservation_h
@@ -42,6 +26,20 @@ class vtkCallbackCommand;
 // STD includes
 #include <deque>
 
+/// \brief Stores information about the relationship between a Subject and an Observer.
+///
+/// The Observation is a record of 
+/// - a subject  (vtkObject)
+/// - an event type (unsigned long)
+/// - an objserver (vtkObject)
+/// - a callback (vtkCallbackCommand)
+/// - optional comment strings
+/// This class can be used by the vtkEventBroker to keep track of the registered observers
+/// that it manages, and it can be used by the event queue to keep track of which 
+/// events have been triggered so it can invoke them later
+//
+/// \note This class does not add or remove observers itself; it just keeps track of them
+/// for the event broker.
 class VTK_MRML_EXPORT vtkObservation : public vtkObject 
 {
   public:
@@ -159,4 +157,3 @@ protected:
 };
 
 #endif
-

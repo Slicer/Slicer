@@ -11,15 +11,15 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkMRMLChartViewNode - MRML node to represent chart view parameters.
-///   
-///  ChartViewNodes are associated one to one with a ChartWidget.
-///
+
 #ifndef __vtkMRMLChartViewNode_h
 #define __vtkMRMLChartViewNode_h
 
 #include "vtkMRMLNode.h"
 
+/// \brief MRML node to represent chart view parameters.
+///
+/// ChartViewNodes are associated one to one with a ChartWidget.
 class VTK_MRML_EXPORT vtkMRMLChartViewNode : public vtkMRMLNode
 {
 public:

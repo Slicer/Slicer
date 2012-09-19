@@ -42,7 +42,8 @@ class qSlicerAbstractCoreModulePrivate;
   static QString staticTitle() { return _TITLE; }  \
   virtual QString title()const { return _TITLE; }
 
-/// qSlicerAbstractCoreModule is the base class of any module in Slicer.
+/// \brief qSlicerAbstractCoreModule is the base class of any module in Slicer.
+//
 /// Core modules, Loadable modules, CLI modules derive from it.
 /// It is responsible to create the UI and the Logic:
 /// createWidgetRepresentation() and createLogic() must be reimplemented in
