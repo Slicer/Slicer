@@ -148,6 +148,10 @@ protected slots:
   void onMinimumChanged(double min);
   void onMaximumChanged(double max);
 
+  ///
+  /// Triggered upon MRML scene updates
+  void onMRMLTransformNodeModified(vtkObject* caller);
+
 protected:
   QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
 
@@ -157,7 +161,7 @@ protected:
   /// which percentage of the found range(max-min) value should be substracted/added
   /// to the min/max value found.
   static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                                      double pad = 0);
+                                                            double pad = 0);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformSliders);

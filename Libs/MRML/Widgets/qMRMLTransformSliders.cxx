@@ -150,33 +150,50 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 {
   Q_D(qMRMLTransformSliders);
 
-  // Updating the min/max values of the sliders depending on the matrix
-  // Required when loading a transform from a file
-  vtkNew<vtkTransform> transform;
-  qMRMLUtils::getTransformInCoordinateSystem(transformNode,
-    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
-
-  // Extract the min/max values from the matrix and pad them by 30% of the range
-  // If padding is changed here, it should also be changed for qMRMLMatrixWidget
-  vtkMatrix4x4 * mat = transform->GetMatrix();
-  if(mat)
-    {
-    QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.3);
-    if(minmax.first < this->minimum())
-      {
-      this->setMinimum(minmax.first);
-      }
-    if(minmax.second > this->maximum())
-      {
-      this->setMaximum(minmax.second);
-      }
-    }
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
+                      vtkMRMLTransformableNode::TransformModifiedEvent,
+                      this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
 
   d->LRSlider->setMRMLTransformNode(transformNode);
   d->PASlider->setMRMLTransformNode(transformNode);
   d->ISSlider->setMRMLTransformNode(transformNode);
   this->setEnabled(transformNode != 0);
   d->MRMLTransformNode = transformNode;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
+{
+  Q_D(qMRMLTransformSliders);
+
+  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
+  if (!transformNode)
+    {
+    return;
+    }
+  Q_ASSERT(transformNode);
+
+  vtkNew<vtkTransform> transform;
+  qMRMLUtils::getTransformInCoordinateSystem(transformNode,
+      this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
+
+  vtkMatrix4x4 * matrix = transform->GetMatrix();
+  Q_ASSERT(matrix);
+  if (!matrix) { return; }
+
+  //Extract the min/max values from the matrix
+  //Change them if the matrix changed externally(python, cli, etc.)
+  QPair<double, double> minmax = this->extractMinMaxTranslationValue(matrix, 0.0);
+  if(minmax.first < this->minimum())
+    {
+    minmax.first = minmax.first - 0.3 * fabs(minmax.first);
+    this->setMinimum(minmax.first);
+    }
+  if(minmax.second > this->maximum())
+    {
+    minmax.second = minmax.second + 0.3 * fabs(minmax.second);
+    this->setMaximum(minmax.second);
+    }
 }
 
 // --------------------------------------------------------------------------

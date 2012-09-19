@@ -165,11 +165,6 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   d->InvertPushButton->setEnabled(transformNode != 0);
   d->MatrixViewGroupBox->setEnabled(transformNode != 0);
 
-  // Listen for Transform node changes
-  this->qvtkReconnect(d->MRMLTransformNode, transformNode,
-    vtkMRMLTransformableNode::TransformModifiedEvent,
-    this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
-
   QStringList nodeTypes;
   // If no transform node, it would show the entire scene, lets shown none
   // instead.
@@ -216,61 +211,6 @@ void qSlicerTransformsModuleWidget::invert()
 
   d->RotationSliders->resetUnactiveSliders();
   d->MRMLTransformNode->GetMatrixTransformToParent()->Invert();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* caller)
-{
-  Q_D(qSlicerTransformsModuleWidget);
-  
-  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
-  if (!transformNode) { return; }
-
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-  qMRMLUtils::getTransformInCoordinateSystem(d->MRMLTransformNode,
-    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
-
-  // The matrix can be changed externally. The min/max values shall be updated 
-  //accordingly to the new matrix if needed.
-  vtkMatrix4x4 * mat = transform->GetMatrix();
-  if(!mat)
-    {
-    return;
-    }
-
-  QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.0);
-
-  if (minmax.first < d->TranslationSliders->minimum())
-    {
-    minmax.first = minmax.first - 0.3 * fabs(minmax.first);
-    d->TranslationSliders->setMinimum(minmax.first);
-    }
-  if (minmax.second > d->TranslationSliders->maximum())
-    {
-    minmax.second = minmax.second + 0.3 * fabs(minmax.second);
-    d->TranslationSliders->setMaximum(minmax.second);
-    }
-}
-
-//-----------------------------------------------------------------------------
-QPair<double, double> qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
-                                             vtkMatrix4x4 * mat, double pad)
-{
-  QPair<double, double> minmax;
-  if (!mat)
-    {
-    Q_ASSERT(mat);
-    return minmax;
-    }
-  for (int i=0; i <3; i++)
-    {
-    minmax.first = qMin(minmax.first, mat->GetElement(i,3));
-    minmax.second = qMax(minmax.second, mat->GetElement(i,3));
-    }
-  double range = minmax.second - minmax.first;
-  minmax.first = minmax.first - pad * range;
-  minmax.second = minmax.second + pad * range;
-  return minmax;
 }
 
 //-----------------------------------------------------------------------------

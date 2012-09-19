@@ -140,25 +140,8 @@ void qMRMLMatrixWidget::updateMatrix()
   int oldUserUpdates = d->UserUpdates;
   d->UserUpdates = false;
 
-  // Update the widget range for new matrix values
-  // Pad the min/max values by 30% of the range.
-  // Padding should be equal to padding applied for qMRMLTransformSliders
-  vtkMatrix4x4 * mat = transform->GetMatrix();
-  if(mat)
-    {
-    QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.3);
-    if (minmax.first < this->minimum())
-      {
-      this->setMinimum(minmax.first);
-      }
-    if (minmax.second > this->maximum())
-      {
-      this->setMaximum(minmax.second);
-      }
-    }
-
   // update the matrix with the new values.
-  this->setMatrixInternal( mat );
+  this->setMatrixInternal( transform->GetMatrix() );
   d->UserUpdates = oldUserUpdates;
   // keep a ref on the transform otherwise, the matrix will be reset when transform
   // goes out of scope (because ctkVTKAbstractMatrixWidget has a weak ref on the matrix).
@@ -176,25 +159,4 @@ void qMRMLMatrixWidget::updateTransformNode()
     }
   vtkMatrix4x4* matrix = this->matrix();
   d->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(matrix);
-}
-
-//-----------------------------------------------------------------------------
-QPair<double, double> qMRMLMatrixWidget::extractMinMaxTranslationValue(
-                                             vtkMatrix4x4 * mat, double pad)
-{
-  QPair<double, double> minmax;
-  if (!mat)
-    {
-    Q_ASSERT(mat);
-    return minmax;
-    }
-  for (int i=0; i <3; i++)
-    {
-    minmax.first = qMin(minmax.first, mat->GetElement(i,3));
-    minmax.second = qMax(minmax.second, mat->GetElement(i,3));
-    }
-  double range = minmax.second - minmax.first;
-  minmax.first = minmax.first - pad * range;
-  minmax.second = minmax.second + pad * range;
-  return minmax;
 }

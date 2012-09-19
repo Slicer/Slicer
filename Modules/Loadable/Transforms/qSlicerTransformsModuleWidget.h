@@ -62,20 +62,8 @@ protected slots:
 
   void transformSelectedNodes();
   void untransformSelectedNodes();
-  /// 
-  /// Triggered upon MRML transform node updates
-  void onMRMLTransformNodeModified(vtkObject* caller);
 
 protected:
-  /// 
-  /// Fill the 'minmax' array with the min/max translation value of the matrix.
-  /// Parameter expand allows to specify (using a value between 0 and 1)
-  /// which percentage of the found min/max value should be substracted/added
-  /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                                      double pad = 0);
-
-
   /// 
   /// Convenient method to return the coordinate system currently selected
   int coordinateReference()const;

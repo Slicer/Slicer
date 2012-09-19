@@ -154,18 +154,6 @@ void qMRMLLinearTransformSlider::onMRMLTransformNodeModified(vtkObject* caller)
   Q_ASSERT(matrix);
   if (!matrix) { return; }
 
-  //Extract the min/max values from the matrix
-  //Change them if the matrix changed externally(python, cli, etc.)
-  QPair<double, double> minmax = this->extractMinMaxTranslationValue(matrix, 0.0);
-  if(minmax.first < this->minimum())
-    {
-    this->setMinimum(minmax.first);
-    }
-  if(minmax.second > this->maximum())
-    {
-    this->setMaximum(minmax.second);
-    }
-
   double _value = 0.0;
   if (this->typeOfTransform() == TRANSLATION_LR)
     {
@@ -242,25 +230,3 @@ void qMRMLLinearTransformSlider::applyTransformation(double _sliderPosition)
   d->MRMLTransformNode->GetMatrixTransformToParent()->DeepCopy(
     transform->GetMatrix());
 }
-
-//-----------------------------------------------------------------------------
-QPair<double, double> qMRMLLinearTransformSlider::extractMinMaxTranslationValue(
-                                             vtkMatrix4x4 * mat, double pad)
-{
-  QPair<double, double> minmax;
-  if (!mat)
-    {
-    Q_ASSERT(mat);
-    return minmax;
-    }
-  for (int i=0; i <3; i++)
-    {
-    minmax.first = qMin(minmax.first, mat->GetElement(i,3));
-    minmax.second = qMax(minmax.second, mat->GetElement(i,3));
-    }
-  double range = minmax.second - minmax.first;
-  minmax.first = minmax.first - pad * range;
-  minmax.second = minmax.second + pad * range;
-  return minmax;
-}
-

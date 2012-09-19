@@ -75,15 +75,6 @@ protected slots:
 protected:
   QScopedPointer<qMRMLMatrixWidgetPrivate> d_ptr;
 
-  ///
-  /// Fill the 'minmax' array with the min/max translation value of the matrix.
-  /// Parameter expand allows to specify (using a value between 0 and 1)
-  /// which percentage of the found min/max value should be substracted/added
-  /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                                      double pad = 0);
-
-
 private:
   Q_DECLARE_PRIVATE(qMRMLMatrixWidget);
   Q_DISABLE_COPY(qMRMLMatrixWidget);

@@ -74,6 +74,7 @@ public:
   /// 
   /// Return the current transform node
   vtkMRMLLinearTransformNode* mrmlTransformNode()const;
+
 public slots:
   /// 
   /// Set the MRML node of interest
@@ -91,14 +92,6 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLLinearTransformSliderPrivate> d_ptr;
-
-  ///
-  /// Extract min/max translation values from the transform matrix.
-  /// Parameter 'pad' allows to specify (using a value between 0 and 1)
-  /// which percentage of the found range(max-min) value should be substracted/added
-  /// to the min/max value found.
-  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                                      double pad = 0);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLLinearTransformSlider);
