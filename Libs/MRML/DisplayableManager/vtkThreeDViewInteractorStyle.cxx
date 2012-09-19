@@ -225,7 +225,8 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
   int mouseInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   vtkMRMLInteractionNode *interactionNode = 0;
     
-  if ( this->GetCameraNode() != 0 )
+  if ( this->GetCameraNode() != 0 &&
+       this->GetCameraNode()->GetScene() != 0 )
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(
         this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
@@ -239,6 +240,10 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonDown()
       {
       vtkErrorMacro("OnLeftButtonDown: no interaction node! Assuming ViewTransform");
       }
+    }
+  else
+    {
+    vtkErrorMacro("OnLeftButtonDown: camera node " << (this->GetCameraNode() ? "has no scene defined" : "is null"));
     }
   
   if (this->Interactor->GetShiftKey()) 
@@ -293,7 +298,8 @@ void vtkThreeDViewInteractorStyle::OnLeftButtonUp()
   int placeModePersistence = 0;
   vtkMRMLInteractionNode *interactionNode = 0;
     
-  if ( this->GetCameraNode() != 0 )
+  if ( this->GetCameraNode() != 0 &&
+       this->GetCameraNode()->GetScene() != 0 )
     {
     interactionNode = vtkMRMLInteractionNode::SafeDownCast(
         this->GetCameraNode()->GetScene()->GetNthNodeByClass(0,"vtkMRMLInteractionNode"));
