@@ -12,11 +12,6 @@
 
 =========================================================================auto=*/
 
-///  vtkTensorImplicitFunctionToFunctionSet - Wrapper class around itk::BSplineInterpolateImageFuntion
-/// 
-/// vtkTensorImplicitFunctionToFunctionSet
-
-
 #ifndef __vtkTensorImplicitFunctionToFunctionSet_h
 #define __vtkTensorImplicitFunctionToFunctionSet_h
 
@@ -30,9 +25,10 @@
 #include "vtkFunctionSet.h"
 #include "vtkImageData.h"
 
+/// \brief Wrapper class around itk::BSplineInterpolateImageFunction.
 class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctionSet
 {
- public:
+public:
   static vtkTensorImplicitFunctionToFunctionSet *New();
   vtkTypeRevisionMacro(vtkTensorImplicitFunctionToFunctionSet, vtkFunctionSet );
   virtual void PrintSelf(ostream& os, vtkIndent indent);
@@ -82,8 +78,8 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
     for ( int i = 0 ; i < 3 ; i++ )
       memcpy(v[i],eigVec[i],3*sizeof(vtkFloatingPointType));
   }
- protected:
-  
+
+protected:
   vtkFloatingPointType Direction[3];
   int DirectionValid;
   int IntegrationDirection;
@@ -124,7 +120,6 @@ class VTK_Teem_EXPORT vtkTensorImplicitFunctionToFunctionSet : public vtkFunctio
     }
   ~vtkTensorImplicitFunctionToFunctionSet() {}
 
-  
 private:
   vtkTensorImplicitFunctionToFunctionSet(const vtkTensorImplicitFunctionToFunctionSet&);  /// Not implemented.
   void operator=(const vtkTensorImplicitFunctionToFunctionSet&);  /// Not implemented.

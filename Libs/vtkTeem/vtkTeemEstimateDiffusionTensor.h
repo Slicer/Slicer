@@ -11,8 +11,6 @@
   Version:   $Revision: 1.3.2.1 $
 
 =========================================================================auto=*/
-///  vtkTeemEstimateDiffusionTensor - 
-/// 
 
 #ifndef __vtkTeemEstimateDiffusionTensor_h
 #define __vtkTeemEstimateDiffusionTensor_h

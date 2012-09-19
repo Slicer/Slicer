@@ -12,12 +12,6 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkImageLabelCombine - Add, subtract, multiply, divide, invert, sin, cos, exp, log.
-/// 
-/// vtkImageLabelCombine implements basic mathematic operations SetOperation is
-/// used to select the filters behavior.  The filter can take two or one
-/// input.
-
 
 #ifndef __vtkImageLabelCombine_h
 #define __vtkImageLabelCombine_h
@@ -26,6 +20,11 @@
 
 #include "vtkThreadedImageAlgorithm.h"
 
+/// \brief Add, subtract, multiply, divide, invert, sin, cos, exp, log.
+///
+/// vtkImageLabelCombine implements basic mathematic operations SetOperation is
+/// used to select the filters behavior.  The filter can take two or one
+/// input.
 class VTK_Teem_EXPORT vtkImageLabelCombine : public vtkThreadedImageAlgorithm
 {
 public:
@@ -68,16 +67,3 @@ private:
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

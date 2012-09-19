@@ -36,4 +36,5 @@ class VTK_Teem_EXPORT vtkHyperStreamlineTeem : public vtkHyperStreamlineDTMRI
   tenFiberContext *ProduceFiberContext();
   bool DatasetOrSettingsChanged();
 };
+
 #endif

@@ -11,12 +11,6 @@
   Version:   $Revision: 1.12 $
 
 =========================================================================auto=*/
-///  vtkSeedTracts - 
-/// 
-//
-/// Individual streamlines can be started at a point, or 
-/// many can be started inside a region of interest.
-//
 
 #ifndef __vtkSeedTracts_h
 #define __vtkSeedTracts_h
@@ -41,9 +35,11 @@
 #define USE_VTK_PRECISE_HYPERSTREAMLINE_POINTS 2
 #define USE_VTK_HYPERSTREAMLINE_TEEM 3
 
+/// Individual streamlines can be started at a point, or 
+/// many can be started inside a region of interest.
 class VTK_Teem_EXPORT vtkSeedTracts : public vtkObject
 {
- public:
+public:
   static vtkSeedTracts *New();
   vtkTypeMacro(vtkSeedTracts,vtkObject);
 
@@ -262,7 +258,7 @@ class VTK_Teem_EXPORT vtkSeedTracts : public vtkObject
   vtkSetStringMacro(FilePrefix);
   vtkGetStringMacro(FilePrefix);
 
- protected:
+protected:
   vtkSeedTracts();
   ~vtkSeedTracts();
 

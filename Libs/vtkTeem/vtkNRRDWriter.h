@@ -1,11 +1,4 @@
 
-///  vtkNRRDWriter - Writes PNG files.
-/// 
-/// vtkNRRDWriter writes NRRD files.
-
-/// .SECTION See Also
-/// vtkNRRDReader
-
 #ifndef __vtkNRRDWriter_h
 #define __vtkNRRDWriter_h
 
@@ -20,6 +13,11 @@
 class vtkImageData;
 class AttributeMapType;
 
+/// \brief Writes PNG files.
+///
+/// vtkNRRDWriter writes NRRD files.
+///
+/// \sa vtkNRRDReader
 class VTK_Teem_EXPORT vtkNRRDWriter : public vtkWriter
 {
 public:
@@ -33,8 +31,6 @@ public:
   /// Get the input to this writer.
   vtkImageData* GetInput();
   vtkImageData* GetInput(int port);
-
-
 
   /// 
   /// Specify file name of vtk polygon data file to write.
@@ -107,5 +103,3 @@ private:
 };
 
 #endif
-
-

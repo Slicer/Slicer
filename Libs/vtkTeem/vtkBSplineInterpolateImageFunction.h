@@ -11,13 +11,6 @@
   Version:   $Revision: 1.10 $
 
 =========================================================================auto=*/
-///  vtkBSplineInterpolateImageFunction - BSpline interpolation of a image dataset of points
-/// 
-/// vtkBSplineInterpolateImageFunction
-/// .SECTION Bugs
-/// This class should be rewritten to properly take into account the ImageData. This is
-/// not a regular SetInput (not ref count). Also mtime of image is not taken into account...
-
 
 #ifndef __vtkBSplineInterpolateImageFunction_h
 #define __vtkBSplineInterpolateImageFunction_h
@@ -35,6 +28,13 @@
 #define ImageDimension 3
 
 class vtkImageData;
+
+/// \brief BSpline interpolation of a image dataset of points.
+///
+/// vtkBSplineInterpolateImageFunction
+///
+/// This class should be rewritten to properly take into account the ImageData. This is
+/// not a regular SetInput (not ref count). Also mtime of image is not taken into account...
 class  VTK_Teem_EXPORT vtkBSplineInterpolateImageFunction : public vtkImplicitFunction
 {
  public:

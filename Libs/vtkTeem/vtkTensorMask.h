@@ -11,8 +11,20 @@
   Version:   $Revision: 1.2.8.2 $
 
 =========================================================================auto=*/
-///  vtkTensorMask - Combines a mask and an image.
-/// 
+
+#ifndef __vtkTensorMask_h
+#define __vtkTensorMask_h
+
+#include "vtkObject.h"
+#include "vtkObjectFactory.h"
+
+#include "vtkTeemConfigure.h"
+
+#include "vtkImageMask.h"
+#include "vtkImageTwoInputFilter.h"
+
+/// \brief Combines a mask and an image.
+///
 /// vtkTensorMask combines a mask with an image.  Non zero mask
 /// implies the output pixel will be the same as the image.
 /// If a mask pixel is zero,  the the output pixel
@@ -22,18 +34,6 @@
 /// The two inputs should have the same "WholeExtent".
 /// The mask input should be unsigned char, and the image scalar type
 /// is the same as the output scalar type.
-
-
-#ifndef __vtkTensorMask_h
-#define __vtkTensorMask_h
-#include "vtkObject.h"
-#include "vtkObjectFactory.h"
-
-#include "vtkTeemConfigure.h"
-
-#include "vtkImageMask.h"
-#include "vtkImageTwoInputFilter.h"
-
 class VTK_Teem_EXPORT vtkTensorMask : public vtkImageMask
 {
 public:
@@ -63,6 +63,3 @@ protected:
 };
 
 #endif
-
-
-

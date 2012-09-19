@@ -11,51 +11,6 @@
   Version:   $Revision: 1.8 $
 
 =========================================================================auto=*/
-///  vtkDiffusionTensorGlyph - scale and orient glyph(s) according to tensor eigenvalues and eigenvectors
-/// 
-/// vtkDiffusionTensorGlyph is a filter that copies a geometric representation (specified
-/// as polygonal data) to every input point. The geometric representation, or 
-/// glyph, can be scaled and/or rotated according to the tensor at the input 
-/// point. Scaling and rotation is controlled by the eigenvalues/eigenvectors
-/// of the tensor as follows. For each tensor, the eigenvalues (and associated
-/// eigenvectors) are sorted to determine the major, medium, and minor 
-/// eigenvalues/eigenvectors. The major eigenvalue scales the glyph in the 
-/// x-direction, the medium in the y-direction, and the minor in the 
-/// z-direction. Then, the glyph is rotated so that the glyph's local x-axis 
-/// lies along the major eigenvector, y-axis along the medium eigenvector, and
-/// z-axis along the minor.
-//
-/// A scale factor is provided to control the amount of scaling. Also, you 
-/// can turn off scaling completely if desired. The boolean variable 
-/// ClampScaling controls the maximum scaling (in conjunction with
-/// MaxScaleFactor.) This is useful in certain applications where 
-/// singularities or large order of magnitude differences exist in 
-/// the eigenvalues.
-//
-/// Another instance variable, ExtractEigenvalues, has been provided to 
-/// control extraction of eigenvalues/eigenvectors. If this boolean is false,
-/// then eigenvalues/eigenvectors are not extracted, and the columns of the
-/// tensor are taken as the eigenvectors (norm of column is eigenvalue). 
-/// This allows additional capability over the vtkGlyph3D object. That is, the
-/// glyph can be oriented in three directions instead of one.
-//
-/// To accomodate display in another coordinate system besides the ijk
-/// coordinate system of the volume array, two matrices are provided.
-/// The VolumePosition matrix positions each tensor in the correct location
-/// to account for voxel translation and rotation of the volume.
-/// (Scaling is already handled well in vtk ImageData.)
-/// The TensorRotationMatrix rotates each tensor into the new
-/// coordinate system.
-//
-/// Types of scalars that may be generated from tensors for coloring are defined
-/// in vtkDiffusionTensorMathematics.h.  If the ColorMode is set to Eigenvalues, then
-/// glyphs are colored according to a function of the eigenvalues.  These
-/// functions are scalar invariants of the diffusion tensor.  They are selected
-/// by calling ColorGlyphsByFractionalAnisotropy, etc.
-//
-/// .SECTION See Also
-/// vtkTensorGlyph vtkDiffusionTensorMathematics vtkSuperquadricTensorGlyph
-//
 
 #ifndef __vtkDiffusionTensorGlyph_h
 #define __vtkDiffusionTensorGlyph_h
@@ -67,7 +22,51 @@
 class vtkImageData;
 class vtkMatrix4x4;
 
-
+/// \brief scale and orient glyph(s) according to tensor eigenvalues and eigenvectors.
+///
+/// vtkDiffusionTensorGlyph is a filter that copies a geometric representation (specified
+/// as polygonal data) to every input point. The geometric representation, or 
+/// glyph, can be scaled and/or rotated according to the tensor at the input 
+/// point. Scaling and rotation is controlled by the eigenvalues/eigenvectors
+/// of the tensor as follows. For each tensor, the eigenvalues (and associated
+/// eigenvectors) are sorted to determine the major, medium, and minor 
+/// eigenvalues/eigenvectors. The major eigenvalue scales the glyph in the 
+/// x-direction, the medium in the y-direction, and the minor in the 
+/// z-direction. Then, the glyph is rotated so that the glyph's local x-axis 
+/// lies along the major eigenvector, y-axis along the medium eigenvector, and
+/// z-axis along the minor.
+///
+/// A scale factor is provided to control the amount of scaling. Also, you 
+/// can turn off scaling completely if desired. The boolean variable 
+/// ClampScaling controls the maximum scaling (in conjunction with
+/// MaxScaleFactor.) This is useful in certain applications where 
+/// singularities or large order of magnitude differences exist in 
+/// the eigenvalues.
+///
+/// Another instance variable, ExtractEigenvalues, has been provided to 
+/// control extraction of eigenvalues/eigenvectors. If this boolean is false,
+/// then eigenvalues/eigenvectors are not extracted, and the columns of the
+/// tensor are taken as the eigenvectors (norm of column is eigenvalue). 
+/// This allows additional capability over the vtkGlyph3D object. That is, the
+/// glyph can be oriented in three directions instead of one.
+///
+/// To accomodate display in another coordinate system besides the ijk
+/// coordinate system of the volume array, two matrices are provided.
+/// The VolumePosition matrix positions each tensor in the correct location
+/// to account for voxel translation and rotation of the volume.
+/// (Scaling is already handled well in vtk ImageData.)
+/// The TensorRotationMatrix rotates each tensor into the new
+/// coordinate system.
+///
+/// Types of scalars that may be generated from tensors for coloring are defined
+/// in vtkDiffusionTensorMathematics.h.  If the ColorMode is set to Eigenvalues, then
+/// glyphs are colored according to a function of the eigenvalues.  These
+/// functions are scalar invariants of the diffusion tensor.  They are selected
+/// by calling ColorGlyphsByFractionalAnisotropy, etc.
+///
+/// \sa vtkTensorGlyph
+/// \sa vtkDiffusionTensorMathematics
+/// \sa vtkSuperquadricTensorGlyph
 class VTK_Teem_EXPORT vtkDiffusionTensorGlyph : public vtkTensorGlyph
 {
 public:

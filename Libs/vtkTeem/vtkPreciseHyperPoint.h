@@ -16,7 +16,6 @@
 
 #include "vtkTeemConfigure.h"
 
-
 class VTK_Teem_EXPORT vtkPreciseHyperPoint { //;prevent man page generation
 public:
     vtkPreciseHyperPoint(); /// method sets up storage

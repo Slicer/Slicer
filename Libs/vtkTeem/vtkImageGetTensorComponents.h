@@ -11,17 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkImageGetTensorComponents - Six scalar components from tensor
-/// 
-/// vtkImageGetTensorComponents gets from the tensor the 6 components and
-/// exports them as scalar components, ordered as follows:
-/// 1 2 3
-/// 2 4 5
-/// 3 5 6
-
-
-/// .SECTION See Also
-/// vtkImageSetTensorComponents
 
 #ifndef __vtkImageGetTensorComponents_h
 #define __vtkImageGetTensorComponents_h
@@ -30,6 +19,15 @@
 
 #include "vtkImageToImageFilter.h"
 
+/// \brief Six scalar components from tensor.
+///
+/// vtkImageGetTensorComponents gets from the tensor the 6 components and
+/// exports them as scalar components, ordered as follows:
+/// 1 2 3
+/// 2 4 5
+/// 3 5 6
+///
+/// \sa vtkImageSetTensorComponents
 class VTK_Teem_EXPORT vtkImageGetTensorComponents : public vtkImageToImageFilter
 {
 public:
@@ -63,13 +61,3 @@ private:
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-

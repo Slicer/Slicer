@@ -11,27 +11,6 @@
   Version:   $Revision: 1.13 $
 
 =========================================================================auto=*/
-///  vtkHyperStreamlineDTMRI - generate hyperstreamline in arbitrary dataset
-/// 
-/// vtkHyperStreamlineDTMRI is a filter that integrates through a tensor field to 
-/// generate a hyperstreamline. The integration is along the maximum eigenvector
-/// and the cross section of the hyperstreamline is defined by the two other
-/// eigenvectors. Thus the shape of the hyperstreamline is "tube-like", with 
-/// the cross section being elliptical. Hyperstreamlines are used to visualize
-/// tensor fields.
-//
-/// The starting point of a hyperstreamline can be defined in one of two ways. 
-/// First, you may specify an initial position. This is a x-y-z global 
-/// coordinate. The second option is to specify a starting location. This is 
-/// cellId, subId, and  cell parametric coordinates.
-//
-/// The integration of the hyperstreamline occurs through the major eigenvector 
-/// field. IntegrationStepLength controls the step length within each cell 
-/// (this is in mm). The length of the 
-/// hyperstreamline is controlled by MaximumPropagationDistance. This parameter
-/// is the length of the hyperstreamline in units of distance. 
-/// .SECTION See Also
-/// vtkTensorGlyph vtkStreamer
 
 #ifndef __vtkHyperStreamlineDTMRI_h
 #define __vtkHyperStreamlineDTMRI_h
@@ -41,6 +20,28 @@
 #include "vtkDiffusionTensorMathematics.h" /// for VTK_TENS_FRACTIONAL_ANISOTROPY
 #include "vtkTractographyPointAndArray.h"
 
+/// \brief Generate hyperstreamline in arbitrary dataset.
+///
+/// vtkHyperStreamlineDTMRI is a filter that integrates through a tensor field to 
+/// generate a hyperstreamline. The integration is along the maximum eigenvector
+/// and the cross section of the hyperstreamline is defined by the two other
+/// eigenvectors. Thus the shape of the hyperstreamline is "tube-like", with 
+/// the cross section being elliptical. Hyperstreamlines are used to visualize
+/// tensor fields.
+///
+/// The starting point of a hyperstreamline can be defined in one of two ways. 
+/// First, you may specify an initial position. This is a x-y-z global 
+/// coordinate. The second option is to specify a starting location. This is 
+/// cellId, subId, and  cell parametric coordinates.
+///
+/// The integration of the hyperstreamline occurs through the major eigenvector 
+/// field. IntegrationStepLength controls the step length within each cell 
+/// (this is in mm). The length of the 
+/// hyperstreamline is controlled by MaximumPropagationDistance. This parameter
+/// is the length of the hyperstreamline in units of distance. 
+///
+/// \sa vtkTensorGlyph
+/// \sa vtkStreamer
 class VTK_Teem_EXPORT vtkHyperStreamlineDTMRI : public vtkHyperStreamline
 {
 public:
@@ -125,5 +126,3 @@ private:
 };
 
 #endif
-
-

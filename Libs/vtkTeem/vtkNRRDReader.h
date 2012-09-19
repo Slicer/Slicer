@@ -25,15 +25,6 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkNRRDReader - Reads Nearly Raw Raster Data files
-/// 
-/// vtkNRRDReader 
-/// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
-//
-
-//
-/// .SECTION See Also
-/// vtkImageReader2
 
 #ifndef __vtkNRRDReader_h
 #define __vtkNRRDReader_h
@@ -52,6 +43,11 @@
 
 #include "teem/nrrd.h"
 
+/// \brief Reads Nearly Raw Raster Data files.
+///
+/// Reads Nearly Raw Raster Data files using the nrrdio library as used in ITK
+//
+/// \sa vtkImageReader2
 class VTK_Teem_EXPORT vtkNRRDReader : public vtkMedicalImageReader2
 {
 public:
@@ -259,4 +255,5 @@ private:
   void operator=(const vtkNRRDReader&);  /// Not implemented.
 
 };
+
 #endif

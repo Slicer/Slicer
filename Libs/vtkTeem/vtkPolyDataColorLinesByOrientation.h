@@ -12,8 +12,6 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkPolyDataColorLinesByOrientation - colors the lines in the polydata by their mean orientation
-/// 
 
 #ifndef __vtkPolyDataColorLinesByOrientation_h
 #define __vtkPolyDataColorLinesByOrientation_h
@@ -21,6 +19,7 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkTeemConfigure.h"
 
+/// \brief Colors the lines in the polydata by their mean orientation.
 class VTK_Teem_EXPORT vtkPolyDataColorLinesByOrientation : public vtkPolyDataAlgorithm
 {
 public:

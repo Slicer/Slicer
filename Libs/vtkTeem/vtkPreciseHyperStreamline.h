@@ -11,8 +11,28 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkPreciseHyperStreamline - generate hyperstreamline in arbitrary dataset
-/// 
+
+#ifndef __vtkPreciseHyperStreamline_h
+#define __vtkPreciseHyperStreamline_h
+
+#include "vtkTeemConfigure.h"
+
+#include "vtkDataSetToPolyDataFilter.h"
+#include "vtkInitialValueProblemSolver.h" /// to get the function set
+
+#define VTK_INTEGRATE_FORWARD 0
+#define VTK_INTEGRATE_BACKWARD 1
+#define VTK_INTEGRATE_BOTH_DIRECTIONS 2
+
+#define VTK_INTEGRATE_MAJOR_EIGENVECTOR 0
+#define VTK_INTEGRATE_MEDIUM_EIGENVECTOR 1
+#define VTK_INTEGRATE_MINOR_EIGENVECTOR 2
+
+
+class vtkPreciseHyperArray;
+
+/// \brief Generate hyperstreamline in arbitrary dataset.
+///
 /// vtkPreciseHyperStreamline is a filter that integrates through a tensor field to 
 /// generate a hyperstreamline. The integration is along the maximum eigenvector
 /// and the cross section of the hyperstreamline is defined by the two other
@@ -37,29 +57,9 @@
 /// is possible to control the scaling of the tube cross section by using a 
 /// logarithmic scale. Use LogScalingOn to turn this capability on. The Radius 
 /// value controls the initial radius of the tube.
-
-/// .SECTION See Also
-/// vtkTensorGlyph vtkStreamer
-
-#ifndef __vtkPreciseHyperStreamline_h
-#define __vtkPreciseHyperStreamline_h
-
-#include "vtkTeemConfigure.h"
-
-#include "vtkDataSetToPolyDataFilter.h"
-#include "vtkInitialValueProblemSolver.h" /// to get the function set
-
-#define VTK_INTEGRATE_FORWARD 0
-#define VTK_INTEGRATE_BACKWARD 1
-#define VTK_INTEGRATE_BOTH_DIRECTIONS 2
-
-#define VTK_INTEGRATE_MAJOR_EIGENVECTOR 0
-#define VTK_INTEGRATE_MEDIUM_EIGENVECTOR 1
-#define VTK_INTEGRATE_MINOR_EIGENVECTOR 2
-
-
-class vtkPreciseHyperArray;
-
+///
+/// \sa vtkTensorGlyph
+/// \sa vtkStreamer
 class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFilter
 {
  public:
@@ -334,5 +334,3 @@ class VTK_Teem_EXPORT vtkPreciseHyperStreamline : public vtkDataSetToPolyDataFil
 };
 
 #endif
-
-

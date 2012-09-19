@@ -11,13 +11,6 @@
   Version:   $Revision: 1.6 $
 
 =========================================================================auto=*/
-///  vtkTensorRotate - flip Y axis and negate xy and zy terms
-/// 
-/// Make tend estim generated vtk files compatible with slicer
-/// .SECTION Warning
-/// The filter will always output floating point (loose precision)
-/// explicit use of vtkFloatArray
-
 
 #ifndef __vtkTensorRotate_h
 #define __vtkTensorRotate_h
@@ -28,6 +21,13 @@
 
 class vtkFloatArray;
 class vtkImageData;
+
+/// \brief  flip Y axis and negate xy and zy terms.
+///
+/// Make tend estim generated vtk files compatible with slicer
+///
+/// \warning The filter will always output floating point (loose precision)
+/// explicit use of vtkFloatArray.
 class VTK_Teem_EXPORT vtkTensorRotate : public vtkImageToImageFilter
 {
 public:
@@ -65,20 +65,6 @@ protected:
 
   vtkTransform *Transform;
 
-
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

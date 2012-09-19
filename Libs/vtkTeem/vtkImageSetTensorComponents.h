@@ -11,16 +11,6 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-///  vtkImageSetTensorComponents - Six scalar components to tensor
-/// 
-/// vtkImageSetTensorComponents build from the input with 6 scalar components
-/// the full tensor as output. Components are assumed to be ordered as follows:
-/// 1 2 3
-/// 2 4 5
-/// 3 5 6
-
-/// .SECTION See Also
-/// vtkImageGetTensorComponents
 
 #ifndef __vtkImageSetTensorComponents_h
 #define __vtkImageSetTensorComponents_h
@@ -29,6 +19,15 @@
 
 #include "vtkImageToImageFilter.h"
 
+/// \brief Six scalar components to tensor.
+///
+/// vtkImageSetTensorComponents build from the input with 6 scalar components
+/// the full tensor as output. Components are assumed to be ordered as follows:
+/// 1 2 3
+/// 2 4 5
+/// 3 5 6
+///
+/// \sa vtkImageGetTensorComponents
 class VTK_TEEM_EXPORT vtkImageSetTensorComponents : public vtkImageToImageFilter
 {
 public:
@@ -61,20 +60,10 @@ protected:
   /// before threading happens.  This replaces the superclass 
   /// vtkImageMultipleInputFilter's Execute function.
   void ExecuteData(vtkDataObject *out);
-               
+
 //private:
 ///  vtkImageSetTensorComponents(const vtkImageSetTensorComponents&);  /// Not //implemented.
 ///  void operator=(const vtkImageSetTensorComponents&);  /// Not implemented.
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-

@@ -11,6 +11,7 @@
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
+
 #ifndef __vtkPreciseHyperStreamlinePoints_h
 #define __vtkPreciseHyperStreamlinePoints_h
 
@@ -49,5 +50,3 @@ private:
 };
 
 #endif
-
-

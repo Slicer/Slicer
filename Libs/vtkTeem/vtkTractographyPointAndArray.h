@@ -11,6 +11,7 @@
   Version:   $Revision: 1.1 $
 
 =========================================================================auto=*/
+
 #ifndef __vtkTractographyPointAndArray_h
 #define __vtkTractographyPointAndArray_h
 
