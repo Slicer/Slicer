@@ -11,13 +11,7 @@
   Version:   $Revision$
 
 =========================================================================auto=*/
-///  vtkImageNeighborhoodFilter -  Augments vtkImageSpatialFilter with
-/// a mask to allow neighborhoods of any shape.
-/// 
-/// 4 or 8 neighbor connectivity, or subclasses may define their own neighborhood
-/// shapes. The mask is basically a binary (0/1) filter kernel to define
-/// neighbors of interest.
-//
+
 #ifndef __vtkImageNeighborhoodFilter_h
 #define __vtkImageNeighborhoodFilter_h
 
@@ -25,6 +19,11 @@
 
 #include "vtkMRMLLogicWin32Header.h"
 
+/// \brief Augments vtkImageSpatialFilter with a mask to allow neighborhoods of any shape.
+///
+/// 4 or 8 neighbor connectivity, or subclasses may define their own neighborhood
+/// shapes. The mask is basically a binary (0/1) filter kernel to define
+/// neighbors of interest.
 class VTK_MRML_LOGIC_EXPORT vtkImageNeighborhoodFilter : public vtkImageSpatialAlgorithm
 {
 public:
@@ -72,4 +71,3 @@ protected:
 };
 
 #endif
-

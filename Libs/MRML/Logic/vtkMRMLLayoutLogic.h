@@ -18,11 +18,6 @@
 
 ==============================================================================*/
 
-///  vtkMRMLLayoutLogic - MRML logic class for layout manipulation
-///
-/// This class manages the logic associated with reading, saving,
-/// and changing propertied of the colors
-
 #ifndef __vtkMRMLLayoutLogic_h
 #define __vtkMRMLLayoutLogic_h
 
@@ -39,6 +34,11 @@ class vtkXMLDataElement;
 // STD includes
 #include <cstdlib>
 
+/// \brief MRML logic class for layout manipulation
+///
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the colors
+///
 /// vtkMRMLLayoutLogic is a logic that controls the layout node and the view
 /// nodes in a MRML scene.
 /// It ensures that at least one 3D view and three slice views are always in

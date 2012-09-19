@@ -12,19 +12,6 @@
 
 =========================================================================auto=*/
 
-///  vtkMRMLSliceLogic - slicer logic class for slice manipulation
-/// 
-/// This class manages the logic associated with display of slice windows
-/// (but not the GUI).  Features of the class include:
-///  -- a back-to-front list of MrmlVolumes to be displayed
-///  -- a compositing mode for each volume layer (opacity, outline, glyph, checkerboard, etc)
-///  -- each layer is required to provide an RGBA image in the space defined by the vtkMRMLSliceNode
-//
-/// This class manages internal vtk pipelines that create an output vtkImageData
-/// which can be used by the vtkSlicerSliceGUI class to display the resulting
-/// composite image or it can be used as a texture map in a vtkSlicerView.
-/// This class can also be used for resampling volumes for further computation.
-
 #ifndef __vtkMRMLSliceLogic_h
 #define __vtkMRMLSliceLogic_h
 
@@ -51,10 +38,21 @@ class vtkImageReslice;
 class vtkPolyDataCollection;
 class vtkTransform;
 
+/// \brief Slicer logic class for slice manipulation.
+///
+/// This class manages the logic associated with display of slice windows
+/// (but not the GUI).  Features of the class include:
+///  -- a back-to-front list of MrmlVolumes to be displayed
+///  -- a compositing mode for each volume layer (opacity, outline, glyph, checkerboard, etc)
+///  -- each layer is required to provide an RGBA image in the space defined by the vtkMRMLSliceNode
+///
+/// This class manages internal vtk pipelines that create an output vtkImageData
+/// which can be used by the vtkSlicerSliceGUI class to display the resulting
+/// composite image or it can be used as a texture map in a vtkSlicerView.
+/// This class can also be used for resampling volumes for further computation.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLSliceLogic : public vtkMRMLAbstractLogic 
 {
 public:
-  
   /// The Usual VTK class functions
   static vtkMRMLSliceLogic *New();
   vtkTypeRevisionMacro(vtkMRMLSliceLogic,vtkMRMLAbstractLogic);
@@ -406,4 +404,3 @@ private:
 };
 
 #endif
-

@@ -12,8 +12,22 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkImageResliceMask - Reslices a volume along a new set of axes.
-/// 
+
+#ifndef __vtkImageResliceMask_h
+#define __vtkImageResliceMask_h
+
+#include "vtkMRMLLogicWin32Header.h"
+
+// VTK includes
+#include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
+#include <vtkThreadedImageAlgorithm.h>
+class vtkAbstractTransform;
+class vtkImageData;
+class vtkImageStencilData;
+class vtkMatrix4x4;
+
+/// \brief Reslices a volume along a new set of axes.
+///
 /// Changes: 6.2007:
 /// vtkImageResliceMask is a modified version of vtkImageReslice 
 /// that provides an additional output mask to distinguish the 
@@ -46,25 +60,11 @@
 /// You can use both the ResliceAxes and the ResliceTransform at the
 /// same time, in order to extract slices from a volume that you have
 /// applied a transformation to.
-/// .SECTION Caveats
+///
 /// This filter is very inefficient if the output X dimension is 1.
-/// .SECTION see also
-/// vtkAbstractTransform vtkMatrix4x4
-
-
-#ifndef __vtkImageResliceMask_h
-#define __vtkImageResliceMask_h
-
-#include "vtkMRMLLogicWin32Header.h"
-
-// VTK includes
-#include <vtkImageReslice.h> // for VTK_RESLICE_NEAREST, LINEAR, CUBIC
-#include <vtkThreadedImageAlgorithm.h>
-class vtkAbstractTransform;
-class vtkImageData;
-class vtkImageStencilData;
-class vtkMatrix4x4;
-
+///
+/// \sa vtkAbstractTransform
+/// \sa vtkMatrix4x4
 class VTK_MRML_LOGIC_EXPORT vtkImageResliceMask : public vtkThreadedImageAlgorithm
 {
 public:
@@ -357,11 +357,6 @@ inline const char *vtkImageResliceMask::GetInterpolationModeAsString()
     default:
       return "";
     }
-}  
-//void SetBackgroundMask(bool *&BackgroundMaskPositionPtr, const int NumberOfPixels, const bool flag);
+}
+
 #endif
-
-
-
-
-

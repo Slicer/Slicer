@@ -11,18 +11,7 @@
   Version:   $Revision: 13859 $
 
 =========================================================================auto=*/
-///  vtkMRMLAbstractLogic - Superclass for MRML logic classes
-///
-/// Superclass for all MRML logic classes.
-/// When a scene is set, SetMRMLScene(vtkMRMLScene*),
-/// - UnobserveMRMLScene() is called if a scene was previously set,
-/// - SetMRMLSceneInternal() is called to observe the scene events
-/// (e.g. StartImportEvent, EndBatchProcessEvent...)
-/// - ObserveMRMLScene() is called to initialize the scene from the logic
-/// - UpdateMRMLScene() is called to initialize the logic from the scene
-/// Later, when events are fired by the scene, corresponding methods
-/// (e.g. OnMRMLSceneNodeAdded, OnMRMLEndBatchProcess...) are called in the
-/// logic if the events have been previously observed in SetMRMLSceneInternal()
+
 #ifndef __vtkMRMLAbstractLogic_h
 #define __vtkMRMLAbstractLogic_h
 
@@ -119,7 +108,18 @@ class vtkMRMLApplicationLogic;
   )
 #endif
 
-
+/// \brief Superclass for MRML logic classes.
+///
+/// Superclass for all MRML logic classes.
+/// When a scene is set, SetMRMLScene(vtkMRMLScene*),
+/// - UnobserveMRMLScene() is called if a scene was previously set,
+/// - SetMRMLSceneInternal() is called to observe the scene events
+/// (e.g. StartImportEvent, EndBatchProcessEvent...)
+/// - ObserveMRMLScene() is called to initialize the scene from the logic
+/// - UpdateMRMLScene() is called to initialize the logic from the scene
+/// Later, when events are fired by the scene, corresponding methods
+/// (e.g. OnMRMLSceneNodeAdded, OnMRMLEndBatchProcess...) are called in the
+/// logic if the events have been previously observed in SetMRMLSceneInternal()
 class VTK_MRML_LOGIC_EXPORT vtkMRMLAbstractLogic : public vtkObject
 {
 public:

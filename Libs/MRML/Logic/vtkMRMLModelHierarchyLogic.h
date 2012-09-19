@@ -12,11 +12,6 @@
 
 =========================================================================auto=*/
 
-///  vtkMRMLModelHierarchyLogic - slicer logic class for volumes manipulation
-/// 
-/// This class manages the logic associated with reading, saving,
-/// and changing propertied of the volumes
-
 #ifndef __vtkMRMLModelHierarchyLogic_h
 #define __vtkMRMLModelHierarchyLogic_h
 
@@ -33,14 +28,17 @@ class vtkMRMLDisplayableHierarchyNode;
 
 typedef std::vector< vtkMRMLModelHierarchyNode *> vtkMRMLModelHierarchyNodeList;
 
+/// \brief Slicer logic class for volumes manipulation.
+///
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the volumes.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLModelHierarchyLogic : public vtkMRMLAbstractLogic 
 {
-  public:
-  
+public:
   /// The Usual vtk class functions
   static vtkMRMLModelHierarchyLogic *New();
   vtkTypeRevisionMacro(vtkMRMLModelHierarchyLogic,vtkMRMLAbstractLogic);
-  
+
   /// 
   /// Given model id return it's hierarchy 
   /// or NULL if it does not have one
@@ -105,4 +103,3 @@ protected:
 };
 
 #endif
-

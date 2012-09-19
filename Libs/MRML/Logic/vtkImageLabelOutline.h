@@ -11,10 +11,6 @@
   Version:   $Revision$
 
 =========================================================================auto=*/
-///  vtkImageLabelOutline -  Display labelmap outlines
-/// 
-///  Used  in slicer for the Label layer to outline the segmented
-///  structures (instead of showing them filled-in).
 
 #ifndef __vtkImageLabelOutline_h
 #define __vtkImageLabelOutline_h
@@ -24,6 +20,11 @@
 #include "vtkMRMLLogicWin32Header.h"
 
 class vtkImageData;
+
+/// \brief Display labelmap outlines.
+///
+/// Used  in slicer for the Label layer to outline the segmented
+/// structures (instead of showing them filled-in).
 class VTK_MRML_LOGIC_EXPORT vtkImageLabelOutline : public vtkImageNeighborhoodFilter
 {
 public:
@@ -53,6 +54,3 @@ protected:
 };
 
 #endif
-
-
-

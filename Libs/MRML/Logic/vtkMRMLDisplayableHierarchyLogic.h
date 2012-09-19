@@ -12,10 +12,6 @@
 
 =========================================================================auto=*/
 
-///  vtkMRMLDisplayableHierarchyLogic - slicer logic class for hierarchy manipulation
-/// 
-/// This class manages the logic associated with displayble hierarchy nodes
-
 #ifndef __vtkMRMLDisplayableHierarchyLogic_h
 #define __vtkMRMLDisplayableHierarchyLogic_h
 
@@ -29,6 +25,9 @@ class vtkMRMLDisplayableHierarchyNode;
 
 typedef std::vector< vtkMRMLDisplayableHierarchyNode *> vtkMRMLDisplayableHierarchyNodeList;
 
+/// \brief Slicer logic class for hierarchy manipulation.
+///
+/// This class manages the logic associated with displayable hierarchy nodes.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLDisplayableHierarchyLogic : public vtkMRMLAbstractLogic 
 {
   public:
@@ -66,4 +65,3 @@ protected:
 };
 
 #endif
-

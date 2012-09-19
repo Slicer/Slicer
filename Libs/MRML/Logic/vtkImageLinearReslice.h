@@ -12,15 +12,6 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-///  vtkImageLinearReslice - Slices a volume along a new set of axes.
-/// 
-/// vtkImageLinearReslice uses a vtkMatrix4x4 to pull a slice out of a volume.
-/// This is based on David Gobbi's vtkImageReslice, but tries to be more
-/// efficient by only treating the special case of a linear transform
-/// .SECTION Caveats
-/// .SECTION see also
-/// vtkImageReslice vtkAbstractTransform vtkMatrix4x4
-
 
 #ifndef __vtkImageLinearReslice_h
 #define __vtkImageLinearReslice_h
@@ -40,6 +31,15 @@ class vtkImageData;
 class vtkAbstractTransform;
 class vtkMatrix4x4;
 
+/// \brief Slices a volume along a new set of axes.
+///
+/// vtkImageLinearReslice uses a vtkMatrix4x4 to pull a slice out of a volume.
+/// This is based on David Gobbi's vtkImageReslice, but tries to be more
+/// efficient by only treating the special case of a linear transform
+///
+/// \sa vtkImageReslice
+/// \sa vtkAbstractTransform
+/// \sa vtkMatrix4x4
 class VTK_MRML_LOGIC_EXPORT vtkImageLinearReslice : public vtkThreadedImageAlgorithm
 {
 public:
@@ -47,7 +47,6 @@ public:
   vtkTypeRevisionMacro(vtkImageLinearReslice, vtkThreadedImageAlgorithm);
 
   virtual void PrintSelf(ostream& os, vtkIndent indent);
-
 
   /// 
   /// this is the IJKToIJK transform.  It tells you how to get from
@@ -167,8 +166,3 @@ inline const char *vtkImageLinearReslice::GetInterpolationModeAsString()
 }  
 
 #endif
-
-
-
-
-

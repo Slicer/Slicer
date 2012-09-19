@@ -12,11 +12,6 @@
 
 =========================================================================auto=*/
 
-///  vtkMRMLColorLogic - MRML logic class for color manipulation
-///
-/// This class manages the logic associated with reading, saving,
-/// and changing propertied of the colors
-
 #ifndef __vtkMRMLColorLogic_h
 #define __vtkMRMLColorLogic_h
 
@@ -36,6 +31,10 @@ class vtkMRMLColorTableNode;
 // STD includes
 #include <cstdlib>
 
+/// \brief MRML logic class for color manipulation.
+///
+/// This class manages the logic associated with reading, saving,
+/// and changing propertied of the colors.
 class VTK_MRML_LOGIC_EXPORT vtkMRMLColorLogic : public vtkMRMLAbstractLogic
 {
 public:
@@ -172,4 +171,3 @@ protected:
 };
 
 #endif
-
