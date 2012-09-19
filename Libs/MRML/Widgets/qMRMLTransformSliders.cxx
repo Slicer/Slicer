@@ -31,7 +31,7 @@
 #include "vtkMRMLLinearTransformNode.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 #include <vtkTransform.h>
 
 
@@ -152,20 +152,23 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 
   //Updating the min/max values of the sliders depending on the matrix
   //Required when loading a transform from a file
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(transformNode,
-    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform);
+    this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
   vtkMatrix4x4 * mat = transform->GetMatrix();
-  double min = 0;
-  double max = 0;
-  this->extractMinMaxTranslationValue(mat, min, max, 0.3);
-  if(min < this->minimum())
+
+  //Extract the min/max values from the matrix and pad them by 30% of the range
+  if(mat)
     {
-    this->setMinimum(fabs(min));
-    }
-  if(max > this->maximum())
-    {
-    this->setMaximum(fabs(max));
+    QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.3);
+    if(minmax.first < this->minimum())
+      {
+      this->setMinimum(fabs(minmax.first));
+      }
+    if(minmax.second > this->maximum())
+      {
+      this->setMaximum(fabs(minmax.second));
+      }
     }
 
   d->LRSlider->setMRMLTransformNode(transformNode);
@@ -387,21 +390,23 @@ void qMRMLTransformSliders::onSliderPositionChanged(double position)
 }
 
 //-----------------------------------------------------------------------------
-void qMRMLTransformSliders::extractMinMaxTranslationValue(
-    vtkMatrix4x4 * mat, double& min, double& max, double pad)
+QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
+                                             vtkMatrix4x4 * mat, double pad)
 {
+  QPair<double, double> minmax;
   if (!mat)
     {
     Q_ASSERT(mat);
-    return;
+    return minmax;
     }
   for (int i=0; i <3; i++)
     {
-    min = qMin(min, mat->GetElement(i,3));
-    max = qMax(max, mat->GetElement(i,3));
+    minmax.first = qMin(minmax.first, mat->GetElement(i,3));
+    minmax.second = qMax(minmax.second, mat->GetElement(i,3));
     }
-  double range = max - min;
-  min = min - pad*range;
-  max = max + pad*range;
+  double range = minmax.second - minmax.first;
+  minmax.first = minmax.first - pad*range;
+  minmax.second = minmax.second + pad*range;
+  return minmax;
 }
 

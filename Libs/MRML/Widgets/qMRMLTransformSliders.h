@@ -22,6 +22,7 @@
 #define __qMRMLTransformSliders_h
 
 // Qt includes
+#include <QPair>
 #include <QWidget>
 
 // CTK includes
@@ -151,14 +152,12 @@ protected:
   QScopedPointer<qMRMLTransformSlidersPrivate> d_ptr;
 
   ///
-  /// Fill the 'minmax' array with the min/max translation value of the matrix.
+  /// Extract min/max translation values from the transform matrix.
   /// Parameter 'pad' allows to specify (using a value between 0 and 1)
-  /// which percentage of the found min/max value should be substracted/added
+  /// which percentage of the found range(max-min) value should be substracted/added
   /// to the min/max value found.
-  void extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
-                                     double& min,
-                                     double& max,
-                                     double pad = 0);
+  QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
+                                                      double pad = 0);
 
 private:
   Q_DECLARE_PRIVATE(qMRMLTransformSliders);
