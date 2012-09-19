@@ -240,34 +240,41 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 //-----------------------------------------------------------
 void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref) 
 {
-  if ((this->ParentNodeIDReference && ref && strcmp(ref, this->ParentNodeIDReference)) ||
-      (this->ParentNodeIDReference != ref))
+  // is the parent node id already set to ref?
+  if (this->ParentNodeIDReference && ref &&
+      !strcmp(ref, this->ParentNodeIDReference))
     {
-
-    vtkMRMLHierarchyNode *oldParentNode = this->GetParentNode();
-
-    int disableModify = this->StartModify();
-
-    this->SetParentNodeIDReference(ref);
-    this->SetSortingValue(++MaximumSortingValue);
-
-    this->HierarchyIsModified(this->GetScene());
-
-    this->EndModify(disableModify);
-
-    vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
-    if (oldParentNode)
-      {
-      oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
-      oldParentNode->Modified();
-      }
-    if (parentNode)
-      {
-      parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
-      parentNode->Modified();
-      }
-    this->InvokeHierarchyModifiedEvent();
+    return;
     }
+  // or are both already null?
+  if (!this->ParentNodeIDReference && !ref)
+    {
+    return;
+    }
+    
+  vtkMRMLHierarchyNode *oldParentNode = this->GetParentNode();
+
+  int disableModify = this->StartModify();
+
+  this->SetParentNodeIDReference(ref);
+  this->SetSortingValue(++MaximumSortingValue);
+
+  this->HierarchyIsModified(this->GetScene());
+
+  this->EndModify(disableModify);
+
+  vtkMRMLHierarchyNode *parentNode = this->GetParentNode();
+  if (oldParentNode)
+    {
+    oldParentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeRemovedEvent);
+    oldParentNode->Modified();
+    }
+  if (parentNode)
+    {
+    parentNode->InvokeEvent(vtkMRMLHierarchyNode::ChildNodeAddedEvent);
+    parentNode->Modified();
+    }
+  this->InvokeHierarchyModifiedEvent();
 }
 
 //----------------------------------------------------------------------------

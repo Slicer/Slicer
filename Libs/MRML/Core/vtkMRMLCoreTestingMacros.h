@@ -312,14 +312,14 @@
   object->Set##variable( string1.c_str() ); \
   if( object->Get##variable() != string1 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string1.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
     } \
   std::string string2 = "moreTestingIsBetter"; \
   object->Set##variable( string2.c_str() ); \
   if( object->Get##variable() != string2 ) \
     {   \
-    std::cerr << "Error in Set/Get"#variable << std::endl; \
+    std::cerr << "Error in Set/Get"#variable << ", tried to set to " << string2.c_str() << " but got " << (object->Get##variable() ? object->Get##variable() : "null") << std::endl; \
     return EXIT_FAILURE; \
     } \
   if( originalStringPointer != NULL ) \

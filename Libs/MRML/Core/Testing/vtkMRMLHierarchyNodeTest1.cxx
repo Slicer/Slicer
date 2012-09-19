@@ -51,6 +51,8 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
 
   EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1);
 
+  TEST_SET_GET_DOUBLE_RANGE(node1, SortingValue, 0.0, 10.0);
+  
   TEST_SET_GET_STRING(node1, ParentNodeID);
 
   vtkSmartPointer<vtkMRMLHierarchyNode> pnode = node1->GetParentNode();
@@ -60,7 +62,42 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
   pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
 
-  TEST_SET_GET_DOUBLE_RANGE(node1, SortingValue, 0.0, 10.0);
+  // test the parent node id
+  node1->SetParentNodeID(NULL);
+  if (node1->GetParentNodeID() != NULL)
+    {
+    std::cerr << "Error setting parent node id to null" << std::endl;
+    return EXIT_FAILURE;
+    }
+  node1->SetParentNodeID(NULL);
+  if (node1->GetParentNodeID() != NULL)
+    {
+    std::cerr << "Error setting parent node id to null a second time" << std::endl;
+    return EXIT_FAILURE;
+    }
+  node1->SetParentNodeID("testingValidStringID");
+  if (node1->GetParentNodeID() == NULL ||
+      strcmp(node1->GetParentNodeID(), "testingValidStringID") != 0)
+    {
+    std::cerr << "Error setting parent node id not null" << std::endl;
+    return EXIT_FAILURE;
+    }
+  node1->SetParentNodeID("testingValidStringID");
+  if (node1->GetParentNodeID() == NULL ||
+      strcmp(node1->GetParentNodeID(), "testingValidStringID") != 0)
+    {
+    std::cerr << "Error setting parent node id to a valid string a second time" << std::endl;
+    return EXIT_FAILURE;
+    }
+  node1->SetParentNodeID("anotherID");
+  if (node1->GetParentNodeID() == NULL ||
+      strcmp(node1->GetParentNodeID(), "anotherID") != 0)
+    {
+    std::cerr << "Error setting parent node id to a different valid string" << std::endl;
+    return EXIT_FAILURE;
+    }
+  
+
 
   TEST_SET_GET_BOOLEAN(node1, AllowMultipleChildren);
 
