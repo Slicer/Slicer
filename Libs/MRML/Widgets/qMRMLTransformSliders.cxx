@@ -150,24 +150,25 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 {
   Q_D(qMRMLTransformSliders);
 
-  //Updating the min/max values of the sliders depending on the matrix
-  //Required when loading a transform from a file
+  // Updating the min/max values of the sliders depending on the matrix
+  // Required when loading a transform from a file
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(transformNode,
     this->coordinateReference() == qMRMLTransformSliders::GLOBAL, transform.GetPointer());
-  vtkMatrix4x4 * mat = transform->GetMatrix();
 
-  //Extract the min/max values from the matrix and pad them by 30% of the range
+  // Extract the min/max values from the matrix and pad them by 30% of the range
+  // If padding is changed here, it should also be changed for qMRMLMatrixWidget
+  vtkMatrix4x4 * mat = transform->GetMatrix();
   if(mat)
     {
     QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.3);
     if(minmax.first < this->minimum())
       {
-      this->setMinimum(fabs(minmax.first));
+      this->setMinimum(minmax.first);
       }
     if(minmax.second > this->maximum())
       {
-      this->setMaximum(fabs(minmax.second));
+      this->setMaximum(minmax.second);
       }
     }
 
@@ -405,8 +406,8 @@ QPair<double, double> qMRMLTransformSliders::extractMinMaxTranslationValue(
     minmax.second = qMax(minmax.second, mat->GetElement(i,3));
     }
   double range = minmax.second - minmax.first;
-  minmax.first = minmax.first - pad*range;
-  minmax.second = minmax.second + pad*range;
+  minmax.first = minmax.first - pad * range;
+  minmax.second = minmax.second + pad * range;
   return minmax;
 }
 

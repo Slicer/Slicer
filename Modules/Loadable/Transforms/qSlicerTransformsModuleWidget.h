@@ -72,7 +72,9 @@ protected:
   /// Parameter expand allows to specify (using a value between 0 and 1)
   /// which percentage of the found min/max value should be substracted/added
   /// to the min/max value found.
-  void extractMinMaxTranslationValue(vtkMatrix4x4 * mat, double& min, double& max);
+  static QPair<double, double> extractMinMaxTranslationValue(vtkMatrix4x4 * mat,
+                                                      double pad = 0);
+
 
   /// 
   /// Convenient method to return the coordinate system currently selected

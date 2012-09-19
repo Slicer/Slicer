@@ -233,35 +233,44 @@ void qSlicerTransformsModuleWidget::onMRMLTransformNodeModified(vtkObject* calle
   // The matrix can be changed externally. The min/max values shall be updated 
   //accordingly to the new matrix if needed.
   vtkMatrix4x4 * mat = transform->GetMatrix();
-  double min = 0.;
-  double max = 0.;
-  this->extractMinMaxTranslationValue(mat, min, max);
-  if (min < d->TranslationSliders->minimum())
+  if(!mat)
     {
-    min = min - 0.3 * fabs(min);
-    d->TranslationSliders->setMinimum(min);
+    return;
     }
-  if (max > d->TranslationSliders->maximum())
+
+  QPair<double, double> minmax = this->extractMinMaxTranslationValue(mat, 0.0);
+
+  if (minmax.first < d->TranslationSliders->minimum())
     {
-    max = max + 0.3 * fabs(max);
-    d->TranslationSliders->setMaximum(max);
+    minmax.first = minmax.first - 0.3 * fabs(minmax.first);
+    d->TranslationSliders->setMinimum(minmax.first);
+    }
+  if (minmax.second > d->TranslationSliders->maximum())
+    {
+    minmax.second = minmax.second + 0.3 * fabs(minmax.second);
+    d->TranslationSliders->setMaximum(minmax.second);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
-  vtkMatrix4x4 * mat, double& min, double& max)
+QPair<double, double> qSlicerTransformsModuleWidget::extractMinMaxTranslationValue(
+                                             vtkMatrix4x4 * mat, double pad)
 {
+  QPair<double, double> minmax;
   if (!mat)
     {
     Q_ASSERT(mat);
-    return;
+    return minmax;
     }
   for (int i=0; i <3; i++)
     {
-    min = qMin(min, mat->GetElement(i,3));
-    max = qMax(max, mat->GetElement(i,3));
+    minmax.first = qMin(minmax.first, mat->GetElement(i,3));
+    minmax.second = qMax(minmax.second, mat->GetElement(i,3));
     }
+  double range = minmax.second - minmax.first;
+  minmax.first = minmax.first - pad * range;
+  minmax.second = minmax.second + pad * range;
+  return minmax;
 }
 
 //-----------------------------------------------------------------------------
