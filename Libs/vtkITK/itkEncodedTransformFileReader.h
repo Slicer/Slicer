@@ -30,7 +30,6 @@ namespace itk
 class VTK_ITK_EXPORT EncodedTransformFileReader : public TransformFileReader
 {
 public:
-
   /** SmartPointer typedef support */
   typedef EncodedTransformFileReader Self;
   typedef SmartPointer<Self>  Pointer;

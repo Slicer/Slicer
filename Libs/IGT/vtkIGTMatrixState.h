@@ -1,5 +1,4 @@
 
-
 #ifndef IGTMATRIXSTATE_H
 #define IGTMATRIXSTATE_H
 
@@ -11,11 +10,9 @@
   * class vtkIGTMatrixState
   * This represents a single data from sensor source
   */
-
 class VTK_IGT_EXPORT vtkIGTMatrixState : public vtkObject
 {
 public:
-
   /// Constructors/Destructors
   ///  
     static vtkIGTMatrixState *New();
@@ -35,18 +32,13 @@ public:
   vtkSetObjectMacro(Matrix,vtkMatrix4x4); 
   vtkGetObjectMacro(Matrix,vtkMatrix4x4); 
 
-
 protected:
-
   vtkMatrix4x4* Matrix;
   vtkMatrix4x4* Matrix_in_RAS;
   vtkMatrix4x4* Matrix_in_IJK;
   int m_timestamp;
   /// Private attribute accessor methods
   ///  
-
-
-
 
   /**
    * Set the value of m_timestamp
@@ -59,10 +51,6 @@ protected:
    * @return the value of m_timestamp
    */
   int getTimestamp ( );
-
-
-
-  
 
 };
 
