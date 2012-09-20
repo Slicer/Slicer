@@ -62,6 +62,12 @@ bool vtkMRMLSceneViewStorageNode::CanReadInReferenceNode(vtkMRMLNode *refNode)
 //----------------------------------------------------------------------------
 int vtkMRMLSceneViewStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
 {
+  // don't read from disk if restoring
+  if (this->GetScene() && this->GetScene()->IsRestoring())
+    {
+    return 1;
+    }
+
   vtkMRMLSceneViewNode *sceneViewNode = dynamic_cast <vtkMRMLSceneViewNode *> (refNode);
 
   std::string fullName = this->GetFullNameFromFileName();
