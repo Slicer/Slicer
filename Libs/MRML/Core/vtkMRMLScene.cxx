@@ -1899,7 +1899,10 @@ vtkMRMLNode* vtkMRMLScene::GetNodeByID(const char* id)
         foundNode = node;
         }
       }
-    assert(foundNode == 0);
+    if ( foundNode )
+      {
+      vtkErrorMacro("GetNodeByID: No node found for ID: " << id);
+      }
     }
 #endif
   return node;
