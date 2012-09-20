@@ -909,7 +909,8 @@ QStringList qSlicerExtensionsManagerModel::enabledExtensions()const
 }
 
 // --------------------------------------------------------------------------
-qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel::retrieveExtensionMetadata(const QString& extensionId)
+qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerModel
+::retrieveExtensionMetadata(const QString& extensionId)
 {
   Q_D(qSlicerExtensionsManagerModel);
 
@@ -925,12 +926,12 @@ qSlicerExtensionsManagerModel::ExtensionMetadataType qSlicerExtensionsManagerMod
   QList<QVariantMap> results = qMidasAPI::synchronousQuery(
         ok, this->serverUrl().toString(),
         "midas.slicerpackages.extension.list", parameters);
+  Q_ASSERT(results.count() == 1);
   if (!ok)
     {
     d->critical(results[0]["queryError"].toString());
     return ExtensionMetadataType();
     }
-  Q_ASSERT(results.count() == 1);
   ExtensionMetadataType result = results.at(0);
 
   if (!qSlicerExtensionsManagerModelPrivate::validateExtensionMetadata(result))
