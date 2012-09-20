@@ -243,7 +243,7 @@ class AtlasTestsTest(unittest.TestCase):
   def test_AbdominalAtlasTest(self):
     self.delayDisplay('Running Abdominal Atlas Test')
     downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=7926', 'AbdominalAtlas.mrb', slicer.util.loadScene),
+        ('http://slicer.kitware.com/midas3/download?items=8301', 'Abdominal_Atlas_2012.mrb', slicer.util.loadScene),
         )
     self.test_AtlasTest(downloads,'I')
 
