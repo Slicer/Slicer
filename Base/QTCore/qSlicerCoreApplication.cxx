@@ -250,6 +250,11 @@ void qSlicerCoreApplicationPrivate::init()
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 
+  qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
+  model->setLauncherSettingsFilePath(q->launcherSettingsFilePath());
+  model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
+  q->setExtensionManagerModel(model);
+
 # ifdef Q_OS_MAC
   this->createDirectory(this->defaultExtensionsInstallPathForMacOSX(), "extensions"); // Make sure the path exists
   q->addLibraryPath(this->defaultExtensionsInstallPathForMacOSX());
@@ -258,10 +263,6 @@ void qSlicerCoreApplicationPrivate::init()
 
   this->createDirectory(q->extensionsInstallPath(), "extensions"); // Make sure the path exists
 
-  qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
-  model->setLauncherSettingsFilePath(q->launcherSettingsFilePath());
-  model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
-  q->setExtensionManagerModel(model);
   model->updateModel();
 
   QStringList uninstalledExtensions;
@@ -1071,6 +1072,7 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
   Q_ASSERT(appSettings);
   appSettings->setValue("Extensions/InstallPath", path);
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  Q_ASSERT(this->extensionManagerModel());
   this->extensionManagerModel()->updateModel();
 #endif
 }
