@@ -433,6 +433,13 @@ void vtkMRMLCameraNode::ProcessMRMLEvents ( vtkObject *caller,
     }
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLCameraNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->GetActiveTag(), this);
+}
+
 //-----------------------------------------------------------
 void vtkMRMLCameraNode::UpdateReferences()
 {
@@ -448,6 +455,7 @@ void vtkMRMLCameraNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLCameraNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->GetActiveTag() && !strcmp(oldID, this->GetActiveTag()))
     {
     this->SetActiveTag(newID);

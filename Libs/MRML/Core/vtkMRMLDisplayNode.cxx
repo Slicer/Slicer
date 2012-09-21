@@ -188,6 +188,7 @@ void vtkMRMLDisplayNode::SetSceneReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->ColorNodeID && !strcmp(oldID, this->ColorNodeID))
     {
     this->SetAndObserveColorNodeID(newID);

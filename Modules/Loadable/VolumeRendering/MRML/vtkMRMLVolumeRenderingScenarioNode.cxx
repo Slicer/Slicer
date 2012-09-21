@@ -69,17 +69,16 @@ void vtkMRMLVolumeRenderingScenarioNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeRenderingScenarioNode::UpdateReferenceID(const char *vtkNotUsed(oldID),
-                                                           const char *vtkNotUsed(newID))
+void vtkMRMLVolumeRenderingScenarioNode::UpdateReferenceID(const char *oldID,
+                                                           const char *newID)
 {
-
+  this->Superclass::UpdateReferenceID(oldID, newID);
 }
 
 //-----------------------------------------------------------
 void vtkMRMLVolumeRenderingScenarioNode::UpdateReferences()
 {
-   Superclass::UpdateReferences();
-
+  this->Superclass::UpdateReferences();
 }
 
 //----------------------------------------------------------------------------

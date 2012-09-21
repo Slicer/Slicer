@@ -51,6 +51,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "VolumeRendering";};
 
+  /// Mark the volume, ROI and volume property nodes as references.
+  virtual void SetSceneReferences();
+
   /// Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 

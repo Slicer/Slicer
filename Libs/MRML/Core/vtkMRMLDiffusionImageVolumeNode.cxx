@@ -191,6 +191,7 @@ vtkMRMLDiffusionWeightedVolumeNode* vtkMRMLDiffusionImageVolumeNode::GetDiffusio
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID,newID);
   if (this->BaselineNodeID && !strcmp(oldID, this->BaselineNodeID))
     {
     this->SetBaselineNodeID(newID);
@@ -203,7 +204,6 @@ void vtkMRMLDiffusionImageVolumeNode::UpdateReferenceID(const char *oldID, const
     {
     this->SetDiffusionWeightedNodeID(newID);
     }
-  Superclass::UpdateReferenceID(oldID,newID);
 }
 
 //-----------------------------------------------------------

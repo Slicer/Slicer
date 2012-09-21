@@ -201,8 +201,18 @@ void vtkMRMLVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->VolumeNodeID, this);
+  this->Scene->AddReferencedNodeID(this->ROINodeID, this);
+  this->Scene->AddReferencedNodeID(this->VolumePropertyNodeID, this);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->VolumeNodeID && !strcmp(oldID, this->VolumeNodeID))
     {
     this->SetAndObserveVolumeNodeID(newID);
@@ -234,6 +244,15 @@ void vtkMRMLVolumeRenderingDisplayNode::UpdateReferences()
     {
     this->SetAndObserveVolumePropertyNodeID(NULL);
     }
+}
+
+//-----------------------------------------------------------
+void vtkMRMLVolumeRenderingDisplayNode::UpdateScene(vtkMRMLScene *scene)
+{
+  this->Superclass::UpdateScene(scene);
+  this->SetAndObserveVolumeNodeID(this->VolumeNodeID);
+  this->SetAndObserveVolumePropertyNodeID(this->VolumePropertyNodeID);
+  this->SetAndObserveROINodeID(this->ROINodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -345,15 +364,6 @@ vtkMRMLAnnotationROINode* vtkMRMLVolumeRenderingDisplayNode::GetROINode()
     vtkSetAndObserveMRMLObjectMacro(this->ROINode, vtkMRMLAnnotationROINode::SafeDownCast(snode));
     }
   return this->ROINode;
-}
-
-//-----------------------------------------------------------
-void vtkMRMLVolumeRenderingDisplayNode::UpdateScene(vtkMRMLScene *scene)
-{
-  this->Superclass::UpdateScene(scene);
-  this->SetAndObserveVolumeNodeID(this->VolumeNodeID);
-  this->SetAndObserveVolumePropertyNodeID(this->VolumePropertyNodeID);
-  this->SetAndObserveROINodeID(this->ROINodeID);
 }
 
 //---------------------------------------------------------------------------

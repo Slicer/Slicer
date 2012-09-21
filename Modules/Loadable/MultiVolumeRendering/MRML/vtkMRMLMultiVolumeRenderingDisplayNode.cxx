@@ -319,6 +319,7 @@ void vtkMRMLMultiVolumeRenderingDisplayNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLMultiVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->BgVolumeNodeID && !strcmp(oldID, this->BgVolumeNodeID))
     {
     this->SetAndObserveBgVolumeNodeID(newID);

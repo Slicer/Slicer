@@ -128,6 +128,9 @@ public:
     ActiveTagModifiedEvent = 30000
   };
 
+  /// Mark the active tag node as references.
+  virtual void SetSceneReferences();
+
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene

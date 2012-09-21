@@ -150,6 +150,7 @@ void vtkMRMLFiberBundleDisplayNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->DiffusionTensorDisplayPropertiesNodeID &&
       !strcmp(oldID, this->DiffusionTensorDisplayPropertiesNodeID))
     {

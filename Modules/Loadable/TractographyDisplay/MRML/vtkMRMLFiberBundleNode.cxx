@@ -239,6 +239,7 @@ void vtkMRMLFiberBundleNode::UpdateReferences()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->AnnotationNodeID && !strcmp(oldID, this->AnnotationNodeID))
     {
     this->SetAnnotationNodeID(newID);

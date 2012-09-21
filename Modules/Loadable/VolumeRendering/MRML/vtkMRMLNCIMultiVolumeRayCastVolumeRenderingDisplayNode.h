@@ -54,6 +54,10 @@ public:
   virtual const char* GetNodeTagName() {return "NCIMultiVolumeRayCastVolumeRendering";};
 
   // Description:
+  // Mark the fg volume and fg volume property nodes as references.
+  virtual void SetSceneReferences();
+
+  // Description:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 

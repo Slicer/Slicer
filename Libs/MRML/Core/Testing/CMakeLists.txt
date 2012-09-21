@@ -60,6 +60,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSceneImportTest.cxx
   vtkMRMLSceneTest1.cxx
   #vtkMRMLSceneTest2.cxx
+  vtkMRMLSceneViewNodeImportSceneTest.cxx
   vtkMRMLSceneViewNodeEventsTest.cxx
   vtkMRMLSceneViewNodeRestoreSceneTest.cxx
   vtkMRMLSceneViewNodeStoreSceneTest.cxx
@@ -152,6 +153,7 @@ SIMPLE_TEST( vtkMRMLSceneImportIDConflictTest )
 SIMPLE_TEST( vtkMRMLSceneImportIDModelHierarchyConflictTest )
 SIMPLE_TEST( vtkMRMLSceneIDTest )
 SIMPLE_TEST( vtkMRMLSceneTest1 )
+SIMPLE_TEST( vtkMRMLSceneViewNodeImportSceneTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeEventsTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeRestoreSceneTest )
 SIMPLE_TEST( vtkMRMLSceneViewNodeStoreSceneTest )

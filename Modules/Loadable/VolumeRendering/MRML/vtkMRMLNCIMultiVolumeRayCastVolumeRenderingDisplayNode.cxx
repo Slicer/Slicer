@@ -180,8 +180,17 @@ void vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::WriteXML(ostream& o
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::SetSceneReferences()
+{
+  this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->FgVolumeNodeID, this);
+  this->Scene->AddReferencedNodeID(this->FgVolumePropertyNodeID, this);
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLNCIMultiVolumeRayCastVolumeRenderingDisplayNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
+  this->Superclass::UpdateReferenceID(oldID,newID);
   if (this->FgVolumeNodeID && !strcmp(oldID, this->FgVolumeNodeID))
     {
     this->SetAndObserveFgVolumeNodeID(newID);
