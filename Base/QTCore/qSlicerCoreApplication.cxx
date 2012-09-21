@@ -546,7 +546,7 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
     {
     QDir slicerHomeDir(q->slicerHome());
     slicerHomeDir.cdUp();
-    return slicerHomeDir.absolutePath() + "Contents/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
+    return slicerHomeDir.absolutePath() + "/Contents/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
     }
   else
     {
