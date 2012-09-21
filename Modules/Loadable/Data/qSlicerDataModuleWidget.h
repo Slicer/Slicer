@@ -61,6 +61,7 @@ protected slots:
 public slots:
   void insertTransformNode();
   void hardenTransformOnCurrentNode();
+  void printObject();
 
 protected:
   virtual void setup();

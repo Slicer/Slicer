@@ -427,8 +427,16 @@ void qMRMLTreeView::prependNodeMenuAction(QAction* action)
 void qMRMLTreeView::appendNodeMenuAction(QAction* action)
 {
   Q_D(qMRMLTreeView);
-  // appends the new action to the menu
+  // Append the new action to the menu
   d->NodeMenu->addAction(action);
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::appendSceneMenuAction(QAction* action)
+{
+  Q_D(qMRMLTreeView);
+  // Appends the new action to the menu
+  d->SceneMenu->addAction(action);
 }
 
 //--------------------------------------------------------------------------

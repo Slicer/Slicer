@@ -116,6 +116,12 @@ void qSlicerDataModuleWidget::setup()
   connect(d->ShowHiddenCheckBox, SIGNAL(toggled(bool)),
           d->MRMLTreeView->sortFilterProxyModel(), SLOT(setShowHidden(bool)));
 
+  QAction* printNodeAction = new QAction(tr("Print"),this);
+  d->MRMLTreeView->appendNodeMenuAction(printNodeAction);
+  d->MRMLTreeView->appendSceneMenuAction(printNodeAction);
+  connect(printNodeAction, SIGNAL(triggered()),
+          this, SLOT(printObject()));
+
   // Filter on all the columns
   d->MRMLTreeView->sortFilterProxyModel()->setFilterKeyColumn(-1);
   connect(d->FilterLineEdit, SIGNAL(textChanged(QString)),
@@ -199,6 +205,19 @@ void qSlicerDataModuleWidget::insertTransformNode()
 
   this->mrmlScene()->AddNode(linearTransform);
   linearTransform->Delete();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataModuleWidget::printObject()
+{
+  Q_D(qSlicerDataModuleWidget);
+  vtkObject* object = d->MRMLTreeView->currentNode() ?
+    vtkObject::SafeDownCast(d->MRMLTreeView->currentNode()) :
+    vtkObject::SafeDownCast(this->mrmlScene());
+  if (object)
+    {
+    object->Print(std::cout);
+    }
 }
 
 //-----------------------------------------------------------------------------

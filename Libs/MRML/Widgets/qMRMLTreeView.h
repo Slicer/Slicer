@@ -137,12 +137,18 @@ public:
   bool isEditMenuActionVisible()const;
   void setEditMenuActionVisible(bool show);
 
-  /// Add a custom QAction to add into the context menu on a right click
-  /// \sa prependNodeMenuAction()
+  /// Add a custom QAction to add into the context menu that opens with a right
+  /// click on a MRML node.
+  /// \sa prependNodeMenuAction(), appendSceneMenuAction()
   void appendNodeMenuAction(QAction* action);
 
   /// \sa prependSceneMenuAction(), appendNodeMenuAction()
   void prependNodeMenuAction(QAction* action);
+
+  /// Add a custom QAction to add into the context menu that opens with a right
+  /// click on the MRML scene.
+  /// \sa appendNodeMenuAction(), prependSceneMenuAction()
+  void appendSceneMenuAction(QAction* action);
 
   /// \sa prependNodeMenuAction()
   void prependSceneMenuAction(QAction* action);
