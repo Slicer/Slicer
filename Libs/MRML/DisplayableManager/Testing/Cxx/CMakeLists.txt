@@ -4,6 +4,7 @@ set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLCameraDisplayableManagerTest1.cxx
   vtkMRMLModelDisplayableManagerTest.cxx
+  vtkMRMLModelSliceDisplayableManagerTest.cxx
   vtkMRMLThreeDReformatDisplayableManagerTest1.cxx
   vtkMRMLThreeDViewDisplayableManagerFactoryTest1.cxx
   vtkMRMLDisplayableManagerFactoriesTest1.cxx

@@ -460,6 +460,11 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 {
   bool show = node && node->IsA("vtkMRMLModelNode");
 
+  if (!this->SliceNode->GetLayoutName())
+    {
+    vtkErrorWithObjectMacro(this->External, "No layout name to slice node " << this->SliceNode->GetID());
+    return false;
+    }
   // Ignore the slice model node for this slice DM.
   std::string cmpstr = std::string(this->SliceNode->GetLayoutName()) + " Volume Slice";
   show = show && ( cmpstr.compare(node->GetName()) );
@@ -542,11 +547,10 @@ void vtkMRMLModelSliceDisplayableManager
     return;
     }
 
-  this->SetUpdateFromMRMLRequested(1);
-
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
+    this->SetUpdateFromMRMLRequested(1);
     return;
     }
 
@@ -558,15 +562,8 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
-  if ( node && (!node->IsA("vtkMRMLModelNode")) && (!node->IsA("vtkMRMLModelDisplayNode")) )
-    {
-    return;
-    }
-
-  this->SetUpdateFromMRMLRequested(1);
-
-  // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->IsBatchProcessing())
+  if ( node && (!node->IsA("vtkMRMLModelNode"))
+       && (!node->IsA("vtkMRMLModelDisplayNode")) )
     {
     return;
     }
@@ -574,21 +571,20 @@ void vtkMRMLModelSliceDisplayableManager
   vtkMRMLDisplayableNode* modelNode = NULL;
   vtkMRMLDisplayNode* displayNode = NULL;
 
+  bool modified = false;
   if ( (modelNode = vtkMRMLDisplayableNode::SafeDownCast(node)) )
     {
     this->RemoveDisplayableNode(modelNode);
-    this->RequestRender();
-    return;
+    modified = true;
     }
   else if ( (displayNode = vtkMRMLDisplayNode::SafeDownCast(node)) )
     {
     this->Internal->RemoveDisplayNode(displayNode);
-    this->RequestRender();
-    return;
+    modified = true;
     }
-  else
+  if (modified)
     {
-    return;
+    this->RequestRender();
     }
 }
 
