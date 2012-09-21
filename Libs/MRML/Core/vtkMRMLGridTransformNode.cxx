@@ -65,14 +65,6 @@ void vtkMRMLGridTransformNode::WriteXML(ostream& of, int nIndent)
     of << " spacing=\"" << spacing[0] << " " << spacing[1] << " " << spacing[2] << "\" ";    
     double* origin = image->GetOrigin();
     of << " origin=\"" << origin[0] << " " << origin[1] << " " << origin[2] << "\" ";
-    of << " displacement=\"";
-    double* dataPtr = reinterpret_cast<double*>(image->GetScalarPointer());
-    int num = N[0] * N[1] * N[2] * 3;
-    for( int i = 0; i < num; ++i, ++dataPtr )
-      {
-      of << dataPtr[0] << " ";
-      }
-    of << "\" ";
     }
 }
 
