@@ -699,19 +699,22 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   origin[0] *= -1;   // L -> R
   origin[1] *= -1;   // P -> A
 
-  if (!this->UseNativeOrigin)
+  if (this->UseNativeOrigin)
     {
-    // Center the image
-    for (int j = 0; j < 3; j++)
-      {
-      origin[j] = spacing[j] * (extent[2*j+1] - extent[2*j]) / 2.0;
-      }
+      for (int j = 0; j < 3; j++)
+        {
+          RasToIjkMatrix->SetElement(j, 3, origin[j]);
+        }
+      RasToIjkMatrix->Invert();
     }
-  for (int j = 0; j < 3; j++)
+  else
     {
-    RasToIjkMatrix->SetElement(j, 3, origin[j]);
+      RasToIjkMatrix->Invert();
+      for (int j = 0; j < 3; j++)
+        {
+          RasToIjkMatrix->SetElement(j, 3, (extent[2*j+1] - extent[2*j])/2.0);
+        }
     }
-  RasToIjkMatrix->Invert();
 
   output->SetSpacing(spacing);
   output->SetOrigin(origin);
