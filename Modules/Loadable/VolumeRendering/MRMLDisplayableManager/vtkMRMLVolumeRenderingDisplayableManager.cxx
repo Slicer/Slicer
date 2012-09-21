@@ -1320,7 +1320,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
 
   this->DisplayedNode = vspNode;
 
-  if (vspNode->GetVisibility())
+  if (vspNode->GetVisibility() && this->Volume->GetMapper())
     {
     this->AddVolumeToView();
     }
