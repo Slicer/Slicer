@@ -131,6 +131,9 @@ set(MRMLWidgets_SRCS
   qMRMLSliceInformationWidget.cxx
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
+  qMRMLSliceView.cxx
+  qMRMLSliceView.h
+  qMRMLSliceView_p.h
   qMRMLSliceWidget.cxx
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
@@ -219,6 +222,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSliceControllerWidget_p.h
   qMRMLSliceInformationWidget.h
   qMRMLSliceInformationWidget_p.h
+  qMRMLSliceView.h
+  qMRMLSliceView_p.h
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
   qMRMLSortFilterHierarchyProxyModel.h

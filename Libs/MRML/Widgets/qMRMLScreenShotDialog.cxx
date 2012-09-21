@@ -23,11 +23,11 @@
 #include <QWeakPointer>
 
 // CTK includes
-#include <ctkVTKSliceView.h>
 #include <ctkVTKWidgetsUtils.h>
 
 // qMRML includes
 #include "qMRMLLayoutManager.h"
+#include <qMRMLSliceView.h>
 #include "qMRMLSliceWidget.h"
 #include "qMRMLScreenShotDialog.h"
 #include "qMRMLThreeDView.h"
@@ -284,7 +284,7 @@ void qMRMLScreenShotDialog::grabScreenShot(int screenshotWindow)
     case qMRMLScreenShotDialog::Yellow:
     case qMRMLScreenShotDialog::Green:
       // Create a screenshot of a specific sliceView
-      widget = const_cast<ctkVTKSliceView*>(
+      widget = const_cast<qMRMLSliceView*>(
           d->LayoutManager.data()->sliceWidget(this->enumToString(screenshotWindow))->sliceView());
       break;
     case qMRMLScreenShotDialog::FullLayout:

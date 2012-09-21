@@ -31,6 +31,10 @@ class qMRMLThreeDViewPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 
+/// \brief 3D view for view nodes.
+/// For performance reasons, the view block refreshs when the scene is in
+/// batch process state.
+/// \sa qMRMLThreeDWidget, qMRMLThreeDViewControllerWidget, qMRMLSliceView
 class QMRML_WIDGETS_EXPORT qMRMLThreeDView : public ctkVTKRenderView
 {
   Q_OBJECT
@@ -62,6 +66,8 @@ public:
 public slots:
 
   /// Set the MRML \a scene that should be listened for events
+  /// When the scene is in batch process state, the view blocks all refresh.
+  /// \sa renderEnabled
   void setMRMLScene(vtkMRMLScene* newScene);
 
   /// Set the current \a viewNode to observe

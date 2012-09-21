@@ -52,25 +52,10 @@ public:
   void init();
 
 public slots:
-
-  /// Handle MRML scene event
-  void startProcessing();
   void endProcessing();
-
   /// Set the image data to the slice view
   void setImageData(vtkImageData * imageData);
 
-  void updateWidgetFromMRMLSliceNode();
-
-public:
-  void initDisplayableManagers();
-
-  vtkMRMLDisplayableManagerGroup*    DisplayableManagerGroup;
-  vtkMRMLSliceNode*                  MRMLSliceNode;
-  QColor                             InactiveBoxColor;
-
-  class vtkInternalLightBoxRendererManagerProxy;
-  vtkSmartPointer<vtkInternalLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
 #endif

@@ -21,9 +21,6 @@
 #ifndef __qMRMLSliceWidget_h
 #define __qMRMLSliceWidget_h
 
-// Qt includes
-#include <QWidget>
-
 // CTK includes
 #include <ctkPimpl.h>
 
@@ -32,8 +29,7 @@
 
 #include "qMRMLWidgetsExport.h"
 
-
-class ctkVTKSliceView;
+class qMRMLSliceView;
 class qMRMLSliceWidgetPrivate;
 class qMRMLSliceControllerWidget;
 class vtkCollection;
@@ -58,15 +54,6 @@ public:
   /// Constructors
   explicit qMRMLSliceWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceWidget();
-
-  /// Add a displayable manager to the view,
-  /// the displayable manager is proper to the slice view and is not shared
-  /// with other views.
-  /// If you want to register a displayable manager with all the slice
-  /// views (existing or future), you need to do it via
-  /// vtkMRMLThreeDViewDisplayableManagerFactory::RegisterDisplayableManager()
-  /// By default: vtkMRMLSliceModelDisplayableManager is  already registered.
-  void addDisplayableManager(const QString& displayableManager);
 
   /// Get slice controller
   Q_INVOKABLE qMRMLSliceControllerWidget* sliceController()const;
@@ -129,26 +116,7 @@ public:
   /// A const ctkVTKSliceView pointer is returned as you shouldn't
   /// mess too much with it. If you do, be aware that you are probably
   /// unsynchronizing the view from the nodes/logics.
-  Q_INVOKABLE const ctkVTKSliceView* sliceView()const;
-
-  /// Convert device coordinates to XYZ coordinates. The x and y
-  /// components of the return value are the positions within a
-  /// LightBox pane and the z component of the return value (rounded
-  /// to the nearest integer) is the pane in the LightBox
-  Q_INVOKABLE QList<double> convertDeviceToXYZ(const QList<int>&xy);
-
-  /// Convert RAS to XYZ coordinates. parameters ras and return value
-  /// are of length 3. Z component of the return value is the pane in
-  /// the LightBox.
-  Q_INVOKABLE QList<double> convertRASToXYZ(const QList<double>& ras);
-
-  /// Convert XYZ to RAS coordinates. parameters xyz and return value
-  /// are of length 3. Z component of parameter xyz is the LightBox
-  /// pane and the X and Y components of parameter xyz is the position
-  /// in the LightBox pane.
-  Q_INVOKABLE QList<double> convertXYZToRAS(const QList<double> &xyz);
-  
-
+  Q_INVOKABLE const qMRMLSliceView* sliceView()const;
 
   //virtual bool eventFilter(QObject* object, QEvent* event);
 public slots:

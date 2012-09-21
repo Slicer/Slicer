@@ -36,7 +36,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="ctkVTKSliceView" name="VTKSliceView">
+       <widget class="qMRMLSliceView" name="SliceView">
         <property name="renderEnabled">
          <bool>true</bool>
         </property>
@@ -60,9 +60,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkVTKSliceView</class>
+   <class>qMRMLSliceView</class>
    <extends>QWidget</extends>
-   <header>ctkVTKSliceView.h</header>
+   <header>qMRMLSliceView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -71,6 +71,22 @@
    <sender>qMRMLSliceWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SliceController</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>297</x>
+     <y>258</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>59</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLSliceWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SliceView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">

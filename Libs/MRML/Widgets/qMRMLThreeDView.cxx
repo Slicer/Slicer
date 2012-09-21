@@ -149,7 +149,8 @@ void qMRMLThreeDViewPrivate::setMRMLScene(vtkMRMLScene* newScene)
     vtkMRMLScene::EndBatchProcessEvent, this, SLOT(onSceneEndProcessing()));
 
   this->MRMLScene = newScene;
-  q->setRenderEnabled(this->MRMLScene != 0);
+  q->setRenderEnabled(
+    this->MRMLScene != 0 && !this->MRMLScene->IsBatchProcessing());
 }
 
 //---------------------------------------------------------------------------
