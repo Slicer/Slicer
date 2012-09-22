@@ -264,7 +264,7 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
   {
     if (mrmlScene()) mrmlScene()->SaveStateForUndo();
     vtkPolyData *FilteredPolyData = vtkPolyData::New();
-    FilteredPolyData->DeepCopy(d->FiberBundleNode->GetPolyData());
+    FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
     fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
     FilteredPolyData->Delete();
 
