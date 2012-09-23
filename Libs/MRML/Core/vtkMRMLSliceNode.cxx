@@ -106,11 +106,11 @@ vtkMRMLSliceNode::vtkMRMLSliceNode()
 
   this->IsUpdatingMatrices = 0;
 
-  this->LayoutLabel = new char[1];
-  strcpy(this->LayoutLabel, "");
   this->LayoutColor[0] = vtkMRMLSliceNode::grayColor()[0];
   this->LayoutColor[1] = vtkMRMLSliceNode::grayColor()[1];
   this->LayoutColor[2] = vtkMRMLSliceNode::grayColor()[2];
+
+  this->SetLayoutLabel("");
 }
 
 //----------------------------------------------------------------------------
@@ -144,11 +144,6 @@ vtkMRMLSliceNode::~vtkMRMLSliceNode()
     {
     delete [] this->OrientationReference;
     }
-  if ( this->LayoutLabel )
-    {
-    delete [] this->LayoutLabel;
-    }
-  this->SetLayoutName(NULL);
 }
 
 //-----------------------------------------------------------
@@ -660,14 +655,6 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
       }
     }
   of << indent << " sliceToRAS=\"" << ss.str().c_str() << "\"";
-  if (this->GetLayoutName())
-    {
-    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
-    }
-  if (this->GetLayoutLabel())
-    {
-    of << indent << " layoutLabel=\"" << this->GetLayoutLabel() << "\"";
-    }
   of << indent << " layoutColor=\"" << this->LayoutColor[0] << " "
      << this->LayoutColor[1] << " " << this->LayoutColor[2] << "\"";
   if (this->OrientationString)
@@ -708,7 +695,7 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
     attValue = *(atts++);
     if (!strcmp(attName, "layoutLabel")) 
       {
-      this->SetLayoutLabel( attValue );
+      // layout label is set in Superclass
       layoutLabelFound = true;
       }
     else if (!strcmp(attName, "layoutColor")) 
@@ -1019,7 +1006,6 @@ void vtkMRMLSliceNode::Copy(vtkMRMLNode *anode)
   Superclass::Copy(anode);
   vtkMRMLSliceNode *node = vtkMRMLSliceNode::SafeDownCast(anode);
 
-  this->SetLayoutLabel(node->GetLayoutLabel());
   this->SetLayoutColor(node->GetLayoutColor());
 
   this->SetSliceVisible(node->GetSliceVisible());
@@ -1077,7 +1063,6 @@ void vtkMRMLSliceNode::PrintSelf(ostream& os, vtkIndent indent)
   int idx;
   
   Superclass::PrintSelf(os,indent);
-  os << indent << "LayoutLabel: " << (this->LayoutLabel ? this->LayoutLabel : "(null)") << std::endl;
   os << indent << "LayoutColor: " << this->LayoutColor[0] << " "
                                   << this->LayoutColor[1] << " "
                                   << this->LayoutColor[2] << std::endl;

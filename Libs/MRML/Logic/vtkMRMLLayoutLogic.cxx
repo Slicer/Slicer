@@ -1097,29 +1097,16 @@ void vtkMRMLLayoutLogic::ApplyProperty(const ViewProperty& property, vtkMRMLNode
       }
     sliceNode->SetOrientation(value.c_str());
     }
-  // ViewLabel
+  // LayoutLabel
   if (name == std::string("viewlabel"))
     {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(view);
-    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(view);
-    vtkMRMLChartViewNode* chartViewNode = vtkMRMLChartViewNode::SafeDownCast(view);
-    if (!sliceNode && !viewNode && !chartViewNode)
+    vtkMRMLAbstractViewNode* viewNode = vtkMRMLAbstractViewNode::SafeDownCast(view);
+    if (!viewNode)
       {
       vtkWarningMacro("Invalid view label property.");
       return;
       }
-    if (sliceNode)
-      {
-      sliceNode->SetLayoutLabel(value.c_str());
-      }
-    if (viewNode)
-      {
-      viewNode->SetViewLabel(value.c_str());
-      }
-    if (chartViewNode)
-      {
-      chartViewNode->SetViewLabel(value.c_str());
-      }
+    viewNode->SetLayoutLabel(value.c_str());
     }
   // ViewColor
   if (name == std::string("viewcolor"))

@@ -11,12 +11,16 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
-#include "vtkObjectFactory.h"
-
-#include "vtkMRMLViewNode.h"
+// MRML includes
 #include "vtkMRMLScene.h"
+#include "vtkMRMLViewNode.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLViewNode);
@@ -25,11 +29,6 @@ vtkMRMLNodeNewMacro(vtkMRMLViewNode);
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::vtkMRMLViewNode()
 {
-  //this->SingletonTag = const_cast<char *>("vtkMRMLViewNode");
-  this->HideFromEditors = 0;
-
-  this->Active = 0;
-  this->Visibility = 1;
   this->BoxVisible = 1;
   this->AxisLabelsVisible = 1;
   this->AxisLabelsCameraDependent = 1;
@@ -53,18 +52,12 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor2[0] = this->defaultBackgroundColor2()[0];
   this->BackgroundColor2[1] = this->defaultBackgroundColor2()[1];
   this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
-  this->ViewLabel = new char[2];
-  strcpy(this->ViewLabel, "1");
   this->FPSVisible = 0;
  }
 
 //----------------------------------------------------------------------------
 vtkMRMLViewNode::~vtkMRMLViewNode()
 {
-  if ( this->ViewLabel )
-    {
-    delete [] this->ViewLabel;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -82,17 +75,6 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 
   vtkIndent indent(nIndent);
 
-  if (this->GetViewLabel())
-    {
-    of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
-    }
-  if (this->GetLayoutName())
-    {
-    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
-    }
-
-  of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
-  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
   of << indent << " fieldOfView=\"" << this->GetFieldOfView() << "\"";
   of << indent << " letterSize=\"" << this->GetLetterSize() << "\"";
   of << indent << " boxVisible=\"" << (this->BoxVisible ? "true" : "false") << "\"";
@@ -101,14 +83,6 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
   of << indent << " axisLabelsVisible=\"" << (this->AxisLabelsVisible ? "true" : "false") << "\"";
   of << indent << " axisLabelsCameraDependent=\"" << (this->AxisLabelsCameraDependent ? "true" : "false") << "\"";
 
-  // background color
-  of << indent << " backgroundColor=\"" << this->BackgroundColor[0] << " "
-     << this->BackgroundColor[1] << " " << this->BackgroundColor[2] << "\"";
-
-  of << indent << " backgroundColor2=\"" << this->BackgroundColor2[0] << " "
-     << this->BackgroundColor2[1] << " " << this->BackgroundColor2[2] << "\"";
-
-  
   // spin or rock?
   if ( this->GetAnimationMode() == vtkMRMLViewNode::Off )
     {
@@ -202,10 +176,9 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
 {
-  bool isBackgroundColor2Set = false;
   int disabledModify = this->StartModify();
 
-  Superclass::ReadXMLAttributes(atts);
+  this->Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -213,15 +186,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "layoutLabel")) 
-      {
-      this->SetViewLabel( attValue );
-      }
-    else if (!strcmp(attName, "layoutName"))
-      {
-      this->SetLayoutName( attValue );
-      }
-    else if (!strcmp(attName, "fieldOfView")) 
+    if (!strcmp(attName, "fieldOfView")) 
       {
       std::stringstream ss;
       ss << attValue;
@@ -237,38 +202,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       ss >> fov;
       this->LetterSize = fov;
       }
-
-    else if (!strcmp(attName, "backgroundColor"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      double val;
-      ss >> val;
-      this->BackgroundColor[0] = val;
-      ss << attValue;
-      ss >> val;
-      this->BackgroundColor[1] = val;
-      ss << attValue;
-      ss >> val;
-      this->BackgroundColor[2] = val;
-      }
-      
-    else if (!strcmp(attName, "backgroundColor2"))
-      {
-      isBackgroundColor2Set = true;
-      std::stringstream ss;
-      ss << attValue;
-      double val;
-      ss >> val;
-      this->BackgroundColor2[0] = val;
-      ss << attValue;
-      ss >> val;
-      this->BackgroundColor2[1] = val;
-      ss << attValue;
-      ss >> val;
-      this->BackgroundColor2[2] = val;
-      }
-    
     else if (!strcmp(attName, "boxVisible")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -280,7 +213,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->BoxVisible = 0;
         }
       }
-    
     else if (!strcmp(attName, "fiducialsVisible")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -292,7 +224,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialsVisible = 0;
         }
       }
-    
     else if (!strcmp(attName, "fiducialLabelsVisible")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -304,7 +235,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->FiducialLabelsVisible = 0;
         }
       }
-
     else if (!strcmp(attName, "axisLabelsVisible")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -316,7 +246,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->AxisLabelsVisible = 0;
         }
       }
-
     else if (!strcmp(attName, "axisLabelsCameraDependent")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -328,7 +257,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->AxisLabelsCameraDependent = 0;
         }
       }
-
     else if (!strcmp(attName, "stereoType")) 
       {
       if (!strcmp(attValue,"NoStereo")) 
@@ -351,9 +279,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         {
         this->StereoType = vtkMRMLViewNode::Interlaced;
         }
-      
       }
-
     else if (!strcmp(attName, "rockLength" ))
       {
       std::stringstream ss;
@@ -361,7 +287,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       int len;
       ss >> len;
       this->RockLength = len;
-      }    
+      }
     else if (!strcmp(attName, "rockCount" ))
       {
       std::stringstream ss;
@@ -369,8 +295,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       int count;
       ss >> count;
       this->RockCount = count;
-      }    
-
+      }
     else if (!strcmp(attName, "animationMode")) 
       {
       if (!strcmp(attValue,"Off")) 
@@ -386,7 +311,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->AnimationMode = vtkMRMLViewNode::Rock;
         }
       }
-    
     else if (!strcmp (attName, "viewAxisMode"))
       {
       if (!strcmp (attValue, "RotateAround"))
@@ -398,7 +322,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->ViewAxisMode = vtkMRMLViewNode::LookFrom;
         }
       }
-    
     else if (!strcmp(attName, "spinDegrees" ))
       {
       std::stringstream ss;
@@ -422,8 +345,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       int ms;
       ss >> ms;
       this->AnimationMs = ms;
-      }    
-
+      }
     else if (!strcmp(attName, "spinDirection")) 
       {
       if (!strcmp(attValue,"RollLeft")) 
@@ -451,7 +373,6 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->SpinDirection = vtkMRMLViewNode::PitchDown;
         }
       }
-
     else if (!strcmp(attName, "renderMode")) 
       {
       if (!strcmp(attValue,"Perspective")) 
@@ -463,55 +384,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->RenderMode = vtkMRMLViewNode::Orthographic;
         }
       }
-
-    else if (!strcmp(attName, "active")) 
-      {
-      if (!strcmp(attValue,"true")) 
-        {
-        this->Active = 1;
-        }
-      else
-        {
-        this->Active = 0;
-        }
-      }
-    else if (!strcmp(attName, "visibility")) 
-      {
-      if (!strcmp(attValue,"true")) 
-        {
-        this->Visibility = 1;
-        }
-      else
-        {
-        this->Visibility = 0;
-        }
-      }
     }
-#if MRML_SUPPORT_VERSION < 0x040000
-  if (!isBackgroundColor2Set)
-    {
-    this->BackgroundColor2[0] = this->BackgroundColor[0];
-    this->BackgroundColor2[1] = this->BackgroundColor[1];
-    this->BackgroundColor2[2] = this->BackgroundColor[2];
-    }
-#endif
-#if MRML_SUPPORT_VERSION < 0x040200
-  // vtkMRMLViewNodes where not singletons before 4.2
-  if (!this->GetLayoutName() || strlen(this->GetLayoutName()))
-    {
-    const char* layoutName = 0;
-    if (this->GetID() &&
-        strncmp(this->GetID(), this->GetClassName(), strlen(this->GetClassName())) == 0)
-      {
-      layoutName = this->GetID() + strlen(this->GetClassName());
-      }
-    if (!layoutName || strlen(layoutName) == 0)
-      {
-      layoutName = "1";
-      }
-    this->SetLayoutName(layoutName);
-    }
-#endif
   this->EndModify(disabledModify);
 }
 
@@ -522,11 +395,9 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
 {
   int disabledModify = this->StartModify();
 
-  Superclass::Copy(anode);
+  this->Superclass::Copy(anode);
   vtkMRMLViewNode *node = (vtkMRMLViewNode *) anode;
 
-
-  this->SetViewLabel(node->GetViewLabel());
   this->SetBoxVisible(node->GetBoxVisible());
   this->SetFiducialsVisible(node->GetFiducialsVisible());
   this->SetFiducialLabelsVisible(node->GetFiducialLabelsVisible());
@@ -544,11 +415,6 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetRockCount ( node->GetRockCount ( ) );
   this->SetStereoType ( node->GetStereoType ( ) );
   this->SetRenderMode ( node->GetRenderMode() );
-  this->SetBackgroundColor ( node->GetBackgroundColor ( ) );
-  this->SetBackgroundColor2 ( node->GetBackgroundColor2 ( ) );
-  // Important: do not use SetActive or RemoveActiveFlagInScene will be called
-  this->Active = node->GetActive();
-  this->Visibility = node->GetVisibility();
 
   this->EndModify(disabledModify);
 }
@@ -556,12 +422,8 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "ViewLabel: " << (this->ViewLabel ? this->ViewLabel : "(null)") << std::endl;
-  os << indent << "Active:        " << this->Active << "\n";
-  os << indent << "Visibility:        " << this->Visibility << "\n";
   os << indent << "BoxVisible:        " << this->BoxVisible << "\n";
   os << indent << "FiducialsVisible:        " << this->FiducialsVisible << "\n";
   os << indent << "FiducialLabelsVisible:        " << this->FiducialLabelsVisible << "\n";
@@ -579,12 +441,6 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RockCount:       " << this->RockCount << "\n";
   os << indent << "StereoType:       " << this->StereoType << "\n";
   os << indent << "RenderMode:       " << this->RenderMode << "\n";
-  os << indent << "BackgroundColor:       " << this->BackgroundColor[0] << " "
-     << this->BackgroundColor[1] << " "
-     << this->BackgroundColor[2] <<"\n";
-  os << indent << "BackgroundColor2:       " << this->BackgroundColor2[0] << " "
-     << this->BackgroundColor2[1] << " "
-     << this->BackgroundColor2[2] <<"\n";
 }
 
 //------------------------------------------------------------------------------
@@ -604,25 +460,4 @@ double* vtkMRMLViewNode::defaultBackgroundColor2()
                                        0.4705882352941176,
                                        0.7450980392156863};
   return backgroundColor2;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLViewNode::RemoveActiveFlagInScene()
-{
-  if (this->Scene == NULL)
-    {
-    return;
-    }
-
-  vtkMRMLViewNode *node = NULL;
-  int nnodes = this->Scene->GetNumberOfNodesByClass("vtkMRMLViewNode");
-  for (int n=0; n<nnodes; n++)
-    {
-    node = vtkMRMLViewNode::SafeDownCast (
-       this->Scene->GetNthNodeByClass(n, "vtkMRMLViewNode"));
-    if (node != this)
-      {
-      node->SetActive(0);
-      }
-    }
 }

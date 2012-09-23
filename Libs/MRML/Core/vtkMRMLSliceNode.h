@@ -15,9 +15,11 @@
 #ifndef __vtkMRMLSliceNode_h
 #define __vtkMRMLSliceNode_h
 
-#include "vtkMRMLNode.h"
+// MRML includes
+#include "vtkMRMLAbstractViewNode.h"
 class vtkMRMLVolumeNode;
 
+// VTK includes
 class vtkMatrix4x4;
 
 /// \brief MRML node for storing a slice through RAS space.
@@ -26,11 +28,11 @@ class vtkMatrix4x4;
 /// the desired slice plane.
 /// \li SliceToRAS is the matrix that rotates and translates the slice plane
 /// \li FieldOfView tells the size of  slice plane
-class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
 {
   public:
   static vtkMRMLSliceNode *New();
-  vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLSliceNode,vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual vtkMRMLNode* CreateNodeInstance();
@@ -199,26 +201,6 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLNode
   /// Recalculate XYToSlice and XYToRAS in terms or fov, dim, SliceToRAS
   /// - called when any of the inputs change
   void UpdateMatrices();
-
-  /// 
-  /// Name of the layout. Must be unique between all the slice
-  /// nodes because it is used as a singleton tag.
-  /// Must be the same than the slice composite node.
-  /// No name (i.e. "") by default. Typical names are colors:
-  /// "Red", "Green", "Yellow"... to uniquely define the slice node
-  /// \sa vtkMRMLSliceCompositeNode::SetLayoutName
-  void SetLayoutName(const char *layoutName) 
-  {
-    this->SetSingletonTag(layoutName);
-  }
-  char *GetLayoutName() 
-  {
-    return this->GetSingletonTag();
-  }
-
-  /// Label for layout. Usually a 1 character label, e.g. R, 1, 2, etc.
-  vtkSetStringMacro(LayoutLabel);
-  vtkGetStringMacro(LayoutLabel);
 
   /// Color for layout as rgb
   vtkSetVector3Macro(LayoutColor, double);
@@ -416,7 +398,6 @@ protected:
   char *OrientationString;
   char *OrientationReference;
 
-  char * LayoutLabel;
   double LayoutColor[3];
 
   int LayoutGridRows;

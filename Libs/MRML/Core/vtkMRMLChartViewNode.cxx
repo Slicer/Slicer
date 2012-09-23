@@ -1,10 +1,26 @@
+/*=auto=========================================================================
 
-#include <sstream>
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-#include "vtkObjectFactory.h"
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
+  Program:   3D Slicer
+  Module:    $RCSfile: vtkMRMLChartNode.h,v $
+  Date:      $Date: 2006/03/19 17:12:29 $
+  Version:   $Revision: 1.3 $
+
+=========================================================================auto=*/
+
+// MRML includes
 #include "vtkMRMLChartViewNode.h"
 #include "vtkMRMLScene.h"
+
+// VTK includes
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLChartViewNode);
@@ -12,11 +28,9 @@ vtkMRMLNodeNewMacro(vtkMRMLChartViewNode);
 //vtkCxxSetReferenceStringMacro(vtkMRMLChartViewNode, ChartNodeID);
 
 //----------------------------------------------------------------------------
-vtkMRMLChartViewNode::vtkMRMLChartViewNode() : vtkMRMLNode()
+vtkMRMLChartViewNode::vtkMRMLChartViewNode()
 {
   this->ChartNodeID = 0;
-  this->ViewLabel = new char[2];
-  strcpy(this->ViewLabel, "1");
 }
 
 //----------------------------------------------------------------------------
@@ -25,10 +39,6 @@ vtkMRMLChartViewNode::~vtkMRMLChartViewNode()
   if (this->ChartNodeID)
     {
     this->SetChartNodeID(0);
-    }
-  if ( this->ViewLabel )
-    {
-    delete [] this->ViewLabel;
     }
 }
 
@@ -49,14 +59,6 @@ void vtkMRMLChartViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << " chart=\"" << this->ChartNodeID << "\"";
     }
-  if (this->GetViewLabel())
-    {
-    of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
-    }
-  if (this->GetLayoutName() != NULL)
-    {
-    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -72,15 +74,7 @@ void vtkMRMLChartViewNode::ReadXMLAttributes(const char** atts)
     {
     attName = *(atts++);
     attValue = *(atts++);
-    if (!strcmp(attName, "layoutLabel")) 
-      {
-      this->SetViewLabel( attValue );
-      }
-    else if (!strcmp(attName, "layoutName")) 
-      {
-      this->SetLayoutName( attValue );
-      }
-    else if (!strcmp(attName, "chart")) 
+    if (!strcmp(attName, "chart"))
       {
       this->SetChartNodeID(attValue);
       }
@@ -98,9 +92,8 @@ void vtkMRMLChartViewNode::Copy(vtkMRMLNode *anode)
 
   int disabledModify = this->StartModify();
 
-  Superclass::Copy(anode);
+  this->Superclass::Copy(anode);
 
-  this->SetViewLabel(achartviewnode->GetViewLabel());
   this->SetChartNodeID(achartviewnode->GetChartNodeID());
 
   this->EndModify(disabledModify);
@@ -109,10 +102,8 @@ void vtkMRMLChartViewNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLChartViewNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
-  Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "ViewLabel: " << (this->ViewLabel ? this->ViewLabel : "(null)") << std::endl;
   os << indent << "ChartNodeID: " << 
    (this->ChartNodeID ? this->ChartNodeID : "(none)") << "\n";
 }

@@ -53,7 +53,7 @@ public:
   void SetSliceLogics(vtkCollection* sliceLogics);
   vtkCollection* GetSliceLogics()const;
   vtkMRMLSliceLogic* GetSliceLogic(vtkMRMLSliceNode* sliceNode) const;
-  vtkMRMLSliceLogic* GetSliceLogicByLayoutLabel(const char* layoutLabel) const;
+  vtkMRMLSliceLogic* GetSliceLogicByLayoutName(const char* layoutName) const;
 
   /// Get ModelHierarchyLogic
   vtkMRMLModelHierarchyLogic* GetModelHierarchyLogic() const;

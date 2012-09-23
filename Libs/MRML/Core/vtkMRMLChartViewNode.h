@@ -15,16 +15,16 @@
 #ifndef __vtkMRMLChartViewNode_h
 #define __vtkMRMLChartViewNode_h
 
-#include "vtkMRMLNode.h"
+#include "vtkMRMLAbstractViewNode.h"
 
 /// \brief MRML node to represent chart view parameters.
 ///
 /// ChartViewNodes are associated one to one with a ChartWidget.
-class VTK_MRML_EXPORT vtkMRMLChartViewNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLChartViewNode : public vtkMRMLAbstractViewNode
 {
 public:
   static vtkMRMLChartViewNode *New();
-  vtkTypeMacro(vtkMRMLChartViewNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLChartViewNode, vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -50,15 +50,6 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
-  /// 
-  /// Name of the layout
-  void SetLayoutName(const char *layoutName) {
-    this->SetSingletonTag(layoutName);
-  }
-  char *GetLayoutName() {
-    return this->GetSingletonTag();
-  }
-
   ///
   /// Set the Chart node id displayed in this Chart View
   void SetChartNodeID(const char *);
@@ -66,10 +57,6 @@ public:
   ///
   /// Get the Chart node id displayed in this Chart View
   vtkGetStringMacro(ChartNodeID);
-
-  /// Label for the view. Usually a 1 character label, e.g. 1, 2, etc.
-  vtkSetStringMacro(ViewLabel);
-  vtkGetStringMacro(ViewLabel);
 
   /// 
   /// Updates this node if it depends on other nodes 
@@ -94,7 +81,6 @@ protected:
   void operator=(const vtkMRMLChartViewNode&);
 
   char* ChartNodeID;
-  char* ViewLabel;
 };
 
 #endif

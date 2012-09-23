@@ -190,9 +190,9 @@ GetSliceLogic(vtkMRMLSliceNode* sliceNode) const
 
 //---------------------------------------------------------------------------
 vtkMRMLSliceLogic* vtkMRMLApplicationLogic::
-GetSliceLogicByLayoutLabel(const char* layoutLabel) const
+GetSliceLogicByLayoutName(const char* layoutName) const
 {
-  if(!layoutLabel || !this->Internal->SliceLogics)
+  if(!layoutName || !this->Internal->SliceLogics)
     {
     return 0;
     }
@@ -206,7 +206,7 @@ GetSliceLogicByLayoutLabel(const char* layoutLabel) const
     {
     if (logic->GetSliceNode())
       {
-      if ( !strcmp( logic->GetSliceNode()->GetLayoutName(), layoutLabel) )
+      if ( !strcmp( logic->GetSliceNode()->GetLayoutName(), layoutName) )
         {
         break;
         }

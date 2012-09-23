@@ -15,16 +15,18 @@
 #ifndef __vtkMRMLViewNode_h
 #define __vtkMRMLViewNode_h
 
-#include "vtkMRMLNode.h"
+// VTK includes
+#include "vtkMRMLAbstractViewNode.h"
 
-/// \brief MRML node to represent view parameters.
+/// \brief MRML node to represent a 3D view.
 ///
 /// View node contains view parameters.
-class VTK_MRML_EXPORT vtkMRMLViewNode : public vtkMRMLNode
+class VTK_MRML_EXPORT vtkMRMLViewNode
+  : public vtkMRMLAbstractViewNode
 {
 public:
   static vtkMRMLViewNode *New();
-  vtkTypeMacro(vtkMRMLViewNode,vtkMRMLNode);
+  vtkTypeMacro(vtkMRMLViewNode,vtkMRMLAbstractViewNode);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   //--------------------------------------------------------------------------
@@ -41,7 +43,6 @@ public:
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-
   /// 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
@@ -50,29 +51,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
-  ///
-  /// Name of the layout. Must be unique between all the view
-  /// nodes because it is used as a singleton tag.
-  /// No name (i.e. "") by default.
-  /// \sa vtkMRMLSliceNode::SetLayoutName(), SetSingletonTag()
-  inline void SetLayoutName(const char *layoutName);
-  inline const char *GetLayoutName();
-
   /// Return the color the view nodes have for the background by default.
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
-
-  /// 
-  /// Indicates whether or not the view is active
-  vtkGetMacro (Active, int );
-  vtkSetMacro (Active, int );
-
-  /// 
-  /// Indicates whether or not the view is visible (if it is not visible,
-  /// then the view is not shown in any of the view layouts, but can be privately
-  /// used by modules)
-  vtkGetMacro(Visibility, int);
-  vtkSetMacro(Visibility, int);
 
   /// 
   /// Indicates if the box is visible
@@ -106,16 +87,6 @@ public:
   /// Axis label size
   vtkGetMacro(LetterSize, double);
   vtkSetMacro(LetterSize, double);
-
-  /// 
-  /// Background color
-  vtkGetVector3Macro (BackgroundColor, double);
-  vtkSetVector3Macro (BackgroundColor, double);
-
-  /// 
-  /// Background color 2
-  vtkGetVector3Macro (BackgroundColor2, double);
-  vtkSetVector3Macro (BackgroundColor2, double);
 
   /// 
   /// Turn on and off animated spinning or rocking.
@@ -163,10 +134,6 @@ public:
   /// specifies orthographic or perspective rendering
   vtkGetMacro (RenderMode, int );
   vtkSetMacro (RenderMode, int );
-
-  /// Label for the view. Usually a 1 character label, e.g. R, 1, 2, etc.
-  vtkSetStringMacro(ViewLabel);
-  vtkGetStringMacro(ViewLabel);
 
   /// Show FPS in the lower right side of the screen.
   /// 0 by default.
@@ -236,9 +203,7 @@ protected:
   int AxisLabelsCameraDependent;
   double FieldOfView;
   double LetterSize;
-  double BackgroundColor[3];
-  double BackgroundColor2[3];
-  
+
   /// 
   /// parameters of automatic spin
   int AnimationMode;
@@ -269,36 +234,8 @@ protected:
   /// automatic view control
   int ViewAxisMode;
 
-  /// 
-  /// Indicates whether or not the View is active
-  int Active;
-
-  /// 
-  /// Indicates whether or not the View is visible
-  int Visibility;
-
-  /// Label to show for the view (shortcut for the name)
-  char * ViewLabel;
-
   /// Show the Frame per second as text on the lower right part of the view
   int FPSVisible;
-
-  /// 
-  /// When a view is set Active, make other views inactive.
-  virtual void RemoveActiveFlagInScene();
 };
-
-
-//------------------------------------------------------------------------------
-void vtkMRMLViewNode::SetLayoutName(const char *layoutName)
-{
-  this->SetSingletonTag(layoutName);
-}
-
-//------------------------------------------------------------------------------
-const char *vtkMRMLViewNode::GetLayoutName()
-{
-  return this->GetSingletonTag();
-}
 
 #endif

@@ -121,7 +121,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     {
     qMRMLThreeDViewControllerWidget *widget =
       new qMRMLThreeDViewControllerWidget(this->ThreeDViewControllersCollapsibleButton);
-    widget->setViewLabel( vn->GetViewLabel() );
+    widget->setViewLabel( vn->GetLayoutLabel() );
     widget->setMRMLViewNode( vn );
     widget->setLayoutBehavior( qMRMLViewControllerBar::Panel );
     

@@ -257,13 +257,13 @@ QWidget* qMRMLLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceNod
   qMRMLSliceWidget * sliceWidget = new qMRMLSliceWidget(q->viewport());
   sliceWidget->sliceController()->setControllerButtonGroup(this->SliceControllerButtonGroup);
   QString sliceLayoutName(sliceNode->GetLayoutName());
-  QString sliceLayoutLabel(sliceNode->GetLayoutLabel());
+  QString sliceViewLabel(sliceNode->GetLayoutLabel());
   QColor sliceLayoutColor = QColor::fromRgbF(sliceNode->GetLayoutColor()[0],
                                              sliceNode->GetLayoutColor()[1],
                                              sliceNode->GetLayoutColor()[2]);
   sliceWidget->setSliceViewName(sliceLayoutName);
   sliceWidget->setObjectName(QString("qMRMLSliceWidget" + sliceLayoutName));
-  sliceWidget->setSliceViewLabel(sliceLayoutLabel);
+  sliceWidget->setSliceViewLabel(sliceViewLabel);
   sliceWidget->setSliceViewColor(sliceLayoutColor);
   sliceWidget->setMRMLScene(this->MRMLScene);
   sliceWidget->setMRMLSliceNode(sliceNode);
@@ -294,8 +294,8 @@ qMRMLThreeDWidget* qMRMLLayoutManagerPrivate::createThreeDWidget(vtkMRMLViewNode
   Q_ASSERT(!this->threeDWidget(viewNode));
 
   qMRMLThreeDWidget* threeDWidget = new qMRMLThreeDWidget(q->viewport());
-  threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetViewLabel()));
-  threeDWidget->setViewLabel(viewNode->GetViewLabel());
+  threeDWidget->setObjectName(QString("ThreeDWidget%1").arg(viewNode->GetLayoutLabel()));
+  threeDWidget->setViewLabel(viewNode->GetLayoutLabel());
   threeDWidget->setMRMLScene(this->MRMLScene);
   threeDWidget->setMRMLViewNode(viewNode);
 
@@ -324,7 +324,7 @@ qMRMLChartWidget* qMRMLLayoutManagerPrivate::createChartWidget(vtkMRMLChartViewN
   chartWidget = new qMRMLChartWidget(q->viewport());
   QString layoutName(viewNode->GetLayoutName());
   chartWidget->setObjectName(QString("qMRMLChartWidget" + layoutName));
-  chartWidget->setViewLabel(viewNode->GetViewLabel());
+  chartWidget->setViewLabel(viewNode->GetLayoutLabel());
   chartWidget->setColorLogic(this->MRMLColorLogic);
   chartWidget->setMRMLScene(this->MRMLScene);
   chartWidget->setMRMLChartViewNode(viewNode);
