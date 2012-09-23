@@ -30,6 +30,12 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif()
 
+# MRML scenes that are older than MRML_SUPPORT_VERSION won't be supported.
+# Or said differently, MRML_SUPPORT_VERSION is the earliest version supported
+# for a MRML scene.
+set(MRML_SUPPORT_VERSION 0x040000 CACHE STRING "MRML scene version to support " )
+mark_as_advanced(MRML_SUPPORT_VERSION)
+
 # --------------------------------------------------------------------------
 # Include dirs
 # --------------------------------------------------------------------------

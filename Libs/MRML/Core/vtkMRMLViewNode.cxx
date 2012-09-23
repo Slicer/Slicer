@@ -479,6 +479,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         }
       }
     }
+#if MRML_SUPPORT_VERSION < 0x040000
   // Old MRML scene files don't have backgroundColor2 property ( < Slicer 4.0)
   if (!isBackgroundColor2Set)
     {
@@ -486,6 +487,7 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
     this->BackgroundColor2[1] = this->BackgroundColor[1];
     this->BackgroundColor2[2] = this->BackgroundColor[2];
     }
+#endif
   this->EndModify(disabledModify);
 }
 
