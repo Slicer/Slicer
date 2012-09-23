@@ -318,7 +318,7 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
     {
       d->FiberBundleNode->GetScene()->SaveStateForUndo();
       vtkPolyData *FilteredPolyData = vtkPolyData::New();
-      FilteredPolyData->DeepCopy(d->FiberBundleNode->GetPolyData());
+      FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
       d->FiberBundleNode->SetAndObservePolyData(FilteredPolyData);
       FilteredPolyData->Delete();
       d->FiberBundleNode->SetSubsamplingRatio(1);
