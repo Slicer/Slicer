@@ -50,6 +50,14 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName();
 
+  ///
+  /// Name of the layout. Must be unique between all the view
+  /// nodes because it is used as a singleton tag.
+  /// No name (i.e. "") by default.
+  /// \sa vtkMRMLSliceNode::SetLayoutName(), SetSingletonTag()
+  inline void SetLayoutName(const char *layoutName);
+  inline const char *GetLayoutName();
+
   /// Return the color the view nodes have for the background by default.
   static double* defaultBackgroundColor();
   static double* defaultBackgroundColor2();
@@ -279,5 +287,18 @@ protected:
   /// When a view is set Active, make other views inactive.
   virtual void RemoveActiveFlagInScene();
 };
+
+
+//------------------------------------------------------------------------------
+void vtkMRMLViewNode::SetLayoutName(const char *layoutName)
+{
+  this->SetSingletonTag(layoutName);
+}
+
+//------------------------------------------------------------------------------
+const char *vtkMRMLViewNode::GetLayoutName()
+{
+  return this->GetSingletonTag();
+}
 
 #endif

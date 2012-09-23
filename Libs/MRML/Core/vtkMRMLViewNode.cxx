@@ -77,14 +77,18 @@ const char* vtkMRMLViewNode::GetNodeTagName()
 void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
-  Superclass::WriteXML(of, nIndent);
+
+  this->Superclass::WriteXML(of, nIndent);
 
   vtkIndent indent(nIndent);
 
   if (this->GetViewLabel())
     {
     of << indent << " layoutLabel=\"" << this->GetViewLabel() << "\"";
+    }
+  if (this->GetLayoutName())
+    {
+    of << indent << " layoutName=\"" << this->GetLayoutName() << "\"";
     }
 
   of << indent << " active=\"" << (this->Active ? "true" : "false") << "\"";
@@ -212,6 +216,10 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
     if (!strcmp(attName, "layoutLabel")) 
       {
       this->SetViewLabel( attValue );
+      }
+    else if (!strcmp(attName, "layoutName"))
+      {
+      this->SetLayoutName( attValue );
       }
     else if (!strcmp(attName, "fieldOfView")) 
       {
@@ -480,12 +488,28 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
       }
     }
 #if MRML_SUPPORT_VERSION < 0x040000
-  // Old MRML scene files don't have backgroundColor2 property ( < Slicer 4.0)
   if (!isBackgroundColor2Set)
     {
     this->BackgroundColor2[0] = this->BackgroundColor[0];
     this->BackgroundColor2[1] = this->BackgroundColor[1];
     this->BackgroundColor2[2] = this->BackgroundColor[2];
+    }
+#endif
+#if MRML_SUPPORT_VERSION < 0x040200
+  // vtkMRMLViewNodes where not singletons before 4.2
+  if (!this->GetLayoutName() || strlen(this->GetLayoutName()))
+    {
+    const char* layoutName = 0;
+    if (this->GetID() &&
+        strncmp(this->GetID(), this->GetClassName(), strlen(this->GetClassName())) == 0)
+      {
+      layoutName = this->GetID() + strlen(this->GetClassName());
+      }
+    if (!layoutName || strlen(layoutName) == 0)
+      {
+      layoutName = "1";
+      }
+    this->SetLayoutName(layoutName);
     }
 #endif
   this->EndModify(disabledModify);

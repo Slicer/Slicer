@@ -8,6 +8,7 @@
 
 // VTK includes
 #include <vtkCollection.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -15,21 +16,22 @@
 
 int vtkMRMLLayoutLogicTest2(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLLayoutLogic > logic = vtkSmartPointer<vtkMRMLLayoutLogic>::New();
-  EXERCISE_BASIC_OBJECT_METHODS( logic );
+  vtkNew< vtkMRMLLayoutLogic > logic;
+  EXERCISE_BASIC_OBJECT_METHODS( logic.GetPointer() );
 
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   // populate scene with nodes
   vtkSmartPointer<vtkMRMLViewNode> viewNode = vtkSmartPointer<vtkMRMLViewNode>::New();
+  viewNode->SetLayoutName("1");
   scene->AddNode(viewNode);
   vtkSmartPointer<vtkMRMLSliceNode> redSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  redSliceNode->SetSingletonTag("Red");
+  redSliceNode->SetLayoutName("Red");
   scene->AddNode(redSliceNode);
   vtkSmartPointer<vtkMRMLSliceNode> yellowSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  yellowSliceNode->SetSingletonTag("Yellow");
+  yellowSliceNode->SetLayoutName("Yellow");
   scene->AddNode(yellowSliceNode);
   vtkSmartPointer<vtkMRMLSliceNode> greenSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  greenSliceNode->SetSingletonTag("Green");
+  greenSliceNode->SetLayoutName("Green");
   scene->AddNode(greenSliceNode);
   // populate scene with layout
   vtkSmartPointer<vtkMRMLLayoutNode> layout = vtkSmartPointer<vtkMRMLLayoutNode>::New();
@@ -52,11 +54,22 @@ int vtkMRMLLayoutLogicTest2(int , char * [] )
       logic->GetViewNodes()->GetItemAsObject(2) != yellowSliceNode.GetPointer() ||
       logic->GetViewNodes()->GetItemAsObject(3) != greenSliceNode.GetPointer())
     {
-    std::cerr << __LINE__ << " Wrong nodes returned:"
+    std::cerr << __LINE__ << " Wrong nodes returned: "
               << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(0))->GetID() << " "
               << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(1))->GetID() << " "
               << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(2))->GetID() << " "
-              << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(3))->GetID()
+              << vtkMRMLNode::SafeDownCast(logic->GetViewNodes()->GetItemAsObject(3))->GetID() << " "
+              << std::endl << "  instead of :"
+              << viewNode->GetID() << " " << redSliceNode->GetID() << " "
+              << yellowSliceNode->GetID() << " " << greenSliceNode->GetID() << " "
+              << "Pointers: "
+              << logic->GetViewNodes()->GetItemAsObject(0) << " "
+              << logic->GetViewNodes()->GetItemAsObject(1) << " "
+              << logic->GetViewNodes()->GetItemAsObject(2) << " "
+              << logic->GetViewNodes()->GetItemAsObject(3) << " "
+              << std::endl << "  instead of :"
+              << viewNode.GetPointer() << " " << redSliceNode.GetPointer() << " "
+              << yellowSliceNode.GetPointer() << " " << greenSliceNode.GetPointer() << " "
               << std::endl;
     return EXIT_FAILURE;
     }

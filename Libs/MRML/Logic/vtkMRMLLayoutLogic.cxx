@@ -47,7 +47,7 @@
 const char* conventionalView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "    <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
@@ -90,7 +90,7 @@ const char* fourUpView =
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "     <property name=\"viewlabel\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
@@ -119,7 +119,7 @@ const char* fourUpView =
 const char* oneUp3DView =
   "<layout type=\"horizontal\">"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
@@ -158,7 +158,7 @@ const char* oneUpGreenView =
 const char* tabbed3DView =
   "<layout type=\"tab\">"
   " <item multiple=\"true\">"
-  "  <view class=\"vtkMRMLViewNode\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
@@ -179,12 +179,12 @@ const char* dual3DView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "     <property name=\"viewlabel\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
   "     <property name=\"viewlabel\" action=\"default\">2</property>"
   "    </view>"
   "   </item>"
@@ -220,7 +220,7 @@ const char* dual3DView =
 const char* conventionalWidescreenView =
   "<layout type=\"horizontal\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
@@ -254,19 +254,19 @@ const char* conventionalWidescreenView =
 const char* triple3DEndoscopyView =
   "<layout type=\"vertical\" split=\"true\" >"
   " <item>"
-  "  <view class=\"vtkMRMLViewNode\">"
+  "  <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "   <property name=\"viewlabel\" action=\"default\">1</property>"
   "  </view>"
   " </item>"
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
   "     <property name=\"viewlabel\" action=\"default\">2</property>"
   "    </view>"
   "   </item>"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"endoscopy\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"3\" type=\"endoscopy\">"
   "     <property name=\"viewlabel\" action=\"default\">3</property>"
   "    </view>"
   "   </item>"
@@ -333,7 +333,7 @@ const char* fourOverFourView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "     <property name=\"viewlabel\" action=\"default\">1</property>"
   "    </view>"
   "   </item>"
@@ -363,7 +363,7 @@ const char* fourOverFourView =
   " <item>"
   "  <layout type=\"horizontal\">"
   "   <item>"
-  "    <view class=\"vtkMRMLViewNode\" type=\"secondary\">"
+  "    <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
   "     <property name=\"viewlabel\" action=\"default\">2</property>"
   "    </view>"
   "   </item>"
@@ -397,7 +397,7 @@ const char* conventionalQuantitativeView =
   " <item>"
   "   <layout type=\"horizontal\">"
   "     <item>"
-  "      <view class=\"vtkMRMLViewNode\">"
+  "      <view class=\"vtkMRMLViewNode\" singletontag=\"1\">"
   "       <property name=\"viewlabel\" action=\"default\">1</property>"
   "      </view>"
   "     </item>"
@@ -738,7 +738,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     "    </view>"
     "   </item>"
     "   <item>"
-    "    <view class=\"vtkMRMLViewNode\"/>"
+    "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\"/>"
     "   </item>"
     "  </layout>"
     " </item>"
@@ -782,7 +782,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     " <item>"
     "  <layout type=\"vertical\">"
     "   <item>"
-    "    <view class=\"vtkMRMLViewNode\"/>"
+    "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\"/>"
     "   </item>"
     "   <item>"
     "    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
@@ -840,7 +840,7 @@ void vtkMRMLLayoutLogic::UpdateCompareViewLayoutDefinitions()
     "    </view>"
     "   </item>"
     "   <item>"
-    "    <view class=\"vtkMRMLViewNode\"/>"
+    "    <view class=\"vtkMRMLViewNode\" singletontag=\"1\"/>"
     "   </item>"
     "  </layout>"
     " </item>"
@@ -1006,7 +1006,17 @@ vtkMRMLNode* vtkMRMLLayoutLogic::CreateViewFromAttributes(const ViewAttributes& 
     }
   if (className == "vtkMRMLViewNode")
     {
-    node->SetName(this->GetMRMLScene()->GetUniqueNameByString("View"));
+    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(node);
+    it = attributes.find(std::string("singletontag"));
+    if (it != end)
+      {
+      const std::string& singletonTag = it->second;
+      viewNode->SetLayoutName(singletonTag.c_str());
+      }
+    std::string name = std::string("View");
+    name += std::string(viewNode->GetLayoutName());
+    node->SetName(name.c_str());
+    //node->SetName(this->GetMRMLScene()->GetUniqueNameByString("View"));
     }
   else if (className == "vtkMRMLChartViewNode")
     {
@@ -1210,7 +1220,9 @@ vtkCollection* vtkMRMLLayoutLogic::GetViewsFromAttributes(const ViewAttributes& 
       {
       for (;(node = vtkMRMLNode::SafeDownCast(nodes->GetNextItemAsObject(nodesIt)));)
         {
-        if (attributeValue != node->GetSingletonTag())
+        std::string singletonTag =
+          node->GetSingletonTag() ? node->GetSingletonTag() : "";
+        if (attributeValue != singletonTag)
           {
           nodes->RemoveItem(node);
           }
