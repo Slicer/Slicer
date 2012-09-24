@@ -36,6 +36,9 @@
 // MRML includes
 #include <vtkMRMLLinearTransformNode.h>
 
+// VTK includes
+#include <vtkNew.h>
+
 // STL includes
 #include <set>
 
@@ -194,7 +197,8 @@ void qSlicerDataModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 void qSlicerDataModuleWidget::insertTransformNode()
 {
   Q_D(qSlicerDataModuleWidget);
-  vtkMRMLTransformNode* linearTransform = vtkMRMLLinearTransformNode::New();
+  vtkNew<vtkMRMLLinearTransformNode> linearTransform;
+  this->mrmlScene()->AddNode(linearTransform.GetPointer());
 
   vtkMRMLNode* parent = vtkMRMLTransformNode::SafeDownCast(
     d->MRMLTreeView->currentNode());
@@ -202,9 +206,6 @@ void qSlicerDataModuleWidget::insertTransformNode()
     {
     linearTransform->SetAndObserveTransformNodeID( parent->GetID() );
     }
-
-  this->mrmlScene()->AddNode(linearTransform);
-  linearTransform->Delete();
 }
 
 //-----------------------------------------------------------------------------

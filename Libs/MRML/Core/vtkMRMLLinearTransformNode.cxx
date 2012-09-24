@@ -12,14 +12,16 @@ Version:   $Revision: 1.14 $
 
 =========================================================================auto=*/
 
-#include <sstream>
-
-#include "vtkObjectFactory.h"
-#include "vtkCallbackCommand.h"
-#include <vtkGeneralTransform.h>
-
-#include "vtkEventBroker.h"
+// MRML includes
 #include "vtkMRMLLinearTransformNode.h"
+
+// VTK includes
+#include <vtkCommand.h>
+#include <vtkGeneralTransform.h>
+#include <vtkObjectFactory.h>
+
+// STD includes
+#include <sstream>
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLLinearTransformNode);
@@ -296,7 +298,8 @@ void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
 {
   Superclass::ProcessMRMLEvents ( caller, event, callData );
 
-  if (this->MatrixTransformToParent != NULL && this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
+  if (this->MatrixTransformToParent != NULL &&
+      this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
     this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
