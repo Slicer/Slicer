@@ -89,8 +89,7 @@ void vtkMRMLCameraDisplayableManager::Create()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndClose()
 {
-  //this->RemoveCameraObservers();
-  this->SetAndObserveCameraNode(0);
+  this->UpdateCameraNode();
 }
 
 //---------------------------------------------------------------------------
@@ -346,8 +345,9 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
     return;
     }
 
-  // Do I have a camera node?
-  if (this->Internal->CameraNode == 0)
+  // Can I reuse the existing CameraNode ?
+  if (this->Internal->CameraNode == 0 ||
+      this->Internal->CameraNode->GetScene() != this->GetMRMLScene())
     {
     // is there an unasigned camera node?
     if (unassignedCamera != 0)
