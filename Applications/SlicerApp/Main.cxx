@@ -43,24 +43,19 @@
 
 // SlicerApp includes
 #include "qSlicerApplication.h"
+#include "qSlicerApplicationHelper.h"
 #ifdef Slicer_BUILD_CLI_SUPPORT
 # include "qSlicerCLIExecutableModuleFactory.h"
 # include "qSlicerCLILoadableModuleFactory.h"
 #endif
-#include "qSlicerCommandOptions.h"
-#include "qSlicerCoreModuleFactory.h"
-#include "qSlicerLoadableModuleFactory.h"
 #include "qSlicerAppMainWindow.h"
+#include "qSlicerCommandOptions.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerModuleManager.h"
 #include "qSlicerStyle.h"
 
 // VTK includes
 //#include <vtkObject.h>
-
-#ifdef Slicer_USE_PYTHONQT
-# include "qSlicerScriptedLoadableModuleFactory.h"
-#endif
 
 #ifdef Slicer_USE_PYTHONQT
 # include <PythonQtObjectPtr.h>
@@ -120,73 +115,6 @@ void initializePythonConsole(ctkPythonConsole& pythonConsole)
     }
 }
 #endif
-
-//----------------------------------------------------------------------------
-void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager)
-{
-  qSlicerApplication* app = qSlicerApplication::application();
-  // Register module factories
-  moduleFactoryManager->registerFactory(new qSlicerCoreModuleFactory);
-
-// \todo Move the registration somewhere else for reuse.
-  qSlicerCommandOptions* options = qSlicerApplication::application()->commandOptions();
-  if (!options->disableLoadableModules() && !options->runPythonAndExit())
-    {
-    moduleFactoryManager->registerFactory(new qSlicerLoadableModuleFactory);
-    QString loadablePath = app->slicerHome() + "/" + Slicer_QTLOADABLEMODULES_LIB_DIR + "/";
-    moduleFactoryManager->addSearchPath(loadablePath);
-    // On Win32, *both* paths have to be there, since scripts are installed
-    // in the install location, and exec/libs are *automatically* installed
-    // in intDir.
-    moduleFactoryManager->addSearchPath(loadablePath + app->intDir());
-    }
-
-#ifdef Slicer_USE_PYTHONQT
-  if (!options->disableScriptedLoadableModules() &&
-      !qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython) &&
-      !options->runPythonAndExit())
-    {
-    moduleFactoryManager->registerFactory(
-      new qSlicerScriptedLoadableModuleFactory);
-    QString scriptedPath = app->slicerHome() + "/" + Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/";
-    moduleFactoryManager->addSearchPath(scriptedPath);
-    // On Win32, *both* paths have to be there, since scripts are installed
-    // in the install location, and exec/libs are *automatically* installed
-    // in intDir.
-    moduleFactoryManager->addSearchPath(scriptedPath + app->intDir());
-    }
-#endif
-
-  QSettings settings;
-#ifdef Slicer_BUILD_CLI_SUPPORT
-  if (!options->disableCLIModules() && !options->runPythonAndExit())
-    {
-    QString tempDirectory =
-      qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory();
-    bool preferExecutableCLIs =
-      settings.value("Modules/PreferExecutableCLI", false).toBool();
-    moduleFactoryManager->registerFactory(
-      new qSlicerCLILoadableModuleFactory(tempDirectory), preferExecutableCLIs ? 0 : 1);
-    // Option to prefer executable CLIs to limit memory consumption.
-    moduleFactoryManager->registerFactory(
-      new qSlicerCLIExecutableModuleFactory(tempDirectory), preferExecutableCLIs ? 1 : 0);
-    QString cliPath = app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/";
-    moduleFactoryManager->addSearchPath(cliPath);
-    // On Win32, *both* paths have to be there, since scripts are installed
-    // in the install location, and exec/libs are *automatically* installed
-    // in intDir.
-    moduleFactoryManager->addSearchPath(cliPath + app->intDir());
-#ifdef Q_OS_MAC
-    moduleFactoryManager->addSearchPath(app->slicerHome() + "/" + Slicer_CLIMODULES_SUBDIR);
-#endif
-    }
-#endif
-  moduleFactoryManager->addSearchPaths(
-    settings.value("Modules/AdditionalPaths").toStringList());
-  moduleFactoryManager->setModulesToIgnore(
-    settings.value("Modules/IgnoreModules").toStringList());
-  moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
-}
 
 //----------------------------------------------------------------------------
 void showMRMLEventLoggerWidget()
@@ -312,7 +240,7 @@ int SlicerAppMain(int argc, char* argv[])
   qSlicerModuleManager * moduleManager = qSlicerApplication::application()->moduleManager();
   qSlicerModuleFactoryManager * moduleFactoryManager = moduleManager->factoryManager();
   moduleFactoryManager->addSearchPaths(app.commandOptions()->additonalModulePaths());
-  setupModuleFactoryManager(moduleFactoryManager);
+  qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
 
   // Register and instantiate modules
   splashMessage(splashScreen, "Registering modules...");

@@ -112,14 +112,8 @@ add_library(${KIT_LIBRARY_NAME}
 set_target_properties(${KIT_LIBRARY_NAME} PROPERTIES LABELS ${PROJECT_NAME})
 
 set(SlicerApp_LIBRARIES
-  qSlicerModulesCore
+  qSlicerBaseQTApp
   )
-
-if(Slicer_BUILD_CLI_SUPPORT)
-  list(APPEND SlicerApp_LIBRARIES
-    qSlicerBaseQTCLI
-    )
-endif()
 
 target_link_libraries(${KIT_LIBRARY_NAME}
   ${SlicerApp_LIBRARIES}

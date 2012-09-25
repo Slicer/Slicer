@@ -28,6 +28,7 @@ set(Slicer_PYTHON_MODULES_CONFIG "
 'logic',
 'qSlicerBaseQTCorePythonQt',
 'qSlicerBaseQTGUIPythonQt',
+'qSlicerBaseQTAppPythonQt',
 # slicer module
 'modulelogic',
 'modulemrml',

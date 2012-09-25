@@ -815,7 +815,7 @@ include(SlicerMacroBuildModuleWidgets)
 # Slicer Core and GUI library
 #-----------------------------------------------------------------------------
 set(Slicer_CORE_LIBRARY qSlicerBaseQTCore)
-set(Slicer_GUI_LIBRARY qSlicerBaseQTGUI)
+set(Slicer_GUI_LIBRARY qSlicerBaseQTApp)
 
 #-----------------------------------------------------------------------------
 # Applications
