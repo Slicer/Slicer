@@ -76,16 +76,18 @@ class EditorWidget:
     and that we have the volumes loaded
     """
     warned = False
-    sliceLogics = slicer.app.layoutManager().mrmlSliceLogics()
-    for i in xrange(sliceLogics.GetNumberOfItems()):
-      sliceLogic = sliceLogics.GetItemAsObject(i)
-      if sliceLogic:
-        sliceNode = sliceLogic.GetSliceNode()
-        if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
-          if not warned:
-            qt.QMessageBox.warning(slicer.util.mainWindow(), 'Editor', 'The Editor Module is not compatible with slice viewers in light box mode.\nViews are being reset.')
-            warned = True
-          sliceNode.SetLayoutGrid(1,1)
+    layoutManager = slicer.app.layoutManager()
+    if layoutManager != None:
+      sliceLogics = layoutManager.mrmlSliceLogics()
+      for i in xrange(sliceLogics.GetNumberOfItems()):
+        sliceLogic = sliceLogics.GetItemAsObject(i)
+        if sliceLogic:
+          sliceNode = sliceLogic.GetSliceNode()
+          if sliceNode.GetLayoutGridRows() != 1 or sliceNode.GetLayoutGridColumns() != 1:
+            if not warned:
+              qt.QMessageBox.warning(slicer.util.mainWindow(), 'Editor', 'The Editor Module is not compatible with slice viewers in light box mode.\nViews are being reset.')
+              warned = True
+            sliceNode.SetLayoutGrid(1,1)
 
     # get the master and merge nodes from the composite node associated
     # with the red slice, but only if showing volumes
