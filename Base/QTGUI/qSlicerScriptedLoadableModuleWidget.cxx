@@ -130,7 +130,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
 #endif
   if (!pyfile)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "setPythonSource - File" << newPythonSource << "doesn't exist !";
     return false;
     }
@@ -161,12 +161,12 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
 
   if (!classToInstantiate)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModuleWidget::setPythonSource - "
                             "Failed to load scripted pythonqt module class definition"
                             " %1 from %2").arg(classNameToLoad).arg(newPythonSource).toLatin1());
-    PyErr_Print();
+    PythonQt::self()->handleError();
     return false;
     }
 
@@ -179,7 +179,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
         << "- Failed to wrap" << this->metaObject()->className();
     return false;
@@ -193,7 +193,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
   Py_DECREF(arguments);
   if (!self)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
         << " - Failed to instantiate scripted pythonqt class"
         << classNameToLoad << classToInstantiate;
@@ -236,7 +236,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
     return;
     }
   PyObject_CallObject(method, 0);
-  PyErr_Print();
+  PythonQt::self()->handleError();
 }
 
 //-----------------------------------------------------------------------------
@@ -250,7 +250,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
     return;
     }
   PyObject_CallObject(method, 0);
-  PyErr_Print();
+  PythonQt::self()->handleError();
 }
 
 //-----------------------------------------------------------------------------
@@ -264,5 +264,5 @@ void qSlicerScriptedLoadableModuleWidget::exit()
     return;
     }
   PyObject_CallObject(method, 0);
-  PyErr_Print();
+  PythonQt::self()->handleError();
 }

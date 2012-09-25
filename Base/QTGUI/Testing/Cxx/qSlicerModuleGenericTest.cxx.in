@@ -220,6 +220,13 @@ int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+#ifdef Slicer_USE_PYTHONQT
+  if (pythonManager->pythonErrorOccured())
+    {
+    return EXIT_FAILURE;
+    }
+#endif
+
   delete module;
 
   return EXIT_SUCCESS;

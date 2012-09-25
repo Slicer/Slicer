@@ -146,7 +146,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 #endif
   if (!pyfile)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "qSlicerScriptedLoadableModule::setPythonSource - File"
                 << newPythonSource << "doesn't exist !";
     return false;
@@ -177,19 +177,19 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 
   if (!classToInstantiate)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     PyErr_SetString(PyExc_RuntimeError,
                     QString("qSlicerScriptedLoadableModule::setPythonSource - "
                             "Failed to load scripted pythonqt module class definition"
                             " %1 from %2").arg(className).arg(newPythonSource).toLatin1());
-    PyErr_Print();
+    PythonQt::self()->handleError();
     return false;
     }
 
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
         << "- Failed to wrap" << this->metaObject()->className();
     return false;
@@ -203,7 +203,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   Py_DECREF(arguments);
   if (!self)
     {
-    PyErr_Print();
+    PythonQt::self()->handleError();
     qCritical() << "qSlicerScriptedLoadableModuleWidget::setPythonSource" << newPythonSource
                 << "-  Failed to instantiate scripted pythonqt class" << className << classToInstantiate;
     return false;
@@ -237,7 +237,7 @@ void qSlicerScriptedLoadableModule::setup()
     return;
     }
   PyObject_CallObject(method, 0);
-  PyErr_Print();
+  PythonQt::self()->handleError();
 }
 
 //-----------------------------------------------------------------------------
