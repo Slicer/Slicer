@@ -72,7 +72,7 @@ class EditColor(object):
     self.updateParameterNode(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent)
     self.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
 
-    self.frame.connect( 'destroyed(QObject)', self.cleanup)
+    self.frame.connect( 'destroyed()', self.cleanup)
     self.colorSpin.connect( 'valueChanged(int)', self.updateMRMLFromGUI)
     self.colorPatch.connect( 'clicked()', self.showColorBox )
 
