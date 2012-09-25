@@ -1777,8 +1777,8 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_d
   }
 #endif
 
-  int extensionIdOffset = 1;
 #ifdef Slicer_USE_PYTHONQT
+  int extensionIdOffset = 1;
   {
     extensionIdOffset = 0;
     int extensionId = 2;
