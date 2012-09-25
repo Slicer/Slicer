@@ -47,6 +47,7 @@ public:
   QVector<qSlicerModuleFactory*> notFileBasedFactories()const;
 
   QStringList SearchPaths;
+  QStringList ExplicitModules;
   QStringList ModulesToIgnore;
   QMap<QString, QFileInfo> IgnoredModules;
   QMap<qSlicerModuleFactory*, int> Factories;
@@ -178,6 +179,25 @@ QStringList qSlicerAbstractModuleFactoryManager::searchPaths()const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerAbstractModuleFactoryManager::setExplicitModules(const QStringList& moduleNames)
+{
+  Q_D(qSlicerAbstractModuleFactoryManager);
+  if (d->ModulesToIgnore == moduleNames)
+    {
+    return;
+    }
+  d->ExplicitModules = moduleNames;
+  emit explicitModulesChanged(moduleNames);
+}
+
+//-----------------------------------------------------------------------------
+QStringList qSlicerAbstractModuleFactoryManager::explicitModules()const
+{
+  Q_D(const qSlicerAbstractModuleFactoryManager);
+  return d->ExplicitModules;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerAbstractModuleFactoryManager::setModulesToIgnore(const QStringList& moduleNames)
 {
   Q_D(qSlicerAbstractModuleFactoryManager);
@@ -273,6 +293,10 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     // factory.
     //existingModuleFactory->unregisterItem(file);
     dontEmitSignal = true;
+    }
+  if (!d->ExplicitModules.isEmpty() && !d->ExplicitModules.contains(moduleName))
+    {
+    return;
     }
   if (d->ModulesToIgnore.contains(moduleName))
     {

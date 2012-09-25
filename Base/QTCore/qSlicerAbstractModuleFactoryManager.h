@@ -43,16 +43,19 @@ class qSlicerAbstractModuleFactoryManagerPrivate;
 ///   factoryManager->addSearchPath(app->slicerHome() + "/" +  Slicer_QTSCRIPTEDMODULES_LIB_DIR + "/" );
 ///   factoryManager->addSearchPath(app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" );
 ///   ...
-/// 3) Optionally specify module names to ignore
-/// For startup speed-up and memory consummation, it can be useful to not load some modules
-///   factoryManager->setModulesToSkip(QStringList(QString("Data")));
+/// 3) Optionally:
+///    - specify module names to ignore: For startup speed-up and memory consummation,
+///    it can be useful to not load some modules:
+///     factoryManager->setModulesToIgnore(QStringList(QString("Data")));
+///    - specify an explicit list of modules to register/instantiate/load. All other discovered
+///    modules won't be loaded.
 /// 4) scan the directories and test which file is a module and register it (not instantiated yet)
 /// For each file in the search paths, the factory manager asks each registered
 /// factory if they can load the file. If there is a factory that supports the
 /// file, the manager associates the factory to the file path, otherwise the
 /// file is discarded.
 ///   factoryManager->registerModules();
-/// 5) Instantiate all the register modules
+/// 5) Instantiate all the registered modules
 ///   factoryManager->instantiateModules();
 /// 6) Connect each module with the scene and the application
 /// The application logic and the scene are passed to each module.
@@ -122,6 +125,9 @@ public:
   /// Utility function that removes a path to the current \a searchPaths list.
   inline void removeSearchPath(const QString& path);
 
+  void setExplicitModules(const QStringList& moduleNames);
+  QStringList explicitModules()const;
+
   void setModulesToIgnore(const QStringList& modulesNames);
   QStringList modulesToIgnore()const;
 
@@ -173,6 +179,8 @@ signals:
   /// registered factories have been loaded
   void modulesRegistered(const QStringList& moduleNames);
   void moduleRegistered(const QString& moduleName);
+
+  void explicitModulesChanged(const QStringList& moduleNames);
 
   void modulesToIgnoreChanged(const QStringList& moduleNames);
   void moduleIgnored(const QString& moduleName);
