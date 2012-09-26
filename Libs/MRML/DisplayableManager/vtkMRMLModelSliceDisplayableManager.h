@@ -53,6 +53,7 @@ protected:
   vtkMRMLModelSliceDisplayableManager();
   virtual ~vtkMRMLModelSliceDisplayableManager();
 
+  virtual void UnobserveMRMLScene();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   virtual void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData);

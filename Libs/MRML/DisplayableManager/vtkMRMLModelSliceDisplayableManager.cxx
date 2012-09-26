@@ -447,11 +447,10 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 void vtkMRMLModelSliceDisplayableManager::vtkInternal
 ::ClearDisplayableNodes()
 {
-  while(this->DisplayPipelines.size() > 0)
+  while(this->ModelToDisplayNodes.size() > 0)
     {
-    this->RemoveDisplayNode(this->DisplayPipelines.begin()->first);
+    this->External->RemoveDisplayableNode(this->ModelToDisplayNodes.begin()->first);
     }
-  this->ModelToDisplayNodes.clear();
 }
 
 //---------------------------------------------------------------------------
@@ -522,20 +521,25 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
 void vtkMRMLModelSliceDisplayableManager
 ::RemoveDisplayableNode(vtkMRMLDisplayableNode* node)
 {
-  // Remove single DisplayableNode
-
   if (!node)
     {
     return;
     }
+  vtkInternal::ModelToDisplayCacheType::iterator displayableIt =
+    this->Internal->ModelToDisplayNodes.find(node);
+  if(displayableIt == this->Internal->ModelToDisplayNodes.end())
+    {
+    return;
+    }
 
-  std::set<vtkMRMLDisplayNode *> dnodes = this->Internal->ModelToDisplayNodes[node];
+  std::set<vtkMRMLDisplayNode *> dnodes = displayableIt->second;
   std::set<vtkMRMLDisplayNode *>::iterator diter;
-  for ( diter = dnodes.begin(); diter != dnodes.end(); diter++)
+  for ( diter = dnodes.begin(); diter != dnodes.end(); ++diter)
     {
     this->Internal->RemoveDisplayNode(*diter);
     }
   this->Internal->RemoveObservations(node);
+  this->Internal->ModelToDisplayNodes.erase(displayableIt);
 }
 
 //---------------------------------------------------------------------------
@@ -652,6 +656,12 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
       }
     }
   this->RequestRender();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelSliceDisplayableManager::UnobserveMRMLScene()
+{
+  this->Internal->ClearDisplayableNodes();
 }
 
 //---------------------------------------------------------------------------
