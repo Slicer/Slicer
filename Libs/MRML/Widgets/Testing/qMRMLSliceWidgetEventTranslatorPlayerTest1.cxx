@@ -79,10 +79,28 @@ int qMRMLSliceWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   scene->Connect();
 
   vtkMRMLSliceNode* redSliceNode = 0;
+  // search for a red slice node
+  std::vector<vtkMRMLNode*> sliceNodes;
+  scene->GetNodesByClass("vtkMRMLSliceNode", sliceNodes);
+  for (unsigned int i = 0; i < sliceNodes.size(); ++i)
+    {
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes[i]);
+    if (!strcmp(sliceNode->GetLayoutName(), "Red") )
+      {
+      redSliceNode = sliceNode;
+      break;
+      }
+    }
+  if (!redSliceNode)
+    {
+    std::cerr << "Scene must contain a valid vtkMRMLSliceNode:" << redSliceNode << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // "Red" slice by default
   qMRMLSliceWidget sliceWidget;
   sliceWidget.setMRMLScene(scene);
+
   sliceWidget.setMRMLSliceNode(redSliceNode);
 
   etpWidget.addTestCase(&sliceWidget,
