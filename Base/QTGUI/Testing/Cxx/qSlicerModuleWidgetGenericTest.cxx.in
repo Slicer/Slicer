@@ -32,7 +32,7 @@
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerAbstractModuleWidget.h>
 #include <qSlicerApplication.h>
-#ifdef GENERIC_CXX_MODULE_TEST_DEPENDENCIES
+#ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
 # include <qSlicerApplicationHelper.h>
 # include <qSlicerModuleFactoryManager.h>
 # include <qSlicerModuleManager.h>
@@ -58,33 +58,32 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-#ifdef GENERIC_CXX_MODULE_TEST_DEPENDENCIES
-  QStringList moduleDependencies = QString("@GENERIC_CXX_MODULE_TEST_DEPENDENCIES@").split(";");
-
-  qSlicerModuleFactoryManager * moduleFactoryManager = app.moduleManager()->factoryManager();
-  //moduleFactoryManager->addSearchPaths(app.commandOptions()->additonalModulePaths());
-  qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
-  moduleFactoryManager->setExplicitModules(moduleDependencies);
-
-  moduleFactoryManager->registerModules();
-  qDebug() << "Number of registered modules:"
-           << moduleFactoryManager->registeredModuleNames().count();
-
-  moduleFactoryManager->instantiateModules();
-  qDebug() << "Number of instantiated modules:"
-           << moduleFactoryManager->instantiatedModuleNames().count();
-
-  // Load all available modules
-  foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
-    {
-    Q_ASSERT(!name.isNull());
-    qDebug() << "Loading module" << name;
-    moduleFactoryManager->loadModule(name);
-    }
-
-#endif
-
   qSlicer@MODULENAME@Module module(0);
+
+#ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
+  if (!module.dependencies().isEmpty())
+    {
+    qSlicerModuleFactoryManager * moduleFactoryManager = app.moduleManager()->factoryManager();
+    qSlicerApplicationHelper::setupModuleFactoryManager(moduleFactoryManager);
+    moduleFactoryManager->setExplicitModules(module.dependencies());
+
+    moduleFactoryManager->registerModules();
+    qDebug() << "Number of registered modules:"
+             << moduleFactoryManager->registeredModuleNames().count();
+
+    moduleFactoryManager->instantiateModules();
+    qDebug() << "Number of instantiated modules:"
+             << moduleFactoryManager->instantiatedModuleNames().count();
+
+    // Load all available modules
+    foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
+      {
+      Q_ASSERT(!name.isNull());
+      qDebug() << "Loading module" << name;
+      moduleFactoryManager->loadModule(name);
+      }
+    }
+#endif
 
   QString modulePathWithoutIntDir = QLatin1String("@MODULEPATH_WITHOUT_INTDIR@");
   if (!QFile::exists(modulePathWithoutIntDir))

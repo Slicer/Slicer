@@ -18,12 +18,6 @@ macro(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR
     set(MODULETESTS ModuleGenericTest ModuleWidgetGenericTest)
     foreach(MODULETEST ${MODULETESTS})
 
-      set(GENERIC_CXX_MODULE_TEST_DEPENDENCIES "${GENERIC_CXX_MODULE_TEST_${MODULE_NAME}_DEPENDENCIES}")
-
-      if(NOT "${GENERIC_CXX_MODULE_TEST_DEPENDENCIES}" STREQUAL "")
-        add_definitions(-DGENERIC_CXX_MODULE_TEST_DEPENDENCIES)
-      endif()
-
       # Note: the variable MODULENAME is used to configure the different tests.
       set(configured_test_src ${CMAKE_CURRENT_BINARY_DIR}/qSlicer${MODULENAME}${MODULETEST}.cxx)
 
