@@ -456,9 +456,9 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       sliceNode = sliceWidget.mrmlSliceNode()
       interactor = observee.GetInteractor()
       xy = interactor.GetEventPosition()
-      xyz = sliceWidget.convertDeviceToXYZ(xy);
+      xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy);
 
-      ras = sliceWidget.convertXYZToRAS(xyz)
+      ras = sliceWidget.sliceView().convertXYZToRAS(xyz)
       layerLogicCalls = [sliceLogic.GetBackgroundLayer]
       for logicCall in layerLogicCalls:
         layerLogic = logicCall()
