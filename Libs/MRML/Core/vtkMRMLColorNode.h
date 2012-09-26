@@ -32,7 +32,17 @@ class vtkScalarsToColors;
 /// Slicer (the label map colours, some default ramps, a random one) or created by
 /// a user. More than one model or label volume or editor can access the prebuilt
 /// nodes. This is used as a superclass for table based, procedural based, and
-/// implicit function based color nodes
+/// implicit function based color nodes.
+/// All the color names are initialised to \a NoName ("(none)") when the table
+/// is created, using the max index of the colours expected to fill the table
+/// to set the size of the names array. If the node is being read in from a
+/// file, not all of the colours might be present from 0-max, so the colour
+/// name should remain (none) at those indices.
+/// But if the colour node is being built up from colours without names, there
+/// is a method to init the names from the colour RGBA values so that
+/// something would be there rather than the default \a NoName which is used
+/// to determine that it's a unnamed and probably uninitialised colour.
+///
 /// Subclasses must reimplement GetColor() and GetNumberOfColors().
 class VTK_MRML_EXPORT vtkMRMLColorNode : public vtkMRMLStorableNode
 {
@@ -152,8 +162,9 @@ public:
   /// the method if you want it to return something else in subclasses
   virtual vtkScalarsToColors* GetScalarsToColors();
 
-  /// 
   /// get/set the string used for an unnamed colour
+  /// "(none)" by default.
+  /// \sa SetColorName
   vtkGetStringMacro(NoName);
   vtkSetStringMacro(NoName);
 
@@ -177,6 +188,11 @@ protected:
   /// 
   /// Set values in the names vector from the colours in the node
   virtual bool SetNameFromColor(int index);
+
+  /// Return true if the color index has a "real" name, otherwise return false
+  /// if the name is \a NoName (i.e. "(none)") or automatically generated
+  /// (i.e. "R=...G=...B=...").
+  /// \sa GetNoName()
   virtual bool HasNameFromColor(int index);
   
   /// 

@@ -323,8 +323,13 @@ bool vtkMRMLColorNode::SetNameFromColor(int index)
 //---------------------------------------------------------------------------
 bool vtkMRMLColorNode::HasNameFromColor(int index)
 {
+  const char* colorName = this->GetColorName(index);
+  if (colorName && strcmp(colorName, this->GetNoName()) == 0)
+    {
+    return false;
+    }
   std::stringstream ss;
-  ss << this->GetColorName(index);
+  ss << colorName;
   std::string token;
   ss >> token;
   if (token.compare(0,2,"R=") != 0)
