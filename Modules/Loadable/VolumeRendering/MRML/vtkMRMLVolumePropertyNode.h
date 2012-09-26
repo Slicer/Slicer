@@ -24,32 +24,15 @@ class vtkVolumeProperty;
 
 #define COUNT_CROPPING_REGION_PLANES 6
 
-class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode : public vtkMRMLStorableNode
+/// \brief vtkMRMLVolumePropertyNode contains the transfer functions (scalar
+/// opacity, color and gradient opacity) for the volume rendering.
+class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumePropertyNode
+  : public vtkMRMLStorableNode
 {
 public:
   //--------------------------------------------------------------------------
   /// OWN methods
   //--------------------------------------------------------------------------
-
-
-  /// Get a string representation of all points in the piecewise function.
-  /// format: <numberOfPoints> <XValue1> <OpacityValue1>
-  /// ...<XValueN> <OpacityValueN> 
-  std::string GetPiecewiseFunctionString(vtkPiecewiseFunction* function);
-
-  /// Get a string representation of all points in the color transfer function.
-  //format: <numberOfPoints> <XValue1> <RValue1> <GValue1><BValue1> 
-  //...<XValueN> <RValueN> <GValueN><BValueN>
-  std::string GetColorTransferFunctionString(vtkColorTransferFunction* function);
-
-  /// Put parameters described in a String into an existing
-  /// vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
-  void GetPiecewiseFunctionFromString(const std::string& str,vtkPiecewiseFunction* result);
-
-  /// Put parameters described in a String into an existing
-  /// vtkColorTransferFunction, use together with getColorTransferFunctionString
-  void GetColorTransferFunctionFromString(const std::string& str, vtkColorTransferFunction* result);
-
 
   /// Create a new vtkMRMLVolumePropertyNode
   static vtkMRMLVolumePropertyNode *New();
@@ -60,15 +43,77 @@ public:
   /// but use the methods below. It wouldn't observe them.
   vtkGetObjectMacro(VolumeProperty,vtkVolumeProperty);
 
-  /// Set the scalar opacity to the volume property
-  void SetScalarOpacity(vtkPiecewiseFunction* newScalarOpacity, int component = 0);
+  /// Set the scalar opacity to the volume property.
+  /// \sa GetScalarOpacity, GetPiecewiseFunctionString(), SetGradientOpacity(),
+  /// SetColor()
+  void SetScalarOpacity(vtkPiecewiseFunction* newScalarOpacity, int component = 0);\
+  /// Return the scalar opacity function for a given component or 0 if no
+  /// function exists.
+  /// \sa SetScalarOpacity()
+  vtkPiecewiseFunction* GetScalarOpacity(int component = 0);
 
-  /// Set the gradient opacity to the volume property
+  /// Set the gradient opacity to the volume property.
+  /// \sa GetGradientOpacity(), GetPiecewiseFunctionString(),
+  /// SetScalarOpacity(), SetColor()
   void SetGradientOpacity(vtkPiecewiseFunction* newGradientOpacity, int component = 0);
+  /// Return the gradient opacity function for a given component or 0 if no
+  /// function exists.
+  /// \sa SetGradientOpacity()
+  vtkPiecewiseFunction* GetGradientOpacity(int component = 0);
 
-  /// Set the color function to the volume property
+  /// Set the color function to the volume property.
+  /// \sa GetColor(), GetPiecewiseFunctionString(),
+  /// SetScalarOpacity(), SetGradientOpacity()
   void SetColor(vtkColorTransferFunction* newColorFunction, int component = 0);
+  /// Return the color transfer function for a given component or 0 if no
+  /// function exists.
+  /// \sa SetColor()
+  vtkColorTransferFunction* GetColor(int component = 0);
 
+  /// Utility function that transforms a piecewise function into a string.
+  /// Format:
+  /// \verbatim
+  /// <numberOfPoints> <XValue1> <OpacityValue1> ... <XValueN> <OpacityValueN>
+  /// \endverbatim
+  /// \sa GetPiecewiseFunctionFromString(), GetColorTransferFunctionString()
+  static std::string GetPiecewiseFunctionString(vtkPiecewiseFunction* function);
+
+  /// Utility function that transforms a color transfer function into a string.
+  /// Format:
+  /// \verbatim
+  /// <numberOfPoints> <XValue1> <RValue1> <GValue1><BValue1> ... <XValueN> <RValueN> <GValueN><BValueN>
+  /// \endverbatim
+  /// \sa GetColorTransferFunctionFromString(), GetPiecewiseFunctionString()
+  static std::string GetColorTransferFunctionString(vtkColorTransferFunction* function);
+
+  /// Utility function:
+  /// Put parameters described in a string into an existing
+  /// vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
+  /// \sa GetPiecewiseFunctionString(), GetColorTransferFunctionFromString()
+  static void GetPiecewiseFunctionFromString(const std::string& str,
+                                             vtkPiecewiseFunction* result);
+
+  /// Utility function:
+  /// Put parameters described in a string into an existing
+  /// vtkColorTransferFunction, use together with getColorTransferFunctionString
+  /// \sa GetColorTransferFunctionString(), GetPiecewiseFunctionFromString()
+  static void GetColorTransferFunctionFromString(const std::string& str,
+                                                 vtkColorTransferFunction* result);
+
+  /// Utility function:
+  /// Put parameters described in a string into an existing vtkPiecewiseFunction.
+  /// To be used with GetPiecewiseFunctionString()
+  /// \sa GetPiecewiseFunctionString(), GetPiecewiseFunctionFromString()
+  static inline void GetPiecewiseFunctionFromString(const char *str,
+                                                    vtkPiecewiseFunction* result);
+
+  /// Utility function:
+  /// Put parameters described in a string into an existing
+  /// vtkColorTransferFunction.
+  /// To be used with GetColorTransferFunctionString()
+  /// \sa GetColorTransferFunctionFromString()
+  static inline void GetColorTransferFunctionFromString(const char *str,
+                                                        vtkColorTransferFunction* result);
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
@@ -97,18 +142,6 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
-  /// Put parameters described in a String into an existing vtkPiecewiseFunction, use together with GetPiecewiseFunctionString
-  void GetPiecewiseFunctionFromString(char *str,vtkPiecewiseFunction* result) 
-  {
-    this->GetPiecewiseFunctionFromString(std::string (str), result);
-  };
-
-  /// Put parameters described in a String into an existing vtkColorTransferFunction, use together with getColorTransferFunctionString
-  void GetColorTransferFunctionFromString(char *str, vtkColorTransferFunction* result)
-  {
-    GetColorTransferFunctionFromString(std::string (str), result);
-  };
-
   /// \sa vtkMRMLStorableNode::GetModifiedSinceRead()
   virtual bool GetModifiedSinceRead();
 
@@ -134,5 +167,23 @@ private:
   void operator=(const vtkMRMLVolumePropertyNode&);/// Not implmented
 
 };
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumePropertyNode
+::GetPiecewiseFunctionFromString(const char *str,
+                                 vtkPiecewiseFunction* result)
+{
+  vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(
+    std::string(str), result);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLVolumePropertyNode
+::GetColorTransferFunctionFromString(const char *str,
+                                     vtkColorTransferFunction* result)
+{
+  vtkMRMLVolumePropertyNode::GetColorTransferFunctionFromString(
+    std::string (str), result);
+}
 
 #endif

@@ -264,7 +264,7 @@ std::string vtkMRMLVolumePropertyNode
 {
   std::stringstream resultStream;
   double *it = data;
-  //write header
+  // Write header
   resultStream << size;
   for (int i=0; i < size; ++i)
     {
@@ -364,6 +364,13 @@ void vtkMRMLVolumePropertyNode
 }
 
 //---------------------------------------------------------------------------
+vtkPiecewiseFunction* vtkMRMLVolumePropertyNode
+::GetScalarOpacity(int component)
+{
+  return this->VolumeProperty->GetScalarOpacity(component);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode
 ::SetGradientOpacity(vtkPiecewiseFunction* newGradientOpacity, int component)
 {
@@ -378,6 +385,13 @@ void vtkMRMLVolumePropertyNode
 }
 
 //---------------------------------------------------------------------------
+vtkPiecewiseFunction* vtkMRMLVolumePropertyNode
+::GetGradientOpacity(int component)
+{
+  return this->VolumeProperty->GetGradientOpacity(component);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLVolumePropertyNode
 ::SetColor(vtkColorTransferFunction* newColorFunction, int component)
 {
@@ -389,6 +403,13 @@ void vtkMRMLVolumePropertyNode
   vtkObserveMRMLObjectEventsMacro(
     this->VolumeProperty->GetRGBTransferFunction(component),
     this->ObservedEvents);
+}
+
+//---------------------------------------------------------------------------
+vtkColorTransferFunction* vtkMRMLVolumePropertyNode
+::GetColor(int component)
+{
+  return this->VolumeProperty->GetRGBTransferFunction(component);
 }
 
 //---------------------------------------------------------------------------
