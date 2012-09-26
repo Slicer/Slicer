@@ -30,9 +30,6 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 //----------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLVolumeRenderingDisplayNode);
-
-//----------------------------------------------------------------------------
 vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, VolumeNodeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, VolumePropertyNodeID);
 vtkCxxSetReferenceStringMacro(vtkMRMLVolumeRenderingDisplayNode, ROINodeID);

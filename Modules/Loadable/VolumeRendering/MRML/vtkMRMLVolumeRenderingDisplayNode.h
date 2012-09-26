@@ -33,11 +33,8 @@ class VTK_SLICER_VOLUMERENDERING_MODULE_MRML_EXPORT vtkMRMLVolumeRenderingDispla
   : public vtkMRMLDisplayNode
 {
 public:
-  static vtkMRMLVolumeRenderingDisplayNode *New();
   vtkTypeMacro(vtkMRMLVolumeRenderingDisplayNode,vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  virtual vtkMRMLNode* CreateNodeInstance();
 
   /// Set node attributes
   virtual void ReadXMLAttributes( const char** atts);
@@ -47,9 +44,6 @@ public:
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
-
-  /// Get node XML tag name (like Volume, Model)
-  virtual const char* GetNodeTagName() {return "VolumeRendering";};
 
   /// Mark the volume, ROI and volume property nodes as references.
   virtual void SetSceneReferences();
