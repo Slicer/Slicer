@@ -820,6 +820,8 @@ set(Slicer_GUI_LIBRARY qSlicerBaseQTApp)
 #-----------------------------------------------------------------------------
 # Applications
 #-----------------------------------------------------------------------------
+add_subdirectory(Modules/Core)
+add_subdirectory(Base/QTApp)
 add_subdirectory(Modules)
 add_subdirectory(Applications)
 

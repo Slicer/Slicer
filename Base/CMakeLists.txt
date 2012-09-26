@@ -21,4 +21,6 @@ endif()
 if(Slicer_USE_PYTHONQT)
   add_subdirectory(Python)
 endif(Slicer_USE_PYTHONQT)
-add_subdirectory(QTApp)
+
+# Since "QTApp" depends on "Modules/Core", the folder is included in the top-level CMakeLists.txt
+# after "Modules/Core" folder.
