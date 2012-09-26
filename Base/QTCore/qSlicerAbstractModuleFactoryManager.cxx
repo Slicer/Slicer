@@ -52,6 +52,7 @@ public:
   QMap<QString, QFileInfo> IgnoredModules;
   QMap<qSlicerModuleFactory*, int> Factories;
   QMap<QString, qSlicerModuleFactory*> RegisteredModules;
+  QMap<QString, QStringList> ModuleDependees;
 };
 
 //-----------------------------------------------------------------------------
@@ -343,6 +344,14 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager
     {
     qCritical() << "Fail to instantiate module" << moduleName;
     }
+  foreach(const QString& dependency, module->dependencies())
+    {
+    QStringList dependees = d->ModuleDependees.value(dependency);
+    if (!dependees.contains(moduleName))
+      {
+      d->ModuleDependees.insert(dependency, dependees << moduleName);
+      }
+    }
   emit moduleInstantiated(moduleName);
   return module;
 }
@@ -440,4 +449,11 @@ QStringList qSlicerAbstractModuleFactoryManager::dependentModules(const QString&
       }
     }
   return dependents;
+}
+
+//---------------------------------------------------------------------------
+QStringList qSlicerAbstractModuleFactoryManager::moduleDependees(const QString& module)const
+{
+  Q_D(const qSlicerAbstractModuleFactoryManager);
+  return d->ModuleDependees.value(module);
 }

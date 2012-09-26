@@ -171,8 +171,13 @@ public:
 
   /// Return the list of modules that have \a module as a dependency.
   /// Note that the list can contain unloaded modules.
-  /// \sa qSlicerAbstractCoreModule::dependencies()
+  /// \sa qSlicerAbstractCoreModule::dependencies(), moduleDependees()
   QStringList dependentModules(const QString& module)const;
+
+  /// Return the list of modules that depend on \a module.
+  /// Note that the list can contain unloaded modules.
+  /// \sa dependentModules(), qSlicerAbstractCoreModule::dependencies()
+  QStringList moduleDependees(const QString& module)const;
 
 signals:
   /// \brief This signal is emitted when all the modules associated with the
