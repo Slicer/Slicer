@@ -97,25 +97,10 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
     }
 
   vtkMRMLNode* node = this->MRMLScene->CreateNodeByClass( className.c_str() );
-  bool isASceneSnapshotNode = false;
   if (!node)
     {
-    // check to see if it's a renamed node
-    if (className.compare("vtkMRMLSceneSnapshotNode") == 0)
-      {
-      node = this->MRMLScene->CreateNodeByClass("vtkMRMLSceneViewNode");
-      if (!node)
-        {
-        vtkWarningMacro(<< "Failed to create a vtkMRMLSceneViewNode when encountered class name " << className.c_str());
-        return;
-        }
-      isASceneSnapshotNode = true;
-      }
-    else
-      {
-      vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
-      return;
-      }
+    vtkWarningMacro(<< "Failed to CreateNodeByClass: " << className);
+    return;
     }
 
   // It is needed to have the scene root dir set before ReadXMLAttributes is
@@ -128,10 +113,13 @@ void vtkMRMLParser::StartElement(const char* tagName, const char** atts)
 
   // Slicer3 snap shot nodes were hidden by default, show them so that
   // they show up in the tree views
-  if (isASceneSnapshotNode)
+#if MRML_SUPPORT_VERSION < 0x040000
+  if (strcmp(tagName, "SceneSnapshot") == 0)
     {
     node->HideFromEditorsOff();
     }
+#endif
+
   // ID will be set by AddNode
   /*
   if (node->GetID() == NULL) 

@@ -616,7 +616,13 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
     }
   if (!tagName)
     {
-    vtkErrorMacro("RegisterNodeClass: can't register a null tag name for node class " << (node->GetClassName() ? node->GetClassName() : "null"));
+    tagName = node->GetNodeTagName();
+    }
+  if (!tagName)
+    {
+    vtkErrorMacro( << __FUNCTION__
+      << ": can't register a null tag name for node class "
+      << (node->GetClassName() ? node->GetClassName() : "null"));
     return;
     }
   std::string xmlTag(tagName);

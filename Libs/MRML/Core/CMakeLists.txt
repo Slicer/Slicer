@@ -33,7 +33,12 @@ endif()
 # MRML scenes that are older than MRML_SUPPORT_VERSION won't be supported.
 # Or said differently, MRML_SUPPORT_VERSION is the earliest version supported
 # for a MRML scene.
-set(MRML_SUPPORT_VERSION 0x040000 CACHE STRING "MRML scene version to support " )
+# The format is: 0xXXYYZZ where XX is the major version, YY the minor and
+# ZZ the patch version.
+# For example, set MRML_SUPPORT_VERSION to 0x040000 if you don't want to
+# support scenes of Slicer 3.
+# Supports Slicer3 and Slicer4 scenes by default.
+set(MRML_SUPPORT_VERSION 0x030000 CACHE STRING "MRML scene version to support " )
 mark_as_advanced(MRML_SUPPORT_VERSION)
 
 # --------------------------------------------------------------------------

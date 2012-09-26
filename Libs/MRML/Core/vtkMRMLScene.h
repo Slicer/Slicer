@@ -92,17 +92,33 @@ public:
   /// Create node with a given class
   vtkMRMLNode* CreateNodeByClass(const char* className);
 
-  /// Register node class with the Scene so that it can create it from
-  /// a class name
-  /// -- this maintains a registered pointer to the node, so users should Delete()
-  ///    the node after calling this.  The node is Deleted when the scene is destroyed.
-  void RegisterNodeClass(vtkMRMLNode* node);
-  /// Register node class with the Scene so that it can create it from
-  /// a class name
-  /// tagName can be a custom tagName
-  /// -- this maintains a registered pointer to the node, so users should Delete()
-  ///    the node after calling this.  The node is Deleted when the scene is destroyed.
+  /// \brief Register a node class to the scene so that the scene can later
+  /// create the same node type from a tag or a class name.
+  ///
+  /// This is mainly used during scene loading.
+  /// The XML element names are used to instantiate the nodes.
+  ///
+  /// \a node is an instance of the class to instantiate when
+  /// CreateNodeByClass() is called with a corresponding className retrieved
+  /// using GetClassNameByTag().
+  /// \a tagName can be 0 or an XML tag a custom tagName.
+  /// If \a tagName is 0 (default), the \a node GetNodeTagName() is used.
+  /// Otherwise, tagName is used.
+  ///
+  /// The signature with tagName != 0 is useful to add support for
+  /// scene backward compatibility. Calls with an obsolete tag should be
+  /// wrapped with: "#if MRML_SUPPORT_VERSION < 0x0X0Y0Z"/"#endif
+  /// where X is the major version of Slicer scene to support, Y the minor and
+  /// Z the patch version.
+  ///
+  /// \sa CreateNodeByClass(), GetClassNameByTag()
   void RegisterNodeClass(vtkMRMLNode* node, const char* tagName);
+
+  /// Utility function to RegisterNodeClass(), the node tag name is used when
+  /// registering the node.
+  ///
+  /// \sa RegisterNodeClass()
+  void RegisterNodeClass(vtkMRMLNode* node);
 
   /// Add a path to the list.
   const char* GetClassNameByTag(const char *tagName);
