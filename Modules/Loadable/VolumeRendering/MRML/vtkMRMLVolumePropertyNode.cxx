@@ -13,6 +13,7 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <limits>
 #include <sstream>
 
 //----------------------------------------------------------------------------
@@ -266,6 +267,7 @@ std::string vtkMRMLVolumePropertyNode
   double *it = data;
   // Write header
   resultStream << size;
+  resultStream.precision(std::numeric_limits<double>::digits10);
   for (int i=0; i < size; ++i)
     {
     resultStream << " ";
