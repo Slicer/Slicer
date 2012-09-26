@@ -86,7 +86,20 @@ int qSlicerModuleFactoryManager::loadModules()
 //---------------------------------------------------------------------------
 bool qSlicerModuleFactoryManager::loadModule(const QString& name)
 {
+  return this->loadModule(name, QString());
+}
+
+//---------------------------------------------------------------------------
+bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString& dependee)
+{
   Q_D(qSlicerModuleFactoryManager);
+
+  if (dependee.isEmpty()
+      && !this->explicitModules().isEmpty()
+      && !this->explicitModules().contains(name))
+    {
+    return false;
+    }
 
   // A module should be registered when attempting to load it
   if (!this->isRegistered(name) ||
@@ -102,6 +115,8 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name)
     return true;
     }
 
+  qDebug() << "Loading module" << name;
+
   // Instantiate the module if needed
   qSlicerAbstractCoreModule* instance = this->moduleInstance(name);
   if (!instance)
@@ -114,7 +129,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name)
   foreach(const QString& dependency, instance->dependencies())
     {
     // no-op if the module is already loaded
-    bool dependencyLoaded = this->loadModule(dependency);
+    bool dependencyLoaded = this->loadModule(dependency, name);
     if (!dependencyLoaded)
       {
       qWarning() << "When loading module " << name << ", the dependency"

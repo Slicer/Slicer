@@ -101,6 +101,8 @@ signals:
 protected:
   QScopedPointer<qSlicerModuleFactoryManagerPrivate> d_ptr;
 
+  bool loadModule(const QString& name, const QString& dependee);
+
   /// Unload module identified by \a name
   void unloadModule(const QString& name);
 

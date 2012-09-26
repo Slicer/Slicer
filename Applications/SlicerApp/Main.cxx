@@ -264,7 +264,6 @@ int SlicerAppMain(int argc, char* argv[])
   foreach(const QString& name, moduleFactoryManager->instantiatedModuleNames())
     {
     Q_ASSERT(!name.isNull());
-    qDebug() << "Loading module" << name;
     splashMessage(splashScreen, "Loading module \"" + name + "\"...");
     moduleFactoryManager->loadModule(name);
     }

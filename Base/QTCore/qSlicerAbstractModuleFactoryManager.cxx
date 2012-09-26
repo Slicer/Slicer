@@ -294,10 +294,6 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     //existingModuleFactory->unregisterItem(file);
     dontEmitSignal = true;
     }
-  if (!d->ExplicitModules.isEmpty() && !d->ExplicitModules.contains(moduleName))
-    {
-    return;
-    }
   if (d->ModulesToIgnore.contains(moduleName))
     {
     //qDebug() << "Ignore module" << moduleName;
