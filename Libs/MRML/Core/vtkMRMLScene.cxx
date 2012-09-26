@@ -3148,9 +3148,8 @@ vtkURIHandler * vtkMRMLScene::FindURIHandler(const char *URI)
 
 
 //-----------------------------------------------------------------------------
-void
-vtkMRMLScene::
-GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
+void vtkMRMLScene
+::GetReferencedSubScene(vtkMRMLNode *rnode, vtkMRMLScene* newScene)
 {
   //
   // clear scene

@@ -293,11 +293,16 @@ public:
   /// \a node.
   /// The node itself is in first place in the collection. No doublon in the
   /// list.
+  /// For a node to be referenced by another node, the latter must call
+  /// AddReferencedNodeID().
   /// Note that you are responsible for deleting the returned collection.
+  /// \sa GetReferencedSubScene()
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
-  /// Get a sub-scene containing all nodes directly or indirectly reference by
-  /// the input node
+  /// Get a sub-scene containing all nodes directly or indirectly referenced by
+  /// the input node.
+  /// GetReferencedNodes() is internally called.
+  /// \sa AddReferencedNodeID(), GetReferencedNodes()
   void GetReferencedSubScene(vtkMRMLNode *node, vtkMRMLScene* newScene);
 
   /// Return the list of referencing nodes.
