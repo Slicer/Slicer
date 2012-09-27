@@ -153,7 +153,7 @@ QStringList qSlicerCoreCommandOptions::additonalModulePaths()const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return QStringList()
-      << d->ParsedArgs.value("additional-module-path").toStringList()
+      << d->ParsedArgs.value("additional-module-path").toString()
       << d->ParsedArgs.value("additional-module-paths").toStringList();
 }
 
