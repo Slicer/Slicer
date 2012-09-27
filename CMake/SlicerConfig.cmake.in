@@ -342,28 +342,31 @@ set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
 
+#Update CMAKE_MODULE_PATH
+set(CMAKE_MODULE_PATH
+    ${Slicer_CMAKE_DIR}
+    ${Slicer_EXTENSIONS_CMAKE_DIR}
+    ${CMAKE_MODULE_PATH})
+
+set(Slicer_VTK_CMAKE_MODULE_PATH ${VTK_CMAKE_DIR})
+set(Slicer_CTK_CMAKE_MODULE_PATH ${CTK_CMAKE_DIR} ${CTK_CMAKE_UTILITIES_DIR})
+
 # Include external projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})
   find_package(${proj} REQUIRED)
+  if(DEFINED Slicer_${proj}_CMAKE_MODULE_PATH)
+    foreach(path ${Slicer_${proj}_CMAKE_MODULE_PATH})
+      #Add the new project paths to CMAKE_MODULE_PATH
+      set(CMAKE_MODULE_PATH
+        ${path}
+        ${CMAKE_MODULE_PATH})
+    endforeach()
+  endif()
 endforeach()
 
 # This block should be added after VTK and CTK are found.
 # Indeed, it will check if both VTK_QT_QMAKE_EXECUTABLE and CTK_QT_QMAKE_EXECUTABLE are valid.
 include(${Slicer_CMAKE_DIR}/SlicerBlockFindQtAndCheckVersion.cmake)
-
-# --------------------------------------------------------------------------
-# CMake module path
-# --------------------------------------------------------------------------
-
-# Update CMake module path
-set(CMAKE_MODULE_PATH
-  ${Slicer_CMAKE_DIR}
-  ${Slicer_EXTENSIONS_CMAKE_DIR}
-  ${VTK_CMAKE_DIR}
-  ${CTK_CMAKE_DIR}
-  ${CTK_CMAKE_UTILITIES_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
 
 # --------------------------------------------------------------------------
 if(EXISTS "@Slicer_TARGETS_FILE@" AND NOT TARGET SlicerBaseLogic)
