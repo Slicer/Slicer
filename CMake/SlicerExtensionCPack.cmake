@@ -142,5 +142,28 @@ if(APPLE)
   add_subdirectory(${slicer_extension_cpack_bundle_fixup_directory} ${slicer_extension_cpack_bundle_fixup_directory}-binary)
 endif()
 
-include(CPack)
+#-----------------------------------------------------------------------------
+# Set EXTENSION_UPLOAD_ONLY_COMMAND
+set(EXTENSION_UPLOAD_ONLY_COMMAND_ARG_LIST ${EXTENSION_COMMAND_ARG_LIST})
+list(APPEND EXTENSION_UPLOAD_ONLY_COMMAND_ARG_LIST
+  RUN_CTEST_CONFIGURE=FALSE
+  RUN_CTEST_BUILD=FALSE
+  RUN_CTEST_TEST=FALSE
+  RUN_CTEST_PACKAGES=FALSE
+  RUN_CTEST_UPLOAD=TRUE
+  EXTENSION_ARCHITECTURE=${EXTENSION_ARCHITECTURE}
+  EXTENSION_BITNESS=${EXTENSION_BITNESS}
+  EXTENSION_OPERATING_SYSTEM=${EXTENSION_OPERATING_SYSTEM}
+  CPACK_PACKAGE_FILE_NAME=${CPACK_PACKAGE_FILE_NAME}
+  )
+set(script_args "${CTEST_BUILD_CONFIGURATION_COMMAND_ARG}")
+SlicerConvertScriptArgListToCTestFormat("${EXTENSION_UPLOAD_ONLY_COMMAND_ARG_LIST}" script_args)
+set(EXTENSION_UPLOAD_ONLY_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${EXTENSION_SCRIPT},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
 
+add_custom_target(Experimental${target_qualifier}UploadOnly
+  COMMAND ${EXTENSION_UPLOAD_ONLY_COMMAND}
+  COMMENT "Upload extension"
+  )
+
+#-----------------------------------------------------------------------------
+include(CPack)

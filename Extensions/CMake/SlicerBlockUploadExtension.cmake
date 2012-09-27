@@ -43,17 +43,13 @@ set(RUN_CTEST_SUBMIT TRUE)
 
 #-----------------------------------------------------------------------------
 # Prepare external project configuration arguments
-set(script ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUploadExtension.cmake)
-set(script_arg_list
+set(EXTENSION_SCRIPT ${Slicer_EXTENSIONS_CMAKE_DIR}/SlicerBlockBuildPackageAndUploadExtension.cmake)
+set(EXTENSION_COMMAND_ARG_LIST
   CTEST_CMAKE_GENERATOR=${Slicer_EXTENSION_CMAKE_GENERATOR}
   GIT_EXECUTABLE=${GIT_EXECUTABLE}
   Subversion_SVN_EXECUTABLE=${Subversion_SVN_EXECUTABLE}
   CMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
   BUILD_TESTING=${BUILD_TESTING}
-  RUN_CTEST_CONFIGURE=${RUN_CTEST_CONFIGURE}
-  RUN_CTEST_BUILD=${RUN_CTEST_BUILD}
-  RUN_CTEST_TEST=${RUN_CTEST_TEST}
-  RUN_CTEST_PACKAGES=${RUN_CTEST_PACKAGES}
   RUN_CTEST_SUBMIT=${RUN_CTEST_SUBMIT}
   EXTENSION_BUILD_OPTIONS_STRING=${EXTENSION_BITNESS}bits-Qt${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}
   EXTENSION_COMPILER=${EXTENSION_COMPILER}
@@ -79,10 +75,10 @@ set(script_arg_list
   MIDAS_PACKAGE_API_KEY=${MIDAS_PACKAGE_API_KEY}
   )
 if(NOT "${CTEST_MODEL}" STREQUAL "")
-  list(APPEND script_arg_list CTEST_MODEL=${CTEST_MODEL})
+  list(APPEND EXTENSION_COMMAND_ARG_LIST CTEST_MODEL=${CTEST_MODEL})
 endif()
 foreach(dep ${EXTENSION_DEPENDS})
-  list(APPEND script_arg_list ${dep}_DIR=${${dep}_DIR})
+  list(APPEND EXTENSION_COMMAND_ARG_LIST ${dep}_DIR=${${dep}_DIR})
 endforeach()
 
 
@@ -100,25 +96,35 @@ if(CMAKE_CONFIGURATION_TYPES)
 else()
   set(CTEST_BUILD_CONFIGURATION ${CMAKE_BUILD_TYPE})
 endif()
-set(ctest_build_configuration_arg "CTEST_BUILD_CONFIGURATION\#\#${CTEST_BUILD_CONFIGURATION}")
+set(CTEST_BUILD_CONFIGURATION_COMMAND_ARG "CTEST_BUILD_CONFIGURATION\#\#${CTEST_BUILD_CONFIGURATION}")
 
 #-----------------------------------------------------------------------------
 # Set EXTENSION_TEST_COMMAND
-set(script_arg_list_for_test ${script_arg_list})
-list(APPEND script_arg_list_for_test RUN_CTEST_UPLOAD=FALSE)
-set(script_args "${ctest_build_configuration_arg}")
+set(script_arg_list_for_test ${EXTENSION_COMMAND_ARG_LIST})
+list(APPEND script_arg_list_for_test
+  RUN_CTEST_CONFIGURE=${RUN_CTEST_CONFIGURE}
+  RUN_CTEST_BUILD=${RUN_CTEST_BUILD}
+  RUN_CTEST_TEST=${RUN_CTEST_TEST}
+  RUN_CTEST_PACKAGES=${RUN_CTEST_PACKAGES}
+  RUN_CTEST_UPLOAD=FALSE
+  )
+set(script_args "${CTEST_BUILD_CONFIGURATION_COMMAND_ARG}")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_test}" script_args)
-set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
+set(EXTENSION_TEST_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${EXTENSION_SCRIPT},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
 
 #-----------------------------------------------------------------------------
 # Set EXTENSION_UPLOAD_COMMAND
-set(script_arg_list_for_upload ${script_arg_list})
+set(script_arg_list_for_upload ${EXTENSION_COMMAND_ARG_LIST})
 list(APPEND script_arg_list_for_upload
+  RUN_CTEST_CONFIGURE=${RUN_CTEST_CONFIGURE}
+  RUN_CTEST_BUILD=${RUN_CTEST_BUILD}
+  RUN_CTEST_TEST=${RUN_CTEST_TEST}
+  RUN_CTEST_PACKAGES=${RUN_CTEST_PACKAGES}
   RUN_CTEST_UPLOAD=TRUE
   EXTENSION_ARCHITECTURE=${EXTENSION_ARCHITECTURE}
   EXTENSION_BITNESS=${EXTENSION_BITNESS}
   EXTENSION_OPERATING_SYSTEM=${EXTENSION_OPERATING_SYSTEM}
   )
-set(script_args "${ctest_build_configuration_arg}")
+set(script_args "${CTEST_BUILD_CONFIGURATION_COMMAND_ARG}")
 SlicerConvertScriptArgListToCTestFormat("${script_arg_list_for_upload}" script_args)
-set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${script},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
+set(EXTENSION_UPLOAD_COMMAND ${CMAKE_CTEST_COMMAND} -C ${CTEST_BUILD_CONFIGURATION} -S ${EXTENSION_SCRIPT},${script_args} -V${CTEST_EXTRA_VERBOSE_ARG})
