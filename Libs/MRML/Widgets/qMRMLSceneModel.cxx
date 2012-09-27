@@ -110,7 +110,7 @@ QModelIndexList qMRMLSceneModelPrivate::indexes(const QString& nodeID)const
   const int sceneColumnCount = q->columnCount(nodeParentIndex);
   for (int j = 1; j < sceneColumnCount; ++j)
     {
-    nodeIndexes << nodeParentIndex.child(row, j);
+    nodeIndexes << q->index(row, j, nodeParentIndex);
     }
   return nodeIndexes;
 }
@@ -937,13 +937,14 @@ void qMRMLSceneModel::updateNodeFromItem(vtkMRMLNode* node, QStandardItem* item)
  Q_ASSERT(node != this->mrmlNodeFromItem(item->parent()));
 
   QStandardItem* parentItem = item->parent();
+  int columnCount = parentItem ? parentItem->columnCount() : 0;
 
   // Don't do the following if the row is not complete (reparenting an
   // incomplete row might lead to errors). (if there is no child yet for a given
   // column, it will get there next time updateNodeFromItem is called).
   // updateNodeFromItem() is called for every item drag&dropped (we insure that
   // all the indexes of the row are reparented when entering the d&d function
-  for (int i = 0; i < parentItem->columnCount(); ++i)
+  for (int i = 0; i < columnCount; ++i)
     {
     if (parentItem->child(item->row(), i) == 0)
       {
