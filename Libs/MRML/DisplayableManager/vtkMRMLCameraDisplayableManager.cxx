@@ -121,11 +121,28 @@ void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndRestore()
   // by grabbing the first available camera. Sounds like a hack, but
   // too  much time was wasted on this thing.
   vtkMRMLCameraNode *camera_node = this->Internal->CameraNode;
+  vtkMRMLNode *nodeInScene = NULL;
+  if (camera_node)
+    {
+    // camera node is defined but can it be found in the current scene?
+    nodeInScene = this->GetMRMLScene()->GetNodeByID(camera_node->GetID());
+    if (!nodeInScene)
+      {
+      // reset the internal camera node 
+      camera_node = NULL;
+      this->SetAndObserveCameraNode(0);
+      }
+    }
   if (!camera_node)
     {
     camera_node = vtkMRMLCameraNode::SafeDownCast(
         this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
     camera_node->SetActiveTag(this->GetMRMLViewNode()->GetID());
+    // if the internal one needs updating
+    if (!nodeInScene)
+      {
+      this->UpdateCameraNode();
+      }
     }
   else if (!camera_node->GetActiveTag())
     {
@@ -222,10 +239,13 @@ void vtkMRMLCameraDisplayableManager::SetAndObserveCameraNode(vtkMRMLCameraNode 
   // If a camera node already points to me. Do I already have it?
   if (newCameraNode == this->Internal->CameraNode)
     {
-    // I'm already pointing to it
-    vtkDebugMacro("UpdateCamera: CameraNode [" << newCameraNode->GetID()
-                  << "] is already pointing to my ViewNode and I'm observing it - "
-                  << "Internal->CameraNode [" << this->Internal->CameraNode->GetID() << "]");
+    if (newCameraNode)
+      {
+      // I'm already pointing to it
+      vtkDebugMacro("UpdateCamera: CameraNode [" << newCameraNode->GetID()
+                    << "] is already pointing to my ViewNode and I'm observing it - "
+                    << "Internal->CameraNode [" << this->Internal->CameraNode->GetID() << "]");
+      }
     return;
     }
 
@@ -362,14 +382,15 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
       {
       // create one
       unassignedCamera =  vtkMRMLCameraNode::New();
-      vtkDebugMacro("Viewer widget: Created new unassigned CameraNode");
+      vtkDebugMacro("UpdateCamera: Created new unassigned CameraNode");
       unassignedCamera->SetName(
         this->GetMRMLScene()->GetUniqueNameByString(defaultCameraName));
       //this->MRMLScene->GetUniqueNameByString(viewCameraNode->GetNodeTagName()));
       unassignedCamera->SetActiveTag(
         this->GetMRMLViewNode() ? this->GetMRMLViewNode()->GetID() : 0);
-      this->SetAndObserveCameraNode(unassignedCamera);
       this->GetMRMLScene()->AddNode(unassignedCamera);
+      // add node should have triggerd observing it, but do this for sure (it will check that it's not already observing it)
+      this->SetAndObserveCameraNode(unassignedCamera);
       unassignedCamera->Delete();
       }
     }
