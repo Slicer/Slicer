@@ -339,20 +339,20 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager
   if (module)
     {
     module->setName(moduleName);
+    foreach(const QString& dependency, module->dependencies())
+      {
+      QStringList dependees = d->ModuleDependees.value(dependency);
+      if (!dependees.contains(moduleName))
+        {
+        d->ModuleDependees.insert(dependency, dependees << moduleName);
+        }
+      }
+    emit moduleInstantiated(moduleName);
     }
   else
     {
     qCritical() << "Fail to instantiate module" << moduleName;
     }
-  foreach(const QString& dependency, module->dependencies())
-    {
-    QStringList dependees = d->ModuleDependees.value(dependency);
-    if (!dependees.contains(moduleName))
-      {
-      d->ModuleDependees.insert(dependency, dependees << moduleName);
-      }
-    }
-  emit moduleInstantiated(moduleName);
   return module;
 }
 
