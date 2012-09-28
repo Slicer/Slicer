@@ -349,20 +349,22 @@ set(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH}
   )
 
-set(Slicer_VTK_CMAKE_MODULE_PATH ${VTK_CMAKE_DIR})
-set(Slicer_CTK_CMAKE_MODULE_PATH ${CTK_CMAKE_DIR} ${CTK_CMAKE_UTILITIES_DIR})
-
 # Include external projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})
   find_package(${proj} REQUIRED)
-  if(DEFINED Slicer_${proj}_CMAKE_MODULE_PATH)
-    foreach(path ${Slicer_${proj}_CMAKE_MODULE_PATH})
-      # Add the new project path(s) to CMAKE_MODULE_PATH
-      set(CMAKE_MODULE_PATH
-        ${path}
-        ${CMAKE_MODULE_PATH}
-        )
-    endforeach()
+  # Add project CMake dir to module path
+  if(DEFINED ${proj}_CMAKE_DIR)
+    set(CMAKE_MODULE_PATH
+      ${${proj}_CMAKE_DIR}
+      ${CMAKE_MODULE_PATH}
+      )
+  endif()
+  # Add project Utilities/CMake dir to module path
+  if(DEFINED ${proj}_CMAKE_UTILITIES_DIR)
+    set(CMAKE_MODULE_PATH
+      ${${proj}_CMAKE_UTILITIES_DIR}
+      ${CMAKE_MODULE_PATH}
+      )
   endif()
 endforeach()
 
