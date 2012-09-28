@@ -432,7 +432,7 @@ class EndoscopyPathModel:
     model.SetAndObserveDisplayNodeID(modelDisplay.GetID())
 
     # Add to scene
-    modelDisplay.SetPolyData(model.GetPolyData())
+    modelDisplay.SetInputPolyData(model.GetPolyData())
     scene.AddNode(model)
 
     # Camera cursor
@@ -453,7 +453,7 @@ class EndoscopyPathModel:
     cursor.SetAndObserveDisplayNodeID(cursorModelDisplay.GetID())
 
     # Add to scene
-    cursorModelDisplay.SetPolyData(sphere.GetOutput())
+    cursorModelDisplay.SetInputPolyData(sphere.GetOutput())
     scene.AddNode(cursor)
 
     # Create transform node
