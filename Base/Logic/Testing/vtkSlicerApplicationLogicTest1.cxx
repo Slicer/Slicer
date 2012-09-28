@@ -135,6 +135,20 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       row.push_back("1");
       data.push_back(row);
     }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
+      row.push_back("/home/jchris/Projects/Slicer.app/Contents");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("0");
+      data.push_back(row);
+    }
     for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
       {
       std::string filePath(data.at(rowIdx).at(0));

@@ -64,17 +64,7 @@ QStringList qSlicerCorePythonManager::pythonPaths()
   paths << app->slicerHome() + "/" Slicer_BIN_DIR "/" + app->intDir();
   paths << app->slicerHome() + "/" Slicer_BIN_DIR "/Python";
 
-  QSettings* settings = app->settings();
   paths << QSettings().value("Python/AdditionalPythonPaths").toStringList();
-  QStringList extraPaths = settings->value("Modules/AdditionalPaths").toStringList();
-  QStringList newPythonModulePaths;
-  foreach (const QString& s, extraPaths)
-    {
-    QString pythonDir = s;
-    pythonDir.append("/Python");
-    newPythonModulePaths << s;
-    newPythonModulePaths << pythonDir;
-    }
   paths << app->slicerHome() + "/" Slicer_LIB_DIR;
 
 #ifdef Slicer_BUILD_QTLOADABLEMODULES
@@ -133,7 +123,6 @@ QStringList qSlicerCorePythonManager::pythonPaths()
     paths << app->slicerHome() + "/lib/Python" + pythonLibSubDirectory + "/site-packages";
     }
 
-  paths << newPythonModulePaths;
   return paths;
 }
 

@@ -1560,7 +1560,17 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath, co
     return false;
     }
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
-  return itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
+  bool isEmbedded = itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  // On MacOSX extensions are installed in the "Extensions" folder being a sub directory of the
+  // application dir, an extra test is required to make sure the tested filePath
+  // doesn't belong to that "Extensions" folder.
+  if (isEmbedded && extensionPath.find(Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME) != std::string::npos)
+    {
+    isEmbedded = false;
+    }
+#endif
+  return isEmbedded;
 }
 
 //----------------------------------------------------------------------------
