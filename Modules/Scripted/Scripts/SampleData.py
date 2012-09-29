@@ -165,10 +165,20 @@ class SampleDataLogic:
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
     return self.downloadFile(uri, destFolderPath, name)
 
+  def humanFormatSize(self,size):
+    """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
+    for x in ['bytes','KB','MB','GB']:
+      if size < 1024.0 and size > -1024.0:
+        return "%3.1f%s" % (size, x)
+      size /= 1024.0
+    return "%3.1f%s" % (size, 'TB')
+
   def reportHook(self,blocksSoFar,blockSize,totalSize):
     percent = int((100. * blocksSoFar * blockSize) / totalSize)
     if percent == 100 or (percent - self.downloadPercent >= 10):
-      self.logMessage('<i>Downloaded %d blocks of size %d (%d%% of %d total)...</i>' % (blocksSoFar, blockSize, percent, totalSize))
+      humanSizeSoFar = self.humanFormatSize(blocksSoFar * blockSize)
+      humanSizeTotal = self.humanFormatSize(totalSize)
+      self.logMessage('<i>Downloaded %s (%d%% of %s)...</i>' % (humanSizeSoFar, percent, humanSizeTotal))
       self.downloadPercent = percent
 
   def downloadFile(self, uri, destFolderPath, name):
