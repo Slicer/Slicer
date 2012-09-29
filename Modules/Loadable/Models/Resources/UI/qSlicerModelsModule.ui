@@ -24,40 +24,55 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="qMRMLTreeView" name="ModelHierarchyTreeView">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <widget class="ctkExpandableWidget" name="ResizableFrame">
+     <property name="orientations">
+      <set>Qt::Vertical</set>
      </property>
-     <property name="dragDropMode">
-      <enum>QAbstractItemView::InternalMove</enum>
+     <property name="sizeGripInside">
+      <bool>false</bool>
      </property>
-     <property name="selectionMode">
-       <enum>QAbstractItemView::ExtendedSelection</enum>
-     </property>
-     <property name="headerHidden">
-      <bool>true</bool>
-     </property>
-     <property name="sceneModelType">
-      <string>ModelHierarchy</string>
-     </property>
-     <property name="listenNodeModifiedEvent">
-      <bool>true</bool>
-     </property>
-      <property name="renameMenuActionVisible">
-        <bool>false</bool>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <property name="margin">
+       <number>0</number>
       </property>
-      <property name="deleteMenuActionVisible">
-        <bool>false</bool>
-      </property>
-      <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLModelHierarchyNode</string>
-       <string>vtkMRMLModelNode</string>
-      </stringlist>
-     </property>
+      <item>
+       <widget class="qMRMLTreeView" name="ModelHierarchyTreeView">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::InternalMove</enum>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="headerHidden">
+         <bool>true</bool>
+        </property>
+        <property name="sceneModelType">
+         <string>ModelHierarchy</string>
+        </property>
+        <property name="listenNodeModifiedEvent">
+         <bool>true</bool>
+        </property>
+        <property name="nodeTypes">
+         <stringlist>
+          <string>vtkMRMLModelHierarchyNode</string>
+          <string>vtkMRMLModelNode</string>
+         </stringlist>
+        </property>
+        <property name="renameMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="deleteMenuActionVisible">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -190,6 +205,12 @@
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
