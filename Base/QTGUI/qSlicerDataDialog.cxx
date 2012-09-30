@@ -62,11 +62,13 @@ qSlicerDataDialogPrivate::qSlicerDataDialogPrivate(QWidget* _parent)
   headerView->checkableModelHelper()->setPropagateDepth(1);
   // Finally assign the new header to the view
   this->FileWidget->setHorizontalHeader(headerView);
-  
+
   headerView->setStretchLastSection(false);
   headerView->setResizeMode(FileColumn, QHeaderView::Stretch);
   headerView->setResizeMode(TypeColumn, QHeaderView::ResizeToContents);
   headerView->setResizeMode(OptionsColumn, QHeaderView::ResizeToContents);
+
+  this->FileWidget->sortItems(-1, Qt::AscendingOrder);
 
   // Connect the "Options" button with the visibility of the "Options" column.
   connect(this->ShowOptionsCheckBox, SIGNAL(toggled(bool)),
