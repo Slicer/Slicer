@@ -247,12 +247,19 @@ void qSlicerTransformsModuleWidget::transformSelectedNodes()
   QModelIndexList selectedIndexes =
     d->TransformableTreeView->selectionModel()->selectedRows();
   selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
+  // Applying the transform can't be done in the model index loop because
+  // setting the transform invalidates the model indexes.
+  QList<vtkSmartPointer<vtkMRMLTransformableNode> > nodesToTransform;
   foreach(QModelIndex selectedIndex, selectedIndexes)
     {
     vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
     d->TransformableTreeView->sortFilterProxyModel()->
       mrmlNodeFromIndex( selectedIndex ));
     Q_ASSERT(node);
+    nodesToTransform << node;
+    }
+  foreach(vtkSmartPointer<vtkMRMLTransformableNode> node, nodesToTransform)
+    {
     node->SetAndObserveTransformNodeID(d->MRMLTransformNode->GetID());
     }
 }
