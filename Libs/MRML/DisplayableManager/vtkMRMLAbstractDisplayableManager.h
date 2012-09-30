@@ -126,7 +126,9 @@ protected:
   /// or OnMRMLSceneEndImport() if the new scene is valid
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  /// Could be overloaded in DisplayableManager subclass
+  /// ProcessMRMLNodesEvents calls OnMRMLDisplayableNodeModifiedEvent when the
+  /// displayable node (e.g. vtkMRMLSliceNode, vtkMRMLViewNode) is Modified.
+  /// Could be overloaded in DisplayableManager subclass.
   virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
 
   /// \brief Allow to specify additonal events that the DisplayableNode will observe

@@ -307,18 +307,23 @@ void qMRMLThreeDView::resetFocalPoint()
     savedBoxVisibile = d->MRMLViewNode->GetBoxVisible();
     savedAxisLabelVisible = d->MRMLViewNode->GetAxisLabelsVisible();
 
+    int wasModifying = d->MRMLViewNode->StartModify();
     // Hide Box and AxisLabel so they don't get taken into account when computing
     // the view boundaries
     d->MRMLViewNode->SetBoxVisible(0);
     d->MRMLViewNode->SetAxisLabelsVisible(0);
+    d->MRMLViewNode->EndModify(wasModifying);
     }
+  // Superclass resets the camera.
   this->Superclass::resetFocalPoint();
 
   if (d->MRMLViewNode)
     {
     // Restore visibility state
+    int wasModifying = d->MRMLViewNode->StartModify();
     d->MRMLViewNode->SetBoxVisible(savedBoxVisibile);
     d->MRMLViewNode->SetAxisLabelsVisible(savedAxisLabelVisible);
+    d->MRMLViewNode->EndModify(wasModifying);
     // Inform the displayable manager that the view is reset, so it can
     // update the box/labels bounds.
     d->MRMLViewNode->InvokeEvent(vtkMRMLViewNode::ResetFocalPointRequestedEvent);

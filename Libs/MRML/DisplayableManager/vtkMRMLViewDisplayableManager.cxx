@@ -363,9 +363,16 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisVisibility()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxisLabelVisibility()
 {
+  vtkCamera *camera = this->External->GetRenderer() ?
+    this->External->GetRenderer()->GetActiveCamera() : 0;
+  if (!camera ||
+      !this->External->GetMRMLViewNode())
+    {
+    return;
+    }
+
   double orient[] = {-1,1};
   double dir[4];
-  vtkCamera *camera = this->External->GetRenderer()->GetActiveCamera();
   camera->GetDirectionOfProjection(dir);
   vtkMath::Normalize(dir);
 
@@ -440,7 +447,6 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
 
   vtkRenderWindow * renderWindow = this->External->GetRenderer()->GetRenderWindow();
   int stereoType = this->External->GetMRMLViewNode()->GetStereoType();
-  std::cout << "Change stereo" << std::endl;
   if (stereoType == vtkMRMLViewNode::RedBlue)
     {
     renderWindow->SetStereoTypeToRedBlue();
@@ -507,7 +513,7 @@ vtkMRMLViewDisplayableManager::vtkMRMLViewDisplayableManager()
 //---------------------------------------------------------------------------
 vtkMRMLViewDisplayableManager::~vtkMRMLViewDisplayableManager()
 {
-  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, NULL);
+  this->SetAndObserveCameraNode(NULL);
   delete this->Internal;
 }
 
@@ -527,6 +533,8 @@ void vtkMRMLViewDisplayableManager::AdditionalInitializeStep()
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager::Create()
 {
+  this->Superclass::Create();
+
   assert(this->GetRenderer());
   assert(this->GetMRMLViewNode());
 
@@ -540,55 +548,72 @@ void vtkMRMLViewDisplayableManager::Create()
   assert(cameraDisplayableManager);
 
   // Listen for ActiveCameraChangedEvent
+  // \tbd active camera should be set to view node instead and only observing
+  //  view node should be necessary.
   cameraDisplayableManager->AddObserver(vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent,
                                         this->GetWidgetsCallbackCommand());
 
-  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, 
-                                cameraDisplayableManager->GetCameraNode());
+  this->SetAndObserveCameraNode(cameraDisplayableManager->GetCameraNode());
 
+  this->UpdateFromViewNode();
+}
 
-  // If there is a active camera available, it means the vtkMRMLCameraDisplayableManager
-  // has already been created and ActiveCameraChangedEvent already invoked.
-  this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager
+::OnMRMLDisplayableNodeModifiedEvent(vtkObject* vtkNotUsed(caller))
+{
+  this->UpdateFromViewNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::UpdateFromViewNode()
+{
+  this->Internal->UpdateRenderMode();
   this->Internal->UpdateAxisLabelVisibility();
-  this->Superclass::Create();
+  this->Internal->UpdateAxisVisibility();
+  this->Internal->UpdateStereoType();
+  this->Internal->UpdateBackgroundColor();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager
+::SetAndObserveCameraNode(vtkMRMLCameraNode* cameraNode)
+{
+  vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode, cameraNode);
+  this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+  this->UpdateFromCameraNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLViewDisplayableManager::UpdateFromCameraNode()
+{
+  this->Internal->UpdateAxisLabelVisibility();
 }
 
 //---------------------------------------------------------------------------
 void vtkMRMLViewDisplayableManager
 ::ProcessMRMLNodesEvents(vtkObject * caller,
                          unsigned long event,
-                         void *vtkNotUsed(callData))
+                         void * callData)
 {
-  if(vtkMRMLViewNode::SafeDownCast(caller))
+  if (vtkMRMLViewNode::SafeDownCast(caller))
     {
-    if (event == vtkCommand::ModifiedEvent)
-      {
-      this->Internal->UpdateRenderMode();
-      this->Internal->UpdateAxisLabelVisibility();
-      this->Internal->UpdateAxisVisibility();
-      this->Internal->UpdateStereoType();
-      this->Internal->UpdateBackgroundColor();
-      }
-    else if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)
+    if (event == vtkMRMLViewNode::ResetFocalPointRequestedEvent)
       {
       vtkDebugMacro(<< "ProcessMRMLNodesEvents - ResetFocalPointEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       this->Internal->UpdateAxisLabelVisibility();
       }
+    // Note: event == ModifiedEvent is handled by superclass
     }
   else if(vtkMRMLCameraNode::SafeDownCast(caller))
     {
     if (event == vtkCommand::ModifiedEvent)
       {
-      this->Internal->UpdateAxisLabelVisibility();
+      this->UpdateFromCameraNode();
       }
     }
-  // Default MRML Event handler is NOT needed
-//  else
-//    {
-//    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
-//    }
+  this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
@@ -603,11 +628,7 @@ void vtkMRMLViewDisplayableManager
       {
       vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
         vtkMRMLCameraDisplayableManager::SafeDownCast(caller);
-      this->SetAndObserveCameraNode(
-      vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode,
-                                    cameraDisplayableManager->GetCameraNode());
-      vtkDebugMacro(<< "ProcessMRMLNodesEvents - ActiveCameraChangedEvent");
-      this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
+      this->SetAndObserveCameraNode(cameraDisplayableManager->GetCameraNode());
       }
     }
   this->Superclass::ProcessWidgetsEvents(caller, event, callData);

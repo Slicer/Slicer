@@ -23,11 +23,20 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
-
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager : 
-  public vtkMRMLAbstractThreeDViewDisplayableManager
+// MRML includes
+class vtkMRMLCameraNode;
+
+/// \brief Displayable manager that configures a vtkRenderer from a
+/// vtkMRMLViewNode and its associated active vtkMRMLCameraNode.
+/// It essentially configures:
+///  - the axis cube
+///  - the axis labels
+///  - the background colors (gradient)
+/// When the view is rotated, the "closest" axis label is hidden.
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLViewDisplayableManager
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 
 public:
@@ -40,21 +49,39 @@ protected:
   vtkMRMLViewDisplayableManager();
   virtual ~vtkMRMLViewDisplayableManager();
 
+  /// Receives events from the view and the camera nodes.
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
   virtual void ProcessWidgetsEvents(vtkObject *caller, unsigned long event, void *callData);
 
   virtual void AdditionalInitializeStep();
 
+  /// Observe the View node and initialize the renderer accordingly.
   virtual void Create();
-  
+
+  /// Called each time the view node is modified.
+  /// Internally update the renderer from the view node.
+  /// \sa UpdateFromMRMLViewNode()
+  virtual void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller);
+
+  /// Update the renderer from the view node properties.
+  /// \sa UpdateFromCameraNode
+  void UpdateFromViewNode();
+
+  /// Set, Observe and Update from the camera node.
+  /// \sa UpdateFromMRMLCameraNode()
+  void SetAndObserveCameraNode(vtkMRMLCameraNode* cameraNodeToObserve);
+
+  /// Each time the camera is modified, the closest label to the camera is hidden.
+  /// \sa SetAndObserveFromMRMLCameraNode, UpdateFromViewNode()
+  void UpdateFromCameraNode();
+
 private:
 
   vtkMRMLViewDisplayableManager(const vtkMRMLViewDisplayableManager&);// Not implemented
-  void operator=(const vtkMRMLViewDisplayableManager&);                     // Not Implemented
-  
+  void operator=(const vtkMRMLViewDisplayableManager&); // Not Implemented
+
   class vtkInternal;
   vtkInternal * Internal;
-
 };
 
 #endif
