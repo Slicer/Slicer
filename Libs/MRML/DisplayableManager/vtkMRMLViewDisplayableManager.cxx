@@ -210,8 +210,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
 void vtkMRMLViewDisplayableManager::vtkInternal::UpdateAxis(vtkRenderer * renderer,
                                                             vtkMRMLViewNode * viewNode)
 {
-  assert(renderer);
-  if (!renderer->IsActiveCameraCreated() || !viewNode)
+  if (!renderer || !renderer->IsActiveCameraCreated() || !viewNode)
     {
     return;
     }
