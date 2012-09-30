@@ -72,6 +72,12 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// This property controls whether the list auto resize to fit its size
   /// to show the number indexes without scrollbar.
   Q_PROPERTY(bool fitSizeToVisibleIndexes READ fitSizeToVisibleIndexes WRITE setFitSizeToVisibleIndexes)
+  /// This property controls the minimum size of (minimum)sizeHint.
+  /// When fitSizeToVisibleIndexes is true, the default size can be small if the
+  /// contains few nodes. Setting \a minSizeHint ensures a minimum size of the
+  /// tree minimumSizeHint and sizeHint properties.
+  /// \sa fitSizeToVisibleIndexes
+  Q_PROPERTY(QSize minSizeHint READ minSizeHint WRITE setMinSizeHint)
   /// This property controls whether the "Rename" context menu entry is visible
   /// Visible by default
   /// \sa deleteMenuActionVisible, editMenuActionVisible, prependNodeMenuAction()
@@ -175,8 +181,11 @@ public:
 
   /// When true, the tree widget resize itself so that
   /// it's sizeHint is right for the visible indexes
-  bool fitSizeToVisibleIndexes()const;
   void setFitSizeToVisibleIndexes(bool);
+  bool fitSizeToVisibleIndexes()const;
+
+  void setMinSizeHint(QSize min);
+  QSize minSizeHint()const;
 
   /// Return true if \a potentialAncestor is an ancestor
   /// of index

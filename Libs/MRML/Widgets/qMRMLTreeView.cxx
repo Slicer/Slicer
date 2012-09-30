@@ -51,6 +51,7 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->SortFilterModel = 0;
   this->FitSizeToVisibleIndexes = true;
   this->TreeViewSizeHint = QSize();
+  this->TreeViewMinSizeHint = QSize(120, 120);
   this->NodeMenu = 0;
   this->RenameAction = 0;
   this->DeleteAction = 0;
@@ -67,6 +68,7 @@ void qMRMLTreeViewPrivate::init()
 {
   Q_Q(qMRMLTreeView);
 
+  q->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding));
   q->setItemDelegate(new qMRMLItemDelegate(q));
   q->setAutoScrollMargin(32); // scroll hot area sensitivity
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
@@ -200,7 +202,6 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
     {
     ++visibleIndexCount;
     }
-
   this->TreeViewSizeHint = q->QTreeView::sizeHint();
   this->TreeViewSizeHint.setHeight(
     q->frameWidth()
@@ -210,6 +211,8 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
     + q->frameWidth());
   // Add half a line to give some space under the tree
   this->TreeViewSizeHint.rheight() += q->sizeHintForRow(0) / 2;
+  this->TreeViewSizeHint =
+    this->TreeViewSizeHint.expandedTo(this->TreeViewMinSizeHint);
   return this->TreeViewSizeHint;
 }
 
@@ -551,6 +554,21 @@ bool qMRMLTreeView::fitSizeToVisibleIndexes()const
 {
   Q_D(const qMRMLTreeView);
   return d->FitSizeToVisibleIndexes;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setMinSizeHint(QSize min)
+{
+  Q_D(qMRMLTreeView);
+  d->TreeViewMinSizeHint = min;
+  d->recomputeSizeHint();
+}
+
+//--------------------------------------------------------------------------
+QSize qMRMLTreeView::minSizeHint()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->TreeViewMinSizeHint;
 }
 
 //------------------------------------------------------------------------------

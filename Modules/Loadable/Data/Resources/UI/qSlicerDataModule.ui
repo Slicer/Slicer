@@ -29,7 +29,7 @@
       </property>
       <item row="0" column="0">
        <widget class="qMRMLTreeView" name="MRMLTreeView">
-        <property name="minimumSize">
+        <property name="minSizeHint">
          <size>
           <width>0</width>
           <height>120</height>

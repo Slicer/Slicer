@@ -50,6 +50,7 @@ public:
   QString                    SceneModelType;
   bool                       FitSizeToVisibleIndexes;
   mutable QSize              TreeViewSizeHint;
+  QSize                      TreeViewMinSizeHint;
 
   QMenu*                     NodeMenu;
   QAction*                   RenameAction;
