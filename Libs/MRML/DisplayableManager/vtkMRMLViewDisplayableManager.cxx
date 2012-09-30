@@ -601,6 +601,11 @@ void vtkMRMLViewDisplayableManager
     {
     if (event == vtkMRMLCameraDisplayableManager::ActiveCameraChangedEvent)
       {
+      vtkMRMLCameraDisplayableManager* cameraDisplayableManager =
+        vtkMRMLCameraDisplayableManager::SafeDownCast(caller);
+      this->SetAndObserveCameraNode(
+      vtkSetAndObserveMRMLNodeMacro(this->Internal->CameraNode,
+                                    cameraDisplayableManager->GetCameraNode());
       vtkDebugMacro(<< "ProcessMRMLNodesEvents - ActiveCameraChangedEvent");
       this->Internal->UpdateAxis(this->GetRenderer(), this->GetMRMLViewNode());
       }
