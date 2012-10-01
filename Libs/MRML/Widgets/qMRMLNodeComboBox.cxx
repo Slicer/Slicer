@@ -787,6 +787,22 @@ bool qMRMLNodeComboBox::renameEnabled()const
 }
 
 //--------------------------------------------------------------------------
+QList<vtkMRMLNode*> qMRMLNodeComboBox::nodes()const
+{
+  QList<vtkMRMLNode*> nodeList;
+  for (int i = 0; i < this->nodeCount(); ++i)
+    {
+    vtkMRMLNode* node = this->nodeFromIndex(i);
+    Q_ASSERT(node);
+    if (node)
+      {
+      nodeList << node;
+      }
+    }
+  return nodeList;
+}
+
+//--------------------------------------------------------------------------
 qMRMLSortFilterProxyModel* qMRMLNodeComboBox::sortFilterProxyModel()const
 {
   Q_ASSERT(qobject_cast<qMRMLSortFilterProxyModel*>(this->model()));
@@ -798,6 +814,13 @@ QAbstractItemModel* qMRMLNodeComboBox::model()const
 {
   Q_D(const qMRMLNodeComboBox);
   return d->ComboBox ? d->ComboBox->model() : 0;
+}
+
+//--------------------------------------------------------------------------
+qMRMLSceneModel* qMRMLNodeComboBox::sceneModel()const
+{
+  Q_ASSERT(this->sortFilterProxyModel());
+  return this->sortFilterProxyModel()->sceneModel();
 }
 
 //--------------------------------------------------------------------------

@@ -29,6 +29,7 @@
 #include "qMRMLWidgetsExport.h"
 class qMRMLNodeFactory;
 class qMRMLNodeComboBoxPrivate;
+class qMRMLSceneModel;
 
 // VTK includes
 class vtkMRMLNode;
@@ -81,10 +82,6 @@ public:
   /// by default (0).
   /// \sa setMRMLScene
   vtkMRMLScene* mrmlScene()const;
-
-  /// Retrieve the sortFilterProxyModel used to filter/sort
-  /// the nodes.
-  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
@@ -179,9 +176,25 @@ public:
   bool renameEnabled()const;
   void setRenameEnabled(bool enable);
 
-  /// Internal model associated to the combobox
+  /// Return a list of all the nodes that are displayed in the combo box.
+  QList<vtkMRMLNode*> nodes()const;
+
+  /// Internal model associated to the combobox.
+  /// It is usually not the scene model but the sort filter proxy model.
+  /// \sa sortFilterProxyModel(), sceneModel()
   QAbstractItemModel* model()const;
-  
+
+  /// Retrieve the sortFilterProxyModel used to filter/sort
+  /// the nodes.
+  /// \sa sceneModel()
+  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
+
+  /// Retrieve the scene model internally used.
+  /// The scene model is usually not used directly, but a sortFilterProxyModel
+  /// is plugged in.
+  /// \sa sortFilterProxyModel()
+  qMRMLSceneModel* sceneModel()const;
+
   /// Return the node factory used to create nodes when "Add Node"
   /// is selected (property \a AddEnabled should be true).
   /// A typical use would be to connect the node factory signal

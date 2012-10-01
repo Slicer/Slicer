@@ -31,7 +31,8 @@ qMRMLCheckableNodeComboBoxPlugin
 //-----------------------------------------------------------------------------
 QWidget *qMRMLCheckableNodeComboBoxPlugin::createWidget(QWidget *parentWidget)
 {
-  qMRMLCheckableNodeComboBox* widget = new qMRMLCheckableNodeComboBox(parentWidget);
+  qMRMLCheckableNodeComboBox* widget =
+    new qMRMLCheckableNodeComboBox(parentWidget);
   return widget;
 }
 

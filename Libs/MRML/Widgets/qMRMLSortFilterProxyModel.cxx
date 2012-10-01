@@ -374,3 +374,9 @@ QStringList qMRMLSortFilterProxyModel::hiddenNodeIDs()const
   Q_D(const qMRMLSortFilterProxyModel);
   return d->HiddenNodeIDs;
 }
+
+// --------------------------------------------------------------------------
+qMRMLSceneModel* qMRMLSortFilterProxyModel::sceneModel()const
+{
+  return qobject_cast<qMRMLSceneModel*>(this->sourceModel());
+}

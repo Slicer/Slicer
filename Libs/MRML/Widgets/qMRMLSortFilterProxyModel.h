@@ -24,6 +24,7 @@
 // Qt includes
 #include <QSortFilterProxyModel>
 #include <QStringList>
+class QStandardItem;
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -34,8 +35,8 @@
 class vtkMRMLNode;
 class vtkMRMLScene;
 class qMRMLAbstractItemHelper;
+class qMRMLSceneModel;
 class qMRMLSortFilterProxyModelPrivate;
-class QStandardItem;
 
 /// Filter nodes based on their types and attributes
 /// Support filtering QSortFilterProxyModel::filterRegExp
@@ -132,6 +133,9 @@ public:
 
   void setHiddenNodeIDs(const QStringList& nodeIDsToHide);
   QStringList hiddenNodeIDs()const;
+
+  /// Return the scene model used as input if any.
+  qMRMLSceneModel* sceneModel()const;
 
 public slots:
    void setShowHidden(bool);

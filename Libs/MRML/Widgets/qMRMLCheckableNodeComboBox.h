@@ -41,7 +41,12 @@ public:
   virtual ~qMRMLCheckableNodeComboBox();
 
   /// Return the list of checked nodes.
+  /// \sa uncheckedNodes(), nodes()
   QList<vtkMRMLNode*> checkedNodes()const;
+
+  /// Return the list of unchecked nodes.
+  /// \sa checkedNodes(), nodes()
+  QList<vtkMRMLNode*> uncheckedNodes()const;
 
   /// Return true if all the nodes are checked.
   /// If empty, return true;
@@ -56,6 +61,10 @@ public:
   /// Qt::Unchecked is returned.
   Qt::CheckState checkState(vtkMRMLNode* node)const;
   void setCheckState(vtkMRMLNode* node, Qt::CheckState check);
+
+  /// Set the node item as user checkable or not.
+  /// By default, the items are user checkable.
+  void setUserCheckable(vtkMRMLNode* node, bool userCheckable);
 
 public slots:
   /// Set the check state of the node to Qt::Checked.

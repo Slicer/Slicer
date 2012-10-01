@@ -98,10 +98,16 @@ public:
   virtual ~qMRMLSceneModel();
 
   enum ItemDataRole{
+    /// Unique ID of the item. For nodes, it is the node ID.
     UIDRole = Qt::UserRole + 1,
+    /// Pointer (as long long) of the item if it is a scene or a node.
     PointerRole,
+    /// Map (QMap<QString, QVariant>) for parent items of extra items.
     ExtraItemsRole,
+    /// Integer that contains the visibility property of a node.
+    /// It is closely related to the item icon.
     VisibilityRole,
+    /// Must stay the last enum in the list.
     LastRole
     };
 
