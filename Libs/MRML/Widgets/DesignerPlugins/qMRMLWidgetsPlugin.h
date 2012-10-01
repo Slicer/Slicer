@@ -31,6 +31,7 @@
 #include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLColorTableViewPlugin.h"
+#include "qMRMLDisplayNodeViewComboBoxPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLEventBrokerWidgetPlugin.h"
 #include "qMRMLLabelComboBoxPlugin.h"
@@ -75,6 +76,7 @@ public:
             << new qMRMLColorTableComboBoxPlugin
             << new qMRMLColorTableViewPlugin
             << new qMRMLColorTableViewPlugin
+            << new qMRMLDisplayNodeViewComboBoxPlugin
             << new qMRMLDisplayNodeWidgetPlugin
             << new qMRMLEventBrokerWidgetPlugin
             << new qMRMLLabelComboBoxPlugin

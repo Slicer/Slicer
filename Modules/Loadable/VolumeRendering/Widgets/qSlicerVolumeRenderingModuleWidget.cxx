@@ -119,9 +119,6 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   QObject::connect(this->VolumePropertyNodeComboBox,
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode*)));
-  QObject::connect(this->ViewCheckableNodeComboBox,
-                   SIGNAL(checkedNodesChanged()),
-                   q, SLOT(onCheckedViewNodesChanged()));
 
   // Rendering
   QObject::connect(this->ROICropCheckBox,
@@ -250,16 +247,9 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
     this->IgnoreVolumesThresholdCheckBox->isChecked());
   bool wasLastVolumeVisible = this->VisibilityCheckBox->isChecked();
   displayNode->SetVisibility(wasLastVolumeVisible);
-  foreach (vtkMRMLViewNode* viewNode, q->mrmlViewNodes())
+  foreach (vtkMRMLViewNode* viewNode,
+           this->ViewCheckableNodeComboBox->checkedViewNodes())
     {
-    displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
-    }
-  // Have at list 1 view node
-  if (q->mrmlViewNodes().size() == 0)
-    {
-    // find the fist view node in the scene
-    vtkMRMLViewNode* viewNode = vtkMRMLViewNode::SafeDownCast(
-      q->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLViewNode"));
     displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
     }
   displayNode->EndModify(wasModifying);
@@ -444,24 +434,6 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
 
-  // We don't want to update ViewCheckableNodeComboBox if it's checked nodes
-  // are good. Otherwise it would lead to an inconsistent state.
-  if (d->DisplayNode &&
-      !((d->DisplayNode->GetNumberOfViewNodeIDs() == 0 ||
-         d->DisplayNode->GetNumberOfViewNodeIDs() == d->ViewCheckableNodeComboBox->nodeCount())&&
-        (d->ViewCheckableNodeComboBox->allChecked() ||
-         d->ViewCheckableNodeComboBox->noneChecked())))
-    {
-    for (int i = 0; i < d->ViewCheckableNodeComboBox->nodeCount(); ++i)
-      {
-      vtkMRMLNode* view = d->ViewCheckableNodeComboBox->nodeFromIndex(i);
-      Q_ASSERT(view);
-      d->ViewCheckableNodeComboBox->setCheckState(
-        view,
-        d->DisplayNode && d->DisplayNode->IsViewNodeIDPresent(view->GetID()) ? Qt::Checked : Qt::Unchecked);
-      }
-    }
-
   // set display node from current GUI state
   this->setMRMLVolumePropertyNode(
     d->DisplayNode ? d->DisplayNode->GetVolumePropertyNode() : 0);
@@ -515,48 +487,10 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
 }
 
 // --------------------------------------------------------------------------
-QList<vtkMRMLViewNode*> qSlicerVolumeRenderingModuleWidget::mrmlViewNodes()const
-{
-  Q_D(const qSlicerVolumeRenderingModuleWidget);
-  QList<vtkMRMLViewNode*> res;
-  foreach(vtkMRMLNode* checkedNode, d->ViewCheckableNodeComboBox->checkedNodes())
-    {
-    res << vtkMRMLViewNode::SafeDownCast(checkedNode);
-    }
-  return res;
-}
-// --------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidget::addVolumeIntoView(vtkMRMLNode* viewNode)
 {
   Q_D(qSlicerVolumeRenderingModuleWidget);
   d->ViewCheckableNodeComboBox->check(viewNode);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerVolumeRenderingModuleWidget::onCheckedViewNodesChanged()
-{
-  Q_D(qSlicerVolumeRenderingModuleWidget);
-
-  // set view in the currently selected display node
-  vtkMRMLVolumeRenderingDisplayNode* displayNode = this->mrmlDisplayNode();
-  if (!displayNode)
-    {
-    return;
-    }
-
-  int wasModifying = displayNode->StartModify();
-
-  displayNode->RemoveAllViewNodeIDs();
-  if (!d->ViewCheckableNodeComboBox->allChecked() &&
-      !d->ViewCheckableNodeComboBox->noneChecked())
-    {
-    foreach (vtkMRMLViewNode* viewNode, this->mrmlViewNodes())
-      {
-      displayNode->AddViewNodeID(viewNode ? viewNode->GetID() : 0);
-      }
-    }
-
-  displayNode->EndModify(wasModifying);
 }
 
 // --------------------------------------------------------------------------

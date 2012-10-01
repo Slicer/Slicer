@@ -53,7 +53,6 @@ public:
   vtkMRMLVolumeRenderingDisplayNode* mrmlDisplayNode()const;
   vtkMRMLAnnotationROINode* mrmlROINode()const;
   vtkMRMLVolumePropertyNode* mrmlVolumePropertyNode()const;
-  QList<vtkMRMLViewNode*> mrmlViewNodes()const;
 
   void addRenderingMethodWidget(const QString& methodClassName,
                                 qSlicerVolumeRenderingPropertiesWidget* widget);
@@ -83,7 +82,6 @@ protected slots:
   void onCurrentMRMLDisplayNodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLROINodeChanged(vtkMRMLNode* node);
   void onCurrentMRMLVolumePropertyNodeChanged(vtkMRMLNode* node);
-  void onCheckedViewNodesChanged();
 
   void onCurrentRenderingMethodChanged(int index);
   void onCurrentMemorySizeChanged(int index);

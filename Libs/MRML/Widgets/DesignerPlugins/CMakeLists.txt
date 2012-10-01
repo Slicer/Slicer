@@ -29,6 +29,8 @@ set(${KIT}_SRCS
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.cxx
   qMRMLColorTableViewPlugin.h
+  qMRMLDisplayNodeViewComboBoxPlugin.cxx
+  qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.cxx
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.cxx
@@ -90,6 +92,7 @@ set(${KIT}_MOC_SRCS
   qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.h
+  qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.h
   qMRMLLabelComboBoxPlugin.h

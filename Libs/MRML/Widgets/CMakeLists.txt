@@ -62,6 +62,8 @@ set(MRMLWidgets_SRCS
   qMRMLColorTableView.h
   qMRMLDisplayNodeWidget.cxx
   qMRMLDisplayNodeWidget.h
+  qMRMLDisplayNodeViewComboBox.cxx
+  qMRMLDisplayNodeViewComboBox.h
   qMRMLLabelComboBox.h
   qMRMLLabelComboBox.cxx
   qMRMLEventBrokerConnection.cxx
@@ -185,6 +187,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.h
   qMRMLColorModel.h
+  qMRMLDisplayNodeViewComboBox.h
   qMRMLDisplayNodeWidget.h
   qMRMLEventBrokerConnection.h
   qMRMLEventBrokerWidget.h

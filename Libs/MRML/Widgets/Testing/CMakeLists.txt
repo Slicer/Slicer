@@ -13,6 +13,7 @@ set(TEST_SOURCES
   qMRMLColorPickerWidgetTest3.cxx
   qMRMLColorTableComboBoxTest1.cxx
   qMRMLColorTableViewTest1.cxx
+  qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLDisplayNodeWidgetTest1.cxx
   qMRMLLayoutManagerTest1.cxx
   qMRMLLayoutManagerTest2.cxx
@@ -111,6 +112,7 @@ QT4_WRAP_CPP(Tests_MOC_CXX ${Tests_MOC_SRCS})
 QT4_GENERATE_MOCS(
   qMRMLCheckableNodeComboBoxTest.cxx
   qMRMLColorModelTest.cxx
+  qMRMLDisplayNodeViewComboBoxTest.cxx
   qMRMLLabelComboBoxTest.cxx
   qMRMLSceneModelTest.cxx
   qMRMLSliceControllerWidgetTest.cxx
@@ -139,6 +141,7 @@ SIMPLE_TEST( qMRMLColorPickerWidgetTest2 )
 SIMPLE_TEST( qMRMLColorPickerWidgetTest3 )
 SIMPLE_TEST( qMRMLColorTableComboBoxTest1 )
 SIMPLE_TEST( qMRMLColorTableViewTest1 )
+SIMPLE_TEST( qMRMLDisplayNodeViewComboBoxTest )
 SIMPLE_TEST( qMRMLDisplayNodeWidgetTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest1 )
 SIMPLE_TEST( qMRMLLayoutManagerTest2 )
