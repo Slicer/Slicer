@@ -27,6 +27,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLCameraNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableNode.h>
 
 // VTK includes
@@ -168,36 +169,54 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateRASBounds(double bounds[6
 
   std::vector<vtkMRMLNode *> nodes;
   int nnodes = scene->GetNodesByClass("vtkMRMLDisplayableNode", nodes);
-  double nodeBounds[6];
-  for (int n=0; n<nnodes; n++)
+  for (int n=0; n < nnodes; n++)
     {
-    vtkMRMLDisplayableNode *node =  vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
-    if (node && !(!strcmp(node->GetName(), "Red Volume Slice") ||
-                  !strcmp(node->GetName(), "Green Volume Slice") ||
-                  !strcmp(node->GetName(), "Yellow Volume Slice")) )
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(nodes[n]);
+    if (!displayableNode ||
+        strcmp(displayableNode->GetName(), "Red Volume Slice") == 0 ||
+        strcmp(displayableNode->GetName(), "Green Volume Slice") == 0 ||
+        strcmp(displayableNode->GetName(), "Yellow Volume Slice") == 0 )
       {
-      node->GetRASBounds(nodeBounds);
-      if (vtkMath::AreBoundsInitialized(nodeBounds))
+      continue;
+      }
+    bool isDisplayableNodeVisibleInView = false;
+    for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+      {
+      vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+      if (displayNode && displayNode->IsDisplayableInView(
+                           this->External->GetMRMLViewNode()->GetID()))
         {
-        if (!vtkMath::AreBoundsInitialized(bounds))
+        isDisplayableNodeVisibleInView = true;
+        break;
+        }
+      }
+    if (!isDisplayableNodeVisibleInView)
+      {
+      continue;
+      }
+    double nodeBounds[6];
+    displayableNode->GetRASBounds(nodeBounds);
+    if (vtkMath::AreBoundsInitialized(nodeBounds))
+      {
+      if (!vtkMath::AreBoundsInitialized(bounds))
+        {
+        for (int i=0; i<6; i++)
           {
-          for (int i=0; i<6; i++)
-            {
-            bounds[i] = nodeBounds[i];
-            }
+          bounds[i] = nodeBounds[i];
           }
-        else
+        }
+      else
+        {
+        for (int i=0; i<3; i++)
           {
-          for (int i=0; i<3; i++)
+          if (bounds[2*i] > nodeBounds[2*i])
             {
-            if (bounds[2*i] > nodeBounds[2*i])
-              {
-              bounds[2*i] = nodeBounds[2*i];
-              }
-            if (bounds[2*i+1] < nodeBounds[2*i+1])
-              {
-              bounds[2*i+1] = nodeBounds[2*i+1];
-              }
+            bounds[2*i] = nodeBounds[2*i];
+            }
+          if (bounds[2*i+1] < nodeBounds[2*i+1])
+            {
+            bounds[2*i+1] = nodeBounds[2*i+1];
             }
           }
         }
