@@ -147,6 +147,17 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           loadable.selected = False
           loadables.append(loadable)
 
+    # remove any files from loadables that don't have pixel data (no point sending them to ITK for reading)
+    newLoadables = []
+    for loadable in loadables:
+      newFiles = []
+      for file in loadable.files:
+        if slicer.dicomDatabase.fileValue(file,self.tags['pixelData'])!='':
+          newFiles.append(file)
+      if len(newFiles) > 0:
+        loadable.files = newFiles
+        newLoadables.append(loadable)
+    loadables = newLoadables
 
     #
     # now for each series and subseries, sort the images
