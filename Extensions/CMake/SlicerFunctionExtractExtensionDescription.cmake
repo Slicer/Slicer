@@ -92,25 +92,25 @@ function(slicerFunctionExtractExtensionDescription)
 
     string(TOUPPER ${token} upper_case_token)
     string(REGEX REPLACE "^(.*\n)?${token}[ ]+([^\n]+).*"
-          "\\2" sext_${upper_case_token} "${extension_file_content}")
+          "\\2" ext_${upper_case_token} "${extension_file_content}")
 
     # If there was no match, set to the default value specified above or an empty string if any
-    if(sext_${upper_case_token} STREQUAL "${extension_file_content}")
-      set(sext_${upper_case_token} ${token_default_value})
+    if(ext_${upper_case_token} STREQUAL "${extension_file_content}")
+      set(ext_${upper_case_token} ${token_default_value})
     endif()
 
     # Trim value
-    set(str ${sext_${upper_case_token}})
+    set(str ${ext_${upper_case_token}})
     string(REGEX REPLACE "^[ \t\r\n]+" "" str "${str}")
     string(REGEX REPLACE "[ \t\r\n]+$" "" str "${str}")
-    set(sext_${upper_case_token} ${str})
+    set(ext_${upper_case_token} ${str})
 
     if(${token} STREQUAL "depends")
-      string(REGEX REPLACE "^NA$" "" sext_${upper_case_token} "${sext_${upper_case_token}}")
-      string(REPLACE " " ";" sext_${upper_case_token} "${sext_${upper_case_token}}")
+      string(REGEX REPLACE "^NA$" "" ext_${upper_case_token} "${ext_${upper_case_token}}")
+      string(REPLACE " " ";" ext_${upper_case_token} "${ext_${upper_case_token}}")
     endif()
 
-    set(${MY_VAR_PREFIX}_EXT_${upper_case_token} ${sext_${upper_case_token}} PARENT_SCOPE)
+    set(${MY_VAR_PREFIX}_EXT_${upper_case_token} ${ext_${upper_case_token}} PARENT_SCOPE)
   endforeach()
 
 endfunction()

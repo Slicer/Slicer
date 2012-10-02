@@ -84,46 +84,46 @@ foreach(extension_name ${EXTENSION_LIST})
     if("${EXTENSION_EXT_SCM}" STREQUAL "" AND "${EXTENSION_EXT_SCMURL}" STREQUAL "")
       message(WARNING "Failed to extract extension information associated to file: ${file}")
     else()
-      set(sext_add_project True)
-      set(sext_ep_options_repository)
-      set(sext_ep_cmake_args)
-      set(sext_revision ${EXTENSION_EXT_SCMREVISION})
+      set(ext_add_project True)
+      set(ext_ep_options_repository)
+      set(ext_ep_cmake_args)
+      set(ext_revision ${EXTENSION_EXT_SCMREVISION})
       if(${EXTENSION_EXT_SCM} STREQUAL "git")
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
-        if("${sext_revision}" STREQUAL "")
-          set(sext_revision "origin/master")
+        if("${ext_revision}" STREQUAL "")
+          set(ext_revision "origin/master")
         endif()
-        set(sext_ep_options_repository
-          GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${sext_revision})
-        list(APPEND sext_ep_cmake_args
+        set(ext_ep_options_repository
+          GIT_REPOSITORY ${EXTENSION_EXT_SCMURL} GIT_TAG ${ext_revision})
+        list(APPEND ext_ep_cmake_args
            -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE})
       elseif(${EXTENSION_EXT_SCM} STREQUAL "svn")
         set(EXTENSION_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME})
-        if("${sext_revision}" STREQUAL "")
-          set(sext_revision "HEAD")
+        if("${ext_revision}" STREQUAL "")
+          set(ext_revision "HEAD")
         endif()
-        set(sext_ep_options_repository
-          SVN_REPOSITORY ${EXTENSION_EXT_SCMURL} SVN_REVISION -r ${sext_revision})
-        list(APPEND sext_ep_cmake_args
+        set(ext_ep_options_repository
+          SVN_REPOSITORY ${EXTENSION_EXT_SCMURL} SVN_REVISION -r ${ext_revision})
+        list(APPEND ext_ep_cmake_args
            -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE})
         if(NOT ${EXTENSION_EXT_SVNUSERNAME} STREQUAL "")
-           list(APPEND sext_ep_options_repository
+           list(APPEND ext_ep_options_repository
              SVN_USERNAME "${EXTENSION_EXT_SVNUSERNAME}"
              SVN_PASSWORD "${EXTENSION_EXT_SVNPASSWORD}"
              SVN_TRUST_CERT 1
              )
         endif()
       elseif(${EXTENSION_EXT_SCM} STREQUAL "local")
-        set(sext_ep_options_repository DOWNLOAD_COMMAND "")
+        set(ext_ep_options_repository DOWNLOAD_COMMAND "")
         set(EXTENSION_SOURCE_DIR ${EXTENSION_EXT_SCMURL})
         if(NOT EXISTS ${EXTENSION_SOURCE_DIR})
           set(EXTENSION_SOURCE_DIR ${Slicer_LOCAL_EXTENSIONS_DIR}/${EXTENSION_SOURCE_DIR})
         endif()
       else()
-        set(sext_add_project False)
+        set(ext_add_project False)
         message(WARNING "Unknown type of SCM [${EXTENSION_EXT_SCM}] associated with extension named ${EXTENSION_NAME} - See file ${file}")
       endif()
-      if(sext_add_project)
+      if(ext_add_project)
         # Set external project DEPENDS parameter
         set(EP_ARG_EXTENSION_DEPENDS)
         if(Slicer_SOURCE_DIR)
@@ -151,7 +151,7 @@ foreach(extension_name ${EXTENSION_LIST})
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
-            ${sext_ep_options_repository}
+            ${ext_ep_options_repository}
             SOURCE_DIR ${EXTENSION_SOURCE_DIR}
             BINARY_DIR ${EXTENSION_NAME}-build
             CONFIGURE_COMMAND ""
@@ -170,7 +170,7 @@ foreach(extension_name ${EXTENSION_LIST})
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
-              ${sext_ep_options_repository}
+              ${ext_ep_options_repository}
               SOURCE_DIR ${EXTENSION_SOURCE_DIR}
               BINARY_DIR ${EXTENSION_NAME}-build
               CONFIGURE_COMMAND ""
@@ -192,7 +192,7 @@ foreach(extension_name ${EXTENSION_LIST})
           #-----------------------------------------------------------------------------
           # Slicer_UPLOAD_EXTENSIONS: FALSE
           #-----------------------------------------------------------------------------
-          list(APPEND sext_ep_cmake_args
+          list(APPEND ext_ep_cmake_args
             -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
             -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
             -DBUILD_TESTING:BOOL=${BUILD_TESTING}
@@ -207,19 +207,19 @@ foreach(extension_name ${EXTENSION_LIST})
             )
 
           foreach(dep ${EXTENSION_DEPENDS})
-            list(APPEND sext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
+            list(APPEND ext_ep_cmake_args -D${dep}_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/${dep}-build)
           endforeach()
 
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
-            ${sext_ep_options_repository}
+            ${ext_ep_options_repository}
             INSTALL_COMMAND ""
             SOURCE_DIR ${EXTENSION_SOURCE_DIR}
             BINARY_DIR ${EXTENSION_NAME}-build
             CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
             CMAKE_ARGS
-              ${sext_ep_cmake_args}
+              ${ext_ep_cmake_args}
             ${EP_ARG_EXTENSION_DEPENDS}
             )
           # This custom external project step forces the build and later
@@ -233,13 +233,13 @@ foreach(extension_name ${EXTENSION_LIST})
             # Add convenient external project allowing to build the extension
             # independently of Slicer
             ExternalProject_Add(${proj}-rebuild
-              ${sext_ep_options_repository}
+              ${ext_ep_options_repository}
               INSTALL_COMMAND ""
               SOURCE_DIR ${EXTENSION_SOURCE_DIR}
               BINARY_DIR ${EXTENSION_NAME}-build
               CMAKE_GENERATOR ${Slicer_EXTENSION_CMAKE_GENERATOR}
               CMAKE_ARGS
-                ${sext_ep_cmake_args}
+                ${ext_ep_cmake_args}
               ${EP_ARG_EXTENSION_REBUILD_DEPENDS}
               )
             # This custom external project step forces the build and later
