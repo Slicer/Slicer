@@ -1288,15 +1288,15 @@ void vtkMRMLVolumeRenderingDisplayableManager
 void vtkMRMLVolumeRenderingDisplayableManager
 ::UpdatePipelineFromDisplayNode(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  std::cout << "UpdatePipelineFromDisplayNode ";
+  vtkDebugMacro("UpdatePipelineFromDisplayNode ");
   if (!vspNode ||
       !this->ValidateDisplayNode(vspNode))
     {
-    std::cout << "not valid" << std::endl;
+    vtkDebugMacro("not valid");
     return;
     }
 
-  std::cout << "valid: " << vspNode->GetClassName() <<std::endl;
+  vtkDebugMacro("valid: " << vspNode->GetClassName());
   //this->RemoveVolumeFromView();
 
   //this->GetInteractor()->Disable();
