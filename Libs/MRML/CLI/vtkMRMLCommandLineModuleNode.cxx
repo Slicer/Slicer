@@ -38,12 +38,12 @@ public:
 
   ModuleDescription ModuleDescriptionObject;
 
-  static ModuleDescriptionMap *RegisteredModules;
+  static ModuleDescriptionMap RegisteredModules;
 
   vtkMRMLCommandLineModuleNode::StatusType Status;
 };
 
-ModuleDescriptionMap* vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules = new ModuleDescriptionMap;
+ModuleDescriptionMap vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules;
 
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCommandLineModuleNode);
@@ -428,22 +428,40 @@ void vtkMRMLCommandLineModuleNode::AbortProcess()
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode::HasRegisteredModule(const std::string& name)
 {
-  ModuleDescriptionMap::iterator mit;
+  ModuleDescriptionMap::iterator mit =
+      vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
 
-  mit = (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules).find(name);
+  return mit != vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.end();
+}
 
-  return mit != (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules).end();
+//----------------------------------------------------------------------------
+int vtkMRMLCommandLineModuleNode::GetNumberOfRegisteredModules()
+{
+  return (int)vtkInternal::RegisteredModules.size();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLCommandLineModuleNode::GetRegisteredModuleNameByIndex( int idx )
+{
+  ModuleDescriptionMap::iterator mit = vtkInternal::RegisteredModules.begin();
+  int count = 0;
+  while ( mit != vtkInternal::RegisteredModules.end() )
+    {
+    if ( count == idx ) { return (*mit).first.c_str(); }
+    ++mit;
+    ++count;
+    }
+  return "";
 }
 
 //----------------------------------------------------------------------------
 ModuleDescription vtkMRMLCommandLineModuleNode
 ::GetRegisteredModuleDescription(const std::string& name)
 {
-  ModuleDescriptionMap::iterator mit;
+  ModuleDescriptionMap::iterator mit =
+      vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.find(name);
 
-  mit = (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules).find(name);
-
-  if (mit != (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules).end())
+  if (mit != vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules.end())
     {
     return (*mit).second;
     }
@@ -455,33 +473,7 @@ ModuleDescription vtkMRMLCommandLineModuleNode
 void vtkMRMLCommandLineModuleNode
 ::RegisterModuleDescription(ModuleDescription md)
 {
-  (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules)[md.GetTitle()] = md;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLCommandLineModuleNode::ClearRegisteredModules()
-{
-  (*vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules).clear();
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLCommandLineModuleNode::GetNumberOfRegisteredModules ()
-{ 
-  return (int)vtkInternal::RegisteredModules->size();
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLCommandLineModuleNode::GetRegisteredModuleNameByIndex ( int idx )
-{
-  ModuleDescriptionMap::iterator mit = vtkInternal::RegisteredModules->begin();
-  int count = 0;
-  while ( mit != vtkInternal::RegisteredModules->end() )
-    {
-    if ( count == idx ) { return (*mit).first.c_str(); }
-    ++mit;
-    ++count;
-    }
-  return "";
+  vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules[md.GetTitle()] = md;
 }
 
 //----------------------------------------------------------------------------

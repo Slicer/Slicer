@@ -90,8 +90,6 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   void SetParameterAsFloat(const char *name, const float value);
 
   const char* GetParameterAsString(const char* name) const;
-  int GetNumberOfRegisteredModules ();
-  const char* GetRegisteredModuleNameByIndex ( int idx );
   void SetModuleDescription ( const char *name );
   const char* GetModuleVersion ();
   const char* GetModuleTitle ();
@@ -121,11 +119,12 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   const char* GetParameterCoordinateSystem ( unsigned int group, unsigned int param );
 
   /// Methods to manage the master list of module description prototypes
+  static int GetNumberOfRegisteredModules();
+  static const char* GetRegisteredModuleNameByIndex( int idx );
   static void RegisterModuleDescription(ModuleDescription md);
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
-  static void ClearRegisteredModules();
-/// ETX
+
 protected:
   void AbortProcess ();
 
