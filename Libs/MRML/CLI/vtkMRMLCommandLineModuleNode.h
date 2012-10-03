@@ -25,7 +25,7 @@ class ModuleDescription;
 /// \brief MRML node for representing the parameters allowing to run a command line module
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
-  public:
+public:
   static vtkMRMLCommandLineModuleNode *New();
   vtkTypeMacro(vtkMRMLCommandLineModuleNode, vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
@@ -57,8 +57,8 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   /// Completed).  The "modify" parameter indicates whether the object
   /// can be modified by the call.
   void SetStatus(StatusType status, bool modify=true);
-  StatusType GetStatus();
-  const char* GetStatusString();
+  StatusType GetStatus() const;
+  const char* GetStatusString() const;
 
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
@@ -90,33 +90,35 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   void SetParameterAsFloat(const char *name, const float value);
 
   const char* GetParameterAsString(const char* name) const;
-  void SetModuleDescription ( const char *name );
-  const char* GetModuleVersion ();
-  const char* GetModuleTitle ();
-  const char* GetModuleTarget ();
-  const char* GetModuleType ();
-  unsigned int GetNumberOfParameterGroups ();
-  unsigned int GetNumberOfParametersInGroup ( unsigned int group );
-  const char* GetParameterGroupLabel ( unsigned int group );
-  const char* GetParameterGroupDescription ( unsigned int group );
-  const char* GetParameterGroupAdvanced ( unsigned int group );
-  const char* GetParameterTag ( unsigned int group, unsigned int param );
-  const char* GetParameterType ( unsigned int group, unsigned int param );
-  const char* GetParameterArgType ( unsigned int group, unsigned int param );
-  const char* GetParameterName ( unsigned int group, unsigned int param );
-  const char* GetParameterLongFlag ( unsigned int group, unsigned int param );
-  const char* GetParameterLabel ( unsigned int group, unsigned int param );
-  const char* GetParameterConstraints ( unsigned int group, unsigned int param );
-  const char* GetParameterMaximum ( unsigned int group, unsigned int param );
-  const char* GetParameterMinimum ( unsigned int group, unsigned int param );
-  const char* GetParameterDescription ( unsigned int group, unsigned int param );
-  const char* GetParameterChannel ( unsigned int group, unsigned int param );
-  const char* GetParameterIndex ( unsigned int group, unsigned int param );
-  const char* GetParameterDefault ( unsigned int group, unsigned int param );
-  const char* GetParameterFlag ( unsigned int group, unsigned int param );
-  const char* GetParameterMultiple ( unsigned int group, unsigned int param );
-  const char* GetParameterFileExtensions ( unsigned int group, unsigned int param );
-  const char* GetParameterCoordinateSystem ( unsigned int group, unsigned int param );
+  void SetModuleDescription( const char *name );
+  const char* GetModuleVersion() const;
+  const char* GetModuleTitle() const;
+  const char* GetModuleTarget() const;
+  const char* GetModuleType() const;
+  bool IsValidGroupId(unsigned int group) const;
+  bool IsValidParamId(unsigned int group, unsigned int param) const;
+  unsigned int GetNumberOfParameterGroups() const;
+  unsigned int GetNumberOfParametersInGroup( unsigned int group ) const;
+  const char* GetParameterGroupLabel( unsigned int group ) const;
+  const char* GetParameterGroupDescription( unsigned int group ) const;
+  const char* GetParameterGroupAdvanced( unsigned int group ) const;
+  const char* GetParameterTag( unsigned int group, unsigned int param ) const;
+  const char* GetParameterType( unsigned int group, unsigned int param ) const;
+  const char* GetParameterArgType( unsigned int group, unsigned int param ) const;
+  const char* GetParameterName( unsigned int group, unsigned int param ) const;
+  const char* GetParameterLongFlag( unsigned int group, unsigned int param ) const;
+  const char* GetParameterLabel( unsigned int group, unsigned int param ) const;
+  const char* GetParameterConstraints( unsigned int group, unsigned int param ) const;
+  const char* GetParameterMaximum( unsigned int group, unsigned int param ) const;
+  const char* GetParameterMinimum( unsigned int group, unsigned int param ) const;
+  const char* GetParameterDescription( unsigned int group, unsigned int param ) const;
+  const char* GetParameterChannel( unsigned int group, unsigned int param ) const;
+  const char* GetParameterIndex( unsigned int group, unsigned int param ) const;
+  const char* GetParameterDefault( unsigned int group, unsigned int param ) const;
+  const char* GetParameterFlag( unsigned int group, unsigned int param ) const;
+  const char* GetParameterMultiple( unsigned int group, unsigned int param ) const;
+  const char* GetParameterFileExtensions( unsigned int group, unsigned int param ) const;
+  const char* GetParameterCoordinateSystem( unsigned int group, unsigned int param ) const;
 
   /// Methods to manage the master list of module description prototypes
   static int GetNumberOfRegisteredModules();
@@ -126,7 +128,7 @@ class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
 
 protected:
-  void AbortProcess ();
+  void AbortProcess();
 
 private:
   vtkMRMLCommandLineModuleNode();
