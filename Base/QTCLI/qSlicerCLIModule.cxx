@@ -174,6 +174,9 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
   // Set module entry point
   desc.SetTarget(this->entryPoint().toStdString());
 
+  // Register the module description in the master list
+  vtkMRMLCommandLineModuleNode::RegisterModuleDescription(desc);
+
   d->Desc = desc; 
 }
 
