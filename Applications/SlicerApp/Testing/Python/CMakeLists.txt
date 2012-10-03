@@ -173,6 +173,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
+  slicer_add_python_unittest(SCRIPT RSNA2012Vis.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
@@ -183,6 +184,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerMRBTest.py
     Slicer4Minute.py
     Charting.py
+    RSNA2012Vis.py
     )
 
   set(KIT_PYTHON_RESOURCES
