@@ -19,6 +19,7 @@
 // MRMLCLI includes
 #include "vtkMRMLCommandLineModuleNode.h"
 class ModuleDescription;
+class ModuleParameter;
 
 // MRML include
 #include "vtkMRMLScene.h"
@@ -30,7 +31,10 @@ class ModuleDescription;
 
 typedef enum { CommandLineModule, SharedObjectModule, PythonModule } CommandLineModuleType;
 
-/// Historically was vtkCommandLineModuleLogic
+/// \brief Logic for running CLI
+///
+/// vtkSlicerCLIModuleLogic logic allows to run a either synchronously or asynchronously CLI
+/// using parameters of a \a vtkMRMLCommandLineModuleNode.
 class Q_SLICER_BASE_QTCLI_EXPORT vtkSlicerCLIModuleLogic :
   public vtkSlicerModuleLogic
 {
@@ -56,17 +60,19 @@ public:
                                  unsigned long vtkNotUsed(event),
                                  void * vtkNotUsed(callData)){}
 
-  // Description: For debugging, control deletion of temp files
-  vtkBooleanMacro (DeleteTemporaryFiles, int);
-  vtkSetMacro (DeleteTemporaryFiles, int);
-  vtkGetMacro (DeleteTemporaryFiles, int);
+  /// For debugging, control deletion of temp files
+  virtual void DeleteTemporaryFilesOn();
+  virtual void DeleteTemporaryFilesOff();
+  void SetDeleteTemporaryFiles(int value);
+  int GetDeleteTemporaryFiles() const;
 
-  // Description: For debugging, control redirection of cout and cerr
-  vtkBooleanMacro (RedirectModuleStreams, int);
-  vtkSetMacro (RedirectModuleStreams, int);
-  vtkGetMacro (RedirectModuleStreams, int);
+  /// For debugging, control redirection of cout and cerr
+  virtual void RedirectModuleStreamsOn();
+  virtual void RedirectModuleStreamsOff();
+  void SetRedirectModuleStreams(int value);
+  int GetRedirectModuleStreams() const;
 
-  // The method that schedules the command line module to run.
+  /// Schedules the command line module to run.
   /// The CLI is scheduled to be run in a separate thread. This methods
   /// is non blocking and returns immediately.
   /// If \a updateDisplay is 'true' the selection node will be updated with the
@@ -82,9 +88,8 @@ public:
   /// in the node selectors.
   void ApplyAndWait ( vtkMRMLCommandLineModuleNode* node, bool updateDisplay = true);
 
-  // Set/Get the directory to use for temporary files
-  void SetTemporaryDirectory(const char *tempdir)
-    { this->TemporaryDirectory = tempdir; }
+  /// Set/Get the directory to use for temporary files
+  void SetTemporaryDirectory(const char *tempdir);
 
 //   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
 //   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node) 
@@ -117,12 +122,8 @@ private:
   vtkSlicerCLIModuleLogic(const vtkSlicerCLIModuleLogic&);
   void operator=(const vtkSlicerCLIModuleLogic&);
 
-  ModuleDescription DefaultModuleDescription;
-  int DeleteTemporaryFiles;
-
-  int RedirectModuleStreams;
-
-  std::string TemporaryDirectory;
+  class vtkInternal;
+  vtkInternal * Internal;
 };
 
 #endif

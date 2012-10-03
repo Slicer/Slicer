@@ -29,6 +29,10 @@
 // Slicer includes
 #include "qSlicerCLIProgressBar.h"
 
+// SlicerExecutionModel includes
+#include <ModuleDescription.h>
+#include <ModuleProcessInformation.h>
+
 // MRML includes
 #include <vtkMRMLCommandLineModuleNode.h>
 

@@ -14,14 +14,18 @@
 
 #include "vtkSlicerTask.h"
 
+// SlicerExecutionModel includes
+#include <ModuleDescription.h>
+
 // MRML includes
-#include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLFiducialListNode.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLROIListNode.h>
+#include <vtkMRMLStorageNode.h>
 #include <vtkMRMLTransformNode.h>
-#include <vtkMRMLColorNode.h>
 
 // VTK includes
 #include <vtkStringArray.h>
@@ -31,20 +35,12 @@
 #include <itksys/SystemTools.hxx>
 #include <itksys/RegularExpression.hxx>
 
-// Annotations module includes
-
 // QT includes
 #include <QDebug>
 
 #if defined(__APPLE__) && (MAC_OS_X_VERSION_MAX_ALLOWED >= 1030)
 // needed to hack around itksys to override defaults used by Mac OS X
 #endif
-
-
-
-// #ifdef Slicer_USE_PYTHON
-// #include "slicerPython.h"
-// #endif
 
 // STL includes
 #include <algorithm>
@@ -73,19 +69,35 @@ struct DigitsToCharacters
 
 typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
+
+//----------------------------------------------------------------------------
+class vtkSlicerCLIModuleLogic::vtkInternal
+{
+public:
+  ModuleDescription DefaultModuleDescription;
+  int DeleteTemporaryFiles;
+
+  int RedirectModuleStreams;
+
+  std::string TemporaryDirectory;
+};
+
 //----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerCLIModuleLogic);
 
 //----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 {
-  this->DeleteTemporaryFiles = 1;
-  this->RedirectModuleStreams = 1;
+  this->Internal = new vtkInternal();
+
+  this->Internal->DeleteTemporaryFiles = 1;
+  this->Internal->RedirectModuleStreams = 1;
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerCLIModuleLogic::~vtkSlicerCLIModuleLogic()
 {
+  delete this->Internal;
 }
 
 //----------------------------------------------------------------------------
@@ -97,14 +109,14 @@ void vtkSlicerCLIModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 //-----------------------------------------------------------------------------
 void vtkSlicerCLIModuleLogic::SetDefaultModuleDescription(const ModuleDescription& description)
 {
-  this->DefaultModuleDescription = description;
+  this->Internal->DefaultModuleDescription = description;
 }
 
 //-----------------------------------------------------------------------------
 const ModuleDescription& vtkSlicerCLIModuleLogic
 ::GetDefaultModuleDescription()const
 {
-  return this->DefaultModuleDescription;
+  return this->Internal->DefaultModuleDescription;
 }
 
 //-----------------------------------------------------------------------------
@@ -112,7 +124,7 @@ vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNode()
 {
   vtkMRMLCommandLineModuleNode* node = vtkMRMLCommandLineModuleNode::SafeDownCast(
     this->GetMRMLScene()->CreateNodeByClass("vtkMRMLCommandLineModuleNode"));
-  node->SetModuleDescription(this->DefaultModuleDescription);
+  node->SetModuleDescription(this->Internal->DefaultModuleDescription);
   return node;
 }
 
@@ -123,6 +135,64 @@ vtkMRMLCommandLineModuleNode* vtkSlicerCLIModuleLogic::CreateNodeInScene()
   this->GetMRMLScene()->AddNode(node);
   node->Delete();
   return node;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::DeleteTemporaryFilesOn ()
+{
+  this->SetDeleteTemporaryFiles(static_cast<int>(1));
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::DeleteTemporaryFilesOff ()
+{
+  this->SetDeleteTemporaryFiles(static_cast<int>(0));
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetDeleteTemporaryFiles(int value)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting DeleteTemporaryFiles to " << value);
+  if (this->Internal->DeleteTemporaryFiles != value)
+    {
+    this->Internal->DeleteTemporaryFiles = value;
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerCLIModuleLogic::GetDeleteTemporaryFiles() const
+{
+  return this->Internal->DeleteTemporaryFiles;
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::RedirectModuleStreamsOn()
+{
+  this->SetRedirectModuleStreams(static_cast<int>(1));
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::RedirectModuleStreamsOff()
+{
+  this->SetRedirectModuleStreams(static_cast<int>(0));
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetRedirectModuleStreams(int value)
+{
+  vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting DeleteTemporaryFiles to " << value);
+  if (this->Internal->RedirectModuleStreams != value)
+    {
+    this->Internal->RedirectModuleStreams = value;
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+int vtkSlicerCLIModuleLogic::GetRedirectModuleStreams() const
+{
+  return this->Internal->RedirectModuleStreams;
 }
 
 //----------------------------------------------------------------------------
@@ -160,7 +230,7 @@ vtkSlicerCLIModuleLogic
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->TemporaryDirectory + "/" + pid + "_" + fname + ".mrml";
+  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname + ".mrml";
 
   return fname;
 }
@@ -229,7 +299,7 @@ vtkSlicerCLIModuleLogic
 
   // By default, the filename is based on the temporary directory and
   // the pid
-  fname = this->TemporaryDirectory + "/" + pid + "_" + fname;
+  fname = this->Internal->TemporaryDirectory + "/" + pid + "_" + fname;
 
   if (tag == "image")
     {
@@ -333,6 +403,12 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
     {
     this->GetApplicationLogic()->ProcessReadData();
     }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::SetTemporaryDirectory(const char *tempdir)
+{
+  this->Internal->TemporaryDirectory = tempdir;
 }
 
 //-----------------------------------------------------------------------------
@@ -836,7 +912,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       code << alphanum[rand() % (sizeof(alphanum)-1)];
       }
 
-    std::string returnFile = this->TemporaryDirectory + "/" + pidString.str()
+    std::string returnFile = this->Internal->TemporaryDirectory + "/" + pidString.str()
       + "_" + code.str() + ".params";
 
     commandLineAsString.push_back( returnFile );
@@ -1566,7 +1642,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     int returnValue = 0;
     try
       {
-      if (this->RedirectModuleStreams)
+      if (this->Internal->RedirectModuleStreams)
         {
         // redirect the streams
         std::cout.rdbuf( coutstringstream.rdbuf() );
@@ -1595,7 +1671,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         vtkErrorMacro( << (tmp + cerrstringstream.str()).c_str() );
         }
 
-      if (this->RedirectModuleStreams)
+      if (this->Internal->RedirectModuleStreams)
         {
         // reset the streams
         std::cout.rdbuf( origcoutrdbuf );

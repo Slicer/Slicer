@@ -26,17 +26,16 @@
 // CTK includes
 #include <ctkWidgetsUtils.h>
 
-// SlicerQT includes
+// Slicer includes
 #include "qMRMLNodeComboBox.h"
 #include "qSlicerCLIModuleWidget.h"
 #include "vtkSlicerCLIModuleLogic.h"
 
-// Slicer vtk includes
-//#include <vtkCommandLineModuleLogic.h>
-
-// ModuleDescriptionParser includes
+// SlicerExecutionModel includes
+#include <ModuleDescription.h>
 #include <ModuleDescriptionParser.h>
 #include <ModuleLogo.h>
+#include <ModuleProcessInformation.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCLIModulePrivate
