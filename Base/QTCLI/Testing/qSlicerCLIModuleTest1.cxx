@@ -72,7 +72,7 @@ void runCli(void * data)
   cliModuleNode->SetParameterAsInt("InputValue1", inputValue1);
   cliModuleNode->SetParameterAsInt("InputValue2", inputValue2);
   cliModuleNode->SetParameterAsString("OperationType", "Addition");
-  cliModuleNode->SetParameterAsString("OutputFile", outputFile.fileName().toLatin1());
+  cliModuleNode->SetParameterAsString("OutputFile", outputFile.fileName().toStdString());
 
   // Execute synchronously so that we can check the content of the file after the module execution
   CLIModule->cliModuleLogic()->ApplyAndWait(cliModuleNode);

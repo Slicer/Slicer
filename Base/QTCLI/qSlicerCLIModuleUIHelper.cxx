@@ -979,22 +979,22 @@ void qSlicerCLIModuleUIHelper::setCommandLineModuleParameter(vtkMRMLCommandLineM
   QVariant::Type type = value.type();
   if (type == QVariant::Bool)
     {
-    commandLineModuleNode->SetParameterAsBool(name.toStdString(),
+    commandLineModuleNode->SetParameterAsBool(name.toLatin1(),
                                               value.toBool());
     }
   else if (type == QVariant::Int)
     {
-    commandLineModuleNode->SetParameterAsInt(name.toStdString(),
+    commandLineModuleNode->SetParameterAsInt(name.toLatin1(),
                                              value.toInt());
     }
   else if (type == QVariant::Double)
     {
-    commandLineModuleNode->SetParameterAsDouble(name.toStdString(),
+    commandLineModuleNode->SetParameterAsDouble(name.toLatin1(),
                                                 value.toDouble());
     }
   else if (type == QVariant::String)
     {
-    commandLineModuleNode->SetParameterAsString(name.toStdString(),
+    commandLineModuleNode->SetParameterAsString(name.toLatin1(),
                                                 value.toString().toStdString());
     }
   else
@@ -1016,7 +1016,7 @@ void qSlicerCLIModuleUIHelper::updateUi(vtkMRMLCommandLineModuleNode* commandLin
   foreach(qSlicerWidgetValueWrapper* valueWrapper, d->WidgetValueWrappers)
     {
     QString value = QString::fromStdString(
-      commandLineModuleNode->GetParameterAsString(valueWrapper->name().toStdString()));
+      commandLineModuleNode->GetParameterAsString(valueWrapper->name().toLatin1()));
     valueWrapper->setValue(value);
     }
 }

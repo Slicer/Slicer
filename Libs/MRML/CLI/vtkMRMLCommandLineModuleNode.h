@@ -33,7 +33,7 @@ public:
   virtual vtkMRMLNode* CreateNodeInstance();
 
   /// Set node attributes
-  virtual void ReadXMLAttributes( const char** atts);
+  virtual void ReadXMLAttributes(const char** atts);
 
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
@@ -63,7 +63,6 @@ public:
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
   bool ReadParameterFile(const std::string& filename);
-  bool ReadParameterFile(const char *filename);
 
   /// Write a parameter file. This will output any parameters that
   /// parameters in this
@@ -71,58 +70,49 @@ public:
   /// control whether all parameters are written or just the
   /// parameters with simple IO mechanisms.
   bool WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters = true);
-  bool WriteParameterFile(const char *filename, bool withHandlesToBulkParameters = true);
 
   /// Get/Set a parameter for the module.
-  void SetParameterAsString(const std::string& name, const std::string& value);
-  void SetParameterAsInt(const std::string& name, int value);
-  void SetParameterAsBool(const std::string& name, bool value);
-  void SetParameterAsDouble(const std::string& name, double value);
-  void SetParameterAsFloat(const std::string& name, float value);
+  bool SetParameterAsString(const char* name, const std::string& value);
+  bool SetParameterAsInt(const char* name, int value);
+  bool SetParameterAsBool(const char* name, bool value);
+  bool SetParameterAsDouble(const char* name, double value);
+  bool SetParameterAsFloat(const char* name, float value);
 
-  std::string GetParameterAsString(const std::string &name) const;
+  std::string GetParameterAsString(const char* name) const;
 
-  /// Some functions to make CommandLineModuleNodes useful from Tcl and Python
-  void SetParameterAsString(const char *name, const char *value);
-  void SetParameterAsInt(const char *name, const int value);
-  void SetParameterAsBool(const char *name, const int value);
-  void SetParameterAsDouble(const char *name, const double value);
-  void SetParameterAsFloat(const char *name, const float value);
-
-  const char* GetParameterAsString(const char* name) const;
-  void SetModuleDescription( const char *name );
-  const char* GetModuleVersion() const;
-  const char* GetModuleTitle() const;
-  const char* GetModuleTarget() const;
-  const char* GetModuleType() const;
+  void SetModuleDescription(const char *name);
+  std::string GetModuleVersion() const;
+  std::string GetModuleTitle() const;
+  std::string GetModuleTarget() const;
+  std::string GetModuleType() const;
   bool IsValidGroupId(unsigned int group) const;
   bool IsValidParamId(unsigned int group, unsigned int param) const;
   unsigned int GetNumberOfParameterGroups() const;
-  unsigned int GetNumberOfParametersInGroup( unsigned int group ) const;
-  const char* GetParameterGroupLabel( unsigned int group ) const;
-  const char* GetParameterGroupDescription( unsigned int group ) const;
-  const char* GetParameterGroupAdvanced( unsigned int group ) const;
-  const char* GetParameterTag( unsigned int group, unsigned int param ) const;
-  const char* GetParameterType( unsigned int group, unsigned int param ) const;
-  const char* GetParameterArgType( unsigned int group, unsigned int param ) const;
-  const char* GetParameterName( unsigned int group, unsigned int param ) const;
-  const char* GetParameterLongFlag( unsigned int group, unsigned int param ) const;
-  const char* GetParameterLabel( unsigned int group, unsigned int param ) const;
-  const char* GetParameterConstraints( unsigned int group, unsigned int param ) const;
-  const char* GetParameterMaximum( unsigned int group, unsigned int param ) const;
-  const char* GetParameterMinimum( unsigned int group, unsigned int param ) const;
-  const char* GetParameterDescription( unsigned int group, unsigned int param ) const;
-  const char* GetParameterChannel( unsigned int group, unsigned int param ) const;
-  const char* GetParameterIndex( unsigned int group, unsigned int param ) const;
-  const char* GetParameterDefault( unsigned int group, unsigned int param ) const;
-  const char* GetParameterFlag( unsigned int group, unsigned int param ) const;
-  const char* GetParameterMultiple( unsigned int group, unsigned int param ) const;
-  const char* GetParameterFileExtensions( unsigned int group, unsigned int param ) const;
-  const char* GetParameterCoordinateSystem( unsigned int group, unsigned int param ) const;
+  unsigned int GetNumberOfParametersInGroup(unsigned int group) const;
+  std::string GetParameterGroupLabel(unsigned int group) const;
+  std::string GetParameterGroupDescription(unsigned int group) const;
+  std::string GetParameterGroupAdvanced(unsigned int group) const;
+  std::string GetParameterTag(unsigned int group, unsigned int param) const;
+  std::string GetParameterType(unsigned int group, unsigned int param) const;
+  std::string GetParameterArgType(unsigned int group, unsigned int param) const;
+  std::string GetParameterName(unsigned int group, unsigned int param) const;
+  std::string GetParameterLongFlag(unsigned int group, unsigned int param) const;
+  std::string GetParameterLabel(unsigned int group, unsigned int param) const;
+  std::string GetParameterConstraints(unsigned int group, unsigned int param) const;
+  std::string GetParameterMaximum(unsigned int group, unsigned int param) const;
+  std::string GetParameterMinimum(unsigned int group, unsigned int param) const;
+  std::string GetParameterDescription(unsigned int group, unsigned int param) const;
+  std::string GetParameterChannel(unsigned int group, unsigned int param) const;
+  std::string GetParameterIndex(unsigned int group, unsigned int param) const;
+  std::string GetParameterDefault(unsigned int group, unsigned int param) const;
+  std::string GetParameterFlag(unsigned int group, unsigned int param) const;
+  std::string GetParameterMultiple(unsigned int group, unsigned int param) const;
+  std::string GetParameterFileExtensions(unsigned int group, unsigned int param) const;
+  std::string GetParameterCoordinateSystem(unsigned int group, unsigned int param) const;
 
   /// Methods to manage the master list of module description prototypes
   static int GetNumberOfRegisteredModules();
-  static const char* GetRegisteredModuleNameByIndex( int idx );
+  static const char* GetRegisteredModuleNameByIndex(int idx);
   static void RegisterModuleDescription(ModuleDescription md);
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
