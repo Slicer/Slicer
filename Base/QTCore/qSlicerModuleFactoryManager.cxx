@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // SlicerQt includes
+#include "qSlicerCoreApplication.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
@@ -115,12 +116,16 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
     return true;
     }
 
-  qDebug() << "Loading module" << name;
+  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+    {
+    qDebug() << "Loading module" << name;
+    }
 
   // Instantiate the module if needed
   qSlicerAbstractCoreModule* instance = this->moduleInstance(name);
   if (!instance)
     {
+    qDebug() << "Failed to instantiate module" << name;
     return false;
     }
 
