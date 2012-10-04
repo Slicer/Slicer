@@ -211,11 +211,13 @@ void qMRMLVolumeWidgetPrivate::updateSingleStep(double min, double max)
 // --------------------------------------------------------------------------
 void qMRMLVolumeWidgetPrivate::setDecimals(int decimals)
 {
+  Q_UNUSED(decimals);
 }
 
 // --------------------------------------------------------------------------
 void qMRMLVolumeWidgetPrivate::setSingleStep(double singleStep)
 {
+  Q_UNUSED(singleStep);
 }
 
 // --------------------------------------------------------------------------
