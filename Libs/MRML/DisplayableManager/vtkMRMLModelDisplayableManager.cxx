@@ -31,7 +31,7 @@
 #include "vtkMRMLClipModelsNode.h"
 #include "vtkMRMLSliceNode.h"
 //#include "vtkMRMLCameraNode.h"
-//#include "vtkMRMLViewNode.h"
+#include "vtkMRMLViewNode.h"
 
 // VTK includes
 #include <vtkAssignAttribute.h>
@@ -1367,8 +1367,11 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
 
-      prop->SetVisibility(modelDisplayNode->GetVisibility());
-      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = modelDisplayNode->GetVisibility();
+      bool visible = modelDisplayNode->GetVisibility() &&
+                     modelDisplayNode->IsDisplayableInView(
+                       this->GetMRMLViewNode()->GetID());
+      prop->SetVisibility(visible);
+      this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
 
       if (actor)
         {
