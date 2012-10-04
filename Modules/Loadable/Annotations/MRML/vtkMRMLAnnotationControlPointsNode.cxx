@@ -324,7 +324,7 @@ void vtkMRMLAnnotationControlPointsNode::CreatePolyData()
     this->GetPolyData()->SetPoints(polyPoint);
     polyPoint->Delete();
     }
-  std::cout << "CreatePolyData: " << this->GetPoints() << std::endl;
+  vtkDebugMacro("CreatePolyData: " << this->GetPoints());
   // This assumes I want to display the poly data , which I do not want to as it is displayed by widgets 
   //if (this->GetAnnotationPointDisplayNode())
   //  {
