@@ -169,8 +169,6 @@ void qMRMLTransformSliders::setMRMLTransformNode(vtkMRMLLinearTransformNode* tra
 // --------------------------------------------------------------------------
 void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
 {
-  Q_D(qMRMLTransformSliders);
-
   vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(caller);
   if (!transformNode)
     {

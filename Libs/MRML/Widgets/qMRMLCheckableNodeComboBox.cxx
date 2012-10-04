@@ -123,7 +123,6 @@ QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::checkedNodes()const
 // --------------------------------------------------------------------------
 QList<vtkMRMLNode*> qMRMLCheckableNodeComboBox::uncheckedNodes()const
 {
-  Q_D(const qMRMLCheckableNodeComboBox);
   QList<vtkMRMLNode*> res = this->nodes();
   foreach(vtkMRMLNode* checkedNode, this->checkedNodes())
     {
@@ -183,7 +182,6 @@ void qMRMLCheckableNodeComboBox::setCheckState(vtkMRMLNode* node, Qt::CheckState
 // --------------------------------------------------------------------------
 void qMRMLCheckableNodeComboBox::setUserCheckable(vtkMRMLNode* node, bool userCheckable)
 {
-  Q_D(qMRMLCheckableNodeComboBox);
   QStandardItem* nodeItem = this->sceneModel()->itemFromNode(node);
   if (nodeItem)
     {
