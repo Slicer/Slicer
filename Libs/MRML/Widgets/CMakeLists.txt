@@ -165,6 +165,8 @@ set(MRMLWidgets_SRCS
   qMRMLVolumeInfoWidget.h
   qMRMLVolumeThresholdWidget.cxx
   qMRMLVolumeThresholdWidget.h
+  qMRMLVolumeWidget.cxx
+  qMRMLVolumeWidget.h
   qMRMLWidget.cxx
   qMRMLWidget.h
   qMRMLWindowLevelWidget.cxx
@@ -241,6 +243,8 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLViewControllerBar_p.h
   qMRMLVolumeInfoWidget.h
   qMRMLVolumeThresholdWidget.h
+  qMRMLVolumeWidget.h
+  qMRMLVolumeWidget_p.h
   qMRMLWidget.h
   qMRMLWindowLevelWidget.h
   )

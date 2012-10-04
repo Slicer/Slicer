@@ -1,39 +1,50 @@
+/*==============================================================================
+
+  Program: 3D Slicer
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
+
 #ifndef __qMRMLVolumeThresholdWidget_h
 #define __qMRMLVolumeThresholdWidget_h
 
-/// Qt includes
-#include <QWidget>
-
 /// CTK includes
-#include <ctkPimpl.h>
-#include <ctkVTKObject.h>
-
-#include "qMRMLWidgetsExport.h"
-
-class vtkMRMLNode;
-class vtkMRMLScalarVolumeDisplayNode;
-class vtkMRMLScalarVolumeNode;
+#include "qMRMLVolumeWidget.h"
 class qMRMLVolumeThresholdWidgetPrivate;
 
-class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget : public QWidget
+class QMRML_WIDGETS_EXPORT qMRMLVolumeThresholdWidget
+  : public qMRMLVolumeWidget
 {
   Q_OBJECT
-  QVTK_OBJECT
-
   Q_PROPERTY(int  autoThreshold READ autoThreshold WRITE setAutoThreshold)
   Q_PROPERTY(double lowerThreshold READ lowerThreshold WRITE setLowerThreshold)
   Q_PROPERTY(double upperThreshold READ upperThreshold WRITE setUpperThreshold)
 
 public:
   /// Constructors
-  typedef QWidget Superclass;
+  typedef qMRMLVolumeWidget Superclass;
   explicit qMRMLVolumeThresholdWidget(QWidget* parent=0);
   virtual ~qMRMLVolumeThresholdWidget();
 
-  /// 0: Manual
-  /// 1: Auto
-  /// 2: Off
-  int autoThreshold() const;
+  enum ControlMode
+  {
+    Auto = 0,
+    Manual = 1,
+    Off =2
+  };
+
+  ControlMode autoThreshold() const;
+  void setAutoThreshold(ControlMode autoWindowLevel);
 
   /// Is the thresholding activated
   bool isOff()const;
@@ -45,10 +56,6 @@ public:
   /// 
   /// Get upperThreshold
   double upperThreshold()const;
-
-  /// 
-  /// Return the current MRML node of interest
-  vtkMRMLScalarVolumeNode* mrmlVolumeNode()const;
 
 signals:
   /// 
@@ -74,36 +81,14 @@ public slots:
   /// Set lowerThreshold/upperThreshold in once
   void setThreshold(double lowerThreshold, double upperThreshold);
 
-  /// 
-  /// Set the MRML node of interest
-  void setMRMLVolumeNode(vtkMRMLScalarVolumeNode* displayNode);
-  void setMRMLVolumeNode(vtkMRMLNode* node);
-
-protected slots:
-  /// the volume node has been modified, maybe its displayNode has been
-  /// changed
-  void updateDisplayNode();
-
-  /// update widget GUI from MRML node
-  void updateWidgetFromMRML();
-
 protected:
-  /// 
-  /// Return the current MRML display node
-  vtkMRMLScalarVolumeDisplayNode* mrmlDisplayNode()const;
-
-  /// 
-  /// Set current MRML display node
-  void setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* displayNode);
+  /// Update the widget from volume display node properties.
+  virtual void updateWidgetFromMRMLDisplayNode();
 
   /// 
   /// Set sliders range
   void setMinimum(double min);
   void setMaximum(double max);
-
-
-protected:
-  QScopedPointer<qMRMLVolumeThresholdWidgetPrivate> d_ptr;
 
 private:
   Q_DECLARE_PRIVATE(qMRMLVolumeThresholdWidget);

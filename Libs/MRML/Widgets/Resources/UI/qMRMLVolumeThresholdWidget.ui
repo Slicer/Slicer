@@ -34,12 +34,12 @@
     <widget class="QComboBox" name="AutoManualComboBox">
      <item>
       <property name="text">
-       <string>Manual</string>
+       <string>Auto</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Auto</string>
+       <string>Manual</string>
       </property>
      </item>
      <item>
@@ -50,16 +50,11 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="qMRMLRangeWidget" name="VolumeThresholdRangeWidget"/>
+    <widget class="ctkRangeWidget" name="VolumeThresholdRangeWidget"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>qMRMLRangeWidget</class>
-   <extends>ctkRangeWidget</extends>
-   <header>qMRMLRangeWidget.h</header>
-  </customwidget>
    <customwidget>
      <class>ctkRangeWidget</class>
      <extends>QWidget</extends>

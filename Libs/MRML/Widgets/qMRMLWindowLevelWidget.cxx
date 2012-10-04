@@ -1,63 +1,61 @@
+/*==============================================================================
 
-// Qt includes
+  Program: 3D Slicer
+
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) All Rights Reserved.
+
+  See COPYRIGHT.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+==============================================================================*/
 
 // CTK includes
-#include <ctkRangeWidget.h>
 #include <ctkPopupWidget.h>
-#include <ctkUtils.h>
 
 // qMRML includes
+#include "qMRMLVolumeWidget_p.h"
 #include "qMRMLWindowLevelWidget.h"
 #include "ui_qMRMLWindowLevelWidget.h"
 
 // MRML includes
-#include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 
-// VTK includes
-#include <vtkImageData.h>
-
 //-----------------------------------------------------------------------------
-class qMRMLWindowLevelWidgetPrivate: public Ui_qMRMLWindowLevelWidget
+class qMRMLWindowLevelWidgetPrivate
+  : public qMRMLVolumeWidgetPrivate
+  , public Ui_qMRMLWindowLevelWidget
 {
   Q_DECLARE_PUBLIC(qMRMLWindowLevelWidget);
 protected:
-  qMRMLWindowLevelWidget* const q_ptr;
+  typedef qMRMLVolumeWidgetPrivate Superclass;
 
 public:
   qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object);
   virtual ~qMRMLWindowLevelWidgetPrivate();
-  void init();
-  bool blockSignals(bool block);
-  void scalarRange(vtkMRMLScalarVolumeDisplayNode* displayNode, double range[2]);
-  void updateSingleStep(double min, double max);
-  
-  vtkMRMLScalarVolumeNode*        VolumeNode;
-  vtkMRMLScalarVolumeDisplayNode* VolumeDisplayNode;
-  ctkPopupWidget*                 PopupWidget;
-  ctkRangeWidget*                 RangeWidget;
-  double                          DisplayScalarRange[2];
+  virtual void init();
+
+  virtual bool blockSignals(bool block);
+  virtual void setRange(double min, double max);
+  virtual void setDecimals(int decimals);
+  virtual void setSingleStep(double singleStep);
 };
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidgetPrivate::qMRMLWindowLevelWidgetPrivate(
-  qMRMLWindowLevelWidget& object)
-  : q_ptr(&object)
+qMRMLWindowLevelWidgetPrivate
+::qMRMLWindowLevelWidgetPrivate(qMRMLWindowLevelWidget& object)
+  : Superclass(object)
 {
-  this->VolumeNode = 0;
-  this->VolumeDisplayNode = 0;
-  this->PopupWidget = 0;
-  this->RangeWidget = 0;
-  this->DisplayScalarRange[0] = 0;
-  this->DisplayScalarRange[1] = 0;
 }
 
 // --------------------------------------------------------------------------
 qMRMLWindowLevelWidgetPrivate::~qMRMLWindowLevelWidgetPrivate()
 {
-  delete this->PopupWidget;
-  this->PopupWidget = 0;
-  this->RangeWidget = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -65,6 +63,7 @@ void qMRMLWindowLevelWidgetPrivate::init()
 {
   Q_Q(qMRMLWindowLevelWidget);
 
+  this->Superclass::init();
   this->setupUi(q);
 
   q->setAutoWindowLevel(qMRMLWindowLevelWidget::Auto);
@@ -86,118 +85,56 @@ void qMRMLWindowLevelWidgetPrivate::init()
 
   QObject::connect(this->AutoManualComboBox, SIGNAL(currentIndexChanged(int)),
                    q, SLOT(setAutoWindowLevel(int)));
-
-  // disable as there is not MRML Node associated with the widget
-  q->setEnabled(this->VolumeDisplayNode != 0);
-
-  // we can't use the flag Qt::Popup as it automatically closes when there is
-  // a click outside of the rangewidget
-  this->PopupWidget = new ctkPopupWidget(q);
-  this->PopupWidget->setObjectName("RangeWidgetPopup");
-
-  QPalette popupPalette = q->palette();
-  QColor windowColor = popupPalette.color(QPalette::Window);
-  windowColor.setAlpha(200);
-  QColor darkColor = popupPalette.color(QPalette::Dark);
-  darkColor.setAlpha(200);
-  /*
-  QLinearGradient gradient(QPointF(0.,0.),QPointF(0.,0.5));
-  gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
-  gradient.setColorAt(0, windowColor);
-  gradient.setColorAt(1, darkColor);
-  popupPalette.setBrush(QPalette::Window, gradient);
-  */
-  popupPalette.setColor(QPalette::Window, darkColor);
-  this->PopupWidget->setPalette(popupPalette);
-  this->PopupWidget->setAttribute(Qt::WA_TranslucentBackground, true);
-
-  this->PopupWidget->setAutoShow(false);
-  this->PopupWidget->setAutoHide(true);
-  //this->PopupWidget->setBaseWidget(q);
-  this->RangeWidget = new ctkRangeWidget;
-
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(this->RangeWidget);
-  this->PopupWidget->setLayout(layout);
-
-  QMargins margins = layout->contentsMargins();
-  margins.setTop(0);
-  layout->setContentsMargins(margins);
-  
-  this->RangeWidget->setSpinBoxAlignment(Qt::AlignBottom);
-  this->RangeWidget->setRange(-1000000., 1000000.);
-  QObject::connect(this->RangeWidget, SIGNAL(valuesChanged(double,double)),
-                   q, SLOT(setRange(double,double)));
-  this->RangeWidget->setToolTip("Set the range boundaries of Window/Level to control large numbers or allow fine tuning");
 }
 
 // --------------------------------------------------------------------------
 bool qMRMLWindowLevelWidgetPrivate::blockSignals(bool block)
 {
+  bool res = this->Superclass::blockSignals(block);
   this->WindowLevelRangeSlider->blockSignals(block);
   this->WindowSpinBox->blockSignals(block);
   this->LevelSpinBox->blockSignals(block);
   this->MinSpinBox->blockSignals(block);
   this->MaxSpinBox->blockSignals(block);
-  return this->RangeWidget->blockSignals(block);
+  return res;
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidgetPrivate::scalarRange(vtkMRMLScalarVolumeDisplayNode* dNode, double range[2])
+void qMRMLWindowLevelWidgetPrivate::setRange(double min, double max)
 {
-  // vtkMRMLScalarVolumeDisplayNode::GetDisplayScalarRange() can be a bit
-  // slow if there is no input as it searches the scene for the associated
-  // volume node.
-  // Here we already know the volumenode so we can manually use it to
-  // retrieve the scalar range.
-  if (dNode && dNode->GetInputImageData())
-    {
-    dNode->GetDisplayScalarRange(range);
-    }
-  else if (this->VolumeNode->GetImageData())
-    {
-    this->VolumeNode->GetImageData()->GetScalarRange(range);
-    }
-  else
-    {
-    range[0] = 0.;
-    range[1] = 0.;
-    }
+  this->Superclass::setRange(min, max);
+  this->WindowLevelRangeSlider->setRange(min, max);
+  this->WindowSpinBox->setRange(0, max - min);
+  this->LevelSpinBox->setRange(min, max);
+  this->MinSpinBox->setRange(min, max);
+  this->MaxSpinBox->setRange(min, max);
+  //this->RangeWidget->setValues(min, max);
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidgetPrivate::updateSingleStep(double min, double max)
+void qMRMLWindowLevelWidgetPrivate::setDecimals(int decimals)
 {
-  double interval = max - min;
-  int order = interval != 0. ? ctk::orderOfMagnitude(interval) : -2;
-
-  int ratio = 2;
-  double singleStep = pow(10., order - ratio);
-  int decimals = qMax(0, -order + ratio);
-
+  this->Superclass::setDecimals(decimals);
   this->WindowSpinBox->setDecimals(decimals);
   this->LevelSpinBox->setDecimals(decimals);
   this->MinSpinBox->setDecimals(decimals);
   this->MaxSpinBox->setDecimals(decimals);
+}
 
+// --------------------------------------------------------------------------
+void qMRMLWindowLevelWidgetPrivate::setSingleStep(double singleStep)
+{
+  this->Superclass::setSingleStep(singleStep);
   this->WindowLevelRangeSlider->setSingleStep(singleStep);
   this->WindowSpinBox->setSingleStep(singleStep);
   this->LevelSpinBox->setSingleStep(singleStep);
   this->MinSpinBox->setSingleStep(singleStep);
   this->MaxSpinBox->setSingleStep(singleStep);
-
-  // The RangeWidget doesn't have to be as precise as the sliders/spinboxes.
-  ratio = 1;
-  singleStep = pow(10., order - ratio);
-  decimals = qMax(0, -order + ratio);
-
-  this->RangeWidget->setDecimals(decimals);
-  this->RangeWidget->setSingleStep(singleStep);
 }
 
 // --------------------------------------------------------------------------
-qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* _parent) : Superclass(_parent)
-  , d_ptr(new qMRMLWindowLevelWidgetPrivate(*this))
+qMRMLWindowLevelWidget::qMRMLWindowLevelWidget(QWidget* parentWidget)
+  : Superclass(new qMRMLWindowLevelWidgetPrivate(*this), parentWidget)
 {
   Q_D(qMRMLWindowLevelWidget);
   d->init();
@@ -397,62 +334,6 @@ double qMRMLWindowLevelWidget::level() const
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setMRMLVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* node)
-{
-  Q_D(qMRMLWindowLevelWidget);
-  if (d->VolumeDisplayNode == node)
-    {
-    return;
-    }
-
-  // each time the node is modified, the qt widgets are updated
-  this->qvtkReconnect(d->VolumeDisplayNode, node,
-                       vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRMLDisplayNode()));
-
-  d->VolumeDisplayNode = node;
-
-  this->setEnabled(node != 0);
-
-  this->updateWidgetFromMRMLDisplayNode();
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLNode* node)
-{
-  this->setMRMLVolumeNode(vtkMRMLScalarVolumeNode::SafeDownCast(node));
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setMRMLVolumeNode(vtkMRMLScalarVolumeNode* volumeNode)
-{
-  Q_D(qMRMLWindowLevelWidget);
-  if (volumeNode == d->VolumeNode)
-    {
-    return;
-    }
-
-  this->qvtkReconnect(d->VolumeNode, volumeNode, vtkCommand::ModifiedEvent,
-                      this, SLOT(updateWidgetFromMRMLVolumeNode()));
-
-  d->VolumeNode = volumeNode;
-  this->updateWidgetFromMRMLVolumeNode();
-}
-
-// --------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode* qMRMLWindowLevelWidget::mrmlVolumeNode()const
-{
-  Q_D(const qMRMLWindowLevelWidget);
-  return d->VolumeNode;
-}
-
-// --------------------------------------------------------------------------
-vtkMRMLScalarVolumeDisplayNode* qMRMLWindowLevelWidget::mrmlDisplayNode()const
-{
-  Q_D(const qMRMLWindowLevelWidget);
-  return d->VolumeDisplayNode;
-}
-
-// --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::setMinimumValue(double min)
 {
   this->setMinMaxRangeValue(min, this->maximumValue());
@@ -465,36 +346,13 @@ void qMRMLWindowLevelWidget::setMaximumValue(double max)
 }
 
 // --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateWidgetFromMRMLVolumeNode()
-{
-  Q_D(qMRMLWindowLevelWidget);
-  vtkMRMLScalarVolumeDisplayNode* newVolumeDisplayNode = d->VolumeNode ?
-    vtkMRMLScalarVolumeDisplayNode::SafeDownCast(
-      d->VolumeNode->GetVolumeDisplayNode()) :0;
-/*
-  if (d->VolumeNode && d->VolumeNode->GetImageData())
-    {
-    this->updateRangeForVolumeDisplayNode(newVolumeDisplayNode);
-    }
-*/
-  this->setMRMLVolumeDisplayNode( newVolumeDisplayNode );
-}
-
-// --------------------------------------------------------------------------
 void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
 {
   Q_D(qMRMLWindowLevelWidget);
+  this->Superclass::updateWidgetFromMRMLDisplayNode();
   if (!d->VolumeDisplayNode)
     {
     return;
-    }
-
-  double range[2];
-  d->scalarRange(d->VolumeDisplayNode, range);
-  if (range[0] != d->DisplayScalarRange[0] ||
-      range[1] != d->DisplayScalarRange[1])
-    {
-    this->updateRangeForVolumeDisplayNode(d->VolumeDisplayNode);
     }
 
   double window = d->VolumeDisplayNode->GetWindow();
@@ -526,65 +384,4 @@ void qMRMLWindowLevelWidget::updateWidgetFromMRMLDisplayNode()
         }
       break;
     }
-}
-
-//------------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::updateRangeForVolumeDisplayNode(vtkMRMLScalarVolumeDisplayNode* dNode)
-{
-  Q_D(qMRMLWindowLevelWidget);
-  double range[2];
-  d->scalarRange(dNode, range);
-  d->DisplayScalarRange[0] = range[0];
-  d->DisplayScalarRange[1] = range[1];
-  // we don't want RangeWidget to fire any signal because we don't have
-  // a display node correctly set here (it's done )
-  d->RangeWidget->blockSignals(true);
-  double interval = range[1] - range[0];
-  Q_ASSERT(interval >= 0.);
-  double min, max;
-
-  if (interval <= 10.)
-    {
-    min = qMin(-10., range[0] - 2.*interval);
-    max = qMax(10., range[1] + 2.*interval);
-    }
-  else
-    {
-    min = qMin(-1200., range[0] - 2.*interval);
-    max = qMax(900., range[1] + 2.*interval);
-    }
-
-  d->RangeWidget->setRange(min, max);
-  d->RangeWidget->blockSignals(false);
-
-  if (interval < 10.)
-    {
-    //give us some space
-    range[0] = range[0] - interval*0.1;
-    range[1] = range[1] + interval*0.1;
-    }
-  else
-    {
-    //give us some space
-    range[0] = qMin(-600., range[0] - interval*0.1);
-    range[1] = qMax(600., range[1] + interval*0.1);
-    }
-  bool blocked = d->blockSignals(true);
-  this->setRange(range[0], range[1]);
-  d->blockSignals(blocked);
-}
-
-// --------------------------------------------------------------------------
-void qMRMLWindowLevelWidget::setRange(double min, double max)
-{
-  Q_D(qMRMLWindowLevelWidget);
-
-  d->updateSingleStep(min, max);
-
-  d->WindowLevelRangeSlider->setRange(min, max);
-  d->WindowSpinBox->setRange(0, max - min);
-  d->LevelSpinBox->setRange(min, max);
-  d->MinSpinBox->setRange(min, max);
-  d->MaxSpinBox->setRange(min, max);
-  d->RangeWidget->setValues(min, max);
 }

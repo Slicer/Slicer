@@ -36,7 +36,7 @@
 //------------------------------------------------------------------------------
 qMRMLSceneHierarchyModelPrivate
 ::qMRMLSceneHierarchyModelPrivate(qMRMLSceneHierarchyModel& object)
-  : qMRMLSceneModelPrivate(object)
+  : Superclass(object)
   , ExpandColumn(-1)
 {
 }
