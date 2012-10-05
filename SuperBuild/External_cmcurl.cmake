@@ -25,7 +25,7 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"
-  SVN_REVISION -r "138"
+  SVN_REVISION -r "185"
   "${slicer_external_update}"
   SOURCE_DIR cmcurl
   BINARY_DIR cmcurl-build

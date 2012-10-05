@@ -106,13 +106,7 @@ endif()
 set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 
 # For more details, see http://www.kitware.com/blog/home/post/11
-set(CTEST_USE_LAUNCHERS 0)
-if(CTEST_CMAKE_GENERATOR MATCHES ".*Makefiles.*")
-  set(CTEST_USE_LAUNCHERS 1)
-endif()
-#if(NOT ${CTEST_CMAKE_GENERATOR} MATCHES "Visual Studio")
-#  set(CTEST_USE_LAUNCHERS 1)
-#endif()
+set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
@@ -184,7 +178,6 @@ macro(run_ctest)
     # Write initial cache.
     #-----------------------------------------------------------------------------
     file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
-CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 QT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}

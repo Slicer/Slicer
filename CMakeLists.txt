@@ -29,6 +29,12 @@ set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 
 #-----------------------------------------------------------------------------
+include(CTestUseLaunchers OPTIONAL)
+if(${CTEST_USE_LAUNCHERS})
+  message(STATUS "CTest launchers enabled")
+endif()
+
+#-----------------------------------------------------------------------------
 # VAriable Slicer_LANGUAGES
 #-----------------------------------------------------------------------------
 set(Slicer_LANGUAGES

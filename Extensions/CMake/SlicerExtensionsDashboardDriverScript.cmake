@@ -232,10 +232,7 @@ message("EXTENSIONS_BUILDSYSTEM_SOURCE_DIRECTORY: ${EXTENSIONS_BUILDSYSTEM_SOURC
 message("Slicer_DIR ................: ${Slicer_DIR}")
 
 # For more details, see http://www.kitware.com/blog/home/post/11
-set(CTEST_USE_LAUNCHERS 0)
-if(CTEST_CMAKE_GENERATOR MATCHES ".*Makefiles.*")
-  set(CTEST_USE_LAUNCHERS 1)
-endif()
+set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} 1)
 
 if(empty_binary_directory)
   message("Directory ${CTEST_BINARY_DIRECTORY} cleaned !")
@@ -331,7 +328,6 @@ macro(run_ctest)
       #-----------------------------------------------------------------------------
       file(WRITE "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt" "
 CTEST_MODEL:STRING=${model}
-CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
 Slicer_EXTENSIONS_TRACK_QUALIFIER:STRING=${EXTENSIONS_TRACK_QUALIFIER}
 GIT_EXECUTABLE:FILEPATH=${CTEST_GIT_COMMAND}
 Subversion_SVN_EXECUTABLE:FILEPATH=${CTEST_SVN_COMMAND}

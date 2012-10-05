@@ -185,14 +185,6 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_SlicerWebGLExport
   )
 
-# Add CTEST_USE_LAUNCHER only if already defined and enabled.
-# It avoids extra overhead for manual builds and still allow the option
-# to be propagated to the external project.
-# See http://www.kitware.com/blog/home/post/11
-if(DEFINED CTEST_USE_LAUNCHER AND "${CTEST_USE_LAUNCHER}")
-  list(APPEND ep_cmake_boolean_args CTEST_USE_LAUNCHER)
-endif()
-
 # Add the option to disable Java even when found on the machine.
 list(APPEND ep_cmake_boolean_args CMAKE_DISABLE_FIND_PACKAGE_Java)
 
