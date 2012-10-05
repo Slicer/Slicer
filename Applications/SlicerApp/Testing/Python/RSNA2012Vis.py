@@ -310,6 +310,7 @@ class RSNA2012VisTest(unittest.TestCase):
       dicomWidget.dicomApp.suspendModel()
       indexer = ctk.ctkDICOMIndexer()
       indexer.addDirectory(slicer.dicomDatabase, dicomFilesDirectory, None)
+      indexer = None
       dicomWidget.dicomApp.resumeModel()
       dicomWidget.detailsPopup.open()
       # click on the first row of the tree
