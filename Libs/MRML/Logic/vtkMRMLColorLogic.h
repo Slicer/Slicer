@@ -124,7 +124,6 @@ protected:
   /// We add the default LUTs.
   virtual void OnMRMLSceneNewEvent();
 
-
   vtkMRMLColorTableNode* CreateLabelsNode();
   vtkMRMLColorTableNode* CreateDefaultTableNode(int type);
   vtkMRMLProceduralColorNode* CreateRandomNode();
@@ -154,7 +153,11 @@ protected:
   void AddUserFileNodes();
   
   virtual std::vector<std::string> FindDefaultColorFiles();
-  virtual std::vector<std::string> FindUserColorFiles();  
+  virtual std::vector<std::string> FindUserColorFiles();
+
+  /// Return the ID of a node that doesn't belong to a scene.
+  /// It is the concatenation of the node class name and its type.
+  static const char * GetColorNodeID(vtkMRMLColorNode* colorNode);
 
   /// a vector holding discovered default colour files, found in the
   /// Resources/ColorFiles directory, white space separated with:
@@ -168,6 +171,8 @@ protected:
   /// look for extra colour files, set from the return value of
   /// vtkMRMLApplication::GetColorFilePaths
   char *UserColorFilePaths;
+
+  static std::string TempColorNodeID;
 };
 
 #endif

@@ -28,6 +28,12 @@
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
+#include <vtkNew.h>
+
+// STD includes
+#include <cassert>
+
+std::string vtkMRMLColorLogic::TempColorNodeID;
 
 vtkCxxRevisionMacro(vtkMRMLColorLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLColorLogic);
@@ -268,65 +274,51 @@ void vtkMRMLColorLogic::RemoveDefaultColorNodes()
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetColorTableNodeID(int type)
 {
-  const char *id;
-  vtkMRMLColorTableNode *basicNode = vtkMRMLColorTableNode::New();
+  vtkNew<vtkMRMLColorTableNode> basicNode;
   basicNode->SetType(type);
-
-  //std::string id = std::string(basicNode->GetClassName()) + std::string(basicNode->GetTypeAsString());
-  id = basicNode->GetTypeAsIDString();
-  basicNode->Delete();
-  //basicNode = NULL;
-  //return id.c_str();
-
-  return (id);
+  return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
 }
 
 //----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::GetFreeSurferColorNodeID(int type)
 {
-  const char *id;
-  vtkMRMLFreeSurferProceduralColorNode *basicNode = vtkMRMLFreeSurferProceduralColorNode::New();
+  vtkNew<vtkMRMLFreeSurferProceduralColorNode> basicNode;
   basicNode->SetType(type);
-
-  id = basicNode->GetTypeAsIDString();
-  basicNode->Delete();
-
-  return (id);
+  return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
 }
 
 //----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::GetPETColorNodeID (int type )
 {
-  const char *id;
-  vtkMRMLPETProceduralColorNode *basicNode = vtkMRMLPETProceduralColorNode::New();
+  vtkNew<vtkMRMLPETProceduralColorNode> basicNode;
   basicNode->SetType(type);
-  id = basicNode->GetTypeAsIDString();
-  basicNode->Delete();
-
-  return (id);
+  return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
 }
-
 
 //----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::GetdGEMRICColorNodeID(int type)
 {
-  const char *id;
-  vtkMRMLdGEMRICProceduralColorNode *basicNode = vtkMRMLdGEMRICProceduralColorNode::New();
+  vtkNew<vtkMRMLdGEMRICProceduralColorNode> basicNode;
   basicNode->SetType(type);
-  id = basicNode->GetTypeAsIDString();
-  basicNode->Delete();
+  return vtkMRMLColorLogic::GetColorNodeID(basicNode.GetPointer());
+}
 
-  return (id);
+//----------------------------------------------------------------------------
+const char *vtkMRMLColorLogic::GetColorNodeID(vtkMRMLColorNode* colorNode)
+{
+  assert(colorNode);
+  std::string id = std::string(colorNode->GetClassName()) +
+                   std::string(colorNode->GetTypeAsString());
+  vtkMRMLColorLogic::TempColorNodeID = id;
+  return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
 
 //----------------------------------------------------------------------------
 const char * vtkMRMLColorLogic::GetProceduralColorNodeID(const char *name)
 {
-  char *id;
-  std::string idStr = std::string("vtkMRMLProceduralColorNode") + std::string(name);
-  id = new char[idStr.length() + 1];
-  strcpy(id, idStr.c_str());
-  return id;
+  std::string id = std::string("vtkMRMLProceduralColorNode") + std::string(name);
+  vtkMRMLColorLogic::TempColorNodeID = id;
+  return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
 
 //----------------------------------------------------------------------------
@@ -340,13 +332,10 @@ std::string vtkMRMLColorLogic::GetFileColorNodeSingletonTag(const char * fileNam
 //----------------------------------------------------------------------------
 const char *vtkMRMLColorLogic::GetFileColorNodeID(const char * fileName)
 {
-  char *id;
-  std::string idStr =
-    std::string("vtkMRMLColorTableNode") +
-    vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName);
-  id =  new char[idStr.length() + 1];
-  strcpy(id, idStr.c_str());
-  return id;
+  std::string id = std::string("vtkMRMLColorTableNode") +
+                   vtkMRMLColorLogic::GetFileColorNodeSingletonTag(fileName);
+  vtkMRMLColorLogic::TempColorNodeID = id;
+  return vtkMRMLColorLogic::TempColorNodeID.c_str();
 }
 
 //----------------------------------------------------------------------------

@@ -23,39 +23,165 @@
 
 // MRML includes
 #include <vtkMRMLColorNode.h>
+#include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLdGEMRICProceduralColorNode.h>
+#include <vtkMRMLPETProceduralColorNode.h>
 
 // VTK includes
-#include <vtkLookupTable.h>
+#include <vtkNew.h>
 #include <vtkTimerLog.h>
 
 // STD includes
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLColorLogicTest1(int , char * [] )
+//----------------------------------------------------------------------------
+namespace
 {
-  // To load the freesurfer file, SLICER_HOME is requested
+bool TestPerformance();
+bool TestNodeIDs();
+bool TestDefaults();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLColorLogicTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
+{
+  bool res = true;
+  res = TestPerformance() && res;
+  res = TestNodeIDs() && res;
+  res = TestDefaults() && res;
+  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+namespace
+{
+
+//----------------------------------------------------------------------------
+bool TestPerformance()
+{
+  // To load freesurfer files, SLICER_HOME is requested
   //vtksys::SystemTools::PutEnv("SLICER_HOME=..." );
   vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
   vtkMRMLColorLogic* colorLogic = vtkMRMLColorLogic::New();
-  colorLogic->SetDebug(1);
 
-  vtkSmartPointer<vtkTimerLog> overallTimer = vtkSmartPointer<vtkTimerLog>::New();
+  vtkNew<vtkTimerLog> overallTimer;
   overallTimer->StartTimer();
 
   colorLogic->SetMRMLScene(scene);
 
   overallTimer->StopTimer();
-  std::cout << "AddDefaultColorNodes: " << overallTimer->GetElapsedTime() << "s"
-            << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
+  std::cout << "<DartMeasurement name=\"AddDefaultColorNodes\" "
+            << "type=\"numeric/double\">"
+            << overallTimer->GetElapsedTime() << "</DartMeasurement>" << std::endl;
   overallTimer->StartTimer();
 
   colorLogic->Delete();
 
   overallTimer->StopTimer();
-  std::cout << "RemoveDefaultColorNodes: " << overallTimer->GetElapsedTime() << "s"
-            << " " << 1. / overallTimer->GetElapsedTime() << "fps" << std::endl;
+  std::cout << "<DartMeasurement name=\"RemoveDefaultColorNodes\" "
+            << "type=\"numeric/double\">"
+            << overallTimer->GetElapsedTime()
+            << "</DartMeasurement>" << std::endl;
 
-  return EXIT_SUCCESS;
+  return true;
 }
 
+//----------------------------------------------------------------------------
+bool TestNodeIDs()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+
+  vtkMRMLNode* node= 0;
+  scene->InitTraversal();
+  while ( (node = scene->GetNextNodeByClass("vtkMRMLColorTableNode")) )
+    {
+    vtkMRMLColorTableNode* colorNode =
+      vtkMRMLColorTableNode::SafeDownCast(node);
+    const char* nodeID =
+      vtkMRMLColorLogic::GetColorTableNodeID(colorNode->GetType());
+    if (strcmp(colorNode->GetID(), nodeID) != 0)
+      {
+      std::cout << "Failed to generate color table node ID for "
+                << colorNode->GetType() << std::endl;
+      return false;
+      }
+    }
+  scene->InitTraversal();
+  while ( (node = scene->GetNextNodeByClass("vtkMRMLPETProceduralColorNode")) )
+    {
+    vtkMRMLPETProceduralColorNode* colorNode =
+      vtkMRMLPETProceduralColorNode::SafeDownCast(node);
+    const char* nodeID =
+      vtkMRMLColorLogic::GetPETColorNodeID(colorNode->GetType());
+    if (strcmp(colorNode->GetID(), nodeID) != 0)
+      {
+      std::cout << "Failed to generate color table node ID for "
+                << colorNode->GetType() << std::endl;
+      return false;
+      }
+    }
+  scene->InitTraversal();
+  while ( (node = scene->GetNextNodeByClass("vtkMRMLdGEMRICProceduralColorNode")) )
+    {
+    vtkMRMLdGEMRICProceduralColorNode* colorNode =
+      vtkMRMLdGEMRICProceduralColorNode::SafeDownCast(node);
+    const char* nodeID =
+      vtkMRMLColorLogic::GetdGEMRICColorNodeID(colorNode->GetType());
+    if (strcmp(colorNode->GetID(), nodeID) != 0)
+      {
+      std::cout << "Failed to generate color table node ID for "
+                << colorNode->GetType() << std::endl;
+      return false;
+      }
+    }
+  // To test free surfers, SLICER_HOME env variable needs to be set.
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestDefaults()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+  if (scene->GetNodeByID(colorLogic->GetDefaultVolumeColorNodeID()) == 0)
+    {
+    std::cout << "Can't find default volume color node with ID: "
+              << colorLogic->GetDefaultVolumeColorNodeID() << std::endl;
+    return false;
+    }
+  if (scene->GetNodeByID(colorLogic->GetDefaultLabelMapColorNodeID()) == 0)
+    {
+    std::cout << "Can't find default labelmap color node with ID: "
+              << colorLogic->GetDefaultLabelMapColorNodeID() << std::endl;
+    return false;
+    }
+  if (scene->GetNodeByID(colorLogic->GetDefaultEditorColorNodeID()) == 0)
+    {
+    std::cout << "Can't find default editor color node with ID: "
+              << colorLogic->GetDefaultEditorColorNodeID() << std::endl;
+    return false;
+    }
+  if (scene->GetNodeByID(colorLogic->GetDefaultModelColorNodeID()) == 0)
+    {
+    std::cout << "Can't find default model color node with ID: "
+              << colorLogic->GetDefaultModelColorNodeID() << std::endl;
+    return false;
+    }
+  if (scene->GetNodeByID(colorLogic->GetDefaultChartColorNodeID()) == 0)
+    {
+    std::cout << "Can't find default chart color node with ID: "
+              << colorLogic->GetDefaultChartColorNodeID() << std::endl;
+    return false;
+    }
+  //if (scene->GetNodeByID(colorLogic->GetDefaultFreeSurferLabelMapColorNodeID()) == 0)
+  //  {
+  //  std::cout << "Can't find default free surfer color node with ID: "
+  //            << colorLogic->GetDefaultFreeSurferLabelMapColorNodeID() << std::endl;
+  //  return false;
+  //  }
+  return true;
+}
+
+}

@@ -93,8 +93,7 @@ public:
   /// Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->dGEMRIC15T; };
   int GetLastType() { return this->dGEMRIC3T; };
-  
-  const char *GetTypeAsIDString();
+
   const char *GetTypeAsString();
   void SetTypeTo15T();
   void SetTypeTo3T();

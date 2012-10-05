@@ -110,10 +110,6 @@ public:
   const char * GetTypeAsString();
 
   /// 
-  /// return a text string describing the class name and type name
-  const char * GetTypeAsIDString();
-  
-  /// 
   /// DisplayModifiedEvent is generated when display node parameters is changed
   enum
     {

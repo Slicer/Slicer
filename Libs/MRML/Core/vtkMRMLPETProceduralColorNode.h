@@ -69,8 +69,7 @@ public:
   /// Return the lowest and the highest integers, for use in looping
   int GetFirstType() { return this->PETheat; };
   int GetLastType() { return this->PETMIP; };
-  
-  const char *GetTypeAsIDString();
+
   const char *GetTypeAsString();
   void SetTypeToHeat();
   void SetTypeToRainbow();

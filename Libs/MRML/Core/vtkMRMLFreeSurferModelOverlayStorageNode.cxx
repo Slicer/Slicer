@@ -175,38 +175,15 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           // make sure scalars are visible
           displayNode->SetScalarVisibility(1);
           }
+
         // set the colour look up table
-        vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-        if (extension == std::string(".thickness"))
+        std::string colorNodeID = this->GetColorNodeIDFromExtension(extension);
+        if (displayNode && !colorNodeID.empty())
           {
-          colorNode->SetTypeToGreenRed();
+          vtkDebugMacro("Using color node " << colorNodeID
+                        << " for scalar " << scalarName.c_str());
+          displayNode->SetAndObserveColorNodeID(colorNodeID.c_str());
           }
-        else if (extension == std::string(".curv") ||
-                 extension == std::string(".avg_curv") ||
-                 extension == std::string(".sulc"))
-          {
-          colorNode->SetTypeToGreenRed();
-          }
-        else if (extension == std::string(".area"))
-          {
-          colorNode->SetTypeToRedGreen();
-          }
-        else if (extension == std::string(".fs"))
-          {
-          colorNode->SetTypeToBlueRed();
-          }
-        else if (extension == std::string(".retinotopy"))
-          {
-          vtkWarningMacro("Retinotopy color wheel not implemented yet, using default of Heat.");
-          //colorNode->SetTypeToColorWheel();
-          }
-        vtkDebugMacro("Using color node " << colorNode->GetTypeAsIDString() << " for scalar " << scalarName.c_str());
-        if (displayNode)
-          {
-          displayNode->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-          }
-        colorNode->Delete();
-        colorNode  = NULL;
 
         reader->SetOutput(NULL);
         reader->Delete();
@@ -282,17 +259,15 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           modelNode->AddPointScalars(floatArray);
           vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
           // set the colour look up table
-          vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-          colorNode->SetTypeToHeat();
           if (displayNode)
             {
             displayNode->SetActiveScalarName(scalarName.c_str());
             // make sure scalars are visible
             displayNode->SetScalarVisibility(1);
-            displayNode->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+            std::string colorNodeID = this->GetColorNodeIDFromType(
+              vtkMRMLFreeSurferProceduralColorNode::Heat);
+            displayNode->SetAndObserveColorNodeID(colorNodeID.c_str());
             }
-          colorNode->Delete();
-          colorNode = NULL;
           }
         reader->Delete();
         floatArray->Delete();
@@ -375,17 +350,15 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           modelNode->AddPointScalars(floatArray);
           vtkMRMLModelDisplayNode *displayNode = modelNode->GetModelDisplayNode();
           // set the colour look up table
-          vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-          colorNode->SetTypeToLabels();
           if (displayNode)
             {
             displayNode->SetActiveScalarName(scalarName.c_str());
             // make sure scalars are visible
             displayNode->SetScalarVisibility(1);
-            displayNode->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
+            std::string colorNodeID = this->GetColorNodeIDFromType(
+              vtkMRMLFreeSurferProceduralColorNode::Labels);
+            displayNode->SetAndObserveColorNodeID(colorNodeID.c_str());
             }
-          colorNode->Delete();
-          colorNode = NULL;
           }
         reader->Delete();
         floatArray->Delete();
@@ -640,11 +613,9 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
         // make sure scalars are visible
         modelNode->GetModelDisplayNode()->SetScalarVisibility(1);
         // use the heat colour scale
-        vtkMRMLFreeSurferProceduralColorNode *colorNode = vtkMRMLFreeSurferProceduralColorNode::New();
-        colorNode->SetTypeToHeat();
-        modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNode->GetTypeAsIDString());
-        colorNode->Delete();
-        colorNode = NULL;
+        std::string colorNodeID = this->GetColorNodeIDFromType(
+          vtkMRMLFreeSurferProceduralColorNode::Heat);
+        modelNode->GetModelDisplayNode()->SetAndObserveColorNodeID(colorNodeID.c_str());
 
         reader->Delete();
         floatArray->Delete();
@@ -668,6 +639,60 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
 
   vtkDebugMacro("ReadData: Returning " << result);
   return result;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLFreeSurferModelOverlayStorageNode
+::GetColorNodeIDFromExtension(const std::string& extension)
+{
+  int type = vtkMRMLFreeSurferProceduralColorNode::Heat;
+  if (extension == std::string(".thickness"))
+    {
+    type = vtkMRMLFreeSurferProceduralColorNode::GreenRed;
+    }
+  else if (extension == std::string(".curv") ||
+           extension == std::string(".avg_curv") ||
+           extension == std::string(".sulc"))
+    {
+    type = vtkMRMLFreeSurferProceduralColorNode::GreenRed;
+    }
+  else if (extension == std::string(".area"))
+    {
+    type = vtkMRMLFreeSurferProceduralColorNode::RedGreen;
+    }
+  else if (extension == std::string(".fs"))
+    {
+    type = vtkMRMLFreeSurferProceduralColorNode::BlueRed;
+    }
+  else if (extension == std::string(".retinotopy"))
+    {
+    vtkWarningMacro("Retinotopy color wheel not implemented yet, using default of Heat.");
+    //type = type = vtkMRMLFreeSurferProceduralColorNode::ColorWheel();
+    }
+  return this->GetColorNodeIDFromType(type);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLFreeSurferModelOverlayStorageNode
+::GetColorNodeIDFromType(int type)
+{
+  if (!this->GetScene())
+    {
+    return std::string();
+    }
+  std::vector<vtkMRMLNode *> colorNodes;
+  this->GetScene()->GetNodesByClass("vtkMRMLFreeSurferProceduralColorNode",  colorNodes);
+  for (int i = 0; i < colorNodes.size(); ++i)
+    {
+    vtkMRMLFreeSurferProceduralColorNode* colorNode =
+      vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNodes[i]);
+    if (colorNode->GetType() == type)
+      {
+      return std::string(colorNode->GetID());
+      }
+    }
+  vtkErrorMacro( << "Can't find free surfer color node of type: " << type);
+  return std::string();
 }
 
 //----------------------------------------------------------------------------

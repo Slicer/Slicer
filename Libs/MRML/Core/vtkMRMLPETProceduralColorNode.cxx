@@ -105,25 +105,6 @@ void vtkMRMLPETProceduralColorNode::SetTypeToMIP()
   this->SetType(this->PETMIP);
 }
 
-
-//---------------------------------------------------------------------------
-const char *vtkMRMLPETProceduralColorNode::GetTypeAsIDString()
-{
-   if (this->Type == this->PETheat)
-    {
-    return "vtkMRMLPETProceduralColorNodePET-Heat";
-    }
-  else if (this->Type == this->PETrainbow)
-    {
-    return "vtkMRMLPETProceduralColorNodePET-Rainbow";
-    }
-  else if (this->Type == this->PETMIP)
-    {
-    return "vtkMRMLPETProceduralColorNodePET-MaximumIntensityProjection";
-    }
-  return "(unknown)";
-}
-
 //---------------------------------------------------------------------------
 const char *vtkMRMLPETProceduralColorNode::GetTypeAsString()
 {

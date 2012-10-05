@@ -65,6 +65,8 @@ protected:
   /// NOTE: Subclasses should implement this method
   virtual int WriteDataInternal(vtkMRMLNode *refNode);
 
+  std::string GetColorNodeIDFromExtension(const std::string& extension);
+  std::string GetColorNodeIDFromType(int type);
 };
 
 #endif

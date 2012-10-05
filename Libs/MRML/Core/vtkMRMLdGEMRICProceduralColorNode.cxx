@@ -107,20 +107,6 @@ void vtkMRMLdGEMRICProceduralColorNode::SetTypeTo3T()
 }
 
 //---------------------------------------------------------------------------
-const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsIDString()
-{
-   if (this->Type == this->dGEMRIC15T)
-    {
-    return "vtkMRMLdGEMRICProceduralColorNode1.5T";
-    }
-  else if (this->Type == this->dGEMRIC3T)
-    {
-    return "vtkMRMLdGEMRICProceduralColorNode3T";
-    }
-   return "(unknown)";
-}
-
-//---------------------------------------------------------------------------
 const char *vtkMRMLdGEMRICProceduralColorNode::GetTypeAsString()
 {
   if (this->Type == this->dGEMRIC15T)

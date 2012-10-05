@@ -298,38 +298,6 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
   return "(unknown)";
 }
 
-//----------------------------------------------------------------------------
-const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsIDString()
-{
-  if (this->Type == this->Heat)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeHeat";
-    }
-  if (this->Type == this->BlueRed)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeBlueRed";
-    }
-  if (this->Type == this->RedBlue)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeRedBlue";
-    }
-  if (this->Type == this->RedGreen)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeRedGreen";
-    }
-  if (this->Type == this->GreenRed)
-    {
-    return "vtkMRMLFreeSurferProceduralColorNodeGreenRed";
-    }
-  // these two are not held in this node, but use this node to define constants
-  if (this->Type == this->Labels)
-    {
-    return "vtkMRMLFreeSurferColorNodeLabels";
-    }
-  // custom will have a unique id
-  return "(unknown)";
-}
-
 //---------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
                                            unsigned long event, 
