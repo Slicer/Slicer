@@ -53,6 +53,8 @@ public:
   QMap<qSlicerModuleFactory*, int> Factories;
   QMap<QString, qSlicerModuleFactory*> RegisteredModules;
   QMap<QString, QStringList> ModuleDependees;
+
+  bool Verbose;
 };
 
 //-----------------------------------------------------------------------------
@@ -60,6 +62,7 @@ public:
 qSlicerAbstractModuleFactoryManagerPrivate::qSlicerAbstractModuleFactoryManagerPrivate(qSlicerAbstractModuleFactoryManager& object)
   : q_ptr(&object)
 {
+  this->Verbose = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -395,7 +398,10 @@ void qSlicerAbstractModuleFactoryManager::uninstantiateModules()
 void qSlicerAbstractModuleFactoryManager::uninstantiateModule(const QString& moduleName)
 {
   Q_D(qSlicerAbstractModuleFactoryManager);
-  qDebug() << "Uninstantiating:" << moduleName;
+  if (d->Verbose)
+    {
+    qDebug() << "Uninstantiating:" << moduleName;
+    }
   Q_ASSERT(d->RegisteredModules.contains(moduleName));
   emit moduleAboutToBeUninstantiated(moduleName);
   d->RegisteredModules[moduleName]->uninstantiate(moduleName);
@@ -434,6 +440,7 @@ void qSlicerAbstractModuleFactoryManager::setVerboseModuleDiscovery(bool verbose
     {
     factory->setVerbose(verbose);
     }
+  this->setIsVerbose(verbose);
 }
 
 //---------------------------------------------------------------------------
@@ -457,3 +464,18 @@ QStringList qSlicerAbstractModuleFactoryManager::moduleDependees(const QString& 
   Q_D(const qSlicerAbstractModuleFactoryManager);
   return d->ModuleDependees.value(module);
 }
+
+//---------------------------------------------------------------------------
+bool  qSlicerAbstractModuleFactoryManager::isVerbose()const
+{
+  Q_D(const qSlicerAbstractModuleFactoryManager);
+  return d->Verbose;
+}
+
+//---------------------------------------------------------------------------
+void qSlicerAbstractModuleFactoryManager::setIsVerbose(bool flag)
+{
+  Q_D(qSlicerAbstractModuleFactoryManager);
+  d->Verbose = flag;
+}
+  

@@ -199,6 +199,12 @@ signals:
   void modulesUninstantiated(const QStringList& moduleNames);
   void moduleUninstantiated(const QString& moduleName);
 
+public slots:
+  /// Enable/disable local verbose output during module discovery and
+  /// uninstantiating, set by setVerboseModuleDiscovery()
+  /// \sa setVerboseModuleDiscovery()
+  void setIsVerbose(bool flag);
+  bool isVerbose()const;
 protected:
   QScopedPointer<qSlicerAbstractModuleFactoryManagerPrivate> d_ptr;
 

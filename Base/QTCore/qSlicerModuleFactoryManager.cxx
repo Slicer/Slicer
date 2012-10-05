@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // SlicerQt includes
-#include "qSlicerCoreApplication.h"
 #include "qSlicerModuleFactoryManager.h"
 #include "qSlicerAbstractCoreModule.h"
 
@@ -116,7 +115,7 @@ bool qSlicerModuleFactoryManager::loadModule(const QString& name, const QString&
     return true;
     }
 
-  if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_EnableTesting))
+  if (this->Superclass::isVerbose())
     {
     qDebug() << "Loading module" << name;
     }
