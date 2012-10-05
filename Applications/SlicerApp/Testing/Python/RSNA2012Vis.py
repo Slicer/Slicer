@@ -292,7 +292,10 @@ class RSNA2012VisTest(unittest.TestCase):
     slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
 
     self.delayDisplay("Switching to temp database directory")
-    originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+    if slicer.dicomDatabase:
+      originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+    else:
+      originalDatabaseDirectory = None
     tempDatabaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
     qt.QDir().mkpath(tempDatabaseDirectory)
     dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
@@ -372,7 +375,8 @@ class RSNA2012VisTest(unittest.TestCase):
       self.delayDisplay('Test caused exception!\n' + str(e))
 
     self.delayDisplay("Restoring original database directory")
-    dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
+    if originalDatabaseDirectory:
+      dicomWidget.onDatabaseDirectoryChanged(originalDatabaseDirectory)
 
   def test_Part2Head(self):
     """ Test using the head atlas - may not be needed - Slicer4Minute is already tested
