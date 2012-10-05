@@ -34,8 +34,9 @@ class vtkMRMLDisplayNode;
 /// In a Model-View-Controller design pattern, the displayable node is the
 /// model. The display nodes are the views of the model.
 ///
-/// TBD: Check support for a display node to be simultaneously referenced by
+/// \tbd Check support for a display node to be simultaneously referenced by
 /// different displayable nodes.
+/// \sa vtkMRMLDisplayNode
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:
