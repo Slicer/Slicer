@@ -291,18 +291,18 @@ class RSNA2012VisTest(unittest.TestCase):
     qt.QDir().mkpath(dicomFilesDirectory)
     slicer.app.applicationLogic().Unzip(filePath, dicomFilesDirectory)
 
-    self.delayDisplay("Switching to temp database directory")
-    if slicer.dicomDatabase:
-      originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
-    else:
-      originalDatabaseDirectory = None
-    tempDatabaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
-    qt.QDir().mkpath(tempDatabaseDirectory)
-    dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
-    dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
-
     try:
-      logic = RSNA2012VisLogic()
+      self.delayDisplay("Switching to temp database directory")
+      tempDatabaseDirectory = slicer.app.temporaryPath + '/tempDICOMDatbase'
+      qt.QDir().mkpath(tempDatabaseDirectory)
+      if slicer.dicomDatabase:
+        originalDatabaseDirectory = os.path.split(slicer.dicomDatabase.databaseFilename)[0]
+      else:
+        originalDatabaseDirectory = None
+        settings = qt.QSettings()
+        settings.setValue('DatabaseDirectory', tempDatabaseDirectory)
+      dicomWidget = slicer.modules.dicom.widgetRepresentation().self()
+      dicomWidget.onDatabaseDirectoryChanged(tempDatabaseDirectory)
 
       self.delayDisplay('Importing DICOM')
       mainWindow = slicer.util.mainWindow()
