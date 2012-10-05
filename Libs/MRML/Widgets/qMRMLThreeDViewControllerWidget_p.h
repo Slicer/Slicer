@@ -54,8 +54,9 @@ public:
 
   ctkSignalMapper*                 StereoTypesMapper;
   ctkButtonGroup*                  AnimateViewButtonGroup;
-  
+
   QString                          ThreeDViewLabel;
+  QToolButton*                     CenterToolButton;
 
 protected:
   virtual void setupPopupUi();

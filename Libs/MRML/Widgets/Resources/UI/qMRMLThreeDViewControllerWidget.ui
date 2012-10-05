@@ -49,13 +49,6 @@
        <property name="toolTip">
         <string>Center the 3D view on the scene.</string>
        </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
-       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -378,6 +371,18 @@
    </property>
    <property name="toolTip">
     <string>Set white background</string>
+   </property>
+  </action>
+  <action name="actionCenter">
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/ViewCenter.png</normaloff>:/Icons/ViewCenter.png</iconset>
+   </property>
+   <property name="text">
+    <string>Center</string>
+   </property>
+   <property name="toolTip">
+    <string>Center the 3D view on the scene</string>
    </property>
   </action>
  </widget>

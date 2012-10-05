@@ -52,6 +52,7 @@ qMRMLThreeDViewControllerWidgetPrivate::qMRMLThreeDViewControllerWidgetPrivate(
 {
   this->ViewNode = 0;
   this->ThreeDView = 0;
+  this->CenterToolButton = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -92,7 +93,8 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(zoomOut()));
 
   // ResetFocalPoint button
-  QObject::connect(this->CenterButton, SIGNAL(clicked()),
+  this->CenterButton->setDefaultAction(this->actionCenter);
+  QObject::connect(this->actionCenter, SIGNAL(triggered()),
                    q, SLOT(resetFocalPoint()));
 
   // StereoType actions
@@ -171,7 +173,15 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
 //---------------------------------------------------------------------------
 void qMRMLThreeDViewControllerWidgetPrivate::init()
 {
+  Q_Q(qMRMLThreeDViewControllerWidget);
   this->Superclass::init();
+
+  this->CenterToolButton = new QToolButton(q);
+  this->CenterToolButton->setAutoRaise(true);
+  this->CenterToolButton->setDefaultAction(this->actionCenter);
+  this->CenterToolButton->setFixedSize(15, 15);
+  this->BarLayout->insertWidget(2, this->CenterToolButton);
+
   this->ViewLabel->setText(qMRMLThreeDViewControllerWidget::tr("1"));
   this->BarLayout->addStretch(1);
   this->setColor(qMRMLColors::threeDViewBlue());
