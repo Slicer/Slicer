@@ -173,10 +173,6 @@ vtkMRMLScene::vtkMRMLScene()
   this->RegisterNodeClass( modelclipnode );
   modelclipnode->Delete();
 
-  vtkMRMLScalarVolumeNode *svoln = vtkMRMLScalarVolumeNode::New();
-  this->RegisterNodeClass( svoln );
-  svoln->Delete();
-
   vtkMRMLFiducialListNode *fidln = vtkMRMLFiducialListNode::New();
   this->RegisterNodeClass( fidln );
   fidln->Delete();
@@ -634,7 +630,11 @@ void vtkMRMLScene::RegisterNodeClass(vtkMRMLNode* node, const char* tagName)
     {
     if (this->RegisteredNodeTags[i] == xmlTag)
       {
-      vtkDebugMacro(<<"Tag has already been registered, unregister previous node");
+      vtkWarningMacro("Tag " << tagName
+                      << " has already been registered, unregistering previous node class "
+                      << (this->RegisteredNodeClasses[i]->GetClassName() ? this->RegisteredNodeClasses[i]->GetClassName() : "(no class name)")
+                      << " to register "
+                      << (node->GetClassName() ? node->GetClassName() : "(no class name)"));
       // As the node was previously Registered to the scene, we need to
       // unregister it here. It should destruct the pointer as well (only 1
       // reference on the node).
