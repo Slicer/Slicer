@@ -58,7 +58,7 @@ qSlicerIO::IOFileType qSlicerSceneBundleIO::fileType()const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSceneBundleIO::extensions()const 
 {
-  return QStringList() << "*.mrb";
+  return QStringList() << "*.mrb" << "*.zip" << "*.xar";
 }
 
 //-----------------------------------------------------------------------------
