@@ -439,9 +439,8 @@ class RSNA2012VisTest(unittest.TestCase):
       clip.SetGreenSliceClipState(2)
 
       viewNode = threeDView.mrmlViewNode()
-      cameras = slicer.mrmlScene.GetNodesByClass('vtkMRMLCameraNode')
-      for index in xrange(cameras.GetNumberOfItems()):
-        cameraNode = cameras.GetItemAsObject(index)
+      cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
       cameraNode.GetCamera().Azimuth(90)
@@ -491,9 +490,8 @@ class RSNA2012VisTest(unittest.TestCase):
       redWidget = layoutManager.sliceWidget('Red')
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
-      cameras = slicer.mrmlScene.GetNodesByClass('vtkMRMLCameraNode')
-      for index in xrange(cameras.GetNumberOfItems()):
-        cameraNode = cameras.GetItemAsObject(index)
+      cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
@@ -517,9 +515,8 @@ class RSNA2012VisTest(unittest.TestCase):
       redWidget.sliceController().setSliceVisible(True);
 
       self.delayDisplay('Middle Hepatic')
-      models = slicer.mrmlScene.GetNodesByClass('vtkMRMLModelNode')
-      for index in xrange(models.GetNumberOfItems()):
-        modelNode = models.GetItemAsObject(index)
+      models = slicer.util.getNodes('vtkMRMLModelNode*')
+      for modelNode in models.values():
         modelNode.GetDisplayNode().SetVisibility(0)
 
       segmentVII = slicer.util.getNode('LiverSegment_II')
@@ -569,9 +566,8 @@ class RSNA2012VisTest(unittest.TestCase):
       redWidget = layoutManager.sliceWidget('Red')
       redController = redWidget.sliceController()
       viewNode = threeDView.mrmlViewNode()
-      cameras = slicer.mrmlScene.GetNodesByClass('vtkMRMLCameraNode')
-      for index in xrange(cameras.GetNumberOfItems()):
-        cameraNode = cameras.GetItemAsObject(index)
+      cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
+      for cameraNode in cameras.values():
         if cameraNode.GetActiveTag() == viewNode.GetID():
           break
 
