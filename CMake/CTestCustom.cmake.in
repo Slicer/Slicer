@@ -238,6 +238,9 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Since NUMPY has test that return build errors, let's add the following exception
   "WARNING non-zero return value in ctest from"
+
+  # Git
+  "You are in 'detached HEAD' state"
   )
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
