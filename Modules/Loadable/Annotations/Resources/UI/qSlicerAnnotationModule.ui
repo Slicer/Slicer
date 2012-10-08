@@ -491,7 +491,7 @@
   <customwidget>
    <class>qMRMLAnnotationTreeView</class>
    <extends>QTreeView</extends>
-   <header>GUI/qMRMLAnnotationTreeView.h</header>
+   <header>qMRMLAnnotationTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

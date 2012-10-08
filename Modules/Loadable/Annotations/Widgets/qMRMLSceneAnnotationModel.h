@@ -21,19 +21,22 @@
 #ifndef __qMRMLSceneAnnotationModel_h
 #define __qMRMLSceneAnnotationModel_h
 
+// qMRML includes
 #include "qMRMLSceneDisplayableModel.h"
 
-// Annotation QT includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "qSlicerAnnotationsModuleWidgetsExport.h"
+class qMRMLSceneAnnotationModelPrivate;
 
 // Logic includes
 class vtkSlicerAnnotationModuleLogic;
 
-class qMRMLSceneAnnotationModelPrivate;
+// MRML includes
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLSceneAnnotationModel : public qMRMLSceneDisplayableModel
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
+  : public qMRMLSceneDisplayableModel
 {
   Q_OBJECT
 

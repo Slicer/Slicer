@@ -1,6 +1,5 @@
 // Annotation includes
 #include "vtkSlicerAnnotationModuleLogic.h"
-#include "../GUI/qSlicerAnnotationModuleWidget.h"
 
 // Annotation/MRML includes
 #include "vtkMRMLAnnotationRulerNode.h"

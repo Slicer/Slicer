@@ -21,29 +21,26 @@
 #ifndef __qMRMLAnnotationTreeView_h
 #define __qMRMLAnnotationTreeView_h
 
-// Qt includes
-#include <QTreeView>
-// Annotation QT includes
-#include "GUI/qSlicerAnnotationModuleWidget.h"
-
-// CTK includes
-#include <ctkPimpl.h>
-
 // qMRML includes
 #include "qMRMLTreeView.h"
 
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "qSlicerAnnotationsModuleWidgetsExport.h"
+class qMRMLAnnotationTreeViewPrivate;
 
 // Logic includes
-#include "Logic/vtkSlicerAnnotationModuleLogic.h"
+class vtkSlicerAnnotationModuleLogic;
 
-class qMRMLSortFilterProxyModel;
-class qMRMLAnnotationTreeViewPrivate;
+// MRML includes
 class vtkMRMLNode;
 class vtkMRMLScene;
 
+// VTK includes
+class vtkCollection;
+
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qMRMLAnnotationTreeView : public qMRMLTreeView
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLAnnotationTreeView
+  : public qMRMLTreeView
 {
   Q_OBJECT
 

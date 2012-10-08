@@ -5,23 +5,31 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
+  ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
+  ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
-  qMRMLAnnotationROIWidget.cxx
-  qMRMLAnnotationROIWidget.h
   #qMRMLAnnotationDisplayNodePropertyWidget.cxx
   #qMRMLAnnotationDisplayNodePropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget.cxx
   #qMRMLAnnotationDisplayNodePointPropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  qMRMLAnnotationROIWidget.cxx
+  qMRMLAnnotationROIWidget.h
+  qMRMLAnnotationTreeView.cxx
+  qMRMLAnnotationTreeView.h
+  qMRMLSceneAnnotationModel.cxx
+  qMRMLSceneAnnotationModel.h
   )
 
 set(${KIT}_MOC_SRCS
-  qMRMLAnnotationROIWidget.h
   #qMRMLAnnotationDisplayNodePropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  qMRMLAnnotationROIWidget.h
+  qMRMLAnnotationTreeView.h
+  qMRMLSceneAnnotationModel.h
   )
 
 set(${KIT}_UI_SRCS
@@ -34,6 +42,7 @@ set(${KIT}_RESOURCES
 
 set(${KIT}_TARGET_LIBRARIES
   vtkSlicerAnnotationsModuleMRML
+  vtkSlicerAnnotationsModuleLogic
   )
 
 #-----------------------------------------------------------------------------

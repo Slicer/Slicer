@@ -37,6 +37,7 @@
 #include "qMRMLSceneAnnotationModel.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationNode.h"
+#include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
 
@@ -51,7 +52,7 @@ public:
   qMRMLAnnotationTreeViewPrivate(qMRMLAnnotationTreeView& object);
   void init();
 
-  qMRMLSceneAnnotationModel*           SceneModel;
+  qMRMLSceneAnnotationModel* SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
 };
 
@@ -97,8 +98,6 @@ void qMRMLAnnotationTreeViewPrivate::init()
         q,
         SLOT(onSelectionChanged(QItemSelection,QItemSelection)),
         Qt::DirectConnection );
-
-  q->setUniformRowHeights(true);
 }
 
 //------------------------------------------------------------------------------

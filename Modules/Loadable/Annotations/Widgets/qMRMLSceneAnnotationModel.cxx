@@ -45,7 +45,7 @@
 
 //------------------------------------------------------------------------------
 qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
-  :qMRMLSceneDisplayableModel(vparent)
+  : qMRMLSceneDisplayableModel(vparent)
 {
   this->setListenNodeModifiedEvent(true);
   this->setNameColumn(5);

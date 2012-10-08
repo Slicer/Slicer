@@ -75,10 +75,6 @@ set(VTKWidget_SRCS
   )
 
 set(GUI_SRCS
-  GUI/qMRMLSceneAnnotationModel.cxx
-  GUI/qMRMLSceneAnnotationModel.h
-  GUI/qMRMLAnnotationTreeView.cxx
-  GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.cxx
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.cxx
@@ -118,8 +114,6 @@ set(MODULE_MOC_SRCS
   qSlicerAnnotationsIOOptionsWidget.h
   qSlicerAnnotationsModule.h
   qSlicerFiducialsIO.h
-  GUI/qMRMLSceneAnnotationModel.h
-  GUI/qMRMLAnnotationTreeView.h
   GUI/qSlicerAnnotationModuleWidget.h
   GUI/qSlicerAnnotationModulePropertyDialog.h
   GUI/qSlicerAnnotationModuleReportDialog.h
