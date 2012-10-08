@@ -1317,7 +1317,7 @@ void qMRMLSceneModel::onItemChanged(QStandardItem * item)
       //this->metaObject()->invokeMethod(
       //  this, "onItemChanged", Qt::QueuedConnection, Q_ARG(QStandardItem*, item));
       d->DraggedItem = item;
-      QTimer::singleShot(100, this, SLOT(delayedItemChanged()));
+      QTimer::singleShot(200, this, SLOT(delayedItemChanged()));
       }
     return;
     }
