@@ -90,6 +90,12 @@ macro(SlicerMacroBuildModuleLogic)
       SlicerBaseLogicPythonD
       )
 
+    foreach(library ${MODULELOGIC_TARGET_LIBRARIES})
+      if(TARGET ${library}PythonD)
+        list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
+      endif()
+    endforeach()
+
     SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULELOGIC_NAME}
       SRCS ${MODULELOGIC_SRCS}

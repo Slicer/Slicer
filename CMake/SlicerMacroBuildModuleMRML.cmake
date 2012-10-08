@@ -65,6 +65,12 @@ macro(SlicerMacroBuildModuleMRML)
     set(Slicer_Wrapped_LIBRARIES
       )
 
+    foreach(library ${MODULEMRML_TARGET_LIBRARIES})
+      if(TARGET ${library}PythonD)
+        list(APPEND Slicer_Wrapped_LIBRARIES ${library}PythonD)
+      endif()
+    endforeach()
+
     SlicerMacroPythonWrapModuleVTKLibrary(
       NAME ${MODULEMRML_NAME}
       SRCS ${MODULEMRML_SRCS}
