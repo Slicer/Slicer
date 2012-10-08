@@ -41,16 +41,16 @@ class qMRMLDisplayNodeViewComboBoxTester: public QObject
   qMRMLDisplayNodeViewComboBox* ComboBox;
   vtkMRMLNode* node(int i = 0);
 
-  void testDefaults();
-
 private slots:
   void init();
   void cleanup();
 
+  void testDefaults();
   void testSetScene();
   void testUncheck();
   void testObserveNode();
   void testAddNode();
+  void testResetScene();
 };
 
 // ----------------------------------------------------------------------------
@@ -168,6 +168,13 @@ void qMRMLDisplayNodeViewComboBoxTester::testAddNode()
     QCOMPARE(this->ComboBox->checkedViewNodes()[i], this->node(i));
     }
   QCOMPARE(this->ComboBox->uncheckedViewNodes().count(), 0);
+}
+
+// ----------------------------------------------------------------------------
+void qMRMLDisplayNodeViewComboBoxTester::testResetScene()
+{
+  this->ComboBox->setMRMLScene(0);
+  QCOMPARE(this->ComboBox->checkedViewNodes().count(), 0);
 }
 
 // ----------------------------------------------------------------------------
