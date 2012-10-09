@@ -324,9 +324,9 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
         // if (sliceNode->Matrix4x4AreEqual(sliceNode->GetSliceToRAS(),
         //                                  sNode->GetSliceToRAS()))
           {
-          //std::cout << "Orientation match, flags = " << sliceNode->GetInteractionFlags() << std::endl;
-          // std::cout << "Broadcasting SliceToRAS and FieldOfView to "
-          //           << sNode->GetName() << std::endl;
+          // std::cout << "Orientation match, flags = " << sliceNode->GetInteractionFlags() << std::endl;
+          // std::cout << "Broadcasting SliceToRAS, SliceOrigin, and FieldOfView to "
+          //            << sNode->GetName() << std::endl;
           //
 
           // Copy the slice to RAS information
@@ -336,6 +336,15 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
             // Need to copy the SliceToRAS. SliceNode::SetSliceToRAS()
             // does a shallow copy. So we have to explictly call DeepCopy()
             sNode->GetSliceToRAS()->DeepCopy( sliceNode->GetSliceToRAS() );
+            }
+
+          // Copy the slice origin information
+          if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+            & vtkMRMLSliceNode::XYZOriginFlag)
+            {
+            // Need to copy the SliceOrigin. 
+            double *xyzOrigin = sliceNode->GetXYZOrigin();
+            sNode->SetXYZOrigin( xyzOrigin[0], xyzOrigin[1], xyzOrigin[2] );
             }
 
           // Copy the field of view information. Use the new

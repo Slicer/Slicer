@@ -432,7 +432,7 @@ void vtkSliceViewInteractorStyle::StartTranslate()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   this->SliceLogic->GetMRMLScene()->SaveStateForUndo(sliceNode);
-  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
+  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::XYZOriginFlag);
 
   this->SetActionState(this->Translate);
   this->GetActionStartSliceToRAS()->DeepCopy(sliceNode->GetSliceToRAS());

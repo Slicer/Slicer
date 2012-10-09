@@ -312,6 +312,8 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   ///    FieldOfViewFlag - broadcast a specific field of view setting
   ///    OrientationFlag - broadcast the orientation 
   ///    ResetFieldOfViewFlag - broadcast a message to reset the field of view
+  ///    MultiplanarReformatFlag - broadcast reformat widget transformation
+  ///    XYZOriginFlag - broadcast the XYZOrigin to all linked viewers
   enum InteractionFlagType
   {
     None = 0,
@@ -319,8 +321,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
     FieldOfViewFlag = 2, // broadcast a specific field of view setting
     OrientationFlag = 4,
     ResetFieldOfViewFlag = 8, // broadcast a reset to all viewers
-    MultiplanarReformatFlag = 16 // broadcast reformat widget transformation
-    // Next one needs to be 32
+    MultiplanarReformatFlag = 16, // broadcast reformat widget transformation
+    XYZOriginFlag = 32
+    // Next one needs to be 64
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated
