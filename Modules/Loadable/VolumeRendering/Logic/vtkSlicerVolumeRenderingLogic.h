@@ -75,7 +75,7 @@ public:
   std::map<std::string, std::string> GetRenderingMethods();
   /// The default rendering method is set to display nodes created in
   /// CreateVolumeRenderingDisplayNode(). If no rendering method is given
-  /// the VTKCPURayCast is set.
+  /// the VTKCPURayCast is instantiated.
   /// \sa CreateVolumeRenderingDisplayNode()
   vtkSetStringMacro(DefaultRenderingMethod);
   vtkGetStringMacro(DefaultRenderingMethod);
@@ -87,15 +87,17 @@ public:
   vtkSetMacro(UseLinearRamp, bool);
   vtkGetMacro(UseLinearRamp, bool);
 
-  /// Create and add into the scene a volume rendering display node.
-  /// The create node is of type renderingType if not null,
-  /// DefaultRenderingMethod if not null or
+  /// Create a volume rendering display node.
+  /// The node to instantiate will be of type \a renderingType if not null,
+  /// \a DefaultRenderingMethod if not null or
   /// vtkMRMLCPURayCastVolumeRenderingDisplayNode in that order.
   /// Return the created node or 0 if there is no scene or the class name
   /// doesn't exist.
-  /// If renderingClassName is 0, the returned node has a name generated
+  /// If \a renderingClassName is 0, the returned node has a name generated
   /// using "VolumeRendering" as base name.
-  /// \sa SetDefaultRenderingMethod()
+  /// You are responsible for deleting the node (read more about it in the
+  /// section \ref GetNewCreate).
+  /// \sa DefaultRenderingMethod
   vtkMRMLVolumeRenderingDisplayNode* CreateVolumeRenderingDisplayNode(const char* renderingClassName = 0);
 
   /// Observe the volume rendering display node to copy the volume display
@@ -290,6 +292,12 @@ protected:
   void UpdateVolumeRenderingDisplayNode(vtkMRMLVolumeRenderingDisplayNode* node);
 
   std::map<std::string, std::string> RenderingMethods;
+  /// This property holds the default rendering method to instantiate in
+  /// \a CreateVolumeRenderingDisplayNode().
+  /// If no rendering method is given, the VTKCPURayCast technique is
+  /// instantiated.
+  /// \sa SetDefaultRenderingMethod(), GetDefaultRenderingMethod(),
+  /// CreateVolumeRenderingDisplayNode()
   char* DefaultRenderingMethod;
   bool UseLinearRamp;
 

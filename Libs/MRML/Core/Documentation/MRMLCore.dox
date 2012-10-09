@@ -1,0 +1,15 @@
+/**
+\page MRML
+\tableofcontents
+\section NamingConvention Naming convention
+\subsection GetNewCreate Get, New, Create, CreateAndAdd
+Accessors in VTK/MRML are typically in the format \c GetXXX() where \c XXX is the name of an existing \a vtkObject that the class instance owns (directly or indirectly).
+However, it happens that sometimes the \a vtkObject doesn't exist and the method instantiates an object without registering it.
+In that case, the returned object has a reference count of 1 and the caller is responsible for dereferencing (call \c Delete() on) the returned object.
+Here is the different naming conventions for such accessors:
+\li \c GetXXX: Return an existing object, reference count is not changed, the caller is not responsible for the object.
+\li \c NewXXX: Solely instantiate an object (typically a factory method). The caller is responsible to decrement the reference count.
+\li \c CreateXXX: Instantiate and configure an object. The caller is responsible to decrement the reference count. If XXX is a MRML node, it is NOT added into the scene.
+\li \c CreateAndAddXXX: Instantiate, configure and add into the scene a MRML node. The caller is not responsible to decrement the reference count.
+
+*/

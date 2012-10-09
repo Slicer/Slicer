@@ -230,8 +230,10 @@ vtkMRMLVolumeRenderingDisplayNode* qSlicerVolumeRenderingModuleWidgetPrivate
   vtkSlicerVolumeRenderingLogic *logic =
     vtkSlicerVolumeRenderingLogic::SafeDownCast(q->logic());
 
-  vtkMRMLVolumeRenderingDisplayNode *displayNode =
+  vtkMRMLVolumeRenderingDisplayNode* displayNode =
     logic->CreateVolumeRenderingDisplayNode();
+  q->mrmlScene()->AddNode(displayNode);
+  displayNode->Delete();
 
   vtkMRMLVolumePropertyNode *propNode = NULL;
   vtkMRMLAnnotationROINode  *roiNode = NULL;
@@ -618,6 +620,8 @@ void qSlicerVolumeRenderingModuleWidget::onCurrentRenderingMethodChanged(int ind
   vtkMRMLVolumeRenderingDisplayNode* displayNode =
     volumeRenderingLogic->CreateVolumeRenderingDisplayNode(
       renderingClassName.toLatin1());
+  this->mrmlScene()->AddNode(displayNode);
+  displayNode->Delete();
   vtkWeakPointer<vtkMRMLVolumeRenderingDisplayNode> oldDisplayNode = d->DisplayNode;
   displayNode->vtkMRMLVolumeRenderingDisplayNode::Copy(d->DisplayNode);
   d->DisplayNodeComboBox->setCurrentNode(displayNode);

@@ -724,8 +724,6 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic
     {
     node->SetName(this->GetMRMLScene()->GenerateUniqueName("VolumeRendering").c_str());
     }
-  this->GetMRMLScene()->AddNode(node);
-  node->Delete();
 
   return node;
 }
@@ -736,11 +734,9 @@ vtkMRMLVolumeRenderingScenarioNode* vtkSlicerVolumeRenderingLogic::CreateScenari
   vtkMRMLVolumeRenderingScenarioNode *node = NULL;
 
   if (this->GetMRMLScene())
-  {
+    {
     node = vtkMRMLVolumeRenderingScenarioNode::New();
-    this->GetMRMLScene()->AddNode(node);
-    node->Delete();
-  }
+    }
 
   return node;
 }
