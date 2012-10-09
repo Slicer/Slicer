@@ -43,6 +43,7 @@
 #include <vtkTransform.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWeakPointer.h>
+#include <vtkPointLocator.h>
 
 
 // VTK includes: customization
@@ -340,6 +341,9 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
       }
     pipeline->Cutter->SetInput(polyData);
 
+    // need this to update bounds of the locator, to avoid crash in the cutter 
+    polyData->Modified();
+
     // Update transform matrices
 
     vtkSmartPointer<vtkMatrix4x4> tempMat1 = vtkSmartPointer<vtkMatrix4x4>::New();
@@ -353,7 +357,6 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     tempMat1->Invert();
     vtkMatrix4x4::Multiply4x4(tempMat1, this->SliceXYToRAS, tempMat2);
     this->SetSlicePlaneFromMatrix(tempMat2, pipeline->Plane);
-    pipeline->Plane->Modified();
 
     //    Set PolyData Transform
     tempMat1->DeepCopy(this->SliceXYToRAS);
@@ -361,7 +364,19 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     vtkMatrix4x4::Multiply4x4(tempMat1,
                               pipeline->NodeToWorld, tempMat2);
     pipeline->TransformToSlice->SetMatrix(tempMat2);
-    pipeline->TransformToSlice->Modified();
+
+    pipeline->Plane->Modified(); 
+    
+    // optimization for slice to slice intersections which are 1 quad polydatas
+    // no need for 50^3 default locator divisons
+    if (polyData->GetNumberOfPoints() <= 4)
+    {
+      vtkSmartPointer<vtkPointLocator> locator = vtkSmartPointer<vtkPointLocator>::New();
+      double *bounds = polyData->GetBounds();
+      locator->SetDivisions(2,2,2);
+      locator->InitPointInsertion(polyData->GetPoints(), bounds);
+      pipeline->Cutter->SetLocator(locator);
+    }
 
     // Update pipeline actor
     vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
