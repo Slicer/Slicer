@@ -299,11 +299,13 @@ class LabelStatisticsLogic:
     """Make a MRML chart of the current stats
     """
     layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
+    layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)
     layoutNodes.InitTraversal()
     layoutNode = layoutNodes.GetNextItemAsObject()
     layoutNode.SetViewArrangement(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalQuantitativeView)
 
     chartViewNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    chartViewNodes.SetReferenceCount(chartViewNodes.GetReferenceCount()-1)
     chartViewNodes.InitTraversal()
     chartViewNode = chartViewNodes.GetNextItemAsObject()
 
