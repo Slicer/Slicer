@@ -27,7 +27,7 @@ if(NOT DEFINED ChangeTrackerPy_SOURCE_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/ChangeTrackerPy.git"
-    GIT_TAG "1146bc127976e6c7672990710981439e83045bf1"
+    GIT_TAG "05ba9d0bc7e53707d71bcb62b8b938c60fc0a496"
     "${slicer_external_update}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
