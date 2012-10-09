@@ -719,7 +719,8 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
 ::CreateLabelVolume(vtkMRMLVolumeNode *volumeNode,
                     const char *name)
 {
-  this->CreateAndAddLabelVolume(volumeNode, name);
+  vtkWarningMacro("Deprecated, please use CreateAndAddLabelVolume instead");
+  return this->CreateAndAddLabelVolume(volumeNode, name);
 }
 
 //----------------------------------------------------------------------------
@@ -728,7 +729,8 @@ vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
                     vtkMRMLVolumeNode *volumeNode,
                     const char *name)
 {
-  this->CreateAndAddLabelVolume(scene, volumeNode, name);
+  vtkWarningMacro("Deprecated, please use CreateAndAddLabelVolume instead");
+  return this->CreateAndAddLabelVolume(scene, volumeNode, name);
 }
 
 //----------------------------------------------------------------------------
