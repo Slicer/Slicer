@@ -173,6 +173,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT SlicerMRBTest.py)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
+  slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
   slicer_add_python_unittest(SCRIPT RSNA2012Vis.py)
   slicer_add_python_unittest(SCRIPT RSNA2012Quant.py)
 
@@ -185,6 +186,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     SlicerMRBTest.py
     Slicer4Minute.py
     Charting.py
+    SliceLinkLogic.py
     RSNA2012Vis.py
     RSNA2012Quant.py
     )
