@@ -143,6 +143,18 @@ public:
   vtkMRMLScalarVolumeNode *CreateAndAddLabelVolume(vtkMRMLScene *scene,
                                                    vtkMRMLVolumeNode *volumeNode,
                                                    const char *name);
+  /// \deprecated
+  /// Create a label map volume to match the given \a volumeNode and add it to
+  /// the current scene.
+  /// \sa CreateAndAddLabelVolume
+  vtkMRMLScalarVolumeNode *CreateLabelVolume(vtkMRMLVolumeNode *volumeNode,
+                                             const char *name);
+  /// \deprecated
+  /// Create a label map volume to match the given \a volumeNode and add it to the \a scene
+  /// \sa CreateAndAddLabelVolume
+  vtkMRMLScalarVolumeNode *CreateLabelVolume(vtkMRMLScene *scene,
+                                             vtkMRMLVolumeNode *volumeNode,
+                                             const char *name);
 
   /// Fill in a label map volume to match the given template volume node.
   /// \sa FillLabelVolumeFromTemplate(vtkMRMLScene*, vtkMRMLScalarVolumeNode*, vtkMRMLVolumeNode*)

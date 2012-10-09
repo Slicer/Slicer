@@ -715,6 +715,23 @@ vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
+::CreateLabelVolume(vtkMRMLVolumeNode *volumeNode,
+                    const char *name)
+{
+  this->CreateAndAddLabelVolume(volumeNode, name);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
+::CreateLabelVolume(vtkMRMLScene* scene,
+                    vtkMRMLVolumeNode *volumeNode,
+                    const char *name)
+{
+  this->CreateAndAddLabelVolume(scene, volumeNode, name);
+}
+
+//----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode *
 vtkSlicerVolumesLogic::FillLabelVolumeFromTemplate(vtkMRMLScalarVolumeNode *labelNode,
                                                    vtkMRMLVolumeNode *templateNode)
