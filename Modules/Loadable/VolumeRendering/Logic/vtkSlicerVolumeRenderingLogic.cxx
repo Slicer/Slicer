@@ -935,7 +935,7 @@ void vtkSlicerVolumeRenderingLogic::UpdateDisplayNodeFromVolumeNode(
     (*roiNode)->SetInteractiveMode(1);
     // by default, show the ROI only if cropping is enabled
     (*roiNode)->SetVisibility(displayNode->GetCroppingEnabled());
-    this->GetMRMLScene()->AddNode(*roiNode);
+    (*roiNode)->Initialize(this->GetMRMLScene());
     (*roiNode)->Delete();
     }
   displayNode->SetAndObserveROINodeID((*roiNode)->GetID());
