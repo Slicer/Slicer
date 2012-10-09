@@ -649,17 +649,17 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLScalarVolumeNode *
-vtkSlicerVolumesLogic::CreateLabelVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
+vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
+::CreateAndAddLabelVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
 {
-  return this->CreateLabelVolume(this->GetMRMLScene(), volumeNode, name);
+  return this->CreateAndAddLabelVolume(this->GetMRMLScene(), volumeNode, name);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode *
-vtkSlicerVolumesLogic::CreateLabelVolume(vtkMRMLScene *scene,
-                                         vtkMRMLVolumeNode *volumeNode,
-                                         const char *name)
+vtkSlicerVolumesLogic::CreateAndAddLabelVolume(vtkMRMLScene *scene,
+                                               vtkMRMLVolumeNode *volumeNode,
+                                               const char *name)
 {
   if ( scene == NULL || volumeNode == NULL || name == NULL)
     {

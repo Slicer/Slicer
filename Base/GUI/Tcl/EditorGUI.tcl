@@ -500,7 +500,7 @@ proc EditorCreateLabelVolume {this} {
 
   set scene [[$this GetLogic] GetMRMLScene]
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set labelNode [$volumesLogic CreateLabelVolume $scene $volumeNode $name]
+  set labelNode [$volumesLogic CreateAndAddLabelVolume $scene $volumeNode $name]
 
   # make the source node the active background, and the label node the active label
   set selectionNode [[[$this GetLogic] GetApplicationLogic]  GetSelectionNode]

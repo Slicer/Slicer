@@ -237,7 +237,7 @@ class sceneImport2428Test(unittest.TestCase):
     #
     self.delayDisplay("Setting up LabelMap")
     volumesLogic = slicer.modules.volumes.logic()
-    headLabel = volumesLogic.CreateLabelVolume( slicer.mrmlScene, head, head.GetName() + '-label' )
+    headLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, head, head.GetName() + '-label' )
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( head.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( headLabel.GetID() )

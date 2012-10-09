@@ -219,7 +219,7 @@ int vtkSlicerCropVolumeLogic::Apply(vtkMRMLCropVolumeParametersNode* pnode)
       vtkMatrix4x4 *outputIJKToRAS = vtkMatrix4x4::New();
       vtkMRMLLinearTransformNode *movingVolumeTransform = NULL, *roiTransform = NULL;
 
-      refVolume = this->Internal->VolumesLogic->CreateLabelVolume(
+      refVolume = this->Internal->VolumesLogic->CreateAndAddLabelVolume(
           this->GetMRMLScene(), inputVolume, "CropVolume_ref_volume");
       refVolume->HideFromEditorsOn();
 

@@ -29,7 +29,7 @@ class EditorLibTesting(unittest.TestCase):
     volumesLogic = slicer.modules.volumes.logic()
     # AF: intentionally use the naming convention that does not match the one
     # used by Editor
-    headLabel = volumesLogic.CreateLabelVolume( slicer.mrmlScene, head, head.GetName() + '-segmentation' )
+    headLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, head, head.GetName() + '-segmentation' )
     
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( head.GetID() )

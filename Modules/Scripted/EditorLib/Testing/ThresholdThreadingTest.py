@@ -46,7 +46,7 @@ class ThresholdThreading(unittest.TestCase):
     # create a label map and set it for editing
     #
     volumesLogic = slicer.modules.volumes.logic()
-    croppedHeadLabel = volumesLogic.CreateLabelVolume( slicer.mrmlScene, croppedHead, croppedHead.GetName() + '-label' )
+    croppedHeadLabel = volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, croppedHead, croppedHead.GetName() + '-label' )
     selectionNode = slicer.app.applicationLogic().GetSelectionNode()
     selectionNode.SetReferenceActiveVolumeID( croppedHead.GetID() )
     selectionNode.SetReferenceActiveLabelVolumeID( croppedHeadLabel.GetID() )

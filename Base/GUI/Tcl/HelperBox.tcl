@@ -143,7 +143,7 @@ itcl::body HelperBox::createMerge {} {
   set _createMergeOptions ""
   if { $merge == "" } {
     set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-    set merge [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $_master $mergeName]
+    set merge [$volumesLogic CreateAndAddLabelVolume $::slicer3::MRMLScene $_master $mergeName]
     [$merge GetDisplayNode] SetAndObserveColorNodeID [[$o(colorSelector) GetSelected] GetID]
     $this setMergeVolume $merge
   }
@@ -299,7 +299,7 @@ itcl::body HelperBox::addStructure { {label ""} {options ""} } {
   set structureName [$_master GetName]-$labelName-label
 
   set volumesLogic [$::slicer3::VolumesGUI GetLogic]
-  set struct [$volumesLogic CreateLabelVolume $::slicer3::MRMLScene $_master $structureName]
+  set struct [$volumesLogic CreateAndAddLabelVolume $::slicer3::MRMLScene $_master $structureName]
   [$struct GetDisplayNode] SetAndObserveColorNodeID [$colorNode GetID]
 
   $this updateStructures
