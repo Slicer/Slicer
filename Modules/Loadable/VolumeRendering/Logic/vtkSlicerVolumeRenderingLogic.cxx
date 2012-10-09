@@ -561,15 +561,27 @@ void vtkSlicerVolumeRenderingLogic
 //----------------------------------------------------------------------------
 void vtkSlicerVolumeRenderingLogic
 ::CopyDisplayToVolumeRenderingDisplayNode(
-  vtkMRMLVolumeRenderingDisplayNode* vspNode, vtkMRMLVolumeDisplayNode* displayNode)
+  vtkMRMLVolumeRenderingDisplayNode* vspNode,
+  vtkMRMLVolumeDisplayNode* displayNode)
 {
   assert(vspNode);
   if (!displayNode)
     {
+    vtkMRMLVolumeNode* volumeNode = vspNode->GetVolumeNode();
+    if (!volumeNode)
+      {
+      vtkWarningMacro("Volume Rendering display node does not reference a "
+                      "volume node.");
+      return;
+      }
     displayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(
-      vspNode->GetVolumeNode()->GetDisplayNode());
+      volumeNode->GetDisplayNode());
     }
-  assert(displayNode);
+  if (!displayNode)
+    {
+    vtkWarningMacro("No display node to copy");
+    return;
+    }
   if (vtkMRMLScalarVolumeDisplayNode::SafeDownCast(displayNode))
     {
     this->CopyScalarDisplayToVolumeRenderingDisplayNode(vspNode,
