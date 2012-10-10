@@ -88,8 +88,7 @@ class SampleDataWidget:
         ( 'MRBrainTumor Time Point 2', self.logic.downloadMRBrainTumor2 ),
         ( 'Baseline Volume', self.logic.downloadWhiteMatterExplorationBaselineVolume),
         ( 'DTI Volume', self.logic.downloadWhiteMatterExplorationDTIVolume),
-        ( 'DWI Volume', self.logic.downloadDiffusionMRIDWIVolume),
-        ( 'CTAbdomen', self.logic.downloadAbdominalCTVolume)
+        ( 'DWI Volume', self.logic.downloadDiffusionMRIDWIVolume)
       )
     for sample in samples:
       b = qt.QPushButton('Download %s' % sample[0] )
@@ -161,10 +160,6 @@ class SampleDataLogic:
     self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2142,1', 'dwi.raw.gz')
     filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2141,1', 'dwi.nhdr')
     return self.loadVolume(filePath, 'dwi');
-
-  def downloadAbdominalCTVolume(self):
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd')
-    return self.loadVolume(filePath, 'Panoramix-cropped');
 
   def downloadFileIntoCache(self, uri, name):
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
