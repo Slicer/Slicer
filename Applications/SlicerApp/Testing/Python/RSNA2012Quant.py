@@ -355,10 +355,129 @@ class RSNA2012QuantTest(unittest.TestCase):
   def test_Part2PETCT(self):
     """ Test using the PETCT module
     """
-    self.delayDisplay("Test not yet available", 3000)
+    self.delayDisplay("Starting the test")
+    #
+    # first, get some data
+    #
+    import urllib
+    downloads = (
+        ('http://slicer.kitware.com/midas3/download?items=9185', 'RSNA2011_PETCT.zip', slicer.util.loadScene),
+        )
+
+    for url,name,loader in downloads:
+      filePath = slicer.app.temporaryPath + '/' + name
+      if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+        print('Requesting download %s from %s...\n' % (name, url))
+        urllib.urlretrieve(url, filePath)
+      if loader:
+        print('Loading %s...\n' % (name,))
+        loader(filePath)
+    self.delayDisplay('Finished with download and loading\n')
+
+    zipFilePath = slicer.app.temporaryPath + '/' + 'RSNA2011_PETCT.zip'
+    extractPath = slicer.app.temporaryPath + '/' + 'RSNA2011_PETCT'
+    qt.QDir().mkpath(extractPath)
+    applicationLogic = slicer.app.applicationLogic()
+    applicationLogic.Unzip(zipFilePath, extractPath)
+
+    try:
+      logic = RSNA2012QuantLogic()
+      mainWindow = slicer.util.mainWindow()
+      layoutManager = slicer.app.layoutManager()
+      threeDView = layoutManager.threeDWidget(0).threeDView()
+      redWidget = layoutManager.sliceWidget('Red')
+      redController = redWidget.sliceController()
+      greenWidget = layoutManager.sliceWidget('Green')
+      greenController = greenWidget.sliceController()
+      yellowWidget = layoutManager.sliceWidget('Yellow')
+      yellowController = yellowWidget.sliceController()
+      viewNode = threeDView.mrmlViewNode()
+      cameras = slicer.util.getNodes('vtkMRMLCameraNode*')
+      for cameraNode in cameras.values():
+        if cameraNode.GetActiveTag() == viewNode.GetID():
+          break
+
+      self.delayDisplay('Configure View')
+      threeDView.resetFocalPoint()
+      self.clickAndDrag(threeDView,button='Right')
+      redWidget.sliceController().setSliceVisible(True);
+      yellowWidget.sliceController().setSliceVisible(True);
+
+      self.delayDisplay('Show Volumes')
+      mainWindow.moduleSelector().selectModule('Volumes')
+      compositNode = redWidget.mrmlSliceCompositeNode()
+      compositNode.SetForegroundOpacity(0.6)
+      volumeSelector = slicer.util.findChildren(name='ActiveVolumeNodeSelector')[0]
+      scalarWidget = slicer.util.findChildren(name='qSlicerScalarVolumeDisplayWidget')[0]
+      colorSelector = slicer.util.findChildren(scalarWidget, name='ColorTableComboBox')[0]
+      PET1 = slicer.util.getNode('PET1')
+      volumeSelector.setCurrentNode(PET1)
+      PETHeat = slicer.util.getNode('PET-Heat')
+      colorSelector.setCurrentNode(PETHeat)
+
+      self.delayDisplay('Scroll Slices')
+      for offset in xrange(-1000,-700,20):
+        redController.setSliceOffsetValue(offset)
+      for offset in xrange(-20,20,2):
+        greenController.setSliceOffsetValue(offset)
+      for offset in xrange(-20,20,2):
+        yellowController.setSliceOffsetValue(offset)
+
+      self.delayDisplay('SUV Computation')
+
+      slicer.util.selectModule('PETStandardUptakeValueComputation')
+
+      parameters = {
+          "PETDICOMPath": extractPath + '/' + 'PET1',
+          "PETVolume": slicer.util.getNode('PET1'),
+          "VOIVolume": slicer.util.getNode('PET1-label'),
+          }
+
+      suvComputation = slicer.modules.petstandarduptakevaluecomputation
+      self.CLINode1 = None
+      self.CLINode1 = slicer.cli.run(suvComputation, self.CLINode1, parameters, delete_temporary_files=False)
+      waitCount = 0
+      while self.CLINode1.GetStatusString() != 'Completed' and waitCount < 100:
+        self.delayDisplay( "Running SUV Computation... %d" % waitCount )
+        waitCount += 1
+
+      self.delayDisplay("Second time point")
+      parameters = {
+          "PETDICOMPath": extractPath + '/' + 'PET2',
+          "PETVolume": slicer.util.getNode('PET2'),
+          "VOIVolume": slicer.util.getNode('PET2-label'),
+          }
+
+      suvComputation = slicer.modules.petstandarduptakevaluecomputation
+      self.CLINode2 = None
+      self.CLINode2 = slicer.cli.run(suvComputation, self.CLINode2, parameters, delete_temporary_files=False)
+      waitCount = 0
+      while self.CLINode2.GetStatusString() != 'Completed' and waitCount < 100:
+        self.delayDisplay( "Running SUV Computation... %d" % waitCount )
+        waitCount += 1
+
+
+      premax = float(self.CLINode1.GetParameterAsString('SUVMax').split()[0].strip(','))
+      postmax = float(self.CLINode2.GetParameterAsString('SUVMax').split()[0].strip(','))
+      self.delayDisplay("Check the numbers: is %g 16.6 greater than %g?" %
+          (premax, postmax))
+
+      percent = 100 * (postmax - premax) / premax
+      if abs(percent - 16.61) > 1:
+        raise "Oh no! the calculation is off"
+
+      self.delayDisplay("Calculated percent change is %g" % percent)
+
+
+      self.delayDisplay('Test passed!')
+    except Exception, e:
+      import traceback
+      traceback.print_exc()
+      self.delayDisplay('Test caused exception!\n' + str(e))
+
 
   def test_Part3ChangeTracker(self):
-    """ Test using the liver example data
+    """ Test the ChangeTracker module
     """
     self.delayDisplay("Starting the test")
     #
