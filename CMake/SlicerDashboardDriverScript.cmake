@@ -107,6 +107,9 @@ set(track ${CTEST_TRACK_PREFIX}${track}${CTEST_TRACK_SUFFIX})
 
 # For more details, see http://www.kitware.com/blog/home/post/11
 set(CTEST_USE_LAUNCHERS 1)
+if(NOT "${CTEST_CMAKE_GENERATOR}" MATCHES "Make")
+  set(CTEST_USE_LAUNCHERS 0)
+endif()
 set(ENV{CTEST_USE_LAUNCHERS_DEFAULT} ${CTEST_USE_LAUNCHERS})
 
 if(empty_binary_directory)
