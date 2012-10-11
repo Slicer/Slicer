@@ -280,7 +280,7 @@ class RSNA2012QuantTest(unittest.TestCase):
     self.delayDisplay('Finished with download and loading\n')
 
     try:
-      logic = RSNA2012VisLogic()
+      logic = RSNA2012QuantLogic()
       mainWindow = slicer.util.mainWindow()
       layoutManager = slicer.app.layoutManager()
       threeDView = layoutManager.threeDWidget(0).threeDView()
