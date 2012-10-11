@@ -1,9 +1,6 @@
 #ifndef __vtkSlicerAnnotationModuleLogic_h
 #define __vtkSlicerAnnotationModuleLogic_h
 
-// Annotation QT includes
-class qSlicerAnnotationModuleWidget;
-
 // Slicer Logic includes
 #include "vtkSlicerAnnotationsModuleLogicExport.h"
 #include "vtkSlicerModuleLogic.h"
@@ -285,8 +282,6 @@ protected:
   virtual void OnInteractionModePersistenceChangedEvent(vtkMRMLInteractionNode *interactionNode);
 
 private:
-
-  qSlicerAnnotationModuleWidget* m_Widget;
 
   vtkMRMLAnnotationNode* m_LastAddedAnnotationNode;
 
