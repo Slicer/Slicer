@@ -59,6 +59,11 @@ protected:
   /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
   virtual void OnInteractorStyleEvent(int eventid);
 
+  /// Called after interactor event specified using
+  /// AddInteractorObservableEvent are invoked.
+  /// \sa AddInteractorObservableEvent RemoveInteractorObservableEvent
+  virtual void OnInteractorEvent(int eventid);
+
   /// Method to perform additional initialization
   virtual void AdditionalInitializeStep();
 

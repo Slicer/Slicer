@@ -175,10 +175,19 @@ protected:
   /// Allows to add observer to the current interactor style that will call the
   /// virtual method OnInteractorStyleEvent accordingly.
   /// \sa AdditionalInitializeStep RemoveInteractorStyleObservableEvent
-  void AddInteractorStyleObservableEvent(int eventid);
+  void AddInteractorStyleObservableEvent(int eventid, float priority=0.0);
 
   /// \sa AddInteractorStyleObservableEvent
   void RemoveInteractorStyleObservableEvent(int eventid);
+
+  /// Usually used inside AdditionalInitializeStep()
+  /// Allows to add observer to the current interactor that will call the
+  /// virtual method OnInteractorEvent accordingly.
+  /// \sa AdditionalInitializeStep RemoveInteractorObservableEvent
+  void AddInteractorObservableEvent(int eventid, float priority=0.0);
+
+  /// \sa AddInteractorObservableEvent
+  void RemoveInteractorObservableEvent(int eventid);
 
   /// Called after interactor style event specified using AddInteractorStyleObservableEvent
   /// are invoked.
@@ -198,11 +207,22 @@ protected:
   /// \sa AddInteractorStyleObservableEvent RemoveInteractorStyleObservableEvent
   virtual void OnInteractorStyleEvent(int eventid);
 
+  /// Called after interactor event specified using
+  /// AddInteractorObservableEvent are invoked
+  /// \sa AddInteractorObservableEvent RemoveInteractorObservableEvent
+  virtual void OnInteractorEvent(int eventid);
+
   /// Set the Abort flag on the InteractorStyle event callback
   void SetInteractorStyleAbortFlag(int f);
   int GetInteractorStyleAbortFlag();
   void InteractorStyleAbortFlagOn();
   void InteractorStyleAbortFlagOff();
+
+  /// Set the Abort flag on the Interactor event callback
+  void SetInteractorAbortFlag(int f);
+  int GetInteractorAbortFlag();
+  void InteractorAbortFlagOn();
+  void InteractorAbortFlagOff();
 
 private:
 

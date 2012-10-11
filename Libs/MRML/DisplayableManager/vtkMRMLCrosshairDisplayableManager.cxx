@@ -698,6 +698,36 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
           }
         break;
 
+      case vtkCommand::LeftButtonReleaseEvent:
+        // Button release is only meaningful in navigation mode
+        if (this->Internal->CrosshairNode->GetNavigation())
+          {
+          this->Internal->PickState = vtkInternal::NoPick;
+          this->Internal->ActionState = vtkInternal::NoAction;
+          }
+        break;
+
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
+{
+  // Here, we process events that are normally swallowed by the InteractorStyle
+  //
+  //
+
+   // std::cout << "Interactor event: " << eventid
+   //           << ", eventname:" << vtkCommand::GetStringFromEventId(eventid) 
+   //           << std::endl;
+
+  this->Superclass::OnInteractorEvent(eventid);
+
+  if (this->Internal->CrosshairNode && this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
+    {
+    switch (eventid)
+      {
       case vtkCommand::LeftButtonPressEvent:
         // Button press is only meaningful in navigation mode
         if (this->Internal->CrosshairNode->GetNavigation())
@@ -709,17 +739,8 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
 
             // Set the abort flag so that no other callbacks respond
             // (may need to set a priority).
-            this->InteractorStyleAbortFlagOn();
+            this->InteractorAbortFlagOn();
             }
-          }
-        break;
-
-      case vtkCommand::LeftButtonReleaseEvent:
-        // Button release is only meaningful in navigation mode
-        if (this->Internal->CrosshairNode->GetNavigation())
-          {
-          this->Internal->PickState = vtkInternal::NoPick;
-          this->Internal->ActionState = vtkInternal::NoAction;
           }
         break;
 
@@ -826,8 +847,10 @@ int vtkMRMLCrosshairDisplayableManager::ActiveInteractionModes()
 //---------------------------------------------------------------------------
 void vtkMRMLCrosshairDisplayableManager::AdditionalInitializeStep()
 {
-  // Add interactor style styles to watch
-  this->AddInteractorStyleObservableEvent(vtkCommand::MouseMoveEvent);
+  // Add an observation directly on the interactor to capture 
+  // events which are normally swallowed by the InteractorStyle
+  this->AddInteractorObservableEvent(vtkCommand::MouseMoveEvent, 1.0);
+  this->AddInteractorObservableEvent(vtkCommand::LeftButtonPressEvent, 1.0);
 
   // Build the initial crosshair representation
   this->Internal->BuildCrosshair();
