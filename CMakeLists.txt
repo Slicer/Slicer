@@ -80,6 +80,18 @@ if(EXISTS ${_overwrite_options_file})
 endif()
 
 #-----------------------------------------------------------------------------
+# Check if the linker will resolve symbols of underlinked libraries
+#-----------------------------------------------------------------------------
+if(UNIX)
+  include(SlicerLinkerAsNeededFlagCheck)
+  if(Slicer_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
+      CACHE STRING "Flags used by the linker"
+      FORCE)
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
 # Set a default build type if none was specified
 #-----------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
