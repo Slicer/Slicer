@@ -90,9 +90,6 @@ public:
 
   void Initialize(vtkMRMLScene* mrmlScene);
 
-  int GetVisibility() {return this->GetVisible();}
-  void SetVisibility(int flag) {this->SetVisible(flag);}
-
   double GetSplineMeasurement();
   void SetSplineMeasurement(double val);
 

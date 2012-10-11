@@ -385,7 +385,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnnota
 
   this->SetParentTransformToWidget(roiNode, roiWidget);
 
-  if (roiNode->GetVisibility())
+  if (roiNode->GetDisplayVisibility())
     {
     widget->EnabledOn();
     }
@@ -536,7 +536,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   plane->SetNormal(normal);
   plane->SetOrigin(origin);
 
-  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetVisibility() ? 1:0);
+  rep->SetHandlesVisibility(roiNode->GetLocked()==0 && roiNode->GetDisplayVisibility() ? 1:0);
 
   rep->PlaceWidget(b);
 
@@ -546,7 +546,7 @@ void vtkMRMLAnnotationROIDisplayableManager::PropagateMRMLToWidget2D(vtkMRMLAnno
   rep->GetActors2D(actors.GetPointer());
   for (int i=0; i<actors->GetNumberOfItems(); i++)
     {
-    vtkProp::SafeDownCast(actors->GetItemAsObject(i))->SetVisibility(roiNode->GetVisibility());
+    vtkProp::SafeDownCast(actors->GetItemAsObject(i))->SetVisibility(roiNode->GetDisplayVisibility());
     }
 
   // re-render the widget

@@ -343,7 +343,7 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
   if(node)
     {
     this->parametersNode->SetROINodeID(node->GetID());
-    this->parametersNode->SetROIVisibility(node->GetVisibility());
+    this->parametersNode->SetROIVisibility(node->GetDisplayVisibility());
     this->updateWidget();
 
     if(d->VoxelBasedModeRadioButton->isChecked())
@@ -366,7 +366,7 @@ void qSlicerCropVolumeModuleWidget::onROIVisibilityChanged()
     vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
   if (node)
     {
-    node->SetVisibility(d->VisibilityButton->isChecked());
+    node->SetDisplayVisibility(d->VisibilityButton->isChecked());
     }
 }
 

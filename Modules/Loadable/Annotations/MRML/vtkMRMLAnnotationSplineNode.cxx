@@ -247,7 +247,7 @@ int vtkMRMLAnnotationSplineNode::SetRuler(vtkIdType line1Id, int sel, int vis)
       return -1;
     }
   this->SetSelected(sel); 
-  this->SetVisible(vis); 
+  this->SetDisplayVisibility(vis);
 
   return 1;
 }

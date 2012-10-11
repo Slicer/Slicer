@@ -346,7 +346,7 @@ int vtkMRMLAnnotationAngleNode::SetAngle(vtkIdType line1Id, vtkIdType line2Id, i
   //this->SetPositionCenterByID();
 
   this->SetSelected(sel); 
-  this->SetVisible(vis);
+  this->SetDisplayVisibility(vis);
 
   return 1;
 }

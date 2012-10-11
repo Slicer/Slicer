@@ -356,7 +356,7 @@ int vtkMRMLAnnotationRulerStorageNode::WriteAnnotationRulerData(fstream& of, vtk
     return 0;
     }
   int sel = refNode->GetSelected();
-  int vis = refNode->GetVisible(); 
+  int vis = refNode->GetDisplayVisibility(); 
   of << this->GetAnnotationStorageType() << "|" << 0  << "|" << sel << "|" << vis << endl;   
 
   return 1;

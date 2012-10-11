@@ -67,7 +67,7 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   node2->SetSelected(1);
-  node2->SetVisible(0);
+  node2->SetDisplayVisibility(0);
   
   double *_ctp =  node2->GetFiducialCoordinates();
   
@@ -83,7 +83,7 @@ int vtkMRMLAnnotationFiducialNodeTest1(int , char * [] )
     return EXIT_FAILURE;
     }
   
-  if (!node2->GetSelected() || node2->GetVisible())
+  if (!node2->GetSelected() || node2->GetDisplayVisibility())
     {
     std::cerr << "Error in SetFiducial: attributes are not set correct " << std::endl;
     return EXIT_FAILURE;

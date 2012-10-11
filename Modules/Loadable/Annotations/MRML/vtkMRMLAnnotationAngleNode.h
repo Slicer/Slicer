@@ -142,10 +142,6 @@ public:
   vtkGetStringMacro(ModelIDCenter);
   vtkSetStringMacro(ModelIDCenter);
 
-  // Just here for historic reasons to comply with vtkMRMLMeasurementsAngleNode
-  int GetVisibility() {return this->GetVisible();}
-  void SetVisibility(int flag) {this->SetVisible(flag);}
-
   void SetAngleMeasurement(double val);
   double GetAngleMeasurement();
 

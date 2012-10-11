@@ -167,7 +167,6 @@ char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
     double coord[3] = {(double)xyz[0], (double)xyz[1], (double)xyz[2]};
     fnode->AddControlPoint(coord, sel, vis);
     fnode->SetSelected(sel);
-    fnode->SetVisible(vis);
     fnode->SetLocked(locked);
 
     this->GetMRMLScene()->AddNode(fnode);
@@ -185,7 +184,7 @@ char *vtkSlicerAnnotationModuleLogic::LoadFiducialList(const char *filename)
     fnode->GetAnnotationPointDisplayNode()->SetSelectedColor(selColor);
     fnode->GetAnnotationTextDisplayNode()->SetColor(color);
     fnode->GetAnnotationTextDisplayNode()->SetSelectedColor(selColor);
-    
+    fnode->SetDisplayVisibility(vis);
     fnode->Delete();
     }
   // clean up
@@ -2192,7 +2191,7 @@ int vtkSlicerAnnotationModuleLogic::GetAnnotationVisibility(const char * id)
 
   if (annotationNode)
     {
-    return annotationNode->GetVisible();
+    return annotationNode->GetDisplayVisibility();
     }
 
   // is it a heirarchy node?
@@ -2234,7 +2233,7 @@ void vtkSlicerAnnotationModuleLogic::SetAnnotationVisibility(const char * id)
   if (annotationNode)
     {
     // show/hide this annotation
-    annotationNode->SetVisible(!annotationNode->GetVisible());
+    annotationNode->SetDisplayVisibility(!annotationNode->GetDisplayVisibility());
     return;
     }
 
@@ -3320,7 +3319,7 @@ void vtkSlicerAnnotationModuleLogic::SetHierarchyAnnotationsVisibleFlag(vtkMRMLA
       {
       // this is a valid annotation child node
       //
-      childNode->SetVisible((flag ? 1 : 0));
+      childNode->SetDisplayVisibility((flag ? 1 : 0));
       }
     } // for loop
 }

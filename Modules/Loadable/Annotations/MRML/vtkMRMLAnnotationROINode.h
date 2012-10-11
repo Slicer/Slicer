@@ -99,16 +99,6 @@ public:
 
   void Initialize(vtkMRMLScene* mrmlScene);
 
-  int GetVisibility() 
-  {
-    return this->GetVisible();
-  }
-
-  void SetVisibility(int flag) 
-  {
-    this->SetVisible(flag);
-  }
-
   /// 
   /// Get/Set for ROI Position in RAS cooridnates
   /// Note: The ROI Postion is the center of the ROI

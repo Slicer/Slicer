@@ -24,24 +24,6 @@ int vtkMRMLAnnotationFiducialNode::SetFiducial(double newControl[3],int selected
     {
     return 0;
     }
-
-  // this is wrong, it's over riding the Text when read a fiducial from a file
-  /*
-  if (label) 
-    {
-    this->SetFiducialLabel(label);
-    }
-  else 
-    {
-    this->SetTextFromID();      
-    }
-  */
-
-  /* and this is wrong because it's setting the flags on the node rather than
-  on the control point
-  this->SetSelected(selectedFlag);
-  this->SetVisible(visibleFlag);
-  */
   
   return 1;
 }

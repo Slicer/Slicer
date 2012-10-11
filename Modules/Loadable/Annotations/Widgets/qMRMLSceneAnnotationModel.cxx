@@ -141,7 +141,7 @@ void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkM
       // the visibility icon
       if (annotationNode)
         {
-        if (annotationNode->GetVisible())
+        if (annotationNode->GetDisplayVisibility())
           {
           item->setData(QPixmap(":/Icons/Small/SlicerVisible.png"),Qt::DecorationRole);
           }

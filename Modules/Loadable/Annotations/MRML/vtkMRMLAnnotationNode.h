@@ -114,14 +114,6 @@ public:
   vtkGetStringMacro (ReferenceNodeID);
   vtkSetStringMacro (ReferenceNodeID);
 
-  // Description:
-  // Select all elements defining an annotation 
-  // overwrites *_SELECTED and *_VISIBLE when set to 0
-  // do not have to define for Selected as already defined by Superclass 
-  vtkGetMacro(Visible, int);
-  vtkSetMacro(Visible, int);
-  vtkBooleanMacro(Visible, int);
-
   /// If set to 1 then parameters should not be changed.
   /// Fires vtkMRMLAnnotationNode::LockModifiedEvent if changed except if
   /// GetDisableModifiedEvent() is true.
@@ -170,7 +162,6 @@ protected:
   vtkStringArray *TextList;
   char *ReferenceNodeID; 
 
-  int Visible;
   int Locked;
 
   vtkMRMLAnnotationNode * m_Backup;

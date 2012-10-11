@@ -569,8 +569,7 @@ void qMRMLAnnotationTreeView::onVisibilityColumnClicked(vtkMRMLNode* node)
   if (annotationNode)
     {
     // this is a valid annotationNode
-    annotationNode->SetVisible(!annotationNode->GetVisible());
-
+    annotationNode->SetDisplayVisibility(!annotationNode->GetDisplayVisibility());
     }
 
   // taking out the switch for hierarchy nodes, do it via the buttons above

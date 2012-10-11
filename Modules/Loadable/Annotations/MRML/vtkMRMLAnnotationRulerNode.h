@@ -172,9 +172,6 @@ public:
 
 //  void Initialize(vtkMRMLScene* mrmlScene);
 
-  int GetVisibility() {return this->GetVisible();}
-  void SetVisibility(int flag) {this->SetVisible(flag);}
-
   double GetDistanceMeasurement();
   void SetDistanceMeasurement(double val);
 

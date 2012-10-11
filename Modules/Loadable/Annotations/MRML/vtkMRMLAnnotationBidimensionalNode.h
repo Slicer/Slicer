@@ -65,9 +65,6 @@ public:
   // transform utility functions
   void Initialize(vtkMRMLScene* mrmlScene);
 
-  int GetVisibility() {return this->GetVisible();}
-  void SetVisibility(int flag) {this->SetVisible(flag);}
-
   std::vector<double> GetBidimensionalMeasurement();
   void SetBidimensionalMeasurement(double val1, double val2);
 

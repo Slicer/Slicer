@@ -11,7 +11,7 @@ vtkMRMLNodeNewMacro(vtkMRMLAnnotationDisplayNode);
 //----------------------------------------------------------------------------
 vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
 {
-  this->SetVisibility(0);
+  this->SetVisibility(1);
   this->SetVectorVisibility(0);
   this->SetScalarVisibility(0);
   this->SetTensorVisibility(0);

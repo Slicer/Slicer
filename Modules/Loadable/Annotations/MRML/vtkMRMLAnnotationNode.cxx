@@ -32,7 +32,6 @@ vtkMRMLAnnotationNode::vtkMRMLAnnotationNode()
 {
   this->TextList = vtkStringArray::New();
   this->ReferenceNodeID = NULL;
-  this->Visible=1;  
   this->Locked = 0;
   this->m_Backup = 0;
 
@@ -64,7 +63,6 @@ void vtkMRMLAnnotationNode::WriteXML(ostream& of, int nIndent)
   vtkIndent indent(nIndent);
  
   of << indent << " referenceNodeID=\"" << (this->ReferenceNodeID ? this->GetReferenceNodeID() : "None") << "\"";
-  of << indent << " visible=\"" << this->Visible << "\"";
   of << indent << " locked=\"" << this->Locked << "\"";
    
   int textLength = this->TextList->GetNumberOfValues();
@@ -130,25 +128,6 @@ void vtkMRMLAnnotationNode::ReadXMLAttributes(const char** atts)
       {
       this->SetReferenceNodeID(attValue.c_str());
       }
-    else if (!strcmp(attName, "visible"))
-      {
-      this->SetVisible(atof(attValue.c_str()));
-      }
-    // for backwards compatibility
-    else if (!strcmp(attName, "visibility"))
-      {
-      if (!strcmp(attValue.c_str(),"true"))
-        {
-        // visiblity = true
-        this->SetVisible(1);
-        }
-      else
-        {
-        // visibility = false
-        this->SetVisible(0);
-        }
-      }
-    // end of backwards compatibility
     else if (!strcmp(attName, "locked"))
       {
       this->SetLocked(atof(attValue.c_str()));
@@ -191,7 +170,6 @@ void vtkMRMLAnnotationNode::Copy(vtkMRMLNode *anode)
     }
 
   this->SetReferenceNodeID(node->GetReferenceNodeID());
-  this->SetVisible(node->GetVisible());
   this->SetLocked(node->GetLocked());
   this->TextList->DeepCopy(node->TextList);
 
@@ -262,7 +240,6 @@ void vtkMRMLAnnotationNode::PrintAnnotationInfo(ostream& os, vtkIndent indent, i
 
   os << indent << "ReferenceNodeID: " << ( (this->ReferenceNodeID) ? this->ReferenceNodeID : "None" ) << "\n";
   os << indent << "Selected: " << this->Selected << "\n";
-  os << indent << "Visible: " << this->Visible << "\n";
   os << indent << "Locked: " << this->Locked << "\n";
   os << indent << "textList: "; 
   if  (!this->TextList || !this->GetNumberOfTexts()) 

@@ -154,7 +154,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
     return;
     }
 
-  bool isVisibleOnNode = (node->GetVisible() != 0 ? true : false);
+  bool isVisibleOnNode = (node->GetDisplayVisibility() != 0 ? true : false);
   bool isVisibleOnWidget = (widget->GetEnabled() != 0 ? true : false);
 
   vtkDebugMacro("UpdateVisible: isVisibleOnNode = " << isVisibleOnNode << ", isVisibleOnWidget = " << isVisibleOnWidget << ", displayableInViewer = " << displayableInViewer);

@@ -127,7 +127,7 @@ void qMRMLAnnotationROIWidget::onMRMLNodeModified()
   d->IsProcessingOnMRMLNodeModified = true;
 
   // Visibility
-  d->DisplayClippingBoxButton->setChecked(d->ROINode->GetVisibility());
+  d->DisplayClippingBoxButton->setChecked(d->ROINode->GetDisplayVisibility());
 
   // Interactive Mode
   bool interactive = d->ROINode->GetInteractiveMode();
@@ -191,7 +191,7 @@ void qMRMLAnnotationROIWidget::setExtent(double minLR, double maxLR,
 void qMRMLAnnotationROIWidget::setDisplayClippingBox(bool visible)
 {
   Q_D(qMRMLAnnotationROIWidget);
-  d->ROINode->SetVisibility(visible);
+  d->ROINode->SetDisplayVisibility(visible);
   emit displayClippingBoxChanged(visible);
 }
 

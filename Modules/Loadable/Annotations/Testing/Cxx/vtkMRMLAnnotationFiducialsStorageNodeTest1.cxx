@@ -48,7 +48,9 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     std::cerr << "Error: Could not define Fiducial " << std::endl;
     return EXIT_FAILURE;
     }
-  std::cout << "Set annNode visible to 0, GetVisible = " << annNode->GetVisible() << std::endl;
+  // changing to use the display node visibilty, update this to show the
+  // control point visibility
+  std::cout << "Set annNode visible to 0, GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
   
   vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
   mrmlScene->AddNode(annNode);
@@ -89,7 +91,7 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     }
   node2->SetFileName(fileName.c_str());
   node2->WriteData(annNode);
-  std::cout << "After Write Data, annNode GetVisible = " << annNode->GetVisible() << std::endl;
+  std::cout << "After Write Data, annNode GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
 
   vtkIndent in;
   std::stringstream initialAnnotation, afterAnnotation;
@@ -103,9 +105,9 @@ int vtkMRMLAnnotationFiducialsStorageNodeTest1(int argc, char * argv[] )
     {
     annNode->GetAnnotationPointDisplayNode()->SetColor(0.0, 0.0, 0.0);
     }
-  std::cout << "After ResetAnnotations, annNode GetVisible = " << annNode->GetVisible() << std::endl;
+  std::cout << "After ResetAnnotations, annNode GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
   node2->ReadData(annNode);
-  std::cout << "After ReadData, annNode GetVisible = " << annNode->GetVisible() << std::endl;
+  std::cout << "After ReadData, annNode GetDisplayVisibility = " << annNode->GetDisplayVisibility() << std::endl;
   annNode->PrintAnnotationInfo(afterAnnotation,in);
   if (initialAnnotation.str().compare(afterAnnotation.str())) 
   {
