@@ -63,11 +63,11 @@ if(NOT "${Slicer_CPACK_SKIP_GENERATE_EXTENSION_DESCRIPTION}")
     EXTENSION_WC_REVISION ${${EXTENSION_NAME}_WC_REVISION}
     EXTENSION_WC_ROOT ${${EXTENSION_NAME}_WC_ROOT}
     EXTENSION_WC_URL ${${EXTENSION_NAME}_WC_URL}
-    DESTINATION_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    DESTINATION_DIR ${CMAKE_BINARY_DIR}
     SLICER_WC_REVISION ${Slicer_WC_REVISION}
     SLICER_WC_ROOT ${Slicer_WC_ROOT}
     )
-  set(description_file "${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}.s4ext")
+  set(description_file "${CMAKE_BINARY_DIR}/${EXTENSION_NAME}.s4ext")
   if(NOT EXISTS "${description_file}")
     message(FATAL_ERROR "error: Failed to generate extension description file: ${description_file}")
   endif()
