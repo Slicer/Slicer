@@ -726,6 +726,7 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
 
   if (this->Internal->CrosshairNode && this->Internal->CrosshairNode->GetCrosshairMode() != vtkMRMLCrosshairNode::NoCrosshair)
     {
+    bool renderNeeded = false;
     switch (eventid)
       {
       case vtkCommand::LeftButtonPressEvent:
@@ -778,42 +779,47 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
                    && (fabs(xyz[1] - c_xyz[1]) < tol) )
                 {
                 this->Internal->PickState = vtkInternal::Over;
-                if (this->Internal->HighlightActor)
+                if (this->Internal->HighlightActor && !this->Internal->HighlightActor->GetVisibility())
                   {
                   this->Internal->HighlightActor->VisibilityOn();
+                  renderNeeded = true;
                   }
                 }
-              else if ( fabs(xyz[0] - c_xyz[0]) < tol )
-                {
-                this->Internal->PickState = vtkInternal::Vertical;
-                if (this->Internal->HighlightActor)
-                  {
-                  this->Internal->HighlightActor->VisibilityOn();
-                  }
-                }
-              else if ( fabs(xyz[1] - c_xyz[1]) < tol )
-                {
-                this->Internal->PickState = vtkInternal::Horizontal;
-                if (this->Internal->HighlightActor)
-                  {
-                  this->Internal->HighlightActor->VisibilityOn();
-                  }
-                }
+              // else if ( fabs(xyz[0] - c_xyz[0]) < tol )
+              //   {
+              //   this->Internal->PickState = vtkInternal::Vertical;
+              //   if (this->Internal->HighlightActor && !this->Internal->HighlightActor->GetVisibility())
+              //     {
+              //     this->Internal->HighlightActor->VisibilityOn();
+              //     renderNeeed = true;
+              //     }
+              //   }
+              // else if ( fabs(xyz[1] - c_xyz[1]) < tol && !this->Internal->HighlightActor->GetVisibility())
+              //   {
+              //   this->Internal->PickState = vtkInternal::Horizontal;
+              //   if (this->Internal->HighlightActor)
+              //     {
+              //     this->Internal->HighlightActor->VisibilityOn();
+              //     renderNeeded = true;
+              //     }
+              //   }
               else if ( (fabs(xyz[0] - c_xyz[0]) < 2.0*tol) 
                         && (fabs(xyz[1] - c_xyz[1]) < 2.0*tol) )
                 {
                 this->Internal->PickState = vtkInternal::Near;
-                if (this->Internal->HighlightActor)
+                if (this->Internal->HighlightActor && !this->Internal->HighlightActor->GetVisibility())
                   {
                   this->Internal->HighlightActor->VisibilityOn();
+                  renderNeeded = true;
                   }
                 }
               else
                 {
                 this->Internal->PickState = vtkInternal::Outside;
-                if (this->Internal->HighlightActor)
+                if (this->Internal->HighlightActor && this->Internal->HighlightActor->GetVisibility())
                   {
                   this->Internal->HighlightActor->VisibilityOff();
+                  renderNeeded = true;
                   }
                 }
               break;
@@ -823,17 +829,25 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorEvent(int eventid)
               // lightbox pane
               int id = (int) (xyz[2] + 0.5); // round to find the lightbox
               this->Internal->CrosshairNode->SetCrosshairRAS(ras, id);
+              // modifying the CrosshairRAS will trigger a render
               break;
             }
           }
         else
           {
           // Cross-referencing mode. Set the new position on the crosshair
+          // modifying the CrosshairRAS will trigger a render
           this->Internal->CrosshairNode->SetCrosshairRAS(ras);
           }
         break;
       }
+
+    if (renderNeeded)
+      {
+      this->RequestRender();
+      }
     }
+
 }
 
 //---------------------------------------------------------------------------
