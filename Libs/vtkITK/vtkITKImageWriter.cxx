@@ -433,6 +433,42 @@ void vtkITKImageWriter::Write()
         return; 
       }
   } // vector
+  else if (this->GetInput()->GetNumberOfScalarComponents() == 4) {
+
+    // take into consideration the scalar type
+    switch (this->GetInput()->GetScalarType())
+      {
+      case VTK_DOUBLE:
+        {
+        typedef itk::Vector<double, 4> VectorPixelType;
+        ITKWriteVTKImage<VectorPixelType>(this, this->GetInput(),
+          this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+      case VTK_FLOAT:
+        {
+        typedef itk::Vector<float, 4> VectorPixelType;
+        ITKWriteVTKImage<VectorPixelType>(this, this->GetInput(),
+          this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+      case VTK_UNSIGNED_SHORT:
+        {
+        typedef itk::Vector<unsigned short, 4> VectorPixelType;
+        ITKWriteVTKImage<VectorPixelType>(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+      case VTK_UNSIGNED_CHAR:
+        {
+        typedef itk::Vector<unsigned char, 4> VectorPixelType;
+        ITKWriteVTKImage<VectorPixelType>(this, this->GetInput(), this->GetFileName(), this->RasToIJKMatrix);
+        }
+        break;
+      default:
+        vtkErrorMacro(<< "Execute: Unknown output ScalarType");
+        return; 
+      }
+  } // 4-vector
   else if (this->GetInput()->GetNumberOfScalarComponents() == 9) {
 
     // take into consideration the scalar type
