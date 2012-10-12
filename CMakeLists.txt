@@ -82,7 +82,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Check if the linker will resolve symbols of underlinked libraries
 #-----------------------------------------------------------------------------
-if(UNIX)
+if(UNIX AND NOT APPLE)
   include(SlicerLinkerAsNeededFlagCheck)
   if(Slicer_LINKER_NO_AS_NEEDED_FLAG_REQUIRED)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed"
