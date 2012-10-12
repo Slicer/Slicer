@@ -759,6 +759,10 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     // prevent conflicts with user settings).
     // \todo improve settings switch mechanism.
     this->setApplicationName(this->applicationName() + "Testing");
+    if (QFile::exists(this->settings()->fileName()))
+      {
+      QFile::remove(this->settings()->fileName());
+      }
     }
 }
 
