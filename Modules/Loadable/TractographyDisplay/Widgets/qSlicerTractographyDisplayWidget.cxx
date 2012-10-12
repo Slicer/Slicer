@@ -150,9 +150,15 @@ void qSlicerTractographyDisplayWidget::setFiberBundleNode(vtkMRMLFiberBundleNode
     this->FiberBundleNode();
   
   d->FiberBundleNode = fiberBundleNode;
-  
+
   qvtkReconnect( oldNode, this->FiberBundleNode(),
                 vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()) );
+
+  if (fiberBundleNode == 0)
+    {
+    setFiberBundleDisplayNode((vtkMRMLFiberBundleDisplayNode*)NULL);
+    }
+
   this->updateWidgetFromMRML();
 }
 
