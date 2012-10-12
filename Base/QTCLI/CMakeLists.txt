@@ -112,6 +112,7 @@ if(VTK_WRAP_PYTHON)
     KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
     KIT_PYTHON_LIBRARIES SlicerBaseLogicPythonD
     )
+  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${PROJECT_NAME}Python ${PROJECT_NAME}PythonD)
 endif()
 
 # --------------------------------------------------------------------------
