@@ -625,6 +625,7 @@ void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
   if (this->Internal->Renderer)
     {
     this->Internal->Renderer->Register(this);
+    this->Internal->SetAndObserveInteractor(this->Internal->Renderer->GetRenderWindow()->GetInteractor());
     }
 
   this->AdditionalInitializeStep();
