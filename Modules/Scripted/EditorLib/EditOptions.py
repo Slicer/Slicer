@@ -172,11 +172,14 @@ class EditOptions(object):
     return success, lo, hi    
 
   def setRangeWidgetToBackgroundRange(self, rangeWidget):
+    """Set the range widget based on current backgroun
+    volume - note that hi+1 is used since the range widget
+    will round floating numbers to 2 significant digits"""
     if not rangeWidget:
       return
     success, lo, hi = self.getBackgroundScalarRange()
     if success:
-      rangeWidget.minimum, rangeWidget.maximum = lo, hi
+      rangeWidget.minimum, rangeWidget.maximum = lo, hi+1
 
   def statusText(self,text):
     slicer.util.showStatusMessage(text)
