@@ -85,6 +85,11 @@ protected:
   ~vtkITKGrowCutSegmentationImageFilter() {};
 
   virtual void ExecuteData(vtkDataObject *outData);
+
+  // Override ExecuteInformation so that the second input is used to
+  // define the output information (input gestures and output
+  // segmentation images should be same image type)
+  virtual void ExecuteInformation(vtkImageData **, vtkImageData *);
   
    
 private:

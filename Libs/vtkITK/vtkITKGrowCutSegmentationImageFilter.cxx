@@ -646,6 +646,16 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
   return;
 }
 
+void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation(
+  vtkImageData **inputs, vtkImageData *output)
+{
+  if (inputs[1] == NULL)
+    {
+    return;
+    }
+
+  output->CopyTypeSpecificInformation(inputs[1]);
+}
 
 
 void vtkITKGrowCutSegmentationImageFilter::PrintSelf(ostream& os, vtkIndent indent)
