@@ -500,6 +500,9 @@ class HelperBox(object):
     - optional caller and event ignored (for use as vtk observer callback)
     """
 
+    if slicer.mrmlScene.IsBatchProcessing():
+      return
+
     if self.setMergeButton.destroyed():
       """ TODO: here the python class still exists but the 
       Qt widgets are gone - need to figure out when to remove observers 
