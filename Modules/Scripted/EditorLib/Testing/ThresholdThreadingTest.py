@@ -1,11 +1,29 @@
 
 import unittest
+import qt
 import slicer
 import EditorLib
 
 class ThresholdThreading(unittest.TestCase):
   def setUp(self):
     pass
+
+  def delayDisplay(self,message,msec=1000):
+    """This utility method displays a small dialog and waits.
+    This does two things: 1) it lets the event loop catch up
+    to the state of the test so that rendering and widget updates
+    have all taken place before the test continues and 2) it
+    shows the user/developer/tester the state of the test
+    so that we'll know when it breaks.
+    """
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
 
   def runTest(self):
     self.test_ThresholdThreading()
@@ -20,6 +38,7 @@ class ThresholdThreading(unittest.TestCase):
     #
     # first, get some sample data
     #
+    self.delayDisplay("Get some data")
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
     head = sampleDataLogic.downloadMRHead()
@@ -52,9 +71,11 @@ class ThresholdThreading(unittest.TestCase):
     selectionNode.SetReferenceActiveLabelVolumeID( croppedHeadLabel.GetID() )
     slicer.app.applicationLogic().PropagateVolumeSelection(0)
 
+
     #
     # got to the editor and do some drawing
     #
+    self.delayDisplay("Paint some things")
     editUtil = EditorLib.EditUtil.EditUtil()
     parameterNode = editUtil.getParameterNode()
     lm = slicer.app.layoutManager()
@@ -71,6 +92,8 @@ class ThresholdThreading(unittest.TestCase):
     paintTool.paintApply()
     paintTool.cleanup()
     paintTool = None
+
+    self.delayDisplay("Now grow cut")
 
     #
     # now do GrowCut
@@ -94,6 +117,7 @@ class ThresholdThreading(unittest.TestCase):
 
     self.assertEqual((postArray - preArray).max(), 0)
 
+    self.delayDisplay("Test passed!")
 
 #
 # ThresholdThreadingTest
