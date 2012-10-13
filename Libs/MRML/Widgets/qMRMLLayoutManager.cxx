@@ -487,6 +487,7 @@ void qMRMLLayoutManagerPrivate::onSceneRestoredEvent()
 
   if (this->MRMLLayoutNode)
     {
+    this->updateWidgetsFromViewNodes();
     // trigger an update to the layout
     this->MRMLLayoutNode->Modified();
     }
