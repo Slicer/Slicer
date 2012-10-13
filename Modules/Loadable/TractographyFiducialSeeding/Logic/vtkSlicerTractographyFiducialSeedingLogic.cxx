@@ -462,11 +462,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
 
     seed->TransformStreamlinesToRASAndAppendToPolyData(outFibers.GetPointer());
 
-    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
+    int wasModifying = fiberNode->StartModify();
 
-    //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
-    fiberNode->SetSubsamplingRatio(1.);
-
+    std::vector< vtkMRMLFiberBundleDisplayNode * > dnodes;
     int newNode = 0;
     vtkMRMLFiberBundleDisplayNode *dnode = fiberNode->GetTubeDisplayNode();
     if (dnode == NULL || oldPoly == NULL)
@@ -479,7 +477,9 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       dnode->DisableModifiedEventOff();
       newNode = 1;
       }
-    if (oldPoly == NULL && displayMode == 1)
+   dnode->DisableModifiedEventOn();
+   dnodes.push_back(dnode);
+   if (oldPoly == NULL && displayMode == 1)
       {
       dnode->SetVisibility(1);
       }
@@ -501,6 +501,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
         dnode->DisableModifiedEventOff();
         }
       }
+    dnode->DisableModifiedEventOn();
+    dnodes.push_back(dnode);
     if (oldPoly == NULL && displayMode == 0)
       {
       dnode->SetVisibility(1);
@@ -523,7 +525,8 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
         dnode->DisableModifiedEventOff();
         }
       }
-
+    dnode->DisableModifiedEventOn();
+    dnodes.push_back(dnode);
 
     if (fiberNode->GetStorageNode() == NULL)
       {
@@ -531,8 +534,6 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       fiberNode->GetScene()->AddNode(storageNode.GetPointer());
       fiberNode->SetAndObserveStorageNodeID(storageNode->GetID());
       }
-
-    fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
 
     if (vxformNode != NULL )
       {
@@ -542,6 +543,22 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
       {
       fiberNode->SetAndObserveTransformNodeID(NULL);
       }
+
+    //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
+    fiberNode->SetSubsamplingRatio(1.);
+
+    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
+
+    fiberNode->EndModify(wasModifying);
+
+    for (int i=0; i<dnodes.size(); i++)
+      {
+      dnodes[i]->DisableModifiedEventOff();
+      }
+
+    // count on fiberNode->SetAndObservePolyData() sending PolyDataModifiedEvent
+    //fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
+
   }
 
   return 1;

@@ -600,7 +600,8 @@ void vtkMRMLFiberBundleNode::UpdateSubsampling()
   }
     */
     // \tbd why not Modified() instead ?
-  this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
+  //this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, this);
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
