@@ -118,6 +118,8 @@ protected:
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
+  virtual void OnMRMLSceneStartRestore();
+  virtual void OnMRMLSceneEndRestore();
 
   virtual void UnobserveMRMLScene();
   virtual void UpdateFromMRMLScene();
