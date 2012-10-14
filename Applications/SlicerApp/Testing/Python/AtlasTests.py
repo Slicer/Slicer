@@ -221,12 +221,12 @@ class AtlasTestsTest(unittest.TestCase):
   def runTest(self):
     """Run as few or as many tests as needed here.
     """
-    # self.setUp()
-    # self.test_AbdominalAtlasTest()
+    self.setUp()
+    self.test_AbdominalAtlasTest()
     self.setUp()
     self.test_BrainAtlasTest()
-    # self.setUp()
-    # self.test_KneeAtlasTest()
+    self.setUp()
+    self.test_KneeAtlasTest()
 
   def runAbdominalTest(self):
     self.setUp()
