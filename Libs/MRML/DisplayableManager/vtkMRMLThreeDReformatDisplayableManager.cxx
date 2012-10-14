@@ -263,8 +263,9 @@ vtkImplicitPlaneWidget2* vtkMRMLThreeDReformatDisplayableManager::vtkInternal
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::
-UpdateWidget(vtkMRMLSliceNode* sliceNode, vtkImplicitPlaneWidget2* planeWidget)
+void vtkMRMLThreeDReformatDisplayableManager::vtkInternal
+::UpdateWidget(vtkMRMLSliceNode* sliceNode,
+               vtkImplicitPlaneWidget2* planeWidget)
 {
   if (!sliceNode || (!planeWidget && !sliceNode->GetWidgetVisible()))
     {

@@ -682,7 +682,7 @@ std::string vtkMRMLFreeSurferModelOverlayStorageNode
     }
   std::vector<vtkMRMLNode *> colorNodes;
   this->GetScene()->GetNodesByClass("vtkMRMLFreeSurferProceduralColorNode",  colorNodes);
-  for (int i = 0; i < colorNodes.size(); ++i)
+  for (unsigned int i = 0; i < colorNodes.size(); ++i)
     {
     vtkMRMLFreeSurferProceduralColorNode* colorNode =
       vtkMRMLFreeSurferProceduralColorNode::SafeDownCast(colorNodes[i]);

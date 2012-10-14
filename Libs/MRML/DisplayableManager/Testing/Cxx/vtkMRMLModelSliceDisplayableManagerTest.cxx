@@ -51,7 +51,8 @@
 bool TestBatchRemoveDisplayNode();
 
 //----------------------------------------------------------------------------
-int vtkMRMLModelSliceDisplayableManagerTest(int argc, char* argv[])
+int vtkMRMLModelSliceDisplayableManagerTest(int vtkNotUsed(argc),
+                                            char* vtkNotUsed(argv)[])
 {
   bool res = true;
   res = TestBatchRemoveDisplayNode() && res;
