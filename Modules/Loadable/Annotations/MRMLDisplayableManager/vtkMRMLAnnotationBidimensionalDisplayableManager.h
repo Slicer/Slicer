@@ -17,10 +17,8 @@
 #define __vtkMRMLAnnotationBidimensionalDisplayableManager_h
 
 // Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
-
-// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
 class vtkMRMLAnnotationBidimensionalNode;
 class vtkSlicerViewerWidget;
@@ -30,8 +28,9 @@ class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationBidimensionalDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationBidimensionalDisplayableManager
+  : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 

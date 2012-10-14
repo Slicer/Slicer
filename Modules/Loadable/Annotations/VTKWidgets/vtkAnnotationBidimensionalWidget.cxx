@@ -1,11 +1,9 @@
 
-// AnnotationModule/VTKWidgets includes
-#include "VTKWidgets/vtkAnnotationBidimensionalWidget.h"
-#include "VTKWidgets/vtkAnnotationBidimensionalRepresentation.h"
+// Annotations includes
+#include "vtkAnnotationBidimensionalWidget.h"
+#include "vtkAnnotationBidimensionalRepresentation.h"
 
 // VTK includes
-#include <vtkAbstractWidget.h>
-#include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
@@ -18,24 +16,24 @@ void vtkAnnotationBidimensionalWidget::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
+//---------------------------------------------------------------------------
 vtkAnnotationBidimensionalWidget::vtkAnnotationBidimensionalWidget()
 {
-
-
 }
 
+//---------------------------------------------------------------------------
 vtkAnnotationBidimensionalWidget::~vtkAnnotationBidimensionalWidget()
 {
-
 }
 
-//----------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkAnnotationBidimensionalWidget::CreateDefaultRepresentation()
 {
   if ( ! this->WidgetRep )
     {
     this->WidgetRep = vtkAnnotationBidimensionalRepresentation::New();
     }
-  reinterpret_cast<vtkAnnotationBidimensionalRepresentation*>(this->WidgetRep)->InstantiateHandleRepresentation();
+  vtkAnnotationBidimensionalRepresentation::SafeDownCast(this->WidgetRep)
+    ->InstantiateHandleRepresentation();
 }
 

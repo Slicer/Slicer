@@ -15,26 +15,28 @@
 #ifndef VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
 #define VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_
 
-// Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
-// Annotation MRML includes
-#include <vtkMRMLAnnotationNode.h>
+// Annotations MRML includes
+class vtkMRMLAnnotationDisplayNode;
+class vtkMRMLAnnotationNode;
+
+// MRML includes
+class vtkMRMLInteractionNode;
 
 // VTK includes
-#include <vtkAbstractWidget.h>
 #include <vtkHandleWidget.h>
 #include <vtkSeedWidget.h>
 #include <vtkSmartPointer.h>
 
-// MRML includes
-#include <vtkMRMLSliceNode.h>
-#include <vtkMRMLInteractionNode.h>
-class vtkMRMLAnnotationDisplayNode;
+// STD includes
+#include <map>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManagerHelper :
-    public vtkObject
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationDisplayableManagerHelper
+  : public vtkObject
 {
 public:
 

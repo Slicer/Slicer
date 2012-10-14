@@ -19,7 +19,7 @@
 #include <vtkSphereHandleRepresentation.h>
 
 // MRML includes
-#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLInteractionNode.h>
 
 // STD includes
 #include <algorithm>

@@ -17,10 +17,8 @@
 #define __vtkMRMLAnnotationSplineDisplayableManager_h
 
 // Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
-
-// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
 class vtkMRMLAnnotationSplineNode;
 class vtkSlicerViewerWidget;
@@ -29,8 +27,9 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationSplineDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationSplineDisplayableManager
+  : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 

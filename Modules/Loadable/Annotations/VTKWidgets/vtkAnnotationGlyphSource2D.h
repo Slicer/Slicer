@@ -27,12 +27,12 @@
 #ifndef __vtkAnnotationGlyphSource2D_h
 #define __vtkAnnotationGlyphSource2D_h
 
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
-#include "vtkSlicerBaseLogic.h"
-#include "vtkGlyphSource2D.h"
-
-#include "vtkPolyDataAlgorithm.h"
+// VTK includes
+#include <vtkGlyphSource2D.h>
+#include <vtkPolyDataAlgorithm.h>
 
 /*
   /// already defined
@@ -56,7 +56,9 @@ class vtkPoints;
 class vtkUnsignedCharArray;
 class vtkCellArray;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationGlyphSource2D : public vtkPolyDataAlgorithm
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationGlyphSource2D
+  : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeRevisionMacro(vtkAnnotationGlyphSource2D,vtkPolyDataAlgorithm);

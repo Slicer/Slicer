@@ -12,18 +12,19 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONBIDIMENSIONALREPRESENTATION_H_
-#define VTKANNOTATIONBIDIMENSIONALREPRESENTATION_H_
+#ifndef __vtkAnnotationBidimensionalRepresentation_h
+#define __vtkAnnotationBidimensionalRepresentation_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
 // VTK includes
 #include <vtkBiDimensionalRepresentation2D.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationBidimensionalRepresentation :
-    public vtkBiDimensionalRepresentation2D
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationBidimensionalRepresentation
+  : public vtkBiDimensionalRepresentation2D
 {
 public:
 
@@ -39,7 +40,7 @@ protected:
   vtkAnnotationBidimensionalRepresentation();
   virtual ~vtkAnnotationBidimensionalRepresentation();
 
-  void BuildRepresentation();
+  virtual void BuildRepresentation();
 
 private:
 
@@ -51,4 +52,4 @@ private:
 
 };
 
-#endif /* VTKANNOTATIONRULERREPRESENTATION_H_ */
+#endif /* __vtkAnnotationBidimensionalRepresentation_h */

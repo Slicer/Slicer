@@ -7,7 +7,9 @@
 #include <vtkMRMLAnnotationRulerNode.h>
 
 // Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationClickCounter.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLModelDisplayableManager.h>
@@ -29,6 +31,7 @@
 #include <vtkCallbackCommand.h>
 #include <vtkCamera.h>
 #include <vtkHandleRepresentation.h>
+#include <vtkHandleWidget.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>

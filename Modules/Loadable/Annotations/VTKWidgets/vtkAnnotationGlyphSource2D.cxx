@@ -16,6 +16,9 @@
 // AnnotationModule/VTKWidgets includes
 #include "vtkAnnotationGlyphSource2D.h"
 
+// Logic includes
+#include "vtkSlicerBaseLogic.h"
+
 // MRML includes
 #include <vtkMRMLFiducialListNode.h>
 

@@ -1,6 +1,6 @@
 
-// AnnotationModule/VTKWidgets includes
-#include "VTKWidgets/vtkAnnotationBidimensionalRepresentation.h"
+// Annotations includes
+#include "vtkAnnotationBidimensionalRepresentation.h"
 
 // VTK includes
 #include <vtkAxisActor2D.h>
@@ -41,7 +41,7 @@ vtkAnnotationBidimensionalRepresentation::~vtkAnnotationBidimensionalRepresentat
 
 }
 
-//----------------------------------------------------------------------
+//----------------------------------------------------------------------------
 void vtkAnnotationBidimensionalRepresentation::BuildRepresentation()
 {
 

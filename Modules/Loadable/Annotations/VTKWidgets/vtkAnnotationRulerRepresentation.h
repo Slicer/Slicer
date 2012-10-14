@@ -12,18 +12,19 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONRULERREPRESENTATION_H_
-#define VTKANNOTATIONRULERREPRESENTATION_H_
+#ifndef __vtkAnnotationRulerRepresentation_h
+#define __vtkAnnotationRulerRepresentation_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
 // VTK includes
 #include <vtkDistanceRepresentation2D.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerRepresentation :
-    public vtkDistanceRepresentation2D
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationRulerRepresentation
+  : public vtkDistanceRepresentation2D
 {
 public:
 
@@ -42,7 +43,7 @@ protected:
   vtkAnnotationRulerRepresentation();
   virtual ~vtkAnnotationRulerRepresentation();
 
-  void BuildRepresentation();
+  virtual void BuildRepresentation();
 
 private:
 
@@ -53,4 +54,4 @@ private:
 
 };
 
-#endif /* VTKANNOTATIONRULERREPRESENTATION_H_ */
+#endif /* __vtkAnnotationRulerRepresentation_h */

@@ -16,31 +16,31 @@
 #ifndef __vtkMRMLAnnotationDisplayableManager_h
 #define __vtkMRMLAnnotationDisplayableManager_h
 
-// Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
-
-// Annotation MRMLDisplayableManager includes
-#include "vtkMRMLAnnotationClickCounter.h"
-#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
+class vtkMRMLAnnotationClickCounter;
+class vtkMRMLAnnotationDisplayNode;
+class vtkMRMLAnnotationDisplayableManagerHelper;
+class vtkMRMLAnnotationLineDisplayNode;
+class vtkMRMLAnnotationNode;
+class vtkMRMLAnnotationPointDisplayNode;
+class vtkSlicerViewerWidget;
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractDisplayableManager.h>
-#include <vtkMRMLAbstractSliceViewDisplayableManager.h>
+
+// MRML includes
+class vtkMRMLSliceNode;
 
 // VTK includes
-#include <vtkHandleWidget.h>
-#include <vtkSeedWidget.h>
-
-class vtkMRMLAnnotationNode;
-class vtkSlicerViewerWidget;
-class vtkMRMLAnnotationDisplayNode;
-class vtkMRMLAnnotationPointDisplayNode;
-class vtkMRMLAnnotationLineDisplayNode;
 class vtkAbstractWidget;
+class vtkHandleWidget;
+class vtkSeedWidget;
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationDisplayableManager :
-    public vtkMRMLAbstractDisplayableManager
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationDisplayableManager
+  : public vtkMRMLAbstractDisplayableManager
 {
 public:
 

@@ -90,9 +90,7 @@
 #ifndef __vtkAnnotationROIWidget2D_h
 #define __vtkAnnotationROIWidget2D_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
-
+// Annotations includes
 #include "vtkAnnotationROIWidget.h"
 
 class vtkAnnotationROIRepresentation2D;
@@ -100,7 +98,8 @@ class vtkWidgetRepresentation2D;
 class vtkHandleWidget;
 
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkAnnotationROIWidget2D : public vtkAnnotationROIWidget
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT  vtkAnnotationROIWidget2D
+  : public vtkAnnotationROIWidget
 {
 public:
   /// 

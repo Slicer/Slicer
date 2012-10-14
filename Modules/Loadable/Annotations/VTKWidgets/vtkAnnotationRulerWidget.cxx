@@ -1,12 +1,10 @@
 
 // AnnotationModule/VTKWidgets includes
-#include "VTKWidgets/vtkAnnotationRulerRepresentation.h"
-#include "VTKWidgets/vtkAnnotationRulerRepresentation3D.h"
-#include "VTKWidgets/vtkAnnotationRulerWidget.h"
+#include "vtkAnnotationRulerRepresentation.h"
+#include "vtkAnnotationRulerRepresentation3D.h"
+#include "vtkAnnotationRulerWidget.h"
 
 // VTK includes
-#include <vtkAbstractWidget.h>
-#include <vtkDistanceWidget.h>
 #include <vtkObjectFactory.h>
 
 //---------------------------------------------------------------------------
@@ -19,33 +17,34 @@ void vtkAnnotationRulerWidget::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
+//---------------------------------------------------------------------------
 vtkAnnotationRulerWidget::vtkAnnotationRulerWidget()
 {
-
-
 }
 
+//---------------------------------------------------------------------------
 vtkAnnotationRulerWidget::~vtkAnnotationRulerWidget()
 {
-
 }
 
-//----------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkAnnotationRulerWidget::CreateDefaultRepresentation()
 {
   if ( ! this->WidgetRep )
     {
     this->WidgetRep = vtkAnnotationRulerRepresentation::New();
     }
-  reinterpret_cast<vtkAnnotationRulerRepresentation*>(this->WidgetRep)->InstantiateHandleRepresentation();
+  vtkAnnotationRulerRepresentation::SafeDownCast(this->WidgetRep)
+    ->InstantiateHandleRepresentation();
 }
 
-//----------------------------------------------------------------------
+//---------------------------------------------------------------------------
 void vtkAnnotationRulerWidget::CreateDefaultRepresentation3D()
 {
   if ( ! this->WidgetRep )
     {
     this->WidgetRep = vtkAnnotationRulerRepresentation3D::New();
     }
-  reinterpret_cast<vtkAnnotationRulerRepresentation3D*>(this->WidgetRep)->InstantiateHandleRepresentation();
+  vtkAnnotationRulerRepresentation3D::SafeDownCast(this->WidgetRep)
+    ->InstantiateHandleRepresentation();
 }

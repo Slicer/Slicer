@@ -7,6 +7,8 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
 add_subdirectory(MRML)
+add_subdirectory(VTKWidgets)
+add_subdirectory(MRMLDisplayableManager)
 add_subdirectory(Logic)
 add_subdirectory(Widgets)
 
@@ -21,57 +23,8 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/MRML
   ${CMAKE_CURRENT_BINARY_DIR}/MRML
-  ${CMAKE_CURRENT_SOURCE_DIR}/MRMLDisplayableManager
-  ${CMAKE_CURRENT_BINARY_DIR}/MRMLDisplayableManager
-  ${CMAKE_CURRENT_SOURCE_DIR}/VTKWidgets
-  ${CMAKE_CURRENT_BINARY_DIR}/VTKWidgets
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
-  )
-
-set(DisplayableManager_SRCS
-  MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationDisplayableManagerHelper.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationClickCounter.cxx
-
-  MRMLDisplayableManager/vtkMRMLAnnotationTextDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationFiducialDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationStickyDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationAngleDisplayableManager.cxx
-  #MRMLDisplayableManager/vtkMRMLAnnotationSplineDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationRulerDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.h
-  MRMLDisplayableManager/vtkMRMLAnnotationROIDisplayableManager.cxx
-
-  )
-
-set(VTKWidget_SRCS
-  # Ruler VTK widget
-  VTKWidgets/vtkAnnotationRulerWidget.cxx
-  VTKWidgets/vtkAnnotationRulerWidget.h
-  VTKWidgets/vtkAnnotationRulerRepresentation.cxx
-  VTKWidgets/vtkAnnotationRulerRepresentation.h
-  VTKWidgets/vtkAnnotationRulerRepresentation3D.cxx
-  VTKWidgets/vtkAnnotationRulerRepresentation3D.h
-
-  # Bidimensional VTK widget
-  VTKWidgets/vtkAnnotationBidimensionalWidget.cxx
-  VTKWidgets/vtkAnnotationBidimensionalWidget.h
-  VTKWidgets/vtkAnnotationBidimensionalRepresentation.cxx
-  VTKWidgets/vtkAnnotationBidimensionalRepresentation.h
-
-  VTKWidgets/vtkAnnotationGlyphSource2D.cxx
-  VTKWidgets/vtkAnnotationGlyphSource2D.h
-
-  VTKWidgets/vtkAnnotationROIRepresentation.h
-  VTKWidgets/vtkAnnotationROIRepresentation.cxx
-  VTKWidgets/vtkAnnotationROIRepresentation2D.h
-  VTKWidgets/vtkAnnotationROIRepresentation2D.cxx
-  VTKWidgets/vtkAnnotationROIWidget.h
-  VTKWidgets/vtkAnnotationROIWidget.cxx
-  VTKWidgets/vtkAnnotationROIWidget2D.h
-  VTKWidgets/vtkAnnotationROIWidget2D.cxx
   )
 
 set(GUI_SRCS
@@ -85,19 +38,7 @@ set(GUI_SRCS
   GUI/qSlicerAnnotationModuleSnapShotDialog.h
   )
 
-set(VTK_USE_INSTANTIATOR_NEW 1)
-VTK_MAKE_INSTANTIATOR3("qSlicer${MODULE_NAME}ModuleInstantiator"
-  DisplayableManagerInstantiator_SRCS
-  "${DisplayableManager_SRCS}"
-  "${MODULE_EXPORT_DIRECTIVE}"
-  ${CMAKE_CURRENT_BINARY_DIR}
-  "qSlicer${MODULE_NAME}ModuleExport.h"
-  )
-
 set(MODULE_SRCS
-  ${DisplayableManager_SRCS}
-  ${DisplayableManagerInstantiator_SRCS}
-  ${VTKWidget_SRCS}
   ${GUI_SRCS}
   qSlicerAnnotationsIO.cxx
   qSlicerAnnotationsIO.h
@@ -134,9 +75,11 @@ set(MODULE_RESOURCES
 set(MODULE_TARGET_LIBRARIES
   qSlicerBaseQTCore
   qMRMLWidgets
-  vtkSlicerAnnotationsModuleMRML
-  vtkSlicerAnnotationsModuleLogic
-  qSlicerAnnotationsModuleWidgets
+  vtkSlicer${MODULE_NAME}ModuleMRML
+  vtkSlicer${MODULE_NAME}ModuleVTKWidgets
+  vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
+  vtkSlicer${MODULE_NAME}ModuleLogic
+  qSlicer${MODULE_NAME}ModuleWidgets
   )
 
 #-----------------------------------------------------------------------------

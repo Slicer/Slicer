@@ -12,28 +12,33 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
+// Annotations includes
 #include "vtkAnnotationROIRepresentation.h"
+
+// VTK includes
 #include "vtkActor.h"
-#include "vtkSphereSource.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkPolyData.h"
-#include "vtkCallbackCommand.h"
+#include "vtkAssemblyPath.h"
 #include "vtkBox.h"
+#include "vtkCallbackCommand.h"
+#include "vtkCamera.h"
+#include "vtkCellArray.h"
+#include "vtkCellPicker.h"
+#include "vtkDoubleArray.h"
+#include "vtkInteractorObserver.h"
+#include "vtkMath.h"
+#include "vtkMatrix4x4.h"
+#include "vtkObjectFactory.h"
+#include "vtkPlanes.h"
 #include "vtkPolyData.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkInteractorObserver.h"
-#include "vtkMath.h"
-#include "vtkCellArray.h"
-#include "vtkCellPicker.h"
+#include "vtkSphereSource.h"
 #include "vtkTransform.h"
-#include "vtkDoubleArray.h"
-#include "vtkPlanes.h"
-#include "vtkCamera.h"
-#include "vtkAssemblyPath.h"
 #include "vtkWindow.h"
-#include "vtkObjectFactory.h"
 
 
 vtkCxxRevisionMacro(vtkAnnotationROIRepresentation, "$Revision: 12141 $");
@@ -809,6 +814,13 @@ void vtkAnnotationROIRepresentation::GetExtents(double bounds[])
   bounds[1] = sqrt( (p2[0]-p0[0])*(p2[0]-p0[0]) + (p2[1]-p0[1])*(p2[1]-p0[1]) + (p2[2]-p0[2])*(p2[2]-p0[2]) );
   bounds[2] = sqrt( (p3[0]-p0[0])*(p3[0]-p0[0]) + (p3[1]-p0[1])*(p3[1]-p0[1]) + (p3[2]-p0[2])*(p3[2]-p0[2]) );
 
+}
+
+//----------------------------------------------------------------------------
+void vtkAnnotationROIRepresentation
+::SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix)
+{
+  this->WorldToLocalMatrix->DeepCopy(worldToLocalMatrix);
 }
 
 //----------------------------------------------------------------------------

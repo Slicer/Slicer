@@ -34,13 +34,8 @@
 #ifndef __vtkAnnotationROIRepresentation2D_h
 #define __vtkAnnotationROIRepresentation2D_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
-
+// Annotations includes
 #include "vtkAnnotationROIRepresentation.h"
-
-#include "vtkWidgetRepresentation.h"
-#include "vtkProperty2D.h"
 
 class vtkLineSource;
 class vtkSphereSource;
@@ -66,7 +61,9 @@ class vtkTransformPolyDataFilter;
 
 #define NUMBER_HANDLES 7
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationROIRepresentation2D : public vtkAnnotationROIRepresentation
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationROIRepresentation2D
+  : public vtkAnnotationROIRepresentation
 {
 public:
   /// 

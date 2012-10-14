@@ -12,19 +12,19 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONBIDIMENSIONALWIDGET_H_
-#define VTKANNOTATIONBIDIMENSIONALWIDGET_H_
+#ifndef __vtkAnnotationBidimensionalWidget_h
+#define __vtkAnnotationBidimensionalWidget_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
 // VTK includes
-#include <vtkAbstractWidget.h>
 #include <vtkBiDimensionalWidget.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationBidimensionalWidget :
-    public vtkBiDimensionalWidget
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationBidimensionalWidget
+  : public vtkBiDimensionalWidget
 {
 public:
 
@@ -32,8 +32,7 @@ public:
   vtkTypeRevisionMacro(vtkAnnotationBidimensionalWidget, vtkBiDimensionalWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  void CreateDefaultRepresentation();
-  void CreateDefaultRepresentation3D();
+  virtual void CreateDefaultRepresentation();
 
 protected:
 
@@ -47,4 +46,4 @@ private:
 
 };
 
-#endif /* VTKANNOTATIONBIDIMENSIONALWIDGET_H_ */
+#endif /* __vtkAnnotationBidimensionalWidget_h */

@@ -4,13 +4,13 @@
 
 // Annotation MRML includes
 #include <vtkMRMLAnnotationBidimensionalNode.h>
-#include <vtkMRMLAnnotationDisplayableManager.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
-#include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationClickCounter.h"
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 #include "vtkMRMLAnnotationBidimensionalDisplayableManager.h"
 
 // Annotation VTKWidgets includes

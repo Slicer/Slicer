@@ -28,11 +28,13 @@
 #include <vtkMRMLApplicationLogic.h>
 
 // MRML includes
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLViewNode.h>
+
 // VTK includes
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h> 
+#include <vtkRenderWindowInteractor.h>
 #include <vtkCamera.h>
 
 // STD includes

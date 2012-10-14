@@ -2,11 +2,11 @@
 #include <vtkSlicerAnnotationModuleLogic.h>
 
 // Annotation MRML includes
-#include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationROINode.h>
 
 // Annotation DisplayableManager includes
-#include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkMRMLAnnotationClickCounter.h"
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 #include "vtkMRMLAnnotationROIDisplayableManager.h"
 
 // Annotation VTKWidgets includes
@@ -18,6 +18,7 @@
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLLinearTransformNode.h>
+#include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes

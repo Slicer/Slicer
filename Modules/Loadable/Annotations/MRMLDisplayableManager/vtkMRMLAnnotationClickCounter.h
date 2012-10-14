@@ -12,18 +12,19 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKMRMLANNOTATIONCLICKCOUNTER_H_
-#define VTKMRMLANNOTATIONCLICKCOUNTER_H_
+#ifndef __vtkMRMLAnnotationClickCounter_h
+#define __vtkMRMLAnnotationClickCounter_h
 
 // Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
 // VTK include
 #include <vtkObject.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationClickCounter :
-    public vtkObject
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationClickCounter
+  : public vtkObject
 {
 public:
 
@@ -51,4 +52,4 @@ private:
 
 };
 
-#endif /* VTKMRMLANNOTATIONCLICKCOUNTER_H_ */
+#endif /* __vtkMRMLAnnotationClickCounter_h */

@@ -34,30 +34,33 @@
 #ifndef __vtkAnnotationROIRepresentation_h
 #define __vtkAnnotationROIRepresentation_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
+// VTK includes
 #include "vtkWidgetRepresentation.h"
-#include "vtkMatrix4x4.h"
 
 class vtkActor;
-class vtkPolyDataMapper;
-class vtkLineSource;
-class vtkSphereSource;
-class vtkCellPicker;
-class vtkProperty;
-class vtkPolyData;
-class vtkPoints;
-class vtkPolyDataAlgorithm;
-class vtkPointHandleRepresentation3D;
-class vtkTransform;
-class vtkPlanes;
 class vtkBox;
+class vtkCellPicker;
 class vtkDoubleArray;
+class vtkLineSource;
+class vtkMatrix4x4;
+class vtkPlanes;
+class vtkPointHandleRepresentation3D;
+class vtkPoints;
+class vtkPolyData;
+class vtkPolyDataAlgorithm;
+class vtkPolyDataMapper;
+class vtkProperty;
+class vtkSphereSource;
+class vtkTransform;
 
 #define NUMBER_HANDLES 7
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationROIRepresentation : public vtkWidgetRepresentation
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationROIRepresentation
+  : public vtkWidgetRepresentation
 {
 public:
   /// 
@@ -88,10 +91,7 @@ public:
   vtkBooleanMacro(InsideOut,int);
 
   /// Get/Set optional world to local coordiante system transformation
-  void SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix)
-  {
-    this->WorldToLocalMatrix->DeepCopy(worldToLocalMatrix);
-  }
+  void SetWorldToLocalMatrix(vtkMatrix4x4 *worldToLocalMatrix);
   vtkGetObjectMacro(WorldToLocalMatrix,vtkMatrix4x4);
 
   /// 

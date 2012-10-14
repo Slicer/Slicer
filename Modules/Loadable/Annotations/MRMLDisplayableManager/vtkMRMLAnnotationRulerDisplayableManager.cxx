@@ -3,14 +3,14 @@
 #include <vtkSlicerAnnotationModuleLogic.h>
 
 // Annotation MRML includes
-#include <vtkMRMLAnnotationDisplayableManager.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
-#include <vtkMRMLAnnotationNode.h>
 #include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationRulerNode.h>
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationClickCounter.h"
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 #include "vtkMRMLAnnotationRulerDisplayableManager.h"
 
 // Annotation VTKWidgets includes

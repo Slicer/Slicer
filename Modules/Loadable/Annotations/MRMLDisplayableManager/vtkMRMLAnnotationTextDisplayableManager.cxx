@@ -8,11 +8,11 @@
 #include <vtkMRMLAnnotationTextNode.h>
 
 // Annotation MRMLDisplayableManager includes
-#include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkMRMLAnnotationTextDisplayableManager.h"
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>

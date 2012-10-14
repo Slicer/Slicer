@@ -12,8 +12,12 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
+// Annotations includes
 #include "vtkAnnotationROIWidget2D.h"
 #include "vtkAnnotationROIRepresentation2D.h"
+
+// VTK includes
 #include "vtkCommand.h"
 #include "vtkCallbackCommand.h"
 #include "vtkRenderWindowInteractor.h"

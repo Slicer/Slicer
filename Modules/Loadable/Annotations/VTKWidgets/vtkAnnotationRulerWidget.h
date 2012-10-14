@@ -6,25 +6,24 @@
  or http://www.slicer.org/copyright/copyright.txt for details.
 
  Program:   3D Slicer
- Module:    $RCSfile: vtkMRMLAnnotationDisplayableManagerHelper,v $
+ Module:    $RCSfile: vtkAnnotationRulerWidget,v $
  Date:      $Date: Aug 4, 2010 10:44:52 AM $
  Version:   $Revision: 1.0 $
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONRULERWIDGET_H_
-#define VTKANNOTATIONRULERWIDGET_H_
+#ifndef __vtkAnnotationRulerWidget_h
+#define __vtkAnnotationRulerWidget_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
 // VTK includes
-#include <vtkAbstractWidget.h>
 #include <vtkDistanceWidget.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerWidget :
-    public vtkDistanceWidget
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT vtkAnnotationRulerWidget
+  : public vtkDistanceWidget
 {
 public:
 
@@ -32,8 +31,8 @@ public:
   vtkTypeRevisionMacro(vtkAnnotationRulerWidget, vtkDistanceWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  void CreateDefaultRepresentation();
-  void CreateDefaultRepresentation3D();
+  virtual void CreateDefaultRepresentation();
+  virtual void CreateDefaultRepresentation3D();
 
 protected:
 
@@ -47,4 +46,4 @@ private:
 
 };
 
-#endif /* VTKANNOTATIONRULERWIDGET_H_ */
+#endif /* __vtkAnnotationRulerWidget_h */

@@ -17,9 +17,6 @@
 #define __vtkMRMLAnnotationROIDisplayableManager_h
 
 // Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
-
-// Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 
 class vtkMRMLAnnotationROINode;
@@ -30,8 +27,9 @@ class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationROIDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationROIDisplayableManager
+  : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 

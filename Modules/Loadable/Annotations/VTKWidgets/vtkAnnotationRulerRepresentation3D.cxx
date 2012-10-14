@@ -1,5 +1,5 @@
 // AnnotationModule/VTKWidgets includes
-#include "VTKWidgets/vtkAnnotationRulerRepresentation3D.h"
+#include "vtkAnnotationRulerRepresentation3D.h"
 
 // VTK includes
 #include <vtkAxisActor2D.h>

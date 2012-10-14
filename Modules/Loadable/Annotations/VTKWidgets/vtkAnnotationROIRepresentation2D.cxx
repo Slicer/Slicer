@@ -12,7 +12,11 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+
+// Annotations includes
 #include "vtkAnnotationROIRepresentation2D.h"
+
+// VTK includes
 #include "vtkActor2D.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyDataMapper2D.h"

@@ -91,15 +91,16 @@
 #define __vtkAnnotationROIWidget_h
 
 // AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
-#include "vtkAbstractWidget.h"
+// VTK includes
+#include <vtkAbstractWidget.h>
 
 class vtkAnnotationROIRepresentation;
 class vtkHandleWidget;
 
-
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT  vtkAnnotationROIWidget : public vtkAbstractWidget
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT vtkAnnotationROIWidget
+  : public vtkAbstractWidget
 {
 public:
   /// 

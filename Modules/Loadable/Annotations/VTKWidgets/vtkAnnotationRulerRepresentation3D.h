@@ -12,18 +12,19 @@
 
  =========================================================================auto=*/
 
-#ifndef VTKANNOTATIONRULERREPRESENTATION3D_H_
-#define VTKANNOTATIONRULERREPRESENTATION3D_H_
+#ifndef __vtkAnnotationRulerRepresentation3D_h
+#define __vtkAnnotationRulerRepresentation3D_h
 
-// AnnotationModule includes
-#include "qSlicerAnnotationsModuleExport.h"
+// Annotations includes
+#include "vtkSlicerAnnotationsModuleVTKWidgetsExport.h"
 
 // VTK includes
 #include <vtkDistanceRepresentation3D.h>
 
 /// \ingroup Slicer_QtModules_Annotation
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkAnnotationRulerRepresentation3D :
-    public vtkDistanceRepresentation3D
+class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
+vtkAnnotationRulerRepresentation3D
+  : public vtkDistanceRepresentation3D
 {
 public:
 
@@ -61,7 +62,7 @@ public:
   // Description:
   // Get the glyph actor
   vtkGetObjectMacro(GlyphActor, vtkActor);
-  
+
   // Description:
   // Get the label actor
   vtkGetObjectMacro(LabelActor, vtkFollower);
@@ -71,7 +72,7 @@ protected:
   vtkAnnotationRulerRepresentation3D();
   virtual ~vtkAnnotationRulerRepresentation3D();
 
-  void BuildRepresentation();
+  virtual void BuildRepresentation();
 
   // Internal use: set the label actor's position from current world point 1
   // and 2 positions and label position factor
@@ -89,13 +90,13 @@ private:
   int MaxTicks;
 
   bool GlyphScaleSpecified;
-  
+
   // Label title position
   double LabelPosition;
- 
+
   // Glyph3D scale
   double GlyphScale;
 
 };
 
-#endif /* VTKANNOTATIONRULERREPRESENTATION3D_H_ */
+#endif /* __vtkAnnotationRulerRepresentation3D_h */

@@ -10,6 +10,7 @@
 #include <vtkMRMLAnnotationTextDisplayNode.h>
 
 // Annotation MRMLDisplayableManager includes
+#include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 #include "vtkMRMLAnnotationFiducialDisplayableManager.h"
 
 // Annotation VTKWidgets includes
@@ -20,6 +21,7 @@
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLSliceNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>

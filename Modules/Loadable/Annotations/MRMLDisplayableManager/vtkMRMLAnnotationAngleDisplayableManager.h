@@ -16,11 +16,9 @@
 #ifndef __vtkMRMLAnnotationAngleDisplayableManager_h
 #define __vtkMRMLAnnotationAngleDisplayableManager_h
 
-// Annotation includes
-#include "qSlicerAnnotationsModuleExport.h"
-
-// Annotation MRMLDisplayableManager includes
+// Annotations includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
+#include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
 class vtkMRMLAnnotationAngleNode;
 class vtkSlicerViewerWidget;
@@ -29,8 +27,9 @@ class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkAngleWidget;
 
-class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT vtkMRMLAnnotationAngleDisplayableManager :
-    public vtkMRMLAnnotationDisplayableManager
+class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
+vtkMRMLAnnotationAngleDisplayableManager
+  : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 

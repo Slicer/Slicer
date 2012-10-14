@@ -4,7 +4,6 @@
 
 // VTK includes
 #include <vtkObjectFactory.h>
-#include <vtkSmartPointer.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro (vtkMRMLAnnotationClickCounter);
