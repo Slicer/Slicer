@@ -11,12 +11,15 @@ set(${KIT}_SRCS
 
   qMRMLAnnotationROIWidgetPlugin.cxx
   qMRMLAnnotationROIWidgetPlugin.h
+  qMRMLAnnotationTreeViewPlugin.cxx
+  qMRMLAnnotationTreeViewPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
   qSlicerAnnotationModuleWidgetsPlugin.h
 
   qMRMLAnnotationROIWidgetPlugin.h
+  qMRMLAnnotationTreeViewPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

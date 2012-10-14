@@ -26,6 +26,7 @@
 
 // Annotations includes
 #include "qMRMLAnnotationROIWidgetPlugin.h"
+#include "qMRMLAnnotationTreeViewPlugin.h"
 
 // \class Group the plugins in one library
 class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_PLUGINS_EXPORT qSlicerAnnotationModuleWidgetsPlugin
@@ -39,7 +40,8 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLAnnotationROIWidgetPlugin;
+    plugins << new qMRMLAnnotationROIWidgetPlugin
+            << new qMRMLAnnotationTreeViewPlugin;
     return plugins;
     }
 };
