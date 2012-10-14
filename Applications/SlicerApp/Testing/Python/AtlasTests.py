@@ -245,32 +245,28 @@ class AtlasTestsTest(unittest.TestCase):
     downloads = (
         ('http://slicer.kitware.com/midas3/download?items=8301', 'Abdominal_Atlas_2012.mrb', slicer.util.loadScene),
         )
-    self.test_AtlasTest(downloads,'I')
+    self.perform_AtlasTest(downloads,'I')
 
   def test_BrainAtlasTest(self):
     self.delayDisplay('Running Brain Atlas Test')
     downloads = (
         ('http://slicer.kitware.com/midas3/download?items=7927', 'BrainAtlas.mrb', slicer.util.loadScene),
         )
-    self.test_AtlasTest(downloads,'grayscale')
+    self.perform_AtlasTest(downloads,'grayscale')
 
   def test_KneeAtlasTest(self):
     self.delayDisplay('Running Knee Atlas Test')
     downloads = (
         ('http://slicer.kitware.com/midas3/download?items=7928', 'KneeAtlas.mrb', slicer.util.loadScene),
         )
-    self.test_AtlasTest(downloads,'I')
+    self.perform_AtlasTest(downloads,'I')
 
-  def test_AtlasTest(self, downloads,testVolumePattern):
-    """ Ideally you should have several levels of tests.  At the lowest level
-    tests sould exercise the functionality of the logic with different inputs
-    (both valid and invalid).  At higher levels your tests should emulate the
-    way the user would interact with your code and confirm that it still works
-    the way you intended.
-    One of the most important features of the tests is that it should alert other
-    developers when their changes will have an impact on the behavior of your
-    module.  For example, if a developer removes a feature that you depend on,
-    your test should break so they know that the feature is needed.
+  def perform_AtlasTest(self, downloads,testVolumePattern):
+    """ Perform the actual atlas test.
+    This includes: download and load the given data, touch all
+    model hierarchies, and restore all scene views.
+    downloads : list of lists of: url, file save name, load callable
+    testVolumePattern : volume name/id that is tested for valid load
     """
 
     self.delayDisplay("Starting the test")
