@@ -159,7 +159,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     actions.removeFirst(); // remove AllModules
     actions.removeFirst(); // remove first separator
     }
-  // The actions are before submenus and inserted based on their index ot alphabetically
+  // The actions are before submenus and inserted based on their index or alphabetically
   bool ok = false;
   int index = moduleAction->property("index").toInt(&ok);
   if (!ok || index == -1 || !useIndex)
@@ -178,7 +178,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
                                   action->isSeparator() ||
                                   actionIndex > index ||
                                   (actionIndex == index &&
-                                   action->text() > moduleAction->text())))
+                                   (action->text().compare(moduleAction->text(), Qt::CaseInsensitive) > 0))))
       {
       menu->insertAction(action, moduleAction);
       return;
@@ -186,7 +186,7 @@ void qSlicerModulesMenuPrivate::addModuleAction(QMenu* menu, QAction* moduleActi
     else if (moduleAction->menu() && action->menu() &&
              (actionIndex > index ||
               (actionIndex == index &&
-               action->text() > moduleAction->text())))
+               (action->text().compare(moduleAction->text(), Qt::CaseInsensitive) > 0))))
       {
       menu->insertAction(action, moduleAction);
       return;
