@@ -28,7 +28,6 @@ set(cli_modules
   GrayscaleModelMaker
   HistogramMatching
   ImageLabelCombine
-  Java
   LabelMapSmoothing
   MaskScalarVolume
   MedianImageFilter
