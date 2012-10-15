@@ -284,6 +284,7 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__baselineVolumeSelector.setCurrentNode(baselineNode)
       changeTracker.selectScansStep._ChangeTrackerSelectScansStep__followupVolumeSelector.setCurrentNode(followupNode)
 
+      '''
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
 
@@ -302,7 +303,6 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
       roi.SetXYZ(-2.81037, 28.7629, 28.4536)
       roi.SetRadiusXYZ(22.6467, 22.6804, 22.9897)
     
-      '''
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
 
