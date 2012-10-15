@@ -1642,6 +1642,13 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
   // components[components.size() - 4 - offset] -> lib
   // components[0 .. components.size() - 4 - offset] -> Common path to lib and share directory
 
+  if (components.size() < 5)
+    {
+    // At least 5 components are expected to be able to compute the module home directory
+    vtkGenericWarningMacro( << "Failed to compute module home directory given filePath: " << filePath);
+    return std::string();
+    }
+
   // offset == 1 if there is an intermediate build directory
   int offset = 0;
   std::string intDir(".");
@@ -1658,9 +1665,9 @@ std::string GetModuleHomeDirectory(const std::string& filePath,
   moduleTypeSubDir = components.at(components.size() - 2 - offset);
   slicerSubDir = components.at(components.size() - 3 - offset);
 
-  std::string shareDirectory =
+  std::string homeDirectory =
       itksys::SystemTools::JoinPath(components.begin(), components.end() - 4 - offset);
-  return shareDirectory;
+  return homeDirectory;
 }
 
 } // end of anonymous namespace
@@ -1684,6 +1691,11 @@ std::string vtkSlicerApplicationLogic::GetModuleShareDirectory(const std::string
   std::string moduleTypeSubDir;
   std::string shareDirectory = GetModuleHomeDirectory(filePath, slicerSubDir, moduleTypeSubDir);
 
+  if (shareDirectory.empty())
+    {
+    return std::string();
+    }
+
   shareDirectory.append("/share");
   shareDirectory.append("/");
   shareDirectory.append(slicerSubDir);
@@ -1706,6 +1718,12 @@ std::string vtkSlicerApplicationLogic::GetModuleSlicerXYShareDirectory(const std
   std::string slicerSubDir;
   std::string moduleTypeSubDir;
   std::string shareDirectory = GetModuleHomeDirectory(filePath, slicerSubDir, moduleTypeSubDir);
+
+  if (shareDirectory.empty())
+    {
+    return std::string();
+    }
+
   shareDirectory.append("/share");
   shareDirectory.append("/");
   shareDirectory.append(slicerSubDir);

@@ -33,8 +33,10 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
   //-----------------------------------------------------------------------------
   std::string inputModulePath1("/path/to/Slicer-Superbuild/Slicer-build/lib/Slicer-X.Y/qt-loadable-modules/libqSlicerVolumeRenderingModule.so");
   std::string inputModulePath2("c:\\path\\to\\Slicer-Superbuild\\Slicer-build\\lib\\Slicer-X.Y\\qt-loadable-modules\\Release\\qSlicerVolumeRenderingModule.dll");
+  std::string inputModulePath3("c:\\VolumeRendering\\qSlicerVolumeRenderingModule.dll");
   std::string expectedModuleSlicerXYShareDirectory1("/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
   std::string expectedModuleSlicerXYShareDirectory2("c:/path/to/Slicer-Superbuild/Slicer-build/share/Slicer-X.Y");
+  std::string expectedModuleSlicerXYShareDirectory3("");
   {
     std::string expectedModuleShareDirectory = expectedModuleSlicerXYShareDirectory1 + "/qt-loadable-modules/VolumeRendering";
     std::string currentModuleShareDirectory = vtkSlicerApplicationLogic::GetModuleShareDirectory("VolumeRendering", inputModulePath1);
@@ -48,6 +50,16 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
 
     expectedModuleShareDirectory = expectedModuleSlicerXYShareDirectory2 + "/qt-loadable-modules/VolumeRendering";
     currentModuleShareDirectory = vtkSlicerApplicationLogic::GetModuleShareDirectory("VolumeRendering", inputModulePath2);
+    if (currentModuleShareDirectory != expectedModuleShareDirectory)
+      {
+      std::cerr << "Line " << __LINE__ << " - Failed to compute module share directory !\n"
+                << "\texpected:" << expectedModuleShareDirectory << "\n"
+                << "\tcurrent:" << currentModuleShareDirectory << std::endl;
+      return EXIT_FAILURE;
+      }
+
+    expectedModuleShareDirectory = expectedModuleSlicerXYShareDirectory3;
+    currentModuleShareDirectory = vtkSlicerApplicationLogic::GetModuleShareDirectory("VolumeRendering", inputModulePath3);
     if (currentModuleShareDirectory != expectedModuleShareDirectory)
       {
       std::cerr << "Line " << __LINE__ << " - Failed to compute module share directory !\n"
