@@ -76,6 +76,7 @@ public:
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
   vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
+
 };
 
 //----------------------------------------------------------------------------
@@ -398,6 +399,30 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, cons
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
+{
+  std::string validchars = "-_.,@#$%^()[]{}<>+=";
+  std::ostringstream result;
+
+  for (size_t i = 0; i < s.size(); i++)
+    {
+    if ( (s[i] > 'A' && s[i] <= 'z')
+          ||
+         (s[i] > '0'&& s[i] <= '9')
+          ||
+         (validchars.find(s[i]) != std::string::npos) )
+      {
+        result << s[i];
+      }
+    else
+      {
+        result << '%' << std::hex << (unsigned short) s[i] << std::dec;
+      }
+    }
+  return result.str();
+}
+
+//----------------------------------------------------------------------------
 bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot)
 {
 
@@ -530,8 +555,9 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
           storageNode = storableNode->CreateDefaultStorageNode();
           if (storageNode)
             {
-            std::string storageFileName = std::string(storableNode->GetName()) +
-              std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
+            std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
+            std::string extension = storageNode->GetDefaultWriteFileExtension();
+            std::string storageFileName = fileBaseName + std::string(".") + extension;
             vtkDebugMacro("new file name = " << storageFileName.c_str());
             storageNode->SetFileName(storageFileName.c_str());
             this->GetMRMLScene()->AddNode(storageNode);

@@ -50,6 +50,8 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
   def runTest(self):
     self.setUp()
     self.test_SlicerMRB()
+    self.test_PercentEncode()
+
 
   def test_SlicerMRB(self):
     """
@@ -208,6 +210,25 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
     self.delayDisplay("Test Finished")
 
+  def test_PercentEncode(self):
+    """ Replicate the issue reported in bug 2605 where saving
+    and MRB file that includes DICOM values doesn't work
+    on windows.  In this case, the name of the volume includes
+    a ':' character, and is interpreted as a drive letter on windows.
+    TODO: there should be a Cxx level application logic test too.
+    """
+    appLogic = slicer.app.applicationLogic()
+    stringPairs = (
+        ('', ''),
+        ('test', 'test'),
+        ('tEstAZ', 'tEstAZ'),
+        ('t#$%^&()<>{}[]EstAZ', 't#$%^&()<>{}[]EstAZ'),
+        ('test./:', 'test.%2f%3a'),
+      )
+    for original,encoded in stringPairs:
+      self.delayDisplay("Testing that %s becomes %s" % (original,encoded), 150)
+      self.assertTrue( appLogic.PercentEncode(original) == encoded )
+    self.delayDisplay("Test Finished")
 
   def imageCompare(self,images,text='',prefWidth=1500): 
     """Show images in a window with a text message.
