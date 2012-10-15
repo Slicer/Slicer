@@ -472,7 +472,7 @@ void vtkMRMLAbstractDisplayableManager::vtkInternal::UpdateInteractor(int eventI
       }
     }
 
-  // Update InteractorStyleObservableEvents vector
+  // Update InteractorObservableEvents vector
   if (eventIdToObserve != vtkCommand::NoEvent)
     {
     // Check if the ObservableEvent has already been registered
@@ -625,10 +625,18 @@ void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
   if (this->Internal->Renderer)
     {
     this->Internal->Renderer->Register(this);
-    this->Internal->SetAndObserveInteractor(this->Internal->Renderer->GetRenderWindow()->GetInteractor());
     }
 
   this->AdditionalInitializeStep();
+
+  if (this->Internal->Renderer)
+    {
+    // Need to do this AFTER the call to AdditionalInitializeStep(), otherwise
+    // the events registered in AfterInitializeStep() are not
+    // observed. I don't know why but I suspect it is due to a side
+    // effect event being generated when adding the observation.
+    this->Internal->SetAndObserveInteractor(this->Internal->Renderer->GetRenderWindow()->GetInteractor());
+    }
 
   this->Modified();
 }
