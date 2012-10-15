@@ -863,7 +863,22 @@ void vtkMRMLCrosshairDisplayableManager::AdditionalInitializeStep()
 {
   // Add an observation directly on the interactor to capture 
   // events which are normally swallowed by the InteractorStyle
-  this->AddInteractorObservableEvent(vtkCommand::MouseMoveEvent, 1.0);
+
+  // MoveMoveEvent - priority = -1.0. Allows InteractorStyle to get
+  // the move event before the Crosshair.  This is needed so that
+  // Shift-MouseMove can jump the slices and reposition the SliceNodes
+  // before the Crosshair tries to draw. This allows the Crosshair to
+  // draw on the right slice (avoids a blinking crosshair where the
+  // crosshair is turned off when it is drawn on one slice and the
+  // SliceViewer is displaying a different slice).
+  this->AddInteractorObservableEvent(vtkCommand::MouseMoveEvent, -1.0);
+
+  // LeftButtonPress - priority = 1.0. Allows the Crosshair to get the
+  // left button press before the InteractorStyle. This allows the
+  // Crosshair to decide if the user is navigating and the mouse is
+  // close to the cross center and therefore the crosshair will
+  // swallow the event (giving precedence to navigating the Crosshair
+  // over window level in the InteractorStyle).
   this->AddInteractorObservableEvent(vtkCommand::LeftButtonPressEvent, 1.0);
 
   // Build the initial crosshair representation
@@ -876,3 +891,5 @@ void vtkMRMLCrosshairDisplayableManager::SetLightBoxRendererManagerProxy(vtkMRML
 {
   this->Internal->LightBoxRendererManagerProxy = mgr;
 }
+
+
