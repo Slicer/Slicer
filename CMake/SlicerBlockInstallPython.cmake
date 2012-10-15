@@ -5,12 +5,14 @@ if(Slicer_USE_PYTHONQT)
 
   get_filename_component(SUPER_BUILD_DIR "${Slicer_BINARY_DIR}" PATH)
   set(PYTHON_DIR "${SUPER_BUILD_DIR}/python-build")
+  if(NOT EXISTS "${PYTHON_DIR}${python_lib_subdir}")
+    message(FATAL_ERROR "error: Failed to install Python ! - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
+  endif()
+
+  # Install libraries
   set(python_lib_subdir /Lib/)
   if(UNIX)
     set(python_lib_subdir /lib/python2.6/)
-  endif()
-  if(NOT EXISTS "${PYTHON_DIR}${python_lib_subdir}")
-    message(FATAL_ERROR "error: Failed to install Python ! - Unexistant directory PYTHON_DIR:${PYTHON_DIR}${python_lib_subdir}")
   endif()
   
   set(extra_exclude_pattern)
@@ -54,5 +56,17 @@ if(Slicer_USE_PYTHONQT)
       DESTINATION bin
       COMPONENT Runtime)
   endif()
+
+  # Install headers
+  set(python_include_subdir /Include/)
+  if(UNIX)
+    set(python_include_subdir /include/python2.6/)
+  endif()
+
+  install(FILES "${PYTHON_DIR}${python_include_subdir}/pyconfig.h"
+    DESTINATION ${Slicer_INSTALL_ROOT}lib/Python${python_include_subdir}
+    COMPONENT Runtime
+    )
+
 endif()
 
