@@ -454,7 +454,7 @@
     </hint>
    </hints>
   </connection>
-   <connection>
+  <connection>
    <sender>TransformNodeSelector</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
    <receiver>RotationSliders</receiver>
@@ -486,7 +486,6 @@
     </hint>
    </hints>
   </connection>
-
   <connection>
    <sender>TranslationSliders</sender>
    <signal>valuesChanged()</signal>

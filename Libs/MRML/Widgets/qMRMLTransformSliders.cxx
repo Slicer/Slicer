@@ -43,7 +43,7 @@ public:
     {
     this->MRMLTransformNode = 0;
     }
-    
+
   qMRMLTransformSliders::TransformType   TypeOfTransform;
   vtkMRMLLinearTransformNode*            MRMLTransformNode;
   QStack<qMRMLLinearTransformSlider*>    ActiveSliders;
@@ -54,20 +54,19 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
   , d_ptr(new qMRMLTransformSlidersPrivate)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   d->setupUi(this);
 
   this->setCoordinateReference(qMRMLTransformSliders::GLOBAL);
   this->setTypeOfTransform(qMRMLTransformSliders::TRANSLATION);
 
-  
   this->connect(d->LRSlider, SIGNAL(valueChanged(double)),
                 SLOT(onSliderPositionChanged(double)));
   this->connect(d->PASlider, SIGNAL(valueChanged(double)),
                 SLOT(onSliderPositionChanged(double)));
   this->connect(d->ISSlider, SIGNAL(valueChanged(double)),
                 SLOT(onSliderPositionChanged(double)));
-  
+
   this->connect(d->MinValueSpinBox, SIGNAL(valueChanged(double)),
                 SLOT(onMinimumChanged(double)));
   this->connect(d->MaxValueSpinBox, SIGNAL(valueChanged(double)),
@@ -89,7 +88,7 @@ qMRMLTransformSliders::~qMRMLTransformSliders()
 void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coordinateReference)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   qMRMLLinearTransformSlider::CoordinateReferenceType ref = qMRMLLinearTransformSlider::GLOBAL;
   if (_coordinateReference == LOCAL)
     {
@@ -104,7 +103,7 @@ void qMRMLTransformSliders::setCoordinateReference(CoordinateReferenceType _coor
 qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinateReference() const
 {
   Q_D(const qMRMLTransformSliders);
-  
+
   // Assumes settings of the sliders are all the same
   qMRMLLinearTransformSlider::CoordinateReferenceType ref =
     d->LRSlider->coordinateReference();
@@ -115,7 +114,7 @@ qMRMLTransformSliders::CoordinateReferenceType qMRMLTransformSliders::coordinate
 void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   if (d->TypeOfTransform == _typeOfTransform) { return; }
   if (_typeOfTransform == qMRMLTransformSliders::TRANSLATION)
     {
@@ -128,6 +127,9 @@ void qMRMLTransformSliders::setTypeOfTransform(TransformType _typeOfTransform)
     d->LRSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_LR);
     d->PASlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_PA);
     d->ISSlider->setTypeOfTransform(qMRMLLinearTransformSlider::ROTATION_IS);
+
+    // Range of Rotation sliders should be fixed to (-180,180)
+    this->setRange(-180.00, 180.00);
     }
   d->TypeOfTransform = _typeOfTransform;
 }
@@ -175,6 +177,12 @@ void qMRMLTransformSliders::onMRMLTransformNodeModified(vtkObject* caller)
     return;
     }
   Q_ASSERT(transformNode);
+
+  // If the type of transform is ROTATION, do not modify
+  if(this->typeOfTransform() == qMRMLTransformSliders::ROTATION)
+    {
+    return;
+    }
 
   vtkNew<vtkTransform> transform;
   qMRMLUtils::getTransformInCoordinateSystem(transformNode,
@@ -248,7 +256,7 @@ void qMRMLTransformSliders::setMaximum(double max)
 void qMRMLTransformSliders::setRange(double min, double max)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   // Could be optimized here by blocking signals on spinboxes and manually
   // call the setRange method on the sliders. Does it really worth it ?
   d->MinValueSpinBox->setValue(min);
@@ -259,7 +267,7 @@ void qMRMLTransformSliders::setRange(double min, double max)
 void qMRMLTransformSliders::onMinimumChanged(double min)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   d->LRSlider->setMinimum(min);
   d->PASlider->setMinimum(min);
   d->ISSlider->setMinimum(min);
@@ -271,7 +279,7 @@ void qMRMLTransformSliders::onMinimumChanged(double min)
 void qMRMLTransformSliders::onMaximumChanged(double max)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   d->LRSlider->setMaximum(max);
   d->PASlider->setMaximum(max);
   d->ISSlider->setMaximum(max);
@@ -306,7 +314,7 @@ double qMRMLTransformSliders::singleStep()const
 void qMRMLTransformSliders::setSingleStep(double step)
 {
   Q_D(qMRMLTransformSliders);
-  
+
   d->LRSlider->setSingleStep(step);
   d->PASlider->setSingleStep(step);
   d->ISSlider->setSingleStep(step);
@@ -358,7 +366,7 @@ void qMRMLTransformSliders::setISLabel(const QString& label)
 void qMRMLTransformSliders::reset()
 {
   Q_D(qMRMLTransformSliders);
-  
+
   d->LRSlider->reset();
   d->PASlider->reset();
   d->ISSlider->reset();
@@ -368,7 +376,7 @@ void qMRMLTransformSliders::reset()
 void qMRMLTransformSliders::resetUnactiveSliders()
 {
   Q_D(qMRMLTransformSliders);
-  
+
   if (!d->ActiveSliders.contains(d->LRSlider))
     {
     bool blocked = d->LRSlider->blockSignals(true);
