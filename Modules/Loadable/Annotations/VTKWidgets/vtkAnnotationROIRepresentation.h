@@ -56,8 +56,6 @@ class vtkProperty;
 class vtkSphereSource;
 class vtkTransform;
 
-#define NUMBER_HANDLES 7
-
 class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
 vtkAnnotationROIRepresentation
   : public vtkWidgetRepresentation
@@ -71,6 +69,8 @@ public:
   /// Standard methods for the class.
   vtkTypeRevisionMacro(vtkAnnotationROIRepresentation,vtkWidgetRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent);
+
+  static const int NUMBER_HANDLES = 7;
 
   /// 
   /// Get the planes describing the implicit function defined by the box

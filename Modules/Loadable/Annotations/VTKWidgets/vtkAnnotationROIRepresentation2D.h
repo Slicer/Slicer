@@ -59,8 +59,6 @@ class vtkTransform;
 class vtkTransformPolyDataFilter;
 
 
-#define NUMBER_HANDLES 7
-
 class VTK_SLICER_ANNOTATIONS_MODULE_VTKWIDGETS_EXPORT
 vtkAnnotationROIRepresentation2D
   : public vtkAnnotationROIRepresentation
