@@ -633,8 +633,11 @@ void vtkMRMLAbstractDisplayableManager::SetRenderer(vtkRenderer* newRenderer)
     {
     // Need to do this AFTER the call to AdditionalInitializeStep(), otherwise
     // the events registered in AfterInitializeStep() are not
-    // observed. I don't know why but I suspect it is due to a side
-    // effect event being generated when adding the observation.
+    // observed.
+    // Indeed, the method "AddInteractorObservableEvent" expects the MRMLInteractionNode
+    // to be set to add the observer(s). MRMLInteractionNode being set after "SetRenderer" function
+    // is completed, the method "SetAndObserveInteractor" that also setup observers has to be called
+    // after the observable events are added.
     this->Internal->SetAndObserveInteractor(this->Internal->Renderer->GetRenderWindow()->GetInteractor());
     }
 
