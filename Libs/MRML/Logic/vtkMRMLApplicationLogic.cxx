@@ -406,9 +406,9 @@ std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 
   for (size_t i = 0; i < s.size(); i++)
     {
-    if ( (s[i] > 'A' && s[i] <= 'z')
+    if ( (s[i] >= 'A' && s[i] <= 'z')
           ||
-         (s[i] > '0'&& s[i] <= '9')
+         (s[i] >= '0'&& s[i] <= '9')
           ||
          (validchars.find(s[i]) != std::string::npos) )
       {
