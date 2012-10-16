@@ -16,6 +16,7 @@ list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
 list(APPEND Tests ${KIT_TEST_SRCS})
 
 add_executable(${KIT}CxxTests ${Tests})
+set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})

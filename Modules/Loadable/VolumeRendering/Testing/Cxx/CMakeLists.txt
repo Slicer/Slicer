@@ -29,6 +29,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 set(LIBRARY_NAME ${PROJECT_NAME})
 
 add_executable(${KIT}CxxTests ${Tests})
+set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
 target_link_libraries(${KIT}CxxTests ${KIT} vtkSlicerVolumesModuleLogic)
 
 set(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/fixed.nrrd")

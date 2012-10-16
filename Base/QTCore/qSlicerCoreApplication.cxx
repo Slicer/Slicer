@@ -329,12 +329,16 @@ QString qSlicerCoreApplicationPrivate::discoverSlicerHomeDirectory()
 
 #ifdef Q_OS_WIN32
   Q_Q(qSlicerCoreApplication);
-  if (this->IntDir.isEmpty())
+  if (!this->isInstalled(slicerHome))
     {
-    qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_BIN_DIR, this->IntDir);
-    if (this->IntDir.isEmpty())
+    foreach(const QString& subDir,
+            QStringList() << Slicer_BIN_DIR << Slicer_CLIMODULES_BIN_DIR << "Cxx")
       {
-      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), Slicer_CLIMODULES_BIN_DIR, this->IntDir);
+      qSlicerUtils::pathWithoutIntDir(q->applicationDirPath(), subDir, this->IntDir);
+      if (!this->IntDir.isEmpty())
+        {
+        break;
+        }
       }
     }
   Q_ASSERT(this->isInstalled(slicerHome) ? this->IntDir.isEmpty() : !this->IntDir.isEmpty());

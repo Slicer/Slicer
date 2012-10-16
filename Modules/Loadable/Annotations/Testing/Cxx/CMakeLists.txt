@@ -49,6 +49,7 @@ set(TestsToRun ${Tests})
 list(REMOVE_ITEM TestsToRun ${KIT}CxxTests.cxx)
 
 add_executable(${KIT}CxxTests ${Tests})
+set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
 
 set(target_libraries
   qSlicerAnnotationsModuleWidgets
