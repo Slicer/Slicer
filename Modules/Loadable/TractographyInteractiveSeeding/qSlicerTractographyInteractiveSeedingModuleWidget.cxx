@@ -9,81 +9,81 @@
 #include "vtkMRMLAnnotationFiducialNode.h"
 
 // Tractography Logic includes
-#include "vtkSlicerTractographyFiducialSeedingLogic.h"
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
+#include "vtkSlicerTractographyInteractiveSeedingLogic.h"
+#include "vtkMRMLTractographyInteractiveSeedingNode.h"
 
 // Tractography QTModule includes
-#include "qSlicerTractographyFiducialSeedingModuleWidget.h"
-#include "ui_qSlicerTractographyFiducialSeedingModule.h"
+#include "qSlicerTractographyInteractiveSeedingModuleWidget.h"
+#include "ui_qSlicerTractographyInteractiveSeedingModule.h"
 
 // VTK includes
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-/// \ingroup Slicer_QtModules_TractographyFiducialSeeding
-class qSlicerTractographyFiducialSeedingModuleWidgetPrivate:
-  public Ui_qSlicerTractographyFiducialSeedingModule
+/// \ingroup Slicer_QtModules_TractographyInteractiveSeeding
+class qSlicerTractographyInteractiveSeedingModuleWidgetPrivate:
+  public Ui_qSlicerTractographyInteractiveSeedingModule
 {
 };
 
 //-----------------------------------------------------------------------------
-qSlicerTractographyFiducialSeedingModuleWidget::qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent)
+qSlicerTractographyInteractiveSeedingModuleWidget::qSlicerTractographyInteractiveSeedingModuleWidget(QWidget *_parent)
   : Superclass(_parent),
   settingFiberBundleNode(false),
   settingMRMLScene(false),
-  d_ptr(new qSlicerTractographyFiducialSeedingModuleWidgetPrivate)
+  d_ptr(new qSlicerTractographyInteractiveSeedingModuleWidgetPrivate)
 {
-  this->TractographyFiducialSeedingNode = 0;
+  this->TractographyInteractiveSeedingNode = 0;
 }
 //-----------------------------------------------------------------------------
-qSlicerTractographyFiducialSeedingModuleWidget::~qSlicerTractographyFiducialSeedingModuleWidget()
+qSlicerTractographyInteractiveSeedingModuleWidget::~qSlicerTractographyInteractiveSeedingModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::enter()
+void qSlicerTractographyInteractiveSeedingModuleWidget::enter()
 {
   this->onEnter();
   this->Superclass::enter();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::onEnter()
+void qSlicerTractographyInteractiveSeedingModuleWidget::onEnter()
 {
-  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
 
   if (this->mrmlScene() == 0)
     {
     return;
     }
 
-  vtkSlicerTractographyFiducialSeedingLogic* logic =
-           vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+  vtkSlicerTractographyInteractiveSeedingLogic* logic =
+           vtkSlicerTractographyInteractiveSeedingLogic::SafeDownCast(this->logic());
   if (!logic)
     {
     return;
     }
 
   // first check the logic if it has a parameter node
-  if (logic->GetTractographyFiducialSeedingNode())
+  if (logic->GetTractographyInteractiveSeedingNode())
     {
-    this->setTractographyFiducialSeedingNode(logic->GetTractographyFiducialSeedingNode());
+    this->setTractographyInteractiveSeedingNode(logic->GetTractographyInteractiveSeedingNode());
     }
 
   // if we have a parameter node select it
-  if (this->TractographyFiducialSeedingNode == 0)
+  if (this->TractographyInteractiveSeedingNode == 0)
     {
-    vtkMRMLNode * node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+    vtkMRMLNode * node = this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLTractographyInteractiveSeedingNode");
     if (node)
       {
-      this->setTractographyFiducialSeedingNode(node);
+      this->setTractographyInteractiveSeedingNode(node);
       return;
       }
     else
       {
       vtkMRMLNode * nodeAdded =
-          this->mrmlScene()->AddNode(vtkNew<vtkMRMLTractographyFiducialSeedingNode>().GetPointer());
-      this->setTractographyFiducialSeedingNode(nodeAdded);
+          this->mrmlScene()->AddNode(vtkNew<vtkMRMLTractographyInteractiveSeedingNode>().GetPointer());
+      this->setTractographyInteractiveSeedingNode(nodeAdded);
       }
     }
   else
@@ -139,7 +139,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::onEnter()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* scene)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 {
   this->settingMRMLScene = true;
   this->Superclass::setMRMLScene(scene);
@@ -148,14 +148,14 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
                 this, SLOT(onSceneImportedEvent()));
 
   // find parameters node or create it if there is no one in the scene
-  if (scene && this->TractographyFiducialSeedingNode == 0)
+  if (scene && this->TractographyInteractiveSeedingNode == 0)
     {
-    vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
-    vtkMRMLNode *node = scene->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+    vtkMRMLTractographyInteractiveSeedingNode *tnode = 0;
+    vtkMRMLNode *node = scene->GetNthNodeByClass(0, "vtkMRMLTractographyInteractiveSeedingNode");
     if (node)
       {
-      tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
-      this->setTractographyFiducialSeedingNode(tnode);
+      tnode = vtkMRMLTractographyInteractiveSeedingNode::SafeDownCast(node);
+      this->setTractographyInteractiveSeedingNode(tnode);
       }
     }
   this->settingMRMLScene = false;
@@ -163,15 +163,15 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setMRMLScene(vtkMRMLScene* 
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::onSceneImportedEvent()
+void qSlicerTractographyInteractiveSeedingModuleWidget::onSceneImportedEvent()
 {
   this->onEnter();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setup()
+void qSlicerTractographyInteractiveSeedingModuleWidget::setup()
 {
-  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
   d->setupUi(this);
 
   d->FiducialNodeSelector->addAttribute("vtkMRMLScalarVolumeNode", "LabelMap", "1");
@@ -266,76 +266,76 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setup()
                 SLOT(setFilePrefix(const QString &)));
 
   QObject::connect(d->ParameterNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this,
-                                             SLOT(setTractographyFiducialSeedingNode(vtkMRMLNode*)));
+                                             SLOT(setTractographyInteractiveSeedingNode(vtkMRMLNode*)));
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLNode* qSlicerTractographyFiducialSeedingModuleWidget::seedingNode()
+vtkMRMLNode* qSlicerTractographyInteractiveSeedingModuleWidget::seedingNode()
 {
   vtkMRMLNode *node = 0;
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
     node = this->mrmlScene()->GetNodeByID(
-                        this->TractographyFiducialSeedingNode->GetInputFiducialRef());
+                        this->TractographyInteractiveSeedingNode->GetInputFiducialRef());
     }
   return node;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLDiffusionTensorVolumeNode* qSlicerTractographyFiducialSeedingModuleWidget::diffusionTensorVolumeNode()
+vtkMRMLDiffusionTensorVolumeNode* qSlicerTractographyInteractiveSeedingModuleWidget::diffusionTensorVolumeNode()
 {
   vtkMRMLDiffusionTensorVolumeNode *dtiNode = 0;
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
     dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->mrmlScene()->GetNodeByID(
-              this->TractographyFiducialSeedingNode->GetInputVolumeRef()));
+              this->TractographyInteractiveSeedingNode->GetInputVolumeRef()));
     }
   return dtiNode;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLFiberBundleNode* qSlicerTractographyFiducialSeedingModuleWidget::fiberBundleNode()
+vtkMRMLFiberBundleNode* qSlicerTractographyInteractiveSeedingModuleWidget::fiberBundleNode()
 {
   vtkMRMLFiberBundleNode *fiberNode = 0;
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
     fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->mrmlScene()->GetNodeByID(
-                this->TractographyFiducialSeedingNode->GetOutputFiberRef()));
+                this->TractographyInteractiveSeedingNode->GetOutputFiberRef()));
     }
   return fiberNode;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setTractographyFiducialSeedingNode(vtkMRMLNode *node)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setTractographyInteractiveSeedingNode(vtkMRMLNode *node)
 {
   if (this->settingMRMLScene)
     {
     return;
     }
 
-  vtkMRMLTractographyFiducialSeedingNode *paramNode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
+  vtkMRMLTractographyInteractiveSeedingNode *paramNode = vtkMRMLTractographyInteractiveSeedingNode::SafeDownCast(node);
 
   // each time the node is modified, the logic creates tracks
-  vtkSlicerTractographyFiducialSeedingLogic *seedingLogic =
-        vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+  vtkSlicerTractographyInteractiveSeedingLogic *seedingLogic =
+        vtkSlicerTractographyInteractiveSeedingLogic::SafeDownCast(this->logic());
   if (seedingLogic && this->mrmlScene())
     {
-    seedingLogic->SetAndObserveTractographyFiducialSeedingNode(paramNode);
+    seedingLogic->SetAndObserveTractographyInteractiveSeedingNode(paramNode);
     }
 
   // each time the node is modified, the qt widgets are updated
-  this->qvtkReconnect(this->TractographyFiducialSeedingNode, paramNode,
+  this->qvtkReconnect(this->TractographyInteractiveSeedingNode, paramNode,
                        vtkCommand::ModifiedEvent, this, SLOT(updateWidgetFromMRML()));
 
-  this->TractographyFiducialSeedingNode = paramNode;
+  this->TractographyInteractiveSeedingNode = paramNode;
   this->updateWidgetFromMRML();
 }
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setSeedingNode(vtkMRMLNode *node)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedingNode(vtkMRMLNode *node)
 {
-  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
 
   if (this->settingMRMLScene)
     {
@@ -351,15 +351,15 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setSeedingNode(vtkMRMLNode 
     d->stackedWidget->setCurrentIndex(0);
     }
 
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetInputFiducialRef(node ?
+    this->TractographyInteractiveSeedingNode->SetInputFiducialRef(node ?
                                                                node->GetID() : "" );
-    vtkSlicerTractographyFiducialSeedingLogic *seedingLogic =
-          vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+    vtkSlicerTractographyInteractiveSeedingLogic *seedingLogic =
+          vtkSlicerTractographyInteractiveSeedingLogic::SafeDownCast(this->logic());
     if (seedingLogic && this->mrmlScene())
       {
-      seedingLogic->SetAndObserveTractographyFiducialSeedingNode(this->TractographyFiducialSeedingNode);
+      seedingLogic->SetAndObserveTractographyInteractiveSeedingNode(this->TractographyInteractiveSeedingNode);
       }
     }
 }
@@ -396,26 +396,26 @@ static double round_num(double num)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNode(vtkMRMLNode *node)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setDiffusionTensorVolumeNode(vtkMRMLNode *node)
 {
   if (this->settingMRMLScene)
     {
     return;
     }
 
-  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
 
   vtkMRMLDiffusionTensorVolumeNode *diffusionTensorVolumeNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(node);
 
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetInputVolumeRef(diffusionTensorVolumeNode ?
+    this->TractographyInteractiveSeedingNode->SetInputVolumeRef(diffusionTensorVolumeNode ?
                                                              diffusionTensorVolumeNode->GetID() : "" );
-    vtkSlicerTractographyFiducialSeedingLogic *seedingLogic =
-          vtkSlicerTractographyFiducialSeedingLogic::SafeDownCast(this->logic());
+    vtkSlicerTractographyInteractiveSeedingLogic *seedingLogic =
+          vtkSlicerTractographyInteractiveSeedingLogic::SafeDownCast(this->logic());
     if (seedingLogic && this->mrmlScene())
       {
-      seedingLogic->SetAndObserveTractographyFiducialSeedingNode(this->TractographyFiducialSeedingNode);
+      seedingLogic->SetAndObserveTractographyInteractiveSeedingNode(this->TractographyInteractiveSeedingNode);
       }
     }
 
@@ -450,7 +450,7 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setDiffusionTensorVolumeNod
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setFiberBundleNode(vtkMRMLNode *node)
 {
   if (this->settingMRMLScene)
     {
@@ -463,29 +463,29 @@ void qSlicerTractographyFiducialSeedingModuleWidget::setFiberBundleNode(vtkMRMLN
     }
   settingFiberBundleNode = true;
   vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(node);
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    if (this->TractographyFiducialSeedingNode->GetInputFiducialRef())
+    if (this->TractographyInteractiveSeedingNode->GetInputFiducialRef())
       {
-      vtkMRMLNode *seedNode = this->mrmlScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputFiducialRef());
+      vtkMRMLNode *seedNode = this->mrmlScene()->GetNodeByID(this->TractographyInteractiveSeedingNode->GetInputFiducialRef());
       if (fiberBundleNode && seedNode && seedNode->GetName() && fiberBundleNode->GetName())
         {
         fiberBundleNode->SetName(std::string(std::string(fiberBundleNode->GetName()) +
                       std::string("_")+std::string(seedNode->GetName())).c_str());
         }
       }
-    this->TractographyFiducialSeedingNode->SetOutputFiberRef(fiberBundleNode ?
+    this->TractographyInteractiveSeedingNode->SetOutputFiberRef(fiberBundleNode ?
                                                              fiberBundleNode->GetID() : "" );
     }
   settingFiberBundleNode = false;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetFromMRML()
+void qSlicerTractographyInteractiveSeedingModuleWidget::updateWidgetFromMRML()
 {
-  Q_D(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
 
-  vtkMRMLTractographyFiducialSeedingNode *paramNode = this->TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode *paramNode = this->TractographyInteractiveSeedingNode;
 
   if (paramNode && this->mrmlScene())
     {
@@ -522,179 +522,179 @@ void qSlicerTractographyFiducialSeedingModuleWidget::updateWidgetFromMRML()
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingCurvature(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setStoppingCurvature(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetStoppingCurvature(value);
+    this->TractographyInteractiveSeedingNode->SetStoppingCurvature(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingValue(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setStoppingValue(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetStoppingValue(value);
+    this->TractographyInteractiveSeedingNode->SetStoppingValue(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setIntegrationStep(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setIntegrationStep(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetIntegrationStep(value);
+    this->TractographyInteractiveSeedingNode->SetIntegrationStep(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setMinimumPath(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setMinimumPath(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetMinimumPathLength(value);
+    this->TractographyInteractiveSeedingNode->SetMinimumPathLength(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setMaximumPath(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setMaximumPath(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetMaximumPathLength(value);
+    this->TractographyInteractiveSeedingNode->SetMaximumPathLength(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setFiducialRegion(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setFiducialRegion(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetSeedingRegionSize(value);
+    this->TractographyInteractiveSeedingNode->SetSeedingRegionSize(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setFiducialRegionStep(double value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setFiducialRegionStep(double value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetSeedingRegionStep(value);
-    }
-}
-
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setStoppingCriteria(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetStoppingMode(value);
-    }
-}
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setTrackDisplayMode(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetDisplayMode(value);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setSeedSelectedFiducials(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetSeedSelectedFiducials(value!=0?1:0);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setMaxNumberSeeds(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetMaxNumberOfSeeds(value);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setEnableSeeding(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetEnableSeeding(value);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setUseIndexSpace(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetUseIndexSpace(value);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setSeedSpacing(double value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetSeedSpacing(value);
-    }
-}
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setROILabel(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetROILabel(value);
-    }
-}
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setRandomGrid(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetRandomGrid(value);
-    }
-}
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setLinearMeasureStart(double value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetLinearMeasureStart(value);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setWriteFibers(int value)
-{
-  if (this->TractographyFiducialSeedingNode)
-    {
-    this->TractographyFiducialSeedingNode->SetWriteToFile(value);
+    this->TractographyInteractiveSeedingNode->SetSeedingRegionStep(value);
     }
 }
 
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setDirectory(const QString &value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setStoppingCriteria(int value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetFileDirectoryName(value.toLatin1());
+    this->TractographyInteractiveSeedingNode->SetStoppingMode(value);
+    }
+}
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setTrackDisplayMode(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetDisplayMode(value);
     }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTractographyFiducialSeedingModuleWidget::setFilePrefix(const QString &value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedSelectedFiducials(int value)
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyFiducialSeedingNode->SetFilePrefix(value.toLatin1());
+    this->TractographyInteractiveSeedingNode->SetSeedSelectedFiducials(value!=0?1:0);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setMaxNumberSeeds(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetMaxNumberOfSeeds(value);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setEnableSeeding(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetEnableSeeding(value);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setUseIndexSpace(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetUseIndexSpace(value);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedSpacing(double value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetSeedSpacing(value);
+    }
+}
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setROILabel(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetROILabel(value);
+    }
+}
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setRandomGrid(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetRandomGrid(value);
+    }
+}
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setLinearMeasureStart(double value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetLinearMeasureStart(value);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setWriteFibers(int value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetWriteToFile(value);
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setDirectory(const QString &value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetFileDirectoryName(value.toLatin1());
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setFilePrefix(const QString &value)
+{
+  if (this->TractographyInteractiveSeedingNode)
+    {
+    this->TractographyInteractiveSeedingNode->SetFilePrefix(value.toLatin1());
     }
 }

@@ -6,13 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkMRMLTractographyFiducialSeedingNode.h,v $
+  Module:    $RCSfile: vtkMRMLTractographyInteractiveSeedingNode.h,v $
   Date:      $Date: 2006/03/19 17:12:29 $
   Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#ifndef __vtkMRMLTractographyFiducialSeedingNode_h
-#define __vtkMRMLTractographyFiducialSeedingNode_h
+#ifndef __vtkMRMLTractographyInteractiveSeedingNode_h
+#define __vtkMRMLTractographyInteractiveSeedingNode_h
 
 // MRML includes
 #include <vtkMRML.h>
@@ -24,16 +24,16 @@
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
 
-#include "vtkSlicerTractographyFiducialSeedingModuleLogicExport.h"
+#include "vtkSlicerTractographyInteractiveSeedingModuleLogicExport.h"
 
 class vtkImageData;
 
-class VTK_SLICER_TRACTOGRAPHYFIDUCIALSEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyFiducialSeedingNode :
+class VTK_SLICER_TRACTOGRAPHYINTERACTIVESEEDING_MODULE_LOGIC_EXPORT vtkMRMLTractographyInteractiveSeedingNode :
   public vtkMRMLNode
 {
 public:
-  static vtkMRMLTractographyFiducialSeedingNode *New();
-  vtkTypeMacro(vtkMRMLTractographyFiducialSeedingNode,vtkMRMLNode);
+  static vtkMRMLTractographyInteractiveSeedingNode *New();
+  vtkTypeMacro(vtkMRMLTractographyInteractiveSeedingNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -190,10 +190,10 @@ public:
 
 
 protected:
-  vtkMRMLTractographyFiducialSeedingNode();
-  ~vtkMRMLTractographyFiducialSeedingNode();
-  vtkMRMLTractographyFiducialSeedingNode(const vtkMRMLTractographyFiducialSeedingNode&);
-  void operator=(const vtkMRMLTractographyFiducialSeedingNode&);
+  vtkMRMLTractographyInteractiveSeedingNode();
+  ~vtkMRMLTractographyInteractiveSeedingNode();
+  vtkMRMLTractographyInteractiveSeedingNode(const vtkMRMLTractographyInteractiveSeedingNode&);
+  void operator=(const vtkMRMLTractographyInteractiveSeedingNode&);
 
   int StoppingMode;
   int DisplayMode;

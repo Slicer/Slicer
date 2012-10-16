@@ -6,14 +6,14 @@ See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   3D Slicer
-Module:    $RCSfile: vtkMRMLTractographyFiducialSeedingNode.cxx,v $
+Module:    $RCSfile: vtkMRMLTractographyInteractiveSeedingNode.cxx,v $
 Date:      $Date: 2006/03/17 15:10:10 $
 Version:   $Revision: 1.2 $
 
 =========================================================================auto=*/
 
-// MRMLTractographyFiducialSeeding includes
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
+// MRMLTractographyInteractiveSeeding includes
+#include "vtkMRMLTractographyInteractiveSeedingNode.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
@@ -25,10 +25,10 @@ Version:   $Revision: 1.2 $
 #include <sstream>
 
 //------------------------------------------------------------------------------
-vtkMRMLNodeNewMacro(vtkMRMLTractographyFiducialSeedingNode);
+vtkMRMLNodeNewMacro(vtkMRMLTractographyInteractiveSeedingNode);
 
 //----------------------------------------------------------------------------
-vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
+vtkMRMLTractographyInteractiveSeedingNode::vtkMRMLTractographyInteractiveSeedingNode()
 {
    this->StoppingMode = 0;
    this->StoppingValue = 0.25;
@@ -59,7 +59,7 @@ vtkMRMLTractographyFiducialSeedingNode::vtkMRMLTractographyFiducialSeedingNode()
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLTractographyFiducialSeedingNode::~vtkMRMLTractographyFiducialSeedingNode()
+vtkMRMLTractographyInteractiveSeedingNode::~vtkMRMLTractographyInteractiveSeedingNode()
 {
    this->SetInputVolumeRef( NULL );
    this->SetInputFiducialRef( NULL );
@@ -67,7 +67,7 @@ vtkMRMLTractographyFiducialSeedingNode::~vtkMRMLTractographyFiducialSeedingNode(
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
+void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
@@ -198,7 +198,7 @@ void vtkMRMLTractographyFiducialSeedingNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts)
+void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** atts)
 {
   vtkMRMLNode::ReadXMLAttributes(atts);
 
@@ -372,12 +372,12 @@ void vtkMRMLTractographyFiducialSeedingNode::ReadXMLAttributes(const char** atts
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, VolumeID
-void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
+void vtkMRMLTractographyInteractiveSeedingNode::Copy(vtkMRMLNode *anode)
 {
   Superclass::Copy(anode);
   this->DisableModifiedEventOn();
 
-  vtkMRMLTractographyFiducialSeedingNode *node = (vtkMRMLTractographyFiducialSeedingNode *) anode;
+  vtkMRMLTractographyInteractiveSeedingNode *node = (vtkMRMLTractographyInteractiveSeedingNode *) anode;
 
   this->SetStoppingValue(node->StoppingValue);
   this->SetStoppingMode(node->StoppingMode);
@@ -409,7 +409,7 @@ void vtkMRMLTractographyFiducialSeedingNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLTractographyInteractiveSeedingNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   
   vtkMRMLNode::PrintSelf(os,indent);
@@ -447,7 +447,7 @@ void vtkMRMLTractographyFiducialSeedingNode::PrintSelf(ostream& os, vtkIndent in
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTractographyFiducialSeedingNode::UpdateReferenceID(const char *oldID, const char *newID)
+void vtkMRMLTractographyInteractiveSeedingNode::UpdateReferenceID(const char *oldID, const char *newID)
 {
   this->Superclass::UpdateReferenceID(oldID, newID);
   if (this->InputVolumeRef && !strcmp(oldID, this->InputVolumeRef))

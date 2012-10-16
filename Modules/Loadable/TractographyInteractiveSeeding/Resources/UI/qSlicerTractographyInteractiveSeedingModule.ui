@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerTractographyFiducialSeedingModule</class>
- <widget class="qSlicerWidget" name="qSlicerTractographyFiducialSeedingModule">
+ <class>qSlicerTractographyInteractiveSeedingModule</class>
+ <widget class="qSlicerWidget" name="qSlicerTractographyInteractiveSeedingModule">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -30,7 +30,7 @@
      </property>
      <property name="nodeTypes">
       <stringlist>
-       <string>vtkMRMLTractographyFiducialSeedingNode</string>
+       <string>vtkMRMLTractographyInteractiveSeedingNode</string>
       </stringlist>
      </property>
      <property name="showHidden">
@@ -706,7 +706,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerTractographyFiducialSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ParameterNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -722,7 +722,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyFiducialSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>DTINodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -738,7 +738,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyFiducialSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>FiducialNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -754,7 +754,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyFiducialSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>FiberNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

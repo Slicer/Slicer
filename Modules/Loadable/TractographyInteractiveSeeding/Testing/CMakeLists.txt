@@ -8,8 +8,8 @@ SlicerMacroConfigureGenericCxxModuleTests(${MODULE_NAME} KIT_TEST_SRCS KIT_TEST_
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_NAMES_CXX}
-  qSlicerTractographyFiducialSeedingModuleWidgetTest1.cxx
-  qSlicerTractographyFiducialSeedingModuleWidgetTest2.cxx
+  qSlicerTractographyInteractiveSeedingModuleWidgetTest1.cxx
+  qSlicerTractographyInteractiveSeedingModuleWidgetTest2.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 list(REMOVE_ITEM Tests ${KIT_TEST_NAMES_CXX})
@@ -30,6 +30,6 @@ endforeach()
 
 SET(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 
-SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest1 )
-SIMPLE_TEST( qSlicerTractographyFiducialSeedingModuleWidgetTest2 ${VOLUME_FILE})
+SIMPLE_TEST( qSlicerTractographyInteractiveSeedingModuleWidgetTest1 )
+SIMPLE_TEST( qSlicerTractographyInteractiveSeedingModuleWidgetTest2 ${VOLUME_FILE})
 

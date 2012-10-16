@@ -1,5 +1,5 @@
-#ifndef __qSlicerTractographyFiducialSeedingModuleWidget_h
-#define __qSlicerTractographyFiducialSeedingModuleWidget_h
+#ifndef __qSlicerTractographyInteractiveSeedingModuleWidget_h
+#define __qSlicerTractographyInteractiveSeedingModuleWidget_h
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -7,35 +7,35 @@
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerTractographyFiducialSeedingModuleExport.h"
+#include "qSlicerTractographyInteractiveSeedingModuleExport.h"
 
-class qSlicerTractographyFiducialSeedingModuleWidgetPrivate;
+class qSlicerTractographyInteractiveSeedingModuleWidgetPrivate;
 class vtkMRMLNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLDiffusionTensorVolumeNode;
-class vtkMRMLTractographyFiducialSeedingNode;
+class vtkMRMLTractographyInteractiveSeedingNode;
 
-/// \ingroup Slicer_QtModules_TractographyFiducialSeeding
-class Q_SLICER_QTMODULES_TRACTOGRAPHYFIDUCIALSEEDING_EXPORT qSlicerTractographyFiducialSeedingModuleWidget :  public qSlicerAbstractModuleWidget
+/// \ingroup Slicer_QtModules_TractographyInteractiveSeeding
+class Q_SLICER_QTMODULES_TRACTOGRAPHYINTERACTIVESEEDING_EXPORT qSlicerTractographyInteractiveSeedingModuleWidget :  public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
   QVTK_OBJECT
 
 public:
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerTractographyFiducialSeedingModuleWidget(QWidget *_parent=0);
-  virtual ~qSlicerTractographyFiducialSeedingModuleWidget();
+  qSlicerTractographyInteractiveSeedingModuleWidget(QWidget *_parent=0);
+  virtual ~qSlicerTractographyInteractiveSeedingModuleWidget();
 
   /// Get current parameter node
-  vtkMRMLTractographyFiducialSeedingNode* tractographyFiducialSeedingNode() {
-    return this->TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode* tractographyInteractiveSeedingNode() {
+    return this->TractographyInteractiveSeedingNode;
   };
 
   /// Get current seeding node
-  vtkMRMLNode* seedingNode(); 
+  vtkMRMLNode* seedingNode();
 
   /// Get current DTI volume node
-  vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode(); 
+  vtkMRMLDiffusionTensorVolumeNode* diffusionTensorVolumeNode();
 
   /// Get current fiber bundlde node
   vtkMRMLFiberBundleNode* fiberBundleNode();
@@ -44,7 +44,7 @@ public:
 
 public slots:
 
-  /// 
+  ///
   /// Set the current MRML scene to the widget
   virtual void setMRMLScene(vtkMRMLScene*);
 
@@ -52,7 +52,7 @@ public slots:
   void onSceneImportedEvent();
 
   /// Set current parameter node
-  void setTractographyFiducialSeedingNode(vtkMRMLNode *node);
+  void setTractographyInteractiveSeedingNode(vtkMRMLNode *node);
 
   /// Set current seeding node
   void setSeedingNode(vtkMRMLNode *node);
@@ -131,19 +131,18 @@ protected:
   virtual void setup();
   void onEnter();
 
-  vtkMRMLTractographyFiducialSeedingNode* TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode* TractographyInteractiveSeedingNode;
 
   bool settingFiberBundleNode;
 
   bool settingMRMLScene;
 
 protected:
-  QScopedPointer<qSlicerTractographyFiducialSeedingModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerTractographyInteractiveSeedingModuleWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerTractographyFiducialSeedingModuleWidget);
-  Q_DISABLE_COPY(qSlicerTractographyFiducialSeedingModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerTractographyInteractiveSeedingModuleWidget);
+  Q_DISABLE_COPY(qSlicerTractographyInteractiveSeedingModuleWidget);
 };
 
 #endif
-                                     

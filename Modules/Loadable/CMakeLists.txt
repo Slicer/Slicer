@@ -21,7 +21,7 @@ set(qtmodules
   Reformat
   ViewControllers
   Volumes
-  TractographyFiducialSeeding # tractography depends of Volumes
+  TractographyInteractiveSeeding # tractography depends of Volumes
   VolumeRendering # Volume Rendering depends of Volumes
   )
 if(Slicer_BUILD_CLI_SUPPORT)

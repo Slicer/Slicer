@@ -6,13 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   3D Slicer
-  Module:    $RCSfile: vtkSlicerTractographyFiducialSeedingLogic.cxx,v $
+  Module:    $RCSfile: vtkSlicerTractographyInteractiveSeedingLogic.cxx,v $
   Date:      $Date: 2006/01/06 17:56:48 $
   Version:   $Revision: 1.58 $
 
 =========================================================================auto=*/
 
-#include "vtkSlicerTractographyFiducialSeedingLogic.h"
+#include "vtkSlicerTractographyInteractiveSeedingLogic.h"
 
 // MRML includes
 #include <vtkMRMLAnnotationControlPointsNode.h>
@@ -23,7 +23,7 @@
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleStorageNode.h>
 #include <vtkMRMLScalarVolumeNode.h>
-#include "vtkMRMLTractographyFiducialSeedingNode.h"
+#include "vtkMRMLTractographyInteractiveSeedingNode.h"
 #include <vtkMRMLTransformNode.h>
 
 // vtkTeem includes
@@ -43,28 +43,28 @@
 // STD includes
 #include <algorithm>
 
-vtkCxxRevisionMacro(vtkSlicerTractographyFiducialSeedingLogic, "$Revision: 1.9.12.1 $");
-vtkStandardNewMacro(vtkSlicerTractographyFiducialSeedingLogic);
+vtkCxxRevisionMacro(vtkSlicerTractographyInteractiveSeedingLogic, "$Revision: 1.9.12.1 $");
+vtkStandardNewMacro(vtkSlicerTractographyInteractiveSeedingLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerTractographyFiducialSeedingLogic::vtkSlicerTractographyFiducialSeedingLogic()
+vtkSlicerTractographyInteractiveSeedingLogic::vtkSlicerTractographyInteractiveSeedingLogic()
 {
   this->MaskPoints = vtkMaskPoints::New();
-  this->TractographyFiducialSeedingNode = NULL;
+  this->TractographyInteractiveSeedingNode = NULL;
   this->DiffusionTensorVolumeNode = NULL;
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerTractographyFiducialSeedingLogic::~vtkSlicerTractographyFiducialSeedingLogic()
+vtkSlicerTractographyInteractiveSeedingLogic::~vtkSlicerTractographyInteractiveSeedingLogic()
 {
   this->MaskPoints->Delete();
   this->RemoveMRMLNodesObservers();
-  vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, NULL);
+  vtkSetAndObserveMRMLNodeMacro(this->TractographyInteractiveSeedingNode, NULL);
   vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::RemoveMRMLNodesObservers()
+void vtkSlicerTractographyInteractiveSeedingLogic::RemoveMRMLNodesObservers()
 {
   for (unsigned int i=0; i<this->ObservedNodes.size(); i++)
     {
@@ -74,17 +74,17 @@ void vtkSlicerTractographyFiducialSeedingLogic::RemoveMRMLNodesObservers()
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerTractographyInteractiveSeedingLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->vtkObject::PrintSelf(os, indent);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducialSeedingNode(vtkMRMLTractographyFiducialSeedingNode *node)
+void vtkSlicerTractographyInteractiveSeedingLogic::SetAndObserveTractographyInteractiveSeedingNode(vtkMRMLTractographyInteractiveSeedingNode *node)
 {
-  vtkMRMLTractographyFiducialSeedingNode *oldNode = this->TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode *oldNode = this->TractographyInteractiveSeedingNode;
 
-  vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, node);
+  vtkSetAndObserveMRMLNodeMacro(this->TractographyInteractiveSeedingNode, node);
 
   if (node && node != oldNode)
     {
@@ -95,20 +95,20 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetAndObserveTractographyFiducia
     return;
     }
 
-  this->ProcessMRMLNodesEvents(this->TractographyFiducialSeedingNode, vtkCommand::ModifiedEvent, NULL);
+  this->ProcessMRMLNodesEvents(this->TractographyInteractiveSeedingNode, vtkCommand::ModifiedEvent, NULL);
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
+void vtkSlicerTractographyInteractiveSeedingLogic::AddMRMLNodesObservers()
 {
-  if (this->TractographyFiducialSeedingNode)
+  if (this->TractographyInteractiveSeedingNode)
     {
 
     vtkMRMLDiffusionTensorVolumeNode *dtiNode = vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputVolumeRef()));
+          this->GetMRMLScene()->GetNodeByID(this->TractographyInteractiveSeedingNode->GetInputVolumeRef()));
     vtkSetAndObserveMRMLNodeMacro(this->DiffusionTensorVolumeNode, dtiNode);
 
-    vtkMRMLNode *seedinNode = this->GetMRMLScene()->GetNodeByID(this->TractographyFiducialSeedingNode->GetInputFiducialRef());
+    vtkMRMLNode *seedinNode = this->GetMRMLScene()->GetNodeByID(this->TractographyInteractiveSeedingNode->GetInputFiducialRef());
 
     vtkMRMLAnnotationHierarchyNode *annotationHierarchyNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedinNode);
     vtkMRMLTransformableNode *transformableNode = vtkMRMLTransformableNode::SafeDownCast(seedinNode);
@@ -169,7 +169,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::AddMRMLNodesObservers()
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerTractographyFiducialSeedingLogic::IsObservedNode(vtkMRMLNode *node)
+int vtkSlicerTractographyInteractiveSeedingLogic::IsObservedNode(vtkMRMLNode *node)
 {
   std::vector<vtkMRMLTransformableNode *>::const_iterator observedNodeIt =
     std::find(this->ObservedNodes.begin(), this->ObservedNodes.end(),node);
@@ -177,7 +177,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::IsObservedNode(vtkMRMLNode *node)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
+void vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForOneSeed(vtkSeedTracts *seed,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLTransformableNode *transformableNode,
                                                             int stoppingMode,
@@ -341,7 +341,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForOneSeed(vtkSeedTr
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyFiducialSeedingNode *parametersNode,
+int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractographyInteractiveSeedingNode *parametersNode,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLNode *seedingyNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
@@ -565,7 +565,7 @@ int vtkSlicerTractographyFiducialSeedingLogic::CreateTracts(vtkMRMLTractographyF
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject *caller,
+void vtkSlicerTractographyInteractiveSeedingLogic::ProcessMRMLNodesEvents(vtkObject *caller,
                                                                       unsigned long event,
                                                                       void *callData)
 {
@@ -576,7 +576,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject
     return;
     }
 
-  vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode* snode = this->TractographyInteractiveSeedingNode;
 
   if (snode == NULL || snode->GetEnableSeeding() == 0)
     {
@@ -598,15 +598,15 @@ void vtkSlicerTractographyFiducialSeedingLogic::ProcessMRMLNodesEvents(vtkObject
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::OnMRMLSceneEndImport()
+void vtkSlicerTractographyInteractiveSeedingLogic::OnMRMLSceneEndImport()
 {
   // if we have a parameter node select it
-  vtkMRMLTractographyFiducialSeedingNode *tnode = 0;
-  vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLTractographyFiducialSeedingNode");
+  vtkMRMLTractographyInteractiveSeedingNode *tnode = 0;
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLTractographyInteractiveSeedingNode");
   if (node)
     {
-    tnode = vtkMRMLTractographyFiducialSeedingNode::SafeDownCast(node);
-    vtkSetAndObserveMRMLNodeMacro(this->TractographyFiducialSeedingNode, tnode);
+    tnode = vtkMRMLTractographyInteractiveSeedingNode::SafeDownCast(node);
+    vtkSetAndObserveMRMLNodeMacro(this->TractographyInteractiveSeedingNode, tnode);
     this->RemoveMRMLNodesObservers();
     this->AddMRMLNodesObservers();
     }
@@ -614,7 +614,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::OnMRMLSceneEndImport()
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic
+void vtkSlicerTractographyInteractiveSeedingLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 {
   if (node == NULL || !this->IsObservedNode(node))
@@ -625,10 +625,10 @@ void vtkSlicerTractographyFiducialSeedingLogic
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic
+void vtkSlicerTractographyInteractiveSeedingLogic
 ::OnMRMLNodeModified(vtkMRMLNode* vtkNotUsed(node))
 {
-  vtkMRMLTractographyFiducialSeedingNode* snode = this->TractographyFiducialSeedingNode;
+  vtkMRMLTractographyInteractiveSeedingNode* snode = this->TractographyInteractiveSeedingNode;
 
   if (snode == NULL || snode->GetEnableSeeding() == 0)
     {
@@ -667,20 +667,20 @@ void vtkSlicerTractographyFiducialSeedingLogic
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::RegisterNodes()
+void vtkSlicerTractographyInteractiveSeedingLogic::RegisterNodes()
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
   if (!scene)
     {
     return;
     }
-  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLTractographyFiducialSeedingNode>::New());
+  scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLTractographyInteractiveSeedingNode>::New());
 }
 
 //---------------------------------------------------------------------------
 // Set the internal mrml scene adn observe events on it
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyFiducialSeedingLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerTractographyInteractiveSeedingLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
@@ -689,7 +689,7 @@ void vtkSlicerTractographyFiducialSeedingLogic::SetMRMLSceneInternal(vtkMRMLScen
 }
 
 //----------------------------------------------------------------------------
-int vtkSlicerTractographyFiducialSeedingLogic::CreateTractsForLabelMap(
+int vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForLabelMap(
                                                             vtkSeedTracts *seed,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
                                                             vtkMRMLScalarVolumeNode *seedingNode,

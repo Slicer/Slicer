@@ -4,7 +4,7 @@
 
   Copyright (c) Kitware Inc.
 
-  See COPYRIGHT.txt
+  See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Unless required by applicable law or agreed to in writing, software
@@ -25,29 +25,44 @@
 #include <qSlicerApplication.h>
 
 // Volumes includes
-#include "qSlicerTractographyFiducialSeedingModule.h"
-#include "qSlicerTractographyFiducialSeedingModuleWidget.h"
+#include "qSlicerTractographyInteractiveSeedingModule.h"
+#include "qSlicerTractographyInteractiveSeedingModuleWidget.h"
+#include <vtkSlicerVolumesLogic.h>
 
 // MRML includes
 
 // VTK includes
+#include <vtkSmartPointer.h>
 
 //-----------------------------------------------------------------------------
-int qSlicerTractographyFiducialSeedingModuleWidgetTest1( int argc, char * argv[] )
+int qSlicerTractographyInteractiveSeedingModuleWidgetTest2( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
 
-  qSlicerTractographyFiducialSeedingModule module;
+  qSlicerTractographyInteractiveSeedingModule module;
   module.setMRMLScene(app.mrmlScene());
   module.initialize(0);
 
-  qSlicerTractographyFiducialSeedingModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerTractographyFiducialSeedingModuleWidget*>(
-      module.widgetRepresentation());
+  qSlicerTractographyInteractiveSeedingModuleWidget* moduleWidget =
+    dynamic_cast<qSlicerTractographyInteractiveSeedingModuleWidget*>(
+      module.widgetRepresentation()); 
+
+  vtkMRMLVolumeNode* volumeNode = 0;
+  bool fileNameInTheCommandLine = false;
+  if (argc > 1 && QString(argv[1]) != "-I")
+    {
+    fileNameInTheCommandLine = true;
+    vtkSmartPointer<vtkSlicerVolumesLogic> logic = vtkSmartPointer<vtkSlicerVolumesLogic>::New();
+    logic->SetMRMLScene(app.mrmlScene());
+    volumeNode = logic->AddArchetypeVolume(argv[1], "dtiVolume");
+    }
+
+  moduleWidget->setDiffusionTensorVolumeNode(volumeNode);
 
   moduleWidget->show();
 
-  if (argc < 2 || QString(argv[1]) != "-I")
+  if (argc < (fileNameInTheCommandLine ? 3 : 2) ||
+      QString(argv[fileNameInTheCommandLine ? 2 : 1]) != "-I")
     {
     QTimer::singleShot(100, qApp, SLOT(quit()));
     }
