@@ -401,7 +401,7 @@ bool vtkMRMLApplicationLogic::OpenSlicerDataBundle(const char *sdbFilePath, cons
 //----------------------------------------------------------------------------
 std::string vtkMRMLApplicationLogic::PercentEncode(std::string s)
 {
-  std::string validchars = "-_.,@#$%^()[]{}<>+=";
+  std::string validchars = "-_.,@#$%^&()[]{}<>+=";
   std::ostringstream result;
 
   for (size_t i = 0; i < s.size(); i++)

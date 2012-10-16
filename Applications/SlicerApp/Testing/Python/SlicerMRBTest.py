@@ -227,6 +227,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
       )
     for original,encoded in stringPairs:
       self.delayDisplay("Testing that %s becomes %s" % (original,encoded), 150)
+      print ('%s becomes %s, should be %s' % (original, appLogic.PercentEncode(original), encoded))
       self.assertTrue( appLogic.PercentEncode(original) == encoded )
     self.delayDisplay("Test Finished")
 
