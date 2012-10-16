@@ -76,7 +76,33 @@ function(midas_api_login)
 endfunction()
 
 function(midas_api_escape_for_url var str)
-  string(REPLACE "\\/" "%2F" _tmp "${str}") # Slash
+  # Source: http://www.blooberry.com/indexdot/html/topics/urlencoding.htm
+  string(REPLACE "%" "%25" _tmp "${str}") # Percent character
+  # Reserved characters
+  string(REPLACE "$" "%24" _tmp "${_tmp}") # Slash
+  string(REPLACE "&" "%26" _tmp "${_tmp}") # Ampersand
+  string(REPLACE "+" "%2B" _tmp "${_tmp}") # Plus
+  string(REPLACE "," "%2C" _tmp "${_tmp}") # Comma
+  string(REPLACE "/" "%2F" _tmp "${_tmp}") # Slash
+  string(REPLACE ":" "%3A" _tmp "${_tmp}") # Colon
+  string(REPLACE ";" "%3B" _tmp "${_tmp}") # Semi-colon
+  string(REPLACE "=" "%3D" _tmp "${_tmp}") # Equals
+  string(REPLACE "?" "%3F" _tmp "${_tmp}") # Question mark
+  string(REPLACE "@" "%40" _tmp "${_tmp}") # 'At' symbol
+  # Unsafe characters
   string(REPLACE " " "%20" _tmp "${_tmp}") # Space
+  string(REPLACE "\"" "%22" _tmp "${_tmp}") # Quotation marks
+  string(REPLACE "<" "%3C" _tmp "${_tmp}") # 'Less Than' symbol
+  string(REPLACE ">" "%3E" _tmp "${_tmp}") # 'Greater Than' symbol
+  string(REPLACE "#" "%23" _tmp "${_tmp}") # 'Pound' character
+  string(REPLACE "{" "%7B" _tmp "${_tmp}") # Left Curly Brace
+  string(REPLACE "}" "%7D" _tmp "${_tmp}") # Right Curly Brace
+  string(REPLACE "|" "%7C" _tmp "${_tmp}") # Vertical Bar/Pipe
+  string(REPLACE "\\" "%5C" _tmp "${_tmp}") # Backslash
+  string(REPLACE "^" "%5E" _tmp "${_tmp}") # Caret
+  string(REPLACE "~" "%7E" _tmp "${_tmp}") # Tilde
+  string(REPLACE "[" "%5B" _tmp "${_tmp}") # Left Square Bracket
+  string(REPLACE "]" "%5D" _tmp "${_tmp}") # Right Square Bracket
+  string(REPLACE "`" "%60" _tmp "${_tmp}") # Grave Accent
   set(${var} ${_tmp} PARENT_SCOPE)
 endfunction()
