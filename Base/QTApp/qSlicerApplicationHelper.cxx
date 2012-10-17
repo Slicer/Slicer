@@ -22,6 +22,7 @@
 
 // Qt includes
 #include <QSettings>
+#include <QTranslator>
 
 // Slicer includes
 #include "qSlicerApplication.h"
@@ -37,6 +38,21 @@
 
 #ifdef Slicer_USE_PYTHONQT
 # include "qSlicerScriptedLoadableModuleFactory.h"
+#endif
+
+// CTK includes
+#ifdef Slicer_USE_PYTHONQT
+# include <ctkPythonConsole.h>
+#endif
+
+// MRMLWidgets includes
+#include <qMRMLEventLoggerWidget.h>
+
+#ifdef Slicer_USE_PYTHONQT
+# include <PythonQtObjectPtr.h>
+# include <PythonQtPythonInclude.h>
+# include "qSlicerPythonManager.h"
+# include "qSlicerSettingsPythonPanel.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -115,3 +131,101 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
 }
 
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::loadTranslations(const QString& dir)
+{
+  qSlicerApplication * app = qSlicerApplication::application();
+  Q_ASSERT(app);
+
+  QString localeFilter =
+      QString( QString("*") + app->settings()->value("language").toString());
+  localeFilter.resize(3);
+  localeFilter += QString(".qm");
+
+  QDir directory(dir);
+  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
+
+  foreach(QString qmFile, qmFiles)
+    {
+    QTranslator* translator = new QTranslator();
+    QString qmFilePath = QString(dir + QString("/") + qmFile);
+
+    if(!translator->load(qmFilePath))
+      {
+      qDebug() << "The File " << qmFile << " hasn't been loaded in the translator";
+      return;
+      }
+    app->installTranslator(translator);
+    }
+}
+
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::loadLanguage()
+{
+  qSlicerApplication * app = qSlicerApplication::application();
+  Q_ASSERT(app);
+
+  // we check if the application is installed or not.
+  if (app->isInstalled())
+    {
+    QString qmDir = QString(Slicer_QM_DIR);
+    Self::loadTranslations(qmDir);
+    }
+  else
+    {
+    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
+    foreach(QString qmDir, qmDirs)
+      {
+      Self::loadTranslations(qmDir);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::showMRMLEventLoggerWidget()
+{
+  qMRMLEventLoggerWidget* logger = new qMRMLEventLoggerWidget(0);
+  logger->setAttribute(Qt::WA_DeleteOnClose);
+  logger->setConsoleOutputEnabled(false);
+  logger->setMRMLScene(qSlicerApplication::application()->mrmlScene());
+
+  QObject::connect(qSlicerApplication::application(),
+                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                   logger,
+                   SLOT(setMRMLScene(vtkMRMLScene*)));
+
+  logger->show();
+}
+
+//----------------------------------------------------------------------------
+void qSlicerApplicationHelper::initializePythonConsole(ctkPythonConsole* pythonConsole)
+{
+#ifdef Slicer_USE_PYTHONQT
+  Q_ASSERT(pythonConsole);
+  Q_ASSERT(qSlicerApplication::application()->pythonManager());
+  pythonConsole->initialize(qSlicerApplication::application()->pythonManager());
+
+  QStringList autocompletePreferenceList;
+  autocompletePreferenceList
+      << "slicer" << "slicer.mrmlScene"
+      << "qt.QPushButton";
+  pythonConsole->completer()->setAutocompletePreferenceList(autocompletePreferenceList);
+
+  //pythonConsole->setAttribute(Qt::WA_QuitOnClose, false);
+  pythonConsole->resize(600, 280);
+
+  qSlicerApplication::application()->settingsDialog()->addPanel(
+    "Python", new qSlicerSettingsPythonPanel);
+
+  // Show pythonConsole if required
+  qSlicerCommandOptions * options = qSlicerApplication::application()->commandOptions();
+  if(options->showPythonInteractor() && !options->runPythonAndExit())
+    {
+    pythonConsole->show();
+    pythonConsole->activateWindow();
+    pythonConsole->raise();
+    }
+#else
+  Q_UNUSED(pythonConsole);
+#endif
+}

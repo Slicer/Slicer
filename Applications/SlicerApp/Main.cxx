@@ -24,19 +24,15 @@
 #include <QSplashScreen>
 #include <QString>
 #include <QTimer>
-#include <QTranslator>
 
 // Slicer includes
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT Slicer_QM_OUTPUT_DIRS, Slicer_INSTALL_QM_DIR
+#include "vtkSlicerConfigure.h"
 
 // CTK includes
 #include <ctkAbstractLibraryFactory.h>
 #ifdef Slicer_USE_PYTHONQT
 # include <ctkPythonConsole.h>
 #endif
-
-// MRMLWidgets includes
-#include <qMRMLEventLoggerWidget.h>
 
 // Slicer includes
 #include "vtkSlicerVersionConfigure.h" // For Slicer_VERSION_FULL, Slicer_BUILD_CLI_SUPPORT
@@ -56,13 +52,6 @@
 
 // VTK includes
 //#include <vtkObject.h>
-
-#ifdef Slicer_USE_PYTHONQT
-# include <PythonQtObjectPtr.h>
-# include <PythonQtPythonInclude.h>
-# include "qSlicerPythonManager.h"
-# include "qSlicerSettingsPythonPanel.h"
-#endif
 
 #if defined (_WIN32) && !defined (Slicer_BUILD_WIN32_CONSOLE)
 # include <windows.h>
@@ -84,54 +73,6 @@ void setEnableQtTesting()
 }
 #endif
 
-#ifdef Slicer_USE_PYTHONQT
-
-//----------------------------------------------------------------------------
-void initializePythonConsole(ctkPythonConsole& pythonConsole)
-{
-  // Create python console
-  Q_ASSERT(qSlicerApplication::application()->pythonManager());
-  pythonConsole.initialize(qSlicerApplication::application()->pythonManager());
-
-  QStringList autocompletePreferenceList;
-  autocompletePreferenceList
-      << "slicer" << "slicer.mrmlScene"
-      << "qt.QPushButton";
-  pythonConsole.completer()->setAutocompletePreferenceList(autocompletePreferenceList);
-
-  //pythonConsole.setAttribute(Qt::WA_QuitOnClose, false);
-  pythonConsole.resize(600, 280);
-
-  qSlicerApplication::application()->settingsDialog()->addPanel(
-    "Python", new qSlicerSettingsPythonPanel);
-
-  // Show pythonConsole if required
-  qSlicerCommandOptions * options = qSlicerApplication::application()->commandOptions();
-  if(options->showPythonInteractor() && !options->runPythonAndExit())
-    {
-    pythonConsole.show();
-    pythonConsole.activateWindow();
-    pythonConsole.raise();
-    }
-}
-#endif
-
-//----------------------------------------------------------------------------
-void showMRMLEventLoggerWidget()
-{
-  qMRMLEventLoggerWidget* logger = new qMRMLEventLoggerWidget(0);
-  logger->setAttribute(Qt::WA_DeleteOnClose);
-  logger->setConsoleOutputEnabled(false);
-  logger->setMRMLScene(qSlicerApplication::application()->mrmlScene());
-
-  QObject::connect(qSlicerApplication::application(),
-                   SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
-                   logger,
-                   SLOT(setMRMLScene(vtkMRMLScene*)));
-
-  logger->show();
-}
-
 //----------------------------------------------------------------------------
 void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& message)
 {
@@ -141,56 +82,6 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
     }
   splashScreen->showMessage(message, Qt::AlignBottom | Qt::AlignHCenter);
   //splashScreen->repaint();
-}
-
-//----------------------------------------------------------------------------
-void loadTranslations(const QString& dir)
-{
-  qSlicerApplication * app = qSlicerApplication::application();
-  Q_ASSERT(app);
-
-  QString localeFilter =
-      QString( QString("*") + app->settings()->value("language").toString());
-  localeFilter.resize(3);
-  localeFilter += QString(".qm");
-
-  QDir directory(dir);
-  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
-
-  foreach(QString qmFile, qmFiles)
-    {
-    QTranslator* translator = new QTranslator();
-    QString qmFilePath = QString(dir + QString("/") + qmFile);
-
-    if(!translator->load(qmFilePath))
-      {
-      qDebug() << "The File " << qmFile << " hasn't been loaded in the translator";
-      return;
-      }
-    app->installTranslator(translator);
-    }
-}
-
-//----------------------------------------------------------------------------
-void loadLanguage()
-{
-  qSlicerApplication * app = qSlicerApplication::application();
-  Q_ASSERT(app);
-
-  // we check if the application is installed or not.
-  if (app->isInstalled())
-    {
-    QString qmDir = QString(Slicer_QM_DIR);
-    loadTranslations(qmDir);
-    }
-  else
-    {
-    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
-    foreach(QString qmDir, qmDirs)
-      {
-      loadTranslations(qmDir);
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -209,7 +100,7 @@ int SlicerAppMain(int argc, char* argv[])
     }
 
   // We load the language selected for the application
-  loadLanguage();
+  qSlicerApplicationHelper::loadLanguage();
 
 #ifdef Slicer_USE_QtTesting
   setEnableQtTesting(); // disabled the native menu bar.
@@ -220,7 +111,7 @@ int SlicerAppMain(int argc, char* argv[])
   pythonConsole.setWindowTitle("Slicer Python Interactor");
   if (!qSlicerApplication::testAttribute(qSlicerApplication::AA_DisablePython))
     {
-    initializePythonConsole(pythonConsole);
+    qSlicerApplicationHelper::initializePythonConsole(&pythonConsole);
     }
 #endif
 
@@ -285,7 +176,7 @@ int SlicerAppMain(int argc, char* argv[])
   // Process command line argument after the event loop is started
   QTimer::singleShot(0, &app, SLOT(handleCommandLineArguments()));
 
-  // showMRMLEventLoggerWidget();
+  // qSlicerApplicationHelper::showMRMLEventLoggerWidget();
 
   // Look at QApplication::exec() documentation, it is recommended to connect
   // clean up code to the aboutToQuit() signal

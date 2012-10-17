@@ -26,6 +26,7 @@
 
 #include "qSlicerBaseQTAppExport.h"
 
+class ctkPythonConsole;
 class qSlicerModuleFactoryManager;
 
 class Q_SLICER_BASE_QTAPP_EXPORT qSlicerApplicationHelper : public QObject
@@ -33,11 +34,20 @@ class Q_SLICER_BASE_QTAPP_EXPORT qSlicerApplicationHelper : public QObject
   Q_OBJECT
 public:
   typedef QObject Superclass;
+  typedef qSlicerApplicationHelper Self;
 
   qSlicerApplicationHelper(QObject * parent = 0);
   virtual ~qSlicerApplicationHelper();
 
   static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
+
+  static void loadTranslations(const QString& dir);
+
+  static void loadLanguage();
+
+  static void showMRMLEventLoggerWidget();
+
+  static void initializePythonConsole(ctkPythonConsole* pythonConsole);
 
 private:
   Q_DISABLE_COPY(qSlicerApplicationHelper);
