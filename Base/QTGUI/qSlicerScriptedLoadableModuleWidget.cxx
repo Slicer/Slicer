@@ -235,6 +235,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
     {
     return;
     }
+  PythonQt::self()->resetErrorFlag();
   PyObject_CallObject(method, 0);
   PythonQt::self()->handleError();
 }
@@ -249,6 +250,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
     {
     return;
     }
+  PythonQt::self()->resetErrorFlag();
   PyObject_CallObject(method, 0);
   PythonQt::self()->handleError();
 }
@@ -263,6 +265,7 @@ void qSlicerScriptedLoadableModuleWidget::exit()
     {
     return;
     }
+  PythonQt::self()->resetErrorFlag();
   PyObject_CallObject(method, 0);
   PythonQt::self()->handleError();
 }
