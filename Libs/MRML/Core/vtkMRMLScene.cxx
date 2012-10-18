@@ -751,7 +751,7 @@ int vtkMRMLScene::GetStates()const
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::StartState(const StateType& state, int anticipatedMaxProgress)
+void vtkMRMLScene::StartState(unsigned long state, int anticipatedMaxProgress)
 {
   bool wasBatchProcessing = this->IsBatchProcessing();
   bool wasInState = ((this->GetStates() & state ) == state);
@@ -769,7 +769,7 @@ void vtkMRMLScene::StartState(const StateType& state, int anticipatedMaxProgress
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::EndState(const StateType& state)
+void vtkMRMLScene::EndState(unsigned long state)
 {
   assert(this->States.back() == state);
   this->States.pop_back();
@@ -791,7 +791,7 @@ void vtkMRMLScene::EndState(const StateType& state)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::ProgressState(const StateType& state, int progress)
+void vtkMRMLScene::ProgressState(unsigned long state, int progress)
 {
   if (state & vtkMRMLScene::BatchProcessState)
     {

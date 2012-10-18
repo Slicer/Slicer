@@ -493,7 +493,7 @@ public:
   /// \endcode
   /// StartState internally pushes the state into a stack.
   /// \sa EndState, GetStates
-  void StartState(const StateType& state, int anticipatedMaxProgress = 0);
+  void StartState(unsigned long state, int anticipatedMaxProgress = 0);
 
   /// Unflag the scene as being in a \state mode.
   /// EndState() fires the state end event if the scene is no longer
@@ -501,10 +501,10 @@ public:
   /// A matching StartState(\a state) must be called prior.
   /// e.g. EndImportEvent if state is ImportState.
   /// EndState internally pops the state out of the stack
-  void EndState(const StateType& state);
+  void EndState(unsigned long state);
 
   /// TODO: Report progress of the current state.
-  void ProgressState(const StateType& state, int progress = 0);
+  void ProgressState(unsigned long state, int progress = 0);
 
   enum SceneEventType
     {
@@ -618,7 +618,7 @@ protected:
   vtkCollection *    URIHandlerCollection;
   vtkTagTable *      UserTagTable;
 
-  std::vector<StateType> States;
+  std::vector<unsigned long> States;
 
   int  UndoStackSize;
   bool UndoFlag;
