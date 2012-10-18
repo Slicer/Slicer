@@ -30,12 +30,16 @@ vtkAnnotationRulerWidget::~vtkAnnotationRulerWidget()
 //---------------------------------------------------------------------------
 void vtkAnnotationRulerWidget::CreateDefaultRepresentation()
 {
-  if ( ! this->WidgetRep )
+  if ( ! this->WidgetRep)
     {
     this->WidgetRep = vtkAnnotationRulerRepresentation::New();
     }
-  vtkAnnotationRulerRepresentation::SafeDownCast(this->WidgetRep)
-    ->InstantiateHandleRepresentation();
+  if (!vtkDistanceRepresentation::SafeDownCast(this->WidgetRep))
+    {
+    vtkErrorMacro("CreateDefaultRepresentation: unable to cast widget representation to a vtkDistanceRepresentation, class = " <<  this->WidgetRep->GetClassName());
+    return;
+    }
+  vtkDistanceRepresentation::SafeDownCast(this->WidgetRep)->InstantiateHandleRepresentation();
 }
 
 //---------------------------------------------------------------------------
@@ -45,6 +49,11 @@ void vtkAnnotationRulerWidget::CreateDefaultRepresentation3D()
     {
     this->WidgetRep = vtkAnnotationRulerRepresentation3D::New();
     }
-  vtkAnnotationRulerRepresentation3D::SafeDownCast(this->WidgetRep)
-    ->InstantiateHandleRepresentation();
+  if (!vtkDistanceRepresentation::SafeDownCast(this->WidgetRep))
+    {
+    vtkErrorMacro("CreateDefaultRepresentation3D: unable to cast widget representation to a vtkDistanceRepresentation, class = " <<  this->WidgetRep->GetClassName());
+    return;
+    }
+  
+  vtkDistanceRepresentation::SafeDownCast(this->WidgetRep)->InstantiateHandleRepresentation();
 }
