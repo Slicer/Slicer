@@ -716,6 +716,12 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 
   if (options->displayHelpAndExit())
     {
+    if (this->launcherSettingsFilePath().isEmpty())
+      {
+      std::cout << "Usage\n"
+                << "  " Slicer_MAIN_PROJECT_APPLICATION_NAME " [options]\n\n"
+                << "Options\n";
+      }
     std::cout << qPrintable(options->helpText()) << std::endl;
     d->terminate(EXIT_SUCCESS);
     return;
