@@ -72,9 +72,6 @@ vtkMRMLAnnotationDisplayableManager::vtkMRMLAnnotationDisplayableManager()
 
   this->m_Focus = "vtkMRMLAnnotationNode";
 
-  // by default, this displayableManager handles a ThreeDView
-  this->m_SliceNode = 0;
-
   // by default, multiply the display node scale by this when setting scale on elements in 2d windows
   this->ScaleFactor2D = 0.00333;
 
@@ -94,8 +91,6 @@ vtkMRMLAnnotationDisplayableManager::~vtkMRMLAnnotationDisplayableManager()
 
   this->Helper->Delete();
   this->m_ClickCounter->Delete();
-
-  this->m_SliceNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -104,10 +99,10 @@ void vtkMRMLAnnotationDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "DisableInteractorStyleEventsProcessing = " << this->DisableInteractorStyleEventsProcessing << std::endl;
-  if (this->m_SliceNode &&
-      this->m_SliceNode->GetID())
+  if (this->GetSliceNode() &&
+      this->GetSliceNode()->GetID())
     {
-    os << indent << "Slice node id = " << this->m_SliceNode->GetID() << std::endl;
+    os << indent << "Slice node id = " << this->GetSliceNode()->GetID() << std::endl;
     }
   else
     {
@@ -531,10 +526,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeModifiedEvent(vtkM
 
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
-  if(this->m_SliceNode)
+  if(this->Is2DDisplayableManager())
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
-    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+    this->OnMRMLSliceNodeModifiedEvent(this->GetSliceNode());
     }
   else
     {
@@ -583,10 +578,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
   if (widget)
     {
 
-    if(this->m_SliceNode)
+    if(this->Is2DDisplayableManager())
       {
       // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
-      this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+      this->OnMRMLSliceNodeModifiedEvent(this->GetSliceNode());
       }
     else
       {
@@ -642,10 +637,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationNodeTransformModifiedE
     }
 
 
-  if(this->m_SliceNode)
+  if(this->Is2DDisplayableManager())
     {
     // force a OnMRMLSliceNodeModified() call to hide/show widgets according to the selected slice
-    this->OnMRMLSliceNodeModifiedEvent(this->m_SliceNode);
+    this->OnMRMLSliceNodeModifiedEvent(this->GetSliceNode());
     }
   else
     {
@@ -688,28 +683,19 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
     return;
     }
 
-  vtkMRMLSliceNode * sliceNode = vtkMRMLSliceNode::SafeDownCast(caller);
-
-  if (sliceNode)
+  if (this->GetSliceNode())
     {
     // the associated renderWindow is a 2D SliceView
     // this is the entry point for all events fired by one of the three sliceviews
     // (f.e. change slice number, zoom etc.)
-
-    // we remember that this instance of the displayableManager deals with 2D
-    // this is important for widget creation etc. and save the actual SliceNode
-    // because during Slicer startup the SliceViews fire events, it will be always set correctly
-    this->m_SliceNode = sliceNode;
-
     // now we call the handle for specific sliceNode actions
-    this->OnMRMLSliceNodeModifiedEvent(sliceNode);
+    this->OnMRMLSliceNodeModifiedEvent(this->GetSliceNode());
 
     // and exit
     return;
     }
 
   vtkMRMLViewNode * viewNode = vtkMRMLViewNode::SafeDownCast(caller);
-
   if (viewNode)
     {
     // the associated renderWindow is a 3D View
@@ -722,22 +708,13 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
 //---------------------------------------------------------------------------
 vtkMRMLSliceNode * vtkMRMLAnnotationDisplayableManager::GetSliceNode()
 {
-
-  return this->m_SliceNode;
-
+  return vtkMRMLSliceNode::SafeDownCast(this->GetMRMLDisplayableNode());
 }
 
 //---------------------------------------------------------------------------
 bool vtkMRMLAnnotationDisplayableManager::Is2DDisplayableManager()
 {
-  if (this->m_SliceNode != NULL)
-    {
-    return true;
-    }
-  else
-    {
-    return false;
-    }
+  return GetSliceNode() != 0;
 }
 
 //---------------------------------------------------------------------------
@@ -861,11 +838,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         this->GetWorldToDisplayCoordinates(transformedP1,displayP1);
         this->GetWorldToDisplayCoordinates(transformedP2,displayP2);
 
-        //std::cout << this->m_SliceNode->GetName() << " ras1: " << p1[0] << "," << p1[1] << "," << p1[2] << std::endl;
-        //std::cout << this->m_SliceNode->GetName() << " ras2: " << p2[0] << "," << p2[1] << "," << p2[2] << std::endl;
+        //std::cout << this->GetSliceNode()->GetName() << " ras1: " << p1[0] << "," << p1[1] << "," << p1[2] << std::endl;
+        //std::cout << this->GetSliceNode()->GetName() << " ras2: " << p2[0] << "," << p2[1] << "," << p2[2] << std::endl;
 
-        //std::cout << this->m_SliceNode->GetName() << " display1: " << displayP1[0] << "," << displayP1[1] << "," << displayP1[2] << std::endl;
-        //std::cout << this->m_SliceNode->GetName() << " display2: " << displayP2[0] << "," << displayP2[1] << "," << displayP2[2] << std::endl;
+        //std::cout << this->GetSliceNode()->GetName() << " display1: " << displayP1[0] << "," << displayP1[1] << "," << displayP1[2] << std::endl;
+        //std::cout << this->GetSliceNode()->GetName() << " display2: " << displayP2[0] << "," << displayP2[1] << "," << displayP2[2] << std::endl;
 
         // get line between p1 and p2
         // g(x) = p1 + r*(p2-p1)
@@ -873,9 +850,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         // compute intersection with slice plane
         // if !=0: mark the intersection
 
-        //double this->m_SliceNode->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
-        // t = (this->m_SliceNode->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
-        double t = (this->m_SliceNode->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
+        //double this->GetSliceNode()->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
+        // t = (this->GetSliceNode()->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
+        double t = (this->GetSliceNode()->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
 
         // p2-p1
         double P2minusP1[3];
@@ -947,7 +924,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         marker->On();
         marker->CompleteInteraction();
 
-        //std::cout << this->m_SliceNode->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
+        //std::cout << this->GetSliceNode()->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
 
         }
 
@@ -1062,7 +1039,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     // the third coordinate of the displayCoordinates is the distance to the slice
     float distanceToSlice = displayCoordinates[2];
 
-    if (distanceToSlice < -0.5 || distanceToSlice >= (0.5+this->m_SliceNode->GetDimensions()[2]-1))
+    if (distanceToSlice < -0.5 || distanceToSlice >= (0.5+this->GetSliceNode()->GetDimensions()[2]-1))
       {
       // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice
       // hence, we do not want to show this widget

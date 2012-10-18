@@ -212,8 +212,6 @@ private:
 
   int DisableInteractorStyleEventsProcessing;
 
-  vtkMRMLSliceNode * m_SliceNode;
-
   /// Scale factor for 2d windows
   double ScaleFactor2D;
 };
