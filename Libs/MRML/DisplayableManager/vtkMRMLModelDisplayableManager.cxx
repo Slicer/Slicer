@@ -633,6 +633,11 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* 
     {
     return false;
     }
+  if (modelNode->IsA("vtkMRMLAnnotationNode"))
+    {
+    /// issue 2666: don't manage annotation nodes - don't show lines between the control points
+    return false;
+    }
   return modelNode->GetPolyData() ? true : false;
 }
 
@@ -642,6 +647,11 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node
   vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(node);
   if (!modelDisplayNode)
     {
+    return false;
+    }
+  if (modelDisplayNode->IsA("vtkMRMLAnnotationDisplayNode"))
+    {
+    /// issue 2666: don't manage annotation nodes - don't show lines between the control points
     return false;
     }
   return modelDisplayNode->GetInputPolyData() ? true : false;
@@ -832,9 +842,11 @@ void vtkMRMLModelDisplayableManager
 
     int clipping = displayNode->GetClipping();
     int visibility = displayNode->GetVisibility();
-    vtkPolyData *polyData =
-      modelDisplayNode ? modelDisplayNode->GetOutputPolyData() : NULL;
-
+    vtkPolyData *polyData = NULL;
+    if (this->IsModelDisplayable(modelDisplayNode))
+      {
+      polyData = modelDisplayNode->GetOutputPolyData();
+      }
     if (hdnode)
       {
       clipping = hdnode->GetClipping();
@@ -843,7 +855,7 @@ void vtkMRMLModelDisplayableManager
         hierarchyModelDisplayNode->GetPolyData() : NULL;
       }
     // hierarchy display nodes may not have poly data pointer
-    if (polyData == 0)
+    if (polyData == 0 && this->IsModelDisplayable(modelNode))
       {
       polyData = modelNode ? modelNode->GetPolyData() : NULL;
       }
