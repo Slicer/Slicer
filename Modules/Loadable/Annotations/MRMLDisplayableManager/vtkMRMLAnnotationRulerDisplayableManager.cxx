@@ -183,15 +183,17 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
   rulerWidget->SetInteractor(this->GetInteractor());
   rulerWidget->SetCurrentRenderer(this->GetRenderer());
+  rulerWidget->SetIs2DWidget(this->Is2DDisplayableManager());
 
-  if (this->GetSliceNode())
+  if (this->Is2DDisplayableManager())
     {
 
     // this is a 2D displayableManager
     vtkNew<vtkPointHandleRepresentation2D> handle;
 //    handle->GetProperty()->SetColor(1,0,0);
 
-    vtkNew<vtkAnnotationRulerRepresentation> dRep;
+    vtkAnnotationRulerRepresentation * dRep =
+        vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
     dRep->SetHandleRepresentation(handle.GetPointer());
     dRep->InstantiateHandleRepresentation();
 
@@ -202,8 +204,6 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
 
     dRep->RulerModeOn();
     dRep->SetRulerDistance(10);
-
-    rulerWidget->SetRepresentation(dRep.GetPointer());
 
     bool showWidget = true;
     showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
@@ -222,7 +222,9 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     vtkNew<vtkPointHandleRepresentation3D> handle2;
 //    handle2->GetProperty()->SetColor(1,1,0);
 
-    vtkNew<vtkAnnotationRulerRepresentation3D> dRep2;
+    vtkAnnotationRulerRepresentation3D * dRep2 =
+        vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+
     dRep2->SetHandleRepresentation(handle2.GetPointer());
     dRep2->InstantiateHandleRepresentation();
     dRep2->RulerModeOn();
@@ -235,8 +237,6 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     cubeSource->SetZLength(1.0);
     cubeSource->Update();
     //dRep2->UpdateGlyphPolyData(cubeSource->GetOutput());
-
-    rulerWidget->SetRepresentation(dRep2.GetPointer());
 
     rulerWidget->SetWidgetStateToManipulate();
     rulerWidget->On();

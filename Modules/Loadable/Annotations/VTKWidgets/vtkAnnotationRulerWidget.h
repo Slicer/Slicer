@@ -34,10 +34,18 @@ public:
   virtual void CreateDefaultRepresentation();
   virtual void CreateDefaultRepresentation3D();
 
+  /// Return True if the widget will build its 2D representation
+  bool GetIs2DWidget();
+
+  /// Set the widget mode. By default, the widget will build its 2D representation
+  void SetIs2DWidget(int value);
+
 protected:
 
   vtkAnnotationRulerWidget();
   virtual ~vtkAnnotationRulerWidget();
+
+  bool Is2DWidget;
 
 private:
 
