@@ -808,10 +808,10 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
                       "MRMLScene does NOT contain any InteractionNode");
       }
     }
-  this->SetMRMLScene(sceneToObserve);
   vtkSetAndObserveMRMLNodeEventsMacro(this->Internal->MRMLDisplayableNode,
                                       newMRMLDisplayableNode,
                                       this->Internal->MRMLDisplayableNodeObservableEvents);
+  this->SetMRMLScene(sceneToObserve);
   this->SetUpdateFromMRMLRequested(true);
   this->CreateIfPossible();
   this->RequestRender();
