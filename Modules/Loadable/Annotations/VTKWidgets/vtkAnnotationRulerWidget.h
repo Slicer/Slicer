@@ -32,7 +32,6 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void CreateDefaultRepresentation();
-  virtual void CreateDefaultRepresentation3D();
 
   /// Return True if the widget will build its 2D representation
   bool GetIs2DWidget();
