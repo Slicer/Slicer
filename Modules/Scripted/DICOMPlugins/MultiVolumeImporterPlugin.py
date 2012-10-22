@@ -21,6 +21,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     self.tags['seriesInstanceUID'] = "0020,000E"
     self.tags['seriesDescription'] = "0008,103E"
+    self.tags['position'] = "0020,0032"
 
     # tags used to identify multivolumes
     self.multiVolumeTags = {}
@@ -42,6 +43,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
 
+    self.epsilon = epsilon
+
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
     corresponding to ways of interpreting the 
@@ -61,6 +64,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
   def examineFilesMultiseries(self,files):
 
+    print('MultiVolumeImportPlugin:examineMultiseries')
     loadables = []
 
     mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime'])
@@ -70,7 +74,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
       nFrames = mvNode.GetNumberOfFrames()
-        
+
+      if self.isFrameOriginConsistent(files, mvNode) == False:
+        continue
+
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = files
       loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
@@ -120,6 +127,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     # now iterate over all subseries file lists and try to parse the
     # multivolumes
 
+
     for key in subseriesLists.keys():
 
       mvNodes = self.initMultiVolumes(subseriesLists[key])
@@ -130,6 +138,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
         nFrames = mvNode.GetNumberOfFrames()
         
+        if self.isFrameOriginConsistent(files, mvNode) == False:
+          continue
+
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
         loadable.name = subseriesDescriptions[key] + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
@@ -141,6 +152,36 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadables.append(loadable)
 
     return loadables
+
+  # return true is the origins for the individual frames are within
+  # self.epsilon apart
+  def isFrameOriginConsistent(self, files, mvNode):
+    nFrames = mvNode.GetNumberOfFrames()
+
+    # sort files for each frame
+    nFiles = len(files)
+    filesPerFrame = nFiles/nFrames
+    frameOrigins = []
+    
+    scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
+    for frameNumber in range(nFrames):     
+      frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
+      # sv plugin will sort the filenames by geometric order
+      svs = scalarVolumePlugin.examine([frameFileList])
+      if len(svs) == 0:
+        return False
+
+      positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags['position'])
+      frameOrigins.append([float(zz) for zz in positionTag.split('\\')])
+
+    # compare frame origins with the origin of the first frame
+    firstO = frameOrigins[0]
+    for o in frameOrigins[1:]:
+      if abs(o[0]-firstO[0])>self.epsilon or abs(o[1]-firstO[1])>self.epsilon or abs(o[2]-firstO[2])>self.epsilon:
+        # frames have mismatching origins
+        return False
+
+    return True
 
   def load(self,loadable):
     """Load the selection as a MultiVolume, if multivolume attribute is
