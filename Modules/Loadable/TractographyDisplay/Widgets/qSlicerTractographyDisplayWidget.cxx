@@ -569,8 +569,11 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
             }
           break;
           }
-        else
+        else if (d->FiberBundleNode && d->FiberBundleNode->GetPolyData() &&
+                 d->FiberBundleNode->GetPolyData()->GetPoints() &&
+                 d->FiberBundleNode->GetPolyData()->GetPointData() )
          {
+         // no tensors in a valid polydata
          d->FiberBundleDisplayNode->SetColorMode(vtkMRMLFiberBundleDisplayNode::colorModeSolid);
          }
       case vtkMRMLFiberBundleDisplayNode::colorModeSolid:
