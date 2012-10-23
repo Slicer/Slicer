@@ -257,7 +257,7 @@ class AtlasTestsTest(unittest.TestCase):
   def test_KneeAtlasTest(self):
     self.delayDisplay('Running Knee Atlas Test')
     downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=7928', 'KneeAtlas.mrb', slicer.util.loadScene),
+        ('http://slicer.kitware.com/midas3/download?items=9912', 'KneeAtlas2012.mrb', slicer.util.loadScene),
         )
     self.perform_AtlasTest(downloads,'I')
 
