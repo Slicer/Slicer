@@ -308,11 +308,15 @@ class AtlasTestsTest(unittest.TestCase):
         hierarchyOriginalExpanded = mh.GetExpanded()
         # collapse and change the colour on the hierarchy to full red
         mh.SetExpanded(0)
+        self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = false")
         mhd.SetColor(1,0,0)
+        self.delayDisplay("Model hierarchy " + mh.GetName() + ": color = red")        
         # set the collapsed visibility to 0
         mhd.SetVisibility(0)
+        self.delayDisplay("Model hierarchy " + mh.GetName() + ": visibility = off")
         # expand, should see all models in correct colour
         mh.SetExpanded(1)
+        self.delayDisplay("Model hierarchy " + mh.GetName() + ": expanded = true")
         # reset the hierarchy 
         mhd.SetVisibility(hierarchyOriginalVisibility)
         mhd.SetColor(hierarchyOriginalColour)
