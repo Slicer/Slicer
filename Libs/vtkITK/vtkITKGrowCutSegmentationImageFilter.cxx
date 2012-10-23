@@ -646,6 +646,11 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
   return;
 }
 
+void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation()
+{
+  Superclass::ExecuteInformation();
+}
+
 void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation(
   vtkImageData **inputs, vtkImageData *output)
 {

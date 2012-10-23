@@ -90,8 +90,12 @@ protected:
   // define the output information (input gestures and output
   // segmentation images should be same image type)
   virtual void ExecuteInformation(vtkImageData **, vtkImageData *);
+
+  // Need to provide ExecuteInformation() or it will be hidden by the
+  // override to ExecuteInformation(vtkImageData**, vtkImageData**)
+  virtual void ExecuteInformation();
   
-   
+  
 private:
   vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
   void operator=(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
