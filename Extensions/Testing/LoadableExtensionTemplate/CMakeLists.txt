@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.7)
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME LoadableExtensionTemplate)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Extensions/LoadableExtensionTemplate")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.2/Extensions/LoadableExtensionTemplate")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling a loadable module")

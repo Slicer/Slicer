@@ -4,7 +4,7 @@
   <title>DTIexport</title>
   <description>Export DTI data to various file formats</description>
   <version>1.0</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/DTIExport</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/DTIExport</documentation-url>
   <license></license>
   <contributor>Sonia Pujol (SPL, BWH)</contributor>
   <acknowledgements>This work is part of the National Alliance for Medical Image Computing (NA-MIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.</acknowledgements>

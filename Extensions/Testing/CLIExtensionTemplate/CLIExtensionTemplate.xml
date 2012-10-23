@@ -4,7 +4,7 @@
   <title>CLIExtensionTemplate</title>
   <description><![CDATA[This is a CLI module (based on GaussianBlurImageFilter) bundled in an extension]]></description>
   <version>0.0.1</version>
-  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.1/Modules/CLIExtensionTemplate</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/CLIExtensionTemplate</documentation-url>
   <license>Slicer</license>
   <contributor>Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)</contributor>
   <acknowledgements>This work was partially funded by NIH grant 3P41RR013218-12S1</acknowledgements>
