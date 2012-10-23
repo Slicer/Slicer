@@ -35,6 +35,7 @@
 #include "qSlicerVolumeRenderingModule.h"
 #include "qSlicerVolumeRenderingModuleWidget.h"
 #include "qSlicerVolumeRenderingSettingsPanel.h"
+#include "VolumeRenderingInstantiator.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerVolumeRenderingModule, qSlicerVolumeRenderingModule);
