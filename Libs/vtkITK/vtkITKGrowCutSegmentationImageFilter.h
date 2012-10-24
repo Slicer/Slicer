@@ -2,11 +2,12 @@
 #ifndef __vtkITKGrowCutSegmentationImageFilter_h
 #define __vtkITKGrowCutSegmentationImageFilter_h
 
-#include "vtkITK.h" 
-//#include "vtkImageTwoInputFilter.h"
-#include "vtkImageMultipleInputFilter.h"
-#include "vtkPoints.h"
-#include "vtkImageData.h"
+#include "vtkITK.h"
+
+// VTK includes
+#include <vtkImageMultipleInputFilter.h>
+
+class vtkImageData;
 
 /// \brief- Wrapper class around itk::GrowCutSegmentationImageFilter
 ///
@@ -30,76 +31,42 @@ public:
   vtkTypeRevisionMacro(vtkITKGrowCutSegmentationImageFilter,vtkImageMultipleInputFilter );
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Methods to set/get maxIterations
-  //  vtkSetMacro(MaxIterations, double);
-  //vtkGetMacro(MaxIterations, double);
-
-  // Methods to set/get objectSize
+  /// Methods to set/get objectSize
   vtkSetMacro(ObjectSize, double);
   vtkGetMacro(ObjectSize, double);
 
-  // Methods to set/get contrastNoiseRatio
+  /// Methods to set/get contrastNoiseRatio
   vtkSetMacro(ContrastNoiseRatio, double);
-  vtkGetMacro(ContrastNoiseRatio, double);    
+  vtkGetMacro(ContrastNoiseRatio, double);
 
-
-  // Methods to set/get contrastNoiseRatioThreshold 
-  // cnrThreshold
-  //vtkSetMacro(CnrThreshold, double);
-  //vtkGetMacro(CnrThreshold, double);
-
-  // Methods to set/get priorSegmentConfidence
+  /// Methods to set/get priorSegmentConfidence
   vtkSetMacro(PriorSegmentConfidence, double);
   vtkGetMacro(PriorSegmentConfidence, double);
 
-  // Methods to set the gestureColors
-  //void SetGestureColors( vtkPoints *points )
-// {
-//    GestureColors = points;
-//    this->Modified();
-// }
- 
-  // Method for getting the gesture colors
- // vtkPoints* GetGestureColors (){
- //   return GestureColors;
- // }
-
-  
-
 public:
-  // member variables
-  //  double MaxIterations;
   double ObjectSize;
   double PriorSegmentConfidence;
   double ContrastNoiseRatio;
- // vtkPoints *GestureColors;
-
-  // optional : contrastNoiseRatio Threshold. Use this for producing 
-  // output with values over the threshold in the final segmentation
-  // not implemented yet 
-  //double CnrThreshold; 
 
 
 protected:
   vtkITKGrowCutSegmentationImageFilter();
-  ~vtkITKGrowCutSegmentationImageFilter() {};
+  ~vtkITKGrowCutSegmentationImageFilter(){}
 
   virtual void ExecuteData(vtkDataObject *outData);
 
-  // Override ExecuteInformation so that the second input is used to
-  // define the output information (input gestures and output
-  // segmentation images should be same image type)
+  /// Override ExecuteInformation so that the second input is used to
+  /// define the output information (input gestures and output
+  /// segmentation images should be same image type)
   virtual void ExecuteInformation(vtkImageData **, vtkImageData *);
 
-  // Need to provide ExecuteInformation() or it will be hidden by the
-  // override to ExecuteInformation(vtkImageData**, vtkImageData**)
+  /// Need to provide ExecuteInformation() or it will be hidden by the
+  /// override to ExecuteInformation(vtkImageData**, vtkImageData**)
   virtual void ExecuteInformation();
-  
-  
+
 private:
   vtkITKGrowCutSegmentationImageFilter(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
   void operator=(const vtkITKGrowCutSegmentationImageFilter&);  // Not implemented.
-  
 
 };
 
