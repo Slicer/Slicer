@@ -1576,38 +1576,10 @@ void qMRMLSliceControllerWidget::setSliceVisible(bool visible)
     {
     return;
     }
-  vtkMRMLLayoutNode *layoutNode = vtkMRMLLayoutNode::SafeDownCast(
-    this->mrmlScene()->GetNthNodeByClass(0,"vtkMRMLLayoutNode"));
-  if (d->MRMLSliceCompositeNode->GetLinkedControl())
-    {
-    vtkCollection* sliceNodes = this->mrmlScene()->GetNodesByClass("vtkMRMLSliceNode");
-    if (!sliceNodes)
-      {
-      return;
-      }
-    vtkMRMLSliceNode* sliceNode = 0;
-    for(sliceNodes->InitTraversal();
-        (sliceNode = vtkMRMLSliceNode::SafeDownCast(sliceNodes->GetNextItemAsObject()));)
-      {
-      // if compareview, send only compareview slices to 3D main viewer; otherwise,
-      // only send red, yellow, and green to 3D main viewer.
-      if (layoutNode ? ((QString(sliceNode->GetLayoutName()) == "Compare" &&
-           layoutNode->GetViewArrangement() == vtkMRMLLayoutNode::SlicerLayoutCompareView) ||
-          (QString(sliceNode->GetLayoutName()) != "Compare" &&
-           layoutNode->GetViewArrangement() != vtkMRMLLayoutNode::SlicerLayoutCompareView))
-          : true)
-        {
-        this->mrmlScene()->SaveStateForUndo(sliceNode);
-        sliceNode->SetSliceVisible(visible);
-        }
-      }
-    sliceNodes->Delete();
-    }
-  else
-    {
-    this->mrmlScene()->SaveStateForUndo(d->MRMLSliceNode);
-    d->MRMLSliceNode->SetSliceVisible(visible);
-    }
+  
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceVisibleFlag);
+  d->MRMLSliceNode->SetSliceVisible(visible);
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------

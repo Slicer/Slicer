@@ -425,6 +425,31 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           sNode->SetUseLabelOutline( sliceNode->GetUseLabelOutline() );
           }
         
+        // Broadcasting the visibility of slice in 3D
+        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::SliceVisibleFlag)
+          {
+          std::string layoutName(sliceNode->GetLayoutName() ? sliceNode->GetLayoutName() : "");
+          std::string lname(sNode->GetLayoutName() ? sNode->GetLayoutName() : "");
+          if (layoutName.find("Compare") == 0)
+            {
+            // Compare view, only broadcast to compare views
+            if (lname.find("Compare") == 0)
+              {
+              // Compare view, broadcast
+              sNode->SetSliceVisible(sliceNode->GetSliceVisible());
+              }
+            }
+          else
+            {
+            // Not a compare view, only broadcast to non compare views
+            if (lname.find("Compare") != 0)
+              {
+              // not a Compare view, broadcast
+              sNode->SetSliceVisible(sliceNode->GetSliceVisible());
+              }
+            }
+          }        
 
         //
         // End of the block for broadcasting parametes and command

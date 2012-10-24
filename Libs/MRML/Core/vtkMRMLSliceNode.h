@@ -315,6 +315,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
   ///    MultiplanarReformatFlag - broadcast reformat widget transformation
   ///    XYZOriginFlag - broadcast the XYZOrigin to all linked viewers
   ///    LabelOutlineFlag - broadcast outlining the labelmaps
+  ///    SliceVisibleFlag = broadcast display of slice in 3D
   enum InteractionFlagType
   {
     None = 0,
@@ -324,8 +325,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
     ResetFieldOfViewFlag = 8, // broadcast a reset to all viewers
     MultiplanarReformatFlag = 16, // broadcast reformat widget transformation
     XYZOriginFlag = 32,
-    LabelOutlineFlag = 64
-    // Next one needs to be 64
+    LabelOutlineFlag = 64,
+    SliceVisibleFlag = 128
+    // Next one needs to be 256
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated
