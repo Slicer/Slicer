@@ -648,7 +648,7 @@ void vtkITKGrowCutSegmentationImageFilter::ExecuteData(
 
 void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation()
 {
-  Superclass::ExecuteInformation();
+  this->Superclass::ExecuteInformation();
 }
 
 void vtkITKGrowCutSegmentationImageFilter::ExecuteInformation(
