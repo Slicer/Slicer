@@ -1824,16 +1824,15 @@ void qMRMLSliceControllerWidget::showLabelOutline(bool show)
     {
     return;
     }
-  vtkMRMLSliceNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
+
+  if (!d->MRMLSliceNode)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
-      {
-      node->SetUseLabelOutline(show);
-      }
+    return;
     }
+
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
+  d->MRMLSliceNode->SetUseLabelOutline(show);
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------

@@ -418,6 +418,14 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
           this->BroadcastLastRotation(sliceNode,sNode);
           }
 
+        // Setting the label outline mode
+        if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+          & vtkMRMLSliceNode::LabelOutlineFlag)
+          {
+          sNode->SetUseLabelOutline( sliceNode->GetUseLabelOutline() );
+          }
+        
+
         //
         // End of the block for broadcasting parametes and command
         // that do not require the orientation to match
