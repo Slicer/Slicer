@@ -156,7 +156,10 @@ void qSlicerLoadableModule::setup()
     {
     // By convention, if the module is not embedded,
     // "<MODULEPATH>/Python" will be appended to PYTHONPATH
-    Self::importModulePythonExtensions(app->corePythonManager(), app->intDir(), this->path());
+    if (!Self::importModulePythonExtensions(app->corePythonManager(), app->intDir(), this->path()))
+      {
+      qWarning() << "qSlicerLoadableModule::setup - Failed to import module" << this->name() << "python extensions";
+      }
     }
 #endif
 }
