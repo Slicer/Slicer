@@ -19,54 +19,54 @@
 ==============================================================================*/
 
 // FooBar Widgets includes
-#include "qSlicerFooBarWidget.h"
-#include "ui_qSlicerFooBarWidget.h"
+#include "qSlicerLoadableExtensionTemplateFooBarWidget.h"
+#include "ui_qSlicerLoadableExtensionTemplateFooBarWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_LoadableExtensionTemplate
-class qSlicerFooBarWidgetPrivate
-  : public Ui_qSlicerFooBarWidget
+class qSlicerLoadableExtensionTemplateFooBarWidgetPrivate
+  : public Ui_qSlicerLoadableExtensionTemplateFooBarWidget
 {
-  Q_DECLARE_PUBLIC(qSlicerFooBarWidget);
+  Q_DECLARE_PUBLIC(qSlicerLoadableExtensionTemplateFooBarWidget);
 protected:
-  qSlicerFooBarWidget* const q_ptr;
+  qSlicerLoadableExtensionTemplateFooBarWidget* const q_ptr;
 
 public:
-  qSlicerFooBarWidgetPrivate(
-    qSlicerFooBarWidget& object);
-  virtual void setupUi(qSlicerFooBarWidget*);
+  qSlicerLoadableExtensionTemplateFooBarWidgetPrivate(
+    qSlicerLoadableExtensionTemplateFooBarWidget& object);
+  virtual void setupUi(qSlicerLoadableExtensionTemplateFooBarWidget*);
 };
 
 // --------------------------------------------------------------------------
-qSlicerFooBarWidgetPrivate
-::qSlicerFooBarWidgetPrivate(
-  qSlicerFooBarWidget& object)
+qSlicerLoadableExtensionTemplateFooBarWidgetPrivate
+::qSlicerLoadableExtensionTemplateFooBarWidgetPrivate(
+  qSlicerLoadableExtensionTemplateFooBarWidget& object)
   : q_ptr(&object)
 {
 }
 
 // --------------------------------------------------------------------------
-void qSlicerFooBarWidgetPrivate
-::setupUi(qSlicerFooBarWidget* widget)
+void qSlicerLoadableExtensionTemplateFooBarWidgetPrivate
+::setupUi(qSlicerLoadableExtensionTemplateFooBarWidget* widget)
 {
-  this->Ui_qSlicerFooBarWidget::setupUi(widget);
+  this->Ui_qSlicerLoadableExtensionTemplateFooBarWidget::setupUi(widget);
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerFooBarWidget methods
+// qSlicerLoadableExtensionTemplateFooBarWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerFooBarWidget
-::qSlicerFooBarWidget(QWidget* parentWidget)
+qSlicerLoadableExtensionTemplateFooBarWidget
+::qSlicerLoadableExtensionTemplateFooBarWidget(QWidget* parentWidget)
   : Superclass( parentWidget )
-  , d_ptr( new qSlicerFooBarWidgetPrivate(*this) )
+  , d_ptr( new qSlicerLoadableExtensionTemplateFooBarWidgetPrivate(*this) )
 {
-  Q_D(qSlicerFooBarWidget);
+  Q_D(qSlicerLoadableExtensionTemplateFooBarWidget);
   d->setupUi(this);
 }
 
 //-----------------------------------------------------------------------------
-qSlicerFooBarWidget
-::~qSlicerFooBarWidget()
+qSlicerLoadableExtensionTemplateFooBarWidget
+::~qSlicerLoadableExtensionTemplateFooBarWidget()
 {
 }
