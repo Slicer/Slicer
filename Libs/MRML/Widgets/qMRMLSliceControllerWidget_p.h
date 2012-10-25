@@ -82,7 +82,7 @@ public:
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
   
-  void enableVisibilityButtons();
+  void enableLayerWidgets();
 
   vtkMRMLSliceLogic* compositeNodeLogic(vtkMRMLSliceCompositeNode* node);
   vtkMRMLSliceLogic* sliceNodeLogic(vtkMRMLSliceNode* node);

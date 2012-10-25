@@ -709,7 +709,7 @@ vtkSmartPointer<vtkCollection> qMRMLSliceControllerWidgetPrivate::saveNodesForUn
 }
 
 // --------------------------------------------------------------------------
-void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
+void qMRMLSliceControllerWidgetPrivate::enableLayerWidgets()
 {
   bool hasBackground = this->MRMLSliceCompositeNode ?
     this->MRMLSliceCompositeNode->GetBackgroundVolumeID() != 0 : false;
@@ -733,7 +733,11 @@ void qMRMLSliceControllerWidgetPrivate::enableVisibilityButtons()
 
   this->actionLabelMapVisibility->setEnabled(enableVisibility && hasLabelMap);
   this->LabelMapOpacitySlider->setEnabled(enableVisibility && hasLabelMap);
-  this->actionLabelMapOutline->setEnabled(enableVisibility && hasLabelMap);
+
+  // enable the interpolation or outline modes
+  this->actionLabelMapOutline->setEnabled(hasLabelMap);
+  this->actionBackgroundInterpolation->setEnabled(hasBackground);
+  this->actionForegroundInterpolation->setEnabled(hasForeground);
 }
 
 // --------------------------------------------------------------------------
@@ -925,8 +929,8 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
 
   // Since we blocked the signals when setting the
   // Foreground/Background/Label volumes, we need to explictly call
-  // the function to enable the buttons
-  this->enableVisibilityButtons();
+  // the function to enable the buttons, slides, etc.
+  this->enableLayerWidgets();
 }
 
 
@@ -945,7 +949,7 @@ void qMRMLSliceControllerWidgetPrivate::onForegroundLayerNodeSelected(vtkMRMLNod
   this->MRMLSliceCompositeNode->SetForegroundVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
 
-  this->enableVisibilityButtons();
+  this->enableLayerWidgets();
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
@@ -971,7 +975,7 @@ void qMRMLSliceControllerWidgetPrivate::onBackgroundLayerNodeSelected(vtkMRMLNod
   this->MRMLSliceCompositeNode->SetBackgroundVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
 
-  this->enableVisibilityButtons();
+  this->enableLayerWidgets();
 
   vtkMRMLVolumeNode* volumeNode = vtkMRMLVolumeNode::SafeDownCast(node);
   vtkMRMLScalarVolumeDisplayNode* displayNode =
@@ -997,7 +1001,7 @@ void qMRMLSliceControllerWidgetPrivate::onLabelMapNodeSelected(vtkMRMLNode * nod
   this->MRMLSliceCompositeNode->SetLabelVolumeID(node ? node->GetID() : 0);
   this->SliceLogic->EndSliceCompositeNodeInteraction();
 
-  this->enableVisibilityButtons();
+  this->enableLayerWidgets();
 }
 
 // --------------------------------------------------------------------------
