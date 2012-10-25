@@ -37,6 +37,8 @@ class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractSliceViewDisplayableMana
 {
 public:
   
+  typedef vtkMRMLAbstractSliceViewDisplayableManager Self;
+
   static vtkMRMLAbstractSliceViewDisplayableManager *New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLAbstractSliceViewDisplayableManager,
@@ -45,17 +47,33 @@ public:
   /// Get MRML SliceNode
   vtkMRMLSliceNode * GetMRMLSliceNode();
 
-  /// Convert device coordinates to XYZ coordinates. parameter xyz
-  /// is double[3]
+  /// Convert device coordinates (display) to XYZ coordinates (viewport).
+  /// Parameter \a xyz is double[3]
+  /// \sa ConvertDeviceToXYZ(vtkRenderWindowInteractor *, vtkMRMLSliceNode *, double x, double y, double xyz[3])
   void ConvertDeviceToXYZ(double x, double y, double xyz[3]);
 
-  /// Convert RAS to XYZ coordinates. parameters ras and xyz are
-  /// double[3]. xyz[2] is the lightbox id.
+  /// Convenience function allowing to convert device coordinates (display) to XYZ coordinates (viewport).
+  /// Parameter \a xyz is double[3]
+  static void ConvertDeviceToXYZ(vtkRenderWindowInteractor * interactor,
+                                 vtkMRMLSliceNode * sliceNode, double x, double y, double xyz[3]);
+
+  /// Convert RAS to XYZ coordinates (viewport).
+  /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
+  /// \sa ConvertRASToXYZ(vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
   void ConvertRASToXYZ(double ras[3], double xyz[3]);
 
-  /// Convert XYZ to RAS coordinates. parameters ras and xyz are
-  /// double[3]. xyz[2] is the lightbox id.
+  /// Convenience function allowing to convert RAS to XYZ coordinates (viewport).
+  /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
+  static void ConvertRASToXYZ(vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3]);
+
+  /// Convert XYZ (viewport) to RAS coordinates.
+  /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
+  /// \sa ConvertXYZToRAS(vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
   void ConvertXYZToRAS(double xyz[3], double ras[3]);
+
+  /// Convenience function allowing to Convert XYZ (viewport) to RAS coordinates.
+  /// Parameters \a ras and \a xyz are double[3]. \a xyz[2] is the lightbox id.
+  static void ConvertXYZToRAS(vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3]);
   
 protected:
 

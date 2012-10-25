@@ -74,26 +74,33 @@ vtkMRMLSliceNode * vtkMRMLAbstractSliceViewDisplayableManager::GetMRMLSliceNode(
 }
 
 //---------------------------------------------------------------------------
-/// Convert display to viewport coordinates. XYZ is double[3]
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, double y, double xyz[3])
 {
-  if (xyz == NULL || this->GetInteractor() == NULL || this->GetMRMLSliceNode() == NULL)
+  Self::ConvertDeviceToXYZ(this->GetInteractor(), this->GetMRMLSliceNode(), x, y, xyz);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(
+    vtkRenderWindowInteractor * interactor, vtkMRMLSliceNode * sliceNode,
+    double x, double y, double xyz[3])
+{
+  if (xyz == NULL || interactor == NULL || sliceNode == NULL)
     {
     return;
     }
 
-  double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
-  double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
-  
-  int numberOfColumns = this->GetMRMLSliceNode()->GetLayoutGridColumns();
-  int numberOfRows = this->GetMRMLSliceNode()->GetLayoutGridRows();
+  double windowWidth = interactor->GetRenderWindow()->GetSize()[0];
+  double windowHeight = interactor->GetRenderWindow()->GetSize()[1];
+
+  int numberOfColumns = sliceNode->GetLayoutGridColumns();
+  int numberOfRows = sliceNode->GetLayoutGridRows();
 
   float tempX = x / windowWidth;
   float tempY = (windowHeight - y) / windowHeight;
 
   float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
 
-  vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
+  vtkRenderer* pokedRenderer = interactor->FindPokedRenderer(x,y);
 
   xyz[0] = x - (pokedRenderer ? pokedRenderer->GetOrigin()[0] : 0.);
   xyz[1] = y - (pokedRenderer ? pokedRenderer->GetOrigin()[1] : 0.);
@@ -101,11 +108,21 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(double x, do
 }
 
 //---------------------------------------------------------------------------
-/// Convert RAS to viewport coordinates.
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], double xyz[3])
 {
+  Self::ConvertRASToXYZ(this->GetMRMLSliceNode(), ras, xyz);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(
+    vtkMRMLSliceNode * sliceNode, double ras[3], double xyz[3])
+{
+  if (sliceNode == NULL)
+    {
+    return;
+    }
   vtkMatrix4x4 *rasToXYZ = vtkMatrix4x4::New();
-  rasToXYZ->DeepCopy(this->GetMRMLSliceNode()->GetXYToRAS());
+  rasToXYZ->DeepCopy(sliceNode->GetXYToRAS());
   rasToXYZ->Invert();
 
   double rasw[4], xyzw[4];
@@ -117,14 +134,22 @@ void vtkMRMLAbstractSliceViewDisplayableManager::ConvertRASToXYZ(double ras[3], 
 }
 
 //---------------------------------------------------------------------------
-/// Convert viewport coordinates to RAS
 void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(double xyz[3], double ras[3])
 {
+  Self::ConvertXYZToRAS(this->GetMRMLSliceNode(), xyz, ras);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(
+    vtkMRMLSliceNode * sliceNode, double xyz[3], double ras[3])
+{
+  if (sliceNode == NULL)
+    {
+    return;
+    }
   double rasw[4], xyzw[4];
   xyzw[0] = xyz[0]; xyzw[1] = xyz[1]; xyzw[2] = xyz[2]; xyzw[3] = 1.0;
 
-  this->GetMRMLSliceNode()->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
+  sliceNode->GetXYToRAS()->MultiplyPoint(xyzw, rasw);
   ras[0] = rasw[0]/rasw[3]; ras[1] = rasw[1]/rasw[3]; ras[2] = rasw[2]/rasw[3];
 }
-
-
