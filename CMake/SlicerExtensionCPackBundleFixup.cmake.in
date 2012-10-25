@@ -311,7 +311,7 @@ function(fixup_slicer_extension)
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND candiates_pattern
-      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
+      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/libq*Module${suffix}"
       "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
       )
     if(Slicer_USE_PYTHONQT)

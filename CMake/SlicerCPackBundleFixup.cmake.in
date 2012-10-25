@@ -158,7 +158,7 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_BUILD_QTLOADABLEMODULES "@Slicer_BUILD_QTLOADABLEMODULES@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND candiates_pattern
-      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*${suffix}"
+      "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/libq*Module${suffix}"
       "${app_dir}/Contents/@Slicer_QTLOADABLEMODULES_LIB_DIR@/*Python.so"
       )
     if(Slicer_USE_PYTHONQT)
