@@ -56,10 +56,10 @@
    <item row="1" column="1">
     <widget class="ctkCoordinatesWidget" name="ImageSpacingWidget">
      <property name="decimals" stdset="0">
-      <number>2</number>
+      <number>4</number>
      </property>
      <property name="minimum" stdset="0">
-      <double>0.010000000000000</double>
+      <double>0.00010000000000000</double>
      </property>
      <property name="coordinates" stdset="0">
       <string>1,1,1</string>
