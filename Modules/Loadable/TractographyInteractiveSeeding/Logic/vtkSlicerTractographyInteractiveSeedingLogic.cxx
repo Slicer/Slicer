@@ -551,7 +551,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
     fiberNode->EndModify(wasModifying);
 
-    for (int i=0; i<dnodes.size(); i++)
+    for (unsigned int i=0; i<dnodes.size(); i++)
       {
       dnodes[i]->DisableModifiedEventOff();
       }
