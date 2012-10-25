@@ -1802,7 +1802,7 @@ void qMRMLSliceControllerWidget::showLabelOutline(bool show)
     return;
     }
 
-  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::ResetFieldOfViewFlag);
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::LabelOutlineFlag);
   d->MRMLSliceNode->SetUseLabelOutline(show);
   d->SliceLogic->EndSliceNodeInteraction();
 }
