@@ -1734,17 +1734,11 @@ void qMRMLSliceControllerWidget::setLabelMapOpacity(double opacity)
     {
     return;
     }
-  vtkMRMLSliceCompositeNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);
-       (node = static_cast<vtkMRMLSliceCompositeNode*>(
-         nodes->GetNextItemAsObject(it)));)
-    {
-    if (node == d->MRMLSliceCompositeNode || this->isLinked())
-      {
-      node->SetLabelOpacity(opacity);
-      }
-    }
+
+  d->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::LabelOpacityFlag);
+  d->MRMLSliceCompositeNode->SetLabelOpacity(opacity);
+  d->SliceLogic->EndSliceCompositeNodeInteraction();
+
   // LabelOpacityToggleButton won't fire the clicked(bool) signal here because
   // we change its check state programatically.
   d->actionLabelMapVisibility->setChecked(opacity == 0.);
@@ -1763,17 +1757,11 @@ void qMRMLSliceControllerWidget::setForegroundOpacity(double opacity)
     {
     return;
     }
-  vtkMRMLSliceCompositeNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);
-       (node = static_cast<vtkMRMLSliceCompositeNode*>(
-         nodes->GetNextItemAsObject(it)));)
-    {
-    if (node == d->MRMLSliceCompositeNode || this->isLinked())
-      {
-      node->SetForegroundOpacity(opacity);
-      }
-    }
+
+  d->SliceLogic->StartSliceCompositeNodeInteraction(vtkMRMLSliceCompositeNode::ForegroundOpacityFlag);
+  d->MRMLSliceCompositeNode->SetForegroundOpacity(opacity);
+  d->SliceLogic->EndSliceCompositeNodeInteraction();
+
   // LabelOpacityToggleButton won't fire the clicked(bool) signal here because
   // we change its check state programatically.
   d->actionForegroundVisibility->setChecked(opacity == 0.);

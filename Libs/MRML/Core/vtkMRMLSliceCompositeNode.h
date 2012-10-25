@@ -218,8 +218,10 @@ class VTK_MRML_EXPORT vtkMRMLSliceCompositeNode : public vtkMRMLNode
     None = 0,
     ForegroundVolumeFlag = 1,
     BackgroundVolumeFlag = 2, 
-    LabelVolumeFlag = 4
-    // Next one needs to be 8
+    LabelVolumeFlag = 4, 
+    LabelOpacityFlag = 8,
+    ForegroundOpacityFlag = 16
+    // Next one needs to be 32
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated

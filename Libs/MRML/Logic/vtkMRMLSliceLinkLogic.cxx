@@ -486,6 +486,7 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
       {
       if (cNode != sliceCompositeNode)
         {
+        // Foreground selection
         if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::ForegroundVolumeFlag)
           {
@@ -493,17 +494,34 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
           cNode->SetForegroundVolumeID(sliceCompositeNode->GetForegroundVolumeID());
           }
 
+        // Background selection
         if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::BackgroundVolumeFlag)
           {
           cNode->SetBackgroundVolumeID(sliceCompositeNode->GetBackgroundVolumeID());
           }
 
+        // Labelmap selection
         if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
             & vtkMRMLSliceCompositeNode::LabelVolumeFlag)
           {
           cNode->SetLabelVolumeID(sliceCompositeNode->GetLabelVolumeID());
           }
+
+        // Foreground opacity
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+            & vtkMRMLSliceCompositeNode::ForegroundOpacityFlag)
+          {
+          cNode->SetForegroundOpacity(sliceCompositeNode->GetForegroundOpacity());
+          }
+
+        // Labelmap opacity
+        if (sliceCompositeNode->GetInteractionFlags() & sliceCompositeNode->GetInteractionFlagsModifier() 
+            & vtkMRMLSliceCompositeNode::LabelOpacityFlag)
+          {
+          cNode->SetLabelOpacity(sliceCompositeNode->GetLabelOpacity());
+          }
+
         }
       }
 
