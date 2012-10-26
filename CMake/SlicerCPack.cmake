@@ -90,6 +90,20 @@ if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Resources/Slicer.icns")
 endif()
 
+# Installers for 32- vs. 64-bit CMake:
+#  - Root install directory (displayed to end user at installer-run time)
+#  - "NSIS package/display name" (text used in the installer GUI)
+#  - Registry key used to store info about the installation
+if(CMAKE_CL_64)
+  set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+  set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} (Win64)")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} (Win64)")
+else()
+  set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+  set(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+  set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+endif()
+
 # Slicer does *NOT* require setting the windows path
 set(CPACK_NSIS_MODIFY_PATH OFF)
 
