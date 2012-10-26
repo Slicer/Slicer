@@ -28,7 +28,9 @@ if(Slicer_USE_PYTHONQT)
     #       * For convenience, let's exclude lib[-]dynload completely.
     #
     list(APPEND extra_exclude_pattern 
-      REGEX "lib[-]dynload.*" EXCLUDE)
+      REGEX "lib[-]dynload.*" EXCLUDE
+      REGEX "distutils/command/wininst-.*" EXCLUDE
+      )
   endif()
 
   install(
