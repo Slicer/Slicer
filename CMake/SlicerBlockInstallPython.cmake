@@ -44,11 +44,13 @@ if(Slicer_USE_PYTHONQT)
     )
   # Install python library
   if(UNIX)
-    slicerInstallLibrary(
-      FILE ${PYTHON_LIBRARY}
-      DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/lib
-      COMPONENT Runtime
-      PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+    if(NOT APPLE)
+      slicerInstallLibrary(
+        FILE ${PYTHON_LIBRARY}
+        DESTINATION ${Slicer_INSTALL_ROOT}lib/Python/lib
+        COMPONENT Runtime
+        PERMISSIONS OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ)
+    endif()
   elseif(WIN32)
     get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)
     get_filename_component(PYTHON_LIB_PATH ${PYTHON_LIBRARY} PATH)

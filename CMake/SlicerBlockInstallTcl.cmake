@@ -15,6 +15,15 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   set(TclTk_INSTALL_LIB_DIR ${Slicer_INSTALL_ROOT}lib/TclTk)
 
   if(Slicer_TCL_DIR)
+
+    set(extra_exclude_pattern)
+    if(APPLE)
+      set(extra_exclude_pattern
+        REGEX "lib/libtcl${TCL_TK_VERSION_DOT}.dylib" EXCLUDE
+        REGEX "lib/libtk${TCL_TK_VERSION_DOT}.dylib" EXCLUDE
+        )
+    endif()
+
     install(DIRECTORY
       ${Slicer_TCL_DIR}/
       DESTINATION ${TclTk_INSTALL_LIB_DIR}
@@ -28,6 +37,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
       PATTERN "tclsh${TCL_TK_VERSION_DOT}" EXCLUDE
       PATTERN "wish${TCL_TK_VERSION_DOT}" EXCLUDE
       PATTERN ".svn" EXCLUDE
+      ${extra_exclude_pattern}
       )
   endif()
 endif()

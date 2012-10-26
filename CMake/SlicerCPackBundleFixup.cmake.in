@@ -79,7 +79,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
-      set(path "@executable_path@/../lib/TclTk")
+      set(path "@executable_path@/../lib/TclTk/lib")
     endif()
   endif()
 
@@ -172,8 +172,6 @@ function(fixup_bundle_with_plugins app)
     list(APPEND candiates_pattern
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
-      "${app_dir}/Contents/lib/Python/lib/*${suffix}"
-      "${app_dir}/Contents/lib/Python/lib/python2.6/lib-dynload/*.so"
       "${app_dir}/Contents/lib/Python/lib/python2.6/site-packages/*.so"
       )
   endif()
@@ -215,6 +213,12 @@ function(fixup_bundle_with_plugins app)
   set(Slicer_USE_OpenIGTLink "@Slicer_USE_OpenIGTLink@")
   if(Slicer_USE_OpenIGTLink)
     list(APPEND libs_path "@OpenIGTLink_LIBRARY_DIRS@")
+  endif()
+  if(Slicer_USE_PYTHONQT)
+    list(APPEND libs_path "@SLICER_PYTHON_LIB_DIR@")
+  endif()
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
+    list(APPEND libs_path "@Slicer_TCL_DIR@/lib/")
   endif()
 
   list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_LIB_DIR@")
