@@ -132,16 +132,17 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "Lib")
-  endif()
   set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-build)
   get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
     ${SLICER_PYTHON_LIB_DIR}
     )
+
+  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
+  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(pythonpath_subdir "Lib")
+  endif()
 endif()
 
 if(Slicer_USE_QtTesting)
