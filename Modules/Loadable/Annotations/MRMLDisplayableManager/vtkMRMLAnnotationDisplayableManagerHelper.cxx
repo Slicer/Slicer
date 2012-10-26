@@ -158,15 +158,19 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
   bool isVisibleOnWidget = (widget->GetEnabled() != 0 ? true : false);
 
   vtkDebugMacro("UpdateVisible: isVisibleOnNode = " << isVisibleOnNode << ", isVisibleOnWidget = " << isVisibleOnWidget << ", displayableInViewer = " << displayableInViewer);
-  if (!displayableInViewer && isVisibleOnWidget)
+  if (!displayableInViewer)
     {
-    // this viewer can't display it, but the widget is currently on, so turn
-    // it off
-    widget->EnabledOff();
+    if (isVisibleOnWidget)
+      {
+      // this viewer can't display it, but the widget is currently on, so turn
+      // it off
+      widget->EnabledOff();
+      }
     }
-  // only update the visibility of the widget if it is different than on the node
   else
     {
+    // the viewer can display it, but only update the visibility on the widget
+    // if it is different than on the node
     if (isVisibleOnNode && !isVisibleOnWidget)
       {
       widget->EnabledOn();
