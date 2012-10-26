@@ -12,6 +12,7 @@
 #include "vtkMRMLAnnotationDisplayableManagerHelper.h"
 
 // MRMLDisplayableManager includes
+#include <vtkMRMLAbstractSliceViewDisplayableManager.h>
 #include <vtkMRMLModelDisplayableManager.h>
 #include <vtkMRMLDisplayableManagerGroup.h>
 
@@ -1288,32 +1289,9 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToWorldCoordinates(double x,
   if (this->Is2DDisplayableManager())
     {
     // 2D case
-
-    // we will get the transformation matrix to convert display coordinates to RAS
-
-//    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
-//    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
-
-//    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
-//    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
-
-//    float tempX = x / windowWidth;
-//    float tempY = (windowHeight - y) / windowHeight;
-
-//    float z = floor(tempY*numberOfRows)*numberOfColumns + floor(tempX*numberOfColumns);
-
-    vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(x,y);
-
-    vtkMatrix4x4 * xyToRasMatrix = this->GetSliceNode()->GetXYToRAS();
-
-    double displayCoordinates[4];
-    displayCoordinates[0] = x - pokedRenderer->GetOrigin()[0];
-    displayCoordinates[1] = y - pokedRenderer->GetOrigin()[1];
-    displayCoordinates[2] = 0;
-    displayCoordinates[3] = 1;
-
-    xyToRasMatrix->MultiplyPoint(displayCoordinates, worldCoordinates);
-
+    double xyz[3];
+    vtkMRMLAbstractSliceViewDisplayableManager::ConvertDeviceToXYZ(this->GetInteractor(), this->GetSliceNode(), x, y, xyz);
+    vtkMRMLAbstractSliceViewDisplayableManager::ConvertXYZToRAS(this->GetSliceNode(), xyz, worldCoordinates);
     }
   else
     {
