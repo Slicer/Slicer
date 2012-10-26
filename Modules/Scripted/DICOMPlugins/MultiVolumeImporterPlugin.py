@@ -172,6 +172,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         return False
 
       positionTag = slicer.dicomDatabase.fileValue(svs[0].files[0], self.tags['position'])
+
+      if positionTag == '':
+        return False
+
       frameOrigins.append([float(zz) for zz in positionTag.split('\\')])
 
     # compare frame origins with the origin of the first frame
