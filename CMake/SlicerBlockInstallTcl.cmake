@@ -19,9 +19,9 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
       ${Slicer_TCL_DIR}/
       DESTINATION ${TclTk_INSTALL_LIB_DIR}
       USE_SOURCE_PERMISSIONS
-      REGEX "man/" EXCLUDE
-      REGEX "include/" EXCLUDE
-      REGEX "demos/" EXCLUDE      
+      REGEX "/man" EXCLUDE
+      REGEX "/include" EXCLUDE
+      REGEX "/demos" EXCLUDE
       PATTERN "*.sh" EXCLUDE
       PATTERN "*.c" EXCLUDE
       PATTERN "tclsh${TCL_TK_VERSION_DOT}" EXCLUDE
