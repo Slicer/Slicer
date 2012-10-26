@@ -17,8 +17,13 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_TCL_DIR)
 
     set(extra_exclude_pattern)
+    if(UNIX)
+      list(APPEND extra_exclude_pattern
+        REGEX "/bin" EXCLUDE
+        )
+    endif()
     if(APPLE)
-      set(extra_exclude_pattern
+      list(APPEND extra_exclude_pattern
         REGEX "lib/libtcl${TCL_TK_VERSION_DOT}.dylib" EXCLUDE
         REGEX "lib/libtk${TCL_TK_VERSION_DOT}.dylib" EXCLUDE
         )
