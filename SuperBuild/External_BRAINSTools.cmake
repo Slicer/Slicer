@@ -21,7 +21,7 @@ set(proj BRAINSTools)
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(GIT_TAG "03ce71cca9bbfb1f0da0040b139011211694b1c6" CACHE STRING "" FORCE)
+  set(GIT_TAG "fa2159607df370451e7a26d09e4e2a61b6e6c5c8" CACHE STRING "" FORCE)
 else()
   set(GIT_TAG "3b334f620148b9b7d0df3175f06cdc8ef5734bc0" CACHE STRING "" FORCE) # 2012-07-23 tag
 endif()
