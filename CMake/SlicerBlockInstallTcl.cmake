@@ -22,6 +22,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
       REGEX "/man" EXCLUDE
       REGEX "/include" EXCLUDE
       REGEX "/demos" EXCLUDE
+      PATTERN "*.a" EXCLUDE
       PATTERN "*.sh" EXCLUDE
       PATTERN "*.c" EXCLUDE
       PATTERN "tclsh${TCL_TK_VERSION_DOT}" EXCLUDE
