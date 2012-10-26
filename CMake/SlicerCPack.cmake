@@ -90,6 +90,8 @@ if(APPLE)
   set(CPACK_PACKAGE_ICON "${Slicer_SOURCE_DIR}/Resources/Slicer.icns")
 endif()
 
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+
 # Installers for 32- vs. 64-bit CMake:
 #  - Root install directory (displayed to end user at installer-run time)
 #  - "NSIS package/display name" (text used in the installer GUI)
