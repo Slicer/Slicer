@@ -4,6 +4,7 @@
 
 // MRML includes
 #include "vtkMRMLFiberBundleNode.h"
+#include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationFiducialNode.h"
@@ -128,11 +129,37 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::onEnter()
   this->mrmlScene()->GetNodesByClass("vtkMRMLFiberBundleNode", nodes);
   if (nodes.size() == 0 && d->FiberNodeSelector->currentNode() == 0)
     {
-    vtkMRMLNode * nodeAdded =
-        this->mrmlScene()->AddNode(vtkNew<vtkMRMLFiberBundleNode>().GetPointer());
-    Q_ASSERT(nodeAdded);
-    nodeAdded->SetName("FiberBundle");
-    this->setFiberBundleNode(nodeAdded);
+    vtkMRMLFiberBundleNode *fiberNode = vtkMRMLFiberBundleNode::New();
+    fiberNode->SetScene(this->mrmlScene());
+
+    vtkMRMLFiberBundleDisplayNode *dnode = 0;
+    dnode = fiberNode->AddTubeDisplayNode();
+    dnode->DisableModifiedEventOn();
+    dnode->SetScalarVisibility(1);
+    dnode->SetOpacity(1);
+    dnode->SetVisibility(1);
+    dnode->DisableModifiedEventOff();
+
+    dnode = fiberNode->AddLineDisplayNode();
+    dnode->DisableModifiedEventOn();
+    dnode->SetVisibility(0);
+    dnode->SetOpacity(1);
+    dnode->SetScalarVisibility(0);
+    dnode->DisableModifiedEventOff();
+
+    dnode = fiberNode->AddGlyphDisplayNode();
+    dnode->DisableModifiedEventOn();
+    dnode->SetVisibility(0);
+    dnode->SetScalarVisibility(1);
+    dnode->SetOpacity(1);
+    dnode->DisableModifiedEventOff();
+
+    fiberNode = vtkMRMLFiberBundleNode::SafeDownCast(this->mrmlScene()->AddNode(fiberNode));
+    Q_ASSERT(fiberNode);
+    fiberNode->SetName("FiberBundle");
+
+    this->setFiberBundleNode(fiberNode);
+    fiberNode->Delete();
     }
 
   this->updateWidgetFromMRML();

@@ -547,14 +547,14 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
     //For the results to reflect the paremeters, we make sure that there is no subsampling in the fibers
     fiberNode->SetSubsamplingRatio(1.);
 
-    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
-
-    fiberNode->EndModify(wasModifying);
-
     for (unsigned int i=0; i<dnodes.size(); i++)
       {
       dnodes[i]->DisableModifiedEventOff();
       }
+
+    fiberNode->SetAndObservePolyData(outFibers.GetPointer());
+
+    fiberNode->EndModify(wasModifying);
 
     // count on fiberNode->SetAndObservePolyData() sending PolyDataModifiedEvent
     //fiberNode->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
