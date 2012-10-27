@@ -964,6 +964,18 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     return 0;
     }
 
+  if (this->IsInLightboxMode())
+    {
+    /// BUG mantis issue 1690: if in lightbox mode, don't show fiducials or
+    /// rulers
+    if (!strcmp(this->m_Focus, "vtkMRMLAnnotationFiducialNode") ||
+        !strcmp(this->m_Focus, "vtkMRMLAnnotationRulerNode"))
+      {
+      return false;
+      }
+    }
+
+  
   int numberOfControlPoints =  controlPointsNode->GetNumberOfControlPoints();
   // the text node saves it's second control point in viewport coordinates, so
   // don't check it
@@ -1636,5 +1648,23 @@ void vtkMRMLAnnotationDisplayableManager::GetWorldToLocalCoordinates(vtkMRMLAnno
       }
     }
 
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::IsInLightboxMode()
+{
+  bool flag = false;
+  if (this->Is2DDisplayableManager() &&
+      this->GetSliceNode())
+    {
+    int numberOfColumns = this->GetSliceNode()->GetLayoutGridColumns();
+    int numberOfRows = this->GetSliceNode()->GetLayoutGridRows();
+    if (numberOfColumns > 1 ||
+        numberOfRows > 1)
+      {
+      flag = true;
+      }
+    }
+  return flag;
 }
 

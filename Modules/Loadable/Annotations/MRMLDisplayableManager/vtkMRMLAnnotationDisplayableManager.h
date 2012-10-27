@@ -84,6 +84,10 @@ public:
   vtkSetMacro(ScaleFactor2D, double);
   vtkGetMacro(ScaleFactor2D, double);
 
+  /// Return true if in lightbox mode - there is a slice node that has layout
+  /// grid columns or rows > 1
+  bool IsInLightboxMode();
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();
