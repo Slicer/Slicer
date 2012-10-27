@@ -107,9 +107,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
   factory->RegisterDisplayableManager("vtkMRMLCameraDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLViewDisplayableManager");
   factory->RegisterDisplayableManager("vtkMRMLAnnotationDisplayableManager");
-//  factory->RegisterDisplayableManager("vtkMRMLAnnotationFiducialDisplayableManager");
-  // need a model displayable manager for the coord transform testing/picking
-  factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager");
+  factory->RegisterDisplayableManager("vtkMRMLModelDisplayableManager"); // Needed for the coord transform testing/picking
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
       factory->InstantiateDisplayableManagers(rr);
@@ -162,7 +160,7 @@ int vtkMRMLAnnotationDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNotU
     }
   else
     {
-    std::cerr << "Unalble to get the annotation displayable manager from the displayble manager group!" << std::endl;
+    std::cerr << "Unable to get the annotation displayable manager from the displayble manager group!" << std::endl;
     return EXIT_FAILURE;
     }
   if (adm ==  NULL)

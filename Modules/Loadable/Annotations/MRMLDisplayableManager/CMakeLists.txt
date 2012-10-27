@@ -14,15 +14,24 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(displayable_manager_SRCS
+  vtkMRMLAnnotationDisplayableManager.cxx
+  vtkMRMLAnnotationDisplayableManager.h
   vtkMRMLAnnotationTextDisplayableManager.cxx
+  vtkMRMLAnnotationTextDisplayableManager.h
   vtkMRMLAnnotationFiducialDisplayableManager.cxx
+  vtkMRMLAnnotationFiducialDisplayableManager.h
   #vtkMRMLAnnotationStickyDisplayableManager.cxx
+  #vtkMRMLAnnotationStickyDisplayableManager.h
   #vtkMRMLAnnotationAngleDisplayableManager.cxx
+  #vtkMRMLAnnotationAngleDisplayableManager.h
   #vtkMRMLAnnotationSplineDisplayableManager.cxx
+  #vtkMRMLAnnotationSplineDisplayableManager.h
   vtkMRMLAnnotationRulerDisplayableManager.cxx
+  vtkMRMLAnnotationRulerDisplayableManager.h
   vtkMRMLAnnotationBidimensionalDisplayableManager.cxx
-  vtkMRMLAnnotationROIDisplayableManager.h
+  vtkMRMLAnnotationBidimensionalDisplayableManager.h
   vtkMRMLAnnotationROIDisplayableManager.cxx
+  vtkMRMLAnnotationROIDisplayableManager.h
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)
@@ -37,7 +46,6 @@ VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"
 set(${KIT}_SRCS
   ${displayable_manager_instantiator_SRCS}
   ${displayable_manager_SRCS}
-  vtkMRMLAnnotationDisplayableManager.cxx
   vtkMRMLAnnotationDisplayableManagerHelper.cxx
   vtkMRMLAnnotationClickCounter.cxx
   )
