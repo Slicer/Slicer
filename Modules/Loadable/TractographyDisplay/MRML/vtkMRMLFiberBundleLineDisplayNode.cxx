@@ -130,15 +130,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       {
       this->ScalarVisibilityOff( );
       this->TensorToColor->SetExtractScalar(0);
-
-      vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
-      if (colorNode)
-        {
-        this->SetAndObserveColorNodeID(colorNode->GetID());
-        }
-
-      this->AutoScalarRangeOff();
-      this->SetScalarRange(0, 255);
       }
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars)
       {
@@ -269,40 +260,39 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
     this->TensorToColor->SetExtractScalar(0);
     }
 
-  if (this->GetAutoScalarRange() && this->GetScalarVisibility())
-    {
-    double range[2] = {0., 1.};
-    if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+    if (this->GetAutoScalarRange() &&
+      this->GetScalarVisibility())
       {
-      int scalarInvariant =  0;
-      if ( DiffusionTensorDisplayPropertiesNode )
+      double range[2] = {0., 1.};
+      if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalar) ||
+          (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeFunctionOfScalar))
         {
-        scalarInvariant = DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( );
+        int scalarInvariant = 0;
+        if (DiffusionTensorDisplayPropertiesNode)
+          {
+          scalarInvariant = DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( );
+          }
+        if (DiffusionTensorDisplayPropertiesNode &&
+            vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(
+              scalarInvariant))
+          {
+          vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
+            scalarInvariant, range);
+          }
+        else if (this->GetInputPolyData())
+          {
+          this->GetOutputPolyData()->Update();
+          this->GetOutputPolyData()->GetScalarRange(range);
+          }
         }
-
-      if (DiffusionTensorDisplayPropertiesNode &&
-          vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(
-            scalarInvariant))
+      else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
+               this->GetInputPolyData())
         {
-        vtkDebugMacro("Data-based automatic range");
-        vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
-          scalarInvariant, range);
+        this->GetInputPolyData()->Update();
+        this->GetInputPolyData()->GetScalarRange(range);
         }
-      else if (this->GetInputPolyData())
-        {
-        vtkDebugMacro("Data-based scalar range");
-        this->TensorToColor->Update();
-        this->TensorToColor->GetOutput()->GetScalarRange(range);
-        }
+      this->ScalarRange[0] = range[0];
+      this->ScalarRange[1] = range[1];
       }
-    else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
-             this->GetInputPolyData())
-      {
-      this->GetOutputPolyData()->Update();
-      this->GetOutputPolyData()->GetScalarRange(range);
-      }
-    this->ScalarRange[0] = range[0];
-    this->ScalarRange[1] = range[1];
-    }
 }
 
