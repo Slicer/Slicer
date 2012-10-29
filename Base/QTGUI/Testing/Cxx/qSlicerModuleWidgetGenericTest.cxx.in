@@ -28,6 +28,9 @@
 #endif
 #include <QWidget>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerAbstractModuleWidget.h>
@@ -57,6 +60,7 @@ const int minimumWidth = 500;
 int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
+  app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
 
   qSlicer@MODULENAME@Module module(0);
 

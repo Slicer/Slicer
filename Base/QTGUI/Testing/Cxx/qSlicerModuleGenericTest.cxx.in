@@ -28,6 +28,9 @@
 #endif
 #include <QWidget>
 
+// CTK includes
+#include <ctkErrorLogModel.h>
+
 // SlicerQt includes
 #include <qSlicerAbstractModuleRepresentation.h>
 #include <qSlicerApplication.h>
@@ -45,6 +48,7 @@
 // @MODULENAME@ includes
 #include "qSlicer@MODULENAME@Module.h"
 
+
 // MRML includes
 #include <vtkMRMLScene.h>
 
@@ -55,6 +59,7 @@
 int qSlicer@MODULENAME@ModuleGenericTest( int argc, char * argv[] )
 {
   qSlicerApplication app(argc, argv);
+  app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
 
   qSlicer@MODULENAME@Module * module = new qSlicer@MODULENAME@Module;
 
