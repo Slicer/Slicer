@@ -15,8 +15,8 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationROINode : publ
 public:
   static vtkMRMLAnnotationROINode *New();
   vtkTypeMacro(vtkMRMLAnnotationROINode,vtkMRMLAnnotationLinesNode);
-  // Description:
-  // Just prints short summary 
+  /// Description:
+  /// Just prints short summary 
   void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -24,29 +24,29 @@ public:
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
-  // Description:
-  // Get node XML tag name (like Volume, Model)
+  /// Description:
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "AnnotationROI";};
 
   virtual const char* GetIcon() {return ":/Icons/AnnotationROI.png";};
 
   // Description:
-  // Read node attributes from XML file
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
   
-  // Description:
-  // Write this node's information to a MRML file in XML format.
+  /// Description:
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
 
-  // Description:
-  // Copy the node's attributes to this object
+  /// Description:
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
   void UpdateScene(vtkMRMLScene *scene);
 
-  // Description:
-  // alternative method to propagate events generated in Display nodes
+  /// Description:
+  /// alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
@@ -64,39 +64,41 @@ public:
   vtkGetMacro(InsideOut, int);
   vtkSetMacro(InsideOut, int);
 
-  // Description:
-  // KP Define - should be part of AnnotationRulerDisplayNode 
+  /// Description:
+  /// KP Define - should be part of AnnotationRulerDisplayNode 
   double GetROIAnnotationScale();
   void SetROIAnnotationScale(double init);
 
-  // Description:
-  // get/set the distance annotation visbility
+  /// Description:
+  /// get/set the visibility of any text associated with the ROI
   int GetROIAnnotationVisibility();
   void SetROIAnnotationVisibility(int flag);
 
 //  int SetROI(vtkIdType line1Id, int sel, int vis);  
 
-  // Description:
-  // get/set the point representation color
+  /// Description:
+  /// get/set the point representation color
   double *GetPointColor();
   void SetPointColor( double initColor[3]);
 
-  // Description:
-  // get/set the line representation color
+  /// Description:
+  /// get/set the line representation color
   double *GetLineColor();
   void SetLineColor(double newColor[3]);
 
-  // Description:
-  // get/set the distance annotation text color
+  /// Description:
+  /// get/set the ROI annotation text color
   double *GetROIAnnotationTextColor();
   void SetROIAnnotationTextColor(double initColor[3]);
 
- // Description:
-  // transform utility functions
+  /// Description:
+  /// transform utility functions
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
   virtual void ApplyTransform(vtkAbstractTransform* transform);
   virtual void GetTransformedPlanes(vtkPlanes *planes);
 
+  /// Description:
+  /// Add ROI to scene and add display nodes
   void Initialize(vtkMRMLScene* mrmlScene);
 
   /// 
@@ -107,7 +109,7 @@ public:
   /// void SetXYZ(double* XYZ);
   /// vtkGetVectorMacro(XYZ,double,3);
   //double* GetXYZ() {return this->GetControlPointCoordinates(0);}
-  // returns true and control point coordinate 0 on success, false and 0,0,0 on failure
+  /// returns true and control point coordinate 0 on success, false and 0,0,0 on failure
   bool GetXYZ(double point[3]);
   int SetXYZ(double newControl[3]) 
   { 
@@ -143,6 +145,7 @@ public:
   vtkSetStringMacro(LabelText);
   vtkGetStringMacro(LabelText);
 
+  /// Get/Set for the volume node ID associated with this ROI
   vtkGetStringMacro(VolumeNodeID);
   vtkSetStringMacro(VolumeNodeID);
 
