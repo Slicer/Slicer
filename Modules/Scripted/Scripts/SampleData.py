@@ -13,7 +13,7 @@ class SampleData:
     parent.categories = ["Informatics"]
     parent.contributors = ["Steve Pieper (Isomics), Benjamin Long (Kitware), Jean-Christophe Fillion-Robin (Kitware)"]
     parent.helpText = string.Template("""
-The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection. 
+The SampleData module can be used to download data for working with in slicer.  Use of this module requires an active network connection.
 See <a href=\"$a/Documentation/$b.$c/Modules/SampleData\">$a/Documentation/$b.$c/Modules/SampleData</a> for more information.
     """).substitute({ 'a':parent.slicerWikiUrl, 'b':slicer.app.majorVersion, 'c':slicer.app.minorVersion })
     parent.acknowledgementText = """
@@ -71,7 +71,7 @@ class SampleDataWidget:
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
 
@@ -193,8 +193,11 @@ class SampleDataLogic:
       self.logMessage('<b>Requesting download</b> <i>%s</i> from %s...\n' % (name, uri))
       # add a progress bar
       self.downloadPercent = 0
-      urllib.urlretrieve(uri, filePath, self.reportHook)
-      self.logMessage('<b>Download finished</b>')
+      try:
+        urllib.urlretrieve(uri, filePath, self.reportHook)
+        self.logMessage('<b>Download finished</b>')
+      except IOError as e:
+        self.logMessage('<b><font color="red">\tDownload failed: %s</font></b>' % e)
     else:
       self.logMessage('<b>File already exists in cache - reusing it.</b>')
     return filePath
@@ -203,7 +206,7 @@ class SampleDataLogic:
     self.logMessage('<b>Requesting load</b> <i>%s</i> from %s...\n' % (name, uri))
     success, volumeNode = slicer.util.loadVolume(uri, properties = {'name' : name}, returnNode=True)
     if success:
-      self.logMessage('<i>finished.</i>\n')
+      self.logMessage('<b>Load finished</b>\n')
     else:
-      self.logMessage('<b>Load failed!</b>\n')
+      self.logMessage('<b><font color="red">\tLoad failed!</font></b>\n')
     return volumeNode
