@@ -1,6 +1,6 @@
 /**********************************************************************
  * vtkItkGrowCutSegmentationImageFilter
- * Implements wrapper for the itkGrowCutSegmentationImageFilter 
+ * Implements wrapper for the itkGrowCutSegmentationImageFilter
  * This implemnents n-class segmentation
  **********************************************************************/
 
@@ -36,17 +36,17 @@ vtkStandardNewMacro(vtkITKGrowCutSegmentationImageFilter);
 #endif
 
 //-----------------------------------------------------------------------------
-// Local Function: not method. 
-void vtkITKImageGrowCutHandleProgressEvent(itk::Object *caller, 
+// Local Function: not method.
+void vtkITKImageGrowCutHandleProgressEvent(itk::Object *caller,
                                            const itk::EventObject& vtkNotUsed(eventObject),
                                            void *clientdata)
 {
 
-    itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
-    vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
-    if (itkFilter && vtkFilter )
+  itk::ProcessObject *itkFilter = static_cast<itk::ProcessObject*>(caller);
+  vtkProcessObject *vtkFilter = static_cast<vtkProcessObject*>(clientdata);
+  if (itkFilter && vtkFilter )
     {
-      vtkFilter->UpdateProgress( itkFilter->GetProgress() );
+    vtkFilter->UpdateProgress( itkFilter->GetProgress() );
     }
 };
 
@@ -54,7 +54,7 @@ void vtkITKImageGrowCutHandleProgressEvent(itk::Object *caller,
 //-----------------------------------------------------------------------------
 //// 3D filter
 template<class IT1, class OT>
-void vtkITKImageGrowCutExecute3D(vtkImageData *inData, 
+void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   IT1 *inPtr1, OT *inPtr2, OT *inPtr3,
   OT *output, double &ObjectSize,
   double &contrastNoiseRatio,
@@ -67,7 +67,7 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
   typedef itk::Image<OT, 3> OutImageType;
 
   typename OutImageType::Pointer labelImage = OutImageType::New();
-  
+
   typename OutImageType::Pointer prevSegmentedImage = OutImageType::New();
 
   typename OutImageType::Pointer outputImageROI = OutImageType::New();
@@ -149,45 +149,50 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
 
   for(weight.GoToBegin(), label.GoToBegin(); !weight.IsAtEnd();
       ++weight, ++label)
-    {
-      typename OutImageType::PixelType color = label.Get();
-      if(color == 0)
+  {
+    typename OutImageType::PixelType color = label.Get();
+    if(color == 0)
       {
-         weight.Set(0.0);
+       weight.Set(0.0);
       }
-      else{
-        weight.Set( contrastNoiseRatio );
+    else
+      {
+      weight.Set( contrastNoiseRatio );
 
-  typename OutImageType::IndexType idx = label.GetIndex();
-  for (unsigned i = 0; i < ndims; i++)
-    {
-      if(!foundLabel)
+      typename OutImageType::IndexType idx = label.GetIndex();
+      for (unsigned i = 0; i < ndims; i++)
         {
-    roiStart[i] = idx[i];
-    roiEnd[i] = idx[i];
+        if(!foundLabel)
+          {
+          roiStart[i] = idx[i];
+          roiEnd[i] = idx[i];
+          }
+        else
+          {
+          if(idx[i] <= roiStart[i])
+            {
+            roiStart[i] = idx[i];
+            }
+          if(idx[i] >= roiEnd[i])
+            {
+            roiEnd[i] = idx[i];
+            }
+          }
         }
-      else
-        {
-    if(idx[i] <= roiStart[i])
-      roiStart[i] = idx[i];
-    if(idx[i] >= roiEnd[i])
-      roiEnd[i] = idx[i];
-        }
+    foundLabel = true;
     }
-      foundLabel = true;
-      }
-    }
+  }
 
 
   for(weight.GoToBegin(), plabel.GoToBegin(), label.GoToBegin(); !weight.IsAtEnd();
       ++weight, ++plabel, ++label)
     {
-      typename OutImageType::PixelType color = plabel.Get();
-      if(color != 0 && weight.Get() == 0.0)
-  {
-    weight.Set( priorSegmentStrength );
-    label.Set ( color );
-  }
+    typename OutImageType::PixelType color = plabel.Get();
+    if(color != 0 && weight.Get() == 0.0)
+      {
+      weight.Set( priorSegmentStrength );
+      label.Set ( color );
+      }
     }
 
   std::cout << " ObjectSize (radius) " << ObjectSize << std::endl;
@@ -196,19 +201,19 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
 
   for (unsigned i = 0; i < ndims; i++)
     {
-      int diff = static_cast< int > (roiStart[i] - radius);
-      if (diff >= index[i])
+    int diff = static_cast< int > (roiStart[i] - radius);
+    if (diff >= index[i])
       {
-        roiStart[i] -= radius;
+      roiStart[i] -= radius;
       }
-      else
+    else
       {
-        roiStart[i] = index[i];
+      roiStart[i] = index[i];
       }
-      roiEnd[i] = (static_cast<unsigned int>(roiEnd[i] + radius) < size[i]) ?
-  (roiEnd[i] + radius) : size[i]-1;
+    roiEnd[i] = (static_cast<unsigned int>(roiEnd[i] + radius) < size[i]) ?
+(roiEnd[i] + radius) : size[i]-1;
 
-      std::cout << " roi[ " << roiStart[i]<<" "<<roiEnd[i] << "] " << std::endl;
+    std::cout << " roi[ " << roiStart[i]<<" "<<roiEnd[i] << "] " << std::endl;
     }
 
 
@@ -228,16 +233,16 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
 
   for (unsigned n = 0; n < ndims; n++)
     {
-      istart[n] = roiStart[n];
-      isize[n] = roiEnd[n]-roiStart[n];
+    istart[n] = roiStart[n];
+    isize[n] = roiEnd[n]-roiStart[n];
 
-      std::cout << " istart " << istart[n] << " isize " << isize[n] << " " << std::endl;
+    std::cout << " istart " << istart[n] << " isize " << isize[n] << " " << std::endl;
 
-      ostart[n] = istart[n];
-      osize[n] = isize[n];
+    ostart[n] = istart[n];
+    osize[n] = isize[n];
 
-      wstart[n] = istart[n];
-      wsize[n] = isize[n];
+    wstart[n] = istart[n];
+    wsize[n] = isize[n];
 
     }
 
@@ -307,8 +312,8 @@ void vtkITKImageGrowCutExecute3D(vtkImageData *inData,
 
   for (filterOut.GoToBegin(), out.GoToBegin(); !filterOut.IsAtEnd(); ++filterOut, ++out)
     {
-      out.Set(filterOut.Get());
-   }
+    out.Set(filterOut.Get());
+    }
 
  memcpy(output, outputImage->GetBufferPointer(),
          outputImage->GetBufferedRegion().GetNumberOfPixels()*sizeof(OT) );
@@ -600,4 +605,3 @@ void vtkITKGrowCutSegmentationImageFilter::PrintSelf(ostream& os, vtkIndent inde
   os << indent << "Object Size : " << this->ObjectSize << std::endl;
   os << indent << "ContrastNoiseRatio : " << this->ContrastNoiseRatio << std::endl;
 }
-
