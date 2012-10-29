@@ -532,7 +532,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterGroupLabel( unsigned int g
 {
   if (!this->IsValidGroupId(group))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetLabel();
 }
@@ -542,7 +542,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterGroupDescription ( unsigne
 {
   if (!this->IsValidGroupId(group))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetDescription();
 }
@@ -552,7 +552,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterGroupAdvanced ( unsigned i
 {
   if (!this->IsValidGroupId(group))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetAdvanced();
 }
@@ -562,7 +562,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterTag ( unsigned int group, 
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetTag();
 }
@@ -572,7 +572,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterType ( unsigned int group,
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetType();
 }
@@ -582,7 +582,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterArgType ( unsigned int gro
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetArgType();
 }
@@ -592,7 +592,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterName ( unsigned int group,
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetName();
 }
@@ -602,7 +602,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterLongFlag ( unsigned int gr
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetLongFlag();
 }
@@ -612,7 +612,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterLabel ( unsigned int group
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetLabel();
 }
@@ -622,7 +622,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterConstraints ( unsigned int
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetConstraints();
 }
@@ -632,7 +632,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterMaximum ( unsigned int gro
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetMaximum();
 }
@@ -642,7 +642,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterMinimum ( unsigned int gro
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetMinimum();
 }
@@ -652,7 +652,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterDescription ( unsigned int
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetDescription();
 }
@@ -662,7 +662,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterChannel ( unsigned int gro
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetChannel();
 }
@@ -672,7 +672,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterIndex ( unsigned int group
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetIndex();
 }
@@ -682,7 +682,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterDefault ( unsigned int gro
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetDefault();
 }
@@ -692,7 +692,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterFlag ( unsigned int group,
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetFlag();
 }
@@ -702,7 +702,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterMultiple ( unsigned int gr
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetMultiple();
 }
@@ -712,7 +712,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterFileExtensions ( unsigned 
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetFileExtensionsAsString();
 }
@@ -722,7 +722,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterCoordinateSystem ( unsigne
 {
   if (!this->IsValidParamId(group, param))
     {
-    return 0;
+    return std::string();
     }
   return this->GetModuleDescription().GetParameterGroups()[group].GetParameters()[param].GetCoordinateSystem();
 }
