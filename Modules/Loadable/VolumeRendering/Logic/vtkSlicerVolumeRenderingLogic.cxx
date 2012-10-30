@@ -519,7 +519,7 @@ void vtkSlicerVolumeRenderingLogic
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
   vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
-  const int colorCount = colors->GetNumberOfAvailableColors();
+  int colorCount = std::min(colors->GetNumberOfAvailableColors(), vtkIdType(1024));
   double value = colors->GetRange()[0];
   double step = (colors->GetRange()[1] - colors->GetRange()[0]) / colorCount;
   double color[4] = {0., 0., 0., 1.};
@@ -637,8 +637,6 @@ void vtkSlicerVolumeRenderingLogic
     vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
   int disabledModify = vspNode->StartModify();
-  int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
-
   this->SetThresholdToVolumeProp(
     scalarRange, threshold, prop,
     this->UseLinearRamp, ignoreVolumeDisplayNodeThreshold);
@@ -651,8 +649,6 @@ void vtkSlicerVolumeRenderingLogic
     }
   this->SetWindowLevelToVolumeProp(
     scalarRange, windowLevel, lut, prop);
-
-  vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
   vspNode->EndModify(disabledModify);
 }
 
@@ -679,11 +675,7 @@ void vtkSlicerVolumeRenderingLogic
     vspNode->GetVolumePropertyNode()->GetVolumeProperty();
 
   int disabledModify = vspNode->StartModify();
-  int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
-
   this->SetLabelMapToVolumeProp(colors, prop);
-
-  vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
   vspNode->EndModify(disabledModify);
 }
 
