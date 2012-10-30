@@ -519,7 +519,7 @@ void vtkSlicerVolumeRenderingLogic
   vtkNew<vtkColorTransferFunction> colorTransfer;
 
   vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
-  const int colorCount = colors->GetNumberOfAvailableColors();
+  int colorCount = std::min(colors->GetNumberOfAvailableColors(), vtkIdType(1024));
   double value = colors->GetRange()[0];
   double step = (colors->GetRange()[1] - colors->GetRange()[0]) / colorCount;
   double color[4] = {0., 0., 0., 1.};
