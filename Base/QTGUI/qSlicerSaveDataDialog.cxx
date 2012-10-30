@@ -223,6 +223,12 @@ void qSlicerSaveDataDialogPrivate::populateItems()
     return;
     }
 
+  QDir newDir(this->MRMLScene->GetRootDirectory());
+  if (!newDir.exists())
+    {
+    this->MRMLScene->SetRootDirectory(".");
+    }
+
   // sorting the table while doing insertions is dangerous
   // Moreover, we want to have the MRML scene to be the first item.
   this->FileWidget->setSortingEnabled(false);
