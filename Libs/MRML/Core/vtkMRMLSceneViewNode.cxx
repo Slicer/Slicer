@@ -678,3 +678,8 @@ bool vtkMRMLSceneViewNode::IncludeNodeInSceneView(vtkMRMLNode *node)
   
   return includeInView;
 }
+
+void vtkMRMLSceneViewNode::SetSceneViewRootDir( const char* name)
+{
+  this->Nodes->SetRootDirectory(name);
+}

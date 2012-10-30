@@ -108,6 +108,8 @@ class VTK_MRML_EXPORT vtkMRMLSceneViewNode : public vtkMRMLStorableNode
   /// hierarchy node, snapshot clip node, true otherwise
   bool IncludeNodeInSceneView(vtkMRMLNode *node);
 
+  void SetSceneViewRootDir( const char* name);
+
 protected:
   vtkMRMLSceneViewNode();
   ~vtkMRMLSceneViewNode();
