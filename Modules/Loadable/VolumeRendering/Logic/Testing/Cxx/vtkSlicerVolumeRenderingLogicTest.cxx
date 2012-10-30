@@ -75,6 +75,7 @@ bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
               << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
     return false;
     }
+  displayNode->Delete();
 
   logic->SetDefaultRenderingMethod("vtkMRMLGPURayCastVolumeRenderingDisplayNode");
   displayNode = logic->CreateVolumeRenderingDisplayNode();
@@ -87,6 +88,7 @@ bool testDefaultRenderingMethod(const std::string& moduleShareDirectory)
               << (displayNode ? displayNode->GetClassName() : "none") << ")" << std::endl;
     return false;
     }
+  displayNode->Delete();
 
   return true;
 }
