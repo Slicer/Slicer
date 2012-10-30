@@ -250,7 +250,7 @@ class AtlasTestsTest(unittest.TestCase):
   def test_BrainAtlasTest(self):
     self.delayDisplay('Running Brain Atlas Test')
     downloads = (
-        ('http://slicer.kitware.com/midas3/download?items=10083', '2012-10-26-BrainAtlas.mrb', slicer.util.loadScene),
+        ('http://slicer.kitware.com/midas3/download?items=10397', 'BrainAtlas-2012-10-29.mrb', slicer.util.loadScene),
         )
     self.perform_AtlasTest(downloads,'A1_grayT1')
 
