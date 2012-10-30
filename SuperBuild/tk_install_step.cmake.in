@@ -6,6 +6,6 @@ set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
 
 execute_process(
   COMMAND make install
-  WORKING_DIRECTORY @tcl_base@/tk/unix
+  WORKING_DIRECTORY "@tcl_base@/tk/unix"
 )
 

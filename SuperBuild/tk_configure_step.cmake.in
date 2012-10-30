@@ -38,15 +38,15 @@ if(APPLE)
   set(ENV{LDFLAGS} "${osx_flags} $ENV{LDFLAGS}")
 
   execute_process(
-    COMMAND sh configure --with-tcl=@tcl_build@/lib --prefix=@tcl_build@ --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x --with-cflags=${configure_cflags}
-    WORKING_DIRECTORY @tcl_base@/tk/unix
+    COMMAND sh configure --with-tcl="@tcl_build@/lib" --prefix="@tcl_build@" --disable-corefoundation --x-libraries=/usr/X11R6/lib --x-includes=/usr/X11R6/include --with-x --with-cflags=${configure_cflags}
+    WORKING_DIRECTORY "@tcl_base@/tk/unix"
   )
 
 else()
 
   execute_process(
-    COMMAND sh configure --with-tcl=@tcl_build@/lib --prefix=@tcl_build@  --with-cflags=${configure_cflags}
-    WORKING_DIRECTORY @tcl_base@/tk/unix
+    COMMAND sh configure --with-tcl="@tcl_build@/lib" --prefix="@tcl_build@"  --with-cflags=${configure_cflags}
+    WORKING_DIRECTORY "@tcl_base@/tk/unix"
   )
 
 endif()

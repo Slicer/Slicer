@@ -24,6 +24,6 @@ set(ENV{YACC} "@BISON_EXECUTABLE@" )
 set(ENV{YFLAGS} "@BISON_FLAGS@" )
 
 execute_process(
-  COMMAND sh @pcre_source_dir@/configure --prefix=@pcre_install_dir@  --disable-shared
-  WORKING_DIRECTORY @pcre_binary_dir@
+  COMMAND sh "@pcre_source_dir@/configure" --prefix="@pcre_install_dir@"  --disable-shared
+  WORKING_DIRECTORY "@pcre_binary_dir@"
 )

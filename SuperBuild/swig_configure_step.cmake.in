@@ -21,6 +21,6 @@ set(ENV{YACC} "@BISON_EXECUTABLE@" )
 set(ENV{YFLAGS} "@BISON_FLAGS@" )
 
 execute_process(
-  COMMAND sh @swig_source_dir@/configure --prefix=@swig_install_dir@ --with-pcre-prefix=@pcre_install_dir@
-  WORKING_DIRECTORY @swig_binary_dir@
+  COMMAND sh "@swig_source_dir@/configure" --prefix="@swig_install_dir@" --with-pcre-prefix="@pcre_install_dir@"
+  WORKING_DIRECTORY "@swig_binary_dir@"
 )
