@@ -71,6 +71,13 @@ endif()
 include(PreventInSourceBuilds)
 include(PreventInBuildInstalls)
 
+if(NOT DEFINED Slicer_SKIP_DIR_WITH_SPACES_CHECK)
+  set(Slicer_SKIP_DIR_WITH_SPACES_CHECK FALSE)
+endif()
+if(NOT Slicer_SKIP_DIR_WITH_SPACES_CHECK)
+  include(PreventDirWithSpaces)
+endif()
+
 #-----------------------------------------------------------------------------
 # Overwrite default options
 #-----------------------------------------------------------------------------
