@@ -76,7 +76,7 @@ if(UNIX)
   #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
-    COMMAND sh configure ${extra_configure_flags} --prefix="@CMAKE_CURRENT_BINARY_DIR@/python-build" --enable-unicode=ucs2 --enable-shared
+    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
     #RESULT_VARIABLE rv
     )
