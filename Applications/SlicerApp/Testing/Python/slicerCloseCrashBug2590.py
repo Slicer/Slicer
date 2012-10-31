@@ -226,8 +226,8 @@ class slicerCloseCrashBug2590Test(unittest.TestCase):
     down()
     for step in xrange(steps):
       frac = float(step)/steps
-      x = start[0] + frac*(end[0]-start[0])
-      y = start[1] + frac*(end[1]-start[1])
+      x = int(start[0] + frac*(end[0]-start[0]))
+      y = int(start[1] + frac*(end[1]-start[1]))
       interator.SetEventPosition(x,y)
       style.OnMouseMove()
     up()

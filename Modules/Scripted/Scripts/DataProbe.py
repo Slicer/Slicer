@@ -129,7 +129,7 @@ class DataProbeInfoWidget(object):
         return "Out of Frame"
     pixel = ""
     if volumeNode.GetLabelMap():
-      labelIndex = imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0)
+      labelIndex = int(imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0))
       labelValue = "Unknown"
       colorNode = volumeNode.GetDisplayNode().GetColorNode()
       if colorNode:
