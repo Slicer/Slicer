@@ -505,6 +505,12 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 void qSlicerApplication::openExtensionManagerDialog()
 {
   Q_D(qSlicerApplication);
+  if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
+      this->mainWindow())
+    {
+    // The first time the dialog is open, resize it.
+    d->ExtensionsManagerDialog->resize(this->mainWindow()->size());
+    }
   d->ExtensionsManagerDialog->setExtensionsManagerModel(
         this->extensionManagerModel());
   if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
