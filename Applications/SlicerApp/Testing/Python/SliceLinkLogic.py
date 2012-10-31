@@ -234,7 +234,7 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic = SliceLinkLogicLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
 
-    eps = 1e-4
+    eps = 1e-2
 
     # Change to a CompareView
     ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')
@@ -275,8 +275,8 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) < eps)
+    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
+    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
     self.delayDisplay('Broadcasted a reset of the field of view to all Compare Views')
     
     # Changed the number of lightboxes
@@ -287,8 +287,8 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) < eps)
+    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
+    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
     self.delayDisplay('Changed the number of lightboxes')
 
     # Pan
@@ -307,8 +307,8 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[0] when zooming (fov[1] can differ by 
     # a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) < eps)
+    self.assertTrue(abs(compareNode2.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0] < eps)
+    self.assertTrue(abs(compareNode3.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0] < eps)
     self.delayDisplay('Broadcasted a zoom to all Compare Views')
 
     # Change the slice
