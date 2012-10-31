@@ -260,8 +260,14 @@ class DICOMDetailsPopup(object):
       slicer.app.processEvents()
       self.progress.setValue(step)
       slicer.app.processEvents()
-      self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
-      loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
+      try:
+        self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
+        loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
+      except Exception,e:
+        qt.QMessageBox.warning(self.window,
+            "DICOM", "Warning: Plugin failed: %s" % pluginClass)
+        print("DICOM Plugin failed: %s", str(e))
+
       step +=1
     self.loadButton.enabled = loadEnabled
     self.organizeLoadables()
