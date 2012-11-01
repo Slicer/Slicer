@@ -340,6 +340,31 @@ void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     return;
     }
 
+  // check for missing display nodes (if we're not in batch processing mode)
+  if (this->GetMRMLScene() &&
+      !this->GetMRMLScene()->IsBatchProcessing())
+    {
+    // check if no display nodes have been added already via calls to Initialize
+    if (annotationNode->GetDisplayNode() == NULL)
+      {
+      // keep it down to one modify event from the node (will be node added
+      // events from the new nodes)
+      int modifyFlag = annotationNode->StartModify();
+      vtkDebugMacro("OnMRMLSceneNodeAddedEvent: adding display nodes for " << annotationNode->GetName());
+      if (vtkMRMLAnnotationLinesNode::SafeDownCast(annotationNode))
+        {
+        vtkMRMLAnnotationLinesNode::SafeDownCast(annotationNode)->CreateAnnotationLineDisplayNode();
+        }
+      if (vtkMRMLAnnotationControlPointsNode::SafeDownCast(annotationNode))
+        {
+        vtkMRMLAnnotationControlPointsNode::SafeDownCast(annotationNode)->CreateAnnotationPointDisplayNode();
+        }
+      annotationNode->CreateAnnotationTextDisplayNode();
+      annotationNode->EndModify(modifyFlag);
+      }
+    }
+
+  // set up the hierarchy for the new annotation node if necessary
   bool retval = this->AddHierarchyNodeForAnnotation(annotationNode);
   if (!retval)
     {
