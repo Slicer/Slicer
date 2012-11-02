@@ -128,6 +128,7 @@ void vtkMRMLAnnotationDisplayableManager::SetAndObserveNode(vtkMRMLAnnotationNod
   nodeEvents->InsertNextValue(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLAnnotationNode::LockModifiedEvent);
   nodeEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
+  nodeEvents->InsertNextValue(vtkMRMLDisplayableNode::DisplayModifiedEvent);
 
  if (annotationNode)// && !annotationNode->HasObserver(vtkMRMLTransformableNode::TransformModifiedEvent))
    {
@@ -315,7 +316,6 @@ void vtkMRMLAnnotationDisplayableManager
 {
 
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
-  vtkMRMLAnnotationDisplayNode *displayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(caller);
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
   if (annotationNode)
     {
@@ -333,14 +333,8 @@ void vtkMRMLAnnotationDisplayableManager
       case vtkMRMLAnnotationNode::LockModifiedEvent:
         this->OnMRMLAnnotationNodeLockModifiedEvent(annotationNode);
         break;
-      }
-    }
-  else if (displayNode)
-    {
-    switch(event)
-      {
-      case vtkCommand::ModifiedEvent:
-        this->OnMRMLAnnotationDisplayNodeModifiedEvent(displayNode);
+      case vtkMRMLDisplayableNode::DisplayModifiedEvent:
+        this->OnMRMLAnnotationDisplayNodeModifiedEvent(annotationNode->GetDisplayNode());
         break;
       }
     }
@@ -403,13 +397,6 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
   if (node->IsA("vtkMRMLInteractionNode"))
     {
     this->AddObserversToInteractionNode();
-    return;
-    }
-
-  if (node->IsA("vtkMRMLAnnotationDisplayNode"))
-    {
-    // have a display node, need to observe it
-    vtkObserveMRMLNodeMacro(node);
     return;
     }
 
