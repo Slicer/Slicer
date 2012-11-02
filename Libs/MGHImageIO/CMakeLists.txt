@@ -115,9 +115,10 @@ set_target_properties(MGHIOPlugin PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}"
   )
+
 target_link_libraries(MGHIOPlugin
   ${lib_name}
-)
+  )
 
 # Apply user-defined properties to the library target.
 if(Slicer_LIBRARY_PROPERTIES)

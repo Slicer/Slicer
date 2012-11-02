@@ -50,9 +50,9 @@ set(KIT_PYTHON_SCRIPTS
   DICOM2FullBrainTractography.py
   )
 
-subdirs(
+add_subdirectory(
   DICOM2FullBrainTractographyLib
-)
+  )
 
 set(KIT_PYTHON_RESOURCES
   )

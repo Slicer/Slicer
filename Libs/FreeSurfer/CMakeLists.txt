@@ -66,7 +66,7 @@ set(FreeSurfer_SRCS
 set_source_files_properties(
   vtkFSIO.cxx
   WRAP_EXCLUDE
-)
+  )
 
 # --------------------------------------------------------------------------
 # Build library

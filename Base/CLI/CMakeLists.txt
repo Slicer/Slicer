@@ -72,7 +72,7 @@ add_library(${lib_name} ${SlicerBaseCLI_SRCS})
 target_link_libraries(${lib_name}
   vtkCommon
   ModuleDescriptionParser
-)
+  )
 set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
 # Apply user-defined properties to the library target.

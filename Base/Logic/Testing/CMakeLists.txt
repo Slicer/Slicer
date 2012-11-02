@@ -10,7 +10,7 @@ set(KIT_TEST_SRCS
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
-)
+  )
 
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT})

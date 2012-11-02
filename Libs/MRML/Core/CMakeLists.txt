@@ -199,7 +199,7 @@ set_source_files_properties(
   vtkMRMLDisplayableNode.cxx
   vtkMRMLVolumeDisplayNode.cxx
   ABSTRACT
-)
+  )
 
 string(REGEX REPLACE "\\.cxx" ".h" MRMLCore_SRCS_HEADERS "${MRMLCore_SRCS}")
 source_group("Header Files" FILES ${MRMLCore_SRCS_HEADERS})

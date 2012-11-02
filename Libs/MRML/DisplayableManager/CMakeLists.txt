@@ -72,7 +72,7 @@ set(DisplayableManager_SRCS
   vtkMRMLCrosshairDisplayableManager.cxx
   vtkMRMLModelSliceDisplayableManager.cxx
   vtkMRMLVolumeGlyphSliceDisplayableManager.cxx
-)
+  )
 
 set(KIT_SRCS
   ${DisplayableManager_SRCS}
@@ -84,23 +84,24 @@ set(KIT_SRCS
   vtkMRMLAbstractThreeDViewDisplayableManager.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
   
- # SliceView factory and DisplayableManager
+  # SliceView factory and DisplayableManager
   vtkMRMLAbstractSliceViewDisplayableManager.cxx
   vtkMRMLSliceViewDisplayableManagerFactory.cxx
 
- vtkSliceViewInteractorStyle.cxx
+  vtkSliceViewInteractorStyle.cxx
   vtkThreeDViewInteractorStyle.cxx
 
   # Proxy classes
   vtkMRMLLightBoxRendererManagerProxy.cxx
-)
+  )
+
 set_source_files_properties(
- vtkMRMLDisplayableManagerGroup.cxx
+  vtkMRMLDisplayableManagerGroup.cxx
   vtkMRMLDisplayableManagerFactory.cxx
   vtkMRMLThreeDViewDisplayableManagerFactory.cxx
- vtkMRMLSliceViewDisplayableManagerFactory.cxx
+  vtkMRMLSliceViewDisplayableManagerFactory.cxx
   WRAP_EXCLUDE
-)
+  )
 
 if(MRMLDisplayableManager_USE_PYTHON)
   list(APPEND KIT_SRCS

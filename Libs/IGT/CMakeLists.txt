@@ -110,7 +110,7 @@ add_library(${lib_name} ${srcs})
 set(libs
   MRMLCore
   ${TRACKING_INTERFACE_LIB}
-)
+  )
 
 # If VTK_WRAP_TCL: Complain if KWWidget is not available
 #  if(NOT KWWidgets_FOUND)

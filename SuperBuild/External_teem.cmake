@@ -81,7 +81,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     ${teem_DEPENDENCIES}
-)
+  )
 
 set(Teem_DIR ${CMAKE_BINARY_DIR}/teem-build)
 

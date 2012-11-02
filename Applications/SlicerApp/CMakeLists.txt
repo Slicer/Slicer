@@ -59,7 +59,7 @@ set(SlicerApp_RESOURCES
   Resources/SlicerApp.qrc
   ${qSlicerBaseQTGUI_SOURCE_DIR}/Resources/qSlicerBaseQTGUI.qrc
   ${qSlicerModulesCore_SOURCE_DIR}/Resources/qSlicerModulesCore.qrc
-)
+  )
 
 QT4_WRAP_CPP(SlicerApp_SRCS ${SlicerApp_MOC_SRCS})
 QT4_WRAP_UI(SlicerApp_UI_CXX ${SlicerApp_UI_SRCS})

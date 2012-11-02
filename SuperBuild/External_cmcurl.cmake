@@ -43,7 +43,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     ${cmcurl_DEPENDENCIES}
-)
+  )
 
 set(SLICERLIBCURL_DIR ${CMAKE_BINARY_DIR}/cmcurl-build)
 
