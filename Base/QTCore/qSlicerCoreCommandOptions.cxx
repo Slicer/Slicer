@@ -95,11 +95,6 @@ bool qSlicerCoreCommandOptions::parse(const QStringList& arguments)
     return false;
     }
 
-  if (d->ParsedArgs.value("disable-settings").toBool())
-    {
-    qSlicerCoreApplication::application()->disableSettings();
-    }
-
   // If first unparsed argument is python script, enable 'shebang' mode
   QStringList unparsedArguments = this->unparsedArguments();
   if (unparsedArguments.size() > 0 && unparsedArguments.at(0).endsWith(".py"))
@@ -248,6 +243,13 @@ QString qSlicerCoreCommandOptions::tempDirectory() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->Settings.value("temp-directory", QVariant(QDir::tempPath())).toString();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::settingsEnabled() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-settings").toBool();
 }
 
 //-----------------------------------------------------------------------------

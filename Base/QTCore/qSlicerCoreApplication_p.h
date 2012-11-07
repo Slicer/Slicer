@@ -54,7 +54,7 @@ public:
   virtual void init();
 
   /// Instanciate settings object
-  QSettings* instantiateSettings(const QString& suffix, bool useTmp);
+  QSettings* instantiateSettings(bool useTmp);
 
   /// Return true is this instance of Slicer is running from an installed directory
   bool isInstalled(const QString& slicerHome)const;
