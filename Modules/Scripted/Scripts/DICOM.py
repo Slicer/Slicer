@@ -302,12 +302,20 @@ class DICOMWidget:
       slicer.dicomDatabase = ctk.ctkDICOMDatabase()
       self.setDatabasePrecacheTags()
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
-    if not (os.access(databaseDirectory, os.W_OK) and os.access(databaseDirectory, os.R_OK)):
-      self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+    messages = ""
+    if not os.path.exists(databaseDirectory):
+      messages += "Directory does not exist. "
+    else:
+      if not os.access(databaseDirectory, os.W_OK):
+        messages += "Directory not writable. "
+      if not os.access(databaseDirectory, os.R_OK):
+        messages += "Directory not readable. "
+    if messages != "":
+      self.messageBox('The database file path "%s" cannot be used.  %s\nPlease pick a different database directory using the LocalDatabase button in the DICOM Browser.' % (databaseFilepath,messages))
     else:
       slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
       if not slicer.dicomDatabase.isOpen:
-        self.messageBox('The database file path "%s" cannot be opened.' % databaseFilepath)
+        self.messageBox('The database file path "%s" cannot be opened.\nPlease pick a different database directory using the LocalDatabase button in the DICOM Browser.' % databaseFilepath)
         self.dicomDatabase = None
       else:
         if self.dicomApp:
