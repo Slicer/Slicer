@@ -1,6 +1,9 @@
 import os
 import unittest
 import math
+import datetime
+import time
+import random
 from __main__ import vtk, qt, ctk, slicer
 
 #
@@ -327,6 +330,138 @@ class ChartingTest(unittest.TestCase):
     # Set the chart to display
     cvn.SetChartNodeID(cn.GetID())
     self.delayDisplay('A bar chart')
+
+    # Test using a date axis
+    #
+
+    # Create another data array
+    dn4 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+    a = dn4.GetArray()
+
+    # ugh, python uses localtime
+    dates = ["3/27/2010","6/15/2010","12/14/2010","3/8/2011","9/5/2011","12/20/2011","3/17/2012","6/12/2012","9/22/2012","12/14/2012","3/23/2012"]
+    #dates = ["3/27/2010","6/15/2010","9/21/2010","12/14/2010","3/8/2011","5/31/2011","9/5/2011","12/20/2011","3/17/2012","6/12/2012","9/22/2012","12/14/2012","3/23/2012"]
+    times = []
+    for i in range(len(dates)):
+      times.append(time.mktime(datetime.datetime.strptime(dates[i], "%m/%d/%Y").timetuple()))
+
+    a.SetNumberOfTuples(len(times))
+
+    for i in range(len(times)):
+      a.SetComponent(i, 0, times[i])
+      a.SetComponent(i, 1, math.sin(x[i]/4.0) + 4)
+      a.SetComponent(i, 2, 0)
+
+    # Create another ChartNode
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
+
+    # Add data to the chart
+    cn.AddArray('Lesion #1', dn4.GetID())
+
+    # Configure properties of the Chart
+    cn.SetProperty('default', 'title', 'A chart with dates')
+    cn.SetProperty('default', 'xAxisLabel', 'date')
+    cn.SetProperty('default', 'xAxisType', 'date')
+    cn.SetProperty('default', 'yAxisLabel', 'size (cm)')
+    cn.SetProperty('default', 'type', 'Bar');
+
+    # Set the chart to display
+    cvn.SetChartNodeID(cn.GetID())
+    self.delayDisplay('A chart with dates')
+    
+
+    # Test using a color table to look up label names
+    # 
+    #
+
+    # Create another data array
+    dn5 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+    a = dn5.GetArray()
+
+    a.SetNumberOfTuples(4)
+    a.SetComponent(0, 0, 6)
+    a.SetComponent(0, 1, 32)
+    a.SetComponent(1, 0, 3)
+    a.SetComponent(1, 1, 12)
+    a.SetComponent(2, 0, 4)
+    a.SetComponent(2, 1, 20)
+    a.SetComponent(3, 0, 5)
+    a.SetComponent(3, 1, 6)
+    
+
+    # Create another ChartNode
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
+
+    # Add data to the chart
+    cn.AddArray('Volumes', dn5.GetID())
+
+    # Configure properties of the Chart
+    cn.SetProperty('default', 'title', 'A chart with labels')
+    cn.SetProperty('default', 'xAxisLabel', 'structure')
+    cn.SetProperty('default', 'xAxisType', 'categorical')
+    cn.SetProperty('default', 'yAxisLabel', 'size (cm)')
+    cn.SetProperty('default', 'type', 'Bar');
+    cn.SetProperty('Volumes', 'lookupTable', slicer.util.getNode('GenericAnatomyColors').GetID() )
+
+    # Set the chart to display
+    cvn.SetChartNodeID(cn.GetID())
+    self.delayDisplay('A chart with labels')
+    
+    # Test box plots
+    #
+    #
+
+    # Create another data array
+    dn6 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+    a = dn6.GetArray()
+
+    a.SetNumberOfTuples(40)
+    for i in range(a.GetNumberOfTuples()):
+      a.SetComponent(i, 0, 1)
+      a.SetComponent(i, 1, (2.0*random.random() - 0.5) + 20.0)
+
+    # Create another data array
+    dn7 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+    a = dn7.GetArray()
+
+    a.SetNumberOfTuples(25)
+    for i in range(20):
+      a.SetComponent(i, 0, 2)
+      a.SetComponent(i, 1, 2.0*(2.0*random.random()-1.0) + 27.0)
+    for i in range(5):
+      a.SetComponent(20+i, 0, 2)
+      a.SetComponent(20+i, 1, 10.0*(2.0*random.random()-1.0) + 27.0)
+
+    # Create another data array
+    dn8 = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+    a = dn8.GetArray()
+
+    a.SetNumberOfTuples(25)
+    for i in range(20):
+      a.SetComponent(i, 0, 3)
+      a.SetComponent(i, 1, 3.0*(2.0*random.random()-1.0) + 24.0)
+    for i in range(5):
+      a.SetComponent(20+i, 0, 2)
+      a.SetComponent(20+i, 1, 10.0*(2.0*random.random()-1.0) + 24.0)
+    
+    # Create another ChartNode
+    cn = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
+
+    # Add data to the chart
+    cn.AddArray('Controls', dn6.GetID())
+    cn.AddArray('Group A', dn7.GetID())
+    cn.AddArray('Group B', dn8.GetID())
+
+    # Configure properties of the Chart
+    cn.SetProperty('default', 'title', 'A box chart')
+    cn.SetProperty('default', 'xAxisLabel', 'population')
+    cn.SetProperty('default', 'xAxisType', 'categorical')
+    cn.SetProperty('default', 'yAxisLabel', 'size (ml)')
+    cn.SetProperty('default', 'type', 'Box');
+
+    # Set the chart to display
+    cvn.SetChartNodeID(cn.GetID())
+    self.delayDisplay('A box chart')
 
     #
     self.delayDisplay('Test passed!')

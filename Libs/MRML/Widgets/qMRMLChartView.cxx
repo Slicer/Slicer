@@ -23,6 +23,10 @@
 #include <QToolButton>
 #include <QWebFrame>
 
+// STD includes
+#include <vector>
+#include <algorithm>
+
 // CTK includes
 #include <ctkAxesWidget.h>
 #include <ctkLogger.h>
@@ -53,7 +57,7 @@ const char *plotPreamble =
   "<!DOCTYPE html>"
   "<html>"
   "<head>"
-  "<title>Line Charts and Options</title>"
+  "<title>Chart</title>"
   "<link class=\"include\" rel=\"stylesheet\" type=\"text/css\" href=\"qrc:/jqPlot/jquery.jqplot.min.css\" />"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/jquery.min.js\"></script>"
   "</head>"
@@ -63,6 +67,7 @@ const char *plotPostscript =
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/jquery.jqplot.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasTextRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.barRenderer.min.js\"></script>"
+  "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.boxplotRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisLabelRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.canvasAxisTickRenderer.min.js\"></script>"
   "<script class=\"include\" type=\"text/javascript\" src=\"qrc:/jqPlot/plugins/jqplot.categoryAxisRenderer.min.js\"></script>"
@@ -210,375 +215,41 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     return;
     }
 
-  vtkStringArray *arrayIDs = cn->GetArrays();
-  vtkStringArray *arrayNames = cn->GetArrayNames();
 
-  // What type of chart? What type of axes?
-  //
-  //
-  const char *type = cn->GetProperty("default", "type");
-  const char *xAxisType = cn->GetProperty("default", "xAxisType");
-  const char *yAxisType = cn->GetProperty("default", "yAxisType");
-
-  bool rotateXTickLabels = false;
-
-  // data to plot - represented in javascript
+  // Generate javascript for the data, ticks, options
   //
   //
   QStringList plotData;
-  plotData << "var data = [";
-
-  // for each curve
-  for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
-    {
-    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(idx).c_str() ));
-
-    if (dn)
-      {
-      vtkMRMLColorNode *seriesColorNode = 0;
-      const char *seriesLookupTable 
-        = cn->GetProperty(arrayNames->GetValue(idx).c_str(), "lookupTable");
-      if (seriesLookupTable)
-        {
-        seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
-        }
-
-      // if doing a Bar chart with categorical data and a lookup
-      // table, then use the color names (tissue names) instead of the
-      // label value
-      if (type && !strcmp(type, "Bar") 
-          && xAxisType && !strcmp(xAxisType, "categorical")
-          && seriesColorNode) 
-        {
-        plotData << this->seriesDataString(dn, seriesColorNode);
-        if (dn->GetSize() > 6)
-          {
-          rotateXTickLabels = true;
-          }
-        }
-      else
-        {
-        // convert the data array into a string of quantitative values
-        plotData << this->seriesDataString(dn);
-        }
-
-      if (idx < arrayIDs->GetNumberOfValues()-1)
-        {
-        plotData << ",";
-        }
-      }
-    }
-
-  plotData << "];";
-  
-  // properties for the plot - represented in javascript
-  //
-  //
-  
+  QStringList plotXAxisTicks;
   QStringList plotOptions;
-  plotOptions << "var options = {";
 
-  // plot level properties: title, axis labels, grid, ...
-  plotOptions << 
-    "highlighter: {show: true, useAxesFormatters: false, formatString: '%.3g, %.3g'}, cursor: {show: true, zoom: true}";
+  const char *type = cn->GetProperty("default", "type");
 
-  // title
-  const char *showTitle = cn->GetProperty("default", "showTitle");
-  const char *title = cn->GetProperty("default", "title");
-
-  if (showTitle && !strcmp(showTitle, "on") && title)
+  if (!type || (type && !strcmp(type, "Line")))
     {
-    plotOptions << ", title: '" << title << "'";
+    // line charts are the default
+    plotData << this->lineData(cn);
+    plotXAxisTicks << this->lineXAxisTicks(cn);
+    plotOptions << this->lineOptions(cn);
     }
-
-  // jqplot bar charts (BarRenderer) were designed for categorical
-  // data.  For numeric x-axis data, the bar widths are calculated
-  // incorrectly. But if the bar charts are set to be "stacked", then
-  // bar widths are calculated properly. Defaulting to stacked bar
-  // charts for now.  May write our own renderer for the types of bar
-  // charts we want.
-  //
-  // Note that this also affects how varyBarColors
-  // works. varyBarColors is disabled for stacked bar charts. So you
-  // can only assign a color node to noncategorical data.
-  if (type && !strcmp(type, "Bar") 
-      && (!xAxisType || (xAxisType && strcmp(xAxisType, "categorical"))))
+  else if (type && !strcmp(type, "Scatter"))
     {
-    // use stacking for "quantitative" and "date", note only testing
-    // against not "categorical"
-    plotOptions << ", stackSeries: true";
+    plotData << this->scatterData(cn);
+    plotXAxisTicks << this->scatterXAxisTicks(cn);
+    plotOptions << this->scatterOptions(cn);
     }
-  
-  // axes labels
-  const char *showXAxisLabel = cn->GetProperty("default", "showXAxisLabel");
-  const char *xAxisLabel = cn->GetProperty("default", "xAxisLabel");
-  const char *xAxisPad = cn->GetProperty("default", "xAxisPad");
-  const char *showYAxisLabel = cn->GetProperty("default", "showYAxisLabel");
-  const char *yAxisLabel = cn->GetProperty("default", "yAxisLabel");
-  const char *yAxisPad = cn->GetProperty("default", "yAxisPad");
-  
-  bool showx = false, showy = false;
-  if (showXAxisLabel && !strcmp(showXAxisLabel, "on") && xAxisLabel)
+  else if (type && !strcmp(type, "Bar"))
     {
-    showx = true;
+    plotData << this->barData(cn);
+    plotXAxisTicks << this->barXAxisTicks(cn);
+    plotOptions << this->barOptions(cn);
     }
-  if (showYAxisLabel && !strcmp(showYAxisLabel, "on") && yAxisLabel)
+  else if (type && !strcmp(type, "Box"))
     {
-    showy = true;
+    plotData << this->boxData(cn);
+    plotXAxisTicks << this->boxXAxisTicks(cn);
+    plotOptions << this->boxOptions(cn);
     }
-  if (showx || showy)
-    {
-    plotOptions << ", axes: {";
-    if (showx)
-      {
-      plotOptions << "xaxis: {label: '" << xAxisLabel << "'";
-      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
-      if (xAxisPad)
-      {
-        plotOptions << ", pad: " << xAxisPad;
-      }
-      if (xAxisType && !strcmp(xAxisType, "categorical"))
-        {
-        plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
-        if (rotateXTickLabels)
-          {
-          plotOptions << ", tickRenderer: $.jqplot.CanvasAxisTickRenderer"
-                      << ", tickOptions: { angle: -30 }";
-          }
-        }
-      plotOptions << "}";
-      if (showy)
-        {
-        plotOptions << ", ";
-        }
-      }
-    if (showy)
-      {
-      plotOptions << "yaxis: {label: '" << yAxisLabel << "'";
-      plotOptions << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
-      if (yAxisPad)
-      {
-        plotOptions << ", pad: " << yAxisPad;
-      }
-      if (yAxisType && !strcmp(yAxisType, "categorical"))
-        {
-        plotOptions << ", renderer: $.jqplot.CategoryAxisRenderer";
-        }
-      plotOptions << "}";
-      }
-    plotOptions << "}";
-    }
-    
-  
-  // grid
-  const char *grid = cn->GetProperty("default", "showGrid");
-
-  if (grid && !strcmp(grid, "on"))
-    {
-    plotOptions << ", grid: {drawGridlines: true}";
-    }
-  else
-    {
-    plotOptions << ", grid: {drawGridlines: false}";
-    }
-
-  // legend
-  const char *legend = cn->GetProperty("default", "showLegend");
-
-  if (legend && !strcmp(legend, "on"))
-    {
-    plotOptions << ", legend: {show: true}";
-    }
-  else
-    {
-    plotOptions << ", legend: {show: false}";
-    }
-
-  // Use a default set of colors defined by Slicer or specified by the
-  // chart node. Later, when defining each series and if we are
-  // displaying a bar chart, we will look for a lookup table assigned
-  // to the array and use that with "varyBarColor". We define the
-  // seriesColors here for line charts to work. If seriesColors is
-  // defined in seriesDefaults, then only bar charts observe it.
-  const char* defaultChartColorNodeID =
-    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
-  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
-    this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
-  vtkMRMLColorNode *colorNode = defaultColorNode;
-  const char *lookupTable = cn->GetProperty("default", "lookupTable");
-  if (lookupTable)
-    {
-    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
-    }
-
-  if (colorNode)
-    {
-    plotOptions << ", seriesColors: " << this->seriesColorsString(colorNode);
-    }
-
-  // default properties for a series
-  //
-  //
-  plotOptions << ", seriesDefaults: {show: true";
-
-  // chart type
-  int defaultMarkers = 0; // 0 = not set, 1 = on, -1 = off
-  int defaultLines = 0;   // 0 = not set, 1 = on, -1 = off
-  if (type && !strcmp(type, "Line"))
-    {
-    defaultLines = 1; // lines on, markers don't care
-    }
-  if (type && !strcmp(type, "Scatter"))
-    {
-    defaultMarkers = 1; // markers on
-    defaultLines = -1;  // lines off
-    }
-  if (type && !strcmp(type, "Bar"))
-    {
-    plotOptions << ", renderer: $.jqplot.BarRenderer";
-    plotOptions << ", rendererOptions: {barWidth: null, fillToZero: true, varyBarColor: true, useNegativeColors: false}";
-    }
-
-  // markers
-  const char *markers = cn->GetProperty("default", "showMarkers");
-    
-  if ((markers && !strcmp(markers, "on")) || defaultMarkers == 1)
-    {
-    plotOptions << ", showMarker: true";
-    }
-  else if (markers && !strcmp(markers, "off"))
-    {
-    plotOptions << ", showMarker: false";
-    }
-  
-  // lines
-  const char *lines = cn->GetProperty("default", "showLines");
-  
-  if ((lines && !strcmp(lines, "on") && defaultLines != -1) || defaultLines == 1)
-    {
-    plotOptions << ", showLine: true";
-    }
-  else if ((lines && !strcmp(lines, "off")) || defaultLines == -1)
-    {
-    plotOptions << ", showLine: false";
-    }
-
-  // line pattern
-  const char *linePattern = cn->GetProperty("default", "linePattern");
-  
-  if (linePattern && !strcmp(linePattern, "solid"))
-    {
-    // By default the line pattern is solid
-    }
-  else if (linePattern && !strcmp(linePattern, "dashed"))
-    {
-    plotOptions << ", linePattern: 'dashed'";
-    }
-  else if (linePattern && !strcmp(linePattern, "dotted"))
-    {
-    plotOptions << ", linePattern: 'dotted'";
-    }
-  else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
-    {
-    plotOptions << ", linePattern: '-.'";
-    }
-
-  // end of seriesDefaults properties
-  plotOptions << "}";
-  
-  // series level properties
-  //
-  //
-  plotOptions << ", series: [";
-  for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
-    {
-    std::string arrayName = arrayNames->GetValue(idx);
-
-    // for each series
-    plotOptions << "{";
-    // legend
-    plotOptions << "label: '" << arrayName.c_str() << "'";
-
-    // markers
-    const char *markers = cn->GetProperty(arrayName.c_str(), "showMarkers");
-    
-    if (markers && !strcmp(markers, "on"))
-      {
-      plotOptions << ", showMarker: true";
-      }
-    else if (markers && !strcmp(markers, "off"))
-      {
-      plotOptions << ", showMarker: false";
-      }
-
-    // lines
-    const char *lines = cn->GetProperty(arrayName.c_str(), "showLines");
-
-    if (lines && !strcmp(lines, "on"))
-      {
-      plotOptions << ", showLine: true";
-      }
-    else if (lines && !strcmp(lines, "off"))
-      {
-      plotOptions << ", showLine: false";
-      }
-
-    // line pattern
-    const char *linePattern = cn->GetProperty(arrayName.c_str(), "linePattern");
-    
-    if (linePattern && !strcmp(linePattern, "solid"))
-      {
-      plotOptions << ", linePattern: 'solid'";
-      }
-    if (linePattern && !strcmp(linePattern, "dashed"))
-      {
-      plotOptions << ", linePattern: 'dashed'";
-      }
-    else if (linePattern && !strcmp(linePattern, "dotted"))
-      {
-      plotOptions << ", linePattern: 'dotted'";
-      }
-    else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
-      {
-      plotOptions << ", linePattern: '-.'";
-      }
-
-    // color
-    const char *color = cn->GetProperty(arrayName.c_str(), "color");
-    
-    if (color)
-      {
-      plotOptions << ", color: '" << color << "'";
-      }
-
-    // seriesColors, only use for bar (and pie?)
-    if (type && !strcmp(type, "Bar"))
-      {
-      const char *seriesLookupTable = cn->GetProperty(arrayName.c_str(), "lookupTable");
-      if (seriesLookupTable)
-        {
-        vtkMRMLColorNode *seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
-        vtkMRMLDoubleArrayNode *arrayNode = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID(arrayIDs->GetValue(idx).c_str()));
-        if (seriesColorNode)
-          {
-          plotOptions << ", seriesColors: "
-                      << this->seriesColorsString(seriesColorNode, arrayNode);
-          }
-        }
-      }
-
-    // end of a series
-    plotOptions << "}";
-    if (idx < arrayNames->GetNumberOfValues()-1)
-      {
-      plotOptions << ",";
-      }
-    }
-  // end of series properties
-  plotOptions << "]";
-  // end of properties
-  plotOptions << "};";
-
 
   // resize slot - represented in javascript
   // pass in resetAxes: true option to get rid of old ticks and axis properties
@@ -587,12 +258,15 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "var resizeSlot = function() {"
     "$('#chart').css('width', 0.95*$(window).width());"
     "$('#chart').css('height', 0.95*$(window).height());"
-    "plot1.replot( {resetAxes: true} );"
+    "var opts = {resetAxes: true};"
+    "if (plot1.series[0].renderer && plot1.series[0].renderer.constructor === $.jqplot.BoxplotRenderer){"
+    "  opts = {resetAxes: true, axes: plot1.series[0].renderer.replot.axes};}"
+    "plot1.replot( opts );"
     "};";
 
   // an initial call to the resize slot - represented in javascript
   QStringList plotInitialResize;
-  plotInitialResize <<
+  plotInitialResize << 
     "resizeSlot();";
 
   // resize hook - represented in javascript
@@ -646,6 +320,7 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
     "<script class=\"code\" type=\"text/javascript\">"    // 3. container for js
     "$(document).ready(function(){";                 // 4. ready function     
   plot << plotData;     // insert data
+  plot << plotXAxisTicks;  // insert ticks if needed
   plot << plotOptions;  // insert options
   plot << 
     "var plot1 = $.jqplot ('chart', data, options);";  // call the plot
@@ -663,11 +338,12 @@ void qMRMLChartViewPrivate::updateWidgetFromMRML()
       
   plot << plotPostscript;   // 5. page postscript, additional javascript
   
-  // qDebug() << plot.join("");
+  //qDebug() << plot.join("");
 
   // show the plot
   q->setHtml(plot.join("")); 
   q->show();
+
 
   // expose this object to the Javascript code so Javascript can call
   // slots in this Qt object, e.g. onDataPointClicked()
@@ -739,6 +415,112 @@ QString qMRMLChartViewPrivate::seriesColorsString(vtkMRMLColorNode *colorNode, v
 }
 
 //---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesTicksString(vtkMRMLDoubleArrayNode *dn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      data << QString("%1").arg(x);
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::arrayTicksString(vtkStringArray *arrayNames)
+{
+  QStringList data;
+
+  data << "[";
+
+  for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
+    {
+    data << "'" << QString(arrayNames->GetValue(idx)) << "'";
+    if (idx < arrayNames->GetNumberOfValues()-1)
+      {
+      data << ", ";
+      }
+    }
+  
+  data << "]";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesLabelTicksString(vtkMRMLDoubleArrayNode *dn, vtkMRMLColorNode *cn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      data << "'" << cn->GetColorName((int)x) << "'";
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesDateTicksString(vtkMRMLDoubleArrayNode *dn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      // convert from unix timestamp (seconds) to javascript timestamp (ms)
+      data << QString("(new Date(%1)).toISOString().slice(0,10)").arg(x * 1000.0);
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
 QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn)
 {
   QStringList data;
@@ -767,7 +549,7 @@ QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn)
 }
 
 //---------------------------------------------------------------------------
-QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn, vtkMRMLColorNode *cn)
+QString qMRMLChartViewPrivate::seriesLabelDataString(vtkMRMLDoubleArrayNode *dn, vtkMRMLColorNode *cn)
 {
   QStringList data;
 
@@ -793,6 +575,979 @@ QString qMRMLChartViewPrivate::seriesDataString(vtkMRMLDoubleArrayNode *dn, vtkM
 
   return data.join("");
 }
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesDependentDataString(vtkMRMLDoubleArrayNode *dn)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    double x, y;
+
+    // for each value
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      // only emit the y axis value, x axis defined elsewhere by the "ticks"
+      data << QString("%1").arg(y);
+      if (j < dn->GetSize()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::lineData(vtkMRMLChartNode *cn)
+{
+  QStringList data;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  data << "var data = [";
+
+  // for each curve
+  for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
+    {
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(idx).c_str() ));
+
+    if (dn)
+      {
+      if (xAxisType && !strcmp(xAxisType, "date"))
+        {
+        // convert the data array into a string using just the
+        // dependent variables.  the dates will be specified using the
+        // ticks along the x-axis
+        data << this->seriesDependentDataString(dn);
+        }
+      else
+        {
+        // convert the data array into a string of quantitative values
+        data << this->seriesDataString(dn);
+        }
+
+      if (idx < arrayIDs->GetNumberOfValues()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "];";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::lineXAxisTicks(vtkMRMLChartNode *cn)
+{
+  QStringList ticks;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
+    {
+    // without any other information, all we can do it use the x-data
+    // as categories
+    
+    // define the ticks from the first curve (could do better)
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+
+    if (dn)
+      {
+      ticks << "var xAxisTicks = " 
+            << this->seriesTicksString(dn)
+            << ";";
+      }
+    }
+  else if (xAxisType && !strcmp(xAxisType, "date"))
+    {
+    // define the ticks from the first curve (could do better)
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+
+    if (dn)
+      {
+      ticks << "var xAxisTicks = " 
+            << this->seriesDateTicksString(dn)
+            << ";";
+      }
+    }
+
+  return ticks.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::genericOptions(vtkMRMLChartNode *cn, bool rotateXTickLabels)
+{
+  QStringList options;
+
+  // plot level properties: title, axis labels, grid, ...
+  options << 
+    "highlighter: {show: true, useAxesFormatters: false, formatString: '%.3g, %.3g'}, cursor: {show: true, zoom: true}";
+
+  // title
+  const char *showTitle = cn->GetProperty("default", "showTitle");
+  const char *title = cn->GetProperty("default", "title");
+
+  if (showTitle && !strcmp(showTitle, "on") && title)
+    {
+    options << ", title: '" << title << "'";
+    }
+
+  // axes labels
+  const char *showXAxisLabel = cn->GetProperty("default", "showXAxisLabel");
+  const char *xAxisLabel = cn->GetProperty("default", "xAxisLabel");
+  const char *xAxisPad = cn->GetProperty("default", "xAxisPad");
+  const char *showYAxisLabel = cn->GetProperty("default", "showYAxisLabel");
+  const char *yAxisLabel = cn->GetProperty("default", "yAxisLabel");
+  const char *yAxisPad = cn->GetProperty("default", "yAxisPad");
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+  const char *yAxisType = cn->GetProperty("default", "yAxisType");
+  
+  bool showx = false, showy = false;
+  if (showXAxisLabel && !strcmp(showXAxisLabel, "on") && xAxisLabel)
+    {
+    showx = true;
+    }
+  if (showYAxisLabel && !strcmp(showYAxisLabel, "on") && yAxisLabel)
+    {
+    showy = true;
+    }
+  if (showx || showy)
+    {
+    options << ", axes: {";
+    if (showx)
+      {
+      options << "xaxis: {label: '" << xAxisLabel << "'";
+      options << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      if (xAxisPad)
+      {
+        options << ", pad: " << xAxisPad;
+      }
+      if (xAxisType && !strcmp(xAxisType, "categorical"))
+        {
+        options << ", renderer: $.jqplot.CategoryAxisRenderer";
+        options << ", ticks: xAxisTicks";
+        options << ", tickRenderer: $.jqplot.CanvasAxisTickRenderer";
+        if (rotateXTickLabels)
+          {
+          options << ", tickOptions: { angle: -30 }";
+          }
+        }
+      if (xAxisType && !strcmp(xAxisType, "date"))
+        {
+        // date axis, use a category axis
+        options << ", renderer: $.jqplot.CategoryAxisRenderer"
+                    << ", tickRenderer: $.jqplot.CanvasAxisTickRenderer"
+                    << ", ticks: xAxisTicks" 
+                    << ", tickOptions: { angle: -30 }";
+        }
+      options << "}";
+      if (showy)
+        {
+        options << ", ";
+        }
+      }
+    if (showy)
+      {
+      options << "yaxis: {label: '" << yAxisLabel << "'";
+      options << ", labelRenderer: $.jqplot.CanvasAxisLabelRenderer";
+      if (yAxisPad)
+      {
+        options << ", pad: " << yAxisPad;
+      }
+      if (yAxisType && !strcmp(yAxisType, "categorical"))
+        {
+        options << ", renderer: $.jqplot.CategoryAxisRenderer";
+        }
+      options << "}";
+      }
+    options << "}";
+    }
+
+  // grid
+  const char *grid = cn->GetProperty("default", "showGrid");
+
+  if (grid && !strcmp(grid, "on"))
+    {
+    options << ", grid: {drawGridlines: true}";
+    }
+  else
+    {
+    options << ", grid: {drawGridlines: false}";
+    }
+
+
+  return options.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::lineOptions(vtkMRMLChartNode *cn)
+{
+  QStringList options;
+
+  vtkStringArray *arrayNames = cn->GetArrayNames();
+
+  options << "var options = {";
+
+  // add the options that are the same for all charts
+  options << this->genericOptions(cn, false);
+  
+  // legend
+  const char *legend = cn->GetProperty("default", "showLegend");
+
+  if (legend && !strcmp(legend, "on"))
+    {
+    options << ", legend: {show: true}";
+    }
+  else
+    {
+    options << ", legend: {show: false}";
+    }
+
+  // Use a default set of colors defined by Slicer or specified by the
+  // chart node. We define the seriesColors here for line charts to
+  // work. If seriesColors is defined in seriesDefaults, then only bar
+  // charts observe it.
+  const char* defaultChartColorNodeID =
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
+    this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
+  vtkMRMLColorNode *colorNode = defaultColorNode;
+  const char *lookupTable = cn->GetProperty("default", "lookupTable");
+  if (lookupTable)
+    {
+    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
+    }
+
+  if (colorNode)
+    {
+    options << ", seriesColors: " << this->seriesColorsString(colorNode);
+    }
+
+  // default properties for a series
+  //
+  //
+  options << ", seriesDefaults: {show: true";
+
+  // chart type
+  int defaultMarkers = 0; // 0 = not set, 1 = on, -1 = off
+  int defaultLines = 0;   // 0 = not set, 1 = on, -1 = off
+  const char *type = cn->GetProperty("default", "type");
+  if (type && !strcmp(type, "Line"))
+    {
+    defaultLines = 1; // lines on, markers don't care
+    }
+  if (type && !strcmp(type, "Scatter"))
+    {
+    defaultMarkers = 1; // markers on
+    defaultLines = -1;  // lines off
+    }
+
+  // markers
+  const char *markers = cn->GetProperty("default", "showMarkers");
+    
+  if ((markers && !strcmp(markers, "on")) || defaultMarkers == 1)
+    {
+    options << ", showMarker: true";
+    }
+  else if (markers && !strcmp(markers, "off"))
+    {
+    options << ", showMarker: false";
+    }
+  
+  // lines
+  const char *lines = cn->GetProperty("default", "showLines");
+  
+  if ((lines && !strcmp(lines, "on") && defaultLines != -1) || defaultLines == 1)
+    {
+    options << ", showLine: true";
+    }
+  else if ((lines && !strcmp(lines, "off")) || defaultLines == -1)
+    {
+    options << ", showLine: false";
+    }
+
+  // line pattern
+  const char *linePattern = cn->GetProperty("default", "linePattern");
+  
+  if (linePattern && !strcmp(linePattern, "solid"))
+    {
+    // By default the line pattern is solid
+    }
+  else if (linePattern && !strcmp(linePattern, "dashed"))
+    {
+    options << ", linePattern: 'dashed'";
+    }
+  else if (linePattern && !strcmp(linePattern, "dotted"))
+    {
+    options << ", linePattern: 'dotted'";
+    }
+  else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
+    {
+    options << ", linePattern: '-.'";
+    }
+
+  // end of seriesDefaults properties
+  options << "}";
+  
+  // series level properties
+  //
+  //
+  options << ", series: [";
+  for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
+    {
+    std::string arrayName = arrayNames->GetValue(idx);
+
+    // for each series
+    options << "{";
+    // legend
+    options << "label: '" << arrayName.c_str() << "'";
+
+    // markers
+    const char *markers = cn->GetProperty(arrayName.c_str(), "showMarkers");
+    
+    if (markers && !strcmp(markers, "on"))
+      {
+      options << ", showMarker: true";
+      }
+    else if (markers && !strcmp(markers, "off"))
+      {
+      options << ", showMarker: false";
+      }
+
+    // lines
+    const char *lines = cn->GetProperty(arrayName.c_str(), "showLines");
+
+    if (lines && !strcmp(lines, "on"))
+      {
+      options << ", showLine: true";
+      }
+    else if (lines && !strcmp(lines, "off"))
+      {
+      options << ", showLine: false";
+      }
+
+    // line pattern
+    const char *linePattern = cn->GetProperty(arrayName.c_str(), "linePattern");
+    
+    if (linePattern && !strcmp(linePattern, "solid"))
+      {
+      options << ", linePattern: 'solid'";
+      }
+    if (linePattern && !strcmp(linePattern, "dashed"))
+      {
+      options << ", linePattern: 'dashed'";
+      }
+    else if (linePattern && !strcmp(linePattern, "dotted"))
+      {
+      options << ", linePattern: 'dotted'";
+      }
+    else if (linePattern && !strcmp(linePattern, "dashed-dotted"))
+      {
+      options << ", linePattern: '-.'";
+      }
+
+    // color
+    const char *color = cn->GetProperty(arrayName.c_str(), "color");
+    
+    if (color)
+      {
+      options << ", color: '" << color << "'";
+      }
+
+    // end of a series
+    options << "}";
+    if (idx < arrayNames->GetNumberOfValues()-1)
+      {
+      options << ",";
+      }
+    }
+  // end of series properties
+  options << "]";
+  // end of properties
+  options << "};";
+
+
+  return options.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::scatterData(vtkMRMLChartNode *cn)
+{
+  return this->lineData(cn);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::scatterXAxisTicks(vtkMRMLChartNode *cn)
+{
+  return this->lineXAxisTicks(cn);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::scatterOptions(vtkMRMLChartNode *cn)
+{
+  return this->lineOptions(cn);
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::barData(vtkMRMLChartNode *cn)
+{
+  QStringList data;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  vtkStringArray *arrayNames = cn->GetArrayNames();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  data << "var data = [";
+
+  // for each curve
+  for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
+    {
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(idx).c_str() ));
+
+    if (dn)
+      {
+      vtkMRMLColorNode *seriesColorNode = 0;
+      const char *seriesLookupTable 
+        = cn->GetProperty(arrayNames->GetValue(idx).c_str(), "lookupTable");
+      if (seriesLookupTable)
+        {
+        seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
+        }
+
+      if (xAxisType && !strcmp(xAxisType, "categorical")
+          && seriesColorNode) 
+        {
+        // convert the data into a string by using just the dependent
+        // variables. we'll use the color names (tissue names) as
+        // "ticks" along the x-axis
+        data << this->seriesDependentDataString(dn);
+        if (dn->GetSize() > 6)
+          {
+          //rotateXTickLabels = true;
+          }
+        }
+      else if (xAxisType && !strcmp(xAxisType, "date"))
+        {
+        // convert the data array into a string using just the
+        // dependent variables. we'll use the dates as "ticks" along
+        // the x-axis
+        data << this->seriesDependentDataString(dn);
+        }
+      else
+        {
+        // convert the data array into a string of quantitative values
+        data << this->seriesDataString(dn);
+        }
+
+      if (idx < arrayIDs->GetNumberOfValues()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "];";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::barXAxisTicks(vtkMRMLChartNode *cn)
+{
+  QStringList ticks;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  vtkStringArray *arrayNames = cn->GetArrayNames();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
+    {
+    // define the ticks from the first curve (could do better)
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+
+    if (dn)
+      {
+      const char *seriesLookupTable = cn->GetProperty(arrayNames->GetValue(0).c_str(), "lookupTable");
+      if (seriesLookupTable)
+        {
+        vtkMRMLColorNode *seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
+        
+        ticks << "var xAxisTicks = " 
+              << this->seriesLabelTicksString(dn, seriesColorNode)
+              << ";";
+        }
+      }
+    }
+  else if (xAxisType && !strcmp(xAxisType, "date"))
+    {
+    // define the ticks from the first curve (could do better)
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+
+    if (dn)
+      {
+      ticks << "var xAxisTicks = " 
+            << this->seriesDateTicksString(dn)
+            << ";";
+      }
+    }
+
+  return ticks.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::barOptions(vtkMRMLChartNode *cn)
+{
+  QStringList options;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  vtkStringArray *arrayNames = cn->GetArrayNames();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  options << "var options = {";
+
+  // Do we need to rotate the x-axis tick labels?
+  bool rotateXTickLabels = false;
+  if (xAxisType && !strcmp(xAxisType, "categorical"))
+    {
+    // if we have a color table for the first series
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+    if (dn)
+      {
+      const char *seriesLookupTable = cn->GetProperty(arrayNames->GetValue(0).c_str(), "lookupTable");
+      if (seriesLookupTable)
+        {
+        if (dn->GetSize() > 6)
+          {
+          rotateXTickLabels = true;
+          }
+        }
+      }    
+    }
+
+  // add the options that are the same for all charts
+  options << this->genericOptions(cn, rotateXTickLabels);
+  
+  // jqplot bar charts (BarRenderer) were designed for categorical
+  // data.  For numeric x-axis data, the bar widths are calculated
+  // incorrectly. But if the bar charts are set to be "stacked", then
+  // bar widths are calculated properly. Defaulting to stacked bar
+  // charts for now.  May write our own renderer for the types of bar
+  // charts we want.
+  //
+  // Note that this also affects how varyBarColor
+  // works. varyBarColor is disabled for stacked bar charts. So you
+  // can only assign a color node to nonquantitative data.
+  if (!xAxisType || (xAxisType && !strcmp(xAxisType, "quantitative")))
+    {
+    // use stacking for "quantitative" 
+    options << ", stackSeries: true";
+    }
+
+  // legend. should we  show if not categorical?
+  const char *legend = cn->GetProperty("default", "showLegend");
+
+  if (legend && !strcmp(legend, "on"))
+    {
+    options << ", legend: {show: true}";
+    }
+  else
+    {
+    options << ", legend: {show: false}";
+    }
+
+  // Use a default set of colors defined by Slicer or specified by the
+  // chart node. We define the seriesColors here for line charts to
+  // work. If seriesColors is defined in seriesDefaults, then only bar
+  // charts observe it.
+  const char* defaultChartColorNodeID =
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
+    this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
+  vtkMRMLColorNode *colorNode = defaultColorNode;
+  const char *lookupTable = cn->GetProperty("default", "lookupTable");
+  if (lookupTable)
+    {
+    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
+    }
+
+  if (colorNode)
+    {
+    options << ", seriesColors: " << this->seriesColorsString(colorNode);
+    }
+
+  // default properties for a series
+  //
+  //
+  options << ", seriesDefaults: {show: true";
+
+  options << ", renderer: $.jqplot.BarRenderer";
+  options << ", rendererOptions: {barWidth: null, fillToZero: true, varyBarColor: false, useNegativeColors: false}";
+
+  // end of seriesDefaults properties
+  options << "}";
+  
+
+  // series level properties
+  //
+  //
+  options << ", series: [";
+  for (int idx = 0; idx < arrayNames->GetNumberOfValues(); idx++)
+    {
+    std::string arrayName = arrayNames->GetValue(idx);
+
+    // for each series
+    options << "{";
+    // legend
+    options << "label: '" << arrayName.c_str() << "'";
+
+    // color
+    const char *color = cn->GetProperty(arrayName.c_str(), "color");
+    
+    if (color)
+      {
+      options << ", color: '" << color << "'";
+      }
+
+    // seriesColors, only use for bar
+    const char *seriesLookupTable = cn->GetProperty(arrayName.c_str(), "lookupTable");
+    if (seriesLookupTable)
+      {
+      vtkMRMLColorNode *seriesColorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(seriesLookupTable));
+      vtkMRMLDoubleArrayNode *arrayNode = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID(arrayIDs->GetValue(idx).c_str()));
+      if (seriesColorNode)
+        {
+        options << ", seriesColors: "
+                    << this->seriesColorsString(seriesColorNode, arrayNode);
+        options << ", rendererOptions: {varyBarColor: true}";
+        }
+      }
+
+    // end of a series
+    options << "}";
+    if (idx < arrayNames->GetNumberOfValues()-1)
+      {
+      options << ",";
+      }
+    }
+  // end of series properties
+  options << "]";
+  // end of properties
+  options << "};";
+    
+
+  return options.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::boxData(vtkMRMLChartNode *cn)
+{
+  // Box charts are a bit different.  Each MRML series defines one
+  // box. The boxes from each series form the "series" sent to jqPlot.
+
+  QStringList data;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  data << "var data = [";
+
+  // for each curve
+  for (int idx = 0; idx < arrayIDs->GetNumberOfValues(); idx++)
+    {
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(idx).c_str() ));
+
+    if (dn)
+      {
+      if (xAxisType && !strcmp(xAxisType, "categorical"))
+        {
+        // all the MRML series get lumped into one jqPlot series 
+        // (need to surround the data with an extra [])
+        if (idx == 0)
+          {
+          data << "[";
+          }
+
+        data << this->seriesBoxDataString(dn, idx);
+
+        if (idx == arrayIDs->GetNumberOfValues()-1)
+          {
+          data << "]";
+          }
+        }
+      else if (xAxisType && !strcmp(xAxisType, "date"))
+        {
+        // JVM - Not currently handled.  Need to work out how the dates are
+        // associated with each series.  This will get used for the
+        // ticks.
+
+        // all the MRML series get lumped into one jqPlot series 
+        // (need to surround the data with an extra [])
+        if (idx == 0)
+          {
+          data << "[";
+          }
+
+        data << this->seriesBoxDataString(dn, idx);
+
+        if (idx == arrayIDs->GetNumberOfValues()-1)
+          {
+          data << "]";
+          }
+        }
+
+      if (idx < arrayIDs->GetNumberOfValues()-1)
+        {
+        data << ",";
+        }
+      }
+    }
+
+  data << "];";
+
+  return data.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::boxXAxisTicks(vtkMRMLChartNode *cn)
+{
+  // JVM - Need to define ticks for case "date" axes
+
+  QStringList ticks;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  vtkStringArray *arrayNames = cn->GetArrayNames();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  if (xAxisType && !strcmp(xAxisType, "categorical"))
+    {
+    // define the ticks from the first curve (could do better)
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+
+    if (dn)
+      {
+      ticks << "var xAxisTicks = " 
+            << this->arrayTicksString(arrayNames)
+            << ";";
+      }
+    }
+
+  return ticks.join("");
+}
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::boxOptions(vtkMRMLChartNode *cn)
+{
+  // Since only series is sent to jqPlot, the options are a bit different
+  QStringList options;
+
+  vtkStringArray *arrayIDs = cn->GetArrays();
+  const char *xAxisType = cn->GetProperty("default", "xAxisType");
+
+  options << "var options = {";
+
+  // Do we need to rotate the x-axis tick labels?
+  bool rotateXTickLabels = false;
+  if (xAxisType && !strcmp(xAxisType, "categorical"))
+    {
+    if (arrayIDs->GetSize() > 6)
+      {
+      rotateXTickLabels = true;
+      }
+    }
+
+  // add the options that are the same for all charts
+  options << this->genericOptions(cn, rotateXTickLabels);
+
+  // Use a default set of colors defined by Slicer or specified by the
+  // chart node. 
+  const char* defaultChartColorNodeID =
+    this->ColorLogic ? this->ColorLogic->GetDefaultChartColorNodeID() : 0;
+  vtkMRMLColorNode *defaultColorNode = vtkMRMLColorNode::SafeDownCast(
+    this->MRMLScene->GetNodeByID(defaultChartColorNodeID));
+  vtkMRMLColorNode *colorNode = defaultColorNode;
+  const char *lookupTable = cn->GetProperty("default", "lookupTable");
+  if (lookupTable)
+    {
+    colorNode = vtkMRMLColorNode::SafeDownCast(this->MRMLScene->GetNodeByID(lookupTable));
+    }
+
+  if (colorNode)
+    {
+    options << ", seriesColors: " << this->seriesColorsString(colorNode);
+    }
+
+  // default properties for a series
+  //
+  //
+  options << ", seriesDefaults: {show: true";
+
+  // chart type
+  options << ", renderer: $.jqplot.BoxplotRenderer";
+
+  // end of seriesDefaults properties
+  options << "}";
+  
+  // series level properties. only one jqplot series in a box plot
+  //
+  //
+  options << ", series: [";
+  options << "{";
+  
+  // color
+  const char *color = cn->GetProperty("default", "color");
+    
+  if (color)
+    {
+    options << ", color: '" << color << "'";
+    }
+
+  // end of a series
+  options << "}";
+  // end of series properties
+  options << "]";
+  // end of properties
+  options << "};";
+
+  return options.join("");
+}
+
+
+
+//---------------------------------------------------------------------------
+QString qMRMLChartViewPrivate::seriesBoxDataString(vtkMRMLDoubleArrayNode *dn, unsigned int idx)
+{
+  QStringList data;
+
+  data << "[";
+
+  if (dn)
+    {
+    // Find the median, first and third quantiles, high, low values
+    // (e.g. guards:  q1 - 1.5 IQR, q3 + 1.5 IQR).
+    //
+    // first quantile is the median of the lower half of the data
+    // third quantile is the median of the upper half of the data
+    double x, y;
+    double q1, q3, median, low, high;
+    
+    // copy data into an STL vector
+    std::vector<double> values;
+    for (unsigned int j = 0; j < dn->GetSize(); ++j)
+      {
+      dn->GetXYValue(j, &x, &y);
+      values.push_back(y);
+      }
+
+    // find the median position
+    std::vector<double>::iterator medIt = values.begin() + values.size() / 2;
+    std::nth_element(values.begin(), medIt, values.end());
+
+    // calculate the median value and define the quantile positions
+    std::vector<double>::iterator q1It, q3It;
+    std::vector<double>::iterator q1BeginIt, q1EndIt, q3BeginIt, q3EndIt;
+    if (values.size() % 2 == 1)
+      {
+      // odd number of elements, just select median
+      median = *medIt;
+
+      // median is a datum, include it in both halfs 
+      q1BeginIt = values.begin();
+      q1EndIt = medIt + 1; // one past median so median is included
+
+      q3BeginIt = medIt; // median is included
+      q3EndIt = values.end();
+      }
+    else
+      {
+      // even number of values, median is the average of the middle
+      // two items
+      median = (*medIt + *(medIt-1))/2.0;
+
+      // median is not a datum, exclude it from both halfs
+      q1BeginIt = values.begin();
+      q1EndIt = medIt; // excludes the median
+
+      q3BeginIt = medIt + 1; // median is excluded
+      q3EndIt = values.end();
+      }
+
+    q1It = q1BeginIt + (q1EndIt - q1BeginIt)/2;
+    q3It = q3BeginIt + (q3EndIt - q3BeginIt)/2;
+
+    // find the quantiles
+    //
+    std::nth_element(q1BeginIt, q1It, q1EndIt);
+    std::nth_element(q3BeginIt, q3It, q3EndIt);
+
+    if ((q1EndIt - q1BeginIt) % 2 == 1)
+      {
+      // odd number of elements in lower half
+      q1 = *q1It;
+      }
+    else
+      {
+      // even number of elements, average
+      q1 = (*q1It + *(q1It-1))/2.0;
+      }
+    
+
+    if ((q3EndIt - q3BeginIt) % 2 == 1)
+      {
+      // odd number of elements in upper half
+      q3 = *q3It;
+      }
+    else
+      {
+      // even number of elements, average
+      q3 = (*q3It + *(q3It-1))/2.0;
+      }
+
+    // find the fences
+    double IQR;
+    
+    IQR = q3 - q1;
+    low = q1 - 1.5 * IQR;
+    high = q3 + 1.5 * IQR;
+
+    // output the values....
+    //
+
+    // Output the values: index, low, q1, median, q3, high
+    data << QString("%1").arg(idx+1) << ", " 
+         << QString("%1").arg(low) << ", " 
+         << QString("%1").arg(q1) << ", "
+         << QString("%1").arg(median) << ", " 
+         << QString("%1").arg(q3) << ", " 
+         << QString("%1").arg(high);
+    
+    // Output any outliers, points outside [low, high]. 
+    for (std::vector<double>::iterator vit = values.begin(); 
+         vit != values.end(); ++vit)
+      {
+      if (*vit < low || *vit > high)
+        {
+        data << ", " << QString("%1").arg(*vit);
+        }
+      }
+    }
+
+  data << "]";
+
+  return data.join("");
+}
+
 
 //---------------------------------------------------------------------------
 void qMRMLChartViewPrivate::onDataMouseOver(int series, int pointidx, double x, double y)
@@ -986,6 +1741,8 @@ QSize qMRMLChartView::sizeHint()const
   // return a default size hint (invalid size)
   return QSize();
 }
+
+
 
 
 
