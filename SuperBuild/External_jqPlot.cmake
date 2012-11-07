@@ -17,7 +17,7 @@ if(NOT DEFINED jqPlot_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 
   ExternalProject_Add(${proj}
-    URL http://cloud.github.com/downloads/Slicer/jqPlot/jquery.jqplot.1.0.0b2_r1012.tar.gz
+    URL http://cloud.github.com/downloads/millerjv/jqplotDownloads/jquery.jqplot.1.0.0b2_r1012.tar.gz
     URL_MD5 2afa87db609446d568b79a9ae5c07523
     "${slicer_external_update}"
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot
