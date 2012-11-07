@@ -105,7 +105,7 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// 
   /// Chart level properties
   ///
-  /// \li  "type" - Line, Bar, Scatter
+  /// \li  "type" - Line, Bar, Scatter, Box
   /// \li  "title" - title displayed on the chart
   /// \li  "showTitle" - show title "on" or "off"
   /// \li  "xAxisLabel" - label displayed on the x-axis
@@ -119,7 +119,7 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   ///                   data range on the axis to give the axis range so that data points
   ///                   don't fall on the edges of the axis.
   /// \li  "showYAxisLabel" - show y-axis label "on" or "off"
-  /// \li  "yAxisType" - type of data on y-axis, "quantitative", "categorical", "date"
+  /// \li  "yAxisType" - type of data on y-axis, "quantitative", "categorical"
   /// \li  "showGrid" - show grid "on" or "off"
   /// \li  "showLegend" - show legend "on" or "off"
   /// \li  "lookupTable" - MRMLID of a ColorNode to use to color series
@@ -134,6 +134,10 @@ class VTK_MRML_EXPORT vtkMRMLChartNode : public vtkMRMLNode
   /// \li  "color" - color to use for the array lines and points (#RRGGBB)
   /// \li  "lookupTable" - MRMLID of a ColorNode to use to color individual 
   ///         bars in bar chart (useful with categorical data)
+  ///
+  /// When using DoubleArrayNodes, dates are specified as floats
+  /// representing the number of seconds since January 1, 1970 UTC. 
+  /// Fractional seconds are permitted.
   /// 
   void SetProperty(const char *arrname, const char *property, const char *value);
   const char* GetProperty(const char *arrname, const char *property);
