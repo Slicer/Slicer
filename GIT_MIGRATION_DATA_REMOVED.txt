@@ -1,4 +1,3 @@
-0135502f44a60824387786978a9e126c2684042c8131f923d11f71c1a89e624c  Base/GUI/Tcl/ImageData/Thumbs.db
 08fd0e76845ea9a1a1c9ab6d7d96daf6dbb2840d5f2649a127a6f279e7c04c0a  Base/Logic/Testing/vol.zip
 01fd0b39e96da9e85b841273173001958a5feb219875deee0719a74e36b02652  Base/QTCore/Testing/Data/Input/19354-linux-amd64-CLIExtensionTemplate-svn19354-2012-02-23.tar.gz
 87105840a5b6a5efee1e682df07957d880e23e131791c3b53746e0a4e6c2dfc8  Base/QTCore/Testing/Data/Input/19354-linux-amd64-LoadableExtensionTemplate-svn19354-2012-02-23.tar.gz
