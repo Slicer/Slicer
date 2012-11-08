@@ -54,6 +54,7 @@ public:
   virtual void init();
 
   /// Instanciate settings object
+  virtual QSettings* newSettings();
   QSettings* instantiateSettings(bool useTmp);
 
   /// Return true is this instance of Slicer is running from an installed directory

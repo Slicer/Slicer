@@ -99,6 +99,8 @@ public:
   /// Initialize application style
   void initStyle();
 
+  virtual QSettings* newSettings();
+
   qSlicerLayoutManager*   LayoutManager;
   ctkToolTipTrapper*      ToolTipTrapper;
   ctkSettingsDialog*      SettingsDialog;
@@ -246,6 +248,13 @@ void qSlicerApplicationPrivate::initStyle()
 }
 
 //-----------------------------------------------------------------------------
+QSettings* qSlicerApplicationPrivate::newSettings()
+{
+  Q_Q(qSlicerApplication);
+  return new ctkSettings(q);
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerApplication methods
 
 //-----------------------------------------------------------------------------
@@ -376,17 +385,6 @@ void qSlicerApplication::onSlicerApplicationLogicModified()
     this->layoutManager()->setMRMLColorLogic(
       this->applicationLogic()->GetColorLogic());
     }
-}
-
-//-----------------------------------------------------------------------------
-QSettings* qSlicerApplication::newSettings(const QString& fileName)
-{
-  if (!fileName.isEmpty())
-    {
-    // Special case for tmp settings
-    return new ctkSettings(fileName, QSettings::defaultFormat(), this);
-    }
-  return new ctkSettings(this);
 }
 
 //-----------------------------------------------------------------------------

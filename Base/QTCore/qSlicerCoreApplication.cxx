@@ -279,6 +279,13 @@ void qSlicerCoreApplicationPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
+QSettings* qSlicerCoreApplicationPrivate::newSettings()
+{
+  Q_Q(qSlicerCoreApplication);
+  return new QSettings(q);
+}
+
+//-----------------------------------------------------------------------------
 QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
 {
   Q_Q(qSlicerCoreApplication);
@@ -286,7 +293,7 @@ QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
     {
     q->setApplicationName(q->applicationName() + "-tmp");
     }
-  QSettings* settings = new QSettings(q);
+  QSettings* settings = this->newSettings();
   if (useTmp)
     {
     settings->clear();
