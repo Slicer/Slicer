@@ -288,6 +288,9 @@ protected slots:
   void processAppLogicReadData();
   void processAppLogicWriteData();
 
+  /// Set the ReturnCode flag and call QCoreApplication::exit()
+  void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
+
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 
