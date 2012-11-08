@@ -78,12 +78,12 @@ def registerScriptedDisplayableManagers(sliceWidget):
     }
     # enable the specific instances that are working well currently (low overhead)
     # set enabledSWidget {ModelSWidget SliceSWidget VolumeDisplaySWidget}
-    set enabledSWidget {VolumeDisplaySWidget}
-    foreach esw $enabledSWidget {
-      foreach sw [itcl::find objects -isa $esw] {
-        $sw configure -enabled true
-      }
-    }
+    #set enabledSWidget {VolumeDisplaySWidget}
+    #foreach esw $enabledSWidget {
+    #  foreach sw [itcl::find objects -isa $esw] {
+    #    $sw configure -enabled true
+    #  }
+    #}
     # tell the SliceSWidget to create instances of only specific widget types
     foreach sw [itcl::find objects -isa SliceSWidget] {
       $sw configure -swidgetTypes  { { ModelSWidget -modelID vtkMRMLModelNode } }
