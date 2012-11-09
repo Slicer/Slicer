@@ -772,6 +772,9 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     QString pythonScript = options->pythonScript();
     QString extraPythonScript = options->extraPythonScript();
     QStringList scriptArgs = options->unparsedArguments();
+    // Do not pass "--attach-process", it will avoid some python script to complain about
+    // unknown argument.
+    scriptArgs.removeAll("--attach-process");
     if(!extraPythonScript.isEmpty())
       {
       scriptArgs.removeFirst();
