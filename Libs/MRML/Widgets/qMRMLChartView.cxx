@@ -655,17 +655,22 @@ QString qMRMLChartViewPrivate::lineXAxisTicks(vtkMRMLChartNode *cn)
   vtkStringArray *arrayIDs = cn->GetArrays();
   const char *xAxisType = cn->GetProperty("default", "xAxisType");
 
-  if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
+  if (!arrayIDs || arrayIDs->GetNumberOfValues() <= 0)
+    {
+    // no axis ticks by default
+    }
+  else if (!xAxisType || (xAxisType && !strcmp(xAxisType, "categorical")))
     {
     // without any other information, all we can do it use the x-data
     // as categories
-    
+
     // define the ticks from the first curve (could do better)
-    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(
+      this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
 
     if (dn)
       {
-      ticks << "var xAxisTicks = " 
+      ticks << "var xAxisTicks = "
             << this->seriesTicksString(dn)
             << ";";
       }
@@ -673,11 +678,12 @@ QString qMRMLChartViewPrivate::lineXAxisTicks(vtkMRMLChartNode *cn)
   else if (xAxisType && !strcmp(xAxisType, "date"))
     {
     // define the ticks from the first curve (could do better)
-    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
+    vtkMRMLDoubleArrayNode *dn = vtkMRMLDoubleArrayNode::SafeDownCast(
+      this->MRMLScene->GetNodeByID( arrayIDs->GetValue(0).c_str() ));
 
     if (dn)
       {
-      ticks << "var xAxisTicks = " 
+      ticks << "var xAxisTicks = "
             << this->seriesDateTicksString(dn)
             << ";";
       }
