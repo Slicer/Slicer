@@ -74,8 +74,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     for mvNode in mvNodes:
       tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
       nFrames = mvNode.GetNumberOfFrames()
+      orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
 
-      if self.isFrameOriginConsistent(files, mvNode) == False:
+      if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
         continue
 
       loadable = DICOMLib.DICOMLoadable()
@@ -137,8 +138,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       for mvNode in mvNodes:
         tagName = mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName')
         nFrames = mvNode.GetNumberOfFrames()
-        
-        if self.isFrameOriginConsistent(files, mvNode) == False:
+        orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
+
+        if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
           continue
 
         loadable = DICOMLib.DICOMLoadable()
@@ -156,6 +158,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
   # return true is the origins for the individual frames are within
   # self.epsilon apart
   def isFrameOriginConsistent(self, files, mvNode):
+
     nFrames = mvNode.GetNumberOfFrames()
 
     # sort files for each frame
@@ -199,7 +202,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       return
 
     nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
-    files = loadable.files
+    files = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
     nFiles = len(files)
     filesPerFrame = nFiles/nFrames
     frames = []
@@ -391,6 +394,10 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetAttribute("MultiVolume.FrameIdentifyingDICOMTagName",frameTag)
       mvNode.SetAttribute('MultiVolume.NumberOfFrames',str(len(tagValue2FileList)))
       mvNode.SetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits',self.multiVolumeTagsUnits[frameTag])
+      # keep the files in the order by the detected tag
+      # files are not ordered within the individual frames -- this will be
+      # done by ScalarVolumePlugin later
+      mvNode.SetAttribute('MultiVolume.FrameFileList', frameFileListStr)
 
       mvNode.SetNumberOfFrames(len(tagValue2FileList))
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
