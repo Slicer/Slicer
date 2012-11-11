@@ -22,6 +22,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.tags['seriesInstanceUID'] = "0020,000E"
     self.tags['seriesDescription'] = "0008,103E"
     self.tags['position'] = "0020,0032"
+    self.tags['studyDescription'] = "0008,1030"
 
     # tags used to identify multivolumes
     self.multiVolumeTags = {}
@@ -76,13 +77,15 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       nFrames = mvNode.GetNumberOfFrames()
       orderedFiles = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
 
+      desc = slicer.dicomDatabase.fileValue(orderedFiles[0],self.tags['studyDescription']) # SeriesDescription
+
       if self.isFrameOriginConsistent(orderedFiles, mvNode) == False:
         continue
 
       loadable = DICOMLib.DICOMLoadable()
-      loadable.files = files
+      loadable.files = orderedFiles
       loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
-      mvNode.SetName(loadable.name)
+      mvNode.SetName(desc)      
       loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
@@ -146,7 +149,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         loadable = DICOMLib.DICOMLoadable()
         loadable.files = files
         loadable.name = subseriesDescriptions[key] + ' - as a ' + str(nFrames) + ' frames MultiVolume by ' + tagName
-        mvNode.SetName(loadable.name)
+        mvNode.SetName(subseriesDescriptions[key])
         loadable.tooltip = loadable.name
         loadable.selected = True
         loadable.multivolume = mvNode
