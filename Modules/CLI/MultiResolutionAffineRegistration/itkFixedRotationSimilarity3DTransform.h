@@ -142,20 +142,7 @@ private:
 
 }  // namespace itk
 
-// Define instantiation macro for this template.
-#define ITK_TEMPLATE_FixedRotationSimilarity3DTransform(_, EXPORT, x, y) namespace itk { \
-  _(1 (class EXPORT FixedRotationSimilarity3DTransform<ITK_TEMPLATE_1 x> ) ) \
-  namespace Templates { typedef FixedRotationSimilarity3DTransform<ITK_TEMPLATE_1 x> FixedRotationSimilarity3DTransform \
-##y; } \
-  }
-
-/*
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkFixedRotationSimilarity3DTransform+-.h"
-#endif
-*/
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkFixedRotationSimilarity3DTransform.txx"
 #endif
 

@@ -271,17 +271,7 @@ namespace itk
 
 }  /// namespace itk
 
-/// Define instantiation macro for this template.
-#define ITK_TEMPLATE_DisplacementFieldTransform(_, EXPORT, x, y) namespace itk { \
-  _(3(class EXPORT DisplacementFieldTransform< ITK_TEMPLATE_3 x >)) \
-  namespace Templates { typedef DisplacementFieldTransform< ITK_TEMPLATE_3 x > \
-                                                   DisplacementFieldTransform##y; } \
-  }
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkDisplacementFieldTransform+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 # include "itkDisplacementFieldTransform.txx"
 #endif
 #endif /* __itkDisplacementFieldTransform_h */

@@ -148,18 +148,7 @@ private:
 
 } // end namespace itk
 
-// Define instantiation macro for this template.
-#define ITK_TEMPLATE_DifferenceDiffusionTensor3DImageFilter(_, EXPORT, x, y) namespace itk { \
-  _(2 (class EXPORT DifferenceDiffusionTensor3DImageFilter<ITK_TEMPLATE_2 x> ) ) \
-  namespace Templates { typedef DifferenceDiffusionTensor3DImageFilter<ITK_TEMPLATE_2 x> \
-                        DifferenceDiffusionTensor3DImageFilter##y; } \
-  }
-
-#if ITK_TEMPLATE_EXPLICIT
-#include "itkTemplates/DifferenceDiffusionTensor3DImageFilter+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkDifferenceDiffusionTensor3DImageFilter.txx"
 #endif
 
