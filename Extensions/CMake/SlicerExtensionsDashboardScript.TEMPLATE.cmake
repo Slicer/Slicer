@@ -152,7 +152,7 @@ endfunction()
 #
 # Download and include dashboard driver script
 #
-set(url http://svn.slicer.org/Slicer4/trunk/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
+set(url http://svn.slicer.org/Slicer4/branches/Slicer-4-2/Extensions/CMake/SlicerExtensionsDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 download_file(${url} ${dest})
 include(${dest})
