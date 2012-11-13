@@ -105,7 +105,8 @@ void vtkMRMLLabelMapVolumeDisplayNode::UpdateImageDataPipeline()
     }
   if (lookupTable == NULL && this->ColorNodeID != NULL)
     {
-    if (!this->GetScene() || !this->GetScene()->IsImporting())
+    // only complain if there's a scene set and that scene is not batch processing
+    if (this->GetScene() && !this->GetScene()->IsBatchProcessing())
       {
       vtkErrorMacro(<< "vtkMRMLLabelMapVolumeDisplayNode: Warning, the color table node: "
                     << this->ColorNodeID << " can't be found");

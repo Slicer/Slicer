@@ -35,6 +35,7 @@
 #include "vtkUnstructuredGridReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkXMLPolyDataWriter.h"
+#include "vtksys/SystemTools.hxx"
 
 // ITK includes
 #include "itkDefaultDynamicMeshTraits.h"
@@ -103,21 +104,28 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName == std::string(""))
     {
-    vtkErrorMacro("ReadData: File name not specified");
+    vtkErrorMacro("ReadDataInternal: File name not specified");
     return 0;
     }
-
+  
+  // check that the file exists
+  if (vtksys::SystemTools::FileExists(fullName.c_str()) == false)
+    {
+    vtkErrorMacro("ReadDataInternal: model file '" << fullName.c_str() << "' not found.");
+    return 0;
+    }
+      
   // compute file prefix
   std::string name(fullName);
   std::string::size_type loc = name.find_last_of(".");
   if( loc == std::string::npos )
     {
-    vtkErrorMacro("ReadData: no file extension specified: " << name.c_str());
+    vtkErrorMacro("ReadDataInternal: no file extension specified: " << name.c_str());
     return 0;
     }
   std::string extension = name.substr(loc);
 
-  vtkDebugMacro("ReadData: extension = " << extension.c_str());
+  vtkDebugMacro("ReadDataInternal: extension = " << extension.c_str());
 
   int result = 1;
   try
@@ -155,7 +163,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       else
         {
         vtkErrorMacro("File " << fullName.c_str()
-                      << "is not polydata nor unstructured grid.");
+                      << " is not recognized as polydata nor as an unstructured grid.");
         }
       if (output == 0)
         {
@@ -275,7 +283,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       double *scalarRange =  modelNode->GetPolyData()->GetScalarRange();
       if (scalarRange)
         {
-        vtkDebugMacro("ReadData: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
+        vtkDebugMacro("ReadDataInternal: setting scalar range " << scalarRange[0] << ", " << scalarRange[1]);
         modelNode->GetDisplayNode()->SetScalarRange(scalarRange);
         }
       }
