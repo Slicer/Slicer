@@ -1,5 +1,7 @@
-from __main__ import slicer
+import os
+import unittest
 import qt, vtk
+from __main__ import slicer
 
 #
 # DataProbe
@@ -29,6 +31,18 @@ This work is supported by NA-MIC, NAC, NCIGT, and the Slicer Community. See <a>h
     if not slicer.app.commandOptions().noMainWindow :
       qt.QTimer.singleShot(0, self.addView);
 
+    # Add this test to the SelfTest module's list for discovery when the module
+    # is created.  Since this module may be discovered before SelfTests itself,
+    # create the list if it doesn't already exist.
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
+    slicer.selfTests['DataProbe'] = self.runTest
+
+  def runTest(self):
+    tester = DataProbeTest()
+    tester.runTest()
 
   def __del__(self):
     if self.infoWidget:
@@ -262,69 +276,30 @@ class DataProbeInfoWidget(object):
     self.viewerFrame.layout().addStretch(1)
 
     # the grid - things about the layers
-    if True:
-      # this method makes labels
-      self.layerGrid = qt.QFrame(self.frame)
-      self.layerGrid.setLayout(qt.QGridLayout())
-      self.frame.layout().addWidget(self.layerGrid)
-      layers = ('L', 'F', 'B')
-      self.layerNames = {}
-      self.layerIJKs = {}
-      self.layerValues = {}
-      row = 0
-      for layer in layers:
-        col = 0
-        self.layerGrid.layout().addWidget(qt.QLabel(layer), row, col)
-        col += 1
-        self.layerNames[layer] = qt.QLabel()
-        self.layerGrid.layout().addWidget(self.layerNames[layer], row, col)
-        col += 1
-        self.layerIJKs[layer] = qt.QLabel()
-        self.layerGrid.layout().addWidget(self.layerIJKs[layer], row, col)
-        col += 1
-        self.layerValues[layer] = qt.QLabel()
-        self.layerGrid.layout().addWidget(self.layerValues[layer], row, col)
-        self.layerGrid.layout().setColumnStretch(col,100)
-        col += 1
-        row += 1
-    else:
-      # this method use a model/view
-      self.layerView = qt.QTableView(self.frame)
-      self.layerView.verticalHeader().hide()
-      self.frame.layout().addWidget(self.layerView)
-      self.layerModel = qt.QStandardItemModel()
-      self.layerView.setModel(self.layerModel)
-      layers = ('L', 'F', 'B')
-      self.layerNames = {}
-      self.layerIJKs = {}
-      self.layerValues = {}
-      self.items = []
-      row = 0
-      for layer in layers:
-        col = 0
-        item = qt.QStandardItem()
-        item.setText(layer)
-        self.layerModel.setItem(row,col,item)
-        self.items.append(item)
-        col += 1
-        self.layerNames[layer] = qt.QStandardItem()
-        self.layerModel.setItem(row,col,self.layerNames[layer])
-        col += 1
-        self.layerIJKs[layer] = qt.QStandardItem()
-        self.layerModel.setItem(row,col,self.layerIJKs[layer])
-        col += 1
-        self.layerValues[layer] = qt.QStandardItem()
-        self.layerModel.setItem(row,col,self.layerValues[layer])
-        col += 1
-        row += 1
-      self.layerView.setColumnWidth(0,15)
-      self.layerView.setColumnWidth(1,80)
-      self.layerView.setColumnWidth(2,65)
-      self.layerView.setColumnWidth(3,55)
-      self.layerModel.setHeaderData(0,1,"")
-      self.layerModel.setHeaderData(1,1,"Volume")
-      self.layerModel.setHeaderData(2,1,"IJK")
-      self.layerModel.setHeaderData(3,1,"Value")
+    # this method makes labels
+    self.layerGrid = qt.QFrame(self.frame)
+    self.layerGrid.setLayout(qt.QGridLayout())
+    self.frame.layout().addWidget(self.layerGrid)
+    layers = ('L', 'F', 'B')
+    self.layerNames = {}
+    self.layerIJKs = {}
+    self.layerValues = {}
+    row = 0
+    for layer in layers:
+      col = 0
+      self.layerGrid.layout().addWidget(qt.QLabel(layer), row, col)
+      col += 1
+      self.layerNames[layer] = qt.QLabel()
+      self.layerGrid.layout().addWidget(self.layerNames[layer], row, col)
+      col += 1
+      self.layerIJKs[layer] = qt.QLabel()
+      self.layerGrid.layout().addWidget(self.layerIJKs[layer], row, col)
+      col += 1
+      self.layerValues[layer] = qt.QLabel()
+      self.layerGrid.layout().addWidget(self.layerValues[layer], row, col)
+      self.layerGrid.layout().setColumnStretch(col,100)
+      col += 1
+      row += 1
 
     # goto module button
     self.goToModule = qt.QPushButton('->', self.frame)
@@ -374,8 +349,70 @@ class DataProbeWidget:
     pass
 
   def setup(self):
-    self.parent.layout().addWidget(qt.QLabel("Nothing here..."))
+
+    # reload button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.reloadButton = qt.QPushButton("Reload")
+    self.reloadButton.toolTip = "Reload this module."
+    self.reloadButton.name = "DataProbe Reload"
+    self.layout.addWidget(self.reloadButton)
+    self.reloadButton.connect('clicked()', self.onReload)
+
+    # reload and test button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
+    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
+    self.layout.addWidget(self.reloadAndTestButton)
+    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+
     self.parent.layout().addStretch(1)
+
+  def onReload(self,moduleName="DataProbe"):
+    """Generic reload method for any scripted module.
+    ModuleWizard will subsitute correct default moduleName.
+    """
+    import imp, sys, os, slicer
+
+    widgetName = moduleName + "Widget"
+
+    # reload the source code
+    # - set source file path
+    # - load the module to the global space
+    filePath = eval('slicer.modules.%s.path' % moduleName.lower())
+    p = os.path.dirname(filePath)
+    if not sys.path.__contains__(p):
+      sys.path.insert(0,p)
+    fp = open(filePath, "r")
+    globals()[moduleName] = imp.load_module(
+        moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
+    fp.close()
+
+    # rebuild the widget
+    # - find and hide the existing widget
+    # - create a new widget in the existing parent
+    parent = slicer.util.findChildren(name='%s Reload' % moduleName)[0].parent()
+    for child in parent.children():
+      try:
+        child.hide()
+      except AttributeError:
+        pass
+    # Remove spacer items
+    item = parent.layout().itemAt(0)
+    while item:
+      parent.layout().removeItem(item)
+      item = parent.layout().itemAt(0)
+    # create new widget inside existing parent
+    globals()[widgetName.lower()] = eval(
+        'globals()["%s"].%s(parent)' % (moduleName, widgetName))
+    globals()[widgetName.lower()].setup()
+
+  def onReloadAndTest(self,moduleName="DataProbe"):
+    self.onReload()
+    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
+    tester = eval(evalString)
+    tester.runTest()
 
 
 class CalculateTensorScalars:
@@ -414,3 +451,102 @@ class CalculateTensorScalars:
             return value
         else:
             return None
+
+
+#
+# DataProbeLogic
+#
+
+class DataProbeLogic:
+  """This class should implement all the actual 
+  computation done by your module.  The interface 
+  should be such that other python code can import
+  this class and make use of the functionality without
+  requiring an instance of the Widget
+  """
+  def __init__(self):
+    pass
+
+  def hasImageData(self,volumeNode):
+    """This is a dummy logic method that 
+    returns true if the passed in volume
+    node has valid image data
+    """
+    if not volumeNode:
+      print('no volume node')
+      return False
+    if volumeNode.GetImageData() == None:
+      print('no image data')
+      return False
+    return True
+
+
+class DataProbeTest(unittest.TestCase):
+  """
+  This is the test case for your scripted module.
+  """
+
+  def delayDisplay(self,message,msec=1000):
+    """This utility method displays a small dialog and waits.
+    This does two things: 1) it lets the event loop catch up
+    to the state of the test so that rendering and widget updates
+    have all taken place before the test continues and 2) it
+    shows the user/developer/tester the state of the test
+    so that we'll know when it breaks.
+    """
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
+
+  def setUp(self):
+    """ Do whatever is needed to reset the state - typically a scene clear will be enough.
+    """
+    pass
+
+  def runTest(self):
+    """Run as few or as many tests as needed here.
+    """
+    self.setUp()
+    self.test_DataProbe1()
+
+  def test_DataProbe1(self):
+    """ Ideally you should have several levels of tests.  At the lowest level
+    tests sould exercise the functionality of the logic with different inputs
+    (both valid and invalid).  At higher levels your tests should emulate the
+    way the user would interact with your code and confirm that it still works
+    the way you intended.
+    One of the most important features of the tests is that it should alert other
+    developers when their changes will have an impact on the behavior of your
+    module.  For example, if a developer removes a feature that you depend on,
+    your test should break so they know that the feature is needed.
+    """
+
+    self.delayDisplay("Starting the test")
+    #
+    # first, get some data
+    #
+    if not slicer.util.getNode('FA'):
+      import urllib
+      downloads = (
+          ('http://slicer.kitware.com/midas3/download?items=5767', 'FA.nrrd', slicer.util.loadVolume),
+          )
+
+      for url,name,loader in downloads:
+        filePath = slicer.app.temporaryPath + '/' + name
+        if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+          print('Requesting download %s from %s...\n' % (name, url))
+          urllib.urlretrieve(url, filePath)
+        if loader:
+          print('Loading %s...\n' % (name,))
+          loader(filePath)
+    self.delayDisplay('Finished with download and loading\n')
+
+    self.widget = DataProbeInfoWidget()
+    self.widget.frame.show()
+
+    self.delayDisplay('Test passed!')
