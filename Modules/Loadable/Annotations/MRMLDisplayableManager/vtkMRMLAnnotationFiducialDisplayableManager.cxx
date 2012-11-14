@@ -740,10 +740,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
   if (this->Is2DDisplayableManager())
     {
     // for 2d managers, compare the display positions
-    double displayCoordinates1[4];
-    double displayCoordinatesBuffer1[4];
+    double displayCoordinates1[4] = {0.0, 0.0, 0.0, 1.0};
+    double displayCoordinatesBuffer1[4] = {0.0, 0.0, 0.0, 1.0};
 
-    // get point in world ccordinates using parent transforms
+    // get point in world coordinates using parent transforms
     double pointTransformed[4];
     pointsNode->GetControlPointWorldCoordinates(0, pointTransformed);
 
