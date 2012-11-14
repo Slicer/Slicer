@@ -1,36 +1,164 @@
-
 import os
 import unittest
-import vtk
-import qt
-import slicer
-import EditorLib
+from __main__ import vtk, qt, ctk, slicer
 
-class RSNA2012ProstateDemo(unittest.TestCase):
-  """ Test for slicer data bundle
+#
+# RSNA2012ProstateDemo
+#
 
-Run manually from within slicer by pasting an version of this with the correct path into the python console:
-execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Python/RSNA2012ProstateDemoTest.py'); t = RSNA2012ProstateDemo(); t.setUp(); t.runTest()
+class RSNA2012ProstateDemo:
+  def __init__(self, parent):
+    parent.title = "RSNA2012ProstateDemo" # TODO make this more human readable by adding spaces
+    parent.categories = ["Testing.TestCases"]
+    parent.dependencies = []
+    parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
+    parent.helpText = """
+    This module was developed as a self test to perform the operations needed for the RSNA 2012 Prostate Demo 
+    """
+    parent.acknowledgementText = """
+    This file was originally developed by Steve Pieper, Isomics, Inc.  and was partially funded by NIH grant 3P41RR013218-12S1.
+""" # replace with organization, grant and thanks.
+    self.parent = parent
 
+    # Add this test to the SelfTest module's list for discovery when the module
+    # is created.  Since this module may be discovered before SelfTests itself,
+    # create the list if it doesn't already exist.
+    try:
+      slicer.selfTests
+    except AttributeError:
+      slicer.selfTests = {}
+    slicer.selfTests['RSNA2012ProstateDemo'] = self.runTest
+
+  def runTest(self):
+    tester = RSNA2012ProstateDemoTest()
+    tester.runTest()
+
+#
+# qRSNA2012ProstateDemoWidget
+#
+
+class RSNA2012ProstateDemoWidget:
+  def __init__(self, parent = None):
+    if not parent:
+      self.parent = slicer.qMRMLWidget()
+      self.parent.setLayout(qt.QVBoxLayout())
+      self.parent.setMRMLScene(slicer.mrmlScene)
+    else:
+      self.parent = parent
+    self.layout = self.parent.layout()
+    if not parent:
+      self.setup()
+      self.parent.show()
+
+  def setup(self):
+    # Instantiate and connect widgets ...
+
+    # reload button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.reloadButton = qt.QPushButton("Reload")
+    self.reloadButton.toolTip = "Reload this module."
+    self.reloadButton.name = "RSNA2012ProstateDemo Reload"
+    self.layout.addWidget(self.reloadButton)
+    self.reloadButton.connect('clicked()', self.onReload)
+
+    # reload and test button
+    # (use this during development, but remove it when delivering
+    #  your module to users)
+    self.reloadAndTestButton = qt.QPushButton("Reload and Test")
+    self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
+    self.layout.addWidget(self.reloadAndTestButton)
+    self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
+
+    # Add vertical spacer
+    self.layout.addStretch(1)
+
+  def onReload(self,moduleName="RSNA2012ProstateDemo"):
+    """Generic reload method for any scripted module.
+    ModuleWizard will subsitute correct default moduleName.
+    """
+    import imp, sys, os, slicer
+
+    widgetName = moduleName + "Widget"
+
+    # reload the source code
+    # - set source file path
+    # - load the module to the global space
+    filePath = eval('slicer.modules.%s.path' % moduleName.lower())
+    p = os.path.dirname(filePath)
+    if not sys.path.__contains__(p):
+      sys.path.insert(0,p)
+    fp = open(filePath, "r")
+    globals()[moduleName] = imp.load_module(
+        moduleName, fp, filePath, ('.py', 'r', imp.PY_SOURCE))
+    fp.close()
+
+    # rebuild the widget
+    # - find and hide the existing widget
+    # - create a new widget in the existing parent
+    parent = slicer.util.findChildren(name='%s Reload' % moduleName)[0].parent()
+    for child in parent.children():
+      try:
+        child.hide()
+      except AttributeError:
+        pass
+    # Remove spacer items
+    item = parent.layout().itemAt(0)
+    while item:
+      parent.layout().removeItem(item)
+      item = parent.layout().itemAt(0)
+    # create new widget inside existing parent
+    globals()[widgetName.lower()] = eval(
+        'globals()["%s"].%s(parent)' % (moduleName, widgetName))
+    globals()[widgetName.lower()].setup()
+
+  def onReloadAndTest(self,moduleName="RSNA2012ProstateDemo"):
+    self.onReload()
+    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
+    tester = eval(evalString)
+    tester.runTest()
+
+#
+# RSNA2012ProstateDemoLogic
+#
+
+class RSNA2012ProstateDemoLogic:
+  """This class should implement all the actual 
+  computation done by your module.  The interface 
+  should be such that other python code can import
+  this class and make use of the functionality without
+  requiring an instance of the Widget
+  """
+  def __init__(self):
+    pass
+
+  def hasImageData(self,volumeNode):
+    """This is a dummy logic method that 
+    returns true if the passed in volume
+    node has valid image data
+    """
+    if not volumeNode:
+      print('no volume node')
+      return False
+    if volumeNode.GetImageData() == None:
+      print('no image data')
+      return False
+    return True
+
+
+class RSNA2012ProstateDemoTest(unittest.TestCase):
+  """
+  This is the test case for your scripted module.
   """
 
-  def __init__(self,methodName='runTest', uniqueDirectory=True,strict=False):
-    """
-    Load MRB and check that switching across scene views does not lead to a
-    crash
-
-    uniqueDirectory: boolean about save directory
-                     False to reuse standard dir name
-                     True timestamps dir name
-    strict: boolean about how carefully to check result
-                     True then check every detail
-                     False then confirm basic operation, but allow non-critical issues to pass
-    """
-    unittest.TestCase.__init__(self,methodName)
-    self.uniqueDirectory = uniqueDirectory
-    self.strict = strict
-
   def delayDisplay(self,message,msec=1000):
+    """This utility method displays a small dialog and waits.
+    This does two things: 1) it lets the event loop catch up
+    to the state of the test so that rendering and widget updates
+    have all taken place before the test continues and 2) it
+    shows the user/developer/tester the state of the test
+    so that we'll know when it breaks.
+    """
     print(message)
     self.info = qt.QDialog()
     self.infoLayout = qt.QVBoxLayout()
@@ -54,9 +182,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     Replicate one of the crashes in issue 2512
     """
 
-    print("Running RSNA2012ProstateDemo Test case with:")
-    print("uniqueDirectory : %s" % self.uniqueDirectory)
-    print("strict : %s" % self.strict)
+    print("Running RSNA2012ProstateDemo Test case:")
 
     import urllib
 
@@ -88,74 +214,13 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
   def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
     """Come up with a unique directory name in the temp dir and make it and return it
     # TODO: switch to QTemporaryDir in Qt5.
-    # For now, create a named directory if uniqueDirectory attribute is true
     Note: this directory is not automatically cleaned up
     """
     if not tempDir:
       tempDir = qt.QDir(slicer.app.temporaryPath)
     tempDirName = key
-    if self.uniqueDirectory:
-      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+    key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
     dirPath = fileInfo.absoluteFilePath()
     qt.QDir().mkpath(dirPath)
     return dirPath
-
-
-#
-# RSNA2012ProstateDemoTest
-#
-
-class RSNA2012ProstateDemoTest:
-  """
-  This class is the 'hook' for slicer to detect and recognize the test
-  as a loadable scripted module (with a hidden interface)
-  """
-  def __init__(self, parent):
-    parent.title = "RSNA2012ProstateDemoTest"
-    parent.categories = ["Testing"]
-    parent.contributors = ["Andrey Fedorov (SPL)"]
-    parent.helpText = """
-    Self-test for RSNA2012 Prostate Demo
-    No module interface here, only used in SelfTests module
-    """
-    parent.acknowledgementText = """
-    """
-
-    # don't show this module
-    parent.hidden = True
-
-    # Add this test to the SelfTest module's list for discovery when the module
-    # is created.  Since this module may be discovered before SelfTests itself,
-    # create the list if it doesn't already exist.
-    try:
-      slicer.selfTests
-    except AttributeError:
-      slicer.selfTests = {}
-    slicer.selfTests['RSNA2012ProstateDemoTest'] = self.runTest
-
-  def runTest(self):
-    tester = RSNA2012ProstateDemo()
-    tester.setUp()
-    tester.runTest()
-
-
-#
-# RSNA2012ProstateDemoTestWidget
-#
-
-class RSNA2012ProstateDemoTestWidget:
-  def __init__(self, parent = None):
-    self.parent = parent
-
-  def setup(self):
-    # don't display anything for this widget - it will be hidden anyway
-    pass
-
-  def enter(self):
-    pass
-
-  def exit(self):
-    pass
-
-
