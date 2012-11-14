@@ -196,12 +196,15 @@ void vtkMRMLSceneViewNode::ReadXMLAttributes(const char** atts)
 //----------------------------------------------------------------------------
 void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
 {
-  int disabledModify = node->StartModify();
-
+  // for the child nodes in the scene view scene, we don't want to invoke any
+  // pending modified events when done processing them, so just use the bare
+  // DisableModifiedEventOn and SetDisableModifiedEvent calls rather than
+  // using StartModify and EndModify
+  int disabledModify = this->GetDisableModifiedEvent();
+  this->DisableModifiedEventOn();
+    
   Superclass::ProcessChildNode(node);
   node->SetAddToSceneNoModify(0);
-
-  node->EndModify(disabledModify);
 
   if (this->Nodes == NULL)
     {
@@ -209,6 +212,9 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
     }  
   node->SetScene(this->Nodes);
   this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
+
+  node->SetDisableModifiedEvent(disabledModify);
+
 }
 
 //----------------------------------------------------------------------------
@@ -495,7 +501,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
   for (sceneNodes->InitTraversal(it);
        (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it))) ;)
     {
-    if (!this->IncludeNodeInSceneView(node) && node->GetSaveWithScene())
+    if (this->IncludeNodeInSceneView(node) && node->GetSaveWithScene())
       {
       node->UpdateScene(this->Scene);
       }
