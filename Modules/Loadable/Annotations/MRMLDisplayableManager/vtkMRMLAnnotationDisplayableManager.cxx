@@ -547,7 +547,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
   if (!node)
     {
-    vtkErrorMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: null node");
+    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: null node");
     return;
     }
   vtkMRMLAnnotationDisplayNode *annotationDisplayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(node);
