@@ -178,6 +178,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT RSNA2012Quant.py)
   slicer_add_python_unittest(SCRIPT slicerCloseCrashBug2590.py)
   slicer_add_python_unittest(SCRIPT ViewControllersSliceInterpolationBug1926.py)
+  slicer_add_python_unittest(SCRIPT RSNA2012ProstateDemo.py)
 
   # add as hidden module for use at run time
   set(KIT_PYTHON_SCRIPTS
@@ -193,6 +194,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     RSNA2012Quant.py
     slicerCloseCrashBug2590.py
     ViewControllersSliceInterpolationBug1926.py  
+    RSNA2012ProstateDemo.py
     )
 
   set(KIT_PYTHON_RESOURCES
