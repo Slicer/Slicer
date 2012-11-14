@@ -541,14 +541,19 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
 
   if (this->m_Updating)
     {
-    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Updating in progress.. Exit now.")
+    vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Updating in progress, returning.")
     return;
     }
 
+  if (!node)
+    {
+    vtkErrorMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: null node");
+    return;
+    }
   vtkMRMLAnnotationDisplayNode *annotationDisplayNode = vtkMRMLAnnotationDisplayNode::SafeDownCast(node);
   if (!annotationDisplayNode)
     {
-    vtkErrorMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Can not access node.")
+    vtkErrorMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: Cannot convert node to annotation display node: " << (node->GetID() ? node->GetID() : "null id"));
     return;
     }
 
