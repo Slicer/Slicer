@@ -188,8 +188,11 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
     # perform the downloads if needed, then load
     filePath = slicer.app.temporaryPath + '/RSNA2012ProstateDemo.mrb'
     urlPath = 'http://slicer.kitware.com/midas3/download?items=10697'
-    self.delayDisplay('Downloading MRB from %s to %s...\n' % (urlPath, filePath))
-    urllib.urlretrieve(urlPath, filePath)
+    if not os.path.exists(filePath) or os.stat(filePath).st_size == 0:
+      self.delayDisplay('Downloading MRB from %s to %s...\n' % (urlPath, filePath))
+      urllib.urlretrieve(urlPath, filePath)
+    else:
+      self.delayDisplay('Using existing %s...\n' % filePath)
     slicer.mrmlScene.Clear(0)
     appLogic = slicer.app.applicationLogic()
     self.delayDisplay('Done loading data! Will now open the bundle')
