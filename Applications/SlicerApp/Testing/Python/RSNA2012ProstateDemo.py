@@ -62,8 +62,9 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
 
     # perform the downloads if needed, then load
     filePath = slicer.app.temporaryPath + '/RSNA2012ProstateDemo.mrb'
-    self.delayDisplay('Downloading MRB from %s ...\n' % filePath)
-    urllib.urlretrieve('http://slicer.kitware.com/midas3/download?items=10697', filePath)
+    urlPath = 'http://slicer.kitware.com/midas3/download?items=10697'
+    self.delayDisplay('Downloading MRB from %s ...\n' % urlPath)
+    urllib.urlretrieve(urlPath, filePath)
     slicer.mrmlScene.Clear(0)
     appLogic = slicer.app.applicationLogic()
     self.delayDisplay('Done loading data! Will now open the bundle')
