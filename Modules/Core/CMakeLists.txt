@@ -49,7 +49,7 @@ set(KIT_MOC_SRCS
 set(KIT_UI_SRCS
   Resources/UI/qSlicerEventBrokerModule.ui
   Resources/UI/qSlicerROIModule.ui
-)
+  )
 
 # Additional Target libraries (QT libs already included)
 set(KIT_target_libraries
@@ -59,7 +59,7 @@ set(KIT_target_libraries
 # Resources
 set(KIT_resources
   Resources/qSlicerModulesCore.qrc
-)
+  )
 
 SlicerMacroBuildBaseQtLibrary(
   NAME ${PROJECT_NAME}

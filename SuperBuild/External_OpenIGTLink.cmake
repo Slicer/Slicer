@@ -51,6 +51,6 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   DEPENDS
     ${OpenIGTLink_DEPENDENCIES}
-)
+  )
 
 set(OpenIGTLink_DIR ${CMAKE_BINARY_DIR}/OpenIGTLink-build)

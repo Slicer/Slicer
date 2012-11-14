@@ -11,7 +11,7 @@ target_link_libraries(${CLP}Test
   vtkTeem
   ModuleDescriptionParser
   SlicerBaseCLI
-)
+  )
 
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 

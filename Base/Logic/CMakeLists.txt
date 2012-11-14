@@ -112,7 +112,7 @@ endif()
 set_source_files_properties(
   vtkPichonFastMarchingPDF.cxx
   WRAP_EXCLUDE
-)
+  )
 
 # --------------------------------------------------------------------------
 ## Create an instantiator for these classes

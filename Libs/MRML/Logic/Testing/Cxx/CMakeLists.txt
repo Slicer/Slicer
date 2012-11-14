@@ -15,7 +15,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest4.cxx
   vtkMRMLSliceLogicTest5.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
-)
+  )
 
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${KIT})

@@ -88,7 +88,7 @@ set(vtkITK_SRCS_not_used
   vtkITKImageToImageFilterUSUL.h
   vtkITKImageToImageFilterUSUS.h
   vtkITKImageToImageFilterUSF.h
-)
+  )
 
 # Abstract/pure virtual classes
 

@@ -251,8 +251,8 @@ set(MRMLWidgets_MOC_SRCS
 
 # UI files
 set(MRMLWidgets_UI_SRCS
- Resources/UI/qMRMLChartViewControllerWidget.ui
- Resources/UI/qMRMLClipNodeWidget.ui
+  Resources/UI/qMRMLChartViewControllerWidget.ui
+  Resources/UI/qMRMLClipNodeWidget.ui
   Resources/UI/qMRMLColorPickerWidget.ui
   Resources/UI/qMRMLDisplayNodeWidget.ui
   Resources/UI/qMRMLEventLoggerWidget.ui
@@ -272,9 +272,9 @@ set(MRMLWidgets_UI_SRCS
 
 configure_file(Resources/jqPlot.qrc.in ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc) 
 set(MRMLWidgets_QRC_SRCS
- Resources/qMRMLWidgets.qrc
- ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
-)
+  Resources/qMRMLWidgets.qrc
+  ${qMRMLWidgets_BINARY_DIR}/Resources/jqPlot.qrc
+  )
 
 if(Slicer_USE_QtTesting)
   list(APPEND MRMLWidgets_SRCS
@@ -304,7 +304,7 @@ QT4_WRAP_UI(MRMLWidgets_UI_CXX ${MRMLWidgets_UI_SRCS})
 QT4_ADD_RESOURCES(MRMLWidgets_QRC_CXX ${MRMLWidgets_QRC_SRCS})
 
 source_group("Resources" FILES
- ${MRMLWidgets_UI_SRCS}
+  ${MRMLWidgets_UI_SRCS}
   ${MRMLWidgets_QRC_SRCS}
   )
 

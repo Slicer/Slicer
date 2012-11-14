@@ -36,11 +36,11 @@ set(MODULE_UI_SRCS
   Resources/UI/qSlicer${MODULE_NAME}Module.ui
   Resources/UI/qSlicer${MODULE_NAME}AngleWidget.ui
   Resources/UI/qSlicer${MODULE_NAME}RulerWidget.ui
-)
+  )
 
 set(MODULE_RESOURCES
   Resources/qSlicer${MODULE_NAME}Module.qrc
-)
+  )
 
 set(MODULE_TARGET_LIBRARIES
   ""

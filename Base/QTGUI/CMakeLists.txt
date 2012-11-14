@@ -223,7 +223,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSettingsGeneralPanel.ui
   Resources/UI/qSlicerSettingsInternationalizationPanel.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
-)
+  )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_UI_SRCS
     Resources/UI/qSlicerExtensionsButtonBox.ui
@@ -265,7 +265,7 @@ endif()
 set(KIT_resources
   Resources/qSlicerBaseQTGUI.qrc
   ${qMRMLWidgets_SOURCE_DIR}/Resources/qMRMLWidgets.qrc
-)
+  )
 
 # Python wrap
 if(Slicer_USE_PYTHONQT)
