@@ -21,13 +21,6 @@ def tcl(cmd):
         source $dir/Slicer3Adapters.tcl
         ::Slicer3Adapters::Initialize
       """)
-    
-    # TODO: not clear why package require is not working 
-    # - instead, source the pkgIndex directly
-    _tpycl.tcl_eval("""
-        set dir $::env(SLICER_HOME)/$::env(SLICER_SHARE_DIR)/Tcl
-        source $dir/pkgIndex.tcl
-      """)
 
   return _tpycl.tcl_eval(cmd)
 
