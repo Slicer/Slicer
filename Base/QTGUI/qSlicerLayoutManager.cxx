@@ -102,8 +102,6 @@ QWidget* qSlicerLayoutManagerPrivate::createSliceWidget(vtkMRMLSliceNode* sliceN
         pythonInstanceName.arg(sliceLayoutName, "cornerAnnotation"),
         sliceWidget->overlayCornerAnnotation());
 
-      py->executeString(QString("registerScriptedDisplayableManagers('%1')").arg(sliceLayoutName));
-
       //qDebug() << QString("qSlicerLayoutManagerPrivate::createSliceWidget - "
       //                    "%1 registered with python").arg(sliceLayoutName);
       }

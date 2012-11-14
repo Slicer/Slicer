@@ -38,58 +38,6 @@ class _sliceWidget(object):
   def __init__(self):
     pass
 
-def registerScriptedDisplayableManagers(sliceWidget):
-  """ called from qSlicerLayoutManager::createSliceWidget
-      after it creates python wrappers for the vtk parts of
-      the sliceWidget
-  """
-  # create an instance of the adapter class
-  sliceGUIName = 'sliceGUI%s' % sliceWidget
-  tcl('::Slicer3Adapters::SliceGUI %s' % sliceGUIName)
-  # create procs for the elements and set them in the adapter
-  #    leave out interactor and renderWindow,
-  #    since you can get these from the InteractorStyle
-  for key,method in (
-      ('sliceLogic', 'SetLogic'),
-      ('cornerAnnotation', 'SetCornerAnnotation'),
-      ('interactorStyle', 'SetInteractorStyle')):
-    instName = 'slicer.sliceWidget%s_%s' % (sliceWidget, key)
-    evalString = '%s.GetClassName()' % instName
-    instClass = eval(evalString)
-    # creat a proc that represents the instance
-    procName = tcl('set procName [::tpycl::uniqueInstanceName %s]' % instClass)
-    tclCmd = 'proc $procName {args} {::tpycl::methodCaller %s slicer.sliceWidget%s_%s $args}' % (procName, sliceWidget, key)
-    tcl(tclCmd)
-    # set the new tcl instance into the sliceGUI instance for this slice
-    tcl('%s %s $procName' % (sliceGUIName, method))
-    #
-      
-  sWidget = tcl('SliceSWidget #auto %s' % sliceGUIName)
-  # TODO: the calculateAnnotations option causes a recalculation of the corner
-  # annotation values for each mouse move (even when not displayed) and this 
-  # is a performance slowdown due to the tcl/python wrapping layer.
-  # In native tcl the performance is good, as it probably would be in native python or C++
-  # Probably this should go into CTK as a native behavior of the slice viewer.
-  tcl('%s configure -calculateAnnotations 0' % sWidget)
-  tcl('''
-    # turn off event processing for all swidget instances
-    foreach sw [itcl::find objects -isa SWidget] {
-      $sw configure -enabled false
-    }
-    # enable the specific instances that are working well currently (low overhead)
-    # set enabledSWidget {ModelSWidget SliceSWidget VolumeDisplaySWidget}
-    #set enabledSWidget {VolumeDisplaySWidget}
-    #foreach esw $enabledSWidget {
-    #  foreach sw [itcl::find objects -isa $esw] {
-    #    $sw configure -enabled true
-    #  }
-    #}
-    # tell the SliceSWidget to create instances of only specific widget types
-    foreach sw [itcl::find objects -isa SliceSWidget] {
-      $sw configure -swidgetTypes  { { ModelSWidget -modelID vtkMRMLModelNode } }
-    }
-  ''')
-
 if __name__ == "__main__":
 
   # Initialize global slicer.sliceWidgets dict
