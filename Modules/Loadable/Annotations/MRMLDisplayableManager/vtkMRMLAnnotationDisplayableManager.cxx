@@ -922,61 +922,83 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       //
       // Lightbox specific code
       //
-
-      // get the right renderer index by checking the z coordinate
-      int rendererIndex = (int)(displayCoordinates[2]+0.5);
-
-      // get all renderers associated with this renderWindow
-      // when lightbox mode is enabled, there will be different renderers associated with the renderWindow of the sliceView
-      vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
-
-      // check if the rendererIndex is valid for the current lightbox view
-      if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
+      
+      // get the corresponding lightbox index for this display coordinate and
+      // check if it's in the range of the current number of light boxes being
+      // displayed in the grid rows/columns.
+      int lightboxIndex = (int)(displayCoordinates[2]+0.5);
+      int numberOfLightboxes = sliceNode->GetLayoutGridColumns() * sliceNode->GetLayoutGridRows();
+      //std::cout << "IsWidgetDisplayable: " << sliceNode->GetName() << ": lightbox mode, index = " << lightboxIndex << ", rows = " << sliceNode->GetLayoutGridRows() << ", cols = " << sliceNode->GetLayoutGridColumns() << ", number of light boxes = " << numberOfLightboxes << std::endl;
+      if (lightboxIndex < 0 ||
+          lightboxIndex >= numberOfLightboxes)
         {
+        showWidget = false;
+        }
+      else
+        {
+        // get the right renderer index by checking the z coordinate
+        int rendererIndex = lightboxIndex;
 
-        vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
+        // get all renderers associated with this renderWindow
+        // when lightbox mode is enabled, there will be different renderers
+        // associated with the renderWindow of the sliceView (there may also
+        // be more renderers than light boxes)
+        vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
 
-        // now we get the widget..
-        vtkAbstractWidget* widget = this->GetWidget(node);
-
-        // TODO this code blocks the movement of the widget in lightbox mode
-        if (widget)
+        // check if the rendererIndex is valid for the current lightbox view
+        if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
           {
-          // ..and turn it off..
-          widget->Off();
-          // ..place it and its representation to the right renderer..
-          widget->SetCurrentRenderer(currentRenderer);
-          widget->GetRepresentation()->SetRenderer(currentRenderer);
-          // ..and turn it on again!
-          widget->On();
-          // if it's a seed widget, go to complete interaction state
-          vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
-          if (seedWidget)
-            {
-            vtkDebugMacro("SeedWidget: Complete interaction");
-            seedWidget->CompleteInteraction();
-            }
 
-          // we need to render again
-          if (currentRenderer)
+          vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
+
+          // now we get the widget..
+          vtkAbstractWidget* widget = this->GetWidget(node);
+
+          // TODO this code blocks the movement of the widget in lightbox mode
+          if (widget &&
+              (widget->GetCurrentRenderer() != currentRenderer ||
+               widget->GetRepresentation()->GetRenderer() != currentRenderer))
             {
-            currentRenderer->Render();
+            // if the widget is on, need to turn it off to set the renderer
+            bool toggleOffOn = false;
+            if (widget->GetEnabled())
+              {
+              // turn it off..
+              widget->Off();
+              toggleOffOn = true;
+              }
+            // ..place it and its representation to the right renderer..
+            widget->SetCurrentRenderer(currentRenderer);
+            widget->GetRepresentation()->SetRenderer(currentRenderer);
+            if (toggleOffOn)
+              {
+              // ..and turn it on again!
+              widget->On();
+              }
+            // if it's a seed widget, go to complete interaction state
+            vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+            if (seedWidget)
+              {
+              vtkDebugMacro("SeedWidget: Complete interaction");
+              seedWidget->CompleteInteraction();
+              }
+
+            // we need to render again
+            if (currentRenderer)
+              {
+              currentRenderer->Render();
+              }
             }
           }
+        else
+          {
+          // it's out of range of the current collection of renderers
+          showWidget = false;
+          }
         }
-       int lightboxIndex = rendererIndex;
-       // is it in the range of the current grid rows/columns?
-       int numberOfLightboxes = sliceNode->GetLayoutGridColumns() * sliceNode->GetLayoutGridRows();
-       //std::cout << "IsWidgetDisplayable: " << sliceNode->GetName() << ": lightbox mode, index = " << lightboxIndex << ", rows = " << sliceNode->GetLayoutGridRows() << ", cols = " << sliceNode->GetLayoutGridColumns() << ", number of light boxes = " << numberOfLightboxes << std::endl;
-       if (lightboxIndex < 0 ||
-           lightboxIndex >= numberOfLightboxes)
-         {
-         showWidget = false;
-         break;
-         }
-       //
-       // End of Lightbox specific code
-       //
+      //
+      // End of Lightbox specific code
+      //
       }
     else
       {
