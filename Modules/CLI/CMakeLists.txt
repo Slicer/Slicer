@@ -141,6 +141,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
     set(LAUNCH_EXE ${Slicer_LAUNCH_COMMAND})
   endif()
 
+  set(USE_ANTS                            OFF CACHE BOOL "Build with ANTS capabilities" )
   set(USE_BRAINSFit                       ON CACHE BOOL "Build BRAINSFit"       )
   set(USE_BRAINSROIAuto                   ON CACHE BOOL "Build BRAINSROIAuto"   )
   set(USE_BRAINSResample                  ON CACHE BOOL "Build BRAINSResample"  )
