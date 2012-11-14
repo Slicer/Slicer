@@ -242,6 +242,9 @@ void qSlicerCoreApplicationPrivate::init()
     if (q->corePythonManager())
       {
       q->corePythonManager()->mainContext(); // Initialize python
+      q->corePythonManager()->setSystemExitExceptionHandlerEnabled(true);
+      q->connect(q->corePythonManager(), SIGNAL(systemExitExceptionRaised(int)),
+                 q, SLOT(terminate(int)));
       }
 # ifdef Q_WS_WIN
     // HACK - Since on windows setting an environment variable using putenv doesn't propagate
@@ -588,24 +591,15 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     {
     qWarning() << "Failed to parse arguments - "
                   "it seems you forgot to call setCoreCommandOptions()";
-    this->terminate(EXIT_FAILURE);
+    q->terminate(EXIT_FAILURE);
     return;
     }
   if (!options->parse(q->arguments()))
     {
     qCritical("Problem parsing command line arguments.  Try with --help.");
-    this->terminate(EXIT_FAILURE);
+    q->terminate(EXIT_FAILURE);
     return;
     }
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplicationPrivate::terminate(int returnCode)
-{
-  Q_Q(qSlicerCoreApplication);
-  this->ReturnCode = returnCode;
-  // Does nothing if the event loop is not running
-  q->exit(returnCode);
 }
 
 //-----------------------------------------------------------------------------
@@ -707,8 +701,6 @@ int qSlicerCoreApplication::returnCode()const
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 {
-  Q_D(qSlicerCoreApplication);
-
   qSlicerCoreCommandOptions* options = this->coreCommandOptions();
   Q_ASSERT(options);
 
@@ -721,7 +713,7 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
                 << "Options\n";
       }
     std::cout << qPrintable(options->helpText()) << std::endl;
-    d->terminate(EXIT_SUCCESS);
+    this->terminate(EXIT_SUCCESS);
     return;
     }
 
@@ -729,28 +721,28 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     {
     std::cout << qPrintable(this->applicationName() + " " +
                             this->applicationVersion()) << std::endl;
-    d->terminate(EXIT_SUCCESS);
+    this->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displayProgramPathAndExit())
     {
     std::cout << qPrintable(this->arguments().at(0)) << std::endl;
-    d->terminate(EXIT_SUCCESS);
+    this->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displayHomePathAndExit())
     {
     std::cout << qPrintable(this->slicerHome()) << std::endl;
-    d->terminate(EXIT_SUCCESS);
+    this->terminate(EXIT_SUCCESS);
     return;
     }
 
   if (options->displaySettingsPathAndExit())
     {
     std::cout << qPrintable(this->settings()->fileName()) << std::endl;
-    d->terminate(EXIT_SUCCESS);
+    this->terminate(EXIT_SUCCESS);
     return;
     }
 
@@ -1317,4 +1309,13 @@ void qSlicerCoreApplication::processAppLogicWriteData()
 {
   Q_D(qSlicerCoreApplication);
   d->AppLogic->ProcessWriteData();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication::terminate(int returnCode)
+{
+  Q_D(qSlicerCoreApplication);
+  d->ReturnCode = returnCode;
+  // Does nothing if the event loop is not running
+  this->exit(returnCode);
 }

@@ -103,9 +103,6 @@ public:
   /// Parse arguments
   void parseArguments();
 
-  /// Set the ExitWhenDone flag to True
-  void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
-
 public:
   /// MRMLScene and AppLogic pointers
   vtkSmartPointer<vtkMRMLScene>               MRMLScene;
@@ -136,7 +133,7 @@ public:
   /// CoreCommandOptions - It should exist only one instance of the CoreCommandOptions
   QSharedPointer<ctkErrorLogModel>            ErrorLogModel;
 
-  /// ExitWhenDone flag
+  /// ReturnCode flag
   int                                         ReturnCode;
 
 #ifdef Slicer_USE_PYTHONQT
