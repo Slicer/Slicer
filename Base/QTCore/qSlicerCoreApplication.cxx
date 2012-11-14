@@ -156,6 +156,8 @@ void qSlicerCoreApplicationPrivate::init()
     qDebug() << "qSlicerCoreApplication must be given the True argc/argv";
     }
 
+  this->parseArguments();
+
   this->SlicerHome = this->discoverSlicerHomeDirectory();
   this->setEnvironmentVariable("SLICER_HOME", this->SlicerHome);
 
@@ -232,7 +234,8 @@ void qSlicerCoreApplicationPrivate::init()
   q->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
                  this->ModuleManager->factoryManager(), SLOT(setMRMLScene(vtkMRMLScene*)));
 
-  this->parseArguments();
+  q->handlePreApplicationCommandLineArguments();
+
 #ifdef Slicer_USE_PYTHONQT
   if (!qSlicerCoreApplication::testAttribute(qSlicerCoreApplication::AA_DisablePython))
     {
@@ -276,24 +279,14 @@ void qSlicerCoreApplicationPrivate::init()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(const QString& suffix,
-                                                                bool useTmp)
+QSettings* qSlicerCoreApplicationPrivate::instantiateSettings(bool useTmp)
 {
   Q_Q(qSlicerCoreApplication);
-
-  QString settingsFileName;
   if (useTmp)
     {
-    settingsFileName = QString("%1-%2.%3%4").
-      arg(qSlicerCoreApplication::applicationName().replace(":", "")).
-      arg(QString::number(Slicer_VERSION_MAJOR)).
-      arg(QString::number(Slicer_VERSION_MINOR)).
-      arg(suffix);
-    settingsFileName += "-tmp";
+    q->setApplicationName(q->applicationName() + "-tmp");
     }
-
-  QSettings* settings = q->newSettings(settingsFileName);
-
+  QSettings* settings = new QSettings(q);
   if (useTmp)
     {
     settings->clear();
@@ -597,8 +590,6 @@ void qSlicerCoreApplicationPrivate::parseArguments()
     this->terminate(EXIT_FAILURE);
     return;
     }
-
-  q->handlePreApplicationCommandLineArguments();
 }
 
 //-----------------------------------------------------------------------------
@@ -765,14 +756,6 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
   if (options->isTestingEnabled())
     {
     this->setAttribute(AA_EnableTesting);
-    // Change the application name to change what settings file to use (to
-    // prevent conflicts with user settings).
-    // \todo improve settings switch mechanism.
-    this->setApplicationName(this->applicationName() + "Testing");
-    if (QFile::exists(this->settings()->fileName()))
-      {
-      QFile::remove(this->settings()->fileName());
-      }
     }
 }
 
@@ -887,38 +870,19 @@ QSettings* qSlicerCoreApplication::settings()const
   // If required, instantiate Settings
   if(!mutable_d->Settings)
     {
-    mutable_d->Settings = mutable_d->instantiateSettings("", false);
+    mutable_d->Settings = mutable_d->instantiateSettings(
+          this->coreCommandOptions()->isTestingEnabled() ||
+          this->coreCommandOptions()->settingsEnabled());
     }
   return mutable_d->Settings;
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerCoreApplication::disableSettings()
-{
-  Q_D(qSlicerCoreApplication);
-  Q_ASSERT(d->Settings);
-
-  // Instanciate empty Settings
-  d->Settings = d->instantiateSettings("", true);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication::clearSettings()
 {
   Q_D(qSlicerCoreApplication);
-  Q_ASSERT(!d->Settings);
+  Q_ASSERT(d->Settings);
   d->Settings->clear();
-}
-
-//-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::newSettings(const QString& fileName)
-{
-  if (!fileName.isEmpty())
-    {
-    // Special case for tmp settings
-    return new QSettings(fileName, QSettings::defaultFormat(), this);
-    }
-  return new QSettings(this);
 }
 
 //-----------------------------------------------------------------------------

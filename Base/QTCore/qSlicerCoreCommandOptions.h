@@ -120,9 +120,15 @@ public:
   /// See http://qt.nokia.com/doc/4.6/qdir.html#tempPath
   QString tempDirectory()const;
 
+  /// Return True if slicer settings are ignored
+  bool settingsEnabled() const;
+
   /// Return True if slicer is in testing mode.
   /// Typically set when running unit tests:
   ///  ./Slicer --testing --launch ./bin/qSlicerXXXTests ...
+  /// \note Using this option is equivalent to 'disable-settings' option. Note that
+  /// this may change in the future.
+  /// \sa settingsEnabled()
   bool isTestingEnabled()const;
 
 

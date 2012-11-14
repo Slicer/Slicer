@@ -213,11 +213,6 @@ public:
   /// \note It will also instantiate a QSettings object if required.
   Q_INVOKABLE QSettings* settings()const;
 
-  /// Disable application settings
-  /// Instanciate a new empty ctkSettings object and associate it with this instance.
-  /// \note The original settings won't deleted.
-  void disableSettings();
-
   /// Clear application settings
   void clearSettings();
 
@@ -279,10 +274,6 @@ public slots:
 protected:
   ///
   virtual void handlePreApplicationCommandLineArguments();
-  /// If fileName is set (not empty), a custom fileName is used
-  /// otherwise it uses the default QSettings constructor.
-  /// \sa QSettings::QSettings(QObject* parent)
-  virtual QSettings* newSettings(const QString& fileName = QString());
 
   /// Set MRML Scene
   virtual void setMRMLScene(vtkMRMLScene * scene);
