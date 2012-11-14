@@ -105,7 +105,9 @@ class SelfTestsWidget:
     self.testButtons = {}
     self.testMapper = qt.QSignalMapper() 
     self.testMapper.connect('mapped(const QString&)', self.onRun)
-    for test in slicer.selfTests.keys():
+    testKeys = slicer.selfTests.keys()
+    testKeys.sort()
+    for test in testKeys:
       self.testButtons[test] = qt.QPushButton(test)
       self.testButtons[test].setToolTip(slicer.selfTests[test].__doc__)
       self.testList.layout().addWidget(self.testButtons[test])
