@@ -68,7 +68,7 @@ execfile('/Users/pieper/slicer4/latest/Slicer/Applications/SlicerApp/Testing/Pyt
     slicer.mrmlScene.Clear(0)
     appLogic = slicer.app.applicationLogic()
     self.delayDisplay('Done loading data! Will now open the bundle')
-    mrbExtractPath = self.tempDirectory('__mrb_extract__')
+    mrbExtractPath = self.tempDirectory('__prostate_mrb_extract__')
     mrbLoaded = appLogic.OpenSlicerDataBundle(filePath, mrbExtractPath)
     slicer.app.processEvents()
 
