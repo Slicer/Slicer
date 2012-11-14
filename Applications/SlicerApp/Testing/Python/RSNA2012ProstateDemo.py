@@ -151,7 +151,7 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
   This is the test case for your scripted module.
   """
 
-  def delayDisplay(self,message,msec=1000):
+  def delayDisplay(self,message,msec=100):
     """This utility method displays a small dialog and waits.
     This does two things: 1) it lets the event loop catch up
     to the state of the test so that rendering and widget updates
@@ -174,7 +174,6 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
   def runTest(self):
     self.setUp()
     self.test_RSNA2012ProstateDemo()
-    self.test_PercentEncode()
 
 
   def test_RSNA2012ProstateDemo(self):
@@ -189,7 +188,7 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
     # perform the downloads if needed, then load
     filePath = slicer.app.temporaryPath + '/RSNA2012ProstateDemo.mrb'
     urlPath = 'http://slicer.kitware.com/midas3/download?items=10697'
-    self.delayDisplay('Downloading MRB from %s ...\n' % urlPath)
+    self.delayDisplay('Downloading MRB from %s to %s...\n' % (urlPath, filePath))
     urllib.urlretrieve(urlPath, filePath)
     slicer.mrmlScene.Clear(0)
     appLogic = slicer.app.applicationLogic()
@@ -211,7 +210,7 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
     slicer.mrmlScene.Clear(0)
     self.delayDisplay('Test passed')
 
-  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None):
+  def tempDirectory(self,key='__SlicerTestTemp__',tempDir=None,includeDateTime=False):
     """Come up with a unique directory name in the temp dir and make it and return it
     # TODO: switch to QTemporaryDir in Qt5.
     Note: this directory is not automatically cleaned up
@@ -219,7 +218,8 @@ class RSNA2012ProstateDemoTest(unittest.TestCase):
     if not tempDir:
       tempDir = qt.QDir(slicer.app.temporaryPath)
     tempDirName = key
-    key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
+    if includeDateTime:
+      key += qt.QDateTime().currentDateTime().toString("yyyy-MM-dd_hh+mm+ss.zzz")
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
     dirPath = fileInfo.absoluteFilePath()
     qt.QDir().mkpath(dirPath)
