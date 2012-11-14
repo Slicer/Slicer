@@ -1373,6 +1373,11 @@ int LoadImagesAndComputeSUV( parameters & list, T )
     else
       {
       std::cerr << "Missing some parameters..." << std::endl;
+      std::cerr << "\tinjected Dose " << list.injectedDose << " should not be 0" << std::endl;
+      std::cerr << "\tpatientWeight " << list.patientWeight << " should not be 0" << std::endl;
+      std::cerr << "\tseriesReferenceTime " << list.seriesReferenceTime << " should not be MODULE_INIT_NO_VALUE" << std::endl;
+      std::cerr << "\tinjectionTime " << list.injectionTime<< " should not be MODULE_INIT_NO_VALUE" << std::endl;
+      std::cerr << "\tradionuclideHalfLife " << list.radionuclideHalfLife << " should not be MODULE_INIT_NO_VALUE" << std::endl;
       return EXIT_FAILURE;
       }
 
