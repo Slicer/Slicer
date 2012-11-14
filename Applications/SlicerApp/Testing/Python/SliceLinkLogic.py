@@ -229,12 +229,14 @@ class SliceLinkLogicTest(unittest.TestCase):
         print('Loading %s...\n' % (name,))
         loader(filePath)
     self.delayDisplay('Finished with download and loading')
+    print('')
 
     volumeNode = slicer.util.getNode(pattern="FA")
     logic = SliceLinkLogicLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
 
     eps = 1e-2
+    print('eps = ' + str(eps) + '\n')
 
     # Change to a CompareView
     ln = slicer.util.getNode(pattern='vtkMRMLLayoutNode*')
@@ -242,7 +244,8 @@ class SliceLinkLogicTest(unittest.TestCase):
     ln.SetNumberOfCompareViewLightboxColumns(4)
     ln.SetViewArrangement(12)
     self.delayDisplay('Compare View')
-
+    print('')
+    
     # Get the slice logic, slice node and slice composite node for the
     # first compare viewer
     logic = slicer.app.layoutManager().sliceWidget('Compare1').sliceLogic()
@@ -258,15 +261,17 @@ class SliceLinkLogicTest(unittest.TestCase):
     compareCNode.SetForegroundVolumeID(volumeNode.GetID())
     logic.EndSliceCompositeNodeInteraction()
     self.assertTrue( compareCNode.GetForegroundVolumeID() == volumeNode.GetID())
-
+    print('')
+    
     # Check that whether the volume was propagated
+    self.delayDisplay('Broadcasted volume selection to all Compare Views')
     compareNode2 = slicer.util.getNode('vtkMRMLSliceNodeCompare2')
     compareCNode2 = slicer.util.getNode('vtkMRMLSliceCompositeNodeCompare2')
     self.assertTrue(compareCNode2.GetForegroundVolumeID() == volumeNode.GetID())
     compareNode3 = slicer.util.getNode('vtkMRMLSliceNodeCompare3')
     compareCNode3 = slicer.util.getNode('vtkMRMLSliceCompositeNodeCompare3')
     self.assertTrue(compareCNode3.GetForegroundVolumeID() == volumeNode.GetID())
-    self.delayDisplay('Broadcasted volume selection to all Compare Views')
+    print('')
     
     # Reset the field of view
     logic.StartSliceNodeInteraction(8)  #ResetFieldOfViewFlag
@@ -275,9 +280,15 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
     self.delayDisplay('Broadcasted a reset of the field of view to all Compare Views')
+    diff = abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    print "Field of view of comparison (y) between compare viewers #1 and #2: " + str(diff)
+    self.assertTrue(diff < eps)
+
+    diff = abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] 
+    print "Field of view of comparison (y) between compare viewers #1 and #3: " + str(diff)
+    self.assertTrue(diff < eps)
+    print('')
     
     # Changed the number of lightboxes
     ln.SetNumberOfCompareViewLightboxColumns(6)
@@ -285,20 +296,34 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()
     logic.EndSliceNodeInteraction()
+
     # Note: we validate on fov[1] when resetting the field of view (fov[0] can
     # differ by a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1] < eps)
     self.delayDisplay('Changed the number of lightboxes')
+    diff = abs(compareNode2.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    print "Field of view of comparison (y) between compare viewers #1 and #2: " + str(diff)
+    self.assertTrue(diff < eps)
 
+    diff = abs(compareNode3.GetFieldOfView()[1]-compareNode.GetFieldOfView()[1]) / compareNode.GetFieldOfView()[1]
+    print "Field of view of comparison between compare viewers #1 and #3: " + str(diff)
+    self.assertTrue(diff < eps)
+    print('')
+    
     # Pan
     logic.StartSliceNodeInteraction(32) #XYZOriginFlag
     xyz = compareNode.GetXYZOrigin()
     compareNode.SetSliceOrigin(xyz[0] + 50, xyz[1] + 50, xyz[2])
     logic.EndSliceNodeInteraction()
-    self.assertTrue(abs(compareNode2.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0]) < eps)
-    self.assertTrue(abs(compareNode3.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0]) < eps)
+
     self.delayDisplay('Broadcasted a pan to all Compare Views')
+    diff = abs(compareNode2.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0])
+    print "Origin comparison (x) between compare viewers #1 and #2: " + str(diff)
+    self.assertTrue(diff < eps)
+
+    diff = abs(compareNode3.GetXYZOrigin()[0]-compareNode.GetXYZOrigin()[0])
+    print "Origin comparison (x) between compare viewers #1 and #3: " + str(diff)
+    self.assertTrue(diff < eps)
+    print('')
 
     # Zoom
     logic.StartSliceNodeInteraction(2) #FieldOfFlag
@@ -307,26 +332,39 @@ class SliceLinkLogicTest(unittest.TestCase):
     logic.EndSliceNodeInteraction()
     # Note: we validate on fov[0] when zooming (fov[1] can differ by 
     # a few units)
-    self.assertTrue(abs(compareNode2.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0] < eps)
-    self.assertTrue(abs(compareNode3.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0] < eps)
     self.delayDisplay('Broadcasted a zoom to all Compare Views')
+    diff = abs(compareNode2.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
+    print "Field of view of comparison (x) between compare viewers #1 and #2: " + str(diff)
+    self.assertTrue(diff < eps)
 
+    diff = abs(compareNode3.GetFieldOfView()[0]-compareNode.GetFieldOfView()[0]) / compareNode.GetFieldOfView()[0]
+    print "Field of view of comparison (x) between compare viewers #1 and #3: " + str(diff)
+    self.assertTrue(diff < eps)
+    print('')
+    
     # Change the slice
     logic.StartSliceNodeInteraction(1)   #SliceToRAS
     logic.SetSliceOffset(80)
     logic.EndSliceNodeInteraction()
-    self.assertTrue(abs(compareNode2.GetSliceOffset()-compareNode.GetSliceOffset()) < eps)
-    self.assertTrue(abs(compareNode3.GetSliceOffset()-compareNode.GetSliceOffset()) < eps)
     self.delayDisplay('Broadcasted a change in slice offset to all Compare Views')
+    diff = abs(compareNode2.GetSliceOffset()-compareNode.GetSliceOffset())
+    print "Slice offset comparison between compare viewers #1 and #2: " + str(diff)
+    self.assertTrue(diff < eps)
 
+    diff = abs(compareNode3.GetSliceOffset()-compareNode.GetSliceOffset())
+    print "Slice offset comparison between compare viewers #1 and #3: " + str(diff)
+    self.assertTrue(diff < eps)
+    print('')
+    
     # Change the orientation
     logic.StartSliceNodeInteraction(12)  #OrientationFlag & ResetFieldOfViewFlag
     compareNode.SetOrientation('Sagittal')
     logic.FitSliceToAll()
     compareNode.UpdateMatrices()
     logic.EndSliceNodeInteraction()
+    self.delayDisplay('Broadcasted a change in slice orientation to all Compare Views')
     self.assertTrue(compareNode2.GetOrientationString() == compareNode.GetOrientationString())
     self.assertTrue(compareNode3.GetOrientationString() == compareNode.GetOrientationString())
-    self.delayDisplay('Broadcasted a change in slice orientation to all Compare Views')
-
+    print('')
+    
     self.delayDisplay('Test passed!')
