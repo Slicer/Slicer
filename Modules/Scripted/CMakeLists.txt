@@ -1,9 +1,7 @@
 if(Slicer_BUILD_DICOM_SUPPORT)
   add_subdirectory(DICOMLib)
 endif()
-if(Slicer_USE_PYTHONQT_WITH_TCL)
-  add_subdirectory(EditorLib)
-endif()
+add_subdirectory(EditorLib)
 add_subdirectory(Scripts)
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
