@@ -272,7 +272,14 @@ class SliceLinkLogicTest(unittest.TestCase):
     compareCNode3 = slicer.util.getNode('vtkMRMLSliceCompositeNodeCompare3')
     self.assertTrue(compareCNode3.GetForegroundVolumeID() == volumeNode.GetID())
     print('')
-    
+
+    # Set the orientation to axial
+    logic.StartSliceNodeInteraction(12)  #OrientationFlag & ResetFieldOfViewFlag
+    compareNode.SetOrientation('Axial')
+    logic.FitSliceToAll()
+    compareNode.UpdateMatrices()
+    logic.EndSliceNodeInteraction()
+
     # Reset the field of view
     logic.StartSliceNodeInteraction(8)  #ResetFieldOfViewFlag
     logic.FitSliceToAll()
