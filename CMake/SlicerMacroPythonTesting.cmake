@@ -33,6 +33,7 @@ macro(SLICER_ADD_PYTHON_TEST)
     --ignore-slicerrc ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS} ${MY_SLICER_ARGS}
     --python-script ${CMAKE_CURRENT_SOURCE_DIR}/${MY_SCRIPT} ${MY_SCRIPT_ARGS}
     )
+  set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
 endmacro()
 
 macro(SLICER_ADD_PYTHON_UNITTEST)
@@ -54,4 +55,5 @@ macro(SLICER_ADD_PYTHON_UNITTEST)
     --python-code "import slicer.testing; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     ${MY_SLICER_ARGS}
     )
+  set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)
 endmacro()
