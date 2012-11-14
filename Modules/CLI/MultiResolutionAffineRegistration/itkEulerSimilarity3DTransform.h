@@ -151,18 +151,7 @@ private:
 
 }  // namespace itk
 
-// Define instantiation macro for this template.
-#define ITK_TEMPLATE_EulerSimilarity3DTransform(_, EXPORT, x, y) namespace itk { \
-  _(1 (class EXPORT EulerSimilarity3DTransform<ITK_TEMPLATE_1 x> ) ) \
-  namespace Templates { typedef EulerSimilarity3DTransform<ITK_TEMPLATE_1 x> \
-                        EulerSimilarity3DTransform##y; } \
-  }
-
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkEulerSimilarity3DTransform+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkEulerSimilarity3DTransform.txx"
 #endif
 

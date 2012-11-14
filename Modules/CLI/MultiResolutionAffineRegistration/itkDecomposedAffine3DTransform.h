@@ -170,18 +170,7 @@ private:
 
 }  // namespace itk
 
-// Define instantiation macro for this template.
-#define ITK_TEMPLATE_DecomposedAffine3DTransform(_, EXPORT, x, y) namespace itk { \
-  _(1 (class EXPORT DecomposedAffine3DTransform<ITK_TEMPLATE_1 x> ) ) \
-  namespace Templates { typedef DecomposedAffine3DTransform<ITK_TEMPLATE_1 x> \
-                        DecomposedAffine3DTransform##y; } \
-  }
-
-#if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkDecomposedAffine3DTransform+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkDecomposedAffine3DTransform.txx"
 #endif
 
