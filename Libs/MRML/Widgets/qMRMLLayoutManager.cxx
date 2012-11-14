@@ -527,6 +527,7 @@ void qMRMLLayoutManagerPrivate::onLayoutNodeModifiedEvent(vtkObject* vtkNotUsed(
     {
     return;
     }
+  this->updateWidgetsFromViewNodes();
   this->updateLayoutInternal();
 }
 
