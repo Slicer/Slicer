@@ -1438,9 +1438,9 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
+void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *referencingNode)
 {
-  if (id == NULL || refrencingNode == NULL)
+  if (id == NULL || referencingNode == NULL)
     {
     vtkErrorMacro("RemoveReferencedNodeID: either id is null or the reference node is null.");
     return;
@@ -1454,9 +1454,9 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *refrencin
   for( i=0; i<nnodes; ++i)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
-    if ( node  && refrencingNode )
+    if ( node  && referencingNode )
       {
-      if (node->GetID() && refrencingNode->GetID() && !strcmp(node->GetID(), refrencingNode->GetID())&&
+      if (node->GetID() && referencingNode->GetID() && !strcmp(node->GetID(), referencingNode->GetID())&&
           id && this->ReferencedIDs[i].c_str() && !strcmp(id, this->ReferencedIDs[i].c_str()) )
         {
         // need to remove do nothing
@@ -2820,14 +2820,14 @@ void vtkMRMLScene::ClearRedoStack()
 }
 
 //------------------------------------------------------------------------------
-void vtkMRMLScene::AddReferencedNodeID(const char *id, vtkMRMLNode *refrencingNode)
+void vtkMRMLScene::AddReferencedNodeID(const char *id, vtkMRMLNode *referencingNode)
 {
-  if (id && refrencingNode &&
-      refrencingNode->GetScene() && refrencingNode->GetID() &&
-      !this->IsNodeReferencingNodeID(refrencingNode, id))
+  if (id && referencingNode &&
+      referencingNode->GetScene() && referencingNode->GetID() &&
+      !this->IsNodeReferencingNodeID(referencingNode, id))
     {
     this->ReferencedIDs.push_back(id);
-    this->ReferencingNodes.push_back(refrencingNode);
+    this->ReferencingNodes.push_back(referencingNode);
     }
 }
 
