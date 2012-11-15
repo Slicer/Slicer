@@ -50,12 +50,6 @@ class PerformanceTestsWidget:
       self.layout.addWidget(b)
       b.connect('clicked()', test[1])
 
-    self.tclEnabled = qt.QCheckBox("Tcl Enabled")
-    self.layout.addWidget(self.tclEnabled)
-    self.tclEnabled.setToolTip("Toggles processing of tcl events - disables tcl-based functionality including pan/zoom, window/level, and Editor module.")
-    self.tclEnabled.setChecked(not bool(int(tcl('set ::SWidget::DISABLE_CALLBACKS'))))
-    self.tclEnabled.connect( "clicked()", self.onTclEnabled )
-
     self.log = qt.QTextEdit()
     self.log.readOnly = True
     self.layout.addWidget(self.log)
@@ -65,9 +59,6 @@ class PerformanceTestsWidget:
 
     # Add spacer to layout
     self.layout.addStretch(1)
-
-  def onTclEnabled(self):
-    tcl('set ::SWidget::DISABLE_CALLBACKS %d' % (not self.tclEnabled.checked,))
 
   def downloadMRHead(self):
     self.downloadVolume('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MRHead')
