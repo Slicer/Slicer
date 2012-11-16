@@ -11,8 +11,8 @@ Date:      $Date: 2006/03/03 22:26:39 $
 Version:   $Revision: 1.3 $
 
 =========================================================================auto=*/
-#include <sstream>
 
+#include "vtkAlgorithmOutput.h"
 #include "vtkObjectFactory.h"
 #include "vtkCallbackCommand.h"
 #include "vtkTransform.h"
@@ -22,6 +22,7 @@ Version:   $Revision: 1.3 $
 #include "vtkTransformPolyDataFilter.h"
 
 #include "vtkMRMLGlyphableVolumeSliceDisplayNode.h"
+#include <sstream>
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLGlyphableVolumeSliceDisplayNode);
@@ -156,25 +157,64 @@ void vtkMRMLGlyphableVolumeSliceDisplayNode::SetSliceImage(vtkImageData *image)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkNotUsed(glyphPolyData))
+void vtkMRMLGlyphableVolumeSliceDisplayNode
+::SetInputToPolyDataPipeline(vtkPolyData *vtkNotUsed(glyphPolyData))
 {
+  vtkErrorMacro(<< this->GetClassName() <<" ("<<this
+                    <<"): SetInputPolyData method should not be used");
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPolyData()
+{
+  if (!this->GetOutputPort())
+    {
+    return 0;
+    }
+  // Don't check input polydata as it is not used, but the image data instead.
+  if (!this->GetSliceImage())
+    {
+    return 0;
+    }
+  return vtkPolyData::SafeDownCast(
+    this->GetOutputPort()->GetProducer()->GetOutputDataObject(
+      this->GetOutputPort()->GetIndex()));
+}
+
+//---------------------------------------------------------------------------
+vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPolyData()
+{
+  if (!this->GetSliceOutputPort())
+    {
+    return 0;
+    }
+  // Don't check input polydata as it is not used, but the image data instead.
+  if (!this->GetSliceImage())
+    {
+    return 0;
+    }
+  return vtkPolyData::SafeDownCast(
+    this->GetSliceOutputPort()->GetProducer()->GetOutputDataObject(
+      this->GetSliceOutputPort()->GetIndex()));
 }
 
 //----------------------------------------------------------------------------
-vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetPolyData()
+vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode::GetOutputPort()
 {
-    return NULL;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
-vtkPolyData* vtkMRMLGlyphableVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
+vtkAlgorithmOutput* vtkMRMLGlyphableVolumeSliceDisplayNode::GetSliceOutputPort()
 {
-    return NULL;
+  return this->SliceToXYTransformer->GetOutputPort();
 }
+
 //----------------------------------------------------------------------------
-void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdatePolyDataPipeline() 
+void vtkMRMLGlyphableVolumeSliceDisplayNode::UpdatePolyDataPipeline()
 {
-  vtkErrorMacro("Shouldn't be calling this");
+  this->SliceToXYTransformer->SetInputConnection(
+    this->GetOutputPort());
 }
 
 //---------------------------------------------------------------------------

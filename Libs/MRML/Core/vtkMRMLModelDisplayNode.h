@@ -43,12 +43,18 @@ public:
   /// polydata of the model node.
   virtual void SetInputPolyData(vtkPolyData* polydata);
 
-  /// Return the polydata that was set by SetInputPolyData
+  /// Return the polydata that was set by SetInputPolyData()
+  /// \sa GetOutputPolyData()
   virtual vtkPolyData* GetInputPolyData();
 
   /// Return the polydata that is processed by the display node.
   /// This is the polydata that needs to be connected with the mappers.
-  vtkPolyData* GetOutputPolyData();
+  /// Return 0 if there is no input polydata but it is required.
+  /// GetOutputPolyData() should be reimplemented only if the model display
+  /// node doesn't take a polydata as input but produce an output polydata.
+  /// In all other cases, GetOutputPort() should be reimplemented.
+  /// \sa GetInputPolyData(), GetOutputPort()
+  virtual vtkPolyData* GetOutputPolyData();
 
   /// Reimplemented to update pipeline with new value
   /// \sa SetActiveAttributeLocation()

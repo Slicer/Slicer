@@ -106,15 +106,17 @@ void qSlicerDTISliceDisplayWidgetPrivate::computeScalarBounds(double scalarBound
          q->displayPropertiesNode()->GetColorGlyphBy() : -1);
 
   if (vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantHasKnownScalarRange(ScalarInvariant))
-  {
+    {
     vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(ScalarInvariant, scalarBounds);
-  } else {
-      vtkPolyData* glyphs = this->DisplayNode->GetPolyData();
-      if (glyphs)
-        {
-        glyphs->GetScalarRange(scalarBounds);
-        }
-  }
+    }
+  else
+    {
+    vtkPolyData* glyphs = this->DisplayNode->GetOutputPolyData();
+    if (glyphs)
+      {
+      glyphs->GetScalarRange(scalarBounds);
+      }
+    }
 //  Commented this so the glyphs and bundles are colored consistently
 //  this->DisplayNode->GetPolyData();
 //  scalarBounds[0] = qMin (scalarBounds[0], q->displayNode()->GetScalarRange()[0]);

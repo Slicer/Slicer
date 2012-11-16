@@ -45,8 +45,8 @@ vtkMRMLDiffusionTensorVolumeSliceDisplayNode::vtkMRMLDiffusionTensorVolumeSliceD
   this->DiffusionTensorGlyphFilter->SetResolution (1);
 
   this->ColorMode = this->colorModeScalar;
-  this->SliceToXYTransformer->SetInputConnection(
-    this->DiffusionTensorGlyphFilter->GetOutputPort());
+
+  this->UpdatePolyDataPipeline();
 }
 
 
@@ -151,28 +151,18 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetSliceImage(vtkImageData *i
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SetPolyData(vtkPolyData *vtkNotUsed(glyphPolyData))
+vtkAlgorithmOutput* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetOutputPort()
 {
-  vtkErrorMacro(<< this->GetClassName() <<" ("<<this
-                    <<"): SetPolyData method should not be used");
+  return this->DiffusionTensorGlyphFilter->GetOutputPort();
 }
 
-//----------------------------------------------------------------------------
-vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyData()
-{
-  return this->DiffusionTensorGlyphFilter->GetOutput();
-}
-
-//----------------------------------------------------------------------------
-vtkPolyData* vtkMRMLDiffusionTensorVolumeSliceDisplayNode::GetPolyDataTransformedToSlice()
-{
-  return this->SliceToXYTransformer->GetOutput();
-}
 //----------------------------------------------------------------------------
 void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline() 
 {
   // set display properties according to the tensor-specific display properties node for glyphs
   vtkMRMLDiffusionTensorDisplayPropertiesNode * DiffusionTensorDisplayNode = this->GetDiffusionTensorDisplayPropertiesNode( );
+
+  this->Superclass::UpdatePolyDataPipeline();
 
   if (DiffusionTensorDisplayNode == NULL ||
       this->SliceImage == NULL ||
