@@ -50,14 +50,16 @@ class vtkProp3D;
 class vtkPropPicker;
 class vtkWorldPointPicker;
 
-/// \brief menu to select volumes from current mrml scene.
+/// \brief Manage display nodes with polydata in 3D views.
 ///
-/// Inherits most behavior from kw widget, but is specialized to observe
-/// the current mrml scene and update the entries of the pop up menu to correspond
-/// to the currently available volumes.  This widget also has a notion of the current selection
-/// that can be observed or set externally.
-class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager :
-    public vtkMRMLAbstractThreeDViewDisplayableManager
+/// Any display node in the scene that contains a valid output polydata is
+/// represented into the view renderer using configured synchronized vtkActors
+/// and vtkMappers.
+/// Note that the display nodes must be of type vtkMRMLModelDisplayNode
+/// (to have an output polydata) but the displayable nodes don't necessarily
+/// have to be of type vtkMRMLModelNode.
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLModelDisplayableManager
+  : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
   static vtkMRMLModelDisplayableManager* New();

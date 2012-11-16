@@ -37,8 +37,11 @@ class vtkRenderWindowInteractor;
 
 /// \brief Superclass for displayable manager classes.
 ///
-/// A displayable manager class is responsible to represent a
-/// MRMLDisplayable node in a renderer.
+/// A displayable manager is responsible for representing MRML display nodes
+/// into a renderer (e.g. 2D view renderer). Displayable managers are the interface
+/// between MRML display nodes and vtkRenderer/vtkActors. They are responsible
+/// for creating and synchronizing vtkActor, vtkMapper and vtkProperties with
+/// MRML display nodes.
 class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLAbstractDisplayableManager
   : public vtkMRMLAbstractLogic
 {
