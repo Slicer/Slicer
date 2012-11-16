@@ -629,16 +629,28 @@ void vtkMRMLModelDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
 bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayableNode* node)const
 {
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  if (!modelNode)
-    {
-    return false;
-    }
-  if (modelNode->IsA("vtkMRMLAnnotationNode"))
+  if (!node ||
+      (modelNode && modelNode->IsA("vtkMRMLAnnotationNode")))
     {
     /// issue 2666: don't manage annotation nodes - don't show lines between the control points
     return false;
     }
-  return modelNode->GetPolyData() ? true : false;
+  if (modelNode && modelNode->GetPolyData())
+    {
+    return true;
+    }
+  // Maybe a model node has no polydata but its display nodes have output
+  // polydata (e.g. vtkMRMLGlyphableVolumeSliceDisplayNode).
+  bool displayable = false;
+  for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+    {
+    displayable |= this->IsModelDisplayable(node->GetNthDisplayNode(i));
+    if (displayable)
+      {// Optimization: no need to search any further.
+      continue;
+      }
+    }
+  return displayable;
 }
 
 //---------------------------------------------------------------------------
@@ -654,7 +666,7 @@ bool vtkMRMLModelDisplayableManager::IsModelDisplayable(vtkMRMLDisplayNode* node
     /// issue 2666: don't manage annotation nodes - don't show lines between the control points
     return false;
     }
-  return modelDisplayNode->GetInputPolyData() ? true : false;
+  return modelDisplayNode->GetOutputPolyData() ? true : false;
 }
 
 //---------------------------------------------------------------------------
