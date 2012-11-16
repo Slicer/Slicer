@@ -77,19 +77,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
 
-
-  /// 
-  /// Sets polydata for glyph input (usually stored in FiberBundle node)
-  void SetPolyData(vtkPolyData *glyphPolyData);
-
-  /// 
-  /// Gets resulting glyph PolyData 
-  virtual vtkPolyData* GetPolyData();
-  
-  /// 
-  /// Gets resulting glyph PolyData transfomed to slice XY
-  virtual vtkPolyData* GetPolyDataTransformedToSlice();
-   
   /// 
   /// Update the pipeline based on this node attributes
   virtual void UpdatePolyDataPipeline();
@@ -203,6 +190,10 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   ~vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( );
   vtkMRMLDiffusionTensorVolumeSliceDisplayNode ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
   void operator= ( const vtkMRMLDiffusionTensorVolumeSliceDisplayNode& );
+
+  /// Return the glyph producer output for the input image data.
+  /// \sa GetOutputPolyData()
+  virtual vtkAlgorithmOutput* GetOutputPort();
 
     vtkDiffusionTensorGlyph  *DiffusionTensorGlyphFilter;
 

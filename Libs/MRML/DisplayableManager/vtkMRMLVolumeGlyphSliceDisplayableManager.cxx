@@ -475,7 +475,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal::UpdateActor(
     {
     vtkMRMLDiffusionTensorVolumeSliceDisplayNode* dtiDisplayNode =
       vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast(displayNode);
-    vtkPolyData* polyData = dtiDisplayNode->GetPolyDataTransformedToSlice();
+    vtkPolyData* polyData = dtiDisplayNode->GetSliceOutputPolyData();
 
     vtkActor2D* actor2D = vtkActor2D::SafeDownCast(actor);
     vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(
