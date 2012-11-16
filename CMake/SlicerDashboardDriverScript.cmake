@@ -67,7 +67,7 @@ if(WITH_PACKAGES)
 endif()
 
 if(NOT DEFINED GIT_REPOSITORY)
-  set(repository http://svn.slicer.org/Slicer4/trunk)
+  set(repository http://svn.slicer.org/Slicer4/branches/Slicer-4-2)
 else()
   set(repository ${GIT_REPOSITORY})
   set(git_branch_option "")
