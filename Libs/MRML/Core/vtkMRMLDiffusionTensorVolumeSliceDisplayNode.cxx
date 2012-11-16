@@ -353,8 +353,20 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::ProcessMRMLEvents ( vtkObject
                                            unsigned long event, 
                                            void *callData )
 {
-  Superclass::ProcessMRMLEvents(caller, event, callData);
-  return;
+  // Calls "UpdatePolyDataPipeline"
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  // Let everyone know that the "display" has changed.
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* propertiesNode =
+    vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller);
+  if (propertiesNode != NULL &&
+      this->DiffusionTensorDisplayPropertiesNodeID != NULL &&
+      strcmp(this->DiffusionTensorDisplayPropertiesNodeID,
+             propertiesNode->GetID()) == 0 &&
+      event ==  vtkCommand::ModifiedEvent)
+    {
+    this->Modified();
+    }
 }
 
 //-----------------------------------------------------------
