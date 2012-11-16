@@ -464,6 +464,22 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
   storageNode->AddObserver(vtkCommand::ProgressEvent,  this->GetMRMLNodesCallbackCommand());
 }
 
+//----------------------------------------------------------------------------
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume(
+    const char* filename, const char* volname,
+    int loadingOptions, vtkStringArray *fileList)
+{
+  return this->AddArchetypeVolume(this->VolumeRegistry, filename, volname, loadingOptions, fileList);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic::AddArchetypeScalarVolume(
+    const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
+{
+  NodeSetFactoryRegistry nodeSetFactoryRegistry;
+  nodeSetFactoryRegistry.push_back(&ScalarVolumeNodeSetFactory);
+  return vtkMRMLScalarVolumeNode::SafeDownCast(this->AddArchetypeVolume(nodeSetFactoryRegistry, filename, volname, loadingOptions, fileList));
+}
 
 //----------------------------------------------------------------------------
 // int loadingOptions is bit-coded as following:
@@ -473,7 +489,10 @@ void vtkSlicerVolumesLogic::InitializeStorageNode(
 // bit 3: auto calculate window/level
 // bit 4: discard image orientation
 // higher bits are reserved for future use
-vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
+vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
+    const NodeSetFactoryRegistry& volumeRegistry,
+    const char* filename, const char* volname, int loadingOptions,
+    vtkStringArray *fileList)
 {
   this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
 
@@ -496,7 +515,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (const char* filena
   vtkNew<vtkSlicerErrorSink> errorSink;
 
   // Run through the factory list and test each factory until success
-  for (NodeSetFactoryRegistry::iterator fit = this->VolumeRegistry.begin();
+  for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin();
        fit != VolumeRegistry.end(); ++fit)
     {
     ArchetypeVolumeNodeSet nodeSet( (*fit)(volumeName, this->GetMRMLScene(), loadingOptions) );

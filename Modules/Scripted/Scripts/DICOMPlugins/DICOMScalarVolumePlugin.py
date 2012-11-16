@@ -289,23 +289,11 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     using the volume logic helper class
     and the vtkITK archetype helper code
     """
-    sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
-    vNode = slicer.vtkMRMLScalarVolumeNode()
-    sNode.SetFileName(files[0])
-    sNode.ResetFileNameList()
+    fileList = vtk.vtkStringArray()
     for f in files:
-      sNode.AddFileName(f)
-    sNode.SetSingleFile(0)
-    res = sNode.ReadData(vNode)
-
-    if res == 1:
-      vNode.SetScene(slicer.mrmlScene)
-      vNode.SetName(name)
-      slicer.mrmlScene.AddNode(vNode)
-    else:
-      vNode = None
-
-    return vNode
+      fileList.InsertNextValue(f)
+    volumesLogic = slicer.modules.volumes.logic()
+    return(volumesLogic.AddArchetypeScalarVolume(files[0],name,0,fileList))
 
   def load(self,loadable):
     """Load the select as a scalar volume
