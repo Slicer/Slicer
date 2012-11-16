@@ -176,15 +176,9 @@ void qMRMLSliceViewPrivate::initDisplayableManagers()
   q->qvtkConnect(this->DisplayableManagerGroup, vtkCommand::UpdateEvent,
                  q, SLOT(scheduleRender()));
 
-  // pass the lightbox manager proxy on the CrosshairDisplayableManager
-  vtkMRMLCrosshairDisplayableManager *cmgr =
-    vtkMRMLCrosshairDisplayableManager::SafeDownCast(
-      this->DisplayableManagerGroup->GetDisplayableManagerByClassName("vtkMRMLCrosshairDisplayableManager"));
-  if (cmgr)
-    {
-    cmgr->SetLightBoxRendererManagerProxy(
-      this->LightBoxRendererManagerProxy);
-    }
+  // pass the lightbox manager proxy onto the display managers
+  this->DisplayableManagerGroup->SetLightBoxRendererManagerProxy(this->LightBoxRendererManagerProxy);
+
 }
 
 //---------------------------------------------------------------------------
