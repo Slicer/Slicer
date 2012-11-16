@@ -353,7 +353,7 @@ set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NA
 #-----------------------------------------------------------------------------
 set(Slicer_VERSION_MAJOR "4")
 set(Slicer_VERSION_MINOR "2")
-set(Slicer_VERSION_PATCH "2")
+set(Slicer_VERSION_PATCH "1")
 # Releases define a tweak level
 set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 0)
