@@ -25,8 +25,6 @@
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerWin32Header.h"
 
-class vtkMRMLLightBoxRendererManagerProxy;
-
 /// \brief Displayable manager for the crosshair on slice (2D) views
 ///
 /// Responsible for any display of the crosshair on Slice views.
@@ -38,9 +36,6 @@ public:
   vtkTypeRevisionMacro(vtkMRMLCrosshairDisplayableManager,
                        vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
-
-  /// Set the LightBoxRendererManager proxy
-  virtual void SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy *);
 
 protected:
   vtkMRMLCrosshairDisplayableManager();

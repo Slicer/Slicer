@@ -22,6 +22,7 @@
 #include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLDisplayableManagerGroup.h"
 #include "vtkMRMLDisplayableManagerFactory.h"
+#include <vtkMRMLLightBoxRendererManagerProxy.h>
 
 #ifdef MRMLDisplayableManager_USE_PYTHON
 #include "vtkMRMLScriptedDisplayableManager.h"
@@ -37,6 +38,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 // STD includes
 #include <algorithm>
@@ -70,6 +72,7 @@ public:
   vtkMRMLDisplayableManagerFactory*     DisplayableManagerFactory;
   vtkMRMLNode*                          MRMLDisplayableNode;
   vtkRenderer*                          Renderer;
+  vtkWeakPointer<vtkMRMLLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
 //----------------------------------------------------------------------------
@@ -82,6 +85,7 @@ vtkMRMLDisplayableManagerGroup::vtkInternal::vtkInternal()
   this->Renderer = 0;
   this->CallBackCommand = vtkSmartPointer<vtkCallbackCommand>::New();
   this->DisplayableManagerFactory = 0;
+  this->LightBoxRendererManagerProxy = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -109,6 +113,11 @@ vtkMRMLDisplayableManagerGroup::~vtkMRMLDisplayableManagerGroup()
   if (this->Internal->Renderer)
     {
     this->Internal->Renderer->UnRegister(this);
+    }
+
+  if (this->Internal->LightBoxRendererManagerProxy)
+    {
+    this->Internal->LightBoxRendererManagerProxy = 0;
     }
 
   delete this->Internal;
@@ -262,6 +271,10 @@ void vtkMRMLDisplayableManagerGroup::AddDisplayableManager(
       this->Internal->DisplayableManagerFactory->GetMRMLApplicationLogic());
     }
   displayableManager->SetRenderer(this->Internal->Renderer);
+
+  // pass the lightbox manager proxy to the new displayable manager
+  displayableManager->SetLightBoxRendererManagerProxy(this->Internal->LightBoxRendererManagerProxy);
+
   displayableManager->SetAndObserveMRMLDisplayableNode(this->GetMRMLDisplayableNode());
 
   displayableManager->Register(this);
@@ -457,4 +470,21 @@ void vtkMRMLDisplayableManagerGroup::onDisplayableManagerFactoryUnRegisteredEven
 
   vtkDebugMacro(<< "group:" << this << ", onDisplayableManagerFactoryUnRegisteredEvent:"
                 << displayableManagerName)
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayableManagerGroup::SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy* mgr)
+{
+  this->Internal->LightBoxRendererManagerProxy = mgr;
+
+  for(size_t i=0; i < this->Internal->DisplayableManagers.size(); ++i)
+    {
+    this->Internal->DisplayableManagers[i]->SetLightBoxRendererManagerProxy(this->Internal->LightBoxRendererManagerProxy);
+    }
+}
+
+//---------------------------------------------------------------------------
+vtkMRMLLightBoxRendererManagerProxy* vtkMRMLDisplayableManagerGroup::GetLightBoxRendererManagerProxy()
+{
+  return this->Internal->LightBoxRendererManagerProxy;
 }

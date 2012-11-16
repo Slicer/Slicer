@@ -122,7 +122,6 @@ public:
   vtkSmartPointer<vtkActor2D>                HighlightActor;
   vtkSmartPointer<vtkMRMLCrosshairNode>      CrosshairNodeCache;
   vtkWeakPointer<vtkRenderer>                LightBoxRenderer;
-  vtkWeakPointer<vtkMRMLLightBoxRendererManagerProxy> LightBoxRendererManagerProxy;
 };
 
 
@@ -141,7 +140,6 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal
   this->Actor = 0;
   this->HighlightActor = 0;
   this->LightBoxRenderer = 0;
-  this->LightBoxRendererManagerProxy = 0;
   this->CrosshairNodeCache = vtkSmartPointer<vtkMRMLCrosshairNode>::New();
 }
 
@@ -151,7 +149,6 @@ vtkMRMLCrosshairDisplayableManager::vtkInternal::~vtkInternal()
   this->SetSliceCompositeNode(0);
   this->SetCrosshairNode(0);
   this->LightBoxRenderer = 0;
-  this->LightBoxRendererManagerProxy = 0;
   this->CrosshairNodeCache = 0;
   // everything should be empty
   assert(this->SliceCompositeNode == 0);
@@ -609,11 +606,11 @@ void vtkMRMLCrosshairDisplayableManager::OnMRMLNodeModified(vtkMRMLNode* node)
       this->Internal->HighlightActor->SetPosition(xyz[0], xyz[1]);
 
       // put the actor in the right lightbox
-      if (this->Internal->LightBoxRendererManagerProxy)
+      if (this->GetLightBoxRendererManagerProxy())
         {
         int id = (int) (xyz[2] + 0.5); // round to find the lightbox
         vtkRenderer *renderer 
-          = this->Internal->LightBoxRendererManagerProxy->GetRenderer(id);
+          = this->GetLightBoxRendererManagerProxy()->GetRenderer(id);
         if (renderer != this->Internal->LightBoxRenderer)
           {
           if (this->Internal->LightBoxRenderer)
@@ -688,7 +685,7 @@ void vtkMRMLCrosshairDisplayableManager::OnInteractorStyleEvent(int eventid)
           {
           double xyz[3], ras[3];
           vtkRenderer *renderer 
-            = this->Internal->LightBoxRendererManagerProxy->GetRenderer(0);
+            = this->GetLightBoxRendererManagerProxy()->GetRenderer(0);
           xyz[0] = renderer->GetSize()[0] / 2.0;
           xyz[1] = renderer->GetSize()[1] / 2.0;
           xyz[2] = 0;
@@ -886,10 +883,5 @@ void vtkMRMLCrosshairDisplayableManager::AdditionalInitializeStep()
 }
 
 
-//---------------------------------------------------------------------------
-void vtkMRMLCrosshairDisplayableManager::SetLightBoxRendererManagerProxy(vtkMRMLLightBoxRendererManagerProxy* mgr)
-{
-  this->Internal->LightBoxRendererManagerProxy = mgr;
-}
 
 
