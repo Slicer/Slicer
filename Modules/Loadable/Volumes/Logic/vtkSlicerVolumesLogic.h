@@ -131,6 +131,10 @@ public:
     return this->AddArchetypeVolume( filename, volname, 0, NULL);
     }
 
+  /// Load a scalar volume function directly, bypassing checks of all factories done in AddArchetypeVolume.
+  /// \sa AddArchetypeVolume(const NodeSetFactoryRegistry& volumeRegistry, const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList)
+  vtkMRMLScalarVolumeNode* AddArchetypeScalarVolume(const char* filename, const char* volname, int loadingOptions, vtkStringArray *fileList);
+
   /// Write volume's image data to a specified file
   int SaveArchetypeVolume (const char* filename, vtkMRMLVolumeNode *volumeNode);
 
@@ -210,10 +214,18 @@ protected:
   void SetAndObserveColorToDisplayNode(vtkMRMLDisplayNode* displayNode,
                                        int labelmap, const char* filename);
 
+  typedef std::list<ArchetypeVolumeNodeSetFactory> NodeSetFactoryRegistry;
+
+  /// Convenience function allowing to try to load a volume using a given
+  /// list of \a NodeSetFactoryRegistry
+  vtkMRMLVolumeNode* AddArchetypeVolume(
+      const NodeSetFactoryRegistry& volumeRegistry,
+      const char* filename, const char* volname, int loadingOptions,
+      vtkStringArray *fileList);
+
   vtkSmartPointer<vtkMRMLVolumeNode> ActiveVolumeNode;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
   
-  typedef std::list<ArchetypeVolumeNodeSetFactory> NodeSetFactoryRegistry;
   NodeSetFactoryRegistry VolumeRegistry;
 };
 
