@@ -286,6 +286,8 @@ bool vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
     // volume already exists in the list, don't need to add it
     return false;
     }
+  // Only observe when a display node is added/removed from the displayable
+  // node.
   volume->AddObserver(vtkMRMLDisplayableNode::DisplayModifiedEvent,
                       this->External->GetMRMLNodesCallbackCommand());
   this->VolumeNodes.push_back(volume);
@@ -562,7 +564,17 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
 void vtkMRMLVolumeGlyphSliceDisplayableManager
 ::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  if (event == vtkCommand::ModifiedEvent)
+  if (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
+    {
+    if (vtkMRMLDisplayableNode::SafeDownCast(caller))
+      {
+      if (callData == 0) // a display node is added/removed
+        {
+        this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
+        }
+      }
+    }
+  else if (event == vtkCommand::ModifiedEvent)
     {
     if (vtkMRMLSliceCompositeNode::SafeDownCast(caller))
       {
@@ -571,13 +583,6 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
     else if (vtkMRMLDisplayNode::SafeDownCast(caller))
       {
       this->Internal->UpdateVolumeDisplayNode(vtkMRMLDisplayNode::SafeDownCast(caller));
-      }
-    else if (vtkMRMLDisplayableNode::SafeDownCast(caller))
-      {
-      if (callData == 0)
-        {
-        this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
-        }
       }
     }
   else
