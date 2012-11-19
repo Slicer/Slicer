@@ -23,7 +23,7 @@ if(NOT DEFINED BRAINSTools_SOURCE_DIR)
 if(${ITK_VERSION_MAJOR} STREQUAL "3")
   set(GIT_TAG "fa2159607df370451e7a26d09e4e2a61b6e6c5c8" CACHE STRING "" FORCE)
 else()
-  set(GIT_TAG "4dfc44016ae3eff3ea878b68ba59b4caeec2fe4c" CACHE STRING "" FORCE) # 2012-11-12 tag with Slicer work arounds
+  set(GIT_TAG "1a467459a259d2d8b150b4d3184a73d041a1de3f" CACHE STRING "" FORCE) # 2012-11-12 tag with Slicer work arounds
 endif()
 
   if(NOT DEFINED git_protocol)
