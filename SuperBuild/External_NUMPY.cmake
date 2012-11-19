@@ -53,6 +53,9 @@ ExternalProject_Add(${proj}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_make_step.cmake
   INSTALL_COMMAND ${CMAKE_COMMAND}
     -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_install_step.cmake
+  PATCH_COMMAND ${CMAKE_COMMAND}
+  -DNUMPY_SRC_DIR=${Slicer_BINARY_DIR}/NUMPY
+    -P ${CMAKE_CURRENT_LIST_DIR}/${proj}_patch.cmake
   DEPENDS
     ${NUMPY_DEPENDENCIES}
   )
