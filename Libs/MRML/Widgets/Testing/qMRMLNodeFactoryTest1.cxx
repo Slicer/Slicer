@@ -74,7 +74,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     vtkMRMLNode* createdNode = nodeFactory.createNode("vtkMRMLCameraNode");
     if (createdNode == 0 ||
         createdNode->IsA("vtkMRMLCameraNode") != 1 ||
-        createdNode->GetReferenceCount() != 1 ||
+        createdNode->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdNode) == 0)
       {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed.\n"
@@ -94,7 +94,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
 
     if (createdSingletonNode == 0 ||
         createdSingletonNode->IsA("vtkMRMLInteractionNode") != 1 ||
-        createdSingletonNode->GetReferenceCount() != 1 ||
+        createdSingletonNode->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdSingletonNode) == 0)
       {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed with singleton.\n"
@@ -115,7 +115,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
     if (createdSingletonNode2 == 0 ||
         createdSingletonNode2 != createdSingletonNode ||
         createdSingletonNode2->IsA("vtkMRMLInteractionNode") != 1 ||
-        createdSingletonNode2->GetReferenceCount() != 1 ||
+        createdSingletonNode2->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdSingletonNode2) == 0)
       {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed with singleton2.\n"
@@ -134,7 +134,7 @@ int qMRMLNodeFactoryTest1( int argc, char * argv [] )
       qMRMLNodeFactory::createNode(scene.GetPointer(), "vtkMRMLCameraNode");
     if (createdNodeStatic == 0 ||
         createdNodeStatic->IsA("vtkMRMLCameraNode") != 1 ||
-        createdNodeStatic->GetReferenceCount() != 1 ||
+        createdNodeStatic->GetReferenceCount() != 2 ||
         scene->IsNodePresent(createdNodeStatic) == 0)
       {
       std::cerr << "Line " << __LINE__ << " - qMRMLNodeFactory::createNode() failed.\n"
