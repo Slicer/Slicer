@@ -49,9 +49,8 @@ set(cli_modules
   )
 
 if(Slicer_BUILD_DICOM_SUPPORT)
-  list(APPEND cli_modules
-    CreateDICOMSeries
-    )
+  list(APPEND cli_modules CreateDICOMSeries)
+  list(APPEND cli_modules PETStandardUptakeValueComputation)
 endif()
 
 if(Slicer_BUILD_LEGACY_CLI)
@@ -83,7 +82,6 @@ endif()
 if("${ITK_VERSION_MAJOR}" LESS 4)
   if(Slicer_BUILD_DICOM_SUPPORT)
     list(APPEND cli_modules DicomToNrrdConverter)
-    list(APPEND cli_modules PETStandardUptakeValueComputation)
   endif()
 endif()
 
@@ -170,3 +168,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
     )
 endif()
 
+if(Slicer_BUILD_DWIConvert)
+  message("DCMTK_DIR = ${DCMTK_DIR}")
+  add_subdirectory(${DWIConvert_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/DWIConvert)
+endif()
