@@ -1351,8 +1351,24 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     {
     // Run as a command line module
     //
-    // 
-    
+    //
+
+    // Unset ITK_AUTOLOAD_PATH environment variable to prevent the CLI from
+    // loading the itkMRMLIDIOPlugin plugin because executable CLIs read images
+    // from file and not from shared memory. Worst the plugin in the CLI
+    // could clash by loading libraries (ITK, VTK, MRML) other than the
+    // statically linked to the executable.
+    // Historically, there was an nvidia driver bug that causes the module
+    // to fail on exit with undefined symbol.
+     std::string saveITKAutoLoadPath;
+     itksys::SystemTools::GetEnv("ITK_AUTOLOAD_PATH", saveITKAutoLoadPath);
+     std::string emptyString("ITK_AUTOLOAD_PATH=");
+     int putSuccess =
+       itksys::SystemTools::PutEnv(const_cast <char *> (emptyString.c_str()));
+     if (!putSuccess)
+       {
+       vtkErrorMacro( "Unable to reset ITK_AUTOLOAD_PATH.");
+       }
     //
     // now run the process
     //
@@ -1368,10 +1384,17 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
     
     // execute the command
     itksysProcess_Execute(process);
-    
 
     // restore the load path
-    
+    std::string putEnvString = ("ITK_AUTOLOAD_PATH=");
+    putEnvString = putEnvString + saveITKAutoLoadPath;
+    putSuccess =
+      itksys::SystemTools::PutEnv(const_cast <char *> (putEnvString.c_str()));
+    if (!putSuccess)
+      {
+      vtkErrorMacro( "Unable to restore ITK_AUTOLOAD_PATH. ");
+      }
+
     // Wait for the command to finish
     char *tbuffer;
     int length;
