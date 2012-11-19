@@ -291,6 +291,11 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
 mark_as_advanced(Slicer_BUILD_SlicerWebGLExport)
 
+## This does not yet build cleanly in the slicer environment, so turn off by default
+CMAKE_DEPENDENT_OPTION(Slicer_BUILD_DWIConvert "Build DWIConvert." OFF
+  "Slicer_BUILD_DICOM_SUPPORT" OFF)
+mark_as_advanced(Slicer_BUILD_DWIConvert)
+
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
 # them installed by setting Slicer_INSTALL_DEVELOPMENT to true.
