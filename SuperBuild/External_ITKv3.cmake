@@ -38,7 +38,7 @@ if(NOT DEFINED ITK_DIR)
 
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY "github.com/Kitware/ITK.git" CACHE STRING "Repository from which to get ITK" FORCE)
   # release-3.20 branch on 2012-11-12.
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "3f5d32015df46591fde9c4656b59842f11efe9e4" CACHE STRING "ITK git tag to use" FORCE)
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG "b946b56436cce517d03eeb1684fb9e37c3f842a7" CACHE STRING "ITK git tag to use" FORCE)
 
   mark_as_advanced(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG)
 
