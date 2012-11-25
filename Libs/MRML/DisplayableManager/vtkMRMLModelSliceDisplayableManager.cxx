@@ -310,7 +310,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     }
   else
     {
-    //this->External->AddDisplayableNode( displayNode->GetDisplayableNode() );
+    this->External->AddDisplayableNode( displayNode->GetDisplayableNode() );
     }
 }
 
@@ -566,11 +566,10 @@ void vtkMRMLModelSliceDisplayableManager
     return;
     }
 
-  this->SetUpdateFromMRMLRequested(1);
-
   // Escape if the scene a scene is being closed, imported or connected
   if (this->GetMRMLScene()->IsBatchProcessing())
     {
+    this->SetUpdateFromMRMLRequested(1);
     return;
     }
 
@@ -666,7 +665,7 @@ void vtkMRMLModelSliceDisplayableManager::UpdateFromMRML()
   for (int i=0; i<nnodes; i++)
     {
     mNode  = vtkMRMLDisplayableNode::SafeDownCast(mNodes[i]);
-    if (mNode)
+    if (mNode && this->Internal->UseDisplayableNode(mNode))
       {
       this->AddDisplayableNode(mNode);
       }
