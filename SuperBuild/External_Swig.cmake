@@ -11,7 +11,7 @@ if(DEFINED Swig_DIR AND NOT EXISTS ${Swig_DIR})
   message(FATAL_ERROR "Swig_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-set( TARGET_SWIG_VERSION 2.0.4 )
+set( TARGET_SWIG_VERSION 2.0.8 )
 if(NOT SWIG_DIR)
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
@@ -56,7 +56,7 @@ if(NOT SWIG_DIR)
 
     ExternalProject_add(Swig
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
-      URL_MD5  4319c503ee3a13d2a53be9d828c3adc0
+      URL_MD5  69f917e870efc0712c06ab53217b28d1
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
       DEPENDS PCRE
       )
