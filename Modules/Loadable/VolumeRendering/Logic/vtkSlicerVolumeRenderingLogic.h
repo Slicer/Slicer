@@ -197,6 +197,12 @@ public:
     double scalarRange[2], double windowLevel[2],
     vtkLookupTable* lut, vtkVolumeProperty* node);
 
+  /// Create an opacity transfer function for gradient opacity.
+  /// It ranges from 0 to scalarRange[1] - scalarRange[0].
+  /// \sa SetThresholdToVolumeProp, SetWindowLevelToVolumeProp
+  void SetGradientOpacityToVolumeProp(
+    double scalarRange[2], vtkVolumeProperty* node);
+
   /// Generate and set to the volume property \a node an opacity and color
   /// transfer function from the labelmap LUT \a colors.
   /// \sa SetWindowLevelToVolumeProp, SetThresholdToVolumeProp

@@ -349,8 +349,10 @@ void vtkSlicerVolumeRenderingLogic
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode)
+void vtkSlicerVolumeRenderingLogic
+::UpdateTranferFunctionRangeFromImage(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
+  std::cout << "vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage()" << std::endl;
   if (vspNode == 0 || vspNode->GetVolumeNode() == 0 || vspNode->GetVolumePropertyNode() == 0)
   {
     return;
@@ -374,9 +376,16 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   double rangeNew[2];
   scalars->GetRange(rangeNew);
   functionColor->AdjustRange(rangeNew);
+  std::cout << "Color range: "
+            << functionColor->GetRange()[0] << " " << functionColor->GetRange()[1]
+            << std::endl;
 
   vtkPiecewiseFunction *functionOpacity = prop->GetScalarOpacity();
   functionOpacity->AdjustRange(rangeNew);
+
+  std::cout << "Opacity range: "
+            << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]
+            << std::endl;
 
   rangeNew[1] = (rangeNew[1] - rangeNew[0])*0.25;
   rangeNew[0] = 0;
@@ -384,6 +393,9 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
   functionOpacity = prop->GetGradientOpacity();
   functionOpacity->RemovePoint(255);//Remove the standard value
   functionOpacity->AdjustRange(rangeNew);
+  std::cout << "Gradient Opacity range: "
+            << functionOpacity->GetRange()[0] << " " << functionOpacity->GetRange()[1]
+            << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -398,6 +410,7 @@ void vtkSlicerVolumeRenderingLogic
   // Sanity check
   threshold[0] = std::max(std::min(threshold[0], scalarRange[1]), scalarRange[0]);
   threshold[1] = std::min(std::max(threshold[1], scalarRange[0]), scalarRange[1]);
+  std::cout << "Threshold: " << threshold[0] << " " << threshold[1] << std::endl;
 
   double previous = VTK_DOUBLE_MIN;
 
@@ -506,6 +519,30 @@ void vtkSlicerVolumeRenderingLogic
   volumeProp->SetDiffuse(0.60);
   volumeProp->SetSpecular(0.50);
   volumeProp->SetSpecularPower(40);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::SetGradientOpacityToVolumeProp(double scalarRange[2],
+                                 vtkVolumeProperty* volumeProp)
+{
+  assert(scalarRange && volumeProp);
+
+  double gradientRange[2];
+  gradientRange[0] = 0.;
+  gradientRange[1] = (scalarRange[1] - scalarRange[0]); // *0.25;
+
+  double previous = VTK_DOUBLE_MIN;
+  vtkNew<vtkPiecewiseFunction> opacity;
+  // opacity doesn't support duplicate points
+  opacity->AddPoint(higherAndUnique(scalarRange[0], previous), 1.0);
+  opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 1.0);
+
+  vtkPiecewiseFunction *volumePropGradientOpacity = volumeProp->GetGradientOpacity();
+  if (this->IsDifferentFunction(opacity.GetPointer(), volumePropGradientOpacity))
+    {
+    volumePropGradientOpacity->DeepCopy(opacity.GetPointer());
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -651,6 +688,7 @@ void vtkSlicerVolumeRenderingLogic
     }
   this->SetWindowLevelToVolumeProp(
     scalarRange, windowLevel, lut, prop);
+  this->SetGradientOpacityToVolumeProp(scalarRange, prop);
 
   vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
   vspNode->EndModify(disabledModify);
@@ -682,6 +720,7 @@ void vtkSlicerVolumeRenderingLogic
   int vpNodeDisabledModify = vspNode->GetVolumePropertyNode()->StartModify();
 
   this->SetLabelMapToVolumeProp(colors, prop);
+  this->SetGradientOpacityToVolumeProp(colors->GetRange(), prop);
 
   vspNode->GetVolumePropertyNode()->EndModify(vpNodeDisabledModify);
   vspNode->EndModify(disabledModify);
