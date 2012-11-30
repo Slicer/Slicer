@@ -589,6 +589,7 @@ void vtkMRMLSliceLogic::ProcessLogicEvents()
     points->SetPoint(3, outPt3);
 
     this->UpdatePipeline();
+    points->Modified();
     this->SliceModelNode->GetPolyData()->Modified();
     vtkMRMLModelDisplayNode *modelDisplayNode = this->SliceModelNode->GetModelDisplayNode();
     if ( modelDisplayNode )
