@@ -89,7 +89,7 @@
     </parameter>
     <parameter>
       <label>Gradient Opacity</label>
-      <description><![CDATA[Gradient opacity transfer function.]]></description>
+      <description><![CDATA[Gradient opacity transfer function. This controls the opacity according to how large a density gradient next to the voxel is.]]></description>
     </parameter>
     <parameter>
       <label>Interpolation</label>
