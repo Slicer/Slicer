@@ -25,6 +25,7 @@ Version:   $Revision: 1.0 $
 // STD includes
 #include <cassert>
 #include <sstream>
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLColorNode);
@@ -447,6 +448,7 @@ int vtkMRMLColorNode::SetColorNameWithSpaces(int ind, const char *name, const ch
    // does the input name have the subst character in it?
   if (strstr(name, substString.c_str()) != NULL)
     {
+    std::replace(nameString.begin(), nameString.end(), *subst, ' ');
     return this->SetColorName(ind, nameString.c_str());
     }
   else
