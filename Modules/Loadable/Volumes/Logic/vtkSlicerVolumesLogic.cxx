@@ -516,7 +516,7 @@ vtkMRMLVolumeNode* vtkSlicerVolumesLogic::AddArchetypeVolume (
 
   // Run through the factory list and test each factory until success
   for (NodeSetFactoryRegistry::const_iterator fit = volumeRegistry.begin();
-       fit != VolumeRegistry.end(); ++fit)
+       fit != volumeRegistry.end(); ++fit)
     {
     ArchetypeVolumeNodeSet nodeSet( (*fit)(volumeName, this->GetMRMLScene(), loadingOptions) );
 
