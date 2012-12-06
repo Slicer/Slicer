@@ -517,6 +517,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
    return;
    }
 
+  if (seedWidget->GetWidgetState() != vtkSeedWidget::MovingSeed)
+    {
+    // ignore events not caused by seed movement
+    return;
+    }
+
+
   // cast to the specific mrml node
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
