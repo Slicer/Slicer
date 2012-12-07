@@ -120,7 +120,7 @@ public:
   QString                                     IntDir;
 
   QSettings*                                  UserSettings;
-  QSettings*                                  RevisionSpecificUserSettings;
+  QSettings*                                  RevisionUserSettings;
 
   /// ModuleManager - It should exist only one instance of the factory
   QSharedPointer<qSlicerModuleManager>        ModuleManager;

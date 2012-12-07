@@ -895,13 +895,13 @@ QSettings* qSlicerCoreApplication::revisionUserSettings()const
   qSlicerCoreApplicationPrivate* mutable_d =
     const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instantiate Settings
-  if(!mutable_d->RevisionSpecificUserSettings)
+  if(!mutable_d->RevisionUserSettings)
     {
-    mutable_d->RevisionSpecificUserSettings =
+    mutable_d->RevisionUserSettings =
         new QSettings(this->slicerRevisionUserSettingsFilePath(),
                       QSettings::IniFormat, const_cast<qSlicerCoreApplication*>(this));
     }
-  return mutable_d->RevisionSpecificUserSettings;
+  return mutable_d->RevisionUserSettings;
 }
 
 //-----------------------------------------------------------------------------
