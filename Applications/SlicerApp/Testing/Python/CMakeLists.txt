@@ -166,6 +166,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   # add as unit test for use at build/test time
   slicer_add_python_unittest(SCRIPT AtlasTests.py)
   slicer_add_python_unittest(SCRIPT AbdominalAtlasTest.py)
+  slicer_add_python_unittest(SCRIPT BrainAtlasTest.py)
   slicer_add_python_unittest(SCRIPT KneeAtlasTest.py)
   slicer_add_python_unittest(SCRIPT fiber_visibility_crash2438.py)
   slicer_add_python_unittest(SCRIPT labelToggleBug2049.py)

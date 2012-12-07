@@ -262,24 +262,11 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
       // do we  have a widget for it?
       if (this->GetWidget(annotationNode) == NULL)
         {
-        vtkDebugMacro("UpdateFromMRML: creating a widget for node " << annotationNode->GetID());
-        vtkAbstractWidget *widget = this->CreateWidget(annotationNode);
-        if (widget)
+        vtkDebugMacro("UpdateFromMRML: adding node " << annotationNode->GetID());
+        if (this->AddAnnotation(annotationNode))
           {
-          // Add widget to the list
-          this->Helper->Widgets[annotationNode] = widget;
-
-          // Add the node to the list.
-          this->Helper->AnnotationNodeList.push_back(annotationNode);
-
-          // Refresh observers
-          this->SetAndObserveNode(annotationNode);
-
-          // tear down widget creation
-          this->OnWidgetCreated(widget, annotationNode);
-
           // update the new widget from the node
-          this->PropagateMRMLToWidget(annotationNode, widget);
+          this->PropagateMRMLToWidget(annotationNode, this->GetWidget(annotationNode));
           }
         }
       }
@@ -418,46 +405,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node
 
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent:  node " << node->GetID());
 
-  // Node added should not be already managed
-  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it = std::find(
-      this->Helper->AnnotationNodeList.begin(),
-      this->Helper->AnnotationNodeList.end(),
-      annotationNode);
-  if (it != this->Helper->AnnotationNodeList.end())
+  if (!this->AddAnnotation(annotationNode))
     {
-      vtkErrorMacro("OnMRMLSceneNodeAddedEvent: This node is already associated to the displayable manager!")
-      return;
-    }
-
-  // There should not be a widget for the new node
-  if (this->Helper->GetWidget(annotationNode) != 0)
-    {
-    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: A widget is already associated to this node!");
+    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: failed to add annotation node " << node->GetName());
     return;
     }
-
-  //std::cout << "OnMRMLSceneNodeAddedEvent ThreeD -> CreateWidget" << std::endl;
-
-  // Create the Widget and add it to the list.
-  vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
-  if (!newWidget)
-    {
-    vtkErrorMacro("OnMRMLSceneNodeAddedEvent: Widget was not created!")
-    return;
-    }
-  this->Helper->Widgets[annotationNode] = newWidget;
-
-  // Add the node to the list.
-  this->Helper->AnnotationNodeList.push_back(annotationNode);
-
-  // Refresh observers
-  this->SetAndObserveNode(annotationNode);
-
-  // TODO do we need this render call?
-  this->RequestRender();
-
-  // tear down widget creation
-  this->OnWidgetCreated(newWidget, annotationNode);
 
   // Remove all placed seeds
   this->Helper->RemoveSeeds();
@@ -736,8 +688,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     
     if (visibleOnSlice)
       {
-      // it's visible, just update the position
-      this->UpdatePosition(this->Helper->GetWidget(annotationNode), annotationNode);
+      // it's visible, but if just update the position, don't get updates
+      //necessary when switch into and out of lightbox
+      vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: visible, propagate mrml to widget");
+      this->PropagateMRMLToWidget(annotationNode, this->Helper->GetWidget(annotationNode));
       }
 
     else
@@ -890,15 +844,12 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
 
   if (this->IsInLightboxMode())
     {
-    /// BUG mantis issue 1690: if in lightbox mode, don't show fiducials or
-    /// rulers
-    if (!strcmp(this->m_Focus, "vtkMRMLAnnotationFiducialNode") ||
-        !strcmp(this->m_Focus, "vtkMRMLAnnotationRulerNode"))
+    /// BUG mantis issue 1690: if in lightbox mode, don't show rulers
+    if (!strcmp(this->m_Focus, "vtkMRMLAnnotationRulerNode"))
       {
       return false;
       }
     }
-
   
   int numberOfControlPoints =  controlPointsNode->GetNumberOfControlPoints();
   // the text node saves it's second control point in viewport coordinates, so
@@ -926,7 +877,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       // get the corresponding lightbox index for this display coordinate and
       // check if it's in the range of the current number of light boxes being
       // displayed in the grid rows/columns.
-      int lightboxIndex = (int)(displayCoordinates[2]+0.5);
+      int lightboxIndex = this->GetLightboxIndex(controlPointsNode);
       int numberOfLightboxes = sliceNode->GetLayoutGridColumns() * sliceNode->GetLayoutGridRows();
       //std::cout << "IsWidgetDisplayable: " << sliceNode->GetName() << ": lightbox mode, index = " << lightboxIndex << ", rows = " << sliceNode->GetLayoutGridRows() << ", cols = " << sliceNode->GetLayoutGridColumns() << ", number of light boxes = " << numberOfLightboxes << std::endl;
       if (lightboxIndex < 0 ||
@@ -937,84 +888,128 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       else
         {
         // get the right renderer index by checking the z coordinate
-        int rendererIndex = lightboxIndex;
+        vtkRenderer* currentRenderer = this->GetRenderer(lightboxIndex);
+        
+        // now we get the widget..
+        vtkAbstractWidget* widget = this->GetWidget(node);
 
-        // get all renderers associated with this renderWindow
-        // when lightbox mode is enabled, there will be different renderers
-        // associated with the renderWindow of the sliceView (there may also
-        // be more renderers than light boxes)
-        vtkRendererCollection* rendererCollection = this->GetInteractor()->GetRenderWindow()->GetRenderers();
-
-        // check if the rendererIndex is valid for the current lightbox view
-        if (rendererIndex >= 0 && rendererIndex < rendererCollection->GetNumberOfItems())
+        // TODO this code blocks the movement of the widget in lightbox mode
+        if (widget &&
+            (widget->GetCurrentRenderer() != currentRenderer ||
+             widget->GetRepresentation()->GetRenderer() != currentRenderer))
           {
-
-          vtkRenderer* currentRenderer = vtkRenderer::SafeDownCast(rendererCollection->GetItemAsObject(rendererIndex));
-
-          // now we get the widget..
-          vtkAbstractWidget* widget = this->GetWidget(node);
-
-          // TODO this code blocks the movement of the widget in lightbox mode
-          if (widget &&
-              (widget->GetCurrentRenderer() != currentRenderer ||
-               widget->GetRepresentation()->GetRenderer() != currentRenderer))
+          vtkDebugMacro("IsWidgetDisplayable: updating renderer on widget and representation");
+          // if the widget is on, need to turn it off to set the renderer
+          bool toggleOffOn = false;
+          if (widget->GetEnabled())
             {
-            // if the widget is on, need to turn it off to set the renderer
-            bool toggleOffOn = false;
-            if (widget->GetEnabled())
-              {
-              // turn it off..
-              widget->Off();
-              toggleOffOn = true;
-              }
-            // ..place it and its representation to the right renderer..
-            widget->SetCurrentRenderer(currentRenderer);
-            widget->GetRepresentation()->SetRenderer(currentRenderer);
-            if (toggleOffOn)
-              {
-              // ..and turn it on again!
-              widget->On();
-              }
-            // if it's a seed widget, go to complete interaction state
-            vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
-            if (seedWidget)
-              {
-              vtkDebugMacro("SeedWidget: Complete interaction");
-              seedWidget->CompleteInteraction();
-              }
+            // turn it off..
+            widget->Off();
+            toggleOffOn = true;
+            }
+          // ..place it and its representation to the right renderer..
+          
+          widget->SetCurrentRenderer(currentRenderer);
+          widget->GetRepresentation()->SetRenderer(currentRenderer);
+          
+          if (toggleOffOn)
+            {
+            // ..and turn it on again!
+            widget->On();
+            }
+          // if it's a seed widget, go to complete interaction state
+          vtkSeedWidget *seedWidget = vtkSeedWidget::SafeDownCast(widget);
+          if (seedWidget)
+            {
+            vtkDebugMacro("SeedWidget: Complete interaction");
+            seedWidget->CompleteInteraction();
+            }
 
-            // we need to render again
-            if (currentRenderer)
-              {
-              currentRenderer->Render();
-              }
+          // we need to render again
+          if (currentRenderer)
+            {
+            currentRenderer->Render();
             }
           }
-        else
-          {
-          // it's out of range of the current collection of renderers
-          showWidget = false;
-          }
+        
         }
       //
       // End of Lightbox specific code
       //
       }
-    else
+
+    // check if the annotation is close enough to the slice to be shown
+    if (showWidget)
       {
-      // the third coordinate of the displayCoordinates is the distance to the slice
-      float distanceToSlice = displayCoordinates[2];
-      float maxDistance = 0.5 + (sliceNode->GetDimensions()[2] - 1);
-      if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
+      if (this->IsInLightboxMode())
         {
-        // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice
-        // hence, we do not want to show this widget
-        showWidget = false;
-        // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
-        break;
+        // get the volume's spacing to determine the distance between the slice
+        // location and the annotation
+        // default to spacing 1.0 in case can't get volume slice spacing from
+        // the logic as that will be a multiplicative no-op
+        double spacing = 1.0;
+        vtkMRMLSliceLogic *sliceLogic = NULL;
+        vtkMRMLApplicationLogic *mrmlAppLogic = this->GetMRMLApplicationLogic();
+        if (mrmlAppLogic)
+          {
+          sliceLogic = mrmlAppLogic->GetSliceLogic(this->GetSliceNode());
+          }
+        if (sliceLogic)
+          {
+          double *volumeSliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing();
+          if (volumeSliceSpacing != NULL)
+            {
+            vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName() << ": volumeSliceSpacing = " << volumeSliceSpacing[0] << ", " << volumeSliceSpacing[1] << ", " << volumeSliceSpacing[2]);
+            spacing = volumeSliceSpacing[2];
+            }
+          }
+        vtkDebugMacro("displayCoordinates: " << displayCoordinates[0] << "," << displayCoordinates[1] << "," << displayCoordinates[2] << "\n\tworld coords: " << transformedWorldCoordinates[0] << "," << transformedWorldCoordinates[1] << "," << transformedWorldCoordinates[2]);
+        // calculate the distance from the annotation in world space to the
+        // plane defined by the slice node normal and origin (using same
+        // convention as the vtkMRMLThreeDReformatDisplayableManager)
+        vtkMatrix4x4 *sliceToRAS = this->GetSliceNode()->GetSliceToRAS();
+        double slicePlaneNormal[3], slicePlaneOrigin[3];
+        slicePlaneNormal[0] = sliceToRAS->GetElement(0,2);
+        slicePlaneNormal[1] = sliceToRAS->GetElement(1,2);
+        slicePlaneNormal[2] = sliceToRAS->GetElement(2,2);
+        slicePlaneOrigin[0] = sliceToRAS->GetElement(0,3);
+        slicePlaneOrigin[1] = sliceToRAS->GetElement(1,3);
+        slicePlaneOrigin[2] = sliceToRAS->GetElement(2,3);
+        double distanceToPlane = slicePlaneNormal[0]*(transformedWorldCoordinates[0]-slicePlaneOrigin[0]) +
+          slicePlaneNormal[1]*(transformedWorldCoordinates[1]-slicePlaneOrigin[1]) + 
+          slicePlaneNormal[2]*(transformedWorldCoordinates[2]-slicePlaneOrigin[2]);
+        // this gives the distance to light box plane 0, but have to offset by
+        // number of light box planes (as determined by the light box index) times the volume
+        // slice spacing
+        int lightboxIndex = this->GetLightboxIndex(controlPointsNode);
+        double lightboxOffset = lightboxIndex * spacing;
+        double distanceToSlice = distanceToPlane - lightboxOffset;
+        double maxDistance = 0.5;
+        vtkDebugMacro("\n\tdistance to plane = " << distanceToPlane << "\n\tlightboxIndex = " << lightboxIndex << "\n\tlightboxOffset = " << lightboxOffset << "\n\tdistance to slice = " << distanceToSlice);
+        // check that it's within 0.5mm
+        if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
+          {
+          vtkDebugMacro("Distance to slice is greater than max distance, not showing the widget");
+          showWidget = false;
+          break;
+          }
+        }
+      else
+        {
+        // the third coordinate of the displayCoordinates is the distance to the slice
+        float distanceToSlice = displayCoordinates[2];
+        float maxDistance = 0.5 + (sliceNode->GetDimensions()[2] - 1);
+        vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName() << ": distance to slice = " << distanceToSlice << ", maxDistance = " << maxDistance << "\n\tslice node dimenions[2] = " << sliceNode->GetDimensions()[2]);
+        if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
+          {
+          // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice
+          // hence, we do not want to show this widget
+          showWidget = false;
+          // we don't even need to continue parsing the controlpoints, because we know the widget will not be shown
+          break;
+          }
         }
       }
-
     // -----------------------------------------
     // special cases when the slices get panned:
 
@@ -1623,3 +1618,96 @@ bool vtkMRMLAnnotationDisplayableManager::IsInLightboxMode()
   return flag;
 }
 
+
+
+//---------------------------------------------------------------------------
+int vtkMRMLAnnotationDisplayableManager::GetLightboxIndex(vtkMRMLAnnotationNode *node, int controlPointIndex)
+{
+  int index = -1;
+
+  if (!node)
+    {
+    return index;
+    }
+  if (!this->IsInLightboxMode())
+    {
+    return index;
+    }
+
+  // down cast the node as a controlpoints node to get the coordinates
+  vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
+
+  if (!controlPointsNode)
+    {
+    vtkErrorMacro("GetLightboxIndex: Could not get the controlpoints node.")
+    return index;
+    }
+
+  if (controlPointIndex < 0 ||
+      controlPointIndex >= controlPointsNode->GetNumberOfControlPoints())
+    {
+    return index;
+    }
+  
+  double transformedWorldCoordinates[4];
+  controlPointsNode->GetControlPointWorldCoordinates(controlPointIndex, transformedWorldCoordinates);
+  double displayCoordinates[4];
+  this->GetWorldToDisplayCoordinates(transformedWorldCoordinates,displayCoordinates);
+
+  index = (int)(floor(displayCoordinates[2]+0.5));
+
+
+  return index;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLAnnotationDisplayableManager::AddAnnotation(vtkMRMLAnnotationNode *annotationNode)
+{
+  if (!annotationNode || !this->GetMRMLScene())
+    {
+    return false;
+    }
+
+    // Node added should not be already managed
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it = std::find(
+      this->Helper->AnnotationNodeList.begin(),
+      this->Helper->AnnotationNodeList.end(),
+      annotationNode);
+  if (it != this->Helper->AnnotationNodeList.end())
+    {
+    vtkErrorMacro("AddAnnotation: This node is already associated to the displayable manager!");
+    return false;
+    }
+
+  // There should not be a widget for the new node
+  if (this->Helper->GetWidget(annotationNode) != 0)
+    {
+    vtkErrorMacro("AddAnnotation: A widget is already associated to this node!");
+    return false;
+    }
+
+  vtkDebugMacro("AddAnnotation: ThreeD -> CreateWidget");
+
+  // Create the Widget and add it to the list.
+  vtkAbstractWidget* newWidget = this->CreateWidget(annotationNode);
+  if (!newWidget)
+    {
+    vtkErrorMacro("AddAnnotation: Widget was not created!")
+    return false;
+    }
+  this->Helper->Widgets[annotationNode] = newWidget;
+
+  // Add the node to the list.
+  this->Helper->AnnotationNodeList.push_back(annotationNode);
+
+  // Refresh observers
+  this->SetAndObserveNode(annotationNode);
+
+  // TODO do we need this render call?
+  this->RequestRender();
+
+  // tear down widget creation
+  this->OnWidgetCreated(newWidget, annotationNode);
+
+  return true;
+}

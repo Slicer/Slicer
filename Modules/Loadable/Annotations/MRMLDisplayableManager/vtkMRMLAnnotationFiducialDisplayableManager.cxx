@@ -104,7 +104,11 @@ public:
         // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
         if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
           {
-          representation->SetSeedDisplayPosition(0,restrictedDisplayCoordinates1);
+          if (representation->GetRenderer() &&
+              representation->GetRenderer()->GetActiveCamera())
+            {
+            representation->SetSeedDisplayPosition(0,restrictedDisplayCoordinates1);
+            }
           }
 
         }
@@ -180,18 +184,35 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     std::cout<<"No DisplayNode!"<<std::endl;
     }
 
+  // unset the glyph type which can be necessary when recreating a widget due to 2d/3d swap
+  std::map<vtkMRMLNode*, int>::iterator iter  = this->NodeGlyphTypes.find(displayNode);
+  if (iter != this->NodeGlyphTypes.end())
+    {
+    vtkDebugMacro("CreateWidget: found a glyph type already defined for this node: " << iter->second);
+    this->NodeGlyphTypes[displayNode] = vtkMRMLAnnotationPointDisplayNode::GlyphMin - 1;
+    }
   vtkNew<vtkSeedRepresentation> rep;
-  vtkNew<vtkOrientedPolygonalHandleRepresentation3D> handle;
+  if (!this->IsInLightboxMode())
+    {
+    vtkDebugMacro("CreateWidget: not in light box mode, making a 3d handle");
+    vtkNew<vtkOrientedPolygonalHandleRepresentation3D> handle;
 
-  // default to a starburst glyph, update in propagate mrml to widget
-  vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
-  glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::StarBurst2D);
-  glyphSource->Update();
-  glyphSource->SetScale(1.0);
-  handle->SetHandle(glyphSource->GetOutput());
+    // default to a sphere glyph, update in propagate mrml to widget
+    vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
+    glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Sphere3D);
+    glyphSource->Update();
+    glyphSource->SetScale(1.0);
+    handle->SetHandle(glyphSource->GetOutput());
+    rep->SetHandleRepresentation(handle.GetPointer());
+    }
+  else
+    {
+    vtkDebugMacro("CreateWidget: in light box mode, making a 2d handle");
+    vtkNew<vtkPointHandleRepresentation2D> handle;
+    rep->SetHandleRepresentation(handle.GetPointer());
+    }
 
-
-  rep->SetHandleRepresentation(handle.GetPointer());
+  
 
 
   //seed widget
@@ -201,7 +222,18 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
   seedWidget->SetRepresentation(rep.GetPointer());
 
   seedWidget->SetInteractor(this->GetInteractor());
-  seedWidget->SetCurrentRenderer(this->GetRenderer());
+  // set the renderer on the widget and representation
+  if (!this->IsInLightboxMode())
+    {
+    seedWidget->SetCurrentRenderer(this->GetRenderer());
+    seedWidget->GetRepresentation()->SetRenderer(this->GetRenderer());
+    }
+  else
+    {
+    int lightboxIndex = this->GetLightboxIndex(fiducialNode);
+    seedWidget->SetCurrentRenderer(this->GetRenderer(lightboxIndex));
+    seedWidget->GetRepresentation()->SetRenderer(this->GetRenderer(lightboxIndex));
+    }
 
   //seedWidget->ProcessEventsOff();
 
@@ -297,7 +329,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     vtkErrorMacro("PropagateMRMLToWidget: Could not get seed widget!")
     return;
     }
-
+  
   // cast to the specific mrml node
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
@@ -312,7 +344,11 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
 
   // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
   vtkSeedRepresentation * seedRepresentation = vtkSeedRepresentation::SafeDownCast(seedWidget->GetRepresentation());
-
+  if (!seedRepresentation)
+    {
+    vtkErrorMacro("PropagateMRMLToWidget: Could not get seed representation from widget!")
+    return;
+    }
 
   vtkMRMLAnnotationPointDisplayNode *displayNode = fiducialNode->GetAnnotationPointDisplayNode();
 
@@ -322,6 +358,54 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     }
 
   vtkOrientedPolygonalHandleRepresentation3D *handleRep = vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
+  // might be in lightbox mode where using a 2d point handle
+  vtkPointHandleRepresentation2D *pointHandleRep = vtkPointHandleRepresentation2D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
+  // double check that if switch in and out of light box mode, the handle rep
+  // is updated
+  bool updateHandleType = false;
+  if (this->IsInLightboxMode())
+    {
+    if (handleRep)
+      {
+      vtkDebugMacro("PropagateMRMLToWidget: have a 3d handle representation in 2d light box, resetting it.");
+      updateHandleType = true;
+      }
+    }
+  else
+    {
+    if (pointHandleRep)
+      {
+      vtkDebugMacro("PropagateMRMLToWidget: Not in light box, but have a point handle.");
+      updateHandleType = true;     
+      }
+    }
+  if (updateHandleType)
+    {
+    vtkDebugMacro("PropagateMRMLToWidget: removing widget...");
+    // clean it out
+    this->Helper->RemoveWidgetAndNode(node);
+    // recreate it
+    vtkMRMLAnnotationNode *annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
+    if (annotationNode)
+      {
+      this->AddAnnotation(annotationNode);
+      }
+    // did it come back in here
+    vtkDebugMacro("PropagateMRMLToWidget: did it end up calling this method already?");
+    // probably not, so call and return
+    vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
+    if (widget)
+      {
+      this->PropagateMRMLToWidget(annotationNode, widget);
+      }
+    else
+      {
+      vtkWarningMacro("PropagateMRMLToWidget: failed to add a new widget for node " << node->GetName());
+      return;
+      }
+    vtkDebugMacro("PropagateMRMLToWidget: NOW returning after calling self from self");
+    return;
+    }
   if (handleRep)
     {
     if (displayNode)
@@ -464,7 +548,50 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       handleRep->LabelVisibilityOff();
       }
     }//if (handleRep)
-
+  else if (pointHandleRep)
+    {
+    if (displayNode)
+      {
+      // glyph type
+      /*
+      std::map<vtkMRMLNode*, int>::iterator iter  = this->NodeGlyphTypes.find(displayNode);
+      if (iter == this->NodeGlyphTypes.end() || iter->second != displayNode->GetGlyphType())
+        {
+        // map the 3d sphere to a filled circle, the 3d diamond to a filled
+        // diamond
+        vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
+        if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+          {
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Circle2D);
+          }
+        else if (displayNode->GetGlyphType() == vtkMRMLAnnotationPointDisplayNode::Diamond3D)
+          {
+          glyphSource->SetGlyphType(vtkMRMLAnnotationPointDisplayNode::Diamond2D);
+          }
+        else
+          {
+          glyphSource->SetGlyphType(displayNode->GetGlyphType());
+          }
+        glyphSource->Update();
+        glyphSource->SetScale(1.0);
+        std::cout << "PropagateMRMLToWidget: " << this->GetSliceNode()->GetName() << ": setting point handle rep cursor shape " << glyphSource->GetOutput() << std::endl;
+        pointHandleRep->SetCursorShape(glyphSource->GetOutput());
+        this->NodeGlyphTypes[displayNode] = displayNode->GetGlyphType();
+        }
+      */
+      // set the color
+      if (fiducialNode->GetSelected())
+        {
+        // use the selected color
+        pointHandleRep->GetProperty()->SetColor(displayNode->GetSelectedColor());
+        }
+      else
+        {
+        // use the unselected color
+        pointHandleRep->GetProperty()->SetColor(displayNode->GetColor());
+        }
+      }
+    }
   // now update the position
   this->UpdatePosition(widget, node);
 
@@ -762,7 +889,13 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
       {
       // only update when really changed
       vtkDebugMacro("UpdatePosition: " << this->GetSliceNode()->GetName() << ": display coordinates changed:\n\tseed display = " << displayCoordinatesBuffer1[0] << ", " << displayCoordinatesBuffer1[1] << "\n\tfid display =  " << displayCoordinates1[0] << ", " << displayCoordinates1[1] );
-      seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+      // make sure the representation has a renderer and an active camera to
+      // avoid a crash in vtkRenderer::ViewToWorld
+      if (seedRepresentation->GetRenderer() &&
+          seedRepresentation->GetRenderer()->GetActiveCamera())
+        {
+        seedRepresentation->SetSeedDisplayPosition(0,displayCoordinates1);
+        }
       positionChanged = true;
       }
     else
