@@ -119,7 +119,8 @@ public:
   /// Release, RelWithDebInfo, MinSizeRel or any other custom build type.
   QString                                     IntDir;
 
-  QSettings*                                  Settings;
+  QSettings*                                  UserSettings;
+  QSettings*                                  RevisionSpecificUserSettings;
 
   /// ModuleManager - It should exist only one instance of the factory
   QSharedPointer<qSlicerModuleManager>        ModuleManager;

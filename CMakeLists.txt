@@ -341,6 +341,14 @@ mark_as_advanced(ADDITIONAL_CXX_FLAGS)
 include(SlicerBlockCXXRequiredFlags)
 
 #-----------------------------------------------------------------------------
+# Organization name
+#-----------------------------------------------------------------------------
+set(Slicer_ORGANIZATION_DOMAIN "www.na-mic.org" CACHE INTERNAL "Organization domain")
+set(Slicer_ORGANIZATION_NAME "NA-MIC" CACHE INTERNAL "Organization name")
+
+set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
+
+#-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
 set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
@@ -361,6 +369,10 @@ set(Slicer_VERSION_PATCH "1")
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
   Slicer_BUILDDATE "${Slicer_WC_LAST_CHANGED_DATE}")
+
+if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
+  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
+endif()
 
 if(NOT DEFINED Slicer_VERSION_TWEAK)
   # if it's not a release, use the date as a tweak
@@ -403,7 +415,10 @@ endif()
 #-----------------------------------------------------------------------------
 set(Slicer_INSTALL_ROOT "./")
 set(Slicer_BUNDLE_LOCATION "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app/Contents")
-set(Slicer_BUNDLE_EXTENSIONS_DIRNAME "Extensions")
+# NOTE: Make sure to update vtkSlicerApplicationLogic::IsEmbeddedModule if
+#       the following variables are changed.
+set(Slicer_EXTENSIONS_DIRBASENAME "Extensions")
+set(Slicer_EXTENSIONS_DIRNAME "${Slicer_EXTENSIONS_DIRBASENAME}-${Slicer_WC_REVISION}")
 if(APPLE)
   set(Slicer_INSTALL_ROOT "${Slicer_BUNDLE_LOCATION}/") # Set to create Bundle
 endif()
@@ -876,10 +891,6 @@ get_property(Slicer_QM_OUTPUT_DIRS GLOBAL PROPERTY Slicer_QM_OUTPUT_DIRS)
 # --------------------------------------------------------------------------
 # Configure and install headers
 # --------------------------------------------------------------------------
-
-if(NOT Slicer_FORCED_WC_REVISION STREQUAL "")
-  set(Slicer_WC_REVISION "${Slicer_FORCED_WC_REVISION}")
-endif()
 
 set(files
   vtkSlicerConfigure.h

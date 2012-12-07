@@ -137,6 +137,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       TestRowType row;
       row.push_back("/home/jchris/Projects/MRIChangeDetector-build/lib/Slicer-X.Y/qt-scripted-modules/MRIChangeDetector.pyc");
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4810");
       row.push_back("0");
       data.push_back(row);
     }
@@ -144,6 +145,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       TestRowType row;
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/lib/Slicer-X.Y/qt-scripted-modules/MRIChangeDetector.pyc");
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4810");
       row.push_back("1");
       data.push_back(row);
     }
@@ -151,24 +153,35 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
       TestRowType row;
       row.push_back("/home/jchris/Projects/Slicer.app/Contents/lib/Slicer-4.1/qt-loadable-modules/libqSlicerAnnotationsModule.dylib");
       row.push_back("/home/jchris/Projects/Slicer.app/Contents");
+      row.push_back("4810");
       row.push_back("1");
       data.push_back(row);
     }
     {
       TestRowType row;
-      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4810");
       row.push_back("0");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4811");
+      row.push_back("1");
       data.push_back(row);
     }
     for(TestDataType::size_type rowIdx = 0; rowIdx < data.size(); ++rowIdx)
       {
       std::string filePath(data.at(rowIdx).at(0));
       std::string applicationHomeDir(data.at(rowIdx).at(1));
-      std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(2));
+      std::string slicerRevision(data.at(rowIdx).at(2));
+      std::string isEmbeddedExpectedAsStr(data.at(rowIdx).at(3));
       bool isEmbeddedExpected = (isEmbeddedExpectedAsStr == "1");
 
-      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir);
+      bool isEmbedded = vtkSlicerApplicationLogic::IsEmbeddedModule(filePath, applicationHomeDir, slicerRevision);
       if (isEmbeddedExpected != isEmbedded)
         {
         std::cerr << "Line " << __LINE__ << " - Problem with isEmbedded ! - Row:" << rowIdx << "\n"

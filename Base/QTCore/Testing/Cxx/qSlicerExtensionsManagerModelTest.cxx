@@ -126,14 +126,14 @@ private slots:
   void testIsExtensionEnabled();
   void testIsExtensionEnabled_data();
 
-  void testSetLauncherSettingsFilePath();
-  void testSetLauncherSettingsFilePath_data();
+  void testSetExtensionsSettingsFilePath();
+  void testSetExtensionsSettingsFilePath_data();
 
   void testExtensionAdditionalPathsSettingsUpdated();
   void testExtensionAdditionalPathsSettingsUpdated_data();
 
-  void testExtensionLauncherSettingsUpdated();
-  void testExtensionLauncherSettingsUpdated_data();
+  void testExtensionExtensionsSettingsUpdated();
+  void testExtensionExtensionsSettingsUpdated_data();
 
   void testSetSlicerRevision();
   void testSetSlicerRevision_data();
@@ -417,6 +417,7 @@ void qSlicerExtensionsManagerModelTester::testServerUrl()
 
   QSettings().setValue("Extensions/ServerUrl", serverUrl);
   qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerVersion(Slicer_VERSION);
 
   QUrl currentServerUrl = model.serverUrl();
@@ -503,6 +504,7 @@ void qSlicerExtensionsManagerModelTester::testRetrieveExtensionMetadata()
 
   QFETCH(QString, slicerVersion);
   qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerVersion(slicerVersion);
   ExtensionMetadataType extensionMetadata = model.retrieveExtensionMetadata(extensionId);
 
@@ -551,6 +553,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QFETCH(QString, inputExtensionName);
   QFETCH(QString, inputArchiveFile);
   QFETCH(QString, slicerVersion);
+  QFETCH(QString, slicerRevision);
   QFETCH(QStringList, expectedFiles);
   QFETCH(QString, operatingSystem);
   QFETCH(bool, expectedExtractSuccess);
@@ -561,6 +564,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive()
   QCOMPARE(static_cast<bool>(destinationPath.permissions() & QFile::WriteUser), true);
 
   qSlicerExtensionsManagerModel model;
+  model.setSlicerRevision(slicerRevision);
   model.setSlicerVersion(slicerVersion);
   model.setSlicerOs(operatingSystem);
 
@@ -606,6 +610,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
   QTest::addColumn<QString>("inputExtensionName");
   QTest::addColumn<QString>("inputArchiveFile");
   QTest::addColumn<QString>("slicerVersion");
+  QTest::addColumn<QString>("slicerRevision");
   QTest::addColumn<QStringList>("expectedFiles");
   QTest::addColumn<QString>("operatingSystem");
   QTest::addColumn<bool>("expectedExtractSuccess");
@@ -621,6 +626,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << "CLIExtensionTemplate"
                                << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
                                << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << "19615"
                                << expectedFiles
                                << Slicer_OS_LINUX_NAME
                                << true /* expectedExtractSuccess */
@@ -632,6 +638,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << "CLIExtensionTemplate"
                                << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
                                << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << "19615"
                                << expectedFiles
                                << Slicer_OS_LINUX_NAME
                                << false /* expectedExtractSuccess */
@@ -644,6 +651,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << "CLIExtensionTemplate"
                                << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_LINUX_NAME)
                                << this->slicerVersion(Slicer_OS_LINUX_NAME, 0)
+                               << "19615"
                                << expectedFiles
                                << Slicer_OS_LINUX_NAME
                                << false /* expectedExtractSuccess */
@@ -662,6 +670,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                 << "CLIExtensionTemplate"
                                 << QString(":/extension-%1-0.tar.gz").arg(Slicer_OS_MAC_NAME)
                                 << this->slicerVersion(Slicer_OS_MAC_NAME, 0)
+                                << "19615"
                                 << expectedFiles
                                 << Slicer_OS_MAC_NAME
                                 << true /* expectedExtractSuccess */
@@ -683,6 +692,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                 << "LoadableExtensionTemplate"
                                 << QString(":/extension-%1-1.tar.gz").arg(Slicer_OS_MAC_NAME)
                                 << this->slicerVersion(Slicer_OS_MAC_NAME, 1)
+                                << "19615"
                                 << expectedFiles
                                 << Slicer_OS_MAC_NAME
                                 << true /* expectedExtractSuccess */
@@ -751,6 +761,7 @@ void qSlicerExtensionsManagerModelTester::testInstallExtension()
                          << "ScriptedLoadableExtensionTemplate" << "SuperBuildLoadableExtensionTemplate";
 
   qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.setSlicerVersion(slicerVersion);
   QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
@@ -807,6 +818,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
 
@@ -825,6 +837,7 @@ void qSlicerExtensionsManagerModelTester::testUninstallExtension()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
 
@@ -874,6 +887,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
     QFETCH(QString, operatingSystem);
     QFETCH(QList<int>, extensionIdsToInstall);
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
@@ -887,6 +901,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     QSignalSpy spyExtensionScheduledForUninstall(&model, SIGNAL(extensionScheduledForUninstall(QString)));
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
@@ -900,6 +915,7 @@ void qSlicerExtensionsManagerModelTester::testScheduleExtensionForUninstall()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
@@ -956,6 +972,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   {
     QFETCH(QList<int>, extensionIdsToInstall);
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
@@ -967,6 +984,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   {
     QFETCH(QStringList, extensionNamesToScheduleForUninstall);
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
@@ -980,6 +998,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
     QFETCH(QStringList, extensionNamesToCancelScheduledForUninstall);
     QFETCH(int, expectedSpyExtensionCancelledScheduleForUninstallCount);
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     QSignalSpy spyExtensionCancelledScheduleForUninstall(&model, SIGNAL(extensionCancelledScheduleForUninstall(QString)));
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
@@ -994,6 +1013,7 @@ void qSlicerExtensionsManagerModelTester::testCancelExtensionScheduledForUninsta
   {
     QFETCH(QStringList, expectedExtensionNamesScheduledForUninstall);
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.setSlicerVersion(slicerVersion);
     model.updateModel();
@@ -1056,6 +1076,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
     for (int extensionId = 0; extensionId < 4; ++extensionId)
@@ -1066,6 +1087,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
 
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
@@ -1098,6 +1120,7 @@ void qSlicerExtensionsManagerModelTester::testUpdateModel()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
 
     QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
@@ -1162,6 +1185,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionInstalled()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     if (extensionIdToInstall != -1)
       {
@@ -1175,6 +1199,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionInstalled()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
     QCOMPARE(model.isExtensionInstalled(this->expectedExtensionNames().at(0)), isExtensionZeroInstalled);
@@ -1239,6 +1264,7 @@ void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
       {
@@ -1248,6 +1274,7 @@ void qSlicerExtensionsManagerModelTester::testNumberOfInstalledExtensions()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
     QCOMPARE(model.numberOfInstalledExtensions(), expectedNumberOfInstalledExtensions);
@@ -1304,6 +1331,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
       {
@@ -1313,6 +1341,7 @@ void qSlicerExtensionsManagerModelTester::testInstalledExtensions()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
     QCOMPARE(model.installedExtensions(), expectedInstalledExtensionNames);
@@ -1373,6 +1402,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
 
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     foreach(int extensionIdToInstall, extensionIdsToInstall)
       {
@@ -1402,6 +1432,7 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled()
   }
   {
     qSlicerExtensionsManagerModel model;
+    model.setExtensionsSettingsFilePath(QSettings().fileName());
     model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
     model.updateModel();
     QCOMPARE(model.enabledExtensions(), expectedEnabledExtensionNamesAfterDisable);
@@ -1478,29 +1509,29 @@ void qSlicerExtensionsManagerModelTester::testIsExtensionEnabled_data()
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testSetLauncherSettingsFilePath()
+void qSlicerExtensionsManagerModelTester::testSetExtensionsSettingsFilePath()
 {
-  QFETCH(QString, launcherSettingsFilePath);
-  QFETCH(QString, expectedLauncherSettingsFilePath);
+  QFETCH(QString, extensionsSettingsFilePath);
+  QFETCH(QString, expectedExtensionsSettingsFilePath);
 
   qSlicerExtensionsManagerModel model;
-  QCOMPARE(model.launcherSettingsFilePath(), QString());
+  QCOMPARE(model.extensionsSettingsFilePath(), QString());
 
   QSignalSpy spyModelUpdated(&model, SIGNAL(modelUpdated()));
 
-  model.setLauncherSettingsFilePath(launcherSettingsFilePath);
-  QCOMPARE(model.launcherSettingsFilePath(), expectedLauncherSettingsFilePath);
+  model.setExtensionsSettingsFilePath(extensionsSettingsFilePath);
+  QCOMPARE(model.extensionsSettingsFilePath(), expectedExtensionsSettingsFilePath);
 
   QCOMPARE(spyModelUpdated.count(), 0);
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testSetLauncherSettingsFilePath_data()
+void qSlicerExtensionsManagerModelTester::testSetExtensionsSettingsFilePath_data()
 {
   QVERIFY(this->resetTmp());
 
-  QTest::addColumn<QString>("launcherSettingsFilePath");
-  QTest::addColumn<QString>("expectedLauncherSettingsFilePath");
+  QTest::addColumn<QString>("extensionsSettingsFilePath");
+  QTest::addColumn<QString>("expectedExtensionsSettingsFilePath");
 
   QTest::newRow("existing absolute path - ini extension")
       << this->Tmp.filePath("settings.ini") << this->Tmp.filePath("settings.ini");
@@ -1529,6 +1560,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
   QFETCH(QStringList, modulePaths);
 
   qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.updateModel();
 
@@ -1679,7 +1711,7 @@ void qSlicerExtensionsManagerModelTester::testExtensionAdditionalPathsSettingsUp
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated()
+void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated()
 {
   QSettings().setValue("Extensions/ServerUrl", QUrl::fromLocalFile(this->Tmp.absolutePath()));
   QSettings().setValue("Extensions/InstallPath", this->Tmp.absolutePath());
@@ -1694,9 +1726,9 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated()
   QFETCH(QString, pythonPath);
 
   qSlicerExtensionsManagerModel model;
+  model.setExtensionsSettingsFilePath(QSettings().fileName());
   model.setSlicerRequirements(slicerRevision, operatingSystem, architecture);
   model.updateModel();
-  model.setLauncherSettingsFilePath(this->Tmp.filePath("launcherSettings.ini"));
 
   QCOMPARE(model.numberOfInstalledExtensions(), extensionIdToUninstall.second == -1 ? 0 : 1);
   if (extensionIdToUninstall.second >= 0)
@@ -1712,22 +1744,22 @@ void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated()
     this->installHelper(&model, extensionIdToInstall.first, extensionIdToInstall.second, this->Tmp.absolutePath());
     }
 
-  QSettings launcherSettings(model.launcherSettingsFilePath(), QSettings::IniFormat);
+  QSettings extensionsSettings(model.extensionsSettingsFilePath(), QSettings::IniFormat);
 
   QStringList currentLibraryPath =
-      qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "LibraryPaths", "path");
+      qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "LibraryPaths", "path");
   QCOMPARE(currentLibraryPath, libraryPaths);
 
   QStringList currentPaths =
-      qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "Paths", "path");
+      qSlicerExtensionsManagerModel::readArrayValues(extensionsSettings, "Paths", "path");
   QCOMPARE(currentPaths, paths);
 
-  QString currentPythonPath = launcherSettings.value("EnvironmentVariables/PYTHONPATH").toString();
+  QString currentPythonPath = extensionsSettings.value("EnvironmentVariables/PYTHONPATH").toString();
   QCOMPARE(currentPythonPath, pythonPath);
 }
 
 // ----------------------------------------------------------------------------
-void qSlicerExtensionsManagerModelTester::testExtensionLauncherSettingsUpdated_data()
+void qSlicerExtensionsManagerModelTester::testExtensionExtensionsSettingsUpdated_data()
 {
   QVERIFY(this->resetTmp());
 

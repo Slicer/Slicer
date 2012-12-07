@@ -73,7 +73,7 @@ int qSlicerCoreApplicationTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  QSettings * settings = app.settings();
+  QSettings * settings = app.userSettings();
   if( settings == 0 )
     {
     std::cerr << "Problem with settings()" << std::endl;

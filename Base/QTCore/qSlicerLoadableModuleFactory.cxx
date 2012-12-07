@@ -90,7 +90,8 @@ QStringList qSlicerLoadableModuleFactoryPrivate::modulePaths() const
       }
     }
 
-  QStringList additionalModulePaths = QSettings().value("Modules/AdditionalPaths").toStringList();
+  QSettings * settings = app->revisionUserSettings();
+  QStringList additionalModulePaths = settings->value("Modules/AdditionalPaths").toStringList();
   QStringList qtModulePaths =  additionalModulePaths + defaultQTModulePaths;
 
   //qDebug() << "qtModulePaths:" << qtModulePaths;

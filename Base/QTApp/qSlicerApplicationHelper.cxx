@@ -100,14 +100,13 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     }
 #endif
 
-  QSettings settings;
 #ifdef Slicer_BUILD_CLI_SUPPORT
   if (!options->disableCLIModules() && !options->runPythonAndExit())
     {
     QString tempDirectory =
       qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory();
     bool preferExecutableCLIs =
-      settings.value("Modules/PreferExecutableCLI", false).toBool();
+      app->userSettings()->value("Modules/PreferExecutableCLI", false).toBool();
     moduleFactoryManager->registerFactory(
       new qSlicerCLILoadableModuleFactory(tempDirectory), preferExecutableCLIs ? 0 : 1);
     // Option to prefer executable CLIs to limit memory consumption.
@@ -125,9 +124,9 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     }
 #endif
   moduleFactoryManager->addSearchPaths(
-    settings.value("Modules/AdditionalPaths").toStringList());
+    app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList());
   moduleFactoryManager->setModulesToIgnore(
-    settings.value("Modules/IgnoreModules").toStringList());
+    app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList());
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
 }
 
@@ -138,7 +137,7 @@ void qSlicerApplicationHelper::loadTranslations(const QString& dir)
   Q_ASSERT(app);
 
   QString localeFilter =
-      QString( QString("*") + app->settings()->value("language").toString());
+      QString( QString("*") + app->userSettings()->value("language").toString());
   localeFilter.resize(3);
   localeFilter += QString(".qm");
 

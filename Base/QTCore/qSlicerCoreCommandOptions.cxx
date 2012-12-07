@@ -246,7 +246,7 @@ QString qSlicerCoreCommandOptions::tempDirectory() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::settingsEnabled() const
+bool qSlicerCoreCommandOptions::settingsDisabled() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-settings").toBool();

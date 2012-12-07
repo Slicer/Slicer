@@ -66,8 +66,9 @@ void qSlicerExtensionsManagerDialogPrivate::init()
   // keeping track of settings will allow us to display the "RestartRequestedLabel"
   // only if it applies. Note also that keep track of "EnvironmentVariables/PYTHONPATH'
   // isn't required, "Modules/AdditionalPaths" is enough to know if we should restart.
-  this->PreviousModulesAdditionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
-  this->PreviousExtensionsScheduledForUninstall = QSettings().value("Extensions/ScheduledForUninstall").toStringList();
+  QSettings * settings = qSlicerCoreApplication::application()->revisionUserSettings();
+  this->PreviousModulesAdditionalPaths = settings->value("Modules/AdditionalPaths").toStringList();
+  this->PreviousExtensionsScheduledForUninstall = settings->value("Extensions/ScheduledForUninstall").toStringList();
 }
 
 // --------------------------------------------------------------------------
@@ -146,10 +147,11 @@ void qSlicerExtensionsManagerDialog::onModelUpdated()
   Q_D(qSlicerExtensionsManagerDialog);
   Q_ASSERT(this->extensionsManagerModel());
   bool shouldRestart = false;
+  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
   if (d->PreviousModulesAdditionalPaths
-      != QSettings().value("Modules/AdditionalPaths").toStringList() ||
+      != coreApp->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList() ||
       d->PreviousExtensionsScheduledForUninstall
-      != QSettings().value("Extensions/ScheduledForUninstall").toStringList())
+      != coreApp->revisionUserSettings()->value("Extensions/ScheduledForUninstall").toStringList())
     {
     shouldRestart = true;
     }

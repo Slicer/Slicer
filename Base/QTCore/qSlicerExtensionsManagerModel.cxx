@@ -172,7 +172,7 @@ public:
 
   QNetworkAccessManager NetworkManager;
 
-  QString LauncherSettingsFilePath;
+  QString ExtensionsSettingsFilePath;
 
   QString SlicerRevision;
   QString SlicerOs;
@@ -411,14 +411,15 @@ QStringList removeFromPathList(const QStringList& paths, const QStringList& path
 void qSlicerExtensionsManagerModelPrivate::addExtensionPathToApplicationSettings(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
-  QStringList additionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
-  QSettings().setValue("Modules/AdditionalPaths",
-                       appendToPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+  QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QStringList additionalPaths = settings.value("Modules/AdditionalPaths").toStringList();
+  settings.setValue("Modules/AdditionalPaths",
+                    appendToPathList(additionalPaths, q->extensionModulePaths(extensionName)));
 
 #if defined(Q_OS_MAC) && defined(Slicer_USE_PYTHONQT)
-  QStringList additionalPythonPaths = QSettings().value("Python/AdditionalPythonPaths").toStringList();
-  QSettings().setValue("Python/AdditionalPythonPaths",
-                       appendToPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
+  QStringList additionalPythonPaths = settings.value("Python/AdditionalPythonPaths").toStringList();
+  settings.setValue("Python/AdditionalPythonPaths",
+                    appendToPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
 #endif
 }
 
@@ -426,78 +427,79 @@ void qSlicerExtensionsManagerModelPrivate::addExtensionPathToApplicationSettings
 void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromApplicationSettings(const QString& extensionName)
 {
   Q_Q(qSlicerExtensionsManagerModel);
-  QStringList additionalPaths = QSettings().value("Modules/AdditionalPaths").toStringList();
-  QSettings().setValue("Modules/AdditionalPaths",
-                       removeFromPathList(additionalPaths, q->extensionModulePaths(extensionName)));
+  QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QStringList additionalPaths = settings.value("Modules/AdditionalPaths").toStringList();
+  settings.setValue("Modules/AdditionalPaths",
+                    removeFromPathList(additionalPaths, q->extensionModulePaths(extensionName)));
 
 #if defined(Q_OS_MAC) && defined(Slicer_USE_PYTHONQT)
-  QStringList additionalPythonPaths = QSettings().value("Python/AdditionalPythonPaths").toStringList();
-  QSettings().setValue("Python/AdditionalPythonPaths",
-                       removeFromPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
+  QStringList additionalPythonPaths = settings.value("Python/AdditionalPythonPaths").toStringList();
+  settings.setValue("Python/AdditionalPythonPaths",
+                    removeFromPathList(additionalPythonPaths, this->extensionPythonPaths(extensionName)));
 #endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::addExtensionPathToLauncherSettings(const QString& extensionName)
 {
-  if (this->LauncherSettingsFilePath.isEmpty())
+  if (this->ExtensionsSettingsFilePath.isEmpty())
     {
     return;
     }
-  QSettings launcherSettings(this->LauncherSettingsFilePath, QSettings::IniFormat);
-  if (launcherSettings.status() != QSettings::NoError)
+  QSettings settings(this->ExtensionsSettingsFilePath, QSettings::IniFormat);
+  if (settings.status() != QSettings::NoError)
     {
-    this->warning(QString("Failed to open launcher settings file %1").arg(this->LauncherSettingsFilePath));
+    this->warning(QString("Failed to open extensions settings file %1").arg(this->ExtensionsSettingsFilePath));
     return;
     }
 
-  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "LibraryPaths", "path");
-  qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
+  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path");
+  qSlicerExtensionsManagerModel::writeArrayValues(settings,
                          appendToPathList(libraryPath, this->extensionLibraryPaths(extensionName)),
                          "LibraryPaths", "path");
 
-  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "Paths", "path");
-  qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
+  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path");
+  qSlicerExtensionsManagerModel::writeArrayValues(settings,
                          appendToPathList(paths, this->extensionPaths(extensionName)),
                          "Paths", "path");
 #ifdef Slicer_USE_PYTHONQT
   QString sep("<PATHSEP>");
-  QString pythonPath = launcherSettings.value("EnvironmentVariables/PYTHONPATH").toString();
+  QString pythonPath = settings.value("EnvironmentVariables/PYTHONPATH").toString();
   QStringList pythonPaths = pythonPath.split(sep);
-  launcherSettings.setValue("EnvironmentVariables/PYTHONPATH",
-                       appendToPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
+  settings.setValue("EnvironmentVariables/PYTHONPATH",
+                    appendToPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
 #endif
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettings(const QString& extensionName)
 {
-  if (this->LauncherSettingsFilePath.isEmpty())
+  if (this->ExtensionsSettingsFilePath.isEmpty())
     {
     return;
     }
-  QSettings launcherSettings(this->LauncherSettingsFilePath, QSettings::IniFormat);
-  if (launcherSettings.status() != QSettings::NoError)
+  QSettings settings(this->ExtensionsSettingsFilePath, QSettings::IniFormat);
+  if (settings.status() != QSettings::NoError)
     {
-    this->warning(QString("Failed to open launcher settings file: %1").arg(this->LauncherSettingsFilePath));
+    this->warning(QString("Failed to open extensions settings file: %1").arg(this->ExtensionsSettingsFilePath));
     return;
     }
 
-  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "LibraryPaths", "path");
-  qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
+  QStringList libraryPath = qSlicerExtensionsManagerModel::readArrayValues(settings, "LibraryPaths", "path");
+  qSlicerExtensionsManagerModel::writeArrayValues(settings,
                          removeFromPathList(libraryPath, this->extensionLibraryPaths(extensionName)),
                          "LibraryPaths", "path");
 
-  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(launcherSettings, "Paths", "path");
-  qSlicerExtensionsManagerModel::writeArrayValues(launcherSettings,
+  QStringList paths = qSlicerExtensionsManagerModel::readArrayValues(settings, "Paths", "path");
+  qSlicerExtensionsManagerModel::writeArrayValues(settings,
                          removeFromPathList(paths, this->extensionPaths(extensionName)),
                          "Paths", "path");
 #ifdef Slicer_USE_PYTHONQT
   QString sep("<PATHSEP>");
-  QString pythonPath = launcherSettings.value("EnvironmentVariables/PYTHONPATH").toString();
+  QString pythonPath = settings.value("EnvironmentVariables/PYTHONPATH").toString();
   QStringList pythonPaths = pythonPath.split(sep);
-  launcherSettings.setValue("EnvironmentVariables/PYTHONPATH",
-                       removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
+  settings.setValue("EnvironmentVariables/PYTHONPATH",
+                    removeFromPathList(pythonPaths, this->extensionPythonPaths(extensionName)).join(sep));
 #endif
 }
 
@@ -506,28 +508,17 @@ bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions()co
 {
   Q_Q(const qSlicerExtensionsManagerModel);
 
-  QString settingsFileName = QSettings().fileName();
-  QFileInfo settingsFileInfo = QFileInfo(settingsFileName);
+  QFileInfo settingsFileInfo = QFileInfo(q->extensionsSettingsFilePath());
   if (settingsFileInfo.exists())
     {
     if (!settingsFileInfo.isReadable() || !settingsFileInfo.isWritable())
       {
-      this->warning(QString("Settings file %1 is expected to be both readable and writable").
-                     arg(settingsFileName));
+      this->warning(QString("Extensions settings file %1 is expected to be both readable and writable").
+                     arg(q->extensionsSettingsFilePath()));
       return false;
       }
     }
 
-  QFileInfo launcherSettingsFileInfo = QFileInfo(q->launcherSettingsFilePath());
-  if(launcherSettingsFileInfo.exists())
-    {
-    if (!launcherSettingsFileInfo.isReadable() || !launcherSettingsFileInfo.isWritable())
-      {
-      this->warning(QString("Launcher settings file %1 is expected to be both readable and writable").
-                     arg(q->launcherSettingsFilePath()));
-      return false;
-      }
-    }
   return true;
 }
 
@@ -548,9 +539,11 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionSettings(const QString
 // --------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelPrivate::removeExtensionFromScheduledForUninstallList(const QString& extensionName)
 {
-  QStringList extensionsScheduledForUninstall = QSettings().value("Extensions/ScheduledForUninstall").toStringList();
+  Q_Q(qSlicerExtensionsManagerModel);
+  QSettings settings(q->extensionsSettingsFilePath(), QSettings::IniFormat);
+  QStringList extensionsScheduledForUninstall = settings.value("Extensions/ScheduledForUninstall").toStringList();
   extensionsScheduledForUninstall.removeAll(extensionName);
-  QSettings().setValue("Extensions/ScheduledForUninstall", extensionsScheduledForUninstall);
+  settings.setValue("Extensions/ScheduledForUninstall", extensionsScheduledForUninstall);
 }
 
 // --------------------------------------------------------------------------
@@ -695,7 +688,8 @@ qSlicerExtensionsManagerModel::~qSlicerExtensionsManagerModel()
 // --------------------------------------------------------------------------
 QUrl qSlicerExtensionsManagerModel::serverUrl()const
 {
-  return QUrl(QSettings().value("Extensions/ServerUrl").toString());
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return QUrl(settings.value("Extensions/ServerUrl").toString());
 }
 
 // --------------------------------------------------------------------------
@@ -717,7 +711,8 @@ QUrl qSlicerExtensionsManagerModel::serverUrlWithExtensionsStorePath()const
 // --------------------------------------------------------------------------
 QString qSlicerExtensionsManagerModel::extensionsInstallPath()const
 {
-  return QSettings().value("Extensions/InstallPath").toString();
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return settings.value("Extensions/InstallPath").toString();
 }
 
 // --------------------------------------------------------------------------
@@ -883,13 +878,15 @@ bool qSlicerExtensionsManagerModel::isExtensionEnabled(const QString& extensionN
 // --------------------------------------------------------------------------
 QStringList qSlicerExtensionsManagerModel::scheduledForUninstallExtensions() const
 {
-  return QSettings().value("Extensions/ScheduledForUninstall").toStringList();
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return settings.value("Extensions/ScheduledForUninstall").toStringList();
 }
 
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::isExtensionScheduledForUninstall(const QString& extensionName)const
 {
-  return QSettings().value("Extensions/ScheduledForUninstall").toStringList().contains(extensionName);
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  return settings.value("Extensions/ScheduledForUninstall").toStringList().contains(extensionName);
 }
 
 // --------------------------------------------------------------------------
@@ -1083,9 +1080,10 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString&
     {
     return true;
     }
-  QSettings().setValue(
+  QSettings settings(this->extensionsSettingsFilePath(), QSettings::IniFormat);
+  settings.setValue(
         "Extensions/ScheduledForUninstall",
-        QSettings().value("Extensions/ScheduledForUninstall").toStringList() << extensionName);
+        settings.value("Extensions/ScheduledForUninstall").toStringList() << extensionName);
 
   d->removeExtensionSettings(extensionName);
 
@@ -1197,8 +1195,8 @@ void qSlicerExtensionsManagerModel::updateModel()
 }
 
 // --------------------------------------------------------------------------
-CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, launcherSettingsFilePath, LauncherSettingsFilePath)
-CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString&, setLauncherSettingsFilePath, LauncherSettingsFilePath)
+CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, extensionsSettingsFilePath, ExtensionsSettingsFilePath)
+CTK_SET_CPP(qSlicerExtensionsManagerModel, const QString&, setExtensionsSettingsFilePath, ExtensionsSettingsFilePath)
 
 // --------------------------------------------------------------------------
 CTK_GET_CPP(qSlicerExtensionsManagerModel, QString, slicerRevision, SlicerRevision)
@@ -1466,11 +1464,12 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
   QString srcPath(extensionsDir.absolutePath() + "/" + extensionName + "/" + archiveBaseName);
   QString intermediatePath(extensionsDir.absolutePath() + "/" + extensionName + "-XXXXXX");
 
-  //  Step1: <extensionName>/<archiveBaseName>[/<Slicer_BUNDLE_LOCATION>/<Slicer_BUNDLE_EXTENSIONS_DIRNAME>/<extensionName>] -> <extensionName>-XXXXXX
+  //  Step1: <extensionName>/<archiveBaseName>[/<Slicer_BUNDLE_LOCATION>/<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>/<extensionName>] -> <extensionName>-XXXXXX
   QString srcPathToCopy(srcPath);
   if (this->slicerOs() == Slicer_OS_MAC_NAME)
     {
-    srcPathToCopy = srcPathToCopy + "/" Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME "/" + extensionName;
+    srcPathToCopy = srcPathToCopy + "/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-"
+        + this->slicerRevision() + "/" + extensionName;
     }
   if (!ctk::copyDirRecursively(srcPathToCopy, intermediatePath))
     {

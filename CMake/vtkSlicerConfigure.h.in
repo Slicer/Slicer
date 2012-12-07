@@ -6,6 +6,11 @@
 #ifndef __vtkSlicerConfigure_h
 #define __vtkSlicerConfigure_h
 
+#define Slicer_ORGANIZATION_DOMAIN "@Slicer_ORGANIZATION_DOMAIN@"
+#define Slicer_ORGANIZATION_NAME "@Slicer_ORGANIZATION_NAME@"
+
+#define SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "@SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME@"
+
 #if defined(WIN32) && !defined(VTKSLICER_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
@@ -48,7 +53,8 @@
 
 #cmakedefine Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-#  define Slicer_BUNDLE_EXTENSIONS_DIRNAME "@Slicer_BUNDLE_EXTENSIONS_DIRNAME@"
+#  define Slicer_EXTENSIONS_DIRBASENAME "@Slicer_EXTENSIONS_DIRBASENAME@"
+#  define Slicer_EXTENSIONS_DIRNAME "@Slicer_EXTENSIONS_DIRNAME@"
 #endif
 
 #cmakedefine Slicer_BUILD_DICOM_SUPPORT

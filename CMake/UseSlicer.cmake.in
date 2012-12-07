@@ -292,7 +292,7 @@ endif()
 #-----------------------------------------------------------------------------
 set(Slicer_BUNDLE_EXTENSIONS_LOCATION "")
 if(APPLE)
-  set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_BUNDLE_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
+  set(Slicer_BUNDLE_EXTENSIONS_LOCATION "${Slicer_EXTENSIONS_DIRNAME}/${EXTENSION_NAME}/")
   set(CMAKE_INSTALL_NAME_TOOL "" CACHE FILEPATH "" FORCE)
 endif()
 

@@ -145,10 +145,12 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
                       "directoryList", SIGNAL(directoryListChanged()),
-                      "Additional module paths", ctkSettingsPanel::OptionRequireRestart);
+                      "Additional module paths", ctkSettingsPanel::OptionRequireRestart,
+                      coreApp->revisionUserSettings());
   q->registerProperty("Modules/IgnoreModules", factoryManager,
                       "modulesToIgnore", SIGNAL(modulesToIgnoreChanged(QStringList)),
-                      "Modules to ignore", ctkSettingsPanel::OptionRequireRestart);
+                      "Modules to ignore", ctkSettingsPanel::OptionRequireRestart,
+                      coreApp->revisionUserSettings());
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(QString)),
@@ -231,9 +233,10 @@ void qSlicerSettingsModulesPanel::onModulesToIgnoreChanged()
 void qSlicerSettingsModulesPanel::onAddModulesAdditionalPathClicked()
 {
   Q_D(qSlicerSettingsModulesPanel);
+  qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
   QString path = QFileDialog::getExistingDirectory(
         this, tr("Select folder"),
-        QSettings().value("Extensions/InstallPath").toString());
+        coreApp->revisionUserSettings()->value("Extensions/InstallPath").toString());
   // An empty directory means that the user cancelled the dialog.
   if (path.isEmpty())
     {

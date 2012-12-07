@@ -41,6 +41,9 @@
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUILD_CLI_SUPPORT
+//  - Slicer_ORGANIZATION_DOMAIN
+//  - Slicer_ORGANIZATION_NAME
+//  - SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME
 #include "vtkSlicerConfigure.h"
 
 #ifdef Slicer_USE_PYTHONQT
@@ -101,7 +104,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
   qSlicerCoreIOManager * coreIOManager) : q_ptr(&object)
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
-  this->Settings = 0;
+  this->UserSettings = 0;
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
@@ -146,8 +149,8 @@ void qSlicerCoreApplicationPrivate::init()
   // is udpated solely using 'putenv(...)' function, 'Environment' won't be updated.
   this->Environment = QProcessEnvironment::systemEnvironment();
 
-  QCoreApplication::setOrganizationDomain("www.na-mic.org");
-  QCoreApplication::setOrganizationName("NA-MIC");
+  QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
+  QCoreApplication::setOrganizationName(Slicer_ORGANIZATION_NAME);
 
   QSettings::setDefaultFormat(QSettings::IniFormat);
 
@@ -257,7 +260,7 @@ void qSlicerCoreApplicationPrivate::init()
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 
   qSlicerExtensionsManagerModel * model = new qSlicerExtensionsManagerModel(q);
-  model->setLauncherSettingsFilePath(q->launcherSettingsFilePath());
+  model->setExtensionsSettingsFilePath(q->slicerRevisionUserSettingsFilePath());
   model->setSlicerRequirements(q->repositoryRevision(), q->os(), q->arch());
   q->setExtensionManagerModel(model);
 
@@ -553,11 +556,11 @@ QString qSlicerCoreApplicationPrivate::defaultExtensionsInstallPathForMacOSX()co
     {
     QDir slicerHomeDir(q->slicerHome());
     slicerHomeDir.cdUp();
-    return slicerHomeDir.absolutePath() + "/Contents/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
+    return slicerHomeDir.absolutePath() + "/Contents/" Slicer_EXTENSIONS_DIRNAME;
     }
   else
     {
-    return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME;
+    return q->slicerHome() + "/bin/" Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRNAME;
     }
 }
 #endif
@@ -741,7 +744,7 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
 
   if (options->displaySettingsPathAndExit())
     {
-    std::cout << qPrintable(this->settings()->fileName()) << std::endl;
+    std::cout << qPrintable(this->userSettings()->fileName()) << std::endl;
     this->terminate(EXIT_SUCCESS);
     return;
     }
@@ -864,27 +867,41 @@ void qSlicerCoreApplication::handleCommandLineArguments()
 }
 
 //-----------------------------------------------------------------------------
-QSettings* qSlicerCoreApplication::settings()const
+QSettings* qSlicerCoreApplication::userSettings()const
 {
   Q_D(const qSlicerCoreApplication);
   qSlicerCoreApplicationPrivate* mutable_d =
     const_cast<qSlicerCoreApplicationPrivate*>(d);
   // If required, instantiate Settings
-  if(!mutable_d->Settings)
+  if(!mutable_d->UserSettings)
     {
-    mutable_d->Settings = mutable_d->instantiateSettings(
+    mutable_d->UserSettings = mutable_d->instantiateSettings(
           this->coreCommandOptions()->isTestingEnabled() ||
-          this->coreCommandOptions()->settingsEnabled());
+          this->coreCommandOptions()->settingsDisabled());
     }
-  return mutable_d->Settings;
+  return mutable_d->UserSettings;
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerCoreApplication::clearSettings()
+QSettings* qSlicerCoreApplication::settings()const
 {
-  Q_D(qSlicerCoreApplication);
-  Q_ASSERT(d->Settings);
-  d->Settings->clear();
+  return this->userSettings();
+}
+
+//-----------------------------------------------------------------------------
+QSettings* qSlicerCoreApplication::revisionUserSettings()const
+{
+  Q_D(const qSlicerCoreApplication);
+  qSlicerCoreApplicationPrivate* mutable_d =
+    const_cast<qSlicerCoreApplicationPrivate*>(d);
+  // If required, instantiate Settings
+  if(!mutable_d->RevisionSpecificUserSettings)
+    {
+    mutable_d->RevisionSpecificUserSettings =
+        new QSettings(this->slicerRevisionUserSettingsFilePath(),
+                      QSettings::IniFormat, const_cast<qSlicerCoreApplication*>(this));
+    }
+  return mutable_d->RevisionSpecificUserSettings;
 }
 
 //-----------------------------------------------------------------------------
@@ -967,8 +984,13 @@ QString qSlicerCoreApplication::slicerHome() const
 //-----------------------------------------------------------------------------
 bool qSlicerCoreApplication::isEmbeddedModule(const QString& moduleFileName)const
 {
+  QString slicerRevision = this->repositoryRevision();
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  slicerRevision = this->extensionManagerModel()->slicerRevision();
+#endif
   return vtkSlicerApplicationLogic::IsEmbeddedModule(moduleFileName.toStdString(),
-                                                     this->slicerHome().toStdString());
+                                                     this->slicerHome().toStdString(),
+                                                     slicerRevision.toStdString());
 }
 
 //-----------------------------------------------------------------------------
@@ -981,7 +1003,7 @@ QString qSlicerCoreApplication::defaultTemporaryPath() const
 QString qSlicerCoreApplication::temporaryPath() const
 {
   Q_D(const qSlicerCoreApplication);
-  QSettings* appSettings = this->settings();
+  QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   QString temporaryPath = appSettings->value("TemporaryPath", this->defaultTemporaryPath()).toString();
   d->createDirectory(temporaryPath, "temporary"); // Make sure the path exists
@@ -1018,9 +1040,51 @@ QString qSlicerCoreApplication::launcherSettingsFilePath()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::launcherRevisionSpecificUserSettingsFilePath()const
+{
+  if (this->isInstalled())
+    {
+#ifdef Q_OS_MAC
+    return QString();
+#else
+    return this->slicerRevisionUserSettingsFilePath();
+#endif
+    }
+  else
+    {
+    return this->slicerRevisionUserSettingsFilePath();
+    }
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::slicerUserSettingsFilePath()const
+{
+  return this->userSettings()->fileName();
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerCoreApplication::slicerRevisionUserSettingsFilePath()const
+{
+  QFileInfo fileInfo = QFileInfo(this->userSettings()->fileName());
+  QString prefix = fileInfo.completeBaseName();
+  QString suffix = "-" + this->repositoryRevision();
+  if (this->coreCommandOptions()->isTestingEnabled() ||
+      this->coreCommandOptions()->settingsDisabled())
+    {
+    suffix += "-tmp";
+    }
+  QString fileName =
+      QDir(fileInfo.path()).filePath(QString("%1%2%3.ini")
+                                     .arg(prefix)
+                                     .arg(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME)
+                                     .arg(suffix));
+  return fileName;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 {
-  QSettings* appSettings = this->settings();
+  QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   appSettings->setValue("TemporaryPath", path);
 }
@@ -1028,17 +1092,16 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::defaultExtensionsInstallPath() const
 {
-  QSettings* appSettings = this->settings();
+  QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
-  return QFileInfo(appSettings->fileName()).dir().filePath("Extensions");
+  return QFileInfo(appSettings->fileName()).dir().filePath(Slicer_EXTENSIONS_DIRNAME);
 }
 
 //-----------------------------------------------------------------------------
 QString qSlicerCoreApplication::extensionsInstallPath() const
 {
-  QSettings* appSettings = this->settings();
-  Q_ASSERT(appSettings);
-  return appSettings->value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString();
+  QSettings settings(this->slicerRevisionUserSettingsFilePath(), QSettings::IniFormat);
+  return settings.value("Extensions/InstallPath", this->defaultExtensionsInstallPath()).toString();
 }
 
 //-----------------------------------------------------------------------------
@@ -1048,9 +1111,7 @@ void qSlicerCoreApplication::setExtensionsInstallPath(const QString& path)
     {
     return;
     }
-  QSettings* appSettings = this->settings();
-  Q_ASSERT(appSettings);
-  appSettings->setValue("Extensions/InstallPath", path);
+  this->revisionUserSettings()->setValue("Extensions/InstallPath", path);
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   Q_ASSERT(this->extensionManagerModel());
   this->extensionManagerModel()->updateModel();
