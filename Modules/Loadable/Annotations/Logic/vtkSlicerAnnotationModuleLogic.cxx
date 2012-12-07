@@ -251,7 +251,12 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     rNode->SetName(name);
     
     rStorageNode->SetFileName(filename);
-  
+
+    // add to the scene
+    this->GetMRMLScene()->AddNode(rStorageNode);
+    rNode->Initialize(this->GetMRMLScene());
+    rNode->SetAndObserveStorageNodeID(rStorageNode->GetID());
+
     if (rStorageNode->ReadData(rNode))
       {
       vtkDebugMacro("LoadAnnotation: ruler storage node read " << filename);
