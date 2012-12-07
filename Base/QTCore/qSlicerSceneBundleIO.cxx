@@ -116,6 +116,6 @@ bool qSlicerSceneBundleIO::load(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
-  std::cerr << "loaded and didn't delete " << unpackPath.toStdString() << "\n";
+  std::cerr << "loaded " << unpackPath.toStdString() << "\n";
   return res;
 }
