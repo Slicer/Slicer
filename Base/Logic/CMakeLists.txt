@@ -97,12 +97,6 @@ set(SlicerBaseLogic_SRCS
   vtkImageStash.cxx
   )
 
-if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND SlicerBaseLogic_SRCS
-    vtkSlicerExtensionsLogic.cxx
-    )
-endif()
-
 if(Slicer_USE_PYTHONQT)
   list(APPEND SlicerBaseLogic_SRCS
     vtkSlicerScriptedLoadableModuleLogic.cxx
