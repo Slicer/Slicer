@@ -121,7 +121,7 @@ public:
   QString tempDirectory()const;
 
   /// Return True if slicer settings are ignored
-  bool settingsEnabled() const;
+  bool settingsDisabled() const;
 
   /// Return True if slicer is in testing mode.
   /// Typically set when running unit tests:

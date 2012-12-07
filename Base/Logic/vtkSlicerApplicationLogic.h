@@ -133,7 +133,12 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   void SetTracingOff () { this->Tracing = 0; }
 
   /// Return True if \a filePath is a descendant of \a applicationHomeDir.
-  static bool IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir);
+  /// \note On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
+  /// folder being a sub directory of the application dir, an extra test is performed to make sure the
+  /// tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
+  /// If this is the case, False will be returned.
+  static bool IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir,
+                               const std::string& slicerRevision);
 
   /// Return \a true if the plugin identified with its \a filePath is loaded from an install tree.
   /// \warning Since internally the function looks for the existence of CMakeCache.txt, it will

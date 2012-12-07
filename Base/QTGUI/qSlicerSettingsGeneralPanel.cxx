@@ -66,7 +66,7 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
   this->setupUi(q);
   bool internationalizationEnabled =
-      qSlicerApplication::application()->settings()->value("Internationalization/Enabled").toBool();
+      qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled").toBool();
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);

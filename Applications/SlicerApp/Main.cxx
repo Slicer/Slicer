@@ -66,7 +66,7 @@ namespace
 void setEnableQtTesting()
 {
   if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
-      qSlicerApplication::application()->settings()->value("QtTesting/Enabled").toBool())
+      qSlicerApplication::application()->userSettings()->value("QtTesting/Enabled").toBool())
     {
     QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar);
     }

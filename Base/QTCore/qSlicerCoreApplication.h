@@ -61,6 +61,8 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
   Q_PROPERTY(QString launcherSettingsFilePath READ launcherSettingsFilePath CONSTANT)
+  Q_PROPERTY(QString slicerUserSettingsFilePath READ slicerUserSettingsFilePath CONSTANT)
+  Q_PROPERTY(QString slicerRevisionUserSettingsFilePath READ slicerRevisionUserSettingsFilePath CONSTANT)
   Q_PROPERTY(QString extensionsInstallPath READ extensionsInstallPath WRITE setExtensionsInstallPath)
   Q_PROPERTY(QString intDir READ intDir CONSTANT)
   Q_PROPERTY(bool isInstalled READ isInstalled CONSTANT)
@@ -155,6 +157,17 @@ public:
   /// If any, return slicer launcher settings file path.
   QString launcherSettingsFilePath()const;
 
+  /// If any, return slicer user settings file path specific to a given revision of Slicer.
+  QString launcherRevisionSpecificUserSettingsFilePath()const;
+
+  /// Return slicer user settings file path.
+  /// \sa userSettings()
+  QString slicerUserSettingsFilePath()const;
+
+  /// Return slicer settings file path specific to a given revision of Slicer.
+  /// \sa revisionUserSettings()
+  QString slicerRevisionUserSettingsFilePath()const;
+
   /// Get slicer default extensions path
   QString defaultExtensionsInstallPath() const;
 
@@ -209,12 +222,20 @@ public:
   /// Get errorLogModel
   Q_INVOKABLE ctkErrorLogModel* errorLogModel()const;
 
-  /// Get application settings
+  /// Get slicer application user settings
   /// \note It will also instantiate a QSettings object if required.
+  /// \sa slicerUserSettingsFilePath()
+  Q_INVOKABLE QSettings* userSettings()const;
+
+  /// This function has been deprecated: userSettings() should be used.
+  /// \deprecated
+  /// \sa userSettings()
   Q_INVOKABLE QSettings* settings()const;
 
-  /// Clear application settings
-  void clearSettings();
+  /// Get revision specific slicer application user settings
+  /// \note It will also instantiate a QSettings object if required.
+  /// \sa slicerRevisionSpecificUserSettingsFilePath()
+  Q_INVOKABLE QSettings* revisionUserSettings()const;
 
   /// Return the copyrights of Slicer
   virtual QString copyrights()const;

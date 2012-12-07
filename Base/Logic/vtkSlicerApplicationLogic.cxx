@@ -1547,7 +1547,9 @@ void vtkSlicerApplicationLogic::ProcessWriteSceneData(WriteDataRequest& req)
 }
 
 //----------------------------------------------------------------------------
-bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath, const std::string& applicationHomeDir)
+bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
+                                                 const std::string& applicationHomeDir,
+                                                 const std::string& slicerRevision)
 {
   if (filePath.empty())
     {
@@ -1562,10 +1564,10 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath, co
   std::string extensionPath = itksys::SystemTools::GetFilenamePath(filePath);
   bool isEmbedded = itksys::SystemTools::StringStartsWith(extensionPath.c_str(), applicationHomeDir.c_str());
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  // On MacOSX extensions are installed in the "Extensions" folder being a sub directory of the
-  // application dir, an extra test is required to make sure the tested filePath
-  // doesn't belong to that "Extensions" folder.
-  if (isEmbedded && extensionPath.find(Slicer_BUNDLE_LOCATION "/" Slicer_BUNDLE_EXTENSIONS_DIRNAME) != std::string::npos)
+  // On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
+  // folder being a sub directory of the application dir, an extra test is required to make sure the
+  // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
+  if (isEmbedded && extensionPath.find(Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
     {
     isEmbedded = false;
     }

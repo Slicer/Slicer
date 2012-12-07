@@ -823,9 +823,11 @@ void qSlicerAppMainWindow::setupMenuActions()
   connect(d->actionLoadDICOM, SIGNAL(triggered()),
           this, SLOT(loadDICOMActionTriggered()));
 
-  QSettings settings;
+  qSlicerApplication * app = qSlicerApplication::application();
+
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  d->actionViewExtensionManager->setVisible(settings.value("Extensions/ManagerEnabled").toBool());
+  d->actionViewExtensionManager->setVisible(
+        app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool());
 #else
   d->actionViewExtensionManager->setVisible(false);
 #endif
@@ -834,16 +836,15 @@ void qSlicerAppMainWindow::setupMenuActions()
 #endif
 
 #if defined Slicer_USE_QtTesting && defined Slicer_BUILD_CLI_SUPPORT
-  if (qSlicerApplication::application()->commandOptions()->enableQtTesting() ||
-      settings.value("QtTesting/Enabled").toBool())
+  if (app->commandOptions()->enableQtTesting() ||
+      app->userSettings()->value("QtTesting/Enabled").toBool())
     {
     d->actionEditPlayMacro->setVisible(true);
     d->actionEditRecordMacro->setVisible(true);
-    qSlicerApplication::application()->testingUtility()->addPlayer(
-          new qSlicerCLIModuleWidgetEventPlayer());
+    app->testingUtility()->addPlayer(new qSlicerCLIModuleWidgetEventPlayer());
     }
 #endif
-
+  Q_UNUSED(app);
 }
 #undef qSlicerAppMainWindowCore_connect
 

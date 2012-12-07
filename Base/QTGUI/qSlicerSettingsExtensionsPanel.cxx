@@ -72,11 +72,16 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   // Register settings
   q->registerProperty("Extensions/ManagerEnabled", this->ExtensionsManagerEnabledCheckBox,
                       "checked", SIGNAL(toggled(bool)),
-                      "Enable/Disable extension manager", ctkSettingsPanel::OptionRequireRestart);
+                      "Enable/Disable extension manager", ctkSettingsPanel::OptionRequireRestart,
+                      app->revisionUserSettings());
   q->registerProperty("Extensions/ServerUrl", this->ExtensionsServerUrlLineEdit,
-                      "text", SIGNAL(textChanged(QString)));
+                      "text", SIGNAL(textChanged(QString)),
+                      QString(), ctkSettingsPanel::OptionNone,
+                      app->revisionUserSettings());
   q->registerProperty("Extensions/InstallPath", this->ExtensionsInstallPathButton,
-                      "directory", SIGNAL(directoryChanged(QString)));
+                      "directory", SIGNAL(directoryChanged(QString)),
+                      QString(), ctkSettingsPanel::OptionNone,
+                      app->revisionUserSettings());
 
   // Actions to propagate to the application when settings are changed
   QObject::connect(this->ExtensionsManagerEnabledCheckBox, SIGNAL(toggled(bool)),
