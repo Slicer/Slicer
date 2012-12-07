@@ -105,6 +105,7 @@ qSlicerCoreApplicationPrivate::qSlicerCoreApplicationPrivate(
 {
   qRegisterMetaType<qSlicerCoreApplication::ReturnCode>("qSlicerCoreApplication::ReturnCode");
   this->UserSettings = 0;
+  this->RevisionUserSettings = 0;
   this->ReturnCode = qSlicerCoreApplication::ExitNotRequested;
   this->CoreCommandOptions = QSharedPointer<qSlicerCoreCommandOptions>(coreCommandOptions);
   this->CoreIOManager = QSharedPointer<qSlicerCoreIOManager>(coreIOManager);
