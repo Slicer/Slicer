@@ -25,8 +25,6 @@
 //#include "vtkImageInPlaceFilter.h"
 #include "vtkImageToImageFilter.h"
 
-#include "point.h"
-
 #define SHAPE_POLYGON 1
 #define SHAPE_LINES   2
 #define SHAPE_POINTS  3
