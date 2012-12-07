@@ -61,6 +61,7 @@ protected:
   virtual void Create();
 
   virtual void OnMRMLSceneEndClose();
+  virtual void OnMRMLSceneStartImport();
   virtual void OnMRMLSceneEndImport();
   virtual void OnMRMLSceneEndRestore();
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
@@ -75,6 +76,7 @@ protected:
   virtual void AdditionnalInitializeStep();
   void SetCameraToRenderer();
   void SetCameraToInteractor();
+
 private:
 
   vtkMRMLCameraDisplayableManager(const vtkMRMLCameraDisplayableManager&);// Not implemented

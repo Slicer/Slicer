@@ -47,6 +47,7 @@ public:
   vtkInternal();
   
   vtkMRMLCameraNode* CameraNode;
+  int UpdatingCameraNode;
 };
 
 //---------------------------------------------------------------------------
@@ -56,6 +57,8 @@ public:
 vtkMRMLCameraDisplayableManager::vtkInternal::vtkInternal()
 {
   this->CameraNode = 0;
+  this->UpdatingCameraNode = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -90,6 +93,15 @@ void vtkMRMLCameraDisplayableManager::Create()
 void vtkMRMLCameraDisplayableManager::OnMRMLSceneEndClose()
 {
   this->UpdateCameraNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCameraDisplayableManager::OnMRMLSceneStartImport()
+{
+  if (this->Internal->CameraNode != NULL)
+  {
+    this->Internal->CameraNode->SetActiveTag(NULL);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -277,6 +289,10 @@ void vtkMRMLCameraDisplayableManager::RemoveMRMLObservers()
 //---------------------------------------------------------------------------
 void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
 {
+  if (this->Internal->UpdatingCameraNode)
+    {
+    return;
+    }
   if (this->GetMRMLScene() == 0)
     {
     vtkErrorMacro("UpdateCameraNode: DisplayableManager does NOT have a scene set, "
@@ -290,129 +306,186 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
     return;
     }
 
+  this->Internal->UpdatingCameraNode = 1;
+
   const char * defaultCameraName = "Default Scene Camera";
-#ifndef NDEBUG
-  // How many cameras are in the scene ?
+  // how many cameras are in the scene?
   int numCameraNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLCameraNode");
-
-  // How many view nodes are in the scene ?
+  // how many view nodes are in the scene?
   int numViewNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
-  vtkDebugMacro("UpdateCamera: Number of CameraNodes = " << numCameraNodes
-                << ", Number of ViewNodes = " << numViewNodes);
-#endif
+  vtkDebugMacro("UpdateCamera: num camera nodes = :" << numCameraNodes << ", num view nodes = " << numViewNodes);
+  
+  vtkMRMLCameraNode *camera_node = NULL;
+  vtkMRMLCameraNode *unassignedCamera = NULL;
+  vtkMRMLCameraNode  *pruneDefaultCamera = NULL;
+  int foundDefaultCamera = 0;
+  
+  vtkMRMLViewNode *viewNode = this->GetMRMLViewNode();
 
-  vtkMRMLCameraNode * viewCameraNode = 0;
-  vtkMRMLCameraNode * unassignedCamera = 0;
-  //vtkMRMLCameraNode * pruneDefaultCamera = 0;
-
-  if (!this->GetMRMLViewNode()->GetName())
+  if (viewNode && viewNode->GetName())
     {
-    vtkErrorMacro("View has no name");
+    std::vector<vtkMRMLNode *> cnodes;
+    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
+    vtkMRMLCameraNode *node = NULL;
+    for (int n=0; n<nnodes; n++)
+      {
+      node = vtkMRMLCameraNode::SafeDownCast (cnodes[n]);
+      if (node)
+        {
+        // does the node point to my view node?
+        if (node->GetActiveTag())
+          {
+          if ( !strcmp(node->GetActiveTag(), viewNode->GetID()) &&
+               node->GetName() && 
+               !strcmp(node->GetName(), defaultCameraName) && 
+               !foundDefaultCamera)
+            {
+            // is this a default camera node that we created when the view
+            // node was created?
+            vtkDebugMacro("UpdateCamera: found a default camera node pointing to my view node");
+            pruneDefaultCamera = node;
+            // If there is a new camera with a non-null ActiveTag,
+            // We want to be sure to null-ify the Active Tag of the
+            // camera created upon view node creation (given the
+            // default name = defaultCameraName.
+            //
+            // Logic here will deactivate viewNode's original camera
+            // (the one with defaultCameraName) marked with ActiveTag
+            // ONLY IF another camera node is found marked with a non-null ActiveTag
+            // matching viewNode.
+            //
+            // BUT: a new scene may be loaded which has another camera with the
+            // name = defaultCameraName. If this is parameterized with a non-null
+            // ActiveTag, then we want to be sure NOT to deactivate it instead of
+            // the original camera by mistake.
+            //
+            // Add this flag once we find the first camera. Hacky: oh yes, but...
+            foundDefaultCamera = 1;
+            }
+          if (!strcmp(node->GetActiveTag(), viewNode->GetID()))
+            {
+            // We found a node with a non-null ActiveTag. Might be original
+            // camera with defaultCameraName, or might be a new camera
+            // also with defaultCameraName, or might be a new camera
+            // with some unique name.
+            vtkDebugMacro("UpdateCamera: found a camera pointing to me with id = " << (node->GetID() ? node->GetID() : "NULL"));
+            camera_node = node;
+            // Whichever camera is the last found pointing at the view node
+            // will be the selected "ActiveCamera"
+            }
+          else
+            {
+            // it points to another view node
+            }
+          }
+        else
+          {
+          // steal it!
+          unassignedCamera = node;
+          }
+        }
+      }
+    }
+
+  if (pruneDefaultCamera != NULL)
+    {
+    // is there a camera node that's not the default that wants to point to my
+    // view node
+    if (camera_node != NULL &&
+        camera_node != pruneDefaultCamera)
+      {
+      // unhook the default node
+      vtkDebugMacro("UpdateCamera: pruning default camera node, set it's active tag to null");
+      pruneDefaultCamera->SetActiveTag(NULL);
+      }
+    }
+  // if a camera node already points to me
+  // do I already have it?
+  if (camera_node != NULL &&
+      this->Internal->CameraNode != NULL &&
+      this->Internal->CameraNode == camera_node)
+    {
+    // I'm already pointing to it
+    vtkDebugMacro("UpdateCamera: camera node " << camera_node->GetID() << " is already pointing to my view node and I'm observing it, CameraNode = " << this->Internal->CameraNode->GetID());
+    this->Internal->UpdatingCameraNode = 0;
     return;
     }
 
-  vtkCollection* scene = this->GetMRMLScene()->GetNodes();
-  vtkCollectionSimpleIterator it;
-  vtkMRMLNode* node = 0;
-  for (scene->InitTraversal(it);
-       (node = (vtkMRMLNode*)scene->GetNextItemAsObject(it)) ;)
+  // do I have a camera node?
+  if (this->Internal->CameraNode == NULL)
     {
-    vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(node);
-    if (!cameraNode)
+    if (camera_node != NULL)
       {
-      continue;
-      }
-    // does the node point to my view node?
-    if (cameraNode->GetActiveTag())
-      {
-/*
-      if (cameraNode->GetName() && !strcmp(cameraNode->GetName(), defaultCameraName))
-        {
-        vtkDebugMacro("UpdateCamera: Found a default CameraNode pointing to my ViewNode");
-        pruneDefaultCamera = cameraNode;
-        }
-*/
-      if (!strcmp(cameraNode->GetActiveTag(), this->GetMRMLViewNode()->GetID()))
-        {
-        // Is this a default camera node that we created when the view
-        // node was created?
-        vtkDebugMacro("UpdateCamera: found a camera pointing to me with id = " << (cameraNode->GetID() ? cameraNode->GetID() : "0"));
-        viewCameraNode = cameraNode;
-        break;
-        }
-      // else it points to another view node
+      // I'm not observing the camera node that is using my view node's id as
+      // it's active tag
+      vtkDebugMacro("UpdateCamera: am not observing any camera nodes, now observe the camera node that's pointing at my view node");
+      this->SetAndObserveCameraNode(camera_node);
       }
     else
       {
-      // steal it!
-      unassignedCamera = cameraNode;
-      }
-    }
-/*
-  // Is there a camera node that's not the default that wants to point to my view node
-  if (pruneDefaultCamera != 0 &&
-      viewCameraNode != 0 &&
-      viewCameraNode != pruneDefaultCamera)
-    {
-    // Unhook the default node
-    vtkDebugMacro("UpdateCamera: Pruning default CameraNode, set it's ActiveTag to 0");
-    //pruneDefaultCamera->SetActiveTag(0);
-    }
-*/
-  if (viewCameraNode != 0)
-    {
-    this->SetAndObserveCameraNode(viewCameraNode);
-    return;
-    }
-
-  // Can I reuse the existing CameraNode ?
-  if (this->Internal->CameraNode == 0 ||
-      this->Internal->CameraNode->GetScene() != this->GetMRMLScene())
-    {
-    // is there an unasigned camera node?
-    if (unassignedCamera != 0)
-      {
-      // use it!
-      vtkDebugMacro("UpdateCamera: Setting ActiveTag on unassigned CameraNode");
-      unassignedCamera->SetActiveTag(this->GetMRMLViewNode()->GetID());
-      vtkDebugMacro("UpdateCamera: Setting and observing unassigned CameraNode");
-      this->SetAndObserveCameraNode(unassignedCamera);
-      }
-    else
-      {
-      // create one
-      unassignedCamera =  vtkMRMLCameraNode::New();
-      vtkDebugMacro("UpdateCamera: Created new unassigned CameraNode");
-      unassignedCamera->SetName(
-        this->GetMRMLScene()->GetUniqueNameByString(defaultCameraName));
-      //this->MRMLScene->GetUniqueNameByString(viewCameraNode->GetNodeTagName()));
-      unassignedCamera->SetActiveTag(
-        this->GetMRMLViewNode() ? this->GetMRMLViewNode()->GetID() : 0);
-      this->GetMRMLScene()->AddNode(unassignedCamera);
-      // add node should have triggerd observing it, but do this for sure (it will check that it's not already observing it)
-      this->SetAndObserveCameraNode(unassignedCamera);
-      unassignedCamera->Delete();
+      // is there an unasigned camera node?
+      if (unassignedCamera != NULL)
+        {
+        // use it!
+        vtkDebugMacro("UpdateCamera: setting active tag on unassinged camera");
+        unassignedCamera->SetActiveTag(viewNode->GetID());
+        vtkDebugMacro("UpdateCamera: setting and observing unassigned camera");
+        this->SetAndObserveCameraNode(unassignedCamera);
+        }
+      else
+        {
+        // create one
+        unassignedCamera =  vtkMRMLCameraNode::New();
+        vtkDebugMacro("Viewer widget: Created new unassigned camera");
+        unassignedCamera->SetName(defaultCameraName);
+        //this->GetMRMLScene()->GetUniqueNameByString(camera_node->GetNodeTagName()));
+        unassignedCamera->SetActiveTag(
+                                       viewNode ? viewNode->GetID() : NULL);
+        this->GetMRMLScene()->AddNode(unassignedCamera);
+        this->SetAndObserveCameraNode(unassignedCamera);
+        unassignedCamera->Delete();
+        }
       }
     }
   else
     {
-    // Can get here if a view node steals my camera node
-    vtkDebugMacro("UpdateCamera: I don't have a CameraNode, nothing is pointing to my ViewNode");
-    // Can I swap for an unassigned one?
-    if (unassignedCamera != 0)
+    if (camera_node != NULL)
       {
-      // swap!
-      vtkWarningMacro("UpdateCamera: Stealing an unassigned CameraNode ["
-                      << unassignedCamera->GetID() << "], vtkCamera:"
-                      << unassignedCamera->GetCamera());
-      unassignedCamera->SetActiveTag(this->GetMRMLViewNode()->GetID());
-      this->SetAndObserveCameraNode(unassignedCamera);
+      // I'm not observing the camera node that is using my view node's id as
+      // it's active tag
+      vtkDebugMacro("Resetting to observe the camera node that's pointing at my view node");
+      this->SetAndObserveCameraNode(camera_node);
       }
     else
       {
-      vtkDebugMacro("UpdateCamera: No unassigned CameraNode in the scene to steal!");
+      // can get here if a view node steals my camera node
+      vtkDebugMacro("I have a camera node, but nothing is pointing to my view node");
+      // can I swap for an unassigned one?
+      if (unassignedCamera != NULL)
+        {
+        // swap!
+        //vtkDebugMacro("Stealing an unasigned camera node " << unassignedCamera->GetID() << " for view node " << viewNode->GetID());
+        vtkDebugMacro("why am I here?  I have a camera node already!" << unassignedCamera->GetID() << " for view node " << viewNode->GetID());
+        //unassignedCamera->SetActiveTag(viewNode->GetID());
+        //this->SetAndObserveCameraNode(unassignedCamera);
+        }
+      else
+        {
+        // create one
+        unassignedCamera =  vtkMRMLCameraNode::New();
+        vtkDebugMacro("Viewer widget: Created new unassigned camera");
+        unassignedCamera->SetName(defaultCameraName);
+        //this->GetMRMLScene()->GetUniqueNameByString(camera_node->GetNodeTagName()));
+        unassignedCamera->SetActiveTag(
+                                       viewNode ? viewNode->GetID() : NULL);
+        this->GetMRMLScene()->AddNode(unassignedCamera);
+        this->SetAndObserveCameraNode(unassignedCamera);
+        unassignedCamera->Delete();
+        }
       }
     }
+    this->Internal->UpdatingCameraNode = 0;
+
 }
 
 //---------------------------------------------------------------------------
@@ -465,7 +538,7 @@ void vtkMRMLCameraDisplayableManager::SetCameraToInteractor()
 ////---------------------------------------------------------------------------
 //void vtkMRMLCameraDisplayableManager::AddCameraObservers()
 //{
-//  //!this->MRMLScene || this->SceneClosing
+//  //!this->GetMRMLScene || this->SceneClosing
 //  assert(this->Internal->CameraNode);
 //
 //  vtkEventBroker *broker = vtkEventBroker::GetInstance();
