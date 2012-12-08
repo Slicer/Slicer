@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QSettings>
 
 // CTK includes
@@ -450,7 +449,6 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
   QString defaultRenderingMethod =
     settings.value("VolumeRendering/RenderingMethod",
                    QString("vtkMRMLCPURayCastVolumeRenderinDisplayNode")).toString();
-  qDebug()<< "Default: " << defaultRenderingMethod;
   QString currentVolumeMapper = d->DisplayNode ?
     QString(d->DisplayNode->GetClassName()) : defaultRenderingMethod;
   d->RenderingMethodComboBox->setCurrentIndex(
