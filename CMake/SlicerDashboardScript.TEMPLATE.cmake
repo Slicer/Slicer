@@ -15,8 +15,26 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 #
-# For additional information, see http://http://www.slicer.org/slicerWiki/index.php/Documentation/Snapshot/Developers/Tutorials/DashboardSetup
+# For additional information, see http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/DashboardSetup
 #
+
+#-----------------------------------------------------------------------------
+# Experimental:
+#     - run_ctest() macro will be called *ONE* time
+#     - binary directory will *NOT* be cleaned
+# Continuous:
+#     - run_ctest() macro will be called EVERY 5 minutes ...
+#     - binary directory will *NOT* be cleaned
+#     - configure/build will be executed *ONLY* if the repository has been updated
+# Nightly:
+#     - run_ctest() macro will be called *ONE* time
+#     - binary directory *WILL BE* cleaned
+set(SCRIPT_MODE "Nightly") # "Experimental", "Continuous", "Nightly"
+
+# You could invoke the script with the following syntax:
+#  ctest -S karakoram_Slicer4_nightly.cmake -C <CTEST_BUILD_CONFIGURATION> -V
+#
+# Note that '-C <CTEST_BUILD_CONFIGURATION>' is mandatory on windows
 
 #-----------------------------------------------------------------------------
 # Dashboard properties
@@ -26,7 +44,10 @@ set(MY_COMPILER           "g++4.4.3")
 set(MY_QT_VERSION         "4.7.4")
 set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/QtSDK-1.2/Desktop/Qt/474/gcc/bin/qmake")
 set(CTEST_SITE            "karakoram.kitware") # for example: mymachine.kitware, mymachine.bwh.harvard.edu, ...
-set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/")
+set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/${SCRIPT_MODE}")
+
+set(SVN_BRANCH "trunk")
+set(SVN_REVISION "")
 
 # Each dashboard script should specify a unique ID per CTEST_DASHBOARD_ROOT.
 # It means the following directories will be created:
@@ -53,23 +74,6 @@ set(CTEST_BUILD_CONFIGURATION "Release")
 set(CTEST_TEST_TIMEOUT 500)
 set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
 set(CTEST_PARALLEL_LEVEL 8) # Number of tests running in parallel
-
-# experimental:
-#     - run_ctest() macro will be called *ONE* time
-#     - binary directory will *NOT* be cleaned
-# continuous:
-#     - run_ctest() macro will be called EVERY 5 minutes ...
-#     - binary directory will *NOT* be cleaned
-#     - configure/build will be executed *ONLY* if the repository has been updated
-# nightly:
-#     - run_ctest() macro will be called *ONE* time
-#     - binary directory *WILL BE* cleaned
-set(SCRIPT_MODE "nightly") # "experimental", "continuous", "nightly"
-
-# You could invoke the script with the following syntax:
-#  ctest -S karakoram_Slicer4_nightly.cmake -C <CTEST_BUILD_CONFIGURATION> -V
-#
-# Note that '-C <CTEST_BUILD_CONFIGURATION>' is mandatory on windows
 
 #-----------------------------------------------------------------------------
 # Additional CMakeCache options
@@ -168,7 +172,7 @@ endfunction()
 #
 # Download and include dashboard driver script
 #
-set(url http://svn.slicer.org/Slicer4/branches/Slicer-4-2/CMake/SlicerDashboardDriverScript.cmake)
+set(url http://svn.slicer.org/Slicer4/${SVN_BRANCH}/CMake/SlicerDashboardDriverScript.cmake)
 set(dest ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}.driver)
 download_file(${url} ${dest})
 include(${dest})

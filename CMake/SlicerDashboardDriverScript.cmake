@@ -67,13 +67,26 @@ if(WITH_PACKAGES)
 endif()
 
 if(NOT DEFINED GIT_REPOSITORY)
-  set(repository http://svn.slicer.org/Slicer4/branches/Slicer-4-2)
+  if(NOT DEFINED SVN_BRANCH)
+    set(SVN_BRANCH "branches/Slicer-4-2")
+  endif()
+  set(repository http://svn.slicer.org/Slicer4/${SVN_BRANCH})
+  set(svn_checkout_option "")
+  if(NOT "${SVN_REVISION}" STREQUAL "")
+    set(repository "${repository}@${SVN_REVISION}")
+    set(run_ctest_with_update FALSE)
+  endif()
+  message("SVN_BRANCH .............: ${SVN_BRANCH}")
+  message("SVN_REVISION ...........: ${SVN_REVISION}")
+  message("SVN_REPOSITORY .........: ${repository}")
 else()
   set(repository ${GIT_REPOSITORY})
   set(git_branch_option "")
   if(NOT "${GIT_TAG}" STREQUAL "")
     set(git_branch_option "-b ${GIT_TAG}")
   endif()
+  message("GIT_REPOSITORY ......: ${GIT_REPOSITORY}")
+  message("GIT_TAG .............: ${GIT_TAG}")
 endif()
 
 # Should binary directory be cleaned?
@@ -81,6 +94,9 @@ set(empty_binary_directory FALSE)
 
 # Attempt to build and test also if 'ctest_update' returned an error
 set(force_build FALSE)
+
+# Ensure SCRIPT_MODE is lowercase
+string(TOLOWER ${SCRIPT_MODE} SCRIPT_MODE)
 
 # Set model and track options
 set(model "")
