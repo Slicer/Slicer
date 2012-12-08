@@ -46,7 +46,7 @@ set(QT_QMAKE_EXECUTABLE   "$ENV{HOME}/Dashboards/Support/QtSDK-1.2/Desktop/Qt/47
 set(CTEST_SITE            "karakoram.kitware") # for example: mymachine.kitware, mymachine.bwh.harvard.edu, ...
 set(CTEST_DASHBOARD_ROOT  "$ENV{HOME}/Dashboards/${SCRIPT_MODE}")
 
-set(SVN_BRANCH "trunk")
+set(SVN_BRANCH "branches/Slicer-4-2")
 set(SVN_REVISION "")
 
 # Each dashboard script should specify a unique ID per CTEST_DASHBOARD_ROOT.
