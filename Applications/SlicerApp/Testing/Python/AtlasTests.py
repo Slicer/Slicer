@@ -18,8 +18,8 @@ class AtlasTests:
     For more information:
     
     Abdominal Atlas: <a>http://www.slicer.org/publications/item/view/1918</a>
-    Brain Atlas: <a>http://www.slicer.org/publications/item/view/1918</a>
-    Knee Atlas: <a>http://www.slicer.org/publications/item/view/195</a>
+    Brain Atlas: <a>http://www.slicer.org/publications/item/view/2037</a>
+    Knee Atlas: <a>http://www.slicer.org/publications/item/view/1953</a>
 
     """
     parent.acknowledgementText = """
