@@ -59,6 +59,7 @@ include(SlicerBlockFindQtAndCheckVersion)
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
 include(ExternalProject)
+include(ListToString)
 include(SlicerMacroCheckExternalProjectDependency)
 
 # With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
@@ -73,6 +74,8 @@ endif()
 
 set(ep_base        "${CMAKE_BINARY_DIR}")
 #set(ep_install_dir "${ep_base}/Install")
+
+set(ep_list_separator "^^")
 
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
@@ -224,11 +227,13 @@ endforeach()
 set(ep_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
-  list(APPEND ep_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${CTEST_CONFIGURATION_TYPE})
+  list_to_string(${ep_list_separator} "${CTEST_CONFIGURATION_TYPE}" ep_CTEST_CONFIGURATION_TYPE)
+  list(APPEND ep_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${ep_CTEST_CONFIGURATION_TYPE})
 endif()
 
 if(DEFINED CMAKE_CONFIGURATION_TYPES)
-  list(APPEND ep_superbuild_extra_args -DCMAKE_CONFIGURATION_TYPES:STRING=${CMAKE_CONFIGURATION_TYPES})
+  list_to_string(${ep_list_separator} "${CMAKE_CONFIGURATION_TYPES}" ep_CMAKE_CONFIGURATION_TYPES)
+  list(APPEND ep_superbuild_extra_args -DCMAKE_CONFIGURATION_TYPES:STRING=${ep_CMAKE_CONFIGURATION_TYPES})
 endif()
 
 if(WIN32)
@@ -340,6 +345,7 @@ ExternalProject_Add(${proj}
   BINARY_DIR ${Slicer_BINARY_INNER_SUBDIR}
   CMAKE_GENERATOR ${gen}
   UPDATE_COMMAND ""
+  LIST_SEPARATOR ${ep_list_separator}
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

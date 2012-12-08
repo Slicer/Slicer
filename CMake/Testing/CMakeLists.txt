@@ -15,3 +15,4 @@ endmacro()
 # Add 'CMake script' Tests
 #
 add_cmakescript_test(slicer_setting_variable_message_test UseSlicerMacros)
+add_cmakescript_test(list_to_string_test ListToString)
