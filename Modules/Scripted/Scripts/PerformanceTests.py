@@ -246,6 +246,7 @@ with point index of {pointIndex}
     <a href="chart">Run chart test</a>
     """
     self.webView.setHtml(html)
+    self.webView.settings().setAttribute(qt.QWebSettings.DeveloperExtrasEnabled, True)
     self.webView.page().setLinkDelegationPolicy(qt.QWebPage.DelegateAllLinks)
     self.webView.connect('linkClicked(QUrl)', self.webViewCallback)
     self.webView.show()
