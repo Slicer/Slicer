@@ -103,14 +103,6 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 }
 
 //-----------------------------------------------------------------------------
-//void qSlicerCLIModuleWidgetPrivate::enableCommandButtonState(bool enable)
-//{
-//  this->ApplyPushButton->setEnabled(enable);
-//  this->CancelPushButton->setEnabled(enable);
-//  this->DefaultPushButton->setEnabled(enable);
-//}
-
-//-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   vtkObject* commandLineModuleNode)
 {
