@@ -201,6 +201,7 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
         colorNode->EndModify(wasModifying);
         return 0;
         }
+      colorNode->SetColorNameWithSpaces(id, name.c_str(), "_");
       }
     if (lines.size() > 0 && !biggerThanOne)
       {
