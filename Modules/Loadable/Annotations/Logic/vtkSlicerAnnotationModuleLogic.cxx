@@ -19,6 +19,7 @@
 #include "vtkMRMLAnnotationSplineNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkMRMLAnnotationSnapshotStorageNode.h"
+#include "vtkMRMLAnnotationLinesStorageNode.h"
 
 #include "qSlicerCoreApplication.h"
 
@@ -265,7 +266,28 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     }
   else if (fileType == this->ROI)
     {
-    vtkErrorMacro("LoadAnnotation: ROI reading not supported yet, cannot read " << filename);
+    vtkSmartPointer<vtkMRMLAnnotationLinesStorageNode> roiStorageNode = vtkSmartPointer<vtkMRMLAnnotationLinesStorageNode>::New();
+    vtkMRMLAnnotationROINode * roiNode = vtkMRMLAnnotationROINode::New();
+    roiNode->SetName(name);
+    
+    roiStorageNode->SetFileName(filename);
+    
+    // add the storage node to the scene
+    this->GetMRMLScene()->AddNode(roiStorageNode);
+
+    roiNode->Initialize(this->GetMRMLScene());
+
+    roiNode->SetAndObserveStorageNodeID(roiStorageNode->GetID());
+
+
+    if (roiStorageNode->ReadData(roiNode))
+      {
+      vtkDebugMacro("LoadAnnotation: fiducial storage node read " << filename);
+      nodeID =  roiNode->GetID();
+      }
+
+
+    roiNode->Delete();
     }
   else
     {
