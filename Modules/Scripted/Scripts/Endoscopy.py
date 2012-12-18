@@ -31,6 +31,8 @@ class EndoscopyWidget:
       self.parent = parent
     self.layout = self.parent.layout()
     self.cameraNode = None
+    self.cameraNodeObserverTag = None
+    self.cameraObserverTag= None
     # Flythough variables
     self.transform = None
     self.path = None
@@ -154,17 +156,18 @@ class EndoscopyWidget:
     Connected to signal 'currentNodeChanged()' emitted by camera node selector."""
     
     #  Remove previous observer
-    if self.cameraNode:
-      self.cameraNode.RemoveObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
-      self.camera.RemoveObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraModified)
+    if self.cameraNode and self.cameraNodeObserverTag:
+      self.cameraNode.RemoveObserver(self.cameraNodeObserverTag)
+    if self.camera and self.cameraObserverTag:
+      self.camera.RemoveObserver(self.cameraObserverTag)
     
     newCamera = None
     if newCameraNode:
       newCamera = newCameraNode.GetCamera()
       # Add CameraNode ModifiedEvent observer
-      newCameraNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+      self.cameraNodeObserverTag = newCameraNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
       # Add Camera ModifiedEvent observer
-      newCamera.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
+      self.cameraObserverTag = newCamera.AddObserver(vtk.vtkCommand.ModifiedEvent, self.onCameraNodeModified)
       
     self.cameraNode = newCameraNode
     self.camera = newCamera
@@ -421,7 +424,7 @@ class EndoscopyPathModel:
     # Create model node
     model = slicer.vtkMRMLModelNode()
     model.SetScene(scene)
-    model.SetName("Path-%s" % fids.GetName())
+    model.SetName(scene.GenerateUniqueName("Path-%s" % fids.GetName()))
     model.SetAndObservePolyData(polyData)
 
     # Create display node
@@ -442,7 +445,7 @@ class EndoscopyPathModel:
     # Create model node
     cursor = slicer.vtkMRMLModelNode()
     cursor.SetScene(scene)
-    cursor.SetName("Cursor-%s" % fids.GetName())
+    cursor.SetName(scene.GenerateUniqueName("Cursor-%s" % fids.GetName()))
     cursor.SetAndObservePolyData(sphere.GetOutput())
 
     # Create display node
@@ -458,7 +461,7 @@ class EndoscopyPathModel:
 
     # Create transform node
     transform = slicer.vtkMRMLLinearTransformNode()
-    transform.SetName('Transform-%s' % fids.GetName())
+    transform.SetName(scene.GenerateUniqueName("Transform-%s" % fids.GetName()))
     scene.AddNode(transform)
     cursor.SetAndObserveTransformNodeID(transform.GetID())
     
