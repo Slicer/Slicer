@@ -156,6 +156,13 @@ ctkFileDialog* qSlicerStandardFileDialog::createFileDialog(
     {
     fileDialog->setSidebarUrls(ioManager->favorites());
     }
+#ifdef Q_WS_MAC
+  // Workaround for Mac to show mounted volumes.
+  // See issue #2240
+  QList<QUrl> sidebarUrls = fileDialog->sidebarUrls();
+  sidebarUrls.append(QUrl::fromLocalFile("/Volumes"));
+  fileDialog->setSidebarUrls(sidebarUrls);
+#endif
   if (ioProperties["multipleFiles"].toBool())
     {
     fileDialog->setFileMode(QFileDialog::ExistingFiles);
@@ -205,14 +212,6 @@ bool qSlicerStandardFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
             fileDialog, SLOT(setAcceptButtonEnable(bool)));
     fileDialog->setAcceptButtonEnable(optionsWidget->isValid());
     }
-
-// Workaround for Mac to show mounted volumes.
-// See issue #2240
-#ifdef Q_WS_MAC
-  QList<QUrl> sidebarUrls = ioManager->favorites();
-  sidebarUrls.append(QUrl::fromLocalFile("/Volumes"));
-  fileDialog->setSidebarUrls(sidebarUrls);
-#endif
 
   // we do not delete options now as it is still useful later (even if there is
   // no UI.) they are the options of the reader, UI or not.
@@ -268,14 +267,6 @@ QStringList qSlicerStandardFileDialog::getOpenFileName(
                                 ioProperties);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
 
-// Workaround for Mac to show mounted volumes.
-// See issue #2240
-#ifdef Q_WS_MAC
-  QList<QUrl> sidebarUrls = ioManager->favorites();
-  sidebarUrls.append(QUrl::fromLocalFile("/Volumes"));
-  fileDialog->setSidebarUrls(sidebarUrls);
-#endif
-
   if(fileDialog->exec() == QDialog::Accepted)
     {
     files = fileDialog->selectedFiles();
@@ -295,14 +286,6 @@ QString qSlicerStandardFileDialog::getExistingDirectory(
   ctkFileDialog* fileDialog = qSlicerStandardFileDialog::createFileDialog(
                                 ioProperties);
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
-
-// Workaround for Mac to show mounted volumes.
-// See issue #2240
-#ifdef Q_WS_MAC
-  QList<QUrl> sidebarUrls = ioManager->favorites();
-  sidebarUrls.append(QUrl::fromLocalFile("/Volumes"));
-  fileDialog->setSidebarUrls(sidebarUrls);
-#endif
 
   if (fileDialog->exec() == QDialog::Accepted)
     {
