@@ -25,6 +25,7 @@
 #include <ctkCommandLineParser.h>
 
 #include "qSlicerBaseQTCoreExport.h"
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
 
 class QSettings;
 class qSlicerCoreCommandOptionsPrivate;
@@ -48,6 +49,9 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers)
   Q_PROPERTY(QString tempDirectory READ tempDirectory)
   Q_PROPERTY(bool testingEnabled READ isTestingEnabled)
+#ifdef Slicer_USE_PYTHONQT
+  Q_PROPERTY(bool pythonDisabled READ isPythonDisabled)
+#endif
   Q_PROPERTY(QStringList additonalModulePaths READ additonalModulePaths)
 public:
   typedef ctkCommandLineParser Superclass;
@@ -130,6 +134,13 @@ public:
   /// this may change in the future.
   /// \sa settingsEnabled()
   bool isTestingEnabled()const;
+
+#ifdef Slicer_USE_PYTHONQT
+  /// Return True if slicer has no python infrastructure initialized.
+  /// Python is still compiled with the app, but not enabled at run-time.
+  /// \sa settingsEnabled()
+  bool isPythonDisabled()const;
+#endif
 
 
 protected:

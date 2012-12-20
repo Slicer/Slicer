@@ -259,6 +259,15 @@ bool qSlicerCoreCommandOptions::isTestingEnabled() const
   return d->ParsedArgs.value("testing").toBool();
 }
 
+#ifdef Slicer_USE_PYTHONQT
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::isPythonDisabled() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-python").toBool();
+}
+#endif
+
 //-----------------------------------------------------------------------------
 void qSlicerCoreCommandOptions::addArguments()
 {

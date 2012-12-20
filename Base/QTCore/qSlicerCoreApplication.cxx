@@ -760,6 +760,13 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     {
     this->setAttribute(AA_EnableTesting);
     }
+
+#ifdef Slicer_USE_PYTHONQT
+  if (options->isPythonDisabled())
+    {
+    this->setAttribute(AA_DisablePython);
+    }
+#endif
 }
 
 //-----------------------------------------------------------------------------
