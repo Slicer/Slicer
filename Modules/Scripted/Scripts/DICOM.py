@@ -39,14 +39,14 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     # the dicom database is a global object for slicer
     if settings.contains('DatabaseDirectory'):
       databaseDirectory = settings.value('DatabaseDirectory')
-      if databaseDirectory: 
+      if databaseDirectory:
         slicer.dicomDatabase = ctk.ctkDICOMDatabase()
         slicer.dicomDatabase.openDatabase(databaseDirectory + "/ctkDICOM.sql", "SLICER")
         if not slicer.dicomDatabase.isOpen:
           # can't open the database, so prompt the user later if they enter module
           slicer.dicomDatabase = None
         else:
-          # the dicom listener is also global, but only started on app start if 
+          # the dicom listener is also global, but only started on app start if
           # the user so chooses
           if settings.contains('DICOM/RunListenerAtStart'):
             if bool(settings.value('DICOM/RunListenerAtStart')):
@@ -99,8 +99,8 @@ class DICOMWidget:
   def __init__(self, parent=None):
     self.testingServer = None
     self.dicomApp = None
-    
-    # hide the search box 
+
+    # hide the search box
     self.hideSearch = True
 
     # options for browser
@@ -142,7 +142,7 @@ class DICOMWidget:
   def setup(self):
 
     #
-    # servers 
+    # servers
     #
 
     # testing server - not exposed (used for development)
@@ -164,7 +164,7 @@ class DICOMWidget:
     self.toggleServer.hide()
     self.verboseServer.hide()
 
-    # Listener 
+    # Listener
 
     settings = qt.QSettings()
     self.toggleListener = qt.QPushButton()
@@ -189,9 +189,8 @@ class DICOMWidget:
     self.layout.addWidget(self.dicomFrame)
 
     # initialize the dicomDatabase
-    # - don't let the user escape without
-    #   picking a valid database directory
-    while not slicer.dicomDatabase:
+    #   - pick a default and let the user know
+    if not slicer.dicomDatabase:
       self.promptForDatabaseDirectory()
 
     #
@@ -202,14 +201,14 @@ class DICOMWidget:
     #
     self.dicomApp = ctk.ctkDICOMAppWidget()
     if self.hideSearch:
-      # hide the search options - doesn't work yet and doesn't fit 
+      # hide the search options - doesn't work yet and doesn't fit
       # well into the frame
       slicer.util.findChildren(self.dicomApp, 'SearchOption')[0].hide()
 
     self.detailsPopup = DICOMLib.DICOMDetailsPopup(self.dicomApp,setBrowserPersistence=self.setBrowserPersistence)
 
     self.tree = self.detailsPopup.tree
-    
+
     self.showBrowser = qt.QPushButton('Show DICOM Browser')
     self.dicomFrame.layout().addWidget(self.showBrowser)
     self.showBrowser.connect('clicked()', self.detailsPopup.open)
@@ -272,7 +271,7 @@ class DICOMWidget:
   def requestUpdateRecentActivity(self):
     """This method serves to compress the requests for updating
     the recent activity widget since it is time consuming and there can be
-    many of them coming in a rapid sequence when the 
+    many of them coming in a rapid sequence when the
     database is active"""
     if self.updateRecentActivityRequested:
       return
@@ -286,7 +285,7 @@ class DICOMWidget:
   def requestResumeModel(self):
     """This method serves to compress the requests for resuming
     the dicom model since it is time consuming and there can be
-    many of them coming in a rapid sequence when the 
+    many of them coming in a rapid sequence when the
     database is active"""
     if self.resumeModelRequested:
       return
@@ -304,7 +303,10 @@ class DICOMWidget:
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     messages = ""
     if not os.path.exists(databaseDirectory):
-      messages += "Directory does not exist. "
+      try:
+        os.mkdir(databaseDirectory)
+      except OSError:
+        messages += "Directory does not exist and cannot be created. "
     else:
       if not os.access(databaseDirectory, os.W_OK):
         messages += "Directory not writable. "
@@ -358,14 +360,19 @@ class DICOMWidget:
       if databaseDirectory:
         self.onDatabaseDirectoryChanged(databaseDirectory)
       else:
-        fileDialog = ctk.ctkFileDialog(slicer.util.mainWindow())
-        fileDialog.setWindowModality(1)
-        fileDialog.setWindowTitle("Select DICOM Database Directory")
-        fileDialog.setFileMode(2) # prompt for directory
-        fileDialog.connect('fileSelected(QString)', self.onDatabaseDirectoryChanged)
-        label = qt.QLabel("<p><p>The Slicer DICOM module stores a local database with an index to all datasets that are <br>pushed to slicer, retrieved from remote dicom servers, or imported.<p>Please select a location for this database where you can store the amounts of data you require.<p>Be sure you have write access to the selected directory.", fileDialog)
-        fileDialog.setBottomWidget(label)
-        fileDialog.exec_()
+        # pick the user's Documents by default
+        documentsLocation = qt.QDesktopServices.DocumentsLocation
+        documents = qt.QDesktopServices.storageLocation(documentsLocation)
+        databaseDirectory = documents + "/SlicerDICOMDatabase"
+        message = "DICOM Database will be stored in\n\n"
+        message += databaseDirectory
+        message += "\n\nUse the Local Database button in the DICOM Browser "
+        message += "to pick a different location."
+        qt.QMessageBox.information(slicer.util.mainWindow(),
+                        'DICOM', message, qt.QMessageBox.Ok)
+        if not os.path.exists(databaseDirectory):
+          os.mkdir(databaseDirectory)
+        self.onDatabaseDirectoryChanged(databaseDirectory)
 
   def onTreeClicked(self,index):
     self.model = index.model()
@@ -502,7 +509,7 @@ class DICOMWidget:
       if not self.testingServer:
         # find the helper executables (only works on build trees
         # with standard naming conventions)
-        self.exeDir = slicer.app.slicerHome 
+        self.exeDir = slicer.app.slicerHome
         if slicer.app.intDir:
           self.exeDir = self.exeDir + '/' + slicer.app.intDir
         self.exeDir = self.exeDir + '/../CTK-build/DCMTK-build'
