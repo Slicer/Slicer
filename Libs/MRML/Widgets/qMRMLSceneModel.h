@@ -225,6 +225,12 @@ signals :
   /// qMRMLTreeView
   void reparentedByDragAndDrop(vtkMRMLNode* node, vtkMRMLNode* newParent);
 
+  /// This signal is sent when the scene is about to be updated
+  void sceneAboutToBeUpdated();
+
+  /// This signal is sent after the scene is updated
+  void sceneUpdated();
+
 protected:
 
   qMRMLSceneModel(qMRMLSceneModelPrivate* pimpl, QObject *parent=0);

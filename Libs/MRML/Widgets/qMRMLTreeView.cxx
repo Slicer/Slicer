@@ -35,13 +35,18 @@
 #include "qMRMLTreeView_p.h"
 
 // MRML includes
-#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLDisplayableHierarchyNode.h>
 #include <vtkMRMLDisplayableNode.h>
-#include <vtkMRMLModelNode.h>
+#include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLModelHierarchyLogic.h>
 #include <vtkMRMLModelHierarchyNode.h>
+#include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
+
+// VTK includes
+#include <vtkCollection.h>
+#include <vtkCollectionIterator.h>
+#include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
@@ -57,10 +62,12 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->DeleteAction = 0;
   this->EditAction = 0;
   this->SceneMenu = 0;
+  this->ExpandedNodes = vtkCollection::New();
 }
 //------------------------------------------------------------------------------
 qMRMLTreeViewPrivate::~qMRMLTreeViewPrivate()
 {
+  this->ExpandedNodes->Delete();
 }
 
 //------------------------------------------------------------------------------
@@ -73,16 +80,16 @@ void qMRMLTreeViewPrivate::init()
   q->setAutoScrollMargin(32); // scroll hot area sensitivity
   this->setSortFilterProxyModel(new qMRMLSortFilterProxyModel(q));
   q->setSceneModelType("Transform");
-  
+
   //ctkModelTester * tester = new ctkModelTester(p);
   //tester->setModel(this->SortFilterModel);
   //QObject::connect(q, SIGNAL(activated(QModelIndex)),
-  //                 q, SLOT(onActivated(QModelIndex)));
+  //                 q, SLOT(onActivated(QModelIndeK)));
   //QObject::connect(q, SIGNAL(clicked(QModelIndex)),
   //                 q, SLOT(onActivated(QModelIndex)));
 
   q->setUniformRowHeights(true);
-  
+
   QObject::connect(q, SIGNAL(collapsed(QModelIndex)),
                    q, SLOT(onNumberOfVisibleIndexChanged()));
   QObject::connect(q, SIGNAL(expanded(QModelIndex)),
@@ -90,7 +97,7 @@ void qMRMLTreeViewPrivate::init()
 //QObject::connect(q->header(), SIGNAL(sectionResized(int,int,int)),
   //                  q, SLOT(onSectionResized()));
   q->horizontalScrollBar()->installEventFilter(q);
-  
+
   this->NodeMenu = new QMenu(q);
   this->NodeMenu->setObjectName("nodeMenuTreeView");
 
@@ -114,6 +121,7 @@ void qMRMLTreeViewPrivate::init()
                    q, SLOT(editCurrentNode()));
   this->SceneMenu = new QMenu(q);
   this->SceneMenu->setObjectName("sceneMenuTreeView");
+  this->ExpandedNodes->RemoveAllItems();
 }
 
 //------------------------------------------------------------------------------
@@ -129,6 +137,10 @@ void qMRMLTreeViewPrivate::setSceneModel(qMRMLSceneModel* newModel)
 
   this->SceneModel = newModel;
   this->SortFilterModel->setSourceModel(this->SceneModel);
+  QObject::connect(this->SceneModel, SIGNAL(sceneAboutToBeUpdated()),
+                   q, SLOT(saveTreeExpandState()));
+  QObject::connect(this->SceneModel, SIGNAL(sceneUpdated()),
+                   q, SLOT(loadTreeExpandState()));
   q->expandToDepth(2);
 }
 
@@ -140,7 +152,7 @@ void qMRMLTreeViewPrivate::setSortFilterProxyModel(qMRMLSortFilterProxyModel* ne
     {
     return;
     }
-  
+
   // delete the previous filter
   delete this->SortFilterModel;
   this->SortFilterModel = newSortModel;
@@ -214,6 +226,33 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
   this->TreeViewSizeHint =
     this->TreeViewSizeHint.expandedTo(this->TreeViewMinSizeHint);
   return this->TreeViewSizeHint;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex &parentIndex)
+{
+  Q_Q(qMRMLTreeView);
+  if (q->isExpanded(parentIndex))
+    {
+    // Store a weak reference to the parentNode in the vtkCollection.
+    // This helps avoid any dangling references if the node was deleted
+    // while updating scene.
+    vtkMRMLNode* parentNode = vtkMRMLNode::SafeDownCast(
+      q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex));
+    if (parentNode)
+      {
+      vtkWeakPointer<vtkMRMLNode> weakNode =
+        vtkMRMLNode::SafeDownCast(parentNode);
+      this->ExpandedNodes->AddItem(weakNode);
+      }
+    }
+  // Iterate over children nodes recursively to save their expansion state
+  unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
+  for(unsigned int row = 0; row < numChildrenRows; ++row)
+    {
+    QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
+    this->saveChildrenExpandState(childIndex);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -294,7 +333,7 @@ void qMRMLTreeView::setSceneModel(qMRMLSceneModel* newSceneModel, const QString&
 {
   Q_D(qMRMLTreeView);
 
-  if (!newSceneModel) 
+  if (!newSceneModel)
     {
     return;
     }
@@ -576,16 +615,16 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
 {
   Q_D(qMRMLTreeView);
   this->QTreeView::mousePressEvent(e);
-  
+
   if (e->button() != Qt::RightButton)
     {
     return;
     }
   // get the index of the current column
   QModelIndex index = this->indexAt(e->pos());
-  
+
   vtkMRMLNode* node = this->sortFilterProxyModel()->mrmlNodeFromIndex(index);
-  
+
   if (node)
     {
     d->NodeMenu->exec(e->globalPos());
@@ -609,7 +648,7 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
     QRect decorationElement =
       this->style()->subElementRect(QStyle::SE_ItemViewItemDecoration, &opt, this);
     //decorationElement.translate(this->visualRect(index).topLeft());
-    if (decorationElement.contains(e->pos()))  
+    if (decorationElement.contains(e->pos()))
       {
       if (this->clickDecoration(index))
         {
@@ -673,6 +712,48 @@ void qMRMLTreeView::toggleVisibility(const QModelIndex& index)
     {
     displayableNode->SetDisplayVisibility(displayableNode->GetDisplayVisibility() ? 0 : 1);
     }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::saveTreeExpandState()
+{
+  Q_D(qMRMLTreeView);
+  // Check if there is a scene loaded
+  QStandardItem* sceneItem = this->sceneModel()->mrmlSceneItem();
+  if (!sceneItem)
+    {
+    return;
+    }
+  // Erase previous tree expand state
+  d->ExpandedNodes->RemoveAllItems();
+  QModelIndex sceneIndex = this->sortFilterProxyModel()->mrmlSceneIndex();
+  d->saveChildrenExpandState(sceneIndex);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::loadTreeExpandState()
+{
+  Q_D(qMRMLTreeView);
+  // Check if there is a scene loaded
+  QStandardItem* sceneItem = this->sceneModel()->mrmlSceneItem();
+  if (!sceneItem)
+    {
+    return;
+    }
+  // Iterate over the vtkCollection of expanded nodes
+  vtkCollectionIterator* iter = d->ExpandedNodes->NewIterator();
+  for(iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
+    {
+    vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
+    if (node)
+      {
+      // Expand the node
+      QModelIndex nodeIndex = this->sortFilterProxyModel()->indexFromMRMLNode(node);
+      this->expand(nodeIndex);
+      }
+    }
+  // Clear the vtkCollection now
+  d->ExpandedNodes->RemoveAllItems();
 }
 
 //------------------------------------------------------------------------------

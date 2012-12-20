@@ -43,7 +43,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 {
   Q_OBJECT
   QVTK_OBJECT
-  /// This property controls what type of scene representation 
+  /// This property controls what type of scene representation
   /// (which qMRMLSceneModel implementation/subclass)is used to populate
   /// the nodes of the scene.
   /// Some built-in model types are available :
@@ -229,6 +229,17 @@ protected slots:
   void onNumberOfVisibleIndexChanged();
 
   void updateRootNode(vtkObject* modifiedRootNode);
+
+  /// Save the nodes currently expanded nodes so that their state can later
+  /// be restored by \a loadTreeExpandState(). Successive calls to
+  /// \a saveTreeExpandState() erase previous tree expand state.
+  /// \sa loadTreeExpandState()
+  void saveTreeExpandState();
+
+  /// Expand the nodes previously saved by \a saveTreeExpandState()
+  /// \sa saveTreeExpandState()
+  void loadTreeExpandState();
+
 protected:
   QScopedPointer<qMRMLTreeViewPrivate> d_ptr;
 

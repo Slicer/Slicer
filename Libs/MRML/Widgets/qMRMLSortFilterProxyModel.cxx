@@ -66,7 +66,7 @@ qMRMLSortFilterProxyModel::qMRMLSortFilterProxyModel(QObject *vparent)
   // in 2 steps, first a new row is created (which automatically calls
   // filterAcceptsRow() that returns false) and then set the row with the
   // correct values (which doesn't call filterAcceptsRow() on the up to date
-  // value unless DynamicSortFilter is true). 
+  // value unless DynamicSortFilter is true).
   this->setDynamicSortFilter(true);
 }
 

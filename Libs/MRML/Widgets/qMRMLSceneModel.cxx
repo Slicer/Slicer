@@ -619,6 +619,7 @@ void qMRMLSceneModel::updateScene()
 {
   Q_D(qMRMLSceneModel);
 
+  emit sceneAboutToBeUpdated();
   // Stop listening to all the nodes before we remove them (setRowCount) as some
   // weird behavior could arise when removing the nodes (e.g onMRMLNodeModified
   // could be called ...)
@@ -688,6 +689,7 @@ void qMRMLSceneModel::updateScene()
 
   // Populate scene with nodes
   this->populateScene();
+  emit this->sceneUpdated();
 }
 
 //------------------------------------------------------------------------------

@@ -30,6 +30,9 @@ class QMenu;
 class qMRMLSceneModel;
 class qMRMLSortFilterProxyModel;
 
+// VTK includes
+class vtkCollection;
+
 //------------------------------------------------------------------------------
 class qMRMLTreeViewPrivate
 {
@@ -44,6 +47,9 @@ public:
   void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newSortModel);
   QSize sizeHint()const;
   void recomputeSizeHint(bool forceUpdate = false);
+  /// Save the current expansion state of children nodes of a
+  /// vtkMRMLDisplayableHierarchyNode
+  void saveChildrenExpandState(QModelIndex& parentIndex);
 
   qMRMLSceneModel*           SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
@@ -57,6 +63,8 @@ public:
   QAction*                   DeleteAction;
   QAction*                   EditAction;
   QMenu*                     SceneMenu;
+
+  vtkCollection*             ExpandedNodes;
 
 };
 
