@@ -241,7 +241,7 @@ class DICOMWidget:
     # for our purposes - TODO: fix this to enable it at the ctkDICOM level
     self.sendButton = slicer.util.findChildren(self.dicomApp, text='Send')[0]
     self.sendButton.enabled = False
-    self.sendButton.connect('clicked()', self.onSendClicked)
+    self.sendButton.connect('triggered()', self.onSendClicked)
 
     # the recent activity frame
     self.activityFrame = ctk.ctkCollapsibleButton(self.parent)
