@@ -16,6 +16,23 @@ import DICOMLib
 #
 
 class DICOM:
+
+  @staticmethod
+  def setDatabasePrecacheTags(dicomApp=None):
+    """query each plugin for tags that should be cached on import
+       and set them for the dicom app widget and slicer"""
+    if not slicer.dicomDatabase:
+      return
+    tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
+    for pluginClass in slicer.modules.dicomPlugins:
+      plugin = slicer.modules.dicomPlugins[pluginClass]()
+      tagsToPrecache += plugin.tags.values()
+    tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
+    tagsToPrecache.sort()
+    slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
+    if dicomApp:
+      dicomApp.tagsToPrecache = tagsToPrecache
+
   def __init__(self, parent):
     import string
     parent.title = "DICOM"
@@ -62,7 +79,9 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
     # Trigger the menu to be added when application has started up
     if not slicer.app.commandOptions().noMainWindow :
-      qt.QTimer.singleShot(0, self.addMenu);
+      qt.QTimer.singleShot(0, self.addMenu)
+    # set the dicom pre-cache tags once all plugin classes have been initialized
+    qt.QTimer.singleShot(0, DICOM.setDatabasePrecacheTags)
 
   def addMenu(self):
     #actionIcon = self.parent.icon
@@ -200,6 +219,7 @@ class DICOMWidget:
     #   in the CTK code to avoid the findChildren calls
     #
     self.dicomApp = ctk.ctkDICOMAppWidget()
+    DICOM.setDatabasePrecacheTags(self.dicomApp)
     if self.hideSearch:
       # hide the search options - doesn't work yet and doesn't fit
       # well into the frame
@@ -299,7 +319,7 @@ class DICOMWidget:
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
       slicer.dicomDatabase = ctk.ctkDICOMDatabase()
-      self.setDatabasePrecacheTags()
+    DICOM.setDatabasePrecacheTags(self.dicomApp)
     databaseFilepath = databaseDirectory + "/ctkDICOM.sql"
     messages = ""
     if not os.path.exists(databaseDirectory):
@@ -329,20 +349,6 @@ class DICOMWidget:
           settings.sync()
     if slicer.dicomDatabase:
       slicer.app.setDICOMDatabase(slicer.dicomDatabase)
-
-  def setDatabasePrecacheTags(self):
-    """query each plugin for tags that should be cached on import
-       and set them for the dicom app widget and slicer"""
-    tagsToPrecache = list(slicer.dicomDatabase.tagsToPrecache)
-    for pluginClass in slicer.modules.dicomPlugins:
-      plugin = slicer.modules.dicomPlugins[pluginClass]()
-      tagsToPrecache += plugin.tags.values()
-    tagsToPrecache = list(set(tagsToPrecache))  # remove duplicates
-    tagsToPrecache.sort()
-    if hasattr(slicer, 'dicomDatabase'):
-      slicer.dicomDatabase.tagsToPrecache = tagsToPrecache
-    if self.dicomApp:
-      self.dicomApp.tagsToPrecache = tagsToPrecache
 
   def promptForDatabaseDirectory(self):
     """Ask the user to pick a database directory.
