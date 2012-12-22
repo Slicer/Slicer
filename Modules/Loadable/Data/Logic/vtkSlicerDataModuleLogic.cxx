@@ -24,6 +24,9 @@
 
 // MRML includes
 #include <vtkMRMLNode.h>
+#include <vtkMRMLDisplayableNode.h>
+#include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLStorageNode.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -38,6 +41,8 @@ vtkStandardNewMacro(vtkSlicerDataModuleLogic);
 vtkSlicerDataModuleLogic::vtkSlicerDataModuleLogic()
 {
   this->SceneChangedOff();
+  this->AutoRemoveDisplayAndStorageNodes = true;
+
 }
 
 //----------------------------------------------------------------------------
@@ -49,7 +54,11 @@ vtkSlicerDataModuleLogic::~vtkSlicerDataModuleLogic()
 void vtkSlicerDataModuleLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-}
+
+  os << indent << "AutoRemoveDisplayAndStorageNode: " <<
+    (AutoRemoveDisplayAndStorageNodes ? "On" : "Off") << "\n";
+
+ }
 
 //---------------------------------------------------------------------------
 void vtkSlicerDataModuleLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
@@ -72,4 +81,48 @@ void vtkSlicerDataModuleLogic::RegisterNodes()
 void vtkSlicerDataModuleLogic::UpdateFromMRMLScene()
 {
   this->SceneChangedOn();
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSlicerDataModuleLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
+{
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(node);
+  if (!displayableNode || this->GetMRMLScene()->IsClosing() || !this->AutoRemoveDisplayAndStorageNodes)
+    {
+    return;
+    }
+
+  /// we can't get the display node directly as it might be 0 because the
+  /// displayable node has no longer access to the scene
+  std::vector<vtkMRMLNode *> referencingNodes;
+  for (int i = 0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+    {
+    vtkMRMLNode *dnode = this->GetMRMLScene()->GetNodeByID(
+      displayableNode->GetNthDisplayNodeID(i));
+
+    // make sure no other nodes reference this display node
+    this->GetMRMLScene()->GetReferencingNodes(dnode, referencingNodes);
+
+    if (referencingNodes.size() == 0 || 
+        (referencingNodes.size() == 1 && referencingNodes[0] == node) )
+      {
+      this->GetMRMLScene()->RemoveNode(dnode);
+      }
+    }
+  for (int i = 0; i < displayableNode->GetNumberOfStorageNodes(); ++i)
+    {
+    vtkMRMLNode *snode = this->GetMRMLScene()->GetNodeByID(
+      displayableNode->GetNthStorageNodeID(i));
+
+    // make sure no other nodes reference this storage node
+    this->GetMRMLScene()->GetReferencingNodes(snode, referencingNodes);
+
+    if (referencingNodes.size() == 0 || 
+        (referencingNodes.size() == 1 && referencingNodes[0] == node) )
+      {
+      this->GetMRMLScene()->RemoveNode(snode);
+      }
+    }
+ 
 }

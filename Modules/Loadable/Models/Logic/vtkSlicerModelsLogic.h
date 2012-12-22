@@ -87,10 +87,6 @@ protected:
   ///  - observe the scene
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  /// Reimplemented to delete the storage/display nodes when a displayable
-  /// node is being removed.
-  virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* removedNode);
-
   ///
   /// This property controls whether the removal from the scene of a model node
   /// automatically removes its display and storage nodes or not.

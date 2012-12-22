@@ -328,6 +328,10 @@ public:
   /// \sa GetReferencedSubScene()
   vtkCollection* GetReferencedNodes(vtkMRMLNode *node);
 
+  /// Get vector of nodes containing references to an input node
+  void GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes);
+
+
   /// Get a sub-scene containing all nodes directly or indirectly referenced by
   /// the input node.
   /// GetReferencedNodes() is internally called.

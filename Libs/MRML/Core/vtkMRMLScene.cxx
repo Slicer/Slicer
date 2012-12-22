@@ -3002,6 +3002,26 @@ vtkCollection* vtkMRMLScene::GetReferencedNodes(vtkMRMLNode *node)
   return nodes;
 }
 
+//-----------------------------------------------------------------------------
+void vtkMRMLScene::GetReferencingNodes(vtkMRMLNode* referencedNode, std::vector<vtkMRMLNode *> &referencingNodes)
+{
+  referencingNodes.clear();
+
+  if (!referencedNode || referencedNode->GetID() == 0)
+    {
+    vtkErrorMacro("GetReferencingNodes: null node or referenced node");
+    return;
+    }
+
+  size_t nnodes = this->ReferencedIDs.size();
+  for(size_t n=0; n<nnodes; ++n)
+    {
+    if ( !strcmp(referencedNode->GetID(), this->ReferencedIDs[n].c_str()))
+      {
+      referencingNodes.push_back(this->ReferencingNodes[n]);
+      }
+    }
+}
 
 //------------------------------------------------------------------------------
 void vtkMRMLScene::CopyNodeReferences(vtkMRMLScene *scene)

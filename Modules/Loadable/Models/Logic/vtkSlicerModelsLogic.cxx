@@ -78,31 +78,6 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerModelsLogic::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
-{
-  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
-  if (!modelNode || this->GetMRMLScene()->IsClosing())
-    {
-    return;
-    }
-  if (this->AutoRemoveDisplayAndStorageNodes)
-    {
-    /// we can't get the display node directly as it might be 0 because the
-    /// model node has no longer access to the scene
-    for (int i = 0; i < modelNode->GetNumberOfDisplayNodes(); ++i)
-      {
-      this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(
-        modelNode->GetNthDisplayNodeID(i)));
-      }
-    for (int i = 0; i < modelNode->GetNumberOfStorageNodes(); ++i)
-      {
-      this->GetMRMLScene()->RemoveNode(this->GetMRMLScene()->GetNodeByID(
-        modelNode->GetNthStorageNodeID(i)));
-      }
-    }
-}
-
-//----------------------------------------------------------------------------
 void vtkSlicerModelsLogic::SetActiveModelNode(vtkMRMLModelNode *activeNode)
 {
   vtkSetMRMLNodeMacro(this->ActiveModelNode, activeNode );
