@@ -234,13 +234,17 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex &parentIndex)
   Q_Q(qMRMLTreeView);
   if (q->isExpanded(parentIndex))
     {
-    // Store a weak reference to the parentNode in the vtkCollection.
-    // This helps avoid any dangling references if the node was deleted
-    // while updating scene.
-    vtkMRMLNode* parentNode = vtkMRMLNode::SafeDownCast(
-      q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex));
-    if (parentNode)
+    // Check if the node is currently present in the scene.
+    // When a node/hierarchy is being deleted from the vtkMRMLScene, there is
+    // some reference of the deleted node left dangling in the qMRMLSceneModel.
+    // As a result, mrmlNodeFromIndex returns a reference to a non-existent node.
+    vtkMRMLNode* parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
+    if (parentNode &&
+        q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
       {
+      // Store a weak reference to the parentNode in the vtkCollection.
+      // This helps avoid any dangling references if the node was deleted
+      // while updating scene.
       vtkWeakPointer<vtkMRMLNode> weakNode =
         vtkMRMLNode::SafeDownCast(parentNode);
       this->ExpandedNodes->AddItem(weakNode);

@@ -666,12 +666,14 @@ void qMRMLSceneModel::updateScene()
       preSceneItemCount,
       this->rowCount() - preSceneItemCount - postSceneItemCount);
     this->setColumnCount(oldColumnCount);
+    emit sceneUpdated();
     return;
     }
 
   // if there is no column, there is no scene item.
   if (!this->mrmlSceneItem())
     {
+    emit sceneUpdated();
     return;
     }
 
@@ -689,7 +691,7 @@ void qMRMLSceneModel::updateScene()
 
   // Populate scene with nodes
   this->populateScene();
-  emit this->sceneUpdated();
+  emit sceneUpdated();
 }
 
 //------------------------------------------------------------------------------
