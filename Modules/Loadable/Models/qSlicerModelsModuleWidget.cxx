@@ -81,7 +81,7 @@ qSlicerModelsModuleWidget::~qSlicerModelsModuleWidget()
 void qSlicerModelsModuleWidget::setup()
 {
   Q_D(qSlicerModelsModuleWidget);
-  
+
   d->setupUi(this);
   d->ClipModelsNodeComboBox->setVisible(false);
 
@@ -89,7 +89,7 @@ void qSlicerModelsModuleWidget::setup()
 
   // turn of setting of size to visible indexes to allow drag scrolling
   d->ModelHierarchyTreeView->setFitSizeToVisibleIndexes(false);
-  
+
   // add an add hierarchy right click action on the scene and hierarchy nodes
   connect(d->ModelHierarchyTreeView,  SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onCurrentNodeChanged(vtkMRMLNode*)) );
@@ -113,7 +113,7 @@ void qSlicerModelsModuleWidget::setup()
   d->ModelHierarchyTreeView->appendNodeMenuAction(d->RenameMultipleNodesAction);
   connect(d->RenameMultipleNodesAction, SIGNAL(triggered()),
           this, SLOT(renameMultipleModels()));
-  
+
   this->Superclass::setup();
 }
 
@@ -144,7 +144,7 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
 
   // use lazy update instead of responding to scene import end event
   sceneModel->setLazyUpdate(true);
-  
+
   // qDebug() << "qSlicerModelsModuleWidget::updateTreeViewModel done";
 }
 
@@ -152,7 +152,7 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
 void qSlicerModelsModuleWidget::insertHierarchyNode()
 {
   Q_D(qSlicerModelsModuleWidget);
-  
+
   vtkMRMLModelHierarchyNode *modelHierarchyNode = vtkMRMLModelHierarchyNode::New();
   modelHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString("Model Hierarchy"));
 
@@ -169,15 +169,28 @@ void qSlicerModelsModuleWidget::insertHierarchyNode()
   vtkMRMLNode* parent = vtkMRMLNode::SafeDownCast(d->ModelHierarchyTreeView->currentNode());
   if (parent)
     {
+    QModelIndex parentIndex = d->ModelHierarchyTreeView->sortFilterProxyModel()->
+                  indexFromMRMLNode(parent);
+    bool parentExpanded = d->ModelHierarchyTreeView->isExpanded(parentIndex);
     modelHierarchyNode->SetParentNodeID(parent->GetID());
+    if (parentExpanded)
+      {
+      d->ModelHierarchyTreeView->expand(parentIndex);
+      }
     }
+
+  // Expand the newly added hierarchy node
+  QModelIndex modelHierarchyIndex = d->ModelHierarchyTreeView->
+                                    sortFilterProxyModel()->
+                                    indexFromMRMLNode(modelHierarchyNode);
+  d->ModelHierarchyTreeView->expand(modelHierarchyIndex);
 
   if (modelDisplayNode)
     {
     modelHierarchyNode->SetAndObserveDisplayNodeID(modelDisplayNode->GetID());
     modelDisplayNode->Delete();
     }
-  
+
   modelHierarchyNode->Delete();
 }
 
@@ -191,7 +204,7 @@ void qSlicerModelsModuleWidget::deleteMultipleModels()
     qWarning("No mrml scene set, cannot delete models");
     return;
     }
-  
+
   // get all rows where column 2, the model name, is selected
   int nameColumn = d->ModelHierarchyTreeView->sceneModel()->nameColumn();
   QModelIndexList indexList = d->ModelHierarchyTreeView->selectionModel()->selectedRows(nameColumn);
@@ -275,7 +288,7 @@ void qSlicerModelsModuleWidget::renameMultipleModels()
     qWarning("No mrml scene set, cannot rename models");
     return;
     }
-  
+
   // get all rows where column 2, the model name, is selected
   int nameColumn = d->ModelHierarchyTreeView->sceneModel()->nameColumn();
   QModelIndexList indexList = d->ModelHierarchyTreeView->selectionModel()->selectedRows(nameColumn);
