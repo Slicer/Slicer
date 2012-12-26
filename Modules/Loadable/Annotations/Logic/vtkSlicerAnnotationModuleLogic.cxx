@@ -2795,6 +2795,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeID(vtkMRMLNode* n
       {
       vtkErrorMacro("GetTopLevelHierarchyNodeID: error adding a display node for new top level node " << toplevelNodeID);
       }
+    this->InvokeEvent(HierarchyNodeAddedEvent, toplevelNode);
     toplevelNode->Delete();
     }
   else
@@ -2871,6 +2872,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
     // make it a child of the top annotation hierarchy
     toplevelNode->SetParentNodeID(this->GetTopLevelHierarchyNodeID());
     this->GetMRMLScene()->AddNode(toplevelNode);
+    this->InvokeEvent(HierarchyNodeAddedEvent, toplevelNode);
     toplevelNodeID = toplevelNode->GetID();
     if (this->AddDisplayNodeForHierarchyNode(toplevelNode) == NULL)
       {
@@ -2974,6 +2976,7 @@ char * vtkSlicerAnnotationModuleLogic::GetTopLevelHierarchyNodeIDForNodeClass(vt
           this->GetMRMLScene()->GetUniqueNameByString("List"));
 
       this->GetMRMLScene()->AddNode(hierarchyNode);
+      this->InvokeEvent(HierarchyNodeAddedEvent, hierarchyNode);
 
       }
     else

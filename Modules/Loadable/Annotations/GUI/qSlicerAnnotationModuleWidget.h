@@ -12,6 +12,7 @@ class qSlicerAnnotationModulePropertyDialog;
 class qSlicerAnnotationModuleReportDialog;
 class qSlicerAnnotationModuleWidgetPrivate;
 class vtkMRMLInteractionNode;
+class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_Annotation
 class Q_SLICER_QTMODULES_ANNOTATIONS_EXPORT qSlicerAnnotationModuleWidget :
@@ -50,7 +51,10 @@ public:
 protected:
 
 public slots:
+    /// a public slot that will refresh the tree view 
     void refreshTree();
+    /// a public slot that will expand a newly added hierarchy node item
+    void onHierarchyNodeAddedEvent(vtkObject *caller, vtkObject *obj);
 
     /// a public slot allowing other modules to open up the screen capture
     /// dialog

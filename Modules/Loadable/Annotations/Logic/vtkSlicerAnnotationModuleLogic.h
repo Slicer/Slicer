@@ -21,7 +21,8 @@ class VTK_SLICER_ANNOTATIONS_MODULE_LOGIC_EXPORT vtkSlicerAnnotationModuleLogic 
 {
 public:
   enum Events{
-    RefreshRequestEvent = vtkCommand::UserEvent
+    RefreshRequestEvent = vtkCommand::UserEvent,
+    HierarchyNodeAddedEvent
   };
   static vtkSlicerAnnotationModuleLogic *New();
   vtkTypeRevisionMacro(vtkSlicerAnnotationModuleLogic,vtkSlicerModuleLogic);
