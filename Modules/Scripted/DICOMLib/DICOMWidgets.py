@@ -31,6 +31,10 @@ class DICOMDetailsPopup(object):
   def __init__(self,dicomApp,setBrowserPersistence=None):
     self.dicomApp = dicomApp
     self.setBrowserPersistence = setBrowserPersistence
+    self.popupGeometry = qt.QRect()
+    settings = qt.QSettings()
+    if settings.contains('DICOM/detailsPopup.geometry'):
+      self.popupGeometry = settings.value('DICOM/detailsPopup.geometry')
     self.create()
     self.popupPositioned = False
     self.pluginInstances = {}
@@ -154,24 +158,25 @@ class DICOMDetailsPopup(object):
 
   def open(self):
     self.window.show()
+    if self.popupGeometry.isValid():
+      self.window.setGeometry(self.popupGeometry)
     if not self.popupPositioned:
-      if False:
-        appWidth = self.dicomApp.geometry.width()
-        screenAppPos = self.dicomApp.mapToGlobal(self.dicomApp.pos)
-        x = screenAppPos.x() + appWidth
-        y = screenAppPos.y()
-      else:
-        mainWindow = slicer.util.mainWindow()
-        #screenMainPos = mainWindow.mapToGlobal(mainWindow.pos)
-        screenMainPos = mainWindow.pos
-        x = screenMainPos.x() + 100
-        y = screenMainPos.y() + 100
+      mainWindow = slicer.util.mainWindow()
+      screenMainPos = mainWindow.pos
+      x = screenMainPos.x() + 100
+      y = screenMainPos.y() + 100
       self.window.move(qt.QPoint(x,y))
       self.popupPositioned = True
     self.window.raise_()
 
   def close(self):
+    self.onPopupGeometryChanged()
     self.window.hide()
+
+  def onPopupGeometryChanged(self):
+    settings = qt.QSettings()
+    self.popupGeometry = self.window.geometry
+    settings.setValue('DICOM/detailsPopup.geometry', self.window.geometry)
 
   def setModality(self,modality):
     if self.widgetType == 'dialog':
