@@ -84,7 +84,31 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
   /// hidden or not.
   /// All the nodes are visible (empty string) by default.
   Q_PROPERTY(QString hideNodesUnaffiliatedWithNodeID READ hideNodesUnaffiliatedWithNodeID WRITE setHideNodesUnaffiliatedWithNodeID)
+
+  /// This property controls whether the proxy applies its filter or if it
+  /// shows or hides all the nodes.
+  /// UseFilters by defaults.
+  /// \sa showAll, hideAll
+  Q_PROPERTY(FilterType filterType READ filterType WRITE setFilterType)
+  Q_ENUMS(FilterType)
+  /// This property controls whether all the nodes are visible or not,
+  /// bypassing any filter.
+  /// False by default
+  /// \sa filterType, hideAll
+  Q_PROPERTY(bool showAll READ showAll WRITE setShowAll STORED false)
+  /// This property controls whether all the nodes are hidden or not,
+  /// bypassing any filter.
+  /// False by default.
+  Q_PROPERTY(bool hideAll READ hideAll WRITE setHideAll STORED false)
+
 public:
+  enum FilterType
+    {
+    HideAll = 0,
+    ShowAll,
+    UseFilters
+    };
+
   typedef QSortFilterProxyModel Superclass;
   qMRMLSortFilterProxyModel(QObject *parent=0);
   virtual ~qMRMLSortFilterProxyModel();
@@ -155,11 +179,31 @@ public:
   /// \sa hideNodesUnaffiliatedWithNodeID, setHideNodesUnaffiliatedWithNodeID()
   QString hideNodesUnaffiliatedWithNodeID()const;
 
+  /// Return the current filter type.
+  /// \sa filterType, setFilterType()
+  FilterType filterType()const;
+  /// Return true if all the nodes are visible.
+  /// \sa showAll, setShowAll()
+  bool showAll()const;
+  /// Return true if all the nodes are hidden
+  /// \sa hideAll, setHideAll()
+  bool hideAll()const;
+
   /// Return the scene model used as input if any.
   Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
 
 public slots:
-   void setShowHidden(bool);
+  void setShowHidden(bool);
+
+  /// Set the filter type.
+  /// \sa filterType, filterType()
+  void setFilterType(FilterType filterType);
+  /// Set whether all the nodes should be visible or not.
+  /// \sa showAll, showAll()
+  void setShowAll(bool show);
+  /// Set whether all the nodes should be hidden or not.
+  /// \sa hideAll, hideAll()
+  void setHideAll(bool hide);
 
   // TODO Add setMRMLScene() to propagate to the scene model
 protected:

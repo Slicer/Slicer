@@ -46,6 +46,7 @@ public:
   QString                          HideNodesUnaffiliatedWithNodeID;
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType>    Attributes;
+  qMRMLSortFilterProxyModel::FilterType Filter;
 };
 
 // -----------------------------------------------------------------------------
@@ -53,6 +54,7 @@ qMRMLSortFilterProxyModelPrivate::qMRMLSortFilterProxyModelPrivate()
 {
   this->ShowHidden = false;
   this->ShowChildNodeTypes = true;
+  this->Filter = qMRMLSortFilterProxyModel::UseFilters;
 }
 
 // -----------------------------------------------------------------------------
@@ -170,6 +172,14 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
   if (!node)
     {
     return true;
+    }
+  if (this->showAll())
+    {
+    return true;
+    }
+  if (this->hideAll())
+    {
+    return false;
     }
   if (d->HiddenNodeIDs.contains(node->GetID()))
     {
@@ -406,6 +416,67 @@ QString qMRMLSortFilterProxyModel::hideNodesUnaffiliatedWithNodeID()const
 {
   Q_D(const qMRMLSortFilterProxyModel);
   return d->HideNodesUnaffiliatedWithNodeID;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel
+::setFilterType(FilterType filterType)
+{
+  Q_D(qMRMLSortFilterProxyModel);
+  if (filterType == d->Filter)
+    {
+    return;
+    }
+  d->Filter = filterType;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+qMRMLSortFilterProxyModel::FilterType qMRMLSortFilterProxyModel
+::filterType()const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->Filter;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel
+::setShowAll(bool show)
+{
+  if (show == this->showAll())
+    {
+    return;
+    }
+  this->setFilterType((show ? qMRMLSortFilterProxyModel::ShowAll :
+                       (this->hideAll() ? qMRMLSortFilterProxyModel::HideAll :
+                        qMRMLSortFilterProxyModel::UseFilters)));
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSortFilterProxyModel::showAll()const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->Filter == qMRMLSortFilterProxyModel::ShowAll;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel
+::setHideAll(bool hide)
+{
+  if (hide == this->hideAll())
+    {
+    return;
+    }
+  this->setFilterType((hide ? qMRMLSortFilterProxyModel::HideAll :
+                       (this->showAll() ? qMRMLSortFilterProxyModel:: ShowAll :
+                        qMRMLSortFilterProxyModel::UseFilters)));
+}
+
+// --------------------------------------------------------------------------
+bool qMRMLSortFilterProxyModel::hideAll()const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->Filter == qMRMLSortFilterProxyModel::HideAll;
 }
 
 // --------------------------------------------------------------------------

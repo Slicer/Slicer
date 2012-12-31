@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QInputDialog>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QScrollBar>
@@ -596,7 +597,6 @@ void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
     }
   qvtkReconnect(this->rootNode(), rootNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateRootNode(vtkObject*)));
-  qDebug() << rootNode << treeRootIndex;
   this->setRootIndex(treeRootIndex);
 }
 
@@ -713,7 +713,6 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
     {
     return;
     }
-  qDebug() << "Mouse press";
   // get the index of the current column
   QModelIndex index = this->indexAt(e->pos());
 
@@ -752,6 +751,22 @@ void qMRMLTreeView::mouseReleaseEvent(QMouseEvent* e)
     }
 
   this->QTreeView::mouseReleaseEvent(e);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLTreeView::keyPressEvent(QKeyEvent* e)
+{
+#ifndef _NDEBUG
+  if (e->key() == Qt::Key_Exclam)
+    {
+    qMRMLSortFilterProxyModel::FilterType filter =
+      static_cast<qMRMLSortFilterProxyModel::FilterType>(
+        (this->sortFilterProxyModel()->filterType() + 1) % 3);
+    qDebug() << "Filter type: " << filter;
+    this->sortFilterProxyModel()->setFilterType(filter);
+    }
+#endif
+  this->Superclass::keyPressEvent(e);
 }
 
 //------------------------------------------------------------------------------

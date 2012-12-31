@@ -39,6 +39,9 @@ class vtkMRMLNode;
 class vtkMRMLScene;
 
 /// \todo Rename to qMRMLSceneTreeView
+/// In debug mode, pressing the '!' key on the view switches of
+/// qMRMLSortFilterProxyModel::filterType, it can be useful to debug the scene model
+/// and filters applied to them.
 class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
 {
   Q_OBJECT
@@ -254,6 +257,16 @@ public slots:
   void editCurrentNode();
   void renameCurrentNode();
 
+  /// Bypass all the filters on the view and show all the nodes.
+  /// \sa setHideAll(), qMRMLSortFilterProxyModel::FilterType
+  inline void setShowAll(bool);
+  /// Bypass all the filters on the view and hide all the nodes.
+  /// \sa showAll(), setDontHideAll(), qMRMLSortFilterProxyModel::FilterType
+  inline void setHideAll(bool);
+  /// Convenient slot to call hideAll() with the opposite value.
+  /// \sa setHideAll()
+  inline void setDontHideAll(bool);
+
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
   void currentNodeDeleted(const QModelIndex& index);
@@ -284,6 +297,7 @@ protected:
   virtual void updateGeometries();
   virtual void mousePressEvent(QMouseEvent* event);
   virtual void mouseReleaseEvent(QMouseEvent* event);
+  virtual void keyPressEvent(QKeyEvent* event);
 
   virtual void toggleVisibility(const QModelIndex& index);
 
@@ -302,6 +316,25 @@ void qMRMLTreeView::setShowHidden(bool enable)
 bool qMRMLTreeView::showHidden()const
 {
   return this->sortFilterProxyModel()->showHidden();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTreeView::setShowAll(bool show)
+{
+  this->sortFilterProxyModel()->setShowAll(show);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTreeView::setHideAll(bool hide)
+{
+  this->sortFilterProxyModel()->setHideAll(hide);
+}
+#include <QDebug>
+// --------------------------------------------------------------------------
+void qMRMLTreeView::setDontHideAll(bool dontHide)
+{
+  qDebug() << "DontHide: " << dontHide;
+  this->setHideAll(!dontHide);
 }
 
 #endif
