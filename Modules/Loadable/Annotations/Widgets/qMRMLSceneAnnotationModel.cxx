@@ -320,6 +320,11 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
 vtkMRMLNode* qMRMLSceneAnnotationModel
 ::activeHierarchyNode(vtkMRMLNode* mrmlNode)const
 {
+  if (!mrmlNode)
+    {
+    return 0;
+    }
+
   Q_D(const qMRMLSceneAnnotationModel);
   if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
