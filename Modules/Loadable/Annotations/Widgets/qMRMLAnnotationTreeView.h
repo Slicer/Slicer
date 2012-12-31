@@ -79,10 +79,10 @@ protected slots:
 
 protected:
   QScopedPointer<qMRMLAnnotationTreeViewPrivate> d_ptr;
-  #ifndef QT_NO_CURSOR
-    void mouseMoveEvent(QMouseEvent* e);
-    bool viewportEvent(QEvent* e);
-  #endif
+#ifndef QT_NO_CURSOR
+  void mouseMoveEvent(QMouseEvent* e);
+  bool viewportEvent(QEvent* e);
+#endif
   virtual void mousePressEvent(QMouseEvent* event);
 
   virtual void toggleVisibility(const QModelIndex& index);

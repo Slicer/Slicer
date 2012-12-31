@@ -466,9 +466,11 @@ void qSlicerAnnotationModuleWidget::updateActiveHierarchyLabel()
   if (id)
     {
     //idString = QString(" (") + QString(id) + QString(")");
-    if (d->logic() && d->logic()->GetMRMLScene() && d->logic()->GetMRMLScene()->GetNodeByID(id))
+    vtkMRMLNode* node = d->logic()->GetMRMLScene() ?
+      d->logic()->GetMRMLScene()->GetNodeByID(id) : 0;
+    if (node)
       {
-      name = QString(d->logic()->GetMRMLScene()->GetNodeByID(id)->GetName());
+      name = QString(node->GetName());
       }
     }
   d->activeHierarchyLabel->setText(QString("Active list: ") + name);
