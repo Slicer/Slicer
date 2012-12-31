@@ -63,22 +63,20 @@ public:
   void init();
   void setMRMLScene(vtkMRMLScene* newScene);
   void updateWidgetFromMRML();
-  void updateWidgetFromSelectionNode();
   /// given an annotation id, find the action associated with it and set it
   /// checked, update the cursor, update the icon on the button
   void updateWidgetToAnnotation(const char *annotationID);
 
 public slots:
 
-  void OnMRMLSceneStartClose();
-  void OnMRMLSceneEndImport();
-  void OnMRMLSceneEndClose();
+  void onMRMLSceneStartBatchProcess();
+  void onMRMLSceneEndBatchProcess();
 
-  void onInteractionNodeModeChangedEvent();
-  void onInteractionNodeModePersistenceChanged();
+  void updateWidgetFromSelectionNode();
+  void updateWidgetFromInteractionNode();
+
   void onActiveAnnotationIDChangedEvent();
   void onAnnotationIDListModifiedEvent();
-  
 public:
 
   vtkSmartPointer<vtkMRMLScene>            MRMLScene;
@@ -94,6 +92,7 @@ public:
   /// Group the place actions together so that they're exclusive
   QActionGroup* ActionGroup;
 
+  QString DefaultAnnotation;
 };
 
 #endif

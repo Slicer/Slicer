@@ -356,6 +356,7 @@ void vtkMRMLSelectionNode::AddNewAnnotationIDToList(const char *newID, const cha
       this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);
       }
     }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
@@ -387,7 +388,9 @@ void vtkMRMLSelectionNode::RemoveAnnotationIDFromList(const char *id)
     this->SetActiveAnnotationID(NULL);
     }
   this->InvokeEvent(vtkMRMLSelectionNode::AnnotationIDListModifiedEvent);
-}    
+  this->Modified();
+}
+
 //----------------------------------------------------------------------------
 std::string vtkMRMLSelectionNode::GetAnnotationIDByIndex(int n)
 {
@@ -442,4 +445,11 @@ std::string vtkMRMLSelectionNode::GetAnnotationResourceByID(std::string id)
     resource = this->GetAnnotationResourceByIndex(annotationIndex);
     }
   return resource;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::SetReferenceActiveAnnotationID (const char *id)
+{
+  this->SetActiveAnnotationID(id);
+  this->InvokeEvent(vtkMRMLSelectionNode::ActiveAnnotationIDChangedEvent);
 }

@@ -75,6 +75,7 @@ void vtkMRMLInteractionNode::SetPlaceModePersistence ( int val )
     {
     this->PlaceModePersistence = val;
     this->InvokeEvent(this->InteractionModePersistenceChangedEvent, NULL);
+    this->Modified();
     }
 }
 
@@ -85,6 +86,7 @@ void vtkMRMLInteractionNode::SetTransformModePersistence ( int val )
     {
     this->TransformModePersistence = val;
     this->InvokeEvent(this->InteractionModePersistenceChangedEvent, NULL);
+    this->Modified();
     }
 }
 
@@ -125,6 +127,7 @@ void vtkMRMLInteractionNode::SetCurrentInteractionMode ( int mode )
     default:
       break;
     }
+  this->Modified();
 }
 
 //----------------------------------------------------------------------------
