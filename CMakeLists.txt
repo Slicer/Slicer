@@ -356,8 +356,12 @@ set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
 #-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
-set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
-set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE INTERNAL "Main application name")
+if (NOT DEFINED Slicer_MAIN_PROJECT)
+  set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
+endif()
+if (NOT DEFINED ${Slicer_MAIN_PROJECT}_APPLICATION_NAME)
+  set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE INTERNAL "Main application name")
+endif()
 
 set(Slicer_MAIN_PROJECT_APPLICATION_NAME ${${Slicer_MAIN_PROJECT}_APPLICATION_NAME})
 
@@ -370,6 +374,22 @@ set(Slicer_VERSION_PATCH "0")
 # Releases define a tweak level
 #set(Slicer_VERSION_TWEAK 0)
 #set(Slicer_VERSION_RC 0)
+
+if (${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_MAJOR)
+  set(Slicer_VERSION_MAJOR ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_MAJOR})
+endif()
+if (${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_MINOR)
+  set(Slicer_VERSION_MINOR ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_MINOR})
+endif()
+if (${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_PATCH)
+  set(Slicer_VERSION_PATCH ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_PATCH})
+endif()
+if (${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_TWEAK)
+  set(Slicer_VERSION_TWEAK ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_TWEAK})
+endif()
+if (${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_RC)
+  set(Slicer_VERSION_RC ${${Slicer_MAIN_PROJECT_APPLICATION_NAME}_VERSION_RC})
+endif()
 
 SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer) # Used to configure vtkSlicerVersionConfigure.h.in
 string(REGEX REPLACE ".*([0-9][0-9][0-9][0-9]\\-[0-9][0-9]\\-[0-9][0-9]).*" "\\1"
@@ -868,7 +888,13 @@ set(Slicer_GUI_LIBRARY qSlicerBaseQTApp)
 add_subdirectory(Modules/Core)
 add_subdirectory(Base/QTApp)
 add_subdirectory(Modules)
-add_subdirectory(Applications)
+if (NOT DEFINED Slicer_APPLICATIONS_DIR)
+  add_subdirectory(Applications)
+else()
+  add_subdirectory(${Slicer_APPLICATIONS_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/Applications
+    )
+endif()
 
 # --------------------------------------------------------------------------
 # Bundle extension(s)
