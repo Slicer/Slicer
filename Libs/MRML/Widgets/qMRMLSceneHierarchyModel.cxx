@@ -177,6 +177,14 @@ int qMRMLSceneHierarchyModel::nodeIndex(vtkMRMLNode* node)const
     if (hnode)
       {
       vtkMRMLHierarchyNode* parentHierarchy = vtkMRMLHierarchyNode::SafeDownCast(parent);
+      if (parentHierarchy == 0)
+        {
+        // sometimes the parent is not a hierarchy node but the associated node
+        // of a hierarchy node (if the hierarchy node is filtered out from the view).
+        // We need to find that hierarchy node.
+        parentHierarchy = vtkMRMLHierarchyNode::GetAssociatedHierarchyNode(
+          d->MRMLScene, parent->GetID());
+        }
       const int childrenCount = parentHierarchy->GetNumberOfChildrenNodes();
       for ( int i = 0; i < childrenCount ; ++i)
         {

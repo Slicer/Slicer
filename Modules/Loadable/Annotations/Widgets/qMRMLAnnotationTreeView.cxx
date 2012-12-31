@@ -140,6 +140,23 @@ void qMRMLAnnotationTreeView::onSelectionChanged(const QItemSelection& index,con
 }
 
 //------------------------------------------------------------------------------
+void qMRMLAnnotationTreeView::onCurrentRowChanged(const QModelIndex& index)
+{
+  Q_D(qMRMLAnnotationTreeView);
+
+  // if the user clicked on a hierarchy, set this as the active one
+  // this means, new annotations or new user-created hierarchies will be created
+  // as childs of this one
+  vtkMRMLNode *mrmlNode = d->SortFilterModel->mrmlNodeFromIndex(index);
+  vtkMRMLNode* activeNode =
+    this->annotationModel()->activeHierarchyNode(mrmlNode);
+  this->m_Logic->SetActiveHierarchyNodeID(
+    activeNode ? activeNode->GetID() : 0);
+
+  this->Superclass::onCurrentRowChanged(index);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
 {
 
@@ -149,29 +166,6 @@ void qMRMLAnnotationTreeView::onClicked(const QModelIndex& index)
   if (!mrmlNode)
     {
     return;
-    }
-  // if the user clicked on a hierarchy, set this as the active one
-  // this means, new annotations or new user-created hierarchies will be created
-  // as childs of this one
-
-  if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
-    {
-    this->m_Logic->SetActiveHierarchyNodeID(mrmlNode->GetID());
-    }
-  else
-    {
-    // if the user clicked on a row that isn't a hierarchy node, reset the
-    // active hierarchy to the parent hierarchy of this node (going via the
-    // hierarchy node associated with this node)
-    if(mrmlNode &&
-       !mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
-      {
-      vtkMRMLHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::GetAssociatedHierarchyNode(this->mrmlScene(), mrmlNode->GetID());
-      if (hnode && hnode->GetParentNode())
-        {
-        this->m_Logic->SetActiveHierarchyNodeID(hnode->GetParentNode()->GetID());
-        }
-      }
     }
 
   // check if user clicked on icon, this can happen even after we marked a

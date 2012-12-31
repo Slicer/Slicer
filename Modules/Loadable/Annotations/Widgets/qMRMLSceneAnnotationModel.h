@@ -40,6 +40,13 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
   : public qMRMLSceneDisplayableModel
 {
   Q_OBJECT
+  /// This property controls whether annotations can have children or not.
+  /// This is used when setting the active hierarchy node.
+  /// False by default.
+  /// \sa indexHierarchyNode(),
+  /// vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeID()
+  Q_PROPERTY(bool annotationsAreParent READ areAnnotationsParent WRITE setAnnotationsAreParent)
+
   /// This property holds the column index where the annotation lock property is
   /// controlled.
   /// 2 by default.
@@ -74,6 +81,13 @@ public:
   // Register the logic
   void setLogic(vtkSlicerAnnotationModuleLogic* logic);
 
+  /// Return true if the annotations can have children, false otherwise.
+  /// \sa annotationsAreParent, setAnnotationsAreParent()
+  bool areAnnotationsParent()const;
+  /// Set whether annotations can have children or not.
+  /// \sa annotationsAreParent, areAnnotationsParent()
+  void setAnnotationsAreParent(bool parentable);
+
   /// Return the lock column.
   /// \sa lockColumn, setLockColumn
   int lockColumn()const;
@@ -102,6 +116,12 @@ public:
   /// \sa textColumn, textColumn()
   void setTextColumn(int column);
 
+  /// Return the best active hierarchy node for a given node.
+  /// If the node is an annotation node and annotationsAreParent is true,
+  /// then it returns the associated hierarchy node instead of the parent
+  /// hierarchy node.
+  /// \sa annotationsAreParent
+  virtual vtkMRMLNode* activeHierarchyNode(vtkMRMLNode* mrmlNode)const;
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
   virtual bool canBeAParent(vtkMRMLNode* node)const;
 

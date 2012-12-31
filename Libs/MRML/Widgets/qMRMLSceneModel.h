@@ -175,8 +175,12 @@ public:
   virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action,
                             int row, int column, const QModelIndex &parent);
 
-  /// Must be reimplemented in derived classes
-  /// Returns 0 (scene is not a node) in qMRMLSceneModel
+  /// Returns the parent node of the scene, 0 otherwise (the parent is the
+  /// scene).
+  /// Must be reimplemented in derived classes. If reimplemented, you might
+  /// have to reimplement nodeIndex() as well.
+  /// Returns 0 by default.
+  /// \sa nodeIndex(), canBeAChild(), canBeAParent()
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
   /// Must be reimplemented in derived classes
   virtual int          nodeIndex(vtkMRMLNode* node)const;

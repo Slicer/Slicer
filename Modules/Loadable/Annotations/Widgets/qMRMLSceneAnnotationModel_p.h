@@ -40,6 +40,8 @@ public:
   qMRMLSceneAnnotationModelPrivate(qMRMLSceneAnnotationModel& object);
   virtual void init();
 
+  bool AnnotationsAreParent;
+
   int LockColumn;
   int EditColumn;
   int ValueColumn;

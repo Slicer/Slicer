@@ -89,6 +89,10 @@ protected:
 
   virtual void toggleVisibility(const QModelIndex& index);
 
+  /// Set the active hierarchy node when the current index changes.
+  /// \sa vtkSlicerAnnotationModuleLogic::SetActiveHierarchyNodeID()
+  virtual void onCurrentRowChanged(const QModelIndex& index);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);
   Q_DISABLE_COPY(qMRMLAnnotationTreeView);
