@@ -147,14 +147,19 @@ public:
   /// If not cached, it tnternally scans (slow) the scene to search for the
   /// associated display node ID.
   /// If the displayable node is no longer in the scene (GetScene() == 0), it
-  /// happens after the node is removed from hte scene (scene->RemoveNode(dn),
+  /// happens after the node is removed from the scene (scene->RemoveNode(dn),
   /// the returned display node is 0.
+  /// \sa GetNthDisplayNodeByClass()
   vtkMRMLDisplayNode* GetNthDisplayNode(int n);
 
   ///
   /// Utility function that returns the first display node.
   /// \sa GetNthDisplayNode(int), GetDisplayNodeID()
   inline vtkMRMLDisplayNode* GetDisplayNode();
+
+  /// Return the nth display node that is of class \a className.
+  /// \sa GetNthDisplayNode()
+  vtkMRMLDisplayNode* GetNthDisplayNodeByClass(int n, const char* className);
 
   ///
   /// Return a copy of the list of the display nodes. Some nodes can be 0
