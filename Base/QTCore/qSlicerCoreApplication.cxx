@@ -1102,7 +1102,11 @@ QString qSlicerCoreApplication::defaultExtensionsInstallPath() const
 {
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   return QFileInfo(appSettings->fileName()).dir().filePath(Slicer_EXTENSIONS_DIRNAME);
+#else
+  return QString();
+#endif
 }
 
 //-----------------------------------------------------------------------------
