@@ -26,6 +26,7 @@
 
 // VTK includes
 #include <vtkMRMLNode.h>
+#include <vtkMRMLScene.h>
 
 // -----------------------------------------------------------------------------
 // qMRMLSortFilterProxyModelPrivate
@@ -42,6 +43,7 @@ public:
   bool                             ShowChildNodeTypes;
   QStringList                      HideChildNodeTypes;
   QStringList                      HiddenNodeIDs;
+  QString                          HideNodesUnaffiliatedWithNodeID;
   typedef QPair<QString, QVariant> AttributeType;
   QHash<QString, AttributeType>    Attributes;
 };
@@ -186,6 +188,17 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
         }
       }
     if (hide)
+      {
+      return false;
+      }
+    }
+
+  if (!d->HideNodesUnaffiliatedWithNodeID.isEmpty())
+    {
+    vtkMRMLNode* theNode = sceneModel->mrmlScene()->GetNodeByID(
+      d->HideNodesUnaffiliatedWithNodeID.toLatin1());
+    bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
+    if (!affiliated)
       {
       return false;
       }
@@ -373,6 +386,26 @@ QStringList qMRMLSortFilterProxyModel::hiddenNodeIDs()const
 {
   Q_D(const qMRMLSortFilterProxyModel);
   return d->HiddenNodeIDs;
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSortFilterProxyModel
+::setHideNodesUnaffiliatedWithNodeID(const QString& nodeID)
+{
+  Q_D(qMRMLSortFilterProxyModel);
+  if (nodeID == d->HideNodesUnaffiliatedWithNodeID)
+    {
+    return;
+    }
+  d->HideNodesUnaffiliatedWithNodeID = nodeID;
+  this->invalidateFilter();
+}
+
+// --------------------------------------------------------------------------
+QString qMRMLSortFilterProxyModel::hideNodesUnaffiliatedWithNodeID()const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  return d->HideNodesUnaffiliatedWithNodeID;
 }
 
 // --------------------------------------------------------------------------

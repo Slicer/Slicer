@@ -57,6 +57,8 @@ public:
   bool                       FitSizeToVisibleIndexes;
   mutable QSize              TreeViewSizeHint;
   QSize                      TreeViewMinSizeHint;
+  bool                       ShowScene;
+  bool                       ShowRootNode;
 
   QMenu*                     NodeMenu;
   QAction*                   RenameAction;

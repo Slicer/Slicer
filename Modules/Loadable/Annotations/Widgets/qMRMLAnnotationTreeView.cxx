@@ -84,6 +84,7 @@ void qMRMLAnnotationTreeViewPrivate::init()
   q->setNodeTypes(nodeTypes);
   this->SortFilterModel = q->sortFilterProxyModel();
 
+  q->setShowScene(false);
   //this->SortFilterModel->setSourceModel(this->SceneModel);
   //q->qMRMLTreeView::setModel(this->SortFilterModel);
 
@@ -512,27 +513,6 @@ void qMRMLAnnotationTreeView::setSelectedNode(const char* id)
 void qMRMLAnnotationTreeView::hideScene()
 {
   Q_D(qMRMLAnnotationTreeView);
-
-  // first, we set the root index to the mrmlScene
-  // this works also if the scene is not defined yet
-  QModelIndex root = d->SceneModel->mrmlSceneIndex();
-
-  /* don't hide the top level node
-  if (this->m_Logic &&
-      this->m_Logic->GetMRMLScene())
-    {
-    // if the logic is already registered, we look for the first annotationHierarchyNode
-    vtkMRMLNode* toplevelNode = this->m_Logic->GetMRMLScene()->GetNthNodeByClass(0,"vtkMRMLAnnotationHierarchyNode");
-
-    if (toplevelNode)
-      {
-      // if we find it, we use it as the root index
-      root = d->SceneModel->indexes(toplevelNode)[0];
-      }
-    }
-  */
-  this->setRootIndex(d->SortFilterModel->mapFromSource(root));
-
 
   // set the column widths
   // If the model hasn't been populated yet, the columns don't exist and

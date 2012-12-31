@@ -188,6 +188,14 @@ public:
   /// Must be reimplemented in derived classes.
   /// Doesn't reparent and returns false by qMRMLSceneModel
   virtual bool         reparent(vtkMRMLNode* node, vtkMRMLNode* newParent);
+  /// Utility method that returns true if \a child has \a parent as parent,
+  /// grandparent, great grandparent etc...
+  /// \sa isAffiliatedNode()
+  bool isParentNode(vtkMRMLNode* child, vtkMRMLNode* parent)const;
+  /// Utility method that returns true if 2 nodes are child/parent for each
+  /// other. It can be grandchild, great grand child...
+  /// \sa isParentNode()
+  bool isAffiliatedNode(vtkMRMLNode* nodeA, vtkMRMLNode* nodeB)const;
 
 protected slots:
 

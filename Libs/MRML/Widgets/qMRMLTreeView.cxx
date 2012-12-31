@@ -57,6 +57,8 @@ qMRMLTreeViewPrivate::qMRMLTreeViewPrivate(qMRMLTreeView& object)
   this->FitSizeToVisibleIndexes = true;
   this->TreeViewSizeHint = QSize();
   this->TreeViewMinSizeHint = QSize(120, 120);
+  this->ShowScene = true;
+  this->ShowRootNode = false;
   this->NodeMenu = 0;
   this->RenameAction = 0;
   this->DeleteAction = 0;
@@ -280,8 +282,10 @@ void qMRMLTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   Q_D(qMRMLTreeView);
   Q_ASSERT(d->SortFilterModel);
+  vtkMRMLNode* rootNode = this->rootNode();
   // only qMRMLSceneModel needs the scene, the other proxies don't care.
   d->SceneModel->setMRMLScene(scene);
+  this->setRootNode(rootNode);
   this->expandToDepth(2);
 }
 
@@ -515,17 +519,94 @@ void qMRMLTreeView::editCurrentNode()
 }
 
 //--------------------------------------------------------------------------
+void qMRMLTreeView::setShowScene(bool show)
+{
+  Q_D(qMRMLTreeView);
+  if (d->ShowScene == show)
+    {
+    return;
+    }
+  vtkMRMLNode* oldRootNode = this->rootNode();
+  d->ShowScene = show;
+  this->setRootNode(oldRootNode);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLTreeView::showScene()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->ShowScene;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLTreeView::setShowRootNode(bool show)
+{
+  Q_D(qMRMLTreeView);
+  if (d->ShowRootNode == show)
+    {
+    return;
+    }
+  vtkMRMLNode* oldRootNode = this->rootNode();
+  d->ShowRootNode = show;
+  this->setRootNode(oldRootNode);
+}
+
+//--------------------------------------------------------------------------
+bool qMRMLTreeView::showRootNode()const
+{
+  Q_D(const qMRMLTreeView);
+  return d->ShowRootNode;
+}
+
+//--------------------------------------------------------------------------
 void qMRMLTreeView::setRootNode(vtkMRMLNode* rootNode)
 {
+  Q_D(qMRMLTreeView);
+  // Need to reset the filter to be able to find indexes from nodes that
+  // could potentially be filtered out.
+  this->sortFilterProxyModel()->setHideNodesUnaffiliatedWithNodeID(QString());
+  QModelIndex treeRootIndex;
+  if (rootNode == 0)
+    {
+    if (!d->ShowScene)
+      {
+      treeRootIndex = this->sortFilterProxyModel()->mrmlSceneIndex();
+      }
+    }
+  else
+    {
+    treeRootIndex = this->sortFilterProxyModel()->indexFromMRMLNode(rootNode);
+    if (d->ShowRootNode)
+      {
+      // Hide the siblings of the root node.
+      this->sortFilterProxyModel()->setHideNodesUnaffiliatedWithNodeID(
+        rootNode->GetID());
+      // The parent of the root node becomes the root for QTreeView.
+      treeRootIndex = treeRootIndex.parent();
+      rootNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(treeRootIndex);
+      }
+    }
   qvtkReconnect(this->rootNode(), rootNode, vtkCommand::ModifiedEvent,
                 this, SLOT(updateRootNode(vtkObject*)));
-  this->setRootIndex(this->sortFilterProxyModel()->indexFromMRMLNode(rootNode));
+  qDebug() << rootNode << treeRootIndex;
+  this->setRootIndex(treeRootIndex);
 }
 
 //--------------------------------------------------------------------------
 vtkMRMLNode* qMRMLTreeView::rootNode()const
 {
-  return this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
+  Q_D(const qMRMLTreeView);
+  vtkMRMLNode* treeRootNode =
+    this->sortFilterProxyModel()->mrmlNodeFromIndex(this->rootIndex());
+  if (d->ShowRootNode &&
+      this->mrmlScene() &&
+      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID()
+        .isEmpty())
+    {
+    return this->mrmlScene()->GetNodeByID(
+      this->sortFilterProxyModel()->hideNodesUnaffiliatedWithNodeID().toLatin1());
+    }
+  return treeRootNode;
 }
 
 //--------------------------------------------------------------------------
@@ -624,6 +705,7 @@ void qMRMLTreeView::mousePressEvent(QMouseEvent* e)
     {
     return;
     }
+  qDebug() << "Mouse press";
   // get the index of the current column
   QModelIndex index = this->indexAt(e->pos());
 

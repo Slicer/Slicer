@@ -95,6 +95,22 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// False by default (only nodes with HideFromEditors = 0 are visible)
   /// \sa vtkMRMLNode::GetHideFromEditors()
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
+  /// This property controls whether the scene is visible (is a top-level item).
+  /// It doesn't have any effect if \a rootNode() is not null.
+  /// Visible by default.
+  /// \sa setShowScene(), showScene(),
+  ///  showRootNode, setRootNode(), setRootIndex()
+  Q_PROPERTY(bool showScene READ showScene WRITE setShowScene)
+  /// This property controls whether the root node if any is visible.
+  /// When the root node is visible, it appears as a top-level item, if it is
+  /// hidden only its children are top-level items.
+  /// It doesn't have any effect if \a rootNode() is null.
+  /// Hidden by default.
+  /// Don't use qMRMLSortFilterProxyModel::HideNodesUnaffiliatedWithNodeID if
+  /// showRootNode is true, it is internally being used.
+  /// \sa setShowRootNode(), showRootNode(),
+  ///  showScene, setRootNode(), setRootIndex()
+  Q_PROPERTY(bool showRootNode READ showRootNode WRITE setShowRootNode)
 
 public:
   typedef QTreeView Superclass;
@@ -167,10 +183,22 @@ public:
   inline void setShowHidden(bool);
   inline bool showHidden()const;
 
-  /// Similar to setRootIndex(QModelIndex) but observe the ModifiedEvent of
-  /// the node to stay in sync.
-  /// A null node (default) means QModelIndex() is the root index.
-  Q_INVOKABLE void setRootNode(vtkMRMLNode* root);
+  /// Set the show root node flag.
+  /// \sa showRootNode, showRootNode()
+  void setShowRootNode(bool show);
+  /// Return the show root node flag.
+  /// \sa showRootNode, setShowRootNode()
+  bool showRootNode()const;
+
+  /// Set the show scene flag.
+  /// \sa showScene, showScene()
+  void setShowScene(bool show);
+  /// Return the show scene flag.
+  /// \sa showScene, setShowScene()
+  bool showScene()const;
+
+  /// Return the root node of the tree.
+  /// \sa setRootNode(), showRootNode
   vtkMRMLNode* rootNode()const;
 
   /// Retrieve the sortFilterProxyModel used to filter/sort
@@ -212,6 +240,12 @@ public slots:
   /// If the modelType doesn't match any known model, nothing
   /// will happen
   void setSceneModelType(const QString& modelType);
+
+  /// Similar to setRootIndex(QModelIndex) but observe the ModifiedEvent of
+  /// the node to stay in sync.
+  /// A null node (default) means QModelIndex() is the root index.
+  /// \sa rootNode(), setRootIndex(), showRootNode
+  void setRootNode(vtkMRMLNode* root);
 
   void deleteCurrentNode();
   void editCurrentNode();

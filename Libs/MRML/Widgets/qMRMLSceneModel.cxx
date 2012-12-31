@@ -540,6 +540,26 @@ bool qMRMLSceneModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParent)
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSceneModel::isParentNode(vtkMRMLNode* child, vtkMRMLNode* parent)const
+{
+  for (; child; child = this->parentNode(child))
+    {
+    if (child == parent)
+      {
+      return true;
+      }
+    }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSceneModel
+::isAffiliatedNode(vtkMRMLNode* nodeA, vtkMRMLNode* nodeB)const
+{
+  return this->isParentNode(nodeA, nodeB) || this->isParentNode(nodeB, nodeA);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
 {
   Q_D(qMRMLSceneModel);
