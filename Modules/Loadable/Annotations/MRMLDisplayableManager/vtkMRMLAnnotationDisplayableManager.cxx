@@ -242,11 +242,6 @@ void vtkMRMLAnnotationDisplayableManager::UpdateFromMRML()
     {
     return;
     }
-  // check if there are any of these nodes in the scene
-  if (this->GetMRMLScene()->GetNumberOfNodesByClass(this->m_Focus) < 1)
-    {
-    return;
-    }
   // loop over the nodes for which this manager provides widgets
   this->GetMRMLScene()->InitTraversal();
   vtkMRMLNode *node = this->GetMRMLScene()->GetNextNodeByClass(this->m_Focus);
