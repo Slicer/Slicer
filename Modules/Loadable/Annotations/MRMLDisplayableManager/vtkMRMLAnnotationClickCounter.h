@@ -32,7 +32,13 @@ public:
   vtkTypeRevisionMacro(vtkMRMLAnnotationClickCounter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  /// Check if enough clicks are counted
+  /// Increase the click counter and return the number of clicks.
+  /// \sa HasEnoughClicks()
+  int Click();
+
+  /// Check if enough clicks are counted and reset the click number if it
+  /// is equal to \a clicks
+  /// \sa Click(), Reset()
   bool HasEnoughClicks(int clicks);
 
   /// Reset the click counter

@@ -34,14 +34,20 @@ void vtkMRMLAnnotationClickCounter::Reset()
 }
 
 //---------------------------------------------------------------------------
+int vtkMRMLAnnotationClickCounter::Click()
+{
+  return ++this->m_Clicks;
+}
+
+//---------------------------------------------------------------------------
 bool vtkMRMLAnnotationClickCounter::HasEnoughClicks(int clicks)
 {
-  this->m_Clicks++;
+  this->Click();
 
   if (this->m_Clicks==clicks)
     {
-      this->Reset();
-      return true;
+    this->Reset();
+    return true;
     }
 
   return false;
