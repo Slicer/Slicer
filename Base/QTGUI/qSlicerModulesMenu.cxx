@@ -402,6 +402,7 @@ void qSlicerModulesMenu::addModule(qSlicerAbstractCoreModule* moduleToAdd)
   // Maybe the module was set current before it was added into the menu
   if (d->CurrentModule == moduleAction->data().toString())
     {
+    moduleAction->trigger();
     emit currentModuleChanged(d->CurrentModule);
     }
 }
