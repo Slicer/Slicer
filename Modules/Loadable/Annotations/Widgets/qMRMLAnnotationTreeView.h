@@ -74,7 +74,6 @@ public slots:
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
 
 signals:
-  void currentNodeChanged(vtkMRMLNode* node);
   void onPropertyEditButtonClicked(QString id);
 
 protected slots:
