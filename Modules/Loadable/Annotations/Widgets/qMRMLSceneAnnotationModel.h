@@ -59,6 +59,7 @@ public:
   };
 
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  virtual bool canBeAParent(vtkMRMLNode* node)const;
 
 protected:
 

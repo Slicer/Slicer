@@ -228,6 +228,14 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
 }
 
 //------------------------------------------------------------------------------
+bool qMRMLSceneAnnotationModel::canBeAParent(vtkMRMLNode* node)const
+{
+  bool res = this->Superclass::canBeAParent(node) ||
+    (node && node->IsA("vtkMRMLAnnotationNode"));
+  return res;
+}
+
+//------------------------------------------------------------------------------
 vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
 {
   if (node == NULL)
@@ -243,7 +251,8 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
       displayableNode->GetID())
     {
     // get the displayable hierarchy node associated with this displayable node
-    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(displayableNode->GetScene(), displayableNode->GetID());
+    displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(
+      displayableNode->GetScene(), displayableNode->GetID());
 
     if (displayableHierarchyNode)
       {
@@ -252,7 +261,15 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
         // this is a hidden hierarchy node, so we do not want to display it
         // instead, we will return the parent of the hidden hierarchy node
         // to be used as the parent for the displayableNode
-        return displayableHierarchyNode->GetParentNode();
+        vtkMRMLDisplayableHierarchyNode* parent =
+          vtkMRMLDisplayableHierarchyNode::SafeDownCast(
+            displayableHierarchyNode->GetParentNode());
+        if (parent && parent->GetHideFromEditors() &&
+            parent->GetDisplayableNode())
+          {
+          return parent->GetDisplayableNode();
+          }
+        return parent;
         }
       return displayableHierarchyNode;
       }
