@@ -18,39 +18,34 @@
 
 ==============================================================================*/
 
-#ifndef __qMRMLSceneDisplayableModel_p_h
-#define __qMRMLSceneDisplayableModel_p_h
-
-// Qt includes
+#ifndef __qMRMLSceneAnnotationModel_p_h
+#define __qMRMLSceneAnnotationModel_p_h
 
 // qMRML includes
-#include "qMRMLSceneDisplayableModel.h"
-#include "qMRMLSceneHierarchyModel_p.h"
-
-// MRML includes
-class vtkMRMLDisplayNode;
-class vtkMRMLHierarchyNode;
+#include "qMRMLSceneAnnotationModel.h"
+#include "qMRMLSceneDisplayableModel_p.h"
 
 //------------------------------------------------------------------------------
-// qMRMLSceneDisplayableModelPrivate
+// qMRMLSceneAnnotationModelPrivate
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-class QMRML_WIDGETS_EXPORT qMRMLSceneDisplayableModelPrivate
-  : public qMRMLSceneHierarchyModelPrivate
+class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModelPrivate
+  : public qMRMLSceneDisplayableModelPrivate
 {
 protected:
-  Q_DECLARE_PUBLIC(qMRMLSceneDisplayableModel);
+  Q_DECLARE_PUBLIC(qMRMLSceneAnnotationModel);
 public:
-  typedef qMRMLSceneHierarchyModelPrivate Superclass;
-  qMRMLSceneDisplayableModelPrivate(qMRMLSceneDisplayableModel& object);
+  typedef qMRMLSceneDisplayableModelPrivate Superclass;
+  qMRMLSceneAnnotationModelPrivate(qMRMLSceneAnnotationModel& object);
   virtual void init();
 
-  virtual vtkMRMLHierarchyNode* CreateHierarchyNode()const;
-  vtkMRMLDisplayNode* displayNode(vtkMRMLNode* node)const;
+  int LockColumn;
+  int EditColumn;
+  int ValueColumn;
+  int TextColumn;
 
-  int ColorColumn;
-  int OpacityColumn;
+  vtkSlicerAnnotationModuleLogic* AnnotationLogic;
 };
 
 #endif

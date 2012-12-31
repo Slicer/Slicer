@@ -20,42 +20,60 @@
 
 // Qt includes
 #include <QDebug>
-#include <QMap>
-#include <QMimeData>
-#include <QSharedPointer>
-#include <QStack>
 #include <QStringList>
-#include <QVector>
 
 // Annotations includes
-#include "qMRMLSceneAnnotationModel.h"
+#include "qMRMLSceneAnnotationModel_p.h"
 #include "vtkMRMLAnnotationHierarchyNode.h"
 #include "vtkMRMLAnnotationSnapshotNode.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 
 // MRML includes
 #include <vtkMRMLScene.h>
-#include <vtkMRMLNode.h>
-#include <vtkMRMLAnnotationNode.h>
-#include <vtkMRMLDisplayableHierarchyNode.h>
 
-// VTK includes
-#include <vtkVariantArray.h>
-#include <typeinfo>
+//------------------------------------------------------------------------------
+qMRMLSceneAnnotationModelPrivate
+::qMRMLSceneAnnotationModelPrivate(qMRMLSceneAnnotationModel& object)
+  : qMRMLSceneDisplayableModelPrivate(object)
+{
+  this->LockColumn = -1;
+  this->EditColumn = -1;
+  this->ValueColumn = -1;
+  this->TextColumn = -1;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModelPrivate::init()
+{
+  Q_Q(qMRMLSceneAnnotationModel);
+  this->Superclass::init();
+
+  q->setCheckableColumn(0);
+  q->setVisibilityColumn(1);
+  q->setLockColumn(2);
+  q->setEditColumn(3);
+  q->setValueColumn(4);
+  q->setNameColumn(5);
+  q->setTextColumn(6);
+
+  q->setHorizontalHeaderLabels(
+    QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Name" << "Description");
+}
 
 //------------------------------------------------------------------------------
 qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(QObject *vparent)
-  : qMRMLSceneDisplayableModel(vparent)
+  : Superclass(new qMRMLSceneAnnotationModelPrivate(*this), vparent)
 {
-  this->setListenNodeModifiedEvent(true);
-  this->setNameColumn(5);
-  this->setVisibilityColumn(-1);
-  this->setOpacityColumn(-1);
-  this->setCheckableColumn(qMRMLSceneAnnotationModel::CheckedColumn);
+  Q_D(qMRMLSceneAnnotationModel);
+  d->init();
+}
 
-  this->setColumnCount(7);
-  this->setHorizontalHeaderLabels(
-    QStringList() << "" << "Vis" << "Lock" << "Edit" << "Value" << "Name" << "Description");
+//------------------------------------------------------------------------------
+qMRMLSceneAnnotationModel::qMRMLSceneAnnotationModel(
+  qMRMLSceneAnnotationModelPrivate* pimpl, QObject *vparent)
+  : Superclass(pimpl, vparent)
+{
+  // init() is called by derived class.
 }
 
 //------------------------------------------------------------------------------
@@ -94,112 +112,113 @@ void qMRMLSceneAnnotationModel::updateNodeFromItemData(vtkMRMLNode* node, QStand
       } // for loop
     }// if hierarchyNode
 
-  switch (item->column())
+  if (item->column() == this->textColumn())
     {
-    case qMRMLSceneAnnotationModel::TextColumn:
+    if (annotationNode)
       {
-      if (annotationNode)
+      // if we have an annotation node, the text can be changed by editing the textcolumn
+      annotationNode->SetText(0,item->text().toLatin1(),0,1);
+      if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
         {
-        // if we have an annotation node, the text can be changed by editing the textcolumn
-        annotationNode->SetText(0,item->text().toLatin1(),0,1);
-        if (annotationNode->IsA("vtkMRMLAnnotationFiducialNode"))
-          {
-          // also set the name
-          //annotationNode->SetName(item->text().toLatin1());
-          }
+        // also set the name
+        //annotationNode->SetName(item->text().toLatin1());
         }
-      else if (hierarchyNode)
-        {
-        // if we have a hierarchy node, the description can be changed by editing the textcolumn
-        hierarchyNode->SetDescription(item->text().toLatin1());
-        }
-      else if (snapshotNode)
-        {
-        // if we have a snapshot node, the name can be changed by editing the textcolumn
-        snapshotNode->SetName(item->text().toLatin1());
-        }
-      break;
       }
-    default:
-      break;
+    else if (hierarchyNode)
+      {
+      // if we have a hierarchy node, the description can be changed by editing the textcolumn
+      hierarchyNode->SetDescription(item->text().toLatin1());
+      }
+    else if (snapshotNode)
+      {
+      // if we have a snapshot node, the name can be changed by editing the textcolumn
+      snapshotNode->SetName(item->text().toLatin1());
+      }
     }
 }
 
 //------------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column)
 {
+  Q_D(qMRMLSceneAnnotationModel);
   if (!node)
     {
     return;
     }
-  this->qMRMLSceneDisplayableModel::updateItemDataFromNode(item, node, column);
+  this->Superclass::updateItemDataFromNode(item, node, column);
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(node);
   vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(node);
-  switch (column)
+  if (column == this->visibilityColumn())
     {
-    case qMRMLSceneAnnotationModel::VisibilityColumn:
-      // the visibility icon
-      if (annotationNode)
+    // the visibility icon
+    if (annotationNode)
+      {
+      if (annotationNode->GetDisplayVisibility())
         {
-        if (annotationNode->GetDisplayVisibility())
-          {
-          item->setData(QPixmap(":/Icons/Small/SlicerVisible.png"),Qt::DecorationRole);
-          }
-        else
-          {
-          item->setData(QPixmap(":/Icons/Small/SlicerInvisible.png"),Qt::DecorationRole);
-          }
+        item->setData(QPixmap(":/Icons/Small/SlicerVisible.png"),Qt::DecorationRole);
         }
-      else if (hnode)
+      else
         {
-        // don't show anything, handle it in property dialogue
+        item->setData(QPixmap(":/Icons/Small/SlicerInvisible.png"),Qt::DecorationRole);
         }
-      break;
-    case qMRMLSceneAnnotationModel::LockColumn:
-      // the lock/unlock icon
-
-      if (annotationNode)
+      }
+    else if (hnode)
+      {
+      // don't show anything, handle it in property dialogue
+      }
+    }
+  if (column == this->lockColumn())
+    {
+    // the lock/unlock icon
+    if (annotationNode)
+      {
+      if (annotationNode->GetLocked())
         {
-        if (annotationNode->GetLocked())
-          {
-          item->setData(QPixmap(":/Icons/Small/SlicerLock.png"),Qt::DecorationRole);
-          }
-        else
-          {
-          item->setData(QPixmap(":/Icons/Small/SlicerUnlock.png"),Qt::DecorationRole);
-          }
+        item->setData(QPixmap(":/Icons/Small/SlicerLock.png"),Qt::DecorationRole);
         }
-      else if (hnode)
+      else
         {
-        // don't show anything, handle it in property dialogue
+        item->setData(QPixmap(":/Icons/Small/SlicerUnlock.png"),Qt::DecorationRole);
         }
-      break;
-    case qMRMLSceneAnnotationModel::EditColumn:
-        // the annotation type icon
-        item->setData(QPixmap(this->m_Logic->GetAnnotationIcon(node->GetID())),Qt::DecorationRole);
-        break;
-    case qMRMLSceneAnnotationModel::ValueColumn:
-      if (annotationNode)
-        {
-        // the annotation measurement
-        item->setText(QString(this->m_Logic->GetAnnotationMeasurement(annotationNode->GetID(),false)));
-        }
-      else if (hnode)
-        {
-        item->setText(QString(""));
-        }
-      break;
-    case qMRMLSceneAnnotationModel::TextColumn:
-      if (annotationNode)
-        {
-        // the annotation text
-        item->setText(QString(this->m_Logic->GetAnnotationText(annotationNode->GetID())));
-        }
-      else if (hnode)
-        {
-        item->setText(QString(node->GetDescription()));
-        }
-      break;
+      }
+    else if (hnode)
+      {
+      // don't show anything, handle it in property dialogue
+      }
+    }
+  if (column == this->editColumn())
+    {
+    // the annotation type icon
+    item->setData(
+      QPixmap(d->AnnotationLogic->GetAnnotationIcon(node)), Qt::DecorationRole);
+    }
+  if (column == this->valueColumn())
+    {
+    if (annotationNode)
+      {
+      // the annotation measurement
+      item->setText(
+        QString(d->AnnotationLogic->GetAnnotationMeasurement(
+                  annotationNode->GetID(),false)));
+      }
+    else if (hnode)
+      {
+      item->setText(QString(""));
+      }
+    }
+  if (column == this->textColumn())
+    {
+    if (annotationNode)
+      {
+      // the annotation text
+      item->setText(
+        QString(d->AnnotationLogic->GetAnnotationText(
+                  annotationNode->GetID())));
+      }
+    else if (hnode)
+      {
+      item->setText(QString(node->GetDescription()));
+      }
     }
 }
 
@@ -211,15 +230,16 @@ QFlags<Qt::ItemFlag> qMRMLSceneAnnotationModel::nodeFlags(vtkMRMLNode* node, int
   flags = flags & ~Qt::ItemIsEditable;
   // and set it to the text and names columns
   if (column == this->nameColumn() ||
-      column == qMRMLSceneAnnotationModel::TextColumn)
+      column == this->textColumn())
     {
     flags = flags | Qt::ItemIsEditable;
     }
   // if this is an annotation with a hierarchy node that it's a 1:1 node, don't allow
   // dropping
-  vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode = NULL;
-  displayableHierarchyNode = vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(node->GetScene(), node->GetID());
-  if (displayableHierarchyNode  && 
+  vtkMRMLDisplayableHierarchyNode *displayableHierarchyNode =
+    vtkMRMLDisplayableHierarchyNode::GetDisplayableHierarchyNode(
+      node->GetScene(), node->GetID());
+  if (displayableHierarchyNode  &&
       !displayableHierarchyNode->GetAllowMultipleChildren())
     {
     flags = flags & ~Qt::ItemIsDropEnabled;
@@ -288,17 +308,88 @@ vtkMRMLNode* qMRMLSceneAnnotationModel::parentNode(vtkMRMLNode* node)const
   return 0;
 }
 
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::lockColumn()const
+{
+  Q_D(const qMRMLSceneAnnotationModel);
+  return d->LockColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setLockColumn(int column)
+{
+  Q_D(qMRMLSceneAnnotationModel);
+  d->LockColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::editColumn()const
+{
+  Q_D(const qMRMLSceneAnnotationModel);
+  return d->EditColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setEditColumn(int column)
+{
+  Q_D(qMRMLSceneAnnotationModel);
+  d->EditColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::valueColumn()const
+{
+  Q_D(const qMRMLSceneAnnotationModel);
+  return d->ValueColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setValueColumn(int column)
+{
+  Q_D(qMRMLSceneAnnotationModel);
+  d->ValueColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::textColumn()const
+{
+  Q_D(const qMRMLSceneAnnotationModel);
+  return d->TextColumn;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSceneAnnotationModel::setTextColumn(int column)
+{
+  Q_D(qMRMLSceneAnnotationModel);
+  d->TextColumn = column;
+  this->updateColumnCount();
+}
+
+//------------------------------------------------------------------------------
+int qMRMLSceneAnnotationModel::maxColumnId()const
+{
+  Q_D(const qMRMLSceneAnnotationModel);
+  int maxId = this->Superclass::maxColumnId();
+  maxId = qMax(maxId, d->LockColumn);
+  maxId = qMax(maxId, d->EditColumn);
+  maxId = qMax(maxId, d->ValueColumn);
+  maxId = qMax(maxId, d->TextColumn);
+  return maxId;
+}
 
 //-----------------------------------------------------------------------------
 /// Set and observe the logic
 //-----------------------------------------------------------------------------
 void qMRMLSceneAnnotationModel::setLogic(vtkSlicerAnnotationModuleLogic* logic)
 {
+  Q_D(qMRMLSceneAnnotationModel);
   if (!logic)
     {
     return;
     }
 
-  this->m_Logic = logic;
-
+  d->AnnotationLogic = logic;
 }

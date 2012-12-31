@@ -27,6 +27,7 @@
 // Annotations includes
 #include "qSlicerAnnotationsModuleWidgetsExport.h"
 class qMRMLAnnotationTreeViewPrivate;
+class qMRMLSceneAnnotationModel;
 
 // Logic includes
 class vtkSlicerAnnotationModuleLogic;
@@ -67,6 +68,8 @@ public:
 
   void setSelectedNode(const char* id);
 
+  qMRMLSceneAnnotationModel* annotationModel()const;
+
 public slots:
   void onSelectionChanged(const QItemSelection& index,const QItemSelection& beforeIndex);
 
@@ -85,14 +88,13 @@ protected:
   #endif
   virtual void mousePressEvent(QMouseEvent* event);
 
+  virtual void toggleVisibility(const QModelIndex& index);
+
 private:
   Q_DECLARE_PRIVATE(qMRMLAnnotationTreeView);
   Q_DISABLE_COPY(qMRMLAnnotationTreeView);
 
   vtkSlicerAnnotationModuleLogic* m_Logic;
-  
-  // toggle the visibility of an annotation
-  void onVisibilityColumnClicked(vtkMRMLNode* node);
 
   // toggle un-/lock of an annotation
   void onLockColumnClicked(vtkMRMLNode* node);

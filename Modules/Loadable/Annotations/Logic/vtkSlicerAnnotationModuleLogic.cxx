@@ -2101,21 +2101,18 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
     {
     return 0;
     }
-  // extra check: get node by id can crash if an old scene with a selection
-  // node with the old style id of vtkMRMLSelectionNode1 is opened, check that
-  // the passed in id string is an annotation node id string
-  std::string idString = std::string(id);
-  if (idString.find("vtkMRMLAnnotation") == std::string::npos)
-    {
-    return 0;
-    }
   vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(id);
-  if (!mrmlNode)
-    {
-    return 0;
-    }
+  return this->GetAnnotationIcon(mrmlNode);
+}
+
+//---------------------------------------------------------------------------
+// Return the icon of an annotation MRML Node
+//---------------------------------------------------------------------------
+const char * vtkSlicerAnnotationModuleLogic
+::GetAnnotationIcon(vtkMRMLNode* mrmlNode)
+{
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
-      mrmlNode);
+    mrmlNode);
 
   if (annotationNode)
     {
@@ -2123,8 +2120,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
     }
 
   vtkMRMLAnnotationHierarchyNode* hierarchyNode =
-      vtkMRMLAnnotationHierarchyNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(id));
+    vtkMRMLAnnotationHierarchyNode::SafeDownCast(mrmlNode);
 
   if (hierarchyNode)
     {
@@ -2132,8 +2128,7 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
     }
 
   vtkMRMLAnnotationSnapshotNode* snapshotNode =
-      vtkMRMLAnnotationSnapshotNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(id));
+    vtkMRMLAnnotationSnapshotNode::SafeDownCast(mrmlNode);
 
   if (snapshotNode)
     {
@@ -2141,7 +2136,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationIcon(const char* id)
     }
 
   return 0;
-
 }
 
 //---------------------------------------------------------------------------

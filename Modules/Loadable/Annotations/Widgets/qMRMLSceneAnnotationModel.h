@@ -35,45 +35,90 @@ class vtkSlicerAnnotationModuleLogic;
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_Annotation
+/// \sa vtkMRMLAnnotationNode, vtkSlicerAnnotationLogic
 class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLSceneAnnotationModel
   : public qMRMLSceneDisplayableModel
 {
   Q_OBJECT
+  /// This property holds the column index where the annotation lock property is
+  /// controlled.
+  /// 2 by default.
+  /// \sa lockColumn(), setLockColumn(),
+  /// editColumn, valueColumn, textColumn,
+  /// vtkMRMLAnnotationNode::Locked
+  Q_PROPERTY (int lockColumn READ lockColumn WRITE setLockColumn)
+  /// This property holds the column index where the button to edit annotation
+  /// node advanced property is displayed.
+  /// 3 by default.
+  /// \sa editColumn(), setEditColumn(),
+  /// lockColumn, valueColumn, textColumn
+  Q_PROPERTY (int editColumn READ editColumn WRITE setEditColumn)
+  /// This property holds the column index where the annotation measurement is
+  /// displayed.
+  /// 4 by default.
+  /// \sa valueColumn(), setValueColumn(),
+  /// lockColumn, editColumn, textColumn
+  Q_PROPERTY (int valueColumn READ valueColumn WRITE setValueColumn)
+  /// This property holds the column index where the annotation description is
+  /// displayed.
+  /// 6 by default.
+  /// \sa textColumn(), setTextColumn(),
+  /// lockColumn, editColumn, valueColumn
+  Q_PROPERTY (int textColumn READ textColumn WRITE setTextColumn)
 
 public:
+  typedef qMRMLSceneDisplayableModel Superclass;
   qMRMLSceneAnnotationModel(QObject *parent=0);
   virtual ~qMRMLSceneAnnotationModel();
 
   // Register the logic
   void setLogic(vtkSlicerAnnotationModuleLogic* logic);
 
-  // Enum for the different columns
-  enum Columns{
-    CheckedColumn = 0,
-    VisibilityColumn = 1,
-    LockColumn = 2,
-    EditColumn = 3,
-    NameColumn = 5,
-    ValueColumn = 4,
-    TextColumn = 6
-  };
+  /// Return the lock column.
+  /// \sa lockColumn, setLockColumn
+  int lockColumn()const;
+  /// Set the lock column. Resizes the number of columns if needed.
+  /// \sa lockColumn, lockColumn()
+  void setLockColumn(int column);
+
+  /// Return the edit column.
+  /// \sa editColumn, setEditColumn
+  int editColumn()const;
+  /// Set the edit column. Resizes the number of columns if needed.
+  /// \sa editColumn, editColumn()
+  void setEditColumn(int column);
+
+  /// Return the value column.
+  /// \sa valueColumn, setValueColumn
+  int valueColumn()const;
+  /// Set the value column. Resizes the number of columns if needed.
+  /// \sa valueColumn, valueColumn()
+  void setValueColumn(int column);
+
+  /// Return the text column.
+  /// \sa textColumn, setTextColumn
+  int textColumn()const;
+  /// Set the text column. Resizes the number of columns if needed.
+  /// \sa textColumn, textColumn()
+  void setTextColumn(int column);
 
   virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
   virtual bool canBeAParent(vtkMRMLNode* node)const;
 
 protected:
+  qMRMLSceneAnnotationModel(qMRMLSceneAnnotationModelPrivate* pimpl,
+                             QObject *parent=0);
 
   virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
 
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
 
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
+  virtual int maxColumnId()const;
 
 private:
+  Q_DECLARE_PRIVATE(qMRMLSceneAnnotationModel);
   Q_DISABLE_COPY(qMRMLSceneAnnotationModel);
-
-  vtkSlicerAnnotationModuleLogic* m_Logic;
-
 };
 
 #endif
