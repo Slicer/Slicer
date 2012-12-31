@@ -335,24 +335,24 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
 endif()
 
-# Projects that Slicer needs to download/configure/build...
-if(Slicer_ADDITIONAL_DEPENDENCIES)
-  foreach(additional_dependency ${Slicer_ADDITIONAL_DEPENDENCIES})
-    list(APPEND ep_superbuild_extra_args
-      -D${additional_dependency}_DIR:PATH=${${additional_dependency}_DIR})
-  endforeach()
-endif()
-
-# Projects that Slicer needs to include
-if(Slicer_ADDITIONAL_PROJECTS)
-  # needed by packaging
-  list(APPEND ep_superbuild_extra_args
-    -DSlicer_ADDITIONAL_PROJECTS:STRING=${Slicer_ADDITIONAL_PROJECTS})
-  # needed to do find_package within Slicer
+# Projects that Slicer needs to download/configure/build/install...
+list(APPEND Slicer_ADDITIONAL_PROJECTS ${Slicer_ADDITIONAL_DEPENDENCIES})
+if (Slicer_ADDITIONAL_PROJECTS)
+  list(REMOVE_DUPLICATES Slicer_ADDITIONAL_PROJECTS)
+  set(Slicer_ADDITIONAL_PROJECTS_STRING)
   foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
+    # needed to do find_package within Slicer
     list(APPEND ep_superbuild_extra_args
       -D${additional_project}_DIR:PATH=${${additional_project}_DIR})
+    if(Slicer_ADDITIONAL_PROJECTS_STRING)
+      set(Slicer_ADDITIONAL_PROJECTS_STRING "${Slicer_ADDITIONAL_PROJECTS_STRING}^^${additional_project}")
+    else()
+      set(Slicer_ADDITIONAL_PROJECTS_STRING ${additional_project})
+    endif()
   endforeach()
+  # needed for packaging
+  list(APPEND ep_superbuild_extra_args
+    -DSlicer_ADDITIONAL_PROJECTS:STRING=${Slicer_ADDITIONAL_PROJECTS_STRING})
 endif()
 
 # Set CMake OSX variable to pass down the external project
