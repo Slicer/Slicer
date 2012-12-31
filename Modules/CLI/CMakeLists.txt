@@ -11,13 +11,6 @@ set(cli_modules
   CheckerBoardFilter
 #  ConnectedComponent
   CurvatureAnisotropicDiffusion
-  DiffusionTensorScalarMeasurements
-  DiffusionWeightedVolumeMasking
-  DWIJointRicianLMMSEFilter
-  DWIRicianLMMSEFilter
-  DWIToDTIEstimation
-  DWIUnbiasedNonLocalMeansFilter
-  DTIImportExport
   ExecutionModelTour
   ExtractSkeleton
   FreesurferSurfaceSectionExtraction
@@ -38,19 +31,31 @@ set(cli_modules
   N4ITKBiasFieldCorrection
   OrientScalarVolume
   ProbeVolumeWithModel
-  ResampleDTIVolume
-  ResampleScalarVectorDWIVolume # Depends on DiffusionApplications
+  ResampleDTIVolume # Needed by ResampleScalarVectorDWIVolume
+  ResampleScalarVectorDWIVolume # Depends on DiffusionApplications, needed by CropVolume
   RobustStatisticsSegmenter
   SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
   ThresholdScalarVolume
-  TractographyLabelMapSeeding
   VotingBinaryHoleFillingImageFilter
   )
 
 if(Slicer_BUILD_DICOM_SUPPORT)
   list(APPEND cli_modules CreateDICOMSeries)
   list(APPEND cli_modules PETStandardUptakeValueComputation)
+endif()
+
+if(Slicer_BUILD_DIFFUSION_SUPPORT)
+  list(APPEND cli_modules
+    DiffusionTensorScalarMeasurements
+    DiffusionWeightedVolumeMasking
+    DWIJointRicianLMMSEFilter
+    DWIRicianLMMSEFilter
+    DWIToDTIEstimation
+    DWIUnbiasedNonLocalMeansFilter
+    DTIImportExport
+    TractographyLabelMapSeeding
+    )
 endif()
 
 if(Slicer_BUILD_LEGACY_CLI)

@@ -58,6 +58,7 @@
 #endif
 
 #cmakedefine Slicer_BUILD_DICOM_SUPPORT
+#cmakedefine Slicer_BUILD_DIFFUSION_SUPPORT
 
 #cmakedefine Slicer_BUILD_CLI_SUPPORT
 #cmakedefine Slicer_BUILD_CLI

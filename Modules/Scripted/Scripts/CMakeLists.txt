@@ -48,13 +48,17 @@ ctkMacroCompilePythonScript(
   NO_INSTALL_SUBDIR
   )
 
-add_subdirectory(
-  DICOM2FullBrainTractography
-  )
+if(Slicer_BUILD_DICOM_SUPPORT)
+  if(Slicer_BUILD_DIFFUSION_SUPPORT)
+    add_subdirectory(
+      DICOM2FullBrainTractography
+      )
+  endif()
 
-add_subdirectory(
-  DICOMPlugins
-  )
+  add_subdirectory(
+    DICOMPlugins
+    )
+endif()
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
   add_subdirectory(Testing)

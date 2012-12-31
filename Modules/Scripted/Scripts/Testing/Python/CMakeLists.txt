@@ -1,8 +1,14 @@
 set(extensions DataProbe
-    DICOM
     LabelStatistics
     PerformanceTests
-    SampleData)
+    SampleData
+    )
+
+if(Slicer_BUILD_DICOM_SUPPORT)
+  list(APPEND extensions
+      DICOM
+      )
+endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   list(APPEND extensions
