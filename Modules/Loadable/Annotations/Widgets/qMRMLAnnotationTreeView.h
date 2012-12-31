@@ -66,8 +66,6 @@ public:
 
   void selectedAsCollection(vtkCollection* collection);
 
-  void setSelectedNode(const char* id);
-
   qMRMLSceneAnnotationModel* annotationModel()const;
 
 public slots:

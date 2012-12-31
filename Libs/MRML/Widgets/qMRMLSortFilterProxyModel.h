@@ -156,7 +156,7 @@ public:
   QString hideNodesUnaffiliatedWithNodeID()const;
 
   /// Return the scene model used as input if any.
-  qMRMLSceneModel* sceneModel()const;
+  Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
 
 public slots:
    void setShowHidden(bool);

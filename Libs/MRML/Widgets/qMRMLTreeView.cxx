@@ -364,6 +364,14 @@ vtkMRMLNode* qMRMLTreeView::currentNode()const
 }
 
 //------------------------------------------------------------------------------
+void qMRMLTreeView::setCurrentNode(vtkMRMLNode* node)
+{
+  Q_D(const qMRMLTreeView);
+  QModelIndex nodeIndex = d->SortFilterModel->indexFromMRMLNode(node);
+  this->setCurrentIndex(nodeIndex);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
 {
   Q_D(qMRMLTreeView);

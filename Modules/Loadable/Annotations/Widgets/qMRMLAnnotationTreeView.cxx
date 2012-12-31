@@ -480,19 +480,6 @@ void qMRMLAnnotationTreeView::mouseMoveEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void qMRMLAnnotationTreeView::setSelectedNode(const char* id)
-{
-  Q_D(qMRMLAnnotationTreeView);
-
-  vtkMRMLNode* node = this->mrmlScene()->GetNodeByID(id);
-
-  if (node)
-    {
-    this->setCurrentIndex(d->SortFilterModel->indexFromMRMLNode(node));
-    }
-}
-
-//------------------------------------------------------------------------------
 void qMRMLAnnotationTreeView::hideScene()
 {
   Q_D(qMRMLAnnotationTreeView);

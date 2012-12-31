@@ -247,6 +247,9 @@ public slots:
   /// \sa rootNode(), setRootIndex(), showRootNode
   void setRootNode(vtkMRMLNode* root);
 
+  /// Change the current view node to \a node.
+  /// \sa currentNode
+  void setCurrentNode(vtkMRMLNode* node);
   void deleteCurrentNode();
   void editCurrentNode();
   void renameCurrentNode();
