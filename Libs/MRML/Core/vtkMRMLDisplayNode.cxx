@@ -738,3 +738,11 @@ bool vtkMRMLDisplayNode::IsDisplayableInView(const char* viewNodeID)const
   return this->GetNumberOfViewNodeIDs() == 0
     || this->IsViewNodeIDPresent(viewNodeID);
 }
+
+//-------------------------------------------------------
+bool vtkMRMLDisplayNode::GetVisibility(const char* viewNodeID)
+{
+  bool res = this->GetVisibility() != 0;
+  res = res && this->IsDisplayableInView(viewNodeID);
+  return res;
+}

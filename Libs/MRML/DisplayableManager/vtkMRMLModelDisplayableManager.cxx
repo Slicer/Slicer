@@ -1391,9 +1391,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
       vtkImageActor *imageActor = vtkImageActor::SafeDownCast(prop);
       prop->SetUserMatrix(transformToWorld);
 
-      bool visible = modelDisplayNode->GetVisibility() &&
-                     modelDisplayNode->IsDisplayableInView(
-                       this->GetMRMLViewNode()->GetID());
+      bool visible = modelDisplayNode->GetVisibility(this->GetMRMLViewNode()->GetID());
       prop->SetVisibility(visible);
       this->Internal->DisplayedVisibility[modelDisplayNode->GetID()] = visible;
 

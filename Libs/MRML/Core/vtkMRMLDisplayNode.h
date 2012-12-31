@@ -147,6 +147,12 @@ public:
   /// Set the visibility of the display node.
   /// \sa Visibility, SetVisibility(), GetVisibility(),
   vtkBooleanMacro(Visibility, int);
+  /// Return true if the display node should be visible in the view node.
+  /// To be visible in the view, the node needs to be visible
+  /// (\a Visibility == 1) and the view ID must be in the ViewNodeIDs list
+  /// or the list must be empty (visible in all views).
+  /// \sa Visibility, ViewNodeIDs
+  virtual bool GetVisibility(const char* viewNodeID);
 
   /// Set the clipping of the display node.
   /// \sa Clipping, GetClipping(), ClippingOn(), ClippingOff()
