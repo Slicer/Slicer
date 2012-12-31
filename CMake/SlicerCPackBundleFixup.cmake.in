@@ -230,6 +230,16 @@ function(fixup_bundle_with_plugins app)
   endif()
   list(APPEND libs_path "@Slicer_BINARY_DIR@/@Slicer_QtPlugins_DIR@")
 
+  if (Slicer_ADDITIONAL_PROJECTS)
+    foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
+      find_package(${additional_project})
+      if (${additional_project}_FOUND)
+        include(${${additional_project}_USE_FILE})
+        list(APPEND libs_path "${${additional_project}_LIBRARY_DIRS}")
+      endif()
+    endforeach()
+  endif()
+
   list(REMOVE_DUPLICATES libs_path)
 
   set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")

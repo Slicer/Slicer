@@ -167,6 +167,10 @@ if(Slicer_BUILD_DWIConvert)
   list(APPEND Slicer_DEPENDENCIES DWIConvert)
 endif()
 
+if(DEFINED Slicer_ADDITIONAL_DEPENDENCIES)
+  list(APPEND Slicer_DEPENDENCIES ${Slicer_ADDITIONAL_DEPENDENCIES})
+endif()
+
 SlicerMacroCheckExternalProjectDependency(Slicer)
 
 #-----------------------------------------------------------------------------
@@ -214,6 +218,8 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
   Slicer_BUILD_SlicerWebGLExport
+  Slicer_BUILD_Extensions
+  Slicer_BUILD_SkullStripper
   )
 
 set(ep_superbuild_boolean_args)
@@ -327,6 +333,26 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND ep_superbuild_extra_args
     -DqMidasAPI_DIR:PATH=${qMidasAPI_DIR}
     )
+endif()
+
+# Projects that Slicer needs to download/configure/build...
+if(Slicer_ADDITIONAL_DEPENDENCIES)
+  foreach(additional_dependency ${Slicer_ADDITIONAL_DEPENDENCIES})
+    list(APPEND ep_superbuild_extra_args
+      -D${additional_dependency}_DIR:PATH=${${additional_dependency}_DIR})
+  endforeach()
+endif()
+
+# Projects that Slicer needs to include
+if(Slicer_ADDITIONAL_PROJECTS)
+  # needed by packaging
+  list(APPEND ep_superbuild_extra_args
+    -DSlicer_ADDITIONAL_PROJECTS:STRING=${Slicer_ADDITIONAL_PROJECTS})
+  # needed to do find_package within Slicer
+  foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
+    list(APPEND ep_superbuild_extra_args
+      -D${additional_project}_DIR:PATH=${${additional_project}_DIR})
+  endforeach()
 endif()
 
 # Set CMake OSX variable to pass down the external project
