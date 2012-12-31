@@ -155,7 +155,7 @@ void qSlicerCLIModule::setXmlModuleDescription(const QString& xmlModuleDescripti
     {
     d->Index = -1;
     }
-  d->Categories = QStringList() << QString::fromStdString(desc.GetCategory());
+  d->Categories = QStringList() << QString::fromStdString(desc.GetCategory()).split(';');
 
   d->ProcessInformation = desc.GetProcessInformation();
 
