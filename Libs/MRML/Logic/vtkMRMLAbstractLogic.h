@@ -53,6 +53,22 @@ class vtkMRMLApplicationLogic;
 
 //----------------------------------------------------------------------------
 #ifndef vtkSetAndObserveMRMLNodeMacro
+/// \brief Set and observe a MRML node.
+/// Replace the existing value of \a node with \a value. Unobserve the old node
+/// and observe the ModifiedEvent of the new. When the new node is modified,
+/// vtkMRMLAbstractLogic::ProcessMRMLNodesEvents is called which propagate the
+/// call to vtkMRMLAbstractLogic::OnMRMLNodeModified(vtkMRMLNode*)
+/// automatically.
+/// \note Can't be used with objects other than vtkMRMLNodes
+/// \code
+/// void vtkMRMLMyLogic::SetMyNode(vtkMRMLNode* newNode)
+/// {
+///   vtkSetAndObserveMRMLNodeMacro(this->MyNode, newNode);
+///   this->OnMRMLNodeModified(this->MyNode);
+/// }
+/// \endcode
+/// \sa vtkMRMLAbstractLogic::ProcessMRMLNodesEvents(),
+/// vtkMRMLAbstractLogic::OnMRMLNodeModified()
 #define vtkSetAndObserveMRMLNodeMacro(node,value) {                           \
   vtkObject *_oldNode = (node);                                               \
   this->GetMRMLNodesObserverManager()->SetAndObserveObject(                   \
@@ -169,42 +185,53 @@ protected:
   /// vtkSet[AndObserve]MRMLNode[Event]Macro
   /// ProcessMRMLNodesEvents calls OnMRMLNodeModified when event is
   /// vtkCommand::ModifiedEvent.
+  /// \sa ProcessMRMLSceneEvents, ProcessMRMLLogicsEvents,
+  /// OnMRMLNodeModified(), vtkSetAndObserveMRMLNodeMacro,
+  /// vtkSetAndObserveMRMLNodeMacro, vtkSetAndObserveMRMLNodeEventMacro
   virtual void ProcessMRMLNodesEvents(vtkObject* caller,
                                       unsigned long event,
                                       void * callData);
 
-  /// Get MRML scene callbackCommand
+  /// Receives all the events fired by the logics.
+  /// To listen to a logic, you can add an observer using
+  /// GetMRMLLogicsCallbackCommand().
+  /// To be reimplemented in subclasses if needed.
+  /// \sa GetMRMLLogicsCallbackCommand() ,ProcessMRMLSceneEvents(),
+  /// ProcessMRMLNodesEvents()
+  virtual void ProcessMRMLLogicsEvents(vtkObject* caller,
+                                      unsigned long event,
+                                      void * callData);
+
+  /// Get MRML scene callbackCommand.
   /// You shouldn't have to use it manually, reimplementing
   /// SetMRMLSceneInternal and setting the events to listen should be enough.
+  /// \sa SetMRMLSceneInternal()
   vtkCallbackCommand * GetMRMLSceneCallbackCommand();
 
   /// Get the MRML nodes callbackCommand. The Execute function associated
   /// the the callback calls ProcessMRMLNodesEvents.
   /// Only vtkMRMLNodes can be listened to.
+  /// \sa ProcessMRMLNodesEvents()
   vtkCallbackCommand * GetMRMLNodesCallbackCommand();
+
+  /// Get the MRML Logic callback command.
+  /// \sa GetMRMLSceneCallbackCommand(), GetMRMLNodesCallbackCommand()
+  vtkCallbackCommand * GetMRMLLogicsCallbackCommand();
 
   /// Get MRML scene observerManager. It points to the scene callback.
   /// \sa GetMRMLSceneCallbackCommand()
   vtkObserverManager * GetMRMLSceneObserverManager()const;
 
-  /// Get MRML nodes observerManager. It points to the noes callback.
-  /// \sa GetMRMLSceneCallbackCommand()
+  /// Get MRML nodes observerManager. It points to the nodes callback.
+  /// \sa GetMRMLNodesCallbackCommand()
   vtkObserverManager * GetMRMLNodesObserverManager()const;
 
-  /// Return 0 when not processing a MRML scene event, >0 otherwise.
-  /// Values can be higher than 1 when receiving nested event:
-  /// processing a MRML scene event fires other scene events.
-  /// \sa SetInMRMLCallbackFlag()
-  int GetInMRMLSceneCallbackFlag()const;
+  /// Get MRML logics observerManager. It points to the logics callback.
+  /// \sa GetMRMLLogicsCallbackCommand()
+  vtkObserverManager * GetMRMLLogicsObserverManager()const;
 
   /// Return the event id currently processed or 0 if any.
   int GetProcessingMRMLSceneEvent()const;
-
-  /// Return 0 when not processing any MRML node event, >0 otherwise.
-  /// Values can be higher than 1 when receiving nested events:
-  /// processing a MRML node event fires other node events.
-  /// \sa SetMRMLNodesCallbackFlag()
-  int GetInMRMLNodesCallbackFlag()const;
 
   /// Called anytime a scene is not set to the logic anymore (e.g. a new or
   /// no scene is set)
@@ -306,33 +333,68 @@ protected:
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.
   virtual void RegisterNodes(){}
 
-  /// Set InMRMLCallbackFlag flag
+  /// Set MRMLSceneCallback flag
   /// True means ProcessMRMLEvent has already been called
-  /// In MRMLCallback, loop are avoided by checking the value of the flag
+  /// In MRMLSceneCallback, loop are avoided by checking the value of the flag
+  /// \sa EnterMRMLSceneCallback()
   void SetInMRMLSceneCallbackFlag(int flag);
+
+  /// Return 0 when not processing a MRML scene event, >0 otherwise.
+  /// Values can be higher than 1 when receiving nested event:
+  /// processing a MRML scene event fires other scene events.
+  /// \sa SetInMRMLCallbackFlag()
+  int GetInMRMLSceneCallbackFlag()const;
 
   /// Return true if the MRML callback must be executed, false otherwise.
   /// By default, it returns true, you can reimplement it in subclasses
   virtual bool EnterMRMLSceneCallback()const;
 
-  /// Set InLogicCallbackFlag flag
-  /// True means ProcesslogicEvent has already been called
-  /// In LogicCallback, loop are avoided by checking the value of the flag
-  void SetInMRMLNodesCallbackFlag(int flag);
-
-  /// Return true if the Logic callback must be executed, false otherwise.
-  /// By default, it returns true, you can reimplement it in subclasses
-  virtual bool EnterMRMLNodesCallback()const;
-
   /// Set event id currently processed or 0 if any.
+  /// \sa EnterMRMLSceneCallback()
   void SetProcessingMRMLSceneEvent(int event);
 
-  /// MRMLCallback is a static function to relay modified events from the MRML Scene
-  /// In subclass, MRMLCallback can also be used to relay event from observe MRML node(s)
+  /// Set InMRMLNodesCallback flag.
+  /// In InMRMLNodesCallback, loop are avoided by checking the value of the
+  /// flag.
+  /// \sa EnterMRMLNodesCallback()
+  void SetInMRMLNodesCallbackFlag(int flag);
+
+  /// Return 0 when not processing any MRML node event, >0 otherwise.
+  /// Values can be higher than 1 when receiving nested events:
+  /// processing a MRML node event fires other node events.
+  /// \sa SetMRMLNodesCallbackFlag()
+  int GetInMRMLNodesCallbackFlag()const;
+
+  /// Return true if the MRML Nodes callback must be executed, false otherwise.
+  /// By default, it returns true, you can reimplement it in subclasses.
+  /// \sa SetInMRMLNodesCallbackFlag()
+  virtual bool EnterMRMLNodesCallback()const;
+
+  /// Set InMRMLLogicsCallback flag.
+  /// In InMRMLLogicsCallback, loop are avoided by checking the value of the
+  /// flag.
+  /// \sa EnterMRMLLogicsCallback()
+  void SetInMRMLLogicsCallbackFlag(int flag);
+
+  /// Return 0 when not processing any MRML logic event, >0 otherwise.
+  /// Values can be higher than 1 when receiving nested events:
+  /// processing a MRML logic event fires other node events.
+  /// \sa SetMRMLLogicsCallbackFlag()
+  int GetInMRMLLogicsCallbackFlag()const;
+
+  /// Return true if the Logics callback must be executed, false otherwise.
+  /// By default, it returns true, you can reimplement it in subclasses
+  virtual bool EnterMRMLLogicsCallback()const;
+
+  /// MRMLSceneCallback is a static function to relay modified events from the MRML Scene
+  /// In subclass, MRMLSceneCallback can also be used to relay event from observe MRML node(s)
   static void MRMLSceneCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
-  /// LogicCallback is a static function to relay modified events from the Logic
+  /// MRMLNodesCallback is a static function to relay modified events from the nodes
   static void MRMLNodesCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
+
+  /// MRMLLogicCallback is a static function to relay modified events from the logics
+  static void MRMLLogicsCallback(vtkObject *caller, unsigned long eid, void *clientData, void *callData);
 
   /// Start modifying the logic. Disable Modify events.
   /// Returns the previous state of DisableModifiedEvent flag

@@ -236,7 +236,7 @@ NewImplicitPlaneWidget()
   planeWidget->SetRepresentation(rep.GetPointer());
   planeWidget->SetEnabled(0);
 
-  // Link widget evenement to the LogicCallbackCommand
+  // Link widget evenement to the WidgetsCallbackCommand
   planeWidget->AddObserver(vtkCommand::StartInteractionEvent,
                            this->External->GetWidgetsCallbackCommand());
   planeWidget->AddObserver(vtkCommand::InteractionEvent,

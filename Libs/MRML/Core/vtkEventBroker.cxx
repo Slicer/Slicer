@@ -271,6 +271,10 @@ void vtkEventBroker::DetachObservation ( vtkObservation *observation )
 //----------------------------------------------------------------------------
 void vtkEventBroker::RemoveObservation ( vtkObservation *observation )
 {
+  if (observation == 0)
+    {
+    return;
+    }
   std::vector< vtkObservation *> removeList;
   removeList.push_back( observation );
   this->RemoveObservations( removeList );

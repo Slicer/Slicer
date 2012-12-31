@@ -68,10 +68,6 @@ vtkStandardNewMacro(vtkMRMLSliceLogic);
 //----------------------------------------------------------------------------
 vtkMRMLSliceLogic::vtkMRMLSliceLogic()
 {
-  this->MRMLLogicCallbackCommand = vtkCallbackCommand::New();
-  this->MRMLLogicCallbackCommand->SetClientData(this);
-  this->MRMLLogicCallbackCommand->SetCallback(vtkMRMLSliceLogic::MRMLLogicCallback);
-
   this->Initialized = false;
   this->Name = 0;
   this->BackgroundLayer = 0;
@@ -148,12 +144,6 @@ vtkMRMLSliceLogic::~vtkMRMLSliceLogic()
     }
 
   this->DeleteSliceModel();
-
-  if (this->MRMLLogicCallbackCommand)
-    {
-    this->MRMLLogicCallbackCommand->Delete();
-    this->MRMLLogicCallbackCommand = 0;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -206,7 +196,7 @@ void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 
-  this->ProcessLogicEvents();
+  this->ProcessMRMLLogicsEvents();
   this->ProcessMRMLSceneEvents(newScene, vtkMRMLScene::EndBatchProcessEvent, 0);
 }
 
@@ -489,32 +479,16 @@ void vtkMRMLSliceLogic::OnMRMLNodeModified(vtkMRMLNode* node)
 }
 
 //----------------------------------------------------------------------------
-vtkCallbackCommand* vtkMRMLSliceLogic::GetMRMLLogicCallbackCommand()
+void vtkMRMLSliceLogic
+::ProcessMRMLLogicsEvents(vtkObject* vtkNotUsed(caller),
+                          unsigned long vtkNotUsed(event),
+                          void* vtkNotUsed(callData))
 {
-  return this->MRMLLogicCallbackCommand;
+  this->ProcessMRMLLogicsEvents();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::MRMLLogicCallback(vtkObject*caller, unsigned long eid,
-                                             void* clientData, void* callData)
-{
-  assert(vtkMRMLAbstractLogic::SafeDownCast(caller));
-  vtkMRMLSliceLogic *self = reinterpret_cast<vtkMRMLSliceLogic *>(clientData);
-
-  vtkDebugWithObjectMacro(self, "In vtkMRMLSliceLogic MRMLLogicCallback");
-  self->ProcessLogicEvents(caller, eid, callData);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::ProcessLogicEvents(vtkObject* vtkNotUsed(caller),
-                                           unsigned long vtkNotUsed(event),
-                                           void* vtkNotUsed(callData))
-{
-  this->ProcessLogicEvents();
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLSliceLogic::ProcessLogicEvents()
+void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 {
 
   //
@@ -674,7 +648,7 @@ void vtkMRMLSliceLogic::SetBackgroundLayer(vtkMRMLSliceLayerLogic *backgroundLay
     this->BackgroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
       this->BackgroundLayer, vtkCommand::ModifiedEvent,
-      this, this->GetMRMLLogicCallbackCommand());
+      this, this->GetMRMLLogicsCallbackCommand());
     }
 
   this->Modified();
@@ -699,7 +673,7 @@ void vtkMRMLSliceLogic::SetForegroundLayer(vtkMRMLSliceLayerLogic *foregroundLay
     this->ForegroundLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
       this->ForegroundLayer, vtkCommand::ModifiedEvent,
-      this, this->GetMRMLLogicCallbackCommand());
+      this, this->GetMRMLLogicsCallbackCommand());
     }
 
   this->Modified();
@@ -725,7 +699,7 @@ void vtkMRMLSliceLogic::SetLabelLayer(vtkMRMLSliceLayerLogic *labelLayer)
     this->LabelLayer->SetSliceNode(SliceNode);
     vtkEventBroker::GetInstance()->AddObservation(
       this->LabelLayer, vtkCommand::ModifiedEvent,
-      this, this->GetMRMLLogicCallbackCommand());
+      this, this->GetMRMLLogicsCallbackCommand());
     }
 
   this->Modified();

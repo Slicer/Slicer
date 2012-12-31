@@ -343,18 +343,12 @@ protected:
 
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
-  /// Get Logic CallbackCommand
-  vtkCallbackCommand * GetMRMLLogicCallbackCommand();
-
-  static void MRMLLogicCallback(vtkObject*caller, unsigned long eid,
-                                void* clientData, void* callData);
-
   /// 
   /// process logic events
-  virtual void ProcessLogicEvents(vtkObject * caller,
-                                  unsigned long event,
-                                  void * callData);
-  void ProcessLogicEvents();
+  virtual void ProcessMRMLLogicsEvents(vtkObject * caller,
+                                       unsigned long event,
+                                       void * callData);
+  void ProcessMRMLLogicsEvents();
 
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
@@ -368,7 +362,6 @@ protected:
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
 
-  vtkCallbackCommand*         MRMLLogicCallbackCommand;
   bool                        AddingSliceModelNodes;
   bool                        Initialized;
 
