@@ -45,6 +45,7 @@ class Q_SLICER_MODULE_ANNOTATIONS_WIDGETS_EXPORT qMRMLAnnotationTreeView
   Q_OBJECT
 
 public:
+  typedef qMRMLTreeView Superclass;
   qMRMLAnnotationTreeView(QWidget *parent=0);
   virtual ~qMRMLAnnotationTreeView();
 

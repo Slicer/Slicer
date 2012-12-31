@@ -114,14 +114,31 @@ void vtkMRMLAnnotationHierarchyNode::DeleteDirectChildren()
     }
 }
 
-
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection *children)
+{
+  this->GetChildren(children, 1);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationHierarchyNode::GetAllChildren(vtkCollection *children)
+{
+  this->GetChildren(children, -1);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationHierarchyNode::GetChildren(vtkCollection *children, int level)
 {
   if (children == NULL)
     {
     return;
     }
+
+  if (level-- == 0)
+    {
+    return;
+    }
+
   vtkMRMLScene *scene = this->GetScene();
   if (scene == NULL)
     {
@@ -158,7 +175,7 @@ void vtkMRMLAnnotationHierarchyNode::GetDirectChildren(vtkCollection *children)
           children->AddItem(anode);
           }
         } // if user-created check
-
+      hnode->GetChildren(children, level);
       } // check if it is a direct child of this
 
     } // loop through all nodes

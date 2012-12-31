@@ -601,7 +601,7 @@ void qMRMLAnnotationTreeView::onLockColumnClicked(vtkMRMLNode* node)
 void qMRMLAnnotationTreeView::mousePressEvent(QMouseEvent* event)
 {
   // skip qMRMLTreeView
-  this->QTreeView::mousePressEvent(event);
+  this->Superclass::mousePressEvent(event);
 }
 
 //------------------------------------------------------------------------------

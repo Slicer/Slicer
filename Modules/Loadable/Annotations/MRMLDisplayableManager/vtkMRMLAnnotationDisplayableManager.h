@@ -147,11 +147,11 @@ protected:
   void RemoveObserversFromInteractionNode();
 
   /// Preset functions for certain events.
-  void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
-  void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
-  void OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node);
+  virtual void OnMRMLAnnotationNodeModifiedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLAnnotationNodeTransformModifiedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
+  virtual void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
+  virtual void OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node);
   //
   // Handling of interaction within the RenderWindow
   //
@@ -202,7 +202,18 @@ protected:
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
 
   /// Check if it is the right displayManager
-  virtual bool IsCorrectDisplayableManager();
+  bool IsCorrectDisplayableManager();
+
+  /// Return true if this displayable manager supports(can manage) that node,
+  /// false otherwise.
+  /// Can be reimplemented to add more conditions.
+  /// \sa IsManageable(const char*), IsCorrectDisplayableManager()
+  virtual bool IsManageable(vtkMRMLNode* node);
+  /// Return true if this displayable manager supports(can manage) that node ID,
+  /// false otherwise.
+  /// Can be reimplemented to add more conditions.
+  /// \sa IsManageable(vtkMRMLNode*), IsCorrectDisplayableManager()
+  virtual bool IsManageable(const char* nodeID);
 
   /// Focus of this displayableManager is set to a specific annotation type when inherited
   const char* m_Focus;
