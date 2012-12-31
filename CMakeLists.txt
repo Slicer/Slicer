@@ -875,7 +875,7 @@ set(Slicer_GUI_LIBRARY qSlicerBaseQTApp)
 add_subdirectory(Modules/Core)
 add_subdirectory(Base/QTApp)
 add_subdirectory(Modules)
-if (NOT DEFINED Slicer_APPLICATIONS_DIR)
+if (NOT Slicer_APPLICATIONS_DIR)
   add_subdirectory(Applications)
 else()
   add_subdirectory(${Slicer_APPLICATIONS_DIR}
