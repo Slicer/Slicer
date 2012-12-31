@@ -58,14 +58,14 @@ public:
     TextColumn = 6
   };
 
-  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
+  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
 
 protected:
 
-  virtual vtkMRMLNode* parentNode(vtkMRMLNode* node)const;
+  virtual void updateItemDataFromNode(QStandardItem* item, vtkMRMLNode* node, int column);
 
   virtual void updateNodeFromItemData(vtkMRMLNode* node, QStandardItem* item);
-  
+
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
 
 private:

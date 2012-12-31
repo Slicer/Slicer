@@ -37,7 +37,7 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
   // exercise public slots
   mouseToolBar.switchToViewTransformMode();
   mouseToolBar.switchPlaceMode();
-  mouseToolBar.onPersistenceToggled();
+  mouseToolBar.setPersistence(true);
   // without a qSlicerApplication, setting the cursor is a noop
   mouseToolBar.changeCursorTo(QCursor(Qt::BusyCursor));
 

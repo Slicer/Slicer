@@ -71,20 +71,14 @@ void qSlicerMouseModeToolBarPrivate::init()
   this->PersistenceAction->setToolTip(QObject::tr("Switch between single place and persistent place modes."));
   this->PersistenceAction->setCheckable(true);
   this->PersistenceAction->setChecked(false);
-  vtkMRMLInteractionNode * interactionNode = NULL;
-  if (this->MRMLAppLogic)
+  vtkMRMLInteractionNode * interactionNode =
+    this->MRMLAppLogic ? this->MRMLAppLogic->GetInteractionNode() : 0;
+  if (interactionNode && interactionNode->GetPlaceModePersistence())
     {
-    interactionNode = this->MRMLAppLogic->GetInteractionNode();
+    this->PersistenceAction->setChecked(true);
     }
-  if (interactionNode)
-    {
-    if (interactionNode->GetPlaceModePersistence())
-      {
-      this->PersistenceAction->setChecked(true);
-      }
-    }
-  connect(this->PersistenceAction, SIGNAL(triggered()), q,
-                SLOT(onPersistenceToggled()));
+  connect(this->PersistenceAction, SIGNAL(triggered(bool)),
+          q, SLOT(setPersistence(bool)));
   
   // popuplate the create and place menu, with persistence first
   this->CreateAndPlaceMenu = new QMenu(QObject::tr("Create and Place"), q);
@@ -666,25 +660,20 @@ bool qSlicerMouseModeToolBar::isActionTextInMenu(QString actionText, QMenu *menu
 }
 
 //---------------------------------------------------------------------------
-void qSlicerMouseModeToolBar::onPersistenceToggled()
+void qSlicerMouseModeToolBar::setPersistence(bool persistent)
 {
   Q_D(qSlicerMouseModeToolBar);
 
-  vtkMRMLInteractionNode *interactionNode = NULL;
-  if (d->MRMLAppLogic)
-    {
-    interactionNode = d->MRMLAppLogic->GetInteractionNode();
-    }
+  vtkMRMLInteractionNode *interactionNode =
+    d->MRMLAppLogic ? d->MRMLAppLogic->GetInteractionNode() : 0;
 
   if (interactionNode)
     {
-    int newPersistence = !interactionNode->GetPlaceModePersistence();
-    interactionNode->SetPlaceModePersistence(newPersistence);
+    interactionNode->SetPlaceModePersistence(persistent ? 1 : 0);
     }
   else
     {
-    qWarning() << "qSlicerMouseModeToolBar::onPersistenceToggled: "
-                  "no interaction node found to toggle.";
+    qWarning() << __FUNCTION__ << ": no interaction node found to toggle.";
     }
 }
 

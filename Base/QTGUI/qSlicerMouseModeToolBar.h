@@ -48,6 +48,9 @@ public:
   qSlicerMouseModeToolBar(QWidget* parent = 0);
   virtual ~qSlicerMouseModeToolBar();
 
+  /// For testing, return the active action text
+  QString activeActionText();
+
 public slots:
 
   void setApplicationLogic(vtkSlicerApplicationLogic* logic);
@@ -62,11 +65,8 @@ public slots:
   void switchPlaceMode();
 
   /// Update the interaction node's persistent place mode from the UI
-  void onPersistenceToggled();
+  void setPersistence(bool persistent);
 
-  /// For testing, return the active action text
-  QString activeActionText();
-  
 protected:
   QScopedPointer<qSlicerMouseModeToolBarPrivate> d_ptr;
 
