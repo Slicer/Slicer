@@ -41,10 +41,6 @@ public:
 
   static void setupModuleFactoryManager(qSlicerModuleFactoryManager * moduleFactoryManager);
 
-  static void loadTranslations(const QString& dir);
-
-  static void loadLanguage();
-
   static void showMRMLEventLoggerWidget();
 
   static void initializePythonConsole(ctkPythonConsole* pythonConsole);

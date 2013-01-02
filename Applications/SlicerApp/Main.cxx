@@ -99,8 +99,6 @@ int SlicerAppMain(int argc, char* argv[])
     return app.returnCode();
     }
 
-  // We load the language selected for the application
-  qSlicerApplicationHelper::loadLanguage();
 
 #ifdef Slicer_USE_QtTesting
   setEnableQtTesting(); // disabled the native menu bar.

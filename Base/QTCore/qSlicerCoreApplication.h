@@ -285,6 +285,9 @@ public:
   Q_INVOKABLE void setDICOMDatabase(ctkDICOMDatabase* dicomDatabase);
 #endif
 
+  static void loadTranslations(const QString& dir);
+
+  static void loadLanguage();
 
 public slots:
 

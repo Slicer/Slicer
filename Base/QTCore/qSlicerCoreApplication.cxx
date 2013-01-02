@@ -24,6 +24,8 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QNetworkProxyFactory>
+#include <QSettings>
+#include <QTranslator>
 
 // CTK includes
 #include <ctkErrorLogFDMessageHandler.h>
@@ -283,6 +285,9 @@ void qSlicerCoreApplicationPrivate::init()
     }
 
 #endif
+
+  // We load the language selected for the application
+  q->loadLanguage();
 }
 
 //-----------------------------------------------------------------------------
@@ -1394,4 +1399,54 @@ void qSlicerCoreApplication::terminate(int returnCode)
   d->ReturnCode = returnCode;
   // Does nothing if the event loop is not running
   this->exit(returnCode);
+}
+
+//----------------------------------------------------------------------------
+void qSlicerCoreApplication::loadTranslations(const QString& dir)
+{
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  Q_ASSERT(app);
+
+  QString localeFilter =
+      QString( QString("*") + app->settings()->value("language").toString());
+  localeFilter.resize(3);
+  localeFilter += QString(".qm");
+
+  QDir directory(dir);
+  QStringList qmFiles = directory.entryList(QStringList(localeFilter));
+
+  foreach(QString qmFile, qmFiles)
+    {
+    QTranslator* translator = new QTranslator();
+    QString qmFilePath = QString(dir + QString("/") + qmFile);
+
+    if(!translator->load(qmFilePath))
+      {
+      qDebug() << "The File " << qmFile << " hasn't been loaded in the translator";
+      return;
+      }
+    app->installTranslator(translator);
+    }
+}
+
+//----------------------------------------------------------------------------
+void qSlicerCoreApplication::loadLanguage()
+{
+  qSlicerCoreApplication * app = qSlicerCoreApplication::application();
+  Q_ASSERT(app);
+
+  // we check if the application is installed or not.
+  if (app->isInstalled())
+    {
+    QString qmDir = QString(Slicer_QM_DIR);
+    app->loadTranslations(qmDir);
+    }
+  else
+    {
+    QStringList qmDirs = QString(Slicer_QM_OUTPUT_DIRS).split(";");
+    foreach(QString qmDir, qmDirs)
+      {
+      app->loadTranslations(qmDir);
+      }
+    }
 }
