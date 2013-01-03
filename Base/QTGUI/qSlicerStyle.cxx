@@ -33,7 +33,7 @@
 qSlicerStyle::qSlicerStyle()
   : Superclass(new QCleanlooksStyle)
 {
-
+  this->baseStyle()->setParent(this);
 }
 
 // --------------------------------------------------------------------------
