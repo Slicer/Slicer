@@ -360,6 +360,15 @@ void vtkSlicerAnnotationModuleLogic::ProcessMRMLNodesEvents(vtkObject *caller,
 void vtkSlicerAnnotationModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
 {
   vtkDebugMacro("OnMRMLSceneNodeAddedEvent");
+  // don't respond if the scene is importing as the nodes will have hierarchy
+  // nodes already defined
+  if (this->GetMRMLScene() &&
+      (this->GetMRMLScene()->IsImporting() ||
+       this->GetMRMLScene()->IsRestoring()))
+    {
+    return;
+    }
+  
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
   if (!annotationNode)
