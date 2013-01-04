@@ -213,6 +213,7 @@ vtkMRMLHierarchyNode* vtkMRMLHierarchyNode::GetParentNode()
 void vtkMRMLHierarchyNode::SetSceneReferences()
 {
   this->Superclass::SetSceneReferences();
+  this->Scene->AddReferencedNodeID(this->ParentNodeIDReference, this);
   this->Scene->AddReferencedNodeID(this->AssociatedNodeIDReference, this);
 }
 
@@ -260,7 +261,10 @@ void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref)
   this->SetSortingValue(++MaximumSortingValue);
 
   this->HierarchyIsModified(this->GetScene());
-
+  if (this->GetScene())
+    {
+    this->GetScene()->AddReferencedNodeID(ref, this);
+    }
   this->EndModify(disableModify);
 
   vtkMRMLHierarchyNode *parentNode = this->GetParentNode();

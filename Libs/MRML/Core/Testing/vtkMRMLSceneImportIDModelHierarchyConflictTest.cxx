@@ -25,8 +25,24 @@
 #include <vtkNew.h>
 #include <vtkPolyData.h>
 
+bool ImportIDModelHierarchyConflictTest();
+bool ImportModelHierarchyTwiceTest();
+
 //---------------------------------------------------------------------------
 int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * vtkNotUsed(argv) [])
+{
+  bool res = true;
+  res = ImportIDModelHierarchyConflictTest() && res;
+  res = ImportModelHierarchyTwiceTest() && res;
+  return res ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+//---------------------------------------------------------------------------
+// The test makes sure the model hierarchy nodes correctly support node ID
+// conflict. There are 2 steps in this test
+// a) populates a scene with a model with flat hierarchy node
+// b) and imports a similar scene into the existing scene.
+bool ImportIDModelHierarchyConflictTest()
 {
   vtkNew<vtkMRMLScene> scene;
 
@@ -54,7 +70,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << "model display id: " << modelDisplayNode->GetID()<< " "
               << "display node: " << modelNode.GetPointer()->GetDisplayNode()
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   // does the display node point to the correct polydata?
   std::cout<< "Model display node poly data pointer = "
@@ -66,7 +82,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               <<" model poly data = " <<  modelNode.GetPointer()->GetPolyData()
               << ", display node polydata = " << modelDisplayNode.GetPointer()->GetInputPolyData()
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   // add a model hierarchy node
@@ -121,7 +137,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << " or scene model display node 1 " << scene->GetNodeByID("vtkMRMLModelDisplayNode1")
               << " != original model dipslay node " << modelDisplayNode.GetPointer()
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   vtkMRMLModelNode* modelNode2 = vtkMRMLModelNode::SafeDownCast(
@@ -147,7 +163,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
           }
       }
     std::cerr << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   // check that the hierarchies point to the right display nodes
@@ -155,30 +171,30 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
   if (!hierarchyNode2)
     {
     std::cerr << "Import failure: imported hierarchy node is not using id vtkMRMLModelHierarchyNode2" << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   if (!hierarchyNode2->GetDisplayNodeID())
     {
     std::cerr << "Import failure: imported hierarchy node does not have a display node" << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   if (strcmp(hierarchyNode2->GetDisplayNodeID(), "vtkMRMLModelDisplayNode4") != 0)
     {
     std::cerr << "Import failure: new model hierarchy should point to new display node with id vtkMRMLModelDisplayNode4, instead points to "
               << hierarchyNode2->GetDisplayNodeID() << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   // check that the hierarchies point to the right model nodes
   if (!hierarchyNode2->GetAssociatedNodeID())
     {
     std::cerr << "Import failure: imported hierarchy node does not have an associated node" << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   if (strcmp(hierarchyNode2->GetAssociatedNodeID(), "vtkMRMLModelNode2") != 0)
     {
     std::cerr << "Import failure: new model hierarchy shoudl point to new model node with id vtkMRMLModelNode2, instead points to "
               << hierarchyNode2->GetAssociatedNodeID() << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
 
   // check that the model nodes and model display nodes point to the right poly data
@@ -195,7 +211,7 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
               << vtkMRMLModelDisplayNode::SafeDownCast(modelNode2->GetDisplayNode())
                    ->GetInputPolyData()
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   std::cout << "Imported model poly data and display node poly data are properly null" << std::endl;
 
@@ -203,20 +219,79 @@ int vtkMRMLSceneImportIDModelHierarchyConflictTest(int vtkNotUsed(argc), char * 
     {
     std::cerr << "Import failed: original model node should not have null polydata"
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   if (vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode())->GetInputPolyData() == NULL)
     {
     std::cerr << "Import failed: original model display node should not have null polydata"
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
   if (modelNode->GetPolyData() != vtkMRMLModelDisplayNode::SafeDownCast(
         modelNode->GetDisplayNode())->GetInputPolyData())
     {
     std::cerr << "Import failed: original model node and display node don't have the same poly data"
               << std::endl;
-    return EXIT_FAILURE;
+    return false;
     }
-  return EXIT_SUCCESS;
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool ImportModelHierarchyTwiceTest()
+{
+  vtkNew<vtkMRMLScene> scene;
+
+  // Add model node
+  vtkNew<vtkMRMLModelNode> modelNode;
+  scene->AddNode(modelNode.GetPointer());
+  vtkNew<vtkMRMLModelDisplayNode> hierachyDisplayNode;
+  scene->AddNode(hierachyDisplayNode.GetPointer());
+
+  // Add a model hierarchy node
+  vtkNew<vtkMRMLModelHierarchyNode> modelHierarchyNode;
+  scene->AddNode(modelHierarchyNode.GetPointer());
+  modelHierarchyNode->SetAndObserveDisplayNodeID(hierachyDisplayNode.GetPointer()->GetID());
+  modelHierarchyNode->SetAssociatedNodeID(modelNode.GetPointer()->GetID());
+
+  vtkNew<vtkMRMLHierarchyNode> hierarchyNode;
+  scene->AddNode(hierarchyNode.GetPointer());
+  modelHierarchyNode->SetParentNodeID(hierarchyNode->GetID());
+
+  std::cout << "Starting scene has " << scene->GetNumberOfNodes() << " nodes" << std::endl;
+  /// At this point the following node id should be in the scene:
+  ///   - vtkMRMLModelNode1 with valid polydata
+  ///   - vtkMRMLModelDisplayNode2 with null polydata
+  ///   - vtkMRMLModelHierarchyNode1 (pointing to vtkMRMLModelDisplayNode1 and vtkMRMLModelNode1)
+  ///   - vtkMRMLModelHierarchyNode2 (parent of vtkMRMLModelHierarchyNode1)
+
+  // Save
+  scene->SetSaveToXMLString(1);
+  scene->Commit();
+  std::string xmlScene = scene->GetSceneXMLString();
+  std::cout << xmlScene << std::endl;
+
+  // Load same scene into scene
+  scene->SetSceneXMLString(xmlScene);
+  scene->SetLoadFromXMLString(1);
+  scene->Import();
+
+  vtkMRMLModelHierarchyNode* modelHierarchyNode2= vtkMRMLModelHierarchyNode::SafeDownCast(
+    scene->GetNodeByID("vtkMRMLModelHierarchyNode2"));
+  vtkMRMLHierarchyNode* hierarchyNode2= vtkMRMLHierarchyNode::SafeDownCast(
+    scene->GetNodeByID("vtkMRMLHierarchyNode2"));
+  if (!modelHierarchyNode2 || !hierarchyNode2 ||
+      modelHierarchyNode2->GetParentNode() != hierarchyNode2)
+    {
+    std::cerr << "Failed to import scene at line " << __LINE__ << " :"
+              << " model hierarchy #2: " << modelHierarchyNode2;
+    if (modelHierarchyNode2)
+      {
+      std::cerr << " model hierarchy #2 parent: " << modelHierarchyNode2->GetParentNode();
+      }
+    std::cerr << " hierarchy #2: " << hierarchyNode2 << std::endl;
+    return false;
+    }
+
+  return true;
 }
