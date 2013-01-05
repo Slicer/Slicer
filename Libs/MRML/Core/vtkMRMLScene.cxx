@@ -1242,7 +1242,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
       if (nodeID != this->NodeIDs.end() &&
           nodeID->second == sn)
         {
-        this->NodeIDs.erase(nodeID);
+        this->RemoveNodeID((char*)nodeID->first.c_str());
         }
       // If NodeIDs[newId] already contains a value, that node can't be found
       // anymore in the NodeIDs cache.
@@ -1284,8 +1284,7 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   this->Nodes->vtkCollection::AddItem((vtkObject *)n);
 
   // cache the node so the whole scene cache stays up-todate
-  this->NodeIDs[std::string(n->GetID())] = n;
-  this->NodeIDsMTime = this->Nodes->GetMTime();
+  this->AddNodeID(n);
 
   n->EndModify(wasModifying);
   return n;
@@ -1415,8 +1414,7 @@ void vtkMRMLScene::RemoveNode(vtkMRMLNode *n)
     }
   this->Nodes->vtkCollection::RemoveItem((vtkObject *)n);
 
-  this->NodeIDs.erase(n->GetID());
-  this->NodeIDsMTime = this->Nodes->GetMTime();
+  this->RemoveNodeID(n->GetID());
 
   this->InvokeEvent(vtkMRMLScene::NodeRemovedEvent, n);
   n->UnRegister(this);
@@ -2027,8 +2025,7 @@ vtkMRMLNode* vtkMRMLScene::InsertAfterNode(vtkMRMLNode *item, vtkMRMLNode *n)
     this->Nodes->vtkCollection::InsertItem(index, (vtkObject *)n);
     }
   // cache the node so the whole scene cache stays up-todate
-  this->NodeIDs[std::string(n->GetID())] = n;
-  this->NodeIDsMTime = this->Nodes->GetMTime();
+  this->AddNodeID(n);
 
   n->SetDisableModifiedEvent(modifyStatus);
 
@@ -2109,8 +2106,7 @@ vtkMRMLNode* vtkMRMLScene::InsertBeforeNode(vtkMRMLNode *item, vtkMRMLNode *n)
     this->Nodes->vtkCollection::InsertItem(index, (vtkObject *)n);
     }
   // cache the node so the whole scene cache stays up-todate
-  this->NodeIDs[std::string(n->GetID())] = n;
-  this->NodeIDsMTime = this->Nodes->GetMTime();
+  this->AddNodeID(n);
 
   n->SetDisableModifiedEvent(modifyStatus);
 
@@ -3072,7 +3068,7 @@ void vtkMRMLScene::UpdateNodeIDs()
 {
   if (this->Nodes->GetNumberOfItems() == 0)
     {
-    this->NodeIDs.clear();
+    this->ClearNodeIDs();
     }
   else if (this->Nodes->GetMTime() > this->NodeIDsMTime)
     {
@@ -3084,7 +3080,7 @@ void vtkMRMLScene::UpdateNodeIDs()
                       " were called prior, the NodeIDsMTime would be in sync"
                       " without having the map in sync.");
       }
-    this->NodeIDs.clear();
+    this->ClearNodeIDs();
 #ifdef MRMLSCENE_VERBOSE
     std::cerr << "Recompute node id cache..." << std::endl;
 #endif
@@ -3095,11 +3091,38 @@ void vtkMRMLScene::UpdateNodeIDs()
       {
       if (node->GetID())
         {
-        this->NodeIDs[std::string(node->GetID())] = node;
+        this->AddNodeID(node);
         }
       }
     }
-  this->NodeIDsMTime = this->Nodes->GetMTime();
+}
+
+void vtkMRMLScene::AddNodeID(vtkMRMLNode *node)
+{
+  if (this->Nodes && node && node->GetID())
+    {
+    this->NodeIDs[std::string(node->GetID())] = node;
+    this->NodeIDsMTime = this->Nodes->GetMTime();
+    }
+}
+
+void vtkMRMLScene::RemoveNodeID(char *nodeID)
+{
+  if (this->Nodes && nodeID)
+    {
+    this->NodeIDs.erase(std::string(nodeID));
+    this->NodeIDsMTime = this->Nodes->GetMTime();
+    }
+}
+
+
+void vtkMRMLScene::ClearNodeIDs()
+{
+  if (this->Nodes)
+    {
+    this->NodeIDs.clear();
+    this->NodeIDsMTime = this->Nodes->GetMTime();    
+  }
 }
 
 //------------------------------------------------------------------------------

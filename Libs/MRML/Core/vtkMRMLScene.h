@@ -48,6 +48,12 @@ class vtkMRMLSceneViewNode;
 /// \sa vtkCollection
 class VTK_MRML_EXPORT vtkMRMLScene : public vtkObject
 {
+  /// 
+  /// make the vtkMRMLSceneViewNode a friend since it has internal vtkMRMLScene
+  /// so that it can call protected methods, for example UpdateNodeIDs()
+  /// but that's the only class that is allowed to do so
+  friend class vtkMRMLSceneViewNode;
+
 public:
   static vtkMRMLScene *New();
   vtkTypeMacro(vtkMRMLScene, vtkObject);
@@ -629,6 +635,19 @@ protected:
   /// Combine a basename and an index to produce a full name.
   std::string BuildName(const std::string& baseName, int nameIndex)const;
 
+  /// Syncronize NodeIDs map used to speedup GetByID() method with the Nodes collection
+  void UpdateNodeIDs();
+
+  /// Add node to NodeIDs map used to speedup GetByID() method
+  void AddNodeID(vtkMRMLNode *node);
+
+  /// Remove node from NodeIDs map used to speedup GetByID() method
+  void RemoveNodeID(char *nodeID);
+
+  /// Clear NodeIDs map used to speedup GetByID() method
+  void ClearNodeIDs();
+
+
   vtkCollection*  Nodes;
   unsigned long   SceneModifiedTime;
 
@@ -672,8 +691,6 @@ protected:
   int SaveToXMLString;
 
   int ReadDataOnLoad;
-
-  void UpdateNodeIDs();
 
   unsigned long NodeIDsMTime;
 

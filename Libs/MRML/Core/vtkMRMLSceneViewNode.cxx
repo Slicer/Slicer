@@ -203,6 +203,9 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
   int disabledModify = this->GetDisableModifiedEvent();
   this->DisableModifiedEventOn();
     
+  int disabledModifyNode = node->GetDisableModifiedEvent();
+  node->DisableModifiedEventOn();
+
   Superclass::ProcessChildNode(node);
   node->SetAddToSceneNoModify(0);
 
@@ -210,10 +213,14 @@ void vtkMRMLSceneViewNode::ProcessChildNode(vtkMRMLNode *node)
     {
     this->Nodes = vtkMRMLScene::New();
     }  
-  node->SetScene(this->Nodes);
   this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
 
-  node->SetDisableModifiedEvent(disabledModify);
+  this->Nodes->AddNodeID(node);
+
+  node->SetScene(this->Nodes);
+
+  node->SetDisableModifiedEvent(disabledModifyNode);
+  this->SetDisableModifiedEvent(disabledModify);
 
 }
 
@@ -236,6 +243,7 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode *anode)
   else
     {
     this->Nodes->GetNodes()->RemoveAllItems();
+    this->Nodes->ClearNodeIDs();
     }
   vtkMRMLNode *node = NULL;
   if ( snode->Nodes != NULL )
@@ -247,8 +255,8 @@ void vtkMRMLSceneViewNode::Copy(vtkMRMLNode *anode)
       if (node)
         {
         node->SetScene(this->Nodes);
-        this->Nodes->GetNodes()->vtkCollection::AddItem((vtkObject *)node);
-        }
+        this->Nodes->AddNodeID(node);
+       }
       }
     }
 }
