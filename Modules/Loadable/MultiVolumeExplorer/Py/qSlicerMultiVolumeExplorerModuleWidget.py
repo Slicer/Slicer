@@ -262,7 +262,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         mvNodeFrameCopy.SetScene(slicer.mrmlScene)
         slicer.mrmlScene.AddNode(mvNodeFrameCopy)
         self.__vfSelector.setCurrentNode(mvNodeFrameCopy)
-        return
+        frameVolume = self.__vfSelector.currentNode()
 
       mvImage = self.__mvNode.GetImageData()
       frameId = newValue
@@ -324,8 +324,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__mdSlider.maximum = nFrames-1
       self.__chartTable.SetNumberOfRows(nFrames)
 
-      if self.__cvn != None:
-        self.__cvn.SetChartNodeID(self.__cn.GetID())
+      # if self.__cvn != None:
+      #  self.__cvn.SetChartNodeID(self.__cn.GetID())
 
       self.ctrlFrame.enabled = True
       self.plotFrame.enabled = True
