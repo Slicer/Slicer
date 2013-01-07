@@ -23,6 +23,7 @@ Version:   $Revision: 1.2 $
 #include <vtkMatrix4x4.h>
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
+#include <vtkVector.h>
 
 // VNL includes
 #include <vnl/vnl_double_3.h>
@@ -1923,6 +1924,44 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
       // third column is 'Superior'
       this->SliceToRAS->SetElement(row, 2, alignedRAS[4][row]);
       }
+    }
+
+  //
+  // If two colums project to the same axis, then there will be 
+  // a column of all zeros in the SliceToRAS matrix - if this happens replace this
+  // with the cross product of the other columns
+  //
+  int nullColumn = -1;
+  for (col = 0; col < 3; col++)
+    {
+    int row;
+    bool isNull = true;
+    for (row = 0; row < 3; row++)
+      {
+      if (this->SliceToRAS->GetElement(row, col) != 0.0)
+        {
+        isNull = false;
+        }
+      }
+    if (isNull)
+      {
+      nullColumn = col;
+      }
+    }
+  if (nullColumn != -1)
+    {
+    vtkVector3<double> A(
+      this->SliceToRAS->GetElement(0, (nullColumn+1)%3),
+      this->SliceToRAS->GetElement(1, (nullColumn+1)%3),
+      this->SliceToRAS->GetElement(2, (nullColumn+1)%3));
+    vtkVector3<double> B(
+      this->SliceToRAS->GetElement(0, (nullColumn+2)%3),
+      this->SliceToRAS->GetElement(1, (nullColumn+2)%3),
+      this->SliceToRAS->GetElement(2, (nullColumn+2)%3));
+    vtkVector3<double> C = A.Cross(B);
+    this->SliceToRAS->SetElement(0, nullColumn, C.GetX());
+    this->SliceToRAS->SetElement(1, nullColumn, C.GetY());
+    this->SliceToRAS->SetElement(2, nullColumn, C.GetZ());
     }
 
   this->SetOrientationToReformat(); // just sets the string - indicates that this is not patient aligned
