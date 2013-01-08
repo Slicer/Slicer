@@ -151,14 +151,11 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       vtkDebugMacro("Color by mean fiber orientation");
       this->ScalarVisibilityOn( );
       this->ColorLinesByOrientation->SetColorMode(ColorLinesByOrientation->colorModeMeanFiberOrientation);
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
-        vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
       vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
       if (colorNode)
         {
         this->SetAndObserveColorNodeID(colorNode->GetID());
         }
-
       }
     else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
       {
@@ -166,8 +163,6 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
       this->ScalarVisibilityOn( );
       this->ColorLinesByOrientation->SetColorMode(
         this->ColorLinesByOrientation->colorModePointFiberOrientation);
-      vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
-        vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
       vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
       if (colorNode)
         {
@@ -284,6 +279,12 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
           this->GetOutputPolyData()->Update();
           this->GetOutputPolyData()->GetScalarRange(range);
           }
+        }
+      if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation) ||
+          (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation))
+        {
+          vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
+            vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, range);
         }
       else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
                this->GetInputPolyData())

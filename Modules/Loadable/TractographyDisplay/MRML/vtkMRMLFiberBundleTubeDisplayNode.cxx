@@ -198,15 +198,12 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     this->ScalarVisibilityOn( );
     this->ColorLinesByOrientation->SetColorMode(
       this->ColorLinesByOrientation->colorModeMeanFiberOrientation);
-    this->TubeFilter->SetInputConnection(
-      this->ColorLinesByOrientation->GetOutputPort());
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+    this->TubeFilter->SetInputConnection(this->ColorLinesByOrientation->GetOutputPort());
     vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
     if (ColorNode)
       {
       this->SetAndObserveColorNodeID(ColorNode->GetID());
       }
-
     }
   else if (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation)
     {
@@ -214,9 +211,7 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
     this->ScalarVisibilityOn( );
     this->ColorLinesByOrientation->SetColorMode(
       this->ColorLinesByOrientation->colorModePointFiberOrientation);
-    this->TubeFilter->SetInputConnection(
-      this->ColorLinesByOrientation->GetOutputPort());
-    vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, this->ScalarRange);
+    this->TubeFilter->SetInputConnection(this->ColorLinesByOrientation->GetOutputPort());
     vtkMRMLNode* ColorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
     if (ColorNode)
       {
@@ -335,6 +330,12 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
         this->GetOutputPolyData()->GetScalarRange(range);
         }
       }
+    else if ((this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModeMeanFiberOrientation) ||
+          (this->GetColorMode ( ) == vtkMRMLFiberBundleDisplayNode::colorModePointFiberOrientation))
+        {
+          vtkMRMLDiffusionTensorDisplayPropertiesNode::ScalarInvariantKnownScalarRange(
+            vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation, range);
+        }
     else if (this->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData &&
              this->GetInputPolyData())
       {

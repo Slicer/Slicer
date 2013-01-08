@@ -273,6 +273,7 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         this->GetOutputPolyData()->GetScalarRange(range);
         }
       }
+
     this->ScalarRange[0] = range[0];
     this->ScalarRange[1] = range[1];
     }
