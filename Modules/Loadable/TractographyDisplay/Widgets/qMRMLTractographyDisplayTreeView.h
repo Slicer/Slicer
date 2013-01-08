@@ -74,6 +74,9 @@ protected:
     bool viewportEvent(QEvent* e);
   #endif
 
+protected slots:
+  void dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight );
+
 private:
   Q_DECLARE_PRIVATE(qMRMLTractographyDisplayTreeView);
   Q_DISABLE_COPY(qMRMLTractographyDisplayTreeView);

@@ -146,6 +146,13 @@ bool qMRMLTractographyDisplayTreeView::viewportEvent(QEvent* e)
 
 #endif
 
+//------------------------------------------------------------------------------
+void qMRMLTractographyDisplayTreeView::dataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight )
+{
+  qMRMLTreeView::dataChanged(topLeft, bottomRight);
+  if (~this->currentIndex().isValid())
+    this->setCurrentIndex(topLeft);
+}
 
 //------------------------------------------------------------------------------
 void qMRMLTractographyDisplayTreeView::onVisibilityColumnClicked(vtkMRMLNode* node)
