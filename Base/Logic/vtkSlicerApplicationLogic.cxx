@@ -1567,7 +1567,9 @@ bool vtkSlicerApplicationLogic::IsEmbeddedModule(const std::string& filePath,
   // On MacOSX extensions are installed in the "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>"
   // folder being a sub directory of the application dir, an extra test is required to make sure the
   // tested filePath doesn't belong to that "<Slicer_EXTENSIONS_DIRBASENAME>-<slicerRevision>" folder.
-  if (isEmbedded && extensionPath.find(Slicer_BUNDLE_LOCATION "/" Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
+  // BUG 2848: Since package name can be rename from "Slicer.app" to "Something.app", let's compare
+  // using ".app/Contents/" instead of "Slicer_BUNDLE_LOCATION" which is "Slicer.app/Contents/"
+  if (isEmbedded && extensionPath.find(".app/Contents/" Slicer_EXTENSIONS_DIRBASENAME "-" + slicerRevision) != std::string::npos)
     {
     isEmbedded = false;
     }

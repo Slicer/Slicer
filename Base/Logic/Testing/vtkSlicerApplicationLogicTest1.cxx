@@ -21,6 +21,7 @@
 // Slicer includes
 #include "vtkSlicerApplicationLogic.h"
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkSlicerConfigure.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -129,6 +130,7 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     // The following vector contains rows where each row has three items:
     //   - filePath
     //   - applicationHomeDir
+    //   - slicerRevision
     //   - isEmbeddedExpected
     typedef std::vector<std::string> TestRowType;
     typedef std::vector< TestRowType > TestDataType;
@@ -167,7 +169,39 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
     }
     {
       TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/" Slicer_BUNDLE_LOCATION "/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4810");
+      row.push_back("0");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Foo.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4810");
+      row.push_back("0");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Slicer.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4811");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/" Slicer_BUNDLE_LOCATION "/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
+      row.push_back("4811");
+      row.push_back("1");
+      data.push_back(row);
+    }
+    {
+      TestRowType row;
+      row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build/bin/Foo.app/Contents/Extensions-4810/Reporting/lib/Slicer-4.1/qt-loadable-modules/Python/vtkSlicerReportingModuleLogic.py");
       row.push_back("/home/jchris/Projects/Slicer4-Superbuild-Debug/Slicer-build");
       row.push_back("4811");
       row.push_back("1");
