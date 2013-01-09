@@ -226,7 +226,6 @@ void vtkMRMLFiberBundleTubeDisplayNode::UpdatePolyDataPipeline()
            (DiffusionTensorDisplayPropertiesNode != NULL))
     {
     this->ScalarVisibilityOn( );
-    this->AutoScalarRangeOn( );
     this->TensorToColor->SetExtractScalar(1);
 
     switch ( DiffusionTensorDisplayPropertiesNode->GetColorGlyphBy( ))

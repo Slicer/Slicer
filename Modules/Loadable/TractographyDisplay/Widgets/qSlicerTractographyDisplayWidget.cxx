@@ -15,6 +15,7 @@
 
 // VTK includes
 
+#include <math.h>
 //------------------------------------------------------------------------------
 class qSlicerTractographyDisplayWidgetPrivate: 
   public Ui_qSlicerTractographyDisplayWidget
@@ -59,17 +60,15 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
 
   QObject::connect( this->VisibilityCheckBox, SIGNAL(clicked(bool)), q, SLOT(setVisibility(bool)) );
   QObject::connect( this->ColorByCellScalarsRadioButton, SIGNAL(clicked()), q, SLOT(setColorByCellScalars()) );
-  QObject::connect( this->ColorBySolidColorCheckBox, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
-
+  QObject::connect( this->ColorBySolidColorRadioButton, SIGNAL(clicked()), q, SLOT(setColorBySolid()) );
   QObject::connect( this->ColorBySolidColorPicker, SIGNAL(colorChanged(QColor)), q, SLOT(onColorBySolidChanged(QColor)) );
+
   QObject::connect( this->ColorByScalarsColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), q, 
                     SLOT(setColorByCellScalarsColorTable(vtkMRMLNode*)) );
 
   QObject::connect( this->ColorByScalarInvariantRadioButton, SIGNAL(clicked()), q, SLOT(setColorByScalarInvariant()) );
   QObject::connect( this->ColorByScalarInvariantComboBox, SIGNAL(currentIndexChanged(int)), q,
                     SLOT(onColorByScalarInvariantChanged(int)) );  
-  QObject::connect( this->ColorByScalarInvariantDisplayRange, SIGNAL(rangeChanged(double,double)), q,
-                    SLOT(setColorByScalarInvariantDisplayRange(double,double)) );
 
   QObject::connect( this->ColorByScalarRadioButton, SIGNAL(clicked()), q, SLOT(setColorByScalar()) );
   QObject::connect( this->ColorByScalarComboBox, SIGNAL(currentIndexChanged(int)), q,
@@ -94,6 +93,14 @@ void qSlicerTractographyDisplayWidgetPrivate::init()
                    q, SLOT(setSpecularPower(double)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(backfaceCullingChanged(bool)),
                    q, SLOT(setBackfaceCulling(bool)));
+
+  QObject::connect(this->AutoWL, SIGNAL(clicked(bool)),
+                  q, SLOT(setAutoWindowLevel(bool)));
+
+  QObject::connect(this->FiberBundleColorRangeWidget, SIGNAL(valuesChanged(double, double)),
+                  q, SLOT(setWindowLevel(double, double)));
+  QObject::connect(this->FiberBundleColorRangeWidget, SIGNAL(rangeChanged(double, double)),
+                  q, SLOT(setWindowLevelLimits(double, double)));
 }
 
 
@@ -334,17 +341,7 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariant()
     }
   d->FiberBundleDisplayNode->SetColorModeToScalar();
   d->FiberBundleDisplayNode->SetScalarVisibility(1);
-}
-
-//------------------------------------------------------------------------------
-void qSlicerTractographyDisplayWidget::setColorByScalarInvariantDisplayRange(double min, double max)
-{
-  Q_D(qSlicerTractographyDisplayWidget);
-  if (!d->FiberBundleDisplayNode)
-    {
-    return;
-    }
-  d->FiberBundleDisplayNode->SetScalarRange(min, max);
+  this->updateScalarRange();
 }
 
 //------------------------------------------------------------------------------
@@ -361,7 +358,9 @@ void qSlicerTractographyDisplayWidget::onColorByScalarInvariantChanged(int scala
   if (displayPropertiesNode)
     {
     displayPropertiesNode->SetColorGlyphBy(d->ColorByScalarInvariantComboBox->itemData(scalarInvariantIndex).toInt());
-    } 
+    d->FiberBundleDisplayNode->Modified();
+    this->updateScalarRange();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -388,6 +387,46 @@ void qSlicerTractographyDisplayWidget::setColorByCellScalarsColorTable(vtkMRMLNo
     }
   Q_ASSERT(vtkMRMLColorNode::SafeDownCast(colortableNode));
   d->FiberBundleDisplayNode->SetAndObserveColorNodeID(colortableNode->GetID());
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setAutoWindowLevel(bool value)
+{
+  if (this->m_updating)
+    return;
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode) 
+    { 
+    return;
+    }
+  d->FiberBundleDisplayNode->SetAutoScalarRange(value);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setWindowLevel(double minValue, double maxValue)
+{
+  if (this->m_updating)
+    return;
+  Q_D(qSlicerTractographyDisplayWidget);
+  
+  if (!d->FiberBundleDisplayNode) 
+    { 
+    return;
+    }
+
+  d->FiberBundleDisplayNode->SetScalarRange(minValue, maxValue);
+}
+
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::setWindowLevelLimits(double minValue, double maxValue)
+{
+  if (this->m_updating)
+    return;
+  Q_D(qSlicerTractographyDisplayWidget);
+  const double step = (maxValue - minValue) / 100.;
+  d->FiberBundleColorRangeWidget->setSingleStep(step);
+  d->FiberBundleColorRangeWidget->setDecimals(ceil(fabs(log10(step))));
 }
 
 //------------------------------------------------------------------------------
@@ -518,6 +557,41 @@ bool qSlicerTractographyDisplayWidget::backfaceCulling()const
   return d->MaterialPropertyWidget->backfaceCulling();
 }
 
+//------------------------------------------------------------------------------
+void qSlicerTractographyDisplayWidget::updateScalarRange()
+{
+  Q_D(qSlicerTractographyDisplayWidget);
+
+  if ( !d->FiberBundleNode || !d->FiberBundleDisplayNode)
+    {
+    return;
+    }
+ 
+ double range[2];
+ bool was_updating = this->m_updating;
+ this->m_updating = true;
+
+ d->FiberBundleDisplayNode->GetScalarRange(range);
+ if (d->FiberBundleDisplayNode->GetAutoScalarRange())
+ {
+   d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
+   d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
+   d->FiberBundleColorRangeWidget->setRange(range[0], range[1]);
+ }
+ else
+ {
+  d->FiberBundleColorRangeWidget->setMinimumValue(range[0]);
+  d->FiberBundleColorRangeWidget->setMaximumValue(range[1]);
+
+  if ((d->FiberBundleColorRangeWidget->minimum() > range[0]) ||
+      (d->FiberBundleColorRangeWidget->maximum() < range[1]))
+    d->FiberBundleColorRangeWidget->setRange(range[0], range[1]);
+  }
+ const double step = (range[1] - range[0]) / 100.;
+ d->FiberBundleColorRangeWidget->setSingleStep(step);
+ d->FiberBundleColorRangeWidget->setDecimals(ceil(fabs(log10(step))));
+ this->m_updating = was_updating;
+}
 
 //------------------------------------------------------------------------------
 void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
@@ -581,7 +655,7 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         double color[3];
         d->FiberBundleDisplayNode->GetColor(color);
         d->ColorBySolidColorPicker->setColor(QColor::fromRgbF(color[0],color[1],color[2]) );
-        d->ColorBySolidColorCheckBox->setChecked(1);
+        d->ColorBySolidColorRadioButton->setChecked(1);
         }
         break;
       case vtkMRMLFiberBundleDisplayNode::colorModeUseCellScalars:
@@ -604,6 +678,27 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
         }
         break;
    }
+   if (
+       d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalarData ||
+       d->FiberBundleDisplayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalar
+      )
+   {
+     d->AutoWL->setEnabled(1);
+     d->AutoWL->setChecked(d->FiberBundleDisplayNode->GetAutoScalarRange());
+     if (d->FiberBundleDisplayNode->GetAutoScalarRange())
+     {
+       d->FiberBundleColorRangeWidget->setEnabled(0);
+     }
+     else
+     {
+       d->FiberBundleColorRangeWidget->setEnabled(1);
+      }
+     this->updateScalarRange();
+
+   } else {
+     d->AutoWL->setEnabled(0);
+     d->FiberBundleColorRangeWidget->setEnabled(0);
+   }
 
   d->MaterialPropertyWidget->setColor(
     QColor::fromRgbF(d->FiberBundleDisplayNode->GetColor()[0],
@@ -617,6 +712,4 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
   d->MaterialPropertyWidget->setBackfaceCulling(d->FiberBundleDisplayNode->GetBackfaceCulling());
 
   this->m_updating = 0;
-
-
 }

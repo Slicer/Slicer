@@ -202,7 +202,9 @@ class test_tractography_displayTest(unittest.TestCase):
     """Run as few or as many tests as needed here.
     """
     self.setUp()
-    #self.test_TestTractographyDisplaySelectSolidColor()
+    self.test_TestWindowLevel(display_node='Line')
+    self.test_TestWindowLevel(display_node='Tube')
+    self.test_TestWindowLevel(display_node='Glyph')
     self.test_TestTractographyDisplayColorBy(display_node='Line')
     self.test_TestTractographyDisplayColorBy(display_node='Tube')
     self.test_TestTractographyDisplayColorBy(display_node='Glyph')
@@ -241,7 +243,11 @@ class test_tractography_displayTest(unittest.TestCase):
         if not visibility.checked:
             visibility.click()
 
-        solidColor = slicer.util.findChildren(tubeTab, text=widget_text)[0]
+        solidColor = slicer.util.findChildren(tubeTab, text=widget_text)
+        if len(solidColor) == 0:
+            raise ValueError("Widget %s not found" % widget_text)
+        else:
+            solidColor = solidColor[0]
         solidColor.click()
 
         if displayNode and displayNode.GetColorMode() != color_code:
@@ -252,9 +258,8 @@ class test_tractography_displayTest(unittest.TestCase):
 
     visibility.click()
 
-
-  def test_TestTractographyDisplaySelectSolidColor(self):
-    self.delayDisplay("Starting the test")
+  def test_TestWindowLevel(self, display_node='Tube'):
+    self.delayDisplay("Starting the test Window Level")
 
     self.delayDisplay('Showing Advanced Display\n')
     advancedDisplay = slicer.util.findChildren(text='Advanced Display')[0]
@@ -262,39 +267,40 @@ class test_tractography_displayTest(unittest.TestCase):
 
     self.delayDisplay('Selecting tract1\n')
     tractNode = slicer.util.getNode('tract1')
+    displayNode = getattr(tractNode, 'Get%sDisplayNode' % display_node)()
     tree = slicer.util.findChildren(name='TractographyDisplayTreeView')[0]
     model = tree.model()
     modelIndex = model.indexFromMRMLNode(tractNode)
     tree.setCurrentIndex(modelIndex)
 
-    tubeTab = slicer.util.findChildren(advancedDisplay, name='TubeTab')[0]
+    tubeTab = slicer.util.findChildren(advancedDisplay, name='%sTab' % display_node)[0]
+    slicer.util.findChildren(tubeTab, text='Of Tensor Property')[0].click()
+
 
     visibility = slicer.util.findChildren(tubeTab, text='Visibility')[0]
-
     if not visibility.checked:
         visibility.click()
 
-    solidColor = slicer.util.findChildren(tubeTab, text='Solid Color')[0]
-    solidColor.click()
+    autoWL = slicer.util.findChildren(tubeTab, text='Auto W/L')[0]
 
-    displayNode = tractNode.GetTubeDisplayNode()
-    if displayNode and displayNode.GetColorMode() != displayNode.colorModeSolid:
-        self.delayDisplay('Setting Color Mode To Solid Did not Work')
-        assert(False)
-    else:
-        self.delayDisplay("Setting Color Mode To Solid Color Worked")
+    assert(not autoWL.checked or displayNode.GetAutoScalarRange())
+    assert(autoWL.checked or not displayNode.GetAutoScalarRange())
+    self.delayDisplay('Default Window Level Agrees with Display Node\n')
 
-    #self.delayDisplay('Deleting tract node and toggling visibility')
-    #slicer.mrmlScene.RemoveNode(tractNode)
+    autoWL.click()
+    assert(not autoWL.checked or displayNode.GetAutoScalarRange())
+    assert(autoWL.checked or not displayNode.GetAutoScalarRange())
+    self.delayDisplay('Changes in Window Level Agrees with Display Node\n')
 
-    #visibility = slicer.util.findChildren(name='VisibilityCheckBox')[0]
+    if autoWL.checked:
+        autoWL.click()
 
-    #visibility.checked = False
+    slider = slicer.util.findChildren(tubeTab, name='FiberBundleColorRangeWidget')[0]
+    slider.setMinimumValue(.1)
+    slider.setMaximumValue(.8)
+    scalar_range = displayNode.GetScalarRange()
+    assert((scalar_range[0] == .1) and (scalar_range[1] == .8))
+    self.delayDisplay('Changes in Window Level Values Agree with Display Node\n')
 
-    #self.delayDisplay('Toggled with checked property - okay?')
-
-    #self.delayDisplay('Now try with click button...')
-    #visibility.clicked()
-
-    #self.delayDisplay('Did we crash?')
-    #self.delayDisplay('No... then test passed!')
+    autoWL.click()
+    visibility.click()

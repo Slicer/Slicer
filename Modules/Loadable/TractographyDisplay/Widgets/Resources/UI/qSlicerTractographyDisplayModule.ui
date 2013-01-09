@@ -144,7 +144,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="LineTab">
          <attribute name="title">
@@ -346,7 +346,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>111</x>
-     <y>477</y>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -362,7 +362,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>111</x>
-     <y>477</y>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -377,8 +377,8 @@
      <y>43</y>
     </hint>
     <hint type="destinationlabel">
-     <x>159</x>
-     <y>477</y>
+     <x>183</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -394,7 +394,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>111</x>
-     <y>484</y>
+     <y>450</y>
     </hint>
    </hints>
   </connection>
@@ -425,8 +425,8 @@
      <y>349</y>
     </hint>
     <hint type="destinationlabel">
-     <x>258</x>
-     <y>396</y>
+     <x>270</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>
@@ -457,8 +457,8 @@
      <y>174</y>
     </hint>
     <hint type="destinationlabel">
-     <x>342</x>
-     <y>401</y>
+     <x>354</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>

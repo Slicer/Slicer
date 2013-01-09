@@ -36,6 +36,7 @@ public:
   double specular()const;
   double specularPower()const;
   bool backfaceCulling()const;
+  void updateScalarRange();
 
   vtkMRMLFiberBundleNode* FiberBundleNode()const;
   vtkMRMLFiberBundleDisplayNode* FiberBundleDisplayNode()const;
@@ -51,7 +52,6 @@ public slots:
   void setVisibility(bool);
   void setColorByScalarInvariant();
   void onColorByScalarInvariantChanged(int);
-  void setColorByScalarInvariantDisplayRange(double, double);
   void setColorByScalar();
   void onColorByScalarChanged(int);
   void setColorByMeanFiberOrientation();
@@ -62,6 +62,10 @@ public slots:
   void onColorBySolidChanged(const QColor&);
   void setColorByCellScalarsColorTable(vtkMRMLNode*);
   void setOpacity(double); 
+
+  void setAutoWindowLevel(bool);
+  void setWindowLevel(double, double);
+  void setWindowLevelLimits(double, double);
   
   /// Set the values on the display node
   void setColor(const QColor&);
