@@ -1443,19 +1443,22 @@ void vtkMRMLScene::RemoveReferencedNodeID(const char *id, vtkMRMLNode *referenci
     vtkErrorMacro("RemoveReferencedNodeID: either id is null or the reference node is null.");
     return;
     }
+
   std::vector< std::string > referencedIDs;
   std::vector< vtkSmartPointer<vtkMRMLNode> > referencingNodes;
-  //vtkMRMLNode *node = NULL;
 
-  size_t nnodes = this->ReferencingNodes.size();
-  size_t i=0;
-  for( i=0; i<nnodes; ++i)
+  const size_t nnodes = this->ReferencingNodes.size();
+  referencedIDs.reserve(nnodes);
+  referencingNodes.reserve(nnodes);
+  for(size_t i=0; i<nnodes; ++i)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
     if ( node  && referencingNode )
       {
-      if (node->GetID() && referencingNode->GetID() && !strcmp(node->GetID(), referencingNode->GetID())&&
-          id && this->ReferencedIDs[i].c_str() && !strcmp(id, this->ReferencedIDs[i].c_str()) )
+      if (node->GetID() && referencingNode->GetID()
+          && !strcmp(node->GetID(), referencingNode->GetID())
+          && id && this->ReferencedIDs[i].c_str()
+          && !strcmp(id, this->ReferencedIDs[i].c_str()) )
         {
         // need to remove do nothing
         continue;
@@ -1487,11 +1490,11 @@ void vtkMRMLScene::RemoveNodeReferences(vtkMRMLNode *n)
 
   std::vector< std::string > referencedIDs;
   std::vector< vtkSmartPointer<vtkMRMLNode> > referencingNodes;
-  //vtkMRMLNode *node = NULL;
 
-  size_t nnodes = this->ReferencingNodes.size();
-  size_t i=0;
-  for( i=0; i<nnodes; ++i)
+  const size_t nnodes = this->ReferencingNodes.size();
+  referencedIDs.reserve(nnodes);
+  referencingNodes.reserve(nnodes);
+  for( size_t i=0; i<nnodes; ++i)
     {
     vtkMRMLNode *node = this->ReferencingNodes[i];
     if ( node && n )
@@ -1513,27 +1516,38 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
   std::vector< std::string > referencedIDs;
   std::vector< vtkSmartPointer<vtkMRMLNode> > referencingNodes;
 
-  size_t nnodes = this->ReferencedIDs.size();
-  size_t i=0;
-  for( i=0; i<nnodes; ++i)
+  const size_t nnodes = this->ReferencedIDs.size();
+  referencedIDs.reserve(nnodes);
+  referencingNodes.reserve(nnodes);
+  for( size_t i=0; i<nnodes; ++i)
     {
-    if (this->ReferencedIDs[i].c_str() == NULL || this->ReferencedIDs[i] == "")
+    if (this->ReferencedIDs[i].size() == 0 ||
+        this->ReferencingNodes[i]->GetID() == NULL)
       {
       continue;
       }
     vtkMRMLNode *node = this->GetNodeByID(this->ReferencedIDs[i]);
     if ( node && node->GetID())
       {
-      referencedIDs.push_back(this->ReferencedIDs[i]);
-      referencingNodes.push_back(this->ReferencingNodes[i]);
+      vtkMRMLNode *referencingNode = this->GetNodeByID(
+        this->ReferencingNodes[i]->GetID());
+      if (referencingNode && referencingNode == this->ReferencingNodes[i])
+        {
+        referencedIDs.push_back(this->ReferencedIDs[i]);
+        referencingNodes.push_back(this->ReferencingNodes[i]);
+        }
       }
     }
-
+  this->ReferencedIDs = referencedIDs;
+  this->ReferencingNodes = referencingNodes;
+/*
   std::vector< std::string > referencedIDs1;
   std::vector< vtkSmartPointer<vtkMRMLNode> > referencingNodes1;
 
   nnodes = referencingNodes.size();
-  for( i=0; i<nnodes; i++)
+  referencedIDs1.reserve(nnodes);
+  referencingNodes1.reserve(nnodes);
+  for( size_t i=0; i<nnodes; i++)
     {
     if (referencingNodes[i]->GetID() == NULL)
       {
@@ -1548,6 +1562,7 @@ void vtkMRMLScene::RemoveUnusedNodeReferences()
     }
   this->ReferencedIDs = referencedIDs1;
   this->ReferencingNodes = referencingNodes1;
+*/
 }
 
 //------------------------------------------------------------------------------
@@ -1562,9 +1577,10 @@ void vtkMRMLScene::RemoveReferencesToNode(vtkMRMLNode *n)
   std::vector< std::string > referencedIDs;
   std::vector< vtkSmartPointer<vtkMRMLNode> > referencingNodes;
 
-  size_t nnodes = this->ReferencingNodes.size();
-  size_t i=0;
-  for( i=0; i<nnodes; ++i)
+  const size_t nnodes = this->ReferencingNodes.size();
+  referencedIDs.reserve(nnodes);
+  referencingNodes.reserve(nnodes);
+  for( size_t i=0; i<nnodes; ++i)
     {
     if ( this->ReferencedIDs[i].c_str() && strcmp(this->ReferencedIDs[i].c_str(), n->GetID()))
       {
@@ -2966,6 +2982,7 @@ void vtkMRMLScene::AddReferencedNodes(vtkMRMLNode *node, vtkCollection *refNodes
   vtkMRMLNode *rnode = NULL;
   size_t nnodes = this->ReferencingNodes.size();
   std::vector< std::string > ids;
+  ids.reserve(nnodes);
   for(size_t n=0; n<nnodes; ++n)
     {
     vtkMRMLNode *rrnode = this->ReferencingNodes[n];
