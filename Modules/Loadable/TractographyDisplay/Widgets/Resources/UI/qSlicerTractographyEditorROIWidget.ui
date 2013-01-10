@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>410</width>
-    <height>161</height>
+    <height>172</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,7 +90,7 @@
       <string>Create a new fiber bundle using the ROI selection and the percentage of fibers shown as input.</string>
      </property>
      <property name="text">
-      <string>Create Bundle From ROI</string>
+      <string>Extract Bundle From ROI</string>
      </property>
     </widget>
    </item>
