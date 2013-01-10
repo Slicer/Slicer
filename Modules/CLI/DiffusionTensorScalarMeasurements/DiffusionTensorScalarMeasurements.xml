@@ -60,7 +60,7 @@
       <element>D22</element>
       <element>D33</element>
       <element>ParallelDiffusivity</element>
-      <element>PerpendicularDffusivity</element>
+      <element>PerpendicularDiffusivity</element>
     </string-enumeration>
   </parameters>
 </executable>
