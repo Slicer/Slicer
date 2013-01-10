@@ -104,6 +104,10 @@ public:
   /// loadNodes function with QString("SceneFile")
   bool loadScene(const QString& fileName, bool clear = true);
 
+  /// Convenient function to load a file. All the options (e.g. filetype) are
+  /// chosen by default.
+  Q_INVOKABLE bool loadFile(const QString& fileName);
+
   /// Save nodes (or scene) using the registered writers.
   /// Return true on success, false otherwise.
   /// Attributes are typically:

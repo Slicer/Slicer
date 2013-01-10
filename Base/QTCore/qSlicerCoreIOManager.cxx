@@ -270,6 +270,14 @@ bool qSlicerCoreIOManager::loadScene(const QString& fileName, bool clear)
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreIOManager::loadFile(const QString& fileName)
+{
+  qSlicerIO::IOProperties properties;
+  properties["fileName"] = fileName;
+  return this->loadNodes(this->fileType(fileName), properties);
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreIOManager::loadNodes(const qSlicerIO::IOFileType& fileType,
 #if QT_VERSION < 0x040700
                                      const QVariantMap& parameters,

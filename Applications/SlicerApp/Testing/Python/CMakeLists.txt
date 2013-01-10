@@ -175,6 +175,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
   slicer_add_python_unittest(SCRIPT Slicer4Minute.py)
   slicer_add_python_unittest(SCRIPT Charting.py)
   slicer_add_python_unittest(SCRIPT SliceLinkLogic.py)
+  slicer_add_python_unittest(SCRIPT ScenePerformance.py)
   slicer_add_python_unittest(SCRIPT RSNA2012Vis.py)
   slicer_add_python_unittest(SCRIPT RSNA2012Quant.py)
   slicer_add_python_unittest(SCRIPT slicerCloseCrashBug2590.py)
@@ -192,6 +193,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     Slicer4Minute.py
     Charting.py
     SliceLinkLogic.py
+    ScenePerformance.py
     RSNA2012Vis.py
     RSNA2012Quant.py
     slicerCloseCrashBug2590.py
@@ -200,6 +202,7 @@ if(Slicer_USE_QtTesting AND Slicer_USE_PYTHONQT)
     )
 
   set(KIT_PYTHON_RESOURCES
+    Resources/UI/ScenePerformance.ui
     )
 
   ctkMacroCompilePythonScript(
