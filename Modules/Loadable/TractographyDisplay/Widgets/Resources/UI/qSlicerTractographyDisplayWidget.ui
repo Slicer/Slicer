@@ -377,8 +377,8 @@ QCheckBox::indicator:unchecked {
      <y>121</y>
     </hint>
     <hint type="destinationlabel">
-     <x>338</x>
-     <y>192</y>
+     <x>380</x>
+     <y>154</y>
     </hint>
    </hints>
   </connection>
@@ -389,12 +389,60 @@ QCheckBox::indicator:unchecked {
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>71</x>
-     <y>72</y>
+     <x>81</x>
+     <y>53</y>
     </hint>
     <hint type="destinationlabel">
-     <x>425</x>
-     <y>74</y>
+     <x>428</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ColorByMeanFiberOrientationRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ColorByScalarsColorTableComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ColorByPointFiberOrientationRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ColorByScalarsColorTableComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>264</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>147</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ColorByScalarRadioButton</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>ColorByScalarsColorTableComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>109</x>
+     <y>134</y>
     </hint>
    </hints>
   </connection>

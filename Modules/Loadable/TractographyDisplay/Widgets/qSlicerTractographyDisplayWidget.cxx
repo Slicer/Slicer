@@ -341,6 +341,18 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariant()
     }
   d->FiberBundleDisplayNode->SetColorModeToScalar();
   d->FiberBundleDisplayNode->SetScalarVisibility(1);
+
+  vtkMRMLDiffusionTensorDisplayPropertiesNode* displayPropertiesNode = 
+                          vtkMRMLDiffusionTensorDisplayPropertiesNode::
+                          SafeDownCast(d->FiberBundleDisplayNode->GetDiffusionTensorDisplayPropertiesNode());
+  if (displayPropertiesNode)
+    {
+    if (displayPropertiesNode->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation)
+      d->ColorByScalarsColorTableComboBox->setEnabled(0);
+    else
+      d->ColorByScalarsColorTableComboBox->setEnabled(1);
+    }
+  d->FiberBundleDisplayNode->Modified();
   this->updateScalarRange();
 }
 
@@ -358,9 +370,15 @@ void qSlicerTractographyDisplayWidget::onColorByScalarInvariantChanged(int scala
   if (displayPropertiesNode)
     {
     displayPropertiesNode->SetColorGlyphBy(d->ColorByScalarInvariantComboBox->itemData(scalarInvariantIndex).toInt());
+    if (displayPropertiesNode->GetColorGlyphBy() == vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation)
+      d->ColorByScalarsColorTableComboBox->setEnabled(0);
+    else
+      d->ColorByScalarsColorTableComboBox->setEnabled(1);
+
     d->FiberBundleDisplayNode->Modified();
     this->updateScalarRange();
     }
+
 }
 
 //------------------------------------------------------------------------------
