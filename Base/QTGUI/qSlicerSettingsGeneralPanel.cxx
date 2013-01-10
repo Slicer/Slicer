@@ -70,11 +70,14 @@ void qSlicerSettingsGeneralPanelPrivate::init()
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);
-  /// Default values
-  this->LanguageComboBox->setDefaultLanguage("en");
-  /// set the directory where all the translations files are.
-  this->LanguageComboBox->setDirectory(
-      QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
+  if (internationalizationEnabled)
+    {
+    /// Default values
+    this->LanguageComboBox->setDefaultLanguage("en");
+    /// set the directory where all the translations files are.
+    this->LanguageComboBox->setDirectory(
+        QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
+    }
 
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));

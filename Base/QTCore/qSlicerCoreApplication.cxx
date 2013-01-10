@@ -286,8 +286,11 @@ void qSlicerCoreApplicationPrivate::init()
 
 #endif
 
-  // We load the language selected for the application
-  q->loadLanguage();
+  if (q->userSettings()->value("Internationalization/Enabled").toBool())
+    {
+    // We load the language selected for the application
+    qSlicerCoreApplication::loadLanguage();
+    }
 }
 
 //-----------------------------------------------------------------------------
