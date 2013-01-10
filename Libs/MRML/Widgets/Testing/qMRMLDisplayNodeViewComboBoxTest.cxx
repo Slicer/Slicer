@@ -173,8 +173,10 @@ void qMRMLDisplayNodeViewComboBoxTester::testAddNode()
 // ----------------------------------------------------------------------------
 void qMRMLDisplayNodeViewComboBoxTester::testResetScene()
 {
+  vtkMRMLScene* scene = this->ComboBox->mrmlScene();
   this->ComboBox->setMRMLScene(0);
   QCOMPARE(this->ComboBox->checkedViewNodes().count(), 0);
+  scene->Delete();
 }
 
 // ----------------------------------------------------------------------------
