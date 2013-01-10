@@ -53,7 +53,7 @@ private slots:
 void qMRMLSceneModelTester::testDefaults()
 {
   qMRMLSceneModel sceneModel;
-  QCOMPARE(sceneModel.listenNodeModifiedEvent(), true);
+  QCOMPARE(sceneModel.listenNodeModifiedEvent(), qMRMLSceneModel::OnlyVisibleNodes);
   QCOMPARE(sceneModel.lazyUpdate(), false);
   QCOMPARE(sceneModel.nameColumn(), 0);
   QCOMPARE(sceneModel.idColumn(), -1);
@@ -71,11 +71,11 @@ void qMRMLSceneModelTester::testSetsAndGets()
 {
   qMRMLSceneModel sceneModel;
 
-  sceneModel.setListenNodeModifiedEvent(false);
-  QCOMPARE(sceneModel.listenNodeModifiedEvent(), false);
+  sceneModel.setListenNodeModifiedEvent(qMRMLSceneModel::NoNodes);
+  QCOMPARE(sceneModel.listenNodeModifiedEvent(), qMRMLSceneModel::NoNodes);
 
-  sceneModel.setListenNodeModifiedEvent(true);
-  QCOMPARE(sceneModel.listenNodeModifiedEvent(), true);
+  sceneModel.setListenNodeModifiedEvent(qMRMLSceneModel::AllNodes);
+  QCOMPARE(sceneModel.listenNodeModifiedEvent(), qMRMLSceneModel::AllNodes);
 
   sceneModel.setLazyUpdate(true);
   QCOMPARE(sceneModel.lazyUpdate(), true);

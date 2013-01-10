@@ -94,7 +94,6 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
     rootModel = qobject_cast<QAbstractProxyModel*>(rootModel)->sourceModel();
     }
   this->MRMLSceneModel = qobject_cast<qMRMLSceneModel*>(rootModel);
-  this->MRMLSceneModel->setListenNodeModifiedEvent(true);
   Q_ASSERT(this->MRMLSceneModel);
   // no need to reset the root model index here as the model is not yet set
   this->updateNoneItem(false);

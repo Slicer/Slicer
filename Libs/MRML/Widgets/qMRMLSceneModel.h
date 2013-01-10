@@ -60,12 +60,14 @@ class QMRML_WIDGETS_EXPORT qMRMLSceneModel : public QStandardItemModel
   Q_OBJECT
   QVTK_OBJECT
 
+  Q_ENUMS(NodeTypes)
+
   /// This property controls whether to observe or not the modified event of
   /// the node and update the node item data accordingly.
   /// It can be useful when the modified property is displayed
   /// (name, id, visibility...)
-  /// True by default
-  Q_PROPERTY (bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  /// OnlyVisibleNodes by default
+  Q_PROPERTY (NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
 
   /// Control wether the model actively listens to the scene.
   /// If LazyUpdate is true, the model ignores added node events when the
@@ -97,7 +99,14 @@ public:
   qMRMLSceneModel(QObject *parent=0);
   virtual ~qMRMLSceneModel();
 
-  enum ItemDataRole{
+  enum NodeTypes
+    {
+    NoNodes = 0,
+    AllNodes,
+    OnlyVisibleNodes
+    };
+  enum ItemDataRole
+    {
     /// Unique ID of the item. For nodes, it is the node ID.
     UIDRole = Qt::UserRole + 1,
     /// Pointer (as long long) of the item if it is a scene or a node.
@@ -134,8 +143,11 @@ public:
   /// Option that activates the expensive listening of the vtkMRMLNode Modified
   /// events. When listening, the signal itemDataChanged() is fired when a
   /// vtkMRMLNode is modified.
-  void setListenNodeModifiedEvent(bool listen);
-  bool listenNodeModifiedEvent()const;
+  /// \sa listenNodeModifiedEvent, listenNodeModifiedEvent()
+  void setListenNodeModifiedEvent(NodeTypes nodesToListen);
+  /// Get the types of nodes that are observed.
+  /// \sa listenNodeModifiedEvent, setListenNodeModifiedEvent()
+  NodeTypes listenNodeModifiedEvent()const;
 
   bool lazyUpdate()const;
   void setLazyUpdate(bool lazy);
@@ -201,6 +213,10 @@ public:
   /// \sa isParentNode()
   bool isAffiliatedNode(vtkMRMLNode* nodeA, vtkMRMLNode* nodeB)const;
 
+  /// Observe node and update item when the node is modified.
+  /// \sa listenNodeModifiedEvent
+  virtual void observeNode(vtkMRMLNode* node);
+
 protected slots:
 
   virtual void onMRMLSceneNodeAboutToBeAdded(vtkMRMLScene* scene, vtkMRMLNode* node);
@@ -251,7 +267,6 @@ protected:
   virtual void populateScene();
   virtual QStandardItem* insertNode(vtkMRMLNode* node);
   virtual QStandardItem* insertNode(vtkMRMLNode* node, QStandardItem* parent, int row = -1);
-  virtual void observeNode(vtkMRMLNode* node);
 
   virtual bool isANode(const QStandardItem* item)const;
   virtual QFlags<Qt::ItemFlag> nodeFlags(vtkMRMLNode* node, int column)const;
@@ -318,6 +333,7 @@ private:
   Q_DECLARE_PRIVATE(qMRMLSceneModel);
   Q_DISABLE_COPY(qMRMLSceneModel);
 };
+Q_DECLARE_METATYPE(qMRMLSceneModel::NodeTypes)
 
 void printStandardItem(QStandardItem* item, const QString& offset);
 

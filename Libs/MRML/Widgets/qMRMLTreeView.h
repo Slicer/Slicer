@@ -30,10 +30,10 @@ class QShowEvent;
 #include <ctkVTKObject.h>
 
 // MRMLWidgets includes
+#include "qMRMLSceneModel.h"
 #include "qMRMLSortFilterProxyModel.h"
 #include "qMRMLWidgetsExport.h"
 
-class qMRMLSceneModel;
 class qMRMLTreeViewPrivate;
 class vtkMRMLNode;
 class vtkMRMLScene;
@@ -60,8 +60,9 @@ class QMRML_WIDGETS_EXPORT qMRMLTreeView : public QTreeView
   /// This property controls whether to actively listen to the nodes
   /// to synchronize their representation. As it can be time consuming, you
   /// can disable it if you want a lazy update.
-  /// True by default.
-  Q_PROPERTY(bool listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
+  /// OnlyVisibleNodes by default.
+  /// \sa qMRMLSceneModel::listenNodeModifiedEvent
+  Q_PROPERTY(qMRMLSceneModel::NodeTypes listenNodeModifiedEvent READ listenNodeModifiedEvent WRITE setListenNodeModifiedEvent)
   /// This property controls which node types are visible in the view.
   /// This behaves as a filter, the nodes that have a type not included in the
   /// list will be hidden.
@@ -133,10 +134,12 @@ public:
   /// \sa setSceneModel()
   QString sceneModelType()const;
 
-  /// \sa qMRMLSceneModel::setListenNodeModifiedEvent
-  void setListenNodeModifiedEvent(bool listen);
+  /// Set the node types on the scene model.
+  /// \sa listenNodeModifiedEvent qMRMLSceneModel::setListenNodeModifiedEvent
+  void setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes listen);
+  /// Get the node types of the scene model.
   /// \sa qMRMLSceneModel::listenNodeModifiedEvent
-  bool listenNodeModifiedEvent()const;
+  qMRMLSceneModel::NodeTypes listenNodeModifiedEvent()const;
 
   /// Customize the model
   void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);

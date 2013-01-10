@@ -145,7 +145,6 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType,
 //------------------------------------------------------------------------------
 bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
 {
-  Q_D(const qMRMLSortFilterProxyModel);
   QStandardItem* parentItem = this->sourceItem(source_parent);
   if (parentItem == 0)
     {
@@ -169,21 +168,43 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     }
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
+  AcceptType accept = this->filterAcceptsNode(node);
+  bool acceptRow = (accept == Accept);
+  if (accept == AcceptButPotentiallyRejectable)
+    {
+    acceptRow = this->QSortFilterProxyModel::filterAcceptsRow(source_row,
+                                                              source_parent);
+    }
+  if (node &&
+      sceneModel->listenNodeModifiedEvent() == qMRMLSceneModel::OnlyVisibleNodes &&
+      accept != Reject)
+    {
+    sceneModel->observeNode(node);
+    }
+  return acceptRow;
+}
+
+//------------------------------------------------------------------------------
+qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
+::filterAcceptsNode(vtkMRMLNode* node)const
+{
+  Q_D(const qMRMLSortFilterProxyModel);
+  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
   if (!node)
     {
-    return true;
+    return Accept;
     }
   if (this->showAll())
     {
-    return true;
+    return Accept;
     }
   if (this->hideAll())
     {
-    return false;
+    return Reject;
     }
   if (d->HiddenNodeIDs.contains(node->GetID()))
     {
-    return false;
+    return Reject;
     }
   // HideFromEditors property
   if (!d->ShowHidden && node->GetHideFromEditors())
@@ -199,7 +220,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
       }
     if (hide)
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -210,7 +231,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
     bool affiliated = sceneModel->isAffiliatedNode(node, theNode);
     if (!affiliated)
       {
-      return false;
+      return Reject;
       }
     }
 
@@ -218,8 +239,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
   if (d->NodeTypes.isEmpty())
     {
     // Apply filter if any
-    return this->QSortFilterProxyModel::filterAcceptsRow(source_row,
-                                                         source_parent);
+    return AcceptButPotentiallyRejectable;
     }
   foreach(const QString& nodeType, d->NodeTypes)
     {
@@ -242,7 +262,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
         {
         if (node->IsA(hideChildNodeType.toAscii().data()))
           {
-          return false;
+          return Reject;
           }
         }
       }
@@ -265,7 +285,7 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
       // fail if the attribute isn't defined on the node at all
       if (nodeAttribute == 0)
         {
-        return false;
+        return RejectButPotentiallyAcceptable;
         }
       // if the filter value is null, any node attribute value will match
       if (!d->Attributes[nodeType].second.isNull())
@@ -273,15 +293,14 @@ bool qMRMLSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInd
         // otherwise, the node and filter attributes have to match
         if (testAttribute != nodeAttribute)
           {
-          return false;
+          return RejectButPotentiallyAcceptable;
           }
         }
       }
     // Apply filter if any
-    return this->QSortFilterProxyModel::filterAcceptsRow(source_row,
-                                                         source_parent);
+    return AcceptButPotentiallyRejectable;
     }
-  return false;
+  return Reject;
 }
 
 //-----------------------------------------------------------------------------

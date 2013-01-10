@@ -382,7 +382,7 @@ void qMRMLTreeView::onCurrentRowChanged(const QModelIndex& index)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLTreeView::setListenNodeModifiedEvent(bool listen)
+void qMRMLTreeView::setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes listen)
 {
   Q_D(qMRMLTreeView);
   Q_ASSERT(d->SceneModel);
@@ -390,10 +390,10 @@ void qMRMLTreeView::setListenNodeModifiedEvent(bool listen)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLTreeView::listenNodeModifiedEvent()const
+qMRMLSceneModel::NodeTypes qMRMLTreeView::listenNodeModifiedEvent()const
 {
   Q_D(const qMRMLTreeView);
-  return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : true;
+  return d->SceneModel ? d->SceneModel->listenNodeModifiedEvent() : qMRMLSceneModel::OnlyVisibleNodes;
 }
 
 // --------------------------------------------------------------------------

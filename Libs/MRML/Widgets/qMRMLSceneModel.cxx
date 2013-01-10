@@ -40,9 +40,11 @@
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   : q_ptr(&object)
 {
+  qRegisterMetaType<qMRMLSceneModel::NodeTypes>("qMRMLSceneModel::NodeTypes");
+
   this->CallBack = vtkSmartPointer<vtkCallbackCommand>::New();
   this->LazyUpdate = false;
-  this->ListenNodeModifiedEvent = false;
+  this->ListenNodeModifiedEvent = qMRMLSceneModel::NoNodes;
   this->PendingItemModified = -1; // -1 means not updating
 
   this->NameColumn = -1;
@@ -82,7 +84,7 @@ void qMRMLSceneModelPrivate::init()
                    q, SLOT(onItemChanged(QStandardItem*)));
 
   q->setNameColumn(0);
-  q->setListenNodeModifiedEvent(true);
+  q->setListenNodeModifiedEvent(qMRMLSceneModel::OnlyVisibleNodes);
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +127,7 @@ void qMRMLSceneModelPrivate::listenNodeModifiedEvent()
     {
     vtkMRMLNode* node = q->mrmlNodeFromIndex(sceneIndex.child(i,0));
     q->qvtkDisconnect(node, vtkCommand::NoEvent, q, 0);
-    if (this->ListenNodeModifiedEvent)
+    if (this->ListenNodeModifiedEvent == qMRMLSceneModel::AllNodes)
       {
       q->observeNode(node);
       }
@@ -560,7 +562,7 @@ bool qMRMLSceneModel
 }
 
 //------------------------------------------------------------------------------
-void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
+void qMRMLSceneModel::setListenNodeModifiedEvent(qMRMLSceneModel::NodeTypes listen)
 {
   Q_D(qMRMLSceneModel);
   if (d->ListenNodeModifiedEvent == listen)
@@ -572,7 +574,7 @@ void qMRMLSceneModel::setListenNodeModifiedEvent(bool listen)
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSceneModel::listenNodeModifiedEvent()const
+qMRMLSceneModel::NodeTypes qMRMLSceneModel::listenNodeModifiedEvent()const
 {
   Q_D(const qMRMLSceneModel);
   return d->ListenNodeModifiedEvent;
@@ -790,7 +792,7 @@ QStandardItem* qMRMLSceneModel::insertNode(vtkMRMLNode* node, QStandardItem* par
     this->insertRow(row,items);
     }
   // TODO: don't listen to nodes that are hidden from editors ?
-  if (d->ListenNodeModifiedEvent)
+  if (d->ListenNodeModifiedEvent == AllNodes)
     {
     this->observeNode(node);
     }
@@ -1132,8 +1134,8 @@ void qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved(vtkMRMLScene* scene, vtkMR
     qvtkDisconnect(node, vtkCommand::ModifiedEvent,
                    this, SLOT(onMRMLNodeModified(vtkObject*)));
 
-  Q_ASSERT_X((!d->ListenNodeModifiedEvent && connectionsRemoved == 0) ||
-             (d->ListenNodeModifiedEvent && connectionsRemoved == 1),
+  Q_ASSERT_X(((d->ListenNodeModifiedEvent == NoNodes) && connectionsRemoved == 0) ||
+             (d->ListenNodeModifiedEvent != NoNodes && connectionsRemoved <= 1),
              "qMRMLSceneModel::onMRMLSceneNodeAboutToBeRemoved()",
              "A node has been removed from the scene but the scene model has "
              "never been notified it has been added in the first place. Maybe"

@@ -41,9 +41,6 @@
         <property name="indentation">
          <number>10</number>
         </property>
-        <property name="listenNodeModifiedEvent">
-         <bool>true</bool>
-        </property>
         <property name="editMenuActionVisible">
          <bool>true</bool>
         </property>

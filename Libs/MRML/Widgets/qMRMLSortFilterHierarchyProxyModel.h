@@ -40,7 +40,7 @@ protected:
   // Don't show vtkMRMLHierarchyNode if they are tied to a vtkMRMLModelNode
   // The only vtkMRMLHierarchyNode to display are the ones who reference other
   // vtkMRMLHierarchyNode (tree parent) or empty (tree parent to be)
-  virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
+  virtual AcceptType filterAcceptsNode(vtkMRMLNode* node)const;
   
 protected:
   QScopedPointer<qMRMLSortFilterHierarchyProxyModelPrivate> d_ptr;

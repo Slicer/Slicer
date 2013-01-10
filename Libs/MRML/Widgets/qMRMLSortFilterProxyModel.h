@@ -207,11 +207,20 @@ public slots:
 
   // TODO Add setMRMLScene() to propagate to the scene model
 protected:
+  enum AcceptType
+  {
+    Reject = 0,
+    Accept,
+    RejectButPotentiallyAcceptable,
+    AcceptButPotentiallyRejectable,
+  };
   //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
   virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
+  virtual AcceptType filterAcceptsNode(vtkMRMLNode* node)const;
   //virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
+
 protected:
   QScopedPointer<qMRMLSortFilterProxyModelPrivate> d_ptr;
 

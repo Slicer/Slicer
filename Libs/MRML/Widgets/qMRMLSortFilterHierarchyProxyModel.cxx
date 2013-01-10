@@ -58,33 +58,15 @@ qMRMLSortFilterHierarchyProxyModel::~qMRMLSortFilterHierarchyProxyModel()
 }
 
 //------------------------------------------------------------------------------
-bool qMRMLSortFilterHierarchyProxyModel
-::filterAcceptsRow(int source_row, const QModelIndex &source_parent)const
+qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterHierarchyProxyModel
+::filterAcceptsNode(vtkMRMLNode* node)const
 {
   //Q_D(const qMRMLSortFilterHierarchyProxyModel);
-  bool res = this->Superclass::filterAcceptsRow(source_row, source_parent);
-  if (!res)
+  AcceptType res = this->Superclass::filterAcceptsNode(node);
+  if (res == Accept || res == AcceptButPotentiallyRejectable)
     {
     return res;
     }
-  // shouldn't fail because Superclass::filterAcceptsRow returned true 
-  QStandardItem* parentItem = this->sourceItem(source_parent);
-  Q_ASSERT(parentItem);
-  // shouldn't fail because Superclass::filterAcceptsRow returned true
-  QStandardItem* item = 0;
-  // Sometimes the row is not complete, search for a non null item
-  for (int childIndex = 0; childIndex < parentItem->columnCount(); ++childIndex)
-    {
-    item = parentItem->child(source_row, childIndex);
-    if (item)
-      {
-      break;
-      }
-    }
-  Q_ASSERT(item);
-  qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(
-    this->sourceModel());
-  vtkMRMLNode* node = sceneModel->mrmlNodeFromItem(item);
   vtkMRMLHierarchyNode* hNode = vtkMRMLHierarchyNode::SafeDownCast(node);
   if (!hNode)
     {
@@ -95,7 +77,7 @@ bool qMRMLSortFilterHierarchyProxyModel
   // vtkMRMLHierarchyNode (tree parent) or empty (tree parent to be)
   if (hNode->GetAssociatedNode())
     {
-    return false;
+    return RejectButPotentiallyAcceptable;
     }
   return res;
 }

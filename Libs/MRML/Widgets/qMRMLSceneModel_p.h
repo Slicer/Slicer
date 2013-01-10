@@ -60,7 +60,7 @@ public:
   void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
-  bool ListenNodeModifiedEvent;
+  qMRMLSceneModel::NodeTypes ListenNodeModifiedEvent;
   bool LazyUpdate;
   int PendingItemModified;
   

@@ -78,7 +78,6 @@ qMRMLSceneTractographyDisplayModel::qMRMLSceneTractographyDisplayModel(QObject *
   Q_D(qMRMLSceneTractographyDisplayModel);
   d->init();
 
-  this->setListenNodeModifiedEvent(true);
   this->setVisibilityColumn(-1);
   this->setOpacityColumn(-1);
   this->setCheckableColumn(-1);

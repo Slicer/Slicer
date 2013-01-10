@@ -55,9 +55,6 @@
         <property name="sceneModelType">
          <string>ModelHierarchy</string>
         </property>
-        <property name="listenNodeModifiedEvent">
-         <bool>true</bool>
-        </property>
         <property name="nodeTypes">
          <stringlist>
           <string>vtkMRMLModelHierarchyNode</string>

@@ -116,7 +116,6 @@ int qMRMLTreeViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   modelNode2->SetAndObserveDisplayNodeID(displayModelNode2->GetID());
 
   widget2.setSceneModelType("ModelHierarchy");
-  widget2.setListenNodeModifiedEvent(true);
   widget2.setMRMLScene(scene2);
 
   QAction* insertTransformAction = new QAction("Insert transform", 0);
