@@ -223,6 +223,11 @@ void vtkMRMLDiffusionTensorVolumeSliceDisplayNode::UpdatePolyDataPipeline()
         vtkDebugMacro("coloring with direction (re-implement)");
         this->ScalarVisibilityOn( );
         this->DiffusionTensorGlyphFilter->ColorGlyphsByOrientation( );
+        vtkMRMLNode* colorNode = this->GetScene()->GetNodeByID("vtkMRMLColorTableNodeFullRainbow");
+        if (colorNode)
+          {
+          this->SetAndObserveColorNodeID(colorNode->GetID());
+          }
         }
         break;
       case vtkMRMLDiffusionTensorDisplayPropertiesNode::PlanarMeasure:
