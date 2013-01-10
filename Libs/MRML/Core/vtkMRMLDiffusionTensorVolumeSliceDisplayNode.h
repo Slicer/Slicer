@@ -115,11 +115,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
   //--------------------------------------------------------------------------
   /// Display Information: ColorMode for ALL nodes
   //--------------------------------------------------------------------------
-
- /// Description:
-  /// Color mode for glyphs. The color modes are mutually exclusive.
-  vtkGetMacro ( ColorMode, int );
-  vtkSetMacro ( ColorMode, int );
  
   /// 
   /// Color by solid color (for example the whole fiber bundle red. blue, etc.)
@@ -204,10 +199,6 @@ class VTK_MRML_EXPORT vtkMRMLDiffusionTensorVolumeSliceDisplayNode : public vtkM
     void SetDiffusionTensorDisplayPropertiesNodeID(const char* id);
 
     static std::vector<int> GetSupportedColorModes();
-
-    /// Enumerated
-    int ColorMode;
-
 
 };
 
