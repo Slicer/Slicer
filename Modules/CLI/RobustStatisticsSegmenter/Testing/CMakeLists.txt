@@ -6,8 +6,8 @@ set(CLP ${MODULE_NAME})
 #-----------------------------------------------------------------------------
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/..)
 add_executable( SFLSRobustStat3DTestConsole SFLSRobustStat3DTestConsole.cxx)
-target_link_libraries( SFLSRobustStat3DTestConsole ${ITK_LIBRARIES})
-set_target_properties(SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP})
+target_link_libraries( SFLSRobustStat3DTestConsole ${CLP}Lib )
+set_target_properties( SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP} )
 
 set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
