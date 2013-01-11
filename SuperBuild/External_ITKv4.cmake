@@ -36,7 +36,9 @@ if(NOT DEFINED ITK_DIR)
   set(ITKv4_DCMTK_ARGS)
   if(Slicer_BUILD_DICOM_SUPPORT)
     set(ITKv4_DCMTK_ARGS
+      -DITK_USE_SYSTEM_DCMTK:BOOL=ON
       -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      -DModule_ITKIODCMTK:BOOL=ON
       )
   endif()
 
