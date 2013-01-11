@@ -79,11 +79,21 @@ class _Internal():
     """Add module names as attributes of module slicer.moduleNames"""
     for name in moduleNames:
       setattr( slicer.moduleNames, name, name )
+      # HACK For backward compatibility with ITKv3, map "dwiconvert" module name to "dicomtonrrdconverter"
+      if name == 'DicomToNrrdConverter':
+        setattr( slicer.moduleNames, 'DWIConvert', name )
+      if name == 'DWIConvert':
+        setattr( slicer.moduleNames, 'DicomToNrrdConverter', name )
 
   def setSlicerModules( self, moduleName ):
     """Add modules as attributes of module slicer.modules"""
     moduleManager = slicer.app.moduleManager()
     setattr( slicer.modules, moduleName.lower(), moduleManager.module(moduleName) )
+    # HACK For backward compatibility with ITKv3, map "dicomtonrrdconverter" module to "dwiconvert"
+    if moduleName == 'DicomToNrrdConverter':
+      setattr( slicer.modules, 'dwiconvert', moduleManager.module(moduleName) )
+    if moduleName == 'DWIConvert':
+      setattr( slicer.modules, 'dicomtonrrdconverter', moduleManager.module(moduleName) )
 
 
 _internalInstance = _Internal()
