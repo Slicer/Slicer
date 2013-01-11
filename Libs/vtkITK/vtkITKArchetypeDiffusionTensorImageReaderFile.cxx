@@ -76,6 +76,22 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
     orient2->SetDesiredCoordinateOrientation(self->GetDesiredCoordinateOrientation());
     filter = orient2;
     }
+  // Check pixel type. It must be vector for DTI
+  reader->UpdateOutputInformation();
+
+  // This is a conservative test for dti. It filters out most non-dti
+  // data without having to read the entire file
+  unsigned int numberOfComponents = reader->GetImageIO()->GetNumberOfComponents();
+  if (numberOfComponents != 9)
+    {
+    itkGenericExceptionMacro(<< "number of components is: "
+                             << numberOfComponents
+                             << " but expected 9");
+
+    return;
+    }
+
+  // pixel type and number of components are correct. OK to read image data
   filter->UpdateLargestPossibleRegion();
   itk::ImageRegionConstIteratorWithIndex< ImageType >
     it( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
