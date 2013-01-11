@@ -33,8 +33,8 @@ public:
   /** Register one factory of this type **/
   static void RegisterOneFactory(void)
     {
-MGHImageIOFactory::Pointer MGHFactory = MGHImageIOFactory::New();
-ObjectFactoryBase::RegisterFactory(MGHFactory);
+    MGHImageIOFactory::Pointer MGHFactory = MGHImageIOFactory::New();
+    ObjectFactoryBase::RegisterFactory(MGHFactory.GetPointer());
     }
 
 protected:

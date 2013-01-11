@@ -167,9 +167,11 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
     itk::ObjectFactoryBase::RegisterFactory( itk::Brains2MaskImageIOFactory::New() );
 #endif
 #ifdef ITKV3_COMPATIBILITY
-    itk::ObjectFactoryBase::RegisterFactory( itk::AnalyzeImageIOFactory::New() );
+    itk::AnalyzeImageIOFactory::Pointer analyzeFactory = itk::AnalyzeImageIOFactory::New();
+    itk::ObjectFactoryBase::RegisterFactory( analyzeFactory.GetPointer() );
 #endif
-    itk::ObjectFactoryBase::RegisterFactory( itk::GE5ImageIOFactory::New() );
+    itk::GE5ImageIOFactory::Pointer ge5Factory = itk::GE5ImageIOFactory::New();
+    itk::ObjectFactoryBase::RegisterFactory( ge5Factory.GetPointer() );
     firstTime = false;
     }
   }
