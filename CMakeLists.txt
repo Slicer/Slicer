@@ -595,7 +595,82 @@ endif()
 # ITK
 #-----------------------------------------------------------------------------
 set(expected_ITK_VERSION_MAJOR ${ITK_VERSION_MAJOR})
-find_package(ITK REQUIRED)
+set(Slicer_ITK_COMPONENTS "")
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(ITK_IO_MODULES_USED
+    ITKIOJPEG
+    ITKIOGDCM
+    ITKIOBMP
+    ITKIOLSM
+    ITKIOPNG
+    ITKIOTIFF
+    ITKIOVTK
+    ITKIOStimulate
+    ITKIOBioRad
+    ITKIOMeta
+    ITKIONIFTI
+    ITKIONRRD
+    ITKIOGIPL
+    )
+  set(Slicer_ITK_COMPONENTS
+    ITKAnisotropicSmoothing
+    ITKAntiAlias
+    ITKBiasCorrection
+    ITKBinaryMathematicalMorphology
+    ITKCommon
+    ITKConnectedComponents
+    ITKCurvatureFlow
+    ITKDeprecated
+    ITKDiffusionTensorImage
+    ITKDisplacementField
+    ITKDistanceMap
+    ITKFastMarching
+    ITKHDF5
+    ITKIOImageBase
+    ITKIOSpatialObjects
+    ITKIOStimulate
+    ITKIOTransformBase
+    ITKImageAdaptors
+    ITKImageCompare
+    ITKImageCompose
+    ITKImageFeature
+    ITKImageFilterBase
+    ITKImageFunction
+    ITKImageFusion
+    ITKImageGradient
+    ITKImageGrid
+    ITKImageIntensity
+    ITKImageSources
+    ITKImageStatistics
+    ITKLabelVoting
+    ITKLevelSets
+    ITKMathematicalMorphology
+    ITKMesh
+    ITKOptimizers
+    ITKPDEDeformableRegistration
+    ITKPath
+    ITKQuadEdgeMesh
+    ITKQuadEdgeMeshFiltering
+    ITKRegionGrowing
+    ITKRegistrationCommon
+    ITKReview
+    ITKSmoothing
+    ITKSpatialObjects
+    ITKStatistics
+    ITKTestKernel
+    ITKThresholding
+    ITKTransform
+    ITKV3Compatibility
+    ITKVTK
+    #    ITKVtkGlue
+    ITKZLIB
+    ${ITK_IO_MODULES_USED}
+    )
+  find_package(ITK COMPONENTS ${Slicer_ITK_COMPONENTS})
+else()
+  find_package(ITK REQUIRED)
+endif()
+
 if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
   # Note: Since ITKv3 doesn't include a ITKConfigVersion.cmake file, let's check the version
   #       explicitly instead of passing the version as an argument to find_package() command.

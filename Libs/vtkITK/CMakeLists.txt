@@ -14,7 +14,79 @@ endif()
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
-find_package(ITK REQUIRED)
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(ITK_IO_MODULES_USED
+    ITKIOJPEG
+    ITKIOGDCM
+    ITKIOBMP
+    ITKIOLSM
+    ITKIOPNG
+    ITKIOTIFF
+    ITKIOVTK
+    ITKIOStimulate
+    ITKIOBioRad
+    ITKIOMeta
+    ITKIONIFTI
+    ITKIONRRD
+    ITKIOGIPL
+  )
+  set(${CMAKE_PROJECT_NAME}_ITK_COMPONENTS
+    ITKAnisotropicSmoothing
+    ITKAntiAlias
+    ITKBiasCorrection
+    ITKBinaryMathematicalMorphology
+    ITKCommon
+    ITKConnectedComponents
+    ITKCurvatureFlow
+    ITKDeprecated
+    ITKDiffusionTensorImage
+    ITKDisplacementField
+    ITKDistanceMap
+    ITKFastMarching
+    ITKHDF5
+    ITKIOImageBase
+    ITKIOSpatialObjects
+    ITKIOStimulate
+    ITKIOTransformBase
+    ITKImageAdaptors
+    ITKImageCompare
+    ITKImageCompose
+    ITKImageFeature
+    ITKImageFilterBase
+    ITKImageFunction
+    ITKImageFusion
+    ITKImageGradient
+    ITKImageGrid
+    ITKImageIntensity
+    ITKImageSources
+    ITKImageStatistics
+    ITKLabelVoting
+    ITKLevelSets
+    ITKMathematicalMorphology
+    ITKMesh
+    ITKOptimizers
+    ITKPDEDeformableRegistration
+    ITKPath
+    ITKQuadEdgeMesh
+    ITKQuadEdgeMeshFiltering
+    ITKRegionGrowing
+    ITKRegistrationCommon
+    ITKSmoothing
+    ITKSpatialObjects
+    ITKStatistics
+    ITKTestKernel
+    ITKThresholding
+    ITKTransform
+    ITKV3Compatibility
+    ITKVTK
+    ITKVtkGlue
+    ITKZLIB
+    ${ITK_IO_MODULES_USED}
+    )
+  find_package(ITK COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS})
+else()
+  find_package(ITK REQUIRED)
+endif()
 if(${ITK_VERSION_MAJOR} GREATER 3)
   set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
   list(APPEND ITK_LIBRARIES ITKFactoryRegistration)

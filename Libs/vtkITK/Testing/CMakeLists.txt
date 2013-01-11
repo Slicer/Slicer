@@ -1,21 +1,3 @@
-find_package(VTK REQUIRED)
-if(VTK_FOUND)
-   include(${VTK_USE_FILE})
-else(VTK_FOUND)
-   message(FATAL_ERROR "Cannot build without VTK")
-endif(VTK_FOUND)
-
-find_package( ITK )
-if( ITK_FOUND )
-  if(${ITK_VERSION_MAJOR} GREATER 3)
-    set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-    list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-  endif()
-  include(${ITK_USE_FILE})
-else( ITK_FOUND )
-  message( FATAL_ERROR "Cannot build without ITK" )
-endif( ITK_FOUND )
-
 
 ############################################################################
 # The test is a stand-alone executable.  However, the Slicer
