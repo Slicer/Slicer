@@ -24,6 +24,7 @@
 #include <itkTransformFileReader.h>
 #include <itkVectorResampleImageFilter.h>
 #include <itkWindowedSincInterpolateImageFunction.h>
+#include <itkConstantBoundaryCondition.h>
 
 // ResampleScalarVectorDWIVolume includes
 #include "ResampleScalarVectorDWIVolumeCLP.h"

@@ -43,6 +43,8 @@
 #include "itkImageMaskSpatialObject.h"
 
 #include "itkImage.h"
+#include <itkConstantBoundaryCondition.h>
+
 
 #include <sstream>
 
