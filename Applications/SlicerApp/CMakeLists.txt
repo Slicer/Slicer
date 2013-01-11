@@ -74,6 +74,7 @@ set(SlicerApp_INCLUDE_DIRECTORIES
   ${qMRMLWidgets_INCLUDE_DIRS}
   ${qSlicerModulesCore_SOURCE_DIR}
   ${qSlicerModulesCore_BINARY_DIR}
+  ${ITKFactoryRegistration_INCLUDE_DIRS}
   )
 include_directories(${SlicerApp_INCLUDE_DIRECTORIES})
 

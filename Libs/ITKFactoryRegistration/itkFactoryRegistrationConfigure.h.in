@@ -1,0 +1,16 @@
+
+#ifndef __itkFactoryRegistrationConfigure_h
+#define __itkFactoryRegistrationConfigure_h
+
+#if defined(WIN32) && !defined(ITKFactoryRegistration_STATIC)
+# if defined(ITKFactoryRegistration_EXPORTS)
+#  define ITKFactoryRegistration_EXPORT __declspec( dllexport ) 
+# else
+#  define ITKFactoryRegistration_EXPORT __declspec( dllimport ) 
+# endif
+#else
+# define ITKFactoryRegistration_EXPORT
+#endif
+
+#endif
+

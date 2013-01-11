@@ -24,6 +24,20 @@ set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES
   ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES} ${Slicer_BaseCLI_INCLUDE_DIRS}
   CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE
   )
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES
+    ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES} ${ITKFactoryRegistration_INCLUDE_DIRS}
+    CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE
+    )
+  set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX
+    ${CMAKE_CURRENT_BINARY_DIR}/SEMCommandLineLibraryWrapper.cxx
+    CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE
+    )
+  configure_file(
+    SEMCommandLineLibraryWrapper.cxx.in
+    ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX}
+    )
+endif()
 
 # --------------------------------------------------------------------------
 # Update Slicer_Base_INCLUDE_DIRS

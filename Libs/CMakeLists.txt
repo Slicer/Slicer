@@ -12,7 +12,19 @@ set(GENERATECLP_USE_MD5 ON)
 # Order of project directory matters. Project should be topologically ordered
 # --------------------------------------------------------------------------
 
-set(dirs
+set(dirs )
+
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  list(APPEND dirs
+    ITKFactoryRegistration
+    )
+  set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
+    ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES} ITKFactoryRegistration
+    CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE
+    )
+endif()
+
+list(APPEND dirs
   vtkTeem
   vtkITK
   FreeSurfer

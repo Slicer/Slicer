@@ -605,6 +605,10 @@ if(${ITK_VERSION_MAJOR} VERSION_LESS ${expected_ITK_VERSION_MAJOR})
                       "  ${ITK_CONFIG}, version: ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}\n")
 endif()
 
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+  list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+endif()
 include(${ITK_USE_FILE})
 
 #-----------------------------------------------------------------------------
@@ -753,6 +757,7 @@ endif()
 # SlicerExecutionModel settings
 #-----------------------------------------------------------------------------
 set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES "" CACHE INTERNAL "SlicerExecutionModel extra includes" FORCE)
+set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "" CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE)
 
 #-----------------------------------------------------------------------------
 # Set Slicer buildin libraries *_DIR variables

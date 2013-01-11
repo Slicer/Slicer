@@ -128,6 +128,11 @@ endif()
 # Prerequisites
 # --------------------------------------------------------------------------
 
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
+  list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+endif()
+
 # By default, the "<PROJECT>_USE_FILE" of each slicer external project will be included.
 # This can be changed by setting the variable Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE to TRUE
 if(NOT DEFINED Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE)

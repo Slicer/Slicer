@@ -50,6 +50,11 @@
 #include "qSlicerModuleManager.h"
 #include "qSlicerStyle.h"
 
+// ITK includes
+#if ITK_VERSION_MAJOR > 3
+# include "itkFactoryRegistration.h"
+#endif
+
 // VTK includes
 //#include <vtkObject.h>
 
@@ -87,6 +92,10 @@ void splashMessage(QScopedPointer<QSplashScreen>& splashScreen, const QString& m
 //----------------------------------------------------------------------------
 int SlicerAppMain(int argc, char* argv[])
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration(); 
+#endif
+  
   QCoreApplication::setApplicationName("Slicer");
   QCoreApplication::setApplicationVersion(Slicer_VERSION_FULL);
   //vtkObject::SetGlobalWarningDisplay(false);
