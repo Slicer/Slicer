@@ -186,7 +186,7 @@ macro(SlicerMacroBuildModuleQtLibrary)
       set(MODULEQTLIBRARY_NO_INSTALL_OPTION "NO_INSTALL")
     endif()
     ctkMacroBuildLibWrapper(
-      NAMESPACE "org.slicer.module"
+      NAMESPACE "osm" # Use "osm" instead of "org.slicer.module" to avoid build error on windows
       TARGET ${lib_name}
       SRCS "${MODULEQTLIBRARY_SRCS}"
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR}"
