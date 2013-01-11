@@ -51,7 +51,7 @@ class WorkflowConfiguration:
     def __init__(self):
         self.slicerVolumesLogic = slicer.vtkSlicerVolumesLogic()
         self.slicerVolumesLogic.SetMRMLScene(slicer.mrmlScene)
-        self.dicomtonrrdconverter_parameter_node = None
+        self.dwiconvert_parameter_node = None
         self.diffusionweightedvolumemasking_parameter_node = None
         self.diffusiontensorestimation_parameter_node = None
         self.seeding_parameter_node = None
@@ -84,12 +84,12 @@ class WorkflowConfiguration:
                 display_error("DICOM to NRRD conversion needs a valid output NRRD file")
                 return False
 
-            self.dicomtonrrdconverter_parameter_node = slicer.cli.run(
-                slicer.modules.dicomtonrrdconverter, self.dicomtonrrdconverter_parameter_node,
+            self.dwiconvert_parameter_node = slicer.cli.run(
+                slicer.modules.dwiconvert, self.dwiconvert_parameter_node,
                 data[step_object.id()],
                 wait_for_completion = True)
 
-            if self.dicomtonrrdconverter_parameter_node.GetStatusString() == 'Completed':
+            if self.dwiconvert_parameter_node.GetStatusString() == 'Completed':
                 file_path = data[step_object.id()]['outputVolume']
                 result_status, node = slicer.util.loadVolume(
                     file_path,
