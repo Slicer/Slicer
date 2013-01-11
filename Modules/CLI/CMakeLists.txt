@@ -118,9 +118,6 @@ if(BUILD_TESTING)
   set(TEMP "${Slicer_BINARY_DIR}/Testing/Temporary")
 
   set(MRML_DATA "${Slicer_HOME}/share/MRML/Testing/TestData")
-  if(ITK_VERSION_MAJOR GREATER 3)
-    include_directories(${Slicer_SOURCE_DIR}/Modules/CLI)
-  endif()
 endif()
 
 foreach(module ${cli_modules})
