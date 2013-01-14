@@ -132,11 +132,18 @@ class ScriptedLoadableExtensionTemplateWidget:
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
 
-  def onReloadAndTest(self,moduleName="ScriptedLoadableExtensionTemplate"):
-    self.onReload()
-    evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
-    tester = eval(evalString)
-    tester.runTest()
+  def onReloadAndTest(self,moduleName="ScriptedExample"):
+    try:
+      self.onReload()
+      evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
+      tester = eval(evalString)
+      tester.runTest()
+    except Exception, e:
+      import traceback
+      traceback.print_exc()
+      qt.QMessageBox.warning(slicer.util.mainWindow(), 
+          "Reload and Test", 'Exception!\n\n' + str(e) + "\n\nSee Python Console for Stack Trace")
+
 
 #
 # ScriptedLoadableExtensionTemplateLogic
