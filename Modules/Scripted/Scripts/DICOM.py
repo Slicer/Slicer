@@ -131,8 +131,17 @@ class DICOMWidget:
     self.dicomModelTypes = ('Root', 'Patient', 'Study', 'Series', 'Image')
 
     # state management for compressing events
-    self.resumeModelRequested = False
-    self.updateRecentActivityRequested = False
+    # - each time an update is requested, start the singleShot timer
+    # - if the update is requested before the timeout, the call to timer.start() resets it
+    # - the actual update only happens when the the full time elapses since the last request
+    self.resumeModelTimer = qt.QTimer()
+    self.resumeModelTimer.singleShot = True
+    self.resumeModelTimer.interval = 500
+    self.resumeModelTimer.connect('timeout()', self.onResumeModelRequestTimeout)
+    self.updateRecentActivityTimer = qt.QTimer()
+    self.updateRecentActivityTimer.singleShot = True
+    self.updateRecentActivityTimer.interval = 500
+    self.updateRecentActivityTimer.connect('timeout()', self.onUpateRecentActivityRequestTimeout)
 
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -293,28 +302,20 @@ class DICOMWidget:
     the recent activity widget since it is time consuming and there can be
     many of them coming in a rapid sequence when the
     database is active"""
-    if self.updateRecentActivityRequested:
-      return
-    self.updateRecentActivityRequested = True
-    qt.QTimer.singleShot(500, self.onUpateRecentActivityRequestTimeout)
+    self.updateRecentActivityTimer.start()
 
   def onUpateRecentActivityRequestTimeout(self):
     self.recentActivity.update()
-    self.updateRecentActivityRequested = False
 
   def requestResumeModel(self):
     """This method serves to compress the requests for resuming
     the dicom model since it is time consuming and there can be
     many of them coming in a rapid sequence when the
     database is active"""
-    if self.resumeModelRequested:
-      return
-    self.resumeModelRequested = True
-    qt.QTimer.singleShot(500, self.onResumeModelRequestTimeout)
+    self.resumeModelTimer.start()
 
   def onResumeModelRequestTimeout(self):
     self.dicomApp.resumeModel()
-    self.resumeModelRequested = False
 
   def onDatabaseDirectoryChanged(self,databaseDirectory):
     if not hasattr(slicer, 'dicomDatabase') or not slicer.dicomDatabase:
