@@ -376,7 +376,7 @@ vtkMRMLStorageNode* vtkSlicerModelsLogic::AddScalar(const char* filename, vtkMRM
       vtkErrorMacro("AddScalar: error adding scalar " << filename);
       this->GetMRMLScene()->RemoveNode(storageNode);
       fsmoStorageNode->Delete();
-      return storageNode;
+      return NULL;
       }
 
     //--- informatics

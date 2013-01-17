@@ -406,13 +406,14 @@ int vtkMRMLFreeSurferModelOverlayStorageNode::ReadDataInternal(vtkMRMLNode *refN
           reader->DebugOn();
           }
         int retval = reader->ReadFSAnnotation();
-        if (retval != 0)
+        if (retval != 0 && retval != 5)
           {
           result = 0;
           }
 
-        if (retval == 0)
+        if (retval == 0 || retval == 5)
           {
+          // no error, or a warning about unassigned labels
           // the color names are formatted as 'index {name} '
           char *colorNames = reader->GetColorTableNames();
           int numColours = lutNode->GetNumberOfColors();
