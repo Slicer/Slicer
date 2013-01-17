@@ -220,7 +220,7 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # --------------------------------------------------------------------------
   if(Slicer_USE_PYTHONQT AND SLICERQTBASELIB_WRAP_PYTHONQT)
     ctkMacroBuildLibWrapper(
-      NAMESPACE "org.slicer.base"
+      NAMESPACE "osb" # Use "osb" instead of "org.slicer.base" to avoid build error on windows
       TARGET ${lib_name}
       SRCS "${SLICERQTBASELIB_SRCS}"
       INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
