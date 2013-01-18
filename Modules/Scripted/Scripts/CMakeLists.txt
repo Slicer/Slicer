@@ -2,6 +2,7 @@
 set(KIT_PYTHON_SCRIPTS
     DataProbe.py
     Editor.py
+    FiberBundleToLabelMap.py
     LabelStatistics.py
     PerformanceTests.py
     SampleData.py
@@ -61,5 +62,10 @@ if(Slicer_BUILD_DICOM_SUPPORT)
 endif()
 
 if(BUILD_TESTING AND PYTHON_EXECUTABLE)
+
+  # this will regiester the unittest subclass in the main script
+  # as a ctest (note that it is also usable as a runtime test).
+  slicer_add_python_unittest(SCRIPT FiberBundleToLabelMap.py)
+
   add_subdirectory(Testing)
 endif()
