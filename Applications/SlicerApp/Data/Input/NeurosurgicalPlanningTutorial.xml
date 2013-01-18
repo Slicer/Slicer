@@ -9,7 +9,7 @@
         <appsetting widget="qSlicerModulesMenu" command="currentModule" arguments="Welcome"/>
     </settings>
     <events>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerWelcomeModule/ButtonsFrame/LoadSampleDataButton" command="activate" arguments=""/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerWelcomeModuleWidget/ButtonsFrame/LoadSampleDataButton" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/BaselineVolumePushButton" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/menubar/menuView/MenuLayout" command="activate" arguments="actionViewLayoutConventional"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/DTIVolumePushButton" command="activate" arguments=""/>
@@ -1388,8 +1388,8 @@
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="tract"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="set_edit_string_menu" arguments="Tractography Interactive Seeding"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Tractography Interactive Seeding"/>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyInteractiveSeedingModule/InputsCollapsibleButton/FiberNodeSelector" command="currentNodeChanged" arguments="vtkMRMLFiberBundleNode2"/>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyInteractiveSeedingModule/InputsCollapsibleButton/FiberNodeSelector" command="nodeAddedByUser" arguments=""/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyInteractiveSeedingModuleWidget/InputsCollapsibleButton/FiberNodeSelector" command="currentNodeChanged" arguments="vtkMRMLFiberBundleNode2"/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerTractographyInteractiveSeedingModuleWidget/InputsCollapsibleButton/FiberNodeSelector" command="nodeAddedByUser" arguments=""/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,8,99"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,13,167"/>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,13,167"/>
