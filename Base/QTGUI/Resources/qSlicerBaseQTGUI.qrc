@@ -57,6 +57,21 @@
     <file>Icons/Large/SlicerAddVolume.png</file>
     <file>Icons/XLarge/SlicerAddVolume.png</file>
 
+    <file>Icons/Small/SlicerEditCopy.png</file>
+    <file>Icons/Medium/SlicerEditCopy.png</file>
+    <file>Icons/Large/SlicerEditCopy.png</file>
+    <file>Icons/XLarge/SlicerEditCopy.png</file>
+
+    <file>Icons/Small/SlicerEditCut.png</file>
+    <file>Icons/Medium/SlicerEditCut.png</file>
+    <file>Icons/Large/SlicerEditCut.png</file>
+    <file>Icons/XLarge/SlicerEditCut.png</file>
+
+    <file>Icons/Small/SlicerEditPaste.png</file>
+    <file>Icons/Medium/SlicerEditPaste.png</file>
+    <file>Icons/Large/SlicerEditPaste.png</file>
+    <file>Icons/XLarge/SlicerEditPaste.png</file>
+
     <file>Icons/Small/SlicerHome.png</file>
     <file>Icons/Medium/SlicerHome.png</file>
     <file>Icons/Large/SlicerHome.png</file>
