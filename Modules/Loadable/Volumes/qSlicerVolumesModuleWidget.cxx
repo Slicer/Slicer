@@ -24,11 +24,11 @@
 //#include <ctkModelTester.h>
 
 #include "qSlicerVolumesModuleWidget.h"
-#include "ui_qSlicerVolumesModule.h"
+#include "ui_qSlicerVolumesModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Volumes
-class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModule
+class qSlicerVolumesModuleWidgetPrivate: public Ui_qSlicerVolumesModuleWidget
 {
 public:
 };

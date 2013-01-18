@@ -10,7 +10,7 @@
 
 // CropVolume includes
 #include "qSlicerCropVolumeModuleWidget.h"
-#include "ui_qSlicerCropVolumeModule.h"
+#include "ui_qSlicerCropVolumeModuleWidget.h"
 
 // CropVolume Logic includes
 #include <vtkSlicerCropVolumeLogic.h>
@@ -37,7 +37,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_CropVolume
-class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModule
+class qSlicerCropVolumeModuleWidgetPrivate: public Ui_qSlicerCropVolumeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerCropVolumeModuleWidget);
 protected:

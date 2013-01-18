@@ -20,7 +20,7 @@
 
 // SlicerQt includes
 #include "qSlicerDataModuleWidget.h"
-#include "ui_qSlicerDataModule.h"
+#include "ui_qSlicerDataModuleWidget.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIOManager.h"
 
@@ -43,7 +43,7 @@
 #include <set>
 
 //-----------------------------------------------------------------------------
-class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModule
+class qSlicerDataModuleWidgetPrivate: public Ui_qSlicerDataModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerDataModuleWidget);
 protected:

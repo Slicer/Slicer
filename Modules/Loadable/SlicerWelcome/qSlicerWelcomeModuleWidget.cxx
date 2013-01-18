@@ -30,7 +30,7 @@
 
 // SlicerQt includes
 #include "qSlicerWelcomeModuleWidget.h"
-#include "ui_qSlicerWelcomeModule.h"
+#include "ui_qSlicerWelcomeModuleWidget.h"
 #include "qSlicerApplication.h"
 #include "qSlicerIO.h"
 #include "qSlicerIOManager.h"
@@ -46,7 +46,7 @@ class qSlicerAppMainWindow;
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SlicerWelcome
-class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModule
+class qSlicerWelcomeModuleWidgetPrivate: public Ui_qSlicerWelcomeModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerWelcomeModuleWidget);
 protected:
@@ -70,7 +70,7 @@ qSlicerWelcomeModuleWidgetPrivate::qSlicerWelcomeModuleWidgetPrivate(qSlicerWelc
 //-----------------------------------------------------------------------------
 void qSlicerWelcomeModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
-  this->Ui_qSlicerWelcomeModule::setupUi(widget);
+  this->Ui_qSlicerWelcomeModuleWidget::setupUi(widget);
 
   // Create the button group ensuring that only one collabsibleWidgetButton will be open at a time
   ctkButtonGroup * group = new ctkButtonGroup(widget);

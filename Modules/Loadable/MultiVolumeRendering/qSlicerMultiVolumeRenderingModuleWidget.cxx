@@ -20,7 +20,7 @@
 
 // SlicerQt includes
 #include "qSlicerMultiVolumeRenderingModuleWidget.h"
-#include "ui_qSlicerMultiVolumeRenderingModule.h"
+#include "ui_qSlicerMultiVolumeRenderingModuleWidget.h"
 #include "vtkMRMLMultiVolumeRenderingDisplayNode.h"
 #include "vtkSlicerMultiVolumeRenderingLogic.h"
 
@@ -41,7 +41,7 @@
 #include <cassert>
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_MultiVolumeRendering
-class qSlicerMultiVolumeRenderingModuleWidgetPrivate: public Ui_qSlicerMultiVolumeRenderingModule
+class qSlicerMultiVolumeRenderingModuleWidgetPrivate: public Ui_qSlicerMultiVolumeRenderingModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerMultiVolumeRenderingModuleWidget);
   

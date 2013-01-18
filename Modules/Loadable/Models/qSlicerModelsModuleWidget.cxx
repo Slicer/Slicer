@@ -29,7 +29,7 @@
 
 // SlicerQt includes
 #include "qSlicerModelsModuleWidget.h"
-#include "ui_qSlicerModelsModule.h"
+#include "ui_qSlicerModelsModuleWidget.h"
 
 // MRML includes
 #include "vtkMRMLModelHierarchyNode.h"
@@ -40,7 +40,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Models
-class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModule
+class qSlicerModelsModuleWidgetPrivate: public Ui_qSlicerModelsModuleWidget
 {
 public:
   qSlicerModelsModuleWidgetPrivate();

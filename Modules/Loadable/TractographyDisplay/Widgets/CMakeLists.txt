@@ -38,7 +38,7 @@ set(${KIT}_MOC_SRCS
   )
 
 set(${KIT}_UI_SRCS
-  Resources/UI/qSlicerTractographyDisplayModule.ui
+  Resources/UI/qSlicerTractographyDisplayModuleWidget.ui
   Resources/UI/qSlicerTractographyDisplayBasicWidget.ui
   Resources/UI/qSlicerTractographyEditorROIWidget.ui
   Resources/UI/qSlicerTractographyDisplayGlyphWidget.ui

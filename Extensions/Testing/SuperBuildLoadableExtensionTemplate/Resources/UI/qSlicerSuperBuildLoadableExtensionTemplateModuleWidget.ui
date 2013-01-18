@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerLoadableExtensionTemplateModule</class>
- <widget class="qSlicerWidget" name="qSlicerLoadableExtensionTemplateModule">
+ <class>qSlicerSuperBuildLoadableExtensionTemplateModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerSuperBuildLoadableExtensionTemplateModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,15 +15,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton" native="true">
-     <property name="text" stdset="0">
+    <widget class="ctkCollapsibleButton" name="CTKCollapsibleButton">
+     <property name="text">
       <string>Display</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="qSlicerLoadableExtensionTemplateFooBarWidget" name="FooBar" native="true"/>
-      </item>
-     </layout>
+     <property name="contentsFrameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3"/>
     </widget>
    </item>
    <item>
@@ -52,12 +51,6 @@
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>qSlicerLoadableExtensionTemplateFooBarWidget</class>
-   <extends>QWidget</extends>
-   <header>qSlicerLoadableExtensionTemplateFooBarWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

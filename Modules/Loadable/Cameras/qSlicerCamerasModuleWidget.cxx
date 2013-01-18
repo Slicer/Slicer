@@ -20,7 +20,7 @@
 
 // SlicerQt includes
 #include "qSlicerCamerasModuleWidget.h"
-#include "ui_qSlicerCamerasModule.h"
+#include "ui_qSlicerCamerasModuleWidget.h"
 #include "vtkSlicerCamerasModuleLogic.h"
 
 // MRML includes
@@ -31,7 +31,7 @@
 // STD includes
 
 //-----------------------------------------------------------------------------
-class qSlicerCamerasModuleWidgetPrivate: public Ui_qSlicerCamerasModule
+class qSlicerCamerasModuleWidgetPrivate: public Ui_qSlicerCamerasModuleWidget
 {
 public:
 };

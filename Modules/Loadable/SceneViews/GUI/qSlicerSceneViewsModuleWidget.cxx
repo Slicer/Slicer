@@ -1,5 +1,5 @@
 #include "GUI/qSlicerSceneViewsModuleWidget.h"
-#include "ui_qSlicerSceneViewsModule.h"
+#include "ui_qSlicerSceneViewsModuleWidget.h"
 
 // CTK includes
 #include "ctkCollapsibleButton.h"
@@ -34,7 +34,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_SceneViews
-class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModule
+class qSlicerSceneViewsModuleWidgetPrivate: public Ui_qSlicerSceneViewsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerSceneViewsModuleWidget);
 protected:
@@ -103,7 +103,7 @@ qSlicerSceneViewsModuleWidgetPrivate::~qSlicerSceneViewsModuleWidgetPrivate()
 void qSlicerSceneViewsModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   Q_Q(qSlicerSceneViewsModuleWidget);
-  this->Ui_qSlicerSceneViewsModule::setupUi(widget);
+  this->Ui_qSlicerSceneViewsModuleWidget::setupUi(widget);
 
   QObject::connect(this->hierarchyTreeView,
                    SIGNAL(restoreSceneViewRequested(QString)),

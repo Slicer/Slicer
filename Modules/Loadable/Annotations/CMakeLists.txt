@@ -62,7 +62,7 @@ set(MODULE_MOC_SRCS
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerAnnotationModule.ui
+  Resources/UI/qSlicerAnnotationModuleWidget.ui
   Resources/UI/qSlicerAnnotationModuleIOOptionsWidget.ui
   Resources/UI/qSlicerAnnotationModulePropertyDialog.ui
   Resources/UI/qSlicerAnnotationModuleReportDialog.ui

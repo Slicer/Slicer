@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerColorsModule</class>
- <widget class="qSlicerWidget" name="qSlicerColorsModule">
+ <class>qSlicerColorsModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerColorsModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

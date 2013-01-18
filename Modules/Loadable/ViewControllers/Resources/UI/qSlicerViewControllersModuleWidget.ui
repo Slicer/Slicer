@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerViewControllersModule</class>
- <widget class="qSlicerWidget" name="qSlicerViewControllersModule">
+ <class>qSlicerViewControllersModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerViewControllersModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

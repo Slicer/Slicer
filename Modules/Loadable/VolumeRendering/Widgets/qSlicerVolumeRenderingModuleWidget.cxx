@@ -29,7 +29,7 @@
 
 // qSlicerVolumeRendering includes
 #include "qSlicerVolumeRenderingModuleWidget.h"
-#include "ui_qSlicerVolumeRenderingModule.h"
+#include "ui_qSlicerVolumeRenderingModuleWidget.h"
 #include "vtkMRMLVolumeRenderingDisplayNode.h"
 #include "vtkSlicerVolumeRenderingLogic.h"
 #include "qSlicerCPURayCastVolumeRenderingPropertiesWidget.h"
@@ -57,7 +57,7 @@
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_VolumeRendering
 class qSlicerVolumeRenderingModuleWidgetPrivate
-  : public Ui_qSlicerVolumeRenderingModule
+  : public Ui_qSlicerVolumeRenderingModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerVolumeRenderingModuleWidget);
 protected:
@@ -100,7 +100,7 @@ qSlicerVolumeRenderingModuleWidgetPrivate::~qSlicerVolumeRenderingModuleWidgetPr
 //-----------------------------------------------------------------------------
 void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingModuleWidget* q)
 {
-  this->Ui_qSlicerVolumeRenderingModule::setupUi(q);
+  this->Ui_qSlicerVolumeRenderingModuleWidget::setupUi(q);
 
   QObject::connect(this->VolumeNodeComboBox,
                    SIGNAL(currentNodeChanged(vtkMRMLNode*)),

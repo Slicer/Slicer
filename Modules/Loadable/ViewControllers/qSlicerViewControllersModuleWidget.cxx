@@ -29,7 +29,7 @@
 
 // SlicerQt includes
 #include "qSlicerViewControllersModuleWidget.h"
-#include "ui_qSlicerViewControllersModule.h"
+#include "ui_qSlicerViewControllersModuleWidget.h"
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 
@@ -46,7 +46,7 @@
 
 //-----------------------------------------------------------------------------
 class qSlicerViewControllersModuleWidgetPrivate:
-    public Ui_qSlicerViewControllersModule
+    public Ui_qSlicerViewControllersModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerViewControllersModuleWidget);
 protected:

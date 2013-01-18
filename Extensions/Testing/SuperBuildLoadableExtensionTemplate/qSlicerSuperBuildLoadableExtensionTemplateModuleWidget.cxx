@@ -20,11 +20,11 @@
 
 // SlicerQt includes
 #include "qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h"
-#include "ui_qSlicerSuperBuildLoadableExtensionTemplateModule.h"
+#include "ui_qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate: public Ui_qSlicerSuperBuildLoadableExtensionTemplateModule
+class qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate: public Ui_qSlicerSuperBuildLoadableExtensionTemplateModuleWidget
 {
 public:
   qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate();

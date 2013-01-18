@@ -47,8 +47,8 @@ set(KIT_MOC_SRCS
 
 # UI files
 set(KIT_UI_SRCS
-  Resources/UI/qSlicerEventBrokerModule.ui
-  Resources/UI/qSlicerROIModule.ui
+  Resources/UI/qSlicerEventBrokerModuleWidget.ui
+  Resources/UI/qSlicerROIModuleWidget.ui
   )
 
 # Additional Target libraries (QT libs already included)

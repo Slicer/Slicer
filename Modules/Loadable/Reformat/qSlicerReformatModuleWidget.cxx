@@ -28,7 +28,7 @@
 #include "vtkSlicerReformatLogic.h"
 
 #include "qSlicerReformatModuleWidget.h"
-#include "ui_qSlicerReformatModule.h"
+#include "ui_qSlicerReformatModuleWidget.h"
 
 // MRML includes
 #include "vtkMRMLApplicationLogic.h"
@@ -46,7 +46,7 @@
 
 //------------------------------------------------------------------------------
 class qSlicerReformatModuleWidgetPrivate :
-public Ui_qSlicerReformatModule
+public Ui_qSlicerReformatModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerReformatModuleWidget);
 protected:

@@ -19,7 +19,7 @@
 //#include <ctkModelTester.h>
 
 #include "qSlicerTractographyDisplayModuleWidget.h"
-#include "ui_qSlicerTractographyDisplayModule.h"
+#include "ui_qSlicerTractographyDisplayModuleWidget.h"
 #include "qMRMLSceneTractographyDisplayModel.h"
 // MRML includes
 
@@ -32,7 +32,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_TractographyDisplay
-class qSlicerTractographyDisplayModuleWidgetPrivate: public Ui_qSlicerTractographyDisplayModule
+class qSlicerTractographyDisplayModuleWidgetPrivate: public Ui_qSlicerTractographyDisplayModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTractographyDisplayModuleWidget);
 

@@ -20,10 +20,10 @@
 
 // SlicerQt includes
 #include "qSlicerROIModuleWidget.h"
-#include "ui_qSlicerROIModule.h"
+#include "ui_qSlicerROIModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerROIModuleWidgetPrivate: public Ui_qSlicerROIModule
+class qSlicerROIModuleWidgetPrivate: public Ui_qSlicerROIModuleWidget
 {
 public:
 };

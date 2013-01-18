@@ -23,7 +23,7 @@
 
 // SlicerQt includes
 #include "qSlicerTransformsModuleWidget.h"
-#include "ui_qSlicerTransformsModule.h"
+#include "ui_qSlicerTransformsModuleWidget.h"
 //#include "qSlicerApplication.h"
 //#include "qSlicerIOManager.h"
 
@@ -41,7 +41,7 @@
 #include <vtkTransform.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerTransformsModuleWidgetPrivate: public Ui_qSlicerTransformsModule
+class qSlicerTransformsModuleWidgetPrivate: public Ui_qSlicerTransformsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerTransformsModuleWidget);
 protected:

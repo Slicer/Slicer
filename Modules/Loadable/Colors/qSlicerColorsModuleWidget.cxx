@@ -25,7 +25,7 @@
 #include "qSlicerApplication.h"
 #include "qSlicerLayoutManager.h"
 #include "qSlicerColorsModuleWidget.h"
-#include "ui_qSlicerColorsModule.h"
+#include "ui_qSlicerColorsModuleWidget.h"
 
 // qMRMLWidget includes
 #include "qMRMLThreeDView.h"
@@ -47,7 +47,7 @@
 #include <vtkScalarBarWidget.h>
 
 //-----------------------------------------------------------------------------
-class qSlicerColorsModuleWidgetPrivate: public Ui_qSlicerColorsModule
+class qSlicerColorsModuleWidgetPrivate: public Ui_qSlicerColorsModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerColorsModuleWidget);
 protected:

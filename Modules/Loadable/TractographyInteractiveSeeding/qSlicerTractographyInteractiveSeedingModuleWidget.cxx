@@ -15,7 +15,7 @@
 
 // Tractography QTModule includes
 #include "qSlicerTractographyInteractiveSeedingModuleWidget.h"
-#include "ui_qSlicerTractographyInteractiveSeedingModule.h"
+#include "ui_qSlicerTractographyInteractiveSeedingModuleWidget.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_TractographyInteractiveSeeding
 class qSlicerTractographyInteractiveSeedingModuleWidgetPrivate:
-  public Ui_qSlicerTractographyInteractiveSeedingModule
+  public Ui_qSlicerTractographyInteractiveSeedingModuleWidget
 {
 };
 

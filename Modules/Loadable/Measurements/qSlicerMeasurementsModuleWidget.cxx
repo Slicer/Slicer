@@ -23,11 +23,11 @@
 
 // SlicerQt includes
 #include "qSlicerMeasurementsModuleWidget.h"
-#include "ui_qSlicerMeasurementsModule.h"
+#include "ui_qSlicerMeasurementsModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Measurements
-class qSlicerMeasurementsModuleWidgetPrivate: public Ui_qSlicerMeasurementsModule
+class qSlicerMeasurementsModuleWidgetPrivate: public Ui_qSlicerMeasurementsModuleWidget
 {
 public:
 };

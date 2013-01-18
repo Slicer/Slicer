@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerROIModule</class>
- <widget class="qSlicerWidget" name="qSlicerROIModule">
+ <class>qSlicerROIModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerROIModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

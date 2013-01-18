@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerTractographyDisplayModule</class>
- <widget class="qSlicerWidget" name="qSlicerTractographyDisplayModule">
+ <class>qSlicerTractographyDisplayModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerTractographyDisplayModuleWidget">
   <property name="enabled">
    <bool>true</bool>
   </property>

@@ -22,13 +22,13 @@
 
 // SlicerQt includes
 #include "qSlicerEventBrokerModuleWidget.h"
-#include "ui_qSlicerEventBrokerModule.h"
+#include "ui_qSlicerEventBrokerModuleWidget.h"
 
 #include <sstream>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
-class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModule
+class qSlicerEventBrokerModuleWidgetPrivate: public Ui_qSlicerEventBrokerModuleWidget
 {
 public:
   virtual void setupUi(qSlicerWidget* widget);
@@ -37,7 +37,7 @@ public:
 //-----------------------------------------------------------------------------
 void qSlicerEventBrokerModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
-  this->Ui_qSlicerEventBrokerModule::setupUi(widget);
+  this->Ui_qSlicerEventBrokerModuleWidget::setupUi(widget);
   QObject::connect(this->EventBrokerWidget, SIGNAL(currentObjectChanged(vtkObject*)),
           widget, SLOT(onCurrentObjectChanged(vtkObject*)));
 }

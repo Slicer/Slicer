@@ -47,7 +47,7 @@ set(${KIT}_UI_SRCS
   ../Resources/UI/qSlicerGPURayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerNCIRayCast${MODULE_NAME}PropertiesWidget.ui
   ../Resources/UI/qSlicerNCIMultiVolumeRayCast${MODULE_NAME}PropertiesWidget.ui
-  ../Resources/UI/qSlicer${MODULE_NAME}Module.ui
+  ../Resources/UI/qSlicer${MODULE_NAME}ModuleWidget.ui
   )
 
 set(${KIT}_RESOURCES

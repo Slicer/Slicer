@@ -1,5 +1,5 @@
 #include "GUI/qSlicerAnnotationModuleWidget.h"
-#include "ui_qSlicerAnnotationModule.h"
+#include "ui_qSlicerAnnotationModuleWidget.h"
 #include "Logic/vtkSlicerAnnotationModuleLogic.h"
 
 
@@ -44,7 +44,7 @@
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_Annotation
-class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModule
+class qSlicerAnnotationModuleWidgetPrivate: public Ui_qSlicerAnnotationModuleWidget
 {
   Q_DECLARE_PUBLIC(qSlicerAnnotationModuleWidget);
 protected:
@@ -90,7 +90,7 @@ void qSlicerAnnotationModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 {
   Q_Q(qSlicerAnnotationModuleWidget);
 
-  this->Ui_qSlicerAnnotationModule::setupUi(widget);
+  this->Ui_qSlicerAnnotationModuleWidget::setupUi(widget);
 
 
   // setup the hierarchy treeWidget
