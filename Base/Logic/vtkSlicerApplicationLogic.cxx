@@ -1457,7 +1457,7 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 
                 if (sdnd1)
                   {
-                  vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd);
+                  vtkMRMLNode *tdnd = this->GetMRMLScene()->CopyNode(sdnd1);
                   tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                   }
                 }
