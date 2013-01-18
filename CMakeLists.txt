@@ -262,11 +262,6 @@ CMAKE_DEPENDENT_OPTION(
 mark_as_advanced(Slicer_BUILD_ChangeTrackerPy)
 
 CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_EMSegment "Build EMSegment." ON
-  "Slicer_BUILD_BRAINSTOOLS AND Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_PYTHONQT" OFF)
-mark_as_advanced(Slicer_BUILD_EMSegment)
-
-CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_OpenIGTLinkIF "Build OpenIGTLinkIF." ON
   "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_OpenIGTLink" OFF)
 mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)
@@ -291,6 +286,11 @@ CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
   "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)
+
+CMAKE_DEPENDENT_OPTION(
+  Slicer_BUILD_EMSegment "Build EMSegment." ON
+  "Slicer_BUILD_BRAINSTOOLS AND Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_PYTHONQT" OFF)
+mark_as_advanced(Slicer_BUILD_EMSegment)
 
 #-----------------------------------------------------------------------------
 # Install no development files by default, but allow the user to get
