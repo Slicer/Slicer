@@ -1537,6 +1537,13 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                          filterCommentRegExp.end()
                          - filterCommentRegExp.start());
       }
+    itksys::RegularExpression filterTimeRegExp("<filter-time>[^<]*</filter-time>[ \t\n\r]*");
+    while (filterTimeRegExp.find(stdoutbuffer))
+      {
+      stdoutbuffer.erase(filterTimeRegExp.start(),
+                         filterTimeRegExp.end()
+                         - filterTimeRegExp.start());
+      }
     itksys::RegularExpression filterStartRegExp("<filter-start>[^<]*</filter-start>[ \t\n\r]*");
     while (filterStartRegExp.find(stdoutbuffer))
       {
