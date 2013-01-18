@@ -23,6 +23,10 @@
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkSlicerConfigure.h"
 
+// Slicer MRML includes
+#include "vtkMRMLScene.h"
+#include "vtkMRMLModelHierarchyNode.h"
+
 // VTK includes
 #include <vtkNew.h>
 
@@ -225,6 +229,102 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
         return EXIT_FAILURE;
         }
       }
+  }
+
+  //-----------------------------------------------------------------------------
+  // Test ProcessReadSceneData(ReadDataRequest& req)
+  //-----------------------------------------------------------------------------
+  {
+  vtkSmartPointer<vtkSlicerApplicationLogic> appLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  // create a scene with a model hierarchy that will clash with the imported scene
+  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
+  appLogic->SetMRMLScene(mrmlScene);
+  vtkSmartPointer<vtkMRMLModelHierarchyNode> originalModelHierarchy1 = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+  originalModelHierarchy1->SetName("originalTop");
+  mrmlScene->AddNode(originalModelHierarchy1);
+  vtkSmartPointer<vtkMRMLModelHierarchyNode> originalModelHierarchy2 = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+  originalModelHierarchy2->SetName("originalSecond");
+  mrmlScene->AddNode(originalModelHierarchy2);
+  originalModelHierarchy2->SetParentNodeID(originalModelHierarchy1->GetID());
+  // set up the importing
+  std::vector<std::string> targetIDs;
+  targetIDs.push_back(std::string(originalModelHierarchy1->GetID()));
+  std::vector<std::string> sourceIDs;
+  sourceIDs.push_back(std::string(originalModelHierarchy1->GetID()));
+  // now create a scene to import that has a hierarchy
+  vtkSmartPointer<vtkMRMLScene> importScene = vtkSmartPointer<vtkMRMLScene>::New();
+  std::string filename = "applicationLogicModelHierarchyImportTestScene.mrml";
+  importScene->SetURL(filename.c_str());
+  // make a few deep model hierarchy tree
+  for (int i = 0; i < 5; i++)
+    {
+    vtkSmartPointer<vtkMRMLModelHierarchyNode> mhn = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+    importScene->AddNode(mhn);
+    std::string idNumberString;
+    std::stringstream ss;
+    ss << i;
+    ss >> idNumberString;
+    mhn->SetName(idNumberString.c_str());
+    if (i > 0)
+      {
+      std::string parentNodeID = std::string("vtkMRMLModelHierarchyNode") + idNumberString;
+      std::cout << "Setting parent node id on node " << mhn->GetID() << " to " << parentNodeID.c_str() << std::endl;
+      mhn->SetParentNodeID(parentNodeID.c_str());
+      }
+    }
+  importScene->Commit();
+  // set up to read the file
+  appLogic->CreateProcessingThread();
+  int retval = appLogic->RequestReadScene(filename, targetIDs, sourceIDs, 0, 1);
+  if (retval == 0)
+    {
+    std::cerr << "Unable to process request read scene" << std::endl;
+    return EXIT_FAILURE;
+    }
+  appLogic->ProcessReadData();
+  // test that the app Logic's scene has the proper hierarchy
+  int numNodes = appLogic->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
+  std::cout << "After processing read data, app logic scene has " << numNodes << " model hierarchy nodes" << std::endl;
+  // the five nodes that were imported over wrote one 
+  if (numNodes != 6)
+    {
+    std::cerr << "Expected to have 6 nodes!" << std::endl;
+    return EXIT_FAILURE;
+    }
+  for (int i = 0; i < numNodes; i++)
+    {
+    vtkMRMLNode *mrmlNode = appLogic->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelHierarchyNode");
+    if (mrmlNode && mrmlNode->IsA("vtkMRMLModelHierarchyNode"))
+      {
+      vtkMRMLModelHierarchyNode *hnode = vtkMRMLModelHierarchyNode::SafeDownCast(mrmlNode);
+      std::cout << i << ": Model Hierarchy node named " << hnode->GetName() << " with id " << hnode->GetID() << " has parent node id of " << (hnode->GetParentNodeID() ? hnode->GetParentNodeID() : "null") << std::endl;
+      // the second level clashed with the original hierarchy second level node, so below that, the parent node ids have been shifted
+      if (strcmp(hnode->GetName(),"1") == 0 && 
+          strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode1") != 0)
+        {
+        std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode1" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if (strcmp(hnode->GetName(),"2") == 0 && 
+          strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode3") != 0)
+        {
+        std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode3" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if (strcmp(hnode->GetName(),"3") == 0 && 
+          strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode4") != 0)
+        {
+        std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode4" << std::endl;
+        return EXIT_FAILURE;
+        }
+      if (strcmp(hnode->GetName(),"4") == 0 && 
+          strcmp(hnode->GetParentNodeID(), "vtkMRMLModelHierarchyNode5") != 0)
+        {
+        std::cerr << "Hierarchy node has incorrect parent node id, expected vtkMRMLModelHierarchyNode5" << std::endl;
+        return EXIT_FAILURE;
+        }
+      }
+    }
   }
 
   return EXIT_SUCCESS;

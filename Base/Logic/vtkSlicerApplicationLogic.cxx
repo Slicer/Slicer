@@ -749,7 +749,6 @@ void vtkSlicerApplicationLogic::ProcessReadData()
     {
     return;
     }
-
   ReadDataRequest req;
   // pull an object off the queue
   this->ReadDataQueueLock->Lock();
@@ -1327,7 +1326,6 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
   miniscene->SetURL( req.GetFilename().c_str() );
   miniscene->Import();
 
-
   // iterate over the list of nodes specified to read
   std::vector<std::string>::const_iterator tit;
   std::vector<std::string>::const_iterator sit;
@@ -1406,7 +1404,11 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
 
         // add any children model hierarchy nodes, rinse, repeat
         //
-        // need a way to recurse - JVM
+        // keep a map of model hierarchy node ids so that can update the parent node references
+        std::map<std::string, std::string> parentNodeIDMapper;
+        // hopefully the parents will have been read first, but if not 
+        // keep a list of model hierarchy nodes that failed to have their parent node reference remapped
+        std::vector<vtkMRMLModelHierarchyNode *> childNodesThatNeedParentsIDsRemapped; 
         for (int n=0;
              n<miniscene->GetNumberOfNodesByClass("vtkMRMLModelHierarchyNode");
              n++)
@@ -1423,8 +1425,9 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                           req.GetSourceNodes().end(), mhnd->GetID());
             if (ssit == req.GetSourceNodes().end())
               {
-              // not in source list, so we may need to add it
-              if (mhnd->GetParentNode() == smhnd)
+              // not in source list, so we may need to add it,
+              // if it's a child, grandchild etc of the top level node that we're importing
+              if (strcmp(mhnd->GetTopParentNode()->GetID(), smhnd->GetID()) == 0)
                 {
                 // get the model and display node BEFORE we add nodes
                 // to the target scene
@@ -1432,9 +1435,28 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                 vtkMRMLDisplayNode *sdnd1 = mhnd->GetDisplayNode();
 
                 vtkMRMLNode *tchild = this->GetMRMLScene()->CopyNode(mhnd);
+                // keep track of any node id change in case other nodes use this as a parent
+                parentNodeIDMapper[std::string(mhnd->GetID())] = std::string(tchild->GetID());
                 vtkMRMLModelHierarchyNode *tcmhd
                   = vtkMRMLModelHierarchyNode::SafeDownCast( tchild );
-                tcmhd->SetParentNodeID( tmhnd->GetID() );
+                // check for a parent node id in the mapper (as long as it doesn't already 
+                // point to the source node), default to the top level one though
+                std::string parentNodeID = std::string(tmhnd->GetID());
+                if (tcmhd->GetParentNodeID() != NULL && 
+                    strcmp(tcmhd->GetParentNodeID(),smhnd->GetID()) != 0)
+                  {
+                  std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(std::string(tcmhd->GetParentNodeID()));
+                  if (pIt != parentNodeIDMapper.end())
+                    {
+                    parentNodeID = pIt->second;
+                    vtkDebugMacro("Remapped parent node id to " << parentNodeID.c_str());
+                    }
+                  else
+                    {
+                    childNodesThatNeedParentsIDsRemapped.push_back(tcmhd);
+                    }
+                  }
+                tcmhd->SetParentNodeID( parentNodeID.c_str() );
 
                 if (smnd1)
                   {
@@ -1461,6 +1483,19 @@ void vtkSlicerApplicationLogic::ProcessReadSceneData(ReadDataRequest& req)
                   tcmhd->SetAndObserveDisplayNodeID( tdnd->GetID() );
                   }
                 }
+              }
+            }
+          }
+        if (childNodesThatNeedParentsIDsRemapped.size() > 0)
+          {
+          // iterate through all the imported hierarchies that failed and double check their parent node ids
+          for (unsigned int i = 0; i < childNodesThatNeedParentsIDsRemapped.size(); i++)
+            {
+            std::map<std::string,std::string>::iterator pIt = parentNodeIDMapper.find(childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID());
+            if (pIt != parentNodeIDMapper.end())
+              {
+              vtkDebugMacro("Remapping child node " << childNodesThatNeedParentsIDsRemapped[i]->GetName() << " parent node id from " << childNodesThatNeedParentsIDsRemapped[i]->GetParentNodeID() << " to " << pIt->second.c_str());
+              childNodesThatNeedParentsIDsRemapped[i]->SetParentNodeID(pIt->second.c_str());
               }
             }
           }
