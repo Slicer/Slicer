@@ -706,7 +706,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ParameterNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -722,7 +722,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>DTINodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -738,7 +738,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>FiducialNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -754,7 +754,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyInteractiveSeedingModule</sender>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>FiberNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

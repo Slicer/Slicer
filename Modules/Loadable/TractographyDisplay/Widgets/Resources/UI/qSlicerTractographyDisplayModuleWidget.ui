@@ -335,7 +335,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>GlyphDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -351,7 +351,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TubeDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -367,7 +367,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>LineDisplayWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -383,7 +383,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>GlyphPropertiesWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -399,7 +399,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TractographyDisplayTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -415,7 +415,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTractographyDisplayModule</sender>
+   <sender>qSlicerTractographyDisplayModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ROIEditorWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -433,7 +433,7 @@
   <connection>
    <sender>TractographyDisplayTreeView</sender>
    <signal>currentNodeChanged(vtkMRMLNode*)</signal>
-   <receiver>qSlicerTractographyDisplayModule</receiver>
+   <receiver>qSlicerTractographyDisplayModuleWidget</receiver>
    <slot>setFiberBundleNode(vtkMRMLNode*)</slot>
    <hints>
     <hint type="sourcelabel">

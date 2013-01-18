@@ -691,7 +691,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerVolumeRenderingModule</sender>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ViewCheckableNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -707,7 +707,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerVolumeRenderingModule</sender>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ROINodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -723,7 +723,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerVolumeRenderingModule</sender>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>VolumePropertyNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -739,7 +739,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerVolumeRenderingModule</sender>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>DisplayNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -755,7 +755,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerVolumeRenderingModule</sender>
+   <sender>qSlicerVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>VolumeNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

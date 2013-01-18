@@ -789,7 +789,7 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerDataModule</sender>
+   <sender>qSlicerDataModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

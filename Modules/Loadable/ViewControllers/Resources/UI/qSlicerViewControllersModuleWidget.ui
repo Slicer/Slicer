@@ -135,7 +135,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>qSlicerViewControllersModule</sender>
+   <sender>qSlicerViewControllersModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLSliceNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -151,7 +151,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerViewControllersModule</sender>
+   <sender>qSlicerViewControllersModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLSliceInformationWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

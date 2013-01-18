@@ -551,7 +551,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerReformatModule</sender>
+   <sender>qSlicerReformatModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SliceNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

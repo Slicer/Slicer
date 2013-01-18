@@ -246,7 +246,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerModelsModule</sender>
+   <sender>qSlicerModelsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ModelHierarchyTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -262,7 +262,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerModelsModule</sender>
+   <sender>qSlicerModelsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ClipModelsNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

@@ -225,7 +225,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerColorsModule</sender>
+   <sender>qSlicerColorsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ColorTableComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

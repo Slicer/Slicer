@@ -103,7 +103,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerROIModule</sender>
+   <sender>qSlicerROIModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ROINodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

@@ -303,7 +303,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerCropVolumeModule</sender>
+   <sender>qSlicerCropVolumeModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>InputVolumeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -319,7 +319,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerCropVolumeModule</sender>
+   <sender>qSlicerCropVolumeModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>InputROIComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

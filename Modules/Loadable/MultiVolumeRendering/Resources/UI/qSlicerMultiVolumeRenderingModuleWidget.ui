@@ -658,7 +658,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <sender>qSlicerMultiVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeComboBoxBackgroundVolume</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -674,7 +674,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <sender>qSlicerMultiVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeComboBoxForegroundVolume</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -690,7 +690,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerMultiVolumeRenderingModule</sender>
+   <sender>qSlicerMultiVolumeRenderingModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeComboBoxLabelmapVolume</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

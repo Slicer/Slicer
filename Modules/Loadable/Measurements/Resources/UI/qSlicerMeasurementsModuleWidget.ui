@@ -156,7 +156,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerMeasurementsModule</sender>
+   <sender>qSlicerMeasurementsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>MRMLNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -172,7 +172,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerMeasurementsModule</sender>
+   <sender>qSlicerMeasurementsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SlicerWidget</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -188,7 +188,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerMeasurementsModule</sender>
+   <sender>qSlicerMeasurementsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>SlicerWidget_2</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

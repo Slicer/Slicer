@@ -385,7 +385,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerTransformsModule</sender>
+   <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TransformableTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -401,7 +401,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTransformsModule</sender>
+   <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TransformedTreeView</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
@@ -417,7 +417,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>qSlicerTransformsModule</sender>
+   <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>TransformNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>

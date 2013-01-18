@@ -128,7 +128,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>qSlicerVolumesModule</sender>
+   <sender>qSlicerVolumesModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ActiveVolumeNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
