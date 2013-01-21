@@ -6,7 +6,7 @@
   <version>0.1.0.$Revision: 2104 $(alpha)</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/Threshold</documentation-url>
   <license/>
-  <contributor>Nicole Aucoin (SPL, BWH), Ron Kikinis (SPL, BWH)</contributor>
+  <contributor>Nicole Aucoin (SPL, BWH), Ron Kikinis (SPL, BWH), Julien Finet (Kitware)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
   <parameters>
     <label>IO</label>
@@ -70,5 +70,13 @@
       <description><![CDATA[Set the voxels to this value if they fall outside the threshold range]]></description>
       <default>0</default>
     </integer>
+    <boolean>
+      <name>Negate</name>
+      <label>Negate Threshold</label>
+      <flag>-n</flag>
+      <longflag>--negate</longflag>
+      <description><![CDATA[Swap the outside value with the inside value.]]></description>
+      <default>false</default>
+    </boolean>
   </parameters>
 </executable>

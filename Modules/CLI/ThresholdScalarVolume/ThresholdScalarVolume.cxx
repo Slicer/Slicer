@@ -16,8 +16,9 @@
 =========================================================================*/
 
 // ITK includes
+#include "itkChangeLabelImageFilter.h"
 #include "itkImageFileWriter.h"
-
+#include "itkMaskNegatedImageFilter.h"
 #include "itkThresholdImageFilter.h"
 
 #include "itkPluginUtilities.h"
@@ -48,6 +49,16 @@ int DoIt( int argc, char * argv[] )
 
   typedef itk::ThresholdImageFilter<
     InputImageType>  FilterType;
+  typedef itk::ImageSource<
+    InputImageType>  LastFilterType;
+  typedef itk::ChangeLabelImageFilter<InputImageType, InputImageType>
+    ChangeFilterType;
+  typedef itk::MaskNegatedImageFilter<
+    InputImageType, InputImageType>  NegateFilterType;
+
+  typename LastFilterType::Pointer lastFilter;
+  typename ChangeFilterType::Pointer changeFilter;
+  typename NegateFilterType::Pointer negateFilter;
 
   typename ReaderType::Pointer reader1 = ReaderType::New();
   itk::PluginFilterWatcher watchReader1(reader1, "Read Volume",
@@ -56,6 +67,7 @@ int DoIt( int argc, char * argv[] )
   reader1->SetFileName( InputVolume.c_str() );
 
   typename FilterType::Pointer filter = FilterType::New();
+  lastFilter = filter;
   itk::PluginFilterWatcher watchFilter(filter,
                                        "Threshold image",
                                        CLPProcessInformation);
@@ -75,12 +87,40 @@ int DoIt( int argc, char * argv[] )
     {
     filter->ThresholdAbove(ThresholdValue);
     }
+
+  if( Negate )
+    {
+    InputPixelType outsideValue =
+      (filter->GetLower() != itk::NumericTraits< InputPixelType >::NonpositiveMin()) ?
+      filter->GetLower() - 1 : filter->GetUpper() + 1;
+    filter->SetOutsideValue( outsideValue );
+    changeFilter = ChangeFilterType::New();
+    itk::PluginFilterWatcher watchChangeFilter(changeFilter,
+                                               "Relabel image",
+                                               CLPProcessInformation);
+    changeFilter->SetInput(0, filter->GetOutput());
+    changeFilter->SetChange(0, 1);
+    changeFilter->SetChange(outsideValue, 0);
+
+    // Where there is a 0 in the mask, keep the input value. Where there is
+    // a value other than 0 in the mask, set OutsideValue.
+    negateFilter = NegateFilterType::New();
+    lastFilter = negateFilter;
+    itk::PluginFilterWatcher watchNegateFilter(filter,
+                                               "Negate threshold",
+                                               CLPProcessInformation);
+
+    negateFilter->SetInput(0, reader1->GetOutput());
+    negateFilter->SetInput(1, changeFilter->GetOutput()); // filter is the mask
+    negateFilter->SetOutsideValue(OutsideValue);
+    negateFilter->Update();
+    }
   typename WriterType::Pointer writer = WriterType::New();
   itk::PluginFilterWatcher watchWriter(writer,
                                        "Write Volume",
                                        CLPProcessInformation);
   writer->SetFileName( OutputVolume.c_str() );
-  writer->SetInput( filter->GetOutput() );
+  writer->SetInput( lastFilter->GetOutput() );
   writer->SetUseCompression(1);
   writer->Update();
 
