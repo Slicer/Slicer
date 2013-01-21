@@ -34,7 +34,7 @@ namespace
 {
 
 template <class T>
-int DoIt( int argc, char * argv[], T )
+int DoIt( int argc, char * argv[] )
 {
 
   PARSE_ARGS;
@@ -130,32 +130,37 @@ int main( int argc, char * argv[] )
     {
     itk::GetImageType(InputVolume, pixelType, componentType);
 
-    // This filter handles all types on input, but only produces
-    // signed types
-
     switch( componentType )
       {
       case itk::ImageIOBase::UCHAR:
+        return DoIt<unsigned char>( argc, argv);
+        break;
       case itk::ImageIOBase::CHAR:
-        return DoIt( argc, argv, static_cast<char>(0) );
+        return DoIt<char>( argc, argv );
         break;
       case itk::ImageIOBase::USHORT:
+        return DoIt<unsigned short>( argc, argv );
+        break;
       case itk::ImageIOBase::SHORT:
-        return DoIt( argc, argv, static_cast<short>(0) );
+        return DoIt<short>( argc, argv );
         break;
       case itk::ImageIOBase::UINT:
+        return DoIt<unsigned int>( argc, argv );
+        break;
       case itk::ImageIOBase::INT:
-        return DoIt( argc, argv, static_cast<int>(0) );
+        return DoIt<int>( argc, argv );
         break;
       case itk::ImageIOBase::ULONG:
+        return DoIt<unsigned long>( argc, argv );
+        break;
       case itk::ImageIOBase::LONG:
-        return DoIt( argc, argv, static_cast<long>(0) );
+        return DoIt<long>( argc, argv );
         break;
       case itk::ImageIOBase::FLOAT:
-        return DoIt( argc, argv, static_cast<float>(0) );
+        return DoIt<float>( argc, argv );
         break;
       case itk::ImageIOBase::DOUBLE:
-        return DoIt( argc, argv, static_cast<double>(0) );
+        return DoIt<double>( argc, argv );
         break;
       case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
       default:
