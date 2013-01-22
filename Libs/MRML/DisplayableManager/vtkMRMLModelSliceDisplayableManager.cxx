@@ -369,7 +369,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     
     // optimization for slice to slice intersections which are 1 quad polydatas
     // no need for 50^3 default locator divisons
-    if (polyData->GetNumberOfPoints() <= 4)
+    if (polyData->GetPoints() != NULL && polyData->GetNumberOfPoints() <= 4)
     {
       vtkSmartPointer<vtkPointLocator> locator = vtkSmartPointer<vtkPointLocator>::New();
       double *bounds = polyData->GetBounds();
