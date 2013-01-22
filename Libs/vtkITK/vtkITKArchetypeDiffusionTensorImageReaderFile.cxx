@@ -82,11 +82,11 @@ void vtkITKExecuteDataFromFileDiffusionTensor3D(
   // This is a conservative test for dti. It filters out most non-dti
   // data without having to read the entire file
   unsigned int numberOfComponents = reader->GetImageIO()->GetNumberOfComponents();
-  if (numberOfComponents != 9)
+  if (numberOfComponents != 9 && numberOfComponents != 6)
     {
     itkGenericExceptionMacro(<< "number of components is: "
                              << numberOfComponents
-                             << " but expected 9");
+                             << " but expected 6 or 9");
 
     return;
     }
