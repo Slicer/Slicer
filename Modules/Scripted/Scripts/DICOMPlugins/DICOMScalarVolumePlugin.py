@@ -299,7 +299,17 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     """Load the select as a scalar volume
     """
     volumeNode = self.loadFilesWithArchetype(loadable.files, loadable.name)
+
     if volumeNode:
+
+      #
+      # create Patient Hierarchy node and add list
+      # TODO: this is a temporary addition while Patient Hieararchies are
+      # being developed in the SlicerRT Extension
+      #
+      if hasattr(self,'addSeriesInHierarchy'):
+        self.addSeriesInHierarchy(loadable,volumeNode)
+
       #
       # add list of DICOM instance UIDs to the volume node
       # corresponding to the loaded files
@@ -320,6 +330,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
       selNode = appLogic.GetSelectionNode()
       selNode.SetReferenceActiveVolumeID(volumeNode.GetID())
       appLogic.PropagateVolumeSelection()
+
     return volumeNode
 
 
