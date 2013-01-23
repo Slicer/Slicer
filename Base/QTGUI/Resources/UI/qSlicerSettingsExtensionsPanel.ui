@@ -78,7 +78,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="OpenExtensionManagerPushButton">
+    <widget class="QPushButton" name="OpenExtensionsManagerPushButton">
      <property name="text">
       <string>Open Extension Manager...</string>
      </property>
@@ -110,7 +110,7 @@
   <connection>
    <sender>ExtensionsManagerEnabledCheckBox</sender>
    <signal>toggled(bool)</signal>
-   <receiver>OpenExtensionManagerPushButton</receiver>
+   <receiver>OpenExtensionsManagerPushButton</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">

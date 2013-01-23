@@ -500,7 +500,7 @@ ctkSettingsDialog* qSlicerApplication::settingsDialog()const
 
 // --------------------------------------------------------------------------
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-void qSlicerApplication::openExtensionManagerDialog()
+void qSlicerApplication::openExtensionsManagerDialog()
 {
   Q_D(qSlicerApplication);
   if (!d->ExtensionsManagerDialog->extensionsManagerModel() &&
@@ -510,7 +510,7 @@ void qSlicerApplication::openExtensionManagerDialog()
     d->ExtensionsManagerDialog->resize(this->mainWindow()->size());
     }
   d->ExtensionsManagerDialog->setExtensionsManagerModel(
-        this->extensionManagerModel());
+        this->extensionsManagerModel());
   if (d->ExtensionsManagerDialog->exec() == QDialog::Accepted)
     {
     this->confirmRestart();

@@ -66,7 +66,7 @@ protected slots:
   void onCutActionTriggered();
   void onCopyActionTriggered();
   void onPasteActionTriggered();
-  void onViewExtensionManagerActionTriggered();
+  void onViewExtensionsManagerActionTriggered();
 
   void onFileRecentLoadedActionTriggered();
   void onNewFileLoaded(const qSlicerIO::IOProperties &fileProperties);

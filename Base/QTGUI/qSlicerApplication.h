@@ -116,7 +116,7 @@ public slots:
   void confirmRestart(QString reason = QString());
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  void openExtensionManagerDialog();
+  void openExtensionsManagerDialog();
 #endif
 
 protected:

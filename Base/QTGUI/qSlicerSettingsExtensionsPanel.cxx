@@ -90,8 +90,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                    q, SIGNAL(extensionsServerUrlChanged(QString)));
   QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(onExensionsPathChanged(QString)));
-  QObject::connect(this->OpenExtensionManagerPushButton, SIGNAL(clicked()),
-                   app, SLOT(openExtensionManagerDialog()));
+  QObject::connect(this->OpenExtensionsManagerPushButton, SIGNAL(clicked()),
+                   app, SLOT(openExtensionsManagerDialog()));
 }
 
 // --------------------------------------------------------------------------

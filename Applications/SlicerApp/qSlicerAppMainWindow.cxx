@@ -748,7 +748,7 @@ void qSlicerAppMainWindow::setupMenuActions()
   this->connect(d->actionPaste, SIGNAL(triggered()),
                 this, SLOT(onPasteActionTriggered()));
 
-  qSlicerAppMainWindow_connect(ViewExtensionManager);
+  qSlicerAppMainWindow_connect(ViewExtensionsManager);
 
   d->actionViewLayoutConventional->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalView);
   d->actionViewLayoutConventionalWidescreen->setData(vtkMRMLLayoutNode::SlicerLayoutConventionalWidescreenView);
@@ -826,10 +826,10 @@ void qSlicerAppMainWindow::setupMenuActions()
   qSlicerApplication * app = qSlicerApplication::application();
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
-  d->actionViewExtensionManager->setVisible(
+  d->actionViewExtensionsManager->setVisible(
         app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool());
 #else
-  d->actionViewExtensionManager->setVisible(false);
+  d->actionViewExtensionsManager->setVisible(false);
 #endif
 #ifndef Slicer_USE_PYTHONQT
   d->actionWindowPythonInteractor->setVisible(false);
@@ -943,11 +943,11 @@ void qSlicerAppMainWindow::onCutActionTriggered()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindow::onViewExtensionManagerActionTriggered()
+void qSlicerAppMainWindow::onViewExtensionsManagerActionTriggered()
 {
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerApplication * app = qSlicerApplication::application();
-  app->openExtensionManagerDialog();
+  app->openExtensionsManagerDialog();
 #endif
 }
 

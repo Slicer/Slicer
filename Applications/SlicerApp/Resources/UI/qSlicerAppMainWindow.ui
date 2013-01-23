@@ -95,7 +95,7 @@
      <addaction name="actionWindowToolbarsResetToDefault"/>
     </widget>
     <addaction name="actionWindowPythonInteractor"/>
-    <addaction name="actionViewExtensionManager"/>
+    <addaction name="actionViewExtensionsManager"/>
     <addaction name="separator"/>
     <addaction name="menuWindowToolBars"/>
     <addaction name="MenuLayout"/>
@@ -524,7 +524,7 @@
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionViewExtensionManager">
+  <action name="actionViewExtensionsManager">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
      <normaloff>:/Icons/ExtensionDefaultIcon.png</normaloff>:/Icons/ExtensionDefaultIcon.png</iconset>
