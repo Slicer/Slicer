@@ -47,6 +47,9 @@ public:
   Q_INVOKABLE qSlicerExtensionsManagerModel* extensionsManagerModel()const;
   Q_INVOKABLE void setExtensionsManagerModel(qSlicerExtensionsManagerModel* model);
 
+public slots:
+  void refreshInstallWidget();
+
 protected slots:
   void onModelUpdated();
 

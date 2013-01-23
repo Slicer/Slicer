@@ -240,6 +240,10 @@ CTK_SET_CPP(qSlicerExtensionsInstallWidget, const QString&, setSlicerArch, Slice
 void qSlicerExtensionsInstallWidget::refresh()
 {
   Q_D(qSlicerExtensionsInstallWidget);
+  if (!d->ExtensionsManagerModel)
+    {
+    return;
+    }
   d->WebView->setUrl(d->extensionsListUrl());
 }
 

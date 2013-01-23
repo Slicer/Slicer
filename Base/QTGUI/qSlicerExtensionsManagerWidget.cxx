@@ -101,6 +101,13 @@ void qSlicerExtensionsManagerWidget::setExtensionsManagerModel(qSlicerExtensions
 }
 
 // --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::refreshInstallWidget()
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  d->ExtensionsInstallWidget->refresh();
+}
+
+// --------------------------------------------------------------------------
 void qSlicerExtensionsManagerWidget::onModelUpdated()
 {
   Q_D(qSlicerExtensionsManagerWidget);

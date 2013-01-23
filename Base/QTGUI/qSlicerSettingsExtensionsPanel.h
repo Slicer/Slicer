@@ -47,10 +47,12 @@ public:
   /// Destructor
   virtual ~qSlicerSettingsExtensionsPanel();
 
+signals:
+  void extensionsServerUrlChanged(const QString& url);
+
 protected slots:
   void onExtensionsManagerEnabled(bool value);
   /// \todo This slot does nothing.
-  void onExensionsServerUrlChanged(const QString& url);
   void onExensionsPathChanged(const QString& path);
 
 protected:
