@@ -351,6 +351,18 @@ void qMRMLTreeView::setSceneModel(qMRMLSceneModel* newSceneModel, const QString&
 }
 
 //------------------------------------------------------------------------------
+void qMRMLTreeView::setSortFilterProxyModel(qMRMLSortFilterProxyModel* newFilterModel)
+{
+  Q_D(qMRMLTreeView);
+
+  if (!newFilterModel)
+    {
+    return;
+    }
+  d->setSortFilterProxyModel(newFilterModel);
+}
+
+//------------------------------------------------------------------------------
 vtkMRMLScene* qMRMLTreeView::mrmlScene()const
 {
   Q_D(const qMRMLTreeView);

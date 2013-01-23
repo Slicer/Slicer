@@ -143,6 +143,8 @@ public:
 
   /// Customize the model
   void setSceneModel(qMRMLSceneModel* newSceneModel, const QString& modelType);
+  /// Customize the filter model
+  void setSortFilterProxyModel(qMRMLSortFilterProxyModel* newFilterModel);
 
   /// Set/Get node types to display in the list
   /// NodeTypes are the class names, i.e. vtkMRMLViewNode,
