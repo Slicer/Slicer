@@ -278,11 +278,6 @@ CMAKE_DEPENDENT_OPTION(
 mark_as_advanced(Slicer_BUILD_MultiVolumeExplorer)
 
 CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_SlicerWebGLExport "Build SlicerWebGLExport." ON
-  "Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
-mark_as_advanced(Slicer_BUILD_SlicerWebGLExport)
-
-CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_BRAINSTOOLS "Build the BRAINS subset of registration and segmentation tools." ON
   "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI" OFF)
 mark_as_advanced(Slicer_BUILD_BRAINSTOOLS)

@@ -159,10 +159,6 @@ if(Slicer_BUILD_MultiVolumeImporter)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
 
-if(Slicer_BUILD_SlicerWebGLExport)
-  list(APPEND Slicer_DEPENDENCIES SlicerWebGLExport)
-endif()
-
 if(Slicer_BUILD_DWIConvert)
   list(APPEND Slicer_DEPENDENCIES DWIConvert)
 endif()
@@ -217,7 +213,6 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_EMSegment
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
-  Slicer_BUILD_SlicerWebGLExport
   Slicer_BUILD_Extensions
   Slicer_BUILD_SkullStripper
   )
@@ -323,10 +318,6 @@ endif()
 
 if(Slicer_BUILD_EMSegment)
   list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
-endif()
-
-if(Slicer_BUILD_SlicerWebGLExport)
-  list(APPEND ep_superbuild_extra_args -DSlicerWebGLExport_SOURCE_DIR:PATH=${SlicerWebGLExport_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
