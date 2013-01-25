@@ -8,9 +8,14 @@ set(ENV{LDFLAGS} "") ## NOTE THIS MUST BE BLANK OR THE FORTRAN COMPILER FAILS!
 set(ENV{F77} "")
 set(ENV{F90} "")
 set(ENV{FFLAGS} "")
-set(ENV{F77FLAGS} "")
 set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
 set(ENV{VS_UNICODE_OUTPUT} "")
+# See http://docs.scipy.org/doc/numpy/user/install.html#disabling-atlas-and-other-accelerated-libraries
+# and http://massmail.spl.harvard.edu/public-archives/slicer-devel/2013/011098.html
+set(ENV{ATLAS} "None")
+set(ENV{BLAS} "None")
+set(ENV{LAPACK} "None")
+set(ENV{MKL} "None")
 
 if(APPLE)
   set(CMAKE_OSX_ARCHITECTURES "@CMAKE_OSX_ARCHITECTURES@")
