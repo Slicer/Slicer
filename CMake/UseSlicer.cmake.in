@@ -256,6 +256,7 @@ include(SlicerMacroBuildModuleLogic)
 include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildModuleWidgets)
 include(SlicerMacroBuildQtModule)
+include(SlicerMacroBuildScriptedModule)
 include(vtkMacroKitPythonWrap)
 
 include(SlicerMacroSimpleTest)

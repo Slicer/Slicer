@@ -46,27 +46,25 @@ endif()
 #-----------------------------------------------------------------------------
 # Sources
 #-----------------------------------------------------------------------------
-set(KIT_PYTHON_SCRIPTS
+set(MODULE_PYTHON_SCRIPTS
   DICOM2FullBrainTractography.py
+  )
+
+set(MODULE_PYTHON_RESOURCES
   )
 
 add_subdirectory(
   DICOM2FullBrainTractographyLib
   )
 
-set(KIT_PYTHON_RESOURCES
-  )
-
 #-----------------------------------------------------------------------------
 # Build
 #-----------------------------------------------------------------------------
-ctkMacroCompilePythonScript(
-  TARGET_NAME DICOM2FullBrainTractography
-  SCRIPTS "${KIT_PYTHON_SCRIPTS}"
-  RESOURCES "${KIT_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-  INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
-  NO_INSTALL_SUBDIR
+
+slicerMacroBuildScriptedModule(
+  NAME DICOM2FullBrainTractography
+  SCRIPTS "${MODULE_PYTHON_SCRIPTS}"
+  RESOURCES "${MODULE_PYTHON_RESOURCES}"
   )
 
 #-----------------------------------------------------------------------------

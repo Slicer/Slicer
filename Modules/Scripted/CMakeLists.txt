@@ -1,3 +1,6 @@
+
+include(SlicerMacroBuildScriptedModule)
+
 if(Slicer_BUILD_DICOM_SUPPORT)
   add_subdirectory(DICOMLib)
 endif()
