@@ -32,6 +32,8 @@ macro(slicerMacroBuildCLI)
     set(PASS_VERBOSE VERBOSE)
   endif()
 
+  message(WARNING "Macro 'slicerMacroBuildCLI' is *DEPRECATED* - Use 'SEMMacroBuildCLI' instead.")
+
   SEMMacroBuildCLI(
     ${PASS_EXECUTABLE_ONLY}
     ${PASS_NO_INSTALL}
