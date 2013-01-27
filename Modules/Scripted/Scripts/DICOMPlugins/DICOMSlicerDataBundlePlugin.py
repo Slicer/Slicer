@@ -91,15 +91,11 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     fp.write(zipData)
     fp.close()
 
-    zipFile = zipfile.ZipFile(zipPath, 'r')
-    zipFile.extractall(sceneDir)
-    print ("extracted to %s" % sceneDir)
+    appLogic = slicer.app.applicationLogic()
+    sceneFile = appLogic.OpenSlicerDataBundle(zipPath, sceneDir)
+    print ("loaded %s" % sceneFile)
 
-    mrmlPath = os.path.join(sceneDir,'scene.mrml')
-    slicer.mrmlScene.SetURL(mrmlPath)
-    slicer.mrmlScene.Connect()
-
-    return True
+    return sceneFile != ""
 
 #
 # DICOMSlicerDataBundlePlugin
