@@ -2147,9 +2147,13 @@ void vtkMRMLSliceLogic::SnapSliceOffsetToIJK()
   this->GetLowestVolumeSliceBounds( bounds );
 
   // number of slices along the offset dimension (depends on ijkToRAS and Transforms)
+  // - find the slice index corresponding to the current slice offset
+  // - move the offset to the middle of that slice
+  // - note that bounds[4] 'furthest' edge of the volume from the point of view of this slice
+  // - note also that spacing[2] may correspond to i, j, or k depending on ijkToRAS and sliceToRAS
   double slice = (oldOffset - bounds[4]) / spacing[2];
-  int intSlice = static_cast<int> (0.5 + slice);
-  offset = intSlice * spacing[2] + bounds[4];
+  int intSlice = static_cast<int> (slice);
+  offset = (intSlice + 0.5) * spacing[2] + bounds[4];
   this->SetSliceOffset( offset );
 }
 
