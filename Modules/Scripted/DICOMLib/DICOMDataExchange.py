@@ -225,6 +225,7 @@ class DICOMExporter(object):
     # cmd = "img2dcm -k 'InstanceNumber=1' -k 'SeriesDescription=Slicer Data Bundle' -df %s/template.dcm %s %s" % (self.dicomDirectory, self.imageFile, self.sdbFile)
     args = [
         '-k', 'InstanceNumber=1',
+        '-k', 'StudyDescription=Slicer Scene Export',
         '-k', 'SeriesDescription=Slicer Data Bundle',
         '--dataset-from', '%s/template.dcm' % self.dicomDirectory,
         self.imageFile, self.sdbFile]

@@ -67,30 +67,37 @@ class DICOMSlicerDataBundlePluginClass(DICOMPlugin):
     return loadables
 
   def load(self,loadable):
-    """Load the selection as a diffusion volume
-    using the dicom to nrrd converter module
+    """Load the selection as a data bundle
+    by extracting the embedded zip file and passing it to the application logic
     """
 
     f = loadable.files[0]
     try:
       zipSize = int(slicer.dicomDatabase.fileValue(f, self.tags['zipSize']))
     except ValueError:
+      print("Could not get zipSize for %s" % f)
       return False
 
-    print('importing', f)
-    print('size', zipSize)
+    print('importing file: %s' % f)
+    print('size: %d' % zipSize)
 
+    # require that the databundle be the last element of the file
+    # so we can seek from the end by the size of the zip data
     sceneDir = tempfile.mkdtemp('', 'sceneImport', slicer.app.temporaryPath)
     fp = open(f, 'rb')
     fp.seek(-1 * (1+zipSize), os.SEEK_END)
     zipData = fp.read(zipSize)
     fp.close()
 
+    # save to a temp zip file
     zipPath = os.path.join(sceneDir,'scene.zip')
     fp = open(zipPath,'wb')
     fp.write(zipData)
     fp.close()
 
+    print('saved zip file to: %s' % zipPath)
+
+    # let the scene unpack it and load it
     appLogic = slicer.app.applicationLogic()
     sceneFile = appLogic.OpenSlicerDataBundle(zipPath, sceneDir)
     print ("loaded %s" % sceneFile)
