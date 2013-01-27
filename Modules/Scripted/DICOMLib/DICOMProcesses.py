@@ -5,7 +5,7 @@ from __main__ import ctk
 
 #########################################################
 #
-# 
+#
 comment = """
 
 DICOMProcesses has python/qt wrapper code around
@@ -13,7 +13,7 @@ dcmtk command line modules.  This code is meant
 for use with the DICOM scripted module, but could
 also be used as a logic helper in other code
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -26,11 +26,23 @@ class DICOMProcess(object):
   def __init__(self):
     self.process = None
     self.connections = {}
-    self.exeDir = slicer.app.slicerHome 
-    # note: even in a windows build tree CTK's install does not include a "Debug" or "Release" intDir
-    self.exeDir = self.exeDir + '/../CTK-build/CMakeExternals/Install/bin'
-    if not os.path.exists(self.exeDir):
-      self.exeDir = slicer.app.slicerHome + '/bin'
+    pathOptions = (
+        '/bin'
+        '/../CTK-build/CMakeExternals/Install/bin',
+        '/../DCMTK-build/bin',
+        )
+
+    # note: even in a windows build tree DCMTK's install does not include
+    # a "Debug" or "Release" intDir
+    self.exeDir = None
+    for path in pathOptions:
+      testPath = slicer.app.slicerHome + path
+      if os.path.exists(testPath):
+        self.exeDir = testPath
+        break
+    if not self.exeDir:
+      raise( UserWarning("Could not find a valid path to DICOM helper applications") )
+
     self.exeExtension = ""
     if os.name == 'nt':
       self.exeExtension = '.exe'
@@ -61,7 +73,6 @@ class DICOMProcess(object):
       print('error code is: %d' % self.process.error())
       print('standard out is: %s' % stdout)
       print('standard error is: %s' % stderr)
-  
 
   def stop(self):
     if hasattr(self,'process'):
@@ -142,7 +153,7 @@ class DICOMListener(DICOMProcess):
     dcmdumpExecutable = self.exeDir+'/dcmdump'+self.exeExtension
     # start the server!
     onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
-    args = [str(self.port), 
+    args = [str(self.port),
         '--output-directory' , self.incomingDir,
         '--exec-on-reception', onReceptionCallback]
     print("starting DICOM listener")
@@ -288,9 +299,9 @@ class DICOMTestingQRServer(object):
 
   def makeConfigFile(self,configFile,storageDirectory='.'):
     """ make a config file for the local instance with just
-    the parts we need (comments and examples removed).  
+    the parts we need (comments and examples removed).
     For examples and the full syntax
-    see dcmqrdb/etc/dcmqrscp.cfg and 
+    see dcmqrdb/etc/dcmqrscp.cfg and
     dcmqrdb/docs/dcmqrcnf.txt in the dcmtk source
     available from dcmtk.org or the ctk distribution
     """
