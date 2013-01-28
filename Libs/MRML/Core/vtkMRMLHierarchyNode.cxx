@@ -241,6 +241,16 @@ void vtkMRMLHierarchyNode::UpdateReferences()
 //-----------------------------------------------------------
 void vtkMRMLHierarchyNode::SetParentNodeID(const char* ref) 
 {
+  // is it trying to set it's parent to be itself?
+  if (this->GetID() && ref &&
+      !strcmp(this->GetID(), ref))
+    {
+    vtkErrorMacro("SetParentNode: node "
+                  << (this->GetName() ? this->GetName() : "(unnamed)")
+                  << " with id " << this->GetID()
+                  << " tried to set itself as parent! Returning...");
+    return;
+    }
   // is the parent node id already set to ref?
   if (this->ParentNodeIDReference && ref &&
       !strcmp(ref, this->ParentNodeIDReference))
