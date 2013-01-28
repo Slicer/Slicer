@@ -136,39 +136,6 @@ void qSlicerDataModuleWidget::setup()
   // Make connections for the attribute table widget
   connect(d->MRMLTreeView, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           d->MRMLNodeAttributeTableWidget, SLOT(setMRMLNode(vtkMRMLNode*)));
-
-  // Connect the buttons to the associated slots
-  connect(d->LoadSceneToolButton, SIGNAL(clicked()),
-          this, SLOT(loadScene()));
-  connect(d->AddSceneToolButton, SIGNAL(clicked()),
-          this, SLOT(addScene()));
-  connect(d->AddDataToolButton, SIGNAL(clicked()),
-          this, SLOT(addData()));
-  connect(d->AddVolumesToolButton, SIGNAL(clicked()),
-          this, SLOT(addVolumes()));
-  connect(d->AddModelsToolButton, SIGNAL(clicked()),
-          this, SLOT(addModels()));
-  connect(d->AddScalarOverlayToolButton, SIGNAL(clicked()),
-          this, SLOT(addScalarOverlay()));
-  connect(d->AddTransformationToolButton, SIGNAL(clicked()),
-          this, SLOT(addTransformation()));
-  connect(d->AddFiducialListToolButton, SIGNAL(clicked()),
-          this, SLOT(addFiducialList()));
-  connect(d->AddColorTableToolButton, SIGNAL(clicked()),
-          this, SLOT(addColorTable()));
-  connect(d->AddFiberBundleToolButton, SIGNAL(clicked()),
-          this, SLOT(addFiberBundle()));
-
-  QList<QToolButton*> helpToolButtons =
-    d->LoadAddSceneButton->findChildren<QToolButton*>(
-      QRegExp("*HelpToolButton", Qt::CaseSensitive, QRegExp::Wildcard));
-  foreach(QToolButton* help, helpToolButtons)
-    {
-    // Set the help icon
-    help->setIcon(this->style()->standardIcon(QStyle::SP_MessageBoxQuestion));
-    // hide the text
-    help->setChecked(false);
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -272,62 +239,3 @@ void qSlicerDataModuleWidget::hardenTransformOnCurrentNode()
     vtkMRMLTransformableNode::SafeDownCast(node));
 }
 
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::loadScene()
-{
-  qSlicerApplication::application()->ioManager()->openLoadSceneDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addScene()
-{
-  qSlicerApplication::application()->ioManager()->openAddSceneDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addData()
-{
-  qSlicerApplication::application()->ioManager()->openAddDataDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addVolumes()
-{
-  qSlicerApplication::application()->ioManager()->openAddVolumeDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addModels()
-{
-  qSlicerApplication::application()->ioManager()->openAddModelDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addScalarOverlay()
-{
-  qSlicerApplication::application()->ioManager()->openAddScalarOverlayDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addTransformation()
-{
-  qSlicerApplication::application()->ioManager()->openAddTransformDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addFiducialList()
-{
-  qSlicerApplication::application()->ioManager()->openAddFiducialDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addColorTable()
-{
-  qSlicerApplication::application()->ioManager()->openAddColorTableDialog();
-}
-
-//-----------------------------------------------------------------------------
-void qSlicerDataModuleWidget::addFiberBundle()
-{
-  qSlicerApplication::application()->ioManager()->openAddFiberBundleDialog();
-}

@@ -38,16 +38,6 @@ public:
   virtual ~qSlicerDataModuleWidget();
 
 public slots:
-  void loadScene();
-  void addScene();
-  void addData();
-  void addVolumes();
-  void addModels();
-  void addScalarOverlay();
-  void addTransformation();
-  void addFiducialList();
-  void addColorTable();
-  void addFiberBundle();
 
   void setMRMLIDsVisible(bool visible);
 

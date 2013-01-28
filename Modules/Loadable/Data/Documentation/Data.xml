@@ -32,48 +32,4 @@
       <description>Hide all the nodes not matching the typed string. This can be useful to quickly search for a specific node. Please note that the search is case sensitive</description>
     </parameter>
   </parameters>
-  <parameters>
-    <label>Load&amp;Add Scenes Or Individual datasets</label>
-    <description>Shortcuts to load data into the scene.</description>
-    <parameter>
-      <label>Load new scene (close current)</label>
-      <description>Close the existing scene and load a new MRML scene from a Slicer.x file with extension ".mrml", or a Slicer2.x file with extension ".xml". Data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar") may also be loaded.</description>
-    </parameter>
-    <parameter>
-      <label>Add a scene (to current)</label>
-      <description>Add a new scene to the existing scene. Supported file formats include Slicer.x MRML files (".mrml"), Slicer2.x MRML files (.xml"), data collections in XNAT Catalog format (".xcat") or XNAT Archive format (".xar").</description>
-    </parameter>
-    <parameter>
-      <label>Add data or data directory</label>
-      <description>Add all files in a selected directory to the existing scene, or an individual data set of any supported type.</description>
-    </parameter>
-    <parameter>
-      <label>Add scalar and tensor volumes</label>
-      <description>add volume image data in a variety of formats to the existing scene.</description>
-    </parameter>
-    <parameter>
-      <label>Add 3D model or a model directory</label>
-      <description>Raise a dialog with options to add models to the current scene.</description>
-    </parameter>
-    <parameter>
-      <label>Add scalar overlay</label>
-      <description>Add a (FreeSurfer) scalar overlay to an existing model in the scene.</description>
-    </parameter>
-    <parameter>
-      <label>Add transformation matrix</label>
-      <description>Add a new transform initialized with an Identity matrix to the current scene. Then, use the MRML tree widget in the panel above to position the transform in the data hierarchy.</description>
-    </parameter>
-    <parameter>
-      <label>Add fiducial list</label>
-      <description>Add a fiducial list from a file with extension (".fcsv") to the current scene.</description>
-    </parameter>
-    <parameter>
-      <label>Add color table</label>
-      <description>Add new Color lookup-up tables to the scene (files with extension ".txt"). Click the Add color table button, and select a color LUT file (with extension .txt) from the File Browser.</description>
-    </parameter>
-    <parameter>
-      <label>Add fiber bundle</label>
-      <description>Add new Tractography Fiber Bundles to the scene. Click the Add fiber bundle button, and select a fiber bundle file from the File Browser.</description>
-    </parameter>
-  </parameters>
 </executable>
