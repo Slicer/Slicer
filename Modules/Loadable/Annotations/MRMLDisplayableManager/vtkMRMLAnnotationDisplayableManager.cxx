@@ -33,11 +33,14 @@
 #include <vtkCamera.h>
 #include <vtkHandleRepresentation.h>
 #include <vtkHandleWidget.h>
+#include <vtkLineWidget2.h>
+#include <vtkLineRepresentation.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointHandleRepresentation2D.h>
+#include <vtkPointHandleRepresentation3D.h>
 #include <vtkPropCollection.h>
 #include <vtkProperty2D.h>
 #include <vtkProperty.h>
@@ -686,6 +689,18 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       // it's visible, but if just update the position, don't get updates
       //necessary when switch into and out of lightbox
       vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: visible, propagate mrml to widget");
+
+      // If visible, turn off projection
+      vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+      if (rulerNode)
+        {
+        vtkLineWidget2* line = vtkLineWidget2::SafeDownCast(this->Helper->GetProjectionWidget(rulerNode));
+        if (line)
+          {
+          line->Off();
+          }
+        }
+
       this->PropagateMRMLToWidget(annotationNode, this->Helper->GetWidget(annotationNode));
       }
 
@@ -697,7 +712,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
       vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
       if (rulerNode &&
-          (rulerNode->GetAnnotationLineDisplayNode() && rulerNode->GetAnnotationLineDisplayNode()->GetSliceIntersectionVisibility()))
+          (rulerNode->GetAnnotationLineDisplayNode()))
         {
 
         double transformedP1[4];
@@ -724,84 +739,179 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         // compute intersection with slice plane
         // if !=0: mark the intersection
 
-        //double this->GetSliceNode()->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
-        // t = (this->GetSliceNode()->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
-        double t = (this->GetSliceNode()->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
-
-        // p2-p1
-        double P2minusP1[3];
-        vtkMath::Subtract(displayP2,displayP1,P2minusP1);
-
-        // (p2-p1)*t
-        vtkMath::MultiplyScalar(P2minusP1,t);
-
-        // p1 + ((p2-p1)*t)
-        double P1plusP2minusP1[3];
-        vtkMath::Add(displayP1,P2minusP1,P1plusP2minusP1);
-
-        // Since we have the position of the intersection now,
-        // we want to show it using a marker inside the sliceViews.
-        //
-        // We query the list if we already have a marker for this special widget.
-        // If not, we create a new marker.
-        // In any case, we will move the marker (either the newly created or the old).
-
-        vtkSeedWidget* marker = vtkSeedWidget::SafeDownCast(this->Helper->GetIntersectionWidget(rulerNode));
-
-        if (!marker)
+        if(rulerNode->GetAnnotationLineDisplayNode()->GetSliceIntersectionVisibility())
           {
-          // we create a new marker.
+          //double this->GetSliceNode()->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
+          // t = (this->GetSliceNode()->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
+          double t = (this->GetSliceNode()->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
 
-          vtkNew<vtkPointHandleRepresentation2D> handle;
-          handle->GetProperty()->SetColor(0,1,0);
-          handle->SetHandleSize(3);
+          // p2-p1
+          double P2minusP1[3];
+          vtkMath::Subtract(displayP2,displayP1,P2minusP1);
 
-          vtkNew<vtkSeedRepresentation> rep;
-          rep->SetHandleRepresentation(handle.GetPointer());
+          // (p2-p1)*t
+          vtkMath::MultiplyScalar(P2minusP1,t);
 
-          marker = vtkSeedWidget::New();
+          // p1 + ((p2-p1)*t)
+          double P1plusP2minusP1[3];
+          vtkMath::Add(displayP1,P2minusP1,P1plusP2minusP1);
 
-          marker->CreateDefaultRepresentation();
+          // Since we have the position of the intersection now,
+          // we want to show it using a marker inside the sliceViews.
+          //
+          // We query the list if we already have a marker for this special widget.
+          // If not, we create a new marker.
+          // In any case, we will move the marker (either the newly created or the old).
 
-          marker->SetRepresentation(rep.GetPointer());
+          vtkSeedWidget* marker = vtkSeedWidget::SafeDownCast(this->Helper->GetIntersectionWidget(rulerNode));
 
-          marker->SetInteractor(this->GetInteractor());
-          marker->SetCurrentRenderer(this->GetRenderer());
+          if (!marker)
+            {
+            // we create a new marker.
 
-          marker->ProcessEventsOff();
+            vtkNew<vtkPointHandleRepresentation2D> handle;
+            handle->GetProperty()->SetColor(0,1,0);
+            handle->SetHandleSize(3);
 
+            vtkNew<vtkSeedRepresentation> rep;
+            rep->SetHandleRepresentation(handle.GetPointer());
+
+            marker = vtkSeedWidget::New();
+
+            marker->CreateDefaultRepresentation();
+
+            marker->SetRepresentation(rep.GetPointer());
+
+            marker->SetInteractor(this->GetInteractor());
+            marker->SetCurrentRenderer(this->GetRenderer());
+
+            marker->ProcessEventsOff();
+
+            marker->On();
+            marker->CompleteInteraction();
+
+            // we save the marker in our WidgetIntersection list associated to this node
+            this->Helper->WidgetIntersections[rulerNode] = marker;
+            }
+
+          // remove all old markers associated with this node
+          marker->DeleteSeed(0);
+
+          // the third component of the displayCoordinates is the distance to the slice
+          // now make sure that they have different signs
+          if ((displayP1[2] > 0 && displayP2[2] > 0) ||
+              (displayP1[2] < 0 && displayP2[2] < 0))
+            {
+            // jump out because they do not have different signs
+            ++it;
+            continue;
+            }
+
+          // .. and create a new one at the intersection location
+          vtkSmartPointer<vtkHandleWidget> newhandle = marker->CreateNewHandle();
+          vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
           marker->On();
           marker->CompleteInteraction();
-
-          // we save the marker in our WidgetIntersection list associated to this node
-          this->Helper->WidgetIntersections[rulerNode] = marker;
-
           }
 
-        // remove all old markers associated with this node
-        marker->DeleteSeed(0);
+        // Display projection on 2D viewers        
+        vtkLineWidget2* line = vtkLineWidget2::SafeDownCast(this->Helper->GetProjectionWidget(rulerNode));
+        vtkMRMLAnnotationLineDisplayNode* lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
 
-        // the third component of the displayCoordinates is the distance to the slice
-        // now make sure that they have different signs
-        if ((displayP1[2] > 0 && displayP2[2] > 0) ||
-            (displayP1[2] < 0 && displayP2[2] < 0))
+        if (lineDisplayNode)
           {
-          // jump out because they do not have different signs
-          ++it;
-          continue;
+          if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn)
+            {
+            if (!line)
+              {
+              vtkNew<vtkPointHandleRepresentation3D> handle;
+              handle->GetProperty()->SetOpacity(0.0);
+              handle->GetSelectedProperty()->SetOpacity(0.0);
+              handle->SetHandleSize(0);
+
+              vtkNew<vtkLineRepresentation> rep;
+              rep->SetHandleRepresentation(handle.GetPointer());
+              rep->GetPoint1Representation()->GetProperty()->SetOpacity(0.0);
+              rep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              rep->GetPoint2Representation()->GetProperty()->SetOpacity(0.0);
+              rep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              rep->GetLineHandleRepresentation()->GetProperty()->SetOpacity(0.0);
+              rep->GetLineHandleRepresentation()->GetSelectedProperty()->SetOpacity(0.0);
+
+              line = vtkLineWidget2::New();
+              line->CreateDefaultRepresentation();
+              line->SetRepresentation(rep.GetPointer());
+              line->SetInteractor(this->GetInteractor());
+              line->SetCurrentRenderer(this->GetRenderer());
+              line->ProcessEventsOff();
+              this->Helper->WidgetProjections[rulerNode] = line;
+              }
+
+
+            vtkLineRepresentation* lineRep = vtkLineRepresentation::SafeDownCast(line->GetRepresentation());
+            if (lineRep)
+              {
+              line->Off();
+
+              double colorLine[4];
+              lineDisplayNode->GetSliceProjectionLineColor(colorLine);
+
+              short linePattern = 0xFFFF;
+              
+              if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionDotted)
+                {
+                linePattern = 0xFF00;
+                }
+
+              // TODO: Modifiy pattern to have spaced dot line when further from plane, smaller space when closer
+              // 0x0001 + (0x0001 + 1) = 0x0003 (0000 0000 0000 0011)
+              // 0x0003 + (0x0003 + 1) = 0x0007 (0000 0000 0000 0111)
+              // 0x0007 + (0x0007 + 1) = 0x000F (0000 0000 0000 1111)
+              // etc...
+
+              if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionColoredWhenParallel)
+                {
+                vtkMatrix4x4 *sliceToRAS = this->GetSliceNode()->GetSliceToRAS();
+                double slicePlaneNormal[3], rulerVector[3];
+                slicePlaneNormal[0] = sliceToRAS->GetElement(0,2);
+                slicePlaneNormal[1] = sliceToRAS->GetElement(1,2);
+                slicePlaneNormal[2] = sliceToRAS->GetElement(2,2);                
+                rulerVector[0] = transformedP2[0] - transformedP1[0];
+                rulerVector[1] = transformedP2[1] - transformedP1[1];
+                rulerVector[2] = transformedP2[2] - transformedP1[2];
+
+                vtkMath::Normalize(slicePlaneNormal);
+                vtkMath::Normalize(rulerVector);
+
+                static const double LineInPlaneError = 0.005;
+                if (fabs(vtkMath::Dot(slicePlaneNormal, rulerVector)) < LineInPlaneError)
+                  {
+                  sliceNode->GetLayoutColor(colorLine[0], colorLine[1], colorLine[2]);
+                  linePattern = 0xFFFF;
+                  }
+                }
+
+              // Should be reset when widget is turned off, otherwise handle is rendered
+              lineRep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              lineRep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+
+              lineRep->GetLineProperty()->SetColor(colorLine[0],colorLine[1], colorLine[2]);
+              lineRep->GetLineProperty()->SetOpacity(colorLine[3]);
+              lineRep->GetLineProperty()->SetLineStipplePattern(linePattern);
+              line->On();
+              lineRep->SetPoint1DisplayPosition(displayP1);
+              lineRep->SetPoint2DisplayPosition(displayP2);
+              }
+            }
+          else
+            {
+            if (line)
+              {
+              line->Off();
+              }
+            }
           }
-
-        // .. and create a new one at the intersection location
-        vtkSmartPointer<vtkHandleWidget> newhandle = marker->CreateNewHandle();
-        vtkHandleRepresentation::SafeDownCast(newhandle->GetRepresentation())->SetDisplayPosition(P1plusP2minusP1);
-
-        marker->On();
-        marker->CompleteInteraction();
-
-        //std::cout << this->GetSliceNode()->GetName() << ": " << P1plusP2minusP1[0] << "," << P1plusP2minusP1[1] << "," << P1plusP2minusP1[2] << std::endl;
-
         }
-
       }
 
     ++it;

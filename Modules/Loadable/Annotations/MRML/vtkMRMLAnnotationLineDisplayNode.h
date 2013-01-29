@@ -76,6 +76,52 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   vtkSetMacro(MaxTicks, int);
   vtkGetMacro(MaxTicks, int);
   
+  /// Set SliceProjection flag 
+  /// ProjectionOff, Dotted and ColoredWhenParallel by default.
+  /// ProjectionOff : No projection
+  /// ProjectionOn : Projection with plain line
+  /// ProjectionDotted : Projection with dotted line when
+  ///                          not in the plane
+  /// ProjectionColoredWhenParallel : Color line if parallel
+  ///                                            to slice plane
+  /// \sa SliceIntersectionVisibilty, ProjectedLineColor
+  vtkGetMacro(SliceProjection, int);
+  vtkSetMacro(SliceProjection, int);
+
+  /// Set SliceProjection to On
+  inline void SetSliceProjectionOn();
+ 
+  /// Set SliceProjection to Off
+  inline void SetSliceProjectionOff();
+
+  /// Set SliceProjection to Dotted
+  inline void SetSliceProjectionDottedOn();
+
+  /// Set SliceProjection to Plain
+  inline void SetSliceProjectionDottedOff();
+
+  /// Set line colored when parallel to slice plane
+  inline void SetSliceProjectionColoredWhenParallelOn();
+
+  /// Set line color unchanged when parallel to slice plane
+  inline void SetSliceProjectionColoredWhenParallelOff();
+
+  /// \enumthis->SliceProjection ProjectionFlag
+  enum ProjectionFlag
+  {
+  ProjectionOff = 0x00,
+  ProjectionOn = 0x01,
+  ProjectionDotted = 0x02,
+  ProjectionColoredWhenParallel = 0x04,
+  //ProjectionSparseLineStipplePattern = 0x08
+  };
+
+  /// Set color of the projected line on the 2D viewers
+  /// when parallel to the slice plane
+  /// White (1.0, 1.0, 1.0, 1.0) by default.
+  vtkGetVector4Macro(SliceProjectionLineColor, double);
+  vtkSetVector4Macro(SliceProjectionLineColor, double);
+
   /// Create a backup of this node and attach it.
   void CreateBackup();
   /// Restore an attached backup of this node.
@@ -92,6 +138,57 @@ protected:
   int LabelVisibility;
   double TickSpacing;
   int MaxTicks;
+  int SliceProjection;
+  double SliceProjectionLineColor[4];
 };
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionOn);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionOn);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionDottedOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionDotted);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionDottedOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionDotted);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionColoredWhenParallelOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SetSliceProjectionColoredWhenParallelOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+}
+
 
 #endif

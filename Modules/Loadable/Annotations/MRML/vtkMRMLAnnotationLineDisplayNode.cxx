@@ -19,6 +19,15 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LabelVisibility = 1;
   this->TickSpacing = 10.0;
   this->MaxTicks = 99;
+  this->SliceProjection = (vtkMRMLAnnotationLineDisplayNode::ProjectionOff | 
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionDotted |
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+  
+  // Default line color: white
+  this->SliceProjectionLineColor[0] = 1.0;
+  this->SliceProjectionLineColor[1] = 1.0;
+  this->SliceProjectionLineColor[2] = 1.0;
+  this->SliceProjectionLineColor[3] = 1.0;
 
   /// bug 2375: don't show the slice intersection until it's correct
   this->SliceIntersectionVisibility = 0;
@@ -37,6 +46,14 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " labelVisibility=\"" << (this->LabelVisibility ? "true" : "false") << "\"";
   of << " tickSpacing=\"" << this->TickSpacing << "\"";
   of << " maxTicks=\"" << this->MaxTicks << "\"";
+  of << " sliceProjection=\"" << this->SliceProjection << "\"";
+
+  if (this->SliceProjectionLineColor)
+    {
+    of << indent << " sliceProjectionLineColor=\"" << this->SliceProjectionLineColor[0] << " "
+      << this->SliceProjectionLineColor[1] << " "
+      << this->SliceProjectionLineColor[2] << "\"";
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -88,6 +105,20 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
         ss << attValue;
         ss >> this->MaxTicks;
         }
+    else if (!strcmp(attName, "sliceProjection"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SliceProjection;
+      }
+    else if (!strcmp(attName, "sliceProjectionLineColor"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SliceProjectionLineColor[0];
+      ss >> this->SliceProjectionLineColor[1];
+      ss >> this->SliceProjectionLineColor[2];
+      }
     }
   this->EndModify(disabledModify);
 }
@@ -106,6 +137,8 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetLabelVisibility(node->LabelVisibility);
   this->SetTickSpacing(node->TickSpacing);
   this->SetMaxTicks(node->MaxTicks);
+  this->SetSliceProjection(node->SliceProjection);
+  this->SetSliceProjectionLineColor(node->GetSliceProjectionLineColor());
 
   this->EndModify(disabledModify);
 }
@@ -119,6 +152,12 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Label Visibility : " << (this->LabelVisibility ? "true" : "false") << "\n";
   os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
   os << indent << "Max Ticks        : " << this->MaxTicks << "\n";
+  os << indent << "Slice Projection : " << this->SliceProjection << "\n";
+  os << indent << "Slice Projection Line Color : (" 
+     << this->SliceProjectionLineColor[0] << ","
+     << this->SliceProjectionLineColor[1] << ","
+     << this->SliceProjectionLineColor[2] << ","
+     << this->SliceProjectionLineColor[3] << ")" << "\n";
 }
 
 //---------------------------------------------------------------------------

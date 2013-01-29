@@ -27,6 +27,7 @@ class vtkMRMLInteractionNode;
 
 // VTK includes
 #include <vtkHandleWidget.h>
+#include <vtkLineWidget2.h>
 #include <vtkSeedWidget.h>
 #include <vtkSmartPointer.h>
 
@@ -62,6 +63,8 @@ public:
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice intersection representation
   vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
+  /// ...an its associated vtkAbstractWidget* for Slice intersection representation
+  vtkAbstractWidget * GetProjectionWidget(vtkMRMLAnnotationNode * node); 
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
@@ -97,6 +100,13 @@ public:
 
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetIntersectionsIt;
+  
+  /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetProjections;
+  
+  /// .. and its associated convenient typedef
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetProjectionsIt;
+
 
   //
   // End of The Lists!!
@@ -130,6 +140,13 @@ private:
   std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
   /// .. and its associated convenient typedef
   typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
+
+  /// LineWidget2 for line projection
+  vtkSmartPointer<vtkLineWidget2> LineWidget;
+  /// List of Handles for the LineWidget2
+  std::vector<vtkSmartPointer<vtkHandleWidget> > HandleLineWidgetList;
+  /// .. and its associated convenient typedef
+  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleLineWidgetListIt;
 
 };
 

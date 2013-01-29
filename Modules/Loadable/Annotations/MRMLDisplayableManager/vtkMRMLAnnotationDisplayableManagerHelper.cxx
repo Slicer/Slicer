@@ -248,6 +248,25 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetIntersectionWi
 }
 
 //---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetProjectionWidget(
+    vtkMRMLAnnotationNode * node)
+{
+  if (!node)
+    {
+    return 0;
+    }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetProjectionsIt it = this->WidgetProjections.find(node);
+  if (it == this->WidgetProjections.end())
+    {
+    return 0;
+    }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
 {
   WidgetsIt widgetIterator = this->Widgets.begin();
@@ -269,6 +288,16 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
     intIt->second->Delete();
     }
   this->WidgetIntersections.clear();
+
+  WidgetProjectionsIt projIt;
+  for (projIt = this->WidgetProjections.begin();
+       projIt != this->WidgetProjections.end();
+       ++projIt)
+    {
+    projIt->second->Off();
+    projIt->second->Delete();
+    }
+  this->WidgetProjections.clear();
 
   this->AnnotationNodeList.clear();
 }
