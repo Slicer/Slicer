@@ -28,7 +28,7 @@ def findSource(dir):
 
 def copyAndReplace(inFile, template, target, key, moduleName):
   newFile = os.path.join( target, inFile.replace(key, moduleName) )
-  print "creating %s" % newFile
+  print ("creating %s" % newFile)
   path = os.path.dirname(newFile)
   if not os.path.exists(path):
       os.makedirs(path)
@@ -44,19 +44,19 @@ def copyAndReplace(inFile, template, target, key, moduleName):
   
 
 def usage():
-  print ""
-  print "Usage:"
-  print "ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>"
-  print "  --template default ./Extensions/Testing/LoadableExtensionTemplate"
-  print "  --templateKey default is dirname of template"
-  print "  --target default ./Modules/Loadable/<moduleName>"
-  print "Examples (from Slicer source directory):"
-  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension"
-  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript"
-  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect"
-  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI"
-  print "  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildLoadableExtensionTemplate --target ../MySuperBuild MySuperBuild"
-  print ""
+  print ("")
+  print ("Usage:")
+  print ("ModuleWizard [--template <dir>] [--templateKey <key>] [--target <dir>] <moduleName>")
+  print ("  --template default ./Extensions/Testing/LoadableExtensionTemplate")
+  print ("  --templateKey default is dirname of template")
+  print ("  --target default ./Modules/Loadable/<moduleName>")
+  print ("Examples (from Slicer source directory):")
+  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/LoadableExtensionTemplate --target ../MyExtension MyExtension")
+  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/ScriptedLoadableExtensionTemplate --target ../MyScript MyScript")
+  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/EditorExtensionTemplate --target ../MyEditorEffect MyEditorEffect")
+  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/CLIExtensionTemplate --target ../MyCLI MyCLI")
+  print ("  ./Utilities/Scripts/ModuleWizard.py --template ./Extensions/Testing/SuperBuildLoadableExtensionTemplate --target ../MySuperBuild MySuperBuild")
+  print ("")
 
 def main(argv):
 
@@ -82,7 +82,7 @@ def main(argv):
     moduleName = arg
 
   if moduleName == "":
-    print "Please specify module name"
+    print ("Please specify module name")
     usage()
     exit()
 
@@ -98,23 +98,23 @@ def main(argv):
     target = "Modules/Loadable/" + moduleName
 
   if os.path.exists(target):
-    print target, "exists - delete it first"
+    print (target, "exists - delete it first")
     exit()
 
   if not os.path.exists(template):
-    print template, "does not exist - run from Slicer source dir or specify with --template"
+    print (template, "does not exist - run from Slicer source dir or specify with --template")
     usage()
     exit()
 
-  print "\nWill copy \n\t%s \nto \n\t%s \nreplacing \"%s\" with \"%s\"\n" % (template, target, templateKey, moduleName)
+  print ("\nWill copy \n\t%s \nto \n\t%s \nreplacing \"%s\" with \"%s\"\n" % (template, target, templateKey, moduleName))
   sources = findSource( template )
-  print sources
+  print (sources)
 
   for file in sources:
     copyAndReplace(file, template, target, templateKey, moduleName)
   
 
-  print '\nModule %s created!' % moduleName
+  print ('\nModule %s created!' % moduleName)
 
 if __name__ == "__main__":
   main(sys.argv[1:])
