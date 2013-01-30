@@ -26,7 +26,8 @@
 
 #define ITK_VERSION_MAJOR @ITK_VERSION_MAJOR@
 
-#if ITK_VERSION_MAJOR >= 4
+#include <itkConfigure.h> // For ITK_VERSION_MAJOR
+#if ITK_VERSION_MAJOR > 3
 # include "itkFactoryRegistration.h"
 #endif
 
@@ -34,7 +35,7 @@ extern "C" MODULE_IMPORT int ModuleEntryPoint(int, char* []);
 
 int main(int argc, char** argv)
 {
-#if ITK_VERSION_MAJOR >= 4
+#if ITK_VERSION_MAJOR > 3
   itk::itkFactoryRegistration();
 #endif
   return ModuleEntryPoint(argc, argv);

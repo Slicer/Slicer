@@ -51,6 +51,7 @@
 #include "qSlicerStyle.h"
 
 // ITK includes
+#include <itkConfigure.h> // For ITK_VERSION_MAJOR
 #if ITK_VERSION_MAJOR > 3
 # include "itkFactoryRegistration.h"
 #endif
