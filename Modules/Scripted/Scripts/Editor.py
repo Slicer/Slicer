@@ -99,7 +99,6 @@ class EditorWidget:
       compositeNode = self.editUtil.getCompositeNode()
       selectionNode = slicer.app.applicationLogic().GetSelectionNode()
       selectionNode.SetReferenceSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
-      print( 'setting selection node to ', compositeNode.GetForegroundVolumeID() )
       bgID = lbID = ""
       if compositeNode.GetBackgroundVolumeID():
         bgID = compositeNode.GetBackgroundVolumeID()
