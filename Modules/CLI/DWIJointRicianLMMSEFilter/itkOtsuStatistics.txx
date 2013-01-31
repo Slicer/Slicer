@@ -191,7 +191,7 @@ void OtsuStatistics<TInputImage, TOutputImage>
 {
   m_Min = itk::NumericTraits<double>::max();
   m_Max = itk::NumericTraits<double>::min();
-  for( unsigned int k = 0; k < this->GetNumberOfThreads(); ++k )
+  for( unsigned int k = 0; k < (unsigned int)(this->GetNumberOfThreads()); ++k )
     {
     if( m_ThreadMin[k] < m_Min )
       {
