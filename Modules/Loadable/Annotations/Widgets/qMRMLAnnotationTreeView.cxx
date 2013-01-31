@@ -482,8 +482,6 @@ void qMRMLAnnotationTreeView::mouseMoveEvent(QMouseEvent* e)
 //------------------------------------------------------------------------------
 void qMRMLAnnotationTreeView::hideScene()
 {
-  Q_D(qMRMLAnnotationTreeView);
-
   // set the column widths
   for (int i = 0; i < this->header()->count(); ++i)
     {

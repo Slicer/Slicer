@@ -325,7 +325,6 @@ vtkMRMLNode* qMRMLSceneAnnotationModel
     return 0;
     }
 
-  Q_D(const qMRMLSceneAnnotationModel);
   if(mrmlNode->IsA("vtkMRMLAnnotationHierarchyNode"))
     {
     return mrmlNode;

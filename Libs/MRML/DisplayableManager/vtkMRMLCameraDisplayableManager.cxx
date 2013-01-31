@@ -309,11 +309,9 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   this->Internal->UpdatingCameraNode = 1;
 
   const char * defaultCameraName = "Default Scene Camera";
-  // how many cameras are in the scene?
+  // how many camera and view nodes are in the scene?
   int numCameraNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLCameraNode");
-  // how many view nodes are in the scene?
-  int numViewNodes = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode");
-  vtkDebugMacro("UpdateCamera: num camera nodes = :" << numCameraNodes << ", num view nodes = " << numViewNodes);
+  vtkDebugMacro("UpdateCamera: num camera nodes = :" << numCameraNodes << ", num view nodes = " << this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLViewNode"));
   
   vtkMRMLCameraNode *camera_node = NULL;
   vtkMRMLCameraNode *unassignedCamera = NULL;
@@ -325,9 +323,8 @@ void vtkMRMLCameraDisplayableManager::UpdateCameraNode()
   if (viewNode && viewNode->GetName())
     {
     std::vector<vtkMRMLNode *> cnodes;
-    int nnodes = this->GetMRMLScene()->GetNodesByClass("vtkMRMLCameraNode", cnodes);
     vtkMRMLCameraNode *node = NULL;
-    for (int n=0; n<nnodes; n++)
+    for (int n=0; n<numCameraNodes; n++)
       {
       node = vtkMRMLCameraNode::SafeDownCast (cnodes[n]);
       if (node)
