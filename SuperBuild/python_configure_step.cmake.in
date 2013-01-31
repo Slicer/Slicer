@@ -63,6 +63,12 @@ if(UNIX)
     # http://bugs.python.org/issue11334 indicates that dynamic_lookup causes build issues, confirmed on 10.7.4
     #set(LDFLAGS "${LDFLAGS} -undefined dynamic_lookup")
   endif(APPLE)
+  list(APPEND extra_configure_flags --libdir=@CMAKE_CURRENT_BINARY_DIR@/python-build/lib)
+  
+  if(EXISTS /usr/include/ncurses)
+    set(CFLAGS "${CFLAGS} -I/usr/include/ncurses")
+    set(CXXFLAGS "${CXXFLAGS} -I/usr/include/ncurses")
+  endif()
 
   foreach(v CFLAGS CXXFLAGS CPPFLAGS LDFLAGS LD_LIBRARY_PATH)
     set(ENV{${v}} ${${v}})
@@ -76,7 +82,7 @@ if(UNIX)
   #message(LD_LIBRARY_PATH:[$ENV{LD_LIBRARY_PATH}])
 
   execute_process(
-    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --enable-unicode=ucs2 --enable-shared
+    COMMAND sh configure ${extra_configure_flags} --prefix=@CMAKE_CURRENT_BINARY_DIR@/python-build --libdir=@CMAKE_CURRENT_BINARY_DIR@/python-build/lib --enable-unicode=ucs2 --enable-shared
     WORKING_DIRECTORY "@python_base@"
     #RESULT_VARIABLE rv
     )
