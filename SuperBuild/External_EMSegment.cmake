@@ -22,7 +22,7 @@ if(NOT DEFINED EMSegment_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY "http://svn.slicer.org/Slicer3/trunk/Modules/EMSegment"
-    SVN_REVISION -r "17018"
+    SVN_REVISION -r "17020"
     "${slicer_external_update}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
