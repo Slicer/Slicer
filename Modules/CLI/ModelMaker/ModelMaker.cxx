@@ -1588,6 +1588,7 @@ int main(int argc, char * argv[])
 
         // put it in the hierarchy
         vtkSmartPointer<vtkMRMLModelHierarchyNode> mhnd = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+        mhnd->SetHideFromEditors(1);
         modelScene->AddNode(mhnd);
         mhnd->SetParentNodeID( rnd->GetID() );
         mhnd->SetModelNodeID( mnode->GetID() );

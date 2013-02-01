@@ -139,8 +139,6 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
 
   d->ModelHierarchyTreeView->sortFilterProxyModel()->setHideChildNodeTypes(
     QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
-  d->ModelHierarchyTreeView->sortFilterProxyModel()->setShowHiddenForTypes(
-    QStringList() << "vtkMRMLModelHierarchyNode");
 
   // use lazy update instead of responding to scene import end event
   sceneModel->setLazyUpdate(true);

@@ -326,7 +326,7 @@ bool qMRMLSceneHierarchyModel::reparent(vtkMRMLNode* node, vtkMRMLNode* newParen
         vtkMRMLHierarchyNode* newHierarchyNode = d->CreateHierarchyNode();
         newHierarchyNode->SetName(this->mrmlScene()->GetUniqueNameByString(
           newHierarchyNode->GetNodeTagName()));
-        //newHierarchyNode->SetHideFromEditors(1);
+        newHierarchyNode->SetHideFromEditors(1);
         //newHierarchyNode->AllowMultipleChildrenOff();
         newHierarchyNode->SetAssociatedNodeID(mrmlNode->GetID());
         mrmlNode->GetScene()->AddNode(newHierarchyNode);

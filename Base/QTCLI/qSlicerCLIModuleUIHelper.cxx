@@ -621,7 +621,6 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
                                            
   bool multiple = (moduleParameter.GetMultiple() == "true");
   bool aggregate = (moduleParameter.GetAggregate() == "true");
-  bool showHidden = (multiple && aggregate);
 
   QString channel = QString::fromStdString(moduleParameter.GetChannel());
   if (channel != "input" && channel != "output")
@@ -630,7 +629,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
     return 0; 
     }
 
-  if (showHidden)
+  if (multiple && aggregate)
     {
     nodeType = "vtkMRMLModelHierarchyNode";
     }
@@ -641,7 +640,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createGeometryTagWidget(const ModulePa
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
   qMRMLNodeComboBox * widget = new qMRMLNodeComboBox;
-  widget->setShowHidden(showHidden);
+  widget->setShowHidden(0);
   widget->setNodeTypes(QStringList(nodeType));
   widget->setRenameEnabled(true);
   widget->setBaseName(_label);

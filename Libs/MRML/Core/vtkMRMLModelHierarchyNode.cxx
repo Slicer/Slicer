@@ -31,7 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLModelHierarchyNode);
 vtkMRMLModelHierarchyNode::vtkMRMLModelHierarchyNode()
 {
   this->ModelDisplayNode = NULL;
-  this->HideFromEditors = 1;
+  this->HideFromEditors = 0;
 }
 
 //----------------------------------------------------------------------------
