@@ -238,6 +238,10 @@ void qSlicerAbstractModuleFactoryManager::registerModules()
     factory->registerItems();
     foreach(const QString& moduleName, factory->itemKeys())
       {
+      if (d->Verbose)
+        {
+        qDebug() << "Registering: " << moduleName;
+        }
       d->RegisteredModules[moduleName] = factory;
       emit moduleRegistered(moduleName);
       }
@@ -245,6 +249,10 @@ void qSlicerAbstractModuleFactoryManager::registerModules()
   // then register file based factories
   foreach(const QString& path, d->SearchPaths)
     {
+    if (d->Verbose)
+      {
+      qDebug() << "Searching path: " << path;
+      }
     this->registerModules(path);
     }
   emit this->modulesRegistered(d->RegisteredModules.keys());
@@ -270,9 +278,17 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
   qSlicerFileBasedModuleFactory* moduleFactory = 0;
   foreach(qSlicerFileBasedModuleFactory* factory, d->fileBasedFactories())
     {
+    if (d->Verbose)
+      {
+      qDebug() << " checking file: " << file.absoluteFilePath() << " as a " << typeid(*factory).name();
+      }
     if (!factory->isValidFile(file))
       {
       continue;
+      }
+    if (d->Verbose)
+      {
+      qDebug() << " recognized file: " << file.absoluteFilePath() << " as a " << typeid(*factory).name();
       }
     moduleFactory = factory;
     break;
@@ -291,6 +307,10 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
     if (d->Factories[existingModuleFactory] >=
         d->Factories[moduleFactory])
       {
+      if (d->Verbose)
+        {
+        qDebug() << " file: " << file.absoluteFilePath() << " already registered";
+        }
       return;
       }
     // Replace the factory of the registered module with this higher priority
@@ -301,6 +321,10 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
   if (d->ModulesToIgnore.contains(moduleName))
     {
     //qDebug() << "Ignore module" << moduleName;
+    if (d->Verbose)
+      {
+      qDebug() << " file: " << file.absoluteFilePath() << " is in ignore list";
+      }
     d->IgnoredModules[moduleName] = file;
     emit moduleIgnored(moduleName);
     return;
@@ -309,6 +333,10 @@ void qSlicerAbstractModuleFactoryManager::registerModule(const QFileInfo& file)
   if (registeredModuleName != moduleName)
     {
     //qDebug() << "Ignore module" << moduleName;
+    if (d->Verbose)
+      {
+      qDebug() << " file: " << file.absoluteFilePath() << " ignored because moduleName does not match registeredModuleName";
+      }
     d->IgnoredModules[moduleName] = file;
     emit moduleIgnored(moduleName);
     return;
