@@ -91,6 +91,10 @@ protected slots:
 protected:
   QScopedPointer<qSlicerExtensionsInstallWidgetPrivate> d_ptr;
 
+  /// Event filter used to capture WebView Show and Hide events in order to both set
+  /// "document.webkitHidden" property and trigger the associated event.
+  bool eventFilter(QObject *obj, QEvent *event);
+
 private:
   Q_DECLARE_PRIVATE(qSlicerExtensionsInstallWidget);
   Q_DISABLE_COPY(qSlicerExtensionsInstallWidget);

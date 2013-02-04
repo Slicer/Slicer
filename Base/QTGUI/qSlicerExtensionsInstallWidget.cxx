@@ -60,6 +60,9 @@ public:
   /// Convenient function to evaluate JS in main frame context
   QString evalJS(const QString &js);
 
+  /// Convenient method to set "document.webkitHidden" property
+  void setDocumentWebkitHidden(bool value);
+
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 
   QTime DownloadTime;
@@ -82,6 +85,7 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
   Q_Q(qSlicerExtensionsInstallWidget);
 
   this->setupUi(q);
+  this->WebView->installEventFilter(q);
 
   QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();;
   Q_ASSERT(networkAccessManager);
@@ -98,6 +102,8 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
 
   QObject::connect(this->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
                    q, SLOT(initJavascript()));
+
+  this->WebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
 
   this->ProgressBar->setVisible(false);
 
@@ -153,6 +159,12 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QUrl& faultyUrl
       "</div>";
 
   this->WebView->setHtml(html.arg(faultyUrl.toString()));
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidgetPrivate::setDocumentWebkitHidden(bool value)
+{
+  this->evalJS(QString("document.webkitHidden = %1").arg(value ? "true" : "false"));
 }
 
 // --------------------------------------------------------------------------
@@ -347,6 +359,7 @@ void qSlicerExtensionsInstallWidget::onDownloadFinished(QNetworkReply* reply)
 void qSlicerExtensionsInstallWidget::initJavascript()
 {
   Q_D(qSlicerExtensionsInstallWidget);
+  d->setDocumentWebkitHidden(!d->WebView->isVisible());
   d->mainFrame()->addToJavaScriptWindowObject("extensions_manager_model", d->ExtensionsManagerModel);
 }
 
@@ -370,3 +383,16 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
     }
 }
 
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsInstallWidget::eventFilter(QObject* obj, QEvent* event)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  Q_ASSERT(d->WebView == obj);
+  if (d->WebView == obj && !event->spontaneous() &&
+      (event->type() == QEvent::Show || event->type() == QEvent::Hide))
+    {
+    d->setDocumentWebkitHidden(!d->WebView->isVisible());
+    d->evalJS("$.event.trigger({type: 'webkitvisibilitychange'})"); // Assume jquery is available
+    }
+  return QObject::eventFilter(obj, event);
+}
