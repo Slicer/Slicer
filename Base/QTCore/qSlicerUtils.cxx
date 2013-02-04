@@ -51,7 +51,8 @@ bool qSlicerUtils::isExecutableName(const QString& name)
 bool qSlicerUtils::isCLIExecutable(const QString& filePath)
 {
 #ifdef _WIN32
-  return filePath.endsWith(".exe", Qt::CaseInsensitive);
+  return ( filePath.endsWith(".exe", Qt::CaseInsensitive) ||
+           filePath.endsWith(".bat", Qt::CaseInsensitive) );
 #else
   return !QFileInfo(filePath).fileName().contains('.');
 #endif
