@@ -193,6 +193,8 @@ public:
   Q_INVOKABLE qMRMLSceneModel* sceneModel()const;
 
 public slots:
+  /// Set the showHidden flag.
+  /// \sa showHidden, showHidden()
   void setShowHidden(bool);
 
   /// Set the filter type.
@@ -207,6 +209,17 @@ public slots:
 
   // TODO Add setMRMLScene() to propagate to the scene model
 protected:
+  /// This enum type is used to describe the behavior of a node with regard to
+  /// filtering:
+  ///   * Reject if the node should not be visible and has no chance of being
+  ///     visible.
+  ///   * Accept if the node should be visible and will always be.
+  ///   * RejectButPotentiallyAcceptable if the node should not be visible but
+  ///     has the potential for being visible. This can happen if a property is
+  ///     changed. The node should be observed by the model and invalidate the
+  ///     filter when modified to make sure its visibility state is correct.
+  ///   * AcceptButPotentiallyRejectable if the node should be visible but has
+  ///     the potential for being hidden. See \a RejectButPotentiallyAcceptable.
   enum AcceptType
   {
     Reject = 0,
@@ -214,10 +227,21 @@ protected:
     RejectButPotentiallyAcceptable,
     AcceptButPotentiallyRejectable,
   };
-  //virtual bool filterAcceptsColumn(int source_column, const QModelIndex & source_parent)const;
-  virtual bool filterAcceptsRow(int source_row, const QModelIndex &source_parent)const;
+  /// Returns true if the item in the row indicated by the given source_row and
+  /// source_parent should be included in the model; otherwise returns false.
+  /// This method test each node via \a filterAcceptsNode and observe the nodes
+  /// that have a potential for having their visibility changed.
+  /// This method is final, it is not meant to be overwritten.
+  /// If for some reason a node has not been observed but its visibility has
+  /// changed, the filter can be refresh by calling a\ invalidate()
+  /// \sa filterAcceptsNode(), AcceptType, invalidate()
+  virtual bool filterAcceptsRow(int source_row,
+                                const QModelIndex &source_parent)const;
+  /// This method returns whether the \a node should be visible or hidden
+  /// from the view.
+  /// It returns the behavior of the node with regard to the filters.
+  /// \sa filterAcceptRow(), AcceptType
   virtual AcceptType filterAcceptsNode(vtkMRMLNode* node)const;
-  //virtual bool lessThan(const QModelIndex &left, const QModelIndex &right)const;
 
   QStandardItem* sourceItem(const QModelIndex& index)const;
 
