@@ -146,6 +146,16 @@
       <description><![CDATA[Pad the input volume with zero value voxels on all 6 faces in order to ensure the production of closed surfaces. Sets the origin translation and extent translation so that the models still line up with the unpadded input volume.]]></description>
       <default>true</default>
     </boolean>
+  </parameters>
+  <parameters advanced="true">
+    <label>Debug</label>
+    <file fileExtensions=".mrml">
+      <name>ModelHierarchyFile</name>
+      <channel>input</channel>
+      <label>Color Hierarchy</label>
+      <longflag>--modelHierarchyFile</longflag>
+      <description><![CDATA[A mrml file that contains a template model hierarchy tree with a hierarchy node per color used in the input volume's color table. Color names used for the models are matched to template hierarchy names to create a multi level output tree. Create a hierarchy in the Models GUI and save a scene, then clean it up to remove everything but the model hierarchy and display nodes.]]></description>
+    </file>
     <boolean>
       <name>SaveIntermediateModels</name>
       <label>Save Intermediate Models</label>
@@ -153,9 +163,6 @@
       <description><![CDATA[You can save a copy of the models after each of the intermediate steps (marching cubes, smoothing, and decimation if not joint smoothing, otherwise just after decimation). These intermediate models are not saved in the mrml file, you have to load them manually after turning off deleting temporary files in they python console (View ->Python Interactor) using the following command slicer.modules.modelmaker.cliModuleLogic().DeleteTemporaryFilesOff().]]></description>
       <default>false</default>
     </boolean>
-  </parameters>
-  <parameters advanced="true">
-    <label>Debug</label>
     <boolean>
       <name>debug</name>
       <label>Debug</label>
