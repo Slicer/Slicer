@@ -50,6 +50,10 @@ public slots:
   void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
 
+  /// hide/show all the models in the scene
+  void hideAllModels();
+  void showAllModels();
+
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
   

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
+    <width>615</width>
     <height>664</height>
    </rect>
   </property>
@@ -35,6 +35,51 @@
       <property name="margin">
        <number>0</number>
       </property>
+      <item>
+       <layout class="QHBoxLayout" name="allModelsHorizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="hideAllModelsButton">
+          <property name="toolTip">
+           <string>Turn the visibility off on all models (does not include hierarchies)</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/Icons/Small/SlicerInvisible.png</normaloff>:/Icons/Medium/SlicerInvisible.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="showAllModelsButton">
+          <property name="toolTip">
+           <string>Turns visibility on for all models (does not include hierarchies)</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>:/Icons/Small/SlicerVisible.png</normaloff>:/Icons/Medium/SlicerVisible.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item>
        <widget class="qMRMLTreeView" name="ModelHierarchyTreeView">
         <property name="sizePolicy">
@@ -228,7 +273,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>166</x>
-     <y>252</y>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -244,7 +289,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>231</x>
-     <y>273</y>
+     <y>234</y>
     </hint>
    </hints>
   </connection>
@@ -271,12 +316,12 @@
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>549</x>
+     <x>492</x>
      <y>588</y>
     </hint>
     <hint type="destinationlabel">
-     <x>518</x>
-     <y>575</y>
+     <x>465</x>
+     <y>316</y>
     </hint>
    </hints>
   </connection>
@@ -288,13 +333,49 @@
    <hints>
     <hint type="sourcelabel">
      <x>255</x>
-     <y>578</y>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
      <x>256</x>
-     <y>673</y>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hideAllModelsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerModelsModuleWidget</receiver>
+   <slot>hideAllModels()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>207</x>
+     <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showAllModelsButton</sender>
+   <signal>clicked()</signal>
+   <receiver>qSlicerModelsModuleWidget</receiver>
+   <slot>showAllModels()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>479</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>528</x>
+     <y>-9</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>hideAllModels()</slot>
+  <slot>showAllModels()</slot>
+ </slots>
 </ui>

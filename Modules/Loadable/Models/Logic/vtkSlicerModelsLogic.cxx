@@ -458,3 +458,40 @@ void vtkSlicerModelsLogic::TransformModel(vtkMRMLTransformNode *tnode,
 
   return;
 }
+
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
+{
+  if (this->GetMRMLScene() == 0)
+    {
+    return;
+    }
+  
+  int numModels = this->GetMRMLScene()->GetNumberOfNodesByClass("vtkMRMLModelNode");
+  
+  // go into batch processing mode
+  this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+  for (int i = 0; i < numModels; i++)
+    {
+    vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
+    if (mrmlNode != NULL)
+      {
+      // rule out subclasses
+      if (strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
+        {
+        // rule out slice nodes
+        if (mrmlNode->GetName() != NULL &&
+            strstr(mrmlNode->GetName(), "Volume Slice") == NULL)
+          {
+          vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
+          if (modelNode)
+            {
+            // have a "real" model node, set the display visibility
+            modelNode->SetDisplayVisibility(flag);
+            }
+          }
+        }
+      }
+    }
+  this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
+}

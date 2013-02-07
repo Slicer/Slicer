@@ -76,6 +76,11 @@ class VTK_SLICER_MODELS_MODULE_LOGIC_EXPORT vtkSlicerModelsLogic
                               int transformNormals,
                               vtkMRMLModelNode *modelOut);
 
+  /// Iterate through all models in the scene, find all their display nodes
+  /// and set their visibility flag to flag. Does not touch model hierarchy 
+  /// nodes with display nodes
+  void SetAllModelsVisibility(int flag);
+
 protected:
   vtkSlicerModelsLogic();
   ~vtkSlicerModelsLogic();

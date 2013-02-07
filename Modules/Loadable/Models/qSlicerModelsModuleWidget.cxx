@@ -31,6 +31,9 @@
 #include "qSlicerModelsModuleWidget.h"
 #include "ui_qSlicerModelsModuleWidget.h"
 
+// Logic includes
+#include "vtkSlicerModelsLogic.h"
+
 // MRML includes
 #include "vtkMRMLModelHierarchyNode.h"
 #include "vtkMRMLModelDisplayNode.h"
@@ -339,4 +342,32 @@ void qSlicerModelsModuleWidget::setMRMLScene(vtkMRMLScene* scene)
     return;
     }
   this->Superclass::setMRMLScene(scene);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::showAllModels()
+{
+  if (this->logic() == 0)
+    {
+    return;
+    }
+  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  if (modelsLogic)
+    {
+    modelsLogic->SetAllModelsVisibility(1);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::hideAllModels()
+{
+  if (this->logic() == 0)
+    {
+    return;
+    }
+  vtkSlicerModelsLogic *modelsLogic = vtkSlicerModelsLogic::SafeDownCast(this->logic());
+  if (modelsLogic)
+    {
+    modelsLogic->SetAllModelsVisibility(0);
+    }
 }
