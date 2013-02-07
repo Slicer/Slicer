@@ -30,7 +30,7 @@ class test_tractography_display:
     slicer.selfTests['test_tractography_display'] = self.runTest
 
   def runTest(self):
-    tester = TestTractographyDisplayTest()
+    tester = test_tractography_displayTest()
     tester.runTest()
 
 #
