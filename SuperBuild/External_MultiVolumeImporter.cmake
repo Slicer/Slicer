@@ -28,7 +28,7 @@ if(NOT DEFINED MultiVolumeImporter_SOURCE_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/fedorov/MultiVolumeImporter.git"
     GIT_TAG "63883c9176c2ee1fe24803cbc2cc5268ab086aa8"
-    "${slicer_external_update}"
+    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

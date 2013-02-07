@@ -85,7 +85,7 @@ set_ep_build_command_args(select)
 ExternalProject_Add(${proj}
   URL ${python_URL}
   URL_MD5 ${python_MD5}
-  "${slicer_external_disable_update}"
+  "${${PROJECT_NAME}_EP_DISABLED_UPDATE}"
   DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
   SOURCE_DIR python-build
   PATCH_COMMAND ${python_PATCH_COMMAND}

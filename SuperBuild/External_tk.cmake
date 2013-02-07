@@ -57,7 +57,7 @@ if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${tk_SVN_REPOSITORY}
     SVN_REVISION ${tk_SVN_REVISION}
-    "${slicer_external_disable_update}"
+    "${${PROJECT_NAME}_EP_DISABLED_UPDATE}"
     SOURCE_DIR ${tk_SOURCE_DIR}
     BUILD_IN_SOURCE ${tk_BUILD_IN_SOURCE}
     CONFIGURE_COMMAND ${tk_CONFIGURE_COMMAND}

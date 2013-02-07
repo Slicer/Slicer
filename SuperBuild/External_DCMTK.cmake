@@ -38,7 +38,7 @@ if(NOT DEFINED DCMTK_DIR)
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR ${proj}-install
-    "${slicer_external_update}"
+    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

@@ -33,7 +33,7 @@ endif()
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
   SVN_REVISION -r "7701"
-  "${slicer_external_update}"
+  "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   SOURCE_DIR OpenIGTLink
   BINARY_DIR OpenIGTLink-build
   CMAKE_GENERATOR ${gen}

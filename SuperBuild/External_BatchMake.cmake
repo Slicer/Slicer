@@ -30,7 +30,7 @@ endif()
 ExternalProject_Add(${proj}
   GIT_REPOSITORY "${git_protocol}://batchmake.org/BatchMake.git"
   GIT_TAG "1f5bf4f92e8678c34dc6f7558be5e6613804d988"
-  "${slicer_external_update}"
+  "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   SOURCE_DIR BatchMake
   BINARY_DIR BatchMake-build
   CMAKE_GENERATOR ${gen}

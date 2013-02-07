@@ -19,7 +19,7 @@ if(NOT DEFINED jqPlot_DIR)
   ExternalProject_Add(${proj}
     URL http://cloud.github.com/downloads/Slicer/jqplot/jquery.jqplot.1.0.4r1115.tar.gz
     URL_MD5 5c5d73730145c3963f09e1d3ca355580
-    "${slicer_external_update}"
+    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot-build
     CONFIGURE_COMMAND ""
