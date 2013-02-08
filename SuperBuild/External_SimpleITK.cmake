@@ -47,7 +47,7 @@ set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/Si
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
   BINARY_DIR SimpleITK-build
-  GIT_REPOSITORY http://itk.org/SimpleITK.git
+  GIT_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git
   GIT_TAG c9d890337f1b582acb0482e16c06aa62f3af0886
   "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   CMAKE_ARGS
