@@ -120,6 +120,21 @@ target_link_libraries(${KIT_LIBRARY_NAME}
   ${SlicerApp_LIBRARIES}
   )
 
+#----------------------------------------------------------------------------
+# ITKv3: Ensure ITKIOReview library is packaged on MacOSX
+#----------------------------------------------------------------------------
+if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
+  # Force linking against ITKIOReview library to ensure it will be packaged and
+  # fixed-up on MacOSX. That way extensions depending on the associated code
+  # will load properly.
+  # On unix-like platform, by using gcc the dependency should NOT be
+  # optimized out. Hence, it is not required to explicitly call a function.
+  # See http://slicer-devel.65872.n3.nabble.com/ITK-lib-missing-from-Mac-Slicer-package-needed-for-Plastimatch-tt4027274.html
+  if(APPLE AND ITK_VERSION_MAJOR EQUAL 3)
+    target_link_libraries(${KIT_LIBRARY_NAME} ITKIOReview)
+  endif()
+endif()
+
 # --------------------------------------------------------------------------
 # Configure Application Bundle Resources (Mac Only)
 # --------------------------------------------------------------------------
