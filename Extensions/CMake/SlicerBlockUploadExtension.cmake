@@ -6,6 +6,9 @@ foreach(var ${expected_defined_vars})
     message(FATAL_ERROR "Variable ${var} is not defined !")
   endif()
 endforeach()
+
+message(STATUS "BUG 2491: [${CTEST_SCRIPT_NAME}][${EXTENSION_NAME}] -0- [GIT_EXECUTABLE:${GIT_EXECUTABLE}]")
+
 set(expected_existing_vars CMAKE_CTEST_COMMAND GIT_EXECUTABLE Subversion_SVN_EXECUTABLE Slicer_CMAKE_DIR Slicer_EXTENSIONS_CMAKE_DIR Slicer_DIR)
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS "${${var}}")

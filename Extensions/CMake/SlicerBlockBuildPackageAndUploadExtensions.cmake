@@ -147,7 +147,9 @@ foreach(extension_name ${EXTENSION_LIST})
           #-----------------------------------------------------------------------------
           set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
           set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
+          message(STATUS "BUG 2491: [${CTEST_SCRIPT_NAME}][${EXTENSION_NAME}] -0- [GIT_EXECUTABLE:${GIT_EXECUTABLE}]")
           include(SlicerBlockUploadExtension)
+          message(STATUS "BUG 2491: [${CTEST_SCRIPT_NAME}][${EXTENSION_NAME}] -1- [GIT_EXECUTABLE:${GIT_EXECUTABLE}]")
           # Add extension external project
           set(proj ${EXTENSION_NAME})
           ExternalProject_Add(${proj}
