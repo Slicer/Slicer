@@ -181,6 +181,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     mvNode = self.__mvSelector.currentNode()
 
     if labelNode != None and mvNode != None:
+
       labelID = labelNode.GetID()
       img = labelNode.GetImageData()
       extent = img.GetWholeExtent()
@@ -231,6 +232,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
         colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
         self.__cn.SetProperty(name, "color", colorStr)
+
+        if self.__cvn == None:
+          self.InitChartViewNode()
+
         self.__cvn.Modified()
 
       tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
@@ -506,7 +511,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           # seems to update only after another plot?..
           self.__chart.AddPlot(0)
 
-  def enter(self):
+  def InitChartViewNode(self):
     if self.__cvn == None:
       print("No chart view nodes found, switching to quantiative layout")
       lm = slicer.app.layoutManager()
@@ -521,5 +526,3 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       if self.__cvn == None:
         print("Failed to locate chart view node!", file=sys.stderr)
         return
-
-    self.onLabelVolumeChanged()
