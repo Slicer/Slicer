@@ -62,6 +62,7 @@ protected slots:
 
   void transformSelectedNodes();
   void untransformSelectedNodes();
+  void hardenSelectedNodes();
 
 protected:
   /// 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>389</width>
-    <height>930</height>
+    <width>391</width>
+    <height>957</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -218,10 +218,10 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Transformed nodes</string>
+      <string>Apply transform</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0" rowspan="2">
+      <item row="1" column="0" rowspan="3">
        <widget class="qMRMLTreeView" name="TransformableTreeView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
@@ -264,7 +264,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2" rowspan="2">
+      <item row="1" column="2" rowspan="3">
        <widget class="qMRMLTreeView" name="TransformedTreeView">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
@@ -313,6 +313,20 @@
        <widget class="QLabel" name="TransformedLabel">
         <property name="text">
          <string>Transformed:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QToolButton" name="HardenToolButton">
+        <property name="toolTip">
+         <string>Harden transform</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../qSlicerTransformsModule.qrc">
+          <normaloff>:/Icons/Transforms.png</normaloff>:/Icons/Transforms.png</iconset>
         </property>
        </widget>
       </item>

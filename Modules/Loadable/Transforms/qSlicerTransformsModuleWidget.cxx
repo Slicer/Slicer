@@ -127,6 +127,8 @@ void qSlicerTransformsModuleWidget::setup()
                 SLOT(transformSelectedNodes()));
   this->connect(d->UntransformToolButton, SIGNAL(clicked()),
                 SLOT(untransformSelectedNodes()));
+  this->connect(d->HardenToolButton, SIGNAL(clicked()),
+                SLOT(hardenSelectedNodes()));
 
   // Icons
   QIcon rightIcon =
@@ -278,5 +280,22 @@ void qSlicerTransformsModuleWidget::untransformSelectedNodes()
       mrmlNodeFromIndex( selectedIndex ));
     Q_ASSERT(node);
     node->SetAndObserveTransformNodeID(0);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::hardenSelectedNodes()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  QModelIndexList selectedIndexes =
+    d->TransformedTreeView->selectionModel()->selectedRows();
+  selectedIndexes = qMRMLTreeView::removeChildren(selectedIndexes);
+  foreach(QModelIndex selectedIndex, selectedIndexes)
+    {
+    vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(
+    d->TransformedTreeView->sortFilterProxyModel()->
+      mrmlNodeFromIndex( selectedIndex ));
+    Q_ASSERT(node);
+    d->logic()->hardenTransform(vtkMRMLTransformableNode::SafeDownCast(node));
     }
 }
