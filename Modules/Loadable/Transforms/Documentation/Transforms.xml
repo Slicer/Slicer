@@ -61,5 +61,9 @@
       <label>Left arrow</label>
       <description><![CDATA[Remove the current transform node from the selected nodes in the Transformed list.]]></description>
     </parameter>
+    <parameter>
+      <label>Harden transform</label>
+      <description><![CDATA[Apply the current transform node to the selected nodes in the Transformed list. This action moves the node back to the transformable lsit and "apply" the transform. It does, however, not resample the data, but rather place the information about the new orientation into the data header. When the data is saved, this information is saved also as part of the file header, as long as orientation data is supported by the file format. If the saved file  is now loaded by another software that does not consider this header orientation (e.g. ImageJ) or does not visualize the data in physical space, then the data will appear in its old position. You can avoid this problem by actually resampling the data. To do this, go to the Resample module, and select your image and transform as input, create a new volume as output and click Apply. This new volume will now be in the new orientation that will be retained if saved and reloaded elsewhere.]]></description>
+    </parameter>
   </parameters>
 </executable>
