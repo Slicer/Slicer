@@ -42,7 +42,7 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
 
     HelpButton(self.frame, "This is a sample with no real functionality.")
 
-    self.apply.connect('clicked()', self.onApply)
+    self.connections.append( (self.apply, 'clicked()', self.onApply) )
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
@@ -65,9 +65,9 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
     super(EditorExtensionTemplateOptions,self).setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
-    self.updatingGUI = True
+    self.disconnectWidgets()
     super(EditorExtensionTemplateOptions,self).updateGUIFromMRML(caller,event)
-    self.updatingGUI = False
+    self.connectWidgets()
 
   def onApply(self):
     print('This is just an example - nothing here yet')
