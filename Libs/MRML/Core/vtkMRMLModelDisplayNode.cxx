@@ -128,4 +128,9 @@ void vtkMRMLModelDisplayNode::UpdatePolyDataPipeline()
     this->GetActiveScalarName(),
     this->GetActiveScalarName() ? vtkDataSetAttributes::SCALARS : -1,
     this->GetActiveAttributeLocation());
+  if (this->GetAutoScalarRange() && this->GetOutputPolyData())
+    {
+    this->GetOutputPolyData()->Update();
+    this->SetScalarRange(this->GetOutputPolyData()->GetScalarRange());
+    }
 }
