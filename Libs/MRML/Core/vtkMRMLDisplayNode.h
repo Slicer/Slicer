@@ -287,6 +287,7 @@ public:
   vtkGetStringMacro(ActiveScalarName);
 
   /// Set the active attribute location of the display node.
+  /// vtkAssignAttribute::POINT_DATA by default.
   /// \sa ActiveAttributeLocation, GetActiveAttributeLocation()
   vtkSetMacro(ActiveAttributeLocation, int);
   /// Get the active attribute location of the display node.

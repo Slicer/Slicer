@@ -484,14 +484,13 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "AutoScalarRange:   " << this->AutoScalarRange << "\n";
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
-  os << indent << "SliceIntersectionVisibility:          " << this->SliceIntersectionVisibility << "\n";
+  os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
 
-  os << "ScalarRange:\n";
+  os << indent << "ScalarRange:       ";
   for (idx = 0; idx < 2; ++idx)
     {
-    os << indent << ", " << this->ScalarRange[idx];
+    os << this->ScalarRange[idx] << ((idx == 0) ? ", " : "\n");
     }
-  os << endl;
   os << indent << "ColorNodeID: " <<
     (this->ColorNodeID ? this->ColorNodeID : "(none)") << "\n";
 
