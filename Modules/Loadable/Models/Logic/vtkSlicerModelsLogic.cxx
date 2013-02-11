@@ -10,6 +10,7 @@
 /// Slicer logic includes
 #include "vtkSlicerColorLogic.h"
 #include "vtkSlicerModelsLogic.h"
+#include "vtkMRMLSliceLogic.h"
 
 /// MRML includes
 #include <vtkCacheManager.h>
@@ -474,22 +475,20 @@ void vtkSlicerModelsLogic::SetAllModelsVisibility(int flag)
   for (int i = 0; i < numModels; i++)
     {
     vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNthNodeByClass(i, "vtkMRMLModelNode");
-    if (mrmlNode != NULL)
+    // Exclude volume slice model nodes.
+    // Exclude vtkMRMLModelNode subclasses by comparing classname.
+    // Doing so will avoid updating annotation and fiber bundle node
+    // visibility since they derive from vtkMRMLModelNode
+    // See http://www.na-mic.org/Bug/view.php?id=2576
+    if (mrmlNode != NULL
+        && !vtkMRMLSliceLogic::IsSliceModelNode(mrmlNode)
+        && strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
       {
-      // rule out subclasses
-      if (strcmp(mrmlNode->GetClassName(), "vtkMRMLModelNode") == 0)
+      vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
+      if (modelNode)
         {
-        // rule out slice nodes
-        if (mrmlNode->GetName() != NULL &&
-            strstr(mrmlNode->GetName(), "Volume Slice") == NULL)
-          {
-          vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(mrmlNode);
-          if (modelNode)
-            {
-            // have a "real" model node, set the display visibility
-            modelNode->SetDisplayVisibility(flag);
-            }
-          }
+        // have a "real" model node, set the display visibility
+        modelNode->SetDisplayVisibility(flag);
         }
       }
     }

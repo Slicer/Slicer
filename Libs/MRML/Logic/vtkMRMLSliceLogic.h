@@ -336,6 +336,16 @@ public:
   /// Return the associated slicerlayer nodes
   static vtkMRMLSliceCompositeNode* GetSliceCompositeNode(vtkMRMLSliceNode* node);
 
+  /// Default node name suffix for use with volume slice models to distinguish them
+  /// as built in models rather than user accessible.
+  /// \sa IsSliceModelNode
+  static const std::string SLICE_MODEL_NODE_NAME_SUFFIX;
+
+  /// Return true if the node is a model node that has the default volume slice
+  /// node name suffix, false otherwise
+  /// \sa SLICE_MODEL_NODE_NAME_SUFFIX
+  static bool IsSliceModelNode(vtkMRMLNode *mrmlNode);
+
 protected:
 
   vtkMRMLSliceLogic();

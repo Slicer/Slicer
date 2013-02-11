@@ -60,6 +60,7 @@
 const int vtkMRMLSliceLogic::SLICE_INDEX_ROTATED=-1;
 const int vtkMRMLSliceLogic::SLICE_INDEX_OUT_OF_VOLUME=-2;
 const int vtkMRMLSliceLogic::SLICE_INDEX_NO_VOLUME=-3;
+const std::string vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX = std::string("Volume Slice");
 
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLSliceLogic, "$Revision$");
@@ -1224,6 +1225,8 @@ void vtkMRMLSliceLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ForegroundOpacity: " << this->ForegroundOpacity << "\n";
   os << indent << "LabelOpacity: " << this->LabelOpacity << "\n";
 
+  os << indent << "SLICE_MODEL_NODE_NAME_SUFFIX: " << this->SLICE_MODEL_NODE_NAME_SUFFIX << "\n";
+
 }
 
 //----------------------------------------------------------------------------
@@ -1329,7 +1332,7 @@ void vtkMRMLSliceLogic::CreateSliceModel()
     // slice viewer
     this->SliceModelDisplayNode->SetSliceIntersectionVisibility(0);
 
-    std::string name = std::string(this->Name) + " Volume Slice";
+    std::string name = std::string(this->Name) + std::string(" ") + this->SLICE_MODEL_NODE_NAME_SUFFIX;
     this->SliceModelNode->SetName (name.c_str());
 
     // make the xy to RAS transform
@@ -2337,4 +2340,18 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLogic::GetSliceCompositeNode(vtkMRMLSlice
       }
     }
   return 0;
+}
+
+
+//----------------------------------------------------------------------------
+bool vtkMRMLSliceLogic::IsSliceModelNode(vtkMRMLNode *mrmlNode)
+{
+  if (mrmlNode != NULL &&
+      mrmlNode->IsA("vtkMRMLModelNode") &&
+      mrmlNode->GetName() != NULL &&
+      strstr(mrmlNode->GetName(), vtkMRMLSliceLogic::SLICE_MODEL_NODE_NAME_SUFFIX.c_str()) != NULL)
+    {
+    return true;
+    }
+  return false;
 }
