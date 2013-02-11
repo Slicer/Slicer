@@ -236,7 +236,7 @@ mark_as_advanced(Slicer_USE_CTKAPPLAUNCHER)
 option(Slicer_USE_QtTesting    "Integrate QtTesting framework into Slicer." ON)
 mark_as_advanced(Slicer_USE_QtTesting)
 
-set(ITK_VERSION_MAJOR 3 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
+set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build Slicer (3 or 4).")
 # Set the possible values of ITK major version for cmake-gui
 set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "3" "4")
 if(NOT "${ITK_VERSION_MAJOR}" STREQUAL "3" AND NOT "${ITK_VERSION_MAJOR}" STREQUAL "4")
