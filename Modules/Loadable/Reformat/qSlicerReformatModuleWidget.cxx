@@ -24,7 +24,6 @@
 
 // SlicerQt includes
 #include "vtkMRMLSliceNode.h"
-#include "vtkSlicerTransformLogic.h"
 #include "vtkSlicerReformatLogic.h"
 
 #include "qSlicerReformatModuleWidget.h"
@@ -203,10 +202,10 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
 {
   Q_Q(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* transformLogic =
+  vtkSlicerReformatLogic* reformatLogic =
     vtkSlicerReformatLogic::SafeDownCast(q->logic());
 
-  if (!this->MRMLSliceNode || !transformLogic)
+  if (!this->MRMLSliceNode || !reformatLogic)
     {
     return;
     }
@@ -218,7 +217,7 @@ void qSlicerReformatModuleWidgetPrivate::updateOriginCoordinates()
 
   // Update volumes extremums
   double volumeBounds[6] = {0, 0, 0, 0, 0, 0};
-  transformLogic->GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
+  reformatLogic->GetVolumeBounds(this->MRMLSliceNode, volumeBounds);
 
   /// TODO: set min/max per element
   double minimum = qMin(volumeBounds[0], qMin(volumeBounds[2], volumeBounds[4]));
@@ -524,16 +523,16 @@ void qSlicerReformatModuleWidget::setWorldPosition(double* worldCoordinates)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* transformLogic =
+  vtkSlicerReformatLogic* reformatLogic =
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
-  if (!d->MRMLSliceNode || !transformLogic)
+  if (!d->MRMLSliceNode || !reformatLogic)
     {
     return;
     }
 
   // Insert the widget translation
-  transformLogic->SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
+  reformatLogic->SetSliceOrigin(d->MRMLSliceNode, worldCoordinates);
 }
 
 //------------------------------------------------------------------------------
@@ -546,10 +545,10 @@ void qSlicerReformatModuleWidget::setSliceNormal(double x, double y, double z)
 //------------------------------------------------------------------------------
 void qSlicerReformatModuleWidget::setNormalToCamera()
 {
-  vtkSlicerReformatLogic* transformLogic =
+  vtkSlicerReformatLogic* reformatLogic =
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
-  if (!transformLogic)
+  if (!reformatLogic)
     {
     return;
     }
@@ -557,7 +556,7 @@ void qSlicerReformatModuleWidget::setNormalToCamera()
   // NOTE: We use the first Camera because there is no notion of active scene
   // Code to be changed when methods avaible.
   vtkMRMLCameraNode* cameraNode = vtkMRMLCameraNode::SafeDownCast(
-    transformLogic->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
+    reformatLogic->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLCameraNode"));
 
   if (!cameraNode)
     {
@@ -605,10 +604,10 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* transformLogic =
+  vtkSlicerReformatLogic* reformatLogic =
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
-  if (!d->MRMLSliceNode || !transformLogic)
+  if (!d->MRMLSliceNode || !reformatLogic)
     {
     return;
     }
@@ -622,7 +621,7 @@ void qSlicerReformatModuleWidget::setSliceNormal(double* sliceNormal)
   vtkMath::Normalize(normalizedSliceNormal);
 
   // Insert the widget rotation
-  transformLogic->SetSliceNormal(d->MRMLSliceNode, normalizedSliceNormal);
+  reformatLogic->SetSliceNormal(d->MRMLSliceNode, normalizedSliceNormal);
 }
 
 //------------------------------------------------------------------------------
@@ -708,10 +707,10 @@ void qSlicerReformatModuleWidget::centerSliceNode()
 {
   Q_D(qSlicerReformatModuleWidget);
 
-  vtkSlicerReformatLogic* transformLogic =
+  vtkSlicerReformatLogic* reformatLogic =
     vtkSlicerReformatLogic::SafeDownCast(this->logic());
 
-  if (!d->MRMLSliceNode || !d->MRMLSliceLogic || !transformLogic)
+  if (!d->MRMLSliceNode || !d->MRMLSliceLogic || !reformatLogic)
     {
     return;
     }
@@ -720,9 +719,9 @@ void qSlicerReformatModuleWidget::centerSliceNode()
 
   // Retrieve the center given the volume bounds
   double bounds[6], center[3];
-  transformLogic->GetVolumeBounds(d->MRMLSliceNode, bounds);
+  reformatLogic->GetVolumeBounds(d->MRMLSliceNode, bounds);
   vtkSlicerReformatLogic::GetCenterFromBounds(bounds, center);
 
   // Apply the center
-  transformLogic->SetSliceOrigin(d->MRMLSliceNode, center);
+  reformatLogic->SetSliceOrigin(d->MRMLSliceNode, center);
 }

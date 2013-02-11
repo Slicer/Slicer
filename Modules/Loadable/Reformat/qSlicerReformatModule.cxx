@@ -21,9 +21,6 @@
 // Qt includes
 #include <QtPlugin>
 
-// SlicerQt includes
-#include "vtkSlicerTransformLogic.h"
-
 // Reformat Logic includes
 #include <vtkSlicerReformatLogic.h>
 
