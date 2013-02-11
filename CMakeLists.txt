@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 2.8.9)
 #-----------------------------------------------------------------------------
 if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,

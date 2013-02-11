@@ -1,41 +1,3 @@
-#-----------------------------------------------------------------------------
-# Extract dashboard option passed from command line
-#-----------------------------------------------------------------------------
-# Note: The syntax to pass option from the command line while invoking ctest is
-#       the following: ctest -S /path/to/script.cmake,OPTNAME1##OPTVALUE1^^OPTNAME2##OPTVALUE2
-#
-# Example:
-#       ctest -S /path/to/script.cmake,SCRIPT_MODE##continuous^^GIT_TAG##next
-#
-if(NOT CTEST_SCRIPT_ARG STREQUAL "")
-  cmake_policy(PUSH)
-  cmake_policy(SET CMP0007 OLD)
-  string(REPLACE "^^" "\\;" CTEST_SCRIPT_ARG_AS_LIST "${CTEST_SCRIPT_ARG}")
-  set(CTEST_SCRIPT_ARG_AS_LIST ${CTEST_SCRIPT_ARG_AS_LIST})
-  foreach(argn_argv ${CTEST_SCRIPT_ARG_AS_LIST})
-    string(REPLACE "##" "\\;" argn_argv_list ${argn_argv})
-    set(argn_argv_list ${argn_argv_list})
-    list(LENGTH argn_argv_list argn_argv_list_length)
-    list(GET argn_argv_list 0 argn)
-    if(argn_argv_list_length GREATER 1)
-      list(REMOVE_AT argn_argv_list 0) # Take first item
-      set(argv) # Convert from list to string separated by '='
-      foreach(str_item ${argn_argv_list})
-        set(argv "${argv}=${str_item}")
-      endforeach()
-      string(SUBSTRING ${argv} 1 -1 argv) # Remove first unwanted '='
-      string(REPLACE "/-/" "//" argv ${argv}) # See http://www.cmake.org/Bug/view.php?id=12953
-      string(REPLACE "-AMP-" "&" argv ${argv})
-      string(REPLACE "-WHT-" "?" argv ${argv})
-      string(REPLACE "-LPAR-" "(" argv ${argv})
-      string(REPLACE "-RPAR-" ")" argv ${argv})
-      string(REPLACE "-EQUAL-" "=" argv ${argv})
-      string(REPLACE "-DOTDOT-" ".." argv ${argv})
-      set(${argn} ${argv})
-    endif()
-  endforeach()
-  cmake_policy(POP)
-endif()
 
 #-----------------------------------------------------------------------------
 # Macro allowing to set a variable to its default value only if not already defined
@@ -44,6 +6,11 @@ macro(setIfNotDefined var defaultvalue)
     set(${var} "${defaultvalue}")
   endif()
 endmacro()
+
+if(NOT EXISTS "${SCRIPT_ARGS_FILE}")
+  message(FATAL_ERROR "Argument 'SCRIPT_ARGS_FILE' is either missing or pointing to an nonexistent file !")
+endif()
+include(${SCRIPT_ARGS_FILE})
 
 #-----------------------------------------------------------------------------
 # Sanity checks
