@@ -69,9 +69,6 @@ set_property(GLOBAL PROPERTY Label ${label})
 # If no CTestConfig.cmake file is found in ${ctestconfig_dest_dir},
 # one will be generated.
 set(ctestconfig_dest_dir ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
-if(${CMAKE_VERSION} VERSION_LESS "2.8.7")
-  set(ctestconfig_dest_dir ${EXTENSION_SOURCE_DIR})
-endif()
 if(NOT EXISTS ${ctestconfig_dest_dir}/CTestConfig.cmake)
   message(STATUS "CTestConfig.cmake has been written to: ${ctestconfig_dest_dir}")
   file(WRITE ${ctestconfig_dest_dir}/CTestConfig.cmake
