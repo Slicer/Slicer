@@ -279,7 +279,10 @@ if(NOT EXTENSIONS_BUILDSYSTEM_TESTING)
   # Note: The following command should be specified as a list.
   set(CTEST_GIT_UPDATE_CUSTOM ${CMAKE_COMMAND} -P ${CTEST_SCRIPT_DIRECTORY}/${CTEST_SCRIPT_NAME}-${git_tag_cleaned}-${SCRIPT_MODE}-gitupdate.cmake)
 
-  # Retrieve revision associated with Slicer source tree
+  # Retrieve revision associated with Slicer build tree
+  if(NOT EXISTS "${Slicer_DIR}/vtkSlicerVersionConfigure.h")
+    message(FATAL_ERROR "Extension can NOT be built without a valid Slicer build tree. Check path associated with Slicer_DIR.")
+  endif()
   _get_slicer_revision("${Slicer_DIR}/vtkSlicerVersionConfigure.h" Slicer_WC_REVISION)
   message("Slicer_WC_REVISION:${Slicer_WC_REVISION}")
   set(Slicer_PREVIOUS_WC_REVISION ${Slicer_WC_REVISION})
