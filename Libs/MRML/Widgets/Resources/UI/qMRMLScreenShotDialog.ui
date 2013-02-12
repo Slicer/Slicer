@@ -186,6 +186,9 @@
    </item>
    <item row="5" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="toolTip">
+      <string>Save snapshot via File Save. Edit in Annotations module.</string>
+     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
