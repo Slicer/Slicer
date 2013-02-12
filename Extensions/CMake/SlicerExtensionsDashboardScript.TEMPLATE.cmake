@@ -44,7 +44,7 @@ set(WITH_DOCUMENTATION FALSE)
 #set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ) # for example: $ENV{HOME}/Projects/Doxygen
 set(CTEST_BUILD_CONFIGURATION "Release") # Release or Debug
 set(CTEST_TEST_TIMEOUT 500)
-set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j4" on unix
+set(CTEST_BUILD_FLAGS "") # Use multiple CPU cores to build. For example "-j -l4" on unix
 set(CTEST_PARALLEL_LEVEL 8) # Number of tests running in parallel
 
 # experimental:
