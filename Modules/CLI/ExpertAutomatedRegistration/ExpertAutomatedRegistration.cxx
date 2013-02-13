@@ -12,7 +12,7 @@ namespace
 
 // Description:
 // Get the PixelType and ComponentType from fileName
-void GetImageType(std::string fileName,
+void GetImageType(const std::string & fileName,
                   itk::ImageIOBase::IOPixelType & pixelType,
                   itk::ImageIOBase::IOComponentType & componentType,
                   unsigned int & dimensions )
@@ -47,9 +47,9 @@ int DoIt( int argc, char *argv[] )
 
   typedef typename itk::Image<T, DimensionT> ImageType;
 
-  typedef typename itk::ImageToImageRegistrationHelper<ImageType> RegerType;
+  typedef typename itk::ImageToImageRegistrationHelper<ImageType> RegistrationType;
 
-  typename RegerType::Pointer reger = RegerType::New();
+  typename RegistrationType::Pointer reger = RegistrationType::New();
 
   reger->SetReportProgress( true );
 
@@ -108,13 +108,13 @@ int DoIt( int argc, char *argv[] )
       std::cout << "WARNING: Landmarks specified, but initialization process "
                 << "was not told to use landmarks. " << std::endl;
       std::cout << "Changing initialization to use landmarks." << std::endl;
-      reger->SetInitialMethodEnum( RegerType::INIT_WITH_LANDMARKS );
+      reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_LANDMARKS );
       }
     }
 
   if( initialization == "Landmarks" )
     {
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_LANDMARKS );
+    reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_LANDMARKS );
     reger->SetFixedLandmarks( fixedLandmarks );
     reger->SetMovingLandmarks( movingLandmarks );
     }
@@ -124,7 +124,7 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Initialization: ImageCenters" << std::endl;
       }
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_IMAGE_CENTERS );
+    reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_IMAGE_CENTERS );
     }
   else if( initialization == "SecondMoments" )
     {
@@ -132,7 +132,7 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Initialization: SecondMoments" << std::endl;
       }
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_SECOND_MOMENTS );
+    reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_SECOND_MOMENTS );
     }
   else if( initialization == "CentersOfMass" )
     {
@@ -140,7 +140,7 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Initialization: CentersOfMass" << std::endl;
       }
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_CENTERS_OF_MASS );
+    reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_CENTERS_OF_MASS );
     }
   else // if( initialization == "None" )
     {
@@ -148,7 +148,7 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Initialization: None" << std::endl;
       }
-    reger->SetInitialMethodEnum( RegerType::INIT_WITH_NONE );
+    reger->SetInitialMethodEnum( RegistrationType::INIT_WITH_NONE );
     }
 
   if( registration == "None" )
@@ -246,13 +246,13 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Metric: NormalizedCorrelation" << std::endl;
       }
-    reger->SetRigidMetricMethodEnum( RegerType
+    reger->SetRigidMetricMethodEnum( RegistrationType
                                      ::OptimizedRegistrationMethodType
                                      ::NORMALIZED_CORRELATION_METRIC );
-    reger->SetAffineMetricMethodEnum( RegerType
+    reger->SetAffineMetricMethodEnum( RegistrationType
                                       ::OptimizedRegistrationMethodType
                                       ::NORMALIZED_CORRELATION_METRIC );
-    reger->SetBSplineMetricMethodEnum( RegerType
+    reger->SetBSplineMetricMethodEnum( RegistrationType
                                        ::OptimizedRegistrationMethodType
                                        ::NORMALIZED_CORRELATION_METRIC );
     }
@@ -262,13 +262,13 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Metric: MeanSquared" << std::endl;
       }
-    reger->SetRigidMetricMethodEnum( RegerType
+    reger->SetRigidMetricMethodEnum( RegistrationType
                                      ::OptimizedRegistrationMethodType
                                      ::MEAN_SQUARED_ERROR_METRIC );
-    reger->SetAffineMetricMethodEnum( RegerType
+    reger->SetAffineMetricMethodEnum( RegistrationType
                                       ::OptimizedRegistrationMethodType
                                       ::MEAN_SQUARED_ERROR_METRIC );
-    reger->SetBSplineMetricMethodEnum( RegerType
+    reger->SetBSplineMetricMethodEnum( RegistrationType
                                        ::OptimizedRegistrationMethodType
                                        ::MEAN_SQUARED_ERROR_METRIC );
     }
@@ -278,13 +278,13 @@ int DoIt( int argc, char *argv[] )
       {
       std::cout << "###Metric: MattesMutualInformation" << std::endl;
       }
-    reger->SetRigidMetricMethodEnum( RegerType
+    reger->SetRigidMetricMethodEnum( RegistrationType
                                      ::OptimizedRegistrationMethodType
                                      ::MATTES_MI_METRIC );
-    reger->SetAffineMetricMethodEnum( RegerType
+    reger->SetAffineMetricMethodEnum( RegistrationType
                                       ::OptimizedRegistrationMethodType
                                       ::MATTES_MI_METRIC );
-    reger->SetBSplineMetricMethodEnum( RegerType
+    reger->SetBSplineMetricMethodEnum( RegistrationType
                                        ::OptimizedRegistrationMethodType
                                        ::MATTES_MI_METRIC );
     }
@@ -416,37 +416,37 @@ int DoIt( int argc, char *argv[] )
   /** not sure */
   if( interpolation == "NearestNeighbor" )
     {
-    reger->SetRigidInterpolationMethodEnum( RegerType
+    reger->SetRigidInterpolationMethodEnum( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::NEAREST_NEIGHBOR_INTERPOLATION);
-    reger->SetAffineInterpolationMethodEnum( RegerType
+    reger->SetAffineInterpolationMethodEnum( RegistrationType
                                              ::OptimizedRegistrationMethodType
                                              ::NEAREST_NEIGHBOR_INTERPOLATION );
-    reger->SetBSplineInterpolationMethodEnum( RegerType
+    reger->SetBSplineInterpolationMethodEnum( RegistrationType
                                               ::OptimizedRegistrationMethodType
                                               ::NEAREST_NEIGHBOR_INTERPOLATION );
     }
   else if( interpolation == "Linear" )
     {
-    reger->SetRigidInterpolationMethodEnum( RegerType
+    reger->SetRigidInterpolationMethodEnum( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::LINEAR_INTERPOLATION );
-    reger->SetAffineInterpolationMethodEnum( RegerType
+    reger->SetAffineInterpolationMethodEnum( RegistrationType
                                              ::OptimizedRegistrationMethodType
                                              ::LINEAR_INTERPOLATION );
-    reger->SetBSplineInterpolationMethodEnum( RegerType
+    reger->SetBSplineInterpolationMethodEnum( RegistrationType
                                               ::OptimizedRegistrationMethodType
                                               ::LINEAR_INTERPOLATION );
     }
   else if( interpolation == "BSpline" )
     {
-    reger->SetRigidInterpolationMethodEnum( RegerType
+    reger->SetRigidInterpolationMethodEnum( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::BSPLINE_INTERPOLATION );
-    reger->SetAffineInterpolationMethodEnum( RegerType
+    reger->SetAffineInterpolationMethodEnum( RegistrationType
                                              ::OptimizedRegistrationMethodType
                                              ::BSPLINE_INTERPOLATION );
-    reger->SetBSplineInterpolationMethodEnum( RegerType
+    reger->SetBSplineInterpolationMethodEnum( RegistrationType
                                               ::OptimizedRegistrationMethodType
                                               ::BSPLINE_INTERPOLATION );
     }
@@ -536,19 +536,19 @@ int DoIt( int argc, char *argv[] )
       {
       if( interpolation == "NearestNeighbor" )
         {
-        resultImage = reger->ResampleImage( RegerType
+        resultImage = reger->ResampleImage( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::NEAREST_NEIGHBOR_INTERPOLATION );
         }
       else if( interpolation == "Linear" )
         {
-        resultImage = reger->ResampleImage( RegerType
+        resultImage = reger->ResampleImage( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::LINEAR_INTERPOLATION );
         }
       else if( interpolation == "BSpline" )
         {
-        resultImage = reger->ResampleImage( RegerType
+        resultImage = reger->ResampleImage( RegistrationType
                                             ::OptimizedRegistrationMethodType
                                             ::BSPLINE_INTERPOLATION );
         }
