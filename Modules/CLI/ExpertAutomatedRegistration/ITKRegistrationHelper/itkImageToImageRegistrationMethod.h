@@ -63,6 +63,8 @@ public:
   typedef DataObjectDecorator<TransformType> TransformOutputType;
 
   typedef typename DataObject::Pointer DataObjectPointer;
+  typedef Superclass::DataObjectPointerArraySizeType
+                                       DataObjectPointerArraySizeType;
 
   typedef TImage ImageType;
 
@@ -137,9 +139,10 @@ protected:
   itkGetObjectMacro( Transform, TransformType );
   itkGetConstObjectMacro( Transform, TransformType );
 
-  virtual DataObjectPointer       MakeOutput( unsigned int idx );
+  using Superclass::MakeOutput;
+  virtual DataObjectPointer   MakeOutput( DataObjectPointerArraySizeType idx );
 
-  unsigned long                   GetMTime( void ) const;
+  unsigned long               GetMTime( void ) const;
 
 protected:
 

@@ -153,7 +153,7 @@ const typename ImageToImageRegistrationMethod<TImage>::TransformOutputType
 template <class TImage>
 DataObject::Pointer
 ImageToImageRegistrationMethod<TImage>
-::MakeOutput( unsigned int idx )
+::MakeOutput( DataObjectPointerArraySizeType idx )
 {
   switch( idx )
     {
