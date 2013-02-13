@@ -249,7 +249,6 @@ BSplineImageToImageRegistrationMethod<TImage>
   /*  Set scales = expected amount of movement of a control point */
   /**/
   typename Superclass::TransformParametersType params( numberOfParameters );
-  typename TImage::SizeType fixedImageSize = this->GetFixedImage()->GetLargestPossibleRegion().GetSize();
   typename TransformType::SpacingType spacing   = this->GetFixedImage()->GetSpacing();
   double scale = 1.0 / (m_ExpectedDeformationMagnitude * spacing[0]);
   params.Fill( scale );
