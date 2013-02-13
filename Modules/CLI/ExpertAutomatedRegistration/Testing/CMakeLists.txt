@@ -1,1 +1,46 @@
 message(WARNING "warning: Module ${MODULE_NAME} doesn't have any test !")
+
+#-----------------------------------------------------------------------------
+set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
+set(CLP ${MODULE_NAME})
+
+#-----------------------------------------------------------------------------
+add_executable(Generate${CLP}TestData Generate${CLP}TestData.cxx)
+target_link_libraries(Generate${CLP}TestData ${ITK_LIBRARIES})
+set_target_properties(Generate${CLP}TestData PROPERTIES LABELS ${CLP})
+
+set(frequency 10)
+
+set(testname ${CLP}TestDataFixed)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:Generate${CLP}TestData>
+  ${frequency} ${TEMP}/${CLP}Fixed.mha
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+
+set(testname ${CLP}TestDataRigidArgs)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:Generate${CLP}TestData>
+  ${frequency} ${TEMP}/${CLP}RigidArgs.mha -p 2 4 6 -o 0.02 0.04 0.06
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+
+set(testname ${CLP}TestDataRigid)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:Generate${CLP}TestData>
+  ${frequency} ${TEMP}/${CLP}Rigid.mha -t ${INPUT}/RigidUNC24.tfm
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+
+set(testname ${CLP}TestDataAffine)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:Generate${CLP}TestData>
+  ${frequency} ${TEMP}/${CLP}Affine.mha -t ${INPUT}/AffineUNC24.tfm
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})
+
+
+set(testname ${CLP}TestDataBSpline)
+add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:Generate${CLP}TestData>
+  ${frequency} ${TEMP}/${CLP}BSpline.mha -t ${INPUT}/BSplineUNC24.tfm
+  )
+set_property(TEST ${testname} PROPERTY LABELS ${CLP})

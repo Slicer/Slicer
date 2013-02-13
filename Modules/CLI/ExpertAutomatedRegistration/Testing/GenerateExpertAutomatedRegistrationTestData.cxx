@@ -1,12 +1,13 @@
 
 // ITK includes
-#include <itkBSplineDeformableTransform.h>
-#include <itkEuler3DTransform.h>
-#include <itkImageFileWriter.h>
-#include <itkImage.h>
-#include <itkResampleImageFilter.h>
-#include <itkTransformFactory.h>
-#include <itkTransformFileReader.h>
+#include "itkAffineTransform.h"
+#include "itkBSplineDeformableTransform.h"
+#include "itkEuler3DTransform.h"
+#include "itkImageFileWriter.h"
+#include "itkImage.h"
+#include "itkResampleImageFilter.h"
+#include "itkTransformFactory.h"
+#include "itkTransformFileReader.h"
 
 // STD includes
 #include <list>
@@ -19,10 +20,12 @@ int main(int argc, char * * argv)
 {
   if( argc < 3 )
     {
-    std::cout
-    <<
-    "GenerateRegisterImagesTestData <freq> <outFile> [-t transform] [-p positionX positionY positionZ] [-o orientationX orientationY orientationZ]"
-    << std::endl;
+    std::cerr << argv[0]
+              << " <freq> <outFile>"
+              << " [-t transform]"
+              << " [-p positionX positionY positionZ]"
+              << " [-o orientationX orientationY orientationZ]"
+              << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -30,9 +33,9 @@ int main(int argc, char * * argv)
 
   ImageType::Pointer  img = ImageType::New();
   ImageType::SizeType size;
-  size[0] = 176;
-  size[1] = 256;
-  size[2] = 176;
+  size[0] = 32;
+  size[1] = 64;
+  size[2] = 32;
   img->SetRegions( size );
   img->Allocate();
 
