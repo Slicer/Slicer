@@ -19,6 +19,8 @@
 #include "vtkObjectFactory.h"
 
 #include "vtkPichonFastMarching.h"
+#include "vtkPointData.h"
+#include "vtkDataArray.h"
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -1213,6 +1215,44 @@ int vtkPichonFastMarching::addSeedIJK( int I, int J, int K )
   return 0; // we're trying to put a seed outside of the volume
 }
 
+int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
+{
+  // here the assumption is that the label image is always short pixel type
+  // The filter is to be used from Editor effects, and the label is always
+  // short, so for this use case it's a valid assumption.
+
+  int scalarType = label->GetScalarType();
+  if(scalarType == VTK_SHORT || scalarType == VTK_UNSIGNED_SHORT)
+  {
+    short* bufferPointer = (short*) label->GetPointData()->GetScalars()->GetVoidPointer(0);
+    vtkIdType inc[3];
+    label->GetIncrements(inc);
+    int extent[6];
+    label->GetExtent(extent);
+
+    int total = 0;
+    for(int k=0;k<extent[5]+1;k++)
+    {
+      for(int j=0;j<extent[3]+1;j++)
+      {
+        for(int i=0;i<extent[1]+1;i++)
+        {
+          if(bufferPointer[k*inc[2]+j*inc[1]+i])
+          {
+            this->addSeedIJK(i,j,k);
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    std::cerr << "ERROR: vtkPichonFastMarching: seed label image must be of type SHORT or UNSIGNED SHORT!" << std::endl;
+    return 0;
+  }
+
+  return 1;
+}
 
 void vtkPichonFastMarching::unInit( void )
 {

@@ -90,6 +90,7 @@ public:
 
   int addSeed( float r, float a, float s );
   int addSeedIJK( int, int, int );
+  int addSeedsFromImage(vtkImageData*);
 
   void show(float r);
 
