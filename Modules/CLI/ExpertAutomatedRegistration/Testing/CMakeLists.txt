@@ -3,6 +3,9 @@ message(WARNING "warning: Module ${MODULE_NAME} doesn't have any test !")
 #-----------------------------------------------------------------------------
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 set(CLP ${MODULE_NAME})
+if(NOT DEFINED TEMP)
+  set(TEMP ${PROJECT_BINARY_DIR}/Testing/Temporary)
+endif()
 
 #-----------------------------------------------------------------------------
 add_executable(Generate${CLP}TestData Generate${CLP}TestData.cxx)
