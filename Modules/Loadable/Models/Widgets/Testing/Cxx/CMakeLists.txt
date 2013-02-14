@@ -29,5 +29,5 @@ endmacro()
 # Add Tests
 #
 
-SIMPLE_TEST( qMRMLModelDisplayNodeWidgetTest1 )
+simple_test( qMRMLModelDisplayNodeWidgetTest1 )
 SCENE_TEST( qMRMLModelDisplayNodeWidgetTest2 cube.mrml )

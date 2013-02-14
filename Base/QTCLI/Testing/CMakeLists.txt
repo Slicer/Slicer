@@ -22,6 +22,6 @@ set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
 # Add Tests
 #
 
-SIMPLE_TEST( qSlicerCLIExecutableModuleFactoryTest1 )
-SIMPLE_TEST( qSlicerCLILoadableModuleFactoryTest1 )
-SIMPLE_TEST( qSlicerCLIModuleTest1 )
+simple_test( qSlicerCLIExecutableModuleFactoryTest1 )
+simple_test( qSlicerCLILoadableModuleFactoryTest1 )
+simple_test( qSlicerCLIModuleTest1 )

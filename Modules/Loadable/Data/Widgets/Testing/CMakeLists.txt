@@ -16,5 +16,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
-SIMPLE_TEST( qMRMLNodeAttributeTableViewTest )
-SIMPLE_TEST( qMRMLNodeAttributeTableWidgetTest )
+simple_test( qMRMLNodeAttributeTableViewTest )
+simple_test( qMRMLNodeAttributeTableWidgetTest )

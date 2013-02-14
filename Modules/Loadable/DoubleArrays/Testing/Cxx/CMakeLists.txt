@@ -19,9 +19,9 @@ set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  simple_test( ${testname} )
 endforeach()
 
 set(DOUBLEARRAY_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/doubleArray.csv")
 
-SIMPLE_TEST(vtkSlicerDoubleArraysLogicAddFileTest ${DOUBLEARRAY_FILE})
+simple_test(vtkSlicerDoubleArraysLogicAddFileTest ${DOUBLEARRAY_FILE})

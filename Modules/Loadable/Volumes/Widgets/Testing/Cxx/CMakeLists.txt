@@ -25,6 +25,6 @@ target_link_libraries(${KIT}CxxTests ${test_target_libraries})
 
 set(DTI_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 
-SIMPLE_TEST( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
-SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest1 )
-SIMPLE_TEST( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )
+simple_test( qSlicerDiffusionTensorVolumeDisplayWidgetTest1 )
+simple_test( qSlicerDTISliceDisplayWidgetTest1 )
+simple_test( qSlicerDTISliceDisplayWidgetTest2 ${DTI_FILE} )

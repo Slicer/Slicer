@@ -25,11 +25,11 @@ set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE
 target_link_libraries(${KIT}CxxTests ${KIT} vtkSlicerVolumesModuleLogic)
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  simple_test( ${testname} )
 endforeach()
 
 SET(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/helix-DTI.nhdr")
 
-SIMPLE_TEST( qSlicerTractographyInteractiveSeedingModuleWidgetTest1 )
-SIMPLE_TEST( qSlicerTractographyInteractiveSeedingModuleWidgetTest2 ${VOLUME_FILE})
+simple_test( qSlicerTractographyInteractiveSeedingModuleWidgetTest1 )
+simple_test( qSlicerTractographyInteractiveSeedingModuleWidgetTest2 ${VOLUME_FILE})
 

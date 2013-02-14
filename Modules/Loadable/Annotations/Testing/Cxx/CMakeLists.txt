@@ -60,29 +60,29 @@ target_link_libraries(${KIT}CxxTests ${KIT}
   ${target_libraries}
   )
 
-#SIMPLE_TEST( vtkMRMLAnnotationNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationStorageNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationDisplayNodeTest1 )
-#SIMPLE_TEST( TestAnnAngleWidget3D )
-#SIMPLE_TEST( vtkMRMLAnnotationControlPointsNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationPointDisplayNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationControlPointsStorageNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationLinesNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationLineDisplayNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationLinesStorageNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationAngleNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationAngleStorageNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationRulerNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationRulerStorageNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationFiducialNodeTest1 )
-#SIMPLE_TEST( vtkMRMLAnnotationTextDisplayableManagerTest1 )
-#SIMPLE_TEST( vtkSlicerAnnotationModuleLogicTest1 )
-#SIMPLE_TEST( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
+#simple_test( vtkMRMLAnnotationNodeTest1 )
+#simple_test( vtkMRMLAnnotationStorageNodeTest1 )
+#simple_test( vtkMRMLAnnotationDisplayNodeTest1 )
+#simple_test( TestAnnAngleWidget3D )
+#simple_test( vtkMRMLAnnotationControlPointsNodeTest1 )
+#simple_test( vtkMRMLAnnotationPointDisplayNodeTest1 )
+#simple_test( vtkMRMLAnnotationControlPointsStorageNodeTest1 )
+#simple_test( vtkMRMLAnnotationLinesNodeTest1 )
+#simple_test( vtkMRMLAnnotationLineDisplayNodeTest1 )
+#simple_test( vtkMRMLAnnotationLinesStorageNodeTest1 )
+#simple_test( vtkMRMLAnnotationAngleNodeTest1 )
+#simple_test( vtkMRMLAnnotationAngleStorageNodeTest1 )
+#simple_test( vtkMRMLAnnotationRulerNodeTest1 )
+#simple_test( vtkMRMLAnnotationRulerStorageNodeTest1 )
+#simple_test( vtkMRMLAnnotationFiducialNodeTest1 )
+#simple_test( vtkMRMLAnnotationTextDisplayableManagerTest1 )
+#simple_test( vtkSlicerAnnotationModuleLogicTest1 )
+#simple_test( qSlicerAnnotationModuleAnnotationPropertyDialogTest1 )
 
 
 #add_test(SlicerAnnotationRulerTest1 ${Slicer_LAUNCHER_EXECUTABLE} --test-mode --script ${Slicer_SOURCE_DIR}/Modules/Loadable/Annotation/Testing/TestAddRuler.tcl)
 
-# SIMPLE_TEST( vtkMRMLAnnotationFiducialStorageNodeTest1 )
+# simple_test( vtkMRMLAnnotationFiducialStorageNodeTest1 )
 # Install the testing data
 
 

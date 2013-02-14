@@ -22,13 +22,13 @@ set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  simple_test( ${testname} )
 endforeach()
 
 set(MODEL_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/cube.vtk")
 set(MODEL_SCENE "${MRMLCore_SOURCE_DIR}/Testing/modelHierarchy.mrml")
 
-SIMPLE_TEST( qSlicerModelsModuleWidgetTest1 ${MODEL_FILE} )
-SIMPLE_TEST( qSlicerModelsModuleWidgetTestScene ${MODEL_SCENE} )
-SIMPLE_TEST(vtkSlicerModelsLogicAddFileTest ${MODEL_FILE})
-SIMPLE_TEST(vtkSlicerModelsLogicAutoRemoveTest)
+simple_test( qSlicerModelsModuleWidgetTest1 ${MODEL_FILE} )
+simple_test( qSlicerModelsModuleWidgetTestScene ${MODEL_SCENE} )
+simple_test(vtkSlicerModelsLogicAddFileTest ${MODEL_FILE})
+simple_test(vtkSlicerModelsLogicAutoRemoveTest)

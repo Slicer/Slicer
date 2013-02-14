@@ -23,7 +23,7 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 
 #-----------------------------------------------------------------------------
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  simple_test( ${testname} )
 endforeach()
 
-# Add your test after this line, using SIMPLE_TEST( <testname> )
+# Add your test after this line, using simple_test( <testname> )

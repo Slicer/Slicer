@@ -53,21 +53,21 @@ if(BUILD_TESTING)
 
   # Remark: qSlicerModuleFactoryManager class is tested within Applications/SlicerQT/Testing
 
-  SIMPLE_TEST( qSlicerCoreApplicationTest1)
+  simple_test( qSlicerCoreApplicationTest1)
   set_property(TEST qSlicerCoreApplicationTest1 PROPERTY LABELS ${LIBRARY_NAME})
-  SIMPLE_TEST( qSlicerCoreIOManagerTest1 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/name.mrml)
+  simple_test( qSlicerCoreIOManagerTest1 ${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/name.mrml)
   set_property(TEST qSlicerCoreIOManagerTest1 PROPERTY LABELS ${LIBRARY_NAME})
-  SIMPLE_TEST( qSlicerAbstractCoreModuleTest1 )
-  SIMPLE_TEST( qSlicerLoadableModuleFactoryTest1 )
-  SIMPLE_TEST( qSlicerUtilsTest1 )
+  simple_test( qSlicerAbstractCoreModuleTest1 )
+  simple_test( qSlicerLoadableModuleFactoryTest1 )
+  simple_test( qSlicerUtilsTest1 )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-    SIMPLE_TEST( qSlicerExtensionsManagerModelTest )
-    SIMPLE_TEST( qSlicerPersistentCookieJarTest )
+    simple_test( qSlicerExtensionsManagerModelTest )
+    simple_test( qSlicerPersistentCookieJarTest )
   endif()
 
   if(Slicer_USE_PYTHONQT)
-    SIMPLE_TEST( qSlicerCorePythonManagerWithoutApplicationTest )
+    simple_test( qSlicerCorePythonManagerWithoutApplicationTest )
   endif()
 
 endif()

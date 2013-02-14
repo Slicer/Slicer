@@ -17,4 +17,4 @@ macro(TEST_FILE TEST_NAME FILENAME)
     )
 endmacro()
 
-SIMPLE_TEST( vtkDiffusionTensorMathematicsTest1 )
+simple_test( vtkDiffusionTensorMathematicsTest1 )

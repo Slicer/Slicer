@@ -42,21 +42,21 @@ target_link_libraries(${KIT}CxxTests  ${target_libraries})
 # Add Tests
 #
 
-SIMPLE_TEST( qSlicerAppAboutDialogTest1 )
+simple_test( qSlicerAppAboutDialogTest1 )
 if(Slicer_USE_PYTHONQT_WITH_TCL)
   if(Slicer_HAS_CONSOLE_IO_SUPPORT)
-    SIMPLE_TEST( qSlicerApplicationTpyclTest1 )
+    simple_test( qSlicerApplicationTpyclTest1 )
     set_tests_properties(qSlicerApplicationTpyclTest1 PROPERTIES PASS_REGULAR_EXPRESSION stringArray)
   endif()
   if(Slicer_BUILD_CLI_SUPPORT)
     if(Slicer_BUILD_EMSegment)
-      SIMPLE_TEST( qSlicerApplicationTpyclEMSegmentIntegrationTest $<TARGET_FILE:EMSegmentCommandLine>)
+      simple_test( qSlicerApplicationTpyclEMSegmentIntegrationTest $<TARGET_FILE:EMSegmentCommandLine>)
     endif()
   endif()
 endif()
-SIMPLE_TEST( qSlicerAppMainWindowCoreTest1 )
-SIMPLE_TEST( qSlicerAppMainWindowTest1 )
-SIMPLE_TEST( qSlicerModuleFactoryManagerTest1 )
+simple_test( qSlicerAppMainWindowCoreTest1 )
+simple_test( qSlicerAppMainWindowTest1 )
+simple_test( qSlicerModuleFactoryManagerTest1 )
 
 #
 # Application tests

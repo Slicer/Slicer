@@ -24,11 +24,11 @@ target_link_libraries(${KIT}CxxTests ${KIT})
 set(VOLUME_FILE "${MRMLCore_SOURCE_DIR}/Testing/TestData/fixed.nrrd")
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} ${VOLUME_FILE})
+  simple_test( ${testname} ${VOLUME_FILE})
 endforeach()
-SIMPLE_TEST( qSlicerVolumesIOOptionsWidgetTest1 )
-SIMPLE_TEST( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE})
-SIMPLE_TEST( vtkSlicerVolumesLogicTest1 ${VOLUME_FILE})
+simple_test( qSlicerVolumesIOOptionsWidgetTest1 )
+simple_test( qSlicerVolumesModuleWidgetTest1 ${VOLUME_FILE})
+simple_test( vtkSlicerVolumesLogicTest1 ${VOLUME_FILE})
   
 
 set(TEMP ${Slicer_BINARY_DIR}/Testing/Temporary)

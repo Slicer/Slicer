@@ -21,7 +21,7 @@ set_target_properties(${KIT}CxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 foreach(testname ${KIT_TEST_NAMES})
-  SIMPLE_TEST( ${testname} )
+  simple_test( ${testname} )
 endforeach()
-SIMPLE_TEST(qSlicerCamerasModuleWidgetTest1)
-SIMPLE_TEST(vtkSlicerCamerasModuleLogicCopyImportedCamerasTest)
+simple_test(qSlicerCamerasModuleWidgetTest1)
+simple_test(vtkSlicerCamerasModuleLogicCopyImportedCamerasTest)

@@ -9,5 +9,5 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 add_executable(${KIT}CxxTests ${Tests})
 target_link_libraries(${KIT}CxxTests ${lib_name} vtkSlicerColorsModuleLogic)
 
-SIMPLE_TEST( vtkSlicerColorLogicTest1 )
+simple_test( vtkSlicerColorLogicTest1 )
 

@@ -3,7 +3,7 @@
 
 #! Usage:
 #! \code
-#! SIMPLE_TEST(<testname> [argument1 ...])
+#! simple_test(<testname> [argument1 ...])
 #! \endcode
 #!
 #! This macro add a test using the complete add_test signature specifying target using
