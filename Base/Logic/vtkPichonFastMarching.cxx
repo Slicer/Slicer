@@ -1230,7 +1230,6 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
     int extent[6];
     label->GetExtent(extent);
 
-    int total = 0;
     for(int k=0;k<extent[5]+1;k++)
     {
       for(int j=0;j<extent[3]+1;j++)
