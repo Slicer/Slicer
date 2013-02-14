@@ -30,6 +30,10 @@ macro(slicerMacroBuildQtModule)
     ${ARGN}
     )
 
+  if(QTMODULE_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to slicerMacroBuildQtModule(): \"${QTMODULE_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   set(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
   message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME} [${MY_EXPORT_HEADER_PREFIX}Export.h]")
 

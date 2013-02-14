@@ -47,13 +47,14 @@ macro(slicerMacroBuildScriptedModule)
       message(STATUS "${curr_opt} = ${MY_SLICER_${curr_opt}}")
     endforeach()
   endif()
-  if(DEFINED MY_SLICER_UNPARSED_ARGUMENTS)
-    message(AUTHOR_WARNING "Unparsed argument(s) given [${MY_SLICER_UNPARSED_ARGUMENTS}]")
-  endif()
 
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
+  if(MY_SLICER_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to slicerMacroBuildScriptedModule(): \"${MY_SLICER_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   if(NOT DEFINED MY_SLICER_NAME)
     message(FATAL_ERROR "NAME is mandatory")
   endif()

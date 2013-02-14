@@ -29,6 +29,10 @@ macro(SlicerMacroBuildModuleWidgets)
     ${ARGN}
     )
 
+  if(MODULEWIDGETS_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to SlicerMacroBuildModuleWidgets(): \"${MODULEWIDGETS_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   list(APPEND MODULEWIDGETS_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_Base_INCLUDE_DIRS}

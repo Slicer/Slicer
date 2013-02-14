@@ -32,6 +32,10 @@ macro(SlicerMacroBuildModuleVTKLibrary)
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
+  if(MODULEVTKLIBRARY_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to SlicerMacroBuildModuleVTKLibrary(): \"${MODULEVTKLIBRARY_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   set(expected_nonempty_vars NAME EXPORT_DIRECTIVE SRCS)
   foreach(var ${expected_nonempty_vars})
     if("${MODULEVTKLIBRARY_${var}}" STREQUAL "")

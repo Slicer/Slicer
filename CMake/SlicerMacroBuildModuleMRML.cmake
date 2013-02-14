@@ -29,6 +29,10 @@ macro(SlicerMacroBuildModuleMRML)
     ${ARGN}
     )
 
+  if(MODULEMRML_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to SlicerMacroBuildModuleMRML(): \"${MODULEMRML_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   list(APPEND MODULEMRML_INCLUDE_DIRECTORIES
     ${Slicer_Libs_INCLUDE_DIRS}
     ${Slicer_ModuleMRML_INCLUDE_DIRS}

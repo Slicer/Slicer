@@ -32,6 +32,10 @@ macro(SlicerMacroBuildModuleQtLibrary)
   # --------------------------------------------------------------------------
   # Sanity checks
   # --------------------------------------------------------------------------
+  if(MODULEQTLIBRARY_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to SlicerMacroBuildModuleQtLibrary(): \"${MODULEQTLIBRARY_UNPARSED_ARGUMENTS}\"")
+  endif()
+
   set(expected_defined_vars NAME EXPORT_DIRECTIVE)
   foreach(var ${expected_defined_vars})
     if(NOT DEFINED MODULEQTLIBRARY_${var})
