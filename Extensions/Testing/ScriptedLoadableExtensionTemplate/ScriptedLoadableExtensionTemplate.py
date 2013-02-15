@@ -53,13 +53,21 @@ class ScriptedLoadableExtensionTemplateWidget:
   def setup(self):
     # Instantiate and connect widgets ...
 
+    #
+    # Reload and Test area
+    #
+    reloadCollapsibleButton = ctk.ctkCollapsibleButton()
+    reloadCollapsibleButton.text = "Reload && Test"
+    self.layout.addWidget(reloadCollapsibleButton)
+    reloadFormLayout = qt.QFormLayout(reloadCollapsibleButton)
+
     # reload button
     # (use this during development, but remove it when delivering
     #  your module to users)
     self.reloadButton = qt.QPushButton("Reload")
     self.reloadButton.toolTip = "Reload this module."
     self.reloadButton.name = "ScriptedLoadableExtensionTemplate Reload"
-    self.layout.addWidget(self.reloadButton)
+    reloadFormLayout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
 
     # reload and test button
@@ -67,31 +75,74 @@ class ScriptedLoadableExtensionTemplateWidget:
     #  your module to users)
     self.reloadAndTestButton = qt.QPushButton("Reload and Test")
     self.reloadAndTestButton.toolTip = "Reload this module and then run the self tests."
-    self.layout.addWidget(self.reloadAndTestButton)
+    reloadFormLayout.addWidget(self.reloadAndTestButton)
     self.reloadAndTestButton.connect('clicked()', self.onReloadAndTest)
 
-    # Collapsible button
-    dummyCollapsibleButton = ctk.ctkCollapsibleButton()
-    dummyCollapsibleButton.text = "A collapsible button"
-    self.layout.addWidget(dummyCollapsibleButton)
+    #
+    # Parameters Area
+    #
+    parametersCollapsibleButton = ctk.ctkCollapsibleButton()
+    parametersCollapsibleButton.text = "Parameters"
+    self.layout.addWidget(parametersCollapsibleButton)
 
     # Layout within the dummy collapsible button
-    dummyFormLayout = qt.QFormLayout(dummyCollapsibleButton)
+    parametersFormLayout = qt.QFormLayout(parametersCollapsibleButton)
 
-    # HelloWorld button
-    helloWorldButton = qt.QPushButton("Hello world")
-    helloWorldButton.toolTip = "Print 'Hello world' in standard ouput."
-    dummyFormLayout.addWidget(helloWorldButton)
-    helloWorldButton.connect('clicked(bool)', self.onHelloWorldButtonClicked)
+    #
+    # input volume selector
+    #
+    self.inputSelector = slicer.qMRMLNodeComboBox()
+    self.inputSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
+    self.inputSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
+    self.inputSelector.selectNodeUponCreation = True
+    self.inputSelector.addEnabled = False
+    self.inputSelector.removeEnabled = False
+    self.inputSelector.noneEnabled = False
+    self.inputSelector.showHidden = False
+    self.inputSelector.showChildNodeTypes = False
+    self.inputSelector.setMRMLScene( slicer.mrmlScene )
+    self.inputSelector.setToolTip( "Pick the input to the algorithm." )
+    parametersFormLayout.addRow("Input Volume: ", self.inputSelector)
+
+    #
+    # output volume selector
+    #
+    self.outputSelector = slicer.qMRMLNodeComboBox()
+    self.outputSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
+    self.outputSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
+    self.outputSelector.selectNodeUponCreation = False
+    self.outputSelector.addEnabled = True
+    self.outputSelector.removeEnabled = True
+    self.outputSelector.noneEnabled = False
+    self.outputSelector.showHidden = False
+    self.outputSelector.showChildNodeTypes = False
+    self.outputSelector.setMRMLScene( slicer.mrmlScene )
+    self.outputSelector.setToolTip( "Pick the output to the algorithm." )
+    parametersFormLayout.addRow("Output Volume: ", self.outputSelector)
+
+    #
+    # Apply Button
+    #
+    self.applyButton = qt.QPushButton("Apply")
+    self.applyButton.toolTip = "Run the algorithm."
+    self.applyButton.enabled = False
+    parametersFormLayout.addRow(self.applyButton)
+
+    # connections
+    self.applyButton.connect('clicked(bool)', self.onApplyButton)
+    self.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
+    self.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
 
     # Add vertical spacer
     self.layout.addStretch(1)
 
-    # Set local var as instance attribute
-    self.helloWorldButton = helloWorldButton
+  def onSelect(self):
+    self.applyButton.enabled = self.inputSelector.currentNode() and self.outputSelector.currentNode()
 
-  def onHelloWorldButtonClicked(self):
-    print "Hello World !"
+  def onApplyButton(self):
+    logic = ScriptedLoadableExtensionTemplateLogic()
+    print("Run the algorithm")
+    logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode())
 
   def onReload(self,moduleName="ScriptedLoadableExtensionTemplate"):
     """Generic reload method for any scripted module.
@@ -116,7 +167,7 @@ class ScriptedLoadableExtensionTemplateWidget:
     # rebuild the widget
     # - find and hide the existing widget
     # - create a new widget in the existing parent
-    parent = slicer.util.findChildren(name='%s Reload' % moduleName)[0].parent()
+    parent = slicer.util.findChildren(name='%s Reload' % moduleName)[0].parent().parent()
     for child in parent.children():
       try:
         child.hide()
@@ -170,6 +221,12 @@ class ScriptedLoadableExtensionTemplateLogic:
     if volumeNode.GetImageData() == None:
       print('no image data')
       return False
+    return True
+
+  def run(self,inputVolume,outputVolume):
+    """
+    Run the actual algorithm
+    """
     return True
 
 
