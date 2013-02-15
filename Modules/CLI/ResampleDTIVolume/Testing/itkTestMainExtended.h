@@ -54,6 +54,7 @@
 #include "itksys/SystemTools.hxx"
 #include "itkIntTypes.h"
 #include <itkTensorFractionalAnisotropyImageFilter.h>
+#include "itkPluginUtilities.h"
 
 #define ITK_TEST_DIMENSION_MAX 6
 
@@ -250,20 +251,6 @@ int main(int ac, char* av[] )
 
 // Regression Testing Code
 
-// What pixeltype is the image
-void GetImageType( const char* fileName,
-                   itk::ImageIOBase::IOPixelType & pixelType,
-                   itk::ImageIOBase::IOComponentType & componentType )
-{
-  typedef itk::Image<unsigned char, 3> ImageType;
-  itk::ImageFileReader<ImageType>::Pointer imageReader =
-    itk::ImageFileReader<ImageType>::New();
-  imageReader->SetFileName( fileName );
-  imageReader->UpdateOutputInformation();
-  pixelType = imageReader->GetImageIO()->GetPixelType();
-  componentType = imageReader->GetImageIO()->GetComponentType();
-}
-
 template <class ImageType>
 int ReadImages(  const char* baselineImageFilename,
                  const char* testImageFilename,
@@ -332,10 +319,10 @@ int RegressionTestImage(const char *testImageFilename,
 
   itk::ImageIOBase::IOPixelType     pixelTypeBaseline;
   itk::ImageIOBase::IOComponentType componentTypeBaseline;
-  GetImageType( baselineImageFilename, pixelTypeBaseline, componentTypeBaseline );
+  itk::GetImageType( baselineImageFilename, pixelTypeBaseline, componentTypeBaseline );
   itk::ImageIOBase::IOPixelType     pixelTypeTestImage;
   itk::ImageIOBase::IOComponentType componentTypeTestImage;
-  GetImageType( testImageFilename, pixelTypeTestImage, componentTypeTestImage );
+  itk::GetImageType( testImageFilename, pixelTypeTestImage, componentTypeTestImage );
   bool diffusion = false;
   // check if the voxels of the image are diffusion tensors
   if( ( pixelTypeBaseline == itk::ImageIOBase::SYMMETRICSECONDRANKTENSOR
