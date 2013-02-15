@@ -1,18 +1,30 @@
 /*=========================================================================
-
-  Adapted from itkTestMain.h available in ITK: www.itk.org
-
-  Portion of this code are covered under the ITK Copyright
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-  Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Copyright Insight Software Consortium
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
+/*=========================================================================
+ *
+ *  Portions of this file are subject to the VTK Toolkit Version 3 copyright.
+ *
+ *  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+ *
+ *  For complete copyright, license and disclaimer of warranty information
+ *  please refer to the NOTICE file at the top of the ITK source tree.
+ *
+ *=========================================================================*/
 #ifndef __itkTestMainDTI_h
 #define __itkTestMainDTI_h
 
@@ -40,6 +52,7 @@
 #include "itkDiffusionTensor3D.h"
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
+#include "itkIntTypes.h"
 #include <itkTensorFractionalAnisotropyImageFilter.h>
 
 #define ITK_TEST_DIMENSION_MAX 6
@@ -51,8 +64,11 @@ std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
   extern int test(int, char * [] ); \
   StringToTestFunctionMap[#test] = test
 
-int RegressionTestImage(const char *testImageFilename, const char *baselineImageFilename, int reportErrors,
-                        double intensityTolerance = 2.0, unsigned int numberOfPixelsTolerance = 0,
+int RegressionTestImage(const char *testImageFilename, 
+                        const char *baselineImageFilename,
+                        int reportErrors,
+                        double intensityTolerance = 2.0, 
+                        ::itk::SizeValueType numberOfPixelsTolerance = 0,
                         unsigned int radiusTolerance = 0);
 
 std::map<std::string, int> RegressionTestBaselines(char *);
@@ -305,7 +321,7 @@ int RegressionTestImage(const char *testImageFilename,
                         const char *baselineImageFilename,
                         int reportErrors,
                         double intensityTolerance,
-                        unsigned int numberOfPixelsTolerance,
+                        ::itk::SizeValueType  numberOfPixelsTolerance,
                         unsigned int radiusTolerance )
 {
   // Use the factory mechanism to read the test and baseline files and convert them to double
@@ -361,6 +377,8 @@ int RegressionTestImage(const char *testImageFilename,
     diff->SetDifferenceThreshold( intensityTolerance );
     diff->SetToleranceRadius( radiusTolerance );
     diff->UpdateLargestPossibleRegion();
+
+    itk::SizeValueType status = itk::NumericTraits<itk::SizeValueType>::Zero;
     status = diff->GetNumberOfPixelsWithDifferences();
 
     }
@@ -412,7 +430,8 @@ int RegressionTestImage(const char *testImageFilename,
     OutputType::IndexType index; index.Fill(0);
     for( unsigned int i = 2; i < ITK_TEST_DIMENSION_MAX; i++ )
       {
-      index[i] = size[i] / 2; // NOTE: Integer Divide used to get approximately the center slice
+      index[i] = size[i] / 2; // NOTE: Integer Divide used to get approximately
+                              // the center slice
       size[i] = 0;
       }
 
@@ -436,7 +455,7 @@ int RegressionTestImage(const char *testImageFilename,
     std::cout << status;
     std::cout <<  "</DartMeasurement>" << std::endl;
 
-    ::std::ostringstream diffName;
+    std::ostringstream diffName;
     diffName << testImageFilename << ".diff.png";
     try
       {
@@ -498,7 +517,7 @@ int RegressionTestImage(const char *testImageFilename,
       baselineFA = baselineFAfilter->GetOutput();
       }
 
-    ::std::ostringstream baseName;
+    std::ostringstream baseName;
     if( !diffusion )
       {
       baseName << testImageFilename << ".base.png";
@@ -596,13 +615,13 @@ int RegressionTestImage(const char *testImageFilename,
     std::cout << testName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
     }
-
   return (status > numberOfPixelsTolerance) ? 1 : 0;
 }
 
 //
 // Generate all of the possible baselines
-// The possible baselines are generated fromn the baselineFilename using the following algorithm:
+// The possible baselines are generated fromn the baselineFilename using the
+// following algorithm:
 // 1) strip the suffix
 // 2) append a digit .x
 // 3) append the original suffix.
@@ -625,7 +644,7 @@ std::map<std::string, int> RegressionTestBaselines(char *baselineFilename)
     }
   while( ++x )
     {
-    ::std::ostringstream filename;
+    std::ostringstream filename;
     filename << originalBaseline << "." << x << suffix;
     std::ifstream filestream(filename.str().c_str() );
     if( !filestream )
