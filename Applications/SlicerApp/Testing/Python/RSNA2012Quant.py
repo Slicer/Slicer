@@ -10,7 +10,7 @@ class RSNA2012Quant:
   def __init__(self, parent):
     parent.title = "RSNA2012Quant" # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
-    parent.dependencies = []
+    parent.dependencies = ["ChangeTracker"]
     parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module was developed as a self test to perform the operations needed for the RSNA 2012 Quantitative Imaging Tutorial
