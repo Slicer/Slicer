@@ -244,6 +244,32 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRML()
   this->setEnabled(d->VolumeNode != 0);
   if (!d->VolumeNode)
     {
+    double dimensions[3] = {0.,0.,0.};
+    d->ImageDimensionsWidget->setCoordinates(dimensions);
+  
+    double spacing[3] = {1.,1.,1.};
+    d->ImageSpacingWidget->setCoordinates(spacing);
+  
+    double origin[3] = {0.,0.,0.};
+    d->ImageOriginWidget->setCoordinates(origin);
+  
+    d->MinScalarDoubleSpinBox->setRange(0., 0.);
+    d->MaxScalarDoubleSpinBox->setRange(0., 0.);
+    d->MinScalarDoubleSpinBox->setValue(0.);
+    d->MaxScalarDoubleSpinBox->setValue(0.);
+
+    d->ScanOrderComboBox->setCurrentIndex(-1);
+
+    d->NumberOfScalarsSpinBox->setValue(1);
+  
+    d->ScalarTypeComboBox->setCurrentIndex(-1);
+    
+    d->FileNameLineEdit->setText("");
+  
+    d->LabelMapCheckBox->setChecked(false);
+
+    d->WindowLevelPresetsListWidget->clear();
+
     return;
     }
   vtkImageData* image = d->VolumeNode->GetImageData();
