@@ -173,6 +173,8 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setMRMLScene(vtkMRMLScen
 
   qvtkReconnect(this->logic(), scene, vtkMRMLScene::EndImportEvent,
                 this, SLOT(onSceneImportedEvent()));
+  qvtkReconnect(this->logic(), scene, vtkMRMLScene::EndRestoreEvent,
+                this, SLOT(onSceneRestoredEvent()));
 
   // find parameters node or create it if there is no one in the scene
   if (scene && this->TractographyInteractiveSeedingNode == 0)
@@ -191,6 +193,12 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setMRMLScene(vtkMRMLScen
 
 //-----------------------------------------------------------------------------
 void qSlicerTractographyInteractiveSeedingModuleWidget::onSceneImportedEvent()
+{
+  this->onEnter();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::onSceneRestoredEvent()
 {
   this->onEnter();
 }

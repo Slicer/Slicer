@@ -598,7 +598,7 @@ void vtkSlicerTractographyInteractiveSeedingLogic::ProcessMRMLNodesEvents(vtkObj
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerTractographyInteractiveSeedingLogic::OnMRMLSceneEndImport()
+void vtkSlicerTractographyInteractiveSeedingLogic::SelectFirstParameterNode()
 {
   // if we have a parameter node select it
   vtkMRMLTractographyInteractiveSeedingNode *tnode = 0;
@@ -607,10 +607,26 @@ void vtkSlicerTractographyInteractiveSeedingLogic::OnMRMLSceneEndImport()
     {
     tnode = vtkMRMLTractographyInteractiveSeedingNode::SafeDownCast(node);
     vtkSetAndObserveMRMLNodeMacro(this->TractographyInteractiveSeedingNode, tnode);
-    this->RemoveMRMLNodesObservers();
-    this->AddMRMLNodesObservers();
+    //this->RemoveMRMLNodesObservers();
+    //this->AddMRMLNodesObservers();
+    // trigger an update to the tracts if seeding is enabled
+    // (this method calls remove and add mrml nodes observers)
+    this->OnMRMLNodeModified(node);
     }
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyInteractiveSeedingLogic::OnMRMLSceneEndImport()
+{
+  this->SelectFirstParameterNode();
   this->InvokeEvent(vtkMRMLScene::EndImportEvent);
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerTractographyInteractiveSeedingLogic::OnMRMLSceneEndRestore()
+{
+  this->SelectFirstParameterNode();
+  this->InvokeEvent(vtkMRMLScene::EndRestoreEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -678,13 +694,14 @@ void vtkSlicerTractographyInteractiveSeedingLogic::RegisterNodes()
 }
 
 //---------------------------------------------------------------------------
-// Set the internal mrml scene adn observe events on it
+// Set the internal mrml scene and observe events on it
 //---------------------------------------------------------------------------
 void vtkSlicerTractographyInteractiveSeedingLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 

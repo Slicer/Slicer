@@ -50,6 +50,8 @@ public slots:
 
   /// Process loaded scene
   void onSceneImportedEvent();
+  /// Process restored scene
+  void onSceneRestoredEvent();
 
   /// Set current parameter node
   void setTractographyInteractiveSeedingNode(vtkMRMLNode *node);

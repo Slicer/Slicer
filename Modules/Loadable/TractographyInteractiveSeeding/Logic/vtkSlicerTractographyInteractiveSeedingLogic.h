@@ -110,7 +110,14 @@ protected:
   // Initialize listening to MRML events
   virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
 
+  // set and observe the 0th parameter node in the scene, looking for it by
+  // class vtkMRMLTractographyInteractiveSeedingNode. Called when the scene
+  // has been updated via an import or restore.
+  void SelectFirstParameterNode();
+
+  /// Respond to MRML events
   virtual void OnMRMLSceneEndImport();
+  virtual void OnMRMLSceneEndRestore();
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
   virtual void OnMRMLNodeModified(vtkMRMLNode* node);
