@@ -132,7 +132,7 @@ class ScriptedLoadableExtensionTemplateWidget:
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
 
-  def onReloadAndTest(self,moduleName="ScriptedExample"):
+  def onReloadAndTest(self,moduleName="ScriptedLoadableExtensionTemplate"):
     try:
       self.onReload()
       evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
