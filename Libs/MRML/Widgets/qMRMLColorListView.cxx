@@ -105,6 +105,7 @@ void qMRMLColorListView::setMRMLColorNode(vtkMRMLColorNode* node)
   Q_ASSERT(mrmlModel);
   mrmlModel->setMRMLColorNode(node);
   this->sortFilterProxyModel()->invalidate();
+  this->setCurrentIndex(this->model()->index(-1,-1));
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ bool qMRMLColorListView::showOnlyNamedColors()const
 //------------------------------------------------------------------------------
 void qMRMLColorListView::currentChanged(const QModelIndex& current, const QModelIndex &previous)
 {
-  if (current != previous)
+  if (current.isValid())
     {
     QModelIndex colorIndex = this->sortFilterProxyModel()->mapToSource(current);
     int colorEntry = this->colorModel()->colorFromIndex(colorIndex);
