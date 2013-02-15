@@ -38,7 +38,6 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "itkNumericTraits.h"
 #include "itkMultiThreader.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -53,6 +52,7 @@
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
 #include "itkIntTypes.h"
+#include "itkFloatingPointExceptions.h"
 #include <itkTensorFractionalAnisotropyImageFilter.h>
 #include "itkPluginUtilities.h"
 
@@ -91,6 +91,8 @@ void PrintAvailableTests()
 
 int main(int ac, char* av[] )
 {
+  itk::FloatingPointExceptions::Enable();
+
   double       intensityTolerance  = 2.0;
   unsigned int numberOfPixelsTolerance = 0;
   unsigned int radiusTolerance = 0;
