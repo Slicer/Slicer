@@ -25,7 +25,7 @@ foreach(module ${SCRIPTED_MODULES})
   if(${_module_disabled} STREQUAL "-1")
     slicerMacroBuildScriptedModule(
       NAME "${module}"
-      SCRIPTS "${module}.py"
+      SCRIPTS ${module}.py
       )
   endif()
 endforeach()
