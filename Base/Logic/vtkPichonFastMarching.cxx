@@ -1220,7 +1220,7 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
   // here the assumption is that the label image is always short pixel type
   // The filter is to be used from Editor effects, and the label is always
   // short, so for this use case it's a valid assumption.
-
+  int nSeeds = 0;
   int scalarType = label->GetScalarType();
   if(scalarType == VTK_SHORT || scalarType == VTK_UNSIGNED_SHORT)
   {
@@ -1239,6 +1239,7 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
           if(bufferPointer[k*inc[2]+j*inc[1]+i])
           {
             this->addSeedIJK(i,j,k);
+            nSeeds++;
           }
         }
       }
@@ -1250,7 +1251,7 @@ int vtkPichonFastMarching::addSeedsFromImage(vtkImageData* label)
     return 0;
   }
 
-  return 1;
+  return nSeeds;
 }
 
 void vtkPichonFastMarching::unInit( void )
