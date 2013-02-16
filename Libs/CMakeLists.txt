@@ -3,9 +3,6 @@ project(SlicerLibs)
 # Enable this option to avoid unnecessary re-compilation associated with command line module
 set(GENERATECLP_USE_MD5 ON)
 
-#set(IGT_USE_IGSTK ${Slicer_USE_IGSTK})
-#set(IGT_USE_NAVITRACK ${Slicer_USE_NAVITRACK})
-
 # --------------------------------------------------------------------------
 #                      ----] W A R N I N G [----
 # --------------------------------------------------------------------------
@@ -43,7 +40,6 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 list(APPEND dirs
   MGHImageIO
-#  IGT
   MRML/Widgets
   )
 
