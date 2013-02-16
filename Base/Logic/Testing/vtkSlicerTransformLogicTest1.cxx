@@ -12,15 +12,19 @@
 // Logic includes
 #include "vtkSlicerTransformLogic.h"
 
-// MRML includes
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
 
-// VTK includes
-
-// STD includes
-
-
+//-----------------------------------------------------------------------------
 int vtkSlicerTransformLogicTest1(int argc, char * argv [])
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   if(argc < 2)
     {
     std::cerr << "Missing transform file name." << std::endl;

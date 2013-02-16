@@ -1,9 +1,21 @@
 
 #include <vtkITKArchetypeImageSeriesVectorReaderFile.h>
+
+// VTK includes
 #include <vtkImageData.h>
+
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
 
 int main(int argc, char *argv[])
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   if (argc < 2)
     {
     std::cout << "ERROR: need to specify a file to try reading on the command line." << std::endl;

@@ -30,14 +30,22 @@
 #include "qSlicerVolumesModule.h"
 #include "vtkSlicerVolumesLogic.h"
 
-// MRML includes
-
 // VTK includes
 #include <vtkNew.h>
+
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
 
 //-----------------------------------------------------------------------------
 int qSlicerVolumesModuleWidgetTest1( int argc, char * argv[] )
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   qSlicerApplication app(argc, argv);
 
   if (argc < 2)

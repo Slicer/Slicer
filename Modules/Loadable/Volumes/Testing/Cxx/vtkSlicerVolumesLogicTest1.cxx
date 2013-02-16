@@ -30,6 +30,12 @@
 #include <vtkImageData.h>
 #include <vtkNew.h>
 
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
+
 //-----------------------------------------------------------------------------
 bool isImageDataValid(vtkImageData* imageData)
 {
@@ -55,6 +61,10 @@ bool isImageDataValid(vtkImageData* imageData)
 //-----------------------------------------------------------------------------
 int vtkSlicerVolumesLogicTest1( int argc, char * argv[] )
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerVolumesLogic> logic;
 

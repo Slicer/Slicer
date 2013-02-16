@@ -36,8 +36,13 @@
 #include <vtkSmartPointer.h>
 #include <vtkTimerLog.h>
 
-// STD includes
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
 
+//-----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, vtkMRMLScene* scene)
 {
   vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> displayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
@@ -74,8 +79,13 @@ vtkMRMLScalarVolumeNode* vtkMRMLSliceLogicTest5_loadVolume(const char* volume, v
   return scalarNode.GetPointer();
 }
 
+//-----------------------------------------------------------------------------
 int vtkMRMLSliceLogicTest5(int argc, char * argv [] )
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   if( argc < 2 )
     {
     std::cerr << "Error: missing arguments" << std::endl;

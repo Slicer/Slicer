@@ -33,9 +33,19 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+// ITK includes
+#include <itkConfigure.h>
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
+
 //-----------------------------------------------------------------------------
 int qSlicerDTISliceDisplayWidgetTest2( int argc, char * argv[] )
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   QApplication app(argc, argv);
 
   if (argc < 2)

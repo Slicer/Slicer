@@ -23,6 +23,7 @@ endif()
 if(${ITK_VERSION_MAJOR} GREATER 3)
   set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
   list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
+  list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
 endif()
 include(${ITK_USE_FILE})
 
