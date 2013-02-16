@@ -51,7 +51,7 @@
 #include "itkIntTypes.h"
 #include "itkFloatingPointExceptions.h"
 #if ITK_VERSION_MAJOR > 3
-# include "itkFactoryRegistration.h"
+#  include <itkFactoryRegistration.h>
 #endif
 
 #define ITK_TEST_DIMENSION_MAX 6
