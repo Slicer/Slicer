@@ -38,11 +38,11 @@ slicerMacroBuildScriptedModule(
 #-----------------------------------------------------------------------------
 if(BUILD_TESTING)
 
-  # this will regiester the unittest subclass in the main script
-  # as a ctest (note that it is also usable as a runtime test).
+  # Register the unittest subclass in the main script as a ctest.
+  # Note that the test will also be available at runtime.
   slicer_add_python_unittest(SCRIPT ScriptedLoadableExtensionTemplate.py)
 
-  # additional build-time testing goes in here
+  # Additional build-time testing
   add_subdirectory(Testing)
 endif()
 
