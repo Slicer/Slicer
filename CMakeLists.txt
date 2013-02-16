@@ -257,11 +257,6 @@ CMAKE_DEPENDENT_OPTION(Slicer_USE_SimpleITK "Build Slicer with SimpleITK support
 # The following option has been added for conveniency so that "extension-like"
 # module can be enabled/disabled at the superbuild level.
 CMAKE_DEPENDENT_OPTION(
-  Slicer_BUILD_ChangeTrackerPy "Build ChangeTrackerPy." ON
-  "Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_QTSCRIPTEDMODULES" OFF)
-mark_as_advanced(Slicer_BUILD_ChangeTrackerPy)
-
-CMAKE_DEPENDENT_OPTION(
   Slicer_BUILD_OpenIGTLinkIF "Build OpenIGTLinkIF." ON
   "Slicer_BUILD_QTLOADABLEMODULES AND Slicer_USE_OpenIGTLink" OFF)
 mark_as_advanced(CLEAR Slicer_BUILD_OpenIGTLinkIF)

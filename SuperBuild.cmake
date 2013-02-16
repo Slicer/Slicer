@@ -115,10 +115,6 @@ if(Slicer_BUILD_BRAINSTOOLS)
     list(APPEND Slicer_DEPENDENCIES BRAINSTools)
 endif()
 
-if(Slicer_BUILD_ChangeTrackerPy)
-  list(APPEND Slicer_DEPENDENCIES ChangeTrackerPy)
-endif()
-
 if(Slicer_BUILD_EMSegment)
   list(APPEND Slicer_DEPENDENCIES EMSegment)
 endif()
@@ -209,7 +205,6 @@ set(ep_cmake_boolean_args
   Slicer_USE_QtTesting
   Slicer_USE_SimpleITK
   Slicer_BUILD_BRAINSTOOLS
-  Slicer_BUILD_ChangeTrackerPy
   Slicer_BUILD_EMSegment
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
@@ -302,10 +297,6 @@ endif()
 
 if(Slicer_BUILD_BRAINSTOOLS)
   list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
-endif()
-
-if(Slicer_BUILD_ChangeTrackerPy)
-  list(APPEND ep_superbuild_extra_args -DChangeTrackerPy_SOURCE_DIR:PATH=${ChangeTrackerPy_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_MultiVolumeExplorer)
