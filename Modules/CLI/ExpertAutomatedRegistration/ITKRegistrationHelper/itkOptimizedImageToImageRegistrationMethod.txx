@@ -257,15 +257,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
   metric->SetFixedImage( fixedImage );
   metric->SetMovingImage( movingImage );
 
-#ifdef ITK_USE_REVIEW
-#ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
   metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-#else
-  itkWarningMacro(<< "ITK not compiled with ITK_USE_OPTIMIZED_REGISTRATION_METHODS. Performance will suffer.");
-#endif
-#else
-  itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
-#endif
 
   if( this->GetUseRegionOfInterest() ||
       this->GetSampleFromOverlap() ||
@@ -349,15 +341,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
       samplingRate = 1;
       itkWarningMacro(<< "Adjusting the number of samples due to restrictive threshold/overlap criteria.");
       this->SetNumberOfSamples( count );
-#ifdef ITK_USE_REVIEW
-#ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
       metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-#else
-      itkWarningMacro(<< "ITK not compiled with ITK_USE_OPTIMIZED_REGISTRATION_METHODS. Performance will suffer.");
-#endif
-#else
-      itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
-#endif
       }
     double step = 0;
     typename MetricType::FixedImageIndexContainer indexList;
@@ -412,15 +396,7 @@ OptimizedImageToImageRegistrationMethod<TImage>
       itkWarningMacro(<< "Full set of samples not collected. Collected "
                       << indexList.size() << " of " << m_NumberOfSamples );
       this->SetNumberOfSamples( indexList.size() );
-#ifdef ITK_USE_REVIEW
-#ifdef ITK_USE_OPTIMIZED_REGISTRATION_METHODS
       metric->SetNumberOfSpatialSamples( m_NumberOfSamples );
-#else
-      itkWarningMacro(<< "ITK not compiled with ITK_USE_OPTIMIZED_REGISTRATION_METHODS. Performance will suffer.");
-#endif
-#else
-      itkWarningMacro(<< "ITK not compiled with ITK_USE_REVIEW. Performance will suffer.");
-#endif
       }
     std::cout << "Passing index list to metric..." << std::endl;
     std::cout << "  List size = " << indexList.size() << std::endl;
