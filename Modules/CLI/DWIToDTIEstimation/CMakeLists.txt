@@ -6,9 +6,7 @@ set(MODULE_NAME DWIToDTIEstimation) # Do not use 'project()'
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRMLCore vtkTeem SlicerBaseLogic
-  LINK_DIRECTORIES
-    ${vtkTeem_LIB_DIR}
+  TARGET_LIBRARIES MRMLCore vtkTeem
   INCLUDE_DIRECTORIES
     ${vtkITK_INCLUDE_DIRS}
     ${MRMLCore_INCLUDE_DIRS}

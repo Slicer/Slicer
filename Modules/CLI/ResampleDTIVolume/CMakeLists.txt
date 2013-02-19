@@ -12,7 +12,6 @@ SEMMacroBuildCLI(
     dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.h
     dtiprocessFiles/itkHFieldToDeformationFieldImageFilter.txx
   TARGET_LIBRARIES ModuleDescriptionParser ${ITK_LIBRARIES}
-  LINK_DIRECTORIES ${ModuleDescriptionParser_BINARY_DIR}
   INCLUDE_DIRECTORIES
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
   )

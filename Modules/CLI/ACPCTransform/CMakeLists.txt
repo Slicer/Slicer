@@ -14,9 +14,6 @@ SEMMacroBuildCLI(
     ${MRMLCore_INCLUDE_DIRS}
     ${vtkITK_INCLUDE_DIRS}
     ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
-  LINK_DIRECTORIES
-    ${ModuleDescriptionParser_BINARY_DIR}
-    ${vtkTeem_LIB_DIR}
   )
 
 #-----------------------------------------------------------------------------
