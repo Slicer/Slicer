@@ -105,6 +105,24 @@ set(Slicer_ModuleMRML_INCLUDE_DIRS "@Slicer_ModuleMRML_INCLUDE_DIRS_CONFIG@"
 set(Slicer_ModuleWidgets_INCLUDE_DIRS "@Slicer_ModuleWidgets_INCLUDE_DIRS_CONFIG@"
   CACHE INTERNAL "Slicer Module widgets includes" FORCE)
 
+set(FreeSurfer_INCLUDE_DIRS "@FreeSurfer_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "FreeSurfer includes" FORCE)
+
+set(ITKFactoryRegistration_INCLUDE_DIRS "@ITKFactoryRegistration_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "ITKFactoryRegistration includes" FORCE)
+
+set(MRMLCore_INCLUDE_DIRS "@MRMLCore_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "MRMLCore includes" FORCE)
+
+set(RemoteIO_INCLUDE_DIRS "@RemoteIO_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "RemoteIO includes" FORCE)
+
+set(vtkITK_INCLUDE_DIRS "@vtkITK_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "vtkITK includes" FORCE)
+
+set(vtkTeem_INCLUDE_DIRS "@vtkTeem_INCLUDE_DIRS_CONFIG@"
+  CACHE INTERNAL "vtkTeem includes" FORCE)
+
 # The location of the UseSlicer.cmake file.
 set(Slicer_USE_FILE "@Slicer_USE_FILE_CONFIG@")
 
