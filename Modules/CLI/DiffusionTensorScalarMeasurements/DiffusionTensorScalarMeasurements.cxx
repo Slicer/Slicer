@@ -1,8 +1,11 @@
-#include "vtkDiffusionTensorMathematics.h"
 
-#include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
-#include "vtkImageData.h"
+// vtkTeem includes
+#include <vtkDiffusionTensorMathematics.h>
+#include <vtkNRRDReader.h>
+#include <vtkNRRDWriter.h>
+
+// VTK includes
+#include <vtkImageData.h>
 
 #if ITK_VERSION_MAJOR >= 4
 #endif
