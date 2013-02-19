@@ -8,7 +8,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test00)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest00.nhdr
   --outputtransform ${TEMP}/BSplineDeformableRegistrationTest00Transform.txt
@@ -40,7 +40,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}Test01)
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest01.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest01Transform.txt
@@ -57,7 +57,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}Test02)
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest02.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest02Transform.txt
@@ -74,7 +74,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}Test03)
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest03.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest03Transform.txt
@@ -91,7 +91,7 @@ if(SLICER_BRAINWEB_DATA_ROOT)
   set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}Test04)
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     ModuleEntryPoint
     --resampledmovingfilename  ${TEMP}/BSplineDeformableRegistrationTest04.nhdr
     --outputtransform ${TEMP}/BSplineDeformableRegistrationTest04Transform.txt

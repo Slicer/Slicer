@@ -9,7 +9,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/${CLP}Test.nhdr
   ${TEMP}/${CLP}Test.nhdr
   ModuleEntryPoint
@@ -18,7 +18,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 function(add_module_test pixeltype)
   set(testname ${CLP}Test_${pixeltype})
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     --compare ${BASELINE}/${CLP}Test_${pixeltype}.mha
     ${TEMP}/${CLP}Test_${pixeltype}.mha
     ModuleEntryPoint

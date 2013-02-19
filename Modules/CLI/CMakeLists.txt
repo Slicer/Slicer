@@ -107,9 +107,9 @@ if(BUILD_TESTING)
     DOC "Directory with data taken from http://public.kitware.com/pub/itk/Data/BrainWeb/")
   mark_as_advanced(SLICER_BRAINWEB_DATA_ROOT)
 
-  set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
+  set(SEM_LAUNCH_COMMAND ${Slicer_LAUNCH_COMMAND})
   if(USE_VALGRIND)
-    set(Launcher_Command "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
+    set(SEM_LAUNCH_COMMAND "${Slicer_BINARY_DIR}/Scripts/runValgrindForOneModule.sh")
   endif()
 
   set(BASELINE "${Slicer_SOURCE_DIR}/Testing/Data/Baseline/CLI")
@@ -138,7 +138,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${Slicer_INSTALL_CLIMODULES_BIN_DIR} CACHE PATH "" FORCE)
 
   if(BUILD_TESTING)
-    set(LAUNCH_EXE ${Slicer_LAUNCH_COMMAND})
+    set(LAUNCH_EXE ${SEM_LAUNCH_COMMAND})
   endif()
 
   set(USE_BRAINSFit                       ON CACHE BOOL "Build BRAINSFit"       )

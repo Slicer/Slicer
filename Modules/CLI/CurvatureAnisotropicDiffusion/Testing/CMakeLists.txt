@@ -8,7 +8,7 @@
 #target_link_libraries(${CLP}Test ${CLP}Lib)
 
 #set(testname ${CLP}Test)
-#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+#add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/${CLP}Test.nhdr
 #            ${TEMP}/${CLP}Test.nhdr
 #    ModuleEntryPoint

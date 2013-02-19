@@ -10,7 +10,7 @@ target_link_libraries( SFLSRobustStat3DTestConsole ${CLP}Lib )
 set_target_properties( SFLSRobustStat3DTestConsole PROPERTIES LABELS ${CLP} )
 
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:SFLSRobustStat3DTestConsole>
     ${INPUT}/grayscale.nrrd
     ${INPUT}/grayscale-label.nrrd
     ${TEMP}/rss-test-seg.nrrd 50 0.1 0.2)

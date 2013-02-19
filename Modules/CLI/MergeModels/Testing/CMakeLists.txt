@@ -10,7 +10,7 @@ target_link_libraries(${CLP}Test ${CLP}Lib ${ITK_LIBRARIES})
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
     ${MRML_TEST_DATA}/sphere.vtk
     ${MRML_TEST_DATA}/cube.vtk
@@ -19,7 +19,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}TestVtp)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
     ${MRML_TEST_DATA}/sphere.vtp
     ${MRML_TEST_DATA}/cube.vtp
@@ -29,7 +29,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 # add a test that compares the outline to a baseline .vtp
 set(testname ${CLP}TestCompare)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} ${CMAKE_COMMAND}
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} ${CMAKE_COMMAND}
   -Dtest_cmd=$<TARGET_FILE:${CLP}Test>
   -Dtest_name=ModuleEntryPoint
   -Dmodel1=${MRML_TEST_DATA}/sphere.vtp

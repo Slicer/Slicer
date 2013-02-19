@@ -8,12 +8,12 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test000)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint  --help
   )
 
 set(testname ${CLP}Test00)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest00.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest00Transform.txt
@@ -28,7 +28,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test01)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest01.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest01Transform.txt
@@ -42,7 +42,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test02)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/AffineRegistrationTest02.nhdr
   --outputtransform ${TEMP}/AffineRegistrationTest02Transform.txt

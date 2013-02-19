@@ -9,13 +9,13 @@ target_link_libraries(${CLP}Test ${CLP}Lib)
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 set(testname ${CLP}Test000)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint --help
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test00)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest00.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest00Transform.txt
@@ -31,7 +31,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test01)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest01.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest01Transform.txt
@@ -46,7 +46,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test02)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest02.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest02Transform.txt
@@ -61,7 +61,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test03)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest03.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest03Transform.txt
@@ -76,7 +76,7 @@ add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 set(testname ${CLP}Test04)
-add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   ModuleEntryPoint
   --resampledmovingfilename  ${TEMP}/RigidRegistrationTest04.nhdr
   --outputtransform ${TEMP}/RigidRegistrationTest04Transform.txt
@@ -97,7 +97,7 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 # corner (as compared to the transform passed with --initialtransform) exceeds
 # 0.1
 #set(testname ${CLP}Test02)
-#add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+#add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
 #  --compare ${BASELINE}/RigidRegistrationTest02.nrrd
 #   ${TEMP}/RigidRegistrationTest02.nrrd
 #  RigidRegistrationTest

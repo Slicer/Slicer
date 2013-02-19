@@ -31,7 +31,7 @@ if(BUILD_TESTING)
   #set_target_properties(ImageCompare PROPERTIES LABELS ${CLP})
 
   set(testname ${CLP}_N3_Brain2D_1)
-  add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
     --inputImage
     ${TEST_DATA_DIR}/t81slice.nii.gz
     --inputMask
@@ -59,7 +59,7 @@ if(BUILD_TESTING)
   #set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}_N3_Brain2D_2)
-  add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
     --inputImage
     ${TEST_DATA_DIR}/he3volume.nii.gz
     --inputMask
@@ -86,7 +86,7 @@ if(BUILD_TESTING)
   #set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
   set(testname ${CLP}_N4_Brain2D)
-  add_test(NAME ${testname} COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}>
     --inputImage
     ${TEST_DATA_DIR}/t81slice.nii.gz
     --inputMask

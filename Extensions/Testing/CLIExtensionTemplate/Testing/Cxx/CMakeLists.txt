@@ -1,6 +1,5 @@
 
 #-----------------------------------------------------------------------------
-set(Launcher_Command ${Slicer_LAUNCH_COMMAND})
 set(BASELINE ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Baseline)
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../Data/Input)
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
@@ -14,7 +13,7 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 #-----------------------------------------------------------------------------
 set(testname ${CLP}Test)
-ExternalData_add_test(${CLP}Data NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+ExternalData_add_test(${CLP}Data NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare DATA{${BASELINE}/${CLP}Test.nhdr,${CLP}Test.raw}
   ${TEMP}/${CLP}Test.nhdr
   ModuleEntryPoint

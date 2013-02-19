@@ -10,7 +10,7 @@ set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 
 function(add_module_test orientation)
   set(testname ${CLP}Test${orientation})
-  add_test(NAME ${testname} COMMAND ${Launcher_Command} $<TARGET_FILE:${CLP}Test>
+  add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
     --compare ${BASELINE}/${testname}.nrrd
     ${TEMP}/${testname}.nrrd
     ModuleEntryPoint
