@@ -6,7 +6,7 @@ set(MODULE_NAME ProbeVolumeWithModel) # Do not use 'project()'
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
-  TARGET_LIBRARIES MRMLCore vtkTeem SlicerBaseLogic
+  TARGET_LIBRARIES MRMLCore vtkTeem
   INCLUDE_DIRECTORIES
     ${vtkITK_INCLUDE_DIRS}
     ${MRMLCore_INCLUDE_DIRS}

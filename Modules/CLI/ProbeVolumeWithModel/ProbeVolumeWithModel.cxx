@@ -1,14 +1,18 @@
-#include "vtkNRRDReader.h"
-#include "vtkImageData.h"
+
 #include "ProbeVolumeWithModelCLP.h"
 
-#include "vtkPolyData.h"
-#include "vtkXMLPolyDataReader.h"
-#include "vtkPolyDataReader.h"
-#include "vtkTransform.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkProbeFilter.h"
-#include "vtkXMLPolyDataWriter.h"
+// vtkTeem includes
+#include <vtkNRRDReader.h>
+
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataReader.h>
+#include <vtkProbeFilter.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkXMLPolyDataReader.h>
+#include <vtkXMLPolyDataWriter.h>
 
 int main( int argc, char * argv[] )
 {
