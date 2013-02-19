@@ -938,6 +938,13 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
   bool showWidget = true;
   bool inViewport = false;
 
+  // allow annotations to appear only in designated viewers
+  vtkMRMLDisplayNode *displayNode = node->GetDisplayNode();
+  if (displayNode && !displayNode->IsDisplayableInView(sliceNode->GetID()))
+    {
+    return 0;
+    }
+
   // down cast the node as a controlpoints node to get the coordinates
   vtkMRMLAnnotationControlPointsNode * controlPointsNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(node);
 
