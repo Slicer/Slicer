@@ -1,14 +1,24 @@
-#include "vtkSmartPointer.h"
-#include "vtkNRRDReader.h"
-#include "vtkNRRDWriter.h"
-#include "vtkMRMLNRRDStorageNode.h"
-#include "vtkImageExtractComponents.h"
-#include "vtkImageWeightedSum.h"
 
-#include "vtkImageSeedConnectivity.h"
+// SlicerBaseLogic includes
 #include "vtkImageConnectivity.h"
-#include "vtkITKNewOtsuThresholdImageFilter.h"
 
+// MRMLCore includes
+#include <vtkMRMLNRRDStorageNode.h>
+
+// vtkITK includes
+#include <vtkITKNewOtsuThresholdImageFilter.h>
+
+// vtkTeem includes
+#include <vtkNRRDReader.h>
+#include <vtkNRRDWriter.h>
+
+// VTK includes
+#include <vtkImageExtractComponents.h>
+#include <vtkImageSeedConnectivity.h>
+#include <vtkImageWeightedSum.h>
+#include <vtkSmartPointer.h>
+
+// ITK includes
 #if ITK_VERSION_MAJOR >= 4
 #include "itkFloatingPointExceptions.h"
 #endif
