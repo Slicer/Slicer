@@ -69,6 +69,11 @@ class DataProbeInfoWidget(object):
     self.type = type
     self.nameSize = 24
 
+    # Default observer priority is 0.0, and the widgets have a 0.5 priority
+    # so we set this to 1 in order to get events that would
+    # otherwise be swallowed.  Since we do not abort the event, this is harmless.
+    self.priority = 2
+
     # keep list of pairs: [observee,tag] so they can be removed easily
     self.styleObserverTags = []
     # keep a map of interactor styles to sliceWidgets so we can easily get sliceLogic
@@ -119,11 +124,11 @@ class DataProbeInfoWidget(object):
       sliceWidget = layoutManager.sliceWidget(sliceNode.GetLayoutName())
       if sliceWidget:
         # add obserservers and keep track of tags
-        style = sliceWidget.sliceView().interactorStyle()
+        style = sliceWidget.sliceView().interactor()
         self.sliceWidgetsPerStyle[style] = sliceWidget
         events = ("MouseMoveEvent", "EnterEvent", "LeaveEvent")
         for event in events:
-          tag = style.AddObserver(event, self.processEvent)
+          tag = style.AddObserver(event, self.processEvent, self.priority)
           self.styleObserverTags.append([style,tag])
       # TODO: also observe the slice nodes
 
@@ -211,7 +216,7 @@ class DataProbeInfoWidget(object):
       sliceWidget = self.sliceWidgetsPerStyle[observee]
       sliceLogic = sliceWidget.sliceLogic()
       sliceNode = sliceWidget.mrmlSliceNode()
-      interactor = observee.GetInteractor()
+      interactor = observee
       xy = interactor.GetEventPosition()
       xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy);
       # populate the widgets
