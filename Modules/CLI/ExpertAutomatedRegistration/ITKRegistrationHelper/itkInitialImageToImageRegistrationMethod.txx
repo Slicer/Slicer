@@ -230,8 +230,6 @@ InitialImageToImageRegistrationMethod<TImage>
     }
   else
     {
-    typedef ImageRegionMomentsCalculator<TImage> MomentsCalculatorType;
-
     typename MomentsCalculatorType::Pointer momCalc;
     momCalc = MomentsCalculatorType::New();
 
