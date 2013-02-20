@@ -8,13 +8,13 @@
 #include "itkResampleImageFilter.h"
 #include "itkTransformFactory.h"
 #include "itkTransformFileReader.h"
-
-// STD includes
-#include <list>
-
+#include "itkConfigure.h" // For ITK_VERSION_MAJOR
 #if ITK_VERSION_MAJOR > 3
 #  include <itkFactoryRegistration.h>
 #endif
+
+// STD includes
+#include <list>
 
 #ifndef M_PI
 #define M_PI 3.1415926
