@@ -3,12 +3,12 @@ import unittest
 from __main__ import vtk, qt, ctk, slicer
 
 #
-# ScriptedLoadableExtensionTemplate
+# ScriptedLoadableModuleTemplate
 #
 
-class ScriptedLoadableExtensionTemplate:
+class ScriptedLoadableModuleTemplate:
   def __init__(self, parent):
-    parent.title = "ScriptedLoadableExtensionTemplate" # TODO make this more human readable by adding spaces
+    parent.title = "ScriptedLoadableModuleTemplate" # TODO make this more human readable by adding spaces
     parent.categories = ["Examples"]
     parent.dependencies = []
     parent.contributors = ["Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
@@ -27,17 +27,17 @@ class ScriptedLoadableExtensionTemplate:
       slicer.selfTests
     except AttributeError:
       slicer.selfTests = {}
-    slicer.selfTests['ScriptedLoadableExtensionTemplate'] = self.runTest
+    slicer.selfTests['ScriptedLoadableModuleTemplate'] = self.runTest
 
   def runTest(self):
-    tester = ScriptedLoadableExtensionTemplateTest()
+    tester = ScriptedLoadableModuleTemplateTest()
     tester.runTest()
 
 #
-# qScriptedLoadableExtensionTemplateWidget
+# qScriptedLoadableModuleTemplateWidget
 #
 
-class ScriptedLoadableExtensionTemplateWidget:
+class ScriptedLoadableModuleTemplateWidget:
   def __init__(self, parent = None):
     if not parent:
       self.parent = slicer.qMRMLWidget()
@@ -66,7 +66,7 @@ class ScriptedLoadableExtensionTemplateWidget:
     #  your module to users)
     self.reloadButton = qt.QPushButton("Reload")
     self.reloadButton.toolTip = "Reload this module."
-    self.reloadButton.name = "ScriptedLoadableExtensionTemplate Reload"
+    self.reloadButton.name = "ScriptedLoadableModuleTemplate Reload"
     reloadFormLayout.addWidget(self.reloadButton)
     self.reloadButton.connect('clicked()', self.onReload)
 
@@ -140,11 +140,11 @@ class ScriptedLoadableExtensionTemplateWidget:
     self.applyButton.enabled = self.inputSelector.currentNode() and self.outputSelector.currentNode()
 
   def onApplyButton(self):
-    logic = ScriptedLoadableExtensionTemplateLogic()
+    logic = ScriptedLoadableModuleTemplateLogic()
     print("Run the algorithm")
     logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode())
 
-  def onReload(self,moduleName="ScriptedLoadableExtensionTemplate"):
+  def onReload(self,moduleName="ScriptedLoadableModuleTemplate"):
     """Generic reload method for any scripted module.
     ModuleWizard will subsitute correct default moduleName.
     """
@@ -183,7 +183,7 @@ class ScriptedLoadableExtensionTemplateWidget:
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
 
-  def onReloadAndTest(self,moduleName="ScriptedLoadableExtensionTemplate"):
+  def onReloadAndTest(self,moduleName="ScriptedLoadableModuleTemplate"):
     try:
       self.onReload()
       evalString = 'globals()["%s"].%sTest()' % (moduleName, moduleName)
@@ -197,10 +197,10 @@ class ScriptedLoadableExtensionTemplateWidget:
 
 
 #
-# ScriptedLoadableExtensionTemplateLogic
+# ScriptedLoadableModuleTemplateLogic
 #
 
-class ScriptedLoadableExtensionTemplateLogic:
+class ScriptedLoadableModuleTemplateLogic:
   """This class should implement all the actual 
   computation done by your module.  The interface 
   should be such that other python code can import
@@ -230,7 +230,7 @@ class ScriptedLoadableExtensionTemplateLogic:
     return True
 
 
-class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
+class ScriptedLoadableModuleTemplateTest(unittest.TestCase):
   """
   This is the test case for your scripted module.
   """
@@ -261,9 +261,9 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
     """Run as few or as many tests as needed here.
     """
     self.setUp()
-    self.test_ScriptedLoadableExtensionTemplate1()
+    self.test_ScriptedLoadableModuleTemplate1()
 
-  def test_ScriptedLoadableExtensionTemplate1(self):
+  def test_ScriptedLoadableModuleTemplate1(self):
     """ Ideally you should have several levels of tests.  At the lowest level
     tests sould exercise the functionality of the logic with different inputs
     (both valid and invalid).  At higher levels your tests should emulate the
@@ -295,6 +295,6 @@ class ScriptedLoadableExtensionTemplateTest(unittest.TestCase):
     self.delayDisplay('Finished with download and loading\n')
 
     volumeNode = slicer.util.getNode(pattern="FA")
-    logic = ScriptedLoadableExtensionTemplateLogic()
+    logic = ScriptedLoadableModuleTemplateLogic()
     self.assertTrue( logic.hasImageData(volumeNode) )
     self.delayDisplay('Test passed!')
