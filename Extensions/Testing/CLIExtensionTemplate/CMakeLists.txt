@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.9)
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME CLIExtensionTemplate)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.2/Extensions/CLIExtensionTemplate")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/CLIExtensionTemplate")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware)")
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling one CLI module")
