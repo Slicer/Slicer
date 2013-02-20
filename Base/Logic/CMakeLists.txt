@@ -85,7 +85,6 @@ set(SlicerBaseLogic_SRCS
   vtkImageSlicePaint.cxx
   vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
-  vtkSlicerROILogic.cxx
   vtkImageConnectivity.cxx
   vtkImageLabelChange.cxx
   vtkImageErode.cxx
