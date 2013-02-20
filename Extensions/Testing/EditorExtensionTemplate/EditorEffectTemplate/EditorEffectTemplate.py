@@ -13,28 +13,28 @@ from EditorLib import LabelEffect
 #
 
 #
-# EditorExtensionTemplateOptions - see LabelEffect, EditOptions and Effect for superclasses
+# EditorEffectTemplateOptions - see LabelEffect, EditOptions and Effect for superclasses
 #
 
-class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
-  """ EditorExtensionTemplate-specfic gui
+class EditorEffectTemplateOptions(EditorLib.LabelEffectOptions):
+  """ EditorEffectTemplate-specfic gui
   """
 
   def __init__(self, parent=0):
-    super(EditorExtensionTemplateOptions,self).__init__(parent)
+    super(EditorEffectTemplateOptions,self).__init__(parent)
 
     # self.attributes should be tuple of options:
     # 'MouseTool' - grabs the cursor
     # 'Nonmodal' - can be applied while another is active
     # 'Disabled' - not available
     self.attributes = ('MouseTool')
-    self.displayName = 'EditorExtensionTemplate Effect'
+    self.displayName = 'EditorEffectTemplate Effect'
 
   def __del__(self):
-    super(EditorExtensionTemplateOptions,self).__del__()
+    super(EditorEffectTemplateOptions,self).__del__()
 
   def create(self):
-    super(EditorExtensionTemplateOptions,self).create()
+    super(EditorEffectTemplateOptions,self).create()
     self.apply = qt.QPushButton("Apply", self.frame)
     self.apply.setToolTip("Apply the extension operation")
     self.frame.layout().addWidget(self.apply)
@@ -48,7 +48,7 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
     self.frame.layout().addStretch(1)
 
   def destroy(self):
-    super(EditorExtensionTemplateOptions,self).destroy()
+    super(EditorEffectTemplateOptions,self).destroy()
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
@@ -62,11 +62,11 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
       self.parameterNodeTag = node.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
   def setMRMLDefaults(self):
-    super(EditorExtensionTemplateOptions,self).setMRMLDefaults()
+    super(EditorEffectTemplateOptions,self).setMRMLDefaults()
 
   def updateGUIFromMRML(self,caller,event):
     self.disconnectWidgets()
-    super(EditorExtensionTemplateOptions,self).updateGUIFromMRML(caller,event)
+    super(EditorEffectTemplateOptions,self).updateGUIFromMRML(caller,event)
     self.connectWidgets()
 
   def onApply(self):
@@ -77,17 +77,17 @@ class EditorExtensionTemplateOptions(EditorLib.LabelEffectOptions):
       return
     disableState = self.parameterNode.GetDisableModifiedEvent()
     self.parameterNode.SetDisableModifiedEvent(1)
-    super(EditorExtensionTemplateOptions,self).updateMRMLFromGUI()
+    super(EditorEffectTemplateOptions,self).updateMRMLFromGUI()
     self.parameterNode.SetDisableModifiedEvent(disableState)
     if not disableState:
       self.parameterNode.InvokePendingModifiedEvent()
 
 
 #
-# EditorExtensionTemplateTool
+# EditorEffectTemplateTool
 #
 
-class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
+class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
   is selected.  It is responsible for implementing feedback and
@@ -98,10 +98,10 @@ class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
-    super(EditorExtensionTemplateTool,self).__init__(sliceWidget)
+    super(EditorEffectTemplateTool,self).__init__(sliceWidget)
 
   def cleanup(self):
-    super(EditorExtensionTemplateTool,self).cleanup()
+    super(EditorEffectTemplateTool,self).cleanup()
 
   def processEvent(self, caller=None, event=None):
     """
@@ -110,7 +110,7 @@ class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
     if event == "LeftButtonPressEvent":
       xy = self.interactor.GetEventPosition()
       sliceLogic = self.sliceWidget.sliceLogic()
-      logic = EditorExtensionTemplateLogic(sliceLogic)
+      logic = EditorEffectTemplateLogic(sliceLogic)
       logic.apply(xy)
       print("Got a %s at %s in %s", (event,str(xy),self.sliceWidget.sliceLogic().GetSliceNode().GetName()))
       self.abortEvent(event)
@@ -119,17 +119,17 @@ class EditorExtensionTemplateTool(LabelEffect.LabelEffectTool):
 
 
 #
-# EditorExtensionTemplateLogic
+# EditorEffectTemplateLogic
 #
 
-class EditorExtensionTemplateLogic(LabelEffect.LabelEffectLogic):
+class EditorEffectTemplateLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
-  type.  It can be instanced as needed by an EditorExtensionTemplateTool
-  or EditorExtensionTemplateOptions instance in order to compute intermediate
+  type.  It can be instanced as needed by an EditorEffectTemplateTool
+  or EditorEffectTemplateOptions instance in order to compute intermediate
   results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
-  from the EditorExtensionTemplateTool so that the operations can be used
+  from the EditorEffectTemplateTool so that the operations can be used
   by other code without the need for a view context.
   """
 
@@ -141,43 +141,43 @@ class EditorExtensionTemplateLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The EditorExtensionTemplateExtension class definition
+# The EditorEffectTemplateExtension class definition
 #
 
-class EditorExtensionTemplateExtension(LabelEffect.LabelEffect):
+class EditorEffectTemplateExtension(LabelEffect.LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """
 
   def __init__(self):
-    # name is used to define the name of the icon image resource (e.g. EditorExtensionTemplate.png)
-    self.name = "EditorExtensionTemplate"
+    # name is used to define the name of the icon image resource (e.g. EditorEffectTemplate.png)
+    self.name = "EditorEffectTemplate"
     # tool tip is displayed on mouse hover
     self.toolTip = "Paint: circular paint brush for label map editing"
 
-    self.options = EditorExtensionTemplateOptions
-    self.tool = EditorExtensionTemplateTool
-    self.logic = EditorExtensionTemplateLogic
+    self.options = EditorEffectTemplateOptions
+    self.tool = EditorEffectTemplateTool
+    self.logic = EditorEffectTemplateLogic
 
 """ Test:
 
 sw = slicer.app.layoutManager().sliceWidget('Red')
 import EditorLib
-pet = EditorLib.EditorExtensionTemplateTool(sw)
+pet = EditorLib.EditorEffectTemplateTool(sw)
 
 """
 
 #
-# EditorExtensionTemplate
+# EditorEffectTemplate
 #
 
-class EditorExtensionTemplate:
+class EditorEffectTemplate:
   """
   This class is the 'hook' for slicer to detect and recognize the extension
   as a loadable scripted module
   """
   def __init__(self, parent):
-    parent.title = "Editor EditorExtensionTemplate Effect"
+    parent.title = "Editor EditorEffectTemplate Effect"
     parent.categories = ["Developer Tools.Editor Extensions"]
     parent.contributors = ["Steve Pieper (Isomics)"] # insert your name in the list
     parent.helpText = """
@@ -204,13 +204,13 @@ class EditorExtensionTemplate:
       slicer.modules.editorExtensions
     except AttributeError:
       slicer.modules.editorExtensions = {}
-    slicer.modules.editorExtensions['EditorExtensionTemplate'] = EditorExtensionTemplateExtension
+    slicer.modules.editorExtensions['EditorEffectTemplate'] = EditorEffectTemplateExtension
 
 #
-# EditorExtensionTemplateWidget
+# EditorEffectTemplateWidget
 #
 
-class EditorExtensionTemplateWidget:
+class EditorEffectTemplateWidget:
   def __init__(self, parent = None):
     self.parent = parent
 

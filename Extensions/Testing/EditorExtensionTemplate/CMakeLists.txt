@@ -1,16 +1,14 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.9)
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
   set(EXTENSION_NAME EditorExtensionTemplate)
-  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.2/Extensions/EditorExtensionTemplate")
+  set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/EditorExtensionTemplate")
   set(EXTENSION_CATEGORY "Examples")
   set(EXTENSION_CONTRIBUTORS "Steve Pieper (Isomics)")
   set(EXTENSION_DESCRIPTION "This is an example of extension bundling one scripted loadable editor effect")
+  set(EXTENSION_ICONURL "http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing/EditorExtensionTemplate/EditorExtensionTemplate.png?revision=21750&view=co")
 endif()
-
-#-----------------------------------------------------------------------------
-set(MODULE_NAME EditorExtensionTemplate)
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
@@ -19,27 +17,7 @@ if(NOT Slicer_SOURCE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
-set(MODULE_PYTHON_SCRIPTS
-  EditorExtensionTemplate.py
-  )
-
-set(MODULE_PYTHON_RESOURCES
-  EditorExtensionTemplate.png
-  )
-
-#-----------------------------------------------------------------------------
-ctkMacroCompilePythonScript(
-  TARGET_NAME EditorExtensionTemplate
-  SCRIPTS "${MODULE_PYTHON_SCRIPTS}"
-  RESOURCES "${MODULE_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
-  INSTALL_DIR ${Slicer_INSTALL_ROOT}
-  )
-
-#-----------------------------------------------------------------------------
-if(BUILD_TESTING)
-  add_subdirectory(Testing)
-endif()
+add_subdirectory(EditorEffectTemplate)
 
 #-----------------------------------------------------------------------------
 if(NOT Slicer_SOURCE_DIR)
