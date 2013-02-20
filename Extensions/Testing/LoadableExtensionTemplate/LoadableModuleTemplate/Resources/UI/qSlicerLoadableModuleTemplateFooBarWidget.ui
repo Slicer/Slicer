@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerLoadableExtensionTemplateFooBarWidget</class>
- <widget class="QWidget" name="qSlicerLoadableExtensionTemplateFooBarWidget">
+ <class>qSlicerLoadableModuleTemplateFooBarWidget</class>
+ <widget class="QWidget" name="qSlicerLoadableModuleTemplateFooBarWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

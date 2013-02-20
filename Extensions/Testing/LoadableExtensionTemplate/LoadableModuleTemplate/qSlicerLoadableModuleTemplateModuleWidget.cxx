@@ -19,44 +19,44 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerLoadableExtensionTemplateModuleWidget.h"
-#include "ui_qSlicerLoadableExtensionTemplateModuleWidget.h"
+#include "qSlicerLoadableModuleTemplateModuleWidget.h"
+#include "ui_qSlicerLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerLoadableExtensionTemplateModuleWidgetPrivate: public Ui_qSlicerLoadableExtensionTemplateModuleWidget
+class qSlicerLoadableModuleTemplateModuleWidgetPrivate: public Ui_qSlicerLoadableModuleTemplateModuleWidget
 {
 public:
-  qSlicerLoadableExtensionTemplateModuleWidgetPrivate();
+  qSlicerLoadableModuleTemplateModuleWidgetPrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerLoadableExtensionTemplateModuleWidgetPrivate methods
+// qSlicerLoadableModuleTemplateModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableExtensionTemplateModuleWidgetPrivate::qSlicerLoadableExtensionTemplateModuleWidgetPrivate()
+qSlicerLoadableModuleTemplateModuleWidgetPrivate::qSlicerLoadableModuleTemplateModuleWidgetPrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerLoadableExtensionTemplateModuleWidget methods
+// qSlicerLoadableModuleTemplateModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableExtensionTemplateModuleWidget::qSlicerLoadableExtensionTemplateModuleWidget(QWidget* _parent)
+qSlicerLoadableModuleTemplateModuleWidget::qSlicerLoadableModuleTemplateModuleWidget(QWidget* _parent)
   : Superclass( _parent )
-  , d_ptr( new qSlicerLoadableExtensionTemplateModuleWidgetPrivate )
+  , d_ptr( new qSlicerLoadableModuleTemplateModuleWidgetPrivate )
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerLoadableExtensionTemplateModuleWidget::~qSlicerLoadableExtensionTemplateModuleWidget()
+qSlicerLoadableModuleTemplateModuleWidget::~qSlicerLoadableModuleTemplateModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerLoadableExtensionTemplateModuleWidget::setup()
+void qSlicerLoadableModuleTemplateModuleWidget::setup()
 {
-  Q_D(qSlicerLoadableExtensionTemplateModuleWidget);
+  Q_D(qSlicerLoadableModuleTemplateModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
 }
