@@ -9,7 +9,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 add_executable(Generate${CLP}TestData Generate${CLP}TestData.cxx)
-target_link_libraries(Generate${CLP}TestData ${ITK_LIBRARIES})
+target_link_libraries(Generate${CLP}TestData
+  ${ITK_LIBRARIES}
+  ITKFactoryRegistration
+  )
 set_target_properties(Generate${CLP}TestData PROPERTIES LABELS ${CLP})
 
 set(frequency 10)
