@@ -12,12 +12,20 @@
 // STD includes
 #include <list>
 
+#if ITK_VERSION_MAJOR > 3
+#  include <itkFactoryRegistration.h>
+#endif
+
 #ifndef M_PI
 #define M_PI 3.1415926
 #endif
 
 int main(int argc, char * * argv)
 {
+#if ITK_VERSION_MAJOR > 3
+  itk::itkFactoryRegistration();
+#endif
+
   if( argc < 3 )
     {
     std::cerr << argv[0]
@@ -193,7 +201,15 @@ int main(int argc, char * * argv)
   WriterType::Pointer writer = WriterType::New();
   writer->SetInput( img );
   writer->SetFileName( argv[2] );
-  writer->Update();
+  try
+    {
+    writer->Update();
+    }
+  catch( itk::ExceptionObject & error )
+    {
+    std::cerr << "Error: " << error << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }
