@@ -1,7 +1,7 @@
 
 #-----------------------------------------------------------------------------
 set(KIT_UNITTEST_SCRIPTS)
-SlicerMacroConfigureGenericPythonModuleTests("${EXTENSION_NAME}" KIT_UNITTEST_SCRIPTS)
+SlicerMacroConfigureGenericPythonModuleTests("${MODULE_NAME}" KIT_UNITTEST_SCRIPTS)
 
 #-----------------------------------------------------------------------------
 foreach(script_name ${KIT_UNITTEST_SCRIPTS})
