@@ -24,6 +24,7 @@ set(EditorLib_PYTHON_SCRIPTS
   SaveIslandEffect
   ChangeLabelEffect
   GrowCutEffect
+  FastMarchingEffect
   )
 
 set(EditorLib_PYTHON_RESOURCES

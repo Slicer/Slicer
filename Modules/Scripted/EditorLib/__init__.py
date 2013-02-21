@@ -22,3 +22,4 @@ from RemoveIslandsEffect import *
 from SaveIslandEffect import *
 from ChangeLabelEffect import *
 from GrowCutEffect import *
+from FastMarchingEffect import *

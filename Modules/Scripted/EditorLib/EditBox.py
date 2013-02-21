@@ -55,6 +55,7 @@ class EditBox(object):
     self.editorBuiltins["SaveIslandEffect"] = EditorLib.SaveIslandEffect
     self.editorBuiltins["ChangeIslandEffect"] = EditorLib.ChangeIslandEffect
     self.editorBuiltins["GrowCutEffect"] = EditorLib.GrowCutEffect
+    self.editorBuiltins["FastMarchingEffect"] = EditorLib.FastMarchingEffect
 
     if not parent:
       self.parent = qt.QFrame()
@@ -109,6 +110,7 @@ class EditBox(object):
     "MakeModel", "GrowCutSegment",
     "Threshold", 
     "PreviousCheckPoint", "NextCheckPoint",
+    "FastMarching"
     )
 
   # allow overriding the developers name of the tool for a more user-friendly label name
@@ -216,7 +218,7 @@ class EditBox(object):
     # create all of the buttons
     # createButtonRow() ensures that only effects in self.effects are exposed,
     self.createButtonRow( ("DefaultTool", "EraseLabel", "PaintEffect", "DrawEffect", "LevelTracingEffect", "RectangleEffect", "IdentifyIslandsEffect", "ChangeIslandEffect", "RemoveIslandsEffect", "SaveIslandEffect") )
-    self.createButtonRow( ("ErodeEffect", "DilateEffect", "GrowCutEffect", "ThresholdEffect", "ChangeLabelEffect", "MakeModelEffect") )
+    self.createButtonRow( ("ErodeEffect", "DilateEffect", "GrowCutEffect", "ThresholdEffect", "ChangeLabelEffect", "MakeModelEffect", "FastMarchingEffect") )
 
     extensions = []
     for k in slicer.modules.editorExtensions:
