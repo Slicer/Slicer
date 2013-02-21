@@ -929,9 +929,14 @@ float vtkPichonFastMarching::step( void )
   /* find point in fmsTRIAL with smallest T, remove it from fmsTRIAL and put
      it in fmsKNOWN */
 
+  static int emptyTreeCnt;
   if( emptyTree() )
     {
-      vtkErrorMacro( "vtkPichonFastMarching::step empty tree!" << endl );
+      if(emptyTreeCnt == 0)
+        {
+        vtkErrorMacro( "vtkPichonFastMarching::step empty tree!" << endl );
+        }
+      emptyTreeCnt++;
       return (float)INF;
     }
 
