@@ -26,7 +26,7 @@ include(SlicerMacroParseArguments)
 macro(slicerMacroBuildQtModule)
   SLICER_PARSE_ARGUMENTS(QTMODULE
     "NAME;TITLE;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "NO_INSTALL;NO_TITLE"
+    "NO_INSTALL;NO_TITLE;WITH_GENERIC_TESTS"
     ${ARGN}
     )
 
@@ -195,6 +195,36 @@ macro(slicerMacroBuildQtModule)
       ${dynamicHeaders}
       DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_INCLUDE_DIR}/${QTMODULE_NAME} COMPONENT Development
       )
+  endif()
+
+  if(BUILD_TESTING AND QTMODULE_WITH_GENERIC_TESTS)
+
+    set(KIT ${lib_name})
+
+    set(KIT_GENERIC_TEST_SRCS)
+    set(KIT_GENERIC_TEST_NAMES)
+    set(KIT_GENERIC_TEST_NAMES_CXX)
+    SlicerMacroConfigureGenericCxxModuleTests(${QTMODULE_NAME}
+      KIT_GENERIC_TEST_SRCS
+      KIT_GENERIC_TEST_NAMES
+      KIT_GENERIC_TEST_NAMES_CXX
+      )
+
+    set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
+    create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+      ${KIT_GENERIC_TEST_NAMES_CXX}
+      EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+      )
+
+    add_executable(${KIT}GenericCxxTests ${Tests})
+    set_target_properties(${KIT}GenericCxxTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR})
+    target_link_libraries(${KIT}GenericCxxTests ${KIT})
+
+    foreach(testname ${KIT_GENERIC_TEST_NAMES})
+      add_test(NAME ${testname}
+               COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}GenericCxxTests> ${testname})
+      set_property(TEST ${testname} PROPERTY LABELS ${KIT})
+    endforeach()
   endif()
 
 endmacro()
