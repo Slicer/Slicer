@@ -1,11 +1,12 @@
 set(KIT ${PROJECT_NAME})
-set(CMAKE_TESTDRIVER_AFTER_TESTMAIN  "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
-create_test_sourcelist(Tests ${KIT}CxxTests.cxx
+
+#-----------------------------------------------------------------------------
+set(KIT_TEST_SRCS
   qMRMLNodeAttributeTableViewTest.cxx
   qMRMLNodeAttributeTableWidgetTest.cxx
-  EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
+#-----------------------------------------------------------------------------
 QT4_GENERATE_MOCS(
   qMRMLNodeAttributeTableViewTest.cxx
   qMRMLNodeAttributeTableWidgetTest.cxx
@@ -13,8 +14,13 @@ QT4_GENERATE_MOCS(
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX})
-target_link_libraries(${KIT}CxxTests ${KIT})
+#-----------------------------------------------------------------------------
+slicerMacroConfigureModuleCxxTestDriver(
+  NAME ${KIT}
+  SOURCES ${KIT_TEST_SRCS}
+  WITH_VTK_DEBUG_LEAKS_CHECK
+  )
 
+#-----------------------------------------------------------------------------
 simple_test( qMRMLNodeAttributeTableViewTest )
 simple_test( qMRMLNodeAttributeTableWidgetTest )
