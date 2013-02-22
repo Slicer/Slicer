@@ -1,12 +1,9 @@
-set(EditorLib_PYTHON_SCRIPTS
-  __init__
-  ColorBox
-  EditBox
-  EditColor
-  EditOptions
-  EditUtil
-  HelperBox
-  Effect
+
+#-----------------------------------------------------------------------------
+set(MODULE_NAME EditorLib)
+
+#-----------------------------------------------------------------------------
+set(EDITOR_BUILTIN_EFFECTS
   LabelEffect
   PaintEffect
   DrawEffect
@@ -27,20 +24,31 @@ set(EditorLib_PYTHON_SCRIPTS
   FastMarchingEffect
   )
 
-set(EditorLib_PYTHON_RESOURCES
+#-----------------------------------------------------------------------------
+set(MODULE_PYTHON_SCRIPTS
+  __init__
+  ColorBox
+  EditBox
+  EditColor
+  EditOptions
+  EditUtil
+  Effect
+  HelperBox
+  ${EDITOR_BUILTIN_EFFECTS}
   )
 
-ctkMacroCompilePythonScript(
-  TARGET_NAME EditorLib
-  SCRIPTS "${EditorLib_PYTHON_SCRIPTS}"
-  RESOURCES "${EditorLib_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python/EditorLib
-  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}/Python
+set(MODULE_PYTHON_RESOURCES
   )
 
 #-----------------------------------------------------------------------------
-# Testing
-#
+slicerMacroBuildScriptedModule(
+  NAME ${MODULE_NAME}
+  SCRIPTS ${MODULE_PYTHON_SCRIPTS}
+  RESOURCES ${MODULE_PYTHON_RESOURCES}
+  WITH_SUBDIR
+  )
+
+#-----------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
