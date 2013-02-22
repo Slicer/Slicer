@@ -38,6 +38,26 @@ set(MODULE_PYTHON_SCRIPTS
   )
 
 set(MODULE_PYTHON_RESOURCES
+  Resources/Icons/ChangeIsland.png
+  Resources/Icons/ChangeLabel.png
+  Resources/Icons/DefaultTool.png
+  Resources/Icons/DilateLabel.png
+  Resources/Icons/Draw.png
+  Resources/Icons/EraseLabel.png
+  Resources/Icons/ErodeLabel.png
+  Resources/Icons/FastMarchingEffect.png
+  Resources/Icons/GrowCutSegment.png
+  Resources/Icons/IdentifyIslands.png
+  Resources/Icons/ImplicitRectangle.png
+  Resources/Icons/LevelTracing.png
+  Resources/Icons/MakeModel.png
+  Resources/Icons/NextCheckPoint.png
+  Resources/Icons/Paint.png
+  Resources/Icons/PreviousCheckPoint.png
+  Resources/Icons/RemoveIslands.png
+  Resources/Icons/SaveIsland.png
+  Resources/Icons/Threshold.png
+  Resources/Icons/ToolbarEditorToolbox.png
   )
 
 #-----------------------------------------------------------------------------

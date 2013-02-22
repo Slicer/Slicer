@@ -31,8 +31,7 @@ This work is partially supported by PAR-07-249: R01CA131718 NA-MIC Virtual Colon
       slicer.mrmlScene.RegisterNodeClass(node)
       node.Delete()
 
-    iconDir = slicer.app.slicerHome + '/' + os.environ['SLICER_SHARE_DIR'] + '/Tcl/ImageData'
-    parent.icon = qt.QIcon("%s/ToolbarEditorToolbox.png" % iconDir)
+    parent.icon = qt.QIcon("%s/ToolbarEditorToolbox.png" % EditorLib.ICON_DIR)
 
 
 #
