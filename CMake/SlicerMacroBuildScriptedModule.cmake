@@ -20,6 +20,7 @@
 
 macro(slicerMacroBuildScriptedModule)
   set(options
+    WITH_SUBDIR
     VERBOSE
     )
   set(oneValueArgs
@@ -69,13 +70,21 @@ macro(slicerMacroBuildScriptedModule)
     endforeach()
   endforeach()
 
+  set(_no_install_subdir_option NO_INSTALL_SUBDIR)
+  set(_destination_subdir "")
+  if(MY_SLICER_WITH_SUBDIR)
+    get_filename_component(_destination_subdir ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+    set(_destination_subdir "/${_destination_subdir}")
+    set(_no_install_subdir_option "")
+  endif()
+
   ctkMacroCompilePythonScript(
     TARGET_NAME ${MY_SLICER_NAME}
     SCRIPTS "${MY_SLICER_SCRIPTS}"
     RESOURCES "${MY_SLICER_RESOURCES}"
-    DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+    DESTINATION_DIR ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}${_destination_subdir}
     INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
-    NO_INSTALL_SUBDIR
+    ${_no_install_subdir_option}
     )
 
 endmacro()
