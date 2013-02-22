@@ -20,6 +20,7 @@
 
 macro(slicerMacroBuildScriptedModule)
   set(options
+    WITH_GENERIC_TESTS
     WITH_SUBDIR
     VERBOSE
     )
@@ -86,6 +87,20 @@ macro(slicerMacroBuildScriptedModule)
     INSTALL_DIR ${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}
     ${_no_install_subdir_option}
     )
+
+  if(BUILD_TESTING AND MY_SLICER_WITH_GENERIC_TESTS)
+    set(_generic_unitest_scripts)
+    SlicerMacroConfigureGenericPythonModuleTests("${MY_SLICER_NAME}" _generic_unitest_scripts)
+
+    foreach(script_name ${_generic_unitest_scripts})
+      slicer_add_python_unittest(
+        SCRIPT ${script_name}
+        SLICER_ARGS --no-main-window --disable-cli-modules --disable-loadable-modules
+                    --additional-module-path ${CMAKE_BINARY_DIR}/${Slicer_QTSCRIPTEDMODULES_LIB_DIR}
+        TESTNAME_PREFIX nomainwindow_
+        )
+    endforeach()
+  endif()
 
 endmacro()
 
