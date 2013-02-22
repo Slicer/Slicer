@@ -141,10 +141,10 @@ class EditorEffectTemplateLogic(LabelEffect.LabelEffectLogic):
 
 
 #
-# The EditorEffectTemplateExtension class definition
+# The EditorEffectTemplate class definition
 #
 
-class EditorEffectTemplateExtension(LabelEffect.LabelEffect):
+class EditorEffectTemplate(LabelEffect.LabelEffect):
   """Organizes the Options, Tool, and Logic classes into a single instance
   that can be managed by the EditBox
   """
@@ -204,7 +204,7 @@ class EditorEffectTemplate:
       slicer.modules.editorExtensions
     except AttributeError:
       slicer.modules.editorExtensions = {}
-    slicer.modules.editorExtensions['EditorEffectTemplate'] = EditorEffectTemplateExtension
+    slicer.modules.editorExtensions['EditorEffectTemplate'] = EditorEffectTemplate
 
 #
 # EditorEffectTemplateWidget

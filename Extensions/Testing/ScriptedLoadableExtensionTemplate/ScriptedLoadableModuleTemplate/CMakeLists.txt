@@ -21,7 +21,7 @@ if(BUILD_TESTING)
 
   # Register the unittest subclass in the main script as a ctest.
   # Note that the test will also be available at runtime.
-  slicer_add_python_unittest(SCRIPT ScriptedLoadableModuleTemplate.py)
+  slicer_add_python_unittest(SCRIPT ${MODULE_NAME}.py)
 
   # Additional build-time testing
   add_subdirectory(Testing)
