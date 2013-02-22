@@ -17,11 +17,13 @@
 #ifndef __vtkImageLabelChange_h
 #define __vtkImageLabelChange_h
 
-#include "vtkImageToImageFilter.h"
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
+
+// VTK includes
+#include <vtkImageToImageFilter.h>
 
 class vtkImageData;
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageLabelChange : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageLabelChange : public vtkImageToImageFilter
 {
 public:
     static vtkImageLabelChange *New();

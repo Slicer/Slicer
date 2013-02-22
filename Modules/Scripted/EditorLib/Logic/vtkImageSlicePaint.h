@@ -42,14 +42,13 @@
 #ifndef __vtkImageSlicePaint_h
 #define __vtkImageSlicePaint_h
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
 
-#include "vtkImageInPlaceFilter.h"
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkMatrix4x4.h>
 
-#include "vtkImageData.h"
-#include "vtkMatrix4x4.h"
-
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageSlicePaint : public vtkObject
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageSlicePaint : public vtkObject
 {
 public:
   static vtkImageSlicePaint *New();

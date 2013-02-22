@@ -15,8 +15,10 @@
 #ifndef __vtkImageConnectivity_h
 #define __vtkImageConnectivity_h
 
-#include "vtkImageToImageFilter.h"
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
+
+// VTK includes
+#include <vtkImageToImageFilter.h>
 
 #define CONNECTIVITY_IDENTIFY 1
 #define CONNECTIVITY_REMOVE 2
@@ -24,7 +26,7 @@
 #define CONNECTIVITY_MEASURE 4
 #define CONNECTIVITY_SAVE 5
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageConnectivity : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageConnectivity : public vtkImageToImageFilter
 {
 public:
   static vtkImageConnectivity *New();

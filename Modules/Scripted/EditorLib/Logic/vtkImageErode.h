@@ -14,11 +14,13 @@
 #ifndef __vtkImageErode_h
 #define __vtkImageErode_h
 
-#include "vtkImageData.h"
-#include "vtkImageNeighborhoodFilter.h"
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageErode : public vtkImageNeighborhoodFilter
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkImageNeighborhoodFilter.h>
+
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageErode : public vtkImageNeighborhoodFilter
 {
 public:
   static vtkImageErode *New();

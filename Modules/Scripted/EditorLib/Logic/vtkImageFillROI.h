@@ -22,18 +22,17 @@
 #ifndef __vtkImageFillROI_h
 #define __vtkImageFillROI_h
 
-//#include "vtkImageInPlaceFilter.h"
-#include "vtkImageToImageFilter.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
+
+// VTK includes
+#include <vtkImageToImageFilter.h>
 
 #define SHAPE_POLYGON 1
 #define SHAPE_LINES   2
 #define SHAPE_POINTS  3
 
-#include "vtkSlicerBaseLogic.h"
-
-
 class vtkPoints;
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageFillROI : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageFillROI : public vtkImageToImageFilter
 {
 public:
   static vtkImageFillROI *New();

@@ -18,14 +18,15 @@
 #ifndef __vtkImageStash_h
 #define __vtkImageStash_h
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
 
-#include "vtkImageData.h"
-#include "vtkUnsignedCharArray.h"
-#include "vtkZLibDataCompressor.h"
-#include "vtkMultiThreader.h"
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkMultiThreader.h>
+#include <vtkUnsignedCharArray.h>
+#include <vtkZLibDataCompressor.h>
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkImageStash : public vtkObject
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkImageStash : public vtkObject
 {
 public:
   static vtkImageStash *New();

@@ -9,14 +9,16 @@
 #ifndef __vtkPichonFastMarching_h
 #define __vtkPichonFastMarching_h
 
-#include "vtkImageData.h"
-#include "vtkImageToImageFilter.h"
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
+#include "vtkPichonFastMarchingPDF.h"
 
+// VTK includes
+#include <vtkImageData.h>
+#include <vtkImageToImageFilter.h>
+
+// STD includes
 #include <vector>
 #include <algorithm>
-
-#include "vtkPichonFastMarchingPDF.h"
 
 #define MAJOR_VERSION 3
 #define MINOR_VERSION 1
@@ -55,7 +57,7 @@ typedef std::vector<int> VecInt;
 
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarching : public vtkImageToImageFilter
 {
 public:
   static vtkPichonFastMarching *New();

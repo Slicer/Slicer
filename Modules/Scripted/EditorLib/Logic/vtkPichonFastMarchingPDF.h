@@ -9,7 +9,7 @@
 #ifndef __PichonFastMarchingPDF_h
 #define __PichonFastMarchingPDF_h
 
-#include "vtkSlicerBaseLogic.h"
+#include "vtkSlicerEditorLibModuleLogicExport.h"
 
 #ifdef _WIN32 /// WINDOWS
 
@@ -47,7 +47,7 @@ of Intensity and Inhomogeneity
 
 */
 
-class VTK_SLICER_BASE_LOGIC_EXPORT vtkPichonFastMarchingPDF : public vtkObject
+class VTK_SLICER_EDITORLIB_MODULE_LOGIC_EXPORT vtkPichonFastMarchingPDF : public vtkObject
 {
 public:
 

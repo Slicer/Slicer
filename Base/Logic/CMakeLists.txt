@@ -82,18 +82,10 @@ set(SlicerBaseLogic_SRCS
   vtkSlicerFiducialsLogic.cxx
   vtkDataIOManagerLogic.cxx
   # slicer's vtk extensions (filters)
-  vtkImageSlicePaint.cxx
-  vtkImageFillROI.cxx
   vtkSlicerGlyphSource2D.cxx
-  vtkImageConnectivity.cxx
-  vtkImageLabelChange.cxx
-  vtkImageErode.cxx
   vtkSlicerTransformLogic.cxx
-  vtkPichonFastMarching.cxx
-  vtkPichonFastMarchingPDF.cxx
   vtkImageRectangularSource.cxx
   vtkSystemInformation.cxx
-  vtkImageStash.cxx
   )
 
 if(Slicer_USE_PYTHONQT)
@@ -102,10 +94,10 @@ if(Slicer_USE_PYTHONQT)
     )
 endif()
 
-set_source_files_properties(
-  vtkPichonFastMarchingPDF.cxx
-  WRAP_EXCLUDE
-  )
+#set_source_files_properties(
+  #vtkPichonFastMarchingPDF.cxx
+#  WRAP_EXCLUDE
+#  )
 
 # --------------------------------------------------------------------------
 ## Create an instantiator for these classes

@@ -3,6 +3,9 @@
 set(MODULE_NAME EditorLib)
 
 #-----------------------------------------------------------------------------
+add_subdirectory(Logic)
+
+#-----------------------------------------------------------------------------
 set(EDITOR_BUILTIN_EFFECTS
   LabelEffect
   PaintEffect
