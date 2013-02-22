@@ -73,6 +73,7 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     )
   list(APPEND Slicer_PYTHON_RESOURCES
     tpycl/tpycl.tcl
+    slicer/tcl/Slicer3Adapters.tcl
     )
 endif()
 

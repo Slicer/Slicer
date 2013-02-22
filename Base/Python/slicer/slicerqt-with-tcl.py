@@ -16,11 +16,13 @@ def tcl(cmd):
     for p in packages:
       _tpycl.py_package(p)
 
+    import os
+    tcl_dir = os.path.dirname(os.path.realpath(__file__)) + '/tcl/'
     _tpycl.tcl_eval("""
-        set dir $::env(SLICER_HOME)/$::env(SLICER_SHARE_DIR)/Tcl
+        set dir \"%s\"
         source $dir/Slicer3Adapters.tcl
         ::Slicer3Adapters::Initialize
-      """)
+      """ % tcl_dir)
 
   return _tpycl.tcl_eval(cmd)
 

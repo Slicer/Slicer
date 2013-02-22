@@ -12,15 +12,12 @@ add_subdirectory(QTCore)
 add_subdirectory(QTGUI)
 if(Slicer_BUILD_CLI_SUPPORT)
   add_subdirectory(QTCLI)
-endif()
-add_subdirectory(GUI)
-if(Slicer_BUILD_CLI_SUPPORT)
   add_subdirectory(CLI)
 endif()
 
 if(Slicer_USE_PYTHONQT)
   add_subdirectory(Python)
-endif(Slicer_USE_PYTHONQT)
+endif()
 
 # Since "QTApp" depends on "Modules/Core", the folder is included in the top-level CMakeLists.txt
 # after "Modules/Core" folder.
