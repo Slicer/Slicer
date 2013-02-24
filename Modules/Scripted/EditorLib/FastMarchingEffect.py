@@ -203,7 +203,7 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
     # collect seeds
     dim = bgImage.GetWholeExtent()
     # initialize the filter
-    self.fm = slicer.logic.vtkPichonFastMarching()
+    self.fm = slicer.vtkPichonFastMarching()
     scalarRange = bgImage.GetScalarRange()
     depth = scalarRange[1]-scalarRange[0]
 
