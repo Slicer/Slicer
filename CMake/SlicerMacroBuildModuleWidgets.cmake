@@ -23,9 +23,26 @@
 #
 
 macro(SlicerMacroBuildModuleWidgets)
-  SLICER_PARSE_ARGUMENTS(MODULEWIDGETS
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "WRAP_PYTHONQT;NO_INSTALL"
+  set(options
+    WRAP_PYTHONQT
+    NO_INSTALL
+    )
+  set(oneValueArgs
+    NAME
+    EXPORT_DIRECTIVE
+    )
+  set(multiValueArgs
+    SRCS
+    MOC_SRCS
+    UI_SRCS
+    INCLUDE_DIRECTORIES
+    TARGET_LIBRARIES
+    RESOURCES
+    )
+  CMAKE_PARSE_ARGUMENTS(MODULEWIDGETS
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
 

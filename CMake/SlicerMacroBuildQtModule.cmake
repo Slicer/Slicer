@@ -21,12 +21,30 @@
 #
 #
 #
-include(SlicerMacroParseArguments)
 
 macro(slicerMacroBuildQtModule)
-  SLICER_PARSE_ARGUMENTS(QTMODULE
-    "NAME;TITLE;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "NO_INSTALL;NO_TITLE;WITH_GENERIC_TESTS"
+  set(options
+    NO_INSTALL
+    NO_TITLE
+    WITH_GENERIC_TESTS
+    )
+  set(oneValueArgs
+    NAME
+    TITLE
+    EXPORT_DIRECTIVE
+    )
+  set(multiValueArgs
+    SRCS
+    MOC_SRCS
+    UI_SRCS
+    INCLUDE_DIRECTORIES
+    TARGET_LIBRARIES
+    RESOURCES
+    )
+  CMAKE_PARSE_ARGUMENTS(QTMODULE
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
 

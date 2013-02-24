@@ -24,9 +24,20 @@
 #
 
 macro(SlicerMacroPythonWrapModuleVTKLibrary)
-  SLICER_PARSE_ARGUMENTS(PYTHONWRAPMODULEVTKLIBRARY
-    "NAME;SRCS;WRAPPED_TARGET_LIBRARIES;RELATIVE_PYTHON_DIR"
-    ""
+  set(options
+    )
+  set(oneValueArgs
+    NAME
+    RELATIVE_PYTHON_DIR
+    )
+  set(multiValueArgs
+    SRCS
+    WRAPPED_TARGET_LIBRARIES
+    )
+  CMAKE_PARSE_ARGUMENTS(PYTHONWRAPMODULEVTKLIBRARY
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
 

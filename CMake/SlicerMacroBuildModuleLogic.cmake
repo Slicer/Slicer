@@ -23,9 +23,23 @@
 #
 
 macro(SlicerMacroBuildModuleLogic)
-  SLICER_PARSE_ARGUMENTS(MODULELOGIC
-    "NAME;EXPORT_DIRECTIVE;SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES"
-    "DISABLE_WRAP_PYTHON;NO_INSTALL"
+  set(options
+    DISABLE_WRAP_PYTHON
+    NO_INSTALL
+    )
+  set(oneValueArgs
+    NAME
+    EXPORT_DIRECTIVE
+    )
+  set(multiValueArgs
+    SRCS
+    INCLUDE_DIRECTORIES
+    TARGET_LIBRARIES
+    )
+  CMAKE_PARSE_ARGUMENTS(MODULELOGIC
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
 

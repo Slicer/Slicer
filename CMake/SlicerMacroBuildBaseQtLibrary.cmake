@@ -53,11 +53,28 @@
 #
 
 macro(SlicerMacroBuildBaseQtLibrary)
-  SLICER_PARSE_ARGUMENTS(SLICERQTBASELIB
-    "NAME;EXPORT_DIRECTIVE;SRCS;MOC_SRCS;UI_SRCS;INCLUDE_DIRECTORIES;TARGET_LIBRARIES;RESOURCES"
-    "WRAP_PYTHONQT"
+  set(options
+    WRAP_PYTHONQT
+    )
+  set(oneValueArgs
+    NAME
+    EXPORT_DIRECTIVE
+    )
+  set(multiValueArgs
+    SRCS
+    MOC_SRCS
+    UI_SRCS
+    INCLUDE_DIRECTORIES
+    TARGET_LIBRARIES
+    RESOURCES
+    )
+  CMAKE_PARSE_ARGUMENTS(SLICERQTBASELIB
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
+
   message(STATUS "Configuring Slicer Qt base library: ${SLICERQTBASELIB_NAME}")
   # --------------------------------------------------------------------------
   # Sanity checks

@@ -43,9 +43,20 @@
 #
 
 function(slicerInstallLibrary)
-  SLICER_PARSE_ARGUMENTS(_slicerInstallLibrary
-    "FILE;DESTINATION;COMPONENT;PERMISSIONS"
-    ""
+  set(options
+    )
+  set(oneValueArgs
+    FILE
+    DESTINATION
+    COMPONENT
+    )
+  set(multiValueArgs
+    PERMISSIONS
+    )
+  CMAKE_PARSE_ARGUMENTS(_slicerInstallLibrary
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
     ${ARGN}
     )
 
