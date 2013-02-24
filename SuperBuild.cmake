@@ -209,7 +209,6 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
   Slicer_BUILD_Extensions
-  Slicer_BUILD_SkullStripper
   )
 
 set(ep_superbuild_boolean_args)
