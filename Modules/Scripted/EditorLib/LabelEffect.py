@@ -33,6 +33,8 @@ class LabelEffectOptions(Effect.EffectOptions):
 
   def __init__(self, parent=0):
     super(LabelEffectOptions,self).__init__(parent)
+    self.usesPaintOver = True
+    self.usesThreshold = True
 
   def __del__(self):
     super(LabelEffectOptions,self).__del__()
@@ -59,6 +61,13 @@ class LabelEffectOptions(Effect.EffectOptions):
     self.setRangeWidgetToBackgroundRange(self.threshold)
     self.frame.layout().addWidget(self.threshold)
     self.widgets.append(self.threshold)
+
+    if not self.usesPaintOver:
+      self.paintOver.hide()
+    if not self.usesThreshold:
+      self.thresholdPaint.hide()
+      self.thresholdLabel.hide()
+      self.threshold.hide()
 
     self.connections.append( (self.paintOver, "clicked()", self.updateMRMLFromGUI ) )
     self.connections.append( (self.thresholdPaint, "clicked()", self.updateMRMLFromGUI ) )
