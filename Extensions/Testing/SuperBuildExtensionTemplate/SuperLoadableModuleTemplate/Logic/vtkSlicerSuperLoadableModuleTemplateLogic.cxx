@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-// SuperBuildLoadableExtensionTemplate Logic includes
-#include "vtkSlicerSuperBuildLoadableExtensionTemplateLogic.h"
+// SuperLoadableModuleTemplate Logic includes
+#include "vtkSlicerSuperLoadableModuleTemplateLogic.h"
 
 // MRML includes
 
@@ -27,27 +27,26 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-vtkStandardNewMacro(vtkSlicerSuperBuildLoadableExtensionTemplateLogic);
+vtkStandardNewMacro(vtkSlicerSuperLoadableModuleTemplateLogic);
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperBuildLoadableExtensionTemplateLogic::vtkSlicerSuperBuildLoadableExtensionTemplateLogic()
+vtkSlicerSuperLoadableModuleTemplateLogic::vtkSlicerSuperLoadableModuleTemplateLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkSlicerSuperBuildLoadableExtensionTemplateLogic::~vtkSlicerSuperBuildLoadableExtensionTemplateLogic()
+vtkSlicerSuperLoadableModuleTemplateLogic::~vtkSlicerSuperLoadableModuleTemplateLogic()
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
+void vtkSlicerSuperLoadableModuleTemplateLogic::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
-::SetMRMLSceneInternal(vtkMRMLScene * newScene)
+void vtkSlicerSuperLoadableModuleTemplateLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
@@ -57,25 +56,25 @@ void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::RegisterNodes()
+void vtkSlicerSuperLoadableModuleTemplateLogic::RegisterNodes()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic::UpdateFromMRMLScene()
+void vtkSlicerSuperLoadableModuleTemplateLogic::UpdateFromMRMLScene()
 {
   assert(this->GetMRMLScene() != 0);
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
+void vtkSlicerSuperLoadableModuleTemplateLogic
 ::OnMRMLSceneNodeAdded(vtkMRMLNode* vtkNotUsed(node))
 {
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerSuperBuildLoadableExtensionTemplateLogic
+void vtkSlicerSuperLoadableModuleTemplateLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }

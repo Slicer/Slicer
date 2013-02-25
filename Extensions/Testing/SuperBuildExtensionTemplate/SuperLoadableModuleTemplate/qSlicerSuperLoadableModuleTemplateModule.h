@@ -15,19 +15,20 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSuperBuildLoadableExtensionTemplateModule_h
-#define __qSlicerSuperBuildLoadableExtensionTemplateModule_h
+#ifndef __qSlicerSuperLoadableModuleTemplateModule_h
+#define __qSlicerSuperLoadableModuleTemplateModule_h
 
 // SlicerQt includes
 #include "qSlicerLoadableModule.h"
 
-#include "qSlicerSuperBuildLoadableExtensionTemplateModuleExport.h"
+#include "qSlicerSuperLoadableModuleTemplateModuleExport.h"
 
-class qSlicerSuperBuildLoadableExtensionTemplateModulePrivate;
+class qSlicerSuperLoadableModuleTemplateModulePrivate;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_EXPORT qSlicerSuperBuildLoadableExtensionTemplateModule :
-  public qSlicerLoadableModule
+class Q_SLICER_QTMODULES_SUPERLOADABLEMODULETEMPLATE_EXPORT
+qSlicerSuperLoadableModuleTemplateModule
+  : public qSlicerLoadableModule
 {
   Q_OBJECT
   Q_INTERFACES(qSlicerLoadableModule);
@@ -35,8 +36,8 @@ class Q_SLICER_QTMODULES_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_EXPORT qSlicerSuper
 public:
 
   typedef qSlicerLoadableModule Superclass;
-  explicit qSlicerSuperBuildLoadableExtensionTemplateModule(QObject *parent=0);
-  virtual ~qSlicerSuperBuildLoadableExtensionTemplateModule();
+  explicit qSlicerSuperLoadableModuleTemplateModule(QObject *parent=0);
+  virtual ~qSlicerSuperLoadableModuleTemplateModule();
 
   qSlicerGetTitleMacro(QTMODULE_TITLE);
 
@@ -44,7 +45,6 @@ public:
   virtual QString acknowledgementText()const;
   virtual QStringList contributors()const;
 
-  /// Return a custom icon for the module
   virtual QIcon icon()const;
 
   virtual QStringList categories()const;
@@ -62,11 +62,11 @@ protected:
   virtual vtkMRMLAbstractLogic* createLogic();
 
 protected:
-  QScopedPointer<qSlicerSuperBuildLoadableExtensionTemplateModulePrivate> d_ptr;
+  QScopedPointer<qSlicerSuperLoadableModuleTemplateModulePrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSuperBuildLoadableExtensionTemplateModule);
-  Q_DISABLE_COPY(qSlicerSuperBuildLoadableExtensionTemplateModule);
+  Q_DECLARE_PRIVATE(qSlicerSuperLoadableModuleTemplateModule);
+  Q_DISABLE_COPY(qSlicerSuperLoadableModuleTemplateModule);
 
 };
 

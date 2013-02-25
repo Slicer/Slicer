@@ -15,19 +15,19 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerSuperBuildLoadableExtensionTemplateModuleWidget_h
-#define __qSlicerSuperBuildLoadableExtensionTemplateModuleWidget_h
+#ifndef __qSlicerSuperLoadableModuleTemplateModuleWidget_h
+#define __qSlicerSuperLoadableModuleTemplateModuleWidget_h
 
 // SlicerQt includes
 #include "qSlicerAbstractModuleWidget.h"
 
-#include "qSlicerSuperBuildLoadableExtensionTemplateModuleExport.h"
+#include "qSlicerSuperLoadableModuleTemplateModuleExport.h"
 
-class qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate;
+class qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate;
 class vtkMRMLNode;
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class Q_SLICER_QTMODULES_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_EXPORT qSlicerSuperBuildLoadableExtensionTemplateModuleWidget :
+class Q_SLICER_QTMODULES_SUPERLOADABLEMODULETEMPLATE_EXPORT qSlicerSuperLoadableModuleTemplateModuleWidget :
   public qSlicerAbstractModuleWidget
 {
   Q_OBJECT
@@ -35,20 +35,20 @@ class Q_SLICER_QTMODULES_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_EXPORT qSlicerSuper
 public:
 
   typedef qSlicerAbstractModuleWidget Superclass;
-  qSlicerSuperBuildLoadableExtensionTemplateModuleWidget(QWidget *parent=0);
-  virtual ~qSlicerSuperBuildLoadableExtensionTemplateModuleWidget();
+  qSlicerSuperLoadableModuleTemplateModuleWidget(QWidget *parent=0);
+  virtual ~qSlicerSuperLoadableModuleTemplateModuleWidget();
 
 public slots:
 
 
 protected:
-  QScopedPointer<qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate> d_ptr;
   
   virtual void setup();
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerSuperBuildLoadableExtensionTemplateModuleWidget);
-  Q_DISABLE_COPY(qSlicerSuperBuildLoadableExtensionTemplateModuleWidget);
+  Q_DECLARE_PRIVATE(qSlicerSuperLoadableModuleTemplateModuleWidget);
+  Q_DISABLE_COPY(qSlicerSuperLoadableModuleTemplateModuleWidget);
 };
 
 #endif

@@ -19,44 +19,44 @@
 #include <QDebug>
 
 // SlicerQt includes
-#include "qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h"
-#include "ui_qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h"
+#include "qSlicerSuperLoadableModuleTemplateModuleWidget.h"
+#include "ui_qSlicerSuperLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate: public Ui_qSlicerSuperBuildLoadableExtensionTemplateModuleWidget
+class qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate: public Ui_qSlicerSuperLoadableModuleTemplateModuleWidget
 {
 public:
-  qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate();
+  qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate methods
+// qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate::qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate()
+qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate::qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerSuperBuildLoadableExtensionTemplateModuleWidget methods
+// qSlicerSuperLoadableModuleTemplateModuleWidget methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModuleWidget::qSlicerSuperBuildLoadableExtensionTemplateModuleWidget(QWidget* _parent)
+qSlicerSuperLoadableModuleTemplateModuleWidget::qSlicerSuperLoadableModuleTemplateModuleWidget(QWidget* _parent)
   : Superclass( _parent )
-  , d_ptr( new qSlicerSuperBuildLoadableExtensionTemplateModuleWidgetPrivate )
+  , d_ptr( new qSlicerSuperLoadableModuleTemplateModuleWidgetPrivate )
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModuleWidget::~qSlicerSuperBuildLoadableExtensionTemplateModuleWidget()
+qSlicerSuperLoadableModuleTemplateModuleWidget::~qSlicerSuperLoadableModuleTemplateModuleWidget()
 {
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSuperBuildLoadableExtensionTemplateModuleWidget::setup()
+void qSlicerSuperLoadableModuleTemplateModuleWidget::setup()
 {
-  Q_D(qSlicerSuperBuildLoadableExtensionTemplateModuleWidget);
+  Q_D(qSlicerSuperLoadableModuleTemplateModuleWidget);
   d->setupUi(this);
   this->Superclass::setup();
 }

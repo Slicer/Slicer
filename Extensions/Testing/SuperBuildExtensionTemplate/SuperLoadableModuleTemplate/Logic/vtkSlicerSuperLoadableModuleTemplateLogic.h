@@ -15,14 +15,14 @@
 
 ==============================================================================*/
 
-// .NAME vtkSlicerSuperBuildLoadableExtensionTemplateLogic - slicer logic class for volumes manipulation
+// .NAME vtkSlicerSuperLoadableModuleTemplateLogic - slicer logic class for volumes manipulation
 // .SECTION Description
 // This class manages the logic associated with reading, saving,
 // and changing propertied of the volumes
 
 
-#ifndef __vtkSlicerSuperBuildLoadableExtensionTemplateLogic_h
-#define __vtkSlicerSuperBuildLoadableExtensionTemplateLogic_h
+#ifndef __vtkSlicerSuperLoadableModuleTemplateLogic_h
+#define __vtkSlicerSuperLoadableModuleTemplateLogic_h
 
 // Slicer includes
 #include "vtkSlicerModuleLogic.h"
@@ -32,24 +32,24 @@
 // STD includes
 #include <cstdlib>
 
-#include "vtkSlicerSuperBuildLoadableExtensionTemplateModuleLogicExport.h"
+#include "vtkSlicerSuperLoadableModuleTemplateModuleLogicExport.h"
 
 
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class VTK_SLICER_SUPERBUILDLOADABLEEXTENSIONTEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerSuperBuildLoadableExtensionTemplateLogic :
+class VTK_SLICER_SUPERLOADABLEMODULETEMPLATE_MODULE_LOGIC_EXPORT vtkSlicerSuperLoadableModuleTemplateLogic :
   public vtkSlicerModuleLogic
 {
 public:
 
-  static vtkSlicerSuperBuildLoadableExtensionTemplateLogic *New();
-  vtkTypeMacro(vtkSlicerSuperBuildLoadableExtensionTemplateLogic, vtkSlicerModuleLogic);
+  static vtkSlicerSuperLoadableModuleTemplateLogic *New();
+  vtkTypeMacro(vtkSlicerSuperLoadableModuleTemplateLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
-  vtkSlicerSuperBuildLoadableExtensionTemplateLogic();
-  virtual ~vtkSlicerSuperBuildLoadableExtensionTemplateLogic();
+  vtkSlicerSuperLoadableModuleTemplateLogic();
+  virtual ~vtkSlicerSuperLoadableModuleTemplateLogic();
 
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   virtual void RegisterNodes();
   virtual void UpdateFromMRMLScene();
@@ -57,8 +57,8 @@ protected:
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 private:
 
-  vtkSlicerSuperBuildLoadableExtensionTemplateLogic(const vtkSlicerSuperBuildLoadableExtensionTemplateLogic&); // Not implemented
-  void operator=(const vtkSlicerSuperBuildLoadableExtensionTemplateLogic&);               // Not implemented
+  vtkSlicerSuperLoadableModuleTemplateLogic(const vtkSlicerSuperLoadableModuleTemplateLogic&); // Not implemented
+  void operator=(const vtkSlicerSuperLoadableModuleTemplateLogic&);               // Not implemented
 };
 
 #endif

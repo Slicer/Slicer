@@ -18,62 +18,63 @@
 // Qt includes
 #include <QtPlugin>
 
-// ExtensionTemplate Logic includes
-#include <vtkSlicerSuperBuildLoadableExtensionTemplateLogic.h>
+// SuperLoadableModuleTemplate Logic includes
+#include <vtkSlicerSuperLoadableModuleTemplateLogic.h>
 
-// ExtensionTemplate includes
-#include "qSlicerSuperBuildLoadableExtensionTemplateModule.h"
-#include "qSlicerSuperBuildLoadableExtensionTemplateModuleWidget.h"
+// SuperLoadableModuleTemplate includes
+#include "qSlicerSuperLoadableModuleTemplateModule.h"
+#include "qSlicerSuperLoadableModuleTemplateModuleWidget.h"
 
 //-----------------------------------------------------------------------------
-Q_EXPORT_PLUGIN2(qSlicerSuperBuildLoadableExtensionTemplateModule, qSlicerSuperBuildLoadableExtensionTemplateModule);
+Q_EXPORT_PLUGIN2(qSlicerSuperLoadableModuleTemplateModule, qSlicerSuperLoadableModuleTemplateModule);
 
 //-----------------------------------------------------------------------------
 /// \ingroup Slicer_QtModules_ExtensionTemplate
-class qSlicerSuperBuildLoadableExtensionTemplateModulePrivate
+class qSlicerSuperLoadableModuleTemplateModulePrivate
 {
 public:
-  qSlicerSuperBuildLoadableExtensionTemplateModulePrivate();
+  qSlicerSuperLoadableModuleTemplateModulePrivate();
 };
 
 //-----------------------------------------------------------------------------
-// qSlicerSuperBuildLoadableExtensionTemplateModulePrivate methods
+// qSlicerSuperLoadableModuleTemplateModulePrivate methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModulePrivate::qSlicerSuperBuildLoadableExtensionTemplateModulePrivate()
+qSlicerSuperLoadableModuleTemplateModulePrivate
+::qSlicerSuperLoadableModuleTemplateModulePrivate()
 {
 }
 
 //-----------------------------------------------------------------------------
-// qSlicerSuperBuildLoadableExtensionTemplateModule methods
+// qSlicerSuperLoadableModuleTemplateModule methods
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModule::qSlicerSuperBuildLoadableExtensionTemplateModule(QObject* _parent)
+qSlicerSuperLoadableModuleTemplateModule
+::qSlicerSuperLoadableModuleTemplateModule(QObject* _parent)
   : Superclass(_parent)
-  , d_ptr(new qSlicerSuperBuildLoadableExtensionTemplateModulePrivate)
+  , d_ptr(new qSlicerSuperLoadableModuleTemplateModulePrivate)
 {
 }
 
 //-----------------------------------------------------------------------------
-qSlicerSuperBuildLoadableExtensionTemplateModule::~qSlicerSuperBuildLoadableExtensionTemplateModule()
+qSlicerSuperLoadableModuleTemplateModule::~qSlicerSuperLoadableModuleTemplateModule()
 {
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSuperBuildLoadableExtensionTemplateModule::helpText()const
+QString qSlicerSuperLoadableModuleTemplateModule::helpText()const
 {
-  return "This SuperBuildLoadableExtensionTemplate module illustrates how a loadable"
-      "module should be implemented.";
+  return "This is a loadable module bundled in an extension";
 }
 
 //-----------------------------------------------------------------------------
-QString qSlicerSuperBuildLoadableExtensionTemplateModule::acknowledgementText()const
+QString qSlicerSuperLoadableModuleTemplateModule::acknowledgementText()const
 {
   return "This work was was partially funded by NIH grant 3P41RR013218-12S1";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::contributors()const
+QStringList qSlicerSuperLoadableModuleTemplateModule::contributors()const
 {
   QStringList moduleContributors;
   moduleContributors << QString("Jean-Christophe Fillion-Robin (Kitware)");
@@ -81,37 +82,38 @@ QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::contributors()cons
 }
 
 //-----------------------------------------------------------------------------
-QIcon qSlicerSuperBuildLoadableExtensionTemplateModule::icon()const
+QIcon qSlicerSuperLoadableModuleTemplateModule::icon()const
 {
-  return QIcon(":/Icons/SuperBuildLoadableExtensionTemplate.png");
+  return QIcon(":/Icons/SuperLoadableModuleTemplate.png");
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::categories() const
+QStringList qSlicerSuperLoadableModuleTemplateModule::categories() const
 {
   return QStringList() << "Examples";
 }
 
 //-----------------------------------------------------------------------------
-QStringList qSlicerSuperBuildLoadableExtensionTemplateModule::dependencies() const
+QStringList qSlicerSuperLoadableModuleTemplateModule::dependencies() const
 {
   return QStringList();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerSuperBuildLoadableExtensionTemplateModule::setup()
+void qSlicerSuperLoadableModuleTemplateModule::setup()
 {
   this->Superclass::setup();
 }
 
 //-----------------------------------------------------------------------------
-qSlicerAbstractModuleRepresentation * qSlicerSuperBuildLoadableExtensionTemplateModule::createWidgetRepresentation()
+qSlicerAbstractModuleRepresentation * qSlicerSuperLoadableModuleTemplateModule
+::createWidgetRepresentation()
 {
-  return new qSlicerSuperBuildLoadableExtensionTemplateModuleWidget;
+  return new qSlicerSuperLoadableModuleTemplateModuleWidget;
 }
 
 //-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerSuperBuildLoadableExtensionTemplateModule::createLogic()
+vtkMRMLAbstractLogic* qSlicerSuperLoadableModuleTemplateModule::createLogic()
 {
-  return vtkSlicerSuperBuildLoadableExtensionTemplateLogic::New();
+  return vtkSlicerSuperLoadableModuleTemplateLogic::New();
 }

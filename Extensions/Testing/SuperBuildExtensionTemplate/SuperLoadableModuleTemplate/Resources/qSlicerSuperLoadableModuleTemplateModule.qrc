@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
-    <file>Icons/SuperBuildLoadableExtensionTemplate.png</file>
+    <file>Icons/SuperLoadableModuleTemplate.png</file>
   </qresource>
 </RCC>
