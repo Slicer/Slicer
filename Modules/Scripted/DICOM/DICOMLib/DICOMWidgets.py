@@ -269,8 +269,10 @@ class DICOMDetailsPopup(object):
         self.loadablesByPlugin[plugin] = plugin.examine(fileLists)
         loadEnabled = loadEnabled or self.loadablesByPlugin[plugin] != []
       except Exception,e:
+        import traceback
+        traceback.print_exc()
         qt.QMessageBox.warning(self.window,
-            "DICOM", "Warning: Plugin failed: %s" % pluginClass)
+            "DICOM", "Warning: Plugin failed: %s\n\nSee python console for error message." % pluginClass)
         print("DICOM Plugin failed: %s", str(e))
 
       step +=1
