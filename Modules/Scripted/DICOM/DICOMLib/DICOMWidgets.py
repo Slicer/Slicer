@@ -517,7 +517,12 @@ class DICOMRecentActivityWidget(object):
           if len(files) > 0:
             instance = self.dicomDatabase.instanceForFile(files[0])
             seriesTime = self.dicomDatabase.insertDateTimeForInstance(instance)
-            patientName = self.dicomDatabase.instanceValue(instance,self.tags['patientName'])
+            try:
+              patientName = self.dicomDatabase.instanceValue(instance,self.tags['patientName'])
+            except RuntimeError:
+              # this indicates that the particular instance is no longer
+              # accessible to the dicom database, so we should ignore it here
+              continue
             seriesDescription = self.dicomDatabase.instanceValue(instance,self.tags['seriesDescription'])
             elapsed = seriesTime.secsTo(now) 
             secondsPerHour = 60 * 60
