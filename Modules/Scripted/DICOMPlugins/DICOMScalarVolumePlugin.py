@@ -100,10 +100,7 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
     subseriesFiles = {}
     subseriesValues = {}
     for file in loadable.files:
-      # check if the image contains pixel data
-      if slicer.dicomDatabase.fileValue(file,self.tags['pixelData'])!='':
-        pixelDataAvailable = True
-      
+
       # save position and orientation
       positions[file] = slicer.dicomDatabase.fileValue(file,self.tags['position'])
       if positions[file] == "":
@@ -124,10 +121,6 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
         subseriesFiles[tag,value].append(file)
     
     loadables = []
-    
-    # If there is no pixel data at all then nothing can be loaded, so return right now
-    if pixelDataAvailable==False:
-      return loadables
     
     # Pixel data is available, so add the default loadable to the output
     loadables.append(loadable)
@@ -156,6 +149,13 @@ class DICOMScalarVolumePluginClass(DICOMPlugin):
           newFiles.append(file)
       if len(newFiles) > 0:
         loadable.files = newFiles
+        newLoadables.append(loadable)
+      else:
+        # here all files in have no pixel data, so they might be
+        # secondary capture images which will read, so let's pass
+        # them through with a warning and low confidence
+        loadable.warning = "There is no pixel data attribute for the DICOM objects, but they might be readable as secondary capture images"
+        loadable.confidence = 0.2
         newLoadables.append(loadable)
     loadables = newLoadables
 
