@@ -84,21 +84,17 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     qt.QTimer.singleShot(0, DICOM.setDatabasePrecacheTags)
 
   def addMenu(self):
-    #actionIcon = self.parent.icon
-    #a = qt.QAction(actionIcon, 'DICOM', slicer.util.mainWindow())
-    #a.setToolTip('Raise the DICOM module for loading DICOM dataset')
-    #a.connect('triggered()', self.select)
+    """Add an action to the File menu that will go into
+    the DICOM module by selecting the module.  Note that 
+    once the module is constructed (below in setup) another
+    connection is made that will also cause the instance-created
+    DICOM browser to be raised by this menu action"""
     a = self.parent.action()
-
     menuFile = slicer.util.lookupTopLevelWidget('menuFile')
     if menuFile:
       for action in menuFile.actions():
         if action.text == 'Save':
           menuFile.insertAction(action,a)
-
-#  def select(self):
-#    m = slicer.util.mainWindow()
-#    m.moduleSelector().selectModule('DICOM')
 
   def __del__(self):
     if hasattr(slicer, 'dicomListener'):
@@ -241,6 +237,21 @@ class DICOMWidget:
     self.showBrowser = qt.QPushButton('Show DICOM Browser')
     self.dicomFrame.layout().addWidget(self.showBrowser)
     self.showBrowser.connect('clicked()', self.detailsPopup.open)
+
+    # connect to the main window's dicom button
+    mw = slicer.util.mainWindow()
+    try:
+      action = slicer.util.findChildren(mw,name='actionLoadDICOM')[0]
+      action.connect('triggered()',self.detailsPopup.open)
+    except IndexError:
+      print('Could not connect to the main window DICOM button')
+
+    # connect to our menu file entry so it raises the browser
+    menuFile = slicer.util.lookupTopLevelWidget('menuFile')
+    if menuFile:
+      for action in menuFile.actions():
+        if action.text == 'DICOM':
+          action.connect('triggered()',self.detailsPopup.open)
 
     # make the tree view a bit bigger
     self.tree.setMinimumHeight(250)
