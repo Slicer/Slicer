@@ -473,6 +473,15 @@ const char* fourUpQuantitativeView =
   " </item>"
   "</layout>";
 
+const char* oneUpQuantitativeView =
+  "<layout type=\"horizontal\">"
+  " <item>"
+  "    <view class=\"vtkMRMLChartViewNode\" singletontag=\"ChartView1\">"
+  "     <property name=\"viewlabel\" action=\"default\">1</property>"
+  "    </view>"
+  " </item>"
+  "</layout>";
+
 const char* twoOverTwoView =
   "<layout type=\"vertical\">"
   " <item>"
@@ -985,6 +994,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          conventionalQuantitativeView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutFourUpQuantitativeView,
                                          fourUpQuantitativeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutOneUpQuantitativeView,
+                                         oneUpQuantitativeView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutTwoOverTwoView,
                                          twoOverTwoView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeQuantitativeView,
