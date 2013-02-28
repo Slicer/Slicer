@@ -157,9 +157,11 @@ class DICOMDetailsPopup(object):
       self.headerLayout.addWidget(self.header.widget)
 
   def open(self):
-    self.window.show()
-    if self.popupGeometry.isValid():
-      self.window.setGeometry(self.popupGeometry)
+    if not self.window.isVisible():
+      self.window.show()
+      if self.popupGeometry.isValid():
+        self.window.setGeometry(self.popupGeometry)
+        self.popupPositioned = True
     if not self.popupPositioned:
       mainWindow = slicer.util.mainWindow()
       screenMainPos = mainWindow.pos
