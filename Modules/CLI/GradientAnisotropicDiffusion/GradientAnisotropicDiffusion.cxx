@@ -63,6 +63,7 @@ int DoIt( int argc, char * argv[], T )
   filter->SetNumberOfIterations( numberOfIterations );
   filter->SetTimeStep( timeStep );
   filter->SetConductanceParameter( conductance );
+  filter->SetUseImageSpacing( useImageSpacing );
 
   typename CastType::Pointer cast = CastType::New();
   cast->SetInput( filter->GetOutput() );

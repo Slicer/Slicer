@@ -67,4 +67,15 @@
       <description><![CDATA[Output filtered]]></description>
     </image>
   </parameters>
+  <parameters advanced = "true">
+    <label>Advanced</label>
+    <description><![CDATA[Advanced parameters for the anisotropic diffusion algorithm]]></description>
+    <boolean>
+      <name>useImageSpacing</name>
+      <longflag>--useImageSpacing</longflag>
+      <description>![CDATA[Take into account image spacing in the computation.  It is advisable to turn this option on, especially when the pixel size is different in different dimensions. However, to produce results consistent with Slicer4.2 and earlier, this option should be turned off.]]</description>
+      <label>Use image spacing</label>
+      <default>true</default>
+    </boolean>
+  </parameters>
 </executable>
