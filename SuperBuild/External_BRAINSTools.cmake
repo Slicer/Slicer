@@ -20,18 +20,14 @@ set(proj BRAINSTools)
 
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
-if(${ITK_VERSION_MAJOR} STREQUAL "3")
-  set(GIT_TAG "fa2159607df370451e7a26d09e4e2a61b6e6c5c8" CACHE STRING "" FORCE)
-else()
-  set(GIT_TAG "796a96d7b0b4c5faf8188919d77ffa863f0af216" CACHE STRING "" FORCE) # 2013-01-07 tag DWIConvert
-endif()
+  set(GIT_TAG "0e40329e03bdce728785f866ad67f194e9d1b013" CACHE STRING "" FORCE) # 2013-03-08 ITK with const-correctness options
 
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
   endif()
 
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSStandAlone.git"
+    GIT_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git"
     GIT_TAG "${GIT_TAG}"
     "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${proj}
