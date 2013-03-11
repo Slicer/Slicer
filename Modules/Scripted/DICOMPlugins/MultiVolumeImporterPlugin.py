@@ -202,7 +202,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     try:
       mvNode = loadable.multivolume
     except AttributeError:
-      return
+      return None
 
     nFrames = int(mvNode.GetAttribute('MultiVolume.NumberOfFrames'))
     files = string.split(mvNode.GetAttribute('MultiVolume.FrameFileList'),',')
@@ -226,7 +226,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       svLoadables = scalarVolumePlugin.examine([frameFileList])
 
       if len(svLoadables) == 0:
-        return
+        return None
       for f in svLoadables[0].files:
         sNode.AddFileName(f)
 
@@ -237,7 +237,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       if frame == None:
         print('Failed to read a multivolume frame!')
-        return False
+        return None
 
       if frameNumber == 0:
         frameImage = frame.GetImageData()
@@ -274,7 +274,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvNode.SetNumberOfFrames(nFrames)
     slicer.mrmlScene.AddNode(mvNode)
 
-    return True
+    return mvNode
 
   def tm2ms(self,tm):
    
