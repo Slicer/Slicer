@@ -190,6 +190,9 @@ set(Slicer_INSTALL_PREFIX  "@CMAKE_INSTALL_PREFIX@")
 # --------------------------------------------------------------------------
 # External data
 # --------------------------------------------------------------------------
+if(NOT DEFINED Slicer_ExternalData_DATA_MANAGEMENT_TARGET)
+  set(Slicer_ExternalData_DATA_MANAGEMENT_TARGET "@Slicer_ExternalData_DATA_MANAGEMENT_TARGET@")
+endif()
 set(Slicer_ExternalData_OBJECT_STORES "@Slicer_ExternalData_OBJECT_STORES@")
 set(Slicer_ExternalData_URL_TEMPLATES "@Slicer_ExternalData_URL_TEMPLATES@")
 

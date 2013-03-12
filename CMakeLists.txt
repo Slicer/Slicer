@@ -542,6 +542,7 @@ message(STATUS "Configuring Slicer for ${Slicer_OS}-${Slicer_ARCHITECTURE}")
 #-----------------------------------------------------------------------------
 # ExternalData configuration for test data
 #-----------------------------------------------------------------------------
+set(Slicer_ExternalData_DATA_MANAGEMENT_TARGET ${PROJECT_NAME}Data)
 list(APPEND ExternalData_URL_TEMPLATES "http://slicer.kitware.com/midas3/api/rest?method=midas.bitstream.download&checksum=%(hash)")
 set(ExternalData_OBJECT_STORES ${Slicer_BINARY_DIR}/ExternalData/Objects)
 include(ExternalData)
@@ -1040,6 +1041,11 @@ if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
     COMPONENT Development
     )
 endif()
+
+#-----------------------------------------------------------------------------
+# Create target to download data from the <Slicer_ExternalData_DATA_MANAGEMENT_TARGET> group.
+# This must come after all tests have been added that reference the group, so we put it last.
+ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as

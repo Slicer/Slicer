@@ -41,7 +41,7 @@ macro(SIMPLE_TEST testname)
     message(FATAL_ERROR "error: Target '${KIT}CxxTests' is not defined !")
   endif()
 
-  add_test(NAME ${testname}
+  ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${testname}
            COMMAND ${Slicer_LAUNCH_COMMAND} $<TARGET_FILE:${KIT}CxxTests> ${testname} ${ARGN})
   set_property(TEST ${testname} PROPERTY LABELS ${KIT})
 endmacro()
