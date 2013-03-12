@@ -112,7 +112,7 @@ if(Slicer_BUILD_CLI_SUPPORT)
 endif()
 
 if(Slicer_BUILD_BRAINSTOOLS)
-    list(APPEND Slicer_DEPENDENCIES BRAINSTools)
+    list(APPEND Slicer_DEPENDENCIES BRAINSTools DoubleConvert)
 endif()
 
 if(Slicer_BUILD_EMSegment)
