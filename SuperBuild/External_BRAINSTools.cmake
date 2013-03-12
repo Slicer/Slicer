@@ -12,7 +12,7 @@ if(DEFINED BRAINSTools_SOURCE_DIR AND NOT EXISTS ${BRAINSTools_SOURCE_DIR})
 endif()
 
 # Set dependency list
-set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK )
+set(BRAINSTools_DEPENDENCIES ${ITK_EXTERNAL_NAME} SlicerExecutionModel VTK DoubleConvert)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(BRAINSTools)
