@@ -83,7 +83,7 @@ slicer_add_python_unittest(
 set_tests_properties(py_nomainwindow_SlicerUnitTestWithErrorsTest PROPERTIES WILL_FAIL TRUE)
 
 #
-# Exercise different Slicer command line option and check that no warnings are displated.
+# Exercise different Slicer command line option and check that no warnings are displayed.
 #
 macro(nowarning_test test_name)
   add_test(

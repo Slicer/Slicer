@@ -53,7 +53,7 @@ macro(slicerMacroBuildQtModule)
   endif()
 
   set(MY_EXPORT_HEADER_PREFIX qSlicer${QTMODULE_NAME}Module)
-  message(STATUS "Configuring Qt loadable module: ${QTMODULE_NAME} [${MY_EXPORT_HEADER_PREFIX}Export.h]")
+  message(STATUS "Configuring Loadable module: ${QTMODULE_NAME} [${MY_EXPORT_HEADER_PREFIX}Export.h]")
 
   # --------------------------------------------------------------------------
   # Sanity checks
