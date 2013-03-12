@@ -295,6 +295,8 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     }
   std::vector<std::string>::iterator displayNodeIDIt =
     this->DisplayNodeIDs.begin() + n;
+
+  // if we dont find the node or they have the same id
   if (displayNodeIDIt == this->DisplayNodeIDs.end() ||
       *displayNodeIDIt == newDisplayNodeID)
     {
@@ -306,6 +308,7 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     return;
     }
 
+  // node id is different, unobserve the old node
   if (!displayNodeIDIt->empty() && this->Scene)
     {
     this->Scene->RemoveReferencedNodeID(
@@ -322,11 +325,13 @@ void vtkMRMLDisplayableNode::SetAndObserveNthDisplayNodeID(int n, const char *di
     this->DisplayNodes.erase(this->DisplayNodes.begin() + n);
     if (oldDisplayNode != 0)
       {
+      // TODO should be OnDisplayNodeAboutRemoved()
       this->OnDisplayNodeAdded(0);
       }
     }
   else
     {
+    // change the existing node ID
     *displayNodeIDIt = newDisplayNodeID;
     if (this->Scene)
       {
