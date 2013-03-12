@@ -45,9 +45,9 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
   Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit)
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit)
   Q_PROPERTY(bool displaySettingsPathAndExit READ displaySettingsPathAndExit)
+  Q_PROPERTY(bool displayTemporaryPathAndExit READ displayTemporaryPathAndExit)
   Q_PROPERTY(bool verboseModuleDiscovery READ verboseModuleDiscovery)
   Q_PROPERTY(bool disableMessageHandlers READ disableMessageHandlers)
-  Q_PROPERTY(QString tempDirectory READ tempDirectory)
   Q_PROPERTY(bool testingEnabled READ isTestingEnabled)
 #ifdef Slicer_USE_PYTHONQT
   Q_PROPERTY(bool pythonDisabled READ isPythonDisabled)
@@ -112,17 +112,14 @@ public:
   /// Return True if slicer should display settings path and exit
   bool displaySettingsPathAndExit()const;
 
+  /// Return True if slicer should display settings path and exit
+  bool displayTemporaryPathAndExit()const;
+
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;
 
   /// Return True if slicer shouldn't catch messages printed to the terminal.
   bool disableMessageHandlers()const;
-
-  /// Return temp directory
-  /// Try to read the value from the setting, if no value is found it defaults to
-  /// the value returned by QDir::tempPath()
-  /// See http://qt.nokia.com/doc/4.6/qdir.html#tempPath
-  QString tempDirectory()const;
 
   /// Return True if slicer settings are ignored
   bool settingsDisabled() const;

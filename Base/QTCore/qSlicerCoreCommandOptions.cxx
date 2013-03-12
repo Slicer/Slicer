@@ -20,15 +20,12 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDir>
-#include <QSettings>
 
 // CTK includes
 #include <ctkPimpl.h>
 
 // SlicerQt includes
 #include "qSlicerCoreCommandOptions.h"
-#include "qSlicerCoreApplication.h" // For disableCurrentSettings()
 
 //-----------------------------------------------------------------------------
 class qSlicerCoreCommandOptionsPrivate
@@ -42,7 +39,6 @@ public:
   void init();
 
   QHash<QString, QVariant> ParsedArgs;
-  QSettings                Settings;
   QString                  ExtraPythonScript;
   bool                     RunPythonAndExit;
 };
@@ -231,6 +227,13 @@ bool qSlicerCoreCommandOptions::displaySettingsPathAndExit() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::displayTemporaryPathAndExit() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("temporary-path").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -242,13 +245,6 @@ bool qSlicerCoreCommandOptions::disableMessageHandlers() const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-message-handlers").toBool();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerCoreCommandOptions::tempDirectory() const
-{
-  Q_D(const qSlicerCoreCommandOptions);
-  return d->Settings.value("temp-directory", QVariant(QDir::tempPath())).toString();
 }
 
 //-----------------------------------------------------------------------------
@@ -335,6 +331,9 @@ void qSlicerCoreCommandOptions::addArguments()
 
   this->addArgument("settings-path", "", QVariant::Bool,
                     "Displays settings path and exits.");
+
+  this->addArgument("temporary-path", "", QVariant::Bool,
+                    "Displays temporary path and exits.");
 
   this->addArgument("verbose-module-discovery", "", QVariant::Bool,
                     "Enable verbose output during module discovery process.");

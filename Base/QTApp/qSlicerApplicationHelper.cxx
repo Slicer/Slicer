@@ -103,7 +103,7 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
   if (!options->disableCLIModules() && !options->runPythonAndExit())
     {
     QString tempDirectory =
-      qSlicerCoreApplication::application()->coreCommandOptions()->tempDirectory();
+      qSlicerCoreApplication::application()->temporaryPath();
     bool preferExecutableCLIs =
       app->userSettings()->value("Modules/PreferExecutableCLI", false).toBool();
     moduleFactoryManager->registerFactory(

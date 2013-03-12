@@ -758,6 +758,13 @@ void qSlicerCoreApplication::handlePreApplicationCommandLineArguments()
     return;
     }
 
+  if (options->displayTemporaryPathAndExit())
+    {
+    std::cout << qPrintable(this->temporaryPath()) << std::endl;
+    this->terminate(EXIT_SUCCESS);
+    return;
+    }
+
   if (options->ignoreRest())
     {
     qDebug() << "Ignored arguments:" << options->unparsedArguments();
