@@ -60,7 +60,9 @@ public:
   QStringList fileDescriptions(const QString& file)const;
   QStringList fileDescriptionsByType(const qSlicerIO::IOFileType fileType)const;
 
+  /// Return the file type associated with an VTK \a object.
   Q_INVOKABLE qSlicerIO::IOFileType fileWriterFileType(vtkObject* object)const;
+
   Q_INVOKABLE QStringList fileWriterDescriptions(const qSlicerIO::IOFileType& fileType)const;
   QStringList fileWriterExtensions(vtkObject* object)const;
 

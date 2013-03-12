@@ -226,6 +226,46 @@ def openSaveDataDialog():
   from slicer import app
   return app.coreIOManager().openSaveDataDialog()
 
+def saveNode(node, filename, properties={}):
+  """Save 'node' data into 'filename'.
+
+  It is the user responsability to provide the appropriate file extension.
+
+  User has also the possibility to overwrite the fileType internally retrieved using
+  method 'qSlicerCoreIOManager::fileWriterFileType(vtkObject*)'. This can be done
+  by specifiying a 'fileType'attribute to the optional 'properties' dictionary.
+  """
+  from slicer import app
+  properties["nodeID"] = node.GetID();
+  properties["fileName"] = filename
+  if hasattr(properties, "fileType"):
+    filetype = properties["fileType"]
+  else:
+    filetype = app.coreIOManager().fileWriterFileType(node)
+  return app.coreIOManager().saveNodes(filetype, properties)
+
+def saveScene(filename, properties={}):
+  """Save the current scene.
+
+  Based on the value of 'filename', the current scene is saved either
+  as a MRML file, MRB file or directory.
+
+  If filename ends with '.mrml', the scene is saved as a single file
+  without associated data.
+
+  If filename ends with '.mrb', the scene is saved as a MRML bundle (Zip
+  archive with scene and data files).
+
+  In every other case, the scene is saved in the directory
+  specified by 'filename'. Both MRML scene file and data
+  will be written to disk. If needed, directories and sub-directories
+  will be created.
+  """
+  from slicer import app
+  filetype = 'SceneFile'
+  properties['fileName'] = filename
+  return app.coreIOManager().saveNodes(filetype, properties)
+
 #
 # Module
 #
