@@ -41,14 +41,8 @@ if(NOT DEFINED "DoubleConvert_DIR")
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
     )
 
-  # HACK - Fix build error - See https://github.com/BRAINSia/double-conversion/issues/3
-  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    set(${proj}_CXX_FLAGS "${ep_common_cxx_flags} -fPIC")
-    set(${proj}_C_FLAGS "${ep_common_c_flags} -fPIC")
-  endif()
-
   set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/double-conversion.git)
-  set(${proj}_GIT_TAG 9014759697ed334753a8334e09ec8c01f9c53830)
+  set(${proj}_GIT_TAG 4acac6d49232d1822b19d4dd79f1477656757156)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -58,9 +52,9 @@ if(NOT DEFINED "DoubleConvert_DIR")
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${${proj}_CXX_FLAGS}
+      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${${proj}_C_FLAGS}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
       # INSTALL_COMMAND "" # Limit the number of include paths bu installing the project
