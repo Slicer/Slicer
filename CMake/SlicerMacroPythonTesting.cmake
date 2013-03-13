@@ -46,18 +46,13 @@ macro(SLICER_ADD_PYTHON_UNITTEST)
   if("${_script_source_dir}" STREQUAL "")
     set(_script_source_dir ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
-  # HACK - Waiting the generator expression $<SEMICOLON> is available with the required CMake
-  #        version and since using an unknown genetor expression trigger an error. Let's use
-  #        "<SEMICOLON>" instead. See associated code in
-  #        qSlicerCoreApplication::handleCommandLineArguments function.
-  #        See http://cmake.org/Bug/view.php?id=14003
   ExternalData_add_test(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET}
     NAME py_${MY_TESTNAME_PREFIX}${test_name}
     COMMAND ${Slicer_LAUNCHER_EXECUTABLE}
     --no-splash
     --testing
     --ignore-slicerrc ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS}
-    --python-code "import slicer.testing<SEMICOLON> slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
+    --python-code "import slicer.testing\\; slicer.testing.runUnitTest(['${CMAKE_CURRENT_BINARY_DIR}', '${_script_source_dir}'], '${test_name}')"
     ${MY_SLICER_ARGS}
     )
   set_property(TEST py_${MY_TESTNAME_PREFIX}${test_name} PROPERTY RUN_SERIAL TRUE)

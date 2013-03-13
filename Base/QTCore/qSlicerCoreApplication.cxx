@@ -878,10 +878,6 @@ void qSlicerCoreApplication::handleCommandLineArguments()
     QString pythonCode = options->pythonCode();
     if(!pythonCode.isEmpty())
       {
-      // HACK - Waiting the generator expression $<SEMICOLON> is available with the required CMake
-      //        version, let's proceed to the replacement of "<SEMICOLON>" here.
-      //        See http://cmake.org/Bug/view.php?id=14003
-      pythonCode.replace("<SEMICOLON>", ";");
       qApp->processEvents();
       this->corePythonManager()->executeString(pythonCode);
       }
