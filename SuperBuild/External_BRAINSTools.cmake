@@ -20,7 +20,7 @@ set(proj BRAINSTools)
 
 if(NOT DEFINED BRAINSTools_SOURCE_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
-  set(GIT_TAG "0e40329e03bdce728785f866ad67f194e9d1b013" CACHE STRING "" FORCE) # 2013-03-08 ITK with const-correctness options
+  set(GIT_TAG "49eda67a4bfc83dfff1ca1b102cc6281efaf6521" CACHE STRING "" FORCE)
 
   if(NOT DEFINED git_protocol)
     set(git_protocol "git")
