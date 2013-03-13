@@ -17,10 +17,7 @@
 
 // MRML includes
 #include "vtkMRML.h"
-#include "MRMLReferencedNode.h"
 #include "vtkObserverManager.h"
-#include "vtkIdTypeArray.h"
-
 class vtkMRMLScene;
 
 
@@ -113,7 +110,6 @@ void class::Set##name (const char* _arg)            \
   }
 #endif
 
-
 /// \brief Abstract Superclass for all specific types of MRML nodes.
 ///
 /// This node encapsulates the functionality common to all types of MRML nodes.
@@ -145,7 +141,7 @@ public:
   /// 
   /// Updates this node if it depends on other nodes 
   /// when the node is deleted in the scene
-  virtual void UpdateReferences();
+  virtual void UpdateReferences() {};
 
   /// 
   /// Set dependencies between this node and a child node
@@ -433,115 +429,12 @@ public:
   vtkSetMacro(Selected, int);
   vtkBooleanMacro(Selected, int);
 
-  ///
-  /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  /// use this method to add new reference types to a node
-  void AddNodeReferenceRole(const char *referenceRole)
-  {
-    if (referenceRole)
-      {
-      this->NodeReferences[std::string(referenceRole)] = std::vector< MRMLReferencedNode >();
-      }
-  }
-  
-  ///
-  /// set a reference to a node with specified nodeID from this node for a specific referenceRole
-  inline vtkMRMLNode* SetNodeReferenceID(const char* referenceRole, const char* referencedNodeID);
-
-  /// Convenience method that adds a reference node ID at the end of the list.
-  inline vtkMRMLNode* AddNodeReferenceID(const char* referenceRole , const char* referencedNodeID);
-
-  ///
-  /// set a N-th reference from this node with specified referencedNodeID for a specific referenceRole
-  vtkMRMLNode* SetNthNodeReferenceID(const char* referenceRole, int n, const char* referencedNodeID);
-
-  ///
-  /// set and observe a reference node from this node for a specific reference role
-  /// observe Modified event by default, optionally takes array of events
-  inline vtkMRMLNode* SetAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=0);
-
-  ///
-  /// add and observe a reference node from this node for a specific reference role
-  /// observe Modified event by default, optionally takes array of events
-  inline vtkMRMLNode* AddAndObserveNodeReferenceID(const char* referenceRole , const char* referencedNodeID, vtkIntArray *events=0);
-  
-  /// 
-  /// Set and observe the Nth node ID for a specific reference role.
-  /// If n is larger than the number of reference nodes, the node ID
-  /// is added at the end of the list. If nodeReferenceID is 0, the node ID is
-  /// removed from the list.
-  /// When a node ID is set (added or changed), its corresponding node is
-  /// searched (slow) into the scene and cached for fast future access.
-  /// It is possible however that the node is not yet into the scene (due to
-  /// some temporary state (at loading time for example). UpdateScene() can
-  /// later be called to retrieve the nodes from the scene
-  /// (automatically done when loading a scene). Get(Nth)NodeReference() also
-  /// scan the scene if the node was not yet cached.
-  /// \sa SetAndObserveNodeReferenceID(const char*),
-  /// AddAndObserveNodeReferenceID(const char *), RemoveNthNodeReferenceID(int)
-  vtkMRMLNode* SetAndObserveNthNodeReferenceID(const char* referenceRole, int n, const char *nodeReferenceID, vtkIntArray *events=0);
-
-  ///
-  /// Convenience method that removes the Nth node ID from the list
-  ///
-  inline void RemoveNthNodeReferenceID(const char* referenceRole, int n);
-
-  ///
-  /// Remove all node IDs and associated nodes for a specific reference role.
-  void RemoveAllNodeReferenceIDs(const char* referenceRole);
-
-  ///
-  /// Return true if NodeReferenceID is in the node ID list for a specific reference role.
-  bool HasNodeReferenceID(const char* referenceRole, const char* NodeReferenceID);
-
-  ///
-  /// Return the number of node IDs for a specific reference role(and nodes as they always
-  /// have the same size).
-  inline int GetNumberOfNodeReferences(const char* referenceRole);
-  ///
-  /// Return the string of the Nth node ID for a specific reference role. Or 0 if no such
-  /// node exist.
-  /// Warning, a temporary char generated from a std::string::c_str()
-  /// is returned.
-  const char *GetNthNodeReferenceID(const char* referenceRole, int n);
-
-  ///
-  /// Utility function that returns the first node id for a specific reference role.
-  /// \sa GetNthNodeReferenceID(int), GetNodeReference()
-  inline const char *GetNodeReferenceID(const char* referenceRole);
-
-  /// 
-  /// Get referenced MRML node for a specific reference role. Can be 0 in temporary states; e.g. if
-  /// the referenced node has no scene, or if the referenced is not
-  /// yet into the scene.
-  /// If not cached, it tnternally scans (slow) the scene to search for the
-  /// associated referenced node ID.
-  /// If the referencing node is no longer in the scene (GetScene() == 0), it
-  /// happens after the node is removed from the scene (scene->RemoveNode(dn),
-  /// the returned referenced node is 0.
-  vtkMRMLNode* GetNthNodeReference(const char* referenceRole, int n);
-
-  ///
-  /// Utility function that returns the first referenced node.
-  /// \sa GetNthNodeReference(int), GetNodeReferenceID()
-  inline vtkMRMLNode* GetNodeReference(const char* referenceRole);
-
-  ///
-  /// Return a list of the referenced nodes. Some nodes can be 0
-  /// when the scene is in a temporary state.
-  /// The list of nodes is browsed (slow) to make sure the pointers are
-  /// up-to-date.
-  /// \sa GetNthNodeReference
-  void GetNodeReferences(const char* referenceRole, std::vector<vtkMRMLNode*> &nodes);
-
-
   /// HierarchyModifiedEvent is generated when the hierarchy node with which
   /// this node is associated changes
   enum
     {
       HierarchyModifiedEvent = 16000,
-      IDChangedEvent = 16001,
-      ReferenceAddedEvent
+      IDChangedEvent = 16001
     };
 
 protected:
@@ -586,38 +479,11 @@ protected:
 
   vtkObserverManager *MRMLObserverManager;
 
-  /// NodeReferences maps stores vector of refererences for each referenceRole, 
-  /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  /// use AddNodeReferenceType() to add new reference types to a node
-  typedef std::map< std::string, std::vector< MRMLReferencedNode> > NodeReferencesType;
-  NodeReferencesType NodeReferences;
-
-
   /// 
   /// Get/Set the string used to manage encoding/decoding of strings/URLs with special characters
   vtkSetStringMacro( TempURLString );
   vtkGetStringMacro( TempURLString );
-
-
-  ///
-  /// Call UpdateNthNodeReference(i) on all nodes.
-  void UpdateNodeReferences(const char* referenceRole);
-
-  /// Search the referenced node in the scene that match the associated node ID.
-  /// Prerequisites: scene is valid, n >= 0 and n < referenced node IDs list size
-  void UpdateNthNodeReference(const char* referenceRole, int n);
-
-  void SetAndObserveNthNodeReference(const char* referenceRole, int n, vtkMRMLNode *referencedNode, vtkIntArray *events=0);
-
-  ///
-  /// Called when a node is added (list size increased). 
-  virtual void OnNodeReferenceAdded(const char* referenceRole, MRMLReferencedNode *reference)
-  {
-    this->InvokeEvent(vtkMRMLNode::ReferenceAddedEvent, reference);
-  }
-
-
-
+  
 private:
   /// 
   /// ID use by other nodes to reference this node in XML.
@@ -633,62 +499,5 @@ private:
   int DisableModifiedEvent;
   int ModifiedEventPending;
 };
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::SetNodeReferenceID(const char* referenceRole, const char *referencedNodeID)
-{
-  return this->SetNthNodeReferenceID(referenceRole, 0, referencedNodeID);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::AddNodeReferenceID(const char* referenceRole, const char *referencedNodeID)
-{
-  return this->SetNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), referencedNodeID);
-}
-
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLNode::GetNodeReferenceID(const char* referenceRole)
-{
-  return this->GetNthNodeReferenceID(referenceRole, 0);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::GetNodeReference(const char* referenceRole)
-{
-  return this->GetNthNodeReference(referenceRole, 0);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::SetAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
-{
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, 0, NodeReferenceID, events);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::AddAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
-{
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), NodeReferenceID, events);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLNode::RemoveNthNodeReferenceID(const char* referenceRole, int n)
-{
-  this->SetAndObserveNthNodeReferenceID(referenceRole, n, 0);
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
-{
-  int n=0;
-  if (referenceRole)
-    {
-    n = static_cast<int>(this->NodeReferences[std::string(referenceRole)].size());
-    }
-  return n;
-}
-
-
-
 
 #endif
