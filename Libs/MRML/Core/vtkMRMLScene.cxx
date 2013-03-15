@@ -1286,6 +1286,8 @@ vtkMRMLNode*  vtkMRMLScene::AddNodeNoNotify(vtkMRMLNode *n)
   // cache the node so the whole scene cache stays up-todate
   this->AddNodeID(n);
 
+  //n->OnNodeAddedToScene();
+
   n->EndModify(wasModifying);
   return n;
 }

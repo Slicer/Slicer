@@ -61,43 +61,32 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// Set the references to the scene.
-  virtual void SetSceneReferences();
-
-  /// 
-  /// Updates this node if it depends on other nodes 
-  /// when the node is deleted in the scene
-  virtual void UpdateReferences();
-
   /// 
   /// Finds the storage node and read the data
   virtual void UpdateScene(vtkMRMLScene *scene);
-
-  /// 
-  /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
   /// 
   /// alternative method to propagate events generated in Storage nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
                                    unsigned long /*event*/, 
                                    void * /*callData*/ );
-  /// 
-  /// String ID of the storage MRML node
-  /*
-  vtkSetReferenceStringMacro(StorageNodeID);
-  void SetReferenceStorageNodeID(const char *id) { this->SetStorageNodeID(id); }
-  vtkGetStringMacro(StorageNodeID);
 
   /// 
-  /// Get associated storage MRML node
-  vtkMRMLStorageNode* GetStorageNode();
-  */
-  /// 
   /// String ID of the storage MRML node
-  void SetAndObserveStorageNodeID(const char *StorageNodeID);
-  void AddAndObserveStorageNodeID(const char *StorageNodeID);
-  void SetAndObserveNthStorageNodeID(int n, const char *StorageNodeID);
+  void SetAndObserveStorageNodeID(const char *storageNodeID)
+  {
+    this->SetAndObserveNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), storageNodeID);
+  }
+
+  void AddAndObserveStorageNodeID(const char *storageNodeID)
+  {
+    this->AddAndObserveNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), storageNodeID);
+  }
+
+  void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID)
+  {
+    this->SetAndObserveNthNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), n, storageNodeID);
+  }
 
   /// 
   /// This is describes the type of data stored in the nodes storage node(s).
@@ -111,37 +100,27 @@ public:
   const char *GetSlicerDataType ();
   
   int GetNumberOfStorageNodes()
-    {
-      return static_cast<int>(this->StorageNodeIDs.size());
-    };
+  {
+    return this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
+  }
 
   const char *GetNthStorageNodeID(int n)
   {
-      if (n < 0 || n >= (int)this->StorageNodeIDs.size())
-      {
-          return NULL;
-      }
-      return this->StorageNodeIDs[n].c_str();
-  };
+    return this->GetNthNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), n);
+  }
 
   const char *GetStorageNodeID()
-    {
-    return this->GetNthStorageNodeID(0);
-    };
+  {
+  return this->GetNthStorageNodeID(0);
+  }
 
   /// 
   /// Get associated display MRML node
   vtkMRMLStorageNode* GetNthStorageNode(int n);
 
-  vtkMRMLStorageNode* GetStorageNode()
-    {
-    return this->GetNthStorageNode(0);
-    };
+  vtkMRMLStorageNode* GetStorageNode();
 
-  std::vector<vtkMRMLStorageNode*> GetStorageNodes()const
-    {
-    return this->StorageNodes;
-    };
+  //std::vector<vtkMRMLStorageNode*> GetStorageNodes()const;
 
   /// Create a storage node for this node type or NULL if it doesn't have one.
   /// Null by default.
@@ -163,25 +142,21 @@ public:
   /// \sa GetStoredTime() StorableModifiedTime Modified()
   virtual bool GetModifiedSinceRead();
 
+  static const std::string STORAGE_NODE_REFERENCE_ROLE;
+  static const std::string STORAGE_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
+
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();
   vtkMRMLStorableNode(const vtkMRMLStorableNode&);
   void operator=(const vtkMRMLStorableNode&);
 
-  void SetStorageNodeID(const char* id) ;
-  void SetNthStorageNodeID(int n, const char* id);
-  void AddStorageNodeID(const char* id);
-  void AddAndObserveStorageNode(vtkMRMLStorageNode *dnode);
-
   vtkTagTable *UserTagTable;
 
-  std::vector<std::string> StorageNodeIDs;
   /// 
   /// SlicerDataType records the kind of storage node that
   /// holds the data. Set in each subclass.
   std::string SlicerDataType;
-  std::vector<vtkMRMLStorageNode *> StorageNodes;
 
   /// Compute when the storable node was read/written for the last time.
   /// This information is used by GetModifiedSinceRead() to know if the node

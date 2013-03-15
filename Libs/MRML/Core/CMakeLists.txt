@@ -135,6 +135,7 @@ set(MRMLCore_SRCS
   vtkMRMLModelNode.cxx
   vtkMRMLModelStorageNode.cxx
   vtkMRMLNode.cxx
+  vtkMRMLNodeReference.cxx
   vtkMRMLParser.cxx
   vtkMRMLProceduralColorNode.cxx
   vtkMRMLROIListNode.cxx

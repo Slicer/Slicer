@@ -24,6 +24,7 @@ class vtkMRMLStorageNode;
 class vtkAssignAttributes;
 class vtkDataArray;
 class vtkPolyData;
+class vtkMRMLDisplayNode;
 
 /// \brief MRML node to represent a 3D surface model.
 ///
@@ -176,9 +177,18 @@ protected:
   vtkMRMLModelNode(const vtkMRMLModelNode&);
   void operator=(const vtkMRMLModelNode&);
 
-  /// Called when a display node is added. Propagate the polydata
+  /// Called when a display node is added/removed/modified. Propagate the polydata
   /// to the new display node.
-  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
+  virtual void UpdateDisplayNodePolyData(vtkMRMLDisplayNode *dnode);
+
+  ///
+  /// Called when a node reference ID is added (list size increased). 
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
+
+  ///
+  /// Called when a node reference ID is modified. 
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
+
 
   /// Internal function that sets the polydata to all the display nodes.
   /// Can be called if the polydata is changed.

@@ -173,7 +173,18 @@ protected:
   vtkMRMLVolumeNode(const vtkMRMLVolumeNode&);
   void operator=(const vtkMRMLVolumeNode&);
 
-  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode);
+  /// Called when a display node is added/removed/modified. Propagate the polydata
+  /// to the new display node.
+  virtual void UpdateDisplayNodeImageData(vtkMRMLDisplayNode *dnode);
+
+  ///
+  /// Called when a node reference ID is added (list size increased). 
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
+
+  ///
+  /// Called when a node reference ID is modified. 
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference);
+
   virtual void SetImageData(vtkImageData* img);
 
   /// these are unit length direction cosines

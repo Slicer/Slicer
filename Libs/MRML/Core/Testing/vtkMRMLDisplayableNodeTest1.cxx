@@ -33,6 +33,7 @@ public:
   // associated to the node ID exists in the scene.
   const std::vector<vtkMRMLDisplayNode*>& GetInternalDisplayNodes()
     {
+    this->GetDisplayNodes();
     return this->DisplayNodes;
     }
   virtual vtkMRMLNode* CreateNodeInstance()
@@ -237,10 +238,10 @@ bool TestAddDisplayNodeIDWithNoScene()
   // Finally, add the node into the scene so it can look for the display nodes
   // in the scene.
   scene->AddNode(displayableNode.GetPointer());
-
-  if (displayableNode->GetInternalDisplayNodes().size() != 2 ||
-      displayableNode->GetInternalDisplayNodes()[0] != 0 ||
-      displayableNode->GetInternalDisplayNodes()[1] != 0)
+  const std::vector<vtkMRMLDisplayNode*> &internalNodes = displayableNode->GetInternalDisplayNodes();
+  if (internalNodes.size() != 2 ||
+      internalNodes[0] == 0 ||
+      internalNodes[1] == 0)
     {
     std::cout << __LINE__ << ": AddNode failed" << std::endl;
     return false;
@@ -252,7 +253,7 @@ bool TestAddDisplayNodeIDWithNoScene()
   if (displayableNode->GetInternalDisplayNodes().size() != 2 ||
       nthDisplayNode != displayNode3.GetPointer() ||
       displayableNode->GetInternalDisplayNodes()[1] != displayNode3.GetPointer() ||
-      displayableNode->GetInternalDisplayNodes()[0] != 0)
+      displayableNode->GetInternalDisplayNodes()[0] == 0)
     {
     std::cout << __LINE__ << ": GetNthDisplayNode failed" << std::endl;
     return false;
@@ -356,8 +357,7 @@ bool TestAddDelayedDisplayNode()
   scene->AddNode(displayNode1.GetPointer());
 
   if (displayableNode->GetNthDisplayNodeID(0) == 0 ||
-      strcmp(displayableNode->GetNthDisplayNodeID(0), "vtkMRMLDisplayNodeTestHelper1") ||
-      displayableNode->GetInternalDisplayNodes()[0] != 0)
+      strcmp(displayableNode->GetNthDisplayNodeID(0), "vtkMRMLDisplayNodeTestHelper1"))
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed" << std::endl;
     return false;
@@ -536,13 +536,15 @@ bool TestDisplayModifiedEvent()
 
   displayableNode->SetAndObserveDisplayNodeID(displayNode1->GetID());
 
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 3 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) != 1 ||
       spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << " "
               << spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
     return false;
     }
@@ -564,13 +566,15 @@ bool TestDisplayModifiedEvent()
   scene->AddNode(displayNode2.GetPointer());
   displayableNode->SetAndObserveDisplayNodeID(displayNode2->GetID());
 
-  if (spy->GetTotalNumberOfEvents() != 2 ||
+  if (spy->GetTotalNumberOfEvents() != 3 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceModifiedEvent) != 1 ||
       spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << " "
               << spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
     return false;
     }
@@ -580,12 +584,14 @@ bool TestDisplayModifiedEvent()
 
   if (spy->GetTotalNumberOfEvents() != 2 ||
       spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
-      spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) != 1) //||
+      //spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1)
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
-              << spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) << " "<< std::endl;
+              //<< spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
     return false;
     }
   spy->ResetNumberOfEvents();
@@ -608,13 +614,15 @@ bool TestDisplayModifiedEvent()
   // update the reference of the node
   vtkMRMLDisplayNode* displayNode = displayableNode->GetDisplayNode();
 
-  if (spy->GetTotalNumberOfEvents() != 1 ||
+  if (spy->GetTotalNumberOfEvents() != 2 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) != 1 ||
       spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) != 1 ||
       displayNode != displayNode3.GetPointer())
     {
     std::cout << __LINE__ << ": SetAndObserveDisplayNodeID failed:" << std::endl
               << spy->GetTotalNumberOfEvents() << " "
               << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << " "
               << spy->GetNumberOfEvents(vtkMRMLDisplayableNode::DisplayModifiedEvent) << std::endl;
     return false;
     }

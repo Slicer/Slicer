@@ -57,8 +57,12 @@ void vtkMRMLModelDisplayNode::ProcessMRMLEvents(vtkObject *caller,
 //---------------------------------------------------------------------------
 void vtkMRMLModelDisplayNode::SetInputPolyData(vtkPolyData* polyData)
 {
-  this->SetInputToPolyDataPipeline(polyData);
-  this->Modified();
+   if (this->GetInputPolyData() == polyData)
+     {
+     return;
+     }
+   this->SetInputToPolyDataPipeline(polyData);
+   this->Modified();
 }
 
 //---------------------------------------------------------------------------

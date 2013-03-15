@@ -59,8 +59,10 @@ void vtkMRMLTransformNode::Copy(vtkMRMLNode *anode)
 void vtkMRMLTransformNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
+  const char* transformNodeID = this->GetNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str());
+
   os << indent << "TransformNodeID: " <<
-    (this->TransformNodeID ? this->TransformNodeID : "(none)") << "\n";
+    (transformNodeID ? transformNodeID : "(none)") << "\n";
 }
 
 //----------------------------------------------------------------------------

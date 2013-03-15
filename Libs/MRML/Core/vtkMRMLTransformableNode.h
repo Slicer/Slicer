@@ -44,32 +44,11 @@ public:
   virtual void WriteXML(ostream& of, int indent);
 
   /// 
-  /// Copy the node's attributes to this object
-  virtual void Copy(vtkMRMLNode *node);
-
-  /// 
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() = 0;
 
-  /// Set the transform node as reference into the scene.
-  virtual void SetSceneReferences();
-
-  /// 
-  /// Updates this node if it depends on other nodes 
-  /// when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  /// 
-  /// Observe the reference transform node
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
-  /// 
-  /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
-  /// 
-  /// String ID of the transform MRML node
-  vtkGetStringMacro(TransformNodeID);
+  ///
+  /// Set a reference to transform node
   void SetAndObserveTransformNodeID(const char *transformNodeID);
 
   /// 
@@ -110,16 +89,19 @@ public:
   /// \sa TransformPointToWorld, SetAndObserveTransformNodeID
   virtual void TransformPointFromWorld(const double in[4], double out[4]);
 
+  /// Get referenced transform node id
+  const char *GetTransformNodeID();
+
+  static const std::string TRANSFORM_NODE_REFERENCE_ROLE;
+  static const std::string TRANSFORM_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
+
 protected:
   vtkMRMLTransformableNode();
   ~vtkMRMLTransformableNode();
   vtkMRMLTransformableNode(const vtkMRMLTransformableNode&);
   void operator=(const vtkMRMLTransformableNode&);
 
-  void SetTransformNodeID(const char* id);
-  char *TransformNodeID;
-
-  vtkMRMLTransformNode* TransformNode;
+  std::string TransformNodeID;
 
 };
 

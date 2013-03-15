@@ -587,9 +587,22 @@ vtkMRMLStorageNode* vtkMRMLModelNode::CreateDefaultStorageNode()
 {
   return vtkMRMLStorageNode::SafeDownCast(vtkMRMLModelStorageNode::New());
 }
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+{
+  this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  Superclass::OnNodeReferenceAdded(reference);
+}
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelNode::OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode)
+void vtkMRMLModelNode::OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+{
+   this->UpdateDisplayNodePolyData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+   Superclass::OnNodeReferenceModified(reference);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelNode::UpdateDisplayNodePolyData(vtkMRMLDisplayNode *dnode)
 {
   vtkMRMLModelDisplayNode* modelDisplayNode =
     vtkMRMLModelDisplayNode::SafeDownCast(dnode);
@@ -597,7 +610,6 @@ void vtkMRMLModelNode::OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode)
     {
     this->SetPolyDataToDisplayNode(modelDisplayNode);
     }
-  this->Superclass::OnDisplayNodeAdded(dnode);
 }
 
 //---------------------------------------------------------------------------

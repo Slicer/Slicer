@@ -37,6 +37,9 @@ class vtkMRMLDisplayNode;
 /// \tbd Check support for a display node to be simultaneously referenced by
 /// different displayable nodes.
 /// \sa vtkMRMLDisplayNode
+
+class vtkMRMLDisplayNode;
+
 class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 {
 public:
@@ -67,41 +70,36 @@ public:
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// Set the display node IDs as references to the scene.
-  virtual void SetSceneReferences();
-
-  /// 
-  /// Updates this node if it depends on other nodes 
-  /// when the node is deleted in the scene
-  virtual void UpdateReferences();
-
-  /// 
-  /// Clears out the list of display nodes, and repopulate it from
-  /// the list of display node ids.
-  virtual void UpdateScene(vtkMRMLScene *scene);
-
-  /// 
-  /// Update the stored reference to another node in the scene
-  virtual void UpdateReferenceID(const char *oldID, const char *newID);
-
   /// 
   /// Convenience method that sets the first display node ID.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void SetAndObserveDisplayNodeID(const char *displayNodeID);
+  inline void SetAndObserveDisplayNodeID(const char *displayNodeID)
+  {
+    this->SetAndObserveNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+  }
 
   /// 
   /// Convenience method that adds a display node ID at the end of the list.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void AddAndObserveDisplayNodeID(const char *displayNodeID);
+  inline void AddAndObserveDisplayNodeID(const char *displayNodeID)
+  {
+    this->AddAndObserveNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+  }
 
   ///
   /// Convenience method that removes the Nth display node ID from the list
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
-  inline void RemoveNthDisplayNodeID(int n);
+  inline void RemoveNthDisplayNodeID(int n)
+  {
+    this->RemoveNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n);
+  }
 
   ///
   /// Remove all display node IDs and associated display nodes.
-  void RemoveAllDisplayNodeIDs();
+  inline void RemoveAllDisplayNodeIDs()
+  {
+    this->RemoveAllNodeReferenceIDs(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+  }
 
   /// 
   /// Set and observe the Nth display node ID in the list.
@@ -117,28 +115,43 @@ public:
   /// scan the scene if the node was not yet cached.
   /// \sa SetAndObserveDisplayNodeID(const char*),
   /// AddAndObserveDisplayNodeID(const char *), RemoveNthDisplayNodeID(int)
-  void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID);
+  inline void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID)
+  {
+    this->SetAndObserveNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n, displayNodeID);
+  }
 
   ///
   /// Return true if displayNodeID is in the display node ID list.
-  bool HasDisplayNodeID(const char* displayNodeID);
+  inline bool HasDisplayNodeID(const char* displayNodeID)
+  {
+    return this->HasNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+  }
 
   ///
   /// Return the number of display node IDs (and display nodes as they always
   /// have the same size).
-  inline int GetNumberOfDisplayNodes()const;
+  inline int GetNumberOfDisplayNodes()
+  {
+    return this->GetNumberOfNodeReferences(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+  }
 
   ///
   /// Return the string of the Nth display node ID. Or 0 if no such
   /// node exist.
   /// Warning, a temporary char generated from a std::string::c_str()
   /// is returned.
-  const char *GetNthDisplayNodeID(int n);
+  inline const char *GetNthDisplayNodeID(int n)
+  {
+    return this->GetNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n);
+  }
 
   ///
   /// Utility function that returns the first display node id.
   /// \sa GetNthDisplayNodeID(int), GetDisplayNode()
-  inline const char *GetDisplayNodeID();
+  inline const char *GetDisplayNodeID()
+  {
+    return this->GetNthDisplayNodeID(0);
+  }
 
   /// 
   /// Get associated display MRML node. Can be 0 in temporary states; e.g. if
@@ -155,11 +168,14 @@ public:
   ///
   /// Utility function that returns the first display node.
   /// \sa GetNthDisplayNode(int), GetDisplayNodeID()
-  inline vtkMRMLDisplayNode* GetDisplayNode();
+  inline vtkMRMLDisplayNode* GetDisplayNode()
+  {
+    return this->GetNthDisplayNode(0);
+  }
 
   /// Return the nth display node that is of class \a className.
   /// \sa GetNthDisplayNode()
-  vtkMRMLDisplayNode* GetNthDisplayNodeByClass(int n, const char* className);
+  //vtkMRMLDisplayNode* GetNthDisplayNodeByClass(int n, const char* className);
 
   ///
   /// Return a copy of the list of the display nodes. Some nodes can be 0
@@ -204,31 +220,39 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
+ static const std::string DISPLAY_NODE_REFERENCE_ROLE;
+ static const std::string DISPLAY_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
+
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
   void operator=(const vtkMRMLDisplayableNode&);
 
-  ///
-  /// Call UpdateNthDisplayNode(i) on all nodes.
-  void UpdateDisplayNodes();
 
   ///
-  /// Search the display node in the scene that match the associated node ID.
-  /// Prerequisites: scene is valid, n >= 0 and n < display node IDs list size
-  void UpdateNthDisplayNode(int n);
-
-  void SetAndObserveNthDisplayNode(int n, vtkMRMLDisplayNode *dnode);
-
-  ///
-  /// Called when a node is added (list size increased). By default it emits
-  /// the DisplayModified event.
-  virtual void OnDisplayNodeAdded(vtkMRMLDisplayNode *dnode);
+  /// Called when a node reference ID is added (list size increased). 
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceAdded(reference);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+  }
 
   ///
-  /// List of display node IDs.
-  std::vector<std::string> DisplayNodeIDs;
+  /// Called when a node reference ID is modified. 
+  virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceModified(reference);
+    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+  }
+
+  ///
+  /// Called after a node reference ID is removed (list size decreased). 
+  virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
+  {
+    Superclass::OnNodeReferenceRemoved(reference);
+    //this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+  }
 
   ///
   /// Cached list of display nodes. The index of each element match the
@@ -237,40 +261,5 @@ public:
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;
 };
 
-//----------------------------------------------------------------------------
-const char * vtkMRMLDisplayableNode::GetDisplayNodeID()
-{
-  return this->GetNthDisplayNodeID(0);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetDisplayNode()
-{
-  return this->GetNthDisplayNode(0);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::SetAndObserveDisplayNodeID(const char *displayNodeID)
-{
-  this->SetAndObserveNthDisplayNodeID(0, displayNodeID);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::AddAndObserveDisplayNodeID(const char *displayNodeID)
-{
-  this->SetAndObserveNthDisplayNodeID(this->GetNumberOfDisplayNodes(), displayNodeID);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLDisplayableNode::RemoveNthDisplayNodeID(int n)
-{
-  this->SetAndObserveNthDisplayNodeID(n, 0);
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLDisplayableNode::GetNumberOfDisplayNodes()const
-{
-  return static_cast<int>(this->DisplayNodeIDs.size());
-}
 
 #endif

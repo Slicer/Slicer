@@ -658,14 +658,27 @@ void vtkMRMLVolumeNode::SetAndObserveImageData(vtkImageData *imageData)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLVolumeNode::OnDisplayNodeAdded(vtkMRMLDisplayNode* dNode)
+void vtkMRMLVolumeNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+{
+  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  Superclass::OnNodeReferenceAdded(reference);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode:: OnNodeReferenceModified(vtkMRMLNodeReference *reference)
+{
+  this->UpdateDisplayNodeImageData(vtkMRMLDisplayNode::SafeDownCast(reference->ReferencedNode));
+  Superclass::OnNodeReferenceModified(reference);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::UpdateDisplayNodeImageData(vtkMRMLDisplayNode* dNode)
 {
   vtkMRMLVolumeDisplayNode* vNode = vtkMRMLVolumeDisplayNode::SafeDownCast(dNode);
   if (vNode)
     {
     vNode->SetInputImageData(this->ImageData);
     }
-  this->Superclass::OnDisplayNodeAdded(dNode);
 }
 
 //-----------------------------------------------------------
