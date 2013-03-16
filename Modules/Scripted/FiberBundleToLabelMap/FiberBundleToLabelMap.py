@@ -10,11 +10,11 @@ class FiberBundleToLabelMap:
   def __init__(self, parent):
     import string
     parent.title = "FiberBundleToLabelMap" # TODO make this more human readable by adding spaces
-    parent.categories = ["Diffusion.Diffusion Data Conversion"]
+    parent.categories = ["Diffusion.Tractography"]
     parent.dependencies = []
     parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = string.Template("""
-The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.  
+The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.
 
 See <a href=\"$a/Documentation/$b.$c/Modules/FiberBuntdeToLabelMap\">the documentation</a> for more information.
 
@@ -126,8 +126,8 @@ class FiberBundleToLabelMapWidget:
 #
 
 class FiberBundleToLabelMapLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -136,7 +136,7 @@ class FiberBundleToLabelMapLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -149,7 +149,7 @@ class FiberBundleToLabelMapLogic:
     return True
 
   def rasterizeFibers(self,fiberNode,labelNode,labelValue=1):
-    """Trace through the given fiber bundles and 
+    """Trace through the given fiber bundles and
     set the corresponding pixels in the given labelNode volume"""
     print('rasterizing...')
     rasToIJK = vtk.vtkMatrix4x4()
