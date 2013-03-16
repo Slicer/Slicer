@@ -587,7 +587,7 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
  bool was_updating = this->m_updating;
  this->m_updating = true;
 
- d->FiberBundleDisplayNode->GetPolyData()->Update();
+ d->FiberBundleDisplayNode->GetOutputPolyData()->Update();
  d->FiberBundleDisplayNode->GetScalarRange(range);
  if (d->FiberBundleDisplayNode->GetAutoScalarRange())
  {
