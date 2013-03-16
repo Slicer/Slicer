@@ -98,6 +98,12 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
   """
 
   def __init__(self, sliceWidget):
+
+    # keep a flag since events such as sliceNode modified
+    # may come during superclass construction, which will
+    # invoke our processEvents method
+    self.initialized = False
+
     super(DrawEffectTool,self).__init__(sliceWidget)
     
     # create a logic instance to do the non-gui work
@@ -123,6 +129,8 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     self.renderer.AddActor2D( self.actor )
     self.actors.append( self.actor )
 
+    self.initialized = True
+
   def cleanup(self):
     """
     call superclass to clean up actor
@@ -141,10 +149,13 @@ class DrawEffectTool(LabelEffect.LabelEffectTool):
     handle events from the render window interactor
     """
 
-    # TODO: might need preProcessEvent method like DrawEffect.tcl
-    # TODO: might need grabID
+    if super(DrawEffectTool,self).processEvent(caller,event):
+      return
 
-    # events from the interactory
+    if not self.initialized:
+      return
+
+    # events from the interactor
     if event == "LeftButtonPressEvent":
       self.actionState = "drawing"
       self.cursorOff()

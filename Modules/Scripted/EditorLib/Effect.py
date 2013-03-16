@@ -154,6 +154,7 @@ class EffectTool(object):
     # sliceWidget to operate on and convenience variables
     # to access the internals
     self.sliceWidget = sliceWidget
+    self.sliceLogic = sliceWidget.sliceLogic()
     self.sliceView = self.sliceWidget.sliceView()
     self.interactor = self.sliceView.interactorStyle().GetInteractor()
     self.renderWindow = self.sliceWidget.sliceView().renderWindow()
@@ -183,12 +184,42 @@ class EffectTool(object):
       tag = self.interactor.AddObserver(e, self.processEvent, 1.0)
       self.interactorObserverTags.append(tag)
 
+    self.sliceNodeTags = []
+    sliceNode = self.sliceLogic.GetSliceNode()
+    tag = sliceNode.AddObserver('ModifiedEvent', self.processEvent, 1.0)
+    self.sliceNodeTags.append(tag)
+
     # spot for tracking the current cursor while it is turned off for paining
     self.savedCursor = None
 
   def processEvent(self, caller=None, event=None):
-    """Default implementation for tools that ignore events"""
-    pass
+    """Event filter that lisens for certain key events that
+    should be responded to by all events.
+    Currently:
+      escape - cancel operation
+      'e' - toggle paint color to black and back
+      '\\' - pick up paint color from current location (eyedropper)
+    """
+    if event == "KeyPressEvent":
+      key = self.interactor.GetKeySym()
+      if key.lower() == 'escape':
+        # TODO: cancel interaction - requrires access to EditBox.defaultEffect
+        # - need a way to do this indirectly
+        self.abortEvent(event)
+        return True
+      if key == 'e':
+        self.editUtil.toggleLabel()
+        self.abortEvent(event)
+        return True
+      if key.lower() == 'backslash':
+        xy = self.interactor.GetEventPosition()
+        if self.interactor.FindPokedRenderer(*xy):
+          self.editUtil.setLabel(self.logic.labelAtXY(xy)) 
+        else:
+          print('not in viewport')
+        self.abortEvent(event)
+        return True
+    return False
 
   def cursorOff(self):
     """Turn off and save the current cursor so
@@ -223,6 +254,9 @@ class EffectTool(object):
     self.sliceView.scheduleRender()
     for tag in self.interactorObserverTags:
       self.interactor.RemoveObserver(tag)
+    sliceNode = self.sliceLogic.GetSliceNode()
+    for tag in self.sliceNodeTags:
+      sliceNode.RemoveObserver(tag)
 
 
 #
@@ -290,6 +324,18 @@ class EffectLogic(object):
     """return i j k in label image for a given x y"""
     layerLogic = self.sliceLogic.GetLabelLayer()
     return self.layerXYToIJK(layerLogic,xyPoint)
+
+  def labelAtXY(self,xyPoint):
+    ijk = self.labelXYToIJK(xyPoint)
+    layerLogic = self.sliceLogic.GetLabelLayer()
+    volumeNode = layerLogic.GetVolumeNode()
+    if not volumeNode: return 0
+    imageData = volumeNode.GetImageData()
+    if not imageData: return 0
+    dims = imageData.GetDimensions()
+    for ele in xrange(3):
+      if ijk[ele] < 0 or ijk[ele] >= dims[ele]: return 0
+    return int(imageData.GetScalarComponentAsDouble(ijk[0], ijk[1], ijk[2], 0))
 
   def xyzToRAS(self,xyzPoint):
     """return r a s for a given x y z"""

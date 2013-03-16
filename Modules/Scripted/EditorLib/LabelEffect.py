@@ -167,6 +167,10 @@ class LabelEffectTool(Effect.EffectTool):
     super(LabelEffectTool,self).__init__(sliceWidget)
     self.rotateSliceToImage()
 
+  def processEvent(self, caller=None, event=None):
+    """Default implementation for tools that ignore events"""
+    return super(LabelEffectTool,self).processEvent(caller,event)
+
   def cleanup(self):
     super(LabelEffectTool,self).cleanup()
 
