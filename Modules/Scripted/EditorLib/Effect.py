@@ -217,7 +217,7 @@ class EffectTool(object):
       cmd.SetAbortFlag(1)
 
   def cleanup(self):
-    # clean up actors and observers
+    """clean up actors and observers"""
     for a in self.actors:
       self.renderer.RemoveActor2D(a)
     self.sliceView.scheduleRender()
