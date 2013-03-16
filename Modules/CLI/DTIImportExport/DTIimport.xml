@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Diffusion Data Conversion</category>
+  <category>Legacy.Diffusion.Diffusion Data Conversion</category>
   <title>DTIimport</title>
   <description>Import tensor datasets from various formats, including the NifTi file format</description>
   <version>1.0</version>

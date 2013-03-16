@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Diffusion.Diffusion Data Conversion</category>
+  <category>Legacy.Diffusion.Diffusion Data Conversion</category>
   <title>DTIexport</title>
   <description>Export DTI data to various file formats</description>
   <version>1.0</version>
