@@ -352,7 +352,6 @@ void qSlicerTractographyDisplayWidget::setColorByScalarInvariant()
     else
       d->ColorByScalarsColorTableComboBox->setEnabled(1);
     }
-  d->FiberBundleDisplayNode->Modified();
   this->updateScalarRange();
 }
 
@@ -375,7 +374,6 @@ void qSlicerTractographyDisplayWidget::onColorByScalarInvariantChanged(int scala
     else
       d->ColorByScalarsColorTableComboBox->setEnabled(1);
 
-    d->FiberBundleDisplayNode->Modified();
     this->updateScalarRange();
     }
 
@@ -589,6 +587,7 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
  bool was_updating = this->m_updating;
  this->m_updating = true;
 
+ d->FiberBundleDisplayNode->GetPolyData()->Update();
  d->FiberBundleDisplayNode->GetScalarRange(range);
  if (d->FiberBundleDisplayNode->GetAutoScalarRange())
  {
