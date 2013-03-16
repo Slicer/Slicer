@@ -135,14 +135,14 @@ int main( int argc, char * argv[] )
       pt[2]= (int) floor(pIJK[2]);
       inPtr = (short *) imageCastLabel_A->GetOutput()->GetScalarPointer(pt);
 
-      for(label=0; label<NotPassLabel.size() && not nopass; label++)
+      for(label=0; label<NotPassLabel.size() && !nopass; label++)
         {
         nopass = (*inPtr == NotPassLabel[label]);
         }
       if (nopass)
         break; //Skip this one
 
-      for(label=0; label<PassLabel.size() && not pass; label++)
+      for(label=0; label<PassLabel.size() &&  !pass; label++)
         {
           pass = (*inPtr == PassLabel[label]);
         }
