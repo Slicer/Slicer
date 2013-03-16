@@ -34,32 +34,43 @@
 #include <vtkTransform.h>
 #include <vtkImageData.h>
 
+//-----------------------------------------------------------------------------
+qMRMLUtils::qMRMLUtils(QObject* _parent)
+  :QObject(_parent)
+{
+}
+
+//-----------------------------------------------------------------------------
+qMRMLUtils::~qMRMLUtils()
+{
+}
+
 //------------------------------------------------------------------------------
 void qMRMLUtils::vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector)
 {
   if (!matrix) { return; }
-  
+
   vector.clear();
-  
+
   for (int i=0; i < 4; i++)
     {
     for (int j=0; j < 4; j++)
       {
-      vector.append(matrix->GetElement(i,j)); 
+      vector.append(matrix->GetElement(i,j));
       }
     }
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global, 
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLNode* node, bool global,
     vtkTransform* transform)
 {
-  Self::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode::SafeDownCast( node ), 
-    global, transform); 
+  Self::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode::SafeDownCast( node ),
+    global, transform);
 }
 
 //------------------------------------------------------------------------------
-void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode, 
+void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode,
   bool global, vtkTransform* transform)
 {
   Q_ASSERT(transform);
@@ -70,18 +81,18 @@ void qMRMLUtils::getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* tran
 
   transform->Identity();
 
-  if (!transformNode) 
-    { 
-    return; 
+  if (!transformNode)
+    {
+    return;
     }
 
   vtkMatrix4x4 *matrix = transformNode->GetMatrixTransformToParent();
   Q_ASSERT(matrix);
-  if (!matrix) 
-    { 
-    return; 
+  if (!matrix)
+    {
+    return;
     }
-  
+
   transform->SetMatrix(matrix);
 
   if ( global )

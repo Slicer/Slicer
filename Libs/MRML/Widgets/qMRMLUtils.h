@@ -39,38 +39,38 @@ class vtkImageData;
 
 #define compare_double(x, y) (((x-y)<0.000001) && ((x-y)>-0.000001))
 
-class QMRML_WIDGETS_EXPORT qMRMLUtils
+class QMRML_WIDGETS_EXPORT qMRMLUtils : public QObject
 {
-  
+  Q_OBJECT;
 public:
-  typedef qMRMLUtils Self; 
-  
-  /// 
+  typedef qMRMLUtils Self;
+  qMRMLUtils(QObject* parent = 0);
+  virtual ~qMRMLUtils();
+
+  ///
   /// Convert a vtkMatrix to a QVector
-  static void vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector); 
-  
-  /// 
-  static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global, 
-    vtkTransform* transform); 
-  static void getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode, 
+  Q_INVOKABLE static void vtkMatrixToQVector(vtkMatrix4x4* matrix, QVector<double> & vector);
+
+  ///
+  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLNode* transformNode, bool global,
+    vtkTransform* transform);
+  Q_INVOKABLE static void getTransformInCoordinateSystem(vtkMRMLLinearTransformNode* transformNode,
     bool global, vtkTransform* transform);
 
   /// Retrieve the number of visible view node associated with \a scene
-  static int countVisibleViewNode(vtkMRMLScene* scene);
+  Q_INVOKABLE static int countVisibleViewNode(vtkMRMLScene* scene);
 
   /// Create Icon using the given color
-  static QPixmap createColorPixmap(QStyle * style, const QColor& color);
+  Q_INVOKABLE static QPixmap createColorPixmap(QStyle * style, const QColor& color);
 
   /// Convert vtkImageData to QImage
-  static bool vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img);
+  Q_INVOKABLE static bool vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img);
 
   /// Convert QImage to vtkImageData
-  static bool qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
+  Q_INVOKABLE static bool qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
 
 private:
-  /// Not implemented
-  qMRMLUtils(){}
-  virtual ~qMRMLUtils(){}
+  Q_DISABLE_COPY(qMRMLUtils);
 
 };
 

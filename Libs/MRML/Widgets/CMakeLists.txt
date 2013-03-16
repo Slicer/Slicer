@@ -239,6 +239,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLThreeDWidget.h
   qMRMLTransformSliders.h
   qMRMLTreeView.h
+  qMRMLUtils.h
   qMRMLViewControllerBar.h
   qMRMLViewControllerBar_p.h
   qMRMLVolumeInfoWidget.h
