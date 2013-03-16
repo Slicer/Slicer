@@ -6,7 +6,7 @@
 #define ITK_LEAN_AND_MEAN
 #endif
 
-#include "TractographyLabelSelectCLP.h"
+#include "FiberBundleLabelSelectCLP.h"
 
 #include <iostream>
 #include <algorithm>
