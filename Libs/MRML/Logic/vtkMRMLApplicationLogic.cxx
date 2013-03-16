@@ -471,7 +471,6 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   // remove the directory if it does exist
   if (vtksys::SystemTools::FileExists(rootDir.c_str(), false))
     {
-    vtkWarningMacro("removing SDB scene directory " << rootDir.c_str());
     if (!vtksys::SystemTools::RemoveADirectory(rootDir.c_str()))
       {
       vtkErrorMacro("Error removing SDB scene directory " << rootDir.c_str() << ", cannot make a fresh archive.");
