@@ -147,11 +147,27 @@ QPixmap qMRMLUtils::createColorPixmap(QStyle * style, const QColor &color)
 }
 
 //---------------------------------------------------------------------------
-bool qMRMLUtils::qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
+bool qMRMLUtils::qImageToVtkImageData(const QImage& qImage, vtkImageData* vtkimage)
 {
   if (vtkimage == 0)
     {
     return false;
+    }
+
+  QImage img = qImage;
+  if (qImage.hasAlphaChannel())
+    {
+    if (qImage.format() != QImage::Format_ARGB32)
+      {
+      img = qImage.convertToFormat(QImage::Format_ARGB32);
+      }
+    }
+  else
+    {
+    if (qImage.format() != QImage::Format_RGB32)
+      {
+      img = qImage.convertToFormat(QImage::Format_RGB32);
+      }
     }
 
   int height = img.height();
@@ -168,17 +184,27 @@ bool qMRMLUtils::qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage)
   for(int i=0; i<height; i++)
     {
     unsigned char* row;
+
     row = static_cast<unsigned char*>(vtkimage->GetScalarPointer(0, height-i-1, 0));
     const QRgb* linePixels = reinterpret_cast<const QRgb*>(img.scanLine(i));
+
+    /*
+     * TODO: consider using this to speed up the conversion:
+     *
+    memcpy(row, linePixels, width*numcomponents);
+    */
+
+    unsigned char* pixel;
+    pixel = row;
     for(int j=0; j<width; j++)
       {
       const QRgb& col = linePixels[j];
-      row[j*numcomponents] = qRed(col);
-      row[j*numcomponents+1] = qGreen(col);
-      row[j*numcomponents+2] = qBlue(col);
+      *pixel++ = qRed(col);
+      *pixel++ = qGreen(col);
+      *pixel++ = qBlue(col);
       if(numcomponents == 4)
         {
-        row[j*numcomponents+3] = qAlpha(col);
+        *pixel++ = qAlpha(col);
         }
       }
     }
