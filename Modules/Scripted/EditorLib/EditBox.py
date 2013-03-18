@@ -100,7 +100,7 @@ class EditBox(object):
   
   # effects that change the mouse cursor
   availableMouseTools = (
-    "Paint", "Draw", "LevelTracing", "Rectangle", "ChangeIsland", "SaveIsland",
+    "Paint", "Draw", "LevelTracing", "Rectangle", "ChangeIsland", "SaveIsland", "Wand",
     )
 
   # effects that operate from the menu (non mouse)
@@ -167,6 +167,7 @@ class EditBox(object):
     self.effectIconFiles["ChangeIslandEffect"] = self.effectIconFiles["ChangeIsland"]
     self.effectIconFiles["ChangeLabelEffect"] = self.effectIconFiles["ChangeLabel"]
     self.effectIconFiles["GrowCutEffect"] = self.effectIconFiles["GrowCutSegment"]
+    self.effectIconFiles["Wand"] = self.effectIconFiles["WandEffect"]
 
   def createButtonRow(self, effects, rowLabel=""):
     """ create a row of the edit box given a list of 
