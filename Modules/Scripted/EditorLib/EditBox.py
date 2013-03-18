@@ -56,6 +56,7 @@ class EditBox(object):
     self.editorBuiltins["ChangeIslandEffect"] = EditorLib.ChangeIslandEffect
     self.editorBuiltins["GrowCutEffect"] = EditorLib.GrowCutEffect
     self.editorBuiltins["FastMarchingEffect"] = EditorLib.FastMarchingEffect
+    self.editorBuiltins["WandEffect"] = EditorLib.WandEffect
 
     if not parent:
       self.parent = qt.QFrame()
@@ -110,7 +111,6 @@ class EditBox(object):
     "MakeModel", "GrowCutSegment",
     "Threshold", 
     "PreviousCheckPoint", "NextCheckPoint",
-    "FastMarching"
     )
 
   # allow overriding the developers name of the tool for a more user-friendly label name
@@ -217,7 +217,7 @@ class EditBox(object):
 
     # create all of the buttons
     # createButtonRow() ensures that only effects in self.effects are exposed,
-    self.createButtonRow( ("DefaultTool", "EraseLabel", "PaintEffect", "DrawEffect", "LevelTracingEffect", "RectangleEffect", "IdentifyIslandsEffect", "ChangeIslandEffect", "RemoveIslandsEffect", "SaveIslandEffect") )
+    self.createButtonRow( ("DefaultTool", "EraseLabel", "PaintEffect", "DrawEffect", "WandEffect", "LevelTracingEffect", "RectangleEffect", "IdentifyIslandsEffect", "ChangeIslandEffect", "RemoveIslandsEffect", "SaveIslandEffect") )
     self.createButtonRow( ("ErodeEffect", "DilateEffect", "GrowCutEffect", "ThresholdEffect", "ChangeLabelEffect", "MakeModelEffect", "FastMarchingEffect") )
 
     extensions = []

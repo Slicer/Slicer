@@ -339,16 +339,8 @@ class DrawEffect(LabelEffect.LabelEffect):
     # name is used to define the name of the icon image resource (e.g. DrawEffect.png)
     self.name = "DrawEffect"
     # tool tip is displayed on mouse hover
-    self.toolTip = "Draw: circular paint brush for label map editing"
+    self.toolTip = "Draw: draw outlines - apply with right click or 'a' key"
 
     self.options = DrawEffectOptions
     self.tool = DrawEffectTool
     self.logic = DrawEffectLogic
-
-""" Test:
-
-sw = slicer.app.layoutManager().sliceWidget('Red')
-import EditorLib
-pet = EditorLib.DrawEffectTool(sw)
-
-"""

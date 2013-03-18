@@ -25,6 +25,7 @@ set(EDITOR_BUILTIN_EFFECTS
   ChangeLabelEffect
   GrowCutEffect
   FastMarchingEffect
+  WandEffect
   )
 
 #-----------------------------------------------------------------------------
@@ -61,6 +62,7 @@ set(MODULE_PYTHON_RESOURCES
   Resources/Icons/SaveIsland.png
   Resources/Icons/Threshold.png
   Resources/Icons/ToolbarEditorToolbox.png
+  Resources/Icons/WandEffect.png
   )
 
 #-----------------------------------------------------------------------------
