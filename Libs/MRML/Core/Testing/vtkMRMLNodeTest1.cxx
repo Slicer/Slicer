@@ -332,8 +332,6 @@ bool TestAddRefrencedNodeIDWithNoScene()
 {
   vtkNew<vtkMRMLScene> scene;
 
-  vtkMRMLNode *returnNode = 0;
-
   std::string role1("refrole1");
   std::string role2("refrole2");
 

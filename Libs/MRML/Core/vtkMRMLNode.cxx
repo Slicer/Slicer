@@ -461,7 +461,7 @@ void vtkMRMLNode::WriteNodeBodyXML(ostream &, int )
 //----------------------------------------------------------------------------
 void vtkMRMLNode::ProcessMRMLEvents (vtkObject *caller,
                                      unsigned long event,
-                                     void *callData )
+                                     void *vtkNotUsed(callData) )
 {
 
   NodeReferencesType::iterator it;
@@ -921,7 +921,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
 
   std::vector< vtkMRMLNodeReference *> &references = this->NodeReferences[std::string(referenceRole)];
 
-  assert( references.size() > n);
+  assert( references.size() > (unsigned int)(n));
 
   this->UpdateNthNodeReference(references[n], n);
 }
@@ -996,7 +996,6 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   // Delete the  node ID if the new value is 0.
   if (newReferencedNodeID.empty())
     {
-    vtkMRMLNode *oldReferencedNode = (*referencedNodesIt)->ReferencedNode;
     this->OnNodeReferenceRemoved(*referencedNodesIt);
     referencedNode->UnRegister(this);
     referencedNodes.erase(referencedNodesIt);
@@ -1106,7 +1105,6 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   // Delete the node ID if the new value is 0.
   if (newReferencedNodeID.empty())
     {
-    vtkMRMLNode* oldReferencedNode = (*referencedNodesIt)->ReferencedNode;
     /// Need to unobserve
     this->SetAndObserveNthNodeReference(referenceRole, n, 0);
     vtkMRMLNodeReference *tmp = (*referencedNodesIt);

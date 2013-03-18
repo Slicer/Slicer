@@ -39,7 +39,7 @@ class VTK_MRML_EXPORT vtkMRMLNodeReference : public vtkObject
 public: 
   vtkTypeMacro(vtkMRMLNodeReference,vtkObject);
   static vtkMRMLNodeReference *New();
-  void PrintSelf(ostream& os, vtkIndent indent){};
+  void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)){};
 
   vtkMRMLNodeReference()
   {

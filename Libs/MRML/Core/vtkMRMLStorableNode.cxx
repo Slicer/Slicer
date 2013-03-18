@@ -214,7 +214,7 @@ void vtkMRMLStorableNode::PrintSelf(ostream& os, vtkIndent indent)
    
   int numStorageNodes = this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
 
-  for (unsigned int i=0; i < numStorageNodes; i++) 
+  for (int i=0; i < numStorageNodes; i++) 
     {
     const char * id = this->GetNthNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), i);
     os << indent << "StorageNodeIDs[" << i << "]: " <<
@@ -236,7 +236,7 @@ void vtkMRMLStorableNode::UpdateScene(vtkMRMLScene *scene)
   int numStorageNodes = this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
 
   vtkDebugMacro("UpdateScene: going through the storage node ids: " <<  numStorageNodes);
-  for (unsigned int i=0; i < numStorageNodes; i++)
+  for (int i=0; i < numStorageNodes; i++)
     {
     vtkDebugMacro("UpdateScene: getting storage node at i = " << i);
     vtkMRMLStorageNode *pnode = this->GetNthStorageNode(i);
@@ -310,7 +310,7 @@ void vtkMRMLStorableNode::ProcessMRMLEvents ( vtkObject *caller,
     
   int numStorageNodes = this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
 
-  for (unsigned int i=0; i<numStorageNodes; i++)
+  for (int i=0; i<numStorageNodes; i++)
     {
     vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
     if (dnode != NULL && dnode == vtkMRMLStorageNode::SafeDownCast(caller) &&
@@ -343,7 +343,7 @@ vtkTimeStamp vtkMRMLStorableNode::GetStoredTime()
 
   int numStorageNodes = this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
 
-  for (unsigned int i = 0; i < numStorageNodes; ++i)
+  for (int i = 0; i < numStorageNodes; ++i)
     {
     vtkMRMLStorageNode *dnode = this->GetNthStorageNode(i);
     if (dnode != NULL && storedTime < dnode->GetStoredTime())
