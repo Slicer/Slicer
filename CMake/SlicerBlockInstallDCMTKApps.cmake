@@ -6,7 +6,7 @@ if(WIN32)
   set(EXE ".exe")
 endif()
 
-set(DCMTK_Apps storescu storescp dcmdump dump2dcm img2dcm dcmdjpeg)
+set(DCMTK_Apps storescu storescp dcmdump dump2dcm img2dcm dcmdjpeg dcmqrscp)
 foreach(dcmtk_App ${DCMTK_Apps})
   install(FILES ${CTK_DCMTK_DIR}/bin/${dcmtk_App}${EXE}
     DESTINATION ${Slicer_INSTALL_BIN_DIR}
