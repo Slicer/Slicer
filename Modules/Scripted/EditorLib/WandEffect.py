@@ -80,15 +80,15 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
     EditorLib.HelpButton(self.frame, "Use this tool to label all voxels that are within a tolerance of where you click")
 
     # don't connect the signals and slots directly - instead, add these
-    # to the list of connections so that gui callbacks can be cleanly 
+    # to the list of connections so that gui callbacks can be cleanly
     # disabled while the gui is being updated.  This allows several gui
     # elements to be interlinked with signal/slots but still get updated
     # as a unit to the new value of the mrml node.
-    self.connections.append( 
+    self.connections.append(
         (self.toleranceSpinBox, 'valueChanged(double)', self.onToleranceSpinBoxChanged) )
-    self.connections.append( 
+    self.connections.append(
         (self.maxPixelsSpinBox, 'valueChanged(double)', self.onMaxPixelsSpinBoxChanged) )
-    self.connections.append( 
+    self.connections.append(
         (self.fillModeCheckBox, 'clicked()', self.onFillModeClicked) )
 
     # Add vertical spacer
@@ -99,7 +99,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
 
   # note: this method needs to be implemented exactly as-is
   # in each leaf subclass so that "self" in the observer
-  # is of the correct type 
+  # is of the correct type
   def updateParameterNode(self, caller, event):
     node = self.editUtil.getParameterNode()
     if node != self.parameterNode:
@@ -170,7 +170,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
 #
 # WandEffectTool
 #
- 
+
 class WandEffectTool(LabelEffect.LabelEffectTool):
   """
   One instance of this will be created per-view when the effect
@@ -209,13 +209,13 @@ class WandEffectTool(LabelEffect.LabelEffectTool):
 #
 # WandEffectLogic
 #
- 
+
 class WandEffectLogic(LabelEffect.LabelEffectLogic):
   """
   This class contains helper methods for a given effect
   type.  It can be instanced as needed by an WandEffectTool
   or WandEffectOptions instance in order to compute intermediate
-  results (say, for user feedback) or to implement the final 
+  results (say, for user feedback) or to implement the final
   segmentation editing operation.  This class is split
   from the WandEffectTool so that the operations can be used
   by other code without the need for a view context.
@@ -238,7 +238,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
     paintThreshold = int(node.GetParameter("LabelEffect,paintThreshold"))
     thresholdMin = float(node.GetParameter("LabelEffect,paintThresholdMin"))
     thresholdMax = float(node.GetParameter("LabelEffect,paintThresholdMax"))
-    
+
     #
     # get the label and background volume nodes
     #
@@ -254,7 +254,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
     # (note: bg and lb will be the same for volumes created
     # by the editor, but can be different if the use selected
     # different bg nodes, but that is not handled here).
-    # 
+    #
     xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
     ijkFloat = xyToIJK.MultiplyPoint(xy+(0,1))[:3]
     ijk = []
@@ -270,7 +270,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
     #
     # Get the numpy array for the bg and label
     #
-    import vtk.util.numpy_support
+    import vtk.util.numpy_support, numpy
     backgroundImage = backgroundNode.GetImageData()
     labelImage = labelNode.GetImageData()
     shape = list(backgroundImage.GetDimensions())
@@ -313,7 +313,13 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
       hi = value + tolerance
     pixelsSet = 0
     toVisit = [ijk,]
-    visited = []    
+    # Create a map that contains the location of the pixels
+    # that have been already visited (added or considered to be added).
+    # This is required if paintOver is enabled because then we reconsider
+    # all pixels (not just the ones that have not labelled yet).
+    if paintOver:
+      labelDrawVisitedArray = numpy.zeros(labelDrawArray.shape,dtype='bool')
+
     while toVisit != []:
       location = toVisit.pop(0)
       try:
@@ -327,22 +333,18 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
       if (paintOver and l == label):
         # label is the current one, but maybe it was filled with another high/low value,
         # so we have to visit it once (and only once) in this session, too
-        visitedCurrentLocation = True
-        try:
-          visited.index(location)
-        except ValueError:
-          # not found, so not visited yet
-          visitedCurrentLocation = False
-        if visitedCurrentLocation:        
+        if  labelDrawVisitedArray[location]:
+          # visited already, so don't try to fill it again
           continue
         else:
-          visited.append(location)
+          # we'll visit this pixel now, so mark it as visited
+          labelDrawVisitedArray[location] = True
       if b < lo or b > hi:
         continue
-      labelDrawArray[location] = label        
+      labelDrawArray[location] = label
       if l != label:
         # only count those pixels that were changed (to allow step-by-step growing by multiple mouse clicks)
-        pixelsSet += 1      
+        pixelsSet += 1
       if pixelsSet > maxPixels:
         toVisit = []
       else:
@@ -366,7 +368,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
     labelNode.Modified()
 
 #
-# The WandEffect class definition 
+# The WandEffect class definition
 #
 
 class WandEffect(LabelEffect.LabelEffect):
