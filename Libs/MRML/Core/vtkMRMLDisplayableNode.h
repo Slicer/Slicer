@@ -235,7 +235,10 @@ public:
   virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceAdded(reference);
-    this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+    if (reference->ReferenceRole == this->DISPLAY_NODE_REFERENCE_ROLE)
+      {
+      this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
+      }
   }
 
   ///
