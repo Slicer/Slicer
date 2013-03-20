@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+################################################################################
+#
+#  Program: 3D Slicer
+#
+#  Copyright (c) Kitware Inc.
+#
+#  See COPYRIGHT.txt
+#  or http://www.slicer.org/copyright/copyright.txt for details.
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+################################################################################
+
+# Based on hook scripts from Git, VTK and ParaView.
+
+# Prepare a copy of the message:
+#  - strip comment lines
+#  - stop at "diff --git" (git commit -v)
+commit_msg="$GIT_DIR/COMMIT_MSG"
+sed -n -e '/^#/d' -e '/^diff --git/q' -e 'p;d' "$1" > "$commit_msg"
+
+advice='
+To continue editing, run the command
+  git commit -e -F '"$commit_msg"'
+(assuming your working directory is at the top).'
+
+printErrorAndExit() {
+  echo 'commit-msg hook failure' 1>&2
+  echo '-----------------------' 1>&2
+  echo '' 1>&2
+  echo "$@" 1>&2
+  test -n "$advice" && echo "$advice" 1>&2
+  exit 1
+}
+
+#-----------------------------------------------------------------------------
+# Check the commit message layout with a simple state machine.
+
+msg_is_merge() {
+  test -f "$GIT_DIR/MERGE_HEAD" &&
+    echo "$line" | grep "^Merge " >/dev/null 2>&1
+}
+
+msg_is_revert() {
+  echo "$line" | grep "^Revert " >/dev/null 2>&1
+}
+
+msg_first() {
+  len=$(echo -n "$line" | wc -c)
+  if test $len -eq 0; then
+    # not yet first line
+    return
+  elif test $len -lt 8; then
+    printErrorAndExit 'The first line must be at least 8 characters:
+--------
+'"$line"'
+--------'
+  elif test $len -gt 78 && ! msg_is_merge && ! msg_is_revert; then
+    printErrorAndExit 'The first line may be at most 78 characters:
+------------------------------------------------------------------------------
+'"$line"'
+------------------------------------------------------------------------------'
+  elif echo "$line" | grep "^[	 ]\|[	 ]$" >/dev/null 2>&1; then
+    printErrorAndExit 'The first line may not have leading or trailing space:
+['"$line"']'
+  fi
+  if [[ ( "$(echo "$line" | cut -c1-4)" =~ (BUG:|ENH:)$ ) ||
+    ( "$(echo "$line" | cut -c1-5)" =~ (COMP:|PERF:)$ ) ||
+    ( "$(echo "$line" | cut -c1-6)" =~ (STYLE:)$ ) ]]; then
+  # first line okay
+  state=second
+else
+  # Print advice on commit message
+  printErrorAndExit '
+------------------------------------------------------------------------------
+Git Commits to NA-MIC require commit type in the comment.
+Valid commit types are:
+  BUG:   - a change made to fix a runtime issue
+  (crash, segmentation fault, exception, or incorrect result,
+  COMP:  - a fix for a compilation issue, error or warning,
+  ENH:   - new functionality added to the project,
+  PERF:  - a performance improvement,
+  STYLE: - a change that does not impact the logic or execution of the code.
+  (improve coding style, comments, documentation).
+
+The Git command to commit the change is:
+
+  git commit -m '"BUG: fixed core dump when passed float data"'
+
+you can also use the syntax below which omits the -m flag. In this case
+git will start up an editor for you to enter a comment on why you made the change.
+
+  git commit
+------------------------------------------------------------------------------
+'
+fi
+}
+
+msg_second() {
+  if test "x$line" != "x"; then
+    printErrorAndExit 'The second line must be empty:
+'"$line"
+  else
+    state=rest
+  fi
+}
+
+msg_rest() {
+  if echo "$line" | grep -q "^Change-Id:"; then
+    state=gerrit
+  fi
+}
+
+# Pipe commit message into the state machine.
+state=first
+cat "$commit_msg" |
+while IFS='' read line; do
+  msg_$state || break
+done &&
+  rm -f "$commit_msg" || exit 1
+advice='' # No more temporary message file.

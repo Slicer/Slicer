@@ -1,0 +1,226 @@
+#!/usr/bin/env bash
+
+################################################################################
+#
+#  Program: 3D Slicer
+#
+#  Copyright (c) Kitware Inc.
+#
+#  See COPYRIGHT.txt
+#  or http://www.slicer.org/copyright/copyright.txt for details.
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+################################################################################
+
+# Based on hook scripts from Git, VTK and ParaView.
+
+printErrorAndExit() {
+  echo 'pre-commit hook failure' 1>&2
+  echo '-----------------------' 1>&2
+  echo '' 1>&2
+  echo "$@" 1>&2
+  exit 1
+}
+
+zero='0000000000000000000000000000000000000000'
+
+#-----------------------------------------------------------------------------
+# Check for committer identity.
+advice='
+Use the commands
+
+   git config --global user.name '\''Your Name'\''
+   git config --global user.email '\''you@yourdomain.com'\''
+
+to introduce yourself to Git before committing.'
+
+# Ensure name and email are available.
+git config --get user.name > /dev/null &&
+  git config --get user.email > /dev/null ||
+  printErrorAndExit 'Identity not configured!' "$advice"
+
+# Validate name and email.
+git config --get user.name | grep ' ' > /dev/null ||
+  printErrorAndExit 'Set user.name to your name (with a space), not a userid.' "$advice"
+git config --get user.email | grep '^[^@]*@[^@]*$' > /dev/null ||
+  printErrorAndExit 'Set user.email to an email address (userid@validdomain.com).' "$advice"
+
+#-----------------------------------------------------------------------------
+# Check content that will be added by this commit.
+
+if git rev-parse --verify -q HEAD > /dev/null; then
+  against=HEAD
+else
+  # Initial commit: diff against an empty tree object
+  against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# Merge ("git commit" after "git merge" with conflicts or --no-commit)
+merge_head=$(git rev-parse -q --verify MERGE_HEAD) || merge_head=''
+
+# Disallow non-ascii file names.  The printable range starts at the
+# space character and ends with tilde.
+if test "$(git diff --cached --name-only --diff-filter=A -z $against |
+  LC_ALL=C tr -d '[ -~]\0')"; then
+  printErrorAndExit 'Non-ascii file names may not be added:
+  '"$(git diff --cached --name-only --diff-filter=A $against)"
+fi
+
+#-----------------------------------------------------------------------------
+# Check the file modes and sizes.
+
+mode_looks_exe() {
+  case "$1" in
+    *.bat) return 0 ;;
+    *.cmd) return 0 ;;
+    *.exe) return 0 ;;
+    *.com) return 0 ;;
+  esac
+  git cat-file blob "$2" | head -1 | grep "^#!/" > /dev/null
+}
+mode_not_exe () {
+  echo "The file '$file' looks executable but does not have an executable mode."
+}
+mode_bad_exe () {
+  echo "The file '$file' has executable mode but does not look executable."
+}
+mode_non_file () {
+  echo "The path '$file' has a non-file mode."
+}
+check_mode () {
+  case "$dst_mode" in
+    100755) mode_looks_exe "$file" "$dst_obj" || mode_bad_exe ;;
+    100644) mode_looks_exe "$file" "$dst_obj" && mode_not_exe ;;
+    160000) ;;
+    *)      mode_non_file ;;
+  esac
+}
+
+size_max_KiB=$(git config hooks.MaxObjectKiB)
+test -n "$size_max_KiB" || size_max_KiB=1024
+size_too_large_once=""
+size_too_large_once() {
+  test -z "$size_too_large_once" || return ; size_too_large_once=done
+  echo 'At least one file is staged for commit with size larger than its limit.
+  We prefer to keep large files out of the main source tree, especially
+  binary files that do not compress well.  This hook disallows large files
+  by default but can be configured.  A limit for specific files or patterns
+  may be set in ".gitattributes" with the "hooks.MaxObjectKiB" attribute.
+  For example, the line
+
+    *.c              hooks.MaxObjectKiB=2048
+
+    sets a limit of 2048 KiB for C source files.  See "git help attributes"
+    for details on the .gitattributes format.  If no attribute has been set
+    for a given file then its size is limited by the local default.  Run
+
+        git config hooks.MaxObjectKiB $KiB
+
+    to set the local default limit (0 to disable).
+        '
+}
+
+size_too_large() {
+  size_too_large_once
+  echo "The path '$file' has size $file_KiB KiB, greater than allowed $max_KiB KiB."
+}
+size_validate_max_KiB() {
+  test "$max_KiB" -ge "0" 2>/dev/null && return 0
+  echo "The path '$file' has invalid attribute \"hooks-MaxObjectKiB=$max_KiB\"."
+  return 1
+}
+check_size() {
+  test "$dst_obj" != "$zero" || return
+  max_KiB=$(git check-attr hooks.MaxObjectKiB -- "$file" |
+      sed 's/^[^:]*: hooks.MaxObjectKiB: //')
+  case "$max_KiB" in
+    'unset')       return ;; # No maximum for this object.
+    'set')         max_KiB="$size_max_KiB" ;; # Use local default.
+    'unspecified') max_KiB="$size_max_KiB" ;; # Use local default.
+    *) size_validate_max_KiB || return ;;
+  esac
+  if test "$max_KiB" -gt "0"; then
+    file_KiB=$(expr '(' $(git cat-file -s "$dst_obj") + 1023 ')' / 1024)
+    test "$file_KiB" -le "$max_KiB" || size_too_large
+  fi
+}
+check_line_lengths() {
+  # Enforce maximum line length to 80 characters
+  too_long=$(git diff-index --cached -p $against -- ${file} |
+           egrep '^\+.{161,}' | sed -E 's/^\+//')
+  test -z "$too_long" || echo "The line:
+------------------------------------------------------------------------------
+  '$too_long'
+------------------------------------------------------------------------------
+  in file '$file' is longer than 160 characters.
+  It is required to have no more than 80 characters per line.
+"
+}
+
+diffs=$(git diff-index --cached $against -- |
+      sed -n '/^:[^:]/ {s/^://;p;}')
+#Exclude git submodules, if any
+diffs_normal=$(echo "$diffs" | grep -v '^...... 160000')
+bad=$(
+test -n "$diffs_normal" && echo "$diffs_normal" |
+while read src_mode dst_mode src_obj dst_obj status file; do
+  if test "$src_mode" != "$dst_mode" -a "$dst_mode" != "000000"; then
+    check_mode
+  fi
+  if test "$dst_mode" != "160000" -a "$dst_mode" != '000000'; then
+    check_size
+    check_line_lengths
+  fi
+done
+)
+test -z "$bad" || printErrorAndExit "$bad"
+
+#-----------------------------------------------------------------------------
+# Builtin whitespace checks.
+bad=$(git diff-index --check --cached $against --) || printErrorAndExit "$bad"
+
+# Approximate whitespace=tab-in-indent check with Git < 1.7.2.
+git --version | grep -q " \(1\.[0-6]\|1\.7\.[01]\)" &&
+  approx_tab_in_indent=true || approx_tab_in_indent=false
+check_tab() {
+  lines=$(git diff-index -p --cached $against -- "$1" |
+        grep '^+  ') &&
+  echo "$lines" |
+  while read line; do
+    echo "$1: tab in indent." &&
+    echo "$line"
+  done
+}
+
+# Reject addition of a line without a newline at end-of-file.
+check_no_lf_at_eof() {
+  lines=$(git diff-index -p --cached $against -- "$1" | tail -2)
+  if echo "$lines" | head -1 | grep -q '^+' &&
+    echo "$lines" | tail -1 | grep -q '^\\ No newline'; then
+    echo "$1: No newline at end of file"
+  fi
+}
+
+# Custom whitespace checks.
+check_whitespace() {
+  ws=$(git check-attr whitespace -- "$file" |
+     sed 's/^[^:]*: whitespace: //')
+  if $approx_tab_in_indent; then
+    case ",$ws," in
+      *,tab-in-indent,*) check_tab "$1" ;;
+    esac
+  fi
+  case ",$ws," in
+    *,no-lf-at-eof,*) check_no_lf_at_eof "$1" ;;
+  esac
+}
+bad=$(git diff-index --name-only --cached $against -- |
+while read file; do
+  check_whitespace "$file"
+done)
+test -z "$bad" || printErrorAndExit "$bad"
