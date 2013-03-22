@@ -71,6 +71,7 @@ bool qSlicerIOManagerPrivate::startProgressDialog(int steps)
     }
   int max = (steps != 1 ? steps : 100);
   this->ProgressDialog = new QProgressDialog("Loading file... ", "Cancel", 0, max);
+  this->ProgressDialog->setWindowTitle(QString("Loading ..."));
   if (steps == 1)
     {
     // We only support cancelling a load action if we can have control over it
