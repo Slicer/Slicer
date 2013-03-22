@@ -66,7 +66,9 @@ void qMRMLDisplayNodeWidgetPrivate::init()
                    q, SLOT(setClipping(bool)));
   QObject::connect(this->SliceIntersectionVisibilityCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setSliceIntersectionVisible(bool)));
-  
+  QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
+                   q, SLOT(setSliceIntersectionThickness(int)));
+
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(colorChanged(QColor)),
                    q, SLOT(setColor(QColor)));
   QObject::connect(this->MaterialPropertyWidget, SIGNAL(opacityChanged(double)),
@@ -232,6 +234,31 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionVisibleVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSliceIntersectionThickness(int thickness)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  if (!d->MRMLDisplayNode.GetPointer())
+    {
+    return;
+    }
+  d->MRMLDisplayNode->SetSliceIntersectionThickness(thickness);
+}
+
+//------------------------------------------------------------------------------
+int qMRMLDisplayNodeWidget::sliceIntersectionThickness()const
+{
+  Q_D(const qMRMLDisplayNodeWidget);
+  return d->SliceIntersectionThicknessSpinBox->value();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::setSliceIntersectionThicknessVisible(bool visible)
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  d->SliceIntersectionThicknessSpinBox->setVisible(visible);
+}
+
+//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::setColor(const QColor& color)
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -378,6 +405,8 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
   d->ClippingCheckBox->setChecked(d->MRMLDisplayNode->GetClipping());
   d->SliceIntersectionVisibilityCheckBox->setChecked(
     d->MRMLDisplayNode->GetSliceIntersectionVisibility());
+  d->SliceIntersectionThicknessSpinBox->setValue(
+    d->MRMLDisplayNode->GetSliceIntersectionThickness());
   d->MaterialPropertyWidget->setColor(
     QColor::fromRgbF(d->MRMLDisplayNode->GetColor()[0],
                      d->MRMLDisplayNode->GetColor()[1],

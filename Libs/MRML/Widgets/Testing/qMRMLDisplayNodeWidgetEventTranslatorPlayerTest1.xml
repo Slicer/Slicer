@@ -11,6 +11,18 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/ClippingCheckBox" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SelectedCheckBox" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionVisibilityCheckBox" command="set_boolean" arguments="true"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/SliceIntersectionThicknessSpinBox" command="set_int" arguments="10"/>
+
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/VisibilityCheckBox" command="set_boolean" arguments="false"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/CollapsibleGroupBox/MaterialPropertyWidget/OpacitySliderSpinBox/Slider/1QSlider0" command="set_int" arguments="99"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLDisplayNodeWidget/CollapsibleGroupBox/MaterialPropertyWidget/OpacitySliderSpinBox/Slider/1QSlider0" command="set_int" arguments="98"/>

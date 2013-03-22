@@ -557,6 +557,7 @@
     TEST_SET_GET_BOOLEAN(node, Visibility);                             \
     TEST_SET_GET_BOOLEAN(node, Clipping);                               \
     TEST_SET_GET_BOOLEAN(node, SliceIntersectionVisibility);            \
+    TEST_SET_GET_INT_RANGE(node, SliceIntersectionThickness, 0, 10);   \
     TEST_SET_GET_BOOLEAN(node, BackfaceCulling);                        \
     TEST_SET_GET_BOOLEAN(node, ScalarVisibility);                       \
     TEST_SET_GET_BOOLEAN(node, VectorVisibility);                       \

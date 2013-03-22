@@ -47,6 +47,7 @@ vtkMRMLDisplayNode::vtkMRMLDisplayNode()
   this->Visibility = 1;
   this->Clipping = 0;
   this->SliceIntersectionVisibility = 0;
+  this->SliceIntersectionThickness = 1;
   this->BackfaceCulling = 1;
   this->ScalarVisibility = 0;
   this->VectorVisibility = 0;
@@ -130,6 +131,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
 
   of << indent << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
+
+  of << indent << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
 
   of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
 
@@ -321,7 +324,13 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
         {
         this->SliceIntersectionVisibility = 0;
         }
-     }
+      }
+    else if (!strcmp(attName, "sliceIntersectionThickness")) 
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->SliceIntersectionThickness;
+      }
     else if (!strcmp(attName, "backfaceCulling")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -447,6 +456,7 @@ void vtkMRMLDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetBackfaceCulling(node->BackfaceCulling);
   this->SetClipping(node->Clipping);
   this->SetSliceIntersectionVisibility(node->SliceIntersectionVisibility);
+  this->SetSliceIntersectionThickness(node->SliceIntersectionThickness);
   this->SetAndObserveTextureImageData(node->TextureImageData);
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
@@ -485,6 +495,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "BackfaceCulling:   " << this->BackfaceCulling << "\n";
   os << indent << "Clipping:          " << this->Clipping << "\n";
   os << indent << "SliceIntersectionVisibility: " << this->SliceIntersectionVisibility << "\n";
+  os << indent << "SliceIntersectionThickness: " << this->SliceIntersectionThickness << "\n";
 
   os << indent << "ScalarRange:       ";
   for (idx = 0; idx < 2; ++idx)

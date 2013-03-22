@@ -164,19 +164,26 @@ public:
   /// \sa Clipping, SetClipping(), GetClipping()
   vtkBooleanMacro(Clipping, int);
 
-  /// Set the slicer intersection visibility of the display node.
+  /// Set the slice intersection visibility of the display node.
   /// \sa SliceIntersectionVisibility, GetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff()
   vtkSetMacro(SliceIntersectionVisibility, int);
-  /// Get the slicer intersection visibility of the display node.
+  /// Get the slice intersection visibility of the display node.
   /// \sa SliceIntersectionVisibility, SetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff()
   vtkGetMacro(SliceIntersectionVisibility, int);
-  /// Set the slicer intersection visibility of the display node.
+  /// Set the slice intersection visibility of the display node.
   /// \sa SliceIntersectionVisibility, SetSliceIntersectionVisibility(),
   /// GetSliceIntersectionVisibility(),
   vtkBooleanMacro(SliceIntersectionVisibility, int);
 
+  /// Set the slice intersection thickness of the display node. In voxels.
+  /// \sa SliceIntersectionThickness, GetSliceIntersectionThickness()
+  vtkSetMacro(SliceIntersectionThickness, int);
+  /// Get the slice intersection thickness of the display node. In voxels.
+  /// \sa SliceIntersectionThickness, SetSliceIntersectionThickness()
+  vtkGetMacro(SliceIntersectionThickness, int);
+  
   /// Set the backface culling of the display node.
   /// \sa BackfaceCulling, GetBackfaceCulling(), BackfaceCullingOn(),
   /// BackfaceCullingOff()
@@ -428,8 +435,16 @@ protected:
   /// 0 by default.
   /// \sa SetSliceIntersectionVisibility(), GetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff(),
-  /// Visibility, Clipping
+  /// SetSliceIntersectionThickness(), GetSliceIntersectionThickness(),
+  /// Visibility, Clipping, SliceIntersectionThickness
   int SliceIntersectionVisibility;
+  /// Specifies how thick to show the intersections with slice planes if slice
+  /// intersection visibility is on
+  /// 1 voxel by default.
+  /// \sa SetSliceIntersectionVisibility(), GetSliceIntersectionVisibility(),
+  /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff(),
+  /// Visibility, SliceIntersectionVisibility,  
+  int SliceIntersectionThickness;
   /// Indicates whether to cull (not render) the backface of the surface.
   /// 1 by default.
   /// \sa SetBackfaceCulling(), GetBackfaceCulling(), BackfaceCullingOn(),

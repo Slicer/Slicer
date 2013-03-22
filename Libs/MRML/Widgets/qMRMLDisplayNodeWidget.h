@@ -48,6 +48,7 @@ public:
   bool selected()const;
   bool clipping()const;
   bool sliceIntersectionVisible()const;
+  int sliceIntersectionThickness()const;
   QColor color()const;
   double opacity()const;
   double ambient()const;
@@ -69,13 +70,16 @@ public slots:
   void setSelected(bool);
   void setClipping(bool);
   void setSliceIntersectionVisible(bool);
+  void setSliceIntersectionThickness(int);
 
   /// Make checkboxes visible or invisible, for use with display nodes that don't 
-  /// need to control visibility, selected, clipping, slice intersection visibility
+  /// need to control visibility, selected, clipping, slice intersection
+  /// visibility, slice intersection thickness
   void setVisibilityVisible(bool);
   void setSelectedVisible(bool);
   void setClippingVisible(bool);
   void setSliceIntersectionVisibleVisible(bool);
+  void setSliceIntersectionThicknessVisible(bool);
 
   /// Set the values on the display node
   void setColor(const QColor&);
