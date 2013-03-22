@@ -7,13 +7,13 @@
 #Source: http://www.slicer.org/slicerWiki/index.php/Slicer4:2012_DarkBrightChartColors
 #
 #Begin table data:
-0 Series_1 236 44 51 255
-1 Series_2 18 139 74 255
-2 Series_3 22 93 167 255
-3 Series_4 243 123 45 255
-4 Series_5 101 50 143 255
-5 Series_6 161 28 35 255
-6 Series_7 178 60 147 255
-7 Series_8 1 2 2 255
+1 Series_1 236 44 51 255
+2 Series_2 18 139 74 255
+3 Series_3 22 93 167 255
+4 Series_4 243 123 45 255
+5 Series_5 101 50 143 255
+6 Series_6 161 28 35 255
+7 Series_7 178 60 147 255
+8 Series_8 1 2 2 255
 #EOF
 
