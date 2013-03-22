@@ -895,6 +895,7 @@ ImageToImageRegistrationHelper<TImage>
       typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
       resampler->SetOutputParametersFromImage( tmp );
       resampler->SetTransform( m_LoadedBSplineTransform );
+      resampler->SetDefaultPixelValue( defaultPixelValue );
       resampler->Update();
       if( !passedImage )
         {
@@ -925,6 +926,7 @@ ImageToImageRegistrationHelper<TImage>
     typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( aTrans );
+    resampler->SetDefaultPixelValue( defaultPixelValue );
     resampler->Update();
     if( !passedImage )
       {
@@ -954,6 +956,7 @@ ImageToImageRegistrationHelper<TImage>
     typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( bTrans );
+    resampler->SetDefaultPixelValue( defaultPixelValue );
     resampler->Update();
     if( !passedImage )
       {
@@ -986,6 +989,7 @@ ImageToImageRegistrationHelper<TImage>
     typename ImageType::Pointer tmp = const_cast<ImageType *>(m_FixedImage.GetPointer() );
     resampler->SetOutputParametersFromImage( tmp );
     resampler->SetTransform( tmpTransform );
+    resampler->SetDefaultPixelValue( defaultPixelValue );
     resampler->Update();
 
     mImage = resampler->GetOutput();
