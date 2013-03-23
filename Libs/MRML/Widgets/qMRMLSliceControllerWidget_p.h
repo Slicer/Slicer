@@ -118,6 +118,9 @@ public slots:
   void updateFromForegroundDisplayNode(vtkObject* displayNode);
   void updateFromBackgroundDisplayNode(vtkObject* displayNode);
 
+  void updateFromForegroundVolumeNode(vtkObject* volumeNode);
+  void updateFromBackgroundVolumeNode(vtkObject* volumeNode);
+
   void applyCustomLightbox();
 
 protected:
