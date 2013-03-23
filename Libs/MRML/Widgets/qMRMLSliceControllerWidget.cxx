@@ -202,8 +202,6 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setSliceModelMode2D()));
   QObject::connect(this->actionSliceModelMode2D_Volumes, SIGNAL(triggered()),
                    q, SLOT(setSliceModelMode2D_Volumes()));
-  QObject::connect(this->actionSliceModelModeVolumes_2D, SIGNAL(triggered()),
-                   q, SLOT(setSliceModelModeVolumes_2D()));
   //QObject::connect(this->actionSliceModelModeCustom, SIGNAL(triggered()),
   //                 q, SLOT(setSliceModelModeCustom()));
 
@@ -545,7 +543,6 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   this->SliceModelMenu->addAction(this->actionSliceModelModeVolumes);
   this->SliceModelMenu->addAction(this->actionSliceModelMode2D);
   this->SliceModelMenu->addAction(this->actionSliceModelMode2D_Volumes);
-  this->SliceModelMenu->addAction(this->actionSliceModelModeVolumes_2D);
   //this->SliceModelMenu->addAction(this->actionSliceModelModeCustom);
 
   this->SliceVisibilityButton->setCheckable(true);
@@ -819,8 +816,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
                                                 vtkMRMLSliceNode::SliceResolutionMatch2DView);
   this->actionSliceModelMode2D_Volumes->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
                                                 vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes);
-  this->actionSliceModelModeVolumes_2D->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
-                                                vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView);
   //this->actionSliceModelModeCustom->setChecked(this->MRMLSliceNode->GetSliceResolutionMode() ==
   //                                              vtkMRMLSliceNode::SliceResolutionCustom);
 
@@ -2084,12 +2079,6 @@ void qMRMLSliceControllerWidget::setSliceModelMode2D()
 void qMRMLSliceControllerWidget::setSliceModelMode2D_Volumes()
 {
   this->setSliceModelMode(vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes);
-}
-
-//---------------------------------------------------------------------------
-void qMRMLSliceControllerWidget::setSliceModelModeVolumes_2D()
-{
-  this->setSliceModelMode(vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView);
 }
 
 //---------------------------------------------------------------------------
