@@ -891,18 +891,21 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceCompositeNode()
   this->ForegroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
   this->ForegroundComboBox->blockSignals(wasBlocked);
+  this->onForegroundLayerNodeSelected(q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetForegroundVolumeID()));
 
   // Update "background layer" node selector
   wasBlocked = this->BackgroundComboBox->blockSignals(true);
   this->BackgroundComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
   this->BackgroundComboBox->blockSignals(wasBlocked);
+  this->onBackgroundLayerNodeSelected(q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetBackgroundVolumeID()));
 
   // Update "label map" node selector
   wasBlocked = this->LabelMapComboBox->blockSignals(true);
   this->LabelMapComboBox->setCurrentNode(
       q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
   this->LabelMapComboBox->blockSignals(wasBlocked);
+  this->onLabelMapNodeSelected(q->mrmlScene()->GetNodeByID(this->MRMLSliceCompositeNode->GetLabelVolumeID()));
 
   // Label opacity
   this->LabelMapOpacitySlider->setValue(this->MRMLSliceCompositeNode->GetLabelOpacity());
