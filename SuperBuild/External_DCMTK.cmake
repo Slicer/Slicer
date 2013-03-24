@@ -29,8 +29,8 @@ if(NOT DEFINED DCMTK_DIR)
       "-DCMAKE_PROJECT_DCMTK_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
   endif()
 
-  set(DCMTK_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
-  set(DCMTK_GIT_TAG "d06e2b7d9bafb23df4e969482a68b50fc75aaaa9")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/DCMTK.git)
+  set(${proj}_GIT_TAG "257e800c42f40ff3207a9242fa225c850c56dd07")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}

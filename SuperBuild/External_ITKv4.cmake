@@ -37,7 +37,7 @@ if(NOT DEFINED ITK_DIR)
   if(Slicer_BUILD_DICOM_SUPPORT)
     set(ITKv4_DCMTK_ARGS
       -DITK_USE_SYSTEM_DCMTK:BOOL=ON
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      -DDCMTK_DIR:PATH=${DCMTK_DIR}/share/dcmtk
       -DModule_ITKIODCMTK:BOOL=ON
       )
   endif()
@@ -75,7 +75,7 @@ if(NOT DEFINED ITK_DIR)
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(ITKv4_GIT_TAG 8978a8e56de129a0717fe7806353682b7f776aef) #2013-03-08 Provide const correct API
+  set(ITKv4_GIT_TAG 55ba0bf6511dda626877e0f3e7a69ee02a41d4e9) #2013-03-24 Use version with DoubleConversion included
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}

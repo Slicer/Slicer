@@ -296,7 +296,6 @@ endif()
 
 if(Slicer_BUILD_BRAINSTOOLS)
   list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
-  list(APPEND ep_superbuild_extra_args -DDoubleConvert_DIR:PATH=${DoubleConvert_DIR})
 endif()
 
 if(Slicer_BUILD_MultiVolumeExplorer)
