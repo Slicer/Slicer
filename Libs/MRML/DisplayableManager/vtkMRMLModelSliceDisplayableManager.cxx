@@ -389,6 +389,7 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal
     actor->SetPosition(0,0);
     vtkProperty2D* actorProperties = actor->GetProperty();
     actorProperties->SetColor(displayNode->GetColor() );
+    actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness() );
     }
 }
 
