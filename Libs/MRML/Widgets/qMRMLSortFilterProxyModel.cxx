@@ -190,7 +190,7 @@ qMRMLSortFilterProxyModel::AcceptType qMRMLSortFilterProxyModel
 {
   Q_D(const qMRMLSortFilterProxyModel);
   qMRMLSceneModel* sceneModel = qobject_cast<qMRMLSceneModel*>(this->sourceModel());
-  if (!node)
+  if (!node || !node->GetID())
     {
     return Accept;
     }
