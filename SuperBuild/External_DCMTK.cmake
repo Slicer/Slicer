@@ -30,7 +30,7 @@ if(NOT DEFINED DCMTK_DIR)
   endif()
 
   set(${proj}_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/DCMTK.git)
-  set(${proj}_GIT_TAG "257e800c42f40ff3207a9242fa225c850c56dd07")
+  set(${proj}_GIT_TAG "c14dd383cfedd2f2c0daf9adf2b50214712821e6")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}
@@ -63,8 +63,11 @@ if(NOT DEFINED DCMTK_DIR)
     DEPENDS
       ${DCMTK_DEPENDENCIES}
   )
-
-  set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  #
+  # Until and unless CTK stops using its own FindDCMTK.cmake, it will have
+  # to employ a different DCMTK_DIR variable than ITK.
+  set(DCMTK_DIR_ROOT ${CMAKE_BINARY_DIR}/${proj}-install )
+  set(DCMTK_DIR ${DCMTK_DIR_ROOT}/lib/cmake/dcmtk)
 else()
   # The project is provided with DCMTK_DIR, nevertheless since other project may depend on DCMTK_DIR,
   # let's add an 'empty' one

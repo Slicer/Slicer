@@ -56,7 +56,7 @@ if(NOT DEFINED CTK_DIR)
 
   if(Slicer_BUILD_DICOM_SUPPORT)
     list(APPEND optional_ep_args
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
+      -DDCMTK_DIR:PATH=${DCMTK_DIR_ROOT}
       )
   endif()
 
