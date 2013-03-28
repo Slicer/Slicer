@@ -236,7 +236,7 @@ void qSlicerScriptedLoadableModule::setup()
     {
     return;
     }
-  PythonQt::self()->resetErrorFlag();
+  PythonQt::self()->clearError();
   PyObject_CallObject(method, 0);
   PythonQt::self()->handleError();
 }
