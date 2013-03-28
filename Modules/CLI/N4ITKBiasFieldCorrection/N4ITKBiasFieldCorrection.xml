@@ -43,20 +43,6 @@
   </parameters>
   <parameters>
     <label>N4 Parameters</label>
-    <integer-vector>
-      <name>numberOfIterations</name>
-      <longflag>iterations</longflag>
-      <label>Number of iterations</label>
-      <description><![CDATA[Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.]]></description>
-      <default>50,40,30</default>
-    </integer-vector>
-    <float>
-      <name>convergenceThreshold</name>
-      <longflag>convergencethreshold</longflag>
-      <label>Convergence threshold</label>
-      <description><![CDATA[Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.]]></description>
-      <default>0.0001</default>
-    </float>
     <float-vector>
       <name>initialMeshResolution</name>
       <longflag>meshresolution</longflag>
@@ -71,17 +57,35 @@
       <description><![CDATA[An alternative means to define the spline grid, by setting the distance between the control points. This parameter is used only if the grid resolution is not specified.]]></description>
       <default>0</default>
     </float>
-    <integer>
-      <name>shrinkFactor</name>
-      <longflag>shrinkfactor</longflag>
-      <label>Shrink factor</label>
-      <description><![CDATA[Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time.]]></description>
-      <default>4</default>
-    </integer>
+
+    <float>
+      <name>bfFWHM</name>
+      <longflag>bffwhm</longflag>
+      <label>Bias field Full Width at Half Maximum</label>
+      <description><![CDATA[Bias field Full Width at Half Maximum. Zero implies use of the default value.]]></description>
+      <default>0</default>
+    </float>
+
   </parameters>
   <parameters advanced="true">
     <label>Advanced N4 Parameters</label>
     <description><![CDATA[Advanced parameters of the algorithm]]></description>
+
+    <integer-vector>
+      <name>numberOfIterations</name>
+      <longflag>iterations</longflag>
+      <label>Number of iterations</label>
+      <description><![CDATA[Maximum number of iterations at each level of resolution. Larger values will increase execution time, but may lead to better results.]]></description>
+      <default>500,400,300</default>
+    </integer-vector>
+    <float>
+      <name>convergenceThreshold</name>
+      <longflag>convergencethreshold</longflag>
+      <label>Convergence threshold</label>
+      <description><![CDATA[Stopping criterion for the iterative bias estimation. Larger values will lead to smaller execution time.]]></description>
+      <default>0.0001</default>
+    </float>
+
     <integer>
       <name>bsplineOrder</name>
       <longflag>bsplineorder</longflag>
@@ -89,6 +93,15 @@
       <description><![CDATA[Order of B-spline used in the approximation. Larger values will lead to longer execution times, may result in overfitting and poor result.]]></description>
       <default>3</default>
     </integer>
+
+    <integer>
+      <name>shrinkFactor</name>
+      <longflag>shrinkfactor</longflag>
+      <label>Shrink factor</label>
+      <description><![CDATA[Defines how much the image should be upsampled before estimating the inhomogeneity field. Increase if you want to reduce the execution time. 1 corresponds to the original resolution. Larger values will significantly reduce the computation time.]]></description>
+      <default>4</default>
+    </integer>
+
     <image>
       <longflag>weightimage</longflag>
       <name>weightImageName</name>
@@ -96,12 +109,22 @@
       <channel>input</channel>
       <description><![CDATA[Weight Image]]></description>
     </image>
-    <float-vector>
-      <name>histogramSharpening</name>
-      <longflag>histogramsharpening</longflag>
-      <label>Histogram sharpening parameters</label>
-      <description><![CDATA[A vector of up to three values. Non-zero values correspond to Bias Field Full Width at Half Maximum, Wiener filter noise, and Number of histogram bins.]]></description>
-      <default>0,0,0</default>
-    </float-vector>
+
+    <float>
+      <name>wienerFilterNoise</name>
+      <longflag>wienerfilternoise</longflag>
+      <label>Wiener filter noise</label>
+      <description><![CDATA[Wiener filter noise. Zero implies use of the default value.]]></description>
+      <default>0</default>
+    </float>
+
+    <integer>
+      <name>nHistogramBins</name>
+      <longflag>nhistogrambins</longflag>
+      <label>Number of histogram bins</label>
+      <description><![CDATA[Number of histogram bins. Zero implies use of the default value.]]></description>
+      <default>0</default>
+    </integer>
+
   </parameters>
 </executable>

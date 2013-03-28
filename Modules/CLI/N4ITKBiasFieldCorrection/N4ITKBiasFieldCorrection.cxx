@@ -300,17 +300,17 @@ int main(int argc, char* * argv)
   /**
    * histogram sharpening options
    */
-  if( histogramSharpening.size() && histogramSharpening[0] )
+  if( bfFWHM )
     {
-    correcter->SetBiasFieldFullWidthAtHalfMaximum( histogramSharpening[0] );
+    correcter->SetBiasFieldFullWidthAtHalfMaximum( bfFWHM );
     }
-  if( histogramSharpening.size() > 1 && histogramSharpening[1] )
+  if( wienerFilterNoise )
     {
-    correcter->SetWienerFilterNoise( histogramSharpening[1] );
+    correcter->SetWienerFilterNoise( wienerFilterNoise );
     }
-  if( histogramSharpening.size() > 2 && histogramSharpening[2] )
+  if( nHistogramBins )
     {
-    correcter->SetNumberOfHistogramBins( histogramSharpening[2] );
+    correcter->SetNumberOfHistogramBins( nHistogramBins );
     }
 
   try
