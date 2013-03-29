@@ -75,17 +75,17 @@ public:
   /// String ID of the storage MRML node
   void SetAndObserveStorageNodeID(const char *storageNodeID)
   {
-    this->SetAndObserveNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), storageNodeID);
+    this->SetAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
   }
 
   void AddAndObserveStorageNodeID(const char *storageNodeID)
   {
-    this->AddAndObserveNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), storageNodeID);
+    this->AddAndObserveNodeReferenceID(this->GetStorageNodeReferenceRole(), storageNodeID);
   }
 
   void SetAndObserveNthStorageNodeID(int n, const char *storageNodeID)
   {
-    this->SetAndObserveNthNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), n, storageNodeID);
+    this->SetAndObserveNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n, storageNodeID);
   }
 
   /// 
@@ -101,12 +101,12 @@ public:
   
   int GetNumberOfStorageNodes()
   {
-    return this->GetNumberOfNodeReferences(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str());
+    return this->GetNumberOfNodeReferences(this->GetStorageNodeReferenceRole());
   }
 
   const char *GetNthStorageNodeID(int n)
   {
-    return this->GetNthNodeReferenceID(vtkMRMLStorableNode::STORAGE_NODE_REFERENCE_ROLE.c_str(), n);
+    return this->GetNthNodeReferenceID(this->GetStorageNodeReferenceRole(), n);
   }
 
   const char *GetStorageNodeID()
@@ -142,14 +142,21 @@ public:
   /// \sa GetStoredTime() StorableModifiedTime Modified()
   virtual bool GetModifiedSinceRead();
 
-  static const std::string STORAGE_NODE_REFERENCE_ROLE;
-  static const std::string STORAGE_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
-
  protected:
   vtkMRMLStorableNode();
   ~vtkMRMLStorableNode();
   vtkMRMLStorableNode(const vtkMRMLStorableNode&);
   void operator=(const vtkMRMLStorableNode&);
+
+  char* StorageNodeReferenceRole;
+  char* StorageNodeReferenceRererenceMRMLAttributeName;
+
+  vtkSetStringMacro(StorageNodeReferenceRole);
+  vtkGetStringMacro(StorageNodeReferenceRole);
+ 
+  vtkSetStringMacro(StorageNodeReferenceRererenceMRMLAttributeName);
+  vtkGetStringMacro(StorageNodeReferenceRererenceMRMLAttributeName);
+
 
   vtkTagTable *UserTagTable;
 

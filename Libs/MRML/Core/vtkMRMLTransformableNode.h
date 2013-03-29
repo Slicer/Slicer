@@ -92,8 +92,6 @@ public:
   /// Get referenced transform node id
   const char *GetTransformNodeID();
 
-  static const std::string TRANSFORM_NODE_REFERENCE_ROLE;
-  static const std::string TRANSFORM_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
 
 protected:
   vtkMRMLTransformableNode();
@@ -101,7 +99,19 @@ protected:
   vtkMRMLTransformableNode(const vtkMRMLTransformableNode&);
   void operator=(const vtkMRMLTransformableNode&);
 
-  std::string TransformNodeID;
+  char* TransformNodeReferenceRole;
+  char* TransformNodeReferenceRererenceMRMLAttributeName;
+
+  vtkSetStringMacro(TransformNodeReferenceRole);
+  vtkGetStringMacro(TransformNodeReferenceRole);
+ 
+  vtkSetStringMacro(TransformNodeReferenceRererenceMRMLAttributeName);
+  vtkGetStringMacro(TransformNodeReferenceRererenceMRMLAttributeName);
+
+private:
+  char* TransformNodeIDInternal;
+  vtkSetStringMacro(TransformNodeIDInternal);
+  vtkGetStringMacro(TransformNodeIDInternal);
 
 };
 

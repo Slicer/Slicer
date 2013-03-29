@@ -17,9 +17,9 @@
 
 // MRML includes
 #include "vtkMRML.h"
-#include "vtkMRMLNodeReference.h"
 #include "vtkObserverManager.h"
 #include "vtkIdTypeArray.h"
+#include "vtkIntArray.h"
 
 class vtkMRMLScene;
 
@@ -554,6 +554,54 @@ public:
       ReferenceRemovedEvent,
       ReferencedNodeModifiedEvent
     };
+protected: 
+  ///
+  /// class to hold information about a referenced node used by refering node
+  class VTK_MRML_EXPORT vtkMRMLNodeReference : public vtkObject
+  {
+  public: 
+    vtkTypeMacro(vtkMRMLNodeReference,vtkObject);
+    static vtkMRMLNodeReference *New();
+    void PrintSelf(ostream& vtkNotUsed(os), vtkIndent vtkNotUsed(indent)){};
+
+  public:
+    vtkSetStringMacro(ReferenceRole);
+    vtkGetStringMacro(ReferenceRole);
+
+    vtkSetStringMacro(ReferencedNodeID);
+    vtkGetStringMacro(ReferencedNodeID);
+
+    vtkMRMLNode*    ReferencingNode;
+    vtkMRMLNode*    ReferencedNode;
+    vtkIntArray*    Events;
+
+  protected:
+
+    vtkMRMLNodeReference()
+   {
+      this->ReferencedNode = 0;
+      this->ReferencingNode = 0;
+      this->Events = 0;
+      this->ReferencedNodeID = 0;
+      this->ReferenceRole = 0;
+    }
+
+    ~vtkMRMLNodeReference(){};
+    vtkMRMLNodeReference(const vtkMRMLNodeReference&);
+    void operator=(const vtkMRMLNodeReference&);
+
+    char*     ReferenceRole;
+    char*     ReferencedNodeID;
+
+  };
+
+  /// NodeReferences maps stores vector of refererences for each referenceRole, 
+  /// the referenceRole can be any unique string, for example "display", "transform" etc.
+  /// use AddNodeReferenceType() to add new reference types to a node
+  typedef std::map< std::string, std::vector< vtkMRMLNodeReference *> > NodeReferencesType;
+  NodeReferencesType NodeReferences;
+
+  std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
 protected:
   
@@ -596,14 +644,6 @@ protected:
   AttributesType Attributes;
 
   vtkObserverManager *MRMLObserverManager;
-
-  /// NodeReferences maps stores vector of refererences for each referenceRole, 
-  /// the referenceRole can be any unique string, for example "display", "transform" etc.
-  /// use AddNodeReferenceType() to add new reference types to a node
-  typedef std::map< std::string, std::vector< vtkMRMLNodeReference *> > NodeReferencesType;
-  NodeReferencesType NodeReferences;
-
-  std::map< std::string, std::string> NodeReferenceMRMLAttributeNames;
 
   /// 
   /// Get/Set the string used to manage encoding/decoding of strings/URLs with special characters
@@ -670,63 +710,7 @@ private:
 
   int DisableModifiedEvent;
   int ModifiedEventPending;
+
 };
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::SetNodeReferenceID(const char* referenceRole, const char *referencedNodeID)
-{
-  return this->SetNthNodeReferenceID(referenceRole, 0, referencedNodeID);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::AddNodeReferenceID(const char* referenceRole, const char *referencedNodeID)
-{
-  return this->SetNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), referencedNodeID);
-}
-
-
-//----------------------------------------------------------------------------
-const char * vtkMRMLNode::GetNodeReferenceID(const char* referenceRole)
-{
-  return this->GetNthNodeReferenceID(referenceRole, 0);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::GetNodeReference(const char* referenceRole)
-{
-  return this->GetNthNodeReference(referenceRole, 0);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::SetAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
-{
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, 0, NodeReferenceID, events);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLNode::AddAndObserveNodeReferenceID(const char* referenceRole, const char *NodeReferenceID, vtkIntArray *events)
-{
-  return this->SetAndObserveNthNodeReferenceID(referenceRole, this->GetNumberOfNodeReferences(referenceRole), NodeReferenceID, events);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLNode::RemoveNthNodeReferenceID(const char* referenceRole, int n)
-{
-  this->SetAndObserveNthNodeReferenceID(referenceRole, n, 0);
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLNode::GetNumberOfNodeReferences(const char* referenceRole)
-{
-  int n=0;
-  if (referenceRole)
-    {
-    n = static_cast<int>(this->NodeReferences[std::string(referenceRole)].size());
-    }
-  return n;
-}
-
-
-
 
 #endif

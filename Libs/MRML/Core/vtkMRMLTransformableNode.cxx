@@ -23,16 +23,20 @@ Version:   $Revision: 1.14 $
 #include <vtkMatrix4x4.h>
 
 
-const std::string vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE = "transform";
-const std::string vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_MRML_ATTRIBUTE_NAME = "transformNodeRef";
-
-
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
+  this->TransformNodeIDInternal = 0;
+  this->TransformNodeReferenceRole = 0;
+  this->TransformNodeReferenceRererenceMRMLAttributeName = 0;
+
+  this->SetTransformNodeReferenceRole("storage");
+  this->SetTransformNodeReferenceRererenceMRMLAttributeName("storageNodeRef");
+
+
   this->HideFromEditors = 0;
-  this->AddNodeReferenceRole(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str(),
-                             vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_MRML_ATTRIBUTE_NAME.c_str());
+  this->AddNodeReferenceRole(this->GetTransformNodeReferenceRole(),
+                             this->GetTransformNodeReferenceRererenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------
@@ -61,7 +65,7 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
 void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
-  const char* transformNodeID = this->GetNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str());
+  const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
   os << indent << "TransformNodeID: " <<
     (transformNodeID ? transformNodeID : "(none)") << "\n";
@@ -70,16 +74,17 @@ void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 const char* vtkMRMLTransformableNode::GetTransformNodeID()
 {
-  const char* transformNodeID = this->GetNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str());
-  this->TransformNodeID = transformNodeID ? transformNodeID : "";
-  return transformNodeID ? this->TransformNodeID.c_str() : 0;
+  this->SetTransformNodeIDInternal(
+    this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()));
+
+  return this->GetTransformNodeIDInternal();
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 {
   vtkMRMLTransformNode* node = NULL;
-  const char* transformNodeID = this->GetNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str());
+  const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
   if (this->GetScene() && transformNodeID != NULL )
     {
@@ -92,7 +97,7 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
-  if (transformNodeID == 0 && this->GetNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str()) == 0)
+  if (transformNodeID == 0 && this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()) == 0)
     {
     // was NULL and still NULL, nothing to do
     return;
@@ -108,7 +113,7 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
     }
 
   // use vtkMRMLNode call to set and observe reference
-  this->SetAndObserveNodeReferenceID(vtkMRMLTransformableNode::TRANSFORM_NODE_REFERENCE_ROLE.c_str(), transformNodeID);
+  this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID);
 }
 
 //---------------------------------------------------------------------------

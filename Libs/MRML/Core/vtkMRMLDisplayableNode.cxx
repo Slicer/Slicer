@@ -29,14 +29,18 @@ Version:   $Revision: 1.3 $
 #include <cassert>
 #include <sstream>
 
-const std::string vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE = "display";
-const std::string vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_MRML_ATTRIBUTE_NAME = "displayNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
-  this->AddNodeReferenceRole(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(),
-                             vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_MRML_ATTRIBUTE_NAME.c_str() );
+  this->DisplayNodeReferenceRole = 0;
+  this->DisplayNodeReferenceRererenceMRMLAttributeName = 0;
+
+  this->SetDisplayNodeReferenceRole("display");
+  this->SetDisplayNodeReferenceRererenceMRMLAttributeName("displayNodeRef");
+
+  this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
+                             this->GetDisplayNodeReferenceRererenceMRMLAttributeName() );
 }
 
 //----------------------------------------------------------------------------
@@ -81,11 +85,11 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 
   Superclass::PrintSelf(os,indent);
   
-  int numDisplayNodes = this->GetNumberOfNodeReferences(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
 
   for (unsigned int i=0; i<numDisplayNodes; i++)
     {
-    const char * id = this->GetNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), i);
+    const char * id = this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), i);
 
     os << indent << "DisplayNodeIDs[" << i << "]: " <<
      id << "\n";
@@ -96,13 +100,13 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 const std::vector<vtkMRMLDisplayNode*>& vtkMRMLDisplayableNode::GetDisplayNodes()
 {
-  int numDisplayNodes = this->GetNumberOfNodeReferences(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
   vtkMRMLDisplayNode *dnode;
   this->DisplayNodes.clear();
   for (int i=0; i<numDisplayNodes; i++)
     {
       dnode = vtkMRMLDisplayNode::SafeDownCast(
-        this->GetNthNodeReference(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), i));
+        this->GetNthNodeReference(this->GetDisplayNodeReferenceRole(), i));
       this->DisplayNodes.push_back(dnode);
     }
 
@@ -113,7 +117,7 @@ const std::vector<vtkMRMLDisplayNode*>& vtkMRMLDisplayableNode::GetDisplayNodes(
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
 {
   return vtkMRMLDisplayNode::SafeDownCast(
-    this->GetNthNodeReference(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n));
+    this->GetNthNodeReference(this->GetDisplayNodeReferenceRole(), n));
 }
 
 //---------------------------------------------------------------------------
@@ -122,7 +126,7 @@ void vtkMRMLDisplayableNode::ProcessMRMLEvents ( vtkObject *caller,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
-  int numDisplayNodes = this->GetNumberOfNodeReferences(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
   for (int i=0; i<numDisplayNodes; i++)
     {
     vtkMRMLDisplayNode *dnode = this->GetNthDisplayNode(i);

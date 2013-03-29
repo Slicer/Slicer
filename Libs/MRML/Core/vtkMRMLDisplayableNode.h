@@ -75,7 +75,7 @@ public:
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
   inline void SetAndObserveDisplayNodeID(const char *displayNodeID)
   {
-    this->SetAndObserveNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+    this->SetAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
   }
 
   /// 
@@ -83,7 +83,7 @@ public:
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
   inline void AddAndObserveDisplayNodeID(const char *displayNodeID)
   {
-    this->AddAndObserveNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+    this->AddAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
   }
 
   ///
@@ -91,14 +91,14 @@ public:
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
   inline void RemoveNthDisplayNodeID(int n)
   {
-    this->RemoveNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n);
+    this->RemoveNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n);
   }
 
   ///
   /// Remove all display node IDs and associated display nodes.
   inline void RemoveAllDisplayNodeIDs()
   {
-    this->RemoveAllNodeReferenceIDs(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+    this->RemoveAllNodeReferenceIDs(this->GetDisplayNodeReferenceRole());
   }
 
   /// 
@@ -117,14 +117,14 @@ public:
   /// AddAndObserveDisplayNodeID(const char *), RemoveNthDisplayNodeID(int)
   inline void SetAndObserveNthDisplayNodeID(int n, const char *displayNodeID)
   {
-    this->SetAndObserveNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n, displayNodeID);
+    this->SetAndObserveNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n, displayNodeID);
   }
 
   ///
   /// Return true if displayNodeID is in the display node ID list.
   inline bool HasDisplayNodeID(const char* displayNodeID)
   {
-    return this->HasNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), displayNodeID);
+    return this->HasNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
   }
 
   ///
@@ -132,7 +132,7 @@ public:
   /// have the same size).
   inline int GetNumberOfDisplayNodes()
   {
-    return this->GetNumberOfNodeReferences(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str());
+    return this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
   }
 
   ///
@@ -142,7 +142,7 @@ public:
   /// is returned.
   inline const char *GetNthDisplayNodeID(int n)
   {
-    return this->GetNthNodeReferenceID(vtkMRMLDisplayableNode::DISPLAY_NODE_REFERENCE_ROLE.c_str(), n);
+    return this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), n);
   }
 
   ///
@@ -220,22 +220,27 @@ public:
   /// Get bounding box in global RAS the form (xmin,xmax, ymin,ymax, zmin,zmax).
   virtual void GetRASBounds(double bounds[6]);
 
- static const std::string DISPLAY_NODE_REFERENCE_ROLE;
- static const std::string DISPLAY_NODE_REFERENCE_MRML_ATTRIBUTE_NAME;
-
  protected:
   vtkMRMLDisplayableNode();
   ~vtkMRMLDisplayableNode();
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
   void operator=(const vtkMRMLDisplayableNode&);
 
+  char *DisplayNodeReferenceRole;
+  char *DisplayNodeReferenceRererenceMRMLAttributeName;
+
+  vtkSetStringMacro(DisplayNodeReferenceRole);
+  vtkGetStringMacro(DisplayNodeReferenceRole);
+ 
+  vtkSetStringMacro(DisplayNodeReferenceRererenceMRMLAttributeName);
+  vtkGetStringMacro(DisplayNodeReferenceRererenceMRMLAttributeName);
 
   ///
   /// Called when a node reference ID is added (list size increased). 
   virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceAdded(reference);
-    if (reference->ReferenceRole == this->DISPLAY_NODE_REFERENCE_ROLE)
+    if (std::string(reference->GetReferenceRole()) == this->DisplayNodeReferenceRole)
       {
       this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
       }

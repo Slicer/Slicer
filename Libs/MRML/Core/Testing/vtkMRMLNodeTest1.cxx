@@ -13,7 +13,6 @@
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLNodeReference.h"
 
 // VTK includes
 #include <vtkNew.h>
@@ -387,25 +386,6 @@ bool TestAddRefrencedNodeIDWithNoScene()
   // in the scene.
   scene->AddNode(referencingNode.GetPointer());
 
-  //std::map< std::string, std::vector< vtkMRMLNodeReference *> > refs = referencingNode->GetInternalReferencedNodes();
-
-  //refs = referencingNode->GetInternalReferencedNodes();
-  /**
-  if (referencingNode->GetInternalReferencedNodes()[role1].size() != 2 ||
-      referencingNode->GetInternalReferencedNodes()[role1][0]->ReferencedNode != referencedNode2.GetPointer() ||
-      referencingNode->GetInternalReferencedNodes()[role1][1]->ReferencedNode != referencedNode3.GetPointer() ||
-      referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 1), referencedNode3->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 1) != referencedNode3.GetPointer() ||
-      // make sure it didn't change the first referenced node ID
-      referencingNode->GetNthNodeReferenceID(role1.c_str(), 0) == 0 ||
-      strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 0), referencedNode2->GetID()) ||
-      referencingNode->GetNthNodeReference(role1.c_str(), 0) != referencedNode2.GetPointer())
-    {
-    std::cout << __LINE__ << ": AddNode failed" << std::endl;
-    return false;
-    }
-   **/
   if (
       referencingNode->GetNthNodeReferenceID(role1.c_str(), 1) == 0 ||
       strcmp(referencingNode->GetNthNodeReferenceID(role1.c_str(), 1), referencedNode3->GetID()) ||
