@@ -71,6 +71,8 @@
 #ifdef Slicer_USE_PYTHONQT
 #  define Slicer_PYTHON_VERSION_DOT "@Slicer_PYTHON_VERSION_DOT@"
 #  define Slicer_PYTHON_VERSION "@Slicer_PYTHON_VERSION@"
+#cmakedefine HAVE_PYRUN_CLOSEFILE
+#cmakedefine HAVE_PYRUN_OPENFILE
 #endif //Slicer_USE_PYTHONQT
 
 #cmakedefine Slicer_BUILD_QTLOADABLEMODULES

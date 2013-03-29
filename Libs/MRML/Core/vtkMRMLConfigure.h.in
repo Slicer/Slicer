@@ -15,4 +15,7 @@
 #cmakedefine MRML_USE_TEEM
 #cmakedefine MRML_USE_vtkTeem
 
+#cmakedefine HAVE_PYRUN_CLOSEFILE
+#cmakedefine HAVE_PYRUN_OPENFILE
+
 #define MRML_SUPPORT_VERSION @MRML_SUPPORT_VERSION@

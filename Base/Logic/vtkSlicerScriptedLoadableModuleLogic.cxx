@@ -178,7 +178,11 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
   assert(pythonSource.find(".py") != std::string::npos);
 
   // Open the file
+#ifdef HAVE_PYRUN_OPENFILE
+  FILE* pyfile = PyRun_OpenFile(pythonSource.c_str());
+#else
   FILE* pyfile = fopen(pythonSource.c_str(), "r");
+#endif
   if (!pyfile)
     {
     vtkErrorMacro(<< "SetPythonSource - File " << pythonSource << " doesn't exist !");
@@ -207,6 +211,12 @@ bool vtkSlicerScriptedLoadableModuleLogic::SetPythonSource(const std::string& py
                   << pythonSource);
     return false;
     }
+
+#ifdef HAVE_PYRUN_CLOSEFILE
+  PyRun_CloseFile(pyfile);
+#else
+  fclose(pyfile);
+#endif
 
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 

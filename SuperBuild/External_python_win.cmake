@@ -54,6 +54,8 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
   file(TO_CMAKE_PATH "${out}" out)
   file(TO_CMAKE_PATH "${script}" script)
   set(python_SOURCE_DIR ${python_build})
+  set(HAVE_PYRUN_CLOSEFILE 1)
+  set(HAVE_PYRUN_OPENFILE 1)
   configure_file(SuperBuild/python_patch_step_win.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
     @ONLY)
