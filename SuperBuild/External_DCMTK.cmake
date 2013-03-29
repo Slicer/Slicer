@@ -29,19 +29,17 @@ if(NOT DEFINED DCMTK_DIR)
       "-DCMAKE_PROJECT_DCMTK_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
   endif()
 
-  set(${proj}_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/DCMTK.git)
-  set(${proj}_GIT_TAG "c14dd383cfedd2f2c0daf9adf2b50214712821e6")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
+  set(${proj}_GIT_TAG "f461865d1759854db56e4c840991c81c77e45bb9")
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${DCMTK_REPOSITORY}
     GIT_TAG ${DCMTK_GIT_TAG}
     SOURCE_DIR ${proj}
     BINARY_DIR ${proj}-build
-    INSTALL_DIR ${proj}-install
     "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -60,14 +58,11 @@ if(NOT DEFINED DCMTK_DIR)
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+    INSTALL_COMMAND ""
     DEPENDS
       ${DCMTK_DEPENDENCIES}
   )
-  #
-  # Until and unless CTK stops using its own FindDCMTK.cmake, it will have
-  # to employ a different DCMTK_DIR variable than ITK.
-  set(DCMTK_DIR_ROOT ${CMAKE_BINARY_DIR}/${proj}-install )
-  set(DCMTK_DIR ${DCMTK_DIR_ROOT}/lib/cmake/dcmtk)
+  set(DCMTK_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
   # The project is provided with DCMTK_DIR, nevertheless since other project may depend on DCMTK_DIR,
   # let's add an 'empty' one

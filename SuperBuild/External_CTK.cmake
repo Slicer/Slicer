@@ -56,7 +56,7 @@ if(NOT DEFINED CTK_DIR)
 
   if(Slicer_BUILD_DICOM_SUPPORT)
     list(APPEND optional_ep_args
-      -DDCMTK_DIR:PATH=${DCMTK_DIR_ROOT}
+      -DDCMTK_DIR:PATH=${DCMTK_DIR}
       )
   endif()
 
@@ -66,7 +66,7 @@ if(NOT DEFINED CTK_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
-    GIT_TAG "587c5f323adcd28e10fddb150987e6ca65009bb2"
+    GIT_TAG "8cf58e5e5863cab801f1a11ac64aa2f4ac51c5c3"
     "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build

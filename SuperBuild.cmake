@@ -418,8 +418,6 @@ ExternalProject_Add(${proj}
     -DjqPlot_DIR:PATH=${jqPlot_DIR}
     # LibArchive
     -DLibArchive_DIR:PATH=${LibArchive_DIR}
-    # Where to find the installed DCMTK_DIR_ROOT wheere ${DCMTK_DIR_ROOT}/bin contains the executables.
-    -DDCMTK_DIR_ROOT:PATH=${DCMTK_DIR_ROOT}
   INSTALL_COMMAND ""
   )
 
