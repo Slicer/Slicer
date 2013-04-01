@@ -31,8 +31,8 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 
 ExternalProject_Add(${proj}
-  SVN_REPOSITORY "http://svn.na-mic.org/NAMICSandBox/trunk/OpenIGTLink"
-  SVN_REVISION -r "7701"
+  GIT_REPOSITORY "${git_protocol}://github.com/openigtlink/OpenIGTLink.git"
+  GIT_TAG "66e272daa0744cbcdd492fb02137b19acff33019"
   "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   SOURCE_DIR OpenIGTLink
   BINARY_DIR OpenIGTLink-build
