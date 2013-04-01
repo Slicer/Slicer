@@ -55,6 +55,9 @@ qSlicerAbstractCoreModule* qSlicerCLIExecutableModuleFactoryItem::instanciator()
 
   int cliProcessTimeoutInMs = 5000;
   QProcess cli;
+  QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+  env.insert("ITK_AUTOLOAD_PATH", "");
+  cli.setProcessEnvironment(env);
   cli.start(this->path(), QStringList(QString("--xml")));
   bool res = cli.waitForFinished(cliProcessTimeoutInMs);
   if (!res)
