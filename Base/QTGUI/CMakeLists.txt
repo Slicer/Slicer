@@ -76,8 +76,6 @@ set(KIT_SRCS
   qSlicerSettingsCachePanel.h
   qSlicerSettingsGeneralPanel.cxx
   qSlicerSettingsGeneralPanel.h
-  qSlicerSettingsInternationalizationPanel.cxx
-  qSlicerSettingsInternationalizationPanel.h
   qSlicerSettingsModulesPanel.cxx
   qSlicerSettingsModulesPanel.h
   qSlicerStyle.cxx
@@ -101,6 +99,13 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.cxx
     qSlicerSettingsExtensionsPanel.h
+    )
+endif()
+
+if(Slicer_BUILD_I18N_SUPPORT)
+  list(APPEND KIT_SRCS
+    qSlicerSettingsInternationalizationPanel.cxx
+    qSlicerSettingsInternationalizationPanel.h
     )
 endif()
 
@@ -174,7 +179,6 @@ set(KIT_MOC_SRCS
   qSlicerSaveDataDialog_p.h
   qSlicerSettingsCachePanel.h
   qSlicerSettingsGeneralPanel.h
-  qSlicerSettingsInternationalizationPanel.h
   qSlicerSettingsModulesPanel.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
@@ -188,6 +192,12 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     qSlicerExtensionsManagerDialog.h
     qSlicerExtensionsManagerWidget.h
     qSlicerSettingsExtensionsPanel.h
+    )
+endif()
+
+if(Slicer_BUILD_I18N_SUPPORT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerSettingsInternationalizationPanel.h
     )
 endif()
 

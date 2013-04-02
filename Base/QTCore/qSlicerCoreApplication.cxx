@@ -43,6 +43,7 @@
 //  - Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
 //  - Slicer_BUILD_WIN32_CONSOLE
 //  - Slicer_BUILD_CLI_SUPPORT
+//  - Slicer_BUILD_I18N_SUPPORT
 //  - Slicer_ORGANIZATION_DOMAIN
 //  - Slicer_ORGANIZATION_NAME
 //  - SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME
@@ -1415,6 +1416,7 @@ void qSlicerCoreApplication::terminate(int returnCode)
 //----------------------------------------------------------------------------
 void qSlicerCoreApplication::loadTranslations(const QString& dir)
 {
+#ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
@@ -1438,11 +1440,15 @@ void qSlicerCoreApplication::loadTranslations(const QString& dir)
       }
     app->installTranslator(translator);
     }
+#else
+  Q_UNUSED(dir)
+#endif
 }
 
 //----------------------------------------------------------------------------
 void qSlicerCoreApplication::loadLanguage()
 {
+#ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
   Q_ASSERT(app);
 
@@ -1460,4 +1466,5 @@ void qSlicerCoreApplication::loadLanguage()
       app->loadTranslations(qmDir);
       }
     }
+#endif
 }

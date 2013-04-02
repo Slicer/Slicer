@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QMainWindow>
 
-#include "vtkSlicerConfigure.h" // For Slicer_USE_QtTesting
+#include "vtkSlicerConfigure.h" // For Slicer_USE_*, Slicer_BUILD_*_SUPPORT
 
 // CTK includes
 #include <ctkColorDialog.h>
@@ -54,7 +54,9 @@
 #endif
 #include "qSlicerSettingsCachePanel.h"
 #include "qSlicerSettingsGeneralPanel.h"
-#include "qSlicerSettingsInternationalizationPanel.h"
+#ifdef Slicer_BUILD_I18N_SUPPORT
+# include "qSlicerSettingsInternationalizationPanel.h"
+#endif
 #ifdef Slicer_USE_QtTesting
 # include "qSlicerSettingsQtTestingPanel.h"
 #endif
@@ -187,9 +189,11 @@ void qSlicerApplicationPrivate::init()
   cachePanel->setCacheManager(this->MRMLScene->GetCacheManager());
   this->SettingsDialog->addPanel("Cache", cachePanel);
 
+#ifdef Slicer_BUILD_I18N_SUPPORT
   qSlicerSettingsInternationalizationPanel* qtInternationalizationPanel =
       new qSlicerSettingsInternationalizationPanel;
   this->SettingsDialog->addPanel("Internationalization", qtInternationalizationPanel);
+#endif
 
 #ifdef Slicer_USE_QtTesting
   qSlicerSettingsQtTestingPanel* qtTestingPanel = new qSlicerSettingsQtTestingPanel;

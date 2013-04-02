@@ -195,6 +195,7 @@ option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 option(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
 option(Slicer_BUILD_DIFFUSION_SUPPORT "Build Slicer with diffusion (DWI, DTI) support" ON)
+option(Slicer_BUILD_I18N_SUPPORT "Build Slicer with Internationalization support" OFF)
 option(Slicer_BUILD_QTLOADABLEMODULES "Build Slicer QT Loadable Modules" ON)
 mark_as_advanced(Slicer_BUILD_QTLOADABLEMODULES)
 option(Slicer_USE_PYTHONQT "Integrate a python-QT interpreter into Slicer." ON)
@@ -212,7 +213,7 @@ CMAKE_DEPENDENT_OPTION(
   "Slicer_BUILD_CLI" OFF
   )
 option(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT "Build Slicer extension manager" ON)
-option(Slicer_UPDATE_TRANSLATION "update translation" OFF )
+CMAKE_DEPENDENT_OPTION(Slicer_UPDATE_TRANSLATION "update translation" OFF "Slicer_BUILD_I18N_SUPPORT" OFF)
 mark_as_advanced(Slicer_UPDATE_TRANSLATION)
 
 set(Slicer_FORCED_WC_REVISION "" CACHE STRING "Overwrite value of auto-discovered Slicer_WC_REVISION")
