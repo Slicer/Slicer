@@ -360,6 +360,7 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
     SliceResolutionMatchVolumes=0, 
     SliceResolutionMatch2DView,
     SliceFOVMatch2DViewSpacingMatchVolumes,
+    SliceFOVMatchVolumesSpacingMatch2DView,
     SliceResolutionCustom
   };
 

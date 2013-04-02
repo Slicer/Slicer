@@ -215,6 +215,7 @@ public slots:
   void setSliceModelModeVolumes();
   void setSliceModelMode2D();
   void setSliceModelMode2D_Volumes();
+  void setSliceModelModeVolumes_2D();
   void setSliceModelModeCustom();
 
   void setSliceModelFOV(int index, double fov);

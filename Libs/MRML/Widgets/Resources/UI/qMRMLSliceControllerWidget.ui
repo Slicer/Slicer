@@ -692,6 +692,14 @@
        <string>FOV matches 2D, Spacing matches Volumes</string>
      </property>
    </action>
+   <action name="actionSliceModelModeVolumes_2D">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>FOV matches Volumes, Spacing matches 2D View</string>
+     </property>
+   </action>
    <action name="actionLightbox1x1_view">
    <property name="checkable">
     <bool>true</bool>

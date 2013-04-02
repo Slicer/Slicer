@@ -1336,7 +1336,8 @@ void vtkMRMLSliceNode::SetSliceResolutionMode(int mode)
       this->SetUVWOrigin(0,0,0);
     }
     else if (this->SliceResolutionMode == vtkMRMLSliceNode::SliceResolutionMatch2DView ||
-        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes)
+        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatch2DViewSpacingMatchVolumes ||
+        this->SliceResolutionMode == vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView)
     {
       this->SetUVWOrigin(this->GetXYZOrigin());
     }

@@ -525,17 +525,22 @@ void vtkMRMLSliceLogic::ProcessMRMLLogicsEvents()
 
     vtkPoints *points = this->SliceModelNode->GetPolyData()->GetPoints();
 
-    int *dims=0;
+    int *dims1=0;
+    int dims[3];
     vtkMatrix4x4 *textureToRAS = 0;
     if (this->SliceNode->GetSliceResolutionMode() != vtkMRMLSliceNode::SliceResolutionMatch2DView)
       {
       textureToRAS = this->SliceNode->GetUVWToRAS();
-      dims = this->SliceNode->GetUVWDimensions();
+      dims1 = this->SliceNode->GetUVWDimensions();
+      dims[0] = dims1[0]-1;
+      dims[1] = dims1[1]-1;
       }
     else
       {
       textureToRAS = this->SliceNode->GetXYToRAS();
-      dims = this->SliceNode->GetDimensions();
+      dims1 = this->SliceNode->GetDimensions();
+      dims[0] = dims1[0];
+      dims[1] = dims1[1];
       }
 
     // set the plane corner point for use in a model
@@ -2100,6 +2105,43 @@ void vtkMRMLSliceLogic::SetSliceExtentsToSliceNode()
       }
     this->SliceNode->SetUVWExtentsAndDimensions(fov, dimensions);
     }
+  else if (this->SliceNode->GetSliceResolutionMode() == vtkMRMLSliceNode::SliceFOVMatchVolumesSpacingMatch2DView)
+    {
+    // compute RAS spacing in 2D view
+    vtkMatrix4x4 *xyToRAS = this->SliceNode->GetXYToRAS();
+    int  dims[3];
+
+    //
+    double inPt[4]={0,0,0,1};
+    double outPt0[4];
+    double outPt1[4];
+    double outPt2[4];
+
+    // set the z position to be the active slice (from the lightbox)
+    inPt[2] = this->SliceNode->GetActiveSlice();
+
+    // transform XYZ = (0,0,0)
+    xyToRAS->MultiplyPoint(inPt, outPt0);
+
+    // transform XYZ = (1,0,0)
+    inPt[0] = 1;
+    xyToRAS->MultiplyPoint(inPt, outPt1);
+
+    // transform XYZ = (0,1,0)
+    inPt[0] = 0;
+    inPt[1] = 1;
+    xyToRAS->MultiplyPoint(inPt, outPt2);
+
+    double xSpacing = sqrt(vtkMath::Distance2BetweenPoints(outPt0, outPt1));
+    double ySpacing = sqrt(vtkMath::Distance2BetweenPoints(outPt0, outPt2));
+
+    dims[0] = extents[0]/xSpacing+1;
+    dims[1] = extents[2]/ySpacing+1;
+    dims[2] = 1;
+
+    this->SliceNode->SetUVWExtentsAndDimensions(extents, dims);
+    }
+
 }
 
 //----------------------------------------------------------------------------
