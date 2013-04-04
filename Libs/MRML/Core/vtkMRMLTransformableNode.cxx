@@ -30,8 +30,8 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
   this->TransformNodeReferenceRole = 0;
   this->TransformNodeReferenceRererenceMRMLAttributeName = 0;
 
-  this->SetTransformNodeReferenceRole("storage");
-  this->SetTransformNodeReferenceRererenceMRMLAttributeName("storageNodeRef");
+  this->SetTransformNodeReferenceRole("transform");
+  this->SetTransformNodeReferenceRererenceMRMLAttributeName("transformNodeRef");
 
 
   this->HideFromEditors = 0;
