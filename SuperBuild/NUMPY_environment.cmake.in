@@ -8,7 +8,7 @@ set(ENV{LDFLAGS} "") ## NOTE THIS MUST BE BLANK OR THE FORTRAN COMPILER FAILS!
 set(ENV{F77} "")
 set(ENV{F90} "")
 set(ENV{FFLAGS} "")
-set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{LD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(ENV{VS_UNICODE_OUTPUT} "")
 # See http://docs.scipy.org/doc/numpy/user/install.html#disabling-atlas-and-other-accelerated-libraries
 # and http://massmail.spl.harvard.edu/public-archives/slicer-devel/2013/011098.html

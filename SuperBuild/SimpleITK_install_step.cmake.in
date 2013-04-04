@@ -1,6 +1,6 @@
 ## This file performs the necessary steps to install SimpleITK into the python environment of Slicer.
-set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
-set(ENV{DYLD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+set(ENV{LD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
+set(ENV{DYLD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
 # The working path must be set to the location of the SimpleITK.py

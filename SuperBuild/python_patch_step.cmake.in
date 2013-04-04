@@ -1,0 +1,15 @@
+# Provide a version of 'pythonrun.c' with PyRun_OpenFile() and
+# PyRun_CloseFile().
+# This is necessary on Windows, as python might be compiled in release mode
+# while Slicer is in debug. As python takes a FILE* as function parameter
+# like PyRun_File, the FILE* needs to be created with the same STD lib.
+# Mixing modes (debug or release) might lead to crashes
+
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/pythonrun.c.in"
+  "@python_SOURCE_DIR@/Python/pythonrun.c"
+  COPY)
+configure_file(
+  "@CMAKE_CURRENT_SOURCE_DIR@/SuperBuild/pythonrun.h.in"
+  "@python_SOURCE_DIR@/Include/pythonrun.h"
+  COPY)

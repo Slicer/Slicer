@@ -193,7 +193,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Modules.(getpath|signalmodule).c.*warning: ignoring return value of.*declared with attribute warn_unused_result"
   "Modules.expat.xmlparse.*warning.*discards qualifiers from pointer target type"
   # Python - Mac
-  "ranlib: file:.*libpython2.6.a.*has no symbols"
+  "ranlib: file:.*libpython2.7.a.*has no symbols"
   "python.Modules._cursesmodule.c.*warning.*may be used uninitialized in this function"
   "python.Mac.Modules.(cf|Nav).*warning: (cast|unused)"
   "python.Modules._ctypes.*warning: function declaration isn't a prototype"

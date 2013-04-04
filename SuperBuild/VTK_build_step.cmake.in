@@ -6,9 +6,9 @@ if(UNIX)
   endif()
 
   if(APPLE)
-    set(ENV{DYLD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+    set(ENV{DYLD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
   else(APPLE)
-    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@/python-build/lib")
+    set(ENV{LD_LIBRARY_PATH} "@CMAKE_CURRENT_BINARY_DIR@")
   endif(APPLE)
 
   execute_process(

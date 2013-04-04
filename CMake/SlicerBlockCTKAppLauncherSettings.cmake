@@ -132,8 +132,12 @@ if(Slicer_USE_OpenIGTLink)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-build)
-  get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
+  set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-install)
+  if(UNIX)
+    get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
+  else()
+    get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_EXECUTABLE} PATH)
+  endif()
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
     ${SLICER_PYTHON_LIB_DIR}
@@ -141,7 +145,7 @@ if(Slicer_USE_PYTHONQT)
 
   set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "Lib")
+    set(pythonpath_subdir Lib)
   endif()
 endif()
 
@@ -198,6 +202,7 @@ if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "<APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-dynload")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/site-packages")
 
   if(Slicer_BUILD_QTLOADABLEMODULES)
@@ -205,12 +210,7 @@ if(Slicer_USE_PYTHONQT)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
   endif()
 
-  # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
-  # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
-  # and ../lib/pythonX.Y/{lib-tk, lib-old, lib-dynload}
-  # See http://docs.python.org/c-api/intro.html#embedding-python
-  if(WIN32)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP>${SLICER_PYTHONHOME}/${pythonpath_subdir}/lib-tk")
   endif()
 
@@ -293,7 +293,7 @@ endif()
 if(Slicer_USE_PYTHONQT)
   set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
   if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "Lib")
+    set(pythonpath_subdir Lib)
   endif()
 endif()
 
@@ -325,11 +325,9 @@ set(SLICER_ENVVARS_INSTALLED
   )
 
 if(Slicer_USE_PYTHONQT)
-  set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})
-  if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(pythonpath_subdir "Lib")
-  endif()
   set(PYTHONPATH "<APPLAUNCHER_DIR>/${Slicer_INSTALL_LIB_DIR}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
+  set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-dynload")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/site-packages")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTSCRIPTEDMODULES_LIB_DIR}")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_INSTALL_QTLOADABLEMODULES_LIB_DIR}")
@@ -337,12 +335,7 @@ if(Slicer_USE_PYTHONQT)
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/bin/Python")
   set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/${Slicer_QTLOADABLEMODULES_PYTHON_LIB_DIR}")
 
-  # On unix-like system, setting PYTHONHOME is enough to have the following path automatically
-  # appended to PYTHONPATH: ../lib/pythonX.Y.zip, ../lib/pythonX.Y/,
-  # and ../lib/pythonX.Y/{lib-tk, lib-old, lib-dynload}
-  # See http://docs.python.org/c-api/intro.html#embedding-python
-  if(WIN32)
-    set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}")
+  if(Slicer_USE_PYTHONQT_WITH_TCL)
     set(PYTHONPATH "${PYTHONPATH}<PATHSEP><APPLAUNCHER_DIR>/lib/Python/${pythonpath_subdir}/lib-tk")
   endif()
 
