@@ -110,18 +110,25 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     """Load the selection as a diffusion volume
     using the dicom to nrrd converter module
     """
-    parameters = {}
-    parameters['inputDicomDirectory'] = os.path.dirname(loadable.files[0])
-    parameters['outputDirectory'] = slicer.app.temporaryPath
-    parameters['outputVolume'] = slicer.app.temporaryPath + '/dwiImport.nhdr'
     if not hasattr(slicer.modules, 'dwiconvert'):
       print('No diffusion dicom importer module available')
       return False
+    # create an output diffusion node as a target
+    nodeFactory = slicer.qMRMLNodeFactory()
+    nodeFactory.setMRMLScene(slicer.mrmlScene)
+    diffusionNode = nodeFactory.createNode('vtkMRMLDiffusionWeightedVolumeNode')
+    diffusionNode.SetName(loadable.name)
+    # set up the parameters
+    parameters = {}
+    parameters['inputDicomDirectory'] = os.path.dirname(loadable.files[0])
+    parameters['outputDirectory'] = slicer.app.temporaryPath
+    parameters['outputVolume'] = diffusionNode.GetID()
+    # run the module
     dicomDWIConverter = slicer.modules.dwiconvert
     cliNode = slicer.cli.run(dicomDWIConverter, None, parameters, wait_for_completion = True)
     success = False
     if cliNode.GetStatusString() == "Completed":
-      if slicer.util.loadVolume(parameters['outputVolume']):
+      if diffusionNode.GetImageData():
         success = True
     return success
 

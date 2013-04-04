@@ -70,7 +70,7 @@ public:
   /// If the node is a singleton that already exists in the scene, the existing
   /// node is returned.
   /// \sa vtkMRMLScene::AddNode
-  vtkMRMLNode* createNode(const QString& className);
+  Q_INVOKABLE vtkMRMLNode* createNode(const QString& className);
 
   /// 
   /// Convenient method allowing to create a new node and add it to the \a scene
@@ -81,13 +81,13 @@ public:
   /// Add attribute that will be passed to any new created node.
   /// TODO: Support attributes for more than 1 node class
   /// Note: If an attribute already exist, it's value will be overwritten.
-  void addAttribute(const QString& attributeName, const QString& attributeValue);
-  void removeAttribute(const QString& attributeName);
-  QString attribute(const QString& attributeName)const;
+  Q_INVOKABLE void addAttribute(const QString& attributeName, const QString& attributeValue);
+  Q_INVOKABLE void removeAttribute(const QString& attributeName);
+  Q_INVOKABLE QString attribute(const QString& attributeName)const;
 
   /// Base name used to generate a name for create node.
-  void setBaseName(const QString& className, const QString& baseName);
-  QString baseName(const QString& className)const;
+  Q_INVOKABLE void setBaseName(const QString& className, const QString& baseName);
+  Q_INVOKABLE QString baseName(const QString& className)const;
 
 public slots:
   /// 
