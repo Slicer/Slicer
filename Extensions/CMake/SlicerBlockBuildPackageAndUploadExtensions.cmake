@@ -147,6 +147,9 @@ foreach(extension_name ${EXTENSION_LIST})
           #-----------------------------------------------------------------------------
           set(EXTENSION_SUPERBUILD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${EXTENSION_NAME}-build)
           set(EXTENSION_BUILD_SUBDIRECTORY ${EXTENSION_EXT_BUILD_SUBDIRECTORY})
+          if(NOT DEFINED CTEST_MODEL)
+            set(CTEST_MODEL "Experimental")
+          endif()
           include(SlicerBlockUploadExtension)
           # Add extension external project
           set(proj ${EXTENSION_NAME})
