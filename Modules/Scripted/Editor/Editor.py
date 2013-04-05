@@ -14,7 +14,7 @@ class Editor:
     parent.categories = ["", "Segmentation"]
     parent.contributors = ["Steve Pieper (Isomics)"]
     parent.helpText = string.Template("""
-The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.  
+The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.
 
 See <a href=\"$a/Documentation/$b.$c/Modules/Editor\">the documentation</a> for more information.
 
@@ -42,9 +42,10 @@ class EditorWidget:
 
   # Lower priorities:
   #->> additional option for list of allowed labels - texts
-  
+
   def __init__(self, parent=None, showVolumesFrame=True):
     self.observerTags = []
+    self.shortcuts = []
     self.toolsBox = None
 
     # set attributes from ctor parameters
@@ -69,11 +70,9 @@ class EditorWidget:
       self.parent = parent
       self.layout = parent.layout()
 
-  def enter(self):
-    """
-    When entering the module, check that the lightbox modes are off
-    and that we have the volumes loaded
-    """
+  def turnOffLightboxes(self):
+    """Since the editor effects can't be used in lightbox mode,
+    be sure to turn these off and warn the user about it"""
     warned = False
     layoutManager = slicer.app.layoutManager()
     if layoutManager != None:
@@ -88,29 +87,65 @@ class EditorWidget:
               warned = True
             sliceNode.SetLayoutGrid(1,1)
 
+  def installShortcutKeys(self):
+    """Turn on editor-wide shortcuts.  These are active independent
+    of the currently selected effect."""
+    Key_Escape = 0x01000000 # not in PythonQt
+    self.shortcuts = []
+    keysAndCallbacks = (
+        ('e', self.editUtil.toggleLabel),
+        ('z', self.toolsBox.undoRedo.undo),
+        ('y', self.toolsBox.undoRedo.redo),
+        ('h', self.editUtil.toggleCrosshair),
+        ('o', self.editUtil.toggleLabelOutline),
+        ('t', self.editUtil.toggleForegroundBackground),
+        (Key_Escape, self.toolsBox.defaultEffect),
+        )
+    for key,callback in keysAndCallbacks:
+      shortcut = qt.QShortcut(slicer.util.mainWindow())
+      shortcut.setKey( qt.QKeySequence(key) )
+      shortcut.connect( 'activated()', callback )
+      self.shortcuts.append(shortcut)
+
+  def removeShortcutKeys(self):
+    for shortcut in self.shortcuts:
+      shortcut.disconnect('activated()')
+      shortcut.setParent(None)
+    self.shortcuts = []
+
+  def enter(self):
+    """
+    When entering the module, check that the lightbox modes are off
+    and that we have the volumes loaded
+    """
+    self.turnOffLightboxes()
+    self.installShortcutKeys()
+
     # get the master and merge nodes from the composite node associated
-    # with the red slice, but only if showing volumes
+    # with the red slice, but only if showing volumes and we don't already
+    # have an active set of volumes that we are using
     if self.showVolumesFrame:
-      # get the slice composite node for the Red slice view (we'll assume it exists 
-      # since we are in the editor) to get the current background and label
-      # - set the foreground layer as the active ID 
-      # in the selection node for later calls to PropagateVolumeSelection
-      compositeNode = self.editUtil.getCompositeNode()
-      selectionNode = slicer.app.applicationLogic().GetSelectionNode()
-      selectionNode.SetReferenceSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
-      bgID = lbID = ""
-      if compositeNode.GetBackgroundVolumeID():
-        bgID = compositeNode.GetBackgroundVolumeID()
-      if compositeNode.GetLabelVolumeID():
-        lbID = compositeNode.GetLabelVolumeID()
-      masterNode = slicer.mrmlScene.GetNodeByID( bgID )
-      mergeNode = slicer.mrmlScene.GetNodeByID( lbID )
-      self.setMasterNode(masterNode)
-      self.setMergeNode(mergeNode)
+      if not self.helper.master or not self.helper.merge:
+        # get the slice composite node for the Red slice view (we'll assume it exists
+        # since we are in the editor) to get the current background and label
+        # - set the foreground layer as the active ID
+        # in the selection node for later calls to PropagateVolumeSelection
+        compositeNode = self.editUtil.getCompositeNode()
+        selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+        selectionNode.SetReferenceSecondaryVolumeID( compositeNode.GetForegroundVolumeID() )
+        bgID = lbID = ""
+        if compositeNode.GetBackgroundVolumeID():
+          bgID = compositeNode.GetBackgroundVolumeID()
+        if compositeNode.GetLabelVolumeID():
+          lbID = compositeNode.GetLabelVolumeID()
+        masterNode = slicer.mrmlScene.GetNodeByID( bgID )
+        mergeNode = slicer.mrmlScene.GetNodeByID( lbID )
+        self.setMasterNode(masterNode)
+        self.setMergeNode(mergeNode)
     # if not showing volumes, the caller is responsible for setting the master and
     # merge nodes, most likely according to a widget within the caller
 
-    # Observe the parameter node in order to make changes to 
+    # Observe the parameter node in order to make changes to
     # button states as needed
     self.parameterNode = self.editUtil.getParameterNode()
     self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
@@ -121,13 +156,14 @@ class EditorWidget:
 
     if self.helper:
       self.helper.onEnter()
-    
+
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
     if self.helper:
       self.helper.onExit()
     if self.toolsBox:
       self.toolsBox.defaultEffect()
+    self.removeShortcutKeys()
 
   def updateGUIFromMRML(self, caller, event):
     if self.toolsBox:
@@ -150,7 +186,7 @@ class EditorWidget:
     if newMasterNode and newMasterNode.GetClassName() == "vtkMRMLScalarVolumeNode":
       if self.helper:
         self.helper.setMasterVolume(newMasterNode)
-      
+
   # sets the node for the label map
   def setMergeNode(self, newMergeNode):
     if newMergeNode:
@@ -163,7 +199,7 @@ class EditorWidget:
     if slicer.app.commandOptions().noMainWindow:
       # don't build the widget if there's no place to put it
       return
-    
+
     #
     # Editor Volumes
     #
@@ -175,7 +211,7 @@ class EditorWidget:
       self.layout.addWidget(self.volumes)
     else:
       self.volumes = None
-    
+
     # create the helper box - note this isn't a Qt widget
     #  but a helper class that creates Qt widgets in the given parent
     if self.showVolumesFrame:
@@ -217,7 +253,7 @@ class EditorWidget:
 
     if self.helper:
       # add a callback to collapse/open the frame based on the validity of the label volume
-      self.helper.mergeValidCommand = self.updateLabelFrame 
+      self.helper.mergeValidCommand = self.updateLabelFrame
       # add a callback to reset the tool when a new volume is selected
       self.helper.selectCommand = self.toolsBox.defaultEffect
 

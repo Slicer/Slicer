@@ -117,6 +117,7 @@ class EditUtil(object):
     return self.getParameterNode().SetParameter('label',str(label))
 
   def toggleLabel(self):
+    """toggle the current label map in the editor parameter node"""
     storedLabelParam = self.getParameterNode().GetParameter('storedLabel')
     if storedLabelParam == '':
       self.getParameterNode().SetParameter('storedLabel','0')
@@ -125,7 +126,7 @@ class EditUtil(object):
     self.setLabel(storedLabel)
 
   def getLabelColor(self):
-    """ returns rgba tuple for the current paint color """
+    """returns rgba tuple for the current paint color """
     labelVolume = self.getLabelVolume()
     if labelVolume:
       volumeDisplayNode = labelVolume.GetDisplayNode()
@@ -137,7 +138,7 @@ class EditUtil(object):
     return (0,0,0,0)
 
   def getLabelName(self):
-    """ returns the string name of the currently selected index """
+    """returns the string name of the currently selected index """
     labelVolume = self.getLabelVolume()
     if labelVolume:
       volumeDisplayNode = labelVolume.GetDisplayNode()
@@ -146,6 +147,30 @@ class EditUtil(object):
         index = self.getLabel()
         return colorNode.GetColorName(index)
     return ""
+
+  def toggleCrosshair(self):
+    """Turn on or off the crosshair and enable navigation mode
+    by manipulating the scene's singleton crosshair node.
+    """
+    crosshairNode = slicer.util.getNode('vtkMRMLCrosshairNode*')
+    if crosshairNode:
+      if crosshairNode.GetCrosshairMode() == 0:
+        crosshairNode.SetCrosshairMode(1)
+        crosshairNode.SetNavigation(1)
+      else:
+        crosshairNode.SetCrosshairMode(0)
+
+  def toggleLabelOutline(self):
+    """Switch the label outline mode for all composite nodes in the scene"""
+    for sliceNode in slicer.util.getNodes('vtkMRMLSliceNode*').values():
+      sliceNode.SetUseLabelOutline(not sliceNode.GetUseLabelOutline())
+
+  def toggleForegroundBackground(self):
+    """Swap the foreground and background volumes for all composite nodes in the scene"""
+    for sliceCompositeNode in slicer.util.getNodes('vtkMRMLSliceCompositeNode*').values():
+      oldForeground = sliceCompositeNode.GetForegroundVolumeID()
+      sliceCompositeNode.SetForegroundVolumeID(sliceCompositeNode.GetBackgroundVolumeID())
+      sliceCompositeNode.SetBackgroundVolumeID(oldForeground)
 
 
 class UndoRedo(object):
