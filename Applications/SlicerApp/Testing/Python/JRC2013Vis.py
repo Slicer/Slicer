@@ -200,6 +200,7 @@ class JRC2013VisWidget:
         '/bin', 
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
+        '/../DCMTK-build/bin',
         )
       
       dcmqrscpExePath = None
@@ -382,6 +383,7 @@ class JRC2013VisTest(unittest.TestCase):
         '/bin', 
         '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-install/bin',
+        '/../DCMTK-build/bin',
         )
       
       dcmqrscpExePath = None

@@ -27,9 +27,9 @@ class DICOMProcess(object):
     self.process = None
     self.connections = {}
     pathOptions = (
-        '/bin'
-        '/../CTK-build/CMakeExternals/Install/bin',
         '/../DCMTK-build/bin',
+        '/../CTK-build/CMakeExternals/Install/bin',
+        '/bin'
         )
 
     # note: even in a windows build tree DCMTK's install does not include
