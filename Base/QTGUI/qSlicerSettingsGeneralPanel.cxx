@@ -32,7 +32,7 @@
 #include "qSlicerSettingsGeneralPanel.h"
 #include "ui_qSlicerSettingsGeneralPanel.h"
 
-#include "vtkSlicerConfigure.h" // For Slicer_QM_OUTPUT_DIRS
+#include "vtkSlicerConfigure.h" // For Slicer_QM_OUTPUT_DIRS, Slicer_BUILD_I18N_SUPPORT
 
 // --------------------------------------------------------------------------
 // qSlicerSettingsGeneralPanelPrivate
@@ -65,11 +65,14 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   Q_Q(qSlicerSettingsGeneralPanel);
 
   this->setupUi(q);
+
+#ifdef Slicer_BUILD_I18N_SUPPORT
   bool internationalizationEnabled =
       qSlicerApplication::application()->userSettings()->value("Internationalization/Enabled").toBool();
 
   this->LanguageLabel->setVisible(internationalizationEnabled);
   this->LanguageComboBox->setVisible(internationalizationEnabled);
+
   if (internationalizationEnabled)
     {
     /// Default values
@@ -78,6 +81,10 @@ void qSlicerSettingsGeneralPanelPrivate::init()
     this->LanguageComboBox->setDirectory(
         QString(Slicer_QM_OUTPUT_DIRS).split(";").at(0));
     }
+#else
+  this->LanguageLabel->setVisible(false);
+  this->LanguageComboBox->setVisible(false);
+#endif
 
   QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
                    q, SLOT(onFontChanged(QFont)));

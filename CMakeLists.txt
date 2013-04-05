@@ -117,18 +117,6 @@ set(Slicer_EXPORT_HEADER_TEMPLATE "${Slicer_SOURCE_DIR}/CMake/qSlicerExport.h.in
 set(Slicer_LOGOS_RESOURCE "${Slicer_SOURCE_DIR}/Resources/qSlicer.qrc")
 
 #-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s)
-#-----------------------------------------------------------------------------
-include(CMakeDependentOption)
-include(CMakeParseArguments)
-include(Slicer3PluginsMacros)
-include(SlicerMacroExtractRepositoryInfo)
-include(SlicerMacroGetOperatingSystemArchitectureBitness)
-include(SlicerMacroEmptyExternalProject)
-include(SlicerMacroTranslation)
-include(SlicerFunctionInstallLibrary)
-
-#-----------------------------------------------------------------------------
 # Platform checks
 #-----------------------------------------------------------------------------
 include(SlicerBlockPlatformCheck)
@@ -189,6 +177,8 @@ endif()
 #-----------------------------------------------------------------------------
 # General Slicer Options
 #-----------------------------------------------------------------------------
+include(CMakeDependentOption)
+
 option(BUILD_TESTING "Test the project" ON)
 option(WITH_MEMCHECK "Run tests through valgrind." OFF)
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
@@ -326,6 +316,19 @@ set(ADDITIONAL_C_FLAGS "" CACHE STRING "Additional C Flags")
 mark_as_advanced(ADDITIONAL_C_FLAGS)
 set(ADDITIONAL_CXX_FLAGS "" CACHE STRING "Additional CXX Flags")
 mark_as_advanced(ADDITIONAL_CXX_FLAGS)
+
+#-----------------------------------------------------------------------------
+# CMake Function(s) and Macro(s)
+#-----------------------------------------------------------------------------
+include(CMakeParseArguments)
+include(Slicer3PluginsMacros)
+include(SlicerMacroExtractRepositoryInfo)
+include(SlicerMacroGetOperatingSystemArchitectureBitness)
+include(SlicerMacroEmptyExternalProject)
+if(Slicer_BUILD_I18N_SUPPORT)
+  include(SlicerMacroTranslation)
+endif()
+include(SlicerFunctionInstallLibrary)
 
 #-----------------------------------------------------------------------------
 # Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
