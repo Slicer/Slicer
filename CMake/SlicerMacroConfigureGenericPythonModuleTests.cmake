@@ -5,12 +5,15 @@
 
 macro(SlicerMacroConfigureGenericPythonModuleTests MODULENAMES TEST_SCRIPTS_OUTPUT_VAR)
   # Sanity checks
-  set(expected_nonempty_vars MODULENAMES TEST_SCRIPTS_OUTPUT_VAR Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR)
-  foreach(var ${expected_nonempty_vars})
-    if("${var}" STREQUAL "")
-      message(FATAL_ERROR "error: Variable ${var} is empty !")
-    endif()
-  endforeach()
+  if("${MODULENAMES}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable MODULENAMES is empty !")
+  endif()
+  if("${TEST_SCRIPTS_OUTPUT_VAR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable TEST_SCRIPTS_OUTPUT_VAR is empty !")
+  endif()
+  if("${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR is empty !")
+  endif()
 
   foreach(MODULENAME ${MODULENAMES})
 

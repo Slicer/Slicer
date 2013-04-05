@@ -5,12 +5,21 @@
 
 macro(SlicerMacroConfigureGenericCxxModuleTests MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR)
   # Sanity checks
-  set(expected_nonempty_vars MODULENAMES TEST_SRCS_OUTPUT_VAR TEST_NAMES_OUTPUT_VAR TEST_NAMES_CXX_OUTPUT_VAR Slicer_CXX_MODULE_TEST_TEMPLATES_DIR)
-  foreach(var ${expected_nonempty_vars})
-    if("${${var}}" STREQUAL "")
-      message(FATAL_ERROR "error: Variable ${var} is empty !")
-    endif()
-  endforeach()
+  if("${MODULENAMES}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable MODULENAMES is empty !")
+  endif()
+  if("${TEST_SRCS_OUTPUT_VAR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable TEST_SRCS_OUTPUT_VAR is empty !")
+  endif()
+  if("${TEST_NAMES_OUTPUT_VAR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable TEST_NAMES_OUTPUT_VAR is empty !")
+  endif()
+  if("${TEST_NAMES_CXX_OUTPUT_VAR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable TEST_NAMES_CXX_OUTPUT_VAR is empty !")
+  endif()
+  if("${Slicer_CXX_MODULE_TEST_TEMPLATES_DIR}" STREQUAL "")
+    message(FATAL_ERROR "error: Variable Slicer_CXX_MODULE_TEST_TEMPLATES_DIR is empty !")
+  endif()
 
   set(MODULEPATH_WITHOUT_INTDIR ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_BIN_DIR})
 
