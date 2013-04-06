@@ -183,6 +183,7 @@ class WandEffectTool(LabelEffect.LabelEffectTool):
 
   def __init__(self, sliceWidget):
     super(WandEffectTool,self).__init__(sliceWidget)
+    self.logic = WandEffectLogic(self.sliceWidget.sliceLogic())
 
   def cleanup(self):
     super(WandEffectTool,self).cleanup()
@@ -198,9 +199,9 @@ class WandEffectTool(LabelEffect.LabelEffectTool):
     if event == "LeftButtonPressEvent":
       xy = self.interactor.GetEventPosition()
       sliceLogic = self.sliceWidget.sliceLogic()
-      logic = WandEffectLogic(sliceLogic)
-      logic.undoRedo = self.undoRedo
-      logic.apply(xy)
+      self.logic = WandEffectLogic(sliceLogic)
+      self.logic.undoRedo = self.undoRedo
+      self.logic.apply(xy)
       self.abortEvent(event)
     else:
       pass

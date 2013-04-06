@@ -132,6 +132,9 @@ class LevelTracingEffectTool(LabelEffect.LabelEffectTool):
     handle events from the render window interactor
     """
 
+    if super(LevelTracingEffectTool,self).processEvent(caller,event):
+      return
+
     # events from the interactory
     if event == "LeftButtonPressEvent":
       self.apply()

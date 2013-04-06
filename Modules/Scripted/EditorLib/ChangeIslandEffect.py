@@ -107,11 +107,15 @@ class ChangeIslandEffectTool(IslandEffect.IslandEffectTool):
     """
     handle events from the render window interactor
     """
+
+    if super(ChangeIslandEffectTool,self).processEvent(caller,event):
+      return
+
     # events from the interactory
     if event == "LeftButtonPressEvent":
       self.logic.undoRedo = self.undoRedo
       xy = self.interactor.GetEventPosition()
-      self.logic.saveIsland(xy)
+      self.logic.changeIsland(xy)
       self.abortEvent(event)
 
 #
@@ -132,7 +136,7 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
   def __init__(self,sliceLogic):
     super(ChangeIslandEffectLogic,self).__init__(sliceLogic)
 
-  def saveIsland(self,xy):
+  def changeIsland(self,xy):
     #
     # change the label values based on the parameter node
     #

@@ -258,6 +258,8 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
 
   def __init__(self, sliceWidget):
     super(PaintEffectTool,self).__init__(sliceWidget)
+    # create a logic instance to do the non-gui work
+    self.logic = PaintEffectLogic(self.sliceWidget.sliceLogic())
 
     # configuration variables
     self.delayedPaint = True
@@ -319,6 +321,11 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     """
     handle events from the render window interactor
     """
+
+    if super(PaintEffectTool,self).processEvent(caller,event):
+      return
+
+    # interactor events
     if event == "LeftButtonPressEvent":
       self.actionState = "painting"
       if not self.pixelMode:
@@ -633,10 +640,8 @@ class PaintEffectLogic(LabelEffect.LabelEffectLogic):
   by other code without the need for a view context.
   """
 
-  def __init__(self):
-    # TODO: flesh this out - might want to move all the paint work into here
-    # for easier re-use
-    pass
+  def __init__(self,sliceLogic):
+    super(PaintEffectLogic,self).__init__(sliceLogic)
 
 
 #

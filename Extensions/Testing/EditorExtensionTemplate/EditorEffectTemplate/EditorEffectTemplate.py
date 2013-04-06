@@ -99,6 +99,8 @@ class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
 
   def __init__(self, sliceWidget):
     super(EditorEffectTemplateTool,self).__init__(sliceWidget)
+    # create a logic instance to do the non-gui work
+    self.logic = EditorEffectTemplateLogic(self.sliceWidget.sliceLogic())
 
   def cleanup(self):
     super(EditorEffectTemplateTool,self).cleanup()
@@ -107,6 +109,11 @@ class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
     """
     handle events from the render window interactor
     """
+
+    # let the superclass deal with the event if it wants to
+    if super(EditorEffectTemplateTool,self).processEvent(caller,event):
+      return
+
     if event == "LeftButtonPressEvent":
       xy = self.interactor.GetEventPosition()
       sliceLogic = self.sliceWidget.sliceLogic()
@@ -115,6 +122,12 @@ class EditorEffectTemplateTool(LabelEffect.LabelEffectTool):
       print("Got a %s at %s in %s", (event,str(xy),self.sliceWidget.sliceLogic().GetSliceNode().GetName()))
       self.abortEvent(event)
     else:
+      pass
+
+    # events from the slice node
+    if caller and caller.IsA('vtkMRMLSliceNode'):
+      # here you can respond to pan/zoom or other changes
+      # to the view
       pass
 
 

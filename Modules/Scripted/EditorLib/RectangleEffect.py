@@ -161,6 +161,9 @@ class RectangleEffectTool(LabelEffect.LabelEffectTool):
     handle events from the render window interactor
     """
 
+    if super(RectangleEffectTool,self).processEvent(caller,event):
+      return
+
     if event == "LeftButtonPressEvent":
       self.actionState = "dragging"
       self.cursorOff()

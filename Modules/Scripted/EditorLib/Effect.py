@@ -202,15 +202,6 @@ class EffectTool(object):
     """
     if event == "KeyPressEvent":
       key = self.interactor.GetKeySym()
-      if key.lower() == 'escape':
-        # TODO: cancel interaction - requrires access to EditBox.defaultEffect
-        # - need a way to do this indirectly
-        self.abortEvent(event)
-        return True
-      if key == 'e':
-        self.editUtil.toggleLabel()
-        self.abortEvent(event)
-        return True
       if key.lower() == 'backslash':
         xy = self.interactor.GetEventPosition()
         if self.interactor.FindPokedRenderer(*xy):
