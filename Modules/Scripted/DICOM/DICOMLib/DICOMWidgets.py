@@ -531,14 +531,16 @@ class DICOMRecentActivityWidget(object):
             elapsed = seriesTime.secsTo(now) 
             secondsPerHour = 60 * 60
             secondsPerDay = secondsPerHour * 24
+            timeNote = None
             if elapsed < secondsPerDay:
               timeNote = 'Today'
             elif elapsed < 7 * secondsPerDay:
               timeNote = 'Past Week'
             elif elapsed < 30 * 7 * secondsPerDay:
               timeNote = 'Past Month'
-            text = "%s: %s for %s" % (timeNote, seriesDescription, patientName)
-            recentSeries.append( self.seriesWithTime(series, elapsed, seriesTime, text) )
+            if timeNote:
+              text = "%s: %s for %s" % (timeNote, seriesDescription, patientName)
+              recentSeries.append( self.seriesWithTime(series, elapsed, seriesTime, text) )
     recentSeries.sort(self.compareSeriesTimes)
     return recentSeries
 
