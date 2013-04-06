@@ -68,6 +68,11 @@ void qSlicerTractographyEditorROIWidgetPrivate::init()
                    q, SLOT(positiveROISelection(bool)));
   QObject::connect(this->NegativeROI, SIGNAL(toggled(bool)),
                    q, SLOT(negativeROISelection(bool)));
+  QObject::connect(this->InteractiveROI, SIGNAL(clicked(bool)),
+                   q, SLOT(setInteractiveROI(bool)));
+  QObject::connect(this->ROIVisibility, SIGNAL(clicked(bool)),
+                   q, SLOT(setROIVisibility(bool)));
+
 }
 
 
@@ -120,22 +125,9 @@ void qSlicerTractographyEditorROIWidget::
   {
     d->AnnotationMRMLNodeForFiberSelection = fiberBundleNode->GetAnnotationNode();
     d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
-    if (!fiberBundleNode->GetSelectWithAnnotationNode())
-    {
-      d->DisableROI->setChecked(true);
-    }
-    else if (fiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::PositiveAnnotationNodeSelection)
-    {
-      d->PositiveROI->setChecked(true);
-    }
-    else if (fiberBundleNode->GetSelectionWithAnnotationNodeMode() == vtkMRMLFiberBundleNode::NegativeAnnotationNodeSelection)
-    {
-      d->NegativeROI->setChecked(true);
-    }
-
   }
 
-//  this->updateWidgetFromMRML();
+  this->updateWidgetFromMRML();
 }
 
 //------------------------------------------------------------------------------
@@ -167,7 +159,25 @@ void qSlicerTractographyEditorROIWidget::
     {
       d->NegativeROI->setChecked(true);
     }
+
+    std::string fiberName = std::string("Update ") + std::string(d->FiberBundleNode->GetName()) + 
+                            std::string(" From ROI");
+
+    d->UpdateBundleFromSelection->setText(QApplication::translate("qSlicerTractographyEditorROIWidget", 
+                            fiberName.c_str(), 0, QApplication::UnicodeUTF8));
   }
+
+  if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
+  {
+    d->ROIVisibility->setChecked((bool)d->AnnotationMRMLNodeForFiberSelection->GetDisplayVisibility());
+
+    vtkMRMLAnnotationROINode* ROINode = vtkMRMLAnnotationROINode::SafeDownCast(d->AnnotationMRMLNodeForFiberSelection);
+    if (ROINode)
+    {
+      d->InteractiveROI->setChecked((bool)ROINode->GetInteractiveMode());
+    }
+  }
+
 }
 
 void qSlicerTractographyEditorROIWidget::setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode* AnnotationMRMLNodeForFiberSelection)
@@ -213,6 +223,30 @@ void qSlicerTractographyEditorROIWidget::setAnnotationROIMRMLNodeToFiberBundleEn
 
       d->PositiveROI->setChecked(true);
       }
+    this->updateWidgetFromMRML();
+  }
+}
+
+
+
+void qSlicerTractographyEditorROIWidget::setInteractiveROI(bool arg)
+{
+  Q_D(qSlicerTractographyEditorROIWidget);
+  if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
+  {
+    vtkMRMLAnnotationROINode* ROINode = vtkMRMLAnnotationROINode::SafeDownCast(d->AnnotationMRMLNodeForFiberSelection);
+    if (ROINode)
+    {
+      ROINode->SetInteractiveMode((int)arg);
+    }
+  }
+}
+void qSlicerTractographyEditorROIWidget::setROIVisibility(bool arg)
+{
+  Q_D(qSlicerTractographyEditorROIWidget);
+  if (d->FiberBundleNode && d->AnnotationMRMLNodeForFiberSelection)
+  {
+    d->AnnotationMRMLNodeForFiberSelection->SetDisplayVisibility((int)arg);
   }
 }
 
@@ -299,7 +333,7 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
 
   if (d->FiberBundleNode)
   {
-    if (d->ConfirmFiberBundleUpdate->checkState() != Qt::Checked)
+    if (d->ConfirmFiberBundleUpdate->checkState() == Qt::Checked)
     {
      int ret = QMessageBox::warning(this, tr("Update Bundle From ROI"),
                                     tr("This will replace the actual fiber bundle\n"
@@ -314,7 +348,7 @@ void qSlicerTractographyEditorROIWidget::updateBundleFromSelection()
      }
     }
 
-    if (proceedWithUpdate || (d->ConfirmFiberBundleUpdate->checkState() == Qt::Checked))
+    if (proceedWithUpdate || (d->ConfirmFiberBundleUpdate->checkState() != Qt::Checked))
     {
       d->FiberBundleNode->GetScene()->SaveStateForUndo();
       vtkPolyData *FilteredPolyData = vtkPolyData::New();

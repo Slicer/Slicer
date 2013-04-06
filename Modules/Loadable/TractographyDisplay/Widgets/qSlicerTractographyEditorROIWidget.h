@@ -37,6 +37,8 @@ public slots:
   void disableROISelection(bool);
   void positiveROISelection(bool);
   void negativeROISelection(bool);
+  void setInteractiveROI(bool);
+  void setROIVisibility(bool);
   void createNewBundleFromSelection();
   void updateBundleFromSelection();
 

@@ -35,6 +35,8 @@
 // TractographyDisplays includes
 #include "qMRMLTractographyDisplayTreeView.h"
 #include "qMRMLSceneTractographyDisplayModel.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLNode.h"
 #include "vtkMRMLFiberBundleNode.h"
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleLineDisplayNode.h"
@@ -189,6 +191,19 @@ void qMRMLTractographyDisplayTreeView::setMRMLScene(vtkMRMLScene* scene)
 {
   this->Superclass::setMRMLScene(scene);
   this->setRootIndex(this->sortFilterProxyModel()->mrmlSceneIndex());
+
+  Q_D(qMRMLTractographyDisplayTreeView);
+
+  if (scene)
+  {
+    vtkMRMLNode* node = scene->GetNthNodeByClass(0, "vtkMRMLFiberBundleNode");
+
+    if (node)
+      {
+      this->setCurrentIndex(d->SortFilterModel->indexFromMRMLNode(node));
+      }
+  }
+
 }
 
 //------------------------------------------------------------------------------

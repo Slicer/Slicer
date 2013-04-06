@@ -85,6 +85,39 @@
     </widget>
    </item>
    <item row="2" column="0">
+     <widget class="QCheckBox" name="InteractiveROI">
+       <property name="text">
+         <string>Interactive ROI</string>
+       </property>
+       <property name="checked">
+         <bool>true</bool>
+       </property>
+     </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="ROIVisibility">
+     <property name="styleSheet">
+      <string notr="true">QCheckBox::indicator {
+     width: 21px;
+     height: 21px;
+ }
+
+ QCheckBox::indicator:checked {
+     image: url(:/Icons/Medium/SlicerVisible.png);
+ }
+QCheckBox::indicator:unchecked {
+     image: url(:/Icons/Medium/SlicerInvisible.png);
+ }</string>
+     </property>
+     <property name="text">
+      <string>ROI Visibility</string>
+     </property>
+     <property name="autoExclusive">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QPushButton" name="CreateNewFiberBundle">
      <property name="toolTip">
       <string>Create a new fiber bundle using the ROI selection and the percentage of fibers shown as input.</string>
@@ -94,7 +127,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="qMRMLNodeComboBox" name="FiberBundleFromSelection">
      <property name="enabled">
       <bool>true</bool>
@@ -121,7 +154,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QPushButton" name="UpdateBundleFromSelection">
      <property name="toolTip">
       <string>Crop the fiber bundle using the ROI selection and the percentage of fibers shown as input.</string>
@@ -131,10 +164,13 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QCheckBox" name="ConfirmFiberBundleUpdate">
      <property name="text">
       <string>Confirm update</string>
+     </property>
+     <property name="checked">
+       <bool>true</bool>
      </property>
     </widget>
    </item>

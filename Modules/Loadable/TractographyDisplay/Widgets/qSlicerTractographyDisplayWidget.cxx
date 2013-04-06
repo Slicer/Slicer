@@ -578,7 +578,7 @@ void qSlicerTractographyDisplayWidget::updateScalarRange()
 {
   Q_D(qSlicerTractographyDisplayWidget);
 
-  if ( !d->FiberBundleNode || !d->FiberBundleDisplayNode)
+  if ( !d->FiberBundleNode || !d->FiberBundleDisplayNode || !d->FiberBundleDisplayNode->GetOutputPolyData())
     {
     return;
     }
