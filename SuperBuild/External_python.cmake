@@ -86,6 +86,10 @@ if(NOT DEFINED python_DIR)
       )
   endif()
 
+  # Force Python build to "Release".
+  set(SAVED_CMAKE_CFG_INTDIR ${CMAKE_CFG_INTDIR})
+  set(CMAKE_CFG_INTDIR "Release")
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/davidsansome/python-cmake-buildsystem.git"
     GIT_TAG "6c8957e1229967a6ce78424ff0f7a3e03fe2921f"
@@ -110,6 +114,8 @@ if(NOT DEFINED python_DIR)
       python-source ${python_DEPENDENCIES}
     )
   set(python_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+
+  set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
 
   if(UNIX)
     set(python_IMPORT_SUFFIX so)
