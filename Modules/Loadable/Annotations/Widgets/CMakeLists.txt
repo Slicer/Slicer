@@ -15,8 +15,12 @@ set(${KIT}_SRCS
   #qMRMLAnnotationDisplayNodePointPropertyWidget.cxx
   #qMRMLAnnotationDisplayNodePointPropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  qMRMLAnnotationFiducialProjectionPropertyWidget.cxx
+  qMRMLAnnotationFiducialProjectionPropertyWidget.h
   qMRMLAnnotationROIWidget.cxx
   qMRMLAnnotationROIWidget.h
+  qMRMLAnnotationRulerProjectionPropertyWidget.cxx
+  qMRMLAnnotationRulerProjectionPropertyWidget.h
   qMRMLAnnotationTreeView.cxx
   qMRMLAnnotationTreeView.h
   qMRMLSceneAnnotationModel.cxx
@@ -27,13 +31,17 @@ set(${KIT}_MOC_SRCS
   #qMRMLAnnotationDisplayNodePropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget.h
   #qMRMLAnnotationDisplayNodePointPropertyWidget_p.h
+  qMRMLAnnotationFiducialProjectionPropertyWidget.h
   qMRMLAnnotationROIWidget.h
+  qMRMLAnnotationRulerProjectionPropertyWidget.h
   qMRMLAnnotationTreeView.h
   qMRMLSceneAnnotationModel.h
   )
 
 set(${KIT}_UI_SRCS
+  Resources/UI/qMRMLAnnotationFiducialProjectionPropertyWidget.ui
   Resources/UI/qMRMLAnnotationROIWidget.ui
+  Resources/UI/qMRMLAnnotationRulerProjectionPropertyWidget.ui
   #Resources/UI/qMRMLAnnotationDisplayNodePointPropertyWidget.ui
   )
 

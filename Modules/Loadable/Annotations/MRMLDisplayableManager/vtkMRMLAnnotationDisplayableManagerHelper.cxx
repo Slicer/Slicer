@@ -248,7 +248,7 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetIntersectionWi
 }
 
 //---------------------------------------------------------------------------
-vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetProjectionWidget(
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetOverLineProjectionWidget(
     vtkMRMLAnnotationNode * node)
 {
   if (!node)
@@ -257,8 +257,46 @@ vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetProjectionWidg
     }
 
   // Make sure the map contains a vtkWidget associated with this node
-  WidgetProjectionsIt it = this->WidgetProjections.find(node);
-  if (it == this->WidgetProjections.end())
+  WidgetOverLineProjectionsIt it = this->WidgetOverLineProjections.find(node);
+  if (it == this->WidgetOverLineProjections.end())
+    {
+    return 0;
+    }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetUnderLineProjectionWidget(
+    vtkMRMLAnnotationNode * node)
+{
+  if (!node)
+    {
+    return 0;
+    }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetUnderLineProjectionsIt it = this->WidgetUnderLineProjections.find(node);
+  if (it == this->WidgetUnderLineProjections.end())
+    {
+    return 0;
+    }
+
+  return it->second;
+}
+
+//---------------------------------------------------------------------------
+vtkAbstractWidget * vtkMRMLAnnotationDisplayableManagerHelper::GetPointProjectionWidget(
+    vtkMRMLAnnotationNode * node)
+{
+  if (!node)
+    {
+    return 0;
+    }
+
+  // Make sure the map contains a vtkWidget associated with this node
+  WidgetPointProjectionsIt it = this->WidgetPointProjections.find(node);
+  if (it == this->WidgetPointProjections.end())
     {
     return 0;
     }
@@ -289,15 +327,35 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveAllWidgetsAndNodes()
     }
   this->WidgetIntersections.clear();
 
-  WidgetProjectionsIt projIt;
-  for (projIt = this->WidgetProjections.begin();
-       projIt != this->WidgetProjections.end();
-       ++projIt)
+  WidgetOverLineProjectionsIt projOverIt;
+  for (projOverIt = this->WidgetOverLineProjections.begin();
+       projOverIt != this->WidgetOverLineProjections.end();
+       ++projOverIt)
     {
-    projIt->second->Off();
-    projIt->second->Delete();
+    projOverIt->second->Off();
+    projOverIt->second->Delete();
     }
-  this->WidgetProjections.clear();
+  this->WidgetOverLineProjections.clear();
+
+  WidgetUnderLineProjectionsIt projUnderIt;
+  for (projUnderIt = this->WidgetUnderLineProjections.begin();
+       projUnderIt != this->WidgetUnderLineProjections.end();
+       ++projUnderIt)
+    {
+    projUnderIt->second->Off();
+    projUnderIt->second->Delete();
+    }
+  this->WidgetUnderLineProjections.clear();
+
+  WidgetPointProjectionsIt pointProjIt;
+  for (pointProjIt = this->WidgetPointProjections.begin();
+       pointProjIt != this->WidgetPointProjections.end();
+       ++pointProjIt)
+    {
+    pointProjIt->second->Off();
+    pointProjIt->second->Delete();
+    }
+  this->WidgetPointProjections.clear();
 
   this->AnnotationNodeList.clear();
 }

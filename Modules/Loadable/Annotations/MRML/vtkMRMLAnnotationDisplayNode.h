@@ -156,6 +156,37 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   vtkSetAndPropagateMacro(SelectedSpecular, double);
   vtkGetMacro(SuperSelectedSpecular, double);
 
+  /// Set SliceProjection flag 
+  /// Off by default
+  /// Not all subclasses have projection behavior
+  /// Please refer to subclasses for more information
+  /// \sa SliceIntersectionVisibilty, ProjectedColor
+  vtkSetMacro(SliceProjection, int);
+  vtkGetMacro(SliceProjection, int);
+
+  /// \enum ProjectionFlag
+  enum ProjectionFlag
+  {
+  ProjectionOff = 0x00,
+  ProjectionOn = 0x01
+  };
+
+  /// Set SliceProjection to On
+  inline void SliceProjectionOn();
+ 
+  /// Set SliceProjection to Off
+  inline void SliceProjectionOff();
+
+  /// Set color of the projection on the 2D viewers
+  /// White (1.0, 1.0, 1.0) by default.
+  vtkSetVector3Macro(ProjectedColor, double);
+  vtkGetVector3Macro(ProjectedColor, double);
+
+  /// Set opacity of projection on the 2D viewers
+  /// 1.0 by default
+  vtkSetMacro(ProjectedOpacity, double);
+  vtkGetMacro(ProjectedOpacity, double);
+
  protected:
   vtkMRMLAnnotationDisplayNode();
   ~vtkMRMLAnnotationDisplayNode();
@@ -176,6 +207,25 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationDisplayNode : 
   double SuperSelectedSpecular;
 
 
+  int SliceProjection;
+  double ProjectedColor[3];
+  double ProjectedOpacity;
 };
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayNode
+::SliceProjectionOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationDisplayNode::ProjectionOn);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayNode
+::SliceProjectionOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationDisplayNode::ProjectionOn);
+}
 
 #endif

@@ -63,8 +63,12 @@ public:
   vtkAbstractWidget * GetWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice intersection representation
   vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
-  /// ...an its associated vtkAbstractWidget* for Slice intersection representation
-  vtkAbstractWidget * GetProjectionWidget(vtkMRMLAnnotationNode * node); 
+  /// ...an its associated vtkAbstractWidget* for Slice projection representation
+  vtkAbstractWidget * GetOverLineProjectionWidget(vtkMRMLAnnotationNode * node); 
+  /// ...an its associated vtkAbstractWidget* for Slice projection representation
+  vtkAbstractWidget * GetUnderLineProjectionWidget(vtkMRMLAnnotationNode * node); 
+  /// ...an its associated vtkAbstractWidget* for Slice projection representation
+  vtkAbstractWidget * GetPointProjectionWidget(vtkMRMLAnnotationNode * node); 
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
@@ -102,11 +106,22 @@ public:
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetIntersectionsIt;
   
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
-  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetProjections;
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetOverLineProjections;
   
   /// .. and its associated convenient typedef
-  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetProjectionsIt;
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetOverLineProjectionsIt;
 
+  /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetUnderLineProjections;
+  
+  /// .. and its associated convenient typedef
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetUnderLineProjectionsIt;
+
+  /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
+  std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetPointProjections;
+  
+  /// .. and its associated convenient typedef
+  typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetPointProjectionsIt;
 
   //
   // End of The Lists!!
@@ -140,14 +155,6 @@ private:
   std::vector<vtkSmartPointer<vtkHandleWidget> > HandleWidgetList;
   /// .. and its associated convenient typedef
   typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleWidgetListIt;
-
-  /// LineWidget2 for line projection
-  vtkSmartPointer<vtkLineWidget2> LineWidget;
-  /// List of Handles for the LineWidget2
-  std::vector<vtkSmartPointer<vtkHandleWidget> > HandleLineWidgetList;
-  /// .. and its associated convenient typedef
-  typedef std::vector<vtkSmartPointer<vtkHandleWidget> >::iterator HandleLineWidgetListIt;
-
 };
 
 #endif /* VTKMRMLANNOTATIONDISPLAYABLEMANAGERHELPER_H_ */

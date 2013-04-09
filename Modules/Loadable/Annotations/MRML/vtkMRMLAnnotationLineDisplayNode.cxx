@@ -19,16 +19,14 @@ vtkMRMLAnnotationLineDisplayNode::vtkMRMLAnnotationLineDisplayNode()
   this->LabelVisibility = 1;
   this->TickSpacing = 10.0;
   this->MaxTicks = 99;
-  this->SliceProjection = (vtkMRMLAnnotationLineDisplayNode::ProjectionOff | 
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionDotted |
-                           vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
+  this->SliceProjection = (vtkMRMLAnnotationDisplayNode::ProjectionOff | 
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionDashed |
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel |
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop | 
+                           vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
   
-  // Default line color: white
-  this->SliceProjectionLineColor[0] = 1.0;
-  this->SliceProjectionLineColor[1] = 1.0;
-  this->SliceProjectionLineColor[2] = 1.0;
-  this->SliceProjectionLineColor[3] = 1.0;
-
+  this->UnderLineThickness = 1.0;
+  this->OverLineThickness = 3.0;
   /// bug 2375: don't show the slice intersection until it's correct
   this->SliceIntersectionVisibility = 0;
 }
@@ -48,12 +46,15 @@ void vtkMRMLAnnotationLineDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " maxTicks=\"" << this->MaxTicks << "\"";
   of << " sliceProjection=\"" << this->SliceProjection << "\"";
 
-  if (this->SliceProjectionLineColor)
+  if (this->ProjectedColor)
     {
-    of << indent << " sliceProjectionLineColor=\"" << this->SliceProjectionLineColor[0] << " "
-      << this->SliceProjectionLineColor[1] << " "
-      << this->SliceProjectionLineColor[2] << "\"";
+    of << indent << " projectedColor=\"" << this->ProjectedColor[0] << " "
+      << this->ProjectedColor[1] << " "
+      << this->ProjectedColor[2] << "\"";
     }
+  of << " projectedOpacity=\"" << this->ProjectedOpacity << "\"";
+  of << " underLineThickness=\"" << this->UnderLineThickness << "\"";
+  of << " overLineThickness=\"" << this->OverLineThickness << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -111,13 +112,31 @@ void vtkMRMLAnnotationLineDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> this->SliceProjection;
       }
-    else if (!strcmp(attName, "sliceProjectionLineColor"))
+    else if (!strcmp(attName, "projectedColor"))
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->SliceProjectionLineColor[0];
-      ss >> this->SliceProjectionLineColor[1];
-      ss >> this->SliceProjectionLineColor[2];
+      ss >> this->ProjectedColor[0];
+      ss >> this->ProjectedColor[1];
+      ss >> this->ProjectedColor[2];
+      }
+    else if (!strcmp(attName, "projectedOpacity"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->ProjectedOpacity;
+      }
+    else if (!strcmp(attName, "underLineThickness"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->UnderLineThickness;
+      }
+    else if (!strcmp(attName, "overLineThickness"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->OverLineThickness;
       }
     }
   this->EndModify(disabledModify);
@@ -138,7 +157,10 @@ void vtkMRMLAnnotationLineDisplayNode::Copy(vtkMRMLNode *anode)
   this->SetTickSpacing(node->TickSpacing);
   this->SetMaxTicks(node->MaxTicks);
   this->SetSliceProjection(node->SliceProjection);
-  this->SetSliceProjectionLineColor(node->GetSliceProjectionLineColor());
+  this->SetProjectedColor(node->GetProjectedColor());
+  this->SetProjectedOpacity(node->GetProjectedOpacity());
+  this->SetUnderLineThickness(node->GetUnderLineThickness());
+  this->SetOverLineThickness(node->GetOverLineThickness());
 
   this->EndModify(disabledModify);
 }
@@ -153,11 +175,13 @@ void vtkMRMLAnnotationLineDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Tick Spacing     : " << this->TickSpacing << "\n";
   os << indent << "Max Ticks        : " << this->MaxTicks << "\n";
   os << indent << "Slice Projection : " << this->SliceProjection << "\n";
-  os << indent << "Slice Projection Line Color : (" 
-     << this->SliceProjectionLineColor[0] << ","
-     << this->SliceProjectionLineColor[1] << ","
-     << this->SliceProjectionLineColor[2] << ","
-     << this->SliceProjectionLineColor[3] << ")" << "\n";
+  os << indent << "Projected Color : (" 
+     << this->ProjectedColor[0] << ","
+     << this->ProjectedColor[1] << ","
+     << this->ProjectedColor[2] << ")" << "\n";
+  os << indent << "Projected Opacity: " << this->ProjectedOpacity << "\n";
+  os << indent << "Under Line Thickness: " << this->UnderLineThickness << "\n";
+  os << indent << "Over Line Thickness: " << this->OverLineThickness << "\n";
 }
 
 //---------------------------------------------------------------------------

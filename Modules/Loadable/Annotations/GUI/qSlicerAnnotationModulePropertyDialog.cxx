@@ -32,7 +32,6 @@
 //------------------------------------------------------------------------------
 qSlicerAnnotationModulePropertyDialog::~qSlicerAnnotationModulePropertyDialog()
 {
-  this->m_id = 0;
   this->m_logic = 0;
 }
 
@@ -45,6 +44,7 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
   // now build the user interface
   ui.setupUi(this);
 
+  this->setAttribute(Qt::WA_DeleteOnClose);
  
   ui.DescriptionLabel->setVisible(true);
   ui.DescriptionTextEdit->setVisible(true);
@@ -403,6 +403,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.pointAmbientSliderSpinBoxWidget->setValue(pointDisplayNode->GetAmbient());
     ui.pointDiffuseSliderSpinBoxWidget->setValue(pointDisplayNode->GetDiffuse());
     ui.pointSpecularSliderSpinBoxWidget->setValue(pointDisplayNode->GetSpecular());
+
+    // Expand fiducial projection panel if projection turned on
+    bool collapseGroupBox = 
+      pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn ? false : true; 
+    ui.pointFiducialProjectionPropertiesGroupBox->setCollapsed(collapseGroupBox);
     }
     
   /// Lines
@@ -461,6 +466,11 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     ui.lineAmbientSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetAmbient());
     ui.lineDiffuseSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetDiffuse());
     ui.lineSpecularSliderSpinBoxWidget_2->setValue(lineDisplayNode->GetSpecular());
+
+    // Expand ruler projection panel if projection turned on
+    bool collapseGroupBox = 
+      lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn ? false : true; 
+    ui.lineRulerProjectionPropertiesGroupBox->setCollapsed(collapseGroupBox);
     }
  
   /// ROI
@@ -486,6 +496,20 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   else
     {
     ui.tabWidget->setTabEnabled(3, false);
+    }
+
+  // Ruler
+  vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(mrmlNode);
+  if (rulerNode)
+    {
+    ui.lineRulerProjectionWidget->setMRMLRulerNode(rulerNode);
+    }
+
+  // Fiducial
+  vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(mrmlNode);
+  if (fiducialNode)
+    {
+    ui.pointFiducialProjectionWidget->setMRMLFiducialNode(fiducialNode);
     }
 
   if (mrmlNode->IsA("vtkMRMLAnnotationFiducialNode") || mrmlNode->IsA("vtkMRMLAnnotationRulerNode"))

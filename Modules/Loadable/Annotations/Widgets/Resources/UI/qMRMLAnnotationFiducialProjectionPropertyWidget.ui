@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qMRMLAnnotationFiducialProjectionPropertyWidget</class>
+ <widget class="QWidget" name="qMRMLAnnotationFiducialProjectionPropertyWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>205</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>qMRMLAnnotationFiducialProjectionPropertyWidget</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="labelAlignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="formAlignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="Point2DProjectionLabel">
+     <property name="toolTip">
+      <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
+     </property>
+     <property name="text">
+      <string>2D Projection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="ctkCheckBox" name="Point2DProjectionCheckBox">
+     <property name="toolTip">
+      <string>Turn on/off visualization of projected fiducial on 2D viewers</string>
+     </property>
+     <property name="indicatorIcon">
+      <iconset resource="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
+       <normaloff>:/Icons/XLarge/SlicerVisible.png</normaloff>
+       <normalon>:/Icons/XLarge/SlicerInvisible.png</normalon>:/Icons/XLarge/SlicerVisible.png</iconset>
+     </property>
+     <property name="indicatorIconSize">
+      <size>
+       <width>23</width>
+       <height>23</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="PointProjectionColorLabel">
+     <property name="toolTip">
+      <string>Color of the projected fiducial on 2D viewers</string>
+     </property>
+     <property name="text">
+      <string>Projection Color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ctkColorPickerButton" name="PointProjectionColorPickerButton">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Color of the projected fiducial on 2D viewers</string>
+     </property>
+     <property name="color">
+      <color>
+       <red>255</red>
+       <green>255</green>
+       <blue>255</blue>
+      </color>
+     </property>
+     <property name="displayColorName">
+      <bool>false</bool>
+     </property>
+     <property name="dialogOptions">
+      <set>ctkColorPickerButton::UseCTKColorDialog</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="PointOutlinedBehindSlicePlaneLabel">
+     <property name="toolTip">
+      <string>Fiducial projection is displayed filled when on top of slice plane, outlined when behind, and with full opacity when in the plane</string>
+     </property>
+     <property name="text">
+      <string>Outlined Behind Slice Plane</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="PointOutlinedBehindSlicePlaneCheckBox">
+     <property name="toolTip">
+      <string>Fiducial projection is displayed filled when on top of slice plane, outlined when behind, and with full opacity when in the plane</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="PointUseFiducialColorLabel">
+     <property name="toolTip">
+      <string>Use the same color as fiducial</string>
+     </property>
+     <property name="text">
+      <string>Use Fiducial Color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="PointUseFiducialColorCheckBox">
+     <property name="toolTip">
+      <string>Use the same color as fiducial</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>ctkCheckBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc"/>
+ </resources>
+ <connections/>
+</ui>

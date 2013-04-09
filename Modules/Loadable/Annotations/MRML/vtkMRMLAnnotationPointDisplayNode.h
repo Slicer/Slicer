@@ -101,6 +101,35 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   /// Restore an attached backup of this node.
   void RestoreBackup();
 
+  /// Set projection color as fiducial color
+  ///\sa SetProjectedColor
+  inline void SliceProjectionUseFiducialColorOn();
+
+  /// Manually set projection color
+  ///\sa SetProjectedColor
+  inline void SliceProjectionUseFiducialColorOff();
+
+  /// Set projection's view different 
+  /// if under/over/in the plane
+  ///\sa SetProjectedColor
+  inline void SliceProjectionOutlinedBehindSlicePlaneOn();
+
+  /// Set projection's view the same
+  /// if under/over/in the plane
+  ///\sa SetProjectedColor
+  inline void SliceProjectionOutlinedBehindSlicePlaneOff();
+
+  /// ProjectionUseFiducialColor : Set projection color as fiducial color
+  /// ProjectionOutlinedBehindSlicePlane : Different shape and opacity when fiducial
+  /// is on top of the slice plane, or under
+  /// Projection Off, UseFiducialColor, OutlinedBehindSlicePlane by default
+  ///\enum ProjectionFlag
+  enum ProjectionFlag
+  {
+  ProjectionUseFiducialColor = 0x02,
+  ProjectionOutlinedBehindSlicePlane = 0x04
+  };
+  
  protected:
   vtkMRMLAnnotationPointDisplayNode();
   ~vtkMRMLAnnotationPointDisplayNode() { };
@@ -110,7 +139,38 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationPointDisplayNo
   double GlyphScale;
   int GlyphType;
   static const char* GlyphTypesNames[GlyphMax+2];
-
 };
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationPointDisplayNode
+::SliceProjectionUseFiducialColorOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationPointDisplayNode
+::SliceProjectionUseFiducialColorOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionUseFiducialColor);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationPointDisplayNode
+::SliceProjectionOutlinedBehindSlicePlaneOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationPointDisplayNode
+::SliceProjectionOutlinedBehindSlicePlaneOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationPointDisplayNode::ProjectionOutlinedBehindSlicePlane);
+}
 
 #endif

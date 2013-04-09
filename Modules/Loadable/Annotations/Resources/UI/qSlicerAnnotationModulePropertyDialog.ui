@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>418</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -695,20 +695,35 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
            </layout>
+          </item>
+          <item row="3" column="2">
+           <widget class="ctkCollapsibleGroupBox" name="pointFiducialProjectionPropertiesGroupBox">
+            <property name="title">
+             <string>Fiducial Projection</string>
+            </property>
+            <property name="collapsed">
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="qMRMLAnnotationFiducialProjectionPropertyWidget" name="pointFiducialProjectionWidget"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <spacer name="verticalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -818,19 +833,6 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
@@ -906,6 +908,47 @@
             </property>
            </spacer>
           </item>
+          <item row="3" column="1">
+           <widget class="ctkCollapsibleGroupBox" name="lineRulerProjectionPropertiesGroupBox">
+            <property name="title">
+             <string>Ruler Projection</string>
+            </property>
+            <property name="collapsed">
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="qMRMLAnnotationRulerProjectionPropertyWidget" name="lineRulerProjectionWidget"/>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <spacer name="verticalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="4" column="1">
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
         <widget class="QWidget" name="ROI">
@@ -953,15 +996,37 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLAnnotationFiducialProjectionPropertyWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLAnnotationFiducialProjectionPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qMRMLAnnotationROIWidget</class>
    <extends>QWidget</extends>
    <header>qMRMLAnnotationROIWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>qMRMLAnnotationRulerProjectionPropertyWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLAnnotationRulerProjectionPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleButton</class>
    <extends>QWidget</extends>
    <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

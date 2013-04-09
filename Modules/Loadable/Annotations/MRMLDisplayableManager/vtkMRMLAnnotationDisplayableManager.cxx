@@ -2,14 +2,19 @@
 // Annotation MRML includes
 #include <vtkMRMLAnnotationControlPointsNode.h>
 #include <vtkMRMLAnnotationDisplayNode.h>
+#include <vtkMRMLAnnotationFiducialNode.h>
 #include <vtkMRMLAnnotationLineDisplayNode.h>
 #include <vtkMRMLAnnotationNode.h>
+#include <vtkMRMLAnnotationPointDisplayNode.h>
 #include <vtkMRMLAnnotationRulerNode.h>
 
 // Annotation MRMLDisplayableManager includes
 #include "vtkMRMLAnnotationClickCounter.h"
 #include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkMRMLAnnotationDisplayableManagerHelper.h"
+
+// Annotation VTKWidget
+#include <vtkAnnotationGlyphSource2D.h>
 
 // MRMLDisplayableManager includes
 #include <vtkMRMLAbstractSliceViewDisplayableManager.h>
@@ -691,13 +696,31 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
       vtkDebugMacro("OnMRMLSliceNodeModifiedEvent: visible, propagate mrml to widget");
 
       // If visible, turn off projection
+      // TODO: Find a way to generalize it (turn projectionOff ?). Difficult to know which one were turned on before
+      // to turn them back on when out of slice plane
+
       vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+      vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode);
       if (rulerNode)
         {
-        vtkLineWidget2* line = vtkLineWidget2::SafeDownCast(this->Helper->GetProjectionWidget(rulerNode));
-        if (line)
+        vtkLineWidget2* overLine = vtkLineWidget2::SafeDownCast(this->Helper->GetOverLineProjectionWidget(rulerNode));
+        vtkLineWidget2* underLine = vtkLineWidget2::SafeDownCast(this->Helper->GetUnderLineProjectionWidget(rulerNode));
+        if (overLine)
           {
-          line->Off();
+          overLine->Off();
+          }
+        if (underLine)
+          {
+          underLine->Off();
+          }
+        }
+      
+      if (fiducialNode)
+        {
+        vtkSeedWidget* fiducialSeed = vtkSeedWidget::SafeDownCast(this->Helper->GetPointProjectionWidget(fiducialNode));
+        if (fiducialSeed)
+          {
+          fiducialSeed->Off();
           }
         }
 
@@ -710,7 +733,11 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
       // only implemented for ruler yet
 
-      vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+      vtkMRMLAnnotationRulerNode* rulerNode = 
+        vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
+      vtkMRMLAnnotationFiducialNode* fiducialNode = 
+        vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode);
+
       if (rulerNode &&
           (rulerNode->GetAnnotationLineDisplayNode()))
         {
@@ -743,7 +770,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           {
           //double this->GetSliceNode()->GetSliceOffset() = p1[2] + (p2[2]-p1[2])*t;
           // t = (this->GetSliceNode()->GetSliceOffset() - p1[2]) / (p2[2]-p1[2])
-          double t = (this->GetSliceNode()->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
+          //double t = (this->GetSliceNode()->GetSliceOffset()-displayP1[2]) / (displayP2[2]-displayP1[2]);
+          double t = (-displayP1[2]) / (displayP2[2]-displayP1[2]);
 
           // p2-p1
           double P2minusP1[3];
@@ -815,14 +843,20 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           }
 
         // Display projection on 2D viewers        
-        vtkLineWidget2* line = vtkLineWidget2::SafeDownCast(this->Helper->GetProjectionWidget(rulerNode));
+        vtkLineWidget2* overLine = vtkLineWidget2::SafeDownCast(this->Helper->GetOverLineProjectionWidget(rulerNode));
+        vtkLineWidget2* underLine = vtkLineWidget2::SafeDownCast(this->Helper->GetUnderLineProjectionWidget(rulerNode));
         vtkMRMLAnnotationLineDisplayNode* lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
 
         if (lineDisplayNode)
           {
           if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn)
             {
-            if (!line)
+            double overLineWidth = lineDisplayNode->GetOverLineThickness();
+            double underLineWidth = lineDisplayNode->GetUnderLineThickness();
+            double intersectionPoint[3] = {displayP2[0], displayP2[1], displayP2[2] };
+            bool lineIntersectPlane = false;          
+
+            if (!overLine)
               {
               vtkNew<vtkPointHandleRepresentation3D> handle;
               handle->GetProperty()->SetOpacity(0.0);
@@ -838,27 +872,91 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
               rep->GetLineHandleRepresentation()->GetProperty()->SetOpacity(0.0);
               rep->GetLineHandleRepresentation()->GetSelectedProperty()->SetOpacity(0.0);
 
-              line = vtkLineWidget2::New();
-              line->CreateDefaultRepresentation();
-              line->SetRepresentation(rep.GetPointer());
-              line->SetInteractor(this->GetInteractor());
-              line->SetCurrentRenderer(this->GetRenderer());
-              line->ProcessEventsOff();
-              this->Helper->WidgetProjections[rulerNode] = line;
+              overLine = vtkLineWidget2::New();
+              overLine->CreateDefaultRepresentation();
+              overLine->SetRepresentation(rep.GetPointer());
+              overLine->SetInteractor(this->GetInteractor());
+              overLine->SetCurrentRenderer(this->GetRenderer());
+              overLine->ProcessEventsOff();
+              this->Helper->WidgetOverLineProjections[rulerNode] = overLine;
               }
 
-
-            vtkLineRepresentation* lineRep = vtkLineRepresentation::SafeDownCast(line->GetRepresentation());
-            if (lineRep)
+            if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionThickerOnTop)
               {
-              line->Off();
+              if (!underLine)
+                {
+                vtkNew<vtkPointHandleRepresentation3D> handle;
+                handle->GetProperty()->SetOpacity(0.0);
+                handle->GetSelectedProperty()->SetOpacity(0.0);
+                handle->SetHandleSize(0);
+                
+                vtkNew<vtkLineRepresentation> rep;
+                rep->SetHandleRepresentation(handle.GetPointer());
+                rep->GetPoint1Representation()->GetProperty()->SetOpacity(0.0);
+                rep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
+                rep->GetPoint2Representation()->GetProperty()->SetOpacity(0.0);
+                rep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+                rep->GetLineHandleRepresentation()->GetProperty()->SetOpacity(0.0);
+                rep->GetLineHandleRepresentation()->GetSelectedProperty()->SetOpacity(0.0);
+                rep->GetLineProperty()->SetLineWidth(underLineWidth);
+                
+                underLine = vtkLineWidget2::New();
+                underLine->CreateDefaultRepresentation();
+                underLine->SetRepresentation(rep.GetPointer());
+                underLine->SetInteractor(this->GetInteractor());
+                underLine->SetCurrentRenderer(this->GetRenderer());
+                underLine->ProcessEventsOff();
+                this->Helper->WidgetUnderLineProjections[rulerNode] = underLine;              
+                }
+  
+              if ((displayP1[2] * displayP2[2]) < 0)
+                {
+                // Point 1 and Point 2 are in different side of the plane
+                // Calculate plane intersection and set it as second point
+                // of top line, set it as first point of under line
+                lineIntersectPlane = true;
+                
+                double t = (-displayP1[2]) / (displayP2[2]-displayP1[2]);
+                double P2minusP1[3];
+                vtkMath::Subtract(displayP2,displayP1,P2minusP1);
+                vtkMath::MultiplyScalar(P2minusP1,t);
+                vtkMath::Add(displayP1,P2minusP1,intersectionPoint);
+                }
+              else
+                {
+                underLine->Off();
+                }
+              }
+            else
+              {
+              if (underLine)
+                {
+                underLine->Off();
+                }
+              }
 
-              double colorLine[4];
-              lineDisplayNode->GetSliceProjectionLineColor(colorLine);
+            vtkLineRepresentation* overLineRep = vtkLineRepresentation::SafeDownCast(overLine->GetRepresentation());
+
+            if (overLineRep)
+              {
+              overLine->Off();
+              underLine->Off();
+
+              double lineOpacity = lineDisplayNode->GetProjectedOpacity();
+              double lineColor[3];
+
+              if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionUseRulerColor)
+                {
+                lineDisplayNode->GetColor(lineColor);
+                }
+              else
+                {
+                lineDisplayNode->GetProjectedColor(lineColor);
+                }
 
               short linePattern = 0xFFFF;
               
-              if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionDotted)
+              if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionDashed)
                 {
                 linePattern = 0xFF00;
                 }
@@ -886,29 +984,178 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 static const double LineInPlaneError = 0.005;
                 if (fabs(vtkMath::Dot(slicePlaneNormal, rulerVector)) < LineInPlaneError)
                   {
-                  sliceNode->GetLayoutColor(colorLine[0], colorLine[1], colorLine[2]);
+                  sliceNode->GetLayoutColor(lineColor);
                   linePattern = 0xFFFF;
                   }
                 }
 
               // Should be reset when widget is turned off, otherwise handle is rendered
-              lineRep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
-              lineRep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              overLineRep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              overLineRep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+              overLineRep->GetLineProperty()->SetColor(lineColor);
+              overLineRep->GetLineProperty()->SetOpacity(lineOpacity);
+              overLineRep->GetLineProperty()->SetLineStipplePattern(linePattern);
+              overLineRep->GetLineProperty()->SetLineWidth(displayP1[2] > 0 ? underLineWidth : overLineWidth);
+              overLine->On();
+              overLineRep->SetPoint1DisplayPosition(displayP1);
+              overLineRep->SetPoint2DisplayPosition(intersectionPoint);
 
-              lineRep->GetLineProperty()->SetColor(colorLine[0],colorLine[1], colorLine[2]);
-              lineRep->GetLineProperty()->SetOpacity(colorLine[3]);
-              lineRep->GetLineProperty()->SetLineStipplePattern(linePattern);
-              line->On();
-              lineRep->SetPoint1DisplayPosition(displayP1);
-              lineRep->SetPoint2DisplayPosition(displayP2);
+              if (lineIntersectPlane)
+                {
+                vtkLineRepresentation* underLineRep = vtkLineRepresentation::SafeDownCast(underLine->GetRepresentation());
+                if (underLineRep)
+                  {
+                  underLineRep->GetPoint1Representation()->GetSelectedProperty()->SetOpacity(0.0);
+                  underLineRep->GetPoint2Representation()->GetSelectedProperty()->SetOpacity(0.0);
+                  underLineRep->GetLineProperty()->SetColor(lineColor);
+                  underLineRep->GetLineProperty()->SetOpacity(lineOpacity);
+                  underLineRep->GetLineProperty()->SetLineStipplePattern(linePattern);
+                  underLineRep->GetLineProperty()->SetLineWidth(displayP2[2] > 0 ? underLineWidth : overLineWidth);
+                  underLine->On();
+                  underLineRep->SetPoint1DisplayPosition(intersectionPoint);
+                  underLineRep->SetPoint2DisplayPosition(displayP2);
+                  }
+                }
               }
             }
           else
             {
-            if (line)
+            if (overLine)
               {
-              line->Off();
+              overLine->Off();
               }
+            if (underLine)
+              {
+              underLine->Off();
+              }
+            }
+          }
+        }
+      else if (fiducialNode &&
+               fiducialNode->GetAnnotationPointDisplayNode())
+        {
+        double transformedP1[4];
+        fiducialNode->GetFiducialWorldCoordinates(transformedP1);
+
+        double displayP1[4];
+        this->GetWorldToDisplayCoordinates(transformedP1, displayP1);
+
+        vtkSeedWidget* projectionSeed = 
+          vtkSeedWidget::SafeDownCast(this->Helper->GetPointProjectionWidget(fiducialNode));
+
+        vtkMRMLAnnotationPointDisplayNode* pointDisplayNode = 
+          vtkMRMLAnnotationPointDisplayNode::SafeDownCast(fiducialNode->GetAnnotationPointDisplayNode());
+
+        if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn)
+          {
+          double glyphScale = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphScale()*2;
+          int glyphType = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphType();
+          if (glyphType == vtkMRMLAnnotationPointDisplayNode::Sphere3D)
+            {
+            // 3D Sphere glyph is represented in 2D by a Circle2D glyph
+            glyphType = vtkMRMLAnnotationPointDisplayNode::Circle2D;
+            }
+
+          double pointOpacity = pointDisplayNode->GetProjectedOpacity();
+          double pointColor[3];
+          pointDisplayNode->GetProjectedColor(pointColor);
+          
+          if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionUseFiducialColor)
+            {
+            pointDisplayNode->GetColor(pointColor);
+            }
+
+          if (!projectionSeed)
+            {
+            vtkNew<vtkAnnotationGlyphSource2D> glyph;
+            glyph->SetGlyphType(glyphType);
+            glyph->SetScale(glyphScale);
+            glyph->SetScale2(glyphScale);
+            glyph->SetColor(pointColor);
+
+            vtkNew<vtkPointHandleRepresentation2D> handle;
+            handle->SetCursorShape(glyph->GetOutput());
+
+            vtkNew<vtkSeedRepresentation> rep;
+            rep->SetHandleRepresentation(handle.GetPointer());
+
+            projectionSeed = vtkSeedWidget::New();
+            projectionSeed->CreateDefaultRepresentation();
+            projectionSeed->SetRepresentation(rep.GetPointer());
+            projectionSeed->SetInteractor(this->GetInteractor());
+            projectionSeed->SetCurrentRenderer(this->GetRenderer());
+            projectionSeed->CreateNewHandle();
+            projectionSeed->ProcessEventsOff();
+            projectionSeed->On();
+            projectionSeed->CompleteInteraction();
+            this->Helper->WidgetPointProjections[fiducialNode] = projectionSeed;
+            }
+
+          vtkSeedRepresentation* projectionSeedRep = 
+            vtkSeedRepresentation::SafeDownCast(projectionSeed->GetRepresentation());
+
+          if (projectionSeedRep)
+            {
+            projectionSeed->Off();
+            
+            if (projectionSeed->GetSeed(0))
+              {
+              vtkPointHandleRepresentation2D* handleRep = 
+                vtkPointHandleRepresentation2D::SafeDownCast(projectionSeed->GetSeed(0)->GetRepresentation());
+              
+              if (handleRep)
+                {
+                vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
+                glyphSource->SetGlyphType(glyphType);
+                glyphSource->SetScale(glyphScale);
+                glyphSource->SetScale2(glyphScale);
+               
+                if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOutlinedBehindSlicePlane)
+                  {
+                  static const double threshold = 0.5;
+                  static const double notInPlaneOpacity = 0.6;
+                  static const double inPlaneOpacity = 1.0;
+                  if (displayP1[2] < 0)
+                    {
+                    glyphSource->FilledOff();
+                    pointOpacity = notInPlaneOpacity;
+                    
+                    if (displayP1[2] > -threshold)
+                      {
+                      pointOpacity = inPlaneOpacity;
+                      }
+                    }
+                  else if (displayP1[2] > 0)
+                    {
+                    glyphSource->FilledOn();
+                    pointOpacity = notInPlaneOpacity;
+                    
+                    if (displayP1[2] < threshold)
+                      {
+                      pointOpacity = inPlaneOpacity;
+                      }
+                    }
+                  }
+                else
+                  {
+                  glyphSource->FilledOn();
+                  }
+                glyphSource->SetColor(pointColor);
+                handleRep->GetProperty()->SetColor(pointColor);
+                handleRep->GetProperty()->SetOpacity(pointOpacity);                
+                handleRep->SetCursorShape(glyphSource->GetOutput());
+                handleRep->SetDisplayPosition(displayP1);
+                projectionSeed->On();
+                projectionSeed->CompleteInteraction();
+                }
+              }
+            }
+          }
+        else
+          {
+          if (projectionSeed)
+            {
+            projectionSeed->Off();
             }
           }
         }

@@ -25,7 +25,9 @@
 #include <QDesignerCustomWidgetCollectionInterface>
 
 // Annotations includes
+#include "qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin.h"
 #include "qMRMLAnnotationROIWidgetPlugin.h"
+#include "qMRMLAnnotationRulerProjectionPropertyWidgetPlugin.h"
 #include "qMRMLAnnotationTreeViewPlugin.h"
 
 // \class Group the plugins in one library
@@ -40,7 +42,9 @@ public:
   QList<QDesignerCustomWidgetInterface*> customWidgets() const
     {
     QList<QDesignerCustomWidgetInterface *> plugins;
-    plugins << new qMRMLAnnotationROIWidgetPlugin
+    plugins << new qMRMLAnnotationFiducialProjectionPropertyWidgetPlugin
+            << new qMRMLAnnotationROIWidgetPlugin
+            << new qMRMLAnnotationRulerProjectionPropertyWidgetPlugin
             << new qMRMLAnnotationTreeViewPlugin;
     return plugins;
     }

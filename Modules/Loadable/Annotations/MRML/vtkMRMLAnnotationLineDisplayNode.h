@@ -76,51 +76,57 @@ class  VTK_SLICER_ANNOTATIONS_MODULE_MRML_EXPORT vtkMRMLAnnotationLineDisplayNod
   vtkSetMacro(MaxTicks, int);
   vtkGetMacro(MaxTicks, int);
   
-  /// Set SliceProjection flag 
-  /// ProjectionOff, Dotted and ColoredWhenParallel by default.
-  /// ProjectionOff : No projection
-  /// ProjectionOn : Projection with plain line
-  /// ProjectionDotted : Projection with dotted line when
-  ///                          not in the plane
-  /// ProjectionColoredWhenParallel : Color line if parallel
-  ///                                            to slice plane
-  /// \sa SliceIntersectionVisibilty, ProjectedLineColor
-  vtkGetMacro(SliceProjection, int);
-  vtkSetMacro(SliceProjection, int);
-
-  /// Set SliceProjection to On
-  inline void SetSliceProjectionOn();
- 
-  /// Set SliceProjection to Off
-  inline void SetSliceProjectionOff();
-
-  /// Set SliceProjection to Dotted
-  inline void SetSliceProjectionDottedOn();
+  /// Set SliceProjection to Dashed
+  inline void SliceProjectionDashedOn();
 
   /// Set SliceProjection to Plain
-  inline void SetSliceProjectionDottedOff();
+  inline void SliceProjectionDashedOff();
 
   /// Set line colored when parallel to slice plane
-  inline void SetSliceProjectionColoredWhenParallelOn();
+  inline void SliceProjectionColoredWhenParallelOn();
 
   /// Set line color unchanged when parallel to slice plane
-  inline void SetSliceProjectionColoredWhenParallelOff();
+  inline void SliceProjectionColoredWhenParallelOff();
 
-  /// \enumthis->SliceProjection ProjectionFlag
+  /// Set line thicker when on top of the plane, thiner when under
+  inline void SliceProjectionThickerOnTopOn();
+
+  /// Set line thickness uniform
+  inline void SliceProjectionThickerOnTopOff();
+
+  /// Set projection color as ruler color
+  ///\sa SetProjectedColor
+  inline void SliceProjectionUseRulerColorOn();
+
+  /// Manually set projection color
+  ///\sa SetProjectedColor
+  inline void SliceProjectionUseRulerColorOff();
+
+  /// ProjectionDashed : Set projected line dashed
+  /// ProjectionColoredWhenParallel : Set projected line
+  /// colored when parallel to slice plane
+  /// ProjectionThickerOnTop : Set projected line thicker
+  /// on top of the plane, thiner when under
+  /// Projection Off, Dashed, ColoredWhenParallel,
+  /// ThickerOnTop and UseRulerColor by default
+  /// \enum ProjectionFlag
   enum ProjectionFlag
   {
-  ProjectionOff = 0x00,
-  ProjectionOn = 0x01,
-  ProjectionDotted = 0x02,
+  ProjectionDashed = 0x02,
   ProjectionColoredWhenParallel = 0x04,
-  //ProjectionSparseLineStipplePattern = 0x08
+  ProjectionThickerOnTop = 0x08,
+  ProjectionUseRulerColor = 0x10
   };
 
-  /// Set color of the projected line on the 2D viewers
-  /// when parallel to the slice plane
-  /// White (1.0, 1.0, 1.0, 1.0) by default.
-  vtkGetVector4Macro(SliceProjectionLineColor, double);
-  vtkSetVector4Macro(SliceProjectionLineColor, double);
+  /// Get/Set the thickness of the line under the plane
+  /// Default: 1.0
+  vtkSetMacro(UnderLineThickness, double);
+  vtkGetMacro(UnderLineThickness, double);
+
+  /// Get/Set the thickness of the line over the plane
+  /// Default: 3.0
+  vtkSetMacro(OverLineThickness, double);
+  vtkGetMacro(OverLineThickness, double);
 
   /// Create a backup of this node and attach it.
   void CreateBackup();
@@ -138,45 +144,30 @@ protected:
   int LabelVisibility;
   double TickSpacing;
   int MaxTicks;
-  int SliceProjection;
-  double SliceProjectionLineColor[4];
+
+  double UnderLineThickness;
+  double OverLineThickness;
 };
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionOn()
+::SliceProjectionDashedOn()
 {
   this->SetSliceProjection( this->GetSliceProjection() | 
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionOn);
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionOff()
+::SliceProjectionDashedOff()
 {
   this->SetSliceProjection( this->GetSliceProjection() & 
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionOn);
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionDashed);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionDottedOn()
-{
-  this->SetSliceProjection( this->GetSliceProjection() | 
-                            vtkMRMLAnnotationLineDisplayNode::ProjectionDotted);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionDottedOff()
-{
-  this->SetSliceProjection( this->GetSliceProjection() & 
-                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionDotted);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionColoredWhenParallelOn()
+::SliceProjectionColoredWhenParallelOn()
 {
   this->SetSliceProjection( this->GetSliceProjection() | 
                             vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
@@ -184,11 +175,42 @@ void vtkMRMLAnnotationLineDisplayNode
 
 //----------------------------------------------------------------------------
 void vtkMRMLAnnotationLineDisplayNode
-::SetSliceProjectionColoredWhenParallelOff()
+::SliceProjectionColoredWhenParallelOff()
 {
   this->SetSliceProjection( this->GetSliceProjection() & 
                             ~vtkMRMLAnnotationLineDisplayNode::ProjectionColoredWhenParallel);
 }
 
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SliceProjectionThickerOnTopOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SliceProjectionThickerOnTopOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionThickerOnTop);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SliceProjectionUseRulerColorOn()
+{
+  this->SetSliceProjection( this->GetSliceProjection() | 
+                            vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLAnnotationLineDisplayNode
+::SliceProjectionUseRulerColorOff()
+{
+  this->SetSliceProjection( this->GetSliceProjection() & 
+                            ~vtkMRMLAnnotationLineDisplayNode::ProjectionUseRulerColor);
+}
 
 #endif

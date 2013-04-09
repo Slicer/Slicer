@@ -31,6 +31,12 @@ vtkMRMLAnnotationDisplayNode::vtkMRMLAnnotationDisplayNode()
   this->Specular = 0;
   this->Power = 1;
 
+  this->SliceProjection = vtkMRMLAnnotationDisplayNode::ProjectionOff;
+  this->ProjectedColor[0] = 1.0;
+  this->ProjectedColor[1] = 1.0;
+  this->ProjectedColor[2] = 1.0;
+  this->ProjectedOpacity = 1.0;
+
   this->m_Backup = 0;
 
 }
