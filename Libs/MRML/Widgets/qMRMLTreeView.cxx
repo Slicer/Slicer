@@ -235,31 +235,30 @@ QSize qMRMLTreeViewPrivate::sizeHint()const
 void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex &parentIndex)
 {
   Q_Q(qMRMLTreeView);
-  if (q->isExpanded(parentIndex))
+  vtkMRMLNode* parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
+
+  // Check if the node is currently present in the scene.
+  // When a node/hierarchy is being deleted from the vtkMRMLScene, there is
+  // some reference of the deleted node left dangling in the qMRMLSceneModel.
+  // As a result, mrmlNodeFromIndex returns a reference to a non-existent node.
+  // We do not need to save the tree hierarchy in such cases.
+  if (!parentNode ||
+      !q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
     {
-    // Check if the node is currently present in the scene.
-    // When a node/hierarchy is being deleted from the vtkMRMLScene, there is
-    // some reference of the deleted node left dangling in the qMRMLSceneModel.
-    // As a result, mrmlNodeFromIndex returns a reference to a non-existent node.
-    vtkMRMLNode* parentNode = q->sortFilterProxyModel()->mrmlNodeFromIndex(parentIndex);
-    if (parentNode &&
-        q->sortFilterProxyModel()->mrmlScene()->IsNodePresent(parentNode))
+    return;
+    }
+
+    if (q->isExpanded(parentIndex))
       {
-      // Store a weak reference to the parentNode in the vtkCollection.
-      // This helps avoid any dangling references if the node was deleted
-      // while updating scene.
-      vtkWeakPointer<vtkMRMLNode> weakNode =
-        vtkMRMLNode::SafeDownCast(parentNode);
-      this->ExpandedNodes->AddItem(weakNode);
+      this->ExpandedNodes->AddItem(parentNode);
       }
-    }
-  // Iterate over children nodes recursively to save their expansion state
-  unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
-  for(unsigned int row = 0; row < numChildrenRows; ++row)
-    {
-    QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
-    this->saveChildrenExpandState(childIndex);
-    }
+    // Iterate over children nodes recursively to save their expansion state
+    unsigned int numChildrenRows = q->sortFilterProxyModel()->rowCount(parentIndex);
+    for(unsigned int row = 0; row < numChildrenRows; ++row)
+      {
+      QModelIndex childIndex = q->sortFilterProxyModel()->index(row, 0, parentIndex);
+      this->saveChildrenExpandState(childIndex);
+      }
 }
 
 //------------------------------------------------------------------------------
@@ -848,7 +847,20 @@ void qMRMLTreeView::saveTreeExpandState()
   // Erase previous tree expand state
   d->ExpandedNodes->RemoveAllItems();
   QModelIndex sceneIndex = this->sortFilterProxyModel()->mrmlSceneIndex();
-  d->saveChildrenExpandState(sceneIndex);
+
+  // First pass for the scene node
+  vtkMRMLNode* sceneNode = this->sortFilterProxyModel()->mrmlNodeFromIndex(sceneIndex);
+  if (this->isExpanded(sceneIndex))
+    {
+    if (sceneNode && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(sceneNode))
+      d->ExpandedNodes->AddItem(sceneNode);
+    }
+  unsigned int numChildrenRows = this->sortFilterProxyModel()->rowCount(sceneIndex);
+  for(unsigned int row = 0; row < numChildrenRows; ++row)
+    {
+    QModelIndex childIndex = this->sortFilterProxyModel()->index(row, 0, sceneIndex);
+    d->saveChildrenExpandState(childIndex);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -866,7 +878,8 @@ void qMRMLTreeView::loadTreeExpandState()
   for(iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
     {
     vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(iter->GetCurrentObject());
-    if (node)
+    // Check if the node is currently present in the scene.
+    if (node && this->sortFilterProxyModel()->mrmlScene()->IsNodePresent(node))
       {
       // Expand the node
       QModelIndex nodeIndex = this->sortFilterProxyModel()->indexFromMRMLNode(node);
