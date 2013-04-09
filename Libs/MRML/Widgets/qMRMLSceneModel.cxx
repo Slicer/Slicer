@@ -354,6 +354,7 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
     scene->AddObserver(vtkMRMLScene::EndCloseEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::StartImportEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::EndImportEvent, d->CallBack);
+    scene->AddObserver(vtkMRMLScene::StartBatchProcessEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::EndBatchProcessEvent, d->CallBack);
     }
   d->MRMLScene = scene;
@@ -641,7 +642,6 @@ void qMRMLSceneModel::updateScene()
 {
   Q_D(qMRMLSceneModel);
 
-  emit sceneAboutToBeUpdated();
   // Stop listening to all the nodes before we remove them (setRowCount) as some
   // weird behavior could arise when removing the nodes (e.g onMRMLNodeModified
   // could be called ...)
@@ -688,14 +688,12 @@ void qMRMLSceneModel::updateScene()
       preSceneItemCount,
       this->rowCount() - preSceneItemCount - postSceneItemCount);
     this->setColumnCount(oldColumnCount);
-    emit sceneUpdated();
     return;
     }
 
   // if there is no column, there is no scene item.
   if (!this->mrmlSceneItem())
     {
-    emit sceneUpdated();
     return;
     }
 
@@ -713,7 +711,6 @@ void qMRMLSceneModel::updateScene()
 
   // Populate scene with nodes
   this->populateScene();
-  emit sceneUpdated();
 }
 
 //------------------------------------------------------------------------------
@@ -1083,6 +1080,9 @@ void qMRMLSceneModel::onMRMLSceneEvent(vtkObject* vtk_obj, unsigned long event,
     case vtkMRMLScene::EndImportEvent:
       sceneModel->onMRMLSceneImported(scene);
       break;
+    case vtkMRMLScene::StartBatchProcessEvent:
+      sceneModel->onMRMLSceneStartBatchProcess(scene);
+      break;
     case vtkMRMLScene::EndBatchProcessEvent:
       sceneModel->onMRMLSceneEndBatchProcess(scene);
       break;
@@ -1416,6 +1416,17 @@ void qMRMLSceneModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSceneModel::onMRMLSceneStartBatchProcess(vtkMRMLScene* scene)
+{
+  Q_D(qMRMLSceneModel);
+  Q_UNUSED(scene);
+  if (d->LazyUpdate)
+    {
+    emit sceneAboutToBeUpdated();
+    }
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSceneModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
 {
   Q_D(qMRMLSceneModel);
@@ -1423,6 +1434,7 @@ void qMRMLSceneModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
   if (d->LazyUpdate)
     {
     this->updateScene();
+    emit sceneUpdated();
     }
 }
 

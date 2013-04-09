@@ -228,6 +228,7 @@ protected slots:
   virtual void onMRMLSceneImported(vtkMRMLScene* scene);
   virtual void onMRMLSceneAboutToBeClosed(vtkMRMLScene* scene);
   virtual void onMRMLSceneClosed(vtkMRMLScene* scene);
+  virtual void onMRMLSceneStartBatchProcess(vtkMRMLScene* scene);
   virtual void onMRMLSceneEndBatchProcess(vtkMRMLScene* scene);
 
   void onMRMLSceneDeleted(vtkObject* scene);
