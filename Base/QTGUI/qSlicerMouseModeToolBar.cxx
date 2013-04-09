@@ -100,8 +100,6 @@ void qSlicerMouseModeToolBarPrivate::init()
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    this->CreateAndPlaceToolButton,
                    SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
-
-  this->updateWidgetFromMRML();
 }
 
 //---------------------------------------------------------------------------
@@ -163,7 +161,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromSelectionNode()
     this->MRMLAppLogic ? this->MRMLAppLogic->GetSelectionNode() : 0;
   if (!selectionNode)
     {
-    qWarning() << "Mouse Mode ToolBar: no selection node";
+    qDebug() << "Mouse Mode ToolBar: no selection node";
     return;
     }
 
@@ -271,7 +269,7 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetFromInteractionNode()
     this->MRMLAppLogic ? this->MRMLAppLogic->GetInteractionNode() : 0;
   if (!interactionNode)
     {
-    qWarning() << "Mouse Mode ToolBar: no interaction node";
+    qDebug() << "Mouse Mode ToolBar: no interaction node";
     return;
     }
 
