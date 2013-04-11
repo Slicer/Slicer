@@ -33,8 +33,7 @@ public:
   // associated to the node ID exists in the scene.
   const std::vector<vtkMRMLDisplayNode*>& GetInternalDisplayNodes()
     {
-    this->GetDisplayNodes();
-    return this->DisplayNodes;
+    return this->GetDisplayNodes();
     }
   virtual vtkMRMLNode* CreateNodeInstance()
     {
