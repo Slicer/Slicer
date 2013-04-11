@@ -148,9 +148,9 @@ void vtkMRMLDisplayableNode::CreateDefaultDisplayNodes()
 //---------------------------------------------------------------------------
 int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
-  std::vector<vtkMRMLDisplayNode*>::iterator it =
-    this->DisplayNodes.begin();
-  if (it == this->DisplayNodes.end() ||
+  std::vector<vtkMRMLDisplayNode*> displayNodes = this->GetDisplayNodes();
+  std::vector<vtkMRMLDisplayNode*>::iterator it = displayNodes.begin();
+  if (it == displayNodes.end() ||
       !(*it))
     {
     return 0;
@@ -160,7 +160,7 @@ int vtkMRMLDisplayableNode::GetDisplayVisibility()
     {
     return 2;
     }
-  for ( ; it != this->DisplayNodes.end(); ++it)
+  for ( ; it != displayNodes.end(); ++it)
     {
     vtkMRMLDisplayNode* displayNode = *it;
     if ( displayNode && displayNode->GetVisibility() != visible)
@@ -178,9 +178,11 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
     {
     return;
     }
+  
+  std::vector<vtkMRMLDisplayNode*> displayNodes = this->GetDisplayNodes();
   std::vector<vtkMRMLDisplayNode*>::iterator it;
-  for (it = this->DisplayNodes.begin();
-       it != this->DisplayNodes.end(); ++it)
+  for (it = displayNodes.begin();
+       it != displayNodes.end(); ++it)
     {
     vtkMRMLDisplayNode* displayNode = *it;
     if (displayNode)

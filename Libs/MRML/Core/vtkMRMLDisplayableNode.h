@@ -262,10 +262,11 @@ public:
     //this->InvokeEvent(vtkMRMLDisplayableNode::DisplayModifiedEvent, reference->ReferencedNode);
   }
 
+
+ private:
   ///
-  /// Cached list of display nodes. The index of each element match the
-  /// DisplayNodeIDs element indexes.
-  /// Note: some nodes can be null.
+   /// Internally cached list of display nodes used ONLY to return the vector of node in GetDisplayNodes()
+  /// DON'T USE this variable anywhere else
   std::vector<vtkMRMLDisplayNode *> DisplayNodes;
 };
 
