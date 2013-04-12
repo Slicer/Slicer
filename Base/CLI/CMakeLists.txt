@@ -87,7 +87,7 @@ set(lib_name "SlicerBaseCLI")
 
 add_library(${lib_name} ${SlicerBaseCLI_SRCS})
 target_link_libraries(${lib_name}
-  vtkCommon
+  ${VTK_LIBRARIES}
   ModuleDescriptionParser
   )
 set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
