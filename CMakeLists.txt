@@ -35,14 +35,6 @@ if(${CTEST_USE_LAUNCHERS})
 endif()
 
 #-----------------------------------------------------------------------------
-# VAriable Slicer_LANGUAGES
-#-----------------------------------------------------------------------------
-set(Slicer_LANGUAGES
-  "fr"
-  )
-set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
-
-#-----------------------------------------------------------------------------
 # Sanity checks
 #------------------------------------------------------------------------------
 if(WIN32)
@@ -329,6 +321,17 @@ if(Slicer_BUILD_I18N_SUPPORT)
   include(SlicerMacroTranslation)
 endif()
 include(SlicerFunctionInstallLibrary)
+
+
+#-----------------------------------------------------------------------------
+# Internationalization
+#-----------------------------------------------------------------------------
+if(Slicer_BUILD_I18N_SUPPORT)
+  set(Slicer_LANGUAGES
+    "fr"
+    )
+  set_property(GLOBAL PROPERTY Slicer_LANGUAGES ${Slicer_LANGUAGES})
+endif()
 
 #-----------------------------------------------------------------------------
 # Set Slicer_{C,CXX}_REQUIRED_FLAGS variables
