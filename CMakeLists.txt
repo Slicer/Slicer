@@ -346,10 +346,10 @@ set(SLICER_REVISION_SPECIFIC_USER_SETTINGS_FILEBASENAME "")
 #-----------------------------------------------------------------------------
 # Main application
 #-----------------------------------------------------------------------------
-if (NOT DEFINED Slicer_MAIN_PROJECT)
+if(NOT DEFINED Slicer_MAIN_PROJECT)
   set(Slicer_MAIN_PROJECT SlicerApp CACHE INTERNAL "Main project name")
 endif()
-if (NOT DEFINED ${Slicer_MAIN_PROJECT}_APPLICATION_NAME)
+if(NOT DEFINED ${Slicer_MAIN_PROJECT}_APPLICATION_NAME)
   set(${Slicer_MAIN_PROJECT}_APPLICATION_NAME Slicer CACHE INTERNAL "Main application name")
 else()
   set(SlicerApp_APPLICATION_NAME Slicer)
