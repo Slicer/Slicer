@@ -263,9 +263,7 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
     self.undoRedo.saveState()
 
     self.editUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
-    self.editUtil.getLabelImage().Modified()
-
-    self.sliceLogic.GetLabelLayer().GetVolumeNode().Modified()
+    self.editUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
     # print('FastMarching output image: '+str(output))
     print('FastMarching march update completed')
 
@@ -281,7 +279,7 @@ class FastMarchingEffectLogic(Effect.EffectLogic):
     self.editUtil.getLabelImage().DeepCopy(self.fm.GetOutput())
     self.editUtil.getLabelImage().Modified()
  
-    self.sliceLogic.GetLabelLayer().GetVolumeNode().Modified()
+    self.editUtil.markVolumeNodeAsModified(self.sliceLogic.GetLabelLayer().GetVolumeNode())
 
   def getLabelNode(self):
     return self.sliceLogic.GetLabelLayer().GetVolumeNode()

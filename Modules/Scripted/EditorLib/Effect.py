@@ -406,7 +406,7 @@ class EffectLogic(object):
       self.scopedSlicePaint.Paint()
     else:
       print("Invalid scope option %s" % self.scope)
-    volumeNode.Modified()
+    self.editUtil.markVolumeNodeAsModified(volumeNode)
 
   def getVisibleCorners(self,layerLogic,slicePaint=None):
     """return a nested list of ijk coordinates representing

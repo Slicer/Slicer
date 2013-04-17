@@ -480,7 +480,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     sliceLogic = self.sliceWidget.sliceLogic()
     labelLogic = sliceLogic.GetLabelLayer()
     labelNode = labelLogic.GetVolumeNode()
-    labelNode.Modified()
+    self.editUtil.markVolumeNodeAsModified(labelNode)
 
   def paintPixel(self, x, y):
     """
@@ -512,7 +512,7 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     parameterNode = self.editUtil.getParameterNode()
     paintLabel = int(parameterNode.GetParameter("label"))
     labelImage.SetScalarComponentFromFloat(ijk[0],ijk[1],ijk[2],0, paintLabel)
-    labelImage.Modified()
+    self.editUtil.markVolumeNodeAsModified(labelNode)
 
   def paintBrush(self, x, y):
     """

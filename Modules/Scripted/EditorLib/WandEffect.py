@@ -365,8 +365,7 @@ class WandEffectLogic(LabelEffect.LabelEffectLogic):
           toVisit.append((location[0]    , location[1]    , location[2] + 1))
 
     # signal to slicer that the label needs to be updated
-    labelImage.Modified()
-    labelNode.Modified()
+    self.editUtil.markVolumeNodeAsModified(labelNode)
 
 #
 # The WandEffect class definition

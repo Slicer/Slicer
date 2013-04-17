@@ -263,7 +263,7 @@ class ThresholdEffectTool(Effect.EffectTool):
     thresh.Update()
 
     self.editUtil.getLabelImage().DeepCopy( thresh.GetOutput() )
-    self.editUtil.getLabelImage().Modified()
+    self.editUtil.markVolumeNodeAsModified(self.editUtil.getLabelVolume())
 
   def preview(self,color=None):
 

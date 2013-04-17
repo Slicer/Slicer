@@ -372,7 +372,7 @@ class HelperBox(object):
           self.addStructure( i, "noEdit" )
         structureVolume = self.structureVolume( labelName )
         structureVolume.GetImageData().DeepCopy( thresholder.GetOutput() )
-        structureVolume.Modified()
+        self.editUtil.markVolumeNodeAsModified(structureVolume)
 
     self.statusText( "Finished splitting." )
 

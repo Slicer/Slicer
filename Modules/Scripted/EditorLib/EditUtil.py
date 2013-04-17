@@ -172,6 +172,22 @@ class EditUtil(object):
       sliceCompositeNode.SetForegroundVolumeID(sliceCompositeNode.GetBackgroundVolumeID())
       sliceCompositeNode.SetBackgroundVolumeID(oldForeground)
 
+  def markVolumeNodeAsModified(self,volumeNode):
+    """Mark all parts of a volume node as modified so that a correct
+    render is triggered.  This includes setting the modified flag on the
+    point data scalars so that the GetScalarRange method will return the 
+    correct value, and certain operations like volume rendering will
+    know to update.
+    http://na-mic.org/Bug/view.php?id=3076
+    This method should be called any time the image data has been changed
+    via an editing operation.
+    Note that this call will typically schedule a render operation to be
+    performed the next time the event loop is idle.
+    """
+    volumeNode.GetImageData().GetPointData().GetScalars().Modified()
+    volumeNode.GetImageData().Modified()
+    volumeNode.Modified()
+
 
 class UndoRedo(object):
   """ Code to manage a list of undo/redo volumes
@@ -207,7 +223,7 @@ class UndoRedo(object):
         pass
       self.stash.Unstash()
       self.volumeNode.GetImageData().DeepCopy( self.stashImage )
-      self.volumeNode.Modified()
+      EditUtil().markVolumeNodeAsModified(self.volumeNode)
 
 
   def __init__(self,undoSize=10):

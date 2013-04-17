@@ -433,7 +433,7 @@ class LabelEffectLogic(Effect.EffectLogic):
 
     self.painter.Paint()
 
-    labelNode.Modified()
+    self.editUtil.markVolumeNodeAsModified(labelNode)
 
   def sliceIJKPlane(self):
     """ Return a code indicating which plane of IJK
