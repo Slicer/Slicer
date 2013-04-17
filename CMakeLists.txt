@@ -392,6 +392,7 @@ if(Slicer_VERSION_TWEAK GREATER 0)
   set(Slicer_VERSION_FULL "${Slicer_VERSION_FULL}-${Slicer_VERSION_TWEAK}")
 endif()
 message(STATUS "Building Slicer version [${Slicer_VERSION_FULL}]")
+message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} revision [${Slicer_WC_REVISION}]")
 
 #-----------------------------------------------------------------------------
 # Slicer sub-directories
