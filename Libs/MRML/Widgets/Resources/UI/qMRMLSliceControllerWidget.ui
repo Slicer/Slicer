@@ -183,6 +183,9 @@
           <property name="text">
            <string/>
           </property>
+          <property name="toolTip">
+           <string>Slice spacing may be set automatically or manually by the user or context</string>
+          </property>
           <property name="icon">
            <iconset resource="../qMRMLWidgets.qrc">
             <normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</normaloff>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
@@ -662,7 +665,8 @@
    </property>
    <property name="icon">
     <iconset resource="../qMRMLWidgets.qrc">
-     <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>:/Icons/SlicerManualSliceSpacing.png</iconset>
+     <normaloff>:/Icons/SlicerManualSliceSpacing.png</normaloff>
+     <normalon>:/Icons/SlicerAutomaticSliceSpacing.png</normalon>:/Icons/SlicerAutomaticSliceSpacing.png</iconset>
    </property>
    <property name="text">
     <string>Automatic</string>

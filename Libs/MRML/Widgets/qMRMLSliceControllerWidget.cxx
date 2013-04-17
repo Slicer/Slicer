@@ -793,9 +793,18 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   this->actionShow_reformat_widget->setText(
     showReformat ? tr("Hide reformat widget"): tr("Show reformat widget"));
   // Slice spacing mode
+  this->SliceSpacingButton->setIcon(
+    this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode ?
+      QIcon(":/Icons/SlicerAutomaticSliceSpacing.png") :
+      QIcon(":/Icons/SlicerManualSliceSpacing.png"));
   this->actionSliceSpacingModeAutomatic->setChecked(
     this->MRMLSliceNode->GetSliceSpacingMode() == vtkMRMLSliceNode::AutomaticSliceSpacingMode);
-  double fov[3];
+  // Prescribed slice spacing
+  double spacing[3] = {0.0, 0.0, 0.0};
+  this->MRMLSliceNode->GetPrescribedSliceSpacing(spacing);
+  this->SliceSpacingSpinBox->setValue(spacing[2]);
+  // Field of view
+  double fov[3]  = {0.0, 0.0, 0.0};
   this->MRMLSliceNode->GetFieldOfView(fov);
   wasBlocked = this->SliceFOVSpinBox->blockSignals(true);
   this->SliceFOVSpinBox->setValue(fov[0] < fov[1] ? fov[0] : fov[1]);
@@ -1924,60 +1933,37 @@ void qMRMLSliceControllerWidget::setCompositingToSubtract()
 void qMRMLSliceControllerWidget::setSliceSpacingMode(bool automatic)
 {
   Q_D(qMRMLSliceControllerWidget);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
-  if (!nodes.GetPointer())
+  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
     {
     return;
     }
-  vtkMRMLSliceNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceSpacingFlag);
+  if (automatic)
     {
-    if (node == d->MRMLSliceNode || this->isLinked())
-      {
-      if (automatic)
-        {
-        node->SetSliceSpacingModeToAutomatic();
-        }
-      else
-        {
-        node->SetSliceSpacingModeToPrescribed();
-        }
-      }
+    d->MRMLSliceNode->SetSliceSpacingModeToAutomatic();
     }
+  else
+    {
+    d->MRMLSliceNode->SetSliceSpacingModeToPrescribed();
+    }
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 //---------------------------------------------------------------------------
 void qMRMLSliceControllerWidget::setSliceSpacing(double sliceSpacing)
 {
   Q_D(qMRMLSliceControllerWidget);
-  this->setSliceSpacingMode(false);
-  vtkSmartPointer<vtkCollection> nodes = d->saveNodesForUndo("vtkMRMLSliceNode");
-  if (!nodes.GetPointer())
+  if (!d->MRMLSliceNode || !d->MRMLSliceCompositeNode)
     {
     return;
     }
-  vtkMRMLSliceNode* node = 0;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLSliceNode*>(
-                                   nodes->GetNextItemAsObject(it)));)
-    {
-    if (node == d->MRMLSliceNode || this->isLinked())
-      {
-      double *current = node->GetPrescribedSliceSpacing();
-      double spacing[3];
-      spacing[0] = current[0];
-      spacing[1] = current[1];
-      spacing[2] = sliceSpacing;
-      node->SetPrescribedSliceSpacing(spacing);
-      vtkMRMLSliceLogic* sliceLogic = d->sliceNodeLogic(node);
-      if (sliceLogic)
-        {
-        sliceLogic->ResizeSliceNode(d->ViewSize.width(), d->ViewSize.height());
-        }
-      }
-    }
+  d->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceSpacingFlag);
+  d->MRMLSliceNode->SetSliceSpacingModeToPrescribed();
+  double spacing[3] = {0.0, 0.0, 0.0};
+  d->MRMLSliceNode->GetPrescribedSliceSpacing(spacing);
+  spacing[2] = sliceSpacing;
+  d->MRMLSliceNode->SetPrescribedSliceSpacing(spacing);
+  d->SliceLogic->EndSliceNodeInteraction();
 }
 
 // --------------------------------------------------------------------------

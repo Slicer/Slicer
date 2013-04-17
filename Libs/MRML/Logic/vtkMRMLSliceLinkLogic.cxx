@@ -451,8 +451,15 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode *sliceNode)
             }
           }        
 
+          // Setting the slice spacing
+          if (sliceNode->GetInteractionFlags() & sliceNode->GetInteractionFlagsModifier()
+            & vtkMRMLSliceNode::SliceSpacingFlag)
+            {
+            sNode->SetSliceSpacingMode( sliceNode->GetSliceSpacingMode() );
+            sNode->SetPrescribedSliceSpacing( sliceNode->GetPrescribedSliceSpacing() );
+            }
         //
-        // End of the block for broadcasting parametes and command
+        // End of the block for broadcasting parameters and commands
         // that do not require the orientation to match
         //
         }

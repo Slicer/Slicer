@@ -326,8 +326,9 @@ class VTK_MRML_EXPORT vtkMRMLSliceNode : public vtkMRMLAbstractViewNode
     MultiplanarReformatFlag = 16, // broadcast reformat widget transformation
     XYZOriginFlag = 32,
     LabelOutlineFlag = 64,
-    SliceVisibleFlag = 128
-    // Next one needs to be 256
+    SliceVisibleFlag = 128,
+    SliceSpacingFlag = 256
+    // Next one needs to be 512
   };
 
   /// Get/Set a flag indicating what parameters are being manipulated

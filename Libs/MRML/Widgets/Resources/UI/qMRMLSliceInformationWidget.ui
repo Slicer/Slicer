@@ -208,7 +208,7 @@
    <item row="8" column="0">
     <widget class="QLabel" name="label_9">
      <property name="toolTip">
-      <string>Slice spacing can be prescribed by the user or context or set automatically</string>
+      <string>Slice spacing may be set automatically or manually by the user or context</string>
      </property>
      <property name="text">
       <string>Slice spacing mode:</string>
@@ -233,7 +233,7 @@
      <item>
       <widget class="QRadioButton" name="PrescribedSliceSpacingRadioButton">
        <property name="text">
-        <string>Prescribed</string>
+        <string>Manual</string>
        </property>
       </widget>
      </item>
@@ -242,7 +242,7 @@
    <item row="9" column="0">
     <widget class="QLabel" name="label_10">
      <property name="text">
-      <string>Prescribed spacing:</string>
+      <string>Manual spacing:</string>
      </property>
     </widget>
    </item>
@@ -252,7 +252,7 @@
       <bool>false</bool>
      </property>
      <property name="toolTip">
-      <string>Slice spacing used when slice spacing mode is prescribed by the user or by the context</string>
+      <string>Manual spacing is used when slice spacing is set manually by the user or context</string>
      </property>
      <property name="decimals">
       <number>1</number>
@@ -275,7 +275,7 @@
    <item row="5" column="0">
     <widget class="QLabel" name="label_7">
      <property name="toolTip">
-      <string>Field of view of the slice.</string>
+      <string>Field of view of slice</string>
      </property>
      <property name="text">
       <string>Field of view:</string>
