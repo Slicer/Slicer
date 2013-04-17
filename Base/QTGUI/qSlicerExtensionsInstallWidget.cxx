@@ -19,6 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QDebug>
+#include <QDesktopServices>
 #include <QNetworkCookieJar>
 #include <QNetworkReply>
 #include <QSettings>
@@ -108,6 +110,11 @@ void qSlicerExtensionsInstallWidgetPrivate::init()
   this->ProgressBar->setVisible(false);
 
   this->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOn);
+
+  this->WebView->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
+
+  QObject::connect(this->WebView->page(), SIGNAL(linkClicked(QUrl)),
+                   q, SLOT(onLinkClicked(QUrl)));
 }
 
 // --------------------------------------------------------------------------
@@ -380,6 +387,23 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
   if(!ok)
     {
     d->setFailurePage(d->extensionsListUrl().toString());
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
+{
+  Q_D(qSlicerExtensionsInstallWidget);
+  if(url.host() == this->extensionsManagerModel()->serverUrl().host())
+    {
+    d->WebView->load(url);
+    }
+  else
+    {
+    if(!QDesktopServices::openUrl(url))
+      {
+      qWarning() << "Failed to open url:" << url;
+      }
     }
 }
 
