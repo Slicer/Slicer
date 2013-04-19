@@ -7,12 +7,12 @@
 #Source: http://www.slicer.org/slicerWiki/index.php/Slicer4:2012_LightPaleChartColors
 #
 #Begin table data:
-1 Series_1 241 175 174 255
-2 Series_2 218 227 172 255
-3 Series_3 184 211 235 255
-4 Series_4 243 208 177 255
-5 Series_5 212 179 211 255
-6 Series_6 221 185 170 255
-7 Series_7 234 193 218 255
-8 Series_8 204 204 204 255
+0 Series_1 241 175 174 255
+1 Series_2 218 227 172 255
+2 Series_3 184 211 235 255
+3 Series_4 243 208 177 255
+4 Series_5 212 179 211 255
+5 Series_6 221 185 170 255
+6 Series_7 234 193 218 255
+7 Series_8 204 204 204 255
 #EOF
