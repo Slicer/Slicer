@@ -28,6 +28,8 @@ class vtkImageLogic;
 class vtkImageMapToColors;
 class vtkImageMapToWindowLevelColors;
 class vtkImageThreshold;
+class vtkImageExtractComponents;
+class vtkImageMathematics;
 
 // STD includes
 #include <vector>
@@ -223,6 +225,9 @@ protected:
   vtkImageThreshold *Threshold;
   vtkImageAppendComponents *AppendComponents;
   vtkImageMapToWindowLevelColors *MapToWindowLevelColors;
+  vtkImageExtractComponents *ExtractRGB;
+  vtkImageExtractComponents *ExtractAlpha;
+  vtkImageMathematics *MultiplyAlpha;
 
   /// 
   /// window level presets

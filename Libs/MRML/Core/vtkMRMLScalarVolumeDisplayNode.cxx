@@ -24,6 +24,7 @@ Version:   $Revision: 1.2 $
 #include <vtkColorTransferFunction.h>
 #include <vtkImageAccumulateDiscrete.h>
 #include <vtkImageAppendComponents.h>
+#include <vtkImageExtractComponents.h>
 #include <vtkImageBimodalAnalysis.h>
 #include <vtkImageCast.h>
 #include <vtkImageData.h>
@@ -32,6 +33,7 @@ Version:   $Revision: 1.2 $
 #include <vtkImageThreshold.h>
 #include <vtkObjectFactory.h>
 #include <vtkLookupTable.h>
+#include <vtkImageMathematics.h>
 
 // STD includes
 #include <cassert>
@@ -59,14 +61,25 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->MapToColors = vtkImageMapToColors::New();
   this->Threshold = vtkImageThreshold::New();
   this->AppendComponents = vtkImageAppendComponents::New();
+
+  this->ExtractRGB = vtkImageExtractComponents::New();
+  this->ExtractAlpha = vtkImageExtractComponents::New();
+  this->MultiplyAlpha = vtkImageMathematics::New();
+
   
   this->MapToWindowLevelColors = vtkImageMapToWindowLevelColors::New();
   this->MapToWindowLevelColors->SetOutputFormatToLuminance();
   this->MapToWindowLevelColors->SetWindow(256.);
   this->MapToWindowLevelColors->SetLevel(128.);
 
-  this->MapToColors->SetOutputFormatToRGB();
-  this->MapToColors->SetInputConnection( this->MapToWindowLevelColors->GetOutputPort() );
+  this->MapToColors->SetOutputFormatToRGBA();
+  this->MapToColors->SetInputConnection(this->MapToWindowLevelColors->GetOutputPort() );
+
+  this->ExtractRGB->SetInputConnection(this->MapToColors->GetOutputPort());
+  this->ExtractRGB->SetComponents(0,1,2);
+
+  this->ExtractAlpha->SetInputConnection(this->MapToColors->GetOutputPort());
+  this->ExtractAlpha->SetComponents(3);
 
   this->Threshold->ReplaceInOn();
   this->Threshold->SetInValue(255);
@@ -76,15 +89,20 @@ vtkMRMLScalarVolumeDisplayNode::vtkMRMLScalarVolumeDisplayNode()
   this->Threshold->ThresholdBetween(VTK_SHORT_MIN, VTK_SHORT_MAX);
   this->ResliceAlphaCast->SetOutputScalarTypeToUnsignedChar();
 
+  this->MultiplyAlpha->SetInputConnection(0, this->ExtractAlpha->GetOutputPort() );
+  this->MultiplyAlpha->SetInputConnection(1, this->ResliceAlphaCast->GetOutputPort() );
+  this->MultiplyAlpha->SetOperationToMultiply();
+
   this->AlphaLogic->SetOperationToAnd();
   this->AlphaLogic->SetOutputTrueValue(255);
   this->AlphaLogic->SetInputConnection(0, this->Threshold->GetOutputPort() );
   //this->AlphaLogic->SetInputConnection(1, this->Threshold->GetOutputPort() );
-  this->AlphaLogic->SetInputConnection(1, this->ResliceAlphaCast->GetOutputPort() );
+  this->AlphaLogic->SetInputConnection(1, this->MultiplyAlpha->GetOutputPort() );
 
   this->AppendComponents->RemoveAllInputs();
-  this->AppendComponents->AddInputConnection(0, this->MapToColors->GetOutputPort() );
+  this->AppendComponents->AddInputConnection(0, this->ExtractRGB->GetOutputPort() );
   this->AppendComponents->AddInputConnection(0, this->AlphaLogic->GetOutputPort() );
+
 
   this->Bimodal = NULL;
   this->Accumulate = NULL;
@@ -105,6 +123,10 @@ vtkMRMLScalarVolumeDisplayNode::~vtkMRMLScalarVolumeDisplayNode()
   this->Threshold->Delete();
   this->AppendComponents->Delete();
   this->MapToWindowLevelColors->Delete();
+  this->ExtractRGB->Delete();
+  this->ExtractAlpha->Delete();
+  this->MultiplyAlpha->Delete();
+
 
   if (this->Bimodal)
     {
