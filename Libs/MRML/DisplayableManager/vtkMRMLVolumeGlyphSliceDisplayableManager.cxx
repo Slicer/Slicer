@@ -321,7 +321,13 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
   assert(std::find(this->VolumeNodes.begin(), this->VolumeNodes.end(), volume) != this->VolumeNodes.end());
   // The volume has just been added to the volume list or has been modified,
   // update its display node list.
-  this->SetVolumeDisplayNodes(volume, volume->GetDisplayNodes());
+  int nnodes = volume->GetNumberOfDisplayNodes();
+  std::vector<vtkMRMLDisplayNode*> displayNodes;
+  for (int i=0; i<nnodes; i++)
+  {
+    displayNodes.push_back(volume->GetNthDisplayNode(i));
+  }
+  this->SetVolumeDisplayNodes(volume, displayNodes);
 }
 
 //---------------------------------------------------------------------------
@@ -368,7 +374,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
     }
   // Make sure there is no more display nodes than the volume has
   assert( displayNodesIt->second.size() <=
-          displayNodesIt->first->GetDisplayNodes().size());
+          displayNodesIt->first->GetNumberOfDisplayNodes());
 }
 
 //---------------------------------------------------------------------------

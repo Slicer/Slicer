@@ -98,22 +98,6 @@ void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-const std::vector<vtkMRMLDisplayNode*>& vtkMRMLDisplayableNode::GetDisplayNodes()
-{
-  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
-  vtkMRMLDisplayNode *dnode;
-  this->DisplayNodes.clear();
-  for (int i=0; i<numDisplayNodes; i++)
-    {
-      dnode = vtkMRMLDisplayNode::SafeDownCast(
-        this->GetNthNodeReference(this->GetDisplayNodeReferenceRole(), i));
-      this->DisplayNodes.push_back(dnode);
-    }
-
-  return this->DisplayNodes;
-}
-
-//----------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)
 {
   return vtkMRMLDisplayNode::SafeDownCast(
@@ -148,21 +132,20 @@ void vtkMRMLDisplayableNode::CreateDefaultDisplayNodes()
 //---------------------------------------------------------------------------
 int vtkMRMLDisplayableNode::GetDisplayVisibility()
 {
-  std::vector<vtkMRMLDisplayNode*> displayNodes = this->GetDisplayNodes();
-  std::vector<vtkMRMLDisplayNode*>::iterator it = displayNodes.begin();
-  if (it == displayNodes.end() ||
-      !(*it))
+  int ndnodes = this->GetNumberOfDisplayNodes();
+  if (ndnodes == 0 || this->GetNthDisplayNode(0) == 0)
     {
     return 0;
     }
-  int visible = (*it)->GetVisibility();
+  int visible = this->GetNthDisplayNode(0)->GetVisibility();
   if (visible == 2)
     {
     return 2;
     }
-  for ( ; it != displayNodes.end(); ++it)
+
+  for (int i=1; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode* displayNode = *it;
+    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
     if ( displayNode && displayNode->GetVisibility() != visible)
       {
       return 2;
@@ -178,13 +161,11 @@ void vtkMRMLDisplayableNode::SetDisplayVisibility(int visible)
     {
     return;
     }
-  
-  std::vector<vtkMRMLDisplayNode*> displayNodes = this->GetDisplayNodes();
-  std::vector<vtkMRMLDisplayNode*>::iterator it;
-  for (it = displayNodes.begin();
-       it != displayNodes.end(); ++it)
+
+  int ndnodes = this->GetNumberOfDisplayNodes();
+  for (int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode* displayNode = *it;
+    vtkMRMLDisplayNode *displayNode = this->GetNthDisplayNode(i);
     if (displayNode)
       {
       displayNode->SetVisibility(visible);

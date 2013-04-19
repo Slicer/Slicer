@@ -173,17 +173,12 @@ public:
     return this->GetNthDisplayNode(0);
   }
 
-  /// Return the nth display node that is of class \a className.
-  /// \sa GetNthDisplayNode()
-  //vtkMRMLDisplayNode* GetNthDisplayNodeByClass(int n, const char* className);
-
-  ///
-  /// Return a copy of the list of the display nodes. Some nodes can be 0
-  /// when the scene is in a temporary state.
-  /// The list of nodes is browsed (slow) to make sure the pointers are
-  /// up-to-date.
-  /// \sa GetNthDisplayNode
-  const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
+  /// \deprecated GetDisplayNodes
+  /// Obsolete utility function that provides an unsafe API.
+  /// Please use GetNumberOfDisplayNodes() and
+  /// GetNthDisplayNode() instead
+  /// const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
+  /// \sa GetNumberOfDisplayNodes, GetNthDisplayNode
 
   /// 
   /// alternative method to propagate events generated in Display nodes

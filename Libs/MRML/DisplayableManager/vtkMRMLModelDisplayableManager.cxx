@@ -681,12 +681,12 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
     }
   // If the node is already cached with an actor process only this one
   // If it was not visible and is still not visible do nothing
-  const std::vector< vtkMRMLDisplayNode *>& dnodes = modelNode->GetDisplayNodes();
+  int ndnodes = modelNode->GetNumberOfDisplayNodes();
   bool updateModel = false;
   bool updateMRML = false;
-  for (unsigned int i=0; i<dnodes.size(); i++)
+  for (unsigned int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *dnode = dnodes[i];
+    vtkMRMLDisplayNode *dnode = modelNode->GetNthDisplayNode(i);
     assert(dnode);
     bool visible = (dnode->GetVisibility() == 1) && this->IsModelDisplayable(dnode);
     bool hasActor =
@@ -832,15 +832,16 @@ void vtkMRMLModelDisplayableManager::UpdateModifiedModel(vtkMRMLDisplayableNode 
 void vtkMRMLModelDisplayableManager
 ::UpdateModelPolyData(vtkMRMLDisplayableNode *displayableNode)
 {
-  std::vector< vtkMRMLDisplayNode *> displayNodes = displayableNode->GetDisplayNodes();
+  int ndnodes = displayableNode->GetNumberOfDisplayNodes();
+
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(displayableNode);
   vtkMRMLDisplayNode *hdnode = this->GetHierarchyDisplayNode(displayableNode);
   vtkMRMLModelNode *hierarchyModelDisplayNode =
     vtkMRMLModelNode::SafeDownCast(hdnode);
 
-  for (unsigned int i=0; i<displayNodes.size(); i++)
+  for (unsigned int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *displayNode = displayNodes[i];
+    vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
     vtkMRMLModelDisplayNode *modelDisplayNode =
       vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
 
@@ -1366,12 +1367,12 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
     lnode->GetMatrixTransformToWorld(transformToWorld);
     }
 
-  std::vector<vtkMRMLDisplayNode *> displayNodes = model->GetDisplayNodes();
+  int ndnodes = model->GetNumberOfDisplayNodes();
   vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
 
-  for (unsigned int i=0; i<displayNodes.size(); i++)
+  for (unsigned int i=0; i<ndnodes; i++)
     {
-    vtkMRMLDisplayNode *thisDisplayNode = displayNodes[i];
+    vtkMRMLDisplayNode *thisDisplayNode = model->GetNthDisplayNode(i);
     vtkMRMLDisplayNode *modelDisplayNode = thisDisplayNode;
     if (thisDisplayNode != 0)
       {

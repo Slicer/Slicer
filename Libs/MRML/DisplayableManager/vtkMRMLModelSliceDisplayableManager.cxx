@@ -519,18 +519,18 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
     }
 
   // Add Display Nodes
-  std::vector<vtkMRMLDisplayNode *> dnodes = node->GetDisplayNodes();
-  if (dnodes.size() > 0)
+  int nnodes = node->GetNumberOfDisplayNodes();
+  if (nnodes > 0)
     {
     this->Internal->AddObservations(node);
     }
-  std::vector<vtkMRMLDisplayNode *>::iterator diter;
-  for ( diter = dnodes.begin(); diter != dnodes.end(); diter++)
-    {
-    if ( this->Internal->UseDisplayNode(*diter) )
+  for (int i=0; i<nnodes; i++)
+  {
+    vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);    
+    if ( this->Internal->UseDisplayNode(dnode) )
       {
-      this->Internal->ModelToDisplayNodes[node].insert(*diter);
-      this->Internal->AddDisplayNode( node, *diter );
+      this->Internal->ModelToDisplayNodes[node].insert(dnode);
+      this->Internal->AddDisplayNode( node, dnode );
       }
     }
 }

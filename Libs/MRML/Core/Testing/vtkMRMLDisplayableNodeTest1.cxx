@@ -31,9 +31,15 @@ public:
 
   // Return the raw list of display nodes. Elements can be 0 even if the node
   // associated to the node ID exists in the scene.
-  const std::vector<vtkMRMLDisplayNode*>& GetInternalDisplayNodes()
+  const std::vector<vtkMRMLDisplayNode*> GetInternalDisplayNodes()
     {
-    return this->GetDisplayNodes();
+    std::vector<vtkMRMLDisplayNode*> InternalDisplayNodes;
+    int ndnodes = this->GetNumberOfDisplayNodes();
+    for (unsigned int i=0; i<ndnodes; i++)
+      {
+      InternalDisplayNodes.push_back(this->GetNthDisplayNode(i));
+      }
+    return InternalDisplayNodes;
     }
   virtual vtkMRMLNode* CreateNodeInstance()
     {
@@ -493,7 +499,7 @@ bool TestRemoveDisplayableNode()
   // nodes.
   vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(0);
   std::vector<vtkMRMLDisplayNode*> displayNodes =
-    displayableNode->GetDisplayNodes();
+    displayableNode->GetInternalDisplayNodes();
 
   if (displayableNode->GetNumberOfDisplayNodes() != 3 ||
       displayNode != 0 ||
