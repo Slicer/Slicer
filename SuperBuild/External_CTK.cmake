@@ -66,7 +66,7 @@ if(NOT DEFINED CTK_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/CTK.git"
-    GIT_TAG "d7fb8187145694c6a2e40bbd95fe0faad886e472"
+    GIT_TAG "88690f783e6af513ea88a730307762232faa492c"
     "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build

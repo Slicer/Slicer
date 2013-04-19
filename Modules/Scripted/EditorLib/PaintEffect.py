@@ -62,7 +62,7 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.radiusLabel.setToolTip("Set the radius of the paint brush in millimeters")
     self.radiusFrame.layout().addWidget(self.radiusLabel)
     self.widgets.append(self.radiusLabel)
-    self.radiusSpinBox = qt.QDoubleSpinBox(self.radiusFrame)
+    self.radiusSpinBox = ctk.ctkSpinBox(self.radiusFrame)
     self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
     self.radiusSpinBox.minimum = self.minimumRadius
     self.radiusSpinBox.maximum = self.maximumRadius

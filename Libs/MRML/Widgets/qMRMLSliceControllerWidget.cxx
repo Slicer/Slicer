@@ -20,8 +20,6 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDoubleSpinBox>
-#include <QSpinBox>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -35,6 +33,7 @@
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
 #include <ctkSliderWidget.h>
+#include <ctkSpinBox.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
@@ -357,9 +356,9 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
 
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
-  QDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
+  ctkSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
   spinBox->setFrame(false);
-  spinBox->setButtonSymbols(QAbstractSpinBox::NoButtons);
+  spinBox->spinBox()->setButtonSymbols(QAbstractSpinBox::NoButtons);
   spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
   int targetHeight = spinBox->parentWidget()->layout()->sizeHint().height();//setSizeConstraint(QLayout::SetMinimumSize);
   int fontHeight = spinBox->fontMetrics().height();
@@ -504,7 +503,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   QMenu* sliceSpacingManualMode = new QMenu(tr("Manual spacing"), this->SliceSpacingMenu);
   sliceSpacingManualMode->setObjectName("slicerSpacingManualMode");
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
-  this->SliceSpacingSpinBox = new QDoubleSpinBox(sliceSpacingManualMode);
+  this->SliceSpacingSpinBox = new ctkSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
   this->SliceSpacingSpinBox->setRange(0.001, VTK_LARGE_FLOAT);
   this->SliceSpacingSpinBox->setSingleStep(0.1);
@@ -522,7 +521,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   QWidget* sliceFOVWidget = new QWidget(this->SliceSpacingMenu);
   QHBoxLayout* sliceFOVLayout = new QHBoxLayout(sliceFOVWidget);
   sliceFOVLayout->setContentsMargins(0,0,0,0);
-  this->SliceFOVSpinBox = new QDoubleSpinBox(sliceFOVWidget);
+  this->SliceFOVSpinBox = new ctkSpinBox(sliceFOVWidget);
   this->SliceFOVSpinBox->setRange(0.01, 10000.);
   this->SliceFOVSpinBox->setValue(250.);
   QObject::connect(this->SliceFOVSpinBox, SIGNAL(valueChanged(double)),
@@ -567,13 +566,13 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   QWidget* fovSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* fovSliceModelLayout = new QHBoxLayout(fovSliceModel);
 
-  this->SliceModelFOVXSpinBox = new QDoubleSpinBox(fovSliceModel);
+  this->SliceModelFOVXSpinBox = new ctkSpinBox(fovSliceModel);
   this->SliceModelFOVXSpinBox->setRange(0.01, 10000.);
   this->SliceModelFOVXSpinBox->setValue(UVWExtents[0]);
   QObject::connect(this->SliceModelFOVXSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceModelFOVX(double)));
 
-  this->SliceModelFOVYSpinBox = new QDoubleSpinBox(fovSliceModel);
+  this->SliceModelFOVYSpinBox = new ctkSpinBox(fovSliceModel);
   this->SliceModelFOVYSpinBox->setRange(0.01, 10000.);
   this->SliceModelFOVYSpinBox->setValue(UVWExtents[1]);
   QObject::connect(this->SliceModelFOVYSpinBox, SIGNAL(valueChanged(double)),
@@ -617,13 +616,13 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   QWidget* originSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* originSliceModelLayout = new QHBoxLayout(originSliceModel);
 
-  this->SliceModelOriginXSpinBox = new QDoubleSpinBox(originSliceModel);
+  this->SliceModelOriginXSpinBox = new ctkSpinBox(originSliceModel);
   this->SliceModelOriginXSpinBox->setRange(-1000., 1000.);
   this->SliceModelOriginXSpinBox->setValue(UVWOrigin[0]);
   QObject::connect(this->SliceModelOriginXSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceModelOriginX(double)));
 
-  this->SliceModelOriginYSpinBox = new QDoubleSpinBox(originSliceModel);
+  this->SliceModelOriginYSpinBox = new ctkSpinBox(originSliceModel);
   this->SliceModelOriginYSpinBox->setRange(-1000, 1000.);
   this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
   QObject::connect(this->SliceModelOriginYSpinBox, SIGNAL(valueChanged(double)),
@@ -864,7 +863,6 @@ void qMRMLSliceControllerWidgetPrivate::updateWidgetFromMRMLSliceNode()
   wasBlocked = this->SliceModelOriginYSpinBox->blockSignals(true);
   this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
   this->SliceModelOriginYSpinBox->blockSignals(wasBlocked);
-  
 }
 
 // --------------------------------------------------------------------------

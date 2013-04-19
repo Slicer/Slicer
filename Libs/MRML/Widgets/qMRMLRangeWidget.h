@@ -30,7 +30,7 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLRangeSliderPrivate;
-class QDoubleSpinBox;
+class ctkSpinBox;
 
 /// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
 /// It adds QSpinBoxes (in a menu) for controlling the range of the values
@@ -62,8 +62,8 @@ protected slots:
   void updateSymmetricMoves(bool symmetric);
 
 protected:
-  QDoubleSpinBox* MinSpinBox;
-  QDoubleSpinBox* MaxSpinBox;
+  ctkSpinBox* MinSpinBox;
+  ctkSpinBox* MaxSpinBox;
 };
 
 /// qMRMLDoubleRangeSlider is a wrapper around a ctkDoubleRangeSlider

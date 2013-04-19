@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 #include <QMenu>
 #include <QStyleOptionSlider>
@@ -27,6 +26,7 @@
 #include <QWidgetAction>
 
 // CTK includes
+#include <ctkSpinBox.h>
 #include "qMRMLRangeWidget.h"
 
 // --------------------------------------------------------------------------
@@ -40,7 +40,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   rangeWidget->setLayout(rangeLayout);
   rangeLayout->setContentsMargins(0,0,0,0);
 
-  this->MinSpinBox = new QDoubleSpinBox(rangeWidget);
+  this->MinSpinBox = new ctkSpinBox(rangeWidget);
   this->MinSpinBox->setPrefix("Min: ");
   this->MinSpinBox->setRange(-1000000., 1000000.);
   this->MinSpinBox->setValue(this->minimum());
@@ -48,7 +48,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
           this, SLOT(updateRange()));
   rangeLayout->addWidget(this->MinSpinBox);
 
-  this->MaxSpinBox = new QDoubleSpinBox(rangeWidget);
+  this->MaxSpinBox = new ctkSpinBox(rangeWidget);
   this->MaxSpinBox->setPrefix("Max: ");
   this->MaxSpinBox->setRange(-1000000., 1000000.);
   this->MaxSpinBox->setValue(this->maximum());

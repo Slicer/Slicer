@@ -20,7 +20,6 @@
 
 // QT includes
 #include <QApplication>
-#include <QDoubleSpinBox>
 #include <QEvent>
 #include <QHBoxLayout>
 
@@ -30,6 +29,7 @@
 #include <ctkDoubleSlider.h>
 #include <ctkSliderWidget.h>
 #include <ctkPopupWidget.h>
+#include <ctkSpinBox.h>
 
 // qMRML includes
 #include "qMRMLColorModel.h"
@@ -39,7 +39,7 @@
 qMRMLItemDelegate::qMRMLItemDelegate(QObject *parent)
   : QStyledItemDelegate(parent)
 {
-  this->DummySpinBox = new QDoubleSpinBox(0);
+  this->DummySpinBox = new ctkSpinBox(0);
   this->DummySpinBox->setDecimals(2);
   this->DummySpinBox->setRange(0., 1.);
 }
@@ -131,7 +131,7 @@ QWidget *qMRMLItemDelegate
     // ctkSliderWidget::setPopupSlider(true)
     slider->setParent(parent);
 
-    QDoubleSpinBox *spinBox = slider->spinBox();
+    ctkSpinBox *spinBox = slider->spinBox();
     spinBox->setFrame(false);
     /*
     //spinBox->setParent(parent);

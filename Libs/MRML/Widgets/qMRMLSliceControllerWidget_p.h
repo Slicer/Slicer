@@ -39,12 +39,11 @@
 #include <vtkSmartPointer.h>
 #include <vtkWeakPointer.h>
 
-class QSpinBox;
-class QDoubleSpinBox;
-class QSpinBox;
 class ctkSignalMapper;
 class ctkSliderWidget;
+class ctkSpinBox;
 class ctkVTKSliceView;
+class QSpinBox;
 class vtkMRMLSliceNode;
 class vtkObject;
 
@@ -151,19 +150,19 @@ public:
   QMenu*                              SliceSpacingMenu;
   QMenu*                              SliceModelMenu;
 
-  QDoubleSpinBox*                     SliceSpacingSpinBox;
-  QDoubleSpinBox*                     SliceFOVSpinBox;
+  ctkSpinBox*                         SliceSpacingSpinBox;
+  ctkSpinBox*                         SliceFOVSpinBox;
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
 
-  QDoubleSpinBox*                     SliceModelFOVXSpinBox;
-  QDoubleSpinBox*                     SliceModelFOVYSpinBox;
+  ctkSpinBox*                         SliceModelFOVXSpinBox;
+  ctkSpinBox*                         SliceModelFOVYSpinBox;
 
-  QDoubleSpinBox*                     SliceModelOriginXSpinBox;
-  QDoubleSpinBox*                     SliceModelOriginYSpinBox;
+  ctkSpinBox*                         SliceModelOriginXSpinBox;
+  ctkSpinBox*                         SliceModelOriginYSpinBox;
 
-  QSpinBox*                    SliceModelDimensionXSpinBox;
-  QSpinBox*                    SliceModelDimensionYSpinBox;
+  QSpinBox*                           SliceModelDimensionXSpinBox;
+  QSpinBox*                           SliceModelDimensionYSpinBox;
 
   QSize                               ViewSize;
 };

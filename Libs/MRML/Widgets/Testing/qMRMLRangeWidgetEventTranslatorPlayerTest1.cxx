@@ -45,7 +45,7 @@ void checkFinalWidgetState(void* data)
   {
   qMRMLRangeWidget* widget = reinterpret_cast<qMRMLRangeWidget*>(data);
 
-  CTKCOMPARE(widget->minimumValue(), 14.00);
+  CTKCOMPARE(widget->minimumValue(), 0.00);
   CTKCOMPARE(widget->maximumValue(), 85.00);
   }
 }

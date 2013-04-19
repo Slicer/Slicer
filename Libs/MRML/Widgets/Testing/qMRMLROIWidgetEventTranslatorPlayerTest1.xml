@@ -55,9 +55,9 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/1qMRMLDoubleRangeSlider0" command="set_min_double" arguments="-31"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/1qMRMLDoubleRangeSlider0" command="set_min_double" arguments="-32"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/1qMRMLDoubleRangeSlider0" command="set_min_double" arguments="-33"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox" command="set_double" arguments="9.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox" command="set_double" arguments="8.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox" command="set_double" arguments="7.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="9.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="8.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/LRRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="7.00"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/PARangeWidget/1qMRMLDoubleRangeSlider0" command="set_max_double" arguments="11"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/PARangeWidget/1qMRMLDoubleRangeSlider0" command="set_max_double" arguments="12"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLROIWidget/PARangeWidget/1qMRMLDoubleRangeSlider0" command="set_max_double" arguments="13"/>

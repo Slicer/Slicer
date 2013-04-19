@@ -8,47 +8,47 @@
         <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000003e40000018600000004000000040000000800000008fc00000000"/>
     </settings>
     <events>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="4"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="5"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="6"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="7"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="8"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="9"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox0" command="set_double" arguments="10"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="1"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="0"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="1"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="2"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="4"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="2"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox1" command="set_double" arguments="20"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="set_double" arguments="513"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="set_double" arguments="514"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="set_double" arguments="515"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1QDoubleSpinBox2" command="set_double" arguments="516"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="1"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="2"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="3"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="4"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="5"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="6"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="7"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="8"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="9"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="10"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="11"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="12"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="13"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="14"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="15"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="16"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="17"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox0/1QDoubleSpinBox0" command="set_double" arguments="10"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="0"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox1/1QDoubleSpinBox0" command="set_double" arguments="20"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="513"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="514"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="515"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageSpacingWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="516"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="1"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="2"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="3"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="4"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="5"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="6"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="7"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="8"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="9"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="10"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="11"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="12"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="13"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="14"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="15"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="16"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="17"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/CenterVolumePushButton" command="activate" arguments=""/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1QDoubleSpinBox2" command="set_double" arguments="16"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/ImageOriginWidget/1ctkSpinBox2/1QDoubleSpinBox0" command="set_double" arguments="16"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/LabelMapCheckBox" command="set_boolean" arguments="true"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mousePress" arguments="1,1,0,31,15,"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/qMRMLVolumeInfoWidget/WindowLevelPresetsListWidget" command="mouseRelease" arguments="1,0,0,31,15,"/>

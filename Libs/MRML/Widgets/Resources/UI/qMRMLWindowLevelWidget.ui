@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QDoubleSpinBox" name="WindowSpinBox">
+    <widget class="ctkSpinBox" name="WindowSpinBox">
      <property name="prefix">
       <string>W: </string>
      </property>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item row="0" column="4">
-    <widget class="QDoubleSpinBox" name="LevelSpinBox">
+    <widget class="ctkSpinBox" name="LevelSpinBox">
      <property name="prefix">
       <string>L: </string>
      </property>
@@ -70,7 +70,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QDoubleSpinBox" name="MinSpinBox">
+    <widget class="ctkSpinBox" name="MinSpinBox">
      <property name="prefix">
       <string>Min:</string>
      </property>
@@ -80,7 +80,7 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QDoubleSpinBox" name="MaxSpinBox">
+    <widget class="ctkSpinBox" name="MaxSpinBox">
      <property name="prefix">
       <string>Max:</string>
      </property>
@@ -96,6 +96,11 @@
    <class>ctkDoubleRangeSlider</class>
    <extends>QWidget</extends>
    <header>ctkDoubleRangeSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

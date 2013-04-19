@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QDoubleSpinBox" name="SurfaceAreaDoubleSpinBox">
+    <widget class="ctkSpinBox" name="SurfaceAreaDoubleSpinBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -45,7 +45,7 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="VolumeAreaDoubleSpinBox">
+    <widget class="ctkSpinBox" name="VolumeAreaDoubleSpinBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -269,6 +269,11 @@
    <class>ctkExpandButton</class>
    <extends>QToolButton</extends>
    <header>ctkExpandButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

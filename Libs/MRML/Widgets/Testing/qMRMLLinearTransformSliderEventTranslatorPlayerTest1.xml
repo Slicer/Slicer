@@ -58,13 +58,13 @@
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="50"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="51"/>
         <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/Slider/1QSlider0" command="set_int" arguments="52"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="53.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="54.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="55.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="56.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="57.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="58.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="59.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox" command="set_double" arguments="60.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="53.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="54.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="55.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="56.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="57.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="58.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="59.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkSliderWidget/SpinBox/1QDoubleSpinBox0" command="set_double" arguments="60.00"/>
     </events>
 </QtTesting>

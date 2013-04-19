@@ -43,7 +43,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
     self.toleranceLabel.setToolTip("Set the tolerance of the wand in terms of background pixel values")
     self.toleranceFrame.layout().addWidget(self.toleranceLabel)
     self.widgets.append(self.toleranceLabel)
-    self.toleranceSpinBox = qt.QDoubleSpinBox(self.toleranceFrame)
+    self.toleranceSpinBox = ctk.ctkSpinBox(self.toleranceFrame)
     self.toleranceSpinBox.setToolTip("Set the tolerance of the wand in terms of background pixel values")
     self.toleranceSpinBox.minimum = 0
     self.toleranceSpinBox.maximum = 1000
@@ -59,7 +59,7 @@ class WandEffectOptions(LabelEffect.LabelEffectOptions):
     self.maxPixelsLabel.setToolTip("Set the maxPixels for each click")
     self.maxPixelsFrame.layout().addWidget(self.maxPixelsLabel)
     self.widgets.append(self.maxPixelsLabel)
-    self.maxPixelsSpinBox = qt.QDoubleSpinBox(self.maxPixelsFrame)
+    self.maxPixelsSpinBox = ctk.ctkSpinBox(self.maxPixelsFrame)
     self.maxPixelsSpinBox.setToolTip("Set the maxPixels for each click")
     self.maxPixelsSpinBox.minimum = 1
     self.maxPixelsSpinBox.maximum = 100000

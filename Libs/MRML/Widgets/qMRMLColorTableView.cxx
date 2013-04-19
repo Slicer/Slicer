@@ -19,7 +19,6 @@
 ==============================================================================*/
 
 // QT includes
-#include <QDoubleSpinBox>
 #include <QHeaderView>
 #include <QSortFilterProxyModel>
 

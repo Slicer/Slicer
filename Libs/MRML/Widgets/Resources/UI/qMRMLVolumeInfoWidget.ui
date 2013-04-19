@@ -194,7 +194,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="MinScalarDoubleSpinBox">
+      <widget class="ctkSpinBox" name="MinScalarDoubleSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -220,7 +220,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="MaxScalarDoubleSpinBox">
+      <widget class="ctkSpinBox" name="MaxScalarDoubleSpinBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -294,6 +294,11 @@
    <class>ctkMatrixWidget</class>
    <extends>QWidget</extends>
    <header>ctkMatrixWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

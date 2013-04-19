@@ -287,7 +287,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="AngleAnnotationScaleSpinBox"/>
+             <widget class="ctkSpinBox" name="AngleAnnotationScaleSpinBox"/>
             </item>
            </layout>
           </widget>
@@ -351,6 +351,11 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

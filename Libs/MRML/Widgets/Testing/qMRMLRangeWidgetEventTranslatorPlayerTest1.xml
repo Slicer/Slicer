@@ -8,19 +8,19 @@
         <state widget="MainWindow" command="mainWindowState" arguments="000000ff00000000fd00000000000002650000013f00000004000000040000000800000008fc00000000"/>
     </settings>
     <events>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="98.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="97.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="96.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="95.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="94.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="93.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="92.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="91.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="90.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="89.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="88.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="87.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="86.00"/>
-        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox" command="set_double" arguments="85.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="98.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="97.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="96.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="95.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="94.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="93.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="92.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="91.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="90.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="89.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="88.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="87.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="86.00"/>
+        <event widget="ctkEventTranslatorPlayerWidget/centralwidget/stackedWidget/ctkRangeWidget/MaximumSpinBox/1QDoubleSpinBox0" command="set_double" arguments="85.00"/>
     </events>
 </QtTesting>

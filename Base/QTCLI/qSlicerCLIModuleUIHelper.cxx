@@ -12,10 +12,10 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QRadioButton>
+#include <QSpinBox>
 #include <QToolButton>
 
 // CTK includes
@@ -23,6 +23,7 @@
 #include <ctkFlowLayout.h>
 #include <ctkPathLineEdit.h>
 #include <ctkSliderWidget.h>
+#include <ctkSpinBox.h>
 
 // qMRML includes
 #include <qMRMLNodeComboBox.h>
@@ -87,9 +88,9 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper()
 WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, QSpinBox, value, setValue, Int, valueChanged(int));
 WIDGET_VALUE_WRAPPER(IntegerWithConstraints, ctkSliderWidget, value, setValue, Int, valueChanged(double));
 WIDGET_VALUE_WRAPPER(Boolean, QCheckBox, isChecked, setChecked, Bool, toggled(bool));
-WIDGET_VALUE_WRAPPER(FloatWithoutConstraints, QDoubleSpinBox, value, setValue, Double, valueChanged(double));
+WIDGET_VALUE_WRAPPER(FloatWithoutConstraints, ctkSpinBox, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(FloatWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
-WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, QDoubleSpinBox, value, setValue, Double, valueChanged(double));
+WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkSpinBox, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(DoubleWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(String, QLineEdit, text, setText, String, textChanged(const QString&));
 WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
@@ -354,7 +355,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
   QWidget * widget = 0;
   if (!withConstraints)
     {
-    QDoubleSpinBox * spinBox = new QDoubleSpinBox;
+    ctkSpinBox * spinBox = new ctkSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
@@ -425,7 +426,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
   QWidget * widget = 0;
   if (!withConstraints)
     {
-    QDoubleSpinBox * spinBox = new QDoubleSpinBox;
+    ctkSpinBox * spinBox = new ctkSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);

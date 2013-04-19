@@ -215,10 +215,10 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QDoubleSpinBox" name="OnPlaneXdoubleSpinBox"/>
+             <widget class="ctkSpinBox" name="OnPlaneXdoubleSpinBox"/>
             </item>
             <item>
-             <widget class="QDoubleSpinBox" name="OnPlaneYdoubleSpinBox"/>
+             <widget class="ctkSpinBox" name="OnPlaneYdoubleSpinBox"/>
             </item>
            </layout>
           </widget>
@@ -544,6 +544,11 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
