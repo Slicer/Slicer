@@ -92,16 +92,6 @@ protected:
   ///  - observe the scene
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  ///
-  /// This property controls whether the removal from the scene of a model node
-  /// automatically removes its display and storage nodes or not.
-  /// This automatic behavior (true by default) is used to prevent the user
-  /// from seeing a model (display node) in a 3D view after a model node
-  /// has been deleted/removed (delete from a tree view qt widget).
-  /// If the nodes were not removed/deleted, the display and storage nodes
-  /// would be zombie nodes in the scene with no one pointing on them.
-  bool AutoRemoveDisplayAndStorageNodes;
-
   //
   vtkMRMLModelNode *ActiveModelNode;
 

@@ -19,7 +19,7 @@
 ==============================================================================*/
 
 // Models logic
-#include "vtkSlicerModelsLogic.h"
+#include "vtkSlicerDataModuleLogic.h"
 
 // MRML includes
 #include <vtkMRMLModelDisplayNode.h>
@@ -34,7 +34,7 @@ bool testAutoRemoveModelFirst();
 bool testAutoRemoveDisplayFirst();
 
 //-----------------------------------------------------------------------------
-int vtkSlicerModelsLogicAutoRemoveTest( int , char * [] )
+int vtkSlicerDataLogicAutoRemoveTest( int , char * [] )
 {
   bool res = true;
   res = testAutoRemoveModelFirst() && res;
@@ -45,7 +45,7 @@ int vtkSlicerModelsLogicAutoRemoveTest( int , char * [] )
 //-----------------------------------------------------------------------------
 bool testAutoRemoveModelFirst()
 {
-  vtkNew<vtkSlicerModelsLogic> modelsLogic;
+  vtkNew<vtkSlicerDataModuleLogic> modelsLogic;
 
   vtkNew<vtkMRMLScene> scene;
   modelsLogic->SetMRMLScene(scene.GetPointer());
@@ -66,7 +66,7 @@ bool testAutoRemoveModelFirst()
 
   scene->RemoveNode(modelNode.GetPointer());
 
-  // vtkSlicerModelsLogic should have remove the storage and display
+  // vtkSlicerDataModuleLogic should have remove the storage and display
   // nodes from the scene: no zombie.
   if (scene->IsNodePresent(displayNode1.GetPointer()) ||
       scene->IsNodePresent(displayNode2.GetPointer()) ||
@@ -96,7 +96,7 @@ bool testAutoRemoveDisplayFirst()
 {
   std::cout << "Start RemoveModel display first" << std::endl;
 
-  vtkNew<vtkSlicerModelsLogic> modelsLogic;
+  vtkNew<vtkSlicerDataModuleLogic> modelsLogic;
 
   vtkNew<vtkMRMLScene> scene;
   modelsLogic->SetMRMLScene(scene.GetPointer());
@@ -120,7 +120,7 @@ bool testAutoRemoveDisplayFirst()
   std::cout << "removed done" << std::endl;
   scene->RemoveNode(modelNode.GetPointer());
 
-  // vtkSlicerModelsLogic should have remove the storage and display
+  // vtkSlicerDataModuleLogic should have remove the storage and display
   // nodes from the scene: no zombie.
   if (scene->IsNodePresent(displayNode1.GetPointer()) ||
       scene->IsNodePresent(displayNode2.GetPointer()) ||

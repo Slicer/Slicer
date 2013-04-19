@@ -42,7 +42,6 @@ vtkCxxSetObjectMacro(vtkSlicerModelsLogic, ColorLogic, vtkMRMLColorLogic);
 //----------------------------------------------------------------------------
 vtkSlicerModelsLogic::vtkSlicerModelsLogic()
 {
-  this->AutoRemoveDisplayAndStorageNodes = true;
   this->ActiveModelNode = NULL;
   this->ColorLogic = NULL;
 }
@@ -223,13 +222,6 @@ vtkMRMLModelNode* vtkSlicerModelsLogic::AddModel (const char* filename)
       {
       vtkErrorMacro("AddModel: error reading " << filename);
       this->GetMRMLScene()->RemoveNode(modelNode);
-      // display and storage nodes should be automatically removed
-      // when the model node is removed from the scene
-      if (!this->AutoRemoveDisplayAndStorageNodes)
-        {
-        this->GetMRMLScene()->RemoveNode(storageNode);
-        this->GetMRMLScene()->RemoveNode(displayNode);
-        }
       modelNode = NULL;
       }
     }
@@ -292,8 +284,6 @@ void vtkSlicerModelsLogic::PrintSelf(ostream& os, vtkIndent indent)
   this->vtkObject::PrintSelf(os, indent);
 
   os << indent << "vtkSlicerModelsLogic:             " << this->GetClassName() << "\n";
-  os << indent << "AutoRemoveDisplayAndStorageNode: " <<
-    (AutoRemoveDisplayAndStorageNodes ? "On" : "Off") << "\n";
   os << indent << "ActiveModelNode: " <<
     (this->ActiveModelNode ? this->ActiveModelNode->GetName() : "(none)") << "\n";
   if (this->ColorLogic)
