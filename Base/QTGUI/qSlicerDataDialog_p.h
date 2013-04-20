@@ -53,9 +53,6 @@ protected:
   void addFile(const QFileInfo& file);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
 
-  void dragEnterEvent(QDragEnterEvent *event);
-  void dropEvent(QDropEvent *event);
-
 private:
   friend class qSlicerDataDialog;
 };

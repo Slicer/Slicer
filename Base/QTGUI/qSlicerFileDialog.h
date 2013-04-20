@@ -24,6 +24,8 @@
 // Qt includes
 #include <QObject>
 #include <QStringList>
+class QDragEnterEvent;
+class QDropEvent;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -63,7 +65,20 @@ public:
   static QStringList nameFilters(qSlicerIO::IOFileType fileType =
                                  QString("NoFile"));
 
-//private:
+  /// Accept or ignore drops.
+  /// Can be reimplemented in subclass to support drag&drop.
+  /// Do nothing by default.
+  /// \sa dropEvent()
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+
+  /// Handle drop events: populate the dialog with the droped mime data.
+  /// Can be reimplemented in subclass to support drag&drop.
+  /// Do nothing by default.
+  /// If it does something, acceptProposedAction() or accept() must be called.
+  /// \sa dragEnterEvent()
+  virtual void dropEvent(QDropEvent *event);
+
+private:
 //  Q_DECLARE_PRIVATE(qSlicerFileDialog);
   Q_DISABLE_COPY(qSlicerFileDialog);
 };

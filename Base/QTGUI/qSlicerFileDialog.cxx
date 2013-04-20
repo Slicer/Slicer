@@ -72,6 +72,18 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerFileDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+  Q_UNUSED(event);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerFileDialog::dropEvent(QDropEvent *event)
+{
+  Q_UNUSED(event);
+}
+
+//-----------------------------------------------------------------------------
 class qSlicerStandardFileDialogPrivate
 {
 public:

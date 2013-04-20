@@ -64,10 +64,17 @@ public:
   virtual bool loadNodes(const QList<qSlicerIO::IOProperties>& files,
                          vtkCollection* loadedNodes = 0);
 
-  /// A dragEnterEvent has been forwarded to the IOManager;
-  /// it checks whether the dragEnterEvent is accepted or not by itself.
+  /// dragEnterEvents can be forwarded to the IOManager, if a registered dialog
+  /// supports it, the event is accepted, otherwise ignored.
+  /// \sa dropEvent()
   void dragEnterEvent(QDragEnterEvent *event);
-  /// Create a qSlicerDataDialog and forward the drop event to the dialog.
+
+  /// Search, in the list of registered readers, the first dialog that
+  /// handles the drop event. If the event is accepted by the dialog (
+  /// usually the is also used to populate the dialog), the manager opens the dialog,
+  /// otherwise the next dialog is tested. The order in which dialogs are
+  /// being tested is the opposite of the dialogs are registered.
+  /// \sa dragEnterEvent()
   void dropEvent(QDropEvent *event);
 
 public slots:

@@ -1,6 +1,7 @@
 /// Qt includes
 #include <QDebug>
 #include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QFileDialog>
 #include <QMetaProperty>
 #include <QProgressDialog>
@@ -42,10 +43,13 @@ public:
                                  qSlicerFileDialog::IOAction,
                                  const qSlicerIO::IOProperties&);
 
+  qSlicerFileDialog* findDialog(qSlicerIO::IOFileType fileType,
+                                qSlicerFileDialog::IOAction)const;
+
   QStringList                       History;
   QList<QUrl>                       Favorites;
-  QMap<QString, qSlicerFileDialog*> ReadDialogs;
-  QMap<QString, qSlicerFileDialog*> WriteDialogs;
+  QList<qSlicerFileDialog*>         ReadDialogs;
+  QList<qSlicerFileDialog*>         WriteDialogs;
 
   QSharedPointer<ctkScreenshotDialog> ScreenshotDialog;
   QProgressDialog*                    ProgressDialog;
@@ -160,6 +164,23 @@ createUniqueDialogName(qSlicerIO::IOFileType fileType,
 }
 
 //-----------------------------------------------------------------------------
+qSlicerFileDialog* qSlicerIOManagerPrivate
+::findDialog(qSlicerIO::IOFileType fileType,
+             qSlicerFileDialog::IOAction action)const
+{
+  const QList<qSlicerFileDialog*>& dialogs =
+    (action == qSlicerFileDialog::Read)? this->ReadDialogs : this->WriteDialogs;
+  foreach(qSlicerFileDialog* dialog, dialogs)
+    {
+    if (dialog->fileType() == fileType)
+      {
+      return dialog;
+      }
+    }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerIOManager methods
 
 //-----------------------------------------------------------------------------
@@ -205,8 +226,7 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
     QString name = d->createUniqueDialogName(fileType, action, properties);
     properties["objectName"] = name;
     }
-  qSlicerFileDialog* dialog = action == qSlicerFileDialog::Read ? 
-    d->ReadDialogs[fileType] : d->WriteDialogs[fileType];
+  qSlicerFileDialog* dialog = d->findDialog(fileType, action);
   if (dialog == 0)
     {
     deleteDialog = true;
@@ -227,18 +247,30 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
 //---------------------------------------------------------------------------
 void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
 {
-  if (event->mimeData()->hasFormat("text/uri-list"))
+  Q_D(qSlicerIOManager);
+  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
     {
-    event->acceptProposedAction();
+    dialog->dragEnterEvent(event);
+    if (event->isAccepted())
+      {
+      break;
+      }
     }
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerIOManager::dropEvent(QDropEvent *event)
 {
-  qSlicerDataDialog* dataDialog = new qSlicerDataDialog(this);
-  dataDialog->dropEvent(event);
-  dataDialog->exec();
+  Q_D(qSlicerIOManager);
+  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+    {
+    dialog->dropEvent(event);
+    if (event->isAccepted())
+      {
+      dialog->exec();
+      break;
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -279,24 +311,24 @@ void qSlicerIOManager::registerDialog(qSlicerFileDialog* dialog)
 {
   Q_D(qSlicerIOManager);
   Q_ASSERT(dialog);
+  qSlicerFileDialog* existingDialog =
+    d->findDialog(dialog->fileType(), dialog->action());
+  if (existingDialog)
+    {
+    d->ReadDialogs.removeAll(existingDialog);
+    d->WriteDialogs.removeAll(existingDialog);
+    existingDialog->deleteLater();
+    }
   if (dialog->action() == qSlicerFileDialog::Read)
     {
-    if (d->ReadDialogs[dialog->fileType()])
-      {
-      delete d->ReadDialogs[dialog->fileType()];
-      }
-    d->ReadDialogs[dialog->fileType()] = dialog;
+    d->ReadDialogs.prepend(dialog);
     }
   else if (dialog->action() == qSlicerFileDialog::Write)
     {
-    if (d->WriteDialogs[dialog->fileType()])
-      {
-      delete d->WriteDialogs[dialog->fileType()];
-      }
-    d->WriteDialogs[dialog->fileType()] = dialog;
+    d->WriteDialogs.prepend(dialog);
     }
   else
-    {      
+    {
     Q_ASSERT(dialog->action() == qSlicerFileDialog::Read ||
              dialog->action() == qSlicerFileDialog::Write);
     }

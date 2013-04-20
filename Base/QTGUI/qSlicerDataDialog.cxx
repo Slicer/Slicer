@@ -188,47 +188,6 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   this->FileWidget->setSortingEnabled(sortingEnabled);
 }
 
-//---------------------------------------------------------------------------
-void qSlicerDataDialogPrivate::dragEnterEvent(QDragEnterEvent *event)
-{
-  if (event->mimeData()->hasFormat("text/uri-list"))
-    {
-    event->acceptProposedAction();
-    }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerDataDialogPrivate::dropEvent(QDropEvent *event)
-{
-  QList<QUrl> urls = event->mimeData()->urls();
-  if (urls.isEmpty())
-    {
-    return;
-    }
-
-  QString localPath;
-  QFileInfo pathInfo;
-  foreach(QUrl url, urls)
-    {
-    if (!url.isValid() || url.isEmpty())
-      {
-      continue;
-      }
-
-    localPath = url.toLocalFile(); // convert QUrl to local path
-    pathInfo.setFile(localPath); // information about the path
-
-    if (pathInfo.isDir()) // if it is a directory we add the files to the dialog
-      {
-      this->addDirectory(QDir(localPath));
-      }
-    else if (pathInfo.isFile()) // if it is a file we simply add the file
-      {
-      this->addFile(pathInfo);
-      }
-    }
-}
-
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::reset()
 {
@@ -398,12 +357,46 @@ qSlicerFileDialog::IOAction qSlicerDataDialog::action()const
   return qSlicerFileDialog::Read;
 }
 
+//---------------------------------------------------------------------------
+void qSlicerDataDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    {
+    event->accept();
+    }
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerDataDialog::dropEvent(QDropEvent *event)
 {
   Q_D(qSlicerDataDialog);
+  bool pathAdded = false;
+  foreach(QUrl url, event->mimeData()->urls())
+    {
+    if (!url.isValid() || url.isEmpty())
+      {
+      continue;
+      }
 
-  d->dropEvent(event);
+    QString localPath = url.toLocalFile(); // convert QUrl to local path
+    QFileInfo pathInfo;
+    pathInfo.setFile(localPath); // information about the path
+
+    if (pathInfo.isDir()) // if it is a directory we add the files to the dialog
+      {
+      d->addDirectory(QDir(localPath));
+      pathAdded = true;
+      }
+    else if (pathInfo.isFile()) // if it is a file we simply add the file
+      {
+      d->addFile(pathInfo);
+      pathAdded = true;
+      }
+    }
+  if (pathAdded)
+    {
+    event->acceptProposedAction();
+    }
 }
 
 //-----------------------------------------------------------------------------

@@ -37,14 +37,15 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDataDialog : public qSlicerFileDialog
 {
   Q_OBJECT
 public:
-  typedef QObject Superclass;
+  typedef qSlicerFileDialog Superclass;
   qSlicerDataDialog(QObject* parent =0);
   virtual ~qSlicerDataDialog();
-  
+
   virtual qSlicerIO::IOFileType fileType()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
-  void dropEvent(QDropEvent *event);
+  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual void dropEvent(QDropEvent *event);
 
   /// run the dialog to select the file/files/directory
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
