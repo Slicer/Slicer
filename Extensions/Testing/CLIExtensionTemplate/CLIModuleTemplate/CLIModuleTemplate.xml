@@ -9,6 +9,8 @@
   <contributor>Julien Jomier (Kitware), Stephen Aylward (Kitware), Jean-Christophe Fillion-Robin (Kitware)</contributor>
   <acknowledgements>This work was partially funded by NIH grant 3P41RR013218-12S1</acknowledgements>
   <parameters>
+    <label>IO</label>
+    <description><![CDATA[Input/output parameters]]></description>
     <double>
       <name>sigma</name>
       <longflag>sigma</longflag>
@@ -17,8 +19,6 @@
       <description><![CDATA[Sigma value in physical units (e.g., mm) of the Gaussian kernel]]></description>
       <default>1.0</default>
     </double>
-    <label>IO</label>
-    <description><![CDATA[Input/output parameters]]></description>
     <image>
       <name>inputVolume</name>
       <label>Input Volume</label>

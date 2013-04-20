@@ -30,11 +30,10 @@
     <label>Filter Settings</label>
     <string-enumeration>
       <name>Type</name>
-      <label>Output Type:</label>
-      <description><![CDATA[Type for the new output volume.]]></description>
+      <label>Output Type</label>
+      <description><![CDATA[Scalar data type for the new output volume.]]></description>
+      <flag>-t</flag>
       <longflag>--type</longflag>
-      <flag>--t</flag>
-      <default>UnsignedChar</default>
       <element>Char</element>
       <element>UnsignedChar</element>
       <element>Short</element>
@@ -43,6 +42,7 @@
       <element>UnsignedInt</element>
       <element>Float</element>
       <element>Double</element>
+      <default>UnsignedChar</default>
     </string-enumeration>
   </parameters>
 </executable>
