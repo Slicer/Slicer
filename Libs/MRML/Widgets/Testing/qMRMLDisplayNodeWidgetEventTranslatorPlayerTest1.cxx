@@ -51,15 +51,10 @@ void checkFinalWidgetState(void* data)
   {
   qMRMLDisplayNodeWidget* widget = reinterpret_cast<qMRMLDisplayNodeWidget*>(data);
 
-  CTKCOMPARE(widget->opacity(), 0.55);
-//  CTKCOMPARE(widget->ambient(), 0.1);
-  CTKCOMPARE(widget->diffuse(), 0.8);
-  CTKCOMPARE(widget->specular(), 0.5);
   CTKCOMPARE(widget->visibility(), false);
   CTKCOMPARE(widget->selected(), true);
   CTKCOMPARE(widget->clipping(), true);
   CTKCOMPARE(widget->sliceIntersectionVisible(), true);
-  CTKCOMPARE(widget->backfaceCulling(), false);
   }
 }
 

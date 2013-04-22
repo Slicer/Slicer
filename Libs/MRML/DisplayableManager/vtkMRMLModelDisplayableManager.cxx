@@ -1452,28 +1452,35 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
           actor->GetMapper()->SetScalarRange(modelDisplayNode->GetScalarRange());
           }
           //// }
+        actor->GetProperty()->SetRepresentation(modelDisplayNode->GetRepresentation());
+        actor->GetProperty()->SetPointSize(modelDisplayNode->GetPointSize());
+        actor->GetProperty()->SetLineWidth(modelDisplayNode->GetLineWidth());
+        actor->GetProperty()->SetLighting(modelDisplayNode->GetLighting());
+        actor->GetProperty()->SetInterpolation(modelDisplayNode->GetInterpolation());
+        actor->GetProperty()->SetShading(modelDisplayNode->GetShading());
+        actor->GetProperty()->SetFrontfaceCulling(modelDisplayNode->GetFrontfaceCulling());
         actor->GetProperty()->SetBackfaceCulling(modelDisplayNode->GetBackfaceCulling());
 
-        if (modelDisplayNode)
+        if (modelDisplayNode->GetSelected())
           {
-          if (modelDisplayNode->GetSelected())
-            {
-            vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
-            actor->GetProperty()->SetColor(modelDisplayNode->GetSelectedColor());
-            actor->GetProperty()->SetAmbient(modelDisplayNode->GetSelectedAmbient());
-            actor->GetProperty()->SetSpecular(modelDisplayNode->GetSelectedSpecular());
-            }
-          else
-            {
-            //vtkWarningMacro("Model display node " << modelDisplayNode->GetName() << " is not selected...");
-            actor->GetProperty()->SetColor(modelDisplayNode->GetColor());
-            actor->GetProperty()->SetAmbient(modelDisplayNode->GetAmbient());
-            actor->GetProperty()->SetSpecular(modelDisplayNode->GetSpecular());
-            }
+          vtkDebugMacro("Model display node " << modelDisplayNode->GetName() << " is selected...");
+          actor->GetProperty()->SetColor(modelDisplayNode->GetSelectedColor());
+          actor->GetProperty()->SetAmbient(modelDisplayNode->GetSelectedAmbient());
+          actor->GetProperty()->SetSpecular(modelDisplayNode->GetSelectedSpecular());
+          }
+        else
+          {
+          //vtkWarningMacro("Model display node " << modelDisplayNode->GetName() << " is not selected...");
+          actor->GetProperty()->SetColor(modelDisplayNode->GetColor());
+          actor->GetProperty()->SetAmbient(modelDisplayNode->GetAmbient());
+          actor->GetProperty()->SetSpecular(modelDisplayNode->GetSpecular());
           }
         actor->GetProperty()->SetOpacity(modelDisplayNode->GetOpacity());
         actor->GetProperty()->SetDiffuse(modelDisplayNode->GetDiffuse());
         actor->GetProperty()->SetSpecularPower(modelDisplayNode->GetPower());
+        actor->GetProperty()->SetEdgeVisibility(modelDisplayNode->GetEdgeVisibility());
+        actor->GetProperty()->SetEdgeColor(modelDisplayNode->GetEdgeColor());
+
         if (modelDisplayNode->GetTextureImageData() != 0)
           {
           if (actor->GetTexture() == 0)

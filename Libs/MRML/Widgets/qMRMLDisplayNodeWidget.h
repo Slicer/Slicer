@@ -49,13 +49,6 @@ public:
   bool clipping()const;
   bool sliceIntersectionVisible()const;
   int sliceIntersectionThickness()const;
-  QColor color()const;
-  double opacity()const;
-  double ambient()const;
-  double diffuse()const;
-  double specular()const;
-  double specularPower()const;
-  bool backfaceCulling()const;
 
 public slots:
   /// Set the volume node to display
@@ -81,17 +74,9 @@ public slots:
   void setSliceIntersectionVisibleVisible(bool);
   void setSliceIntersectionThicknessVisible(bool);
 
-  /// Set the values on the display node
-  void setColor(const QColor&);
-  void setOpacity(double);
-  void setAmbient(double);
-  void setDiffuse(double);
-  void setSpecular(double);
-  void setSpecularPower(double);
-  void setBackfaceCulling(bool);
-
 protected slots:
   void updateWidgetFromMRML();
+  void updateNodeFromProperty();
 
 protected:
   QScopedPointer<qMRMLDisplayNodeWidgetPrivate> d_ptr;

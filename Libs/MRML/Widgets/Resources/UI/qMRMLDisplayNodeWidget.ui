@@ -6,139 +6,136 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>321</height>
+    <width>333</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Display Node</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <property name="labelAlignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-   </property>
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="VisibilityLabel">
-     <property name="text">
-      <string>&amp;Visible:</string>
-     </property>
-     <property name="buddy">
-      <cstring>VisibilityCheckBox</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="VisibilityCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="SelectedLabel">
-     <property name="text">
-      <string>&amp;Selected:</string>
-     </property>
-     <property name="buddy">
-      <cstring>SelectedCheckBox</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="SelectedCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="ClippingLabel">
-     <property name="text">
-      <string>&amp;Clip:</string>
-     </property>
-     <property name="buddy">
-      <cstring>ClippingCheckBox</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QCheckBox" name="ClippingCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="SliceIntersectionVisibilityLabel">
-     <property name="text">
-      <string>Slice &amp;Intersections Visible:</string>
-     </property>
-     <property name="buddy">
-      <cstring>SliceIntersectionVisibilityCheckBox</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="SliceIntersectionThicknessLabel">
-     <property name="text">
-      <string>Slice Intersections &amp;Thickness:</string>
-     </property>
-     <property name="buddy">
-      <cstring>SliceIntersectionThicknessSpinBox</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
-     <property name="minimum">
-      <number>0</number>
-     </property>
-     <property name="maximum">
-       <number>10</number>
-     </property>
-     <property name="suffix">
-      <string> px</string>
-     </property>
-     <property name="singleStep">
-       <number>1</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
+   <item row="0" column="0" colspan="2">
     <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
      <property name="title">
-      <string>&amp;Material Properties</string>
+      <string>Visibility</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="ctkMaterialPropertyWidget" name="MaterialPropertyWidget"/>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="VisibilityLabel">
+        <property name="text">
+         <string>&amp;Visible:</string>
+        </property>
+        <property name="buddy">
+         <cstring>VisibilityCheckBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="VisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="SelectedLabel">
+        <property name="text">
+         <string>&amp;Selected:</string>
+        </property>
+        <property name="buddy">
+         <cstring>SelectedCheckBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="SelectedCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ClippingLabel">
+        <property name="text">
+         <string>&amp;Clip:</string>
+        </property>
+        <property name="buddy">
+         <cstring>ClippingCheckBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="ClippingCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="SliceIntersectionVisibilityLabel">
+        <property name="text">
+         <string>Slice &amp;Intersections Visible:</string>
+        </property>
+        <property name="buddy">
+         <cstring>SliceIntersectionVisibilityCheckBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="SliceIntersectionVisibilityCheckBox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="SliceIntersectionThicknessLabel">
+        <property name="text">
+         <string>Slice Intersections &amp;Thickness:</string>
+        </property>
+        <property name="buddy">
+         <cstring>SliceIntersectionThicknessSpinBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QSpinBox" name="SliceIntersectionThicknessSpinBox">
+        <property name="suffix">
+         <string> px</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="ctkVTKPropertyWidget" name="PropertyWidget"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkVTKPropertyWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkVTKPropertyWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkMaterialPropertyWidget</class>
-   <extends>QWidget</extends>
-   <header>ctkMaterialPropertyWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

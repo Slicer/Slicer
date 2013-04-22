@@ -36,7 +36,7 @@
 int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
-  
+
   vtkSmartPointer< vtkMRMLModelDisplayNode > displayNode =
     vtkSmartPointer< vtkMRMLModelDisplayNode >::New();
 
@@ -49,18 +49,8 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  double color[3];
-  displayNode->GetColor(color);
-  double opacity = displayNode->GetOpacity();
-  double ambient = displayNode->GetAmbient();
-  double diffuse = displayNode->GetDiffuse();
-  double specular = displayNode->GetSpecular();
-  double specularPower = displayNode->GetPower();
-  
-  bool backfaceCulling = displayNode->GetBackfaceCulling();
-  
   displayNodeWidget.setMRMLDisplayNode(displayNode);
-  
+
   if (displayNodeWidget.mrmlDisplayNode() != displayNode.GetPointer())
     {
     std::cerr << "qMRMLDisplayNodeWidget::setMRMLDisplayNode() failed."
@@ -68,169 +58,61 @@ int qMRMLDisplayNodeWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.color() != QColor::fromRgbF(color[0],color[1],color[2]))
+  bool visibility = displayNode->GetVisibility();
+  if (displayNodeWidget.visibility() != visibility)
     {
-    std::cerr << "Wrong color: " << displayNodeWidget.color().rgb() << std::endl;
+    std::cerr << "Wrong visibility: " << displayNodeWidget.visibility() << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.opacity() != opacity)
+  bool selected = displayNode->GetSelected();
+  if (displayNodeWidget.selected() != selected)
     {
-    std::cerr << "Wrong opacity: " << displayNodeWidget.opacity() << std::endl;
-    return EXIT_FAILURE;
-    }
-  
-  if (displayNodeWidget.ambient() != ambient)
-    {
-    std::cerr << "Wrong ambient: " << displayNodeWidget.ambient() << std::endl;
+    std::cerr << "Wrong selected: " << displayNodeWidget.selected() << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.diffuse() != diffuse)
+  bool clipping = displayNode->GetClipping();
+  if (displayNodeWidget.clipping() != clipping)
     {
-    std::cerr << "Wrong diffuse: " << displayNodeWidget.diffuse() << std::endl;
+    std::cerr << "Wrong clipping: " << displayNodeWidget.clipping() << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.specular() != specular)
+  bool sliceIntersectionVisible = displayNode->GetSliceIntersectionVisibility();
+  if (displayNodeWidget.sliceIntersectionVisible() != sliceIntersectionVisible)
     {
-    std::cerr << "Wrong specular: " << displayNodeWidget.specular() << std::endl;
+    std::cerr << "Wrong intersection: "
+              << displayNodeWidget.sliceIntersectionVisible() << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.specularPower() != specularPower)
+  int sliceIntersectionThickness = displayNode->GetSliceIntersectionThickness();
+  if (displayNodeWidget.sliceIntersectionThickness() != sliceIntersectionThickness)
     {
-    std::cerr << "Wrong specularPower: " << displayNodeWidget.specularPower() << std::endl;
+    std::cerr << "Wrong intersection thickness: "
+              << displayNodeWidget.sliceIntersectionThickness() << std::endl;
     return EXIT_FAILURE;
     }
 
-  if (displayNodeWidget.backfaceCulling() != backfaceCulling)
+  displayNode->VisibilityOff();
+  if (displayNodeWidget.visibility() != false)
     {
-    std::cerr << "Wrong backfaceCulling: " << displayNodeWidget.backfaceCulling() << std::endl;
+    std::cerr << "vtkMRMLDisplayNode::SetVisibility() failed: "
+              << displayNodeWidget.visibility() << std::endl;
     return EXIT_FAILURE;
     }
 
-  displayNode->SetColor(1., 1., 1.);
-
-  if (displayNodeWidget.color() != QColor::fromRgbF(1., 1., 1.))
+  displayNodeWidget.setVisibility(true);
+  if (displayNode->GetVisibility() != 1)
     {
-    std::cerr << "vtkMRMLDisplayNode::SetColor() failed: " << displayNodeWidget.color().rgb() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setColor(Qt::red);
-  displayNode->GetColor(color);
-  if (color[0] != 1. || color[1] != 0. || color[2] !=0)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setColor() failed: "
-              << color[0] << " " << color[1] << " " << color[2] << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetOpacity(0.11);
-
-  if (displayNodeWidget.opacity() != 0.11)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetOpacity() failed: " << displayNodeWidget.opacity() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setOpacity(0.99);
-  
-  if (displayNode->GetOpacity() != 0.99)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setOpacity() failed: "
-              << displayNode->GetOpacity() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetAmbient(0.5);
-
-  if (displayNodeWidget.ambient() != 0.5)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetAmbient() failed: " << displayNodeWidget.ambient() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setAmbient(0.8);
-  
-  if (displayNode->GetAmbient() != 0.8)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setAmbient() failed: "
-              << displayNode->GetAmbient() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetDiffuse(1.2);
-
-  if (displayNodeWidget.diffuse() != 1.)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetDiffuse() failed: " << displayNodeWidget.diffuse() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setDiffuse(0.3);
-  
-  if (displayNode->GetDiffuse() != 0.3)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setDiffuse() failed: "
-              << displayNode->GetDiffuse() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetSpecular(0.99);
-
-  if (displayNodeWidget.specular() != 0.99)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetSpecular() failed: " << displayNodeWidget.specular() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setSpecular(0.01);
-  
-  if (displayNode->GetSpecular() != 0.01)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setSpecular() failed: "
-              << displayNode->GetSpecular() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetPower(45);
-
-  if (displayNodeWidget.specularPower() != 45)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetPower() failed: " << displayNodeWidget.specularPower() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setSpecularPower(60);
-  
-  if (displayNode->GetPower() != 50)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setSpecularPower() failed: "
-              << displayNode->GetPower() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNode->SetBackfaceCulling(false);
-
-  if (displayNodeWidget.backfaceCulling() != false)
-    {
-    std::cerr << "vtkMRMLDisplayNode::SetBackfaceCulling() failed: " << displayNodeWidget.backfaceCulling() << std::endl;
-    return EXIT_FAILURE;
-    }
-
-  displayNodeWidget.setBackfaceCulling(true);
-  
-  if (displayNode->GetBackfaceCulling() != 1)
-    {
-    std::cerr << "qMRMLDisplayNodeWidget::setBackfaceCulling() failed: "
-              << displayNode->GetBackfaceCulling() << std::endl;
+    std::cerr << "qMRMLDisplayNodeWidget::setVisibility failed: "
+              << displayNode->GetVisibility() << std::endl;
     return EXIT_FAILURE;
     }
 
   displayNodeWidget.show();
-  
+
   if (argc < 2 || QString(argv[1]) != "-I" )
     {
     QTimer::singleShot(200, &app, SLOT(quit()));

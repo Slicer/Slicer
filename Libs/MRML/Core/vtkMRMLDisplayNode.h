@@ -82,6 +82,13 @@ public:
   /// \sa Color, SetColor()
   vtkGetVector3Macro(Color, double);
 
+  /// Set the edge color of the display node.
+  /// \sa EdgeColor, GetEdgeColor()
+  vtkSetVector3Macro(EdgeColor, double);
+  /// Get the edge color of the display node.
+  /// \sa EdgeColor, SetEdgeColor()
+  vtkGetVector3Macro(EdgeColor, double);
+
   /// Set the selected color of the display node.
   /// \sa SelectedColor, GetSelectedColor()
   vtkSetVector3Macro(SelectedColor, double);
@@ -102,6 +109,27 @@ public:
   /// Get the selected specular coef of the display node.
   /// \sa SelectedSpecular, SetSelectedSpecular()
   vtkGetMacro(SelectedSpecular, double);
+
+  /// Set the diameter of points.
+  /// \sa PointSize, GetPointSize()
+  vtkSetMacro(PointSize, double);
+  /// Get the diameter of points.
+  /// \sa PointSize, SetPointSize()
+  vtkGetMacro(PointSize, double);
+
+  /// Set the width of lines.
+  /// \sa LineWidth, GetLineWidth()
+  vtkSetMacro(LineWidth, double);
+  /// Get the widget of lines.
+  /// \sa LineWidth, SetLineWidth()
+  vtkGetMacro(LineWidth, double);
+
+  /// Set the representation of the surface.
+  /// \sa Representation, GetRepresentation()
+  vtkSetMacro(Representation, int);
+  /// Get the representation of the surface.
+  /// \sa Representation, SetRepresentation()
+  vtkGetMacro(Representation, int);
 
   /// Set the opacity coef of the display node.
   /// \sa Opacity, GetOpacity()
@@ -154,6 +182,14 @@ public:
   /// \sa Visibility, ViewNodeIDs
   virtual bool GetVisibility(const char* viewNodeID);
 
+  /// Set the visibility of the edges.
+  /// \sa EdgeVisibility, GetEdgeVisibility()
+  vtkSetMacro(EdgeVisibility, int);
+  vtkBooleanMacro(EdgeVisibility, int);
+  /// Get the visibility of the edges.
+  /// \sa EdgeVisibility, SetEdgeVisibility()
+  vtkGetMacro(EdgeVisibility, int);
+
   /// Set the clipping of the display node.
   /// \sa Clipping, GetClipping(), ClippingOn(), ClippingOff()
   vtkSetMacro(Clipping, int);
@@ -183,7 +219,18 @@ public:
   /// Get the slice intersection thickness of the display node. In voxels.
   /// \sa SliceIntersectionThickness, SetSliceIntersectionThickness()
   vtkGetMacro(SliceIntersectionThickness, int);
-  
+
+  /// Set the backface culling of the display node.
+  /// \sa FrontfaceCulling, GetFrontfaceCulling(), FrontfaceCullingOn(),
+  /// FrontfaceCullingOff()
+  vtkSetMacro(FrontfaceCulling, int);
+  /// Get the backface culling of the display node.
+  /// \sa FrontfaceCulling, SetFrontfaceCulling(), FrontfaceCullingOn(),
+  /// FrontfaceCullingOff()
+  vtkGetMacro(FrontfaceCulling, int);
+  /// Set the backface culling of the display node.
+  /// \sa FrontfaceCulling, SetFrontfaceCulling(), GetFrontfaceCulling()
+  vtkBooleanMacro(FrontfaceCulling, int);
   /// Set the backface culling of the display node.
   /// \sa BackfaceCulling, GetBackfaceCulling(), BackfaceCullingOn(),
   /// BackfaceCullingOff()
@@ -195,6 +242,32 @@ public:
   /// Set the backface culling of the display node.
   /// \sa BackfaceCulling, SetBackfaceCulling(), GetBackfaceCulling()
   vtkBooleanMacro(BackfaceCulling, int);
+
+  /// Enable/Disable lighting of the display node.
+  /// \sa Lighting, GetLighting(), LightingOn(),
+  /// LightingOff()
+  vtkSetMacro(Lighting, int);
+  /// Get the lighting of the display node.
+  /// \sa Lighting, SetLighting(), LightingOn(),
+  /// LightingOff()
+  vtkGetMacro(Lighting, int);
+  /// Enable/Disable the lighting of the display node.
+  /// \sa Lighting, SetLighting(), GetLighting()
+  vtkBooleanMacro(Lighting, int);
+
+  /// Set the interpolation of the surface.
+  /// \sa Interpolation, GetInterpolation()
+  vtkSetMacro(Interpolation, int);
+  /// Get the interpolation of the surface.
+  /// \sa Interpolation, SetInterpolation()
+  vtkGetMacro(Interpolation, int);
+
+  /// Set the shading mode (None, Gouraud, Flat) of the display node.
+  /// \sa Shading, GetShading()
+  vtkSetMacro(Shading, int);
+  /// Get the shading of the display node.
+  /// \sa Shading, SetShading()
+  vtkGetMacro(Shading, int);
 
   /// Set the scalar visibility of the display node.
   /// \sa ScalarVisibility, GetScalarVisibility(), ScalarVisibilityOn(),
@@ -421,35 +494,97 @@ protected:
   /// SelectedColor, SelectedAmbient, Specular
   double SelectedSpecular;
 
+  /// Diameter of a point. The size is expressed in screen units.
+  /// The default is 1.0.
+  /// \sa SetPointSize(), GetPointSize(), LineWidth
+  double PointSize;
+
+  /// Width of a line. The width is expressed in screen units.
+  /// The default is 1.0.
+  /// \sa SetLineWidth(), GetLineWidth(), PointSize
+  double LineWidth;
+
+  /// Representation models
+  /// \sa vtkProperty
+  enum RepresentationType{
+    PointsRepresentation = 0,
+    WireframeRepresentation,
+    SurfaceRepresentation
+  };
+  /// Control the surface geometry representation for the object.
+  /// SurfaceRepresentation by default.
+  /// \sa SetRepresentation(), GetRepresentation(), Interpolation
+  int Representation;
+
+  /// This property controls the lighting.
+  /// 1 by default.
+  /// \sa SetLighting(), GetLighting(),
+  /// Interpolation, Shading
+  int Lighting;
+
+  /// Interpolation models
+  enum InterpolationType{
+    FlatInterpolation = 0,
+    GouraudInterpolation,
+    PhongInterpolation
+  };
+  /// Set the shading interpolation method for an object. Note that
+  /// to use an interpolation other than FlatInterpolation, normals
+  /// must be associated to the polydata (Gouraud and Phong are usually the
+  /// same).
+  /// GouraudInterpolation by default.
+  /// \sa SetInterpolation(), GetInterpolation(),
+  /// Lighting
+  int Interpolation;
+
+  /// This property controls whether the shading is enabled/disabled.
+  /// 1 by default.
+  /// \sa SetShading(), GetShading(),
+  /// Lighting
+  int Shading;
+
   /// Indicates if the surface is visible.
   /// True by default.
   /// \sa SetVisibility(), GetVisibility(), VisibilityOn(), VisibilityOff()
-  /// Color, Opacity, Clipping
+  /// Color, Opacity, Clipping, EdgeVisibility, SliceIntersectionVisibility
   int Visibility;
+  /// This property controls the visibility of edges. On some renderers it is
+  /// possible to render the edges of geometric primitives separately
+  /// from the interior.
+  /// 0 by default.
+  /// \sa SetEdgeVisibility(), GetEdgeVisibility(),
+  /// EdgeColor, Visibility, SliceIntersectionVisibility
+  int EdgeVisibility;
   /// Specifies whether to clip the surface with the slice planes.
   /// 0 by default.
   /// \sa SetClipping(), GetClipping(), ClippingOn(), ClippingOff()
-  /// Visibility, SliceIntersectionVisibility
+  /// Visibility, EdgeVisibility, SliceIntersectionVisibility
   int Clipping;
   /// Specifies whether to show model intersections on slice planes.
   /// 0 by default.
   /// \sa SetSliceIntersectionVisibility(), GetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff(),
   /// SetSliceIntersectionThickness(), GetSliceIntersectionThickness(),
-  /// Visibility, Clipping, SliceIntersectionThickness
+  /// Visibility, Clipping, SliceIntersectionThickness, EdgeVisibility
   int SliceIntersectionVisibility;
   /// Specifies how thick to show the intersections with slice planes if slice
   /// intersection visibility is on
   /// 1 voxel by default.
   /// \sa SetSliceIntersectionVisibility(), GetSliceIntersectionVisibility(),
   /// SliceIntersectionVisibilityOn(), SliceIntersectionVisibilityOff(),
-  /// Visibility, SliceIntersectionVisibility,  
+  /// Visibility, SliceIntersectionVisibility,
   int SliceIntersectionThickness;
+  /// Indicates whether to cull (not render) the frontface of the surface.
+  /// 0 by default.
+  /// \sa SetFrontfaceCulling(), GetFrontfaceCulling(), FrontfaceCullingOn(),
+  /// FrontfaceCullingOff(),
+  /// BackfaceCulling, Visibility, Clipping
+  int FrontfaceCulling;
   /// Indicates whether to cull (not render) the backface of the surface.
   /// 1 by default.
   /// \sa SetBackfaceCulling(), GetBackfaceCulling(), BackfaceCullingOn(),
   /// BackfaceCullingOff(),
-  /// Visibility, Clipping
+  /// FrontfaceCulling, Visibility, Clipping
   int BackfaceCulling;
   /// Indicates whether to render the scalar value associated with each polygon
   /// vertex.
@@ -496,12 +631,18 @@ protected:
   /// Model's color in the format [r,g,b].
   /// Gray (0.5, 0.5, 0.5) by default.
   /// \sa SetColor(), GetColor(),
-  /// SelectedColor, Ambient, Diffuse, Specular, Power, ColorNodeID
+  /// SelectedColor, EdgeColor, Ambient, Diffuse, Specular, Power, ColorNodeID
   double Color[3];
+  /// The property controls the color of primitive edges (if edge visibility is
+  /// enabled).
+  /// Black (0,0,0) by default.
+  /// \sa SetEdgeColor(), GetEdgeColor(),
+  /// EdgeVisibility, Color, SelectedColor
+  double EdgeColor[3];
   /// Node's selected ambient color (r,g,b).
   /// Red (1., 0., 0.) by default.
   /// \sa SetSelectedColor(), GetSelectedColor(),
-  /// Color, SelectedAmbient, SelectedSpecular
+  /// Color, EdgeColor, SelectedAmbient, SelectedSpecular
   double SelectedColor[3];
 
   /// List of view node ID's for which the display node should be visible into.

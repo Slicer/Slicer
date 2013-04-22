@@ -37,33 +37,45 @@ vtkCxxSetReferenceStringMacro(vtkMRMLDisplayNode, ActiveScalarName);
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode::vtkMRMLDisplayNode()
 {
-  // Strings
-  this->Color[0] = 0.5;
-  this->Color[1] = 0.5;
-  this->Color[2] = 0.5;
-
-  // Numbers
   this->Opacity = 1.0;
+  this->Ambient = 0.0;
+  this->Diffuse = 1.0;
+  this->Specular = 0;
+  this->Power = 1;
+  this->SelectedAmbient = 0.4;
+  this->SelectedSpecular = 0.5;
+
+  this->PointSize = 1.0;
+  this->LineWidth = 1.0;
+  this->Representation = vtkMRMLDisplayNode::SurfaceRepresentation;
+  this->Lighting = 1;
+  this->Interpolation = vtkMRMLDisplayNode::GouraudInterpolation;
+  this->Shading = 1;
+
   this->Visibility = 1;
+  this->EdgeVisibility = 0;
   this->Clipping = 0;
   this->SliceIntersectionVisibility = 0;
   this->SliceIntersectionThickness = 1;
+  this->FrontfaceCulling = 0;
   this->BackfaceCulling = 1;
   this->ScalarVisibility = 0;
   this->VectorVisibility = 0;
   this->TensorVisibility = 0;
   this->InterpolateTexture = 0;
   
-  this->Ambient = 0;
-  this->Diffuse = 1.0;
-  this->Specular = 0;
-  this->Power = 1;
   this->AutoScalarRange = 1;
 
   // Arrays
   this->ScalarRange[0] = 0;
   this->ScalarRange[1] = 100;
 
+  this->Color[0] = 0.5;
+  this->Color[1] = 0.5;
+  this->Color[2] = 0.5;
+  this->EdgeColor[0] = 0.0;
+  this->EdgeColor[1] = 0.0;
+  this->EdgeColor[2] = 0.0;
   this->SelectedColor[0] = 1.0;
   this->SelectedColor[1] = 0.0;
   this->SelectedColor[2] = 0.0;
@@ -105,6 +117,8 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
       << this->Color[2] << "\"";
     }
 
+  of << indent << " edgeColor=\"" << this->EdgeColor[0] << " "
+     << this->EdgeColor[1] << " " << this->EdgeColor[2] << "\"";
   if (this->SelectedColor)
     {
     of << indent << " selectedColor=\"" << this->SelectedColor[0] << " "
@@ -126,14 +140,22 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " opacity=\"" << this->Opacity << "\"";
 
-  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << indent << " pointSize=\"" << this->PointSize << "\"";
+  of << indent << " lineWidth=\"" << this->LineWidth << "\"";
+  of << indent << " representation=\"" << this->SurfaceRepresentation << "\"";
+  of << indent << " lighting=\"" << (this->Lighting? "true" : "false") << "\"";
+  of << indent << " interpolation=\"" << this->Interpolation << "\"";
+  of << indent << " shading=\"" << (this->Shading? "true" : "false") << "\"";
 
+  of << indent << " visibility=\"" << (this->Visibility ? "true" : "false") << "\"";
+  of << indent << " edgeVisibility=\"" << (this->EdgeVisibility? "true" : "false") << "\"";
   of << indent << " clipping=\"" << (this->Clipping ? "true" : "false") << "\"";
 
   of << indent << " sliceIntersectionVisibility=\"" << (this->SliceIntersectionVisibility ? "true" : "false") << "\"";
 
   of << indent << " sliceIntersectionThickness=\"" << this->SliceIntersectionThickness << "\"";
 
+  of << indent << " frontfaceCulling=\"" << (this->FrontfaceCulling ? "true" : "false") << "\"";
   of << indent << " backfaceCulling=\"" << (this->BackfaceCulling ? "true" : "false") << "\"";
 
   of << indent << " scalarVisibility=\"" << (this->ScalarVisibility ? "true" : "false") << "\"";
@@ -235,6 +257,14 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       ss >> Color[1];
       ss >> Color[2];
       }
+    else if (!strcmp(attName, "edgeColor"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->EdgeColor[0];
+      ss >> this->EdgeColor[1];
+      ss >> this->EdgeColor[2];
+      }
     else if (!strcmp(attName, "selectedColor")) 
       {
       std::stringstream ss;
@@ -292,6 +322,52 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       ss << attValue;
       ss >> Opacity;
       }
+    else if (!strcmp(attName, "pointSize"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->PointSize;
+      }
+    else if (!strcmp(attName, "lineWidth"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->LineWidth;
+      }
+    else if (!strcmp(attName, "representation"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->Representation;
+      }
+    else if (!strcmp(attName, "lighting"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->Lighting = 1;
+        }
+      else
+        {
+        this->Lighting = 0;
+        }
+      }
+    else if (!strcmp(attName, "interpolation"))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      ss >> this->Interpolation;
+      }
+    else if (!strcmp(attName, "shading"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->Shading = 1;
+        }
+      else
+        {
+        this->Shading = 0;
+        }
+      }
     else if (!strcmp(attName, "visibility")) 
       {
       if (!strcmp(attValue,"true")) 
@@ -301,6 +377,17 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       else
         {
         this->Visibility = 0;
+        }
+      }
+    else if (!strcmp(attName, "edgeVisibility"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->EdgeVisibility = 1;
+        }
+      else
+        {
+        this->EdgeVisibility = 0;
         }
       }
     else if (!strcmp(attName, "clipping")) 
@@ -330,6 +417,17 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
       std::stringstream ss;
       ss << attValue;
       ss >> this->SliceIntersectionThickness;
+      }
+    else if (!strcmp(attName, "frontfaceCulling"))
+      {
+      if (!strcmp(attValue,"true"))
+        {
+        this->FrontfaceCulling = 1;
+        }
+      else
+        {
+        this->FrontfaceCulling = 0;
+        }
       }
     else if (!strcmp(attName, "backfaceCulling")) 
       {

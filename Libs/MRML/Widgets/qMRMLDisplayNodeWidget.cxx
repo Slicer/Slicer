@@ -29,6 +29,7 @@
 #include <vtkMRMLDisplayNode.h>
 
 // VTK includes
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 
 //------------------------------------------------------------------------------
@@ -44,12 +45,15 @@ public:
   void init();
 
   vtkSmartPointer<vtkMRMLDisplayNode> MRMLDisplayNode;
+  vtkSmartPointer<vtkProperty> Property;
 };
 
 //------------------------------------------------------------------------------
-qMRMLDisplayNodeWidgetPrivate::qMRMLDisplayNodeWidgetPrivate(qMRMLDisplayNodeWidget& object)
+qMRMLDisplayNodeWidgetPrivate::qMRMLDisplayNodeWidgetPrivate(
+  qMRMLDisplayNodeWidget& object)
   : q_ptr(&object)
 {
+  this->Property = vtkSmartPointer<vtkProperty>::New();
 }
 
 //------------------------------------------------------------------------------
@@ -69,20 +73,9 @@ void qMRMLDisplayNodeWidgetPrivate::init()
   QObject::connect(this->SliceIntersectionThicknessSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(setSliceIntersectionThickness(int)));
 
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(colorChanged(QColor)),
-                   q, SLOT(setColor(QColor)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(opacityChanged(double)),
-                   q, SLOT(setOpacity(double)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(ambientChanged(double)),
-                   q, SLOT(setAmbient(double)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(diffuseChanged(double)),
-                   q, SLOT(setDiffuse(double)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularChanged(double)),
-                   q, SLOT(setSpecular(double)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(specularPowerChanged(double)),
-                   q, SLOT(setSpecularPower(double)));
-  QObject::connect(this->MaterialPropertyWidget, SIGNAL(backfaceCullingChanged(bool)),
-                   q, SLOT(setBackfaceCulling(bool)));
+  this->PropertyWidget->setProperty(this->Property);
+  q->qvtkConnect(this->Property, vtkCommand::ModifiedEvent,
+                 q, SLOT(updateNodeFromProperty()));
   q->setEnabled(this->MRMLDisplayNode.GetPointer() != 0);
 }
 
@@ -259,138 +252,6 @@ void qMRMLDisplayNodeWidget::setSliceIntersectionThicknessVisible(bool visible)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setColor(const QColor& color)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  // QColors loose precision in the numbers, don't reset the color if it didn't
-  // "really" change.
-  double* oldColor = d->MRMLDisplayNode->GetColor();
-  if (QColor::fromRgbF(oldColor[0], oldColor[1], oldColor[2]) != color)
-    {
-    d->MRMLDisplayNode->SetColor(color.redF(), color.greenF(), color.blueF());
-    }
-}
-
-//------------------------------------------------------------------------------
-QColor qMRMLDisplayNodeWidget::color()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->color();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setOpacity(double opacity)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetOpacity(opacity);
-}
-
-//------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::opacity()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->opacity();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setAmbient(double ambient)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetAmbient(ambient);
-}
-
-//------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::ambient()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->ambient();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setDiffuse(double diffuse)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetDiffuse(diffuse);
-}
-
-//------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::diffuse()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->diffuse();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setSpecular(double specular)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetSpecular(specular);
-}
-
-//------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::specular()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->specular();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setSpecularPower(double specularPower)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetPower(specularPower);
-}
-
-//------------------------------------------------------------------------------
-double qMRMLDisplayNodeWidget::specularPower()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->specularPower();
-}
-
-//------------------------------------------------------------------------------
-void qMRMLDisplayNodeWidget::setBackfaceCulling(bool backfaceCulling)
-{
-  Q_D(qMRMLDisplayNodeWidget);
-  if (!d->MRMLDisplayNode.GetPointer())
-    {
-    return;
-    }
-  d->MRMLDisplayNode->SetBackfaceCulling(backfaceCulling);
-}
-
-//------------------------------------------------------------------------------
-bool qMRMLDisplayNodeWidget::backfaceCulling()const
-{
-  Q_D(const qMRMLDisplayNodeWidget);
-  return d->MaterialPropertyWidget->backfaceCulling();
-}
-
-//------------------------------------------------------------------------------
 void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
 {
   Q_D(qMRMLDisplayNodeWidget);
@@ -407,14 +268,70 @@ void qMRMLDisplayNodeWidget::updateWidgetFromMRML()
     d->MRMLDisplayNode->GetSliceIntersectionVisibility());
   d->SliceIntersectionThicknessSpinBox->setValue(
     d->MRMLDisplayNode->GetSliceIntersectionThickness());
-  d->MaterialPropertyWidget->setColor(
-    QColor::fromRgbF(d->MRMLDisplayNode->GetColor()[0],
-                     d->MRMLDisplayNode->GetColor()[1],
-                     d->MRMLDisplayNode->GetColor()[2]));
-  d->MaterialPropertyWidget->setOpacity(d->MRMLDisplayNode->GetOpacity());
-  d->MaterialPropertyWidget->setAmbient(d->MRMLDisplayNode->GetAmbient());
-  d->MaterialPropertyWidget->setDiffuse(d->MRMLDisplayNode->GetDiffuse());
-  d->MaterialPropertyWidget->setSpecular(d->MRMLDisplayNode->GetSpecular());
-  d->MaterialPropertyWidget->setSpecularPower(d->MRMLDisplayNode->GetPower());
-  d->MaterialPropertyWidget->setBackfaceCulling(d->MRMLDisplayNode->GetBackfaceCulling());
+
+  // While updating Property, its state is unstable.
+  qvtkBlock(d->Property, vtkCommand::ModifiedEvent, this);
+
+  // Representation
+  d->Property->SetRepresentation(d->MRMLDisplayNode->GetRepresentation());
+  d->Property->SetPointSize(d->MRMLDisplayNode->GetPointSize());
+  d->Property->SetLineWidth(d->MRMLDisplayNode->GetLineWidth());
+  d->Property->SetFrontfaceCulling(d->MRMLDisplayNode->GetFrontfaceCulling());
+  d->Property->SetBackfaceCulling(d->MRMLDisplayNode->GetBackfaceCulling());
+  // Color
+  d->Property->SetColor(d->MRMLDisplayNode->GetColor()[0],
+                        d->MRMLDisplayNode->GetColor()[1],
+                        d->MRMLDisplayNode->GetColor()[2]);
+  d->Property->SetOpacity(d->MRMLDisplayNode->GetOpacity());
+  d->Property->SetEdgeVisibility(d->MRMLDisplayNode->GetEdgeVisibility());
+  d->Property->SetEdgeColor(d->MRMLDisplayNode->GetEdgeColor()[0],
+                            d->MRMLDisplayNode->GetEdgeColor()[1],
+                            d->MRMLDisplayNode->GetEdgeColor()[2]);
+  // Lighting
+  d->Property->SetLighting(d->MRMLDisplayNode->GetLighting());
+  d->Property->SetInterpolation(d->MRMLDisplayNode->GetInterpolation());
+  d->Property->SetShading(d->MRMLDisplayNode->GetShading());
+  // Material
+  d->Property->SetAmbient(d->MRMLDisplayNode->GetAmbient());
+  d->Property->SetDiffuse(d->MRMLDisplayNode->GetDiffuse());
+  d->Property->SetSpecular(d->MRMLDisplayNode->GetSpecular());
+  d->Property->SetSpecularPower(d->MRMLDisplayNode->GetPower());
+  qvtkUnblock(d->Property, vtkCommand::ModifiedEvent, this);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLDisplayNodeWidget::updateNodeFromProperty()
+{
+  Q_D(qMRMLDisplayNodeWidget);
+  if (!d->MRMLDisplayNode.GetPointer())
+    {
+    return;
+    }
+  int wasModifying = d->MRMLDisplayNode->StartModify();
+  // Representation
+  d->MRMLDisplayNode->SetRepresentation(d->Property->GetRepresentation());
+  d->MRMLDisplayNode->SetPointSize(d->Property->GetPointSize());
+  d->MRMLDisplayNode->SetLineWidth(d->Property->GetLineWidth());
+  d->MRMLDisplayNode->SetFrontfaceCulling(d->Property->GetFrontfaceCulling());
+  d->MRMLDisplayNode->SetBackfaceCulling(d->Property->GetBackfaceCulling());
+  // Color
+  d->MRMLDisplayNode->SetColor(d->Property->GetColor()[0],
+                               d->Property->GetColor()[1],
+                               d->Property->GetColor()[2]);
+  d->MRMLDisplayNode->SetOpacity(d->Property->GetOpacity());
+  d->MRMLDisplayNode->SetEdgeVisibility(d->Property->GetEdgeVisibility());
+  d->MRMLDisplayNode->SetEdgeColor(d->Property->GetEdgeColor()[0],
+                                   d->Property->GetEdgeColor()[1],
+                                   d->Property->GetEdgeColor()[2]);
+  // Lighting
+  d->MRMLDisplayNode->SetLighting(d->Property->GetLighting());
+  d->MRMLDisplayNode->SetInterpolation(d->Property->GetInterpolation());
+  d->MRMLDisplayNode->SetShading(d->Property->GetShading());
+  // Material
+  d->MRMLDisplayNode->SetAmbient(d->Property->GetAmbient());
+  d->MRMLDisplayNode->SetDiffuse(d->Property->GetDiffuse());
+  d->MRMLDisplayNode->SetSpecular(d->Property->GetSpecular());
+  d->MRMLDisplayNode->SetPower(d->Property->GetSpecularPower());
+
+  d->MRMLDisplayNode->EndModify(wasModifying);
 }
