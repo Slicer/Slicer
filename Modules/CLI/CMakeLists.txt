@@ -156,18 +156,28 @@ if(Slicer_BUILD_BRAINSTOOLS)
 
   ## BRAINSTools comes with some extra tool
   ## options that should not be compiled by default.
+  set(USE_AutoWorkup                     OFF CACHE BOOL "" FORCE)
   set(USE_ANTS                           OFF CACHE BOOL "Build with ANTS capabilities" )
   set(USE_GTRACT                         OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSABC                      OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSTalairach                OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSConstellationDetector    OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSMush                     OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSInitializedControlPoints OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSMultiModeSegment         OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSCut                      OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSLandmarkInitializer      OFF CACHE BOOL "" FORCE)
   set(USE_ImageCalculator                OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSSurfaceTools             OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSSnapShotWriter           OFF CACHE BOOL "" FORCE)
   set(USE_ConvertBetweenFileFormats      OFF CACHE BOOL "" FORCE)
   set(USE_BRAINSMultiSTAPLE              OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSCreateLabelMapFromProbabilityMaps OFF OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSContinuousClass          OFF CACHE BOOL "" FORCE)
+  set(USE_ICCDEF                         OFF CACHE BOOL "" FORCE)
+  set(USE_BRAINSPosteriorToContinuousClass OFF CACHE BOOL "" FORCE)
+  set(USE_DebugImageViewer               OFF CACHE BOOL "" FORCE)
+  set(BRAINS_DEBUG_IMAGE_WRITE           OFF CACHE BOOL "" FORCE)
 
   # HACK - Ensure BRAINSTools uses the same ExternalData version as Slicer.
   #        See https://github.com/BRAINSia/BRAINSTools/issues/3
