@@ -66,6 +66,7 @@ protected:
   /// Initialize the displayable manager based on its associated
   /// vtkMRMLSliceNode
   virtual void Create();
+  int AddingDisplayableNode;
 
 private:
 

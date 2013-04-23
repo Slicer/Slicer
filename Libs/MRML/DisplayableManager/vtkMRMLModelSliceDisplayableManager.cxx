@@ -494,6 +494,7 @@ bool vtkMRMLModelSliceDisplayableManager::vtkInternal
 vtkMRMLModelSliceDisplayableManager::vtkMRMLModelSliceDisplayableManager()
 {
   this->Internal = new vtkInternal(this);
+  this->AddingDisplayableNode = 0;
 }
 
 //---------------------------------------------------------------------------
@@ -512,16 +513,21 @@ void vtkMRMLModelSliceDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
   vtkMRMLDisplayableNode* node)
 {
+  if (this->AddingDisplayableNode)
+    {
+    return;
+    }
   // Check if node should be used
   if (!this->Internal->UseDisplayableNode(node))
     {
     return;
     }
 
-  this->Internal->AddObservations(node);
-
+  this->AddingDisplayableNode = 1;
   // Add Display Nodes
   int nnodes = node->GetNumberOfDisplayNodes();
+
+  this->Internal->AddObservations(node);
 
   for (int i=0; i<nnodes; i++)
   {
@@ -532,6 +538,7 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
       this->Internal->AddDisplayNode( node, dnode );
       }
     }
+  this->AddingDisplayableNode = 0;
 }
 
 //---------------------------------------------------------------------------
