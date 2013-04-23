@@ -90,18 +90,18 @@ public:
   /// Return the up-to-date list of vtkMRMLSliceLogics associated to the slice views.
   Q_INVOKABLE vtkCollection* mrmlSliceLogics()const;
 
-  void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
-  vtkMRMLColorLogic* mrmlColorLogic()const;
+  Q_INVOKABLE void setMRMLColorLogic(vtkMRMLColorLogic* colorLogic);
+  Q_INVOKABLE vtkMRMLColorLogic* mrmlColorLogic()const;
 
   /// Returns the current layout. it's the same value than
   /// vtkMRMLLayoutNode::ViewArrangement
   /// \sa vtkMRMLLayoutNode::SlicerLayout
   int layout()const;
 
-  vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
-  vtkRenderer* activeThreeDRenderer()const;
-  vtkMRMLChartViewNode* activeMRMLChartViewNode()const;
-  vtkRenderer* activeChartRenderer()const;
+  Q_INVOKABLE vtkMRMLViewNode* activeMRMLThreeDViewNode()const;
+  Q_INVOKABLE vtkRenderer* activeThreeDRenderer()const;
+  Q_INVOKABLE vtkMRMLChartViewNode* activeMRMLChartViewNode()const;
+  Q_INVOKABLE vtkRenderer* activeChartRenderer()const;
 
   Q_INVOKABLE vtkMRMLLayoutLogic* layoutLogic()const;
 public slots:
