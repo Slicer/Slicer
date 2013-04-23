@@ -518,12 +518,11 @@ void vtkMRMLModelSliceDisplayableManager::AddDisplayableNode(
     return;
     }
 
+  this->Internal->AddObservations(node);
+
   // Add Display Nodes
   int nnodes = node->GetNumberOfDisplayNodes();
-  if (nnodes > 0)
-    {
-    this->Internal->AddObservations(node);
-    }
+
   for (int i=0; i<nnodes; i++)
   {
     vtkMRMLDisplayNode *dnode = node->GetNthDisplayNode(i);    

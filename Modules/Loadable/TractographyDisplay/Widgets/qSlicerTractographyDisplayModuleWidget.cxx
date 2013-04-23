@@ -62,6 +62,8 @@ void qSlicerTractographyDisplayModuleWidgetPrivate::init()
 
   this->setupUi(q);
 
+  this->percentageOfFibersShown->setTracking(false);
+
   QObject::connect(this->percentageOfFibersShown, SIGNAL(valueChanged(double)),
                    q, SLOT(setPercentageOfFibersShown(double)));
   QObject::connect(q, SIGNAL(percentageOfFibersShownChanged(double)),

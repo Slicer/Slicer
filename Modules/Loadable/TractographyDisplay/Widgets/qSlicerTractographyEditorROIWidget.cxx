@@ -54,6 +54,8 @@ void qSlicerTractographyEditorROIWidgetPrivate::init()
   Q_Q(qSlicerTractographyEditorROIWidget);
   this->setupUi(q);
 
+  this->ROIForFiberSelectionMRMLNodeSelector->setBaseName(QString::fromUtf8("ROI Node"));
+
   QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*)));
   QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
@@ -115,13 +117,7 @@ void qSlicerTractographyEditorROIWidget::
 
   d->FiberBundleNode = fiberBundleNode;
 
-  // TODO: move this to updateWidgetFromMRML section.
-  if (!fiberBundleNode)
-  {
-    return;
-  }
-
-  if (fiberBundleNode->GetNumberOfDisplayNodes() > 1)
+  if (fiberBundleNode && fiberBundleNode->GetNumberOfDisplayNodes() > 1)
   {
     d->AnnotationMRMLNodeForFiberSelection = fiberBundleNode->GetAnnotationNode();
     d->ROIForFiberSelectionMRMLNodeSelector->setCurrentNode(d->AnnotationMRMLNodeForFiberSelection);
@@ -135,6 +131,34 @@ void qSlicerTractographyEditorROIWidget::
   updateWidgetFromMRML()
 {
   Q_D(qSlicerTractographyEditorROIWidget);
+
+  if ( !d->FiberBundleNode || !d->AnnotationMRMLNodeForFiberSelection)
+  {
+    // make widgest inactive
+    d->ConfirmFiberBundleUpdate->setEnabled(false);
+    d->CreateNewFiberBundle->setEnabled(false);
+    d->DisableROI->setEnabled(false);
+    d->FiberBundleFromSelection->setEnabled(false);
+    d->InteractiveROI->setEnabled(false);
+    d->NegativeROI->setEnabled(false);
+    d->PositiveROI->setEnabled(false);
+    d->ROIVisibility->setEnabled(false);
+    d->UpdateBundleFromSelection->setEnabled(false);
+  }
+  else
+  {
+    // make widgest active
+    d->ConfirmFiberBundleUpdate->setEnabled(true);
+    d->CreateNewFiberBundle->setEnabled(true);
+    d->DisableROI->setEnabled(true);
+    d->FiberBundleFromSelection->setEnabled(true);
+    d->InteractiveROI->setEnabled(true);
+    d->NegativeROI->setEnabled(true);
+    d->PositiveROI->setEnabled(true);
+    d->ROIVisibility->setEnabled(true);
+    d->UpdateBundleFromSelection->setEnabled(true);
+  }
+
   if ( !d->FiberBundleNode )
     {
     return;
@@ -296,7 +320,7 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
   vtkMRMLFiberBundleNode *fiberBundleFromSelection = vtkMRMLFiberBundleNode::SafeDownCast(d->FiberBundleFromSelection->currentNode());
   if (d->FiberBundleNode && fiberBundleFromSelection && (d->FiberBundleNode != fiberBundleFromSelection))
   {
-    if (mrmlScene()) mrmlScene()->SaveStateForUndo();
+    //if (mrmlScene()) mrmlScene()->SaveStateForUndo();
     vtkPolyData *FilteredPolyData = vtkPolyData::New();
     FilteredPolyData->DeepCopy(d->FiberBundleNode->GetFilteredPolyData());
     fiberBundleFromSelection->SetAndObservePolyData(FilteredPolyData);
@@ -314,6 +338,8 @@ void qSlicerTractographyEditorROIWidget::createNewBundleFromSelection()
       fiberBundleFromSelection->SetAndObserveTransformNodeID(d->FiberBundleNode->GetTransformNodeID());
       fiberBundleFromSelection->InvokeEvent(vtkMRMLFiberBundleNode::PolyDataModifiedEvent, NULL);
     }
+    
+    fiberBundleFromSelection->GetLineDisplayNode()->SetOpacity(0.7);
 
   } else {
      QMessageBox::warning(this, tr("Create Bundle From ROI"),
