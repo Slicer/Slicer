@@ -6,7 +6,7 @@ printErrorAndExit() {
   echo 'Failure during user information setup' 1>&2
   echo '-------------------------------------' 1>&2
   echo '' 1>&2
-  echo "@" 1>&2
+  echo "$@" 1>&2
   exit 1
 }
 

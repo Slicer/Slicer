@@ -9,7 +9,7 @@ printErrorAndExit() {
   echo 'Failure during git development setup' 1>&2
   echo '------------------------------------' 1>&2
   echo '' 1>&2
-  echo "@" 1>&2
+  echo "$@" 1>&2
   exit 1
 }
 
@@ -43,3 +43,8 @@ echo
 echo "Suggesting git tips..."
 ./GitTips.sh || exit 1
 echo
+
+# Record the version of this setup so the developer can be notified that
+# this script and/or hooks have been modified.
+SetupForDevelopment_VERSION=1
+git config hooks.SetupForDevelopment ${SetupForDevelopment_VERSION}
