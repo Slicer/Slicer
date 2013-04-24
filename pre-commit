@@ -51,6 +51,22 @@ git config --get user.email | grep '^[^@]*@[^@]*$' > /dev/null ||
   printErrorAndExit 'Set user.email to an email address (userid@validdomain.com).' "$advice"
 
 #-----------------------------------------------------------------------------
+# Check that developer setup is up-to-date.
+lastSetupForDevelopment=$(git config --get hooks.SetupForDevelopment || echo 0)
+eval $(grep '^SetupForDevelopment_VERSION=' \
+  "$GIT_DIR/../Utilities/SetupForDevelopment.sh")
+test -n "$SetupForDevelopment_VERSION" || SetupForDevelopment_VERSION=0
+if test $lastSetupForDevelopment -lt $SetupForDevelopment_VERSION; then
+  printErrorAndExit '
+------------------------------------------------------------------------------
+Developer setup in this work tree is out of date. Please re-run
+
+  Utilities/SetupForDevelopment.sh
+------------------------------------------------------------------------------
+  '
+fi &&
+
+#-----------------------------------------------------------------------------
 # Check content that will be added by this commit.
 
 if git rev-parse --verify -q HEAD > /dev/null; then
