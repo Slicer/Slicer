@@ -32,7 +32,6 @@ int main( int argc, char * argv[] )
   vtkDiffusionTensorMathematics *math = vtkDiffusionTensorMathematics::New();
 
   math->SetInput(0, reader->GetOutput() );
-  math->SetInput(1, reader->GetOutput() );
 
   if( operation == std::string("Trace") )
     {
@@ -94,7 +93,7 @@ int main( int argc, char * argv[] )
     {
     math->SetOperationToMaxEigenvalueProjectionY();
     }
-  else if( operation == std::string("MaxEigenvalueProjectioZ") )
+  else if( operation == std::string("MaxEigenvalueProjectionZ") )
     {
     math->SetOperationToMaxEigenvalueProjectionZ();
     }
