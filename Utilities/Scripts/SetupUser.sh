@@ -36,7 +36,7 @@ do
 
   $gitName <$gitEmail>
   "
-  read -ep "Is the author name and email address above correct? [Y/N] " correct
+  read -ep "Is the author name and email address above correct? [Y/n] " correct
   if [ "$correct" == "n" ] || [ "$correct" == "N" ]; then
     setup_user
   else

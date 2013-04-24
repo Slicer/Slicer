@@ -29,6 +29,11 @@ set(Slicer_CMAKE_DIR ${Slicer_SOURCE_DIR}/CMake)
 set(Slicer_EXTENSIONS_CMAKE_DIR ${Slicer_SOURCE_DIR}/Extensions/CMake)
 
 #-----------------------------------------------------------------------------
+# http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
+#-----------------------------------------------------------------------------
+include(SlicerCheckSourceTree)
+
+#-----------------------------------------------------------------------------
 include(CTestUseLaunchers OPTIONAL)
 if(${CTEST_USE_LAUNCHERS})
   message(STATUS "CTest launchers enabled")

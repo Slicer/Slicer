@@ -1,0 +1,10 @@
+#!/bin/sh
+echo 'Your work tree has not been configured for Slicer development.
+Paste the following commands into a shell:
+
+  ./Utilities/SetupForDevelopment.sh
+
+See
+http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/DevelopmentWithGit
+ for more information.'
+exit 1
