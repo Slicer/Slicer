@@ -668,6 +668,41 @@ int vtkSlicerVolumesLogic::SaveArchetypeVolume (const char* filename, vtkMRMLVol
 }
 
 //----------------------------------------------------------------------------
+void vtkSlicerVolumesLogic
+::SetVolumeAsLabelMap(vtkMRMLVolumeNode *volumeNode, bool labelMap)
+{
+  vtkMRMLScalarVolumeNode *scalarNode =
+    vtkMRMLScalarVolumeNode::SafeDownCast(volumeNode);
+  if (scalarNode == 0 ||
+      scalarNode->IsA("vtkMRMLTensorVolumeNode") ||
+      static_cast<bool>(scalarNode->GetLabelMap()) == labelMap)
+    {
+    return;
+    }
+  vtkMRMLDisplayNode *oldDisplayNode = scalarNode->GetDisplayNode();
+  if (oldDisplayNode)
+    {
+    scalarNode->GetScene()->RemoveNode(oldDisplayNode);
+    }
+  vtkMRMLVolumeDisplayNode* displayNode = 0;
+  if (labelMap)
+    {
+    displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
+    }
+  else
+    {
+    displayNode = vtkMRMLScalarVolumeDisplayNode::New();
+    }
+  displayNode->SetAndObserveColorNodeID (
+    labelMap ? "vtkMRMLColorTableNodeLabels" : "vtkMRMLColorTableNodeGrey");
+  scalarNode->GetScene()->AddNode(displayNode);
+  scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
+  scalarNode->SetLabelMap( labelMap );
+  displayNode->Delete();
+}
+
+
+//----------------------------------------------------------------------------
 vtkMRMLScalarVolumeNode* vtkSlicerVolumesLogic
 ::CreateAndAddLabelVolume(vtkMRMLVolumeNode *volumeNode, const char *name)
 {
