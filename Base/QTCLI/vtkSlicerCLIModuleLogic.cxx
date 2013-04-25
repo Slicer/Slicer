@@ -2148,10 +2148,6 @@ void vtkSlicerCLIModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkNew<vtkIntArray> events;
     events->InsertNextValue(vtkCommand::ModifiedEvent);
     events->InsertNextValue(
-      vtkMRMLCommandLineModuleNode::ParameterChangedEvent);
-    events->InsertNextValue(
-      vtkMRMLCommandLineModuleNode::InputParameterModifiedEvent);
-    events->InsertNextValue(
       vtkMRMLCommandLineModuleNode::AutoRunEvent);
     vtkObserveMRMLNodeEventsMacro(node, events.GetPointer());
     }
@@ -2176,27 +2172,17 @@ void vtkSlicerCLIModuleLogic
       {
       case vtkCommand::ModifiedEvent:
         break;
-      case vtkMRMLCommandLineModuleNode::ParameterChangedEvent:
-        if (cliNode->GetAutoRun() &
-            vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged)
-          {
-          this->AutoRun(cliNode);
-          }
-        break;
-      case vtkMRMLCommandLineModuleNode::InputParameterModifiedEvent:
-        if (cliNode->GetAutoRun() &
-            vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified)
-          {
-          this->AutoRun(cliNode);
-          }
-        break;
       case vtkMRMLCommandLineModuleNode::AutoRunEvent:
         {
         unsigned long requestTime = reinterpret_cast<unsigned long>(callData);
-        if (cliNode->IsAutoRunOn() &&
-            ((cliNode->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified &&
+        if (requestTime == 0)
+          {
+          this->AutoRun(cliNode);
+          }
+        else if (cliNode->GetAutoRun() &&
+            ((cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnAnyInputEvent &&
               cliNode->GetInputMTime() <= requestTime) ||
-             (cliNode->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged &&
+             (cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter &&
               cliNode->GetParameterMTime() <= requestTime)))
           {
           if (cliNode->IsBusy())
@@ -2225,7 +2211,7 @@ void vtkSlicerCLIModuleLogic
 void vtkSlicerCLIModuleLogic
 ::AutoRun(vtkMRMLCommandLineModuleNode* node)
 {
-  if (!node || !node->IsAutoRunOn())
+  if (!node || !node->GetAutoRun())
     {
     return;
     }
@@ -2233,7 +2219,7 @@ void vtkSlicerCLIModuleLogic
 
   if (node->IsBusy())
     {
-    if (!(node->GetAutoRun()
+    if (!(node->GetAutoRunMode()
           & vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess))
       {
       return;
@@ -2246,9 +2232,15 @@ void vtkSlicerCLIModuleLogic
       extraDelay = 100;
       }
     }
-  unsigned long requestTime =
-    (node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified) ?
-    node->GetInputMTime() : node->GetParameterMTime();
+  unsigned long requestTime = 1; // we don't want 0, so 1 works
+  if (node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
+    {
+    requestTime = std::max(requestTime, node->GetParameterMTime());
+    }
+  if (node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnAnyInputEvent)
+    {
+    requestTime = std::max(requestTime, node->GetInputMTime());
+    }
   // Wait a bit (for potential other modifications) before re-running the module.
   this->GetApplicationLogic()->InvokeEventWithDelay(
     node->GetAutoRunDelay() + extraDelay,

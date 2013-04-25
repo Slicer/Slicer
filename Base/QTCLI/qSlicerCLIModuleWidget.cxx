@@ -44,6 +44,7 @@ qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWid
   this->CommandLineModuleNode = 0;
   this->AutoRunWhenParameterChanged = 0;
   this->AutoRunWhenInputModified = 0;
+  this->AutoRunOnOtherInputEvents = 0;
   this->AutoRunCancelsRunningProcess = 0;
 }
 
@@ -90,6 +91,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   // Setup AutoRun menu
   QMenu* autoRunMenu = new QMenu(q->tr("AutoRun"), this->AutoRunPushButton);
+
   this->AutoRunWhenParameterChanged =
     new QAction(q->tr("AutoRun on changed parameter"), autoRunMenu);
   this->AutoRunWhenParameterChanged->setToolTip(
@@ -98,14 +100,25 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->AutoRunWhenParameterChanged->setCheckable(true);
   this->connect(this->AutoRunWhenParameterChanged, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunWhenParameterChanged(bool)));
+
   this->AutoRunWhenInputModified =
     new QAction(q->tr("AutoRun on modified input"), autoRunMenu);
   this->AutoRunWhenInputModified->setToolTip(
-    q->tr("As long as the AutoRun button is down, the module is run anytime the "
-          "input node(s) is/are modified."));
+    q->tr("As long as the AutoRun button is down, the module is run anytime an "
+          "input node is modified."));
   this->AutoRunWhenInputModified->setCheckable(true);
   this->connect(this->AutoRunWhenInputModified, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunWhenInputModified(bool)));
+
+  this->AutoRunOnOtherInputEvents =
+    new QAction(q->tr("AutoRun on other input events"), autoRunMenu);
+  this->AutoRunOnOtherInputEvents->setToolTip(
+    q->tr("As long as the AutoRun button is down, the module is run anytime an "
+          "input node fires an event other than a modified event."));
+  this->AutoRunOnOtherInputEvents->setCheckable(true);
+  this->connect(this->AutoRunOnOtherInputEvents, SIGNAL(toggled(bool)),
+                q, SLOT(setAutoRunOnOtherInputEvents(bool)));
+
   this->AutoRunCancelsRunningProcess =
     new QAction(q->tr("AutoRun cancels running process"),autoRunMenu);
   this->AutoRunCancelsRunningProcess->setToolTip(
@@ -115,8 +128,10 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
   this->AutoRunCancelsRunningProcess->setCheckable(true);
   this->connect(this->AutoRunCancelsRunningProcess, SIGNAL(toggled(bool)),
                 q, SLOT(setAutoRunCancelsRunningProcess(bool)));
+
   autoRunMenu->addAction(this->AutoRunWhenParameterChanged);
   autoRunMenu->addAction(this->AutoRunWhenInputModified);
+  autoRunMenu->addAction(this->AutoRunOnOtherInputEvents);
   autoRunMenu->addAction(this->AutoRunCancelsRunningProcess);
   this->AutoRunPushButton->setMenu(autoRunMenu);
 
@@ -159,8 +174,14 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
   Q_ASSERT(node);
 
-  // Update parameters
-  this->CLIModuleUIHelper->updateUi(node);
+  // Update parameters except if the module is running, it would prevent the
+  // the user to keep the focus into the widgets each time a progress
+  // is reported. (try to select text in the label list line edit of the
+  // ModelMaker while running)
+  if (!(node->GetStatus() & vtkMRMLCommandLineModuleNode::Running))
+    {
+    this->CLIModuleUIHelper->updateUi(node);
+    }
 
   switch (node->GetStatus())
     {
@@ -189,12 +210,17 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
       break;
     }
   this->AutoRunWhenParameterChanged->setChecked(
-    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged);
+    node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter);
   this->AutoRunWhenInputModified->setChecked(
-    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified);
+    node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent);
+  this->AutoRunOnOtherInputEvents->setChecked(
+    node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents);
   this->AutoRunCancelsRunningProcess->setChecked(
-    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess);
-  this->AutoRunPushButton->setChecked(node->IsAutoRunOn());
+    node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess);
+  if (this->AutoRunPushButton->isChecked() != node->GetAutoRun())
+    {
+    this->AutoRunPushButton->setChecked(node->GetAutoRun());
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -452,62 +478,69 @@ void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
 void qSlicerCLIModuleWidget::setAutoRun(bool enable)
 {
   Q_D(qSlicerCLIModuleWidget);
-  int autoRun = d->commandLineModuleNode()->GetAutoRun();
-  if (enable)
-    {
-    autoRun |= vtkMRMLCommandLineModuleNode::AutoRunOn;
-    }
-  else
-    {
-    autoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunOn;
-    }
-  d->commandLineModuleNode()->SetAutoRun(autoRun);
+  d->commandLineModuleNode()->SetAutoRun(enable);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setAutoRunWhenParameterChanged(bool autoRun)
 {
   Q_D(qSlicerCLIModuleWidget);
-  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
     {
-    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
+    newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter;
     }
   else
     {
-    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
+    newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter;
     }
-  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
+  d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setAutoRunWhenInputModified(bool autoRun)
 {
   Q_D(qSlicerCLIModuleWidget);
-  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
     {
-    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified;
+    newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent;
     }
   else
     {
-    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified;
+    newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent;
     }
-  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
+  d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setAutoRunOnOtherInputEvents(bool autoRun)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
+  if (autoRun)
+    {
+    newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
+    }
+  else
+    {
+    newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
+    }
+  d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerCLIModuleWidget::setAutoRunCancelsRunningProcess(bool autoRun)
 {
   Q_D(qSlicerCLIModuleWidget);
-  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  int newAutoRunMode = d->commandLineModuleNode()->GetAutoRunMode();
   if (autoRun)
     {
-    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
+    newAutoRunMode |= vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
     }
   else
     {
-    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
+    newAutoRunMode &= ~vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
     }
-  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
+  d->commandLineModuleNode()->SetAutoRunMode(newAutoRunMode);
 }

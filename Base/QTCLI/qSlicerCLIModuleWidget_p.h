@@ -110,6 +110,7 @@ public:
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
   QAction* AutoRunWhenParameterChanged;
   QAction* AutoRunWhenInputModified;
+  QAction* AutoRunOnOtherInputEvents;
   QAction* AutoRunCancelsRunningProcess;
 };
 

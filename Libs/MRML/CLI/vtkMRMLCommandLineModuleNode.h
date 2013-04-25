@@ -57,12 +57,13 @@ public:
     /// SetParameterAsNode(), SetParameterAsInt(), SetParameterAsBool(),
     /// SetParameterAsDouble(), SetParameterAsFloat()
     ParameterChangedEvent = 17000,
-    /// Event invoked anytime a node set as input parameter is modified
-    /// (i.e. ModifiedEvent is invoked on the node).
+    /// Event invoked anytime a node set as input parameter triggers an event.
+    /// The type of event is passed as callData. (e.g. ModifiedEvent,
+    /// PolyDataModifiedEvent).
     /// \sa SetParameterAsNode(), ParameterChangedEvent
-    InputParameterModifiedEvent,
-    /// Reserved event used to trigger AutoRun. It takes a request time as
-    /// call data.
+    InputParameterEvent,
+    /// Event invoked when the AutoRun is triggerd. It takes a request time as
+    /// call data. 0 when called from CLI node.
     /// \sa SetAutoRun()
     AutoRunEvent
   };
@@ -120,48 +121,63 @@ public:
   /// Do nothing if the module is not "busy".
   /// \sa IsBusy(), Cancelling, Cancelled
   void Cancel();
+
   /// This enum type controls when the CLI should be run automatically.
   /// \sa SetAutoRun(), GetAutoRun()
   enum AutoRunMode
   {
-    NoAutoRun = 0x00,
-    /// Enable the AutoRun mode.
-    AutoRunOn = 0x01,
+    /// Triggering a new autorun cancels the processing of the current CLI if
+    /// any.
+    /// \sa SetStatus(), Cancelling
+    AutoRunCancelsRunningProcess = 0x01,
     /// When set, it triggers autorun requests when a parameter is modified
     /// when calling SetParameterAsXXX().
-    AutoRunWhenParameterChanged = 0x02,
-    /// When set, it triggers autorun requests when an input node (parameter
-    /// not in the output channel) is modified (ModifiedEvent is invoked).
-    /// As of now, a parameter in both input and output channels does not
-    /// trigger autorun.
-    AutoRunWhenInputModified = 0x04,
-    AutoRunCancelsRunningProcess = 0x08,
+    /// \sa AutoRunOnModifiedInputEvent
+    AutoRunOnChangedParameter = 0x10,
+    /// When set, it triggers autorun requests when an input node (i.e. a
+    /// parameter not in the output channel) is modified (
+    /// vtkCommand::ModifiedEvent is invoked). As of now, a parameter in both
+    /// input and output channels does not trigger an autorun (infinite loop).
+    AutoRunOnModifiedInputEvent = 0x20,
+    /// Trigger an auto run when an input parameter fires an event other than
+    /// vtkCommand::ModifiedEvent
+    AutoRunOnOtherInputEvents = 0x40,
+    /// Trigger an auto run when an input parameter fires any event.
+    AutoRunOnAnyInputEvent = AutoRunOnModifiedInputEvent | AutoRunOnOtherInputEvents,
     // <- add here new options
-    AutoRunEnabledMask = AutoRunWhenParameterChanged | AutoRunWhenInputModified
+    /// Mask used to know if auto run is configured with valid parameters
+    AutoRunEnabledMask = AutoRunOnChangedParameter | AutoRunOnAnyInputEvent
   };
 
-  /// Set the auto running flags for the node.
+  /// Enable/Disable the AutoRun for the CLI node.
   /// The behavior is ensured by the CLI logic.
-  /// AutoRun is disabled by default but AutoRunWhenParameterChanged is set.
-  /// \sa AutoRunMode
-  void SetAutoRun(int autoRunMode);
+  /// AutoRun is disabled (false) by default.
+  /// \sa GetAutoRun(), AutoRunMode, SetAutoRunDelay()
+  void SetAutoRun(bool enable);
+
+  /// Return true if the AutoRun is enabled, false otherwise.
+  /// \sa SetAutoRun(), AutoRunMode, GetAutoRunDelay()
+  bool GetAutoRun()const;
+
+  /// Set the auto running flags for the node.
+  /// The behavior is ensured by the CLI logic. AutoRun is not enabled until
+  /// \a SetAutoRun(true) is called.
+  /// \a AutoRunWhenParameterChanged | AutoRunCancelsRunningProcess by default.
+  /// \sa AutoRunMode, GetAutoRunMode(), SetAutoRun(), SetAutoRunDelay()
+  void SetAutoRunMode(int autoRunMode);
 
   /// Return the AutoRun mode flags.
-  /// \sa SetAutoRun(), IsAutoRunOn()
-  int GetAutoRun()const;
-
-  /// Return true if the AutoRun mode is on.
-  /// \sa SetAutoRun(), GetAutoRun()
-  bool IsAutoRunOn()const;
+  /// \sa AutoRunMode, SetAutoRunMode(), GetAutoRun(), GetAutoRunDelay()
+  int GetAutoRunMode()const;
 
   /// Set the number of msecs to wait before automatically running
   /// the module. 1000msecs by default.
-  /// \sa GetAutoRunDelay(), SetAutoRun()
+  /// \sa GetAutoRunDelay(), SetAutoRun(), SetAutoRunMode()
   void SetAutoRunDelay(unsigned int delayInMs);
 
   /// Return the number of msecs to wait before automatically running
   /// the module.
-  /// \sa SetAutoRunDelay(), GetAutoRun()
+  /// \sa SetAutoRunDelay(), GetAutoRun(), GetAutoRunMode()
   unsigned int GetAutoRunDelay()const;
 
   /// Return the last time the module was ran.

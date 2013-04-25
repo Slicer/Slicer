@@ -23,7 +23,9 @@ Version:   $Revision: 1.2 $
 
 // VTK includes
 #include <vtkCommand.h>
+#include <vtkIntArray.h>
 #include <vtkObjectFactory.h>
+#include <vtkSmartPointer.h>
 
 // STD includes
 #include <sstream>
@@ -78,7 +80,8 @@ vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
   this->Internal->Status = vtkMRMLCommandLineModuleNode::Idle;
   this->Internal->AutoRun = false;
   this->Internal->AutoRunMode =
-    vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
+    vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter
+    | vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
   this->Internal->AutoRunDelay = 1000;
 }
 
@@ -303,7 +306,7 @@ void vtkMRMLCommandLineModuleNode
                     void *vtkNotUsed(callData) )
 {
   vtkMRMLNode* node = vtkMRMLNode::SafeDownCast(caller);
-  if (!node || event != vtkCommand::ModifiedEvent)
+  if (!node)
     {
     return;
     }
@@ -312,8 +315,28 @@ void vtkMRMLCommandLineModuleNode
   // Let the CLI logic know that an input parameter has been modified.
   if (isInput)
     {
-    this->Internal->InputMTime.Modified();
-    this->InvokeEvent(vtkMRMLCommandLineModuleNode::InputParameterModifiedEvent);
+    int eventType = 0;
+    if (event == vtkCommand::ModifiedEvent)
+      {
+      eventType |= vtkMRMLCommandLineModuleNode::AutoRunOnModifiedInputEvent;
+      }
+    if (event != vtkCommand::ModifiedEvent)
+      {
+      eventType |= vtkMRMLCommandLineModuleNode::AutoRunOnOtherInputEvents;
+      }
+    bool autoRun = false;
+    if (eventType & this->GetAutoRunMode())
+      {
+      this->Internal->InputMTime.Modified();
+      autoRun = true;
+      }
+    this->InvokeEvent(vtkMRMLCommandLineModuleNode::InputParameterEvent,
+                      reinterpret_cast<void*>(event));
+    if (autoRun)
+      {
+      this->InvokeEvent(vtkMRMLCommandLineModuleNode::AutoRunEvent,
+                        reinterpret_cast<void*>(0));
+      }
     }
 }
 
@@ -374,7 +397,10 @@ bool vtkMRMLCommandLineModuleNode
       if (this->MRMLObserverManager->GetObservationsCount(node) == 0 &&
           this->IsInputDefaultValue(value))
         {
-        vtkObserveMRMLObjectMacro(node);
+        vtkSmartPointer<vtkIntArray> events =
+          vtkSmartPointer<vtkIntArray>::New();
+        events->InsertNextValue(vtkCommand::AnyEvent);
+        vtkObserveMRMLObjectEventsMacro(node, events);
         }
       // if the old node is no longer an input parameter
       //if (!this->IsInputDefaultValue(oldValue))
@@ -390,6 +416,12 @@ bool vtkMRMLCommandLineModuleNode
       }
     this->Internal->ParameterMTime.Modified();
     this->InvokeEvent(vtkMRMLCommandLineModuleNode::ParameterChangedEvent);
+    if (this->GetAutoRunMode()
+        & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
+      {
+      this->InvokeEvent(vtkMRMLCommandLineModuleNode::AutoRunEvent,
+                        reinterpret_cast<void*>(0));
+      }
     this->Modified();
     return true;
     }
@@ -416,6 +448,11 @@ bool vtkMRMLCommandLineModuleNode
       }
     this->Internal->ParameterMTime.Modified();
     this->InvokeEvent(vtkMRMLCommandLineModuleNode::ParameterChangedEvent);
+    if (this->GetAutoRunMode()
+        & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
+      {
+      this->InvokeEvent(vtkMRMLCommandLineModuleNode::AutoRunEvent, 0);
+      }
     this->Modified();
     return true;
     }
