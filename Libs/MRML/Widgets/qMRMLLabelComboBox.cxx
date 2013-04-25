@@ -78,7 +78,7 @@ void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColor
 QColor qMRMLLabelComboBoxPrivate::colorFromIndex(int index) const
 {
   //qDebug() << "qMRMLLabelComboBox::colorFromIndex - index:" << index;
-  if (index < 0)
+  if (index < 0 || this->ColorNode == 0)
     {
     return QColor::Invalid;
     }
@@ -173,6 +173,22 @@ void qMRMLLabelComboBox::setCurrentColor(int index)
   
   // Will trigger onCurrentIndexChanged
   d->ComboBox->setCurrentIndex(index);
+}
+
+// ------------------------------------------------------------------------------
+void qMRMLLabelComboBox::setCurrentColor(const QString& color)
+{
+  Q_D(qMRMLLabelComboBox);
+  int index = d->ComboBox->findText(color);
+  // Will trigger onCurrentIndexChanged
+  d->ComboBox->setCurrentIndex(index);
+}
+
+// ------------------------------------------------------------------------------
+QString qMRMLLabelComboBox::currentColorName()const
+{
+  Q_D(const qMRMLLabelComboBox);
+  return d->ComboBox->currentText();
 }
 
 // ------------------------------------------------------------------------------

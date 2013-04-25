@@ -38,7 +38,8 @@ class QMRML_WIDGETS_EXPORT qMRMLLabelComboBox : public qMRMLWidget
   Q_OBJECT
   QVTK_OBJECT
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
-  Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor USER true)
+  Q_PROPERTY(int currentColor READ currentColor WRITE setCurrentColor NOTIFY currentColorChanged USER true)
+  Q_PROPERTY(QString currentColorName READ currentColorName WRITE setCurrentColor NOTIFY currentColorChanged STORED false)
   Q_PROPERTY(int maximumColorCount READ maximumColorCount WRITE setMaximumColorCount)
   Q_PROPERTY(bool colorNameVisible READ colorNameVisible WRITE setColorNameVisible)
   Q_PROPERTY(bool labelValueVisible READ labelValueVisible WRITE setLabelValueVisible)
@@ -70,6 +71,7 @@ public:
   vtkMRMLColorNode* mrmlColorNode()const;
 
   int currentColor()const;
+  QString currentColorName()const;
 
   int maximumColorCount()const;
   void setMaximumColorCount(int maximum);
@@ -79,6 +81,7 @@ public slots:
   void setMRMLColorNode(vtkMRMLNode * newMRMLColorNode);
 
   void setCurrentColor(int index);
+  void setCurrentColor(const QString& colorName);
 
   void updateWidgetFromMRML();
   
