@@ -90,7 +90,13 @@ class VTK_MRML_EXPORT vtkObservation : public vtkObject
   vtkGetMacro (TotalElapsedTime, double);
   vtkSetMacro (TotalElapsedTime, double);
 
-  std::deque<void *> *GetCallDataList() {return &(this->CallDataList);};
+  struct CallType
+  {
+    inline CallType(unsigned long eventID, void* callData);
+    unsigned long EventID;
+    void* CallData;
+  };
+  std::deque<CallType> *GetCallDataList() {return &(this->CallDataList);};
 
 protected:
   vtkObservation();
@@ -131,7 +137,7 @@ protected:
 
   /// 
   /// data passed to the observation by the subject
-  std::deque<void *> CallDataList;
+  std::deque<CallType> CallDataList;
 
   /// 
   /// Holder for script as an alternative to the callback command
@@ -155,5 +161,13 @@ protected:
   double TotalElapsedTime;
 
 };
+
+//----------------------------------------------------------------------------
+vtkObservation::CallType::CallType(unsigned long eventID, void* callData)
+  : EventID(eventID)
+  , CallData(callData)
+{
+}
+
 
 #endif
