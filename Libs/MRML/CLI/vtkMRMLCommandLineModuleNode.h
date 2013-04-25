@@ -84,6 +84,7 @@ public:
     Cancelling=0x04,
     /// State when the CLI is no longer being executed because
     /// Cancelling has been requested.
+    /// Do not set manually, use Cancel() instead.
     Cancelled=0x08,
     /// State when the CLI has been successfully executed.
     Completed=0x10,
@@ -100,17 +101,25 @@ public:
   /// can be modified by the call. Having modify = false is used when a separate
   /// thread updates the node status but does not want to invoke modified
   /// events because it would refresh the GUI from the thread.
+  /// Do not call manually, only the logic should change the status of the node.
+  /// \sa GetStatus(), GetStatusString(), IsBusy(), Cancel()
   void SetStatus(StatusType status, bool modify=true);
-  StatusType GetStatus() const;
+  /// \sa SetStatus(), GetStatusString(), IsBusy()
+  int GetStatus() const;
 
   /// Return current status as a string for display.
+  /// \sa GetStatus(), IsBusy()
   const char* GetStatusString() const;
 
   /// Return true if the module is in a busy state: Scheduled, Running or
   /// Cancelling.
-  /// \sa SetStatus(), GetStatus(), BusyMask
+  /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
   bool IsBusy()const;
 
+  /// Set a request to stop the processing of the CLI.
+  /// Do nothing if the module is not "busy".
+  /// \sa IsBusy(), Cancelling, Cancelled
+  void Cancel();
   /// This enum type controls when the CLI should be run automatically.
   /// \sa SetAutoRun(), GetAutoRun()
   enum AutoRunMode

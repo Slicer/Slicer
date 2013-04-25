@@ -2241,7 +2241,7 @@ void vtkSlicerCLIModuleLogic
     if (node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelling)
       {
       // request the module execution to be cancelled.
-      node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
+      node->Cancel();
       // Wait until the module is stopped
       extraDelay = 100;
       }

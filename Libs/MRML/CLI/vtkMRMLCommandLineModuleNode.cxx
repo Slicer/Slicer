@@ -43,10 +43,14 @@ public:
   static ModuleDescriptionMap RegisteredModules;
 
   vtkMRMLCommandLineModuleNode::StatusType Status;
-  /// AutoRun flags
-  int AutoRun;
+
+  /// AutoRun state (On/Off)
+  bool AutoRun;
+  /// AutoRunMode flags
+  int AutoRunMode;
   /// Delay in msecs to wait before the module is auto run.
   unsigned int AutoRunDelay;
+
   /// Last time the module was started.
   vtkTimeStamp LastRunTime;
   /// Last time a parameter was modified.
@@ -72,7 +76,8 @@ vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
   this->Internal = new vtkInternal();
   this->HideFromEditors = true;
   this->Internal->Status = vtkMRMLCommandLineModuleNode::Idle;
-  this->Internal->AutoRun =
+  this->Internal->AutoRun = false;
+  this->Internal->AutoRunMode =
     vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
   this->Internal->AutoRunDelay = 1000;
 }
@@ -111,6 +116,7 @@ void vtkMRMLCommandLineModuleNode::WriteXML(ostream& of, int nIndent)
   //
   of << " title=\"" << this->URLEncodeString ( module.GetTitle().c_str() ) << "\"";
   of << " version=\"" << this->URLEncodeString ( module.GetVersion().c_str() ) << "\"";
+  of << " autorunmode=\"" << this->Internal->AutoRunMode << "\"";
   of << " autorun=\"" << this->Internal->AutoRun << "\"";
   
   // Loop over the parameter groups, writing each parameter.  Note
@@ -179,9 +185,17 @@ void vtkMRMLCommandLineModuleNode::ReadXMLAttributes(const char** atts)
       {
       moduleVersion = this->URLDecodeString(attValue);
       }
+    else if (!strcmp(attName, "autorunmode"))
+      {
+      int autoRunMode = 0;
+      std::stringstream ss;
+      ss << attValue;
+      ss >> autoRunMode;
+      this->SetAutoRunMode(autoRunMode);
+      }
     else if (!strcmp(attName, "autorun"))
       {
-      int autoRun = vtkMRMLCommandLineModuleNode::NoAutoRun;
+      bool autoRun = false;
       std::stringstream ss;
       ss << attValue;
       ss >> autoRun;
@@ -242,7 +256,7 @@ void vtkMRMLCommandLineModuleNode::Copy(vtkMRMLNode *anode)
   vtkMRMLCommandLineModuleNode *node = (vtkMRMLCommandLineModuleNode *) anode;
 
   this->SetModuleDescription(node->GetModuleDescription());
-  this->SetStatus(node->GetStatus());
+  this->SetStatus(static_cast<StatusType>(node->GetStatus()));
 }
 
 //----------------------------------------------------------------------------
@@ -253,9 +267,9 @@ void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Module description:   "
      << "\n"
      << "   " << this->GetModuleDescription();
-  os << indent << "Status: " << this->GetStatus() << "\n";
-  os << indent << "AutoRun:" << this->GetAutoRun()
-     << (this->IsAutoRunOn() ? "(On)" : "(Off)");
+  os << indent << "Status: " << this->GetStatusString() << "\n";
+  os << indent << "AutoRun:" << this->GetAutoRun() << "\n";
+  os << indent << "AutoRunMode:" << this->GetAutoRunMode() << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -475,7 +489,8 @@ void vtkMRMLCommandLineModuleNode
 }
 
 //----------------------------------------------------------------------------
-vtkMRMLCommandLineModuleNode::StatusType vtkMRMLCommandLineModuleNode::GetStatus() const
+int vtkMRMLCommandLineModuleNode
+::GetStatus() const
 {
   return this->Internal->Status;
 }
@@ -487,7 +502,7 @@ bool vtkMRMLCommandLineModuleNode::IsBusy() const
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCommandLineModuleNode::SetAutoRun(int autoRun)
+void vtkMRMLCommandLineModuleNode::SetAutoRun(bool autoRun)
 {
   if (this->Internal->AutoRun == autoRun)
     {
@@ -498,15 +513,26 @@ void vtkMRMLCommandLineModuleNode::SetAutoRun(int autoRun)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLCommandLineModuleNode::GetAutoRun() const
+bool vtkMRMLCommandLineModuleNode::GetAutoRun() const
 {
   return this->Internal->AutoRun;
 }
 
 //----------------------------------------------------------------------------
-bool vtkMRMLCommandLineModuleNode::IsAutoRunOn() const
+void vtkMRMLCommandLineModuleNode::SetAutoRunMode(int autoRunMode)
 {
-  return this->Internal->AutoRun & vtkMRMLCommandLineModuleNode::AutoRunOn;
+  if (this->Internal->AutoRunMode == autoRunMode)
+    {
+    return;
+    }
+  this->Internal->AutoRunMode = autoRunMode;
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+int vtkMRMLCommandLineModuleNode::GetAutoRunMode() const
+{
+  return this->Internal->AutoRunMode;
 }
 
 //----------------------------------------------------------------------------
@@ -556,11 +582,20 @@ const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
     case Cancelling: return "Cancelling";
     case Cancelled: return "Cancelled";
     case Completed: return "Completed";
-    case CompletedWithErrors: return "CompletedWithErrors";
+    case CompletedWithErrors: return "Completed with errors";
     default:
       break;
     }
   return "Unknown";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::Cancel()
+{
+  if (this->IsBusy())
+    {
+    this->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
+    }
 }
 
 //----------------------------------------------------------------------------

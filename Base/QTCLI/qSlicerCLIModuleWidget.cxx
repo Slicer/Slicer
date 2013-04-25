@@ -445,7 +445,7 @@ void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
     {
     return;
     }
-  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
+  node->Cancel();
 }
 
 //-----------------------------------------------------------------------------
