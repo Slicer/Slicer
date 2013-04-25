@@ -56,18 +56,31 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
   : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
-  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+
+  Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
+  /// This property controls whether an additional item is added into the menu
+  /// list, such item allows the user to select none of the nodes in the
+  /// combobox list. By default, the display of the item is "None" but it can be
+  /// changed with \a noneDisplay.
+  /// \sa noneDisplay, addEnabled, removeEnabled, editEnabled, renameEnabled
+  /// \sa noneEnabled(), setNoneEnabled()
   Q_PROPERTY(bool noneEnabled READ noneEnabled WRITE setNoneEnabled)
   Q_PROPERTY(bool addEnabled READ addEnabled WRITE setAddEnabled)
   Q_PROPERTY(bool removeEnabled READ removeEnabled WRITE setRemoveEnabled)
   Q_PROPERTY(bool editEnabled READ editEnabled WRITE setEditEnabled)
   Q_PROPERTY(bool renameEnabled READ renameEnabled WRITE setRenameEnabled)
-  Q_PROPERTY(QString baseName READ baseName WRITE setBaseName)
-  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false)
+
+  Q_PROPERTY(bool selectNodeUponCreation READ selectNodeUponCreation WRITE setSelectNodeUponCreation)
+  /// This property controls the name that is displayed for the None item.
+  /// "None" by default.
+  /// \sa noneEnabled
+  Q_PROPERTY(QString noneDisplay READ noneDisplay WRITE setNoneDisplay)
+
   Q_PROPERTY(QComboBox::SizeAdjustPolicy sizeAdjustPolicy READ sizeAdjustPolicy WRITE setSizeAdjustPolicy)
 
 public:
@@ -151,10 +164,11 @@ public:
   bool selectNodeUponCreation()const;
   void setSelectNodeUponCreation(bool value);
 
-  /// Set/Get NoneEnabled flags
-  /// An additional item is added into the menu list, where the user can select
-  /// "None".
+  /// Return true if the "none" is in the comboBox list, false otherwise.
+  /// \sa noneEnabled, setNoneEnabled()
   bool noneEnabled()const;
+  /// Set whether the "none" item should be in the comboBox list or not.
+  /// \sa noneEnabled, noneEnabled()
   void setNoneEnabled(bool enable);
 
   /// Allow the user to create a new node. An "Add node" item is added into the
@@ -175,6 +189,14 @@ public:
   /// Allow the user to rename the node.
   bool renameEnabled()const;
   void setRenameEnabled(bool enable);
+
+  /// Return the name of the "none" item
+  /// \sa noneDisplay, setNoneDisplay()
+  QString noneDisplay()const;
+
+  /// Set the name of the "none" item.
+  /// \sa noneDisplay, noneDisplay()
+  void setNoneDisplay(const QString& displayName);
 
   /// Return a list of all the nodes that are displayed in the combo box.
   QList<vtkMRMLNode*> nodes()const;

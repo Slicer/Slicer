@@ -46,12 +46,14 @@ qMRMLNodeComboBoxPrivate::qMRMLNodeComboBoxPrivate(qMRMLNodeComboBox& object)
   this->ComboBox = 0;
   this->MRMLNodeFactory = 0;
   this->MRMLSceneModel = 0;
-  this->SelectNodeUponCreation = true;
   this->NoneEnabled = false;
   this->AddEnabled = true;
   this->RemoveEnabled = true;
   this->EditEnabled = false;
   this->RenameEnabled = false;
+
+  this->SelectNodeUponCreation = true;
+  this->NoneDisplay = qMRMLNodeComboBox::tr("None");
   this->AutoDefaultText = true;
 }
 
@@ -206,7 +208,7 @@ void qMRMLNodeComboBoxPrivate::updateNoneItem(bool resetRootIndex)
   QStringList noneItem;
   if (this->NoneEnabled)
     {
-    noneItem.append("None");
+    noneItem.append(this->NoneDisplay);
     }
   //QVariant currentNode =
   //  this->ComboBox->itemData(this->ComboBox->currentIndex(), qMRMLSceneModel::UIDRole);
@@ -783,6 +785,25 @@ bool qMRMLNodeComboBox::renameEnabled()const
 {
   Q_D(const qMRMLNodeComboBox);
   return d->RenameEnabled;
+}
+
+//--------------------------------------------------------------------------
+void qMRMLNodeComboBox::setNoneDisplay(const QString& displayName)
+{
+  Q_D(qMRMLNodeComboBox);
+  if (d->NoneDisplay == displayName)
+    {
+    return;
+    }
+  d->NoneDisplay = displayName;
+  d->updateNoneItem(false);
+}
+
+//--------------------------------------------------------------------------
+QString qMRMLNodeComboBox::noneDisplay()const
+{
+  Q_D(const qMRMLNodeComboBox);
+  return d->NoneDisplay;
 }
 
 //--------------------------------------------------------------------------

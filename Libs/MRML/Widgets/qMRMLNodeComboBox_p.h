@@ -55,14 +55,15 @@ public:
   QComboBox*        ComboBox;
   qMRMLNodeFactory* MRMLNodeFactory;
   qMRMLSceneModel*  MRMLSceneModel;
-  bool              SelectNodeUponCreation;
   bool              NoneEnabled;
   bool              AddEnabled;
   bool              RemoveEnabled;
   bool              EditEnabled;
   bool              RenameEnabled;
-  
-  bool              AutoDefaultText;
+
+  bool SelectNodeUponCreation;
+  QString NoneDisplay;
+  bool AutoDefaultText;
 };
 
 #endif
