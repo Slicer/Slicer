@@ -1365,6 +1365,7 @@ void qSlicerCoreApplication
   vtkMRMLApplicationLogic::InvokeRequest* request =
     reinterpret_cast<vtkMRMLApplicationLogic::InvokeRequest *>(callData);
   QTimer* timer = new QTimer(this);
+  timer->setSingleShot(true);
   QVariant invokeCaller =
     qVariantFromValue(reinterpret_cast<void*>(request->Caller));
   timer->setProperty("caller", invokeCaller);

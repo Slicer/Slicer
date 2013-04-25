@@ -2175,17 +2175,28 @@ void vtkSlicerCLIModuleLogic
       case vtkMRMLCommandLineModuleNode::AutoRunEvent:
         {
         unsigned long requestTime = reinterpret_cast<unsigned long>(callData);
-        if (requestTime == 0)
+        // Make sure the CLI node has its AutoRun flag enabled and its mode is
+        // valid.
+        bool autoRun = cliNode->GetAutoRun() &&
+          cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunEnabledMask;
+        // 0 is a special value that means the autorun request has just been
+        // triggered, therefore the logic should wait to see if other requests
+        // are made before calling Apply.
+        if (requestTime != 0)
           {
-          this->AutoRun(cliNode);
+          if (cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnAnyInputEvent)
+            {
+            autoRun = autoRun && (cliNode->GetInputMTime() <= requestTime);
+            }
+          if (cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter)
+            {
+            autoRun = autoRun && (cliNode->GetParameterMTime() <= requestTime);
+            }
           }
-        else if (cliNode->GetAutoRun() &&
-            ((cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnAnyInputEvent &&
-              cliNode->GetInputMTime() <= requestTime) ||
-             (cliNode->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter &&
-              cliNode->GetParameterMTime() <= requestTime)))
+
+        if (autoRun)
           {
-          if (cliNode->IsBusy())
+          if ((requestTime == 0) || cliNode->IsBusy())
             {
             this->AutoRun(cliNode);
             }
