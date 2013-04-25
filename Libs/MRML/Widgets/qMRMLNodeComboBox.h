@@ -187,7 +187,7 @@ public:
   /// Retrieve the sortFilterProxyModel used to filter/sort
   /// the nodes.
   /// \sa sceneModel()
-  qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
+  Q_INVOKABLE qMRMLSortFilterProxyModel* sortFilterProxyModel()const;
 
   /// Retrieve the scene model internally used.
   /// The scene model is usually not used directly, but a sortFilterProxyModel

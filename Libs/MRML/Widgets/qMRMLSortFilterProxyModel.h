@@ -77,18 +77,10 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
   /// will be visible.
   Q_PROPERTY(QStringList hideChildNodeTypes READ hideChildNodeTypes WRITE setHideChildNodeTypes)
 
-  /// This property controls the nodes to hide by node IDs.
-  Q_PROPERTY(QStringList hiddenNodeIDs READ hiddenNodeIDs WRITE setHiddenNodeIDs)
-
-  /// This property controls whether nodes unaffiliated with a given node ID are
-  /// hidden or not.
-  /// All the nodes are visible (empty string) by default.
-  Q_PROPERTY(QString hideNodesUnaffiliatedWithNodeID READ hideNodesUnaffiliatedWithNodeID WRITE setHideNodesUnaffiliatedWithNodeID)
-
   /// This property controls whether the proxy applies its filter or if it
   /// shows or hides all the nodes.
   /// UseFilters by defaults.
-  /// \sa showAll, hideAll
+  /// \sa showAll, hideAll, hiddenNodeIDs, visibleNodeIDs
   Q_PROPERTY(FilterType filterType READ filterType WRITE setFilterType)
   Q_ENUMS(FilterType)
   /// This property controls whether all the nodes are visible or not,
@@ -100,6 +92,23 @@ class QMRML_WIDGETS_EXPORT qMRMLSortFilterProxyModel : public QSortFilterProxyMo
   /// bypassing any filter.
   /// False by default.
   Q_PROPERTY(bool hideAll READ hideAll WRITE setHideAll STORED false)
+
+  /// This property forces nodes to be hidden despite their ability to be
+  /// visible. Only \a filterType takes precedence or \a hiddenNodeIDs.
+  /// It takes precendence over \a visibleNodeIDs.
+  /// \sa visibleNodeIDs, filterType, showHidden
+  Q_PROPERTY(QStringList hiddenNodeIDs READ hiddenNodeIDs WRITE setHiddenNodeIDs)
+
+  /// This property forces nodes to be visible even if they should be hidden
+  /// based on the filter rules. Only \a filterType and \a hiddenNodeIDs
+  /// can take precedence over this property.
+  /// \sa hiddenNodeIDs, filterType, showHidden
+  Q_PROPERTY(QStringList visibleNodeIDs READ visibleNodeIDs WRITE setVisibleNodeIDs)
+
+  /// This property controls whether nodes unaffiliated with a given node ID are
+  /// hidden or not.
+  /// All the nodes are visible (empty string) by default.
+  Q_PROPERTY(QString hideNodesUnaffiliatedWithNodeID READ hideNodesUnaffiliatedWithNodeID WRITE setHideNodesUnaffiliatedWithNodeID)
 
 public:
   enum FilterType
@@ -170,6 +179,13 @@ public:
   /// Return the list of nodes to hide.
   /// \sa hiddenNodeIDs, setHiddenNodeIDs()
   QStringList hiddenNodeIDs()const;
+
+  /// Set the list of nodes to force visibility.
+  /// \sa visibleNodeIDs, visibleNodeIDs()
+  void setVisibleNodeIDs(const QStringList& nodeIDsToShow);
+  /// Return the list of nodes to show.
+  /// \sa visibleNodeIDs, setVisibleNodeIDs()
+  QStringList visibleNodeIDs()const;
 
   /// Set the node ID used to filter out nodes that are not associated to it.
   /// Recompute the filtering.
