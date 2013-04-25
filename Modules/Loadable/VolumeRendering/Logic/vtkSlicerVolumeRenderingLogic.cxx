@@ -558,7 +558,7 @@ void vtkSlicerVolumeRenderingLogic
   vtkLookupTable* lut = vtkLookupTable::SafeDownCast(colors);
   const int colorCount = colors->GetNumberOfAvailableColors();
   double value = colors->GetRange()[0];
-  double step = (colors->GetRange()[1] - colors->GetRange()[0]) / colorCount;
+  double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
   double color[4] = {0., 0., 0., 1.};
   for (int i = 0; i < colorCount; ++i, value += step)
     {
