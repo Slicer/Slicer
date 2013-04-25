@@ -23,6 +23,7 @@
 class ModuleDescription;
 
 /// \brief MRML node for representing the parameters allowing to run a command line module
+/// The parameters can be changed with SetParameterAsXXX().
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
 public:
@@ -71,11 +72,31 @@ public:
   /// parameters with simple IO mechanisms.
   bool WriteParameterFile(const std::string& filename, bool withHandlesToBulkParameters = true);
 
-  /// Get/Set a parameter for the module.
+  /// Set the parameter \a name to the node \a value.
+  /// If the parameter is not in the output channel, InputParameterModifiedEvent
+  /// is invoked anytime the node is modified (ModifiedEvent is invoked).
+  /// \sa SetParameterAsString(), SetParameterAsBool(), SetParameterAsDouble(),
+  /// SetParameterAsFloat(), SetParameterAsInt()
+  bool SetParameterAsNode(const char* name, vtkMRMLNode* value);
+  /// Set the parameter \a name to the string \a value.
+  /// \sa SetParameterAsInt(), SetParameterAsBool(), SetParameterAsDouble(),
+  /// SetParameterAsFloat(), SetParameterAsNode()
   bool SetParameterAsString(const char* name, const std::string& value);
+  /// Set the parameter \a name to the int \a value.
+  /// \sa SetParameterAsString(), SetParameterAsBool(), SetParameterAsDouble(),
+  /// SetParameterAsFloat(), SetParameterAsNode()
   bool SetParameterAsInt(const char* name, int value);
+  /// Set the parameter \a name to the bool \a value.
+  /// \sa SetParameterAsString(), SetParameterAsInt(), SetParameterAsDouble(),
+  /// SetParameterAsFloat(), SetParameterAsNode()
   bool SetParameterAsBool(const char* name, bool value);
+  /// Set the parameter \a name to the double \a value.
+  /// \sa SetParameterAsString(), SetParameterAsInt(), SetParameterAsBool(),
+  /// SetParameterAsFloat(), SetParameterAsNode()
   bool SetParameterAsDouble(const char* name, double value);
+  /// Set the parameter \a name to the float \a value.
+  /// \sa SetParameterAsString(), SetParameterAsInt(), SetParameterAsDouble(),
+  /// SetParameterAsBool(), SetParameterAsNode()
   bool SetParameterAsFloat(const char* name, float value);
 
   std::string GetParameterAsString(const char* name) const;

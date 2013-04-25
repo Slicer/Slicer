@@ -37,7 +37,7 @@ def setNodeParameters(node, parameters):
     elif isinstance(value, float):
       node.SetParameterAsDouble(key, value)
     elif isinstance(value, slicer.vtkMRMLNode):
-      node.SetParameterAsString(key, value.GetID())
+      node.SetParameterAsNode(key, value)
     elif isinstance(value, list) or isinstance(value, tuple):
       commaSeparatedString = str(value)
       commaSeparatedString = commaSeparatedString[1:len(commaSeparatedString)-1]

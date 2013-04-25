@@ -275,24 +275,61 @@ bool vtkMRMLCommandLineModuleNode
 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode
-::SetParameterAsDouble(const char* name, double value)
+::SetParameterAsNode(const char* name, vtkMRMLNode* node)
 {
-  std::ostringstream strvalue;
-
-  strvalue << value;
-  
+  std::string value = node ? node->GetID() : "";
+  std::string oldValue = this->GetParameterAsString(name);
   // Set the default value of the named parameter with the value
   // specified
-  if (strvalue.str() != this->GetParameterAsString(name))
+  if (value != oldValue)
     {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, strvalue.str()))
+    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, value))
       {
+#ifndef NDEBUG
+      if (!this->Internal->ModuleDescriptionObject.HasParameter(name))
+        {
+        vtkErrorMacro(<< "There is no parameter named " << name );
+        }
+#endif
       return false;
       }
     this->Modified();
     return true;
     }
   return false;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode
+::SetParameterAsString(const char* name, const std::string& value)
+{
+  // Set the default value of the named parameter with the value
+  // specified
+  if (value != this->GetParameterAsString(name))
+    {
+    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, value))
+      {
+#ifndef NDEBUG
+      if (!this->Internal->ModuleDescriptionObject.HasParameter(name))
+        {
+        vtkErrorMacro(<< "There is no parameter named " << name );
+        }
+#endif
+      return false;
+      }
+    this->Modified();
+    return true;
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode
+::SetParameterAsDouble(const char* name, double value)
+{
+  std::ostringstream strvalue;
+  strvalue << value;
+  return this->SetParameterAsString(name, strvalue.str());
 }
 
 //----------------------------------------------------------------------------
@@ -300,63 +337,25 @@ bool vtkMRMLCommandLineModuleNode
 ::SetParameterAsFloat(const char *name, float value)
 {
   std::ostringstream strvalue;
-
   strvalue << value;
-  
-  // Set the default value of the named parameter with the value
-  // specified
-  if (strvalue.str() != this->GetParameterAsString(name))
-    {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, strvalue.str()))
-      {
-      return false;
-      }
-    this->Modified();
-    return true;
-    }
-  return false;
+  return this->SetParameterAsString(name, strvalue.str());
 }
-
 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode
 ::SetParameterAsInt(const char* name, int value)
 {
   std::ostringstream strvalue;
-
   strvalue << value;
-  
-  // Set the default value of the named parameter with the value
-  // specified
-  if (strvalue.str() != this->GetParameterAsString(name))
-    {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(name, strvalue.str()))
-      {
-      return false;
-      }
-    this->Modified();
-    return true;
-    }
-  return false;
+  return this->SetParameterAsString(name, strvalue.str());
 }
 
 //----------------------------------------------------------------------------
 bool vtkMRMLCommandLineModuleNode
 ::SetParameterAsBool(const char* name, bool value)
 {
-  // Set the default value of the named parameter with the value
-  // specified
-  if (this->GetParameterAsString(name) != (value ? "true" : "false"))
-    {
-    if (!this->Internal->ModuleDescriptionObject.SetParameterDefaultValue(
-          name, value ? "true" : "false"))
-      {
-      return false;
-      }
-    this->Modified();
-    return true;
-    }
-  return false;
+  std::string valueAsString = (value ? "true" : "false");
+  return this->SetParameterAsString(name, valueAsString);
 }
 
 //----------------------------------------------------------------------------

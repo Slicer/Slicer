@@ -32,6 +32,7 @@
 
 // MRML includes
 #include <vtkMRMLCommandLineModuleNode.h>
+#include <vtkMRMLScene.h>
 
 // ITK includes
 
@@ -994,8 +995,19 @@ void qSlicerCLIModuleUIHelper::setCommandLineModuleParameter(vtkMRMLCommandLineM
     }
   else if (type == QVariant::String)
     {
-    commandLineModuleNode->SetParameterAsString(name.toLatin1(),
-                                                value.toString().toStdString());
+    QString valueAsString = value.toString();
+    vtkMRMLNode* node = valueAsString.startsWith("vtkMRML") ?
+      d->CLIModuleWidget->mrmlScene()->GetNodeByID(
+        valueAsString.toLatin1()) : 0;
+    if (node)
+      {
+      commandLineModuleNode->SetParameterAsNode(name.toLatin1(),node);
+      }
+    else
+      {
+      commandLineModuleNode->SetParameterAsString(name.toLatin1(),
+                                                  value.toString().toStdString());
+      }
     }
   else
     {
