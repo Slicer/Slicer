@@ -39,6 +39,9 @@ class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+
+  Q_PROPERTY(bool visibleAfterExecution
+             READ isVisibleAfterExecution WRITE setVisibleAfterExecution)
 public:
 
   typedef QWidget Superclass;
@@ -48,10 +51,18 @@ public:
   /// Get the \a commandLineModuleNode
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * commandLineModuleNode()const;
 
+  /// Get if the progress bars stay visible after execution or not.
+  /// True by default.
+  bool isVisibleAfterExecution() const;
+
 public slots:
 
   /// Set the \a commandLineModuleNode
   void setCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
+
+  /// Set if the progress bars stay visible after execution or not.
+  /// True by default.
+  void setVisibleAfterExecution(bool visible);
 
 protected slots:
 

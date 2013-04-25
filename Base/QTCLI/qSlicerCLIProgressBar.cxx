@@ -60,6 +60,7 @@ private:
   QProgressBar * StageProgressBar;
 
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+  bool VisibleAfterExecution;
 
 };
 
@@ -71,6 +72,7 @@ qSlicerCLIProgressBarPrivate::qSlicerCLIProgressBarPrivate(qSlicerCLIProgressBar
   :q_ptr(&object)
 {
   this->CommandLineModuleNode = 0;
+  this->VisibleAfterExecution = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -137,6 +139,13 @@ vtkMRMLCommandLineModuleNode * qSlicerCLIProgressBar::commandLineModuleNode()con
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCLIProgressBar::isVisibleAfterExecution()const
+{
+  Q_D(const qSlicerCLIProgressBar);
+  return d->VisibleAfterExecution;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCLIProgressBar::setCommandLineModuleNode(
   vtkMRMLCommandLineModuleNode* commandLineModuleNode)
 {
@@ -153,6 +162,19 @@ void qSlicerCLIProgressBar::setCommandLineModuleNode(
     this, SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
 
   d->CommandLineModuleNode = commandLineModuleNode;
+  this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIProgressBar::setVisibleAfterExecution(bool visible)
+{
+  Q_D(qSlicerCLIProgressBar);
+  if (visible == d->VisibleAfterExecution)
+    {
+    return;
+    }
+
+  d->VisibleAfterExecution = visible;
   this->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }
 
@@ -175,9 +197,20 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
 
   // Update progress
   d->StatusLabel->setText(node->GetStatusString());
-  d->ProgressBar->setVisible(node->GetStatus() != vtkMRMLCommandLineModuleNode::Idle &&
-                                node->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled);
-  d->StageProgressBar->setVisible(node->GetStatus() == vtkMRMLCommandLineModuleNode::Running);
+
+  // Update visibility
+  bool showProgressBar = node->IsBusy();
+  if (d->VisibleAfterExecution)
+    {
+    showProgressBar |=
+      node->GetStatus() == vtkMRMLCommandLineModuleNode::Completed;
+    showProgressBar |=
+      node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors;
+    }
+  d->ProgressBar->setVisible(showProgressBar);
+  d->StageProgressBar->setVisible(node->IsBusy());
+
+  // Update Progress
   ModuleProcessInformation* info = node->GetModuleDescription().GetProcessInformation();
   switch (node->GetStatus())
     {
