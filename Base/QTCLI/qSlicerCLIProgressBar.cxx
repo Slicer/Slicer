@@ -89,12 +89,12 @@ void qSlicerCLIProgressBarPrivate::init()
   sizePolicy.setVerticalStretch(0);
   sizePolicy.setHeightForWidth(StatusLabelLabel->sizePolicy().hasHeightForWidth());
   this->StatusLabelLabel->setSizePolicy(sizePolicy);
+  this->StatusLabelLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
   this->GridLayout->addWidget(StatusLabelLabel, 1, 0, 1, 1);
 
   this->StatusLabel = new QLabel();
   this->StatusLabel->setObjectName(QString::fromUtf8("StatusLabel"));
-  this->StatusLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
   this->GridLayout->addWidget(StatusLabel, 1, 1, 1, 1);
 
@@ -110,7 +110,7 @@ void qSlicerCLIProgressBarPrivate::init()
   this->StageProgressBar->setValue(0);
   this->GridLayout->addWidget(StageProgressBar, 3, 0, 1, 2);
 
-  this->StatusLabelLabel->setText(QObject::tr("Status"));
+  this->StatusLabelLabel->setText(QObject::tr("Status:"));
   this->StatusLabel->setText(QObject::tr("Idle"));
 }
 
