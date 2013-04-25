@@ -560,6 +560,8 @@ void vtkSlicerVolumeRenderingLogic
   double value = colors->GetRange()[0];
   double step = (colors->GetRange()[1] - colors->GetRange()[0] + 1.) / colorCount;
   double color[4] = {0., 0., 0., 1.};
+  const double midPoint = 0.5;
+  const double sharpness = 1.0;
   for (int i = 0; i < colorCount; ++i, value += step)
     {
     // Short circuit for luts as it is faster
@@ -571,8 +573,8 @@ void vtkSlicerVolumeRenderingLogic
       {
       colors->GetColor(value, color);
       }
-    opacity->AddPoint(value, color[3]);
-    colorTransfer->AddRGBPoint(value, color[0], color[1], color[2]);
+    opacity->AddPoint(value, color[3], midPoint, sharpness);
+    colorTransfer->AddRGBPoint(value, color[0], color[1], color[2], midPoint, sharpness);
     }
 
   vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
