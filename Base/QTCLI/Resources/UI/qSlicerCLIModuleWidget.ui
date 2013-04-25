@@ -73,9 +73,6 @@
             </item>
            </layout>
           </item>
-          <item>
-           <widget class="qSlicerCLIProgressBar" name="CLIProgressBar" native="true"/>
-          </item>
          </layout>
         </widget>
        </item>
@@ -92,6 +89,9 @@
       </layout>
      </widget>
     </widget>
+   </item>
+   <item>
+    <widget class="qSlicerCLIProgressBar" name="CLIProgressBar" native="true"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="ButtonLayout">
