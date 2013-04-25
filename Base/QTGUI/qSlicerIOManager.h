@@ -37,9 +37,9 @@ public:
   /// If no dialog is registered for a given fileType (e.g.
   /// QString("SceneFile")), a default dialog (qSlicerStandardFileDialog) is 
   /// used.
-  bool openDialog(qSlicerIO::IOFileType fileType,
-                  qSlicerFileDialog::IOAction action,
-                  qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties());
+  Q_INVOKABLE bool openDialog(qSlicerIO::IOFileType fileType,
+                              qSlicerFileDialog::IOAction action,
+                              qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties());
 
   void addHistory(const QString& path);
   const QStringList& history()const;

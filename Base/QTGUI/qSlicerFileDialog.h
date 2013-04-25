@@ -42,6 +42,7 @@ class qSlicerIOManager;
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(IOAction)
 public:
   typedef QObject Superclass;
   qSlicerFileDialog(QObject* parent =0);
@@ -120,5 +121,7 @@ private:
   Q_DECLARE_PRIVATE(qSlicerStandardFileDialog);
   Q_DISABLE_COPY(qSlicerStandardFileDialog);
 };
+
+Q_DECLARE_METATYPE(qSlicerFileDialog::IOAction)
 
 #endif

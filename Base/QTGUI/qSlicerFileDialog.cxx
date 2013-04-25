@@ -43,6 +43,7 @@ public:
 qSlicerFileDialog::qSlicerFileDialog(QObject* _parent)
   :QObject(_parent)
 {
+  qRegisterMetaType<qSlicerFileDialog::IOAction>("qSlicerFileDialog::IOAction");
 }
 
 //-----------------------------------------------------------------------------
