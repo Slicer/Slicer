@@ -163,7 +163,15 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(
   Q_D(qSlicerCLIProgressBar);
   vtkMRMLCommandLineModuleNode * node =
     vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode);
-  Q_ASSERT(node);
+  if (!node)
+    {
+    d->StatusLabel->setText("No CLI");
+    d->ProgressBar->setVisible(false);
+    d->StageProgressBar->setVisible(false);
+    d->ProgressBar->setMaximum(0);
+    d->StageProgressBar->setMaximum(0);
+    return;
+    }
 
   // Update progress
   d->StatusLabel->setText(node->GetStatusString());

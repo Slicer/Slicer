@@ -245,7 +245,6 @@ void qSlicerCLIModuleWidgetPrivate::setDefaultNodeValue(vtkMRMLNode* commandLine
   Q_ASSERT(node);
   // Note that node will fire a ModifyEvent.
   node->SetModuleDescription(this->logic()->GetDefaultModuleDescription());
-  this->CLIProgressBar->setCommandLineModuleNode(vtkMRMLCommandLineModuleNode::SafeDownCast(commandLineModuleNode));
 }
 
 //-----------------------------------------------------------------------------
@@ -417,6 +416,7 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
   //d->updateCommandLineModuleNodeFromUi(d->CommandLineModuleNode);
 
   d->CommandLineModuleNode = node;
+  d->CLIProgressBar->setCommandLineModuleNode(d->CommandLineModuleNode);
   d->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
 }
 
