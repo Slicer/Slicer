@@ -371,9 +371,13 @@ void vtkMRMLCommandLineModuleNode
   if (this->Internal->Status != status)
     {
     this->Internal->Status = status;
-    if (this->Internal->Status == vtkMRMLCommandLineModuleNode::Cancelled)
+    switch (this->Internal->Status)
       {
-      this->AbortProcess();
+      case vtkMRMLCommandLineModuleNode::Cancelling:
+        this->AbortProcess();
+        break;
+      default:
+        break;
       }
     if (modify)
       {
@@ -389,6 +393,11 @@ vtkMRMLCommandLineModuleNode::StatusType vtkMRMLCommandLineModuleNode::GetStatus
 }
 
 //----------------------------------------------------------------------------
+bool vtkMRMLCommandLineModuleNode::IsBusy() const
+{
+  return this->Internal->Status & vtkMRMLCommandLineModuleNode::BusyMask;
+}
+
 const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
 {
   switch (this->Internal->Status)

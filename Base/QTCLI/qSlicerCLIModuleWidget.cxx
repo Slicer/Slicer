@@ -128,6 +128,7 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
       this->CancelPushButton->setEnabled(true);
       break;
     case vtkMRMLCommandLineModuleNode::Running:
+    case vtkMRMLCommandLineModuleNode::Cancelling:
       this->DefaultPushButton->setEnabled(false);
       this->ApplyPushButton->setEnabled(false);
       this->CancelPushButton->setEnabled(true);
@@ -394,6 +395,7 @@ void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
     {
     return;
     }
-  qDebug() << "Cancel module processing...";
-  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelled);
+  node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
+}
+
 }

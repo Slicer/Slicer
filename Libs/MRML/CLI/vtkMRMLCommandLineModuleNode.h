@@ -52,7 +52,27 @@ public:
   ModuleDescription& GetModuleDescription();
   void SetModuleDescription(const ModuleDescription& description);
 
-  typedef enum { Idle=0, Scheduled=1, Running=2, Completed=3, CompletedWithErrors=4, Cancelled=5 } StatusType;
+  typedef enum {
+    /// Initial state of the CLI.
+    Idle=0x00,
+    /// State when the CLI has been requested to be executed.
+    Scheduled=0x01,
+    /// State when the CLI is being executed.
+    Running=0x02,
+    /// State when the CLI has been requested to be cancelled.
+    Cancelling=0x04,
+    /// State when the CLI is no longer being executed because
+    /// Cancelling has been requested.
+    Cancelled=0x08,
+    /// State when the CLI has been successfully executed.
+    Completed=0x10,
+    /// Mask applied when the CLI has been executed with errors
+    ErrorsMask=0x20,
+    /// State when the CLI has been executed with errors
+    CompletedWithErrors= Completed | ErrorsMask,
+    /// Mask used to know if the CLI is in pending mode.
+    BusyMask = Scheduled | Running | Cancelling
+  } StatusType;
 
   /// Set the status of the node (Idle, Scheduled, Running,
   /// Completed).  The "modify" parameter indicates whether the object
@@ -61,6 +81,10 @@ public:
   StatusType GetStatus() const;
   const char* GetStatusString() const;
 
+  /// Return true if the module is in a busy state: Scheduled, Running or
+  /// Cancelling.
+  /// \sa SetStatus(), GetStatus(), BusyMask
+  bool IsBusy()const;
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
   bool ReadParameterFile(const std::string& filename);
