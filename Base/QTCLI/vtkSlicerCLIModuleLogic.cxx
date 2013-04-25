@@ -18,6 +18,7 @@
 #include <ModuleDescription.h>
 
 // MRML includes
+#include <vtkEventBroker.h>
 #include <vtkMRMLColorNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
@@ -83,6 +84,53 @@ public:
   int RedirectModuleStreams;
 
   std::string TemporaryDirectory;
+
+  typedef std::vector<std::pair<int, vtkMRMLCommandLineModuleNode*> > RequestType;
+  struct FindRequest
+  {
+    FindRequest(vtkMRMLCommandLineModuleNode* node)
+      : Node(node)
+      , LastRequestUID(0)
+    {
+    }
+    FindRequest(int requestUID)
+      : Node(0)
+      , LastRequestUID(requestUID)
+    {
+    }
+    bool operator()(const std::pair<int, vtkMRMLCommandLineModuleNode*>& p)
+    {
+      return (this->Node != 0 && p.second == this->Node) ||
+        (this->LastRequestUID != 0 && p.first == this->LastRequestUID);
+    }
+    vtkMRMLCommandLineModuleNode* Node;
+    int LastRequestUID;
+  };
+
+  void SetLastRequest(vtkMRMLCommandLineModuleNode* node, int requestUID)
+  {
+    RequestType::iterator it = std::find_if(
+      this->LastRequests.begin(), this->LastRequests.end(), FindRequest(node));
+    if (it == this->LastRequests.end())
+      {
+      this->LastRequests.push_back(std::make_pair(requestUID, node));
+      }
+    else
+      {
+      assert( it->first < requestUID );
+      it->first = requestUID;
+      }
+  }
+  int GetLastRequest(vtkMRMLCommandLineModuleNode* node)
+  {
+    RequestType::iterator it = std::find_if(
+      this->LastRequests.begin(), this->LastRequests.end(), FindRequest(node));
+    return (it != this->LastRequests.end())? it->first : 0;
+  }
+
+  /// List of read data/scene requests of the CLI nodes
+  /// being executed with their.
+  RequestType LastRequests;
 };
 
 //----------------------------------------------------------------------------
@@ -442,6 +490,13 @@ void vtkSlicerCLIModuleLogic::Apply ( vtkMRMLCommandLineModuleNode* node, bool u
   // once the task actually runs
   node->Register(this);
   node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
+
+  // Observe application logic to know when the CLI is completed and the
+  // associated data loaded. The observation will be removed in the callback.
+  vtkEventBroker::GetInstance()->AddObservation(
+    this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
+    this, this->GetMRMLLogicsCallbackCommand());
+
   // Schedule the task
   ret = this->GetApplicationLogic()->ScheduleTask( task );
 
@@ -1856,7 +1911,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   else if (node0->GetStatus() != vtkMRMLCommandLineModuleNode::Cancelled
            && node0->GetStatus() != vtkMRMLCommandLineModuleNode::CompletedWithErrors)
     {
-    node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
+    node0->SetStatus(vtkMRMLCommandLineModuleNode::Completing, false);
     this->GetApplicationLogic()->RequestModified( node0 );
     }
   // reset the progress to zero
@@ -1867,7 +1922,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // import the results if the plugin was allowed to complete
   //
   //
-  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completed)
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing)
     {
     // reload nodes
     for (id2fn0 = nodesToReload.begin(); id2fn0 != nodesToReload.end(); ++id2fn0)
@@ -1889,10 +1944,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         // data is reloaded by the main thread.
         bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
         bool deleteFile = this->GetDeleteTemporaryFiles();
-        this->GetApplicationLogic()
+        int requestUID = this->GetApplicationLogic()
           ->RequestReadData((*id2fn0).first.c_str(), (*id2fn0).second.c_str(),
                             displayData, deleteFile);
-        
+        this->Internal->SetLastRequest(node0, requestUID);
+
         // If we are reloading a file, then we know that it is a file
         // that needs to be removed.  It wouldn't make sense for two
         // outputs of a module to produce the same file to be reloaded.
@@ -1961,31 +2017,40 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   // if there was a miniscene that needs loading, request it
   if (miniscene->GetNumberOfNodes() > 0)
     {
-    bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
-    bool deleteFile = this->GetDeleteTemporaryFiles();
-
-    // Convert the index map to two vectors so that we can pass it to
-    // a function in a different library (Win32 limitation)
-    std::vector<std::string> keys, values;
-    
-    MRMLIDMap::iterator mit;
-    for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end();
-         ++mit)
+    // don't load the mini scene if errors were found or the cli was cancelled.
+    if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing)
       {
-      // only load the nodes that are needed back into the main scene
-      MRMLIDToFileNameMap::iterator rit = nodesToReload.find( (*mit).first );
+      bool displayData = this->IsCommandLineModuleNodeUpdatingDisplay(node0);
+      bool deleteFile = this->GetDeleteTemporaryFiles();
 
-      if (rit != nodesToReload.end())
+      // Convert the index map to two vectors so that we can pass it to
+      // a function in a different library (Win32 limitation)
+      std::vector<std::string> keys, values;
+
+      MRMLIDMap::iterator mit;
+      for (mit = sceneToMiniSceneMap.begin(); mit != sceneToMiniSceneMap.end();
+           ++mit)
         {
-        keys.push_back( (*mit).first );
-        values.push_back( (*mit).second );
-        }
-      }
+        // only load the nodes that are needed back into the main scene
+        MRMLIDToFileNameMap::iterator rit = nodesToReload.find( (*mit).first );
 
-    // Place a request to read the miniscene and map any ids as necessary
-    this->GetApplicationLogic()
-      ->RequestReadScene( minisceneFilename, keys, values,
-                          displayData, deleteFile );
+        if (rit != nodesToReload.end())
+          {
+          keys.push_back( (*mit).first );
+          values.push_back( (*mit).second );
+          }
+        }
+
+      // Place a request to read the miniscene and map any ids as necessary
+      int requestUID = this->GetApplicationLogic()
+        ->RequestReadScene( minisceneFilename, keys, values,
+                            displayData, deleteFile );
+      this->Internal->SetLastRequest(node0, requestUID);
+      }
+    else // but delete the temporary file.
+      {
+      filesToDelete.insert(minisceneFilename);
+      }
     }
 
 
@@ -2015,6 +2080,17 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       }
     }
 
+  // The CLI node is only completed if the outputs are loaded back into the
+  // scene.
+  // This is a special case where no output is needed to be read. Usually
+  // the CLI node is set to Completed when the Application Logic has finished
+  // to process all the requests.
+  if (node0->GetStatus() == vtkMRMLCommandLineModuleNode::Completing &&
+      this->Internal->GetLastRequest(node0) == 0)
+    {
+    node0->SetStatus(vtkMRMLCommandLineModuleNode::Completed, false);
+    this->GetApplicationLogic()->RequestModified( node0 );
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2152,6 +2228,35 @@ void vtkSlicerCLIModuleLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkObserveMRMLNodeEventsMacro(node, events.GetPointer());
     }
   this->Superclass::OnMRMLSceneNodeAdded(node);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerCLIModuleLogic::ProcessMRMLLogicsEvents(vtkObject* caller,
+                                                      unsigned long event,
+                                                      void * callData)
+{
+  if (caller->IsA("vtkSlicerApplicationLogic") &&
+      event == vtkSlicerApplicationLogic::RequestProcessedEvent)
+    {
+    unsigned long uid = reinterpret_cast<unsigned long>(callData);
+    vtkInternal::RequestType::iterator it =
+      std::find_if(this->Internal->LastRequests.begin(),
+      this->Internal->LastRequests.end(), vtkInternal::FindRequest(uid));
+    if (it != this->Internal->LastRequests.end())
+      {
+      vtkMRMLCommandLineModuleNode* node = it->second;
+      // If the status is not Completing, then there should be no request made
+      // on the application logic.
+      assert(node->GetStatus() == vtkMRMLCommandLineModuleNode::Completing);
+      node->SetStatus(vtkMRMLCommandLineModuleNode::Completed);
+      this->Internal->LastRequests.erase(it);
+      // we are not interested in any request anymore because the cli node is
+      // Completed.
+      vtkEventBroker::GetInstance()->RemoveObservations(
+        this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
+        this, this->GetMRMLLogicsCallbackCommand());
+      }
+    }
 }
 
 //---------------------------------------------------------------------------

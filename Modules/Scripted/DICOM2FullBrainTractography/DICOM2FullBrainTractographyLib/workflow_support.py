@@ -188,10 +188,6 @@ def widget_find_field(widget, objectName):
             return children[0]
 
 
-def wait_for_module(module, time_pause=5):
-    while module.GetStatusString() not in ('Completed','CompletedWithErrors','Cancelled'):
-        time.sleep(time_pause)
-
 
 __VOLUME_TYPES__ =(
     'Scalar',

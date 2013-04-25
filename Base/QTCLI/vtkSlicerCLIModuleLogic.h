@@ -111,6 +111,8 @@ protected:
   /// Reimplemented to observe CLI node.
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
                                       void *callData);
+  /// Reimplemented to observe vtkSlicerApplicationLogic.
+  void ProcessMRMLLogicsEvents(vtkObject*, long unsigned int, void*);
 
 
   std::string ConstructTemporaryFileName(const std::string& tag,

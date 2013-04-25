@@ -61,11 +61,17 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 
   /// Shutdown the processing thread
   void TerminateProcessingThread();
+  /// List of events potentially fired by the application logic
   enum RequestEvents
     {
       RequestModifiedEvent = vtkMRMLApplicationLogic::RequestInvokeEvent + 1,
       RequestReadDataEvent,
-      RequestWriteDataEvent
+      RequestWriteDataEvent,
+      /// Event fired when a readData, writeData or readScene request
+      /// has been processed.
+      /// The uid of the request is passed as callData.
+      /// \todo Add support for "modified" request.
+      RequestProcessedEvent
     };
 
   /// Schedule a task to run in the processing thread. Returns true if
@@ -78,12 +84,20 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// performed in the main thread.  This allows the call to Modified
   /// to trigger GUI changes. RequestModified() is called from the
   /// processing thread to modify an object in the main thread.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered.
+  /// \todo Fire RequestProcessedEvent when processing Modified requests.
+  /// \sa RequestReadData(), RequestWriteData()
   int RequestModified( vtkObject * );
 
   /// Request that data be read from a file and set it on the referenced
   /// node.  The request will be sent to the main thread which will be
   /// responsible for reading the data, setting it on the referenced
   /// node, and updating the display.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered. When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
   int RequestReadData(const char *refNode, const char *filename,
                        int displayData = false,
                        int deleteFile=false);
@@ -95,6 +109,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
 
 
   /// Request that data be written from a file to a remote destination.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered.  When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadData(), RequestReadScene()
   int RequestWriteData(const char *refNode, const char *filename,
                        int displayData = false,
                        int deleteFile=false);
@@ -105,6 +123,10 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   /// loaded back into the main scene.  Hierarchical nodes will be
   /// handled specially, in that only the top node needs to be listed
   /// in the sourceIds.
+  /// Return the request UID (monotonically increasing) of the request or 0 if
+  /// the request failed to be registered. When the request is processed,
+  /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// \sa RequestReadData(), RequestWriteData()
   int RequestReadScene(const std::string& filename,
                        std::vector<std::string> &targetIDs,
                        std::vector<std::string> &sourceIDs,
@@ -199,6 +221,7 @@ private:
   itk::MutexLock::Pointer ReadDataQueueLock;
   itk::MutexLock::Pointer WriteDataQueueActiveLock;
   itk::MutexLock::Pointer WriteDataQueueLock;
+  vtkTimeStamp RequestTimeStamp;
   int ProcessingThreadId;
   std::vector<int> NetworkingThreadIDs;
   int ProcessingThreadActive;

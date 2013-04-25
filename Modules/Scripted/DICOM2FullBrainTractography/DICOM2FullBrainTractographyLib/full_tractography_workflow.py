@@ -89,7 +89,8 @@ class WorkflowConfiguration:
                 data[step_object.id()],
                 wait_for_completion = True)
 
-            if self.dwiconvert_parameter_node.GetStatusString() == 'Completed':
+            if self.dwiconvert_parameter_node.GetStatusString() == 'Completing' or \
+                self.dwiconvert_parameter_node.GetStatusString() == 'Completed':
                 file_path = data[step_object.id()]['outputVolume']
                 result_status, node = slicer.util.loadVolume(
                     file_path,
@@ -150,7 +151,8 @@ class WorkflowConfiguration:
             wait_for_completion=True
         )
 
-        if self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completed":
+        if self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completing" or \
+            self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completed":
             display_error("Error in diffusion tensor estimation")
             return False
 
@@ -174,7 +176,8 @@ class WorkflowConfiguration:
             wait_for_completion=True
         )
 
-        result_status = self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completed'
+        result_status = self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completing' or \
+                             self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completed'
 
         if not result_status:
             display_error("Error in diffusion tensor estimation")
@@ -205,7 +208,8 @@ class WorkflowConfiguration:
             wait_for_completion=True
         )
 
-        result_status = self.seeding_parameter_node.GetStatusString() == 'Completed'
+        result_status = self.seeding_parameter_node.GetStatusString() == 'Completing' or \
+                             self.seeding_parameter_node.GetStatusString() == 'Completed'
 
         if not result_status:
             display_error("Error in tractography")

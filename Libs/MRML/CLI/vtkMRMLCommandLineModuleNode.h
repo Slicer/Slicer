@@ -50,7 +50,7 @@ public:
   virtual const char* GetNodeTagName()
     {return "CommandLineModule";}
 
-  /// List of events potentially fired by the node.
+  /// List of events that can be fired on or by the node.
   enum CLINodeEvent{
     /// Event invoked anytime a parameter value is changed.
     /// \sa InputParameterModifiedEvent, SetParameterAsString(),
@@ -65,7 +65,9 @@ public:
     /// Event invoked when the AutoRun is triggerd. It takes a request time as
     /// call data. 0 when called from CLI node.
     /// \sa SetAutoRun()
-    AutoRunEvent
+    AutoRunEvent,
+    /// Event invoked when the CLI changes of status
+    StatusModifiedEvent
   };
 
   /// Get/Set the module description object. THe module description
@@ -87,14 +89,18 @@ public:
     /// Cancelling has been requested.
     /// Do not set manually, use Cancel() instead.
     Cancelled=0x08,
-    /// State when the CLI has been successfully executed.
-    Completed=0x10,
+    /// State when the CLI has been successfully executed and is in a finishing
+    /// state that loads the outputs into the scene.
+    Completing=0x10,
+    /// State when the CLI has been successfully executed and outputs are
+    /// loaded in the scene.
+    Completed=0x20,
     /// Mask applied when the CLI has been executed with errors
-    ErrorsMask=0x20,
+    ErrorsMask=0x40,
     /// State when the CLI has been executed with errors
     CompletedWithErrors= Completed | ErrorsMask,
     /// Mask used to know if the CLI is in pending mode.
-    BusyMask = Scheduled | Running | Cancelling
+    BusyMask = Scheduled | Running | Cancelling | Completing
   } StatusType;
 
   /// Set the status of the node (Idle, Scheduled, Running,
@@ -112,8 +118,8 @@ public:
   /// \sa GetStatus(), IsBusy()
   const char* GetStatusString() const;
 
-  /// Return true if the module is in a busy state: Scheduled, Running or
-  /// Cancelling.
+  /// Return true if the module is in a busy state: Scheduled, Running,
+  /// Cancelling, Completing.
   /// \sa SetStatus(), GetStatus(), BusyMask, Cancel()
   bool IsBusy()const;
 
@@ -274,6 +280,8 @@ public:
   static bool HasRegisteredModule(const std::string& name);
   static ModuleDescription GetRegisteredModuleDescription(const std::string& name);
 
+  /// Reimplemented for internal reasons.
+  virtual void Modified();
 protected:
   void AbortProcess();
   virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event,

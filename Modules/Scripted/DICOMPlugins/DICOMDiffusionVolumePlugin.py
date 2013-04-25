@@ -127,7 +127,7 @@ class DICOMDiffusionVolumePluginClass(DICOMPlugin):
     dicomDWIConverter = slicer.modules.dwiconvert
     cliNode = slicer.cli.run(dicomDWIConverter, None, parameters, wait_for_completion = True)
     success = False
-    if cliNode.GetStatusString() == "Completed":
+    if cliNode.GetStatusString() == "Completing" or cliNode.GetStatusString() == "Completed":
       if diffusionNode.GetImageData():
         success = True
     return success

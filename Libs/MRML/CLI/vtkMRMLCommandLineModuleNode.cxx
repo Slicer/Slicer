@@ -59,6 +59,9 @@ public:
   vtkTimeStamp ParameterMTime;
   /// Last time an input parameter was modified.
   vtkTimeStamp InputMTime;
+
+  /// Flag to trigger or not the StatusModifiedEvent
+  mutable bool InvokeStatusModifiedEvent;
 };
 
 ModuleDescriptionMap vtkMRMLCommandLineModuleNode::vtkInternal::RegisteredModules;
@@ -518,6 +521,8 @@ void vtkMRMLCommandLineModuleNode
       default:
         break;
       }
+    // StatusModifiedEvent will be invoked next time Modified() is called.
+    this->Internal->InvokeStatusModifiedEvent = true;
     if (modify)
       {
       this->Modified();
@@ -618,6 +623,7 @@ const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
     case Running: return "Running";
     case Cancelling: return "Cancelling";
     case Cancelled: return "Cancelled";
+    case Completing: return "Completing";
     case Completed: return "Completed";
     case CompletedWithErrors: return "Completed with errors";
     default:
@@ -984,4 +990,18 @@ bool vtkMRMLCommandLineModuleNode
     }
 
   return modified;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLCommandLineModuleNode::Modified()
+{
+  bool invokeStatusModifiedEvent = this->Internal->InvokeStatusModifiedEvent;
+  this->Internal->InvokeStatusModifiedEvent = false;
+
+  this->Superclass::Modified();
+
+  if (invokeStatusModifiedEvent)
+    {
+    this->InvokeEvent(vtkMRMLCommandLineModuleNode::StatusModifiedEvent);
+    }
 }

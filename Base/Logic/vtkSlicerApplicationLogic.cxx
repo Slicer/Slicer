@@ -58,65 +58,63 @@
 //----------------------------------------------------------------------------
 class ProcessingTaskQueue : public std::queue<vtkSmartPointer<vtkSlicerTask> > {};
 class ModifiedQueue : public std::queue<vtkSmartPointer<vtkObject> > {};
-class ReadDataRequest
+
+//----------------------------------------------------------------------------
+class DataRequest
 {
 public:
-  ReadDataRequest(const std::string& node, const std::string& filename,
-                  int displayData, int deleteFile)
-    {
-      m_TargetNodes.clear();
-      m_SourceNodes.clear();
-      m_IsScene = false;
+  DataRequest(const std::string& node, const std::string& filename,
+              int displayData, int deleteFile, int uid = 0)
+  {
+    m_TargetNodes.push_back(node);
+    m_Filename = filename;
+    m_DisplayData = displayData;
+    m_DeleteFile = deleteFile;
+    m_IsScene = false;
+    m_UID = uid;
+  }
 
-      m_TargetNodes.push_back(node);
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
+  DataRequest(const char *node, const char *filename, int displayData,
+              int deleteFile, int uid = 0)
+  {
+    m_TargetNodes.push_back(node);
+    m_Filename = filename;
+    m_DisplayData = displayData;
+    m_DeleteFile = deleteFile;
+    m_IsScene = false;
+    m_UID = uid;
+  }
 
-  ReadDataRequest(const char *node, const char *filename, int displayData,
-                  int deleteFile)
-    {
-      m_TargetNodes.clear();
-      m_SourceNodes.clear();
-      m_IsScene = false;
+  DataRequest(const std::vector<std::string>& targetNodes,
+              const std::vector<std::string>& sourceNodes,
+              const std::string& filename,
+              int displayData, int deleteFile,
+              int uid = 0)
+  {
+    m_TargetNodes = targetNodes;
+    m_SourceNodes = sourceNodes;
+    m_Filename = filename;
+    m_DisplayData = displayData;
+    m_DeleteFile = deleteFile;
+    m_IsScene = true;
+    m_UID = uid;
+  }
 
-      m_TargetNodes.push_back(node);
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
-
-  ReadDataRequest(const std::vector<std::string>& targetNodes,
-                  const std::vector<std::string>& sourceNodes,
-                  const std::string& filename,
-                  int displayData, int deleteFile)
-    {
-      m_IsScene = true;
-
-      m_TargetNodes = targetNodes;
-      m_SourceNodes = sourceNodes;
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
-
-  ReadDataRequest()
+  DataRequest()
     : m_Filename(""), m_DisplayData( false ), m_DeleteFile( false ),
-      m_IsScene( false )
-    {
-    }
+      m_IsScene( false ), m_UID(0)
+  {
+  }
 
   const std::string& GetNode() const
-    {
-      static const std::string empty;
-      if (m_TargetNodes.size() > 0)
-        {
-        return m_TargetNodes[0];
-        }
-
-      return empty;
-    }
+  {
+    static const std::string empty;
+    if (m_TargetNodes.size() > 0)
+      {
+      return m_TargetNodes[0];
+      }
+    return empty;
+  }
 
   const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
   const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
@@ -124,6 +122,7 @@ public:
   int GetDisplayData() const { return m_DisplayData; }
   int GetDeleteFile() const { return m_DeleteFile; }
   int GetIsScene() const { return m_IsScene; }
+  int GetUID()const{return m_UID;}
 
 protected:
   std::vector<std::string> m_TargetNodes;
@@ -132,86 +131,71 @@ protected:
   int m_DisplayData;
   int m_DeleteFile;
   bool m_IsScene;
+  int m_UID;
+};
+
+//----------------------------------------------------------------------------
+class ReadDataRequest: public DataRequest
+{
+public:
+  ReadDataRequest(const std::string& node, const std::string& filename,
+                  int displayData, int deleteFile, int uid = 0)
+    : DataRequest( node, filename, displayData, deleteFile, uid)
+  {
+  }
+
+  ReadDataRequest(const char *node, const char *filename, int displayData,
+                  int deleteFile, int uid = 0)
+    : DataRequest(node, filename, displayData, deleteFile, uid)
+  {
+  }
+
+  ReadDataRequest(const std::vector<std::string>& targetNodes,
+                  const std::vector<std::string>& sourceNodes,
+                  const std::string& filename,
+                  int displayData, int deleteFile,
+                  int uid = 0)
+    : DataRequest(targetNodes, sourceNodes, filename,
+                  displayData, deleteFile, uid)
+  {
+  }
+
+  ReadDataRequest()
+  {
+  }
 
 };
 class ReadDataQueue : public std::queue<ReadDataRequest> {} ;
 
 //----------------------------------------------------------------------------
-class WriteDataRequest
+class WriteDataRequest: public DataRequest
 {
 public:
   WriteDataRequest(const std::string& node, const std::string& filename,
-                  int displayData, int deleteFile)
-    {
-      m_TargetNodes.clear();
-      m_SourceNodes.clear();
-      m_IsScene = false;
-
-      m_TargetNodes.push_back(node);
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
+                   int displayData, int deleteFile, int uid = 0)
+    : DataRequest( node, filename, displayData, deleteFile, uid)
+  {
+  }
 
   WriteDataRequest(const char *node, const char *filename, int displayData,
-                  int deleteFile)
-    {
-      m_TargetNodes.clear();
-      m_SourceNodes.clear();
-      m_IsScene = false;
-
-      m_TargetNodes.push_back(node);
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
+                   int deleteFile, int uid = 0)
+    : DataRequest(node, filename, displayData, deleteFile, uid)
+  {
+  }
 
   WriteDataRequest(const std::vector<std::string>& targetNodes,
-                  const std::vector<std::string>& sourceNodes,
-                  const std::string& filename,
-                  int displayData, int deleteFile)
-    {
-      m_IsScene = true;
-
-      m_TargetNodes = targetNodes;
-      m_SourceNodes = sourceNodes;
-      m_Filename = filename;
-      m_DisplayData = displayData;
-      m_DeleteFile = deleteFile;
-    }
+                   const std::vector<std::string>& sourceNodes,
+                   const std::string& filename,
+                   int displayData, int deleteFile,
+                   int uid = 0)
+    : DataRequest(targetNodes, sourceNodes, filename,
+                  displayData, deleteFile, uid)
+  {
+  }
 
   WriteDataRequest()
-    : m_Filename(""), m_DisplayData( false ), m_DeleteFile( false ),
-      m_IsScene( false )
-    {
-    }
-
-  const std::string& GetNode() const
-    {
-      static const std::string empty;
-      if (m_TargetNodes.size() > 0)
-        {
-        return m_TargetNodes[0];
-        }
-
-      return empty;
-    }
-
-  const std::vector<std::string>& GetSourceNodes() const {return m_SourceNodes;}
-  const std::vector<std::string>& GetTargetNodes() const {return m_TargetNodes;}
-  const std::string& GetFilename() const { return m_Filename; }
-  int GetDisplayData() const { return m_DisplayData; }
-  int GetDeleteFile() const { return m_DeleteFile; }
-  int GetIsScene() const { return m_IsScene; }
-
-protected:
-  std::vector<std::string> m_TargetNodes;
-  std::vector<std::string> m_SourceNodes;
-  std::string m_Filename;
-  int m_DisplayData;
-  int m_DeleteFile;
-  bool m_IsScene;
-
+  {
+  }
 };
 class WriteDataQueue : public std::queue<WriteDataRequest> {} ;
 
@@ -590,15 +574,17 @@ int vtkSlicerApplicationLogic::RequestModified( vtkObject *obj )
     {
     obj->Register(this);
     this->ModifiedQueueLock->Lock();
+    this->RequestTimeStamp.Modified();
+    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
     (*this->InternalModifiedQueue).push( obj );
 //     std::cout << " [" << (*this->InternalModifiedQueue).size()
 //               << "] " << std::endl;
     this->ModifiedQueueLock->Unlock();
-    return true;
+    return uid;
     }
 
   // could not request the Modified
-  return false;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -616,17 +602,18 @@ int vtkSlicerApplicationLogic::RequestReadData( const char *refNode, const char 
   if (active)
     {
     this->ReadDataQueueLock->Lock();
-    (*this->InternalReadDataQueue).push( ReadDataRequest(refNode, filename,
-                                                         displayData,
-                                                         deleteFile) );
+    this->RequestTimeStamp.Modified();
+    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
+    (*this->InternalReadDataQueue).push(
+      ReadDataRequest(refNode, filename, displayData, deleteFile, uid) );
 //     std::cout << " [" << (*this->InternalReadDataQueue).size()
 //               << "] " << std::endl;
     this->ReadDataQueueLock->Unlock();
-    return true;
+    return uid;
     }
 
   // could not request the record be added to the queue
-  return false;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -644,17 +631,18 @@ int vtkSlicerApplicationLogic::RequestWriteData( const char *refNode, const char
   if (active)
     {
     this->WriteDataQueueLock->Lock();
-    (*this->InternalWriteDataQueue).push( WriteDataRequest(refNode, filename,
-                                                         displayData,
-                                                         deleteFile) );
+    this->RequestTimeStamp.Modified();
+    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
+    (*this->InternalWriteDataQueue).push(
+      WriteDataRequest(refNode, filename, displayData, deleteFile, uid) );
 //     std::cout << " [" << (*this->InternalWriteDataQueue).size()
 //               << "] " << std::endl;
     this->WriteDataQueueLock->Unlock();
-    return true;
+    return uid;
     }
 
   // could not request the record be added to the queue
-  return false;
+  return 0;
 }
 
 
@@ -677,18 +665,17 @@ int vtkSlicerApplicationLogic::RequestReadScene(
   if (active)
     {
     this->ReadDataQueueLock->Lock();
-    (*this->InternalReadDataQueue).push( ReadDataRequest(targetIDs,
-                                                         sourceIDs,
-                                                         filename,
-                                                         displayData,
-                                                         deleteFile) );
+    this->RequestTimeStamp.Modified();
+    int uid = static_cast<int>(this->RequestTimeStamp.GetMTime());
+    (*this->InternalReadDataQueue).push(
+      ReadDataRequest(targetIDs, sourceIDs, filename, displayData, deleteFile, uid) );
     this->ReadDataQueueLock->Unlock();
 
-    return true;
+    return uid;
     }
 
   // could not request the record be added to the queue
-  return false;
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -775,6 +762,11 @@ void vtkSlicerApplicationLogic::ProcessReadData()
   // schedule the next timer sooner in case there is stuff in the queue
   // otherwise for a while later
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestReadDataEvent, &delay);
+  if (req.GetUID())
+    {
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
+                      reinterpret_cast<void*>(req.GetUID()));
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -816,6 +808,11 @@ void vtkSlicerApplicationLogic::ProcessWriteData()
   // otherwise for a while later
   int delay = (*this->InternalWriteDataQueue).size() > 0 ? 0: 200;
   this->InvokeEvent(vtkSlicerApplicationLogic::RequestWriteDataEvent, &delay);
+  if (req.GetUID())
+    {
+    this->InvokeEvent(vtkSlicerApplicationLogic::RequestProcessedEvent,
+                      reinterpret_cast<void*>(req.GetUID()));
+    }
 }
 
 //----------------------------------------------------------------------------
