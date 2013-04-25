@@ -46,7 +46,7 @@ QString qMRMLLabelComboBoxPlugin::includeFile() const
 //-----------------------------------------------------------------------------
 bool qMRMLLabelComboBoxPlugin::isContainer() const
 {
-  return true;
+  return false;
 }
 
 //-----------------------------------------------------------------------------
