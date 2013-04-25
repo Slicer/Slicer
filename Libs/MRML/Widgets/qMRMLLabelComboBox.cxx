@@ -59,6 +59,10 @@ void qMRMLLabelComboBoxPrivate::setMRMLColorNode(vtkMRMLColorNode * newMRMLColor
 {
   Q_Q(qMRMLLabelComboBox);
 
+  if (this->ColorNode == newMRMLColorNode)
+    {
+    return;
+    }
   q->qvtkReconnect(this->ColorNode, newMRMLColorNode, vtkCommand::ModifiedEvent,
                       q, SLOT(updateWidgetFromMRML()));
   q->setEnabled(newMRMLColorNode != 0);
