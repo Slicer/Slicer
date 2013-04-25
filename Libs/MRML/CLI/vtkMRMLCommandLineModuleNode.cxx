@@ -59,7 +59,7 @@ vtkMRMLCommandLineModuleNode::vtkMRMLCommandLineModuleNode()
 {
   this->Internal = new vtkInternal();
   this->HideFromEditors = true;
-  this->Internal->Status = Idle;
+  this->Internal->Status = vtkMRMLCommandLineModuleNode::Idle;
 }
 
 //----------------------------------------------------------------------------
@@ -222,12 +222,12 @@ void vtkMRMLCommandLineModuleNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLCommandLineModuleNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  vtkMRMLNode::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os,indent);
 
   os << indent << "Module description:   "
-     << std::endl
+     << "\n"
      << "   " << this->GetModuleDescription();
-  os << indent << "Status: " << this->GetStatus();
+  os << indent << "Status: " << this->GetStatus() << "\n";
 }
 
 //----------------------------------------------------------------------------
@@ -405,9 +405,12 @@ const char* vtkMRMLCommandLineModuleNode::GetStatusString() const
     case Idle: return "Idle";
     case Scheduled: return "Scheduled";
     case Running: return "Running";
+    case Cancelling: return "Cancelling";
+    case Cancelled: return "Cancelled";
     case Completed: return "Completed";
     case CompletedWithErrors: return "CompletedWithErrors";
-    case Cancelled: return "Cancelled";
+    default:
+      break;
     }
   return "Unknown";
 }
@@ -478,25 +481,25 @@ void vtkMRMLCommandLineModuleNode::SetModuleDescription ( const char *name )
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetModuleVersion () const
 {
-  return this->GetModuleDescription().GetVersion().c_str();
+  return this->GetModuleDescription().GetVersion();
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetModuleTitle () const
 {
-  return this->GetModuleDescription().GetTitle().c_str();
+  return this->GetModuleDescription().GetTitle();
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetModuleTarget () const
 {
-  return this->GetModuleDescription().GetTarget().c_str();
+  return this->GetModuleDescription().GetTarget();
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLCommandLineModuleNode::GetModuleType () const
 {
-  return this->GetModuleDescription().GetType().c_str();
+  return this->GetModuleDescription().GetType();
 }
 
 //----------------------------------------------------------------------------

@@ -323,11 +323,26 @@ protected:
   /// closed or restored, only when a new scene is set.
   /// \sa SetAndObserveMRMLSceneInternal() SetAndObserveMRMLSceneEventsInternal()
   /// \sa UpdateFromMRMLScene()
-  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
-  /// Convenient method to set and observe the scene
+  /// Convenient method to set and observe the scene.
+  /// \obsolete The Modified event on the scene is deprecated.
   void SetAndObserveMRMLSceneInternal(vtkMRMLScene *newScene);
-  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene, vtkIntArray *events, vtkFloatArray *priorities=0);
+  /// Typically called by a subclass in the derived SetMRMLSceneInternal to
+  /// observe specific node events.
+  /// \code
+  /// void vtkMRMLMyLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+  /// {
+  ///   vtkNew<vtkIntArray> events;
+  ///   events->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
+  ///   events->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
+  ///   this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
+  /// }
+  /// \endcode
+  /// \sa SetMRMLSceneInternal()
+  void SetAndObserveMRMLSceneEventsInternal(vtkMRMLScene *newScene,
+                                            vtkIntArray *events,
+                                            vtkFloatArray *priorities=0);
 
   /// Register node classes into the MRML scene. Called each time a new scene
   /// is set. Do nothing by default. Can be reimplemented in derivated classes.

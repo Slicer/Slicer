@@ -22,7 +22,9 @@
 
 class ModuleDescription;
 
-/// \brief MRML node for representing the parameters allowing to run a command line module
+/// \brief MRML node for representing the parameters allowing to run a command
+/// line interface module (CLI).
+/// The CLI parameters are defined with \a SetModuleDescription().
 /// The parameters can be changed with SetParameterAsXXX().
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
@@ -76,9 +78,13 @@ public:
 
   /// Set the status of the node (Idle, Scheduled, Running,
   /// Completed).  The "modify" parameter indicates whether the object
-  /// can be modified by the call.
+  /// can be modified by the call. Having modify = false is used when a separate
+  /// thread updates the node status but does not want to invoke modified
+  /// events because it would refresh the GUI from the thread.
   void SetStatus(StatusType status, bool modify=true);
   StatusType GetStatus() const;
+
+  /// Return current status as a string for display.
   const char* GetStatusString() const;
 
   /// Return true if the module is in a busy state: Scheduled, Running or

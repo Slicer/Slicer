@@ -57,7 +57,7 @@ public slots:
   void reset();
 
 protected:
-  /// 
+  ///
   virtual void setup();
 
   /// Run a command line module given \a parameterNode

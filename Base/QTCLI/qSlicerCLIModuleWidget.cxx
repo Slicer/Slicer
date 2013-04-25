@@ -19,8 +19,8 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QFormLayout>
 #include <QDebug>
+#include <QFormLayout>
 
 // SlicerQt includes
 #include "qSlicerCLIModule.h"
@@ -38,8 +38,8 @@
 qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWidget& object)
   :q_ptr(&object)
 {
-  this->CommandLineModuleNode = 0;
   this->CLIModuleUIHelper = 0;
+  this->CommandLineModuleNode = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -237,11 +237,11 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
   QString description = QString::fromStdString(moduleParameter.GetDescription());
 
   // TODO Parameters with flags can support the None node because they are optional
-  int noneEnabled = 0;
-  if (moduleParameter.GetLongFlag() != "" || moduleParameter.GetFlag() != "")
-    {
-    noneEnabled = 1;
-    }
+  //int noneEnabled = 0;
+  //if (moduleParameter.GetLongFlag() != "" || moduleParameter.GetFlag() != "")
+  //  {
+  //  noneEnabled = 1;
+  //  }
 
   QLabel* widgetLabel = new QLabel(_label);
   widgetLabel->setToolTip(description);
@@ -335,7 +335,7 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
     vtkCommand::ModifiedEvent,
     d, SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
 
-  // After we desconnected the Modified event from the old CommandLineModuleNode
+  // After we disconnected the Modified event from the old CommandLineModuleNode
   // we can save the paramaters of the command line module node so they could be
   // retrieved later on when it becomes current again
   d->updateCommandLineModuleNodeFromUi(d->CommandLineModuleNode);

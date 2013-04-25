@@ -104,7 +104,7 @@
         <string>Reset parameters to default.</string>
        </property>
        <property name="text">
-        <string>Default</string>
+        <string>Restore Defaults</string>
        </property>
       </widget>
      </item>
