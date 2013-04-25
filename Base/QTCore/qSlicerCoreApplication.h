@@ -315,6 +315,20 @@ protected slots:
   /// Set the ReturnCode flag and call QCoreApplication::exit()
   void terminate(int exitCode = qSlicerCoreApplication::ExitSuccess);
 
+  /// Called when the application logic requests a delayed event invokation.
+  /// When the singleton application logic fires the RequestInvokeEvent,
+  /// a timer is created, and on timeout, \a invokeEvent() is called to
+  /// propagate the requested event invocation.
+  /// \sa invokeEvent(), vtkMRMLApplicationLogic::InvokeRequest
+  /// \sa onSlicerApplicationLogicRequest(), processAppLogicModified()
+  void requestInvokeEvent(vtkObject* caller, void* callData);
+
+  /// Called only when a special QTimer times out.
+  /// The timer contains dynamic properties describing an event to invoke on
+  /// a specific object.
+  /// \sa requestInvokeEvent
+  void invokeEvent();
+
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
 

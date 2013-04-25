@@ -63,7 +63,7 @@ class VTK_SLICER_BASE_LOGIC_EXPORT vtkSlicerApplicationLogic
   void TerminateProcessingThread();
   enum RequestEvents
     {
-      RequestModifiedEvent = vtkCommand::UserEvent,
+      RequestModifiedEvent = vtkMRMLApplicationLogic::RequestInvokeEvent + 1,
       RequestReadDataEvent,
       RequestWriteDataEvent
     };

@@ -824,3 +824,26 @@ int vtkMRMLApplicationLogic::LoadDefaultParameterSets(vtkMRMLScene *scene,
 
   return static_cast<int>(filesToLoad.size());
 }
+
+//----------------------------------------------------------------------------
+vtkMRMLApplicationLogic
+::InvokeRequest::InvokeRequest()
+  : Delay (100)
+  , Caller(0)
+  , EventID(vtkCommand::ModifiedEvent)
+  , CallData(0)
+{
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic
+::InvokeEventWithDelay(unsigned int delayInMs, vtkObject* caller, unsigned long eventID,
+              void* callData)
+{
+  InvokeRequest request;
+  request.Delay = delayInMs;
+  request.Caller = caller;
+  request.EventID = eventID;
+  request.CallData = callData;
+  this->InvokeEvent(vtkMRMLApplicationLogic::RequestInvokeEvent, &request);
+}

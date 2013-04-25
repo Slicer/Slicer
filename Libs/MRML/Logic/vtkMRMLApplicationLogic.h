@@ -115,7 +115,28 @@ public:
   static int LoadDefaultParameterSets(vtkMRMLScene * scene,
                                       const std::vector<std::string>& directories);
 
-  
+  /// List of custom events fired by the class.
+  enum Events{
+    RequestInvokeEvent = vtkCommand::UserEvent + 1
+  };
+  /// Structure passed as calldata pointer in the RequestEvent invoked event.
+  struct InvokeRequest{
+    InvokeRequest();
+    /// 100ms by default.
+    unsigned int Delay;
+    /// the caller to call InvokeEvent() on.
+    vtkObject* Caller;
+    /// The event id of InvokeEvent. ModifiedEvent by default.
+    unsigned long EventID;
+    /// Optional call data. 0 by default.
+    void* CallData;
+  };
+  /// Conveniently calls an InvokeEvent on an object with a delay.
+  void InvokeEventWithDelay(unsigned int delayInMs,
+                            vtkObject* caller,
+                            unsigned long eventID = vtkCommand::ModifiedEvent,
+                            void* callData = 0);
+
 protected:
 
   vtkMRMLApplicationLogic();
