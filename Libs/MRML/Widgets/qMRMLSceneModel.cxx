@@ -343,6 +343,8 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
     {
     d->MRMLScene->RemoveObserver(d->CallBack);
     }
+  d->MRMLScene = scene;
+  this->updateScene();
   if (scene)
     {
     scene->AddObserver(vtkMRMLScene::NodeAboutToBeAddedEvent, d->CallBack, -10.);
@@ -357,8 +359,6 @@ void qMRMLSceneModel::setMRMLScene(vtkMRMLScene* scene)
     scene->AddObserver(vtkMRMLScene::StartBatchProcessEvent, d->CallBack);
     scene->AddObserver(vtkMRMLScene::EndBatchProcessEvent, d->CallBack);
     }
-  d->MRMLScene = scene;
-  this->updateScene();
 }
 
 //------------------------------------------------------------------------------
@@ -1288,8 +1288,8 @@ void qMRMLSceneModel::updateNodeItems(vtkMRMLNode* node, const QString& nodeUID)
   Q_ASSERT(node && node->GetScene());
   //Q_ASSERT(node->GetScene()->IsNodePresent(node));
   QModelIndexList nodeIndexes = d->indexes(nodeUID);
-  Q_ASSERT(nodeIndexes.count());
   //qDebug() << "onMRMLNodeModified" << node->GetID() << nodeIndexes;
+  Q_ASSERT(nodeIndexes.count());
   for (int i = 0; i < nodeIndexes.size(); ++i)
     {
     QModelIndex index = nodeIndexes[i];
