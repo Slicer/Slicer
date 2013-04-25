@@ -41,7 +41,7 @@ class LabelStatisticsWidget:
       self.grayscaleSelector.setMRMLScene(slicer.mrmlScene)
       self.labelSelector.setMRMLScene(slicer.mrmlScene)
       self.parent.show()
-    
+
   def setup(self):
     #
     # the grayscale volume selector
@@ -67,7 +67,7 @@ class LabelStatisticsWidget:
     # TODO: need to add a QLabel
     # self.grayscaleSelector.SetLabelText( "Master Volume:" )
     self.grayscaleSelectorFrame.layout().addWidget(self.grayscaleSelector)
-    
+
     #
     # the label volume selector
     #
@@ -92,7 +92,7 @@ class LabelStatisticsWidget:
     self.labelSelector.setMRMLScene( slicer.mrmlScene )
     self.labelSelector.setToolTip( "Pick the label map to edit" )
     self.labelSelectorFrame.layout().addWidget( self.labelSelector )
-    
+
     # Apply button
     self.applyButton = qt.QPushButton("Apply")
     self.applyButton.toolTip = "Calculate Statistics."
@@ -137,7 +137,7 @@ class LabelStatisticsWidget:
     self.saveButton.connect('clicked()', self.onSave)
     self.grayscaleSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onGrayscaleSelect)
     self.labelSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelSelect)
-    
+
   def onGrayscaleSelect(self, node):
     self.grayscaleNode = node
     self.applyButton.enabled = bool(self.grayscaleNode) and bool(self.labelNode)
@@ -146,9 +146,27 @@ class LabelStatisticsWidget:
     self.labelNode = node
     self.applyButton.enabled = bool(self.grayscaleNode) and bool(self.labelNode)
 
+  def volumesAreValid(self):
+    """Verify that volumes are compatible with label calculation
+    algorithm assumptions"""
+    if not self.grayscaleNode or not self.labelNode:
+      return False
+    if not self.grayscaleNode.GetImageData() or not self.labelNode.GetImageData():
+      return False
+    if self.grayscaleNode.GetImageData().GetDimensions() != self.labelNode.GetImageData().GetDimensions():
+      return False
+    if not self.grayscaleNode.GetSpacing() != self.labelNode.GetSpacing():
+      return False
+    return True
+
   def onApply(self):
     """Calculate the label statistics
     """
+    if not self.volumesAreValid():
+      qt.QMessageBox.warning(slicer.util.mainWindow(),
+          "Label Statistics", "Volumes do not have same geometry.")
+      return
+
     self.applyButton.text = "Working..."
     # TODO: why doesn't processEvents alone make the label text change?
     self.applyButton.repaint()
@@ -224,20 +242,20 @@ class LabelStatisticsLogic:
   Nodes are passed in as arguments.
   Results are stored as 'statistics' instance variable.
   """
-  
+
   def __init__(self, grayscaleNode, labelNode, fileName=None):
     #import numpy
 
     self.keys = ("Index", "Count", "Volume mm^3", "Volume cc", "Min", "Max", "Mean", "StdDev")
     cubicMMPerVoxel = reduce(lambda x,y: x*y, labelNode.GetSpacing())
     ccPerCubicMM = 0.001
-    
+
     # TODO: progress and status updates
     # this->InvokeEvent(vtkLabelStatisticsLogic::StartLabelStats, (void*)"start label stats")
-    
+
     self.labelStats = {}
     self.labelStats['Labels'] = []
-   
+
     stataccum = vtk.vtkImageAccumulate()
     stataccum.SetInput(labelNode.GetImageData())
     stataccum.Update()
@@ -262,16 +280,16 @@ class LabelStatisticsLogic:
       thresholder.ThresholdBetween(i,i)
       thresholder.SetOutputScalarType(grayscaleNode.GetImageData().GetScalarType())
       thresholder.Update()
-      
+
       # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.25");
-      
+
       #  use vtk's statistics class with the binary labelmap as a stencil
       stencil = vtk.vtkImageToImageStencil()
       stencil.SetInput(thresholder.GetOutput())
       stencil.ThresholdBetween(1, 1)
-      
+
       # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"0.5")
-      
+
       stat1 = vtk.vtkImageAccumulate()
       stat1.SetInput(grayscaleNode.GetImageData())
       stat1.SetStencil(stencil.GetOutput())
@@ -290,7 +308,7 @@ class LabelStatisticsLogic:
         self.labelStats[i,"Max"] = stat1.GetMax()[0]
         self.labelStats[i,"Mean"] = stat1.GetMean()[0]
         self.labelStats[i,"StdDev"] = stat1.GetStandardDeviation()[0]
-        
+
         # this.InvokeEvent(vtkLabelStatisticsLogic::LabelStatsInnerLoop, (void*)"1")
 
     # this.InvokeEvent(vtkLabelStatisticsLogic::EndLabelStats, (void*)"end label stats")
@@ -365,14 +383,13 @@ class LabelStatisticsLogic:
     fp.write(self.statsAsCSV())
     fp.close()
 
-      
 
 class Slicelet(object):
   """A slicer slicelet is a module widget that comes up in stand alone mode
   implemented as a python class.
   This class provides common wrapper functionality used by all slicer modlets.
   """
-  # TODO: put this in a SliceletLib 
+  # TODO: put this in a SliceletLib
   # TODO: parse command line arge
 
 
