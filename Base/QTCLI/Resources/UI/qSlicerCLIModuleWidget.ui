@@ -109,6 +109,19 @@
       </widget>
      </item>
      <item>
+      <widget class="ctkMenuButton" name="AutoRunPushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>AutoRun</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="HorizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -168,6 +181,11 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkMenuButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkMenuButton.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerCLIProgressBar</class>

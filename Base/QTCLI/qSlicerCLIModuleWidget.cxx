@@ -19,8 +19,10 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QAction>
 #include <QDebug>
 #include <QFormLayout>
+#include <QMenu>
 
 // SlicerQt includes
 #include "qSlicerCLIModule.h"
@@ -40,6 +42,9 @@ qSlicerCLIModuleWidgetPrivate::qSlicerCLIModuleWidgetPrivate(qSlicerCLIModuleWid
 {
   this->CLIModuleUIHelper = 0;
   this->CommandLineModuleNode = 0;
+  this->AutoRunWhenParameterChanged = 0;
+  this->AutoRunWhenInputModified = 0;
+  this->AutoRunCancelsRunningProcess = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -83,15 +88,50 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 
   this->addParameterGroups();
 
+  // Setup AutoRun menu
+  QMenu* autoRunMenu = new QMenu(q->tr("AutoRun"), this->AutoRunPushButton);
+  this->AutoRunWhenParameterChanged =
+    new QAction(q->tr("AutoRun on changed parameter"), autoRunMenu);
+  this->AutoRunWhenParameterChanged->setToolTip(
+    q->tr("As long as the AutoRun button is down, the module "
+          "is run anytime a parameter value is changed."));
+  this->AutoRunWhenParameterChanged->setCheckable(true);
+  this->connect(this->AutoRunWhenParameterChanged, SIGNAL(toggled(bool)),
+                q, SLOT(setAutoRunWhenParameterChanged(bool)));
+  this->AutoRunWhenInputModified =
+    new QAction(q->tr("AutoRun on modified input"), autoRunMenu);
+  this->AutoRunWhenInputModified->setToolTip(
+    q->tr("As long as the AutoRun button is down, the module is run anytime the "
+          "input node(s) is/are modified."));
+  this->AutoRunWhenInputModified->setCheckable(true);
+  this->connect(this->AutoRunWhenInputModified, SIGNAL(toggled(bool)),
+                q, SLOT(setAutoRunWhenInputModified(bool)));
+  this->AutoRunCancelsRunningProcess =
+    new QAction(q->tr("AutoRun cancels running process"),autoRunMenu);
+  this->AutoRunCancelsRunningProcess->setToolTip(
+    q->tr("When checked, on apply, the module cancels/stops the existing "
+          "running instance if any, otherwise it waits the completion to start "
+          "a new run."));
+  this->AutoRunCancelsRunningProcess->setCheckable(true);
+  this->connect(this->AutoRunCancelsRunningProcess, SIGNAL(toggled(bool)),
+                q, SLOT(setAutoRunCancelsRunningProcess(bool)));
+  autoRunMenu->addAction(this->AutoRunWhenParameterChanged);
+  autoRunMenu->addAction(this->AutoRunWhenInputModified);
+  autoRunMenu->addAction(this->AutoRunCancelsRunningProcess);
+  this->AutoRunPushButton->setMenu(autoRunMenu);
+
   // Connect buttons
-  this->connect(this->ApplyPushButton, SIGNAL(pressed()),
+  this->connect(this->ApplyPushButton, SIGNAL(clicked()),
                 q, SLOT(apply()));
 
-  this->connect(this->CancelPushButton, SIGNAL(pressed()),
+  this->connect(this->CancelPushButton, SIGNAL(clicked()),
                 q, SLOT(cancel()));
 
-  this->connect(this->DefaultPushButton, SIGNAL(pressed()),
+  this->connect(this->DefaultPushButton, SIGNAL(clicked()),
                 q, SLOT(reset()));
+
+  this->connect(this->AutoRunPushButton, SIGNAL(toggled(bool)),
+                q, SLOT(setAutoRun(bool)));
 
   this->connect(this->MRMLCommandLineModuleNodeSelector,
                 SIGNAL(currentNodeChanged(vtkMRMLNode*)),
@@ -106,6 +146,7 @@ void qSlicerCLIModuleWidgetPrivate::setupUi(qSlicerWidget* widget)
 void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
   vtkObject* commandLineModuleNode)
 {
+  this->AutoRunPushButton->setEnabled(commandLineModuleNode != 0);
   if (!commandLineModuleNode)
     {
     this->ApplyPushButton->setEnabled(false);
@@ -147,6 +188,13 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
       this->CancelPushButton->setEnabled(false);
       break;
     }
+  this->AutoRunWhenParameterChanged->setChecked(
+    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged);
+  this->AutoRunWhenInputModified->setChecked(
+    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified);
+  this->AutoRunCancelsRunningProcess->setChecked(
+    node->GetAutoRun() & vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess);
+  this->AutoRunPushButton->setChecked(node->IsAutoRunOn());
 }
 
 //-----------------------------------------------------------------------------
@@ -255,20 +303,22 @@ void qSlicerCLIModuleWidgetPrivate::addParameter(QFormLayout* _layout,
 void qSlicerCLIModuleWidgetPrivate::onValueChanged(const QString& name, const QVariant& value)
 {
   Q_Q(qSlicerCLIModuleWidget);
-  // make sure a command line module node is created
-  if (this->CommandLineModuleNode != 0 ||
-      // but if the scene is closing, then nevermind, values are changing
-      // because nodes are getting removed
-      !q->mrmlScene() ||
+  // but if the scene is closing, then nevermind, values are changing
+  // because nodes are getting removed
+  if (!q->mrmlScene() ||
       q->mrmlScene()->IsClosing())
     {
     return;
     }
-  // if not, then create a default node
-  this->MRMLCommandLineModuleNodeSelector->addNode();
-  Q_ASSERT(this->CommandLineModuleNode);
-  // and reset the value as it may have changed because of the new node
-  this->CLIModuleUIHelper->setValue(name, value);
+  // Make sure a command line module node is created
+  if (this->CommandLineModuleNode == 0)
+    {
+    // if not, then create a default node
+    this->MRMLCommandLineModuleNodeSelector->addNode();
+    Q_ASSERT(this->CommandLineModuleNode);
+    }
+  this->CLIModuleUIHelper->setCommandLineModuleParameter(
+    this->CommandLineModuleNode, name, value);
 }
 
 //-----------------------------------------------------------------------------
@@ -336,9 +386,9 @@ void qSlicerCLIModuleWidget::setCurrentCommandLineModuleNode(
     d, SLOT(updateUiFromCommandLineModuleNode(vtkObject*)));
 
   // After we disconnected the Modified event from the old CommandLineModuleNode
-  // we can save the paramaters of the command line module node so they could be
+  // we can save the parameters of the command line module node so they could be
   // retrieved later on when it becomes current again
-  d->updateCommandLineModuleNodeFromUi(d->CommandLineModuleNode);
+  //d->updateCommandLineModuleNodeFromUi(d->CommandLineModuleNode);
 
   d->CommandLineModuleNode = node;
   d->updateUiFromCommandLineModuleNode(d->CommandLineModuleNode);
@@ -398,4 +448,66 @@ void qSlicerCLIModuleWidget::cancel(vtkMRMLCommandLineModuleNode* node)
   node->SetStatus(vtkMRMLCommandLineModuleNode::Cancelling);
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setAutoRun(bool enable)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  int autoRun = d->commandLineModuleNode()->GetAutoRun();
+  if (enable)
+    {
+    autoRun |= vtkMRMLCommandLineModuleNode::AutoRunOn;
+    }
+  else
+    {
+    autoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunOn;
+    }
+  d->commandLineModuleNode()->SetAutoRun(autoRun);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setAutoRunWhenParameterChanged(bool autoRun)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  if (autoRun)
+    {
+    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
+    }
+  else
+    {
+    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunWhenParameterChanged;
+    }
+  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setAutoRunWhenInputModified(bool autoRun)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  if (autoRun)
+    {
+    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified;
+    }
+  else
+    {
+    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunWhenInputModified;
+    }
+  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCLIModuleWidget::setAutoRunCancelsRunningProcess(bool autoRun)
+{
+  Q_D(qSlicerCLIModuleWidget);
+  int newAutoRun = d->commandLineModuleNode()->GetAutoRun();
+  if (autoRun)
+    {
+    newAutoRun |= vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
+    }
+  else
+    {
+    newAutoRun &= ~vtkMRMLCommandLineModuleNode::AutoRunCancelsRunningProcess;
+    }
+  d->commandLineModuleNode()->SetAutoRun(newAutoRun);
 }

@@ -24,6 +24,7 @@
 // Qt includes
 #include <QHash>
 #include <QList>
+class QAction;
 
 // CTK includes
 #include <ctkPimpl.h>
@@ -107,6 +108,9 @@ public:
   qSlicerCLIModuleUIHelper* CLIModuleUIHelper; 
   
   vtkMRMLCommandLineModuleNode* CommandLineModuleNode;
+  QAction* AutoRunWhenParameterChanged;
+  QAction* AutoRunWhenInputModified;
+  QAction* AutoRunCancelsRunningProcess;
 };
 
 

@@ -26,6 +26,8 @@ class ModuleDescription;
 /// line interface module (CLI).
 /// The CLI parameters are defined with \a SetModuleDescription().
 /// The parameters can be changed with SetParameterAsXXX().
+/// It is possible to automatically run the CLI each time the parameters are
+/// changed, see \a SetAutoRun().
 class VTK_MRML_CLI_EXPORT vtkMRMLCommandLineModuleNode : public vtkMRMLNode
 {
 public:
@@ -47,6 +49,23 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName()
     {return "CommandLineModule";}
+
+  /// List of events potentially fired by the node.
+  enum CLINodeEvent{
+    /// Event invoked anytime a parameter value is changed.
+    /// \sa InputParameterModifiedEvent, SetParameterAsString(),
+    /// SetParameterAsNode(), SetParameterAsInt(), SetParameterAsBool(),
+    /// SetParameterAsDouble(), SetParameterAsFloat()
+    ParameterChangedEvent = 17000,
+    /// Event invoked anytime a node set as input parameter is modified
+    /// (i.e. ModifiedEvent is invoked on the node).
+    /// \sa SetParameterAsNode(), ParameterChangedEvent
+    InputParameterModifiedEvent,
+    /// Reserved event used to trigger AutoRun. It takes a request time as
+    /// call data.
+    /// \sa SetAutoRun()
+    AutoRunEvent
+  };
 
   /// Get/Set the module description object. THe module description
   /// object is used to cache the current settings for the module.
@@ -91,6 +110,63 @@ public:
   /// Cancelling.
   /// \sa SetStatus(), GetStatus(), BusyMask
   bool IsBusy()const;
+
+  /// This enum type controls when the CLI should be run automatically.
+  /// \sa SetAutoRun(), GetAutoRun()
+  enum AutoRunMode
+  {
+    NoAutoRun = 0x00,
+    /// Enable the AutoRun mode.
+    AutoRunOn = 0x01,
+    /// When set, it triggers autorun requests when a parameter is modified
+    /// when calling SetParameterAsXXX().
+    AutoRunWhenParameterChanged = 0x02,
+    /// When set, it triggers autorun requests when an input node (parameter
+    /// not in the output channel) is modified (ModifiedEvent is invoked).
+    /// As of now, a parameter in both input and output channels does not
+    /// trigger autorun.
+    AutoRunWhenInputModified = 0x04,
+    AutoRunCancelsRunningProcess = 0x08,
+    // <- add here new options
+    AutoRunEnabledMask = AutoRunWhenParameterChanged | AutoRunWhenInputModified
+  };
+
+  /// Set the auto running flags for the node.
+  /// The behavior is ensured by the CLI logic.
+  /// AutoRun is disabled by default but AutoRunWhenParameterChanged is set.
+  /// \sa AutoRunMode
+  void SetAutoRun(int autoRunMode);
+
+  /// Return the AutoRun mode flags.
+  /// \sa SetAutoRun(), IsAutoRunOn()
+  int GetAutoRun()const;
+
+  /// Return true if the AutoRun mode is on.
+  /// \sa SetAutoRun(), GetAutoRun()
+  bool IsAutoRunOn()const;
+
+  /// Set the number of msecs to wait before automatically running
+  /// the module. 1000msecs by default.
+  /// \sa GetAutoRunDelay(), SetAutoRun()
+  void SetAutoRunDelay(unsigned int delayInMs);
+
+  /// Return the number of msecs to wait before automatically running
+  /// the module.
+  /// \sa SetAutoRunDelay(), GetAutoRun()
+  unsigned int GetAutoRunDelay()const;
+
+  /// Return the last time the module was ran.
+  /// \sa GetParameterMTime(), GetInputMTime(), GetMTime()
+  unsigned long GetLastRunTime()const;
+
+  /// Return the last time a parameter was modified
+  /// \sa GetInputMTime(), GetMTime()
+  unsigned long GetParameterMTime()const;
+
+  /// Return the last time an input parameter was modified.
+  /// \sa GetParameterMTime(), GetMTime()
+  unsigned long GetInputMTime()const;
+
   /// Read a parameter file. This will set any parameters that
   /// parameters in this ModuleDescription.
   bool ReadParameterFile(const std::string& filename);
@@ -161,6 +237,11 @@ public:
   std::string GetParameterFileExtensions(unsigned int group, unsigned int param) const;
   std::string GetParameterCoordinateSystem(unsigned int group, unsigned int param) const;
 
+  /// Returns true if the value is a default value for a parameter that is not
+  /// an output parameter.
+  /// \sa SetAutoRun
+  bool IsInputDefaultValue(const std::string& value)const;
+
   /// Methods to manage the master list of module description prototypes
   static int GetNumberOfRegisteredModules();
   static const char* GetRegisteredModuleNameByIndex(int idx);
@@ -170,6 +251,8 @@ public:
 
 protected:
   void AbortProcess();
+  virtual void ProcessMRMLEvents(vtkObject *caller, unsigned long event,
+                                 void *callData);
 
 private:
   vtkMRMLCommandLineModuleNode();

@@ -56,6 +56,10 @@ public slots:
   void cancel();
   void reset();
 
+  void setAutoRun(bool enable);
+  void setAutoRunWhenParameterChanged(bool);
+  void setAutoRunWhenInputModified(bool);
+  void setAutoRunCancelsRunningProcess(bool);
 protected:
   ///
   virtual void setup();

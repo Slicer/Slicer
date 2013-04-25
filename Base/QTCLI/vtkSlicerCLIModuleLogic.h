@@ -104,6 +104,15 @@ public:
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
 protected:
+  /// Reimplemented to observe NodeAddedEvent.
+  virtual void SetMRMLSceneInternal(vtkMRMLScene * newScene);
+  /// Reimplemented for AutoRun mode.
+  virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
+  /// Reimplemented to observe CLI node.
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event,
+                                      void *callData);
+
+
   std::string ConstructTemporaryFileName(const std::string& tag,
                                          const std::string& type,
                                          const std::string& name,
@@ -123,6 +132,9 @@ protected:
   /// selection node with the outputs of the CLI
   bool IsCommandLineModuleNodeUpdatingDisplay(
     vtkMRMLCommandLineModuleNode* commandLineModuleNode)const;
+
+  /// Call apply because the node requests it.
+  void AutoRun(vtkMRMLCommandLineModuleNode* cliNode);
 
 private:
   vtkSlicerCLIModuleLogic();
