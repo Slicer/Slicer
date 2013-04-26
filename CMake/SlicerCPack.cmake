@@ -12,7 +12,6 @@ include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
 if(Slicer_BUILD_DICOM_SUPPORT)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
-  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKLibs.cmake)
 endif()
 
 set(CPACK_INSTALL_CMAKE_PROJECTS)
@@ -25,6 +24,9 @@ endif()
 
 if(NOT APPLE)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQt.cmake)
+  if(Slicer_BUILD_DICOM_SUPPORT)
+    include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKLibs.cmake)
+  endif()
   if(Slicer_USE_PYTHONQT)
     include(${Slicer_CMAKE_DIR}/SlicerBlockInstallPythonQt.cmake)
   endif()
