@@ -228,6 +228,23 @@ if(APPLE)
   endif()
 endif()
 
+if(WIN32)
+  if(Slicer_USE_PYTHONQT)
+    # HACK - See http://www.na-mic.org/Bug/view.php?id=1180
+    get_filename_component(_python_library_name_we ${PYTHON_LIBRARY} NAME_WE)
+    get_target_property(_slicerapp_output_dir
+      ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} RUNTIME_OUTPUT_DIRECTORY)
+    add_custom_command(
+      TARGET ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+              ${PYTHON_LIB_PATH}/${_python_library_name_we}.dll
+              ${_slicerapp_output_dir}/${CMAKE_CFG_INTDIR}
+      COMMENT "Copy '${_python_library_name_we}.dll' along side '${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}' executable. See Slicer issue #1180"
+      )
+  endif()
+endif()
+
 target_link_libraries(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
   ${KIT_LIBRARY_NAME}
   )
