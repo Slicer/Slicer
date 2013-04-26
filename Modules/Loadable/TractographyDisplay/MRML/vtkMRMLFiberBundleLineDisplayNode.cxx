@@ -109,7 +109,7 @@ vtkAlgorithmOutput* vtkMRMLFiberBundleLineDisplayNode::GetOutputPort()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
 {
-  this->Superclass::UpdatePolyDataPipeline();
+  //this->Superclass::UpdatePolyDataPipeline();
   this->TensorToColor->SetInputConnection(this->Superclass::GetOutputPort());
 
   if (!this->Visibility)
@@ -292,8 +292,9 @@ void vtkMRMLFiberBundleLineDisplayNode::UpdatePolyDataPipeline()
         this->GetInputPolyData()->Update();
         this->GetInputPolyData()->GetScalarRange(range);
         }
-      this->ScalarRange[0] = range[0];
-      this->ScalarRange[1] = range[1];
+      //this->ScalarRange[0] = range[0];
+      //this->ScalarRange[1] = range[1];
+      this->SetScalarRange(range);
       }
 }
 

@@ -184,6 +184,11 @@ void vtkMRMLFiberBundleNode::ProcessMRMLEvents ( vtkObject *caller,
    this->UpdateROISelection();
   }
 
+  if (vtkMRMLDiffusionTensorDisplayPropertiesNode::SafeDownCast(caller) && event == vtkCommand::ModifiedEvent)
+  {
+    this->InvokeEvent(vtkMRMLModelNode::DisplayModifiedEvent, NULL);
+  }
+
   Superclass::ProcessMRMLEvents(caller, event, callData);
   return;
 }

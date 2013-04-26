@@ -121,7 +121,7 @@ vtkAlgorithmOutput* vtkMRMLFiberBundleGlyphDisplayNode::GetOutputPort()
 //----------------------------------------------------------------------------
 void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
 {
-  this->Superclass::UpdatePolyDataPipeline();
+  //this->Superclass::UpdatePolyDataPipeline();
 
   this->DiffusionTensorGlyphFilter->SetInputConnection(
     this->Superclass::GetOutputPort());
@@ -274,8 +274,9 @@ void vtkMRMLFiberBundleGlyphDisplayNode::UpdatePolyDataPipeline()
         }
       }
 
-    this->ScalarRange[0] = range[0];
-    this->ScalarRange[1] = range[1];
+    //this->ScalarRange[0] = range[0];
+    //this->ScalarRange[1] = range[1];
+    this->SetScalarRange(range);    
     }
 }
 
