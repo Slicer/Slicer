@@ -70,9 +70,12 @@ msg_first() {
     printErrorAndExit 'The first line may not have leading or trailing space:
 ['"$line"']'
   fi
-  if [[ ( "$(echo "$line" | cut -c1-4)" =~ (BUG:|ENH:)$ ) ||
-    ( "$(echo "$line" | cut -c1-5)" =~ (COMP:|PERF:)$ ) ||
-    ( "$(echo "$line" | cut -c1-6)" =~ (STYLE:)$ ) ]]; then
+  firstSixLetters=$(echo "$line" | cut -c1-6)
+  if [ "${firstSixLetters:0:4}" == "BUG:" -o \
+    "${firstSixLetters:0:4}" == "ENH:" -o \
+    "${firstSixLetters:0:5}" == "COMP:" -o \
+    "${firstSixLetters:0:5}" == "PERF:" -o \
+    "$firstSixLetters" == "STYLE:" ]; then
   # first line okay
   state=second
 else
