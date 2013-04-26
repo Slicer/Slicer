@@ -72,6 +72,7 @@ endif()
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_BUILD
+  ${DCMTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
