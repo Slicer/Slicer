@@ -45,8 +45,7 @@ if(Slicer_USE_PYTHONQT)
     endif()
   elseif(WIN32)
     get_filename_component(PYTHON_LIB_BASE ${PYTHON_LIBRARY} NAME_WE)
-    get_filename_component(PYTHON_LIB_PATH ${PYTHON_EXECUTABLE} PATH)
-    install(FILES "${PYTHON_LIB_PATH}/${PYTHON_LIB_BASE}.dll"
+    install(FILES "${PYTHON_LIBRARY_PATH}/${PYTHON_LIB_BASE}.dll"
       DESTINATION bin
       COMPONENT Runtime)
   endif()
