@@ -12,6 +12,7 @@ include(${Slicer_CMAKE_DIR}/SlicerBlockInstallQtPlugins.cmake)
 
 if(Slicer_BUILD_DICOM_SUPPORT)
   include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKApps.cmake)
+  include(${Slicer_CMAKE_DIR}/SlicerBlockInstallDCMTKLibs.cmake)
 endif()
 
 set(CPACK_INSTALL_CMAKE_PROJECTS)
