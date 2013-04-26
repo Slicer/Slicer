@@ -238,7 +238,7 @@ if(WIN32)
       TARGET ${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-              ${PYTHON_LIB_PATH}/${_python_library_name_we}.dll
+              ${PYTHON_LIBRARY_PATH}/${_python_library_name_we}.dll
               ${_slicerapp_output_dir}/${CMAKE_CFG_INTDIR}
       COMMENT "Copy '${_python_library_name_we}.dll' along side '${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}' executable. See Slicer issue #1180"
       )
