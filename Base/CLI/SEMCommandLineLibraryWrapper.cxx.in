@@ -15,10 +15,12 @@
 
 =========================================================================*/
 
-// This file is intended to be compiled and linked against a shared
-// library CLP to prevent the need to compile twice.
+// This file is intended to be compiled and linked against a static or
+// shared library CLP to (1) prevent the need to compile twice and
+// (2) provide a mechanism to execute code before the entry point of module
+// compiled either as the [executable only] or [executable + shared library].
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(MODULE_STATIC)
 #define MODULE_IMPORT __declspec(dllimport)
 #else
 #define MODULE_IMPORT
