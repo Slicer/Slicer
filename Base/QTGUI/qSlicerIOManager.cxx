@@ -3,7 +3,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFileDialog>
-#include <QInputdialog>
+#include <QInputDialog>
 #include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
