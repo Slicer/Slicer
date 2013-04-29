@@ -38,6 +38,7 @@ public:
   virtual ~qSlicerSaveDataDialog();
 
   virtual qSlicerIO::IOFileType fileType()const;
+  virtual QString description()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
   /// Open the data dialog and save the nodes/scene

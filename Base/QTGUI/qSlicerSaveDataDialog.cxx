@@ -1189,6 +1189,12 @@ qSlicerIO::IOFileType qSlicerSaveDataDialog::fileType()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerSaveDataDialog::description()const
+{
+  return tr("Any Data");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerFileDialog::IOAction qSlicerSaveDataDialog::action()const
 {
   return qSlicerFileDialog::Write;

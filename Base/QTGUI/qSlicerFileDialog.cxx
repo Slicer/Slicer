@@ -73,9 +73,10 @@ QStringList qSlicerFileDialog::nameFilters(qSlicerIO::IOFileType fileType)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerFileDialog::dragEnterEvent(QDragEnterEvent *event)
+bool qSlicerFileDialog::isMimeDataAccepted(const QMimeData *mimeData)const
 {
-  Q_UNUSED(event);
+  Q_UNUSED(mimeData);
+  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -90,6 +91,7 @@ class qSlicerStandardFileDialogPrivate
 public:
   qSlicerStandardFileDialogPrivate();
   qSlicerIO::IOFileType       FileType;
+  QString                     Description;
   qSlicerFileDialog::IOAction Action;
 };
 
@@ -126,6 +128,19 @@ qSlicerIO::IOFileType qSlicerStandardFileDialog::fileType()const
   return d->FileType;
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerStandardFileDialog::setDescription(const QString& description)
+{
+  Q_D(qSlicerStandardFileDialog);
+  d->Description = description;
+}
+
+//-----------------------------------------------------------------------------
+QString qSlicerStandardFileDialog::description()const
+{
+  Q_D(const qSlicerStandardFileDialog);
+  return d->Description;
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerStandardFileDialog::setAction(qSlicerFileDialog::IOAction dialogAction)

@@ -117,6 +117,8 @@ if(Slicer_USE_PYTHONQT)
     qSlicerScriptedLoadableModuleWidget.h
     qSlicerScriptedLoadableModule.cxx
     qSlicerScriptedLoadableModule.h
+    qSlicerScriptedFileDialog.cxx
+    qSlicerScriptedFileDialog.h
     )
 endif()
 
@@ -205,6 +207,7 @@ if(Slicer_USE_PYTHONQT)
   list(APPEND KIT_MOC_SRCS
     qSlicerScriptedLoadableModule.h
     qSlicerScriptedLoadableModuleWidget.h
+    qSlicerScriptedFileDialog.h
     )
 endif()
 

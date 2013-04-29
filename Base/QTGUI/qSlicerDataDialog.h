@@ -42,9 +42,10 @@ public:
   virtual ~qSlicerDataDialog();
 
   virtual qSlicerIO::IOFileType fileType()const;
+  virtual QString description()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
-  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual bool isMimeDataAccepted(const QMimeData* mimeData)const;
   virtual void dropEvent(QDropEvent *event);
 
   /// run the dialog to select the file/files/directory

@@ -21,7 +21,6 @@
 /// Qt includes
 #include <QDebug>
 #include <QComboBox>
-#include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFileDialog>
 
@@ -352,18 +351,21 @@ qSlicerIO::IOFileType qSlicerDataDialog::fileType()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerDataDialog::description()const
+{
+  return tr("Any Data");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerFileDialog::IOAction qSlicerDataDialog::action()const
 {
   return qSlicerFileDialog::Read;
 }
 
 //---------------------------------------------------------------------------
-void qSlicerDataDialog::dragEnterEvent(QDragEnterEvent *event)
+bool qSlicerDataDialog::isMimeDataAccepted(const QMimeData* mimeData)const
 {
-  if (event->mimeData()->hasFormat("text/uri-list"))
-    {
-    event->accept();
-    }
+  return mimeData->hasFormat("text/uri-list");
 }
 
 //-----------------------------------------------------------------------------

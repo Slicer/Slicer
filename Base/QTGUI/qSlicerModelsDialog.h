@@ -40,6 +40,7 @@ public:
   virtual ~qSlicerModelsDialog();
 
   virtual qSlicerIO::IOFileType fileType()const;
+  virtual QString description()const;
   virtual qSlicerFileDialog::IOAction action()const;
 
   /// run the dialog to select the file/files/directory

@@ -3,6 +3,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QFileDialog>
+#include <QInputdialog>
 #include <QMetaProperty>
 #include <QProgressDialog>
 #include <QSettings>
@@ -250,9 +251,9 @@ void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
   Q_D(qSlicerIOManager);
   foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
     {
-    dialog->dragEnterEvent(event);
-    if (event->isAccepted())
+    if (dialog->isMimeDataAccepted(event->mimeData()))
       {
+      event->accept();
       break;
       }
     }
@@ -262,13 +263,47 @@ void qSlicerIOManager::dragEnterEvent(QDragEnterEvent *event)
 void qSlicerIOManager::dropEvent(QDropEvent *event)
 {
   Q_D(qSlicerIOManager);
+  QStringList supportedReaders;
   foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
     {
-    dialog->dropEvent(event);
-    if (event->isAccepted())
+    if (dialog->isMimeDataAccepted(event->mimeData()))
       {
-      dialog->exec();
-      break;
+      supportedReaders << dialog->description();
+      }
+    }
+  QString selectedReader;
+  if (supportedReaders.size() > 1)
+    {
+    QWidget* parent = 0;
+    QString title = tr("Select a reader");
+    QString label = tr("Select a reader to use for your data?");
+    int current = 0;
+    bool editable = false;
+    bool ok = false;
+    selectedReader = QInputDialog::getItem(0, title, label, supportedReaders, current, editable, &ok);
+    if (!ok)
+      {
+      selectedReader = QString();
+      }
+    }
+  else if (supportedReaders.size() ==1)
+    {
+    selectedReader = supportedReaders[0];
+    }
+  if (selectedReader.isEmpty())
+    {
+    return;
+    }
+  foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
+    {
+    if (dialog->description() == selectedReader)
+      {
+      dialog->dropEvent(event);
+      if (event->isAccepted())
+        {
+        dialog->exec();
+        break;
+        }
       }
     }
 }

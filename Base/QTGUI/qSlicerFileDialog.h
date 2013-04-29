@@ -24,7 +24,7 @@
 // Qt includes
 #include <QObject>
 #include <QStringList>
-class QDragEnterEvent;
+class QMimeData;
 class QDropEvent;
 
 // CTK includes
@@ -43,12 +43,19 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
 {
   Q_OBJECT
   Q_ENUMS(IOAction)
+  Q_PROPERTY(QString description READ description)
+
 public:
   typedef QObject Superclass;
   qSlicerFileDialog(QObject* parent =0);
   virtual ~qSlicerFileDialog();
 
   virtual qSlicerIO::IOFileType fileType()const = 0;
+
+  /// Unique name of the reader/writer
+  /// \sa filetype()
+  virtual QString description()const = 0;
+
   enum IOAction
   {
     Read,
@@ -66,17 +73,17 @@ public:
   static QStringList nameFilters(qSlicerIO::IOFileType fileType =
                                  QString("NoFile"));
 
-  /// Accept or ignore drops.
+  /// Accept or ignore mimedata.
+  /// Returns false by default.
   /// Can be reimplemented in subclass to support drag&drop.
-  /// Do nothing by default.
   /// \sa dropEvent()
-  virtual void dragEnterEvent(QDragEnterEvent *event);
+  virtual bool isMimeDataAccepted(const QMimeData*mimeData)const;
 
   /// Handle drop events: populate the dialog with the droped mime data.
   /// Can be reimplemented in subclass to support drag&drop.
   /// Do nothing by default.
   /// If it does something, acceptProposedAction() or accept() must be called.
-  /// \sa dragEnterEvent()
+  /// \sa isMimeDataAccepted()
   virtual void dropEvent(QDropEvent *event);
 
 private:
@@ -84,22 +91,42 @@ private:
   Q_DISABLE_COPY(qSlicerFileDialog);
 };
 
+Q_DECLARE_METATYPE(qSlicerFileDialog::IOAction)
+
 class qSlicerStandardFileDialogPrivate;
 class ctkFileDialog;
 
 //------------------------------------------------------------------------------
-class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog : public qSlicerFileDialog
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerStandardFileDialog
+: public qSlicerFileDialog
 {
   Q_OBJECT
+  Q_PROPERTY(qSlicerIO::IOFileType fileType READ fileType WRITE setFileType)
+  Q_PROPERTY(QString description READ description WRITE setDescription)
+  /// This property controls which action the dialog is doing: read or write.
+  /// Read by default.
+  Q_PROPERTY(IOAction action READ action WRITE setAction)
+
 public:
   qSlicerStandardFileDialog(QObject* parent=0);
   virtual ~qSlicerStandardFileDialog();
 
-  void setFileType(qSlicerIO::IOFileType fileType);
+  /// Reimplemented to return the fileType set by setFileType()
+  /// \sa fileType, setFileType()
   virtual qSlicerIO::IOFileType fileType()const;
+  virtual void setFileType(qSlicerIO::IOFileType fileType);
 
-  void setAction(qSlicerFileDialog::IOAction dialogAction);
+  /// Reimplemented to return the description set by setDescription()
+  /// \sa description, setDescription()
+  virtual QString description() const;
+  virtual void setDescription(const QString& description);
+
+  /// Reimplemented to return the IOAction set by setAction()
+  /// \sa action, setAction()
   virtual qSlicerFileDialog::IOAction action()const;
+  /// Set the action of the file dialog. To be called by python.
+  /// \sa action, action()
+  void setAction(IOAction action);
 
   virtual bool exec(const qSlicerIO::IOProperties& ioProperties =
                     qSlicerIO::IOProperties());

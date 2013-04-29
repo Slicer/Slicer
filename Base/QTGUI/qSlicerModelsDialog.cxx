@@ -110,6 +110,12 @@ qSlicerIO::IOFileType qSlicerModelsDialog::fileType()const
 }
 
 //-----------------------------------------------------------------------------
+QString qSlicerModelsDialog::description()const
+{
+  return tr("Models");
+}
+
+//-----------------------------------------------------------------------------
 qSlicerFileDialog::IOAction qSlicerModelsDialog::action()const
 {
   return qSlicerFileDialog::Read;

@@ -27,8 +27,11 @@
 #include <PythonQt.h>
 
 // Slicer includes
+#include "qSlicerApplication.h"
+#include "qSlicerIOManager.h"
 #include "qSlicerScriptedLoadableModule.h"
 #include "qSlicerScriptedLoadableModuleWidget.h"
+#include "qSlicerScriptedFileDialog.h"
 #include "vtkSlicerScriptedLoadableModuleLogic.h"
 
 // VTK includes
@@ -231,6 +234,7 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
 void qSlicerScriptedLoadableModule::setup()
 {
   Q_D(qSlicerScriptedLoadableModule);
+  this->registerFileDialog();
   PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
   if (!method)
     {
@@ -239,6 +243,20 @@ void qSlicerScriptedLoadableModule::setup()
   PythonQt::self()->clearError();
   PyObject_CallObject(method, 0);
   PythonQt::self()->handleError();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModule::registerFileDialog()
+{
+  Q_D(qSlicerScriptedLoadableModule);
+  QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
+  bool ret = fileDialog->setPythonSource(d->PythonSource);
+  if (!ret)
+    {
+    return;
+    }
+  qSlicerApplication::application()->ioManager()
+    ->registerDialog(fileDialog.take());
 }
 
 //-----------------------------------------------------------------------------

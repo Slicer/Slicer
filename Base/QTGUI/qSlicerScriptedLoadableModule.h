@@ -92,6 +92,8 @@ protected:
 
   virtual void setup();
 
+  void registerFileDialog();
+
   virtual qSlicerAbstractModuleRepresentation* createWidgetRepresentation();
 
   virtual vtkMRMLAbstractLogic* createLogic();
