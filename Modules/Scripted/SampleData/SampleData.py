@@ -89,7 +89,8 @@ class SampleDataWidget:
         ( 'Baseline Volume', self.logic.downloadWhiteMatterExplorationBaselineVolume),
         ( 'DTI Volume', self.logic.downloadWhiteMatterExplorationDTIVolume),
         ( 'DWI Volume', self.logic.downloadDiffusionMRIDWIVolume),
-        ( 'CTAbdomen', self.logic.downloadAbdominalCTVolume)
+        ( 'CTAbdomen', self.logic.downloadAbdominalCTVolume),
+        ( 'CBCTDentalSurgery', self.logic.downloadDentalSurgery),
       )
     for sample in samples:
       b = qt.QPushButton('Download %s' % sample[0] )
@@ -165,6 +166,19 @@ class SampleDataLogic:
   def downloadAbdominalCTVolume(self):
     filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd')
     return self.loadVolume(filePath, 'Panoramix-cropped');
+
+  def downloadDentalSurgery(self):
+    pre = self.downloadPreDentalSurgery()
+    post = self.downloadPostDentalSurgery()
+    return pre,post
+
+  def downloadPreDentalSurgery(self):
+    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz', 'PreDentalSurgery.gipl.gz')
+    return self.loadVolume(filePath, 'PreDentalSurgery');
+
+  def downloadPostDentalSurgery(self):
+    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz', 'PostDentalSurgery.gipl.gz')
+    return self.loadVolume(filePath, 'PostDentalSurgery');
 
   def downloadFileIntoCache(self, uri, name):
     destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
