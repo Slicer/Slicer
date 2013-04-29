@@ -149,6 +149,4 @@ private:
   Q_DISABLE_COPY(qSlicerStandardFileDialog);
 };
 
-Q_DECLARE_METATYPE(qSlicerFileDialog::IOAction)
-
 #endif
