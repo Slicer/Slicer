@@ -6,19 +6,19 @@ import EditorLib
 
 #########################################################
 #
-# 
+#
 comment = """
 
   EditBox is a wrapper around a set of Qt widgets and other
-  structures to manage the slicer4 edit box.  
+  structures to manage the slicer4 edit box.
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
 
 #
-# The parent class definition 
+# The parent class definition
 #
 
 class EditBox(object):
@@ -32,6 +32,7 @@ class EditBox(object):
     self.editUtil = EditUtil.EditUtil()
     self.undoRedo = EditUtil.UndoRedo()
     self.undoRedo.stateChangedCallback = self.updateUndoRedoButtons
+    self.toggleShortcut = None
 
     # check for extensions - if none have been registered, just create the empty dictionary
     try:
@@ -97,7 +98,7 @@ class EditBox(object):
   #
   # Public lists of the available effects provided by the editor
   #
-  
+
   # effects that change the mouse cursor
   availableMouseTools = (
     "Paint", "Draw", "LevelTracing", "Rectangle", "ChangeIsland", "SaveIsland", "Wand",
@@ -105,11 +106,11 @@ class EditBox(object):
 
   # effects that operate from the menu (non mouse)
   availableOperations = (
-    "DefaultTool", "EraseLabel", 
+    "DefaultTool", "EraseLabel",
     "IdentifyIslands", "RemoveIslands",
-    "ErodeLabel", "DilateLabel", "ChangeLabel", 
+    "ErodeLabel", "DilateLabel", "ChangeLabel",
     "MakeModel", "GrowCutSegment",
-    "Threshold", 
+    "Threshold",
     "PreviousCheckPoint", "NextCheckPoint",
     )
 
@@ -135,7 +136,7 @@ class EditBox(object):
     # - look for implementation class of pattern *Effect
     # - get an icon name for the pushbutton
     iconDir = EditorLib.ICON_DIR
-    
+
     self.effectIconFiles = {}
     self.effectModes = {}
     self.icons = {}
@@ -170,14 +171,14 @@ class EditBox(object):
     self.effectIconFiles["Wand"] = self.effectIconFiles["WandEffect"]
 
   def createButtonRow(self, effects, rowLabel=""):
-    """ create a row of the edit box given a list of 
+    """ create a row of the edit box given a list of
     effect names (items in _effects(list) """
 
-    f = qt.QFrame(self.parent)
-    self.parent.layout().addWidget(f)
-    self.rowFrames.append(f)
+    rowFrame = qt.QFrame(self.mainFrame)
+    self.mainFrame.layout().addWidget(rowFrame)
+    self.rowFrames.append(rowFrame)
     hbox = qt.QHBoxLayout()
-    f.setLayout( hbox )
+    rowFrame.setLayout( hbox )
 
     if rowLabel:
       label = qt.QLabel(rowLabel)
@@ -187,7 +188,7 @@ class EditBox(object):
       # check that the effect belongs in our list of effects before including
       if (effect in self.effects):
         i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect])
-        a = self.actions[effect] = qt.QAction(i, '', f)
+        a = self.actions[effect] = qt.QAction(i, '', rowFrame)
         self.effectButtons[effect] = b = self.buttons[effect] = qt.QToolButton()
         b.setDefaultAction(a)
         b.setToolTip(effect)
@@ -199,13 +200,18 @@ class EditBox(object):
         self.effectMapper.setMapping(self.buttons[effect], effect)
         # Connect button with signal mapper
         self.buttons[effect].connect('clicked()', self.effectMapper, 'map()')
-        
+
     hbox.addStretch(1)
 
   # create the edit box
   def create(self):
-    
+
     self.findEffects()
+
+    self.mainFrame = qt.QFrame(self.parent)
+    vbox = qt.QVBoxLayout()
+    self.mainFrame.setLayout(vbox)
+    self.parent.layout().addWidget(self.mainFrame)
 
     #
     # the buttons
@@ -229,7 +235,7 @@ class EditBox(object):
     self.createButtonRow( ("PreviousCheckPoint", "NextCheckPoint"), rowLabel="Undo/Redo: " )
 
     #
-    # the labels 
+    # the labels
     #
     self.toolsActiveToolFrame = qt.QFrame(self.parent)
     self.toolsActiveToolFrame.setLayout(qt.QHBoxLayout())
@@ -243,8 +249,10 @@ class EditBox(object):
     self.toolsActiveToolName.setStyleSheet("background-color: rgb(232,230,235)")
     self.toolsActiveToolFrame.layout().addWidget(self.toolsActiveToolName)
 
+    vbox.addStretch(1)
+
     self.updateUndoRedoButtons()
-   
+
   def setActiveToolLabel(self,name):
     if EditBox.displayNames.has_key(name):
       name = EditBox.displayNames[name]
@@ -268,13 +276,13 @@ class EditBox(object):
       return
     if not self.editUtil.getLabelVolume():
       return
-    
+
     #
     # an effect was selected, so build an options GUI
     # - check to see if it is an extension effect,
     # if not, try to create it, else ignore it
     # For extensions, look for 'effect'Options and 'effect'Tool
-    # in the editorExtensions map and use those to create the 
+    # in the editorExtensions map and use those to create the
     # effect
     #
     if self.currentOption:
@@ -286,7 +294,7 @@ class EditBox(object):
         tool.cleanup()
       self.currentTools = []
 
-    # look at builtins and extensions 
+    # look at builtins and extensions
     # - TODO: other effect styles are deprecated
     effectClass = None
     if effectName in slicer.modules.editorExtensions.keys():
@@ -341,7 +349,7 @@ class EditBox(object):
           interactionNode = appLogic.GetInteractionNode()
           interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
           # make an appropriate cursor for the tool
-          cursor = self.cursorForEffect(effectName) 
+          cursor = self.cursorForEffect(effectName)
           for tool in self.currentTools:
             tool.sliceWidget.setCursor(cursor)
 
@@ -376,3 +384,28 @@ class EditBox(object):
   def updateUndoRedoButtons(self):
     self.effectButtons["PreviousCheckPoint"].enabled = self.undoRedo.undoEnabled()
     self.effectButtons["NextCheckPoint"].enabled = self.undoRedo.redoEnabled()
+
+  def toggleFloatingMode(self):
+    """Set or clear the parent of the edit box so that it is a top level
+    window or embeded in the gui as appropriate.  Meant to be associated
+    with the space bar shortcut for the mainWindow, set in Editor.py"""
+    if self.mainFrame.parent():
+      self.mainFrame.setParent(None)
+      cursorPosition = qt.QCursor().pos()
+      w = self.mainFrame.width
+      h = self.mainFrame.height
+      self.mainFrame.pos = qt.QPoint(cursorPosition.x() - w/2, cursorPosition.y() - h/2)
+      self.mainFrame.show()
+      self.mainFrame.raise_()
+      Key_Space = 0x20 # not in PythonQt
+      self.toggleShortcut = qt.QShortcut(self.mainFrame)
+      self.toggleShortcut.setKey( qt.QKeySequence(Key_Space) )
+      self.toggleShortcut.connect( 'activated()', self.toggleFloatingMode )
+    else:
+      if self.toggleShortcut:
+        self.toggleShortcut.disconnect('activated()')
+        self.toggleShortcut.setParent(None)
+        self.toggleShortcut = None
+      self.mainFrame.setParent(self.parent)
+      self.parent.layout().addWidget(self.mainFrame)
+

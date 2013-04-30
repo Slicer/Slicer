@@ -91,6 +91,7 @@ class EditorWidget:
     """Turn on editor-wide shortcuts.  These are active independent
     of the currently selected effect."""
     Key_Escape = 0x01000000 # not in PythonQt
+    Key_Space = 0x20 # not in PythonQt
     self.shortcuts = []
     keysAndCallbacks = (
         ('e', self.editUtil.toggleLabel),
@@ -100,6 +101,12 @@ class EditorWidget:
         ('o', self.editUtil.toggleLabelOutline),
         ('t', self.editUtil.toggleForegroundBackground),
         (Key_Escape, self.toolsBox.defaultEffect),
+        ('p', lambda : self.toolsBox.selectEffect('PaintEffect')),
+        ('d', lambda : self.toolsBox.selectEffect('DrawEffect')),
+        ('w', lambda : self.toolsBox.selectEffect('WandEffect')),
+        ('r', lambda : self.toolsBox.selectEffect('RectangleEffect')),
+        ('c', self.toolsColor.showColorBox),
+        (Key_Space, self.toolsBox.toggleFloatingMode),
         )
     for key,callback in keysAndCallbacks:
       shortcut = qt.QShortcut(slicer.util.mainWindow())
@@ -150,10 +157,6 @@ class EditorWidget:
     self.parameterNode = self.editUtil.getParameterNode()
     self.parameterNodeTag = self.parameterNode.AddObserver(vtk.vtkCommand.ModifiedEvent, self.updateGUIFromMRML)
 
-    # resume the current effect, if we left the editor and re-entered or pick default
-    # TODO: not fully implemented
-    #self.activateEffect()
-
     if self.helper:
       self.helper.onEnter()
 
@@ -168,18 +171,6 @@ class EditorWidget:
   def updateGUIFromMRML(self, caller, event):
     if self.toolsBox:
       self.toolsBox.updateUndoRedoButtons()
-
-  def activateEffect(self):
-    if self.toolsBox:
-      # if you can, resume what the user was working on
-      self.toolsBox.resumeEffect()
-      if not self.toolsBox.currentOption:
-        # if not, try to load the paint tool
-        try:
-          self.toolsBox.selectEffect('Paint')
-        except KeyError:
-          # oh well, no paint effect so let the user pick their own
-          pass
 
   # sets the node for the volume to be segmented
   def setMasterNode(self, newMasterNode):
