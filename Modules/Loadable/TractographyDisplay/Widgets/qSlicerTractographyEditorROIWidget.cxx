@@ -215,6 +215,7 @@ void qSlicerTractographyEditorROIWidget::setAnnotationMRMLNodeForFiberSelection(
       d->AnnotationMRMLNodeForFiberSelection = AnnotationNode;
       d->FiberBundleNode->SetAndObserveAnnotationNodeID(d->AnnotationMRMLNodeForFiberSelection->GetID());
       }
+    this->updateWidgetFromMRML();
   }
 }
 
