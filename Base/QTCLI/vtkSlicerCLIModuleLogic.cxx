@@ -448,6 +448,13 @@ void vtkSlicerCLIModuleLogic::ApplyAndWait ( vtkMRMLCommandLineModuleNode* node,
   // Just execute and wait.
   node->Register(this);
   node->SetAttribute("UpdateDisplay", updateDisplay ? "true" : "false");
+
+  // Observe application logic to know when the CLI is completed and the
+  // associated data loaded. The observation will be removed in the callback.
+  vtkEventBroker::GetInstance()->AddObservation(
+    this->GetApplicationLogic(), vtkSlicerApplicationLogic::RequestProcessedEvent,
+    this, this->GetMRMLLogicsCallbackCommand());
+
   vtkSlicerCLIModuleLogic::ApplyTask ( node );
 
   while (this->GetApplicationLogic()->GetReadDataQueueSize())
