@@ -22,11 +22,6 @@ set(proj python)
 
 #message(STATUS "${__indent}Adding project ${proj}")
 
-#
-# WARNING - If you consider updating the Python version, make sure the patch
-#           step associated with both window and unix are still valid !
-#
-
 if(NOT DEFINED python_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 
