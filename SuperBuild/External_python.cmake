@@ -32,12 +32,6 @@ if(NOT DEFINED python_DIR)
 
   set(python_SOURCE_DIR "${CMAKE_BINARY_DIR}/Python-2.7.3")
 
-  set(HAVE_PYRUN_CLOSEFILE 1)
-  set(HAVE_PYRUN_OPENFILE 1)
-  configure_file(SuperBuild/python_patch_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
-      @ONLY)
-
   ExternalProject_Add(python-source
     URL "http://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz"
     URL_MD5 "2cf641732ac23b18d139be077bd906cd"
@@ -46,7 +40,6 @@ if(NOT DEFINED python_DIR)
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
-    PATCH_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_patch_step.cmake
     )
 
   # Set CMake OSX variable to pass down the external project

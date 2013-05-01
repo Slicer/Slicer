@@ -277,18 +277,6 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
 {
   assert(pythonSource.find(".py") != std::string::npos);
 
-  // Open the file
-#ifdef HAVE_PYRUN_OPENFILE
-  FILE* pyfile = PyRun_OpenFile(pythonSource.c_str());
-#else
-  FILE* pyfile = fopen(pythonSource.c_str(), "r");
-#endif
-  if (!pyfile)
-    {
-    vtkErrorMacro(<< "SetPythonSource - File " << pythonSource << " doesn't exist !");
-    return;
-    }
-
   // Extract filename - It should match the associated python class
   std::string className = vtksys::SystemTools::GetFilenameWithoutExtension(pythonSource);
   //std::cout << "SetPythonSource - className:" << className << std::endl;
@@ -301,7 +289,15 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
   if (!classToInstantiate)
     {
-    PyRun_File(pyfile, pythonSource.c_str(), Py_file_input, global_dict, global_dict);
+    std::string pyRunStr = std::string("execfile('") + pythonSource + std::string("')");
+    PyObject * pyRes = PyRun_String(pyRunStr.c_str(),
+                                    Py_file_input, global_dict, global_dict);
+    if (!pyRes)
+      {
+      vtkErrorMacro(<< "setPythonSource - Failed to execute file" << pythonSource << "!");
+      return;
+      }
+    Py_DECREF(pyRes);
     classToInstantiate = PyDict_GetItemString(global_dict, className.c_str());
     }
   if (!classToInstantiate)
@@ -310,12 +306,6 @@ void vtkMRMLScriptedDisplayableManager::SetPythonSource(const std::string& pytho
                   << pythonSource);
     return;
     }
-
-#ifdef HAVE_PYRUN_CLOSEFILE
-  PyRun_CloseFile(pyfile);
-#else
-  fclose(pyfile);
-#endif
 
   //std::cout << "classToInstantiate:" << classToInstantiate << std::endl;
 

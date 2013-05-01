@@ -136,19 +136,6 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
 
   Q_ASSERT(newPythonSource.endsWith(".py"));
 
-  // Open the file
-#ifdef HAVE_PYRUN_OPENFILE
-  FILE* pyfile = PyRun_OpenFile(newPythonSource.toLatin1());
-#else
-  FILE* pyfile = fopen(newPythonSource.toLatin1(), "r");
-#endif
-  if (!pyfile)
-    {
-    PythonQt::self()->handleError();
-    qCritical() << "setPythonSource - File" << newPythonSource << "doesn't exist !";
-    return false;
-    }
-
   // Extract moduleName from the provided filename
   QString classNameToLoad = className;
   if (classNameToLoad.isEmpty())
@@ -168,28 +155,47 @@ bool qSlicerScriptedFileDialog::setPythonSource(const QString& newPythonSource, 
   // Load class definition if needed
   PyObject * classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
   if (!classToInstantiate)
-    {/*
-    PyRun_File(pyfile, newPythonSource.toLatin1(), Py_file_input, global_dict, global_dict);
-    classToInstantiate = PyDict_GetItemString(global_dict, classNameToLoad.toLatin1());
-    }
-
-  if (!classToInstantiate)
     {
-    PythonQt::self()->handleError();
-    PyErr_SetString(PyExc_RuntimeError,
-                    QString("qSlicerScriptedFileDialog::setPythonSource - "
-                            "Failed to load scripted pythonqt module class definition"
-                            " %1 from %2").arg(classNameToLoad).arg(newPythonSource).toLatin1());
-    */
-    PythonQt::self()->handleError();
+    // HACK The file dialog class definition is expected to be available after executing the
+    //      associated module class, trying to load the file a second time will (1) cause all the
+    //      classes within the file to be associated with module corresponding to __name__
+    //      variable and (2) raise a 'TypeError' exception.
+    //
+    //      For example, if a file name 'Bar.py' having a class Bar, is loaded by
+    //      qSlicerScriptedLoadableModule, the associated class name will be: Bar.Bar
+    //
+    //      Then, if the qSlicerScriptedFileDialog also attempt to load the Bar.py file,
+    //      the class name associated with the same class will then be: BarDialog.Bar or
+    //      __main__.Bar if __name__ is not explicitly overridden
+    //
+    //      In other word, if BarPlugin.py contain code like:
+    //
+    //        from SomeLig import MyBasePlugin
+    //        class BarPlugin(MyBasePlugin):
+    //           def __init__(self):
+    //           print("################")
+    //           print(BarPlugin)
+    //           print(self.__class__)
+    //           print(isinstance(self, BarPlugin))
+    //           print("################")
+    //           super(BarPlugin,self).__init__()
+    //
+    //      the following will be printed:
+    //
+    //        ################
+    //        <class '__main__.BarPlugin'>  // or <class 'BarPluginFileDialog.BarPlugin'>
+    //        <class 'BarPlugin.BarPlugin'>
+    //        False
+    //        ################
+    //
+    //      and will raise the following exception:
+    //         TypeError: super(type, obj): obj must be an instance or subtype of type
+    //
+    //      More details about the exception :
+    //        http://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+    //
     return false;
     }
-
-#ifdef HAVE_PYRUN_CLOSEFILE
-  PyRun_CloseFile(pyfile);
-#else
-  fclose(pyfile);
-#endif
 
   PyObject * wrappedThis = PythonQt::self()->priv()->wrapQObject(this);
   if (!wrappedThis)

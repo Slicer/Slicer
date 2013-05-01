@@ -43,6 +43,8 @@ public:
   virtual ~qSlicerScriptedFileDialog();
 
   QString pythonSource()const;
+
+  /// \warning Setting the source is a no-op. See detailed comment in the source code.
   bool setPythonSource(const QString& newPythonSource, const QString& className = QLatin1String(""));
 
   /// Convenience method allowing to retrieve the associated scripted instance
