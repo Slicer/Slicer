@@ -12,7 +12,7 @@ if(DEFINED LibArchive_DIR AND NOT EXISTS ${LibArchive_DIR})
 endif()
 
 # Set dependency list
-set(LibArchive_DEPENDENCIES "")
+set(LibArchive_DEPENDENCIES "zlib")
 if(WIN32)
   list(APPEND LibArchive_DEPENDENCIES zlib)
 endif()
@@ -29,14 +29,6 @@ if(NOT DEFINED LibArchive_DIR)
   #         of LibArchive, see the repository for earlier revisions of this file.
   #
   set(ADDITIONAL_CMAKE_ARGS)
-  if(WIN32)
-    # CMake arguments specific to LibArchive >= 2.8.4
-    list(APPEND ADDITIONAL_CMAKE_ARGS
-      -DZLIB_INCLUDE_DIR:PATH=${zlib_DIR}/include
-      -DZLIB_LIBRARY:FILEPATH=${zlib_DIR}/lib/zlib.lib
-      -DZLIB_ROOT:PATH=${zlib_DIR}
-      )
-  endif()
   # CMake arguments specific to LibArchive >= 2.8.4
   list(APPEND ADDITIONAL_CMAKE_ARGS
     -DBUILD_TESTING:BOOL=OFF
@@ -77,6 +69,9 @@ if(NOT DEFINED LibArchive_DIR)
       -DENABLE_TAR:BOOL=OFF
       -DENABLE_TEST:BOOL=OFF
       -DENABLE_XATTR:BOOL=OFF
+      -DZLIB_ROOT:PATH=${SLICER_ZLIB_ROOT}
+      -DZLIB_INCLUDE_DIR:PATH=${SLICER_ZLIB_INCLUDE_DIR}
+      -DZLIB_LIBRARY:FILEPATH=${SLICER_ZLIB_LIBRARY}
       ${ADDITIONAL_CMAKE_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS

@@ -80,7 +80,7 @@ set(VTK_LIBRARIES vtkCommon vtkFiltering vtkIO)
 
 set(libs
   ${VTK_LIBRARIES}
-  vtkzlib
+  ${ZLIB_LIBRARIES}
   )
 target_link_libraries(${lib_name} ${libs})
 

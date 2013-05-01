@@ -416,6 +416,10 @@ ExternalProject_Add(${proj}
     -DjqPlot_DIR:PATH=${jqPlot_DIR}
     # LibArchive
     -DLibArchive_DIR:PATH=${LibArchive_DIR}
+    # zlib
+    -DZLIB_ROOT:PATH=${SLICER_ZLIB_ROOT}
+    -DZLIB_INCLUDE_DIR:PATH=${SLICER_ZLIB_INCLUDE_DIR}
+    -DZLIB_LIBRARY:FILEPATH=${SLICER_ZLIB_LIBRARY}
   INSTALL_COMMAND ""
   )
 

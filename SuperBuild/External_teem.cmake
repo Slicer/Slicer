@@ -7,7 +7,7 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(teem_DEPENDENCIES VTK)
+set(teem_DEPENDENCIES zlib VTK)
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(teem)
@@ -31,13 +31,10 @@ endif()
 #message(STATUS "${__indent}Adding project ${proj}")
 
 if(WIN32)
-  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkzlib.lib)
   set(teem_PNG_LIBRARY ${VTK_DIR}/bin/${CMAKE_CFG_INTDIR}/vtkpng.lib)
 elseif(APPLE)
-  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/libvtkzlib.dylib)
   set(teem_PNG_LIBRARY ${VTK_DIR}/bin/libvtkpng.dylib)
 else()
-  set(teem_ZLIB_LIBRARY ${VTK_DIR}/bin/libvtkzlib.so)
   set(teem_PNG_LIBRARY ${VTK_DIR}/bin/libvtkpng.so)
 endif()
 
@@ -69,12 +66,13 @@ ExternalProject_Add(${proj}
     -DTeem_BZIP2:BOOL=OFF
     -DTeem_ZLIB:BOOL=ON
     -DTeem_PNG:BOOL=ON
-    -DTeem_VTK_MANGLE:BOOL=ON
     -DTeem_VTK_TOOLKITS_IPATH:FILEPATH=${VTK_DIR}
-    -DZLIB_INCLUDE_DIR:PATH=${VTK_SOURCE_DIR}/Utilities
-    -DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=${VTK_SOURCE_DIR}/Utilities/vtkzlib
-    -DTeem_ZLIB_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
-    -DZLIB_LIBRARY:FILEPATH=${teem_ZLIB_LIBRARY}
+    -DZLIB_ROOT:PATH=${SLICER_ZLIB_ROOT}
+    -DZLIB_INCLUDE_DIR:PATH=${SLICER_ZLIB_INCLUDE_DIR}
+    -DZLIB_LIBRARY:FILEPATH=${SLICER_ZLIB_LIBRARY}
+    -DTeem_VTK_MANGLE:BOOL=OFF ## NOT NEEDED FOR EXTERNAL ZLIB outside of vtk
+    #-DTeem_VTK_ZLIB_MANGLE_IPATH:PATH=${VTK_SOURCE_DIR}/Utilities/vtkzlib
+    #-DTeem_ZLIB_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DPNG_PNG_INCLUDE_DIR:PATH=${VTK_SOURCE_DIR}/Utilities/vtkpng
     -DTeem_PNG_DLLCONF_IPATH:PATH=${VTK_DIR}/Utilities
     -DPNG_LIBRARY:FILEPATH=${teem_PNG_LIBRARY}

@@ -6,6 +6,11 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+# Sanity checks
+if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
+  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to non-existing directory")
+endif()
+
 # Set dependency list
 set(zlib_DEPENDENCIES "")
 
@@ -44,20 +49,28 @@ if(NOT DEFINED zlib_DIR)
     INSTALL_DIR zlib-install
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
+      ## CXX should not be needed, but it a cmake default test
+      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+      -DCMAKE_C_FLAGS:STRING=${zlib_c_flags}
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-      # -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
-      -DCMAKE_C_FLAGS:STRING=${zlib_c_flags}
-      -DZLIB_MANGLE_PREFIX:STRING=la_zlib_
+      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
       ${ADDITIONAL_CMAKE_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${zlib_DEPENDENCIES}
     )
   set(zlib_DIR ${CMAKE_BINARY_DIR}/zlib-install)
+  set(SLICER_ZLIB_ROOT ${zlib_DIR})
+  set(SLICER_ZLIB_INCLUDE_DIR ${zlib_DIR}/include )
+  if(WIN32)
+    set(SLICER_ZLIB_LIBRARY     ${zlib_DIR}/lib/zlib.lib )
+  else()
+    set(SLICER_ZLIB_LIBRARY     ${zlib_DIR}/lib/libzlib.a )
+  endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
   # let's add an 'empty' one
   SlicerMacroEmptyExternalProject(${proj} "${zlib_DEPENDENCIES}")
 endif()
-

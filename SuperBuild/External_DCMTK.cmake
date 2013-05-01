@@ -7,7 +7,7 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Set dependency list
-set(DCMTK_DEPENDENCIES "")
+set(DCMTK_DEPENDENCIES "zlib")
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(DCMTK)
