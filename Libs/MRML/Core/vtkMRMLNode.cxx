@@ -1218,6 +1218,7 @@ void vtkMRMLNode::RemoveAllReferencedNodes()
         {
         // node is registered with ObsereverManager, events is registered here
         (*it1)->Events->UnRegister(this);
+        (*it1)->Events = 0;
         }
       (*it1)->ReferencedNode = 0;
       }

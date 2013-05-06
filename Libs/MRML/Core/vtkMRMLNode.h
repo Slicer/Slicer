@@ -578,15 +578,22 @@ protected:
   protected:
 
     vtkMRMLNodeReference()
-   {
+      {
       this->ReferencedNode = 0;
       this->ReferencingNode = 0;
       this->Events = 0;
       this->ReferencedNodeID = 0;
       this->ReferenceRole = 0;
-    }
+      }
 
-    ~vtkMRMLNodeReference(){};
+    ~vtkMRMLNodeReference()
+      {
+      if (this->Events)
+        {
+        this->Events->Delete();
+        this->Events = 0;
+        }
+      };
     vtkMRMLNodeReference(const vtkMRMLNodeReference&);
     void operator=(const vtkMRMLNodeReference&);
 
