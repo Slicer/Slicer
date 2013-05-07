@@ -397,8 +397,9 @@ void vtkMRMLFiberBundleNode::SetAndObservePolyData(vtkPolyData* polyData)
 
     std::vector<vtkIdType> idVector;
     for(vtkIdType i = 0;  i < numberOfFibers; i++ )
+      {
       idVector.push_back(i);
-
+      }
     random_shuffle ( idVector.begin(), idVector.end() );
 
     this->ShuffledIds->Initialize();

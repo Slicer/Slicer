@@ -32,6 +32,7 @@
 #include "vtkMRMLSliceNode.h"
 //#include "vtkMRMLCameraNode.h"
 #include "vtkMRMLViewNode.h"
+#include "vtkMRMLInteractionNode.h"
 
 // VTK includes
 #include <vtkAssignAttribute.h>
@@ -132,7 +133,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->WorldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
   this->PropPicker = vtkSmartPointer<vtkPropPicker>::New();
   this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  this->CellPicker->SetTolerance(0.00001);
+  this->CellPicker->SetTolerance(0.00000001);
   this->PointPicker = vtkSmartPointer<vtkPointPicker>::New();
   this->ResetPick();
 }
@@ -222,7 +223,7 @@ void vtkMRMLModelDisplayableManager::PrintSelf ( ostream& os, vtkIndent indent )
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
+void vtkMRMLModelDisplayableManager::AdditionalInitializeStep()
 {
   vtkRenderWindowInteractor * interactor = this->GetInteractor();
   if (interactor)
@@ -234,7 +235,13 @@ void vtkMRMLModelDisplayableManager::AdditionnalInitializeStep()
       interactorStyle->SetModelDisplayableManager(this);
       }
     }
+}
 
+//---------------------------------------------------------------------------
+int vtkMRMLModelDisplayableManager::ActiveInteractionModes() 
+{
+  //return vtkMRMLInteractionNode::ViewTransform;
+  return 0;
 }
 
 //---------------------------------------------------------------------------
@@ -1705,8 +1712,8 @@ int vtkMRMLModelDisplayableManager::Pick(int x, int y)
         vtkDebugMacro("Checking model " << modelIter->first.c_str() << "'s polydata");
         if (modelIter->second != 0)
           {
-          if (vtkMRMLModelNode::SafeDownCast(modelIter->second) &&
-              vtkMRMLModelNode::SafeDownCast(modelIter->second)->GetPolyData() == polyData)
+          if (vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second) &&
+              vtkMRMLModelDisplayNode::SafeDownCast(modelIter->second)->GetOutputPolyData() == polyData)
             {
             vtkDebugMacro("Found matching poly data, pick was on model " << modelIter->first.c_str());
             this->Internal->PickedNodeID = modelIter->first;
@@ -1938,3 +1945,67 @@ vtkClipPolyData* vtkMRMLModelDisplayableManager::CreateTransformedClipper(
     }
   return clipper;
 }
+
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::OnInteractorStyleEvent(int eventid)
+{
+  bool keyPressed = false;
+  char *keySym = this->GetInteractor()->GetKeySym();
+  if (keySym && strcmp(keySym, "i") == 0)
+    {
+    keyPressed = true;
+    }
+
+  //if (eventid == vtkCommand::LeftButtonReleaseEvent)
+  if (eventid == vtkCommand::LeftButtonPressEvent && keyPressed)
+    {
+
+    double x = this->GetInteractor()->GetEventPosition()[0];
+    double y = this->GetInteractor()->GetEventPosition()[1];
+
+    double windowWidth = this->GetInteractor()->GetRenderWindow()->GetSize()[0];
+    double windowHeight = this->GetInteractor()->GetRenderWindow()->GetSize()[1];
+
+    if (x < windowWidth && y < windowHeight)
+      {
+      // it's a 3D displayable manager and the click could have been on a node
+      double yNew = windowHeight - y - 1;
+      vtkMRMLDisplayNode *displayNode = NULL;
+      vtkMRMLDisplayableNode *displayableNode = NULL;
+
+      if (this->Pick(x,yNew) &&
+          strcmp(this->GetPickedNodeID(),"") != 0)
+        {
+        // find the node id, the picked node name is probably the display node
+        const char *pickedNodeID = this->GetPickedNodeID();
+
+        vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(pickedNodeID);
+        if (mrmlNode)
+          {
+          displayNode = vtkMRMLDisplayNode::SafeDownCast(mrmlNode);
+          }
+        else
+          {
+          vtkDebugMacro("couldn't find a mrml node with ID " << pickedNodeID);
+          }
+        }
+
+      if (displayNode)
+        {
+        displayNode->SetColor(1.0, 0, 0);
+        displayableNode = displayNode->GetDisplayableNode();
+        this->GetInteractionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
+        }
+      }
+    }
+  if (keyPressed)
+    {
+    this->GetInteractor()->SetKeySym(0);
+    }
+
+  this->PassThroughInteractorStyleEvent(eventid);
+
+  return;
+}
+

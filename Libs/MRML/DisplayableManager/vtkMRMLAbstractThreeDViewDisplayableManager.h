@@ -54,6 +54,8 @@ protected:
 
   /// Could be overloaded in DisplayableManager subclass
   virtual void OnMRMLViewNodeModifiedEvent(){}
+
+  virtual void PassThroughInteractorStyleEvent(int eventid);
   
 private:
 

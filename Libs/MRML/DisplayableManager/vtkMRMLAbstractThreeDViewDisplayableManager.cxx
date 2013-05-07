@@ -23,9 +23,10 @@
 
 // MRML includes
 #include <vtkMRMLViewNode.h>
+#include "vtkThreeDViewInteractorStyle.h"
 
 // VTK includes
-
+#include "vtkRenderWindowInteractor.h"
 // STD includes
 #include <cassert>
 
@@ -67,5 +68,101 @@ void vtkMRMLAbstractThreeDViewDisplayableManager::OnMRMLDisplayableNodeModifiedE
 vtkMRMLViewNode * vtkMRMLAbstractThreeDViewDisplayableManager::GetMRMLViewNode()
 {
   return vtkMRMLViewNode::SafeDownCast(this->GetMRMLDisplayableNode());
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAbstractThreeDViewDisplayableManager::PassThroughInteractorStyleEvent(int eventid)
+{
+  vtkThreeDViewInteractorStyle* interactorStyle = vtkThreeDViewInteractorStyle::SafeDownCast(
+              this->GetInteractor()->GetInteractorStyle());
+
+  if (interactorStyle)
+  {
+
+  switch(eventid)
+    {
+    case vtkCommand::ExposeEvent:
+      interactorStyle->OnExpose();
+      break;
+
+    case vtkCommand::ConfigureEvent:
+      interactorStyle->OnConfigure();
+      break;
+
+    case vtkCommand::EnterEvent:  
+      interactorStyle->OnEnter();
+      break;
+
+    case vtkCommand::LeaveEvent:
+        interactorStyle->OnLeave();
+      break;
+
+    case vtkCommand::TimerEvent: 
+        interactorStyle->OnTimer();
+      break;
+
+    case vtkCommand::MouseMoveEvent: 
+        interactorStyle->OnMouseMove();
+      break;
+
+    case vtkCommand::LeftButtonPressEvent: 
+        interactorStyle->OnLeftButtonDown();
+      break;
+
+    case vtkCommand::LeftButtonReleaseEvent:
+        interactorStyle->OnLeftButtonUp();
+        break;
+
+    case vtkCommand::MiddleButtonPressEvent:
+        interactorStyle->OnMiddleButtonDown();
+      break;
+
+    case vtkCommand::MiddleButtonReleaseEvent:
+        interactorStyle->OnMiddleButtonUp();
+      break;
+
+    case vtkCommand::RightButtonPressEvent:
+        interactorStyle->OnRightButtonDown();
+      break;
+
+    case vtkCommand::RightButtonReleaseEvent: 
+        interactorStyle->OnRightButtonUp();
+      break;
+
+    case vtkCommand::MouseWheelForwardEvent:
+        interactorStyle->OnMouseWheelForward();
+      break;
+
+    case vtkCommand::MouseWheelBackwardEvent: 
+        interactorStyle->OnMouseWheelBackward();
+      break;
+
+    case vtkCommand::KeyPressEvent:
+        interactorStyle->OnKeyDown();
+        interactorStyle->OnKeyPress();
+      break;
+
+    case vtkCommand::KeyReleaseEvent: 
+        interactorStyle->OnKeyUp();
+        interactorStyle->OnKeyRelease(); 
+      break;
+
+    case vtkCommand::CharEvent:  
+        interactorStyle->OnChar();
+      break;
+
+    case vtkCommand::DeleteEvent:
+      interactorStyle->SetInteractor(0);
+      break;
+      
+    case vtkCommand::TDxMotionEvent:
+    case vtkCommand::TDxButtonPressEvent:
+    case vtkCommand::TDxButtonReleaseEvent:
+      interactorStyle->DelegateTDxEvent(eventid,0);
+      break;
+    }
+
+    return;
+  }
 }
 

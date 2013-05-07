@@ -51,6 +51,7 @@ public:
       //LassoRegion,
       Place = 0x1,
       ViewTransform = 0x2,
+      Select = 0x4,
     };
 
   /// events

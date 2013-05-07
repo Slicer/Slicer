@@ -193,6 +193,10 @@ public:
   // Set the maximum number of fibers to show by default when a new fiber bundle node is set
   vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
 
+  vtkIdType GetUnShuffledFiberID(vtkIdType shuffledIndex)
+  {
+    return this->ShuffledIds->GetValue(shuffledIndex);
+  }
 
 protected:
   vtkMRMLFiberBundleNode();

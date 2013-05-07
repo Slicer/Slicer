@@ -134,7 +134,8 @@ protected:
   vtkMRMLModelDisplayableManager();
   virtual ~vtkMRMLModelDisplayableManager();
 
-  virtual void AdditionnalInitializeStep();
+  virtual void AdditionalInitializeStep();
+  virtual int ActiveInteractionModes();
 
   virtual void OnMRMLSceneStartClose();
   virtual void OnMRMLSceneEndClose();
@@ -142,6 +143,7 @@ protected:
   virtual void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   virtual void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
 
+  virtual void OnInteractorStyleEvent(int eventId);
   virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
 
   /// Returns true if something visible in modelNode has changed and would

@@ -35,6 +35,9 @@
 // Tractography Logic includes
 #include "vtkSlicerFiberBundleLogic.h"
 
+#include <vtkMRMLThreeDViewDisplayableManagerFactory.h>
+#include "TractographyDisplayInstantiator.h"
+
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerTractographyDisplayModule, qSlicerTractographyDisplayModule);
 
@@ -49,6 +52,11 @@ qSlicerTractographyDisplayModule(QObject* _parent)
 void qSlicerTractographyDisplayModule::setup()
 {
   this->Superclass::setup();
+
+  vtkMRMLThreeDViewDisplayableManagerFactory::GetInstance()->
+    RegisterDisplayableManager("vtkMRMLTractographyDisplayDisplayableManager");
+
+
   vtkSlicerFiberBundleLogic* fiberBundleLogic =
     vtkSlicerFiberBundleLogic::SafeDownCast(this->logic());
   qSlicerCoreIOManager* coreIOManager =
