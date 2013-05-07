@@ -166,6 +166,7 @@ class EditorWidget:
       self.helper.onExit()
     if self.toolsBox:
       self.toolsBox.defaultEffect()
+      self.toolsBox.cancelFloatingMode()
     self.removeShortcutKeys()
 
   def updateGUIFromMRML(self, caller, event):

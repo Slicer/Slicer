@@ -3,7 +3,7 @@ import slicer
 
 #########################################################
 #
-# 
+#
 comment = """
 
   EditUtil holds utility functions required by the other
@@ -11,7 +11,7 @@ comment = """
 
   Note: this needs to be a class so it can be reloaded
 
-# TODO : 
+# TODO :
 """
 #
 #########################################################
@@ -73,14 +73,14 @@ class EditUtil(object):
     backgroundVolume = self.getBackgroundVolume()
     if backgroundVolume:
       return backgroundVolume.GetImageData()
-    
+
   def getBackgroundVolume(self):
     compNode = self.getCompositeNode()
     if compNode:
       backgroundID = compNode.GetBackgroundVolumeID()
       if backgroundID:
         return slicer.mrmlScene.GetNodeByID(backgroundID)
-  
+
   def getBackgroundID(self):
     compNode = self.getCompositeNode()
     if compNode:
@@ -122,8 +122,11 @@ class EditUtil(object):
     if storedLabelParam == '':
       self.getParameterNode().SetParameter('storedLabel','0')
     storedLabel = int(self.getParameterNode().GetParameter('storedLabel'))
-    self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
-    self.setLabel(storedLabel)
+    if self.getLabel() == 0:
+      self.setLabel(storedLabel)
+    else:
+      self.getParameterNode().SetParameter('storedLabel',str(self.getLabel()))
+      self.setLabel(0)
 
   def getLabelColor(self):
     """returns rgba tuple for the current paint color """
@@ -156,7 +159,6 @@ class EditUtil(object):
     if crosshairNode:
       if crosshairNode.GetCrosshairMode() == 0:
         crosshairNode.SetCrosshairMode(1)
-        crosshairNode.SetNavigation(1)
       else:
         crosshairNode.SetCrosshairMode(0)
 
@@ -175,7 +177,7 @@ class EditUtil(object):
   def markVolumeNodeAsModified(self,volumeNode):
     """Mark all parts of a volume node as modified so that a correct
     render is triggered.  This includes setting the modified flag on the
-    point data scalars so that the GetScalarRange method will return the 
+    point data scalars so that the GetScalarRange method will return the
     correct value, and certain operations like volume rendering will
     know to update.
     http://na-mic.org/Bug/view.php?id=3076
@@ -209,13 +211,13 @@ class UndoRedo(object):
       self.stash.ThreadedStash()
 
     def restore(self):
-      """Unstash the volume but first check that the 
+      """Unstash the volume but first check that the
       stash operation is not still ongoing in the other thread.
       TODO: the stash operation is determinisitic, so there's
       no chance of a deadlock here, but it would still be better
       to integrate the wait into the event queue to avoid locking
       the interface.  In practice this would only happen if the user
-      clicks Undo while the thread is still executing, which is 
+      clicks Undo while the thread is still executing, which is
       unlikely.  And at worst this busy loop will consume two threads
       (this one and the stashing one) for the time the stash takes to complete.
       """
@@ -226,7 +228,7 @@ class UndoRedo(object):
       EditUtil().markVolumeNodeAsModified(self.volumeNode)
 
 
-  def __init__(self,undoSize=10):
+  def __init__(self,undoSize=100):
     self.enabled = True
     self.undoSize = undoSize
     self.undoList = []
@@ -250,14 +252,14 @@ class UndoRedo(object):
 
   def storeVolume(self,checkPointList,volumeNode):
     """ Internal helper function
-    Save a stashed copy of the given volume node into 
+    Save a stashed copy of the given volume node into
     the passed list (could be undo or redo list)
     """
     if not self.enabled or not volumeNode or not volumeNode.GetImageData():
       return
     checkPointList.append( self.checkPoint(volumeNode) )
     self.stateChangedCallback()
-    if len(checkPointList) >= self.undoSize: 
+    if len(checkPointList) >= self.undoSize:
       return( checkPointList[1:] )
     else:
       return( checkPointList )
@@ -271,7 +273,7 @@ class UndoRedo(object):
     self.stateChangedCallback()
 
   def undo(self):
-    """Perform the operation when the user presses 
+    """Perform the operation when the user presses
     the undo button on the editor interface.
     This pushes the current state onto the redoList and
     removes a volume from the undoList.
@@ -286,7 +288,7 @@ class UndoRedo(object):
     self.stateChangedCallback()
 
   def redo(self):
-    """Perform the operation when the user presses 
+    """Perform the operation when the user presses
     the undo button on the editor interface.
     This pushes the current state onto the undo stack
     and restores the state from the redo stack

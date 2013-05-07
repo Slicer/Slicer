@@ -385,23 +385,24 @@ class EditBox(object):
     self.effectButtons["PreviousCheckPoint"].enabled = self.undoRedo.undoEnabled()
     self.effectButtons["NextCheckPoint"].enabled = self.undoRedo.redoEnabled()
 
-  def toggleFloatingMode(self):
-    """Set or clear the parent of the edit box so that it is a top level
-    window or embeded in the gui as appropriate.  Meant to be associated
-    with the space bar shortcut for the mainWindow, set in Editor.py"""
-    if self.mainFrame.parent():
-      self.mainFrame.setParent(None)
-      cursorPosition = qt.QCursor().pos()
-      w = self.mainFrame.width
-      h = self.mainFrame.height
-      self.mainFrame.pos = qt.QPoint(cursorPosition.x() - w/2, cursorPosition.y() - h/2)
-      self.mainFrame.show()
-      self.mainFrame.raise_()
-      Key_Space = 0x20 # not in PythonQt
-      self.toggleShortcut = qt.QShortcut(self.mainFrame)
-      self.toggleShortcut.setKey( qt.QKeySequence(Key_Space) )
-      self.toggleShortcut.connect( 'activated()', self.toggleFloatingMode )
-    else:
+  def isFloatingMode(self):
+    return self.mainFrame.parent() is None
+
+  def enterFloatingMode(self):
+    self.mainFrame.setParent(None)
+    cursorPosition = qt.QCursor().pos()
+    w = self.mainFrame.width
+    h = self.mainFrame.height
+    self.mainFrame.pos = qt.QPoint(cursorPosition.x() - w/2, cursorPosition.y() - h/2)
+    self.mainFrame.show()
+    self.mainFrame.raise_()
+    Key_Space = 0x20 # not in PythonQt
+    self.toggleShortcut = qt.QShortcut(self.mainFrame)
+    self.toggleShortcut.setKey( qt.QKeySequence(Key_Space) )
+    self.toggleShortcut.connect( 'activated()', self.toggleFloatingMode )
+
+  def cancelFloatingMode(self):
+    if self.isFloatingMode():
       if self.toggleShortcut:
         self.toggleShortcut.disconnect('activated()')
         self.toggleShortcut.setParent(None)
@@ -409,3 +410,11 @@ class EditBox(object):
       self.mainFrame.setParent(self.parent)
       self.parent.layout().addWidget(self.mainFrame)
 
+  def toggleFloatingMode(self):
+    """Set or clear the parent of the edit box so that it is a top level
+    window or embeded in the gui as appropriate.  Meant to be associated
+    with the space bar shortcut for the mainWindow, set in Editor.py"""
+    if self.isFloatingMode():
+      self.cancelFloatingMode()
+    else:
+      self.enterFloatingMode()
