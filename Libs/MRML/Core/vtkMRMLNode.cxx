@@ -1117,7 +1117,7 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   if (newReferencedNodeID.empty())
     {
     /// Need to unobserve
-    this->SetAndObserveNthNodeReference(referenceRole, n, 0);
+    this->SetAndObserveNthNodeReference(referenceRole, n, 0, (*referencedNodesIt)->Events);
     vtkMRMLNodeReference *tmp = (*referencedNodesIt);
     referencedNodes.erase(referencedNodesIt);
     this->NodeReferences[std::string(referenceRole)] = referencedNodes;
@@ -1218,8 +1218,9 @@ void vtkMRMLNode::RemoveAllReferencedNodes()
         {
         // node is registered with ObsereverManager, events is registered here
         (*it1)->Events->UnRegister(this);
-        (*it1)->Events = 0;
+        (*it1)->ReferencedNode->UnRegister(this);
         }
+      (*it1)->Events = 0;
       (*it1)->ReferencedNode = 0;
       }
     }
