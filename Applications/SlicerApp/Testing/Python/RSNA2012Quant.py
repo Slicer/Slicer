@@ -10,7 +10,7 @@ class RSNA2012Quant:
   def __init__(self, parent):
     parent.title = "RSNA2012Quant" # TODO make this more human readable by adding spaces
     parent.categories = ["Testing.TestCases"]
-    parent.dependencies = ["ChangeTracker"]
+    parent.dependencies = []
     parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = """
     This module was developed as a self test to perform the operations needed for the RSNA 2012 Quantitative Imaging Tutorial
@@ -154,8 +154,8 @@ class RSNA2012QuantWidget:
 #
 
 class RSNA2012QuantLogic:
-  """This class should implement all the actual 
-  computation done by your module.  The interface 
+  """This class should implement all the actual
+  computation done by your module.  The interface
   should be such that other python code can import
   this class and make use of the functionality without
   requiring an instance of the Widget
@@ -164,7 +164,7 @@ class RSNA2012QuantLogic:
     pass
 
   def hasImageData(self,volumeNode):
-    """This is a dummy logic method that 
+    """This is a dummy logic method that
     returns true if the passed in volume
     node has valid image data
     """
@@ -480,6 +480,11 @@ class RSNA2012QuantTest(unittest.TestCase):
     """ Test the ChangeTracker module
     """
     self.delayDisplay("Starting the test")
+
+    if not hasattr(slicer.modules, 'changetracker'):
+      self.delayDisplay("ChangeTracker not available, skipping the test.")
+      return
+
     #
     # first, get some data
     #
@@ -538,7 +543,7 @@ class RSNA2012QuantTest(unittest.TestCase):
       roi = changeTracker.defineROIStep._ChangeTrackerDefineROIStep__roi
       roi.SetXYZ(-2.81037, 28.7629, 28.4536)
       roi.SetRadiusXYZ(22.6467, 22.6804, 22.9897)
-    
+
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
 
@@ -547,7 +552,7 @@ class RSNA2012QuantTest(unittest.TestCase):
 
       self.delayDisplay('Go Forward')
       changeTracker.workflow.goForward()
-        
+
       self.delayDisplay('Pick Metric')
       checkList = changeTracker.analyzeROIStep._ChangeTrackerAnalyzeROIStep__metricCheckboxList
       index = checkList.values().index('IntensityDifferenceMetric')
