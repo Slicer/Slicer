@@ -261,8 +261,8 @@ int vtkPolyDataColorLinesByOrientation::RequestData(
     idx = outCD->AddArray(cellColor);
     if (idx >= 0)
       outCD->SetActiveAttribute(idx, vtkDataSetAttributes::SCALARS);
-    cellColor->Delete();
   }
+  cellColor->Delete();
 
   output->Squeeze();
   delete [] pts;
