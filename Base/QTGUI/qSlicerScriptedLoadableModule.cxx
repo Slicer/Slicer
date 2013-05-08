@@ -216,6 +216,26 @@ bool qSlicerScriptedLoadableModule::setPythonSource(const QString& newPythonSour
   d->PythonSource = newPythonSource;
   d->PythonSelf = self;
 
+  QString instanceName = moduleName + QString("Instance");
+
+  PyObject * slicer = PyDict_GetItemString(global_dict, "slicer");
+  if (slicer)
+    {
+    PyObject * slicerModules = PyObject_GetAttrString(slicer, "modules");
+    if (slicerModules)
+      {
+      PyObject_SetAttrString(slicerModules, instanceName.toLatin1(), self);
+      }
+    else
+      {
+      qCritical() << "Could not access slicer.modules module";
+      }
+    }
+  else
+    {
+    qCritical() << "Could not access slicer module";
+    }
+
   return true;
 }
 
