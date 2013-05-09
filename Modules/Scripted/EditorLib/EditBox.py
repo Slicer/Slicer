@@ -269,6 +269,16 @@ class EditBox(object):
   #
   def selectEffect(self, effectName):
 
+    if effectName ==  "EraseLabel":
+        self.editUtil.toggleLabel()
+        return
+    elif effectName ==  "PreviousCheckPoint":
+        self.undoRedo.undo()
+        return
+    elif effectName == "NextCheckPoint":
+        self.undoRedo.redo()
+        return
+
     #
     # If there is no background volume or label map, do nothing
     #
@@ -336,22 +346,15 @@ class EditBox(object):
     if toolName.endswith('Effect'):
       toolName = effectName[:-len('Effect')]
 
-    if effectName ==  "EraseLabel":
-        self.editUtil.toggleLabel()
-    elif effectName ==  "PreviousCheckPoint":
-        self.undoRedo.undo()
-    elif effectName == "NextCheckPoint":
-        self.undoRedo.redo()
-    else:
-        if toolName in self.mouseTools:
-          # set the interaction mode in case there was an active place going on
-          appLogic = slicer.app.applicationLogic()
-          interactionNode = appLogic.GetInteractionNode()
-          interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
-          # make an appropriate cursor for the tool
-          cursor = self.cursorForEffect(effectName)
-          for tool in self.currentTools:
-            tool.sliceWidget.setCursor(cursor)
+    if toolName in self.mouseTools:
+      # set the interaction mode in case there was an active place going on
+      appLogic = slicer.app.applicationLogic()
+      interactionNode = appLogic.GetInteractionNode()
+      interactionNode.SetCurrentInteractionMode(interactionNode.ViewTransform)
+      # make an appropriate cursor for the tool
+      cursor = self.cursorForEffect(effectName)
+      for tool in self.currentTools:
+        tool.sliceWidget.setCursor(cursor)
 
   def cursorForEffect(self,effectName):
     """Return an instance of QCursor customized for the given effectName.
