@@ -304,9 +304,10 @@ void vtkMRMLApplicationLogic::PropagateVolumeSelection(int fit)
     cnode->SetLabelVolumeID( labelID );
     }
 
-  if (fit) {
+  if (fit)
+    {
     this->FitSliceToAll();
-  }
+    }
 }
 
 
@@ -326,6 +327,7 @@ void vtkMRMLApplicationLogic::FitSliceToAll()
     vtkMRMLSliceNode *sliceNode = sliceLogic->GetSliceNode();
     int *dims = sliceNode->GetDimensions();
     sliceLogic->FitSliceToAll(dims[0], dims[1]);
+    sliceLogic->SnapSliceOffsetToIJK();
     }
 }
 
