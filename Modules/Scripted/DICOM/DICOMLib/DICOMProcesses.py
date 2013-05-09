@@ -155,7 +155,7 @@ class DICOMListener(DICOMProcess):
     onReceptionCallback = '%s --load-short --print-short --print-filename --search PatientName "%s/#f"' % (dcmdumpExecutable, self.incomingDir)
     args = [str(self.port),
         '--output-directory' , self.incomingDir,
-        '--exec-on-reception', onReceptionCallback]
+        '--exec-sync', '--exec-on-reception', onReceptionCallback]
     print("starting DICOM listener")
     super(DICOMListener,self).start(self.storeSCPExecutable, args)
 
