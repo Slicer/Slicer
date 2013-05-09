@@ -291,6 +291,25 @@ class LabelEffectLogic(Effect.EffectLogic):
 
     return [maskIJKToRAS, mask]
 
+  def getIJKToRASMatrix(self,volumeNode):
+    """Returns the matrix for the node
+    that takes into account the ijkToRAS
+    and any linear transforms that have been applied
+    """
+
+    ijkToRAS = vtk.vtkMatrix4x4()
+
+    volumeNode.GetIJKToRASMatrix(ijkToRAS)
+    transformNode = volumeNode.GetParentTransformNode()
+    if transformNode:
+      if transformNode.IsTransformToWorldLinear():
+        rasToRAS = vtk.vtkMatrix4x4()
+        transformNode.GetMatrixTransformToWorld(rasToRAS)
+        rasToRAS.Multiply4x4(rasToRAS, ijkToRAS, ijkToRAS)
+      else:
+        print ("Cannot handle non-linear transforms - skipping")
+    return ijkToRAS
+
   def applyPolyMask(self,polyData):
     """
     rasterize a polyData (closed list of points) 
@@ -378,21 +397,8 @@ class LabelEffectLogic(Effect.EffectLogic):
     backgroundLogic = self.sliceLogic.GetLabelLayer()
     backgroundNode = backgroundLogic.GetVolumeNode()
 
-    backgroundIJKToRAS = vtk.vtkMatrix4x4()
-    labelIJKToRAS = vtk.vtkMatrix4x4()
-
-    sets = ( (backgroundNode, backgroundIJKToRAS), (labelNode, labelIJKToRAS) )
-    for node,ijkToRAS in sets:
-      node.GetIJKToRASMatrix(ijkToRAS)
-      transformNode = node.GetParentTransformNode()
-      if transformNode:
-        if transformNode.IsTransformToWorldLinear():
-          rasToRAS = vtk.vtkMatrix4x4()
-          transformNode.GetMatrixTransformToWorld(rasToRAS)
-          rasToRAS.Multiply4x4(rasToRAS, ijkToRAS, ijkToRAS)
-        else:
-          print ("Cannot handle non-linear transforms")
-          return
+    backgroundIJKToRAS = self.getIJKToRASMatrix(backgroundNode)
+    labelIJKToRAS = self.getIJKToRASMatrix(labelNode)
 
     #
     # create an exract image for undo if it doesn't exist yet.

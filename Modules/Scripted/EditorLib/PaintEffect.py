@@ -583,12 +583,16 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
         br[i] = dims[i] - 1
         
     #
-    # get the ijk to ras matrices 
+    # get the layers and nodes 
+    # and ijk to ras matrices including transforms
     #
-    backgroundIJKToRAS = vtk.vtkMatrix4x4()
-    backgroundNode.GetIJKToRASMatrix(backgroundIJKToRAS)
-    labelIJKToRAS = vtk.vtkMatrix4x4()
-    labelNode.GetIJKToRASMatrix(labelIJKToRAS)
+    labelLogic = self.sliceLogic.GetLabelLayer()
+    labelNode = labelLogic.GetVolumeNode()
+    backgroundLogic = self.sliceLogic.GetLabelLayer()
+    backgroundNode = backgroundLogic.GetVolumeNode()
+    backgroundIJKToRAS = self.logic.getIJKToRASMatrix(backgroundNode)
+    labelIJKToRAS = self.logic.getIJKToRASMatrix(labelNode)
+
 
     xyToRAS = sliceNode.GetXYToRAS()
     brushCenter = xyToRAS.MultiplyPoint( (x, y, 0, 1) )[:3]
