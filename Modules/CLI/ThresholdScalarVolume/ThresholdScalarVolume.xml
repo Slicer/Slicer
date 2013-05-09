@@ -38,38 +38,38 @@
       <element>Above</element>
       <element>Outside</element>
     </string-enumeration>
-    <integer>
+    <float>
       <name>ThresholdValue</name>
       <label>Threshold Value</label>
       <flag>-t</flag>
       <longflag>--threshold</longflag>
       <description><![CDATA[Threshold value]]></description>
       <default>128</default>
-    </integer>
-    <integer>
+    </float>
+    <float>
       <name>Lower</name>
       <label>Lower</label>
       <flag>-l</flag>
       <longflag>--lower</longflag>
       <description><![CDATA[Lower threshold value]]></description>
       <default>1</default>
-    </integer>
-    <integer>
+    </float>
+    <float>
       <name>Upper</name>
       <label>Upper</label>
       <flag>-u</flag>
       <longflag>--upper</longflag>
       <description><![CDATA[Upper threshold value]]></description>
       <default>200</default>
-    </integer>
-    <integer>
+    </float>
+    <float>
       <name>OutsideValue</name>
       <label>Outside Value</label>
       <flag>-v</flag>
       <longflag>--outsidevalue</longflag>
       <description><![CDATA[Set the voxels to this value if they fall outside the threshold range]]></description>
       <default>0</default>
-    </integer>
+    </float>
     <boolean>
       <name>Negate</name>
       <label>Negate Threshold</label>
