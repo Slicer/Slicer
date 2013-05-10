@@ -1090,11 +1090,12 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
   std::vector< vtkMRMLNodeReference *>::iterator referencedNodesIt = 
                                              referencedNodes.begin() + n;
 
-  // if we dont find the node or they have the same id
+  // if we dont find the node or they have the same id adn events
   // just update the references
   if (referencedNodesIt == referencedNodes.end() || 
      ((*referencedNodesIt)->GetReferencedNodeID() &&
-       std::string((*referencedNodesIt)->GetReferencedNodeID()) == newReferencedNodeID))
+       std::string((*referencedNodesIt)->GetReferencedNodeID()) == newReferencedNodeID &&
+       (*referencedNodesIt)->Events == events) )
     {
     if (n < static_cast<int>(referencedNodes.size()))
       {
@@ -1135,6 +1136,21 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
       }
 
     (*referencedNodesIt)->ReferencingNode = this;
+
+    // Update events
+    if ((*referencedNodesIt)->Events != events) // events are different
+      {
+      if ((*referencedNodesIt)->Events)
+        {
+        (*referencedNodesIt)->Events->UnRegister(this);
+        }
+      if (events)
+        {
+          events->Register(this);
+        }
+      }
+    (*referencedNodesIt)->Events = events;
+
     this->UpdateNthNodeReference(*referencedNodesIt, n);
     referencedNode =  (*referencedNodesIt)->ReferencedNode;
     }

@@ -53,6 +53,7 @@ bool TestRemoveReferencedNode();
 bool TestRemoveReferencingNode();
 bool TestNodeReferences();
 bool TestReferenceModifiedEvent();
+bool TestReferencesWithEvent();
 bool TestAddReferenceedNodeIDEventsWithNoScene();
 bool TestReferenceNodeNoObservers();
 
@@ -77,6 +78,7 @@ int vtkMRMLNodeTest1(int , char * [] )
   res = TestRemoveReferencingNode() && res;
   res = TestNodeReferences() && res;
   res = TestReferenceModifiedEvent() && res;
+  res = TestReferencesWithEvent() && res;
   res = TestAddReferenceedNodeIDEventsWithNoScene() && res;
   res = TestReferenceNodeNoObservers() && res;
 
@@ -818,6 +820,135 @@ bool TestReferenceModifiedEvent()
   spy->ResetNumberOfEvents();
   return true;
 }
+
+
+//----------------------------------------------------------------------------
+bool TestReferencesWithEvent()
+{
+  std::string role1("refrole1");
+
+  vtkNew<vtkMRMLScene> scene;
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencingNode;
+  scene->AddNode(referencingNode.GetPointer());
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode1;
+  scene->AddNode(referencedNode1.GetPointer());
+
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(777);
+  events->InsertNextValue(888);
+
+  vtkNew<vtkMRMLNodeCallback> spy;
+  referencingNode->AddObserver(vtkCommand::AnyEvent, spy.GetPointer());
+
+  referencingNode->SetAndObserveNodeReferenceID(role1.c_str(), referencedNode1->GetID(), events.GetPointer());
+
+  if (spy->GetTotalNumberOfEvents() != 2 ||
+      spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) != 1 )
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed:" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+
+  if (referencingNode->GetInternalReferencedNodes()[role1][0]->ReferencedNode == 0 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(1) != 888)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+
+  spy->ResetNumberOfEvents();
+
+  vtkNew<vtkMRMLNodeTestHelper1> referencedNode2;
+  scene->AddNode(referencedNode2.GetPointer());
+  referencingNode->SetAndObserveNodeReferenceID(role1.c_str(), referencedNode2->GetID(), events.GetPointer());
+
+  if (spy->GetTotalNumberOfEvents() != 2 ||
+      spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceModifiedEvent) != 1)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed:" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+  if (referencingNode->GetInternalReferencedNodes()[role1][0]->ReferencedNode == 0 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(1) != 888)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+
+  spy->ResetNumberOfEvents();
+
+  referencingNode->SetAndObserveNodeReferenceID(role1.c_str(),  0);
+
+  if (spy->GetTotalNumberOfEvents() != 2 ||
+      spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) != 1 ||
+      spy->GetNumberOfEvents(vtkMRMLNode::ReferenceRemovedEvent) != 1)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed:" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+  spy->ResetNumberOfEvents();
+
+
+  referencingNode->AddAndObserveNodeReferenceID(role1.c_str(), referencedNode1->GetID(), events.GetPointer());
+
+  if (referencingNode->GetInternalReferencedNodes()[role1][0]->ReferencedNode == 0 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(1) != 888)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+
+
+  spy->ResetNumberOfEvents();
+
+  referencingNode->SetAndObserveNthNodeReferenceID(role1.c_str(), 0, referencedNode1->GetID(), events.GetPointer());
+
+  if (referencingNode->GetInternalReferencedNodes()[role1][0]->ReferencedNode == 0 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetNumberOfTuples() != 2 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(0) != 777 ||
+      referencingNode->GetInternalReferencedNodes()[role1][0]->Events->GetValue(1) != 888)
+    {
+    std::cout << __LINE__ << ": SetAndObserveNodeReferenceID failed: events are incorrect" << std::endl
+              << spy->GetTotalNumberOfEvents() << " "
+              << spy->GetNumberOfEvents(vtkCommand::ModifiedEvent) << " "
+              << spy->GetNumberOfEvents(vtkMRMLNode::ReferenceAddedEvent) << std::endl;
+    return false;
+    }
+
+
+  spy->ResetNumberOfEvents();
+
+  return true;
+}
+
 
 
 
