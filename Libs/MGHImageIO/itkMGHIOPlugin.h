@@ -10,7 +10,7 @@
 #define MGHIOPlugin_EXPORT __declspec(dllimport)
 #endif
 #else
-#define MGHIOPlugin_EXPORT 
+#define MGHIOPlugin_EXPORT
 #endif
 
 /**
@@ -20,6 +20,7 @@
  * itkLoad() is C (not C++) function.
  */
 extern "C" {
-    MGHIOPlugin_EXPORT itk::ObjectFactoryBase* itkLoad();
-} 
-#endif  
+MGHIOPlugin_EXPORT itk::ObjectFactoryBase * itkLoad();
+
+}
+#endif

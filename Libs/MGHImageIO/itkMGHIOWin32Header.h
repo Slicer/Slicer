@@ -12,9 +12,9 @@
 
 =========================================================================auto=*/
 ///  itkMGHImageIOWin32Header - manage Windows system differences
-/// 
+///
 /// The itkMGHImageIOWin32Header captures some system differences between Unix
-/// and Windows operating systems. 
+/// and Windows operating systems.
 
 #ifndef __itkMGHImageIOWin32Header_h
 #define __itkMGHImageIOWin32Header_h
@@ -23,9 +23,9 @@
 
 #if defined(WIN32) && !defined(MGHIO_STATIC)
 #if defined(MGHIO_EXPORTS)
-#define MGHImageIO_EXPORT __declspec( dllexport ) 
+#define MGHImageIO_EXPORT __declspec( dllexport )
 #else
-#define MGHImageIO_EXPORT __declspec( dllimport ) 
+#define MGHImageIO_EXPORT __declspec( dllimport )
 #endif
 #else
 #define MGHImageIO_EXPORT
