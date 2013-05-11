@@ -1,18 +1,16 @@
 
-#ifndef H_ITK_IMAGE_IO_H
-#define H_ITK_IMAGE_IO_H
-
-/// STD includes
+#ifndef __itkMGHImageIO_h
+#define __itkMGHImageIO_h
 
 /// ITK includes
 #include "itkImageIOBase.h"
 #include "itkMatrix.h"
 
+
 #include <itk_zlib.h>
 
 namespace itk
 {
-
 class MGHImageIO : public ImageIOBase
 {
 public:
@@ -53,7 +51,7 @@ protected:
 
 private:
   /// processes the actual data buffer
-  void SwapBytesIfNecessary(void* buffer, unsigned long numberOfPixels);
+  void SwapBytesIfNecessary(void * const buffer, const unsigned long numberOfPixels);
 
   /// examines the direction cosines and creates encapsulation data
   // void MriDirCos();
@@ -76,4 +74,4 @@ private:
 
 } // end namespace itk
 
-#endif
+#endif // __itkMGHImageIO_h
