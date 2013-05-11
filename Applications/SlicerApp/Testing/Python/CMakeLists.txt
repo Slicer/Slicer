@@ -165,6 +165,16 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+## Test reading MGH file format types.
+slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_mgh.py
+  SLICER_ARGS --no-main-window --disable-cli-modules --disable-scripted-loadable-modules
+              DATA{${INPUT}/T1.mgz}
+              DATA{${INPUT}/T1_longname.mgh.gz}
+              DATA{${INPUT}/T1_uncompressed.mgh}
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 #
 # SelfTests
 # see http://wiki.slicer.org/slicerWiki/index.php/Documentation/Nightly/Developers/Tutorials/SelfTestModule
