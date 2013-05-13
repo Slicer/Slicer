@@ -691,7 +691,7 @@ bool vtkMRMLModelDisplayableManager::OnMRMLDisplayableModelNodeModifiedEvent(
   int ndnodes = modelNode->GetNumberOfDisplayNodes();
   bool updateModel = false;
   bool updateMRML = false;
-  for (unsigned int i=0; i<ndnodes; i++)
+  for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *dnode = modelNode->GetNthDisplayNode(i);
     assert(dnode);
@@ -846,7 +846,7 @@ void vtkMRMLModelDisplayableManager
   vtkMRMLModelNode *hierarchyModelDisplayNode =
     vtkMRMLModelNode::SafeDownCast(hdnode);
 
-  for (unsigned int i=0; i<ndnodes; i++)
+  for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *displayNode = displayableNode->GetNthDisplayNode(i);
     vtkMRMLModelDisplayNode *modelDisplayNode =
@@ -1377,7 +1377,7 @@ void vtkMRMLModelDisplayableManager::SetModelDisplayProperty(vtkMRMLDisplayableN
   int ndnodes = model->GetNumberOfDisplayNodes();
   vtkMRMLDisplayNode *hierarchyDisplayNode = this->GetHierarchyDisplayNode(model);
 
-  for (unsigned int i=0; i<ndnodes; i++)
+  for (int i=0; i<ndnodes; i++)
     {
     vtkMRMLDisplayNode *thisDisplayNode = model->GetNthDisplayNode(i);
     vtkMRMLDisplayNode *modelDisplayNode = thisDisplayNode;
