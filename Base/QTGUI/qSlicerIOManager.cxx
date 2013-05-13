@@ -274,7 +274,6 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
   QString selectedReader;
   if (supportedReaders.size() > 1)
     {
-    QWidget* parent = 0;
     QString title = tr("Select a reader");
     QString label = tr("Select a reader to use for your data?");
     int current = 0;

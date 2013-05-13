@@ -527,8 +527,12 @@ void vtkMRMLAbstractLogic
                           unsigned long vtkNotUsed(event),
                           void *vtkNotUsed(callData))
 {
+#ifndef _NDEBUG
+  (void)caller;
+#else
   vtkMRMLAbstractLogic* logic = vtkMRMLAbstractLogic::SafeDownCast(caller);
   assert(logic);
+#endif
 }
 
 //---------------------------------------------------------------------------
