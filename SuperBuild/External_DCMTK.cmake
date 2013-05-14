@@ -35,6 +35,13 @@ if(NOT DEFINED DCMTK_DIR)
       "-DCMAKE_PROJECT_DCMTK_INCLUDE:FILEPATH=${CMAKE_ROOT}/Modules/CTestUseLaunchers.cmake")
   endif()
 
+  if(UNIX)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
+      -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
+      )
+  endif()
+
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)
   set(${proj}_GIT_TAG "f461865d1759854db56e4c840991c81c77e45bb9")
 
@@ -59,9 +66,7 @@ if(NOT DEFINED DCMTK_DIR)
       -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
-      -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
-      -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
