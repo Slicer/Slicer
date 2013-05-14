@@ -23,6 +23,11 @@ if(APPLE)
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
+if(NOT CMAKE_CONFIGURATION_TYPES)
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE})
+endif()
+
 #message(STATUS "${__indent}Adding project ${proj}")
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.slicer.org/Slicer3-lib-mirrors/trunk/cmcurl"
@@ -36,7 +41,6 @@ ExternalProject_Add(${proj}
   #Not needed -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
     -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DSLICERLIBCURL_TESTING:BOOL=OFF
   #Not used -DBUILD_TESTING:BOOL=OFF
     -DBUILD_SHARED_LIBS:BOOL=ON
