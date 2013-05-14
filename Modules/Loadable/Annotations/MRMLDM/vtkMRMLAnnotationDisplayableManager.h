@@ -99,7 +99,7 @@ public:
   /// after calling RemoveWidgetAndNode on the Helper
   /// \sa vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode()
   bool AddAnnotation(vtkMRMLAnnotationNode *node);
-  
+
 protected:
 
   vtkMRMLAnnotationDisplayableManager();
@@ -244,4 +244,3 @@ private:
 };
 
 #endif
-

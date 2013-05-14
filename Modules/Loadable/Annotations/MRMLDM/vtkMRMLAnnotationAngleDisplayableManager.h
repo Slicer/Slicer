@@ -7,35 +7,34 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationBidimensionalDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationAngleDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationBidimensionalDisplayableManager_h
-#define __vtkMRMLAnnotationBidimensionalDisplayableManager_h
+#ifndef __vtkMRMLAnnotationAngleDisplayableManager_h
+#define __vtkMRMLAnnotationAngleDisplayableManager_h
 
-// Annotation includes
+// Annotations includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
-class vtkMRMLAnnotationBidimensionalNode;
+class vtkMRMLAnnotationAngleNode;
 class vtkSlicerViewerWidget;
-class vtkMRMLAnnotationBidimensionalDisplayNode;
+class vtkMRMLAnnotationTextDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
-class vtkTextWidget;
+class vtkAngleWidget;
 
-/// \ingroup Slicer_QtModules_Annotation
 class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
-vtkMRMLAnnotationBidimensionalDisplayableManager
+vtkMRMLAnnotationAngleDisplayableManager
   : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationBidimensionalDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationBidimensionalDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationAngleDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationAngleDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // the following functions must be public to be accessible by the callback
@@ -43,14 +42,15 @@ public:
   virtual void PropagateMRMLToWidget(vtkMRMLAnnotationNode* node, vtkAbstractWidget * widget);
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
+
   // update just the position, called from PropagateMRMLToWidget and in
   // response to slice node modified events
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
 
 protected:
 
-  vtkMRMLAnnotationBidimensionalDisplayableManager(){this->m_Focus="vtkMRMLAnnotationBidimensionalNode";}
-  virtual ~vtkMRMLAnnotationBidimensionalDisplayableManager(){}
+  vtkMRMLAnnotationAngleDisplayableManager(){this->m_Focus="vtkMRMLAnnotationAngleNode";}
+  virtual ~vtkMRMLAnnotationAngleDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID);
@@ -62,10 +62,9 @@ protected:
 
 private:
 
-  vtkMRMLAnnotationBidimensionalDisplayableManager(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationBidimensionalDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationAngleDisplayableManager(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationAngleDisplayableManager&); /// Not Implemented
 
 };
 
 #endif
-

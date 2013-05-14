@@ -52,4 +52,3 @@ bool vtkMRMLAnnotationClickCounter::HasEnoughClicks(int clicks)
 
   return false;
 }
-

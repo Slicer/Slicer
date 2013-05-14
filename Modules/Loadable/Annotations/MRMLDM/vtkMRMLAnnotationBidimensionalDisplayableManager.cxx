@@ -248,8 +248,11 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
   double displayCoordinates3[4];
   double displayCoordinates4[4];
 
-  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
-  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
+  vtkAnnotationBidimensionalRepresentation * bidimensionalRepr =
+      vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation());
+
+  bidimensionalRepr->SetDistance1(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+  bidimensionalRepr->SetDistance2(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates3,worldCoordinates4)));
 
   if (this->GetSliceNode())
     {
@@ -259,24 +262,24 @@ void vtkMRMLAnnotationBidimensionalDisplayableManager::OnWidgetCreated(vtkAbstra
     this->GetWorldToDisplayCoordinates(worldCoordinates3,displayCoordinates3);
     this->GetWorldToDisplayCoordinates(worldCoordinates4,displayCoordinates4);
 
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3DisplayPosition(displayCoordinates3);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4DisplayPosition(displayCoordinates4);
+    bidimensionalRepr->SetPoint1DisplayPosition(displayCoordinates1);
+    bidimensionalRepr->SetPoint2DisplayPosition(displayCoordinates2);
+    bidimensionalRepr->SetPoint3DisplayPosition(displayCoordinates3);
+    bidimensionalRepr->SetPoint4DisplayPosition(displayCoordinates4);
 
     }
   else
     {
 
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint3WorldPosition(worldCoordinates3);
-    vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetPoint4WorldPosition(worldCoordinates4);
+    bidimensionalRepr->SetPoint1WorldPosition(worldCoordinates1);
+    bidimensionalRepr->SetPoint2WorldPosition(worldCoordinates2);
+    bidimensionalRepr->SetPoint3WorldPosition(worldCoordinates3);
+    bidimensionalRepr->SetPoint4WorldPosition(worldCoordinates4);
 
     }
 
   // set a specific format for the measurement text
-  vtkAnnotationBidimensionalRepresentation::SafeDownCast(bidimensionalWidget->GetRepresentation())->SetLabelFormat("%.1f");
+  bidimensionalRepr->SetLabelFormat("%.1f");
 
   // finally we add observer for end interaction, what a dirty hack!! if we added it before, it would all be crazy
   vtkAnnotationBidimensionalWidgetCallback *myCallback = vtkAnnotationBidimensionalWidgetCallback::New();

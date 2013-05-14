@@ -520,7 +520,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLAnnotationDisplayNodeModifiedEve
     return;
     }
 
-  vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: found the annotation node " << annotationNode->GetID() << " associated with the modified display node " << annotationDisplayNode->GetID());
+  vtkDebugMacro("OnMRMLAnnotationDisplayNodeModifiedEvent: found the annotation node "
+                << annotationNode->GetID() << " associated with the modified display node "
+                << annotationDisplayNode->GetID());
   vtkAbstractWidget * widget = this->Helper->GetWidget(annotationNode);
 
   if (widget)
@@ -688,7 +690,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
     bool visibleOnSlice = this->IsWidgetDisplayable(sliceNode, annotationNode);
 
     this->Helper->UpdateVisible(annotationNode, visibleOnSlice);
-    
+
     if (visibleOnSlice)
       {
       // it's visible, but if just update the position, don't get updates
@@ -714,7 +716,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           underLine->Off();
           }
         }
-      
+
       if (fiducialNode)
         {
         vtkSeedWidget* fiducialSeed = vtkSeedWidget::SafeDownCast(this->Helper->GetPointProjectionWidget(fiducialNode));
@@ -733,9 +735,9 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
       // only implemented for ruler yet
 
-      vtkMRMLAnnotationRulerNode* rulerNode = 
+      vtkMRMLAnnotationRulerNode* rulerNode =
         vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode);
-      vtkMRMLAnnotationFiducialNode* fiducialNode = 
+      vtkMRMLAnnotationFiducialNode* fiducialNode =
         vtkMRMLAnnotationFiducialNode::SafeDownCast(annotationNode);
 
       if (rulerNode &&
@@ -842,7 +844,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           marker->CompleteInteraction();
           }
 
-        // Display projection on 2D viewers        
+        // Display projection on 2D viewers
         vtkLineWidget2* overLine = vtkLineWidget2::SafeDownCast(this->Helper->GetOverLineProjectionWidget(rulerNode));
         vtkLineWidget2* underLine = vtkLineWidget2::SafeDownCast(this->Helper->GetUnderLineProjectionWidget(rulerNode));
         vtkMRMLAnnotationLineDisplayNode* lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
@@ -854,7 +856,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
             double overLineWidth = lineDisplayNode->GetOverLineThickness();
             double underLineWidth = lineDisplayNode->GetUnderLineThickness();
             double intersectionPoint[3] = {displayP2[0], displayP2[1], displayP2[2] };
-            bool lineIntersectPlane = false;          
+            bool lineIntersectPlane = false;
 
             if (!overLine)
               {
@@ -889,7 +891,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 handle->GetProperty()->SetOpacity(0.0);
                 handle->GetSelectedProperty()->SetOpacity(0.0);
                 handle->SetHandleSize(0);
-                
+
                 vtkNew<vtkLineRepresentation> rep;
                 rep->SetHandleRepresentation(handle.GetPointer());
                 rep->GetPoint1Representation()->GetProperty()->SetOpacity(0.0);
@@ -899,23 +901,23 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 rep->GetLineHandleRepresentation()->GetProperty()->SetOpacity(0.0);
                 rep->GetLineHandleRepresentation()->GetSelectedProperty()->SetOpacity(0.0);
                 rep->GetLineProperty()->SetLineWidth(underLineWidth);
-                
+
                 underLine = vtkLineWidget2::New();
                 underLine->CreateDefaultRepresentation();
                 underLine->SetRepresentation(rep.GetPointer());
                 underLine->SetInteractor(this->GetInteractor());
                 underLine->SetCurrentRenderer(this->GetRenderer());
                 underLine->ProcessEventsOff();
-                this->Helper->WidgetUnderLineProjections[rulerNode] = underLine;              
+                this->Helper->WidgetUnderLineProjections[rulerNode] = underLine;
                 }
-  
+
               if ((displayP1[2] * displayP2[2]) < 0)
                 {
                 // Point 1 and Point 2 are in different side of the plane
                 // Calculate plane intersection and set it as second point
                 // of top line, set it as first point of under line
                 lineIntersectPlane = true;
-                
+
                 double t = (-displayP1[2]) / (displayP2[2]-displayP1[2]);
                 double P2minusP1[3];
                 vtkMath::Subtract(displayP2,displayP1,P2minusP1);
@@ -955,7 +957,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 }
 
               short linePattern = 0xFFFF;
-              
+
               if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionDashed)
                 {
                 linePattern = 0xFF00;
@@ -973,7 +975,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                 double slicePlaneNormal[3], rulerVector[3];
                 slicePlaneNormal[0] = sliceToRAS->GetElement(0,2);
                 slicePlaneNormal[1] = sliceToRAS->GetElement(1,2);
-                slicePlaneNormal[2] = sliceToRAS->GetElement(2,2);                
+                slicePlaneNormal[2] = sliceToRAS->GetElement(2,2);
                 rulerVector[0] = transformedP2[0] - transformedP1[0];
                 rulerVector[1] = transformedP2[1] - transformedP1[1];
                 rulerVector[2] = transformedP2[2] - transformedP1[2];
@@ -1040,10 +1042,10 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         double displayP1[4];
         this->GetWorldToDisplayCoordinates(transformedP1, displayP1);
 
-        vtkSeedWidget* projectionSeed = 
+        vtkSeedWidget* projectionSeed =
           vtkSeedWidget::SafeDownCast(this->Helper->GetPointProjectionWidget(fiducialNode));
 
-        vtkMRMLAnnotationPointDisplayNode* pointDisplayNode = 
+        vtkMRMLAnnotationPointDisplayNode* pointDisplayNode =
           vtkMRMLAnnotationPointDisplayNode::SafeDownCast(fiducialNode->GetAnnotationPointDisplayNode());
 
         if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn)
@@ -1059,7 +1061,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
           double pointOpacity = pointDisplayNode->GetProjectedOpacity();
           double pointColor[3];
           pointDisplayNode->GetProjectedColor(pointColor);
-          
+
           if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionUseFiducialColor)
             {
             pointDisplayNode->GetColor(pointColor);
@@ -1091,25 +1093,25 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
             this->Helper->WidgetPointProjections[fiducialNode] = projectionSeed;
             }
 
-          vtkSeedRepresentation* projectionSeedRep = 
+          vtkSeedRepresentation* projectionSeedRep =
             vtkSeedRepresentation::SafeDownCast(projectionSeed->GetRepresentation());
 
           if (projectionSeedRep)
             {
             projectionSeed->Off();
-            
+
             if (projectionSeed->GetSeed(0))
               {
-              vtkPointHandleRepresentation2D* handleRep = 
+              vtkPointHandleRepresentation2D* handleRep =
                 vtkPointHandleRepresentation2D::SafeDownCast(projectionSeed->GetSeed(0)->GetRepresentation());
-              
+
               if (handleRep)
                 {
                 vtkNew<vtkAnnotationGlyphSource2D> glyphSource;
                 glyphSource->SetGlyphType(glyphType);
                 glyphSource->SetScale(glyphScale);
                 glyphSource->SetScale2(glyphScale);
-               
+
                 if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOutlinedBehindSlicePlane)
                   {
                   static const double threshold = 0.5;
@@ -1119,7 +1121,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                     {
                     glyphSource->FilledOff();
                     pointOpacity = notInPlaneOpacity;
-                    
+
                     if (displayP1[2] > -threshold)
                       {
                       pointOpacity = inPlaneOpacity;
@@ -1129,7 +1131,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                     {
                     glyphSource->FilledOn();
                     pointOpacity = notInPlaneOpacity;
-                    
+
                     if (displayP1[2] < threshold)
                       {
                       pointOpacity = inPlaneOpacity;
@@ -1142,7 +1144,7 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
                   }
                 glyphSource->SetColor(pointColor);
                 handleRep->GetProperty()->SetColor(pointColor);
-                handleRep->GetProperty()->SetOpacity(pointOpacity);                
+                handleRep->GetProperty()->SetOpacity(pointOpacity);
                 handleRep->SetCursorShape(glyphSource->GetOutput());
                 handleRep->SetDisplayPosition(displayP1);
                 projectionSeed->On();
@@ -1209,7 +1211,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       return false;
       }
     }
-  
+
   int numberOfControlPoints =  controlPointsNode->GetNumberOfControlPoints();
   // the text node saves it's second control point in viewport coordinates, so
   // don't check it
@@ -1232,13 +1234,17 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
       //
       // Lightbox specific code
       //
-      
+
       // get the corresponding lightbox index for this display coordinate and
       // check if it's in the range of the current number of light boxes being
       // displayed in the grid rows/columns.
       int lightboxIndex = this->GetLightboxIndex(controlPointsNode);
       int numberOfLightboxes = sliceNode->GetLayoutGridColumns() * sliceNode->GetLayoutGridRows();
-      //std::cout << "IsWidgetDisplayable: " << sliceNode->GetName() << ": lightbox mode, index = " << lightboxIndex << ", rows = " << sliceNode->GetLayoutGridRows() << ", cols = " << sliceNode->GetLayoutGridColumns() << ", number of light boxes = " << numberOfLightboxes << std::endl;
+      //std::cout << "IsWidgetDisplayable: " << sliceNode->GetName()
+      //          << ": lightbox mode, index = " << lightboxIndex
+      //          << ", rows = " << sliceNode->GetLayoutGridRows()
+      //          << ", cols = " << sliceNode->GetLayoutGridColumns()
+      //          << ", number of light boxes = " << numberOfLightboxes << std::endl;
       if (lightboxIndex < 0 ||
           lightboxIndex >= numberOfLightboxes)
         {
@@ -1248,7 +1254,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         {
         // get the right renderer index by checking the z coordinate
         vtkRenderer* currentRenderer = this->GetRenderer(lightboxIndex);
-        
+
         // now we get the widget..
         vtkAbstractWidget* widget = this->GetWidget(node);
 
@@ -1267,10 +1273,10 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
             toggleOffOn = true;
             }
           // ..place it and its representation to the right renderer..
-          
+
           widget->SetCurrentRenderer(currentRenderer);
           widget->GetRepresentation()->SetRenderer(currentRenderer);
-          
+
           if (toggleOffOn)
             {
             // ..and turn it on again!
@@ -1290,7 +1296,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
             currentRenderer->Render();
             }
           }
-        
+
         }
       //
       // End of Lightbox specific code
@@ -1318,11 +1324,22 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
           double *volumeSliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing();
           if (volumeSliceSpacing != NULL)
             {
-            vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName() << ": volumeSliceSpacing = " << volumeSliceSpacing[0] << ", " << volumeSliceSpacing[1] << ", " << volumeSliceSpacing[2]);
+            vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName()
+                          << ": volumeSliceSpacing = "
+                          << volumeSliceSpacing[0] << ", "
+                          << volumeSliceSpacing[1] << ", "
+                          << volumeSliceSpacing[2]);
             spacing = volumeSliceSpacing[2];
             }
           }
-        vtkDebugMacro("displayCoordinates: " << displayCoordinates[0] << "," << displayCoordinates[1] << "," << displayCoordinates[2] << "\n\tworld coords: " << transformedWorldCoordinates[0] << "," << transformedWorldCoordinates[1] << "," << transformedWorldCoordinates[2]);
+        vtkDebugMacro("displayCoordinates: "
+                      << displayCoordinates[0] << ","
+                      << displayCoordinates[1] << ","
+                      << displayCoordinates[2]
+                      << "\n\tworld coords: "
+                      << transformedWorldCoordinates[0] << ","
+                      << transformedWorldCoordinates[1] << ","
+                      << transformedWorldCoordinates[2]);
         // calculate the distance from the annotation in world space to the
         // plane defined by the slice node normal and origin (using same
         // convention as the vtkMRMLThreeDReformatDisplayableManager)
@@ -1335,7 +1352,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         slicePlaneOrigin[1] = sliceToRAS->GetElement(1,3);
         slicePlaneOrigin[2] = sliceToRAS->GetElement(2,3);
         double distanceToPlane = slicePlaneNormal[0]*(transformedWorldCoordinates[0]-slicePlaneOrigin[0]) +
-          slicePlaneNormal[1]*(transformedWorldCoordinates[1]-slicePlaneOrigin[1]) + 
+          slicePlaneNormal[1]*(transformedWorldCoordinates[1]-slicePlaneOrigin[1]) +
           slicePlaneNormal[2]*(transformedWorldCoordinates[2]-slicePlaneOrigin[2]);
         // this gives the distance to light box plane 0, but have to offset by
         // number of light box planes (as determined by the light box index) times the volume
@@ -1344,7 +1361,10 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         double lightboxOffset = lightboxIndex * spacing;
         double distanceToSlice = distanceToPlane - lightboxOffset;
         double maxDistance = 0.5;
-        vtkDebugMacro("\n\tdistance to plane = " << distanceToPlane << "\n\tlightboxIndex = " << lightboxIndex << "\n\tlightboxOffset = " << lightboxOffset << "\n\tdistance to slice = " << distanceToSlice);
+        vtkDebugMacro("\n\tdistance to plane = " << distanceToPlane
+                      << "\n\tlightboxIndex = " << lightboxIndex
+                      << "\n\tlightboxOffset = " << lightboxOffset
+                      << "\n\tdistance to slice = " << distanceToSlice);
         // check that it's within 0.5mm
         if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
           {
@@ -1358,7 +1378,10 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
         // the third coordinate of the displayCoordinates is the distance to the slice
         float distanceToSlice = displayCoordinates[2];
         float maxDistance = 0.5 + (sliceNode->GetDimensions()[2] - 1);
-        vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName() << ": distance to slice = " << distanceToSlice << ", maxDistance = " << maxDistance << "\n\tslice node dimenions[2] = " << sliceNode->GetDimensions()[2]);
+        vtkDebugMacro("Slice node " << this->GetSliceNode()->GetName()
+                      << ": distance to slice = " << distanceToSlice
+                      << ", maxDistance = " << maxDistance
+                      << "\n\tslice node dimenions[2] = " << sliceNode->GetDimensions()[2]);
         if (distanceToSlice < -0.5 || distanceToSlice >= maxDistance)
           {
           // if the distance to the slice is more than 0.5mm, we know that at least one coordinate of the widget is outside the current activeSlice
@@ -1422,7 +1445,8 @@ void vtkMRMLAnnotationDisplayableManager::OnInteractorStyleEvent(int eventid)
     {
     if (this->GetInteractionNode()->GetCurrentInteractionMode() == vtkMRMLInteractionNode::Place)
       {
-      //std::cout << "OnInteractorStyleEvent got a left button release " << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates" << std::endl;
+      //std::cout << "OnInteractorStyleEvent got a left button release "
+      // << eventid << ", and are in place mode, calling OnClickInRenderWindowGetCoordinates" << std::endl;
       this->OnClickInRenderWindowGetCoordinates();
       }
 //    else { vtkWarningMacro("OnInteractorStyleEvent: not in vtkMRMLInteractionNode::Place interaction mode"); }
@@ -1729,7 +1753,13 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double
       {
       viewportCoordinates[1] = displayCoordinates[1]/windowHeight;
       }
-    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y << ", display coords calc as " << displayCoordinates[0] << ", " << displayCoordinates[1] << ", returning viewport = " << viewportCoordinates[0] << ", " << viewportCoordinates[1]);
+    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y
+                  << ", display coords calc as "
+                  << displayCoordinates[0] << ", "
+                  << displayCoordinates[1]
+                  << ", returning viewport = "
+                  << viewportCoordinates[0] << ", "
+                  << viewportCoordinates[1]);
     }
   else
     {
@@ -1741,7 +1771,8 @@ void vtkMRMLAnnotationDisplayableManager::GetDisplayToViewportCoordinates(double
       {
       viewportCoordinates[1] = y/windowHeight;
       }
-    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y << ", returning viewport = " << viewportCoordinates[0] << ", " << viewportCoordinates[1]);
+    vtkDebugMacro("GetDisplayToViewportCoordinates: x = " << x << ", y = " << y
+                  << ", returning viewport = " << viewportCoordinates[0] << ", " << viewportCoordinates[1]);
     }
 }
 
@@ -2019,7 +2050,7 @@ int vtkMRMLAnnotationDisplayableManager::GetLightboxIndex(vtkMRMLAnnotationNode 
     {
     return index;
     }
-  
+
   double transformedWorldCoordinates[4];
   controlPointsNode->GetControlPointWorldCoordinates(controlPointIndex, transformedWorldCoordinates);
   double displayCoordinates[4];

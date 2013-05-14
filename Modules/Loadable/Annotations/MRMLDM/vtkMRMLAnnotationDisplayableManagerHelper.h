@@ -64,11 +64,11 @@ public:
   /// ...an its associated vtkAbstractWidget* for Slice intersection representation
   vtkAbstractWidget * GetIntersectionWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetOverLineProjectionWidget(vtkMRMLAnnotationNode * node); 
+  vtkAbstractWidget * GetOverLineProjectionWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetUnderLineProjectionWidget(vtkMRMLAnnotationNode * node); 
+  vtkAbstractWidget * GetUnderLineProjectionWidget(vtkMRMLAnnotationNode * node);
   /// ...an its associated vtkAbstractWidget* for Slice projection representation
-  vtkAbstractWidget * GetPointProjectionWidget(vtkMRMLAnnotationNode * node); 
+  vtkAbstractWidget * GetPointProjectionWidget(vtkMRMLAnnotationNode * node);
   /// Remove all widgets, intersection widgets, nodes
   void RemoveAllWidgetsAndNodes();
   /// Remove a node, its widget and its intersection widget
@@ -104,22 +104,22 @@ public:
 
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetIntersectionsIt;
-  
+
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetOverLineProjections;
-  
+
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetOverLineProjectionsIt;
 
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetUnderLineProjections;
-  
+
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetUnderLineProjectionsIt;
 
   /// Map of vtkWidgets to reflect the Slice projection indexed using associated node ID
   std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*> WidgetPointProjections;
-  
+
   /// .. and its associated convenient typedef
   typedef std::map<vtkMRMLAnnotationNode*, vtkAbstractWidget*>::iterator WidgetPointProjectionsIt;
 

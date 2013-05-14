@@ -157,7 +157,9 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
   bool isVisibleOnNode = (node->GetDisplayVisibility() != 0 ? true : false);
   bool isVisibleOnWidget = (widget->GetEnabled() != 0 ? true : false);
 
-  vtkDebugMacro("UpdateVisible: isVisibleOnNode = " << isVisibleOnNode << ", isVisibleOnWidget = " << isVisibleOnWidget << ", displayableInViewer = " << displayableInViewer);
+  vtkDebugMacro("UpdateVisible: isVisibleOnNode = " << isVisibleOnNode
+                << ", isVisibleOnWidget = " << isVisibleOnWidget
+                << ", displayableInViewer = " << displayableInViewer);
   if (!displayableInViewer)
     {
     if (isVisibleOnWidget)
@@ -183,7 +185,7 @@ void vtkMRMLAnnotationDisplayableManagerHelper::UpdateVisible(vtkMRMLAnnotationN
     else if (!isVisibleOnNode && isVisibleOnWidget)
       {
       widget->EnabledOff();
-      }    
+      }
     }
 }
 
@@ -529,6 +531,7 @@ vtkMRMLAnnotationNode * vtkMRMLAnnotationDisplayableManagerHelper::GetAnnotation
         }
       }
     }
-  vtkDebugMacro("GetAnnotationNodeFromDisplayNode: unable to find annotation node that has display node " << (displayNode->GetID() ? displayNode->GetID() : "null"));
+  vtkDebugMacro("GetAnnotationNodeFromDisplayNode: unable to find annotation node that has display node "
+                << (displayNode->GetID() ? displayNode->GetID() : "null"));
   return NULL;
 }

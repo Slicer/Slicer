@@ -307,25 +307,31 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     this->GetWorldToDisplayCoordinates(worldCoordinates1,displayCoordinates1);
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
 
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1DisplayPosition(displayCoordinates1);
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2DisplayPosition(displayCoordinates2);
+    vtkAnnotationRulerRepresentation * rulerRepresentation =
+        vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+
+    rulerRepresentation->SetPoint1DisplayPosition(displayCoordinates1);
+    rulerRepresentation->SetPoint2DisplayPosition(displayCoordinates2);
 
     // set a specific format for the measurement text
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat(format.c_str());
+    rulerRepresentation->SetLabelFormat(format.c_str());
 
-    vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rulerRepresentation->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
     }
   else
     {
 
-    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint1WorldPosition(worldCoordinates1);
-    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetPoint2WorldPosition(worldCoordinates2);
+    vtkAnnotationRulerRepresentation3D * rulerRepresentation3D =
+        vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+
+    rulerRepresentation3D->SetPoint1WorldPosition(worldCoordinates1);
+    rulerRepresentation3D->SetPoint2WorldPosition(worldCoordinates2);
 
     // set a specific format for the measurement text
-    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetLabelFormat(format.c_str());
+    rulerRepresentation3D->SetLabelFormat(format.c_str());
 
-    vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation())->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rulerRepresentation3D->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
 
     }
 
@@ -876,7 +882,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
   if (this->Is2DDisplayableManager())
     {
     // get the 2d representation
-    vtkAnnotationRulerRepresentation * rep = vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
+    vtkAnnotationRulerRepresentation * rulerRepresentation =
+        vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
 
     // change the 2D location
     double displayCoordinates1[4]={0,0,0,1};
@@ -888,28 +895,29 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
     this->GetWorldToDisplayCoordinates(worldCoordinates2,displayCoordinates2);
 
     // only update the position, if coordinates really change
-    rep->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
-    rep->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
+    rulerRepresentation->GetPoint1DisplayPosition(displayCoordinatesBuffer1);
+    rulerRepresentation->GetPoint2DisplayPosition(displayCoordinatesBuffer2);
 
     if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
       {
-      rep->SetPoint1DisplayPosition(displayCoordinates1);
+      rulerRepresentation->SetPoint1DisplayPosition(displayCoordinates1);
       }
     if (this->GetDisplayCoordinatesChanged(displayCoordinates2,displayCoordinatesBuffer2))
       {
-      rep->SetPoint2DisplayPosition(displayCoordinates2);
+      rulerRepresentation->SetPoint2DisplayPosition(displayCoordinates2);
       }
     }
   else
     {
     /// 3d case
     // now get the widget properties (coordinates, measurement etc.) and if the mrml node has changed, propagate the changes
-    vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
+    vtkAnnotationRulerRepresentation3D * rulerRepresentation3D =
+        vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
     // change the 3D location
-    rep->SetPoint1WorldPosition(worldCoordinates1);
-    rep->SetPoint2WorldPosition(worldCoordinates2);
+    rulerRepresentation3D->SetPoint1WorldPosition(worldCoordinates1);
+    rulerRepresentation3D->SetPoint2WorldPosition(worldCoordinates2);
 
-    rep->NeedToRenderOn();
+    rulerRepresentation3D->NeedToRenderOn();
     }
 
   rulerWidget->Modified();

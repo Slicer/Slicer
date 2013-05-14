@@ -439,5 +439,3 @@ void vtkMRMLAnnotationAngleDisplayableManager::OnClickInRenderWindow(double x, d
     } // has enough clicks
 
 }
-
-

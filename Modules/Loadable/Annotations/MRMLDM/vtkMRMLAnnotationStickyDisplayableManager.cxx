@@ -231,7 +231,10 @@ void vtkMRMLAnnotationStickyDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnn
   vtkLogoRepresentation * rep = vtkLogoRepresentation::SafeDownCast(logoWidget->GetRepresentation());
 
   // now we have to transfer again from world coordinates to normalized viewport coordinates
-  double * displayCoordinates = this->GetWorldToDisplayCoordinates(stickyNode->GetControlPointCoordinates(0)[0],stickyNode->GetControlPointCoordinates(0)[1],stickyNode->GetControlPointCoordinates(0)[2]);
+  double * displayCoordinates = this->GetWorldToDisplayCoordinates(
+        stickyNode->GetControlPointCoordinates(0)[0],
+        stickyNode->GetControlPointCoordinates(0)[1],
+        stickyNode->GetControlPointCoordinates(0)[2]);
 
   double u = displayCoordinates[0];
   double v = displayCoordinates[1];

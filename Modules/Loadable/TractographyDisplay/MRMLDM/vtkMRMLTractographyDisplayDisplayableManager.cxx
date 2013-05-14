@@ -154,7 +154,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode, 
+void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
                                                                      vtkIdType pickedCell)
 {
   if (!displayNode)

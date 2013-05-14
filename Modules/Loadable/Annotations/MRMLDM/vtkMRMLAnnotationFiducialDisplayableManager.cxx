@@ -212,7 +212,7 @@ vtkAbstractWidget * vtkMRMLAnnotationFiducialDisplayableManager::CreateWidget(vt
     rep->SetHandleRepresentation(handle.GetPointer());
     }
 
-  
+
 
 
   //seed widget
@@ -329,7 +329,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     vtkErrorMacro("PropagateMRMLToWidget: Could not get seed widget!")
     return;
     }
-  
+
   // cast to the specific mrml node
   vtkMRMLAnnotationFiducialNode* fiducialNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(node);
 
@@ -357,7 +357,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     vtkDebugMacro("PropagateMRMLToWidget: Could not get display node for node " << (fiducialNode->GetID() ? fiducialNode->GetID() : "null id"));
     }
 
-  vtkOrientedPolygonalHandleRepresentation3D *handleRep = vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
+  vtkOrientedPolygonalHandleRepresentation3D *handleRep =
+      vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
   // might be in lightbox mode where using a 2d point handle
   vtkPointHandleRepresentation2D *pointHandleRep = vtkPointHandleRepresentation2D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
   // double check that if switch in and out of light box mode, the handle rep
@@ -376,7 +377,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     if (pointHandleRep)
       {
       vtkDebugMacro("PropagateMRMLToWidget: Not in light box, but have a point handle.");
-      updateHandleType = true;     
+      updateHandleType = true;
       }
     }
   if (updateHandleType)
@@ -414,7 +415,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       std::map<vtkMRMLNode*, int>::iterator iter  = this->NodeGlyphTypes.find(displayNode);
       if (iter == this->NodeGlyphTypes.end() || iter->second != displayNode->GetGlyphType())
         {
-        vtkDebugMacro("DisplayNode glyph type = " << displayNode->GetGlyphType() << " = " << displayNode->GetGlyphTypeAsString() << ", is 3d glyph = " << (displayNode->GlyphTypeIs3D() ? "true" : "false") << ", is 2d disp manager = " << this->Is2DDisplayableManager());
+        vtkDebugMacro("DisplayNode glyph type = " << displayNode->GetGlyphType() << " = " << displayNode->GetGlyphTypeAsString()
+                      << ", is 3d glyph = " << (displayNode->GlyphTypeIs3D() ? "true" : "false")
+                      << ", is 2d disp manager = " << this->Is2DDisplayableManager());
         if (displayNode->GlyphTypeIs3D())
           {
           if (this->Is2DDisplayableManager())
@@ -574,7 +577,8 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
           }
         glyphSource->Update();
         glyphSource->SetScale(1.0);
-        std::cout << "PropagateMRMLToWidget: " << this->GetSliceNode()->GetName() << ": setting point handle rep cursor shape " << glyphSource->GetOutput() << std::endl;
+        std::cout << "PropagateMRMLToWidget: " << this->GetSliceNode()->GetName()
+                  << ": setting point handle rep cursor shape " << glyphSource->GetOutput() << std::endl;
         pointHandleRep->SetCursorShape(glyphSource->GetOutput());
         this->NodeGlyphTypes[displayNode] = displayNode->GetGlyphType();
         }
@@ -675,7 +679,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
     double displayCoordinates1[4] = {0.0,0.0,0.0,1.0};
     seedRepresentation->GetSeedDisplayPosition(0,displayCoordinates1);
-    vtkDebugMacro("PropagateWidgetToMRML: 2d displayable manager: widget display coords = " << displayCoordinates1[0] << ", " << displayCoordinates1[1] << ", " << displayCoordinates1[2]);
+    vtkDebugMacro("PropagateWidgetToMRML: 2d displayable manager: widget display coords = "
+                  << displayCoordinates1[0] << ", "
+                  << displayCoordinates1[1] << ", "
+                  << displayCoordinates1[2]);
     this->GetDisplayToWorldCoordinates(displayCoordinates1,worldCoordinates1);
     vtkDebugMacro("PropagateWidgetToMRML: 2d: widget world coords = " << worldCoordinates1[0] << ", " << worldCoordinates1[1] << ", "<< worldCoordinates1[2]);
     }
@@ -690,7 +697,10 @@ vtkDebugMacro("PropagateWidgetToMRML: 3d: widget world coords = " << worldCoordi
   bool positionChanged = false;
   double currentCoordinates[4] = {0.0, 0.0, 0.0, 1.0};
   fiducialNode->GetFiducialWorldCoordinates(currentCoordinates);
-  vtkDebugMacro("PropagateWidgetToMRML: fiducial current world coordinates = " << currentCoordinates[0] << ", " << currentCoordinates[1] << ", " << currentCoordinates[2]);
+  vtkDebugMacro("PropagateWidgetToMRML: fiducial current world coordinates = "
+                << currentCoordinates[0] << ", "
+                << currentCoordinates[1] << ", "
+                << currentCoordinates[2]);
 
   double currentCoords[3];
   currentCoords[0] = currentCoordinates[0];
@@ -810,7 +820,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnInteractorStyleEvent(int eve
   if (eventid == vtkCommand::KeyPressEvent)
     {
     char *keySym = this->GetInteractor()->GetKeySym();
-    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1] << ", key sym = " << (keySym == NULL ? "null" : keySym));
+    vtkDebugMacro("OnInteractorStyleEvent " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D")
+                  << ": key press event position = " << this->GetInteractor()->GetEventPosition()[0] << ", " << this->GetInteractor()->GetEventPosition()[1]
+                  << ", key sym = " << (keySym == NULL ? "null" : keySym));
     if (!keySym)
       {
       return;
@@ -888,7 +900,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
     if (this->GetDisplayCoordinatesChanged(displayCoordinates1,displayCoordinatesBuffer1))
       {
       // only update when really changed
-      vtkDebugMacro("UpdatePosition: " << this->GetSliceNode()->GetName() << ": display coordinates changed:\n\tseed display = " << displayCoordinatesBuffer1[0] << ", " << displayCoordinatesBuffer1[1] << "\n\tfid display =  " << displayCoordinates1[0] << ", " << displayCoordinates1[1] );
+      vtkDebugMacro("UpdatePosition: " << this->GetSliceNode()->GetName()
+                    << ": display coordinates changed:\n\tseed display = " << displayCoordinatesBuffer1[0] << ", " << displayCoordinatesBuffer1[1]
+                    << "\n\tfid display =  " << displayCoordinates1[0] << ", " << displayCoordinates1[1] );
       // make sure the representation has a renderer and an active camera to
       // avoid a crash in vtkRenderer::ViewToWorld
       if (seedRepresentation->GetRenderer() &&
@@ -915,7 +929,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::UpdatePosition(vtkAbstractWidg
 
     if (this->GetWorldCoordinatesChanged(seedWorldCoord, fidWorldCoord))
       {
-      vtkDebugMacro("UpdatePosition: " << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D") << ": world coordinates changed:\n\tseed = " << seedWorldCoord[0] << ", " << seedWorldCoord[1] << ", " << seedWorldCoord[2] << "\n\tfid =  " << fidWorldCoord[0] << ", " << fidWorldCoord[1] << ", " << fidWorldCoord[2]);
+      vtkDebugMacro("UpdatePosition: "
+                    << (this->Is2DDisplayableManager() ? this->GetSliceNode()->GetName() : "3D")
+                    << ": world coordinates changed:\n\tseed = " << seedWorldCoord[0] << ", " << seedWorldCoord[1] << ", " << seedWorldCoord[2]
+                    << "\n\tfid =  " << fidWorldCoord[0] << ", " << fidWorldCoord[1] << ", " << fidWorldCoord[2]);
       seedRepresentation->GetHandleRepresentation(0)->SetWorldPosition(fidWorldCoord);
       positionChanged = true;
       }

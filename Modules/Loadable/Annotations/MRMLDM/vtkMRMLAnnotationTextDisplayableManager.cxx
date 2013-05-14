@@ -385,7 +385,10 @@ void vtkMRMLAnnotationTextDisplayableManager::UpdatePosition(vtkAbstractWidget *
   vtkDebugMacro("UpdatePosition: caption coordinates from node = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1]);
   if ((this->Is2DDisplayableManager() && strcmp(this->GetSliceNode()->GetName(), "Red") == 0) || !this->Is2DDisplayableManager())
      {
-     vtkDebugMacro("UpdatePosition: caption coordinates from node " << textNode->GetID() << " = " << captionViewportCoordinates[0] << ", " << captionViewportCoordinates[1] << (this->Is2DDisplayableManager() ? "(2D)" : "(3D)"));
+     vtkDebugMacro("UpdatePosition: caption coordinates from node " << textNode->GetID() << " = "
+                   << captionViewportCoordinates[0]
+                   << ", " << captionViewportCoordinates[1]
+                   << (this->Is2DDisplayableManager() ? "(2D)" : "(3D)"));
      }
   //these two calls should do the same thing, the caption actor is updated
   //from the rep position
@@ -499,10 +502,14 @@ void vtkMRMLAnnotationTextDisplayableManager::PropagateWidgetToMRML(vtkAbstractW
 
   if (captionPosition)
     {
-    vtkDebugMacro("PropagateWidgetToMRML: " << textNode->GetID() << " widget rep caption position viewport = " << captionPosition[0] << ", " << captionPosition[1]);
+    vtkDebugMacro("PropagateWidgetToMRML: " << textNode->GetID()
+                  << " widget rep caption position viewport = "
+                  << captionPosition[0] << ", "
+                  << captionPosition[1]);
     if (captionPosition[0] < 0.0 || captionPosition[1] < 0.0 || captionPosition[0] > 1.0 || captionPosition[1] > 1.0)
       {
-      vtkErrorMacro("PropagateWidgetToMRML: caption position from widget is not in normalised viewport coordinates: " << captionPosition[0] << ", " << captionPosition[1]);
+      vtkErrorMacro("PropagateWidgetToMRML: caption position from widget is not in normalised viewport coordinates: "
+                    << captionPosition[0] << ", " << captionPosition[1]);
       }
     else
       {

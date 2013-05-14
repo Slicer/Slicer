@@ -7,41 +7,41 @@
 
  Program:   3D Slicer
 
- Module:    $RCSfile: vtkMRMLAnnotationFiducialDisplayableManager.h,v $
+ Module:    $RCSfile: vtkMRMLAnnotationRulerDisplayableManager.h,v $
  Date:      $Date: 2010/07/26 04:48:05 $
  Version:   $Revision: 1.5 $
 
  =========================================================================auto=*/
 
-#ifndef __vtkMRMLAnnotationFiducialDisplayableManager_h
-#define __vtkMRMLAnnotationFiducialDisplayableManager_h
+#ifndef __vtkMRMLAnnotationRulerDisplayableManager_h
+#define __vtkMRMLAnnotationRulerDisplayableManager_h
 
 // Annotation includes
 #include "vtkMRMLAnnotationDisplayableManager.h"
 #include "vtkSlicerAnnotationsModuleMRMLDisplayableManagerExport.h"
 
-class vtkMRMLAnnotationFiducialNode;
+class vtkMRMLAnnotationRulerNode;
 class vtkSlicerViewerWidget;
-class vtkMRMLAnnotationTextDisplayNode;
+class vtkMRMLAnnotationRulerDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
 class vtkTextWidget;
 
 /// \ingroup Slicer_QtModules_Annotation
 class VTK_SLICER_ANNOTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT
-vtkMRMLAnnotationFiducialDisplayableManager
+vtkMRMLAnnotationRulerDisplayableManager
   : public vtkMRMLAnnotationDisplayableManager
 {
 public:
 
-  static vtkMRMLAnnotationFiducialDisplayableManager *New();
-  vtkTypeRevisionMacro(vtkMRMLAnnotationFiducialDisplayableManager, vtkMRMLAnnotationDisplayableManager);
+  static vtkMRMLAnnotationRulerDisplayableManager *New();
+  vtkTypeRevisionMacro(vtkMRMLAnnotationRulerDisplayableManager, vtkMRMLAnnotationDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
 
-  vtkMRMLAnnotationFiducialDisplayableManager(){this->m_Focus="vtkMRMLAnnotationFiducialNode";}
-  virtual ~vtkMRMLAnnotationFiducialDisplayableManager(){}
+  vtkMRMLAnnotationRulerDisplayableManager(){this->m_Focus="vtkMRMLAnnotationRulerNode";}
+  virtual ~vtkMRMLAnnotationRulerDisplayableManager(){}
 
   /// Callback for click in RenderWindow
   virtual void OnClickInRenderWindow(double x, double y, const char *associatedNodeID);
@@ -56,25 +56,14 @@ protected:
   /// Propagate properties of widget to MRML node.
   virtual void PropagateWidgetToMRML(vtkAbstractWidget * widget, vtkMRMLAnnotationNode* node);
 
-  /// set up an observer on the interactor style to watch for key press events
-  virtual void AdditionnalInitializeStep();
-  /// respond to the interactor style event
-  virtual void OnInteractorStyleEvent(int eventid);
-
-  // respond to control point modified events
+  // update the ruler end point positions from the MRML node
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
-
-  std::map<vtkMRMLNode*, int> NodeGlyphTypes;
-
-  // clean up when scene closes
-  virtual void OnMRMLSceneEndClose();
 
 private:
 
-  vtkMRMLAnnotationFiducialDisplayableManager(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not implemented
-  void operator=(const vtkMRMLAnnotationFiducialDisplayableManager&); /// Not Implemented
+  vtkMRMLAnnotationRulerDisplayableManager(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not implemented
+  void operator=(const vtkMRMLAnnotationRulerDisplayableManager&); /// Not Implemented
 
 };
 
 #endif
-

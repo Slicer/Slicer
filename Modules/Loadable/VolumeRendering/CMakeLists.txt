@@ -9,7 +9,7 @@ string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 add_subdirectory(MRML)
 add_subdirectory(VolumeRenderingReplacements)
 add_subdirectory(Logic)
-add_subdirectory(MRMLDisplayableManager)
+add_subdirectory(MRMLDM)
 add_subdirectory(Widgets)
 
 #-----------------------------------------------------------------------------
