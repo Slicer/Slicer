@@ -27,18 +27,18 @@ if(NOT DEFINED LibArchive_DIR)
   # NOTE: - a stable, recent release (3.0.4) of LibArchive is now checked out from git
   #         for all platforms.  For notes on cross-platform issues with earlier versions
   #         of LibArchive, see the repository for earlier revisions of this file.
-  #
-  set(ADDITIONAL_CMAKE_ARGS)
+
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+
   # CMake arguments specific to LibArchive >= 2.8.4
-  list(APPEND ADDITIONAL_CMAKE_ARGS
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DBUILD_TESTING:BOOL=OFF
     -DENABLE_OPENSSL:BOOL=OFF
     )
 
   # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
@@ -61,7 +61,6 @@ if(NOT DEFINED LibArchive_DIR)
     # Not used -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DENABLE_ACL:BOOL=OFF
@@ -72,8 +71,8 @@ if(NOT DEFINED LibArchive_DIR)
       -DZLIB_ROOT:PATH=${SLICER_ZLIB_ROOT}
       -DZLIB_INCLUDE_DIR:PATH=${SLICER_ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${SLICER_ZLIB_LIBRARY}
-      ${ADDITIONAL_CMAKE_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     DEPENDS
       ${LibArchive_DEPENDENCIES}
     )

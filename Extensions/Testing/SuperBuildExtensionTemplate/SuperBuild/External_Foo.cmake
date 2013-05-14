@@ -21,10 +21,11 @@ set(proj Foo)
 if(NOT DEFINED ${proj}_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+
   # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
@@ -46,9 +47,9 @@ if(NOT DEFINED ${proj}_DIR)
       -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       -DBUILD_TESTING:BOOL=OFF
+      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo "This CONFIGURE_COMMAND is just here as a placeholder. Remove this line to enable configuring of a real CMake based external project"
     BUILD_COMMAND ${CMAKE_COMMAND} -E echo "This BUILD_COMMAND is just here as a placeholder. Remove this line to enable building of a real CMake based external project"
     INSTALL_COMMAND ""

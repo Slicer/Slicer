@@ -37,10 +37,11 @@ if(NOT DEFINED python_DIR)
     INSTALL_COMMAND ""
     )
 
+  set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+
   # Set CMake OSX variable to pass down the external project
-  set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
-    list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
@@ -50,7 +51,6 @@ if(NOT DEFINED python_DIR)
     set(git_protocol "git")
   endif()
 
-  set(python_TCL_EXTERNAL_PROJECT_ARGS)
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     if(WIN32)
       set(tcl_library ${CMAKE_CURRENT_BINARY_DIR}/tcl-build/lib/tcl${TCL_TK_VERSION}.lib)
@@ -61,7 +61,7 @@ if(NOT DEFINED python_DIR)
     endif()
     message(STATUS "TCL_LIBRARY:${tcl_library}")
     message(STATUS "TK_LIBRARY:${tk_library}")
-    list(APPEND python_TCL_EXTERNAL_PROJECT_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DENABLE_TKINTER:BOOL=ON
       -DTCL_LIBRARY:FILEPATH=${tcl_library}
       -DTCL_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
@@ -69,7 +69,7 @@ if(NOT DEFINED python_DIR)
       -DTK_INCLUDE_PATH:PATH=${CMAKE_CURRENT_BINARY_DIR}/tcl-build/include
       )
   else()
-    list(APPEND python_TCL_EXTERNAL_PROJECT_ARGS
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DENABLE_TKINTER:BOOL=OFF
       )
   endif()
@@ -90,7 +90,6 @@ if(NOT DEFINED python_DIR)
       #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
       #-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
       #-DBUILD_TESTING:BOOL=OFF
@@ -99,7 +98,7 @@ if(NOT DEFINED python_DIR)
       -DUSE_SYSTEM_LIBRARIES:BOOL=OFF
       -DZLIB_INCLUDE_DIR:PATH=${SLICER_ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${SLICER_ZLIB_LIBRARY}
-      ${python_TCL_EXTERNAL_PROJECT_ARGS}
+      ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     DEPENDS
       python-source ${python_DEPENDENCIES}
     )

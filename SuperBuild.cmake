@@ -176,9 +176,11 @@ SlicerMacroCheckExternalProjectDependency(Slicer)
 #message(STATUS "Generated ${CMAKE_CURRENT_BINARY_DIR}/SlicerDependencies.txt")
 
 #-----------------------------------------------------------------------------
-# Set superbuild boolean args
-#-----------------------------------------------------------------------------
-set(ep_cmake_boolean_args
+# Define list of additional options used to configure Slicer
+#------------------------------------------------------------------------------
+set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
+
+foreach(ep_cmake_arg
   DOCUMENTATION_TARGET_IN_ALL
   BUILD_TESTING
   BUILD_SHARED_LIBS
@@ -201,7 +203,6 @@ set(ep_cmake_boolean_args
   Slicer_USE_OpenIGTLink
   Slicer_WITH_LIBRARY_VERSION
   Slicer_USE_NUMPY
-  #Slicer_USE_WEAVE
   Slicer_USE_QtTesting
   Slicer_USE_SimpleITK
   Slicer_BUILD_BRAINSTOOLS
@@ -210,38 +211,25 @@ set(ep_cmake_boolean_args
   Slicer_BUILD_MultiVolumeImporter
   Slicer_BUILD_Extensions
   )
-
-set(ep_superbuild_boolean_args)
-foreach(ep_cmake_arg ${ep_cmake_boolean_args})
-  list(APPEND ep_superbuild_boolean_args -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
 endforeach()
-
-# message("CMake args:")
-# foreach(arg ${ep_superbuild_boolean_args})
-#   message("  ${arg}")
-# endforeach()
-
-#-----------------------------------------------------------------------------
-# Define list of additional options used to configure Slicer
-#------------------------------------------------------------------------------
-set(ep_superbuild_extra_args)
 
 if(DEFINED CTEST_CONFIGURATION_TYPE)
   list_to_string(${ep_list_separator} "${CTEST_CONFIGURATION_TYPE}" ep_CTEST_CONFIGURATION_TYPE)
-  list(APPEND ep_superbuild_extra_args -DCTEST_CONFIGURATION_TYPE:STRING=${ep_CTEST_CONFIGURATION_TYPE})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DCTEST_CONFIGURATION_TYPE:STRING=${ep_CTEST_CONFIGURATION_TYPE})
 endif()
 
 if(DEFINED CMAKE_CONFIGURATION_TYPES)
   list_to_string(${ep_list_separator} "${CMAKE_CONFIGURATION_TYPES}" ep_CMAKE_CONFIGURATION_TYPES)
-  list(APPEND ep_superbuild_extra_args -DCMAKE_CONFIGURATION_TYPES:STRING=${ep_CMAKE_CONFIGURATION_TYPES})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DCMAKE_CONFIGURATION_TYPES:STRING=${ep_CMAKE_CONFIGURATION_TYPES})
 endif()
 
 if(WIN32)
-  list(APPEND ep_superbuild_extra_args -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=ON)
 endif()
 
 if(Slicer_USE_PYTHONQT)
-  list(APPEND ep_superbuild_extra_args
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_EXECUTABLE}
     -DPYTHON_INCLUDE_DIR:PATH=${slicer_PYTHON_INCLUDE}
     -DPYTHON_LIBRARY:FILEPATH=${slicer_PYTHON_LIBRARY}
@@ -249,13 +237,13 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_USE_PYTHONQT_WITH_TCL)
-  list(APPEND ep_superbuild_extra_args
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DSlicer_TCL_DIR:PATH=${tcl_build}
     -DTCL_TK_VERSION:STRING=${TCL_TK_VERSION}
     -DTCL_TK_VERSION_DOT:STRING=${TCL_TK_VERSION_DOT}
     )
   if(INCR_TCL_VERSION)
-    list(APPEND ep_superbuild_extra_args
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -DINCR_TCL_VERSION:STRING=${INCR_TCL_VERSION}
       -DINCR_TCL_VERSION_DOT:STRING=${INCR_TCL_VERSION_DOT}
       )
@@ -264,7 +252,7 @@ endif()
 
 if(Slicer_BUILD_QTLOADABLEMODULES)
   # Provide a mechanism to disable one or more loadable modules.
-  list(APPEND ep_superbuild_extra_args -DSlicer_QTLOADABLEMODULES_DISABLED:STRING=${Slicer_QTLOADABLEMODULES_DISABLED})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_QTLOADABLEMODULES_DISABLED:STRING=${Slicer_QTLOADABLEMODULES_DISABLED})
 endif()
 
 if(Slicer_BUILD_QTSCRIPTEDMODULES)
@@ -273,57 +261,57 @@ if(Slicer_BUILD_QTSCRIPTEDMODULES)
 endif()
 
 if(Slicer_USE_BatchMake)
-  list(APPEND ep_superbuild_extra_args -DBatchMake_DIR:PATH=${BatchMake_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DBatchMake_DIR:PATH=${BatchMake_DIR})
 endif()
 
 if(Slicer_USE_OpenIGTLink)
-  list(APPEND ep_superbuild_extra_args -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DOpenIGTLink_DIR:PATH=${OpenIGTLink_DIR})
 endif()
 
 if(Slicer_BUILD_OpenIGTLinkIF)
-  list(APPEND ep_superbuild_extra_args -DOpenIGTLinkIF_SOURCE_DIR:PATH=${OpenIGTLinkIF_SOURCE_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DOpenIGTLinkIF_SOURCE_DIR:PATH=${OpenIGTLinkIF_SOURCE_DIR})
 endif()
 
 if(Slicer_USE_CTKAPPLAUNCHER)
-  list(APPEND ep_superbuild_extra_args -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DCTKAPPLAUNCHER_DIR:PATH=${CTKAPPLAUNCHER_DIR})
 endif()
 
-if(Slicer_BUILD_CLI_SUPPORT)  
+if(Slicer_BUILD_CLI_SUPPORT)
   # Provide a mechanism to disable one or more CLI modules.
-  list(APPEND ep_superbuild_extra_args -DSlicer_CLIMODULES_DISABLED:STRING=${Slicer_CLIMODULES_DISABLED})
-  list(APPEND ep_superbuild_extra_args -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicer_CLIMODULES_DISABLED:STRING=${Slicer_CLIMODULES_DISABLED})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR})
 endif()
 
 if(Slicer_BUILD_BRAINSTOOLS)
-  list(APPEND ep_superbuild_extra_args -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DBRAINSTools_SOURCE_DIR:PATH=${BRAINSTools_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_MultiVolumeExplorer)
-  list(APPEND ep_superbuild_extra_args -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DMultiVolumeExplorer_SOURCE_DIR:PATH=${MultiVolumeExplorer_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_MultiVolumeImporter)
-  list(APPEND ep_superbuild_extra_args -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_EMSegment)
-  list(APPEND ep_superbuild_extra_args -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DEMSegment_SOURCE_DIR:PATH=${EMSegment_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND ep_superbuild_extra_args
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DqMidasAPI_DIR:PATH=${qMidasAPI_DIR}
     )
 endif()
 
 # Projects that Slicer needs to download/configure/build/install...
 list(APPEND Slicer_ADDITIONAL_PROJECTS ${Slicer_ADDITIONAL_DEPENDENCIES})
-if (Slicer_ADDITIONAL_PROJECTS)
+if(Slicer_ADDITIONAL_PROJECTS)
   list(REMOVE_DUPLICATES Slicer_ADDITIONAL_PROJECTS)
   set(Slicer_ADDITIONAL_PROJECTS_STRING)
   foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
     # needed to do find_package within Slicer
-    list(APPEND ep_superbuild_extra_args
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
       -D${additional_project}_DIR:PATH=${${additional_project}_DIR})
     if(Slicer_ADDITIONAL_PROJECTS_STRING)
       set(Slicer_ADDITIONAL_PROJECTS_STRING "${Slicer_ADDITIONAL_PROJECTS_STRING}^^${additional_project}")
@@ -332,24 +320,28 @@ if (Slicer_ADDITIONAL_PROJECTS)
     endif()
   endforeach()
   # needed for packaging
-  list(APPEND ep_superbuild_extra_args
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DSlicer_ADDITIONAL_PROJECTS:STRING=${Slicer_ADDITIONAL_PROJECTS_STRING})
 endif()
 
 # Set CMake OSX variable to pass down the external project
-set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
 if(APPLE)
-  list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
     -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
 if(Slicer_BUILD_DWIConvert)
-  list(APPEND ep_superbuild_extra_args
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
     -DDWIConvert_SOURCE_DIR:PATH=${DWIConvert_SOURCE_DIR}
     )
 endif()
+
+# message("Slicer External project args:")
+# foreach(arg ${EXTERNAL_PROJECT_OPTIONAL_ARGS})
+#   message("  ${arg}")
+# endforeach()
 
 #------------------------------------------------------------------------------
 # Configure and build Slicer
@@ -369,9 +361,6 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
     -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-    ${ep_superbuild_boolean_args}
-    ${ep_superbuild_extra_args}
-    ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
     -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
     -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
     -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
@@ -395,6 +384,7 @@ ExternalProject_Add(${proj}
     -DSlicer_EXTENSION_SOURCE_DIRS:STRING=${Slicer_EXTENSION_SOURCE_DIRS}
     -DDOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY:PATH=${DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY}
     -DDOXYGEN_EXECUTABLE:FILEPATH=${DOXYGEN_EXECUTABLE}
+    ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     # ITK
     -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
     -DITK_DIR:PATH=${ITK_DIR}
