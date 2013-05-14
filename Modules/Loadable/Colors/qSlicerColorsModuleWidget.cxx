@@ -137,8 +137,8 @@ void qSlicerColorsModuleWidget::setup()
 
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));
-  connect(d->NumberOfColorsSpinBox, SIGNAL(valueChanged(int)),
-          this, SLOT(setNumberOfColors(int)));
+  connect(d->NumberOfColorsSpinBox, SIGNAL(editingFinished()),
+          this, SLOT(setNumberOfColors()));
   connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double,double)),
           this, SLOT(setLookupTableRange(double,double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
@@ -217,16 +217,22 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorsModuleWidget::setNumberOfColors(int newNumber)
+void qSlicerColorsModuleWidget::setNumberOfColors()
 {
   Q_D(qSlicerColorsModuleWidget);
   if (!d->NumberOfColorsSpinBox->isEnabled())
     {
     return;
     }
+  int newNumber = d->NumberOfColorsSpinBox->value();
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
     d->ColorTableComboBox->currentNode());
   colorTableNode->SetNumberOfColors(newNumber);
+  colorTableNode->GetLookupTable()->SetRange(0, newNumber - 1);
+  // update the slider manually
+  bool blocked = d->LUTRangeWidget->blockSignals(true);
+  d->LUTRangeWidget->setRange(0, newNumber - 1);
+  d->LUTRangeWidget->blockSignals(blocked);
 }
 
 //-----------------------------------------------------------------------------

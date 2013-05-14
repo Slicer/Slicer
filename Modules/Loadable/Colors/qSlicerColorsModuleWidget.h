@@ -43,7 +43,7 @@ public:
 
 public slots:
   void setCurrentColorNode(vtkMRMLNode*);
-  void setNumberOfColors(int);
+  void setNumberOfColors();
   void setLookupTableRange(double min, double max);
   void copyCurrentColorNode();
 
