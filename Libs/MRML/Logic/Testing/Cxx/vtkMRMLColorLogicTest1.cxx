@@ -28,6 +28,7 @@
 #include <vtkMRMLPETProceduralColorNode.h>
 
 // VTK includes
+#include <vtkLookupTable.h>
 #include <vtkNew.h>
 #include <vtkTimerLog.h>
 
@@ -41,6 +42,7 @@ namespace
 bool TestPerformance();
 bool TestNodeIDs();
 bool TestDefaults();
+bool TestCopy();
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +52,7 @@ int vtkMRMLColorLogicTest1(int vtkNotUsed(argc), char * vtkNotUsed(argv)[] )
   res = TestPerformance() && res;
   res = TestNodeIDs() && res;
   res = TestDefaults() && res;
+  res = TestCopy() && res;
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 namespace
@@ -181,6 +184,74 @@ bool TestDefaults()
   //            << colorLogic->GetDefaultFreeSurferLabelMapColorNodeID() << std::endl;
   //  return false;
   //  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool TestCopy()
+{
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
+
+  vtkSmartPointer<vtkMRMLColorTableNode> originalNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  originalNode->SetTypeToFile();
+  originalNode->NamesInitialisedOff();
+  originalNode->SetNumberOfColors(6);
+  originalNode->GetLookupTable()->SetTableRange(0, 5);
+  originalNode->SetColor(0, "background", 0.0, 0.0, 0.0, 0.0);
+  originalNode->SetColor(1, "one", 0.5, 1.0, 0.0, 0.1);
+  originalNode->SetColor(2, "two", 0.5, 0.5, 0.0, 0.3);
+  originalNode->SetColor(3, "three", 0.33, 0.0, 0.5, 0.5);
+  originalNode->SetColor(4, "four", 0.75, 0.0, 1.0, 0.7);
+  originalNode->SetColor(5, "five and done", 1.0, 1.0, 1.0, 1.0);
+  originalNode->NamesInitialisedOn();
+  
+  vtkMRMLColorTableNode *copiedNode = colorLogic->CopyNode(originalNode, "Copied Generic");
+  if (!copiedNode)
+    {
+    std::cerr << "Failed to create a copy of the generic colors node" << std::endl;
+    return false;
+    }
+
+  // check the copy
+  double originalColor[4];
+  double copyColor[4];
+  int numToTest = originalNode->GetNumberOfColors();
+  for (int i = 0; i < numToTest; ++i)
+    {
+    if (!originalNode->GetColor(i, originalColor))
+      {
+      std::cerr << "Failed to get color " << i << " from the origianl node." << std::endl;
+      return false;
+      }
+    if (!copiedNode->GetColor(i, copyColor))
+      {
+      std::cerr << "Failed to get color " << i << " from the copied node." << std::endl;
+      return false;
+      }
+    if (copyColor[0] != originalColor[0] ||
+        copyColor[1] != originalColor[1] ||
+        copyColor[2] != originalColor[2] ||
+        copyColor[3] != originalColor[3])
+      {
+      std::cerr << "Copy failed to copy color " << i << ", expected "
+                << originalColor[0] << "," << originalColor[1] << "," << originalColor[2] << "," << originalColor[3]
+                << ", but got "
+                << copyColor[0] << "," << copyColor[1] << "," << copyColor[2] << "," << copyColor[3]
+                << std::endl;
+      return false;
+      }
+    const char *originalColorName = originalNode->GetColorName(i);
+    const char *copyColorName = copiedNode->GetColorName(i);
+    if (originalColorName != NULL && copyColorName != NULL &&
+        strcmp(originalColorName, copyColorName) != 0)
+      {
+      std::cerr << "Failed to copy color name for color number " << i << ", expected '" << originalColorName << "', but got '" << copyColorName << "'" << std::endl;
+      return false;
+      }
+    }
+  copiedNode->Delete();
   return true;
 }
 
