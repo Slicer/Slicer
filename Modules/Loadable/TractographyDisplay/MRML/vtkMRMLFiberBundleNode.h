@@ -193,10 +193,21 @@ public:
   // Set the maximum number of fibers to show by default when a new fiber bundle node is set
   vtkSetMacro ( MaxNumberOfFibersToShowByDefault, vtkIdType );
 
+  // Description:
+  // Get original cell id in the input polydata
   vtkIdType GetUnShuffledFiberID(vtkIdType shuffledIndex)
   {
     return this->ShuffledIds->GetValue(shuffledIndex);
   }
+
+  // Description:
+  // Enable, Disapble shuffle of IDs
+  vtkGetMacro(EnableShuffleIDs, int);
+  void SetEnableShuffleIDs(int value)
+  {
+    this->EnableShuffleIDs = value;
+  }
+
 
 protected:
   vtkMRMLFiberBundleNode();
@@ -223,6 +234,7 @@ protected:
   /// ALL MRML nodes
   int SelectWithAnnotationNode;
   int SelectionWithAnnotationNodeMode;
+  int EnableShuffleIDs;
 
   vtkMRMLAnnotationNode *AnnotationNode;
   char *AnnotationNodeID;

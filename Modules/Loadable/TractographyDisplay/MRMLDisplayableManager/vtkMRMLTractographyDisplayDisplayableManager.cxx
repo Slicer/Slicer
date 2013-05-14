@@ -107,6 +107,9 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
               this->GetMRMLDisplayableManagerGroup()->GetDisplayableManagerByClassName(
                 "vtkMRMLModelDisplayableManager"));
 
+      double pickTolerance = modelDisplayableManager->GetPickTolerance();
+      modelDisplayableManager->SetPickTolerance(0.001);
+
       vtkIdType cellID = -1;
 
       if (modelDisplayableManager->Pick(x,yNew) &&
@@ -134,6 +137,9 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
         this->DeletePickedFiber(displayNode, cellID);
         this->GetInteractionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
         }
+
+      // reset pick tolerance
+      modelDisplayableManager->SetPickTolerance(pickTolerance);
       }
     }
 
@@ -167,28 +173,46 @@ void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFibe
   vtkMRMLFiberBundleTubeDisplayNode *tubeDisplayNode = vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast(displayNode);
   vtkMRMLFiberBundleGlyphDisplayNode *glyphDisplayNode = vtkMRMLFiberBundleGlyphDisplayNode::SafeDownCast(displayNode);
 
+  vtkIdType cellID = -1;
   if (tubeDisplayNode)
     {
     int numSides = tubeDisplayNode->GetTubeNumberOfSides();
-    vtkIdType cellID = pickedCell/numSides;
-    cellID = fiberBundleNode->GetUnShuffledFiberID(cellID);
-
-    vtkPolyData *polyData = vtkPolyData::New();
-    polyData->DeepCopy(fiberBundleNode->GetPolyData());
-    //polyData->BuildLinks();
-    polyData->DeleteCell(cellID);
-    polyData->RemoveDeletedCells();
-    fiberBundleNode->SetAndObservePolyData(polyData);
-    polyData->Delete();
-    //tubeDisplayNode->SetInputPolyData(polyData);
-    //tubeDisplayNode->InvokeEvent(vtkCommand::ModifiedEvent);
+    cellID = pickedCell/numSides;
     }
   else if (lineDisplayNode)
     {
-    // NOT IMPLEMENTED YET
+    cellID = pickedCell;
     }
   else if (glyphDisplayNode)
     {
     // NOT IMPLEMENTED YET
     }
+
+  if (cellID >=0)
+    {
+    cellID = fiberBundleNode->GetUnShuffledFiberID(cellID);
+
+    int shuffleIDs = fiberBundleNode->GetEnableShuffleIDs();
+
+    fiberBundleNode->SetEnableShuffleIDs(0);
+
+    vtkPolyData *polyData = vtkPolyData::New();
+    polyData->DeepCopy(fiberBundleNode->GetPolyData());
+    polyData->DeleteCell(cellID);
+    polyData->RemoveDeletedCells();
+    fiberBundleNode->SetAndObservePolyData(polyData);
+    polyData->Delete();
+
+    fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);
+
+    /** just updating polydata does not work for some reason
+    vtkPolyData *polyData = fiberBundleNode->GetPolyData();
+    polyData->DeleteCell(cellID);
+    polyData->RemoveDeletedCells();
+    polyData->Modified();
+    tubeDisplayNode->InvokeEvent(vtkCommand::ModifiedEvent);
+    //tubeDisplayNode->SetInputPolyData(polyData);
+    ***/
+    }
+
 }

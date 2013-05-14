@@ -99,6 +99,11 @@ public:
   /// as appropriate depending what's found under the xy.
   int Pick(int x, int y);
 
+  /// Get/Set tolerance for Pick() method.
+  /// it will call vtkCellPicker.Get/SetTolerance()
+  double GetPickTolerance();
+  void SetPickTolerance(double tolerance);
+
   /// 
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char *GetPickedNodeID();

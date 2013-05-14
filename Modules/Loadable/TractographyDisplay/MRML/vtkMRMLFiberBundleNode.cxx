@@ -67,6 +67,7 @@ vtkMRMLFiberBundleNode::vtkMRMLFiberBundleNode()
   this->ExtractPolyDataGeometry = 0;
   this->Planes = 0;
   this->SelectWithAnnotationNode = 0;
+  this->EnableShuffleIDs = 1;
 
   this->PrepareSubsampling();
   this->PrepareROISelection();
@@ -406,9 +407,16 @@ void vtkMRMLFiberBundleNode::SetAndObservePolyData(vtkPolyData* polyData)
     this->ShuffledIds->SetNumberOfTuples(numberOfFibers);
     for(vtkIdType i = 0;  i < numberOfFibers; i++ )
       {
-      this->ShuffledIds->SetValue(i, idVector[i]);
+      if (this->EnableShuffleIDs)
+        {
+        this->ShuffledIds->SetValue(i, idVector[i]);
+        }
+      else
+        {
+        this->ShuffledIds->SetValue(i, i);
+        }
       }
-    float subsamplingRatio = 1.;
+    float subsamplingRatio = this->SubsamplingRatio;
 
     if (numberOfFibers > this->GetMaxNumberOfFibersToShowByDefault() )
       {

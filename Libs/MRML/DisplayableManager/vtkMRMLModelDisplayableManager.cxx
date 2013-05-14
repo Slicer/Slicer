@@ -133,7 +133,7 @@ vtkMRMLModelDisplayableManager::vtkInternal::vtkInternal()
   this->WorldPointPicker = vtkSmartPointer<vtkWorldPointPicker>::New();
   this->PropPicker = vtkSmartPointer<vtkPropPicker>::New();
   this->CellPicker = vtkSmartPointer<vtkCellPicker>::New();
-  this->CellPicker->SetTolerance(0.00000001);
+  this->CellPicker->SetTolerance(0.00001);
   this->PointPicker = vtkSmartPointer<vtkPointPicker>::New();
   this->ResetPick();
 }
@@ -174,6 +174,7 @@ void vtkMRMLModelDisplayableManager::vtkInternal::ResetPick()
   this->PickedCellID = -1;
   this->PickedPointID = -1;
 }
+
 
 //---------------------------------------------------------------------------
 // vtkMRMLModelDisplayableManager methods
@@ -1664,6 +1665,18 @@ vtkPointPicker* vtkMRMLModelDisplayableManager::GetPointPicker()
   vtkDebugMacro(<< "returning Internal->PointPicker address "
                 << this->Internal->PointPicker.GetPointer());
   return this->Internal->PointPicker;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::SetPickTolerance(double tolerance)
+{
+  this->Internal->CellPicker->SetTolerance(tolerance);
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLModelDisplayableManager::GetPickTolerance()
+{
+  return this->Internal->CellPicker->GetTolerance();
 }
 
 //---------------------------------------------------------------------------
