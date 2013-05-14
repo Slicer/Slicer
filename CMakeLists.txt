@@ -177,7 +177,7 @@ endif()
 include(CMakeDependentOption)
 
 option(BUILD_TESTING "Test the project" ON)
-option(WITH_MEMCHECK "Run tests through valgrind." OFF)
+#option(WITH_MEMCHECK "Run tests through valgrind." OFF)
 option(WITH_COVERAGE "Enable/Disable coverage" OFF)
 option(Slicer_USE_VTK_DEBUG_LEAKS "Enable VTKs Debug Leaks functionality in both VTK and Slicer." ON)
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
