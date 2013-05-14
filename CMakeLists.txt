@@ -286,15 +286,16 @@ endif()
 #-----------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------
-option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
-mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
-
-set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
- CACHE PATH "Where documentation archives should be stored")
-mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
-
-# Attempt to discover Doxygen so that DOXYGEN_EXECUTABLE is set to an appropriate default value
 find_package(Doxygen QUIET)
+
+if(DOXYGEN_DOT_FOUND)
+  set(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+   CACHE PATH "Where documentation archives should be stored")
+  mark_as_advanced(DOCUMENTATION_ARCHIVES_OUTPUT_DIRECTORY)
+
+  option(DOCUMENTATION_TARGET_IN_ALL "Include the custom target for building documentation in 'all'" OFF)
+  mark_as_advanced(DOCUMENTATION_TARGET_IN_ALL)
+endif()
 
 #-----------------------------------------------------------------------------
 # CTestCustom
