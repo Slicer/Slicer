@@ -138,7 +138,7 @@ void qSlicerColorsModuleWidget::setup()
   connect(d->ColorTableComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
           this, SLOT(onMRMLColorNodeChanged(vtkMRMLNode*)));
   connect(d->NumberOfColorsSpinBox, SIGNAL(editingFinished()),
-          this, SLOT(setNumberOfColors()));
+          this, SLOT(updateNumberOfColors()));
   connect(d->LUTRangeWidget, SIGNAL(valuesChanged(double,double)),
           this, SLOT(setLookupTableRange(double,double)));
   connect(d->CopyColorNodeButton, SIGNAL(clicked()),
@@ -217,7 +217,7 @@ void qSlicerColorsModuleWidget::onMRMLColorNodeChanged(vtkMRMLNode* newColorNode
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerColorsModuleWidget::setNumberOfColors()
+void qSlicerColorsModuleWidget::updateNumberOfColors()
 {
   Q_D(qSlicerColorsModuleWidget);
   if (!d->NumberOfColorsSpinBox->isEnabled())
@@ -228,24 +228,26 @@ void qSlicerColorsModuleWidget::setNumberOfColors()
   vtkMRMLColorTableNode* colorTableNode = vtkMRMLColorTableNode::SafeDownCast(
     d->ColorTableComboBox->currentNode());
   colorTableNode->SetNumberOfColors(newNumber);
-  colorTableNode->GetLookupTable()->SetRange(0, newNumber - 1);
-  // update the slider manually
-  bool blocked = d->LUTRangeWidget->blockSignals(true);
+  // update the slider which will trigger updating the table on the node
   d->LUTRangeWidget->setRange(0, newNumber - 1);
-  d->LUTRangeWidget->blockSignals(blocked);
 }
 
 //-----------------------------------------------------------------------------
 void qSlicerColorsModuleWidget::setLookupTableRange(double min, double max)
 {
   Q_D(qSlicerColorsModuleWidget);
-  if (!d->LUTRangeWidget->isEnabled())
+
+  vtkMRMLNode *currentNode = d->ColorTableComboBox->currentNode();
+  if (!currentNode)
     {
     return;
     }
-  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(d->ColorTableComboBox->currentNode());
-  Q_ASSERT(colorNode);
-  colorNode->GetLookupTable()->SetRange(min, max);
+  
+  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(currentNode);
+  if (colorNode && colorNode->GetLookupTable())
+    {
+    colorNode->GetLookupTable()->SetRange(min, max);
+    }
 }
 
 //-----------------------------------------------------------------------------
