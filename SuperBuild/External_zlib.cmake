@@ -23,11 +23,6 @@ if(NOT DEFINED zlib_DIR)
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
 
-  set(zlib_c_flags ${ep_common_c_flags})
-  if(WIN32)
-    set(zlib_c_flags "${ep_common_c_flags} /DZLIB_WINAPI")
-  endif()
-
   # Set CMake OSX variable to pass down the external project
   if(APPLE)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
@@ -57,7 +52,7 @@ if(NOT DEFINED zlib_DIR)
       ## CXX should not be needed, but it a cmake default test
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${zlib_c_flags}
+      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
