@@ -46,5 +46,5 @@ echo
 
 # Record the version of this setup so the developer can be notified that
 # this script and/or hooks have been modified.
-SetupForDevelopment_VERSION=2
+SetupForDevelopment_VERSION=3
 git config hooks.SetupForDevelopment ${SetupForDevelopment_VERSION}
