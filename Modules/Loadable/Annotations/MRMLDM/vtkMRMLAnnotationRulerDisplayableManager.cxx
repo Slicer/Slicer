@@ -716,11 +716,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
     rep->GetPoint1WorldPosition(worldCoordinates1);
     rep->GetPoint2WorldPosition(worldCoordinates2);
-
-    // Compute distance and update representation
-    distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
-    rep->SetDistance(distance);
-
     }
 
   // if movement is not allowed, jump out
@@ -742,8 +737,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
     {
     rulerNode->SetPositionWorldCoordinates2(worldCoordinates2);
     }
-  // save distance to mrml
-  rulerNode->SetDistanceMeasurement(distance);
 
   // save the current view
   rulerNode->SaveView();
@@ -798,13 +791,10 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnClickInRenderWindow(double x, d
     //this->GetDisplayToWorldCoordinates(displayCoordinates1[0],displayCoordinates1[1],worldCoordinates1);
     this->GetDisplayToWorldCoordinates(displayCoordinates2[0],displayCoordinates2[1],worldCoordinates2);
 
-    double distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
-
     vtkMRMLAnnotationRulerNode *rulerNode = vtkMRMLAnnotationRulerNode::New();
 
     rulerNode->SetPositionWorldCoordinates1(worldCoordinates1);
     rulerNode->SetPositionWorldCoordinates2(worldCoordinates2);
-    rulerNode->SetDistanceMeasurement(distance);
 
     rulerNode->SetName(this->GetMRMLScene()->GetUniqueNameByString("M"));
 

@@ -172,8 +172,8 @@ public:
 
 //  void Initialize(vtkMRMLScene* mrmlScene);
 
+  /// Calculate the distance between world coordinates of the two end points
   double GetDistanceMeasurement();
-  void SetDistanceMeasurement(double val);
 
 
   /// get/set the id of the model the first and second end of the ruler is constrained upon
@@ -208,7 +208,6 @@ protected:
   /// to
   char *ModelID1;
   char *ModelID2;
-  double distanceMeasurement;
 };
 
 #endif

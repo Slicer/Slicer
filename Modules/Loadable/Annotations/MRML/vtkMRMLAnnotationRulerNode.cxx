@@ -8,6 +8,7 @@
 
 #include <vtkAbstractTransform.h>
 #include <vtkObjectFactory.h>
+#include <vtkMath.h>
 #include <vtkMatrix4x4.h>
 
 //----------------------------------------------------------------------------
@@ -72,11 +73,7 @@ void vtkMRMLAnnotationRulerNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " modelID2=\"" << this->ModelID2 << "\"";
     }
-  if (this->distanceMeasurement)
-    {
-    of << indent << " distanceMeasurement=\"" << this->distanceMeasurement << "\"";
-    }
-
+  of << indent << " distanceMeasurement=\"" << this->GetDistanceMeasurement() << "\"";
 }
 
 
@@ -118,12 +115,6 @@ void vtkMRMLAnnotationRulerNode::ReadXMLAttributes(const char** atts)
       {
       this->SetModelID2(attValue.c_str());
       }
-    else if (!strcmp(attName, "distanceMeasurement"))
-      {
-      std::stringstream ss;
-      ss << attValue;
-      ss >> this->distanceMeasurement;
-      }
     }
   this->EndModify(disabledModify);
 }
@@ -133,11 +124,10 @@ void vtkMRMLAnnotationRulerNode::Copy(vtkMRMLNode *anode)
 {
 
   Superclass::Copy(anode);
-  vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
+  //vtkMRMLAnnotationRulerNode *node = (vtkMRMLAnnotationRulerNode *) anode;
 
   //this->SetPosition1(node->GetPosition1());
   //this->SetPosition2(node->GetPosition2());
-  this->SetDistanceMeasurement(node->GetDistanceMeasurement());
   //this->SetResolution(node->GetResolution());
   //this->SetDistanceAnnotationFormat(node->GetDistanceAnnotationFormat());
   //this->SetModelID1(node->GetModelID1());
@@ -429,16 +419,18 @@ vtkMRMLStorageNode* vtkMRMLAnnotationRulerNode::CreateDefaultStorageNode()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLAnnotationRulerNode::SetDistanceMeasurement(double val)
-{
-    this->distanceMeasurement = val;
-    this->InvokeEvent(vtkMRMLAnnotationRulerNode::ValueModifiedEvent);
-}
-
-//---------------------------------------------------------------------------
 double vtkMRMLAnnotationRulerNode::GetDistanceMeasurement()
 {
-    return this->distanceMeasurement;
+  double distanceMeasurement = 0.0;
+
+  double p1[4]={0,0,0,1};
+  double p2[4]={0,0,0,1};
+  this->GetPositionWorldCoordinates1(p1);
+  this->GetPositionWorldCoordinates2(p2);
+
+  distanceMeasurement = sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
+  
+  return distanceMeasurement;
 }
 
 //---------------------------------------------------------------------------
