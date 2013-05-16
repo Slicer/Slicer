@@ -62,6 +62,10 @@ vtkMRMLDiffusionTensorDisplayPropertiesNode::vtkMRMLDiffusionTensorDisplayProper
 
   // set the type to user
   this->SetTypeToUser();
+
+  // This node does not have a valid LUT
+  this->SetLookupTable(NULL);
+
 }
 
 //----------------------------------------------------------------------------

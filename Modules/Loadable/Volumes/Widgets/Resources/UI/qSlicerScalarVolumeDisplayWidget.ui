@@ -33,7 +33,7 @@
       <bool>false</bool>
      </property>
      <property name="showChildNodeTypes">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </item>
