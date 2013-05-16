@@ -460,6 +460,17 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
     storageNode->Delete();
     snode = storageNode;
     }
+  else
+    {
+    // a file name exists, but we want to update the filename to match the current
+    // node name
+    if (snode->GetFileName() && node->GetName())
+      {
+      QFileInfo existingInfo(snode->GetFileName());
+      QFileInfo newInfo(existingInfo.absoluteDir(), QString(node->GetName() + QString(".") + existingInfo.suffix()));
+      snode->SetFileName(newInfo.absoluteFilePath().toLatin1());
+      }
+    }
   if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
     {
     QString fileExtension = snode->GetDefaultWriteFileExtension();
