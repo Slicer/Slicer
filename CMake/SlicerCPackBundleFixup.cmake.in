@@ -137,8 +137,7 @@ function(fixup_bundle_with_plugins app)
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
 
   set(candiates_pattern
-    "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*${suffix}"
-    "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.so"
+    "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.dylib"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/designer/*Plugins.so"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/iconengines/*Plugin.so"
     "${app_dir}/Contents/@Slicer_QtPlugins_DIR@/imageformats/*${suffix}"

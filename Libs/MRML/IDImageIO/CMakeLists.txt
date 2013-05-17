@@ -149,26 +149,6 @@ install(TARGETS MRMLIDIOPlugin
   )
 
 # --------------------------------------------------------------------------
-# Make a copy named '.so' for compatibility with the expectations
-# of the ITK Factory mechanism on macs
-# --------------------------------------------------------------------------
-if(APPLE)
-  add_custom_command(
-    TARGET MRMLIDIOPlugin
-    DEPENDS "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_ITKFACTORIES_DIR}/libMRMLIDIOPlugin.dylib"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_ITKFACTORIES_DIR}/libMRMLIDIOPlugin.dylib"
-    "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_ITKFACTORIES_DIR}/libMRMLIDIOPlugin.so"
-    VERBATIM
-    )
-  install(FILES
-    "${CMAKE_BINARY_DIR}/${MRMLIDImageIO_ITKFACTORIES_DIR}/libMRMLIDIOPlugin.so"
-    DESTINATION ${MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR}
-    )
-endif()
-
-# --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
 set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}

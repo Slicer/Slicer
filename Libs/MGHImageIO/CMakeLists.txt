@@ -149,26 +149,6 @@ install(TARGETS MGHIOPlugin
   )
 
 # --------------------------------------------------------------------------
-# Make a copy named '.so' for compatibility with the expectations
-# of the ITK Factory mechanism on macs
-# --------------------------------------------------------------------------
-if(APPLE)
-  add_custom_command(
-    TARGET MGHIOPlugin
-    DEPENDS "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.dylib"
-    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
-    VERBATIM
-    )
-  install(FILES
-    "${CMAKE_BINARY_DIR}/${MGHImageIO_ITKFACTORIES_DIR}/libMGHIOPlugin.so"
-    DESTINATION ${MGHImageIO_INSTALL_ITKFACTORIES_DIR}
-    )
-endif()
-
-# --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
 set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
