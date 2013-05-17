@@ -38,12 +38,7 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
   Q_ASSERT(!app->slicerHome().isEmpty());
 
   QStringList defaultCmdLineModulePaths;
-#ifdef Slicer_BUILD_CLI
-  bool appendDefaultCmdLineModulePaths = true;
-#else
-  bool appendDefaultCmdLineModulePaths = app->isInstalled();
-#endif
-  if (appendDefaultCmdLineModulePaths)
+  if (QFile::exists(app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR))
     {
     defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR;
     if (!app->intDir().isEmpty())
