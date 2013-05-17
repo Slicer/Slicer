@@ -134,14 +134,9 @@ endif()
 
 if(Slicer_USE_PYTHONQT)
   set(SLICER_PYTHONHOME ${Slicer_SUPERBUILD_DIR}/python-install)
-  if(UNIX)
-    get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_LIBRARY} PATH)
-  else()
-    get_filename_component(SLICER_PYTHON_LIB_DIR ${PYTHON_EXECUTABLE} PATH)
-  endif()
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
     ${CTK_DIR}/PythonQt-build/<CMAKE_CFG_INTDIR>
-    ${SLICER_PYTHON_LIB_DIR}
+    ${PYTHON_LIBRARY_PATH}
     )
 
   set(pythonpath_subdir lib/python${Slicer_PYTHON_VERSION_DOT})

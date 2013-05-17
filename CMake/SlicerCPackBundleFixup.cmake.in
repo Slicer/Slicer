@@ -123,12 +123,30 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction()
 
+macro(_fixup_paths_append list var)
+  if(NOT EXISTS "${var}")
+    message(FATAL_ERROR "Path append to list [${list}] does NOT exist !")
+  endif()
+
+  list(APPEND ${list} ${var})
+endmacro()
+
 #-----------------------------------------------------------------------------
 # Fixup the .app bundles in the install tree:
 #-----------------------------------------------------------------------------
 function(fixup_bundle_with_plugins app)
   set(app_dir "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${app}")
   set(suffix "@CMAKE_SHARED_LIBRARY_SUFFIX@")
+
+  set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
+  set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
+
+  # Sanity checks
+  foreach(path Slicer_BUILD_DIR Slicer_SUPERBUILD_DIR)
+    if(NOT EXISTS ${${path}})
+      message(FATAL_ERROR "${path} variable is defined but corresponds to non-existing directory: ${${path}}")
+    endif()
+  endforeach()
 
   set(candiates_pattern
     "${app_dir}/Contents/@Slicer_ITKFACTORIES_DIR@/*Plugin.dylib"
@@ -209,7 +227,7 @@ function(fixup_bundle_with_plugins app)
     list(APPEND libs_path "@OpenIGTLink_LIBRARY_DIRS@")
   endif()
   if(Slicer_USE_PYTHONQT)
-    list(APPEND libs_path "@SLICER_PYTHON_LIB_DIR@")
+    _fixup_paths_append(libs_path "@PYTHON_LIBRARY_PATH@")
   endif()
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     list(APPEND libs_path "@Slicer_TCL_DIR@/lib/")
@@ -239,9 +257,6 @@ function(fixup_bundle_with_plugins app)
   endif()
 
   list(REMOVE_DUPLICATES libs_path)
-
-  set(Slicer_BUILD_DIR "@Slicer_BINARY_DIR@")
-  set(Slicer_SUPERBUILD_DIR "@Slicer_SUPERBUILD_DIR@")
 
   gp_clear_log()
 
