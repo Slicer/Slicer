@@ -124,7 +124,7 @@ if(WIN32)
 endif()
 
 if(APPLE)
-  set(executable_path @executable_path)
+  set(fixup_path @executable_path/..)
   set(slicer_extension_cpack_bundle_fixup_directory ${CMAKE_BINARY_DIR}/SlicerExtensionBundle)
   set(EXTENSION_BINARY_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR}/${EXTENSION_BUILD_SUBDIRECTORY})
   set(EXTENSION_SUPERBUILD_DIR ${EXTENSION_SUPERBUILD_BINARY_DIR})
