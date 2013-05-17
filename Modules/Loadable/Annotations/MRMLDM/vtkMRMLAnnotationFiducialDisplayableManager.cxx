@@ -58,60 +58,85 @@ public:
   static vtkAnnotationFiducialWidgetCallback *New()
   { return new vtkAnnotationFiducialWidgetCallback; }
 
-  vtkAnnotationFiducialWidgetCallback(){}
+  vtkAnnotationFiducialWidgetCallback()
+  {
+  }
 
   virtual void Execute (vtkObject *vtkNotUsed(caller), unsigned long event, void*)
   {
 
-    if ((event == vtkCommand::EndInteractionEvent) || (event == vtkCommand::InteractionEvent))
+    // mark the Node with an attribute to indicate if it is currently being interacted with
+    // so that other code can respond to changes only when it is not moving
+    // Annodation.MovingInSliceView will be set to the layout name of
+    // our slice node while it is being actively manipulated
+    if (this->m_Widget && this->m_DisplayableManager && this->m_Node)
       {
-
-      // sanity checks
-      if (!this->m_DisplayableManager)
+      vtkMRMLSliceNode *sliceNode = this->m_DisplayableManager->GetSliceNode();
+      if (sliceNode)
         {
-        return;
-        }
-      if (!this->m_Node)
-        {
-        return;
-        }
-      if (!this->m_Widget)
-        {
-        return;
-        }
-      // sanity checks end
-
-
-      if (this->m_DisplayableManager->Is2DDisplayableManager())
-        {
-
-        // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
-
-        // we need the widgetRepresentation
-        vtkSeedRepresentation * representation = vtkSeedRepresentation::SafeDownCast(this->m_Widget->GetRepresentation());
-
-        double displayCoordinates1[4];
-
-        // first, we get the current displayCoordinates of the points
-        representation->GetSeedDisplayPosition(0,displayCoordinates1);
-
-        // second, we copy these to restrictedDisplayCoordinates
-        double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
-
-        // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
-        this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
-
-        // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
-        if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+        int modifiedWasDisabled = this->m_Node->GetDisableModifiedEvent();
+        this->m_Node->DisableModifiedEventOn();
+        if (this->m_Widget->GetWidgetState() == vtkSeedWidget::MovingSeed)
           {
-          if (representation->GetRenderer() &&
-              representation->GetRenderer()->GetActiveCamera())
+          this->m_Node->SetAttribute("Annotations.MovingInSliceView", sliceNode->GetLayoutName());
+          }
+        else
+          {
+          const char *movingView = this->m_Node->GetAttribute("Annotations.MovingInSliceView");
+          if (movingView && !strcmp(movingView, sliceNode->GetLayoutName()))
             {
-            representation->SetSeedDisplayPosition(0,restrictedDisplayCoordinates1);
+            this->m_Node->RemoveAttribute("Annotations.MovingInSliceView");
             }
           }
-
+        this->m_Node->SetDisableModifiedEvent(modifiedWasDisabled);
         }
+      }
+
+    // sanity checks
+    if (!this->m_DisplayableManager)
+      {
+      return;
+      }
+    if (!this->m_Node)
+      {
+      return;
+      }
+    if (!this->m_Widget)
+      {
+      return;
+      }
+    // sanity checks end
+
+
+    if (this->m_DisplayableManager->Is2DDisplayableManager())
+      {
+
+      // if this is a 2D SliceView displayableManager, restrict the widget to the renderer
+
+      // we need the widgetRepresentation
+      vtkSeedRepresentation * representation = vtkSeedRepresentation::SafeDownCast(this->m_Widget->GetRepresentation());
+
+      double displayCoordinates1[4];
+
+      // first, we get the current displayCoordinates of the points
+      representation->GetSeedDisplayPosition(0,displayCoordinates1);
+
+      // second, we copy these to restrictedDisplayCoordinates
+      double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
+
+      // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
+      this->m_DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
+
+      // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
+      if (this->m_DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+        {
+        if (representation->GetRenderer() &&
+            representation->GetRenderer()->GetActiveCamera())
+          {
+          representation->SetSeedDisplayPosition(0,restrictedDisplayCoordinates1);
+          }
+        }
+      }
 
       if (event == vtkCommand::EndInteractionEvent)
         {
@@ -122,15 +147,14 @@ public:
           this->m_Node->GetScene()->SaveStateForUndo(this->m_Node);
           }
         }
-      // the interaction with the widget ended, now propagate the changes to MRML
-      this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
 
-      }
+    // the interaction with the widget ended, now propagate the changes to MRML
+    this->m_DisplayableManager->PropagateWidgetToMRML(this->m_Widget, this->m_Node);
   }
 
   void SetWidget(vtkAbstractWidget *w)
   {
-    this->m_Widget = w;
+    this->m_Widget = vtkSeedWidget::SafeDownCast(w);
   }
   void SetNode(vtkMRMLAnnotationNode *n)
   {
@@ -141,9 +165,11 @@ public:
     this->m_DisplayableManager = dm;
   }
 
-  vtkAbstractWidget * m_Widget;
+  vtkSeedWidget * m_Widget;
   vtkMRMLAnnotationNode * m_Node;
   vtkMRMLAnnotationDisplayableManager * m_DisplayableManager;
+  bool WasMoving;
+  bool IsMoving;
 };
 
 //---------------------------------------------------------------------------
@@ -294,6 +320,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::OnWidgetCreated(vtkAbstractWid
   myCallback->SetNode(node);
   myCallback->SetWidget(widget);
   myCallback->SetDisplayableManager(this);
+  widget->AddObserver(vtkCommand::StartInteractionEvent,myCallback);
   widget->AddObserver(vtkCommand::EndInteractionEvent,myCallback);
   widget->AddObserver(vtkCommand::InteractionEvent,myCallback);
   myCallback->Delete();
@@ -650,7 +677,10 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateWidgetToMRML(vtkAbstr
 
   if (seedWidget->GetWidgetState() != vtkSeedWidget::MovingSeed)
     {
-    // ignore events not caused by seed movement
+    // ignore events not caused by seed movement,
+    // but invoke any pending Modifieds, such as may have been
+    // set in the callback command for changed attribute state
+    node->InvokePendingModifiedEvent();
     return;
     }
 
