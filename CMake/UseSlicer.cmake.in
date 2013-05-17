@@ -310,17 +310,21 @@ endif()
 # Set Slicer_INSTALL_*MODULE_*_DIR variables
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_CLI_SUPPORT)
+  set(SlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_BIN_DIR}")
+  set(SlicerExecutionModel_DEFAULT_CLI_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}")
+  set(SlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR}")
+
   set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_BIN_DIR}")
-  if(APPLE)
-    # For more detail, see 'Slicer/CMakeLists.txt' and search for 'Slicer_INSTALL_CLIMODULES_BIN_DIR'
-    set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}/${Slicer_CLIMODULES_SUBDIR}")
-  endif()
   set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_LIB_DIR}")
   set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_BUNDLE_EXTENSIONS_LOCATION}${Slicer_CLIMODULES_SHARE_DIR}")
   if(APPLE)
     set(SlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION "${Slicer_INSTALL_CLIMODULES_BIN_DIR}")
     set(SlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION "${Slicer_INSTALL_CLIMODULES_LIB_DIR}")
     set(SlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION "${Slicer_INSTALL_CLIMODULES_LIB_DIR}")
+    set(SlicerExecutionModel_DEFAULT_CLI_EXECUTABLE_LINK_FLAGS
+      "${SlicerExecutionModel_DEFAULT_CLI_EXECUTABLE_LINK_FLAGS} -Wl,-rpath,@loader_path/../../../../../")
+    set(SlicerExecutionModel_DEFAULT_CLI_LIBRARY_LINK_FLAGS
+      "${SlicerExecutionModel_DEFAULT_CLI_LIBRARY_LINK_FLAGS} -Wl,-rpath,@loader_path/../../../../../")
   endif()
 endif()
 

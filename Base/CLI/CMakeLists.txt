@@ -98,7 +98,7 @@ if(Slicer_LIBRARY_PROPERTIES)
 endif()
 
 # --------------------------------------------------------------------------
-# Build library
+# Install library
 # --------------------------------------------------------------------------
 install(TARGETS ${lib_name}
   RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries

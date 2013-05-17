@@ -216,10 +216,12 @@ add_executable(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
 set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} PROPERTIES LABELS ${PROJECT_NAME})
 
 if(APPLE)
+  set(link_flags "-Wl,-rpath,@loader_path/../")
   set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX}
     PROPERTIES
       OUTPUT_NAME ${SlicerApp_APPLICATION_NAME}
       MACOSX_BUNDLE_BUNDLE_VERSION "${Slicer_VERSION_FULL}"
+      LINK_FLAGS ${link_flags}
     )
   if(DEFINED Slicer_VERSION_TWEAK)
     set_target_properties(${PROJECT_NAME}${SlicerApp_EXE_SUFFIX} PROPERTIES

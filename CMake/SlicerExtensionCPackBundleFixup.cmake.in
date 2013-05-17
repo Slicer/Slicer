@@ -1,5 +1,6 @@
 
-include(BundleUtilities)
+include(@Slicer_CMAKE_DIR@/BundleUtilitiesWithRPath.cmake)
+#include(BundleUtilities)
 
 #
 # Snanity checks
@@ -38,17 +39,6 @@ function(gp_clear_log)
 endfunction()
 
 #-----------------------------------------------------------------------------
-# gp_resolved_file_type_override resolved_file type_var
-#-----------------------------------------------------------------------------
-function(gp_resolved_file_type_override resolved_file type_var)
-  if(resolved_file MATCHES "^/usr/.*/lib")
-    set(${type_var} system PARENT_SCOPE)
-  endif()
-
-  #gp_log_message("resolving ${file} as ${${type_var}}")
-endfunction()
-
-#-----------------------------------------------------------------------------
 # gp_item_default_embedded_path_override item default_embedded_path_var
 #-----------------------------------------------------------------------------
 # Return the path that others should refer to the item by when the item
@@ -61,6 +51,10 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   # By default, embed items as set by gp_item_default_embedded_path:
   set(path "${${default_embedded_path_var}}")
+
+  if(item MATCHES "[^/]+\\.framework/")
+    set(path "@fixup_path@/Frameworks")
+  endif()
 
   if(item MATCHES "\\.(dylib|so)$")
     set(path "@fixup_path@/@Slicer_LIB_DIR@")
@@ -83,8 +77,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   endif()
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
-  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
-  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
+  if(Slicer_BUILD_CLI_SUPPORT)
     if(item MATCHES "@Slicer_BINARY_INNER_SUBDIR@/@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")
       set(path "@fixup_path@/@Slicer_CLIMODULES_LIB_DIR@")
     elseif(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")
@@ -184,9 +177,18 @@ function(fixup_extension ext libs dirs)
   message(STATUS "  dirs='${dirs}'")
 
   #get_bundle_and_executable("${ext}" bundle executable valid)
-  #if(valid)
+  set(bundle "${ext}")
+  message(STATUS "  bundle='${bundle}'")
+  set(valid 1)
+  if(valid)
   #  get_filename_component(exepath "${executable}" PATH)
-    set(exepath "${ext}/Contents/MacOS")
+    set(exepath "${bundle}/Contents/MacOS")
+
+    # TODO: Extract list of rpath dirs automatically. On MacOSX, the following could be
+    #       done: otool -l path/to/executable | grep -A 3 LC_RPATH | grep path
+    #       See http://www.mikeash.com/pyblog/friday-qa-2009-11-06-linking-and-install-names.html#comment-87ea054b4839586412727dcfc94c79d2
+    set(GP_RPATH_DIR ${bundle}/Contents)
+    message(STATUS "  GP_RPATH_DIR='${GP_RPATH_DIR}'")
 
     message(STATUS "fixup_extension: preparing...")
     get_extension_keys("${ext}" "${libs}" "${dirs}" keys)
@@ -261,9 +263,9 @@ function(fixup_extension ext libs dirs)
 
     #message(STATUS "fixup_extension: verifying...")
     #verify_app("${app}")
-  #else(valid)
-  #  message(SEND_ERROR "error: fixup_extension: not a valid bundle")
-  #endif(valid)
+  else(valid)
+    message(SEND_ERROR "error: fixup_extension: not a valid bundle")
+  endif(valid)
 
   message(STATUS "fixup_extension: done")
 endfunction(fixup_extension)
@@ -279,9 +281,6 @@ function(fixup_slicer_extension)
 
   set(candiates_pattern
     )
-
-  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
-  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 
@@ -315,7 +314,8 @@ function(fixup_slicer_extension)
   if(Slicer_BUILD_QTLOADABLEMODULES)
     list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
-  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
+  set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
+  if(Slicer_BUILD_CLI_SUPPORT)
     list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_CLIMODULES_LIB_DIR@")
   endif()
 

@@ -1,5 +1,6 @@
 
-include(BundleUtilities)
+include(@CMAKE_SOURCE_DIR@/CMake/BundleUtilitiesWithRPath.cmake)
+#include(BundleUtilities)
 
 #
 # Avoid following symlinks encountered during FILE GLOB_RECURSE calls:
@@ -30,16 +31,6 @@ function(gp_clear_log)
 endfunction()
 
 #-----------------------------------------------------------------------------
-# gp_resolved_file_type_override resolved_file type_var
-#-----------------------------------------------------------------------------
-function(gp_resolved_file_type_override resolved_file type_var)
-  if(resolved_file MATCHES "^/usr/.*/lib")
-    set(${type_var} system PARENT_SCOPE)
-  endif()
-  #gp_log_message("resolving ${file} as ${${type_var}}")
-endfunction()
-
-#-----------------------------------------------------------------------------
 # gp_item_default_embedded_path_override item default_embedded_path_var
 #-----------------------------------------------------------------------------
 # Return the path that others should refer to the item by when the item
@@ -53,6 +44,14 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   # By default, embed items as set by gp_item_default_embedded_path:
   set(path "${${default_embedded_path_var}}")
 
+  if(item MATCHES "Contents/bin/[^/]+")
+    set(path "@fixup_path@/bin")
+  endif()
+
+  if(item MATCHES "[^/]+\\.framework/")
+    set(path "@fixup_path@/Frameworks")
+  endif()
+
   if(item MATCHES "\\.(dylib|so)$")
     set(path "@fixup_path@/@Slicer_LIB_DIR@")
   endif()
@@ -63,41 +62,35 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     if(item MATCHES "libpython[^/]+\\.dylib$")
       set(path "@fixup_path@/lib/Python/lib")
     endif()
+    # Python extensions
+    if(item MATCHES "lib-dynload/[^/]+\\.so$")
+      set(path "@fixup_path@/lib/Python/lib/python2.7/lib-dynload")
+    endif()
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     # Tcl libraries
-    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
+    if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$"
+       OR item MATCHES "libitcl3\\.2\\.dylib$"
+       OR item MATCHES "libitk3\\.2\\.dylib$")
       set(path "@fixup_path@/lib/TclTk/lib")
     endif()
   endif()
-
 
   if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
     set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
   endif()
 
-  if(item MATCHES "@Slicer_QtPlugins_DIR@/designer/[^/]+\\.(so|dylib)$")
-    set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/designer")
-  endif()
-
-  if(item MATCHES "@Slicer_QtPlugins_DIR@/iconengines/[^/]+\\.(so|dylib)$")
-    set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/iconengines")
-  endif()
-
-  if(item MATCHES "@Slicer_QtPlugins_DIR@/imageformats/[^/]+\\.(so|dylib)$")
-    set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/imageformats")
-  endif()
-
-  if(item MATCHES "@Slicer_QtPlugins_DIR@/sqldrivers/[^/]+\\.(so|dylib)$")
-    set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/sqldrivers")
-  endif()
+  foreach(qt_plugin_dir designer iconengines imageformats sqldrivers)
+    if(item MATCHES "@Slicer_QtPlugins_DIR@/${qt_plugin_dir}/[^/]+\\.(so|dylib)$")
+      set(path "@fixup_path@/@Slicer_QtPlugins_DIR@/${qt_plugin_dir}")
+    endif()
+  endforeach()
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
-  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
-  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
-    if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+\\.dylib$")
+  if(Slicer_BUILD_CLI_SUPPORT)
+    if(item MATCHES "@Slicer_CLIMODULES_LIB_DIR@/[^/]+") # Matches library and executable
       set(path "@fixup_path@/@Slicer_CLIMODULES_LIB_DIR@")
     endif()
   endif()
@@ -111,7 +104,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   math(EXPR lib_current $ENV{FIXUP_LIB_CURRENT}+1)
   set(ENV{FIXUP_LIB_CURRENT} ${lib_current})
-  gp_log_message("${lib_current}/$ENV{FIXUP_LIBS_COUNT} - fixing item ${item} with ${path}")
+  gp_log_message("${lib_current} - fixing item ${item} with ${path}")
 
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction()
@@ -150,7 +143,6 @@ function(fixup_bundle_with_plugins app)
     )
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
-  set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 
@@ -171,14 +163,17 @@ function(fixup_bundle_with_plugins app)
     list(APPEND candiates_pattern
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*Python.so"
       "${app_dir}/Contents/@Slicer_LIB_DIR@/*PythonQt.so"
-      "${app_dir}/Contents/lib/Python/lib/python2.7/site-packages/*.so"
-      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/*.so"
+      # Since both core python and numpy module have no dependency beside of
+      # system library, there is no need to fix them.
+      # "${app_dir}/Contents/lib/Python/lib/python2.7/site-packages/*.so"
+      #"${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/*.so"
       )
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     list(APPEND candiates_pattern
+      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_tkinter.so"
       "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
       )
   endif()
@@ -242,14 +237,13 @@ function(fixup_bundle_with_plugins app)
   if(Slicer_BUILD_QTLOADABLEMODULES)
     _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_QTLOADABLEMODULES_LIB_DIR@")
   endif()
-  if(Slicer_BUILD_CLI)
+  if(Slicer_BUILD_CLI_SUPPORT)
     _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_CLIMODULES_LIB_DIR@")
   endif()
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/designer")
   _fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/iconengines")
   #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/imageformats")
   #_fixup_paths_append(libs_path "${Slicer_BUILD_DIR}/@Slicer_BIN_DIR@/sqldrivers")
-
   if (Slicer_ADDITIONAL_PROJECTS)
     foreach(additional_project ${Slicer_ADDITIONAL_PROJECTS})
       find_package(${additional_project})
@@ -287,9 +281,13 @@ function(fixup_bundle_with_plugins app)
   endforeach()
 
   # Keep track of libs count and current lib being fixed
-  list(LENGTH libs libs_count)
-  set(ENV{FIXUP_LIBS_COUNT} ${libs_count})
   set(ENV{FIXUP_LIB_CURRENT} 0)
+
+  set(inner_re "1|a|bat|bmp|c|cc|cfg|cmake|conf|css|ctypes|cxx|dat|def|doc|dylib|egg-info|enc")
+  set(inner_re "${inner_re}|eps|example|f|f90|fits|gif|gz|h|hxx|i|icns|ico|in|ini|itk|log|md5")
+  set(inner_re "${inner_re}|mhd|mrml|mrml_remote|msg|nhdr|nib|nrrd|pkl|plist|png|ps|py|pyc|pyf")
+  set(inner_re "${inner_re}|pyw|pyx|raw|sample|so|supp|tcl|txt|ui|xml")
+  set(GP_IS_FILE_EXECUTABLE_EXCLUDE_REGEX "\\.(${inner_re})$")
 
   fixup_bundle(
     "${app_dir}"

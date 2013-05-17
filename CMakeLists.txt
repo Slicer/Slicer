@@ -443,19 +443,6 @@ set(Slicer_INSTALL_QM_DIR "${Slicer_INSTALL_ROOT}${Slicer_QM_DIR}")
 
 if(Slicer_BUILD_CLI_SUPPORT)
   set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_BIN_DIR}")
-  if(APPLE)
-    # HACK - On Mac OSX, since all libraries are fixed using the same "install_name" (specifying the
-    # location of the dependent libraries relatively to the location of Slicer executable), it
-    # is required for CLI executable to be located at same depth as Slicer executable.
-    # See also Slicer/CMake/SlicerCPackBundleFixup.cmake.in
-    #
-    # A more elegant solution would be to create a "Slicer.framework" on which both "${Slicer_MAIN_PROJECT_APPLICATION_NAME}.app"
-    # and the plugins/extensions (or loadable bundles) would depend on.
-    #
-    # NOTE: Make sure to update 'qSlicerCLIExecutableModuleFactory.cxx' if
-    #       the following variable is changed.
-    set(Slicer_INSTALL_CLIMODULES_BIN_DIR "${Slicer_INSTALL_ROOT}/${Slicer_CLIMODULES_SUBDIR}")
-  endif()
   set(Slicer_INSTALL_CLIMODULES_LIB_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_LIB_DIR}")
   set(Slicer_INSTALL_CLIMODULES_SHARE_DIR "${Slicer_INSTALL_ROOT}${Slicer_CLIMODULES_SHARE_DIR}")
 endif()
@@ -811,11 +798,6 @@ include(${SLICERLIBCURL_USE_FILE})
 set(LibArchive_INCLUDE_DIR ${LibArchive_DIR}/include)
 if(WIN32)
   set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive.lib)
-elseif(APPLE)
-  # HACK Since fixup extension expects the library to contain the full path, let's make sure the non-installed
-  # version of the library is used. Ideally, the project shouldn't be installed and a LibArchiveConfig.cmake
-  # should be created.
-  set(LibArchive_LIBRARY ${LibArchive_DIR}/../LibArchive-build/libarchive/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()
   set(LibArchive_LIBRARY ${LibArchive_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()

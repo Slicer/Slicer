@@ -26,9 +26,6 @@
 #include "qSlicerCLIModule.h"
 #include "qSlicerCLIModuleFactoryHelper.h"
 #include "qSlicerUtils.h"
-#ifdef Q_OS_MAC
-# include "qSlicerCoreApplication.h"
-#endif
 
 //-----------------------------------------------------------------------------
 qSlicerCLIExecutableModuleFactoryItem::qSlicerCLIExecutableModuleFactoryItem(

@@ -55,7 +55,7 @@ Plugins = ${Slicer_QtPlugins_DIR}
           COMPONENT Runtime
           RENAME qt.conf)
 
-  set(fixup_path @executable_path/..)
+  set(fixup_path @rpath)
   set(slicer_cpack_bundle_fixup_directory ${Slicer_BINARY_DIR}/CMake/SlicerCPackBundleFixup)
   configure_file(
     "${Slicer_SOURCE_DIR}/CMake/SlicerCPackBundleFixup.cmake.in"
