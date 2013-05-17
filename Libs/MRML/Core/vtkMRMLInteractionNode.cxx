@@ -20,6 +20,7 @@ vtkMRMLInteractionNode::vtkMRMLInteractionNode()
   this->LastInteractionMode = vtkMRMLInteractionNode::ViewTransform;
   this->PlaceModePersistence = 0;
   this->TransformModePersistence = 1;
+  this->EnableFiberEdit = 0;
 }
 
 //----------------------------------------------------------------------------

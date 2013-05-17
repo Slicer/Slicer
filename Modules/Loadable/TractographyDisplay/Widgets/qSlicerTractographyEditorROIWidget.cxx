@@ -15,6 +15,7 @@
 #include <vtkMRMLStorageNode.h>
 #include <vtkMRMLFiberBundleNode.h>
 #include <vtkMRMLFiberBundleDisplayNode.h>
+#include <vtkMRMLInteractionNode.h>
 #include <vtkMRMLScene.h>
 
 // VTK includes
@@ -74,6 +75,8 @@ void qSlicerTractographyEditorROIWidgetPrivate::init()
                    q, SLOT(setInteractiveROI(bool)));
   QObject::connect(this->ROIVisibility, SIGNAL(clicked(bool)),
                    q, SLOT(setROIVisibility(bool)));
+  QObject::connect(this->EnableFiberEdit, SIGNAL(clicked(bool)),
+                   q, SLOT(setInteractiveFiberEdit(bool)));
 
 }
 
@@ -263,6 +266,21 @@ void qSlicerTractographyEditorROIWidget::setInteractiveROI(bool arg)
     if (ROINode)
     {
       ROINode->SetInteractiveMode((int)arg);
+    }
+  }
+}
+
+void qSlicerTractographyEditorROIWidget::setInteractiveFiberEdit(bool arg)
+{
+  Q_D(qSlicerTractographyEditorROIWidget);
+  if (d->FiberBundleNode)
+  {
+    vtkMRMLInteractionNode *interactionNode =
+      vtkMRMLInteractionNode::SafeDownCast(
+          this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    if (interactionNode)
+    {
+      interactionNode->SetEnableFiberEdit((int)arg);
     }
   }
 }

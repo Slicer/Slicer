@@ -174,6 +174,16 @@ QCheckBox::indicator:unchecked {
      </property>
     </widget>
    </item>
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="EnableFiberEdit">
+     <property name="text">
+      <string>Enable Interactive Edit (d-key delete)</string>
+     </property>
+     <property name="checked">
+       <bool>false</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>

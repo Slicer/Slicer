@@ -38,6 +38,7 @@ public slots:
   void positiveROISelection(bool);
   void negativeROISelection(bool);
   void setInteractiveROI(bool);
+  void setInteractiveFiberEdit(bool);
   void setROIVisibility(bool);
   void createNewBundleFromSelection();
   void updateBundleFromSelection();

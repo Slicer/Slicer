@@ -74,6 +74,10 @@ public:
   void SwitchToSinglePlaceMode();
   void SwitchToViewTransformMode();
 
+/// Enable/Disable Editing of Fibers
+  vtkGetMacro(EnableFiberEdit, int);
+  vtkSetMacro(EnableFiberEdit, int);
+
 protected:
   vtkMRMLInteractionNode();
   ~vtkMRMLInteractionNode();
@@ -86,6 +90,8 @@ protected:
 
   int PlaceModePersistence;
   int TransformModePersistence;
+
+  int EnableFiberEdit;
 };
 
 #endif

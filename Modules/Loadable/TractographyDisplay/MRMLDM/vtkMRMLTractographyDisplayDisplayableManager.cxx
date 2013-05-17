@@ -58,6 +58,19 @@ vtkCxxRevisionMacro (vtkMRMLTractographyDisplayDisplayableManager, "$Revision: 1
 //---------------------------------------------------------------------------
 vtkMRMLTractographyDisplayDisplayableManager::vtkMRMLTractographyDisplayDisplayableManager()
 {
+  this->EnableFiberEdit = 0;
+
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonPressEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonReleaseEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::RightButtonPressEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::RightButtonReleaseEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::MiddleButtonPressEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::MiddleButtonReleaseEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::MouseWheelBackwardEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::MouseWheelForwardEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::EnterEvent);
+  this->RemoveInteractorStyleObservableEvent(vtkCommand::LeaveEvent);
+  this->AddInteractorStyleObservableEvent(vtkCommand::KeyPressEvent);
 }
 
 //---------------------------------------------------------------------------
@@ -81,14 +94,10 @@ int vtkMRMLTractographyDisplayDisplayableManager::ActiveInteractionModes()
 //---------------------------------------------------------------------------
 void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int eventid)
 {
-  bool keyPressed = false;
-  char *keySym = this->GetInteractor()->GetKeySym();
-  if (keySym && strcmp(keySym, "d") == 0)
-    {
-    keyPressed = true;
-    }
-
-  if (eventid == vtkCommand::LeftButtonReleaseEvent && keyPressed)
+  //if (eventid == vtkCommand::LeftButtonReleaseEvent && keyPressed)
+  if (this->GetEnableFiberEdit() &&
+      eventid == vtkCommand::KeyPressEvent && 
+      this->GetInteractor()->GetKeyCode() == 'd')
     {
     double x = this->GetInteractor()->GetEventPosition()[0];
     double y = this->GetInteractor()->GetEventPosition()[1];
@@ -141,11 +150,6 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
       // reset pick tolerance
       modelDisplayableManager->SetPickTolerance(pickTolerance);
       }
-    }
-
-  if (keyPressed)
-    {
-    this->GetInteractor()->SetKeySym(0);
     }
 
   this->PassThroughInteractorStyleEvent(eventid);
@@ -215,4 +219,42 @@ void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFibe
     ***/
     }
 
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTractographyDisplayDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+
+  vtkMRMLInteractionNode *interactionNode = NULL;
+
+  if (newScene)
+    {
+    interactionNode = vtkMRMLInteractionNode::SafeDownCast(
+          newScene->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+    }
+  if (interactionNode)
+    {
+    if (newScene)
+      {
+      vtkObserveMRMLNodeMacro(interactionNode);
+      }
+    else
+      {
+      vtkUnObserveMRMLNodeMacro(interactionNode);
+      }
+    }
+
+  Superclass::SetMRMLSceneInternal(newScene);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTractographyDisplayDisplayableManager
+::ProcessMRMLNodesEvents(vtkObject *caller,unsigned long event,void *callData)
+{
+
+  vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
+  if (interactionNode && event == vtkCommand::ModifiedEvent)
+  {
+    this->SetEnableFiberEdit(interactionNode->GetEnableFiberEdit());
+  }
 }

@@ -40,6 +40,8 @@ public:
   vtkTypeRevisionMacro(vtkMRMLTractographyDisplayDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  vtkGetMacro(EnableFiberEdit, int);
+  vtkSetMacro(EnableFiberEdit, int);
 
 protected:
   vtkMRMLTractographyDisplayDisplayableManager();
@@ -49,12 +51,16 @@ protected:
 
   virtual int ActiveInteractionModes();
 
+  virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+  virtual void ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void *callData);
+
   virtual void OnInteractorStyleEvent(int eventId);
 
   void DeletePickedFiber(vtkMRMLFiberBundleDisplayNode* dnode, vtkIdType pickedCell);
 
 protected:
-
+  
+  int EnableFiberEdit;
 };
 
 #endif
