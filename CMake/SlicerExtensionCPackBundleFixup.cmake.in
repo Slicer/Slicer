@@ -295,11 +295,6 @@ function(fixup_slicer_extension)
 
   set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
   set(Slicer_BUILD_CLI "@Slicer_BUILD_CLI@")
-  if(Slicer_BUILD_CLI_SUPPORT AND Slicer_BUILD_CLI)
-    list(APPEND candiates_pattern
-      "${ext_dir}/Contents/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_CLIMODULES_LIB_DIR@/*${suffix}"
-      )
-  endif()
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 
