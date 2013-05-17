@@ -1,9 +1,4 @@
-#
-# Make sure this CMake has BundleUtilities.cmake:
-#
-if(NOT EXISTS "${CMAKE_ROOT}/Modules/BundleUtilities.cmake")
-  message(FATAL_ERROR "error: BundleUtilities.cmake not found. Use CMake 2.8.3 or later.")
-endif()
+
 include(BundleUtilities)
 
 #
