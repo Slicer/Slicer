@@ -62,32 +62,24 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   # By default, embed items as set by gp_item_default_embedded_path:
   set(path "${${default_embedded_path_var}}")
 
-  if(item MATCHES "\\.dylib$")
+  if(item MATCHES "\\.(dylib|so)$")
     set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
   set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
   if(Slicer_USE_PYTHONQT)
-
+    # Python library
     if(item MATCHES "libpython[^/]+\\.dylib$")
       set(path "@executable_path@/../lib/Python/lib")
     endif()
-
-    if(item MATCHES "@Slicer_LIB_DIR@/[^/]+Python\\.so$")
-      set(path "@executable_path@/../@Slicer_LIB_DIR@")
-    endif()
-
   endif()
 
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
+    # Tcl libraries
     if(item MATCHES "tcl-build/lib/lib[^/]+\\.dylib$")
       set(path "@executable_path@/../lib/TclTk")
     endif()
-  endif()
-
-  if(item MATCHES "@Slicer_LIB_DIR@/[^/]+\\.dylib$")
-    set(path "@executable_path@/../@Slicer_LIB_DIR@")
   endif()
 
   #if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
@@ -322,7 +314,7 @@ function(fixup_slicer_extension)
   list(REMOVE_DUPLICATES libs)
 
   # Additional libs may be found in:
-  set(libs_path )#"@CMAKE_RUNTIME_OUTPUT_DIRECTORY@")
+  set(libs_path )
 
   list(APPEND libs_path "@EXTENSION_BINARY_DIR@/@Slicer_LIB_DIR@")
   if(Slicer_BUILD_QTLOADABLEMODULES)
