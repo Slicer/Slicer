@@ -152,14 +152,6 @@ qSlicerCLIExecutableModuleFactory::qSlicerCLIExecutableModuleFactory(const QStri
 void qSlicerCLIExecutableModuleFactory::registerItems()
 {
   QStringList modulePaths = qSlicerCLIModuleFactoryHelper::modulePaths();
-
-#ifdef Q_OS_MAC
-  // HACK - See CMakeLists.txt for additional details
-  if (qSlicerCoreApplication::application()->isInstalled())
-    {
-    modulePaths.prepend(qSlicerCoreApplication::application()->slicerHome() + "/" Slicer_CLIMODULES_SUBDIR);
-    }
-#endif
   this->registerAllFileItems(modulePaths);
 }
 

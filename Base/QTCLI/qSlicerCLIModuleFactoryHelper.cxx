@@ -54,6 +54,14 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
        defaultCmdLineModulePaths << app->slicerHome() + "/" + Slicer_CLIMODULES_LIB_DIR + "/" + app->intDir();
        }
     }
+#ifdef Q_OS_MAC
+  // HACK - See CMakeLists.txt for additional details
+  if (qSlicerCoreApplication::application()->isInstalled() &&
+      QFile::exists(app->slicerHome() + "/" + Slicer_CLIMODULES_SUBDIR))
+    {
+    defaultCmdLineModulePaths << app->slicerHome() + "/" Slicer_CLIMODULES_SUBDIR;
+    }
+#endif
 
   QSettings * settings = app->revisionUserSettings();
   QStringList additionalModulePaths = settings->value("Modules/AdditionalPaths").toStringList();
