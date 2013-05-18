@@ -155,8 +155,6 @@ class LabelStatisticsWidget:
       return False
     if self.grayscaleNode.GetImageData().GetDimensions() != self.labelNode.GetImageData().GetDimensions():
       return False
-    if not self.grayscaleNode.GetSpacing() != self.labelNode.GetSpacing():
-      return False
     return True
 
   def onApply(self):
@@ -164,7 +162,7 @@ class LabelStatisticsWidget:
     """
     if not self.volumesAreValid():
       qt.QMessageBox.warning(slicer.util.mainWindow(),
-          "Label Statistics", "Volumes do not have same geometry.")
+          "Label Statistics", "Volumes do not have the same geometry.")
       return
 
     self.applyButton.text = "Working..."
