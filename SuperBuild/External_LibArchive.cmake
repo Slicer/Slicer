@@ -59,7 +59,6 @@ if(NOT DEFINED LibArchive_DIR)
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     INSTALL_DIR LibArchive-install
-    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
     # Not used -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}

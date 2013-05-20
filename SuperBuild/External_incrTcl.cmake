@@ -57,7 +57,7 @@ if(NOT WIN32)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${incrTcl_SVN_REPOSITORY}
     SVN_REVISION ${incrTcl_SVN_REVISION}
-    "${${PROJECT_NAME}_EP_DISABLED_UPDATE}"
+    UPDATE_COMMAND "" # Disable update
     SOURCE_DIR tcl/incrTcl
     BUILD_IN_SOURCE ${incrTcl_BUILD_IN_SOURCE}
     PATCH_COMMAND ${incrTcl_PATCH_COMMAND}

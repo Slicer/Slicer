@@ -19,7 +19,6 @@ if(NOT DEFINED jqPlot_DIR)
   ExternalProject_Add(${proj}
     URL http://slicer.kitware.com/midas3/download?items=15065&dummy=jquery.jqplot.1.0.4r1120.tar.gz
     URL_MD5 5c5d73730145c3963f09e1d3ca355580
-    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/jqPlot-build
     CONFIGURE_COMMAND ""

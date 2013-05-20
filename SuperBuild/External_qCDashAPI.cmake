@@ -43,7 +43,6 @@ if(NOT DEFINED qCDashAPI_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/jcfr/qCDashAPI.git"
     GIT_TAG "9cd19663c1884b28ba4ad4153b290bf9da5500ab"
-    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}

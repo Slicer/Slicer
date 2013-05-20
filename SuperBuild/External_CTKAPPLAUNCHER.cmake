@@ -40,7 +40,6 @@ if(Slicer_USE_CTKAPPLAUNCHER)
       URL http://packages.kitware.com/api/rest?method=midas.item.download&id=${item_id}&dummy=CTKAppLauncher-${launcher_version}-${CTKAPPLAUNCHER_OS}-${CTKAPPLAUNCHER_ARCHITECTURE}.tar.gz
       URL_MD5 ${md5}
       SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
-      "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""

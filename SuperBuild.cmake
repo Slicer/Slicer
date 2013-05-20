@@ -62,16 +62,6 @@ include(ExternalProject)
 include(ListToString)
 include(SlicerMacroCheckExternalProjectDependency)
 
-# With CMake 2.8.9 or later, the UPDATE_COMMAND is required for updates to occur.
-# For earlier versions, we nullify the update state to prevent updates and
-# undesirable rebuild.
-set(${PROJECT_NAME}_EP_DISABLED_UPDATE UPDATE_COMMAND "")
-if(CMAKE_VERSION VERSION_LESS 2.8.9)
-  set(${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288 ${${PROJECT_NAME}_EP_DISABLED_UPDATE})
-else()
-  set(${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288 LOG_UPDATE 1)
-endif()
-
 set(ep_base        "${CMAKE_BINARY_DIR}")
 #set(ep_install_dir "${ep_base}/Install")
 

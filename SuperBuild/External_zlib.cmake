@@ -43,7 +43,6 @@ if(NOT DEFINED zlib_DIR)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/zlib.git"
     GIT_TAG "66a753054b356da85e1838a081aa94287226823e"
-    "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
     SOURCE_DIR zlib
     BINARY_DIR zlib-build
     INSTALL_DIR zlib-install

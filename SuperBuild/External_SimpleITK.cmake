@@ -64,7 +64,6 @@ ExternalProject_add(SimpleITK
   BINARY_DIR SimpleITK-build
   GIT_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git
   GIT_TAG v0.6.1
-  "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   CMAKE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}

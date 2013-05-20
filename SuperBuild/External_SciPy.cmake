@@ -17,7 +17,6 @@ set(proj SciPy)
 
 ExternalProject_Add(${proj}
   SVN_REPOSITORY "http://svn.scipy.org/svn/scipy/branches/0.7.x"
-  "${${PROJECT_NAME}_EP_UPDATE_IF_GREATER_288}"
   SOURCE_DIR python/scipy
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
