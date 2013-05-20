@@ -111,7 +111,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
     widget->setSliceLogic(sliceWidget->sliceController()->sliceLogic());
     
     // add the widget to the display
-    SliceControllersLayout->addWidget(widget);
+    this->SliceControllersLayout->addWidget(widget);
 
     barWidget = widget;
     }
@@ -133,7 +133,7 @@ qSlicerViewControllersModuleWidgetPrivate::createController(vtkMRMLNode *n, qSli
       }
     
     // add the widget to the display
-    ThreeDViewControllersLayout->addWidget(widget);
+    this->ThreeDViewControllersLayout->addWidget(widget);
     
     barWidget = widget;
     }
