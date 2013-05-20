@@ -302,6 +302,7 @@ slicer_config_set_ep(
   CACHE PATH "Path to Curl build or install directory" FORCE)
 
 # SlicerExecutionModel settings
+set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX "@SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG@")
 set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES "@SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG@")
 set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES "@SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG@")
 

@@ -123,6 +123,7 @@ if(Slicer_USE_PYTHONQT)
 endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
+  set(SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX_CONFIG ${SlicerExecutionModel_CLI_LIBRARY_WRAPPER_CXX})
   set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES})
   set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 endif()
