@@ -34,7 +34,7 @@
 #include <ctkPimpl.h>
 #include <ctkUtils.h>
 
-// qMidasAPI includes
+// qRestAPI includes
 #include <qMidasAPI.h>
 
 // QtCore includes

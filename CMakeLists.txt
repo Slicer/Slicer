@@ -714,11 +714,11 @@ find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
-# qMidasAPI
+# qRestAPI
 #-----------------------------------------------------------------------------
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  find_package(qMidasAPI REQUIRED)
-  include(${qMidasAPI_USE_FILE})
+  find_package(qRestAPI REQUIRED)
+  include(${qRestAPI_USE_FILE})
 endif()
 
 #-----------------------------------------------------------------------------

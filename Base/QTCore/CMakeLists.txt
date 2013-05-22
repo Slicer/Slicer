@@ -122,7 +122,7 @@ set(KIT_target_libraries
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_target_libraries
-    qMidasAPI
+    qRestAPI
     )
 endif()
 

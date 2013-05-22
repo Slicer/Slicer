@@ -7,18 +7,18 @@ endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
 # Sanity checks
-if(DEFINED qMidasAPI_DIR AND NOT EXISTS ${qMidasAPI_DIR})
-  message(FATAL_ERROR "qMidasAPI_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED qRestAPI_DIR AND NOT EXISTS ${qRestAPI_DIR})
+  message(FATAL_ERROR "qRestAPI_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
 # Set dependency list
-set(qMidasAPI_DEPENDENCIES "")
+set(qRestAPI_DEPENDENCIES "")
 
 # Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(qMidasAPI)
-set(proj qMidasAPI)
+SlicerMacroCheckExternalProjectDependency(qRestAPI)
+set(proj qRestAPI)
 
-if(NOT DEFINED qMidasAPI_DIR)
+if(NOT DEFINED qRestAPI_DIR)
   #message(STATUS "${__indent}Adding project ${proj}")
 
   set(EXTERNAL_PROJECT_OPTIONAL_ARGS)
@@ -41,8 +41,8 @@ if(NOT DEFINED qMidasAPI_DIR)
   endif()
 
   ExternalProject_Add(${proj}
-    GIT_REPOSITORY "${git_protocol}://github.com/Slicer/qMidasAPI.git"
-    GIT_TAG "2fae646e963a43d0cae7af52c18e78ce43a75f0c"
+    GIT_REPOSITORY "${git_protocol}://github.com/commontk/qRestAPI.git"
+    GIT_TAG "e71c0d625dd9ba85a1a449417addfa1237674a85"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
@@ -52,16 +52,16 @@ if(NOT DEFINED qMidasAPI_DIR)
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       #-DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} # Unused
       -DBUILD_TESTING:BOOL=OFF
+      -DBUILD_SHARED_LIBS:BOOL=OFF
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
       ${EXTERNAL_PROJECT_OPTIONAL_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
-      ${qMidasAPI_DEPENDENCIES}
+      ${qRestAPI_DEPENDENCIES}
     )
-  set(qMidasAPI_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+  set(qRestAPI_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 else()
-  # The project is provided using qMidasAPI_DIR, nevertheless since other project may depend on qMidasAPI,
+  # The project is provided using qRestAPI_DIR, nevertheless since other project may depend on qRestAPI,
   # let's add an 'empty' one
-  SlicerMacroEmptyExternalProject(${proj} "${qMidasAPI_DEPENDENCIES}")
+  SlicerMacroEmptyExternalProject(${proj} "${qRestAPI_DEPENDENCIES}")
 endif()
-

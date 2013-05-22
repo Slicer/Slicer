@@ -292,9 +292,9 @@ slicer_config_set_ep(
   CACHE FILEPATH "Path to Python debug library" FORCE)
 
 slicer_config_set_ep(
-  qMidasAPI_DIR
-  "@qMidasAPI_DIR_CONFIG@"
-  CACHE PATH "Path to qMidasAPI build or install directory" FORCE)
+  qRestAPI_DIR
+  "@qRestAPI_DIR_CONFIG@"
+  CACHE PATH "Path to qRestAPI build or install directory" FORCE)
 
 slicer_config_set_ep(
   SLICERLIBCURL_DIR

@@ -110,7 +110,7 @@ if(Slicer_BUILD_EMSegment)
 endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
-  list(APPEND Slicer_DEPENDENCIES qMidasAPI)
+  list(APPEND Slicer_DEPENDENCIES qRestAPI)
 endif()
 
 if(Slicer_BUILD_DICOM_SUPPORT)
@@ -288,7 +288,7 @@ endif()
 
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-    -DqMidasAPI_DIR:PATH=${qMidasAPI_DIR}
+    -DqRestAPI_DIR:PATH=${qRestAPI_DIR}
     )
 endif()
 
