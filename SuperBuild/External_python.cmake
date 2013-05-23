@@ -103,8 +103,6 @@ if(NOT DEFINED python_DIR)
     )
   set(python_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
-  set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
-
   if(UNIX)
     set(python_IMPORT_SUFFIX so)
     if(APPLE)
@@ -124,6 +122,29 @@ if(NOT DEFINED python_DIR)
   else()
     message(FATAL_ERROR "Unknown system !")
   endif()
+
+  if(UNIX)
+    configure_file(
+      SuperBuild/python_customPython_configure.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
+      @ONLY)
+    ExternalProject_Add_Step(${proj} python_customPython_configure
+      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
+      DEPENDEES install
+      )
+  endif()
+
+  # Since fixup_bundle expects the library to be writable, let's add an extra step
+  # to make sure it's the case.
+  if(APPLE)
+    ExternalProject_Add_Step(${proj} python_install_chmod_library
+      COMMAND chmod u+xw ${slicer_PYTHON_LIBRARY}
+      DEPENDEES install
+      )
+  endif()
+
+  set(CMAKE_CFG_INTDIR ${SAVED_CMAKE_CFG_INTDIR}) # Restore CMAKE_CFG_INTDIR
+
 else()
   # The project is provided using python_DIR, nevertheless since other project may depend on python,
   # let's add an 'empty' one
@@ -135,24 +156,3 @@ endif()
 message(STATUS "slicer_PYTHON_INCLUDE:${slicer_PYTHON_INCLUDE}")
 message(STATUS "slicer_PYTHON_LIBRARY:${slicer_PYTHON_LIBRARY}")
 message(STATUS "slicer_PYTHON_EXECUTABLE:${slicer_PYTHON_EXECUTABLE}")
-
-if(UNIX)
-  configure_file(
-    SuperBuild/python_customPython_configure.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
-    @ONLY)
-  ExternalProject_Add_Step(${proj} python_customPython_configure
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
-    DEPENDEES install
-    )
-endif()
-
-#-----------------------------------------------------------------------------
-# Since fixup_bundle expects the library to be writable, let's add an extra step
-# to make sure it's the case.
-if(APPLE)
-  ExternalProject_Add_Step(${proj} python_install_chmod_library
-    COMMAND chmod u+xw ${slicer_PYTHON_LIBRARY}
-    DEPENDEES install
-    )
-endif()
