@@ -42,7 +42,7 @@ if(NOT DEFINED qRestAPI_DIR)
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/qRestAPI.git"
-    GIT_TAG "a13763a1fcf385e2eb76b54a76c3e14b2f0c2ce6"
+    GIT_TAG "4467b2bc100c21efb16dfdb56127a4f08ae5f2bf"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
     CMAKE_GENERATOR ${gen}
