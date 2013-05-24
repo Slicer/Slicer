@@ -25,6 +25,7 @@
 #include "vtkSlicerTractographyDisplayModuleMRMLDisplayableManagerExport.h"
 
 class vtkMRMLFiberBundleDisplayNode;
+class vtkMRMLFiberBundleNode;
 
 // MRML DisplayableManager includes
 #include <vtkMRMLAbstractThreeDViewDisplayableManager.h>
@@ -56,11 +57,17 @@ protected:
 
   virtual void OnInteractorStyleEvent(int eventId);
 
-  void DeletePickedFiber(vtkMRMLFiberBundleDisplayNode* dnode, vtkIdType pickedCell);
+  vtkMRMLFiberBundleNode* GetPickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
+                                                         vtkIdType pickedCell, vtkIdType &cellID);
+  void DeleteSelectedFibers();
+  void DeletePickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode, std::vector<vtkIdType> &cellIDs);
+  void SelectPickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode, std::vector<vtkIdType> &cellIDs);
 
 protected:
   
   int EnableFiberEdit;
+  vtkMRMLFiberBundleNode* SelectedFiberBundleNode;
+  std::map <vtkIdType, std::vector<double> > SelectedCells;
 };
 
 #endif

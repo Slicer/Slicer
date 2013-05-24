@@ -44,6 +44,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
 #include "vtkPolyData.h"
+#include "vtkPointData.h"
 
 // ITKSys includes
 //#include <itksys/SystemTools.hxx>
@@ -59,6 +60,7 @@ vtkCxxRevisionMacro (vtkMRMLTractographyDisplayDisplayableManager, "$Revision: 1
 vtkMRMLTractographyDisplayDisplayableManager::vtkMRMLTractographyDisplayDisplayableManager()
 {
   this->EnableFiberEdit = 0;
+  this->SelectedFiberBundleNode = 0;
 
   this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonPressEvent);
   this->RemoveInteractorStyleObservableEvent(vtkCommand::LeftButtonReleaseEvent);
@@ -97,7 +99,9 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
   //if (eventid == vtkCommand::LeftButtonReleaseEvent && keyPressed)
   if (this->GetEnableFiberEdit() &&
       eventid == vtkCommand::KeyPressEvent && 
-      this->GetInteractor()->GetKeyCode() == 'd')
+      (this->GetInteractor()->GetKeyCode() == 'd' ||
+       this->GetInteractor()->GetKeyCode() == 'x' ||
+       this->GetInteractor()->GetKeyCode() == 's') )
     {
     double x = this->GetInteractor()->GetEventPosition()[0];
     double y = this->GetInteractor()->GetEventPosition()[1];
@@ -119,13 +123,13 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
       double pickTolerance = modelDisplayableManager->GetPickTolerance();
       modelDisplayableManager->SetPickTolerance(0.001);
 
-      vtkIdType cellID = -1;
+      vtkIdType pickedCellID = -1;
 
       if (modelDisplayableManager->Pick(x,yNew) &&
           strcmp(modelDisplayableManager->GetPickedNodeID(),"") != 0)
         {
 
-        cellID = modelDisplayableManager->GetPickedCellID();
+        pickedCellID = modelDisplayableManager->GetPickedCellID();
 
         // find the node id, the picked node name is probably the display node
         const char *pickedNodeID = modelDisplayableManager->GetPickedNodeID();
@@ -141,15 +145,64 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
           }
         }
 
-      if (displayNode)
-        {
-        this->DeletePickedFiber(displayNode, cellID);
-        this->GetInteractionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
-        }
-
       // reset pick tolerance
       modelDisplayableManager->SetPickTolerance(pickTolerance);
+
+      if (this->GetInteractor()->GetKeyCode() == 'd')
+        {
+        std::vector<vtkIdType> cellIDs;
+        if (this->SelectedCells.empty())
+          {
+          // delete picked fiber
+          if (displayNode)
+            {
+            vtkIdType cellID = -1;
+            vtkMRMLFiberBundleNode *fiberBundleNode = this->GetPickedFiber(displayNode, pickedCellID, cellID);
+            if (fiberBundleNode && cellID > -1)
+              {
+              cellIDs.push_back(cellID);
+              this->DeletePickedFibers(fiberBundleNode, cellIDs);
+              }
+            }
+          }
+        else
+          {
+          // delete all selected fibers
+          this->DeleteSelectedFibers();
+          this->SelectedFiberBundleNode = NULL;
+          this->SelectedCells.clear();
+          }
+        }
+      else if (this->GetInteractor()->GetKeyCode() == 's')
+        {
+        // add fiber to selection
+        vtkIdType cellID = -1;
+        vtkMRMLFiberBundleNode *fiberBundleNode = this->GetPickedFiber(displayNode, pickedCellID, cellID);
+        if (fiberBundleNode && cellID > -1)
+          {
+          this->SelectedFiberBundleNode = fiberBundleNode;
+          std::vector<vtkIdType> cellIDs;
+          cellIDs.push_back(cellID);
+          this->SelectPickedFibers(fiberBundleNode, cellIDs);
+          }
+        }
+      else if (this->GetInteractor()->GetKeyCode() == 'x')
+        {
+        // unselect all selected fibers
+        std::vector<vtkIdType> cellIDs;
+        std::map <vtkIdType, std::vector<double> >::iterator it;
+        for(it = this->SelectedCells.begin(); it != this->SelectedCells.end(); it++)
+          {
+          cellIDs.push_back(it->first);
+          }
+        this->SelectPickedFibers(this->SelectedFiberBundleNode, cellIDs);
+        this->SelectedFiberBundleNode = NULL;
+        this->SelectedCells.clear();
+        }
+
       }
+
+    this->GetInteractionNode()->SetCurrentInteractionMode(vtkMRMLInteractionNode::ViewTransform);
     }
 
   this->PassThroughInteractorStyleEvent(eventid);
@@ -158,26 +211,36 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
-                                                                     vtkIdType pickedCell)
+void vtkMRMLTractographyDisplayDisplayableManager::DeleteSelectedFibers()
 {
+  std::vector<vtkIdType> cellIDs;
+  std::map <vtkIdType, std::vector<double> >::iterator it;
+  for (it = this->SelectedCells.begin(); it != this->SelectedCells.end(); it++)
+    {
+    cellIDs.push_back(it->first);
+    }
+  this->DeletePickedFibers(this->SelectedFiberBundleNode, cellIDs);
+  // reset selection
+}
+ 
+//---------------------------------------------------------------------------
+vtkMRMLFiberBundleNode*
+vtkMRMLTractographyDisplayDisplayableManager::GetPickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
+                                                             vtkIdType pickedCell, vtkIdType &cellID)
+{
+  cellID = -1;
+
+  vtkMRMLFiberBundleNode *fiberBundleNode = NULL;
+
   if (!displayNode)
   {
-    return;
-  }
-  vtkMRMLFiberBundleNode *fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(
-    displayNode->GetDisplayableNode());
-
-  if (!fiberBundleNode)
-  {
-    return;
+    return fiberBundleNode;
   }
 
   vtkMRMLFiberBundleLineDisplayNode *lineDisplayNode = vtkMRMLFiberBundleLineDisplayNode::SafeDownCast(displayNode);
   vtkMRMLFiberBundleTubeDisplayNode *tubeDisplayNode = vtkMRMLFiberBundleTubeDisplayNode::SafeDownCast(displayNode);
   vtkMRMLFiberBundleGlyphDisplayNode *glyphDisplayNode = vtkMRMLFiberBundleGlyphDisplayNode::SafeDownCast(displayNode);
 
-  vtkIdType cellID = -1;
   if (tubeDisplayNode)
     {
     int numSides = tubeDisplayNode->GetTubeNumberOfSides();
@@ -192,32 +255,119 @@ void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFiber(vtkMRMLFibe
     // NOT IMPLEMENTED YET
     }
 
-  if (cellID >=0)
-    {
+  if(cellID >= 0)
+    {            
+    fiberBundleNode = vtkMRMLFiberBundleNode::SafeDownCast(displayNode->GetDisplayableNode());
     cellID = fiberBundleNode->GetUnShuffledFiberID(cellID);
-
-    int shuffleIDs = fiberBundleNode->GetEnableShuffleIDs();
-
-    fiberBundleNode->SetEnableShuffleIDs(0);
-
-    vtkPolyData *polyData = vtkPolyData::New();
-    polyData->DeepCopy(fiberBundleNode->GetPolyData());
-    polyData->DeleteCell(cellID);
-    polyData->RemoveDeletedCells();
-    fiberBundleNode->SetAndObservePolyData(polyData);
-    polyData->Delete();
-
-    fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);
-
-    /** just updating polydata does not work for some reason
-    vtkPolyData *polyData = fiberBundleNode->GetPolyData();
-    polyData->DeleteCell(cellID);
-    polyData->RemoveDeletedCells();
-    polyData->Modified();
-    tubeDisplayNode->InvokeEvent(vtkCommand::ModifiedEvent);
-    //tubeDisplayNode->SetInputPolyData(polyData);
-    ***/
     }
+
+  return fiberBundleNode;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTractographyDisplayDisplayableManager::DeletePickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode,
+                                                                     std::vector<vtkIdType> &cellIDs)
+{
+  if (!fiberBundleNode)
+  {
+    return;
+  }
+
+  int shuffleIDs = fiberBundleNode->GetEnableShuffleIDs();
+  fiberBundleNode->SetEnableShuffleIDs(0);
+
+  vtkPolyData *polyData = vtkPolyData::New();
+  polyData->DeepCopy(fiberBundleNode->GetPolyData());
+  for (unsigned int i=0; i<cellIDs.size(); i++)
+    {
+    if (cellIDs[i] >= 0)
+      {
+      polyData->DeleteCell(cellIDs[i]);
+      }
+    }
+  polyData->RemoveDeletedCells();
+  fiberBundleNode->SetAndObservePolyData(polyData);
+  polyData->Delete();
+
+  fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);
+
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTractographyDisplayDisplayableManager::SelectPickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode,
+                                                                     std::vector<vtkIdType> &cellIDs)
+{
+  if (!fiberBundleNode)
+    {
+    return;
+    }
+
+  int shuffleIDs = fiberBundleNode->GetEnableShuffleIDs();
+  fiberBundleNode->SetEnableShuffleIDs(0);
+
+  // copy polydata
+  vtkIdType npts;
+  vtkIdType* pts;
+  vtkPolyData *polyData = vtkPolyData::New();
+  polyData->DeepCopy(fiberBundleNode->GetPolyData());
+  if (polyData->GetPointData() == NULL || polyData->GetPointData()->GetArray(0) == NULL)
+    {
+    return;
+    }
+
+  // get selection color(value) from the range
+  vtkDataArray *pointScalars = polyData->GetPointData()->GetArray(0);
+  double *range = pointScalars->GetRange();
+  float selectValue = range[1];
+  int ncomponents = pointScalars->GetNumberOfComponents();
+
+  // Loop overs cells
+
+  for (unsigned int i=0; i<cellIDs.size(); i++)
+    {
+    if (cellIDs[i] < 0)
+      {
+      continue;
+      }
+
+    polyData->GetCellPoints(cellIDs[i], npts, pts);
+
+    std::map <vtkIdType, std::vector<double> >::iterator it = this->SelectedCells.find(cellIDs[i]);
+    std::vector<double> values;
+
+    if (it != this->SelectedCells.end())
+      {
+      // if cell was already selected, unselect
+      // reset scalar values
+      values = it->second;
+      for (int p=0; p<npts; p++)
+        {
+        for (int c=0; c<ncomponents; c++)
+          {
+          pointScalars->SetComponent(pts[p], c, values[p*ncomponents+c]);
+          }
+        }
+      this->SelectedCells.erase(it);
+      }
+    else
+      {
+      // select cell, store scalar values and replace them with 'selectValue'
+      for (int p=0; p<npts; p++)
+        {
+        for (int c=0; c<ncomponents; c++)
+          {
+          values.push_back(pointScalars->GetComponent(p, c));
+          pointScalars->SetComponent(pts[p], c, selectValue);
+          }
+        }
+      this->SelectedCells[cellIDs[i]] = values;
+      }
+    }//for (unsigned int i=0; i<cellIDs.size(); i++)
+
+  fiberBundleNode->SetAndObservePolyData(polyData);
+  polyData->Delete();
+
+  fiberBundleNode->SetEnableShuffleIDs(shuffleIDs);
 
 }
 
