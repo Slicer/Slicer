@@ -705,7 +705,7 @@ void tilg_iso_3D(int dx, int dy, int dz,
       dir_mask = dir_tab[dir];
       for( i = nzz + nx + 1; i < end; i++ )
         {
-        if( (result[i] == OBJ) )
+        if( result[i] == OBJ )
           {
           nc = Env_Code_3(i);
           if( ( (~ nc) & dir_mask) == dir_mask )
