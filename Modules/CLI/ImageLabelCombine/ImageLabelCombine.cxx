@@ -75,6 +75,27 @@ int main( int argc, char * argv[] )
     output = duplicator->GetOutput();
     }
 
+  // Check dimensions equality
+  unsigned int inputDim = input->GetImageDimension();
+  unsigned int outputDim = output->GetImageDimension();
+  if (inputDim != outputDim)
+    {
+    std::cerr << "Input images dimensionality is not be the same" << std::endl;
+    return EXIT_FAILURE;
+    }
+  const ImageType::SizeType inputSize = input->GetLargestPossibleRegion().GetSize();
+  const ImageType::SizeType outputSize = output->GetLargestPossibleRegion().GetSize();
+  bool dimCheck = true;
+  for (int i=0; i<inputDim; i++)
+    {
+    dimCheck = dimCheck && (inputSize[i] == outputSize[i]);
+    }
+  if (!dimCheck)
+    {
+    std::cerr << "Input images dimensions are not be the same" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // This module operates on the image pixels. The images are expected to be
   // coinciding in the voxel space.
   IteratorType itIn(input, input->GetLargestPossibleRegion() );
