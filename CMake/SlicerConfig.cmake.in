@@ -7,6 +7,95 @@
 #
 #
 
+#
+# When manually building extension on MacOSX, in addition to the usual configure
+# option (CMAKE_BUILD_TYPE, ...), the developer is also expected to
+# configure it passing the variables:
+#   CMAKE_OSX_ARCHITECTURES
+#   CMAKE_OSX_DEPLOYMENT_TARGET
+#   CMAKE_OSX_SYSROOT
+# The value of these variables should match the one used to
+# configure the associated Slicer build tree. These values can be
+# retrieved looking at the CMakeCache.txt file located in the Slicer
+# build tree.
+#
+# To simplify the task of manually building out-of-source modules or extensions,
+# the developer could include the following statement at the top of both the main
+# CMakeLists.txt of the extension and also at the top of each module CMakeLists.txt
+# bundled within the extension.
+# Doing so will ensure that either the extension or each bundled module could be
+# built in a standalone fashion very easily without passing extra option
+# at configure time:
+#
+#  find_package(Slicer COMPONENTS ConfigurePrerequisites [...] REQUIRED)
+#
+#  project(Foo)
+#
+#  [...]
+#
+#  find_package(Slicer REQUIRED)
+#  include(${Slicer_USE_FILE})
+#  [...]
+
+
+# Extension support can be disabled by either
+#  (1) setting Slicer_DONT_USE_EXTENSION to TRUE or
+#  (2) calling find_package(Slicer COMPONENTS NoExtensionSupport [...] REQUIRED)
+
+
+# --------------------------------------------------------------------------
+#  COMPONENTS                | CMAKE VARIABLE(S)
+# --------------------------------------------------------------------------
+#  NoExtensionSupport        | Slicer_USE_NOEXTENSIONSUPPORT
+# --------------------------------------------------------------------------
+#  ConfigurePrerequisites    | Slicer_USE_NOEXTENSIONSUPPORT
+#                            | Slicer_DONT_USE_EXTENSION
+# --------------------------------------------------------------------------
+if(Slicer_FIND_COMPONENTS)
+  foreach(component ${Slicer_FIND_COMPONENTS})
+    string(TOUPPER ${component} _COMPONENT)
+    set(Slicer_USE_${_COMPONENT} 1)
+  endforeach()
+
+  set(Slicer_DONT_USE_EXTENSION ${Slicer_USE_NOEXTENSIONSUPPORT})
+endif()
+
+if(NOT DEFINED Slicer_DONT_USE_EXTENSION)
+  set(Slicer_DONT_USE_EXTENSION FALSE)
+endif()
+
+if(NOT DEFINED Slicer_USE_CONFIGUREPREREQUISITES)
+  set(Slicer_USE_CONFIGUREPREREQUISITES FALSE)
+endif()
+
+
+# --------------------------------------------------------------------------
+set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
+set(Slicer_EXTENSIONS_CMAKE_DIR "@Slicer_EXTENSIONS_CMAKE_DIR@")
+
+# Update CMAKE_MODULE_PATH
+set(CMAKE_MODULE_PATH
+  ${Slicer_CMAKE_DIR}
+  ${Slicer_EXTENSIONS_CMAKE_DIR}
+  ${CMAKE_MODULE_PATH}
+  )
+
+# --------------------------------------------------------------------------
+if(Slicer_USE_CONFIGUREPREREQUISITES AND NOT Slicer_PREREQUISITES_CONFIGURED)
+  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+  #       we ensure that the bitness will be properly detected.
+  include(SlicerBlockSetCMakeOSXVariables)
+  if(DEFINED CMAKE_C_COMPILER OR DEFINED CMAKE_CXX_COMPILER)
+    message(FATAL_ERROR
+      "To be effective, 'find_package(Slicer COMPONENTS ConfigurePrerequisites)' should "
+      "be placed before any calls to 'project()' or 'enable_language()'."
+      "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
+      )
+  endif()
+  set(Slicer_PREREQUISITES_CONFIGURED 1 CACHE INTERNAL "True if UseSlicer has already been included")
+  return()
+endif()
+
 # --------------------------------------------------------------------------
 # Slicer options
 # --------------------------------------------------------------------------
@@ -26,9 +115,6 @@ set(Slicer_BUILD_TESTING "@BUILD_TESTING@")
 set(Slicer_REQUIRED_QT_VERSION "@Slicer_REQUIRED_QT_VERSION@")
 set(Slicer_EXPERIMENTAL_QT_VERSION "@Slicer_EXPERIMENTAL_QT_VERSION@")
 set(Slicer_REQUIRED_QT_MODULES "@Slicer_REQUIRED_QT_MODULES@")
-
-set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
-set(Slicer_EXTENSIONS_CMAKE_DIR "@Slicer_EXTENSIONS_CMAKE_DIR@")
 
 # Launcher command
 set(Slicer_LAUNCHER_EXECUTABLE "@Slicer_LAUNCHER_EXECUTABLE_CONFIG@")
@@ -367,13 +453,6 @@ set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
-
-# Update CMAKE_MODULE_PATH
-set(CMAKE_MODULE_PATH
-  ${Slicer_CMAKE_DIR}
-  ${Slicer_EXTENSIONS_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
 
 # Include external projects
 foreach(proj ${Slicer_EXTERNAL_PROJECTS})

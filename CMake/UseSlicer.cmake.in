@@ -4,7 +4,7 @@
 # It includes the required Slicer macros/functions and sets up compiler
 # settings for a project to use Slicer.
 #
-# Note that the behavior of this file can customized up to some extent by
+# Note that the behavior of this file can be further customized by
 # defining variables like:
 #
 #   set(Slicer_SKIP_<DoSomething> TRUE)
@@ -13,15 +13,10 @@
 #
 #   include(${Slicer_USE_FILE})
 #
-# Note also that setting Slicer_DONT_USE_EXTENSION to TRUE allows to disable
-# extension support.
-#
 # The variable allowing to customize the behavior are:
 #
-#  Slicer_SKIP_SlicerBlockSetCMakeOSXVariables
 #  Slicer_SKIP_USE_FILE_INCLUDE_CHECK
 #  Slicer_SKIP_EXTENSION_NAME_CHECK
-#  Slicer_SKIP_PROJECT_COMMAND
 #  Slicer_SKIP_EXTERNAL_PROJECTS_USEFILE
 #  Slicer_SKIP_EXTERNAL_DATA
 #  Slicer_SKIP_SlicerBlockPlatformCheck
@@ -59,35 +54,24 @@ function(_slicer_skip_message text)
 endfunction()
 
 # --------------------------------------------------------------------------
-if(NOT DEFINED Slicer_DONT_USE_EXTENSION)
-  set(Slicer_DONT_USE_EXTENSION FALSE)
-endif()
-
-# --------------------------------------------------------------------------
-if(NOT DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
-  set(Slicer_SKIP_SlicerBlockSetCMakeOSXVariables FALSE)
-endif()
-if(NOT Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
-  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
-  #       we ensure that the bitness will be properly detected.
-  include(SlicerBlockSetCMakeOSXVariables)
-else()
-  _slicer_skip_message("SlicerBlockSetCMakeOSXVariables")
-endif()
-
-# --------------------------------------------------------------------------
 # Setting and checking EXTENSION_NAME
 # --------------------------------------------------------------------------
 if(NOT Slicer_DONT_USE_EXTENSION)
   slicer_check_variable(EXTENSION_NAME _EXTENSION_NAME_SET)
   slicer_check_variable(MODULE_NAME _MODULE_NAME_SET)
-
-  if(NOT ${_EXTENSION_NAME_SET} AND ${_MODULE_NAME_SET})
-    set(EXTENSION_NAME ${MODULE_NAME})
+  slicer_check_variable(PROJECT_NAME _PROJECT_NAME_SET)
+  if(NOT ${_EXTENSION_NAME_SET})
+    if(${_MODULE_NAME_SET})
+      set(EXTENSION_NAME ${MODULE_NAME})
+    elseif(${_PROJECT_NAME_SET})
+      set(EXTENSION_NAME ${PROJECT_NAME})
+    endif()
     slicer_setting_variable_message("EXTENSION_NAME")
   endif()
   if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK AND "${EXTENSION_NAME}" STREQUAL "")
-    message(FATAL_ERROR "error: Make sure to set EXTENSION_NAME or MODULE_NAME prior to call 'include(\${Slicer_USE_FILE})' !")
+    message(FATAL_ERROR
+      "error: Make sure to call 'project(<extension_name>)' or "
+      "set EXTENSION_NAME (or MODULE_NAME) prior to call 'include(\${Slicer_USE_FILE})' !")
   endif()
 endif()
 
@@ -95,33 +79,30 @@ endif()
 # Setup project
 # --------------------------------------------------------------------------
 
-if(NOT Slicer_DONT_USE_EXTENSION)
-  if(NOT DEFINED Slicer_SKIP_PROJECT_COMMAND)
-    set(Slicer_SKIP_PROJECT_COMMAND FALSE)
-  endif()
-  if(NOT DEFINED Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-    set(Slicer_SKIP_USE_FILE_INCLUDE_CHECK ${Slicer_SKIP_PROJECT_COMMAND})
-  endif()
-  if(NOT Slicer_SKIP_USE_FILE_INCLUDE_CHECK)
-    if(DEFINED ${EXTENSION_NAME}_SOURCE_DIR AND NOT UseSlicer_INCLUDED_ONCE)
-      message(FATAL_ERROR "Since calling 'include(\${Slicer_USE_FILE})' automatically calls 'project(${EXTENSION_NAME})'. "
-                          "Make sure to remove any call to project(${EXTENSION_NAME}). "
-                          "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
-                          )
-    endif()
-    set(UseSlicer_INCLUDED_ONCE 1 CACHE INTERNAL "True if UseSlicer has already been included")
-  else()
-    _slicer_skip_message("Slicer_USE_FILE_INCLUDE_CHECK'")
-  endif()
+if(DEFINED Slicer_SKIP_PROJECT_COMMAND)
+  message(AUTHOR_WARNING
+    "Setting Slicer_SKIP_PROJECT_COMMAND is not required anymore."
+    "Calling 'project()' along side 'find_package(Slicer)' is not"
+    "restricted anymore.")
+endif()
 
-  if(Slicer_SKIP_EXTENSION_NAME_CHECK)
-    set(Slicer_SKIP_PROJECT_COMMAND TRUE)
-  endif()
-  if(NOT Slicer_SKIP_PROJECT_COMMAND)
-    project(${EXTENSION_NAME})
-  else()
-    _slicer_skip_message("'project(${EXTENSION_NAME})'")
-  endif()
+if(DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
+  message(AUTHOR_WARNING
+    "Setting Slicer_SKIP_SlicerBlockSetCMakeOSXVariables is not required anymore."
+    "Calling 'find_package(Slicer)' does NOT implies the inclusion of "
+    "'SlicerBlockSetCMakeOSXVariables'."
+    "For convenience, if the developer would like to have the CMAKE_OSX_* variable "
+    "automatically set, component 'ConfigurePrerequisites' should be used."
+    "For example:"
+    "  find_package(Slicer COMPONENTS ConfigurePrerequisites)"
+    "  project(Foo)")
+endif()
+
+if(NOT DEFINED ${EXTENSION_NAME}_SOURCE_DIR)
+  set(${EXTENSION_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+endif()
+if(NOT DEFINED ${EXTENSION_NAME}_BINARY_DIR)
+  set(${EXTENSION_NAME}_BINARY_DIR ${CMAKE_BINARY_DIR})
 endif()
 
 # --------------------------------------------------------------------------
