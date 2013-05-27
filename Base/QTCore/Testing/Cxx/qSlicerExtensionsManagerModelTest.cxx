@@ -346,6 +346,8 @@ qSlicerExtensionsManagerModelTester::extensionMetadata(const QString &os, int ex
 // ----------------------------------------------------------------------------
 void qSlicerExtensionsManagerModelTester::initTestCase()
 {
+  QSettings::setDefaultFormat(QSettings::IniFormat);
+
   QVERIFY(QDir::temp().exists());
 
   this->TemporaryDirName =
