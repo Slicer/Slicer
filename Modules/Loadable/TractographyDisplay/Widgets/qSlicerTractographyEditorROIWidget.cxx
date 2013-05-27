@@ -57,6 +57,8 @@ void qSlicerTractographyEditorROIWidgetPrivate::init()
 
   this->ROIForFiberSelectionMRMLNodeSelector->setBaseName(QString::fromUtf8("ROI Node"));
 
+  this->EnableFiberEdit->setToolTip(QString("Click in 3D view to focus\n s: toggle select/unselect individual fibers\n x: unselect all selected fibers\n d: delete selected fibers or an individual fiber, if none is selected"));
+
   QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(currentNodeChanged(vtkMRMLNode*)),
                    q, SLOT(setAnnotationMRMLNodeForFiberSelection(vtkMRMLNode*)));
   QObject::connect(this->ROIForFiberSelectionMRMLNodeSelector, SIGNAL(nodeAddedByUser(vtkMRMLNode*)),
