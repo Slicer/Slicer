@@ -754,6 +754,8 @@ if(Slicer_USE_PYTHONQT)
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   string(REGEX REPLACE "[.]" "" Slicer_PYTHON_VERSION ${Slicer_PYTHON_VERSION_DOT})
   message(STATUS "Configuring ${SlicerApp_APPLICATION_NAME} with python ${Slicer_PYTHON_VERSION_DOT}")
+
+  set(CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME "Slicer")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1048,6 +1050,12 @@ endif()
 # Create target to download data from the <Slicer_ExternalData_DATA_MANAGEMENT_TARGET> group.
 # This must come after all tests have been added that reference the group, so we put it last.
 ExternalData_Add_Target(${Slicer_ExternalData_DATA_MANAGEMENT_TARGET})
+
+#-----------------------------------------------------------------------------
+# Create targets CopySlicerPython{Resource, Script}Files, CompileSlicerPythonFiles
+if(Slicer_USE_PYTHONQT)
+  ctkFunctionAddCompilePythonScriptTargets(${CTK_COMPILE_PYTHON_SCRIPTS_GLOBAL_TARGET_NAME})
+endif()
 
 #-----------------------------------------------------------------------------
 # The commands in this directory are intended to be executed as
