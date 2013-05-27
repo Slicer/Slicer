@@ -647,7 +647,7 @@ void qSlicerExtensionsManagerModelTester::testExtractExtensionArchive_data()
                                << true /* nonExistentDestinationPath */
                                << false /* readOnlyDestinationPath */;
     }
-#ifndef Q_OS_WIN
+#if !(defined Q_OS_WIN || defined Q_OS_MAC)
     {
       QTest::newRow("linux-0-readonly-destinationPath")
                                << "CLIExtensionTemplate"
