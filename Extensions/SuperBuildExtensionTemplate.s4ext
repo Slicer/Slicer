@@ -6,7 +6,7 @@
 
 # This is source code manager (i.e. svn)
 scm local
-scmurl Testing/SuperBuildLoadableExtensionTemplate
+scmurl Testing/SuperBuildExtensionTemplate
 
 # list dependencies
 # - These should be names of other modules that have .s4ext files
@@ -34,7 +34,7 @@ iconurl     http://viewvc.slicer.org/viewvc.cgi/Slicer4/trunk/Extensions/Testing
 status      Beta
 
 # One line stating what the module does
-description This is an example of Qt loadable module using SuperBuild built as an extension
+description This is an example of extension having a SuperBuild structure.
 
 # Space separated list of urls
 screenshoturls http://wiki.slicer.org/slicerWiki/images/b/b3/Slicer-r19441-SuperBuildLoadableExtensionTemplate-screenshot.png
