@@ -156,6 +156,34 @@ void vtkMRMLUnitNode::SetQuantity(const char* name)
 }
 
 //----------------------------------------------------------------------------
+std::string vtkMRMLUnitNode::WrapValueWithPrefix(std::string& value)
+{
+  std::string wrappedString = "";
+  if (this->Prefix)
+    {
+    wrappedString = std::string(this->Prefix) + " ";
+    }
+  return wrappedString + value;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLUnitNode::WrapValueWithSuffix(std::string& value)
+{
+  std::string wrappedString = "";
+  if (this->Suffix)
+    {
+    wrappedString = " " + std::string(this->Suffix);
+    }
+  return value + wrappedString;
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLUnitNode::WrapValueWithPrefixAndSuffix(std::string& value)
+{
+  return this->WrapValueWithPrefix(this->WrapValueWithSuffix(value));
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLUnitNode::SetName(const char* name)
 {
   this->Superclass::SetName(name);

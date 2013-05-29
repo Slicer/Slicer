@@ -143,7 +143,7 @@ bool qMRMLVolumeInfoWidgetPrivate::centeredOrigin(double* origin)const
 
 //------------------------------------------------------------------------------
 qMRMLVolumeInfoWidget::qMRMLVolumeInfoWidget(QWidget *_parent)
-  : QWidget(_parent)
+  : Superclass(_parent)
   , d_ptr(new qMRMLVolumeInfoWidgetPrivate(*this))
 {
   Q_D(qMRMLVolumeInfoWidget);

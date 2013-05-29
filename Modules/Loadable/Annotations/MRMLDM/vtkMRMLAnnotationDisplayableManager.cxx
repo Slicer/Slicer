@@ -205,6 +205,49 @@ void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromInteractionNode()
     vtkUnObserveMRMLNodeMacro(interactionNode);
     }
 }
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::AddObserversToSelectionNode()
+{
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (selectionNode)
+    {
+    vtkDebugMacro("AddObserversToSelectionNode: selectionNode found")
+    vtkIntArray* selectionEvents = vtkIntArray::New();
+    selectionEvents->InsertNextValue(vtkMRMLSelectionNode::UnitModifiedEvent);
+    vtkObserveMRMLNodeEventsMacro(selectionNode, selectionEvents);
+    selectionEvents->Delete();
+    }
+  else
+    {
+    vtkWarningMacro("AddObserversToSelectionNode: No selection node!");
+    }
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationDisplayableManager::RemoveObserversFromSelectionNode()
+{
+  if (!this->GetMRMLScene())
+    {
+    return;
+    }
+
+  vtkMRMLSelectionNode* selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  if (selectionNode)
+    {
+    vtkUnObserveMRMLNodeMacro(selectionNode);
+    }
+}
+
 //---------------------------------------------------------------------------
 void vtkMRMLAnnotationDisplayableManager::Create()
 {
@@ -290,11 +333,13 @@ void vtkMRMLAnnotationDisplayableManager::SetMRMLSceneInternal(vtkMRMLScene* new
   if (newScene)
     {
     this->AddObserversToInteractionNode();
+    this->AddObserversToSelectionNode();
     }
   else
     {
     // there's no scene to get the interaction node from, so this won't do anything
     this->RemoveObserversFromInteractionNode();
+    this->RemoveObserversFromSelectionNode();
     }
   vtkDebugMacro("SetMRMLSceneInternal: add observer on interaction node now?");
 
@@ -307,6 +352,8 @@ void vtkMRMLAnnotationDisplayableManager
 
   vtkMRMLAnnotationNode * annotationNode = vtkMRMLAnnotationNode::SafeDownCast(caller);
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
+  vtkMRMLSelectionNode * selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(caller);
   if (annotationNode)
     {
     switch(event)
@@ -342,6 +389,13 @@ void vtkMRMLAnnotationDisplayableManager
       // always update lock if the mode changed, even if this isn't the displayable manager
       // for the annotation that is getting placed, but don't update locking on persistence changed event
       this->Helper->UpdateLockedAllWidgetsFromInteractionNode(interactionNode);
+      }
+    }
+  else if (selectionNode)
+    {
+    if (event == vtkMRMLSelectionNode::UnitModifiedEvent)
+      {
+      this->OnMRMLSelectionNodeUnitModifiedEvent(selectionNode);
       }
     }
   else

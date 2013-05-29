@@ -40,10 +40,10 @@
 #include <vtkWeakPointer.h>
 
 class ctkSignalMapper;
-class ctkSliderWidget;
 class ctkSpinBox;
 class ctkVTKSliceView;
 class QSpinBox;
+class qMRMLSliderWidget;
 class vtkMRMLSliceNode;
 class vtkObject;
 
@@ -140,7 +140,7 @@ public:
   QButtonGroup*                       ControllerButtonGroup;
 
   QToolButton*                        FitToWindowToolButton;
-  ctkSliderWidget*                    SliceOffsetSlider;
+  qMRMLSliderWidget*                  SliceOffsetSlider;
   double                              LastLabelMapOpacity;
   double                              LastForegroundOpacity;
   double                              LastBackgroundOpacity;

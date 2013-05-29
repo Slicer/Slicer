@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>qMRMLVolumeInfoWidget</class>
- <widget class="QWidget" name="qMRMLVolumeInfoWidget">
+ <widget class="qMRMLWidget" name="qMRMLVolumeInfoWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -28,7 +28,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageDimensionsWidget">
+    <widget class="qMRMLCoordinatesWidget" name="ImageDimensionsWidget">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -44,6 +44,9 @@
      <property name="coordinates" stdset="0">
       <string>1,1,1</string>
      </property>
+     <property name="quantity">
+      <string>length</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="0">
@@ -54,8 +57,8 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageSpacingWidget">
-     <property name="decimals" stdset="0">
+    <widget class="qMRMLCoordinatesWidget" name="ImageSpacingWidget">
+     <property name="decimals">
       <number>4</number>
      </property>
      <property name="minimum" stdset="0">
@@ -63,6 +66,12 @@
      </property>
      <property name="coordinates" stdset="0">
       <string>1,1,1</string>
+     </property>
+     <property name="quantity">
+      <string>length</string>
+     </property>
+     <property name="unitAwareProperties">
+      <set>qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Suffix</set>
      </property>
     </widget>
    </item>
@@ -74,8 +83,8 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="ctkCoordinatesWidget" name="ImageOriginWidget">
-     <property name="decimals" stdset="0">
+    <widget class="qMRMLCoordinatesWidget" name="ImageOriginWidget">
+     <property name="decimals">
       <number>4</number>
      </property>
      <property name="minimum" stdset="0">
@@ -83,6 +92,9 @@
      </property>
      <property name="maximum" stdset="0">
       <double>1000000.000000000000000</double>
+     </property>
+     <property name="quantity">
+      <string>length</string>
      </property>
     </widget>
    </item>
@@ -286,6 +298,17 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>qMRMLCoordinatesWidget</class>
+   <extends>ctkCoordinatesWidget</extends>
+   <header>qMRMLCoordinatesWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
    <header>ctkCoordinatesWidget.h</header>
@@ -302,5 +325,54 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>qMRMLVolumeInfoWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ImageDimensionsWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLVolumeInfoWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ImageOriginWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qMRMLVolumeInfoWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ImageSpacingWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>44</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -62,11 +62,15 @@ class PaintEffectOptions(LabelEffect.LabelEffectOptions):
     self.radiusLabel.setToolTip("Set the radius of the paint brush in millimeters")
     self.radiusFrame.layout().addWidget(self.radiusLabel)
     self.widgets.append(self.radiusLabel)
-    self.radiusSpinBox = ctk.ctkSpinBox(self.radiusFrame)
+    self.radiusSpinBox = slicer.qMRMLSpinBox(self.radiusFrame)
     self.radiusSpinBox.setToolTip("Set the radius of the paint brush in millimeters")
+    self.radiusSpinBox.quantity = "length"
+    # QFlags not wrapped in python. Equivalent to Prefix | Suffix
+    # See qMRMLSpinBox for more details.
+    self.radiusSpinBox.unitAwareProperties = 0x01 | 0x02
     self.radiusSpinBox.minimum = self.minimumRadius
     self.radiusSpinBox.maximum = self.maximumRadius
-    self.radiusSpinBox.suffix = "mm"
+    self.radiusSpinBox.setMRMLScene(slicer.mrmlScene)
     from math import log,floor
     decimals = floor(log(self.minimumRadius,10))
     if decimals < 0:

@@ -127,6 +127,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     }
   
   // hide the RAS if it's not a fiducial
+  ui.RASCoordinatesWidget->setMRMLScene(this->m_logic->GetMRMLScene());
   if (!mrmlNode->IsA("vtkMRMLAnnotationFiducialNode"))
     {
     ui.RASLabel->setVisible(false);
@@ -260,6 +261,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.DescriptionTextEdit->setText(text.c_str());
 
   // load the current annotation text scale
+  ui.textScaleSliderSpinBoxWidget->setMRMLScene(this->m_logic->GetMRMLScene());
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
     {
@@ -396,6 +398,7 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 //      std::cout << "\tset current index via the glyph type " << pointDisplayNode->GetGlyphType() << ", current index = " << ui.pointGlyphTypeComboBox->currentIndex() << std::endl;
       }
     // glyph size
+    ui.pointSizeSliderSpinBoxWidget->setMRMLScene(this->m_logic->GetMRMLScene());
     ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
     
     // glyph material properties
@@ -454,9 +457,8 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
     // label visibility
     ui.lineLabelVisibilityCheckBox->setChecked(lineDisplayNode->GetLabelVisibility());
     // tick spacing
-    QString plainText;
-    plainText.setNum(lineDisplayNode->GetTickSpacing());
-    ui.lineTickSpacingLineEdit->setText(plainText);
+    ui.lineTickSpacingSlider->setMRMLScene(this->m_logic->GetMRMLScene());
+    ui.lineTickSpacingSlider->setValue(lineDisplayNode->GetTickSpacing());
 
     // max ticks
     ui.lineMaxTicksSliderSpinBoxWidget->setValue(lineDisplayNode->GetMaxTicks());
@@ -602,7 +604,7 @@ void qSlicerAnnotationModulePropertyDialog::createConnection()
                 this, SLOT(onLineLabelPositionChanged(double)));
   this->connect(ui.lineLabelVisibilityCheckBox, SIGNAL(stateChanged(int)),
                 this, SLOT(onLineLabelVisibilityStateChanged(int)));
-  this->connect(ui.lineTickSpacingLineEdit, SIGNAL(textChanged(QString)),
+  this->connect(ui.lineTickSpacingSlider, SIGNAL(valueChanged(double)),
                 this, SLOT(onLineTickSpacingChanged()));
 
   this->connect(ui.lineMaxTicksSliderSpinBoxWidget, SIGNAL(valueChanged(double)),
@@ -1238,8 +1240,7 @@ void qSlicerAnnotationModulePropertyDialog::onLineTickSpacingChanged()
     {
     return;
     }
-  QString plainText = ui.lineTickSpacingLineEdit->text();
-  double value = plainText.toDouble();
+  double value = ui.lineTickSpacingSlider->value();
   if (lineDisplayNode->GetScene())
     {
     lineDisplayNode->GetScene()->SaveStateForUndo(lineDisplayNode);
@@ -1549,7 +1550,7 @@ void qSlicerAnnotationModulePropertyDialog::lockUnlockInterface(bool lock)
   ui.lineWidthSliderSpinBoxWidget_2->setEnabled(lock);
   ui.lineLabelPositionSliderSpinBoxWidget->setEnabled(lock);
   ui.lineLabelVisibilityCheckBox->setEnabled(lock);
-  ui.lineTickSpacingLineEdit->setEnabled(lock);
+  ui.lineTickSpacingSlider->setEnabled(lock);
   ui.lineMaxTicksSliderSpinBoxWidget->setEnabled(lock);
 
   // ROI

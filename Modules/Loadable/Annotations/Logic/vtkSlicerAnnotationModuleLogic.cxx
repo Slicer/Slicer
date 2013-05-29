@@ -29,6 +29,7 @@
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSelectionNode.h>
 #include <vtkMRMLSliceNode.h>
+#include <vtkMRMLUnitNode.h>
 
 // Logic includes
 #include <vtkSlicerFiducialsLogic.h>
@@ -1973,6 +1974,8 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
   vtkMRMLAnnotationNode* annotationNode = vtkMRMLAnnotationNode::SafeDownCast(
       node);
+  vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
+    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
 
   if (!annotationNode)
     {
@@ -1990,26 +1993,46 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
         this->m_MeasurementFormat,
         vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode)->GetDistanceMeasurement());
 
-    ss << string;
-
+    std::string unit = string;
+    unit += " mm";
+    vtkMRMLUnitNode* lengthUnit = 0;
     if (showUnits)
       {
-      ss << " [mm]";
+      if (selectionNode)
+        {
+        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("length")));
+        if (lengthUnit)
+          {
+          unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string));
+          }
+        }
       }
+    ss << unit;
 
     this->m_StringHolder = ss.str();
     }
   else if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
-    std::ostringstream ss;
-    ss
-        << vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
+    std::string value = std::ostringstream(
+      vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement()).str();
+    std::string measurement = value;
     if (showUnits)
       {
-      ss << " [degrees]";
+      // Get Unit from node
+      measurement = value + " degrees";
+      if (selectionNode)
+        {
+        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("angle")));
+        if (lengthUnit)
+          {
+          measurement = lengthUnit->WrapValueWithPrefixAndSuffix(value);
+          }
+        }
       }
 
-    this->m_StringHolder = ss.str();
+    this->m_StringHolder = measurement;
     }
   else if (node->IsA("vtkMRMLAnnotationFiducialNode"))
     {
@@ -2070,13 +2093,22 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
       sprintf(string, this->m_MeasurementFormat, measurement2);
       }
 
-    ss << string;
-
+    std::string unit = string;
+    unit += " mm";
+    vtkMRMLUnitNode* lengthUnit = 0;
     if (showUnits)
       {
-      ss << " [mm]";
+      if (selectionNode)
+        {
+        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
+          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("length")));
+        if (lengthUnit)
+          {
+          unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string));
+          }
+        }
       }
-    ss << " x ";
+    ss << unit << " x ";
 
     char string2[512];
     if (measurement1first)
@@ -2089,10 +2121,13 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
       }
 
     ss << string2;
-    if (showUnits)
+    unit = string2;
+    unit += " mm";
+    if (lengthUnit)
       {
-      ss << " [mm]";
+      unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string2));
       }
+    ss << unit;
 
     this->m_StringHolder = ss.str();
     }

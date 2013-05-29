@@ -25,6 +25,7 @@ class vtkSlicerViewerWidget;
 class vtkMRMLAnnotationRulerDisplayNode;
 class vtkMRMLAnnotationPointDisplayNode;
 class vtkMRMLAnnotationLineDisplayNode;
+class vtkMRMLSelectionNode;
 class vtkTextWidget;
 
 /// \ingroup Slicer_QtModules_Annotation
@@ -58,6 +59,13 @@ protected:
 
   // update the ruler end point positions from the MRML node
   virtual void UpdatePosition(vtkAbstractWidget *widget, vtkMRMLNode *node);
+
+  // Get the label from the node and unit node
+  std::string GetLabelFormat(vtkMRMLAnnotationRulerNode* rulerNode);
+
+  /// When the unit has changed, modify the ruler nodes to refresh the label.
+  /// \sa AddObserversToSelectionNode(), RemoveObserversFromSelectionNode()
+  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* selectionNode);
 
 private:
 

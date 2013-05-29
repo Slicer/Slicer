@@ -20,6 +20,9 @@
 
 // MRML includes
 #include <vtkMRMLInteractionNode.h>
+#include <vtkMRMLScene.h>
+#include <vtkMRMLSelectionNode.h>
+#include <vtkMRMLUnitNode.h>
 
 // VTK includes
 #include <vtkAbstractWidget.h>
@@ -292,12 +295,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
 
   //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
 
-  std::string format = std::string("%-#6.3g mm");
-  if (rulerNode->GetName())
-    {
-    format = std::string(rulerNode->GetName()) + std::string(": ") + format;
-    }
-
+  std::string format = this->GetLabelFormat(rulerNode);
   if (this->GetSliceNode())
     {
 
@@ -600,15 +598,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   vtkDistanceRepresentation *rep = vtkDistanceRepresentation::SafeDownCast(rulerWidget->GetRepresentation());
   if (rep)
     {
-    if (rulerNode->GetName())
-      {
-      std::string format = std::string(rulerNode->GetName()) + std::string(": %-#6.3g mm");
-      rep->SetLabelFormat(format.c_str());
-      }
-    else
-      {
-      rep->SetLabelFormat("%-#6.3g mm");
-      }
+    rep->SetLabelFormat(this->GetLabelFormat(rulerNode).c_str());
     }
 
 
@@ -620,6 +610,42 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   // enable processing of modified events
   this->m_Updating = 0;
 
+}
+
+//---------------------------------------------------------------------------
+/// Get the label from the application and the ruler widget
+std::string vtkMRMLAnnotationRulerDisplayableManager
+::GetLabelFormat(vtkMRMLAnnotationRulerNode* rulerNode)
+{
+  if (!rulerNode)
+    {
+    return "";
+    }
+
+  std::string unitSuffix = "mm";
+  if (this->GetMRMLScene())
+    {
+    vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+
+    if (selectionNode)
+      {
+      vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
+        this->GetMRMLScene()->GetNodeByID(
+          selectionNode->GetUnitNodeID("length")));
+      if (lengthUnit)
+        {
+        unitSuffix = lengthUnit->GetSuffix();
+        }
+      }
+    }
+
+  std::string format = "";
+  if (rulerNode->GetName())
+    {
+    format += std::string(rulerNode->GetName()) + std::string(" :");
+    }
+  return format + "%-#6.3g " + unitSuffix;
 }
 
 //---------------------------------------------------------------------------
@@ -914,4 +940,27 @@ void vtkMRMLAnnotationRulerDisplayableManager::UpdatePosition(vtkAbstractWidget 
 
   // enable processing of modified events
   this->m_Updating = 0;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLAnnotationRulerDisplayableManager
+::OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* selectionNode)
+{
+  if (!selectionNode)
+    {
+    return;
+    }
+
+  vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt it;
+  for (it = this->Helper->AnnotationNodeList.begin();
+    it != this->Helper->AnnotationNodeList.end(); ++it)
+    {
+    vtkMRMLAnnotationRulerNode* rulerNode =
+      vtkMRMLAnnotationRulerNode::SafeDownCast((*it));
+    if (rulerNode)
+      {
+      // The unit has changed, modify the ruler node to refresh the label.
+      rulerNode->Modified();
+      }
+    }
 }

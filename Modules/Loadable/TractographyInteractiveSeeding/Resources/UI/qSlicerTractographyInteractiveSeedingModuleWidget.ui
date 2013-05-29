@@ -466,7 +466,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="ctkSliderWidget" name="MinimumPathSpinBox">
+       <widget class="qMRMLSliderWidget" name="MinimumPathSpinBox">
         <property name="singleStep">
          <double>1.000000000000000</double>
         </property>
@@ -479,6 +479,12 @@
         <property name="suffix">
          <string>mm</string>
         </property>
+        <property name="quantity" stdset="0">
+         <string>length</string>
+        </property>
+        <property name="unitAwareProperties">
+         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
+        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -489,7 +495,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="ctkSliderWidget" name="MaximumPathSpinBox">
+       <widget class="qMRMLSliderWidget" name="MaximumPathSpinBox">
         <property name="singleStep">
          <double>1.000000000000000</double>
         </property>
@@ -501,6 +507,12 @@
         </property>
         <property name="suffix">
          <string>mm</string>
+        </property>
+        <property name="quantity" stdset="0">
+         <string>length</string>
+        </property>
+        <property name="unitAwareProperties">
+         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
         </property>
        </widget>
       </item>
@@ -579,7 +591,7 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="ctkSliderWidget" name="IntegrationStepSpinBox">
+       <widget class="qMRMLSliderWidget" name="IntegrationStepSpinBox">
         <property name="singleStep">
          <double>0.010000000000000</double>
         </property>
@@ -594,6 +606,12 @@
         </property>
         <property name="suffix">
          <string>mm</string>
+        </property>
+        <property name="quantity" stdset="0">
+         <string>length</string>
+        </property>
+        <property name="unitAwareProperties">
+         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
         </property>
        </widget>
       </item>
@@ -681,6 +699,11 @@
    <header>qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>qSlicerWidget</class>
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
@@ -766,6 +789,54 @@
     <hint type="destinationlabel">
      <x>318</x>
      <y>164</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MinimumPathSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>222</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>473</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MaximumPathSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>222</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTractographyInteractiveSeedingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>IntegrationStepSpinBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>222</x>
+     <y>366</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>603</y>
     </hint>
    </hints>
   </connection>

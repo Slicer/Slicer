@@ -32,12 +32,12 @@
 #include <ctkDoubleSlider.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
-#include <ctkSliderWidget.h>
 #include <ctkSpinBox.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
 #include "qMRMLSliceControllerWidget_p.h"
+#include "qMRMLSliderWidget.h"
 
 // MRMLLogic includes
 #include <vtkMRMLSliceLayerLogic.h>
@@ -351,9 +351,11 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->FitToWindowToolButton->setFixedSize(15, 15);
   this->BarLayout->insertWidget(2, this->FitToWindowToolButton);
 
-  this->SliceOffsetSlider = new ctkSliderWidget(q);
+  this->SliceOffsetSlider = new qMRMLSliderWidget(q);
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
+  this->SliceOffsetSlider->setQuantity("length");
+  this->SliceOffsetSlider->setUnitAwareProperties(qMRMLSliderWidget::Suffix);
 
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
   ctkSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
@@ -375,6 +377,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
                 q, SLOT(setSliceOffsetValue(double)), Qt::QueuedConnection);
   this->connect(this->SliceOffsetSlider, SIGNAL(valueIsChanging(double)),
                 q, SLOT(trackSliceOffsetValue(double)), Qt::QueuedConnection);
+  this->connect(q, SIGNAL(mrmlSceneChanged(vtkMRMLScene*)),
+                this->SliceOffsetSlider, SLOT(setMRMLScene(vtkMRMLScene*)));
 
   this->BarLayout->addWidget(this->SliceOffsetSlider);
 

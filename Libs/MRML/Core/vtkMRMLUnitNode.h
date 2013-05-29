@@ -65,6 +65,14 @@ public:
   void SetQuantity(const char* quantity);
 
   ///
+  /// Helper function that wrap the given string with the
+  /// suffix and or the prefix. A space is used between the
+  /// prefix and the value as well as between the value and the suffix.
+  std::string WrapValueWithPrefix(std::string& value);
+  std::string WrapValueWithSuffix(std::string& value);
+  std::string WrapValueWithPrefixAndSuffix(std::string& value);
+
+  ///
   /// Set the name of the unit. Since unit nodes are singleton,
   /// this name must be unique throughout the scene.
   virtual void SetName(const char* name);

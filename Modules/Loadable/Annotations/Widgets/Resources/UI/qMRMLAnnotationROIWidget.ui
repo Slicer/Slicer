@@ -668,6 +668,9 @@
                   </disabled>
                 </palette>
               </property>
+              <property name="quantity">
+                <string>length</string>
+              </property>
             </widget>
           </item>
           <item row="1" column="0">
@@ -1312,6 +1315,9 @@
                   </disabled>
                 </palette>
               </property>
+              <property name="quantity">
+                <string>length</string>
+              </property>
             </widget>
           </item>
           <item row="2" column="0">
@@ -1954,6 +1960,9 @@
                     </colorrole>
                   </disabled>
                 </palette>
+              </property>
+              <property name="quantity">
+                <string>length</string>
               </property>
             </widget>
           </item>
