@@ -28,7 +28,7 @@ class WorkflowConfiguration:
             ('outputVolume', 'currentPath'),
             ('useBMatrixGradientDirections','checked'),
             ('inputNRRDVolume','currentPath'),
-            ('inputNRRDMRMLNode','currentNodeId'),
+            ('inputNRRDMRMLNode','currentNodeID'),
         ],
         'dwi2dti':[
             ('leastSquaresEstimation', 'checked'),
