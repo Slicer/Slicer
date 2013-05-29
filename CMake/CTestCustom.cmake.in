@@ -240,7 +240,7 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "WARNING non-zero return value in ctest from"
 
   # Git
-  "You are in 'detached HEAD' state"
+  "HEAD is now"
   )
 
 set(CTEST_CUSTOM_ERROR_EXCEPTION
