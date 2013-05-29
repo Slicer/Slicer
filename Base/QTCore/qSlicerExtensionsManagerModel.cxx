@@ -325,7 +325,7 @@ QStandardItem* qSlicerExtensionsManagerModelPrivate::extensionItem(const QString
       this->Model.findItems(extensionName, Qt::MatchExactly, Self::NameColumn);
   if (foundItems.count() != 1)
     {
-    return false;
+    return 0;
     }
   return this->Model.item(foundItems.at(0)->row(), column);
 }
