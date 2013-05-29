@@ -623,7 +623,7 @@ void qSlicerTractographyDisplayWidget::updateWidgetFromMRML()
   d->VisibilityCheckBox->setChecked( d->FiberBundleDisplayNode->GetVisibility() );
   d->OpacitySlider->setValue( d->FiberBundleDisplayNode->GetOpacity() );
   
-  d->ColorByScalarsColorTableComboBox->setCurrentNode
+  d->ColorByScalarsColorTableComboBox->setCurrentNodeID
     (d->FiberBundleDisplayNode->GetColorNodeID());
   d->ColorByScalarComboBox->setDataSet(vtkDataSet::SafeDownCast(d->FiberBundleNode->GetPolyData()));
 

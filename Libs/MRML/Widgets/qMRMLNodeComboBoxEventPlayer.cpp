@@ -61,7 +61,7 @@ bool qMRMLNodeComboBoxEventPlayer::playEvent(QObject *Object,
         {
         comboBox->setCurrentNodeIndex(0);
         }
-      comboBox->setCurrentNode(Arguments);
+      comboBox->setCurrentNodeID(Arguments);
       return true;
       }
     if (Command == "nodeAboutToBeRemoved")

@@ -94,16 +94,16 @@ WIDGET_VALUE_WRAPPER(FloatWithConstraints, ctkSliderWidget, value, setValue, Dou
 WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkSpinBox, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(DoubleWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(String, QLineEdit, text, setText, String, textChanged(const QString&));
-WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Region, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
-WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
+WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Region, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
+WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Directory, ctkDirectoryButton, directory, setDirectory, String, directoryChanged(QString));
 WIDGET_VALUE_WRAPPER(File, ctkPathLineEdit, currentPath, setCurrentPath, String, currentPathChanged(QString));
 WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setCheckedValue, String, valueChanged());
-WIDGET_VALUE_WRAPPER(Measurement, qMRMLNodeComboBox, currentNodeId, setCurrentNode, String, currentNodeChanged(vtkMRMLNode*));
+WIDGET_VALUE_WRAPPER(Measurement, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 
 //-----------------------------------------------------------------------------
 #define INSTANCIATE_WIDGET_VALUE_WRAPPER(_NAME, _PARAM_NAME, _LABEL, _WIDGET_INSTANCE) \

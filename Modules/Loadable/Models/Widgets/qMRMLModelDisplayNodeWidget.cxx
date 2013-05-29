@@ -215,5 +215,5 @@ void qMRMLModelDisplayNodeWidget::updateWidgetFromMRML()
   d->ActiveScalarComboBox->blockSignals(wasBlocking);
   d->ActiveScalarComboBox->setCurrentArray(d->MRMLModelDisplayNode->GetActiveScalarName());
   d->ScalarsColorTableComboBox->setMRMLScene(d->MRMLModelDisplayNode->GetScene());
-  d->ScalarsColorTableComboBox->setCurrentNode(d->MRMLModelDisplayNode->GetColorNodeID());
+  d->ScalarsColorTableComboBox->setCurrentNodeID(d->MRMLModelDisplayNode->GetColorNodeID());
 }

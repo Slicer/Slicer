@@ -169,7 +169,7 @@ void qMRMLSliceControllerWidgetTester::testSetBackgroundVolume()
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("BackgroundComboBox"));
-  QCOMPARE(comboBox->currentNodeId(), expectedVolumeNodeID);
+  QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   //sliceControllerWidget.show();
   //qApp->exec();
@@ -201,7 +201,7 @@ void qMRMLSliceControllerWidgetTester::testSetForegroundVolume()
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("ForegroundComboBox"));
-  QCOMPARE(comboBox->currentNodeId(), expectedVolumeNodeID);
+  QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   //sliceControllerWidget.show();
   //qApp->exec();
@@ -233,7 +233,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolume()
   QFETCH(QString, expectedVolumeNodeID);
   qMRMLNodeComboBox* comboBox =
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
-  QCOMPARE(comboBox->currentNodeId(), expectedVolumeNodeID);
+  QCOMPARE(comboBox->currentNodeID(), expectedVolumeNodeID);
 
   //sliceControllerWidget.show();
   //qApp->exec();
@@ -267,7 +267,7 @@ void qMRMLSliceControllerWidgetTester::testChangeLabelMapToScalarVolume()
 
   qMRMLNodeComboBox* comboBox =
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
-  QCOMPARE(comboBox->currentNodeId(), QString());
+  QCOMPARE(comboBox->currentNodeID(), QString());
 }
 
 // ----------------------------------------------------------------------------
@@ -301,7 +301,7 @@ void qMRMLSliceControllerWidgetTester::testSetLabelVolumeWithNoLinkedControl()
 
   qMRMLNodeComboBox* comboBox =
     qobject_cast<qMRMLNodeComboBox*>(sliceControllerWidget.findChild<qMRMLNodeComboBox*>("LabelMapComboBox"));
-  QCOMPARE(comboBox->currentNodeId(), QString(labelmapNode2->GetID()));
+  QCOMPARE(comboBox->currentNodeID(), QString(labelmapNode2->GetID()));
 
   //sliceControllerWidget.show();
   //qApp->exec();

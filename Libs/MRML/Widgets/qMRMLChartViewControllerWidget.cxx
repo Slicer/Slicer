@@ -346,7 +346,7 @@ void qMRMLChartViewControllerWidget::updateWidgetFromMRML()
     }
 
   // ChartNode selector
-  d->chartComboBox->setCurrentNode(chartNode->GetID());
+  d->chartComboBox->setCurrentNodeID(chartNode->GetID());
 
   // Array selector
   vtkStringArray *arrayIDs = chartNode->GetArrays();
