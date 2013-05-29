@@ -98,11 +98,9 @@ if(DEFINED Slicer_SKIP_SlicerBlockSetCMakeOSXVariables)
     "  project(Foo)")
 endif()
 
-if(NOT DEFINED ${EXTENSION_NAME}_SOURCE_DIR)
-  set(${EXTENSION_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-endif()
-if(NOT DEFINED ${EXTENSION_NAME}_BINARY_DIR)
-  set(${EXTENSION_NAME}_BINARY_DIR ${CMAKE_BINARY_DIR})
+if(NOT DEFINED ${EXTENSION_NAME}_SOURCE_DIR
+  AND NOT DEFINED ${EXTENSION_NAME}_BINARY_DIR)
+  project(${EXTENSION_NAME})
 endif()
 
 # --------------------------------------------------------------------------
