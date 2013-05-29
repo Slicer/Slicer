@@ -29,6 +29,8 @@ set(${KIT}_SRCS
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.cxx
   qMRMLColorTableViewPlugin.h
+  qMRMLCoordinatesWidgetPlugin.cxx
+  qMRMLCoordinatesWidgetPlugin.h
   qMRMLDisplayNodeViewComboBoxPlugin.cxx
   qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.cxx
@@ -65,6 +67,10 @@ set(${KIT}_SRCS
   qMRMLSliceInformationWidgetPlugin.h
   qMRMLSliceWidgetPlugin.cxx
   qMRMLSliceWidgetPlugin.h
+  qMRMLSliderWidgetPlugin.cxx
+  qMRMLSliderWidgetPlugin.h
+  qMRMLSpinBoxPlugin.cxx
+  qMRMLSpinBoxPlugin.h
   qMRMLThreeDViewPlugin.cxx
   qMRMLThreeDViewPlugin.h
   qMRMLTransformSlidersPlugin.cxx
@@ -92,6 +98,7 @@ set(${KIT}_MOC_SRCS
   qMRMLColorListViewPlugin.h
   qMRMLColorTableComboBoxPlugin.h
   qMRMLColorTableViewPlugin.h
+  qMRMLCoordinatesWidgetPlugin.h
   qMRMLDisplayNodeViewComboBoxPlugin.h
   qMRMLDisplayNodeWidgetPlugin.h
   qMRMLEventBrokerWidgetPlugin.h
@@ -110,6 +117,8 @@ set(${KIT}_MOC_SRCS
   qMRMLSliceControllerWidgetPlugin.h
   qMRMLSliceInformationWidgetPlugin.h
   qMRMLSliceWidgetPlugin.h
+  qMRMLSliderWidgetPlugin.h
+  qMRMLSpinBoxPlugin.h
   qMRMLThreeDViewPlugin.h
   qMRMLTransformSlidersPlugin.h
   qMRMLTreeViewPlugin.h

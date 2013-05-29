@@ -30,15 +30,19 @@
 #include "qMRMLWidgetsExport.h"
 
 class qMRMLRangeSliderPrivate;
-class ctkSpinBox;
+class qMRMLSpinBox;
+class vtkMRMLScene;
 
 /// qMRMLRangeWidget is a wrapper around a ctkRangeWidget
 /// It adds QSpinBoxes (in a menu) for controlling the range of the values
+/// and supports for the units.
 class QMRML_WIDGETS_EXPORT qMRMLRangeWidget : public ctkRangeWidget
 {
   Q_OBJECT
   Q_PROPERTY(QPalette minimumHandlePalette READ minimumHandlePalette WRITE setMinimumHandlePalette)
   Q_PROPERTY(QPalette maximumHandlePalette READ maximumHandlePalette WRITE setMaximumHandlePalette)
+  Q_PROPERTY(vtkMRMLScene* mrmlScene READ mrmlScene WRITE setMRMLScene)
+  Q_PROPERTY(QString quantity READ quantity WRITE setQuantity)
 
 public:
   /// Constructor
@@ -49,6 +53,9 @@ public:
   QPalette minimumHandlePalette()const;
   QPalette maximumHandlePalette()const;
 
+  vtkMRMLScene* mrmlScene()const;
+  QString quantity()const;
+
 public slots:
   /// Set the palette of the minimum handle
   void setMinimumHandlePalette(const QPalette& palette);
@@ -56,14 +63,22 @@ public slots:
   /// Set the palette of the minimum handle
   void setMaximumHandlePalette(const QPalette& palette);
 
+  /// Set the quantity the widget should look for.
+  /// \sa quantity()
+  void setQuantity(const QString& baseName);
+
+  /// Set the scene the spinboxes listens to.
+  /// \sa mrmlScene()
+  virtual void setMRMLScene(vtkMRMLScene* scene);
+
 protected slots:
   void updateSpinBoxRange(double min, double max);
   void updateRange();
   void updateSymmetricMoves(bool symmetric);
 
 protected:
-  ctkSpinBox* MinSpinBox;
-  ctkSpinBox* MaxSpinBox;
+  qMRMLSpinBox* MinSpinBox;
+  qMRMLSpinBox* MaxSpinBox;
 };
 
 /// qMRMLDoubleRangeSlider is a wrapper around a ctkDoubleRangeSlider
@@ -74,6 +89,9 @@ public:
   qMRMLDoubleRangeSlider(QWidget* parentWidget);
   QPalette minimumHandlePalette()const;
   QPalette maximumHandlePalette()const;
+
+  vtkMRMLScene* mrmlScene()const;
+  QString quantity()const;
 
 public slots:
   /// Set the palette of the minimum handle

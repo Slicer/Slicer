@@ -25,9 +25,14 @@
 #include <QToolButton>
 #include <QWidgetAction>
 
-// CTK includes
-#include <ctkSpinBox.h>
+// qMRML includes
+#include <qMRMLSpinBox.h>
+
 #include "qMRMLRangeWidget.h"
+
+// --------------------------------------------------------------------------
+// qMRMLRangeWidget
+//
 
 // --------------------------------------------------------------------------
 qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
@@ -40,7 +45,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
   rangeWidget->setLayout(rangeLayout);
   rangeLayout->setContentsMargins(0,0,0,0);
 
-  this->MinSpinBox = new ctkSpinBox(rangeWidget);
+  this->MinSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MinSpinBox->setPrefix("Min: ");
   this->MinSpinBox->setRange(-1000000., 1000000.);
   this->MinSpinBox->setValue(this->minimum());
@@ -48,7 +53,7 @@ qMRMLRangeWidget::qMRMLRangeWidget(QWidget* parentWidget)
           this, SLOT(updateRange()));
   rangeLayout->addWidget(this->MinSpinBox);
 
-  this->MaxSpinBox = new ctkSpinBox(rangeWidget);
+  this->MaxSpinBox = new qMRMLSpinBox(rangeWidget);
   this->MaxSpinBox->setPrefix("Max: ");
   this->MaxSpinBox->setRange(-1000000., 1000000.);
   this->MaxSpinBox->setValue(this->maximum());
@@ -136,6 +141,49 @@ void qMRMLRangeWidget::updateSymmetricMoves(bool symmetric)
   this->setSymmetricMoves(symmetric);
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLRangeWidget::setQuantity(const QString& quantity)
+{
+  if (quantity == this->quantity())
+    {
+    return;
+    }
+
+  this->MinSpinBox->setQuantity(quantity);
+  this->MaxSpinBox->setQuantity(quantity);
+}
+
+//-----------------------------------------------------------------------------
+QString qMRMLRangeWidget::quantity()const
+{
+  Q_ASSERT(this->MinSpinBox->quantity() == this->MaxSpinBox->quantity());
+  return this->MinSpinBox->quantity();
+}
+
+// --------------------------------------------------------------------------
+vtkMRMLScene* qMRMLRangeWidget::mrmlScene()const
+{
+  Q_ASSERT(this->MinSpinBox->mrmlScene() == this->MaxSpinBox->mrmlScene());
+  return this->MinSpinBox->mrmlScene();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLRangeWidget::setMRMLScene(vtkMRMLScene* scene)
+{
+  if (this->mrmlScene() == scene)
+    {
+    return;
+    }
+
+  this->MinSpinBox->setMRMLScene(scene);
+  this->MaxSpinBox->setMRMLScene(scene);
+  this->setEnabled(this->isEnabled() && scene != 0);
+}
+
+// --------------------------------------------------------------------------
+// qMRMLDoubleRangeSlider
+//
+
 // --------------------------------------------------------------------------
 qMRMLDoubleRangeSlider::qMRMLDoubleRangeSlider(QWidget* parentWidget)
   :ctkDoubleRangeSlider(parentWidget)
@@ -170,6 +218,10 @@ void qMRMLDoubleRangeSlider::setMaximumHandlePalette(const QPalette& palette)
   qobject_cast<qMRMLRangeSlider*>(this->slider())
     ->setMaximumHandlePalette(palette);
 }
+
+// --------------------------------------------------------------------------
+// qMRMLRangeSlider
+//
 
 // --------------------------------------------------------------------------
 class qMRMLRangeSliderPrivate

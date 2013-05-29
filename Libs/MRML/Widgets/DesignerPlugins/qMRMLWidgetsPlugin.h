@@ -31,6 +31,7 @@
 #include "qMRMLColorListViewPlugin.h"
 #include "qMRMLColorTableComboBoxPlugin.h"
 #include "qMRMLColorTableViewPlugin.h"
+#include "qMRMLCoordinatesWidgetPlugin.h"
 #include "qMRMLDisplayNodeViewComboBoxPlugin.h"
 #include "qMRMLDisplayNodeWidgetPlugin.h"
 #include "qMRMLEventBrokerWidgetPlugin.h"
@@ -48,6 +49,8 @@
 #include "qMRMLSliceControllerWidgetPlugin.h"
 #include "qMRMLSliceInformationWidgetPlugin.h"
 #include "qMRMLSliceWidgetPlugin.h"
+#include "qMRMLSliderWidgetPlugin.h"
+#include "qMRMLSpinBoxPlugin.h"
 #include "qMRMLThreeDViewPlugin.h"
 #include "qMRMLTransformSlidersPlugin.h"
 #include "qMRMLTreeViewPlugin.h"
@@ -76,6 +79,7 @@ public:
             << new qMRMLColorTableComboBoxPlugin
             << new qMRMLColorTableViewPlugin
             << new qMRMLColorTableViewPlugin
+            << new qMRMLCoordinatesWidgetPlugin
             << new qMRMLDisplayNodeViewComboBoxPlugin
             << new qMRMLDisplayNodeWidgetPlugin
             << new qMRMLEventBrokerWidgetPlugin
@@ -94,6 +98,8 @@ public:
             << new qMRMLSliceControllerWidgetPlugin
             << new qMRMLSliceInformationWidgetPlugin
             << new qMRMLSliceWidgetPlugin
+            << new qMRMLSliderWidgetPlugin
+            << new qMRMLSpinBoxPlugin
             << new qMRMLThreeDViewPlugin
             << new qMRMLTransformSlidersPlugin
             << new qMRMLTreeViewPlugin

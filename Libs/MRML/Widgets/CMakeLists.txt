@@ -60,6 +60,8 @@ set(MRMLWidgets_SRCS
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.cxx
   qMRMLColorTableView.h
+  qMRMLCoordinatesWidget.cxx
+  qMRMLCoordinatesWidget.h
   qMRMLDisplayNodeWidget.cxx
   qMRMLDisplayNodeWidget.h
   qMRMLDisplayNodeViewComboBox.cxx
@@ -139,10 +141,14 @@ set(MRMLWidgets_SRCS
   qMRMLSliceWidget.cxx
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
+  qMRMLSliderWidget.cxx
+  qMRMLSliderWidget.h
   qMRMLSortFilterHierarchyProxyModel.cxx
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.cxx
   qMRMLSortFilterProxyModel.h
+  qMRMLSpinBox.cxx
+  qMRMLSpinBox.h
   qMRMLThreeDView.cxx
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
@@ -189,6 +195,7 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLColorTableComboBox.h
   qMRMLColorTableView.h
   qMRMLColorModel.h
+  qMRMLCoordinatesWidget.h
   qMRMLDisplayNodeViewComboBox.h
   qMRMLDisplayNodeWidget.h
   qMRMLEventBrokerConnection.h
@@ -231,8 +238,10 @@ set(MRMLWidgets_MOC_SRCS
   qMRMLSliceView_p.h
   qMRMLSliceWidget.h
   qMRMLSliceWidget_p.h
+  qMRMLSliderWidget.h
   qMRMLSortFilterHierarchyProxyModel.h
   qMRMLSortFilterProxyModel.h
+  qMRMLSpinBox.h
   qMRMLThreeDView.h
   qMRMLThreeDView_p.h
   qMRMLThreeDViewControllerWidget.h
