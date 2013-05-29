@@ -26,7 +26,10 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
-const int NUMBER_OF_UNITS = 5;
+// STD includes
+#include <vector>
+
+const size_t NUMBER_OF_UNITS = 5;
 const char* UNITS[NUMBER_OF_UNITS][2] = {{"length", "m"},
                                          {"length", "km"},
                                          {"energy", "J"},
@@ -63,7 +66,7 @@ int vtkMRMLUnitNodeTest1(int , char * [] )
 vtkMRMLScene* CreatePopulatedScene()
 {
   vtkMRMLScene* scene = vtkMRMLScene::New();
-  for (int i = 0; i < NUMBER_OF_UNITS; ++i)
+  for (size_t i = 0; i < NUMBER_OF_UNITS; ++i)
     {
     vtkSmartPointer<vtkMRMLUnitNode> unit
       = vtkSmartPointer<vtkMRMLUnitNode>::New();
@@ -89,7 +92,7 @@ bool TestScenesUnitNodeID(vtkMRMLScene* scene)
     return false;
     }
 
-  for (int i = 0; i < units.size(); ++i)
+  for (size_t i = 0; i < units.size(); ++i)
     {
     std::string id = "vtkMRMLUnitNode";
     id += UNITS[i][1];
@@ -118,7 +121,7 @@ bool TestUnitNodeAttribute(vtkMRMLScene* scene)
 
   bool foundQuantityAttribute = false;
   std::vector<std::string> attributes = unit->GetAttributeNames();
-  for (int i = 0; i < attributes.size(); ++i)
+  for (size_t i = 0; i < attributes.size(); ++i)
     {
     if (attributes[i].compare("Quantity") == 0)
       {
