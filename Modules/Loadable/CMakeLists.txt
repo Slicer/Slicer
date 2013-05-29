@@ -6,6 +6,7 @@ set(qtmodules
   Cameras
   Colors
   Transforms
+  Units
   Annotations
   Data
   DoubleArrays

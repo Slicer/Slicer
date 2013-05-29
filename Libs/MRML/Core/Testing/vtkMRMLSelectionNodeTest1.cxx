@@ -15,6 +15,10 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
+// ---------------------------------------------------------------------------
+bool TestUnit(vtkMRMLSelectionNode* node1);
+
+// ---------------------------------------------------------------------------
 int vtkMRMLSelectionNodeTest1(int , char * [] )
 {
   vtkSmartPointer< vtkMRMLSelectionNode > node1 = vtkSmartPointer< vtkMRMLSelectionNode >::New();
@@ -71,6 +75,71 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
     node1->Print(std::cout);
     return EXIT_FAILURE;
     }
+
+  if (TestUnit(node1) != EXIT_SUCCESS)
+    {
+    return EXIT_FAILURE;
+    }
+
   node1->Print(std::cout);
+  return EXIT_SUCCESS;
+}
+
+// ---------------------------------------------------------------------------
+bool TestUnit(vtkMRMLSelectionNode* node1)
+{
+  vtkSmartPointer<vtkMRMLNodeCallback> callback =
+    vtkSmartPointer<vtkMRMLNodeCallback>::New();
+  node1->AddObserver(vtkMRMLSelectionNode::UnitModifiedEvent, callback);
+
+  const char* quantity = "mass";
+  const char* unit = "vtkMRMLUnitNodeKilogram";
+  node1->SetUnitNodeID(quantity, unit);
+  if (strcmp(node1->GetUnitNodeID(quantity), unit) != 0)
+    {
+    std::cerr<<"Expecting: "<<unit<<" got "
+      <<node1->GetUnitNodeID(quantity)<<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  node1->SetUnitNodeID(quantity, "");
+  if (node1->GetUnitNodeID(quantity) != 0)
+    {
+    std::cerr<<"Expecting: "<<0<<" got "
+      <<node1->GetUnitNodeID(quantity)<<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  node1->SetUnitNodeID(quantity, 0);
+  if (node1->GetUnitNodeID(quantity) != 0)
+    {
+    std::cerr<<"Expecting: "<<0<<" got "
+      <<node1->GetUnitNodeID(quantity)<<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  node1->SetUnitNodeID("", unit);
+  if (strcmp(node1->GetUnitNodeID(""), unit) != 0)
+    {
+    std::cerr<<"Expecting: "<<unit<<" got "
+      <<node1->GetUnitNodeID("")<<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  node1->SetUnitNodeID(0, unit);
+  if (strcmp(node1->GetUnitNodeID(0), unit) != 0)
+    {
+    std::cerr<<"Expecting: "<<unit<<" got "
+      <<node1->GetUnitNodeID(0)<<std::endl;
+    return EXIT_FAILURE;
+    }
+
+  if (callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent) != 5)
+    {
+    std::cerr<<"Expecting: "<<5<<" callbacks got "
+      <<callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent)
+      <<std::endl;
+    return EXIT_FAILURE;
+    }
   return EXIT_SUCCESS;
 }

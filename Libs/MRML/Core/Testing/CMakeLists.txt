@@ -78,6 +78,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformNodeTest1.cxx
   vtkMRMLTransformStorageNodeTest1.cxx
   vtkMRMLTransformableNodeTest1.cxx
+  vtkMRMLUnitNodeTest1.cxx
   vtkMRMLUnstructuredGridDisplayNodeTest1.cxx
   vtkMRMLUnstructuredGridNodeTest1.cxx
   vtkMRMLUnstructuredGridStorageNodeTest1.cxx
@@ -173,6 +174,7 @@ simple_test( vtkMRMLTransformableNodeReferenceSaveImportTest )
 simple_test( vtkMRMLTransformableNodeTest1 )
 simple_test( vtkMRMLTransformNodeTest1 )
 simple_test( vtkMRMLTransformStorageNodeTest1 )
+simple_test( vtkMRMLUnitNodeTest1 )
 simple_test( vtkMRMLUnstructuredGridDisplayNodeTest1 )
 simple_test( vtkMRMLUnstructuredGridNodeTest1 )
 simple_test( vtkMRMLUnstructuredGridStorageNodeTest1 )
