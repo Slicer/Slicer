@@ -1995,7 +1995,6 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
     std::string unit = string;
     unit += " mm";
-    vtkMRMLUnitNode* lengthUnit = 0;
     if (showUnits)
       {
       if (selectionNode)
@@ -2014,12 +2013,13 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     }
   else if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
-    std::string value = std::ostringstream(
-      vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement()).str();
-    std::string measurement = value;
+    std::ostringstream ss;
+    ss << vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
+    std::string measurement = ss.str();
     if (showUnits)
       {
       // Get Unit from node
+      std::string value = ss.str();
       measurement = value + " degrees";
       if (selectionNode)
         {
