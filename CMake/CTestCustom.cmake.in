@@ -155,12 +155,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   # exception specific to Mac/X11
   "VTK.Rendering.vtkOpenGL.*warning: this is the location of the previous definition"
 
-  # CTK - log4qt
-  "logobjectptr.obj : warning LNK4221: no public symbols found; archive member will be inaccessible"
-  "/usr/bin/ranlib: .*libLog4Qt.a.*has no symbols"
-  "log4qt.rollingfileappender.h.*Warning: Property declaration maxFileSize has no READ accessor function."
-  "ld.*has different visibility.*libLog4Qt.a"
-
   # CTK - dcmtk
   "dcmdata/dcovlay.h:93: warning: use of old-style cast"
   "/usr/bin/ranlib: .*lib(dcmtls|oflog).a.*has no symbols"
