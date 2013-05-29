@@ -22,7 +22,6 @@ set(KIT qSlicer${MODULE_NAME}Module)
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
-  qSlicerUnitsModuleWidgetTest1.cxx
   vtkSlicerUnitsLogicTest1.cxx
   )
 
@@ -34,5 +33,4 @@ slicerMacroConfigureModuleCxxTestDriver(
   )
 
 #-----------------------------------------------------------------------------
-simple_test(qSlicerUnitsModuleWidgetTest1)
 simple_test(vtkSlicerUnitsLogicTest1)

@@ -23,6 +23,7 @@
 
 // Qt includes
 #include <QString>
+#include <QStringList>
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -41,6 +42,7 @@ class Q_SLICER_QTMODULES_UNITS_EXPORT qSlicerUnitsSettingsPanel
 {
   Q_OBJECT
   QVTK_OBJECT
+  Q_PROPERTY(QStringList quantities READ quantities WRITE setQuantities NOTIFY quantitiesChanged)
 public:
 
   /// Superclass typedef
@@ -52,11 +54,22 @@ public:
   /// Destructor
   virtual ~qSlicerUnitsSettingsPanel();
 
+  /// Set the units logic. The logic is observed to get the application
+  /// scene and used to set the defaults units.
   void setUnitsLogic(vtkSlicerUnitsLogic* logic);
+
+  /// Return the quantities for which units can be set.
+  /// The quantities are saved in the settings.
+  QStringList quantities();
+
+signals:
+  void quantitiesChanged(const QStringList&);
 
 protected slots:
   void onUnitsLogicModified();
   void onNodeIDChanged(const QString& id);
+  void setQuantities(const QStringList& quantities);
+  void updateFromSelectionNode();
 
 protected:
   QScopedPointer<qSlicerUnitsSettingsPanelPrivate> d_ptr;

@@ -27,7 +27,6 @@
 
 // Units includes
 #include "qSlicerUnitsModule.h"
-#include "qSlicerUnitsModuleWidget.h"
 #include "qSlicerUnitsSettingsPanel.h"
 
 //-----------------------------------------------------------------------------
@@ -123,6 +122,12 @@ QStringList qSlicerUnitsModule::dependencies() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerUnitsModule::isHidden() const
+{
+  return true;
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerUnitsModule::setup()
 {
   this->Superclass::setup();
@@ -142,7 +147,7 @@ void qSlicerUnitsModule::setup()
 qSlicerAbstractModuleRepresentation * qSlicerUnitsModule
 ::createWidgetRepresentation()
 {
-  return new qSlicerUnitsModuleWidget;
+  return 0;
 }
 
 //-----------------------------------------------------------------------------

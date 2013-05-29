@@ -54,6 +54,9 @@ public:
   virtual QStringList categories()const;
   virtual QStringList dependencies() const;
 
+  /// Hide unit module by default
+  bool isHidden() const;
+
 protected:
   /// Initialize the module. Register the volumes reader/writer
   virtual void setup();

@@ -40,7 +40,6 @@ class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
   : public vtkMRMLAbstractLogic
 {
 public:
-
   static vtkSlicerUnitsLogic *New();
   vtkTypeMacro(vtkSlicerUnitsLogic, vtkMRMLAbstractLogic);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
@@ -57,23 +56,44 @@ public:
     double max = 10000);
 
   //
-  // Change the default unit for the quantity attributed
-  // to the given unit.
+  // Change the default unit for the corresponding quantity
   void SetDefaultUnit(const char* quantity, const char* id);
+
+  //
+  // Get the scene with preset unit nodes in it.
+  vtkMRMLScene* GetUnitsScene() const;
 
 protected:
   vtkSlicerUnitsLogic();
   virtual ~vtkSlicerUnitsLogic();
 
-  virtual void AddBuiltInUnits();
+  // Add the built in units in the units logic scene.
+  virtual void AddDefaultsUnits();
 
+  // Add the default units in the application scene
+  virtual void AddBuiltInUnits(vtkMRMLScene* scene);
+
+  // Overloaded to add the defaults units in the application scene.
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
 
   /// Register MRML Node classes to Scene.
   /// Gets called automatically when the MRMLScene is attached to this
   /// logic class.
   virtual void RegisterNodes();
+  virtual void RegisterNodesInternal(vtkMRMLScene* scene);
 
+  // Add a unit node to the given secne
+  vtkMRMLUnitNode* AddUnitNodeToScene(vtkMRMLScene* scene,
+    const char* name,
+    const char* quantity = "length",
+    const char* prefix = "",
+    const char* suffix = "",
+    int precision = 3,
+    double min = -10000,
+    double max = 10000);
+
+  // Variables
+  vtkMRMLScene* UnitsScene;
 private:
   vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&); // Not implemented
   void operator=(const vtkSlicerUnitsLogic&); // Not implemented

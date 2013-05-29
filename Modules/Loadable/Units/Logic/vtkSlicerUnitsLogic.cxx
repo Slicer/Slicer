@@ -40,11 +40,17 @@ vtkStandardNewMacro(vtkSlicerUnitsLogic);
 //----------------------------------------------------------------------------
 vtkSlicerUnitsLogic::vtkSlicerUnitsLogic()
 {
+  this->UnitsScene = vtkMRMLScene::New();
+  this->AddBuiltInUnits(this->UnitsScene);
 }
 
 //----------------------------------------------------------------------------
 vtkSlicerUnitsLogic::~vtkSlicerUnitsLogic()
 {
+  if (this->UnitsScene)
+    {
+    this->UnitsScene->Delete();
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -58,7 +64,23 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
 ::AddUnitNode(const char* name, const char* quantity, const char* prefix,
               const char* suffix, int precision, double min, double max)
 {
-  if (!this->GetMRMLScene())
+  return this->AddUnitNodeToScene(this->GetMRMLScene(), name, quantity,
+    prefix, suffix, precision, min, max);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLScene* vtkSlicerUnitsLogic::GetUnitsScene() const
+{
+  return this->UnitsScene;
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLUnitNode* vtkSlicerUnitsLogic
+::AddUnitNodeToScene(vtkMRMLScene* scene, const char* name,
+                     const char* quantity, const char* prefix,
+                     const char* suffix, int precision, double min, double max)
+{
+  if (!scene)
     {
     return 0;
     }
@@ -72,7 +94,7 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
   unitNode->SetMinimumValue(min);
   unitNode->SetMaximumValue(max);
 
-  this->GetMRMLScene()->AddNode(unitNode);
+  scene->AddNode(unitNode);
   unitNode->Delete();
   return unitNode;
 }
@@ -83,38 +105,58 @@ void vtkSlicerUnitsLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   vtkNew<vtkIntArray> events;
   this->Superclass::SetMRMLSceneInternal(newScene);
 
-  this->AddBuiltInUnits();
+  this->AddDefaultsUnits();
 }
 
 //---------------------------------------------------------------------------
-void vtkSlicerUnitsLogic::AddBuiltInUnits()
+void vtkSlicerUnitsLogic::AddDefaultsUnits()
 {
-  // Add defaults nodes here
-  vtkMRMLUnitNode* node = this->AddUnitNode("metre", "length", "", "m", 3);
+  vtkMRMLUnitNode* node =
+    this->AddUnitNode("ApplicationLength", "length", "", "mm", 3);
   node->SetSaveWithScene(false);
-  node = this->AddUnitNode("centimeter", "length", "", "cm", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("millimeter", "length", "", "mm", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("micrometer", "length", "", "µm", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("nanometer", "length", "", "nm", 3);
-  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
 
-  node = this->AddUnitNode("year", "time", "", "year", 3);
+  node = this->AddUnitNode("ApplicationTime", "time", "", "s", 3);
   node->SetSaveWithScene(false);
-  node = this->AddUnitNode("month", "time", "", "month", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("day", "time", "", "day", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("hour", "time", "", "h", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("second", "time", "", "s", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("millisecond", "time", "", "ms", 3);
-  node->SetSaveWithScene(false);
-  node = this->AddUnitNode("microsecond", "time", "", "µs", 3);
-  node->SetSaveWithScene(false);
+  this->SetDefaultUnit(node->GetQuantity(), node->GetID());
+}
+
+//---------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
+{
+  if (!scene)
+    {
+    return;
+    }
+
+  this->RegisterNodesInternal(scene);
+
+  // Add defaults nodes here
+  this->AddUnitNodeToScene(scene,
+    "metre", "length", "", "m", 3);
+  this->AddUnitNodeToScene(scene,
+    "centimetre", "length", "", "cm", 3);
+  this->AddUnitNodeToScene(scene,
+    "millimetre", "length", "", "mm", 3);
+  this->AddUnitNodeToScene(scene,
+    "micrometre", "length", "", "µm", 3);
+  this->AddUnitNodeToScene(scene,
+    "nanometre", "length", "", "nm", 3);
+
+  this->AddUnitNodeToScene(scene,
+    "year", "time", "", "year", 3);
+  this->AddUnitNodeToScene(scene,
+    "month", "time", "", "month", 3);
+  this->AddUnitNodeToScene(scene,
+    "day", "time", "", "day", 3);
+  this->AddUnitNodeToScene(scene,
+    "hour", "time", "", "h", 3);
+  this->AddUnitNodeToScene(scene,
+    "second", "time", "", "s", 3);
+  this->AddUnitNodeToScene(scene,
+    "millisecond", "time", "", "ms", 3);
+  this->AddUnitNodeToScene(scene,
+    "microsecond", "time", "", "µs", 3);
 }
 
 //-----------------------------------------------------------------------------
@@ -136,8 +178,14 @@ void vtkSlicerUnitsLogic::SetDefaultUnit(const char* quantity, const char* id)
 //-----------------------------------------------------------------------------
 void vtkSlicerUnitsLogic::RegisterNodes()
 {
-  assert(this->GetMRMLScene() != 0);
+  this->RegisterNodesInternal(this->GetMRMLScene());
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::RegisterNodesInternal(vtkMRMLScene* scene)
+{
+  assert(scene != 0);
 
   vtkNew<vtkMRMLUnitNode> unitNode;
-  this->GetMRMLScene()->RegisterNodeClass( unitNode.GetPointer() );
+  scene->RegisterNodeClass(unitNode.GetPointer());
 }

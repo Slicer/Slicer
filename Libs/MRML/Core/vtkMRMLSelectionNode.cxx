@@ -457,6 +457,22 @@ void vtkMRMLSelectionNode::SetReferenceActiveAnnotationID (const char *id)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
+{
+  std::string unit = "Unit/";
+  for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
+    it != this->NodeReferences.end(); ++it)
+    {
+    if (it->first.compare(0, unit.size(), unit) == 0)
+      {
+      // there is only one referenced node per reference role
+      units.push_back(
+        vtkMRMLUnitNode::SafeDownCast(it->second[0]->ReferencedNode));
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 {
   std::string referenceRole = "Unit/";

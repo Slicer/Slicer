@@ -18,6 +18,8 @@
 // MRML includes
 #include "vtkMRMLNode.h"
 
+class vtkMRMLUnitNode;
+
 // STD includes
 #include <vector>
 
@@ -155,6 +157,8 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// Get the number of ids in the list
   int GetNumberOfAnnotationIDsInList() { return static_cast<int>(this->AnnotationIDList.size()); };
 
+  /// -- Units --
+
   /// Description:
   /// Set/Get the current unit node associated with the given quantity.
   /// This is how the GUI or the logic can access the current node for
@@ -167,6 +171,12 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// \sa UnitModifiedEvent
   const char* GetUnitNodeID(const char* quantity);
   void SetUnitNodeID(const char* quantity, const char* id);
+
+  /// Description:
+  /// Get all the unit node currently observed by the selection node.
+  /// \sa GetReferenceNodes()
+  /// \sa GetUnitNodeID(), SetUnitNodeID()
+  void GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units);
 
   /// Description:
   /// Method to propagate events generated in units nodes.

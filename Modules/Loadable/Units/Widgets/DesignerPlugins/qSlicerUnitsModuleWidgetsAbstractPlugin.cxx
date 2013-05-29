@@ -18,39 +18,34 @@
 
 ==============================================================================*/
 
-// Qt includes
-#include <QTimer>
-
-// Slicer includes
-#include <qSlicerApplication.h>
-
-// Volumes includes
-#include "qSlicerUnitsModule.h"
-#include "qSlicerUnitsModuleWidget.h"
-
-// MRML includes
-
-// VTK includes
+#include "qSlicerUnitsModuleWidgetsAbstractPlugin.h"
 
 //-----------------------------------------------------------------------------
-int qSlicerUnitsModuleWidgetTest1( int argc, char * argv[] )
+qSlicerUnitsModuleWidgetsAbstractPlugin
+::qSlicerUnitsModuleWidgetsAbstractPlugin()
 {
-  qSlicerApplication app(argc, argv);
+}
 
-  qSlicerUnitsModule module;
-  module.setMRMLScene(app.mrmlScene());
-  module.initialize(0);
+//-----------------------------------------------------------------------------
+QString qSlicerUnitsModuleWidgetsAbstractPlugin::group() const
+{
+  return "Slicer [Units Widgets]";
+}
 
-  qSlicerUnitsModuleWidget* moduleWidget =
-    dynamic_cast<qSlicerUnitsModuleWidget*>(
-      module.widgetRepresentation());
+//-----------------------------------------------------------------------------
+QIcon qSlicerUnitsModuleWidgetsAbstractPlugin::icon() const
+{
+  return QIcon();
+}
 
-  moduleWidget->show();
+//-----------------------------------------------------------------------------
+QString qSlicerUnitsModuleWidgetsAbstractPlugin::toolTip() const
+{
+  return QString();
+}
 
-  if (argc < 2 || QString(argv[1]) != "-I")
-    {
-    QTimer::singleShot(100, qApp, SLOT(quit()));
-    }
-
-  return app.exec();
+//-----------------------------------------------------------------------------
+QString qSlicerUnitsModuleWidgetsAbstractPlugin::whatsThis() const
+{
+  return QString();
 }

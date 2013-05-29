@@ -134,9 +134,9 @@ bool TestUnit(vtkMRMLSelectionNode* node1)
     return EXIT_FAILURE;
     }
 
-  if (callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent) != 5)
+  if (callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent) != 3)
     {
-    std::cerr<<"Expecting: "<<5<<" callbacks got "
+    std::cerr<<"Expecting: "<<3<<" callbacks got "
       <<callback->GetNumberOfEvents(vtkMRMLSelectionNode::UnitModifiedEvent)
       <<std::endl;
     return EXIT_FAILURE;

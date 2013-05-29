@@ -39,11 +39,10 @@ int vtkSlicerUnitsLogicTest1( int argc, char * argv[] )
   std::vector<vtkMRMLNode*> nodes;
   scene->GetNodesByClass("vtkMRMLUnitNode", nodes);
 
-  const int numberOfUnits = 4;
-  const char* unitNodeIDs[numberOfUnits] = {"vtkMRMLUnitNodeMeter",
-                                            "vtkMRMLUnitNodeMillimeter",
-                                            "vtkMRMLUnitNodeSecond",
-                                            "vtkMRMLUnitNodeMillisecond"};
+  const int numberOfUnits = 2;
+  const char* unitNodeIDs[numberOfUnits] = {"vtkMRMLUnitNodeApplicationLength",
+                                            "vtkMRMLUnitNodeApplicationTime",
+                                            };
 
   if (nodes.size() != numberOfUnits)
     {
@@ -51,7 +50,7 @@ int vtkSlicerUnitsLogicTest1( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  for (int i = 0; i < 4; ++i)
+  for (int i = 0; i < numberOfUnits; ++i)
     {
     vtkMRMLUnitNode* node = vtkMRMLUnitNode::SafeDownCast(nodes[i]);
     if (!node || strcmp(node->GetID(), unitNodeIDs[i]) != 0)
