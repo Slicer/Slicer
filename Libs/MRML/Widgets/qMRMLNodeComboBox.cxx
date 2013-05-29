@@ -466,6 +466,13 @@ QString qMRMLNodeComboBox::currentNodeID()const
 }
 
 // --------------------------------------------------------------------------
+QString qMRMLNodeComboBox::currentNodeId()const
+{
+  // \deprecated
+  return this->currentNodeID();
+}
+
+// --------------------------------------------------------------------------
 void qMRMLNodeComboBox::editCurrentNode()
 {
   vtkMRMLNode* node = this->currentNode();

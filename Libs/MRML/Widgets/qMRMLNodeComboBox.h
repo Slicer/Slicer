@@ -158,6 +158,10 @@ public:
   /// Utility function that is based on currentNode
   QString currentNodeID()const;
 
+  /// \deprecated
+  /// Use currentNodeID instead
+  QString currentNodeId()const;
+
   /// if true, when the user create a node using "Add node", the node will be
   /// automatically selected. It doesn't apply if the node is programatically
   /// added (when the combobox is populated by the scene).
