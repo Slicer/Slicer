@@ -960,9 +960,28 @@ else()
     )
 endif()
 
+
+#-----------------------------------------------------------------------------
+set(Slicer_USE_FILE ${Slicer_BINARY_DIR}/UseSlicer.cmake)
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/UseSlicer.cmake.in
+  ${Slicer_USE_FILE} COPYONLY)
+
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/SlicerConfigVersion.cmake.in
+  ${Slicer_BINARY_DIR}/SlicerConfigVersion.cmake @ONLY)
+
+set(Slicer_EXTENSION_CPACK ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake)
+
+
 # --------------------------------------------------------------------------
 # Bundle extension(s)
 # --------------------------------------------------------------------------
+# Configure SlicerConfig for bundled extension(s) or module(s)
+set(Slicer_DIR "${Slicer_BINARY_DIR}/Extensions")
+configure_file(
+  ${Slicer_SOURCE_DIR}/CMake/SlicerConfig.cmake.in
+  ${Slicer_DIR}/SlicerConfig.cmake @ONLY)
 # List of extension source directories can be passed at configuration time
 # using the following syntax:
 #  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer
@@ -977,6 +996,7 @@ foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
     ${${extension_source_dirname}_BINARY_DIR}
     )
 endforeach()
+unset(Slicer_DIR)
 
 # --------------------------------------------------------------------------
 # Recover the QM output directories

@@ -18,7 +18,7 @@
 #
 #
 
-set(Slicer_USE_FILE_CONFIG ${Slicer_BINARY_DIR}/UseSlicer.cmake)
+set(Slicer_USE_FILE_CONFIG ${Slicer_USE_FILE})
 
 # Compilation settings
 set(Slicer_CMAKE_CXX_COMPILER_CONFIG ${CMAKE_CXX_COMPILER})
@@ -39,7 +39,7 @@ set(Slicer_CXX_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_CXX_MODULE_TEST_TEMPLAT
 set(Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR_CONFIG ${Slicer_PYTHON_MODULE_TEST_TEMPLATES_DIR})
 
 # Path to extension CPack script(s)
-set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPack.cmake)
+set(Slicer_EXTENSION_CPACK_CONFIG ${Slicer_EXTENSION_CPACK})
 set(Slicer_EXTENSION_CPACK_BUNDLE_FIXUP_CONFIG ${Slicer_SOURCE_DIR}/CMake/SlicerExtensionCPackBundleFixup.cmake.in)
 
 set(Slicer_GUI_LIBRARY_CONFIG ${Slicer_GUI_LIBRARY})

@@ -68,11 +68,15 @@ if(NOT Slicer_DONT_USE_EXTENSION)
     endif()
     slicer_setting_variable_message("EXTENSION_NAME")
   endif()
-  if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK AND "${EXTENSION_NAME}" STREQUAL "")
+  if(NOT Slicer_SKIP_EXTENSION_NAME_CHECK AND "${EXTENSION_NAME}" MATCHES "^$|^Slicer$|^Project$")
     message(FATAL_ERROR
       "error: Make sure to call 'project(<extension_name>)' or "
       "set EXTENSION_NAME (or MODULE_NAME) prior to call 'include(\${Slicer_USE_FILE})' !")
   endif()
+endif()
+
+if(Slicer_SOURCE_DIR)
+  return()
 endif()
 
 # --------------------------------------------------------------------------

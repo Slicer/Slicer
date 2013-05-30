@@ -29,6 +29,11 @@ foreach(var ${expected_nonempty_vars})
   endif()
 endforeach()
 
+if(Slicer_SOURCE_DIR)
+  message(STATUS "Skipping extension packaging: ${EXTENSION_NAME}")
+  return()
+endif()
+
 set(expected_existing_vars EXTENSION_README_FILE EXTENSION_LICENSE_FILE)
 foreach(var ${expected_existing_vars})
   if(NOT EXISTS ${${var}})

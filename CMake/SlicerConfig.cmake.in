@@ -68,6 +68,9 @@ if(NOT DEFINED Slicer_USE_CONFIGUREPREREQUISITES)
   set(Slicer_USE_CONFIGUREPREREQUISITES FALSE)
 endif()
 
+if(Slicer_SOURCE_DIR)
+  return()
+endif()
 
 # --------------------------------------------------------------------------
 set(Slicer_CMAKE_DIR "@Slicer_CMAKE_DIR@")
