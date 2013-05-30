@@ -986,6 +986,7 @@ configure_file(
 # using the following syntax:
 #  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer
 foreach(extension_source_dir ${Slicer_EXTENSION_SOURCE_DIRS})
+  get_filename_component(extension_source_dir ${extension_source_dir} REALPATH)
   get_filename_component(extension_source_dirname ${extension_source_dir} NAME_WE)
   message(STATUS "Configuring extension: ${extension_source_dirname}")
   set(ExternalData_SOURCE_ROOT ${extension_source_dir})
