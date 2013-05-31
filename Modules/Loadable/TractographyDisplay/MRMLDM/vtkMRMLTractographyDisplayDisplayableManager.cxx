@@ -175,19 +175,27 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
         }
       else if (this->GetInteractor()->GetKeyCode() == 's')
         {
-        // add fiber to selection
-        vtkIdType cellID = -1;
-        vtkMRMLFiberBundleNode *fiberBundleNode = this->GetPickedFiber(displayNode, pickedCellID, cellID);
-        if (fiberBundleNode != this->SelectedFiberBundleNode)
+        // only works in scalar color mode for now
+        if (displayNode && displayNode->GetColorMode() == vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+          {
+          // add fiber to selection
+          vtkIdType cellID = -1;
+          vtkMRMLFiberBundleNode *fiberBundleNode = this->GetPickedFiber(displayNode, pickedCellID, cellID);
+          if (fiberBundleNode != this->SelectedFiberBundleNode)
+            {
+            this->ClearSelectedFibers();
+            }
+          if (fiberBundleNode && cellID > -1)
+            {
+            this->SelectedFiberBundleNode = fiberBundleNode;
+            std::vector<vtkIdType> cellIDs;
+            cellIDs.push_back(cellID);
+            this->SelectPickedFibers(fiberBundleNode, cellIDs);
+            }
+          }
+        else if (displayNode->GetColorMode() != vtkMRMLFiberBundleDisplayNode::colorModeScalar)
           {
           this->ClearSelectedFibers();
-          }
-        if (fiberBundleNode && cellID > -1)
-          {
-          this->SelectedFiberBundleNode = fiberBundleNode;
-          std::vector<vtkIdType> cellIDs;
-          cellIDs.push_back(cellID);
-          this->SelectPickedFibers(fiberBundleNode, cellIDs);
           }
         }
       else if (this->GetInteractor()->GetKeyCode() == 'x')
@@ -416,6 +424,10 @@ void vtkMRMLTractographyDisplayDisplayableManager
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
   if (interactionNode && event == vtkCommand::ModifiedEvent)
   {
+    if (!interactionNode->GetEnableFiberEdit())
+    {
+      this->ClearSelectedFibers();
+    }
     this->SetEnableFiberEdit(interactionNode->GetEnableFiberEdit());
   }
 }

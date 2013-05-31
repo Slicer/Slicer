@@ -28,6 +28,7 @@
 #include "vtkMRMLFiberBundleDisplayNode.h"
 #include "vtkMRMLFiberBundleStorageNode.h"
 #include "vtkMRMLFiberBundleTubeDisplayNode.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLScene.h"
 
 //-----------------------------------------------------------------------------
@@ -97,6 +98,21 @@ void qSlicerTractographyDisplayModuleWidget::setup()
 //  Q_D(qSlicerTractographyDisplayModuleWidget);
 //  d->setupUi(this);
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerTractographyDisplayModuleWidget::exit()
+{
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(
+        this->mrmlScene()->GetNthNodeByClass(0, "vtkMRMLInteractionNode"));
+  if (interactionNode)
+  {
+    interactionNode->SetEnableFiberEdit(0);
+  }
+
+  this->Superclass::exit();
+}
+
 
 void qSlicerTractographyDisplayModuleWidget::setFiberBundleNode(vtkMRMLNode* inputNode)
 {

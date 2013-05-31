@@ -43,6 +43,8 @@ public:
   vtkMRMLFiberBundleNode fiberBundleNode()const;
   double PercentageOfFibersShown()const;
 
+  virtual void exit();
+
 public slots:
   void setFiberBundleNode(vtkMRMLNode*);
   void setFiberBundleNode(vtkMRMLFiberBundleNode*);
