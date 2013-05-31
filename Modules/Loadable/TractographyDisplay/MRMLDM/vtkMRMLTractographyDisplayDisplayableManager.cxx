@@ -178,6 +178,10 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
         // add fiber to selection
         vtkIdType cellID = -1;
         vtkMRMLFiberBundleNode *fiberBundleNode = this->GetPickedFiber(displayNode, pickedCellID, cellID);
+        if (fiberBundleNode != this->SelectedFiberBundleNode)
+          {
+          this->ClearSelectedFibers();
+          }
         if (fiberBundleNode && cellID > -1)
           {
           this->SelectedFiberBundleNode = fiberBundleNode;
@@ -189,15 +193,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
       else if (this->GetInteractor()->GetKeyCode() == 'x')
         {
         // unselect all selected fibers
-        std::vector<vtkIdType> cellIDs;
-        std::map <vtkIdType, std::vector<double> >::iterator it;
-        for(it = this->SelectedCells.begin(); it != this->SelectedCells.end(); it++)
-          {
-          cellIDs.push_back(it->first);
-          }
-        this->SelectPickedFibers(this->SelectedFiberBundleNode, cellIDs);
-        this->SelectedFiberBundleNode = NULL;
-        this->SelectedCells.clear();
+        this->ClearSelectedFibers();
         }
 
       }
@@ -208,6 +204,21 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
   this->PassThroughInteractorStyleEvent(eventid);
 
   return;
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLTractographyDisplayDisplayableManager::ClearSelectedFibers()
+{
+  // unselect all selected fibers
+  std::vector<vtkIdType> cellIDs;
+  std::map <vtkIdType, std::vector<double> >::iterator it;
+  for(it = this->SelectedCells.begin(); it != this->SelectedCells.end(); it++)
+    {
+    cellIDs.push_back(it->first);
+    }
+  this->SelectPickedFibers(this->SelectedFiberBundleNode, cellIDs);
+  this->SelectedFiberBundleNode = NULL;
+  this->SelectedCells.clear();
 }
 
 //---------------------------------------------------------------------------

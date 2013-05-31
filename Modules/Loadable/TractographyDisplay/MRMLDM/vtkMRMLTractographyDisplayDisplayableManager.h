@@ -60,6 +60,7 @@ protected:
   vtkMRMLFiberBundleNode* GetPickedFiber(vtkMRMLFiberBundleDisplayNode* displayNode,
                                                          vtkIdType pickedCell, vtkIdType &cellID);
   void DeleteSelectedFibers();
+  void ClearSelectedFibers();
   void DeletePickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode, std::vector<vtkIdType> &cellIDs);
   void SelectPickedFibers(vtkMRMLFiberBundleNode *fiberBundleNode, std::vector<vtkIdType> &cellIDs);
 
