@@ -345,6 +345,7 @@ def array(pattern = "", index = 0):
   used in scripts to be sure you get exactly what you want.
   """
   vectorTypes = ('vtkMRMLVectorVolumeNode', 'vtkMRMLMultiVolumeNode')
+  tensorTypes = ('vtkMRMLDiffusionTensorVolumeNode',)
   import vtk.util.numpy_support
   n = getNode(pattern=pattern, index=index)
   if n.GetClassName() == 'vtkMRMLScalarVolumeNode':
@@ -362,5 +363,11 @@ def array(pattern = "", index = 0):
       shape.append(components)
     a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetScalars()).reshape(shape)
     return a
-  # TODO: accessors for other node types: tensors, polydata (verts, polys...), colors
+  elif n.GetClassName() in tensorTypes:
+    i = n.GetImageData()
+    shape = list(n.GetImageData().GetDimensions())
+    shape.reverse()
+    a = vtk.util.numpy_support.vtk_to_numpy(i.GetPointData().GetTensors()).reshape(shape+[3,3])
+    return a
+  # TODO: accessors for other node types: polydata (verts, polys...), colors
 
