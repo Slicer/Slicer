@@ -57,6 +57,7 @@ class QMRML_WIDGETS_EXPORT qMRMLNodeComboBox
 {
   Q_OBJECT
   Q_PROPERTY(QString currentNodeID READ currentNodeID WRITE setCurrentNodeID NOTIFY currentNodeIDChanged DESIGNABLE false)
+  Q_PROPERTY(QString currentNodeId READ currentNodeId WRITE setCurrentNode DESIGNABLE false) // \deprecated
   Q_PROPERTY(QStringList nodeTypes READ nodeTypes WRITE setNodeTypes)
   Q_PROPERTY(bool showHidden READ showHidden WRITE setShowHidden)
   Q_PROPERTY(bool showChildNodeTypes READ showChildNodeTypes WRITE setShowChildNodeTypes)
@@ -160,7 +161,7 @@ public:
 
   /// \deprecated
   /// Use currentNodeID instead
-  QString currentNodeId()const;
+  Q_INVOKABLE QString currentNodeId()const;
 
   /// if true, when the user create a node using "Add node", the node will be
   /// automatically selected. It doesn't apply if the node is programatically
@@ -242,6 +243,10 @@ public slots:
   /// Select the node to be current
   void setCurrentNode(vtkMRMLNode* node);
 
+  /// \deprecated
+  /// Use setCurrentNodeID instead
+  void setCurrentNode(const QString& nodeID);
+
   /// Select the node to be current. If \nodeId is invalid (or can't be found
   /// in the scene), the current node becomes 0.
   void setCurrentNodeID(const QString& nodeID);
@@ -249,7 +254,7 @@ public slots:
   /// Select the current node by index. The index refers to the order of the nodes
   /// into the list. If \a index is 0, the first node will be selected (even if
   /// "NoneEnabled" is true).
-  /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNodeId(const QString&)
+  /// \sa nodeCount, setCurrentNode(vtkMRMLNode* ), setCurrentNodeID(const QString&)
   void setCurrentNodeIndex(int index);
 
   /// Creates a node of the same type than on the "node types" properties.

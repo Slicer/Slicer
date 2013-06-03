@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QDebug>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QKeyEvent>
@@ -468,7 +469,7 @@ QString qMRMLNodeComboBox::currentNodeID()const
 // --------------------------------------------------------------------------
 QString qMRMLNodeComboBox::currentNodeId()const
 {
-  // \deprecated
+  qWarning() << "This function is deprecated. Use currentNodeID() instead";
   return this->currentNodeID();
 }
 
@@ -618,6 +619,13 @@ void qMRMLNodeComboBox::setMRMLScene(vtkMRMLScene* scene)
 void qMRMLNodeComboBox::setCurrentNode(vtkMRMLNode* newCurrentNode)
 {
   this->setCurrentNodeID(newCurrentNode ? newCurrentNode->GetID() : "");
+}
+
+// --------------------------------------------------------------------------
+void qMRMLNodeComboBox::setCurrentNode(const QString& nodeID)
+{
+  qWarning() << "This function is deprecated. Use setCurrentNodeID() instead";
+  this->setCurrentNodeID(nodeID);
 }
 
 // --------------------------------------------------------------------------
