@@ -289,9 +289,19 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
 
+  std::vector<vtkMRMLUnitNode*> units;
+  node->GetUnitNodes(units);
+  for (std::vector<vtkMRMLUnitNode*>::iterator it = units.begin();
+    it != units.end(); ++it)
+    {
+    if (*it)
+      {
+      this->SetUnitNodeID((*it)->GetQuantity(), (*it)->GetID());
+      }
+    }
+
   this->EndModify(disabledModify);
-  
-  }
+}
 
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::PrintSelf(ostream& os, vtkIndent indent)
@@ -487,8 +497,23 @@ void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
   std::string referenceRole = "Unit/" + safeQuantity;
 
   unsigned long mTime = this->GetMTime();
-  this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
+  std::map<std::string, std::string>::iterator nodeReferenceIterator =
+    this->NodeReferenceMRMLAttributeNames.find(safeQuantity);
+  if (id &&
+    nodeReferenceIterator == this->NodeReferenceMRMLAttributeNames.end())
+    {
+    // Add Attribute
+    this->NodeReferenceMRMLAttributeNames[referenceRole] =
+      safeQuantity + "Unit";
+    }
+  else if (!id &&
+    nodeReferenceIterator != this->NodeReferenceMRMLAttributeNames.end())
+    {
+    // Remove attribute
+    this->NodeReferenceMRMLAttributeNames.erase(nodeReferenceIterator);
+    }
 
+  this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
   if (this->GetMTime() > mTime)
     {
     // Node changed, propaged unit modified event

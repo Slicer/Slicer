@@ -145,6 +145,12 @@ slicer_add_python_test(
   TESTNAME_PREFIX nomainwindow_
   )
 
+set(testname MRMLSceneImportAndExport)
+slicer_add_python_test(
+  SCRIPT ${testname}.py
+  TESTNAME_PREFIX mainwindow_
+  )
+
 set(testname MRMLCreateNodeByClassWithSetReferenceCountToOne)
 slicer_add_python_test(
   SCRIPT ${testname}.py
