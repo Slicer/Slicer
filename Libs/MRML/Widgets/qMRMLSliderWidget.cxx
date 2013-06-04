@@ -71,7 +71,6 @@ void qMRMLSliderWidgetPrivate::setAndObserveSelectionNode()
     {
     selectionNode = vtkMRMLSelectionNode::SafeDownCast(
       this->MRMLScene->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
-    Q_ASSERT(selectionNode);
     }
 
   q->qvtkReconnect(this->SelectionNode, selectionNode,
