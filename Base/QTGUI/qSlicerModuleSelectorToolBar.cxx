@@ -100,6 +100,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(this->ModulesMenu, SIGNAL(currentModuleChanged(QString)),
                    q, SLOT(onModuleSelected(QString)));
   this->ModulesComboBox->setMenu(this->ModulesMenu);
+  this->ModulesComboBox->toolButtonInternal()->setShortcut(QKeySequence("Ctrl+F"));
 
   // History
   this->HistoryMenu = new QMenu(QObject::tr("Modules history"), q);
@@ -128,6 +129,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    this->PreviousButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->PreviousButton->setEnabled(this->PreviousHistoryMenu->actions().size() > 0);
+  this->PreviousButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Left));
 
   // Next button
   this->NextHistoryMenu = new QMenu("Modules Next History", q);
@@ -144,6 +146,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QObject::connect(q, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)),
                    this->NextButton,SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
   this->NextButton->setEnabled(this->NextHistoryMenu->actions().size() > 0);
+  this->NextButton->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_Right));
 }
 
 //---------------------------------------------------------------------------
