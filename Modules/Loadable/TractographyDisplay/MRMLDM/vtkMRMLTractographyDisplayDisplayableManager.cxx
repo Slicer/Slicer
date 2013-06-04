@@ -193,7 +193,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::OnInteractorStyleEvent(int ev
             this->SelectPickedFibers(fiberBundleNode, cellIDs);
             }
           }
-        else if (displayNode->GetColorMode() != vtkMRMLFiberBundleDisplayNode::colorModeScalar)
+        else if (displayNode && displayNode->GetColorMode() != vtkMRMLFiberBundleDisplayNode::colorModeScalar)
           {
           this->ClearSelectedFibers();
           }
