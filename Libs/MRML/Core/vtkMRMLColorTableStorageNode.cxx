@@ -127,7 +127,10 @@ int vtkMRMLColorTableStorageNode::ReadDataInternal(vtkMRMLNode *refNode)
       }
     // extra one for zero, also resizes the names array
     colorNode->SetNumberOfColors(maxID + 1);
-    colorNode->GetLookupTable()->SetTableRange(0, maxID);
+    if (colorNode->GetLookupTable())
+      {
+      colorNode->GetLookupTable()->SetTableRange(0, maxID);
+      }
     // init the table to black/opacity 0 with no name, just in case we're missing values
     const char *noName = colorNode->GetNoName();
     for (int i = 0; i < maxID+1; i++)
@@ -254,36 +257,39 @@ int vtkMRMLColorTableStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
 
   // put down a header
   of << "# Color table file " << (this->GetFileName() != NULL ? this->GetFileName() : "null") << endl;
-  of << "# " << colorNode->GetLookupTable()->GetNumberOfTableValues() << " values" << endl;
-  for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)
+  if (colorNode->GetLookupTable() != NULL) 
     {
-    // is it an unnamed color?
-    if (colorNode->GetNoName() &&
-        colorNode->GetColorName(i) &&
-        strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
+    of << "# " << colorNode->GetLookupTable()->GetNumberOfTableValues() << " values" << endl;
+    for (int i = 0; i < colorNode->GetLookupTable()->GetNumberOfTableValues(); i++)
       {
-      continue;
+      // is it an unnamed color?
+      if (colorNode->GetNoName() &&
+          colorNode->GetColorName(i) &&
+          strcmp(colorNode->GetNoName(), colorNode->GetColorName(i)) == 0)
+        {
+        continue;
+        }
+      
+      double *rgba;
+      rgba = colorNode->GetLookupTable()->GetTableValue(i);
+      // the colour look up table uses 0-1, file values are 0-255,
+      double r = rgba[0] * 255.0;
+      double g = rgba[1] * 255.0;
+      double b = rgba[2] * 255.0;
+      double a = rgba[3] * 255.0;
+      of << i;
+      of << " ";
+      of << colorNode->GetColorNameWithoutSpaces(i, "_");
+      of << " ";
+      of << r;
+      of << " ";
+      of << g;
+      of << " ";
+      of << b;
+      of << " ";
+      of << a;
+      of << endl;   
       }
-    
-    double *rgba;
-    rgba = colorNode->GetLookupTable()->GetTableValue(i);
-    // the colour look up table uses 0-1, file values are 0-255,
-    double r = rgba[0] * 255.0;
-    double g = rgba[1] * 255.0;
-    double b = rgba[2] * 255.0;
-    double a = rgba[3] * 255.0;
-    of << i;
-    of << " ";
-    of << colorNode->GetColorNameWithoutSpaces(i, "_");
-    of << " ";
-    of << r;
-    of << " ";
-    of << g;
-    of << " ";
-    of << b;
-    of << " ";
-    of << a;
-    of << endl;   
     }
   of.close();
 
