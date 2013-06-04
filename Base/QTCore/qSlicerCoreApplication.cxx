@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QDir>
+#include <QLocale>
 #include <QMessageBox>
 #include <QTimer>
 #include <QNetworkProxyFactory>
@@ -139,6 +140,19 @@ void qSlicerCoreApplicationPrivate::init()
 {
   Q_Q(qSlicerCoreApplication);
 
+  // Set the locale to be "C" to avoid issues related to reading and writing
+  // of floating point numbers.  For example, when the decimal point is set to be
+  // a comma instead of a period, there can be truncation of data.
+  // See these previous commits and the
+  // http://viewvc.slicer.org/viewvc.cgi/Slicer4?view=revision&revision=21856
+  // http://viewvc.slicer.org/viewvc.cgi/Slicer4?view=revision&revision=21865
+  // http://slicer-devel.65872.n3.nabble.com/Re-Rounding-to-integer-tt4027985.html
+  // http://slicer-devel.65872.n3.nabble.com/Re-slicer-users-Slicer4-can-t-really-use-it-yet-td4028040.html
+  // http://slicer-users.65878.n3.nabble.com/Slicer4-DICOM-many-problems-td4025919.html
+  // and issue #3029
+  QLocale::setDefault(QLocale::C);
+
+  // allow a debugger to be attached during startup
   if(qApp->arguments().contains("--attach-process"))
     {
     QString msg("This message box is here to give you time to attach "
