@@ -258,13 +258,15 @@ class sceneImport2428Test(unittest.TestCase):
     self.delayDisplay('Paint radius is %s' % parameterNode.GetParameter('PaintEffect,radius'))
     sliceWidget = lm.sliceWidget('Red')
     size = min(sliceWidget.width,sliceWidget.height)
-    step = size / 8
+    step = size / 12
+    center = size / 2
     parameterNode.SetParameter('PaintEffect,radius', '20')
     paintTool = EditorLib.PaintEffectTool(sliceWidget)
     self.delayDisplay('Paint radius is %s, tool radius is %d' % (parameterNode.GetParameter('PaintEffect,radius'),paintTool.radius))
     for label in xrange(1,5):
       editUtil.setLabel(label)
-      pos = step * label
+      pos = center - 2*step + (step * label)
+      self.delayDisplay('Painting %d, at  (%d,%d)' % (label,pos,pos),200)
       paintTool.paintAddPoint(pos,pos)
       paintTool.paintApply()
     paintTool.cleanup()
