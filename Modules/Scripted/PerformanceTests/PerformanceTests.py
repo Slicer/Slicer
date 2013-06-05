@@ -42,6 +42,7 @@ class PerformanceTestsWidget:
         ( 'Reslicing', self.reslicing ),
         ( 'Chart Test', self.chartTest ),
         ( 'Web View Test', self.webViewTest ),
+        ( 'Fill Out Web Form Test', self.webViewFormTest ),
         ( 'Memory Check', self.memoryCheck ),
       )
 
@@ -250,6 +251,26 @@ with point index of {pointIndex}
     self.webView.page().setLinkDelegationPolicy(qt.QWebPage.DelegateAllLinks)
     self.webView.connect('linkClicked(QUrl)', self.webViewCallback)
     self.webView.show()
+
+  def webViewFormTest(self):
+    """Just as a demo, load a google search in a web view
+    and use the qt api to fill in a search term"""
+    self.webView = qt.QWebView()
+    self.webView.settings().setAttribute(qt.QWebSettings.DeveloperExtrasEnabled, True)
+    self.webView.connect('loadFinished(bool)', self.webViewFormLoadedCallback)
+    self.webView.show()
+    u = qt.QUrl('http://www.google.com')
+    self.webView.setUrl(u)
+
+  def webViewFormLoadedCallback(self,ok):
+    if not ok:
+      print('page did not load')
+      return
+    page = self.webView.page()
+    frame = page.mainFrame()
+    document = frame.documentElement()
+    element = document.findFirst('.lst')
+    element.setAttribute("value", "where can I learn more about this 3D Slicer program?")
 
   def memoryCallback(self):
     if self.sysInfoWindow.visible:
