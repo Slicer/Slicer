@@ -40,7 +40,7 @@ public:
      ----------------------------------------------------------------------
      ---------------------------------------------------------------------- */
 
-  typedef typename SuperClassType::TCharImage TLabelImage;
+  typedef typename SuperClassType::TShortImage TLabelImage;
   typedef typename TLabelImage::Pointer       TLabelImagePointer;
 
   typedef typename SuperClassType::TFloatImage TFloatImage;

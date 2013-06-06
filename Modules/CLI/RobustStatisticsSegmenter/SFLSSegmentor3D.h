@@ -29,11 +29,13 @@ public:
   typedef itk::Image<double, 3>        TDoubleImage;
   typedef itk::Image<char, 3>          TCharImage;
   typedef itk::Image<unsigned char, 3> TUCharImage;
+  typedef itk::Image<short, 3>         TShortImage;
 
   typedef TImage      ImageType;
   typedef TFloatImage LSImageType;
   typedef TCharImage  LabelImageType;
   typedef TUCharImage MaskImageType;
+  typedef TShortImage ShortImageType;
 
   typedef typename TImage::IndexType  TIndex;
   typedef typename TImage::SizeType   TSize;
