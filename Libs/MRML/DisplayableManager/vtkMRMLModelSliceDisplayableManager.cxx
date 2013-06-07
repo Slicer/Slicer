@@ -620,8 +620,6 @@ void vtkMRMLModelSliceDisplayableManager
 void vtkMRMLModelSliceDisplayableManager
 ::ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData)
 {
-  vtkMRMLDisplayNode* displayNode;
-  vtkMRMLDisplayableNode* displayableNode;
   vtkMRMLScene* scene = this->GetMRMLScene();
 
   if ( scene->IsBatchProcessing() )
@@ -629,10 +627,14 @@ void vtkMRMLModelSliceDisplayableManager
     return;
     }
 
-  if ( (displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller)) )
+  vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(caller);
+
+  if ( displayableNode )
     {
-    if ( (event == vtkMRMLDisplayableNode::DisplayModifiedEvent)
-          && (displayNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData)) )
+    vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode *> (callData);
+    vtkMRMLDisplayNode* displayNode = vtkMRMLDisplayNode::SafeDownCast(callDataNode);
+
+    if ( displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent) )
       {
       this->Internal->UpdateDisplayNode(displayNode);
       this->RequestRender();
