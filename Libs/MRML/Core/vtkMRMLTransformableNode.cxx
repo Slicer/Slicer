@@ -103,6 +103,13 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
     return;
     }
 
+  if (transformNodeID != 0 && this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()) != 0 &&
+      !strcmp(transformNodeID, this->GetNodeReferenceID(this->GetTransformNodeReferenceRole())))
+    {
+    //the same ID, nothing to do
+    return;
+    }
+
   vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(
     this->GetScene() != 0 ?this->GetScene()->GetNodeByID(transformNodeID) : 0);
 
@@ -118,6 +125,8 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
   events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID, events);
   events->Delete();
+
+  this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
 }
 
 //---------------------------------------------------------------------------
