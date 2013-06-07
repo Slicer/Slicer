@@ -103,6 +103,51 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
 
 
 #
+# DICOM file dialog
+#
+class DICOMFileDialog:
+  """This specially named class is detected by the scripted loadable
+  module and is the target for optional drag and drop operations.
+  See: Base/QTGUI/qSlicerScriptedFileDialog.h
+  and commit http://svn.slicer.org/Slicer4/trunk@21951 and issue #3081
+  """
+
+  def __init__(self,qSlicerFileDialog):
+    self.qSlicerFileDialog = qSlicerFileDialog
+    qSlicerFileDialog.fileType = 'DICOM Directory'
+    qSlicerFileDialog.description = 'Load directory into DICOM database'
+    qSlicerFileDialog.action = slicer.qSlicerFileDialog.Read
+    self.directoriesToAdd = []
+
+  def execDialog(self):
+    """Not used"""
+    print('execDialog called on %s' % self)
+
+  def isMimeDataAccepted(self):
+    """Checks the dropped data and returns true if it is one or
+    more directories"""
+    self.directoriesToAdd = []
+    mimeData = self.qSlicerFileDialog.mimeData()
+    if mimeData.hasFormat('text/uri-list'):
+      urls = mimeData.urls()
+      for url in urls:
+        localPath = url.toLocalFile() # convert QUrl to local path
+        pathInfo = qt.QFileInfo()
+        pathInfo.setFile(localPath) # information about the path
+        if pathInfo.isDir(): # if it is a directory we add the files to the dialog
+          self.directoriesToAdd.append(localPath)
+    self.qSlicerFileDialog.acceptMimeData(len(self.directoriesToAdd) != 0)
+
+  def dropEvent(self):
+    mainWindow = slicer.util.mainWindow()
+    mainWindow.moduleSelector().selectModule('DICOM')
+    dicomWidget = slicer.modules.DICOMWidget
+    for directory in self.directoriesToAdd:
+      dicomWidget.detailsPopup.dicomApp.onImportDirectory(directory)
+    self.directoriesToAdd = []
+
+
+#
 # DICOM widget
 #
 
