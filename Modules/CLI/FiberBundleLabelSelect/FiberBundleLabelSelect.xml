@@ -42,12 +42,12 @@ Fiber bundle label select allows a user to select tracts passing or not passing 
   </parameters>
   
   <parameters>
-    <label>Label definition</label>
+    <label>Label regions definition</label>
     <description>Selection of label/s</description>
     
     <integer-vector>
       <name>PassLabel</name>
-      <label> Labels to pass pass </label>
+      <label> Labels to pass through </label>
       <flag>-p</flag>
       <longflag>--pass</longflag>
       <description>Label values that defines pass region.</description>
@@ -56,7 +56,7 @@ Fiber bundle label select allows a user to select tracts passing or not passing 
 
     <integer-vector>
       <name>NotPassLabel</name>
-      <label> Label not to pass</label>
+      <label> Labels not to pass through</label>
       <flag>-n</flag>
       <longflag>--nopass</longflag>
       <description>Label values that defines no pass region.</description>
