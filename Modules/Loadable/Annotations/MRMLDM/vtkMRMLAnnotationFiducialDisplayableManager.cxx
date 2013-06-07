@@ -384,6 +384,17 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
     vtkDebugMacro("PropagateMRMLToWidget: Could not get display node for node " << (fiducialNode->GetID() ? fiducialNode->GetID() : "null id"));
     }
 
+  // adjust the scale of the widget based on the current slice dimensions
+  // so the widgets will maintain a fixed screen size as the window is resized
+  // - this is used below to adjust text and fiducial size
+  double scaleFor2D = 1;
+  if (this->GetSliceNode())
+    {
+    int *dimensions = this->GetSliceNode()->GetDimensions();
+    double windowDiagonal = sqrt(double(dimensions[0]*dimensions[0]+dimensions[1]*dimensions[1]));
+    scaleFor2D = 707.1 / windowDiagonal; // assume a nominal screen of 500x500
+    }
+
   vtkOrientedPolygonalHandleRepresentation3D *handleRep =
       vtkOrientedPolygonalHandleRepresentation3D::SafeDownCast(seedRepresentation->GetHandleRepresentation(0));
   // might be in lightbox mode where using a 2d point handle
@@ -524,7 +535,7 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
       // the following check is only needed since we require a different uniform scale depending on 2D and 3D
       if (this->Is2DDisplayableManager())
         {
-        handleRep->SetUniformScale(displayNode->GetGlyphScale()*this->GetScaleFactor2D());
+        handleRep->SetUniformScale(displayNode->GetGlyphScale()*this->GetScaleFactor2D()*scaleFor2D);
         }
       else
         {
@@ -552,9 +563,9 @@ void vtkMRMLAnnotationFiducialDisplayableManager::PropagateMRMLToWidget(vtkMRMLA
         if (this->Is2DDisplayableManager())
           {
           // scale it down for the 2d windows
-          textscale[0] *= this->GetScaleFactor2D();
-          textscale[1] *= this->GetScaleFactor2D();
-          textscale[2] *= this->GetScaleFactor2D();
+          textscale[0] *= this->GetScaleFactor2D() * scaleFor2D;
+          textscale[1] *= this->GetScaleFactor2D() * scaleFor2D;
+          textscale[2] *= this->GetScaleFactor2D() * scaleFor2D;
           }
         handleRep->SetLabelTextScale(textscale);
         if (handleRep->GetLabelTextActor())
