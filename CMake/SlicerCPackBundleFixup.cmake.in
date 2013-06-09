@@ -78,6 +78,16 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     endif()
   endif()
 
+  set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
+  if(Slicer_USE_SimpleITK)
+    if (item MATCHES  "site-packages/(SimpleITK.*)/_SimpleITK\\.so" )
+      # CMAKE_MATCH_1 is the over complicated egg path
+      set(python_sys_site_path "@fixup_path@/lib/Python/lib/python2.7/site-packages")
+      set(path "${python_sys_site_path}/${CMAKE_MATCH_1}/")
+    endif()
+  endif()
+
+
   if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
     set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
   endif()
@@ -175,6 +185,13 @@ function(fixup_bundle_with_plugins app)
     list(APPEND candiates_pattern
       "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_tkinter.so"
       "${app_dir}/Contents/lib/TclTk/lib/lib*${suffix}"
+      )
+  endif()
+
+  set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
+  if(Slicer_USE_SimpleITK)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/lib/Python/lib/python2.7/site-packages/SimpleITK*/_SimpleITK.so"
       )
   endif()
 
