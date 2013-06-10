@@ -87,7 +87,6 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     endif()
   endif()
 
-
   if(item MATCHES "@Slicer_ITKFACTORIES_DIR@/[^/]+Plugin\\.(so|dylib)$")
     set(path "@fixup_path@/@Slicer_ITKFACTORIES_DIR@")
   endif()
