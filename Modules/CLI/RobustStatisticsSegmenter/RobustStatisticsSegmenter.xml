@@ -17,7 +17,7 @@
       <flag>v</flag>
       <description><![CDATA[The approximate volume of the object, in mL.]]></description>
       <label>Approximate volume(mL)</label>
-      <default>1</default>
+      <default>50</default>
       <constraints>
         <minimum>0.0</minimum>
         <maximum>1000000</maximum>
@@ -33,7 +33,7 @@
       <longflag>intensityHomogeneity</longflag>
       <description><![CDATA[What is the homogeneity of intensity within the object? Given constant intensity at 1.0 score and extreme fluctuating intensity at 0.]]></description>
       <label>Intensity Homogeneity[0-1.0]</label>
-      <default>0.0</default>
+      <default>0.6</default>
       <constraints>
         <minimum>0.0</minimum>
         <maximum>1.0</maximum>
@@ -46,7 +46,7 @@
       <flag>c</flag>
       <description><![CDATA[Given sphere 1.0 score and extreme rough bounday/surface 0 score, what is the expected smoothness of the object?]]></description>
       <label>Boundary Smoothness[0-1.0]</label>
-      <default>0</default>
+      <default>0.5</default>
       <constraints>
         <minimum>0.0</minimum>
         <maximum>1.0</maximum>
@@ -61,7 +61,7 @@
       <default>1</default>
       <constraints>
         <minimum>1</minimum>
-        <maximum>255</maximum>
+        <maximum>1000</maximum>
         <step>1</step>
       </constraints>
     </integer>
@@ -81,14 +81,14 @@
   <parameters>
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
-    <image>
+    <image type="scalar">
       <name>originalImageFileName</name>
       <label>Original Image</label>
       <channel>input</channel>
       <index>0</index>
       <description><![CDATA[Original image to be segmented]]></description>
     </image>
-    <image>
+    <image type="label">
       <name>labelImageFileName</name>
       <label>Label Image</label>
       <channel>input</channel>
