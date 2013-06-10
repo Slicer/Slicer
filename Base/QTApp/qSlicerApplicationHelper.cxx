@@ -124,8 +124,10 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
 #endif
   moduleFactoryManager->addSearchPaths(
     app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList());
-  moduleFactoryManager->setModulesToIgnore(
-    app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList());
+  QStringList ignoreModules =
+    app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList();
+  ignoreModules << "Units"; // See http://www.na-mic.org/Bug/view.php?id=3152
+  moduleFactoryManager->setModulesToIgnore(ignoreModules);
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
 }
 
