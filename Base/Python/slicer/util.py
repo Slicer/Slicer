@@ -280,7 +280,7 @@ def selectModule(module):
 
 def moduleNames():
   from slicer import app
-  return app.moduleManager().factoryManager().moduleNames()
+  return app.moduleManager().factoryManager().loadedModuleNames()
 
 def getModule(moduleName):
   from slicer import app
