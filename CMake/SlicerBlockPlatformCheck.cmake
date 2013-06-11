@@ -57,11 +57,15 @@ if(Slicer_PLATFORM_CHECK)
       message(FATAL_ERROR "Visual Studio >= 2008 is required !")
     endif()
 
-    include(CMakeDetermineVSServicePack)
-    DetermineVSServicePack(Slicer_MSVC_SERVICE_PACK)
-    message(STATUS "Detected: ${Slicer_MSVC_SERVICE_PACK}")
-
-    if(MSVC90 AND NOT "${Slicer_MSVC_SERVICE_PACK}" STREQUAL "vc90sp1")
+    # See https://github.com/Kitware/CMake/blob/master/Modules/CMakeDetermineVSServicePack.cmake
+    #  14.00.50727.42  - vc80
+    #  14.00.50727.762 - vc80sp1
+    #  15.00.21022.08  - vc90
+    #  15.00.30729.01  - vc90sp1
+    #  16.00.30319.01  - vc100
+    #  16.00.40219.01  - vc100sp1
+    #  17.00.50727.1   - vc110
+    if(MSVC90 AND NOT "${CMAKE_CXX_COMPILER_VERSION}" VERSION_EQUAL "15.00.30729.01")
       message(FATAL_ERROR "Slicer requires Microsoft Visual Studio 2008 (VS9) SP1 or greater!"
                           "See http://www.microsoft.com/en-us/download/details.aspx?id=10986" )
     endif()
