@@ -15,6 +15,9 @@ if(NOT TARGET ConfigureAdditionalLauncherSettings)
   list(FIND Slicer_LAUNCH_COMMAND "--launch" launch_index)
   list(INSERT Slicer_LAUNCH_COMMAND ${launch_index} ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS})
 
+  list(FIND SEM_LAUNCH_COMMAND "--launch" launch_index)
+  list(INSERT SEM_LAUNCH_COMMAND ${launch_index} ${Slicer_ADDITIONAL_LAUNCHER_SETTINGS})
+
   # Configure script
   set(_additonal_settings_configure_script ${CMAKE_CURRENT_BINARY_DIR}/AdditionalLauncherSettings-configure.cmake)
   file(WRITE ${_additonal_settings_configure_script}
