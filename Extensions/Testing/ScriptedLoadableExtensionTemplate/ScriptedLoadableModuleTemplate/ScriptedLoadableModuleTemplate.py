@@ -136,6 +136,9 @@ class ScriptedLoadableModuleTemplateWidget:
     # Add vertical spacer
     self.layout.addStretch(1)
 
+  def cleanup(self):
+    pass
+
   def onSelect(self):
     self.applyButton.enabled = self.inputSelector.currentNode() and self.outputSelector.currentNode()
 
@@ -178,10 +181,16 @@ class ScriptedLoadableModuleTemplateWidget:
     while item:
       parent.layout().removeItem(item)
       item = parent.layout().itemAt(0)
+
+    # delete the old widget instance
+    if hasattr(globals()['slicer'].modules, widgetName):
+      getattr(globals()['slicer'].modules, widgetName).cleanup()
+
     # create new widget inside existing parent
     globals()[widgetName.lower()] = eval(
         'globals()["%s"].%s(parent)' % (moduleName, widgetName))
     globals()[widgetName.lower()].setup()
+    setattr(globals()['slicer'].modules, widgetName, globals()[widgetName.lower()])
 
   def onReloadAndTest(self,moduleName="ScriptedLoadableModuleTemplate"):
     try:
