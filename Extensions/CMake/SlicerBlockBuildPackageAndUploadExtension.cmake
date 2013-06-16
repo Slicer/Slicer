@@ -228,8 +228,11 @@ else()
         RESULT_VARNAME slicer_midas_upload_status
         )
       if(NOT slicer_midas_upload_status STREQUAL "ok")
-        message("Uploading [${package_name}] on CDash") # on failure, upload the package to CDash instead
-        ctest_upload(FILES ${p})
+        message(FATAL_ERROR
+"Upload of [${package_name}] failed !
+Check that:
+  (1) you have been granted permission to upload
+  (2) your email and api key are correct")
       else()
         message("Uploading URL on CDash")  # On success, upload a link to CDash
         midas_ctest_upload_url(
