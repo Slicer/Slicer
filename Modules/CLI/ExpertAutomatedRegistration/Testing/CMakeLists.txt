@@ -1,4 +1,4 @@
-message(WARNING "warning: Module ${MODULE_NAME} doesn't have any test !")
+#message(WARNING "warning: Module ${MODULE_NAME} doesn't have any test !")
 
 #-----------------------------------------------------------------------------
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
