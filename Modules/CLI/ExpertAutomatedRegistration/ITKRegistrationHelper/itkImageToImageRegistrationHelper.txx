@@ -1074,14 +1074,14 @@ ImageToImageRegistrationHelper<TImage>
 template <class TImage>
 void
 ImageToImageRegistrationHelper<TImage>
-::LoadParameters( const std::string filename )
+::LoadParameters( const std::string itkNotUsed(filename) )
 {
 }
 
 template <class TImage>
 void
 ImageToImageRegistrationHelper<TImage>
-::SaveParameters( const std::string filename )
+::SaveParameters( const std::string itkNotUsed(filename) )
 {
 }
 
