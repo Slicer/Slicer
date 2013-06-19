@@ -989,6 +989,50 @@ void vtkSlicerVolumesLogic::ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode
 }
 
 //-------------------------------------------------------------------------
+void vtkSlicerVolumesLogic::CenterVolume(vtkMRMLVolumeNode* volumeNode)
+{
+  if (!volumeNode || !volumeNode->GetImageData())
+    {
+    return;
+    }
+  double origin[3];
+  this->GetVolumeCenteredOrigin(volumeNode, origin);
+  volumeNode->SetOrigin(origin);
+}
+
+//------------------------------------------------------------------------------
+void vtkSlicerVolumesLogic
+::GetVolumeCenteredOrigin(vtkMRMLVolumeNode* volumeNode, double* origin)
+{
+  // WARNING: this code is duplicated in qMRMLVolumeInfoWidget !
+  origin[0] = 0.;
+  origin[1] = 0.;
+  origin[2] = 0.;
+
+  vtkImageData *imageData = volumeNode ? volumeNode->GetImageData() : 0;
+  if (!imageData)
+    {
+    return;
+    }
+
+  int *dims = imageData->GetDimensions();
+  double dimsH[4];
+  dimsH[0] = dims[0] - 1;
+  dimsH[1] = dims[1] - 1;
+  dimsH[2] = dims[2] - 1;
+  dimsH[3] = 0.;
+
+  vtkSmartPointer<vtkMatrix4x4> ijkToRAS = vtkSmartPointer<vtkMatrix4x4>::New();
+  volumeNode->GetIJKToRASMatrix(ijkToRAS);
+  double rasCorner[4];
+  ijkToRAS->MultiplyPoint(dimsH, rasCorner);
+
+  origin[0] = -0.5 * rasCorner[0];
+  origin[1] = -0.5 * rasCorner[1];
+  origin[2] = -0.5 * rasCorner[2];
+}
+
+//-------------------------------------------------------------------------
 void vtkSlicerVolumesLogic::TranslateFreeSurferRegistrationMatrixIntoSlicerRASToRASMatrix( vtkMRMLVolumeNode *V1Node,
                                                                        vtkMRMLVolumeNode *V2Node,
                                                                        vtkMatrix4x4 *FSRegistrationMatrix,

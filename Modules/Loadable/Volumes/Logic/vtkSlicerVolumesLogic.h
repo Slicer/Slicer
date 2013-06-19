@@ -200,6 +200,14 @@ public:
   void ComputeTkRegVox2RASMatrix ( vtkMRMLVolumeNode *VNode,
                                    vtkMatrix4x4 *M );
 
+  /// Center the volume on the origin (0,0,0)
+  /// \sa GetVolumeCenteredOrigin()
+  void CenterVolume(vtkMRMLVolumeNode *volumeNode);
+
+  /// Compute the origin of the volume in order for the volume to be centered.
+  /// \sa CenterVolume()
+  void GetVolumeCenteredOrigin(vtkMRMLVolumeNode *volumeNode, double* origin);
+
 protected:
   vtkSlicerVolumesLogic();
   virtual ~vtkSlicerVolumesLogic();
