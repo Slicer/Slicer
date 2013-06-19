@@ -44,7 +44,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtksys/SystemTools.hxx>
-
+#include <vtkWeakPointer.h>
 
 //----------------------------------------------------------------------------
 namespace
@@ -679,11 +679,9 @@ void vtkSlicerVolumesLogic
     {
     return;
     }
-  vtkMRMLDisplayNode *oldDisplayNode = scalarNode->GetDisplayNode();
-  if (oldDisplayNode)
-    {
-    scalarNode->GetScene()->RemoveNode(oldDisplayNode);
-    }
+
+  vtkWeakPointer<vtkMRMLDisplayNode> oldDisplayNode = scalarNode->GetDisplayNode();
+
   vtkMRMLVolumeDisplayNode* displayNode = 0;
   if (labelMap)
     {
@@ -696,9 +694,16 @@ void vtkSlicerVolumesLogic
   displayNode->SetAndObserveColorNodeID (
     labelMap ? "vtkMRMLColorTableNodeLabels" : "vtkMRMLColorTableNodeGrey");
   scalarNode->GetScene()->AddNode(displayNode);
-  scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
   scalarNode->SetLabelMap( labelMap );
+  scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
   displayNode->Delete();
+
+  // We need to remove it after the new display node is set otherwise the
+  // slice layer logic would create one between the scene removal and the set.
+  if (oldDisplayNode.GetPointer())
+    {
+    scalarNode->GetScene()->RemoveNode(oldDisplayNode);
+    }
 }
 
 

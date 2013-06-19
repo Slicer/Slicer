@@ -40,6 +40,7 @@
 #include <vtkImageData.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
+#include <vtkWeakPointer.h>
 
 //------------------------------------------------------------------------------
 class qMRMLVolumeInfoWidgetPrivate: public Ui_qMRMLVolumeInfoWidget
@@ -460,24 +461,22 @@ void qMRMLVolumeInfoWidget::setScalarType(int index)
 }
 
 //------------------------------------------------------------------------------
-void qMRMLVolumeInfoWidget::setLabelMap(bool enable)
+void qMRMLVolumeInfoWidget::setLabelMap(bool labelMap)
 {
   Q_D(qMRMLVolumeInfoWidget);
   vtkMRMLScalarVolumeNode *scalarNode =
     vtkMRMLScalarVolumeNode::SafeDownCast(d->VolumeNode);
   if (scalarNode == 0 ||
-      scalarNode->IsA("vtkMRMLTensorVolume") ||
-      static_cast<bool>(scalarNode->GetLabelMap()) == enable)
+      scalarNode->IsA("vtkMRMLTensorVolumeNode") ||
+      static_cast<bool>(scalarNode->GetLabelMap()) == labelMap)
     {
     return;
     }
-  vtkMRMLDisplayNode *oldDisplayNode = scalarNode->GetDisplayNode();
-  if (oldDisplayNode)
-    {
-    scalarNode->GetScene()->RemoveNode(oldDisplayNode);
-    }
+
+  vtkWeakPointer<vtkMRMLDisplayNode> oldDisplayNode = scalarNode->GetDisplayNode();
+
   vtkMRMLVolumeDisplayNode* displayNode = 0;
-  if (enable )
+  if (labelMap)
     {
     displayNode = vtkMRMLLabelMapVolumeDisplayNode::New();
     }
@@ -485,11 +484,19 @@ void qMRMLVolumeInfoWidget::setLabelMap(bool enable)
     {
     displayNode = vtkMRMLScalarVolumeDisplayNode::New();
     }
-  displayNode->SetAndObserveColorNodeID (enable ? "vtkMRMLColorTableNodeLabels" : "vtkMRMLColorTableNodeGrey");
+  displayNode->SetAndObserveColorNodeID (
+    labelMap ? "vtkMRMLColorTableNodeLabels" : "vtkMRMLColorTableNodeGrey");
   scalarNode->GetScene()->AddNode(displayNode);
+  scalarNode->SetLabelMap( labelMap );
   scalarNode->SetAndObserveDisplayNodeID( displayNode->GetID() );
-  scalarNode->SetLabelMap( enable );
   displayNode->Delete();
+
+  // We need to remove it after the new display node is set otherwise the
+  // slice layer logic would create one between the scene removal and the set.
+  if (oldDisplayNode.GetPointer())
+    {
+    scalarNode->GetScene()->RemoveNode(oldDisplayNode);
+    }
 }
 
 
