@@ -22,8 +22,7 @@
 #define __qSlicerCLIProgressBar_h
 
 // Qt includes
-#include <QGridLayout>
-#include <QScopedPointer>
+#include <QMetaType>
 #include <QWidget>
 
 // CTK includes
@@ -38,10 +37,19 @@ class qSlicerCLIProgressBarPrivate;
 class Q_SLICER_BASE_QTCLI_EXPORT qSlicerCLIProgressBar : public QWidget
 {
   Q_OBJECT
+  Q_ENUMS(Visibility)
   QVTK_OBJECT
 
-  Q_PROPERTY(bool visibleAfterExecution
-             READ isVisibleAfterExecution WRITE setVisibleAfterExecution)
+  /// This property controls how the status label is visible.
+  /// AlwaysVisible by default.
+  /// \sa statusVisibility(), setStatusVisibility(),
+  /// progressVisibility
+  Q_PROPERTY(Visibility statusVisibility READ statusVisibility WRITE setStatusVisibility)
+  /// This property controls how the progress bar is visible.
+  /// VisibleAfterCompletion by default.
+  /// \sa progressVisibility(), setProgressVisibility(),
+  /// progressVisibility
+  Q_PROPERTY(Visibility progressVisibility READ progressVisibility WRITE setProgressVisibility)
 public:
 
   typedef QWidget Superclass;
@@ -51,18 +59,34 @@ public:
   /// Get the \a commandLineModuleNode
   Q_INVOKABLE vtkMRMLCommandLineModuleNode * commandLineModuleNode()const;
 
-  /// Get if the progress bars stay visible after execution or not.
-  /// True by default.
-  bool isVisibleAfterExecution() const;
+  /// Visibility behavior of the GUI elements of the CLI progress bar.
+  enum Visibility
+  {
+    AlwaysHidden = 0,
+    AlwaysVisible,
+    HiddenWhenIdle,
+    VisibleAfterCompletion
+  };
+
+  /// Visiblity of the status label.
+  /// \sa statusVisibility
+  Visibility statusVisibility()const;
+  /// Visibility of the progress bar.
+  /// \sa progressVisiblity
+  Visibility progressVisibility()const;
 
 public slots:
 
   /// Set the \a commandLineModuleNode
   void setCommandLineModuleNode(vtkMRMLCommandLineModuleNode* commandLineModuleNode);
 
-  /// Set if the progress bars stay visible after execution or not.
-  /// True by default.
-  void setVisibleAfterExecution(bool visible);
+  /// Set the status label visibility
+  /// \sa statusVisibility
+  void setStatusVisibility(qSlicerCLIProgressBar::Visibility visibility);
+
+  /// Set the progress bar visibility
+  /// \sa progressVisibility
+  void setProgressVisibility(qSlicerCLIProgressBar::Visibility visibility);
 
 protected slots:
 
@@ -79,5 +103,6 @@ private:
   Q_DISABLE_COPY(qSlicerCLIProgressBar);
 
 };
+
 
 #endif

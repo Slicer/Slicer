@@ -99,7 +99,7 @@ SlicerMacroBuildBaseQtLibrary(
   )
 
 # Plugin
-#add_subdirectory(Plugins)
+add_subdirectory(DesignerPlugins)
 
 # --------------------------------------------------------------------------
 # Python Wrapping
