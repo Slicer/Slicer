@@ -289,16 +289,17 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
 
-  std::vector<vtkMRMLUnitNode*> units;
-  node->GetUnitNodes(units);
-  for (std::vector<vtkMRMLUnitNode*>::iterator it = units.begin();
-    it != units.end(); ++it)
-    {
-    if (*it)
-      {
-      this->SetUnitNodeID((*it)->GetQuantity(), (*it)->GetID());
-      }
-    }
+  // See issue http://www.na-mic.org/Bug/view.php?id=3176
+  //std::vector<vtkMRMLUnitNode*> units;
+  //node->GetUnitNodes(units);
+  //for (std::vector<vtkMRMLUnitNode*>::iterator it = units.begin();
+  //  it != units.end(); ++it)
+  //  {
+  //  if (*it)
+  //    {
+  //    this->SetUnitNodeID((*it)->GetQuantity(), (*it)->GetID());
+  //    }
+  //  }
 
   this->EndModify(disabledModify);
 }
