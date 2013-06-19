@@ -110,7 +110,7 @@ public:
   /// events because it would refresh the GUI from the thread.
   /// Do not call manually, only the logic should change the status of the node.
   /// \sa GetStatus(), GetStatusString(), IsBusy(), Cancel()
-  void SetStatus(StatusType status, bool modify=true);
+  void SetStatus(int status, bool modify=true);
   /// \sa SetStatus(), GetStatusString(), IsBusy()
   int GetStatus() const;
 

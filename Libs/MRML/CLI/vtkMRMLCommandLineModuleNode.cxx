@@ -44,7 +44,7 @@ public:
 
   static ModuleDescriptionMap RegisteredModules;
 
-  vtkMRMLCommandLineModuleNode::StatusType Status;
+  int Status;
 
   /// AutoRun state (On/Off)
   bool AutoRun;
@@ -504,8 +504,7 @@ std::string vtkMRMLCommandLineModuleNode::GetParameterAsString(const char *name)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLCommandLineModuleNode
-::SetStatus(vtkMRMLCommandLineModuleNode::StatusType status, bool modify)
+void vtkMRMLCommandLineModuleNode::SetStatus(int status, bool modify)
 {
   if (this->Internal->Status != status)
     {
