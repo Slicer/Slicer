@@ -51,6 +51,12 @@
 #  ConfigurePrerequisites    | Slicer_USE_NOEXTENSIONSUPPORT
 #                            | Slicer_DONT_USE_EXTENSION
 # --------------------------------------------------------------------------
+
+foreach(component NoExtensionSupport ConfigurePrerequisites)
+  string(TOUPPER ${component} _COMPONENT)
+  set(Slicer_USE_${_COMPONENT} 0)
+endforeach()
+
 if(Slicer_FIND_COMPONENTS)
   foreach(component ${Slicer_FIND_COMPONENTS})
     string(TOUPPER ${component} _COMPONENT)
@@ -84,18 +90,20 @@ set(CMAKE_MODULE_PATH
   )
 
 # --------------------------------------------------------------------------
-if(Slicer_USE_CONFIGUREPREREQUISITES AND NOT Slicer_PREREQUISITES_CONFIGURED)
-  # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
-  #       we ensure that the bitness will be properly detected.
-  include(SlicerBlockSetCMakeOSXVariables)
-  if(DEFINED CMAKE_C_COMPILER OR DEFINED CMAKE_CXX_COMPILER)
-    message(FATAL_ERROR
-      "To be effective, 'find_package(Slicer COMPONENTS ConfigurePrerequisites)' should "
-      "be placed before any calls to 'project()' or 'enable_language()'."
-      "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
-      )
+if(Slicer_USE_CONFIGUREPREREQUISITES)
+  if(NOT Slicer_PREREQUISITES_CONFIGURED)
+    # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
+    #       we ensure that the bitness will be properly detected.
+    include(SlicerBlockSetCMakeOSXVariables)
+    if(DEFINED CMAKE_C_COMPILER OR DEFINED CMAKE_CXX_COMPILER)
+      message(FATAL_ERROR
+        "To be effective, 'find_package(Slicer COMPONENTS ConfigurePrerequisites)' should "
+        "be placed before any calls to 'project()' or 'enable_language()'."
+        "Before re-configuring, make sure to clean the build directory: ${CMAKE_CURRENT_BINARY_DIR}"
+        )
+    endif()
+    set(Slicer_PREREQUISITES_CONFIGURED 1 CACHE INTERNAL "True if component 'ConfigurePrerequisites' has already been included")
   endif()
-  set(Slicer_PREREQUISITES_CONFIGURED 1 CACHE INTERNAL "True if UseSlicer has already been included")
   return()
 endif()
 
