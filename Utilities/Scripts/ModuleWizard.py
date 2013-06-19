@@ -13,6 +13,7 @@ def findSource(dir):
               fnmatch.fnmatch(file, "*.cxx") or \
               fnmatch.fnmatch(file, "*.cpp") or \
               fnmatch.fnmatch(file, "CMakeLists.txt") or \
+              fnmatch.fnmatch(file, "*.cmake") or \
               fnmatch.fnmatch(file, "*.ui") or \
               fnmatch.fnmatch(file, "*.qrc") or \
               fnmatch.fnmatch(file, "*.py") or \
