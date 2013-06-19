@@ -46,14 +46,13 @@ public:
   virtual ~qSlicerModelsDialogPrivate();
 
   void init();
-  QStringList selectedFiles()const;
 
 public slots:
   void openAddModelFileDialog();
   void openAddModelDirectoryDialog();
-
 protected:
   QStringList SelectedFiles;
+  QStringList LoadedNodeIDs;
 };
 
 #endif

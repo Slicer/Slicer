@@ -47,6 +47,7 @@ public:
   virtual bool exec(const qSlicerIO::IOProperties& readerProperties =
                     qSlicerIO::IOProperties());
 
+  virtual QStringList loadedNodes()const;
 protected:
   QScopedPointer<qSlicerModelsDialogPrivate> d_ptr;
 

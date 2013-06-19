@@ -37,6 +37,7 @@ class QDropEvent;
 /// Forward declarations
 class qSlicerIOManager;
 //class qSlicerFileDialogPrivate;
+class qSlicerIOOptions;
 
 //------------------------------------------------------------------------------
 class Q_SLICER_BASE_QTGUI_EXPORT qSlicerFileDialog : public QObject
@@ -86,6 +87,10 @@ public:
   /// \sa isMimeDataAccepted()
   virtual void dropEvent(QDropEvent *event);
 
+  /// Return the list of nodes created by exec().
+  /// To be reimplemented.
+  /// \sa qSlicerFileReader::loadedNodes()
+  virtual QStringList loadedNodes()const;
 private:
 //  Q_DECLARE_PRIVATE(qSlicerFileDialog);
   Q_DISABLE_COPY(qSlicerFileDialog);
@@ -137,9 +142,14 @@ public:
   static QString getExistingDirectory(qSlicerIO::IOProperties ioProperties =
                                       qSlicerIO::IOProperties());
 
+  /// Return the list of nodes created by exec().
+  virtual QStringList loadedNodes()const;
+
 protected:
   static ctkFileDialog* createFileDialog(const qSlicerIO::IOProperties& ioProperties =
                                          qSlicerIO::IOProperties());
+
+  qSlicerIOOptions* options(const qSlicerIO::IOProperties& ioProperties)const;
 
 protected:
   QScopedPointer<qSlicerStandardFileDialogPrivate> d_ptr;

@@ -32,14 +32,20 @@ public:
   qSlicerIOManager(QObject* parent = 0);
   virtual ~qSlicerIOManager();
 
-  /// Search for the most appropriate dialog based on the fileType,
-  /// and open it.
+  /// Search for the most appropriate dialog based on the action and fileType,
+  /// and open it. Once the user select the file(s), the action (read or write)
+  /// is done. Note that to write a node, the "nodeID" property must be passed.
   /// If no dialog is registered for a given fileType (e.g.
-  /// QString("SceneFile")), a default dialog (qSlicerStandardFileDialog) is 
+  /// QString("SceneFile")), a default dialog (qSlicerStandardFileDialog) is
   /// used.
+  /// If reading files (action == qSlicerFileDialog::Read) and if loadedNodes
+  /// is not null, the loadedNodes collection is being populated with the
+  /// loaded nodes.
+  /// Returns true on success, false otherwise.
   Q_INVOKABLE bool openDialog(qSlicerIO::IOFileType fileType,
                               qSlicerFileDialog::IOAction action,
-                              qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties());
+                              qSlicerIO::IOProperties ioProperties = qSlicerIO::IOProperties(),
+                              vtkCollection* loadedNodes = 0);
 
   void addHistory(const QString& path);
   const QStringList& history()const;

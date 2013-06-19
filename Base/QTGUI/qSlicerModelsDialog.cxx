@@ -26,6 +26,11 @@
 #include "qSlicerIOManager.h"
 #include "qSlicerModelsDialog_p.h"
 
+// VTK includes
+#include "vtkCollection.h"
+#include "vtkMRMLNode.h"
+#include "vtkNew.h"
+
 //-----------------------------------------------------------------------------
 qSlicerModelsDialogPrivate::qSlicerModelsDialogPrivate(qSlicerModelsDialog& object, QWidget* _parentWidget)
   : QDialog(_parentWidget)
@@ -48,12 +53,6 @@ void qSlicerModelsDialogPrivate::init()
           this, SLOT(openAddModelFileDialog()));
   connect(this->AddModelDirectoryToolButton, SIGNAL(clicked()),
           this, SLOT(openAddModelDirectoryDialog()));
-}
-
-//-----------------------------------------------------------------------------
-QStringList qSlicerModelsDialogPrivate::selectedFiles()const
-{
-  return this->SelectedFiles;
 }
 
 //-----------------------------------------------------------------------------
@@ -127,20 +126,33 @@ bool qSlicerModelsDialog::exec(const qSlicerIO::IOProperties& readerProperties)
   Q_D(qSlicerModelsDialog);
   Q_ASSERT(!readerProperties.contains("fileName"));
 
+  d->LoadedNodeIDs.clear();
   bool res = false;
   if (d->exec() != QDialog::Accepted)
     {
     return res;
     }
-  QStringList files = d->selectedFiles();
+  QStringList files = d->SelectedFiles;
   foreach(QString file, files)
     {
     qSlicerIO::IOProperties properties = readerProperties;
     properties["fileName"] = file;
+    vtkNew<vtkCollection> loadedNodes;
     res = qSlicerCoreApplication::application()->coreIOManager()
       ->loadNodes(this->fileType(),
-                  properties) || res;
+                  properties, loadedNodes.GetPointer()) || res;
+    for (int i = 0; i < loadedNodes->GetNumberOfItems(); ++i)
+      {
+      d->LoadedNodeIDs << vtkMRMLNode::SafeDownCast(loadedNodes->GetItemAsObject(i))
+        ->GetID();
+      }
     }
   return res;
 }
 
+//-----------------------------------------------------------------------------
+QStringList qSlicerModelsDialog::loadedNodes()const
+{
+  Q_D(const qSlicerModelsDialog);
+  return d->LoadedNodeIDs;
+}

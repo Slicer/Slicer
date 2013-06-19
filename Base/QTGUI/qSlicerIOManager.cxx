@@ -22,7 +22,11 @@
 #include "qSlicerAbstractCoreModule.h"
 
 /// MRML includes
+#include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
+
+/// VTK includes
+#include <vtkCollection.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerIOManagerPrivate
@@ -34,6 +38,8 @@ protected:
 
 public:
   qSlicerIOManagerPrivate(qSlicerIOManager& object);
+
+  vtkMRMLScene* currentScene()const;
 
   /// Return true if a dialog is created, false if a dialog already existed
   bool startProgressDialog(int steps = 1);
@@ -64,6 +70,12 @@ qSlicerIOManagerPrivate::qSlicerIOManagerPrivate(qSlicerIOManager& object)
   :q_ptr(&object)
 {
   this->ProgressDialog = 0;
+}
+
+//-----------------------------------------------------------------------------
+vtkMRMLScene* qSlicerIOManagerPrivate::currentScene()const
+{
+  return qSlicerCoreApplication::application()->mrmlScene();
 }
 
 //-----------------------------------------------------------------------------
@@ -218,7 +230,8 @@ bool qSlicerIOManager::openAddSceneDialog()
 //-----------------------------------------------------------------------------
 bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType, 
                                   qSlicerFileDialog::IOAction action,
-                                  qSlicerIO::IOProperties properties)
+                                  qSlicerIO::IOProperties properties,
+                                  vtkCollection* loadedNodes)
 {
   Q_D(qSlicerIOManager);
   bool deleteDialog = false;
@@ -238,6 +251,17 @@ bool qSlicerIOManager::openDialog(qSlicerIO::IOFileType fileType,
     dialog = standardDialog;
     }
   bool res = dialog->exec(properties);
+  if (loadedNodes)
+    {
+    foreach(const QString& nodeID, dialog->loadedNodes())
+      {
+      vtkMRMLNode* node = d->currentScene()->GetNodeByID(nodeID.toLatin1());
+      if (node)
+        {
+        loadedNodes->AddItem(node);
+        }
+      }
+    }
   if (deleteDialog)
    {
     delete dialog;
