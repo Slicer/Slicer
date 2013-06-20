@@ -56,7 +56,9 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@fixup_path@/Frameworks")
   endif()
 
-  if(item MATCHES "\\.(dylib|so)$")
+  if(item MATCHES "@CMAKE_BINARY_DIR@/.+\\.(dylib|so)$")
+    set(path "@fixup_path@/@Slicer_BUNDLE_EXTENSIONS_LOCATION@@Slicer_LIB_DIR@")
+  elseif(item MATCHES "\\.(dylib|so)$")
     set(path "@fixup_path@/@Slicer_LIB_DIR@")
   endif()
 
