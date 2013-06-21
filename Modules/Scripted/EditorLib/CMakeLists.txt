@@ -24,6 +24,7 @@ set(EDITOR_BUILTIN_EFFECTS
   SaveIslandEffect
   ChangeLabelEffect
   GrowCutEffect
+  WatershedFromMarkerEffect
   FastMarchingEffect
   WandEffect
   )
@@ -51,6 +52,7 @@ set(MODULE_PYTHON_RESOURCES
   Resources/Icons/ErodeLabel.png
   Resources/Icons/FastMarchingEffect.png
   Resources/Icons/GrowCutSegment.png
+  Resources/Icons/WatershedFromMarkerEffect.png
   Resources/Icons/IdentifyIslands.png
   Resources/Icons/ImplicitRectangle.png
   Resources/Icons/LevelTracing.png

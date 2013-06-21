@@ -27,5 +27,6 @@ from RemoveIslandsEffect import *
 from SaveIslandEffect import *
 from ChangeLabelEffect import *
 from GrowCutEffect import *
+from WatershedFromMarkerEffect import *
 from FastMarchingEffect import *
 from WandEffect import *

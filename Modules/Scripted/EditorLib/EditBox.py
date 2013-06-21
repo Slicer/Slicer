@@ -56,6 +56,7 @@ class EditBox(object):
     self.editorBuiltins["SaveIslandEffect"] = EditorLib.SaveIslandEffect
     self.editorBuiltins["ChangeIslandEffect"] = EditorLib.ChangeIslandEffect
     self.editorBuiltins["GrowCutEffect"] = EditorLib.GrowCutEffect
+    self.editorBuiltins["WatershedFromMarkerEffect"] = EditorLib.WatershedFromMarkerEffect
     self.editorBuiltins["FastMarchingEffect"] = EditorLib.FastMarchingEffect
     self.editorBuiltins["WandEffect"] = EditorLib.WandEffect
 
@@ -110,6 +111,7 @@ class EditBox(object):
     "IdentifyIslands", "RemoveIslands",
     "ErodeLabel", "DilateLabel", "ChangeLabel",
     "MakeModel", "GrowCutSegment",
+    "WatershedFromMarkerEffect",
     "Threshold",
     "PreviousCheckPoint", "NextCheckPoint",
     )
@@ -168,6 +170,7 @@ class EditBox(object):
     self.effectIconFiles["ChangeIslandEffect"] = self.effectIconFiles["ChangeIsland"]
     self.effectIconFiles["ChangeLabelEffect"] = self.effectIconFiles["ChangeLabel"]
     self.effectIconFiles["GrowCutEffect"] = self.effectIconFiles["GrowCutSegment"]
+    self.effectIconFiles["WatershedFromMarkerEffectEffect"] = self.effectIconFiles["WatershedFromMarkerEffect"]
     self.effectIconFiles["Wand"] = self.effectIconFiles["WandEffect"]
 
   def createButtonRow(self, effects, rowLabel=""):
@@ -225,7 +228,7 @@ class EditBox(object):
     # create all of the buttons
     # createButtonRow() ensures that only effects in self.effects are exposed,
     self.createButtonRow( ("DefaultTool", "EraseLabel", "PaintEffect", "DrawEffect", "WandEffect", "LevelTracingEffect", "RectangleEffect", "IdentifyIslandsEffect", "ChangeIslandEffect", "RemoveIslandsEffect", "SaveIslandEffect") )
-    self.createButtonRow( ("ErodeEffect", "DilateEffect", "GrowCutEffect", "ThresholdEffect", "ChangeLabelEffect", "MakeModelEffect", "FastMarchingEffect") )
+    self.createButtonRow( ("ErodeEffect", "DilateEffect", "GrowCutEffect", "WatershedFromMarkerEffect", "ThresholdEffect", "ChangeLabelEffect", "MakeModelEffect", "FastMarchingEffect") )
 
     extensions = []
     for k in slicer.modules.editorExtensions:
