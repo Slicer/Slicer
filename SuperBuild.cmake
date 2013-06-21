@@ -198,6 +198,7 @@ foreach(ep_cmake_arg
   Slicer_BUILD_EMSegment
   Slicer_BUILD_MultiVolumeExplorer
   Slicer_BUILD_MultiVolumeImporter
+  Slicer_PLATFORM_CHECK
   )
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -D${ep_cmake_arg}:BOOL=${${ep_cmake_arg}})
 endforeach()
