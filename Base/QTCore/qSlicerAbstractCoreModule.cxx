@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QList>
 
 // SlicerQt includes
 #include "qSlicerAbstractCoreModule.h"
@@ -45,6 +46,7 @@ public:
   QString                                    Path;
   bool                                       Installed;
   qSlicerAbstractModuleRepresentation*       WidgetRepresentation;
+  QList<qSlicerAbstractModuleRepresentation*> WidgetRepresentations;
   vtkSmartPointer<vtkMRMLScene>              MRMLScene;
   vtkSmartPointer<vtkSlicerApplicationLogic> AppLogic;
   vtkSmartPointer<vtkMRMLAbstractLogic>      Logic;
@@ -63,8 +65,11 @@ qSlicerAbstractCoreModulePrivate::qSlicerAbstractCoreModulePrivate()
 //-----------------------------------------------------------------------------
 qSlicerAbstractCoreModulePrivate::~qSlicerAbstractCoreModulePrivate()
 {
-  // Delete the widget representation
-  delete this->WidgetRepresentation;
+ // Delete the widget representations
+  while (!this->WidgetRepresentations.isEmpty())
+    {
+    delete this->WidgetRepresentations.first();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -206,6 +211,19 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
 {
   Q_D(qSlicerAbstractCoreModule);
 
+  // If required, create widgetRepresentation
+  if (!d->WidgetRepresentation)
+    {
+    d->WidgetRepresentation = this->createNewWidgetRepresentation();
+    }
+  return d->WidgetRepresentation;
+}
+
+//-----------------------------------------------------------------------------
+qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::createNewWidgetRepresentation()
+{
+  Q_D(qSlicerAbstractCoreModule);
+
   // Since 'logic()' should have been called in 'initialize(), let's make
   // sure the 'logic()' method call is consistent and won't create a
   // diffent logic object
@@ -214,23 +232,24 @@ qSlicerAbstractModuleRepresentation* qSlicerAbstractCoreModule::widgetRepresenta
   Q_ASSERT(currentLogic == this->logic());
 #endif
 
-  // If required, create widgetRepresentation
-  if (!d->WidgetRepresentation)
+  qSlicerAbstractModuleRepresentation *newWidgetRepresentation;
+  newWidgetRepresentation = this->createWidgetRepresentation();
+
+  if (newWidgetRepresentation == 0)
     {
-    d->WidgetRepresentation = this->createWidgetRepresentation();
-    if (d->WidgetRepresentation == 0)
-      {
-      qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
-      return 0;
-      }
-    // internally sets the logic and call setup,
-    d->WidgetRepresentation->setModule(this);
-    // Note: setMRMLScene should be called after setup (just to make sure widgets
-    // are well written and can handle empty mrmlscene
-    d->WidgetRepresentation->setMRMLScene(this->mrmlScene());
-    //d->WidgetRepresentation->setWindowTitle(this->title());
+    qDebug() << "Warning, the module "<<this->name()<< "has no widget representation";
+    return 0;
     }
-  return d->WidgetRepresentation;
+  // internally sets the logic and call setup,
+  newWidgetRepresentation->setModule(this);
+  // Note: setMRMLScene should be called after setup (just to make sure widgets
+  // are well written and can handle empty mrmlscene
+  newWidgetRepresentation->setMRMLScene(this->mrmlScene());
+  //d->WidgetRepresentation->setWindowTitle(this->title());
+  // Add the copy of the widget representation to the list
+  d->WidgetRepresentations << newWidgetRepresentation;
+
+  return newWidgetRepresentation;
 }
 
 //-----------------------------------------------------------------------------
@@ -264,8 +283,13 @@ vtkMRMLAbstractLogic* qSlicerAbstractCoreModule::logic()
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAbstractCoreModule::representationDeleted()
+void qSlicerAbstractCoreModule::representationDeleted(qSlicerAbstractModuleRepresentation *representation)
 {
   Q_D(qSlicerAbstractCoreModule);
-  d->WidgetRepresentation = 0;
+
+  if (d->WidgetRepresentation == representation)
+    {
+    d->WidgetRepresentation = 0;
+    }
+  d->WidgetRepresentations.removeAll(representation);
 }

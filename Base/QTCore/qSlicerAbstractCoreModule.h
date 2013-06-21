@@ -218,7 +218,14 @@ public:
   /// This method allows to get a pointer to the WidgetRepresentation.
   /// If no WidgetRepresentation already exists, one will be created calling
   /// 'createWidgetRepresentation' method.
+  /// \sa createNewWidgetRepresentation(), createWidgetRepresentation()
   qSlicerAbstractModuleRepresentation* widgetRepresentation();
+
+  /// Force the creation of a new widget representation. 
+  /// It does not return the widget of the module, but a new instance instead. 
+  /// It can be useful when embedding a module widget into another module.
+  /// \sa widgetRepresentation(), createWidgetRepresentation()
+  qSlicerAbstractModuleRepresentation* createNewWidgetRepresentation();
 
   /// Get/Set the application logic.
   /// It must be set.
@@ -270,7 +277,10 @@ private:
   Q_DECLARE_PRIVATE(qSlicerAbstractCoreModule);
   Q_DISABLE_COPY(qSlicerAbstractCoreModule);
   friend class qSlicerAbstractModuleRepresentation;
-  void representationDeleted();
+
+  /// Internal method called by the destructor of qSlicerAbstractModuleRepresentation
+  /// to remove the representation from the list.
+  void representationDeleted(qSlicerAbstractModuleRepresentation *representation);
   /// Indicate if the module has already been initialized
   bool Initialized;
 };

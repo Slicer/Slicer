@@ -69,6 +69,12 @@ public slots:
     }
 
   //----------------------------------------------------------------------------
+  qSlicerAbstractModuleWidget* createNewWidgetRepresentation(qSlicerAbstractModule* _module)
+    {
+    return dynamic_cast<qSlicerAbstractModuleWidget*>(_module->createNewWidgetRepresentation());
+    }
+
+  //----------------------------------------------------------------------------
   // qSlicerAbstractModule
 
   //----------------------------------------------------------------------------

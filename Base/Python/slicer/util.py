@@ -294,13 +294,19 @@ def getModule(moduleName):
 def getModuleGui(module):
   if isinstance(module, basestring):
     module = getModule(module)
-  if not module:
-    return None
   widgetRepr = module.widgetRepresentation()
   if not widgetRepr:
     import sys
-    print("Could not find module widget representation with name '%s" % moduleName, file=sys.stderr)
-    return None
+    print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
+  return widgetRepr
+
+def getNewModuleGui(module):
+  if isinstance(module, basestring):
+    module = getModule(module)
+  widgetRepr = module.createNewWidgetRepresentation()
+  if not widgetRepr:
+    import sys
+    print("Could not find module widget representation with name '%s" % module.name, file=sys.stderr)
   return widgetRepr
 
 #
