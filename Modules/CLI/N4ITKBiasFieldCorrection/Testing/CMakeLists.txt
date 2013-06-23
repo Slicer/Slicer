@@ -14,7 +14,8 @@ set(testname ${CLP}Test)
 add_test(NAME ${testname} COMMAND ${SEM_LAUNCH_COMMAND} $<TARGET_FILE:${CLP}Test>
   --compare ${BASELINE}/he3corrected.nii.gz ${TEMP}/he3corrected.nii.gz
   ModuleEntryPoint
-  --inputimage ${TEST_DATA}/he3volume.nii.gz --maskimage ${TEST_DATA}/he3mask.nii.gz
-  --outputimage ${TEMP}/he3corrected.nii.gz --outputbiasfield ${TEMP}/he3biasfield.nii.gz
+  --maskimage ${TEST_DATA}/he3mask.nii.gz
+  --outputbiasfield ${TEMP}/he3biasfield.nii.gz
+  ${TEST_DATA}/he3volume.nii.gz ${TEMP}/he3corrected.nii.gz
   )
 set_property(TEST ${testname} PROPERTY LABELS ${CLP})

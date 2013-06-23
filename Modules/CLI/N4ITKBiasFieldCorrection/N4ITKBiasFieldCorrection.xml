@@ -13,10 +13,10 @@
     <label>IO</label>
     <description><![CDATA[Input/output parameters]]></description>
     <image>
-      <longflag>inputimage</longflag>
       <name>inputImageName</name>
       <label>Input Image</label>
       <channel>input</channel>
+      <index>0</index>
       <description><![CDATA[Input image where you observe signal inhomegeneity]]></description>
     </image>
     <image>
@@ -27,10 +27,10 @@
       <description><![CDATA[Binary mask that defines the structure of your interest. NOTE: This parameter is OPTIONAL. If the mask is not specified, the module will use internally Otsu thresholding to define this mask. Better processing results can often be obtained when a meaningful mask is defined.]]></description>
     </image>
     <image>
-      <longflag>outputimage</longflag>
       <name>outputImageName</name>
       <label>Output Volume</label>
       <channel>output</channel>
+      <index>1</index>
       <description><![CDATA[Result of processing]]></description>
     </image>
     <image>
