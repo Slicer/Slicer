@@ -77,39 +77,32 @@ endif()
 # only depends on ITK and a second library that only depends on VTK
 
 set(SlicerBaseCLI_SRCS
+  vtkPluginFilterWatcher.cxx
   )
-set(SlicerBaseCLI_LIBS
+
+# --------------------------------------------------------------------------
+# Build library
+# --------------------------------------------------------------------------
+set(lib_name "SlicerBaseCLI")
+
+add_library(${lib_name} ${SlicerBaseCLI_SRCS})
+target_link_libraries(${lib_name}
+  ${VTK_LIBRARIES}
   ModuleDescriptionParser
   )
+set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
 
-find_package(VTK)
-if(VTK_FOUND)
-  include(${VTK_USE_FILE})
-  list(APPEND SlicerBaseCLI_SRCS vtkPluginFilterWatcher.cxx)
-  list(APPEND SlicerBaseCLI_LIBS ${VTK_LIBRARIES})
+# Apply user-defined properties to the library target.
+if(Slicer_LIBRARY_PROPERTIES)
+  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
 
-if(${SlicerBaseCLI_SRCS})
-  # --------------------------------------------------------------------------
-  # Build library
-  # --------------------------------------------------------------------------
-  set(lib_name "SlicerBaseCLI")
+# --------------------------------------------------------------------------
+# Install library
+# --------------------------------------------------------------------------
+install(TARGETS ${lib_name}
+  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
+  )
 
-  add_library(${lib_name} ${SlicerBaseCLI_SRCS})
-  target_link_libraries(${lib_name} ${SlicerBaseCLI_LIBS})
-  set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
-
-  # Apply user-defined properties to the library target.
-  if(Slicer_LIBRARY_PROPERTIES)
-    set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-  endif()
-
-  # --------------------------------------------------------------------------
-  # Install library
-  # --------------------------------------------------------------------------
-  install(TARGETS ${lib_name}
-    RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-    LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
-    )
-endif()
