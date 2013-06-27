@@ -250,10 +250,21 @@ class WatershedFromMarkerEffectLogic(LabelEffect.LabelEffectLogic):
       self.undoRedo.saveState()
 
     featureImage = sitk.GradientMagnitudeRecursiveGaussian( backgroundImage, float(self.sigma) );
+    del backgroundImage
     f = sitk.MorphologicalWatershedFromMarkersImageFilter()
     f.SetMarkWatershedLine( False )
     f.SetFullyConnected( False )
-    sitk.WriteImage( sitk.Cast( f.Execute( featureImage, labelImage ), sitk.sitkUInt16 ), sitkUtils.GetSlicerITKReadWriteAddress( labelNodeName ) )
+    labelImage = f.Execute( featureImage, labelImage )
+    del featureImage
+
+    # The output of the watershed is the same as the input.
+    # But Slicer exepects labelMaps to be Int16, so convert to that
+    # type to impove compatibility, just in cast if needed.
+    if labelImage.GetPixelID() != sitk.sitkInt16:
+      labelImage = sitk.Cast( labelImage, sitk.sitkInt16 )
+
+    # This currently performs a deep copy of the bulk data.
+    sitk.WriteImage( labelImage, sitkUtils.GetSlicerITKReadWriteAddress( labelNodeName ) )
     labelNode.GetImageData().Modified()
     labelNode.Modified()
 
