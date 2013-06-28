@@ -247,7 +247,7 @@
     </widget>
    </item>
    <item row="9" column="1">
-    <widget class="ctkSpinBox" name="PrescribedSpacingSpinBox">
+    <widget class="ctkDoubleSpinBox" name="PrescribedSpacingSpinBox">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -297,9 +297,9 @@
    <header>ctkCoordinatesWidget.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

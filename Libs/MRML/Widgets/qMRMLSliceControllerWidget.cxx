@@ -32,7 +32,7 @@
 #include <ctkDoubleSlider.h>
 #include <ctkPopupWidget.h>
 #include <ctkSignalMapper.h>
-#include <ctkSpinBox.h>
+#include <ctkDoubleSpinBox.h>
 
 // qMRML includes
 #include "qMRMLColors.h"
@@ -358,7 +358,7 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider->setUnitAwareProperties(qMRMLSliderWidget::Suffix);
 
   //this->SliceOffsetSlider->spinBox()->setParent(this->PopupWidget);
-  ctkSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
+  ctkDoubleSpinBox* spinBox = this->SliceOffsetSlider->spinBox();
   spinBox->setFrame(false);
   spinBox->spinBox()->setButtonSymbols(QAbstractSpinBox::NoButtons);
   spinBox->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored);
@@ -507,7 +507,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   QMenu* sliceSpacingManualMode = new QMenu(tr("Manual spacing"), this->SliceSpacingMenu);
   sliceSpacingManualMode->setObjectName("slicerSpacingManualMode");
   sliceSpacingManualMode->setIcon(QIcon(":/Icon/SlicerManualSliceSpacing.png"));
-  this->SliceSpacingSpinBox = new ctkSpinBox(sliceSpacingManualMode);
+  this->SliceSpacingSpinBox = new ctkDoubleSpinBox(sliceSpacingManualMode);
   this->SliceSpacingSpinBox->setDecimals(3);
   this->SliceSpacingSpinBox->setRange(0.001, VTK_LARGE_FLOAT);
   this->SliceSpacingSpinBox->setSingleStep(0.1);
@@ -525,7 +525,7 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceSpacingMenu()
   QWidget* sliceFOVWidget = new QWidget(this->SliceSpacingMenu);
   QHBoxLayout* sliceFOVLayout = new QHBoxLayout(sliceFOVWidget);
   sliceFOVLayout->setContentsMargins(0,0,0,0);
-  this->SliceFOVSpinBox = new ctkSpinBox(sliceFOVWidget);
+  this->SliceFOVSpinBox = new ctkDoubleSpinBox(sliceFOVWidget);
   this->SliceFOVSpinBox->setRange(0.01, 10000.);
   this->SliceFOVSpinBox->setValue(250.);
   QObject::connect(this->SliceFOVSpinBox, SIGNAL(valueChanged(double)),
@@ -570,13 +570,13 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   QWidget* fovSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* fovSliceModelLayout = new QHBoxLayout(fovSliceModel);
 
-  this->SliceModelFOVXSpinBox = new ctkSpinBox(fovSliceModel);
+  this->SliceModelFOVXSpinBox = new ctkDoubleSpinBox(fovSliceModel);
   this->SliceModelFOVXSpinBox->setRange(0.01, 10000.);
   this->SliceModelFOVXSpinBox->setValue(UVWExtents[0]);
   QObject::connect(this->SliceModelFOVXSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceModelFOVX(double)));
 
-  this->SliceModelFOVYSpinBox = new ctkSpinBox(fovSliceModel);
+  this->SliceModelFOVYSpinBox = new ctkDoubleSpinBox(fovSliceModel);
   this->SliceModelFOVYSpinBox->setRange(0.01, 10000.);
   this->SliceModelFOVYSpinBox->setValue(UVWExtents[1]);
   QObject::connect(this->SliceModelFOVYSpinBox, SIGNAL(valueChanged(double)),
@@ -620,13 +620,13 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   QWidget* originSliceModel = new QWidget(this->SliceModelMenu);
   QHBoxLayout* originSliceModelLayout = new QHBoxLayout(originSliceModel);
 
-  this->SliceModelOriginXSpinBox = new ctkSpinBox(originSliceModel);
+  this->SliceModelOriginXSpinBox = new ctkDoubleSpinBox(originSliceModel);
   this->SliceModelOriginXSpinBox->setRange(-1000., 1000.);
   this->SliceModelOriginXSpinBox->setValue(UVWOrigin[0]);
   QObject::connect(this->SliceModelOriginXSpinBox, SIGNAL(valueChanged(double)),
                    q, SLOT(setSliceModelOriginX(double)));
 
-  this->SliceModelOriginYSpinBox = new ctkSpinBox(originSliceModel);
+  this->SliceModelOriginYSpinBox = new ctkDoubleSpinBox(originSliceModel);
   this->SliceModelOriginYSpinBox->setRange(-1000, 1000.);
   this->SliceModelOriginYSpinBox->setValue(UVWOrigin[1]);
   QObject::connect(this->SliceModelOriginYSpinBox, SIGNAL(valueChanged(double)),

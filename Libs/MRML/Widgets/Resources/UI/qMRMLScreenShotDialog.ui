@@ -140,7 +140,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="ctkSpinBox" name="scaleFactorSpinBox">
+    <widget class="ctkDoubleSpinBox" name="scaleFactorSpinBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -203,9 +203,9 @@
    <header>ctkThumbnailLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -215,10 +215,10 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="ctkSpinBox" name="OnPlaneXdoubleSpinBox"/>
+             <widget class="ctkDoubleSpinBox" name="OnPlaneXdoubleSpinBox"/>
             </item>
             <item>
-             <widget class="ctkSpinBox" name="OnPlaneYdoubleSpinBox"/>
+             <widget class="ctkDoubleSpinBox" name="OnPlaneYdoubleSpinBox"/>
             </item>
            </layout>
           </widget>
@@ -546,9 +546,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

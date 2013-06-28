@@ -124,7 +124,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ctkSpinBox" name="MinValueSpinBox">
+            <widget class="ctkDoubleSpinBox" name="MinValueSpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -167,7 +167,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ctkSpinBox" name="MaxValueSpinBox">
+            <widget class="ctkDoubleSpinBox" name="MaxValueSpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -243,9 +243,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

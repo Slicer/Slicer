@@ -22,7 +22,7 @@
 #define __qMRMLSpinBox_h
 
 // CTK includes
-#include <ctkSpinBox.h>
+#include <ctkDoubleSpinBox.h>
 #include <ctkVTKObject.h>
 
 // qMRML includes
@@ -36,11 +36,11 @@ class vtkMRMLScene;
 class qMRMLSpinBoxPrivate;
 
 /// \class qMRMLSpinBox
-/// \brief Extend the ctkSpinBox to integrate units support
+/// \brief Extend the ctkDoubleSpinBox to integrate units support
 ///
-/// This custom widgets extends the ctkSpinBox widget to integrate the
+/// This custom widgets extends the ctkDoubleSpinBox widget to integrate the
 /// unit support within Slicer. By default, this widget behaves just like
-/// a normal ctkSpinBox.
+/// a normal ctkDoubleSpinBox.
 ///
 /// To use the units, one needs to set what kind of quantity this widget should
 /// look for. For example, when dealing with world positions, the quantity is
@@ -52,7 +52,7 @@ class qMRMLSpinBoxPrivate;
 /// spinbox are updated by units and which aren't.
 ///
 /// \sa qMRMLSliderWidget, qMRMLCoordinatesWidget
-class QMRML_WIDGETS_EXPORT qMRMLSpinBox : public ctkSpinBox
+class QMRML_WIDGETS_EXPORT qMRMLSpinBox : public ctkDoubleSpinBox
 {
   Q_OBJECT
   QVTK_OBJECT
@@ -74,7 +74,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSpinBox : public ctkSpinBox
   Q_PROPERTY(UnitAwareProperties unitAwareProperties READ unitAwareProperties WRITE setUnitAwareProperties)
 
 public:
-  typedef ctkSpinBox Superclass;
+  typedef ctkDoubleSpinBox Superclass;
 
   /// Construct an empty qMRMLSpinBox with a null scene.
   explicit qMRMLSpinBox(QWidget* parent = 0);

@@ -40,7 +40,7 @@
 #include <vtkWeakPointer.h>
 
 class ctkSignalMapper;
-class ctkSpinBox;
+class ctkDoubleSpinBox;
 class ctkVTKSliceView;
 class QSpinBox;
 class qMRMLSliderWidget;
@@ -150,16 +150,16 @@ public:
   QMenu*                              SliceSpacingMenu;
   QMenu*                              SliceModelMenu;
 
-  ctkSpinBox*                         SliceSpacingSpinBox;
-  ctkSpinBox*                         SliceFOVSpinBox;
+  ctkDoubleSpinBox*                         SliceSpacingSpinBox;
+  ctkDoubleSpinBox*                         SliceFOVSpinBox;
   QSpinBox*                           LightBoxRowsSpinBox;
   QSpinBox*                           LightBoxColumnsSpinBox;
 
-  ctkSpinBox*                         SliceModelFOVXSpinBox;
-  ctkSpinBox*                         SliceModelFOVYSpinBox;
+  ctkDoubleSpinBox*                         SliceModelFOVXSpinBox;
+  ctkDoubleSpinBox*                         SliceModelFOVYSpinBox;
 
-  ctkSpinBox*                         SliceModelOriginXSpinBox;
-  ctkSpinBox*                         SliceModelOriginYSpinBox;
+  ctkDoubleSpinBox*                         SliceModelOriginXSpinBox;
+  ctkDoubleSpinBox*                         SliceModelOriginYSpinBox;
 
   QSpinBox*                           SliceModelDimensionXSpinBox;
   QSpinBox*                           SliceModelDimensionYSpinBox;

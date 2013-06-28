@@ -176,8 +176,8 @@ void qMRMLCoordinatesWidget::updateWidgetFromUnitNode()
       for (int i = 0; this->layout()->itemAt(i); ++i)
         {
         QLayoutItem* item = this->layout()->itemAt(i);
-        ctkSpinBox* spinBox =
-          item ? qobject_cast<ctkSpinBox*>(item->widget()) : 0;
+        ctkDoubleSpinBox* spinBox =
+          item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
         if (spinBox)
           {
           if (d->Flags.testFlag(qMRMLCoordinatesWidget::Precision))

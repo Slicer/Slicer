@@ -25,7 +25,7 @@
 #include <QStyledItemDelegate>
 
 // CTK includes
-class ctkSpinBox;
+class ctkDoubleSpinBox;
 
 // qMRML includes
 #include "qMRMLWidgetsExport.h"
@@ -36,7 +36,7 @@ class ctkSpinBox;
 /// a ctkColorPickerButton linked to a color picker dialog on click
 /// If an index has a Qt::EditRole set to a QString that exactly is on the form
 /// X.YY where X is 0 or 1 and Y is a digit (0 to 9), then the editor will be
-/// a ctkSpinBox with a slider poping up on mouse hover.
+/// a ctkDoubleSpinBox with a slider poping up on mouse hover.
 class QMRML_WIDGETS_EXPORT qMRMLItemDelegate: public QStyledItemDelegate
 {
   Q_OBJECT
@@ -71,7 +71,7 @@ protected slots:
   void commitAndClose();
 
 protected:
-  ctkSpinBox* DummySpinBox;
+  ctkDoubleSpinBox* DummySpinBox;
 };
 
 #endif

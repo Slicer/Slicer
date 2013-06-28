@@ -23,7 +23,7 @@
 #include <ctkFlowLayout.h>
 #include <ctkPathLineEdit.h>
 #include <ctkSliderWidget.h>
-#include <ctkSpinBox.h>
+#include <ctkDoubleSpinBox.h>
 
 // qMRML includes
 #include <qMRMLNodeComboBox.h>
@@ -89,9 +89,9 @@ qSlicerWidgetValueWrapper::~qSlicerWidgetValueWrapper()
 WIDGET_VALUE_WRAPPER(IntegerWithoutConstraints, QSpinBox, value, setValue, Int, valueChanged(int));
 WIDGET_VALUE_WRAPPER(IntegerWithConstraints, ctkSliderWidget, value, setValue, Int, valueChanged(double));
 WIDGET_VALUE_WRAPPER(Boolean, QCheckBox, isChecked, setChecked, Bool, toggled(bool));
-WIDGET_VALUE_WRAPPER(FloatWithoutConstraints, ctkSpinBox, value, setValue, Double, valueChanged(double));
+WIDGET_VALUE_WRAPPER(FloatWithoutConstraints, ctkDoubleSpinBox, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(FloatWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
-WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkSpinBox, value, setValue, Double, valueChanged(double));
+WIDGET_VALUE_WRAPPER(DoubleWithoutConstraints, ctkDoubleSpinBox, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(DoubleWithConstraints, ctkSliderWidget, value, setValue, Double, valueChanged(double));
 WIDGET_VALUE_WRAPPER(String, QLineEdit, text, setText, String, textChanged(const QString&));
 WIDGET_VALUE_WRAPPER(Point, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
@@ -356,7 +356,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
   QWidget * widget = 0;
   if (!withConstraints)
     {
-    ctkSpinBox * spinBox = new ctkSpinBox;
+    ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
@@ -427,7 +427,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
   QWidget * widget = 0;
   if (!withConstraints)
     {
-    ctkSpinBox * spinBox = new ctkSpinBox;
+    ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);

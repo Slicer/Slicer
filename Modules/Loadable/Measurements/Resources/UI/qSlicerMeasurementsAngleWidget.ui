@@ -287,7 +287,7 @@
              </widget>
             </item>
             <item>
-             <widget class="ctkSpinBox" name="AngleAnnotationScaleSpinBox"/>
+             <widget class="ctkDoubleSpinBox" name="AngleAnnotationScaleSpinBox"/>
             </item>
            </layout>
           </widget>
@@ -353,9 +353,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ctkSpinBox</class>
+   <class>ctkDoubleSpinBox</class>
    <extends>QWidget</extends>
-   <header>ctkSpinBox.h</header>
+   <header>ctkDoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
