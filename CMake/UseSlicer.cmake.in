@@ -248,6 +248,7 @@ include(SlicerMacroBuildScriptedModule)
 include(vtkMacroKitPythonWrap)
 
 include(SlicerMacroConfigureModuleCxxTestDriver)
+include(ExternalData)
 include(SlicerMacroSimpleTest)
 include(SlicerMacroPythonTesting)
 include(SlicerMacroConfigureGenericCxxModuleTests)
