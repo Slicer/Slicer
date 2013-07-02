@@ -18,6 +18,13 @@
 #
 ################################################################################
 
+if(NOT DEFINED Slicer_DONT_USE_EXTENSION)
+  set(Slicer_DONT_USE_EXTENSION FALSE)
+endif()
+if(Slicer_DONT_USE_EXTENSION)
+  message(STATUS "Skipping extension packaging - Extension support is disabled.")
+  return()
+endif()
 
 # -------------------------------------------------------------------------
 # Sanity checks
@@ -30,7 +37,7 @@ foreach(var ${expected_nonempty_vars})
 endforeach()
 
 if(Slicer_SOURCE_DIR)
-  message(STATUS "Skipping extension packaging: ${EXTENSION_NAME}")
+  message(STATUS "Skipping extension packaging: ${EXTENSION_NAME} - Slicer_SOURCE_DIR is defined.")
   return()
 endif()
 
