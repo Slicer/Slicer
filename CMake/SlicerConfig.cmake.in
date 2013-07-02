@@ -461,6 +461,27 @@ slicer_config_set_compiler_ep( CMAKE_CXX_COMPILER "@Slicer_CMAKE_CXX_COMPILER_CO
 set(CMAKE_CXX_FLAGS    "@Slicer_CMAKE_CXX_FLAGS_CONFIG@")
 set(CMAKE_C_FLAGS      "@Slicer_CMAKE_C_FLAGS_CONFIG@")
 
+# On platform (i.e. Windows with Visual Studio) where it is possible to use
+# either a 32 or 64 bits generator, it is important to compare bitness of Slicer
+# project against project depending on Slicer (i.e. extension) to ensure there
+# are no mismatch.
+set(Slicer_CMAKE_SIZEOF_VOID_P "@CMAKE_SIZEOF_VOID_P@")
+set(Slicer_CMAKE_GENERATOR "@CMAKE_GENERATOR@")
+if(NOT DEFINED Slicer_SKIP_CMAKE_SIZEOF_VOID_P_CHECK)
+  set(Slicer_SKIP_CMAKE_SIZEOF_VOID_P_CHECK FALSE)
+endif()
+if(NOT ${Slicer_SKIP_CMAKE_SIZEOF_VOID_P_CHECK})
+  if(NOT Slicer_CMAKE_SIZEOF_VOID_P EQUAL CMAKE_SIZEOF_VOID_P)
+    message(FATAL_ERROR
+      "Mismatch between bitness of '${CMAKE_PROJECT_NAME}' and 'Slicer' project !\n"
+      "\tSlicer_CMAKE_SIZEOF_VOID_P:${Slicer_CMAKE_SIZEOF_VOID_P}\n"
+      "\tCMAKE_SIZEOF_VOID_P:${CMAKE_SIZEOF_VOID_P}\n"
+      "Reconfigure '${CMAKE_PROJECT_NAME}' project using a compatible Generator.\n"
+      "Generator used to configure Slicer was: ${Slicer_CMAKE_GENERATOR}\n"
+      "See http://www.cmake.org/cmake/help/v2.8.11/cmake.html#opt:-Ggenerator-name")
+  endif()
+endif()
+
 # List all required external project
 set(Slicer_EXTERNAL_PROJECTS @Slicer_EXTERNAL_PROJECTS_CONFIG@)
 set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE @Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG@)
