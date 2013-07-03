@@ -140,11 +140,20 @@ int main( int argc, char * argv[] )
         nopass = (*inPtr == NotPassLabel[label]);
         }
       if (nopass)
-        break; //Skip this one
-
-      for(label=0; label<PassLabel.size() &&  !pass; label++)
         {
-          pass = (*inPtr == PassLabel[label]);
+        break; //Skip this one
+        }
+
+      if (PassLabel.size() == 0)
+        {
+        pass = true;
+        }
+      else
+        {
+        for(label=0; label<PassLabel.size() &&  !pass; label++)
+          {
+            pass = (*inPtr == PassLabel[label]);
+          }
         }
       }
     addLine = pass && !nopass;
