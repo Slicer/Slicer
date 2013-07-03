@@ -90,7 +90,7 @@ namespace itk
 template <class TInputImage, class TMaskImage =
             Image<unsigned char, ::itk::GetImageDimension<TInputImage>::ImageDimension>,
           class TOutputImage = TInputImage>
-class ITK_EXPORT N4MRIBiasFieldCorrectionImageFilter :
+class N4MRIBiasFieldCorrectionImageFilter :
   public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

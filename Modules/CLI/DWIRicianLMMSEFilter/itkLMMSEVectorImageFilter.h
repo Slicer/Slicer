@@ -39,7 +39,7 @@ namespace itk
  * \ingroup IntensityImageFilters
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LMMSEVectorImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class LMMSEVectorImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

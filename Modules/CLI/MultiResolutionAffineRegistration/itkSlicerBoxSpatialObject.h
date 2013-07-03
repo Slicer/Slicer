@@ -36,7 +36,7 @@ namespace itk
  *
  */
 template <unsigned int TDimension = 3>
-class ITK_EXPORT SlicerBoxSpatialObject
+class SlicerBoxSpatialObject
   : public SpatialObject<TDimension>
 {
 

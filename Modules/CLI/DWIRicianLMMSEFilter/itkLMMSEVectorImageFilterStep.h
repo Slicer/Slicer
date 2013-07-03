@@ -19,7 +19,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LMMSEVectorImageFilterStep : public ImageToImageFilter<TInputImage, TOutputImage>
+class LMMSEVectorImageFilterStep : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

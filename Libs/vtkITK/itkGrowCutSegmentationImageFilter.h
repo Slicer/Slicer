@@ -56,7 +56,7 @@ namespace itk
 template<class TInputImage, 
   class TOutputImage, 
   class TWeightPixelType = float> 
-  class ITK_EXPORT GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage> 
+  class GrowCutSegmentationImageFilter: public ImageToImageFilter<TInputImage,TOutputImage> 
 {
 
  public:

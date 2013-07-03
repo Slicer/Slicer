@@ -28,7 +28,7 @@ namespace itk
  * \brief Compute mean, std, min, and max of positive pixels
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ComputeRestrictedHistogram : public ImageToImageFilter<TInputImage, TOutputImage>
+class ComputeRestrictedHistogram : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

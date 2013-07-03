@@ -40,7 +40,7 @@ namespace itk
  * \ingroup IntensityImageFilters
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT MaskedMeanImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class MaskedMeanImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

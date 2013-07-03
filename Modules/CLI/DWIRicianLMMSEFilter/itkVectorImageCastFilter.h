@@ -43,7 +43,7 @@ public:
 }
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT VectorImageCastFilter :
+class VectorImageCastFilter :
   public UnaryFunctorImageFilter<TInputImage, TOutputImage,
                                  Function::Cast<typename TInputImage::PixelType, typename TOutputImage::PixelType>   >
 {

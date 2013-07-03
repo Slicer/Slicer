@@ -47,7 +47,7 @@ bool UNLM_gradientDistance_smaller( OrderType e1, OrderType e2 )
  * \sa Image
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT UNLMFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class UNLMFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */

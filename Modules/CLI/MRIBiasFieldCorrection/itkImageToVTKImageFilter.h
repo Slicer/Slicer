@@ -38,7 +38,7 @@ namespace itk
  * \ingroup   ImageFilters
  */
 template <class TInputImage>
-class ITK_EXPORT ImageToVTKImageFilter : public ProcessObject
+class ImageToVTKImageFilter : public ProcessObject
 {
 public:
   /** Standard class typedefs. */

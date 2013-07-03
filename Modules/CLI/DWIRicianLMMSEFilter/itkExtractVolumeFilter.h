@@ -27,7 +27,7 @@ namespace itk
  * \sa Image
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ExtractVolumeFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class ExtractVolumeFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */

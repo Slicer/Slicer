@@ -65,7 +65,7 @@ namespace itk
  * Class definition for ParameterCostFunction
  */
 template <class TControlPointLattice>
-class ITK_EXPORT ParameterCostFunction
+class ParameterCostFunction
   : public SingleValuedCostFunction
 {
 public:

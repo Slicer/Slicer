@@ -49,7 +49,7 @@ namespace itk
  */
 template <class TScalarType = double>
 // Data type for scalars (float or double)
-class ITK_EXPORT AnisotropicSimilarity3DTransform :
+class AnisotropicSimilarity3DTransform :
   public VersorRigid3DTransform<TScalarType>
 {
 public:

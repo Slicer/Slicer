@@ -39,7 +39,7 @@ namespace itk
  * \ingroup IntensityImageFilters  Multithreaded
  */
 template<class TInputImage, class TOutputImage>
-class ITK_EXPORT NewOtsuThresholdImageFilter : 
+class NewOtsuThresholdImageFilter : 
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

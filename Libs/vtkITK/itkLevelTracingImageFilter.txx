@@ -13,7 +13,7 @@ namespace itk
 {
 
 template <class TInputImage, class TCoordRep = float>
-class ITK_EXPORT LevelTracingImageFunction : 
+class LevelTracingImageFunction : 
     public ImageFunction<TInputImage,bool,TCoordRep> 
 {
 public:

@@ -83,7 +83,7 @@ public:
 }
 
 template <class TInputImage1, class TInputImage2, class TOutputImage>
-class ITK_EXPORT ConstrainedValueMultiplicationImageFilter :
+class ConstrainedValueMultiplicationImageFilter :
     public
 BinaryFunctorImageFilter<TInputImage1,TInputImage2,TOutputImage, 
                          Functor::ConstrainedValueMultiplication< 

@@ -56,7 +56,7 @@ namespace itk
 template <class TTransform,
           class TFixedImage,
           class TMovingImage>
-class ITK_EXPORT AnisotropicSimilarityLandmarkBasedTransformInitializer :
+class AnisotropicSimilarityLandmarkBasedTransformInitializer :
   public Object
 {
 public:

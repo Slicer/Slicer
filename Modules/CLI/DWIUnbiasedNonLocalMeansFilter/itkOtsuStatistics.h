@@ -19,7 +19,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT OtsuStatistics : public ImageToImageFilter<TInputImage, TOutputImage>
+class OtsuStatistics : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

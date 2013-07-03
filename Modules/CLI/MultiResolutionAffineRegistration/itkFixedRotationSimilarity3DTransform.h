@@ -50,7 +50,7 @@ namespace itk
  */
 template <class TScalarType = double>
 // Data type for scalars (float or double)
-class ITK_EXPORT FixedRotationSimilarity3DTransform :
+class FixedRotationSimilarity3DTransform :
   public Similarity3DTransform<TScalarType>
 {
 public:

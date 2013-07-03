@@ -40,7 +40,7 @@ namespace itk
  * \ingroup IntensityImageFilters   Multithreaded
  */
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT DifferenceDiffusionTensor3DImageFilter :
+class DifferenceDiffusionTensor3DImageFilter :
   public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:

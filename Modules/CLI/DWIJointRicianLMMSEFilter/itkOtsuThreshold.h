@@ -19,7 +19,7 @@ namespace itk
 /** \class OtsuThreshold */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT OtsuThreshold : public ImageToImageFilter<TInputImage, TOutputImage>
+class OtsuThreshold : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Convenient typedefs for simplifying declarations. */

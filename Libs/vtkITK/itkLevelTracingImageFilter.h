@@ -27,7 +27,7 @@ namespace itk
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT LevelTracingImageFilter:public ImageToImageFilter<TInputImage,TOutputImage>
+class LevelTracingImageFilter:public ImageToImageFilter<TInputImage,TOutputImage>
 {
 public:
   /** Standard class typedefs. */

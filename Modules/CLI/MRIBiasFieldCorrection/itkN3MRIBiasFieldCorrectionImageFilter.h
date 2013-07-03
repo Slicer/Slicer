@@ -89,7 +89,7 @@ namespace itk
 
 template <class TInputImage, class TBiasFieldImage, class TMaskImage,
           class TConfidenceImage>
-class ITK_EXPORT N3BiasFieldScaleCostFunction
+class N3BiasFieldScaleCostFunction
   : public SingleValuedCostFunction
 {
 public:
@@ -143,7 +143,7 @@ private:
 template <class TInputImage, class TMaskImage = Image<unsigned char,
                                                       ::itk::GetImageDimension<TInputImage>::ImageDimension>,
           class TOutputImage = TInputImage>
-class ITK_EXPORT N3MRIBiasFieldCorrectionImageFilter :
+class N3MRIBiasFieldCorrectionImageFilter :
   public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
