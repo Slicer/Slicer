@@ -70,7 +70,9 @@ ExternalProject_add(SimpleITK
     -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     # SimpleITK does not work with shared libs turned on
-    -DBUILD_SHARED_LIBS:BOOL=OFF
+    -DBUILD_SHARED_LIBS:BOOL=${Slicer_USE_SimpleITK_SHARED}
+    -DSimpleITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
+    -DSimpleITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
     -DBUILD_EXAMPLES:BOOL=OFF
@@ -90,3 +92,4 @@ ExternalProject_add(SimpleITK
   #
   DEPENDS ${SimpleITK_DEPENDENCIES}
   )
+set(SimpleITK_DIR ${CMAKE_BINARY_DIR}/SimpleITK-build)

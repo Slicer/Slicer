@@ -22,6 +22,14 @@ set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK
 endif()
 
 # -------------------------------------------------------------------------
+# Install SimpleITK
+#
+#-------------------------------------------------------------------------
+if(NOT "${SimpleITK_DIR}" STREQUAL "" AND EXISTS "${SimpleITK_DIR}/CMakeCache.txt" AND ${Slicer_USE_SimpleITK_SHARED})
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${SimpleITK_DIR};SimpleITK;Unspecified;/")
+endif()
+
+# -------------------------------------------------------------------------
 # Install SlicerExecutionModel
 # -------------------------------------------------------------------------
 if(Slicer_BUILD_CLI_SUPPORT

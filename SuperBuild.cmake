@@ -194,6 +194,7 @@ foreach(ep_cmake_arg
   Slicer_USE_NUMPY
   Slicer_USE_QtTesting
   Slicer_USE_SimpleITK
+  Slicer_USE_SimpleITK_SHARED
   Slicer_BUILD_BRAINSTOOLS
   Slicer_BUILD_EMSegment
   Slicer_BUILD_MultiVolumeExplorer
@@ -237,6 +238,12 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
       -DINCR_TCL_VERSION_DOT:STRING=${INCR_TCL_VERSION_DOT}
       )
   endif()
+endif()
+
+if(Slicer_USE_SimpleITK)
+   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+     -DSimpleITK_DIR:PATH=${SimpleITK_DIR}
+     )
 endif()
 
 if(Slicer_BUILD_QTLOADABLEMODULES)

@@ -117,6 +117,7 @@ set(Slicer_USE_OpenIGTLink "@Slicer_USE_OpenIGTLink@")
 set(Slicer_USE_PYTHONQT "@Slicer_USE_PYTHONQT@")
 set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
 set(Slicer_USE_QtTesting "@Slicer_USE_QtTesting@")
+set(Slicer_USE_SimpleITK "@Slicer_USE_SimpleITK@")
 set(Slicer_BUILD_CLI_SUPPORT "@Slicer_BUILD_CLI_SUPPORT@")
 set(Slicer_BUILD_DICOM_SUPPORT "@Slicer_BUILD_DICOM_SUPPORT@")
 set(Slicer_BUILD_DIFFUSION_SUPPORT "@Slicer_BUILD_DIFFUSION_SUPPORT@")
@@ -362,6 +363,11 @@ slicer_config_set_ep(
   ITK_DIR
   "@ITK_DIR_CONFIG@"
   CACHE PATH "Path to ITK build or install directory" FORCE)
+
+slicer_config_set_ep(
+  SimpleITK_DIR
+  "@SimpleITK_DIR_CONFIG@"
+  CACHE PATH "Path to SimpleITK build or install directory" FORCE)
 
 slicer_config_set_ep(
   OpenIGTLink_DIR

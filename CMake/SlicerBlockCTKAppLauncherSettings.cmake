@@ -158,6 +158,12 @@ if(Slicer_USE_NUMPY)
     )
 endif()
 
+if(Slicer_USE_SimpleITK)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${SimpleITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
+    )
+endif()
+
 #-----------------------------------------------------------------------------
 # PATHS
 #-----------------------------------------------------------------------------
