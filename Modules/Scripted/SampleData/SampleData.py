@@ -188,9 +188,9 @@ class SampleDataLogic:
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
     for x in ['bytes','KB','MB','GB']:
       if size < 1024.0 and size > -1024.0:
-        return "%3.1f%s" % (size, x)
+        return "%3.1f %s" % (size, x)
       size /= 1024.0
-    return "%3.1f%s" % (size, 'TB')
+    return "%3.1f %s" % (size, 'TB')
 
   def reportHook(self,blocksSoFar,blockSize,totalSize):
     # we clamp to 100% because the blockSize might be larger than the file itself
