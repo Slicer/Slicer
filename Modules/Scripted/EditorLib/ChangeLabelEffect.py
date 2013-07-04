@@ -41,6 +41,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
 
   def create(self):
     super(ChangeLabelEffectOptions,self).create()
+    self.logic.undoRedo = self.undoRedo
     import EditColor
     self.inputColor = EditColor.EditColor(self.frame,'ChangeLabelEffect,inputColor')
     self.inputColor.label.setText("Input Color:")
