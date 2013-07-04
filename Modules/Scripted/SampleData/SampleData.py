@@ -193,9 +193,11 @@ class SampleDataLogic:
     return "%3.1f%s" % (size, 'TB')
 
   def reportHook(self,blocksSoFar,blockSize,totalSize):
-    percent = int((100. * blocksSoFar * blockSize) / totalSize)
+    # we clamp to 100% because the blockSize might be larger than the file itself
+    percent = min(int((100. * blocksSoFar * blockSize) / totalSize), 100)
     if percent == 100 or (percent - self.downloadPercent >= 10):
-      humanSizeSoFar = self.humanFormatSize(blocksSoFar * blockSize)
+      # we clamp to totalSize when blockSize is larger than totalSize
+      humanSizeSoFar = self.humanFormatSize(min(blocksSoFar * blockSize, totalSize))
       humanSizeTotal = self.humanFormatSize(totalSize)
       self.logMessage('<i>Downloaded %s (%d%% of %s)...</i>' % (humanSizeSoFar, percent, humanSizeTotal))
       self.downloadPercent = percent
