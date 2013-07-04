@@ -4,9 +4,9 @@
  <widget class="ctkPopupWidget" name="qMRMLSliceControllerWidget">
   <property name="geometry">
    <rect>
-    <x>3031</x>
-    <y>737</y>
-    <width>321</width>
+    <x>505</x>
+    <y>334</y>
+    <width>257</width>
     <height>130</height>
    </rect>
   </property>
@@ -79,11 +79,17 @@
           <property name="toolTip">
            <string>Toggle slice visibility in the 3D view.</string>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
           <property name="checked">
            <bool>false</bool>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::MenuButtonPopup</enum>
           </property>
          </widget>
         </item>
@@ -275,6 +281,9 @@
      <property name="autoRaise">
       <bool>true</bool>
      </property>
+     <property name="popupMode">
+      <enum>QToolButton::MenuButtonPopup</enum>
+     </property>
     </widget>
    </item>
    <item row="1" column="2">
@@ -296,9 +305,6 @@
      </property>
      <property name="maximum">
       <double>1.000000000000000</double>
-     </property>
-     <property name="popupSlider">
-      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -368,44 +374,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QToolButton" name="ForegroundVisibilityButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="pageStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="popupSlider">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="3">
     <widget class="QToolButton" name="ForegroundInterpolationButton">
      <property name="enabled">
@@ -469,16 +437,6 @@
      </property>
      <property name="popupMode">
       <enum>QToolButton::InstantPopup</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QToolButton" name="BackgroundVisibilityButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="autoRaise">
-      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -556,6 +514,34 @@
      </property>
      <property name="renameEnabled">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" rowspan="2">
+    <widget class="ctkSliderWidget" name="ForegroundOpacitySlider">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="pageStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="popupSlider">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -1159,38 +1145,6 @@
     <hint type="destinationlabel">
      <x>34</x>
      <y>50</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MoreButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>ForegroundVisibilityButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>5</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>44</x>
-     <y>70</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>MoreButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>BackgroundVisibilityButton</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>9</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>35</x>
-     <y>93</y>
     </hint>
    </hints>
   </connection>

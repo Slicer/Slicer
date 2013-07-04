@@ -77,6 +77,7 @@ public:
   void setupCompositingMenu();
   void setupSliceSpacingMenu();
   void setupSliceModelMenu();
+  void setupLabelMapMenu();
   void setupMoreOptionsMenu();
 
   vtkSmartPointer<vtkCollection> saveNodesForUndo(const QString& nodeTypes);
@@ -149,6 +150,7 @@ public:
   QMenu*                              CompositingMenu;
   QMenu*                              SliceSpacingMenu;
   QMenu*                              SliceModelMenu;
+  QMenu*                              LabelMapMenu;
 
   ctkDoubleSpinBox*                         SliceSpacingSpinBox;
   ctkDoubleSpinBox*                         SliceFOVSpinBox;

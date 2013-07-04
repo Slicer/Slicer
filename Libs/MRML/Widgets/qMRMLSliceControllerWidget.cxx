@@ -85,6 +85,7 @@ qMRMLSliceControllerWidgetPrivate::qMRMLSliceControllerWidgetPrivate(qMRMLSliceC
   this->CompositingMenu = 0;
   this->SliceSpacingMenu = 0;
   this->SliceModelMenu = 0;
+  this->LabelMapMenu = 0;
 
   this->SliceSpacingSpinBox = 0;
   this->SliceFOVSpinBox = 0;
@@ -129,23 +130,23 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->ForegroundOpacitySlider->spinBox()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   this->BackgroundOpacitySlider->spinBox()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-  this->LabelMapOpacitySlider->slider()->setOrientation(Qt::Vertical);
   this->ForegroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
   this->BackgroundOpacitySlider->slider()->setOrientation(Qt::Vertical);
 
-  this->LabelMapOpacitySlider->popup()->setHideDelay(400);
-  this->ForegroundOpacitySlider->popup()->setHideDelay(400);
   this->BackgroundOpacitySlider->popup()->setHideDelay(400);
 
-  this->LabelMapOpacitySlider->popup()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-  this->ForegroundOpacitySlider->popup()->setAlignment(Qt::AlignTop | Qt::AlignLeft);
   this->BackgroundOpacitySlider->popup()->setAlignment(Qt::AlignBottom | Qt::AlignLeft);
 
   int popupHeight = this->PopupWidget->sizeHint().height() / 2;
-  this->LabelMapOpacitySlider->popup()->setFixedHeight(popupHeight);
-  this->ForegroundOpacitySlider->popup()->setFixedHeight(popupHeight);
   this->BackgroundOpacitySlider->popup()->setFixedHeight(popupHeight);
 
+  QGridLayout* popupLayout =
+    qobject_cast<QGridLayout*>(this->PopupWidget->layout());
+  popupLayout->addWidget(this->ForegroundOpacitySlider->spinBox(), 2, 2);
+  this->connect(this->MoreButton, SIGNAL(toggled(bool)),
+                this->ForegroundOpacitySlider->spinBox(), SLOT(setVisible(bool)));
+  this->connect(this->ForegroundComboBox, SIGNAL(currentNodeChanged(bool)),
+                this->ForegroundOpacitySlider->spinBox(), SLOT(setEnabled(bool)));
   // Set selector attributes
   // Background and Foreground volume selectors can display LabelMap volumes. No
   // need to add the LabelMap attribute for them.
@@ -228,6 +229,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   this->setupCompositingMenu();
   this->setupSliceSpacingMenu();
   this->setupSliceModelMenu();
+  this->setupLabelMapMenu();
 
   // Visibility column
   this->connect(this->actionLabelMapVisibility, SIGNAL(triggered(bool)),
@@ -310,8 +312,7 @@ void qMRMLSliceControllerWidgetPrivate::setupPopupUi()
   //this->setupMoreOptionsMenu();
 
   this->LabelMapVisibilityButton->setDefaultAction(this->actionLabelMapVisibility);
-  this->ForegroundVisibilityButton->setDefaultAction(this->actionForegroundVisibility);
-  this->BackgroundVisibilityButton->setDefaultAction(this->actionBackgroundVisibility);
+  this->LabelMapVisibilityButton->setMenu(this->LabelMapMenu);
 
   this->LabelMapOutlineButton->setDefaultAction(this->actionLabelMapOutline);
   this->ForegroundInterpolationButton->setDefaultAction(this->actionForegroundInterpolation);
@@ -551,10 +552,6 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   this->SliceModelMenu->addAction(this->actionSliceModelModeVolumes_2D);
   //this->SliceModelMenu->addAction(this->actionSliceModelModeCustom);
 
-  this->SliceVisibilityButton->setCheckable(true);
-  this->SliceVisibilityButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-  this->SliceVisibilityButton->setPopupMode(QToolButton::MenuButtonPopup);
-
   // TODO add custom sliders
   double UVWExtents[] = {256,256,256};
   double UVWOrigin[] = {0,0,0};
@@ -641,6 +638,15 @@ void qMRMLSliceControllerWidgetPrivate::setupSliceModelMenu()
   originSliceModelMenu->addAction(originSliceModelAction);
   this->SliceModelMenu->addMenu(originSliceModelMenu);
   
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSliceControllerWidgetPrivate::setupLabelMapMenu()
+{
+  this->LabelMapMenu = new QMenu(tr("LabelMap"), this->LabelMapVisibilityButton);
+  QWidgetAction* opacityAction = new QWidgetAction(this->LabelMapOpacitySlider);
+  opacityAction->setDefaultWidget(this->LabelMapOpacitySlider->slider());
+  this->LabelMapMenu->addAction(opacityAction);
 }
 
 // --------------------------------------------------------------------------
