@@ -64,6 +64,8 @@ public:
   bool SelectNodeUponCreation;
   QString NoneDisplay;
   bool AutoDefaultText;
+
+  QList<QAction*> UserMenuActions;
 };
 
 #endif

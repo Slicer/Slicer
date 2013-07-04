@@ -235,6 +235,17 @@ public:
   QComboBox::SizeAdjustPolicy sizeAdjustPolicy()const;
   void setSizeAdjustPolicy(QComboBox::SizeAdjustPolicy policy);
 
+  /// Allow addition of menu actions in addition to the default actions that
+  /// can be flagged on or off via \a setAddEnabled() etc.
+  /// New actions are saved to the UserMenuActions list, and are added to the
+  /// extra items list in \a updateActionItems(bool resetRootIndex) and set as
+  /// post items on the scene model. The new actions are checked for and
+  /// triggered in \a activateExtraItem(const QModelIndex& index)
+  /// Checks for action text duplicates and doesn't add them.
+  /// Also checks for action text that will be hidden by the default action
+  /// texts and doesn't add it.
+  virtual void addMenuAction(QAction *newAction);
+
 public slots:
   /// Set the scene the combobox listens to. The scene is observed and when new
   /// nodes are added to the scene, the menu list is populated.
