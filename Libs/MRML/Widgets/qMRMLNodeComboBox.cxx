@@ -79,6 +79,7 @@ void qMRMLNodeComboBoxPrivate::init(QAbstractItemModel* model)
     {
     ctkComboBox* comboBox = new ctkComboBox(q);
     comboBox->setElideMode(Qt::ElideMiddle);
+    comboBox->setScrollWheelEffect(ctkComboBox::ScrollWithNoVScrollBar);
     q->setComboBox(comboBox);
     }
   else
@@ -887,7 +888,7 @@ void qMRMLNodeComboBox::setComboBox(QComboBox* comboBox)
 
   this->layout()->addWidget(comboBox);
   d->ComboBox = comboBox;
-
+  d->ComboBox->setFocusProxy(this);
   d->setModel(oldModel);
 
   connect(d->ComboBox, SIGNAL(currentIndexChanged(QString)),
