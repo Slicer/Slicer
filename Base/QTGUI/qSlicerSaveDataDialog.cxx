@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 /// Qt includes
+#include <QComboBox>
 #include <QDate>
 #include <QDebug>
 #include <QLineEdit>
@@ -29,7 +30,6 @@
 /// CTK includes
 #include <ctkCheckableHeaderView.h>
 #include <ctkCheckableModelHelper.h>
-#include <ctkComboBox.h>
 #include <ctkVTKWidgetsUtils.h>
 
 /// SlicerQt includes
@@ -312,8 +312,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
     qSlicerCoreApplication::application()->coreIOManager();
   
   // Scene Format
-  ctkComboBox* sceneComboBoxWidget = new ctkComboBox(this->FileWidget);
-  sceneComboBoxWidget->setScrollWheelEffect(ctkComboBox::ScrollWithNoVScrollBar);
+  QComboBox* sceneComboBoxWidget = new QComboBox(this->FileWidget);
   foreach(const QString& extension,
           coreIOManager->fileWriterExtensions(this->MRMLScene))
     {
@@ -568,8 +567,7 @@ QWidget* qSlicerSaveDataDialogPrivate::createFileFormatsWidget(vtkMRMLStorableNo
 {
   vtkMRMLStorageNode* snode = node->GetStorageNode();
   Q_ASSERT(snode);
-  ctkComboBox* fileFormats = new ctkComboBox(this->FileWidget);
-  fileFormats->setScrollWheelEffect(ctkComboBox::ScrollWithNoVScrollBar);
+  QComboBox* fileFormats = new QComboBox(this->FileWidget);
   // Add custom qSlicerSaveFile
   qSlicerCoreIOManager* coreIOManager =
     qSlicerCoreApplication::application()->coreIOManager();

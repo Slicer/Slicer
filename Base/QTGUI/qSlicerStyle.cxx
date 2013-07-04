@@ -19,9 +19,13 @@
 ==============================================================================*/
 
 // Qt includes
-#include <QStyleOptionGroupBox>
-#include <QGroupBox>
+#include <QAbstractScrollArea>
 #include <QCleanlooksStyle>
+#include <QDebug>
+#include <QEvent>
+#include <QGroupBox>
+#include <QScrollBar>
+#include <QStyleOptionGroupBox>
 
 // qMRML includes
 #include "qSlicerStyle.h"
@@ -282,3 +286,38 @@ int qSlicerStyle::styleHint(StyleHint hint, const QStyleOption *opt, const QWidg
     }
   return res;
 }
+
+//------------------------------------------------------------------------------
+bool qSlicerStyle::eventFilter(QObject* obj, QEvent* event)
+{
+  QWidget* widget = qobject_cast<QWidget*>(obj);
+  switch (event->type())
+    {
+    case QEvent::Wheel:
+      if (qobject_cast<QAbstractScrollArea*>(widget) ||
+          qobject_cast<QScrollBar*>(widget) ||
+          qobject_cast<QAbstractScrollArea*>(widget->parentWidget()))
+        {
+        break;
+        }
+      for (QWidget* ancestor = widget->parentWidget();
+           ancestor; ancestor = ancestor->parentWidget())
+        {
+        if (QAbstractScrollArea* scrollArea =
+            qobject_cast<QAbstractScrollArea*>(ancestor))
+          {
+          if (scrollArea->verticalScrollBar()->minimum() !=
+              scrollArea->verticalScrollBar()->maximum())
+            {
+            event->ignore();
+            return true;
+            }
+          }
+        }
+      break;
+    default:
+      break;
+    }
+  return this->Superclass::eventFilter(obj, event);
+}
+

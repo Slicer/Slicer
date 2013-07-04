@@ -108,6 +108,7 @@ int SlicerAppMain(int argc, char* argv[])
     {
     return app.returnCode();
     }
+  app.installEventFilter(app.style());
 
 
 #ifdef Slicer_USE_QtTesting

@@ -62,15 +62,12 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="ctkComboBox" name="MRMLSceneModelComboBox">
+         <widget class="QComboBox" name="MRMLSceneModelComboBox">
           <property name="toolTip">
            <string extracomment="Pick a model to determine how the scene is organised in the tree"/>
           </property>
           <property name="editable">
            <bool>false</bool>
-          </property>
-          <property name="scrollWheelEffect">
-           <enum>ctkComboBox::ScrollWithNoVScrollBar</enum>
           </property>
          </widget>
         </item>
@@ -180,11 +177,6 @@
    <extends>QGroupBox</extends>
    <header>ctkCollapsibleGroupBox.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkComboBox</class>
-   <extends>QComboBox</extends>
-   <header>ctkComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>ctkDynamicSpacer</class>

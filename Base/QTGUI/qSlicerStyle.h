@@ -51,6 +51,13 @@ public:
   virtual QPalette standardPalette()const;
   virtual int styleHint(StyleHint hint, const QStyleOption *opt, const QWidget *widget,
                         QStyleHintReturn *returnData) const;
+
+  /// Behavior of widgets can be tweaked if an event filter is installed on a
+  /// widget or application.
+  /// If activated, the filter:
+  ///  * prevents widgets to receive wheel events when they are in a scroll area
+  ///    with a visible scrollbar.
+  virtual bool eventFilter(QObject* obj, QEvent* event);
 };
 
 #endif
