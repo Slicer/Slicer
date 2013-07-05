@@ -958,6 +958,10 @@ void qMRMLLayoutManager::setLayout(int layout)
   // Update LayoutNode
   if (d->MRMLLayoutNode)
     {
+    if (!d->MRMLLayoutNode->IsLayoutDescription(layout))
+      {
+      layout = vtkMRMLLayoutNode::SlicerLayoutConventionalView;
+      }
     d->MRMLLayoutNode->SetViewArrangement(layout);
     }
 }
