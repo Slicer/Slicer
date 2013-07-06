@@ -51,7 +51,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
   def examine(self,fileLists):
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     fileLists parameter.
     """
     loadables = []
@@ -88,7 +88,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       loadable = DICOMLib.DICOMLoadable()
       loadable.files = orderedFiles
       loadable.name =  str(nFrames) + ' frames MultiVolume by ' + tagName
-      mvNode.SetName(desc)      
+      mvNode.SetName(desc)
       loadable.tooltip = loadable.name
       loadable.selected = True
       loadable.multivolume = mvNode
@@ -102,7 +102,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     print("MultiVolumeImportPlugin::examine")
 
     """ Returns a list of DICOMLoadable instances
-    corresponding to ways of interpreting the 
+    corresponding to ways of interpreting the
     files parameter.
     """
     loadables = []
@@ -125,7 +125,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
       if desc == "":
         desc = "Unknown"
- 
+
       if not subseriesLists.has_key(value):
         subseriesLists[value] = []
       subseriesLists[value].append(file)
@@ -171,9 +171,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     nFiles = len(files)
     filesPerFrame = nFiles/nFrames
     frameOrigins = []
-    
+
     scalarVolumePlugin = slicer.modules.dicomPlugins['DICOMScalarVolumePlugin']()
-    for frameNumber in range(nFrames):     
+    for frameNumber in range(nFrames):
       frameFileList = files[frameNumber*filesPerFrame:(frameNumber+1)*filesPerFrame]
       # sv plugin will sort the filenames by geometric order
       svs = scalarVolumePlugin.examine([frameFileList])
@@ -212,7 +212,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     nFiles = len(files)
     filesPerFrame = nFiles/nFrames
     frames = []
-    
+
     mvImage = vtk.vtkImageData()
     mvImageArray = None
 
@@ -220,7 +220,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
     # read each frame into scalar volume
     for frameNumber in range(nFrames):
-      
+
       sNode = slicer.vtkMRMLVolumeArchetypeStorageNode()
       sNode.ResetFileNameList();
 
@@ -277,10 +277,18 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     mvNode.SetNumberOfFrames(nFrames)
     slicer.mrmlScene.AddNode(mvNode)
 
+    #
+    # automatically select the volume to display
+    #
+    appLogic = slicer.app.applicationLogic()
+    selNode = appLogic.GetSelectionNode()
+    selNode.SetReferenceActiveVolumeID(mvNode.GetID())
+    appLogic.PropagateVolumeSelection()
+
     return mvNode
 
   def tm2ms(self,tm):
-   
+
     try:
       hhmmss = string.split(tm,'.')[0]
     except:
@@ -326,13 +334,13 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if tagValueStr == '':
           # not found?
           continue
-        
+
         if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
         else:
           tagValue = float(tagValueStr)
-        
+
         try:
           tagValue2FileList[tagValue].append(file)
         except:
@@ -350,7 +358,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       if len(tagValue2FileList)<2:
         # not enough frames for this tag to be a multivolume
         continue
-  
+
       tagValues = tagValue2FileList.keys()
       # sort the frames
       tagValues.sort()
@@ -416,7 +424,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         echoTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['EchoTime'])
         repetitionTime = slicer.dicomDatabase.fileValue(firstFile, self.tags['RepetitionTime'])
         flipAngle = slicer.dicomDatabase.fileValue(firstFile, self.tags['FlipAngle'])
-        
+
         mvNode.SetAttribute('MultiVolume.DICOM.EchoTime',echoTime)
         mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',repetitionTime)
         mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',flipAngle)
@@ -453,7 +461,7 @@ class MultiVolumeImporterPlugin:
     No module interface here, only in the DICOM module
     """
     parent.acknowledgementText = """
-    This DICOM Plugin was developed by 
+    This DICOM Plugin was developed by
     Andrey Fedorov, BWH.
     and was partially funded by NIH grant U01CA151261.
     """
@@ -476,13 +484,13 @@ class MultiVolumeImporterPlugin:
 class MultiVolumeImporterPluginWidget:
   def __init__(self, parent = None):
     self.parent = parent
-    
+
   def setup(self):
     # don't display anything for this widget - it will be hidden anyway
     pass
 
   def enter(self):
     pass
-    
+
   def exit(self):
     pass
