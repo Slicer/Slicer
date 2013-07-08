@@ -136,7 +136,6 @@ void qMRMLCoordinatesWidget::setMRMLScene(vtkMRMLScene* scene)
 
   d->MRMLScene = scene;
   d->setAndObserveSelectionNode();
-  this->setEnabled(scene != 0);
 }
 
 // --------------------------------------------------------------------------
