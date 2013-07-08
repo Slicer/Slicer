@@ -250,6 +250,9 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
     return false;
     }
 
+  // save the path to the MRB so it will be used as the default next save time
+  this->mrmlScene()->SetURL(properties["fileName"].toString().toLatin1());
+
   qDebug() << "saved " << fileInfo.absoluteFilePath();
   return true;
 }
