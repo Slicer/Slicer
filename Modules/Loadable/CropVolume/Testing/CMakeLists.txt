@@ -12,5 +12,7 @@ slicerMacroConfigureModuleCxxTestDriver(
   WITH_VTK_DEBUG_LEAKS_CHECK
   )
 
+add_subdirectory(Python)
+
 #-----------------------------------------------------------------------------
 simple_test(vtkMRMLCropVolumeParametersNodeTest1)
