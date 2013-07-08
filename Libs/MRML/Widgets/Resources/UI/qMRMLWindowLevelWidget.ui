@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Window Level</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1,0,0,0">
    <property name="margin">
@@ -38,6 +38,9 @@
      <property name="decimals">
       <number>2</number>
      </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+     </property>
     </widget>
    </item>
    <item row="0" column="4">
@@ -47,6 +50,9 @@
      </property>
      <property name="decimals">
       <number>2</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
      </property>
     </widget>
    </item>
@@ -77,6 +83,9 @@
      <property name="decimals">
       <number>2</number>
      </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+     </property>
     </widget>
    </item>
    <item row="0" column="3">
@@ -86,6 +95,9 @@
      </property>
      <property name="decimals">
       <number>2</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
      </property>
     </widget>
    </item>

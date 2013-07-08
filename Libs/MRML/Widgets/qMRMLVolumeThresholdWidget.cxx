@@ -16,6 +16,7 @@
 ==============================================================================*/
 
 // CTK includes
+#include <ctkDoubleSpinBox.h>
 #include <ctkPopupWidget.h>
 
 // qMRML includes
@@ -59,6 +60,10 @@ void qMRMLVolumeThresholdWidgetPrivate::init()
 
   this->Superclass::init();
   this->setupUi(q);
+  this->VolumeThresholdRangeWidget->minimumSpinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
+  this->VolumeThresholdRangeWidget->maximumSpinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
 
   q->setAutoThreshold(qMRMLVolumeThresholdWidget::Off);
 

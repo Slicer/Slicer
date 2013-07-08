@@ -314,6 +314,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createIntegerTagWidget(const ModulePar
     if (!stepAsStr.isEmpty()) { step = stepAsStr.toInt(); }
     
     ctkSliderWidget * slider = new ctkSliderWidget;
+    slider->spinBox()->setDecimalsOption(
+      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
     slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);
@@ -358,6 +360,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
     {
     ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
+    spinBox->setDecimalsOption(
+      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
     spinBox->setValue(value);
@@ -398,6 +402,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFloatTagWidget(const ModuleParam
     
     ctkSliderWidget * slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
+    slider->spinBox()->setDecimalsOption(
+      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
     slider->setTickInterval(step);
     slider->setSingleStep(step);
     slider->setRange(min, max);
@@ -429,6 +435,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
     {
     ctkDoubleSpinBox * spinBox = new ctkDoubleSpinBox;
     spinBox->setDecimals(decimals);
+    spinBox->setDecimalsOption(
+      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
     spinBox->setSingleStep(step);
     spinBox->setRange(min, max);
     spinBox->setValue(value);
@@ -468,6 +476,8 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDoubleTagWidget(const ModulePara
       }
     ctkSliderWidget * slider = new ctkSliderWidget;
     slider->setDecimals(decimals);
+    slider->spinBox()->setDecimalsOption(
+      ctkDoubleSpinBox::DecimalsByKey | ctkDoubleSpinBox::DecimalsByShortcuts );
     slider->setSingleStep(step);
     slider->setTickInterval(step);
     slider->setRange(min, max);

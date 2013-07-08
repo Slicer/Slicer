@@ -61,6 +61,9 @@
      <property name="decimals">
       <number>4</number>
      </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsAsMin|ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
+     </property>
      <property name="minimum" stdset="0">
       <double>0.00010000000000000</double>
      </property>
@@ -86,6 +89,9 @@
     <widget class="qMRMLCoordinatesWidget" name="ImageOriginWidget">
      <property name="decimals">
       <number>4</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsAsMin|ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
      </property>
      <property name="minimum" stdset="0">
       <double>-1000000.000000000000000</double>
@@ -127,6 +133,9 @@
      </property>
      <property name="decimals">
       <number>4</number>
+     </property>
+     <property name="decimalsOption">
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
      </property>
      <property name="singleStep">
       <double>0.000100000000000</double>
@@ -213,6 +222,15 @@
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
+       </property>
+       <property name="maximum">
+        <double>1000000000.000000000000000</double>
+       </property>
       </widget>
      </item>
      <item>
@@ -238,6 +256,15 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
+       </property>
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="decimalsOption">
+        <set>ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
+       </property>
+       <property name="maximum">
+        <double>1000000000.000000000000000</double>
        </property>
       </widget>
      </item>

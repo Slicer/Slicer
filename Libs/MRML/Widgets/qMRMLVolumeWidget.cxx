@@ -22,6 +22,7 @@
 #include <QVBoxLayout>
 
 // CTK includes
+#include <ctkDoubleSpinBox.h>
 #include <ctkRangeWidget.h>
 #include <ctkPopupWidget.h>
 #include <ctkUtils.h>
@@ -92,6 +93,10 @@ void qMRMLVolumeWidgetPrivate::init()
   this->PopupWidget->setAutoHide(true);
   //this->PopupWidget->setBaseWidget(q);
   this->RangeWidget = new ctkRangeWidget;
+  this->RangeWidget->minimumSpinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
+  this->RangeWidget->maximumSpinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts);
 
   QVBoxLayout* layout = new QVBoxLayout;
   layout->addWidget(this->RangeWidget);
