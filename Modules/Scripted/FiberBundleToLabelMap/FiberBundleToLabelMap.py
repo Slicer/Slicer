@@ -9,13 +9,11 @@ from __main__ import vtk, qt, ctk, slicer
 class FiberBundleToLabelMap:
   def __init__(self, parent):
     import string
-    parent.title = "FiberBundleToLabelMap" # TODO make this more human readable by adding spaces
+    parent.title = "Fiber Bundle to Label Map"
     parent.categories = ["Diffusion.Tractography"]
     parent.dependencies = []
     parent.contributors = ["Steve Pieper (Isomics)"] # replace with "Firstname Lastname (Org)"
     parent.helpText = string.Template("""
-The Editor allows label maps to be created and edited. The active label map will be modified by the Editor.
-
 See <a href=\"$a/Documentation/$b.$c/Modules/FiberBuntdeToLabelMap\">the documentation</a> for more information.
 
 This module converts Fiber Bundles to Label Map Volumes by filling pixels in the label volume where fiber vertex points are located.
