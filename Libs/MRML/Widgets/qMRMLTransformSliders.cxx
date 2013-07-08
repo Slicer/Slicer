@@ -56,6 +56,12 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
   Q_D(qMRMLTransformSliders);
 
   d->setupUi(this);
+  d->LRSlider->spinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
+  d->PASlider->spinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
+  d->ISSlider->spinBox()->setDecimalsOption(
+    ctkDoubleSpinBox::DecimalsByShortcuts | ctkDoubleSpinBox::DecimalsByKey);
 
   this->setCoordinateReference(qMRMLTransformSliders::GLOBAL);
   this->setTypeOfTransform(qMRMLTransformSliders::TRANSLATION);
@@ -74,6 +80,9 @@ qMRMLTransformSliders::qMRMLTransformSliders(QWidget* _parent) : Superclass(_par
   // the default values of min and max are set in the .ui file
   this->onMinimumChanged(d->MinValueSpinBox->value());
   this->onMaximumChanged(d->MaxValueSpinBox->value());
+
+  this->connect(d->LRSlider, SIGNAL(decimalsChanged(int)),
+                SIGNAL(decimalsChanged(int)));
 
   // disable as there is not MRML Node associated with the widget
   this->setEnabled(false);
@@ -222,6 +231,21 @@ QString qMRMLTransformSliders::title()const
 {
   Q_D(const qMRMLTransformSliders);
   return d->SlidersGroupBox->title();
+}
+
+// --------------------------------------------------------------------------
+int qMRMLTransformSliders::decimals()const
+{
+  Q_D(const qMRMLTransformSliders);
+  return d->LRSlider->decimals();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLTransformSliders::setDecimals(int newDecimals)
+{
+  Q_D(qMRMLTransformSliders);
+  // setting the decimals to LRSlider will propagate to the other widgets.
+  d->LRSlider->setDecimals(newDecimals);
 }
 
 // --------------------------------------------------------------------------

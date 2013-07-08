@@ -50,6 +50,7 @@ class QMRML_WIDGETS_EXPORT qMRMLTransformSliders : public QWidget
   Q_PROPERTY(QString ISLabel READ isLabel WRITE setISLabel)
   Q_PROPERTY(double SingleStep READ singleStep WRITE setSingleStep)
 
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals NOTIFY decimalsChanged)
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum)
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
   Q_PROPERTY(bool minMaxVisible READ isMinMaxVisible WRITE setMinMaxVisible)
@@ -78,6 +79,10 @@ public:
   /// Set/Get Title of the group box
   void setTitle(const QString& title);
   QString title()const;
+
+  /// Return the decimals property value.
+  /// \sa decimals
+  int decimals()const;
 
   /// 
   /// Get sliders range
@@ -125,6 +130,10 @@ signals:
   /// Signal sent if the minimum or maximum slider's value is updated
   void rangeChanged(double newMinimum, double newMaximum);
 
+  /// Signal sent when the number of decimals has changed.
+  /// \sa decimals
+  void decimalsChanged(int newDecimals);
+
 public slots:
   /// 
   /// Set the MRML node of interest
@@ -141,6 +150,10 @@ public slots:
   /// is changing its value. The reset doesn't fire any event and the node
   /// is not modified. If no slider is active, then all sliders are reset.
   void resetUnactiveSliders();
+
+  /// Set the decimals property value.
+  /// \sa decimals
+  void setDecimals(int newDecimals);
 
 protected slots:
   void onSliderPositionChanged(double position);

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>957</height>
+    <height>927</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -108,6 +108,9 @@
            </property>
            <property name="editable">
             <bool>true</bool>
+           </property>
+           <property name="decimalsOption">
+            <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
            </property>
           </widget>
          </item>
@@ -635,6 +638,54 @@
     <hint type="destinationlabel">
      <x>285</x>
      <y>783</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MatrixWidget</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>TranslationSliders</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>226</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>TranslationSliders</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>RotationSliders</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>192</x>
+     <y>436</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>RotationSliders</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>MatrixWidget</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>448</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>60</x>
+     <y>131</y>
     </hint>
    </hints>
   </connection>

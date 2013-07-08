@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Transform</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -131,6 +131,9 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="decimalsOption">
+              <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
+             </property>
              <property name="minimum">
               <double>-1000000000.000000000000000</double>
              </property>
@@ -173,6 +176,9 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="decimalsOption">
+              <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts</set>
              </property>
              <property name="minimum">
               <double>-1000000000.000000000000000</double>
@@ -249,5 +255,54 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>MinValueSpinBox</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>MaxValueSpinBox</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>MaxValueSpinBox</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>LRSlider</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>340</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>329</x>
+     <y>44</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LRSlider</sender>
+   <signal>decimalsChanged(int)</signal>
+   <receiver>MinValueSpinBox</receiver>
+   <slot>setDecimals(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>122</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
