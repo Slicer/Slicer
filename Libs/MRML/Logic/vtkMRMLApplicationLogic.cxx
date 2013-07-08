@@ -591,10 +591,12 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
           pathComponents.pop_back();
           origStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
 
-          std::string ext = storageNode->GetDefaultWriteFileExtension();
-          std::string uniqueFileName;
-
-          uniqueFileName = fileBaseName + ext;
+          std::string ext = std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
+          std::string uniqueFileName = fileBaseName;
+          if (ext != vtksys::SystemTools::GetFilenameExtension(fileBaseName))
+            {
+            uniqueFileName = uniqueFileName + ext;
+            }
           storageNode->SetFileName(uniqueFileName.c_str());
           storageNode->SetDataDirectory(dataDir.c_str());
           vtkDebugMacro("set data directory to "
