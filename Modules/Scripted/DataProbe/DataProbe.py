@@ -95,9 +95,11 @@ class DataProbeInfoWidget(object):
   def __del__(self):
     self.removeObservers()
 
-  def fitName(self,name):
-    if len(name) > self.nameSize:
-      preSize = self.nameSize / 2
+  def fitName(self,name,nameSize=None):
+    if not nameSize:
+      nameSize = self.nameSize
+    if len(name) > nameSize:
+      preSize = nameSize / 2
       postSize = preSize - 3
       name = name[:preSize] + "..." + name[-postSize:]
     return name
@@ -260,6 +262,11 @@ class DataProbeInfoWidget(object):
         self.layerNames[layer].setText( '<b>' + nameLabel )
         self.layerIJKs[layer].setText( '(' + ijkLabel + ')' )
         self.layerValues[layer].setText( '<b>' + valueLabel )
+    sceneName = slicer.mrmlScene.GetURL()
+    if sceneName != "":
+      self.frame.parent().text = "Data Probe: %s" % self.fitName(sceneName,nameSize=2*self.nameSize)
+    else:
+      self.frame.parent().text = "Data Probe"
 
   def createSmall(self):
     """Make the internals of the widget to display in the
