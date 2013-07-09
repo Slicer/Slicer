@@ -421,10 +421,16 @@ void vtkSliceViewInteractorStyle::DecrementSlice()
 void vtkSliceViewInteractorStyle::MoveSlice(double delta)
 {
   double offset = this->SliceLogic->GetSliceOffset();
+  double newOffset = offset + delta;
 
-  this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
-  this->SliceLogic->SetSliceOffset(offset + delta);
-  this->SliceLogic->EndSliceNodeInteraction();
+  double sliceBounds[6] = {0, -1, 0, -1, 0, -1};
+  this->SliceLogic->GetSliceBounds(sliceBounds);
+  if (newOffset >= sliceBounds[4] && newOffset <= sliceBounds[5])
+    {
+    this->SliceLogic->StartSliceNodeInteraction(vtkMRMLSliceNode::SliceToRASFlag);
+    this->SliceLogic->SetSliceOffset(newOffset);
+    this->SliceLogic->EndSliceNodeInteraction();
+    }
 }
 
 //----------------------------------------------------------------------------
