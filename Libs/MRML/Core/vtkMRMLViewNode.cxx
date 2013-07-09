@@ -52,6 +52,7 @@ vtkMRMLViewNode::vtkMRMLViewNode()
   this->BackgroundColor2[0] = this->defaultBackgroundColor2()[0];
   this->BackgroundColor2[1] = this->defaultBackgroundColor2()[1];
   this->BackgroundColor2[2] = this->defaultBackgroundColor2()[2];
+  this->UseDepthPeeling = 0;
   this->FPSVisible = 0;
  }
 
@@ -171,6 +172,9 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " renderMode=\"" << "Orthographic" << "\"";
     }
+
+  of << indent << " useDepthPeeling=\"" << this->GetUseDepthPeeling() << "\"";
+
 }
 
 //----------------------------------------------------------------------------
@@ -384,6 +388,14 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         this->RenderMode = vtkMRMLViewNode::Orthographic;
         }
       }
+    else if (!strcmp(attName, "useDepthPeeling" ))
+      {
+      std::stringstream ss;
+      ss << attValue;
+      int use;
+      ss >> use;
+      this->SetUseDepthPeeling(use);
+      }
     }
   this->EndModify(disabledModify);
 }
@@ -415,6 +427,8 @@ void vtkMRMLViewNode::Copy(vtkMRMLNode *anode)
   this->SetRockCount ( node->GetRockCount ( ) );
   this->SetStereoType ( node->GetStereoType ( ) );
   this->SetRenderMode ( node->GetRenderMode() );
+  this->SetUseDepthPeeling ( node->GetUseDepthPeeling() );
+  this->SetFPSVisible ( node->GetFPSVisible() );
 
   this->EndModify(disabledModify);
 }
@@ -441,6 +455,8 @@ void vtkMRMLViewNode::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RockCount:       " << this->RockCount << "\n";
   os << indent << "StereoType:       " << this->StereoType << "\n";
   os << indent << "RenderMode:       " << this->RenderMode << "\n";
+  os << indent << "UseDepthPeeling:       " << this->UseDepthPeeling << "\n";
+  os << indent << "FPSVisible:       " << this->FPSVisible << "\n";
 }
 
 //------------------------------------------------------------------------------

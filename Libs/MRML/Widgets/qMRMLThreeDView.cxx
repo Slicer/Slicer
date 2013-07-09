@@ -211,6 +211,7 @@ void qMRMLThreeDViewPrivate::updateWidgetFromMRML()
   q->setSpinEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
   q->setRockEnabled(this->MRMLViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
 
+  q->setUseDepthPeeling(this->MRMLViewNode->GetUseDepthPeeling() != 0);
   q->setFPSVisible(this->MRMLViewNode->GetFPSVisible() != 0);
 }
 

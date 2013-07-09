@@ -137,8 +137,18 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   QObject::connect(this->actionSet3DAxisLabelVisible, SIGNAL(triggered(bool)),
                    q, SLOT(set3DAxisLabelVisible(bool)));
 
+  // More controls
+  QMenu* moreMenu = new QMenu("More", this->PopupWidget);
+  moreMenu->addAction(this->actionUseDepthPeeling);
+  moreMenu->addAction(this->actionSetFPSVisible);
+  this->MoreToolButton->setMenu(moreMenu);
+
+  // Depth peeling
+  QObject::connect(this->actionUseDepthPeeling, SIGNAL(toggled(bool)),
+                   q, SLOT(setUseDepthPeeling(bool)));
+
   // FPS
-  QObject::connect(this->FPSButton, SIGNAL(toggled(bool)),
+  QObject::connect(this->actionSetFPSVisible, SIGNAL(toggled(bool)),
                    q, SLOT(setFPSVisible(bool)));
 
   // Background color
@@ -250,7 +260,7 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
     << d->PitchButton << d->RollButton << d->YawButton
     << d->CenterButton << d->OrthoButton << d->VisibilityButton
     << d->ZoomInButton << d->ZoomOutButton << d->StereoButton
-    << d->RockButton << d->SpinButton;
+    << d->RockButton << d->SpinButton << d->MoreToolButton;
   foreach(QWidget* w, widgets)
     {
     w->setEnabled(d->ViewNode != 0);
@@ -265,7 +275,8 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
   d->actionSet3DAxisLabelVisible->setChecked(
     d->ViewNode->GetAxisLabelsVisible());
 
-  d->FPSButton->setChecked(d->ViewNode->GetFPSVisible());
+  d->actionUseDepthPeeling->setChecked(d->ViewNode->GetUseDepthPeeling());
+  d->actionSetFPSVisible->setChecked(d->ViewNode->GetFPSVisible());
 
   double* color = d->ViewNode->GetBackgroundColor();
   QColor backgroundColor = QColor::fromRgbF(color[0], color[1], color[2]);
@@ -414,6 +425,17 @@ void qMRMLThreeDViewControllerWidget::set3DAxisLabelVisible(bool visible)
     return;
     }
   d->ViewNode->SetAxisLabelsVisible(visible);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setUseDepthPeeling(bool use)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  if (!d->ViewNode)
+    {
+    return;
+    }
+  d->ViewNode->SetUseDepthPeeling(use ? 1 : 0);
 }
 
 // --------------------------------------------------------------------------

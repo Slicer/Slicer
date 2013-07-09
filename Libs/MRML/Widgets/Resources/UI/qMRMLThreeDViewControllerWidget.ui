@@ -153,26 +153,6 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QToolButton" name="PitchButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Pitch the view of the scene.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewPitch.png</normaloff>:/Icons/ViewPitch.png</iconset>
-       </property>
-       <property name="autoRepeat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
       <widget class="QToolButton" name="RollButton">
        <property name="enabled">
         <bool>false</bool>
@@ -192,7 +172,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2">
+     <item row="1" column="2">
       <widget class="QToolButton" name="YawButton">
        <property name="enabled">
         <bool>false</bool>
@@ -212,27 +192,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="3">
-      <widget class="QToolButton" name="RockButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Rock the 3D view.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewRock.png</normaloff>:/Icons/ViewRock.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
+     <item row="0" column="3">
       <widget class="QToolButton" name="SpinButton">
        <property name="enabled">
         <bool>false</bool>
@@ -252,17 +212,60 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QToolButton" name="FPSButton">
+     <item row="1" column="3">
+      <widget class="QToolButton" name="RockButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Rock the 3D view.</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/ViewRock.png</normaloff>:/Icons/ViewRock.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QToolButton" name="MoreToolButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
        <property name="icon">
         <iconset resource="../qMRMLWidgets.qrc">
-         <normaloff>:/Icons/ViewFPS.png</normaloff>:/Icons/ViewFPS.png</iconset>
+         <normaloff>:/Icons/SliceMoreOptions.png</normaloff>:/Icons/SliceMoreOptions.png</iconset>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QToolButton" name="PitchButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Pitch the view of the scene.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../qMRMLWidgets.qrc">
+         <normaloff>:/Icons/ViewPitch.png</normaloff>:/Icons/ViewPitch.png</iconset>
+       </property>
+       <property name="autoRepeat">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -383,6 +386,29 @@
    </property>
    <property name="toolTip">
     <string>Center the 3D view on the scene</string>
+   </property>
+  </action>
+  <action name="actionUseDepthPeeling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use depth peeling</string>
+   </property>
+   <property name="toolTip">
+    <string>Depth peeling is used to render transparent surface models in order</string>
+   </property>
+  </action>
+  <action name="actionSetFPSVisible">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../qMRMLWidgets.qrc">
+     <normaloff>:/Icons/ViewFPS.png</normaloff>:/Icons/ViewFPS.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show/Hide frames per second (FPS)</string>
    </property>
   </action>
  </widget>

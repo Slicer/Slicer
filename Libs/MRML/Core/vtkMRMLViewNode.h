@@ -135,6 +135,11 @@ public:
   vtkGetMacro (RenderMode, int );
   vtkSetMacro (RenderMode, int );
 
+  /// Use depth peeling or not.
+  /// 0 by default.
+  vtkGetMacro ( UseDepthPeeling, int );
+  vtkSetMacro ( UseDepthPeeling, int );
+
   /// Show FPS in the lower right side of the screen.
   /// 0 by default.
   vtkGetMacro ( FPSVisible, int );
@@ -233,6 +238,9 @@ protected:
   /// Parameters for look-from or rotate-around
   /// automatic view control
   int ViewAxisMode;
+
+  /// Use the depth peeling rendering mode.
+  int UseDepthPeeling;
 
   /// Show the Frame per second as text on the lower right part of the view
   int FPSVisible;
