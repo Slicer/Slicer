@@ -32,6 +32,8 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['RepetitionTime'] = "0018,0080"
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
     self.multiVolumeTags['SeriesTime'] = "0008,0031"
+    # this one is GE-specific using the private tag
+    self.multiVolumeTags['B-value'] = "0043,1039"
     # used on some GE systems, with 2D acquisitions
     self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
 
@@ -46,6 +48,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
+    self.multiVolumeTagsUnits['B-value'] = "mm2/s"
 
     self.epsilon = epsilon
 
@@ -338,8 +341,20 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         if frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
           # extra parsing is needed to convert from DICOM TM VR into ms
           tagValue = self.tm2ms(tagValueStr) # convert to ms
+        elif frameTag == "B-value":
+          # need to re-query from file, due to an issue in DCMTK
+          dcmDump = str(DICOMLib.DICOMCommand('dcmdump',[file]).start())
+          dcmDump = string.split(dcmDump,'\n')
+          for line in dcmDump:
+            if string.find(line,'(0043,1039)') == 0:
+              tagValue = float(string.split(string.split(line,' ')[2][1:-1],'\\')[0])
+              break
+          print('B-value: '+str(tagValue))
         else:
-          tagValue = float(tagValueStr)
+          try:
+            tagValue = float(tagValueStr)
+          except:
+            continue
 
         try:
           tagValue2FileList[tagValue].append(file)
