@@ -305,27 +305,29 @@ void qSlicerCropVolumeModuleWidget::onInputVolumeChanged()
     {
     return;
     }
+
   vtkMRMLNode* node = d->InputVolumeComboBox->currentNode();
   if(node)
     {
     this->parametersNode->SetInputVolumeNodeID(node->GetID());
 
-
     if(d->VoxelBasedModeRadioButton->isChecked())
       {
-        if(d->checkForVolumeParentTransform())
-          {
-            d->showUnsupportedTransVolumeVoxelCroppingDialog();
-            d->InputVolumeComboBox->setCurrentNode(NULL);
-          }
-        else
-          {
-            d->performROIVoxelGridAlignment();
-          }
+      if(d->checkForVolumeParentTransform())
+        {
+        d->showUnsupportedTransVolumeVoxelCroppingDialog();
+        d->InputVolumeComboBox->setCurrentNode(NULL);
+        }
+      else
+        {
+        d->performROIVoxelGridAlignment();
+        }
       }
-
-
     }
+  else
+   {
+   this->parametersNode->SetInputVolumeNodeID(NULL);
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -350,6 +352,10 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
       d->performROIVoxelGridAlignment();
 
     }
+  else
+   {
+   this->parametersNode->SetROINodeID(NULL);
+   }
 }
 
 
