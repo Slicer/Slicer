@@ -28,6 +28,7 @@
 #include "vtkMRMLSliceLogic.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSliceCompositeNode.h"
+#include "vtkMRMLVolumeNode.h"
 
 //----------------------------------------------------------------------------
 vtkCxxSetObjectMacro(vtkSliceViewInteractorStyle, SliceLogic, vtkMRMLSliceLogic);
@@ -55,7 +56,7 @@ vtkSliceViewInteractorStyle::vtkSliceViewInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-vtkSliceViewInteractorStyle::~vtkSliceViewInteractorStyle() 
+vtkSliceViewInteractorStyle::~vtkSliceViewInteractorStyle()
 {
   this->ActionStartSliceToRAS->Delete();
   this->ActionStartXYToRAS->Delete();
@@ -65,7 +66,7 @@ vtkSliceViewInteractorStyle::~vtkSliceViewInteractorStyle()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent) 
+void vtkSliceViewInteractorStyle::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -104,7 +105,7 @@ void vtkSliceViewInteractorStyle::OnKeyRelease()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnChar() 
+void vtkSliceViewInteractorStyle::OnChar()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
@@ -165,7 +166,7 @@ void vtkSliceViewInteractorStyle::OnChar()
     {
     vtkErrorMacro("TODO: set active lightbox/compare view slice");
     /*
-     * This is commented out until the active slice highlight and the 
+     * This is commented out until the active slice highlight and the
      * correct texture is assigned.  See but #1644
     double xyz[4];
     this->GetEventXYZ(xyz);
@@ -180,6 +181,22 @@ void vtkSliceViewInteractorStyle::OnChar()
     {
     vtkErrorMacro("TODO: set active lightbox/compare view slice");
     }
+  else if ( !strcmp(key, "bracketleft") )
+    {
+    this->CycleVolumeLayer(0,-1);
+    }
+  else if ( !strcmp(key, "bracketright") )
+    {
+    this->CycleVolumeLayer(0,1);
+    }
+  else if ( !strcmp(key, "braceleft") )
+    {
+    this->CycleVolumeLayer(1,-1);
+    }
+  else if ( !strcmp(key, "braceright") )
+    {
+    this->CycleVolumeLayer(1,1);
+    }
   else
     {
     this->Superclass::OnChar();
@@ -187,7 +204,7 @@ void vtkSliceViewInteractorStyle::OnChar()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnRightButtonDown() 
+void vtkSliceViewInteractorStyle::OnRightButtonDown()
 {
   this->SliceLogic->GetMRMLScene()->SaveStateForUndo(this->SliceLogic->GetSliceNode());
   this->SetActionState(vtkSliceViewInteractorStyle::Zoom);
@@ -198,27 +215,27 @@ void vtkSliceViewInteractorStyle::OnRightButtonDown()
   this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
 }
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnRightButtonUp() 
+void vtkSliceViewInteractorStyle::OnRightButtonUp()
 {
   this->SetActionState(vtkSliceViewInteractorStyle::None);
   this->SliceLogic->EndSliceNodeInteraction();
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnMiddleButtonDown() 
+void vtkSliceViewInteractorStyle::OnMiddleButtonDown()
 {
   this->StartTranslate();
   this->SetActionStartWindow(this->GetInteractor()->GetEventPosition());
   this->SetLastActionWindow(this->GetInteractor()->GetEventPosition());
 }
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnMiddleButtonUp() 
+void vtkSliceViewInteractorStyle::OnMiddleButtonUp()
 {
   this->EndTranslate();
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnLeftButtonDown() 
+void vtkSliceViewInteractorStyle::OnLeftButtonDown()
 {
   if (this->Interactor->GetShiftKey())
     {
@@ -237,7 +254,7 @@ void vtkSliceViewInteractorStyle::OnLeftButtonDown()
   this->Superclass::OnLeftButtonDown();
 }
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnLeftButtonUp() 
+void vtkSliceViewInteractorStyle::OnLeftButtonUp()
 {
   if (this->ActionState == this->Translate)
     {
@@ -255,7 +272,7 @@ void vtkSliceViewInteractorStyle::OnLeftButtonUp()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnMouseMove() 
+void vtkSliceViewInteractorStyle::OnMouseMove()
 {
   vtkMRMLSliceNode *sliceNode = this->SliceLogic->GetSliceNode();
   vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
@@ -285,9 +302,9 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
       int deltaY = windowY - this->GetActionStartWindow()[1];
       double percent = (windowH + deltaY) / (1.0 * windowH);
 
-      // the factor operation is so 'z' isn't changed and the 
+      // the factor operation is so 'z' isn't changed and the
       // slider can still move through the full range
-      if ( percent > 0. ) 
+      if ( percent > 0. )
         {
         double newFOVx = this->GetActionStartFOV()[0] * percent;
         double newFOVy = this->GetActionStartFOV()[1] * percent;
@@ -353,14 +370,14 @@ void vtkSliceViewInteractorStyle::OnMouseMove()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnMouseWheelForward() 
+void vtkSliceViewInteractorStyle::OnMouseWheelForward()
 {
   this->IncrementSlice();
   this->Superclass::OnMouseWheelForward();
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnMouseWheelBackward() 
+void vtkSliceViewInteractorStyle::OnMouseWheelBackward()
 {
   this->DecrementSlice();
   this->Superclass::OnMouseWheelBackward();
@@ -373,7 +390,7 @@ void vtkSliceViewInteractorStyle::OnExpose()
 }
 
 //----------------------------------------------------------------------------
-void vtkSliceViewInteractorStyle::OnConfigure() 
+void vtkSliceViewInteractorStyle::OnConfigure()
 {
   this->Superclass::OnConfigure();
 }
@@ -563,6 +580,58 @@ void vtkSliceViewInteractorStyle::GetEventXYZ(double xyz[4])
   double tx = windowX / (1. * windowW);
   double ty = (windowH - windowY) / (1. * windowH);
   xyz[2] = (floor(ty*numRows)*numCols + floor(tx*numCols));
-  
+
   xyz[3] = 1.;
+}
+
+
+//----------------------------------------------------------------------------
+void vtkSliceViewInteractorStyle::CycleVolumeLayer(int layer, int direction)
+{
+  // first, find the current volume index for the given layer (can be NULL)
+  vtkMRMLScene *scene = this->SliceLogic->GetMRMLScene();
+  vtkMRMLSliceCompositeNode *sliceCompositeNode = this->SliceLogic->GetSliceCompositeNode();
+  char *volumeID = NULL;
+  switch (layer)
+    {
+    case 0: { volumeID = sliceCompositeNode->GetBackgroundVolumeID(); } break;
+    case 1: { volumeID = sliceCompositeNode->GetForegroundVolumeID(); } break;
+    case 2: { volumeID = sliceCompositeNode->GetLabelVolumeID(); } break;
+    }
+  vtkMRMLVolumeNode *volumeNode = vtkMRMLVolumeNode::SafeDownCast(scene->GetNodeByID(volumeID));
+
+  // now figure out which one it is in the list
+  int volumeCount = scene->GetNumberOfNodesByClass("vtkMRMLVolumeNode");
+  int volumeIndex;
+  for (volumeIndex = 0; volumeIndex < volumeCount; volumeIndex++)
+    {
+    if (volumeNode == scene->GetNthNodeByClass(volumeIndex, "vtkMRMLVolumeNode"))
+      {
+      break;
+      }
+    }
+
+  // now increment by direction, and clamp to number of nodes
+  volumeIndex += direction;
+  if (volumeIndex >= volumeCount)
+    {
+    volumeIndex = 0;
+    }
+  if (volumeIndex < 0)
+    {
+    volumeIndex = volumeCount - 1;
+    }
+
+  // if we found a node, set it in the given layer
+  volumeNode = vtkMRMLVolumeNode::SafeDownCast(
+                  scene->GetNthNodeByClass(volumeIndex, "vtkMRMLVolumeNode"));
+  if (volumeNode)
+    {
+    switch (layer)
+      {
+      case 0: { sliceCompositeNode->SetBackgroundVolumeID(volumeNode->GetID()); } break;
+      case 1: { sliceCompositeNode->SetForegroundVolumeID(volumeNode->GetID()); } break;
+      case 2: { sliceCompositeNode->SetLabelVolumeID(volumeNode->GetID()); } break;
+      }
+    }
 }

@@ -28,7 +28,7 @@ class vtkMRMLSliceLogic;
 /// \brief Provides customizable interaction routines.
 ///
 /// Relies on vtkInteractorStyleUser, but with MouseWheelEvents.
-/// and mapping to control the slicer slice logic (manipulates the 
+/// and mapping to control the slicer slice logic (manipulates the
 /// vtkMRMLSliceNode and vtkMRMLSliceCompositeNode.
 /// TODO:
 /// * Do we need Rotate Mode?  Probably better to just rely on the reformat widget
@@ -40,13 +40,13 @@ public:
   static vtkSliceViewInteractorStyle *New();
   vtkTypeRevisionMacro(vtkSliceViewInteractorStyle,vtkInteractorStyleUser);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
-  /// 
+
+  ///
   /// Events are either handled here by changing the slice node
   /// and composite node (sometimes using the logic's methods) or
   /// they are passed to the vtkInteractorStyleUser, which conditionally
   /// passes them to observers if there are any.
-  /// 
+  ///
   /// Generic event bindings
   virtual void OnMouseMove();
   virtual void OnLeftButtonDown();
@@ -58,12 +58,12 @@ public:
   /// MouseWheel callbacks added for slicer
   virtual void OnMouseWheelForward();
   virtual void OnMouseWheelBackward();
-  /// 
+  ///
   /// Keyboard functions
   virtual void OnChar();
   virtual void OnKeyPress();
   virtual void OnKeyRelease();
-  /// 
+  ///
   /// These are more esoteric events, but are useful in some cases.
   virtual void OnExpose();
   virtual void OnConfigure();
@@ -86,7 +86,7 @@ public:
   vtkSetMacro(ActionState, int);
 
   /// state of things when the current action started
-  /// - ras is mouse pointer in patient space 
+  /// - ras is mouse pointer in patient space
   /// - fov is the slice node field of view
   /// - window is mouse pointer with respect to the whole viewer
   /// - xyz is mouse pointer with respect to the light box view (z is which light box viewer)
@@ -100,7 +100,7 @@ public:
   vtkSetVector2Macro(ActionStartWindow, int);
   vtkGetVector2Macro(LastActionWindow, int);
   vtkSetVector2Macro(LastActionWindow, int);
-  
+
   vtkGetMacro(ActionStartForegroundOpacity, double);
   vtkSetMacro(ActionStartForegroundOpacity, double);
   vtkGetMacro(ActionStartLabelOpacity, double);
@@ -136,11 +136,11 @@ public:
   /// check for prescribed spacing, otherwise return best spacing amount
   /// for current layer setup (use logic to look for spacing of first non-null
   /// layer)
-  double GetSliceSpacing(); 
+  double GetSliceSpacing();
   /// Adjust the slice position with respect to current slice node offset
-  void IncrementSlice(); 
-  void DecrementSlice(); 
-  void MoveSlice(double delta); 
+  void IncrementSlice();
+  void DecrementSlice();
+  void MoveSlice(double delta);
 
   /// Collect some boilerplate management steps so they can be used
   /// in more than one place
@@ -170,10 +170,18 @@ public:
   /// The 4th component is 1 so it can be used with a homogenous transform.
   void GetEventXYZ(double xyz[4]);
 
-  /// 
+  ///
   /// Get/Set the SliceLogic
   void SetSliceLogic(vtkMRMLSliceLogic* SliceLogic);
   vtkGetObjectMacro(SliceLogic, vtkMRMLSliceLogic);
+
+  ///
+  /// Change the displayed volume in the selected layer by moving
+  /// in a loop trough the volumes available in the scene.
+  ///  - layer: are 0,1,2 for bg, fg, lb
+  ///  - direction: positive or negative (wraps through volumes in scene)
+  void CycleVolumeLayer(int layer, int direction);
+
 
 protected:
 
