@@ -3,9 +3,17 @@ set(ENV{LD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(ENV{DYLD_LIBRARY_PATH} "@slicer_PYTHON_SHARED_LIBRARY_DIR@")
 set(ENV{VS_UNICODE_OUTPUT} "")
 
+# HACK
+# Slicer's python does not support https, where pipy has
+# distribute. So we manually download the specific version into the
+# SimpleITK build tree.
+file(DOWNLOAD  "http://midas3.kitware.com/midas/download/item/208573/distribute-0.6.28.tar.gz"
+  "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/distribute-0.6.28.tar.gz"
+  EXPECTED_MD5 b400b532e33f78551e6847c1f5965e56
+  )
+
 # The working path must be set to the location of the SimpleITK.py
 # file so that it will be picked up by distuils setup, and installed
 execute_process(
   WORKING_DIRECTORY "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping"
   COMMAND "@slicer_PYTHON_EXECUTABLE@" "@CMAKE_CURRENT_BINARY_DIR@/SimpleITK-build/Wrapping/PythonPackage/setup.py" install )
-
