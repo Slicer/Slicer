@@ -2,7 +2,11 @@ from __future__ import print_function
 import sys
 
 from __main__ import vtk, qt, ctk, slicer
-import vtk.util.numpy_support
+try:
+  NUMPY_AVAILABLE = True
+  import vtk.util.numpy_support
+except:
+  NUMPY_AVAILABLE = False
 from MultiVolumeImporter.Helper import Helper
 
 #
@@ -50,6 +54,16 @@ class MultiVolumeImporterWidget:
 
   def setup(self):
     # Instantiate and connect widgets ...
+
+    if not NUMPY_AVAILABLE:
+      label = qt.QLabel('The module is not available due to missing Numpy package.')
+      self.layout.addWidget(label)
+      label = qt.QLabel('You can seek help by contacting 3D Slicer user list: slicer-users@bwh.harvard.edu')
+      self.layout.addWidget(label)
+
+      # Add vertical spacer
+      self.layout.addStretch(1)
+      return
 
     # Collapsible button
     dummyCollapsibleButton = ctk.ctkCollapsibleButton()
@@ -201,7 +215,7 @@ class MultiVolumeImporterWidget:
       fullName = frameFolder+'/'+fileNames[frameId]
       print("Processing frame %d: %s" % (frameId, fullName))
 
-      frame = self.readFrame(fullName)     
+      frame = self.readFrame(fullName)
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
       mvImageArray.T[frameId] = frameImageArray
@@ -231,7 +245,7 @@ class MultiVolumeImporterWidget:
         mvNode.SetAttribute('MultiVolume.DICOM.RepetitionTime',trTag)
       if faTag != '':
         mvNode.SetAttribute('MultiVolume.DICOM.FlipAngle',faTag)
-    
+
     mvNode.SetName(str(nFrames)+' frames MultiVolume')
     Helper.SetBgFgVolumes(mvNode.GetID(),None)
 
@@ -243,7 +257,7 @@ class MultiVolumeImporterWidget:
     frame = slicer.vtkMRMLScalarVolumeNode()
     sNode.ReadData(frame)
     return frame
- 
+
   # leave no trace of the temporary nodes
   def annihilateScalarNode(self, node):
     dn = node.GetDisplayNode()
