@@ -26,8 +26,9 @@
 
 namespace
 {
-  int basics();
-  bool readWrite();
+int basics();
+bool readWrite();
+bool piecewiseFunctionFromString();
 }
 
 //---------------------------------------------------------------------------
@@ -36,6 +37,7 @@ int vtkMRMLVolumePropertyNodeTest1(int , char * [] )
   bool res = true;
   res = (basics() == EXIT_SUCCESS) && res;
   res = readWrite() && res;
+  res = piecewiseFunctionFromString() && res;
 
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -126,6 +128,40 @@ bool readWrite()
                   << " " << value[2] << " " << value[3] << std::endl;
         return false;
         }
+    }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool piecewiseFunctionFromString()
+{
+  std::string s("10 0 0 4.94065645841247e-324 0 69.5504608154297"
+                " 0 154.266067504883 0.699999988079071 228 1");
+  double expectedData[10] = {0, 0, 4.94065645841247e-324, 0, 69.5504608154297,
+                             0, 154.266067504883, 0.699999988079071, 228, 1};
+  vtkSmartPointer<vtkPiecewiseFunction> function =
+    vtkSmartPointer<vtkPiecewiseFunction>::New();
+  vtkMRMLVolumePropertyNode::GetPiecewiseFunctionFromString(s, function);
+
+  if (function->GetSize() != 5)
+    {
+    std::cout << "Failed to parse string " << s << ", "
+              << "found " << function->GetSize() << " values instead of 10";
+    return false;
+    }
+  for (int i=0; i < 5; ++i)
+    {
+    double node[4];
+    function->GetNodeValue(i, node);
+    if (node[0] != expectedData[i*2] ||
+        node[1] != expectedData[i*2+1])
+      {
+      std::cout << "Failed to parse value at index " << i << ", "
+                << "found [" << node[0] << "," << node[1] << "] "
+                << "instead of [" << expectedData[i*2] << ","
+                << expectedData[i*2+1] << "]" << std::endl;
+      return false;
+      }
     }
   return true;
 }
