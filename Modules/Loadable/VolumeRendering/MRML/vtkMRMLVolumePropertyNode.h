@@ -115,6 +115,16 @@ public:
   static inline void GetColorTransferFunctionFromString(const char *str,
                                                         vtkColorTransferFunction* result);
 
+  /// Utility function:
+  /// Return the nearest higher value.
+  /// \sa HigherAndUnique()
+  static double NextHigher(double value);
+  /// Utility function:
+  /// Return the value or the nearest higher value if the value is equal
+  /// to previousValue. Update previousValue with the new higher value.
+  /// \sa NextHigher()
+  static double HigherAndUnique(double value, double & previousValue);
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
@@ -152,8 +162,9 @@ protected:
   /// Use ->Delete() to delete object
   ~vtkMRMLVolumePropertyNode(void);
 
-  static int dataFromString(const std::string& dataString, double* &data);
-  static std::string dataToString(double* data, int size);
+  static int NodesFromString(const std::string& dataString, double* &data, int nodeSize);
+  static int DataFromString(const std::string& dataString, double* &data);
+  static std::string DataToString(double* data, int size);
 
   /// Events observed on the transfer functions
   vtkIntArray* ObservedEvents;

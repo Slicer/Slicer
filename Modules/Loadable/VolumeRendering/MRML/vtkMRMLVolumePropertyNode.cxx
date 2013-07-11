@@ -13,6 +13,7 @@
 #include <vtkVolumeProperty.h>
 
 // STD includes
+#include <cassert>
 #include <limits>
 #include <sstream>
 
@@ -261,7 +262,7 @@ void vtkMRMLVolumePropertyNode::ProcessMRMLEvents ( vtkObject *caller,
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLVolumePropertyNode
-::dataToString(double* data, int size)
+::DataToString(double* data, int size)
 {
   std::stringstream resultStream;
   double *it = data;
@@ -279,7 +280,7 @@ std::string vtkMRMLVolumePropertyNode
 
 //---------------------------------------------------------------------------
 int vtkMRMLVolumePropertyNode
-::dataFromString(const std::string& dataString, double* &data)
+::DataFromString(const std::string& dataString, double* &data)
 {
   std::stringstream stream;
   stream << dataString;
@@ -290,20 +291,40 @@ int vtkMRMLVolumePropertyNode
     {
     return 0;
     }
-
   data = new double[size];
   for(int i=0; i < size; ++i)
     {
-    stream >> data[i];
+    std::string s;
+    stream >> s;
+    data[i] = atof(s.c_str());
     }
   return size;
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLVolumePropertyNode
+::NodesFromString(const std::string& dataString, double* &nodes, int nodeSize)
+{
+  int size = vtkMRMLVolumePropertyNode::DataFromString(dataString, nodes);
+  if (size % nodeSize)
+    {
+    std::cerr << "Error parsing data string" << std::endl;
+    return 0;
+    }
+  // Ensure uniqueness
+  double previous = VTK_DOUBLE_MIN;
+  for (int i = 0; i < size; i+= nodeSize)
+    {
+    nodes[i] = vtkMRMLVolumePropertyNode::HigherAndUnique(nodes[i], previous);
+    }
+  return size / nodeSize;
 }
 
 //---------------------------------------------------------------------------
 std::string vtkMRMLVolumePropertyNode
 ::GetPiecewiseFunctionString(vtkPiecewiseFunction* function)
 {
-  return vtkMRMLVolumePropertyNode::dataToString(
+  return vtkMRMLVolumePropertyNode::DataToString(
     function->GetDataPointer(), function->GetSize() * 2);
 }
 
@@ -311,7 +332,7 @@ std::string vtkMRMLVolumePropertyNode
 std::string vtkMRMLVolumePropertyNode
 ::GetColorTransferFunctionString(vtkColorTransferFunction* function)
 {
-  return vtkMRMLVolumePropertyNode::dataToString(
+  return vtkMRMLVolumePropertyNode::DataToString(
     function->GetDataPointer(), function->GetSize() * 4);
 }
 
@@ -321,12 +342,11 @@ void vtkMRMLVolumePropertyNode
   const std::string& str,vtkPiecewiseFunction* result)
 {
   double* data = 0;
-  int size = vtkMRMLVolumePropertyNode::dataFromString(str, data);
-  if (!size)
+  int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 2);
+  if (size)
     {
-    return;
+    result->FillFromDataPointer(size, data);
     }
-  result->FillFromDataPointer(size/2, data);
   delete [] data;
 }
 
@@ -336,14 +356,50 @@ void vtkMRMLVolumePropertyNode
   const std::string& str, vtkColorTransferFunction* result)
 {
   double* data = 0;
-  int size = vtkMRMLVolumePropertyNode::dataFromString(str, data);
-  if (!size)
+  int size = vtkMRMLVolumePropertyNode::NodesFromString(str, data, 4);
+  if (size)
     {
-    return;
+    result->FillFromDataPointer(size, data);
     }
-  result->FillFromDataPointer(size/4, data);
   delete [] data;
 }
+
+//----------------------------------------------------------------------------
+double vtkMRMLVolumePropertyNode
+::NextHigher(double value)
+{
+  if (value == 0.)
+    {
+    // special case to avoid denormalized numbers
+    return std::numeric_limits<double>::min();
+    }
+  // Increment the value by the smallest offset possible
+  // The challenge here is to find the offset, if the value is 100000000., an
+  // offset of espilon won't work.
+  typedef union {
+      long long i64;
+      double d64;
+    } dbl_64;
+  dbl_64 d;
+  d.d64 = value;
+  d.i64 += (value < 0.) ? -1 : 1;
+  return d.d64;
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLVolumePropertyNode
+::HigherAndUnique(double value, double &previousValue)
+{
+  value = std::max(value, previousValue);
+  if (value == previousValue)
+    {
+    value = vtkMRMLVolumePropertyNode::NextHigher(value);
+    }
+  assert (value != previousValue);
+  previousValue = value;
+  return value;
+}
+
 
 //---------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLVolumePropertyNode::CreateDefaultStorageNode()

@@ -55,33 +55,6 @@
 #include <cassert>
 
 //----------------------------------------------------------------------------
-double nextHigher(double value)
-{
-  // Increment the value by the smallest offset possible
-  typedef union {
-      long long i64;
-      double d64;
-    } dbl_64;
-  dbl_64 d;
-  d.d64 = value;
-  d.i64 += (value >= 0) ? 1 : -1;
-  return d.d64;
-}
-
-//----------------------------------------------------------------------------
-double higherAndUnique(double value, double &previousValue)
-{
-  value = std::max(value, previousValue);
-  if (value == previousValue)
-    {
-    value = nextHigher(value);
-    }
-  assert (value != previousValue);
-  previousValue = value;
-  return value;
-}
-
-//----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkSlicerVolumeRenderingLogic, "$Revision: 1.9.12.1 $");
 vtkStandardNewMacro(vtkSlicerVolumeRenderingLogic);
 
@@ -416,19 +389,19 @@ void vtkSlicerVolumeRenderingLogic
 
   vtkNew<vtkPiecewiseFunction> opacity;
   // opacity doesn't support duplicate points
-  opacity->AddPoint(higherAndUnique(scalarRange[0], previous), 0.0);
-  opacity->AddPoint(higherAndUnique(threshold[0], previous), 0.0);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), 0.0);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[0], previous), 0.0);
   if (!linearRamp)
     {
-    opacity->AddPoint(higherAndUnique(threshold[0], previous), 1.0);
+    opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[0], previous), 1.0);
     }
-  opacity->AddPoint(higherAndUnique(threshold[1], previous), 1.0);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[1], previous), 1.0);
   double endValue = stayUpAtUpperLimit ? 1.0 : 0.0;
   if (!stayUpAtUpperLimit)
     {
-    opacity->AddPoint(higherAndUnique(threshold[1], previous), endValue);
+    opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(threshold[1], previous), endValue);
     }
-  opacity->AddPoint(higherAndUnique(scalarRange[1], previous), endValue);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), endValue);
 
   vtkPiecewiseFunction *volumePropOpacity = volumeProp->GetScalarOpacity();
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
@@ -469,13 +442,13 @@ void vtkSlicerVolumeRenderingLogic
     double color[4];
     lut->GetTableValue(0, color);
 
-    colorTransfer->AddRGBPoint(higherAndUnique(scalarRange[0], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous),
                                color[0], color[1], color[2]);
-    colorTransfer->AddRGBPoint(higherAndUnique(windowLevelMinMax[0], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(windowLevelMinMax[0], previous),
                                color[0], color[1], color[2]);
-    colorTransfer->AddRGBPoint(higherAndUnique(windowLevelMinMax[1], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(windowLevelMinMax[1], previous),
                                color[0], color[1], color[2]);
-    colorTransfer->AddRGBPoint(higherAndUnique(scalarRange[1], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous),
                                color[0], color[1], color[2]);
     }
   else // if (size > 1)
@@ -484,7 +457,7 @@ void vtkSlicerVolumeRenderingLogic
 
     double color[4];
     lut->GetTableValue(0, color);
-    colorTransfer->AddRGBPoint(higherAndUnique(scalarRange[0], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous),
                                color[0], color[1], color[2]);
 
     double value = windowLevelMinMax[0];
@@ -496,14 +469,14 @@ void vtkSlicerVolumeRenderingLogic
                               value += downSamplingFactor*step)
       {
       lut->GetTableValue(i, color);
-      colorTransfer->AddRGBPoint(higherAndUnique(value, previous),
+      colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(value, previous),
                                  color[0], color[1], color[2]);
       }
 
     lut->GetTableValue(size - 1, color);
-    colorTransfer->AddRGBPoint(higherAndUnique(windowLevelMinMax[1], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(windowLevelMinMax[1], previous),
                                color[0], color[1], color[2]);
-    colorTransfer->AddRGBPoint(higherAndUnique(scalarRange[1], previous),
+    colorTransfer->AddRGBPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous),
                                color[0], color[1], color[2]);
     }
 
@@ -535,8 +508,8 @@ void vtkSlicerVolumeRenderingLogic
   double previous = VTK_DOUBLE_MIN;
   vtkNew<vtkPiecewiseFunction> opacity;
   // opacity doesn't support duplicate points
-  opacity->AddPoint(higherAndUnique(scalarRange[0], previous), 1.0);
-  opacity->AddPoint(higherAndUnique(scalarRange[1], previous), 1.0);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), 1.0);
+  opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), 1.0);
 
   vtkPiecewiseFunction *volumePropGradientOpacity = volumeProp->GetGradientOpacity();
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropGradientOpacity))
