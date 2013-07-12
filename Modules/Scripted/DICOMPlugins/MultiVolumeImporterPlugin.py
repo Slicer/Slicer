@@ -33,7 +33,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTags['AcquisitionTime'] = "0008,0032"
     self.multiVolumeTags['SeriesTime'] = "0008,0031"
     # this one is GE-specific using the private tag
-    self.multiVolumeTags['B-value'] = "0043,1039"
+    # self.multiVolumeTags['B-value'] = "0043,1039"
     # used on some GE systems, with 2D acquisitions
     self.multiVolumeTags['TemporalPositionIdentifier'] = "0020,0100"
 
@@ -48,7 +48,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     self.multiVolumeTagsUnits['AcquisitionTime'] = "ms"
     self.multiVolumeTagsUnits['SeriesTime'] = "ms"
     self.multiVolumeTagsUnits['TemporalPositionIdentifier'] = "count"
-    self.multiVolumeTagsUnits['B-value'] = "mm2/s"
+    # self.multiVolumeTagsUnits['B-value'] = "mm2/s"
 
     self.epsilon = epsilon
 
