@@ -72,15 +72,23 @@ endif()
 # LIBRARY_PATHS
 #-----------------------------------------------------------------------------
 set(SLICER_LIBRARY_PATHS_BUILD
-  ${DCMTK_DIR}/bin/<CMAKE_CFG_INTDIR>
+  ${DCMTK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
   ${VTK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${CTK_DIR}/CTK-build/bin/<CMAKE_CFG_INTDIR>
   ${QT_LIBRARY_DIR}
-  ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${Teem_DIR}/bin/<CMAKE_CFG_INTDIR>
   ${LibArchive_DIR}/${LIB_SUBDIR}
   <APPLAUNCHER_DIR>/bin/<CMAKE_CFG_INTDIR>
   )
+if(${ITK_VERSION_MAJOR} GREATER 3)
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${ITK_DIR}/${LIB_SUBDIR}/<CMAKE_CFG_INTDIR>
+    )
+else()
+  list(APPEND SLICER_LIBRARY_PATHS_BUILD
+    ${ITK_DIR}/bin/<CMAKE_CFG_INTDIR>
+    )
+endif()
 
 if(Slicer_BUILD_CLI_SUPPORT)
   list(APPEND SLICER_LIBRARY_PATHS_BUILD
