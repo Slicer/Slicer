@@ -905,7 +905,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
 
         if (lineDisplayNode)
           {
-          if (lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn)
+          if ((lineDisplayNode->GetSliceProjection() & lineDisplayNode->ProjectionOn) &&
+              lineDisplayNode->GetVisibility())
             {
             double overLineWidth = lineDisplayNode->GetOverLineThickness();
             double underLineWidth = lineDisplayNode->GetUnderLineThickness();
@@ -1109,7 +1110,8 @@ void vtkMRMLAnnotationDisplayableManager::OnMRMLSliceNodeModifiedEvent(vtkMRMLSl
         vtkMRMLAnnotationPointDisplayNode* pointDisplayNode =
           vtkMRMLAnnotationPointDisplayNode::SafeDownCast(fiducialNode->GetAnnotationPointDisplayNode());
 
-        if (pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn)
+        if ((pointDisplayNode->GetSliceProjection() & pointDisplayNode->ProjectionOn) &&
+            pointDisplayNode->GetVisibility())
           {
           double glyphScale = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphScale()*2;
           int glyphType = fiducialNode->GetAnnotationPointDisplayNode()->GetGlyphType();
