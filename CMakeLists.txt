@@ -998,6 +998,12 @@ set(Slicer_DIR "${Slicer_BINARY_DIR}/Extensions")
 configure_file(
   ${Slicer_SOURCE_DIR}/CMake/SlicerConfig.cmake.in
   ${Slicer_DIR}/SlicerConfig.cmake @ONLY)
+
+message(STATUS "--------------------------------------------------")
+message(STATUS "Configuring remote modules")
+message(STATUS "--------------------------------------------------")
+add_subdirectory(Modules/Remote)
+
 # List of extension source directories can be passed at configuration time
 # using the following syntax:
 #  cmake -DSlicer_EXTENSION_SOURCE_DIRS:STRING=/path/to/ExtensionA;/path/to/ExtensionB /path/to/source/Slicer

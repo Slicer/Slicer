@@ -36,10 +36,4 @@ foreach(module ${modules})
   endif()
 endforeach()
 
-if(Slicer_BUILD_MultiVolumeImporter)
-  # NOTE: MultiVolumeImporter source code is checkout using "External_MultiVolumeImporter.cmake".
-  add_subdirectory(
-    ${MultiVolumeImporter_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/MultiVolumeImporter
-    )
-endif()
+# External modules have been moved to Modules/Remote/CMakeLists.txt
