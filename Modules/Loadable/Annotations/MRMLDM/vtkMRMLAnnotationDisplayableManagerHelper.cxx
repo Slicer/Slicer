@@ -395,6 +395,38 @@ void vtkMRMLAnnotationDisplayableManagerHelper::RemoveWidgetAndNode(
     this->WidgetIntersections.erase(node);
   }
 
+  WidgetOverLineProjectionsIt widgetOverLineProjectionIterator = this->WidgetOverLineProjections.find(node);
+  if (widgetOverLineProjectionIterator != this->WidgetOverLineProjections.end()) {
+
+  if (this->WidgetOverLineProjections[node])
+    {
+    this->WidgetOverLineProjections[node]->Off();
+    this->WidgetOverLineProjections[node]->Delete();
+    }
+  this->WidgetOverLineProjections.erase(node);
+  }
+
+  WidgetUnderLineProjectionsIt widgetUnderLineProjectionIterator = this->WidgetUnderLineProjections.find(node);
+  if (widgetUnderLineProjectionIterator != this->WidgetUnderLineProjections.end()) {
+
+  if (this->WidgetUnderLineProjections[node])
+    {
+    this->WidgetUnderLineProjections[node]->Off();
+    this->WidgetUnderLineProjections[node]->Delete();
+    }
+  this->WidgetUnderLineProjections.erase(node);
+  }
+
+  WidgetPointProjectionsIt widgetPointProjectionIterator = this->WidgetPointProjections.find(node);
+  if (widgetPointProjectionIterator != this->WidgetPointProjections.end()) {
+
+  if (this->WidgetPointProjections[node])
+    {
+    this->WidgetPointProjections[node]->Off();
+    this->WidgetPointProjections[node]->Delete();
+    }
+  this->WidgetPointProjections.erase(node);
+  }
 
   vtkMRMLAnnotationDisplayableManagerHelper::AnnotationNodeListIt nodeIterator = std::find(
       this->AnnotationNodeList.begin(),
