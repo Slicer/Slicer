@@ -29,7 +29,7 @@
 #include <vtkNew.h>
 
 //-----------------------------------------------------------------------------
-int vtkSlicerUnitsLogicTest1( int argc, char * argv[] )
+int vtkSlicerUnitsLogicTest1( int, char *[] )
 {
   vtkNew<vtkMRMLScene> scene;
   vtkNew<vtkSlicerUnitsLogic> logic;

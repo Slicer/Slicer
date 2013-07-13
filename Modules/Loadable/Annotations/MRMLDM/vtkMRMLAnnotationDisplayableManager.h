@@ -160,7 +160,7 @@ protected:
   virtual void OnMRMLAnnotationNodeLockModifiedEvent(vtkMRMLNode* node);
   virtual void OnMRMLAnnotationDisplayNodeModifiedEvent(vtkMRMLNode *node);
   virtual void OnMRMLAnnotationControlPointModifiedEvent(vtkMRMLNode *node);
-  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* node) {};
+  virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode*) {};
 
   //
   // Handling of interaction within the RenderWindow

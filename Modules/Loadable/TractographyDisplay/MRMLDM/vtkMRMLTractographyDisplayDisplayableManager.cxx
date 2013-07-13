@@ -418,7 +418,7 @@ void vtkMRMLTractographyDisplayDisplayableManager::SetMRMLSceneInternal(vtkMRMLS
 
 //---------------------------------------------------------------------------
 void vtkMRMLTractographyDisplayDisplayableManager
-::ProcessMRMLNodesEvents(vtkObject *caller,unsigned long event,void *callData)
+::ProcessMRMLNodesEvents(vtkObject *caller, unsigned long event, void * vtkNotUsed(callData))
 {
 
   vtkMRMLInteractionNode * interactionNode = vtkMRMLInteractionNode::SafeDownCast(caller);
