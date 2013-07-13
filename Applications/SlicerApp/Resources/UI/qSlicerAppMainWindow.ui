@@ -304,6 +304,22 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <widget class="QToolBar" name="DialogToolBar">
+   <property name="windowTitle">
+    <string>Extensions</string>
+   </property>
+   <property name="accessibleName">
+    <string>Extension</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionViewExtensionsManager"/>
+   <addaction name="actionWindowErrorLog"/>
+  </widget>
   <action name="actionFileLoadScene">
    <property name="icon">
     <iconset resource="../../../../Base/QTGUI/Resources/qSlicerBaseQTGUI.qrc">
@@ -535,7 +551,7 @@
     <string>Extension Manager</string>
    </property>
    <property name="toolTip">
-    <string>Raise the &quot;Extension Manager&quot; wizard that provides status and information about available extensions</string>
+    <string>Raise the &quot;Extensions Manager&quot; wizard that provides status and information about available extensions</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+4</string>

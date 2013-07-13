@@ -226,6 +226,10 @@ void qSlicerAppMainWindowPrivate::setupUi(QMainWindow * mainWindow)
   toolBarActions << this->MouseModeToolBar->toggleViewAction();
   toolBarActions << this->CaptureToolBar->toggleViewAction();
   toolBarActions << this->ViewersToolBar->toggleViewAction();
+#ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
+  toolBarActions << this->DialogToolBar->toggleViewAction();
+#endif
+  toolBarActions << this->DialogToolBar->toggleViewAction();
 
   this->menuWindowToolBars->insertActions(
     this->actionWindowToolbarsResetToDefault, toolBarActions);
@@ -791,6 +795,9 @@ void qSlicerAppMainWindow::setupMenuActions()
   d->actionViewLayoutCompareGrid_2x2_viewers->setData(2);
   d->actionViewLayoutCompareGrid_3x3_viewers->setData(3);
   d->actionViewLayoutCompareGrid_4x4_viewers->setData(4);
+
+  d->actionWindowErrorLog->setIcon(
+        this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
 
   connect(d->actionWindowErrorLog, SIGNAL(triggered(bool)),
           d->Core, SLOT(onWindowErrorLogActionTriggered(bool)));
