@@ -50,12 +50,22 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
 
   if(SLICER_TEST_DRIVER_SOURCES)
 
-    set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "")
-    set(EXTRA_INCLUDE "")
+    set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN
+"// Direct VTK messages on standard output
+#ifdef WIN32
+  vtkWin32OutputWindow* outputWindow =
+    vtkWin32OutputWindow::SafeDownCast(vtkOutputWindow::GetInstance());
+  if (outputWindow)
+    {
+    outputWindow->SendToStdErrOn();
+    }
+#endif")
+    set(EXTRA_INCLUDE "vtkWin32OutputWindow.h")
 
     if(SLICER_TEST_DRIVER_WITH_VTK_DEBUG_LEAKS_CHECK)
-      set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();")
-      set(EXTRA_INCLUDE EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h)
+      set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN
+        "${CMAKE_TESTDRIVER_BEFORE_TESTMAIN}\nDEBUG_LEAKS_ENABLE_EXIT_ERROR();")
+      set(EXTRA_INCLUDE "${EXTRA_INCLUDE}\"\n\#include \"vtkMRMLDebugLeaksMacro.h")
     endif()
 
     if(SLICER_TEST_DRIVER_INCLUDE_DIRECTORIES)
@@ -64,7 +74,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
 
     create_test_sourcelist(Tests ${SLICER_TEST_DRIVER_NAME}CxxTests.cxx
       ${SLICER_TEST_DRIVER_SOURCES}
-      ${EXTRA_INCLUDE}
+      EXTRA_INCLUDE ${EXTRA_INCLUDE}
       )
 
     set(TestsToRun ${Tests})
