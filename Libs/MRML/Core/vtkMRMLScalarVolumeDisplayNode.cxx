@@ -397,10 +397,11 @@ void vtkMRMLScalarVolumeDisplayNode::ProcessMRMLEvents ( vtkObject *caller,
   if (caller == this && event == vtkCommand::ModifiedEvent &&
       !this->IsInCalculateAutoLevels)
     {
+    int wasModifying = this->GetDisableModifiedEvent();
     this->SetDisableModifiedEvent(1);
     this->CalculateAutoLevels();
     // TODO: Reset the pending event counter.
-    this->SetDisableModifiedEvent(0);
+    this->SetDisableModifiedEvent(wasModifying);
     }
   Superclass::ProcessMRMLEvents(caller, event, callData);
 }
