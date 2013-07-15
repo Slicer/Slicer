@@ -22,21 +22,17 @@ Version:   $Revision: 1.14 $
 #include <vtkMatrixToLinearTransform.h>
 #include <vtkMatrix4x4.h>
 
+char vtkMRMLTransformableNode::TransformNodeReferenceRole[] = "transform";
+char vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName[] = "transformNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 {
   this->TransformNodeIDInternal = 0;
-  this->TransformNodeReferenceRole = 0;
-  this->TransformNodeReferenceRererenceMRMLAttributeName = 0;
-
-  this->SetTransformNodeReferenceRole("transform");
-  this->SetTransformNodeReferenceRererenceMRMLAttributeName("transformNodeRef");
-
 
   this->HideFromEditors = 0;
   this->AddNodeReferenceRole(this->GetTransformNodeReferenceRole(),
-                             this->GetTransformNodeReferenceRererenceMRMLAttributeName());
+                             this->GetTransformNodeReferenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------

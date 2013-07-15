@@ -29,18 +29,14 @@ Version:   $Revision: 1.3 $
 #include <cassert>
 #include <sstream>
 
+char vtkMRMLDisplayableNode::DisplayNodeReferenceRole[] = "display";
+char vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName[] = "displayNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 {
-  this->DisplayNodeReferenceRole = 0;
-  this->DisplayNodeReferenceRererenceMRMLAttributeName = 0;
-
-  this->SetDisplayNodeReferenceRole("display");
-  this->SetDisplayNodeReferenceRererenceMRMLAttributeName("displayNodeRef");
-
   this->AddNodeReferenceRole(this->GetDisplayNodeReferenceRole(),
-                             this->GetDisplayNodeReferenceRererenceMRMLAttributeName() );
+                             this->GetDisplayNodeReferenceMRMLAttributeName() );
 }
 
 //----------------------------------------------------------------------------
@@ -66,7 +62,6 @@ void vtkMRMLDisplayableNode::ReadXMLAttributes(const char** atts)
   this->EndModify(disabledModify);
 }
 
-
 //----------------------------------------------------------------------------
 // Copy the node's attributes to this object.
 // Does NOT copy: ID, FilePrefix, Name, ID
@@ -82,20 +77,18 @@ void vtkMRMLDisplayableNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLDisplayableNode::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os,indent);
 
-  Superclass::PrintSelf(os,indent);
-  
-  int numDisplayNodes = this->GetNumberOfNodeReferences(this->GetDisplayNodeReferenceRole());
+  int numDisplayNodes = this->GetNumberOfNodeReferences(
+    this->GetDisplayNodeReferenceRole());
 
-  for (unsigned int i=0; i<numDisplayNodes; i++)
+  for (int i=0; i<numDisplayNodes; i++)
     {
-    const char * id = this->GetNthNodeReferenceID(this->GetDisplayNodeReferenceRole(), i);
-
-    os << indent << "DisplayNodeIDs[" << i << "]: " <<
-     id << "\n";
+    const char * id = this->GetNthNodeReferenceID(
+      this->GetDisplayNodeReferenceRole(), i);
+    os << indent << "DisplayNodeIDs[" << i << "]: " << id << "\n";
     }
 }
-
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayNode* vtkMRMLDisplayableNode::GetNthDisplayNode(int n)

@@ -221,14 +221,11 @@ public:
   vtkMRMLDisplayableNode(const vtkMRMLDisplayableNode&);
   void operator=(const vtkMRMLDisplayableNode&);
 
-  char *DisplayNodeReferenceRole;
-  char *DisplayNodeReferenceRererenceMRMLAttributeName;
+  static char DisplayNodeReferenceRole[];
+  static char DisplayNodeReferenceMRMLAttributeName[];
 
-  vtkSetStringMacro(DisplayNodeReferenceRole);
   vtkGetStringMacro(DisplayNodeReferenceRole);
- 
-  vtkSetStringMacro(DisplayNodeReferenceRererenceMRMLAttributeName);
-  vtkGetStringMacro(DisplayNodeReferenceRererenceMRMLAttributeName);
+  vtkGetStringMacro(DisplayNodeReferenceMRMLAttributeName);
 
   ///
   /// Called when a node reference ID is added (list size increased). 

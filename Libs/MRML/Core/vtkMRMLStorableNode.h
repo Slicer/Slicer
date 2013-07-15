@@ -148,15 +148,11 @@ public:
   vtkMRMLStorableNode(const vtkMRMLStorableNode&);
   void operator=(const vtkMRMLStorableNode&);
 
-  char* StorageNodeReferenceRole;
-  char* StorageNodeReferenceRererenceMRMLAttributeName;
+  static char StorageNodeReferenceRole[];
+  static char StorageNodeReferenceMRMLAttributeName[];
 
-  vtkSetStringMacro(StorageNodeReferenceRole);
   vtkGetStringMacro(StorageNodeReferenceRole);
- 
-  vtkSetStringMacro(StorageNodeReferenceRererenceMRMLAttributeName);
-  vtkGetStringMacro(StorageNodeReferenceRererenceMRMLAttributeName);
-
+  vtkGetStringMacro(StorageNodeReferenceMRMLAttributeName);
 
   vtkTagTable *UserTagTable;
 
