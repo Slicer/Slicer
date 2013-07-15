@@ -24,6 +24,7 @@
 // Qt includes
 #include <QApplication>
 #include <QMetaType>
+#include <QVariant>
 
 // CTK includes
 #include <ctkVTKObject.h>
@@ -317,13 +318,16 @@ protected slots:
 
   /// Called when the application logic requests a delayed event invokation.
   /// When the singleton application logic fires the RequestInvokeEvent,
-  /// a timer is created, and on timeout, \a invokeEvent() is called to
-  /// propagate the requested event invocation.
   /// \sa invokeEvent(), vtkMRMLApplicationLogic::InvokeRequest
   /// \sa onSlicerApplicationLogicRequest(), processAppLogicModified()
   void requestInvokeEvent(vtkObject* caller, void* callData);
 
-  /// Called only when a special QTimer times out.
+  /// a timer is created, and on timeout, \a invokeEvent() is called to
+  /// propagate the requested event invocation.
+  /// \sa invokeEventRequested(), requestInvokeEvent(), invokeEvent()
+  void scheduleInvokeEvent(unsigned int delay, void* caller, unsigned long event, void* callData);
+
+  /// Internal method called only when a special QTimer times out.
   /// The timer contains dynamic properties describing an event to invoke on
   /// a specific object.
   /// \sa requestInvokeEvent
@@ -331,6 +335,11 @@ protected slots:
 
 signals:
   void mrmlSceneChanged(vtkMRMLScene* mrmlScene);
+
+  /// Internal method used to move an invocation from a thread to the main thread.
+  /// \sa requestInvokeEvent(), scheduleInvokeEvent()
+  void invokeEventRequested(unsigned int delay, void* caller,
+                            unsigned long event, void* callData);
 
 protected:
   qSlicerCoreApplication(qSlicerCoreApplicationPrivate* pimpl, int &argc, char **argv);

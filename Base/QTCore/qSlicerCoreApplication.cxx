@@ -218,7 +218,9 @@ void qSlicerCoreApplicationPrivate::init()
   q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
               q, SLOT(onSlicerApplicationLogicModified()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent,
-                 q, SLOT(requestInvokeEvent(vtkObject*,void*)));
+                 q, SLOT(requestInvokeEvent(vtkObject*,void*)), 0.0, Qt::DirectConnection);
+  q->connect(q, SIGNAL(invokeEventRequested(unsigned int,void*,unsigned long,void*)),
+             q, SLOT(scheduleInvokeEvent(unsigned int,void*,unsigned long,void*)), Qt::AutoConnection);
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestModifiedEvent,
               q, SLOT(onSlicerApplicationLogicRequest(vtkObject*,void*,ulong)));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestReadDataEvent,
@@ -1382,27 +1384,29 @@ void qSlicerCoreApplication::onSlicerApplicationLogicModified()
 void qSlicerCoreApplication
 ::requestInvokeEvent(vtkObject* caller, void* callData)
 {
+  // This method can be called by any thread.
   Q_UNUSED(caller);
   vtkMRMLApplicationLogic::InvokeRequest* request =
     reinterpret_cast<vtkMRMLApplicationLogic::InvokeRequest *>(callData);
-  QTimer* timer = new QTimer(this);
-  timer->setSingleShot(true);
-  QVariant invokeCaller =
-    qVariantFromValue(reinterpret_cast<void*>(request->Caller));
-  timer->setProperty("caller", invokeCaller);
-
-  QVariant invokeEventID =
-    qVariantFromValue(request->EventID);
-  timer->setProperty("eventID", invokeEventID);
-
-  QVariant invokeCallData =
-    qVariantFromValue(reinterpret_cast<void*>(request->CallData));
-  timer->setProperty("callData", invokeCallData);
-
-  timer->connect(timer, SIGNAL(timeout()),this, SLOT(invokeEvent()));
-  timer->start(request->Delay);
+  // If the thread is the same as the main thread then it is executed directly,
+  // otherwise it is queued to be executed by the main thread.
+  emit invokeEventRequested(request->Delay, request->Caller,
+                            request->EventID, request->CallData);
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerCoreApplication
+::scheduleInvokeEvent(unsigned int delay, void* caller,
+                      unsigned long eventID, void* callData)
+{
+  QTimer* timer = new QTimer(this);
+  timer->setSingleShot(true);
+  timer->setProperty("caller", qVariantFromValue(caller));
+  timer->setProperty("eventID", qVariantFromValue(eventID));
+  timer->setProperty("callData", qVariantFromValue(callData));
+  timer->connect(timer, SIGNAL(timeout()),this, SLOT(invokeEvent()));
+  timer->start(delay);
+}
 
 //-----------------------------------------------------------------------------
 void qSlicerCoreApplication
