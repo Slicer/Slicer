@@ -189,6 +189,8 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
   // copy references
   this->DeleteAllReferences();
 
+  this->NodeReferenceMRMLAttributeNames = node->NodeReferenceMRMLAttributeNames;
+
   NodeReferencesType::iterator it;
   for (it = node->NodeReferences.begin(); it != node->NodeReferences.end(); it++)
     {
