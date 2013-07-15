@@ -4,9 +4,9 @@ include(${Slicer_CMAKE_DIR}/SlicerMacroBuildQtModule.cmake)
 set(qtmodules
   AtlasCreator
   Cameras
+  Units
   Colors
   Transforms
-  Units
   Annotations
   Data
   DoubleArrays

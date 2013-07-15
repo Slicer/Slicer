@@ -68,6 +68,14 @@ QStringList qSlicerTransformsModule::categories() const
 }
 
 //-----------------------------------------------------------------------------
+QStringList qSlicerTransformsModule::dependencies() const
+{
+  QStringList moduleDependencies;
+  moduleDependencies << "Units";
+  return moduleDependencies;
+}
+
+//-----------------------------------------------------------------------------
 qSlicerAbstractModuleRepresentation* qSlicerTransformsModule::createWidgetRepresentation()
 {
   return new qSlicerTransformsModuleWidget;

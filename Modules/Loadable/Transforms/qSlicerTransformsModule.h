@@ -47,6 +47,9 @@ public:
 
   virtual QStringList categories()const;
 
+  /// Dependencies of the module
+  virtual QStringList dependencies()const;
+
   /// Display name for the module
   qSlicerGetTitleMacro("Transforms");
 

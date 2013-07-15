@@ -122,12 +122,11 @@ QStringList qSlicerVolumesModule::categories() const
   return QStringList() << "";
 }
 
-
 //-----------------------------------------------------------------------------
 QStringList qSlicerVolumesModule::dependencies() const
 {
   QStringList moduleDependencies;
-  moduleDependencies << "Colors";
+  moduleDependencies << "Colors" << "Units";
   return moduleDependencies;
 }
 
