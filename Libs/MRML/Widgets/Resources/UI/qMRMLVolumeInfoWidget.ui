@@ -32,20 +32,17 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="decimals" stdset="0">
+     <property name="decimals">
       <number>0</number>
      </property>
-     <property name="minimum" stdset="0">
+     <property name="minimum">
       <double>0.000000000000000</double>
      </property>
-     <property name="maximum" stdset="0">
+     <property name="maximum">
       <double>100000.000000000000000</double>
      </property>
      <property name="coordinates" stdset="0">
       <string>1,1,1</string>
-     </property>
-     <property name="quantity">
-      <string>length</string>
      </property>
     </widget>
    </item>
@@ -62,7 +59,7 @@
       <number>4</number>
      </property>
      <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsAsMin|ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
      </property>
      <property name="minimum" stdset="0">
       <double>0.00010000000000000</double>
@@ -72,9 +69,6 @@
      </property>
      <property name="quantity">
       <string>length</string>
-     </property>
-     <property name="unitAwareProperties">
-      <set>qMRMLCoordinatesWidget::Prefix|qMRMLCoordinatesWidget::Suffix</set>
      </property>
     </widget>
    </item>
@@ -91,7 +85,7 @@
       <number>4</number>
      </property>
      <property name="decimalsOption">
-      <set>ctkDoubleSpinBox::DecimalsAsMin|ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
+      <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
      </property>
      <property name="minimum" stdset="0">
       <double>-1000000.000000000000000</double>

@@ -136,6 +136,22 @@
   <connection>
    <sender>qSlicerVolumesModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>MRMLVolumeInfoWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>118</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVolumesModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
    <receiver>ActiveVolumeNodeSelector</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
@@ -178,22 +194,6 @@
     <hint type="destinationlabel">
      <x>155</x>
      <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>qSlicerVolumesModuleWidget</sender>
-   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>MRMLVolumeInfoWidget</receiver>
-   <slot>setMRMLScene(vtkMRMLScene*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>118</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>118</x>
-     <y>76</y>
     </hint>
    </hints>
   </connection>
