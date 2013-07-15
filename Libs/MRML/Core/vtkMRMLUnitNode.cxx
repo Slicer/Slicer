@@ -215,6 +215,16 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
 }
 
 //----------------------------------------------------------------------------
+void vtkMRMLUnitNode::Reset()
+{
+  if (this->GetSingletonTag() != 0)
+    {
+    return;
+    }
+  this->Superclass::Reset();
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLUnitNode::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);

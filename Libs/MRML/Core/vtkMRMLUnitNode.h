@@ -58,6 +58,9 @@ public:
   /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "Unit";};
 
+  /// Reimplemented to prevent reset if unit node is a singleton.
+  virtual void Reset();
+
   ///
   /// Set/Get the quantity the unit belongs to. A unit can only
   /// have one quantity. Default is "".

@@ -126,7 +126,6 @@ void qSlicerApplicationHelper::setupModuleFactoryManager(qSlicerModuleFactoryMan
     app->revisionUserSettings()->value("Modules/AdditionalPaths").toStringList());
   QStringList ignoreModules =
     app->revisionUserSettings()->value("Modules/IgnoreModules").toStringList();
-  ignoreModules << "Units"; // See http://www.na-mic.org/Bug/view.php?id=3152
   moduleFactoryManager->setModulesToIgnore(ignoreModules);
   moduleFactoryManager->setVerboseModuleDiscovery(app->commandOptions()->verboseModuleDiscovery());
 }

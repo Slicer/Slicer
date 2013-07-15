@@ -36,6 +36,9 @@ class vtkMRMLUnitNode;
 
 #include "vtkSlicerUnitsModuleLogicExport.h"
 
+// STD includes
+#include <map>
+
 class VTK_SLICER_UNITS_MODULE_LOGIC_EXPORT vtkSlicerUnitsLogic
   : public vtkMRMLAbstractLogic
 {
@@ -67,6 +70,11 @@ protected:
   vtkSlicerUnitsLogic();
   virtual ~vtkSlicerUnitsLogic();
 
+  /// Reimplemented to save the selection node unit nodes.
+  virtual void OnMRMLSceneStartClose();
+  /// Reimplemented to restore the selection node unit nodes.
+  virtual void OnMRMLSceneEndClose();
+
   // Add the built in units in the units logic scene.
   virtual void AddDefaultsUnits();
 
@@ -97,6 +105,8 @@ protected:
 private:
   vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&); // Not implemented
   void operator=(const vtkSlicerUnitsLogic&); // Not implemented
+
+  std::map<std::string, std::string> CachedDefaultUnits;
 };
 
 #endif
