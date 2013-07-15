@@ -190,6 +190,12 @@ protected:
   vtkMRMLSelectionNode(const vtkMRMLSelectionNode&);
   void operator=(const vtkMRMLSelectionNode&);
 
+  static char UnitNodeReferenceRole[];
+  static char UnitNodeReferenceMRMLAttributeName[];
+
+  vtkGetStringMacro(UnitNodeReferenceRole);
+  vtkGetStringMacro(UnitNodeReferenceMRMLAttributeName);
+
   char *ActiveVolumeID;
   char *SecondaryVolumeID;
   char *ActiveLabelVolumeID;

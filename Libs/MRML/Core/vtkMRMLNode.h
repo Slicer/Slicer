@@ -447,9 +447,14 @@ public:
   ///
   /// the referenceRole can be any unique string, for example "display", "transform" etc.
   /// Optionally a MRML attribute name for storing the reference in the mrml scene file can be specified.
-  /// For exmaple "displayNodeRef". If ommited the MRML attribute name will be the same as the role.
+  /// For example "displayNodeRef". If ommitted the MRML attribute name will be the same as the role.
+  /// If referenceRole ends with '/', it is considered as a "template" reference role
+  /// that can be used to generate attribute names dynamically by concatenation:
+  /// If referenceRole is "unit/" and mrmlAttributeName is "UnitRef", then the generated
+  /// MRML attribute names for a node reference role of "unit/length" will be "lengthUnitRef".
   /// Use this method to add new reference types to a node.
   /// This method is typically called in the contructors of each subclass.
+  /// \sa GetReferenceNodeFromMRMLAttributeName()
   void AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName=0);
   
   ///
@@ -657,6 +662,24 @@ protected:
   vtkSetStringMacro( TempURLString );
   vtkGetStringMacro( TempURLString );
 
+  /// Return the reference role (if found) associated with the attribute
+  /// name found in a MRML scene file. Return 0 otherwise.
+  /// Note that AddNodeReference() must be called prior.
+  /// \sa GetMRMLAttributeNameFromReferenceRole(), AddNodeReference(),
+  /// ReadXMLAttributes(), WriteXML()
+  virtual const char* GetReferenceRoleFromMRMLAttributeName(const char* attName);
+
+  /// Return the mrml attribute name (if found) associated with a reference
+  /// role. Return 0 otherwise.
+  /// Note that AddNodeReference() must be called prior.
+  /// \sa GetReferenceRoleFromMRMLAttributeName(), AddNodeReference(),
+  /// ReadXMLAttributes(), WriteXML()
+  virtual const char* GetMRMLAttributeNameFromReferenceRole(const char* refRole);
+
+  /// Return true if the reference role is generic (ends with '/') or false
+  /// otherwise.
+  /// \sa AddNodeReference()
+  virtual bool IsReferenceRoleGeneric(const char* refRole);
 
   ///
   /// Call UpdateNthNodeReference(referenceRole, i) on all nodes.

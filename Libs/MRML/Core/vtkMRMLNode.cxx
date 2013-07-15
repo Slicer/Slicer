@@ -274,8 +274,9 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   std::map< std::string, std::string>::iterator itName;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
-    std::string referenceRole = it->first;
-    std::string referenceMRMLAttributeName = NodeReferenceMRMLAttributeNames[referenceRole];
+    const std::string& referenceRole = it->first;
+    const std::string referenceMRMLAttributeName =
+      this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
 
     std::stringstream ss;
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
@@ -292,7 +293,8 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
       }
     if (numReferencedNodes > 0)
       {
-      os << indent << " " << referenceMRMLAttributeName << "=\"" << ss.str().c_str() << "\"";
+      os << indent << referenceMRMLAttributeName << "=\""
+         << ss.str().c_str() << "\"" << "\n";
       }
     }
 
@@ -310,27 +312,6 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
     attName = *(atts++);
     attValue = *(atts++);
 
-    // read node refereences
-    std::map< std::string, std::string>::iterator it;
-    for (it = this->NodeReferenceMRMLAttributeNames.begin(); it != this->NodeReferenceMRMLAttributeNames.end(); it++)
-      {
-      std::string referenceRole = it->first;
-      std::string referenceMRMLAttributeName = it->second;
-
-      if (!strcmp(attName, referenceMRMLAttributeName.c_str() ) )
-        {
-        std::stringstream ss(attValue);
-        while (!ss.eof())
-          {
-          std::string id;
-          ss >> id;
-          if (!id.empty())
-            {
-            this->AddNodeReferenceID(referenceRole.c_str(), id.c_str());
-            }
-          }
-        }
-      }
     if (!strcmp(attName, "id")) 
       {
       this->SetID(attValue);
@@ -388,6 +369,20 @@ void vtkMRMLNode::ReadXMLAttributes(const char** atts)
          this->SetAttribute(name.c_str(), value.c_str());
          }
        }
+     else if ( const char* referenceRole =
+                 this->GetReferenceRoleFromMRMLAttributeName(attName) )
+       {
+       std::stringstream ss(attValue);
+       while (!ss.eof())
+        {
+        std::string id;
+        ss >> id;
+        if (!id.empty())
+          {
+          this->AddNodeReferenceID(referenceRole, id.c_str());
+          }
+        }
+       }
     }
   this->EndModify(disabledModify);
 
@@ -436,8 +431,9 @@ void vtkMRMLNode::WriteXML(ostream& of, int nIndent)
   std::map< std::string, std::string>::iterator itName;
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
-    std::string referenceRole = it->first;
-    std::string referenceMRMLAttributeName = NodeReferenceMRMLAttributeNames[referenceRole];
+    const std::string& referenceRole = it->first;
+    const std::string referenceMRMLAttributeName =
+      this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
 
     std::stringstream ss;
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
@@ -512,14 +508,105 @@ void vtkMRMLNode::SetScene(vtkMRMLScene* scene)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLNode::AddNodeReferenceRole(const char *referenceRole, const char *mrmlAttributeName)
+void vtkMRMLNode::AddNodeReferenceRole(const char *refRole, const char *mrmlAttributeName)
 {
-  if (referenceRole)
+  if (!refRole)
     {
-    this->NodeReferences[std::string(referenceRole)] = std::vector< vtkMRMLNodeReference *>();
-    this->NodeReferenceMRMLAttributeNames[std::string(referenceRole)] = mrmlAttributeName ? 
-      std::string(mrmlAttributeName) : std::string(referenceRole);
+    return;
     }
+  const std::string referenceRole(refRole);
+  this->NodeReferenceMRMLAttributeNames[referenceRole] =
+    mrmlAttributeName ? std::string(mrmlAttributeName) : referenceRole;
+  if (!this->IsReferenceRoleGeneric(refRole))
+    {
+    this->NodeReferences[referenceRole] = std::vector< vtkMRMLNodeReference *>();
+    }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLNode::GetReferenceRoleFromMRMLAttributeName(const char* attName)
+{
+  if (attName == 0)
+    {
+    return 0;
+    }
+  std::string attributeName(attName);
+  // Search if the attribute name has been registered using AddNodeReferenceRole.
+  std::map< std::string, std::string>::iterator it;
+  for (it = this->NodeReferenceMRMLAttributeNames.begin();
+       it != this->NodeReferenceMRMLAttributeNames.end();
+       ++it)
+    {
+    const std::string& nodeReferenceRole = it->first;
+    const std::string& nodeMRMLAttributeName = it->second;
+    if (nodeMRMLAttributeName == attributeName)
+      {
+      return nodeReferenceRole.c_str();
+      }
+    else if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&
+             attributeName.compare(
+              attributeName.length() - nodeMRMLAttributeName.length(),
+              nodeMRMLAttributeName.length(), nodeMRMLAttributeName) == 0)
+      {
+      // if attName = "lengthUnitRef" and  [refRole,attName] = ["unit/","UnitRef"]
+      // then return "unit/length"
+      static std::string referenceRole;
+      referenceRole = nodeReferenceRole;
+      referenceRole += attributeName.substr(0, attributeName.length() -
+                                               nodeMRMLAttributeName.length());
+      return referenceRole.c_str();
+      }
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLNode
+::GetMRMLAttributeNameFromReferenceRole(const char* refRole)
+{
+  if (refRole == 0)
+    {
+    return 0;
+    }
+  std::string referenceRole(refRole);
+  // Try first to see if the reference role is registered as is.
+  std::map< std::string, std::string>::const_iterator it =
+    this->NodeReferenceMRMLAttributeNames.find(referenceRole);
+  if (it != this->NodeReferenceMRMLAttributeNames.end())
+    {
+    return it->second.c_str();
+    }
+  // Otherwise, it might be a generic reference role.
+  for (it = this->NodeReferenceMRMLAttributeNames.begin();
+       it != this->NodeReferenceMRMLAttributeNames.end();
+       ++it)
+    {
+    const std::string& nodeReferenceRole = it->first;
+    const std::string& nodeMRMLAttributeName = it->second;
+    if (this->IsReferenceRoleGeneric(nodeReferenceRole.c_str()) &&
+        referenceRole.compare(0, nodeReferenceRole.length(),
+                              nodeReferenceRole) == 0)
+      {
+      // if refRole = "unit/length" and  [refRole,attName] = ["unit/","UnitRef"]
+      // then return "lengthUnitRef"
+      static std::string mrmlAttributeName;
+      mrmlAttributeName = referenceRole.substr(nodeReferenceRole.length());
+      mrmlAttributeName += nodeMRMLAttributeName;
+      return mrmlAttributeName.c_str();
+      }
+    }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLNode::IsReferenceRoleGeneric(const char* refRole)
+{
+  if (refRole == 0)
+    {
+    return false;
+    }
+  std::string nodeReferenceRole(refRole);
+  return nodeReferenceRole.at(nodeReferenceRole.length()-1) == '/';
 }
 
 //----------------------------------------------------------------------------

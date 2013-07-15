@@ -34,6 +34,9 @@ vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveViewID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLayoutID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveVolumeID);
 
+char vtkMRMLSelectionNode::UnitNodeReferenceRole[] = "unit/";
+char vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName[] = "UnitNodeRef";
+
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
 
@@ -51,6 +54,9 @@ vtkMRMLSelectionNode::vtkMRMLSelectionNode()
   this->ActiveCameraID = NULL;
   this->ActiveViewID = NULL;
   this->ActiveLayoutID = NULL;
+
+  this->AddNodeReferenceRole(this->GetUnitNodeReferenceRole(),
+                             this->GetUnitNodeReferenceMRMLAttributeName());
 }
 
 //----------------------------------------------------------------------------
@@ -216,7 +222,7 @@ void vtkMRMLSelectionNode::ReadXMLAttributes(const char** atts)
 {
   int disabledModify = this->StartModify();
 
-  Superclass::ReadXMLAttributes(atts);
+  this->Superclass::ReadXMLAttributes(atts);
 
   const char* attName;
   const char* attValue;
@@ -288,18 +294,6 @@ void vtkMRMLSelectionNode::Copy(vtkMRMLNode *anode)
   this->SetActiveCameraID (node->GetActiveCameraID());
   this->SetActiveViewID (node->GetActiveViewID() );
   this->SetActiveLayoutID (node->GetActiveLayoutID() );
-
-  // See issue http://www.na-mic.org/Bug/view.php?id=3176
-  //std::vector<vtkMRMLUnitNode*> units;
-  //node->GetUnitNodes(units);
-  //for (std::vector<vtkMRMLUnitNode*>::iterator it = units.begin();
-  //  it != units.end(); ++it)
-  //  {
-  //  if (*it)
-  //    {
-  //    this->SetUnitNodeID((*it)->GetQuantity(), (*it)->GetID());
-  //    }
-  //  }
 
   this->EndModify(disabledModify);
 }
@@ -470,11 +464,12 @@ void vtkMRMLSelectionNode::SetReferenceActiveAnnotationID (const char *id)
 //----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
 {
-  std::string unit = "Unit/";
   for (NodeReferencesType::const_iterator it = this->NodeReferences.begin();
     it != this->NodeReferences.end(); ++it)
     {
-    if (it->first.compare(0, unit.size(), unit) == 0)
+    if (it->first.compare(0, strlen(this->GetUnitNodeReferenceRole()),
+                          this->GetUnitNodeReferenceRole()) == 0 &&
+        it->second.size() > 0)
       {
       // there is only one referenced node per reference role
       units.push_back(
@@ -486,8 +481,8 @@ void vtkMRMLSelectionNode::GetUnitNodes(std::vector<vtkMRMLUnitNode*>& units)
 //----------------------------------------------------------------------------
 const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 {
-  std::string referenceRole = "Unit/";
-  referenceRole += quantity ? quantity : "";
+  std::string safeQuantity = quantity ? quantity : "";
+  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
   return this->GetNodeReferenceID(referenceRole.c_str());
 }
 
@@ -495,26 +490,11 @@ const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 {
   std::string safeQuantity = quantity ? quantity : "";
-  std::string referenceRole = "Unit/" + safeQuantity;
+  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
 
   unsigned long mTime = this->GetMTime();
-  std::map<std::string, std::string>::iterator nodeReferenceIterator =
-    this->NodeReferenceMRMLAttributeNames.find(safeQuantity);
-  if (id &&
-    nodeReferenceIterator == this->NodeReferenceMRMLAttributeNames.end())
-    {
-    // Add Attribute
-    this->NodeReferenceMRMLAttributeNames[referenceRole] =
-      safeQuantity + "Unit";
-    }
-  else if (!id &&
-    nodeReferenceIterator != this->NodeReferenceMRMLAttributeNames.end())
-    {
-    // Remove attribute
-    this->NodeReferenceMRMLAttributeNames.erase(nodeReferenceIterator);
-    }
-
   this->SetAndObserveNodeReferenceID(referenceRole.c_str(), id);
+  // \todo a bit too much hackish...
   if (this->GetMTime() > mTime)
     {
     // Node changed, propaged unit modified event
