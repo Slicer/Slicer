@@ -584,9 +584,7 @@ MRMLIDImageIO
   node = this->FileNameToVolumeNodePtr( m_FileName.c_str() );
   if (node)
     {
-    // Don't send Modified events
-    //
-    node->DisableModifiedEventOn();
+    int wasModifying = node->StartModify();
     
     // Need to create a VTK ImageData to hang off the node if there is
     // not one already there
@@ -661,7 +659,7 @@ MRMLIDImageIO
 
     // Enable Modified events
     //
-    node->DisableModifiedEventOff();
+    node->EndModify(wasModifying);
     }
 }
 

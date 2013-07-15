@@ -29,7 +29,9 @@
 #include <vtkMRMLTransformNode.h>
 
 // VTK includes
+#include <vtkCallbackCommand.h>
 #include <vtkIntArray.h>
+#include <vtkMultiThreader.h>
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 
@@ -73,6 +75,77 @@ struct DigitsToCharacters
 
 typedef std::pair<vtkSlicerCLIModuleLogic *, vtkMRMLCommandLineModuleNode *> LogicNodePair;
 
+//---------------------------------------------------------------------------
+class vtkSlicerCLIRescheduleCallback : public vtkCallbackCommand
+{
+public:
+  static vtkSlicerCLIRescheduleCallback *New()
+  {
+    return new vtkSlicerCLIRescheduleCallback;
+  }
+  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData)
+  {
+    if (std::find(this->ThreadIDs.begin(), this->ThreadIDs.end(),
+                  vtkMultiThreader::GetCurrentThreadID()) != this->ThreadIDs.end())
+      {
+      if (this->CLIModuleLogic)
+        {
+        vtkSlicerApplicationLogic* appLogic =
+          this->CLIModuleLogic->GetApplicationLogic();
+        appLogic->InvokeEventWithDelay(this->Delay, caller, eid, callData);
+        }
+      this->SetAbortFlag(1);
+      }
+  }
+
+  void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
+  {
+    this->CLIModuleLogic = logic;
+  }
+  vtkSlicerCLIModuleLogic* GetCLIModuleLogic()
+  {
+    return this->CLIModuleLogic;
+  }
+
+  void SetDelay(int delay)
+  {
+    this->Delay = delay;
+  }
+  int GetDelay()
+  {
+    return this->Delay;
+  }
+
+  void RescheduleEventsFromThreadID(vtkMultiThreaderIDType id, bool reschedule)
+  {
+    if (id == 0)
+      {
+      return;
+      }
+    if (reschedule)
+      {
+      this->ThreadIDs.push_back(id);
+      }
+    else
+      {
+      std::remove(this->ThreadIDs.begin(), this->ThreadIDs.end(), id);
+      }
+  }
+protected:
+  vtkSlicerCLIRescheduleCallback()
+  {
+    this->CLIModuleLogic = 0;
+    this->Delay = 0;
+  }
+  ~vtkSlicerCLIRescheduleCallback()
+  {
+    this->SetCLIModuleLogic(0);
+  }
+
+  vtkSlicerCLIModuleLogic* CLIModuleLogic;
+  int Delay;
+  std::vector<vtkMultiThreaderIDType> ThreadIDs;
+};
 
 //----------------------------------------------------------------------------
 class vtkSlicerCLIModuleLogic::vtkInternal
@@ -131,6 +204,9 @@ public:
   /// List of read data/scene requests of the CLI nodes
   /// being executed with their.
   RequestType LastRequests;
+
+  vtkSmartPointer<vtkSlicerCLIRescheduleCallback> RescheduleCallback;
+
 };
 
 //----------------------------------------------------------------------------
@@ -143,6 +219,9 @@ vtkSlicerCLIModuleLogic::vtkSlicerCLIModuleLogic()
 
   this->Internal->DeleteTemporaryFiles = 1;
   this->Internal->RedirectModuleStreams = 1;
+  this->Internal->RescheduleCallback =
+    vtkSmartPointer<vtkSlicerCLIRescheduleCallback>::New();
+  this->Internal->RescheduleCallback->SetCLIModuleLogic(this);
 }
 
 //----------------------------------------------------------------------------
@@ -920,8 +999,22 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
           }
         }
       }
+    if (commandType == SharedObjectModule &&
+        sceneToMiniSceneMap.find(nd->GetID()) == sceneToMiniSceneMap.end())
+      {
+      // If the node is not in the mini-scene, then it means the filter will
+      // modify the node directly (via itkMRMLIDImageIO). We don't want any
+      // event to be fired from the thread, but from the main thread instead.
+      nd->AddObserver(vtkCommand::AnyEvent, this->Internal->RescheduleCallback,
+                      100000000.f);
+      }
     }
-  
+  // Start rescheduling the output nodes events.
+  if (commandType == SharedObjectModule)
+    {
+    this->Internal->RescheduleCallback->RescheduleEventsFromThreadID(
+      vtkMultiThreader::GetCurrentThreadID(), true);
+    }
   // write out the miniscene if needed
   if (miniscene->GetNumberOfNodes() > 0)
     {
@@ -1925,7 +2018,14 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
   node0->GetModuleDescription().GetProcessInformation()->Progress = 0;
   node0->GetModuleDescription().GetProcessInformation()->StageProgress = 0;
   this->GetApplicationLogic()->RequestModified( node0 );
-  
+
+  // Stop rescheduling the output nodes events.
+  if (commandType == SharedObjectModule)
+    {
+    this->Internal->RescheduleCallback->RescheduleEventsFromThreadID(
+      vtkMultiThreader::GetCurrentThreadID(), false);
+    }
+
   // import the results if the plugin was allowed to complete
   //
   //
@@ -1960,6 +2060,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         // that needs to be removed.  It wouldn't make sense for two
         // outputs of a module to produce the same file to be reloaded.
         filesToDelete.erase( (*id2fn0).second );
+
+        if (commandType == SharedObjectModule)
+          {
+          vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID((*id2fn0).first);
+          node->RemoveObserver(this->Internal->RescheduleCallback);
+          }
         }
       }
 
