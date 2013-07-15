@@ -135,30 +135,30 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   // Add defaults nodes here
   this->AddUnitNodeToScene(scene,
-    "metre", "length", "", "m", 3);
+    "Meter", "length", "", "m", 3);
   this->AddUnitNodeToScene(scene,
-    "centimetre", "length", "", "cm", 3);
+    "Centimeter", "length", "", "cm", 3);
   this->AddUnitNodeToScene(scene,
-    "millimetre", "length", "", "mm", 3);
+    "Millimeter", "length", "", "mm", 3);
   this->AddUnitNodeToScene(scene,
-    "micrometre", "length", "", "µm", 3);
+    "Micrometer", "length", "", "µm", 3);
   this->AddUnitNodeToScene(scene,
-    "nanometre", "length", "", "nm", 3);
+    "Nanometer", "length", "", "nm", 3);
 
   this->AddUnitNodeToScene(scene,
-    "year", "time", "", "year", 3);
+    "Year", "time", "", "year", 3);
   this->AddUnitNodeToScene(scene,
-    "month", "time", "", "month", 3);
+    "Month", "time", "", "month", 3);
   this->AddUnitNodeToScene(scene,
-    "day", "time", "", "day", 3);
+    "Day", "time", "", "day", 3);
   this->AddUnitNodeToScene(scene,
-    "hour", "time", "", "h", 3);
+    "Hour", "time", "", "h", 3);
   this->AddUnitNodeToScene(scene,
-    "second", "time", "", "s", 3);
+    "Second", "time", "", "s", 3);
   this->AddUnitNodeToScene(scene,
-    "millisecond", "time", "", "ms", 3);
+    "Millisecond", "time", "", "ms", 3);
   this->AddUnitNodeToScene(scene,
-    "microsecond", "time", "", "µs", 3);
+    "Microsecond", "time", "", "µs", 3);
 }
 
 //-----------------------------------------------------------------------------

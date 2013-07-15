@@ -43,22 +43,88 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
 {
   Q_OBJECT
   QVTK_OBJECT
+  /// This property controls the name of the unit node.
+  /// \sa name(), setName(), nameChanged()
+  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+  /// This property controls the quantity of the unit node.
+  /// \sa quantity(), setQuantity(), quantityChanged()
+  Q_PROPERTY(QString quantity READ quantity WRITE setQuantity NOTIFY quantityChanged)
+  /// This property controls the prefix of the unit node.
+  /// \sa prefix(), setPrefix(), prefixChanged()
   Q_PROPERTY(QString prefix READ prefix WRITE setPrefix NOTIFY prefixChanged)
+  /// This property controls the suffix of the unit node.
+  /// \sa suffix(), setSuffix(), suffixChanged()
   Q_PROPERTY(QString suffix READ suffix WRITE setSuffix NOTIFY suffixChanged)
+  /// This property controls the precision of the unit node.
+  /// \sa precision(), setPrecision(), precisionChanged()
   Q_PROPERTY(int precision READ precision WRITE setPrecision NOTIFY precisionChanged)
+  /// This property controls the minimum of the unit node.
+  /// \sa minimum(), setMinimum(), minimumChanged()
   Q_PROPERTY(double minimum READ minimum WRITE setMinimum NOTIFY minimumChanged)
+  /// This property controls the maximum of the unit node.
+  /// \sa maximum(), setMaximum(), maximumChanged()
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+
+  /// Set/Get what are the current unit node displayed property by the widget.
+  /// Hidden properties can still be accessed programatically.
+  /// By default, all the properties are visible.
+  /// \sa editableProperties
+  Q_PROPERTY(UnitProperties displayedProperties READ displayedProperties WRITE setDisplayedProperties)
+  /// This property control which property is editable by the user.
+  /// All the properties except quantity are editable by default.e
+  /// \sa displayedProperties
+  Q_PROPERTY(UnitProperties editableProperties READ editableProperties WRITE setEditableProperties)
+
+  Q_FLAGS(UnitProperty UnitProperties)
 
 public:
   typedef qMRMLWidget Superclass;
   qMRMLUnitWidget(QWidget *parent=0);
   virtual ~qMRMLUnitWidget();
 
+  /// Return the name property value.
+  /// \sa name
+  QString name() const;
+  /// Return the quantity property value.
+  /// \sa quantity
+  QString quantity() const;
+  /// Return the prefix property value.
+  /// \sa prefix
   QString prefix() const;
+  /// Return the suffix property value.
+  /// \sa suffix
   QString suffix() const;
+  /// Return the precision property value.
+  /// \sa precision
   int precision() const;
+  /// Return the minimum property value.
+  /// \sa minimum
   double minimum() const;
+  /// Return the maximum property value.
+  /// \sa maximum
   double maximum() const;
+
+  enum UnitProperty
+    {
+    None = 0x000,
+    Preset = 0x001,
+    Name = 0x002,
+    Quantity = 0x004,
+    Precision = 0x008,
+    Prefix = 0x010,
+    Suffix = 0x020,
+    Minimum = 0x040,
+    Maximum = 0x080,
+    All = 0xfff,
+    };
+  Q_DECLARE_FLAGS(UnitProperties, UnitProperty)
+
+  /// Return the displayedProperties property value.
+  /// \sa displayedProperties
+  UnitProperties displayedProperties() const;
+  /// Return the editableProperties property value.
+  /// \sa editableProperties
+  UnitProperties editableProperties() const;
 
   /// Set the units logic scene for the preset comboxes
   virtual void setMRMLScene(vtkMRMLScene* unitsLogicScene);
@@ -67,15 +133,45 @@ public:
 
 public slots:
   void setCurrentNode(vtkMRMLNode* unitNode);
-  void updateWidgetFromNode();
+
+  /// Set the name property value.
+  /// \sa name
+  void setName(const QString &);
+  /// Set the quantity property value.
+  /// \sa quantity
+  void setQuantity(const QString &);
+  /// Set the prefix property value.
+  /// \sa prefix
   void setPrefix(const QString &);
+  /// Set the suffix property value.
+  /// \sa suffix
   void setSuffix(const QString &);
+  /// Set the precision property value.
+  /// \sa precision
   void setPrecision(int);
+  /// Set the minimum property value.
+  /// \sa minimum
   void setMinimum(double);
+  /// Set the maximum property value.
+  /// \sa maximum
   void setMaximum(double);
+
+  /// Apply a preset to the node.
   void setUnitFromPreset(vtkMRMLNode* presetNode);
 
+  /// Set the displayedProperties property value.
+  /// \sa displayedProperties
+  void setDisplayedProperties(UnitProperties properties);
+  /// Set the editableProperties property value.
+  /// \sa editableProperties
+  void setEditableProperties(UnitProperties properties);
+
+protected slots:
+  void updateWidgetFromNode();
+
 signals:
+  void nameChanged(QString);
+  void quantityChanged(QString);
   void prefixChanged(QString);
   void suffixChanged(QString);
   void precisionChanged(int);
@@ -89,5 +185,7 @@ private:
   Q_DECLARE_PRIVATE(qMRMLUnitWidget);
   Q_DISABLE_COPY(qMRMLUnitWidget);
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(qMRMLUnitWidget::UnitProperties)
 
 #endif

@@ -70,6 +70,7 @@ protected slots:
   void onNodeIDChanged(const QString& id);
   void setQuantities(const QStringList& quantities);
   void updateFromSelectionNode();
+  void showAll(bool showAll);
 
 protected:
   QScopedPointer<qSlicerUnitsSettingsPanelPrivate> d_ptr;

@@ -39,7 +39,8 @@ class qMRMLNodeComboBox;
 class qMRMLSettingsUnitWidgetPrivate;
 class vtkSlicerUnitsLogic;
 
-class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget : public QWidget
+class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLSettingsUnitWidget
+  : public QWidget
 {
   Q_OBJECT
   QVTK_OBJECT

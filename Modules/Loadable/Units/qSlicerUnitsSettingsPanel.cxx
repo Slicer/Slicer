@@ -92,6 +92,10 @@ void qSlicerUnitsSettingsPanelPrivate::init()
   Q_Q(qSlicerUnitsSettingsPanel);
 
   this->setupUi(q);
+
+  q->connect(this->ShowAllCheckBox, SIGNAL(toggled(bool)),
+    q, SLOT(showAll(bool)));
+  this->ShowAllCheckBox->setChecked(false);
 }
 
 // ---------------------------------------------------------------------------
@@ -132,7 +136,9 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
 
   // Add collapsible groupbox
   ctkCollapsibleGroupBox* groupbox = new ctkCollapsibleGroupBox(q);
-  groupbox->setTitle(lowerQuantity);
+  QString groupboxTitle = lowerQuantity;
+  groupboxTitle[0] = groupboxTitle[0].toUpper();
+  groupbox->setTitle(groupboxTitle);
   QVBoxLayout* layout = new QVBoxLayout;
   groupbox->setLayout(layout);
 
@@ -144,9 +150,12 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
     "vtkMRMLUnitNode", "Quantity", lowerQuantity);
   unitWidget->unitComboBox()->setMRMLScene(this->MRMLScene);
   unitWidget->unitComboBox()->setEnabled(false);
+  unitWidget->unitWidget()->setDisplayedProperties(
+    this->ShowAllCheckBox->isChecked() ?
+      qMRMLUnitWidget::All : qMRMLUnitWidget::Precision);
   layout->addWidget(unitWidget);
 
-  this->PanelLayout->addWidget(groupbox);
+  this->QuantitiesLayout->addWidget(groupbox);
   this->Quantities[lowerQuantity] = unitWidget;
   this->registerProperties(lowerQuantity, unitWidget);
 
@@ -156,7 +165,7 @@ void qSlicerUnitsSettingsPanelPrivate::addQuantity(const QString& quantity)
 // ---------------------------------------------------------------------------
 void qSlicerUnitsSettingsPanelPrivate::clearQuantities()
 {
-  foreach (QObject* obj, this->PanelLayout->children())
+  foreach (QObject* obj, this->GridLayout->children())
     {
     delete obj;
     }
@@ -321,5 +330,22 @@ void qSlicerUnitsSettingsPanel::updateFromSelectionNode()
       d->Quantities[quantity]->unitComboBox()->setCurrentNodeID(
         (*it)->GetID());
       }
+    }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerUnitsSettingsPanel::showAll(bool showAll)
+{
+  Q_D(qSlicerUnitsSettingsPanel);
+  foreach (qMRMLSettingsUnitWidget* widget, d->Quantities.values())
+    {
+    qMRMLUnitWidget::UnitProperties allButNameAndQuantity =
+      qMRMLUnitWidget::Preset |
+      qMRMLUnitWidget::Prefix | qMRMLUnitWidget::Suffix |
+      qMRMLUnitWidget::Precision |
+      qMRMLUnitWidget::Minimum | qMRMLUnitWidget::Maximum;
+
+    widget->unitWidget()->setDisplayedProperties(showAll ?
+      allButNameAndQuantity : qMRMLUnitWidget::Precision);
     }
 }
