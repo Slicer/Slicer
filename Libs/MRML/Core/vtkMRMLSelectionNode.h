@@ -167,10 +167,15 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// There can be no node (i.e. NULL) associated to a quantity.
   /// To make sure to have the correct unit node, one should observe the
   /// selection node for UnitModifiedEvent.
-  /// \sa GetNodeReferenceID(), SetAndObserveNodeReferenceID()
+  /// \sa GetUnitNode(), GetNodeReferenceID(), SetAndObserveNodeReferenceID()
   /// \sa UnitModifiedEvent
   const char* GetUnitNodeID(const char* quantity);
   void SetUnitNodeID(const char* quantity, const char* id);
+
+  /// Description:
+  /// Return the unit node associated to the quantity.
+  /// \sa GetUnitNodeID()
+  vtkMRMLUnitNode* GetUnitNode(const char* quantity);
 
   /// Description:
   /// Get all the unit node currently observed by the selection node.

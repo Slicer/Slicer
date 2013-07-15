@@ -1985,50 +1985,45 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
 
   if (node->IsA("vtkMRMLAnnotationRulerNode"))
     {
-    std::ostringstream ss;
-
+    double length = vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode)->GetDistanceMeasurement();
     char string[512];
-    sprintf(
-        string,
-        this->m_MeasurementFormat,
-        vtkMRMLAnnotationRulerNode::SafeDownCast(annotationNode)->GetDistanceMeasurement());
+    sprintf(string, this->m_MeasurementFormat,length);
 
     std::string unit = string;
-    unit += " mm";
     if (showUnits)
       {
-      if (selectionNode)
+      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : 0;
+      if (lengthUnit)
         {
-        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("length")));
-        if (lengthUnit)
-          {
-          unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string));
-          }
+        unit = lengthUnit->GetDisplayStringFromValue(length);
+        }
+      else
+        {
+        unit += " mm";
         }
       }
+    std::ostringstream ss;
     ss << unit;
 
     this->m_StringHolder = ss.str();
     }
   else if (node->IsA("vtkMRMLAnnotationAngleNode"))
     {
+    double angle = vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
     std::ostringstream ss;
-    ss << vtkMRMLAnnotationAngleNode::SafeDownCast(annotationNode)->GetAngleMeasurement();
+    ss << angle;
     std::string measurement = ss.str();
     if (showUnits)
       {
       // Get Unit from node
-      std::string value = ss.str();
-      measurement = value + " degrees";
-      if (selectionNode)
+      vtkMRMLUnitNode* angleUnit = selectionNode ? selectionNode->GetUnitNode("angle") : 0;
+      if (angleUnit)
         {
-        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("angle")));
-        if (lengthUnit)
-          {
-          measurement = lengthUnit->WrapValueWithPrefixAndSuffix(value);
-          }
+        measurement = angleUnit->GetDisplayStringFromValue(angle);
+        }
+      else
+        {
+        measurement += " degrees";
         }
       }
 
@@ -2080,52 +2075,42 @@ const char * vtkSlicerAnnotationModuleLogic::GetAnnotationMeasurement(const char
     std::ostringstream ss;
 
     // the greatest measurement should appear first..
-    bool measurement1first = false;
+    double length1 = std::max(measurement1, measurement2);
+    double length2 = std::min(measurement1, measurement2);
 
     char string[512];
-    if (measurement1 > measurement2)
-      {
-      sprintf(string, this->m_MeasurementFormat, measurement1);
-      measurement1first = true;
-      }
-    else
-      {
-      sprintf(string, this->m_MeasurementFormat, measurement2);
-      }
+    sprintf(string, this->m_MeasurementFormat, length1);
 
     std::string unit = string;
-    unit += " mm";
-    vtkMRMLUnitNode* lengthUnit = 0;
     if (showUnits)
       {
-      if (selectionNode)
+      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : 0;
+      if (lengthUnit)
         {
-        vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
-          this->GetMRMLScene()->GetNodeByID(selectionNode->GetUnitNodeID("length")));
-        if (lengthUnit)
-          {
-          unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string));
-          }
+        unit = lengthUnit->GetDisplayStringFromValue(length1);
+        }
+      else
+        {
+        unit += " mm";
         }
       }
     ss << unit << " x ";
 
     char string2[512];
-    if (measurement1first)
-      {
-      sprintf(string2, this->m_MeasurementFormat, measurement2);
-      }
-    else
-      {
-      sprintf(string2, this->m_MeasurementFormat, measurement1);
-      }
+    sprintf(string2, this->m_MeasurementFormat, length2);
 
-    ss << string2;
     unit = string2;
-    unit += " mm";
-    if (lengthUnit)
+    if (showUnits)
       {
-      unit = lengthUnit->WrapValueWithPrefixAndSuffix(std::string(string2));
+      vtkMRMLUnitNode* lengthUnit = selectionNode ? selectionNode->GetUnitNode("length") : 0;
+      if (lengthUnit)
+        {
+        unit = lengthUnit->GetDisplayStringFromValue(length2);
+        }
+      else
+        {
+        unit += " mm";
+        }
       }
     ss << unit;
 

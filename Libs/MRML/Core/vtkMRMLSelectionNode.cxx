@@ -487,6 +487,14 @@ const char* vtkMRMLSelectionNode::GetUnitNodeID(const char* quantity)
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLUnitNode* vtkMRMLSelectionNode::GetUnitNode(const char* quantity)
+{
+  std::string safeQuantity = quantity ? quantity : "";
+  std::string referenceRole = this->GetUnitNodeReferenceRole() + safeQuantity;
+  return vtkMRMLUnitNode::SafeDownCast(this->GetNodeReference(referenceRole.c_str()));
+}
+
+//----------------------------------------------------------------------------
 void vtkMRMLSelectionNode::SetUnitNodeID(const char* quantity, const char* id)
 {
   std::string safeQuantity = quantity ? quantity : "";

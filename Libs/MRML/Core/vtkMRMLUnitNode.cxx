@@ -41,7 +41,12 @@ vtkMRMLUnitNode::vtkMRMLUnitNode()
   this->MinimumValue = VTK_DOUBLE_MIN;
   this->MaximumValue = VTK_DOUBLE_MAX;
 
-   this->SetQuantity("");
+  this->DisplayCoefficient = 1.;
+  this->DisplayOffset = 0.;
+
+  this->SetQuantity("");
+  this->SetPrefix("");
+  this->SetSuffix("");
 }
 
 //----------------------------------------------------------------------------
@@ -137,6 +142,16 @@ void vtkMRMLUnitNode::ReadXMLAttributes(const char** atts)
       double max = StringToDouble(attValue);
       this->SetMaximumValue(max);
       }
+    else if (!strcmp(attName, "DisplayCoefficient"))
+      {
+      double coef = StringToDouble(attValue);
+      this->SetDisplayCoefficient(coef);
+      }
+    else if (!strcmp(attName, "DisplayOffset"))
+      {
+      double offset = StringToDouble(attValue);
+      this->SetDisplayOffset(offset);
+      }
     }
   this->EndModify(disabledModify);
 }
@@ -153,6 +168,50 @@ void vtkMRMLUnitNode::SetQuantity(const char* name)
   // Quantity uses attributes internally so it can be easily access by the GUI
   // (qMRMLComboBox for example).
   this->SetAttribute("Quantity", name);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLUnitNode::GetDisplayValueFromValue(double value)
+{
+  return (this->DisplayCoefficient * value) + this->DisplayOffset;
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLUnitNode::GetValueFromDisplayValue(double value)
+{
+  if (this->DisplayCoefficient)
+    {
+    vtkWarningMacro("Invalid display coefficient");
+    return 0.;
+    }
+  return (value - this->DisplayOffset) / this->DisplayCoefficient;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLUnitNode::GetDisplayStringFromValue(double value)
+{
+  const double displayValue = this->GetDisplayValueFromValue(value);
+  std::string displayValueString = this->GetDisplayValueStringFromDisplayValue(displayValue);
+  return this->GetDisplayStringFromDisplayValueString(displayValueString.c_str());
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLUnitNode
+::GetDisplayValueStringFromDisplayValue(double displayValue)
+{
+  std::stringstream strstream;
+  strstream.precision(this->Precision);
+  strstream << displayValue;
+  strstream >> this->LastValueString;
+  return this->LastValueString.c_str();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLUnitNode::GetDisplayStringFromDisplayValueString(const char* value)
+{
+  this->LastDisplayString =
+    this->WrapValueWithPrefixAndSuffix(std::string(value));
+  return this->LastDisplayString.c_str();
 }
 
 //----------------------------------------------------------------------------
