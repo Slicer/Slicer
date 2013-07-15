@@ -183,32 +183,10 @@ void qSlicerCLIModuleWidgetPrivate::updateUiFromCommandLineModuleNode(
     this->CLIModuleUIHelper->updateUi(node);
     }
 
-  switch (node->GetStatus())
-    {
-    case vtkMRMLCommandLineModuleNode::Scheduled:
-      this->ApplyPushButton->setEnabled(false);
-      this->CancelPushButton->setEnabled(true);
-      break;
-    case vtkMRMLCommandLineModuleNode::Running:
-    case vtkMRMLCommandLineModuleNode::Cancelling:
-      this->DefaultPushButton->setEnabled(false);
-      this->ApplyPushButton->setEnabled(false);
-      this->CancelPushButton->setEnabled(true);
-      break;
-    case vtkMRMLCommandLineModuleNode::Cancelled:
-    case vtkMRMLCommandLineModuleNode::Completed:
-    case vtkMRMLCommandLineModuleNode::CompletedWithErrors:
-      this->DefaultPushButton->setEnabled(true);
-      this->ApplyPushButton->setEnabled(true);
-      this->CancelPushButton->setEnabled(false);
-      break;
-    default:
-    case vtkMRMLCommandLineModuleNode::Idle:
-      this->DefaultPushButton->setEnabled(true);
-      this->ApplyPushButton->setEnabled(true);
-      this->CancelPushButton->setEnabled(false);
-      break;
-    }
+  this->ApplyPushButton->setEnabled(!node->IsBusy());
+  this->DefaultPushButton->setEnabled(!node->IsBusy());
+  this->CancelPushButton->setEnabled(node->IsBusy());
+
   this->AutoRunWhenParameterChanged->setChecked(
     node->GetAutoRunMode() & vtkMRMLCommandLineModuleNode::AutoRunOnChangedParameter);
   this->AutoRunWhenInputModified->setChecked(
