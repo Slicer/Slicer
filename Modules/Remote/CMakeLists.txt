@@ -33,6 +33,15 @@ if(Slicer_BUILD_MultiVolumeImporter)
     )
 endif()
 
+
+if(Slicer_BUILD_SimpleFilters)
+  # NOTE: SimpleFilters source is checkout in Superbuild
+  add_subdirectory(
+    ${SimpleFilters_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/SimpleFilters
+    )
+endif()
+
 if(Slicer_BUILD_BRAINSTOOLS)
   # NOTE: BRAINSTools source code is checkout using "External_BRAINSTools.cmake".
   set(BRAINSTools_CLI_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_CLIMODULES_LIB_DIR} CACHE PATH "" FORCE)

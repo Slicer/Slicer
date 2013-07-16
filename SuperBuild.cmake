@@ -145,6 +145,10 @@ if(Slicer_BUILD_MultiVolumeImporter)
   list(APPEND Slicer_DEPENDENCIES MultiVolumeImporter)
 endif()
 
+if(Slicer_BUILD_SimpleFilters)
+  list(APPEND Slicer_DEPENDENCIES SimpleFilters)
+endif()
+
 if(Slicer_BUILD_DWIConvert)
   list(APPEND Slicer_DEPENDENCIES DWIConvert)
 endif()
@@ -288,6 +292,10 @@ endif()
 
 if(Slicer_BUILD_MultiVolumeImporter)
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DMultiVolumeImporter_SOURCE_DIR:PATH=${MultiVolumeImporter_SOURCE_DIR})
+endif()
+
+if(Slicer_BUILD_SimpleFilters)
+  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS -DSimpleFilters_SOURCE_DIR:PATH=${SimpleFilters_SOURCE_DIR})
 endif()
 
 if(Slicer_BUILD_EMSegment)
