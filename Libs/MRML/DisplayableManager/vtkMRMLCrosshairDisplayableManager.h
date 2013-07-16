@@ -59,6 +59,9 @@ protected:
   /// \sa AddInteractorObservableEvent RemoveInteractorObservableEvent
   virtual void OnInteractorEvent(int eventid);
 
+  /// Called when the SliceNode is modified. May cause Crosshair to remap its position on screen.
+  virtual void OnMRMLSliceNodeModifiedEvent();
+
   /// Method to perform additional initialization
   virtual void AdditionalInitializeStep();
 
