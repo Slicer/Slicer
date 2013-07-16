@@ -87,10 +87,12 @@ protected:
   vtkSlicerModelsLogic(const vtkSlicerModelsLogic&);
   void operator=(const vtkSlicerModelsLogic&);
 
-  /// Reimplemented to:
-  ///  - make sure the singleton vtkMRMLClipModelsNode is instantiated
-  ///  - observe the scene
+  /// Reimplemented to observe the NodeRemovedEvent scene event.
   virtual void SetMRMLSceneInternal(vtkMRMLScene* newScene);
+
+  /// Reimplemented to make sure the singleton vtkMRMLClipModelsNode is
+  /// instantiated.
+  virtual void ObserveMRMLScene();
 
   //
   vtkMRMLModelNode *ActiveModelNode;

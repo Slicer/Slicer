@@ -290,6 +290,8 @@ protected:
   // Register local MRML nodes
   virtual void RegisterNodes();
 
+  /// Reimplemented to initialize display nodes in the scene.
+  void ObserveMRMLScene();
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node);
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node);
   void OnMRMLNodeModified(vtkMRMLNode* node);

@@ -70,6 +70,8 @@ protected:
   vtkSlicerUnitsLogic();
   virtual ~vtkSlicerUnitsLogic();
 
+  /// Reimplemented to initialize the scene with unit nodes.
+  virtual void ObserveMRMLScene();
   /// Reimplemented to save the selection node unit nodes.
   virtual void OnMRMLSceneStartClose();
   /// Reimplemented to restore the selection node unit nodes.

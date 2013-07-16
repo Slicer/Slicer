@@ -67,14 +67,20 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   vtkSmartPointer<vtkIntArray> sceneEvents = vtkSmartPointer<vtkIntArray>::New();
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents);
+}
 
-  if (newScene && newScene->GetNthNodeByClass(0, "vtkMRMLClipModelsNode") == 0)
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::ObserveMRMLScene()
+{
+  if (this->GetMRMLScene() &&
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLClipModelsNode") == 0)
     {
     // vtkMRMLClipModelsNode is a singleton
     vtkMRMLClipModelsNode* clipNode = vtkMRMLClipModelsNode::New();
-    newScene->AddNode(clipNode);
+    this->GetMRMLScene()->AddNode(clipNode);
     clipNode->Delete();
     }
+  this->Superclass::ObserveMRMLScene();
 }
 
 //----------------------------------------------------------------------------

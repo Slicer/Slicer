@@ -106,8 +106,13 @@ void vtkSlicerUnitsLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   events->InsertNextValue(vtkMRMLScene::StartCloseEvent);
   events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
+}
 
+//---------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::ObserveMRMLScene()
+{
   this->AddDefaultsUnits();
+  this->Superclass::ObserveMRMLScene();
 }
 
 //---------------------------------------------------------------------------

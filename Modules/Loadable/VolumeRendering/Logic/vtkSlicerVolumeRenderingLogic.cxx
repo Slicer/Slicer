@@ -263,9 +263,15 @@ void vtkSlicerVolumeRenderingLogic
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeAddedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   this->SetAndObserveMRMLSceneEventsInternal(scene, sceneEvents.GetPointer());
+}
 
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic
+::ObserveMRMLScene()
+{
   this->RemoveAllVolumeRenderingDisplayNodes();
   this->AddAllVolumeRenderingDisplayNodes();
+  this->Superclass::ObserveMRMLScene();
 }
 
 //----------------------------------------------------------------------------
