@@ -570,6 +570,25 @@ const char* threeOverThreeQuantitativeView =
   " </item>"
   "</layout>";
 
+const char* sideBySideView =
+  "<layout type=\"horizontal\">"
+  "  <item>"
+  "   <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">"
+  "    <property name=\"orientation\" action=\"default\">Axial</property>"
+  "    <property name=\"viewlabel\" action=\"default\">R</property>"
+  "    <property name=\"viewcolor\" action=\"default\">#F34A33</property>"
+  "   </view>"
+  "  </item>"
+  "  <item>"
+  "   <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+  "    <property name=\"orientation\" action=\"default\">Axial</property>"
+  "    <property name=\"viewlabel\" action=\"default\">Y</property>"
+  "    <property name=\"viewcolor\" action=\"default\">#EDD54C</property>"
+  "   </view>"
+  "  </item>"
+  "</layout>";
+
+
 //----------------------------------------------------------------------------
 vtkCxxRevisionMacro(vtkMRMLLayoutLogic, "$Revision$");
 vtkStandardNewMacro(vtkMRMLLayoutLogic);
@@ -1000,6 +1019,8 @@ void vtkMRMLLayoutLogic::AddDefaultLayouts()
                                          twoOverTwoView);
   this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutThreeOverThreeQuantitativeView,
                                          threeOverThreeQuantitativeView);
+  this->LayoutNode->AddLayoutDescription(vtkMRMLLayoutNode::SlicerLayoutSideBySideView,
+                                         sideBySideView);
   // add the CompareView modes which are defined programmatically
   this->UpdateCompareViewLayoutDefinitions();
   this->LayoutNode->EndModify(wasModifying);

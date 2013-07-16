@@ -106,6 +106,7 @@ public:
       SlicerLayoutOneUpQuantitativeView,
       SlicerLayoutTwoOverTwoView,
       SlicerLayoutThreeOverThreeQuantitativeView,
+      SlicerLayoutSideBySideView,
       SlicerLayoutCustomView = 99,
       SlicerLayoutUserView = 100
     };
