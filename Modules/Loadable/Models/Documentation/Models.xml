@@ -192,25 +192,25 @@
       </parameter>
       <string-enumeration>
         <label>Clipping Type</label>
-        <description><![CDATA[When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model.]]></description>
+        <description><![CDATA[When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. The parts of the model inside the selected space is kept, parts outside of the selection are clipped away.]]></description>
         <element>Union</element>
         <element>Intersection</element>
       </string-enumeration>
       <string-enumeration>
         <label>Red Slice Clipping</label>
-        <description><![CDATA[Control on which side of the red slice plane is clipped on the model]]></description>
+        <description><![CDATA[Use the positive or negative space defined by the Red slice plane to clip the model. Positive side is toward the Superior, negative is toward the Inferior. Keeps the part of the model in the selected space, clips away the rest.]]></description>
         <element>Positive</element>
         <element>Negative</element>
       </string-enumeration>
       <string-enumeration>
         <label>Yellow Slice Clipping</label>
-        <description><![CDATA[Control on which side of the yellow slice plane is clipped on the model]]></description>
+        <description><![CDATA[Use the positive or negative space defined by the Yellow slice plane to clip the model. Positive side is toward the Right, negative is toward the Left. Keeps the part of the model in the selected space, clips away the rest.]]></description>
         <element>Positive</element>
         <element>Negative</element>
       </string-enumeration>
       <string-enumeration>
         <label>Green Slice Clipping</label>
-        <description><![CDATA[Control on which side of the green slice plane is clipped on the model]]></description>
+        <description><![CDATA[Use the positive or negative space defined by the Green slice plane to clip the model. Positive side is toward the Anterior, negative is toward the Posterior. Keeps the part of the model in the selected space, clips away the rest.]]></description>
         <element>Positive</element>
         <element>Negative</element>
       </string-enumeration>
