@@ -182,6 +182,8 @@ void qSlicerDataDialogPrivate::addFile(const QFileInfo& file)
   descriptionComboBox->setCurrentIndex(-1);
   QObject::connect(descriptionComboBox, SIGNAL(currentIndexChanged(QString)),
                    this, SLOT(onFileTypeChanged(QString)));
+  QObject::connect(descriptionComboBox, SIGNAL(activated(QString)),
+                   this, SLOT(onFileTypeActivated(QString)));
   this->FileWidget->setCellWidget(row, TypeColumn, descriptionComboBox);
   descriptionComboBox->setCurrentIndex(0);
   this->FileWidget->setSortingEnabled(sortingEnabled);
@@ -239,29 +241,34 @@ QList<qSlicerIO::IOProperties> qSlicerDataDialogPrivate::selectedFiles()const
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::onFileTypeChanged(const QString& description)
 {
-  QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
-  if (!comboBox)
-    {
-    qCritical() << "qSlicerDataDialogPrivate::onFileTypeChanged must be called"
-                << "by a QComboBox signal";
-    return;
-    }
-  int row = -1;
-  for (int i = 0; i < this->FileWidget->rowCount(); ++i)
-    {
-    if (this->FileWidget->cellWidget(i, TypeColumn) == comboBox)
-      {
-      row = i;
-      break;
-      }
-    }
-  if (row < 0)
-    {
-    qCritical() << "Can't find the item to update";
-    return;
-    }
+  int row = this->senderRow();
   QString fileName = this->FileWidget->item(row, FileColumn)->text();
   this->setFileOptions(row, fileName, description);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDataDialogPrivate::onFileTypeActivated(const QString& description)
+{
+  int activatedRow = this->senderRow();
+  if (this->propagateChange(activatedRow))
+    {
+    for(int row = 0; row < this->FileWidget->rowCount(); ++row)
+      {
+      if (!this->haveSameTypeOption(activatedRow, row))
+        {
+        continue;
+        }
+      QComboBox* selectedComboBox = qobject_cast<QComboBox*>(
+        this->FileWidget->cellWidget(row, TypeColumn));
+      int descriptionIndex =
+        selectedComboBox ? selectedComboBox->findText(description) : -1;
+      qDebug() << "id" << descriptionIndex;
+      if (descriptionIndex != -1)
+        {
+        selectedComboBox->setCurrentIndex(descriptionIndex);
+        }
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -290,6 +297,66 @@ void qSlicerDataDialogPrivate::setFileOptions(
   this->FileWidget->setCellWidget(row, OptionsColumn, optionsWidget);
   this->FileWidget->resizeColumnToContents(OptionsColumn);
 }
+
+//-----------------------------------------------------------------------------
+int qSlicerDataDialogPrivate::senderRow()const
+{
+  QComboBox* comboBox = qobject_cast<QComboBox*>(this->sender());
+  if (!comboBox)
+    {
+    qCritical() << "qSlicerDataDialogPrivate::onFileTypeChanged must be called"
+                << "by a QComboBox signal";
+    return -1;
+    }
+  int row = -1;
+  for (int i = 0; i < this->FileWidget->rowCount(); ++i)
+    {
+    if (this->FileWidget->cellWidget(i, TypeColumn) == comboBox)
+      {
+      row = i;
+      break;
+      }
+    }
+  if (row < 0)
+    {
+    qCritical() << "Can't find the item to update";
+    }
+  return row;
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerDataDialogPrivate::haveSameTypeOption(int row1, int row2)const
+{
+  QComboBox* comboBox1 = qobject_cast<QComboBox*>(
+    this->FileWidget->cellWidget(row1, TypeColumn));
+  QComboBox* comboBox2 = qobject_cast<QComboBox*>(
+    this->FileWidget->cellWidget(row2, TypeColumn));
+  if (!comboBox1 || !comboBox2)
+    {
+    return false;
+    }
+  if (comboBox1->count() != comboBox2->count())
+    {
+    return false;
+    }
+  for (int i=0; i < comboBox1->count(); ++i)
+    {
+    if (comboBox1->itemText(i) != comboBox2->itemText(i))
+      {
+      return false;
+      }
+    }
+  return true;
+}
+//-----------------------------------------------------------------------------
+bool qSlicerDataDialogPrivate::propagateChange(int changedRow)const
+{
+  QTableWidgetItem* item = this->FileWidget->item(changedRow, FileColumn);
+  bool fileSelected = item ? item->checkState() != Qt::Unchecked : false;
+  return fileSelected
+    && (QApplication::keyboardModifiers() & Qt::ShiftModifier);
+}
+
 /*
 //-----------------------------------------------------------------------------
 void qSlicerDataDialogPrivate::updateCheckBoxes(Qt::Orientation orientation, int first, int last)

@@ -35,6 +35,7 @@ public slots:
 
 protected slots:
   void onFileTypeChanged(const QString&);
+  void onFileTypeActivated(const QString&);
 
 //  void updateCheckBoxes(Qt::Orientation orientation, int first, int last);
 //  void updateCheckBoxHeader(int row, int column);
@@ -52,7 +53,12 @@ protected:
   // time consuming if you do it for every file added).
   void addFile(const QFileInfo& file);
   void setFileOptions(int row, const QString& filePath, const QString& fileDescription);
-
+  /// Return the row the last signal comes from.
+  int senderRow()const;
+  bool propagateChange(int changedRow)const;
+  /// Return true if the 2 items have the same filetype options.
+  /// I.e. same items int the TypeColumn combobox.
+  bool haveSameTypeOption(int row1, int row2)const;
 private:
   friend class qSlicerDataDialog;
 };
