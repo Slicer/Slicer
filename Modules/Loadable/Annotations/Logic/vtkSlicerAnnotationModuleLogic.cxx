@@ -251,7 +251,7 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
     vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode> rStorageNode = vtkSmartPointer<vtkMRMLAnnotationRulerStorageNode>::New();
     vtkSmartPointer<vtkMRMLAnnotationRulerNode> rNode = vtkSmartPointer<vtkMRMLAnnotationRulerNode>::New();
     rNode->SetName(name);
-    
+
     rStorageNode->SetFileName(filename);
 
     // add to the scene
@@ -297,6 +297,27 @@ char *vtkSlicerAnnotationModuleLogic::LoadAnnotation(const char *filename, const
   // turn off batch processing
   this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
     
+  return nodeID;
+}
+
+//-----------------------------------------------------------------------------
+char *vtkSlicerAnnotationModuleLogic::AddFiducial(double r, double a, double s,
+                                                  const char *label)
+{
+  char *nodeID = NULL;
+  vtkMRMLAnnotationFiducialNode * fnode = vtkMRMLAnnotationFiducialNode::New();
+
+  if (label != NULL)
+    {
+    fnode->SetName(label);
+    }
+  fnode->SetFiducialCoordinates(r, a, s);
+  fnode->Initialize(this->GetMRMLScene());
+
+  nodeID = fnode->GetID();
+
+  fnode->Delete();
+
   return nodeID;
 }
 

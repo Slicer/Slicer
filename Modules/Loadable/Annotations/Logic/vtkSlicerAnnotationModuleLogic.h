@@ -69,7 +69,7 @@ public:
   /// null if not a valid node, not an annotation node, or doesn't have a line
   /// display node
   vtkMRMLAnnotationLineDisplayNode *GetLineDisplayNode(const char *id);
-  
+
   /// Get the name of an Annotation MRML node
   const char * GetAnnotationName(const char * id);
 
@@ -116,13 +116,13 @@ public:
   /// Get the point glyph type of the annotation mrml node as a string,
   /// returns null if can't find it
   const char * GetAnnotationPointGlyphTypeAsString(const char *id);
-  /// Get the point glyph type of the annotation mrml node, 
+  /// Get the point glyph type of the annotation mrml node,
   int GetAnnotationPointGlyphType(const char *id);
   /// Set the point glyph type of the annotation mrml node from a string
   void SetAnnotationPointGlyphTypeFromString(const char *id, const char *glyphType);
   /// Set the point glyph type of the annotation mrml node
   void SetAnnotationPointGlyphType(const char *id, int glyphType);
-  
+
   /// Get the line color of an annotation mrml node, returns null if can't find it
   double * GetAnnotationLineColor(const char *id);
   /// Set the line color of an annotation mrml node
@@ -133,7 +133,7 @@ public:
   /// Set the unselected line color of an annotation mrml node
   void SetAnnotationLineUnselectedColor(const char *id, double *color);
 
-  
+
   /// Get the measurement value of an Annotation MRML node
   const char * GetAnnotationMeasurement(const char * id, bool showUnits);
 
@@ -155,7 +155,7 @@ public:
   void SetAnnotationSelected(const char * id, bool selected);
   /// Set the selected flag of all annotation mrml nodes
   void SetAllAnnotationsSelected(bool selected);
-  
+
   /// Backup an Annotation MRML node
   void BackupAnnotationNode(const char * id);
   /// Restore a backup of an Annotation MRML node
@@ -248,7 +248,7 @@ public:
   /// Legacy support: load a Slicer3 fiducial list from file. Uses FiducialsLogic to load into a legacy node first, then translates into annotation nodes
   /// returns a comma separated list of the annot nodes loaded
   char *LoadFiducialList(const char *filename);
-  
+
   /// Load an annotation from file, return NULL on error, node ID string
   /// otherwise. Adds the appropriate storage and display nodes to the scene
   /// as well. fileType is from this class's enum
@@ -262,7 +262,12 @@ public:
     ROI,
   };
 
-  
+  /// Add a new fiducial to the currently active hierarchy. Places the
+  /// fiducial at the given RAS coordinates (default 0,0,0) with the
+  /// given label (if NULL, uses default naming convention).
+  /// Returns the ID of the newly added node.
+  char *AddFiducial(double r=0.0, double a=0.0, double s=0.0, const char *label=NULL);
+
 protected:
 
   vtkSlicerAnnotationModuleLogic();
