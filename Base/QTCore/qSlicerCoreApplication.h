@@ -58,6 +58,10 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreApplication : public QApplication
   QVTK_OBJECT
   Q_ENUMS(ReturnCode)
 
+  /// This property holds the path where the Slicer application is.
+  /// For example, for an installed Slicer on Windows, the path can be
+  /// "C:\Program Files (x86)\Slicer 4.3.0\".
+  /// \sa slicerHome(), temporaryPath, isInstalled
   Q_PROPERTY(QString slicerHome READ slicerHome CONSTANT)
   Q_PROPERTY(QString temporaryPath READ temporaryPath WRITE setTemporaryPath)
   Q_PROPERTY(QString launcherExecutableFilePath READ launcherExecutableFilePath CONSTANT)
@@ -137,6 +141,7 @@ public:
   Q_INVOKABLE vtkSlicerApplicationLogic* applicationLogic() const;
 
   /// Get slicer home directory
+  /// \sa slicerHome
   QString slicerHome() const;
 
   /// Returns True if module identified by \a moduleFileName is a descendant of slicer home.
