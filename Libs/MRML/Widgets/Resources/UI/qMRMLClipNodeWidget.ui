@@ -22,6 +22,9 @@
      <property name="text">
       <string>Clipping Type:</string>
      </property>
+     <property name="toolTip">
+       <string>When more than one slice plane is used, this option controls if it's the union or intersection of the positive and/or negative spaces that is used to clip the model. The parts of the model inside the selected space is kept, parts outside of the selection are clipped away.</string>
+     </property>
     </widget>
    </item>
    <item row="0" column="1">
@@ -36,6 +39,9 @@
      <property name="checked">
       <bool>true</bool>
      </property>
+     <property name="toolTip">
+       <string>Use the union of the positive and/or negative spaces defined by the slice planes to clip the model.</string>
+     </property>
     </widget>
    </item>
    <item row="0" column="2">
@@ -47,12 +53,18 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/ClippingIntersection.png</normaloff>:/Icons/ClippingIntersection.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Use the intersection of the positive and/or negative spaces defined by the slice planes to clip the model.</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="0">
     <widget class="QCheckBox" name="RedSliceClippingCheckBox">
      <property name="text">
       <string>Red Slice Clipping:</string>
+     </property>
+     <property name="toolTip">
+      <string>Use the positive or negative space defined by the Red slice plane to clip the model. Positive side is toward the Superior, negative is toward the Inferior. Keeps the part of the model in the selected space, clips away the rest.</string>
      </property>
     </widget>
    </item>
@@ -68,6 +80,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/RedSpacePositive.png</normaloff>:/Icons/RedSpacePositive.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside the positive space, toward the Superior (head), defined by the Red slice plane.</string>
+     </property>
     </widget>
    </item>
    <item row="1" column="2">
@@ -82,12 +97,18 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/RedSpaceNegative.png</normaloff>:/Icons/RedSpaceNegative.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside of the negative space, toward the Inferior (feet), defined by the Red slice plane.</string>
+     </property>
     </widget>
    </item>
    <item row="2" column="0">
     <widget class="QCheckBox" name="YellowSliceClippingCheckBox">
      <property name="text">
       <string>Yellow Slice Clipping:</string>
+     </property>
+     <property name="toolTip">
+      <string>Use the positive or negative space defined by the Yellow slice plane to clip the model. Positive side is toward the Right, negative is toward the Left. Keeps the part of the model in the selected space, clips away the rest.</string>
      </property>
     </widget>
    </item>
@@ -103,6 +124,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/YellowSpacePositive.png</normaloff>:/Icons/YellowSpacePositive.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside of the positive space, toward the Right, defined by the Yellow slice plane.</string>
+     </property>
     </widget>
    </item>
    <item row="2" column="2">
@@ -117,12 +141,18 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/YellowSpaceNegative.png</normaloff>:/Icons/YellowSpaceNegative.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside of the negative space, toward the Left, defined by the Yellow slice plane .</string>
+     </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QCheckBox" name="GreenSliceClippingCheckBox">
      <property name="text">
       <string>Green Slice Clipping:</string>
+     </property>
+     <property name="toolTip">
+      <string>Use the positive or negative space defined by the Green slice plane to clip the model. Positive side is toward the Anterior, negative is toward the Posterior. Keeps the part of the model in the selected space, clips away the rest.</string>
      </property>
     </widget>
    </item>
@@ -138,6 +168,9 @@
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/GreenSpacePositive.png</normaloff>:/Icons/GreenSpacePositive.png</iconset>
      </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside of the positive space, toward the Anterior (front), defined by the Green slice plane.</string>
+     </property>
     </widget>
    </item>
    <item row="3" column="2">
@@ -151,6 +184,9 @@
      <property name="icon">
       <iconset resource="../qMRMLWidgets.qrc">
        <normaloff>:/Icons/GreenSpaceNegative.png</normaloff>:/Icons/GreenSpaceNegative.png</iconset>
+     </property>
+     <property name="toolTip">
+      <string>Keep the parts of the model that are inside of the negative space, toward the Posterior (back), defined by the Green slice plane.</string>
      </property>
     </widget>
    </item>
