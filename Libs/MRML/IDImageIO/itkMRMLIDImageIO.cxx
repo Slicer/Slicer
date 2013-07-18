@@ -16,8 +16,10 @@ Version:   $Revision: 1.18 $
 #include "itkMRMLIDImageIO.h"
 #include "itkMetaDataObject.h"
 
+// MRML includes
 #include "vtkMRMLDiffusionTensorVolumeNode.h"
 #include "vtkMRMLDiffusionWeightedVolumeNode.h"
+#include "vtkMRMLDisplayNode.h"
 #include "vtkMRMLScene.h"
 
 #include <vtkDataArray.h>
@@ -585,6 +587,15 @@ MRMLIDImageIO
   if (node)
     {
     int wasModifying = node->StartModify();
+    std::map<std::string, int> wereModifyingDisplayNodes;
+    for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+      {
+      vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+      if (displayNode)
+        {
+        wereModifyingDisplayNodes[displayNode->GetID()] = displayNode->StartModify();
+        }
+      }
     
     // Need to create a VTK ImageData to hang off the node if there is
     // not one already there
@@ -657,6 +668,15 @@ MRMLIDImageIO
     node->SetAndObserveImageData( img );
     img->UnRegister(NULL); // release the handle
 
+    for (int i = 0; i < node->GetNumberOfDisplayNodes(); ++i)
+      {
+      vtkMRMLDisplayNode* displayNode = node->GetNthDisplayNode(i);
+      if (displayNode)
+        {
+        displayNode->EndModify(
+          wereModifyingDisplayNodes[displayNode->GetID()]);
+        }
+      }
     // Enable Modified events
     //
     node->EndModify(wasModifying);

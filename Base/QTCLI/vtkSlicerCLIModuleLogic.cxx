@@ -201,6 +201,40 @@ public:
     return (it != this->LastRequests.end())? it->first : 0;
   }
 
+  /// Install the reschedule callback on a node and its references
+  /// \sa StopRescheduleNodeEvents()
+  void StartRescheduleNodeEvents(vtkMRMLNode* node)
+  {
+    node->AddObserver(vtkCommand::AnyEvent, this->RescheduleCallback,
+                      100000000.f);
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(node);
+    if (displayableNode)
+      {
+      for (int i=0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+        {
+        vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+        this->StartRescheduleNodeEvents(displayNode);
+        }
+      }
+  }
+  /// Remote the reschedule callback on a node and its references.
+  /// \sa StartRescheduleNodeEvents()
+  void StopRescheduleNodeEvents(vtkMRMLNode* node)
+  {
+    node->RemoveObserver(this->RescheduleCallback);
+    vtkMRMLDisplayableNode* displayableNode =
+      vtkMRMLDisplayableNode::SafeDownCast(node);
+    if (displayableNode)
+      {
+      for (int i=0; i < displayableNode->GetNumberOfDisplayNodes(); ++i)
+        {
+        vtkMRMLDisplayNode* displayNode = displayableNode->GetNthDisplayNode(i);
+        this->StopRescheduleNodeEvents(displayNode);
+        }
+      }
+  }
+
   /// List of read data/scene requests of the CLI nodes
   /// being executed with their.
   RequestType LastRequests;
@@ -1005,8 +1039,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
       // If the node is not in the mini-scene, then it means the filter will
       // modify the node directly (via itkMRMLIDImageIO). We don't want any
       // event to be fired from the thread, but from the main thread instead.
-      nd->AddObserver(vtkCommand::AnyEvent, this->Internal->RescheduleCallback,
-                      100000000.f);
+      this->Internal->StartRescheduleNodeEvents(nd);
       }
     }
   // Start rescheduling the output nodes events.
@@ -2064,7 +2097,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
         if (commandType == SharedObjectModule)
           {
           vtkMRMLNode* node = this->GetMRMLScene()->GetNodeByID((*id2fn0).first);
-          node->RemoveObserver(this->Internal->RescheduleCallback);
+          this->Internal->StopRescheduleNodeEvents(node);
           }
         }
       }
