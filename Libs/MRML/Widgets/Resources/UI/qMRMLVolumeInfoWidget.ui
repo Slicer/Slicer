@@ -62,10 +62,10 @@
       <set>ctkDoubleSpinBox::DecimalsByKey|ctkDoubleSpinBox::DecimalsByShortcuts|ctkDoubleSpinBox::DecimalsByValue</set>
      </property>
      <property name="minimum" stdset="0">
-      <double>0.00010000000000000</double>
+      <double>0.000000000000000</double>
      </property>
      <property name="coordinates" stdset="0">
-      <string>1,1,1</string>
+      <string>0,0,0</string>
      </property>
      <property name="quantity">
       <string>length</string>
