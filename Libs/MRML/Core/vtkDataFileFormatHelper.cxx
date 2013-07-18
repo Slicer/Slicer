@@ -51,6 +51,8 @@ ITKImageFileFormat FileFormatTable[] =
   {"JPEGImageIO", "Compressed pixel data in binary", "JPEG", ".JPEG"},
   {"LSMImageIO", "Optional Compression. Binary pixel data", "LSM", ".lsm"},
   {"LSMImageIO", "Optional Compression. Binary pixel data", "LSM", ".LSM"},
+  {"MRCImageIO", "Cryo-electron tomography and molecular imaging", "MRC", ".mrc"},
+  {"MRCImageIO", "Cryo-electron tomography and molecular imaging", "MRC", ".rec"},
   {"NiftiImageIO", "Header information in binary", "NifTI", ".nia"},
   {"NiftiImageIO", "Uncompressed pixel data in binary", "NifTI", ".nii"},
   {"NiftiImageIO", "Compressed pixel data in binary", "NifTI", ".nii.gz"},
