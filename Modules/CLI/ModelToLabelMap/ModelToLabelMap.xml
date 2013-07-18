@@ -4,7 +4,7 @@
   <title>Model To Label Map</title>
   <description><![CDATA[Intersects an input model with an reference volume and produces an output label map.]]></description>
   <version>0.1.0.$Revision: 8643 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/PolyDataToLabelMap</documentation-url>
+  <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ModelToLabelMap</documentation-url>
   <license/>
   <contributor>Nicole Aucoin (SPL, BWH), Xiaodong Tao (GE)</contributor>
   <acknowledgements><![CDATA[This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
@@ -18,6 +18,14 @@
       <label>Sample distance</label>
       <default>1</default>
     </float>
+    <integer>
+      <name>labelValue</name>
+      <description><![CDATA[The integer label value to use in the output label map.]]></description>
+      <label>Label value</label>
+      <flag>l</flag>
+      <longflag>labelValue</longflag>
+      <default>255</default>
+    </integer>
   </parameters>
   <parameters>
     <label>IO</label>

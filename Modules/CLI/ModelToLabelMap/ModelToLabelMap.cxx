@@ -192,7 +192,7 @@ int DoIt( int argc, char * argv[])
 
     if( label->GetLargestPossibleRegion().IsInside(idx) )
       {
-      label->SetPixel( idx, 255 );
+      label->SetPixel( idx, labelValue );
       }
     }
 
@@ -231,7 +231,7 @@ int DoIt( int argc, char * argv[])
   for( floodFill.GoToBegin(); !floodFill.IsAtEnd(); ++floodFill )
     {
     LabelImageType::IndexType i = floodFill.GetIndex();
-    closedLabel->SetPixel( i, 255 );
+    closedLabel->SetPixel( i, labelValue );
     }
   LabelImageType::Pointer finalLabel = BinaryClosingFilter3D( closedLabel, 2);
   for( itLabel.GoToBegin(); !itLabel.IsAtEnd(); ++itLabel )
