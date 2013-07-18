@@ -24,8 +24,8 @@ Version:   $Revision: 1.3 $
 // STD includes
 #include <sstream>
 
-char vtkMRMLStorableNode::StorageNodeReferenceRole[] = "storage";
-char vtkMRMLStorableNode::StorageNodeReferenceMRMLAttributeName[] = "storageNodeRef";
+const char* vtkMRMLStorableNode::StorageNodeReferenceRole = "storage";
+const char* vtkMRMLStorableNode::StorageNodeReferenceMRMLAttributeName = "storageNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLStorableNode::vtkMRMLStorableNode()
@@ -46,6 +46,18 @@ vtkMRMLStorableNode::~vtkMRMLStorableNode()
     this->UserTagTable = NULL;
     }
   this->SlicerDataType.clear();
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLStorableNode::GetStorageNodeReferenceRole()
+{
+  return vtkMRMLStorableNode::StorageNodeReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLStorableNode::GetStorageNodeReferenceMRMLAttributeName()
+{
+  return vtkMRMLStorableNode::StorageNodeReferenceMRMLAttributeName;
 }
 
 //----------------------------------------------------------------------------

@@ -29,8 +29,8 @@ Version:   $Revision: 1.3 $
 #include <cassert>
 #include <sstream>
 
-char vtkMRMLDisplayableNode::DisplayNodeReferenceRole[] = "display";
-char vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName[] = "displayNodeRef";
+const char* vtkMRMLDisplayableNode::DisplayNodeReferenceRole = "display";
+const char* vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName = "displayNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
@@ -42,6 +42,18 @@ vtkMRMLDisplayableNode::vtkMRMLDisplayableNode()
 //----------------------------------------------------------------------------
 vtkMRMLDisplayableNode::~vtkMRMLDisplayableNode()
 {
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLDisplayableNode::GetDisplayNodeReferenceRole()
+{
+  return vtkMRMLDisplayableNode::DisplayNodeReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLDisplayableNode::GetDisplayNodeReferenceMRMLAttributeName()
+{
+  return vtkMRMLDisplayableNode::DisplayNodeReferenceMRMLAttributeName;
 }
 
 //----------------------------------------------------------------------------

@@ -34,8 +34,8 @@ vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveViewID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveLayoutID);
 vtkCxxSetReferenceStringMacro(vtkMRMLSelectionNode, ActiveVolumeID);
 
-char vtkMRMLSelectionNode::UnitNodeReferenceRole[] = "unit/";
-char vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName[] = "UnitNodeRef";
+const char* vtkMRMLSelectionNode::UnitNodeReferenceRole = "unit/";
+const char* vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName = "UnitNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLSelectionNode);
@@ -107,6 +107,18 @@ vtkMRMLSelectionNode::~vtkMRMLSelectionNode()
     delete [] this->ActiveLayoutID;
     this->ActiveLayoutID = NULL;
     }
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetUnitNodeReferenceRole()
+{
+  return vtkMRMLSelectionNode::UnitNodeReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLSelectionNode::GetUnitNodeReferenceMRMLAttributeName()
+{
+  return vtkMRMLSelectionNode::UnitNodeReferenceMRMLAttributeName;
 }
 
 //----------------------------------------------------------------------------

@@ -22,8 +22,8 @@ Version:   $Revision: 1.14 $
 #include <vtkMatrixToLinearTransform.h>
 #include <vtkMatrix4x4.h>
 
-char vtkMRMLTransformableNode::TransformNodeReferenceRole[] = "transform";
-char vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName[] = "transformNodeRef";
+const char* vtkMRMLTransformableNode::TransformNodeReferenceRole = "transform";
+const char* vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName = "transformNodeRef";
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::vtkMRMLTransformableNode()
@@ -38,6 +38,18 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
 //----------------------------------------------------------------------------
 vtkMRMLTransformableNode::~vtkMRMLTransformableNode()
 {
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformableNode::GetTransformNodeReferenceRole()
+{
+  return vtkMRMLTransformableNode::TransformNodeReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformableNode::GetTransformNodeReferenceMRMLAttributeName()
+{
+  return vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName;
 }
 
 //----------------------------------------------------------------------------
