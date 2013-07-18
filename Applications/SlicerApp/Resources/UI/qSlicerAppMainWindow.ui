@@ -376,13 +376,13 @@
      <normaloff>:/Icons/Small/SlicerLoadData.png</normaloff>:/Icons/Small/SlicerLoadData.png</iconset>
    </property>
    <property name="text">
-    <string>Add Data</string>
+    <string>&amp;Add Data</string>
    </property>
    <property name="toolTip">
     <string>Raise an &quot;Add Data&quot; widget that allows you to select individual datasets to add to the existing scene. This load option is most useful when you want to load many different data types at once (volumes, models, etc.) which may not yet be described by a scene file.</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+O, Ctrl+A</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionFileAddVolume">
