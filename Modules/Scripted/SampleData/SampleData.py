@@ -29,6 +29,13 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
     if not slicer.app.commandOptions().noMainWindow :
       qt.QTimer.singleShot(0, self.addMenu);
 
+    # allow other modules to register sample data sources by appending
+    # instances or subclasses SampleDataSource objects on this list
+    try:
+      slicer.modules.sampleDataSources
+    except AttributeError:
+      slicer.modules.sampleDataSources = {}
+
 
   def addMenu(self):
     actionIcon = self.parent.icon
@@ -46,6 +53,23 @@ This work is supported by NA-MIC, NAC, BIRN, NCIGT, and the Slicer Community. Se
   def select(self):
     m = slicer.util.mainWindow()
     m.moduleSelector().selectModule('SampleData')
+
+#
+# SampleDataSource
+#
+class SampleDataSource:
+  def __init__(self,sampleName=None,uris=None,fileNames=None,nodeNames=None,customDownloader=None):
+    self.sampleName = sampleName
+    if isinstance(uris, basestring):
+      uris = [uris,]
+      fileNames = [fileNames,]
+      nodeNames = [nodeNames,]
+    self.uris = uris
+    self.fileNames = fileNames
+    self.nodeNames = nodeNames
+    self.customDownloader = customDownloader
+    if len(uris) != len(fileNames) or len(uris) != len(nodeNames):
+      raise Exception("All fields of sample data source must have the same length")
 
 
 #
@@ -79,24 +103,27 @@ class SampleDataWidget:
     pass
 
   def setup(self):
-    samples = (
-        ( 'MRHead', self.logic.downloadMRHead ),
-        ( 'CTChest', self.logic.downloadCTChest ),
-        ( 'CTACardio', self.logic.downloadCTACardio ),
-        ( 'DTIBrain', self.logic.downloadDTIBrain ),
-        ( 'MRBrainTumor Time Point 1', self.logic.downloadMRBrainTumor1 ),
-        ( 'MRBrainTumor Time Point 2', self.logic.downloadMRBrainTumor2 ),
-        ( 'Baseline Volume', self.logic.downloadWhiteMatterExplorationBaselineVolume),
-        ( 'DTI Volume', self.logic.downloadWhiteMatterExplorationDTIVolume),
-        ( 'DWI Volume', self.logic.downloadDiffusionMRIDWIVolume),
-        ( 'CTAbdomen', self.logic.downloadAbdominalCTVolume),
-        ( 'CBCTDentalSurgery', self.logic.downloadDentalSurgery),
-      )
-    for sample in samples:
-      b = qt.QPushButton('Download %s' % sample[0] )
-      b.setObjectName('%sPushButton' % sample[0].replace(' ',''))
-      self.layout.addWidget(b)
-      b.connect('clicked()', sample[1])
+
+    categories = slicer.modules.sampleDataSources.keys()
+    categories.sort()
+    if 'BuiltIn' in categories:
+      categories.remove('BuiltIn')
+    categories.insert(0,'BuiltIn')
+    for category in categories:
+      frame = ctk.ctkCollapsibleGroupBox(self.parent)
+      self.layout.addWidget(frame)
+      frame.title = category
+      layout = qt.QVBoxLayout(frame)
+      for source in slicer.modules.sampleDataSources[category]:
+        name = source.sampleName
+        if not name:
+          name = source.nodeNames[0]
+        b = qt.QPushButton('Download %s' % name)
+        layout.addWidget(b)
+        if source.customDownloader:
+          b.connect('clicked()', source.customDownloader)
+        else:
+          b.connect('clicked()', lambda s=source: self.logic.downloadFromSource(s))
 
     self.log = qt.QTextEdit()
     self.log.readOnly = True
@@ -118,71 +145,118 @@ class SampleDataWidget:
 #
 
 class SampleDataLogic:
+  """Manage the slicer.modules.sampleDataSources dictionary.
+  The dictionary keys are categories of sample data sources.
+  The BuiltIn category is managed here.  Modules or extensions can
+  register their own sample data by creating instances of the
+  SampleDataSource class.  These instances should be stored in a
+  list that is assigned to a category following the model
+  used in registerBuiltInSampleDataSources below.
+  """
   def __init__(self, logMessage=None):
     if logMessage:
       self.logMessage = logMessage
+    self.registerBuiltInSampleDataSources()
+
+  def registerBuiltInSampleDataSources(self):
+    """Fills in the pre-define sample data sources"""
+    sourceArguments = (
+        ('MRHead', 'http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MR-head.nrrd', 'MRHead'),
+        ('CTChest', 'http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CT-chest.nrrd', 'CTChest'),
+        ('CTACardio', 'http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTA-cardio.nrrd', 'CTACardio'),
+        ('DTIBrain', 'http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTI-Brain.nrrd', 'DTIBrain'),
+        ('MRBrainTumor1', 'http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd', 'MRBrainTumor1'),
+        ('MRBrainTumor2', 'http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd', 'MRBrainTumor2'),
+        ('BaselineVolume', 'http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd', 'BaselineVolume'),
+        ('DTIVolume', ('http://slicer.kitware.com/midas3/download/?items=2011,1', 'http://slicer.kitware.com/midas3/download/?items=2010,1', ), ('DTIVolume.raw.gz', 'DTIVolume.nhdr'), (None, 'DTIVolume')),
+        ('DWIVolume', ('http://slicer.kitware.com/midas3/download/?items=2142,1', 'http://slicer.kitware.com/midas3/download/?items=2141,1'), ('dwi.raw.gz', 'dwi.nhdr'), (None, 'dwi')),
+        ('Panoramix', 'http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd', 'Panoramix-cropped'),
+        ('CBCTDentalSurgery', ('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz', 'http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz',), ('PreDentalSurgery.gipl.gz', 'PostDentalSurgery.gipl.gz'), ('PreDentalSurgery', 'PostDentalSurgery')),
+        )
+
+    if not slicer.modules.sampleDataSources.has_key('BuiltIn'):
+      slicer.modules.sampleDataSources['BuiltIn'] = []
+    for sourceArgument in sourceArguments:
+      slicer.modules.sampleDataSources['BuiltIn'].append(SampleDataSource(*sourceArgument))
+
+  def downloadFileIntoCache(self, uri, name):
+    """Given a uri and and a filename, download the data into
+    a file of the given name in the scene's cache"""
+    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
+    return self.downloadFile(uri, destFolderPath, name)
+
+  def downloadSourceIntoCache(self, source):
+    """Download all files for the given source and return a
+    list of file paths for the results"""
+    filePaths = []
+    for uri,fileName in zip(source.uris,source.fileNames):
+      filePaths.append(self.downloadFileIntoCache(uri, fileName))
+    return filePaths
+
+  def downloadFromSource(self,source):
+    """Given an instance of SampleDataSource, downloads the data
+    if needed and loads the results in slicer"""
+    nodes = []
+    for uri,fileName,nodeName in zip(source.uris,source.fileNames,source.nodeNames):
+      filePath = self.downloadFileIntoCache(uri, fileName)
+      if nodeName:
+        nodes.append(self.loadVolume(filePath, nodeName))
+    return nodes
+
+  def sourceForSampleName(self,sampleName):
+    """For a given sample name this will search the available sources.
+    Returns SampleDataSource instance."""
+    for category in slicer.modules.sampleDataSources.keys():
+      for source in slicer.modules.sampleDataSources[category]:
+        if sampleName == source.sampleName:
+          return source
+    return None
+
+  def downloadSample(self,sampleName):
+    """For a given sample name this will search the available sources
+    and load it if it is available.  Returns the loaded nodes."""
+    source = self.sourceForSampleName(sampleName)
+    nodes = []
+    if source:
+      nodes = self.downloadFromSource(source)
+    return nodes
 
   def logMessage(self,message):
     print(message)
 
+  """Utility methods for backwards compatibility"""
   def downloadMRHead(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/4/43/MR-head.nrrd', 'MR-head.nrrd')
-    return self.loadVolume(filePath, 'MRHead')
+    return self.downloadSample('MRHead')
 
   def downloadCTChest(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/3/31/CT-chest.nrrd', 'CT-chest.nrrd')
-    return self.loadVolume(filePath, 'CTChest')
+    return self.downloadSample('CTChest')
 
   def downloadCTACardio(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/0/00/CTA-cardio.nrrd', 'CTA-cardio.nrrd')
-    return self.loadVolume(filePath, 'CTACardio')
+    return self.downloadSample('CTACardio')
 
   def downloadDTIBrain(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/0/01/DTI-Brain.nrrd', 'DTI-Brain.nrrd')
-    return self.loadVolume(filePath, 'DTIBrain')
+    return self.downloadSample('DTIBrain')
 
   def downloadMRBrainTumor1(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/5/59/RegLib_C01_1.nrrd', 'RegLib_C01_1.nrrd')
-    return self.loadVolume(filePath, 'MRBrainTumor1')
+    return self.downloadSample('MRBrainTumor1')
 
   def downloadMRBrainTumor2(self):
-    filePath = self.downloadFileIntoCache('http://www.slicer.org/slicerWiki/images/e/e3/RegLib_C01_2.nrrd', 'RegLib_C01_2.nrrd')
-    return self.loadVolume(filePath, 'MRBrainTumor2')
+    return self.downloadSample('MRBrainTumor2')
 
   def downloadWhiteMatterExplorationBaselineVolume(self):
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2009,1', 'BaselineVolume.nrrd')
-    return self.loadVolume(filePath, 'BaselineVolume')
+    return self.downloadSample('BaselineVolume')
 
   def downloadWhiteMatterExplorationDTIVolume(self):
-    self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2011,1', 'DTIVolume.raw.gz')
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2010,1', 'DTIVolume.nhdr')
-    return self.loadVolume(filePath, 'DTIVolume');
+    return self.downloadSample('DTIVolume');
 
   def downloadDiffusionMRIDWIVolume(self):
-    self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2142,1', 'dwi.raw.gz')
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=2141,1', 'dwi.nhdr')
-    return self.loadVolume(filePath, 'dwi');
+    return self.downloadSample('dwi');
 
   def downloadAbdominalCTVolume(self):
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/?items=9073,1', 'Panoramix-cropped.nrrd')
-    return self.loadVolume(filePath, 'Panoramix-cropped');
+    return self.downloadSample('Panoramix-cropped');
 
   def downloadDentalSurgery(self):
-    pre = self.downloadPreDentalSurgery()
-    post = self.downloadPostDentalSurgery()
-    return pre,post
-
-  def downloadPreDentalSurgery(self):
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/item/94510/Greyscale_presurg.gipl.gz', 'PreDentalSurgery.gipl.gz')
-    return self.loadVolume(filePath, 'PreDentalSurgery');
-
-  def downloadPostDentalSurgery(self):
-    filePath = self.downloadFileIntoCache('http://slicer.kitware.com/midas3/download/item/94509/Greyscale_postsurg.gipl.gz', 'PostDentalSurgery.gipl.gz')
-    return self.loadVolume(filePath, 'PostDentalSurgery');
-
-  def downloadFileIntoCache(self, uri, name):
-    destFolderPath = slicer.mrmlScene.GetCacheManager().GetRemoteCacheDirectory()
-    return self.downloadFile(uri, destFolderPath, name)
+    return self.downloadSample('CBCTDentalSurgery');
 
   def humanFormatSize(self,size):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""

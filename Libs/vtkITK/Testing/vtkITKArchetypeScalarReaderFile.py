@@ -17,8 +17,8 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
     def setUp(self):
         import SampleData
         sampleDataLogic = SampleData.SampleDataLogic()
-        dti = sampleDataLogic.downloadMRHead()
-        self.file_name = dti.GetStorageNode().GetFileName()
+        brainSource = sampleDataLogic.sourceForSampleName('MRHead')
+        self.file_name = sampleDataLogic.downloadSourceIntoCache(brainSource)[0]
 
         self.ritk = vtkITK.vtkITKArchetypeImageSeriesScalarReader()
         self.ritk.SetUseOrientationFromFile(True)

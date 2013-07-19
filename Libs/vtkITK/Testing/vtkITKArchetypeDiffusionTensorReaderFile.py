@@ -17,8 +17,8 @@ class vtkITKReaderAgainstNRRDReader(unittest.TestCase):
     def setUp(self):
         import SampleData
         sampleDataLogic = SampleData.SampleDataLogic()
-        dti = sampleDataLogic.downloadDTIBrain()
-        self.file_name = dti.GetStorageNode().GetFileName()
+        dtiSource = sampleDataLogic.sourceForSampleName('DTIBrain')
+        self.file_name = sampleDataLogic.downloadSourceIntoCache(dtiSource)[0]
 
         self.ritk = vtkITK.vtkITKArchetypeDiffusionTensorImageReaderFile()
         self.ritk.SetUseOrientationFromFile(True)
