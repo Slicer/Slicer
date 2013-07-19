@@ -2,7 +2,7 @@
 <executable>
   <category>Surface Models</category>
   <title>Model To Label Map</title>
-  <description><![CDATA[Intersects an input model with an reference volume and produces an output label map.]]></description>
+  <description><![CDATA[Intersects an input model with an reference volume and produces an output label map. Flood fill from the model's center of mass is used, open models or ones with multiple pieces will not work well. The label map is constrained to be unsigned char, so the input label value is only valid in the range 0-255.]]></description>
   <version>0.1.0.$Revision: 8643 $(alpha)</version>
   <documentation-url>http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Modules/ModelToLabelMap</documentation-url>
   <license/>
@@ -20,11 +20,16 @@
     </float>
     <integer>
       <name>labelValue</name>
-      <description><![CDATA[The integer label value to use in the output label map.]]></description>
+      <description><![CDATA[The unsigned char label value to use in the output label map.]]></description>
       <label>Label value</label>
       <flag>l</flag>
       <longflag>labelValue</longflag>
       <default>255</default>
+      <constraints>
+       <minimum>0</minimum>
+       <maximum>255</maximum>
+       <step>1</step>
+      </constraints>
     </integer>
   </parameters>
   <parameters>
@@ -49,7 +54,7 @@
       <label>Output Volume</label>
       <channel>output</channel>
       <index>2</index>
-      <description><![CDATA[The label volume]]></description>
+      <description><![CDATA[Unsigned char label map volume]]></description>
     </image>
   </parameters>
 </executable>
