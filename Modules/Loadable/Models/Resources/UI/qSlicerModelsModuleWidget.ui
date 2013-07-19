@@ -51,6 +51,16 @@
          </spacer>
         </item>
         <item>
+         <widget class="ctkSearchBox" name="ScrollToModelSearchBox">
+          <property name="placeholderText">
+           <string>Scroll to...</string>
+          </property>
+          <property name="showSearchIcon">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="hideAllModelsButton">
           <property name="toolTip">
            <string>Turn the visibility off on all models (does not include hierarchies)</string>
@@ -257,6 +267,11 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

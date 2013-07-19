@@ -86,6 +86,13 @@ void qSlicerModelsModuleWidget::setup()
   Q_D(qSlicerModelsModuleWidget);
 
   d->setupUi(this);
+
+  // Search model
+  connect(d->ScrollToModelSearchBox, SIGNAL(textChanged(QString)),
+          this, SLOT(scrollToModel(QString)));
+  connect(d->ScrollToModelSearchBox, SIGNAL(returnPressed()),
+          this, SLOT(scrollToModel()));
+
   d->ClipModelsNodeComboBox->setVisible(false);
 
   this->updateTreeViewModel();
@@ -370,4 +377,38 @@ void qSlicerModelsModuleWidget::hideAllModels()
     {
     modelsLogic->SetAllModelsVisibility(0);
     }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::scrollToModel(const QString& modelName, bool next)
+{
+  Q_D(qSlicerModelsModuleWidget);
+  QModelIndex startIndex = d->ModelHierarchyTreeView->model()->index(0,0);
+  QModelIndexList matchingModels = d->ModelHierarchyTreeView->model()->match(
+    startIndex,
+    Qt::DisplayRole, modelName, -1,
+    Qt::MatchContains|Qt::MatchWrap|Qt::MatchRecursive);
+  if (!matchingModels.size())
+    {
+    return;
+    }
+  int lastSearch = matchingModels.indexOf(
+    d->ModelHierarchyTreeView->selectionModel()->currentIndex());
+  if (lastSearch == -1 || next)
+    {
+    ++lastSearch;
+    }
+  int newSearch = lastSearch % matchingModels.size();
+  QModelIndex modelIndex = matchingModels[newSearch];
+  d->ModelHierarchyTreeView->scrollTo(
+    modelIndex, QAbstractItemView::PositionAtTop);
+  d->ModelHierarchyTreeView->selectionModel()->setCurrentIndex(
+    modelIndex, QItemSelectionModel::Current);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerModelsModuleWidget::scrollToModel()
+{
+  Q_D(qSlicerModelsModuleWidget);
+  this->scrollToModel(d->ScrollToModelSearchBox->text(), true);
 }

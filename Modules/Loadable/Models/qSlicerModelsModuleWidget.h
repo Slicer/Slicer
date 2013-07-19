@@ -53,6 +53,16 @@ public slots:
   /// hide/show all the models in the scene
   void hideAllModels();
   void showAllModels();
+  /// Search the model nodes matching modelName, and if found ensure a matching
+  /// node is visible and current. If the current node matches modelName, then
+  /// make sure it visible (by scrolling and expanding as needed), if next is
+  /// true, then make the next matching node current and visible. If the
+  /// current node does not match, then make the first matching node current
+  /// and visible.
+  void scrollToModel(const QString& modelName, bool next = false);
+  /// Run the last search again enforcing "next" to true this time.
+  /// \sa scrollToModel()
+  void scrollToModel();
 
 protected:
   QScopedPointer<qSlicerModelsModuleWidgetPrivate> d_ptr;
