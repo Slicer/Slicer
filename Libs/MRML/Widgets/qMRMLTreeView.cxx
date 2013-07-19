@@ -261,6 +261,34 @@ void qMRMLTreeViewPrivate::saveChildrenExpandState(QModelIndex &parentIndex)
       }
 }
 
+//-----------------------------------------------------------------------------
+void qMRMLTreeViewPrivate::scrollTo(const QString& name, bool next)
+{
+  Q_Q(qMRMLTreeView);
+  this->LastScrollToName = name;
+  QModelIndex startIndex = q->model()->index(0,0);
+  QModelIndexList matchingModels = q->model()->match(
+    startIndex,
+    Qt::DisplayRole, name, -1,
+    Qt::MatchContains|Qt::MatchWrap|Qt::MatchRecursive);
+  if (!matchingModels.size())
+    {
+    return;
+    }
+  int lastSearch = matchingModels.indexOf(
+    q->selectionModel()->currentIndex());
+  if (lastSearch == -1 || next)
+    {
+    ++lastSearch;
+    }
+  int newSearch = lastSearch % matchingModels.size();
+  QModelIndex modelIndex = matchingModels[newSearch];
+  q->scrollTo(
+    modelIndex, QAbstractItemView::PositionAtTop);
+  q->selectionModel()->setCurrentIndex(
+    modelIndex, QItemSelectionModel::Current);
+}
+
 //------------------------------------------------------------------------------
 // qMRMLTreeView
 //------------------------------------------------------------------------------
@@ -968,6 +996,21 @@ QModelIndexList qMRMLTreeView::removeChildren(const QModelIndexList& indexes)
       }
     }
   return noAncestorIndexList;
+}
+
+
+//-----------------------------------------------------------------------------
+void qMRMLTreeView::scrollTo(const QString& name)
+{
+  Q_D(qMRMLTreeView);
+  d->scrollTo(name, false);
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLTreeView::scrollToNext()
+{
+  Q_D(qMRMLTreeView);
+  d->scrollTo(d->LastScrollToName, true);
 }
 
 //------------------------------------------------------------------------------

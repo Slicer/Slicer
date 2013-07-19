@@ -50,6 +50,7 @@ public:
   /// Save the current expansion state of children nodes of a
   /// vtkMRMLDisplayableHierarchyNode
   void saveChildrenExpandState(QModelIndex& parentIndex);
+  void scrollTo(const QString& name, bool next);
 
   qMRMLSceneModel*           SceneModel;
   qMRMLSortFilterProxyModel* SortFilterModel;
@@ -59,6 +60,7 @@ public:
   QSize                      TreeViewMinSizeHint;
   bool                       ShowScene;
   bool                       ShowRootNode;
+  QString                    LastScrollToName;
 
   QMenu*                     NodeMenu;
   QAction*                   RenameAction;

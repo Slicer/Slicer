@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Models Module</string>
+   <string>Models</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
@@ -385,6 +385,38 @@
     <hint type="destinationlabel">
      <x>528</x>
      <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ScrollToModelSearchBox</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ModelHierarchyTreeView</receiver>
+   <slot>scrollTo(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ScrollToModelSearchBox</sender>
+   <signal>returnPressed()</signal>
+   <receiver>ModelHierarchyTreeView</receiver>
+   <slot>scrollToNext()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>335</x>
+     <y>14</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>333</x>
+     <y>71</y>
     </hint>
    </hints>
   </connection>

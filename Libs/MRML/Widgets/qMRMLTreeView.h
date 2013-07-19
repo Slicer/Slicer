@@ -242,6 +242,8 @@ public:
 
   virtual bool clickDecoration(const QModelIndex& index);
 
+  using QTreeView::scrollTo;
+
 public slots:
   virtual void setMRMLScene(vtkMRMLScene* scene);
 
@@ -272,6 +274,20 @@ public slots:
   /// \sa setHideAll()
   inline void setDontHideAll(bool);
 
+  /// Search the nodes matching displayName; if found, ensure a matching
+  /// node is visible and current. If the current node matches displayName, then
+  /// make sure it is visible (by scrolling and expanding as needed). If the
+  /// current node does not match displayName, then make the first matching node
+  /// current and visible. This slot can be connected as-is with a QLineEdit or
+  /// a ctkSearchBox textChanged(QString) signal.
+  /// \sa scrollToNext()
+  void scrollTo(const QString& displayName);
+  /// Repeat the last scrollTo() command, and if more than one node was matching
+  /// select the next node.
+  /// This slot can be connected as-is with a QLineEdit or a ctkSearchBox
+  /// returnPressed() signal.
+  /// \sa scrollTo()
+  void scrollToNext();
 signals:
   void currentNodeChanged(vtkMRMLNode* node);
   void currentNodeDeleted(const QModelIndex& index);
