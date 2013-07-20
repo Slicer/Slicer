@@ -15,6 +15,9 @@ if(Slicer_USE_PYTHONQT_WITH_TCL)
     list(APPEND python_DEPENDENCIES tcl tk)
   endif()
 endif()
+if(PYTHON_ENABLE_SSL)
+  list(APPEND python_DEPENDENCIES OpenSSL)
+endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(python)
@@ -74,6 +77,18 @@ if(NOT DEFINED python_DIR)
       )
   endif()
 
+  if(PYTHON_ENABLE_SSL)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DENABLE_SSL:BOOL=ON
+      -DOPENSSL_INCLUDE_DIR:PATH=${EP_OpenSSL_INCLUDE_DIR}
+      -DOPENSSL_LIBRARIES:STRING=${EP_OpenSSL_LIBRARIES}
+      )
+  else()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
+      -DENABLE_SSL:BOOL=OFF
+      )
+  endif()
+
   # Force Python build to "Release".
   set(SAVED_CMAKE_CFG_INTDIR ${CMAKE_CFG_INTDIR})
   set(CMAKE_CFG_INTDIR "Release")
@@ -83,6 +98,7 @@ if(NOT DEFINED python_DIR)
     GIT_TAG "892c95b5024a52ebd47a12292ff74ec7d713db24"
     SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}
     BINARY_DIR ${proj}-build
+    LIST_SEPARATOR ${ep_list_separator}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
@@ -117,22 +133,28 @@ if(NOT DEFINED python_DIR)
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/bin)
     set(slicer_PYTHON_INCLUDE ${python_DIR}/include)
     set(slicer_PYTHON_LIBRARY ${python_DIR}/libs/python27.lib)
-    set(slicer_PYTHON_EXECUTABLE ${python_DIR}/bin/python.exe)
-    set(slicer_PYTHON_REAL_EXECUTABLE ${slicer_PYTHON_EXECUTABLE})
+    set(slicer_PYTHON_EXECUTABLE ${python_DIR}/bin/customPython.exe)
+    set(slicer_PYTHON_REAL_EXECUTABLE ${python_DIR}/bin/python.exe)
   else()
     message(FATAL_ERROR "Unknown system !")
   endif()
 
-  if(UNIX)
-    configure_file(
-      SuperBuild/python_customPython_configure.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
-      @ONLY)
-    ExternalProject_Add_Step(${proj} python_customPython_configure
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
-      DEPENDEES install
-      )
+  # Configure python launcher
+  configure_file(
+    SuperBuild/python_customPython_configure.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
+    @ONLY)
+  set(python_customPython_configure_args)
+
+  if(PYTHON_ENABLE_SSL)
+    set(python_customPython_configure_args -DOpenSSL_EXPORT_LIBRARY_DIR:PATH=${EP_OpenSSL_EXPORT_LIBRARY_DIR})
   endif()
+
+  ExternalProject_Add_Step(${proj} python_customPython_configure
+    COMMAND ${CMAKE_COMMAND} ${python_customPython_configure_args}
+      -P ${CMAKE_CURRENT_BINARY_DIR}/python_customPython_configure.cmake
+    DEPENDEES install
+    )
 
   # Since fixup_bundle expects the library to be writable, let's add an extra step
   # to make sure it's the case.

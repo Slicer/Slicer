@@ -1,0 +1,78 @@
+
+Overview
+========
+
+This folder contains "Slicer.crt" file bundling together X.509v3 certificates (*.pem). Each one
+of these X.509v3 certificate identifies a Certificate authority.
+
+When establishing a connection with a website served over https, this one will present
+a digitial certificate allowing to confirm the "digitial identity" of its associated public key
+later used to establish the secured connection [1].
+
+This digital certificate could either be signed or self-signed [2]. By default, the browser
+rejects self-signed certificates and accepts only the one signed by a trusted Certificate authority.
+
+(1) http://en.wikipedia.org/wiki/Public_key_certificate
+(2) http://en.wikipedia.org/wiki/Self-signed_certificate
+
+
+Certificate authority
+=====================
+
+Certificate authority (CA), is an entity that issues digital certificates. The digital certificate
+certifies the ownership of a public key by the named subject of the certificate. This allows others
+(relying parties) to rely upon signatures or assertions made by the private key that corresponds to
+the public key that is certified.
+
+Source: https://en.wikipedia.org/wiki/Certificate_authority
+
+
+Certificate Bundle generation
+=============================
+
+Re-using the scripts provided by BLFS (Beyond Linux From Scratch) [3], the "Slicer.crt" can easily
+be (re-)generated.
+
+
+Step1: Download the list of trusted CAs from mozilla website [4]
+
+ certhost='http://mxr.mozilla.org'                        &&
+ certdir='/mozilla/source/security/nss/lib/ckfw/builtins' &&
+ url="$certhost$certdir/certdata.txt?raw=1"               &&
+ wget --output-document certdata.txt $url                 &&
+ unset certhost certdir url
+
+
+Step2: Generate "Slicer.crt"
+
+ ./make-ca.sh                                         &&
+ ./remove-expired-certs.sh certs                      &&
+ REVISION=$(grep CVS_ID certdata.txt | cut -f4 -d'$') &&
+ VERSION=$(echo $REVISION | cut -f2 -d" ")            &&
+ mv "BLFS-ca-bundle-${VERSION}.crt"  "Slicer.crt"     &&
+ unset REVISION VERSION
+
+
+Step3: Clean-up
+
+ rm -rf certs                               &&
+ rm certdata.txt
+
+
+Slicer and certificates
+=======================
+
+Within Slicer, secured http connection could be established using:
+
+1) QWebView:
+
+ w = slicer.qSlicerWebWidget()
+ w.show()
+ v = w.webView()
+ v.setUrl(qt.QUrl("https://www.eff.org/https-everywhere"))
+
+2) QNetworkManager (See qSlicerSslTest.cxx)
+
+3) Python libraries like urllib
+
+4) curl [Not yet supported]

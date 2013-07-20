@@ -6,4 +6,5 @@ path=@slicer_PYTHON_REAL_EXECUTABLE@
 
 [LibraryPaths]
 1\path=@slicer_PYTHON_SHARED_LIBRARY_DIR@
-size=1
+2\path=@OpenSSL_EXPORT_LIBRARY_DIR@
+size=2

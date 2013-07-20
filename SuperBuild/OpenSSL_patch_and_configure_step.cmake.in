@@ -1,0 +1,60 @@
+
+#------------------------------------------------------------------------------
+function(write_logs_and_check_result stepname result output error)
+
+  # Write logs
+  foreach(logtype "error" "output")
+    set(${logtype}_file "@CMAKE_BINARY_DIR@/@proj@_${stepname}_step_${logtype}.txt")
+    file(WRITE ${${logtype}_file} ${${logtype}})
+  endforeach()
+
+  # Check result
+  if(NOT ${result} EQUAL 0)
+    message("OpenSSL Errors detected: \n${output}\n${error}")
+    message(FATAL_ERROR "Error in ${stepname} step of OpenSSL. See ${output_file} and ${error_file}")
+  endif()
+
+endfunction()
+
+function(apply_patch source_dir patch)
+  message(STATUS "Applying ${patch}")
+  execute_process(
+    COMMAND patch -p1 -d ${source_dir} -i "@CMAKE_CURRENT_LIST_DIR@/${patch}"
+    WORKING_DIRECTORY ${source_dir}
+    RESULT_VARIABLE result
+    OUTPUT_VARIABLE output
+    ERROR_VARIABLE error
+    )
+  write_logs_and_check_result("patch" ${result} "${output}" "${error}")
+  message(STATUS "Applying ${patch} - done")
+endfunction()
+
+
+#------------------------------------------------------------------------------
+set(EP_SOURCE_DIR "@EP_SOURCE_DIR@")
+
+#------------------------------------------------------------------------------
+# See https://raw.github.com/Alexpux/Qt-builds/master/patches/openssl/openssl-1.0.1-parallel-build.patch
+apply_patch(${EP_SOURCE_DIR} "OpenSSL-1.0.1-parallel-build.patch")
+
+#------------------------------------------------------------------------------
+set(stepname "configure")
+
+set(APPLE "@APPLE@")
+if(APPLE)
+  # Hint OpenSSL that we prefer a 64-bit build.
+  set(ENV{KERNEL_BITS} "64")
+endif()
+
+message(STATUS "Configuring @proj@")
+execute_process(
+  COMMAND sh config
+    zlib -lzlib -L@SLICER_ZLIB_LIBRARY_DIR@
+    shared
+  WORKING_DIRECTORY ${EP_SOURCE_DIR}
+  RESULT_VARIABLE result
+  OUTPUT_VARIABLE output
+  ERROR_VARIABLE error
+  )
+write_logs_and_check_result(${stepname} ${result} "${output}" "${error}")
+message(STATUS "Configuring @proj@ - done")

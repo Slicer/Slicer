@@ -179,6 +179,14 @@ function(fixup_bundle_with_plugins app)
       )
   endif()
 
+  set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
+  if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+    list(APPEND candiates_pattern
+      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_hashlib.so"
+      "${app_dir}/Contents/lib/Python/lib/python2.7/lib-dynload/_ssl.so"
+      )
+  endif()
+
   set(Slicer_USE_PYTHONQT_WITH_TCL "@Slicer_USE_PYTHONQT_WITH_TCL@")
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     list(APPEND candiates_pattern
@@ -239,6 +247,10 @@ function(fixup_bundle_with_plugins app)
   endif()
   if(Slicer_USE_PYTHONQT)
     _fixup_paths_append(libs_path "@PYTHON_LIBRARY_PATH@")
+  endif()
+  set(Slicer_USE_PYTHONQT_WITH_OPENSSL "@Slicer_USE_PYTHONQT_WITH_OPENSSL@")
+  if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+    _fixup_paths_append(libs_path "@OpenSSL_EXPORT_LIBRARY_DIR@")
   endif()
   if(Slicer_USE_PYTHONQT_WITH_TCL)
     _fixup_paths_append(libs_path "@Slicer_TCL_DIR@/lib/")

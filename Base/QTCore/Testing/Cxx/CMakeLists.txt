@@ -11,6 +11,7 @@ if(BUILD_TESTING)
     qSlicerCoreIOManagerTest1.cxx
     qSlicerLoadableModuleFactoryTest1.cxx
     qSlicerUtilsTest1.cxx
+    qSlicerSslTest.cxx
     )
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     list(APPEND KIT_TEST_SRCS
@@ -26,6 +27,10 @@ if(BUILD_TESTING)
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
     ${KIT_TEST_SRCS}
     EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
+    )
+
+  QT4_GENERATE_MOCS(
+    qSlicerSslTest.cxx
     )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -60,6 +65,7 @@ if(BUILD_TESTING)
   simple_test( qSlicerAbstractCoreModuleTest1 )
   simple_test( qSlicerLoadableModuleFactoryTest1 )
   simple_test( qSlicerUtilsTest1 )
+  simple_test( qSlicerSslTest )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     simple_test( qSlicerExtensionsManagerModelTest )

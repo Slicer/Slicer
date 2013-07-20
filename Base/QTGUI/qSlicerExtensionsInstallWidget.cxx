@@ -21,25 +21,18 @@
 // Qt includes
 #include <QDebug>
 #include <QDesktopServices>
-#include <QNetworkCookieJar>
-#include <QNetworkReply>
-#include <QSettings>
-#include <QTime>
 #include <QWebFrame>
+#include <QWebView>
 
 // CTK includes
 #include <ctkPimpl.h>
 
-// QtCore includes
-#include <qSlicerPersistentCookieJar.h>
-
 // QtGUI includes
 #include "qSlicerExtensionsInstallWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
-#include "ui_qSlicerExtensionsInstallWidget.h"
 
 //-----------------------------------------------------------------------------
-class qSlicerExtensionsInstallWidgetPrivate: public Ui_qSlicerExtensionsInstallWidget
+class qSlicerExtensionsInstallWidgetPrivate
 {
   Q_DECLARE_PUBLIC(qSlicerExtensionsInstallWidget);
 protected:
@@ -48,26 +41,13 @@ protected:
 public:
   qSlicerExtensionsInstallWidgetPrivate(qSlicerExtensionsInstallWidget& object);
 
-  void init();
-
   /// Return the URL allowing to retrieve the extension list page
   /// associated with the current architecture, operating system and slicer revision.
   QUrl extensionsListUrl();
 
   void setFailurePage(const QUrl &faultyUrl);
 
-  /// Convenient function to return the mainframe
-  QWebFrame* mainFrame();
-
-  /// Convenient function to evaluate JS in main frame context
-  QString evalJS(const QString &js);
-
-  /// Convenient method to set "document.webkitHidden" property
-  void setDocumentWebkitHidden(bool value);
-
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
-
-  QTime DownloadTime;
 
   QString SlicerRevision;
   QString SlicerOs;
@@ -79,42 +59,6 @@ qSlicerExtensionsInstallWidgetPrivate::qSlicerExtensionsInstallWidgetPrivate(qSl
   :q_ptr(&object)
 {
   this->ExtensionsManagerModel = 0;
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::init()
-{
-  Q_Q(qSlicerExtensionsInstallWidget);
-
-  this->setupUi(q);
-  this->WebView->installEventFilter(q);
-
-  QNetworkAccessManager * networkAccessManager = this->WebView->page()->networkAccessManager();;
-  Q_ASSERT(networkAccessManager);
-  networkAccessManager->setCookieJar(new qSlicerPersistentCookieJar());
-
-  QObject::connect(this->WebView, SIGNAL(loadStarted()),
-                   q, SLOT(onLoadStarted()));
-
-  QObject::connect(this->WebView, SIGNAL(loadFinished(bool)),
-                   q, SLOT(onLoadFinished(bool)));
-
-  QObject::connect(this->WebView, SIGNAL(loadProgress(int)),
-                   this->ProgressBar, SLOT(setValue(int)));
-
-  QObject::connect(this->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),
-                   q, SLOT(initJavascript()));
-
-  this->WebView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-
-  this->ProgressBar->setVisible(false);
-
-  this->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOn);
-
-  this->WebView->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
-
-  QObject::connect(this->WebView->page(), SIGNAL(linkClicked(QUrl)),
-                   q, SLOT(onLinkClicked(QUrl)));
 }
 
 // --------------------------------------------------------------------------
@@ -130,20 +74,9 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 }
 
 // --------------------------------------------------------------------------
-QWebFrame* qSlicerExtensionsInstallWidgetPrivate::mainFrame()
-{
-  return this->WebView->page()->mainFrame();
-}
-
-//-----------------------------------------------------------------------------
-QString qSlicerExtensionsInstallWidgetPrivate::evalJS(const QString &js)
-{
-  return this->mainFrame()->evaluateJavaScript(js).toString();
-}
-
-// --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QUrl& faultyUrl)
 {
+  Q_Q(qSlicerExtensionsInstallWidget);
   QString html =
       "<style type='text/css'>"
       "  div.viewWrapperSlicer{"
@@ -165,13 +98,7 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QUrl& faultyUrl
       "  </div>"
       "</div>";
 
-  this->WebView->setHtml(html.arg(faultyUrl.toString()));
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::setDocumentWebkitHidden(bool value)
-{
-  this->evalJS(QString("document.webkitHidden = %1").arg(value ? "true" : "false"));
+  q->webView()->setHtml(html.arg(faultyUrl.toString()));
 }
 
 // --------------------------------------------------------------------------
@@ -179,8 +106,6 @@ qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerExtensionsInstallWidgetPrivate(*this))
 {
-  Q_D(qSlicerExtensionsInstallWidget);
-  d->init();
 }
 
 // --------------------------------------------------------------------------
@@ -263,21 +188,19 @@ void qSlicerExtensionsInstallWidget::refresh()
     {
     return;
     }
-  d->WebView->setUrl(d->extensionsListUrl());
+  this->webView()->setUrl(d->extensionsListUrl());
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onExtensionInstalled(const QString& extensionName)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
-  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'ScheduleUninstall')").arg(extensionName));
+  this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'ScheduleUninstall')").arg(extensionName));
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onExtensionScheduledForUninstall(const QString& extensionName)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
-  d->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'CancelScheduledForUninstall')").arg(extensionName));
+  this->evalJS(QString("midas.slicerappstore.setExtensionButtonState('%1', 'CancelScheduledForUninstall')").arg(extensionName));
 }
 
 // -------------------------------------------------------------------------
@@ -298,8 +221,6 @@ void qSlicerExtensionsInstallWidget::onSlicerRequirementsChanged(const QString& 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErrorLogLevel::LogLevels level)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
-
   QString delay = "2500";
   QString state;
   if (level == ctkErrorLogLevel::Warning)
@@ -313,77 +234,23 @@ void qSlicerExtensionsInstallWidget::onMessageLogged(const QString& text, ctkErr
     state = "error";
     }
 
-  d->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onDownloadStarted(QNetworkReply* reply)
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-  connect(reply, SIGNAL(downloadProgress(qint64,qint64)),
-          SLOT(onDownloadProgress(qint64,qint64)));
-  d->DownloadTime.start();
-  d->ProgressBar->setVisible(true);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-
-  // Calculate the download speed
-  double speed = bytesReceived * 1000.0 / d->DownloadTime.elapsed();
-  QString unit;
-  if (speed < 1024)
-    {
-    unit = "bytes/sec";
-    }
-  else if (speed < 1024*1024) {
-    speed /= 1024;
-    unit = "kB/s";
-    }
-  else
-    {
-    speed /= 1024*1024;
-    unit = "MB/s";
-    }
-
-  d->ProgressBar->setFormat(QString("%p% (%1 %2)").arg(speed, 3, 'f', 1).arg(unit));
-  d->ProgressBar->setMaximum(bytesTotal);
-  d->ProgressBar->setValue(bytesReceived);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onDownloadFinished(QNetworkReply* reply)
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-  Q_UNUSED(reply);
-  d->ProgressBar->reset();
-  d->ProgressBar->setVisible(false);
+  this->evalJS(QString("midas.createNotice('%1', %2, '%3')").arg(text).arg(delay).arg(state));
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::initJavascript()
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  d->setDocumentWebkitHidden(!d->WebView->isVisible());
-  d->mainFrame()->addToJavaScriptWindowObject("extensions_manager_model", d->ExtensionsManagerModel);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidget::onLoadStarted()
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-  d->ProgressBar->setFormat("%p%");
-  d->ProgressBar->setVisible(true);
+  this->Superclass::initJavascript();
+  this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
+        "extensions_manager_model", d->ExtensionsManagerModel);
 }
 
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 {
   Q_D(qSlicerExtensionsInstallWidget);
-  d->ProgressBar->reset();
-  d->ProgressBar->setVisible(false);
+  this->Superclass::onLoadFinished(ok);
   if(!ok)
     {
     d->setFailurePage(d->extensionsListUrl().toString());
@@ -393,10 +260,9 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
 // --------------------------------------------------------------------------
 void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
 {
-  Q_D(qSlicerExtensionsInstallWidget);
   if(url.host() == this->extensionsManagerModel()->serverUrl().host())
     {
-    d->WebView->load(url);
+    this->Superclass::onLinkClicked(url);
     }
   else
     {
@@ -405,18 +271,4 @@ void qSlicerExtensionsInstallWidget::onLinkClicked(const QUrl& url)
       qWarning() << "Failed to open url:" << url;
       }
     }
-}
-
-// --------------------------------------------------------------------------
-bool qSlicerExtensionsInstallWidget::eventFilter(QObject* obj, QEvent* event)
-{
-  Q_D(qSlicerExtensionsInstallWidget);
-  Q_ASSERT(d->WebView == obj);
-  if (d->WebView == obj && !event->spontaneous() &&
-      (event->type() == QEvent::Show || event->type() == QEvent::Hide))
-    {
-    d->setDocumentWebkitHidden(!d->WebView->isVisible());
-    d->evalJS("$.event.trigger({type: 'webkitvisibilitychange'})"); // Assume jquery is available
-    }
-  return QObject::eventFilter(obj, event);
 }

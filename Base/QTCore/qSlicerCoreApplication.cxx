@@ -29,6 +29,8 @@
 #include <QTimer>
 #include <QNetworkProxyFactory>
 #include <QSettings>
+#include <QSslCertificate>
+#include <QSslSocket>
 #include <QTranslator>
 
 // CTK includes
@@ -173,6 +175,12 @@ void qSlicerCoreApplicationPrivate::init()
                 "your debugger to process [PID %1]");
     QMessageBox::information(0, "Attach process", msg.arg(QCoreApplication::applicationPid()));
     }
+
+  if (!QSslSocket::supportsSsl())
+    {
+    qDebug() << "[SSL] SSL support disabled - Failed to load SSL library !";
+    }
+  qSlicerCoreApplication::loadCaCertificates();
 
   QCoreApplication::setOrganizationDomain(Slicer_ORGANIZATION_DOMAIN);
   QCoreApplication::setOrganizationName(Slicer_ORGANIZATION_NAME);
@@ -1544,4 +1552,15 @@ void qSlicerCoreApplication::loadLanguage()
       }
     }
 #endif
+}
+
+//----------------------------------------------------------------------------
+bool qSlicerCoreApplication::loadCaCertificates()
+{
+  if (QSslSocket::supportsSsl() && QSslSocket::defaultCaCertificates().empty())
+    {
+    qDebug() << "[SSL] No default CA certificates found - Loading Slicer.crt";
+    QSslSocket::setDefaultCaCertificates(QSslCertificate::fromPath(":/Certs/Slicer.crt"));
+    }
+  return !QSslSocket::defaultCaCertificates().empty();
 }

@@ -83,6 +83,8 @@ set(KIT_SRCS
   qSlicerViewersToolBar.cxx
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebWidget.cxx
+  qSlicerWebWidget.h
   qSlicerWidget.cxx
   qSlicerWidget.h
   )
@@ -184,6 +186,7 @@ set(KIT_MOC_SRCS
   qSlicerSettingsModulesPanel.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
+  qSlicerWebWidget.h
   qSlicerWidget.h
   )
 
@@ -236,11 +239,11 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSettingsGeneralPanel.ui
   Resources/UI/qSlicerSettingsInternationalizationPanel.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
+  Resources/UI/qSlicerWebWidget.ui
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_UI_SRCS
     Resources/UI/qSlicerExtensionsButtonBox.ui
-    Resources/UI/qSlicerExtensionsInstallWidget.ui
     Resources/UI/qSlicerExtensionsManageWidget.ui
     Resources/UI/qSlicerExtensionsManagerDialog.ui
     Resources/UI/qSlicerExtensionsManagerWidget.ui
