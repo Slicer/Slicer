@@ -40,12 +40,16 @@ if(NOT DEFINED zlib_DIR)
     set(git_protocol "git")
   endif()
 
+  set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib)
+  set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/zlib-build)
+  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/zlib-install)
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY "${git_protocol}://github.com/commontk/zlib.git"
     GIT_TAG "66a753054b356da85e1838a081aa94287226823e"
-    SOURCE_DIR zlib
-    BINARY_DIR zlib-build
-    INSTALL_DIR zlib-install
+    SOURCE_DIR ${EP_SOURCE_DIR}
+    BINARY_DIR ${EP_BINARY_DIR}
+    INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ## CXX should not be needed, but it a cmake default test
@@ -58,13 +62,14 @@ if(NOT DEFINED zlib_DIR)
     DEPENDS
       ${zlib_DEPENDENCIES}
     )
-  set(zlib_DIR ${CMAKE_BINARY_DIR}/zlib-install)
+  set(zlib_DIR ${EP_INSTALL_DIR})
   set(SLICER_ZLIB_ROOT ${zlib_DIR})
   set(SLICER_ZLIB_INCLUDE_DIR ${zlib_DIR}/include )
+  set(SLICER_ZLIB_LIBRARY_DIR ${zlib_DIR}/lib)
   if(WIN32)
-    set(SLICER_ZLIB_LIBRARY     ${zlib_DIR}/lib/zlib.lib )
+    set(SLICER_ZLIB_LIBRARY     ${SLICER_ZLIB_LIBRARY_DIR}/zlib.lib )
   else()
-    set(SLICER_ZLIB_LIBRARY     ${zlib_DIR}/lib/libzlib.a )
+    set(SLICER_ZLIB_LIBRARY     ${SLICER_ZLIB_LIBRARY_DIR}/libzlib.a )
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,
