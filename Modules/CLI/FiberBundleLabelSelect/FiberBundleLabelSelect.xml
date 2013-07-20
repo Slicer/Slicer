@@ -47,20 +47,42 @@ Fiber bundle label select allows a user to select tracts passing or not passing 
     
     <integer-vector>
       <name>PassLabel</name>
-      <label> Labels to pass through </label>
+      <label> Labels to include </label>
       <flag>-p</flag>
       <longflag>--pass</longflag>
       <description>Comma separated list of label values that defines pass region.</description>
     </integer-vector>
 
-    <integer-vector>
+    <string-enumeration>
+      <name>PassOperation</name>
+      <label> Combine include labels</label>
+      <description>And or Or logical operation used to combine include labels</description>
+      <flag>-i</flag>
+      <longflag>--includeoperation</longflag>
+      <default>OR</default>
+      <element>OR</element>
+      <element>AND</element>
+    </string-enumeration>
+
+   <integer-vector>
       <name>NotPassLabel</name>
-      <label> Labels not to pass through</label>
+      <label> Labels to exclude</label>
       <flag>-n</flag>
       <longflag>--nopass</longflag>
       <description>Comma separated list of label values that defines no pass region.</description>
       <default></default>
     </integer-vector>
+
+    <string-enumeration>
+      <name>NoPassOperation</name>
+      <label> Combine exclude labels</label>
+      <description>And or Or logical operation used to combine exclude labels</description>
+      <flag>-e</flag>
+      <longflag>--excludeoperation</longflag>
+      <default>OR</default>
+      <element>OR</element>
+      <element>AND</element>
+    </string-enumeration>
 
   </parameters>  
 </executable>

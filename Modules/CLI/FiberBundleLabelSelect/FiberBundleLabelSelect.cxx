@@ -41,6 +41,38 @@ int main( int argc, char * argv[] )
   
   try
   {
+
+  // Label operations
+  int includeOperation = 0; // 0-OR; 1-AND
+  if (PassOperation == std::string("OR"))
+    {
+    includeOperation = 0;
+    }
+  else if (PassOperation == std::string("AND"))
+    {
+    includeOperation = 1;
+    }
+  else
+    {
+    std::cerr << "unknown include operation";
+     EXIT_FAILURE;
+    }
+
+  int excludeOperation = 0; // 0-AND; 1-OR
+  if (NoPassOperation == std::string("OR"))
+    {
+    excludeOperation = 0;
+    }
+  else if (NoPassOperation == std::string("AND"))
+    {
+    excludeOperation = 1;
+    }
+  else
+    {
+    std::cerr << "unknown exclude operation";
+     EXIT_FAILURE;
+    }
+
   // Read in Label volume inputs
   vtkSmartPointer<vtkImageCast> imageCastLabel_A = vtkSmartPointer<vtkImageCast>::New();
   vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader> readerLabel_A = vtkSmartPointer<vtkITKArchetypeImageSeriesScalarReader>::New();
@@ -56,7 +88,6 @@ int main( int argc, char * argv[] )
   imageCastLabel_A->SetInput(readerLabel_A->GetOutput() );
   imageCastLabel_A->Update();
 
-  
   // Read in fiber bundle input to be selected.
   vtkSmartPointer<vtkXMLPolyDataReader> readerPD = vtkSmartPointer<vtkXMLPolyDataReader>::New();
   readerPD->SetFileName(InputFibers.c_str());
@@ -135,13 +166,25 @@ int main( int argc, char * argv[] )
       pt[2]= (int) floor(pIJK[2]);
       inPtr = (short *) imageCastLabel_A->GetOutput()->GetScalarPointer(pt);
 
-      for(label=0; label<NotPassLabel.size() && !nopass; label++)
+      if (excludeOperation == 0) // OR
         {
-        nopass = (*inPtr == NotPassLabel[label]);
+        for(label=0; label<NotPassLabel.size() && !nopass; label++)
+          {
+          nopass = (*inPtr == NotPassLabel[label]);
+          }
+        }
+      else if (excludeOperation == 1) // AND
+        {
+        bool nopassAll = (NotPassLabel.size() > 0);
+        for(label=0; label<NotPassLabel.size(); label++)
+          {
+          nopassAll = nopassAll & (*inPtr == NotPassLabel[label]);
+          }
+        nopass = nopassAll;
         }
       if (nopass)
         {
-        break; //Skip this one
+        break; //Skip this one, dont check points
         }
 
       if (PassLabel.size() == 0)
@@ -150,12 +193,29 @@ int main( int argc, char * argv[] )
         }
       else
         {
-        for(label=0; label<PassLabel.size() &&  !pass; label++)
+        if (includeOperation == 0) // OR
           {
-            pass = (*inPtr == PassLabel[label]);
+          for(label=0; label<PassLabel.size() &&  !pass; label++)
+            {
+              pass = (*inPtr == PassLabel[label]);
+            }
           }
+        else if (includeOperation == 1) // AND
+          {
+          bool passAll = true;
+          for(label=0; label<PassLabel.size(); label++)
+            {
+              if (*inPtr != PassLabel[label])
+                {
+                passAll = false;
+                break;
+                }
+            }
+          pass = passAll;
+          }
+
         }
-      }
+      } //for (j=0; j < npts; j++)
     addLine = pass && !nopass;
 
     addLines.push_back(addLine);
@@ -165,7 +225,7 @@ int main( int argc, char * argv[] )
       numNewPts += npts;
       numNewCells++;
       }
-    }
+    } //for (inCellId=0, inLines->InitTraversal(); 
   
   // Add lines
 
