@@ -88,7 +88,6 @@ qMRMLSliderWidget::qMRMLSliderWidget(QWidget* parentWidget)
   : Superclass(parentWidget)
   , d_ptr(new qMRMLSliderWidgetPrivate(*this))
 {
-  Q_D(qMRMLSliderWidget);
 }
 
 // --------------------------------------------------------------------------
