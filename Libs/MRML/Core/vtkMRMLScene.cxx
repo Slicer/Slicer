@@ -2524,7 +2524,7 @@ void vtkMRMLScene::CopyNodeInUndoStack(vtkMRMLNode *copyNode)
   vtkMRMLNode *snode = copyNode->CreateNodeInstance();
   if (snode != NULL)
     {
-    snode->CopyWithSceneWithoutModifiedEvent(copyNode);
+    snode->CopyWithScene(copyNode);
     }
   vtkCollection* undoScene = dynamic_cast < vtkCollection *>( this->UndoStack.back() );
   int nnodes = undoScene->GetNumberOfItems();

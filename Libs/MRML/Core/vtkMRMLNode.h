@@ -185,6 +185,11 @@ public:
   /// NOTE: Call this method in the subclass impementation
   virtual void Copy(vtkMRMLNode *node);
 
+  /// Copy the references of the node into this.
+  /// Existing references will be replaced if found in node, or removed if not
+  /// in node.
+  virtual void CopyReferences(vtkMRMLNode* node);
+
   /// 
   /// Copy everything (including Scene and ID) from another node of the same
   /// type.
@@ -397,19 +402,9 @@ public:
 
   void CopyWithSceneWithSingleModifiedEvent (vtkMRMLNode *node)
     {
-    int oldMode = this->GetDisableModifiedEvent();
-    this->DisableModifiedEventOn();
+    int oldMode = this->StartModify();
     this->CopyWithScene(node);
-    this->InvokePendingModifiedEvent();
-    this->SetDisableModifiedEvent(oldMode);
-    }
-
-  void CopyWithSceneWithoutModifiedEvent (vtkMRMLNode *node)
-    {
-    int oldMode = this->GetDisableModifiedEvent();
-    this->DisableModifiedEventOn();
-    this->CopyWithScene(node);
-    this->SetDisableModifiedEvent(oldMode);
+    this->EndModify(oldMode);
     }
 
   ///

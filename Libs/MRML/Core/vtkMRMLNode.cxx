@@ -174,10 +174,10 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     {
     this->SetName(node->GetName());
     }
-  this->HideFromEditors = node->HideFromEditors;
-  this->SaveWithScene = node->SaveWithScene ;
-  this->Selectable = node->Selectable;
-  this->AddToScene = node->AddToScene;
+  this->SetHideFromEditors( node->HideFromEditors );
+  this->SetSaveWithScene( node->SaveWithScene );
+  this->SetSelectable( node->Selectable );
+  this->SetAddToScene( node->AddToScene );
 
   if (node->GetSingletonTag())
     {
@@ -186,12 +186,36 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
   this->SetDescription(node->GetDescription());
   this->Attributes = node->Attributes;
 
-  // copy references
-  this->DeleteAllReferences();
+  this->CopyReferences(node);
+
+  this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLNode::CopyReferences(vtkMRMLNode* node)
+{
+  // Remove references if not existing in the node to copy
+  NodeReferencesType::iterator it;
+  for (it = this->NodeReferences.begin(); it != this->NodeReferences.end();)
+    {
+    if (node->NodeReferences.find(it->first) == node->NodeReferences.end())
+      {
+      const std::string referenceRoleToRemove = it->first;
+      this->RemoveAllNodeReferenceIDs(referenceRoleToRemove.c_str());
+      NodeReferencesType::iterator nextIt = it;
+      ++nextIt;
+      this->NodeReferences.erase(it);
+      it = nextIt;
+      }
+    else
+      {
+      ++it;
+      }
+    }
 
   this->NodeReferenceMRMLAttributeNames = node->NodeReferenceMRMLAttributeNames;
 
-  NodeReferencesType::iterator it;
+  // Add or replace node references
   for (it = node->NodeReferences.begin(); it != node->NodeReferences.end(); it++)
     {
     std::string referenceRole = it->first;
@@ -199,41 +223,35 @@ void vtkMRMLNode::Copy(vtkMRMLNode *node)
     std::vector< vtkMRMLNodeReference *>::iterator it1;
     for (it1 = it->second.begin(); it1 != it->second.end(); it1++)
       {
-      vtkMRMLNodeReference *referencedNode = vtkMRMLNodeReference::New();
-      referencedNode->ReferencingNode = this;
-      referencedNode->ReferencedNode = 0;
-      referencedNode->SetReferencedNodeID((*it1)->GetReferencedNodeID());
-      referencedNode->SetReferenceRole(referenceRole.c_str());
-      referencedNodes.push_back(referencedNode);
-      this->NodeReferences[referenceRole] = referencedNodes;
-      this->OnNodeReferenceAdded(referencedNode);
+      this->SetNthNodeReferenceID(referenceRole.c_str(),
+                                  std::distance(it->second.begin(), it1),
+                                  (*it1)->GetReferencedNodeID());
       }
     }
-
-  this->EndModify(disabledModify);
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLNode::Reset()
-{    
+{
   vtkMRMLNode *newNode = this->CreateNodeInstance();
-    
+
   int save = this->GetSaveWithScene();
   int hide = this->GetHideFromEditors();
   int select = this->GetSelectable();
   char *tag = this->GetSingletonTag();
 
-  this->DisableModifiedEventOn();
-  this->CopyWithSceneWithoutModifiedEvent(newNode);
-  
+  int wasModifying = this->StartModify();
+  this->CopyWithScene(newNode);
+
   this->SetSaveWithScene(save);
   this->SetHideFromEditors(hide);
   this->SetSelectable(select);
   this->SetSingletonTag(tag);
-  this->DisableModifiedEventOff(); // does not invoke Modified()
-  
+  this->EndModify(wasModifying);
+
   newNode->Delete();
 }
+
 //----------------------------------------------------------------------------
 void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
 {

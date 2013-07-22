@@ -583,7 +583,7 @@ void vtkMRMLSliceNode::UpdateMatrices()
 
     this->SetOrientationString( orientationString );
 
-    // as UpdateMatrices can be called from CopyWithSceneWithoutModifiedEvent
+    // as UpdateMatrices can be called with DisableModifiedEvent
     // (typically when the scene is closed, slice nodes are reset but shouldn't
     // fire events. We should respect the modifiedWasDisabled flag.
     this->EndModify(disabledModify);

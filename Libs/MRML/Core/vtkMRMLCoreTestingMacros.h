@@ -378,8 +378,6 @@
     node->CopyWithoutModifiedEvent(node1);                              \
     node1->SetName("copywithscenewithsinglemodified");                  \
     node->CopyWithSceneWithSingleModifiedEvent(node1);                  \
-    node1->SetName("copywithscenewithoutmodified");                     \
-    node->CopyWithSceneWithoutModifiedEvent(node1);                     \
     vtkMRMLScene * scene = node->GetScene();                            \
                                                                         \
     if( scene != NULL )                                                 \

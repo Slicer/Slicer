@@ -487,7 +487,7 @@ void vtkMRMLSceneViewNode::RestoreScene()
         else 
           {
           vtkMRMLNode *newNode = node->CreateNodeInstance();
-          newNode->CopyWithSceneWithoutModifiedEvent(node);
+          newNode->CopyWithScene(node);
           
           addedNodes.push_back(newNode);
           newNode->SetAddToSceneNoModify(1);
