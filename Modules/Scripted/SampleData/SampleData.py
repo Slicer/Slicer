@@ -226,37 +226,38 @@ class SampleDataLogic:
 
   """Utility methods for backwards compatibility"""
   def downloadMRHead(self):
-    return self.downloadSample('MRHead')
+    return self.downloadSample('MRHead')[0]
 
   def downloadCTChest(self):
-    return self.downloadSample('CTChest')
+    return self.downloadSample('CTChest')[0]
 
   def downloadCTACardio(self):
-    return self.downloadSample('CTACardio')
+    return self.downloadSample('CTACardio')[0]
 
   def downloadDTIBrain(self):
-    return self.downloadSample('DTIBrain')
+    return self.downloadSample('DTIBrain')[0]
 
   def downloadMRBrainTumor1(self):
-    return self.downloadSample('MRBrainTumor1')
+    return self.downloadSample('MRBrainTumor1')[0]
 
   def downloadMRBrainTumor2(self):
-    return self.downloadSample('MRBrainTumor2')
+    return self.downloadSample('MRBrainTumor2')[0]
 
   def downloadWhiteMatterExplorationBaselineVolume(self):
-    return self.downloadSample('BaselineVolume')
+    return self.downloadSample('BaselineVolume')[0]
 
   def downloadWhiteMatterExplorationDTIVolume(self):
-    return self.downloadSample('DTIVolume');
+    return self.downloadSample('DTIVolume')[0]
 
   def downloadDiffusionMRIDWIVolume(self):
-    return self.downloadSample('dwi');
+    return self.downloadSample('dwi')[0]
 
   def downloadAbdominalCTVolume(self):
-    return self.downloadSample('Panoramix-cropped');
+    return self.downloadSample('Panoramix-cropped')[0]
 
   def downloadDentalSurgery(self):
-    return self.downloadSample('CBCTDentalSurgery');
+    # returns list since that's what earlier method did
+    return self.downloadSample('CBCTDentalSurgery')
 
   def humanFormatSize(self,size):
     """ from http://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size"""
