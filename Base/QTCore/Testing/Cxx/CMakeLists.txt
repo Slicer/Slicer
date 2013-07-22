@@ -11,7 +11,6 @@ if(BUILD_TESTING)
     qSlicerCoreIOManagerTest1.cxx
     qSlicerLoadableModuleFactoryTest1.cxx
     qSlicerUtilsTest1.cxx
-    qSlicerSslTest.cxx
     )
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     list(APPEND KIT_TEST_SRCS
@@ -22,6 +21,11 @@ if(BUILD_TESTING)
   if(Slicer_USE_PYTHONQT)
     list(APPEND KIT_TEST_SRCS
       qSlicerCorePythonManagerWithoutApplicationTest.cxx
+      )
+  endif()
+  if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+    list(APPEND KIT_TEST_SRCS
+      qSlicerSslTest.cxx
       )
   endif()
   create_test_sourcelist(Tests ${KIT}CxxTests.cxx
@@ -65,7 +69,6 @@ if(BUILD_TESTING)
   simple_test( qSlicerAbstractCoreModuleTest1 )
   simple_test( qSlicerLoadableModuleFactoryTest1 )
   simple_test( qSlicerUtilsTest1 )
-  simple_test( qSlicerSslTest )
 
   if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     simple_test( qSlicerExtensionsManagerModelTest )
@@ -74,6 +77,10 @@ if(BUILD_TESTING)
 
   if(Slicer_USE_PYTHONQT)
     simple_test( qSlicerCorePythonManagerWithoutApplicationTest )
+  endif()
+
+  if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
+    simple_test( qSlicerSslTest )
   endif()
 
 endif()

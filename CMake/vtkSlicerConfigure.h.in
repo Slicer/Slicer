@@ -33,6 +33,7 @@
 #cmakedefine Slicer_USE_NAVITRACK
 #cmakedefine Slicer_USE_NUMPY
 #cmakedefine Slicer_USE_PYTHONQT
+#cmakedefine Slicer_USE_PYTHONQT_WITH_OPENSSL
 #cmakedefine Slicer_USE_PYTHONQT_WITH_TCL
 #cmakedefine Slicer_USE_QtTesting
 #cmakedefine Slicer_USE_OPENTRACKER

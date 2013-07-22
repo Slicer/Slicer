@@ -97,9 +97,11 @@ void qSlicerWebWidgetPrivate::init()
   QObject::connect(this->WebView->page(), SIGNAL(linkClicked(QUrl)),
                    q, SLOT(onLinkClicked(QUrl)));
 
+#ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
   QObject::connect(networkAccessManager,
                    SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> & )),
                    q, SLOT(handleSslErrors(QNetworkReply*, const QList<QSslError> & )));
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -223,6 +225,7 @@ void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 }
 
 // --------------------------------------------------------------------------
+#ifdef Slicer_USE_PYTHONQT_WITH_OPENSSL
 void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
                                        const QList<QSslError> &errors)
 {
@@ -232,6 +235,7 @@ void qSlicerWebWidget::handleSslErrors(QNetworkReply* reply,
              << qPrintable(e.errorString());
     }
 }
+#endif
 
 // --------------------------------------------------------------------------
 bool qSlicerWebWidget::eventFilter(QObject* obj, QEvent* event)
