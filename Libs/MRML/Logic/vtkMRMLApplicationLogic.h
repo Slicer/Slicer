@@ -38,7 +38,7 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
   : public vtkMRMLAbstractLogic
 {
 public:
-  
+
   static vtkMRMLApplicationLogic *New();
   void PrintSelf(ostream& os, vtkIndent indent);
   vtkTypeRevisionMacro(vtkMRMLApplicationLogic, vtkMRMLAbstractLogic);
@@ -65,7 +65,7 @@ public:
   void SetColorLogic(vtkMRMLColorLogic* newColorLogic);
   vtkMRMLColorLogic* GetColorLogic()const;
 
-  /// 
+  ///
   /// Apply the active volumes in the SelectionNode to the slice composite nodes
   /// Perform the default behavior related to selecting a volume
   /// (in this case, making it the background for all SliceCompositeNodes)
@@ -94,22 +94,22 @@ public:
   /// http://en.wikipedia.org/wiki/Percent-encoding
   /// See http://na-mic.org/Bug/view.php?id=2605
   std::string PercentEncode(std::string s);
-  
+
   /// Save the scene into a self contained directory, sdbDir
   /// If screenShot is not null, use it as the screen shot for a scene view
   /// Returns false if the save failed
   bool SaveSceneToSlicerDataBundleDirectory(const char *sdbDir, vtkImageData *screenShot = NULL);
 
-  /// Open the file into a temp directory and load the scene file 
-  /// inside.  Note that the first mrml file found in the extracted 
+  /// Open the file into a temp directory and load the scene file
+  /// inside.  Note that the first mrml file found in the extracted
   /// directory will be used.
   bool OpenSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory);
 
-  /// Unpack the file into a temp directory and return the scene file 
-  /// inside.  Note that the first mrml file found in the extracted 
+  /// Unpack the file into a temp directory and return the scene file
+  /// inside.  Note that the first mrml file found in the extracted
   /// directory will be used.
   std::string UnpackSlicerDataBundle(const char *sdbFilePath, const char *temporaryDirectory);
-  
+
   /// Load any default parameter sets into the specified scene
   /// Returns the total number of loaded parameter sets
   static int LoadDefaultParameterSets(vtkMRMLScene * scene,
@@ -137,6 +137,12 @@ public:
                             unsigned long eventID = vtkCommand::ModifiedEvent,
                             void* callData = 0);
 
+  /// Return the temporary path that was set by the application
+  const char* GetTemporaryPath();
+
+  /// Set the temporary path the logics can use. The path should be set by the application
+  void SetTemporaryPath(const char* path);
+
 protected:
 
   vtkMRMLApplicationLogic();
@@ -149,10 +155,10 @@ protected:
 
 
 private:
-  
+
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
   void operator=(const vtkMRMLApplicationLogic&);
-  
+
   class vtkInternal;
   vtkInternal* Internal;
 

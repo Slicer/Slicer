@@ -76,6 +76,7 @@ public:
   vtkSmartPointer<vtkMRMLSliceLinkLogic> SliceLinkLogic;
   vtkSmartPointer<vtkMRMLModelHierarchyLogic> ModelHierarchyLogic;
   vtkSmartPointer<vtkMRMLColorLogic> ColorLogic;
+  std::string TemporaryPath;
 
 };
 
@@ -857,4 +858,28 @@ void vtkMRMLApplicationLogic
   request.EventID = eventID;
   request.CallData = callData;
   this->InvokeEvent(vtkMRMLApplicationLogic::RequestInvokeEvent, &request);
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLApplicationLogic::GetTemporaryPath()
+{
+    return this->Internal->TemporaryPath.c_str();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SetTemporaryPath(const char* path)
+{
+    if (path == NULL)
+      {
+      this->Internal->TemporaryPath.clear();
+      }
+    else if (this->Internal->TemporaryPath == std::string(path))
+      {
+      return;
+      }
+    else
+      {
+      this->Internal->TemporaryPath = std::string(path);
+      }
+    this->Modified();
 }

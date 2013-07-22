@@ -14,6 +14,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLSliceLogicTest3.cxx
   vtkMRMLSliceLogicTest4.cxx
   vtkMRMLSliceLogicTest5.cxx
+  vtkMRMLApplicationLogicTest1.cxx
   EXTRA_INCLUDE vtkMRMLDebugLeaksMacro.h
   )
 
@@ -39,3 +40,4 @@ SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest2 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest3 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest4 fixed.nrrd)
 SIMPLE_FILE_TEST( vtkMRMLSliceLogicTest5 fixed.nrrd)
+simple_test( vtkMRMLApplicationLogicTest1 )

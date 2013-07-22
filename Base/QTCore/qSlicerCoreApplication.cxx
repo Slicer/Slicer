@@ -228,6 +228,7 @@ void qSlicerCoreApplicationPrivate::init()
 
   // Create the application Logic object,
   this->AppLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  this->AppLogic->SetTemporaryPath(q->temporaryPath().toLatin1());
   q->qvtkConnect(this->AppLogic, vtkCommand::ModifiedEvent,
               q, SLOT(onSlicerApplicationLogicModified()));
   q->qvtkConnect(this->AppLogic, vtkSlicerApplicationLogic::RequestInvokeEvent,
@@ -1150,6 +1151,7 @@ void qSlicerCoreApplication::setTemporaryPath(const QString& path)
   QSettings* appSettings = this->userSettings();
   Q_ASSERT(appSettings);
   appSettings->setValue("TemporaryPath", path);
+  this->applicationLogic()->SetTemporaryPath(path.toLatin1());
 }
 
 //-----------------------------------------------------------------------------
