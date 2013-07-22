@@ -73,9 +73,11 @@ protected:
   /// Reimplemented to initialize the scene with unit nodes.
   virtual void ObserveMRMLScene();
   /// Reimplemented to save the selection node unit nodes.
-  virtual void OnMRMLSceneStartClose();
+  /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
+  virtual void OnMRMLSceneStartBatchProcess();
   /// Reimplemented to restore the selection node unit nodes.
-  virtual void OnMRMLSceneEndClose();
+  /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
+  virtual void OnMRMLNodeModified(vtkMRMLNode* modifiedNode);
 
   // Add the built in units in the units logic scene.
   virtual void AddDefaultsUnits();
@@ -102,13 +104,28 @@ protected:
     double min = -10000,
     double max = 10000);
 
+  /// Save the default units referenced in the selection node singleton.
+  /// \sa RestoreDefaultUnits()
+  void SaveDefaultUnits();
+
+  /// Restore the saved default units referenced in the selection node
+  /// singleton.
+  /// \sa SaveDefaultUnits()
+  void RestoreDefaultUnits();
   // Variables
   vtkMRMLScene* UnitsScene;
 private:
   vtkSlicerUnitsLogic(const vtkSlicerUnitsLogic&); // Not implemented
   void operator=(const vtkSlicerUnitsLogic&); // Not implemented
 
+  /// This variable contains the units of the singleton before the last scene
+  /// batch process.
+  /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
   std::map<std::string, std::string> CachedDefaultUnits;
+  /// This variable is on when restoring the default units with
+  /// CachedDefaultUnits on the selection node.
+  /// \sa SaveDefaultUnits(), RestoreDefaultUnits()
+  bool RestoringDefaultUnits;
 };
 
 #endif

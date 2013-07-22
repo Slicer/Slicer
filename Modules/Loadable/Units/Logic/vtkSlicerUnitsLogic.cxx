@@ -41,6 +41,7 @@ vtkStandardNewMacro(vtkSlicerUnitsLogic);
 vtkSlicerUnitsLogic::vtkSlicerUnitsLogic()
 {
   this->UnitsScene = vtkMRMLScene::New();
+  this->RestoringDefaultUnits = false;
   this->AddBuiltInUnits(this->UnitsScene);
 }
 
@@ -103,8 +104,8 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
 void vtkSlicerUnitsLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
 {
   vtkNew<vtkIntArray> events;
-  events->InsertNextValue(vtkMRMLScene::StartCloseEvent);
-  events->InsertNextValue(vtkMRMLScene::EndCloseEvent);
+  events->InsertNextValue(vtkMRMLScene::StartBatchProcessEvent);
+  events->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 }
 
@@ -179,6 +180,11 @@ void vtkSlicerUnitsLogic::SetDefaultUnit(const char* quantity, const char* id)
   if (selectionNode)
     {
     selectionNode->SetUnitNodeID(quantity, id);
+    if (!vtkIsObservedMRMLNodeEventMacro(selectionNode,
+                                         vtkCommand::ModifiedEvent))
+      {
+      vtkObserveMRMLNodeMacro(selectionNode);
+      }
     }
 }
 
@@ -198,7 +204,23 @@ void vtkSlicerUnitsLogic::RegisterNodesInternal(vtkMRMLScene* scene)
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerUnitsLogic::OnMRMLSceneStartClose()
+void vtkSlicerUnitsLogic::OnMRMLSceneStartBatchProcess()
+{
+  this->SaveDefaultUnits();
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::OnMRMLNodeModified(vtkMRMLNode* node)
+{
+  if (vtkMRMLSelectionNode::SafeDownCast(node) &&
+      !this->RestoringDefaultUnits)
+    {
+    this->RestoreDefaultUnits();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerUnitsLogic::SaveDefaultUnits()
 {
   // Save selection node units.
   std::vector<vtkMRMLUnitNode*> units;
@@ -219,8 +241,17 @@ void vtkSlicerUnitsLogic::OnMRMLSceneStartClose()
 }
 
 //-----------------------------------------------------------------------------
-void vtkSlicerUnitsLogic::OnMRMLSceneEndClose()
+void vtkSlicerUnitsLogic::RestoreDefaultUnits()
 {
+  this->RestoringDefaultUnits = true;
+  vtkMRMLSelectionNode* selectionNode =  vtkMRMLSelectionNode::SafeDownCast(
+    this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+  std::vector<vtkMRMLUnitNode*> units;
+  int wasModifying = 0;
+  if (selectionNode)
+    {
+    wasModifying = selectionNode->StartModify();
+    }
   // Restore selection node units.
   std::map<std::string, std::string>::const_iterator it;
   for ( it = this->CachedDefaultUnits.begin() ;
@@ -229,4 +260,9 @@ void vtkSlicerUnitsLogic::OnMRMLSceneEndClose()
     {
     this->SetDefaultUnit(it->first.c_str(), it->second.c_str());
     }
+  if (selectionNode)
+    {
+    selectionNode->EndModify(wasModifying);
+    }
+  this->RestoringDefaultUnits = false;
 }
