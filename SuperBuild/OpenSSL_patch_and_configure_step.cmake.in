@@ -35,7 +35,7 @@ set(EP_SOURCE_DIR "@EP_SOURCE_DIR@")
 
 #------------------------------------------------------------------------------
 # See https://raw.github.com/Alexpux/Qt-builds/master/patches/openssl/openssl-1.0.1-parallel-build.patch
-apply_patch(${EP_SOURCE_DIR} "OpenSSL-1.0.1-parallel-build.patch")
+#apply_patch(${EP_SOURCE_DIR} "OpenSSL-1.0.1-parallel-build.patch")
 
 #------------------------------------------------------------------------------
 set(stepname "configure")

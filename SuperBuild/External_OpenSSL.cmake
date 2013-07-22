@@ -37,7 +37,7 @@ if(UNIX)
     PATCH_COMMAND ${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_BINARY_DIR}/${proj}_patch_and_configure_step.cmake
     CONFIGURE_COMMAND ""
-    BUILD_COMMAND $(MAKE) build_libs
+    BUILD_COMMAND $(MAKE) -j1 build_libs
     INSTALL_COMMAND ""
     DEPENDS
       ${OpenSSL_DEPENDENCIES}
