@@ -96,6 +96,12 @@ public:
   vtkSetMacro(ExpectedFPS,double);
   vtkGetMacro(ExpectedFPS,double);
 
+  /// Quality used for PerformanceControl
+  enum Quality
+  {
+    Adaptative = 0,
+    MaximumQuality
+  };
   vtkSetMacro(PerformanceControl,int);
   vtkGetMacro(PerformanceControl,int);
 
@@ -177,7 +183,7 @@ protected:
   /// Performance Control method
   /// 0: Adaptive
   /// 1: Maximum Quality
-  /// 2: Fixed Framerate
+  /// 2: Fixed Framerate // unsupported yet
   int PerformanceControl;
 };
 

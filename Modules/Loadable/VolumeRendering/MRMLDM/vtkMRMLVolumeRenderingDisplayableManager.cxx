@@ -482,11 +482,17 @@ double vtkMRMLVolumeRenderingDisplayableManager
 ::GetFramerate(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   double framerate = vspNode ? vspNode->GetExpectedFPS() : 15.;
-  if (!this->GetRenderer()->GetRenderWindow()->GetEventPending())
+  //if (!this->GetRenderer()->GetRenderWindow()->GetEventPending())
+  //  {
+  //  framerate = 0.0001;
+  //  }
+  framerate = std::max(framerate, 0.0001);
+  if (vspNode->GetPerformanceControl() ==
+      vtkMRMLVolumeRenderingDisplayNode::MaximumQuality)
     {
-    framerate = 0.0001;
+    framerate = 0.0; // special value meaning full quality
     }
-  return std::max(framerate, 0.0001);
+  return framerate;
 }
 
 //---------------------------------------------------------------------------
@@ -494,9 +500,14 @@ double vtkMRMLVolumeRenderingDisplayableManager
 ::GetSampleDistance(vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
   vtkMRMLVolumeNode* volumeNode = vspNode ? vspNode->GetVolumeNode() : 0;
-  double minSpacing = volumeNode->GetMinSpacing() > 0 ?
+  const double minSpacing = volumeNode->GetMinSpacing() > 0 ?
     volumeNode->GetMinSpacing() : 1.;
   double sampleDistance = minSpacing / vspNode->GetEstimatedSampleDistance();
+  if (vspNode->GetPerformanceControl() ==
+      vtkMRMLVolumeRenderingDisplayNode::MaximumQuality)
+    {
+    sampleDistance = minSpacing / 10.; // =10x smaller than pixel is high quality
+    }
   return sampleDistance;
 }
 
@@ -516,7 +527,13 @@ void vtkMRMLVolumeRenderingDisplayableManager
   vtkMRMLCPURayCastVolumeRenderingDisplayNode* vspNode)
 {
   this->UpdateMapper(mapper, vspNode);
+  const bool highDef = vspNode->GetPerformanceControl() ==
+    vtkMRMLVolumeRenderingDisplayNode::MaximumQuality;
+  mapper->SetAutoAdjustSampleDistances( highDef ? 0 : 1);
   mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
+  mapper->SetInteractiveSampleDistance(this->GetSampleDistance(vspNode));
+  mapper->SetImageSampleDistance(highDef ? 0.5 : 1.);
+
   switch(vspNode->GetRaycastTechnique())
     {
     case vtkMRMLVolumeRenderingDisplayNode::MaximumIntensityProjection:
@@ -587,7 +604,11 @@ void vtkMRMLVolumeRenderingDisplayableManager
   vtkMRMLGPURayCastVolumeRenderingDisplayNode* vspNode)
 {
   this->UpdateMapper(mapper, vspNode);
+  const bool highDef = vspNode->GetPerformanceControl() ==
+    vtkMRMLVolumeRenderingDisplayNode::MaximumQuality;
+  mapper->SetAutoAdjustSampleDistances( highDef ? 0 : 1);
   mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
+  mapper->SetImageSampleDistance(highDef ? 0.5 : 1.);
   mapper->SetMaxMemoryInBytes(this->GetMaxMemory(mapper, vspNode));
 
   switch(vspNode->GetRaycastTechnique())
@@ -826,32 +847,33 @@ void vtkMRMLVolumeRenderingDisplayableManager::SetVolumeVisibility(int isVisible
 void vtkMRMLVolumeRenderingDisplayableManager::UpdateDesiredUpdateRate(
   vtkMRMLVolumeRenderingDisplayNode* vspNode)
 {
-  double fps = vspNode->GetExpectedFPS();
   vtkRenderWindow* renderWindow = this->GetRenderer()->GetRenderWindow();
   vtkRenderWindowInteractor* renderWindowInteractor =
     renderWindow ? renderWindow->GetInteractor() : 0;
-  if (renderWindowInteractor)
+  if (!renderWindowInteractor)
     {
-    if (vspNode->GetVisibility())
-      {
-      if (this->OriginalDesiredUpdateRate == 0.)
-        {
-        // Save the DesiredUpdateRate before it is changed.
-        // It will then be restored when the volume rendering is hidden
-        this->OriginalDesiredUpdateRate =
-          renderWindowInteractor->GetDesiredUpdateRate();
-        }
-      renderWindowInteractor->SetDesiredUpdateRate(fps);
-      }
-    else if (this->OriginalDesiredUpdateRate != 0.)
-      {
-      // Restore the DesiredUpdateRate to its original value.
-      renderWindowInteractor->SetDesiredUpdateRate(
-        this->OriginalDesiredUpdateRate);
-      this->OriginalDesiredUpdateRate = 0;
-      }
-    //renderWindowInteractor->SetStillUpdateRate(0.0001);
+    return;
     }
+  double fps = this->GetFramerate(vspNode);
+  if (vspNode->GetVisibility())
+    {
+    if (this->OriginalDesiredUpdateRate == 0.)
+      {
+      // Save the DesiredUpdateRate before it is changed.
+      // It will then be restored when the volume rendering is hidden
+      this->OriginalDesiredUpdateRate =
+        renderWindowInteractor->GetDesiredUpdateRate();
+      }
+    renderWindowInteractor->SetDesiredUpdateRate(fps);
+    }
+  else if (this->OriginalDesiredUpdateRate != 0.)
+    {
+    // Restore the DesiredUpdateRate to its original value.
+    renderWindowInteractor->SetDesiredUpdateRate(
+      this->OriginalDesiredUpdateRate);
+    this->OriginalDesiredUpdateRate = 0;
+    }
+  //renderWindowInteractor->SetStillUpdateRate(0.0001);
 }
 
 //---------------------------------------------------------------------------

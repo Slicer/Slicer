@@ -462,7 +462,9 @@ void qSlicerVolumeRenderingModuleWidget::updateFromMRMLDisplayNode()
     {
     d->FramerateSliderWidget->setValue(d->DisplayNode->GetExpectedFPS());
     }
-
+  d->FramerateSliderWidget->setEnabled(
+    d->DisplayNode && d->DisplayNode->GetPerformanceControl() ==
+    vtkMRMLVolumeRenderingDisplayNode::Adaptative);
   // Opacity/color
   bool follow = d->DisplayNode ? d->DisplayNode->GetFollowVolumeDisplayNode() != 0 : false;
   if (follow)
