@@ -55,7 +55,7 @@ int main( int argc, char * argv[] )
   else
     {
     std::cerr << "unknown include operation";
-     EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
 
   int excludeOperation = 0; // 0-AND; 1-OR
@@ -70,7 +70,7 @@ int main( int argc, char * argv[] )
   else
     {
     std::cerr << "unknown exclude operation";
-     EXIT_FAILURE;
+    return EXIT_FAILURE;
     }
 
   // Read in Label volume inputs
@@ -287,7 +287,7 @@ int main( int argc, char * argv[] )
   catch ( ... )
       {
         std::cerr << "default exception";
-        EXIT_FAILURE;
+        return EXIT_FAILURE;
       }
 
   return EXIT_SUCCESS;
