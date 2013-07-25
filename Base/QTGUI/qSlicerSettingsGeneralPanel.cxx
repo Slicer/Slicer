@@ -86,25 +86,10 @@ void qSlicerSettingsGeneralPanelPrivate::init()
   this->LanguageComboBox->setVisible(false);
 #endif
 
-  QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
-                   q, SLOT(onFontChanged(QFont)));
-  QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(onShowToolTipsToggled(bool)));
-  QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
-                   q, SLOT(onShowToolButtonTextToggled(bool)));
-
   // Default values
   this->SlicerWikiURLLineEdit->setText("http://www.slicer.org/slicerWiki/index.php");
 
   q->registerProperty("no-splash", this->ShowSplashScreenCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
-  q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, "checked",
-                      SIGNAL(toggled(bool)));
-  q->registerProperty("font", this->FontButton, "currentFont",
-                      SIGNAL(currentFontChanged(QFont)));
-  q->registerProperty("MainWindow/ShowToolButtonText", this->ShowToolButtonTextCheckBox,
-                      "checked", SIGNAL(toggled(bool)));
-  q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
                       SIGNAL(toggled(bool)));
   ctkBooleanMapper* restartMapper = new ctkBooleanMapper(this->ConfirmRestartCheckBox, "checked", SIGNAL(toggled(bool)));
   restartMapper->setTrueValue(static_cast<int>(QMessageBox::InvalidRole));
@@ -143,29 +128,4 @@ qSlicerSettingsGeneralPanel::qSlicerSettingsGeneralPanel(QWidget* _parent)
 // --------------------------------------------------------------------------
 qSlicerSettingsGeneralPanel::~qSlicerSettingsGeneralPanel()
 {
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsGeneralPanel::onFontChanged(const QFont& font)
-{
-  qApp->setFont(font);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsGeneralPanel::onShowToolTipsToggled(bool disable)
-{
-  qSlicerApplication::application()->setToolTipsEnabled(!disable);
-}
-
-// --------------------------------------------------------------------------
-void qSlicerSettingsGeneralPanel::onShowToolButtonTextToggled(bool enable)
-{
-  foreach(QWidget* widget, qSlicerApplication::application()->topLevelWidgets())
-    {
-    QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
-    if (mainWindow)
-      {
-      mainWindow->setToolButtonStyle(enable ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
-      }
-    }
 }

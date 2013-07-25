@@ -185,7 +185,7 @@ void qSlicerApplicationPrivate::init()
 
   qSlicerSettingsStylesPanel* settingsStylesPanel =
     new qSlicerSettingsStylesPanel(generalPanel);
-  this->SettingsDialog->addPanel("Style", settingsStylesPanel);
+  this->SettingsDialog->addPanel("Appearance", settingsStylesPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;

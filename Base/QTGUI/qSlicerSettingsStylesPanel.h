@@ -67,6 +67,10 @@ protected slots:
   void onRemoveStyleAdditionalPathClicked();
   void onStyleChanged(const QString&);
 
+  void onFontChanged(const QFont& font);
+  void onShowToolTipsToggled(bool);
+  void onShowToolButtonTextToggled(bool enable);
+
 protected:
   QScopedPointer<qSlicerSettingsStylesPanelPrivate> d_ptr;
 

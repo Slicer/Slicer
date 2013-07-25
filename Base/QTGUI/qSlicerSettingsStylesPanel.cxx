@@ -80,6 +80,23 @@ void qSlicerSettingsStylesPanelPrivate::init()
 
   qSlicerCoreApplication* coreApp = qSlicerCoreApplication::application();
 
+  // General appearance settings
+  QObject::connect(this->FontButton, SIGNAL(currentFontChanged(QFont)),
+                   q, SLOT(onFontChanged(QFont)));
+  QObject::connect(this->ShowToolTipsCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onShowToolTipsToggled(bool)));
+  QObject::connect(this->ShowToolButtonTextCheckBox, SIGNAL(toggled(bool)),
+                   q, SLOT(onShowToolButtonTextToggled(bool)));
+
+  q->registerProperty("no-tooltip", this->ShowToolTipsCheckBox, "checked",
+                      SIGNAL(toggled(bool)));
+  q->registerProperty("font", this->FontButton, "currentFont",
+                      SIGNAL(currentFontChanged(QFont)));
+  q->registerProperty("MainWindow/ShowToolButtonText", this->ShowToolButtonTextCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("MainWindow/RestoreGeometry", this->RestoreUICheckBox, "checked",
+                      SIGNAL(toggled(bool)));
+
   // Additional Style paths
   this->AdditionalStylePathMoreButton->setChecked(false);
 
@@ -254,4 +271,31 @@ void qSlicerSettingsStylesPanel::onStyleChanged(const QString& newStyleName)
   app->setPalette(newStyle->standardPalette());
 
   emit this->currentStyleChanged(newStyleName);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsStylesPanel::onFontChanged(const QFont& font)
+{
+  qSlicerApplication::application()->setFont(font);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsStylesPanel::onShowToolTipsToggled(bool disable)
+{
+  qSlicerApplication::application()->setToolTipsEnabled(!disable);
+}
+
+// --------------------------------------------------------------------------
+void qSlicerSettingsStylesPanel::onShowToolButtonTextToggled(bool enable)
+{
+  qSlicerApplication* app = qSlicerApplication::application();
+  foreach(QWidget* widget, app->topLevelWidgets())
+    {
+    QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
+    if (mainWindow)
+      {
+      mainWindow->setToolButtonStyle(enable ?
+        Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
+      }
+    }
 }
