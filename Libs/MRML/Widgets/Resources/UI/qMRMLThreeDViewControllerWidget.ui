@@ -299,12 +299,12 @@
     <string>Anaglyph</string>
    </property>
   </action>
-  <action name="actionSwitchToCrystalEyesStereo">
+  <action name="actionSwitchToQuadBufferStereo">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>CrystalEyes</string>
+    <string>QuadBuffer</string>
    </property>
   </action>
   <action name="actionSwitchToInterlacedStereo">

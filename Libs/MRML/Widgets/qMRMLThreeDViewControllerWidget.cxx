@@ -42,6 +42,9 @@
 #include <vtkMRMLViewNode.h>
 #include <vtkMRMLSceneViewNode.h>
 
+// VTK includes
+#include <vtkRenderWindow.h>
+
 //--------------------------------------------------------------------------
 // qMRMLThreeDViewControllerWidgetPrivate methods
 
@@ -103,8 +106,8 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                                       vtkMRMLViewNode::NoStereo);
   this->StereoTypesMapper->setMapping(this->actionSwitchToAnaglyphStereo,
                                       vtkMRMLViewNode::Anaglyph);
-  this->StereoTypesMapper->setMapping(this->actionSwitchToCrystalEyesStereo,
-                                      vtkMRMLViewNode::CrystalEyes);
+  this->StereoTypesMapper->setMapping(this->actionSwitchToQuadBufferStereo,
+                                      vtkMRMLViewNode::QuadBuffer);
   this->StereoTypesMapper->setMapping(this->actionSwitchToInterlacedStereo,
                                       vtkMRMLViewNode::Interlaced);
   this->StereoTypesMapper->setMapping(this->actionSwitchToRedBlueStereo,
@@ -115,7 +118,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
   stereoTypesActions->addAction(this->actionSwitchToRedBlueStereo);
   stereoTypesActions->addAction(this->actionSwitchToAnaglyphStereo);
   stereoTypesActions->addAction(this->actionSwitchToInterlacedStereo);
-  //stereoTypesActions->addAction(this->actionSwitchToCrystalEyesStereo);
+  stereoTypesActions->addAction(this->actionSwitchToQuadBufferStereo);
   QMenu* stereoTypesMenu = new QMenu("Stereo Modes", this->PopupWidget);
   stereoTypesMenu->setObjectName("stereoTypesMenu");
   stereoTypesMenu->addActions(stereoTypesActions->actions());
@@ -124,6 +127,7 @@ void qMRMLThreeDViewControllerWidgetPrivate::setupPopupUi()
                    q, SLOT(setStereoType(int)));
   QObject::connect(stereoTypesActions, SIGNAL(triggered(QAction*)),
                    this->StereoTypesMapper, SLOT(map(QAction*)));
+  this->actionSwitchToQuadBufferStereo->setEnabled(false); // Disabled by default
 
   QMenu* visibilityMenu = new QMenu("Visibility", this->PopupWidget);
   visibilityMenu->setObjectName("visibilityMenu");
@@ -218,6 +222,11 @@ void qMRMLThreeDViewControllerWidget::setThreeDView(qMRMLThreeDView* view)
 {
   Q_D(qMRMLThreeDViewControllerWidget);
   d->ThreeDView = view;
+  if(d->ThreeDView != 0)
+    {
+    d->actionSwitchToQuadBufferStereo->setEnabled(
+          d->ThreeDView->renderWindow()->GetStereoCapableWindow());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -288,13 +297,20 @@ void qMRMLThreeDViewControllerWidget::updateWidgetFromMRML()
 
   d->OrthoButton->setChecked(
     d->ViewNode->GetRenderMode() == vtkMRMLViewNode::Orthographic);
-  
+
   QAction* action = qobject_cast<QAction*>(d->StereoTypesMapper->mapping(
     d->ViewNode->GetStereoType()));
   action->setChecked(true);
-  
+
   d->SpinButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Spin);
   d->RockButton->setChecked(d->ViewNode->GetAnimationMode() == vtkMRMLViewNode::Rock);
+}
+
+// --------------------------------------------------------------------------
+void qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled(bool value)
+{
+  Q_D(qMRMLThreeDViewControllerWidget);
+  d->actionSwitchToQuadBufferStereo->setEnabled(value);
 }
 
 // --------------------------------------------------------------------------

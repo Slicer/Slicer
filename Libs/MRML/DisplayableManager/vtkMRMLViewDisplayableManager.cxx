@@ -474,7 +474,7 @@ void vtkMRMLViewDisplayableManager::vtkInternal::UpdateStereoType()
     renderWindow->SetStereoTypeToAnaglyph();
     //renderWindow->SetAnaglyphColorSaturation(0.1);
     }
-  else if (stereoType == vtkMRMLViewNode::CrystalEyes)
+  else if (stereoType == vtkMRMLViewNode::QuadBuffer)
     {
     renderWindow->SetStereoTypeToCrystalEyes();
     }

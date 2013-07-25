@@ -60,13 +60,16 @@ public:
   /// \sa qMRMLThreeDView::addDisplayableManager
   void addDisplayableManager(const QString& displayableManager);
 
-  /// \sa qMRMLThreeDControllerWidget::viewLabel()
+  /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa setiewLabel()
   QString viewLabel()const;
 
-  /// \sa qMRMLThreeDControllerWidget::viewLabel()
+  /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa viewLabel()
   void setViewLabel(const QString& newViewLabel);
+
+  /// \sa qMRMLThreeDViewControllerWidget::setQuadBufferStereoSupportEnabled
+  void setQuadBufferStereoSupportEnabled(bool value);
 
 public slots:
   /// Set the current \a viewNode to observe

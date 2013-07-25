@@ -154,9 +154,9 @@ void vtkMRMLViewNode::WriteXML(ostream& of, int nIndent)
     {
     of << indent << " stereoType=\"" << "Anaglyph" << "\"";    
     }
-  else if ( this->GetStereoType() == vtkMRMLViewNode::CrystalEyes )
+  else if ( this->GetStereoType() == vtkMRMLViewNode::QuadBuffer )
     {
-    of << indent << " stereoType=\"" << "CrystalEyes" << "\"";    
+    of << indent << " stereoType=\"" << "QuadBuffer" << "\"";
     }
   else if ( this->GetStereoType() == vtkMRMLViewNode::Interlaced )
     {
@@ -275,9 +275,9 @@ void vtkMRMLViewNode::ReadXMLAttributes(const char** atts)
         {
         this->StereoType = vtkMRMLViewNode::Anaglyph;
         }
-      else if ( !strcmp (attValue, "CrystalEyes" ))
+      else if ( !strcmp (attValue, "QuadBuffer" ))
         {
-        this->StereoType = vtkMRMLViewNode::CrystalEyes;
+        this->StereoType = vtkMRMLViewNode::QuadBuffer;
         }
       else if ( !strcmp (attValue, "Interlaced" ))
         {

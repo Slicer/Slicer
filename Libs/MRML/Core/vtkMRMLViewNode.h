@@ -169,7 +169,7 @@ public:
       NoStereo = 0,
       RedBlue,
       Anaglyph,
-      CrystalEyes,
+      QuadBuffer,
       Interlaced
     };
 

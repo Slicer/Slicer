@@ -53,6 +53,8 @@ public:
   /// Get the label for the view (abbreviation for the view name)
   QString viewLabel()const;
 
+  void setQuadBufferStereoSupportEnabled(bool value);
+
 public slots:
   void setThreeDView(qMRMLThreeDView* threeDView);
   void setMRMLViewNode(vtkMRMLViewNode* viewNode);
