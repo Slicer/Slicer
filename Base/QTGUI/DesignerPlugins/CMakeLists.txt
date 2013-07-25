@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME}Plugins)
+set(KIT ${PROJECT_NAME}DesignerPlugins)
 project(${KIT})
 
 #
@@ -6,7 +6,7 @@ project(${KIT})
 #
 
 # The header '${KIT}Export.h' will be automatically configured.
-set(${KIT}_EXPORT "Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT")
+set(${KIT}_EXPORT "Q_SLICER_DESIGNER_PLUGINS_EXPORT")
 
 # Source files
 set(${KIT}_SRCS

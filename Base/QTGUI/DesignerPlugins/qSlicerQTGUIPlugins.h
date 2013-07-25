@@ -31,7 +31,7 @@
 #include "qSlicerMouseModeToolBarPlugin.h"
 
 // \class Group the plugins in one library
-class Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT qSlicerQTGUIPlugins
+class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIPlugins
   : public QObject
   , public QDesignerCustomWidgetCollectionInterface
 {

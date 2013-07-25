@@ -61,6 +61,7 @@
 # include "qSlicerSettingsQtTestingPanel.h"
 #endif
 #include "qSlicerSettingsModulesPanel.h"
+#include "qSlicerSettingsStylesPanel.h"
 
 // qMRMLWidget includes
 #include "qMRMLEventBrokerConnection.h"
@@ -176,10 +177,15 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog = new ctkSettingsDialog(0);
   this->SettingsDialog->setResetButton(true);
 
-  this->SettingsDialog->addPanel("General", new qSlicerSettingsGeneralPanel);
+  qSlicerSettingsGeneralPanel* generalPanel = new qSlicerSettingsGeneralPanel;
+  this->SettingsDialog->addPanel("General", generalPanel);
 
   qSlicerSettingsModulesPanel * settingsModulesPanel = new qSlicerSettingsModulesPanel;
   this->SettingsDialog->addPanel("Modules", settingsModulesPanel);
+
+  qSlicerSettingsStylesPanel* settingsStylesPanel =
+    new qSlicerSettingsStylesPanel(generalPanel);
+  this->SettingsDialog->addPanel("Style", settingsStylesPanel);
 
 #ifdef Slicer_BUILD_EXTENSIONMANAGER_SUPPORT
   qSlicerSettingsExtensionsPanel * settingsExtensionsPanel = new qSlicerSettingsExtensionsPanel;

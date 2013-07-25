@@ -26,9 +26,9 @@
 #include <QObject>
 
 // QTGUI includes
-#include "qSlicerBaseQTGUIPluginsExport.h"
+#include "qSlicerBaseQTGUIDesignerPluginsExport.h"
 
-class Q_SLICER_BASE_QTGUI_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin 
+class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerQTGUIAbstractPlugin
   : public QObject
   , public QDesignerCustomWidgetInterface
 {

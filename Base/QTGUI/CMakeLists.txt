@@ -28,6 +28,8 @@ set(KIT_SRCS
   qSlicerApplication.h
   qSlicerCommandOptions.cxx
   qSlicerCommandOptions.h
+  qSlicerDarkStyle.cxx
+  qSlicerDarkStyle.h
   qSlicerDataDialog.cxx
   qSlicerDataDialog.h
   qSlicerDirectoryListView.cxx
@@ -78,6 +80,8 @@ set(KIT_SRCS
   qSlicerSettingsGeneralPanel.h
   qSlicerSettingsModulesPanel.cxx
   qSlicerSettingsModulesPanel.h
+  qSlicerSettingsStylesPanel.cxx
+  qSlicerSettingsStylesPanel.h
   qSlicerStyle.cxx
   qSlicerStyle.h
   qSlicerViewersToolBar.cxx
@@ -157,6 +161,7 @@ set(KIT_MOC_SRCS
   qSlicerActionsDialog.h
   qSlicerApplication.h
   qSlicerCommandOptions.h
+  qSlicerDarkStyle.h
   qSlicerDataDialog.h
   qSlicerDataDialog_p.h
   qSlicerDirectoryListView.h
@@ -184,6 +189,8 @@ set(KIT_MOC_SRCS
   qSlicerSettingsCachePanel.h
   qSlicerSettingsGeneralPanel.h
   qSlicerSettingsModulesPanel.h
+  qSlicerSettingsStylesPanel.h
+  qSlicerStyle.h
   qSlicerViewersToolBar.h
   qSlicerViewersToolBar_p.h
   qSlicerWebWidget.h
@@ -239,6 +246,7 @@ set(KIT_UI_SRCS
   Resources/UI/qSlicerSettingsGeneralPanel.ui
   Resources/UI/qSlicerSettingsInternationalizationPanel.ui
   Resources/UI/qSlicerSettingsModulesPanel.ui
+  Resources/UI/qSlicerSettingsStylesPanel.ui
   Resources/UI/qSlicerWebWidget.ui
   )
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -322,8 +330,9 @@ ctkMacroBuildQtIconEnginesPlugin(
   TARGET_LIBRARIES ${QT_LIBRARIES} ${CTK_LIBRARIES}
   )
 
-# Qt Designer Plugins
+# Qt Plugins
 add_subdirectory(DesignerPlugins)
+add_subdirectory(StylePlugins)
 
 # Testing
 # Note: Within both Testing/Cxx and Testing/Python, some code is useful to both Slicer and the

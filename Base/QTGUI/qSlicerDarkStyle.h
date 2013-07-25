@@ -13,28 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Julien Finet, Kitware Inc.
+  This file was originally developed by Johan Andruejol, Kitware Inc.
   and was partially funded by NIH grant 3P41RR013218-12S1
 
 ==============================================================================*/
 
-#ifndef __qSlicerModulePanelPlugin_h
-#define __qSlicerModulePanelPlugin_h
+#ifndef __qSlicerDarkStyle_h
+#define __qSlicerDarkStyle_h
 
-#include "qSlicerQTGUIAbstractPlugin.h"
+// Slicer includes
+#include "qSlicerStyle.h"
+#include "qSlicerBaseQTGUIExport.h"
 
-class Q_SLICER_DESIGNER_PLUGINS_EXPORT qSlicerModulePanelPlugin
-  : public qSlicerQTGUIAbstractPlugin
+class Q_SLICER_BASE_QTGUI_EXPORT qSlicerDarkStyle : public qSlicerStyle
 {
   Q_OBJECT
 public:
-  qSlicerModulePanelPlugin(QObject* parent = 0);
-  
-  QWidget *createWidget(QWidget *_parent);
-  QString domXml() const;
-  QString includeFile() const;
-  bool isContainer() const;
-  QString name() const;
+  /// Superclass typedef
+  typedef qSlicerStyle Superclass;
+
+  /// Constructors
+  qSlicerDarkStyle();
+  virtual ~qSlicerDarkStyle();
+
+  virtual QPalette standardPalette() const;
 };
 
 #endif
