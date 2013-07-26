@@ -68,6 +68,7 @@ qSlicerSettingsStylesPanelPrivate
                  << "Plastique"
                  << "Cleanlooks"
                  << "Macintosh"
+                 << "Macintosh (aqua)"
                  << "GTK+";
 }
 
