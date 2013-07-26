@@ -337,6 +337,8 @@ ${ADDITIONAL_CMAKECACHE_OPTION}
         include(CTestPackage)
         include(MIDASAPIUploadPackage)
         include(MIDASCTestUploadURL)
+
+        set(Subversion_SVN_EXECUTABLE ${CTEST_SVN_COMMAND})
         include(SlicerMacroExtractRepositoryInfo)
 
         SlicerMacroExtractRepositoryInfo(VAR_PREFIX Slicer SOURCE_DIR ${CTEST_SOURCE_DIRECTORY})
