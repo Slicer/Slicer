@@ -17,6 +17,7 @@ Version:   $Revision: 1.2 $
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLScalarVolumeNode.h>
 
 // VTK includes
 #include <vtkObjectFactory.h>
@@ -40,7 +41,7 @@ vtkMRMLTractographyInteractiveSeedingNode::vtkMRMLTractographyInteractiveSeeding
    this->MaximumPathLength = 800.0;
    this->MaxNumberOfSeeds = 100;
    this->SeedSelectedFiducials = 0;
-   this->ROILabel = 1;
+   this->ROILabels = 0;
    this->RandomGrid = 0;
    this->UseIndexSpace = 0;
    this->LinearMeasureStart = 0.3;
@@ -61,9 +62,13 @@ vtkMRMLTractographyInteractiveSeedingNode::vtkMRMLTractographyInteractiveSeeding
 //----------------------------------------------------------------------------
 vtkMRMLTractographyInteractiveSeedingNode::~vtkMRMLTractographyInteractiveSeedingNode()
 {
-   this->SetInputVolumeRef( NULL );
-   this->SetInputFiducialRef( NULL );
-   this->SetOutputFiberRef( NULL );
+  if (ROILabels)
+    {
+    this->ROILabels->Delete();
+    }
+  this->SetInputVolumeRef( NULL );
+  this->SetInputFiducialRef( NULL );
+  this->SetOutputFiberRef( NULL );
 }
 
 //----------------------------------------------------------------------------
@@ -131,7 +136,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::WriteXML(ostream& of, int nInden
 
   {
     std::stringstream ss;
-    ss << this->ROILabel;
+    ss << this->ROILabelsToString();
     of << indent << " ROILabel=\"" << ss.str() << "\"";
   }
     
@@ -278,7 +283,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::ReadXMLAttributes(const char** a
       {
       std::stringstream ss;
       ss << attValue;
-      ss >> this->ROILabel;
+      this->StringToROILabels(ss.str());
       }
     else if (!strcmp(attName, "randomGrid")) 
       {
@@ -389,7 +394,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::Copy(vtkMRMLNode *anode)
   this->SetSeedingRegionStep(node->SeedingRegionStep);
   this->SetMaxNumberOfSeeds(node->MaxNumberOfSeeds);
   this->SetSeedSelectedFiducials(node->SeedSelectedFiducials);
-  this->SetROILabel(node->ROILabel);
+  this->SetROILabels(node->ROILabels);
   this->SetRandomGrid(node->RandomGrid);
   this->SetUseIndexSpace(node->UseIndexSpace);
   this->SetLinearMeasureStart(node->LinearMeasureStart);
@@ -424,7 +429,7 @@ void vtkMRMLTractographyInteractiveSeedingNode::PrintSelf(ostream& os, vtkIndent
   os << indent << "SeedingRegionStep:   " << this->SeedingRegionStep << "\n";
   os << indent << "MaxNumberOfSeeds:   " << this->MaxNumberOfSeeds << "\n";
   os << indent << "SeedSelectedFiducials:   " << this->SeedSelectedFiducials << "\n";
-  os << indent << "ROILabel:   " << this->ROILabel << "\n";
+  os << indent << "ROILabels:   " << this->ROILabelsToString() << "\n";
   os << indent << "RandomGrid:   " << this->RandomGrid << "\n";
   os << indent << "UseIndexSpace:   " << this->UseIndexSpace << "\n";
   os << indent << "LinearMeasureStart:   " << this->LinearMeasureStart << "\n";
@@ -462,4 +467,74 @@ void vtkMRMLTractographyInteractiveSeedingNode::UpdateReferenceID(const char *ol
     {
     this->SetOutputFiberRef(newID);
     }
+}
+
+void vtkMRMLTractographyInteractiveSeedingNode::StringToROILabels(std::string labels)
+{
+  if (ROILabels)
+    {
+    this->ROILabels->Delete();
+    }
+  this->ROILabels = vtkIntArray::New();
+
+  // get lables range in the volume
+  vtkMRMLScalarVolumeNode *labelsVolume = NULL;
+  double range[2];
+  range[0]=-1;
+  range[1]=1e10;
+  if (this->GetScene())
+    {
+    labelsVolume = vtkMRMLScalarVolumeNode::SafeDownCast(
+        this->GetScene()->GetNodeByID(this->GetInputFiducialRef()) );
+    if (labelsVolume && labelsVolume->GetImageData())
+      {
+      labelsVolume->GetImageData()->GetScalarRange(range);
+      }
+    }
+
+  // parse the string
+  std::stringstream ss(labels);
+  int label;
+  bool validLabels = false;
+  while ( !ss.eof() )
+    {
+    int c =  ss.peek() ;
+    if ( c < '0' || c > '9' )
+      {
+      validLabels = false;
+      ss.ignore(1);
+      continue;
+      }
+    if (ss >> label)
+      {
+      // check range
+      if (range[0] <= label && label <= range[1])
+        {
+        this->ROILabels->InsertNextValue(label);
+        validLabels = true;
+        }
+      }
+    } //while ( !ss.eof() )
+  if (validLabels)
+    {
+    this->Modified();
+    }
+}
+
+std::string vtkMRMLTractographyInteractiveSeedingNode::ROILabelsToString()
+{
+  if (!this->ROILabels)
+    {
+      return std::string();
+    }
+  std::stringstream ss;
+  for (int i=0; i<this->ROILabels->GetNumberOfTuples(); i++)
+    {
+    if (i)
+      {
+      ss << ",";
+      }
+    ss << this->ROILabels->GetValue(i);
+    }
+  return ss.str();
 }

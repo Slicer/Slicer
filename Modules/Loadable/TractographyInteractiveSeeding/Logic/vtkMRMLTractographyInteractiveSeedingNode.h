@@ -21,6 +21,7 @@
 
 // VTK includes
 #include <vtkImageData.h>
+#include <vtkIntArray.h>
 #include <vtkMatrix4x4.h>
 #include <vtkTransform.h>
 
@@ -132,10 +133,9 @@ public:
   vtkSetMacro(RandomGrid, int);
 
   // Description:
-  // Enable/Disable Lable Map seeding random grid
-  vtkBooleanMacro(ROILabel, int);
-  vtkGetMacro(ROILabel, int);
-  vtkSetMacro(ROILabel, int);
+  // Array of labels to seed from
+  vtkGetObjectMacro(ROILabels, vtkIntArray);
+  vtkSetObjectMacro(ROILabels, vtkIntArray);
 
   // Description:
   // Enable/Disable Lable Map seeding use index space
@@ -188,6 +188,9 @@ public:
   // Update the stored reference to another node in the scene
   virtual void UpdateReferenceID(const char *oldID, const char *newID);
 
+  void StringToROILabels(std::string labels);
+
+  std::string ROILabelsToString();
 
 protected:
   vtkMRMLTractographyInteractiveSeedingNode();
@@ -209,7 +212,7 @@ protected:
   int SeedSelectedFiducials;
   int EnableSeeding;
 
-  int ROILabel;
+  vtkIntArray *ROILabels;
   int RandomGrid;
   int UseIndexSpace;
   double LinearMeasureStart;

@@ -382,17 +382,14 @@
           <item row="5" column="0">
            <widget class="QLabel" name="ROILabelLabel">
             <property name="text">
-             <string>ROI Label</string>
+             <string>ROI Labels</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QSpinBox" name="ROILabelInput">
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="value">
-             <number>1</number>
+           <widget class="QLineEdit" name="ROILabelInput">
+             <property name="text">
+               <string>1</string>
             </property>
            </widget>
           </item>

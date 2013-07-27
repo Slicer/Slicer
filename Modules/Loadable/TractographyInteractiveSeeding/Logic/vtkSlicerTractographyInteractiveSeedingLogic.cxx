@@ -343,7 +343,7 @@ void vtkSlicerTractographyInteractiveSeedingLogic::CreateTractsForOneSeed(vtkSee
 //----------------------------------------------------------------------------
 int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractographyInteractiveSeedingNode *parametersNode,
                                                             vtkMRMLDiffusionTensorVolumeNode *volumeNode,
-                                                            vtkMRMLNode *seedingyNode,
+                                                            vtkMRMLNode *seedingNode,
                                                             vtkMRMLFiberBundleNode *fiberNode,
                                                             int stoppingMode,
                                                             double stoppingValue,
@@ -356,7 +356,7 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
                                                             int displayMode)
 {
   // 0. check inputs
-  if (volumeNode == NULL || seedingyNode == NULL || fiberNode == NULL ||
+  if (volumeNode == NULL || seedingNode == NULL || fiberNode == NULL ||
       volumeNode->GetImageData() == NULL)
     {
     if (fiberNode && fiberNode->GetPolyData())
@@ -375,10 +375,10 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
   vtkMRMLTransformNode* vxformNode = volumeNode->GetParentTransformNode();
 
-  vtkMRMLAnnotationHierarchyNode *annotationListNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedingyNode);
-  vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(seedingyNode);
-  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(seedingyNode);
-  vtkMRMLScalarVolumeNode *labelMapNode = vtkMRMLScalarVolumeNode::SafeDownCast(seedingyNode);
+  vtkMRMLAnnotationHierarchyNode *annotationListNode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(seedingNode);
+  vtkMRMLAnnotationControlPointsNode *annotationNode = vtkMRMLAnnotationControlPointsNode::SafeDownCast(seedingNode);
+  vtkMRMLModelNode *modelNode = vtkMRMLModelNode::SafeDownCast(seedingNode);
+  vtkMRMLScalarVolumeNode *labelMapNode = vtkMRMLScalarVolumeNode::SafeDownCast(seedingNode);
 
    if( parametersNode->GetWriteToFile() )
     {
@@ -400,21 +400,24 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
   seed->SetInputTensorField(ici->GetOutput());
 
-  if (labelMapNode)
+  if ( labelMapNode && parametersNode->GetROILabels() )
     {
 
-    this->CreateTractsForLabelMap(seed.GetPointer(), volumeNode, labelMapNode,
-                                  parametersNode->GetROILabel(),
-                                  parametersNode->GetUseIndexSpace(),
-                                  parametersNode->GetSeedSpacing(),
-                                  parametersNode->GetRandomGrid(),
-                                  parametersNode->GetLinearMeasureStart(),
-                                  parametersNode->GetStoppingMode(),
-                                  parametersNode->GetStoppingValue(),
-                                  parametersNode->GetStoppingCurvature(),
-                                  parametersNode->GetIntegrationStep(),
-                                  parametersNode->GetMinimumPathLength(),
-                                  parametersNode->GetMaximumPathLength());
+    for (int i=0; i<parametersNode->GetROILabels()->GetNumberOfTuples(); i++)
+    {
+      this->CreateTractsForLabelMap(seed.GetPointer(), volumeNode, labelMapNode,
+                                    parametersNode->GetROILabels()->GetValue(i),
+                                    parametersNode->GetUseIndexSpace(),
+                                    parametersNode->GetSeedSpacing(),
+                                    parametersNode->GetRandomGrid(),
+                                    parametersNode->GetLinearMeasureStart(),
+                                    parametersNode->GetStoppingMode(),
+                                    parametersNode->GetStoppingValue(),
+                                    parametersNode->GetStoppingCurvature(),
+                                    parametersNode->GetIntegrationStep(),
+                                    parametersNode->GetMinimumPathLength(),
+                                    parametersNode->GetMaximumPathLength());
+      }
     }
   else if (annotationListNode) // loop over annotation nodes
     {

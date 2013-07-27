@@ -273,8 +273,12 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setup()
                 SLOT(setLinearMeasureStart(double)));
 
   QObject::connect(d->ROILabelInput,
-                SIGNAL(valueChanged(int)),
-                SLOT(setROILabel(int)));
+                SIGNAL(textChanged(const QString &)),
+                SLOT(setROILabels(const QString &)));
+
+  QObject::connect(d->ROILabelInput,
+                SIGNAL(returnPressed()),
+                SLOT(setROILabels()));
 
   QObject::connect(d->RandomGridCheckBox,
                 SIGNAL(stateChanged(int)),
@@ -380,6 +384,23 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedingNode(vtkMRMLNo
   if (vtkMRMLScalarVolumeNode::SafeDownCast(d->FiducialNodeSelector->currentNode()) != 0)
     {
     d->stackedWidget->setCurrentIndex(1);
+
+    // set defult label value in UI
+    vtkMRMLScalarVolumeNode *labelsVolume = vtkMRMLScalarVolumeNode::SafeDownCast(d->FiducialNodeSelector->currentNode());
+    if (labelsVolume && labelsVolume->GetImageData())
+      {
+      double range[2];
+      labelsVolume->GetImageData()->GetScalarRange(range);
+      int label = (int)range[0];
+      if (label < 1)
+        {
+        label = 1;
+        }
+      std::stringstream ss;
+      ss << label;
+      QString str = QString::fromUtf8(ss.str().c_str());
+      d->ROILabelInput->setText(str); 
+      }
     }
   else
     {
@@ -535,7 +556,7 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::updateWidgetFromMRML()
     d->StoppingCriteriaComboBox->setCurrentIndex(paramNode->GetStoppingMode());
     d->StoppingValueSpinBox->setValue(paramNode->GetStoppingValue());
     d->DisplayTracksComboBox->setCurrentIndex(paramNode->GetDisplayMode());
-    d->ROILabelInput->setValue(paramNode->GetROILabel());
+    d->ROILabelInput->setText(paramNode->ROILabelsToString().c_str());
     d->RandomGridCheckBox->setChecked(paramNode->GetRandomGrid());
     d->UseIndexSpaceCheckBox->setChecked(paramNode->GetUseIndexSpace());
     d->LinearMeasureStartSlider->setValue(paramNode->GetLinearMeasureStart());
@@ -682,11 +703,17 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setSeedSpacing(double va
     }
 }
 //-----------------------------------------------------------------------------
-void qSlicerTractographyInteractiveSeedingModuleWidget::setROILabel(int value)
+void qSlicerTractographyInteractiveSeedingModuleWidget::setROILabels()
+{
+  Q_D(qSlicerTractographyInteractiveSeedingModuleWidget);
+  this->setROILabels(d->ROILabelInput->text());
+}
+//-----------------------------------------------------------------------------
+void qSlicerTractographyInteractiveSeedingModuleWidget::setROILabels(const QString &labels)
 {
   if (this->TractographyInteractiveSeedingNode)
     {
-    this->TractographyInteractiveSeedingNode->SetROILabel(value);
+    this->TractographyInteractiveSeedingNode->StringToROILabels(labels.toStdString());
     }
 }
 //-----------------------------------------------------------------------------

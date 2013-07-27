@@ -14,6 +14,7 @@ class vtkMRMLNode;
 class vtkMRMLFiberBundleNode;
 class vtkMRMLDiffusionTensorVolumeNode;
 class vtkMRMLTractographyInteractiveSeedingNode;
+class vtkIntArray;
 
 /// \ingroup Slicer_QtModules_TractographyInteractiveSeeding
 class Q_SLICER_QTMODULES_TRACTOGRAPHYINTERACTIVESEEDING_EXPORT qSlicerTractographyInteractiveSeedingModuleWidget :  public qSlicerAbstractModuleWidget
@@ -104,8 +105,11 @@ public slots:
   /// Set linear measure start threshold
   void setLinearMeasureStart(double value);
 
-  /// Set RPO label
-  void setROILabel(int value);
+  /// Set RPO label from Qt widgjet
+  void setROILabels();
+
+  /// Set RPO label from string
+  void setROILabels(const QString &labels);
 
   /// Set random grid
   void setRandomGrid(int value);
