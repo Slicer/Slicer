@@ -140,7 +140,6 @@ class ChangeIslandEffectLogic(IslandEffect.IslandEffectLogic):
     #
     # change the label values based on the parameter node
     #
-    self.undoRedo.saveState()
     labelLogic = self.sliceLogic.GetLabelLayer()
     xyToIJK = labelLogic.GetXYToIJKTransform().GetMatrix()
     ijk = xyToIJK.MultiplyPoint( xy + (0, 1) )[:3]
