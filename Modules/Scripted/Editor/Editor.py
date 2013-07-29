@@ -160,6 +160,9 @@ class EditorWidget:
     if self.helper:
       self.helper.onEnter()
 
+    if self.toolsColor:
+      self.toolsColor.updateGUIFromMRML(self.parameterNode, vtk.vtkCommand.ModifiedEvent)
+
   def exit(self):
     self.parameterNode.RemoveObserver(self.parameterNodeTag)
     if self.helper:

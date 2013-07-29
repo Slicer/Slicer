@@ -110,8 +110,7 @@ class EditColor(object):
       return
     label = int(self.parameterNode.GetParameter(self.parameter))
 
-    if not self.colorNode:
-      self.colorNode = self.editUtil.getColorNode()
+    self.colorNode = self.editUtil.getColorNode()
     if self.colorNode:
       self.frame.setDisabled(0)
       self.labelName.setText( self.colorNode.GetColorName( label ) )
@@ -136,8 +135,7 @@ class EditColor(object):
 
 
   def showColorBox(self):
-    if not self.colorNode:
-      self.colorNode = self.editUtil.getColorNode()
+    self.colorNode = self.editUtil.getColorNode()
 
     if not self.colorBox:
       self.colorBox = ColorBox.ColorBox(parameterNode=self.parameterNode, parameter=self.parameter, colorNode=self.colorNode)
