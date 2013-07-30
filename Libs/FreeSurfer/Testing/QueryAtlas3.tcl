@@ -1,6 +1,6 @@
 
 proc QueryAtlasInit { {filename ""} } {
-  
+
   # find the data
   set ::QA(filename) ""
   if { $filename != "" } {
@@ -26,8 +26,8 @@ proc QueryAtlasInit { {filename ""} } {
 
   QueryAtlasAddModel
   QueryAtlasAddVolumes
-  QueryAtlasAddAnnotations 
-  QueryAtlasInitializePicker 
+  QueryAtlasAddAnnotations
+  QueryAtlasInitializePicker
   QueryAtlasRenderView
 
   QueryAtlasUpdateCursor
@@ -36,7 +36,7 @@ proc QueryAtlasInit { {filename ""} } {
 proc QueryAtlasAddBIRNLogo {} {
 
   set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
-  set interactor [$renderWidget GetRenderWindowInteractor] 
+  set interactor [$renderWidget GetRenderWindowInteractor]
 
   #
   # add the BIRN logo if possible (logo widget was added
@@ -133,7 +133,7 @@ proc QueryAtlasAddBIRNLogo {} {
   #83 :this->Moving = 1;
   #84 :this->ShowBorder = vtkBorderRepresentation::BORDER_ACTIVE;
   #85 :this->PositionCoordinate->SetValue(0.9, 0.025);
-  #86 :this->Position2Coordinate->SetValue(0.075, 0.075); 
+  #86 :this->Position2Coordinate->SetValue(0.075, 0.075);
   }
 }
 
@@ -256,7 +256,7 @@ proc QueryAtlasAddVolumes {} {
 }
 
 #
-# use the freesurfer annotation code to put 
+# use the freesurfer annotation code to put
 # label scalars onto the model
 #
 proc QueryAtlasAddAnnotations {} {
@@ -267,7 +267,7 @@ proc QueryAtlasAddAnnotations {} {
   set modelNode [$::slicer3::MRMLScene GetNodeByID $::QA(modelNodeID)]
   set displayNodeID [$modelNode GetDisplayNodeID]
   set displayNode [$::slicer3::MRMLScene GetNodeByID $displayNodeID]
-  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
   $viewer UpdateFromMRML
   set actor [$viewer GetActorByID [$modelNode GetID]]
   set mapper [$actor GetMapper]
@@ -285,7 +285,7 @@ proc QueryAtlasAddAnnotations {} {
         [$polydata GetPointData] AddArray $scalars
         [$polydata GetPointData] SetActiveScalars "labels"
         $scalars Delete
-    } 
+    }
     set scalaridx [[$polydata GetPointData] SetActiveScalars "labels"]
     set scalars [[$polydata GetPointData] GetArray $scalaridx]
 
@@ -310,13 +310,13 @@ proc QueryAtlasAddAnnotations {} {
         # use the default colour node
         [$modelNode GetDisplayNode] SetAndObserveColorNodeID [$colorLogic GetDefaultFreeSurferLabelMapColorNodeID]
         set lutNode [[$modelNode GetDisplayNode] GetColorNode]
-        # get the names 
+        # get the names
         for {set i 0} {$i < [$lutNode GetNumberOfColors]} {incr i} {
             set _labels($i) [$lutNode GetColorName $i]
         }
     } else {
-        # get the colour names from the reader       
-        array set _labels [$fssar GetColorTableNames]        
+        # get the colour names from the reader
+        array set _labels [$fssar GetColorTableNames]
     }
     array unset ::vtkFreeSurferReadersLabels_$::QA(modelNodeID)
     array set ::vtkFreeSurferReadersLabels_$::QA(modelNodeID) [array get _labels]
@@ -327,8 +327,8 @@ proc QueryAtlasAddAnnotations {} {
 
     # set the look up table
     $mapper SetLookupTable [$lutNode GetLookupTable]
-    
-    
+
+
 
     # make the scalars visible
     $mapper SetScalarRange  [lindex $entries 0] [lindex $entries end]
@@ -344,7 +344,7 @@ proc QueryAtlasAddAnnotations {} {
   #
   # read the freesurfer labels for the aseg+aparc
   #
-  set lutFile $::SlicerHome/share/FreeSurfer/FreeSurferColorLUT.txt
+  set lutFile $::SlicerHome/share/FreeSurfer/FreeSurferColorLUT20060522.txt
   if { [file exists $lutFile] } {
     set fp [open $lutFile "r"]
     while { ![eof $fp] } {
@@ -362,7 +362,7 @@ proc QueryAtlasAddAnnotations {} {
 }
 
 #
-# convert a number to an RGBA 
+# convert a number to an RGBA
 # - A is always 255 (on transp)
 # - number is incremented first so that 0 means background
 #
@@ -382,7 +382,7 @@ proc QueryAtlasNumberToRGBA {number} {
 #
 proc QueryAtlasRGBAToNumber {rgba} {
   foreach {r g b a} $rgba {}
-  return [expr $r * (256*256) + $g * 256 + $b - 1] 
+  return [expr $r * (256*256) + $g * 256 + $b - 1]
 }
 
 
@@ -418,14 +418,14 @@ proc QueryAtlasInitializePicker {} {
   #
   # instrument the polydata with cell number colors
   # - note: even though the array is named CellNumberColors here,
-  #   vtk will (sometimes?) rename it to "Opaque Colors" as part of the first 
+  #   vtk will (sometimes?) rename it to "Opaque Colors" as part of the first
   #   render pass
   #
 
   $::QA(polyData) Update
 
   set cellData [$::QA(polyData) GetCellData]
-  set cellNumberColors [$cellData GetArray "CellNumberColors"] 
+  set cellNumberColors [$cellData GetArray "CellNumberColors"]
   if { $cellNumberColors == "" } {
     set cellNumberColors [vtkUnsignedCharArray New]
     $cellNumberColors SetName "CellNumberColors"
@@ -434,7 +434,7 @@ proc QueryAtlasInitializePicker {} {
   }
   $cellData SetScalars $cellNumberColors
 
-  set cellNumberColors [$cellData GetArray "CellNumberColors"] 
+  set cellNumberColors [$cellData GetArray "CellNumberColors"]
   $cellNumberColors Initialize
   $cellNumberColors SetNumberOfComponents 4
 
@@ -471,8 +471,8 @@ proc QueryAtlasInitializePicker {} {
   }
   set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
   set renderer [$renderWidget GetRenderer]
-  set interactor [$renderWidget GetRenderWindowInteractor] 
-  set style [$interactor GetInteractorStyle] 
+  set interactor [$renderWidget GetRenderWindowInteractor]
+  set style [$interactor GetInteractorStyle]
 
   $interactor AddObserver EnterEvent "QueryAtlasCursorVisibility on"
   $interactor AddObserver LeaveEvent "QueryAtlasCursorVisibility off"
@@ -540,7 +540,7 @@ proc QueryAtlasRenderView {} {
 }
 
 #####################################
-# Override/Restore render state 
+# Override/Restore render state
 # - set up for rendering the cell picker and then
 #   restore the state afterwards
 #
@@ -548,7 +548,7 @@ proc QueryAtlasRenderView {} {
 proc QueryAtlasOverrideRenderState {renderer} {
 
   #
-  # save the render state before overriding it with the 
+  # save the render state before overriding it with the
   # parameters needed for cell rendering
   # - is just background color and visibility state of all actors
   #
@@ -586,7 +586,7 @@ proc QueryAtlasRestoreRenderState {renderer renderState} {
 
 ### utility routine that should be provided by vtkCell
 proc QueryAtlasPCoordsToWorld {cell pCoords} {
-    
+
   if { [$cell GetClassName] != "vtkQuad" } {
     return "0 0 0"
   }
@@ -628,10 +628,10 @@ proc QueryAtlasPickCallback {} {
   #
   # get access to the standard view parts
   #
-  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget] 
+  set viewer [$::slicer3::ApplicationGUI GetActiveViewerWidget]
   set renderWidget [$viewer GetMainViewer]
   set renderWindow [$renderWidget GetRenderWindow]
-  set interactor [$renderWidget GetRenderWindowInteractor] 
+  set interactor [$renderWidget GetRenderWindowInteractor]
   set renderer [$renderWidget GetRenderer]
   set actor [$viewer GetActorByID $::QA(modelNodeID)]
 
@@ -641,7 +641,7 @@ proc QueryAtlasPickCallback {} {
     QueryAtlasRenderView
   }
 
-  # 
+  #
   # get the event location
   #
   eval $interactor UpdateSize [$renderer GetSize]
@@ -772,9 +772,9 @@ proc QueryAtlasPickCallback {} {
   if { ![info exists ::QA(lastLabels)] } {
     set ::QA(lastLabels) ""
   }
-  
+
   if { $pointLabels != $::QA(lastLabels) } {
-    set ::QA(lastLabels) $pointLabels 
+    set ::QA(lastLabels) $pointLabels
   }
 
   QueryAtlasUpdateCursor
@@ -811,18 +811,18 @@ proc QueryAtlasUpdateCursor {} {
   }
 
   if { [info exists ::QA(lastLabels)] && [info exists ::QA(lastWindowXY)] } {
-    $::QA(cursor,actor) SetInput $::QA(lastLabels) 
+    $::QA(cursor,actor) SetInput $::QA(lastLabels)
     foreach {x y} $::QA(lastWindowXY) {}
     set y [expr $y + 15]
     $::QA(cursor,actor) SetPosition $x $y
     $viewer RequestRender
-  } 
+  }
 }
 
 proc QueryAtlasMenuCreate { state } {
 
   set renderWidget [[$::slicer3::ApplicationGUI GetActiveViewerWidget] GetMainViewer]
-  set interactor [$renderWidget GetRenderWindowInteractor] 
+  set interactor [$renderWidget GetRenderWindowInteractor]
   set position [$interactor GetEventPosition]
 
 
@@ -832,7 +832,7 @@ proc QueryAtlasMenuCreate { state } {
 
   #
   # save the event position when the menu action started (when the right mouse
-  # button was pressed) and only post the menu if the position is the same.  
+  # button was pressed) and only post the menu if the position is the same.
   # If they aren't the same, do nothing since this was a dolly(zoom) action.
   #
   switch $state {
@@ -861,7 +861,7 @@ proc QueryAtlasMenuCreate { state } {
         $qaMenu insert end command -label "Add To Search Terms" -command "QueryAtlasAddTerms"
         $qaMenu insert end command -label "Remove All Search Terms" -command "QueryAtlasRemoveTerms"
 
-        
+
         foreach {x y} $::QA(lastRootXY) {}
         $qaMenu post $x $y
       }

@@ -54,7 +54,7 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   std::vector<std::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT.txt"));
+  filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT20060522.txt"));
   std::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 
@@ -79,11 +79,11 @@ vtkMRMLFreeSurferProceduralColorNode::~vtkMRMLFreeSurferProceduralColorNode()
 void vtkMRMLFreeSurferProceduralColorNode::WriteXML(ostream& of, int nIndent)
 {
   // Write all attributes not equal to their defaults
-  
+
   Superclass::WriteXML(of, nIndent);
-  
+
   vtkIndent indent(nIndent);
-  
+
   // only print out the look up table if ?
   if (this->LookupTable != NULL)
     {
@@ -108,7 +108,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
   const char* attName;
   const char* attValue;
   int numColors;
-  while (*atts != NULL) 
+  while (*atts != NULL)
   {
       attName = *(atts++);
       attValue = *(atts++);
@@ -122,7 +122,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
         this->Names.clear();
         this->Names.resize(numColors);
         }
-      else if (!strcmp(attName, "colors")) 
+      else if (!strcmp(attName, "colors"))
         {
         std::stringstream ss;
         bool errorCondition = false;
@@ -135,7 +135,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
           std::string name;
           double r, g, b, a;
           ss >> index;
-          ss >> name;          
+          ss >> name;
           ss >> r;
           ss >> g;
           ss >> b;
@@ -153,7 +153,7 @@ void vtkMRMLFreeSurferProceduralColorNode::ReadXMLAttributes(const char** atts)
           {
           this->NamesInitialisedOn();
           }
-        }      
+        }
       else
         {
         vtkErrorMacro ("Unknown attribute name " << attName << endl);
@@ -186,7 +186,7 @@ void vtkMRMLFreeSurferProceduralColorNode::Copy(vtkMRMLNode *anode)
 //----------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::PrintSelf(ostream& os, vtkIndent indent)
 {
-  
+
   Superclass::PrintSelf(os,indent);
 
   if (this->LookupTable != NULL)
@@ -206,14 +206,14 @@ void vtkMRMLFreeSurferProceduralColorNode::UpdateScene(vtkMRMLScene *scene)
 {
   Superclass::UpdateScene(scene);
   /*
-    if (this->GetStorageNodeID() == NULL) 
+    if (this->GetStorageNodeID() == NULL)
     {
     //vtkErrorMacro("No reference StorageNodeID found");
     return;
     }
-    
+
     vtkMRMLNode* mnode = scene->GetNodeByID(this->StorageNodeID);
-    if (mnode) 
+    if (mnode)
     {
     vtkMRMLStorageNode *node  = dynamic_cast < vtkMRMLStorageNode *>(mnode);
     node->ReadData(this);
@@ -300,7 +300,7 @@ const char* vtkMRMLFreeSurferProceduralColorNode::GetTypeAsString()
 
 //---------------------------------------------------------------------------
 void vtkMRMLFreeSurferProceduralColorNode::ProcessMRMLEvents ( vtkObject *caller,
-                                           unsigned long event, 
+                                           unsigned long event,
                                            void *callData )
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -324,7 +324,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
     vtkDebugMacro("SetType: type is already set to " << type <<  " = " << this->GetTypeAsString());
     return;
     }
-    
+
     this->Type = type;
 
     vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting Type to " << type << " = " << this->GetTypeAsString());
@@ -347,10 +347,10 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
         return;
         }
       }
-    
+
     if (this->Type == this->Heat)
       {
-      this->GetFSLookupTable()->SetLutTypeToHeat();    
+      this->GetFSLookupTable()->SetLutTypeToHeat();
       this->SetNamesFromColors();
       this->SetDescription("The Heat FreeSurfer colour table, shows hot spots with high activation");
       }
@@ -363,7 +363,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
 
     else if (this->Type == this->RedBlue)
       {
-      this->GetFSLookupTable()->SetLutTypeToRedBlue();     
+      this->GetFSLookupTable()->SetLutTypeToRedBlue();
       this->SetNamesFromColors();
       this->SetDescription("A FreeSurfer color scale, 256 colours, from red to blue");
       }
@@ -392,7 +392,7 @@ void vtkMRMLFreeSurferProceduralColorNode::SetType(int type)
       }
     // invoke a modified event
     this->Modified();
-    
+
     // invoke a type  modified event
     this->InvokeEvent(vtkMRMLFreeSurferProceduralColorNode::TypeModifiedEvent);
 }

@@ -21,7 +21,7 @@ proc fips2mrml_InitializeParseFields { } {
     if { [info exists ::fips2mrml_Listbox] } {
         $::fips2mrml_Listbox delete 0 end
     }
-    
+
     #--- number of entry in fips database file
     set ::fips2mrml_Nth ""
     set ::fips2mrml_Nth_index 0
@@ -65,7 +65,7 @@ proc fips2mrml_InitializeParseFields { } {
     #---  name of associated paradigm
     set ::fips2mrml_Paradigm ""
     set ::fips2mrml_Paradigm_index 10
-    
+
     #---  run number
     set ::fips2mrml_RunNo ""
     set ::fips2mrml_RunNo_index 11
@@ -74,15 +74,15 @@ proc fips2mrml_InitializeParseFields { } {
     set ::fips2mrml_AnalysisLevel ""
     set ::fips2mrml_AnalysisLevel_index 12
 
-    #---  name of the analysis or format? (ANALYZE_7.5, DICOM, NIFTI, filename.flac)    
+    #---  name of the analysis or format? (ANALYZE_7.5, DICOM, NIFTI, filename.flac)
     set ::fips2mrml_AnalysisName ""
     set ::fips2mrml_AnalysisName_index 13
 
     #--- directory from which xml image wrapper can be found, or data can be
     #--- found with the FIPS directory structure in mind.
-    set ::fips2mrml_XMLDir ""    
+    set ::fips2mrml_XMLDir ""
     set ::fips2mrml_XMLDir_index 14
-    
+
     #--- for now keep these constant.
     set ::fips2mrml_AnalysisLevel "FirstLevel"
     set ::fips2mrml_RunType "functional"
@@ -290,7 +290,7 @@ proc fips2mrml_GetT1Volume {} {
     #--- find the list of files in the DICOM directory
     #--- below is the real line we want
     set fileList [ glob $T1path*.dcm -nocomplain]
-    set flen [ llength $fileList ]        
+    set flen [ llength $fileList ]
 
     #--- now figure out the first and last file number...
     set gotDICOM 0
@@ -310,7 +310,7 @@ proc fips2mrml_GetT1Volume {} {
         set ::fips2mrml_T1Volume [ lappend ::fips2mrml_T1Volume $f ]
     } else {
         #--- add a null entry to the list of T1 Volumes
-        set ::fips2mrml_T1Volume [ lappend ::fips2mrml_T1Volume "" ] 
+        set ::fips2mrml_T1Volume [ lappend ::fips2mrml_T1Volume "" ]
     }
 
     if {$gotDICOM } {
@@ -349,7 +349,7 @@ proc fips2mrml_GetT2Volume { } {
     #--- find the list of files in the DICOM directory
     #--- below is the real line we want
     set fileList [ glob $T2path*.dcm -nocomplain]
-    set flen [ llength $fileList ]        
+    set flen [ llength $fileList ]
 
     #--- now figure out the first and last file number...
     set gotDICOM 0
@@ -369,7 +369,7 @@ proc fips2mrml_GetT2Volume { } {
         set ::fips2mrml_T2Volume [ lappend ::fips2mrml_T2Volume $f ]
     } else {
         #--- add a null entry to the list of T1 Volumes
-        set ::fips2mrml_T2Volume [ lappend ::fips2mrml_T2Volume "" ] 
+        set ::fips2mrml_T2Volume [ lappend ::fips2mrml_T2Volume "" ]
     }
 
     if { $gotDICOM } {
@@ -377,7 +377,7 @@ proc fips2mrml_GetT2Volume { } {
     } else {
         puts "No T2 volumes found."
     }
-    
+
     return $gotDICOM
 }
 
@@ -394,7 +394,7 @@ proc fips2mrml_GetExampleFuncVolume { } {
     set tmp [format "%s/%s" $tmp "/example_func.nii" ]
     #--- does file exist?
     set found [ file exists $tmp ]
-    set ::fips2mrml_ExampleFuncVolume [ lappend ::fips2mrml_ExampleFuncVolume $tmp ] 
+    set ::fips2mrml_ExampleFuncVolume [ lappend ::fips2mrml_ExampleFuncVolume $tmp ]
 
     if { $found } {
         puts "Example functional volumes found:  $::fips2mrml_ExampleFuncVolume"
@@ -429,7 +429,7 @@ proc fips2mrml_GetZstatVolumes { } {
         set val [ lindex $fileList $j ]
         set val [ format "%s/%s" $tmp $val]
         puts "$val"
-        set ::fips2mrml_ZstatVolumes [ lappend ::fips2mrml_ZstatVolumes $val ]             
+        set ::fips2mrml_ZstatVolumes [ lappend ::fips2mrml_ZstatVolumes $val ]
         #--- does file exist?
         set found [ file exists $val ]
         if { $found } {
@@ -441,7 +441,7 @@ proc fips2mrml_GetZstatVolumes { } {
         puts "No Tstat volumes found."
     }
     return $at_least_one_found
-    
+
 }
 
 proc fips2mrml_CreateUnnumberedZstatFiles { } {
@@ -461,7 +461,7 @@ proc fips2mrml_CreateUnnumberedZstatFiles { } {
         set dirn [ string trimright $fulln "/"]
         set j [ string last "/" $dirn ]
         if { $j > 0 } {
-            set dirn [ string range $dirn 0 $j ]        
+            set dirn [ string range $dirn 0 $j ]
         }
         set filen [ string trimleft $fulln $dirn ]
 
@@ -478,14 +478,14 @@ proc fips2mrml_CreateUnnumberedZstatFiles { } {
         for { set k 0 } { $k < $len2 } { incr k } {
             set c [ string index $basename $k ]
             if { [ string is integer -strict $c ] } {
-                set isaNum 1 
+                set isaNum 1
                 break;
             }
         }
 
         #--- get numberless basename
         set numberlessBasename [ string range $basename 0 [ expr $k -1] ]
-        
+
         #--- pull out the number
         if  { $isaNum && [ file exists $fulln ] } {
             #--- update list and create symbolic link
@@ -496,7 +496,7 @@ proc fips2mrml_CreateUnnumberedZstatFiles { } {
 
             #--- make symlink
             puts "creating symbolic link: $newFile"
-            set fcopy [ file copy -force $fulln $newFile ]            
+            set fcopy [ file copy -force $fulln $newFile ]
             #set mklink [ file link -symbolic $newFile $fulln ]
 
             #--- update zStatVolumes list and zStatVolumeNames
@@ -531,9 +531,9 @@ proc fips2mrml_GetTstatVolumes { } {
     puts "Tstat volumes found:"
     for { set j 0 } { $j < $len2 } { incr j } {
         set val [ lindex $fileList $j ]
-        set val [ format "%s/%s" $tmp $val]            
+        set val [ format "%s/%s" $tmp $val]
         puts "$val"
-        set ::fips2mrml_TstatVolumes [ lappend ::fips2mrml_TstatVolumes $val ]             
+        set ::fips2mrml_TstatVolumes [ lappend ::fips2mrml_TstatVolumes $val ]
         #--- does file exist?
         set found [ file exists $val ]
         if { $found } {
@@ -565,7 +565,7 @@ proc fips2mrml_GetExf2AnatMatrix { } {
     #--- first get all the mat files
 
     set matrixFileList ""
-    set val $::fips2mrml_MatchSelection 
+    set val $::fips2mrml_MatchSelection
     set tmp [lindex $val $::fips2mrml_XMLDir_index ]
     set tmp [format "%s/%s" $tmp "/reg/freesurfer/" ]
     set matrixFile [ format "%s/%s" $tmp "exf2anat.fsl.mat" ]
@@ -1108,8 +1108,8 @@ proc fips2mrml_WriteMRML2File {  } {
         }
         incr mcount
     }
-    
-    
+
+
     #--- write matrices
     set mcount 0
     set row1 "1 0 0 0"
@@ -1121,7 +1121,7 @@ proc fips2mrml_WriteMRML2File {  } {
     puts $fid $line
     set line "<Matrix name='RLrotation$xcount' matrix='$vals'></Matrix>"
     puts $fid $line
-    incr mcount    
+    incr mcount
 
     set mat [ lindex $::fips2mrml_exf2anatList 0 ]
     if { $mat != ""  } {
@@ -1138,7 +1138,7 @@ proc fips2mrml_WriteMRML2File {  } {
         puts $fid $line
         incr mcount
     }
-    
+
     #--- write example functional volume
     set len [ llength $::fips2mrml_ExampleFuncVolume ]
     for { set i 0 } { $i < $len } { incr i } {
@@ -1149,7 +1149,7 @@ proc fips2mrml_WriteMRML2File {  } {
         }
         incr vcount
     }
-    
+
     #--- write statistics volumes
     set len [ llength $::fips2mrml_ZstatVolumes ]
     for { set i 0 } { $i < $len } { incr i } {
@@ -1167,7 +1167,7 @@ proc fips2mrml_WriteMRML2File {  } {
     puts $fid $line
     set line "</Transform>"
     puts $fid $line
-        
+
     #--- close file
     set line "</MRML>"
     puts $fid $line
@@ -1197,7 +1197,7 @@ proc fips2mrml_WriteMRML3File { } {
     set line "<Selection id=\"vtkMRMLSelectionNode1\" name=\"\"  hideFromEditors=\"true\" activeVolumeID=\"vtkMRMLScalarVolumeNode1\" activeLabelVolumeID=\"vtkMRMLScalarVolumeNode2\" ></Selection>"
     puts $fid $line
     puts $fid ""
-    
+
     #--- set up the three main slice and slice composite nodes
     #--- fix parameters to refer to actual nodes created below
     #--- we put brain.mgz in the background layer, and aparc+aseg.mgz in the label layer. fg is null for now.
@@ -1214,7 +1214,7 @@ proc fips2mrml_WriteMRML3File { } {
     set line "<SliceComposite id=\"vtkMRMLSliceCompositeNode2\" name=\"\"  hideFromEditors=\"true\" backgroundVolumeID=\"vtkMRMLScalarVolumeNode1\" foregroundVolumeID=\"\" labelVolumeID=\"vtkMRMLScalarVolumeNode2\" labelOpacity=\"1\" layoutName=\"Yellow\" ></SliceComposite>"
     puts $fid $line
     puts $fid ""
-    
+
     #set line "<Slice id=\"vtkMRMLSliceNode3\" name=\"\"  hideFromEditors=\"true\" layoutName=\"Green\" orientation=\"Coronal\" ></Slice>"
     #puts $fid $line
     set line "<SliceComposite id=\"vtkMRMLSliceCompositeNode3\" name=\"\"  hideFromEditors=\"true\" backgroundVolumeID=\"vtkMRMLScalarVolumeNode1\" foregroundVolumeID=\"\" labelVolumeID=\"vtkMRMLScalarVolumeNode2\" labelOpacity=\"1\" layoutName=\"Green\" ></SliceComposite>"
@@ -1225,7 +1225,7 @@ proc fips2mrml_WriteMRML3File { } {
     set mcount 1
     set vcount 1
     set xcount 1
-    
+
     #--- write pial surface model
     set len [ llength $::fips2mrml_FreeSurferModels ]
     for { set i 0 } { $i < $len } { incr i } {
@@ -1237,7 +1237,7 @@ proc fips2mrml_WriteMRML3File { } {
         #--- create model display node
         set line "<ModelDisplay  id=\"FIPS2MRMLModelDisplayNode$mcount\" name=\"\"  hideFromEditors=\"true\"  color=\"0.5 0.5 0.5\" ambient=\"0\" diffuse=\"1\" specular=\"0\" power=\"1\" opacity=\"1\" visibility=\"true\" clipping=\"false\" backfaceCulling=\"true\" scalarVisibility=\"false\" vectorVisibility=\"false\" tensorVisibility=\"false\" scalarRange=\"0 100\"></ModelDisplay>"
         puts $fid $line
-        
+
         #--- create model node
         set line "<Model id=\"FIPS2MRMLModelNode$mcount\" name=\"lh.pial\"  hideFromEditors=\"false\" storageNodeRef=\"FIPS2MRMLModelStorageNode$mcount\" displayNodeRef=\"FIPS2MRMLModelDisplayNode$mcount\" ></Model>"
         puts $fid $line
@@ -1258,7 +1258,7 @@ proc fips2mrml_WriteMRML3File { } {
         #--- create volume display node
         set line "<VolumeDisplay id=\"vtkMRMLVolumeDisplayNode$vcount\" name=\"\"  hideFromEditors=\"true\" interpolate=\"1\" upperThreshold=\"256\" lowerThreshold=\"33\" autoWindowLevel=\"1\" applyThreshold=\"1\" autoThreshold=\"0\" ></VolumeDisplay>"
         puts $fid $line
-        
+
         #--- create scalar volume node
         set line "<Volume id=\"vtkMRMLScalarVolumeNode$vcount\" name=\"brain.mgz\"  hideFromEditors=\"false\" storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode$vcount\" displayNodeRef=\"vtkMRMLVolumeDisplayNode$vcount\" labelMap=\"0\" ></Volume>"
         puts $fid $line
@@ -1266,8 +1266,8 @@ proc fips2mrml_WriteMRML3File { } {
         incr vcount
     }
     puts $fid ""
-    
-    
+
+
     #--- write color information for aparc+aseg file
     set line "<Color id=\"vtkMRMLFreeSurferColorNode1\" name=\"File\" hideFromEditors=\"true\" type=\"12\" filename=\"$::fips2mrml_FScolors\"> </Color> "
     puts $fid $line
@@ -1285,7 +1285,7 @@ proc fips2mrml_WriteMRML3File { } {
         #--- create volume display node
         set line "<VolumeDisplay id=\"vtkMRMLVolumeDisplayNode$vcount\" name=\"\"  hideFromEditors=\"true\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\" colorNodeRef=\"vtkMRMLFreeSurferColorNode1\"></VolumeDisplay>"
         puts $fid $line
-        
+
         #--- create scalar volume node
         set line "<Volume id=\"vtkMRMLScalarVolumeNode$vcount\" name=\"aparc+aseg.mgz\"  hideFromEditors=\"false\" storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode$vcount\" displayNodeRef=\"vtkMRMLVolumeDisplayNode$vcount\" labelMap=\"1\" ></Volume>"
         puts $fid $line
@@ -1336,7 +1336,7 @@ proc fips2mrml_WriteMRML3File { } {
         #--- create volume display node
         set line "<VolumeDisplay id=\"vtkMRMLVolumeDisplayNode$vcount\" name=\"\"  hideFromEditors=\"true\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\" ></VolumeDisplay>"
         puts $fid $line
-        
+
         #--- create scalar volume node
         set line "<Volume id=\"vtkMRMLScalarVolumeNode$vcount\" name=\"example_functional\"  hideFromEditors=\"false\" storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode$vcount\" displayNodeRef=\"vtkMRMLVolumeDisplayNode$vcount\" transformNodeRef=\"vtkMRMLLinearTransformNode$xcount\" labelMap=\"0\" ></Volume>"
         puts $fid $line
@@ -1344,8 +1344,8 @@ proc fips2mrml_WriteMRML3File { } {
     }
     puts $fid ""
 
-    
-    
+
+
     #--- write statistics volumes
     set len [ llength $::fips2mrml_ZstatVolumes ]
     #--- for now, just write zstat1
@@ -1360,7 +1360,7 @@ proc fips2mrml_WriteMRML3File { } {
         #--- create volume display node
         set line "<VolumeDisplay id=\"vtkMRMLVolumeDisplayNode$vcount\" name=\"\"  hideFromEditors=\"true\" interpolate=\"1\" autoWindowLevel=\"1\" applyThreshold=\"0\" autoThreshold=\"0\" colorNodeRef=\"vtkMRMLColorNodefMRIPA\"></VolumeDisplay>"
         puts $fid $line
-        
+
         #--- create scalar volume node
         set line "<Volume id=\"vtkMRMLScalarVolumeNode$vcount\" name=\"$txtname\"  hideFromEditors=\"false\" storageNodeRef=\"vtkMRMLVolumeArchetypeStorageNode$vcount\" displayNodeRef=\"vtkMRMLVolumeDisplayNode$vcount\" transformNodeRef=\"vtkMRMLLinearTransformNode$xcount\" labelMap=\"0\" ></Volume>"
         puts $fid $line
@@ -1368,8 +1368,8 @@ proc fips2mrml_WriteMRML3File { } {
         incr vcount
     }
     puts $fid ""
-    
-    
+
+
     #--- close file
     set line "</MRML>"
     puts $fid $line
@@ -1385,7 +1385,7 @@ proc fips2mrml_SearchAndReport { } {
     fips2mrml_InitializeGlobals
     fips2mrml_GetSearchInput
     fips2mrml_GetMatchingXMLFiles
-    fips2mrml_PopulateList 
+    fips2mrml_PopulateList
 }
 
 
@@ -1405,7 +1405,7 @@ proc fips2mrml_PopulateList { } {
             $::fips2mrml_Listbox  insert end $val
         }
     }
-    
+
 }
 
 
@@ -1439,20 +1439,20 @@ proc fips2mrml_ConvertSelection  { } {
                 set got [ fips2mrml_GetFreeSurferModels ]
             }
             puts ".........................................................."
-            fips2mrml_WriteMRML3File 
-            fips2mrml_WriteMRML2File 
+            fips2mrml_WriteMRML3File
+            fips2mrml_WriteMRML2File
             puts "... done"
             $::fips2mrml_Message config -text "MRML files written sucessfully."
-            
+
         } else {
             tk_messageBox -message "No corresponding FreeSurfer ID was found; no files written."
             puts "No corresponding FreeSurfer ID was found; no MRML file written.."
         }
     } elseif { [$::fips2mrml_Listbox get 0 ] == "" } {
-        tk_messageBox -message "No matches are listed; nothing to write."        
+        tk_messageBox -message "No matches are listed; nothing to write."
         puts "Nothing selected; no MRML file written."
     } else {
-        tk_messageBox -message "Please select an entry from the list of matches."        
+        tk_messageBox -message "Please select an entry from the list of matches."
         puts "Nothing selected; no MRML file written."
     }
 }
@@ -1483,13 +1483,13 @@ if { $fipsDir == "" } {
     puts "Using fips database file: $::fips_database_dat"
     set ::fsbirnid_dat [format "%s/%s" $fipsDir "FSBIRNID.dat" ]
     puts "Mapping BIRN ID to FreeSurferID with $::fsbirnid_dat"
-    set ::freesurfer_subjectsdir  $fsSubDir 
+    set ::freesurfer_subjectsdir  $fsSubDir
     puts "Using freesurfer subject dir: $::freesurfer_subjectsdir"
-    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT.txt" ]
+    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT20060522.txt" ]
     if { [ file exists $::fips2mrml_FScolors ] } {
         puts "Using freesurfer colors: $::fips2mrml_FScolors"
     } else {
-        puts "Can't find freesurfer colors file FreeSurferColorLUT.txt"
+        puts "Can't find freesurfer colors file FreeSurferColorLUT20060522.txt"
         exit
     }
 
@@ -1500,7 +1500,7 @@ if { $fipsDir == "" } {
     wm title . "FIPS to MRML"
     . config -bg white
 
-    #--- create and pack main frames 
+    #--- create and pack main frames
     frame .container -width 200 -height 800 -bg white
     pack .container
 
@@ -1549,7 +1549,7 @@ if { $fipsDir == "" } {
 
     #--- create buttons to clear search params and to initiate search
     set nowframe $f.fButton1
-    button $nowframe.bClear -text "Clear" -command { fips2mrml_InitializeParseFields } -bg CornSilk2 
+    button $nowframe.bClear -text "Clear" -command { fips2mrml_InitializeParseFields } -bg CornSilk2
     button $nowframe.bSearch -text "Search" -command {fips2mrml_SearchAndReport } -bg CornSilk2
     grid $nowframe.bClear $nowframe.bSearch -row 0 -padx 3 -pady 4
 
@@ -1558,7 +1558,7 @@ if { $fipsDir == "" } {
     listbox $nowframe.lbPicker -selectmode single -width 80 -xscrollcommand "$nowframe.scroll set"
     scrollbar $nowframe.scroll -orient horizontal -command "$nowframe.lbPicker xview"
     set ::fips2mrml_Listbox $nowframe.lbPicker
-    pack $nowframe.lbPicker $nowframe.scroll -side top -fill x -expand y 
+    pack $nowframe.lbPicker $nowframe.scroll -side top -fill x -expand y
 
     #---  create entry to specify basename of mrml files
     set nowframe $f.fButton2

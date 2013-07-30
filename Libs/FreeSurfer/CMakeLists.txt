@@ -138,7 +138,7 @@ endif()
 # Copy the resource files to the build directory
 
 set(RESFILES
-  FreeSurferColorLUT.txt
+  FreeSurferColorLUT20060522.txt
   Simple_surface_labels2002.txt
   )
 foreach(file ${RESFILES})
