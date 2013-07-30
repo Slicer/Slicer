@@ -1817,7 +1817,7 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
                    {  0,  0,  1 },   // superior
                    {  0,  0, -1 } }; // inferior
   
-  int closestAxis[3] = {0., 0., 0.};
+  int closestAxis[3] = {0, 0, 0};
   double closestDot[3] = {-1., -1., -1.};
 
   int direction;
