@@ -344,7 +344,7 @@ proc QueryAtlasAddAnnotations {} {
   #
   # read the freesurfer labels for the aseg+aparc
   #
-  set lutFile $::SlicerHome/share/FreeSurfer/FreeSurferColorLUT20060522.txt
+  set lutFile $::SlicerHome/share/FreeSurfer/FreeSurferColorLUT20120827.txt
   if { [file exists $lutFile] } {
     set fp [open $lutFile "r"]
     while { ![eof $fp] } {

@@ -139,6 +139,7 @@ endif()
 
 set(RESFILES
   FreeSurferColorLUT20060522.txt
+  FreeSurferColorLUT20120827.txt
   Simple_surface_labels2002.txt
   )
 foreach(file ${RESFILES})

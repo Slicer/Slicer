@@ -1485,11 +1485,11 @@ if { $fipsDir == "" } {
     puts "Mapping BIRN ID to FreeSurferID with $::fsbirnid_dat"
     set ::freesurfer_subjectsdir  $fsSubDir
     puts "Using freesurfer subject dir: $::freesurfer_subjectsdir"
-    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT20060522.txt" ]
+    set ::fips2mrml_FScolors [ format "%s/%s" $slicer3Dir "/share/FreeSurfer/FreeSurferColorLUT20120827.txt" ]
     if { [ file exists $::fips2mrml_FScolors ] } {
         puts "Using freesurfer colors: $::fips2mrml_FScolors"
     } else {
-        puts "Can't find freesurfer colors file FreeSurferColorLUT20060522.txt"
+        puts "Can't find freesurfer colors file FreeSurferColorLUT20120827.txt"
         exit
     }
 

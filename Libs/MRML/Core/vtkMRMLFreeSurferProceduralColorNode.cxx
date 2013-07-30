@@ -54,7 +54,7 @@ vtkMRMLFreeSurferProceduralColorNode::vtkMRMLFreeSurferProceduralColorNode()
   std::vector<std::string> filesVector;
   filesVector.push_back(""); // for relative path
   filesVector.push_back(slicerHome);
-  filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT20060522.txt"));
+  filesVector.push_back(std::string("share/FreeSurfer/FreeSurferColorLUT20120827.txt"));
   std::string colorFileName = vtksys::SystemTools::JoinPath(filesVector);
   this->SetLabelsFileName(colorFileName.c_str());
 
