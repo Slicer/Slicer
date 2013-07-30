@@ -139,6 +139,7 @@ int main( int argc, char * argv[] )
   vtkIdType j;
   double p[3];
 
+  int *labelDims = imageCastLabel_A->GetOutput()->GetDimensions();
   // Check lines
   vtkIdType inCellId;
   for (inCellId=0, inLines->InitTraversal(); 
@@ -164,6 +165,13 @@ int main( int argc, char * argv[] )
       pt[0]= (int) floor(pIJK[0]);
       pt[1]= (int) floor(pIJK[1]);
       pt[2]= (int) floor(pIJK[2]);
+      if (pt[0] < 0 || pt[1] < 0 || pt[2] < 0 ||
+          pt[0] >= labelDims[0] || pt[1] >= labelDims[1] || pt[2] >= labelDims[2])
+        {
+        std::cerr << "point #" << j <<" on the line #" << inCellId << " is outside the label";
+        continue;
+        }
+        
       inPtr = (short *) imageCastLabel_A->GetOutput()->GetScalarPointer(pt);
 
       if (excludeOperation == 0) // OR
