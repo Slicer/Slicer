@@ -1967,5 +1967,5 @@ void vtkMRMLSliceNode::RotateToVolumePlane(vtkMRMLVolumeNode *volumeNode)
 
   this->SetOrientationToReformat(); // just sets the string - indicates that this is not patient aligned
 
-  this->Modified();
+  this->UpdateMatrices();
 }
