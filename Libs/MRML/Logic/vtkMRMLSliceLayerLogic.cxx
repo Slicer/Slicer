@@ -314,7 +314,7 @@ void vtkMRMLSliceLayerLogic::UpdateNodeReferences ()
     else
       {
       // TODO: this is a hack
-      vtkErrorMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
+      vtkDebugMacro("UpdateNodeReferences: Volume Node " << this->VolumeNode->GetID() << " doesn't have a display node, adding one.");
       int isLabelMap =0;
       if (vtkMRMLDiffusionTensorVolumeNode::SafeDownCast(this->VolumeNode))
         {
