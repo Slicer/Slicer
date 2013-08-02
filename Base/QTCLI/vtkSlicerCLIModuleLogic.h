@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
- Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+ Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
  All Rights Reserved.
 
  See COPYRIGHT.txt
@@ -100,7 +100,7 @@ public:
   void SetTemporaryDirectory(const char *tempdir);
 
 //   void LazyEvaluateModuleTarget(ModuleDescription& moduleDescriptionObject);
-//   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node) 
+//   void LazyEvaluateModuleTarget(vtkMRMLCommandLineModuleNode* node)
 //     { this->LazyEvaluateModuleTarget(node->GetModuleDescription()); }
 
 protected:
@@ -137,6 +137,11 @@ protected:
 
   /// Call apply because the node requests it.
   void AutoRun(vtkMRMLCommandLineModuleNode* cliNode);
+
+    /// List of custom events fired by the class.
+  enum Events{
+    RequestHierarchyEditEvent = vtkCommand::UserEvent + 1
+  };
 
 private:
   vtkSlicerCLIModuleLogic();
