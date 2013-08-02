@@ -527,14 +527,23 @@ void vtkMRMLChartNode::UpdateReferences()
 
    // arrays
    DoubleArrayIDMap::iterator it;
+
+   // create a separate array for removal of dangling references,
+   // cannot remove inside the loop - inavlidates iterators.
+   DoubleArrayIDMap doubleArrayIDsRemove;
    for (it = this->DoubleArrayIDs->begin(); it != this->DoubleArrayIDs->end();++it)
      {
      if (this->Scene && !this->Scene->GetNodeByID((*it).second.c_str()))
        {
-       this->RemoveArray((*it).first.c_str());
+       doubleArrayIDsRemove[(*it).first.c_str()] = (*it).second.c_str();
        }
      }
-   
+   // now remove dangling references
+   for (it = doubleArrayIDsRemove.begin(); it != doubleArrayIDsRemove.end();++it)
+     {
+     this->RemoveArray((*it).first.c_str());
+     }
+
    // properties
    ChartPropertyMap::iterator pit;
    for (pit = this->Properties->begin(); pit != this->Properties->end(); ++pit)
