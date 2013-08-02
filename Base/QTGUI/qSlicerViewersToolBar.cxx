@@ -71,7 +71,7 @@ void qSlicerViewersToolBarPrivate::init()
 
   /// Crosshair
   ///
-  
+
   // Navigation/Cross-referencing
   this->CrosshairNavigationAction = new QAction(q);
   this->CrosshairNavigationAction->setText(tr("Navigation"));
@@ -108,7 +108,7 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairSmallBasicIntersectionAction->setText(tr("Small basic + intersection"));
   this->CrosshairSmallBasicIntersectionAction->setToolTip(tr("Small crosshair."));
   this->CrosshairSmallBasicIntersectionAction->setCheckable(true);
-  
+
   crosshairActions->addAction(this->CrosshairNoAction);
   crosshairActions->addAction(this->CrosshairBasicAction);
   crosshairActions->addAction(this->CrosshairBasicIntersectionAction);
@@ -116,13 +116,13 @@ void qSlicerViewersToolBarPrivate::init()
   crosshairActions->addAction(this->CrosshairSmallBasicIntersectionAction);
 
   this->CrosshairMapper = new ctkSignalMapper(q);
-  this->CrosshairMapper->setMapping(this->CrosshairNoAction, 
+  this->CrosshairMapper->setMapping(this->CrosshairNoAction,
                                     vtkMRMLCrosshairNode::NoCrosshair);
-  this->CrosshairMapper->setMapping(this->CrosshairBasicAction, 
+  this->CrosshairMapper->setMapping(this->CrosshairBasicAction,
                                     vtkMRMLCrosshairNode::ShowBasic);
-  this->CrosshairMapper->setMapping(this->CrosshairBasicIntersectionAction, 
+  this->CrosshairMapper->setMapping(this->CrosshairBasicIntersectionAction,
                                     vtkMRMLCrosshairNode::ShowIntersection);
-  this->CrosshairMapper->setMapping(this->CrosshairSmallBasicAction, 
+  this->CrosshairMapper->setMapping(this->CrosshairSmallBasicAction,
                                     vtkMRMLCrosshairNode::ShowSmallBasic);
   this->CrosshairMapper->setMapping(this->CrosshairSmallBasicIntersectionAction,                                     vtkMRMLCrosshairNode::ShowSmallIntersection);
   QObject::connect(crosshairActions, SIGNAL(triggered(QAction*)),
@@ -181,7 +181,7 @@ void qSlicerViewersToolBarPrivate::init()
   this->CrosshairMenu->addActions(crosshairThicknessActions->actions());
   this->CrosshairMenu->addSeparator();
   this->CrosshairMenu->addAction(this->CrosshairSliceIntersectionsAction);
-  
+
 
   this->CrosshairToolButton = new QToolButton();
 //  this->CrosshairToolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -272,12 +272,13 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
   for (nodes->InitTraversal(it);(node = static_cast<vtkMRMLCrosshairNode*>(
                                    nodes->GetNextItemAsObject(it)));)
     {
-    node->SetCrosshairMode(mode);
-
+    // cache before carry
     if (mode != vtkMRMLCrosshairNode::NoCrosshair)
       {
       this->CrosshairLastMode = mode;
       }
+
+      node->SetCrosshairMode(mode);
     }
 }
 
@@ -358,7 +359,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
                           this, SLOT(onCrosshairNodeModeChangedEvent()));
         }
       }
-        
+
 
     // Watch the Red SliceCompositeNodes for a change in the
     // SliceIntersectionVisibility state. There are potentially many
@@ -396,7 +397,7 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
 void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 {
   Q_ASSERT(this->MRMLScene);
-  
+
   vtkMRMLNode *node;
   vtkCollectionSimpleIterator it;
   vtkMRMLCrosshairNode* crosshairNode = 0;
@@ -450,7 +451,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
       {
       this->CrosshairLastMode = crosshairNode->GetCrosshairMode();
       }
-    
+
     }
 
   // toggle the slice intersections. this is harder to manage as there
@@ -470,7 +471,7 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
         }
       }
     }
-  
+
 }
 
 
