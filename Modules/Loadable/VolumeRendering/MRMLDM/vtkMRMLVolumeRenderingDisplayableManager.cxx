@@ -608,7 +608,7 @@ void vtkMRMLVolumeRenderingDisplayableManager
     vtkMRMLVolumeRenderingDisplayNode::MaximumQuality;
   mapper->SetAutoAdjustSampleDistances( highDef ? 0 : 1);
   mapper->SetSampleDistance(this->GetSampleDistance(vspNode));
-  mapper->SetImageSampleDistance(highDef ? 0.5 : 1.);
+  mapper->SetImageSampleDistance(highDef ? 1. : 1.);
   mapper->SetMaxMemoryInBytes(this->GetMaxMemory(mapper, vspNode));
 
   switch(vspNode->GetRaycastTechnique())
