@@ -61,6 +61,8 @@ set(KIT_SRCS
   qSlicerModuleManager.h
   qSlicerObject.cxx
   qSlicerObject.h
+  qSlicerPersistentCookieJar.cxx
+  qSlicerPersistentCookieJar.h
   qSlicerSceneBundleIO.cxx
   qSlicerSceneBundleIO.h
   qSlicerSlicer2SceneReader.cxx
@@ -75,8 +77,6 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_SRCS
     qSlicerExtensionsManagerModel.cxx
     qSlicerExtensionsManagerModel.h
-    qSlicerPersistentCookieJar.cxx
-    qSlicerPersistentCookieJar.h
     )
 endif()
 
