@@ -108,6 +108,10 @@ public:
   /// Set index of this node in it's parent based on the value of their SortingValue
   void SetIndexInParent(int index);
 
+  /// Move this node in it's parent up (positive increment) or down (negative increment) 
+  /// by 'increment' number of places
+  void MoveInParent(int increment);
+
   /// Removes immediate children nodes, their children are reparented to this parent node.
   void RemoveHierarchyChildrenNodes();
 

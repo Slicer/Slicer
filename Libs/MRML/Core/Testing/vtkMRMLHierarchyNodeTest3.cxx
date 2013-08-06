@@ -252,6 +252,60 @@ int vtkMRMLHierarchyNodeTest3(int , char * [] )
       }
     }
 
+  // move one down
+  node1 = hnode2->GetNthChildNode(numModels/2);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->MoveInParent(-1);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != (int)oldIndexInParent-1)
+      {
+      std::cerr << "Error moving child one down. Started at index " << oldIndexInParent << ", now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  // move one up
+  node1 = hnode2->GetNthChildNode(numModels/2);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->MoveInParent(1);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != (int)oldIndexInParent+1)
+      {
+      std::cerr << "Error moving child one up. Started at index " << oldIndexInParent << ", now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  // move two down
+  node1 = hnode2->GetNthChildNode(numModels/2);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->MoveInParent(-2);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != (int)oldIndexInParent-2)
+      {
+      std::cerr << "Error moving child two down. Started at index " << oldIndexInParent << ", now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+  // move two up
+  node1 = hnode2->GetNthChildNode(numModels/2);
+  if (node1)
+    {
+    oldIndexInParent = node1->GetIndexInParent();
+    node1->MoveInParent(2);
+    currentIndexInParent = node1->GetIndexInParent();
+    if (currentIndexInParent != (int)oldIndexInParent+2)
+      {
+      std::cerr << "Error moving child two up. Started at index " << oldIndexInParent << ", now at " << currentIndexInParent << std::endl;
+      return EXIT_FAILURE;
+      }
+    }
+
+
   return EXIT_SUCCESS;
 }
 

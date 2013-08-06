@@ -447,6 +447,52 @@ void vtkMRMLHierarchyNode::SetIndexInParent(int index)
 
 //----------------------------------------------------------------------------
 
+void vtkMRMLHierarchyNode::MoveInParent(int increment)
+{
+  if (increment == 0)
+    {
+    return;
+    }
+
+  vtkMRMLHierarchyNode *pnode = this->GetParentNode();
+  if (pnode == NULL)
+    {
+    vtkErrorMacro("vtkMRMLHierarchyNode::MoveInParent() no parent");
+    return;
+    }
+  else
+    {
+    std::vector< vtkMRMLHierarchyNode *> childrenNodes = pnode->GetChildrenNodes();
+    int oldIndex = this->GetIndexInParent();
+    if (oldIndex + increment < 0 || oldIndex + increment >= (int)childrenNodes.size())
+      {
+      vtkErrorMacro("vtkMRMLHierarchyNode::MoveInParent() index " << oldIndex << ", outside the range 0-" << childrenNodes.size()-1);
+      return;
+      }
+    int incr1 = increment > 0 ? 1:-1;
+    int index1 = oldIndex;
+    int index2 = oldIndex + incr1;
+    for (int i=0; i<incr1*increment; i++)
+      {
+      // swap pair of sort values 
+      childrenNodes = pnode->GetChildrenNodes();
+      double sortValue1 = childrenNodes[index1]->GetSortingValue();
+      double sortValue2 = childrenNodes[index2]->GetSortingValue();
+      childrenNodes[index1]->SortingValue = sortValue2;
+      childrenNodes[index2]->SortingValue = sortValue1;
+
+      // update the cache
+      pnode->UpdateChildrenMap();
+      index1 += incr1;
+      index2 += incr1;
+      }
+    // notify observers
+    this->Modified(); 
+    this->InvokeHierarchyModifiedEvent();
+    }
+}
+//----------------------------------------------------------------------------
+
 void vtkMRMLHierarchyNode::RemoveHierarchyChildrenNodes()
 {
   if (this->GetScene() == NULL)
