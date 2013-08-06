@@ -475,6 +475,7 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
       if (existingInfo.completeBaseName() != QString(node->GetName()))
         {
         snode->SetFileName(newInfo.absoluteFilePath().toLatin1());
+        node->StorableModified();
         }
       }
     }
