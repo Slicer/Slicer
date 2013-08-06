@@ -10,9 +10,9 @@
     </settings>
     <events>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerWelcomeModuleWidget/ButtonsFrame/LoadSampleDataButton" command="activate" arguments=""/>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/BaselineVolumePushButton" command="activate" arguments=""/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/BuiltInCollapsibleGroupBox/BaselineVolumePushButton" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/menubar/menuView/MenuLayout" command="activate" arguments="actionViewLayoutConventional"/>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/DTIVolumePushButton" command="activate" arguments=""/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/BuiltInCollapsibleGroupBox/DTIVolumePushButton" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/1QWidget0/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget" command="popupOpen" arguments="true"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/1QWidget0/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/SliceFrame/SliceLinkButton" command="set_boolean" arguments="true"/>
         <event widget="qSlicerAppMainWindow/CentralWidget/CentralWidgetLayoutFrame/1QSplitter0/1QWidget0/qMRMLSliceWidgetRed/SliceController/qMRMLSliceControllerWidget/SliceFrame/SliceLinkButton" command="set_boolean" arguments="true"/>

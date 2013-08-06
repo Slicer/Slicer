@@ -10,7 +10,7 @@
     </settings>
     <events>
         <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/qSlicerWelcomeModuleWidget/ButtonsFrame/LoadSampleDataButton" command="activate" arguments=""/>
-        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/DWIVolumePushButton" command="activate" arguments=""/>
+        <event widget="qSlicerAppMainWindow/PanelDockWidget/dockWidgetContents/ModulePanel/ScrollArea/qt_scrollarea_viewport/scrollAreaWidgetContents/1qSlicerScriptedLoadableModuleWidget0/BuiltInCollapsibleGroupBox/DWIVolumePushButton" command="activate" arguments=""/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="show_popup" arguments="true"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="show_popup" arguments="false"/>
         <event widget="qSlicerAppMainWindow/ModuleSelectorToolBar/1ctkMenuComboBox0" command="triggered" arguments="Volumes"/>

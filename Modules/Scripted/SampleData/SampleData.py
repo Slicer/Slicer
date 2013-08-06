@@ -113,12 +113,14 @@ class SampleDataWidget:
       frame = ctk.ctkCollapsibleGroupBox(self.parent)
       self.layout.addWidget(frame)
       frame.title = category
+      frame.name = '%sCollapsibleGroupBox' % category
       layout = qt.QVBoxLayout(frame)
       for source in slicer.modules.sampleDataSources[category]:
         name = source.sampleName
         if not name:
           name = source.nodeNames[0]
         b = qt.QPushButton('Download %s' % name)
+        b.name = '%sPushButton' % name
         layout.addWidget(b)
         if source.customDownloader:
           b.connect('clicked()', source.customDownloader)
