@@ -574,7 +574,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager
     {
     if (vtkMRMLDisplayableNode::SafeDownCast(caller))
       {
-      if (callData == 0) // a display node is added/removed
+        if (callData == 0 || vtkMRMLDiffusionTensorVolumeSliceDisplayNode::SafeDownCast((vtkObject *)callData) !=0 ) // a display node is added/removed/modified
         {
         this->Internal->UpdateVolume(vtkMRMLDisplayableNode::SafeDownCast(caller));
         }
