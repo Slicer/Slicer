@@ -252,6 +252,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
 
         mvImage.SetExtent(frameExtent)
         mvImage.SetNumberOfScalarComponents(nFrames)
+        mvImage.SetScalarType(frame.GetImageData().GetScalarType())
 
         mvImage.AllocateScalars()
         mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
