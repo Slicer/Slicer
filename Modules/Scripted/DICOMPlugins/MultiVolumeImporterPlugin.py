@@ -403,13 +403,13 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
         for file in frameFileList:
           frameFileListStr = frameFileListStr+file+','
 
-        frameLabelsStr = frameLabelsStr+str(tagValue)+','
-        # if mv was parsed by series time, probably makes sense to start from
-        # 0
+        # if mv was parsed by series time, probably makes sense to start from 0
         if frameTag == 'SeriesTime':
           frameLabelsArray.InsertNextValue(tagValue-tagValue0)
+          frameLabelsStr = frameLabelsStr+str(tagValue-tagValue0)+','
         else:
           frameLabelsArray.InsertNextValue(tagValue)
+          frameLabelsStr = frameLabelsStr+str(tagValue)+','
 
       #print 'File list: ',frameFileList
       #print 'Labels: ',frameLabelsStr
@@ -433,7 +433,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
       mvNode.SetLabelName(self.multiVolumeTagsUnits[frameTag])
       mvNode.SetLabelArray(frameLabelsArray)
 
-      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime':
+      if frameTag == 'TriggerTime' or frameTag == 'AcquisitionTime' or frameTag == 'SeriesTime':
         # this is DCE, so let's keep the tag values that will be needed for
         # the analysis
         firstFile = frameFileList[0]
