@@ -387,10 +387,13 @@ class PaintEffectTool(LabelEffect.LabelEffectTool):
     sliceNode = self.sliceWidget.sliceLogic().GetSliceNode()
     self.rasToXY.DeepCopy(sliceNode.GetXYToRAS())
     self.rasToXY.Invert()
-    if self.rasToXY.GetElement(0, 0) != 0:
-      point = (self.radius, 0, 0, 0)
-    else:
-      point = (0, self.radius,  0, 0)
+    maximum, maxIndex = 0,0
+    for index in range(3):
+      if abs(self.rasToXY.GetElement(0, index)) > maximum:
+        maximum = abs(self.rasToXY.GetElement(0, index))
+        maxIndex = index
+    point = [0, 0, 0, 0]
+    point[maxIndex] = self.radius
     xyRadius = self.rasToXY.MultiplyPoint(point)
     import math
     xyRadius = math.sqrt( xyRadius[0]**2 + xyRadius[1]**2 + xyRadius[2]**2 )
