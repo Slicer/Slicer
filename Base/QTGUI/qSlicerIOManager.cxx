@@ -288,13 +288,23 @@ void qSlicerIOManager::dropEvent(QDropEvent *event)
 {
   Q_D(qSlicerIOManager);
   QStringList supportedReaders;
+  QStringList genericReaders; // those must be last in the choice menu
   foreach(qSlicerFileDialog* dialog, d->ReadDialogs)
     {
     if (dialog->isMimeDataAccepted(event->mimeData()))
       {
-      supportedReaders << dialog->description();
+      QString supportedReader = dialog->description();
+      if (dialog->fileType() == "NoFile")
+        {
+        genericReaders << supportedReader;
+        }
+      else
+        {
+        supportedReaders << supportedReader;
+        }
       }
     }
+  supportedReaders << genericReaders;
   QString selectedReader;
   if (supportedReaders.size() > 1)
     {
