@@ -289,6 +289,9 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     selNode.SetReferenceActiveVolumeID(mvNode.GetID())
     appLogic.PropagateVolumeSelection()
 
+    # file list is no longer needed - remove the attribute
+    mvNode.RemoveAttribute('MultiVolume.FrameFileList')
+
     return mvNode
 
   def tm2ms(self,tm):
