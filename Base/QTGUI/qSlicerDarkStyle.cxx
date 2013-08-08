@@ -62,9 +62,12 @@ QPalette qSlicerDarkStyle::standardPalette()const
   QBrush buttonBrush(buttonGradient);
   buttonBrush.setColor(QColor("#626264")); // for the scrollbars
   palette.setBrush(QPalette::Active, QPalette::Button, buttonBrush);
+  palette.setBrush(QPalette::Inactive, QPalette::Button, buttonBrush);
   buttonGradient.setColorAt(0., QColor("#424244"));
   buttonGradient.setColorAt(1., QColor("#525254"));
-  palette.setBrush(QPalette::Disabled, QPalette::Button, QBrush(buttonGradient));
+  buttonBrush = QBrush(buttonGradient);
+  buttonBrush.setColor(QColor("#4d4d4f"));
+  palette.setBrush(QPalette::Disabled, QPalette::Button, buttonBrush);
   palette.setColor(QPalette::Midlight, "#727274");
   palette.setColor(QPalette::Light, "#828284");
 
