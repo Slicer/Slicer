@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QLinearGradient>
 #include <QPalette>
 
 // qMRML includes
@@ -43,26 +44,37 @@ QPalette qSlicerDarkStyle::standardPalette()const
   QPalette palette = this->Superclass::standardPalette();
 
   // From darkest to lightest
-  palette.setColor(QPalette::Shadow, Qt::black);
+  palette.setColor(QPalette::Shadow, "#0d0d0f");
 
-  palette.setColor(QPalette::Window, "#2c2c2e");
-  palette.setColor(QPalette::AlternateBase, "#2c2c2e");
-  palette.setColor(QPalette::ToolTipBase, "#2c2c2e");
-  palette.setColor(QPalette::Dark, "#2c2c2e");
+  palette.setColor(QPalette::AlternateBase, "#4d4d3f");
+  palette.setColor(QPalette::ToolTipBase, "#3d3d3f");
 
-  palette.setColor(QPalette::Mid, "#363638");
+  palette.setColor(QPalette::Window, "#424244");
+  palette.setColor(QPalette::Disabled, QPalette::Window, "#222224");
+  palette.setColor(QPalette::Base, "#525254");
+  palette.setColor(QPalette::Disabled, QPalette::Base, "#323234");
 
-  palette.setColor(QPalette::Button, "#454545");
+  palette.setColor(QPalette::Dark, "#3d3d3f");
+  palette.setColor(QPalette::Mid, "#4d4d4f");
+  QLinearGradient buttonGradient;
+  buttonGradient.setColorAt(0., QColor("#6d6d6f"));
+  buttonGradient.setColorAt(1., QColor("#5d5d5f"));
+  QBrush buttonBrush(buttonGradient);
+  buttonBrush.setColor(QColor("#626264")); // for the scrollbars
+  palette.setBrush(QPalette::Active, QPalette::Button, buttonBrush);
+  buttonGradient.setColorAt(0., QColor("#424244"));
+  buttonGradient.setColorAt(1., QColor("#525254"));
+  palette.setBrush(QPalette::Disabled, QPalette::Button, QBrush(buttonGradient));
+  palette.setColor(QPalette::Midlight, "#727274");
+  palette.setColor(QPalette::Light, "#828284");
 
-  palette.setColor(QPalette::Midlight, "#626262");
-
-  palette.setColor(QPalette::Base, "#767676");
-  palette.setColor(QPalette::Light, "#767676");
-
-  palette.setColor(QPalette::WindowText, "#e2e2e2");
-  palette.setColor(QPalette::Text, "#e2e2e2");
-  palette.setColor(QPalette::ToolTipText, "#e2e2e2");
-  palette.setColor(QPalette::ButtonText, "#e2e2e2");
+  palette.setColor(QPalette::WindowText, "#e2e2e4");
+  palette.setColor(QPalette::Disabled, QPalette::WindowText, "#323234");
+  palette.setColor(QPalette::Text, "#f2f2f4");
+  palette.setColor(QPalette::Disabled, QPalette::Text, "#828284");
+  palette.setColor(QPalette::ToolTipText, "#e2e2e4");
+  palette.setColor(QPalette::ButtonText, "#ededef");
+  palette.setColor(QPalette::Disabled, QPalette::ButtonText, "#727274");
 
   palette.setColor(QPalette::BrightText, Qt::white);
   return palette;
