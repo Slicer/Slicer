@@ -90,13 +90,13 @@ public:
   /// See http://doc.trolltech.com/4.6/qapplication.html#commitData
   /// and http://doc.trolltech.com/4.6/qsessionmanager.html#allowsInteraction
   //virtual void commitData(QSessionManager & manager);
-  
+
   /// Enable/Disable tooltips
   void setToolTipsEnabled(bool enable);
 
   /// Return the best module name for a given node.
   /// \note qSlicerApplication is a temporary host for the function as it should be
-  /// moved into a DataManager where module can register new node 
+  /// moved into a DataManager where module can register new node
   /// types/modules
   QString nodeModule(vtkMRMLNode* node)const;
 
@@ -107,7 +107,7 @@ public slots:
   /// Utility function that retrieve the best module for a node and trigger
   /// its associated QAction which eventually opens the module.
   /// \note qSlicerApplication is a temporary host for the function as it should be
-  /// moved into a DataManager where module can register new node 
+  /// moved into a DataManager where module can register new node
   /// types/modules
   void openNodeModule(vtkMRMLNode* node);
 
