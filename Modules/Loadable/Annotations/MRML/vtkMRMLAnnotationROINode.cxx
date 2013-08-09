@@ -468,6 +468,19 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
   double xyzOut[3];
   double p[3];
 
+  // report warning if transform has rotation
+  double v[] = {1,0,0,0};
+  double *v1 = transformMatrix->MultiplyDoublePoint(v);
+  vtkMath::Normalize(v1);
+  double v2[4];
+  vtkMath::Cross(v, v1, v2);
+  if (vtkMath::Normalize(v2) > 1.0e-9)
+    {
+      vtkErrorMacro("AnnotationROINode::ApplyTransformMatrix "<< this->GetName() << ". Matrix has rotation component. ROI does not support rotation.");
+    }
+
+  int modify = this->StartModify();
+
   // first point
   if (this->GetXYZ(p))
     {
@@ -493,6 +506,7 @@ void vtkMRMLAnnotationROINode::ApplyTransformMatrix(vtkMatrix4x4* transformMatri
     xyzOut[2] = matrix[2][0]*xyzIn[0] + matrix[2][1]*xyzIn[1] + matrix[2][2]*xyzIn[2] + matrix[2][3];
     this->SetRadiusXYZ(xyzOut);
     }
+  this->EndModify(modify);
 }
 
 //---------------------------------------------------------------------------
@@ -502,6 +516,20 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
   double xyzOut[3];
   double p[3];
 
+  // report warning if transform has rotation
+  double v[] = {1,0,0,0};
+  double v1[4];
+  transform->TransformPoint(v, v1);
+  vtkMath::Normalize(v1);
+  double v2[4];
+  vtkMath::Cross(v, v1, v2);
+  if (vtkMath::Normalize(v2) > 1.0e-9)
+    {
+      vtkErrorMacro("AnnotationROINode::ApplyTransformMatrix "<< this->GetName() << ". Matrix has rotation component. ROI does not support rotation.");
+    }
+
+  int modify = this->StartModify();
+
   // first point
   if (this->GetXYZ(p))
     {
@@ -523,6 +551,8 @@ void vtkMRMLAnnotationROINode::ApplyTransform(vtkAbstractTransform* transform)
     transform->TransformPoint(xyzIn,xyzOut);
     this->SetRadiusXYZ(xyzOut);
     }
+
+  this->EndModify(modify);
 }
 
 #define AVERAGE_ABC(a,b,c) \

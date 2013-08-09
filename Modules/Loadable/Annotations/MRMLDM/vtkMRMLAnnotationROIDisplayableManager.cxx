@@ -732,27 +732,29 @@ void vtkMRMLAnnotationROIDisplayableManager::SetParentTransformToWidget(vtkMRMLA
 
   vtkAnnotationROIRepresentation *rep = vtkAnnotationROIRepresentation::SafeDownCast(widget->GetRepresentation());
 
+  vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
+  transformToWorld->Identity();
+
   // get the nodes's transform node
   vtkMRMLTransformNode* tnode = node->GetParentTransformNode();
   if (rep != NULL && tnode != NULL && tnode->IsLinear())
     {
-    vtkSmartPointer<vtkMatrix4x4> transformToWorld = vtkSmartPointer<vtkMatrix4x4>::New();
-    transformToWorld->Identity();
     vtkMRMLLinearTransformNode *lnode = vtkMRMLLinearTransformNode::SafeDownCast(tnode);
     lnode->GetMatrixTransformToWorld(transformToWorld);
-
-    vtkNew<vtkPropCollection> actors;
-    rep->GetActors(actors.GetPointer());
-
-    for (int i=0; i<actors->GetNumberOfItems(); i++)
-      {
-      vtkActor *actor = vtkActor::SafeDownCast(actors->GetItemAsObject(i));
-      actor->SetUserMatrix(transformToWorld);
-      }
-    //rep->SetTransform(xform);
-
-    widget->InvokeEvent(vtkCommand::EndInteractionEvent);
     }
+
+  vtkNew<vtkPropCollection> actors;
+  rep->GetActors(actors.GetPointer());
+
+  for (int i=0; i<actors->GetNumberOfItems(); i++)
+    {
+    vtkActor *actor = vtkActor::SafeDownCast(actors->GetItemAsObject(i));
+    actor->SetUserMatrix(transformToWorld);
+    }
+  //rep->SetTransform(xform);
+
+  widget->InvokeEvent(vtkCommand::EndInteractionEvent);
+
 }
 
 //---------------------------------------------------------------------------
