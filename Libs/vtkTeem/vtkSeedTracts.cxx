@@ -20,6 +20,7 @@
 #include "vtkTimerLog.h"
 
 #include "vtkMath.h"
+#include "vtkCommand.h"
 
 #include "vtkPointData.h"
 
@@ -550,6 +551,17 @@ void vtkSeedTracts::SeedStreamlinesInROI()
   // filename index
   idx=0;
 
+  int gridIncXYZ = gridIncX*gridIncY*gridIncZ;
+  int numLabelVoxels = 0;
+  if (gridIncXYZ)
+    {
+    numLabelVoxels = maxX*maxY*maxZ/gridIncXYZ;
+    }
+  int labelVoxelCount = 0;
+  int progressCount = 0;
+  int progressCountMax = 100;
+  double progress;
+
   for (idxZ = 0; idxZ <= maxZ; idxZ+=gridIncZ)
     {
       // just output (fractional or integer) current slice number
@@ -561,7 +573,7 @@ void vtkSeedTracts::SeedStreamlinesInROI()
           
           for (idxX = 0; idxX <= maxX; idxX+=gridIncX)
             {
-
+              labelVoxelCount++;
               // get the pointer to the nearest voxel at this location
               int pt[3];
               pt[0]= (int) floor(idxX + 0.5);
@@ -641,6 +653,17 @@ void vtkSeedTracts::SeedStreamlinesInROI()
                         }
                       } // end if (UseStartingThreshold)
 
+                      // Report progress
+                      if (numLabelVoxels && progressCount == progressCountMax)
+                        {
+                        progressCount = 0;
+                        progress = (labelVoxelCount+0.0)/numLabelVoxels;
+                        this->InvokeEvent(vtkCommand::ProgressEvent, (void *)&progress);
+                        }
+                      else
+                        {
+                        progressCount++;
+                        }
                       // Now create a streamline 
                       newStreamline=(vtkHyperStreamlineDTMRI *) 
                         this->CreateHyperStreamline();
