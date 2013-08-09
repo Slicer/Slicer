@@ -80,6 +80,12 @@ public:
   /// \sa GetDisplayValueFromValue(), GetValueFromDisplayValue()
   const char* GetDisplayStringFromValue(double value);
 
+  /// Return the display string format to use with printf/sprintf.
+  /// Note that the value passed to the format must be the DisplayValue.
+  /// For example: "%#6.3g mm" if the precision is 3 and the suffix mm.
+  /// \sa GetDisplayValueFromValue(), GetDisplayStringFromValue()
+  const char* GetDisplayStringFormat();
+
   ///
   /// Set the name of the unit. Since unit nodes are singleton,
   /// this name must be unique throughout the scene.

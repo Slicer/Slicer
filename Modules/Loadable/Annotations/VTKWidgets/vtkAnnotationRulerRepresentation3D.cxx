@@ -75,16 +75,9 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
 
     this->Point1Representation->GetWorldPosition(p1);
     this->Point2Representation->GetWorldPosition(p2);
+    double worldDistance = sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
 
-    if (this->m_Distance > 0)
-      {
-      this->Distance = this->m_Distance;
-      }
-    else
-      {
-      this->Distance = sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
-      }
-
+    this->Distance = this->m_Distance > 0 ? this->m_Distance : worldDistance;
 
     // Line
     this->LinePoints->SetPoint(0,p1);
@@ -126,23 +119,23 @@ void vtkAnnotationRulerRepresentation3D::BuildRepresentation()
       this->Glyph3D->SetScaleFactor(this->Distance/40);
       }
 
-    double distance;
+    double tickSpacing;
     if ( this->RulerMode ) // specified tick separation
       {
       numTicks = (this->RulerDistance <= 0.0 ? 1 : (this->Distance / this->RulerDistance));
       numTicks = (numTicks > this->MaxTicks ? this->MaxTicks : numTicks);
-      distance = this->RulerDistance;
+      tickSpacing = this->RulerDistance * worldDistance / this->Distance;
       }
     else //evenly spaced
       {
       numTicks = this->NumberOfRulerTicks;
-      distance = this->Distance / (numTicks + 1);
+      tickSpacing = worldDistance / (numTicks + 1);
       }
     for (i=1; i <= numTicks; ++i)
       {
-      x[0] = p1[0] + i*v21[0]*distance;
-      x[1] = p1[1] + i*v21[1]*distance;
-      x[2] = p1[2] + i*v21[2]*distance;
+      x[0] = p1[0] + i*v21[0]*tickSpacing;
+      x[1] = p1[1] + i*v21[1]*tickSpacing;
+      x[2] = p1[2] + i*v21[2]*tickSpacing;
       this->GlyphPoints->InsertNextPoint(x);
       this->GlyphVectors->InsertNextTuple(v21);
       }

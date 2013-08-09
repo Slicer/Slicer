@@ -444,7 +444,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="qMRMLSliderWidget" name="textScaleSliderSpinBoxWidget">
+             <widget class="ctkSliderWidget" name="textScaleSliderSpinBoxWidget">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -456,12 +456,6 @@
               </property>
               <property name="maximum">
                <double>20.000000000000000</double>
-              </property>
-              <property name="quantity">
-               <string>length</string>
-              </property>
-              <property name="unitAwareProperties">
-               <set>qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
               </property>
              </widget>
             </item>
@@ -682,18 +676,12 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="qMRMLSliderWidget" name="pointSizeSliderSpinBoxWidget">
+             <widget class="ctkSliderWidget" name="pointSizeSliderSpinBoxWidget">
               <property name="singleStep">
                <double>0.100000000000000</double>
               </property>
               <property name="maximum">
                <double>20.000000000000000</double>
-              </property>
-              <property name="quantity">
-               <string>length</string>
-              </property>
-              <property name="unitAwareProperties">
-               <set>qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
               </property>
              </widget>
             </item>
@@ -776,8 +764,8 @@
             </item>
             <item row="0" column="2">
              <widget class="ctkSliderWidget" name="lineWidthSliderSpinBoxWidget_2">
-              <property name="singleStep">
-               <double>0.100000000000000</double>
+              <property name="decimals">
+               <number>0</number>
               </property>
               <property name="maximum">
                <double>20.000000000000000</double>
@@ -901,7 +889,7 @@
                <string>length</string>
               </property>
               <property name="unitAwareProperties">
-               <set>qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
+               <set>qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix|qMRMLSliderWidget::Scaling</set>
               </property>
              </widget>
             </item>

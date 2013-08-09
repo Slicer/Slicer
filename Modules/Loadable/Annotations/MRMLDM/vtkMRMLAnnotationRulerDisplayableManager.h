@@ -63,6 +63,13 @@ protected:
   // Get the label from the node and unit node
   std::string GetLabelFormat(vtkMRMLAnnotationRulerNode* rulerNode);
 
+  /// Compute the distance in mm between 2 world coordinates points
+  /// \sa ApplyUnit()
+  double GetDistance(const double* wc1, const double* wc2);
+  /// Apply the current unit to a length in mm.
+  /// \sa GetDistance()
+  double ApplyUnit(double lengthInMM);
+
   /// When the unit has changed, modify the ruler nodes to refresh the label.
   /// \sa AddObserversToSelectionNode(), RemoveObserversFromSelectionNode()
   virtual void OnMRMLSelectionNodeUnitModifiedEvent(vtkMRMLSelectionNode* selectionNode);

@@ -215,6 +215,22 @@ const char* vtkMRMLUnitNode::GetDisplayStringFromDisplayValueString(const char* 
 }
 
 //----------------------------------------------------------------------------
+const char* vtkMRMLUnitNode::GetDisplayStringFormat()
+{
+  std::stringstream strstream;
+  strstream << this->GetPrefix();
+  strstream << "%";
+  strstream << "-"; // left justify
+  strstream << "#"; // force decimal point
+  strstream << floor(log10(1. + fabs(this->GetMaximumValue()))); // padd
+  strstream << "." << this->GetPrecision(); // decimals
+  strstream << "g";
+  strstream << this->Suffix;
+  strstream >> this->LastDisplayString;
+  return this->LastDisplayString.c_str();
+}
+
+//----------------------------------------------------------------------------
 std::string vtkMRMLUnitNode::WrapValueWithPrefix(const std::string& value) const
 {
   std::string wrappedString = "";

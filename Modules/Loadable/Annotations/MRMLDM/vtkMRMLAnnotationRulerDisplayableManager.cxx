@@ -175,6 +175,8 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     }
 
   vtkMRMLAnnotationRulerNode* rulerNode = vtkMRMLAnnotationRulerNode::SafeDownCast(node);
+  vtkMRMLAnnotationLineDisplayNode* lineDisplayNode =
+    rulerNode ? rulerNode->GetAnnotationLineDisplayNode() : 0;
 
   if (!rulerNode)
     {
@@ -206,7 +208,8 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     axis->SetTitlePosition(0.2);
 
     dRep->RulerModeOn();
-    dRep->SetRulerDistance(10);
+    dRep->SetRulerDistance(
+      this->ApplyUnit(lineDisplayNode ? lineDisplayNode->GetTickSpacing() : 10.));
 
     bool showWidget = true;
     showWidget = this->IsWidgetDisplayable(this->GetSliceNode(), node);
@@ -231,7 +234,8 @@ vtkAbstractWidget * vtkMRMLAnnotationRulerDisplayableManager::CreateWidget(vtkMR
     dRep2->SetHandleRepresentation(handle2.GetPointer());
     dRep2->InstantiateHandleRepresentation();
     dRep2->RulerModeOn();
-    dRep2->SetRulerDistance(10);
+    dRep2->SetRulerDistance(
+      this->ApplyUnit(lineDisplayNode ? lineDisplayNode->GetTickSpacing() : 10.));
 
     // change ticks to a stretched cube
     vtkNew<vtkCubeSource> cubeSource;
@@ -296,6 +300,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
   //vtkAnnotationRulerRepresentation::SafeDownCast(rulerWidget->GetRepresentation())->SetPositionsForDistanceCalculation(worldCoordinates1, worldCoordinates2);
 
   std::string format = this->GetLabelFormat(rulerNode);
+  double distance = this->ApplyUnit(this->GetDistance(worldCoordinates1, worldCoordinates2));
+
   if (this->GetSliceNode())
     {
 
@@ -314,7 +320,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     // set a specific format for the measurement text
     rulerRepresentation->SetLabelFormat(format.c_str());
 
-    rulerRepresentation->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rulerRepresentation->SetDistance(distance);
 
     }
   else
@@ -329,7 +335,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::OnWidgetCreated(vtkAbstractWidget
     // set a specific format for the measurement text
     rulerRepresentation3D->SetLabelFormat(format.c_str());
 
-    rulerRepresentation3D->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rulerRepresentation3D->SetDistance(distance);
 
     }
 
@@ -395,6 +401,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
   vtkMRMLAnnotationPointDisplayNode *pointDisplayNode = rulerNode->GetAnnotationPointDisplayNode();
   vtkMRMLAnnotationLineDisplayNode *lineDisplayNode = rulerNode->GetAnnotationLineDisplayNode();
 
+  double distance = this->ApplyUnit(this->GetDistance(worldCoordinates1,worldCoordinates2));
+
   // update the location
   if (this->Is2DDisplayableManager())
     {
@@ -415,7 +423,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       */
       }
     // update the distance measurement
-    rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rep->SetDistance(distance);
 
     // set the color
     vtkHandleRepresentation *pointrep1 = rep->GetPoint1Representation();
@@ -486,7 +494,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
       axis->SetTitleVisibility(lineDisplayNode->GetLabelVisibility());
       rep->SetRulerMode(lineDisplayNode->GetMaxTicks() ? 1 : 0);
       rep->SetNumberOfRulerTicks(lineDisplayNode->GetMaxTicks());
-      rep->SetRulerDistance(lineDisplayNode->GetTickSpacing());
+      rep->SetRulerDistance(this->ApplyUnit(lineDisplayNode->GetTickSpacing()));
       }
     rep->NeedToRenderOn();
     }
@@ -498,7 +506,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
     vtkAnnotationRulerRepresentation3D * rep = vtkAnnotationRulerRepresentation3D::SafeDownCast(rulerWidget->GetRepresentation());
 
     // update the distance measurement
-    rep->SetDistance(sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2)));
+    rep->SetDistance(distance);
 
     if (lineDisplayNode)
       {
@@ -587,7 +595,7 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateMRMLToWidget(vtkMRMLAnno
         //rep->GetLineProperty()->SetSpecular(lineDisplayNode->GetSpecular());
         }
       //double thickness = lineDisplayNode->GetLineThickness();
-      rep->SetRulerDistance(lineDisplayNode->GetTickSpacing());
+      rep->SetRulerDistance(this->ApplyUnit(lineDisplayNode->GetTickSpacing()));
       rep->SetMaxTicks(lineDisplayNode->GetMaxTicks());
       }
     //vtkProperty *labelProperty = rep->GetLabelProperty();
@@ -622,7 +630,7 @@ std::string vtkMRMLAnnotationRulerDisplayableManager
     return "";
     }
 
-  std::string unitSuffix = "mm";
+  std::string format = "%-#6.3g mm";
   if (this->GetMRMLScene())
     {
     vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
@@ -635,17 +643,49 @@ std::string vtkMRMLAnnotationRulerDisplayableManager
           selectionNode->GetUnitNodeID("length")));
       if (lengthUnit)
         {
-        unitSuffix = lengthUnit->GetSuffix();
+        format = lengthUnit->GetDisplayStringFormat();
         }
       }
     }
 
-  std::string format = "";
   if (rulerNode->GetName())
     {
-    format += std::string(rulerNode->GetName()) + std::string(" :");
+    format = std::string(rulerNode->GetName()) + std::string(" :") + format;
     }
-  return format + "%-#6.3g " + unitSuffix;
+  return format;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAnnotationRulerDisplayableManager::GetDistance(
+  const double* worldCoordinates1, const double* worldCoordinates2)
+{
+  double distance =
+    sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+  return distance;
+}
+
+//---------------------------------------------------------------------------
+double vtkMRMLAnnotationRulerDisplayableManager
+::ApplyUnit(double lengthInMM)
+{
+  double length = lengthInMM;
+  if (this->GetMRMLScene())
+    {
+    vtkMRMLSelectionNode* selectionNode = vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
+
+    if (selectionNode)
+      {
+      vtkMRMLUnitNode* lengthUnit = vtkMRMLUnitNode::SafeDownCast(
+        this->GetMRMLScene()->GetNodeByID(
+          selectionNode->GetUnitNodeID("length")));
+      if (lengthUnit)
+        {
+        length = lengthUnit->GetDisplayValueFromValue(lengthInMM);
+        }
+      }
+    }
+  return length;
 }
 
 //---------------------------------------------------------------------------
@@ -692,8 +732,6 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
 
   bool allowMovement = true;
 
-  double distance;
-
   if (this->GetSliceNode())
     {
     // 2D widget was changed
@@ -730,8 +768,8 @@ void vtkMRMLAnnotationRulerDisplayableManager::PropagateWidgetToMRML(vtkAbstract
       allowMovement = false;
       }
 
-    // Compute distance and update representation
-    distance = sqrt(vtkMath::Distance2BetweenPoints(worldCoordinates1,worldCoordinates2));
+    // Compute and update representation
+    double distance = this->ApplyUnit(this->GetDistance(worldCoordinates1,worldCoordinates2));
     rep->SetDistance(distance);
 
     }

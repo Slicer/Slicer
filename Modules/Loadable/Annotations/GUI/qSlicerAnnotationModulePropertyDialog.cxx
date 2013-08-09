@@ -48,6 +48,7 @@ qSlicerAnnotationModulePropertyDialog::qSlicerAnnotationModulePropertyDialog(con
  
   ui.DescriptionLabel->setVisible(true);
   ui.DescriptionTextEdit->setVisible(true);
+  ui.lineTickSpacingSlider->setSynchronizeSiblings(ctkSliderWidget::SynchronizeWidth);
 
   if (this->m_logic->IsAnnotationHierarchyNode(id))
     {
@@ -261,7 +262,6 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
   ui.DescriptionTextEdit->setText(text.c_str());
 
   // load the current annotation text scale
-  ui.textScaleSliderSpinBoxWidget->setMRMLScene(this->m_logic->GetMRMLScene());
   vtkMRMLAnnotationTextDisplayNode *textDisplayNode = this->m_logic->GetTextDisplayNode(this->m_id.c_str());
   if (textDisplayNode)
     {
@@ -398,7 +398,6 @@ void qSlicerAnnotationModulePropertyDialog::initialize()
 //      std::cout << "\tset current index via the glyph type " << pointDisplayNode->GetGlyphType() << ", current index = " << ui.pointGlyphTypeComboBox->currentIndex() << std::endl;
       }
     // glyph size
-    ui.pointSizeSliderSpinBoxWidget->setMRMLScene(this->m_logic->GetMRMLScene());
     ui.pointSizeSliderSpinBoxWidget->setValue(pointDisplayNode->GetGlyphScale());
     
     // glyph material properties
