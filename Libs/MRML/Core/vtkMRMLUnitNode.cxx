@@ -269,6 +269,8 @@ void vtkMRMLUnitNode::Copy(vtkMRMLNode *anode)
   this->SetPrecision(node->GetPrecision());
   this->SetMinimumValue(node->GetMinimumValue());
   this->SetMaximumValue(node->GetMaximumValue());
+  this->SetDisplayCoefficient(node->GetDisplayCoefficient());
+  this->SetDisplayOffset(node->GetDisplayOffset());
 
   this->EndModify(disabledModify);
 }

@@ -100,6 +100,15 @@ void qMRMLUnitWidgetPrivate::setupUi(qMRMLUnitWidget* q)
   QObject::connect(this->MaximumSpinBox, SIGNAL(valueChanged(double)),
     q, SIGNAL(minimumChanged(double)));
 
+  QObject::connect(this->CoefficientSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(setCoefficient(double)));
+  QObject::connect(this->CoefficientSpinBox, SIGNAL(valueChanged(double)),
+    q, SIGNAL(coefficientChanged(double)));
+  QObject::connect(this->OffsetSpinBox, SIGNAL(valueChanged(double)),
+    q, SLOT(setOffset(double)));
+  QObject::connect(this->OffsetSpinBox, SIGNAL(valueChanged(double)),
+    q, SIGNAL(offsetChanged(double)));
+
   QObject::connect(this->PresetNodeComboBox,
     SIGNAL(currentNodeChanged(vtkMRMLNode*)),
     q, SLOT(setUnitFromPreset(vtkMRMLNode*)));
@@ -116,6 +125,8 @@ void qMRMLUnitWidgetPrivate::clear()
   this->PrecisionSpinBox->setValue(3);
   this->MinimumSpinBox->setValue(-1000);
   this->MaximumSpinBox->setValue(1000);
+  this->CoefficientSpinBox->setValue(1.0);
+  this->OffsetSpinBox->setValue(0.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -197,6 +208,23 @@ void qMRMLUnitWidgetPrivate::updatePropertyWidgets()
   this->MaximumValueLabel->setEnabled(
     this->EditableProperties.testFlag(qMRMLUnitWidget::Maximum));
 
+  this->CoefficientSpinBox->setVisible(
+    this->DisplayFlags.testFlag(qMRMLUnitWidget::Coefficient));
+  this->CoefficientSpinBox->setEnabled(
+    this->EditableProperties.testFlag(qMRMLUnitWidget::Coefficient));
+  this->CoefficientLabel->setVisible(
+    this->DisplayFlags.testFlag(qMRMLUnitWidget::Coefficient));
+  this->CoefficientLabel->setEnabled(
+    this->EditableProperties.testFlag(qMRMLUnitWidget::Coefficient));
+
+   this->OffsetSpinBox->setVisible(
+    this->DisplayFlags.testFlag(qMRMLUnitWidget::Offset));
+  this->OffsetSpinBox->setEnabled(
+    this->EditableProperties.testFlag(qMRMLUnitWidget::Offset));
+  this->OffsetLabel->setVisible(
+    this->DisplayFlags.testFlag(qMRMLUnitWidget::Offset));
+  this->OffsetLabel->setEnabled(
+    this->EditableProperties.testFlag(qMRMLUnitWidget::Offset));
 }
 
 //-----------------------------------------------------------------------------
@@ -268,6 +296,8 @@ void qMRMLUnitWidget::updateWidgetFromNode()
   d->PrecisionSpinBox->setEnabled(d->CurrentUnitNode != 0);
   d->MinimumSpinBox->setEnabled(d->CurrentUnitNode != 0);
   d->MaximumSpinBox->setEnabled(d->CurrentUnitNode != 0);
+  d->CoefficientSpinBox->setEnabled(d->CurrentUnitNode != 0);
+  d->OffsetSpinBox->setEnabled(d->CurrentUnitNode != 0);
 
   if (!d->CurrentUnitNode)
     {
@@ -290,6 +320,8 @@ void qMRMLUnitWidget::updateWidgetFromNode()
   d->PrecisionSpinBox->setValue(d->CurrentUnitNode->GetPrecision());
   d->MinimumSpinBox->setValue(d->CurrentUnitNode->GetMinimumValue());
   d->MaximumSpinBox->setValue(d->CurrentUnitNode->GetMaximumValue());
+  d->CoefficientSpinBox->setValue(d->CurrentUnitNode->GetDisplayCoefficient());
+  d->OffsetSpinBox->setValue(d->CurrentUnitNode->GetDisplayOffset());
 }
 
 //-----------------------------------------------------------------------------
@@ -386,6 +418,9 @@ void qMRMLUnitWidget::setPrecision(int newPrecision)
     }
   d->MaximumSpinBox->setDecimals(newPrecision);
   d->MinimumSpinBox->setDecimals(newPrecision);
+
+  d->CoefficientSpinBox->setDecimals(newPrecision);
+  d->OffsetSpinBox->setDecimals(newPrecision);
 }
 
 //-----------------------------------------------------------------------------
@@ -429,6 +464,46 @@ void qMRMLUnitWidget::setMaximum(double newMax)
 }
 
 //-----------------------------------------------------------------------------
+double qMRMLUnitWidget::coefficient() const
+{
+  Q_D(const qMRMLUnitWidget);
+  return d->CoefficientSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLUnitWidget::setCoefficient(double newCoeff)
+{
+  Q_D(qMRMLUnitWidget);
+
+  if (!d->CurrentUnitNode)
+    {
+    return;
+    }
+
+  d->CurrentUnitNode->SetDisplayCoefficient(newCoeff);
+}
+
+//-----------------------------------------------------------------------------
+double qMRMLUnitWidget::offset() const
+{
+  Q_D(const qMRMLUnitWidget);
+  return d->OffsetSpinBox->value();
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLUnitWidget::setOffset(double newOffset)
+{
+  Q_D(qMRMLUnitWidget);
+
+  if (!d->CurrentUnitNode)
+    {
+    return;
+    }
+
+  d->CurrentUnitNode->SetDisplayOffset(newOffset);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLUnitWidget::setUnitFromPreset(vtkMRMLNode* presetNode)
 {
   Q_D(qMRMLUnitWidget);
@@ -446,6 +521,9 @@ void qMRMLUnitWidget::setUnitFromPreset(vtkMRMLNode* presetNode)
   d->CurrentUnitNode->SetPrecision(presetUnitNode->GetPrecision());
   d->CurrentUnitNode->SetMinimumValue(presetUnitNode->GetMinimumValue());
   d->CurrentUnitNode->SetMaximumValue(presetUnitNode->GetMaximumValue());
+  d->CurrentUnitNode->SetDisplayCoefficient(
+    presetUnitNode->GetDisplayCoefficient());
+  d->CurrentUnitNode->SetDisplayOffset(presetUnitNode->GetDisplayOffset());
   d->CurrentUnitNode->EndModify(disabledModify);
 }
 

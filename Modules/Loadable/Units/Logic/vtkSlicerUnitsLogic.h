@@ -55,8 +55,8 @@ public:
     const char* prefix = "",
     const char* suffix = "",
     int precision = 3,
-    double min = -10000,
-    double max = 10000);
+    double min = -10000.,
+    double max = 10000.);
 
   //
   // Change the default unit for the corresponding quantity
@@ -101,8 +101,10 @@ protected:
     const char* prefix = "",
     const char* suffix = "",
     int precision = 3,
-    double min = -10000,
-    double max = 10000);
+    double min = -10000.,
+    double max = 10000.,
+    double displayCoeff = 1.0,
+    double displayOffset = 0.0);
 
   /// Save the default units referenced in the selection node singleton.
   /// \sa RestoreDefaultUnits()

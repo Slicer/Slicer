@@ -87,6 +87,7 @@ public:
     Precision = 0x04,
     MinimumValue = 0x08,
     MaximumValue = 0x10,
+    Scaling = 0x20,
     };
   Q_DECLARE_FLAGS(UnitAwareProperties, UnitAwareProperty)
 

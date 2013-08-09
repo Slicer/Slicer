@@ -20,6 +20,9 @@
 
 #include "qMRMLCoordinatesWidget.h"
 
+// CTK includes
+#include <ctkLinearValueProxy.h>
+
 // Qt includes
 #include <QDebug>
 #include <QHBoxLayout>
@@ -43,13 +46,16 @@ protected:
   qMRMLCoordinatesWidget* const q_ptr;
 public:
   qMRMLCoordinatesWidgetPrivate(qMRMLCoordinatesWidget& object);
+  ~qMRMLCoordinatesWidgetPrivate();
 
   void setAndObserveSelectionNode();
+  void updateValueProxy(vtkMRMLUnitNode* unitNode);
 
   QString Quantity;
   vtkMRMLScene* MRMLScene;
   vtkMRMLSelectionNode* SelectionNode;
   qMRMLCoordinatesWidget::UnitAwareProperties Flags;
+  ctkLinearValueProxy* Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -62,6 +68,13 @@ qMRMLCoordinatesWidgetPrivate
   this->Flags = qMRMLCoordinatesWidget::Prefix | qMRMLCoordinatesWidget::Suffix
     | qMRMLCoordinatesWidget::Precision | qMRMLCoordinatesWidget::MinimumValue
     | qMRMLCoordinatesWidget::MaximumValue;
+  this->Proxy = new ctkLinearValueProxy;
+}
+
+// --------------------------------------------------------------------------
+qMRMLCoordinatesWidgetPrivate::~qMRMLCoordinatesWidgetPrivate()
+{
+  delete this->Proxy;
 }
 
 // --------------------------------------------------------------------------
@@ -81,6 +94,23 @@ void qMRMLCoordinatesWidgetPrivate::setAndObserveSelectionNode()
     q, SLOT(updateWidgetFromUnitNode()));
   this->SelectionNode = selectionNode;
   q->updateWidgetFromUnitNode();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLCoordinatesWidgetPrivate::updateValueProxy(vtkMRMLUnitNode* unitNode)
+{
+  Q_Q(qMRMLCoordinatesWidget);
+  if (!unitNode)
+    {
+    q->setValueProxy(0);
+    this->Proxy->setCoefficient(1.0);
+    this->Proxy->setOffset(0.0);
+    return;
+    }
+
+  this->Proxy->setOffset(unitNode->GetDisplayOffset());
+  this->Proxy->setCoefficient(unitNode->GetDisplayCoefficient());
+  q->setValueProxy(this->Proxy);
 }
 
 // --------------------------------------------------------------------------
@@ -172,34 +202,38 @@ void qMRMLCoordinatesWidget::updateWidgetFromUnitNode()
 
     if (unitNode)
       {
-      for (int i = 0; this->layout()->itemAt(i); ++i)
+      if (d->Flags.testFlag(qMRMLCoordinatesWidget::Scaling))
         {
-        QLayoutItem* item = this->layout()->itemAt(i);
-        ctkDoubleSpinBox* spinBox =
-          item ? qobject_cast<ctkDoubleSpinBox*>(item->widget()) : 0;
-        if (spinBox)
+        d->updateValueProxy(unitNode);
+        }
+
+      if (d->Flags.testFlag(qMRMLCoordinatesWidget::Precision))
+        {
+        this->setDecimals(unitNode->GetPrecision());
+        this->setSingleStep(pow(10.0, -unitNode->GetPrecision()));
+        }
+      if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue) &&
+          d->Flags.testFlag(qMRMLCoordinatesWidget::MaximumValue))
+        {
+        this->setRange(unitNode->GetMinimumValue(), unitNode->GetMaximumValue());
+        }
+      else if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue))
+        {
+        this->setMinimum(unitNode->GetMinimumValue());
+        }
+      else if (d->Flags.testFlag(qMRMLCoordinatesWidget::MaximumValue))
+        {
+        this->setMaximum(unitNode->GetMaximumValue());
+        }
+      for (int i = 0; i < this->dimension(); ++i)
+        {
+        if (d->Flags.testFlag(qMRMLCoordinatesWidget::Prefix))
           {
-          if (d->Flags.testFlag(qMRMLCoordinatesWidget::Precision))
-            {
-            spinBox->setDecimals(unitNode->GetPrecision());
-            spinBox->setSingleStep(pow(10.0, -unitNode->GetPrecision()));
-            }
-          if (d->Flags.testFlag(qMRMLCoordinatesWidget::Prefix))
-            {
-            spinBox->setPrefix(unitNode->GetPrefix());
-            }
-          if (d->Flags.testFlag(qMRMLCoordinatesWidget::Suffix))
-            {
-            spinBox->setSuffix(unitNode->GetSuffix());
-            }
-          if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue))
-            {
-            spinBox->setMinimum(unitNode->GetMinimumValue());
-            }
-          if (d->Flags.testFlag(qMRMLCoordinatesWidget::MinimumValue))
-            {
-            spinBox->setMaximum(unitNode->GetMaximumValue());
-            }
+          this->spinBox(i)->setPrefix(unitNode->GetPrefix());
+          }
+        if (d->Flags.testFlag(qMRMLCoordinatesWidget::Suffix))
+          {
+          this->spinBox(i)->setSuffix(unitNode->GetSuffix());
           }
         }
       }

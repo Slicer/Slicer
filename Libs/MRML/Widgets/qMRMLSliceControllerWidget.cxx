@@ -356,7 +356,8 @@ void qMRMLSliceControllerWidgetPrivate::init()
   this->SliceOffsetSlider->setTracking(false);
   this->SliceOffsetSlider->setToolTip(q->tr("Slice distance from RAS origin"));
   this->SliceOffsetSlider->setQuantity("length");
-  this->SliceOffsetSlider->setUnitAwareProperties(qMRMLSliderWidget::Suffix|qMRMLSliderWidget::Precision);
+  this->SliceOffsetSlider->setUnitAwareProperties(
+    qMRMLSliderWidget::Suffix|qMRMLSliderWidget::Precision|qMRMLSliderWidget::Scaling);
   this->SliceOffsetSlider->spinBox()->setDecimalsOption(
     ctkDoubleSpinBox::DecimalsByShortcuts |
     ctkDoubleSpinBox::DecimalsByKey |

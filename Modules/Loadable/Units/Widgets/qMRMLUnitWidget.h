@@ -64,6 +64,12 @@ class Q_SLICER_MODULE_UNITS_WIDGETS_EXPORT qMRMLUnitWidget : public qMRMLWidget
   /// This property controls the maximum of the unit node.
   /// \sa maximum(), setMaximum(), maximumChanged()
   Q_PROPERTY(double maximum READ maximum WRITE setMaximum NOTIFY maximumChanged)
+  /// This property controls the displayed coefficient of the unit node
+  /// \sa coefficient(), setCoefficient(), coefficientChanged()
+  Q_PROPERTY(double coefficient READ coefficient WRITE setCoefficient NOTIFY coefficientChanged)
+  /// This property controls the displayed offset of the unit node.
+  /// \sa offset(), setOffset(), offsetChanged()
+  Q_PROPERTY(double offset READ offset WRITE setOffset NOTIFY offsetChanged)
 
   /// Set/Get what are the current unit node displayed property by the widget.
   /// Hidden properties can still be accessed programatically.
@@ -103,6 +109,12 @@ public:
   /// Return the maximum property value.
   /// \sa maximum
   double maximum() const;
+  /// Return the coefficient property value.
+  /// \sa setCoefficient
+  double coefficient() const;
+  /// Return the offset property value.
+  /// \sa setOffset
+  double offset() const;
 
   enum UnitProperty
     {
@@ -115,6 +127,8 @@ public:
     Suffix = 0x020,
     Minimum = 0x040,
     Maximum = 0x080,
+    Coefficient = 0x100,
+    Offset = 0x200,
     All = 0xfff,
     };
   Q_DECLARE_FLAGS(UnitProperties, UnitProperty)
@@ -155,6 +169,12 @@ public slots:
   /// Set the maximum property value.
   /// \sa maximum
   void setMaximum(double);
+  /// Set the coefficient property value.
+  /// \sa coefficient
+  void setCoefficient(double);
+  /// Set the offset property value.
+  /// \sa offset
+  void setOffset(double);
 
   /// Apply a preset to the node.
   void setUnitFromPreset(vtkMRMLNode* presetNode);
@@ -177,6 +197,8 @@ signals:
   void precisionChanged(int);
   void minimumChanged(double);
   void maximumChanged(double);
+  void coefficientChanged(double);
+  void offsetChanged(double);
 
 protected:
   QScopedPointer<qMRMLUnitWidgetPrivate> d_ptr;

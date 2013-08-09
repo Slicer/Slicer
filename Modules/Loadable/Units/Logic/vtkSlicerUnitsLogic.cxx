@@ -79,7 +79,9 @@ vtkMRMLScene* vtkSlicerUnitsLogic::GetUnitsScene() const
 vtkMRMLUnitNode* vtkSlicerUnitsLogic
 ::AddUnitNodeToScene(vtkMRMLScene* scene, const char* name,
                      const char* quantity, const char* prefix,
-                     const char* suffix, int precision, double min, double max)
+                     const char* suffix, int precision,
+                     double min, double max,
+                     double displayCoeff, double displayOffset)
 {
   if (!scene)
     {
@@ -94,6 +96,8 @@ vtkMRMLUnitNode* vtkSlicerUnitsLogic
   unitNode->SetPrecision(precision);
   unitNode->SetMinimumValue(min);
   unitNode->SetMaximumValue(max);
+  unitNode->SetDisplayCoefficient(displayCoeff);
+  unitNode->SetDisplayOffset(displayOffset);
 
   scene->AddNode(unitNode);
   unitNode->Delete();
@@ -141,30 +145,33 @@ void vtkSlicerUnitsLogic::AddBuiltInUnits(vtkMRMLScene* scene)
 
   // Add defaults nodes here
   this->AddUnitNodeToScene(scene,
-    "Meter", "length", "", "m", 3);
+    "Meter", "length", "", "m", 3, -10000., 10000., 0.001, 0.);
   this->AddUnitNodeToScene(scene,
-    "Centimeter", "length", "", "cm", 3);
+    "Centimeter", "length", "", "cm", 3, -10000., 10000., 0.1, 0.);
   this->AddUnitNodeToScene(scene,
-    "Millimeter", "length", "", "mm", 3);
+    "Millimeter", "length", "", "mm", 3, -10000., 10000., 1., 0.);
   this->AddUnitNodeToScene(scene,
-    "Micrometer", "length", "", "µm", 3);
+    "Micrometer", "length", "", "µm", 3, -10000., 10000., 1000., 0.);
   this->AddUnitNodeToScene(scene,
-    "Nanometer", "length", "", "nm", 3);
+    "Nanometer", "length", "", "nm", 3, -10000., 10000., 1000000., 0.);
 
+  // 30.436875 is average number of days in a month
   this->AddUnitNodeToScene(scene,
-    "Year", "time", "", "year", 3);
+    "Year", "time", "", "year", 2, -10000., 10000., 1.0 / 12.0*30.436875*24.0*60.0*60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Month", "time", "", "month", 3);
+    "Month", "time", "", "month", 2, -10000., 10000., 1.0 / 30.436875*24.0*60.0*60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Day", "time", "", "day", 3);
+    "Day", "time", "", "day", 2, -10000., 10000., 1.0 / 24.0*60.0*60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Hour", "time", "", "h", 3);
+    "Hour", "time", "", "h", 2, -10000., 10000., 1.0 / 60.0*60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Second", "time", "", "s", 3);
+    "Minute", "time", "", "min", 2, -10000., 10000., 1.0/60.0, 0.);
   this->AddUnitNodeToScene(scene,
-    "Millisecond", "time", "", "ms", 3);
+    "Second", "time", "", "s", 3, -10000., 10000., 1., 0.);
   this->AddUnitNodeToScene(scene,
-    "Microsecond", "time", "", "µs", 3);
+    "Millisecond", "time", "", "ms", 3, -10000., 10000., 1000., 0.);
+  this->AddUnitNodeToScene(scene,
+    "Microsecond", "time", "", "µs", 3, -10000., 10000., 1000., 0.);
 }
 
 //-----------------------------------------------------------------------------

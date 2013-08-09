@@ -126,6 +126,12 @@ void qSlicerUnitsSettingsPanelPrivate
   q->registerProperty(quantity + "/maximum", unitWidget->unitWidget(),
     "maximum", SIGNAL(maximumChanged(double)),
     QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+  q->registerProperty(quantity + "/coefficient", unitWidget->unitWidget(),
+    "coefficient", SIGNAL(coefficientChanged(double)),
+    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
+  q->registerProperty(quantity + "/offset", unitWidget->unitWidget(),
+    "offset", SIGNAL(offsetChanged(double)),
+    QString(), ctkSettingsPanel::OptionNone, app->revisionUserSettings());
 }
 
 // ---------------------------------------------------------------------------
@@ -343,7 +349,8 @@ void qSlicerUnitsSettingsPanel::showAll(bool showAll)
       qMRMLUnitWidget::Preset |
       qMRMLUnitWidget::Prefix | qMRMLUnitWidget::Suffix |
       qMRMLUnitWidget::Precision |
-      qMRMLUnitWidget::Minimum | qMRMLUnitWidget::Maximum;
+      qMRMLUnitWidget::Minimum | qMRMLUnitWidget::Maximum |
+      qMRMLUnitWidget::Coefficient | qMRMLUnitWidget::Offset;
 
     widget->unitWidget()->setDisplayedProperties(showAll ?
       allButNameAndQuantity : qMRMLUnitWidget::Precision);

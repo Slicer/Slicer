@@ -20,6 +20,9 @@
 
 #include "qMRMLSpinBox.h"
 
+// CTK includes
+#include <ctkLinearValueProxy.h>
+
 // Qt includes
 #include <QDebug>
 
@@ -42,13 +45,16 @@ protected:
   qMRMLSpinBox* const q_ptr;
 public:
   qMRMLSpinBoxPrivate(qMRMLSpinBox& object);
+  ~qMRMLSpinBoxPrivate();
 
   void setAndObserveSelectionNode();
+  void updateValueProxy(vtkMRMLUnitNode* unitNode);
 
   QString Quantity;
   vtkMRMLScene* MRMLScene;
   vtkMRMLSelectionNode* SelectionNode;
   qMRMLSpinBox::UnitAwareProperties Flags;
+  ctkLinearValueProxy* Proxy;
 };
 
 // --------------------------------------------------------------------------
@@ -61,6 +67,13 @@ qMRMLSpinBoxPrivate::qMRMLSpinBoxPrivate(qMRMLSpinBox& object)
   this->Flags = qMRMLSpinBox::Prefix | qMRMLSpinBox::Suffix
     | qMRMLSpinBox::Precision
     | qMRMLSpinBox::MinimumValue | qMRMLSpinBox::MaximumValue;
+  this->Proxy = new ctkLinearValueProxy();
+}
+
+// --------------------------------------------------------------------------
+qMRMLSpinBoxPrivate::~qMRMLSpinBoxPrivate()
+{
+  delete this->Proxy;
 }
 
 // --------------------------------------------------------------------------
@@ -80,6 +93,23 @@ void qMRMLSpinBoxPrivate::setAndObserveSelectionNode()
     q, SLOT(updateWidgetFromUnitNode()));
   this->SelectionNode = selectionNode;
   q->updateWidgetFromUnitNode();
+}
+
+// --------------------------------------------------------------------------
+void qMRMLSpinBoxPrivate::updateValueProxy(vtkMRMLUnitNode* unitNode)
+{
+  Q_Q(qMRMLSpinBox);
+  if (!unitNode)
+    {
+    q->setValueProxy(0);
+    this->Proxy->setCoefficient(1.0);
+    this->Proxy->setOffset(0.0);
+    return;
+    }
+
+  this->Proxy->setOffset(unitNode->GetDisplayOffset());
+  q->setValueProxy(this->Proxy);
+  this->Proxy->setCoefficient(unitNode->GetDisplayCoefficient());
 }
 
 // --------------------------------------------------------------------------
@@ -192,6 +222,10 @@ void qMRMLSpinBox::updateWidgetFromUnitNode()
       if (d->Flags.testFlag(qMRMLSpinBox::MinimumValue))
         {
         this->setMaximum(unitNode->GetMaximumValue());
+        }
+      if (d->Flags.testFlag(qMRMLSpinBox::Scaling))
+        {
+        d->updateValueProxy(unitNode);
         }
       }
     }
