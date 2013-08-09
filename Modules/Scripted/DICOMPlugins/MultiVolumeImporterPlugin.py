@@ -74,7 +74,7 @@ class MultiVolumeImporterPluginClass(DICOMPlugin):
     print('MultiVolumeImportPlugin:examineMultiseries')
     loadables = []
 
-    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime'])
+    mvNodes = self.initMultiVolumes(files,prescribedTags=['SeriesTime','AcquisitionTime'])
 
     print('DICOMMultiVolumePlugin found '+str(len(mvNodes))+' multivolumes!')
 
