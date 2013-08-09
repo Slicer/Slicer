@@ -63,6 +63,20 @@ public:
   /// Return a reference to the application singleton
   static qSlicerApplication* application();
 
+  /// Avoid some crashes due to execeptions thrown during inside event handlers
+  /// (such as slots).  When exceptions are thown from slots, Qt generates this message:
+  ///
+  ///   > Qt has caught an exception thrown from an event handler. Throwing
+  ///   > exceptions from an event handler is not supported in Qt. You must
+  ///   > reimplement QApplication::notify() and catch all exceptions there.
+  ///
+  /// so we follow the pattern suggested here:
+  ///
+  /// http://stackoverflow.com/questions/13878373/where-am-i-supposed-to-reimplement-qapplicationnotify-function
+  ///
+  virtual bool notify(QObject * receiver, QEvent * event);
+
+
   /// Get commandOptions
   Q_INVOKABLE qSlicerCommandOptions* commandOptions();
 

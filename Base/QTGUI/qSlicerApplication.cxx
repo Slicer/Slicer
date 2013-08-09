@@ -292,6 +292,30 @@ qSlicerApplication* qSlicerApplication::application()
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerApplication::notify(QObject *receiver, QEvent *event)
+{
+  try
+    {
+    return QApplication::notify(receiver, event);
+    }
+  catch( std::exception& exception )
+    {
+    QString errorMessage;
+    errorMessage = tr("Slicer has caught an internal error.\n\n");
+    errorMessage += tr("You may be able to continue from this point, but results are undefined.\n\n");
+    errorMessage += tr("Suggested action is to save your work and restart.");
+    errorMessage += tr("\n\nIf you have a repeatable sequence of steps that causes this message, ");
+    errorMessage += tr("please report the issue following instructions available at http://slicer.org\n\n\n");
+    errorMessage += tr("The message detail is:\n\n");
+    errorMessage += tr("Exception thrown in event: ") + exception.what();
+    qCritical() << errorMessage;
+    QMessageBox::critical(this->mainWindow(),tr("Internal Error"), errorMessage);
+    }
+  return false;
+}
+
+
+//-----------------------------------------------------------------------------
 qSlicerCommandOptions* qSlicerApplication::commandOptions()
 {
   qSlicerCommandOptions* _commandOptions =
