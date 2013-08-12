@@ -49,20 +49,27 @@ QPalette qSlicerDarkStyle::standardPalette()const
   palette.setColor(QPalette::AlternateBase, "#4d4d3f");
   palette.setColor(QPalette::ToolTipBase, "#3d3d3f");
 
-  palette.setColor(QPalette::Window, "#424244");
+  // Cleanlooks style requires a window gradient if a button gradient is used.
+  QLinearGradient windowGradient;
+  windowGradient.setColorAt(0., QColor("#424244"));
+  windowGradient.setColorAt(1., QColor("#424244"));
+  QBrush windowBrush(windowGradient);
+  windowBrush.setColor(QColor("#424244"));
+  palette.setBrush(QPalette::Window, windowBrush);
   palette.setColor(QPalette::Disabled, QPalette::Window, "#222224");
   palette.setColor(QPalette::Base, "#525254");
   palette.setColor(QPalette::Disabled, QPalette::Base, "#323234");
 
   palette.setColor(QPalette::Dark, "#3d3d3f");
   palette.setColor(QPalette::Mid, "#4d4d4f");
-  QLinearGradient buttonGradient;
+  QLinearGradient buttonGradient(0.,0.,0.,1.);
   buttonGradient.setColorAt(0., QColor("#6d6d6f"));
   buttonGradient.setColorAt(1., QColor("#5d5d5f"));
   QBrush buttonBrush(buttonGradient);
   buttonBrush.setColor(QColor("#626264")); // for the scrollbars
   palette.setBrush(QPalette::Active, QPalette::Button, buttonBrush);
   palette.setBrush(QPalette::Inactive, QPalette::Button, buttonBrush);
+
   buttonGradient.setColorAt(0., QColor("#424244"));
   buttonGradient.setColorAt(1., QColor("#525254"));
   buttonBrush = QBrush(buttonGradient);
