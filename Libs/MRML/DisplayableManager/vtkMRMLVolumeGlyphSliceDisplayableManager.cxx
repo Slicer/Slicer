@@ -374,7 +374,7 @@ void vtkMRMLVolumeGlyphSliceDisplayableManager::vtkInternal
     }
   // Make sure there is no more display nodes than the volume has
   assert( displayNodesIt->second.size() <=
-          displayNodesIt->first->GetNumberOfDisplayNodes());
+          (unsigned int) displayNodesIt->first->GetNumberOfDisplayNodes());
 }
 
 //---------------------------------------------------------------------------

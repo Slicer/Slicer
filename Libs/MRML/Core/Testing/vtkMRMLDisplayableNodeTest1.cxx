@@ -35,7 +35,7 @@ public:
     {
     std::vector<vtkMRMLDisplayNode*> InternalDisplayNodes;
     int ndnodes = this->GetNumberOfDisplayNodes();
-    for (unsigned int i=0; i<ndnodes; i++)
+    for (int i=0; i<ndnodes; i++)
       {
       InternalDisplayNodes.push_back(this->GetNthDisplayNode(i));
       }
