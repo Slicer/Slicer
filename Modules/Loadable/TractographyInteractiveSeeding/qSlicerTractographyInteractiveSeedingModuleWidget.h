@@ -54,6 +54,12 @@ public slots:
   /// Process restored scene
   void onSceneRestoredEvent();
 
+  /// Set parameter node to one of resets:
+  /// 0 - Slicer4
+  /// 1- Slicer3 FiducialSeeding module
+  /// 2- Slicer3 Labe Map Seeding module
+  void setParametersPreset(int index);
+
   /// Set current parameter node
   void setTractographyInteractiveSeedingNode(vtkMRMLNode *node);
 

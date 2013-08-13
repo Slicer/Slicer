@@ -31,7 +31,7 @@ vtkMRMLNodeNewMacro(vtkMRMLTractographyInteractiveSeedingNode);
 //----------------------------------------------------------------------------
 vtkMRMLTractographyInteractiveSeedingNode::vtkMRMLTractographyInteractiveSeedingNode()
 {
-   this->StoppingMode = 0;
+   this->StoppingMode = 0; //FA
    this->StoppingValue = 0.25;
    this->StoppingCurvature = 0.7;
    this->IntegrationStep = 0.5;

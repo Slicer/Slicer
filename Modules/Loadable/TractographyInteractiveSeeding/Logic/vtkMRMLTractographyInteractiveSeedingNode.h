@@ -59,8 +59,8 @@ public:
 
   // Description:
   // Get/Set Stopping Mode (module parameter)
-  // 0 - Linear Measure
-  // 1 - FA
+  // 0 - FA
+  // 1 - Linear Measure
   vtkGetMacro(StoppingMode, int);
   vtkSetMacro(StoppingMode, int);
 

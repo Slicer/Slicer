@@ -21,42 +21,89 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="qMRMLNodeComboBox" name="ParameterNodeSelector">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="nodeTypes">
-      <stringlist>
-       <string>vtkMRMLTractographyInteractiveSeedingNode</string>
-      </stringlist>
-     </property>
-     <property name="showHidden">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Parameter set</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="ParametersCollapsibleButton" native="true">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>IO</string>
      </property>
-     <property name="checked">
+     <property name="checked" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
+      <bool>false</bool>
+     </property>
+     <layout class="QFormLayout" name="formLayout_6">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="parametersLabel">
+        <property name="text">
+         <string>Parameters</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+		<widget class="qMRMLNodeComboBox" name="ParameterNodeSelector">
+     	  <property name="sizePolicy">
+      		<sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+       		  <horstretch>0</horstretch>
+       		  <verstretch>0</verstretch>
+      		</sizepolicy>
+     	  </property>
+     	  <property name="nodeTypes">
+      		<stringlist>
+       		  <string>vtkMRMLTractographyInteractiveSeedingNode</string>
+      		</stringlist>
+     	  </property>
+     	  <property name="showHidden">
+      		<bool>true</bool>
+     	  </property>
+    	</widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="presetsLabel">
+        <property name="text">
+         <string>Presets</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="PresetsComboBox">
+        <item>
+         <property name="text">
+          <string>Slicer4 Interctive Seeding Defaults</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Slicer3 Fiducial Seeding Defaults</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Slicer3 Labelmap Seeding Defaults</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="InputsCollapsibleButton" native="true">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text" stdset="0">
+      <string>IO</string>
+     </property>
+     <property name="checked" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="collapsed" stdset="0">
       <bool>false</bool>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -71,19 +118,19 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="DTINodeSelector">
+       <widget class="qMRMLNodeComboBox" name="DTINodeSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLDiffusionTensorVolumeNode</string>
          </stringlist>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
        </widget>
@@ -96,24 +143,24 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector">
+       <widget class="qMRMLNodeComboBox" name="FiducialNodeSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLAnnotationHierarchyNode</string>
           <string>vtkMRMLModelNode</string>
           <string>vtkMRMLScalarVolumeNode</string>
          </stringlist>
         </property>
-        <property name="showChildNodeTypes">
+        <property name="showChildNodeTypes" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
        </widget>
@@ -126,19 +173,19 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="qMRMLNodeComboBox" name="FiberNodeSelector">
+       <widget class="qMRMLNodeComboBox" name="FiberNodeSelector" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLFiberBundleNode</string>
          </stringlist>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
@@ -174,17 +221,17 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ctkCollapsibleButton" name="PlacementOptionCollapsibleButton">
+        <widget class="ctkCollapsibleButton" name="PlacementOptionCollapsibleButton" native="true">
          <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Seed Placement Options</string>
          </property>
-         <property name="checked">
+         <property name="checked" stdset="0">
           <bool>true</bool>
          </property>
-         <property name="collapsed">
+         <property name="collapsed" stdset="0">
           <bool>false</bool>
          </property>
          <layout class="QFormLayout" name="formLayout_1">
@@ -199,17 +246,17 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="ctkSliderWidget" name="FiducialRegionSpinBox">
-            <property name="singleStep">
+           <widget class="ctkSliderWidget" name="FiducialRegionSpinBox" native="true">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>10.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>2.500000000000000</double>
             </property>
-            <property name="suffix">
+            <property name="suffix" stdset="0">
              <string>mm</string>
             </property>
            </widget>
@@ -222,20 +269,20 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="ctkSliderWidget" name="FiducialStepSpinBox">
-            <property name="singleStep">
+           <widget class="ctkSliderWidget" name="FiducialStepSpinBox" native="true">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="minimum">
+            <property name="minimum" stdset="0">
              <double>0.200000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>10.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>1.000000000000000</double>
             </property>
-            <property name="suffix">
+            <property name="suffix" stdset="0">
              <string>mm</string>
             </property>
            </widget>
@@ -285,17 +332,17 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ctkCollapsibleButton" name="LabelMapOptionCollapsibleButton">
+        <widget class="ctkCollapsibleButton" name="LabelMapOptionCollapsibleButton" native="true">
          <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Label Map Options</string>
          </property>
-         <property name="checked">
+         <property name="checked" stdset="0">
           <bool>true</bool>
          </property>
-         <property name="collapsed">
+         <property name="collapsed" stdset="0">
           <bool>false</bool>
          </property>
          <layout class="QFormLayout" name="formLayout_2">
@@ -327,20 +374,20 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="ctkSliderWidget" name="SeedSpacingSlider">
-            <property name="singleStep">
+           <widget class="ctkSliderWidget" name="SeedSpacingSlider" native="true">
+            <property name="singleStep" stdset="0">
              <double>0.010000000000000</double>
             </property>
-            <property name="minimum">
+            <property name="minimum" stdset="0">
              <double>0.200000000000000</double>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>10.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>2.000000000000000</double>
             </property>
-            <property name="suffix">
+            <property name="suffix" stdset="0">
              <string/>
             </property>
            </widget>
@@ -367,14 +414,14 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="ctkSliderWidget" name="LinearMeasureStartSlider">
-            <property name="decimals">
+           <widget class="ctkSliderWidget" name="LinearMeasureStartSlider" native="true">
+            <property name="decimals" stdset="0">
              <number>2</number>
             </property>
-            <property name="maximum">
+            <property name="maximum" stdset="0">
              <double>1.000000000000000</double>
             </property>
-            <property name="value">
+            <property name="value" stdset="0">
              <double>0.300000000000000</double>
             </property>
            </widget>
@@ -388,8 +435,8 @@
           </item>
           <item row="5" column="1">
            <widget class="QLineEdit" name="ROILabelInput">
-             <property name="text">
-               <string>1</string>
+            <property name="text">
+             <string>1</string>
             </property>
            </widget>
           </item>
@@ -415,7 +462,7 @@
            </widget>
           </item>
           <item row="7" column="1">
-           <widget class="ctkDirectoryButton" name="OutputDirectoryButton">
+           <widget class="ctkDirectoryButton" name="OutputDirectoryButton" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -455,17 +502,17 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="SeedOptionCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="SeedOptionCollapsibleButton" native="true">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>Tractography Seeding Parameters</string>
      </property>
-     <property name="checked">
+     <property name="checked" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>false</bool>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
@@ -480,24 +527,21 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLSliderWidget" name="MinimumPathSpinBox">
-        <property name="singleStep">
+       <widget class="qMRMLSliderWidget" name="MinimumPathSpinBox" native="true">
+        <property name="singleStep" stdset="0">
          <double>1.000000000000000</double>
         </property>
-        <property name="maximum">
+        <property name="maximum" stdset="0">
          <double>200.000000000000000</double>
         </property>
-        <property name="value">
+        <property name="value" stdset="0">
          <double>10.000000000000000</double>
         </property>
-        <property name="suffix">
+        <property name="suffix" stdset="0">
          <string>mm</string>
         </property>
         <property name="quantity" stdset="0">
          <string>length</string>
-        </property>
-        <property name="unitAwareProperties">
-         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
         </property>
        </widget>
       </item>
@@ -509,24 +553,21 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="qMRMLSliderWidget" name="MaximumPathSpinBox">
-        <property name="singleStep">
+       <widget class="qMRMLSliderWidget" name="MaximumPathSpinBox" native="true">
+        <property name="singleStep" stdset="0">
          <double>1.000000000000000</double>
         </property>
-        <property name="maximum">
+        <property name="maximum" stdset="0">
          <double>1000.000000000000000</double>
         </property>
-        <property name="value">
+        <property name="value" stdset="0">
          <double>800.000000000000000</double>
         </property>
-        <property name="suffix">
+        <property name="suffix" stdset="0">
          <string>mm</string>
         </property>
         <property name="quantity" stdset="0">
          <string>length</string>
-        </property>
-        <property name="unitAwareProperties">
-         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
         </property>
        </widget>
       </item>
@@ -559,17 +600,17 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="ctkSliderWidget" name="StoppingValueSpinBox">
-        <property name="singleStep">
+       <widget class="ctkSliderWidget" name="StoppingValueSpinBox" native="true">
+        <property name="singleStep" stdset="0">
          <double>0.010000000000000</double>
         </property>
-        <property name="minimum">
+        <property name="minimum" stdset="0">
          <double>0.010000000000000</double>
         </property>
-        <property name="maximum">
+        <property name="maximum" stdset="0">
          <double>1.000000000000000</double>
         </property>
-        <property name="value">
+        <property name="value" stdset="0">
          <double>0.250000000000000</double>
         </property>
        </widget>
@@ -582,17 +623,17 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBox">
-        <property name="singleStep">
+       <widget class="ctkSliderWidget" name="StoppingCurvatureSpinBox" native="true">
+        <property name="singleStep" stdset="0">
          <double>0.010000000000000</double>
         </property>
-        <property name="minimum">
+        <property name="minimum" stdset="0">
          <double>0.010000000000000</double>
         </property>
-        <property name="maximum">
+        <property name="maximum" stdset="0">
          <double>10.000000000000000</double>
         </property>
-        <property name="value">
+        <property name="value" stdset="0">
          <double>0.700000000000000</double>
         </property>
        </widget>
@@ -605,27 +646,24 @@
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="qMRMLSliderWidget" name="IntegrationStepSpinBox">
-        <property name="singleStep">
+       <widget class="qMRMLSliderWidget" name="IntegrationStepSpinBox" native="true">
+        <property name="singleStep" stdset="0">
          <double>0.010000000000000</double>
         </property>
-        <property name="minimum">
+        <property name="minimum" stdset="0">
          <double>0.100000000000000</double>
         </property>
-        <property name="maximum">
+        <property name="maximum" stdset="0">
          <double>10.000000000000000</double>
         </property>
-        <property name="value">
+        <property name="value" stdset="0">
          <double>0.500000000000000</double>
         </property>
-        <property name="suffix">
+        <property name="suffix" stdset="0">
          <string>mm</string>
         </property>
         <property name="quantity" stdset="0">
          <string>length</string>
-        </property>
-        <property name="unitAwareProperties">
-         <set>qMRMLSliderWidget::Precision|qMRMLSliderWidget::Prefix|qMRMLSliderWidget::Suffix</set>
         </property>
        </widget>
       </item>
@@ -633,17 +671,17 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="ControlOptionCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="ControlOptionCollapsibleButton" native="true">
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <property name="text">
+     <property name="text" stdset="0">
       <string>Enabling Options</string>
      </property>
-     <property name="checked">
+     <property name="checked" stdset="0">
       <bool>true</bool>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>false</bool>
      </property>
      <layout class="QFormLayout" name="formLayout_4">
@@ -693,12 +731,7 @@
   <customwidget>
    <class>qMRMLNodeComboBox</class>
    <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>qMRMLSliderWidget</class>
-   <extends>ctkSliderWidget</extends>
-   <header>qMRMLSliderWidget.h</header>
+   <header location="global">qMRMLNodeComboBox.h</header>
   </customwidget>
   <customwidget>
    <class>qSlicerWidget</class>
@@ -721,6 +754,11 @@
    <class>ctkSliderWidget</class>
    <extends>QWidget</extends>
    <header>ctkSliderWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSliderWidget</class>
+   <extends>ctkSliderWidget</extends>
+   <header>qMRMLSliderWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
