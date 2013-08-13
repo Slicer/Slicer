@@ -105,8 +105,14 @@ void vtkImageStash::Stash()
 
   unsigned char *p = static_cast<unsigned char *>(scalars->WriteVoidPointer(0, numPrims));
   this->GetCompressor()->SetCompressionLevel(this->GetCompressionLevel());
-  this->SetStashedScalars(this->GetCompressor()->Compress(p, scalarSize));
-  this->GetStashedScalars()->Delete(); // reference count already set by Compress
+  vtkUnsignedCharArray* compressedBuffer=this->GetCompressor()->Compress(p, scalarSize); // returns a new buffer that has to be deleted
+  // The compressor allocates space that has the size of an uncompressed volume
+  // and even if it uses less memory the buffer size is not reduced.
+  // Call squeeze on the buffer to reclaim the unused memory space
+  // (typically reduces memory consumption from hundreds of megabytes to under a megabyte)
+  compressedBuffer->Squeeze(); 
+  this->SetStashedScalars(compressedBuffer);
+  compressedBuffer->Delete();
 
   // this will realloc a zero sized buffer
   scalars->SetNumberOfTuples(0);
