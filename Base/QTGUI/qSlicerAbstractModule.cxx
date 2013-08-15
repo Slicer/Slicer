@@ -52,7 +52,7 @@ qSlicerAbstractModule::~qSlicerAbstractModule()
 //-----------------------------------------------------------------------------
 QIcon qSlicerAbstractModule::icon()const
 {
-  return QIcon();
+  return QIcon(":Icons/Extension.png");
 }
 
 //-----------------------------------------------------------------------------

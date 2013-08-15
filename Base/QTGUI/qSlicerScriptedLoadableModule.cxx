@@ -115,6 +115,8 @@ qSlicerScriptedLoadableModule::qSlicerScriptedLoadableModule(QObject* _parentObj
   : Superclass(_parentObject)
   , d_ptr(new qSlicerScriptedLoadableModulePrivate)
 {
+  Q_D(qSlicerScriptedLoadableModule);
+  d->Icon = this->Superclass::icon();
 }
 
 //-----------------------------------------------------------------------------
