@@ -183,15 +183,12 @@ int main(int argc, char* * argv)
    * he user wans o specify hings in erms of he spline disance.
    */
 
-  bool                 useSplineDistance = false;
   ImageType::IndexType inputImageIndex =
     inputImage->GetLargestPossibleRegion().GetIndex();
   ImageType::SizeType inputImageSize =
     inputImage->GetLargestPossibleRegion().GetSize();
   ImageType::IndexType maskImageIndex =
     maskImage->GetLargestPossibleRegion().GetIndex();
-  ImageType::SizeType maskImageSize =
-    maskImage->GetLargestPossibleRegion().GetSize();
 
   ImageType::PointType newOrigin = inputImage->GetOrigin();
 
@@ -203,7 +200,6 @@ int main(int argc, char* * argv)
   CorrecterType::ArrayType numberOfControlPoints;
   if( splineDistance )
     {
-    useSplineDistance = true;
 
     unsigned long lowerBound[ImageDimension];
     unsigned long upperBound[ImageDimension];

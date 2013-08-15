@@ -192,8 +192,9 @@ int vtkDiffusionTensorGlyph::RequestData(
   // masking of glyphs
   vtkDataArray *inMask;
   // glyph timing
-  clock_t tStart=0;
-  tStart = clock();
+#ifndef NDEBUG
+  clock_t tStart = clock();
+#endif
 
   // use simpler 3x3 array, not 9D as in vtkTensorGlyph class
   double tensor[3][3];
@@ -230,7 +231,6 @@ int vtkDiffusionTensorGlyph::RequestData(
   int skipRows = 0;
   int skipCols = this->Resolution;
   int rowLength = numPts;
-  int colLength = 1;
   int row = 0;
   int col = 0;
   // TODO: use UpdateExtent not WholeExtent
@@ -245,7 +245,6 @@ int vtkDiffusionTensorGlyph::RequestData(
     skipRows = DimensionResolution[1];
     skipCols = DimensionResolution[0];
     rowLength = dimensions[0];
-    colLength = dimensions[1];
     if (skipCols) 
       {
       numInputPts = (numInputPts+1)/skipCols;

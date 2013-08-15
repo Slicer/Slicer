@@ -78,7 +78,7 @@ int vtkFSSurfaceLabelReader::ReadLabel()
   // read the comment line
   char lineString[1024];
   char *retval = fgets (lineString, 1024, labelFile);
-  if (retval > 0)
+  if (retval != 0)
     {
     vtkDebugMacro("Comment string:" << lineString);
     }

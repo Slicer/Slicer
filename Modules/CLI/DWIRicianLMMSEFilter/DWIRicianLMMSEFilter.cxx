@@ -68,7 +68,6 @@ int DoIt( int argc, char * argv[], PixelType )
   DictionaryType::ConstIterator end = dictionary.End();
 
   double dBValue = 1000;
-  int    iFoundBValue = 0;
 
   while( itr != end )
     {
@@ -101,7 +100,6 @@ int DoIt( int argc, char * argv[], PixelType )
           {
           std::string tagvalue = entryvalue->GetMetaDataObjectValue();
           std::sscanf(tagvalue.c_str(), "%lf\n", &dBValue );
-          iFoundBValue = 1;
           }
         else
           {

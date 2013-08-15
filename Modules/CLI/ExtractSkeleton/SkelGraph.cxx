@@ -643,19 +643,16 @@ void SkelGraph::Sample_along_axis(int n_dim, list<point> * axis_points)
 
   list<skel_branch>::iterator act_pos = graph->begin();
   advance(act_pos, *act_path - 1);
-  int    from_end = 0; // holds the endpoint that we are propagating from
   point *endpt_1, *endpt_2;
   if( act_pos->end_1_neighbors )
     {
     endpt_1 = act_pos->end_2_point;
     endpt_2 = act_pos->end_1_point;
-    from_end = 2;
     }
   else
     {
     endpt_2 = act_pos->end_2_point;
     endpt_1 = act_pos->end_1_point;
-    from_end = 1;
     }
 
   int    cnt_samples = n_dim - 1;
@@ -687,14 +684,12 @@ void SkelGraph::Sample_along_axis(int n_dim, list<point> * axis_points)
         len += len1;
         endpt_2 = act_pos->end_2_point;
         endpt_1 = act_pos->end_1_point;
-        from_end = 1;
         }
       else
         {
         len += len2;
         endpt_1 = act_pos->end_2_point;
         endpt_2 = act_pos->end_1_point;
-        from_end = 2;
         }
       }
     while( len + act_pos->length >= samp_len )   // next sample found
