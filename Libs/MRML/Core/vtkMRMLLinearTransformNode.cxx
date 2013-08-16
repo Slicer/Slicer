@@ -318,7 +318,7 @@ void vtkMRMLLinearTransformNode::ApplyTransformMatrix(vtkMatrix4x4* transformMat
   vtkMatrix4x4* matrixToParent = this->GetMatrixTransformToParent();
   vtkMatrix4x4* newMatrixToParent = vtkMatrix4x4::New();
 
-  vtkMatrix4x4::Multiply4x4(matrixToParent,transformMatrix,newMatrixToParent);
+  vtkMatrix4x4::Multiply4x4(transformMatrix, matrixToParent, newMatrixToParent);
 
   this->SetAndObserveMatrixTransformToParent(newMatrixToParent);
 
