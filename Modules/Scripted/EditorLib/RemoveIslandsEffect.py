@@ -44,21 +44,31 @@ class RemoveIslandsEffectOptions(IslandEffect.IslandEffectOptions):
   def create(self):
     super(RemoveIslandsEffectOptions,self).create()
 
-    self.apply = qt.QPushButton("Apply", self.frame)
-    self.apply.setToolTip("Apply current threshold settings to the label map.")
-    self.frame.layout().addWidget(self.apply)
-    self.widgets.append(self.apply)
+    self.applyConnectivity = qt.QPushButton("Apply Connectivity Method", self.frame)
+    self.applyConnectivity.setToolTip("Remove islands that are not connected at all to the surface.  Islands with thin connections will not be removed.")
+    self.frame.layout().addWidget(self.applyConnectivity)
+    self.widgets.append(self.applyConnectivity)
 
-    self.connections.append( (self.apply, 'clicked()', self.onApply) )
+    self.applyMorphology = qt.QPushButton("Apply Morphology Method", self.frame)
+    self.applyMorphology.setToolTip("Remove islands by erosion and dilation so that small islands are removed even if they are connected to the outside or if they exist on the outside of the larger segmented regions.")
+    self.frame.layout().addWidget(self.applyMorphology)
+    self.widgets.append(self.applyMorphology)
+
+    self.connections.append( (self.applyConnectivity, 'clicked()', self.onApplyConnectivity) )
+    self.connections.append( (self.applyMorphology, 'clicked()', self.onApplyMorphology) )
 
     EditorLib.HelpButton(self.frame, "Remove connected regions (islands) that are fully enclosed by the current label color and are smaller than the given minimum size.")
 
     # Add vertical spacer
     self.frame.layout().addStretch(1)
 
-  def onApply(self):
+  def onApplyConnectivity(self):
     self.logic.undoRedo = self.undoRedo
-    self.logic.removeIslands()
+    self.logic.removeIslandsConnectivity()
+
+  def onApplyMorphology(self):
+    self.logic.undoRedo = self.undoRedo
+    self.logic.removeIslandsMorphology()
 
   def destroy(self):
     super(RemoveIslandsEffectOptions,self).destroy()
@@ -145,7 +155,7 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
           return p
     return 1
 
-  def removeIslands(self):
+  def removeIslandsConnectivity(self):
     #
     # change the label values based on the parameter node
     #
@@ -221,6 +231,145 @@ class RemoveIslandsEffectLogic(IslandEffect.IslandEffectLogic):
       cast2.Update()
       islands.SetAndObserveImageData(cast2.GetOutput())
       thresh2.SetAndObserveImageData(postThresh.GetOutput())
+
+  def removeIslandsMorphology(self):
+    """
+    Remove cruft from image by eroding away by iterations number of layers of surface
+    pixels and then saving only islands that are bigger than the minimumSize.
+    Then dilate back and save only the pixels that are in both the original and
+    result image.  Result is that small islands outside the foreground and small features
+    on the foreground are removed.
+
+    By calling the decrufter twice with fg and bg reversed, you can clean up small features in
+    a label map while preserving the original boundary in other places.
+    """
+    if not self.sliceLogic:
+      self.sliceLogic = self.editUtil.getSliceLogic()
+    parameterNode = self.editUtil.getParameterNode()
+    self.minimumSize = int(parameterNode.GetParameter("IslandEffect,minimumSize"))
+    self.fullyConnected = bool(parameterNode.GetParameter("IslandEffect,fullyConnected"))
+
+    labelImage = vtk.vtkImageData()
+    labelImage.DeepCopy( self.getScopedLabelInput() )
+    label = self.editUtil.getLabel()
+
+    slicer.modules.EditorWidget.toolsBox.undoRedo.saveState()
+
+    self.removeIslandsMorphologyDecruft(labelImage,0,label)
+    self.getScopedLabelOutput().DeepCopy(labelImage)
+    self.applyScopedLabel()
+    slicer.app.processEvents(qt.QEventLoop.ExcludeUserInputEvents)
+
+    self.removeIslandsMorphologyDecruft(labelImage,label,0)
+    self.getScopedLabelOutput().DeepCopy(labelImage)
+    self.applyScopedLabel()
+
+  def removeIslandsMorphologyDecruft(self,image,foregroundLabel,backgroundLabel,iterations=1):
+    #
+    # make binary mask foregroundLabel->1, backgroundLabel->0
+    #
+    binThresh = vtk.vtkImageThreshold()
+    binThresh.SetInput( image )
+    binThresh.ThresholdBetween(foregroundLabel,foregroundLabel)
+    binThresh.SetInValue( 1 )
+    binThresh.SetOutValue( 0 )
+    binThresh.Update()
+
+    #
+    # first, erode iterations number of times
+    #
+    eroder = slicer.vtkImageErode()
+    eroderImage = vtk.vtkImageData()
+    eroderImage.DeepCopy(binThresh.GetOutput())
+    eroder.SetInput(eroderImage)
+    for iteration in range(iterations):
+      eroder.SetForeground( 1 )
+      eroder.SetBackground( 0 )
+      eroder.SetNeighborTo8()
+      eroder.Update()
+      eroderImage.DeepCopy(eroder.GetOutput())
+
+
+    #
+    # now save only islands bigger than a specified size
+    #
+
+    # note that island operation happens in unsigned long space
+    # but the slicer editor works in Short
+    castIn = vtk.vtkImageCast()
+    castIn.SetInput( eroderImage )
+    castIn.SetOutputScalarTypeToUnsignedLong()
+
+    # now identify the islands in the inverted volume
+    # and find the pixel that corresponds to the background
+    islandMath = vtkITK.vtkITKIslandMath()
+    islandMath.SetInput( castIn.GetOutput() )
+    islandMath.SetFullyConnected( self.fullyConnected )
+    islandMath.SetMinimumSize( self.minimumSize )
+
+    # note that island operation happens in unsigned long space
+    # but the slicer editor works in Short
+    castOut = vtk.vtkImageCast()
+    castOut.SetInput( islandMath.GetOutput() )
+    castOut.SetOutputScalarTypeToShort()
+
+    castOut.Update()
+    islandCount = islandMath.GetNumberOfIslands()
+    islandOrigCount = islandMath.GetOriginalNumberOfIslands()
+    ignoredIslands = islandOrigCount - islandCount
+    print( "%d islands created (%d ignored)" % (islandCount, ignoredIslands) )
+
+    #
+    # now map everything back to 0 and 1
+    #
+
+    thresh = vtk.vtkImageThreshold()
+    thresh.SetInput( castOut.GetOutput() )
+    thresh.ThresholdByUpper(1)
+    thresh.SetInValue( 1 )
+    thresh.SetOutValue( 0 )
+    thresh.Update()
+
+    #
+    # now, dilate back (erode background) iterations_plus_one number of times
+    #
+    dilater = slicer.vtkImageErode()
+    dilaterImage = vtk.vtkImageData()
+    dilaterImage.DeepCopy(thresh.GetOutput())
+    dilater.SetInput(dilaterImage)
+    for iteration in range(1+iterations):
+      dilater.SetForeground( 0 )
+      dilater.SetBackground( 1 )
+      dilater.SetNeighborTo8()
+      dilater.Update()
+      dilaterImage.DeepCopy(dilater.GetOutput())
+
+    #
+    # only keep pixels in both original and dilated result
+    #
+
+    logic = vtk.vtkImageLogic()
+    logic.SetInput1(dilaterImage)
+    logic.SetInput2(binThresh.GetOutput())
+    #if foregroundLabel == 0:
+    #  logic.SetOperationToNand()
+    #else:
+    logic.SetOperationToAnd()
+    logic.SetOutputTrueValue(1)
+    logic.Update()
+
+    #
+    # convert from binary mask to 1->foregroundLabel, 0->backgroundLabel
+    #
+    unbinThresh = vtk.vtkImageThreshold()
+    unbinThresh.SetInput( logic.GetOutput() )
+    unbinThresh.ThresholdBetween( 1,1 )
+    unbinThresh.SetInValue( foregroundLabel )
+    unbinThresh.SetOutValue( backgroundLabel )
+    unbinThresh.Update()
+
+    image.DeepCopy(unbinThresh.GetOutput())
+
 
 
 #
