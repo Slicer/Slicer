@@ -21,6 +21,7 @@ Version:   $Revision: 1.14 $
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkImageData.h>
+#include <vtkMathUtilities.h>
 #include <vtkMatrix4x4.h>
 #include <vtkSmartPointer.h>
 
@@ -247,12 +248,22 @@ void vtkMRMLVolumeNode::PrintSelf(ostream& os, vtkIndent indent)
 //----------------------------------------------------------------------------
 void vtkMRMLVolumeNode::SetIJKToRASDirections(double dirs[3][3])
 {
+  bool isModified = false;
   for (int i=0; i<3; i++) 
     {
     for (int j=0; j<3; j++) 
       {
-      IJKToRASDirections[i][j] = dirs[i][j];
+      if (!vtkMathUtilities::FuzzyCompare<double>(this->IJKToRASDirections[i][j], dirs[i][j]))
+        {
+        this->IJKToRASDirections[i][j] = dirs[i][j];
+        isModified = true;
+        }
       }
+    }
+  if (isModified)
+    {
+    this->StorableModifiedTime.Modified();
+    this->Modified();
     }
 }
 
@@ -321,6 +332,48 @@ void vtkMRMLVolumeNode::GetKToRASDirection(double dirs[3])
     {
     dirs[i] = IJKToRASDirections[i][2];
     }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetSpacing(double arg1, double arg2, double arg3)
+{
+  if (!vtkMathUtilities::FuzzyCompare<double>(this->Spacing[0], arg1) ||
+      !vtkMathUtilities::FuzzyCompare<double>(this->Spacing[1], arg2) ||
+      !vtkMathUtilities::FuzzyCompare<double>(this->Spacing[2], arg3))
+    {
+    this->Spacing[0] = arg1;
+    this->Spacing[1] = arg2;
+    this->Spacing[2] = arg3;
+    this->StorableModifiedTime.Modified();
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetSpacing(double arg[3])
+{
+  this->SetSpacing(arg[0], arg[1], arg[2]);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetOrigin(double arg1, double arg2, double arg3)
+{
+  if (!vtkMathUtilities::FuzzyCompare<double>(this->Origin[0], arg1) ||
+      !vtkMathUtilities::FuzzyCompare<double>(this->Origin[1], arg2) ||
+      !vtkMathUtilities::FuzzyCompare<double>(this->Origin[2], arg3))
+    {
+    this->Origin[0] = arg1;
+    this->Origin[1] = arg2;
+    this->Origin[2] = arg3;
+    this->StorableModifiedTime.Modified();
+    this->Modified();
+    }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLVolumeNode::SetOrigin(double arg[3])
+{
+  this->SetOrigin(arg[0], arg[1], arg[2]);
 }
 
 //----------------------------------------------------------------------------

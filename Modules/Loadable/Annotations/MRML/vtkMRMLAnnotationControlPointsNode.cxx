@@ -498,6 +498,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   this->SetAnnotationAttribute(id, CP_VISIBLE, visibleFlag);
 
   //this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
+  this->StorableModifiedTime.Modified();
   this->Modified();
 
   return 1;
@@ -566,6 +567,7 @@ int vtkMRMLAnnotationControlPointsNode::SetControlPoint(int id, double newContro
   this->SetAnnotationAttribute(id, CP_SELECTED, selectedFlag);
   this->SetAnnotationAttribute(id, CP_VISIBLE, visibleFlag);
   //this->InvokeEvent(vtkMRMLAnnotationControlPointsNode::ControlPointModifiedEvent);
+  this->StorableModifiedTime.Modified();
   this->Modified();
 
   return 1;

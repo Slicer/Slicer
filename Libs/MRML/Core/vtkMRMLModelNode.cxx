@@ -80,6 +80,7 @@ void vtkMRMLModelNode::ProcessMRMLEvents ( vtkObject *caller,
       this->PolyData != 0 &&
       event ==  vtkCommand::ModifiedEvent)
     {
+    this->StorableModifiedTime.Modified();
     this->InvokeEvent(vtkMRMLModelNode::PolyDataModifiedEvent, NULL);
     }
   this->Superclass::ProcessMRMLEvents(caller, event, callData);
@@ -135,6 +136,7 @@ void vtkMRMLModelNode::SetAndObservePolyData(vtkPolyData *polyData)
     oldPolyData->UnRegister(this);
     }
 
+  this->StorableModifiedTime.Modified();
   this->Modified();
   this->InvokeEvent( vtkMRMLModelNode::PolyDataModifiedEvent , this);
 }

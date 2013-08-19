@@ -287,6 +287,7 @@ void vtkMRMLLinearTransformNode::SetAndObserveMatrixTransformToParent(vtkMatrix4
     return;
     }
   vtkSetAndObserveMRMLObjectMacro(this->MatrixTransformToParent, matrix);
+  this->StorableModifiedTime.Modified();
   this->Modified();
   this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
 }

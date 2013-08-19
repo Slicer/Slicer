@@ -102,10 +102,14 @@ public:
   /// 
   /// Spacing and Origin, with the Directions, are the independent
   /// parameters that go to make up the IJKToRAS matrix
+  /// In setter methods, StorableModifiedTime may need to be updated,
+  /// which cannot be achieved by using vtkGetVector3Macro.
   vtkGetVector3Macro (Spacing, double);
-  vtkSetVector3Macro (Spacing, double);
+  virtual void SetSpacing(double arg1, double arg2, double arg3);
+  virtual void SetSpacing(double arg[3]);
   vtkGetVector3Macro (Origin, double);
-  vtkSetVector3Macro (Origin, double);
+  virtual void SetOrigin(double arg1, double arg2, double arg3);
+  virtual void SetOrigin(double arg[3]);
 
   ///
   /// Utility function that returns the min spacing between the 3 orientations
