@@ -286,6 +286,7 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
     include(${CTKAPPLAUNCHER_DIR}/CMake/ctkAppLauncher.cmake)
 
     # Define list of extra 'application to launch' to associate with the launcher
+    # within the build tree
     set(extraApplicationToLaunchListForBuildTree)
     if(EXISTS "${QT_DESIGNER_EXECUTABLE}")
       ctkAppLauncherAppendExtraAppToLaunchToList(
@@ -306,13 +307,34 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
     foreach(executable ${executables})
       find_program(${executable}_EXECUTABLE ${executable})
       if(${executable}_EXECUTABLE)
-        message(STATUS "Enabling Slicer launcher option: --${executable}")
+        message(STATUS "Enabling Slicer build tree launcher option: --${executable}")
         ctkAppLauncherAppendExtraAppToLaunchToList(
           LONG_ARG ${executable}
           HELP "Start ${executable}"
           PATH ${${executable}_EXECUTABLE}
           ARGUMENTS ${${executable}_ARGUMENTS}
           OUTPUTVAR extraApplicationToLaunchListForBuildTree
+          )
+      endif()
+    endforeach()
+
+    # Define list of extra 'application to launch' to associate with the launcher
+    # within the install tree
+    set(executables)
+    if(WIN32)
+      list(APPEND executables cmd)
+      set(cmd_ARGUMENTS "/c start cmd")
+    endif()
+    foreach(executable ${executables})
+      find_program(${executable}_EXECUTABLE ${executable})
+      if(${executable}_EXECUTABLE)
+        message(STATUS "Enabling Slicer install tree launcher option: --${executable}")
+        ctkAppLauncherAppendExtraAppToLaunchToList(
+          LONG_ARG ${executable}
+          HELP "Start ${executable}"
+          PATH ${${executable}_EXECUTABLE}
+          ARGUMENTS ${${executable}_ARGUMENTS}
+          OUTPUTVAR extraApplicationToLaunchListForInstallTree
           )
       endif()
     endforeach()
@@ -334,6 +356,7 @@ if(${PROJECT_NAME} STREQUAL ${Slicer_MAIN_PROJECT})
       HELP_LONG_ARG "--help"
       NOSPLASH_ARGS "--no-splash,--help,--version,--home,--program-path,--no-main-window,--settings-path,--temporary-path"
       EXTRA_APPLICATION_TO_LAUNCH_BUILD ${extraApplicationToLaunchListForBuildTree}
+      EXTRA_APPLICATION_TO_LAUNCH_INSTALLED ${extraApplicationToLaunchListForInstallTree}
       DESTINATION_DIR ${Slicer_BINARY_DIR}
       LIBRARY_PATHS_BUILD "${SLICER_LIBRARY_PATHS_BUILD}"
       PATHS_BUILD "${SLICER_PATHS_BUILD}"
