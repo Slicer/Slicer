@@ -57,17 +57,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="ctkPathLineEdit" name="ExtensionsInstallPathLineEdit">
-       <property name="filters">
-        <set>ctkPathLineEdit::Dirs|ctkPathLineEdit::Drives|ctkPathLineEdit::NoDotAndDotDot|ctkPathLineEdit::Readable|ctkPathLineEdit::Writable</set>
-       </property>
-       <property name="options">
-        <set>ctkPathLineEdit::ShowDirsOnly</set>
-       </property>
-       <property name="showHistoryButton">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="ctkDirectoryButton" name="ExtensionsInstallPathButton"/>
      </item>
     </layout>
    </item>
@@ -102,15 +92,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>ctkDirectoryButton</class>
+   <extends>QWidget</extends>
+   <header>ctkDirectoryButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkSettingsPanel</class>
    <extends>QWidget</extends>
    <header>ctkSettingsPanel.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkPathLineEdit</class>
-   <extends>QWidget</extends>
-   <header>ctkPathLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

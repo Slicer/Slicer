@@ -64,9 +64,9 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
   // Default values
   this->ExtensionsManagerEnabledCheckBox->setChecked(true);
   this->ExtensionsServerUrlLineEdit->setText("http://slicer.kitware.com/midas3");
-  this->ExtensionsInstallPathLineEdit->setCurrentPath(app->defaultExtensionsInstallPath());
+  this->ExtensionsInstallPathButton->setDirectory(app->defaultExtensionsInstallPath());
 #ifdef Q_OS_MAC
-  this->ExtensionsInstallPathLineEdit->setDisabled(true);
+  this->ExtensionsInstallPathButton->setDisabled(true);
 #endif
 
   // Register settings
@@ -78,8 +78,8 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                       "text", SIGNAL(textChanged(QString)),
                       QString(), ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
-  q->registerProperty("Extensions/InstallPath", this->ExtensionsInstallPathLineEdit,
-                      "currentPath", SIGNAL(currentPathChanged(QString)),
+  q->registerProperty("Extensions/InstallPath", this->ExtensionsInstallPathButton,
+                      "directory", SIGNAL(directoryChanged(QString)),
                       QString(), ctkSettingsPanel::OptionNone,
                       app->revisionUserSettings());
 
@@ -88,7 +88,7 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
                    q, SLOT(onExtensionsManagerEnabled(bool)));
   QObject::connect(this->ExtensionsServerUrlLineEdit, SIGNAL(textChanged(QString)),
                    q, SIGNAL(extensionsServerUrlChanged(QString)));
-  QObject::connect(this->ExtensionsInstallPathLineEdit, SIGNAL(currentPathChanged(QString)),
+  QObject::connect(this->ExtensionsInstallPathButton, SIGNAL(directoryChanged(QString)),
                    q, SLOT(onExensionsPathChanged(QString)));
   QObject::connect(this->OpenExtensionsManagerPushButton, SIGNAL(clicked()),
                    app, SLOT(openExtensionsManagerDialog()));
