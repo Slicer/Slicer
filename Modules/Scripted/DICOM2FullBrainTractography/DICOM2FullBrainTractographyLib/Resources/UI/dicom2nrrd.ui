@@ -131,14 +131,20 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="ctkDirectoryButton" name="inputDicomDirectory">
+        <widget class="ctkPathLineEdit" name="inputDicomDirectory">
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
-         <property name="caption">
+         <property name="filters">
+          <set>ctkPathLineEdit::Dirs|ctkPathLineEdit::Drives|ctkPathLineEdit::NoDotAndDotDot|ctkPathLineEdit::Readable|ctkPathLineEdit::Writable</set>
+         </property>
+         <property name="options">
+          <set>ctkPathLineEdit::ShowDirsOnly</set>
+         </property>
+         <property name="caption" stdset="0">
           <string>Select Dicom Data</string>
          </property>
         </widget>
@@ -191,6 +197,9 @@
             <property name="filters">
              <set>ctkPathLineEdit::Files|ctkPathLineEdit::NoDot|ctkPathLineEdit::NoDotAndDotDot|ctkPathLineEdit::NoDotDot|ctkPathLineEdit::Readable|ctkPathLineEdit::Writable</set>
             </property>
+            <property name="showHistoryButton">
+             <bool>false</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -240,16 +249,16 @@ Gradient Directions</string>
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <item row="0" column="1">
-        <widget class="qMRMLNodeComboBox" name="inputNRRDMRMLNode">
+        <widget class="qMRMLNodeComboBox" name="inputNRRDMRMLNode" native="true">
          <property name="enabled">
           <bool>true</bool>
          </property>
-         <property name="nodeTypes">
+         <property name="nodeTypes" stdset="0">
           <stringlist>
            <string>vtkMRMLDiffusionWeightedVolumeNode</string>
           </stringlist>
          </property>
-         <property name="addEnabled">
+         <property name="addEnabled" stdset="0">
           <bool>false</bool>
          </property>
         </widget>
@@ -363,25 +372,20 @@ Gradient Directions</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>qMRMLNodeComboBox</class>
-   <extends>QWidget</extends>
-   <header>qMRMLNodeComboBox.h</header>
-  </customwidget>
-  <customwidget>
    <class>qSlicerWidget</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ctkDirectoryButton</class>
-   <extends>QWidget</extends>
-   <header>ctkDirectoryButton.h</header>
   </customwidget>
   <customwidget>
    <class>ctkPathLineEdit</class>
    <extends>QWidget</extends>
    <header>ctkPathLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header location="global">qMRMLNodeComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

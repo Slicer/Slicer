@@ -19,7 +19,6 @@
 #include <QToolButton>
 
 // CTK includes
-#include <ctkDirectoryButton.h>
 #include <ctkFlowLayout.h>
 #include <ctkPathLineEdit.h>
 #include <ctkSliderWidget.h>
@@ -100,7 +99,7 @@ WIDGET_VALUE_WRAPPER(Image, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, 
 WIDGET_VALUE_WRAPPER(Geometry, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Table, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
 WIDGET_VALUE_WRAPPER(Transform, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
-WIDGET_VALUE_WRAPPER(Directory, ctkDirectoryButton, directory, setDirectory, String, directoryChanged(QString));
+WIDGET_VALUE_WRAPPER(Directory, ctkPathLineEdit, currentPath, setCurrentPath, String, currentPathChanged(QString));
 WIDGET_VALUE_WRAPPER(File, ctkPathLineEdit, currentPath, setCurrentPath, String, currentPathChanged(QString));
 WIDGET_VALUE_WRAPPER(Enumeration, ButtonGroupWidgetWrapper, checkedValue, setCheckedValue, String, valueChanged());
 WIDGET_VALUE_WRAPPER(Measurement, qMRMLNodeComboBox, currentNodeID, setCurrentNodeID, String, currentNodeIDChanged(QString));
@@ -783,13 +782,18 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createDirectoryTagWidget(const ModuleP
 {
   QString _label = QString::fromStdString(moduleParameter.GetLabel());
   QString _name = QString::fromStdString(moduleParameter.GetName());
-  
-  ctkDirectoryButton* widget = new ctkDirectoryButton();
-  widget->setCaption(QString("Select %1 ...").arg(_name));
 
-  INSTANCIATE_WIDGET_VALUE_WRAPPER(Directory, _name, _label, widget);
+  ctkPathLineEdit* pathLineEdit =
+    new ctkPathLineEdit(_name, QStringList() << QString("*.*"), ctkPathLineEdit::Dirs);
+  pathLineEdit->setShowHistoryButton(false);
+  pathLineEdit->setOptions(ctkPathLineEdit::ShowDirsOnly);
+  pathLineEdit->setFilters(ctkPathLineEdit::Dirs | ctkPathLineEdit::Drives
+                           | ctkPathLineEdit::NoDotAndDotDot | ctkPathLineEdit::Readable
+                           | ctkPathLineEdit::Writable);
+
+  INSTANCIATE_WIDGET_VALUE_WRAPPER(Directory, _name, _label, pathLineEdit);
   
-  return widget;
+  return pathLineEdit;
 }
 
 //-----------------------------------------------------------------------------
@@ -798,22 +802,13 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createFileTagWidget(const ModuleParame
   QString label = QString::fromStdString(moduleParameter.GetLabel());
   QString name = QString::fromStdString(moduleParameter.GetName());
 
-  QWidget* widget = new QWidget;
   ctkPathLineEdit* pathLineEdit =
-    new ctkPathLineEdit(name, QStringList() << QString("*.*"), ctkPathLineEdit::Files, widget);
-  QToolButton* browseButton = new QToolButton(widget);
-  browseButton->setText("...");
-  QObject::connect(browseButton, SIGNAL(clicked()),
-                   pathLineEdit, SLOT(browse()));
+    new ctkPathLineEdit(name, QStringList() << QString("*.*"), ctkPathLineEdit::Files);
+  pathLineEdit->setShowHistoryButton(false);
 
   INSTANCIATE_WIDGET_VALUE_WRAPPER(File, name, label, pathLineEdit);
 
-  QHBoxLayout* hBoxLayout = new QHBoxLayout;
-  hBoxLayout->setContentsMargins(0,0,0,0);
-  hBoxLayout->addWidget(pathLineEdit);
-  hBoxLayout->addWidget(browseButton);
-  widget->setLayout(hBoxLayout);
-  return widget;
+  return pathLineEdit;
 }
 
 //-----------------------------------------------------------------------------

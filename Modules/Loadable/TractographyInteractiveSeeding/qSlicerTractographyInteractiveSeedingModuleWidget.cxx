@@ -300,8 +300,8 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::setup()
                 SIGNAL(stateChanged(int)),
                 SLOT(setWriteFibers(int)));
 
-  QObject::connect(d->OutputDirectoryButton,
-                SIGNAL(directorySelected(const QString &)),
+  QObject::connect(d->OutputPathLineEdit,
+                SIGNAL(currentPathChanged(const QString &)),
                 SLOT(setDirectory(const QString &)));
 
   QObject::connect(d->FilePrefixLineEdit,
@@ -625,7 +625,7 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::updateWidgetFromMRML()
     d->SeedSpacingSlider->setValue(paramNode->GetSeedSpacing());
     d->WriteFibersCheckBox->setChecked(paramNode->GetWriteToFile());
     d->FilePrefixLineEdit->setText(paramNode->GetFilePrefix());
-    d->OutputDirectoryButton->setDirectory(paramNode->GetFileDirectoryName());
+    d->OutputPathLineEdit->setCurrentPath(paramNode->GetFileDirectoryName());
 
     d->ParameterNodeSelector->setCurrentNode(
       this->mrmlScene()->GetNodeByID(paramNode->GetID()));

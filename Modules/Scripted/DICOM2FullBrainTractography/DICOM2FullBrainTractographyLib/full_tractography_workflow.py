@@ -24,7 +24,7 @@ class WorkflowConfiguration:
             ('DICOMRadioButton', 'checked'),
             ('NRRDDWIRadioButton', 'checked'),
             ('MRMLDWIRadioButton', 'checked'),
-            ('inputDicomDirectory', 'directory'),
+            ('inputDicomDirectory', 'currentPath'),
             ('outputVolume', 'currentPath'),
             ('useBMatrixGradientDirections','checked'),
             ('inputNRRDVolume','currentPath'),

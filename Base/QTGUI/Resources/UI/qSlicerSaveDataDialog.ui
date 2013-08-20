@@ -97,12 +97,18 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="4">
-    <widget class="ctkDirectoryButton" name="DirectoryButton">
-     <property name="text">
-      <string>Change directory for selected files</string>
+    <widget class="ctkPathLineEdit" name="DirectoryButton">
+     <property name="filters">
+      <set>ctkPathLineEdit::Dirs|ctkPathLineEdit::Drives|ctkPathLineEdit::NoDotAndDotDot|ctkPathLineEdit::Readable</set>
      </property>
      <property name="options">
-      <set>ctkDirectoryButton::DontUseNativeDialog</set>
+      <set>ctkPathLineEdit::DontUseNativeDialog|ctkPathLineEdit::ShowDirsOnly</set>
+     </property>
+     <property name="showHistoryButton">
+      <bool>false</bool>
+     </property>
+     <property name="text" stdset="0">
+      <string>Change directory for selected files</string>
      </property>
     </widget>
    </item>
@@ -157,9 +163,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ctkDirectoryButton</class>
+   <class>ctkPathLineEdit</class>
    <extends>QWidget</extends>
-   <header>ctkDirectoryButton.h</header>
+   <header>ctkPathLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -19,6 +19,7 @@
 ==============================================================================*/
 
 // Qt includes
+#include <QFileDialog>
 #include <QMainWindow>
 #include <QSettings>
 
@@ -118,7 +119,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
 
   // Default values
   this->PreferExecutableCLICheckBox->setChecked(false);
-  this->TemporaryDirectoryButton->setDirectory(coreApp->defaultTemporaryPath());
+  this->TemporaryPathLineEdit->setCurrentPath(coreApp->defaultTemporaryPath());
   this->DisableModulesListView->setFactoryManager( factoryManager );
   this->FavoritesModulesListView->setFactoryManager( factoryManager );
   this->ModulesMenu->setCurrentModule("Welcome");
@@ -139,8 +140,8 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "currentModule", SIGNAL(currentModuleChanged(QString)));
   q->registerProperty("Modules/FavoriteModules", this->FavoritesModulesListView->filterModel(),
                       "showModules", SIGNAL(showModulesChanged(QStringList)));
-  q->registerProperty("Modules/TemporaryDirectory", this->TemporaryDirectoryButton,
-                      "directory", SIGNAL(directoryChanged(QString)));
+  q->registerProperty("Modules/TemporaryDirectory", this->TemporaryPathLineEdit,
+                      "currentPath", SIGNAL(currentPathChanged(QString)));
   q->registerProperty("Modules/ShowHiddenModules", this->ShowHiddenModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/AdditionalPaths", this->AdditionalModulePathsView,
@@ -153,7 +154,7 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       coreApp->revisionUserSettings());
 
   // Actions to propagate to the application when settings are changed
-  QObject::connect(this->TemporaryDirectoryButton, SIGNAL(directoryChanged(QString)),
+  QObject::connect(this->TemporaryPathLineEdit, SIGNAL(currentPathChanged(QString)),
                    q, SLOT(onTemporaryPathChanged(QString)));
   QObject::connect(this->AdditionalModulePathsView, SIGNAL(directoryListChanged()),
                    q, SLOT(onAdditionalModulePathsChanged()));

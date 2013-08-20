@@ -67,7 +67,7 @@ void qSlicerSettingsCachePanelPrivate::init()
   Q_Q(qSlicerSettingsCachePanel);
 
   this->setupUi(q);
-  QObject::connect(this->CachePathButton, SIGNAL(directoryChanged(QString)),
+  QObject::connect(this->CachePathLineEdit, SIGNAL(currentPathChanged(QString)),
                    q, SLOT(setCachePath(QString)));
   QObject::connect(this->CacheSizeSpinBox, SIGNAL(valueChanged(int)),
                    q, SLOT(setCacheSize(int)));
@@ -115,8 +115,8 @@ void qSlicerSettingsCachePanel::setCacheManager(vtkCacheManager* cacheManager)
   // Default values
   this->updateFromCacheManager();
 
-  this->registerProperty("Cache/Path", d->CachePathButton, "directory",
-                         SIGNAL(directoryChanged(QString)));
+  this->registerProperty("Cache/Path", d->CachePathLineEdit, "currentPath",
+                         SIGNAL(currentPathChanged(QString)));
   this->registerProperty("Cache/Size", d->CacheSizeSpinBox, "value",
                          SIGNAL(valueChanged(int)));
   this->registerProperty("Cache/FreeBufferSize", d->CacheFreeBufferSpinBox, "value",
@@ -134,7 +134,7 @@ void qSlicerSettingsCachePanel::updateFromCacheManager()
     {
     return;
     }
-  d->CachePathButton->setDirectory(
+  d->CachePathLineEdit->setCurrentPath(
     QString(d->CacheManager->GetRemoteCacheDirectory()));
   d->CacheSizeSpinBox->setValue(
     d->CacheManager->GetRemoteCacheLimit() );

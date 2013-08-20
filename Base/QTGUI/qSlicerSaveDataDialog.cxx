@@ -160,7 +160,7 @@ qSlicerSaveDataDialogPrivate::qSlicerSaveDataDialogPrivate(QWidget* parentWidget
   this->FileWidget->setHorizontalHeader(headerView);
 
   // Connect push buttons to associated actions
-  connect(this->DirectoryButton, SIGNAL(directorySelected(QString)),
+  connect(this->DirectoryButton, SIGNAL(currentPathChanged(QString)),
           this, SLOT(setDirectory(QString)));
   connect(this->SelectSceneDataButton, SIGNAL(clicked()),
           this, SLOT(selectModifiedSceneData()));
@@ -206,10 +206,10 @@ void qSlicerSaveDataDialogPrivate::setDirectory(const QString& newDirectory)
       {
       continue;
       }
-    ctkDirectoryButton* directoryItemButton = qobject_cast<ctkDirectoryButton*>(
+    ctkPathLineEdit* directoryItemPathLineEdit = qobject_cast<ctkPathLineEdit*>(
       this->FileWidget->cellWidget(row, FileDirectoryColumn));
-    Q_ASSERT(directoryItemButton);
-    directoryItemButton->setDirectory(newDir.path());
+    Q_ASSERT(directoryItemPathLineEdit);
+    directoryItemPathLineEdit->setCurrentPath(newDir.path());
     }
 }
 
@@ -233,7 +233,7 @@ void qSlicerSaveDataDialogPrivate::populateItems()
   // Moreover, we want to have the MRML scene to be the first item.
   this->FileWidget->setSortingEnabled(false);
 
-  this->DirectoryButton->setDirectory(this->MRMLScene->GetRootDirectory());
+  this->DirectoryButton->setCurrentPath(this->MRMLScene->GetRootDirectory());
 
   this->populateScene();
 
@@ -342,9 +342,14 @@ void qSlicerSaveDataDialogPrivate::populateScene()
   this->FileWidget->setItem( row, FileNameColumn, fileNameItem);
 
   // Scene Directory
-  ctkDirectoryButton* sceneDirectoryButton =
-    new ctkDirectoryButton(this->MRMLScene->GetRootDirectory(), this->FileWidget);
-  this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
+  ctkPathLineEdit* scenePathLineEdit = new ctkPathLineEdit(this->FileWidget);
+  scenePathLineEdit->setShowHistoryButton(false);
+  scenePathLineEdit->setCurrentPath(this->MRMLScene->GetRootDirectory());
+  scenePathLineEdit->setOptions(ctkPathLineEdit::ShowDirsOnly);
+  scenePathLineEdit->setFilters(ctkPathLineEdit::Dirs | ctkPathLineEdit::Drives
+                                | ctkPathLineEdit::NoDotAndDotDot | ctkPathLineEdit::Readable
+                                | ctkPathLineEdit::Writable);
+  this->FileWidget->setCellWidget(row, FileDirectoryColumn, scenePathLineEdit);
 
   // Scene Selected
   QTableWidgetItem* selectItem = this->FileWidget->item(row, SelectColumn);
@@ -479,14 +484,14 @@ QFileInfo qSlicerSaveDataDialogPrivate::nodeFileInfo(vtkMRMLStorableNode* node)
         }
       }
     }
-  if (snode->GetFileName() == 0 && !this->DirectoryButton->directory().isEmpty())
+  if (snode->GetFileName() == 0 && !this->DirectoryButton->currentPath().isEmpty())
     {
     QString fileExtension = snode->GetDefaultWriteFileExtension();
     if (!fileExtension.isEmpty())
       {
       fileExtension = QString(".") + fileExtension;
       }
-    QFileInfo fileName(QDir(this->DirectoryButton->directory()),
+    QFileInfo fileName(QDir(this->DirectoryButton->currentPath()),
                        QString(node->GetName()) + fileExtension);
     snode->SetFileName(fileName.absoluteFilePath().toLatin1());
     }
@@ -644,7 +649,14 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 QWidget* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
 {
   // TODO: use QSignalMapper
-  return new ctkDirectoryButton(fileInfo.absolutePath(),this->FileWidget);
+  ctkPathLineEdit * fileDirectoryWidget = new ctkPathLineEdit(this->FileWidget);
+  fileDirectoryWidget->setShowHistoryButton(false);
+  fileDirectoryWidget->setCurrentPath(fileInfo.absolutePath());
+  fileDirectoryWidget->setOptions(ctkPathLineEdit::ShowDirsOnly);
+  fileDirectoryWidget->setFilters(ctkPathLineEdit::Dirs | ctkPathLineEdit::Drives
+                                  | ctkPathLineEdit::NoDotAndDotDot | ctkPathLineEdit::Readable
+                                  | ctkPathLineEdit::Writable);
+  return fileDirectoryWidget;
 }
 
 //-----------------------------------------------------------------------------
@@ -805,11 +817,11 @@ QFileInfo qSlicerSaveDataDialogPrivate::file(int row)const
   QTableWidgetItem* fileNameItem = this->FileWidget->item(row, FileNameColumn);
   Q_ASSERT(fileNameItem);
 
-  ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
+  ctkPathLineEdit* filePathLineEdit = qobject_cast<ctkPathLineEdit*>(
     this->FileWidget->cellWidget(row, FileDirectoryColumn));
-  Q_ASSERT(fileDirectoryButton);
+  Q_ASSERT(filePathLineEdit);
 
-  QDir directory = fileDirectoryButton->directory();
+  QDir directory = filePathLineEdit->currentPath();
   return QFileInfo(directory, fileNameItem->text());
 }
 
@@ -924,10 +936,10 @@ QFileInfo qSlicerSaveDataDialogPrivate::sceneFile()const
   int sceneRow = this->findSceneRow();
 
   QTableWidgetItem* fileNameItem = this->FileWidget->item(sceneRow, FileNameColumn);
-  ctkDirectoryButton* fileDirectoryButton = qobject_cast<ctkDirectoryButton*>(
+  ctkPathLineEdit* filePathLineEdit = qobject_cast<ctkPathLineEdit*>(
     this->FileWidget->cellWidget(sceneRow, FileDirectoryColumn));
 
-  QDir directory = fileDirectoryButton->directory();
+  QDir directory = filePathLineEdit->currentPath();
   QFileInfo file = QFileInfo(directory, fileNameItem->text());
   if (file.fileName().isEmpty())
     {
