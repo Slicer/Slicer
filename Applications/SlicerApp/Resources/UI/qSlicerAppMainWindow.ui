@@ -320,7 +320,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionViewExtensionsManager"/>
-   <addaction name="actionWindowErrorLog"/>
   </widget>
   <action name="actionFileLoadScene">
    <property name="icon">

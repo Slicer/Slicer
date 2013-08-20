@@ -26,6 +26,7 @@
 #include <QVariantMap>
 
 // CTK includes
+#include <ctkErrorLogModel.h>
 #include <ctkPimpl.h>
 #include <ctkVTKObject.h>
 
@@ -79,6 +80,10 @@ protected slots:
   void onLayoutChanged(int);
   void loadDICOMActionTriggered();
 
+  void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
+  void onErrorLogButtonClicked();
+  void onErrorLogWidgetActivationChanged(bool activated);
+
 protected:
 
   /// Connect MainWindow action with slots defined in MainWindowCore
@@ -106,6 +111,18 @@ protected:
 private:
   Q_DECLARE_PRIVATE(qSlicerAppMainWindow);
   Q_DISABLE_COPY(qSlicerAppMainWindow);
+};
+
+//---------------------------------------------------------------------------
+class qSlicerErrorLogWidgetEventFilter : public QObject
+{
+  Q_OBJECT
+public:
+  qSlicerErrorLogWidgetEventFilter(QWidget * errorLogWidget);
+protected:
+  bool eventFilter(QObject *obj, QEvent *event);
+signals:
+  void windowActivationChanged(bool);
 };
 
 #endif
