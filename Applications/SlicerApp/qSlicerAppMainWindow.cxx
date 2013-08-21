@@ -36,7 +36,6 @@
 #include "vtkSlicerConfigure.h" // For Slicer_BUILD_DICOM_SUPPORT, Slicer_USE_PYTHONQT, Slicer_USE_QtTesting
 
 // CTK includes
-#include <ctkErrorLogModel.h>
 #include <ctkErrorLogWidget.h>
 #include <ctkMessageBox.h>
 #ifdef Slicer_USE_PYTHONQT
@@ -589,13 +588,6 @@ void qSlicerAppMainWindowPrivate::setupStatusBar()
 
   QObject::connect(this->ErrorLogToolButton, SIGNAL(clicked()),
                    q, SLOT(onErrorLogButtonClicked()));
-
-  qSlicerErrorLogWidgetEventFilter * customEventFilter =
-      new qSlicerErrorLogWidgetEventFilter(this->Core->errorLogWidget());
-  this->Core->errorLogWidget()->installEventFilter(customEventFilter);
-
-  QObject::connect(customEventFilter, SIGNAL(windowActivationChanged(bool)),
-                   q, SLOT(onErrorLogWidgetActivationChanged(bool)));
 }
 
 //-----------------------------------------------------------------------------
@@ -947,16 +939,6 @@ void qSlicerAppMainWindow::onErrorLogButtonClicked()
 }
 
 //---------------------------------------------------------------------------
-void qSlicerAppMainWindow::onErrorLogWidgetActivationChanged(bool activated)
-{
-  Q_D(qSlicerAppMainWindow);
-  if (activated)
-    {
-    d->setErrorLogButtonEnabled(false);
-    }
-}
-
-//---------------------------------------------------------------------------
 void qSlicerAppMainWindow::onEditApplicationSettingsActionTriggered()
 {
   qSlicerApplication::application()->settingsDialog()->exec();
@@ -1238,26 +1220,13 @@ bool qSlicerAppMainWindow::eventFilter(QObject* object, QEvent* event)
       }
 #endif
     }
-  return this->Superclass::eventFilter(object, event);
-}
-
-// --------------------------------------------------------------------------
-// qSlicerErrorLogWidgetEventFilter methods
-
-// --------------------------------------------------------------------------
-qSlicerErrorLogWidgetEventFilter::qSlicerErrorLogWidgetEventFilter(QWidget * errorLogWidget) :
-  QObject(errorLogWidget)
-{
-}
-
-// --------------------------------------------------------------------------
-bool qSlicerErrorLogWidgetEventFilter::eventFilter(QObject *obj, QEvent *event)
-{
-  if (event->type() == QEvent::ActivationChange)
+  if (object == d->Core->errorLogWidget())
     {
-    QWidget * errorLogWidget = qobject_cast<QWidget*>(this->parent());
-    Q_ASSERT(errorLogWidget);
-    emit this->windowActivationChanged(errorLogWidget->isActiveWindow());
+    if (event->type() == QEvent::ActivationChange
+        && d->Core->errorLogWidget()->isActiveWindow())
+      {
+      d->setErrorLogButtonEnabled(false);
+      }
     }
-  return QObject::eventFilter(obj, event);
+  return this->Superclass::eventFilter(object, event);
 }
