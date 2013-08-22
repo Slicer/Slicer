@@ -303,6 +303,7 @@ void vtkMRMLLinearTransformNode::ProcessMRMLEvents ( vtkObject *caller,
       this->MatrixTransformToParent == vtkMatrix4x4::SafeDownCast(caller) &&
       event ==  vtkCommand::ModifiedEvent)
     {
+    this->StorableModifiedTime.Modified();
     this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
     }
 }
