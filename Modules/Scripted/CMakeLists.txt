@@ -10,6 +10,7 @@ set(modules
   PerformanceTests
   SampleData
   SelfTests
+  SurfaceToolbox
   VectorToScalarVolume
   )
 if(Slicer_USE_NUMPY)
