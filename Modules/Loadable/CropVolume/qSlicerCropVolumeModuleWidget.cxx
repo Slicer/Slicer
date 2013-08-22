@@ -244,8 +244,8 @@ void qSlicerCropVolumeModuleWidget::setMRMLScene(vtkMRMLScene* scene)
   this->updateWidget();
 
   // observe close event
-  qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, 
-    this, SLOT(onEndCloseEvent()));
+  //qvtkReconnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent, 
+  //  this, SLOT(onEndCloseEvent()));
 }
 
 void qSlicerCropVolumeModuleWidget::initializeParameterNode(vtkMRMLScene* scene)
@@ -284,6 +284,14 @@ void qSlicerCropVolumeModuleWidget::onApply(){
 
   Q_D(const qSlicerCropVolumeModuleWidget);
   vtkSlicerCropVolumeLogic *logic = d->logic();
+  
+  if(!this->parametersNode || !d->InputVolumeComboBox->currentNode() || 
+     !d->InputROIComboBox->currentNode())
+    return;
+
+  this->parametersNode->SetInputVolumeNodeID(d->InputVolumeComboBox->currentNode()->GetID());
+  this->parametersNode->SetROINodeID(d->InputROIComboBox->currentNode()->GetID());
+
   if(!logic->Apply(this->parametersNode))
     {
     std::cerr << "Propagating to the selection node" << std::endl;
@@ -301,16 +309,9 @@ void qSlicerCropVolumeModuleWidget::onInputVolumeChanged()
   Q_ASSERT(d->InputVolumeComboBox);
   Q_ASSERT(d->VoxelBasedModeRadioButton);
 
-  if(!this->parametersNode)
-    {
-    return;
-    }
-
   vtkMRMLNode* node = d->InputVolumeComboBox->currentNode();
   if(node)
     {
-    this->parametersNode->SetInputVolumeNodeID(node->GetID());
-
     if(d->VoxelBasedModeRadioButton->isChecked())
       {
       if(d->checkForVolumeParentTransform())
@@ -324,10 +325,6 @@ void qSlicerCropVolumeModuleWidget::onInputVolumeChanged()
         }
       }
     }
-  else
-   {
-   this->parametersNode->SetInputVolumeNodeID(NULL);
-   }
 }
 
 //-----------------------------------------------------------------------------
@@ -336,26 +333,13 @@ void qSlicerCropVolumeModuleWidget::onInputROIChanged()
   Q_D(qSlicerCropVolumeModuleWidget);
   Q_ASSERT(d->VoxelBasedModeRadioButton);
 
-  if(!this->parametersNode)
-    {
-    return;
-    }
   vtkMRMLAnnotationROINode* node = 
     vtkMRMLAnnotationROINode::SafeDownCast(d->InputROIComboBox->currentNode());
   if(node)
     {
-    this->parametersNode->SetROINodeID(node->GetID());
-    this->parametersNode->SetROIVisibility(node->GetDisplayVisibility());
-    this->updateWidget();
-
     if(d->VoxelBasedModeRadioButton->isChecked())
       d->performROIVoxelGridAlignment();
-
     }
-  else
-   {
-   this->parametersNode->SetROINodeID(NULL);
-   }
 }
 
 
