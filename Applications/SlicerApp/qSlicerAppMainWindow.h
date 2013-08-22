@@ -81,7 +81,6 @@ protected slots:
   void loadDICOMActionTriggered();
 
   void onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel logLevel);
-  void onErrorLogButtonClicked();
 
 protected:
 

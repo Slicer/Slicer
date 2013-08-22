@@ -103,7 +103,7 @@ public:
 
   void setupStatusBar();
 
-  void setErrorLogButtonEnabled(bool enabled);
+  void setErrorLogIconHighlighted(bool highlighted);
 
   qSlicerAppMainWindowCore*       Core;
   qSlicerModuleSelectorToolBar*   ModuleSelectorToolBar;
@@ -579,31 +579,28 @@ void qSlicerAppMainWindowPrivate::setupStatusBar()
 {
   Q_Q(qSlicerAppMainWindow);
   this->ErrorLogToolButton = new QToolButton();
+  this->ErrorLogToolButton->setDefaultAction(this->actionWindowErrorLog);
   q->statusBar()->addPermanentWidget(this->ErrorLogToolButton);
-  this->setErrorLogButtonEnabled(false);
 
   QObject::connect(qSlicerCoreApplication::application()->errorLogModel(),
                    SIGNAL(entryAdded(ctkErrorLogLevel::LogLevel)),
                    q, SLOT(onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel)));
-
-  QObject::connect(this->ErrorLogToolButton, SIGNAL(clicked()),
-                   q, SLOT(onErrorLogButtonClicked()));
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAppMainWindowPrivate::setErrorLogButtonEnabled(bool enabled)
+void qSlicerAppMainWindowPrivate::setErrorLogIconHighlighted(bool highlighted)
 {
   Q_Q(qSlicerAppMainWindow);
   QIcon defaultIcon = q->style()->standardIcon(QStyle::SP_MessageBoxCritical);
   QIcon icon = defaultIcon;
-  if(!enabled)
+  if(!highlighted)
     {
     QIcon disabledIcon;
     disabledIcon.addPixmap(
           defaultIcon.pixmap(QSize(32, 32), QIcon::Disabled, QIcon::On), QIcon::Active, QIcon::On);
     icon = disabledIcon;
     }
-  this->ErrorLogToolButton->setIcon(icon);
+  this->actionWindowErrorLog->setIcon(icon);
 }
 
 //-----------------------------------------------------------------------------
@@ -842,24 +839,11 @@ void qSlicerAppMainWindow::setupMenuActions()
   d->actionViewLayoutCompareGrid_3x3_viewers->setData(3);
   d->actionViewLayoutCompareGrid_4x4_viewers->setData(4);
 
-  d->actionWindowErrorLog->setIcon(
-        this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
+  d->setErrorLogIconHighlighted(false);
+  d->Core->errorLogWidget()->installEventFilter(this);
 
-  connect(d->actionWindowErrorLog, SIGNAL(triggered(bool)),
-          d->Core, SLOT(onWindowErrorLogActionTriggered(bool)));
-  connect(d->actionWindowPythonInteractor, SIGNAL(triggered(bool)),
-          d->Core, SLOT(onWindowPythonInteractorActionTriggered(bool)));
-  if (d->Core->errorLogWidget())
-    {
-    d->Core->errorLogWidget()->installEventFilter(this);
-    }
-#ifdef Slicer_USE_PYTHONQT
-  if (d->Core->pythonConsole())
-    {
-    d->Core->pythonConsole()->installEventFilter(this);
-    }
-#endif
-
+  qSlicerAppMainWindowCore_connect(WindowErrorLog);
+  qSlicerAppMainWindowCore_connect(WindowPythonInteractor);
   qSlicerAppMainWindowCore_connect(HelpKeyboardShortcuts);
   qSlicerAppMainWindowCore_connect(HelpBrowseTutorials);
   qSlicerAppMainWindowCore_connect(HelpInterfaceDocumentation);
@@ -927,15 +911,8 @@ void qSlicerAppMainWindow::onWarningsOrErrorsOccurred(ctkErrorLogLevel::LogLevel
   Q_D(qSlicerAppMainWindow);
   if(logLevel > ctkErrorLogLevel::Info)
     {
-    d->setErrorLogButtonEnabled(true);
+    d->setErrorLogIconHighlighted(true);
     }
-}
-
-//---------------------------------------------------------------------------
-void qSlicerAppMainWindow::onErrorLogButtonClicked()
-{
-  Q_D(qSlicerAppMainWindow);
-  d->Core->onWindowErrorLogActionTriggered(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1205,27 +1182,12 @@ void qSlicerAppMainWindow::restoreToolbars()
 bool qSlicerAppMainWindow::eventFilter(QObject* object, QEvent* event)
 {
   Q_D(qSlicerAppMainWindow);
-  bool showEvent = (event->type() == QEvent::Show);
-  bool hideEvent = (event->type() == QEvent::Close);
-  if (showEvent || hideEvent)
-    {
-    if (object == d->Core->errorLogWidget())
-      {
-      d->actionWindowErrorLog->setChecked(showEvent);
-      }
-#ifdef Slicer_USE_PYTHONQT
-    else if (object == d->Core->pythonConsole())
-      {
-      d->actionWindowPythonInteractor->setChecked(showEvent);
-      }
-#endif
-    }
   if (object == d->Core->errorLogWidget())
     {
     if (event->type() == QEvent::ActivationChange
         && d->Core->errorLogWidget()->isActiveWindow())
       {
-      d->setErrorLogButtonEnabled(false);
+      d->setErrorLogIconHighlighted(false);
       }
     }
   return this->Superclass::eventFilter(object, event);

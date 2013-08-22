@@ -287,39 +287,23 @@ void qSlicerAppMainWindowCore::setLayoutNumberOfCompareViewColumns(int num)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAppMainWindowCore::onWindowErrorLogActionTriggered(bool show)
+void qSlicerAppMainWindowCore::onWindowErrorLogActionTriggered()
 {
   Q_D(qSlicerAppMainWindowCore);
-  if (show)
-    {
-    d->ErrorLogWidget->show();
-    d->ErrorLogWidget->activateWindow();
-    d->ErrorLogWidget->raise();
-    }
-  else
-    {
-    d->ErrorLogWidget->close();
-    }
+  d->ErrorLogWidget->show();
+  d->ErrorLogWidget->activateWindow();
+  d->ErrorLogWidget->raise();
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerAppMainWindowCore::onWindowPythonInteractorActionTriggered(bool show)
+void qSlicerAppMainWindowCore::onWindowPythonInteractorActionTriggered()
 {
 #ifdef Slicer_USE_PYTHONQT
   ctkPythonConsole* console = this->pythonConsole();
   Q_ASSERT(console);
-  if (show)
-    {
-    console->show();
-    console->activateWindow();
-    console->raise();
-    }
-  else
-    {
-    console->close();
-    }
-#else
-  Q_UNUSED(show);
+  console->show();
+  console->activateWindow();
+  console->raise();
 #endif
 }
 

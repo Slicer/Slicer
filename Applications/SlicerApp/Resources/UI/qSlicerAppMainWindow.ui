@@ -634,9 +634,6 @@
    </property>
   </action>
   <action name="actionWindowErrorLog">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>&amp;Error Log</string>
    </property>
@@ -648,9 +645,6 @@
    </property>
   </action>
   <action name="actionWindowPythonInteractor">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="icon">
     <iconset>
      <normaloff>:/python-icon.png</normaloff>:/python-icon.png</iconset>

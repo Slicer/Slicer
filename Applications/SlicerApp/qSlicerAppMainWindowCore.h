@@ -70,8 +70,8 @@ public slots:
   void setLayout(int);
   void setLayoutNumberOfCompareViewRows(int);
   void setLayoutNumberOfCompareViewColumns(int);
-  void onWindowErrorLogActionTriggered(bool show);
-  void onWindowPythonInteractorActionTriggered(bool show);
+  void onWindowErrorLogActionTriggered();
+  void onWindowPythonInteractorActionTriggered();
 
   void onHelpKeyboardShortcutsActionTriggered();
   void onHelpBrowseTutorialsActionTriggered();
