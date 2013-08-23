@@ -510,6 +510,7 @@ QWidget* qSlicerCLIModuleUIHelperPrivate::createPointTagWidget(const ModuleParam
   nodeTypes += "vtkMRMLFiducialListNode";
   //TODO - specify to point hierarchy
   nodeTypes += "vtkMRMLAnnotationHierarchyNode";
+  nodeTypes += "vtkMRMLMarkupsFiducialNode";
   widget->setNodeTypes(nodeTypes);
   //TODO - title + " FiducialList"
   //TODO - tparameter->SetNewNodeEnabled(1);
