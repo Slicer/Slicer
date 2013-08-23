@@ -32,6 +32,8 @@ class vtkMRMLSliceLogic;
 class vtkMRMLModelHierarchyLogic;
 class vtkMRMLSelectionNode;
 class vtkMRMLInteractionNode;
+class vtkMRMLStorableNode;
+class vtkMRMLStorageNode;
 class vtkImageData;
 
 class VTK_MRML_LOGIC_EXPORT vtkMRMLApplicationLogic
@@ -115,6 +117,10 @@ public:
   static int LoadDefaultParameterSets(vtkMRMLScene * scene,
                                       const std::vector<std::string>& directories);
 
+  /// Creates a unique non-existant file name by adding an index after base file name.
+  static std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename, 
+                                                                   std::string &extention);
+
   /// List of custom events fired by the class.
   enum Events{
     RequestInvokeEvent = vtkCommand::UserEvent + 1
@@ -153,8 +159,15 @@ protected:
   void SetSelectionNode(vtkMRMLSelectionNode* );
   void SetInteractionNode(vtkMRMLInteractionNode* );
 
+  void SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode *storableNode,
+                                                 std::string &dataDir);
+
+
 
 private:
+
+  std::map<vtkMRMLStorageNode*, std::string> OriginalStorageNodeDirs;
+  std::map<vtkMRMLStorageNode*, std::string> OriginalStorageNodeFileNames;
 
   vtkMRMLApplicationLogic(const vtkMRMLApplicationLogic&);
   void operator=(const vtkMRMLApplicationLogic&);

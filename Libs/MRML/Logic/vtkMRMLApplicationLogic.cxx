@@ -531,8 +531,10 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
 
   // change all storage nodes and file names to be unique in the new directory
   // write the new data as we go; save old values
-  std::map<vtkMRMLStorageNode*, std::string> origStorageNodeDirs;
-  std::map<vtkMRMLStorageNode*, std::string> origStorageNodeFileNames;
+  this->OriginalStorageNodeDirs.clear();
+  this->OriginalStorageNodeFileNames.clear();
+
+  std::map<std::string, vtkMRMLNode *> storableNodes;
 
   int numNodes = this->GetMRMLScene()->GetNumberOfNodes();
   for (int i = 0; i < numNodes; ++i)
@@ -543,96 +545,42 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
       vtkErrorMacro("unable to get " << i << "th node from scene with " << numNodes << " nodes");
       continue;
       }
-    if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
-      {
-      vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
-      sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
-      }
     if (mrmlNode->IsA("vtkMRMLStorableNode"))
       {
-      // adjust the file paths for storable nodes
+      // get all storable nodes in the main scene
+      // and store them in the map by ID to avoid duplicates for the scene views
       vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(mrmlNode);
-      if (storableNode && storableNode->GetSaveWithScene())
+
+      this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
+
+      storableNodes[std::string(storableNode->GetID())] = storableNode;
+    }
+    if (mrmlNode->IsA("vtkMRMLSceneViewNode"))
+      {
+      // get all additioanl storable nodes for all scene views except "Master Scene View"
+      vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
+      sceneViewNode->SetSceneViewRootDir(this->GetMRMLScene()->GetRootDirectory());
+
+      // skip "Master Scene View" since it contains the same ndoes as the scene
+      if (sceneViewNode->GetName() && std::string("Master Scene View") == std::string(sceneViewNode->GetName()))
         {
-        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
-        if (!storageNode)
+        continue;
+        }
+      std::vector<vtkMRMLNode *> snodes;
+      sceneViewNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+      std::vector<vtkMRMLNode *>::iterator sit;
+      for (sit = snodes.begin(); sit != snodes.end(); sit++)
+        {
+        vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(*sit);
+        if (storableNodes.find(std::string(storableNode->GetID())) == storableNodes.end())
           {
-          // no storage node, so we have to create one with a valid name in the new directory
-          vtkWarningMacro("creating a new storage node for " << storableNode->GetID());
-          storageNode = storableNode->CreateDefaultStorageNode();
-          if (storageNode)
-            {
-            std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
-            std::string extension = storageNode->GetDefaultWriteFileExtension();
-            std::string storageFileName = fileBaseName + std::string(".") + extension;
-            vtkDebugMacro("new file name = " << storageFileName.c_str());
-            storageNode->SetFileName(storageFileName.c_str());
-            this->GetMRMLScene()->AddNode(storageNode);
-            storableNode->SetAndObserveStorageNodeID(storageNode->GetID());
-            storageNode->Delete();
-            storageNode = storableNode->GetStorageNode();
-            }
-          else
-            {
-            vtkErrorMacro("cannot make a new storage node for storable node " << storableNode->GetID());
-            }
-          }
-        if (storageNode)
-          {
-          // save the old values for the storage nodes
-          // - origStorageNodeFileNames has the old filename (absolute path)
-          // - origStorageNodeDirs has old paths
-          std::string fileName(storageNode->GetFileName());
-          origStorageNodeFileNames[storageNode] = fileName;
-
-          std::vector<std::string> pathComponents;
-          vtksys::SystemTools::SplitPath(fileName.c_str(), pathComponents);
-          // new file name is encoded to handle : or / characters in the node names
-          std::string fileBaseName = this->PercentEncode(pathComponents.back());
-          pathComponents.pop_back();
-          origStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
-
-          std::string ext = std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
-          std::string uniqueFileName = fileBaseName;
-          if (ext != vtksys::SystemTools::GetFilenameExtension(fileBaseName))
-            {
-            uniqueFileName = uniqueFileName + ext;
-            }
-          storageNode->SetFileName(uniqueFileName.c_str());
-          storageNode->SetDataDirectory(dataDir.c_str());
-          vtkDebugMacro("set data directory to "
-            << dataDir.c_str() << ", storable node " << storableNode->GetID()
-            << " file name is now: " << storageNode->GetFileName());
-          // deal with existing files by creating a numeric suffix
-          if (vtksys::SystemTools::FileExists(storageNode->GetFileName(), true))
-            {
-            vtkWarningMacro("file " << storageNode->GetFileName() << " already exists, renaming!");
-            std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(storageNode->GetFileName());
-            bool uniqueName = false;
-            int v = 1;
-            while (!uniqueName)
-              {
-              std::stringstream ss;
-              ss << v;
-              uniqueFileName = baseName + ss.str() + ext;
-              if (vtksys::SystemTools::FileExists(uniqueFileName.c_str()) == 0)
-                {
-                uniqueName = true;
-                }
-              else
-                {
-                ++v;
-                }
-              }
-            vtkDebugMacro("found unique file name " << uniqueFileName.c_str());
-            storageNode->SetFileName(uniqueFileName.c_str());
-            }
-          storageNode->WriteData(storableNode);
+          // save only new storable nodes
+          this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
+          storableNodes[std::string(storableNode->GetID())] = storableNode;
           }
         }
       }
-    }
-
+  }
   //
   // create a scene view, using the snapshot passed in if any
   //
@@ -698,13 +646,13 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
       {
       vtkMRMLStorableNode *storableNode = vtkMRMLStorableNode::SafeDownCast(mrmlNode);
       vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
-      if (storageNode && origStorageNodeFileNames.find( storageNode ) != origStorageNodeFileNames.end() )
+      if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
         {
-        storageNode->SetFileName(origStorageNodeFileNames[storageNode].c_str());
+        storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode].c_str());
         }
-      if (storageNode && origStorageNodeDirs.find( storageNode ) != origStorageNodeDirs.end() )
+      if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
         {
-        storageNode->SetDataDirectory(origStorageNodeDirs[storageNode].c_str());
+        storageNode->SetDataDirectory(this->OriginalStorageNodeDirs[storageNode].c_str());
         }
       }
     }
@@ -713,6 +661,105 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
   this->GetMRMLScene()->SetRootDirectory(origRootDirectory.c_str());
 
   return true;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRMLStorableNode *storableNode,
+                                                                          std::string &dataDir)
+{
+  if (!storableNode || !storableNode->GetSaveWithScene())
+    {
+    return;
+    }
+  // adjust the file paths for storable nodes
+  vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+  if (!storageNode)
+    {
+    // no storage node, so we have to create one with a valid name in the new directory
+    vtkWarningMacro("creating a new storage node for " << storableNode->GetID());
+    storageNode = storableNode->CreateDefaultStorageNode();
+    if (storageNode)
+      {
+      std::string fileBaseName = this->PercentEncode(std::string(storableNode->GetName()));
+      std::string extension = storageNode->GetDefaultWriteFileExtension();
+      std::string storageFileName = fileBaseName + std::string(".") + extension;
+      vtkDebugMacro("new file name = " << storageFileName.c_str());
+      storageNode->SetFileName(storageFileName.c_str());
+      this->GetMRMLScene()->AddNode(storageNode);
+      storableNode->SetAndObserveStorageNodeID(storageNode->GetID());
+      storageNode->Delete();
+      storageNode = storableNode->GetStorageNode();
+      }
+    else
+      {
+      vtkErrorMacro("cannot make a new storage node for storable node " << storableNode->GetID());
+      }
+    }
+
+  if (storageNode)
+    {
+    // save the old values for the storage nodes
+    // - this->OriginalStorageNodeFileNames has the old filename (absolute path)
+    // - this->OriginalStorageNodeDirs has old paths
+    std::string fileName(storageNode->GetFileName());
+    this->OriginalStorageNodeFileNames[storageNode] = fileName;
+
+    std::vector<std::string> pathComponents;
+    vtksys::SystemTools::SplitPath(fileName.c_str(), pathComponents);
+    // new file name is encoded to handle : or / characters in the node names
+    std::string fileBaseName = this->PercentEncode(pathComponents.back());
+    pathComponents.pop_back();
+    this->OriginalStorageNodeDirs[storageNode] = vtksys::SystemTools::JoinPath(pathComponents);
+
+    std::string ext = std::string(".") + std::string(storageNode->GetDefaultWriteFileExtension());
+    std::string uniqueFileName = fileBaseName;
+    if (ext != vtksys::SystemTools::GetFilenameExtension(fileBaseName))
+      {
+      uniqueFileName = uniqueFileName + ext;
+      }
+    storageNode->SetFileName(uniqueFileName.c_str());
+    storageNode->SetDataDirectory(dataDir.c_str());
+    vtkDebugMacro("set data directory to "
+      << dataDir.c_str() << ", storable node " << storableNode->GetID()
+      << " file name is now: " << storageNode->GetFileName());
+    // deal with existing files by creating a numeric suffix
+    if (vtksys::SystemTools::FileExists(storageNode->GetFileName(), true))
+      {
+      vtkWarningMacro("file " << storageNode->GetFileName() << " already exists, renaming!");
+
+      uniqueFileName = this->CreateUniqueFileName(std::string(storageNode->GetFileName()), ext);
+
+      vtkDebugMacro("found unique file name " << uniqueFileName.c_str());
+      storageNode->SetFileName(uniqueFileName.c_str());
+      }
+
+    storageNode->WriteData(storableNode);
+
+    }
+ }
+  
+//----------------------------------------------------------------------------
+std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename, std::string &extention)
+{
+  std::string uniqueFileName;
+  std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+  bool uniqueName = false;
+  int v = 1;
+  while (!uniqueName)
+    {
+    std::stringstream ss;
+    ss << v;
+    uniqueFileName = baseName + ss.str() + extention;
+    if (vtksys::SystemTools::FileExists(uniqueFileName.c_str()) == 0)
+      {
+      uniqueName = true;
+      }
+    else
+      {
+      ++v;
+      }
+    }
+  return uniqueFileName;
 }
 
 //----------------------------------------------------------------------------
