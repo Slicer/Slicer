@@ -34,6 +34,9 @@
 // VTK includes
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
+#include <vtkCollection.h>
+#include <vtkWeakPointer.h>
+
 
 //--------------------------------------------------------------------------
 // qMRMLSliceWidgetPrivate methods

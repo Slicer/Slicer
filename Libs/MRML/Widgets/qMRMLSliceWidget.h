@@ -42,7 +42,7 @@ class vtkMRMLSliceCompositeNode;
 class vtkImageData;
 class vtkInteractorObserver;
 class vtkCornerAnnotation;
-
+class vtkCollection;
 class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -50,7 +50,7 @@ class QMRML_WIDGETS_EXPORT qMRMLSliceWidget : public qMRMLWidget
 public:
   /// Superclass typedef
   typedef qMRMLWidget Superclass;
-  
+
   /// Constructors
   explicit qMRMLSliceWidget(QWidget* parent = 0);
   virtual ~qMRMLSliceWidget();

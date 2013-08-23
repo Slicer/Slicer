@@ -35,6 +35,9 @@ class qMRMLThreeDWidgetPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
 
+// VTK includes
+class vtkCollection;
+
 class QMRML_WIDGETS_EXPORT qMRMLThreeDWidget : public qMRMLWidget
 {
   Q_OBJECT
@@ -59,6 +62,7 @@ public:
 
   /// \sa qMRMLThreeDView::addDisplayableManager
   void addDisplayableManager(const QString& displayableManager);
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
 
   /// \sa qMRMLThreeDViewControllerWidget::viewLabel()
   /// \sa setiewLabel()

@@ -292,6 +292,16 @@ int vtkMRMLDisplayableManagerGroup::GetDisplayableManagerCount()
 }
 
 //----------------------------------------------------------------------------
+vtkMRMLAbstractDisplayableManager * vtkMRMLDisplayableManagerGroup::GetNthDisplayableManager(int n)
+{
+  int numManagers = this->GetDisplayableManagerCount();
+  if (n < 0 || n >= numManagers)
+    {
+    return 0;
+    }
+  return this->Internal->DisplayableManagers[n];
+}
+//----------------------------------------------------------------------------
 void vtkMRMLDisplayableManagerGroup::SetRenderer(vtkRenderer* newRenderer)
 {
   // Sanity checks

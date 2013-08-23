@@ -63,6 +63,8 @@ public:
   /// Return the number of DisplayableManager already added to the group
   int GetDisplayableManagerCount();
 
+  vtkMRMLAbstractDisplayableManager *GetNthDisplayableManager(int n);
+
   /// Return a DisplayableManager given its class name
   vtkMRMLAbstractDisplayableManager*
       GetDisplayableManagerByClassName(const char* className);
@@ -139,4 +141,3 @@ private:
 };
 
 #endif
-

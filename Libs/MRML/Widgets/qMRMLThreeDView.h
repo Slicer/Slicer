@@ -30,6 +30,7 @@
 class qMRMLThreeDViewPrivate;
 class vtkMRMLScene;
 class vtkMRMLViewNode;
+class vtkCollection;
 
 /// \brief 3D view for view nodes.
 /// For performance reasons, the view block refreshs when the scene is in
@@ -56,6 +57,7 @@ public:
   /// vtkMRMLViewDisplayableManager and vtkMRMLModelDisplayableManager are
   /// already registered.
   void addDisplayableManager(const QString& displayableManager);
+  Q_INVOKABLE void getDisplayableManagers(vtkCollection *displayableManagers);
 
   /// Get the 3D View node observed by view.
   Q_INVOKABLE vtkMRMLViewNode* mrmlViewNode()const;
