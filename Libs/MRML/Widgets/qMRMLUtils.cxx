@@ -250,3 +250,23 @@ bool qMRMLUtils::vtkImageDataToQImage(vtkImageData* vtkimage, QImage& img)
   img = newimg;
   return true;
 }
+
+//-----------------------------------------------------------------------------
+void qMRMLUtils::colorToQColor(const double* color, QColor &qcolor)
+{
+  if (color)
+    {
+    qcolor = QColor::fromRgbF(color[0], color[1], color[2]);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLUtils::qColorToColor(const QColor &qcolor, double* color)
+{
+  if (color)
+    {
+    color[0] = qcolor.redF();
+    color[1] = qcolor.greenF();
+    color[2] = qcolor.blueF();
+    }
+}

@@ -69,6 +69,12 @@ public:
   /// Convert QImage to vtkImageData
   Q_INVOKABLE static bool qImageToVtkImageData(const QImage& img, vtkImageData* vtkimage);
 
+  /// Convert C++ RGB array to QColor
+  Q_INVOKABLE static void colorToQColor(const double *color, QColor &qcolor);
+
+  /// Convert QColor to C++ RGB array
+  Q_INVOKABLE static void qColorToColor(const QColor &qcolor, double* color);
+
 private:
   Q_DISABLE_COPY(qMRMLUtils);
 
