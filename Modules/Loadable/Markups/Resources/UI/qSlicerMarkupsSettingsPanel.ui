@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerMarkupsSettingsPanel</class>
+ <widget class="ctkSettingsPanel" name="qSlicerMarkupsSettingsPanel">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>345</width>
+    <height>204</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Markups Settings</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="defaultGlyphTypeLabel">
+     <property name="text">
+      <string>Default glyph type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="defaultGlyphTypeComboBox">
+     <property name="toolTip">
+      <string>The symbol used for the markup</string>
+     </property>
+     <property name="currentIndex">
+      <number>12</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>Vertex2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Dash2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Cross2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ThickCross2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Triangle2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Square2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Circle2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Diamond2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Arrow2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ThickArrow2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>HookedArrow2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>StarBurst2D</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Sphere3D</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="defaultSelectedColorLabel">
+     <property name="text">
+      <string>Default selected color:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="ctkColorPickerButton" name="defaultSelectedColorPickerButton">
+     <property name="color">
+      <color>
+       <red>68</red>
+       <green>172</green>
+       <blue>100</blue>
+      </color>
+     </property>
+     <property name="displayColorName">
+      <bool>false</bool>
+     </property>
+     <property name="dialogOptions">
+      <set>ctkColorPickerButton::UseCTKColorDialog</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="defaultUnselectedColorLabel">
+     <property name="text">
+      <string>Default unselected color:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ctkColorPickerButton" name="defaultUnselectedColorPickerButton">
+     <property name="color">
+      <color>
+       <red>188</red>
+       <green>65</green>
+       <blue>28</blue>
+      </color>
+     </property>
+     <property name="displayColorName">
+      <bool>false</bool>
+     </property>
+     <property name="dialogOptions">
+      <set>ctkColorPickerButton::UseCTKColorDialog</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="defaultGlyphScaleLabel">
+     <property name="text">
+      <string>Default glyph scale:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="ctkSliderWidget" name="defaultGlyphScaleSliderWidget">
+     <property name="toolTip">
+      <string>Default glyph scale</string>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>5.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="defaultTextScaleLabel">
+     <property name="text">
+      <string>Default text scale:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="ctkSliderWidget" name="defaultTextScaleSliderWidget">
+     <property name="toolTip">
+      <string>Default text scale</string>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>20.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>4.500000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="defaultOpacityLabel">
+     <property name="text">
+      <string>Default opacity:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="ctkSliderWidget" name="defaultOpacitySliderWidget">
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkColorPickerButton</class>
+   <extends>QPushButton</extends>
+   <header>ctkColorPickerButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ctkSettingsPanel</class>
+   <extends>QWidget</extends>
+   <header>ctkSettingsPanel.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -11,6 +11,7 @@ set(qtmodules
   Data
   DoubleArrays
   FetchMI
+  Markups
   #Measurements
   Models
   ModelMirror

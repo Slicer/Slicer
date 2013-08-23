@@ -1,0 +1,18 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/">
+    <file>Icons/Markups.png</file>
+    <file>Icons/MarkupsAddFiducial.png</file>
+    <file>Icons/MarkupsDelete.png</file>
+    <file>Icons/MarkupsDeleteAllRows.png</file>
+    <file>Icons/MarkupsDeleteSelectedRows.png</file>
+    <file>Icons/MarkupsDeselectAll.png</file>
+    <file>Icons/MarkupsListLock.png</file>
+    <file>Icons/MarkupsListUnlock.png</file>
+    <file>Icons/MarkupsMouseModePlace.png</file>
+    <file>Icons/MarkupsMoveDown.png</file>
+    <file>Icons/MarkupsMoveUp.png</file>
+    <file>Icons/MarkupsSelected.png</file>
+    <file>Icons/MarkupsSelectedOrUnselected.png</file>
+    <file>Icons/MarkupsUnselected.png</file>
+  </qresource>
+</RCC>

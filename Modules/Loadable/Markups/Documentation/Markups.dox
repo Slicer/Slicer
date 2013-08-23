@@ -1,0 +1,6 @@
+/**
+\defgroup Slicer_QtModules_Markups Markups
+\ingroup Slicer_QtModules
+This module provides a GUI to manage Markup nodes, such as fiducials lists.
+
+*/
