@@ -1476,7 +1476,7 @@ bool vtkMRMLAnnotationDisplayableManager::IsWidgetDisplayable(vtkMRMLSliceNode* 
     pokedRenderer->NormalizedDisplayToViewport(coords[0],coords[1]);
     pokedRenderer->ViewportToNormalizedViewport(coords[0],coords[1]);
 
-    if ((coords[0]>0.0) && (coords[1]<1.0) && (coords[1]>0.0) && (coords[1]<1.0))
+    if ((coords[0]>0.0) && (coords[0]<1.0) && (coords[1]>0.0) && (coords[1]<1.0))
       {
       // current point is inside of view
       inViewport = true;
