@@ -18,7 +18,6 @@
 #include "GUI/qSlicerAnnotationModuleWidget.h"
 #include "vtkSlicerAnnotationModuleLogic.h"
 #include "qSlicerAnnotationsIO.h"
-#include "qSlicerFiducialsIO.h"
 
 //-----------------------------------------------------------------------------
 Q_EXPORT_PLUGIN2(qSlicerAnnotationsModule, qSlicerAnnotationsModule);
@@ -88,9 +87,6 @@ void qSlicerAnnotationsModule::setup()
   qSlicerIOManager* ioManager = qSlicerApplication::application()->ioManager();
   ioManager->registerIO(
     new qSlicerAnnotationsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
-
-  ioManager->registerIO(
-    new qSlicerFiducialsIO(vtkSlicerAnnotationModuleLogic::SafeDownCast(this->logic()), this));
 
   ioManager->registerIO(new qSlicerNodeWriter(
     "Annotations", QString("AnnotationFile"),

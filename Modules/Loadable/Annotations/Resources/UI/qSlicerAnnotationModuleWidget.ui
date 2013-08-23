@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
+    <width>356</width>
     <height>403</height>
    </rect>
   </property>
@@ -26,6 +26,22 @@
       <string>Annotations</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="markupsLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Fiducials have moved to the Markups module.</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="ctkCollapsibleGroupBox" name="CTKCollapsibleGroupBox_3">
         <property name="title">
@@ -380,7 +396,7 @@
            <property name="uniformRowHeights">
             <bool>true</bool>
            </property>
-           <property name="listenNodeModifiedEvent" stdset="0">
+	   <property name="listenNodeModifiedEvent" stdset="0">
             <bool>true</bool>
            </property>
           </widget>

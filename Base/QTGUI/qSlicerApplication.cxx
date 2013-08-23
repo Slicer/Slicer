@@ -464,6 +464,13 @@ QString qSlicerApplication::nodeModule(vtkMRMLNode* node)const
     {
     return "SliceController";
     }
+  else if (node->IsA("vtkMRMLMarkupsNode") ||
+           node->IsA("vtkMRMLMarkupsDisplayNode") ||
+           node->IsA("vtkMRMLMarkupsStorageNode") ||
+           node->IsA("vtkMRMLAnnotationFiducialNode"))
+    {
+    return "Markups";
+    }
   else if (node->IsA("vtkMRMLAnnotationNode") ||
            node->IsA("vtkMRMLAnnotationDisplayNode") ||
            node->IsA("vtkMRMLAnnotationStorageNode") ||
