@@ -165,6 +165,17 @@ def loadFiducialList(filename, returnNode=False):
   filetype = 'FiducialListFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
 
+def loadAnnotationFiducial(filename, returnNode=False):
+  filetype = 'AnnotationFile'
+  properties = {}
+  properties['fiducial'] = 1
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
+
+def loadMarkupsFiducialList(filename, returnNode=False):
+  filetype = 'MarkupsFiducials'
+  properties = {}
+  return loadNodeFromFile(filename, filetype, properties, returnNode)
+
 def loadModel(filename, returnNode=False):
   filetype = 'ModelFile'
   return loadNodeFromFile(filename, filetype, {}, returnNode)
