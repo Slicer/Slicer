@@ -102,25 +102,35 @@ void qSlicerTractographyInteractiveSeedingModuleWidget::onEnter()
     }
 
   // if we have one Fiducial List node select it
-  nodes.clear();
-  this->mrmlScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode", nodes);
-  if (nodes.size() > 1 && d->FiducialNodeSelector->currentNode() == 0)
+  if (d->FiducialNodeSelector->currentNode() == 0)
     {
-    for (unsigned int i=0; i<nodes.size(); i++)
+    int numAnnotationLists = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationHierarchyNode");
+    int numMarkups = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLMarkupsFiducialNode");
+    nodes.clear();
+    if (numMarkups > 0)
       {
-      vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(nodes[i]);
-      vtkCollection *cnodes = vtkCollection::New();
-      hnode->GetDirectChildren(cnodes);
-      if (cnodes->GetNumberOfItems() > 0 && cnodes->GetNumberOfItems() < 5 &&
-          vtkMRMLAnnotationFiducialNode::SafeDownCast(cnodes->GetItemAsObject(0)) != NULL)
+      this->mrmlScene()->GetNodesByClass("vtkMRMLMarkupsFiducialNode", nodes);
+      this->setSeedingNode(nodes[0]);
+      }
+    else if (numAnnotationLists > 1)
+      {
+      this->mrmlScene()->GetNodesByClass("vtkMRMLAnnotationHierarchyNode", nodes);
+      for (unsigned int i=0; i<nodes.size(); i++)
         {
-        this->setSeedingNode(nodes[i]);
+        vtkMRMLAnnotationHierarchyNode *hnode = vtkMRMLAnnotationHierarchyNode::SafeDownCast(nodes[i]);
+        vtkCollection *cnodes = vtkCollection::New();
+        hnode->GetDirectChildren(cnodes);
+        if (cnodes->GetNumberOfItems() > 0 && cnodes->GetNumberOfItems() < 5 &&
+            vtkMRMLAnnotationFiducialNode::SafeDownCast(cnodes->GetItemAsObject(0)) != NULL)
+          {
+          this->setSeedingNode(nodes[i]);
+          cnodes->RemoveAllItems();
+          cnodes->Delete();
+          break;
+          }
         cnodes->RemoveAllItems();
         cnodes->Delete();
-        break;
         }
-      cnodes->RemoveAllItems();
-      cnodes->Delete();
       }
     }
 

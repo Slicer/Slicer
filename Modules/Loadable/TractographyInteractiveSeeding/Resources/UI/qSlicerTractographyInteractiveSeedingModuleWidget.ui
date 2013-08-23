@@ -152,6 +152,7 @@
         </property>
         <property name="nodeTypes" stdset="0">
          <stringlist>
+          <string>vtkMRMLMarkupsFiducialNode</string>
           <string>vtkMRMLAnnotationHierarchyNode</string>
           <string>vtkMRMLModelNode</string>
           <string>vtkMRMLScalarVolumeNode</string>
