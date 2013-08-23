@@ -95,9 +95,9 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::string prefix)
+void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::string prefix, int coordinateSystem)
 {
-  Superclass::WriteCLI(ss, prefix);
+  Superclass::WriteCLI(ss, prefix, coordinateSystem);
 
   if (this->GetPoints())
     {
@@ -111,9 +111,22 @@ void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::s
         {
         ss << prefix << " ";
         }
-      ss << ptr[0] << "," <<  ptr[1] << "," <<  ptr[2] ;
-      if (i < n-1) 
-        { 
+      if (coordinateSystem == 0)
+        {
+        // RAS
+        ss << ptr[0] << "," <<  ptr[1] << "," <<  ptr[2] ;
+        }
+      else if (coordinateSystem == 1)
+        {
+        // LPS
+        double lps[3];
+        lps[0] = -1.0 * ptr[0];
+        lps[1] = -1.0 * ptr[1];
+        lps[2] = ptr[2];
+        ss << lps[0] << "," <<  lps[1] << "," <<  lps[2] ;
+        }
+      if (i < n-1)
+        {
           ss << " ";
         }
       }

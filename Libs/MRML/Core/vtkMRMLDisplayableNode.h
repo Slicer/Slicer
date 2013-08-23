@@ -64,7 +64,8 @@ public:
 
   /// Write this node's information to a string for passing to a CLI, precede
   /// each datum with the prefix if not an empty string
-  virtual void WriteCLI(std::ostringstream& vtkNotUsed(ss), std::string vtkNotUsed(prefix)) {};
+  // coordinateSystemFlag = 0 for RAS, 1 for LPS, 2 for IJK
+  virtual void WriteCLI(std::ostringstream& vtkNotUsed(ss), std::string vtkNotUsed(prefix), int vtkNotUsed(coordinateSystemFlag) = 0) {};
 
   /// 
   /// Copy the node's attributes to this object
