@@ -81,18 +81,22 @@ vtkMRMLNode::~vtkMRMLNode()
   if (this->Description)
     {
     delete [] this->Description;
+    this->Description = NULL;
     }
   if (this->Name)
     {
     delete [] this->Name;
+    this->Name = NULL;
     }
   if (this->ID)
     {
     delete [] this->ID;
+    this->ID = NULL;
     }
   if (this->SceneRootDir)
     {
     delete [] this->SceneRootDir;
+    this->SceneRootDir = NULL;
     }
   if (this->MRMLObserverManager)
     {
