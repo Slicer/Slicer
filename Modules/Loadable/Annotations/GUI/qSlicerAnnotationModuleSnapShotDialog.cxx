@@ -98,6 +98,8 @@ void qSlicerAnnotationModuleSnapShotDialog::reset()
 
   this->resetDialog();
   this->setNameEdit(name);
+  col->RemoveAllItems();
+  col->Delete();
 }
 
 //-----------------------------------------------------------------------------
