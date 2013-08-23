@@ -1,6 +1,6 @@
 <MRML >
 <Selection
-  id="vtkMRMLSelectionNodeSingleton"  name="Selection"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activeAnnotationID="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL"></Selection>
+  id="vtkMRMLSelectionNodeSingleton"  name="Selection"  hideFromEditors="true"  selectable="true"  selected="false"  activeVolumeID="NULL"  secondaryVolumeID="NULL"  activeLabelVolumeID="NULL"  activeFiducialListID="NULL"  activePlaceNodeID="NULL"  activePlaceNodeClassName="NULL"  activeROIListID="NULL"  activeCameraID="NULL"  activeViewID="NULL"  activeLayoutID="NULL"></Selection>
  <Interaction
   id="vtkMRMLInteractionNodeSingleton"  name="Interaction"  hideFromEditors="true"  selectable="true"  selected="false"  currentInteractionMode="ViewTransform"  lastInteractionMode="ViewTransform" ></Interaction>
  <View

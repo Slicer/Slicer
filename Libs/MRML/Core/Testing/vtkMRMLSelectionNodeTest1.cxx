@@ -1,6 +1,6 @@
 /*=auto=========================================================================
 
-  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH) 
+  Portions (c) Copyright 2005 Brigham and Women's Hospital (BWH)
   All Rights Reserved.
 
   See COPYRIGHT.txt
@@ -31,35 +31,38 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
   TEST_SET_GET_STRING(node1, SecondaryVolumeID);
   TEST_SET_GET_STRING(node1, ActiveLabelVolumeID);
   TEST_SET_GET_STRING(node1, ActiveFiducialListID);
-  TEST_SET_GET_STRING(node1, ActiveAnnotationID);
+  TEST_SET_GET_STRING(node1, ActivePlaceNodeID);
+  TEST_SET_GET_STRING(node1, ActivePlaceNodeClassName);
   TEST_SET_GET_STRING(node1, ActiveROIListID);
   TEST_SET_GET_STRING(node1, ActiveCameraID);
   TEST_SET_GET_STRING(node1, ActiveViewID);
   TEST_SET_GET_STRING(node1, ActiveLayoutID);
 
+  // annotations
+  node1->AddNewPlaceNodeClassNameToList(NULL, NULL);
+  node1->AddNewPlaceNodeClassNameToList("invalid string", NULL);
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", NULL);
+  node1->AddNewPlaceNodeClassNameToList(NULL, ":/Icons/AnnotationROI.png");
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
+  node1->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
 
-  node1->AddNewAnnotationIDToList(NULL, NULL);
-  node1->AddNewAnnotationIDToList("invalid string", NULL);
-  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", NULL);
-  node1->AddNewAnnotationIDToList(NULL, ":/Icons/AnnotationROI.png");
-  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROI.png");
-  node1->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPoint.png");
-
-  std::string id;
-  std::cout << "Checking for id '" << id.c_str() << "' in list, got index: " << node1->AnnotationIDInList(id) << std::endl;
-  id = std::string("vtkMRMLAnnotationFiducialNode");
-  int index = node1->AnnotationIDInList(id);
-  std::cout << "Checking for id '" << id.c_str() << "' in list, got index: " << index << std::endl;
+  std::string className;
+  std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << node1->PlaceNodeClassNameInList(className) << std::endl;
+  className = std::string("vtkMRMLAnnotationFiducialNode");
+  int index = node1->PlaceNodeClassNameInList(className);
+  std::cout << "Checking for className '" << className.c_str() << "' in list, got index: " << index << std::endl;
   if (index != -1)
     {
-    std::string idstring = node1->GetAnnotationIDByIndex(index);
-    if (idstring.compare(id) != 0)
+    std::string classNamestring = node1->GetPlaceNodeClassNameByIndex(index);
+    if (classNamestring.compare(className) != 0)
       {
-      std::cerr << "Error! Set id '" << id.c_str() << "' to list at index " << index << ", but got back '" << idstring.c_str() << "'" << std::endl;
+      std::cerr << "Error! Set className '" << className.c_str()
+                << "' to list at index " << index << ", but got back '"
+                << classNamestring.c_str() << "'" << std::endl;
       node1->Print(std::cout);
       return EXIT_FAILURE;
       }
-    std::string resource = node1->GetAnnotationResourceByIndex(index);
+    std::string resource = node1->GetPlaceNodeResourceByIndex(index);
     if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
       {
       std::cerr << "ERROR! Got resource for index " << index << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
@@ -68,10 +71,10 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
       }
     std::cout << "Got resource for index " << index << ": " << resource.c_str() << std::endl;
     }
-  std::string resource = node1->GetAnnotationResourceByID(id);
+  std::string resource = node1->GetPlaceNodeResourceByClassName(className);
   if (resource.compare(":/Icons/AnnotationPoint.png") != 0)
     {
-    std::cerr << "ERROR! Got resource for id " << id << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
+    std::cerr << "ERROR! Got resource for className " << className << ": '" << resource.c_str() << "', but expected ':/Icons/AnnotationPoint.png'" << std::endl;
     node1->Print(std::cout);
     return EXIT_FAILURE;
     }
@@ -82,6 +85,9 @@ int vtkMRMLSelectionNodeTest1(int , char * [] )
     }
 
   node1->Print(std::cout);
+
+  // markups
+
   return EXIT_SUCCESS;
 }
 

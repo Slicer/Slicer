@@ -4,32 +4,32 @@ selectionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLSelectionNodeSingleton")
 
 if selectionNode:
   print selectionNode
-  annotID = "vtkMRMLAnnotationRulerNode"
-  startIndex = selectionNode.AnnotationIDInList(annotID)
-  print "Removing ", annotID
-  selectionNode.RemoveAnnotationIDFromList(annotID)
-  endIndex = selectionNode.AnnotationIDInList(annotID)
+  annotClassName = "vtkMRMLAnnotationRulerNode"
+  startIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
+  print "Removing ", annotClassName
+  selectionNode.RemovePlaceNodeClassNameFromList(annotClassName)
+  endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   print selectionNode
-  print "Start index for ", annotID, " = ", startIndex, ", end index after removing it = ", endIndex
+  print "Start index for ", annotClassName, " = ", startIndex, ", end index after removing it = ", endIndex
   if endIndex != -1:
-    raise Exception("Failed to remove annotation %s from list, end index = %s should be -1" % (annotID, endIndex))
+    raise Exception("Failed to remove annotation %s from list, end index = %s should be -1" % (annotClassName, endIndex))
 
   # now make one active and remove it
-  annotID = "vtkMRMLAnnotationFiducialNode"
-  selectionNode.SetActiveAnnotationID(annotID)
+  annotClassName = "vtkMRMLAnnotationFiducialNode"
+  selectionNode.SetActivePlaceNodeClassName(annotClassName)
   interactionNode = slicer.mrmlScene.GetNodeByID("vtkMRMLInteractionNodeSingleton")
   interactionNode.SwitchToSinglePlaceMode()
-  print "Removing", annotID
-  selectionNode.RemoveAnnotationIDFromList(annotID)
-  endIndex = selectionNode.AnnotationIDInList(annotID)
+  print "Removing", annotClassName
+  selectionNode.RemovePlaceNodeClassNameFromList(annotClassName)
+  endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   if endIndex != -1:
-    raise Exception("Failed to remove active annotation %s from list, end index = %s should be -1" % (annotID, endIndex))
+    raise Exception("Failed to remove active annotation %s from list, end index = %s should be -1" % (annotClassName, endIndex))
 
   # re-add the ruler one
-  annotID = "vtkMRMLAnnotationRulerNode"
+  annotClassName = "vtkMRMLAnnotationRulerNode"
   print "Adding back the ruler node"
-  selectionNode.AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png")
-  endIndex = selectionNode.AnnotationIDInList(annotID)
+  selectionNode.AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png")
+  endIndex = selectionNode.PlaceNodeClassNameInList(annotClassName)
   if endIndex == -1:
-    raise Exception("Failed to re-add %s, end index = %s" % (annotID, endIndex))
+    raise Exception("Failed to re-add %s, end index = %s" % (annotClassName, endIndex))
 

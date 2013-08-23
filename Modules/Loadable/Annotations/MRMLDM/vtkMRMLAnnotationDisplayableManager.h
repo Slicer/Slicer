@@ -219,11 +219,11 @@ protected:
   /// Can be reimplemented to add more conditions.
   /// \sa IsManageable(const char*), IsCorrectDisplayableManager()
   virtual bool IsManageable(vtkMRMLNode* node);
-  /// Return true if this displayable manager supports(can manage) that node ID,
+  /// Return true if this displayable manager supports(can manage) that node class,
   /// false otherwise.
   /// Can be reimplemented to add more conditions.
   /// \sa IsManageable(vtkMRMLNode*), IsCorrectDisplayableManager()
-  virtual bool IsManageable(const char* nodeID);
+  virtual bool IsManageable(const char* nodeClassName);
 
   /// Focus of this displayableManager is set to a specific annotation type when inherited
   const char* m_Focus;

@@ -452,7 +452,7 @@ bool readFileIntoString(const char* filename, std::string& output)
   std::ifstream istream(filename);
   if( !istream )
     {
-    cerr << "Couldn´t open input file:" << filename << endl;
+    cerr << "Could not open input file:" << filename << endl;
     return false;
     }
 
@@ -492,32 +492,30 @@ protected:
 int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
 {
   // Renderer, RenderWindow and Interactor
-  vtkRenderer* rr = vtkRenderer::New();
-  vtkRenderWindow* rw = vtkRenderWindow::New();
-  vtkRenderWindowInteractor* ri = vtkRenderWindowInteractor::New();
+  vtkNew<vtkRenderer> rr;
+  vtkNew<vtkRenderWindow> rw;
+  vtkNew<vtkRenderWindowInteractor> ri;
   rw->SetSize(600, 600);
 
   rw->SetMultiSamples(0); // Ensure to have the same test image everywhere
 
-  rw->AddRenderer(rr);
-  rw->SetInteractor(ri);
+  rw->AddRenderer(rr.GetPointer());
+  rw->SetInteractor(ri.GetPointer());
 
   // Set Interactor Style
-  vtkThreeDViewInteractorStyle * iStyle = vtkThreeDViewInteractorStyle::New();
-  ri->SetInteractorStyle(iStyle);
-  iStyle->Delete();
+  vtkNew<vtkThreeDViewInteractorStyle> iStyle;
+  ri->SetInteractorStyle(iStyle.GetPointer());
 
   // MRML scene
-  vtkMRMLScene* scene = vtkMRMLScene::New();
+  vtkNew<vtkMRMLScene> scene;
 
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
-  vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
-  applicationLogic->SetMRMLScene(scene);
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
 
   // Add ViewNode
-  vtkMRMLViewNode * viewNode = vtkMRMLViewNode::New();
-  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode);
-  viewNode->Delete();
+  vtkNew<vtkMRMLViewNode> viewNode;
+  vtkMRMLNode * nodeAdded = scene->AddNode(viewNode.GetPointer());
   if (!nodeAdded)
     {
     std::cerr << "Failed to add vtkMRMLViewNode" << std::endl;
@@ -525,7 +523,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
 
   // Factory
-  vtkMRMLThreeDViewDisplayableManagerFactory * factory = vtkMRMLThreeDViewDisplayableManagerFactory::New();
+  vtkNew<vtkMRMLThreeDViewDisplayableManagerFactory> factory;
 
   // Check if GetRegisteredDisplayableManagerCount returns 0
   if (factory->GetRegisteredDisplayableManagerCount() != 0)
@@ -571,7 +569,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     */
 
   vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
-      factory->InstantiateDisplayableManagers(rr);
+      factory->InstantiateDisplayableManagers(rr.GetPointer());
 
   if (!displayableManagerGroup)
     {
@@ -591,17 +589,17 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
 
   // RenderRequest Callback
-  vtkRenderRequestCallback * renderRequestCallback = vtkRenderRequestCallback::New();
-  renderRequestCallback->SetRenderer(rr);
-  displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback);
+  vtkNew<vtkRenderRequestCallback> renderRequestCallback;
+  renderRequestCallback->SetRenderer(rr.GetPointer());
+  displayableManagerGroup->AddObserver(vtkCommand::UpdateEvent, renderRequestCallback.GetPointer());
 
   // Assign ViewNode
-  displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
+  displayableManagerGroup->SetMRMLDisplayableNode(viewNode.GetPointer());
 
   // Check if RenderWindowInteractor has NOT been changed
-  if (displayableManagerGroup->GetInteractor() != ri)
+  if (displayableManagerGroup->GetInteractor() != ri.GetPointer())
     {
-    std::cerr << "Expected RenderWindowInteractor:" << ri << std::endl;
+    std::cerr << "Expected RenderWindowInteractor:" << ri.GetPointer() << std::endl;
     std::cerr << "Current RenderWindowInteractor:"
         << displayableManagerGroup->GetInteractor() << std::endl;
     return EXIT_FAILURE;
@@ -681,7 +679,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     record        |= (strcmp("--Record", argv[i]) == 0);
     screenshot    |= (strcmp("--Screenshot", argv[i]) == 0);
     }
-  vtkInteractorEventRecorder * recorder = vtkInteractorEventRecorder::New();
+  vtkNew<vtkInteractorEventRecorder> recorder;
   recorder->SetInteractor(displayableManagerGroup->GetInteractor());
   if (!disableReplay)
     {
@@ -700,8 +698,9 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
       recorder->Play();
       }
     }
+  recorder->SetInteractor(NULL);
 
-  int retval = vtkRegressionTestImageThreshold(rw, 85.0);
+  int retval = vtkRegressionTestImageThreshold(rw.GetPointer(), 85.0);
   if ( record || retval == vtkRegressionTester::DO_INTERACTOR)
     {
     displayableManagerGroup->GetInteractor()->Initialize();
@@ -713,7 +712,7 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
   if (record || screenshot)
     {
     vtkNew<vtkWindowToImageFilter> windowToImageFilter;
-    windowToImageFilter->SetInput(rw);
+    windowToImageFilter->SetInput(rw.GetPointer());
     windowToImageFilter->SetMagnification(1); //set the resolution of the output image
     windowToImageFilter->Update();
 
@@ -725,16 +724,6 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     writer->Write();
     std::cout << "Saved screenshot: " << screenshootFilename << std::endl;
     }
-
-  recorder->Delete();
-  renderRequestCallback->Delete();
-  if (displayableManagerGroup) { displayableManagerGroup->Delete(); }
-  factory->Delete();
-  applicationLogic->Delete();
-  scene->Delete();
-  rr->Delete();
-  rw->Delete();
-  ri->Delete();
 
   return !retval;
 }

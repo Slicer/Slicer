@@ -536,15 +536,22 @@ void vtkSlicerAnnotationModuleLogic::ObserveMRMLScene()
       this->GetMRMLScene()->GetNthNodeByClass(0, "vtkMRMLSelectionNode"));
   if (selectionNode)
     {
-    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::ObserveMRMLScene(): adding new annotation ids to selection node list");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationTextNode", ":/Icons/AnnotationTextWithArrow.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationStickyNode", "");
-//    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png");
+    // got into batch mode
+    this->GetMRMLScene()->StartState(vtkMRMLScene::BatchProcessState);
+
+    vtkDebugMacro("vtkSlicerAnnotationModuleLogic::ObserveMRMLScene(): adding new annotation class names to selection node place list");
+    /// Markups handle placement of new fiducials
+    // selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
+//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationTextNode",  ":/Icons/AnnotationTextWithArrow.png", "Text");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
+//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationBidimensionalNode", ":/Icons/AnnotationBidimensionalWithArrow.png", "Bidimensional");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationROINode", ":/Icons/AnnotationROIWithArrow.png", "ROI");
+//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationAngleNode", ":/Icons/AnnotationAngle.png", "Angle");
+//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationStickyNode", "", "Sticky");
+//    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationSplineNode", ":/Icons/AnnotationSpline.png", "Spline");
+
+    // stop batch add
+    this->GetMRMLScene()->EndState(vtkMRMLScene::BatchProcessState);
     }
   // Superclass::ObserveMRMLScene calls UpdateFromMRMLScene();
   this->Superclass::ObserveMRMLScene();
@@ -567,7 +574,7 @@ void vtkSlicerAnnotationModuleLogic::AddAnnotationNode(const char * nodeDescript
     return;
     }
 
-  selectionNode->SetActiveAnnotationID(nodeDescriptor);
+  selectionNode->SetActivePlaceNodeClassName(nodeDescriptor);
 
   this->StartPlaceMode(persistent);
 
@@ -669,7 +676,7 @@ void vtkSlicerAnnotationModuleLogic::StopPlaceMode(bool persistent)
     }
   // reset the active annotation id after switching to view transform mode,
   // since this is checked in the displayable managers
-  selectionNode->SetActiveAnnotationID("");
+  selectionNode->SetActivePlaceNodeClassName("");
 }
 
 //---------------------------------------------------------------------------

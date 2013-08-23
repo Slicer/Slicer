@@ -59,28 +59,51 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     {
     std::cout << "Got selection node" << std::endl;
     // add the new annotation types to it
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png");
-    selectionNode->AddNewAnnotationIDToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png");
-    
-    selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationFiducialNode", ":/Icons/AnnotationPointWithArrow.png", "Fiducial");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLAnnotationRulerNode", ":/Icons/AnnotationDistanceWithArrow.png", "Ruler");
+    selectionNode->AddNewPlaceNodeClassNameToList("vtkMRMLMarkupsFiducialNode", ":/Icons/MarkupsMouseModePlace.png");
+
+    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationFiducialNode");
     activeActionText = mouseToolBar.activeActionText();
-    std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+    std::cout << "After setting selection node activeplace node class name to "
+              << selectionNode->GetActivePlaceNodeClassName()
+              << ", mouse tool bar active action text = "
+              << qPrintable(activeActionText) << std::endl;
     if (activeActionText.compare(QString("Fiducial")) != 0)
       {
-      std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
+      std::cerr << "Error! Expected active action text of 'Fiducial', got '"
+                << qPrintable(activeActionText) << "'" << std::endl;
       return EXIT_FAILURE;
       }
-      
-    selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationRulerNode");
+
+    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationRulerNode");
     activeActionText = mouseToolBar.activeActionText();
-    std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+    std::cout << "After setting selection node active place node class name to "
+              << selectionNode->GetActivePlaceNodeClassName()
+              << ", mouse tool bar active action text = "
+              << qPrintable(activeActionText) << std::endl;
     if (activeActionText.compare(QString("Ruler")) != 0)
         {
-        std::cerr << "Error! Expected active action text of 'Ruler', got '" << qPrintable(activeActionText) << "'" << std::endl;
+        std::cerr << "Error! Expected active action text of 'Ruler', got '"
+                  << qPrintable(activeActionText) << "'" << std::endl;
         return EXIT_FAILURE;
         }
+
+    // test with no action text
+    selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+    activeActionText = mouseToolBar.activeActionText();
+    std::cout << "After setting selection node active place node class name to "
+              << selectionNode->GetActivePlaceNodeClassName()
+              << ", mouse tool bar active action text = '"
+              << qPrintable(activeActionText) << "'" << std::endl;
+    if (activeActionText.compare(QString("")) != 0)
+      {
+      std::cerr << "Error! Expected active action text of '', got '"
+                << qPrintable(activeActionText) << "'" << std::endl;
+      return EXIT_FAILURE;
+      }
     }
-  
+
   vtkMRMLInteractionNode *interactionNode = NULL;
   mrmlNode = scene->GetNodeByID("vtkMRMLInteractionNodeSingleton");
   if (mrmlNode)
@@ -95,12 +118,16 @@ int qSlicerMouseModeToolBarTest1(int argc, char * argv[] )
     interactionNode->SwitchToSinglePlaceMode();
     if (selectionNode)
       {
-      selectionNode->SetReferenceActiveAnnotationID("vtkMRMLAnnotationFiducialNode");
+      selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLAnnotationFiducialNode");
       activeActionText = mouseToolBar.activeActionText();
-      std::cout << "After setting selection node active annotation id to " << selectionNode->GetActiveAnnotationID() << ", mouse tool bar active action text = " << qPrintable(activeActionText) << std::endl;
+      std::cout << "After setting selection node active place node class name to "
+                << selectionNode->GetActivePlaceNodeClassName()
+                << ", mouse tool bar active action text = "
+                << qPrintable(activeActionText) << std::endl;
       if (activeActionText.compare(QString("Fiducial")) != 0)
         {
-        std::cerr << "Error! Expected active action text of 'Fiducial', got '" << qPrintable(activeActionText) << "'" << std::endl;
+        std::cerr << "Error! Expected active action text of 'Fiducial', got '"
+                  << qPrintable(activeActionText) << "'" << std::endl;
         return EXIT_FAILURE;
         }
       }

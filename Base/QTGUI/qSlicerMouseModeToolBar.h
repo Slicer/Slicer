@@ -42,7 +42,7 @@ class Q_SLICER_BASE_QTGUI_EXPORT qSlicerMouseModeToolBar: public QToolBar
 {
   Q_OBJECT
   /// "vtkMRMLAnnotationFiducialNode" by default.
-  Q_PROPERTY(QString defaultAnnotation READ defaultAnnotation WRITE setDefaultAnnotation)
+  Q_PROPERTY(QString defaultPlaceClassName READ defaultPlaceClassName WRITE setDefaultPlaceClassName)
 public:
   typedef QToolBar Superclass;
 
@@ -55,8 +55,8 @@ public:
   /// For testing, return the active action text
   QString activeActionText();
 
-  QString defaultAnnotation()const;
-  void setDefaultAnnotation(const QString& annotation);
+  QString defaultPlaceClassName()const;
+  void setDefaultPlaceClassName(const QString& className);
 
 public slots:
 
