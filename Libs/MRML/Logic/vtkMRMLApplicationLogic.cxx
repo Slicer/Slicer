@@ -727,7 +727,7 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
       {
       vtkWarningMacro("file " << storageNode->GetFileName() << " already exists, renaming!");
 
-      uniqueFileName = this->CreateUniqueFileName(std::string(storageNode->GetFileName()), ext);
+      uniqueFileName = this->CreateUniqueFileName(fileName);
 
       vtkDebugMacro("found unique file name " << uniqueFileName.c_str());
       storageNode->SetFileName(uniqueFileName.c_str());
@@ -739,17 +739,18 @@ void vtkMRMLApplicationLogic::SaveStorableNodeToSlicerDataBundleDirectory(vtkMRM
  }
   
 //----------------------------------------------------------------------------
-std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename, std::string &extention)
+std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename)
 {
   std::string uniqueFileName;
   std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
+  std::string extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
   bool uniqueName = false;
   int v = 1;
   while (!uniqueName)
     {
     std::stringstream ss;
     ss << v;
-    uniqueFileName = baseName + ss.str() + extention;
+    uniqueFileName = baseName + ss.str() + extension;
     if (vtksys::SystemTools::FileExists(uniqueFileName.c_str()) == 0)
       {
       uniqueName = true;
