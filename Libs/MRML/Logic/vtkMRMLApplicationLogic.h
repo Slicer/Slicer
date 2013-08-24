@@ -118,8 +118,7 @@ public:
                                       const std::vector<std::string>& directories);
 
   /// Creates a unique non-existant file name by adding an index after base file name.
-  static std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename, 
-                                                                   std::string &extention);
+  static std::string CreateUniqueFileName(std::string &filename, std::string &extention);
 
   /// List of custom events fired by the class.
   enum Events{
