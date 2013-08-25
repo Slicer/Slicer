@@ -575,8 +575,12 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
         if (storableNodes.find(std::string(storableNode->GetID())) == storableNodes.end())
           {
           // save only new storable nodes
+          storableNode->SetAddToScene(1);
+          storableNode->UpdateScene(this->GetMRMLScene());
           this->SaveStorableNodeToSlicerDataBundleDirectory(storableNode, dataDir);
+
           storableNodes[std::string(storableNode->GetID())] = storableNode;
+          storableNode->SetAddToScene(0);
           }
         }
       }
@@ -641,6 +645,30 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
       {
       vtkMRMLSceneViewNode *sceneViewNode = vtkMRMLSceneViewNode::SafeDownCast(mrmlNode);
       sceneViewNode->SetSceneViewRootDir(origRootDirectory.c_str());
+
+      // get all additioanl storable nodes for all scene views except "Master Scene View"
+      // skip "Master Scene View" since it contains the same ndoes as the scene
+      if (sceneViewNode->GetName() && std::string("Master Scene View") == std::string(sceneViewNode->GetName()))
+        {
+        continue;
+        }
+      std::vector<vtkMRMLNode *> snodes;
+      sceneViewNode->GetNodesByClass("vtkMRMLStorableNode", snodes);
+      std::vector<vtkMRMLNode *>::iterator sit;
+      for (sit = snodes.begin(); sit != snodes.end(); sit++)
+        {
+        vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(*sit);
+        vtkMRMLStorageNode *storageNode = storableNode->GetStorageNode();
+
+        if (storageNode && this->OriginalStorageNodeFileNames.find( storageNode ) != this->OriginalStorageNodeFileNames.end() )
+          {
+          storageNode->SetFileName(this->OriginalStorageNodeFileNames[storageNode].c_str());
+          }
+        if (storageNode && this->OriginalStorageNodeDirs.find( storageNode ) != this->OriginalStorageNodeDirs.end() )
+          {
+          storageNode->SetDataDirectory(this->OriginalStorageNodeDirs[storageNode].c_str());
+          }
+        }
       }
     if (mrmlNode->IsA("vtkMRMLStorableNode"))
       {
@@ -655,6 +683,7 @@ bool vtkMRMLApplicationLogic::SaveSceneToSlicerDataBundleDirectory(const char *s
         storageNode->SetDataDirectory(this->OriginalStorageNodeDirs[storageNode].c_str());
         }
       }
+
     }
 
   this->GetMRMLScene()->SetURL(origURL.c_str());
@@ -744,6 +773,7 @@ std::string vtkMRMLApplicationLogic::CreateUniqueFileName(std::string &filename)
   std::string uniqueFileName;
   std::string baseName = vtksys::SystemTools::GetFilenameWithoutExtension(filename);
   std::string extension = vtksys::SystemTools::GetFilenameLastExtension(filename);
+
   bool uniqueName = false;
   int v = 1;
   while (!uniqueName)
