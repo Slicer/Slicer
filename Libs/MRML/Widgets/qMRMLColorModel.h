@@ -82,16 +82,20 @@ public:
   /// -1 if the node index is not a MRML node (i.e. vtkMRMLScene, extra item...)
   inline int colorFromIndex(const QModelIndex &nodeIndex)const;
   int colorFromItem(QStandardItem* nodeItem)const;
-  
+
   QStandardItem* itemFromColor(int color, int column = 0)const;
   QModelIndexList indexes(int color)const;
-  
+
   inline QColor qcolorFromIndex(const QModelIndex& nodeIndex)const;
   inline QColor qcolorFromItem(QStandardItem* nodeItem)const;
   QColor qcolorFromColor(int color)const;
 
   /// Return the name of the color \a colorEntry
   QString nameFromColor(int colorEntry)const;
+
+  /// Overload the header data method for the veritical header
+  /// so that can return the color index rather than the row
+  virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
 protected slots:
   void onMRMLColorNodeModified(vtkObject* node);
@@ -100,11 +104,9 @@ protected slots:
 protected:
 
   qMRMLColorModel(qMRMLColorModelPrivate* pimpl, QObject *parent=0);
-  //virtual void insertColor(int color);
   virtual void updateItemFromColor(QStandardItem* item, int color, int column);
   virtual void updateColorFromItem(int color, QStandardItem* item);
   virtual void updateNode();
-  //virtual void populateNode();
 
   static void onMRMLNodeEvent(vtkObject* vtk_obj, unsigned long event,
                               void* client_data, void* call_data);

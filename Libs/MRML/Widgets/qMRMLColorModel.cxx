@@ -20,7 +20,6 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDebug>
 
 // qMRML includes
 #include "qMRMLColorModel_p.h"
@@ -270,37 +269,7 @@ void qMRMLColorModel::updateNode()
                    this, SLOT(onItemChanged(QStandardItem*)),
                    Qt::UniqueConnection);
 }
-/*
-//------------------------------------------------------------------------------
-void qMRMLColorModel::populateNode()
-{
-  Q_D(qMRMLColorModel);
-  Q_ASSERT(d->MRMLColorNode);
-  // Add nodes
-  for (int i = 0; i < d->MRMLColorNode->GetNumberOfColors(); ++i)
-    {
-    this->insertColor(i);
-    }
-}
 
-//------------------------------------------------------------------------------
-void qMRMLColorModel::insertColor(int color)
-{
-  Q_D(qMRMLColorModel);
-  Q_ASSERT(color >= 0);
-  QStandardItem* parent = this->mrmlColorNodeItem();
-  
-  QList<QStandardItem*> items;
-  for (int i= 0; i < this->columnCount(); ++i)
-    {
-    QStandardItem* newItem = new QStandardItem();
-    this->updateItemFromColor(newItem, color, i);
-    items.append(newItem);
-    }
-
-  this->mrmlColorNodeItem()->appendRow(items);
-}
-*/
 //------------------------------------------------------------------------------
 void qMRMLColorModel::updateItemFromColor(QStandardItem* item, int color, int column)
 {
@@ -428,4 +397,22 @@ void qMRMLColorModel::onItemChanged(QStandardItem * item)
     }
   int color = this->colorFromItem(item);
   this->updateColorFromItem(color, item);
+}
+
+//------------------------------------------------------------------------------
+QVariant qMRMLColorModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+  QVariant retval =  QStandardItemModel::headerData(section, orientation, role);
+
+  if (orientation == Qt::Vertical &&
+      role == Qt::DisplayRole)
+    {
+    // for the vertical header, decrement the row number by one, since the
+    // rows start from 1 and the indices start from 0 in the color look up
+    // table.
+    retval = QVariant(retval.toInt() - 1);
+    }
+
+  return retval;
+
 }
