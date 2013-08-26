@@ -1530,14 +1530,32 @@ void qSlicerMarkupsModuleWidget::onDeleteMarkupPushButtonClicked()
     }
   // sort the list
   qSort(rows);
-  // delete from the end
-  for (int i = rows.size() - 1; i >= 0; --i)
+
+  ctkMessageBox deleteAllMsgBox;
+  deleteAllMsgBox.setWindowTitle("Delete Markups in this list?");
+  QString labelText = QString("Delete ")
+    + QString::number(rows.size())
+    + QString(" Markups from this list?");
+  // don't show again check box conflicts with informative text, so use
+  // a long text
+  deleteAllMsgBox.setText(labelText);
+  deleteAllMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  deleteAllMsgBox.setDefaultButton(QMessageBox::Yes);
+  deleteAllMsgBox.setDontShowAgainVisible(true);
+  deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteMarkups");
+  int ret = deleteAllMsgBox.exec();
+  if (ret == QMessageBox::Yes)
     {
-    int index = rows.at(i);
-    // qDebug() << "Deleting: i = " << i << ", index = " << index;
-    // remove the markup at that row
-    listNode->RemoveMarkup(index);
+    // delete from the end
+    for (int i = rows.size() - 1; i >= 0; --i)
+      {
+      int index = rows.at(i);
+      // qDebug() << "Deleting: i = " << i << ", index = " << index;
+      // remove the markup at that row
+      listNode->RemoveMarkup(index);
+      }
     }
+
   // clear the selection on the table
   d->activeMarkupTableWidget->clearSelection();
 }
@@ -1556,7 +1574,23 @@ void qSlicerMarkupsModuleWidget::onDeleteAllMarkupsInListPushButtonClicked()
   if (listNode)
     {
     // qDebug() << "Removing markups from list " << listNode->GetName();
-    listNode->RemoveAllMarkups();
+    ctkMessageBox deleteAllMsgBox;
+    deleteAllMsgBox.setWindowTitle("Delete All Markups in this list?");
+    QString labelText = QString("Delete all ")
+      + QString::number(listNode->GetNumberOfMarkups())
+      + QString(" Markups in this list?");
+    // don't show again check box conflicts with informative text, so use
+    // a long text
+    deleteAllMsgBox.setText(labelText);
+    deleteAllMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    deleteAllMsgBox.setDefaultButton(QMessageBox::Yes);
+    deleteAllMsgBox.setDontShowAgainVisible(true);
+    deleteAllMsgBox.setDontShowAgainSettingsKey("Markups/AlwaysDeleteAllMarkups");
+    int ret = deleteAllMsgBox.exec();
+    if (ret == QMessageBox::Yes)
+      {
+      listNode->RemoveAllMarkups();
+      }
     }
 }
 
@@ -1954,7 +1988,7 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCellClicked(QTableWidgetItem
     return;
     }
 
-  int row = item->row();
+  //int row = item->row();
   int column = item->column();
   //qDebug() << "onActiveMarkupTableCellClicked: row = " << row << ", col = " << column;
 
@@ -1979,7 +2013,11 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupTableCurrentCellChanged(
 {
   Q_D(qSlicerMarkupsModuleWidget);
 
-   // is jumping disabled?
+  Q_UNUSED(currentColumn);
+  Q_UNUSED(previousRow);
+  Q_UNUSED(previousColumn);
+
+  // is jumping disabled?
   if (!d->jumpSlicesGroupBox->isChecked())
     {
     return;
