@@ -90,24 +90,23 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
     parametersFormLayout = qt.QFormLayout(parametersCollapsibleButton)
 
     #
-    # number of fiducials to add
+    # check box to trigger taking screen shots for later use in tutorials
     #
-    self.numToAddSliderWidget = ctk.ctkSliderWidget()
-    self.numToAddSliderWidget.singleStep = 1.0
-    self.numToAddSliderWidget.minimum = 0.0
-    self.numToAddSliderWidget.maximum = 1000.0
-    self.numToAddSliderWidget.value = 100.0
-    self.numToAddSliderWidget.toolTip = "Set the number of fiducials to add."
-    parametersFormLayout.addRow("Number of Fiducials to Add", self.numToAddSliderWidget)
+    self.enableScreenshotsFlagCheckBox = qt.QCheckBox()
+    self.enableScreenshotsFlagCheckBox.checked = 0
+    self.enableScreenshotsFlagCheckBox.toolTip = 'If checked, take a screen shot at tutorial steps. Use the Save Data functionality to write them to disk after running the self test.'
+    parametersFormLayout.addRow("Enable Screenshots", self.enableScreenshotsFlagCheckBox)
 
     #
-    # check box to trigger fewer modify events, adding all the new points
-    # is wrapped inside of a StartModify/EndModify block
+    # scale factor for screen shots
     #
-    self.fewerModifyFlagCheckBox = qt.QCheckBox()
-    self.fewerModifyFlagCheckBox.checked = 0
-    self.fewerModifyFlagCheckBox.toolTip = 'If checked, wrap adding points inside of a StartModify - EndModify block'
-    parametersFormLayout.addRow("Fewer Modify Events", self.fewerModifyFlagCheckBox)
+    self.screenshotScaleFactorSliderWidget = ctk.ctkSliderWidget()
+    self.screenshotScaleFactorSliderWidget.singleStep = 1.0
+    self.screenshotScaleFactorSliderWidget.minimum = 1.0
+    self.screenshotScaleFactorSliderWidget.maximum = 50.0
+    self.screenshotScaleFactorSliderWidget.value = 1.0
+    self.screenshotScaleFactorSliderWidget.toolTip = "Set scale factor for the screen shots."
+    parametersFormLayout.addRow("Screenshot scale factor", self.screenshotScaleFactorSliderWidget)
 
     # Apply Button
     #
@@ -127,10 +126,10 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
 
   def onApplyButton(self):
     logic = NeurosurgicalPlanningTutorialMarkupsSelfTestLogic()
-    sliderValue = int(self.numToAddSliderWidget.value)
-    fewerModifyFlag = self.fewerModifyFlagCheckBox.checked
-    print("Run the logic method to add %s fids" % sliderValue)
-    logic.run(sliderValue,0,fewerModifyFlag)
+    enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
+    screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
+    print("Run the logic method, enable screen shots = %s" % enableScreenshotsFlag)
+    logic.run(enableScreenshotsFlag,screenshotScaleFactor)
 
   def onReload(self,moduleName="NeurosurgicalPlanningTutorialMarkupsSelfTest"):
     """Generic reload method for any scripted module.
@@ -199,26 +198,90 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
   def __init__(self):
     pass
 
-  def run(self):
+  def delayDisplay(self,message,msec=1000):
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
+
+  def takeScreenshot(self,name,description,type=-1,screenshotScaleFactor=1):
+    lm = slicer.app.layoutManager()
+    # switch on the type to get the requested window
+    widget = 0
+    if type == -1:
+      # full window
+      widget = slicer.util.mainWindow()
+    elif type == slicer.qMRMLScreenShotDialog().FullLayout:
+      # full layout
+      widget = lm.viewport()
+    elif type == slicer.qMRMLScreenShotDialog().ThreeD:
+      # just the 3D window
+      widget = lm.threeDWidget(0).threeDView()
+    elif type == slicer.qMRMLScreenShotDialog().Red:
+      # red slice window
+      widget = lm.sliceWidget("Red")
+    elif type == slicer.qMRMLScreenShotDialog().Yellow:
+      # yellow slice window
+      widget = lm.sliceWidget("Yellow")
+    elif type == slicer.qMRMLScreenShotDialog().Green:
+      # green slice window
+      widget = lm.sliceWidget("Green")
+
+    # grab and convert to vtk image data
+    qpixMap = qt.QPixmap().grabWidget(widget)
+    qimage = qpixMap.toImage()
+    imageData = vtk.vtkImageData()
+    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
+
+    annotationLogic = slicer.modules.annotations.logic()
+    annotationLogic.CreateSnapShot(name, description, type, screenshotScaleFactor, imageData)
+
+  def run(self,enableScreenshots=0,screenshotScaleFactor=1):
     """
     Run the actual algorithm
     """
-    print('Running test of the Neurosurgical Planning tutorial')
+    self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
 
+    moduleSelector = slicer.util.mainWindow().moduleSelector()
     #
     # first load the data
     #
+    if enableScreenshots == 1:
+      # for the tutorial, do it through the welcome module
+      moduleSelector.selectModule('Welcome')
+      self.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module',-1,screenshotScaleFactor)
+
+    # but use the sample data module logic to load it for the self test
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
-    print("Getting Baseline volume")
+    self.delayDisplay("Getting Baseline volume")
     baselineVolume = sampleDataLogic.downloadWhiteMatterExplorationBaselineVolume()
 
-    print("Getting DTI volume")
+    self.delayDisplay("Getting DTI volume")
     dtiVolume = sampleDataLogic.downloadWhiteMatterExplorationDTIVolume()
+
+    if enableScreenshots == 1:
+      self.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded',-1,screenshotScaleFactor)
 
     #
     # link the viewers
     #
+
+    if enableScreenshots == 1:
+      # for the tutorial, pop up the linking control
+      # TODO: pipPopup is not exposed to python
+      sliceController = slicer.app.layoutManager().sliceWidget("Red").sliceController()
+      # sliceController.pinPopup(1)
+      # self.delayDisplay("Screenshot")
+      # self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers',-1,screenshotScaleFactor)
+      # sliceController.pinPopup(0)
+
     sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
     compositeNode = sliceLogic.GetSliceCompositeNode()
     compositeNode.SetLinkedControl(1)
@@ -230,19 +293,28 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     compositeNode.SetBackgroundVolumeID(baselineVolume.GetID())
     sliceLogic.EndSliceCompositeNodeInteraction()
 
+    if enableScreenshots == 1:
+      self.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-Baseline','Baseline in background',-1,screenshotScaleFactor)
+
     #
     # adjust window level on baseline
     #
-    mainWindow = slicer.util.mainWindow()
-    mainWindow.moduleSelector().selectModule('Volumes')
+    moduleSelector.selectModule('Volumes')
     baselineVolume.GetDisplayNode().SetWindow(2600)
     baselineVolume.GetDisplayNode().SetLevel(1206)
+    if enableScreenshots == 1:
+      self.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-WindowLevel','Set W/L on baseline',-1,screenshotScaleFactor)
 
     #
     # switch to red slice only
     #
     lm = slicer.app.layoutManager()
     lm.setLayout(6)
+    if enableScreenshots == 1:
+      self.delayDisplay("Screenshot")
+      self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only',-1,screenshotScaleFactor)
 
     #
     # skip segmentation of tumour
@@ -261,15 +333,31 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     #
     # tractography fiducial seeding
     #
-    mainWindow.moduleSelector().selectModule('TractographyInteractiveSeeding')
+    moduleSelector.selectModule('TractographyInteractiveSeeding')
+    if enableScreenshots == 1:
+     self.delayDisplay("Screenshot")
+     self.takeScreenshot('NeurosurgicalPlanning-TIS','Showing Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+
     # DTI in background
     sliceLogic.StartSliceCompositeNodeInteraction(1)
     compositeNode.SetBackgroundVolumeID(dtiVolume.GetID())
     sliceLogic.EndSliceCompositeNodeInteraction()
+
+    # DTI visible in 3D
+    sliceNode = sliceLogic.GetSliceNode()
+    sliceLogic.StartSliceNodeInteraction(128)
+    sliceNode.SetSliceVisible(1)
+    sliceLogic.EndSliceNodeInteraction()
+
+    if enableScreenshots == 1:
+     self.delayDisplay("Screenshot")
+     self.takeScreenshot('NeurosurgicalPlanning-TIS-DTI','DTI volume with Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+
     # place a fiducial
     displayNode = slicer.vtkMRMLMarkupsDisplayNode()
     slicer.mrmlScene.AddNode(displayNode)
     fidNode = slicer.vtkMRMLMarkupsFiducialNode()
+    fidNode.SetName('F')
     slicer.mrmlScene.AddNode(fidNode)
     fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
     r = 28.338526
@@ -282,6 +370,11 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     if (selectionNode != None):
       selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
+    if enableScreenshots == 1:
+     self.delayDisplay("Screenshot")
+     self.takeScreenshot('NeurosurgicalPlanning-TIS-Fid1','Fiducial in Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+
+
     # set up the arguments
     wr = slicer.modules.tractographyinteractiveseeding.widgetRepresentation()
     wr.setDiffusionTensorVolumeNode(dtiVolume)
@@ -290,16 +383,19 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     wr.setMinimumPath(10)
     wr.setStoppingValue(0.15)
 
-    print("Moving the fiducial")
+    if enableScreenshots == 1:
+     self.delayDisplay("Screenshot")
+     self.takeScreenshot('NeurosurgicalPlanning-TIS-Args','Tractography Interactive Seeding arguments',-1,screenshotScaleFactor)
+
+    self.delayDisplay("Moving the fiducial")
     for y in range(-20, 100, 5):
       msg = "Moving the fiducial to y = " + str(y)
-      print msg
-      moveMsg = qt.QDialog()
-      moveMsg.setLayout(qt.QVBoxLayout())
-      moveMsg.layout().addWidget(qt.QLabel(msg))
-      qt.QTimer.singleShot(250, moveMsg.close)
-      moveMsg.exec_()
+      self.delayDisplay(msg,250)
       fidNode.SetNthFiducialPosition(0, r, y, s)
+
+    if enableScreenshots == 1:
+     self.delayDisplay("Screenshot")
+     self.takeScreenshot('NeurosurgicalPlanning-TIS-Moved','Moved fiducial and did Tractography Interactive Seeding',-1,screenshotScaleFactor)
 
     return True
 
