@@ -413,6 +413,8 @@ class DICOMLoadableTable(object):
     for row in xrange(self.widget.rowCount):
       item = self.widget.item(row,0)
       self.loadables[row].selected = (item.checkState() != 0)
+      # updating the names
+      self.loadables[row].name = item.text()
 
   def updateCheckstateFromSelected(self):
     print('updateCheckstateFromSelected')
