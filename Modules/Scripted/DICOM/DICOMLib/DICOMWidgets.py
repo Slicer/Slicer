@@ -342,6 +342,7 @@ class DICOMLoadableTable(object):
     """Add a row to the loadable table
     """
     # name and check state
+    qt_ItemIsEditable = 2 # not in PythonQt
     self.loadables[row] = loadable
     item = qt.QTableWidgetItem(loadable.name)
     item.setCheckState(loadable.selected * 2)
@@ -351,12 +352,14 @@ class DICOMLoadableTable(object):
     # reader
     if reader:
       readerItem = qt.QTableWidgetItem(reader)
+      readerItem.setFlags(readerItem.flags() ^ qt_ItemIsEditable)
       self.items.append(readerItem)
       self.widget.setItem(row,1,readerItem)
       readerItem.setToolTip(item.toolTip())
     # warning
     if loadable.warning:
       warnItem = qt.QTableWidgetItem(loadable.warning)
+      warnItem.setFlags(warnItem.flags() ^ qt_ItemIsEditable)
       self.items.append(warnItem)
       self.widget.setItem(row,2,warnItem)
       item.setToolTip(item.toolTip() + "\n" + loadable.warning)
