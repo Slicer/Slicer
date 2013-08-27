@@ -349,7 +349,11 @@ class EditBox(object):
     if toolName.endswith('Effect'):
       toolName = effectName[:-len('Effect')]
 
-    if toolName in self.mouseTools:
+    hasMouseAttribute = False
+    if hasattr(self.currentOption,'attributes'):
+      hasMouseAttribute = 'MouseTool' in self.currentOption.attributes
+
+    if toolName in self.mouseTools or hasMouseAttribute:
       # set the interaction mode in case there was an active place going on
       appLogic = slicer.app.applicationLogic()
       interactionNode = appLogic.GetInteractionNode()
