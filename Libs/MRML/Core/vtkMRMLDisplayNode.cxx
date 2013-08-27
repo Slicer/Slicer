@@ -142,7 +142,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
 
   of << indent << " pointSize=\"" << this->PointSize << "\"";
   of << indent << " lineWidth=\"" << this->LineWidth << "\"";
-  of << indent << " representation=\"" << this->SurfaceRepresentation << "\"";
+  of << indent << " representation=\"" << this->Representation << "\"";
   of << indent << " lighting=\"" << (this->Lighting? "true" : "false") << "\"";
   of << indent << " interpolation=\"" << this->Interpolation << "\"";
   of << indent << " shading=\"" << (this->Shading? "true" : "false") << "\"";
