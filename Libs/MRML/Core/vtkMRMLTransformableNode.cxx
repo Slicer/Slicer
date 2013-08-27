@@ -13,6 +13,7 @@ Version:   $Revision: 1.14 $
 =========================================================================auto=*/
 
 // MRML includes
+#include "vtkEventBroker.h"
 #include "vtkMRMLLinearTransformNode.h"
 #include "vtkMRMLScene.h"
 
@@ -135,6 +136,22 @@ void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transfor
   events->Delete();
 
   this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformableNode::OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
+{
+  Superclass::OnNodeReferenceAdded(reference);
+
+  // When a scene is loaded, vtkMRMLScene::UpdateNodeReferences doesn't handle
+  // event registration. Except for vtkCommand::ModifiedEvent, any other events
+  // need to be registered via OnNodeReferenceAdded API.
+  if (std::string(reference->GetReferenceRole()) == this->GetTransformNodeReferenceRole()
+     && reference->ReferencedNode && reference->ReferencingNode)
+    {
+    vtkEventBroker::GetInstance()->AddObservation(reference->ReferencedNode,
+      vtkMRMLTransformableNode::TransformModifiedEvent, reference->ReferencingNode, this->MRMLCallbackCommand);
+    }
 }
 
 //---------------------------------------------------------------------------

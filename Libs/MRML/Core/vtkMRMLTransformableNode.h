@@ -105,6 +105,9 @@ protected:
   virtual const char* GetTransformNodeReferenceRole();
   virtual const char* GetTransformNodeReferenceMRMLAttributeName();
 
+  /// Called when a node reference ID is added (list size increased).
+  virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference);
+
 private:
   char* TransformNodeIDInternal;
   vtkSetStringMacro(TransformNodeIDInternal);
