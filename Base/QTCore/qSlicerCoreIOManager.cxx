@@ -20,6 +20,10 @@
 
 // Qt includes
 #include <QDebug>
+#include <QFileInfo>
+
+// CTK includes
+#include <ctkUtils.h>
 
 // SlicerQt includes
 #include "qSlicerCoreApplication.h"
@@ -46,6 +50,8 @@ public:
 
   qSlicerFileReader* reader(const QString& fileName)const;
   QList<qSlicerFileReader*> readers(const QString& fileName)const;
+
+  QList<qSlicerFileWriter*> writers(const qSlicerIO::IOFileType &fileType, const qSlicerIO::IOProperties& parameters)const;
 
   QSettings*        ExtensionFileType;
   QList<qSlicerFileReader*> Readers;
@@ -114,6 +120,75 @@ QList<qSlicerFileReader*> qSlicerCoreIOManagerPrivate::readers(const QString& fi
       }
     }
   return matchingReaders;
+}
+
+//-----------------------------------------------------------------------------
+QList<qSlicerFileWriter*> qSlicerCoreIOManagerPrivate::writers(
+    const qSlicerIO::IOFileType& fileType, const qSlicerIO::IOProperties& parameters)const
+{
+  QString fileName = parameters.value("fileName").toString();
+  QString nodeID = parameters.value("nodeID").toString();
+
+  vtkObject * object = this->currentScene()->GetNodeByID(nodeID.toLatin1());
+  QFileInfo file(fileName);
+
+  QList<qSlicerFileWriter*> matchingWriters;
+  // Some writers ("Slicer Data Bundle (*)" can support any file,
+  // they are called generic writers. The following code ensures
+  // that writers associated with specific file extension are
+  // considered first.
+  QList<qSlicerFileWriter*> genericWriters;
+  foreach(qSlicerFileWriter* writer, this->Writers)
+    {
+    if (writer->fileType() != fileType)
+      {
+      continue;
+      }
+    QStringList matchingNameFilters;
+    foreach(const QString& nameFilter, writer->extensions(object))
+      {
+      foreach(const QString& extension, ctk::nameFilterToExtensions(nameFilter))
+        {
+        // HACK - See http://www.na-mic.org/Bug/view.php?id=3322
+        QString extensionWithStar(extension);
+        if (!extensionWithStar.startsWith("*"))
+          {
+          extensionWithStar.prepend("*");
+          }
+        QRegExp regExp(extensionWithStar, Qt::CaseInsensitive, QRegExp::Wildcard);
+        Q_ASSERT(regExp.isValid());
+        if (regExp.exactMatch(file.absoluteFilePath()))
+          {
+          matchingNameFilters << nameFilter;
+          }
+        }
+      }
+    if (matchingNameFilters.count() == 0)
+      {
+      continue;
+      }
+    // Generic readers must be added to the end
+    foreach(const QString& nameFilter, matchingNameFilters)
+      {
+      if (nameFilter.contains( "*.*" ) || nameFilter.contains("(*)"))
+        {
+        genericWriters << writer;
+        continue;
+        }
+      if (!matchingWriters.contains(writer))
+        {
+        matchingWriters << writer;
+        }
+      }
+    }
+  foreach(qSlicerFileWriter* writer, genericWriters)
+    {
+    if (!matchingWriters.contains(writer))
+      {
+      matchingWriters << writer;
+      }
+    }
+  return matchingWriters;
 }
 
 //-----------------------------------------------------------------------------
@@ -391,7 +466,9 @@ bool qSlicerCoreIOManager::saveNodes(qSlicerIO::IOFileType fileType,
 
   Q_ASSERT(parameters.contains("fileName"));
 
-  const QList<qSlicerFileWriter*> writers = this->writers(fileType);
+  // HACK - See http://www.na-mic.org/Bug/view.php?id=3322
+  //        Sort writers to ensure generic ones are last.
+  const QList<qSlicerFileWriter*> writers = d->writers(fileType, parameters);
 
   QStringList nodes;
   foreach (qSlicerFileWriter* writer, writers)
