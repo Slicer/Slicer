@@ -39,6 +39,22 @@ public:
   vtkTypeMacro(vtkMRMLDisplayNode,vtkMRMLNode);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  /// Representation models
+  /// \sa GetRepresentation(), SetRepresentation()
+  typedef enum {
+    PointsRepresentation = 0,
+    WireframeRepresentation,
+    SurfaceRepresentation
+  } RepresentationType;
+
+  /// Interpolation models
+  /// \sa GetInterpolation(), SetInterpolation()
+  typedef enum {
+    FlatInterpolation = 0,
+    GouraudInterpolation,
+    PhongInterpolation
+  } InterpolationType;
+
   /// Returns the first displayable node that is associated to this display node
   /// Warning: This function is slow as it browses the entire scene to find the
   /// displayable node.
@@ -504,13 +520,6 @@ protected:
   /// \sa SetLineWidth(), GetLineWidth(), PointSize
   double LineWidth;
 
-  /// Representation models
-  /// \sa vtkProperty
-  enum RepresentationType{
-    PointsRepresentation = 0,
-    WireframeRepresentation,
-    SurfaceRepresentation
-  };
   /// Control the surface geometry representation for the object.
   /// SurfaceRepresentation by default.
   /// \sa SetRepresentation(), GetRepresentation(), Interpolation
@@ -522,12 +531,6 @@ protected:
   /// Interpolation, Shading
   int Lighting;
 
-  /// Interpolation models
-  enum InterpolationType{
-    FlatInterpolation = 0,
-    GouraudInterpolation,
-    PhongInterpolation
-  };
   /// Set the shading interpolation method for an object. Note that
   /// to use an interpolation other than FlatInterpolation, normals
   /// must be associated to the polydata (Gouraud and Phong are usually the
