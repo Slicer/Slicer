@@ -32,6 +32,7 @@
 #include "qSlicerScriptedLoadableModule.h"
 #include "qSlicerScriptedLoadableModuleWidget.h"
 #include "qSlicerScriptedFileDialog.h"
+#include "qSlicerScriptedFileWriter.h"
 #include "vtkSlicerScriptedLoadableModuleLogic.h"
 
 // VTK includes
@@ -246,6 +247,7 @@ void qSlicerScriptedLoadableModule::setup()
 {
   Q_D(qSlicerScriptedLoadableModule);
   this->registerFileDialog();
+  this->registerIO();
   PyObject * method = d->PythonAPIMethods[Pimpl::SetupMethod];
   if (!method)
     {
@@ -268,6 +270,22 @@ void qSlicerScriptedLoadableModule::registerFileDialog()
     }
   qSlicerApplication::application()->ioManager()
     ->registerDialog(fileDialog.take());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerScriptedLoadableModule::registerIO()
+{
+  Q_D(qSlicerScriptedLoadableModule);
+  QScopedPointer<qSlicerScriptedFileWriter> fileWriter(new qSlicerScriptedFileWriter(this));
+  bool ret = fileWriter->setPythonSource(d->PythonSource);
+  if (!ret)
+    {
+    return;
+    }
+  qSlicerApplication::application()->ioManager()
+    ->registerIO(fileWriter.take());
+
+  // TODO qSlicerScriptedFileReader
 }
 
 //-----------------------------------------------------------------------------

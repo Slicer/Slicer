@@ -80,6 +80,13 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
     )
 endif()
 
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_SRCS
+    qSlicerScriptedFileWriter.cxx
+    qSlicerScriptedFileWriter.h
+    )
+endif()
+
 # Since the wrapper doesn't consider hierarchy of classes, let's exclude
 # classes deriving from pure abstract class and remaining abstract pure
 set_source_files_properties(
@@ -108,6 +115,12 @@ set(KIT_MOC_SRCS
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
   list(APPEND KIT_MOC_SRCS
     qSlicerExtensionsManagerModel.h
+    )
+endif()
+
+if(Slicer_USE_PYTHONQT)
+  list(APPEND KIT_MOC_SRCS
+    qSlicerScriptedFileWriter.h
     )
 endif()
 
