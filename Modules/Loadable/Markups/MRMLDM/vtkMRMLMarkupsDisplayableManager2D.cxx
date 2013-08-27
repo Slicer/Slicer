@@ -1258,16 +1258,16 @@ void vtkMRMLMarkupsDisplayableManager2D::GetDisplayToViewportCoordinates(double 
 }
 
 //---------------------------------------------------------------------------
-/// Check if the displayCoordinates are inside the viewport and if not, correct the displayCoordinates
-void vtkMRMLMarkupsDisplayableManager2D::RestrictDisplayCoordinatesToViewport(double* displayCoordinates)
+bool vtkMRMLMarkupsDisplayableManager2D::RestrictDisplayCoordinatesToViewport(double* displayCoordinates)
 {
   double coords[2] = {displayCoordinates[0], displayCoordinates[1]};
+  bool restricted = false;
 
   vtkRenderer* pokedRenderer = this->GetInteractor()->FindPokedRenderer(coords[0],coords[1]);
   if (!pokedRenderer)
     {
     vtkErrorMacro("RestrictDisplayCoordinatesToViewport: Could not find the poked renderer!")
-    return;
+    return restricted;
     }
 
   pokedRenderer->DisplayToNormalizedDisplay(coords[0],coords[1]);
@@ -1277,30 +1277,33 @@ void vtkMRMLMarkupsDisplayableManager2D::RestrictDisplayCoordinatesToViewport(do
   if (coords[0]<0.001)
     {
     coords[0] = 0.001;
+    restricted = true;
     }
   else if (coords[0]>0.999)
     {
     coords[0] = 0.999;
+    restricted = true;
     }
 
   if (coords[1]<0.001)
     {
     coords[1] = 0.001;
+    restricted = true;
     }
   else if (coords[1]>0.999)
     {
     coords[1] = 0.999;
+    restricted = true;
     }
 
   pokedRenderer->NormalizedViewportToViewport(coords[0],coords[1]);
   pokedRenderer->ViewportToNormalizedDisplay(coords[0],coords[1]);
   pokedRenderer->NormalizedDisplayToDisplay(coords[0],coords[1]);
 
-//  if (this->GetDisplayCoordinatesChanged(displayCoordinates,coords))
-//    {
   displayCoordinates[0] = coords[0];
   displayCoordinates[1] = coords[1];
-//    }
+
+  return restricted;
 }
 
 //---------------------------------------------------------------------------

@@ -128,10 +128,11 @@ public:
           double restrictedDisplayCoordinates1[4] = {displayCoordinates1[0], displayCoordinates1[1], displayCoordinates1[2], displayCoordinates1[3]};
 
           // modify restrictedDisplayCoordinates 1 and 2, if these are outside the viewport of the current renderer
-          this->DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
+          bool changed = this->DisplayableManager->RestrictDisplayCoordinatesToViewport(restrictedDisplayCoordinates1);
 
           // only if we had to restrict the coordinates aka. if the coordinates changed, we update the positions
-          if (this->DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
+          if (changed ||
+              this->DisplayableManager->GetDisplayCoordinatesChanged(displayCoordinates1,restrictedDisplayCoordinates1))
             {
             representation->SetSeedDisplayPosition(*n,restrictedDisplayCoordinates1);
             }

@@ -59,8 +59,12 @@ public:
   /// Get the sliceNode, if registered.
   vtkMRMLSliceNode * GetSliceNode();
 
-  /// Check if the displayCoordinates are inside the viewport and if not, correct the displayCoordinates
-  void RestrictDisplayCoordinatesToViewport(double* displayCoordinates);
+  /// Check if the displayCoordinates are inside the viewport and if not,
+  /// correct the displayCoordinates. Coordinates are reset if the normalized
+  /// viewport coordinates are less than 0.001 or greater than 0.999 and are
+  /// reset to those values.
+  /// If the coordinates have been reset, return true, otherwise return false.
+  bool RestrictDisplayCoordinatesToViewport(double* displayCoordinates);
 
   /// Check if there are real changes between two sets of displayCoordinates
   bool GetDisplayCoordinatesChanged(double * displayCoordinates1, double * displayCoordinates2);
