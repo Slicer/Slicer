@@ -2604,7 +2604,7 @@ void qSlicerMarkupsModuleWidget::updateLogicFromSettings()
       !settings->contains("Markups/SliceProjectionColor") ||
       !settings->contains("Markups/SliceProjectionOpacity"))
     {
-    qDebug() << "Markups: display settings not saved yet, using defaults";
+    // display settings not saved yet, use defaults
     return;
     }
 
