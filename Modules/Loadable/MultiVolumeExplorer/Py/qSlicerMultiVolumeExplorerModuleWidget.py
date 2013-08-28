@@ -94,11 +94,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.playButton = qt.QPushButton('Play')
     self.playButton.toolTip = 'Iterate over multivolume frames'
     self.playButton.checkable = True
-    
+
     ctrlFrameLayout.addWidget(label, 0, 0)
     ctrlFrameLayout.addWidget(self.__mdSlider, 0, 1)
     ctrlFrameLayout.addWidget(self.playButton, 0, 2)
-    
+
     self.playButton.connect('toggled(bool)', self.onPlayButtonToggled)
 
     self.__mdSlider.connect('valueChanged(double)', self.onSliderChanged)
@@ -257,11 +257,11 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       mvDisplayNode.SetFrameComponent(newValue)
     else:
       return
-      
+
     if self.extractFrame == True:
       frameVolume = self.__vfSelector.currentNode()
 
-      if frameVolume == None:      
+      if frameVolume == None:
         mvNodeFrameCopy = slicer.vtkMRMLScalarVolumeNode()
         mvNodeFrameCopy.SetName(self.__mvNode.GetName()+' frame')
         mvNodeFrameCopy.SetScene(slicer.mrmlScene)
@@ -353,7 +353,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       self.__chartTable.AddColumn(self.__yArray)
       self.__chartTable.SetNumberOfRows(nFrames)
 
-      # get the range of intensities for the 
+      # get the range of intensities for the
       mvi = self.__mvNode.GetImageData()
       self.__mvRange = [0,0]
       for f in range(nFrames):
@@ -487,7 +487,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           values = ''
           extent = mvImage.GetExtent()
           for c in range(nComponents):
-            if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<extent[1] and ijk[1]<extent[3] and ijk[2]<extent[5]:
+            if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<=extent[1] and ijk[1]<=extent[3] and ijk[2]<=extent[5]:
               val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
               self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
               self.__chartTable.SetValue(c, 1, val)
