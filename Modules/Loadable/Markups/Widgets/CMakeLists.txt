@@ -10,16 +10,16 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  qMRMLMarkupsFiducialProjectionPropertyWidget.cxx
-  qMRMLMarkupsFiducialProjectionPropertyWidget.h
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.cxx
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   )
 
 set(${KIT}_MOC_SRCS
-  qMRMLMarkupsFiducialProjectionPropertyWidget.h
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.h
   )
 
 set(${KIT}_UI_SRCS
-  Resources/UI/qMRMLMarkupsFiducialProjectionPropertyWidget.ui
+  Resources/UI/qMRML${MODULE_NAME}FiducialProjectionPropertyWidget.ui
   )
 
 set(${KIT}_RESOURCES

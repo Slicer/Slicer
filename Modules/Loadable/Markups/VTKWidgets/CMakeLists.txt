@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkMarkupsGlyphSource2D.cxx
-  vtkMarkupsGlyphSource2D.h
+  vtk${MODULE_NAME}GlyphSource2D.cxx
+  vtk${MODULE_NAME}GlyphSource2D.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

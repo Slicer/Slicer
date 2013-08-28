@@ -1,14 +1,13 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Markups") # Do not use 'project()'
-set(MODULE_TITLE "Markups")
+set(MODULE_NAME "Markups")
+set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
 add_subdirectory(MRML)
 add_subdirectory(VTKWidgets)
-# make sure to add logic before any Qt widgets
 add_subdirectory(Logic)
 add_subdirectory(MRMLDM)
 add_subdirectory(Widgets)
@@ -26,34 +25,30 @@ set(MODULE_INCLUDE_DIRECTORIES
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
 
-
 set(MODULE_SRCS
-  qSlicerMarkupsIO.cxx
-  qSlicerMarkupsIO.h
-  qSlicerMarkupsModule.cxx
-  qSlicerMarkupsModule.h
-  qSlicerMarkupsModuleWidget.cxx
-  qSlicerMarkupsModuleWidget.h
-  qSlicerMarkupsSettingsPanel.cxx
-  qSlicerMarkupsSettingsPanel.h
+  qSlicer${MODULE_NAME}IO.cxx
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.cxx
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.cxx
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}SettingsPanel.cxx
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
-
 set(MODULE_MOC_SRCS
-  qSlicerMarkupsIO.h
-  qSlicerMarkupsModule.h
-  qSlicerMarkupsModuleWidget.h
-  qSlicerMarkupsSettingsPanel.h
+  qSlicer${MODULE_NAME}IO.h
+  qSlicer${MODULE_NAME}Module.h
+  qSlicer${MODULE_NAME}ModuleWidget.h
+  qSlicer${MODULE_NAME}SettingsPanel.h
   )
 
 set(MODULE_UI_SRCS
-  Resources/UI/qSlicerMarkupsModule.ui
-  Resources/UI/qSlicerMarkupsSettingsPanel.ui
+  Resources/UI/qSlicer${MODULE_NAME}Module.ui
+  Resources/UI/qSlicer${MODULE_NAME}SettingsPanel.ui
   )
 
 set(MODULE_TARGET_LIBRARIES
-# qSlicerBaseQTCore
-# qMRMLWidgets
   vtkSlicer${MODULE_NAME}ModuleMRML
   vtkSlicer${MODULE_NAME}ModuleVTKWidgets
   vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
@@ -62,7 +57,7 @@ set(MODULE_TARGET_LIBRARIES
   )
 
 set(MODULE_RESOURCES
-  Resources/qSlicerMarkupsModule.qrc
+  Resources/qSlicer${MODULE_NAME}Module.qrc
   )
 
 #-----------------------------------------------------------------------------

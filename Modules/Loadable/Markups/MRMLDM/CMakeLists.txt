@@ -14,10 +14,10 @@ set(${KIT}_INCLUDE_DIRECTORIES
 )
 
 set(displayable_manager_SRCS
-  vtkMRMLMarkupsDisplayableManager3D.cxx
-  vtkMRMLMarkupsDisplayableManager2D.cxx
-  vtkMRMLMarkupsFiducialDisplayableManager3D.cxx
-  vtkMRMLMarkupsFiducialDisplayableManager2D.cxx
+  vtkMRML${MODULE_NAME}DisplayableManager3D.cxx
+  vtkMRML${MODULE_NAME}DisplayableManager2D.cxx
+  vtkMRML${MODULE_NAME}FiducialDisplayableManager3D.cxx
+  vtkMRML${MODULE_NAME}FiducialDisplayableManager2D.cxx
   )
 
 set(VTK_USE_INSTANTIATOR_NEW 1)
@@ -32,8 +32,8 @@ VTK_MAKE_INSTANTIATOR3("${MODULE_NAME}Instantiator"
 set(${KIT}_SRCS
   ${displayable_manager_instantiator_SRCS}
   ${displayable_manager_SRCS}
-  vtkMRMLMarkupsDisplayableManagerHelper.cxx
-  vtkMRMLMarkupsClickCounter.cxx
+  vtkMRML${MODULE_NAME}DisplayableManagerHelper.cxx
+  vtkMRML${MODULE_NAME}ClickCounter.cxx
 )
 
 set(${KIT}_TARGET_LIBRARIES

@@ -4,23 +4,23 @@ set(KIT ${PROJECT_NAME}Plugins)
 set(${KIT}_EXPORT "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_PLUGINS_EXPORT")
 
 set(${KIT}_SRCS
-  qSlicerMarkupsModuleWidgetsAbstractPlugin.cxx
-  qSlicerMarkupsModuleWidgetsAbstractPlugin.h
-  qSlicerMarkupsModuleWidgetsPlugin.cxx
-  qSlicerMarkupsModuleWidgetsPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsAbstractPlugin.cxx
+  qSlicer${MODULE_NAME}ModuleWidgetsAbstractPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.cxx
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
 
-  qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.cxx
-  qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.cxx
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
   )
 
 set(${KIT}_MOC_SRCS
-  qSlicerMarkupsModuleWidgetsPlugin.h
+  qSlicer${MODULE_NAME}ModuleWidgetsPlugin.h
 
-  qMRMLMarkupsFiducialProjectionPropertyWidgetPlugin.h
+  qMRML${MODULE_NAME}FiducialProjectionPropertyWidgetPlugin.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
-  qSlicerMarkupsModuleWidgets
+  qSlicer${MODULE_NAME}ModuleWidgets
   )
 
 #-----------------------------------------------------------------------------
