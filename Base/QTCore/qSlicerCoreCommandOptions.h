@@ -118,6 +118,9 @@ public:
   /// Return True if slicer should display details regarding the module discovery process
   bool verboseModuleDiscovery()const;
 
+  /// Return True if slicer should display information at startup
+  bool verbose()const;
+
   /// Return True if slicer shouldn't catch messages printed to the terminal.
   bool disableMessageHandlers()const;
 

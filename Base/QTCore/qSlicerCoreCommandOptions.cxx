@@ -241,6 +241,12 @@ bool qSlicerCoreCommandOptions::verboseModuleDiscovery() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::verbose()const
+{
+  return !this->runPythonAndExit();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableMessageHandlers() const
 {
   Q_D(const qSlicerCoreCommandOptions);
