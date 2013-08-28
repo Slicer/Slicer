@@ -151,17 +151,21 @@ class WorkflowConfiguration:
             wait_for_completion=True
         )
 
-        if self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completing" or \
-            self.diffusionweightedvolumemasking_parameter_node.GetStatusString() != "Completed":
-            display_error("Error in diffusion tensor estimation")
+        result_status = (
+            self.diffusionweightedvolumemasking_parameter_node.GetStatusString() == "Completing" or
+            self.diffusionweightedvolumemasking_parameter_node.GetStatusString() == "Completed"
+        )
+
+        if not result_status:
+            display_error("Error in diffusion tensor masking")
             return False
 
         parameters_estimation = {
             'inputVolume': self.dwi_node.GetID(),
             'outputTensor': self.tensor_node.GetID(),
             'outputBaseline': self.baseline_node.GetID(),
-            'leastSquaresEstimation':step_parameters['leastSquaresEstimation'],
-            'weightedLeastSquaresEstimation':step_parameters['weightedLeastSquaresEstimation']
+            'leastSquaresEstimation': step_parameters['leastSquaresEstimation'],
+            'weightedLeastSquaresEstimation': step_parameters['weightedLeastSquaresEstimation']
         }
 
         if step_parameters['applyMask']:
@@ -176,8 +180,10 @@ class WorkflowConfiguration:
             wait_for_completion=True
         )
 
-        result_status = self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completing' or \
-                             self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completed'
+        result_status = (
+            self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completing' or
+            self.diffusiontensorestimation_parameter_node.GetStatusString() == 'Completed'
+        )
 
         if not result_status:
             display_error("Error in diffusion tensor estimation")
