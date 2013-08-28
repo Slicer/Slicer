@@ -27,7 +27,7 @@
 # built in a standalone fashion very easily without passing extra option
 # at configure time:
 #
-#  find_package(Slicer COMPONENTS ConfigurePrerequisites [...] REQUIRED)
+#  find_package(Slicer COMPONENTS ConfigurePrerequisites REQUIRED)
 #
 #  project(Foo)
 #
@@ -47,9 +47,9 @@
 #  COMPONENTS                | CMAKE VARIABLE(S)
 # --------------------------------------------------------------------------
 #  NoExtensionSupport        | Slicer_USE_NOEXTENSIONSUPPORT
-# --------------------------------------------------------------------------
-#  ConfigurePrerequisites    | Slicer_USE_NOEXTENSIONSUPPORT
 #                            | Slicer_DONT_USE_EXTENSION
+# --------------------------------------------------------------------------
+#  ConfigurePrerequisites    | Slicer_USE_CONFIGUREPREREQUISITES
 # --------------------------------------------------------------------------
 
 foreach(component NoExtensionSupport ConfigurePrerequisites)
