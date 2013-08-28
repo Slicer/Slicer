@@ -52,6 +52,7 @@ public slots:
 
 protected slots:
   void onModelUpdated();
+  void onCurrentTabChanged(int index);
 
 protected:
   QScopedPointer<qSlicerExtensionsManagerWidgetPrivate> d_ptr;

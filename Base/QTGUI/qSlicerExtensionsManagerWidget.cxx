@@ -18,6 +18,10 @@
 
 ==============================================================================*/
 
+// Qt includes
+#include <QToolButton>
+#include <QWebView>
+
 // QtGUI includes
 #include "qSlicerExtensionsManagerWidget.h"
 #include "qSlicerExtensionsManagerModel.h"
@@ -47,6 +51,28 @@ void qSlicerExtensionsManagerWidgetPrivate::init()
   Q_Q(qSlicerExtensionsManagerWidget);
 
   this->setupUi(q);
+
+  // Back and forward buttons
+  QWidget * actionsWidget = new QWidget;
+  QHBoxLayout * hLayout = new QHBoxLayout(actionsWidget);
+  hLayout->setContentsMargins(0, 0, 0, 0);
+  QToolButton * backButton = new QToolButton;
+  backButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Back));
+  hLayout->addWidget(backButton);
+  QToolButton * forwardButton = new QToolButton;
+  forwardButton->setDefaultAction(this->ExtensionsInstallWidget->webView()->pageAction(QWebPage::Forward));
+  hLayout->addWidget(forwardButton);
+
+  int size = this->tabWidget->height();
+  backButton->setIconSize(QSize(size, size));
+  forwardButton->setIconSize(QSize(size, size));
+
+  actionsWidget->setEnabled(false);
+
+  this->tabWidget->setCornerWidget(actionsWidget, Qt::TopLeftCorner);
+
+  QObject::connect(this->tabWidget, SIGNAL(currentChanged(int)),
+                   q, SLOT(onCurrentTabChanged(int)));
 }
 
 // --------------------------------------------------------------------------
@@ -127,4 +153,12 @@ void qSlicerExtensionsManagerWidget::onModelUpdated()
     {
     d->tabWidget->setTabEnabled(manageExtensionsTabIndex, true);
     }
+}
+
+// --------------------------------------------------------------------------
+void qSlicerExtensionsManagerWidget::onCurrentTabChanged(int index)
+{
+  Q_D(qSlicerExtensionsManagerWidget);
+  d->tabWidget->cornerWidget(Qt::TopLeftCorner)->setEnabled(
+        d->tabWidget->widget(index) == d->InstallExtensionsTab);
 }
