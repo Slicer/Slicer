@@ -110,7 +110,8 @@ set_property(TEST ${testname} PROPERTY LABELS ${CLP})
 
 
 #-----------------------------------------------------------------------------
-message(WARNING "warning: Test named 'itkTestMainExtendedScalarTest' associated with ResampleDTI should be reviewed !")
+# See http://www.na-mic.org/Bug/view.php?id=3341
+# message(WARNING "warning: Test named 'itkTestMainExtendedScalarTest' associated with ResampleDTI should be reviewed !")
 # TODO The baseline associated with each command line module has been moved within
 #      the Data/Baseline subdirectory of each module. For that reason, ResampleDTI shouldn't
 #      reference the baseline 'AddTest_DOUBLE.mha' as input data.
