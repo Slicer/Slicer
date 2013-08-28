@@ -92,8 +92,6 @@ void qSlicerWebWidgetPrivate::init()
 
   this->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOn);
 
-  this->WebView->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
-
   QObject::connect(this->WebView->page(), SIGNAL(linkClicked(QUrl)),
                    q, SLOT(onLinkClicked(QUrl)));
 
@@ -218,10 +216,7 @@ void qSlicerWebWidget::onLoadFinished(bool ok)
 // --------------------------------------------------------------------------
 void qSlicerWebWidget::onLinkClicked(const QUrl& url)
 {
-  if(!QDesktopServices::openUrl(url))
-    {
-    qWarning() << "Failed to open url:" << url;
-    }
+  this->webView()->setUrl(url);
 }
 
 // --------------------------------------------------------------------------

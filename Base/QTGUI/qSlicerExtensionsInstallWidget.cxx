@@ -106,6 +106,7 @@ qSlicerExtensionsInstallWidget::qSlicerExtensionsInstallWidget(QWidget* _parent)
   : Superclass(_parent)
   , d_ptr(new qSlicerExtensionsInstallWidgetPrivate(*this))
 {
+  this->webView()->page()->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
 }
 
 // --------------------------------------------------------------------------
