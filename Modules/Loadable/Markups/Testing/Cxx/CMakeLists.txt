@@ -50,5 +50,5 @@ SIMPLE_TEST( vtkSlicerMarkupsLogicTest2 )
 SIMPLE_TEST( vtkSlicerMarkupsLogicTest3 )
 
 # test Slicer4 annotation fiducials in a mrml file
-# TODO: enable this after final cut over
-# SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )
+# TODO: remove this after annotation fiducials have been removed
+SIMPLE_TEST( vtkMarkupsAnnotationSceneTest ${INPUT}/AnnotationTest/AnnotationFiducialsTest.mrml )
