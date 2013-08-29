@@ -152,7 +152,7 @@ bool qSlicerDirectoryListView::hasDirectory(const QString& path)const
   QString absolutePath = QFileInfo(path).absoluteFilePath();
   QModelIndexList foundIndexes = d->DirectoryListModel.match(
         d->DirectoryListModel.index(0, 0), qSlicerDirectoryListViewPrivate::AbsolutePathRole,
-        QVariant(absolutePath));
+        QVariant(absolutePath), /* hits = */ 1, Qt::MatchExactly | Qt::MatchWrap);
   Q_ASSERT(foundIndexes.size() < 2);
   return (foundIndexes.size() != 0);
 }

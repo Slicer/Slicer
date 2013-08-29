@@ -36,6 +36,10 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
 
   QSignalSpy spy(&widget, SIGNAL(directoryListChanged()));
 
+  //
+  // Test directoryList() / setDirectoryList()
+  //
+
   if (widget.directoryList().count() != 0)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with directoryList() method !" << std::endl;
@@ -86,6 +90,30 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
+  //
+  // Test hasDirectory()
+  //
+
+  bool expectedAsBool = false;
+  bool currentAsBool = widget.hasDirectory("/should-not-exist");
+  if (currentAsBool != expectedAsBool)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with hasDirectory() method !\n"
+              << " currentAsBool:" << currentAsBool << "\n"
+              << " expectedAsBool:" << expectedAsBool << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expectedAsBool = true;
+  currentAsBool = widget.hasDirectory(QDir::current().absolutePath());
+  if (currentAsBool != expectedAsBool)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with hasDirectory() method !\n"
+              << " currentAsBool:" << currentAsBool << "\n"
+              << " expectedAsBool:" << expectedAsBool << std::endl;
+    return EXIT_FAILURE;
+    }
+
   widget.removeDirectory(".");
 
   if (spy.count() != 2)
@@ -97,6 +125,16 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
   if (widget.directoryList().count() != 0)
     {
     std::cerr << "Line " << __LINE__ << " - Problem with removeDirectory() method !" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  expectedAsBool = false;
+  currentAsBool = widget.hasDirectory(QDir::current().absolutePath());
+  if (currentAsBool != expectedAsBool)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with hasDirectory() method !\n"
+              << " currentAsBool:" << currentAsBool << "\n"
+              << " expectedAsBool:" << expectedAsBool << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -141,10 +179,46 @@ int qSlicerDirectoryListViewTest1(int argc, char * argv[] )
     std::cerr << "Line " << __LINE__ << " - Problem with selectAllDirectories/selectedDirectoryList methods !\n"
               << " current[0]:" << qPrintable(current) << "\n"
               << " expected[0]:" << qPrintable(expected) << std::endl;
+    }
+
+  paths.clear();
+
+  //
+  // Test addDirectory()
+  //
+
+  QDir currentDirParent = QDir::current();
+  currentDirParent.cdUp();
+
+  widget.addDirectory(".");
+  widget.addDirectory(QDir::tempPath());
+  widget.addDirectory(currentDirParent.absolutePath());
+
+  if (spy.count() != 6)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with addDirectory() method !" << std::endl;
     return EXIT_FAILURE;
     }
 
-  
+  QStringList currentAsList = widget.directoryList();
+  QStringList expectedAsList = QStringList() << "." << QDir::tempPath() << currentDirParent.absolutePath();
+  if (currentAsList != expectedAsList)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with addDirectory method !\n"
+              << " currentAsList:" << qPrintable(currentAsList.join(" ")) << "\n"
+              << " expectedAsList:" << qPrintable(expectedAsList.join(" ")) << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  currentAsList = widget.directoryList(true);
+  expectedAsList = QStringList() << QDir::current().absolutePath() << QDir::tempPath() << currentDirParent.absolutePath();
+  if (currentAsList != expectedAsList)
+    {
+    std::cerr << "Line " << __LINE__ << " - Problem with addDirectory method !\n"
+              << " currentAsList:" << qPrintable(currentAsList.join(" ")) << "\n"
+              << " expectedAsList:" << qPrintable(expectedAsList.join(" ")) << std::endl;
+    return EXIT_FAILURE;
+    }
+
   return EXIT_SUCCESS;
 }
-
