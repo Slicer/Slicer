@@ -201,6 +201,7 @@ class EditorWidget:
     # only if showing volumes
     if self.showVolumesFrame:
       self.volumes = ctk.ctkCollapsibleButton(self.parent)
+      self.volumes.objectName = 'VolumeCollapsibleButton'
       self.volumes.setLayout(qt.QVBoxLayout())
       self.volumes.setText("Create and Select Label Maps")
       self.layout.addWidget(self.volumes)
@@ -223,6 +224,7 @@ class EditorWidget:
 
     # create collapsible button for entire "edit label maps" section
     self.editLabelMapsFrame = ctk.ctkCollapsibleButton(self.parent)
+    self.editLabelMapsFrame.objectName = 'EditLabelMapsFrame'
     self.editLabelMapsFrame.setLayout(qt.QVBoxLayout())
     self.editLabelMapsFrame.setText("Edit Selected Label Map")
     self.layout.addWidget(self.editLabelMapsFrame)
@@ -230,6 +232,7 @@ class EditorWidget:
 
     # create frame holding both the effect options and edit box:
     self.effectsToolsFrame = qt.QFrame(self.editLabelMapsFrame)
+    self.effectsToolsFrame.objectName = 'EffectsToolsFrame'
     self.effectsToolsFrame.setLayout(qt.QHBoxLayout())
     self.editLabelMapsFrame.layout().addStretch(1)
     self.editLabelMapsFrame.layout().addWidget(self.effectsToolsFrame)
@@ -262,6 +265,7 @@ class EditorWidget:
     if not self.effectsToolsFrame:
       return
     self.effectOptionsFrame = qt.QFrame(self.editLabelMapsFrame)
+    self.effectOptionsFrame.objectName = 'EffectOptionsFrame'
     self.effectOptionsFrame.setLayout(qt.QVBoxLayout())
     self.effectOptionsFrame.setMinimumWidth(150)
     #self.effectOptionsFrame.setStyleSheet('border: 2px solid black')
@@ -270,6 +274,7 @@ class EditorWidget:
   # assumes self.effectsToolsFrame, its layout, and effectOptionsFrame has already been created
   def createEditBox(self):
     self.editBoxFrame = qt.QFrame(self.effectsToolsFrame)
+    self.editBoxFrame.objectName = 'EditBoxFrame'
     self.editBoxFrame.setLayout(qt.QVBoxLayout())
     self.effectsToolsFrame.layout().addWidget(self.editBoxFrame)
     self.toolsBox = EditorLib.EditBox(self.editBoxFrame, optionsFrame=self.effectOptionsFrame)

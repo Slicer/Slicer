@@ -92,6 +92,7 @@ class WatershedFromMarkerEffectOptions(Effect.EffectOptions):
 
 
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply the extension operation")
 
     self.frame.layout().addWidget(self.apply)

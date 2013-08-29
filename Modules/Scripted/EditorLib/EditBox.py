@@ -72,6 +72,7 @@ class EditBox(object):
     # frame that holds widgets specific for each effect
     if not optionsFrame:
       self.optionsFrame = qt.QFrame(self.parent)
+      self.optionsFrame.objectName = 'OptionsFrame'
     else:
       self.optionsFrame = optionsFrame
 
@@ -180,6 +181,7 @@ class EditBox(object):
     rowFrame = qt.QFrame(self.mainFrame)
     self.mainFrame.layout().addWidget(rowFrame)
     self.rowFrames.append(rowFrame)
+    rowFrame.objectName = "RowFrame%s" % len(self.rowFrames)
     hbox = qt.QHBoxLayout()
     rowFrame.setLayout( hbox )
 
@@ -192,7 +194,9 @@ class EditBox(object):
       if (effect in self.effects):
         i = self.icons[effect] = qt.QIcon(self.effectIconFiles[effect])
         a = self.actions[effect] = qt.QAction(i, '', rowFrame)
+        a.objectName = effect + 'Action'
         self.effectButtons[effect] = b = self.buttons[effect] = qt.QToolButton()
+        b.objectName = effect + 'ToolButton'
         b.setDefaultAction(a)
         b.setToolTip(effect)
         if EditBox.displayNames.has_key(effect):
@@ -212,6 +216,7 @@ class EditBox(object):
     self.findEffects()
 
     self.mainFrame = qt.QFrame(self.parent)
+    self.mainFrame.objectName = 'MainFrame'
     vbox = qt.QVBoxLayout()
     self.mainFrame.setLayout(vbox)
     self.parent.layout().addWidget(self.mainFrame)

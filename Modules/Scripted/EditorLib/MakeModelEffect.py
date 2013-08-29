@@ -73,6 +73,7 @@ class MakeModelEffectOptions(Effect.EffectOptions):
     self.widgets.append(self.modelName)
 
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Build a model for the current label value of the label map being edited in the Red slice window.  Model will be created in the background." )
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)

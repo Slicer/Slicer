@@ -52,6 +52,7 @@ class ChangeLabelEffectOptions(Effect.EffectOptions):
     self.outputColor.colorSpin.setToolTip("Set the new label value")
 
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply current threshold settings to the label map.")
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)

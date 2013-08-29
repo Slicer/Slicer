@@ -36,6 +36,7 @@ class EditorEffectTemplateOptions(EditorLib.LabelEffectOptions):
   def create(self):
     super(EditorEffectTemplateOptions,self).create()
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply the extension operation")
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)

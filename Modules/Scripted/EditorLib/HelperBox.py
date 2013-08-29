@@ -629,6 +629,7 @@ class HelperBox(object):
     # the master volume selector
     #
     self.masterSelectorFrame = qt.QFrame(self.parent)
+    self.masterSelectorFrame.objectName = 'MasterVolumeFrame'
     self.masterSelectorFrame.setLayout(qt.QHBoxLayout())
     self.masterFrame.layout().addWidget(self.masterSelectorFrame)
 
@@ -637,6 +638,7 @@ class HelperBox(object):
     self.masterSelectorFrame.layout().addWidget(self.masterSelectorLabel)
 
     self.masterSelector = slicer.qMRMLNodeComboBox(self.masterSelectorFrame)
+    self.masterSelector.objectName = 'MasterVolumeNodeSelector'
     # TODO
     self.masterSelector.nodeTypes = ( ("vtkMRMLScalarVolumeNode"), "" )
     self.masterSelector.addAttribute( "vtkMRMLScalarVolumeNode", "LabelMap", 0 )
@@ -657,6 +659,7 @@ class HelperBox(object):
     # merge label name and set button
     #
     self.mergeFrame = qt.QFrame(self.masterFrame)
+    self.mergeFrame.objectName = 'MergeVolumeFrame'
     self.mergeFrame.setLayout(qt.QHBoxLayout())
     self.masterFrame.layout().addWidget(self.mergeFrame)
 
@@ -670,6 +673,7 @@ class HelperBox(object):
     self.mergeFrame.layout().addWidget(self.mergeName)
 
     self.setMergeButton = qt.QPushButton("Set...", self.mergeFrame)
+    self.setMergeButton.objectName = 'MergeVolumeButton'
     self.setMergeButton.setToolTip( "Set the merge volume to use with this master." )
     self.mergeFrame.layout().addWidget(self.setMergeButton)
 
@@ -679,6 +683,7 @@ class HelperBox(object):
     # 
 
     self.structuresFrame = ctk.ctkCollapsibleGroupBox(self.masterFrame)
+    self.structuresFrame.objectName = 'PerStructureVolumesFrame'
     self.structuresFrame.title = "Per-Structure Volumes"
     self.structuresFrame.collapsed = True
     self.structuresFrame.setLayout(qt.QVBoxLayout())
@@ -687,59 +692,69 @@ class HelperBox(object):
     # buttons frame 
 
     self.structureButtonsFrame = qt.QFrame(self.structuresFrame)
+    self.structureButtonsFrame.objectName = 'ButtonsFrame'
     self.structureButtonsFrame.setLayout(qt.QHBoxLayout())
     self.structuresFrame.layout().addWidget(self.structureButtonsFrame)
 
     # add button
 
     self.addStructureButton = qt.QPushButton("Add Structure", self.structureButtonsFrame)
+    self.addStructureButton.objectName = 'AddStructureButton'
     self.addStructureButton.setToolTip( "Add a label volume for a structure to edit" )
     self.structureButtonsFrame.layout().addWidget(self.addStructureButton)
 
     # split button
 
     self.splitButton = qt.QPushButton("Split Merge Volume", self.structuresFrame)
+    self.splitButton.objectName = 'SplitStructureButton'
     self.splitButton.setToolTip( "Split distinct labels from merge volume into new volumes" )
     self.structureButtonsFrame.layout().addWidget(self.splitButton)
 
     # structures view
 
     self.structuresView = qt.QTreeView()
+    self.structuresView.objectName = 'StructuresView'
     self.structuresView.sortingEnabled = True
     self.structuresFrame.layout().addWidget(self.structuresView)
 
     # all buttons frame 
 
     self.allButtonsFrame = qt.QFrame(self.structuresFrame)
+    self.allButtonsFrame.objectName = 'AllButtonsFrameButton'
     self.allButtonsFrame.setLayout(qt.QHBoxLayout())
     self.structuresFrame.layout().addWidget(self.allButtonsFrame)
 
     # delete structures button
 
     self.deleteStructuresButton = qt.QPushButton("Delete Structures", self.allButtonsFrame)
+    self.deleteStructuresButton.objectName = 'DeleteStructureButton'
     self.deleteStructuresButton.setToolTip( "Delete all the structure volumes from the scene.\n\nNote: to delete individual structure volumes, use the Data Module." )
     self.allButtonsFrame.layout().addWidget(self.deleteStructuresButton)
 
     # merge button
 
     self.mergeButton = qt.QPushButton("Merge All", self.allButtonsFrame)
+    self.mergeButton.objectName = 'MergeAllStructuresButton'
     self.mergeButton.setToolTip( "Merge all structures into Merge Volume" )
     self.allButtonsFrame.layout().addWidget(self.mergeButton)
 
     # merge and build button
 
     self.mergeAndBuildButton = qt.QPushButton("Merge And Build", self.allButtonsFrame)
+    self.mergeAndBuildButton.objectName = 'MergeStructuresAndBuildModelsButton'
     self.mergeAndBuildButton.setToolTip( "Merge all structures into Merge Volume and build models from all structures")
     self.allButtonsFrame.layout().addWidget(self.mergeAndBuildButton)
     # options frame
 
     self.optionsFrame = qt.QFrame(self.structuresFrame)
+    self.optionsFrame.objectName = 'OptionsFrame'
     self.optionsFrame.setLayout(qt.QHBoxLayout())
     self.structuresFrame.layout().addWidget(self.optionsFrame)
 
     # replace models button
 
     self.replaceModels = qt.QCheckBox("Replace Models", self.optionsFrame)
+    self.replaceModels.objectName = 'ReplaceModelsCheckBox'
     self.replaceModels.setToolTip( "Replace any existing models when building" )
     self.replaceModels.setChecked(1)
     self.optionsFrame.layout().addWidget(self.replaceModels)
@@ -773,13 +788,14 @@ class HelperBox(object):
 
     if not self.colorSelect:
       self.colorSelect = qt.QDialog(slicer.util.mainWindow())
+      self.colorSelect.objectName = 'EditorColorSelectDialog'
       self.colorSelect.setLayout( qt.QVBoxLayout() )
 
       self.colorPromptLabel = qt.QLabel()
       self.colorSelect.layout().addWidget( self.colorPromptLabel )
 
-
       self.colorSelectorFrame = qt.QFrame()
+      self.colorSelectorFrame.objectName = 'ColorSelectorFrame'
       self.colorSelectorFrame.setLayout( qt.QHBoxLayout() )
       self.colorSelect.layout().addWidget( self.colorSelectorFrame )
 
@@ -808,14 +824,17 @@ class HelperBox(object):
         self.colorSelector.setCurrentNode( defaultNode )
 
       self.colorButtonFrame = qt.QFrame()
+      self.colorButtonFrame.objectName = 'ColorButtonFrame'
       self.colorButtonFrame.setLayout( qt.QHBoxLayout() )
       self.colorSelect.layout().addWidget( self.colorButtonFrame )
 
       self.colorDialogApply = qt.QPushButton("Apply", self.colorButtonFrame)
+      self.colorDialogApply.objectName = 'ColorDialogApply'
       self.colorDialogApply.setToolTip( "Use currently selected color node." )
       self.colorButtonFrame.layout().addWidget(self.colorDialogApply)
 
       self.colorDialogCancel = qt.QPushButton("Cancel", self.colorButtonFrame)
+      self.colorDialogCancel.objectName = 'ColorDialogCancel'
       self.colorDialogCancel.setToolTip( "Cancel current operation." )
       self.colorButtonFrame.layout().addWidget(self.colorDialogCancel)
 

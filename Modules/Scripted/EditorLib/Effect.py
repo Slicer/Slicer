@@ -65,11 +65,13 @@ class EffectOptions(EditOptions):
 
     # interface for the scope options
     self.scopeFrame = qt.QFrame(self.frame)
+    self.scopeFrame.objectName = 'ScopeFrame'
     self.scopeFrame.setLayout(qt.QHBoxLayout())
     self.frame.layout().addWidget(self.scopeFrame)
     self.scopeLabel = qt.QLabel('Scope:')
     self.scopeFrame.layout().addWidget(self.scopeLabel)
     self.scopeComboBox = qt.QComboBox(self.scopeFrame)
+    self.scopeComboBox.objectName = 'ScopeComboBox'
     for scopeOption in self.scopeOptions:
       self.scopeComboBox.addItem(scopeOption)
     self.scopeComboBox.toolTip = "Choose the scope for applying this tool.  Scope of 'visible' refers to contents of Red slice by default (or slice clicked in)"

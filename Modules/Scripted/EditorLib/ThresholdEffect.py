@@ -60,6 +60,7 @@ class ThresholdEffectOptions(Effect.EffectOptions):
     self.widgets.append(self.useForPainting)
 
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply current threshold settings to the label map.")
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)

@@ -36,8 +36,10 @@ class HelpButton(object):
   def __init__(self, parent, helpString = ""):
     self.helpString = helpString
     self.message = qt.QMessageBox()
+    self.message.objectName = 'EditorHelpMessageBox'
     self.message.setWindowTitle("Editor Help")
     self.button = qt.QPushButton("?", parent)
+    self.button.objectName = 'EditorHelpButton'
     self.button.setMaximumWidth(15)
     self.button.setToolTip("Bring up a help window")
     parent.layout().addWidget(self.button)
@@ -120,6 +122,7 @@ class EditOptions(object):
       self.parent.setMRMLScene(slicer.mrmlScene)
       self.parent.show()
     self.frame = qt.QFrame(self.parent)
+    self.frame.objectName = 'EditOptionsFrame'
     self.frame.setLayout(qt.QVBoxLayout())
     self.parent.layout().addWidget(self.frame)
     self.widgets.append(self.frame)

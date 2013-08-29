@@ -45,6 +45,7 @@ class GrowCutEffectOptions(Effect.EffectOptions):
     self.frame.layout().addWidget(self.helpLabel)
 
     self.apply = qt.QPushButton("Apply", self.frame)
+    self.apply.objectName = self.__class__.__name__ + 'Apply'
     self.apply.setToolTip("Apply to run segmentation.\nCreates a new label volume using the current volume as input")
     self.frame.layout().addWidget(self.apply)
     self.widgets.append(self.apply)
