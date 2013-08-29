@@ -48,6 +48,7 @@ class EditColor(object):
 
   def create(self):
     self.frame = qt.QFrame(self.parent)
+    self.frame.objectName = 'EditColorFrame'
     self.frame.setLayout(qt.QHBoxLayout())
     self.parent.layout().addWidget(self.frame)
 
@@ -60,13 +61,14 @@ class EditColor(object):
     self.frame.layout().addWidget(self.labelName)
 
     self.colorSpin = qt.QSpinBox(self.frame)
+    self.colorSpin.objectName = 'ColorSpinBox'
     self.colorSpin.setMaximum( 64000)
     self.colorSpin.setValue( self.editUtil.getLabel() )
     self.colorSpin.setToolTip( "Click colored patch at right to bring up color selection pop up window.  Use the 'c' key to bring up color popup menu." )
     self.frame.layout().addWidget(self.colorSpin)
 
     self.colorPatch = qt.QPushButton(self.frame)
-    self.colorPatch.setObjectName('colorPatch')
+    self.colorPatch.setObjectName('ColorPatchButton')
     self.frame.layout().addWidget(self.colorPatch)
 
     self.updateParameterNode(slicer.mrmlScene, vtk.vtkCommand.ModifiedEvent)
