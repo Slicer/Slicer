@@ -222,6 +222,8 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& newPyth
     qCritical() << "Could not access slicer module";
     }
 
+  this->setObjectName(classNameToLoad);
+
   return true;
 }
 
