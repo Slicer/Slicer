@@ -107,13 +107,13 @@ int vtkSlicerMarkupsLogicTest3(int , char * [] )
     std::cout << "Converted annotation fiducials to " << numMarkupsFiducials
               << " markups fiducial lists" << std::endl;
     }
-  vtkIndent indent;
-  for (int n = 0; n < numMarkupsFiducials; ++n)
-    {
-    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
+//  vtkIndent indent;
+//  for (int n = 0; n < numMarkupsFiducials; ++n)
+//    {
+//    vtkMRMLNode *mrmlNode = scene->GetNthNodeByClass(n, "vtkMRMLMarkupsFiducialNode");
 //    std::cout << "\nConverted Markups node " << n << ":" << std::endl;
 //    mrmlNode->PrintSelf(std::cout, indent);
-    }
+//    }
 
   // clean up before testing
   applicationLogic->SetMRMLScene(NULL);
