@@ -170,16 +170,23 @@ class MultiVolumeImporterWidget:
     faAttr = self.__fa.text
 
     # each frame is saved as a separate volume
-    for f in os.listdir(self.__fDialog.directory):
+    # first filter valid file names and sort alphabetically
+    frames = []
+    inputDir = self.__fDialog.directory
+    for f in os.listdir(inputDir):
       if not f.startswith('.'):
-        fileNames.append(f)
-        frameFileListAttr += f+','
+        fileName = inputDir+'/'+f
+        fileNames.append(fileName)
     fileNames.sort()
 
-    frameFileListAttr = frameFileListAttr[:-1]
+    for fileName in fileNames:
+      (s,f) = self.readFrame(fileName)
+      if s:
+        frames.append(f)
 
-    frameFolder = self.__fDialog.directory
-    nFrames = len(fileNames)
+    nFrames = len(frames)
+    print('Successfully read '+str(nFrames)+' frames')
+
     volumeLabels.SetNumberOfTuples(nFrames)
     volumeLabels.SetNumberOfComponents(1)
     volumeLabels.Allocate(nFrames)
@@ -190,14 +197,11 @@ class MultiVolumeImporterWidget:
     frameLabelsAttr = frameLabelsAttr[:-1]
 
     # read the first frame to get the extent
-    fullName = frameFolder+'/'+fileNames[0]
-    volumesLogic = slicer.modules.volumes.logic()
-    frame = self.readFrame(fullName)
+    frame = frames[0]
     frameImage = frame.GetImageData()
     frameExtent = frameImage.GetExtent()
     frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
 
-    nFrames = len(fileNames)
     mvImage = vtk.vtkImageData()
     mvImage.SetExtent(frameExtent)
     mvImage.SetNumberOfScalarComponents(nFrames)
@@ -212,10 +216,8 @@ class MultiVolumeImporterWidget:
     mvNode.SetIJKToRASMatrix(mat)
 
     for frameId in range(0,nFrames):
-      fullName = frameFolder+'/'+fileNames[frameId]
-      print("Processing frame %d: %s" % (frameId, fullName))
-
-      frame = self.readFrame(fullName)
+      # TODO: check consistent size and orientation!
+      frame = frames[frameId]
       frameImage = frame.GetImageData()
       frameImageArray = vtk.util.numpy_support.vtk_to_numpy(frameImage.GetPointData().GetScalars())
       mvImageArray.T[frameId] = frameImageArray
@@ -255,8 +257,8 @@ class MultiVolumeImporterWidget:
     sNode.SetFileName(file)
     sNode.SetSingleFile(1)
     frame = slicer.vtkMRMLScalarVolumeNode()
-    sNode.ReadData(frame)
-    return frame
+    success = sNode.ReadData(frame)
+    return (success,frame)
 
   # leave no trace of the temporary nodes
   def annihilateScalarNode(self, node):
