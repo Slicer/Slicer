@@ -425,6 +425,8 @@ void qSlicerAppMainWindowPrivate::readSettings()
   Q_Q(qSlicerAppMainWindow);
   QSettings settings;
   settings.beginGroup("MainWindow");
+  q->setToolButtonStyle(settings.value("ShowToolButtonText").toBool()
+                        ? Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
   bool restore = settings.value("RestoreGeometry", false).toBool();
   if (restore)
     {
