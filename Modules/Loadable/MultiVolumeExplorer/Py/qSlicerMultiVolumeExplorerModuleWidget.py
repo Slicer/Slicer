@@ -152,13 +152,37 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.iCharting.setChecked(True)
     self.iCharting.connect('toggled(bool)', self.onInteractiveChartingChanged)
 
+    groupLabel = qt.QLabel('Interactive plotting mode:')
+    self.iChartingMode = qt.QButtonGroup()
+    self.iChartingIntensity = qt.QRadioButton('Intensity')
+    #self.iChartingIntensity.tooltip = 'Plot range adjusted dynamically to the range over the time course for the selected pixel'
+    self.iChartingIntensityFixedAxes = qt.QRadioButton('Fixed range intensity')
+    #self.iChartingIntensityFixedAxes.tooltip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
+    self.iChartingPercent = qt.QRadioButton('Percent change')
+    #self.iChartingPercent.tooltip = 'Percent change relative to the average of the first N frames (parameter set below)'
+    self.iChartingIntensity.setChecked(1)
+
+    self.groupWidget = qt.QWidget()
+    self.groupLayout = qt.QFormLayout(self.groupWidget)
+    self.groupLayout.addRow(groupLabel)
+    self.groupLayout.addRow(self.iChartingIntensity)
+    self.groupLayout.addRow(self.iChartingIntensityFixedAxes)
+    self.groupLayout.addRow(self.iChartingPercent)
+
+    self.baselineFrames = qt.QSpinBox()
+    self.baselineFrames.minimum = 1
+    label = qt.QLabel('Number of baseline frames for percent change calculation:')
+    self.groupLayout.addRow(label,self.baselineFrames)
+
+    plotFrameLayout.addWidget(self.groupWidget,2,0)
+
     label = qt.QLabel("Use intensity range to fix axis extent")
     label.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
     self.__fixedAxesCheckbox = qt.QCheckBox()
     self.__fixedAxesCheckbox.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
     self.__fixedAxesCheckbox.checked = False
-    plotFrameLayout.addWidget(label, 2, 0)
-    plotFrameLayout.addWidget(self.__fixedAxesCheckbox, 2,1,1,2)
+    #plotFrameLayout.addWidget(label, 2, 0)
+    #plotFrameLayout.addWidget(self.__fixedAxesCheckbox, 2,1,1,2)
 
     # add chart container widget
     self.__chartView = ctk.ctkVTKChartView(w)
@@ -176,6 +200,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__chartTable.AddColumn(self.__yArray)
 
   def onLabelVolumeChanged(self):
+    print('onLabelVolumeChanged cvn = '+str(self.__cvn))
     # iterate over the label image and collect the IJK for each label element
     labelNode = self.__fSelector.currentNode()
     mvNode = self.__mvSelector.currentNode()
@@ -217,11 +242,27 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           arr.SetComponent(c, 1, mean/cnt)
           arr.SetComponent(c, 2, 0)
 
+          print('Component '+str(c))
+
+          baselineAverageSignal = 0
+          if self.iChartingPercent.checked:
+            nBaselines = min(self.baselineFrames.value,nComponents)
+            for c in range(nBaselines):
+              baselineAverageSignal += arr.GetComponent(c,1)
+            baselineAverageSignal /= nBaselines
+            if baselineAverageSignal != 0:
+              for c in range(nComponents):
+                intensity = arr.GetComponent(c,1)
+                arr.SetComponent(c,1,(intensity/baselineAverageSignal-1)*100.)
+
+      print('End of loop')
+
       # setup color node
       colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
       colorNode = labelNode.GetDisplayNode().GetColorNode()
       lut = colorNode.GetLookupTable()
 
+      print('Color node setup')
       # add initialized data nodes to the chart
       self.__cn.ClearArrays()
       for k in labeledVoxels.keys():
@@ -234,7 +275,10 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         self.__cn.SetProperty(name, "color", colorStr)
 
         if self.__cvn == None:
+          print('Will init chart view node')
           self.InitChartViewNode()
+        else:
+          print('Chart view node: '+str(self.__cvn))
 
         self.__cvn.Modified()
 
@@ -373,6 +417,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       for l in range(nFrames):
         self.__mvLabels[l] = float(self.__mvLabels[l])
 
+      self.baselineFrames.maximum = nFrames
+
     else:
       self.ctrlFrame.enabled = False
       self.plotFrame.enabled = False
@@ -486,22 +532,40 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           # get the vector of values at IJK
           values = ''
           extent = mvImage.GetExtent()
+          validPixel = True
           for c in range(nComponents):
             if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<=extent[1] and ijk[1]<=extent[3] and ijk[2]<=extent[5]:
               val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
               self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
               self.__chartTable.SetValue(c, 1, val)
             else:
+              validPixel = False
               break
+          baselineAverageSignal = 0
+          if validPixel and self.iChartingPercent.checked:
+            # check if percent plotting was requested and recalculate
+            nBaselines = min(self.baselineFrames.value,nComponents)
+            for c in range(nBaselines):
+              baselineAverageSignal += mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+            baselineAverageSignal /= nBaselines
+            if baselineAverageSignal != 0:
+              for c in range(nComponents):
+                intensity = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+                self.__chartTable.SetValue(c,1,(intensity/baselineAverageSignal-1)*100.)
 
           self.__chart.RemovePlot(0)
           self.__chart.RemovePlot(0)
-          self.__chart.GetAxis(0).SetTitle('signal intensity')
+
+          if self.iChartingPercent.checked and baselineAverageSignal != 0:
+            self.__chart.GetAxis(0).SetTitle('percent change')
+          else:
+            self.__chart.GetAxis(0).SetTitle('signal intensity')
+
           tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
           units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
           xTitle = tag+', '+units
           self.__chart.GetAxis(1).SetTitle(xTitle)
-          if self.__fixedAxesCheckbox.checked == True:
+          if self.iChartingIntensityFixedAxes.checked == True:
             self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
             self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
           else:
@@ -512,6 +576,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           self.__chart.AddPlot(0)
 
   def InitChartViewNode(self):
+    print('Initializing chart view node')
     if self.__cvn == None:
       print("No chart view nodes found, switching to quantiative layout")
       lm = slicer.app.layoutManager()
