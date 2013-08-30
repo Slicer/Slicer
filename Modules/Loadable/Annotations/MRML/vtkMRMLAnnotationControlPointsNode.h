@@ -1,8 +1,8 @@
 // .NAME vtkMRMLAnnotationControlPointsNode - MRML node to represent a fiber bundle from tractography in DTI data.
 // .SECTION Description
 // Annotation nodes contains control points, internally represented as vtkPolyData.
-// A Annotation node contains many control points  and forms the smallest logical unit of tractography 
-// that MRML will manage/read/write. Each control point has accompanying data.  
+// A Annotation node contains many control points  and forms the smallest logical unit of tractography
+// that MRML will manage/read/write. Each control point has accompanying data.
 // Visualization parameters for these nodes are controlled by the vtkMRMLAnnotationPointDisplayNode class.
 //
 
@@ -22,7 +22,7 @@ public:
 
   // void PrintSelf(ostream& os, vtkIndent indent);
   // Description:
-  // Just prints short summary 
+  // Just prints short summary
   virtual void PrintAnnotationInfo(ostream& os, vtkIndent indent, int titleFlag = 1);
 
   //--------------------------------------------------------------------------
@@ -42,9 +42,13 @@ public:
   // Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// Write this node's information to a string for passing to a CLI, write
-  /// out the prefix before each datum. Only implemented for RAS, LPS coordinate systems.
-  virtual void WriteCLI(std::ostringstream& ss, std::string prefix, int coordinateSystem = 0);
+  /// Write this node's information to a vector of strings for passing to a CLI,
+  /// precede each datum with the prefix if not an empty string
+  /// coordinateSystemFlag = 0 for RAS, 1 for LPS
+  /// multipleFlag = 1 for the whole list, 1 for the first point
+  virtual void WriteCLI(std::vector<std::string>& commandLine,
+                        std::string prefix, int coordinateSystem = 0,
+                        int multipleFlag = 1);
 
   // Description:
   // Copy the node's attributes to this object
@@ -54,8 +58,8 @@ public:
 
   // Description:
   // alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
@@ -64,7 +68,7 @@ public:
       ControlPointModifiedEvent = 19010,
     };
 
-  virtual void Modified() 
+  virtual void Modified()
     {
     Superclass::Modified();
 
@@ -74,7 +78,7 @@ public:
       }
     }
 
-  /// 
+  ///
   /// Invokes any modified events that are 'pending', meaning they were generated
   /// while the DisableModifiedEvent flag was nonzero.
   /// Returns the old flag state.
@@ -93,7 +97,7 @@ public:
 
   // Description:
   // Create default storage node or NULL if does not have one
-  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();  
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   int  AddControlPoint(double newControl[3],int selectedFlag, int visibleFlag);
 
@@ -115,7 +119,7 @@ public:
 
   int GetNumberOfControlPoints();
 
-  enum 
+  enum
   {
     CP_SELECTED =  vtkMRMLAnnotationNode::NUM_TEXT_ATTRIBUTE_TYPES,
     CP_VISIBLE,
@@ -156,22 +160,22 @@ public:
   virtual void Initialize(vtkMRMLScene* mrmlScene);
 
 protected:
-  vtkMRMLAnnotationControlPointsNode(); 
+  vtkMRMLAnnotationControlPointsNode();
   ~vtkMRMLAnnotationControlPointsNode() { };
   vtkMRMLAnnotationControlPointsNode(const vtkMRMLAnnotationControlPointsNode&);
   void operator=(const vtkMRMLAnnotationControlPointsNode&);
 
   // Description:
-  // Create Poly data with substructures necessary for this class 
+  // Create Poly data with substructures necessary for this class
   void CreatePolyData();
 
   // Description:
   // Initializes control pointes as well as attributes
-  void ResetControlPoints(); 
+  void ResetControlPoints();
 
   // Description:
-  // Initializes all attributes 
-  void ResetControlPointsAttributesAll(); 
+  // Initializes all attributes
+  void ResetControlPointsAttributesAll();
 
   /// How the next annotation will be numbered in it's Text field
   int NumberingScheme;

@@ -45,7 +45,7 @@ class VTK_MRML_EXPORT vtkMRMLDisplayableNode : public vtkMRMLStorableNode
 public:
   vtkTypeMacro(vtkMRMLDisplayableNode,vtkMRMLStorableNode);
   void PrintSelf(ostream& os, vtkIndent indent);
-  
+
   //--------------------------------------------------------------------------
   /// MRMLNode methods
   //--------------------------------------------------------------------------
@@ -54,24 +54,29 @@ public:
 
   virtual const char* GetNodeTagName() = 0;
 
-  /// 
+  ///
   /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
-  
-  /// 
+
+  ///
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// Write this node's information to a string for passing to a CLI, precede
-  /// each datum with the prefix if not an empty string
-  // coordinateSystemFlag = 0 for RAS, 1 for LPS, 2 for IJK
-  virtual void WriteCLI(std::ostringstream& vtkNotUsed(ss), std::string vtkNotUsed(prefix), int vtkNotUsed(coordinateSystemFlag) = 0) {};
+  /// Write this node's information to a vector of strings for passing to a CLI.
+  /// If the prefix is not an empty string, it gets pushed onto the vector
+  /// of strings before the information.
+  /// coordinateSystemFlag = 0 for RAS, 1 for LPS, 2 for IJK
+  /// multipleFlag = 1 for the whole list, 0 for the first in the list
+  virtual void WriteCLI(std::vector<std::string>& vtkNotUsed(commandLine),
+                        std::string vtkNotUsed(prefix),
+                        int vtkNotUsed(coordinateSystemFlag) = 0,
+                        int vtkNotUsed(multipleFlag) = 1) {};
 
-  /// 
+  ///
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-  /// 
+  ///
   /// Convenience method that sets the first display node ID.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
   inline void SetAndObserveDisplayNodeID(const char *displayNodeID)
@@ -79,7 +84,7 @@ public:
     this->SetAndObserveNodeReferenceID(this->GetDisplayNodeReferenceRole(), displayNodeID);
   }
 
-  /// 
+  ///
   /// Convenience method that adds a display node ID at the end of the list.
   /// \sa SetAndObserverNthDisplayNodeID(int, const char*)
   inline void AddAndObserveDisplayNodeID(const char *displayNodeID)
@@ -102,7 +107,7 @@ public:
     this->RemoveAllNodeReferenceIDs(this->GetDisplayNodeReferenceRole());
   }
 
-  /// 
+  ///
   /// Set and observe the Nth display node ID in the list.
   /// If n is larger than the number of display nodes, the display node ID
   /// is added at the end of the list. If DisplayNodeID is 0, the node ID is
@@ -154,7 +159,7 @@ public:
     return this->GetNthDisplayNodeID(0);
   }
 
-  /// 
+  ///
   /// Get associated display MRML node. Can be 0 in temporary states; e.g. if
   /// the displayable node has no scene, or if the associated display is not
   /// yet into the scene.
@@ -181,12 +186,12 @@ public:
   /// const std::vector<vtkMRMLDisplayNode*>& GetDisplayNodes();
   /// \sa GetNumberOfDisplayNodes, GetNthDisplayNode
 
-  /// 
+  ///
   /// alternative method to propagate events generated in Display nodes
-  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/, 
-                                   unsigned long /*event*/, 
+  virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
+                                   unsigned long /*event*/,
                                    void * /*callData*/ );
-  
+
   /// DisplayModifiedEvent is fired when:
   ///  - a new display node is observed
   ///  - a display node is not longer observed
@@ -229,7 +234,7 @@ public:
   virtual const char* GetDisplayNodeReferenceMRMLAttributeName();
 
   ///
-  /// Called when a node reference ID is added (list size increased). 
+  /// Called when a node reference ID is added (list size increased).
   virtual void OnNodeReferenceAdded(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceAdded(reference);
@@ -240,7 +245,7 @@ public:
   }
 
   ///
-  /// Called when a node reference ID is modified. 
+  /// Called when a node reference ID is modified.
   virtual void OnNodeReferenceModified(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceModified(reference);
@@ -248,7 +253,7 @@ public:
   }
 
   ///
-  /// Called after a node reference ID is removed (list size decreased). 
+  /// Called after a node reference ID is removed (list size decreased).
   virtual void OnNodeReferenceRemoved(vtkMRMLNodeReference *reference)
   {
     Superclass::OnNodeReferenceRemoved(reference);

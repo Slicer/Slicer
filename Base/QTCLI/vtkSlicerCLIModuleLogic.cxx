@@ -1409,10 +1409,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
             }
           else if (markups && markups->IsA("vtkMRMLMarkupsNode"))
             {
-            std::ostringstream ss;
-            markups->WriteCLI(ss, prefix+flag, coordinateSystemFlag);
-            vtkDebugMacro("WriteCL markups output = " << ss.str());
-            commandLineAsString.push_back(ss.str());
+            int multipleFlag = 1;
+            if ((*pit).GetMultiple() == "false")
+              {
+              multipleFlag = 0;
+              }
+            markups->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag, multipleFlag);
             }
           else if (points)
             {
@@ -1426,6 +1428,11 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
               numChildren = col->GetNumberOfItems();
               }
             vtkDebugMacro("Displayable hierarchy has " << numChildren << " child nodes");
+            int multipleFlag = 1;
+            if ((*pit).GetMultiple() == "false")
+              {
+              multipleFlag = 0;
+              }
             for (unsigned int c = 0; c < numChildren; c++)
               {
               // the hierarchy nodes have a sorting index that's respected by
@@ -1443,10 +1450,12 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void *clientdata)
                 if (displayableNode)
                   {
                   vtkDebugMacro("Found displayable node with id " << displayableNode->GetID());
-                  std::ostringstream ss;
-                  displayableNode->WriteCLI(ss, prefix+flag, coordinateSystemFlag);
-                  vtkDebugMacro("WriteCL output = " << ss.str());
-                  commandLineAsString.push_back(ss.str());
+                  displayableNode->WriteCLI(commandLineAsString, prefix+flag, coordinateSystemFlag);
+                  if (multipleFlag == 0)
+                    {
+                    // only write out the first child in the hierarchy
+                    break;
+                    }
                   }
                 }
               }

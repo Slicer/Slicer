@@ -94,9 +94,13 @@ public:
   /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  /// Write this node's information to a string for passing to a CLI, write
-  /// out the prefix before each markup
-  virtual void WriteCLI(std::ostringstream& ss, std::string prefix, int coordinateSystem = 0);
+  /// Write this node's information to a vector of strings for passing to a CLI,
+  /// precede each datum with the prefix if not an empty string
+  /// coordinateSystemFlag = 0 for RAS, 1 for LPS
+  /// multipleFlag = 1 for the whole list, 1 for the first selected markup
+  virtual void WriteCLI(std::vector<std::string>& commandLine,
+                        std::string prefix, int coordinateSystem = 0,
+                        int multipleFlag = 1);
 
   /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);

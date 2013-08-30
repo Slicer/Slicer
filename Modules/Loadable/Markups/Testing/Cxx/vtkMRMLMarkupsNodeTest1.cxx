@@ -460,15 +460,64 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
 
   // test WriteCLI
   vtkIndent indent;
-  std::cout << "Testing WriteCLI call on markups node:" << std::endl;
+  numMarkups = node1->GetNumberOfMarkups();
+  int expectedCommandLineSize = 0;
+  for (int m = 0; m < numMarkups; m++)
+    {
+    expectedCommandLineSize += node1->GetNumberOfPointsInNthMarkup(m);
+    // make sure all are selected so all will be passed
+    node1->SetNthMarkupSelected(m, true);
+    }
+  std::cout << "\nTesting WriteCLI call on markups node with "
+            << numMarkups<< " markups." << std::endl;
   node1->PrintSelf(std::cout, indent);
-  std::ostringstream ss;
+  std::vector<std::string> commandLine1;
   std::string prefix = "point";
-  node1->WriteCLI(ss, prefix, 0);
-  std::cout << "Wrote RAS points to CLI as:\n" << ss.str().c_str() << std::endl;
-  std::ostringstream ssLPS;
-  node1->WriteCLI(ssLPS, prefix, 1);
-  std::cout << "Wrote LPS points to CLI as:\n" << ssLPS.str().c_str() << std::endl;
+  node1->WriteCLI(commandLine1, prefix, 0);
+  std::cout << "Wrote RAS points to CLI as:" << std::endl;
+  for (unsigned int i = 0; i < commandLine1.size(); ++i)
+    {
+    std::cout << commandLine1[i].c_str() << std::endl;
+    }
+  if (commandLine1.size() != expectedCommandLineSize)
+    {
+    std::cerr << "Incorrect number of command line args, for "
+              << expectedCommandLineSize << " markup points, got "
+              << commandLine1.size() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::vector<std::string> commandLine2;
+  node1->WriteCLI(commandLine2, prefix, 1);
+  std::cout << "Wrote LPS points to CLI as:" << std::endl;;
+  for (unsigned int i = 0; i < commandLine2.size(); ++i)
+    {
+    std::cout << commandLine2[i].c_str() << std::endl;
+    }
+  if (commandLine2.size() != expectedCommandLineSize)
+    {
+    std::cerr << "Incorrect number of command line args, for "
+              << expectedCommandLineSize << " markup points, got "
+              << commandLine2.size() << std::endl;
+    return EXIT_FAILURE;
+    }
+  // single point test
+  std::vector<std::string> commandLine3;
+  int multipleFalseExpectedSize = node1->GetNumberOfPointsInNthMarkup(0);
+  node1->WriteCLI(commandLine3, prefix, 0, 0);
+  std::cout << "Wrote single RAS markup to CLI (command line size "
+            << commandLine3.size() << ") :" << std::endl;
+  for (unsigned int i = 0; i < commandLine3.size(); ++i)
+    {
+    std::cout << commandLine3[i].c_str() << std::endl;
+    }
+  if (commandLine3.size() != multipleFalseExpectedSize)
+    {
+    std::cerr << "Too many markups written (" << commandLine3.size()
+              << ") when multiple flag set to false was passed for " << numMarkups << " markups!"
+              << " Expected to see " << multipleFalseExpectedSize << " points." << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
 }

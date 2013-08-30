@@ -91,25 +91,41 @@ void vtkMRMLAnnotationControlPointsNode::WriteXML(ostream& of, int nIndent)
     }
 
   of << indent << " ctrlPtsNumberingScheme=\"" << this->NumberingScheme << "\"";
-  
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::string prefix, int coordinateSystem)
+void vtkMRMLAnnotationControlPointsNode::
+WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
+         int coordinateSystem, int multipleFlag)
 {
-  Superclass::WriteCLI(ss, prefix, coordinateSystem);
+  Superclass::WriteCLI(commandLine, prefix, coordinateSystem, multipleFlag);
+
+  // Ignoring multipleFlag, because by convention there is only one annotation
+  // per node, so if there's a 6 point ROI, it needs to have all of it's
+  // points written out. The multiple flag is managed at the CLI module logic
+  // level where it determines which child nodes in an annotation hierarchy
+  // are added to the command line
 
   if (this->GetPoints())
     {
     vtkPoints *points = this->GetPoints();
     int n = points->GetNumberOfPoints();
 
-    for (int i = 0; i < n; i++ ) 
+    if (multipleFlag == false &&
+        n > 1)
+      {
+      vtkWarningMacro("WriteCLI - Ignoring 'multipleFlag' and writing all "
+                      << n << " points for annotation " << this->GetID()
+                      << ". For more details see "
+                      << "http://www.na-mic.org/Bug/view.php?id=1910");
+      }
+    for (int i = 0; i < n; i++ )
       {
       double* ptr = points->GetPoint(i);
+      std::stringstream ss;
       if (prefix.compare("") != 0)
         {
-        ss << prefix << " ";
+        commandLine.push_back(prefix);
         }
       if (coordinateSystem == 0)
         {
@@ -125,10 +141,7 @@ void vtkMRMLAnnotationControlPointsNode::WriteCLI(std::ostringstream& ss, std::s
         lps[2] = ptr[2];
         ss << lps[0] << "," <<  lps[1] << "," <<  lps[2] ;
         }
-      if (i < n-1)
-        {
-          ss << " ";
-        }
+      commandLine.push_back(ss.str());
       }
     }
 }

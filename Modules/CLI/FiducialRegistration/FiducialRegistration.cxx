@@ -88,11 +88,11 @@ int main(int argc, char* argv[])
 {
   PARSE_ARGS;
 
+
   double invalidRMS = -1;
-  
-  
+
     // Checking conditions.
-  
+
   if( fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 ||
     fixedLandmarks.size() != movingLandmarks.size() )
   {
@@ -115,16 +115,16 @@ int main(int argc, char* argv[])
 
   if( transformType != "Translation" && fixedLandmarks.size() < 3 )
   {
-    std::cerr << "At least 3 fiducual points must be specified for Rigid or Similarity transforms"
-      << std::endl;
+    std::cerr << "At least 3 fixed landmark fiducial points must be specified "
+              << "for Rigid or Similarity transforms, have " << fixedLandmarks.size()
+              << std::endl;
     if (outputMessage == "")
     {
-      outputMessage = "At least 3 fiducual points must be specified for Rigid or Similarity transforms";
+      outputMessage = "At least 3 fixed landmark fiducial points must be specified for Rigid or Similarity transforms";
       rms = invalidRMS;
     }
   }
-  
-  
+
     // Return if conditions not met.
 
   if ( rms == invalidRMS )
@@ -132,16 +132,16 @@ int main(int argc, char* argv[])
     // Write out the return parameters in "name = value" form
     std::ofstream rts;
     rts.open(returnParameterFile.c_str() );
-    rts << "rms = " << rms << std::endl; 
+    rts << "rms = " << rms << std::endl;
     rts << "outputMessage = " << outputMessage <<std::endl;
     rts.close();
 
     return EXIT_SUCCESS;
   }
 
-  
+
   // only calculate if the above conditions hold
-  
+
   typedef  std::vector<itk::Point<double, 3> > PointList;
 
   PointList fixedPoints(fixedLandmarks.size() );
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 
 
     // Handle different transform types.
-  
+
   if( transformType == "Translation" )
   {
     // Clear out the computed rotaitoin if we only requested translation
@@ -214,38 +214,38 @@ int main(int argc, char* argv[])
     std::cerr << "Unsupported transform type: " << transformType << std::endl;
     return EXIT_FAILURE;
   }
-  
-  
+
+
     // Convert into an affine transform for saving to Slicer.
 
   typedef itk::AffineTransform<double, 3> AffineTransform;
   AffineTransform::Pointer fixedToMovingT = itk::AffineTransform<double, 3>::New();
-  
+
   fixedToMovingT->SetCenter( transform->GetCenter() );
   fixedToMovingT->SetMatrix( transform->GetMatrix() );
   fixedToMovingT->SetTranslation( transform->GetTranslation() );
-  
-  
+
+
     // Compute RMS error in the target coordinate system.
-  
+
   AffineTransform::Pointer movingToFixedT = AffineTransform::New();
   fixedToMovingT->GetInverse( movingToFixedT );
-  
+
   typedef InitializerType::LandmarkPointContainer LandmarkPointContainerType;
 
   typedef LandmarkPointContainerType::const_iterator PointsContainerConstIterator;
   PointsContainerConstIterator mitr = movingPoints.begin();
   PointsContainerConstIterator fitr = fixedPoints.begin();
-  
+
   SimilarityTransformType::OutputVectorType                 errortr;
   SimilarityTransformType::OutputVectorType::RealValueType  sum;
   InitializerType::LandmarkPointType                        movingPointInFixed;
   int                                                       counter;
-  
+
   sum = itk::NumericTraits< SimilarityTransformType::OutputVectorType::RealValueType >::ZeroValue();
   counter = itk::NumericTraits< int >::ZeroValue();
-  
-  while( mitr != movingPoints.end() ) 
+
+  while( mitr != movingPoints.end() )
   {
     movingPointInFixed = movingToFixedT->TransformPoint( *mitr );
     errortr = *fitr - movingPointInFixed;
@@ -256,23 +256,23 @@ int main(int argc, char* argv[])
   }
 
   rms = sqrt( sum / counter );
-  
-  
+
+
   itk::TransformFileWriter::Pointer twriter = itk::TransformFileWriter::New();
   twriter->SetInput( fixedToMovingT );
   twriter->SetFileName( saveTransform );
 
   twriter->Update();
 
-  
+
   outputMessage = "Success";
-  
-  
+
+
     // Write out the return parameters in "name = value" form
-  
+
   std::ofstream rts;
   rts.open(returnParameterFile.c_str() );
-  rts << "rms = " << rms << std::endl; 
+  rts << "rms = " << rms << std::endl;
   rts << "outputMessage = " << outputMessage <<std::endl;
   rts.close();
 
