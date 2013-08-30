@@ -44,6 +44,7 @@ public:
   qSlicerDiffusionTensorVolumeDisplayWidgetPrivate(qSlicerDiffusionTensorVolumeDisplayWidget& object);
   ~qSlicerDiffusionTensorVolumeDisplayWidgetPrivate();
   void init();
+  void glyphsOnSlicesDisplaySetEnabled(bool enabled);
   vtkMRMLDiffusionTensorVolumeNode* VolumeNode;
 };
 
@@ -78,6 +79,18 @@ void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::init()
                    q, SLOT(setYellowSliceVisible(bool)));
   QObject::connect(this->GreenSliceCheckBox, SIGNAL(toggled(bool)),
                    q, SLOT(setGreenSliceVisible(bool)));
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerDiffusionTensorVolumeDisplayWidgetPrivate::glyphsOnSlicesDisplaySetEnabled(bool enabled)
+{
+  this->GlyphsOnSlicesDisplayCollapsibleGroupBox->setEnabled(enabled);
+  if (!enabled)
+    {
+    this->RedSliceCheckBox->setCheckState(Qt::Unchecked);
+    this->YellowSliceCheckBox->setCheckState(Qt::Unchecked);
+    this->GreenSliceCheckBox->setCheckState(Qt::Unchecked);
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -223,10 +236,28 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::synchronizeSliceDisplayNodes()
 //----------------------------------------------------------------------------
 void qSlicerDiffusionTensorVolumeDisplayWidget::setVolumeScalarInvariant(int scalarInvariant)
 {
+  Q_D(qSlicerDiffusionTensorVolumeDisplayWidget);
   vtkMRMLDiffusionTensorVolumeDisplayNode* volumeDisplayNode = this->volumeDisplayNode();
   if (!volumeDisplayNode)
     {
     return;
+    }
+  /// As described in but #3323, having a scalar (like FA) as the invariant
+  /// mode with the glyphs visible leads to a crash.  This appears to be
+  /// deep in the pipeline for glyphing. (TODO: fix the pipeline).
+  /// So the solution (workaround) here is to turn off any visible slice
+  /// glyphs when changing the invarient to anything other than color by
+  /// orientation and to disable the glyping panel.
+  if (scalarInvariant ==  vtkMRMLDiffusionTensorDisplayPropertiesNode::ColorOrientation)
+    {
+    d->glyphsOnSlicesDisplaySetEnabled(true);
+    }
+  else
+    {
+    d->glyphsOnSlicesDisplaySetEnabled(false);
+    this->setRedSliceVisible(false);
+    this->setYellowSliceVisible(false);
+    this->setGreenSliceVisible(false);
     }
   volumeDisplayNode->SetScalarInvariant(scalarInvariant);
 }

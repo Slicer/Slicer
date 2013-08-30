@@ -43,7 +43,7 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleGroupBox" name="CollapsibleGroupBox">
+    <widget class="ctkCollapsibleGroupBox" name="GlyphsOnSlicesDisplayCollapsibleGroupBox">
      <property name="title">
       <string>Glyphs on Slices Display</string>
      </property>
