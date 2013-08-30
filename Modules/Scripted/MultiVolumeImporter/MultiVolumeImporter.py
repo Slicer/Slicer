@@ -16,7 +16,7 @@ from MultiVolumeImporter.Helper import Helper
 class MultiVolumeImporter:
   def __init__(self, parent):
     parent.title = "MultiVolumeImporter"
-    parent.categories = ["Work in Progress.MultiVolume Support"]
+    parent.categories = ["MultiVolume Support"]
     parent.contributors = ["Andrey Fedorov (SPL, BWH)",\
         "Jean-Christophe Fillion-Robin (Kitware)", \
         "Julien Finet (Kitware)", \
