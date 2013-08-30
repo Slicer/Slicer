@@ -172,6 +172,7 @@ class MultiVolumeImporterWidget:
     # each frame is saved as a separate volume
     # first filter valid file names and sort alphabetically
     frames = []
+    frame0 = None
     inputDir = self.__fDialog.directory
     for f in os.listdir(inputDir):
       if not f.startswith('.'):
@@ -182,10 +183,23 @@ class MultiVolumeImporterWidget:
     for fileName in fileNames:
       (s,f) = self.readFrame(fileName)
       if s:
+        if not frame0:
+          frame0 = f
+          frame0Image = frame0.GetImageData()
+          frame0Extent = frame0Image.GetExtent()
+        else:
+          frameImage = f.GetImageData()
+          frameExtent = frameImage.GetExtent()
+          if frameExtent[1]!=frame0Extent[1] or frameExtent[3]!=frame0Extent[3] or frameExtent[5]!=frame0Extent[5]:
+            continue
         frames.append(f)
 
     nFrames = len(frames)
     print('Successfully read '+str(nFrames)+' frames')
+
+    if nFrames == 1:
+      print('Single frame dataset - not reading as multivolume!')
+      return
 
     volumeLabels.SetNumberOfTuples(nFrames)
     volumeLabels.SetNumberOfComponents(1)
@@ -196,23 +210,20 @@ class MultiVolumeImporterWidget:
       frameLabelsAttr += str(frameId)+','
     frameLabelsAttr = frameLabelsAttr[:-1]
 
-    # read the first frame to get the extent
-    frame = frames[0]
-    frameImage = frame.GetImageData()
-    frameExtent = frameImage.GetExtent()
-    frameSize = frameExtent[1]*frameExtent[3]*frameExtent[5]
+    # allocate multivolume
+    frameSize = frame0Extent[1]*frame0Extent[3]*frame0Extent[5]
 
     mvImage = vtk.vtkImageData()
-    mvImage.SetExtent(frameExtent)
+    mvImage.SetExtent(frame0Extent)
     mvImage.SetNumberOfScalarComponents(nFrames)
 
     mvImage.AllocateScalars()
     mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
     mat = vtk.vtkMatrix4x4()
-    frame.GetRASToIJKMatrix(mat)
+    frame0.GetRASToIJKMatrix(mat)
     mvNode.SetRASToIJKMatrix(mat)
-    frame.GetIJKToRASMatrix(mat)
+    frame0.GetIJKToRASMatrix(mat)
     mvNode.SetIJKToRASMatrix(mat)
 
     for frameId in range(0,nFrames):
