@@ -289,14 +289,10 @@ void qSlicerSettingsStylesPanel::onShowToolTipsToggled(bool disable)
 // --------------------------------------------------------------------------
 void qSlicerSettingsStylesPanel::onShowToolButtonTextToggled(bool enable)
 {
-  qSlicerApplication* app = qSlicerApplication::application();
-  foreach(QWidget* widget, app->topLevelWidgets())
+  QMainWindow* mainWindow = qSlicerApplication::application()->mainWindow();
+  if (mainWindow)
     {
-    QMainWindow* mainWindow = qobject_cast<QMainWindow*>(widget);
-    if (mainWindow)
-      {
-      mainWindow->setToolButtonStyle(enable ?
-        Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
-      }
+    mainWindow->setToolButtonStyle(enable ?
+      Qt::ToolButtonTextUnderIcon : Qt::ToolButtonIconOnly);
     }
 }
