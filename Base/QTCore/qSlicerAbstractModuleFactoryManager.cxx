@@ -370,6 +370,7 @@ qSlicerAbstractCoreModule* qSlicerAbstractModuleFactoryManager
   if (module)
     {
     module->setName(moduleName);
+    module->setObjectName(QString("%1Module").arg(moduleName));
     foreach(const QString& dependency, module->dependencies())
       {
       QStringList dependees = d->ModuleDependees.value(dependency);
