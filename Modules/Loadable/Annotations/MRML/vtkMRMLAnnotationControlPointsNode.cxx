@@ -119,13 +119,18 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
                       << ". For more details see "
                       << "http://www.na-mic.org/Bug/view.php?id=1910");
       }
+
+    std::stringstream ss;
     for (int i = 0; i < n; i++ )
       {
       double* ptr = points->GetPoint(i);
-      std::stringstream ss;
-      if (prefix.compare("") != 0)
+      if (i==0 && prefix.compare("") != 0)
         {
-        commandLine.push_back(prefix);
+        ss << prefix << " ";
+        }
+      else if (i>0)
+        {
+        ss << ",";
         }
       if (coordinateSystem == 0)
         {
@@ -141,8 +146,8 @@ WriteCLI(std::vector<std::string>& commandLine, std::string prefix,
         lps[2] = ptr[2];
         ss << lps[0] << "," <<  lps[1] << "," <<  lps[2] ;
         }
-      commandLine.push_back(ss.str());
       }
+    commandLine.push_back(ss.str());
     }
 }
 

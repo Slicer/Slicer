@@ -34,6 +34,7 @@ set(cli_modules
   ResampleDTIVolume # Needed by ResampleScalarVectorDWIVolume
   ResampleScalarVectorDWIVolume # Depends on DiffusionApplications, needed by CropVolume
   RobustStatisticsSegmenter
+  ROITest
   SimpleRegionGrowingSegmentation
   SubtractScalarVolumes
   ThresholdScalarVolume

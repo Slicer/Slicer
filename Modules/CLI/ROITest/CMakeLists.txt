@@ -1,0 +1,17 @@
+
+#-----------------------------------------------------------------------------
+set(MODULE_NAME CLIROITest) # Do not use 'project()'
+
+#-----------------------------------------------------------------------------
+SEMMacroBuildCLI(
+  NAME ${MODULE_NAME}
+  LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/NAMICLogo.h
+  
+  TARGET_LIBRARIES ModuleDescriptionParser vtkTeem MRMLCore SlicerBaseCLI
+  INCLUDE_DIRECTORIES
+    ${vtkTeem_INCLUDE_DIRS}
+    ${MRMLCore_INCLUDE_DIRS}
+    ${vtkITK_INCLUDE_DIRS}
+    ${SlicerBaseCLI_SOURCE_DIR} ${SlicerBaseCLI_BINARY_DIR}
+  )
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Testing</category>
+  <title>CLI ROI Test</title>
+  <index>1</index>
+  <version>1.0</version>
+  <parameters>
+    <region multiple="false">
+      <name>ROI_One</name>
+      <label>One ROI</label>
+      <channel>input</channel>
+      <longflag>--ri</longflag>
+    </region>
+    <region multiple="true">
+      <name>ROI_List</name>
+      <label>Hierarchy ROIs</label>
+      <channel>input</channel>
+      <longflag>--ro</longflag>
+    </region>
+  </parameters>
+</executable>
