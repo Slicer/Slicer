@@ -47,7 +47,10 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
     endif()
   endfunction()
 
-  _check_for_required_git_config_insteadof("http://itk.org/" "git://itk.org/")
+  if("${ITK_VERSION_MAJOR}" LESS 4)
+    _check_for_required_git_config_insteadof("http://itk.org/" "git://itk.org/")
+  endif()
+
 endif()
 
 #-----------------------------------------------------------------------------
