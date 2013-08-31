@@ -485,7 +485,7 @@ void qSlicerAppMainWindowPrivate::setupRecentlyLoadedMenu(const QList<qSlicerIO:
 
   // Add separator and clear action
   this->menuRecentlyLoaded->addSeparator();
-  QAction * clearAction = this->menuRecentlyLoaded->addAction("Clear Menu", q, SLOT(onFileRecentLoadedActionTriggered()));
+  QAction * clearAction = this->menuRecentlyLoaded->addAction("Clear History", q, SLOT(onFileRecentLoadedActionTriggered()));
   clearAction->setProperty("clearMenu", QVariant(true));
 }
 
