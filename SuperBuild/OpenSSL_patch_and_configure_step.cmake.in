@@ -44,6 +44,10 @@ set(APPLE "@APPLE@")
 if(APPLE)
   # Hint OpenSSL that we prefer a 64-bit build.
   set(ENV{KERNEL_BITS} "64")
+  # Allow 'sysctl' executable used in OpenSSL config script to be found.
+  # This is required when building Slicer using a cronjob where the
+  # default environement is restricted.
+  set(ENV{PATH} "/usr/sbin:$ENV{PATH}")
 endif()
 
 message(STATUS "Configuring @proj@")
