@@ -33,13 +33,11 @@ if(${ITK_VERSION_MAJOR} GREATER 3)
 endif()
 include(${ITK_USE_FILE})
 
-option(MRML_USE_Teem "Build MRML with Teem support." ON)
-mark_as_advanced(MRML_USE_Teem)
-if(MRML_USE_Teem)
+option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
+mark_as_advanced(MRML_USE_vtkTeem)
+if(MRML_USE_vtkTeem)
   find_package(Teem REQUIRED)
   include(${Teem_USE_FILE})
-  option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
-  mark_as_advanced(MRML_USE_vtkTeem)
 endif()
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
@@ -66,7 +64,7 @@ set(include_dirs
   ${vtkITK_INCLUDE_DIRS}
   ${FreeSurfer_INCLUDE_DIRS}
   )
-if(MRML_USE_Teem)
+if(MRML_USE_vtkTeem)
   list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
 endif()
 include_directories(${include_dirs})
@@ -191,20 +189,18 @@ set(MRMLCore_SRCS
   # register code to the vtkMRMLScene constructor
   )
 
-if(MRML_USE_Teem)
-  if(MRML_USE_vtkTeem)
-    set(MRMLCore_SRCS
-      ${MRMLCore_SRCS}
-      vtkMRMLDiffusionImageVolumeNode.cxx
-      vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
-      vtkMRMLDiffusionTensorVolumeNode.cxx
-      vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
-      vtkMRMLNRRDStorageNode.cxx
-      vtkMRMLTensorVolumeNode.cxx
-      vtkMRMLVectorVolumeNode.cxx
-      )
-  endif(MRML_USE_vtkTeem)
-endif(MRML_USE_Teem)
+if(MRML_USE_vtkTeem)
+  set(MRMLCore_SRCS
+    ${MRMLCore_SRCS}
+    vtkMRMLDiffusionImageVolumeNode.cxx
+    vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
+    vtkMRMLDiffusionTensorVolumeNode.cxx
+    vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
+    vtkMRMLNRRDStorageNode.cxx
+    vtkMRMLTensorVolumeNode.cxx
+    vtkMRMLVectorVolumeNode.cxx
+    )
+endif()
 
 # Abstract/pure virtual classes
 
