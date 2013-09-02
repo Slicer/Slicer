@@ -260,8 +260,8 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       chartNode.AddArray(name, dataNodes[k].GetID())
       rgb = lut.GetTableValue(int(k))
 
-    colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
-    chartNode.SetProperty(name, "color", colorStr)
+      colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
+      chartNode.SetProperty(name, "color", colorStr)
 
     tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
     units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
