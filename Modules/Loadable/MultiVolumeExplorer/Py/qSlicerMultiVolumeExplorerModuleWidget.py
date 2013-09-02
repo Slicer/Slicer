@@ -224,16 +224,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
         arr.SetComponent(c, 2, 0)
 
     if self.iChartingPercent.checked:
-      baseline = 0
       nBaselines = min(self.baselineFrames.value,nComponents)
-      for c in range(nBaselines):
-        baseline += arr.GetComponent(c,1)
-      baseline /= nBaselines
-      if baseline != 0:
-        for c in range(nComponents):
-          intensity = arr.GetComponent(c,1)
-          percentChange = (intensity/baseline-1)*100.
-          arr.SetComponent(c,1,percentChange)
+      for k in labeledVoxels.keys():
+        arr = dataNodes[k].GetArray()
+        baseline = 0
+        for bc in range(nBaselines):
+          baseline += arr.GetComponent(bc,1)
+        baseline /= nBaselines
+        if baseline != 0:
+          for ic in range(nComponents):
+            intensity = arr.GetComponent(ic,1)
+            percentChange = (intensity/baseline-1)*100.
+            arr.SetComponent(ic,1,percentChange)
 
     layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
     layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)
@@ -262,6 +264,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
       colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
       chartNode.SetProperty(name, "color", colorStr)
+
 
     tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
     units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
