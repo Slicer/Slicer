@@ -20,17 +20,6 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__mvNode = None
     self.extractFrame = False
 
-    # chart view node
-    self.__cvn = None
-
-    # data node
-    #slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-
-    # chart node
-    self.__cn = slicer.vtkMRMLChartNode()
-    self.__cn.SetScene(slicer.mrmlScene)
-    slicer.mrmlScene.AddNode(self.__cn)
-
     # image play setup
     self.timer = qt.QTimer()
     self.timer.setInterval(50)
@@ -67,6 +56,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     plotFrameLayout = qt.QGridLayout(self.plotFrame)
     self.layout.addWidget(self.plotFrame)
 
+    self.plotSettingsFrame = ctk.ctkCollapsibleButton()
+    self.plotSettingsFrame.text = "Settings"
+    self.plotSettingsFrame.collapsed = 1
+    plotSettingsFrameLayout = qt.QGridLayout(self.plotSettingsFrame)
+    plotFrameLayout.addWidget(self.plotSettingsFrame,0,1)
+
     label = qt.QLabel('Input multivolume')
     self.__mvSelector = slicer.qMRMLNodeComboBox()
     self.__mvSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
@@ -76,19 +71,12 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__mvSelector.addEnabled = 0
 
     inputFrameLayout.addRow(label, self.__mvSelector)
-    ##self.layout.addWidget(label)
-    ##self.layout.addWidget(self.__mvSelector)
-
 
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
     self.__mdSlider = ctk.ctkSliderWidget()
-    #self.__mdSlider.setRange(0,10)
-    #self.__mdSlider.setValue(5)
 
     label = qt.QLabel('Current frame number')
-    ##self.layout.addWidget(label)
-    ##self.layout.addWidget(self.__mdSlider)
 
     # "play" control
     self.playButton = qt.QPushButton('Play')
@@ -139,22 +127,24 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__fSelector.toolTip = 'Label map to be probed'
     self.__fSelector.setMRMLScene(slicer.mrmlScene)
     self.__fSelector.addEnabled = 0
-    self.__fSelector.connect('currentNodeChanged(vtkMRMLNode*)', self.onLabelVolumeChanged)
-    self.__fSelector.connect('mrmlSceneChanged(vtkMRMLScene*)', self.onLVMRMLSceneChanged)
-    plotFrameLayout.addWidget(label,0,0,1,1)
-    plotFrameLayout.addWidget(self.__fSelector,0,1,1,2)
+    self.chartButton = qt.QPushButton('Chart')
+    self.chartButton.checkable = False
+    self.chartButton.connect('clicked()', self.onChartRequested)
+    plotSettingsFrameLayout.addWidget(label,0,0)
+    plotSettingsFrameLayout.addWidget(self.__fSelector,0,1)
+    plotSettingsFrameLayout.addWidget(self.chartButton,0,2)
 
     self.iCharting = qt.QPushButton()
     self.iCharting.text = 'Enable interactive charting'
     self.iCharting.checkable = True
 
-    plotFrameLayout.addWidget(self.iCharting,1,0,1,3)
+    plotSettingsFrameLayout.addWidget(self.iCharting,1,0,1,3)
     self.iCharting.setChecked(True)
     self.iCharting.connect('toggled(bool)', self.onInteractiveChartingChanged)
 
     groupLabel = qt.QLabel('Interactive plotting mode:')
     self.iChartingMode = qt.QButtonGroup()
-    self.iChartingIntensity = qt.QRadioButton('Intensity')
+    self.iChartingIntensity = qt.QRadioButton('Signal intensity')
     #self.iChartingIntensity.tooltip = 'Plot range adjusted dynamically to the range over the time course for the selected pixel'
     self.iChartingIntensityFixedAxes = qt.QRadioButton('Fixed range intensity')
     #self.iChartingIntensityFixedAxes.tooltip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
@@ -171,23 +161,14 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     self.baselineFrames = qt.QSpinBox()
     self.baselineFrames.minimum = 1
-    label = qt.QLabel('Number of baseline frames for percent change calculation:')
+    label = qt.QLabel('Number of frames for baseline calculation')
     self.groupLayout.addRow(label,self.baselineFrames)
 
-    plotFrameLayout.addWidget(self.groupWidget,2,0)
-
-    label = qt.QLabel("Use intensity range to fix axis extent")
-    label.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
-    self.__fixedAxesCheckbox = qt.QCheckBox()
-    self.__fixedAxesCheckbox.toolTip = "If checked, the extent of the vertical axis of the plot will be fixed to the range of the intensities in the input MultiVolume"
-    self.__fixedAxesCheckbox.checked = False
-    #plotFrameLayout.addWidget(label, 2, 0)
-    #plotFrameLayout.addWidget(self.__fixedAxesCheckbox, 2,1,1,2)
+    plotSettingsFrameLayout.addWidget(self.groupWidget,2,0)
 
     # add chart container widget
     self.__chartView = ctk.ctkVTKChartView(w)
     plotFrameLayout.addWidget(self.__chartView,3,0,1,3)
-
 
     self.__chart = self.__chartView.chart()
     self.__chartTable = vtk.vtkTable()
@@ -199,96 +180,100 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     self.__chartTable.AddColumn(self.__xArray)
     self.__chartTable.AddColumn(self.__yArray)
 
-  def onLabelVolumeChanged(self):
-    print('onLabelVolumeChanged cvn = '+str(self.__cvn))
+  def onChartRequested(self):
     # iterate over the label image and collect the IJK for each label element
     labelNode = self.__fSelector.currentNode()
     mvNode = self.__mvSelector.currentNode()
 
-    if labelNode != None and mvNode != None:
+    if labelNode == None or mvNode == None:
+      return
 
-      labelID = labelNode.GetID()
-      img = labelNode.GetImageData()
-      extent = img.GetWholeExtent()
-      labeledVoxels = {}
-      for i in range(extent[1]):
-        for j in range(extent[3]):
-          for k in range(extent[5]):
-            labelValue = img.GetScalarComponentAsFloat(i,j,k,0)
-            if labelValue:
-              if labelValue in labeledVoxels.keys():
-                labeledVoxels[labelValue].append([i,j,k])
-              else:
-                labeledVoxels[labelValue] = []
-                labeledVoxels[labelValue].append([i,j,k])
+    labelID = labelNode.GetID()
+    img = labelNode.GetImageData()
+    extent = img.GetWholeExtent()
+    labeledVoxels = {}
+    for i in range(extent[1]):
+      for j in range(extent[3]):
+        for k in range(extent[5]):
+          labelValue = img.GetScalarComponentAsFloat(i,j,k,0)
+          if labelValue:
+            if labelValue in labeledVoxels.keys():
+              labeledVoxels[labelValue].append([i,j,k])
+            else:
+              labeledVoxels[labelValue] = []
+              labeledVoxels[labelValue].append([i,j,k])
 
-      # go over all elements, calculate the mean in each frame for each label
-      # and add to the chart array
-      nComponents = self.__mvNode.GetNumberOfFrames()
-      dataNodes = {}
+    # go over all elements, calculate the mean in each frame for each label
+    # and add to the chart array
+    nComponents = self.__mvNode.GetNumberOfFrames()
+    dataNodes = {}
+    for k in labeledVoxels.keys():
+      dataNodes[k] = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
+      dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
+    mvImage = self.__mvNode.GetImageData()
+    for c in range(nComponents):
       for k in labeledVoxels.keys():
-        dataNodes[k] = slicer.mrmlScene.AddNode(slicer.vtkMRMLDoubleArrayNode())
-        dataNodes[k].GetArray().SetNumberOfTuples(nComponents)
-      mvImage = self.__mvNode.GetImageData()
-      for c in range(nComponents):
-        for k in labeledVoxels.keys():
-          arr = dataNodes[k].GetArray()
-          mean = 0.
-          cnt = 0.
-          for v in labeledVoxels[k]:
-            mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
-            cnt = cnt+1
-          arr.SetComponent(c, 0, self.__mvLabels[c])
-          arr.SetComponent(c, 1, mean/cnt)
-          arr.SetComponent(c, 2, 0)
+        arr = dataNodes[k].GetArray()
+        mean = 0.
+        cnt = 0.
+        for v in labeledVoxels[k]:
+          mean = mean+mvImage.GetScalarComponentAsFloat(v[0],v[1],v[2],c)
+          cnt = cnt+1
+        arr.SetComponent(c, 0, self.__mvLabels[c])
+        arr.SetComponent(c, 1, mean/cnt)
+        arr.SetComponent(c, 2, 0)
 
-          print('Component '+str(c))
+    if self.iChartingPercent.checked:
+      baseline = 0
+      nBaselines = min(self.baselineFrames.value,nComponents)
+      for c in range(nBaselines):
+        baseline += arr.GetComponent(c,1)
+      baseline /= nBaselines
+      if baseline != 0:
+        for c in range(nComponents):
+          intensity = arr.GetComponent(c,1)
+          percentChange = (intensity/baseline-1)*100.
+          arr.SetComponent(c,1,percentChange)
 
-          baselineAverageSignal = 0
-          if self.iChartingPercent.checked:
-            nBaselines = min(self.baselineFrames.value,nComponents)
-            for c in range(nBaselines):
-              baselineAverageSignal += arr.GetComponent(c,1)
-            baselineAverageSignal /= nBaselines
-            if baselineAverageSignal != 0:
-              for c in range(nComponents):
-                intensity = arr.GetComponent(c,1)
-                arr.SetComponent(c,1,(intensity/baselineAverageSignal-1)*100.)
+    layoutNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLLayoutNode')
+    layoutNodes.SetReferenceCount(layoutNodes.GetReferenceCount()-1)
+    layoutNodes.InitTraversal()
+    layoutNode = layoutNodes.GetNextItemAsObject()
+    layoutNode.SetViewArrangement(slicer.vtkMRMLLayoutNode.SlicerLayoutConventionalQuantitativeView)
 
-      print('End of loop')
+    chartViewNodes = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
+    chartViewNodes.SetReferenceCount(chartViewNodes.GetReferenceCount()-1)
+    chartViewNodes.InitTraversal()
+    chartViewNode = chartViewNodes.GetNextItemAsObject()
 
-      # setup color node
-      colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
-      colorNode = labelNode.GetDisplayNode().GetColorNode()
-      lut = colorNode.GetLookupTable()
+    chartNode = slicer.mrmlScene.AddNode(slicer.vtkMRMLChartNode())
 
-      print('Color node setup')
-      # add initialized data nodes to the chart
-      self.__cn.ClearArrays()
-      for k in labeledVoxels.keys():
-        name = colorNode.GetColorName(k)
-        self.__cn.AddArray(name, dataNodes[k].GetID())
-        #self.__cn.SetProperty(name, "lookupTable", colorNodeID)
-        rgb = lut.GetTableValue(int(k))
+    # setup color node
+    colorNodeID = labelNode.GetDisplayNode().GetColorNodeID()
+    colorNode = labelNode.GetDisplayNode().GetColorNode()
+    lut = colorNode.GetLookupTable()
 
-        colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
-        self.__cn.SetProperty(name, "color", colorStr)
+    # add initialized data nodes to the chart
+    chartNode.ClearArrays()
+    for k in labeledVoxels.keys():
+      name = colorNode.GetColorName(k)
+      chartNode.AddArray(name, dataNodes[k].GetID())
+      rgb = lut.GetTableValue(int(k))
 
-        if self.__cvn == None:
-          print('Will init chart view node')
-          self.InitChartViewNode()
-        else:
-          print('Chart view node: '+str(self.__cvn))
+    colorStr = self.RGBtoHex(rgb[0]*255,rgb[1]*255,rgb[2]*255)
+    chartNode.SetProperty(name, "color", colorStr)
 
-        self.__cvn.Modified()
+    tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
+    units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
+    xTitle = tag+', '+units
 
-      tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
-      units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
-      xTitle = tag+', '+units
+    chartNode.SetProperty('default','xAxisLabel',xTitle)
+    if self.iChartingPercent.checked:
+      chartNode.SetProperty('default','yAxisLabel','change relative to baseline, %')
+    else:
+      chartNode.SetProperty('default','yAxisLabel','mean signal intensity')
 
-      self.__cn.SetProperty('default','xAxisLabel',xTitle)
-      self.__cn.SetProperty('default','yAxisLabel','mean signal intensity')
-      self.__cvn.SetChartNodeID(self.__cn.GetID())
+    chartViewNode.SetChartNodeID(chartNode.GetID())
 
   def RGBtoHex(self,r,g,b):
     return '#%02X%02X%02X' % (r,g,b)
@@ -557,7 +542,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           self.__chart.RemovePlot(0)
 
           if self.iChartingPercent.checked and baselineAverageSignal != 0:
-            self.__chart.GetAxis(0).SetTitle('percent change')
+            self.__chart.GetAxis(0).SetTitle('change relative to baseline, %')
           else:
             self.__chart.GetAxis(0).SetTitle('signal intensity')
 
@@ -574,20 +559,3 @@ class qSlicerMultiVolumeExplorerModuleWidget:
           plot.SetInput(self.__chartTable, 0, 1)
           # seems to update only after another plot?..
           self.__chart.AddPlot(0)
-
-  def InitChartViewNode(self):
-    print('Initializing chart view node')
-    if self.__cvn == None:
-      print("No chart view nodes found, switching to quantiative layout")
-      lm = slicer.app.layoutManager()
-      if lm == None:
-        return
-      lm.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpQuantitativeView)
-      # chart view node
-      cvns = slicer.mrmlScene.GetNodesByClass('vtkMRMLChartViewNode')
-      cvns.SetReferenceCount(1)
-      cvns.InitTraversal()
-      self.__cvn = cvns.GetNextItemAsObject()
-      if self.__cvn == None:
-        print("Failed to locate chart view node!", file=sys.stderr)
-        return
