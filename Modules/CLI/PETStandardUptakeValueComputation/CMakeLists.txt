@@ -1,7 +1,7 @@
 find_package(DCMTK REQUIRED)
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME PETStandardUptakeValueComputation) # Do not use 'project()'
+set(MODULE_NAME PETStandardUptakeValueComputation)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

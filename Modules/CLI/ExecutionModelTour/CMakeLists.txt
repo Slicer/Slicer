@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ExecutionModelTour) # Do not use 'project()'
+set(MODULE_NAME ExecutionModelTour)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

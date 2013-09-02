@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DWIRicianLMMSEFilter) # Do not use 'project()'
+set(MODULE_NAME DWIRicianLMMSEFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

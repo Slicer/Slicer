@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME FiducialRegistration) # Do not use 'project()'
+set(MODULE_NAME FiducialRegistration)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

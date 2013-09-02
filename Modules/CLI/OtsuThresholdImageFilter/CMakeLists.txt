@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME OtsuThresholdImageFilter) # Do not use 'project()'
+set(MODULE_NAME OtsuThresholdImageFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

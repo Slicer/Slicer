@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME "Annotations")  # Do not use 'project()'
+set(MODULE_NAME "Annotations")
 set(MODULE_TITLE "${MODULE_NAME}")
 
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)

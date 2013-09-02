@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DicomToNrrdConverter) # Do not use 'project()'
+set(MODULE_NAME DicomToNrrdConverter)
 
 foreach(varname ITK_USE_REVIEW ITK_USE_REVIEW_STATISTICS ITK_USE_OPTIMIZED_REGISTRATION_METHODS)
   if(NOT ${varname})

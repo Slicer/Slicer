@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ThresholdScalarVolume) # Do not use 'project()'
+set(MODULE_NAME ThresholdScalarVolume)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

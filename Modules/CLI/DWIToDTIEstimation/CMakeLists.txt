@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DWIToDTIEstimation) # Do not use 'project()'
+set(MODULE_NAME DWIToDTIEstimation)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

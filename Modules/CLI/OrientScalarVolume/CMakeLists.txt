@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME OrientScalarVolume) # Do not use 'project()'
+set(MODULE_NAME OrientScalarVolume)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

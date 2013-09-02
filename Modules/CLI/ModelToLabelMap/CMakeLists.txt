@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ModelToLabelMap) # Do not use 'project()'
+set(MODULE_NAME ModelToLabelMap)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME BlobDetection) # Do not use 'project()'
+set(MODULE_NAME BlobDetection)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME N4ITKBiasFieldCorrection) # Do not use 'project()'
+set(MODULE_NAME N4ITKBiasFieldCorrection)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

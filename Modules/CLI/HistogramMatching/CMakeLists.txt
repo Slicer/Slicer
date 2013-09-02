@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME HistogramMatching) # Do not use 'project()'
+set(MODULE_NAME HistogramMatching)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

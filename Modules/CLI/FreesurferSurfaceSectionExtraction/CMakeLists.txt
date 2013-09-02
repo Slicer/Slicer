@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-#set(MODULE_NAME FreesurferSurfaceSectionExtraction) # Do not use 'project()'
+#set(MODULE_NAME FreesurferSurfaceSectionExtraction)
 
 # culled from Slicer 3.6 release
 #-----------------------------------------------------------------------------

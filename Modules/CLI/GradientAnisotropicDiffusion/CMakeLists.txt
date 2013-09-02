@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME GradientAnisotropicDiffusion) # Do not use 'project()'
+set(MODULE_NAME GradientAnisotropicDiffusion)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

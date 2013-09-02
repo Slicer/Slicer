@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ImageLabelCombine) # Do not use 'project()'
+set(MODULE_NAME ImageLabelCombine)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

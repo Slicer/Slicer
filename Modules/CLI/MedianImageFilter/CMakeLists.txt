@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME MedianImageFilter) # Do not use 'project()'
+set(MODULE_NAME MedianImageFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

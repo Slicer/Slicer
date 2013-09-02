@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ResampleScalarVolume) # Do not use 'project()'
+set(MODULE_NAME ResampleScalarVolume)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

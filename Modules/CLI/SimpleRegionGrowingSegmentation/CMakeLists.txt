@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME SimpleRegionGrowingSegmentation) # Do not use 'project()'
+set(MODULE_NAME SimpleRegionGrowingSegmentation)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

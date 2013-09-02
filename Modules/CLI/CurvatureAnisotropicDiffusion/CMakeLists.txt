@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME CurvatureAnisotropicDiffusion) # Do not use 'project()'
+set(MODULE_NAME CurvatureAnisotropicDiffusion)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

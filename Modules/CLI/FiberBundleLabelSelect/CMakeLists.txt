@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME FiberBundleLabelSelect) # Do not use 'project()'
+set(MODULE_NAME FiberBundleLabelSelect)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

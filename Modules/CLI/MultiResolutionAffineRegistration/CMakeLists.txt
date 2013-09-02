@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME MultiResolutionAffineRegistration) # Do not use 'project()'
+set(MODULE_NAME MultiResolutionAffineRegistration)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/vtkRegisterImagesModuleMultiResApplicationsConfigure.h.in

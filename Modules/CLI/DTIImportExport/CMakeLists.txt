@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DTIimport) # Do not use 'project()'
+set(MODULE_NAME DTIimport)
 
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}
@@ -12,7 +12,7 @@ SEMMacroBuildCLI(
   )
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DTIexport) # Do not use 'project()'
+set(MODULE_NAME DTIexport)
 
 SEMMacroBuildCLI(
   NAME ${MODULE_NAME}

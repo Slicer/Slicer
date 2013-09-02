@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME OtsuThresholdSegmentation) # Do not use 'project()'
+set(MODULE_NAME OtsuThresholdSegmentation)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

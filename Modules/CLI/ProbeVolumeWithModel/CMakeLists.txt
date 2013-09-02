@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ProbeVolumeWithModel) # Do not use 'project()'
+set(MODULE_NAME ProbeVolumeWithModel)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ModelMaker) # Do not use 'project()'
+set(MODULE_NAME ModelMaker)
 
 #-----------------------------------------------------------------------------
 # TODO: Remove SlicerBaseLogic once pass in color node information

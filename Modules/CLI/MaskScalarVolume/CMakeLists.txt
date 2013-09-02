@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME MaskScalarVolume) # Do not use 'project()'
+set(MODULE_NAME MaskScalarVolume)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

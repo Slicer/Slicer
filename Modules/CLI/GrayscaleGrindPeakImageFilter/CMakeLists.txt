@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME GrayscaleGrindPeakImageFilter) # Do not use 'project()'
+set(MODULE_NAME GrayscaleGrindPeakImageFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

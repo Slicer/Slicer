@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME MRIBiasFieldCorrection) # Do not use 'project()'
+set(MODULE_NAME MRIBiasFieldCorrection)
 
 #-----------------------------------------------------------------------------
 # Disable MSVC 8 warnings

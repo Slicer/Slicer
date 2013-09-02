@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DWIUnbiasedNonLocalMeansFilter) # Do not use 'project()'
+set(MODULE_NAME DWIUnbiasedNonLocalMeansFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

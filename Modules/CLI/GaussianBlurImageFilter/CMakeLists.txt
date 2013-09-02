@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME GaussianBlurImageFilter) # Do not use 'project()'
+set(MODULE_NAME GaussianBlurImageFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

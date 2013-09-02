@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME AddScalarVolumes) # Do not use 'project()'
+set(MODULE_NAME AddScalarVolumes)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

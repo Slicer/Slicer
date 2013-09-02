@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME TractographyLabelMapSeeding) # Do not use 'project()'
+set(MODULE_NAME TractographyLabelMapSeeding)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

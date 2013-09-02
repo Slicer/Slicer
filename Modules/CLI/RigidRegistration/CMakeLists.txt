@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME RigidRegistration) # Do not use 'project()'
+set(MODULE_NAME RigidRegistration)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

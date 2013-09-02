@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ExtractSkeleton) # Do not use 'project()'
+set(MODULE_NAME ExtractSkeleton)
 
 # Disable MSVC 8 warnings
 if(WIN32)

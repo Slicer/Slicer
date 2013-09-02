@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME AffineRegistration) # Do not use 'project()'
+set(MODULE_NAME AffineRegistration)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

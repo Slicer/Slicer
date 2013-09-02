@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-set(MODULE_NAME RobustStatisticsSegmenter) # Do not use 'project()'
+set(MODULE_NAME RobustStatisticsSegmenter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

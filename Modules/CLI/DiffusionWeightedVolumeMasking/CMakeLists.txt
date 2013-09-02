@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DiffusionWeightedVolumeMasking) # Do not use 'project()'
+set(MODULE_NAME DiffusionWeightedVolumeMasking)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

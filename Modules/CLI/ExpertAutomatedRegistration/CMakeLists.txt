@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ExpertAutomatedRegistration) # Do not use 'project()'
+set(MODULE_NAME ExpertAutomatedRegistration)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME BSplineToDeformationField) # Do not use 'project()'
+set(MODULE_NAME BSplineToDeformationField)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

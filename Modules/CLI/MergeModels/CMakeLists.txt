@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME MergeModels) # Do not use 'project()'
+set(MODULE_NAME MergeModels)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME DiffusionTensorTest) # Do not use 'project()'
+set(MODULE_NAME DiffusionTensorTest)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

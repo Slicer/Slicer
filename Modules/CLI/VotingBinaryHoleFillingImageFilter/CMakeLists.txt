@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME VotingBinaryHoleFillingImageFilter) # Do not use 'project()'
+set(MODULE_NAME VotingBinaryHoleFillingImageFilter)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ConnectedComponent) # Do not use 'project()'
+set(MODULE_NAME ConnectedComponent)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

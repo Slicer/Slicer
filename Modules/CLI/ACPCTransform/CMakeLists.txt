@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME ACPCTransform) # Do not use 'project()'
+set(MODULE_NAME ACPCTransform)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(

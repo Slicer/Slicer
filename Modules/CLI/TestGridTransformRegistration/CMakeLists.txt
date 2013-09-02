@@ -1,6 +1,6 @@
 
 #-----------------------------------------------------------------------------
-set(MODULE_NAME TestGridTransformRegistration) # Do not use 'project()'
+set(MODULE_NAME TestGridTransformRegistration)
 
 #-----------------------------------------------------------------------------
 SEMMacroBuildCLI(
