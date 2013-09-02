@@ -39,8 +39,18 @@ if(Slicer_PLATFORM_CHECK)
   #   8.x == Mac OSX 10.4 (Tiger)
   #   9.x == Mac OSX 10.5 (Leopard)
   #  10.x == Mac OSX 10.6 (Snow Leopard)
+  #  11.x == Mac OSX 10.7 (Lion)
+  #  12.x == Mac OSX 10.8 (Mountain Lion)
   if(DARWIN_MAJOR_VERSION LESS "9")
     message(FATAL_ERROR "Only Mac OSX >= 10.5 is supported !")
+  endif()
+
+  # CMake 2.8.11 is required to build Slicer on Mountain Lion
+  # See http://www.na-mic.org/Bug/view.php?id=2957
+  if(DARWIN_MAJOR_VERSION GREATER "11")
+    if(${CMAKE_VERSION} VERSION_LESS "2.8.11")
+      message(FATAL_ERROR "CMake >= 2.8.11 is required on Mountain Lion !")
+    endif()
   endif()
 
   if(MSVC)
