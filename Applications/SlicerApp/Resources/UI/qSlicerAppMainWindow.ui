@@ -89,6 +89,9 @@
      <addaction name="actionViewLayoutFourOverFour"/>
      <addaction name="actionViewLayoutTwoOverTwo"/>
      <addaction name="actionViewLayoutSideBySide"/>
+     <addaction name="actionViewLayoutFourByThreeSlice"/>
+     <addaction name="actionViewLayoutFourByTwoSlice"/>
+     <addaction name="actionViewLayoutFiveByTwoSlice"/>
     </widget>
     <widget class="QMenu" name="menuWindowToolBars">
      <property name="title">
@@ -266,6 +269,9 @@
    <addaction name="actionViewLayoutThreeOverThreeQuantitative"/>
    <addaction name="actionViewLayoutFourOverFour"/>
    <addaction name="actionViewLayoutSideBySide"/>
+   <addaction name="actionViewLayoutFourByThreeSlice"/>
+   <addaction name="actionViewLayoutFourByTwoSlice"/>
+   <addaction name="actionViewLayoutFiveByTwoSlice"/>
   </widget>
   <widget class="qSlicerMouseModeToolBar" name="MouseModeToolBar">
    <property name="enabled">
@@ -1176,6 +1182,42 @@
    </property>
    <property name="text">
     <string>Side by side</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutFourByThreeSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four by three slice</string>
+   </property>
+   <property name="toolTip">
+    <string>Four by three slice</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutFourByTwoSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Four by two slice</string>
+   </property>
+   <property name="toolTip">
+    <string>Four by two slice</string>
+   </property>
+  </action>
+  <action name="actionViewLayoutFiveByTwoSlice">
+   <property name="icon">
+    <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
+     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Five by two slice</string>
+   </property>
+   <property name="toolTip">
+    <string>Five by two slice</string>
    </property>
   </action>
  </widget>
