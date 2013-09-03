@@ -204,20 +204,24 @@ class MultiVolumeImporterWidget:
     volumeLabels.SetNumberOfTuples(nFrames)
     volumeLabels.SetNumberOfComponents(1)
     volumeLabels.Allocate(nFrames)
-    for i in range(len(fileNames)):
+    for i in range(nFrames):
       frameId = self.__veInitial.value+self.__veStep.value*i
       volumeLabels.SetComponent(i, 0, frameId)
       frameLabelsAttr += str(frameId)+','
     frameLabelsAttr = frameLabelsAttr[:-1]
 
     # allocate multivolume
-    frameSize = frame0Extent[1]*frame0Extent[3]*frame0Extent[5]
-
     mvImage = vtk.vtkImageData()
+    mvImage.SetScalarType(frame0.GetImageData().GetScalarType())
     mvImage.SetExtent(frame0Extent)
     mvImage.SetNumberOfScalarComponents(nFrames)
 
+    extent = frame0.GetImageData().GetExtent()
+    numPixels = float(extent[1]+1)*(extent[3]+1)*(extent[5]+1)*nFrames
+    scalarType = frame0.GetImageData().GetScalarType()
+    print('Will now try to allocate memory for '+str(numPixels)+' pixels of VTK scalar type'+str(scalarType))
     mvImage.AllocateScalars()
+    print('Memory allocated successfully')
     mvImageArray = vtk.util.numpy_support.vtk_to_numpy(mvImage.GetPointData().GetScalars())
 
     mat = vtk.vtkMatrix4x4()
@@ -226,7 +230,7 @@ class MultiVolumeImporterWidget:
     frame0.GetIJKToRASMatrix(mat)
     mvNode.SetIJKToRASMatrix(mat)
 
-    for frameId in range(0,nFrames):
+    for frameId in range(nFrames):
       # TODO: check consistent size and orientation!
       frame = frames[frameId]
       frameImage = frame.GetImageData()
