@@ -879,7 +879,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
   // go through all the annotation fiducials and collect their hierarchies
   vtkStringArray *hierarchyNodeIDs = vtkStringArray::New();
 
-  for (unsigned int n = 0; n < numberOfAnnotationFids; ++n)
+  for (int n = 0; n < numberOfAnnotationFids; ++n)
     {
     vtkMRMLNode *mrmlNode = vtkMRMLNode::SafeDownCast(col->GetItemAsObject(n));
     if (!mrmlNode)
@@ -951,7 +951,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
     vtkCollection *children = vtkCollection::New();
     hierarchyNode->GetAssociatedChildrendNodes(children, "vtkMRMLAnnotationFiducialNode");
     vtkDebugMacro("Found " << children->GetNumberOfItems() << " annot fids in this hierarchy");
-    for (unsigned int c = 0; c < children->GetNumberOfItems(); ++c)
+    for (int c = 0; c < children->GetNumberOfItems(); ++c)
       {
       vtkMRMLAnnotationFiducialNode *annotNode;
       annotNode = vtkMRMLAnnotationFiducialNode::SafeDownCast(children->GetItemAsObject(c));
