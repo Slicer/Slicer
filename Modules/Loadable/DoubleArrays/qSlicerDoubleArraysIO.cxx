@@ -91,7 +91,7 @@ qSlicerIO::IOFileType qSlicerDoubleArraysIO::fileType()const
 QStringList qSlicerDoubleArraysIO::extensions()const
 {
   return QStringList()
-    << "Double Array (*.csv)"
+    << "Double Array (*.mcsv)"
     ;
 }
 
