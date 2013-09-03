@@ -197,7 +197,9 @@ public:
   {
     return new vtkSlicerCLIEditTransformHierarchyCallback;
   }
-  virtual void Execute(vtkObject* caller, unsigned long eid, void *callData)
+  virtual void Execute(vtkObject* vtkNotUsed(caller),
+                       unsigned long vtkNotUsed(eid),
+                       void * vtkNotUsed(callData))
   {
     vtkMRMLNode *nd =  this->CLIModuleLogic->GetMRMLScene()->GetNodeByID(this->NodeID.c_str());
     vtkMRMLTransformableNode *tnd = vtkMRMLTransformableNode::SafeDownCast(nd);
@@ -207,7 +209,7 @@ public:
       tnd->SetAndObserveTransformNodeID(this->TransformNodeID.c_str());
       this->CLIModuleLogic->GetMRMLScene()->Edited();
     }
-}
+  }
 
   void SetCLIModuleLogic(vtkSlicerCLIModuleLogic* logic)
   {
