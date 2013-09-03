@@ -358,12 +358,15 @@ class DICOMLoadableTable(object):
       readerItem.setToolTip(item.toolTip())
     # warning
     if loadable.warning:
-      warnItem = qt.QTableWidgetItem(loadable.warning)
-      warnItem.setFlags(warnItem.flags() ^ qt_ItemIsEditable)
-      self.items.append(warnItem)
-      self.widget.setItem(row,2,warnItem)
-      item.setToolTip(item.toolTip() + "\n" + loadable.warning)
-      warnItem.setToolTip(item.toolTip())
+      warning = loadable.warning
+    else:
+      warning = ''
+    warnItem = qt.QTableWidgetItem(loadable.warning)
+    warnItem.setFlags(warnItem.flags() ^ qt_ItemIsEditable)
+    self.items.append(warnItem)
+    self.widget.setItem(row,2,warnItem)
+    item.setToolTip(item.toolTip() + "\n" + warning)
+    warnItem.setToolTip(item.toolTip())
 
   def setLoadables(self,loadablesByPlugin):
     """Load the table widget with a list
