@@ -106,7 +106,7 @@ int vtkMRMLMarkupsStorageNode::ReadDataInternal(vtkMRMLNode *vtkNotUsed(refNode)
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLMarkupsStorageNode::WriteDataInternal(vtkMRMLNode *refNode)
+int vtkMRMLMarkupsStorageNode::WriteDataInternal(vtkMRMLNode * vtkNotUsed(refNode))
 {
   vtkWarningMacro("Subclasses must implement WriteDataInternal!");
   return 0;
