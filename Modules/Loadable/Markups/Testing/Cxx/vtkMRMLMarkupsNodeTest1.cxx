@@ -461,10 +461,10 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
   // test WriteCLI
   vtkIndent indent;
   numMarkups = node1->GetNumberOfMarkups();
-  int expectedCommandLineSize = 0;
+  unsigned int expectedCommandLineSize = 0;
   for (int m = 0; m < numMarkups; m++)
     {
-    expectedCommandLineSize += node1->GetNumberOfPointsInNthMarkup(m);
+    expectedCommandLineSize += 2*node1->GetNumberOfPointsInNthMarkup(m);
     // make sure all are selected so all will be passed
     node1->SetNthMarkupSelected(m, true);
     }
@@ -503,7 +503,7 @@ int vtkMRMLMarkupsNodeTest1(int , char * [] )
     }
   // single point test
   std::vector<std::string> commandLine3;
-  int multipleFalseExpectedSize = node1->GetNumberOfPointsInNthMarkup(0);
+  unsigned int multipleFalseExpectedSize = 2*node1->GetNumberOfPointsInNthMarkup(0);
   node1->WriteCLI(commandLine3, prefix, 0, 0);
   std::cout << "Wrote single RAS markup to CLI (command line size "
             << commandLine3.size() << ") :" << std::endl;
