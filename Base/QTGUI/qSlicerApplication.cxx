@@ -206,8 +206,10 @@ void qSlicerApplicationPrivate::init()
   this->SettingsDialog->addPanel("QtTesting", qtTestingPanel);
 #endif
 
+  // HACK - Disable restart - See http://www.na-mic.org/Bug/view.php?id=2535
+  //        This slot should be connected with "restart()" instead of "confirmRestart()"
   QObject::connect(this->SettingsDialog, SIGNAL(restartRequested()),
-                   q, SLOT(restart()));
+                   q, SLOT(confirmRestart()));
 
   //----------------------------------------------------------------------------
   // Dialogs
@@ -436,16 +438,24 @@ void qSlicerApplication::confirmRestart(QString reason)
     reason = tr("Are you sure you want to restart?");
     }
 
+  // HACK - Disable restart - See http://www.na-mic.org/Bug/view.php?id=2535
+
+  reason = tr("Are you sure you want to exit?\n\n"
+              "Make sure to exit and manually restart Slicer.\n\n"
+              "Auto restart has been temporarily disabled.\n"
+              "For details, see http://www.na-mic.org/Bug/view.php?id=2535\n");
+
   ctkMessageBox confirmDialog;
   confirmDialog.setText(reason);
   confirmDialog.setIcon(QMessageBox::Question);
   confirmDialog.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-  confirmDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmRestart" );
+  confirmDialog.setDontShowAgainSettingsKey( "MainWindow/DontConfirmExit" );
   bool restartConfirmed = (confirmDialog.exec() == QMessageBox::Ok);
 
   if (restartConfirmed)
     {
-    this->restart();
+    this->quit();
+//    this->restart();
     }
 }
 
