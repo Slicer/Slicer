@@ -31,6 +31,9 @@
     <file>Icons/LayoutFourOverFourView.png</file>
     <file>Icons/LayoutTwoOverTwoView.png</file>
     <file>Icons/LayoutSideBySideView.png</file>
+    <file>Icons/LayoutFourByThreeSliceView.png</file>
+    <file>Icons/LayoutFourByTwoSliceView.png</file>
+    <file>Icons/LayoutFiveByTwoSliceView.png</file>
     <file>Icons/SliceMoreOptions.png</file>
     <file>Icons/SliceViewerBG.png</file>
     <file>Icons/SliceViewerFG.png</file>

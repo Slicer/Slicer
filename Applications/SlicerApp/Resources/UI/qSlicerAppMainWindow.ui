@@ -1187,7 +1187,7 @@
   <action name="actionViewLayoutFourByThreeSlice">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+     <normaloff>:/Icons/LayoutFourByThreeSliceView.png</normaloff>:/Icons/LayoutFourByThreeThreeSliceView.png</iconset>
    </property>
    <property name="text">
     <string>Four by three slice</string>
@@ -1199,7 +1199,7 @@
   <action name="actionViewLayoutFourByTwoSlice">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+     <normaloff>:/Icons/LayoutFourByTwoSliceView.png</normaloff>:/Icons/LayoutFourByTwoSliceView.png</iconset>
    </property>
    <property name="text">
     <string>Four by two slice</string>
@@ -1211,7 +1211,7 @@
   <action name="actionViewLayoutFiveByTwoSlice">
    <property name="icon">
     <iconset resource="../../../../Libs/MRML/Widgets/Resources/qMRMLWidgets.qrc">
-     <normaloff>:/Icons/LayoutThreeOverThreeView.png</normaloff>:/Icons/LayoutThreeOverThreeView.png</iconset>
+     <normaloff>:/Icons/LayoutFiveByTwoSliceView.png</normaloff>:/Icons/LayoutFiveByTwoSliceView.png</iconset>
    </property>
    <property name="text">
     <string>Five by two slice</string>
