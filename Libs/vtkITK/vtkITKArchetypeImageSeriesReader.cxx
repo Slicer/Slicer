@@ -376,7 +376,6 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
     {
       typedef itk::GDCMSeriesFileNames DICOMNameGeneratorType;
       DICOMNameGeneratorType::Pointer inputImageFileGenerator = DICOMNameGeneratorType::New();
-      std::string fileNameName = itksys::SystemTools::GetFilenameName( this->Archetype );
       std::string fileNamePath = itksys::SystemTools::GetFilenamePath( this->Archetype );
       if (fileNamePath == "")
       {

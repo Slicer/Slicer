@@ -894,7 +894,6 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
       continue;
       }
     char * parentNodeID = oneToOneHierarchyNode->GetParentNodeID();
-    char * hierarchyName = oneToOneHierarchyNode->GetParentNode()->GetName();
     // is it not already in the list of annotation hierarchy node ids?
     vtkIdType id = hierarchyNodeIDs->LookupValue(parentNodeID);
     if (id == -1)
