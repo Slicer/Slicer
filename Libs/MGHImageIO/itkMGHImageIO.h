@@ -56,6 +56,9 @@ private:
   /// examines the direction cosines and creates encapsulation data
   // void MriDirCos();
 
+  /// check if a filename is for a compressed file
+  bool IsCompressedFilename(const std::string fname);
+
   void WriteUncompressedHeader();
 
   void WriteCompressedHeader(gzFile fp);
