@@ -181,9 +181,11 @@ bool qSlicerSceneWriter::writeToMRB(const qSlicerIO::IOProperties& properties)
   //
 
   QFileInfo fileInfo(properties["fileName"].toString());
-  if (!fileInfo.isWritable())
+  QString basePath = fileInfo.absolutePath();
+  if (!QFileInfo(basePath).isWritable())
     {
-    qWarning() << "Failed to write" << fileInfo.absoluteFilePath() << ": Permission denied";
+    qWarning() << "Failed to save" << fileInfo.absoluteFilePath() << ":"
+               << "Path" << basePath << "is not writable";
     return false;
     }
 
