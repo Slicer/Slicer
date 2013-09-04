@@ -898,7 +898,7 @@ void vtkSlicerMarkupsLogic::ConvertAnnotationFiducialsToMarkups()
     vtkIdType id = hierarchyNodeIDs->LookupValue(parentNodeID);
     if (id == -1)
       {
-      vtkDebugMacro("Found unique annotation hierarchy node, id = " << parentNodeID << ", name = " << hierarchyName);
+      vtkDebugMacro("Found unique annotation hierarchy node, id = " << parentNodeID);
       hierarchyNodeIDs->InsertNextValue(parentNodeID);
       }
     }
