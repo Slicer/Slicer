@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.9)
 project(ScriptedLoadableExtensionTemplate)
 
 #-----------------------------------------------------------------------------
-set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/ScriptedLoadableExtensionTemplate")
+set(EXTENSION_HOMEPAGE "http://www.slicer.org/slicerWiki/index.php/Documentation/4.3/Extensions/ScriptedLoadableExtensionTemplate")
 set(EXTENSION_CATEGORY "Examples")
 set(EXTENSION_CONTRIBUTORS "Jean-Christophe Fillion-Robin (Kitware), Steve Pieper (Isomics)")
 set(EXTENSION_DESCRIPTION "This is an example of extension bundling a scripted loadable module")

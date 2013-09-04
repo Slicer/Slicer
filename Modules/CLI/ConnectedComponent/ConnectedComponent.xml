@@ -4,7 +4,7 @@
   <title>Connected Component Filter</title>
   <description><![CDATA[ConnectedComponentImageFilter labels the objects in a binary image. Each distinct object is assigned a unique label.]]></description>
   <version>0.1.0.$Revision: 19363 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/ConnectedComponent</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/ConnectedComponent</documentation-url>
   <license/>
   <contributor>Yanling Liu (SAIC-Frederick)</contributor>
   <acknowledgements><![CDATA[This command module was derived from Insight/Examples (copyright) Insight Software Consortium]]></acknowledgements>

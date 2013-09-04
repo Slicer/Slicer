@@ -4,7 +4,7 @@
   <title>Tractography Label Map Seeding</title>
   <description><![CDATA[Seed tracts on a Diffusion Tensor Image (DT) from a label map]]></description>
   <version>0.1.0.$Revision: 1892 $(alpha)</version>
-  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.2/Modules/Seeding</documentation-url>
+  <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/Seeding</documentation-url>
   <license>slicer3</license>
   <contributor>Raul San Jose (SPL, BWH), Demian Wassermann (SPL, BWH)</contributor>
   <acknowledgements><![CDATA[Laboratory of Mathematics in Imaging. This work is part of the National Alliance for Medical Image Computing (NAMIC), funded by the National Institutes of Health through the NIH Roadmap for Medical Research, Grant U54 EB005149.]]></acknowledgements>
