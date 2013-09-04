@@ -794,6 +794,7 @@ void vtkMRMLFreeSurferModelOverlayStorageNode::InitializeSupportedReadFileTypes(
   this->SupportedReadFileTypes->InsertNextValue(".area");
   this->SupportedReadFileTypes->InsertNextValue(".annot");
   this->SupportedReadFileTypes->InsertNextValue(".mgz");
+  this->SupportedReadFileTypes->InsertNextValue(".mgh.gz");
   this->SupportedReadFileTypes->InsertNextValue(".mgh");
   this->SupportedReadFileTypes->InsertNextValue(".label");
 }
