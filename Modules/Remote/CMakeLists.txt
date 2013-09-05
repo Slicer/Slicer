@@ -61,7 +61,7 @@ if(Slicer_BUILD_BRAINSTOOLS)
   set(USE_BRAINSDemonWarp                 ON CACHE BOOL "Build BRAINSDemonWarp ")
   if("${ITK_VERSION_MAJOR}" GREATER 3)
     set(USE_BRAINSTransformConvert          ON CACHE BOOL "Build BRAINSTransformConvert ")
-    set(USE_DWIConvert                      ON CACHE BOOL "Build DWIConvert ") ## Need to figure out library linking
+    set(USE_DWIConvert                      ${Slicer_BUILD_DICOM_SUPPORT} CACHE BOOL "Build DWIConvert ") ## Need to figure out library linking
   else()
     set(USE_BRAINSTransformConvert          OFF CACHE BOOL "Build BRAINSTransformConvert ")
     set(USE_DWIConvert                      OFF CACHE BOOL "Build DWIConvert ")
