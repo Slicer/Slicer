@@ -50,6 +50,7 @@ public:
   QAction *InsertHierarchyAction;
   QAction *DeleteMultipleNodesAction;
   QAction *RenameMultipleNodesAction;
+  QStringList HideChildNodeTypes;
 };
 
 //-----------------------------------------------------------------------------
@@ -61,6 +62,7 @@ qSlicerModelsModuleWidgetPrivate::qSlicerModelsModuleWidgetPrivate()
   this->InsertHierarchyAction = 0;
   this->DeleteMultipleNodesAction = 0;
   this->RenameMultipleNodesAction = 0;
+  this->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
 }
 
 //-----------------------------------------------------------------------------
@@ -118,6 +120,9 @@ void qSlicerModelsModuleWidget::setup()
   connect(d->RenameMultipleNodesAction, SIGNAL(triggered()),
           this, SLOT(renameMultipleModels()));
 
+  connect(d->IncludeFiberBundleCheckBox, SIGNAL(toggled(bool)),
+          this, SLOT(includeFiberBundles(bool)));
+
   this->Superclass::setup();
 }
 
@@ -141,8 +146,8 @@ void qSlicerModelsModuleWidget::updateTreeViewModel()
   d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->colorColumn(), QHeaderView::ResizeToContents);
   d->ModelHierarchyTreeView->header()->setResizeMode(sceneModel->opacityColumn(), QHeaderView::ResizeToContents);
 
-  d->ModelHierarchyTreeView->sortFilterProxyModel()->setHideChildNodeTypes(
-    QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
+  d->ModelHierarchyTreeView->sortFilterProxyModel()->setHideChildNodeTypes(d->HideChildNodeTypes);
+
 
   // use lazy update instead of responding to scene import end event
   sceneModel->setLazyUpdate(true);
@@ -371,4 +376,20 @@ void qSlicerModelsModuleWidget::hideAllModels()
     {
     modelsLogic->SetAllModelsVisibility(0);
     }
+}
+
+void qSlicerModelsModuleWidget::includeFiberBundles(bool include)
+{
+  Q_D(qSlicerModelsModuleWidget);
+
+  if (include)
+    {
+    d->HideChildNodeTypes = (QStringList() << "vtkMRMLAnnotationNode");
+    }
+  else
+    {
+    d->HideChildNodeTypes = (QStringList() << "vtkMRMLFiberBundleNode" << "vtkMRMLAnnotationNode");
+    }
+
+  this->updateTreeViewModel();
 }

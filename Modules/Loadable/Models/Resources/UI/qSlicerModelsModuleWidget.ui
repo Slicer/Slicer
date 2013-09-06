@@ -38,13 +38,27 @@
       <item>
        <layout class="QHBoxLayout" name="allModelsHorizontalLayout">
         <item>
+          <widget class="QLabel" name="IncludeFiberBundlesLabel">
+            <property name="text">
+              <string>Include Fibers</string>
+            </property>
+          </widget>
+        </item>
+        <item>
+          <widget class="QCheckBox" name="IncludeFiberBundleCheckBox">
+            <property name="text">
+              <string/>
+            </property>
+          </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>5</width>
             <height>20</height>
            </size>
           </property>
