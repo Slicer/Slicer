@@ -49,6 +49,7 @@ public slots:
   void deleteMultipleModels();
   void renameMultipleModels();
   void onCurrentNodeChanged(vtkMRMLNode* newCurrentNode);
+  void includeFiberBundles(bool include);
 
   /// hide/show all the models in the scene
   void hideAllModels();
