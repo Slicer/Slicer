@@ -75,7 +75,9 @@ class VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML_EXPORT vtkMRMLMultiVolumeNode :
   std::string GetLabelName();
   void SetLabelName(const std::string& n);
 
-  vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
+  virtual void CreateDefaultDisplayNodes();
+  
   vtkMRMLMultiVolumeDisplayNode* GetMultiVolumeDisplayNode();
 
   void SetNumberOfFrames(int val);
