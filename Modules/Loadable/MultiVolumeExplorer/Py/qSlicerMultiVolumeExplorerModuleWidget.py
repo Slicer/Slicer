@@ -489,76 +489,122 @@ class qSlicerMultiVolumeExplorerModuleWidget:
       # TODO: reset the label text
       return
 
-    if self.sliceWidgetsPerStyle.has_key(observee):
-      sliceWidget = self.sliceWidgetsPerStyle[observee]
-      sliceLogic = sliceWidget.sliceLogic()
-      sliceNode = sliceWidget.mrmlSliceNode()
-      interactor = observee.GetInteractor()
-      xy = interactor.GetEventPosition()
-      xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy);
+    if not self.sliceWidgetsPerStyle.has_key(observee):
+      return
 
-      ras = sliceWidget.sliceView().convertXYZToRAS(xyz)
-      layerLogicCalls = [sliceLogic.GetBackgroundLayer]
-      for logicCall in layerLogicCalls:
-        layerLogic = logicCall()
-        volumeNode = layerLogic.GetVolumeNode()
-        nameLabel = "None"
-        ijkLabel = ""
-        valueLabel = ""
-        if volumeNode:
-          nameLabel = volumeNode.GetName()
-          xyToIJK = layerLogic.GetXYToIJKTransform().GetMatrix()
-          ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
-          ijk = []
-          for element in ijkFloat:
-            try:
-              index = int(round(element))
-            except ValueError:
-              index = 0
-            ijk.append(index)
+    sliceWidget = self.sliceWidgetsPerStyle[observee]
+    sliceLogic = sliceWidget.sliceLogic()
+    interactor = observee.GetInteractor()
+    xy = interactor.GetEventPosition()
+    xyz = sliceWidget.sliceView().convertDeviceToXYZ(xy);
 
-          # get the vector of values at IJK
-          values = ''
-          extent = mvImage.GetExtent()
-          validPixel = True
-          for c in range(nComponents):
-            if ijk[0]>=0 and ijk[1]>=0 and ijk[2]>=0 and ijk[0]<=extent[1] and ijk[1]<=extent[3] and ijk[2]<=extent[5]:
-              val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-              self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
-              self.__chartTable.SetValue(c, 1, val)
-            else:
-              validPixel = False
-              break
-          baselineAverageSignal = 0
-          if validPixel and self.iChartingPercent.checked:
-            # check if percent plotting was requested and recalculate
-            nBaselines = min(self.baselineFrames.value,nComponents)
-            for c in range(nBaselines):
-              baselineAverageSignal += mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-            baselineAverageSignal /= nBaselines
-            if baselineAverageSignal != 0:
-              for c in range(nComponents):
-                intensity = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
-                self.__chartTable.SetValue(c,1,(intensity/baselineAverageSignal-1)*100.)
+    ras = sliceWidget.sliceView().convertXYZToRAS(xyz)
+    bgLayer = sliceLogic.GetBackgroundLayer()
+    fgLayer = sliceLogic.GetForegroundLayer()
 
-          self.__chart.RemovePlot(0)
-          self.__chart.RemovePlot(0)
+    volumeNode = bgLayer.GetVolumeNode()
+    fgVolumeNode = fgLayer.GetVolumeNode()
+    if not volumeNode or volumeNode.GetID() != self.__mvNode.GetID():
+      return
+    if volumeNode != self.__mvNode:
+      return
 
-          if self.iChartingPercent.checked and baselineAverageSignal != 0:
-            self.__chart.GetAxis(0).SetTitle('change relative to baseline, %')
-          else:
-            self.__chart.GetAxis(0).SetTitle('signal intensity')
+    nameLabel = volumeNode.GetName()
+    xyToIJK = bgLayer.GetXYToIJKTransform().GetMatrix()
+    ijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+    ijk = []
+    for element in ijkFloat:
+      try:
+        index = int(round(element))
+      except ValueError:
+        index = 0
+      ijk.append(index)
 
-          tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
-          units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
-          xTitle = tag+', '+units
-          self.__chart.GetAxis(1).SetTitle(xTitle)
-          if self.iChartingIntensityFixedAxes.checked == True:
-            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
-            self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
-          else:
-            self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
-          plot = self.__chart.AddPlot(0)
-          plot.SetInput(self.__chartTable, 0, 1)
-          # seems to update only after another plot?..
-          self.__chart.AddPlot(0)
+    extent = mvImage.GetExtent()
+    if not (ijk[0]>=extent[0] and ijk[0]<=extent[1] and \
+       ijk[1]>=extent[2] and ijk[1]<=extent[3] and \
+       ijk[2]>=extent[4] and ijk[2]<=extent[5]):
+      # pixel outside the valid extent
+      return
+
+    useFg = False
+    if fgVolumeNode:
+      fgxyToIJK = fgLayer.GetXYToIJKTransform().GetMatrix()
+      fgijkFloat = xyToIJK.MultiplyPoint(xyz+(1,))[:3]
+      fgijk = []
+      for element in fgijkFloat:
+        try:
+          index = int(round(element))
+        except ValueError:
+          index = 0
+        fgijk.append(index)
+        fgImage = fgVolumeNode.GetImageData()
+
+      fgChartTable = vtk.vtkTable()
+      if fgijk[0] == ijk[0] and fgijk[1] == ijk[1] and fgijk[2] == ijk[2] and \
+          fgImage.GetNumberOfScalarComponents() == mvImage.GetNumberOfScalarComponents():
+        useFg = True
+
+        fgxArray = vtk.vtkFloatArray()
+        fgxArray.SetNumberOfTuples(nComponents)
+        fgxArray.SetNumberOfComponents(1)
+        fgxArray.Allocate(nComponents)
+        fgxArray.SetName('frame')
+
+        fgyArray = vtk.vtkFloatArray()
+        fgyArray.SetNumberOfTuples(nComponents)
+        fgyArray.SetNumberOfComponents(1)
+        fgyArray.Allocate(nComponents)
+        fgyArray.SetName('signal intensity')
+ 
+        # will crash if there is no name
+        fgChartTable.AddColumn(fgxArray)
+        fgChartTable.AddColumn(fgyArray)
+        fgChartTable.SetNumberOfRows(nComponents)
+
+    # get the vector of values at IJK
+
+    for c in range(nComponents):
+      val = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+      self.__chartTable.SetValue(c, 0, self.__mvLabels[c])
+      self.__chartTable.SetValue(c, 1, val)
+      if useFg:
+        fgValue = fgImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+        fgChartTable.SetValue(c,0,self.__mvLabels[c])
+        fgChartTable.SetValue(c,1,fgValue)
+
+    baselineAverageSignal = 0
+    if self.iChartingPercent.checked:
+      # check if percent plotting was requested and recalculate
+      nBaselines = min(self.baselineFrames.value,nComponents)
+      for c in range(nBaselines):
+        baselineAverageSignal += mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+      baselineAverageSignal /= nBaselines
+      if baselineAverageSignal != 0:
+        for c in range(nComponents):
+          intensity = mvImage.GetScalarComponentAsDouble(ijk[0],ijk[1],ijk[2],c)
+          self.__chartTable.SetValue(c,1,(intensity/baselineAverageSignal-1)*100.)
+
+    self.__chart.RemovePlot(0)
+    self.__chart.RemovePlot(0)
+
+    if self.iChartingPercent.checked and baselineAverageSignal != 0:
+      self.__chart.GetAxis(0).SetTitle('change relative to baseline, %')
+    else:
+      self.__chart.GetAxis(0).SetTitle('signal intensity')
+
+    tag = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagName'))
+    units = str(self.__mvNode.GetAttribute('MultiVolume.FrameIdentifyingDICOMTagUnits'))
+    xTitle = tag+', '+units
+    self.__chart.GetAxis(1).SetTitle(xTitle)
+    if self.iChartingIntensityFixedAxes.checked == True:
+      self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.FIXED)
+      self.__chart.GetAxis(0).SetRange(self.__mvRange[0],self.__mvRange[1])
+    else:
+      self.__chart.GetAxis(0).SetBehavior(vtk.vtkAxis.AUTO)
+    plot = self.__chart.AddPlot(0)
+    plot.SetInput(self.__chartTable, 0, 1)
+    if useFg:
+      fgplot = self.__chart.AddPlot(0)
+      fgplot.SetInput(fgChartTable, 0, 1)
+    # seems to update only after another plot?..
