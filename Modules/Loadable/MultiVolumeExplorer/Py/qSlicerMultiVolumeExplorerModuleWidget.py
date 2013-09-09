@@ -72,6 +72,18 @@ class qSlicerMultiVolumeExplorerModuleWidget:
 
     inputFrameLayout.addRow(label, self.__mvSelector)
 
+    label = qt.QLabel('Input secondary multivolume')
+    self.fgSelector = slicer.qMRMLNodeComboBox()
+    self.fgSelector.nodeTypes = ['vtkMRMLMultiVolumeNode']
+    self.fgSelector.setMRMLScene(slicer.mrmlScene)
+    self.fgSelector.addEnabled = 0
+    self.fgSelector.noneEnabled = 1
+    self.fgSelector.toolTip = "Secondary multivolume will be used for the secondary \
+      plot in interactive charting. As an example, this can be used to overlay the \
+      curve obtained by fitting a model to the data"
+
+    inputFrameLayout.addRow(label, self.fgSelector)
+
     # TODO: initialize the slider based on the contents of the labels array
     # slider to scroll over metadata stored in the vector container being explored
     self.__mdSlider = ctk.ctkSliderWidget()
@@ -503,7 +515,7 @@ class qSlicerMultiVolumeExplorerModuleWidget:
     fgLayer = sliceLogic.GetForegroundLayer()
 
     volumeNode = bgLayer.GetVolumeNode()
-    fgVolumeNode = fgLayer.GetVolumeNode()
+    fgVolumeNode = self.fgSelector.currentNode()
     if not volumeNode or volumeNode.GetID() != self.__mvNode.GetID():
       return
     if volumeNode != self.__mvNode:
