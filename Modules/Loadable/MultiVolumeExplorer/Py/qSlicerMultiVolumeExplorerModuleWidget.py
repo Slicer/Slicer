@@ -1,5 +1,5 @@
 from __future__ import print_function
-import sys
+import sys, string
 from __main__ import vtk, qt, ctk, slicer
 from qSlicerMultiVolumeExplorerModuleHelper import qSlicerMultiVolumeExplorerModuleHelper as Helper
 

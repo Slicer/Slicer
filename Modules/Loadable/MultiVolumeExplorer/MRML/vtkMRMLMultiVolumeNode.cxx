@@ -201,6 +201,26 @@ vtkMRMLStorageNode* vtkMRMLMultiVolumeNode::CreateDefaultStorageNode()
   return vtkMRMLMultiVolumeStorageNode::New();
 }
 
+void vtkMRMLMultiVolumeNode::CreateDefaultDisplayNodes()
+{
+  vtkMRMLMultiVolumeDisplayNode *displayNode = 
+    vtkMRMLMultiVolumeDisplayNode::SafeDownCast(this->GetDisplayNode());
+  if(displayNode == NULL)
+  {
+    displayNode = vtkMRMLMultiVolumeDisplayNode::New();
+    if(this->GetScene())
+    {
+      displayNode->SetScene(this->GetScene());
+      this->GetScene()->AddNode(displayNode);
+      displayNode->SetDefaultColorMap();
+      displayNode->Delete();
+
+      this->SetAndObserveDisplayNodeID(displayNode->GetID());
+      std::cout << "Display node set and observed" << std::endl;
+    }
+  }
+}
+
 void vtkMRMLMultiVolumeNode::SetNumberOfFrames(int nf)
 {
   this->NumberOfFrames = nf;
