@@ -2,7 +2,7 @@
 <executable>
   <category>Base</category>
   <title>Annotations</title>
-  <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are fiducial points, rulers, and regions of interest (ROIs).]]></description>
+  <description><![CDATA[Create and edit annotations, supplementary information associated with a scene. Currently supported annotations are rulers and regions of interest (ROIs). Use the Markups module for fiducials.]]></description>
   <version>4.3</version>
   <documentation-url>http://wiki.slicer.org/slicerWiki/index.php/Documentation/4.3/Modules/Annotations</documentation-url>
   <license>slicer4</license>
@@ -87,7 +87,7 @@
     </parameter>
     <parameter>
       <label>Value</label>
-      <description><![CDATA[A useful value associated with the annotation (location for fiducials, length for rulers)]]></description>
+      <description><![CDATA[A useful value associated with the annotation (length for rulers)]]></description>
     </parameter>
     <parameter>
       <label>Name</label>
@@ -141,7 +141,7 @@
     <label>Modify Annotation Properties</label>
     <parameter>
       <label>Type</label>
-      <description><![CDATA[The class type for this annotation, is it a fiducial, ruler, region of interest?]]></description>
+      <description><![CDATA[The class type for this annotation, is it a ruler, region of interest?]]></description>
     </parameter>
     <parameter>
       <label>Color</label>
