@@ -94,6 +94,15 @@ void vtkMRMLMarkupsDisplayableManagerHelper::PrintSelf(ostream& os, vtkIndent in
     {
     os << indent.GetNextIndent() << intersectionsIt->first->GetID() << " : intersection is " << (intersectionsIt->second ? "not null" : "null") << std::endl;
     }
+
+  os << indent << "Widget projections:" << std::endl;
+  for (WidgetPointProjectionsIt it = this->WidgetPointProjections.begin();
+       it != this->WidgetPointProjections.end();
+       ++it)
+    {
+    os << indent.GetNextIndent() << it->first.c_str() << " : projection is "
+       << (it->second ? "not null" : "null") << std::endl;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -445,6 +454,7 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveWidgetAndNode(
 
   // remove the entry for the node glyph types
   this->RemoveNodeGlyphType(node->GetDisplayNode());
+
 }
 
 //---------------------------------------------------------------------------
@@ -648,11 +658,6 @@ void vtkMRMLMarkupsDisplayableManagerHelper::RemoveNodeGlyphType(vtkMRMLNode *di
     }
   // erase it
   this->NodeGlyphTypes.erase(iter);
-  if (this->GetDebug())
-    {
-    std::cout << "RemoveNodeGlyphType for display node " << displayNode->GetID() << std::endl;
-    this->PrintNodeGlyphTypes();
-    }
 }
 
 //---------------------------------------------------------------------------
