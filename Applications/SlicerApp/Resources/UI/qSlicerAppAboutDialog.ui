@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>671</width>
-    <height>374</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -521,6 +521,25 @@
        <blue>255</blue>
       </color>
      </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QWidget" name="ButtonBoxWidget" native="true">
+     <layout class="QHBoxLayout" name="ButtonBoxlLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QDialogButtonBox" name="ButtonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Close</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
