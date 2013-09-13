@@ -121,6 +121,25 @@ class ScriptedLoadableModuleTemplateWidget:
     parametersFormLayout.addRow("Output Volume: ", self.outputSelector)
 
     #
+    # check box to trigger taking screen shots for later use in tutorials
+    #
+    self.enableScreenshotsFlagCheckBox = qt.QCheckBox()
+    self.enableScreenshotsFlagCheckBox.checked = 0
+    self.enableScreenshotsFlagCheckBox.setToolTip("If checked, take screen shots for tutorials. Use Save Data to write them to disk.")
+    parametersFormLayout.addRow("Enable Screenshots", self.enableScreenshotsFlagCheckBox)
+
+    #
+    # scale factor for screen shots
+    #
+    self.screenshotScaleFactorSliderWidget = ctk.ctkSliderWidget()
+    self.screenshotScaleFactorSliderWidget.singleStep = 1.0
+    self.screenshotScaleFactorSliderWidget.minimum = 1.0
+    self.screenshotScaleFactorSliderWidget.maximum = 50.0
+    self.screenshotScaleFactorSliderWidget.value = 1.0
+    self.screenshotScaleFactorSliderWidget.setToolTip("Set scale factor for the screen shots.")
+    parametersFormLayout.addRow("Screenshot scale factor", self.screenshotScaleFactorSliderWidget)
+
+    #
     # Apply Button
     #
     self.applyButton = qt.QPushButton("Apply")
@@ -144,8 +163,10 @@ class ScriptedLoadableModuleTemplateWidget:
 
   def onApplyButton(self):
     logic = ScriptedLoadableModuleTemplateLogic()
+    enableScreenshotsFlag = self.enableScreenshotsFlagCheckBox.checked
+    screenshotScaleFactor = int(self.screenshotScaleFactorSliderWidget.value)
     print("Run the algorithm")
-    logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode())
+    logic.run(self.inputSelector.currentNode(), self.outputSelector.currentNode(), enableScreenshotsFlag,screenshotScaleFactor)
 
   def onReload(self,moduleName="ScriptedLoadableModuleTemplate"):
     """Generic reload method for any scripted module.
@@ -232,10 +253,69 @@ class ScriptedLoadableModuleTemplateLogic:
       return False
     return True
 
-  def run(self,inputVolume,outputVolume):
+  def delayDisplay(self,message,msec=1000):
+    #
+    # logic version of delay display
+    #
+    print(message)
+    self.info = qt.QDialog()
+    self.infoLayout = qt.QVBoxLayout()
+    self.info.setLayout(self.infoLayout)
+    self.label = qt.QLabel(message,self.info)
+    self.infoLayout.addWidget(self.label)
+    qt.QTimer.singleShot(msec, self.info.close)
+    self.info.exec_()
+
+  def takeScreenshot(self,name,description,type=-1):
+    # show the message even if not taking a screen shot
+    self.delayDisplay(description)
+
+    if self.enableScreenshots == 0:
+      return
+
+    lm = slicer.app.layoutManager()
+    # switch on the type to get the requested window
+    widget = 0
+    if type == -1:
+      # full window
+      widget = slicer.util.mainWindow()
+    elif type == slicer.qMRMLScreenShotDialog().FullLayout:
+      # full layout
+      widget = lm.viewport()
+    elif type == slicer.qMRMLScreenShotDialog().ThreeD:
+      # just the 3D window
+      widget = lm.threeDWidget(0).threeDView()
+    elif type == slicer.qMRMLScreenShotDialog().Red:
+      # red slice window
+      widget = lm.sliceWidget("Red")
+    elif type == slicer.qMRMLScreenShotDialog().Yellow:
+      # yellow slice window
+      widget = lm.sliceWidget("Yellow")
+    elif type == slicer.qMRMLScreenShotDialog().Green:
+      # green slice window
+      widget = lm.sliceWidget("Green")
+
+    # grab and convert to vtk image data
+    qpixMap = qt.QPixmap().grabWidget(widget)
+    qimage = qpixMap.toImage()
+    imageData = vtk.vtkImageData()
+    slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
+
+    annotationLogic = slicer.modules.annotations.logic()
+    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
+
+  def run(self,inputVolume,outputVolume,,enableScreenshots=0,screenshotScaleFactor=1):
     """
     Run the actual algorithm
     """
+
+    self.delayDisplay('Running the aglorithm')
+
+    self.enableScreenshots = enableScreenshots
+    self.screenshotScaleFactor = screenshotScaleFactor
+
+    self.takeScreenshot('ScriptedLoadableModuleTemplate-Start','Start',-1)
+
     return True
 
 

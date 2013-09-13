@@ -2,6 +2,7 @@ import os
 import time
 import unittest
 from __main__ import vtk, qt, ctk, slicer
+import EditorLib
 
 #
 # NeurosurgicalPlanningTutorialMarkupsSelfTest
@@ -94,7 +95,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
     #
     self.enableScreenshotsFlagCheckBox = qt.QCheckBox()
     self.enableScreenshotsFlagCheckBox.checked = 0
-    self.enableScreenshotsFlagCheckBox.toolTip = 'If checked, take a screen shot at tutorial steps. Use the Save Data functionality to write them to disk after running the self test.'
+    self.enableScreenshotsFlagCheckBox.setToolTip("If checked, take screen shots for tutorials. Use Save Data to write them to disk.")
     parametersFormLayout.addRow("Enable Screenshots", self.enableScreenshotsFlagCheckBox)
 
     #
@@ -105,7 +106,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestWidget:
     self.screenshotScaleFactorSliderWidget.minimum = 1.0
     self.screenshotScaleFactorSliderWidget.maximum = 50.0
     self.screenshotScaleFactorSliderWidget.value = 1.0
-    self.screenshotScaleFactorSliderWidget.toolTip = "Set scale factor for the screen shots."
+    self.screenshotScaleFactorSliderWidget.setToolTip("Set scale factor for the screen shots.")
     parametersFormLayout.addRow("Screenshot scale factor", self.screenshotScaleFactorSliderWidget)
 
     # Apply Button
@@ -208,7 +209,13 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     qt.QTimer.singleShot(msec, self.info.close)
     self.info.exec_()
 
-  def takeScreenshot(self,name,description,type=-1,screenshotScaleFactor=1):
+  def takeScreenshot(self,name,description,type=-1):
+    # show the message even if not taking a screen shot
+    self.delayDisplay(description)
+
+    if self.enableScreenshots == 0:
+      return
+
     lm = slicer.app.layoutManager()
     # switch on the type to get the requested window
     widget = 0
@@ -238,7 +245,29 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     slicer.qMRMLUtils().qImageToVtkImageData(qimage,imageData)
 
     annotationLogic = slicer.modules.annotations.logic()
-    annotationLogic.CreateSnapShot(name, description, type, screenshotScaleFactor, imageData)
+    annotationLogic.CreateSnapShot(name, description, type, self.screenshotScaleFactor, imageData)
+
+  #
+  # for the red slice widget, convert the background volume's RAS
+  # coordinates to display coordinates for painting
+  #
+  def rasToDisplay(self, r, a, s):
+    displayCoords = [0, 0, 0, 1]
+
+    # get the slice node
+    lm = slicer.app.layoutManager()
+    sliceWidget = lm.sliceWidget('Red')
+    sliceLogic = sliceWidget.sliceLogic()
+    sliceNode = sliceLogic.GetSliceNode()
+
+    xyToRASMatrix = sliceNode.GetXYToRAS()
+    rasToXyMatrix = vtk.vtkMatrix4x4()
+    rasToXyMatrix.Invert(xyToRASMatrix, rasToXyMatrix)
+
+    worldCoords = [r, a, s, 1.0]
+    rasToXyMatrix.MultiplyPoint(worldCoords, displayCoords)
+
+    return displayCoords
 
   def run(self,enableScreenshots=0,screenshotScaleFactor=1):
     """
@@ -246,41 +275,50 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     """
     self.delayDisplay('Running test of the Neurosurgical Planning tutorial')
 
+    self.enableScreenshots = enableScreenshots
+    self.screenshotScaleFactor = screenshotScaleFactor
+
+    # conventional layout
+    lm = slicer.app.layoutManager()
+    lm.setLayout(2)
+
     moduleSelector = slicer.util.mainWindow().moduleSelector()
     #
     # first load the data
     #
-    if enableScreenshots == 1:
+    if self.enableScreenshots == 1:
       # for the tutorial, do it through the welcome module
       moduleSelector.selectModule('Welcome')
       self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module',-1,screenshotScaleFactor)
+      self.takeScreenshot('NeurosurgicalPlanning-Welcome','Welcome module',-1)
+    else:
+      # otherwise show the sample data module
+      moduleSelector.selectModule('SampleData')
 
-    # but use the sample data module logic to load it for the self test
+    # use the sample data module logic to load data for the self test
     import SampleData
     sampleDataLogic = SampleData.SampleDataLogic()
+
     self.delayDisplay("Getting Baseline volume")
     baselineVolume = sampleDataLogic.downloadWhiteMatterExplorationBaselineVolume()
 
     self.delayDisplay("Getting DTI volume")
     dtiVolume = sampleDataLogic.downloadWhiteMatterExplorationDTIVolume()
 
-    if enableScreenshots == 1:
-      self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-Loaded','Data loaded',-1)
 
     #
     # link the viewers
     #
 
-    if enableScreenshots == 1:
+    if self.enableScreenshots == 1:
       # for the tutorial, pop up the linking control
-      # TODO: pipPopup is not exposed to python
       sliceController = slicer.app.layoutManager().sliceWidget("Red").sliceController()
-      # sliceController.pinPopup(1)
-      # self.delayDisplay("Screenshot")
-      # self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers',-1,screenshotScaleFactor)
-      # sliceController.pinPopup(0)
+      popupWidget = sliceController.findChild("ctkPopupWidget")
+      if popupWidget != None:
+        popupWidget.pinPopup(1)
+        self.takeScreenshot('NeurosurgicalPlanning-Link','Link slice viewers',-1)
+        popupWidget.pinPopup(0)
 
     sliceLogic = slicer.app.layoutManager().sliceWidget('Red').sliceLogic()
     compositeNode = sliceLogic.GetSliceCompositeNode()
@@ -293,50 +331,263 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     compositeNode.SetBackgroundVolumeID(baselineVolume.GetID())
     sliceLogic.EndSliceCompositeNodeInteraction()
 
-    if enableScreenshots == 1:
-      self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-Baseline','Baseline in background',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-Baseline','Baseline in background',-1)
 
     #
     # adjust window level on baseline
     #
     moduleSelector.selectModule('Volumes')
-    baselineVolume.GetDisplayNode().SetWindow(2600)
-    baselineVolume.GetDisplayNode().SetLevel(1206)
-    if enableScreenshots == 1:
-      self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-WindowLevel','Set W/L on baseline',-1,screenshotScaleFactor)
+    baselineDisplay = baselineVolume.GetDisplayNode()
+    baselineDisplay.SetAutoWindowLevel(0)
+    baselineDisplay.SetWindow(2600)
+    baselineDisplay.SetLevel(1206)
+    self.takeScreenshot('NeurosurgicalPlanning-WindowLevel','Set W/L on baseline',-1)
 
     #
     # switch to red slice only
     #
-    lm = slicer.app.layoutManager()
     lm.setLayout(6)
-    if enableScreenshots == 1:
-      self.delayDisplay("Screenshot")
-      self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-RedSliceOnly','Set layout to Red Slice only',-1)
 
     #
-    # skip segmentation of tumour
+    # segmentation of tumour
     #
+
+    #
+    # create a label map and set it for editing
+    #
+    volumesLogic = slicer.modules.volumes.logic()
+    baselineVolumeLabel =  volumesLogic.CreateAndAddLabelVolume( slicer.mrmlScene, baselineVolume, baselineVolume.GetName() + '-label' )
+    baselineDisplayNode = baselineVolumeLabel.GetDisplayNode()
+    baselineDisplayNode.SetAndObserveColorNodeID('vtkMRMLColorTableNodeFileGenericAnatomyColors.txt')
+    selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+    selectionNode.SetReferenceActiveVolumeID(baselineVolume.GetID())
+    selectionNode.SetReferenceActiveLabelVolumeID(baselineVolumeLabel.GetID())
+    slicer.app.applicationLogic().PropagateVolumeSelection(0)
+
+    #
+    # editor module
+    #
+    moduleSelector.selectModule('Editor')
+    self.takeScreenshot('NeurosurgicalPlanning-Editor','Showing Editor Module',-1)
+
+    # set the slice offset so drawing is right
+    sliceNode = sliceLogic.GetSliceNode()
+    sliceOffset = 58.7
+    sliceNode.SetSliceOffset(sliceOffset)
+
+    #
+    # paint
+    #
+    editUtil = EditorLib.EditUtil.EditUtil()
+    parameterNode = editUtil.getParameterNode()
+    paintEffect = EditorLib.PaintEffectOptions()
+    paintEffect.setMRMLDefaults()
+    paintEffect.__del__()
+    sliceWidget = lm.sliceWidget('Red')
+    paintTool = EditorLib.PaintEffectTool(sliceWidget)
+    self.takeScreenshot('NeurosurgicalPlanning-Paint','Paint tool in Editor Module',-1)
+
+    #
+    # paint in cystic part of tumor, using converstion from RAS coords to
+    # avoid slice widget size differences
+    #
+    editUtil.setLabel(293)
+    displayCoords = self.rasToDisplay(-7.4, 71, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    displayCoords = self.rasToDisplay(-11, 73, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    displayCoords = self.rasToDisplay(-12, 85, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    displayCoords = self.rasToDisplay(-13, 91, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    displayCoords = self.rasToDisplay(-15, 78, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    paintTool.paintApply()
+    self.takeScreenshot('NeurosurgicalPlanning-PaintCystic','Paint cystic part of tumor',-1)
+
+    #
+    # paint in solid part of tumor
+    #
+    editUtil.setLabel(7)
+    displayCoords = self.rasToDisplay(-0.5 , 118.5, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    displayCoords = self.rasToDisplay(-7.4 , 116, sliceOffset)
+    paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    paintTool.paintApply()
+    self.takeScreenshot('NeurosurgicalPlanning-PaintSolid','Paint solid part of tumor',-1)
+
+    #
+    # paint around the tumor
+    #
+    editUtil.setLabel(295)
+    rMax = 25
+    rMin = -50
+    aMax = 145
+    aMin = 50
+    rasStep = 5
+
+    # draw the top and bottom
+    for r in range(rMin, rMax, rasStep):
+      displayCoords = self.rasToDisplay(r, aMin, sliceOffset)
+      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+      displayCoords = self.rasToDisplay(r, aMax, sliceOffset)
+      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+    # draw the left and right
+    for a in range(aMin, aMax, rasStep):
+      displayCoords = self.rasToDisplay(rMin, a, sliceOffset)
+      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+      displayCoords = self.rasToDisplay(rMax, a, sliceOffset)
+      paintTool.paintAddPoint(displayCoords[0], displayCoords[1])
+
+    paintTool.paintApply()
+
+    self.takeScreenshot('NeurosurgicalPlanning-PaintAround','Paint around tumor',-1)
+    #
+    # clean up after painting
+    #
+    paintTool.cleanup()
+    paintTool = None
+
+    #
+    # Grow cut
+    #
+    growCutLogic = EditorLib.GrowCutEffectLogic(sliceWidget.sliceLogic())
+    growCutLogic.growCut()
+    self.takeScreenshot('NeurosurgicalPlanning-Growcut','Growcut',-1)
+
+    #
+    # Merge split volume
+    #
+    slicer.util.selectModule('Editor')
+    slicer.util.findChildren(text='Split Merge Volume')[0].clicked()
+    self.takeScreenshot('NeurosurgicalPlanning-SplitMerge','SplitMerge',-1)
+
+    #
+    # go to the data module
+    #
+    moduleSelector.selectModule('Data')
+    self.takeScreenshot('NeurosurgicalPlanning-SplitMergeData','SplitMerge results in Data',-1)
+
+    #
+    # Ventricles Segmentation
+    #
+
+    moduleSelector.selectModule('Editor')
+    #
+    # select the label volume with the area around the tumor
+    slicer.util.findChildren(name='PerStructureVolumesFrame')[0].collapsed = False
+    treeView = slicer.util.findChildren(name='StructuresView')[0]
+    selection = qt.QItemSelection()
+    # selecting the last split volume in the third row
+    row = 2
+    rowStart = treeView.model().index(row,0)
+    rowEnd = treeView.model().index(row,treeView.model().columnCount() - 1)
+    # rowSel = qt.QItemSelection(rowStart, rowEnd)
+    selection.select(rowStart, rowEnd)
+    # backup: select the label map in the slice logic too
+    baselinelabel295 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 3-label")
+    sliceLogic.StartSliceCompositeNodeInteraction(1)
+    compositeNode.SetLabelVolumeID(baselinelabel295.GetID())
+    sliceLogic.EndSliceCompositeNodeInteraction()
+    self.takeScreenshot('NeurosurgicalPlanning-SelOutside','Select outside region',-1)
+
+    #
+    # Threshold tool
+    #
+    slicer.modules.EditorWidget.toolsBox.selectEffect('ThresholdEffect')
+    parameterNode = slicer.modules.EditorWidget.toolsBox.currentOption.editUtil.getParameterNode()
+    parameterNode.SetParameter('ThresholdEffect,min', str(1700))
+    slicer.modules.EditorWidget.toolsBox.currentTools[0].apply()
+    self.takeScreenshot('NeurosurgicalPlanning-Ventricles','Ventricles segmentation',-1)
+
+    #
+    # Save Islands
+    #
+    slicer.modules.EditorWidget.toolsBox.selectEffect('SaveIslandEffect')
+    saveIslandLogic = EditorLib.SaveIslandEffectLogic(sliceWidget.sliceLogic())
+    displayCoords = self.rasToDisplay(25.3, 5.8, sliceOffset)
+    xy = (displayCoords[0], displayCoords[1])
+    saveIslandLogic.saveIsland(xy)
+    self.takeScreenshot('NeurosurgicalPlanning-SaveIsland','Ventricles save island',-1)
+
+    #
+    # Merge and build
+    #
+    slicer.util.findChildren(text='Merge And Build')[0].clicked()
 
     #
     # switch to conventional layout
     #
     lm.setLayout(2)
+    self.takeScreenshot('NeurosurgicalPlanning-MergeAndBuild','Merged and built models',-1)
 
     #
-    # skip tractography label map seeding
+    # Tractography label map seeding
     #
 
+    #
+    # select label volume with label 293, in the second row
+    #
+    row = 1
+    rowStart = treeView.model().index(row,0)
+    rowEnd = treeView.model().index(row,treeView.model().columnCount() - 1)
+    # rowSel = qt.QItemSelection(rowStart, rowEnd)
+    selection.select(rowStart, rowEnd)
+    # backup: select the label map in the slice logic too
+    baselinelabel293 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 1-label")
+    sliceLogic.StartSliceCompositeNodeInteraction(1)
+    compositeNode.SetLabelVolumeID(baselinelabel293.GetID())
+    sliceLogic.EndSliceCompositeNodeInteraction()
+    self.takeScreenshot('NeurosurgicalPlanning-SelCystic','Select cystic region',-1)
+
+    #
+    # Dilate
+    #
+    slicer.modules.EditorWidget.toolsBox.selectEffect('DilateEffect')
+    editUtil.setLabel(293)
+    self.takeScreenshot('NeurosurgicalPlanning-Dilate','Dilate tool',-1)
+    # tutorial says to click apply three times
+    for d in range (1,3):
+      print d
+      # slicer.util.findChildren(name='DilateEffectOptionsApply')[0].clicked()
+      # slicer.modules.EditorWidget.toolsBox.currentTools[0].apply()
+      slicer.modules.EditorWidget.toolsBox.currentOption.onApply()
+    self.takeScreenshot('NeurosurgicalPlanning-Dilated','Dilated tumor',-1)
+
+    #
+    # Tractography Label Map Seeding module
+    #
+    moduleSelector.selectModule('TractographyLabelMapSeeding')
+    self.takeScreenshot('NeurosurgicalPlanning-LabelMapSeedingModule','Showing Tractography Label Seeding Module',-1)
+    tractographyLabelSeeding = slicer.modules.tractographylabelmapseeding
+    parameters = {}
+    parameters['InputVolume'] = dtiVolume.GetID()
+    baselinelabel293 = slicer.mrmlScene.GetFirstNodeByName("BaselineVolume-region 1-label")
+    parameters['InputROI'] = baselinelabel293.GetID()
+    fibers = slicer.vtkMRMLFiberBundleNode()
+    slicer.mrmlScene.AddNode(fibers)
+    parameters['OutputFibers'] = fibers.GetID()
+    parameters['UseIndexSpace'] = 1
+    parameters['StoppingValue'] = 0.15
+    parameters['ROIlabel'] = 293
+    parameters['StoppingMode'] = 'FractionalAnisotropy'
+    # defaults
+    # parameters['ClTh'] = 0.3
+    # parameters['MinimumLength'] = 20
+    # parameters['MaximumLength'] = 800
+    # parameters['StoppingCurvature'] = 0.7
+    # parameters['IntegrationStepLength'] = 0.5
+    # parameters['SeedSpacing'] = 2
+    # and run it
+    slicer.cli.run(tractographyLabelSeeding, None, parameters)
+    self.takeScreenshot('NeurosurgicalPlanning-LabelMapSeeding','Showing Tractography Label Seeding Results',-1)
 
     #
     # tractography fiducial seeding
     #
     moduleSelector.selectModule('TractographyInteractiveSeeding')
-    if enableScreenshots == 1:
-     self.delayDisplay("Screenshot")
-     self.takeScreenshot('NeurosurgicalPlanning-TIS','Showing Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-TIS','Showing Tractography Interactive Seeding Module',-1)
 
     # DTI in background
     sliceLogic.StartSliceCompositeNodeInteraction(1)
@@ -349,9 +600,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     sliceNode.SetSliceVisible(1)
     sliceLogic.EndSliceNodeInteraction()
 
-    if enableScreenshots == 1:
-     self.delayDisplay("Screenshot")
-     self.takeScreenshot('NeurosurgicalPlanning-TIS-DTI','DTI volume with Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-TIS-DTI','DTI volume with Tractography Interactive Seeding Module',-1)
 
     # place a fiducial
     displayNode = slicer.vtkMRMLMarkupsDisplayNode()
@@ -362,7 +611,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     fidNode.SetAndObserveDisplayNodeID(displayNode.GetID())
     r = 28.338526
     a = 34.064367
-    s = 58.74121
+    s = sliceOffset
     fidNode.AddFiducial(r,a,s)
 
     # make it active
@@ -370,22 +619,21 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
     if (selectionNode != None):
       selectionNode.SetReferenceActivePlaceNodeID(fidNode.GetID())
 
-    if enableScreenshots == 1:
-     self.delayDisplay("Screenshot")
-     self.takeScreenshot('NeurosurgicalPlanning-TIS-Fid1','Fiducial in Tractography Interactive Seeding Module',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-TIS-Fid1','Fiducial in Tractography Interactive Seeding Module',-1)
 
 
     # set up the arguments
     wr = slicer.modules.tractographyinteractiveseeding.widgetRepresentation()
     wr.setDiffusionTensorVolumeNode(dtiVolume)
-    # fiber bundle is created automatically
+    # create a fiber bundle
+    fiducialFibers = slicer.vtkMRMLFiberBundleNode()
+    slicer.mrmlScene.AddNode(fiducialFibers)
+    wr.setFiberBundleNode(fiducialFibers)
     wr.setSeedingNode(fidNode)
     wr.setMinimumPath(10)
     wr.setStoppingValue(0.15)
 
-    if enableScreenshots == 1:
-     self.delayDisplay("Screenshot")
-     self.takeScreenshot('NeurosurgicalPlanning-TIS-Args','Tractography Interactive Seeding arguments',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-TIS-Args','Tractography Interactive Seeding arguments',-1)
 
     self.delayDisplay("Moving the fiducial")
     for y in range(-20, 100, 5):
@@ -393,9 +641,7 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestLogic:
       self.delayDisplay(msg,250)
       fidNode.SetNthFiducialPosition(0, r, y, s)
 
-    if enableScreenshots == 1:
-     self.delayDisplay("Screenshot")
-     self.takeScreenshot('NeurosurgicalPlanning-TIS-Moved','Moved fiducial and did Tractography Interactive Seeding',-1,screenshotScaleFactor)
+    self.takeScreenshot('NeurosurgicalPlanning-TIS-Moved','Moved fiducial and did Tractography Interactive Seeding',-1)
 
     return True
 
@@ -426,6 +672,9 @@ class NeurosurgicalPlanningTutorialMarkupsSelfTestTest(unittest.TestCase):
     """ Do whatever is needed to reset the state - typically a scene clear will be enough.
     """
     slicer.mrmlScene.Clear(0)
+    # reset to conventional layout
+    lm = slicer.app.layoutManager()
+    lm.setLayout(2)
 
   def runTest(self):
     """Run as few or as many tests as needed here.
