@@ -32,6 +32,7 @@
 
 // MRML includes
 #include "vtkMRMLHierarchyNode.h"
+#include "vtkMRMLInteractionNode.h"
 #include "vtkMRMLSelectionNode.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLSceneViewNode.h"
@@ -1167,4 +1168,51 @@ void vtkSlicerMarkupsLogic::RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode
       markupsNode->SetNthMarkupLabel(n, formatString);
       }
     }
+}
+
+//---------------------------------------------------------------------------
+bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent)
+{
+  if (!this->GetMRMLScene())
+    {
+    vtkErrorMacro("StartPlaceMode: no scene");
+    return false;
+    }
+
+  // set up to place markups fiducials
+  vtkMRMLSelectionNode *selectionNode =
+    vtkMRMLSelectionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLSelectionNodeSingleton"));
+  if (!selectionNode)
+    {
+    vtkErrorMacro ("StartPlaceMode: No selection node in the scene." );
+    return false;
+    }
+  selectionNode->SetActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+
+  // now go into place mode with the persistece flag set
+  vtkMRMLInteractionNode *interactionNode =
+    vtkMRMLInteractionNode::SafeDownCast(
+      this->GetMRMLScene()->GetNodeByID("vtkMRMLInteractionNodeSingleton"));
+  if (!interactionNode)
+    {
+    vtkErrorMacro ("StartPlaceMode: No interaction node in the scene." );
+    return false;
+    }
+
+  interactionNode->SetCurrentInteractionMode(vtkMRMLInteractionNode::Place);
+  interactionNode->SetPlaceModePersistence(persistent ? 1 : 0);
+
+  if (interactionNode->GetCurrentInteractionMode()
+      != vtkMRMLInteractionNode::Place)
+    {
+    vtkErrorMacro("StartPlaceMode: Could not set place mode! "
+                  << "Tried to set the interaction mode to "
+                  << vtkMRMLInteractionNode::Place
+                  << ", but it's now "
+                  << interactionNode->GetCurrentInteractionMode());
+    return false;
+    }
+
+  return true;
 }

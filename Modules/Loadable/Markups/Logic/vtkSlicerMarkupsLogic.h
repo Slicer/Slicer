@@ -155,6 +155,11 @@ public:
   /// is not handled.
   void RenameAllMarkupsFromCurrentFormat(vtkMRMLMarkupsNode *markupsNode);
 
+  /// Put the interaction node into place mode, and set the persistence of
+  /// place mode according to the persistent flag.
+  /// Return true on sucessfully going into place mode, false otherwise.
+  bool StartPlaceMode(bool persistent);
+
 protected:
   vtkSlicerMarkupsLogic();
   virtual ~vtkSlicerMarkupsLogic();
