@@ -181,9 +181,23 @@ int vtkSlicerMarkupsLogicTest1(int , char * [] )
               << fidIndex << std::endl;
       return EXIT_FAILURE;
     }
+
+  if (logic1->StartPlaceMode(0))
+    {
+    std::cerr << "Failed to fail starting place mode!" << std::endl;
+    return EXIT_FAILURE;
+    }
+
   // add a selection node
   vtkMRMLApplicationLogic* applicationLogic = vtkMRMLApplicationLogic::New();
   applicationLogic->SetMRMLScene(scene);
+
+  if (!logic1->StartPlaceMode(1))
+    {
+    std::cerr << "Failed to start place mode after adding a selection node!"
+              << std::endl;
+    return EXIT_FAILURE;
+    }
 
   // test adding a fiducial to an active list - no app logic
   fidIndex = logic1->AddFiducial(-1.1, 100.0, 500.0);
