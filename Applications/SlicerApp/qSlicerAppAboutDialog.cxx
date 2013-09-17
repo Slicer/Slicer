@@ -61,6 +61,8 @@ qSlicerAppAboutDialog::qSlicerAppAboutDialog(QWidget* parentWidget)
   //d->SlicerLinksTable->setIndexWidget(QModelIndex(), new QTextBrowser);
   d->SlicerLinksTextBrowser->insertHtml(slicer->copyrights());
   d->CreditsTextBrowser->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+
+  connect(d->ButtonBox, SIGNAL(rejected()), this, SLOT(close()));
 }
 
 //-----------------------------------------------------------------------------
