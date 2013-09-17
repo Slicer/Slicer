@@ -63,6 +63,8 @@ int qSlicer@MODULENAME@ModuleWidgetGenericTest( int argc, char * argv[] )
   app.errorLogModel()->setTerminalOutputs(ctkErrorLogModel::All);
 
   qSlicer@MODULENAME@Module module(0);
+  module.setName("@MODULENAME@");
+  module.setObjectName(QString("%1Module").arg("@MODULENAME@"));
 
 #ifndef GENERIC_CXX_MODULE_TEST_SKIP_DEPENDENCIES
   if (!module.dependencies().isEmpty())
