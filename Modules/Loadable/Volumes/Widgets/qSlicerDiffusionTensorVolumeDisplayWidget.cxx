@@ -163,6 +163,7 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
   d->VolumeNode = volumeNode;
   d->ScalarVolumeDisplayWidget->setMRMLVolumeNode(volumeNode);
   vtkMRMLDiffusionTensorVolumeDisplayNode* newVolumeDisplayNode = this->volumeDisplayNode();
+  vtkMRMLGlyphableVolumeSliceDisplayNode* glyphableVolumeSliceNode = 0;
   if (newVolumeDisplayNode)
     {
     std::vector< vtkMRMLGlyphableVolumeSliceDisplayNode*> dtiSliceDisplayNodes =
@@ -174,12 +175,14 @@ void qSlicerDiffusionTensorVolumeDisplayWidget::setMRMLVolumeNode(vtkMRMLDiffusi
         newVolumeDisplayNode->GetSliceGlyphDisplayNodes(d->VolumeNode);
       }
     Q_ASSERT(dtiSliceDisplayNodes.size());
-    d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(dtiSliceDisplayNodes[0]);
-    qvtkDisconnect(0, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
-    qvtkConnect(dtiSliceDisplayNodes[0], vtkCommand::ModifiedEvent,
-                this, SLOT(synchronizeSliceDisplayNodes()));
-    this->synchronizeSliceDisplayNodes();
+    glyphableVolumeSliceNode = dtiSliceDisplayNodes[0];
     }
+  // The update tasks are also needed when scene is closed (newVolumeDisplayNode is NULL)
+  d->DTISliceDisplayWidget->setMRMLDTISliceDisplayNode(glyphableVolumeSliceNode);
+  qvtkDisconnect(0, vtkCommand::ModifiedEvent, this, SLOT(synchronizeSliceDisplayNodes()));
+  qvtkConnect(glyphableVolumeSliceNode, vtkCommand::ModifiedEvent,
+              this, SLOT(synchronizeSliceDisplayNodes()));
+  this->synchronizeSliceDisplayNodes();
   this->updateWidgetFromMRML();
 }
 
