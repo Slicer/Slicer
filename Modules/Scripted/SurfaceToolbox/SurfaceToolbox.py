@@ -1,5 +1,6 @@
 import os
 import unittest
+import string
 from __main__ import vtk, qt, ctk, slicer
 
 class SurfaceToolbox:
