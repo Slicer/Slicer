@@ -246,6 +246,7 @@ include(SlicerMacroBuildModuleMRML)
 include(SlicerMacroBuildModuleWidgets)
 include(SlicerMacroBuildQtModule)
 include(SlicerMacroBuildScriptedModule)
+include(SlicerMacroExtractRepositoryInfo)
 include(vtkMacroKitPythonWrap)
 
 include(SlicerMacroConfigureModuleCxxTestDriver)
