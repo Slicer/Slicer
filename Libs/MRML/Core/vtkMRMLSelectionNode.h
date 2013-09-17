@@ -100,9 +100,8 @@ class VTK_MRML_EXPORT vtkMRMLSelectionNode : public vtkMRMLNode
   /// ActivePlaceNodeClassNameChangedEvent.
   void SetReferenceActivePlaceNodeClassName (const char *className);
 
-   ///
-  /// the ID of the currently active MRMLMarkupsNode (new markups are added to
-  /// this node)
+  /// Set/Get the ID of the currently active placeNode (new markups or
+  /// annotations are added to this node)
   vtkGetStringMacro (ActivePlaceNodeID);
   void SetActivePlaceNodeID(const char* id);
   void SetReferenceActivePlaceNodeID (const char *id)
