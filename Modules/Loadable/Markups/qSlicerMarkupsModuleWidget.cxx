@@ -450,6 +450,8 @@ void qSlicerMarkupsModuleWidget::enter()
                     this, SLOT(onMRMLSceneEndBatchProcessEvent()));
   this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndCloseEvent,
                     this, SLOT(onMRMLSceneEndCloseEvent()));
+  this->qvtkConnect(this->mrmlScene(), vtkMRMLScene::EndRestoreEvent,
+                    this, SLOT(onMRMLSceneEndRestoreEvent()));
 
   if (this->mrmlScene() && this->markupsLogic())
     {
@@ -479,6 +481,7 @@ void qSlicerMarkupsModuleWidget::checkForAnnotationFiducialConversion()
   // check to see if there are any annotation fiducial nodes
   // and offer to import them as markups
   int numFids = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLAnnotationFiducialNode");
+  int numSceneViews = this->mrmlScene()->GetNumberOfNodesByClass("vtkMRMLSceneViewNode");
   if (numFids > 0)
     {
     ctkMessageBox convertMsgBox;
@@ -489,6 +492,13 @@ void qSlicerMarkupsModuleWidget::checkForAnnotationFiducialConversion()
       + QString(" Moves all Annotation fiducials out of hierarchies (deletes")
       + QString(" the nodes, but leaves the hierarchies in case rulers or")
       + QString(" ROIs are mixed in) and into Markups fiducial list nodes.");
+    if (numSceneViews > 0)
+      {
+      labelText += QString(" Iterates through ")
+        + QString::number(numSceneViews)
+        + QString(" Scene Views and converts any fiducials saved in those")
+        + QString(" scenes into Markups as well.");
+      }
     // don't show again check box conflicts with informative text, so use
     // a long text
     convertMsgBox.setText(labelText);
@@ -571,7 +581,38 @@ void qSlicerMarkupsModuleWidget::updateWidgetFromMRML()
 
   // get the active markup
   vtkMRMLNode *markupsNodeMRML = NULL;
-  std::string listID = (this->markupsLogic() ? this->markupsLogic()->GetActiveListID() : std::string(""));
+  std::string listID = (this->markupsLogic() ?
+                        this->markupsLogic()->GetActiveListID() :
+                        std::string(""));
+
+  // if there's no active list in the logic, check if the node selector has one
+  // selected. This can happen after restoring an older scene view that
+  // didn't have the active place node set on the selection node
+  if (listID.compare("") == 0)
+    {
+    QString currentNodeID = d->activeMarkupMRMLNodeComboBox->currentNodeID();
+    if (currentNodeID.compare("") != 0)
+      {
+      listID = std::string(currentNodeID.toLatin1());
+      qDebug() << "Active list id was null, using GUI combo box setting";
+      // and set it active
+      vtkMRMLNode *mrmlNode = NULL;
+      vtkMRMLSelectionNode *selectionNode = NULL;
+      if (this->markupsLogic())
+        {
+         mrmlNode = this->mrmlScene()->GetNodeByID(this->markupsLogic()->GetSelectionNodeID());
+        }
+      if (mrmlNode)
+        {
+        selectionNode = vtkMRMLSelectionNode::SafeDownCast(mrmlNode);
+        }
+      if (selectionNode)
+        {
+        selectionNode->SetActivePlaceNodeID(listID.c_str());
+        }
+      }
+    }
+  
   markupsNodeMRML = this->mrmlScene()->GetNodeByID(listID.c_str());
   vtkMRMLMarkupsNode *markupsNode = NULL;
   if (markupsNodeMRML)
@@ -909,6 +950,13 @@ void qSlicerMarkupsModuleWidget::onNodeRemovedEvent(vtkObject* scene, vtkObject*
 
 //-----------------------------------------------------------------------------
 void qSlicerMarkupsModuleWidget::onMRMLSceneEndImportEvent()
+{
+  this->checkForAnnotationFiducialConversion();
+  this->updateWidgetFromMRML();
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerMarkupsModuleWidget::onMRMLSceneEndRestoreEvent()
 {
   this->checkForAnnotationFiducialConversion();
   this->updateWidgetFromMRML();

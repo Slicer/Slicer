@@ -87,6 +87,8 @@ public slots:
   void onNodeRemovedEvent(vtkObject* scene, vtkObject* node);
   /// Update the table after a scene is imported
   void onMRMLSceneEndImportEvent();
+  /// Update the table after a scene view is restored
+  void onMRMLSceneEndRestoreEvent();
   /// Update the table after batch processing is done, needed to trigger
   /// an update after a markups file is read in
   void onMRMLSceneEndBatchProcessEvent();

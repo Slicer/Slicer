@@ -66,9 +66,11 @@ public:
   std::string AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *mrmlNode);
 
   /// Create a new markups fiducial node and associated display node, adding both to
-  /// the scene. Also make it the active on on the selection node.
+  /// the scene. If the scene argument is null use the scene set on the logic
+  /// class, and also make it the active on on the selection node, otherwise
+  /// add to the passed scene.
   /// On success, return the id, on failure return an empty string.
-  std::string AddNewFiducialNode(const char *name = "F");
+  std::string AddNewFiducialNode(const char *name = "F", vtkMRMLScene *scene = NULL);
 
   /// Add a new fiducial to the currently active list at the given RAS
   /// coordinates (default 0,0,0). Will create a list is one is not active.
