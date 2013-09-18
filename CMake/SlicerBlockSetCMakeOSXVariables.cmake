@@ -44,17 +44,21 @@ if(APPLE)
   #   8.x == Mac OSX 10.4 (Tiger)
   #   9.x == Mac OSX 10.5 (Leopard)
   #  10.x == Mac OSX 10.6 (Snow Leopard)
-  #  10.x == Mac OSX 10.7 (Lion)
+  #  11.x == Mac OSX 10.7 (Lion)
+  #  12.x == Mac OSX 10.8 (Mountain Lion)
+  #  13.x == Mac OSX 10.9 (Mavericks)
   set(OSX_SDK_104_NAME "Tiger")
   set(OSX_SDK_105_NAME "Leopard")
   set(OSX_SDK_106_NAME "Snow Leopard")
   set(OSX_SDK_107_NAME "Lion")
+  set(OSX_SDK_108_NAME "Mountain Lion")
+  set(OSX_SDK_109_NAME "Mavericks")
 
   set(OSX_SDK_ROOTS
     /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
     /Developer/SDKs
     )
-  set(SDK_VERSIONS_TO_CHECK 10.7 10.6 10.5)
+  set(SDK_VERSIONS_TO_CHECK 10.9 10.8 10.7 10.6 10.5)
   foreach(SDK_VERSION ${SDK_VERSIONS_TO_CHECK})
     if(NOT CMAKE_OSX_DEPLOYMENT_TARGET OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" STREQUAL "")
       foreach(SDK_ROOT ${OSX_SDK_ROOTS})
