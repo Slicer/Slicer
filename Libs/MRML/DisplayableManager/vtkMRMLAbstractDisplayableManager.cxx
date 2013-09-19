@@ -823,7 +823,10 @@ void vtkMRMLAbstractDisplayableManager::SetAndObserveMRMLDisplayableNode(
   this->SetMRMLScene(sceneToObserve);
   this->SetUpdateFromMRMLRequested(true);
   this->CreateIfPossible();
-  this->RequestRender();
+  if (newMRMLDisplayableNode != 0)
+    {
+    this->RequestRender();
+    }
 }
 
 //---------------------------------------------------------------------------
