@@ -253,14 +253,15 @@ class EndoscopyWidget:
     
   def flyTo(self, f):
     """ Apply the fth step in the path to the global camera"""
-    f = int(f)
-    p = self.path[f]
-    self.camera.SetPosition(*p)
-    foc = self.path[f+1]
-    self.camera.SetFocalPoint(*foc)
-    self.transform.GetMatrixTransformToParent().SetElement(0 ,3, p[0])
-    self.transform.GetMatrixTransformToParent().SetElement(1, 3, p[1])
-    self.transform.GetMatrixTransformToParent().SetElement(2, 3, p[2])
+    if self.path:
+      f = int(f)
+      p = self.path[f]
+      self.camera.SetPosition(*p)
+      foc = self.path[f+1]
+      self.camera.SetFocalPoint(*foc)
+      self.transform.GetMatrixTransformToParent().SetElement(0 ,3, p[0])
+      self.transform.GetMatrixTransformToParent().SetElement(1, 3, p[1])
+      self.transform.GetMatrixTransformToParent().SetElement(2, 3, p[2])
 
 
 class EndoscopyComputePath:
