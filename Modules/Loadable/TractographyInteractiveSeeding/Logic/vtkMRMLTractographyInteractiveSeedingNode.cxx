@@ -507,12 +507,8 @@ void vtkMRMLTractographyInteractiveSeedingNode::StringToROILabels(std::string la
       }
     if (ss >> label)
       {
-      // check range
-      if (range[0] <= label && label <= range[1])
-        {
-        this->ROILabels->InsertNextValue(label);
-        validLabels = true;
-        }
+      this->ROILabels->InsertNextValue(label);
+      validLabels = true;
       }
     } //while ( !ss.eof() )
   if (validLabels)

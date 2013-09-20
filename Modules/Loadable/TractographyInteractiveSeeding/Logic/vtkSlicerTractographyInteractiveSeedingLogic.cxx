@@ -446,9 +446,20 @@ int vtkSlicerTractographyInteractiveSeedingLogic::CreateTracts(vtkMRMLTractograp
 
   if ( labelMapNode && parametersNode->GetROILabels() )
     {
+    double range[2];
+    range[0]=-1;
+    range[1]=1e10;
+    labelMapNode->GetImageData()->GetScalarRange(range);
 
     for (int i=0; i<parametersNode->GetROILabels()->GetNumberOfTuples(); i++)
-    {
+      {
+      // check if label is in the range
+      int label = parametersNode->GetROILabels()->GetValue(i);
+      if (range[0] > label || label > range[1])
+        {
+        continue;
+        }
+
       this->CreateTractsForLabelMap(seed.GetPointer(), volumeNode, labelMapNode,
                                     parametersNode->GetROILabels()->GetValue(i),
                                     parametersNode->GetUseIndexSpace(),
