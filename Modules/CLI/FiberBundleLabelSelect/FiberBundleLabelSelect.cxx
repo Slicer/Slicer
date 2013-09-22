@@ -174,7 +174,7 @@ int main( int argc, char * argv[] )
       if (pt[0] < 0 || pt[1] < 0 || pt[2] < 0 ||
           pt[0] >= labelDims[0] || pt[1] >= labelDims[1] || pt[2] >= labelDims[2])
         {
-        std::cerr << "point #" << j <<" on the line #" << inCellId << " is outside the label";
+        std::cerr << "point #" << j <<" on the line #" << inCellId << " is outside the label\n";
         continue;
         }
         
@@ -266,15 +266,19 @@ int main( int argc, char * argv[] )
   //vtkIdTypeArray *cellArray=outFibersCellArray->GetData();
   //cellArray->SetNumberOfTuples(numNewPts+numNewCells);
 
+  // if the input has tensors, copy them to the output
+  vtkDataArray *oldTensors = input->GetPointData()->GetTensors();
   vtkSmartPointer<vtkFloatArray> newTensors = vtkSmartPointer<vtkFloatArray>::New();
-  newTensors->SetNumberOfComponents(9);
-  newTensors->Allocate(9*numNewPts);
-  outFibers->GetPointData()->SetTensors(newTensors);
-  newTensors = static_cast<vtkFloatArray *> (outFibers->GetPointData()->GetTensors());
+  if (oldTensors)
+    {
+    newTensors->SetNumberOfComponents(9);
+    newTensors->Allocate(9*numNewPts);
+    outFibers->GetPointData()->SetTensors(newTensors);
+    newTensors = static_cast<vtkFloatArray *> (outFibers->GetPointData()->GetTensors());
+    }
 
 
   vtkIdType ptId = 0;
-  vtkDataArray *oldTensors = input->GetPointData()->GetTensors();
   double tensor[9];
 
   for (inCellId=0, inLines->InitTraversal(); 
