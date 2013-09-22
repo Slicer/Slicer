@@ -8,7 +8,8 @@ from os import path
 #      be wrapped.
 slicer_qt_loadable_modules_lib_subdir =  path.join("lib", "Slicer-%d.%d", "qt-loadable-modules") % (app.majorVersion, app.minorVersion)
 directory = path.join(app.slicerHome, slicer_qt_loadable_modules_lib_subdir, app.intDir)
-importQtClassesFromDirectory(directory, __name__, filematch = "qSlicer*PythonQt.*")
+if not app.commandOptions().disableLoadableModules:
+    importQtClassesFromDirectory(directory, __name__, filematch = "qSlicer*PythonQt.*")
 
 # Removing things the user shouldn't have to see.
 del app, importQtClassesFromDirectory, directory, slicer_qt_loadable_modules_lib_subdir, path
