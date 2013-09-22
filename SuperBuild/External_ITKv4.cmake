@@ -71,7 +71,7 @@ if(NOT DEFINED ITK_DIR)
   endif()
 
   set(ITKv4_REPOSITORY ${git_protocol}://itk.org/ITK.git)
-  set(ITKv4_GIT_TAG 237932867d8491db6a7745e6b4cc2b25f8e4470c) #2013-08-28
+  set(ITKv4_GIT_TAG a8429da6fe4bfa900d02442b389f6eb6c4882d8f) #2013-09-18
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${ITKv4_REPOSITORY}
