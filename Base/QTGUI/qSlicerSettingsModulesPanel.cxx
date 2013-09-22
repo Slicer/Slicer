@@ -133,6 +133,14 @@ void qSlicerSettingsModulesPanelPrivate::init()
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("disable-cli-modules", this->LoadCommandLineModulesCheckBox,
                       "checked", SIGNAL(toggled(bool)));
+
+  q->registerProperty("disable-builtin-loadable-modules", this->LoadBuiltInLoadableModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("disable-builtin-scripted-loadable-modules", this->LoadBuiltInScriptedLoadableModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+  q->registerProperty("disable-builtin-cli-modules", this->LoadBuiltInCommandLineModulesCheckBox,
+                      "checked", SIGNAL(toggled(bool)));
+
   q->registerProperty("Modules/PreferExecutableCLI", this->PreferExecutableCLICheckBox,
                       "checked", SIGNAL(toggled(bool)));
   q->registerProperty("Modules/HomeModule", this->ModulesMenu,

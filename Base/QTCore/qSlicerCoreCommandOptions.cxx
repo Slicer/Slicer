@@ -126,13 +126,6 @@ bool qSlicerCoreCommandOptions::ignoreRest() const
 }
 
 //-----------------------------------------------------------------------------
-bool qSlicerCoreCommandOptions::disableCLIModules() const
-{
-  Q_D(const qSlicerCoreCommandOptions);
-  return d->ParsedArgs.value("disable-cli-modules").toBool();
-}
-
-//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::ignoreSlicerRC()const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -155,6 +148,34 @@ QStringList qSlicerCoreCommandOptions::additonalModulePaths()const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableModules() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableBuiltInModules() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-builtin-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableCLIModules() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-cli-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableBuiltInCLIModules() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-builtin-cli-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableLoadableModules() const
 {
   Q_D(const qSlicerCoreCommandOptions);
@@ -162,10 +183,24 @@ bool qSlicerCoreCommandOptions::disableLoadableModules() const
 }
 
 //-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableBuiltInLoadableModules() const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-builtin-loadable-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool qSlicerCoreCommandOptions::disableScriptedLoadableModules()const
 {
   Q_D(const qSlicerCoreCommandOptions);
   return d->ParsedArgs.value("disable-scripted-loadable-modules").toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool qSlicerCoreCommandOptions::disableBuiltInScriptedLoadableModules()const
+{
+  Q_D(const qSlicerCoreCommandOptions);
+  return d->ParsedArgs.value("disable-builtin-scripted-loadable-modules").toBool();
 }
 
 //-----------------------------------------------------------------------------
@@ -313,17 +348,32 @@ void qSlicerCoreCommandOptions::addArguments()
   this->addArgument("additional-module-paths", "", QVariant::StringList,
                     "List of additional module path to consider when searching for modules to load.");
 
+  this->addArgument("disable-modules", "", QVariant::Bool,
+                    "Disables the loading of any odules.");
+
+  this->addArgument("disable-builtin-modules", "", QVariant::Bool,
+                    "Disables the loading of builtin Modules.");
+
 #ifdef Slicer_BUILD_CLI_SUPPORT
   this->addArgument("disable-cli-modules", "", QVariant::Bool,
-                    "Disables the loading of Command Line Modules.");
+                    "Disables the loading of any Command Line Modules.");
+
+  this->addArgument("disable-builtin-cli-modules", "", QVariant::Bool,
+                    "Disables the loading of builtin Command Line Modules.");
 #endif
 
   this->addArgument("disable-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of Loadable Modules.");
+                    "Disables the loading of any Loadable Modules.");
+
+  this->addArgument("disable-builtin-loadable-modules", "", QVariant::Bool,
+                    "Disables the loading of builtin Loadable Modules.");
 
 #ifdef Slicer_USE_PYTHONQT
   this->addArgument("disable-scripted-loadable-modules", "", QVariant::Bool,
-                    "Disables the loading of Scripted Loadable Modules.");
+                    "Disables the loading of any Scripted Loadable Modules.");
+
+  this->addArgument("disable-builtin-scripted-loadable-modules", "", QVariant::Bool,
+                    "Disables the loading of builtinScripted Loadable Modules.");
 #endif
 
   this->addArgument("version", "", QVariant::Bool,

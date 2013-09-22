@@ -18,44 +18,51 @@
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="LoadLoadableModulesLabel">
+    <widget class="QLabel" name="LoadModulesLabel">
      <property name="text">
-      <string>Skip loading of:</string>
+      <string>Skip loading of any:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
+    <widget class="QLabel" name="LoadBuildInModulesLabel">
+     <property name="text">
+      <string>Skip loading of builtin:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QLabel" name="ShowHiddenModulesLabel">
      <property name="text">
       <string>Show hidden modules:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QCheckBox" name="ShowHiddenModulesCheckBox">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="TemporaryDirectoryLabel">
      <property name="text">
       <string>Temporary directory:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="ctkDirectoryButton" name="TemporaryDirectoryButton"/>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="AdditionalModulePathsLabel">
      <property name="text">
       <string>Additional module paths:</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QWidget" name="AdditionalModulePathsWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="margin">
@@ -120,7 +127,7 @@
      </layout>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="DisableModulesLabel">
      <property name="toolTip">
       <string>when checking/unchecking a module, its dependencies are checked/unchecked accordingly</string>
@@ -130,7 +137,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="qSlicerModulesListView" name="DisableModulesListView">
@@ -388,21 +395,21 @@
      </item>
     </layout>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="HomeModuleLabel">
      <property name="text">
       <string>Default startup module:</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <widget class="QPushButton" name="HomeModuleButton">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
+   <item row="9" column="0">
     <widget class="QLabel" name="FavoritesModulesLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -421,7 +428,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="9" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="qSlicerModulesListView" name="FavoritesModulesListView">
@@ -523,7 +530,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="PreferExecutableCLILabel">
      <property name="toolTip">
       <string>To limit memory consumption, loading executable CLIs is prefered as they don't load in Slicer's memory</string>
@@ -533,7 +540,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QCheckBox" name="PreferExecutableCLICheckBox">
      <property name="text">
       <string/>
@@ -566,6 +573,40 @@
       <widget class="QCheckBox" name="LoadScriptedLoadableModulesCheckBox">
        <property name="toolTip">
         <string>To temporarily disable, pass  --disable-scripted-loadable-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>scripted loadable modules</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QCheckBox" name="LoadBuiltInLoadableModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarilly disable, pass --disable-builtin-loadable-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>loadable modules</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="LoadBuiltInCommandLineModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarily disable, pass --disable-builtin-cli-modules on the command line</string>
+       </property>
+       <property name="text">
+        <string>command-line plugins</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="LoadBuiltInScriptedLoadableModulesCheckBox">
+       <property name="toolTip">
+        <string>To temporarily disable, pass  --disable-builtin-scripted-loadable-modules on the command line</string>
        </property>
        <property name="text">
         <string>scripted loadable modules</string>
