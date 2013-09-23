@@ -138,6 +138,48 @@
         </spacer>
       </item>
       <item>
+        <widget class="ctkCollapsibleButton" name="FeedbackCollapsibleWidget">
+          <property name="text">
+            <string>Feedback</string>
+          </property>
+          <property name="collapsed">
+            <bool>false</bool>
+          </property>
+          <property name="contentsFrameShape">
+            <enum>QFrame::StyledPanel</enum>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+            <property name="spacing">
+              <number>0</number>
+            </property>
+            <property name="margin">
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="ctkFittedTextBrowser" name="textBrowser_13">
+                <property name="sizePolicy">
+                  <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="source">
+                  <url>
+                    <string>qrc:HTML/Feedback.html</string>
+                  </url>
+                </property>
+                <property name="openExternalLinks">
+                  <bool>true</bool>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
         <widget class="ctkCollapsibleButton" name="WelcomeAndAboutCollapsibleWidget">
           <property name="text">
             <string>About</string>

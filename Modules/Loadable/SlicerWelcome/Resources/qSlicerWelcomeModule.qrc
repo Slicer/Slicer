@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>Icons/Chat.png</file> <!-- Adapted from http://openclipart.org/detail/170274/chat-button-by-scyg -->
     <file>Icons/SlicerWelcome.png</file>
   </qresource>
   <qresource>
@@ -32,6 +33,7 @@
     <file>Images/WelcomeConfigure.png</file>
     <file>HTML/OtherUsefulHints.html</file>
     <file>HTML/Community.html</file>
+    <file>HTML/Feedback.html</file>
     <file>Images/WelcomeCommunity.png</file>
     <file>Images/SlicerLoadDicom-Original.png</file>    
     <file>Images/SlicerLoadData-Original.png</file>    
