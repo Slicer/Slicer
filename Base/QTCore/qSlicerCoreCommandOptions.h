@@ -25,7 +25,7 @@
 #include <ctkCommandLineParser.h>
 
 #include "qSlicerBaseQTCoreExport.h"
-#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT
+#include "vtkSlicerConfigure.h" // For Slicer_USE_PYTHONQT, Slicer_BUILD_WIN32_CONSOLE
 
 class QSettings;
 class qSlicerCoreCommandOptionsPrivate;
@@ -142,6 +142,13 @@ public:
 
   /// Return True if slicer shouldn't catch messages printed to the terminal.
   bool disableMessageHandlers()const;
+
+  /// Return True if slicer shouldn't print messages on the terminal.
+  /// Messages won't be displayed on either stdout or stderr and will only be captured
+  /// in the error log model.
+  /// \sa qSlicerCoreApplication::errorLogModel()
+  /// \sa ctkErrorLogModel::setTerminalOutputs()
+  bool disableTerminalOutputs()const;
 
   /// Return True if slicer settings are ignored
   bool settingsDisabled() const;
