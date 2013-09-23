@@ -288,7 +288,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToPlace(const char *placeNodeCl
     return;
     }
 
-  QAction *checkedAction = 0;
   if (!placeNodeClassName)
     {
     q->changeCursorTo(QCursor());
@@ -305,7 +304,6 @@ void qSlicerMouseModeToolBarPrivate::updateWidgetToPlace(const char *placeNodeCl
         {
         // set this action checked
         actions.at(i)->setChecked(true);
-        checkedAction = actions.at(i);
         // update the cursor from the place node resource
         vtkMRMLSelectionNode *selectionNode = this->MRMLAppLogic->GetSelectionNode();
         if ( selectionNode )
