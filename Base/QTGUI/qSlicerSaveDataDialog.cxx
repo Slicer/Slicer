@@ -343,7 +343,7 @@ void qSlicerSaveDataDialogPrivate::populateScene()
 
   // Scene Directory
   ctkDirectoryButton* sceneDirectoryButton =
-    new ctkDirectoryButton(this->MRMLScene->GetRootDirectory(), this->FileWidget);
+      this->createFileDirectoryWidget(QFileInfo(this->MRMLScene->GetRootDirectory()));
   this->FileWidget->setCellWidget(row, FileDirectoryColumn, sceneDirectoryButton);
 
   // Scene Selected
@@ -641,10 +641,13 @@ QTableWidgetItem* qSlicerSaveDataDialogPrivate
 }
 
 //-----------------------------------------------------------------------------
-QWidget* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
+ctkDirectoryButton* qSlicerSaveDataDialogPrivate::createFileDirectoryWidget(const QFileInfo& fileInfo)
 {
   // TODO: use QSignalMapper
-  return new ctkDirectoryButton(fileInfo.absolutePath(),this->FileWidget);
+  ctkDirectoryButton * directoryButton = new ctkDirectoryButton(fileInfo.absolutePath(),this->FileWidget);
+  directoryButton->setOptions(ctkDirectoryButton::DontUseNativeDialog);
+  directoryButton->setAcceptMode(QFileDialog::AcceptSave);
+  return directoryButton;
 }
 
 //-----------------------------------------------------------------------------
