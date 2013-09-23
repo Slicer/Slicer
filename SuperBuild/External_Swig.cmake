@@ -39,7 +39,7 @@ if(NOT SWIG_DIR)
     # not windows
 
     # Set dependency list
-    set(Swig_DEPENDENCIES "PCRE")
+    set(Swig_DEPENDENCIES PCRE python)
 
     # Include dependent projects if any
     SlicerMacroCheckExternalProjectDependency(Swig)
