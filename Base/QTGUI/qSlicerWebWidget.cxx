@@ -20,10 +20,8 @@
 
 // Qt includes
 #include <QDebug>
-#include <QDesktopServices>
 #include <QNetworkCookieJar>
 #include <QNetworkReply>
-#include <QSettings>
 #include <QTime>
 #include <QUrl>
 #include <QWebFrame>
