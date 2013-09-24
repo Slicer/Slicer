@@ -1721,31 +1721,9 @@ void qSlicerMarkupsModuleWidget::onActiveMarkupMRMLNodeAdded(vtkMRMLNode *markup
 
   // make sure it's set up for the mouse mode tool bar to easily add points to
   // it by making it active in the selection node
-  std::string selectionNodeID = (this->markupsLogic() ? this->markupsLogic()->GetSelectionNodeID() : std::string(""));
-  vtkMRMLNode *node = this->mrmlScene()->GetNodeByID(selectionNodeID.c_str());
-  vtkMRMLSelectionNode *selectionNode = NULL;
-  if (node)
+  if (this->markupsLogic())
     {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
-    }
-  if (selectionNode)
-    {
-    // check if need to update the current type of node that's being placed
-    const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
-    if (!activePlaceNodeClassName ||
-        (activePlaceNodeClassName &&
-         strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
-      {
-      // call the set reference to make sure the event is invoked
-      selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
-      }
-    // set this markup node active if it's not already
-    const char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
-    if (!activePlaceNodeID ||
-        (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
-      {
-      selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
-      }
+    this->markupsLogic()->SetActiveListID(displayableNode);
     }
 }
 
