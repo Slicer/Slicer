@@ -215,6 +215,47 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
     vtkUnObserveMRMLNodeMacro(node);
     vtkObserveMRMLNodeEventsMacro(node, events.GetPointer());
     }
+  // a node could have been added by a node selector's create new node method,
+  // but make sure that the scen eis not batch processing before responding to
+  // the event
+  if (!node->IsA("vtkMRMLMarkupsNode"))
+    {
+    return;
+    }
+  if (this->GetMRMLScene() &&
+      (this->GetMRMLScene()->IsImporting() ||
+       this->GetMRMLScene()->IsRestoring() ||
+       this->GetMRMLScene()->IsBatchProcessing()))
+    {
+    return;
+    }
+  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(node);
+  if (!markupsNode)
+    {
+    return;
+    }
+  if (markupsNode->GetDisplayNode() == NULL)
+    {
+    // add a display node
+    int modifyFlag = markupsNode->StartModify();
+    std::string displayNodeID = this->AddNewDisplayNodeForMarkupsNode(markupsNode);
+    markupsNode->EndModify(modifyFlag);
+    vtkDebugMacro("Added a display node with id " << displayNodeID.c_str()
+                  << " for markups node with id " << markupsNode->GetID());
+    }
+  // make it active for adding to via the mouse
+  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID());
+  vtkMRMLSelectionNode *selectionNode = NULL;
+  if (mrmlNode)
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(mrmlNode);
+    }
+  if (selectionNode)
+    {
+    // call the set reference to make sure the event is invoked
+    selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
+    selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -319,40 +360,47 @@ std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *
   if (!mrmlNode || !mrmlNode->GetScene())
     {
     vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: unable to add a markups display node!");
+    return id;
     }
-  else
+
+  // is there already a display node?
+  vtkMRMLDisplayableNode *displayableNode = vtkMRMLDisplayableNode::SafeDownCast(mrmlNode);
+  if (displayableNode && displayableNode->GetDisplayNode() != NULL)
     {
-    // create the display node
-    vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::New();
-    // set it from the defaults
-    this->SetDisplayNodeToDefaults(displayNode);
-    vtkDebugMacro("AddNewDisplayNodeForMarkupsNode: set display node to defaults");
-
-    // add it to the scene
-    //mrmlNode->GetScene()->AddNode(displayNode);
-    vtkMRMLNode *n = mrmlNode->GetScene()->InsertBeforeNode(mrmlNode, displayNode);
-    if (!n)
-      {
-      vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: error on insert before node");
-      return id;
-      }
-
-    // get the node id to return
-    id = std::string(displayNode->GetID());
-
-    // cast to markups node
-    vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
-    if (markupsNode)
-      {
-      // observe the display node
-      markupsNode->DisableModifiedEventOn();
-      markupsNode->AddAndObserveDisplayNodeID(id.c_str());
-      markupsNode->DisableModifiedEventOff();
-      }
-
-    // clean up
-    displayNode->Delete();
+    return displayableNode->GetDisplayNodeID();
     }
+
+  // create the display node
+  vtkMRMLMarkupsDisplayNode *displayNode = vtkMRMLMarkupsDisplayNode::New();
+  // set it from the defaults
+  this->SetDisplayNodeToDefaults(displayNode);
+  vtkDebugMacro("AddNewDisplayNodeForMarkupsNode: set display node to defaults");
+
+  // add it to the scene
+  //mrmlNode->GetScene()->AddNode(displayNode);
+  vtkMRMLNode *n = mrmlNode->GetScene()->InsertBeforeNode(mrmlNode, displayNode);
+  if (!n)
+    {
+    vtkErrorMacro("AddNewDisplayNodeForMarkupsNode: error on insert before node");
+    return id;
+    }
+
+  // get the node id to return
+  id = std::string(displayNode->GetID());
+
+  // cast to markups node
+  vtkMRMLMarkupsNode *markupsNode = vtkMRMLMarkupsNode::SafeDownCast(mrmlNode);
+  if (markupsNode)
+    {
+    // observe the display node
+    markupsNode->DisableModifiedEventOn();
+    markupsNode->AddAndObserveDisplayNodeID(id.c_str());
+    markupsNode->DisableModifiedEventOff();
+    }
+
+  // clean up
+  displayNode->Delete();
+
   return id;
 }
 
@@ -1188,7 +1236,7 @@ bool vtkSlicerMarkupsLogic::StartPlaceMode(bool persistent)
     vtkErrorMacro ("StartPlaceMode: No selection node in the scene." );
     return false;
     }
-  selectionNode->SetActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
+  selectionNode->SetReferenceActivePlaceNodeClassName("vtkMRMLMarkupsFiducialNode");
 
   // now go into place mode with the persistece flag set
   vtkMRMLInteractionNode *interactionNode =

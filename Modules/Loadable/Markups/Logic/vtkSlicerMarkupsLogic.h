@@ -61,8 +61,10 @@ public:
   /// Returns an empty string on failure.
   std::string GetActiveListID();
 
-  /// Create a new display node and observe it on the markups node
+  /// Create a new display node and observe it on the markups node.
   /// On success, return the id, on failure return an empty string.
+  /// If a display node already exists for this node, return the id of that
+  /// node.
   std::string AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *mrmlNode);
 
   /// Create a new markups fiducial node and associated display node, adding both to
