@@ -1379,13 +1379,15 @@ void qSlicerCoreApplication::restart()
 {
   qSlicerCoreApplication * coreApp = qSlicerCoreApplication::application();
   bool launcherAvailable = QFile::exists(coreApp->launcherExecutableFilePath());
+  QStringList arguments = coreApp->arguments();
+  arguments.removeFirst(); // Remove program name
   if (launcherAvailable)
     {
-    QProcess::startDetached(coreApp->launcherExecutableFilePath(), coreApp->arguments());
+    QProcess::startDetached(coreApp->launcherExecutableFilePath(), arguments);
     }
   else
     {
-    QProcess::startDetached(coreApp->applicationFilePath(), coreApp->arguments());
+    QProcess::startDetached(coreApp->applicationFilePath(), arguments);
     }
   QCoreApplication::quit();
 }
