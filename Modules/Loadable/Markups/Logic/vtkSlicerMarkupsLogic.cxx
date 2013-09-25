@@ -244,18 +244,7 @@ void vtkSlicerMarkupsLogic::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
                   << " for markups node with id " << markupsNode->GetID());
     }
   // make it active for adding to via the mouse
-  vtkMRMLNode *mrmlNode = this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID());
-  vtkMRMLSelectionNode *selectionNode = NULL;
-  if (mrmlNode)
-    {
-    selectionNode = vtkMRMLSelectionNode::SafeDownCast(mrmlNode);
-    }
-  if (selectionNode)
-    {
-    // call the set reference to make sure the event is invoked
-    selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
-    selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
-    }
+  this->SetActiveListID(markupsNode);
 }
 
 //---------------------------------------------------------------------------
@@ -354,6 +343,37 @@ std::string vtkSlicerMarkupsLogic::GetActiveListID()
 }
 
 //---------------------------------------------------------------------------
+void vtkSlicerMarkupsLogic::SetActiveListID(vtkMRMLMarkupsNode *markupsNode)
+{
+  std::string selectionNodeID = this->GetSelectionNodeID();
+  vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(selectionNodeID.c_str());
+  vtkMRMLSelectionNode *selectionNode = NULL;
+  if (node)
+    {
+    selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
+    }
+  if (selectionNode)
+    {
+    // check if need to update the current type of node that's being placed
+    const char *activePlaceNodeClassName = selectionNode->GetActivePlaceNodeClassName();
+    if (!activePlaceNodeClassName ||
+        (activePlaceNodeClassName &&
+         strcmp(activePlaceNodeClassName, markupsNode->GetClassName()) != 0))
+      {
+      // call the set reference to make sure the event is invoked
+      selectionNode->SetReferenceActivePlaceNodeClassName(markupsNode->GetClassName());
+      }
+    // set this markup node active if it's not already
+    const char *activePlaceNodeID = selectionNode->GetActivePlaceNodeID();
+    if (!activePlaceNodeID ||
+        (activePlaceNodeID && strcmp(activePlaceNodeID, markupsNode->GetID()) != 0))
+      {
+      selectionNode->SetActivePlaceNodeID(markupsNode->GetID());
+      }
+    }
+}
+
+//---------------------------------------------------------------------------
 std::string vtkSlicerMarkupsLogic::AddNewDisplayNodeForMarkupsNode(vtkMRMLNode *mrmlNode)
 {
   std::string id;
@@ -445,18 +465,7 @@ std::string vtkSlicerMarkupsLogic::AddNewFiducialNode(const char *name, vtkMRMLS
     // this list
     if (addToThisScene == this->GetMRMLScene())
       {
-      vtkMRMLNode *node = this->GetMRMLScene()->GetNodeByID(this->GetSelectionNodeID());
-      vtkMRMLSelectionNode *selectionNode = NULL;
-      if (node)
-        {
-        selectionNode = vtkMRMLSelectionNode::SafeDownCast(node);
-        }
-      if (selectionNode)
-        {
-        // call the set reference to make sure the event is invoked
-        selectionNode->SetReferenceActivePlaceNodeClassName(mnode->GetClassName());
-        selectionNode->SetActivePlaceNodeID(mnode->GetID());
-        }
+      this->SetActiveListID(mnode);
       }
     }
   // clean up

@@ -59,7 +59,15 @@ public:
 
   /// Utility method to return the id of the active place node.
   /// Returns an empty string on failure.
+  /// \sa SetActiveListID
   std::string GetActiveListID();
+
+  /// Utility method to set the active place node from the passed markups
+  /// node. Does not set the interaction mode to place.
+  /// \sa GetActiveListID, StartPlaceMode
+  /// \sa vtkMRMLSelectionNode::SetReferenceActivePlaceNodeClassName
+  /// \sa vtkMRMLSelectionNode::SetActivePlaceNodeID
+  void SetActiveListID(vtkMRMLMarkupsNode *markupsNode);
 
   /// Create a new display node and observe it on the markups node.
   /// On success, return the id, on failure return an empty string.
@@ -160,6 +168,7 @@ public:
   /// Put the interaction node into place mode, and set the persistence of
   /// place mode according to the persistent flag.
   /// Return true on sucessfully going into place mode, false otherwise.
+  /// \sa SetActiveIDList
   bool StartPlaceMode(bool persistent);
 
 protected:
