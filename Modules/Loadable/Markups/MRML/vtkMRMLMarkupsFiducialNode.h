@@ -15,12 +15,6 @@
 
 ==============================================================================*/
 
-// .NAME vtkMRMLMarkupsFiducialNode - MRML node to represent a fiducial markup
-// .SECTION Description
-// Markups nodes contains control points.
-// Visualization parameters for these nodes are controlled by the vtkMRMLMarkupsDisplayNode class.
-//
-
 #ifndef __vtkMRMLMarkupsFiducialNode_h
 #define __vtkMRMLMarkupsFiducialNode_h
 
@@ -35,12 +29,16 @@
 // VTK includes
 #include <vtkSmartPointer.h>
 
+/// \brief MRML node to represent a fiducial markup
+/// Fiducial Markups nodes contain a list of fiducial points.
+/// Visualization parameters are set in the vtkMRMLMarkupsDisplayNode class.
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsFiducialNode : public vtkMRMLMarkupsNode
 {
 public:
   static vtkMRMLMarkupsFiducialNode *New();
   vtkTypeMacro(vtkMRMLMarkupsFiducialNode,vtkMRMLMarkupsNode);
+  /// Print out the node information to the output stream
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual const char* GetIcon() {return ":/Icons/MarkupsMouseModePlace.png";};
@@ -50,58 +48,72 @@ public:
   //--------------------------------------------------------------------------
 
   virtual vtkMRMLNode* CreateNodeInstance();
-  // Get node XML tag name (like Volume, Model)
+  /// Get node XML tag name (like Volume, Model)
   virtual const char* GetNodeTagName() {return "MarkupsFiducial";};
 
-  // Read node attributes from XML file
+  /// Read node attributes from XML file
   virtual void ReadXMLAttributes( const char** atts);
 
-  // Write this node's information to a MRML file in XML format.
+  /// Write this node's information to a MRML file in XML format.
   virtual void WriteXML(ostream& of, int indent);
 
-  // Copy the node's attributes to this object
+  /// Copy the node's attributes to this object
   virtual void Copy(vtkMRMLNode *node);
 
-
+  /// Calls the superclass UpdateScene
   void UpdateScene(vtkMRMLScene *scene);
 
-  // Alternative method to propagate events generated in Display nodes
+  /// Alternative method to propagate events generated in Display nodes
   virtual void ProcessMRMLEvents ( vtkObject * /*caller*/,
                                    unsigned long /*event*/,
                                    void * /*callData*/ );
 
 
-  // Create default storage node or NULL if does not have one
+  /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
   /// Return a cast display node, returns null if none
   vtkMRMLMarkupsDisplayNode *GetMarkupsDisplayNode();
 
-  /// Wrap some of the generic markup methods
+  // Wrapping some of the generic markup methods
+
   /// Get the number of fiducials in this node
   int GetNumberOfFiducials() { return this->GetNumberOfMarkups(); } ;
-  /// Add a new fiducial and return the fiducial index
+  /// Add a new fiducial from x,y,z coordinates and return the fiducial index
   int AddFiducial(double x, double y, double z);
+  /// Add a new fiducial from an array and return the fiducial index
   int AddFiducialFromArray(double pos[3]);
-  /// Get the position of the nth fiducial
+  /// Get the position of the nth fiducial, returning it in the pos array
   void GetNthFiducialPosition(int n, double pos[3]);
-  /// Set the position of the nth fiducial
+  /// Set the position of the nth fiducial from x, y, z coordinates
   void SetNthFiducialPosition(int n, double x, double y, double z);
+  /// Set the position of the nth fiducial from a double array
   void SetNthFiducialPositionFromArray(int n, double pos[3]);
-  /// Get/Set selected property on Nth fiducial
+  /// Get selected property on Nth fiducial
   bool GetNthFiducialSelected(int n = 0);
+  /// Set selected property on Nth fiducial
   void SetNthFiducialSelected(int n, bool flag);
-  /// Get/Set visibility property on Nth fiducial
+  /// Get visibility property on Nth fiducial
   bool GetNthFiducialVisibility(int n = 0);
+  /// Set visibility property on Nth fiducial. If the visibility is set to
+  /// true on the node/list as a whole, the nth fiducial visibility is used to
+  /// determine if it is visible. If the visibility is set to false on the node
+  /// as a whole, all fiducials are hidden but keep this value for when the
+  /// list as a whole is turned visible.
+  /// \sa vtkMRMLDisplayableNode::SetDisplayVisibility
+  /// \sa vtkMRMLDisplayNode::SetVisibility
   void SetNthFiducialVisibility(int n, bool flag);
-  /// Get/Set label on nth fiducial
+  /// Get label on nth fiducial
   std::string GetNthFiducialLabel(int n = 0);
+  /// Set label on nth fiducial
   void SetNthFiducialLabel(int n, std::string label);
-  /// Get/Set associated node id on nth fiducial
+  /// Get associated node id on nth fiducial
   std::string GetNthFiducialAssociatedNodeID(int n = 0);
+  /// Set associated node id on nth fiducial
   void SetNthFiducialAssociatedNodeID(int n, const char* id);
-  /// Get/Set world coordinates on nth fiducial
+  /// Set world coordinates on nth fiducial
   void SetNthFiducialWorldCoordinates(int n, double coords[4]);
+  /// Get world coordinates on nth fiducial
   void GetNthFiducialWorldCoordinates(int n, double coords[4]);
 
 protected:

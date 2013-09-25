@@ -15,12 +15,6 @@
 
 ==============================================================================*/
 
-// .NAME vtkMRMLMarkupsNode - MRML node to represent a markup
-// .SECTION Description
-// Markups nodes contains control points.
-// Visualization parameters for these nodes are controlled by the vtkMRMLMarkupsDisplayNode class.
-//
-
 #ifndef __vtkMRMLMarkupsNode_h
 #define __vtkMRMLMarkupsNode_h
 
@@ -37,17 +31,7 @@
 class vtkStringArray;
 class vtkMatrix4x4;
 
-/// Each markup has a unique ID.
-/// Each markup is defined by a certain number of RAS points,
-/// 1 for fiducials, 2 for rulers, 3 for angles, etc.
-/// Each markup has an orientation defined by a quaternion. It's represented
-/// by a 4 element vector: [0] = the angle of rotation, [1,2,3] = the axis of
-/// rotation. Default is 0.0, 0.0, 0.0, 1.0
-/// Each markup also has an associated node id, set when the markup
-/// is placed on a data set to link the markup to the volume or model.
-/// Each markup can also be individually un/selected, un/locked, in/visibile,
-/// and have a label (short, shown in the viewers) and description (longer,
-/// shown in the GUI).
+/// see doxygen enabled comment in class description
 typedef struct
 {
   std::string ID;
@@ -61,8 +45,22 @@ typedef struct
   bool Visibility;
 } Markup;
 
-
-
+/// \brief MRML node to represent a list of markups
+/// Markups nodes contains a list of markups that each contain a list of points.
+/// Visualization parameters for these nodes are controlled by the
+/// vtkMRMLMarkupsDisplayNode class.
+/// Each markup has a unique ID.
+/// Each markup is defined by a certain number of RAS points,
+/// 1 for fiducials, 2 for rulers, 3 for angles, etc.
+/// Each markup has an orientation defined by a quaternion. It's represented
+/// by a 4 element vector: [0] = the angle of rotation, [1,2,3] = the axis of
+/// rotation. Default is 0.0, 0.0, 0.0, 1.0
+/// Each markup also has an associated node id, set when the markup
+/// is placed on a data set to link the markup to the volume or model.
+/// Each markup can also be individually un/selected, un/locked, in/visibile,
+/// and have a label (short, shown in the viewers) and description (longer,
+/// shown in the GUI).
+/// \sa vtkMRMLMarkupsDisplayNode
 /// \ingroup Slicer_QtModules_Markups
 class  VTK_SLICER_MARKUPS_MODULE_MRML_EXPORT vtkMRMLMarkupsNode : public vtkMRMLDisplayableNode
 {
@@ -117,22 +115,21 @@ public:
   /// Create default storage node or NULL if does not have one
   virtual vtkMRMLStorageNode* CreateDefaultStorageNode();
 
-
+  /// Access to a VTK string array, not currently used
   int AddText(const char *newText);
   void SetText(int id, const char *newText);
   vtkStdString GetText(int id);
   int DeleteText(int id);
-
   int GetNumberOfTexts();
 
-  /// Invoke events when markups change, passing the markup index if applicable
+  /// Invoke events when markups change, passing the markup index if applicable.
   /// Invoke the lock modified event when a markup's lock status is changed.
-  /// Invoke the label format modified event when markup label format changes
-  /// Invoke the point modified event when a markup's location changes
-  /// Invoke the NthMarkupModifiedEvent event when a markup's non location value
-  /// Invoke the markup added event when adding a new markup to a markups node
+  /// Invoke the label format modified event when markup label format changes.
+  /// Invoke the point modified event when a markup's location changes.
+  /// Invoke the NthMarkupModifiedEvent event when a markup's non location value.
+  /// Invoke the markup added event when adding a new markup to a markups node.
   /// Invoke the markup removed event when removing one or all markups from a node
-  /// (caught by the displayable manager to make sure the widgets match the node)
+  /// (caught by the displayable manager to make sure the widgets match the node).
   enum
   {
     LockModifiedEvent = 19000,
@@ -146,10 +143,18 @@ public:
   /// Clear out the node of all markups
   virtual void RemoveAllMarkups();
 
+  /// Get the Locked property on the markup node/list of markups.
+  vtkGetMacro(Locked, int);
+  /// Set the Locked property on the markup node/list of markups
+  /// If set to 1 then parameters should not be changed, and dragging the
+  /// markups is disabled in 2d and 3d.
+  /// Overrides the Locked flag on individual Markups in that when the node is
+  /// set to be locked, all the markups in the list are locked. When the node
+  /// is unlocked, use the locked flag on the individual markups to determine
+  /// their locked state.
+  void SetLocked(int locked);
   /// Get/Set the Locked property on the markup.
   /// If set to 1 then parameters should not be changed
-  vtkGetMacro(Locked, int);
-  void SetLocked(int locked);
   vtkBooleanMacro(Locked, int);
 
   /// Return true if n is a valid markup, false otherwise
@@ -174,8 +179,11 @@ public:
   /// Add a point to the nth markup, returning the point index
   int AddPointToNthMarkup(vtkVector3d point, int n);
 
-  /// Get points
+  /// Get the position of the pointIndex'th point in markupIndex markup,
+  /// returning it as a vtkVector3d
   vtkVector3d GetMarkupPointVector(int markupIndex, int pointIndex);
+  /// Get the position of the pointIndex'th point in markupIndex markup,
+  /// setting the elements of point
   void GetMarkupPoint(int markupIndex, int pointIndex, double point[3]);
   /// Get points in LPS coordinate system
   void GetMarkupPointLPS(int markupIndex, int pointIndex, double point[3]);
@@ -199,22 +207,31 @@ public:
   /// Swap the position of two markups
   void SwapMarkups(int m1, int m2);
 
-  /// Set a point in a markup
+  /// Set a point in a markup from a pointer to an array
+  /// \sa SetMarkupPoint
   void SetMarkupPointFromPointer(const int markupIndex, const int pointIndex, const double * pos);
+  /// Set a point in a markup from an array
+  /// \sa SetMarkupPoint
   void SetMarkupPointFromArray(const int markupIndex, const int pointIndex, const double pos[3]);
+  /// Set a point in a markup from coordinates
+  /// \sa SetMarkupPointFromPointer, SetMarkupPointFromArray
   void SetMarkupPoint(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
   /// Set a point in a markup using LPS coordinate system, converting to RAS
+  /// \sa SetMarkupPoint
   void SetMarkupPointLPS(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
   /// Set the markupIndex markup's point pointIndex to xyz transformed
   /// by the inverse of the transform to world for the node.
   /// Calls SetMarkupPoint after transforming the passed in coordinate
+  /// \sa SetMarkupPoint
   void SetMarkupPointWorld(const int markupIndex, const int pointIndex, const double x, const double y, const double z);
 
-  /// Set the orientation for a markup
+  /// Set the orientation for a markup from a pointer to a double array
   void SetNthMarkupOrientationFromPointer(int n, const double *orientation);
+  /// Set the orientation for a markup from a double array
   void SetNthMarkupOrientationFromArray(int n, const double orientation[4]);
+  /// Set the orientation for a markup from passed parameters
   void SetNthMarkupOrientation(int n, double w, double x, double y, double z);
-  /// Get the orientation for a markup
+  /// Get the orientation quaternion for a markup
   void GetNthMarkupOrientation(int n, double orientation[4]);
 
   /// Get/Set the associated node id for the nth markup
@@ -224,40 +241,81 @@ public:
   /// Get the id for the nth markup
   std::string GetNthMarkupID(int n = 0);
 
-  /// Get/Set the Selected, Locked and Visibility flags on the nth markup.
-  /// Get returns false if markup doesn't exist
+  /// Get the Selected flag on the nth markup, returns false if markup doesn't
+  /// exist
   bool GetNthMarkupSelected(int n = 0);
+  /// Set the Selected flag on the Nth markup
+  /// \sa vtkMRMLNode::SetSelected
   void SetNthMarkupSelected(int n, bool flag);
+  /// Get the Locked flag on the Nth markup, returns false if markup doesn't
+  /// exist
   bool GetNthMarkupLocked(int n = 0);
+  /// Set Locked property on Nth markup. If locked is set to
+  /// true on the node/list as a whole, the nth markup locked flag is used to
+  /// determine if it is locked. If the locked flag is set to false on the node
+  /// as a whole, all markups are locked but keep this value for when the
+  /// list as a whole is turned unlocked.
+  /// \sa vtMRMLMarkupsNode::SetLocked
   void SetNthMarkupLocked(int n, bool flag);
+  /// Get the Visibility flag of the Nth markup, returns false if markup doesn't
+  /// exist
   bool GetNthMarkupVisibility(int n = 0);
+  /// Set Visibility property on Nth markup. If the visibility is set to
+  /// true on the node/list as a whole, the nth markup visibility is used to
+  /// determine if it is visible. If the visibility is set to false on the node
+  /// as a whole, all markups are hidden but keep this value for when the
+  /// list as a whole is turned visible.
+  /// \sa vtkMRMLDisplayableNode::SetDisplayVisibility
+  /// \sa vtkMRMLDisplayNode::SetVisibility
   void SetNthMarkupVisibility(int n, bool flag);
-  /// Get/Set the Label on the nth markup
+  /// Get the Label on the nth markup, returns an empty string if the
+  /// markup doesn't exist
   std::string GetNthMarkupLabel(int n = 0);
+  /// Set the Label on the nth markup
   void SetNthMarkupLabel(int n, std::string label);
-  /// Get/Set the Description on the nth markup
+  /// Get the Description on the nth markup, returns an empty string if the
+  /// markup doesn't exist
   std::string GetNthMarkupDescription(int n = 0);
+  /// Set the Description on the nth markup
   void SetNthMarkupDescription(int n, std::string description);
 
-  /// Get/Set the label and description on the nth markup, converting between
+  /// Get the label on the nth markup, converting between
   /// user input and storage node file safe strings
   std::string GetNthMarkupLabelForStorage(int n = 0);
+  /// Set the label on the nth markup, converting between
+  /// user input and storage node file safe strings
   void SetNthMarkupLabelFromStorage(int n, std::string label);
+  /// Get the description on the nth markup, converting between
+  /// user input and storage node file safe strings
   std::string GetNthMarkupDescriptionForStorage(int n = 0);
+  /// Set the description on the nth markup, converting between
+  /// user input and storage node file safe strings
   void SetNthMarkupDescriptionFromStorage(int n, std::string description);
 
-  /// Transform utility functions
+  // Transform utility functions
+
+  /// Returns true since can apply non linear transforms
+  /// \sa ApplyTransformMatrix, ApplyTransform
   virtual bool CanApplyNonLinearTransforms()const;
+  /// Apply the passed transformation matrix to all of the markup points
+  /// \sa CanApplyNonLinearTransforms, ApplyTransform
   virtual void ApplyTransformMatrix(vtkMatrix4x4* transformMatrix);
+  /// Apply the passed transformation to all of the markup points
+  /// \sa CanApplyNonLinearTransforms, ApplyTransformMatrix
   virtual void ApplyTransform(vtkAbstractTransform* transform);
 
-  /// The format string that defines the markup names, in standard printf notation, with
-  /// the addition of if %N is in the string, it's replaced by the list name.
-  /// %d will resolve to the highest not yet used list index integer
-  /// character strings will otherwise pass through
-  /// Defaults to %N-%d which will yield markup names of Name-0, Name-1, Name-2
-  /// Set invokes the LabelFormatModifedEvent
+  /// Get the markup label format string that defines the markup names.
+  /// \sa SetMarkupLabelFormat
   std::string GetMarkupLabelFormat();
+  /// Set the markup label format strign that defines the markup names,
+  /// then invoke the LabelFormatModifedEvent
+  /// In standard printf notation, with the addition of %N being replaced
+  /// by the list name.
+  /// %d will resolve to the highest not yet used list index integer.
+  /// Character strings will otherwise pass through
+  /// Defaults to %N-%d which will yield markup names of Name-0, Name-1,
+  /// Name-2
+  /// \sa GetMarkupLabelFormat
   void SetMarkupLabelFormat(std::string format);
 
   /// If the MarkupLabelFormat contains the string %N, return a string
