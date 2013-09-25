@@ -39,7 +39,7 @@ configure_file(SuperBuild/SimpleITK_install_step.cmake.in
 set(SimpleITK_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/SimpleITK_install_step.cmake)
 
 set(SimpleITK_REPOSITORY ${git_protocol}://itk.org/SimpleITK.git)
-set(SimpleITK_GIT_TAG d11d0454f55314beabf6fea564673a52ca983e4b) #0.7.0.dev54
+set(SimpleITK_GIT_TAG e2ec6bbfd7a68b9881f699513627ee9971dedeb9) #v0.7rc1
 
 ExternalProject_add(SimpleITK
   SOURCE_DIR SimpleITK
@@ -54,6 +54,7 @@ ExternalProject_add(SimpleITK
     -DBUILD_SHARED_LIBS:BOOL=${Slicer_USE_SimpleITK_SHARED}
     -DSimpleITK_INSTALL_ARCHIVE_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
     -DSimpleITK_INSTALL_LIBRARY_DIR:PATH=${Slicer_INSTALL_LIB_DIR}
+    -DSITK_INT64_PIXELIDS:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}
     -DITK_DIR:PATH=${ITK_DIR}
     -DPYTHON_EXECUTABLE:PATH=${slicer_PYTHON_EXECUTABLE}
