@@ -15,7 +15,8 @@ from os import path
 #      be wrapped.
 slicer_qt_loadable_modules_lib_subdir =  path.join("lib", "Slicer-%d.%d", "qt-loadable-modules") % (app.majorVersion, app.minorVersion)
 directory = path.join(app.slicerHome, slicer_qt_loadable_modules_lib_subdir, "Python")
-importVTKClassesFromDirectory(directory, __name__, filematch = "vtkSlicer*ModuleLogic.py")
+if not app.commandOptions().disableLoadableModules:
+    importVTKClassesFromDirectory(directory, __name__, filematch = "vtkSlicer*ModuleLogic.py")
 
 # Removing things the user shouldn't have to see.
 del app, importVTKClassesFromDirectory, directory, slicer_qt_loadable_modules_lib_subdir, path
