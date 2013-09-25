@@ -640,7 +640,7 @@ MGHImageIO::WriteUncompressedHeader()
   c[1] *= -1.0;
   for( unsigned int ui = 0; ui < 3; ++ui )
     {
-    this->TWrite(c[ui]);
+    TWrite( ofs, c[ui] );
     }
 
   // fill the rest of the buffer with zeros
@@ -759,7 +759,7 @@ MGHImageIO::WriteCompressedHeader(gzFile file_p)
   c[1] *= -1.0;
   for( unsigned int ui = 0; ui < 3; ++ui )
     {
-    this->TWrite(c[ui]);
+    TWriteZ( file_p, c[ui] );
     }
 
   // fill the rest of the buffer with zeros
