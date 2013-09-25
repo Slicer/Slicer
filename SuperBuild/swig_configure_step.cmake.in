@@ -21,6 +21,10 @@ set(ENV{YACC} "@BISON_EXECUTABLE@" )
 set(ENV{YFLAGS} "@BISON_FLAGS@" )
 
 execute_process(
-  COMMAND sh @swig_source_dir@/configure --prefix=@swig_install_dir@ --with-pcre-prefix=@pcre_install_dir@
+  COMMAND sh @swig_source_dir@/configure
+    --prefix=@swig_install_dir@
+    --with-pcre-prefix=@pcre_install_dir@
+    --without-octave
+    --with-python=@slicer_PYTHON_EXECUTABLE@
   WORKING_DIRECTORY @swig_binary_dir@
 )
