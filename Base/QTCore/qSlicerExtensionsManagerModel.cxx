@@ -557,12 +557,12 @@ QString qSlicerExtensionsManagerModelPrivate::extractArchive(const QDir& extensi
   if(!success)
     {
     this->critical(QString("Failed to extract %1 into %2").arg(archiveFile).arg(extensionsDir.absolutePath()));
-    return false;
+    return QString();
     }
   if(extracted_files.size() == 0)
     {
     this->warning(QString("Archive %1 doesn't contain any files !").arg(archiveFile));
-    return false;
+    return QString();
     }
 
   // Compute <topLevelArchiveDir>. We assume all files are extracted in top-level folder.
@@ -1455,6 +1455,10 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
   // Extract into <extensionsPath>/<extensionName>/<archiveBaseName>/
   extensionsDir.cd(extensionName);
   QString archiveBaseName = d->extractArchive(extensionsDir, archiveFile);
+  if (archiveBaseName.isEmpty())
+    {
+    return false;
+    }
   extensionsDir.cdUp();
 
   // Rename <extensionName>/<archiveBaseName> into <extensionName>
