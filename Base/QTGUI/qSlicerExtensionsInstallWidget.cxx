@@ -45,7 +45,7 @@ public:
   /// associated with the current architecture, operating system and slicer revision.
   QUrl extensionsListUrl();
 
-  void setFailurePage(const QUrl &faultyUrl);
+  void setFailurePage(const QStringList &errors);
 
   qSlicerExtensionsManagerModel * ExtensionsManagerModel;
 
@@ -74,7 +74,7 @@ QUrl qSlicerExtensionsInstallWidgetPrivate::extensionsListUrl()
 }
 
 // --------------------------------------------------------------------------
-void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QUrl& faultyUrl)
+void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QStringList& errors)
 {
   Q_Q(qSlicerExtensionsInstallWidget);
   QString html =
@@ -88,17 +88,51 @@ void qSlicerExtensionsInstallWidgetPrivate::setFailurePage(const QUrl& faultyUrl
       "  div.extensionsTitle{float:left;font-size:24px;font-weight:bolder;margin-top:10px;}"
       "  div.extensionsBodyLeftColumn{float:left;width:230px;border-right:1px solid #d0d0d0;min-height:450px;}"
       "  div.extensionsBodyRightColumn{margin-left:230px;}"
+      "  div.error{"
+      "      position: relative;"
+      "      min-width: 13em; max-width: 52em; margin: 4em auto;"
+      "      border: 1px solid threedshadow; border-radius: 10px 10px 10px 10px;"
+      "      padding: 3em;"
+      "      -webkit-padding-start: 30px;"
+      "      background: url('qrc:Icons/ExtensionError.png') no-repeat scroll left 0px content-box border-box;"
+      "     }"
+      "   #errorTitle, #errorDescription {-webkit-margin-start:80px;}"
+      "   #errorTitle h1 {margin:0px 0px 0.6em;}"
+      "   #errorDescription ul{"
+      "     list-style: square outside none;"
+      "     margin: 0px; -webkit-margin-start: 1.5em; padding: 0px;"
+      "     }"
+      "   #errorDescription ul > li{margin-bottom: 0.5em;}"
+      "   #errorTryAgain{margin-top: 2em;}"
       "</style>"
       "<div class='viewWrapperSlicer'>"
       "  <div class='extensionsHeader'>"
       "    <div class='extensionsTitle'>Slicer Extensions</div>"
       "  </div>"
       "  <div class='extensionsBody'>"
-      "    <p>Failed to load extension page using the following URL:<br>%1</p>"
+      "    <!-- Following layout and associated CSS style are inspired from Mozilla error message. -->"
+      "    <!-- It is originally covered by http://mozilla.org/MPL/2.0/ license -->"
+      "    <!-- MPL 2.0 license is compatible with Slicer (BSD-like) license -->"
+      "    <div class='error'>"
+      "      <div id='errorTitle'><h1>Ooop. Extensions can not be installed !</h1></div>"
+      "      <div id='errorDescription'>"
+      "        <ul>"
+      "%1"
+      "          <li>Check that <b>3D Slicer</b> is properly installed. "
+      "<a href='http://www.slicer.org/slicerWiki/index.php/Documentation/Slicer/Install'>Read more ?</a></li>"
+      "        </ul>"
+      "        <button id='errorTryAgain' onclick='window.extensions_install_widget.refresh();' autofocus='true'>Try Again</button>"
+      "      </div>"
+      "    </div>"
       "  </div>"
       "</div>";
 
-  q->webView()->setHtml(html.arg(faultyUrl.toString()));
+  QStringList htmlErrors;
+  foreach(const QString& error, errors)
+    {
+    htmlErrors << QString("<li>%1</li>").arg(error);
+    }
+  q->webView()->setHtml(html.arg(htmlErrors.join("/n")));
 }
 
 // --------------------------------------------------------------------------
@@ -189,6 +223,12 @@ void qSlicerExtensionsInstallWidget::refresh()
     {
     return;
     }
+  QStringList errors = this->extensionsManagerModel()->checkInstallPrerequisites();
+  if (!errors.empty())
+    {
+    d->setFailurePage(errors);
+    return;
+    }
   this->webView()->setUrl(d->extensionsListUrl());
 }
 
@@ -245,6 +285,9 @@ void qSlicerExtensionsInstallWidget::initJavascript()
   this->Superclass::initJavascript();
   this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
         "extensions_manager_model", d->ExtensionsManagerModel);
+
+  this->webView()->page()->mainFrame()->addToJavaScriptWindowObject(
+        "extensions_install_widget", this);
 }
 
 // --------------------------------------------------------------------------
@@ -254,7 +297,8 @@ void qSlicerExtensionsInstallWidget::onLoadFinished(bool ok)
   this->Superclass::onLoadFinished(ok);
   if(!ok)
     {
-    d->setFailurePage(d->extensionsListUrl().toString());
+    d->setFailurePage(QStringList() << QString("Failed to load extension page using this URL: <strong>%1</strong>")
+                      .arg(d->extensionsListUrl().toString()));
     }
 }
 

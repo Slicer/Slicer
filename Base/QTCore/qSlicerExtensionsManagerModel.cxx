@@ -141,7 +141,9 @@ public:
   void addExtensionPathToLauncherSettings(const QString& extensionName);
   void removeExtensionPathFromLauncherSettings(const QString& extensionName);
 
-  bool checkExtensionSettingsPermissions()const;
+  bool checkExtensionsInstallDestinationPath(const QString &destinationPath, QString& error)const;
+
+  bool checkExtensionSettingsPermissions(QString &error)const;
   void addExtensionSettings(const QString& extensionName);
   void removeExtensionSettings(const QString& extensionName);
 
@@ -503,8 +505,43 @@ void qSlicerExtensionsManagerModelPrivate::removeExtensionPathFromLauncherSettin
 #endif
 }
 
+#ifdef Q_OS_WIN
+extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
+#endif
+
 // --------------------------------------------------------------------------
-bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions()const
+bool qSlicerExtensionsManagerModelPrivate::checkExtensionsInstallDestinationPath(
+    const QString& destinationPath, QString& error)const
+{
+  if (!QDir(destinationPath).exists())
+    {
+    error = QString("Extensions install directory does NOT exist: <strong>%1</strong>").arg(destinationPath);
+    return false;
+    }
+
+  QFileInfo destinationPathInfo(destinationPath);
+#ifdef Q_OS_WIN
+  struct QtNtfsPermissionLookupHelper
+  {
+    QtNtfsPermissionLookupHelper(){++qt_ntfs_permission_lookup;}
+    ~QtNtfsPermissionLookupHelper(){--qt_ntfs_permission_lookup;}
+  };
+  QtNtfsPermissionLookupHelper qt_ntfs_permission_lookup_helper;
+#endif
+  if (!destinationPathInfo.isReadable()
+      || !destinationPathInfo.isWritable()
+      || !destinationPathInfo.isExecutable())
+    {
+    error = QString("Extensions install directory is expected to be "
+                    "readable/writable/executable: <strong>%1</strong>").arg(destinationPath);
+    return false;
+    }
+
+  return true;
+}
+
+// --------------------------------------------------------------------------
+bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions(QString& error)const
 {
   Q_Q(const qSlicerExtensionsManagerModel);
 
@@ -513,8 +550,8 @@ bool qSlicerExtensionsManagerModelPrivate::checkExtensionSettingsPermissions()co
     {
     if (!settingsFileInfo.isReadable() || !settingsFileInfo.isWritable())
       {
-      this->warning(QString("Extensions settings file %1 is expected to be both readable and writable").
-                     arg(q->extensionsSettingsFilePath()));
+      error = QString("Extensions settings file is expected to be readable/writable: <strong>%1</strong>").
+          arg(q->extensionsSettingsFilePath());
       return false;
       }
     }
@@ -825,8 +862,10 @@ void qSlicerExtensionsManagerModel::setExtensionEnabled(const QString& extension
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (!d->checkExtensionSettingsPermissions())
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
     {
+    d->critical(error);
     return;
     }
 
@@ -951,8 +990,10 @@ void qSlicerExtensionsManagerModel::downloadAndInstallExtension(const QString& e
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (!d->checkExtensionSettingsPermissions())
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
     {
+    d->critical(error);
     return;
     }
 
@@ -1040,8 +1081,10 @@ bool qSlicerExtensionsManagerModel::installExtension(const QString& extensionNam
     return false;
     }
 
-  if (!d->checkExtensionSettingsPermissions())
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
     {
+    d->critical(error);
     return false;
     }
 
@@ -1066,8 +1109,10 @@ bool qSlicerExtensionsManagerModel::scheduleExtensionForUninstall(const QString&
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (!d->checkExtensionSettingsPermissions())
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
     {
+    d->critical(error);
     return false;
     }
 
@@ -1097,8 +1142,10 @@ bool qSlicerExtensionsManagerModel::cancelExtensionScheduledForUninstall(const Q
 {
   Q_D(qSlicerExtensionsManagerModel);
 
-  if (!d->checkExtensionSettingsPermissions())
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
     {
+    d->critical(error);
     return false;
     }
   if (!this->isExtensionScheduledForUninstall(extensionName))
@@ -1118,8 +1165,10 @@ bool qSlicerExtensionsManagerModelPrivate::uninstallExtension(const QString& ext
 {
   Q_Q(qSlicerExtensionsManagerModel);
 
-  if (!this->checkExtensionSettingsPermissions())
+  QString error;
+  if (!this->checkExtensionSettingsPermissions(error))
     {
+    this->critical(error);
     return false;
     }
 
@@ -1408,10 +1457,6 @@ void qSlicerExtensionsManagerModel::writeArrayValues(QSettings& settings, const 
   settings.endArray();
 }
 
-#ifdef Q_OS_WIN
-extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
-#endif
-
 // --------------------------------------------------------------------------
 bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     const QString& extensionName, const QString& archiveFile, const QString& destinationPath)
@@ -1423,27 +1468,13 @@ bool qSlicerExtensionsManagerModel::extractExtensionArchive(
     return false;
     }
 
-  if (!QDir(destinationPath).exists())
+  QString error;
+  if (!d->checkExtensionsInstallDestinationPath(destinationPath, error))
     {
-    d->critical(QString("Failed to extract archive %1 into nonexistent directory %2").arg(archiveFile).arg(destinationPath));
+    d->critical(QString("Failed to extract archive %1 into directory %2").arg(archiveFile).arg(destinationPath));
+    d->critical(error);
     return false;
     }
-
-  QFileInfo destinationPathInfo(destinationPath);
-#ifdef Q_OS_WIN
-  ++qt_ntfs_permission_lookup;
-#endif
-  if (!destinationPathInfo.isReadable()
-      || !destinationPathInfo.isWritable()
-      || !destinationPathInfo.isExecutable())
-    {
-    d->critical(QString("Failed to extract archive %1 into directory %2 "
-                        "either NON readable, writable or executable").arg(archiveFile).arg(destinationPath));
-    return false;
-    }
-#ifdef Q_OS_WIN
-  --qt_ntfs_permission_lookup;
-#endif
 
   QDir extensionsDir(destinationPath);
 
@@ -1598,4 +1629,23 @@ bool qSlicerExtensionsManagerModel::exportExtensionList(QString& exportFilePath)
     }
 
   return true;
+}
+
+// --------------------------------------------------------------------------
+QStringList qSlicerExtensionsManagerModel::checkInstallPrerequisites() const
+{
+  Q_D(const qSlicerExtensionsManagerModel);
+  QStringList errors;
+  QString error;
+  if (!d->checkExtensionSettingsPermissions(error))
+    {
+    d->critical(error);
+    errors << error;
+    }
+  if (!d->checkExtensionsInstallDestinationPath(this->extensionsInstallPath(), error))
+    {
+    d->critical(error);
+    errors << error;
+    }
+  return errors;
 }
