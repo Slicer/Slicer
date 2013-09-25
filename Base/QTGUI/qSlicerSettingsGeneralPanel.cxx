@@ -111,10 +111,6 @@ void qSlicerSettingsGeneralPanelPrivate::init()
                       SIGNAL(valueChanged(int)),
                       "Max. number of 'Recently Loaded' menu items",
                       ctkSettingsPanel::OptionRequireRestart);
-
-  // HACK - See http://www.na-mic.org/Bug/view.php?id=2535
-  this->ConfirmRestartCheckBox->setVisible(false);
-  this->ConfirmRestartLabel->setVisible(false);
 }
 
 // --------------------------------------------------------------------------
