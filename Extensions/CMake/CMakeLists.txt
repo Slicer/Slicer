@@ -21,11 +21,27 @@ if(POLICY CMP0017)
 endif()
 
 #-----------------------------------------------------------------------------
+set(_url $ENV{MIDAS_PACKAGE_URL})
+if("${_url}" STREQUAL "")
+  set(_url "http://slicer.kitware.com/midas3")
+endif()
+
+set(_email $ENV{MIDAS_PACKAGE_EMAIL})
+if("${_email}" STREQUAL "")
+  set(_email "YOUR-MIDAS-LOGIN-NOTFOUND")
+endif()
+
+set(_api_key $ENV{MIDAS_PACKAGE_API_KEY})
+if("${_api_key}" STREQUAL "")
+  set(_api_key "YOUR-MIDAS-APIKEY-NOTFOUND")
+endif()
+
+#-----------------------------------------------------------------------------
 # Common options
 #-----------------------------------------------------------------------------
-set(MIDAS_PACKAGE_URL "http://karakoram/midas" CACHE STRING "MIDAS URL where the extension should be uploaded.")
-set(MIDAS_PACKAGE_EMAIL "jchris.fillionr@kitware.com" CACHE STRING "Email allowing to authenticate to the MIDAS server.")
-set(MIDAS_PACKAGE_API_KEY "a4d947d1772e227adf75639b449974d3" CACHE STRING "Token allowing to authenticate to the MIDAS server.")
+set(MIDAS_PACKAGE_URL ${_url} CACHE STRING "MIDAS URL where the extension should be uploaded.")
+set(MIDAS_PACKAGE_EMAIL ${_email} CACHE STRING "Email allowing to authenticate to the MIDAS server.")
+set(MIDAS_PACKAGE_API_KEY ${_api_key} CACHE STRING "Token allowing to authenticate to the MIDAS server.")
 
 #-----------------------------------------------------------------------------
 # Compute default values
