@@ -139,6 +139,13 @@ int main( int argc, char * argv[] )
   vtkIdType j;
   double p[3];
 
+  unsigned int label;
+  std::vector<bool> passAll;
+  for (label=0; label<PassLabel.size(); label++)
+    {
+    passAll.push_back(false);
+    }
+
   int *labelDims = imageCastLabel_A->GetOutput()->GetDimensions();
   // Check lines
   vtkIdType inCellId;
@@ -153,7 +160,6 @@ int main( int argc, char * argv[] )
       }
     double pIJK[3];
     int pt[3];
-    unsigned int label;
     short *inPtr;
     bool addLine = false;
     bool pass = false;
@@ -210,20 +216,26 @@ int main( int argc, char * argv[] )
           }
         else if (includeOperation == 1) // AND
           {
-          bool passAll = true;
           for(label=0; label<PassLabel.size(); label++)
             {
-              if (*inPtr != PassLabel[label])
-                {
-                passAll = false;
-                break;
-                }
-            }
-          pass = passAll;
-          }
-
-        }
+            if (*inPtr == PassLabel[label])
+              {
+              passAll[label] = true;
+              break;
+              }
+            } // for(label=0; 
+          } // else if (includeOperation == 1)
+        } // if !(PassLabel.size() == 0)
       } //for (j=0; j < npts; j++)
+    
+    if (includeOperation == 1 && PassLabel.size() > 0) // AND
+      {
+      pass = true;
+      for (label=0; label<passAll.size(); label++)
+        {
+        pass = pass & passAll[label];
+        }
+      }
     addLine = pass && !nopass;
 
     addLines.push_back(addLine);
