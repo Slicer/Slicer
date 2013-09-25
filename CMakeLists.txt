@@ -141,9 +141,8 @@ endif()
 # Qt requirements
 #-----------------------------------------------------------------------------
 if(NOT DEFINED Slicer_REQUIRED_QT_VERSION)
-  set(Slicer_REQUIRED_QT_VERSION "4.7.4" CACHE STRING "Exact required Qt version" FORCE)
+  set(Slicer_REQUIRED_QT_VERSION "4.7.4" CACHE STRING "Minimum required Qt version" FORCE)
 endif()
-set(Slicer_EXPERIMENTAL_QT_VERSION "4.8.4")
 
 #-----------------------------------------------------------------------------
 # Superbuild Option - Enabled by default
