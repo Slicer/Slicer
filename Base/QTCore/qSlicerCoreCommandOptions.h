@@ -34,13 +34,17 @@ class Q_SLICER_BASE_QTCORE_EXPORT qSlicerCoreCommandOptions : public ctkCommandL
 {
   Q_OBJECT
   Q_PROPERTY(bool displayHelpAndExit READ displayHelpAndExit)
-  Q_PROPERTY(bool disableCLIModules READ disableCLIModules)
   Q_PROPERTY(bool ignoreSlicerRC READ ignoreSlicerRC)
   Q_PROPERTY(QString pythonScript READ pythonScript)
   Q_PROPERTY(QString extraPythonScript READ extraPythonScript)
   Q_PROPERTY(QString pythonCode READ pythonCode)
   Q_PROPERTY(bool runPythonAndExit READ runPythonAndExit WRITE setRunPythonAndExit)
+  Q_PROPERTY(bool disableCLIModules READ disableCLIModules)
   Q_PROPERTY(bool disableLoadableModules READ disableLoadableModules)
+  Q_PROPERTY(bool disableScriptedLoadableModules READ disableScriptedLoadableModules)
+  Q_PROPERTY(bool disableBuiltInCLIModules READ disableBuiltInCLIModules)
+  Q_PROPERTY(bool disableBuiltInLoadableModules READ disableBuiltInLoadableModules)
+  Q_PROPERTY(bool disableBuiltInScriptedLoadableModules READ disableBuiltInScriptedLoadableModules)
   Q_PROPERTY(bool displayVersionAndExit READ displayVersionAndExit)
   Q_PROPERTY(bool displayProgramPathAndExit READ displayProgramPathAndExit)
   Q_PROPERTY(bool displayHomePathAndExit READ displayHomePathAndExit)
@@ -67,9 +71,6 @@ public:
   /// Return True if the ignore rest argument has been passed
   bool ignoreRest() const;
 
-  /// Return True if the loading of Command Line Modules should be disabled
-  bool disableCLIModules()const;
-
   /// Return True if the loading of SlicerRC should be skipped
   bool ignoreSlicerRC()const;
 
@@ -94,11 +95,29 @@ public:
   /// Return list of additional module path that should be considered when searching for modules to load.
   QStringList additonalModulePaths()const;
 
-  /// Return True if the loading of Loadable Modules should be disabled
+  /// Return True if the loading of any modules should be disabled
+  bool disableModules()const;
+
+  /// Return True if the loading of all built-in modules should be disabled
+  bool disableBuiltInModules()const;
+
+  /// Return True if the loading of any Command Line Modules should be disabled
+  bool disableCLIModules()const;
+
+  /// Return True if the loading of built-in Command Line Modules should be disabled
+  bool disableBuiltInCLIModules()const;
+
+  /// Return True if the loading of any Loadable Modules should be disabled
   bool disableLoadableModules()const;
 
-  /// Return True if the loading of Scripted Loadable Modules should be disabled
+  /// Return True if the loading of built-in Loadable Modules should be disabled
+  bool disableBuiltInLoadableModules()const;
+
+  /// Return True if the loading of any Scripted Loadable Modules should be disabled
   bool disableScriptedLoadableModules()const;
+
+  /// Return True if the loading of built-in Scripted Loadable Modules should be disabled
+  bool disableBuiltInScriptedLoadableModules()const;
 
   /// Return True if slicer should display version and exit
   bool displayVersionAndExit()const;
