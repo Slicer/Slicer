@@ -64,5 +64,5 @@ const QStringList qSlicerCLIModuleFactoryHelper::modulePaths()
 bool qSlicerCLIModuleFactoryHelper::isInstalled(const QString& path)
 {
   qSlicerCoreApplication * app = qSlicerCoreApplication::application();
-  return qSlicerUtils::isPluginInstalled(path, app->slicerHome());
+  return app ? qSlicerUtils::isPluginInstalled(path, app->slicerHome()) : false;
 }
