@@ -80,7 +80,7 @@ protected:
   QTableWidgetItem* createNodeStatusItem(vtkMRMLStorableNode* node, const QFileInfo& fileInfo);
   QWidget*          createFileFormatsWidget(vtkMRMLStorableNode* node, QFileInfo& fileInfo);
   QTableWidgetItem* createFileNameItem(const QFileInfo& fileInfo, const QString& extension = QString());
-  QWidget*          createFileDirectoryWidget(const QFileInfo& fileInfo);
+  ctkDirectoryButton* createFileDirectoryWidget(const QFileInfo& fileInfo);
 
   QFileInfo         file(int row)const;
   vtkObject*        object(int row)const;
