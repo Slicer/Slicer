@@ -216,6 +216,8 @@ public slots:
 
   bool exportExtensionList(QString& exportFilePath);
 
+  QStringList checkInstallPrerequisites() const;
+
   void updateModel();
 
 signals:
