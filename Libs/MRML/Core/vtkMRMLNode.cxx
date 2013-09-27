@@ -1177,6 +1177,11 @@ void vtkMRMLNode::UpdateNthNodeReference(const char* referenceRole, int n)
                                                            const char* referencedNodeID,
                                                            vtkIntArray *events)
 {
+  if (referenceRole == 0)
+    {
+    return 0;
+    }
+
   vtkMRMLNode* referencedNode = NULL;
 
   if (events == 0 && this->NodeReferenceEvents[referenceRole] && this->NodeReferenceEvents[referenceRole]->GetNumberOfTuples() > 0)
