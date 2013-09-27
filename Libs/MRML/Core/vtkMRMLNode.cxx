@@ -305,9 +305,13 @@ void vtkMRMLNode::PrintSelf(ostream& os, vtkIndent indent)
   for (it = this->NodeReferences.begin(); it != this->NodeReferences.end(); it++)
     {
     const std::string& referenceRole = it->first;
-    const std::string referenceMRMLAttributeName =
+    const char* refAttribute = 
       this->GetMRMLAttributeNameFromReferenceRole(referenceRole.c_str());
-
+    if (refAttribute == 0)
+      {
+      continue;
+      }
+    const std::string referenceMRMLAttributeName(refAttribute);
     std::stringstream ss;
     int numReferencedNodes = this->GetNumberOfNodeReferences(referenceRole.c_str());
 
