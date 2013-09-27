@@ -32,8 +32,14 @@ vtkMRMLTransformableNode::vtkMRMLTransformableNode()
   this->TransformNodeIDInternal = 0;
 
   this->HideFromEditors = 0;
+
+  vtkIntArray  *events = vtkIntArray::New();
+  events->InsertNextValue(vtkCommand::ModifiedEvent);
+  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
   this->AddNodeReferenceRole(this->GetTransformNodeReferenceRole(),
-                             this->GetTransformNodeReferenceMRMLAttributeName());
+                             this->GetTransformNodeReferenceMRMLAttributeName(),
+                             events);
+  events->Delete();
 }
 
 //----------------------------------------------------------------------------
@@ -106,36 +112,15 @@ vtkMRMLTransformNode* vtkMRMLTransformableNode::GetParentTransformNode()
 //----------------------------------------------------------------------------
 void vtkMRMLTransformableNode::SetAndObserveTransformNodeID(const char *transformNodeID)
 {
-  if (transformNodeID == 0 && this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()) == 0)
-    {
-    // was NULL and still NULL, nothing to do
-    return;
-    }
-
-  if (transformNodeID != 0 && this->GetNodeReferenceID(this->GetTransformNodeReferenceRole()) != 0 &&
-      !strcmp(transformNodeID, this->GetNodeReferenceID(this->GetTransformNodeReferenceRole())))
-    {
-    //the same ID, nothing to do
-    return;
-    }
-
+  // Prevent transform cycles
   vtkMRMLTransformNode* tnode = vtkMRMLTransformNode::SafeDownCast(
     this->GetScene() != 0 ?this->GetScene()->GetNodeByID(transformNodeID) : 0);
-
-  // Prevent transform cycles
   if (tnode && tnode->GetParentTransformNode() == this)
     {
-    tnode->SetAndObserveTransformNodeID(0);
+    transformNodeID = 0;
     }
 
-  // use vtkMRMLNode call to set and observe reference
-  vtkIntArray *events = vtkIntArray::New();
-  events->InsertNextValue(vtkCommand::ModifiedEvent);
-  events->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID, events);
-  events->Delete();
-
-  this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
+  this->SetAndObserveNodeReferenceID(this->GetTransformNodeReferenceRole(), transformNodeID);
 }
 
 //----------------------------------------------------------------------------
@@ -170,9 +155,6 @@ void vtkMRMLTransformableNode::ProcessMRMLEvents ( vtkObject *caller,
   vtkMRMLTransformNode *tnode = this->GetParentTransformNode();
   if (tnode == caller)
     {
-    //TODO don't send even on the scene but rather have vtkMRMLSliceLayerLogic listen to
-    // TransformModifiedEvent
-    //this->GetScene()->InvokeEvent(vtkCommand::ModifiedEvent, NULL);
     this->InvokeEvent(vtkMRMLTransformableNode::TransformModifiedEvent, NULL);
     }
 }
