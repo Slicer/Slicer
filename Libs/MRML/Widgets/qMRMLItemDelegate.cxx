@@ -125,7 +125,6 @@ QWidget *qMRMLItemDelegate
     slider->setSingleStep(0.1);
     slider->setRange(0., 1.);
     slider->setPopupSlider(true);
-    QSize s = slider->popup()->size();
     slider->popup()->layout()->setSizeConstraint(QLayout::SetMinimumSize);
     // ctkSliderWidget::setParent() must be called after
     // ctkSliderWidget::setPopupSlider(true)
