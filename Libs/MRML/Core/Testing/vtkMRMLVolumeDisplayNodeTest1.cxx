@@ -48,11 +48,11 @@ public:
 int vtkMRMLVolumeDisplayNodeTest1(int , char * [] )
 {
 
-  vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLVolumeDisplayNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLVolumeDisplayNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS( vtkMRMLVolumeDisplayNodeTestHelper1, node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLVolumeDisplayNodeTestHelper1, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

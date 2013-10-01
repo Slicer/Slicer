@@ -17,11 +17,11 @@
 
 int vtkMRMLDiffusionTensorVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDiffusionTensorVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLDiffusionTensorVolumeDisplayNode >::New();
+  vtkNew<vtkMRMLDiffusionTensorVolumeDisplayNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDiffusionTensorVolumeDisplayNode, node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLDiffusionTensorVolumeDisplayNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

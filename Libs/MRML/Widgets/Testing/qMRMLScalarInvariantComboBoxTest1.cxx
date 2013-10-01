@@ -29,7 +29,7 @@
 #include <vtkMRMLDiffusionTensorDisplayPropertiesNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -37,11 +37,10 @@ int qMRMLScalarInvariantComboBoxTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
 
-  vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode> displayPropertiesNode
-    = vtkSmartPointer<vtkMRMLDiffusionTensorDisplayPropertiesNode>::New();
+  vtkNew<vtkMRMLDiffusionTensorDisplayPropertiesNode> displayPropertiesNode;
 
   qMRMLScalarInvariantComboBox scalarComboBox;
-  scalarComboBox.setDisplayPropertiesNode(displayPropertiesNode);
+  scalarComboBox.setDisplayPropertiesNode(displayPropertiesNode.GetPointer());
 
   displayPropertiesNode->SetColorGlyphBy(
     vtkMRMLDiffusionTensorDisplayPropertiesNode::ParallelDiffusivity);

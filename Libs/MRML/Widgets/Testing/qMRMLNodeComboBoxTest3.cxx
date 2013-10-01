@@ -29,9 +29,7 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
-#include "vtkSmartPointer.h"
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
 {
@@ -45,8 +43,8 @@ int qMRMLNodeComboBoxTest3( int argc, char * argv [] )
   qMRMLNodeComboBox nodeSelector;
   nodeSelector.show();
   nodeSelector.setNodeTypes(QStringList("vtkMRMLViewNode"));
-  vtkSmartPointer<vtkMRMLScene> scene =  vtkSmartPointer<vtkMRMLScene>::New();
-  nodeSelector.setMRMLScene(scene);
+  vtkNew<vtkMRMLScene> scene;
+  nodeSelector.setMRMLScene(scene.GetPointer());
   scene->SetURL(argv[1]);
   scene->Connect();
 

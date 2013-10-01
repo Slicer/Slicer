@@ -235,16 +235,16 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
   // Test ProcessReadSceneData(ReadDataRequest& req)
   //-----------------------------------------------------------------------------
   {
-  vtkSmartPointer<vtkSlicerApplicationLogic> appLogic = vtkSmartPointer<vtkSlicerApplicationLogic>::New();
+  vtkNew<vtkSlicerApplicationLogic> appLogic;
   // create a scene with a model hierarchy that will clash with the imported scene
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
-  appLogic->SetMRMLScene(mrmlScene);
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> originalModelHierarchy1 = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+  vtkNew<vtkMRMLScene> mrmlScene;
+  appLogic->SetMRMLScene(mrmlScene.GetPointer());
+  vtkNew<vtkMRMLModelHierarchyNode> originalModelHierarchy1;
   originalModelHierarchy1->SetName("originalTop");
-  mrmlScene->AddNode(originalModelHierarchy1);
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> originalModelHierarchy2 = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
+  mrmlScene->AddNode(originalModelHierarchy1.GetPointer());
+  vtkNew<vtkMRMLModelHierarchyNode> originalModelHierarchy2;
   originalModelHierarchy2->SetName("originalSecond");
-  mrmlScene->AddNode(originalModelHierarchy2);
+  mrmlScene->AddNode(originalModelHierarchy2.GetPointer());
   originalModelHierarchy2->SetParentNodeID(originalModelHierarchy1->GetID());
   // set up the importing
   std::vector<std::string> targetIDs;
@@ -252,14 +252,14 @@ int vtkSlicerApplicationLogicTest1(int , char * [])
   std::vector<std::string> sourceIDs;
   sourceIDs.push_back(std::string(originalModelHierarchy1->GetID()));
   // now create a scene to import that has a hierarchy
-  vtkSmartPointer<vtkMRMLScene> importScene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> importScene;
   std::string filename = "applicationLogicModelHierarchyImportTestScene.mrml";
   importScene->SetURL(filename.c_str());
   // make a few deep model hierarchy tree
   for (int i = 0; i < 5; i++)
     {
-    vtkSmartPointer<vtkMRMLModelHierarchyNode> mhn = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-    importScene->AddNode(mhn);
+    vtkNew<vtkMRMLModelHierarchyNode> mhn;
+    importScene->AddNode(mhn.GetPointer());
     std::string idNumberString;
     std::stringstream ss;
     ss << i;

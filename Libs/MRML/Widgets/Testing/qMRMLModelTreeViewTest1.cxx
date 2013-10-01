@@ -29,7 +29,7 @@
 #include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -37,18 +37,18 @@ int qMRMLModelTreeViewTest1( int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
-  vtkSmartPointer<vtkMRMLModelNode> modelNode = vtkSmartPointer<vtkMRMLModelNode>::New();
-  vtkSmartPointer<vtkMRMLModelDisplayNode> displayModelNode = vtkSmartPointer<vtkMRMLModelDisplayNode>::New();
+  vtkNew<vtkMRMLModelNode> modelNode;
+  vtkNew<vtkMRMLModelDisplayNode> displayModelNode;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  scene->AddNode(modelNode);
-  scene->AddNode(displayModelNode);
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(modelNode.GetPointer());
+  scene->AddNode(displayModelNode.GetPointer());
   
   modelNode->SetAndObserveDisplayNodeID(displayModelNode->GetID());
 
   qMRMLTreeView modelView;
   modelView.setSceneModelType("ModelHierarchy");
-  modelView.setMRMLScene(scene);
+  modelView.setMRMLScene(scene.GetPointer());
 
   modelView.show();
   if (argc < 2 || QString(argv[1]) != "-I")

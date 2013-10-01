@@ -15,9 +15,6 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-// VTK includes
-#include <vtkNew.h>
-
 int vtkDataIOManagerLogicTest1(int , char * [] )
 {
   vtkNew<vtkDataIOManagerLogic> logic;

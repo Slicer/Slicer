@@ -22,14 +22,14 @@
 
 // VTK includes
 #include <vtkImageBlend.h>
-
+#include <vtkNew.h>
 
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLSliceLogicTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLSliceLogic > node1 = vtkSmartPointer< vtkMRMLSliceLogic >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  vtkNew<vtkMRMLSliceLogic> node1;
+  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
 #define TEST_SET_GET_OBJECT(object,prefix,variable) \
   vtkSmartPointer<prefix> __##variable = vtkSmartPointer<prefix>::New();\
@@ -49,9 +49,9 @@ int vtkMRMLSliceLogicTest1(int , char * [] )
     return EXIT_FAILURE; \
     }
     
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   node1->SetName("Green");
-  node1->SetMRMLScene(scene);
+  node1->SetMRMLScene(scene.GetPointer());
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceNode, SliceNode);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceLayerLogic, LabelLayer);
   TEST_SET_GET_OBJECT(node1, vtkMRMLSliceCompositeNode, SliceCompositeNode);

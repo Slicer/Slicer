@@ -17,11 +17,11 @@
 
 int vtkMRMLClipModelsNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLClipModelsNode > node1 = vtkSmartPointer< vtkMRMLClipModelsNode >::New();
+  vtkNew<vtkMRMLClipModelsNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLClipModelsNode, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLClipModelsNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

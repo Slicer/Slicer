@@ -41,7 +41,7 @@
 #include <vtkMRMLPETProceduralColorNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cstdlib>
@@ -73,11 +73,10 @@ int qMRMLColorListViewEventTranslatorPlayerTest1(int argc, char * argv [] )
   // Test case 1
   qMRMLColorListView* widget = new qMRMLColorListView();
 
-  vtkSmartPointer<vtkMRMLColorTableNode> colorTableNode =
-    vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
 
-  widget->setMRMLColorNode(colorTableNode);
+  widget->setMRMLColorNode(colorTableNode.GetPointer());
 
   colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();

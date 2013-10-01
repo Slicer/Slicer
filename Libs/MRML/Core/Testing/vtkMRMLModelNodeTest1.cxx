@@ -43,24 +43,24 @@ int vtkMRMLModelNodeTest1(int , char * [] )
 //---------------------------------------------------------------------------
 int ExerciseBasicMethods()
 {
-  vtkSmartPointer< vtkMRMLModelNode > node1 = vtkSmartPointer< vtkMRMLModelNode >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
-  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLModelNode, node1);
+  vtkNew<vtkMRMLModelNode> node1;
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
+  EXERCISE_BASIC_DISPLAYABLE_MRML_METHODS(vtkMRMLModelNode, node1.GetPointer());
   return EXIT_SUCCESS;
 }
 
 //---------------------------------------------------------------------------
 bool TestActiveScalars()
 {
-  vtkSmartPointer< vtkMRMLModelNode > node1 = vtkSmartPointer< vtkMRMLModelNode >::New();
+  vtkNew<vtkMRMLModelNode> node1;
 
-  vtkSmartPointer<vtkIntArray> testingArray = vtkSmartPointer <vtkIntArray>::New();
+  vtkNew<vtkIntArray> testingArray;
   testingArray->SetName("testingArray");
-  node1->AddPointScalars(testingArray);
+  node1->AddPointScalars(testingArray.GetPointer());
 
-  vtkSmartPointer<vtkIntArray> testingArray2 = vtkSmartPointer <vtkIntArray>::New();
+  vtkNew<vtkIntArray> testingArray2;
   testingArray2->SetName("testingArray2");
-  node1->AddCellScalars(testingArray2);
+  node1->AddCellScalars(testingArray2.GetPointer());
 
   int attribute = vtkDataSetAttributes::SCALARS;
   node1->SetActivePointScalars("testingArray", attribute);

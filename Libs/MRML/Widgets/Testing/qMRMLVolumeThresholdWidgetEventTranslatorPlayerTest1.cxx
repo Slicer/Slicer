@@ -39,7 +39,7 @@
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cstdlib>
@@ -69,7 +69,7 @@ int qMRMLVolumeThresholdWidgetEventTranslatorPlayerTest1(int argc, char * argv [
   etpWidget.setTestUtility(testUtility);
 
   // Test case 1
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   scene->SetURL(argv[2]);
   scene->Connect();
   scene->InitTraversal();

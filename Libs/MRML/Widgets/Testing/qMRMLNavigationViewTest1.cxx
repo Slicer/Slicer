@@ -31,7 +31,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -46,9 +46,9 @@ int qMRMLNavigationViewTest1(int argc, char * argv [] )
   threeDView.setWindowTitle("ThreeDView");
   navigationView.setRendererToListen(threeDView.renderer());
   
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  navigationView.setMRMLScene(scene);
-  threeDView.setMRMLScene(scene);
+  vtkNew<vtkMRMLScene> scene;
+  navigationView.setMRMLScene(scene.GetPointer());
+  threeDView.setMRMLScene(scene.GetPointer());
   
   vtkMRMLViewNode* viewNode = vtkMRMLViewNode::New();
   viewNode->SetBoxVisible(true);

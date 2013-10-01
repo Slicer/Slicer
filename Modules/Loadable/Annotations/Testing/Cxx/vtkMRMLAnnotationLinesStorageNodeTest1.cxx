@@ -1,15 +1,19 @@
+
+// MRML includes
 #include "vtkMRMLAnnotationLinesStorageNode.h"
 #include "vtkMRMLAnnotationLinesNode.h"
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
+#include "vtkMRMLCoreTestingMacros.h"
 
+// STD includes
 #include <sstream>
 
-#include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLAnnotationLinesStorageNode > node2 = vtkSmartPointer< vtkMRMLAnnotationLinesStorageNode >::New();
-  EXERCISE_BASIC_OBJECT_METHODS( node2 );
+  vtkNew<vtkMRMLAnnotationLinesStorageNode> node2;
+  EXERCISE_BASIC_OBJECT_METHODS(node2.GetPointer());
 
   vtkMRMLAnnotationLinesStorageNode* node1 = dynamic_cast <  vtkMRMLAnnotationLinesStorageNode *> (node2->CreateNodeInstance());
   if( node1 == NULL )
@@ -20,7 +24,7 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   node1->Delete();
 
 
-  vtkSmartPointer< vtkMRMLAnnotationLinesNode > annNode = vtkSmartPointer< vtkMRMLAnnotationLinesNode >::New();
+  vtkNew<vtkMRMLAnnotationLinesNode> annNode;
   annNode->StartModify();
   annNode->SetName("AnnotationLinesStorageNodeTest") ;
   std::string nodeTagName = annNode->GetNodeTagName();
@@ -43,13 +47,13 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   }
 
  
-  annNode->AddLine(0,1,1,0); 
+  annNode->AddLine(0,1,1,0);
   annNode->AddLine(0,2,0,1);
   annNode->AddLine(1,2,0,0);
 
 
-  vtkSmartPointer<vtkMRMLScene> mrmlScene = vtkSmartPointer<vtkMRMLScene>::New();
-  mrmlScene->AddNode(annNode);
+  vtkNew<vtkMRMLScene> mrmlScene;
+  mrmlScene->AddNode(annNode.GetPointer());
 
   annNode->CreateAnnotationTextDisplayNode();
   if (!annNode->GetAnnotationTextDisplayNode())
@@ -76,12 +80,12 @@ int vtkMRMLAnnotationLinesStorageNodeTest1(int , char * [] )
   annNode->Modified();
   // node2->SetDataDirectory("./log");
   node2->SetFileName("AnnotationLinesStorageNodeTest.acsv");
-  node2->WriteData(annNode);
+  node2->WriteData(annNode.GetPointer());
   vtkIndent in;
   std::stringstream initialAnnotation, afterAnnotation;
   annNode->PrintAnnotationInfo(initialAnnotation,in);
   annNode->ResetAnnotations();
-  if (!node2->ReadData(annNode)) 
+  if (!node2->ReadData(annNode.GetPointer()))
     {
       std::cerr << "Error in vtkMRMLAnnotationLinesStorageNode::ReadData() " << std::endl;
       return EXIT_FAILURE;

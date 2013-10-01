@@ -17,11 +17,11 @@
 
 int vtkMRMLROIListNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLROIListNode > node1 = vtkSmartPointer< vtkMRMLROIListNode >::New();
+  vtkNew<vtkMRMLROIListNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLROIListNode, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLROIListNode, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

@@ -29,7 +29,7 @@
 #include <vtkMRMLColorLogic.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 
@@ -39,12 +39,11 @@ int qMRMLColorPickerWidgetTest1(int argc, char * argv [])
 
   qMRMLColorPickerWidget colorPickerWidget;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  colorPickerWidget.setMRMLScene(scene);
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
-    vtkSmartPointer<vtkMRMLColorLogic>::New();
-  colorLogic->SetMRMLScene(scene);
+  colorPickerWidget.setMRMLScene(scene.GetPointer());
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
   
   colorPickerWidget.show();
 

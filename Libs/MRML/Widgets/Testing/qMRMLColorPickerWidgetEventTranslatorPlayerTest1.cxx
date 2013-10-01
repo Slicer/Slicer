@@ -45,7 +45,7 @@
 #include <vtkMRMLColorLogic.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <cstdlib>
@@ -78,12 +78,11 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   qMRMLColorPickerWidget* widget = new qMRMLColorPickerWidget();
   widget->setObjectName("ColorPickerWidget1");
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
-  widget->setMRMLScene(scene);
-  vtkSmartPointer<vtkMRMLColorLogic> colorLogic =
-    vtkSmartPointer<vtkMRMLColorLogic>::New();
-  colorLogic->SetMRMLScene(scene);
+  widget->setMRMLScene(scene.GetPointer());
+  vtkNew<vtkMRMLColorLogic> colorLogic;
+  colorLogic->SetMRMLScene(scene.GetPointer());
 
   etpWidget.addTestCase(widget,
                         xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest1.xml",
@@ -93,29 +92,26 @@ int qMRMLColorPickerWidgetEventTranslatorPlayerTest1(int argc, char * argv [] )
   qMRMLColorPickerWidget* widget2 = new qMRMLColorPickerWidget();
   widget2->setObjectName("ColorPickerWidget2");
 
-  vtkSmartPointer<vtkMRMLScene> scene2 = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene2;
 
-  vtkSmartPointer<vtkMRMLColorTableNode> colorTableNode =
-    vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkNew<vtkMRMLColorTableNode> colorTableNode;
   colorTableNode->SetType(vtkMRMLColorTableNode::Labels);
-  scene2->AddNode(colorTableNode);
+  scene2->AddNode(colorTableNode.GetPointer());
 
-  widget2->setMRMLScene(scene2);
+  widget2->setMRMLScene(scene2.GetPointer());
 
-  vtkSmartPointer<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode =
-    vtkSmartPointer<vtkMRMLFreeSurferProceduralColorNode>::New();
+  vtkNew<vtkMRMLFreeSurferProceduralColorNode> colorFreeSurferNode;
   colorFreeSurferNode->SetTypeToRedBlue();
-  scene2->AddNode(colorFreeSurferNode);
+  scene2->AddNode(colorFreeSurferNode.GetPointer());
 
 
   // for some reasons it generate a warning if the type is changed.
   colorTableNode->NamesInitialisedOff();
   colorTableNode->SetTypeToCool1();
 
-  vtkSmartPointer<vtkMRMLPETProceduralColorNode> colorPETNode =
-    vtkSmartPointer<vtkMRMLPETProceduralColorNode>::New();
+  vtkNew<vtkMRMLPETProceduralColorNode> colorPETNode;
   colorPETNode->SetTypeToRainbow();
-  scene2->AddNode(colorPETNode);
+  scene2->AddNode(colorPETNode.GetPointer());
 
   etpWidget.addTestCase(widget2,
                         xmlDirectory + "qMRMLColorPickerWidgetEventTranslatorPlayerTest2.xml",

@@ -40,16 +40,16 @@ public:
  
 int vtkMRMLColorTableNodeTest1(int argc, char * argv[] )
 {
-  vtkSmartPointer< vtkMRMLColorTableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLColorTableNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLColorTableNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLColorTableNodeTestHelper1, node1);
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLColorTableNodeTestHelper1, node1.GetPointer());
 
   // check that extra single quotes don't appear in color names via round trip
   // to xml
   std::cout << "\nTesting for tick marks around color names saved to mrml and then loaded (argc = " << argc << ")" << std::endl;
-  vtkSmartPointer< vtkMRMLColorTableNode > colorNode = vtkSmartPointer< vtkMRMLColorTableNode >::New();
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToUser();
   colorNode->SetNumberOfColors(3);
   colorNode->SetColor(0, "zero", 0.0, 0.0, 0.0, 1.0);
@@ -57,7 +57,7 @@ int vtkMRMLColorTableNodeTest1(int argc, char * argv[] )
   colorNode->SetColor(2, "two", 0.0, 1.0, 0.0, 1.0);
   // set up the scene
   vtkMRMLScene *scene = vtkMRMLScene::New();
-  scene->AddNode(colorNode);
+  scene->AddNode(colorNode.GetPointer());
   const char *id = colorNode->GetID();
   std::cout << "Added color node to scene, id = " << id << std::endl;
   // write it out

@@ -16,13 +16,13 @@
 
 #include "vtkMRMLCoreTestingMacros.h"
 
-int vtkMRMLNRRDStorageNodeTest1(int , char * [] )
+int vtkMRMLNRRDStorageNodeTest1(int , char * [])
 {
-  vtkSmartPointer< vtkMRMLNRRDStorageNode > node1 = vtkSmartPointer< vtkMRMLNRRDStorageNode >::New();
+  vtkNew<vtkMRMLNRRDStorageNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLNRRDStorageNode, node1);
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLNRRDStorageNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

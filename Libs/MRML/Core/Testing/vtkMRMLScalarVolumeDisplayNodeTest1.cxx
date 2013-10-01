@@ -17,11 +17,11 @@
 
 int vtkMRMLScalarVolumeDisplayNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode > node1 = vtkSmartPointer< vtkMRMLScalarVolumeDisplayNode >::New();
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLScalarVolumeDisplayNode, node1);
+  EXERCISE_BASIC_DISPLAY_MRML_METHODS(vtkMRMLScalarVolumeDisplayNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

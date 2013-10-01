@@ -8,38 +8,40 @@
 
 // VTK includes
 #include <vtkCollection.h>
-#include <vtkNew.h>
-
-// STD includes
 
 #include "vtkMRMLCoreTestingMacros.h"
 
 int vtkMRMLLayoutLogicTest2(int , char * [] )
 {
-  vtkNew< vtkMRMLLayoutLogic > logic;
+  vtkNew<vtkMRMLLayoutLogic> logic;
   EXERCISE_BASIC_OBJECT_METHODS( logic.GetPointer() );
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  // populate scene with nodes
-  vtkSmartPointer<vtkMRMLViewNode> viewNode = vtkSmartPointer<vtkMRMLViewNode>::New();
-  viewNode->SetLayoutName("1");
-  scene->AddNode(viewNode);
-  vtkSmartPointer<vtkMRMLSliceNode> redSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  redSliceNode->SetLayoutName("Red");
-  scene->AddNode(redSliceNode);
-  vtkSmartPointer<vtkMRMLSliceNode> yellowSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  yellowSliceNode->SetLayoutName("Yellow");
-  scene->AddNode(yellowSliceNode);
-  vtkSmartPointer<vtkMRMLSliceNode> greenSliceNode = vtkSmartPointer<vtkMRMLSliceNode>::New();
-  greenSliceNode->SetLayoutName("Green");
-  scene->AddNode(greenSliceNode);
-  // populate scene with layout
-  vtkSmartPointer<vtkMRMLLayoutNode> layout = vtkSmartPointer<vtkMRMLLayoutNode>::New();
-  scene->AddNode(layout);
+  vtkNew<vtkMRMLScene> scene;
 
-  logic->SetMRMLScene(scene);
+  // populate scene with nodes
+  vtkNew<vtkMRMLViewNode> viewNode;
+  viewNode->SetLayoutName("1");
+  scene->AddNode(viewNode.GetPointer());
+
+  vtkNew<vtkMRMLSliceNode> redSliceNode;
+  redSliceNode->SetLayoutName("Red");
+  scene->AddNode(redSliceNode.GetPointer());
+
+  vtkNew<vtkMRMLSliceNode> yellowSliceNode;
+  yellowSliceNode->SetLayoutName("Yellow");
+  scene->AddNode(yellowSliceNode.GetPointer());
+
+  vtkNew<vtkMRMLSliceNode> greenSliceNode;
+  greenSliceNode->SetLayoutName("Green");
+  scene->AddNode(greenSliceNode.GetPointer());
+
+  // populate scene with layout
+  vtkNew<vtkMRMLLayoutNode> layout;
+  scene->AddNode(layout.GetPointer());
+
+  logic->SetMRMLScene(scene.GetPointer());
   logic->SetMRMLScene(0);
-  logic->SetMRMLScene(scene);
+  logic->SetMRMLScene(scene.GetPointer());
 
   // ConventionalView
   layout->SetViewArrangement(vtkMRMLLayoutNode::SlicerLayoutConventionalView);

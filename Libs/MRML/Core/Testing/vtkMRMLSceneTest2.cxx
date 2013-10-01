@@ -10,6 +10,8 @@
 
 =========================================================================auto=*/
 
+// MRML includes
+#include "vtkMRMLCoreTestingMacros.h"
 #include "vtkMRMLScene.h"
 
 // VTK includes
@@ -20,8 +22,6 @@
 #include <algorithm>
 #include <set>
 #include <sstream>
-
-#include "vtkMRMLCoreTestingMacros.h"
 
 // Convenient macro
 #define SCENE_CHECK_NUMBER_OF_EVENT(MSG, VARNAME, CURRENTCOUNT, OP, EXPECTEDCOUNT) \
@@ -254,8 +254,8 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
     }
   
   // Configure mrml event callback
-  vtkSmartPointer<vtkCallbackCommand> callback = vtkSmartPointer<vtkCallbackCommand>::New();
-  callback->SetCallback(mrmlEventCallback);
+  vtkNew<vtkCallbackCommand> callback;
+  callback->SetCallback(mrmlEventCallback.GetPointer());
   scene->AddObserver(vtkMRMLScene::NodeAboutToBeAddedEvent, callback);
   scene->AddObserver(vtkMRMLScene::NodeAddedEvent, callback);
   scene->AddObserver(vtkMRMLScene::NodeAboutToBeRemovedEvent, callback);
@@ -320,7 +320,7 @@ int vtkMRMLSceneTest2(int argc, char * argv [] )
   //---------------------------------------------------------------------------
   // Extract number of nodes
   //---------------------------------------------------------------------------
-  vtkSmartPointer<vtkXMLDataParser> xmlParser = vtkSmartPointer<vtkXMLDataParser>::New();
+  vtkNew<vtkXMLDataParser> xmlParser;
   xmlParser->SetFileName(argv[1]);
   if (!xmlParser->Parse())
     {

@@ -17,12 +17,12 @@
 
 int vtkMRMLProceduralColorNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLProceduralColorNode > node1 = vtkSmartPointer< vtkMRMLProceduralColorNode >::New();
+  vtkNew<vtkMRMLProceduralColorNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
   // missing storage node defs, for now test the transformable methods
-  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLProceduralColorNode, node1);
+  EXERCISE_BASIC_TRANSFORMABLE_MRML_METHODS(vtkMRMLProceduralColorNode, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

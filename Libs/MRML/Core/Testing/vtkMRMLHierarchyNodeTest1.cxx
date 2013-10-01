@@ -10,11 +10,9 @@
 
 =========================================================================auto=*/
 
-#include "vtkMRMLHierarchyNode.h"
-
-
+// MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
-
+#include "vtkMRMLHierarchyNode.h"
 
 class vtkMRMLHierarchyNodeTestHelper1 : public vtkMRMLHierarchyNode
 {
@@ -37,25 +35,17 @@ public:
 
 int vtkMRMLHierarchyNodeTest1(int , char * [] )
 {
-
-//  vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLHierarchyNodeTestHelper1 >::New();
-
-  vtkSmartPointer< vtkMRMLHierarchyNode > node1 = vtkSmartPointer< vtkMRMLHierarchyNode >::New();
-  std::cout << "node1 is " << (node1 == NULL ? "null" : "not null") << std::endl;
-  if (node1 == NULL)
-    {
-    return EXIT_FAILURE;
-    }
+  vtkNew<vtkMRMLHierarchyNode> node1;
   
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLHierarchyNode, node1.GetPointer());
 
-  TEST_SET_GET_DOUBLE_RANGE(node1, SortingValue, 0.0, 10.0);
+  TEST_SET_GET_DOUBLE_RANGE(node1.GetPointer(), SortingValue, 0.0, 10.0);
   
-  TEST_SET_GET_STRING(node1, ParentNodeID);
+  TEST_SET_GET_STRING(node1.GetPointer(), ParentNodeID);
 
-  vtkSmartPointer<vtkMRMLHierarchyNode> pnode = node1->GetParentNode();
+  vtkMRMLHierarchyNode* pnode = node1->GetParentNode();
   std::cout << "GetParentNode returned " << (pnode == NULL ? "null" : "not null") << std::endl;
 
   node1->SetParentNodeID("testingID");
@@ -99,7 +89,7 @@ int vtkMRMLHierarchyNodeTest1(int , char * [] )
   
 
 
-  TEST_SET_GET_BOOLEAN(node1, AllowMultipleChildren);
+  TEST_SET_GET_BOOLEAN(node1.GetPointer(), AllowMultipleChildren);
 
   return EXIT_SUCCESS;
 }

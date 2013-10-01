@@ -24,7 +24,7 @@
 #include "vtkMRMLUnitNode.h"
 
 // VTK includes
-#include <vtkSmartPointer.h>
+#include <vtkNew.h>
 
 // STD includes
 #include <vector>
@@ -45,13 +45,12 @@ bool TestUnitNodeAttribute(vtkMRMLScene* scene);
 //---------------------------------------------------------------------------
 int vtkMRMLUnitNodeTest1(int , char * [] )
 {
-  vtkSmartPointer<vtkMRMLUnitNode> node1
-    = vtkSmartPointer<vtkMRMLUnitNode>::New();
+  vtkNew<vtkMRMLUnitNode> node1;
   node1->DebugOn();
 
-  EXERCISE_BASIC_OBJECT_METHODS(node1);
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLUnitNode, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLUnitNode, node1.GetPointer());
 
   bool res = true;
   vtkMRMLScene* scene = CreatePopulatedScene();
@@ -68,8 +67,7 @@ vtkMRMLScene* CreatePopulatedScene()
   vtkMRMLScene* scene = vtkMRMLScene::New();
   for (size_t i = 0; i < NUMBER_OF_UNITS; ++i)
     {
-    vtkSmartPointer<vtkMRMLUnitNode> unit
-      = vtkSmartPointer<vtkMRMLUnitNode>::New();
+    vtkNew<vtkMRMLUnitNode> unit;
     unit->SetQuantity(UNITS[i][0]);
     unit->SetName(UNITS[i][1]);
 

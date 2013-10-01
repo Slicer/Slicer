@@ -18,11 +18,11 @@
 
 int vtkMRMLColorTableStorageNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLColorTableStorageNode > node1 = vtkSmartPointer< vtkMRMLColorTableStorageNode >::New();
+  vtkNew<vtkMRMLColorTableStorageNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLColorTableStorageNode, node1);
+  EXERCISE_BASIC_STORAGE_MRML_METHODS(vtkMRMLColorTableStorageNode, node1.GetPointer());
 
   return EXIT_SUCCESS;
 }

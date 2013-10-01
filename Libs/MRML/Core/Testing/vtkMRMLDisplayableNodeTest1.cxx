@@ -19,6 +19,7 @@
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 
 //----------------------------------------------------------------------------
 class vtkMRMLDisplayableNodeTestHelper1 : public vtkMRMLDisplayableNode
@@ -83,11 +84,11 @@ bool TestReferences();
 //----------------------------------------------------------------------------
 int vtkMRMLDisplayableNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 > node1 = vtkSmartPointer< vtkMRMLDisplayableNodeTestHelper1 >::New();
+  vtkNew<vtkMRMLDisplayableNodeTestHelper1> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS( node1.GetPointer() );
 
-  EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayableNodeTestHelper1, node1);
+  EXERCISE_BASIC_MRML_METHODS(vtkMRMLDisplayableNodeTestHelper1, node1.GetPointer());
 
   bool res = true;
   res = TestAddDisplayNodeID() && res;

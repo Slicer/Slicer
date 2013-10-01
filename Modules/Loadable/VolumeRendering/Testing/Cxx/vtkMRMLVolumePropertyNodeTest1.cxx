@@ -18,7 +18,6 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkNew.h>
 #include <vtkPiecewiseFunction.h>
 
 // STD includes

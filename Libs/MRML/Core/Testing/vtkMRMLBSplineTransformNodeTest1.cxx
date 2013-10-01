@@ -19,11 +19,11 @@
 
 int vtkMRMLBSplineTransformNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLBSplineTransformNode > node1 = vtkSmartPointer< vtkMRMLBSplineTransformNode >::New();
+  vtkNew<vtkMRMLBSplineTransformNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
-  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLBSplineTransformNode, node1);
+  EXERCISE_BASIC_TRANSFORM_MRML_METHODS(vtkMRMLBSplineTransformNode, node1.GetPointer());
   
   return EXIT_SUCCESS;
 }

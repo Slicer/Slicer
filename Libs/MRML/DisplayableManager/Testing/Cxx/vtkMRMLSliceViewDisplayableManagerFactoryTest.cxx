@@ -34,10 +34,7 @@
 #include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
-
-// STD includes
-
+#include <vtkNew.h>
 
 //----------------------------------------------------------------------------
 int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
@@ -51,12 +48,11 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   renderWindow->SetInteractor(renderWindowInteractor.GetPointer());
 
   // MRML scene
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
 
   // Application logic - Handle creation of vtkMRMLSelectionNode and vtkMRMLInteractionNode
-  vtkSmartPointer<vtkMRMLApplicationLogic> applicationLogic =
-    vtkSmartPointer<vtkMRMLApplicationLogic>::New();
-  applicationLogic->SetMRMLScene(scene);
+  vtkNew<vtkMRMLApplicationLogic> applicationLogic;
+  applicationLogic->SetMRMLScene(scene.GetPointer());
 
   // Add ViewNode
   vtkMRMLSliceNode * viewNode = vtkMRMLSliceNode::New();
@@ -66,7 +62,7 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
 
   vtkMRMLSliceLogic * sliceLogic = vtkMRMLSliceLogic::New();
   sliceLogic->SetName("Red");
-  sliceLogic->SetMRMLScene(scene);
+  sliceLogic->SetMRMLScene(scene.GetPointer());
   sliceLogic->SetSliceNode(viewNode);
   sliceLogic->UpdateSliceNode();
   sliceLogic->UpdateSliceNodeFromLayout();
@@ -120,9 +116,7 @@ int vtkMRMLSliceViewDisplayableManagerFactoryTest(int vtkNotUsed(argc), char* vt
   displayableManagerGroup->SetMRMLDisplayableNode(viewNode);
 
   displayableManagerGroup->Delete();
-  applicationLogic = 0;
   sliceLogic->Delete();
-  scene = 0;
 
   return EXIT_SUCCESS;
 }

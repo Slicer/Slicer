@@ -17,15 +17,15 @@
 
 int vtkMRMLFiberBundleNodeTest1(int , char * [] )
 {
-  vtkSmartPointer< vtkMRMLFiberBundleNode > node1 = vtkSmartPointer< vtkMRMLFiberBundleNode >::New();
+  vtkNew< vtkMRMLFiberBundleNode> node1;
 
-  EXERCISE_BASIC_OBJECT_METHODS( node1 );
+  EXERCISE_BASIC_OBJECT_METHODS(node1.GetPointer());
 
   node1->UpdateReferences();
 
-  vtkSmartPointer< vtkMRMLFiberBundleNode > node2 = vtkSmartPointer< vtkMRMLFiberBundleNode >::New();
+  vtkNew<vtkMRMLFiberBundleNode> node2;
 
-  node2->Copy( node1 );
+  node2->Copy(node1.GetPointer());
 
   node2->Reset();
 

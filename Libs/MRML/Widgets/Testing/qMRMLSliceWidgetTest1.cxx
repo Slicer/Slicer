@@ -34,9 +34,8 @@
 #include <vtkMRMLVolumeNode.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
 #include <vtkMultiThreader.h>
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLSliceWidgetTest1(int argc, char * argv [] )
 {
@@ -50,7 +49,7 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
     return EXIT_FAILURE;
     }
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   scene->SetURL(argv[1]);
   scene->Connect();
   if (scene->GetNumberOfNodes() == 0)
@@ -96,7 +95,7 @@ int qMRMLSliceWidgetTest1(int argc, char * argv [] )
 
   // "Red" slice by default
   qMRMLSliceWidget sliceWidget;
-  sliceWidget.setMRMLScene(scene);
+  sliceWidget.setMRMLScene(scene.GetPointer());
   sliceWidget.setMRMLSliceNode(redSliceNode);
   sliceWidget.show();
   

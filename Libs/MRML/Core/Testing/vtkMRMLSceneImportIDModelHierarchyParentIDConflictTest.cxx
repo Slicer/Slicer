@@ -47,8 +47,8 @@ void PopulateScene(vtkMRMLScene *scene)
   // add model hierarchy nodes
   for (int i = 0; i < 5; i++)
     {
-    vtkSmartPointer<vtkMRMLModelHierarchyNode> mhn = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-    scene->AddNode(mhn);
+    vtkNew<vtkMRMLModelHierarchyNode> mhn;
+    scene->AddNode(mhn.GetPointer());
     std::string idNumberString;
     std::stringstream ss;
     ss << i;
@@ -195,8 +195,8 @@ bool ImportIDModelHierarchyParentIDConflictTestFile()
   vtkNew<vtkMRMLScene> scene1;
 
   // add a single hierarchy node
-  vtkSmartPointer<vtkMRMLModelHierarchyNode> mhn = vtkSmartPointer<vtkMRMLModelHierarchyNode>::New();
-  scene1->AddNode(mhn);
+  vtkNew<vtkMRMLModelHierarchyNode> mhn;
+  scene1->AddNode(mhn.GetPointer());
 
   std::cout << "\nFile: Starting scene 1 has " << scene1->GetNumberOfNodes() << " nodes" << std::endl;
 

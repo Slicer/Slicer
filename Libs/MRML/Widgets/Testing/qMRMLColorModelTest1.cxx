@@ -34,9 +34,7 @@
 #include <vtkMRMLScene.h>
 
 // VTK includes
-#include <vtkSmartPointer.h>
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLColorModelTest1(int argc, char * argv [])
 {
@@ -44,9 +42,9 @@ int qMRMLColorModelTest1(int argc, char * argv [])
 
   qMRMLColorModel model;
 
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
+  vtkNew<vtkMRMLScene> scene;
   qMRMLNodeFactory nodeFactory(0);
-  nodeFactory.setMRMLScene(scene);
+  nodeFactory.setMRMLScene(scene.GetPointer());
   vtkMRMLNode* node = nodeFactory.createNode("vtkMRMLColorTableNode");
   vtkMRMLColorTableNode* colorNode = vtkMRMLColorTableNode::SafeDownCast(node);
   if (colorNode)

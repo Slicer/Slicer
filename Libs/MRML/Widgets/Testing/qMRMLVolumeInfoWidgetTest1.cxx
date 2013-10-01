@@ -33,17 +33,15 @@
 
 // VTK includes
 #include <vtkImageData.h>
-#include <vtkSmartPointer.h>
-
-// STD includes
+#include <vtkNew.h>
 
 int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
 {
   QApplication app(argc, argv);
   
-  vtkSmartPointer< vtkMRMLScalarVolumeNode > volumeNode = vtkSmartPointer< vtkMRMLScalarVolumeNode >::New();
+  vtkNew< vtkMRMLScalarVolumeNode > volumeNode;
 
-  vtkSmartPointer< vtkImageData > imageData = vtkSmartPointer< vtkImageData >::New();
+  vtkNew< vtkImageData > imageData;
   imageData->SetDimensions(256, 256, 1);
   imageData->SetScalarTypeToUnsignedShort();
   imageData->SetNumberOfScalarComponents(1); // image holds one value intensities
@@ -51,24 +49,24 @@ int qMRMLVolumeInfoWidgetTest1(int argc, char * argv [] )
   //imageData->SetOrigin(0.0,0.0,0.0); not used by vtkMRMLVolumeNode
   imageData->AllocateScalars(); // allocate storage for image data  
   
-  volumeNode->SetAndObserveImageData(imageData);
+  volumeNode->SetAndObserveImageData(imageData.GetPointer());
   volumeNode->SetSpacing(2., 2., 512.);
   volumeNode->SetOrigin(0, 0, 0);
 
-  vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode> displayNode = vtkSmartPointer<vtkMRMLScalarVolumeDisplayNode>::New();
-  vtkSmartPointer<vtkMRMLScene> scene = vtkSmartPointer<vtkMRMLScene>::New();
-  scene->AddNode(volumeNode);
-  scene->AddNode(displayNode);
+  vtkNew<vtkMRMLScalarVolumeDisplayNode> displayNode;
+  vtkNew<vtkMRMLScene> scene;
+  scene->AddNode(volumeNode.GetPointer());
+  scene->AddNode(displayNode.GetPointer());
 
-  vtkSmartPointer<vtkMRMLColorTableNode> colorNode = vtkSmartPointer<vtkMRMLColorTableNode>::New();
+  vtkNew<vtkMRMLColorTableNode> colorNode;
   colorNode->SetTypeToGrey();
-  scene->AddNode(colorNode);
+  scene->AddNode(colorNode.GetPointer());
   displayNode->SetAndObserveColorNodeID(colorNode->GetID());
 
   volumeNode->SetAndObserveDisplayNodeID(displayNode->GetID());
   
   qMRMLVolumeInfoWidget volumeInfo;
-  volumeInfo.setVolumeNode(volumeNode);
+  volumeInfo.setVolumeNode(volumeNode.GetPointer());
   volumeInfo.show();
   
   if (argc < 2 || QString(argv[1]) != "-I" )
