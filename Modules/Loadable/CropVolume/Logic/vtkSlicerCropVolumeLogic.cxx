@@ -46,8 +46,6 @@
 #include <cassert>
 #include <iostream>
 
-#include <math.h>
-
 //----------------------------------------------------------------------------
 class vtkSlicerCropVolumeLogic::vtkInternal
 {
@@ -403,22 +401,22 @@ void vtkSlicerCropVolumeLogic::CropVoxelBased(vtkMRMLAnnotationROINode* roi, vtk
   inputRASToIJK->MultiplyPoint(minXYZRAS, minXYZIJK);
   inputRASToIJK->MultiplyPoint(maxXYZRAS, maxXYZIJK);
 
-  int minX = (int)trunc(fmin(minXYZIJK[0],maxXYZIJK[0]));
-  int maxX = (int)round(fmax(minXYZIJK[0],maxXYZIJK[0]));
-  int minY = (int)trunc(fmin(minXYZIJK[1],maxXYZIJK[1]));
-  int maxY = (int)round(fmax(minXYZIJK[1],maxXYZIJK[1]));
-  int minZ = (int)trunc(fmin(minXYZIJK[2],maxXYZIJK[2]));
-  int maxZ = (int)round(fmax(minXYZIJK[2],maxXYZIJK[2]));
+  double minX = std::min(minXYZIJK[0],maxXYZIJK[0]);
+  double maxX = std::max(minXYZIJK[0],maxXYZIJK[0]) + 0.5; // 0.5 for rounding purposes to make sure everything selected by roi is cropped
+  double minY = std::min(minXYZIJK[1],maxXYZIJK[1]);
+  double maxY = std::max(minXYZIJK[1],maxXYZIJK[1]) + 0.5;
+  double minZ = std::min(minXYZIJK[2],maxXYZIJK[2]);
+  double maxZ = std::max(minXYZIJK[2],maxXYZIJK[2]) + 0.5;
 
   int originalImageExtents[6];
   imageDataWorkingCopy->GetExtent(originalImageExtents);
 
-  minX = std::max(minX,0);
-  maxX = std::min(maxX,originalImageExtents[1]);
-  minY = std::max(minY,0);
-  maxY = std::min(maxY,originalImageExtents[3]);
-  minZ = std::max(minZ,0);
-  maxZ = std::min(maxZ,originalImageExtents[5]);
+  minX = std::max(minX,0.);
+  maxX = std::min(maxX,static_cast<double>(originalImageExtents[1]));
+  minY = std::max(minY,0.);
+  maxY = std::min(maxY,static_cast<double>(originalImageExtents[3]));
+  minZ = std::max(minZ,0.);
+  maxZ = std::min(maxZ,static_cast<double>(originalImageExtents[5]));
 
   int outputWholeExtent[6] = {minX,maxX,minY,maxY,minZ,maxZ};
 
