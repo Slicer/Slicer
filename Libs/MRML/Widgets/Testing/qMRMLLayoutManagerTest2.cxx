@@ -74,9 +74,20 @@ int qMRMLLayoutManagerTest2(int argc, char * argv[] )
       std::cerr << __LINE__ << " Problem with setMRMLScene()" << std::endl;
       return EXIT_FAILURE;
       }
-  }
 
-  layoutManager->setMRMLScene(0);
+    layoutManager->setMRMLScene(0);
+    applicationLogic->SetMRMLScene(0);
+
+    int current = scene->GetReferenceCount();
+    int expected = 1;
+    if (current != expected)
+      {
+      std::cerr << __LINE__ << " Problem with MRMLScene reference count !\n"
+                << "  current: " << current << "\n"
+                << "  expected: " << expected << std::endl;
+      return EXIT_FAILURE;
+      }
+  }
 
   vtkMRMLLayoutNode* layoutNode = 0;
   {
