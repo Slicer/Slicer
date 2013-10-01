@@ -142,6 +142,8 @@ protected:
   virtual void AdditionalInitializeStep();
   virtual int ActiveInteractionModes();
 
+  virtual void UnobserveMRMLScene();
+
   virtual void OnMRMLSceneStartClose();
   virtual void OnMRMLSceneEndClose();
   virtual void UpdateFromMRMLScene();

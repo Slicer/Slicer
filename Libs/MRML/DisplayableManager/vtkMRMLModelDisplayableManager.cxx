@@ -534,6 +534,14 @@ void vtkMRMLModelDisplayableManager::ProcessMRMLNodesEvents(vtkObject *caller,
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLModelDisplayableManager::UnobserveMRMLScene()
+{
+  this->RemoveModelProps();
+  this->RemoveHierarchyObservers(1);
+  this->RemoveModelObservers(1);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLModelDisplayableManager::OnMRMLSceneStartClose()
 {
   this->RemoveHierarchyObservers(0);
