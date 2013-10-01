@@ -198,6 +198,11 @@ void vtkMRMLSliceLogic::SetMRMLSceneInternal(vtkMRMLScene * newScene)
   this->SetAndObserveMRMLSceneEventsInternal(newScene, events.GetPointer());
 
   this->ProcessMRMLLogicsEvents();
+
+  this->BackgroundLayer->SetMRMLScene(newScene);
+  this->ForegroundLayer->SetMRMLScene(newScene);
+  this->LabelLayer->SetMRMLScene(newScene);
+
   this->ProcessMRMLSceneEvents(newScene, vtkMRMLScene::EndBatchProcessEvent, 0);
 }
 
