@@ -568,8 +568,8 @@ int vtkMRMLCameraDisplayableManagerTest1(int argc, char* argv[])
     }
     */
 
-  vtkMRMLDisplayableManagerGroup * displayableManagerGroup =
-      factory->InstantiateDisplayableManagers(rr.GetPointer());
+  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup =
+      vtkSmartPointer<vtkMRMLDisplayableManagerGroup>::Take(factory->InstantiateDisplayableManagers(rr.GetPointer()));
 
   if (!displayableManagerGroup)
     {
